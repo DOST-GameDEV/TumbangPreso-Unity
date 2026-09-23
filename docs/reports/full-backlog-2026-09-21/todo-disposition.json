@@ -2115,14 +2115,36 @@
     {
       "lineAtIntake": 5996,
       "heading": "## 134 · THE BROADCAST PASS: AUTOPILOT, REPLAY, ULTIMATE INTRODUCTIONS, THE SHOVE THAT MEANT NOTHING, AND THE KEYBOARD ON THE PHONE ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current broadcast/Replay/ultimate/shove presentation and input systems are implemented under later VISUAL-1/PRESENTATION work and their existing evidence. Preserve current spectator/input behavior and new REFINE-2 motion feedback; do not resurrect the original broadcast layout or old literal-key cells. Device/final qualification limits remain explicit.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/TouchHud.cs",
+        "Assets/TumbangPreso/Runtime/Input/TouchHud.OwnerPainted.cs",
+        "Assets/TumbangPreso/Runtime/Input/LastInputDevice.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.MatchBar.cs",
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs",
+        "docs/reports/full-backlog-2026-09-21/accessibility-completion.md",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "implemented_or_superseded_by_current_presentation",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 6014,
       "heading": "### 134.1 ⚠️⚠️ THE TOUCH LAYER WAS PAINTING KEYBOARD KEYS, AND THE CAUSE WAS A FIELD TYPE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "TouchHud uses real verb/ability glyphs and LastInputDevice seeds from TouchHud.ShouldShow, while later keyboard/pad input can still switch the scheme. Current InputContractTests and UI evidence cover software behavior; no physical-handset certification inferred. Preserve the current glyph implementation, not the older field-type recipe.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/TouchHud.cs",
+        "Assets/TumbangPreso/Runtime/Input/TouchHud.OwnerPainted.cs",
+        "Assets/TumbangPreso/Runtime/Input/LastInputDevice.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.MatchBar.cs",
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs",
+        "docs/reports/full-backlog-2026-09-21/accessibility-completion.md",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "implemented_or_superseded_by_current_presentation",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 6088,
@@ -2210,8 +2232,19 @@
     {
       "lineAtIntake": 6505,
       "heading": "### 134.9 ✅ CLOSED 2026-09-04: A PHONE IN PRACTICE CAN TURN COOLDOWNS OFF",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "PracticeSandbox touch toggle exists on the touch canvas and RefreshSandbox gates it by PracticeSandbox.Allowed. Preserve the current placement and mode gate; no extra always-on control or old pause-layout restoration is needed.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/TouchHud.cs",
+        "Assets/TumbangPreso/Runtime/Input/TouchHud.OwnerPainted.cs",
+        "Assets/TumbangPreso/Runtime/Input/LastInputDevice.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.MatchBar.cs",
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs",
+        "docs/reports/full-backlog-2026-09-21/accessibility-completion.md",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "implemented_or_superseded_by_current_presentation",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 6553,
@@ -2240,8 +2273,19 @@
     {
       "lineAtIntake": 6667,
       "heading": "### 134.13 ✅ THE CASTER RAIL IS THREE CHARACTERS ON A ROW THAT ALREADY EXISTED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "The old T/U/X letter-cell proposal is superseded by the current VISUAL-1 match bar/state pictograms and current spectator/replay presentation. Replay status explicitly identifies replay and live continuation; do not restore redundant legacy letters/scoreboards. Current replay/native evidence and final qualification remain the acceptance sources.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/TouchHud.cs",
+        "Assets/TumbangPreso/Runtime/Input/TouchHud.OwnerPainted.cs",
+        "Assets/TumbangPreso/Runtime/Input/LastInputDevice.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.MatchBar.cs",
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs",
+        "docs/reports/full-backlog-2026-09-21/accessibility-completion.md",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "implemented_or_superseded_by_current_presentation",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 6700,
@@ -2336,152 +2380,401 @@
     {
       "lineAtIntake": 7082,
       "heading": "## 133 · ONE FONT IS DOING EVERY JOB, AND IT IS A DISPLAY FACE ⚠️⚠️ OPEN, 2026-09-03, NEXT SESSION'S BRIEF",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7104,
       "heading": "### 133.1 What the next session is being asked for",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7163,
       "heading": "### 133.2 What that session must read before touching anything",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7176,
       "heading": "### 133.3 ⚠️ The trap, named in advance",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7189,
       "heading": "### 133.4 ⚠️⚠️ THE SCOPE, AND IT IS A HARD LINE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7220,
       "heading": "### 133.5 ⚠️⚠️ NO LEFTOVER UI, AND THERE IS ALREADY A GATE FOR IT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7242,
       "heading": "### 133.6 THE BRIEF ITSELF: BETTER, NOT REARRANGED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7269,
       "heading": "### 133.7 THE FEELING, IN HIS WORDS, AND IT IS TWO THINGS AT ONCE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7305,
       "heading": "### 133.8 ⚠️⚠️ AND IT HAS TO BE FINDABLE WITHOUT BEING TAUGHT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7357,
       "heading": "### 133.9 What he added while the pass was running, 2026-09-03",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7371,
       "heading": "### 133.10 ✅ What landed 2026-09-03, and the two numbers worth keeping",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7534,
       "heading": "### 133.12 ⚠️⚠️ THE SECOND BATCH: HE LOOKED AT THE FONT PASS AND ASKED FOR THE ACTUAL OVERHAUL",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7615,
       "heading": "### 133.13 ⚠️⚠️ REJECTED. THE 2026-09-03 PASS WAS A RE-SKIN AND HE SENT IT BACK",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7659,
       "heading": "### 133.14 EVERYTHING HE ASKED FOR, IN HIS OWN WORDS, IN ONE PLACE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7687,
       "heading": "### 133.15 ⚠⚠ THE SECOND ATTEMPT AT § 133.13, 2026-09-03, branch `abilities-rework`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7862,
       "heading": "### 133.11 ⚠️ What is still open, and nothing in it is blocked",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical font/five-composition overhaul is superseded by the owner-painted surfaces, completed VISUAL-1 match UI and current UX-1 flow. Keep the surviving purposes: distinct but coherent screens, Darumadrop display/readable supporting type, preserved functions, live bindings and readable bounds. Do not restore the old paper/navy palette, top-right identity spine, Back text,18-unit floor or old lobby composition. Current UI inventory and UX-1 acceptance rows own remaining qualifications.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "classification": "superseded_plan_current_requirements_mapped",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7927,
       "heading": "## 132 · The loadout said nothing about the hero, and a build vanished the moment the match started ⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current roles replace the old combined loadout board: equipment is LOADOUT, skill alternatives are SKILL TREE, hero/ultimate information is HERO and the current timed-selector Learn panel. Actual equipped variant metadata reaches HeroAbilitySystem and current power/inspect readouts. Preserve those current routes and source data; do not restore an ultimate row to the equipment-only screen or rebuild old capture framing.",
+      "evidence": [
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubLoadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubSkillTree.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCharacterSelect.cs",
+        "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubKit.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
+      "classification": "current_routes_and_implementation_supersede_old_board",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7940,
       "heading": "### 132.1 ✅ Twelve default readings that said \"as tuned\"",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current roles replace the old combined loadout board: equipment is LOADOUT, skill alternatives are SKILL TREE, hero/ultimate information is HERO and the current timed-selector Learn panel. Actual equipped variant metadata reaches HeroAbilitySystem and current power/inspect readouts. Preserve those current routes and source data; do not restore an ultimate row to the equipment-only screen or rebuild old capture framing.",
+      "evidence": [
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubLoadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubSkillTree.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCharacterSelect.cs",
+        "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubKit.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
+      "classification": "current_routes_and_implementation_supersede_old_board",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7965,
       "heading": "### 132.2 ✅ The ultimate was not on the loadout board at all",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current roles replace the old combined loadout board: equipment is LOADOUT, skill alternatives are SKILL TREE, hero/ultimate information is HERO and the current timed-selector Learn panel. Actual equipped variant metadata reaches HeroAbilitySystem and current power/inspect readouts. Preserve those current routes and source data; do not restore an ultimate row to the equipment-only screen or rebuild old capture framing.",
+      "evidence": [
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubLoadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubSkillTree.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCharacterSelect.cs",
+        "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubKit.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
+      "classification": "current_routes_and_implementation_supersede_old_board",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 7986,
       "heading": "### 132.3 ✅ A build was invisible the moment the match started, which is most of why they felt the same",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current roles replace the old combined loadout board: equipment is LOADOUT, skill alternatives are SKILL TREE, hero/ultimate information is HERO and the current timed-selector Learn panel. Actual equipped variant metadata reaches HeroAbilitySystem and current power/inspect readouts. Preserve those current routes and source data; do not restore an ultimate row to the equipment-only screen or rebuild old capture framing.",
+      "evidence": [
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubLoadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubSkillTree.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCharacterSelect.cs",
+        "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubKit.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
+      "classification": "current_routes_and_implementation_supersede_old_board",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 8013,
       "heading": "### 132.4 What was checked and found NOT to be wrong",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current roles replace the old combined loadout board: equipment is LOADOUT, skill alternatives are SKILL TREE, hero/ultimate information is HERO and the current timed-selector Learn panel. Actual equipped variant metadata reaches HeroAbilitySystem and current power/inspect readouts. Preserve those current routes and source data; do not restore an ultimate row to the equipment-only screen or rebuild old capture framing.",
+      "evidence": [
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubLoadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubSkillTree.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCharacterSelect.cs",
+        "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubKit.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
+      "classification": "current_routes_and_implementation_supersede_old_board",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 8028,
       "heading": "### 132.6 ✅ The TAB tray printed every ability's name twice",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current roles replace the old combined loadout board: equipment is LOADOUT, skill alternatives are SKILL TREE, hero/ultimate information is HERO and the current timed-selector Learn panel. Actual equipped variant metadata reaches HeroAbilitySystem and current power/inspect readouts. Preserve those current routes and source data; do not restore an ultimate row to the equipment-only screen or rebuild old capture framing.",
+      "evidence": [
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubLoadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubSkillTree.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCharacterSelect.cs",
+        "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubKit.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
+      "classification": "current_routes_and_implementation_supersede_old_board",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 8077,
       "heading": "### 132.7 ✅ The capture frame had been photographing a third of the tray",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current roles replace the old combined loadout board: equipment is LOADOUT, skill alternatives are SKILL TREE, hero/ultimate information is HERO and the current timed-selector Learn panel. Actual equipped variant metadata reaches HeroAbilitySystem and current power/inspect readouts. Preserve those current routes and source data; do not restore an ultimate row to the equipment-only screen or rebuild old capture framing. These are historical capture/typography diagnoses; use the existing corrected current viewport evidence, not another capture-tool rewrite.",
+      "evidence": [
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubLoadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubSkillTree.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCharacterSelect.cs",
+        "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubKit.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
+      "classification": "current_routes_and_implementation_supersede_old_board",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 8111,
       "heading": "### 132.8 ✅ The probe was reporting a blur the game does not have",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current roles replace the old combined loadout board: equipment is LOADOUT, skill alternatives are SKILL TREE, hero/ultimate information is HERO and the current timed-selector Learn panel. Actual equipped variant metadata reaches HeroAbilitySystem and current power/inspect readouts. Preserve those current routes and source data; do not restore an ultimate row to the equipment-only screen or rebuild old capture framing. These are historical capture/typography diagnoses; use the existing corrected current viewport evidence, not another capture-tool rewrite.",
+      "evidence": [
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubLoadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubSkillTree.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCharacterSelect.cs",
+        "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubKit.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
+      "classification": "current_routes_and_implementation_supersede_old_board",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 8145,
       "heading": "### 132.5 ⚠️ WHAT IS STILL OPEN",
-      "disposition": "unreviewed",
-      "evidence": [],
+      "disposition": "Current roles replace the old combined loadout board: equipment is LOADOUT, skill alternatives are SKILL TREE, hero/ultimate information is HERO and the current timed-selector Learn panel. Actual equipped variant metadata reaches HeroAbilitySystem and current power/inspect readouts. Preserve those current routes and source data; do not restore an ultimate row to the equipment-only screen or rebuild old capture framing. Later kit behavior evidence is retained in partialReview/partialEvidence, not reopened as numbers-only. Current UI builders use normal font style and actual reading-font assets; no global synthetic-bold sweep is warranted by an old grep. New animation dissatisfaction remains REFINE-2 and final current-candidate checks remain P7.",
+      "evidence": [
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubLoadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubSkillTree.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCharacterSelect.cs",
+        "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubKit.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
       "partialReview": "Gameplay portion reviewed2026-09-23: later kit reports contain actual trajectory/lane/occupation/speed/time/passage tradeoffs; current native variants route iterates both roles and all registered heroes including Rafi. Do not replace them because the old heading says numbers-only. Final mixed-role/motion/native acceptance remains P7; new owner dissatisfaction with walking/throw/pektus is explicitly queued under REFINE-2.9. UI typography/icon portions remain unreviewed.",
       "partialEvidence": [
         "docs/HERO_KIT_REWORK_DECISIONS.md",
@@ -2494,7 +2787,10 @@
         "docs/reports/improvement-2026-09-14/phaister-skills.md",
         "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Variants.cs",
         "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md"
-      ]
+      ],
+      "classification": "current_routes_and_implementation_supersede_old_board",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 8170,
@@ -2603,8 +2899,22 @@
     {
       "lineAtIntake": 8389,
       "heading": "## 130 · Crossplay, the boot ANR, and the lobby that was drawn in a different language ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Crossplay-capable source and preview parity are implemented; current Windows/Android crossplay and handset performance remain physical-device P7 acceptance. Old lobby/font recipes follow current UX-1/VISUAL-1, not this historical parent.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "Assets/TumbangPreso/Runtime/Input/ScreenFocus.cs",
+        "Assets/TumbangPreso/Runtime/Input/TouchControls.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsSession.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.OwnerPainted.cs",
+        "docs/reports/legacy-review-2026-09-23/report.md",
+        "docs/TODO.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/core-final.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/audits-final.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 8397,
@@ -2663,8 +2973,12 @@
     {
       "lineAtIntake": 8536,
       "heading": "### 130.6 ⚠️⚠️ THE LOBBY AND MAP SELECT WERE DRAWN WITHOUT THE INK OUTLINE, AND THIS IS THE THIRD CAMERA IT HAS HAPPENED TO",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented: preview installs WorldOutline and ColourGrade; its 4x multisampled target deliberately omits the extra post AA. Preserve this parity during later per-map refinement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/MapPreviewSurface.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 8565,
@@ -2691,8 +3005,16 @@
     {
       "lineAtIntake": 8614,
       "heading": "### 130.9 ✅ § 129.3: the YOU card row is measured now, on its fourth report",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical identity-row/Fit-floor/caption recipes were implemented or superseded by current owner-painted and UX-1 layouts. Current readable type, actual label bounds and five-shape accessibility checks govern; do not restore old 14/16/18-unit disputes or retired YOU-card geometry.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "Assets/TumbangPreso/Tests/PlayMode/TumpUiCapture.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 8633,
@@ -2708,8 +3030,16 @@
     {
       "lineAtIntake": 8672,
       "heading": "### 130.11 ✅ § 126.13: two of the three `Fit(..., 14)` floors did not need an exemption at all",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical identity-row/Fit-floor/caption recipes were implemented or superseded by current owner-painted and UX-1 layouts. Current readable type, actual label bounds and five-shape accessibility checks govern; do not restore old 14/16/18-unit disputes or retired YOU-card geometry.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "Assets/TumbangPreso/Tests/PlayMode/TumpUiCapture.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 8694,
@@ -2769,8 +3099,15 @@
     {
       "lineAtIntake": 8992,
       "heading": "### 130.18 ✅ § 130.12's ballot, built on a bump somebody else was already paying for",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Map ballot and host-resolved votes exist; current result board and UX-1 pre-match ballot replace the old one-chip composition. The new arrival ballot is timed; do not add an obsolete second result-board clock. Actual UGS queue/ballot peer qualification remains UX-1.12/P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.QueueArrival.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubMapVote.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/arrival-playmode-v2.xml",
+        "docs/TODO.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9054,
@@ -2795,8 +3132,16 @@
     {
       "lineAtIntake": 9129,
       "heading": "### 130.15 ⚠️ `AspectRatioProbes` IS NARROWED TO ONE OPEN QUESTION NOW, AND IT IS § 121.8",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical identity-row/Fit-floor/caption recipes were implemented or superseded by current owner-painted and UX-1 layouts. Current readable type, actual label bounds and five-shape accessibility checks govern; do not restore old 14/16/18-unit disputes or retired YOU-card geometry.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "Assets/TumbangPreso/Tests/PlayMode/TumpUiCapture.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9151,
@@ -2834,8 +3179,16 @@
     {
       "lineAtIntake": 9214,
       "heading": "## 127 · Phase 16.1: the taya is a RING and an attacker is a DISC ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "The old nothing-started accessibility diagnosis is superseded: FOV, toggles, HUD/text size, contrast, reduced effects/flash, captions and more readable role geometry are implemented with later source/native evidence. Current reticle/can/rim grammar follows VISUAL-1, not the old hue-only UI. Keep the specifically carried-forward v57 match-chat clipping check and physical-device/final qualification open. English-only remains; localization stays cut.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/accessibility-completion.md",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md",
+        "Assets/TumbangPreso/Runtime/UI/HudReadingLayout.cs",
+        "docs/TODO.md"
+      ],
+      "classification": "implemented_with_specific_current_qualification_remaining",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 9223,
@@ -2864,44 +3217,109 @@
     {
       "lineAtIntake": 9263,
       "heading": "### 127.3 ⚠️ OPEN: what is left of Phase 16",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "The old nothing-started accessibility diagnosis is superseded: FOV, toggles, HUD/text size, contrast, reduced effects/flash, captions and more readable role geometry are implemented with later source/native evidence. Current reticle/can/rim grammar follows VISUAL-1, not the old hue-only UI. Keep the specifically carried-forward v57 match-chat clipping check and physical-device/final qualification open. English-only remains; localization stays cut.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/accessibility-completion.md",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md",
+        "Assets/TumbangPreso/Runtime/UI/HudReadingLayout.cs",
+        "docs/TODO.md"
+      ],
+      "classification": "implemented_with_specific_current_qualification_remaining",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 9338,
       "heading": "## 88 · Accounts and identity ⚠️ IN PROGRESS 2026-08-31",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Account layer is implemented on the current owner project. Historical service-project/deploy blockers are superseded by later receipts. The early launch-profile race was fixed and native isolated sign-in passed; full current account lifecycle/physical offline-device acceptance is not inferred from source.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "Assets/TumbangPreso/Runtime/Net/NetIdentity.cs",
+        "ProjectSettings/ProjectSettings.asset",
+        "docs/reports/front-end-flow-2026-09-23/completion/profile-isolation-editmode.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json",
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9366,
       "heading": "### 88.1 · Three things the first pass got wrong, found by running its own tests",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Name-length/fallback-handle and bounded-boot corrections are retained. The entry itself supersedes its proposed impersonation remedy with 90.1; do not reimplement that unsafe proposal. Current launch-profile startup race has separately been fixed and checked.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "Assets/TumbangPreso/Runtime/Net/NetIdentity.cs",
+        "ProjectSettings/ProjectSettings.asset",
+        "docs/reports/front-end-flow-2026-09-23/completion/profile-isolation-editmode.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json",
+        "Packages/com.tumbangpreso.core/Runtime/AccountRules.cs",
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9452,
       "heading": "### 88.2 · The UGS project belongs to somebody else, and the service half is blocked on that",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical project relink and account-service setup completed; current ProjectSettings uses dcf0831e-a5f4-43b4-832e-b687f13a3569/matthewtlabrador. Preserve dated live receipts; do not relink, redeploy, reset accounts or hunt retired service toggles. Current native sign-in/wallet load is distinct from a new account write/delete certification.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "Assets/TumbangPreso/Runtime/Net/NetIdentity.cs",
+        "ProjectSettings/ProjectSettings.asset",
+        "docs/reports/front-end-flow-2026-09-23/completion/profile-isolation-editmode.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json",
+        "docs/TODO_Backlog.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/wallet-deployment.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9513,
       "heading": "### 88.3 · What the new project actually needed, which was one click and not five",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical project relink and account-service setup completed; current ProjectSettings uses dcf0831e-a5f4-43b4-832e-b687f13a3569/matthewtlabrador. Preserve dated live receipts; do not relink, redeploy, reset accounts or hunt retired service toggles. Current native sign-in/wallet load is distinct from a new account write/delete certification.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "Assets/TumbangPreso/Runtime/Net/NetIdentity.cs",
+        "ProjectSettings/ProjectSettings.asset",
+        "docs/reports/front-end-flow-2026-09-23/completion/profile-isolation-editmode.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json",
+        "docs/TODO_Backlog.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/wallet-deployment.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9545,
       "heading": "### 88.4 · ✅ The service half is done. Phase 1 is complete.",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical project relink and account-service setup completed; current ProjectSettings uses dcf0831e-a5f4-43b4-832e-b687f13a3569/matthewtlabrador. Preserve dated live receipts; do not relink, redeploy, reset accounts or hunt retired service toggles. Current native sign-in/wallet load is distinct from a new account write/delete certification.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "Assets/TumbangPreso/Runtime/Net/NetIdentity.cs",
+        "ProjectSettings/ProjectSettings.asset",
+        "docs/reports/front-end-flow-2026-09-23/completion/profile-isolation-editmode.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json",
+        "docs/TODO_Backlog.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/wallet-deployment.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9591,
       "heading": "## 89 · The profile, the stats and the match history ⚠️ IN PROGRESS 2026-08-30",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Career collection/cache/history and server submission are implemented. Current PlayerHub owns presentation. FUTURE phase numbers and the old no-XP/no-rank milestone are historical, not current exclusions or new assignments; current qualification remains P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/CareerStore.cs",
+        "Assets/TumbangPreso/Runtime/UI/PlayerHub.OwnerCareer.cs",
+        "Assets/TumbangPreso/Runtime/UI/PlayerHub.OwnerHistory.cs",
+        "ugs/cloud-code/match-record.js",
+        "docs/FUTURE.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9629,
@@ -2939,8 +3357,18 @@
     {
       "lineAtIntake": 9701,
       "heading": "### 89.4 · What § 2.1 asks for that is not on the screen, and which phase owns each",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Retired phase allocation. Current avatar, career rank, mastery, achievements and social routes supersede the old deliberately empty slots. Do not add a friend-comparison feature solely from FUTURE; preserve current UX-1 profile scope and existing capability.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/CareerStore.cs",
+        "Assets/TumbangPreso/Runtime/UI/PlayerHub.OwnerCareer.cs",
+        "Assets/TumbangPreso/Runtime/UI/PlayerHub.OwnerHistory.cs",
+        "ugs/cloud-code/match-record.js",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubMenus.cs",
+        "docs/FUTURE.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9717,
@@ -2987,32 +3415,68 @@
     {
       "lineAtIntake": 9829,
       "heading": "### 89.9 · Two things found by reviewing this phase rather than by running it",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical record-payload and mastery-layout fixes are retained in the current career/wire implementation. Current owner-painted history/career surfaces replace the old 660x120 arrangement; exact final peer/career coverage remains P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/CareerStore.cs",
+        "Assets/TumbangPreso/Runtime/UI/PlayerHub.OwnerCareer.cs",
+        "Assets/TumbangPreso/Runtime/UI/PlayerHub.OwnerHistory.cs",
+        "ugs/cloud-code/match-record.js",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/audits-final.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9854,
       "heading": "## 126 · The full PlayMode suite had never been run on this commit, and it was 42 red ⚠️⚠️ 2026-09-03, branch `ui-redesign`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical suite failures are accounted for by later fixes/superseded UI and current focused receipts. This is not a fresh full regression pass. Current coherent-candidate partitioned regression remains P7, with physical-device gaps explicit.",
+      "evidence": [
+        "docs/reports/legacy-review-2026-09-23/report.md",
+        "docs/TODO.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/core-final.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/audits-final.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9867,
       "heading": "### 126.1 One probe threw, left the thumb layer switched on, and twenty suites reported other people's bugs",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "TouchHitArea CanvasRenderer requirement and ScreenFocus make-room-before-padding behavior are implemented. Preserve fixture teardown and current per-control fit rather than restoring retired screen sizes. Handset usability/performance remains unverified on physical hardware.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ScreenFocus.cs",
+        "Assets/TumbangPreso/Runtime/Input/TouchControls.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsSession.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.OwnerPainted.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/InputSurfaceProbe.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9905,
       "heading": "### 126.2 The thumb floor was unreachable by construction, because padding cannot make room",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "TouchHitArea CanvasRenderer requirement and ScreenFocus make-room-before-padding behavior are implemented. Preserve fixture teardown and current per-control fit rather than restoring retired screen sizes. Handset usability/performance remains unverified on physical hardware.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ScreenFocus.cs",
+        "Assets/TumbangPreso/Runtime/Input/TouchControls.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsSession.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.OwnerPainted.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/InputSurfaceProbe.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 9968,
       "heading": "### 126.3 The move stick drew as a square because `Mathf.SmoothStep` is not `smoothstep`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented explicit normalized TouchSkin edge ramp in TouchControls; the old flat-square alpha bug is historical, not a request for a new touch style.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/TouchControls.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 10007,
@@ -3028,14 +3492,27 @@
     {
       "lineAtIntake": 10036,
       "heading": "### 126.5 Nothing scrolled a focused control into view, and the scrollbar was carrying it",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "ScreenFocus follows selection into its owning ScrollRect only when needed and on selection change. Preserve controller focus/scroll behavior through current settings and the requested UI review; do not reintroduce a per-frame scroll snap.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ScreenFocus.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 10055,
       "heading": "### 126.6 The rebind list is two pages now, and the panel used to show a pad player a list of keys",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Device-specific binding pages, availability checks and cancellable rebinding are implemented. Current TumpSettingsSession preserves save/discard/conflict semantics; current UI review includes their look and interaction. Physical controller acceptance remains separate.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ScreenFocus.cs",
+        "Assets/TumbangPreso/Runtime/Input/TouchControls.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsSession.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.OwnerPainted.cs",
+        "Assets/TumbangPreso/Runtime/Settings/Rebinding.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 10100,
@@ -3094,8 +3571,15 @@
     {
       "lineAtIntake": 10367,
       "heading": "### 126.9 The four reds that are about the game rather than about the suite",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "All four dated failures have later resolutions: carry measured the wrong drawn offset (archived 93), steering buried its fixture capsule (130.14b), and old picker typography/naming is replaced by the current selector Learn layer. Do not widen tolerances or retune gameplay to these historical failures.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/TODO_Backlog.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/core-final.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 10432,
@@ -3132,200 +3616,532 @@
     {
       "lineAtIntake": 10575,
       "heading": "### 126.13 ⚠️ OPEN: what THAT batch did NOT do (the `Fit` floors are resolved in § 130.11)",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Old Fit-floor and pad-word gaps have later implementations/current replacements. Physical crossplay and handset performance remain P7; the old hardcoded inventory is a fixture migration issue, not missing gameplay. Do not revive retired UI to satisfy stale probes.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ScreenFocus.cs",
+        "Assets/TumbangPreso/Runtime/Input/TouchControls.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsSession.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.OwnerPainted.cs",
+        "docs/reports/legacy-review-2026-09-23/report.md",
+        "docs/TODO.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/core-final.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/audits-final.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 10598,
       "heading": "## 121 · The v61 report: one material for the primaries, a hub with a tab column, and the stuck hover ⚠️⚠️ OPEN, 2026-09-02, branch `ui-redesign`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 10626,
       "heading": "### 121.1 ⚠️⚠️ THE ONE FINDING THAT EXPLAINS FIVE OF HIS NOTES: THE PRIMARY IS THE ONLY CONTROL IN THE PAPER FRONT END STILL DRAWN IN WOOD, AND ITS SHADOW IS GREY",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 10691,
       "heading": "### 121.2 ⚠️⚠️ THE STUCK HOVER, AND IT IS A CACHE KEY WITH ONE FIELD MISSING ✅ CAUSE FOUND",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 10727,
       "heading": "### 121.2b ⚠️⚠️ THE AMBER FOCUS RING, WHICH HE REJECTED THREE TIMES IN ONE SITTING ON THREE DIFFERENT CONTROLS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 10754,
       "heading": "### 121.2c The wordmark on the login card: half its own sign was empty brown",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 10779,
       "heading": "### 121.3 The lobby, five notes",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 10807,
       "heading": "### 121.4 The login screen, two notes, and the first is not what it looks like",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 10842,
       "heading": "### 121.5 The character select, three notes, and one of them is the blue arrows",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 10876,
       "heading": "### 121.6 The player hub, which is § 120.7's own open item and the largest piece",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 10909,
       "heading": "### 121.7 What this pass must NOT do",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 10925,
       "heading": "### 121.8 The 16-unit caption question, which § 120.9 left open on purpose",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes. The current28unit UI floor and inspected larger-text layouts replace the old16versus18caption question; no new approval or blanket font resize is required.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 10995,
       "heading": "### 121.10 ⚠️⚠️ WHAT THE RENDERS CHANGED, AND THREE OF THESE REVERSED A DECISION TAKEN ONE RENDER EARLIER",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11018,
       "heading": "### 121.11 What is NOT done, named rather than left implied",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes. Its chat and address complaints were checked against current routes: nested chat takeover was fixed, history rendered, address layout passed larger-text checks, and real address/code joins and reconnection passed. The specific separate v57 in-match chat clip remains tracked in127.3.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11073,
       "heading": "### 121.9 Acceptance",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11088,
       "heading": "## 119 · The whole front end is repainted in PAPER, and the lobby is rebuilt around the room ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11107,
       "heading": "### 119.1 ⚠️⚠️ THE DIAGNOSIS IS HIS AND IT IS MEASURABLE: THE UI AND THE WORLD ARE THE SAME COLOUR",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11127,
       "heading": "### 119.2 The two new files, and why they are new files rather than an edit",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11139,
       "heading": "### 119.3 ⚠️⚠️ THE CONTROL INVENTORY. NOTHING ON THIS LIST MAY DISAPPEAR",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes. Preserve user capabilities, not obsolete GameObject names. The old TutorialButton inventory mismatch is a fixture migration note; LEARN TO PLAY has a current hamburger route. Do not resurrect retired screens to satisfy its string list.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11196,
       "heading": "### 119.4 The lobby new composition: one room, two rails",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11233,
       "heading": "### 119.5 Each screen gets its own device, because the repetition complaint is about method",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11249,
       "heading": "### 119.6 ⚠️⚠️ `PaperPurityProbe` IS THE GATE ON \"NO LEFTOVER OLD UI\", AND IT IS THE POINT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes. Preserve user capabilities, not obsolete GameObject names. The old TutorialButton inventory mismatch is a fixture migration note; LEARN TO PLAY has a current hamburger route. Do not resurrect retired screens to satisfy its string list.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11267,
       "heading": "### 119.7 Acceptance",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11278,
       "heading": "### 119.8 ⚠️⚠️ THE REDUNDANCY 🧑 FOUND, AND THE LADDER THAT HAD NO DOOR",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11322,
       "heading": "### 119.9 ⚠️⚠️ FIVE FAULTS THE RENDERS FOUND AND NO PROBE COULD, AND ONE OF THEM TOOK THREE PASSES",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11337,
       "heading": "### 119.10 What 🧑 rejected by eye, with the number that agreed with him each time",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11350,
       "heading": "### 119.11 What is NOT done, named rather than left implied ✅ CLOSED BY § 120, 2026-09-02",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11380,
       "heading": "## 118 · The lobby is coherent now and it is not finished ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11392,
       "heading": "### 118.1 The eight things that still read badly, ranked by how much they cost",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11405,
       "heading": "### 118.2 ⚠️⚠️ THE METHOD, AND IT IS NOT \"MAKE IT PRETTIER\"",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11417,
       "heading": "### 118.3 Other games, which 🧑 asked for by name, and what actually transfers",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11433,
       "heading": "### 118.4 What NOT to do, because it has already been decided",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11449,
       "heading": "### 118.5 Acceptance",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical paper/wood/brand composition and hover/palette iteration is superseded by current owner-painted/VISUAL-1/UX-1 surfaces and the latest owner directions. Preserve the functions through current HOME/profile/menu/HOST/JOIN/LOBBY routes; do not restore the old rails, card proportions, identity placement, focus-color prohibitions, blue-arrow treatment or caption-floor dispute. Current meaningful states and acceptance are owned by UX-1, not these retired recipes.",
+      "evidence": [
+        "AGENTS.md",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/README.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json"
+      ],
+      "classification": "superseded_ui_recipe_current_functions_retained",
+      "reviewedOn": "2026-09-23",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 11462,
@@ -3340,236 +4156,548 @@
     {
       "lineAtIntake": 11501,
       "heading": "## 95b · OPEN: nothing asserts that a menu label fits, only that it is legible ⚠️",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current TumpUiCapture asserts text height, rendered-character completeness and action bounds; PhaseSurfaceLayoutProbe also asserts preferred width. This resolves the missing-measurement proposal without indiscriminately rewriting protected converted art. Current five-shape/large-text routes passed; full surface inventory remains UX-1.11/P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Tests/PlayMode/TumpUiCapture.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/PhaseSurfaceLayoutProbe.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11520,
       "heading": "## 72 · Two lobby controls reported dead that every headless check says are alive ⚠️ OPEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Original lobby name/code controls are superseded by current HOME profile and JOIN routes. Current migrated caret/profile cases and native code resolution passed; native physical typing through current fields remains a specific P7 check. Do not add blind ActivateInputField workarounds or claim native typing from automated code submission.",
+      "evidence": [
+        "docs/reports/front-end-flow-2026-09-23/completion/game-defects-v3.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11568,
       "heading": "## 68 · The lobby is a form, and it should be a room ⚠️ OPEN, PLANNED 2026-08-28",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11583,
       "heading": "### 68.0 The four decisions, taken 2026-08-28 before any code",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11594,
       "heading": "### 68.1 What the two screens actually are today",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11610,
       "heading": "### 68.2 ⚠️⚠️ THE LOBBY WORK ADDS NO WIRE CHANGE. CHAT IS THE ONLY ONE, AND IT BUMPS THE PROTOCOL",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical scope/protocol literals apply to that old batch only. Current UX-1 reuses existing networking owners; protocol source is 50, and stable roster/save/wire identities remain protected. Current owner permission supersedes the old ban on character UI edits. No retroactive protocol bump or control rename is required.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+        "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+        "AGENTS.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11626,
       "heading": "### 68.3 ⚠️⚠️ THE OLD CHROME IS KEPT AND SWITCHABLE, NOT DELETED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Fallback code and authored scenes are preserved; -tp-preparation-board selects the prior board and was used for the 53-case baseline. Do not destroy the fallback or force its old visual design onto HOME.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/old-board-v1.xml"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11645,
       "heading": "### 68.4 ⚠️⚠️ RE-SKIN, DO NOT RENAME",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical scope/protocol literals apply to that old batch only. Current UX-1 reuses existing networking owners; protocol source is 50, and stable roster/save/wire identities remain protected. Current owner permission supersedes the old ban on character UI edits. No retroactive protocol bump or control rename is required.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+        "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+        "AGENTS.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11654,
       "heading": "### 68.5 The navigation change, and the third lobby state it creates",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11676,
       "heading": "### 68.6 ⚠️⚠️ HOST → LEAVE → JOIN IN ONE LAUNCH IS THE PATH THIS FEATURE LIVES OR DIES ON",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Actual native initial join exercised auto-host -> leave -> join in one launch, and same-profile reconnect also became CLIENT slot1 with lobby visible after the cold-code fix. This closes this specific restart-order gap; it does not prove all online/browser/physical-input paths.",
+      "evidence": [
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-followup-notes.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11684,
       "heading": "### 68.7 The arrangement: PUBG Mobile's chrome, PC PUBG's line-up",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11718,
       "heading": "### 68.8 The cast, which is the whole feature and the only real engineering",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Legacy LobbyCast motion/framing/nameplates and preview sightline safeguards remain in preserved code. Current UX-1 uses portrait room rows over the real map, so rebuilding that old cast arrangement is superseded. Later REFINE-2 explicitly qualifies actual lobby/map-introduction/play cameras and sensible surrounding context.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/LobbyCast.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyNameplates.cs",
+        "Assets/TumbangPreso/Runtime/UI/MapPreviewSurface.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/map-by-map-refinement-2026-09-23/cultural-and-camera-brief.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11754,
       "heading": "### 68.9 Nameplates",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Legacy LobbyCast motion/framing/nameplates and preview sightline safeguards remain in preserved code. Current UX-1 uses portrait room rows over the real map, so rebuilding that old cast arrangement is superseded. Later REFINE-2 explicitly qualifies actual lobby/map-introduction/play cameras and sensible surrounding context.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/LobbyCast.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyNameplates.cs",
+        "Assets/TumbangPreso/Runtime/UI/MapPreviewSurface.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/map-by-map-refinement-2026-09-23/cultural-and-camera-brief.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11774,
       "heading": "### 68.10 Everything togglable, and the greying that is missing today",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current custom room exposes host-owned rules/start and peer picks/readiness/spectating with existing authority guards. Queued automatic arrival and custom ManualReady now follow the latest owner flow. Do not restore old dual START/READY controls; exact current peer interaction acceptance stays UX-1/P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/arrival-playmode-v2.xml",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-followup-notes.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11805,
       "heading": "### 68.11 The join panel, lifted rather than rewritten",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "HOST/JOIN now wrap the existing network owners, including LAN/code/online routes and error reporting. Cold local code lookup and repeated native join were fixed and passed; actual online/browser transitions and running-match rejoin remain explicitly scoped P7 checks, not blanket done.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "Assets/TumbangPreso/Runtime/UI/LobbyJoinPanel.cs",
+        "Assets/TumbangPreso/Runtime/Net/ServerQuery.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-followup-notes.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11841,
       "heading": "### 68.12 Organisation, so nothing lives in two places",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11861,
       "heading": "### 68.13 What must NOT be touched",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical scope/protocol literals apply to that old batch only. Current UX-1 reuses existing networking owners; protocol source is 50, and stable roster/save/wire identities remain protected. Current owner permission supersedes the old ban on character UI edits. No retroactive protocol bump or control rename is required.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+        "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+        "AGENTS.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11870,
       "heading": "### 68.14 Done looks like",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Dated acceptance checklist is mapped to current UX-1/P7. Core629, focused UI/a11y, eight editor checks, source audits, native code/reconnect and automatic arrival/rematch have receipts. Full current regression, native input/browser/chat/running-match rejoin and clean final identity remain; old style-specific captures do not govern current UI.",
+      "evidence": [
+        "docs/reports/legacy-review-2026-09-23/report.md",
+        "docs/TODO.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/core-final.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/audits-final.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-followup-notes.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11903,
       "heading": "### 68.15 Order of work, so the screen is never half-broken",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11914,
       "heading": "### 68.17 What landed on the `PUBG` branch, and the five things the renders found",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11982,
       "heading": "### 68.18 The second pass, 2026-08-28: navigation, the settings panel, and one rail per side",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 11999,
       "heading": "#### 68.18.1 Navigation: two screens left the path, and one panel was deleted",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12021,
       "heading": "#### 68.18.2 ⚠️⚠️ THE MATCH SETTINGS PANEL WAS UGLY FOR ONE MEASURABLE REASON",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12036,
       "heading": "#### 68.18.3 ⚠️⚠️ ONE RAIL PER SIDE, AND THAT IS A STRUCTURAL FIX RATHER THAN BETTER NUMBERS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12075,
       "heading": "#### 68.18.4 The player card, and where character select went",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PUBG/Street lobby composition and navigation are superseded by the owner wireframes and UX-1: TAP TO START -> HOME, separate HOST/JOIN, portrait room list over the real map, current character/equipment routes. Preserve current network capabilities; do not restore old rails, tabs, direct-title auto-host flow, caption sizes or character placement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/front-end-flow-2026-09-23/ui-authorship-inventory.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12098,
       "heading": "#### 68.18.5 The names, on every machine",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Canonical account/lobby identity and republishing paths exist; current portrait rows replace projected old plates. Native seat identity is observed, but live manual rename reflected on the other machine is not claimed from source and remains current peer acceptance.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-followup-notes.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12116,
       "heading": "#### 68.18.6 The cast's third character did not move, and no test could see it",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Legacy LobbyCast motion/framing/nameplates and preview sightline safeguards remain in preserved code. Current UX-1 uses portrait room rows over the real map, so rebuilding that old cast arrangement is superseded. Later REFINE-2 explicitly qualifies actual lobby/map-introduction/play cameras and sensible surrounding context.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/LobbyCast.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyNameplates.cs",
+        "Assets/TumbangPreso/Runtime/UI/MapPreviewSurface.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/map-by-map-refinement-2026-09-23/cultural-and-camera-brief.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12131,
       "heading": "#### 68.18.7 The Ilalim ng Tulay pillars, and why a camera angle was not the fix",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Legacy LobbyCast motion/framing/nameplates and preview sightline safeguards remain in preserved code. Current UX-1 uses portrait room rows over the real map, so rebuilding that old cast arrangement is superseded. Later REFINE-2 explicitly qualifies actual lobby/map-introduction/play cameras and sensible surrounding context.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/LobbyCast.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyNameplates.cs",
+        "Assets/TumbangPreso/Runtime/UI/MapPreviewSurface.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml",
+        "docs/reports/map-by-map-refinement-2026-09-23/cultural-and-camera-brief.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12159,
       "heading": "#### 68.18.8 ⚠️⚠️ ONE PRESS WAS FIRING THE CLICK UP TO THREE TIMES",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Per-cue/per-frame MenuSfx guard is implemented and preserves distinct Back audio. Current sound/listening review stays PRESENTATION-1.5; do not remove independent call sites or infer audible quality from the guard alone.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/MenuSfx.cs",
+        "docs/TODO.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12187,
       "heading": "#### 68.18.9 What is verified, and what still is not",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Dated acceptance checklist is mapped to current UX-1/P7. Core629, focused UI/a11y, eight editor checks, source audits, native code/reconnect and automatic arrival/rematch have receipts. Full current regression, native input/browser/chat/running-match rejoin and clean final identity remain; old style-specific captures do not govern current UI.",
+      "evidence": [
+        "docs/reports/legacy-review-2026-09-23/report.md",
+        "docs/TODO.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/core-final.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/audits-final.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/code-rejoin-after-fix.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-followup-notes.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12199,
       "heading": "#### 68.18.10 ✅ THE CHAT IS PROVEN, ON TWO REAL PROCESSES",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical two-process lobby chat receipt is retained as dated evidence. Current host relay and UI remain; final both-directions lobby/arena chat and physical input are P7, with 127.3 native chat clipping tracked separately.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.Native.cs",
+        "Assets/TumbangPreso/Runtime/PlayerInputReader.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/game-defects-v3.xml",
+        "docs/TODO_Backlog.md",
+        "docs/TODO.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12233,
       "heading": "#### 68.18.11 The lobby log opens on demand",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Growing/on-arrival lobby history design was explicitly superseded by 68.19 and current compact chat/history. Do not restore the old auto-growing panel.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.Native.cs",
+        "Assets/TumbangPreso/Runtime/PlayerInputReader.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/game-defects-v3.xml",
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12263,
       "heading": "### 68.19 The picker was bleeding, the chat still grew, and the roster had four slippers",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current equipment roster and licensed art are preserved; new hub isolates screens and retained compact chat exposes history. Nested history takeover defect was fixed in current UI. Old Nemu labels yield to current kit decisions; final full gameplay tradeoff/motion refinement is not implied by old roster-count tests.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.Native.cs",
+        "Assets/TumbangPreso/Runtime/PlayerInputReader.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/game-defects-v3.xml",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubLoadout.cs",
+        "docs/HERO_KIT_REWORK_DECISIONS.md",
+        "docs/TODO.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12329,
       "heading": "## 69 · The game has no chat, in the lobby or in a match ⚠️ OPEN, PLANNED 2026-08-28",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Lobby and match chat are implemented with host relay, bounded content/rate, typing input suspension and spectator support. Historical no-chat claim is obsolete. Current both-directions native arena/lobby and specific 127.3 visual follow-up remain P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.Native.cs",
+        "Assets/TumbangPreso/Runtime/PlayerInputReader.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/game-defects-v3.xml",
+        "docs/TODO.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12336,
       "heading": "### 69.1 ⚠️⚠️ THIS IS THE ONE THING IN BOTH SECTIONS THAT MOVES `ProtocolVersion`, 5 → 6",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical protocol5-to6 migration already happened. Current NetSession.ProtocolVersion is50; do not bump or revert it to close this old note.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12342,
       "heading": "### 69.2 Shape",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented host-resolved peer identity, MaxChatLength120, per-peer minimum interval and host relay. Current wire/request audits passed; no new chat protocol or second name authority is required.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/audits-final.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12356,
       "heading": "### 69.3 In the lobby",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current compact room chat/history replaces the old bottom-left wood placement. Preserve behavior, not obsolete furniture coordinates; current nested history lifecycle fix is checked.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.Native.cs",
+        "Assets/TumbangPreso/Runtime/PlayerInputReader.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/game-defects-v3.xml",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+        "docs/reports/front-end-flow-2026-09-23/ux1-plan.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12361,
       "heading": "### 69.4 In the match, where the rules are different",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Match chat routes Enter/cancel through existing input, suspends player intents while typing and retires log lines rather than growing the HUD. Native chat placement/clip follow-up remains127.3; current black outlines and VISUAL-1 grammar supersede old styling.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.Native.cs",
+        "Assets/TumbangPreso/Runtime/PlayerInputReader.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/game-defects-v3.xml",
+        "docs/TODO.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     },
     {
       "lineAtIntake": 12380,
       "heading": "### 69.5 Done looks like",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Host limits and source audits exist, and historical two-process lobby proof is retained. Full current both-directions native chat in lobby and arena remainsP7, with127.3 as its specific visual check. Not marked gameplay complete by a source review.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.cs",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChat.Native.cs",
+        "Assets/TumbangPreso/Runtime/PlayerInputReader.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/game-defects-v3.xml",
+        "docs/reports/legacy-review-2026-09-23/report.md",
+        "docs/TODO.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/core-final.json",
+        "docs/reports/front-end-flow-2026-09-23/completion/audits-final.json",
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source, current owner design and dated evidence; no fresh full regression or human acceptance claimed"
     }
   ],
   "activeAdditions": [
@@ -3611,5 +4739,12 @@
     "googleOauthResourceExists": false,
     "googleClientIdPresentInProcessUserMachine": false,
     "checkedOn": "2026-09-22"
+  },
+  "latestReview": {
+    "date": "2026-09-23",
+    "source": "8f50a659be2dc5f6f8a83fb35076c871dda144f0",
+    "preservedHeadings": 366,
+    "unreviewed": 0,
+    "meaning": "All historical entries accounted for. Current implementation and qualification gaps remain explicitly open in TODO; this is not full task completion."
   }
 }

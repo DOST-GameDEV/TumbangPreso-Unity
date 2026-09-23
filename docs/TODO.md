@@ -75,10 +75,11 @@ to UX-1 and each REFINE-2 map/character/aspect, without dropping unfinished task
    After the existing visible work, implement the new Home and flows below. Preserve
    login and main menu; Home opens from the existing TAP TO START. This is separate
    from the completed in-match UI/HUD pass.
-8. **P6, backlog disposition.** Review the unreviewed numbered entries in the index below
-   against source and evidence and record each in
-   `reports/full-backlog-2026-09-21/todo-disposition.json`. This changes nothing a player
-   sees, so it moved behind the visible work; it must still finish before P7.
+8. **P6, backlog disposition. Source/design review COMPLETE2026-09-23.** All366
+   original heading entries are preserved and individually accounted for in
+   `reports/full-backlog-2026-09-21/todo-disposition.json`; none remain unreviewed.
+   This is not full implementation/qualification completion. Current gaps remain
+   explicitly open below; retired FUTURE/layout recipes are not reactivated.
 9. **P7, final coherent qualification and build.** PRESENTATION-5.2, the final
    integration item and 152 final delivery on one frozen, identified candidate.
 10. **P8, REFINE-2: map-by-map asset and actual-gameplay refinement (owner2026-09-23).**
@@ -530,7 +531,7 @@ Implementation order within UX-1:
   2026-09-22 (varied background islands and mountain layers with stable seeded
   construction and clear routes) is implemented and awaits final qualification.
 - [ ] **Final integration:** remaining overlap, real-peer, whole-backlog disposition and
-  coherent candidate qualification (P6, P7). Preserve all existing task IDs.
+  coherent candidate qualification (P7; P6 disposition complete). Preserve all existing task IDs.
 - [ ] **PRESENTATION-1 /154/155/152.4: Complete ordinary exchange.** Unchecked while 1.5's
   full listening review is open.
   - [x] PRESENTATION-1.1 throw, contact, flight, landing, retrieval, restore and chase as
@@ -610,9 +611,10 @@ one texture or noise stamped everywhere.
 
 One row per numbered entry whose body lives in [TODO_Backlog.md](TODO_Backlog.md), in the
 order they appear there. The disposition column follows the cumulative review recorded in
-`reports/full-backlog-2026-09-21/todo-disposition.json`; "unreviewed (P6)" rows are the
-backlog disposition work in the priority order. The heading's own status word is history,
-not proof of what is missing.
+`reports/full-backlog-2026-09-21/todo-disposition.json`; all 366 headings now have
+source/design dispositions. Remaining implementation and qualification are explicit
+in those dispositions and the current queue. The heading's own status word is
+history, not proof of what is missing.
 
 | § | Entry, heading as written | Reviewed disposition |
 |---|---|---|
@@ -627,30 +629,30 @@ not proof of what is missing.
 | [§ 147](TODO_Backlog.md#s147) | THE GAME NOTICES ITS OWN GOOD MOMENTS AND WRITES THEM DOWN ⚠️ IN PROGRESS, 2026-09-05, branch `main` | Structured highlights, deduplication and replay-window markers are implemented; current shared highlights/replay/halftime extend this system without adding score side effects. |
 | [§ 146](TODO_Backlog.md#s146) | CLASSIC'S DEPTH COMES FROM MOVEMENT: THE COMMITTED RETRIEVAL SLIDE ⚠️ IN PROGRESS, 2026-09-05, branch `main` | Dedicated slide/input/host/relay/bot implementation retained; final candidate motion and human feel remain P7/external. |
 | [§ 145](TODO_Backlog.md#s145) | THE HARDENING THAT COULD STILL PRODUCE FALSE CONFIDENCE ⚠️ IN PROGRESS, 2026-09-05, branch `main` | Harness and identity implementation retained; exact Windows candidate qualification remains P7. |
-| [§ 144](TODO_Backlog.md#s144) | THE TWO ACCOUNT-GATED DOWNLOADS LANDED, AND THE AUDIO GATE WAS GRADING A COPY THE GAME CANNOT LOAD ⚠️ IN PROGRESS, 2026-09-04, branch `main` | unreviewed (P6) |
-| [§ 143](TODO_Backlog.md#s143) | THE NATIONALS HARDENING PASS: A QUALIFICATION THAT CANNOT LIE ⚠️⚠️ IN PROGRESS, 2026-09-04, branch `main` | unreviewed (P6) |
-| [§ 141](TODO_Backlog.md#s141) | SPECTATOR AND A DRIVEN SEAT WERE ON SCREEN AT THE SAME TIME, AND F1-F4 HAVE TWO READERS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework` | Current implementation resolves spectator/body handover through explicit HUD exit paths, and spectator F1-F4 yields to the offline switcher. Label/ownership rules and native spectator evidence are retained. The old debug-key catalogue was a proposed remedy, not a remaining gameplay requirement: do not revive that refactor solely because a named catalogue class is absent. Preserve the current context guard and investigate actual new clashes if found. |
-| [§ 140](TODO_Backlog.md#s140) | THE PLAYER CANNOT SEE THE NETWORK, AND THE TIMEOUT GIVES THEM EIGHT BLIND SECONDS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework` | Current RTT sampling and qualified peer-departure notices are retained. The old textual warning/countdown/placement proposal is not reactivated: newer adopted VISUAL-1 signal grammar and completed-HUD scope govern. Source telemetry without a consumer does not alone establish a current feature request. Any new network UI needs current-scope justification and must fit the adopted design. |
+| [§ 144](TODO_Backlog.md#s144) | THE TWO ACCOUNT-GATED DOWNLOADS LANDED, AND THE AUDIO GATE WAS GRADING A COPY THE GAME CANNOT LOAD ⚠️ IN PROGRESS, 2026-09-04, branch `main` | Sourcing and actual Resources audio gate implemented. Current listening/art assessment and final candidate remain separate. |
+| [§ 143](TODO_Backlog.md#s143) | THE NATIONALS HARDENING PASS: A QUALIFICATION THAT CANNOT LIE ⚠️⚠️ IN PROGRESS, 2026-09-04, branch `main` | Qualification machinery implemented; coherent current-candidate regression/native evidence remains P7. |
+| [§ 141](TODO_Backlog.md#s141) | SPECTATOR AND A DRIVEN SEAT WERE ON SCREEN AT THE SAME TIME, AND F1-F4 HAVE TWO READERS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework` | Spectator handover, input-context guard and distinguishable labels implemented; no speculative revival of the old catalogue proposal. |
+| [§ 140](TODO_Backlog.md#s140) | THE PLAYER CANNOT SEE THE NETWORK, AND THE TIMEOUT GIVES THEM EIGHT BLIND SECONDS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework` | RTT/departure implementation retained; historical warning/countdown layout not reactivated under the newer completed-HUD scope. |
 | [§ 139](TODO_Backlog.md#s139) | SETTINGS IS FOUR PAGES NOW, AND THE RENDERS FOUND THREE FAULTS THAT HAD SHIPPED FOR THE WHOLE PORT ⚠️ OPEN, 2026-09-04, branch `abilities-rework` | Implemented current five-section settings workspace and controller-map/rebinding routes supersede the former four-page converted panel. Owner visual acceptance remains separate. |
 | [§ 138](TODO_Backlog.md#s138) | A CONTROLLER UNITY DOES NOT RECOGNISE IS INVISIBLE TO THIS WHOLE GAME ⚠️ OPEN, 2026-09-04, branch `abilities-rework` | All software discovery/fallback/settings paths are implemented and current hotplug/native evidence is retained. Actual unrecognised-controller vendor/product certification requires hardware. |
-| [§ 134](TODO_Backlog.md#s134) | THE BROADCAST PASS: AUTOPILOT, REPLAY, ULTIMATE INTRODUCTIONS, THE SHOVE THAT MEANT NOTHING, AND THE KEYBOARD ON THE PHONE ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework` | unreviewed (P6) |
-| [§ 133](TODO_Backlog.md#s133) | ONE FONT IS DOING EVERY JOB, AND IT IS A DISPLAY FACE ⚠️⚠️ OPEN, 2026-09-03, NEXT SESSION'S BRIEF | unreviewed (P6) |
-| [§ 132](TODO_Backlog.md#s132) | The loadout said nothing about the hero, and a build vanished the moment the match started ⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework` | unreviewed (P6) |
-| [§ 131](TODO_Backlog.md#s131) | Replace Hero Strike VFX and synthesised SFX from the licensed source list ⚠️⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework` | unreviewed (P6) |
-| [§ 130](TODO_Backlog.md#s130) | Crossplay, the boot ANR, and the lobby that was drawn in a different language ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign` | unreviewed (P6) |
+| [§ 134](TODO_Backlog.md#s134) | THE BROADCAST PASS: AUTOPILOT, REPLAY, ULTIMATE INTRODUCTIONS, THE SHOVE THAT MEANT NOTHING, AND THE KEYBOARD ON THE PHONE ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework` | Current broadcast/touch systems and later evidence retained. Old spectator-letter layout superseded; device/final limits remain explicit. |
+| [§ 133](TODO_Backlog.md#s133) | ONE FONT IS DOING EVERY JOB, AND IT IS A DISPLAY FACE ⚠️⚠️ OPEN, 2026-09-03, NEXT SESSION'S BRIEF | Old font/composition plan superseded by current owner-painted, VISUAL-1 and UX-1 designs. Surviving usability checks stay in UX-1. |
+| [§ 132](TODO_Backlog.md#s132) | The loadout said nothing about the hero, and a build vanished the moment the match started ⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework` | Current HERO/SKILL TREE/LOADOUT/selector routes replace the combined board. Later variant evidence retained; no old layout or blanket font sweep. |
+| [§ 131](TODO_Backlog.md#s131) | Replace Hero Strike VFX and synthesised SFX from the licensed source list ⚠️⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework` | Licensed VFX/SFX sourcing and later authored presentation implemented; current listening/overlap acceptance remains mapped. |
+| [§ 130](TODO_Backlog.md#s130) | Crossplay, the boot ANR, and the lobby that was drawn in a different language ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign` | Preview parity and boot fixes implemented; old layouts superseded by UX-1. Physical crossplay/handset acceptance remains P7. |
 | [§ 128](TODO_Backlog.md#s128) | Phases 11 and 12 are almost entirely built, and this entry was wrong about it once ⚠️ OPEN, 2026-09-03, branch `ui-redesign` | Former missing format implementation is superseded by implemented LastTsinelasDirector and network map ballot; final format integration remains in the retained qualification gate. |
-| [§ 127](TODO_Backlog.md#s127) | Phase 16.1: the taya is a RING and an attacker is a DISC ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign` | unreviewed (P6) |
-| [§ 88](TODO_Backlog.md#s88) | Accounts and identity ⚠️ IN PROGRESS 2026-08-31 | unreviewed (P6) |
-| [§ 89](TODO_Backlog.md#s89) | The profile, the stats and the match history ⚠️ IN PROGRESS 2026-08-30 | unreviewed (P6) |
-| [§ 126](TODO_Backlog.md#s126) | The full PlayMode suite had never been run on this commit, and it was 42 red ⚠️⚠️ 2026-09-03, branch `ui-redesign` | unreviewed (P6) |
-| [§ 121](TODO_Backlog.md#s121) | The v61 report: one material for the primaries, a hub with a tab column, and the stuck hover ⚠️⚠️ OPEN, 2026-09-02, branch `ui-redesign` | unreviewed (P6) |
-| [§ 119](TODO_Backlog.md#s119) | The whole front end is repainted in PAPER, and the lobby is rebuilt around the room ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign` | unreviewed (P6) |
-| [§ 118](TODO_Backlog.md#s118) | The lobby is coherent now and it is not finished ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign` | unreviewed (P6) |
+| [§ 127](TODO_Backlog.md#s127) | Phase 16.1: the taya is a RING and an attacker is a DISC ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign` | Accessibility and role readability implemented; current chat-clip/device/final checks remain in127.3. |
+| [§ 88](TODO_Backlog.md#s88) | Accounts and identity ⚠️ IN PROGRESS 2026-08-31 | Account/project/service setup implemented; current isolated startup fix checked. Historical relink blockers superseded. |
+| [§ 89](TODO_Backlog.md#s89) | The profile, the stats and the match history ⚠️ IN PROGRESS 2026-08-30 | Career/history implemented; old FUTURE phase allocations retired. Current PlayerHub and P7 govern acceptance. |
+| [§ 126](TODO_Backlog.md#s126) | The full PlayMode suite had never been run on this commit, and it was 42 red ⚠️⚠️ 2026-09-03, branch `ui-redesign` | Historical failures resolved or superseded; current full regression and physical-device limits remain P7. |
+| [§ 121](TODO_Backlog.md#s121) | The v61 report: one material for the primaries, a hub with a tab column, and the stuck hover ⚠️⚠️ OPEN, 2026-09-02, branch `ui-redesign` | Historical layout/palette recipes superseded by current UX-1/VISUAL-1. Surviving functions and current acceptance remain mapped in UX-1. |
+| [§ 119](TODO_Backlog.md#s119) | The whole front end is repainted in PAPER, and the lobby is rebuilt around the room ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign` | Historical layout/palette recipes superseded by current UX-1/VISUAL-1. Surviving functions and current acceptance remain mapped in UX-1. |
+| [§ 118](TODO_Backlog.md#s118) | The lobby is coherent now and it is not finished ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign` | Historical layout/palette recipes superseded by current UX-1/VISUAL-1. Surviving functions and current acceptance remain mapped in UX-1. |
 | [§ 96](TODO_Backlog.md#s96) | OPEN: he has never found the way into the hub ⚠️⚠️ | superseded by the implemented lobby player-card/profile door; native UI route qualified, user discoverability judgment remains |
-| [§ 95b](TODO_Backlog.md#s95b) | OPEN: nothing asserts that a menu label fits, only that it is legible ⚠️ | unreviewed (P6) |
-| [§ 72](TODO_Backlog.md#s72) | Two lobby controls reported dead that every headless check says are alive ⚠️ OPEN | unreviewed (P6) |
-| [§ 68](TODO_Backlog.md#s68) | The lobby is a form, and it should be a room ⚠️ OPEN, PLANNED 2026-08-28 | unreviewed (P6) |
-| [§ 69](TODO_Backlog.md#s69) | The game has no chat, in the lobby or in a match ⚠️ OPEN, PLANNED 2026-08-28 | unreviewed (P6) |
+| [§ 95b](TODO_Backlog.md#s95b) | OPEN: nothing asserts that a menu label fits, only that it is legible ⚠️ | Current capture gates assert label fit/rendered characters and bounds. Whole current surface acceptance remains UX-1.11/P7. |
+| [§ 72](TODO_Backlog.md#s72) | Two lobby controls reported dead that every headless check says are alive ⚠️ OPEN | Old controls replaced by current profile/JOIN routes; migrated caret/code checks pass. Native physical typing remains P7. |
+| [§ 68](TODO_Backlog.md#s68) | The lobby is a form, and it should be a room ⚠️ OPEN, PLANNED 2026-08-28 | Old PUBG lobby design superseded by owner UX-1. Native code/reconnect and arrival/rematch pass; remaining current peer checks stay P7. |
+| [§ 69](TODO_Backlog.md#s69) | The game has no chat, in the lobby or in a match ⚠️ OPEN, PLANNED 2026-08-28 | Chat implemented with host limits and input isolation. Current both-direction native chat and 127.3 clip follow-up remain P7. |
 
 <a id="earlier-execution-index-and-supporting-reasoning"></a>
 Earlier startup notes (September 15 demo queue, reserved lanes, the old execution index and
