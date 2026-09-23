@@ -22,6 +22,9 @@ namespace TumbangPreso.Visual
         // The key light and sky as the scene authored them, restored exactly on the way out.
         private Light _sun;private Color _sunColour;private float _sunIntensity,_sunShadow;private Quaternion _sunRotation;
         private Material _skyAuthored,_skyLook;
+        // The court's own dark ground, found once every Start has run. See MapLook.GroundLift.
+        private readonly List<(Renderer renderer,int index)> _court=new List<(Renderer,int)>();
+        private MaterialPropertyBlock _groundBlock;private bool _groundPending=true;
         private struct ShaderFrame
         {
             public Camera Camera;public Texture Ramp;public Vector4 Shape,Key,GlassSky,GlassHorizon,Soft;
@@ -78,7 +81,64 @@ namespace TumbangPreso.Visual
             if(Current!=this)return;
             RestoreScene();Current=null;Shader.SetGlobalFloat(WeightId,0);Shader.SetGlobalFloat(ArchitectureId,0);
         }
-        private void Update(){if(_weight!=Mathf.Clamp01(WorldCueProfile.Current.WorldLighting))ApplyScene();}
+        private void Update()
+        {
+            if(_groundPending){_groundPending=false;FindGround();ApplyGround();}
+            if(_weight!=Mathf.Clamp01(WorldCueProfile.Current.WorldLighting))ApplyScene();
+        }
+        // ⚠️⚠️ FOUND BY SHAPE, NOT BY NAME, AND ONLY FLAT RENDERERS ARE LIFTED. The court floor
+        // arrives through generated meshes and kit prefabs, and no material name is shared by
+        // all five maps. A slab at least 6 m square whose top sits at the floor height and which
+        // spans the court centre is the ground by definition; every other FLAT renderer drawing
+        // the same material is the rest of that road. ⚠️ The flatness test matters: Kenney roads
+        // can sample the same atlas as the houses, and a lift keyed on the material alone would
+        // brighten every facade on the street with it.
+        //
+        // ⚠️ IT RUNS ON THE FIRST UPDATE, NOT IN BUILD, because `EnvColourPass.Start` swaps the
+        // road onto a tinted instance and Start order between the two is not defined. By the
+        // first Update every Start has run, and the colour is read off the live material on
+        // every apply for the same reason.
+        private void FindGround()
+        {
+            _court.Clear();if(Look==null || Look.GroundLift<=1.001f)return;
+            var scene=gameObject.scene;var slabs=new HashSet<Material>();
+            var renderers=FindObjectsByType<MeshRenderer>();
+            foreach(var renderer in renderers)
+            {
+                if(renderer.gameObject.scene!=scene || renderer.GetComponentInParent<VfxRenderTag>()!=null ||
+                    renderer.name.IndexOf("chalk",System.StringComparison.OrdinalIgnoreCase)>=0)continue;
+                var b=renderer.bounds;
+                if(b.size.x<6 || b.size.z<6 || b.size.y>.6f || b.max.y<Floor-.35f || b.max.y>Floor+.1f)continue;
+                if(b.min.x>0 || b.max.x<0 || b.min.z>0 || b.max.z<0)continue;
+                foreach(var material in renderer.sharedMaterials)if(material!=null && material.HasProperty("_Color"))slabs.Add(material);
+            }
+            if(slabs.Count==0){Debug.Log($"[WorldLook] {Look.Map}: no court ground found to lift.");return;}
+            foreach(var renderer in renderers)
+            {
+                if(renderer.gameObject.scene!=scene || renderer.bounds.size.y>.6f || renderer.HasPropertyBlock())continue;
+                var materials=renderer.sharedMaterials;
+                for(int i=0;i<materials.Length;i++)if(materials[i]!=null && slabs.Contains(materials[i]))_court.Add((renderer,i));
+            }
+            // It reports the count: "the pass ran" and "the pass lifted anything" are different claims.
+            Debug.Log($"[WorldLook] {Look.Map}: lifted {_court.Count} court ground slots over {slabs.Count} material(s) by {Look.GroundLift:0.##}.");
+        }
+        private void ApplyGround()
+        {
+            if(_court.Count==0)return;_groundBlock??=new MaterialPropertyBlock();
+            float lift=Mathf.Lerp(1,Look.GroundLift,_weight);
+            foreach(var (renderer,index) in _court)
+            {
+                if(renderer==null)continue;_groundBlock.Clear();
+                var materials=renderer.sharedMaterials;
+                if(_weight>0 && index<materials.Length && materials[index]!=null)
+                {
+                    Color c=materials[index].GetColor("_Color");
+                    _groundBlock.SetColor("_Color",new Color(c.r*lift,c.g*lift,c.b*lift,c.a));
+                }
+                // An empty block is no block, so weight 0 is the authored floor exactly.
+                renderer.SetPropertyBlock(_groundBlock,index);
+            }
+        }
         private void ApplyScene()
         {
             if(Look==null)return;_weight=Mathf.Clamp01(WorldCueProfile.Current.WorldLighting);
@@ -115,6 +175,7 @@ namespace TumbangPreso.Visual
                 if(_sun!=null)_skyLook.SetVector("_SunDirection",-_sun.transform.forward);
                 RenderSettings.skybox=_weight>0?_skyLook:_skyAuthored;
             }
+            ApplyGround();
         }
         private void Blend(string id,Color look){if(_skyAuthored.HasProperty(id))_skyLook.SetColor(id,Color.Lerp(_skyAuthored.GetColor(id),look,_weight));}
         private void RestoreScene()
@@ -125,6 +186,8 @@ namespace TumbangPreso.Visual
             RenderSettings.fogColor=_fogColour;
             if(_sun!=null){_sun.color=_sunColour;_sun.intensity=_sunIntensity;_sun.shadowStrength=_sunShadow;_sun.transform.rotation=_sunRotation;}
             if(_skyLook!=null && RenderSettings.skybox==_skyLook)RenderSettings.skybox=_skyAuthored;
+            if(_court.Count>0){_groundBlock??=new MaterialPropertyBlock();_groundBlock.Clear();
+                foreach(var (renderer,index) in _court)if(renderer!=null)renderer.SetPropertyBlock(_groundBlock,index);}
         }
         private void BeginCamera(Camera camera)
         {

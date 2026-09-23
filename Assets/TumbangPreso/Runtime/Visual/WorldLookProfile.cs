@@ -55,6 +55,15 @@ namespace TumbangPreso.Visual
             public Color Fog,Zenith,Horizon,CloudLight,CloudShade;
             // The coloured black floor added after the tonemap, in linear.
             public Color Lift;
+            // ⚠️⚠️ THE COURT'S OWN GROUND, BRIGHTENED, AND ONLY WHERE IT IS DARK ASPHALT. The rig
+            // lifts every shadow, but a sunlit surface can only be as bright as its albedo, and
+            // Eskinita's and Ilalim's road texture is near black: after the whole bright look it
+            // still measured (90,85,71) and (74,81,73) in full sun, the largest area in every
+            // court view. PEAK has no dark ground anywhere. This multiplies the court floor's
+            // colour through a property block, the same code-chosen road colour
+            // `EnvColourPass.RoadTint` already sets, so no material asset or texture is touched.
+            // 1 (or an unset 0) leaves the floor alone; the plaza, deck and rooftop keep theirs.
+            public float GroundLift=1;
             public MapLook(string map,Color sky,Color equator,Color ground,Color tint,float fogStart,float fogEnd,int wear,bool dark)
             {
                 Map=map;Sky=sky;Equator=equator;Ground=ground;ShadowTint=tint;FogStart=fogStart;FogEnd=fogEnd;WearKind=wear;
@@ -68,6 +77,7 @@ namespace TumbangPreso.Visual
             {Fog=fog;Zenith=zenith;Horizon=horizon;CloudLight=cloudLight;CloudShade=cloudShade;return this;}
             public MapLook Key(Color sun,float intensity,float elevation,float shadowStrength,Color lift)
             {Sun=sun;SunIntensity=intensity;SunElevation=elevation;ShadowStrength=shadowStrength;Lift=lift;return this;}
+            public MapLook Floor(float lift){GroundLift=lift;return this;}
         }
 
         [Header("Cast and hero props")]
@@ -126,10 +136,10 @@ namespace TumbangPreso.Visual
                 .Key(new Color(1,.95f,.84f),1.32f,52,.76f,new Color(.012f,.012f,.022f)),
             new MapLook("Eskinita",new Color(.54f,.63f,.8f),new Color(.70f,.60f,.54f),new Color(.60f,.45f,.33f),new Color(.92f,.86f,1.06f),34,190,1,false)
                 .Air(new Color(.95f,.9f,.8f),new Color(.3f,.62f,.94f),new Color(.97f,.93f,.82f),new Color(1,.97f,.90f),new Color(.72f,.78f,.9f))
-                .Key(new Color(1,.91f,.76f),1.34f,50,.74f,new Color(.018f,.011f,.020f)),
+                .Key(new Color(1,.91f,.76f),1.34f,50,.74f,new Color(.018f,.011f,.020f)).Floor(1.6f),
             new MapLook("IlalimNgTulay",new Color(.52f,.66f,.76f),new Color(.60f,.64f,.62f),new Color(.52f,.47f,.40f),new Color(.84f,.94f,1.06f),36,180,2,false)
                 .Air(new Color(.82f,.91f,.92f),new Color(.36f,.66f,.88f),new Color(.88f,.93f,.90f),new Color(1,.99f,.95f),new Color(.66f,.76f,.84f))
-                .Key(new Color(1,.94f,.82f),1.30f,52,.72f,new Color(.010f,.016f,.020f)),
+                .Key(new Color(1,.94f,.82f),1.30f,52,.72f,new Color(.010f,.016f,.020f)).Floor(1.6f),
             new MapLook("SaBubong",new Color(.58f,.62f,.82f),new Color(.74f,.60f,.56f),new Color(.62f,.46f,.38f),new Color(.96f,.84f,1.08f),40,210,3,true)
                 .Air(new Color(.98f,.88f,.74f),new Color(.32f,.62f,.94f),new Color(1,.91f,.74f),new Color(1,.93f,.82f),new Color(.74f,.78f,.88f))
                 .Key(new Color(1,.87f,.70f),1.32f,42,.74f,new Color(.020f,.012f,.024f)),
