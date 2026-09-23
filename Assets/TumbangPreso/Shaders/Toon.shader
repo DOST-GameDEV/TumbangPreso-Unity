@@ -182,10 +182,30 @@ Shader "TumbangPreso/Toon"
             // `ToonSkin.SetOutlinesSuppressed` is the only writer.
             float _OutlineSuppress;
 
+            // ⚠️⚠️ § THE BRIGHT LOOK'S EDGE. Under a map's world look the hull stops being black
+            // ink and becomes a thinner line in a deeper shade of whatever colour it frames: the
+            // orange shirt gets a rust edge, the teal hair a deep teal one. PEAK draws its cast
+            // with no ink at all; a competitive 1v3 still needs a silhouette, and a self-coloured
+            // line keeps it without reading as a black stroke. Globals rather than properties for
+            // § THE RENDER STYLE's reason, and `WorldLookPresentation` scopes them per camera, so
+            // menu portraits and lineups keep the black ink exactly as before.
+            //
+            // ⚠️ A DELIBERATELY COLOURED OUTLINE IS LEFT ALONE. `Slipper.RefreshHighlight` writes
+            // the landed-slipper highlight colour into `_OutlineColor`; that is a gameplay signal
+            // chosen in settings, so only an ink-dark outline is replaced.
+            half _WorldLookWeight;
+            float4 _WorldSoftLight;
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+            fixed4 _Color;
+            half _UsePalette;
+            fixed4 _Palette[16];
+
             struct appdata_outline
             {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
+                float2 texcoord : TEXCOORD0;
 
                 // ⚠️⚠️ THE WELDED NORMAL, NOT A REAL TANGENT. `OutlineNormals.Weld` averages every
                 // normal sharing a position and parks the result here, because a hull inflated
@@ -204,8 +224,23 @@ Shader "TumbangPreso/Toon"
             struct v2f_outline
             {
                 float4 pos : SV_POSITION;
+                fixed4 colour : COLOR;
                 UNITY_FOG_COORDS(0)
             };
+
+            // The same palette remap the lit pass runs, at the vertex. See § THE ROW TEST below.
+            fixed3 OutlineAlbedo (float2 uv)
+            {
+                fixed3 base = tex2Dlod(_MainTex, float4(TRANSFORM_TEX(uv, _MainTex), 0.0, 0.0)).rgb;
+                if (_UsePalette > 0.5)
+                {
+                    float2 cell = floor(clamp(uv, 0.0, 0.9999) * 16.0);
+                    int col = (int)cell.x;
+                    int row = (int)cell.y;
+                    if (row <= 7) base = _Palette[(col / 2) + (row <= 3 ? 8 : 0)].rgb;
+                }
+                return base * _Color.rgb;
+            }
 
             v2f_outline vert (appdata_outline v)
             {
@@ -222,7 +257,15 @@ Shader "TumbangPreso/Toon"
                 float3 welded = dot(v.tangent.xyz, v.tangent.xyz) > 1e-8 ? v.tangent.xyz : v.normal;
 
                 // See § THE RENDER STYLE above. 0 leaves the authored width exactly as it was.
-                float width = _OutlineWidth * (1.0 - saturate(_OutlineSuppress));
+                float look = saturate(_WorldLookWeight);
+                float width = _OutlineWidth * (1.0 - saturate(_OutlineSuppress))
+                            * lerp(1.0, _WorldSoftLight.w, look);
+
+                // § THE BRIGHT LOOK'S EDGE. pow 1.6 then 0.42 deepens and saturates: white
+                // lands on a mid grey, orange on rust, and black stays black.
+                half inkish = 1.0h - smoothstep(0.08h, 0.2h, max(_OutlineColor.r, max(_OutlineColor.g, _OutlineColor.b)));
+                fixed3 self = pow(OutlineAlbedo(v.texcoord), 1.6) * 0.42 + 0.012;
+                o.colour = fixed4(lerp(_OutlineColor.rgb, self, look * saturate(_WorldSoftLight.z) * inkish), 1.0);
 
                 // ⚠️⚠️ A ZERO WIDTH IS COLLAPSED TO A DEGENERATE TRIANGLE RATHER THAN DRAWN, AND
                 // THAT IS NOT AN OPTIMISATION. `Cull Front` means this pass draws BACK faces; at
@@ -257,7 +300,7 @@ Shader "TumbangPreso/Toon"
 
             fixed4 frag (v2f_outline i) : SV_Target
             {
-                fixed4 c = _OutlineColor;
+                fixed4 c = i.colour;
 
                 // ⚠️ FOGGED LIKE EVERYTHING ELSE. Both arenas run linear fog from 14 m, and an
                 // un-fogged outline draws a hard black edge around a building that has already
