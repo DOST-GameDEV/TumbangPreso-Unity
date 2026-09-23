@@ -168,6 +168,14 @@ checkpoint is retained. Maps, new characters, Inday and remaining secondary UI
 work now follow it in the same assignment. Historical demo-day scheduling and
 superseded designs do not override the current queue or justify repeating done work.
 
+## Home-screen animation
+
+- Owner, 2026-09-23: any home-screen, menu-background, season or hero-showcase animation starts
+  from [docs/HOME_SCREEN_ANIMATION_METHOD.md](docs/HOME_SCREEN_ANIMATION_METHOD.md). Reuse its
+  method (research, real posed models, unaltered faces, re-timed beats, frame-by-frame review);
+  never copy the existing Zack loop's content. The current loop's source and doc are
+  `ArtSource/home-scene/` and `docs/reports/home-scene/README.md`.
+
 ## Workspace, ownership and delivery
 
 - Owner update, 2026-09-23: Claude is also working on a different feature that is

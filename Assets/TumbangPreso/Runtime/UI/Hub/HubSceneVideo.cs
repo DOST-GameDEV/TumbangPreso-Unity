@@ -5,7 +5,7 @@ using UnityEngine.Video;
 namespace TumbangPreso.UI.Hub
 {
     /// <summary>
-    /// The owner's animated HOME scene: Zack at Sa Bubong, a seamless 30 second loop, played in the
+    /// The owner's animated HOME scene: Zack at Sa Bubong, a seamless 42 second loop, played in the
     /// hub's reserved full-bleed <see cref="TumpHub.Scene"/> layer over the live court.
     ///
     /// ⚠️⚠️ THE ANIMATION IS NOT MADE HERE. Its source is `ArtSource/home-scene/` (a Remotion project,

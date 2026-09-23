@@ -1,5 +1,5 @@
 import React from 'react';
-import { B } from '../lib/beats';
+import { B, bt, K } from '../lib/beats';
 import { Crackle } from '../lib/bolt';
 import { kf, outBack, outCubic } from '../lib/kf';
 import { env, onN } from '../lib/time';
@@ -22,8 +22,8 @@ export const Hand: React.FC<{ f: number }> = ({ f }) => {
   const zoom = kf(f, [[B.hand, 1], [B.reverse, 1.1]]);
   const roll = kf(f, [[B.hand, 6], [B.reverse, -3]]);
   const whipOut = f >= B.reverse - 4 ? (f - (B.reverse - 4)) / 4 : 0;
-  const squeeze = kf(f, [[B.hand + 6, 0], [B.hand + 9, 1, outCubic], [B.hand + 12, 0.7, outBack]]);
-  const charge = kf(f, [[B.hand, 0.5], [B.reverse - 2, 1]]);
+  const squeeze = kf(f, [[B.hand + bt(6), 0], [B.hand + bt(9), 1, outCubic], [B.hand + bt(12), 0.7, outBack]]);
+  const charge = kf(f, [[B.hand, 0.5], [B.reverse - bt(2), 1]]);
   const step = onN(f, 2);
   const d = drawActor(zack, {
     x: 900,
@@ -53,7 +53,7 @@ export const Hand: React.FC<{ f: number }> = ({ f }) => {
     const r0 = 120 + 50 * (i % 2);
     sparks.push(<Crackle key={i} a={[fist[0] + Math.cos(a) * r0, fist[1] + Math.sin(a) * r0]} b={[fist[0] + Math.cos(a + 1.1) * (r0 + 150), fist[1] + Math.sin(a + 1.1) * (r0 + 130)]} seed={`hs${step}-${i}`} w={8} branches={2} glow={charge} />);
   }
-  const jump = env(f, B.hand + 9, B.hand + 10, B.hand + 13, B.hand + 16);
+  const jump = env(f, B.hand + bt(9), B.hand + bt(10), B.hand + bt(13), B.hand + bt(16));
   return (
     <Whip id="hwhip" blur={80 * whipOut} dx={-700 * whipOut * whipOut}>
       <g transform={`translate(960 540) scale(${zoom}) translate(-960 -540)`}>

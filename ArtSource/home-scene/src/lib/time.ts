@@ -1,7 +1,7 @@
 import { noise3D } from '@remotion/noise';
 
 export const FPS = 30;
-export const LOOP = 900; // 30.0 s. Every ambient motion is periodic on this, so frame 900 is frame 0.
+export const LOOP = 1260; // 42.0 s. Every ambient motion is periodic on this, so frame 1260 is frame 0.
 
 export const s = (seconds: number) => Math.round(seconds * FPS);
 

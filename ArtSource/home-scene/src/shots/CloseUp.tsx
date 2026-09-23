@@ -1,6 +1,6 @@
 import React from 'react';
 import { random } from 'remotion';
-import { B } from '../lib/beats';
+import { B, bt, K } from '../lib/beats';
 import { Crackle, Pt } from '../lib/bolt';
 import { kf, outBack, outCubic } from '../lib/kf';
 import { onN } from '../lib/time';
@@ -22,10 +22,10 @@ export const CU_CAM = (f: number): Cam => {
 };
 
 const cuCam = (f: number): Cam => {
-  const drift = kf(f, [[B.cu, 0], [B.powered + 18, 1]]);
+  const drift = kf(f, [[B.cu, 0], [B.powered + bt(18), 1]]);
   // ⚠️ The eyes opening is a CRASH ZOOM: four frames in on the eyes with an overshoot, the
   // camera's version of the snap. Then the powered close-up rolls and shakes.
-  const crash = kf(f, [[B.eyesOpen, 0], [B.eyesOpen + 4, 1, outBack], [B.black, 1]]);
+  const crash = kf(f, [[B.eyesOpen, 0], [B.eyesOpen + bt(4), 1, outBack], [B.black, 1]]);
   if (f >= B.eyesOpen && f < B.black) {
     return { zoom: 2.3 + 0.9 * crash, cx: 958, cy: FACE_Y + 10 + 10 * crash, rot: -2 + 3 * crash };
   }
@@ -43,7 +43,8 @@ const cuPose = (f: number): { pose: Pose; face: Face; yaw: number } => {
     // Eyes shut into the gust, the head nodding a hair in it.
     return { pose: { ...base, head: [-8 + 1.2 * Math.sin(f * 0.5), 2 + 1.5 * Math.sin(f * 0.31), 0.8 * Math.sin(f * 0.43)] }, face: 'rest', yaw: 2 };
   }
-  if (f < B.black) return { pose: { ...base, head: [-10, 0, 0] }, face: f < B.eyesOpen + 2 ? 'open' : 'sharp', yaw: 0 };
+  // ⚠️ The eyes-open beat is his own eyes IGNITING, on the crash zoom: his eyes never change shape.
+  if (f < B.black) return { pose: { ...base, head: [-10, 0, 0] }, face: 'glow', yaw: 0 };
   const shake = onN(f, 2);
   return {
     pose: { ...base, head: [-10 + (random(`hx${shake}`) - 0.5) * 3, (random(`hy${shake}`) - 0.5) * 3, (random(`hz${shake}`) - 0.5) * 2] },
@@ -102,13 +103,13 @@ export const CloseUp: React.FC<{ f: number }> = ({ f }) => {
       over.push(<Crackle key={`t${i}`} a={[top[0] + (i - 1) * 60, top[1] + 30]} b={[top[0] + (i - 1) * 60 + Math.cos(a) * 110, top[1] + 30 + Math.sin(a) * 110]} seed={`ct${step}${i}`} w={4} branches={1} glow={1.1} />);
     }
     // The eyes throw a little light.
-    for (const e of [d.at('head', EYE_R), d.at('head', EYE_L)]) over.push(<circle key={`g${e[0]}`} cx={e[0]} cy={e[1]} r={34} fill={P.electric} opacity={0.35} filter="url(#glowBig)" />);
+    for (const e of [d.at('head', EYE_R), d.at('head', EYE_L)]) over.push(<circle key={`g${e[0]}`} cx={e[0]} cy={e[1]} r={30} fill={P.electric} opacity={0.6} filter="url(#glowBig)" />);
   }
-  const open = f >= B.eyesOpen && f < B.eyesOpen + 3;
+  const open = f >= B.eyesOpen && f < B.eyesOpen + bt(3);
   return (
     <g>
       <Wide f={f} cam={cam} figure={<ActorImage d={d} />} over={over} />
-      {powered && <rect x={0} y={0} width={1920} height={1080} fill="#3A0610" opacity={0.26} />}
+      {powered && <rect x={0} y={0} width={1920} height={1080} fill="#3A0610" opacity={0.12} />}
       <WindStreaks f={f} amount={1} />
       {open && <rect x={0} y={0} width={1920} height={1080} fill="#FFF3C8" opacity={0.18} />}
       <rect x={0} y={0} width={1920} height={1080} fill="url(#vignette)" />
@@ -129,14 +130,16 @@ export const Impact: React.FC<{ f: number }> = ({ f }) => {
   if (!zack) return null;
   const black = f < B.yellow;
   const bg = black ? '#0B0306' : '#FFC23A';
-  const cam = CU_CAM(B.eyesOpen + 6);
+  const cam = CU_CAM(B.eyesOpen + bt(6));
   const d = drawActor(zack, {
     ...zackAnchor(0, 0.47),
     focus: 0.47,
     reach: 0.34,
     ppu: ZACK_AT.ppu,
     pose: { head: [-10, 0, 0] },
-    face: black ? 'glow' : 'sharp',
+    // 🧑 2026-09-23 on the black frame with only the arcs showing: *"this is amazing i love it"*.
+    // So the black frame keeps his eyes in the dark; the gold frame shows them in ink.
+    face: black ? 'rest' : 'ink',
     res: 1.35 * cam.zoom,
     ink: 0,
     light: { ...DUSK, flash: 1, flashColour: bg },
@@ -152,7 +155,6 @@ export const Impact: React.FC<{ f: number }> = ({ f }) => {
   return (
     <g>
       <rect x={0} y={0} width={1920} height={1080} fill={bg} />
-      {black && se.map((e, i) => <circle key={i} cx={e[0]} cy={e[1]} r={70} fill={P.electric} opacity={0.55} filter="url(#glowBig)" />)}
       <g transform={layerTransform({ ...cam, rot: 0 }, 1)}>
         <ActorImage d={d} />
       </g>

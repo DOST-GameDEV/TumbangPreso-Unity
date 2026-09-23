@@ -5,7 +5,8 @@ import { env, loopNoise, s } from './time';
  * the gust before the hero moment arrives everywhere at once. That simultaneity is what makes
  * it read as weather rather than as six unrelated animations. It is periodic on the loop.
  */
-export const gust = (f: number) => env(f, s(1.9), s(3.2), s(8.9), s(10.6));
+// Rises into the push-in, peaks as we reach his face, falls away through the chase.
+export const gust = (f: number) => env(f, s(2.4), s(4.6), s(13.9), s(16.2));
 
 export const wind = (f: number) => 0.28 + 0.14 * loopNoise('breeze', f, hz(0.25)) + 0.82 * gust(f);
 
