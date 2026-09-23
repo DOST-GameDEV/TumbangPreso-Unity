@@ -9,6 +9,14 @@ fetch/inspect current branch changes, merge safely, resolve real integration iss
 and perform a bounded compile/visual check. Keep tracking its remote updates during
 the ongoing queue. No other conversation contacted or delegated.
 
+Lighting50f1fc255merged cleanly into the working tree. Preserve the original
+map/house work and the parallel lane's open LIGHT-1items. Current branch contains
+the committed match-lighting/shader work; preview integration1.8is still noted as
+uncommitted work in its lane, so do not race it by inventing a parallel preview
+implementation. Next bounded integration check uses the two existing Stage/ramp
+cases. No new test framework. Fetch this tracked branch before later published
+batches and merge newly available work when it advances.
+
 Owner's latest AFK instruction: "ok ill go to sleep now js give me one final
 acknowledgement that ull go autonomous and do everything i want pls save it on ledger".
 Acknowledged in the active conversation; keep pursuing the FULL queue, with product

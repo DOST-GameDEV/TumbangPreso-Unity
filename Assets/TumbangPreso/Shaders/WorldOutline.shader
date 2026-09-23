@@ -124,6 +124,21 @@ Shader "TumbangPreso/WorldOutline"
             float _LagoonDeckDetail;
             float _Supersample;
 
+            // ⚠️⚠️ § THE BRIGHT LOOK'S EDGES, 2026-09-23. PEAK draws no black lines anywhere: form
+            // reads from light, colour and air. Under a map's world look this pass therefore stops
+            // painting ink and does three quieter things with the same taps:
+            //   * a SILHOUETTE deepens the object's OWN colour, and only on the near side of the
+            //     depth step, so a building's edge darkens its own wall instead of drawing a dark
+            //     halo into the sky behind it;
+            //   * a CONVEX crease facing the key light lifts toward the light colour, the
+            //     sun-caught bevel on PEAK's rocks and planks;
+            //   * a CONCAVE crease takes the map's shade tint, a coloured inside corner.
+            // `_PeakEdge.w` blends from the old ink (0) to this (1), so the off value is exact.
+            float4 _PeakEdge;     // x silhouette shade, y highlight, z crease shade, w weight
+            float4 _PeakSunView;  // key light direction in view space
+            float4 _PeakShade;    // map shade tint
+            float4 _PeakLight;    // key light colour
+
             // ⚠️ NOT NAMED `Sample`, AND `offset` BELOW IS NOT NAMED `step`. Both of those are
             // HLSL intrinsics or reserved in one of the compilers this project targets, and a
             // shadowed intrinsic fails to compile on exactly the platform nobody tested on.
@@ -160,7 +175,9 @@ Shader "TumbangPreso/WorldOutline"
             // -----------------------------------------------------------------------------
             float4 _NormalDetailFade;
 
-            float EdgeAt (float2 duv, float2 offset)
+            // x depth edge, y crease edge (both faded), z signed curvature (+ convex), w how
+            // squarely the crease faces the key light.
+            float4 EdgeTerms (float2 duv, float2 offset)
             {
                 // ⚠️ A ROBERTS CROSS, NOT A SOBEL, AND THE REASON IS THE TAP COUNT. Roberts is
                 // four diagonal taps against Sobel's eight, and both of those numbers are
@@ -191,7 +208,7 @@ Shader "TumbangPreso/WorldOutline"
                 // Everything past the far plane is sky. It has no geometry and no normal, and
                 // a building's silhouette AGAINST it still reads as an edge because the sky's
                 // depth of 1 is a huge step away from the building's.
-                if (nearest >= 0.9995) return 0.0;
+                if (nearest >= 0.9995) return float4(0.0, 0.0, 0.0, 0.0);
 
                 // ---------------------------------------------------------- the depth term
                 //
@@ -290,7 +307,15 @@ Shader "TumbangPreso/WorldOutline"
                 float apparentDistance=metres*_ViewRay.y/1.0913085*_NormalDetailFade.w;
                 normalEdge*=lerp(1,1-smoothstep(_NormalDetailFade.x,_NormalDetailFade.y,apparentDistance),_NormalDetailFade.z);
                 float edge = max(depthEdge, normalEdge);
-                if (edge <= 0.0) return 0.0;
+                if (edge <= 0.0) return float4(0.0, 0.0, 0.0, 0.0);
+
+                // § THE BRIGHT LOOK'S EDGES. Normals diverge across a convex fold and converge
+                // across a concave one. On the diagonal pairs (a to b runs +x+y, c to d runs
+                // +x-y) that is the sign of the normal's change projected on each run.
+                float curvature = (b.normal.x - a.normal.x) + (b.normal.y - a.normal.y)
+                                + (d.normal.x - c.normal.x) - (d.normal.y - c.normal.y);
+                float3 averaged = normalize(a.normal + b.normal + c.normal + d.normal + 1e-4);
+                float sunward = saturate(dot(averaged, _PeakSunView.xyz));
 
                 // ---------------------------------------------------------- the distance fade
                 //
@@ -311,9 +336,9 @@ Shader "TumbangPreso/WorldOutline"
                 // centre and half the taps sit on the sky at the far plane; fading by those
                 // would delete the silhouette of every building in the game.
                 float span = max(_FadeEnd - _FadeStart, 0.001);
-                edge *= 1.0 - saturate((metres - _FadeStart) / span);
+                float fade = 1.0 - saturate((metres - _FadeStart) / span);
 
-                return edge;
+                return float4(depthEdge * fade, normalEdge * fade, curvature, sunward);
             }
 
             // -----------------------------------------------------------------------------
@@ -418,18 +443,19 @@ Shader "TumbangPreso/WorldOutline"
                 // and left, which reads as the outline having slipped off its geometry.
                 float centre = 0.5 * (n - 1);
 
-                float coverage = 0.0;
+                float4 terms = float4(0.0, 0.0, 0.0, 0.0);
 
                 [unroll(3)] for (int sy = 0; sy < n; sy++)
                 {
                     [unroll(3)] for (int sx = 0; sx < n; sx++)
                     {
                         float2 sub = duv + (float2(sx, sy) - centre) * inv * texel;
-                        coverage += EdgeAt(sub, offset);
+                        terms += EdgeTerms(sub, offset);
                     }
                 }
 
-                coverage *= inv * inv;
+                terms *= inv * inv;
+                float coverage = max(terms.x, terms.y);
                 if (coverage <= 0.0 && _WorldGroundContact.z<=0.0) return source;
 
                 // ---------------------------------------------------------- the exclusion mask
@@ -469,7 +495,8 @@ Shader "TumbangPreso/WorldOutline"
                     float samePlane=OnLocalLagoonDeck(duv)*OnLocalLagoonDeck(duv+float2(-reach.x,-reach.y))
                         *OnLocalLagoonDeck(duv+float2(reach.x,reach.y))*OnLocalLagoonDeck(duv+float2(-reach.x,reach.y))
                         *OnLocalLagoonDeck(duv+float2(reach.x,-reach.y));
-                    coverage*=1-samePlane*saturate(_LagoonDeckDetail);
+                    float deck=1-samePlane*saturate(_LagoonDeckDetail);
+                    coverage*=deck;terms.xy*=deck;
                 }
 
                 float mask = max(
@@ -478,7 +505,9 @@ Shader "TumbangPreso/WorldOutline"
                     max(tex2D(_WorldOutlineMask, duv + float2(-reach.x,  reach.y)).r,
                         tex2D(_WorldOutlineMask, duv + float2( reach.x, -reach.y)).r));
 
-                coverage *= 1.0 - saturate(mask * _MaskStrength);
+                float unmasked = 1.0 - saturate(mask * _MaskStrength);
+                coverage *= unmasked;
+                terms.xy *= unmasked;
                 if(_WorldGroundContact.z>0)
                 {
                     float sceneDepth;float3 viewNormal;
@@ -501,7 +530,38 @@ Shader "TumbangPreso/WorldOutline"
                 }
                 if (coverage <= 0.0) return source;
 
-                return half4(lerp(source.rgb, _OutlineColor.rgb, coverage * _Opacity), source.a);
+                half3 inked = lerp(source.rgb, _OutlineColor.rgb, coverage * _Opacity);
+                if (_PeakEdge.w <= 0.0) return half4(inked, source.a);
+
+                // § THE BRIGHT LOOK'S EDGES. Near side only: a pixel whose own depth is the
+                // nearest of the taps belongs to the object in front.
+                float centreDepth;float3 centreNormal;
+                DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, duv), centreDepth, centreNormal);
+                float nearestHere = 1.0;
+                {
+                    float2 r = offset;
+                    float d0;float3 n0;DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, duv + float2(-r.x,-r.y)), d0, n0);
+                    float d1;float3 n1;DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, duv + float2( r.x, r.y)), d1, n1);
+                    float d2;float3 n2;DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, duv + float2(-r.x, r.y)), d2, n2);
+                    float d3;float3 n3;DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture, duv + float2( r.x,-r.y)), d3, n3);
+                    nearestHere = min(min(d0, d1), min(d2, d3));
+                }
+                float nearSide = 1.0 - smoothstep(0.004, 0.02, (centreDepth - nearestHere) / max(nearestHere, 1e-5));
+
+                half3 colour = source.rgb;
+                half luma = dot(colour, half3(0.2126h, 0.7152h, 0.0722h));
+                // Deeper and a touch more saturated than the face it sits on, never black.
+                half3 deeper = max(lerp(luma.xxx, colour, 1.35h), 0.0h) * 0.45h;
+                colour = lerp(colour, deeper, saturate(terms.x * nearSide * _PeakEdge.x));
+
+                float crease = terms.y * (1.0 - saturate(terms.x * 2.0));
+                float convex = saturate(terms.z * 1.6) * crease;
+                float concave = saturate(-terms.z * 1.6) * crease;
+                float lifted = convex * lerp(0.3, 1.0, terms.w) * _PeakEdge.y;
+                colour = colour * (1.0 + 0.6 * lifted) + _PeakLight.rgb * (0.07 * lifted);
+                colour *= lerp(half3(1.0h, 1.0h, 1.0h), _PeakShade.rgb * 0.68h, saturate(concave * _PeakEdge.z));
+
+                return half4(lerp(inked, colour, saturate(_PeakEdge.w)), source.a);
             }
             ENDCG
         }

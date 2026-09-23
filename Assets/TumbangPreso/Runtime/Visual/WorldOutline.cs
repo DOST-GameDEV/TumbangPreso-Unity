@@ -888,6 +888,7 @@ namespace TumbangPreso.Visual
             _material.SetFloat("_WorldContactMask",maskReady?1:0);
             _material.SetMatrix("_WorldContactToWorld",_camera.cameraToWorldMatrix);
             _material.SetVector("_WorldContactProjection",new Vector4(_camera.farClipPlane,_camera.orthographic?1:0,_camera.orthographicSize,_camera.aspect));
+            ApplyBrightLookEdges();
             bool lagoonDeck=WorldLookPresentation.HandlesCamera(_camera) && WorldLookPresentation.Current.Look.Map==UI.SceneFlow.Lagoon;
             _material.SetFloat("_LagoonDeckDetail",lagoonDeck?WorldCueProfile.Current.LagoonDeckDetail:0);
             _material.SetTexture(MainTexId, source);
@@ -906,6 +907,28 @@ namespace TumbangPreso.Visual
         /// them. A map with fog switched off falls back to the camera's far plane, which fades
         /// nothing and is the honest answer to "this map has no haze to match".
         /// </summary>
+        // ⚠️⚠️ § THE BRIGHT LOOK'S EDGES. Only a camera the map's world look owns trades the
+        // black ink for PEAK-style edges (see the shader's note of the same name), and it does so
+        // by the look's own weight, so WorldLighting 0 is the old ink exactly. A menu portrait or
+        // map preview that happens to carry this component keeps its ink.
+        private static readonly int PeakEdgeId = Shader.PropertyToID("_PeakEdge");
+        private static readonly int PeakSunViewId = Shader.PropertyToID("_PeakSunView");
+        private static readonly int PeakShadeId = Shader.PropertyToID("_PeakShade");
+        private static readonly int PeakLightId = Shader.PropertyToID("_PeakLight");
+        private void ApplyBrightLookEdges()
+        {
+            var look=WorldLookPresentation.Current;
+            float weight=WorldLookPresentation.HandlesCamera(_camera)?look.Weight:0;
+            var profile=WorldLookProfile.Current;
+            _material.SetVector(PeakEdgeId,new Vector4(profile.SilhouetteShade,profile.EdgeHighlight,profile.CreaseShade,weight));
+            if(weight<=0)return;
+            var sun=SkyEvent.RecordedSun;
+            Vector3 toLight=sun!=null?-sun.transform.forward:Vector3.up;
+            _material.SetVector(PeakSunViewId,_camera.worldToCameraMatrix.MultiplyVector(toLight).normalized);
+            _material.SetColor(PeakShadeId,look.Look.ShadowTint);
+            _material.SetColor(PeakLightId,sun!=null?sun.color.linear:Color.white);
+        }
+
         private void ApplyFade()
         {
             float start = _fadeStart;

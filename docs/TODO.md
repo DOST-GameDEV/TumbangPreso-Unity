@@ -92,6 +92,58 @@ reads better even with today's lighting, and because it removes HUD and text tha
 captures would otherwise have to be retaken around. Paperwork (P6) moved behind visible
 work because the owner's standing complaint is loops that do not change the game.
 
+### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23
+
+Owner request: overhaul the "gloomy and dark" lighting to be bright and pleasing like PEAK
+(Aggro Crab and Landfall, 2025), not realistic, and make the edges similar to PEAK. Work is on
+branch `lighting/peak-bright-overhaul` (off `ASTRAReworks` at `2a3c7e16`), one commit per
+change. This supersedes VISUAL-1.8's darker ambient and near fog on that branch; the off value
+(`WorldCueProfile.WorldLighting` 0) still restores each scene's own lighting.
+
+**Research (PEAK Steam store frames, Game Informer review):** high key with no true black;
+shadows carry hue (warm sun, sky-coloured shade); bright horizon-matched haze layers the
+distance; soft plush shading on the cast with no ink; edges read from light and colour (lit
+convex bevels, coloured inside corners), not black lines; soft bloom on sky and highlights.
+
+- [x] LIGHT-1.1 Per-map rig in `WorldLookProfile` (+ asset): sun colour, intensity, lifted
+  elevation (azimuth kept), shadow strength, saturated sky-tinted ambient, haze colour and
+  range, sky/cloud colours, coloured black lift. Applied and restored by `WorldLookPresentation`.
+- [x] LIGHT-1.2 Cast soft wrapped terminator with warm band (`Toon`, `ToonTransparent`).
+- [x] LIGHT-1.3 Cast hull drawn in a deeper shade of its own colour at 72% width; coloured
+  gameplay outlines (landed slipper) untouched; previews keep black ink.
+- [x] LIGHT-1.4 World edges: near-side silhouette deepening, sun-side convex highlight,
+  coloured concave crease, replacing black ink under the look (`WorldOutline`).
+- [x] LIGHT-1.5 Grade: HDR bloom (off on Low tier), coloured lift, vibrance (`ColourGrade`).
+- [ ] LIGHT-1.6 Tune from the first render. The v2 render fixed four
+  of the five v1 problems, each its own commit: bloom threshold 1.7 and intensity 0.12 so the lit
+  cast no longer haloes (`7f7dc42e`); Eskinita and SaBubong skies blue instead of lavender, top of
+  frame (195,196,239) to (154,191,241), by pairing a cream or gold horizon with a cyan-leaning
+  zenith (`d30fcb16`); Bayan and Lagoon haze deepened to a light sky blue (`eb27679c`); per-map
+  `GroundLift` 1.6 on the Eskinita and Ilalim court asphalt through a property block, sunlit road
+  (90,85,71) to (158,150,119) on Eskinita and (124,126,106) to (181,185,156) on Ilalim, found by
+  shape and logged (`68d297ba`). Edge close-up checked: no black ink, silhouettes darken their own
+  colour, eaves carry a lighter bevel. Still open: SaBubong read milky in v2, so its haze now runs
+  60 to 300 m (`848e21d4`, NOT yet rendered); whether Ilalim's sunlit road at 181 is too pale is a
+  taste call; overall contrast is lower than PEAK's, left for the owner rather than tuned blind.
+- [x] LIGHT-1.7 The two Stage tests assert the bright look's own claims (`20c977e5`): applied rig,
+  bright shade colour, haze past the court, court ground found; toon ramp measured 1.70:1 under the
+  look against 1.95:1 authored, asserted inside 1.35 to 2. WorldCourtCueTests 3/3 on the Mac.
+- [ ] LIGHT-1.8 Decided: the map-select and lobby preview SHOULD show the bright look, because
+  `MapPreviewSurface` promises the map is graded the way it will be played. In progress:
+  `WorldLookPresentation.InstallPreview(parent, floor, sun)` (explicit sun, handles only cameras
+  tagged `WorldLookCamera`, never `Camera.main`, so the menu UI is not graded) is written but
+  uncommitted and uncompiled. Remaining: call it from `MapPreviewSurface.ApplyMapEnvironment`
+  after the env is applied (destroy the previous preview install first; parent under the shown
+  arena's first active root; sun = its shadow-casting directional light; floor from
+  `WorldGround.TryBelow` at the pivot rather than the spawn-marker height), add `WorldLookCamera`
+  to the preview camera, and note `ConvertedMatchSetup` calls `ReapplyEnvironment` on refresh, so
+  reinstalling there must stay cheap or reuse the live install for the same map.
+- [ ] LIGHT-1.9 Performance check of bloom plus edges on the Balanced tier, and a native build
+  look at the owner's window shape.
+
+Capture: `WorldCourtCueTests.BrightLookSameCameraCapturesOnAllFiveMaps` writes stage, eye and
+cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 passed on the Mac.
+
 ### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)
 
 Owner reference: [3D Asset](https://3d-asset.com/). Requirements, order and research
