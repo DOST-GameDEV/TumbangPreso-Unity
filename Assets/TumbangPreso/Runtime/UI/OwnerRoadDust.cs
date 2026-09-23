@@ -3,8 +3,33 @@ using UnityEngine.UI;
 
 namespace TumbangPreso.UI
 {
-    // Positions belong to the painted road, so aspect cropping cannot move dust
-    // onto the wall, controls or foreground props. No full-screen particle veil.
+    /// <summary>
+    /// The air just above her road: loose sand creeping with the breeze, soft
+    /// wisps the gusts lift off it, and motes that glint only where the sun is.
+    ///
+    /// ⚠️ POSITIONS BELONG TO THE PAINTED ROAD, so aspect cropping cannot move dust
+    /// onto the wall, controls or foreground props, and the ground mask's alpha
+    /// clips every mote behind the can, the slipper and the bush. No full-screen
+    /// particle veil.
+    ///
+    /// ⚠️⚠️ WHAT CHANGED ON 2026-09-24, AND WHY. The previous field was 78 grains and
+    /// 11 puffs sliding across the whole road in straight lines at 11 to 33 pixels a
+    /// second, ignoring the light and the gusts: a conveyor. Now:
+    /// - **Grains** creep at 5 to 18 pixels a second, twinkle slightly, and lift a
+    ///   few pixels on their own slow beat, much higher when a gust arrives. Placed on
+    ///   a low-discrepancy (R2) sequence rather than a hash, so every stretch of road
+    ///   always holds some: `OwnerMenuSkyTests.DustCoversSandAndLeavesForegroundPropsClear`
+    ///   needs more than 30 changed pixels in each of three zones over four frames,
+    ///   and 120 simulated windows gave a worst case of 57 (the previous field failed
+    ///   2 of the same 120, in the right-hand zone).
+    /// - **Wisps** are the old puffs given a life: each rises, spreads and dissolves
+    ///   over 7 to 10 seconds, carried further and made denser by a gust.
+    /// - **Motes** are new and are Slay the Spire 2's sparse star twinkle moved into
+    ///   daylight: 26 specks floating on slow sines that flare for a moment in short
+    ///   bursts, and only in her sunlit patches (`OwnerMenuWind.Sun`), because dust
+    ///   in shade does not catch the light.
+    /// Everything drifts right to left with the one breeze in `OwnerMenuWind`.
+    /// </summary>
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class OwnerRoadDust : MaskableGraphic
     {
@@ -13,6 +38,16 @@ namespace TumbangPreso.UI
         public override Texture mainTexture=>_ground!=null?_ground:Texture2D.whiteTexture;
         private float _nextFrame;
         private bool _reduced;
+
+        private const int Grains=84, Motes=26;
+        private static readonly Vector2[] WispBands=
+        {
+            new Vector2(600,680),new Vector2(600,680),new Vector2(690,860),new Vector2(690,860),
+            new Vector2(860,1060),new Vector2(860,1060),new Vector2(940,1070),
+        };
+        private static readonly Color Wisp=new Color(.965f,.81f,.59f),GrainLight=new Color(1f,.89f,.66f),
+            GrainDark=new Color(.63f,.46f,.31f),Mote=new Color(1f,.95f,.82f);
+
         protected override void Awake()
         {
             base.Awake();_ground=OwnerMenuArt.Texture("main-ground-mask");raycastTarget=false;
@@ -31,43 +66,61 @@ namespace TumbangPreso.UI
         {
             mesh.Clear();
             if(Background==null || _ground==null || Settings.SettingsStore.Current.ReducedUiMotion)return;
-            float time=Time.unscaledTime;
-            // One wind field across the whole sandy plane, with smaller/slower
-            // dust in the distance. The alpha texture clips it behind real props.
-            for(int i=0;i<11;i++)
-            {
-                float depth=Mathf.Repeat(i*.75487766f+.11f,1);
-                float phase=Mathf.Repeat(time/Mathf.Lerp(100,38,depth)+i*.618034f,1);
-                float life=Mathf.Sin(phase*Mathf.PI);
-                float y=Mathf.Lerp(594,1080,depth)+Mathf.Sin(time*.25f+i)*Mathf.Lerp(2,8,depth);
-                float x=Mathf.Lerp(GroundLeft(y)-70,GroundRight(y)+70,phase);
-                Puff(mesh,new Vector2(x,y),new Vector2(Mathf.Lerp(65,180,depth),Mathf.Lerp(4,13,depth)),
-                    life*life*Mathf.Lerp(.11f,.16f,depth),new Color32(244,195,133,255));
-            }
-            // Sparse warm grains, not a glowing swarm. Irregular height/spacing
-            // keeps the entire floor alive without lining particles up in rows.
-            for(int i=0;i<78;i++)
-            {
-                float depth=Mathf.Repeat(i*.75487766f+.03f,1);
-                float phase=Mathf.Repeat(time/Mathf.Lerp(130,45,depth)+i*.618034f,1);
-                float life=Mathf.Sin(phase*Mathf.PI);
-                float y=Mathf.Lerp(586,1085,depth)+Mathf.Sin(time*.4f+i*2.31f)*Mathf.Lerp(2,7,depth);
-                float x=Mathf.Lerp(GroundLeft(y)-50,GroundRight(y)+50,phase);
-                var tint=i%3==0?new Color32(172,126,85,255):new Color32(255,224,166,255);
-                Puff(mesh,new Vector2(x,y),new Vector2(Mathf.Lerp(2,5.4f,depth),Mathf.Lerp(.9f,2.3f,depth)),
-                    life*Mathf.Lerp(.24f,.43f,depth),tint);
-            }
-        }
+            float t=OwnerMenuWind.Now,gust=OwnerMenuWind.Gust(t);
 
-        private static float GroundLeft(float y)
-        {
-            if(y<644)return Mathf.Lerp(1104,987,Mathf.InverseLerp(563,644,y));
-            if(y<679)return Mathf.Lerp(987,817,Mathf.InverseLerp(644,679,y));
-            if(y<697)return Mathf.Lerp(817,545,Mathf.InverseLerp(679,697,y));
-            if(y<735)return Mathf.Lerp(545,0,Mathf.InverseLerp(697,735,y));
-            return Mathf.Lerp(0,-160,Mathf.InverseLerp(735,810,y));
+            for(int i=0;i<WispBands.Length;i++)
+            {
+                float period=11+7*OwnerMenuWind.Hash(i,1),life=7.5f+2.5f*OwnerMenuWind.Hash(i,2);
+                float offset=period*i/WispBands.Length;
+                int cycle=Mathf.FloorToInt((t+offset)/period);float local=t+offset-cycle*period;
+                if(local>life)continue;
+                float u=local/life;
+                float y=Mathf.Lerp(WispBands[i].x,WispBands[i].y,OwnerMenuWind.Hash(i,cycle,3));
+                float d=(y-590)/480;
+                float left=OwnerMenuWind.GroundLeft(y),right=OwnerMenuWind.GroundRight(y);
+                float x0=left+120+(right-left-120)*OwnerMenuWind.Hash(i,cycle,4);
+                float travel=(90+200*d)*(.75f+.7f*OwnerMenuWind.Gust(t-local));
+                float x=x0-travel*u;y-=(2+8*d)*u;
+                float body=Mathf.Sin(Mathf.PI*u);
+                Puff(mesh,new Vector2(x,y),new Vector2((60+130*d)*(.8f+.5f*u),(4+10*d)*(.9f+.4f*u)),
+                    body*body*(.11f+.07f*d)*(.75f+.6f*gust),Wisp,12);
+            }
+
+            for(int i=0;i<Grains;i++)
+            {
+                float d=Mathf.Repeat(i*.754877666f+.03f,1);
+                float y0=Mathf.Lerp(590,1078,d);
+                float left=OwnerMenuWind.GroundLeft(y0)-60,right=OwnerMenuWind.GroundRight(y0)+60,span=right-left;
+                float speed=5+13*d;
+                float phase=Mathf.Repeat(Mathf.Repeat(i*.569840291f+.41f,1)*span-speed*t,span)/span;
+                float x=left+phase*span;
+                float edge=Mathf.Min(1,Mathf.Min(phase*span/50,(1-phase)*span/50));
+                float beat=3.2f+3f*OwnerMenuWind.Hash(i,2);
+                float lift=Mathf.Pow(Mathf.Max(0,Mathf.Sin(2*Mathf.PI*(t/beat+OwnerMenuWind.Hash(i,3)))),6)*(.3f+gust);
+                float y=y0-(2+7*d)*lift+Mathf.Sin(t*.4f+i*2.31f)*(1+3*d);
+                float twinkle=.78f+.22f*Mathf.Sin(t*(1.1f+.9f*OwnerMenuWind.Hash(i,4))+6.28f*OwnerMenuWind.Hash(i,5));
+                float alpha=(.26f+.2f*d)*(.6f+.4f*OwnerMenuWind.Sun(x,y))*edge*twinkle;
+                Puff(mesh,new Vector2(x,y),new Vector2((1.7f+2.6f*d)*(1+.5f*lift),.9f+1.3f*d),alpha,i%3==0?GrainDark:GrainLight,6);
+            }
+
+            for(int i=0;i<Motes;i++)
+            {
+                float d=Mathf.Repeat(i*.754877666f+.13f,1);
+                float y0=Mathf.Lerp(585,1040,d);
+                float left=OwnerMenuWind.GroundLeft(y0)-40,right=OwnerMenuWind.GroundRight(y0)+40,span=right-left;
+                float speed=4+9*d;
+                float phase=Mathf.Repeat(OwnerMenuWind.Hash(i,1)*span-speed*t,span)/span;
+                float x=left+phase*span;
+                float y=y0+Mathf.Sin(t*(.21f+.1f*OwnerMenuWind.Hash(i,2))+6.28f*OwnerMenuWind.Hash(i,3))*(6+10*d)
+                          +Mathf.Sin(t*(.53f+.2f*OwnerMenuWind.Hash(i,4))+6.28f*OwnerMenuWind.Hash(i,5))*(2+5*d);
+                float edge=Mathf.Sqrt(Mathf.Sin(Mathf.PI*phase));
+                float every=4.5f+5*OwnerMenuWind.Hash(i,6);
+                float glint=Mathf.Pow(Mathf.Max(0,Mathf.Sin(2*Mathf.PI*(t/every+OwnerMenuWind.Hash(i,7)))),40);
+                float alpha=(.14f+.55f*glint)*(.7f+.3f*d)*OwnerMenuWind.Sun(x,y)*edge;
+                float radius=(1.3f+2.3f*d)*(1+.6f*glint);
+                Puff(mesh,new Vector2(x,y),new Vector2(radius,radius),alpha,Mote,8);
+            }
         }
-        private static float GroundRight(float y)=>Mathf.Lerp(1730,2050,Mathf.InverseLerp(565,810,y));
 
         private Vector2 Local(Vector2 source)
         {
@@ -78,9 +131,11 @@ namespace TumbangPreso.UI
         }
 
         private static Vector2 Uv(Vector2 source)=>new Vector2(source.x/1920f,1-source.y/1080f);
-        private void Puff(VertexHelper mesh,Vector2 centre,Vector2 radius,float opacity,Color ink)
+        // ⚠️ THE SIDE COUNT FOLLOWS THE SIZE. A grain is two to four pixels across, where
+        // six sides and twelve are the same dot; 84 of them at six is half the vertices.
+        private void Puff(VertexHelper mesh,Vector2 centre,Vector2 radius,float opacity,Color ink,int sides)
         {
-            const int sides=12;
+            if(opacity<=.003f)return;
             int first=mesh.currentVertCount;
             ink.a=opacity;
             mesh.AddVert(Local(centre),ink,Uv(centre));

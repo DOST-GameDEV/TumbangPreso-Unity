@@ -20,10 +20,13 @@ namespace TumbangPreso.PlayTests
     /// is why the DUST looked broken when nothing was wrong with it.
     ///
     /// ⚠️ THE CLAIMS ARE UNCHANGED AND THEY ARE 🧑'S: *"make sure all main menu effects are
-    /// subtle"*. `OwnerMenuAir` carries the numbers (§ 153.3): the cast shadow sways 46 source
-    /// pixels over 74 seconds, about 1.2 px a second at the fastest part of the cycle, the near
-    /// cloud bank crosses at 8.4 units a second and the far one at 4.4, and reduced motion
-    /// parks both at the x she drew them at, which reproduces 46.png exactly.
+    /// subtle"*. `OwnerMenuAir` carries the numbers: since 2026-09-24 the cast shadow rustles in
+    /// place (1.5 source pixels in the calm, 7 at the top of a gust) instead of sliding 46, the
+    /// near cloud bank crosses at 8.4 units a second, the middle at 6.3 and the far at 4.4, and
+    /// reduced motion parks the near and far banks at the x she drew them at with every other
+    /// instance, the churn, the rustle and the passing cloud shadow off, which reproduces
+    /// 46.png exactly. Because the shader reads no clock of its own, disabling the component
+    /// freezes the frame, which is what lets the first case move one bank by hand.
     /// </summary>
     public sealed class OwnerMenuSkyTests
     {

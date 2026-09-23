@@ -459,6 +459,9 @@ with a crisp outline of the thing it was supposed to erase. `opening > .97` is t
 
 ### 153.3 Subtle is a number
 
+⚠️ **The sway, the two banks and the five-leaf loop below were replaced on 2026-09-24 by § 153.23.**
+Kept as the record of what shipped first and why.
+
 - The cast shadow SWAYS, it does not sweep: 46 source pixels over 74 seconds, about 1.2 px a
   second at the fastest part of the cycle. ⚠️ **Her mask is exactly one screen wide**, so a
   travelling drift has to do something at the edge: wrapping puts a seam on screen and a fade
@@ -940,6 +943,45 @@ added next month cannot forget a sound it never has to remember. ⚠️ **Select
 pad has no pointer.** ⚠️ **And the first 0.3 s after a control is enabled is silent**, or
 `ScreenFocus.Rebuild` selecting the first control would open every screen on a chord of every
 button on it announcing itself at once.
+
+### 153.23 Her weather, re-animated against Slay the Spire 2's rig: shadow, clouds, leaves, dust: CLOSED 2026-09-24
+
+🧑: *"fix the improve the animation of the shadows, subtle particles, clouds and leaves for our
+main menu with the click to start"*, *"thoroughly research dynamic and subtle main menu's for
+inspiration like slay the spire 2"*, *"thoroughghly think about it first before starting how to
+make it pretty"*, and *"theres like a version of the main menu there with no shadow and cloud so
+that u could js put a mask over it"*. That clean plate (48.png, `main2-background`) was already
+the base with her masks laid over it, and still is. Nothing new was drawn; every shape is still
+hers. `docs/reports/title-weather-2026-09-24/README.md` has the research, the prototype and every
+measurement.
+
+**The reference, decoded rather than remembered.** Slay the Spire 2's menu is three Spine rigs
+(`mainmenu/bottom`, `top`, `logo`). Their timelines, read with the Spine runtime: one 160 second
+loop; the cloud bank is nine segments each rocking 0.3 to 1.5 degrees on eased 5.3 second cycles
+plus a 2 per cent mesh deform; glows pulse on 4 seconds; stars twinkle in 0.2 second bursts
+seconds apart; boats bob 3 to 16 units. **Nothing large travels. Life is many small correlated
+motions in place, mostly light.**
+
+**What was wrong, measured on a Python transcription of the shipped shader and meshes:**
+
+| Layer | Fault | Now |
+|---|---|---|
+| wind | clouds and dust travelled right, leaves left: two breezes | one breeze, right to left, with a gust every ~31 s (`OwnerMenuWind`) that rustles the shadow, lifts the sand and carries leaves further |
+| shadow | the whole mask slid 46 px on a 74 s sine, so the road swam, and the mirror fold drew a crease in the shade at the foot of the wall | anchored; its edges rustle, 1.5 px calm to 7 px in a gust, plus a soft cloud shadow crossing the street every 150 s |
+| sky | two banks wrapped across 1920 px but her opening is x 975 to 1800: **empty 51 per cent of the time, once for 205 s**, against 61 per cent cover in her painting; the far bank floated at y -10 and showed the flat underside of her mass | five instances of her mass wrapping just outside the opening, all resting on the skyline, churning like the StS2 rig: **never empty over a simulated hour, median cover 35, p90 55** |
+| leaves | five on one 11.4 s loop kept 3 to 4 in the air at once on parallel diagonals, faded out mid-air, drawn upside down | 1.1 in the air on average (max 2), pendulum flutter, land, rest, fade, cast a shadow in sun; every path checked clear of the can, slipper, caption, bush and her road leaves |
+| dust | 78 grains and 11 puffs sliding in straight lines at 11 to 33 px/s | grains creep at 5 to 18 px/s and lift in gusts, wisps rise and dissolve, 26 motes glint only in her sunlit patches |
+
+Changed pixels between frames 0.8 s apart fell from about 87,000 to 54,000: less motion, all of
+it meaning something. No frame-to-frame spikes in either.
+
+⚠️ **The owner's numbers are kept**: near 8.4 and far 4.4 px/s (the new middle bank is 6.3), the
+2 : 1 depth ratio, the 101 s rise and the 43 s breathing. Reduced motion still reproduces 46.png
+exactly, and the shader still reads no clock, so disabling `OwnerMenuAir` freezes the frame.
+
+⚠️ **`OwnerMenuSkyTests.DustCoversSandAndLeavesForegroundPropsClear` was simulated before the port**:
+120 windows, worst zone 57 changed pixels against the 30 it needs. The field it replaced failed
+2 of the same 120.
 
 ### 153.19 The three red core cases were three different kinds of stale, and two were product faults: CLOSED 2026-09-19
 
