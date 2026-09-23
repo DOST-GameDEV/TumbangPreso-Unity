@@ -99,6 +99,7 @@ Shader "TumbangPreso/NearFade"
         _SurfaceCoordinates ("Use authored metre coordinates", Float) = 0
         _SurfaceScale ("Detail scale per metre", Float) = 1
         _SurfaceStrength ("Material detail strength", Range(0,2)) = 1
+        _DeckSurface ("Filtered single-plank deck finish", Range(0,1)) = 0
         _SurfaceBaseY ("Building ground level", Float) = 0
         _SurfaceDebug ("Surface role study", Float) = 0
         _SurfaceHasTexture ("Retain existing surface pattern", Float) = 0

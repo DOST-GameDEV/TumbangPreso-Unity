@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume: publishP3 then batchC, 2026-09-23
+## Current resume: P3 lagoon deck visual sampling, 2026-09-23
 
 Owner is asleep. Continue every autonomously actionable queued item in THIS
 conversation, one agent, without questions or checkpoint endings. Save the exact
@@ -9,10 +9,9 @@ state here at each meaningful checkpoint. Do not mark the full goal complete.
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
 Current HEAD/verified remote1419db83b0a13cf8378342e62e0eb4de9b6c2b90 publishedB.
 Earlierbbab70bbd=1.7,33d50bb7=1.5,88f9e6e68=1.2,479be6a53=1.1,f018173c4=UXintake.
-P3 local deck fix is implemented/focused-validated, ready for scoped commit.
-No active Unity/native/server/browser/helper. Latest job46014 reaped,
-guarddae0f59a8c16; known4churn restored and protected2metas verified.
-No native build. Keep first refinement look and do not repeat passed checks.
+ACTIVE guarded Unity job46014, P3 lagoon-deck-v3 refinement. No.cs edits until
+completion. Local deck-only production refinement and its test are unverified; ledger
+updated; original2PNGmetas protected. All prior batch checks retained.
 
 
 Completed1.1: exact ConfinementRadius square at sampled ground heights, rest/armed/
@@ -113,40 +112,20 @@ washed shadows and is now multiplicative. No assertions weakened. Linear cube
 ratio is a lighting diagnostic, not a claim every coloured hero/display pixel has
 that ratio. Native/performance/full-replay/human acceptance stays P7.
 
-P3 deck evidence look-p3-deck/report.md. Reused and personally inspected old
-validation/Logs/lagoon-deck-live-v3 five-way isolation instead of rerunning it.
-Current v2isolations passed1/1,7.252s:47actual board/thin-batch renderers, two
-NearFade timber materials. Saved geometry already has.38m boards; material adds
-another.19m joint grid. Outline reinforces fine geometry seams; shadows alone do
-not explain them. v1's guessed>100raw-renderer assertion was corrected to actual
-28x26m deck coverage after reading Bake's thin batches; failed receipt retained.
-
-Local fix: LagoonDeckPresentation sets only those47deck renderers' _DeckSurface,
-blending to derivative-filtered single-plank grain without extra divisions.
-WorldOutline suppresses micro-step ink only where centre and4neighbours remain
-on the local thin deck plane; water/structure height changes keep silhouettes.
-No extra per-mesh mask draws, imported mesh/material/collider edits or old-map
-finish changes. WCP.LagoonDeckDetail0 restores baseline. v3new refinement1/1,
-9.655s,guarddae0f59a8c16: renderer coverage, original mesh references, physical
-support andoff restoration. Full/comfort/grey25 before/after personally inspected.
-Retain first look: dense synthetic grid removed, real joints/grain remain. Native
-motion alias/performance and coherent Rafi/lagoon qualification remain P7.
-
-NEXT publishP3 explicit files, fetch before push, verify remote. Then C1.11/1.12/
-1.13 with PRESENTATION-1.5: read NATIONALS_POLISH V3/queue and current owners.
-Use two-tone ink effects/erosion, grounded dust, paper confetti outside the central
-view; remove the existing red grab crescent's misleading dominance; inspect
-CanContactAccent and remaining Sprites/Default paths, ordinary exchange, round
-rhythm. Preserve completed HUD/halftime/results and existing timing/authority.
-Default-owner listening review is still external, not a reason to stop independent
-work. AfterC comesD1.14/1.15 with existing152.4 etc, UX-1,P6,P7. Preserve task IDs,
-login/mainmenu and original model/builders. Owner asleep, no questions/delegation.
+NEXT P3: docs/TODO.md319+ Rafi B/lagoon C final integration, local deck sampling
+refinement. Model/kit/map and v47..v52 evidence already exist; do not recreate them
+or edit existing cast/builders. Read that section and linked expansion docs, refine
+actual local support sampling, finish focused integration items while retaining
+the owner's latest no-intermediate-build rule. Native final qualification stays P7.
+Then C1.11/1.12/1.13 with PRESENTATION-1.5, D1.14/1.15 with152.4 etc, UX-1,P6,P7.
+Carry existing red grab crescent into1.11/1.12 meaning/dominance review. Preserve
+completed HUD, login/mainmenu and every task ID. Owner still asleep, no questions.
 
 Original dirty home-court.png.meta/loading-street.png.meta under Resources/UI/
 composition-redesign MUST NEVER be committed. Expected hashes in
 Logs/visual1-world-protected-metas.json; original bytes in
 Logs/look-1.1-v1/protected-inputs/. Known generated churn (two Inday FppDetails
-assets,QualitySettings.asset,TimeManager.asset) restored afterP3v3; protected2
+assets,QualitySettings.asset,TimeManager.asset) restored afterbatchBv7; protected2
 metas verified/restored exactly. Stage by path, never blanket add/reset/clean.
 Fetch before push, verify remote HEAD. Sole author M4tyu633, no trailers/AI/em dash.
 
@@ -170,3 +149,23 @@ Desktop replacement. Prior ledger is archived with the1.1,1.2,1.5,1.7 andbatchB 
 not the current resume point.
 
 Final static1.7 scope review: ChargeAnticipation now also requires _carrying, preserving the existing empty-hand lunge charge. Held-charge proofs retained; next compilation/P7 includes this one-condition exclusion. No extra rerun needed for unchanged active branch.
+
+## P3 exact intake correction
+
+Read docs/reports/full-backlog-2026-09-21/ledger-before-block-hair-publication.md
+lines299..305. The saved gap is VISUAL: conspicuous fine dark/dashed deck-board
+patterns at oblique player angles in nativev50. Determine material frequency,
+geometry/depth or outline sampling, then refine LOCAL lagoon deck only. It is NOT
+a request to rewrite physical deck support sampling. Earlier wording in this
+ledger about support sampling was an unconfirmed interpretation and is superseded.
+Rafi models/kit, village/islands and v47..v52/three-peer water proofs already exist.
+Do not recreate them or redo native qualification beforeP7. No current source edit.
+Apply Unity bug-investigation skill: reproduce/isolate using controlled same-camera
+views and minimal source changes. Next read actual deck author/material setup,
+capture one baseline with outline/material isolation, then fix measured cause.
+
+P3 evidence reused, not rerun: validation/Logs/lagoon-deck-live-v3 contains five successful2026-09-22 comparisons; personally inspected baseline,no-detail,no-outline,no-shadows,neither. Material detail adds extra board pattern; outline accentuates thin seams; shadows are not sufficient cause. Builder has actual.38m board rows,.013m gaps,.036m height over a slab, and invisible continuous collision. NearFade's EnvironmentSurface kind4 adds synthetic.19m board joints/hash and high-frequency grain on top. No production change yet. Current narrow hypothesis test separates normal/depth outline contributions and LOCAL board detail using existing saved scene/current1419db83 lighting. Four matched960x540 FPP frames, temporary property blocks/settings restored; no asset/geometry/collision change. Before P3-v1: question which edge channel and material detail account for the visible deck pattern? Stop after four inspected comparisons and discovery report, then make only local measured fix. No native build, no repeated old suites; no.cs edits during run. Bug-investigation skill and required foundations/rendering/safety guidance read.
+
+P3-v1 stopped at own discovery assertion:27raw Deck board renderers, not assumed>100. Guard212028c661de,job96887 reaped;4churn/2metas restored. Source confirms LagoonBuilder.Bake groups boards by elevation into Thin deck surface renderers, preserving thin bounds; most old board objects no longer have renderers. Fixture now includes saved thin-deck groups and asserts actual28x26m main-deck coverage, replacing a guessed generator count. No production change. v2 repeats same single four-isolation case/question and stops at inspected frames; no extra suites/build, no.cs edits during run.
+
+P3-v2 PASSED1/1,7.252s,guard9c591eba146c,job28416 reaped;4churn/2metas restored. Personally inspected4current comparisons,47deck renderers with2NearFade kind4 materials. Either outline channel alone retains some fine seams; removing deck detail removes the synthetic dense grid but keeps real joints. Local fix now implemented: LagoonDeckPresentation opts only saved thin-deck/raw-board renderers into derivative-filtered single-plank grain (no second.19m board grid); old timber surfaces/default0 untouched. WorldOutline suppresses extra seam ink only when centre and4neighbours all land within the lagoon deck's thin height band/local extent, retaining water/structure silhouettes. No extra renderer mask draws, mesh/collider/material assets or old-map changes. WCP.LagoonDeckDetail0 restores baseline. BeforeP3-v3: run ONLY new refinement case, sameFPP before/after/comfort960x540; assert47actualrenderer coverage, original meshes/support unchanged andoff property restored. Stop at fresh pass plus normal/grey25 inspection, max3looks. No.cs during run, no native/full suite.

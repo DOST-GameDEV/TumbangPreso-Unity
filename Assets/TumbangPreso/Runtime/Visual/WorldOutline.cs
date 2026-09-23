@@ -888,6 +888,8 @@ namespace TumbangPreso.Visual
             _material.SetFloat("_WorldContactMask",maskReady?1:0);
             _material.SetMatrix("_WorldContactToWorld",_camera.cameraToWorldMatrix);
             _material.SetVector("_WorldContactProjection",new Vector4(_camera.farClipPlane,_camera.orthographic?1:0,_camera.orthographicSize,_camera.aspect));
+            bool lagoonDeck=WorldLookPresentation.HandlesCamera(_camera) && WorldLookPresentation.Current.Look.Map==UI.SceneFlow.Lagoon;
+            _material.SetFloat("_LagoonDeckDetail",lagoonDeck?WorldCueProfile.Current.LagoonDeckDetail:0);
             _material.SetTexture(MainTexId, source);
 
             // ⚠️ THE PASS INDEX IS NOT OPTIONAL. `Graphics.Blit` without one runs EVERY pass in

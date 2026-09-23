@@ -6,6 +6,7 @@
 float _SurfaceKind, _SurfaceVertexRoles, _SurfaceCoordinates, _SurfaceScale, _SurfaceStrength, _SurfaceBaseY;
 float _SurfaceDebug;
 float _SurfaceHasTexture;
+float _DeckSurface;
 
 float TumpSurfaceHash(float2 p)
 {
@@ -78,6 +79,14 @@ void TumpEnvironmentSurface(float3 world,float3 normal,float4 roles,float2 coord
         float board=TumpSurfaceJoint(uv.x/.19,.012);
         float grain=sin(uv.x*92+TumpSurfaceNoise(uv*float2(2.8,.28))*7);
         shade=(TumpSurfaceHash(float2(floor(uv.x/.19),0))-.5)*.15-board*.15+grain*.045*fine;
+        // Real deck geometry already contains the plank divisions. Do not draw
+        // a second.19m grid across each.38m plank. Derivative filtering removes
+        // grain before it becomes a subpixel stripe at a player's grazing angle.
+        float grainFootprint=fwidth(uv.y)*76;
+        float resolved=1-smoothstep(.3,.85,grainFootprint);
+        float deckGrain=sin(uv.y*76+TumpSurfaceNoise(uv*float2(.33,4))*4)*.025*resolved;
+        float deckWear=(TumpSurfaceNoise(uv*float2(.20,1.6))-.5)*.075;
+        shade=lerp(shade,deckWear+deckGrain,saturate(_DeckSurface));
         smoothness=.22;
     }
     if(kind>=4.5&&kind<5.5) // Galvanized/corrugated sheet: ribs and actual sheet seams.

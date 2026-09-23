@@ -435,6 +435,7 @@ namespace TumbangPreso
             var worldLook=Visual.WorldLookPresentation.Install(transform,court.Floor);
             Visual.CourtSurfacePresentation.Install(transform,worldLook);
             if(worldLook!=null)Visual.WorldContactPresentation.Install(transform,lata);
+            Visual.LagoonDeckPresentation.Install(transform);
             Visual.LataClockPresentation.Install(transform,lata);
 
             var runner = gameObject.AddComponent<SliceRunner>();

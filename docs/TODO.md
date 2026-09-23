@@ -323,7 +323,10 @@ Implementation order within UX-1:
   read the crash dump if one is written, fix or name the engine-side cause.
 - [ ] **Rafi B / lagoon C expansion, final integration.** Model, kit, map, v47 to v52
   evidence and the three-peer water checks are done (see the done list). Final coherent
-  qualification and the local deck sampling refinement remain. Owner addition
+  qualification remains in P7. Local deck sampling refinement is DONE:47deck
+  renderers use filtered single-plank grain and local thin-plane outline suppression;
+  original mesh/collision preserved, off restored, focused1/1 and personally inspected
+  before/after/comfort/grey25 in [look-p3-deck](reports/visual-research-2026-09-23/look-p3-deck/report.md). Owner addition
   2026-09-22 (varied background islands and mountain layers with stable seeded
   construction and clear routes) is implemented and awaits final qualification.
 - [ ] **Final integration:** remaining overlap, real-peer, whole-backlog disposition and

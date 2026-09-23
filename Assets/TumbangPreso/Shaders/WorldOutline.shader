@@ -121,6 +121,7 @@ Shader "TumbangPreso/WorldOutline"
             float4 _WorldGroundContact,_WorldContactProjection;
             float4x4 _WorldContactToWorld;
             float _WorldContactMask;
+            float _LagoonDeckDetail;
             float _Supersample;
 
             // ⚠️ NOT NAMED `Sample`, AND `offset` BELOW IS NOT NAMED `step`. Both of those are
@@ -373,6 +374,17 @@ Shader "TumbangPreso/WorldOutline"
             // edge and mask alike, is taken in the SAME normalised UV space at the SAME
             // resolution, through the same `UNITY_UV_STARTS_AT_TOP` flip.
             // -----------------------------------------------------------------------------
+            float OnLocalLagoonDeck(float2 uv)
+            {
+                float depth;float3 normal;
+                DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture,uv),depth,normal);
+                float eye=depth*_WorldContactProjection.x;
+                float3 view=float3((uv*2-1)*_ViewRay.xy*eye,-eye);
+                if(_WorldContactProjection.y>.5)
+                    view.xy=(uv*2-1)*float2(_WorldContactProjection.z*_WorldContactProjection.w,_WorldContactProjection.z);
+                float3 world=mul(_WorldContactToWorld,float4(view,1)).xyz;
+                return step(depth,.9999)*step(abs(world.y-_WorldGroundContact.x),.07)*step(max(abs(world.x),abs(world.z)),24);
+            }
             half4 frag (v2f_img i) : SV_Target
             {
                 half4 source = tex2D(_MainTex, i.uv);
@@ -448,6 +460,17 @@ Shader "TumbangPreso/WorldOutline"
                 // the result, so `mean(edge) · mask` and `mean(edge · mask)` are the same number.
                 // Sampling it inside the loop would cost 12 extra taps at N = 2 to compute it.
                 float2 reach = offset + texel * (centre * inv);
+                if(_LagoonDeckDetail>0)
+                {
+                    // Only micro-steps whose entire footprint stays on the
+                    // lagoon's thin deck plane lose extra screen-space ink.
+                    // A water edge, pile, person or structural height change
+                    // fails this test and keeps its silhouette.
+                    float samePlane=OnLocalLagoonDeck(duv)*OnLocalLagoonDeck(duv+float2(-reach.x,-reach.y))
+                        *OnLocalLagoonDeck(duv+float2(reach.x,reach.y))*OnLocalLagoonDeck(duv+float2(-reach.x,reach.y))
+                        *OnLocalLagoonDeck(duv+float2(reach.x,-reach.y));
+                    coverage*=1-samePlane*saturate(_LagoonDeckDetail);
+                }
 
                 float mask = max(
                     max(tex2D(_WorldOutlineMask, duv + float2(-reach.x, -reach.y)).r,

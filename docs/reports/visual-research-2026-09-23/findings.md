@@ -537,3 +537,13 @@ guard84b80b438847: actual guided-training stock, true thrower identity,8bit colo
 encoding, recording/replay, off and re-equip cleanup. Live matches still forbid
 another player's owned shoe; no ownership gate was changed. Report look-batchB-world
 retains all faults and scope limits. Native/full qualification remains P7.
+
+P3 deck: reused prior five-way captures, then current normal/depth/detail isolation
+(v2,1/1,7.252s). Saved builder batches most actual.38m boards into thin planes;
+NearFade's generic timber added a second.19m division grid. Deck-only single-plank
+grain now filters at pixel footprint, and only micro-step outline samples wholly
+inside the local deck plane lose added ink. Other maps/timber/colliders/meshes stay
+unchanged. v3refinement1/1,9.655s,guarddae0f59a8c16; normal andgrey25 before/after/
+comfort inspected. First look retained. Real joints remain; do not promise zero
+native motion aliasing/performance without P7. Rafi/lagoon coherent qualification
+stays P7 per the owner's no-intermediate-build instruction.
