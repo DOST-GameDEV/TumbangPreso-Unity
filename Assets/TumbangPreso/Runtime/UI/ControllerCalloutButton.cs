@@ -21,7 +21,7 @@ namespace TumbangPreso.UI
             var face=GetComponent<ControllerCalloutFace>();
             if(face!=null){face.Focused=_focused;face.Available=IsInteractable();face.SetVerticesDirty();}
             if(_leaders!=null)foreach(var line in _leaders)
-                if(line!=null)line.color=_focused?SettingsPalette.Accent:new Color32(131,139,145,255);
+                if(line!=null)line.color=_focused?SettingsPalette.Accent:new Color32(146,139,131,255);
             if(_target!=null)_target.SetActive(_focused);
         }
     }

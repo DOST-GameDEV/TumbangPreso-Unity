@@ -140,7 +140,7 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.ArmyDeep, 61);
+            HubPattern.Ground(Root, HubStyle.Maroon, 61);
             HubChrome.Back(Root, Hub);
             HubChrome.Title(Root, "JOIN GAME");
 
@@ -172,7 +172,11 @@ namespace TumbangPreso.UI.Hub
             Column(columns, "NAME", 0);
             Column(columns, "MAP", 470);
             Column(columns, "PLAYERS", 760);
-            _empty = HubKit.Text(_list, "EmptyState", "", HubStyle.Label, true, HubStyle.HoneySoft, TextAnchor.MiddleCenter);
+            // ⚠️ ONE STATE LINE, IN THE READING FACE (2026-09-23 UI review). The empty list said
+            // "Looking for ..." and "Nobody yet" at once, in the display face at body size: two
+            // claims that contradict each other (still searching, already empty) in the face meant
+            // for names and verbs.
+            _empty = HubKit.Text(_list, "EmptyState", "", HubStyle.Label, false, HubStyle.HoneySoft, TextAnchor.MiddleCenter);
             HubKit.Stretch(_empty.rectTransform, 40);
 
             _code = HubKit.Span(HubKit.Rect(right, "CodeEntry"), Vector2.zero, Vector2.one, new Vector2(30, 30), new Vector2(30, 110));
@@ -236,15 +240,15 @@ namespace TumbangPreso.UI.Hub
             for (int i = _list.childCount - 1; i >= 0; i--)
                 if (_list.GetChild(i) != _empty.transform) Destroy(_list.GetChild(i).gameObject);
             _empty.text = rooms.Count == 0
-                ? (_source == 1 ? "Looking for rooms on your network...\nNobody yet. Host one, or ask for a code."
-                                : "Looking for public rooms online...\nNobody yet. Host one, or ask for a code.")
+                ? (_source == 1 ? "No rooms on your network yet. Host one, or join with a code."
+                                : "No public rooms yet. Host one, or join with a code.")
                 : "";
 
             for (int i = 0; i < Mathf.Min(rooms.Count, 5); i++)
             {
                 var room = rooms[i];
                 var row = HubKit.Place(HubKit.Rect(_list, "Room" + i), HubKit.TopLeft, new Vector2(0, -(i * 104)), new Vector2(1180, 92));
-                var plate = HubKit.Shape(row, "Plate", HubStyle.ArmyDeep, false, 940 + i, 4, 16);
+                var plate = HubKit.Shape(row, "Plate", HubStyle.Night, false, 940 + i, 4, 16);
                 HubKit.Stretch(plate.rectTransform);
                 var name = HubKit.Text(row, "Name", room.Name, HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleLeft);
                 HubKit.Place(name.rectTransform, HubKit.Left, new Vector2(20, 0), new Vector2(440, 70));
@@ -420,7 +424,7 @@ namespace TumbangPreso.UI.Hub
             {
                 var seat = seats[i];
                 var row = HubKit.Place(HubKit.Rect(_rows, "Seat" + i), HubKit.TopLeft, new Vector2(0, -(i * 118)), new Vector2(840, 106));
-                var plate = HubKit.Shape(row, "Plate", seat.Mine ? HubStyle.Persimmon : seat.Occupied ? HubStyle.ArmyDeep : new Color(0.2f, 0.12f, 0.06f), false, 970 + i, 4, 18);
+                var plate = HubKit.Shape(row, "Plate", seat.Mine ? HubStyle.Persimmon : seat.Occupied ? HubStyle.Night : new Color(0.2f, 0.12f, 0.06f), false, 970 + i, 4, 18);
                 HubKit.Stretch(plate.rectTransform);
                 var person = seat.Occupied ? Roster.At(people, seat.CharacterPick) : null;
                 var face = HubKit.Picture(row, "Face", HubKit.Portrait(person?.Id));

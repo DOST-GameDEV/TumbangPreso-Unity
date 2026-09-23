@@ -5,6 +5,23 @@ namespace TumbangPreso.UI
 {
     public sealed partial class TumpSettingsView
     {
+        private Text _unsaved;
+        private void RefreshSave()
+        {
+            if (_save == null) return;
+            bool dirty = _session != null && _session.Dirty;
+            var face = _save.transform.Find("SaveFace")?.GetComponent<Image>();
+            if (face != null)
+            {
+                face.color = dirty ? SettingsPalette.Accent : new Color(0, 0, 0, 0);
+                face.GetComponent<Outline>().effectColor = dirty ? SettingsPalette.OnAccent : SettingsPalette.Rule;
+            }
+            var colours = _save.colors;
+            colours.normalColor = colours.highlightedColor = colours.selectedColor = dirty ? SettingsPalette.OnAccent : SettingsPalette.Muted;
+            colours.disabledColor = SettingsPalette.Muted; colours.pressedColor = SettingsPalette.Background;
+            _save.colors = colours;
+            if (_unsaved != null) _unsaved.enabled = dirty;
+        }
         private void Build(Transform owner)
         {
             _canvas = OwnerUiLayout.Canvas(owner, "OwnerSettingsCanvas", 800);
@@ -32,7 +49,6 @@ namespace TumbangPreso.UI
                 OwnerUiLayout.Place(mark.rectTransform, 18, 75, 286, 5); mark.color = SettingsPalette.Accent; mark.raycastTarget = false;
                 _tabs.Add(tab);
             }
-            var note = OwnerUiLayout.Text(root, "SaveHint", "Save your changes\nwhen you're ready.", 28);
             // Keep credits reachable without adding a fifth door to the owner's
             // supplied four-button title composition.
             var credits=SettingsWorkspaceRows.Action(root,"SettingsCredits","CREDITS",()=>
@@ -44,7 +60,6 @@ namespace TumbangPreso.UI
             },407);
             OwnerUiLayout.Place((RectTransform)credits.transform,71,870,407,70);
             credits.GetComponentInChildren<Text>().font=OwnerUiTheme.Current.Display;
-            OwnerUiLayout.Place(note.rectTransform, 86, 951, 381, 91); note.color = SettingsPalette.Muted;
             _heading = OwnerUiLayout.Text(root, "Heading", "", 62, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_heading.rectTransform, 572, 104, 1238, 113); _heading.color = SettingsPalette.Ink;
             _list = OwnerScrollColumn.Build(root, "SettingsList", new Rect(577, 255, 1240, 633), out var scroll);
@@ -53,9 +68,24 @@ namespace TumbangPreso.UI
             { foreach (var image in scrollbar.GetComponentsInChildren<Image>()) image.color = image.name == "Handle" ? SettingsPalette.Muted : SettingsPalette.Control; }
             _status = OwnerUiLayout.Text(root, "SettingsStatus", "", 28);
             OwnerUiLayout.Place(_status.rectTransform, 578, 913, 737, 115); _status.color = SettingsPalette.Muted;
+            // ⚠️ SAVE IS A BUTTON THAT LOOKS LIKE ONE. It was floating words in the corner, grey when
+            // clean, the same object as a label. It is now a filled accent slab while there is
+            // something to save and a quiet outlined one when not, and an UNSAVED marker sits beside
+            // it for as long as the session is dirty (`RefreshSave`). The sidebar sentence "Save your
+            // changes when you're ready" that used to explain it is gone: the button says it.
             _save = SettingsWorkspaceRows.Action(root, "TumpSaveSettings", "SAVE CHANGES", () => _session.Save(), 474);
             OwnerUiLayout.Place((RectTransform)_save.transform, 1361, 954, 474, 82);
+            var saveFace = OwnerUiLayout.Rect(_save.transform, "SaveFace").gameObject.AddComponent<Image>();
+            saveFace.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(saveFace.rectTransform); saveFace.raycastTarget = false;
+            // ⚠️ `useGraphicAlpha` OFF: a Unity Outline multiplies its colour by the face's alpha, so
+            // on the transparent resting face the frame drew nothing and SAVE was floating words again.
+            var saveEdge = saveFace.gameObject.AddComponent<Outline>();
+            saveEdge.effectDistance = new Vector2(3, -3); saveEdge.useGraphicAlpha = false;
             var saveLabel = _save.GetComponentInChildren<Text>(); saveLabel.font = OwnerUiTheme.Current.Display; saveLabel.fontSize = 39;
+            saveLabel.alignment = TextAnchor.MiddleCenter;
+            _unsaved = OwnerUiLayout.Text(root, "UnsavedMarker", "UNSAVED", 28, OwnerUiLayout.TypeRole.Reading);
+            OwnerUiLayout.Place(_unsaved.rectTransform, 1120, 970, 220, 50); _unsaved.alignment = TextAnchor.MiddleRight;
+            _unsaved.color = SettingsPalette.Accent; _unsaved.raycastTarget = false;
         }
     }
 }

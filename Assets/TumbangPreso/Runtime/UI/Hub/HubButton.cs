@@ -78,9 +78,10 @@ namespace TumbangPreso.UI.Hub
             _liftTarget = attended && state != SelectionState.Pressed ? 1.0f : 0.0f;
             _pressTarget = state == SelectionState.Pressed ? 1.0f : 0.0f;
 
+            _focused = state == SelectionState.Selected;
             if (Shape != null)
             {
-                Shape.RingWidth = state == SelectionState.Selected ? 6.0f : 0.0f;
+                Shape.RingWidth = _focused ? 6.0f : 0.0f;
                 Shape.OutlineBoost = attended ? 1.5f : 0.0f;
                 Shape.Hatched = state == SelectionState.Disabled || _forceHatch;
             }
@@ -106,13 +107,48 @@ namespace TumbangPreso.UI.Hub
             set { _forceHatch = value; if (Shape != null) { Shape.Hatched = value || !IsInteractable(); Shape.Redraw(); } }
         }
 
+        /// <summary>
+        /// A light sweep across the face every few seconds: the screen's ONE primary asking to be
+        /// pressed. `HubKit.Button` sets it for every chartreuse sticker, because chartreuse IS the
+        /// primary role (`HubStyle`'s role table), so a screen cannot end up with two shimmering.
+        /// ⚠️ Off under Reduced UI motion and while disabled; the sticker is otherwise unchanged.
+        /// </summary>
+        public bool Shimmer;
+
+        private bool _focused;
+        private float _shimmerClock;
+        private const float ShimmerPeriod = 4.2f, ShimmerSweep = 0.65f;
+
         private void Update()
         {
-            if (Mathf.Approximately(_lift, _liftTarget) && Mathf.Approximately(_press, _pressTarget)) return;
-            float step = Time.unscaledDeltaTime * 14.0f;
-            _lift = Mathf.MoveTowards(_lift, _liftTarget, step);
-            _press = Mathf.MoveTowards(_press, _pressTarget, step * 1.6f);
-            Apply();
+            bool moving = !Mathf.Approximately(_lift, _liftTarget) || !Mathf.Approximately(_press, _pressTarget);
+            if (moving)
+            {
+                float step = Time.unscaledDeltaTime * 14.0f;
+                _lift = Mathf.MoveTowards(_lift, _liftTarget, step);
+                _press = Mathf.MoveTowards(_press, _pressTarget, step * 1.6f);
+                Apply();
+            }
+            if (Shape == null || HubStyle.ReducedMotion) return;
+
+            // ⚠️ THE FOCUS RING BREATHES (6 units, plus or minus 1.5, at 1.1 Hz). A static ring on a
+            // busy animated HOME is one more outline among many; a ring that moves is the one thing
+            // the eye finds, which is the whole job of pad focus.
+            if (_focused)
+            {
+                Shape.RingWidth = 6.0f + Mathf.Sin(Time.unscaledTime * 6.9f) * 1.5f;
+                Shape.Redraw();
+            }
+
+            if (Shimmer && IsInteractable())
+            {
+                _shimmerClock += Time.unscaledDeltaTime;
+                if (_shimmerClock > ShimmerPeriod) _shimmerClock -= ShimmerPeriod;
+                float t = _shimmerClock / ShimmerSweep;
+                float shine = t <= 1.0f ? t : -1.0f;
+                if (!Mathf.Approximately(shine, Shape.Shine)) { Shape.Shine = shine; Shape.Redraw(); }
+            }
+            else if (Shape.Shine >= 0.0f) { Shape.Shine = -1.0f; Shape.Redraw(); }
         }
 
         private void Apply()
@@ -123,6 +159,7 @@ namespace TumbangPreso.UI.Hub
                 Vector2 shadow = _restShadow * (1.0f + _lift * 0.45f) * (1.0f - _press * 0.85f);
                 if (!IsInteractable()) shadow = _restShadow * 0.35f;
                 Shape.ShadowOffset = shadow;
+                Shape.Lit = IsInteractable() ? _lift : 0.0f;
                 Shape.Redraw();
             }
 

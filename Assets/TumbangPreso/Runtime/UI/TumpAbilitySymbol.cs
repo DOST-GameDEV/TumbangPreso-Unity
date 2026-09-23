@@ -21,6 +21,27 @@ namespace TumbangPreso.UI
     {
         public AbilityGlyph Glyph;
         public bool HudStyle;
+
+        /// <summary>
+        /// Draw the ability's illustration dimmed: a power on cooldown or not yet available.
+        /// ⚠️ THIS REPLACED TINTING AS THE STATE CUE FOR DRAWN ICONS (2026-09-23). The deck used to
+        /// tint the white stroke gold when ready and cream when not; a coloured illustration cannot
+        /// be tinted without turning to mud, so ready shows it as drawn and muted shows it at half
+        /// value. The deck's ring, number and fill still carry the cooldown itself.
+        /// </summary>
+        public bool Muted;
+
+        private Sprite _art;
+
+        /// <summary>The illustration when one exists, else the white texture the strokes use.</summary>
+        public override Texture mainTexture
+        {
+            get
+            {
+                _art = AbilityIcons.Illustration(Glyph);
+                return _art != null ? _art.texture : s_WhiteTexture;
+            }
+        }
         /// <summary>Stroke width as a fraction of the icon's short side, match style.</summary>
         public const float HudStroke = .115f;
         public static readonly Color Keel = new Color(0, 0, 0, .92f);
@@ -29,6 +50,23 @@ namespace TumbangPreso.UI
         {
             vh.Clear();
             _segments.Clear();
+            _art = AbilityIcons.Illustration(Glyph);
+            if (_art != null)
+            {
+                // ⚠️ THE DRAWING, FITTED SQUARE AND CENTRED, NOT TINTED: its own colours are the
+                // point. `color` still contributes its alpha, so fades keep working.
+                var box = rectTransform.rect; float side = Mathf.Min(box.width, box.height);
+                var r = new Rect(box.center.x - side / 2, box.center.y - side / 2, side, side);
+                var uv = UnityEngine.Sprites.DataUtility.GetOuterUV(_art);
+                float v = Muted ? 0.5f : 1.0f;
+                var c = new Color(v, v, v, color.a);
+                vh.AddVert(new Vector3(r.xMin, r.yMin), c, new Vector2(uv.x, uv.y));
+                vh.AddVert(new Vector3(r.xMin, r.yMax), c, new Vector2(uv.x, uv.w));
+                vh.AddVert(new Vector3(r.xMax, r.yMax), c, new Vector2(uv.z, uv.w));
+                vh.AddVert(new Vector3(r.xMax, r.yMin), c, new Vector2(uv.z, uv.y));
+                vh.AddTriangle(0, 1, 2); vh.AddTriangle(0, 2, 3);
+                return;
+            }
             Collect(vh);
             var rect = rectTransform.rect; float size = Mathf.Min(rect.width, rect.height);
             if (!HudStyle)

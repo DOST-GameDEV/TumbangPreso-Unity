@@ -230,7 +230,7 @@ namespace TumbangPreso.UI
             var glyphGo = new GameObject("Glyph");
             glyphGo.transform.SetParent(tileGo.transform, false);
             card.Glyph = glyphGo.AddComponent<Image>();
-            card.Glyph.color = UiTheme.HeroGlyphOn;
+            card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOn);
             card.Glyph.preserveAspect = true;
             card.Glyph.raycastTarget = false;
             MenuKit.Stretch(card.Glyph.rectTransform);
@@ -409,7 +409,7 @@ namespace TumbangPreso.UI
             card.Rt.gameObject.SetActive(true);
             card.Tile.color = Color.white;
             card.Glyph.sprite = AbilityIcons.For(ability.Glyph);
-            card.Glyph.color = hero;
+            card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, hero);
             card.Key.text = Hud.KeyLabelFor(action);
             // ⚠️⚠️ `EffectiveName` AND `EffectiveSummary`, WHICH IS `VISION.md` § 3's RECALL
             // LAYER FINALLY SHOWING THE BUILD. This panel IS the hold-key layer that section

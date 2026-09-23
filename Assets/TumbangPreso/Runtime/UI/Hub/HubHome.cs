@@ -49,13 +49,13 @@ namespace TumbangPreso.UI.Hub
         {
             float m = HubKit.Margin;
 
-            var avatar = HubKit.Button(Root, "AvatarButton", null, HubStyle.Golden, () => Hub.Push<HubAvatar>(), 0, 101);
+            var avatar = HubKit.Button(Root, "AvatarButton", null, Door, () => Hub.Push<HubAvatar>(), 0, 101);
             HubKit.Place((RectTransform)avatar.transform, HubKit.TopLeft, new Vector2(m, -m), new Vector2(150, 150));
             _avatar = HubKit.Picture(avatar.Body, "Face", null);
             HubKit.Stretch(_avatar.rectTransform, 14);
             HubSlap.On(avatar.transform, 0.00f);
 
-            var plate = HubKit.Button(Root, "NamePlate", null, HubStyle.ArmyDeep, () => Hub.Host.OpenProfile(), 0, 102);
+            var plate = HubKit.Button(Root, "NamePlate", null, Door, () => Hub.Host.OpenProfile(), 0, 102);
             HubKit.Place((RectTransform)plate.transform, HubKit.TopLeft, new Vector2(m + 168, -m), new Vector2(480, 150));
             var body = plate.Body;
 
@@ -69,7 +69,10 @@ namespace TumbangPreso.UI.Hub
             _tag = HubKit.Text(body, "PlayerTag", "", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleLeft);
             HubKit.Place(_tag.rectTransform, HubKit.TopLeft, new Vector2(124, -70), new Vector2(330, 44));
 
+            // ⚠️ THE TRACK HAS A HONEY RIM. With an ink rim on the dark plate, an empty level-one bar
+            // read as a black slot rather than a bar waiting to fill (2026-09-23 UI review).
             var track = HubKit.Shape(body, "XpTrack", HubStyle.Night, false, 8, 3, 13);
+            track.Outline = new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, 0.55f);
             HubKit.Place(track.rectTransform, HubKit.BottomLeft, new Vector2(122, 18), new Vector2(330, 16));
             _xpFill = HubKit.Rect(track.transform, "XpFill");
             _xpFill.anchorMin = Vector2.zero; _xpFill.anchorMax = new Vector2(0, 1);
@@ -78,16 +81,44 @@ namespace TumbangPreso.UI.Hub
             fill.color = HubStyle.Chartreuse; fill.raycastTarget = false;
             HubSlap.On(plate.transform, 0.04f, -2);
 
-            var tree = HubKit.Button(Root, "SkillTreeButton", null, HubStyle.Army, () => Hub.Push<HubSkillTree>(), 0, 103);
+            var tree = HubKit.Button(Root, "SkillTreeButton", null, Door, () => Hub.Push<HubSkillTree>(), 0, 103);
             HubKit.Place((RectTransform)tree.transform, HubKit.TopLeft, new Vector2(m, -(m + 150 + 24)), new Vector2(420, 124));
-            var treeGlyph = HubKit.Glyph(tree.Body, "Icon", HubGlyph.Mark.Tree, HubStyle.Ink, 0.1f);
-            HubKit.Place(treeGlyph.rectTransform, HubKit.Left, new Vector2(18, 0), new Vector2(84, 84));
-            var the = HubKit.Text(tree.Body, "Eyebrow", "THE", HubStyle.Floor, true, HubStyle.Ink, TextAnchor.LowerLeft);
-            HubKit.Place(the.rectTransform, HubKit.TopLeft, new Vector2(116, -12), new Vector2(120, 34));
-            var treeWords = HubKit.Text(tree.Body, "Label", "SKILL TREE", HubStyle.Title, true, HubStyle.Ink, TextAnchor.MiddleLeft);
-            HubKit.Place(treeWords.rectTransform, HubKit.BottomLeft, new Vector2(114, 12), new Vector2(290, 66));
+            Well(tree.Body, HubStyle.Golden, HubKit.Left, new Vector2(12, 4), new Vector2(100, 96));
+            var treeGlyph = HubKit.Glyph(tree.Body, "Icon", HubGlyph.Mark.Tree, HubStyle.Ink, 0.12f);
+            HubKit.Place(treeGlyph.rectTransform, HubKit.Left, new Vector2(20, 4), new Vector2(84, 84));
+            var the = HubKit.Text(tree.Body, "Eyebrow", "THE", HubStyle.Floor, true, HubStyle.Golden, TextAnchor.LowerLeft);
+            HubKit.Place(the.rectTransform, HubKit.TopLeft, new Vector2(130, -12), new Vector2(120, 34));
+            var treeWords = HubKit.Text(tree.Body, "Label", "SKILL TREE", HubStyle.Title, true, HubStyle.Honey, TextAnchor.MiddleLeft);
+            HubKit.Place(treeWords.rectTransform, HubKit.BottomLeft, new Vector2(128, 18), new Vector2(280, 66));
+            HubKit.Letterpress(treeWords, Door);
             _skillNotice = HubKit.Notice(tree.Body);
             HubSlap.On(tree.transform, 0.08f);
+        }
+
+        // ------------------------------------------------------------------ the door family
+
+        /// <summary>
+        /// Every secondary door on HOME wears this one warm dark.
+        ///
+        /// ⚠️⚠️ ONE FAMILY, ONE PRIMARY, COLOUR IN THE WELLS (owner, 2026-09-23: "their colors are
+        /// ugly as fuck", "they arent even in theme or in color scheme"). Seven doors used to be six
+        /// unrelated flood fills (Golden, ArmyDeep, Army, Persimmon, Golden, DeepRed, ArmyDeep) at
+        /// equal weight over a saturated animated sunset, so nothing led and the olives went to mud
+        /// against the warm reds. Now: most of the chrome is warm dark sticker (Nintendo's
+        /// low-chroma ground, and the same silhouette-against-the-sky role the scene's own skyline
+        /// plays), honey carries rims and lettering, and colour is the small remainder, of which the
+        /// one big saturated slab is chartreuse PLAY. Each door keeps its identity in a coloured
+        /// WELL behind its picture, drawn only from the sunset's warm analogues (persimmon, golden,
+        /// rim red, honey): `docs/reports/ui-hud-review-2026-09-23/research.md` findings 6 and 7.
+        /// </summary>
+        private static Color Door => HubStyle.Night;
+
+        /// <summary>The coloured window behind a door's picture: rounded (furniture, not pressable),
+        /// thin ink edge, flat.</summary>
+        private static void Well(RectTransform body, Color colour, Vector2 anchor, Vector2 at, Vector2 size)
+        {
+            var well = HubKit.Shape(body, "Well", colour, false, 90 + (int)(at.x + size.x), 3, 16);
+            HubKit.Place(well.rectTransform, anchor, at, size);
         }
 
         // ------------------------------------------------------------------ left column
@@ -96,42 +127,54 @@ namespace TumbangPreso.UI.Hub
         {
             float m = HubKit.Margin;
 
-            var shop = HubKit.Button(Root, "ShopButton", null, HubStyle.DeepRed, () => Hub.Push<HubShopPopup>(), 0, 104);
+            var shop = HubKit.Button(Root, "ShopButton", null, Door, () => Hub.Push<HubShopPopup>(), 0, 104);
             HubKit.Place((RectTransform)shop.transform, HubKit.BottomLeft, new Vector2(m, m), new Vector2(300, 214));
-            var stall = HubKit.Glyph(shop.Body, "Icon", HubGlyph.Mark.Shop, HubStyle.Honey, 0.08f);
-            HubKit.Place(stall.rectTransform, HubKit.Top, new Vector2(0, -14), new Vector2(128, 128));
+            Well(shop.Body, HubStyle.RimRed, HubKit.Top, new Vector2(0, -12), new Vector2(272, 128));
+            var stall = HubKit.Glyph(shop.Body, "Icon", HubGlyph.Mark.Shop, HubStyle.Honey, 0.1f);
+            HubKit.Place(stall.rectTransform, HubKit.Top, new Vector2(0, -18), new Vector2(116, 116));
             var shopWords = HubKit.Text(shop.Body, "Label", "SHOP", HubStyle.Title, true, HubStyle.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(shopWords.rectTransform, HubKit.Bottom, new Vector2(0, 12), new Vector2(260, 62));
+            HubKit.Place(shopWords.rectTransform, HubKit.Bottom, new Vector2(0, 14), new Vector2(260, 62));
+            HubKit.Letterpress(shopWords, Door);
             HubSlap.On(shop.transform, 0.16f, -3);
 
-            var task = HubKit.Button(Root, "TaskButton", null, HubStyle.ArmyDeep, () => Hub.Push<HubTasks>(), 0, 105);
+            var task = HubKit.Button(Root, "TaskButton", null, Door, () => Hub.Push<HubTasks>(), 0, 105);
             HubKit.Place((RectTransform)task.transform, HubKit.BottomLeft, new Vector2(m + 320, m), new Vector2(164, 164));
-            var check = HubKit.Glyph(task.Body, "Icon", HubGlyph.Mark.Task, HubStyle.Golden, 0.1f);
-            HubKit.Place(check.rectTransform, HubKit.Top, new Vector2(0, -12), new Vector2(84, 84));
+            Well(task.Body, HubStyle.Golden, HubKit.Top, new Vector2(0, -10), new Vector2(140, 92));
+            var check = HubKit.Glyph(task.Body, "Icon", HubGlyph.Mark.Task, HubStyle.Ink, 0.12f);
+            HubKit.Place(check.rectTransform, HubKit.Top, new Vector2(0, -14), new Vector2(80, 80));
             var taskWords = HubKit.Text(task.Body, "Label", "TASK", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(taskWords.rectTransform, HubKit.Bottom, new Vector2(0, 10), new Vector2(140, 50));
+            HubKit.Place(taskWords.rectTransform, HubKit.Bottom, new Vector2(0, 14), new Vector2(140, 50));
+            HubKit.Letterpress(taskWords, Door);
             _taskNotice = HubKit.Notice(task.Body);
             HubSlap.On(task.transform, 0.2f, 3);
 
-            var loadout = HubKit.Button(Root, "LoadoutButton", null, HubStyle.Golden, () => Hub.Push<HubLoadout>(), 0, 106);
+            var loadout = HubKit.Button(Root, "LoadoutButton", null, Door, () => Hub.Push<HubLoadout>(), 0, 106);
             HubKit.Place((RectTransform)loadout.transform, HubKit.BottomLeft, new Vector2(m, m + 214 + 22), new Vector2(250, 178));
+            Well(loadout.Body, HubStyle.Honey, HubKit.Top, new Vector2(0, -12), new Vector2(226, 102));
             _shoeFace = HubKit.Picture(loadout.Body, "Tsinelas", null);
-            HubKit.Place(_shoeFace.rectTransform, HubKit.TopLeft, new Vector2(4, 22), new Vector2(150, 150));
+            HubKit.Place(_shoeFace.rectTransform, HubKit.TopLeft, new Vector2(8, 10), new Vector2(136, 136));
             _canFace = HubKit.Picture(loadout.Body, "Lata", null);
-            HubKit.Place(_canFace.rectTransform, HubKit.TopRight, new Vector2(-6, 10), new Vector2(128, 128));
-            var loadoutWords = HubKit.Text(loadout.Body, "Label", "LOADOUT", HubStyle.Label, true, HubStyle.Ink, TextAnchor.MiddleCenter);
-            HubKit.Place(loadoutWords.rectTransform, HubKit.Bottom, new Vector2(0, 8), new Vector2(230, 48));
+            HubKit.Place(_canFace.rectTransform, HubKit.TopRight, new Vector2(-10, 6), new Vector2(118, 118));
+            var loadoutWords = HubKit.Text(loadout.Body, "Label", "LOADOUT", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleCenter);
+            HubKit.Place(loadoutWords.rectTransform, HubKit.Bottom, new Vector2(0, 12), new Vector2(230, 48));
+            HubKit.Letterpress(loadoutWords, Door);
             HubSlap.On(loadout.transform, 0.12f, 2);
 
-            var hero = HubKit.Button(Root, "HeroButton", null, HubStyle.Persimmon, () => Hub.Push<HubHero>(), 0, 107);
+            var hero = HubKit.Button(Root, "HeroButton", null, Door, () => Hub.Push<HubHero>(), 0, 107);
             HubKit.Place((RectTransform)hero.transform, HubKit.BottomLeft, new Vector2(m, m + 214 + 22 + 178 + 22), new Vector2(250, 178));
+            Well(hero.Body, HubStyle.Persimmon, HubKit.Top, new Vector2(0, -12), new Vector2(226, 102));
             // ⚠️ THE FACE BREAKS OUT OF THE STICKER'S TOP. A portrait boxed inside its card reads as a
             // thumbnail; one that pokes out reads as a person standing behind a sign, which is the
             // street's own joke and the one flourish on this screen.
+            // ⚠️ AND IT STOPS ABOVE THE LABEL (2026-09-23 UI review). At 170 units it reached down to
+            // 38 units from the sticker's bottom, so "HERO" was lettered across the portrait's dark
+            // torso and read as part of the picture. 146 units raised to break out by 38 ends 70
+            // units up, clear of the 8 to 56 label band, which is how LOADOUT beside it already works.
             _heroFace = HubKit.Picture(hero.Body, "Face", null);
-            HubKit.Place(_heroFace.rectTransform, HubKit.Top, new Vector2(0, 30), new Vector2(170, 170));
-            var heroWords = HubKit.Text(hero.Body, "Label", "HERO", HubStyle.Label, true, HubStyle.Ink, TextAnchor.MiddleCenter);
-            HubKit.Place(heroWords.rectTransform, HubKit.Bottom, new Vector2(0, 8), new Vector2(230, 48));
+            HubKit.Place(_heroFace.rectTransform, HubKit.Top, new Vector2(0, 38), new Vector2(146, 146));
+            var heroWords = HubKit.Text(hero.Body, "Label", "HERO", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleCenter);
+            HubKit.Place(heroWords.rectTransform, HubKit.Bottom, new Vector2(0, 12), new Vector2(230, 48));
+            HubKit.Letterpress(heroWords, Door);
             HubSlap.On(hero.transform, 0.08f, -2);
         }
 
@@ -284,7 +327,9 @@ namespace TumbangPreso.UI.Hub
                 _modeSub.text = "HERO STRIKE  ·  " + tier;
             }
             HubKit.Fit(_modeSub, 460);
-            _modeShape.Fill = choice == 0 ? HubStyle.DeepRed : choice == 1 ? HubStyle.ArmyDeep : HubStyle.Night;
+            // Ranked is the one stake worth marking; Classic and Casual share the door family's dark
+            // (ArmyDeep went to mud beside the sunset, see `Door`).
+            _modeShape.Fill = choice == 0 ? HubStyle.DeepRed : HubStyle.Night;
             _modeShape.Redraw();
 
             // Three of the cast who play this mode peek out of the card's right side.

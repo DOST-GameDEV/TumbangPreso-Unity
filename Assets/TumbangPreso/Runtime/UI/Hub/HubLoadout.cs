@@ -60,7 +60,7 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.ArmyDeep, 23);
+            HubPattern.Ground(Root, HubStyle.Maroon, 23);
             HubChrome.Back(Root, Hub);
             HubChrome.TopRight(Root, Hub);
             _unowned = StartUnowned;
@@ -103,6 +103,12 @@ namespace TumbangPreso.UI.Hub
             _equip = HubKit.Button(Root, "EquipButton", "EQUIP", HubStyle.Chartreuse, () => EquipOrBuy(_selected), HubStyle.Display, 413);
             HubKit.Place((RectTransform)_equip.transform, HubKit.BottomRight, new Vector2(-HubKit.Margin, HubKit.Margin), new Vector2(420, 150));
             _equip.Shape.BandFraction = 0.12f;
+
+            // ⚠️ THE SELECTED ITEM'S NAME SITS ABOVE EQUIP (2026-09-23 UI review). The brackets
+            // marked which tile was chosen but its NAME appeared nowhere until the popup opened, so
+            // EQUIP and BUY acted on something the screen never named.
+            _selectedName = HubKit.Text(Root, "SelectedItemName", "", HubStyle.Title, true, HubStyle.Honey, TextAnchor.LowerLeft);
+            HubKit.Place(_selectedName.rectTransform, HubKit.BottomRight, new Vector2(-HubKit.Margin, HubKit.Margin + 150 + 14), new Vector2(420, 120));
 
             Rebuild();
             if (GameServices.Wallet != null) GameServices.Wallet.Changed += Rebuild;
@@ -155,7 +161,7 @@ namespace TumbangPreso.UI.Hub
                 // ⚠️ OLIVE, NOT CREAM. The first capture was a wall of pale tiles, which the brief rules
                 // out ("no white or pale default palettes"); Army is the logo's mid-tone, dark enough to
                 // read as a ground and light enough that a black tsinelas still shows on it.
-                var tile = HubKit.Button(_grid, "Item_" + entries[i].Id, null, i == equipped ? HubStyle.Golden : HubStyle.Army,
+                var tile = HubKit.Button(_grid, "Item_" + entries[i].Id, null, i == equipped ? HubStyle.Golden : HubStyle.Honey,
                                          () => Open(id), 0, 420 + i + _category * 40);
                 var face = HubKit.Picture(tile.Body, "Face", HubKit.Portrait(entries[i].Id));
                 HubKit.Stretch(face.rectTransform, 16);
@@ -217,6 +223,7 @@ namespace TumbangPreso.UI.Hub
         {
             _selected = id;
             foreach (var t in _tiles) if (t.brackets != null) t.brackets.SetActive(t.id == id);
+            if (_selectedName != null) _selectedName.text = id == null ? "" : ItemName(id);
             if (id == null) { _equip.interactable = false; HubKit.SetLabel(_equip, "EQUIP"); return; }
 
             bool owned = HubOwnership.Owns(id);
@@ -225,6 +232,16 @@ namespace TumbangPreso.UI.Hub
             HubKit.LabelOf(_equip).fontSize = HubStyle.Size(owned ? HubStyle.Display : HubStyle.Title);
             HubKit.Fit(HubKit.LabelOf(_equip), 384);
             _equip.interactable = !equipped;
+        }
+
+        private Text _selectedName;
+
+        private static string ItemName(string id)
+        {
+            string refId = id.Substring(id.IndexOf(':') + 1);
+            var entries = id.StartsWith("slipper:") ? Roster.Slippers : Roster.Cans;
+            var entry = Roster.At(entries, Roster.IndexIn(entries, refId));
+            return (entry?.Name ?? refId).ToUpperInvariant();
         }
 
         private int IndexOf(string id)
@@ -301,7 +318,7 @@ namespace TumbangPreso.UI.Hub
             HubKit.Place((RectTransform)_star.transform, HubKit.TopRight, new Vector2(-34, -30), new Vector2(96, 96));
 
             _stage = HubKit.Place(HubKit.Rect(_panel, "ModelStage"), HubKit.TopLeft, new Vector2(48, -160), new Vector2(1224, 470));
-            var plate = HubKit.Shape(_stage, "StagePlate", HubStyle.ArmyDeep, false, 432, 5, 26);
+            var plate = HubKit.Shape(_stage, "StagePlate", HubStyle.Night, false, 432, 5, 26);
             HubKit.Stretch(plate.rectTransform);
             var model = HubKit.Stretch(HubKit.Rect(_stage, "Model"), 8);
             var preview = model.gameObject.AddComponent<ModelPreview>();

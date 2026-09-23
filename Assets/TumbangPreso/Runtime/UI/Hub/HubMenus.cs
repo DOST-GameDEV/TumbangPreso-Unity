@@ -118,7 +118,7 @@ namespace TumbangPreso.UI.Hub
             {
                 string id = Avatars.Ids[i];
                 int col = i % 5, row = i / 5;
-                var tile = HubKit.Button(grid, "Avatar_" + id, null, HubStyle.ArmyDeep, () => Choose(id), 0, 170 + i);
+                var tile = HubKit.Button(grid, "Avatar_" + id, null, HubStyle.Night, () => Choose(id), 0, 170 + i);
                 HubKit.Place((RectTransform)tile.transform, HubKit.TopLeft, new Vector2(col * (size + gap), -row * (size + gap + 8)), new Vector2(size, size));
                 var face = HubKit.Picture(tile.Body, "Face", Avatars.Get(id));
                 HubKit.Stretch(face.rectTransform, 12);
@@ -154,7 +154,7 @@ namespace TumbangPreso.UI.Hub
             for (int i = 0; i < _tiles.Count; i++)
             {
                 bool mine = Avatars.Ids[i] == current;
-                HubKit.SetFill(_tiles[i], mine ? HubStyle.Persimmon : HubStyle.ArmyDeep);
+                HubKit.SetFill(_tiles[i], mine ? HubStyle.Persimmon : HubStyle.Night);
             }
         }
     }

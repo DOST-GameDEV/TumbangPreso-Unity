@@ -198,6 +198,7 @@ namespace TumbangPreso.UI.Hub
             var shape = Shape(body, "Sticker", fill, true, seed == 0 ? name.GetHashCode() : seed);
             Stretch(shape.rectTransform);
             button.Shape = shape;
+            button.Shimmer = IsPrimary(fill);
 
             Color ink = HubStyle.TextOn(fill);
             if (icon != HubGlyph.Mark.None)
@@ -217,8 +218,12 @@ namespace TumbangPreso.UI.Hub
             {
                 var label = Text(body, "Label", words, step, true, ink, TextAnchor.MiddleCenter);
                 Stretch(label.rectTransform);
-                label.rectTransform.offsetMin = new Vector2(icon != HubGlyph.Mark.None ? 72 : 18, 8);
+                // ⚠️ The label centres on the FACE, above the sticker's lip (`HubShape`'s finish), not
+                // on the whole slab: centred on the slab it sat visibly low on every button.
+                label.rectTransform.anchorMin = new Vector2(0, 0.12f);
+                label.rectTransform.offsetMin = new Vector2(icon != HubGlyph.Mark.None ? 72 : 18, 4);
                 label.rectTransform.offsetMax = new Vector2(-18, -6);
+                Letterpress(label, fill);
             }
 
             if (onClick != null) button.onClick.AddListener(() => onClick());
@@ -250,10 +255,47 @@ namespace TumbangPreso.UI.Hub
             if (button == null || button.Shape == null) return;
             button.Shape.Fill = fill;
             button.Shape.Redraw();
+            button.Shimmer = IsPrimary(fill);
             var label = LabelOf(button);
-            if (label != null) label.color = HubStyle.TextOn(fill);
+            if (label != null) Letterpress(label, fill);
             var icon = button.Body.Find("Icon")?.GetComponent<HubGlyph>();
             if (icon != null) icon.color = HubStyle.TextOn(fill);
+        }
+
+        private static bool IsPrimary(Color fill) =>
+            Mathf.Abs(fill.r - HubStyle.Chartreuse.r) < 0.01f && Mathf.Abs(fill.g - HubStyle.Chartreuse.g) < 0.01f
+            && Mathf.Abs(fill.b - HubStyle.Chartreuse.b) < 0.01f;
+
+        /// <summary>
+        /// The lettering's own depth: a one-step drop in the sticker's deep colour under honey
+        /// lettering, so a light word on a dark sticker sits ON it like the logo's letters do. Ink
+        /// lettering on a light sticker gets none (a shadow under ink only thickens it).
+        /// </summary>
+        public static void Letterpress(Text label, Color fill)
+        {
+            // ⚠️⚠️ LIGHT LETTERS WITH AN INK OUTLINE ON EVERY SATURATED OR DARK STICKER (2026-09-23).
+            // Brawl Stars and Fall Guys (inspected, `research.md`) letter their buttons in white with
+            // a heavy dark outline and a drop, and the mode cards here already did it. That lettering
+            // holds on any fill and over any moving background, and it is what made the plain ink
+            // "PLAY" on chartreuse look like a form button. PAPER stickers (honey and its tints) keep
+            // ink lettering: dark on light is already the strongest pair and an outline only clogs it.
+            Color.RGBToHSV(fill, out _, out float s, out float v);
+            bool paper = s < 0.5f && v > 0.8f;
+            Outline edge = null;
+            foreach (var e in label.GetComponents<Outline>()) edge = e;
+            if (paper)
+            {
+                label.color = HubStyle.Ink;
+                if (edge != null) edge.enabled = false;
+                return;
+            }
+            label.color = HubStyle.Paper;
+            if (edge == null) edge = label.gameObject.AddComponent<Outline>();
+            edge.enabled = true;
+            edge.effectColor = HubStyle.Ink;
+            edge.useGraphicAlpha = false;
+            float weight = label.fontSize >= HubStyle.Display ? 4.0f : label.fontSize >= HubStyle.Title ? 3.0f : 2.5f;
+            edge.effectDistance = new Vector2(weight, -weight - 1.0f);
         }
 
         /// <summary>
@@ -288,6 +330,6 @@ namespace TumbangPreso.UI.Hub
         }
 
         /// <summary>The small prompt beside BACK: ESC, or the pad's east button, or nothing on touch.</summary>
-        public static HubPrompt BackPrompt(Transform parent) => HubPrompt.Build(parent, "BackPrompt", "ESC", "BUTTON EAST");
+        public static HubPrompt BackPrompt(Transform parent) => HubPrompt.Build(parent, "BackPrompt", "ESC", "BUTTON EAST", padOnly: true);
     }
 }

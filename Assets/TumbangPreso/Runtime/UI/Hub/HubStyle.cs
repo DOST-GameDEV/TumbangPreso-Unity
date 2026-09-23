@@ -37,6 +37,27 @@ namespace TumbangPreso.UI.Hub
         /// <summary>The warm dark behind popups and under the queue plate. Red 42 over blue 11.</summary>
         public static readonly Color Night = Hex(0x2A160B);
 
+        /// <summary>
+        /// The ground of every full front-end screen: the logo's deep red taken 60 per cent of
+        /// the way to <see cref="Night"/>, arithmetic at the definition (`CLAUDE.md` § 6.4's rule
+        /// for a derived colour), red 91 over blue 15.
+        ///
+        /// ⚠️⚠️ IT REPLACED ARMY DEEP AS A GROUND ON 2026-09-23. The owner, looking at the front end:
+        /// "their colors are ugly as fuck", "make sure the colors all work well tgthr with the
+        /// background". HOME is an animated red-orange sunset; every screen pushed from it sat on an
+        /// olive (4A4510) that clashed with persimmon cards and went to mud beside every warm red.
+        /// A maroon from the sunset's own family keeps a player who leaves HOME for HERO in the same
+        /// evening. Mocked against olive and plain Night on the real HERO capture first: olive
+        /// clashed, Night read clean but flat, maroon kept the warmth and held every text contrast.
+        /// </summary>
+        public static readonly Color Maroon = new Color(
+            DeepRed.r + (Night.r - DeepRed.r) * 0.6f, DeepRed.g + (Night.g - DeepRed.g) * 0.6f,
+            DeepRed.b + (Night.b - DeepRed.b) * 0.6f, 1.0f);
+
+        /// <summary>The lettering on a saturated or dark sticker: the paper ramp's lightest tint
+        /// of Honey (`CLAUDE.md` § 6.4, `#FEEBD4`), always drawn with an ink outline.</summary>
+        public static readonly Color Paper = Hex(0xFEEBD4);
+
         /// <summary>The dimmer behind a popup. 70 per cent of <see cref="Night"/>, measured to keep
         /// the court readable as a place without competing with the popup's own lettering.</summary>
         public static Color Scrim => new Color(Night.r, Night.g, Night.b, 0.72f);
@@ -100,6 +121,49 @@ namespace TumbangPreso.UI.Hub
 
         public static Color Hex(int rgb) =>
             new Color32((byte)((rgb >> 16) & 0xFF), (byte)((rgb >> 8) & 0xFF), (byte)(rgb & 0xFF), 255);
+
+        // ------------------------------------------------------------------ shading
+
+        /// <summary>
+        /// The lit version of a fill: value up, hue nudged toward yellow, saturation eased.
+        ///
+        /// ⚠️⚠️ SHADE BY SHIFTING THE HUE, NEVER BY MIXING IN BLACK OR WHITE (2026-09-23 UI review,
+        /// `docs/reports/ui-hud-review-2026-09-23/research.md` finding 6). Nintendo's Splatoon team
+        /// "never used black for shade" and picked shades from the same hue; painters and pixel
+        /// artists go one step further and warm the light toward yellow and the shade toward red.
+        /// Until this date every sticker was ONE flat hex, and a flat saturated fill beside five
+        /// other flat saturated fills is exactly what the owner called bland and ugly. The six logo
+        /// colours stay the six logo colours (`CLAUDE.md` § 6.4); this is how each one is LIT.
+        /// </summary>
+        public static Color Lit(Color c, float amount = 1.0f)
+        {
+            Color.RGBToHSV(c, out float h, out float s, out float v);
+            h = TowardHue(h, 1.0f / 6.0f, 0.022f * amount);
+            s *= 1.0f - 0.10f * amount;
+            v = Mathf.Min(1.0f, v + (0.13f + 0.10f * (1.0f - v)) * amount);
+            var lit = Color.HSVToRGB(h, s, v); lit.a = c.a;
+            return lit;
+        }
+
+        /// <summary>The shaded version of a fill: value down, hue pushed toward red, saturation up.
+        /// The warm direction is deliberate: a cool shadow would put blue into a menu (§ 6.4).</summary>
+        public static Color Deep(Color c, float amount = 1.0f)
+        {
+            Color.RGBToHSV(c, out float h, out float s, out float v);
+            h = TowardHue(h, 0.0f, 0.035f * amount);
+            s = Mathf.Min(1.0f, s * (1.0f + 0.14f * amount) + 0.04f * amount);
+            v *= 1.0f - 0.30f * amount;
+            var deep = Color.HSVToRGB(h, s, v); deep.a = c.a;
+            return deep;
+        }
+
+        /// <summary>Move hue <paramref name="h"/> toward <paramref name="target"/> by at most
+        /// <paramref name="step"/>, the short way round the wheel.</summary>
+        private static float TowardHue(float h, float target, float step)
+        {
+            float d = Mathf.Repeat(target - h + 0.5f, 1.0f) - 0.5f;
+            return Mathf.Repeat(h + Mathf.Clamp(d, -step, step), 1.0f);
+        }
 
         /// <summary>Ink or Honey, whichever reads on <paramref name="fill"/>.</summary>
         public static Color TextOn(Color fill)

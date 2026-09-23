@@ -55,7 +55,7 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.ArmyDeep, 22);
+            HubPattern.Ground(Root, HubStyle.Maroon, 22);
 
             // The stage: the left half, a Persimmon sticker the hero stands on.
             var stage = HubKit.Span(HubKit.Rect(Root, "Stage"), new Vector2(0, 0), new Vector2(0.46f, 1),
@@ -294,7 +294,7 @@ namespace TumbangPreso.UI.Hub
 
             if (Slot < 2 && HeroLoadoutRules.VariantsFor(Hero, Slot + 1).Count > 1)
             {
-                var more = HubKit.Button(panel, "OpenSkillTree", "ALTERNATIVES IN THE SKILL TREE", HubStyle.Army,
+                var more = HubKit.Button(panel, "OpenSkillTree", "ALTERNATIVES IN THE SKILL TREE", HubStyle.Honey,
                                          () => { Close(); Hub.Push<HubSkillTree>(t => t.Hero = Hero); }, HubStyle.Body, 342, HubGlyph.Mark.Tree);
                 HubKit.Place((RectTransform)more.transform, HubKit.BottomRight, new Vector2(-48, 44), new Vector2(620, 92));
             }

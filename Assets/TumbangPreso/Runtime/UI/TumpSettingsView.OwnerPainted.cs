@@ -92,7 +92,7 @@ namespace TumbangPreso.UI
             =>SettingsOptionMenu.Create(Row(name,label),name+"Value",values,value,v=>{set(v);_session.Preview();});
         private void Audio()
         {
-            Note("Listen as you adjust. Save to keep your changes.");var s=SettingsStore.Current;
+            var s=SettingsStore.Current;
             AudioSlider("MasterVolume","Master volume",s.MasterVolume,v=>s.MasterVolume=v);
             AudioSlider("SoundVolume","Sound effects",s.SfxVolume,v=>s.SfxVolume=v);
             AudioSlider("MusicVolume","Music",s.MusicVolume,v=>s.MusicVolume=v);
@@ -102,13 +102,16 @@ namespace TumbangPreso.UI
             =>SettingsWorkspaceRows.Slider(Row(name,label),name+"Value",value,0,1,v=>{set(v);_session.Preview();},v=>Mathf.RoundToInt(v*100)+"%");
         private void Graphics()
         {
-            Note("Preview a change, then save it or return to your previous settings.");var s=SettingsStore.Current;
+            var s=SettingsStore.Current;
+            Header("DISPLAY");
             Choice("GraphicsQuality","Graphics quality",GraphicsProfiles.All.Select(p=>p.Label).ToArray(),s.GraphicsQuality,
                 v=>{s.GraphicsQuality=v;GraphicsProfiles.Apply(v);});
             Choice("RenderStyle","Visual style",RenderStyles.All.Select(p=>p.Label).ToArray(),s.RenderStyle,
                 v=>{s.RenderStyle=v;RenderStyles.Apply(v);});
             Choice("AntiAliasing","Smooth edges",AntiAliasModes.All.Select(p=>p.Label).ToArray(),s.AntiAliasMode,
                 v=>{s.AntiAliasMode=v;AntiAliasModes.Apply(v);});
+            Toggle("Fullscreen","Fullscreen",s.Fullscreen,v=>s.Fullscreen=v,s.ApplyDisplay);
+            Header("PERFORMANCE");
             Choice("VSync","Vertical sync",VSyncModes.All.Select(p=>p.Label).ToArray(),s.VSyncMode,
                 v=>{s.VSyncMode=v;VSyncModes.Apply(v);FrameRateOptions.Apply(s.FrameRateLimit);UpdateFrameCapState();});
             _ownerFrameCap=SettingsOptionMenu.Create(Row("FrameRate","Frame rate limit"),"FrameRateValue",
@@ -116,7 +119,6 @@ namespace TumbangPreso.UI
                 v=>{s.FrameRateLimit=FrameRateOptions.All[v];FrameRateOptions.Apply(s.FrameRateLimit);_session.Preview();});
             _frameReason=OwnerUiLayout.Text(_list,"FrameRateReason","",28);_frameReason.color=SettingsPalette.Muted;
             _frameReason.gameObject.AddComponent<LayoutElement>().preferredHeight=67;UpdateFrameCapState();
-            Toggle("Fullscreen","Fullscreen",s.Fullscreen,v=>s.Fullscreen=v,s.ApplyDisplay);
         }
         private void UpdateFrameCapState()
         {
@@ -130,39 +132,48 @@ namespace TumbangPreso.UI
         private void Player()
         {
             var s=SettingsStore.Current;
+            Header("PROFILE");
             var name=SettingsWorkspaceRows.Entry(Row("PlayerName","Player name"),"PlayerNameField","PLAYER NAME");
-            name.SetTextWithoutNotify(s.PlayerName);name.characterLimit=Core.Balance.PlayerNameMax;
+            name.SetTextWithoutNotify(s.PlayerName);name.gameObject.AddComponent<SettingsControlFocus>();name.characterLimit=Core.Balance.PlayerNameMax;
             name.onValueChanged.AddListener(v=>{s.PlayerName=v;_session.Preview();});
+            Header("PRIVACY");
             Toggle("Telemetry","Share play statistics",s.TelemetryEnabled,v=>s.TelemetryEnabled=v);
             Note("Counts only: matches, modes, maps, picks and frame rate. No names, chat or anything you type.");
         }
         private void Accessibility()
         {
             var s=SettingsStore.Current;
+            Header("READING");
             Toggle("LargerText","Larger text",s.LargerText,v=>s.LargerText=v);
             SettingsWorkspaceRows.Slider(Row("HudScale","HUD size"),"HudScaleValue",
                 s.HudScale,1,1.2f,v=>{s.HudScale=v;_session.Preview();},v=>Mathf.RoundToInt(v*100)+"%");
             Note("Larger text enlarges settings and the match HUD. HUD size keeps each readout together; larger text uses at least 120%.");
+            Toggle("HighContrastHud","High-contrast HUD",s.HighContrastHud,v=>s.HighContrastHud=v);
+            Toggle("CalloutCaptions","Announcer captions",s.CalloutCaptions,v=>s.CalloutCaptions=v);
+            Note("English captions follow the recorded announcer, including when announcer volume is muted.");
+            Choice("SlipperHighlight","Slipper highlight",SlipperHighlights.All.Select(p=>p.Label).ToArray(),s.SlipperHighlight,v=>s.SlipperHighlight=v);
+            // ⚠️ "Interface motion can be reduced while gameplay movement stays visible" used to close
+            // this page: its own row already says so, and the owner's concise-copy rule removes a
+            // sentence that repeats a control. The reduced-effects scope note stays, because what it
+            // keeps (ability shapes, status cues) is not guessable from the row.
+            Header("MOTION AND EFFECTS");
+            Toggle("ReducedUiMotion","Reduce interface motion",s.ReducedUiMotion,v=>s.ReducedUiMotion=v);
+            Toggle("ReducedEffects","Reduce visual effects",s.ReducedEffects,v=>s.ReducedEffects=v);
+            Note("Reduced effects lower particles, flashes and shake, remove impact pauses and keep ultimate cameras steady. Ability shapes and status cues stay visible.");
+            AudioSlider("CameraShake","Camera shake",s.CameraShake,v=>s.CameraShake=v);
+            AudioSlider("FlashIntensity","Flash intensity",s.FlashIntensity,v=>s.FlashIntensity=v);
+            Toggle("CinematicCameraMotion","Cinematic camera movement",s.CinematicCameraMotion,v=>s.CinematicCameraMotion=v);
+            SettingsWorkspaceRows.Slider(Row("FirstPersonFov","First-person field of view"),"FirstPersonFovValue",
+                s.FirstPersonFov,75,110,v=>{s.FirstPersonFov=v;_session.Preview();},v=>Mathf.RoundToInt(v)+"°");
+            Header("PLAY CONTROLS");
             Choice("SprintControl","Sprint control",new[]{"Hold","Toggle"},s.ToggleSprint?1:0,v=>s.ToggleSprint=v==1);
             Choice("RestoreControl","Restore can control",new[]{"Hold","Toggle"},s.ToggleRestore?1:0,v=>s.ToggleRestore=v==1);
             Note("Toggle restore: press near the fallen can to start, press again to cancel. Moving away cancels it.");
-            SettingsWorkspaceRows.Slider(Row("FirstPersonFov","First-person field of view"),"FirstPersonFovValue",
-                s.FirstPersonFov,75,110,v=>{s.FirstPersonFov=v;_session.Preview();},v=>Mathf.RoundToInt(v)+"°");
-            Toggle("ReducedUiMotion","Reduce interface motion",s.ReducedUiMotion,v=>s.ReducedUiMotion=v);
-            Toggle("CalloutCaptions","Announcer captions",s.CalloutCaptions,v=>s.CalloutCaptions=v);
-            Toggle("HighContrastHud","High-contrast HUD",s.HighContrastHud,v=>s.HighContrastHud=v);
-            Toggle("ReducedEffects","Reduce visual effects",s.ReducedEffects,v=>s.ReducedEffects=v);
-            Note("Reduced effects lower particles, flashes and shake, remove impact pauses and keep ultimate cameras steady. Ability shapes and status cues stay visible.");
-            Note("English captions follow the recorded announcer, including when announcer volume is muted.");
-            AudioSlider("CameraShake","Camera shake",s.CameraShake,v=>s.CameraShake=v);
-            Toggle("CinematicCameraMotion","Cinematic camera movement",s.CinematicCameraMotion,v=>s.CinematicCameraMotion=v);
-            AudioSlider("FlashIntensity","Flash intensity",s.FlashIntensity,v=>s.FlashIntensity=v);
-            Choice("SlipperHighlight","Slipper highlight",SlipperHighlights.All.Select(p=>p.Label).ToArray(),s.SlipperHighlight,v=>s.SlipperHighlight=v);
             Toggle("Rumble","Controller vibration",s.Rumble,v=>s.Rumble=v,()=>Rumble.Enabled=s.Rumble);
-            Note("Interface motion can be reduced while gameplay movement stays visible.");
         }
         private void Controls()
         {
+            Header("DEVICE");
             Choice("InputDevice","Input device",new[]{"Keyboard & mouse","Controller","Touch"},(int)_device,
                 v=>{_device=(InputDeviceKind)v;ShowSection(0);});
             if(_device==InputDeviceKind.Touch)
@@ -177,6 +188,7 @@ namespace TumbangPreso.UI
                 Toggle("GenericController","Unrecognised controllers",GenericPadBridge.Enabled,v=>GenericPadBridge.Enabled=v);
                 Note("Turn this off for a flight stick or steering wheel. The controller map shows the assumed button layout.");
             }
+            Header("BINDINGS");
             Choice("BindingGroup","Control group",Rebinding.Groups.Select(g=>g.Title).ToArray(),_group,v=>{_group=v;ShowSection(0);});
             foreach(string action in Rebinding.Groups[_group].Actions)
             {
@@ -195,8 +207,11 @@ namespace TumbangPreso.UI
         private Button ActionRow(string name,string title,string label,Action action)
         {
             var button=SettingsWorkspaceRows.Action(Row(name,title),name+"Action",label,action);
+            SettingsWorkspaceRows.Chip(button,name.StartsWith("Binding_",StringComparison.Ordinal));
+            button.gameObject.AddComponent<SettingsControlFocus>();
             return button;
         }
+        private void Header(string words)=>SettingsWorkspaceRows.Header(_list,words);
         private void Decision()
         {
             if(_decision!=null){_decision.SetActive(true);return;}

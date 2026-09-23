@@ -75,5 +75,68 @@ namespace TumbangPreso.UI
             button.colors = colours; button.onClick.AddListener(() => { MenuSfx.Click(); action(); });
             return button;
         }
+
+        /// <summary>
+        /// Give a row's action a face: a KEYCAP for a binding, an outlined PILL for a command
+        /// (OPEN, ARRANGE, RESET CONTROLS).
+        ///
+        /// ⚠️ UNTIL 2026-09-23 BOTH WERE BARE WORDS. "W" and "OPEN" sat in the control column as
+        /// plain lettering, the same weight as the row labels, so nothing said they could be pressed
+        /// (`CLAUDE.md` § 6.3: "a door is a thing that looks pressable") and a key did not look like a
+        /// key. The face is sized to the lettering, recomputed by <see cref="FitChip"/> whenever the
+        /// binding text changes, and never narrower than a thumb-sized 120 units.
+        /// </summary>
+        public static void Chip(Button button, bool keycap)
+        {
+            var label = button.GetComponentInChildren<Text>();
+            var face = OwnerUiLayout.Rect(button.transform, "ChipFace").gameObject.AddComponent<Image>();
+            face.rectTransform.SetAsFirstSibling(); face.raycastTarget = false;
+            face.color = keycap ? SettingsPalette.Control : new Color(0, 0, 0, 0);
+            var edge = face.gameObject.AddComponent<Outline>();
+            edge.effectColor = keycap ? SettingsPalette.Rule : SettingsPalette.Accent; edge.effectDistance = new Vector2(2, -2);
+            edge.useGraphicAlpha = false;   // the pill's face is transparent; see `TumpSettingsView.Build`
+            if (keycap)
+            {
+                // The keycap's lower lip: a darker strip that makes it read as a key sitting up.
+                var lip = OwnerUiLayout.Rect(face.transform, "KeyLip").gameObject.AddComponent<Image>();
+                lip.rectTransform.anchorMin = Vector2.zero; lip.rectTransform.anchorMax = new Vector2(1, 0);
+                lip.rectTransform.offsetMin = Vector2.zero; lip.rectTransform.offsetMax = new Vector2(0, 6);
+                lip.color = SettingsPalette.Background; lip.raycastTarget = false;
+            }
+            label.alignment = TextAnchor.MiddleCenter; label.font = OwnerUiTheme.Current.Display;
+            FitChip(button);
+        }
+
+        public static void FitChip(Button button)
+        {
+            var face = button.transform.Find("ChipFace") as RectTransform;
+            var label = button.GetComponentInChildren<Text>();
+            if (face == null || label == null) return;
+            float width = Mathf.Clamp(label.preferredWidth + 60, 120, 533);
+            face.anchorMin = face.anchorMax = face.pivot = new Vector2(0, .5f);
+            face.anchoredPosition = new Vector2(4, 0); face.sizeDelta = new Vector2(width, 64);
+            label.rectTransform.anchorMin = label.rectTransform.anchorMax = label.rectTransform.pivot = new Vector2(0, .5f);
+            label.rectTransform.anchoredPosition = new Vector2(4, 2); label.rectTransform.sizeDelta = new Vector2(width, 60);
+        }
+
+        /// <summary>
+        /// A group header inside a section: small accent capitals in the reading face. Settings
+        /// pages over a handful of rows are grouped (the Overwatch/Valorant settings pattern), so a
+        /// long list is scanned by its three or four headers instead of read row by row.
+        /// </summary>
+        public static Text Header(Transform list, string words)
+        {
+            var text = OwnerUiLayout.Text(list, "GroupHeader", words, 28, OwnerUiLayout.TypeRole.Reading);
+            text.color = SettingsPalette.Accent; text.alignment = TextAnchor.LowerLeft; text.raycastTarget = false;
+            var box = text.gameObject.AddComponent<LayoutElement>(); box.preferredHeight = 74; box.minHeight = 74;
+            // A short accent rule under the words: the eye jumps from header to header down a long
+            // tab (Hi-Fi RUSH's red group strips, research finding 2) instead of reading the header
+            // as one more row label.
+            var rule = OwnerUiLayout.Rect(text.transform, "GroupRule").gameObject.AddComponent<Image>();
+            rule.rectTransform.anchorMin = rule.rectTransform.anchorMax = rule.rectTransform.pivot = Vector2.zero;
+            rule.rectTransform.anchoredPosition = new Vector2(0, -10); rule.rectTransform.sizeDelta = new Vector2(72, 4);
+            rule.color = SettingsPalette.Accent; rule.raycastTarget = false;
+            return text;
+        }
     }
 }
