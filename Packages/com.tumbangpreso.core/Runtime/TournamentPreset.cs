@@ -363,6 +363,8 @@ namespace TumbangPreso.Core
                 "Diagnostic argument for OwnerUiPlayerReview. Its installer/configuration is disabled by -tp-tournament; it is not a saved player preference."),
             new Modifier("-tp-review-rounds",
                 "Diagnostic argument for NetAutomationProbe. Its installer/configuration is disabled by -tp-tournament; it is not a saved player preference."),
+            new Modifier("-tp-review-automatic-arrival",
+                "Explicit native arrival review rule, disabled by -tp-tournament; ordinary rooms keep their saved manual-ready choice."),
             new Modifier("-tp-review-seconds",
                 "Diagnostic argument for NetAutomationProbe. Its installer/configuration is disabled by -tp-tournament; it is not a saved player preference."),
             new Modifier("-tp-round-rejoin-port",

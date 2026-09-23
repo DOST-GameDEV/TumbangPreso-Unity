@@ -31,6 +31,8 @@ namespace TumbangPreso.Diagnostics
         private bool _rematchObserved;
         private float _readyStableFor;
         private float _resultStableFor;
+        private float _lobbyStableFor;
+        private bool _lobbyStartSent;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void ConfigureReviewRules()
@@ -43,6 +45,7 @@ namespace TumbangPreso.Diagnostics
             var rules=Core.CustomGameRules.Defaults(classic?Core.GameMode.Classic:Core.GameMode.HeroStrike);
             rules.Rounds=Mathf.Clamp(rounds,Core.CustomGameRules.MinRounds,Core.CustomGameRules.MaxRounds);
             rules.RoundSeconds=Mathf.Clamp(seconds,Core.CustomGameRules.MinRoundSeconds,Core.CustomGameRules.MaxRoundSeconds);
+            rules.ManualReady=!Has(args,"-tp-review-automatic-arrival");
             SceneFlow.PinSelectedRules(rules);
             Debug.Log("[NetAuto] Explicit review rules: "+Core.CustomGameRules.ToWire(rules));
         }
@@ -71,8 +74,25 @@ namespace TumbangPreso.Diagnostics
 
         private void Update()
         {
+            StepLobby();
             StepReady();
             StepRematch();
+        }
+
+        private void StepLobby()
+        {
+            // The same START GAME action as the native custom lobby. Direct-arena matrix
+            // runs have no hub and retain their original ready-only automation.
+            if (_expectedPeers <= 0 || _lobbyStartSent || !NetAuthority.IsNetworked || !NetAuthority.IsHost) return;
+            var hub = UI.Hub.TumpHub.Current;
+            if (hub == null || !(hub.Top is UI.Hub.HubLobby) || !hub.Canvas.enabled ||
+                NetSession.Instance.Lobby.PlayingPeerCount() < _expectedPeers)
+            { _lobbyStableFor = 0; return; }
+            _lobbyStableFor += Time.unscaledDeltaTime;
+            if (_lobbyStableFor < SettleSeconds) return;
+            _lobbyStartSent = true;
+            Debug.Log("[NetAuto] START GAME from the visible hub lobby.");
+            hub.Host.StartGame();
         }
 
         /// <summary>
@@ -90,6 +110,9 @@ namespace TumbangPreso.Diagnostics
         private void StepReady()
         {
             if (_expectedPeers <= 0 || !NetAuthority.IsNetworked) return;
+            // Automatic rooms must prove ReadyGate's own post-introduction acknowledgement.
+            // A diagnostic READY press here would conceal a broken automatic arrival.
+            if (!SceneFlow.SelectedRules.ManualReady) return;
 
             var net = NetSession.Instance;
             var gate = FindFirstObjectByType<ReadyGate>();

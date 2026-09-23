@@ -425,6 +425,9 @@ Implementation order within UX-1:
   existing ballot/load/intro/countdown authority; inspect and fill actual missing
   connections, do not replace working stages or remove prior TODO requirements.
   Exact request and implementation decisions in the UX-1 completion plan.
+  Local arrival/manual/reduced-motion cases pass; internal Windows build and LAN
+  address join pass. Native auto-arrival/rematch remains open. Named-profile early
+  sign-in race fixed in source with13identity checks, pending native reproduction.
   Build missing UI to finished quality now; keep every built/changed surface in
   [the UI inventory](reports/front-end-flow-2026-09-23/ui-authorship-inventory.md)
   for a possible later refinement review, with paths/evidence/remaining issues.

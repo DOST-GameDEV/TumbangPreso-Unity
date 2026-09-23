@@ -52,6 +52,7 @@ namespace TumbangPreso.Diagnostics
         private string _path;
         private float _left;
         private float _elapsed;
+        private bool _visibleHubLobbySeen, _arrivalSeen, _automaticCountdownSeen;
 
         private readonly float[] _travelled = new float[Balance.PlayerCount];
         private readonly Vector3[] _lastPosition = new Vector3[Balance.PlayerCount];
@@ -111,6 +112,15 @@ namespace TumbangPreso.Diagnostics
         {
             float dt = Time.unscaledDeltaTime;
             _elapsed += dt;
+
+            var hub = UI.Hub.TumpHub.Current;
+            _visibleHubLobbySeen |= hub != null && hub.Canvas.enabled && hub.Top is UI.Hub.HubLobby;
+            if (GameServices.Round == null || !GameServices.Round.RoundActive)
+            {
+                _arrivalSeen |= FindFirstObjectByType<MatchArrivalPresentation>() != null;
+                var ready = FindFirstObjectByType<ReadyGate>();
+                _automaticCountdownSeen |= !UI.SceneFlow.SelectedRules.ManualReady && ready != null && ready.CountingDown;
+            }
 
             Sample();
 
@@ -237,6 +247,9 @@ namespace TumbangPreso.Diagnostics
             sb.AppendLine($"round           : {(match != null ? match.RoundNumber : -1)}");
             sb.AppendLine($"defender        : {(match != null ? match.DefenderSlot : -1)}");
             sb.AppendLine($"round active    : {(round != null && round.RoundActive)}");
+            sb.AppendLine($"hub lobby seen  : {_visibleHubLobbySeen}");
+            sb.AppendLine($"arrival seen    : {_arrivalSeen}");
+            sb.AppendLine($"auto count seen : {_automaticCountdownSeen}");
             sb.AppendLine($"lata upright    : {_lastLataUpright}   flips: {_lataFlips}");
 
             // ⚠️⚠️ THE PRESET, NOT MERELY "A MATCH HAPPENED". `docs/TODO.md` § 145.8: the recorded
