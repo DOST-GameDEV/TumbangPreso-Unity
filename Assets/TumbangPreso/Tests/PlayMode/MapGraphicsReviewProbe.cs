@@ -153,6 +153,60 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator EskinitaTerraceHomeTimberFollowsTheExistingCourses()
+        { yield return ReviewTimberHomes(new[] { "5_W" }); }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator EskinitaEastHomesTimberFollowsEachExistingFacade()
+        { yield return ReviewTimberHomes(new[] { "2_E", "5_E", "6_E" }); }
+
+        private IEnumerator ReviewTimberHomes(string[] lots)
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+            var rig = Object.FindFirstObjectByType<CameraRig>(); rig.enabled = false;
+            foreach (var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None)) arms.gameObject.SetActive(false);
+            var camera = rig.Camera; camera.fieldOfView = 45;
+            foreach (string lot in lots)
+            {
+            var home = GameObject.Find("Eskinita/Dressing/Bahay/Bahay_Rework_Bahay_" + lot);
+            var finish = GameObject.Find("Eskinita/Dressing/NeighborhoodRework/HouseFinish_Bahay_" + lot);
+            Assert.IsNotNull(home); Assert.IsNotNull(finish);
+            var renderers = finish.GetComponentsInChildren<MeshRenderer>();
+            var after = renderers.Select(r => r.sharedMaterials).ToArray();
+            int changed = 0;
+            var before = after.Select(materials => materials.Select(m =>
+            {
+                string path = m.GetTag("TumpRefineOriginalMaterial", false);
+                if (string.IsNullOrEmpty(path)) return m;
+                changed++;
+                var source = AssetDatabase.LoadAssetAtPath<Material>(path); Assert.IsNotNull(source);
+                return source;
+            }).ToArray()).ToArray();
+            Assert.AreEqual(3, changed);
+            var meshes = finish.GetComponentsInChildren<MeshFilter>().Select(f => f.sharedMesh).ToArray();
+            var bodies = home.GetComponentsInChildren<MeshRenderer>(); var bounds = bodies[0].bounds;
+            foreach (var body in bodies) bounds.Encapsulate(body.bounds);
+            bool east = lot.EndsWith("E");
+            foreach (string angle in new[] { east ? "lit-side" : "frontage", "street" })
+            {
+                camera.transform.position = angle == "lit-side" ? new Vector3(bounds.center.x + 5, 6.4f, bounds.center.z - 6) :
+                    new Vector3(bounds.center.x + (east ? -1 : 1) * (angle == "frontage" ? 9 : 12), 4.6f,
+                    bounds.center.z + (angle == "frontage" ? -3.8f : 4.2f));
+                camera.transform.LookAt(new Vector3(bounds.center.x, 3.1f, bounds.center.z));
+                foreach (string state in new[] { "before", "after" })
+                {
+                    for (int i = 0; i < renderers.Length; i++) renderers[i].sharedMaterials = state == "after" ? after[i] : before[i];
+                    using (Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera, "timber" + lot.Replace("_", "").ToLowerInvariant() + "-" + angle + "-" + state, false, Output, width: 1280, height: 800);
+                }
+            }
+            using (Visual.NeighbourhoodSkyMotion.At(20))
+                yield return GameplayShots.Render(camera, "timber" + lot.Replace("_", "").ToLowerInvariant() + "-small", false, Output, width: 960, height: 540);
+            CollectionAssert.AreEqual(meshes, finish.GetComponentsInChildren<MeshFilter>().Select(f => f.sharedMesh).ToArray());
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator EskinitaOuterContextKeepsTheCourtAndUsesTheRealPreviewCamera()
         {
             var canvas = new GameObject("Context preview canvas", typeof(Canvas));

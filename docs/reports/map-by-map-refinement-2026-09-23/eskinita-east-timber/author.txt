@@ -1,0 +1,8 @@
+5_W:3local material derivatives; original geometry, UVs, board joints, color, windows and collision unchanged.
+Filtered lengthwise grain replaces the second procedural vertical board grid on real horizontal cladding.
+2_E:3local material derivatives; original geometry, UVs, board joints, color, windows and collision unchanged.
+Filtered lengthwise grain replaces the second procedural vertical board grid on real horizontal cladding.
+5_E:3local material derivatives; original geometry, UVs, board joints, color, windows and collision unchanged.
+Filtered lengthwise grain replaces the second procedural vertical board grid on real horizontal cladding.
+6_E:3local material derivatives; original geometry, UVs, board joints, color, windows and collision unchanged.
+Filtered lengthwise grain replaces the second procedural vertical board grid on real horizontal cladding.

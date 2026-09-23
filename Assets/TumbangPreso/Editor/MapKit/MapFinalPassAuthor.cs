@@ -66,6 +66,7 @@ namespace TumbangPreso.EditorTools.MapKit
             MapSurfaceAuthor.FinishLoadedScene(map,report);
             if(map=="Eskinita")EskinitaContextAuthor.FinishLoadedScene(report);
             if(map=="Eskinita")EskinitaHouseFinishAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaTimberFinishAuthor.FinishLoadedScene(report);
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }
 

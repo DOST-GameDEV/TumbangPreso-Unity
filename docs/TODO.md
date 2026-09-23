@@ -151,7 +151,13 @@ building/material decisions, preserving the one-map-at-a-time order.
   supported door shade and a local correction for roof-tinted shrubs. Variant1
   rejected, variant2inspected at matched near cameras/small/grey; focused1/1pass.
   [House evidence](reports/map-by-map-refinement-2026-09-23/eskinita-house-b/report.md).
-  Other primary houses still require their individual refinements; next5_Wtimber.
+  Home5_W's horizontal timber no longer gets an incorrect vertical procedural grid;
+  original boards/colors/windows preserved. Matched near/street/small/grey inspected,
+  focused1/1passed. [Timber evidence](reports/map-by-map-refinement-2026-09-23/eskinita-timber5w/report.md).
+  The same demonstrated cladding/material mismatch is now corrected individually
+  at2_E/5_E/6_E, each inspected from a lit side and its shadowed street frontage;
+  focused1/1passed. [East timber evidence](reports/map-by-map-refinement-2026-09-23/eskinita-east-timber/report.md).
+  Other primary homes and5_W's remaining roof/composition details remain open.
   Near assets/materials, vegetation, sky and whole-map acceptance remain open.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
