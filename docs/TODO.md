@@ -249,7 +249,10 @@ scattered across all maps. Execute inside each map's existing refinement row.
   saved. Eight mint hedge bars now have locally authored low foliage in the retained
   planter shells; variant3selected after paired/overview/grey25inspection,1/1passed.
   [Planting evidence](reports/map-by-map-refinement-2026-09-23/bayan-garden/report.md).
-  Next the abrupt town/ground edge: [measured context plan](reports/map-by-map-refinement-2026-09-23/bayan-context-plan.md).
+  Abrupt town/ground edge replaced by32connected blocks,38retained-family homes,
+  68far homes and22planted plots. Original collision/landmarks retained; actual
+  preview/overview/grey25inspected, focused1/1passed.
+  [Context evidence](reports/map-by-map-refinement-2026-09-23/bayan-context/report.md).
   Remaining monument pots/buildings/sky stay open; keep successful civic landmarks.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.

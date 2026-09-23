@@ -9,11 +9,12 @@ requirements supersede retired plans. No other chats/delegation, paid services,
 credit resets, main edits or Desktop replacement. Normal workers while asleep.
 
 DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Last published/verified remote90401410ff60b1ea8e31f28412c6ecd5448e3729. Current Bayan
-garden unit ready to publish. Protected original2PNGmetas under Resources/UI/
+Last published/verified remote10b3e54e394d3c86288ecc86ba0e88ef43dd5ea2. Bayan
+garden unit is published. Protected original2PNGmetas under Resources/UI/
 composition-redesign (home-court/loading-street): NEVER restore/stage in DEV.
 QUAL C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached90401410f with qualified Bayan garden candidate. No active Unity jobs.
+owned detached10b3e54e3 with town-context source copied. Current author82800runs
+Logs/refine2-bayan-context-v1/author.log. No.cs edits while active.
 Original candidate/stash history retained; no resets/clean/force pushes. Other
 worktrees and contributor dirt stay untouched. Explicit path staging, sole author
 M4tyu633, no trailers/AI mentions/em dashes. Fetch before push, verify remote.
@@ -62,7 +63,7 @@ connected proportions accepted from paired sides/overview/grey25. Case55065passe
 1/1in3.763s, all jobs reaped. Qualified scene/assets/evidence copied to DEV. Full
 patches in QUALLogs/refine2-bayan-garden-v1/v2/v3, known churn restored.
 
-1. Publish the garden unit and plans/evidence. No more foliage taste variants or
+1. Garden unit is published. No more foliage taste variants or
    unchanged checks. Four separate monument pots still look block-like and remain
    a later local item, not already accepted.
 2. Implement bayan-context-plan.md and bayan-town-context-20260924.json. Actual
@@ -73,7 +74,8 @@ patches in QUALLogs/refine2-bayan-garden-v1/v2/v3, known churn restored.
    meaningful connected roads/groves, visual-only ground beyond the camera horizon.
    Preserve originals/collision, no distant shadows. Distinct lower greener town,
    not Eskinita's96dense blocks. Validate generated bodies against existing town
-   and roads. Context is planned only; NO context source/geometry authored yet.
+   and roads. Context source now drafted; guarded author82800in flight. Do not
+   restart it without inspecting completion. No visual acceptance yet.
 3. Review monument pots, near civic/house material weaknesses, town sky/camera views
    and Bayan static card. Keep good church/hall forms. Then Ilalim, SaBubong, Lagoon,
    each individually researched/authored. Lagoon is Sama Bajau, with detached pile
@@ -128,3 +130,35 @@ turnaround step needed -rig; bounded repair used), art-batch4 running (Rafi v7 r
 plus ModeCardPoseAuthor poses to Logs/mode-card-poses). Never commit the two original
 composition-redesign .meta files. Next: avatar compile and picker capture, posters,
 Rafi v7 inspection, five-shape captures of the changed screens, push.
+
+Town-context source: BayanTownContextAuthor.cs uses local measured layout and the
+retained a/c/e/o family meshes.32blocks, explicit garden omissions, far proxies,
+partitioned streets/curbs and visual-only ground outside the110m town. Original
+collider bounds and new house/road/house overlaps guarded. Shared palette/combined
+block meshes, distant shadows off. Existing Eskinita palette/mesh construction
+helpers reused in a separate map-specific author; no Eskinita assets changed.
+BayanTownContextReviewadded to the existing native capture probe for actual preview,
+overview and north/south player views with context toggled at unchanged poses.
+Next author receipt, one focused capture, inspect before/after/small-grey and refine
+only demonstrated defects. Keep surrounding code frozen during the run.
+
+Context author82800stopped/reaped with an actual placement guard: WestOuter1's
+house entered the cross-road atz-78. No scene saved. Move the two side outer blocks
+fromz-84to-100and move their local connecting streets with them; keep the road
+intersection guard unchanged. Revised author next uses author-layout2.log in the
+same context folder. Failed log/partial assets preserved, not claimed as success.
+
+Context author82812completed/reaped after layout correction:32blocks,38retained-family
+homes,68simple far homes,22planted shared plots,110343vertices; one palette material,
+no added collider/shadowcaster. All house/road/house guards pass; independent measured
+size check found no remaining proposed house-road overlap. Current native matched
+preview/overview/north/south review running Logs/refine2-bayan-context-v1/check.log;
+no.cs edits while active. Capture must be inspected before acceptance or publishing.
+
+Context check5031completed/reaped1/1in4.474s. Actual preview/overview/north/small-grey
+inspected: continuation replaces abrupt edge, church/hall remain focal. South witness
+partly inside actor, recorded limitation; do not repair capture machinery. Source/
+qualified scene/assets/evidence copied to DEV, known churn restored after patch.
+Keep this context result; publish it, then review four block-like monument pots and
+remaining local buildings/sky. Full native/camera traversal is still in final gate.
+No active Unity job. See bayan-context/report.md for counts and exact limits.

@@ -46,3 +46,6 @@ z-20.5/+29.8cross-streets and outer lanes.128potential plots before garden omiss
 far fewer than Eskinita's dense district. Check every generated body against roads
 and retained envelope before acceptance. Large visual-only ground avoids the hard
 horizon edge without extra subdivisions or a gameplay-boundary change.
+
+The placement guard caught thez-84outer side plots entering thez-78cross-street.
+Both side blocks/local streets moved toz-100; the guard remains strict.

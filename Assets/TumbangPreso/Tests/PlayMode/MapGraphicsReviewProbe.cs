@@ -87,6 +87,42 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator BayanTownContextReview()
+        {
+            var canvas=new GameObject("Bayan context preview",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.BayanPlaza);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.BayanPlaza && Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.BayanPlaza,preview.Showing);preview.enabled=false;
+            var context=GameObject.Find("BayanPlaza/Dressing/BayanTownContext");Assert.IsNotNull(context);
+            Assert.IsEmpty(context.GetComponentsInChildren<Collider>());
+            foreach(string state in new[]{"before","after"})
+            {
+                context.SetActive(state=="after");yield return null;
+                using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(preview.Camera,"Bayan-context-preview-"+state,false,Output,width:1280,height:720);
+            }
+            Object.Destroy(canvas);yield return PlayModeWorld.Reset();
+            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            context=GameObject.Find("BayanPlaza/Dressing/BayanTownContext");var camera=rig.Camera;camera.fieldOfView=58;
+            foreach(string view in new[]{"overview","north","south"})
+            {
+                camera.transform.position=view=="overview"?new Vector3(16,16,-22):new Vector3(0,1.7f,view=="north"?-10:10);
+                camera.transform.LookAt(view=="overview"?new Vector3(0,1,1):new Vector3(0,2.3f,view=="north"?40:-40));
+                foreach(string state in new[]{"before","after"})
+                {
+                    context.SetActive(state=="after");yield return null;
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"Bayan-context-"+view+"-"+state,false,Output,width:1280,height:720);
+                }
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator BayanGardenMatchedReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza);
