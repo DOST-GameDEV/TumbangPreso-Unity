@@ -54,6 +54,16 @@ namespace TumbangPreso.UI
             if(click!=null)action.onClick.AddListener(()=>{MenuSfx.Click();click();});
             return action;
         }
+        public static OwnerTextAction CreateBack(Transform parent, string name, Action click,
+            float x, float y, float size = 72)
+        {
+            var action = Create(parent, name, "", click, x, y, size, size);
+            var arrow = OwnerUiGlyph.Create(action.transform, "BackArrow", OwnerUiGlyph.Mark.Back, OwnerUiTheme.Current.ActionInk);
+            OwnerUiLayout.Place(arrow.rectTransform, size * .22f, size * .22f, size * .56f, size * .56f);
+            action.FeedbackMotion = arrow.gameObject.AddComponent<OwnerUiMotion>();
+            return action;
+        }
+
         protected override void DoStateTransition(SelectionState state,bool instant)
         {
             bool over=state==SelectionState.Highlighted || state==SelectionState.Selected;

@@ -176,3 +176,27 @@ Follow the one focused check/one bounded tooling-repair rule. Real product defec
 get fixed; unrelated capture machinery does not consume the implementation phase.
 Record unfinished or external acceptance honestly. New research/implementation
 begins after the older actionable-work gate, not instead of finishing it.
+
+## Owner clarification: map references after UI,2026-09-23
+
+Finish all currently assigned UI work before starting map refinement. The older map
+feedback remains active: all five maps individually, construction-specific detail
+and material identity, pleasing stylised art rather than realism, more convincing
+Sama Bajau lagoon architecture including detached over-water homes, animated sky
+and island/mountain context, natural ambient movement. Keep good existing work.
+
+Use built-in image generation as an additional reference source during that later
+pass. Critique every result: record useful silhouette/material/composition ideas,
+errors, over-detail, cultural/place mismatches and parts that would not work in the
+actual3D camera or navigable map. Copy only the good ideas into authored game assets.
+Generate further targeted references when the comparison reveals a concrete gap;
+do not turn reference generation into a substitute for implementing and viewing a
+better map. Continue using3d-asset.com and independent real-world/game references.
+Compare actual in-engine before/after at player/spectator distances for each map.
+No global texture/noise/recolour sweep, no deleting older tasks, no premature closure.
+Current generated images are loading-screen illustrations, not a started map rebuild.
+
+Owner expands the later review to ALL animated skies, islands, mountains and other
+background scenery. This means assess and improve weak existing work, not merely
+retain it because animation exists. Added REFINE-2.6a, carried inside each map pass.
+UI remains the immediate priority.

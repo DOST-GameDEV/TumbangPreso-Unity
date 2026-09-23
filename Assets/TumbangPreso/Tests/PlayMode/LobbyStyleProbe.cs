@@ -128,23 +128,10 @@ namespace TumbangPreso.PlayTests
             for(int i=0;i<SettleFrames;i++)yield return null;
             Assert.IsNull(FindByName("FormatRow"),"The removed RULES shortcut is still installed");
 
-            // ⚠️⚠️ THERE IS NO DRAWER TO OPEN ANY MORE AND THIS LINE THREW A NULL REFERENCE FOR
-            // IT. The converted lobby kept the advanced rules behind `SettingsDrawerToggle`,
-            // MATCH SETTINGS; `OwnerPreparationView` puts `CustomGameButton` on the face of the
-            // screen, which is the same journey one press shorter and is § 6.3's own preference.
-            // The case still asks what it asked: that the rules editor has a live door, that
-            // nothing covers it, and that pressing it opens the screen.
-            var drawer=FindByName("SettingsDrawerToggle")?.GetComponent<Button>();
-            if(drawer!=null)
-            {
-                drawer.onClick.Invoke();
-                for(int i=0;i<10;i++)yield return null;
-            }
-            var buttons=Object.FindObjectsByType<Button>(FindObjectsSortMode.None);
-            var door=buttons.FirstOrDefault(b=>b.name=="CustomGameButton")
-                     ??buttons.FirstOrDefault(b=>b.transform.parent!=null&&b.transform.parent.parent!=null
-                        &&b.transform.parent.parent.GetComponentsInChildren<Text>()
-                        .Any(t=>t.text=="CUSTOM GAME"));
+            // UX-1 moves the same rules editor into the hamburger; assert its real visible door.
+            yield return HubFlowTests.Press("MenuButton");
+            var door = Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
+                .FirstOrDefault(b => b.name == "MenuMATCHRULES" && b.isActiveAndEnabled);
             Assert.IsNotNull(door,"Existing advanced rules editor has no live door");
             Assert.IsTrue(door.interactable);
             var pointer=new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current)

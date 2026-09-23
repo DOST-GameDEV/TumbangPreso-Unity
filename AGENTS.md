@@ -23,6 +23,30 @@ carries an index row per numbered entry; the open entries' whole bodies are in
 status files moved to `docs/archive/` (old-path table in `docs/archive/README.md`).
 `docs/README.md` indexes every document with its status. Nothing was deleted.
 
+## Explicit current UI additions, owner2026-09-23
+
+Finish the assigned UI before later map refinement. The owner explicitly authorizes
+reworking the Terms popup and its consent control within the otherwise protected
+login: consent is an empty or solid-filled square, never a tick. Other login/title
+art stays protected. Loading tips are inline, with rotating replacement artwork.
+New arrival-flow and other built surfaces are tracked in the UX-1 UI inventory.
+
+## Concise UI copy, owner2026-09-23
+
+Do not explain obvious navigation in the interface. Back uses an arrow, without
+redundant BACK text or a sentence explaining what Back does. Visible scrollbars do
+not need SCROLL TO READ. Remove generic press/click instructions when the control
+already communicates the action. Keep meaningful game rules, constraints, errors,
+state and useful device bindings. Preserve internal control identities and operation.
+
+## Targeted quality, owner2026-09-23
+
+Do not improve for the sake of improving. Judge the existing result first and name
+the concrete visual, usability or functional problem. Improve those weak parts;
+preserve parts that already work. This applies to UX-1 and the later map, asset and
+animation reviews. Inspect every assigned part, but do not manufacture changes to
+make a review look busy or mistake a passing test for aesthetic approval.
+
 ## Follow-on refinement mandate,2026-09-23
 
 The owner added REFINE-2 after the older actionable queue: research good-game

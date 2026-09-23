@@ -139,7 +139,8 @@ namespace TumbangPreso.UI.Hub
         public static Text Label(Transform parent, string words, Vector2 at, float width = 600)
         {
             var label = HubKit.Text(parent, "Label_" + words.Replace(" ", ""), words, HubStyle.Floor, false, HubStyle.Golden, TextAnchor.MiddleLeft);
-            HubKit.Place(label.rectTransform, HubKit.TopLeft, at, new Vector2(width, 40));
+            bool larger = Settings.SettingsStore.Current.LargerText;
+            HubKit.Place(label.rectTransform, HubKit.TopLeft, at + new Vector2(0, larger ? 6 : 0), new Vector2(width, larger ? 48 : 40));
             return label;
         }
     }

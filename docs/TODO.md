@@ -92,6 +92,9 @@ questions are preserved in [the intake](reports/map-by-map-refinement-2026-09-23
 [the research/execution plan](reports/map-by-map-refinement-2026-09-23/research-and-execution-plan.md)
 are saved. Aesthetic appeal matters more than realism; research must use multiple
 references. Work one map, character/movement or aspect at a time.
+Owner reiterated: finish assigned UI first. During this later map pass, generate
+additional visual references, critique them and adopt only useful ideas; iterate
+references to solve concrete gaps and verify the improvement in the actual3D game.
 The owner says assets still feel bland, animals repeat obvious fixed routes, and
 bots were sometimes AFK/standing. Treat these as new experience reports; earlier
 passing checks do not prove these complaints resolved. Do not start another global
@@ -110,6 +113,11 @@ map shader sweep as a substitute for individually improving all five places.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
+- [ ] **REFINE-2.6a Skies, islands and backgrounds.** After UI, inspect and improve
+  animated skies, island/mountain layers and other distant/background scenery on
+  every map. Evaluate composition, silhouettes, depth, materials, motion and harmony
+  with that map. Existing animation is not automatic completion or a reason to skip
+  refinement. Carry out changes within each individual map pass, keeping good parts.
 - [ ] **REFINE-2.7 Natural ambient movement.** Diagnose repeated paths and author
   plausible habitat/goal/activity choices, motion and reactions per map.
 - [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
@@ -333,9 +341,10 @@ existing networking path stays in `ConvertedMatchSetup`; TAP TO START and match 
 `Runtime/UI/Hub/` (map in ux1-plan.md § 7b) and walked by `HubFlowTests` through its
 real buttons with captures at 960x540, 1280x720, 1920x1080, 1280x960 and 1600x680. An
 item is ticked only when its screen passed that fixture and its captures were looked at.
-Live UGS deployment of `wallet.js` is an external dependency: this machine has no `ugs`
-CLI or project login (rules proven by `Core.Tests/EconomyTests.cs` and
-`node tools/test_wallet_script.js`).
+`wallet.js` is now published as version1 in the existing production project; live
+source and all3parameters verified against local. Rules pass the existing node
+contract. Runtime service actions remain unchecked; deployment receipt is in
+[completion/wallet-deployment.json](reports/front-end-flow-2026-09-23/completion/wallet-deployment.json).
 Restore path (the § 68.3 keep-the-old-chrome rule): launching with `-tp-preparation-board`
 sets `ConvertedMatchSetup.HubEnabled = false` and the retired preparation board is the view
 again. It is also how the old fixtures are run against the view they were written for.
@@ -382,13 +391,13 @@ Implementation order within UX-1:
   Loading uses map art/name/percentage, bottom tips, optional BH Studios mark. Preserve
   UGS Lobby/Relay,4-character codes,LAN discovery,quick/ranked,reconnect and rematch.
 - [ ] **UX-1.8 Real soft currency and hero/item shop.** Built: `EconomyRules`, `wallet.js`,
-  `WalletStore`, SHOP popup, UNLOCK/BUY. External dependency: deploy `wallet.js` with the `ugs`
-  CLI on a machine logged in to project dcf0831e..., then the Ugs PlayMode check. SHOP is a popup exposing Hero
+  `WalletStore`, SHOP popup, UNLOCK/BUY. Deployment DONE: version1 and exact source/params verified in existing project
+  production. Live wallet action checks remain open; no runtime pass inferred. SHOP is a popup exposing Hero
   and Loadout shops; Home HERO/LOADOUT open directly. Server-authoritative Cloud Code
   balances/unlocks, profile migration and graceful offline behavior. No client grants,
   real-money purchases or paid services. Keep the existing UGS project/IDs.
 - [ ] **UX-1.9 Tasks, skill tree and unlocks.** Built: `HubTasks`, `HubSkillTree`, server
-  claims. Same external deployment dependency as UX-1.8. Currency+ opens earning/tasks. Skill
+  claims. Deployment complete as UX-1.8; live claim/action verification remains open. Currency+ opens earning/tasks. Skill
   Tree owns actual hero alternatives and integrates XP/levels/mastery,
   HeroBuildRules/AbilityChallenges,Cloud Save/Cloud Code. Real unlock transactions;
   cosmetics never alter gameplay and Classic stays neutral. Verify declared Cloud
@@ -398,13 +407,54 @@ Implementation order within UX-1:
   from name-plate Profile Settings (name,achievements,friends,etc.). Hamburger retains
   settings,party,career hub and every former feature, with one visible route each.
 - [ ] **UX-1.11 Per-screen acceptance.** Five shapes, 28 floor, bounds and one-press BACK are
-  asserted per screen. Open: moving the retired preparation-board fixtures to hub doors,
-  High contrast / larger text captures, and physical pad and touch passes. Actual mouse/keyboard,controller focus/B and
+  asserted per screen. Retired preparation-board fixture routes migrated; complete
+  High contrast + Larger text route passed at five shapes. Core629/629, requested
+  EditMode36/36 and final editor checks8/8 pass. Open: full/native regression and
+  physical pad/touch passes. Actual mouse/keyboard,controller focus/B and
   thumb-sized touch; live bindings,one-press Back.960x540,1280x720,1920x1080,4:3 and
   1600x680; every label28canvas units or more; High contrast/larger text. Use shared
   approved canvas/input construction. Inspect captures of default,hover,focus,locked,
   empty and error states. Update old-screen probes to reachable new routes with a
   design reason. Focused changed-behavior checks only; full/native gate remains P7.
+
+- [ ] **UX-1.12 Complete queued match arrival (owner addition2026-09-23).** Selected
+  Ranked on HOME -> PLAY -> queue elapsed timer -> MATCH FOUND -> character select ->
+  map vote -> deliberate loading presentation -> short map/player introduction with
+  camera panning for5..10seconds ->3,2,1,START. Remove the in-game R-to-start step for
+  queued matches. Custom rooms may retain manual ready, behind a room option. Reuse
+  existing ballot/load/intro/countdown authority; inspect and fill actual missing
+  connections, do not replace working stages or remove prior TODO requirements.
+  Exact request and implementation decisions in the UX-1 completion plan.
+  Build missing UI to finished quality now; keep every built/changed surface in
+  [the UI inventory](reports/front-end-flow-2026-09-23/ui-authorship-inventory.md)
+  for a possible later refinement review, with paths/evidence/remaining issues.
+
+- [ ] **UX-1.13 Mode names, awaiting owner selection.** Owner requests simpler,
+  meaningful replacements for Classic and Hero Strike throughout the game. Options
+  revised after the owner clarified the distinction: Chill/Powers (recommended),
+  Chill/Chaos, Relaxed/Powered. The first should sound relaxed, the second ability-based. Do not pick on the owner's behalf or rename before their choice.
+  After selection, audit all player-facing menus/HUD/help/settings/announcements and
+  current design copy; preserve existing save, analytics and wire identifiers through
+  a display-name mapping. Historical quoted feedback and evidence remain intact.
+
+- [x] **UX-1.14 Loading tips and rotating artwork (owner2026-09-23).** Tips belong
+  directly on the loading screen, not behind STORIES & TIPS opening a separate
+  overlay/HUD. Replace the rejected loading-street illustration with a small set of
+  newly generated, cohesive game-world images; rotate about every5seconds during
+  loading with reduced-motion support. Applies to boot loading and match loading;
+  preserve the title/login artwork. Save prompts/provenance and add surfaces to the
+  UI inventory. Do not slow fast loads solely to cycle through every image.
+  Implemented in both loading owners; actual boot readiness and three-image rotation
+  passed. Revised contrast/type captured and inspected. See completion evidence.
+- [x] **UX-1.15 Terms reading and consent (owner2026-09-23).** Explicit narrow
+  exception to login protection: improve the Terms and Conditions presentation and
+  behavior, expand meaningful content, and make consent unmistakable. Unaccepted is
+  an empty square; accepted is a solid-filled square, NEVER a tick/checkmark. Preserve
+  actual acceptance state, keyboard/controller/touch operation and account gating.
+  Draft terms against actual implemented features, not invented services or promises.
+  Implemented and passed: normal/large text at five shapes, scroll, unchanged consent
+  on open/Back, solid fill and actual validation. Latest arrow-only popup inspected.
+  Product draft remains subject to the owner's public-release legal/contact review.
 
 ### Active items carried forward (status unchanged by this cleanup)
 

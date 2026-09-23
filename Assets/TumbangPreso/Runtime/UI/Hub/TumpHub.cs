@@ -38,6 +38,7 @@ namespace TumbangPreso.UI.Hub
         private readonly List<HubScreen> _stack = new List<HubScreen>();
         private HubQueuePlate _plate;
         private HubToast _toast;
+        private bool _wasInRoom, _lobbyEntryPending;
 
         /// <summary>
         /// Where the next open of the hub should land. ⚠️ A SESSION FACT, CONSUMED ON INSTALL,
@@ -91,8 +92,9 @@ namespace TumbangPreso.UI.Hub
             var queue = Net.Matchmaker.Current;
             bool searching = queue != null && queue.IsQueueing;
             if (Host.InRoom && !searching) HubQueueWatch.End();
-            if (entry == HubEntry.Lobby || (Host.InRoom && !searching)) Push<HubLobby>();
+            if (entry == HubEntry.Lobby || (Host.InRoom && !searching)) ShowLobby();
             else if (entry == HubEntry.GameModes) Push<HubModeSelect>();
+            _wasInRoom = Host.InRoom;
         }
 
         /// <summary>
@@ -209,6 +211,24 @@ namespace TumbangPreso.UI.Hub
 
         public void Home() => PopTo<HubHome>();
 
+        /// <summary>
+        /// Enter a custom/rematch room once, regardless of which join path completed.
+        /// Existing lobby subpages stay open when both the button callback and room observer fire.
+        /// Queue rooms retain MATCH FOUND and their timed selection instead.
+        /// </summary>
+        public void ShowLobby()
+        {
+            if (Host == null || !Host.InRoom || QueuedRoom) return;
+            _wasInRoom = true;
+            _lobbyEntryPending = false;
+            if (Find<HubLobby>() != null) return;
+            Home();
+            Push<HubLobby>();
+        }
+
+        private static bool QueuedRoom => HubQueueWatch.QueueRoom ||
+            (Net.Matchmaker.Current != null && Net.Matchmaker.Current.IsQueueing);
+
         private void ResumeTop()
         {
             // The newest full screen comes back; popups above it stay as they were.
@@ -268,13 +288,27 @@ namespace TumbangPreso.UI.Hub
         {
             if (Host == null) return;
 
+            // Invites and -tp-lobbyjoin can finish after Build without pressing a hub button.
+            // Observe before the overlay guard, then present when the overlay gives control back.
+            bool inRoom = Host.InRoom;
+            if (inRoom && !_wasInRoom && !QueuedRoom) _lobbyEntryPending = true;
+            if (!inRoom) _lobbyEntryPending = false;
+            _wasInRoom = inRoom;
+
             // ⚠️ AN OLDER OVERLAY THE CONTROLLER OWNS DRAWS ON ITS OWN CANVAS, and the hub steps
             // aside rather than competing with it for the screen and the pad.
             bool overlay = Host.OverlayOpen;
             if (Canvas.enabled == overlay) Canvas.enabled = !overlay;
             if (overlay) return;
 
+            if (_lobbyEntryPending) ShowLobby();
+
             HubQueueWatch.Tick(this);
+            if (Host.MapVoting && !(Top is HubMapVote))
+            {
+                Home();
+                Push<HubMapVote>();
+            }
             Top?.Tick();
         }
 

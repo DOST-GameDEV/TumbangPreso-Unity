@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
+using TumbangPreso.UI.Hub;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -19,37 +20,27 @@ namespace TumbangPreso.PlayTests
         [UnityTest,Timeout(90000)]
         public IEnumerator OfflinePreparationKeepsMapModeLoadoutAndBackRoutes()
         {
-            bool networked=SceneFlow.Networked;var rules=SceneFlow.SelectedRules.Clone();bool pinned=SceneFlow.RulesPinned;
-            int seat=GameLaunch.SoloSeat;bool spectator=GameLaunch.Spectator;
+            var settings = Settings.SettingsStore.Current;
+            string saved = JsonUtility.ToJson(settings);
+            var rules = SceneFlow.SelectedRules.Clone(); bool pinned = SceneFlow.RulesPinned;
             try
             {
-                SceneFlow.Networked=false;SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
-                GameLaunch.SoloSeat=1;GameLaunch.Spectator=false;PlaySelectionScreen.RequestedLobbyMode=LobbyMode.Practice;
-                yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);yield return null;
-                var canvas=GameObject.Find("OwnerPreparationCanvas").GetComponent<Canvas>();
-                Assert.IsEmpty(canvas.GetComponentsInChildren<TumpSurface>());
-                Assert.AreEqual("CLASSIC",canvas.GetComponentsInChildren<Text>().First(t=>t.name=="ModeValue").text);
-                Assert.IsFalse(canvas.GetComponentsInChildren<Button>(true).First(b=>b.name=="JoinRoomButton").gameObject.activeInHierarchy);
-                var preview=canvas.GetComponentInChildren<MapPreviewSurface>();
-                float until=Time.realtimeSinceStartup+15;
-                while(preview.GetComponent<RawImage>().texture==null && Time.realtimeSinceStartup<until)yield return null;
-                Assert.IsNotNull(preview.GetComponent<RawImage>().texture,"Selected map never reached its actual preview.");
-                var previewRect=((RectTransform)preview.transform).rect;
-                Assert.That(previewRect.width/previewRect.height,Is.EqualTo(16f/9f).Within(.001f),"The real map must keep its render aspect.");
-                foreach (var size in TumpUiCapture.PcViewports)
-                    yield return TumpUiCapture.Capture("CourtPreparation-classic-" + size.x + "x" + size.y,
-                        canvas, size.x, size.y, false, checkActionBounds: true);
-                Press("ModeNextButton");yield return new WaitForSecondsRealtime(.2f);
-                Assert.AreEqual(GameMode.HeroStrike,SceneFlow.SelectedMode);
-                foreach (var size in TumpUiCapture.PcViewports)
-                    yield return TumpUiCapture.Capture("CourtPreparation-hero-" + size.x + "x" + size.y,
-                        canvas, size.x, size.y, false, checkActionBounds: true);
-                string beforeMap=SceneFlow.SelectedMap;
-                Press("MapNextButton");yield return new WaitForSecondsRealtime(.2f);
-                Assert.AreNotEqual(beforeMap,SceneFlow.SelectedMap);
-                Assert.That(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="MapName").text,
-                    Is.EqualTo(SceneFlow.PreviewFor(SceneFlow.SelectedMap).Name));
-                Press("CustomGameButton");yield return null;
+                HubHome.Choice = 1;
+                yield return HubFlowTests.OpenHome();
+                Assert.AreEqual(GameMode.Classic, SceneFlow.SelectedMode);
+                yield return HubFlowTests.Press("ModeCard");
+                yield return HubFlowTests.Press("ClassicCard");
+                yield return HubFlowTests.Press("HeroStrikeChoice");
+                Assert.AreEqual(GameMode.HeroStrike, SceneFlow.SelectedMode);
+                yield return HubFlowTests.Press("ModeCard");
+                yield return HubFlowTests.Press("CustomCard");
+                yield return HubFlowTests.Press("HostDoor");
+                yield return HubFlowTests.Press("MapDropdown");
+                yield return HubFlowTests.Press("Option1");
+                Assert.AreEqual(SceneFlow.MapRegistry[1].Id, SceneFlow.SelectedMap);
+                TumpHub.Current.Home();
+                yield return HubFlowTests.Press("MenuButton");
+                yield return HubFlowTests.Press("MenuMATCHRULES");
                 var custom=GameObject.Find("OwnerCustomGameCanvas").GetComponent<Canvas>();
                 Assert.IsEmpty(custom.GetComponentsInChildren<TumpSurface>());
                 int rounds=SceneFlow.SelectedRules.Rounds;
@@ -76,51 +67,42 @@ namespace TumbangPreso.PlayTests
                 Press("UseRulesButton");yield return new WaitForSecondsRealtime(.65f);
                 Assert.IsFalse(Object.FindFirstObjectByType<CustomGameScreen>().IsOpen);
                 Assert.AreEqual(botTier,TumbangPreso.Settings.SettingsStore.Current.AiDifficulty,"Preparation must not overwrite the chosen custom bot setting.");
-                Press("LoadoutButton");yield return null;yield return null;
-                Assert.IsNotNull(Object.FindFirstObjectByType<TumpPickerView>());
-                // The existing picker owns its close callback; it must return to preparation.
-                var picker=Object.FindFirstObjectByType<ConvertedCharacterSelect>();
-                typeof(ConvertedCharacterSelect).GetMethod("Dismiss",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)
-                    .Invoke(picker,null);
-                yield return null;
-                Assert.True(canvas.gameObject.activeInHierarchy);
-                Press("BackButton");yield return null;yield return null;
-                Assert.IsNotNull(GameObject.Find("OwnerPlayCanvas"));
+
+                Press("LoadoutButton"); yield return null;
+                Assert.IsInstanceOf<HubLoadout>(TumpHub.Current.Top);
+                Press("BackButton"); yield return null;
+                Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top);
             }
             finally
             {
-                SceneFlow.Networked=networked;SceneFlow.AdoptRemoteRules(rules);
-                if(pinned)SceneFlow.PinSelectedRules(rules);else SceneFlow.UnpinSelectedRules();
-                GameLaunch.SoloSeat=seat;GameLaunch.Spectator=spectator;PlaySelectionScreen.RequestedLobbyMode=null;
+                JsonUtility.FromJsonOverwrite(saved, settings);
+                SceneFlow.AdoptRemoteRules(rules);
+                if (pinned) SceneFlow.PinSelectedRules(rules); else SceneFlow.UnpinSelectedRules();
             }
         }
         [UnityTest,Timeout(90000)]
         public IEnumerator RankedPreparationKeepsRankedStakeAndAccountState()
         {
-            SceneFlow.Networked=true;SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
-            PlaySelectionScreen.RequestedLobbyMode=LobbyMode.Ranked;
-            yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);yield return null;
-            var canvas=GameObject.Find("OwnerPreparationCanvas").GetComponent<Canvas>();
-            Assert.AreEqual(QueueStake.Ranked,Object.FindFirstObjectByType<QueueCard>(FindObjectsInactive.Include).Stake);
-            var view=Object.FindFirstObjectByType<OwnerPreparationView>();
-            Assert.IsFalse(view.MatchChoices.activeInHierarchy);Assert.IsTrue(view.RankedSummary.activeInHierarchy);
-            Assert.IsFalse(view.Primary.gameObject.activeInHierarchy);
-            Assert.IsTrue(canvas.transform.Find("PreparationComposition/RankedRoute/SelectedRoute").gameObject.activeInHierarchy);
-            if(GameServices.Account==null || GameServices.Account.IsGuest)
+            int choice = Settings.SettingsStore.Current.HubQueueChoice;
+            try
             {
-                Assert.False(view.StartMatch.interactable);StringAssert.Contains("SIGN IN",view.RankedTitle.text);
-                StringAssert.Contains("profile",view.RankedDetail.text);
+                HubHome.Choice = 0;
+                yield return HubFlowTests.OpenHome();
+                Assert.AreEqual(QueueStake.Ranked, HubHome.ChoiceStake);
+                Assert.AreEqual(GameMode.HeroStrike, SceneFlow.SelectedMode);
+                Assert.IsTrue(TumpHub.Current.Top.GetComponentsInChildren<Text>().Any(t => t.text == "RANKED"));
+                if (GameServices.Account == null || GameServices.Account.IsGuest)
+                {
+                    yield return HubFlowTests.Press("PlayButton");
+                    Assert.IsFalse(HubQueueWatch.QueueRoom, "A guest must not enter ranked matchmaking.");
+                    Assert.IsNotEmpty(TumbangPreso.Net.Matchmaker.Current.Refusal, "Ranked refusal must explain the account gate.");
+                }
             }
-            float until=Time.realtimeSinceStartup+20;
-            while(view.Preview.GetComponent<RawImage>().texture==null && Time.realtimeSinceStartup<until)yield return null;
-            Assert.IsNotNull(view.Preview.GetComponent<RawImage>().texture);
-            Assert.IsNotEmpty(view.RankedTitle.text);Assert.IsNotEmpty(view.RankedDetail.text);
-            foreach (var size in TumpUiCapture.PcViewports)
-                yield return TumpUiCapture.Capture("CourtPreparation-ranked-" + size.x + "x" + size.y,
-                    canvas, size.x, size.y, false, checkActionBounds: true);
-            Press("BackButton");yield return null;yield return null;
-            Assert.IsNotNull(GameObject.Find("OwnerPlayCanvas"));
-            SceneFlow.Networked=false;
+            finally
+            {
+                TumpHub.Current?.Host.CancelQueue();
+                Settings.SettingsStore.Current.HubQueueChoice = choice;
+            }
         }
         [UnityTest]
         public IEnumerator ReadOnlyCustomRulesKeepTabsAndCloseWithoutChangingRules()
@@ -163,36 +145,40 @@ namespace TumbangPreso.PlayTests
             {
                 SceneFlow.Networked=true;PlaySelectionScreen.RequestedLobbyMode=LobbyMode.Custom;
                 yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);yield return null;
-                var view=Object.FindFirstObjectByType<OwnerPreparationView>();
-                Assert.True(view.CopyCode.gameObject.activeInHierarchy);Assert.True(view.StartMatch.gameObject.activeInHierarchy);
+                Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
+                var canvas = TumpHub.Current.Canvas;
+                Assert.IsTrue(canvas.GetComponentsInChildren<Button>().Any(b => b.name == "CodeChip"));
+                Assert.IsTrue(canvas.GetComponentsInChildren<Button>().Any(b => b.name == "StartGame"));
                 foreach (var size in TumpUiCapture.PcViewports)
                     yield return TumpUiCapture.Capture("CourtPreparation-friends-" + size.x + "x" + size.y,
-                        view.Canvas, size.x, size.y, false, checkActionBounds: true);
+                        canvas, size.x, size.y, false, checkActionBounds: true);
                 var chat=Object.FindFirstObjectByType<LobbyChat>();
                 Assert.IsNotNull(chat,"Hidden chat must stay subscribed to incoming room messages.");
                 Assert.IsFalse(chat.IsPresented);
                 var local=typeof(LobbyChat).GetMethod("AddLocal",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
                 local.Invoke(chat,new object[]{"Local test note while the panel is closed."});
-                Press("ChatButton");yield return null;
+                Press("ChatDoor");yield return null;
                 Assert.True(chat.IsPresented);
                 Assert.That(chat.GetComponentsInChildren<Text>().Any(t=>t.text.Contains("Local test note")));
                 foreach(var size in TumpUiCapture.PcViewports)
-                    yield return TumpUiCapture.Capture("RoomChat-compact-"+size.x+"x"+size.y,view.Canvas,size.x,size.y,false,checkActionBounds:true);
+                    yield return TumpUiCapture.Capture("RoomChat-compact-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
                 Press("ChatHistoryButton");yield return null;
+                Assert.IsTrue(TumpHub.Current.Canvas.enabled, "Nested chat history must not hide its parent canvas.");
                 var transcript=chat.GetComponentsInChildren<Text>().First(t=>t.name=="FullTranscript");
                 StringAssert.Contains("Local test note",transcript.text);
                 foreach(var size in TumpUiCapture.PcViewports)
-                    yield return TumpUiCapture.Capture("RoomChat-history-"+size.x+"x"+size.y,view.Canvas,size.x,size.y,false,checkActionBounds:true);
+                    yield return TumpUiCapture.Capture("RoomChat-history-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
                 Press("ChatHistoryBack");yield return null;Press("CloseChatButton");yield return null;
                 Assert.False(chat.IsPresented);Assert.True(chat.isActiveAndEnabled);
                 local.Invoke(chat,new object[]{"Second local note survives hiding."});
-                Press("JoinRoomButton");yield return null;
-                Assert.IsNotNull(GameObject.Find("OwnerJoinCanvas"));Press("CloseJoinButton");yield return null;
-                Press("ChatButton");yield return null;
+                Press("CharacterDoor"); yield return null;
+                Assert.IsInstanceOf<HubCharacterSelect>(TumpHub.Current.Top);
+                TumpHub.Current.Back(); yield return null;
+                Press("ChatDoor");yield return null;
                 Assert.That(chat.GetComponentsInChildren<Text>().Any(t=>t.text.Contains("Second local note")));
                 Press("CloseChatButton");yield return null;
                 Press("BackButton");yield return null;yield return null;
-                Assert.IsNotNull(GameObject.Find("OwnerPlayCanvas"));
+                Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top);
             }
             finally{net.Stop();SceneFlow.Networked=false;PlaySelectionScreen.RequestedLobbyMode=null;}
         }

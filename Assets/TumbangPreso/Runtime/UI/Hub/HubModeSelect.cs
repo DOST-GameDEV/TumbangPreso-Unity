@@ -62,7 +62,6 @@ namespace TumbangPreso.UI.Hub
                 {
                     HubHome.Choice = 0;
                     Hub.Home();
-                    Hub.Toast("RANKED  ·  HERO STRIKE. Press PLAY to queue.");
                 }, 400);
             HubKit.Place((RectTransform)ranked.transform, HubKit.TopLeft, new Vector2(small + gap + tall + gap, 0), new Vector2(tall, h));
 
@@ -97,7 +96,6 @@ namespace TumbangPreso.UI.Hub
         {
             HubHome.Choice = choice;
             Hub.Home();
-            Hub.Toast(choice == 1 ? "CASUAL  ·  CLASSIC. Press PLAY to queue." : "CASUAL  ·  HERO STRIKE. Press PLAY to queue.");
         }
     }
 

@@ -50,18 +50,18 @@ namespace TumbangPreso.PlayTests
             try
             {
                 TumbangPreso.Settings.SettingsStore.Current.CharacterPick=0;
-                yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
+                yield return HubFlowTests.OpenHome();
                 var map=Object.FindFirstObjectByType<MapPreviewSurface>();float until=Time.realtimeSinceStartup+20;
                 while((map==null || map.GetComponent<RawImage>().texture==null) && Time.realtimeSinceStartup<until){yield return null;map=Object.FindFirstObjectByType<MapPreviewSurface>();}
                 Assert.IsNotNull(map);Assert.IsNotNull(map.GetComponent<RawImage>().texture);
-                var button=Object.FindObjectsByType<Button>().First(b=>b.name=="LoadoutButton" && b.isActiveAndEnabled);button.onClick.Invoke();
+                var button=Object.FindObjectsByType<Button>().First(b=>b.name=="HeroButton" && b.isActiveAndEnabled);button.onClick.Invoke();
                 yield return null;yield return new WaitForSecondsRealtime(.5f);
                 var preview=Object.FindFirstObjectByType<ModelPreview>();Assert.IsNotNull(preview);
                 Debug.Log("[OwnerPreviewLighting] ambient="+RenderSettings.ambientLight+" expected="+ModelPreview.PreviewAmbient+" mode="+RenderSettings.ambientMode);
                 foreach(var light in Object.FindObjectsByType<Light>())
                     if((light.cullingMask&(1<<ModelPreview.PreviewLayer))!=0)Debug.Log("[OwnerPreviewLighting] light="+light.name+" energy="+light.intensity+" colour="+light.color);
                 var art=RosterBook.Load().PersonArt(0,GameMode.HeroStrike);Debug.Log("[OwnerPreviewLighting] paletteCount="+(art.Palette?.Length??0));
-                yield return TumpUiCapture.Capture("OwnerPicker-lighting-baseline-u8",GameObject.Find("OwnerLoadoutCanvas").GetComponent<Canvas>(),1920,1080,false);
+                yield return TumpUiCapture.Capture("OwnerPicker-lighting-baseline-u8",TumbangPreso.UI.Hub.TumpHub.Current.Canvas,1920,1080,false);
             }
             finally{TumbangPreso.Settings.SettingsStore.Current.CharacterPick=oldPick;}
         }

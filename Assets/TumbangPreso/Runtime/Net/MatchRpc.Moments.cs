@@ -49,6 +49,7 @@ namespace TumbangPreso.Net
         }
         private void Update()
         {
+            TickQueueArrival();
             TickReplayTransfer();
             for (int i = 0; i < _pendingMoments.Count;)
             {

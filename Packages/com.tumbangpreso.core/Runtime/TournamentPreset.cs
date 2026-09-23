@@ -230,6 +230,10 @@ namespace TumbangPreso.Core
         /// </summary>
         public static readonly Modifier[] NotModifiers =
         {
+            new Modifier("ConvertedMatchSetup.Hub.HubEnabled",
+                "Front-end view selection only. Hub and preparation board use the same match controller, rules and networking."),
+            new Modifier("-tp-preparation-board",
+                "Restores the retained front-end view; does not change gameplay or the tournament rules."),
             new Modifier("-tp-departure-review",
                 "Explicit local departure-review output. Its Configure and Install paths refuse -tp-tournament; no saved player preference is changed."),
             new Modifier("-tp-departure-seat",

@@ -385,6 +385,7 @@ namespace TumbangPreso.Audio
             // The slipper.
             "throw_whoosh", "throw_charge", "slipper_land", "slipper_bounce", "grab",
             "can_knockdown", "reset_complete", "pickup", "throw_release",
+            "court_escape", "court_skid",
 
             // Match state.
             "countdown_tick", "countdown_go", "round_win", "round_lose", "match_win",

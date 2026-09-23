@@ -1,74 +1,95 @@
 using System;
+using TumbangPreso.UI.Hub;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace TumbangPreso.UI
 {
+    /// <summary>A readable account document with persistent actions; opening it never accepts it.</summary>
     public sealed class OwnerTermsView : MonoBehaviour
     {
         private Canvas _canvas;
         private Action<bool> _closed;
-        public bool IsOpen=>_canvas!=null && _canvas.gameObject.activeSelf;
-        public static OwnerTermsView Open(Transform owner,Action<bool> closed)
+        private ScrollRect _scroll;
+        public bool IsOpen => _canvas != null && _canvas.gameObject.activeSelf;
+
+        public static OwnerTermsView Open(Transform owner, Action<bool> closed)
         {
-            var node=new GameObject("OwnerTermsView");node.transform.SetParent(owner,false);
-            var view=node.AddComponent<OwnerTermsView>();view.Build(closed);return view;
+            var node = new GameObject("OwnerTermsView"); node.transform.SetParent(owner, false);
+            var view = node.AddComponent<OwnerTermsView>(); view.Build(closed); return view;
         }
+
         private void Build(Action<bool> closed)
         {
-            _closed=closed;_canvas=OwnerUiLayout.Canvas(transform,"OwnerTermsCanvas",950);
-            ScreenTakeover.Register(this,()=>IsOpen);
-            var scrim=OwnerUiLayout.Rect(_canvas.transform,"ModalBlocker").gameObject.AddComponent<UnityEngine.UI.Image>();
-            OwnerUiLayout.Fill(scrim.rectTransform);scrim.color=new Color(0,0,0,.24f);scrim.raycastTarget=true;
-            var design=OwnerUiLayout.DesignArea(_canvas.transform,"TermsComposition");
-            var paper=OwnerUiLayout.Rect(design,"ReadingSheet").gameObject.AddComponent<OwnerUiPaper>();paper.Style=OwnerUiPaper.Treatment.Dialog;
-            OwnerUiLayout.Place(paper.rectTransform,450,95,1020,890);paper.raycastTarget=true;
-            var title=OwnerUiLayout.Text(design,"Title","Terms & Conditions",46,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(title.rectTransform,505,140,910,70);title.alignment=TextAnchor.MiddleCenter;title.color=OwnerUiTheme.Current.ActionInk;
-            var scroll=OwnerUiLayout.Rect(design,"TermsScroll").gameObject.AddComponent<UnityEngine.UI.ScrollRect>();
-            OwnerUiLayout.Place((RectTransform)scroll.transform,510,230,900,557);
-            scroll.horizontal=false;scroll.vertical=true;scroll.movementType=UnityEngine.UI.ScrollRect.MovementType.Clamped;
-            scroll.scrollSensitivity=35;
-            var viewport=OwnerUiLayout.Rect(scroll.transform,"Viewport");OwnerUiLayout.Fill(viewport);
-            viewport.gameObject.AddComponent<UnityEngine.UI.Image>();var mask=viewport.gameObject.AddComponent<UnityEngine.UI.Mask>();mask.showMaskGraphic=false;
-            var content=OwnerUiLayout.Rect(viewport,"Content");content.anchorMin=new Vector2(0,1);content.anchorMax=Vector2.one;
-            content.pivot=new Vector2(.5f,1);content.sizeDelta=Vector2.zero;
-            var layout=content.gameObject.AddComponent<UnityEngine.UI.VerticalLayoutGroup>();
-            layout.spacing=6;layout.childControlWidth=true;layout.childControlHeight=true;
-            layout.childForceExpandWidth=true;layout.childForceExpandHeight=false;
-            var fit=content.gameObject.AddComponent<UnityEngine.UI.ContentSizeFitter>();fit.verticalFit=UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
-            scroll.viewport=viewport;scroll.content=content;
-            var document=Resources.Load<TextAsset>("UI/owner-painted/play-terms");
-            string words=document!=null?document.text:"";
-            foreach(var block in words.Replace("\r","").Split(new[]{"\n\n"},StringSplitOptions.RemoveEmptyEntries))
+            _closed = closed;
+            _canvas = OwnerUiLayout.Canvas(transform, "OwnerTermsCanvas", 950);
+            ScreenTakeover.Register(this, () => IsOpen);
+            var root = (RectTransform)_canvas.transform;
+            var scrim = HubKit.Stretch(HubKit.Rect(root, "ModalBlocker")).gameObject.AddComponent<Image>();
+            scrim.color = new Color(HubStyle.Night.r, HubStyle.Night.g, HubStyle.Night.b, .78f);
+            scrim.raycastTarget = true;
+            var panel = HubKit.Place(HubKit.Rect(root, "ReadingSheet"), HubKit.Centre, Vector2.zero, new Vector2(1480, 940));
+            var face = HubKit.Shape(panel, "DocumentPlate", HubStyle.Night, false, 1501, 6, 26);
+            HubKit.Stretch(face.rectTransform); face.raycastTarget = true;
+            var title = HubKit.Text(panel, "Title", "TERMS & CONDITIONS", 68, true, HubStyle.Honey);
+            HubKit.Place(title.rectTransform, HubKit.TopLeft, new Vector2(52, -30), new Vector2(1376, 100));
+            var subtitle = HubKit.Text(panel, "DocumentSummary", "Accounts, fair play and your online experience.", HubStyle.Body, false, HubStyle.Honey);
+            HubKit.Place(subtitle.rectTransform, HubKit.TopLeft, new Vector2(56, -132), new Vector2(1030, 60));
+            var date = HubKit.Text(panel, "Revision", "23 SEP 2026", HubStyle.Floor, false, HubStyle.Golden, TextAnchor.MiddleRight);
+            HubKit.Place(date.rectTransform, HubKit.TopRight, new Vector2(-56, -132), new Vector2(300, 60));
+            var rule = HubKit.Rect(panel, "HeaderRule").gameObject.AddComponent<Image>();
+            HubKit.Place(rule.rectTransform, HubKit.TopLeft, new Vector2(56, -202), new Vector2(1368, 3));
+            rule.color = HubStyle.Golden; rule.raycastTarget = false;
+
+            var content = OwnerScrollColumn.Build(panel, "TermsScroll", new Rect(56, 226, 1368, 560), out _scroll);
+            var layout = content.GetComponent<VerticalLayoutGroup>();
+            layout.spacing = 18; layout.padding = new RectOffset(4, 36, 2, 28);
+            var scrollbar = _scroll.verticalScrollbar;
+            var rail = scrollbar.GetComponent<Image>(); rail.color = new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, .2f);
+            scrollbar.targetGraphic.color = HubStyle.Golden;
+            ((RectTransform)scrollbar.transform).sizeDelta = new Vector2(18, 560);
+            _scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+            var document = Resources.Load<TextAsset>("UI/owner-painted/play-terms");
+            string words = document != null ? document.text : "TERMS UNAVAILABLE\nThe document could not be loaded. Please go back and reopen it.";
+            foreach (var block in words.Replace("\r", "").Split(new[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries))
             {
-                int split=block.IndexOf('\n');
-                string heading=split>=0?block.Substring(0,split):block;
-                var label=OwnerUiLayout.Text(content,"SectionTitle",heading,28,OwnerUiLayout.TypeRole.Display);
-                label.gameObject.AddComponent<UnityEngine.UI.LayoutElement>().preferredHeight=52;
-                if(split<0)continue;
-                var body=OwnerUiLayout.Text(content,"SectionText",block.Substring(split+1).Trim(),28);
-                body.color=OwnerUiTheme.Current.EnteredInk;body.verticalOverflow=VerticalWrapMode.Overflow;
+                int split = block.IndexOf('\n');
+                string heading = split >= 0 ? block.Substring(0, split) : block;
+                var label = HubKit.Text(content, "SectionTitle", heading, HubStyle.Label, true, HubStyle.Golden, TextAnchor.MiddleLeft);
+                label.gameObject.AddComponent<LayoutElement>().minHeight = 66;
+                if (split < 0) continue;
+                var body = HubKit.Text(content, "SectionText", block.Substring(split + 1).Trim(), HubStyle.Floor, false, HubStyle.Honey, TextAnchor.UpperLeft);
+                body.lineSpacing = 1.08f;
             }
-            var agree=OwnerPaintedAction.Create(design,"AcceptGuidelines","I AGREE",()=>Close(true),false,48);
-            OwnerUiLayout.Place((RectTransform)agree.transform,755,817,413,91);
-            var back=OwnerUiLayout.Rect(design,"TermsBack");OwnerUiLayout.Place(back,600,919,720,46);
-            var hit=back.gameObject.AddComponent<UnityEngine.UI.Image>();hit.color=Color.clear;
-            var button=back.gameObject.AddComponent<UnityEngine.UI.Button>();button.targetGraphic=hit;button.transition=UnityEngine.UI.Selectable.Transition.None;
-            button.onClick.AddListener(()=>Close(false));
-            var text=OwnerUiLayout.Text(back,"Label","BACK",28,OwnerUiLayout.TypeRole.Accent);
-            OwnerUiLayout.Fill(text.rectTransform);text.alignment=TextAnchor.MiddleCenter;
-            Canvas.ForceUpdateCanvases();UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(content);
-            scroll.verticalNormalizedPosition=1;_canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
+            var back = HubKit.IconButton(panel, "TermsBack", HubGlyph.Mark.Back, HubStyle.Honey, () => Close(false), 1502);
+            HubKit.Place((RectTransform)back.transform, HubKit.BottomLeft, new Vector2(56, 30), new Vector2(106, 106));
+            var agree = HubKit.Button(panel, "AcceptGuidelines", "I AGREE", HubStyle.Chartreuse, () => Close(true), HubStyle.Title, 1503);
+            HubKit.Place((RectTransform)agree.transform, HubKit.BottomRight, new Vector2(-56, 30), new Vector2(430, 106));
+            agree.interactable = document != null && !string.IsNullOrWhiteSpace(document.text);
+            Canvas.ForceUpdateCanvases(); LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            _scroll.verticalNormalizedPosition = 1;
+            _canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
+            if (UnityEngine.EventSystems.EventSystem.current != null)
+                UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(scrollbar.gameObject);
         }
+
         private void Update()
         {
-            if(IsOpen && InputLayer.MenuNav.CancelPressed){ScreenTakeover.ConsumeEscape();Close(false);}
+            if (!IsOpen) return;
+            if (InputLayer.MenuNav.CancelPressed) { ScreenTakeover.ConsumeEscape(); Close(false); }
         }
+
         private void Close(bool accepted)
         {
-            if(!IsOpen)return;_canvas.gameObject.SetActive(false);ScreenTakeover.ConsumeEscape();
-            _closed?.Invoke(accepted);Destroy(gameObject);
+            if (!IsOpen) return;
+            _canvas.gameObject.SetActive(false); ScreenTakeover.ConsumeEscape();
+            _closed?.Invoke(accepted); Destroy(gameObject);
         }
-        private void OnDestroy()=>ScreenTakeover.Unregister(this);
+
+        private void OnDestroy()
+        {
+            ScreenTakeover.Unregister(this);
+            if (_canvas != null) Destroy(_canvas.gameObject);
+        }
     }
 }

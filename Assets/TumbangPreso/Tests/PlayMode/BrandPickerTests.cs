@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
+using TumbangPreso.UI.Hub;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -30,32 +31,31 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator RosterPreviewCanBeCancelledOrExplicitlySaved()
         {
-            yield return Open(GameMode.Classic);
             var settings = Settings.SettingsStore.Current;
-            int saved = settings.CharacterPick;
-            int chosen = (saved + 1) % Roster.ClassicPeople.Count;
-            Assert.AreEqual(Roster.ClassicPeople.Count, GameObject.Find("OwnerRosterGrid").transform.childCount);
-            Press(Find(Tile(Roster.ClassicPeople[chosen].Id)));
-            Assert.AreEqual(saved, settings.CharacterPick, "Preview must not save before explicit confirmation.");
-            yield return UiRuntimeShots.Capture("Picker-brand-v5-people", 1920, 1080);
-            Press(Find("TumpBack"));
-            yield return null;
-            Assert.AreEqual(saved, settings.CharacterPick);
-            Press(Find("LoadoutButton"));
-            yield return null;
-            Press(Find(Tile(Roster.ClassicPeople[chosen].Id)));
-            Press(Find("TumpUseLoadout"));
-            yield return null;
-            Assert.AreEqual(chosen, settings.CharacterPick);
-            Press(Find("LoadoutButton"));
-            yield return null;
-            for (int category = 1; category <= 2; category++)
+            string savedSettings = JsonUtility.ToJson(settings);
+            try
             {
-                Press(Find("TumpCategory" + category));
-                yield return null;
-                Assert.Greater(GameObject.Find("OwnerRosterGrid").transform.childCount, 0);
-                yield return UiRuntimeShots.Capture("Picker-brand-v5-category" + category, 1280, 720);
+                // UX-1: HERO is the inspect/explicit-use route; timed lobby portraits pick immediately.
+                HubHome.Choice = 2; settings.CharacterPick = 0;
+                yield return HubFlowTests.OpenHome();
+                Press(Find("HeroButton")); yield return null;
+                Press(Find("NextHero")); yield return null;
+                Assert.AreEqual(0, settings.CharacterPick, "Inspecting a hero must not save a pick.");
+                Press(Find("BackButton")); yield return null;
+                Assert.AreEqual(0, settings.CharacterPick);
+                Press(Find("HeroButton")); yield return null;
+                Press(Find("NextHero")); yield return null;
+                Press(Find("HeroPrimary")); yield return null;
+                Assert.AreEqual(1, settings.CharacterPick, "PLAY AS must explicitly save the inspected hero.");
+                TumpHub.Current.Home(); yield return null;
+                Press(Find("LoadoutButton")); yield return null;
+                foreach (string category in new[] { "TsinelasTab", "LataTab" })
+                {
+                    Press(Find(category)); yield return null;
+                    Assert.IsTrue(TumpHub.Current.Top.GetComponentsInChildren<Button>().Any(b => b.name.StartsWith("Item_")));
+                }
             }
+            finally { JsonUtility.FromJsonOverwrite(savedSettings, settings); }
         }
 
         /// <summary>
@@ -74,25 +74,24 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator HeroSkillDetailsHaveOneSlotAtATimeAndKeepTheReturnPath()
         {
-            yield return Open(GameMode.HeroStrike);
-            yield return UiRuntimeShots.Capture("Picker-brand-v5-hero", 1920, 1080);
-            Press(Find("TumpSkills"));
-            yield return null;
-            Assert.IsNotNull(GameObject.Find("VariantChoices"),
-                "the skills screen must draw the variant column for the slot it is on.");
-            yield return UiRuntimeShots.Capture("Skills-brand-v5-slot1", 1920, 1080);
-            Press(Find("TumpSkillSlot2"));
-            yield return null;
-            yield return UiRuntimeShots.Capture("Skills-brand-v5-slot2", 1280, 720);
-            Press(Find("TumpSkillSlot0"));
-            yield return null;
-            Assert.IsFalse(Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
-                    .Any(b => b.name == "TumpEquipSkill" && b.isActiveAndEnabled),
-                "an ultimate has no variants, so nothing on its pane may offer to equip one.");
-            yield return UiRuntimeShots.Capture("Skills-brand-v5-ultimate", 1200, 900);
-            Press(Find("TumpSkillBack"));
-            yield return null;
-            Assert.IsTrue(Find("TumpUseLoadout").isActiveAndEnabled);
+            yield return HubFlowTests.OpenHome();
+            Press(Find("HeroButton")); yield return null;
+            for (int slot = 0; slot < 3; slot++)
+            {
+                Press(Find("Ability" + slot)); yield return null;
+                Assert.IsInstanceOf<HubAbilityPopup>(TumpHub.Current.Top);
+                Assert.AreEqual(1, TumpHub.Current.Canvas.GetComponentsInChildren<HubAbilityPopup>().Length);
+                bool alternatives = TumpHub.Current.Top.GetComponentsInChildren<Button>().Any(b => b.name == "OpenSkillTree");
+                Assert.AreEqual(slot < 2, alternatives, "Only ordinary skills offer alternatives; ultimates do not.");
+                TumpHub.Current.Back(); yield return null;
+                Assert.IsInstanceOf<HubHero>(TumpHub.Current.Top);
+            }
+            Press(Find("Ability0")); yield return null;
+            Press(Find("OpenSkillTree")); yield return null;
+            Assert.IsInstanceOf<HubSkillTree>(TumpHub.Current.Top);
+            Assert.IsTrue(TumpHub.Current.Top.GetComponentsInChildren<Button>().Any(b => b.name.StartsWith("Node_")));
+            TumpHub.Current.Back(); yield return null;
+            Assert.IsInstanceOf<HubHero>(TumpHub.Current.Top, "The skill tree must return to the hero that opened it.");
         }
 
         /// <summary>A roster tile is named after the fighter, `TumpPickerView.BuildCollectionChoice`.</summary>

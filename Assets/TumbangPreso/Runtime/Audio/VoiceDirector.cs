@@ -202,7 +202,7 @@ namespace TumbangPreso.Audio
         /// <summary>Drives the 3 · 2 · 1 · GO! from the ready gate's own ticks.</summary>
         public void PlayCountdown(string tickText)
         {
-            if (tickText == "GO!") { Play("count_go"); return; }
+            if (tickText == "GO!" || tickText == "START!") { Play("count_go"); return; }
 
             if (int.TryParse(tickText, out int n)) Play($"count_{n}");
         }

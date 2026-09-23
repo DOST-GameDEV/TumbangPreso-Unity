@@ -5,6 +5,22 @@ correction: login and the title screen stay untouched, HOME opens from TAP TO ST
 eleven sketches under `ArtSource/front-end-flow-20260923/`, and a read of the current
 front end. `docs/TODO.md` UX-1 is the status queue; this file is the design it points at.
 
+## Owner additions during completion,2026-09-23
+
+[Completion plan](completion-plan.md) extends the existing design with UX-1.12:
+HOME selected Ranked -> PLAY -> queue timer -> MATCH FOUND -> character select ->
+map vote -> deliberate loading ->5..10second real3D map/player introduction ->
+3/2/1/START. Queued matches no longer require R in-game; custom rooms get a manual
+ready option. The implementation below is preserved as the original rationale;
+where its character-select paragraph jumps straight to loading, the new ballot and
+arrival stages are now required. The CLASSIC tile still opens Classic/Hero Strike
+choices. Proposed replacement names await the owner's choice (UX-1.13).
+
+[UI inventory](ui-authorship-inventory.md) records inherited and newly built/changed
+surfaces, source files, evidence and actual gaps for a possible later refinement.
+Build missing UI well now. Inspect before changing existing UI; do not restyle for
+its own sake. Login and main menu remain protected.
+
 ## 0 · Where everything lives, and why
 
 **HOME is built inside the `MatchSetup` scene, over the live court, not as a new scene.**

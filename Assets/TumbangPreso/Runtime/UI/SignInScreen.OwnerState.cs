@@ -316,7 +316,7 @@ namespace TumbangPreso.UI
             }
             if (!_ownerTerms.isOn)
             {
-                Fail("Read and accept the play and account guidelines to create an account.");
+                Fail("Read and accept the terms to create an account.");
                 return false;
             }
             return true;

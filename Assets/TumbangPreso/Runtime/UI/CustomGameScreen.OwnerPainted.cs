@@ -105,6 +105,8 @@ namespace TumbangPreso.UI
             _ownerValues["Target"].text=ScoreTargetLabel(_editing.ScoreTarget);_ownerValues["Stock"].text=_editing.Tsinelas.ToString();
             _ownerRuleRows["Stock"].SetActive(_editing.Format==MatchFormat.LastTsinelas);
             _ownerValues["Bots"].text=BotLabel(_editing);_ownerValues["Private"].text=_editing.Private?"ON":"OFF";
+            if (_ownerValues.TryGetValue("ManualReady", out var manualReady))
+                manualReady.text = _editing.ManualReady ? "ON" : "OFF";
             _passwordRow.SetActive(_editing.Private && MayEdit);
             // ⚠️⚠️ THE TARGET AND THE STOCK ARE PART OF THIS SENTENCE AND THE PAINTED REWRITE
             // DROPPED BOTH. `CustomGameScreen.Refresh` has carried them since the screen was

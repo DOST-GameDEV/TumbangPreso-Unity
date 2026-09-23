@@ -31,7 +31,7 @@ namespace TumbangPreso.UI
         {
             _surface = StreetUi.Restyle(button, StreetGraphic.Surface.Navigation);
             var label = button.GetComponentInChildren<Text>(true);
-            bool wordsFit = ((RectTransform)button.transform).rect.width >= 120;
+            bool wordsFit = glyph != StreetIcon.Glyph.Back && ((RectTransform)button.transform).rect.width >= 120;
             if (label != null)
             {
                 label.enabled = wordsFit;

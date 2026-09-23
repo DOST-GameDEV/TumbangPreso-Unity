@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 05:45:25Z" end-time="2026-09-23 05:46:06Z" duration="41.3489395">
+  <test-suite type="TestSuite" id="1731" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-09-23 05:45:25Z" end-time="2026-09-23 05:46:06Z" duration="41.348940" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1725" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-09-23 05:45:25Z" end-time="2026-09-23 05:46:06Z" duration="41.331091" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18588" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1726" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-09-23 05:45:25Z" end-time="2026-09-23 05:46:06Z" duration="41.322866" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1727" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-09-23 05:45:25Z" end-time="2026-09-23 05:46:06Z" duration="41.315165" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1191" name="HomeFlowTests" fullname="TumbangPreso.PlayTests.HomeFlowTests" classname="TumbangPreso.PlayTests.HomeFlowTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-23 05:45:25Z" end-time="2026-09-23 05:45:39Z" duration="14.815960" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1195" name="LoadingTipsStayInlineAndReadinessStillGatesTheTitle" fullname="TumbangPreso.PlayTests.HomeFlowTests.LoadingTipsStayInlineAndReadinessStillGatesTheTitle" methodname="LoadingTipsStayInlineAndReadinessStillGatesTheTitle" classname="TumbangPreso.PlayTests.HomeFlowTests" runstate="Runnable" seed="268549165" result="Passed" start-time="2026-09-23 05:45:25Z" end-time="2026-09-23 05:45:39Z" duration="14.796913" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Splash] preload retained 11723 assets in memory.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1196" name="HubFlowTests" fullname="TumbangPreso.PlayTests.HubFlowTests" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-23 05:45:39Z" end-time="2026-09-23 05:45:47Z" duration="7.312810" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1200" name="HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable" fullname="TumbangPreso.PlayTests.HubFlowTests.HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable" methodname="HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" seed="97098696" result="Failed" start-time="2026-09-23 05:45:39Z" end-time="2026-09-23 05:45:47Z" duration="7.307332" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Hub-A11y-SkillTree-960x540/TumpHubCanvas/Screens/HubSkillTree/Detail/VariantTrade clips its content.
+  Expected: less than or equal to 87.0f
+  But was:  88.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__6.MoveNext () [0x0094c] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-world-qualification-20260923\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:217
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] Hub-A11y-Home-960x540 cream source=252,211,159 pixel=104,90,72; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-1280x720 cream source=252,211,159 pixel=103,89,72; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-1920x1080 cream source=252,211,159 pixel=103,89,72; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-1280x960 cream source=252,211,159 pixel=103,89,72; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-1600x680 cream source=252,211,159 pixel=89,69,55; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-960x540 cream source=252,211,159 pixel=66,52,40; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-1280x720 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-1920x1080 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-1280x960 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-1600x680 cream source=252,211,159 pixel=59,41,30; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-SkillTree-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-SkillTree-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-A11y-SkillTree-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-A11y-SkillTree-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[Net] offline
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1389" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-23 05:45:47Z" end-time="2026-09-23 05:45:54Z" duration="7.404399" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1391" name="StartupLoginStaysSilentUntilGuestRevealsHome" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.StartupLoginStaysSilentUntilGuestRevealsHome" methodname="StartupLoginStaysSilentUntilGuestRevealsHome" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="652307920" result="Passed" start-time="2026-09-23 05:45:47Z" end-time="2026-09-23 05:45:54Z" duration="7.402285" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerLogin-v7-create-1920x1080 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-960x540 cream source=252,211,159 pixel=242,142,105; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-1280x960 cream source=252,211,159 pixel=244,135,100; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-3440x1440 cream source=252,211,159 pixel=242,140,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-960x540 cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1280x720 cream source=252,211,159 pixel=127,73,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1920x1080 cream source=252,211,159 pixel=127,71,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1280x960 cream source=252,211,159 pixel=128,69,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1600x680 cream source=252,211,159 pixel=127,70,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-end-normal cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-960x540 cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1280x720 cream source=252,211,159 pixel=127,73,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1920x1080 cream source=252,211,159 pixel=127,71,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1280x960 cream source=252,211,159 pixel=128,69,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1600x680 cream source=252,211,159 pixel=127,70,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-end-large cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Login-consent-filled cream source=252,211,159 pixel=242,142,105; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerLogin-v8-valid-marks/Disc: vertices=384, cull=False, alpha=0.998, depth=13, material=1
+[TumpGeometry] OwnerLogin-v8-valid-marks/Tick: vertices=24, cull=False, alpha=0.998, depth=14, material=1
+[TumpUiCapture] OwnerLogin-v8-valid-marks cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-signin cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1621" name="TumpNativeFrontEndTests" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-23 05:45:54Z" end-time="2026-09-23 05:46:06Z" duration="11.718417" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1626" name="OwnerLoadingCyclesIllustrationsWithInlineTipsAndRealProgress" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.OwnerLoadingCyclesIllustrationsWithInlineTipsAndRealProgress" methodname="OwnerLoadingCyclesIllustrationsWithInlineTipsAndRealProgress" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="1272136639" result="Passed" start-time="2026-09-23 05:45:54Z" end-time="2026-09-23 05:46:06Z" duration="11.712917" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerLoading-v1 cream source=252,211,159 pixel=79,181,206; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-1-960x540 cream source=252,211,159 pixel=79,181,206; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-1-1280x720 cream source=252,211,159 pixel=78,182,206; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-1-1920x1080 cream source=252,211,159 pixel=79,181,206; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-1-1280x960 cream source=252,211,159 pixel=80,185,207; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-1-1600x680 cream source=252,211,159 pixel=244,233,207; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-2-960x540 cream source=252,211,159 pixel=249,131,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-2-1280x720 cream source=252,211,159 pixel=249,130,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-2-1920x1080 cream source=252,211,159 pixel=249,130,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-2-1280x960 cream source=252,211,159 pixel=250,129,82; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-2-1600x680 cream source=252,211,159 pixel=250,196,143; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-0-960x540 cream source=252,211,159 pixel=249,182,90; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-0-1280x720 cream source=252,211,159 pixel=249,182,90; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-0-1920x1080 cream source=252,211,159 pixel=249,182,90; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-0-1280x960 cream source=252,211,159 pixel=251,183,92; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Loading-illustration-0-1600x680 cream source=252,211,159 pixel=247,175,84; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

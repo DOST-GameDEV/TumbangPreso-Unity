@@ -243,31 +243,16 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator LoadingStoryCanBeOpenedAdvancedAndClosedWithoutSkippingReadiness()
+        public IEnumerator LoadingTipsStayInlineAndReadinessStillGatesTheTitle()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.Splash);
             yield return new WaitForSecondsRealtime(0.6f);
             Assert.IsNotNull(Object.FindFirstObjectByType<SplashScreen>());
-            // ⚠⚠ THE STORY DOOR IS A NAMED LINK NOW, NOT THE ARTWORK. `SplashScreen.cs`'s
-            // `LoadingArtButton` belongs to the converted loading screen;
-            // `BuildCourtLoadingSurface` is what the game builds, and it puts the door on a
-            // labelled `LoadingStories` link instead of on the illustration, because artwork that
-            // is secretly a button is `CLAUDE.md` § 6.3's invisible door. Both are still on disk.
-            yield return PressWhen("LoadingStories");
-            var story = GameObject.Find("LoadingStoryRoot");
-            Assert.IsNotNull(story);
-            var text = story.GetComponentsInChildren<Text>()
-                .FirstOrDefault(t => LoadingPresentation.Stories.Contains(t.text));
-            Assert.IsNotNull(text, "The story sheet shows none of LoadingPresentation.Stories: " +
-                string.Join(" | ", story.GetComponentsInChildren<Text>().Select(t => t.name + "=" + t.text)));
-            string first = text.text;
-            yield return PressWhen("LoadingStoryNext");
-            Assert.AreNotEqual(first, text.text);
-            yield return new WaitForSecondsRealtime(15.1f);
-            Assert.AreEqual(SceneFlow.Splash, SceneManager.GetActiveScene().name,
-                "Reading must hold the loading screen past its maximum random dwell.");
-            yield return PressWhen("LoadingStoryClose");
-            Assert.IsFalse(story.activeSelf);
+            var loadingCanvas = GameObject.Find("OwnerLoadingCanvas").GetComponent<Canvas>();
+            Assert.IsNotNull(loadingCanvas.GetComponentInChildren<LoadingArtwork>());
+            Assert.IsTrue(loadingCanvas.GetComponentsInChildren<Text>().Any(t => t.name == "InlineLoadingTip" && !string.IsNullOrEmpty(t.text)));
+            Assert.IsFalse(loadingCanvas.GetComponentsInChildren<Button>().Any(b => b.name == "LoadingStories"));
+            Assert.IsNull(GameObject.Find("LoadingStoryRoot"), "Tips must not open a second screen or hold readiness.");
             float end = Time.realtimeSinceStartup + 60f;
             while (SceneManager.GetActiveScene().name != SceneFlow.MainMenu && Time.realtimeSinceStartup < end)
                 yield return null;

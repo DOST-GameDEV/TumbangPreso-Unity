@@ -1,5 +1,7 @@
 using System.Collections;
 using System.IO;
+using System.Linq;
+using TumbangPreso.UI.Hub;
 using NUnit.Framework;
 using TumbangPreso.UI;
 using UnityEngine;
@@ -342,36 +344,35 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator ClassicCharacterSelectDrawsTheGodotCastAndBackdrop()
         {
-            Directory.CreateDirectory(OutDir);
-            Settings.SettingsStore.Current.CharacterPick = 0;
-            UI.SceneFlow.PinSelectedRules(Core.CustomGameRules.Defaults(Core.GameMode.Classic));
-
-            var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            yield return ProbeWait.Done(load, "scene load");
-            for (int i = 0; i < 30; i++) yield return null;
-
-            var panel = Find("CharacterSelectPanel");
-            Assert.IsNotNull(panel, "MatchSetup has no CharacterSelectPanel to open.");
-            panel.SetActive(false);
-            panel.SetActive(true);
-            for (int i = 0; i < 30; i++) yield return null;
-
-            var name = FindIn(panel.transform, "CharValueLabel")?.GetComponent<UnityEngine.UI.Text>();
-            Assert.IsNotNull(name, "Classic select has no character name label.");
-            Assert.AreEqual("BERTO", name.text, "Classic select did not open on the Classic roster.");
-
-            var preview = Object.FindFirstObjectByType<ModelPreview>(FindObjectsInactive.Include); // scene-root canvas, see above
-            Assert.IsNotNull(preview?.Subject, "Classic select built no preview subject.");
-            StringAssert.AreEqualIgnoringCase("character-male-f(Clone)", preview.Subject.name,
-                "Classic index zero is not the Godot BERTO model.");
-
-            var backdrop = FindIn(panel.transform, "Backdrop")?.GetComponent<UnityEngine.UI.Image>();
-            Assert.IsNotNull(backdrop, "Classic select has no backdrop image.");
-            Assert.IsNotNull(backdrop.sprite,
-                "The Godot slate-to-midnight gradient was flattened to a solid colour.");
-
-            Capture("character-classic-godot");
-            UI.SceneFlow.PinSelectedRules(Core.CustomGameRules.Defaults(Core.GameMode.HeroStrike));
+            int choice = Settings.SettingsStore.Current.HubQueueChoice;
+            int pick = Settings.SettingsStore.Current.CharacterPick;
+            try
+            {
+                HubHome.Choice = 1; Settings.SettingsStore.Current.CharacterPick = 0;
+                yield return HubFlowTests.OpenHome();
+                yield return HubFlowTests.Press("ModeCard");
+                yield return HubFlowTests.Press("CustomCard");
+                yield return HubFlowTests.Press("HostDoor");
+                yield return HubFlowTests.Press("CreateLobby");
+                float until = Time.realtimeSinceStartup + 15;
+                while (!(TumpHub.Current.Top is HubLobby) && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
+                yield return HubFlowTests.Press("CharacterDoor");
+                var picker = TumpHub.Current.Top;
+                Assert.IsTrue(picker.GetComponentsInChildren<UnityEngine.UI.Text>().Any(t => t.name == "Heading" && t.text == "BERTO"));
+                var preview = picker.GetComponentInChildren<ModelPreview>();
+                Assert.IsNotNull(preview.Subject);
+                StringAssert.AreEqualIgnoringCase("character-male-f(Clone)", preview.Subject.name);
+                // The hub's authored warm stage replaces the retired blue gradient; the cast stays.
+                Assert.IsNotNull(picker.GetComponentsInChildren<HubShape>().FirstOrDefault(g => g.name == "Floor"));
+                yield return TumpUiCapture.Capture("Hub-character-classic", TumpHub.Current.Canvas, 960, 540, false, checkActionBounds: true);
+            }
+            finally
+            {
+                Net.NetSession.Instance?.Stop();
+                Settings.SettingsStore.Current.HubQueueChoice = choice;
+                Settings.SettingsStore.Current.CharacterPick = pick;
+            }
         }
 
         [UnityTest]

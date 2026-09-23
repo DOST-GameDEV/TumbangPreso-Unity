@@ -14,7 +14,7 @@ namespace TumbangPreso.UI
         {
             _canvas=OwnerUiLayout.Canvas(owner,"OwnerSettingsCanvas",800);OwnerUiBackdrop.Build(_canvas.transform);
             var design=OwnerUiLayout.DesignArea(_canvas.transform,"SettingsComposition");
-            OwnerTextAction.Create(design,"TumpSettingsBack","BACK",Back,54,25,170,70,30);
+            OwnerTextAction.CreateBack(design,"TumpSettingsBack",Back,54,25);
             var title=OwnerUiLayout.Text(design,"SettingsTitle","SETTINGS",63,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(title.rectTransform,89,110,1380,98);
             var logo=OwnerUiLayout.Art(design,"OwnerLogo",OwnerUiTheme.Piece.Logo);

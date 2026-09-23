@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
+using TumbangPreso.UI.Hub;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -15,15 +16,25 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class OwnerPlayerHubTests
     {
-        [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
-        [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
+        private int _queueChoice;
+        [UnitySetUp]public IEnumerator Before()
+        {
+            _queueChoice = Settings.SettingsStore.Current.HubQueueChoice;
+            HubHome.Choice = 1;
+            yield return PlayModeWorld.Reset();
+        }
+        [UnityTearDown]public IEnumerator After()
+        {
+            Settings.SettingsStore.Current.HubQueueChoice = _queueChoice;
+            yield return PlayModeWorld.Reset();
+        }
         [UnityTest,Timeout(90000)]
         public IEnumerator HubPagesKeepProfileDraftsAcrossNavigationAndServiceRefresh()
         {
             SceneFlow.Networked=false;SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
             PlaySelectionScreen.RequestedLobbyMode=LobbyMode.Practice;
             yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);yield return null;
-            Press(Find("ProfileButton"));yield return null;
+            Press(Find("NamePlate"));yield return null;
             var hub=Object.FindFirstObjectByType<PlayerHub>();Assert.IsTrue(hub.IsOpen);
             var canvas=GameObject.Find("OwnerPlayerHubCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(canvas.GetComponentsInChildren<GodotButton>(true));Assert.IsEmpty(canvas.GetComponentsInChildren<TumpSurface>(true));
@@ -58,7 +69,9 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(accountName,GameServices.Account?.DisplayName,"Typing must not submit account changes.");
             Assert.AreEqual(localName,TumbangPreso.Settings.SettingsStore.Current.PlayerName);
             Press(Find("ClosePlayerHub"));yield return null;Assert.IsFalse(hub.IsOpen);
-            Assert.IsTrue(GameObject.Find("OwnerPreparationCanvas").activeInHierarchy);
+            yield return null;
+            Assert.IsTrue(TumpHub.Current.Canvas.enabled);
+            Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top);
         }
         [UnityTest,Timeout(90000)]
         public IEnumerator PopulatedCareerAndHistoryRenderRealColumnsWithoutSavingFixtureData()
@@ -73,7 +86,7 @@ namespace TumbangPreso.PlayTests
                 profile.Xp=2500;profile.Rank.MatchesThisSeason=9;profile.Rank.Rating=1800;profile.Rank.Deviation=50;
                 var totals=ProfileRules.ModeFor(profile,"Classic").Totals;totals.Matches=12;totals.Wins=4;
                 totals.Placements[0]=4;totals.Placements[1]=3;totals.Placements[2]=3;totals.Placements[3]=2;
-                Press(Find("ProfileButton"));yield return null;var hub=Object.FindFirstObjectByType<PlayerHub>();
+                Press(Find("NamePlate"));yield return null;var hub=Object.FindFirstObjectByType<PlayerHub>();
                 var canvas=GameObject.Find("OwnerPlayerHubCanvas").GetComponent<Canvas>();
                 Press(Find("HubTabCareer"));yield return null;
                 Assert.That(canvas.GetComponentsInChildren<Text>().Any(t=>t.text.Contains(RatingRules.TierName(RatingRules.TierFor(1800)))));
@@ -105,7 +118,7 @@ namespace TumbangPreso.PlayTests
             SceneFlow.Networked=false;SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
             PlaySelectionScreen.RequestedLobbyMode=LobbyMode.Practice;
             yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);yield return null;
-            Press(Find("ProfileButton"));yield return null;Press(Find("HubTabCareer"));yield return null;
+            Press(Find("NamePlate"));yield return null;Press(Find("HubTabCareer"));yield return null;
             var choice=Object.FindObjectsByType<RecordChoice>().First(c=>c.name=="CareerModeValue");
             ClickSelectable(choice);yield return null;
             var option=choice.GetComponentsInChildren<Toggle>().First(t=>t.GetComponentInChildren<Text>().text=="HERO STRIKE");

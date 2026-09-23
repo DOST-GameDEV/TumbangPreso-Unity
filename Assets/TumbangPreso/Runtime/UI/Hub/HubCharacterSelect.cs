@@ -60,9 +60,9 @@ namespace TumbangPreso.UI.Hub
             _preview.CentreSubject();
 
             _role = HubKit.Text(Root, "Role", "", HubStyle.Label, false, HubStyle.Golden, TextAnchor.MiddleLeft);
-            HubKit.Place(_role.rectTransform, HubKit.TopLeft, new Vector2(HubKit.Margin + 6, -HubKit.Margin), new Vector2(900, 44));
+            HubKit.Place(_role.rectTransform, HubKit.TopLeft, new Vector2(HubKit.Margin + 6, -HubKit.Margin), new Vector2(900, 56));
             _name = HubKit.Text(Root, "Heading", "", HubStyle.Hero, true, HubStyle.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(HubKit.Margin, -HubKit.Margin - 30), new Vector2(980, 150));
+            HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(HubKit.Margin, -HubKit.Margin - 44), new Vector2(980, 150));
             var shadow = _name.gameObject.AddComponent<Shadow>();
             shadow.effectColor = HubStyle.Ink; shadow.effectDistance = new Vector2(6, -7);
 
@@ -95,7 +95,7 @@ namespace TumbangPreso.UI.Hub
             HubKit.Place((RectTransform)_select.transform, HubKit.BottomRight, new Vector2(-HubKit.Margin, HubKit.Margin), new Vector2(3 * 160 + 2 * 16, 130));
             _select.Shape.BandFraction = 0.12f;
             _hint = HubKit.Text(Root, "Hint", "", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleRight);
-            HubKit.Place(_hint.rectTransform, HubKit.BottomRight, new Vector2(-(HubKit.Margin + 512 + 30), HubKit.Margin + 140), new Vector2(700, 84));
+            HubKit.Place(_hint.rectTransform, HubKit.BottomRight, new Vector2(-(HubKit.Margin + 512 + 30), HubKit.Margin + 140), new Vector2(700, 96));
             _hint.alignment = TextAnchor.LowerRight;
 
             // Everyone in the match along the bottom left, with their pick and whether they locked.
@@ -104,8 +104,8 @@ namespace TumbangPreso.UI.Hub
             if (!Timed)
             {
                 HubChrome.Back(Root, Hub);
-                HubKit.Place(_role.rectTransform, HubKit.TopLeft, new Vector2(HubKit.Margin + HubChrome.BarHeight + 30, -HubKit.Margin), new Vector2(900, 44));
-                HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(HubKit.Margin + HubChrome.BarHeight + 24, -HubKit.Margin - 30), new Vector2(900, 150));
+                HubKit.Place(_role.rectTransform, HubKit.TopLeft, new Vector2(HubKit.Margin + HubChrome.BarHeight + 30, -HubKit.Margin), new Vector2(900, 56));
+                HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(HubKit.Margin + HubChrome.BarHeight + 24, -HubKit.Margin - 44), new Vector2(900, 150));
             }
 
             _endsAt = Time.unscaledTime + Seconds;
@@ -241,7 +241,7 @@ namespace TumbangPreso.UI.Hub
                 HubKit.Place(name.rectTransform, HubKit.TopLeft, new Vector2(118, -18), new Vector2(156, 40));
                 HubKit.Fit(name, 156);
                 var state = HubKit.Text(card, "State", seat.Ready || (seat.Mine && _locked) ? "LOCKED" : seat.Occupied ? "PICKING" : "", HubStyle.Floor, false, ink, TextAnchor.MiddleLeft);
-                HubKit.Place(state.rectTransform, HubKit.BottomLeft, new Vector2(118, 18), new Vector2(156, 40));
+                HubKit.Place(state.rectTransform, HubKit.BottomLeft, new Vector2(118, 14), new Vector2(156, 48));
                 HubKit.Fit(state, 156);
             }
         }

@@ -18,7 +18,8 @@ namespace TumbangPreso.UI
             paper.rectTransform.offsetMin = new Vector2(-260, 0); paper.rectTransform.offsetMax = Vector2.zero;
             paper.color = new Color32(235, 216, 183, 255); paper.raycastTarget = false;
             var root = OwnerUiLayout.DesignArea(_nativeJoinCanvas.transform, "RoomBrowserComposition");
-            BrowserLink(root, "CloseJoinButton", "BACK", Close, 55, 28, 174, 68, true);
+            var back = OwnerTextAction.CreateBack(root, "CloseJoinButton", Close, 55, 28);
+            back.GetComponentInChildren<OwnerUiGlyph>().color = OwnerUiTheme.Current.Pale;
             var title = OwnerUiLayout.Text(root, "JoinTitle", "JOIN A\nROOM", 70, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(title.rectTransform, 91, 126, 520, 273); title.color = OwnerUiTheme.Current.Pale;
             var hint = OwnerUiLayout.Text(root, "JoinHint", "Have a friend's code?\nEnter it here and join them.", 32);

@@ -110,7 +110,7 @@ namespace TumbangPreso.UI.Hub
             image.color = task.Done ? HubStyle.Chartreuse : HubStyle.Persimmon;
             image.raycastTarget = false;
             var count = HubKit.Text(card, "Count", task.Progress + " / " + task.Def.Target, HubStyle.Floor, false, ink, TextAnchor.MiddleLeft);
-            HubKit.Place(count.rectTransform, HubKit.BottomLeft, new Vector2(466, 36), new Vector2(120, 40));
+            HubKit.Place(count.rectTransform, HubKit.BottomLeft, new Vector2(466, 36), new Vector2(120, 48));
 
             var reward = HubKit.Place(HubKit.Rect(card, "Reward"), HubKit.TopRight, new Vector2(-30, -20), new Vector2(230, 56));
             var cap = HubKit.Glyph(reward, "Cap", HubGlyph.Mark.Cap, task.Claimed ? HubStyle.HoneySoft : task.Done ? HubStyle.DeepRed : HubStyle.Golden, 0.11f);

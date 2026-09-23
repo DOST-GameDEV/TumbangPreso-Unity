@@ -67,10 +67,10 @@ namespace TumbangPreso.UI.Hub
             _name = HubKit.Text(body, "PlayerName", "", HubStyle.Title, true, HubStyle.Honey, TextAnchor.MiddleLeft);
             HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(122, -14), new Vector2(330, 60));
             _tag = HubKit.Text(body, "PlayerTag", "", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleLeft);
-            HubKit.Place(_tag.rectTransform, HubKit.TopLeft, new Vector2(124, -70), new Vector2(330, 36));
+            HubKit.Place(_tag.rectTransform, HubKit.TopLeft, new Vector2(124, -70), new Vector2(330, 44));
 
             var track = HubKit.Shape(body, "XpTrack", HubStyle.Night, false, 8, 3, 13);
-            HubKit.Place(track.rectTransform, HubKit.BottomLeft, new Vector2(122, 18), new Vector2(330, 26));
+            HubKit.Place(track.rectTransform, HubKit.BottomLeft, new Vector2(122, 18), new Vector2(330, 16));
             _xpFill = HubKit.Rect(track.transform, "XpFill");
             _xpFill.anchorMin = Vector2.zero; _xpFill.anchorMax = new Vector2(0, 1);
             _xpFill.offsetMin = new Vector2(4, 4); _xpFill.offsetMax = new Vector2(0, -4);
@@ -79,13 +79,13 @@ namespace TumbangPreso.UI.Hub
             HubSlap.On(plate.transform, 0.04f, -2);
 
             var tree = HubKit.Button(Root, "SkillTreeButton", null, HubStyle.Army, () => Hub.Push<HubSkillTree>(), 0, 103);
-            HubKit.Place((RectTransform)tree.transform, HubKit.TopLeft, new Vector2(m, -(m + 150 + 24)), new Vector2(380, 124));
+            HubKit.Place((RectTransform)tree.transform, HubKit.TopLeft, new Vector2(m, -(m + 150 + 24)), new Vector2(420, 124));
             var treeGlyph = HubKit.Glyph(tree.Body, "Icon", HubGlyph.Mark.Tree, HubStyle.Ink, 0.1f);
             HubKit.Place(treeGlyph.rectTransform, HubKit.Left, new Vector2(18, 0), new Vector2(84, 84));
             var the = HubKit.Text(tree.Body, "Eyebrow", "THE", HubStyle.Floor, true, HubStyle.Ink, TextAnchor.LowerLeft);
             HubKit.Place(the.rectTransform, HubKit.TopLeft, new Vector2(116, -12), new Vector2(120, 34));
             var treeWords = HubKit.Text(tree.Body, "Label", "SKILL TREE", HubStyle.Title, true, HubStyle.Ink, TextAnchor.MiddleLeft);
-            HubKit.Place(treeWords.rectTransform, HubKit.BottomLeft, new Vector2(114, 12), new Vector2(250, 66));
+            HubKit.Place(treeWords.rectTransform, HubKit.BottomLeft, new Vector2(114, 12), new Vector2(290, 66));
             _skillNotice = HubKit.Notice(tree.Body);
             HubSlap.On(tree.transform, 0.08f);
         }

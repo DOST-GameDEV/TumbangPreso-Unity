@@ -1,0 +1,1030 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 06:33:47Z" end-time="2026-09-23 06:35:53Z" duration="125.2042003">
+  <test-suite type="TestSuite" id="1731" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-09-23 06:33:47Z" end-time="2026-09-23 06:35:53Z" duration="125.204200" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1725" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-09-23 06:33:47Z" end-time="2026-09-23 06:35:53Z" duration="125.192248" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25776" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1726" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-09-23 06:33:47Z" end-time="2026-09-23 06:35:53Z" duration="125.188645" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1727" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="557" result="Failed" site="Child" start-time="2026-09-23 06:33:47Z" end-time="2026-09-23 06:35:53Z" duration="125.185494" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1196" name="HubFlowTests" fullname="TumbangPreso.PlayTests.HubFlowTests" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-23 06:33:47Z" end-time="2026-09-23 06:35:00Z" duration="72.606736" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1200" name="HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable" fullname="TumbangPreso.PlayTests.HubFlowTests.HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable" methodname="HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" seed="276942674" result="Failed" start-time="2026-09-23 06:33:47Z" end-time="2026-09-23 06:35:00Z" duration="72.588693" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Hub-A11y-Lobby-960x540/TumpHubCanvas/Screens/HubLobby/Status clips its content.
+  Expected: less than or equal to 43.0f
+  But was:  44.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__6.MoveNext () [0x0094c] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-world-qualification-20260923\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:217
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] Hub-A11y-Home-960x540 cream source=252,211,159 pixel=104,90,73; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-1280x720 cream source=252,211,159 pixel=103,89,72; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-1920x1080 cream source=252,211,159 pixel=103,89,72; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-1280x960 cream source=252,211,159 pixel=103,89,72; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-1600x680 cream source=252,211,159 pixel=89,68,55; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-960x540 cream source=252,211,159 pixel=66,52,40; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-1280x720 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-1920x1080 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-1280x960 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Avatar-1600x680 cream source=252,211,159 pixel=59,41,30; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-SkillTree-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-SkillTree-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-A11y-SkillTree-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-A11y-SkillTree-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-A11y-SkillTree-960x540 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-SkillTree-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-A11y-SkillTree-1280x720 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-SkillTree-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-A11y-SkillTree-1920x1080 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-SkillTree-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-A11y-SkillTree-1280x960 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-SkillTree-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] Hub-A11y-SkillTree-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=66, material=1
+[TumpUiCapture] Hub-A11y-SkillTree-1600x680 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-Hero-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] Hub-A11y-Hero-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] Hub-A11y-Hero-960x540/Glyph: vertices=40, cull=False, alpha=1, depth=40, material=1
+[TumpUiCapture] Hub-A11y-Hero-960x540 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-Hero-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] Hub-A11y-Hero-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] Hub-A11y-Hero-1280x720/Glyph: vertices=40, cull=False, alpha=1, depth=40, material=1
+[TumpUiCapture] Hub-A11y-Hero-1280x720 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-Hero-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] Hub-A11y-Hero-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] Hub-A11y-Hero-1920x1080/Glyph: vertices=40, cull=False, alpha=1, depth=40, material=1
+[TumpUiCapture] Hub-A11y-Hero-1920x1080 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-Hero-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] Hub-A11y-Hero-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] Hub-A11y-Hero-1280x960/Glyph: vertices=40, cull=False, alpha=1, depth=40, material=1
+[TumpUiCapture] Hub-A11y-Hero-1280x960 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-Hero-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] Hub-A11y-Hero-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] Hub-A11y-Hero-1600x680/Glyph: vertices=40, cull=False, alpha=1, depth=40, material=1
+[TumpUiCapture] Hub-A11y-Hero-1600x680 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-AbilityDetail-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-960x540/Glyph: vertices=40, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-960x540/Glyph: vertices=28, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-A11y-AbilityDetail-960x540 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x720/Glyph: vertices=40, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x720/Glyph: vertices=28, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-A11y-AbilityDetail-1280x720 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-AbilityDetail-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1920x1080/Glyph: vertices=40, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1920x1080/Glyph: vertices=28, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-A11y-AbilityDetail-1920x1080 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x960/Glyph: vertices=40, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1280x960/Glyph: vertices=28, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-A11y-AbilityDetail-1280x960 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-A11y-AbilityDetail-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1600x680/Glyph: vertices=40, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] Hub-A11y-AbilityDetail-1600x680/Glyph: vertices=28, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-A11y-AbilityDetail-1600x680 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Loadout-960x540 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Loadout-1280x720 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Loadout-1920x1080 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Loadout-1280x960 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Loadout-1600x680 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Loadout-unowned-960x540 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Loadout-unowned-1280x720 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Loadout-unowned-1920x1080 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Loadout-unowned-1280x960 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Loadout-unowned-1600x680 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ItemPopup-960x540 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ItemPopup-1280x720 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ItemPopup-1920x1080 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ItemPopup-1280x960 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ItemPopup-1600x680 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ItemPopup-inspect-960x540 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ItemPopup-inspect-1280x720 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ItemPopup-inspect-1920x1080 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ItemPopup-inspect-1280x960 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ItemPopup-inspect-1600x680 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Shop-960x540 cream source=252,211,159 pixel=66,52,40; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Shop-1280x720 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Shop-1920x1080 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Shop-1280x960 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Shop-1600x680 cream source=252,211,159 pixel=59,41,30; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Tasks-960x540 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Tasks-1280x720 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Tasks-1920x1080 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Tasks-1280x960 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Tasks-1600x680 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Menu-960x540 cream source=252,211,159 pixel=66,52,40; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Menu-1280x720 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Menu-1920x1080 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Menu-1280x960 cream source=252,211,159 pixel=66,51,39; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Menu-1600x680 cream source=252,211,159 pixel=59,41,30; isolated UI camera, no ColourGrade.
+[Net] offline
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] Hub-A11y-GameModes-960x540 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-GameModes-1280x720 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-GameModes-1920x1080 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-GameModes-1280x960 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-GameModes-1600x680 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-GameModes-focus-960x540 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-GameModes-focus-1280x720 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-GameModes-focus-1920x1080 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-GameModes-focus-1280x960 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-GameModes-focus-1600x680 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ClassicPopup-960x540 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ClassicPopup-1280x720 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ClassicPopup-1920x1080 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ClassicPopup-1280x960 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-ClassicPopup-1600x680 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-CustomPopup-960x540 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-CustomPopup-1280x720 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-CustomPopup-1920x1080 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-CustomPopup-1280x960 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-CustomPopup-1600x680 cream source=252,211,159 pixel=53,41,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Host-960x540 cream source=252,211,159 pixel=78,63,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Host-1280x720 cream source=252,211,159 pixel=77,63,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Host-1920x1080 cream source=252,211,159 pixel=77,63,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Host-1280x960 cream source=252,211,159 pixel=77,63,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Host-1600x680 cream source=252,211,159 pixel=68,49,38; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Host-map-list-960x540 cream source=252,211,159 pixel=54,39,28; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Host-map-list-1280x720 cream source=252,211,159 pixel=54,38,28; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Host-map-list-1920x1080 cream source=252,211,159 pixel=54,38,27; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Host-map-list-1280x960 cream source=252,211,159 pixel=54,38,27; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Host-map-list-1600x680 cream source=252,211,159 pixel=51,32,22; isolated UI camera, no ColourGrade.
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] Hub-A11y-Join-online-960x540 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-online-1280x720 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-online-1920x1080 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-online-1280x960 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-online-1600x680 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-lan-960x540 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-lan-1280x720 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-lan-1920x1080 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-lan-1280x960 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-lan-1600x680 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-code-960x540 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-code-1280x720 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-code-1920x1080 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-code-1280x960 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Join-code-1600x680 cream source=252,211,159 pixel=74,69,16; isolated UI camera, no ColourGrade.
+[Net] offline
+[Net] signing in to online services...
+[Net] cannot go online: UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] Hub-A11y-Home-queued-960x540 cream source=252,211,159 pixel=100,94,82; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-queued-1280x720 cream source=252,211,159 pixel=99,93,81; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-queued-1920x1080 cream source=252,211,159 pixel=99,93,81; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-queued-1280x960 cream source=252,211,159 pixel=98,92,80; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-Home-queued-1600x680 cream source=252,211,159 pixel=101,87,55; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-MatchFound-960x540 cream source=252,211,159 pixel=78,70,60; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-MatchFound-1280x720 cream source=252,211,159 pixel=78,70,59; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-MatchFound-1920x1080 cream source=252,211,159 pixel=78,70,59; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-MatchFound-1280x960 cream source=252,211,159 pixel=77,69,59; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-MatchFound-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-CharacterSelect-960x540 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-CharacterSelect-1280x720 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-CharacterSelect-1920x1080 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-CharacterSelect-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-A11y-CharacterSelect-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code ZPWS
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1389" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-23 06:35:00Z" end-time="2026-09-23 06:35:08Z" duration="7.665276" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1391" name="StartupLoginStaysSilentUntilGuestRevealsHome" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.StartupLoginStaysSilentUntilGuestRevealsHome" methodname="StartupLoginStaysSilentUntilGuestRevealsHome" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="986477332" result="Passed" start-time="2026-09-23 06:35:00Z" end-time="2026-09-23 06:35:08Z" duration="7.657852" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerLogin-v7-create-1920x1080 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-960x540 cream source=252,211,159 pixel=242,142,105; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-1280x960 cream source=252,211,159 pixel=244,135,100; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-3440x1440 cream source=252,211,159 pixel=242,140,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-960x540 cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1280x720 cream source=252,211,159 pixel=127,73,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1920x1080 cream source=252,211,159 pixel=127,71,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1280x960 cream source=252,211,159 pixel=128,69,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-normal-1600x680 cream source=252,211,159 pixel=127,70,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-end-normal cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-960x540 cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1280x720 cream source=252,211,159 pixel=127,73,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1920x1080 cream source=252,211,159 pixel=127,71,50; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1280x960 cream source=252,211,159 pixel=128,69,49; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-large-1600x680 cream source=252,211,159 pixel=127,70,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Terms-popup-end-large cream source=252,211,159 pixel=127,72,52; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Login-consent-filled cream source=252,211,159 pixel=242,142,105; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerLogin-v8-valid-marks/Disc: vertices=384, cull=False, alpha=0.998, depth=13, material=1
+[TumpGeometry] OwnerLogin-v8-valid-marks/Tick: vertices=24, cull=False, alpha=0.998, depth=14, material=1
+[TumpUiCapture] OwnerLogin-v8-valid-marks cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerLogin-v7-signin/Disc: vertices=384, cull=False, alpha=0.001, depth=13, material=1
+[TumpGeometry] OwnerLogin-v7-signin/Tick: vertices=24, cull=False, alpha=0.001, depth=14, material=1
+[TumpUiCapture] OwnerLogin-v7-signin cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1397" name="OwnerPlayerHubTests" fullname="TumbangPreso.PlayTests.OwnerPlayerHubTests" classname="TumbangPreso.PlayTests.OwnerPlayerHubTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-23 06:35:08Z" end-time="2026-09-23 06:35:40Z" duration="32.475250" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1400" name="CareerRecordChoicesUseNativeOptionsWithoutChangingMatchMode" fullname="TumbangPreso.PlayTests.OwnerPlayerHubTests.CareerRecordChoicesUseNativeOptionsWithoutChangingMatchMode" methodname="CareerRecordChoicesUseNativeOptionsWithoutChangingMatchMode" classname="TumbangPreso.PlayTests.OwnerPlayerHubTests" runstate="Runnable" seed="1508548451" result="Passed" start-time="2026-09-23 06:35:08Z" end-time="2026-09-23 06:35:10Z" duration="2.042174" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] RecordBook-choice-open/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-choice-open/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-choice-open/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-choice-open/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-choice-open/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-choice-open/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-choice-open/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpGeometry] RecordBook-choice-open/SelectedOption: vertices=24, cull=False, alpha=1, depth=6, material=1
+[TumpUiCapture] RecordBook-choice-open cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[RecordChoiceCancel] enabled=True nav=True performed=True selected=CareerModeValue
+]]></output>
+            </test-case>
+            <test-case id="1398" name="HubPagesKeepProfileDraftsAcrossNavigationAndServiceRefresh" fullname="TumbangPreso.PlayTests.OwnerPlayerHubTests.HubPagesKeepProfileDraftsAcrossNavigationAndServiceRefresh" methodname="HubPagesKeepProfileDraftsAcrossNavigationAndServiceRefresh" classname="TumbangPreso.PlayTests.OwnerPlayerHubTests" runstate="Runnable" seed="1986549833" result="Passed" start-time="2026-09-23 06:35:10Z" end-time="2026-09-23 06:35:31Z" duration="21.414710" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] RecordBook-profile-960x540/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-profile-960x540/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-profile-960x540/HubTabFriends: vertices=7, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] RecordBook-profile-960x540/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-profile-960x540/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-profile-960x540/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-profile-960x540 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-profile-1280x720/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-profile-1280x720/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-profile-1280x720/HubTabFriends: vertices=7, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] RecordBook-profile-1280x720/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-profile-1280x720/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-profile-1280x720/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-profile-1280x720 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-profile-1366x768/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-profile-1366x768/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-profile-1366x768/HubTabFriends: vertices=7, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] RecordBook-profile-1366x768/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-profile-1366x768/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-profile-1366x768/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-profile-1366x768 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-profile-1920x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-profile-1920x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-profile-1920x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] RecordBook-profile-1920x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-profile-1920x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-profile-1920x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-profile-1920x1080 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-profile-1920x1200/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-profile-1920x1200/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-profile-1920x1200/HubTabFriends: vertices=7, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] RecordBook-profile-1920x1200/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-profile-1920x1200/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-profile-1920x1200/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-profile-1920x1200 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-profile-1280x960/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-profile-1280x960/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-profile-1280x960/HubTabFriends: vertices=7, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] RecordBook-profile-1280x960/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-profile-1280x960/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-profile-1280x960/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-profile-1280x960 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-profile-2560x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-profile-2560x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-profile-2560x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] RecordBook-profile-2560x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-profile-2560x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-profile-2560x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-profile-2560x1440 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-profile-3440x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-profile-3440x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-profile-3440x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] RecordBook-profile-3440x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-profile-3440x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-profile-3440x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-profile-3440x1440 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-profile-3840x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-profile-3840x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-profile-3840x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] RecordBook-profile-3840x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-profile-3840x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-profile-3840x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-profile-3840x1080 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-profile-3840x2160/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-profile-3840x2160/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-profile-3840x2160/HubTabFriends: vertices=7, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] RecordBook-profile-3840x2160/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-profile-3840x2160/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-profile-3840x2160/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-profile-3840x2160 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[TumpGeometry] RecordBook-Friends-960x540/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Friends-960x540/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Friends-960x540/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Friends-960x540/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-Friends-960x540/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Friends-960x540/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Friends-960x540 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Friends-1280x720/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Friends-1280x720/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Friends-1280x720/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Friends-1280x720/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-Friends-1280x720/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Friends-1280x720/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Friends-1280x720 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Friends-1366x768/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Friends-1366x768/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Friends-1366x768/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Friends-1366x768/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-Friends-1366x768/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Friends-1366x768/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Friends-1366x768 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Friends-1920x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Friends-1920x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Friends-1920x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Friends-1920x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-Friends-1920x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Friends-1920x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Friends-1920x1080 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Friends-1920x1200/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Friends-1920x1200/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Friends-1920x1200/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Friends-1920x1200/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-Friends-1920x1200/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Friends-1920x1200/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Friends-1920x1200 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Friends-1280x960/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Friends-1280x960/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Friends-1280x960/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Friends-1280x960/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-Friends-1280x960/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Friends-1280x960/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Friends-1280x960 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Friends-2560x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Friends-2560x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Friends-2560x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Friends-2560x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-Friends-2560x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Friends-2560x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Friends-2560x1440 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Friends-3440x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Friends-3440x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Friends-3440x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Friends-3440x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-Friends-3440x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Friends-3440x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Friends-3440x1440 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Friends-3840x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Friends-3840x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Friends-3840x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Friends-3840x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-Friends-3840x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Friends-3840x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Friends-3840x1080 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Friends-3840x2160/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Friends-3840x2160/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Friends-3840x2160/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Friends-3840x2160/HubTabCareer: vertices=7, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] RecordBook-Friends-3840x2160/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Friends-3840x2160/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Friends-3840x2160 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Career-960x540/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Career-960x540/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Career-960x540/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Career-960x540/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Career-960x540/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Career-960x540/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-Career-960x540/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-Career-960x540 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Career-1280x720/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Career-1280x720/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Career-1280x720/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Career-1280x720/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Career-1280x720/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Career-1280x720/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-Career-1280x720/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-Career-1280x720 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Career-1366x768/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Career-1366x768/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Career-1366x768/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Career-1366x768/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Career-1366x768/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Career-1366x768/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-Career-1366x768/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-Career-1366x768 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Career-1920x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Career-1920x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Career-1920x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Career-1920x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Career-1920x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Career-1920x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-Career-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-Career-1920x1080 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Career-1920x1200/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Career-1920x1200/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Career-1920x1200/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Career-1920x1200/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Career-1920x1200/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Career-1920x1200/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-Career-1920x1200/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-Career-1920x1200 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Career-1280x960/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Career-1280x960/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Career-1280x960/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Career-1280x960/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Career-1280x960/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Career-1280x960/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-Career-1280x960/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-Career-1280x960 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Career-2560x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Career-2560x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Career-2560x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Career-2560x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Career-2560x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Career-2560x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-Career-2560x1440/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-Career-2560x1440 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Career-3440x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Career-3440x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Career-3440x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Career-3440x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Career-3440x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Career-3440x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-Career-3440x1440/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-Career-3440x1440 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Career-3840x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Career-3840x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Career-3840x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Career-3840x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Career-3840x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Career-3840x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-Career-3840x1080/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-Career-3840x1080 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Career-3840x2160/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Career-3840x2160/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Career-3840x2160/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Career-3840x2160/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Career-3840x2160/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-Career-3840x2160/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-Career-3840x2160/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-Career-3840x2160 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Matches-960x540/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Matches-960x540/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Matches-960x540/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Matches-960x540/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Matches-960x540/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Matches-960x540/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Matches-960x540 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Matches-1280x720/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Matches-1280x720/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Matches-1280x720/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Matches-1280x720/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Matches-1280x720/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Matches-1280x720/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Matches-1280x720 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Matches-1366x768/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Matches-1366x768/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Matches-1366x768/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Matches-1366x768/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Matches-1366x768/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Matches-1366x768/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Matches-1366x768 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Matches-1920x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Matches-1920x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Matches-1920x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Matches-1920x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Matches-1920x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Matches-1920x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Matches-1920x1080 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Matches-1920x1200/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Matches-1920x1200/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Matches-1920x1200/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Matches-1920x1200/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Matches-1920x1200/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Matches-1920x1200/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Matches-1920x1200 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Matches-1280x960/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Matches-1280x960/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Matches-1280x960/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Matches-1280x960/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Matches-1280x960/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Matches-1280x960/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Matches-1280x960 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Matches-2560x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Matches-2560x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Matches-2560x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Matches-2560x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Matches-2560x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Matches-2560x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Matches-2560x1440 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Matches-3440x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Matches-3440x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Matches-3440x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Matches-3440x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Matches-3440x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Matches-3440x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Matches-3440x1440 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Matches-3840x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Matches-3840x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Matches-3840x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Matches-3840x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Matches-3840x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Matches-3840x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Matches-3840x1080 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Matches-3840x2160/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Matches-3840x2160/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Matches-3840x2160/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Matches-3840x2160/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Matches-3840x2160/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Matches-3840x2160/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] RecordBook-Matches-3840x2160 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Account-960x540/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Account-960x540/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Account-960x540/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Account-960x540/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Account-960x540/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Account-960x540/HubTabAccount: vertices=7, cull=False, alpha=1, depth=19, material=1
+[TumpUiCapture] RecordBook-Account-960x540 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Account-1280x720/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Account-1280x720/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Account-1280x720/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Account-1280x720/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Account-1280x720/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Account-1280x720/HubTabAccount: vertices=7, cull=False, alpha=1, depth=19, material=1
+[TumpUiCapture] RecordBook-Account-1280x720 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Account-1366x768/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Account-1366x768/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Account-1366x768/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Account-1366x768/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Account-1366x768/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Account-1366x768/HubTabAccount: vertices=7, cull=False, alpha=1, depth=19, material=1
+[TumpUiCapture] RecordBook-Account-1366x768 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Account-1920x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Account-1920x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Account-1920x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Account-1920x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Account-1920x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Account-1920x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=19, material=1
+[TumpUiCapture] RecordBook-Account-1920x1080 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Account-1920x1200/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Account-1920x1200/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Account-1920x1200/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Account-1920x1200/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Account-1920x1200/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Account-1920x1200/HubTabAccount: vertices=7, cull=False, alpha=1, depth=19, material=1
+[TumpUiCapture] RecordBook-Account-1920x1200 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Account-1280x960/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Account-1280x960/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Account-1280x960/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Account-1280x960/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Account-1280x960/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Account-1280x960/HubTabAccount: vertices=7, cull=False, alpha=1, depth=19, material=1
+[TumpUiCapture] RecordBook-Account-1280x960 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Account-2560x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Account-2560x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Account-2560x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Account-2560x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Account-2560x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Account-2560x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=19, material=1
+[TumpUiCapture] RecordBook-Account-2560x1440 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Account-3440x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Account-3440x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Account-3440x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Account-3440x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Account-3440x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Account-3440x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=19, material=1
+[TumpUiCapture] RecordBook-Account-3440x1440 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Account-3840x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Account-3840x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Account-3840x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Account-3840x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Account-3840x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Account-3840x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=19, material=1
+[TumpUiCapture] RecordBook-Account-3840x1080 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-Account-3840x2160/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-Account-3840x2160/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-Account-3840x2160/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-Account-3840x2160/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-Account-3840x2160/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-Account-3840x2160/HubTabAccount: vertices=7, cull=False, alpha=1, depth=19, material=1
+[TumpUiCapture] RecordBook-Account-3840x2160 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1399" name="PopulatedCareerAndHistoryRenderRealColumnsWithoutSavingFixtureData" fullname="TumbangPreso.PlayTests.OwnerPlayerHubTests.PopulatedCareerAndHistoryRenderRealColumnsWithoutSavingFixtureData" methodname="PopulatedCareerAndHistoryRenderRealColumnsWithoutSavingFixtureData" classname="TumbangPreso.PlayTests.OwnerPlayerHubTests" runstate="Runnable" seed="1225313828" result="Passed" start-time="2026-09-23 06:35:31Z" end-time="2026-09-23 06:35:40Z" duration="9.010548" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] RecordBook-career-populated-960x540/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-career-populated-960x540/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-career-populated-960x540/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-career-populated-960x540/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-career-populated-960x540/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-career-populated-960x540/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-career-populated-960x540/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-career-populated-960x540 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-career-populated-1280x720/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-career-populated-1280x720/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-career-populated-1280x720/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-career-populated-1280x720/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-career-populated-1280x720/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-career-populated-1280x720/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-career-populated-1280x720/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-career-populated-1280x720 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-career-populated-1366x768/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-career-populated-1366x768/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-career-populated-1366x768/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-career-populated-1366x768/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-career-populated-1366x768/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-career-populated-1366x768/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-career-populated-1366x768/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-career-populated-1366x768 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-career-populated-1920x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-career-populated-1920x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-career-populated-1920x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-career-populated-1920x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-career-populated-1920x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-career-populated-1920x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-career-populated-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-career-populated-1920x1080 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-career-populated-1920x1200/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-career-populated-1920x1200/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-career-populated-1920x1200/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-career-populated-1920x1200/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-career-populated-1920x1200/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-career-populated-1920x1200/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-career-populated-1920x1200/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-career-populated-1920x1200 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-career-populated-1280x960/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-career-populated-1280x960/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-career-populated-1280x960/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-career-populated-1280x960/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-career-populated-1280x960/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-career-populated-1280x960/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-career-populated-1280x960/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-career-populated-1280x960 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-career-populated-2560x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-career-populated-2560x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-career-populated-2560x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-career-populated-2560x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-career-populated-2560x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-career-populated-2560x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-career-populated-2560x1440/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-career-populated-2560x1440 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-career-populated-3440x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-career-populated-3440x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-career-populated-3440x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-career-populated-3440x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-career-populated-3440x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-career-populated-3440x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-career-populated-3440x1440/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-career-populated-3440x1440 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-career-populated-3840x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-career-populated-3840x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-career-populated-3840x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-career-populated-3840x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-career-populated-3840x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-career-populated-3840x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-career-populated-3840x1080/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-career-populated-3840x1080 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-career-populated-3840x2160/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-career-populated-3840x2160/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-career-populated-3840x2160/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-career-populated-3840x2160/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-career-populated-3840x2160/HubTabMatches: vertices=7, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] RecordBook-career-populated-3840x2160/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-career-populated-3840x2160/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] RecordBook-career-populated-3840x2160 cream source=252,211,159 pixel=46,62,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-scorecard-960x540/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-scorecard-960x540/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-scorecard-960x540/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-scorecard-960x540/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-scorecard-960x540/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-scorecard-960x540/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-scorecard-960x540/ScorecardPaper: vertices=220, cull=False, alpha=1, depth=37, material=1
+[TumpUiCapture] RecordBook-scorecard-960x540 cream source=252,211,159 pixel=111,29,32; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-scorecard-1280x720/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-scorecard-1280x720/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-scorecard-1280x720/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-scorecard-1280x720/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-scorecard-1280x720/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-scorecard-1280x720/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-scorecard-1280x720/ScorecardPaper: vertices=220, cull=False, alpha=1, depth=37, material=1
+[TumpUiCapture] RecordBook-scorecard-1280x720 cream source=252,211,159 pixel=111,29,32; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-scorecard-1366x768/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-scorecard-1366x768/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-scorecard-1366x768/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-scorecard-1366x768/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-scorecard-1366x768/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-scorecard-1366x768/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-scorecard-1366x768/ScorecardPaper: vertices=220, cull=False, alpha=1, depth=37, material=1
+[TumpUiCapture] RecordBook-scorecard-1366x768 cream source=252,211,159 pixel=111,29,32; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-scorecard-1920x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-scorecard-1920x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-scorecard-1920x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-scorecard-1920x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-scorecard-1920x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-scorecard-1920x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-scorecard-1920x1080/ScorecardPaper: vertices=220, cull=False, alpha=1, depth=37, material=1
+[TumpUiCapture] RecordBook-scorecard-1920x1080 cream source=252,211,159 pixel=111,29,32; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-scorecard-1920x1200/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-scorecard-1920x1200/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-scorecard-1920x1200/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-scorecard-1920x1200/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-scorecard-1920x1200/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-scorecard-1920x1200/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-scorecard-1920x1200/ScorecardPaper: vertices=220, cull=False, alpha=1, depth=37, material=1
+[TumpUiCapture] RecordBook-scorecard-1920x1200 cream source=252,211,159 pixel=111,29,32; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-scorecard-1280x960/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-scorecard-1280x960/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-scorecard-1280x960/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-scorecard-1280x960/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-scorecard-1280x960/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-scorecard-1280x960/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-scorecard-1280x960/ScorecardPaper: vertices=220, cull=False, alpha=1, depth=37, material=1
+[TumpUiCapture] RecordBook-scorecard-1280x960 cream source=252,211,159 pixel=111,29,32; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-scorecard-2560x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-scorecard-2560x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-scorecard-2560x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-scorecard-2560x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-scorecard-2560x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-scorecard-2560x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-scorecard-2560x1440/ScorecardPaper: vertices=220, cull=False, alpha=1, depth=37, material=1
+[TumpUiCapture] RecordBook-scorecard-2560x1440 cream source=252,211,159 pixel=111,29,32; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-scorecard-3440x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-scorecard-3440x1440/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-scorecard-3440x1440/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-scorecard-3440x1440/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-scorecard-3440x1440/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-scorecard-3440x1440/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-scorecard-3440x1440/ScorecardPaper: vertices=220, cull=False, alpha=1, depth=37, material=1
+[TumpUiCapture] RecordBook-scorecard-3440x1440 cream source=252,211,159 pixel=111,29,32; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-scorecard-3840x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-scorecard-3840x1080/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-scorecard-3840x1080/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-scorecard-3840x1080/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-scorecard-3840x1080/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-scorecard-3840x1080/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-scorecard-3840x1080/ScorecardPaper: vertices=220, cull=False, alpha=1, depth=37, material=1
+[TumpUiCapture] RecordBook-scorecard-3840x1080 cream source=252,211,159 pixel=111,29,32; isolated UI camera, no ColourGrade.
+[TumpGeometry] RecordBook-scorecard-3840x2160/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] RecordBook-scorecard-3840x2160/HubTabProfile: vertices=7, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] RecordBook-scorecard-3840x2160/HubTabFriends: vertices=7, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] RecordBook-scorecard-3840x2160/HubTabCareer: vertices=7, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] RecordBook-scorecard-3840x2160/HubTabMatches: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] RecordBook-scorecard-3840x2160/HubTabAccount: vertices=7, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] RecordBook-scorecard-3840x2160/ScorecardPaper: vertices=220, cull=False, alpha=1, depth=37, material=1
+[TumpUiCapture] RecordBook-scorecard-3840x2160 cream source=252,211,159 pixel=111,29,32; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1401" name="OwnerPreparationTests" fullname="TumbangPreso.PlayTests.OwnerPreparationTests" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-23 06:35:40Z" end-time="2026-09-23 06:35:43Z" duration="2.878378" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1404" name="ReadOnlyCustomRulesKeepTabsAndCloseWithoutChangingRules" fullname="TumbangPreso.PlayTests.OwnerPreparationTests.ReadOnlyCustomRulesKeepTabsAndCloseWithoutChangingRules" methodname="ReadOnlyCustomRulesKeepTabsAndCloseWithoutChangingRules" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" seed="876827905" result="Passed" start-time="2026-09-23 06:35:40Z" end-time="2026-09-23 06:35:43Z" duration="2.872069" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] MatchSlate-readonly-960x540/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpUiCapture] MatchSlate-readonly-960x540 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-1280x720/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpUiCapture] MatchSlate-readonly-1280x720 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-1366x768/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpUiCapture] MatchSlate-readonly-1366x768 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-1920x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpUiCapture] MatchSlate-readonly-1920x1080 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-1920x1200/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpUiCapture] MatchSlate-readonly-1920x1200 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-1280x960/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpUiCapture] MatchSlate-readonly-1280x960 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-2560x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpUiCapture] MatchSlate-readonly-2560x1440 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-3440x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpUiCapture] MatchSlate-readonly-3440x1440 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-3840x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpUiCapture] MatchSlate-readonly-3840x1080 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-3840x2160/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpUiCapture] MatchSlate-readonly-3840x2160 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1634" name="TumpNativePickerTests" fullname="TumbangPreso.PlayTests.TumpNativePickerTests" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-23 06:35:43Z" end-time="2026-09-23 06:35:53Z" duration="9.485555" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1636" name="NativeHeroSkillsHaveDistinctSymbolsAndAnActualReturnPath" fullname="TumbangPreso.PlayTests.TumpNativePickerTests.NativeHeroSkillsHaveDistinctSymbolsAndAnActualReturnPath" methodname="NativeHeroSkillsHaveDistinctSymbolsAndAnActualReturnPath" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" seed="1292865018" result="Passed" start-time="2026-09-23 06:35:43Z" end-time="2026-09-23 06:35:53Z" duration="9.483008" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] Hub-biography-dante/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] Hub-biography-dante cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-biography-cheska/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] Hub-biography-cheska cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-biography-sean/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] Hub-biography-sean cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-biography-zack/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] Hub-biography-zack cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-biography-nemu/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] Hub-biography-nemu cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-biography-phaister/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] Hub-biography-phaister cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-biography-rafi/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] Hub-biography-rafi cream source=252,211,159 pixel=233,211,177; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

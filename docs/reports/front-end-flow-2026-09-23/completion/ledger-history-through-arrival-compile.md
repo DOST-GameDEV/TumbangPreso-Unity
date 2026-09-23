@@ -1,0 +1,470 @@
+# Active TUMP rework ledger
+
+## Latest resume: UX-1.12 arrival flow added,2026-09-23
+
+Continue in this conversation. Overall scope is NOT complete. No jobs currently
+active: native world18261, old-board78552, changed-flow38619 and wallet70704 ended.
+Latest user adds queue -> MATCH FOUND -> character select -> MAP VOTE -> deliberate
+loading ->5..10second map/player camera introduction ->3,2,1,START. Queued games
+must not ask for R in game; custom rooms may keep manual ready via a room option.
+Saved as UX-1.12 in TODO and exact words/file-plan entry in completion-plan.md.
+Currently inspecting existing MapRotation/MatchResult ballot, MatchRpc, ReadyGate,
+MatchInstaller, HubCharacterSelect and HubLoading to reuse working stages.
+Do not start more capture-only loops while this requested flow is absent.
+
+Uncommitted own source: idempotent TumpHub.ShowLobby and rising-room observation,
+Host/Join callers; specific accessibility text spacing; Rafi's missing story copied
+from approved lore; audit classifications and tournament view exemption; migrations
+of old fixtures onto actual Hub routes and a fourth accessibility HubFlow case.
+First changed-flow run compiled but11/24passed:3actual large-text clips, plus test
+state leakage/hidden-control failures. Exact XML in front-end-flow/completion.
+Bounded fixture correction1/1used in current DEV but the one retry has NOT run.
+Current corrections reset accessibility in guaranteed teardown/fresh room in OpenHome,
+ignore deliberately closed chat when inspecting other fields, settle a Home transition.
+Production spacing fixes: PlayerTag, character-select Role, lobby Address only.
+No art redesign. Owner rule is inspect first, keep successful parts, fix real weaknesses.
+
+Wallet version1 IS PUBLISHED to existing project production. Remote source equals
+local, all3optionalSTRINGparameters verified. Receipt completion/wallet-deployment.json.
+No player balances modified by deployment; live actions still unverified and Ugs
+fixtures spend service free-tier quota, so do not silently run those under blanket
+local-test permission. No paid plan/billing changes. CLI credentials existed here.
+
+Owner's new TUMP_wireframes_all.zip:9images exact matches, one higher-resolution
+CustomFlow.webp personally inspected and saved with hashes under ArtSource/front-end-
+flow-20260923/additional-wireframes. Login/main menu stay protected; TAP opens HOME.
+DEV has unrelated concurrent HOME video files and4linehook in TumpHub.Build plus
+playmode_suite registration. Preserve them, DO NOT stage that hook as ours or reset
+any foreign work. Candidate copy deliberately excludes just that unpublished hook.
+Original2composition PNGmetas dirty/protected. Candidate is owned detached checkout
+at a45cba87a with our copied frozen .cs/json delta and post-run generated churn;
+Logs/ux1-completion-v1/inputs.json hashes exact checked source. Restore only own
+candidate import churn after saving diff; never restore our copied implementation.
+
+Remaining: implement UX-1.12, complete targeted checks/screenshot inspection, requested
+EditMode/Checks.RunAll, native real-peer paths, P6 and final integration, then REFINE-2.
+All older/new task IDs retained. Detailed run history and corrections follow below.
+
+## Previous resume,2026-09-23
+
+Continue all assigned actionable work in this conversation without checkpoint
+endings. The overall goal is NOT complete. Older unfinished work stays ahead of
+new REFINE-2. Every original task remains; do not erase or blanket-close entries.
+Exact task-local assignment constraints also remain in the active conversation.
+
+DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,ASTRAReworks.
+HEAD/last verified remote7f0ee10d05d8d3345a37bd4a78e92f662db39b53: merge of our
+world/audioD22e16b604 and teammate front-end plan491a5b0a7. No code conflict.
+No active Unity/native/browser/server jobs; all test/push sessions reaped.
+Dirty own work: P6disposition/TODO/README/AGENTS/ledger and new research/review docs,
+plus a tiny AUDIO TEST ONLY singleton hygiene correction. Production D is published.
+Original two composition-redesign PNGmetas remain dirty/protected and MUST NOT be
+committed. Four known Unity-generated paths restored after every completed run.
+
+## Latest user requests, saved and not implemented yet
+
+User again asked whether EVERYTODO was done. Answered NO explicitly. New additions
+REFINE-2.0..2.10 and2.9a..g (18IDs) are preserved in TODO after older work:
+research good-game qualities and visually pleasing/satisfying stylised art first;
+use3d-asset.com plus multiple independent references; improve all five maps one by
+one and each asset/aspect deliberately, not another broad global shader/texture fix;
+natural animals rather than obvious fixed routes; all-bot AFK/stall investigation;
+actual gameplay and animation. New rejection: Sean walking arms stick to body,
+similar across cast, throwing and both pektus directions still look bad. Earlier
+motion tests are NOT final aesthetic acceptance. Fit every character/movement
+individually, preserve models/rigs/input/authority, do not indiscriminately copy poses.
+
+Exact words, thorough execution plan and initial source-backed research:
+reports/map-by-map-refinement-2026-09-23/{owner-request,intake,
+research-and-execution-plan,foundation-research}.md. Full research remains OPEN.
+Primary sources read: MDA2004, Valve TF2paper4.1-4.3, Tango Hi-Fi RUSH interview.
+3d-asset homepage/catalog/sample/licence metadata opened, no downloads/purchases.
+Nintendo retrieval failed; no findings claimed. No REFINE-2game edits yet.
+Queue-preservation.json confirms366original headings and unchanged Backlog/Archive
+bodies, no removals, all18newIDs. This is preservation, not completion evidence.
+
+## Work completed, do not redo
+
+A world:479be6a53=1.1 chalk/escape,88f9e6e68=1.2target/shared clocks,
+33d50bb7=1.5experiments(defaultoff),bbab70bbd=1.7FPP.
+B1419db83=1.8..1.10lighting/court/can/flight. P3deck7ea1a89a2.
+Cinkb39462e60: rotating red down collar suppressed under HeroObjects; eroding ink
+strokes/chips/trails, folded peripheral paper, grounded dust and recorded cue timing.
+Cexchange8028543b9: real missing remote lunge windup fixed with optional kind1 suffix
+on unchanged throw prefix; .12sdriver heartbeat/stop,.85sexpiry; no physical charge/
+impulse/tag writes. Reconnect/disconnect included. Body counterbalance, actual chalk
+skid sampling, bounded role-ring settle. Completed HUD/results/halftime retained.
+D22e16b604: camera-scoped map-sky glazing, restrained facade/roof values; actual
+supported peripheral strings only in Bayan/Eskinita with pinned cloth/sky-clock
+motion; existing animal/resident/boat/sky reactions retained. Every impact attack
+remains audible while overlapping bass-body layers reduce. Rubber-step post-fade
+DC fixed reproducibly, same4671samples/44100mono/peak.36; slide_scrape byte-identical.
+
+Receipts under reports/visual-research-2026-09-23/look-*/report.md. Cinkv2passed1/1,
+16.214s; Cexchangev1passed1/1,9.414s. Denvv2passed1/1,49.415s; audio1/1,.306s.
+All staged normal/comfort/grey25 comparisons personally inspected; first looks kept.
+Dinitial support cutoff missed Eskinita's actual poles atx=+-7.75; corrected to real
+supports and verified>.5m court clearance even with maximum flutter. No moved houses.
+Dsetup/capture repair allowance1/1SPENT. Do not start more fixture/capture tuning.
+Native motion/live room/performance/human acceptance remains P7, not claimed.
+
+Small uncommitted test-only correction discovered during P6: the AUDIO TEST created
+a disposable AudioDirector despite its process-lifetime sceneLoaded contract. It
+now uses GameServices.Ensure/Audio and saves/restores the private mix window. No
+production change or assertion weakening. Prior production result stands; revised
+fixture compiles/runs during P7, no extra intermediate verification loop.
+
+## Older queue/P6 current accounting
+
+117previously unreviewed headings now reconciled against source/preserved evidence;
+136remainunreviewed, mostly shared UI/front-end/profile and mixed historic parents.
+No parent completion inferred from these counts. Per-row facts/paths/remaining
+acceptance in reports/full-backlog-2026-09-21/todo-disposition.json; summary in
+reports/legacy-review-2026-09-23/report.md. Latest full ledger history is beside it.
+132.5gameplay half has newer concrete variant tradeoffs and native role/choice route;
+its UI half stays open. Rafi's previousv52has8owner+8observer cases/all3shipping body
+clips/shared intro and3peer field/clip evidence; no rewrite based on stale candidate
+text. New motion complaints remain REFINE-2, not closed by those older tests.
+
+Next: publish preserved requests/research/P6notes and audio-test hygiene; finish
+remaining mixed-entry routing without UI implementation or losing requirements.
+Then prepare clean frozen P7Windows candidate for actual new windup peer path,
+normal-speed presentation/cloth/Rafi/lagoon/replay/overlap and the shutdown crash.
+P7is not done, no fresh final build exists. Original127.3chat clip remains shared
+UI acceptance; do not silently remove it. Six other old DC flags remain in
+boot_sting,match_win,round_win,ui_back,ui_click,ui_hover; no unrelated waveform edits.
+
+UX1 LANE (separate machine, 2026-09-23): implementation started from
+reports/front-end-flow-2026-09-23/ux1-plan.md. Touches the front end (MatchSetup view,
+title destination, new Runtime/UI/Hub), Core Economy, ugs/cloud-code/wallet.js and a
+WalletStore. It does not touch the match HUD, halftime popup, results board or world
+lanes. Expect concurrent pushes to ASTRAReworks; rebase, never force.
+UX1 state: all hub screens and the TANSAN economy are built (map: ux1-plan.md 7b).
+Checks: Core 626/626 incl. EconomyTests; node tools/test_wallet_script.js passes;
+PlayMode HubFlowTests + HomeFlowTests + OwnerMenuEditsTests (runs ux1-hub-v1..v7, v7 7/7,
+each run's question "do the hub screens build, navigate and fit the five shapes",
+stop at XML; v1 tooling retry was the only one). Old preparation-board fixtures
+(OwnerPreparationTests, TumpNativePickerTests, LobbyChat*, PaperPurityProbe, etc.)
+still address the retired board and are next to be moved to hub doors.
+External: wallet.js deployment needs a machine with the ugs CLI and project login.
+UX1 old-fixture run ux1-old-hub (hub on, 20 MatchSetup fixtures, one process): 51 cases,
+31 passed, 20 failed. Failing: BrandPicker x2, BrandPreparation x2, CosmeticSurface
+NoHeroTab, LobbyStyle AdvancedRules, LobbyTyping, ModelPreview ClassicCharacterSelect
+(team-dante vs character-male-f), NetworkedLobbyTyping, OwnerPlayerHub x3,
+OwnerPreparation x3, OwnerUiAuthoring RealPickerLighting, PaperPurity Inventory,
+TumpNativePicker x3. Most read "no BackButton/ChatButton/picker" (the board's doors are
+hidden under the hub). The two unhandled NREs are inside UGUI InputField.GenerateCaret
+(a hidden board field), not hub code. NOT YET CLASSIFIED: the same run with
+-tp-preparation-board is next; only a case that passes there and fails here is caused
+by the hub. Do not treat this list as regressions or as pre-existing until that run.
+
+## Qualification environment and preservation
+
+Installed6000.5.8f1 has Windows/Linux/WebGL support, noAndroidPlayer; adb not onPATH.
+Real handset/PC LAN/relay and physical pad unverified. No paid setup/service tests.
+Old validation worktree at7c028dda has111dirty paths including recovery animations:
+DO NOT reset/clean it. Use a clean owned candidate checkout for P7; currentCdrive
+free about81GB when checked. Other local home-zack-scene and net worktrees belong
+to concurrent work; do not touch files/processes. Native crash carried fromv57:
+0xc0000005 in D3D12Core.dll1.618.1.0 offset0x264831 after15review stages. No clean-exit
+claim. Diagnose once against an exact frozen artifact, not a capture-fixture loop.
+
+Unity ONLY python tools/run_unity_guarded.py with -tp-profile
+presentation-validation-20260921. NEVER --help or-nographics. No.cs edits during run.
+Write run question/stop condition/job paths here first. One focused pass per coherent
+batch, one bounded tooling repair/retry across compaction. Fix real game defects,
+preserve failures, then implement. Full qualification only at P7; no intermediate
+build. Builds internal Builds/<name>/TumbangPreso.exe, never Desktop.
+Restore only confirmed own generated churn; protectedmeta originals/hashes inLogs.
+Stage explicit paths, sole authorM4tyu633, no trailers/AI/em dash. Fetch before push,
+verify remote; preserve concurrent commits without force. No resets/paid services/
+delegation/other conversations/main edits. No task-owned browser tabs remain.
+
+UX1 LANE (teammate's preserved note): separate machine implements front end over
+MatchSetup, Runtime/UI/Hub, Core Economy, ugs/cloud-code/wallet.js and WalletStore;
+plan reports/front-end-flow-2026-09-23/ux1-plan.md. Expect concurrent pushes and
+preserve their work. Shared TODO/old IDs remain authoritative for their features.
+
+
+Published23d959912deb3bfe808bd91eb2960a3253c22c82, remote verified. Own main source is
+committed; only original2metas dirty before P7planning docs. Preparing P7scoped older
+non-UIcandidate in new owned detached world-qualification-20260923 checkout at23d959912.
+No old UI/new REFINE-2completion claim. Plan qualification-2026-09-23/plan.md records
+order and limits. Cache copy is independent ordinary files from DEVLibrary(~6.45GB);
+DEVAssets~.62GB. No active Unity.exe on this machine when checked. Do not reset old
+validation or share writable caches. Next inspect clean candidate then final Core/
+source audits and one meaningful Editor/build sequence; no reassurance reruns.
+
+
+P7owned candidate checkout created at23d959912 and independently copied warmLibrary;
+session72004completed/reaped, git status was CLEAN. No Unity running yet. Next
+Core question: do engine-free contracts pass on this frozen source? End at one
+fresh nonzero TRX result. Source-audit question: do required current code/authority/
+wire/lifetime/stripping contracts pass? End at one recorded audit stage; classify
+findings rather than repeat the whole stage for reassurance. Commands qualify.py
+--stage core and--stage audits do not launch Unity; outputs in candidateLogs/qualify.
+These can run in parallel. No live service tests or UI implementation. Candidate
+production source stays frozen; fixes will be made/reviewed in DEV if needed.
+
+
+P7source baseline: Core615/615pass;13/14gating source audits pass, one wire-finite
+finding. Informational audio6unchanged DCflags. Sessions76464/74264reaped. Candidate
+stillclean, noUnity launched. Exact raw stages saved underqualification-2026-09-23/
+source-baseline-23d959912. Cause is audit recognition, not unsafe clock: ApplySnapshot
+already first-checks float.IsFinite for both fields. DEVfix recognises only that
+qualified delegate IF its leading guards remain. Mutation test1/1passes (real guard,
+removed guard, unrelated receiver), audit72handlers/100fields/0findings. No gameplay
+code changed. P7tool-repair1/1used; do not broaden/refactor diagnostic tools. Commit
+this small correction/plan/receipts, advance clean candidate to thatcommit, then
+fresh final source-stage records and Editor/runtime/build. Do not loop on old passes.
+
+
+Concurrent65b8a05df adds teammate HOME/UI/economy source and tests. Merged without
+source conflicts; preserve all their implementation. Their retained note says626Core,
+wallet JS and7/7hub flow tests passed on their machine; old preparation-board fixtures
+are still being adapted there, and wallet deployment needs their UGScredentials/CLI.
+Those are teammate reports, not fresh local proof. Our merge whitespace check flagged
+only three standard empty YAML fields in upstreamHub.meta; preserved unchanged.
+Candidate will advance to this integration commit before first Unity run because
+GameServices/NetSession/Core changed. A fresh Core/source stage is warranted; old
+23d959912baseline remains preserved, no production clock validation was changed.
+
+
+Integrated9716e31b8098ffaf5b0c3130a3b69181af8daf34published and remote verified.
+Clean owned candidate advanced to9716e31b8 (new teammate Core/GameServices included),
+no production edits in candidate. Native review's -tp-uireview explicitly bypasses
+UGS sign-in; Editor batch mode does too. Guard uses hidden native windows.
+Next final source stages: fresh Core/audits at9716e31b8 because production dependencies
+changed in teammate commit. Next Editor question: do selected non-UI hardening/input/
+network/graphics/hero/camera contracts compile and pass on the integrated source?
+One guarded EditMode pass, exact filter and XML in candidateLogs/p7-editmode-v1.
+Stop at fresh nonzero XML; record actual failures without widening/repairing old UI
+fixtures. Profilepresentation-validation-20260921, targetWin64, graphics enabled.
+No.cs edits in either relevant source tree while this Editor run is active.
+
+
+P7integrated9716e31b8Core626/626passed, no skips. Source audit stage now11/14gating
+pass: event subscriptions,tournament defaults,gameplay clocks report new findings
+after teammate integration; raw targeted outputs saved candidateLogs/p7-audit_*.txt.
+Finite validation nowpasses. Informational cue audio6flagsunchanged. Session25836
+reaped. EDITOR72612stillrunning; first import in independent checkout reimports
+material cache records, so no.cs edits. Candidate clean before import. Do not treat
+teammate/UI findings as permission to change their UI or repair every stale fixture;
+classify exact scope and continue independently. No native build yet.
+
+
+Exact incoming integration audit findings saved in qualification-2026-09-23/
+integrated-9716e31b8/integration-findings.md with raw outputs. FiveHub anonymous
+subscription classifications; HubEnabled and-tp-preparation-board tournament
+classification; WalletStore daily UTCclock classification. Not assumed runtime bugs,
+not suppressed, upstream code unchanged. Source gate FAILED pending resolution.
+Editor72612stillfirstimport/test attempt in isolatedcandidate, no extra loop.
+
+
+P7Editor firstpass ended/reaped72612:141cases,140passed,1failed,15.071s test duration.
+Onlyfailure is the same incomingHubEnabled missing modifier/exemption classification,
+not a world-runtime failure. No second Editor pass for that unchanged finding.
+Guard275d322db97f restored4profilefiles/1preference. Candidate import/tests dirtied
+Inday2and Rafi2arm meshes by adding tangent channels, bothUIpngmetas and quality;
+ProjectAuditor was stat-only. Candidate was clean before run and solely owned, so
+all8specific paths restored to frozenHEAD after saving generated-churn.patch. DEV's
+original2metas untouched. Candidate nowclean again; no runtimecode fix inferred.
+
+Next one final PlayMode integration question: revised process-audio fixture, actual
+throw/cancel/held ownership, block/skill receipt/round cleanup/shared phase and replay
+contracts still behave together on integrated9716e31b8? Use exact selected non-UI
+fixtures, no retired menu/layout/capture-only group and no re-photographing every
+already-passed world look. Stop at fresh nonzero XML, classify failures. No C#edits
+while run active. Output candidateLogs/p7-playmode-v1, named guard profile.
+
+
+P7PlayMode firstpass ended/reaped47625:30cases,29pass,1fail,227.514s. Guard4b0a7eff3a10
+restored4profilefiles/1preference. Failure ThrowAimIntegrationProbe line73casts
+_crosshair to Text although completedHUD uses HudReticle; it throws before the
+physical release assertion. Stale fixture, not a measured aim defect. Receipt saved,
+NOcast repair/rerun loop. Remaining native aim proof uses existing world paths.
+
+Native route inspection found old OwnerUiPlayerReview navigation still targets
+retired buttons. Do not repair that UI harness. Existing graphics_review.py and
+-tp-graphicsreport bypass it and exercise real rendering. Added that existing local
+probe flag to NetIdentity's already-established local-review sign-in bypass, with
+normal/tournament/UI behaviour untouched, so no live UGS request occurs. The
+existing request-safety native scenario already holds/releases a legitimate lunge
+in round2; added only three CSVobservation columns(local/observedcharge/input), no
+new driver/harness or changed scenario. These tiny diagnostics changes need one
+compilation in the build. No native build yet. Candidate remaining known own
+import churn must be restored after receipt saved, then advance frozen source to
+published diagnostic support commit. Earlier Core/Editor/Play evidence remains
+exactly labelled9716e31b8; don't rerun whole stages merely for an added trace column.
+
+
+Pre-build native coverage adjustment: WorldGraphicsProbe already loops registered
+maps, but its runner still required12rows(only4maps). It now declares the full map/
+quality registry before sampling, and runner requires the exact Cartesian matrix,
+no duplicates and positive real rendering counters. Also replaced the old hardcoded
+playerY.1 with actual support sampling so Lagoon cannot be photographed from below
+its deck. This is required expansion qualification support, not another art pass or
+capture retry. No native run has happened yet. This small support batch will compile
+once in the internal build; no old menu-harness repair and no broad new framework.
+
+
+Published2d43fc0ebe8520cfe5f14a19b5671841a9aa7062, remote verified; candidate advanced
+cleanly to that exact source. Last changes are diagnostics support only: local graphics
+UGSbypass, existing lunge trace columns, declared exact five-map/quality matrix and
+real-floor placement; graphics runner has explicitd3d11/d3d12for bounded crash comparison.
+No need to repeat old passing Core/gameplay checks for those trace/helper changes.
+
+BUILD question: does this exact integrated source compile and produce an internal
+Windows exe/data with an honest identity? Stop after one build result and verify
+actual outputs/manifest. Known UIclassification/stale-reticle test gaps remain;
+this build is not a release-ready claim. Command uses guardedGameBuilder.BuildWindows,
+Win64, profilepresentation-validation-20260921, output candidateBuilds/
+world-qualification-20260923/TumbangPreso.exe, logsLogs/p7-build-v1. No Desktop target.
+No.cs edits while the build runs. Record all generated source churn, never hide it
+or weaken the identity gate to manufacture clean status.
+
+
+Build owned execsession65980 active in world-qualification checkout. No source
+edits until it exits. While waiting, read-only crash research on official Unity
+reports; do not assume any issue matches this case until native API/log/exit evidence
+supports it. No driver/editor upgrade or ProjectSettings workaround applied.
+
+
+Build65980ended/reaped:success1212MB/112s,11scenes,guardd1af0acfce0f. Exe/data/runtimeDLL
+verified under candidateBuilds/world-qualification-20260923; hashes/identity inDEV
+qualification-2026-09-23/build-2d43fc0eb. Identity is honestlyDIRTY: builder changed
+4derived clips(Recovery+Swimming character-female-a/team-rafi), plus2protectedPNGmeta
+empty-scalar whitespace. No other content changes. Do not hide/restamp this artifact
+clean or commit those2metas. Inspect/reconcile derivedclips separately, no unplanned
+motion redesign. Existing imported-source proof and failures retained.
+
+NATIVE question: does the exact internal player render all5maps x3qualityprofiles with
+positive counters, sensible support and a clean process exit? One graphics_review.py
+run, no new UI navigation/capture harness. It uses the existing-tp-graphicsreport and
+now bypassesUGS, hidden native window, guardedgraphics-review-player profile. Output
+candidateLogs/p7-native-world-auto. Record actualAPI/exit/logs; only use one explicit
+backend comparison if an actual failure warrants it. Do not claim worst-case combatFPS
+from this four-parked-player baseline. No shader/driver/editor changes while it runs.
+
+
+UX-1 baseline now: owned candidate advances to a45cba87a48808c12b858cd18c33518902b51b2b. One guarded old-board
+run,20 source-discovered MatchSetup fixtures (excluding isolated InputSurface,
+new Home/Hub fixtures and match lifecycle), exact list saved Logs/ux1-old-board-fixtures.json.
+The prior machine did not publish raw XML or the full20filter; compare only the
+named shared cases, do not invent an exact identical matrix. Question: which
+retired-door failures also fail with the preparation board restored? Stop at
+fresh XML; no.cs edits during run. Logs/ux1-old-board-v1 in owned candidate.
+
+UX-1 source review during baseline: all five anonymous Hub events have child-owned
+publishers, so record exact same-lifetime classifications rather than rewriting
+working controls. WalletStore UTC is a calendar task preview, not gameplay timing
+or reward authority. UGS CLI IS installed here and ugs status reports a locally
+configured service-account key; the inherited missing-CLI claim is stale. Project
+permissions/deployment have NOT been verified and no service mutation occurred.
+
+UX-1 baseline78552 ended/reaped:53cases,51passed,2failed,300.260s; guard10e9b8088fdf.
+Raw XML/exact filter in front-end-flow/completion. Shared named old-door failures
+passed with board except stale TutorialButton inventory and Rafi missing biography.
+Rafi story now restored from existing BADJAO_EXPANSION lore (other stories untouched).
+ShowLobby implemented for rising room entry/install/Host/Join with queue/subpage guards.
+Fourth HubFlow accessibility case added; actual door migrations preserve profile,
+rules, chat focus, hero story/glyphs, variant locks/text and equipment preview/equip.
+No speculative restyling. Classified safe event/calendar sites and front-end switch.
+
+Next focused changed-flow run in owned candidate: Logs/ux1-completion-v1, exact
+input hashes there. DEV concurrent HubSceneVideo hook omitted from candidate ONLY;
+other author's files preserved and not staged. Question: do room entry, accessiblity
+and the migrated contracts work? Stop at fresh XML, inspect failures once and actual
+screenshots; one bounded fixture correction available. No.cs edits during run.
+UGS read-only list succeeded for correct production project:wallet absent,4existing
+scripts retained. Deployment is possible to investigate here; no paid setup done.
+
+UX-1 changed-flow38619 ended/reaped:24cases,11pass,13fail,196.510s. No compiler errors.
+Raw XML preserved. Real Larger text clips identified:HOME PlayerTag44vs36box,
+character Role52vs44,LOBBY Address44vs40. Targeted spacing changes only, no restyle.
+Other failures cascade from nested enumerator accessibility settings leakage and
+persistent test rooms. Bounded fixture repair1/1 now used: guaranteed teardown
+restores saved settings, fresh-HOME helper closes prior test room, hidden chat excluded
+when testing HOST/JOIN fields, one frame after Home for actual hit testing. One focused
+retry still to run after this correction; do not spend another pass rebuilding QA.
+
+Owner supplied TUMP_wireframes_all.zip as reference. Nine images are exact byte matches
+of saved references; CustomFlow.webp is a sharper version of the already saved annotated
+flow, personally inspected. Preserved under ArtSource/front-end-flow-20260923/
+additional-wireframes with hashes. No new route discrepancy found; latest login/title
+protection still wins. Full older TODO and new REFINE-2 retained.
+
+Wallet deployment no longer blocked: exact existing wallet.js published as version1,
+2026-09-23T04:23:12 in correct production project; remote normalized source hash equals
+local and action/item/task are all STRING,optional. Receipt completion/wallet-deployment.json.
+Local node contract passes. Actual live actions remain unverified; do not call them
+passed. No other script, billing, service tier or player balance changed by deployment.
+
+NEW USER STEERING: UX-1.12 added (exact request in completion-plan). Queue after
+character lock-in must run MAP VOTE -> deliberate loading ->5..10s3Dmap/player
+intro camera ->3,2,1,START automatically. No in-game R start in queued games; custom
+manual ready becomes a room toggle. Inspect existing ballot/ready/intro owners then
+write file-level plan and implement. This extends incomplete UX-1, not a replacement
+for older tasks. No jobs active currently; changed-flowv1 reaped; bounded fixture
+corrections exist in DEV and have not had the one retry yet. Do not launch a chain
+of capture-only reruns while this requested flow is still missing.
+
+Owner also asks to build every missing UI in the new sequence to best quality now,
+and keep a complete local inventory for possible later refinement. Saved in
+front-end-flow-2026-09-23/ui-authorship-inventory.md with inherited/new distinction,
+source paths and pending evidence. No new task/chat or delegation is authorized.
+
+UX-1.12 now partly implemented, NOT compiled/qualified yet: appended ManualReady
+wire/clone and custom-room row; MatchRpc.QueueArrival host12second ballot with1s
+winner reveal, existing seat-resolved map vote/tally routing, new bounded authoritative
+QueueVoteState; HubMapVote5map cards/voter portraits/clock/result; IHubHost and TumpHub
+connections; queued StartGame advances ballot. HubLoading minimum2seconds and wrong-map
+preview guard. MatchArrivalPresentation8s real3Dcamera/4players/caption, reduced-motion
+wide shot, collision checks and cleanup; ReadyGate automatic post-intro peer acknowledgements
+then3/2/1/START, Voice uses existing count_go. Spectator already respects clock hold,
+so it stays enabled to preserve highlight subscriptions. Meaningful Core wire/clone/
+older-prefix3/3 passed. New runtime needs compile and focused flow evidence.
+
+New files: Runtime/Net/MatchRpc.QueueArrival.cs, Runtime/UI/Hub/HubMapVote.cs,
+Runtime/MatchArrivalPresentation.cs (metas made), Core.Tests/MatchArrivalRulesTests.cs,
+Resources/UI/map-cards five PNGs (existing in-engine stage images, all inspected,
+provenance saved). Do not copy old native FPP shots into map cards: rejected after
+inspection because foreground arms/slipper cover the court. UI inventory updated.
+No Unity job active. Need add meaningful automatic/manual/ballot runtime checks,
+review host-sync/cleanup/camera timing, then one focused completion retry plus new
+feature checks, followed requested EditMode/Checks and final native peers/build.
+Current code + earlier HUD fixture fixes remain uncommitted; preserve all concurrent
+HOME-video edits and protected2metas. Do not mark UX1 or full goal done.
+
+UX-1.12 source construction complete enough for first compilation, not done/approved.
+New MatchArrivalFlowTests cover local real-LAN queued state ->ballot->voted arena->
+intro->automaticSTART; custom toggle/manual waiting; reduced-motion stable camera and
+interrupted-intro cleanup. They explicitly do NOT claim UGS matchmaking. Registered
+in screens group without staging the concurrent HOME-video fixture registration.
+Wire reader/writer live in MatchRpc.cs with its existing audits (73handlers/101fields,
+finite0findings), helpers in QueueArrival partial. Ready retry uses scaled time so
+pause still stops it; gameplay-clock audit0. Core new contracts3/3 pass.
+
+FIRST COMPILATION/EDITMODE question: do the requested HubPalette,ControllerSupport,
+InputContract,CareerAndCloudCode fixtures compile/pass with new arrival source?
+Owned candidate source snapshot/hash list Logs/ux1-arrival-editmode-v1. One guarded
+run, stop at nonzero XML. No.cs edits while running. Profilepresentation-validation-
+20260921, Win64, no nographics. Candidate restored old owned source/churn only after
+saving complete patch, then recopied latest own tracked/new code/assets. DEV remains
+untouched by Unity; concurrent HOME video hook/files are omitted only in candidate.
+
+Latest owner asks for simple meaningful mode-name choices and to continue working.
+Answered with Standard/Powers(recommended),Original/Powered,Standard/Heroes,
+Regular/Super. No selection yet, so no renaming performed. Added UX-1.13; after
+choice audit all player-facing strings but preserve identity/save/wire values via
+mapping. This is independent of UX-1.12, which continues. Current Unity70588 is
+first requested EditMode compilation at Logs/ux1-arrival-editmode-v1; no.cs edits.
+
+EditMode70588 ended/reaped:requested4fixtures36/36passed,1.607s test duration;
+guard2c2c29a5668c restored4profilefiles/1preference. Compilation passed including
+new arrival and ballot source. XML in completion/arrival-editmode-v1.xml. Saved
+post-run diff and restored only known owned generated assets/settings/metas in
+candidate. Copied canonical Unity importer metadata for our new map-card PNGs.
+Next requested Checks.RunAll once, output Logs/ux1-arrival-checks-v1; question:do
+all registered scene/geometry/input/audio/shader checks pass? Stop at checks.txt.
+No.cs edits during this run. Not a full runtime/peer or visual-approval claim.

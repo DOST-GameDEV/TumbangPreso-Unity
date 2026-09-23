@@ -69,7 +69,7 @@ namespace TumbangPreso.UI
                 var settings = GetComponentInChildren<ConvertedSettingsPanel>(false);
                 if (settings != null && settings.gameObject.activeInHierarchy) return true;
                 if (HubCredits.IsOpen) return true;
-                return ScreenTakeover.AnyOpen;
+                return ScreenTakeover.AnyOpenOutside(_hubView != null ? _hubView.Canvas.transform : null);
             }
         }
 
@@ -260,8 +260,15 @@ namespace TumbangPreso.UI
 
             // ⚠️ NO SECOND `SceneFlow.StartMatch()`: `HostStartMatch` fires `OnMatchStarted`, which
             // this screen answers with the load (`HandleMatchStarted`).
-            MatchRpc.Instance?.HostStartMatch();
+            if (HubQueueWatch.QueueRoom) MatchRpc.Instance?.HostBeginQueueMapVote();
+            else MatchRpc.Instance?.HostStartMatch();
         }
+
+        public bool MapVoting => MatchRpc.Instance != null && MatchRpc.Instance.QueueMapVoting;
+        public float MapVoteSecondsLeft => MatchRpc.Instance != null ? MatchRpc.Instance.QueueMapSecondsLeft : 0;
+        public int MapVoteWinner => MatchRpc.Instance != null ? MatchRpc.Instance.QueueMapWinner : -1;
+        public int MapVoteFor(int seat) => MatchRpc.Instance != null ? MatchRpc.Instance.QueueMapVoteFor(seat) : -1;
+        public void VoteMap(int mapIndex) => MatchRpc.Instance?.SelectMapVoteServerRpc(mapIndex);
 
         public void ToggleReady() => OnPrimaryPressed();
 

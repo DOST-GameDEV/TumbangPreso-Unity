@@ -98,11 +98,38 @@ namespace TumbangPreso.PlayTests
                 Assert.IsEmpty(canvas.GetComponentsInChildren<Transform>().Where(t=>t.name=="FieldIcon" || t.name=="PersonIcon"),"Supplied fields already contain icons");
                 foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(960,540),new Vector2Int(1280,960),new Vector2Int(3440,1440)})
                     yield return TumpUiCapture.Capture("OwnerLogin-v7-create-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
-                Find("TermsLink").onClick.Invoke();yield return null;
-                Find("AcceptGuidelines").onClick.Invoke();yield return new WaitForSecondsRealtime(.2f);
-                var terms=canvas.GetComponentsInChildren<Toggle>().First(t=>t.name=="TermsAcceptance");
-                Assert.True(terms.isOn,"Accepting the actual Terms dialog must tick the signup checkbox");
-                Assert.Greater(terms.graphic.canvasRenderer.GetAlpha(),.95f,"Terms checkmark must be visibly rendered");
+                var terms = canvas.GetComponentsInChildren<Toggle>().First(t => t.name == "TermsAcceptance");
+                Assert.IsFalse(terms.isOn);
+                Assert.Less(terms.graphic.canvasRenderer.GetAlpha(), .05f, "Unaccepted consent must look empty.");
+                Assert.IsInstanceOf<Image>(terms.graphic, "Acceptance must be a filled rectangle, not a check glyph.");
+                bool larger = Settings.SettingsStore.Current.LargerText;
+                try
+                {
+                    foreach (bool large in new[] { false, true })
+                    {
+                        Settings.SettingsStore.Current.LargerText = large;
+                        Find("TermsLink").onClick.Invoke(); yield return null;
+                        Assert.IsFalse(terms.isOn, "Opening the terms is not acceptance.");
+                        var document = GameObject.Find("OwnerTermsCanvas").GetComponent<Canvas>();
+                        var scroll = document.GetComponentInChildren<ScrollRect>();
+                        Canvas.ForceUpdateCanvases();
+                        Assert.Greater(scroll.content.rect.height, scroll.viewport.rect.height * 2, "The long document must actually scroll.");
+                        foreach (var size in HubFlowTests.Shapes)
+                            yield return TumpUiCapture.Capture("Terms-popup-" + (large ? "large-" : "normal-") + size.x + "x" + size.y,
+                                document, size.x, size.y, false, checkActionBounds: true, underlays: new[] { canvas });
+                        scroll.verticalNormalizedPosition = 0; yield return null; yield return null;
+                        yield return TumpUiCapture.Capture("Terms-popup-end-" + (large ? "large" : "normal"),
+                            document, 960, 540, false, checkActionBounds: true, underlays: new[] { canvas });
+                        Find("TermsBack").onClick.Invoke(); yield return null;
+                        Assert.IsFalse(terms.isOn, "BACK must leave consent unchanged.");
+                    }
+                }
+                finally { Settings.SettingsStore.Current.LargerText = larger; }
+                Find("TermsLink").onClick.Invoke(); yield return null;
+                Find("AcceptGuidelines").onClick.Invoke(); yield return new WaitForSecondsRealtime(.2f);
+                Assert.True(terms.isOn, "I AGREE fills the signup consent square.");
+                Assert.Greater(terms.graphic.canvasRenderer.GetAlpha(), .95f, "The accepted fill must be visible.");
+                yield return TumpUiCapture.Capture("Login-consent-filled", canvas, 960, 540, false, checkActionBounds: true);
                 var fields=canvas.GetComponentsInChildren<InputField>();
                 Assert.IsFalse(fields.Any(f=>f.name=="Email"));
                 var confirmation=fields.First(f=>f.name=="ConfirmPassword");

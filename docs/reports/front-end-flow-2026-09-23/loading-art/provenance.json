@@ -1,0 +1,29 @@
+[
+  {
+    "asset": "Assets/TumbangPreso/Resources/UI/loading-illustrations/01-street-court-v1.png",
+    "source": "C:\\Users\\matth\\.codex\\generated_images\\01a0c071-fb2e-7ee3-a48a-8c65642000a1\\exec-44becb0f-47c5-4e3d-90ad-e8dccb29b3ef.png",
+    "sha256": "9dcf3923fabd1e62a3d5be0a4527915aab18fcf85d9742ee15d634871b02bf36",
+    "size": [
+      1672,
+      941
+    ]
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/UI/loading-illustrations/02-lagoon-deck-v1.png",
+    "source": "C:\\Users\\matth\\.codex\\generated_images\\01a0c071-fb2e-7ee3-a48a-8c65642000a1\\exec-1480c6f8-2c07-4c0c-a568-67287071d49c.png",
+    "sha256": "ed6e436a44861648c9a2114836a49b5d7613af8a656f7b23391bdc0feb3d511b",
+    "size": [
+      1672,
+      941
+    ]
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/UI/loading-illustrations/03-rooftop-court-v1.png",
+    "source": "C:\\Users\\matth\\.codex\\generated_images\\01a0c071-fb2e-7ee3-a48a-8c65642000a1\\exec-5e995e16-5948-4990-b5e7-23c9525f08c5.png",
+    "sha256": "427327cddcbc88fcdc3c5b0385d6b436b81e1b5d7a318b6dfb4572a57d0e1558",
+    "size": [
+      1672,
+      941
+    ]
+  }
+]

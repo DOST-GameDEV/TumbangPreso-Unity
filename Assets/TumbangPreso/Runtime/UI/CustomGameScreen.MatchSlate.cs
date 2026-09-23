@@ -15,7 +15,7 @@ namespace TumbangPreso.UI
             var ground = OwnerUiLayout.Rect(_root.transform, "MatchSlateGround").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(ground.rectTransform); ground.color = new Color32(223, 219, 170, 255); ground.raycastTarget = false;
             var design = OwnerUiLayout.DesignArea(_root.transform, "CustomRulesComposition");
-            OwnerTextAction.Create(design, "CustomRulesBack", "BACK", Close, 57, 24, 170, 70, 30);
+            OwnerTextAction.CreateBack(design, "CustomRulesBack", Close, 57, 24);
             var title = OwnerUiLayout.Text(design, "CustomRulesTitle", "CUSTOM MATCH", 64, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(title.rectTransform, 96, 106, 1697, 103);
             _headline = OwnerUiLayout.Text(design, "RulesHeadline", "", 29);
@@ -37,8 +37,9 @@ namespace TumbangPreso.UI
             SlateRule(_ownerMatchPage, "Stock", "SLIPPERS EACH", 430, d => { _editing.Tsinelas = CustomGameRules.MinTsinelas + Cycle(_editing.Tsinelas - CustomGameRules.MinTsinelas, d, TsinelasOptionCount); Apply(); }, "Starting slippers in Last Tsinelas Standing.");
             SlateRule(_ownerRoomPage, "Bots", "BOTS", 0, d => SetBots(Cycle(BotIndex(_editing), d, DifficultyCount + 1)), "Fill empty seats, or choose NONE to play with people only.");
             SlateRule(_ownerRoomPage, "Private", "PRIVATE ROOM", 114, d => { _editing.Private = !_editing.Private; Apply(); }, "Hide this room from the online room list.");
+            SlateRule(_ownerRoomPage, "ManualReady", "MANUAL READY", 228, d => { _editing.ManualReady = !_editing.ManualReady; Apply(); }, "OFF starts after the court introduction. ON waits for everyone to ready up.");
             _passwordRow = OwnerUiLayout.Rect(_ownerRoomPage, "PasswordRow").gameObject;
-            OwnerUiLayout.Place((RectTransform)_passwordRow.transform, 21, 263, 1599, 159);
+            OwnerUiLayout.Place((RectTransform)_passwordRow.transform, 21, 352, 1599, 159);
             var field = OwnerUiLayout.Rect(_passwordRow.transform, "RoomPassword").gameObject.AddComponent<Image>();
             OwnerUiLayout.Place(field.rectTransform, 0, 0, 592, 90); field.color = new Color32(247, 239, 209, 255);
             _password = field.gameObject.AddComponent<InputField>(); _password.targetGraphic = field;

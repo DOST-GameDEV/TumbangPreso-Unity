@@ -20,7 +20,7 @@ namespace TumbangPreso.UI
             var design=OwnerUiLayout.DesignArea(_canvas.transform,"CreditsComposition");
             var margin=OwnerUiLayout.Rect(design,"StudioMargin").gameObject.AddComponent<UnityEngine.UI.Image>();
             OwnerUiLayout.Place(margin.rectTransform,0,0,605,1080);margin.color=new Color32(102,42,48,255);margin.raycastTarget=false;
-            var back=OwnerTextAction.Create(design,"CreditsBack","BACK",Close,54,30,172,70,30);
+            var back=OwnerTextAction.CreateBack(design,"CreditsBack",Close,54,30);
             back.GetComponentInChildren<UnityEngine.UI.Text>().color=new Color32(245,232,198,255);
             var logo=OwnerUiLayout.Art(design,"OriginalOwnerLogo",OwnerUiTheme.Piece.Logo);
             OwnerUiLayout.Place(logo.rectTransform,93,249,460,460*273f/407);

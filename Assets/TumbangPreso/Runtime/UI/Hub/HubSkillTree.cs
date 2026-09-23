@@ -33,6 +33,7 @@ namespace TumbangPreso.UI.Hub
         private RectTransform _heroes, _tree;
         private Text _name, _mastery, _detailName, _detailBody, _detailTrade, _detailState;
         private HubButton _equip;
+        private ScrollRect _detailScroll;
         private AbilityVariant _selected;
 
         public static bool AnythingNew()
@@ -79,17 +80,26 @@ namespace TumbangPreso.UI.Hub
             _name = HubKit.Text(detail, "Heading", "", HubStyle.Title, true, HubStyle.Golden, TextAnchor.MiddleLeft);
             HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(30, -20), new Vector2(560, 60));
             _mastery = HubKit.Text(detail, "Mastery", "", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleLeft);
-            HubKit.Place(_mastery.rectTransform, HubKit.TopLeft, new Vector2(32, -80), new Vector2(560, 36));
-            _detailName = HubKit.Text(detail, "VariantName", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(_detailName.rectTransform, HubKit.TopLeft, new Vector2(30, -130), new Vector2(560, 50));
-            _detailBody = HubKit.Text(detail, "VariantText", "", HubStyle.Floor, false, HubStyle.Honey, TextAnchor.UpperLeft);
-            // ⚠️ EACH BOX HOLDS FOUR, TWO AND TWO LINES OF THE 28 FLOOR (38 units a line), the most
-            // the variant table's longest description, trade and challenge produce at 560 wide.
-            HubKit.Place(_detailBody.rectTransform, HubKit.TopLeft, new Vector2(30, -184), new Vector2(560, 160));
-            _detailTrade = HubKit.Text(detail, "VariantTrade", "", HubStyle.Floor, false, HubStyle.Golden, TextAnchor.UpperLeft);
-            HubKit.Place(_detailTrade.rectTransform, HubKit.TopLeft, new Vector2(30, -348), new Vector2(560, 84));
-            _detailState = HubKit.Text(detail, "VariantState", "", HubStyle.Floor, false, HubStyle.Persimmon, TextAnchor.UpperLeft);
-            HubKit.Place(_detailState.rectTransform, HubKit.TopLeft, new Vector2(30, -436), new Vector2(560, 84));
+            HubKit.Place(_mastery.rectTransform, HubKit.TopLeft, new Vector2(32, -80), new Vector2(560, 48));
+            // This one reading panel must grow with actual descriptions and Larger text. Fixed
+            // four/two-line boxes clipped the font's44-unit line height, one field after another.
+            var content = OwnerScrollColumn.Build(detail, "VariantReading", new Rect(30, 140, 632, 358), out _detailScroll);
+            var scrollRect = (RectTransform)_detailScroll.transform;
+            scrollRect.anchorMin = Vector2.zero; scrollRect.anchorMax = Vector2.one;
+            scrollRect.offsetMin = new Vector2(30, 24); scrollRect.offsetMax = new Vector2(-30, -140);
+            var layout = content.GetComponent<VerticalLayoutGroup>();
+            layout.spacing = 10; layout.padding = new RectOffset(0, 8, 0, 12);
+            var bar = _detailScroll.verticalScrollbar;
+            var barRect = (RectTransform)bar.transform;
+            barRect.anchorMin = new Vector2(1, 0); barRect.anchorMax = Vector2.one;
+            barRect.offsetMin = new Vector2(-18, 0); barRect.offsetMax = Vector2.zero;
+            bar.GetComponent<Image>().color = new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, .15f);
+            bar.targetGraphic.color = HubStyle.Golden;
+            _detailName = HubKit.Text(content, "VariantName", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleLeft);
+            _detailName.gameObject.AddComponent<LayoutElement>().minHeight = 54;
+            _detailBody = HubKit.Text(content, "VariantText", "", HubStyle.Floor, false, HubStyle.Honey, TextAnchor.UpperLeft);
+            _detailTrade = HubKit.Text(content, "VariantTrade", "", HubStyle.Floor, false, HubStyle.Golden, TextAnchor.UpperLeft);
+            _detailState = HubKit.Text(content, "VariantState", "", HubStyle.Floor, false, HubStyle.Persimmon, TextAnchor.UpperLeft);
 
             _equip = HubKit.Button(Root, "EquipVariant", "EQUIP", HubStyle.Chartreuse, Equip, HubStyle.Display, 541);
             HubKit.Place((RectTransform)_equip.transform, HubKit.BottomRight, new Vector2(-HubKit.Margin, HubKit.Margin), new Vector2(460, 140));
@@ -146,7 +156,7 @@ namespace TumbangPreso.UI.Hub
                 label.rectTransform.anchorMin = label.rectTransform.anchorMax = new Vector2(0.5f + side * 0.27f, 1);
                 label.rectTransform.pivot = new Vector2(0.5f, 1);
                 label.rectTransform.anchoredPosition = Vector2.zero;
-                label.rectTransform.sizeDelta = new Vector2(480, 40);
+                label.rectTransform.sizeDelta = new Vector2(480, 48);
                 HubKit.Fit(label, 480);
 
                 for (int n = 0; n < options.Count; n++)
@@ -188,7 +198,7 @@ namespace TumbangPreso.UI.Hub
                     string state = on ? "EQUIPPED" : unlocked ? (option.IsDefault ? "DEFAULT" : "UNLOCKED")
                                  : HeroBuildRules.ChallengeCount(settings.AbilityChallenges, option.Id) + " / " + option.ChallengeTarget;
                     var sub = HubKit.Text(node.Body, "State", state, HubStyle.Floor, false, HubStyle.Ink, TextAnchor.MiddleLeft);
-                    HubKit.Place(sub.rectTransform, HubKit.BottomLeft, new Vector2(114, 16), new Vector2(234, 40));
+                    HubKit.Place(sub.rectTransform, HubKit.BottomLeft, new Vector2(114, 16), new Vector2(234, 48));
                     if (!unlocked)
                     {
                         var lockMark = HubKit.Glyph(node.Body, "Lock", HubGlyph.Mark.Lock, HubStyle.Ink);
@@ -237,6 +247,10 @@ namespace TumbangPreso.UI.Hub
             HubKit.LabelOf(_equip).fontSize = HubStyle.Size(HubStyle.Display);
             HubKit.Fit(HubKit.LabelOf(_equip), 420);
             _equip.interactable = unlocked && !on;
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_detailScroll.content);
+            _detailScroll.verticalNormalizedPosition = 1;
+            Hub.RefreshFocus();
         }
 
         private void Equip()

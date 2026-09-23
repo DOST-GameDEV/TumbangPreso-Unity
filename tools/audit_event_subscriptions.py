@@ -150,6 +150,11 @@ def is_event_target(expression):
 #
 # ⚠️ MEASURED 2026-09-05: thirteen sites, all thirteen safe, none of them previously counted.
 ANONYMOUS_FOREVER = [
+    ("HubCustom.cs", "_map.Changed", "(b) HubHost builds the dropdown under its own Form; destroying the screen destroys the event publisher."),
+    ("HubCustom.cs", "_codeField.onValidateInput", "(b) HubJoin owns the field below CodeEntry; this stateless uppercase validator has no external subscriber."),
+    ("HubLoadout.cs", "tile.Focused", "(b) Each rebuilt item tile is a child of the loadout grid; its event cannot outlive that screen."),
+    ("HubModeSelect.cs", "card.Attention", "(b) Card and its description shade share the mode-screen hierarchy and are destroyed together."),
+    ("HubSkillTree.cs", "node.Focused", "(b) Each rebuilt branch node is owned by the skill-tree screen that receives its focus event."),
     ("ConvertedMainMenu.cs", "signIn.Opened", "SignInScreen and the home view are components of the same menu GameObject."),
     ("PausePanel.cs", "settings.BackPressed", "The settings publisher is a child of this pause panel and is created once."),
     ("PlayerHub.OwnerPainted.cs", "_signIn.Opened", "The sign-in publisher is a component of the same hub GameObject."),

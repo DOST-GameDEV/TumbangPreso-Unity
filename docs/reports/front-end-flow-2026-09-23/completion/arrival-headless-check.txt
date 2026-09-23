@@ -1,0 +1,11 @@
+ok   : classic roster size
+FAIL : hero roster size
+ok   : all roster size
+ok   : cans
+ok   : slippers
+ok   : neutral is exactly 1.0
+ok   : every slot defends exactly once
+ok   : the box is a square
+ok   : shove solves to 2.50 m
+ok   : hit window on BOYBEN
+RESULT: FAILED with 1 problem(s).

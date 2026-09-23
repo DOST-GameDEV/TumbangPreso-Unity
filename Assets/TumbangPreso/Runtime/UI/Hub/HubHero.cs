@@ -74,8 +74,6 @@ namespace TumbangPreso.UI.Hub
             HubKit.Place((RectTransform)previous.transform, HubKit.Left, new Vector2(-30, 0), new Vector2(96, 96));
             var next = HubKit.IconButton(stage, "NextHero", HubGlyph.Mark.Right, HubStyle.Honey, () => Step(1), 312);
             HubKit.Place((RectTransform)next.transform, HubKit.Right, new Vector2(30, 0), new Vector2(96, 96));
-            var hint = HubKit.Text(stage, "RotateHint", "Drag to turn", HubStyle.Floor, false, HubStyle.Ink, TextAnchor.MiddleRight);
-            HubKit.Place(hint.rectTransform, HubKit.BottomRight, new Vector2(-26, 18), new Vector2(300, 40));
 
             HubChrome.Back(Root, Hub);
             HubChrome.TopRight(Root, Hub);
@@ -84,18 +82,18 @@ namespace TumbangPreso.UI.Hub
             var side = HubKit.Span(HubKit.Rect(Root, "Details"), new Vector2(0.46f, 0), new Vector2(1, 1),
                                    new Vector2(70, HubKit.Margin), new Vector2(HubKit.Margin, 190));
             _role = HubKit.Text(side, "Role", "", HubStyle.Label, false, HubStyle.Golden, TextAnchor.MiddleLeft);
-            HubKit.Place(_role.rectTransform, HubKit.TopLeft, new Vector2(0, 0), new Vector2(800, 44));
+            HubKit.Place(_role.rectTransform, HubKit.TopLeft, new Vector2(0, 0), new Vector2(800, 56));
             _name = HubKit.Text(side, "Heading", "", HubStyle.Hero, true, HubStyle.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(-4, -40), new Vector2(820, 150));
+            HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(-4, -56), new Vector2(820, 150));
             var nameShadow = _name.gameObject.AddComponent<Shadow>();
             nameShadow.effectColor = HubStyle.Ink; nameShadow.effectDistance = new Vector2(6, -7);
 
             _abilities = HubKit.Place(HubKit.Rect(side, "Abilities"), HubKit.TopLeft, new Vector2(0, -210), new Vector2(820, 150));
 
             var bioHead = HubKit.Text(side, "BiographyLabel", "//  BIOGRAPHY", HubStyle.Label, false, HubStyle.Golden, TextAnchor.MiddleLeft);
-            HubKit.Place(bioHead.rectTransform, HubKit.TopLeft, new Vector2(0, -392), new Vector2(800, 44));
+            HubKit.Place(bioHead.rectTransform, HubKit.TopLeft, new Vector2(0, -392), new Vector2(800, 56));
             _bio = HubKit.Text(side, "Biography", "", HubStyle.Body, false, HubStyle.Honey, TextAnchor.UpperLeft);
-            HubKit.Place(_bio.rectTransform, HubKit.TopLeft, new Vector2(0, -444), new Vector2(780, 150));
+            HubKit.Place(_bio.rectTransform, HubKit.TopLeft, new Vector2(0, -456), new Vector2(780, 150));
             _story = HubKit.Button(side, "StoryButton", "READ THE STORY", HubStyle.Honey, OpenStory, HubStyle.Body, 325, HubGlyph.Mark.Book);
             HubKit.Place((RectTransform)_story.transform, HubKit.TopLeft, new Vector2(0, -606), new Vector2(360, 84));
 
@@ -202,8 +200,6 @@ namespace TumbangPreso.UI.Hub
                 HubKit.Fit(key, 136);
                 HubSlap.On(tile.transform, 0.04f * i, 2 - i * 2);
             }
-            var note = HubKit.Text(_abilities, "AbilityHint", "Press an icon for\nwhat it does.", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleLeft);
-            HubKit.Place(note.rectTransform, HubKit.TopLeft, new Vector2(3 * 170 + 10, -20), new Vector2(300, 110));
         }
 
         private void RefreshAction(string heroId)

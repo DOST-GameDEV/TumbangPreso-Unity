@@ -13,6 +13,13 @@ namespace TumbangPreso.UI
                                     float elapsed, float displaySeconds)
             => assetsReady && accountReady && !reading && elapsed >= displaySeconds;
 
+        public static readonly string[] Tips =
+        {
+            "The throw is the opening. Keep watching the defender on the run back for your slipper.",
+            "A knocked can gives you room to escape. The defender has to stand it up before tagging again.",
+            "Everyone takes a turn as the defender. Remember the escape routes you will need to guard later.",
+        };
+
         public static readonly string[] Stories =
         {
             "A world built around a street game.\n\nIn TUMP's world, tumbang preso is a major spectator sport. Its best-known players still return to neighborhood courts, where every great rivalry began.",

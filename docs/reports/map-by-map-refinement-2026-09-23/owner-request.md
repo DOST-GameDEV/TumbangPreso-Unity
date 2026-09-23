@@ -48,3 +48,14 @@ in making all these changes please research first what makes a good game and wah
 ## Preservation reminder
 
 make sure old unfinished todo and this new todo arent lost thhoroughly go thru each of them thank u
+
+## Follow-up,2026-09-23
+
+> map pass still in ur todo righht? pls use image generation as references to improve ur maps LATER WHEN UR DONE WITH ALL UI WORK i gave u
+>
+> make sure to still critique what iut does tho and only try to copy the good parts and keep on making references from gpt images until we have gegnunely better mas
+>
+> u still remember my comment about maps earlier and requirements for it? i js wanna make sure it didnt get lost
+
+> improve all animated sky island and backgrounds as well thank you
+> js finish ui first

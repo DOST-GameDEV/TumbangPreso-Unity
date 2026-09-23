@@ -417,7 +417,8 @@ namespace TumbangPreso.Core
                 r.Tsinelas.ToString(),
                 r.Bots.ToString(),
                 r.BotDifficulty.ToString(),
-                r.Private ? "1" : "0");
+                r.Private ? "1" : "0",
+                r.ManualReady ? "1" : "0");
         }
 
         public static CustomRules Parse(string wire, GameMode fallback)
@@ -447,6 +448,8 @@ namespace TumbangPreso.Core
                 rules.BotDifficulty = tier < 0 ? 0 : tier > (int)Difficulty.Astig ? (int)Difficulty.Astig : tier;
 
             if (parts.Length > 8) rules.Private = parts[8] == "1";
+            // An absent suffix preserves the older room's explicit ready gate.
+            if (parts.Length > 9) rules.ManualReady = parts[9] != "0";
 
             // ⚠️ THE PASSWORD IS NOT ON THE WIRE AND MUST NEVER BE. A lobby advert is readable by
             // everybody in the pool; a password in it is a lock with the key taped to the door.
@@ -477,6 +480,9 @@ namespace TumbangPreso.Core
         public int BotDifficulty = (int)Difficulty.Normal;
         public bool Private;
 
+        /// <summary>Custom-room warm-up requires READY. Queued games force automatic arrival.</summary>
+        public bool ManualReady = true;
+
         /// <summary>⚠️ HOST-ONLY. Never serialised onto the wire. See `CustomGameRules.Parse`.</summary>
         public string Password = "";
 
@@ -491,6 +497,7 @@ namespace TumbangPreso.Core
             Bots = Bots,
             BotDifficulty = BotDifficulty,
             Private = Private,
+            ManualReady = ManualReady,
             Password = Password,
         };
     }

@@ -1,11 +1,51 @@
-PLAY FAIR
-Respect other players. Do not cheat, impersonate someone else, or use names and chat to harass people. Keep matches welcoming and report problems honestly.
+1. USING TUMP
+TUMP is a game built around the Filipino street game tumbang preso. These terms explain the rules for using the game, creating an account and taking part in its online features. Read them before choosing I AGREE. If you do not agree, leave this page and do not complete account registration.
+Use the game only when you are legally able to agree to these terms. If local law requires a parent or guardian to authorize your use, ask them to review the game and these terms with you. A device owner's permission is separate from permission to use another person's account. Nothing on this page removes rights that applicable law does not allow to be removed.
 
-KEEP YOUR ACCOUNT SAFE
-Keep your password private. Sign in only to an account you own or have permission to use. Creating a username and password links this device's current progress to that account.
+2. YOUR ACCOUNT AND SIGN-IN
+Use an account that belongs to you or that you are authorized to use. Choose a password you do not share with other players, and do not impersonate the development team, moderators or another person. Keep enough information to recognize the account you created, especially when sharing a device.
+Creating a username and password links the device's current progress to that account through the game's account system. Check which account is active before changing profile details or continuing on a shared computer. An optional contact email entered on the registration form stays on this device. It is not an email sign-in or an email password-recovery service. Do not rely on it to recover a lost password.
 
-YOUR PROGRESS AND INFORMATION
-Guest progress and settings are saved on this device. Online account and multiplayer features need their services to be reachable. Match results and your public player name may be shown to other players. An optional contact email entered here stays on this device; it is not an email sign-in or password-recovery service.
+3. GUEST PLAY, LOCAL SAVES AND SHARED DEVICES
+Guest progress and settings are stored locally. Local files may be lost if the game is removed, the device is reset, files are deleted or storage is damaged. A local save is not the same as a confirmed online account record. Online features may show the last information received when their services are unavailable.
+Sign out or close the game when you finish using a shared device. Do not inspect, copy, alter or use somebody else's saved account information. Moving between guest and signed-in play does not give permission to overwrite another person's account. The game must be allowed to finish a save or synchronization before you assume a change has reached another device.
 
-BEFORE YOU PLAY
-By choosing I AGREE, you acknowledge these play and account guidelines. You can return to this page whenever you need to read them again.
+4. FAIR PLAY
+Play through the controls, rules and features the game provides. Do not use unauthorized software, modified network messages, stolen credentials or deliberate exploits to gain unfair information, change results, interfere with other players or bypass account restrictions. If you discover a fault, report it rather than repeatedly using it against others.
+Built-in bots, practice tools, custom-room rules, remapping and accessibility settings are legitimate game features. Use them within the mode or room that offers them. An organized tournament may publish additional event rules; read those rules separately. A good strategy, an unusual play or a strong opponent is not evidence of cheating by itself.
+
+5. OTHER PLAYERS, NAMES AND CHAT
+Treat people with respect in names, profile text, chat and shared content. Do not threaten, harass, discriminate against or impersonate others. Do not share another person's private information, passwords or account details. Avoid content that is unlawful, sexually exploitative, hateful or designed to deceive players into revealing information or visiting unsafe sites.
+Use blocking, room controls and reporting features where they are available. Give accurate details when reporting a problem, and do not use false reports to punish someone for winning or disagreeing with you. A report is information for review, not proof that a player has broken a rule. Other players can see and may save messages you choose to send.
+
+6. ROOMS, INVITATIONS AND CONNECTIONS
+Share a room code only with people you want to invite. A private or unlisted room is not a place to exchange confidential information: people who receive its code may be able to join. Friends, party and room features depend on the services and permissions available in the current build.
+Online matches need a working connection. Delays, disconnections, unavailable services or a host leaving can interrupt play. Reconnection features may preserve a seat or restore part of a match when the rules allow, but they do not guarantee that a match pauses or can always be recovered. Leaving a match can affect its record or access to queues according to the game's displayed rules.
+
+7. RESULTS, RANKS AND COMPETITIVE RECORDS
+Scores and match outcomes are determined by the game's rules and authoritative match state. A preview, animation or message on one device does not independently award points or establish a final result. Progress, rankings and match history may need time to synchronize after play.
+Do not submit fabricated results, manipulate reports, arrange dishonest outcomes or attempt to claim rewards for matches that were not legitimately recorded. Fixes to errors or abuse may require records to be corrected. Rankings describe play within the game's current systems; they are not a promise of a prize, payment, selection for an event or permanent placement.
+
+8. TANSAN, UNLOCKS AND TASKS
+TANSAN is a game currency earned through the supported play and task systems. In this build it is not real money, cannot be withdrawn as cash and is not offered as a real-money purchase. Heroes, equipment and other unlocks give access within the game; they do not transfer ownership of the underlying artwork or software.
+Online purchases and task claims are checked by the server. A local display or cached balance is not permission to grant an item or duplicate a reward. Check the item's name, ownership state and cost before confirming an action. Prices, task availability, eligibility and balance may change as the game is developed. Do not sell accounts, exchange TANSAN for cash or advertise unsupported trading services.
+
+9. YOUR INFORMATION AND VISIBILITY
+The features you use can involve account and session identifiers, your chosen public name, profile details, settings, saved character choices, progression, match records and information you deliberately send through social or reporting features. Public player names, selected characters and match results may be visible to other players. Avoid putting sensitive personal information in those fields or in chat.
+The game uses Unity technology and online services for some features. Their information practices depend on which services are active and the platform you use. Unity's game-player privacy information is available at unity.com/legal/game-player-and-app-user-privacy-policy. These play terms are not a blanket permission for unrelated data use and do not replace any separate notice or permission required by law.
+
+10. ACCOUNT AND PRIVACY CHOICES
+Use the account, profile, social and settings tools available in your copy of the game to review or change the information and choices they expose. A local edit and an online update can have different effects; read the confirmation shown before deleting information or leaving an account. Deleting a local file does not by itself establish that an online record was deleted.
+Where applicable law gives you rights concerning your personal information, those rights continue to apply. For an account or privacy issue that the available controls do not resolve, use the development team's contact channel supplied with your copy of TUMP. Do not include your password or another person's private information in a report. A request may require verification that the account is yours.
+
+11. SCREENSHOTS, RECORDINGS AND GAME CONTENT
+Multiplayer play can appear in another player's screenshot, stream or recording, including visible names, chat and match results. Consider what you make public when choosing a name or sending a message. Do not use recordings to threaten people, expose private information or falsely present yourself as another player or the game's official representative.
+The game contains original work and third-party material used under its own licenses. Playing the game does not give you ownership of those materials or a general license to extract and redistribute them separately. Respect the credits, notices, third-party licenses and other people's rights when sharing content from or about the game.
+
+12. UPDATES, AVAILABILITY AND RESPONSIBLE USE
+The game and its online features may change as bugs are fixed and content is developed. Compatibility, balancing, available modes and presentation can differ between builds. Keep the version required by the people or event you intend to play with. Features that need an external service may be unavailable when that service cannot be reached.
+There is no promise here that every feature will always be available, uninterrupted or free from errors. Use the game responsibly, take breaks when needed and stop if playing causes discomfort. Accessibility and comfort options can help, but they are not a guarantee that every effect or control suits every player. These statements do not limit protections or remedies that cannot lawfully be limited.
+
+13. ACCEPTANCE AND QUESTIONS
+Account registration requires your affirmative agreement to the terms presented with the form. Reviewing the document is not, by itself, acceptance. An unsubmitted choice can be withdrawn before registration. Acceptance of these play terms does not replace separate permissions that applicable law may require.
+If the terms or a feature are unclear, ask the development team through the contact information provided with your copy before relying on an assumption. The version presented in the game is the version you should read for that build. Any future change must continue to respect applicable law and the choices the game asks you to make.

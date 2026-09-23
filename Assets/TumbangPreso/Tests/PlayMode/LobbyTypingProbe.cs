@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using UnityEngine;
@@ -73,53 +74,24 @@ namespace TumbangPreso.PlayTests
         {
             var report = new StringBuilder();
             var broken = new List<string>();
-
-            if (!Application.CanStreamedLevelBeLoaded("MatchSetup"))
-            {
-                Assert.Ignore("MatchSetup is not in the build settings.");
-                yield break;
-            }
-
-            var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            yield return ProbeWait.Done(load, "scene load");
-
-            for (int i = 0; i < SettleFrames; i++) yield return null;
-            Canvas.ForceUpdateCanvases();
-
-            // ⚠️⚠️ THE CHAT IS OPENED FIRST, THROUGH ITS OWN DOOR, BECAUSE A CLOSED CHAT IS
-            // DELIBERATELY UNTYPEABLE AND THIS PROBE READ THAT AS THE FAULT IT HUNTS.
-            // `LobbyChat.SetPresented(false)` sets its CanvasGroup to alpha 0 and writes
-            // `_field.interactable = false`, and it does NOT deactivate the object, so a sweep
-            // that excludes inactive objects finds a live `ChatInput` a player cannot type into
-            // and is right about the letter of it. The lobby opens with the chat closed on
-            // purpose (§ 114: an empty log is a promise, not a screen element), so the only
-            // question worth asking is about the OPEN chat, which is what CHAT gets you.
-            yield return PresentTheChat(report);
-
-            // The lobby's own furniture first, then the join card, which is built inactive and
-            // is the only place the join-code field exists.
-            yield return Check("lobby", report, broken);
-
-            var join = FindByName("LobbyJoinPanel");
-
-            if (join == null)
-            {
-                report.AppendLine("LobbyJoinPanel: NOT PRESENT");
-                broken.Add("LobbyJoinPanel was never built");
-            }
-            else
-            {
-                join.SetActive(true);
-                for (int i = 0; i < SettleFrames; i++) yield return null;
-                Canvas.ForceUpdateCanvases();
-
-                yield return Check("join card", report, broken);
-            }
-
+            yield return HubFlowTests.OpenHome();
+            yield return HubFlowTests.Press("NamePlate");
+            Assert.IsTrue(Object.FindFirstObjectByType<TumbangPreso.UI.PlayerHub>().IsOpen);
+            yield return Check("profile name", report, broken);
+            Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
+                .First(b => b.name == "ClosePlayerHub" && b.isActiveAndEnabled).onClick.Invoke();
+            yield return null; yield return null;
+            yield return HubFlowTests.Press("ModeCard");
+            yield return HubFlowTests.Press("CustomCard");
+            yield return HubFlowTests.Press("HostDoor");
+            yield return Check("host room name", report, broken);
+            TumbangPreso.UI.Hub.TumpHub.Current.Back(); yield return null;
+            yield return HubFlowTests.Press("CustomCard");
+            yield return HubFlowTests.Press("JoinDoor");
+            yield return HubFlowTests.Press("Source2");
+            yield return Check("join code", report, broken);
             Directory.CreateDirectory("Logs");
             File.WriteAllText(OutPath, report.ToString(), new UTF8Encoding(false));
-            Debug.Log(report.ToString());
-
             Assert.IsEmpty(broken, "fields a player cannot type into:\n" + string.Join("\n", broken));
         }
 
@@ -147,6 +119,9 @@ namespace TumbangPreso.PlayTests
             foreach (var field in Object.FindObjectsByType<InputField>(FindObjectsInactive.Exclude,
                                                                        FindObjectsSortMode.None))
             {
+                if (field.GetComponentsInParent<Canvas>().Any(c => !c.isActiveAndEnabled)) continue;
+                var chat = field.GetComponentInParent<TumbangPreso.UI.LobbyChat>();
+                if (chat != null && !chat.IsPresented) continue; // intentionally closed behind HOST/JOIN
                 var rect = field.transform as RectTransform;
                 if (rect == null) continue;
 
@@ -234,7 +209,7 @@ namespace TumbangPreso.PlayTests
                 yield break;
             }
 
-            var door = FindByName("ChatButton") ?? FindByName("ChatChip");
+            var door = FindByName("ChatDoor") ?? FindByName("ChatButton") ?? FindByName("ChatChip");
             var button = door != null ? door.GetComponent<Button>() : null;
 
             if (button != null && button.IsInteractable())
@@ -245,15 +220,8 @@ namespace TumbangPreso.PlayTests
 
             for (int i = 0; i < HoldFrames; i++) yield return null;
 
-            // Whatever the door reached, the rest are presented directly: a join card's chat has
-            // no door of its own on the lobby it is drawn over.
-            foreach (var chat in chats)
-            {
-                if (chat == null || chat.IsPresented) continue;
-
-                chat.SetPresented(true);
-                report.AppendLine($"--- chat --- {Path(chat.transform)} presented directly");
-            }
+            Assert.IsNotNull(button, "The live room has no visible chat door.");
+            Assert.IsTrue(chats.Any(chat => chat != null && chat.IsPresented), "CHAT did not open its field.");
 
             for (int i = 0; i < HoldFrames; i++) yield return null;
             Canvas.ForceUpdateCanvases();

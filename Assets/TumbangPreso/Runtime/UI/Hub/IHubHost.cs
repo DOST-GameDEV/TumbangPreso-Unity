@@ -76,6 +76,11 @@ namespace TumbangPreso.UI.Hub
         void StartGame();
         void ToggleReady();
         void LockIn();
+        bool MapVoting { get; }
+        float MapVoteSecondsLeft { get; }
+        int MapVoteWinner { get; }
+        int MapVoteFor(int seat);
+        void VoteMap(int mapIndex);
 
         /// <summary>Tell the room this machine's current picks. Reads the saved settings.</summary>
         void PublishPicks();

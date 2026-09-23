@@ -52,6 +52,9 @@ namespace TumbangPreso
 
         private bool _awaitingLocalReady;
         private bool _countingDown;
+        private bool _automatic, _introductionDone;
+        private float _nextAutomaticReady;
+        private Coroutine _arrival;
 
         /// <summary>Peers that have declared ready. Host-side; a set, so a second press from
         /// the same peer changes nothing.</summary>
@@ -74,7 +77,7 @@ namespace TumbangPreso
             _awaitingLocalReady = true;
             _countingDown = false;
 
-            ReadyPromptChanged?.Invoke(true);
+            ReadyPromptChanged?.Invoke(!_automatic);
             RaiseNetReady();
         }
 
@@ -93,7 +96,7 @@ namespace TumbangPreso
 
             RaiseNetReady();
 
-            if (_netReady.Count >= ExpectedReadyCount()) BeginNetCountdown();
+            if ((!_automatic || _introductionDone) && _netReady.Count >= ExpectedReadyCount()) BeginNetCountdown();
         }
 
         /// <summary>
@@ -108,7 +111,7 @@ namespace TumbangPreso
             _netReady.Remove(peerId);
             RaiseNetReady();
 
-            if (_netReady.Count >= ExpectedReadyCount()) BeginNetCountdown();
+            if ((!_automatic || _introductionDone) && _netReady.Count >= ExpectedReadyCount()) BeginNetCountdown();
         }
 
         /// <summary>
@@ -138,6 +141,7 @@ namespace TumbangPreso
         private void BeginNetCountdown()
         {
             if (_countingDown) return;
+            if (_automatic && !_introductionDone) return;
 
             AwaitingNetReady = false;
 
@@ -152,6 +156,15 @@ namespace TumbangPreso
         public void StartLocalCountdown()
         {
             if (_countingDown) return;
+            // A host countdown wins over a delayed local introduction. Never keep the player's
+            // camera or input held after the network has advanced into the playable round.
+            if (_arrival != null)
+            {
+                StopCoroutine(_arrival); _arrival = null;
+                var presentation = GetComponent<MatchArrivalPresentation>();
+                if (presentation != null) { presentation.Cancel(); Destroy(presentation); }
+                _introductionDone = true;
+            }
             _awaitingLocalReady = false;
             AwaitingNetReady = false;
             StartCoroutine(RunReadyCountdown());
@@ -169,7 +182,21 @@ namespace TumbangPreso
             _local = local;
             _awaitingLocalReady = true;
             _countingDown = false;
-            ReadyPromptChanged?.Invoke(true);
+            _automatic = !UI.SceneFlow.SelectedRules.ManualReady;
+            _introductionDone = !_automatic;
+            _readySendPending = false;
+            ReadyPromptChanged?.Invoke(!_automatic);
+            if (_automatic && _arrival == null) _arrival = StartCoroutine(PrepareAutomaticArrival());
+        }
+
+        private IEnumerator PrepareAutomaticArrival()
+        {
+            var presentation = gameObject.AddComponent<MatchArrivalPresentation>();
+            yield return presentation.Run();
+            if (presentation != null) Destroy(presentation);
+            _introductionDone = true;
+            _nextAutomaticReady = 0;
+            _arrival = null;
         }
 
         private void Awake()
@@ -203,6 +230,19 @@ namespace TumbangPreso
             }
 
             if (_countingDown || !_awaitingLocalReady) return;
+
+            if (_automatic)
+            {
+                if (!_introductionDone) return;
+                if (!NetAuthority.IsNetworked) { StartCoroutine(RunReadyCountdown()); return; }
+                if (NetAuthority.IsHost && ExpectedReadyCount() == 0) { BeginNetCountdown(); return; }
+                if (GameLaunch.Spectator || Time.time < _nextAutomaticReady) return;
+                // The host can finish loading after this client. Repeat until the host's countdown
+                // acknowledges the quorum; the existing peer set makes each repeat idempotent.
+                _nextAutomaticReady = Time.time + .5f;
+                Net.MatchRpc.Instance?.DeclareReadyServerRpc();
+                return;
+            }
 
             // ⚠️⚠️ A SPECTATOR'S R IS THE REPLAY KEY AND MUST NOT ALSO BE THE READY KEY.
             // 🧑 2026-08-29: *"r for spectatotr does ready and replay, conflict"*.
@@ -269,7 +309,7 @@ namespace TumbangPreso
                 yield return new WaitForSeconds(TickSeconds);
             }
 
-            CountdownTick?.Invoke("GO!");
+            CountdownTick?.Invoke(_automatic ? "START!" : "GO!");
             yield return new WaitForSeconds(GoSeconds);
 
             CountdownHidden?.Invoke();

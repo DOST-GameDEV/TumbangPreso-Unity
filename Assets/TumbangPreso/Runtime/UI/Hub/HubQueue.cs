@@ -66,7 +66,7 @@ namespace TumbangPreso.UI.Hub
                 // The room went away under a found match, or the search died with a refusal.
                 bool wasFound = Found;
                 End();
-                if (wasFound) { hub.Home(); hub.Toast("The match fell through. Press PLAY to queue again."); }
+                if (wasFound) { hub.Home(); hub.Toast("Match unavailable."); }
                 return;
             }
 
@@ -110,7 +110,8 @@ namespace TumbangPreso.UI.Hub
             // run to show it: a plate that only ever appeared if something else woke it.
             var holder = HubKit.Stretch(HubKit.Rect(parent, "QueuePlateHolder"));
             var plate = holder.gameObject.AddComponent<HubQueuePlate>();
-            var root = HubKit.Place(HubKit.Rect(holder, "QueuePlate"), HubKit.Top, new Vector2(0, -24), new Vector2(540, 118));
+            bool larger = Settings.SettingsStore.Current.LargerText;
+            var root = HubKit.Place(HubKit.Rect(holder, "QueuePlate"), HubKit.Top, new Vector2(0, -24), new Vector2(540, larger ? 148 : 118));
             plate._hub = hub;
             plate._root = root;
 
@@ -126,10 +127,10 @@ namespace TumbangPreso.UI.Hub
             HubKit.Place(clockIcon.rectTransform, HubKit.Left, new Vector2(26, 8), new Vector2(46, 46));
 
             plate._clock = HubKit.Text(root, "Elapsed", "0:00", HubStyle.Display, true, HubStyle.Honey, TextAnchor.MiddleLeft);
-            HubKit.Place(plate._clock.rectTransform, HubKit.Left, new Vector2(84, 12), new Vector2(210, 84));
+            HubKit.Place(plate._clock.rectTransform, HubKit.Left, new Vector2(84, larger ? 24 : 12), new Vector2(210, larger ? 92 : 84));
 
             plate._line = HubKit.Text(root, "QueueLine", "SEARCHING", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleLeft);
-            HubKit.Place(plate._line.rectTransform, HubKit.BottomLeft, new Vector2(30, 10), new Vector2(390, 36));
+            HubKit.Place(plate._line.rectTransform, HubKit.BottomLeft, new Vector2(30, larger ? 6 : 10), new Vector2(390, larger ? 44 : 36));
 
             plate._cancel = HubKit.IconButton(root, "CancelQueue", HubGlyph.Mark.Close, HubStyle.DeepRed, () => hub.Host.CancelQueue(), 71);
             HubKit.Place((RectTransform)plate._cancel.transform, HubKit.Right, new Vector2(-24, 4), new Vector2(84, 84));
@@ -139,7 +140,7 @@ namespace TumbangPreso.UI.Hub
                 HubQueueWatch.AcceptBots();
                 hub.Host.AcceptBots();
             }, HubStyle.Body, 72, HubGlyph.Mark.Bots);
-            HubKit.Place((RectTransform)plate._bots.transform, HubKit.Top, new Vector2(0, -156), new Vector2(360, 76));
+            HubKit.Place((RectTransform)plate._bots.transform, HubKit.Top, new Vector2(0, larger ? -196 : -156), new Vector2(360, 76));
 
             root.gameObject.SetActive(false);
             plate._bots.gameObject.SetActive(false);
@@ -249,6 +250,9 @@ namespace TumbangPreso.UI.Hub
         {
             if (string.IsNullOrWhiteSpace(words)) return;
             _words.text = words;
+            // Refusals often need two lines, especially with Larger text. Size this one temporary
+            // message from its actual content instead of letting it overflow an88-unit plate.
+            _root.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Max(88, _words.preferredHeight + 36));
             _root.gameObject.SetActive(true);
             _root.SetAsLastSibling();
             HubSlap.On(_root, 0, 0);

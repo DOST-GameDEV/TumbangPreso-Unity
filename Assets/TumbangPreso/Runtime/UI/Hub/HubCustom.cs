@@ -114,8 +114,7 @@ namespace TumbangPreso.UI.Hub
             _create.interactable = true;
             HubKit.SetLabel(_create, "CREATE LOBBY");
             if (!string.IsNullOrEmpty(refusal)) { _status.text = refusal; MenuSfx.Error(); return; }
-            Hub.Home();
-            Hub.Push<HubLobby>();
+            Hub.ShowLobby();
         }
     }
 
@@ -149,7 +148,7 @@ namespace TumbangPreso.UI.Hub
             var sourcePlate = HubKit.Shape(left, "Plate", HubStyle.Night, false, 911, 5, 26);
             HubKit.Stretch(sourcePlate.rectTransform);
             var sourceTitle = HubKit.Text(left, "SourceLabel", "SOURCE", HubStyle.Floor, false, HubStyle.Golden, TextAnchor.MiddleLeft);
-            HubKit.Place(sourceTitle.rectTransform, HubKit.TopLeft, new Vector2(34, -24), new Vector2(360, 40));
+            HubKit.Place(sourceTitle.rectTransform, HubKit.TopLeft, new Vector2(34, -24), new Vector2(360, 48));
             string[] names = { "DEDICATED (INTERNET)", "DEDICATED (LAN)", "CODE" };
             HubGlyph.Mark[] marks = { HubGlyph.Mark.Globe, HubGlyph.Mark.House, HubGlyph.Mark.Key };
             _sources = new HubButton[3];
@@ -200,7 +199,7 @@ namespace TumbangPreso.UI.Hub
         private static void Column(RectTransform parent, string words, float x)
         {
             var t = HubKit.Text(parent, "Col_" + words, words, HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleLeft);
-            HubKit.Place(t.rectTransform, HubKit.TopLeft, new Vector2(x, 0), new Vector2(260, 40));
+            HubKit.Place(t.rectTransform, HubKit.TopLeft, new Vector2(x, 0), new Vector2(260, 48));
         }
 
         private void Source(int index)
@@ -272,8 +271,7 @@ namespace TumbangPreso.UI.Hub
             if (this == null) return;
             _busy = false;
             if (!string.IsNullOrEmpty(refusal)) { _status.text = refusal; MenuSfx.Error(); return; }
-            Hub.Home();
-            Hub.Push<HubLobby>();
+            Hub.ShowLobby();
         }
     }
 
@@ -307,7 +305,7 @@ namespace TumbangPreso.UI.Hub
             _code = HubKit.Text(codeChip.Body, "Code", "", HubStyle.Title, true, HubStyle.Golden, TextAnchor.MiddleCenter);
             HubKit.Stretch(_code.rectTransform, 10);
             _address = HubKit.Text(Root, "Address", "", HubStyle.Floor, false, HubStyle.Honey, TextAnchor.MiddleRight);
-            HubKit.Place(_address.rectTransform, HubKit.TopRight, new Vector2(-HubKit.Margin, -(HubKit.Margin + 120)), new Vector2(600, 40));
+            HubKit.Place(_address.rectTransform, HubKit.TopRight, new Vector2(-HubKit.Margin, -(HubKit.Margin + 120)), new Vector2(600, 48));
             _address.gameObject.AddComponent<Shadow>().effectColor = HubStyle.Ink;
 
             _mapLine = HubKit.Text(Root, "MapLine", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleLeft);
@@ -328,7 +326,7 @@ namespace TumbangPreso.UI.Hub
             HubKit.Place((RectTransform)_primary.transform, HubKit.Bottom, new Vector2(0, HubKit.Margin), new Vector2(560, 130));
             _primary.Shape.BandFraction = 0.12f;
             _status = HubKit.Text(Root, "Status", "", HubStyle.Floor, false, HubStyle.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(_status.rectTransform, HubKit.Bottom, new Vector2(0, HubKit.Margin + 140), new Vector2(1200, 40));
+            HubKit.Place(_status.rectTransform, HubKit.Bottom, new Vector2(0, HubKit.Margin + 140), new Vector2(1200, 48));
 
             // Bottom right: character and loadout, settings, chat. Each a square sticker with its name.
             Door("CharacterDoor", HubGlyph.Mark.Person, "CHARACTER", 0, () => Hub.Push<HubCharacterSelect>(c => c.Timed = false));
@@ -407,6 +405,7 @@ namespace TumbangPreso.UI.Hub
             _address.text = string.IsNullOrEmpty(address) ? "" : "or join by address  " + address;
             HubKit.SetLabel(_watch, host.Spectating ? "TAKE A SEAT" : "WATCH INSTEAD");
             HubKit.LabelOf(_watch).fontSize = HubStyle.Size(HubStyle.Floor);
+            HubKit.Fit(HubKit.LabelOf(_watch), 210);
             _mapLine.text = SceneFlow.PreviewFor(SceneFlow.SelectedMap).Name + "   ·   " +
                             (SceneFlow.SelectedMode == GameMode.Classic ? "CLASSIC" : "HERO STRIKE") + "   ·   " +
                             (host.RoomOnline ? "ONLINE" : "LAN");
@@ -450,13 +449,13 @@ namespace TumbangPreso.UI.Hub
             {
                 HubKit.SetLabel(_primary, "START GAME");
                 _primary.interactable = true;
-                _status.text = occupied < Balance.PlayerCount ? "Empty seats are played by bots. Share the code to fill them." : "Everyone is here.";
+                _status.text = occupied < Balance.PlayerCount ? "Empty seats are filled by bots." : "Everyone is here.";
             }
             else
             {
                 HubKit.SetLabel(_primary, host.LocalReady ? "READY  ✓" : "READY");
                 _primary.interactable = true;
-                _status.text = "The host starts the match. READY tells them you are set.";
+                _status.text = host.LocalReady ? "Waiting for the host." : "The host starts the match.";
             }
             _map.gameObject.SetActive(host.IsHost);
             Hub.RefreshFocus();

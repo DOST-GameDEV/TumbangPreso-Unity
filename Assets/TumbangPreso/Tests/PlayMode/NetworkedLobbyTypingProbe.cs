@@ -152,20 +152,9 @@ namespace TumbangPreso.PlayTests
 
             yield return LobbyTypingProbe.Check("networked lobby", report, broken);
 
-            var join = LobbyTypingProbe.FindByName("LobbyJoinPanel");
-
-            if (join == null)
-            {
-                report.AppendLine("LobbyJoinPanel: NOT PRESENT");
-            }
-            else
-            {
-                join.SetActive(true);
-                for (int i = 0; i < SettleFrames; i++) yield return null;
-                Canvas.ForceUpdateCanvases();
-
-                yield return LobbyTypingProbe.Check("networked join card", report, broken);
-            }
+            // UX-1 has no join form over an occupied room. Code/host/profile entry is covered by
+            // the offline fixture; this case keeps the real listener alive while chat owns the caret.
+            Assert.IsTrue(NetSession.Instance.IsNetworked, "Caret interaction must not leave the room.");
 
             Directory.CreateDirectory("Logs");
             File.WriteAllText(OutPath, report.ToString(), new UTF8Encoding(false));

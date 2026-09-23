@@ -1,0 +1,28 @@
+{
+  "projectId": "dcf0831e-a5f4-43b4-832e-b687f13a3569",
+  "environment": "production",
+  "name": "wallet",
+  "version": 1,
+  "datePublished": "2026-09-23T04:23:12",
+  "parameters": [
+    {
+      "type": "STRING",
+      "name": "action",
+      "required": false
+    },
+    {
+      "type": "STRING",
+      "name": "item",
+      "required": false
+    },
+    {
+      "type": "STRING",
+      "name": "task",
+      "required": false
+    }
+  ],
+  "localNormalizedSha256": "668a02fc01bea88528d3db3a866000226a625e2ad803a460437680b9b2b0e3b5",
+  "remoteNormalizedSha256": "668a02fc01bea88528d3db3a866000226a625e2ad803a460437680b9b2b0e3b5",
+  "exactSourceMatch": true,
+  "runtimeActionsVerified": false
+}

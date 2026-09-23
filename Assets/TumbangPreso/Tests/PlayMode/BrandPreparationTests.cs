@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
+using TumbangPreso.UI.Hub;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -20,76 +21,37 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator PreparationKeepsWiredControlsReachableAtReviewSizes()
         {
-            SceneFlow.SelectedMode = GameMode.HeroStrike;
-            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
-            SceneFlow.Networked = false;
-            PlaySelectionScreen.RequestedLobbyMode = LobbyMode.Practice;
-            yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
-            yield return new WaitForSecondsRealtime(.6f);
-            Assert.AreEqual(GameMode.HeroStrike, SceneFlow.SelectedMode, "Preparation should restore the deliberately selected rules.");
-            foreach (var size in new[] { new Vector2Int(1920,1080), new Vector2Int(1280,720), new Vector2Int(1200,900) })
+            yield return HubFlowTests.OpenHome();
+            // UX-1 preserves each capability but relocates rules/settings into the hamburger.
+            foreach (var size in HubFlowTests.Shapes)
             {
-                yield return UiRuntimeShots.Capture($"Preparation-brand-v3-{size.x}x{size.y}", size.x, size.y);
-                // ⚠️⚠️ FIVE CONTROLS, AND THE LIST USED TO CARRY THREE NAMES THIS LOBBY DOES
-                // NOT BUILD. `CharacterButton` and `LoadoutButton` were TWO doors to the fighter
-                // picker on the retired chrome and are one door called `LoadoutButton` now;
-                // `GameSettingsButton` is `SettingsButton`; and `SettingsDrawerToggle` is gone
-                // with the drawer it opened. `OwnerPreparationView.Court` is the authority.
-                foreach (string name in new[] { "BackButton", "LoadoutButton", "ProfileButton", "SettingsButton", "CustomGameButton" })
+                yield return TumpUiCapture.Capture("Hub-preparation-controls-" + size.x + "x" + size.y,
+                    TumpHub.Current.Canvas, size.x, size.y, false, checkActionBounds: true);
+                foreach (string name in new[] { "LoadoutButton", "NamePlate", "MenuButton", "ModeCard", "PlayButton" })
                     Hit(Button(name));
-                Assert.AreEqual(1, Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
-                    .Count(b => b.isActiveAndEnabled && (b.name == "StartButton" || b.name == "PrimaryButton")));
             }
-
-            // ⚠️⚠️ THE MATCH RULES ARE A SHEET NOW, NOT A DRAWER, AND THE DIFFERENCE IS
-            // WHERE THEY LIVE RATHER THAN HOW THEY LOOK. `LobbyChrome.BuildSettingsChip` slid
-            // `SettingsBody` out of a chip on the left rail; `CustomGameButton` opens
-            // `CustomGameScreen` on its own canvas over the whole lobby. So the open state is
-            // asserted on `CustomGameRoot` and the shut state on the screen no longer being
-            // drawn, which is the same claim about a different object.
-            var rules = Button("CustomGameButton");
-            Press(rules);
-            yield return null;
-            yield return null;
-            var sheet = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None)
-                .FirstOrDefault(t => t.name == "CustomGameRoot");
-            Assert.IsNotNull(sheet, "CUSTOM SETTINGS must open the rules sheet. See CustomGameScreen.");
-            Assert.IsTrue(sheet.gameObject.activeInHierarchy);
-            yield return UiRuntimeShots.Capture("Preparation-brand-v3-rules-open", 1920, 1080);
+            Press(Button("MenuButton")); yield return null;
+            Press(Button("MenuMATCHRULES")); yield return null;
             var custom = Object.FindFirstObjectByType<CustomGameScreen>();
-            Assert.IsNotNull(custom);
-            custom.Close();
-            yield return null;
-            Assert.IsFalse(sheet.gameObject.activeInHierarchy,
-                "leaving the rules sheet must put the lobby back.");
-            Press(Button("SettingsButton"));
-            yield return null;
+            Assert.IsNotNull(custom); Assert.IsTrue(custom.IsOpen);
+            custom.Close(); yield return null; yield return null;
+            Assert.IsFalse(custom.IsOpen);
+            Assert.IsTrue(TumpHub.Current.Canvas.enabled);
+            Press(Button("MenuButton")); yield return null;
+            Press(Button("MenuSETTINGS")); yield return null;
             Assert.IsNotNull(Object.FindFirstObjectByType<ConvertedSettingsPanel>());
         }
 
         [UnityTest]
         public IEnumerator PickerBackCanBePressedImmediatelyAfterOpening()
         {
-            SceneFlow.SelectedMode = GameMode.Classic;
-            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
-            SceneFlow.Networked = false;
-            PlaySelectionScreen.RequestedLobbyMode = LobbyMode.Practice;
-            yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
-            yield return new WaitForSecondsRealtime(.6f);
-            // ⚠️ `LoadoutButton`, NOT `CharacterButton`. One door to the fighter picker, named
-            // for what is behind it since the loadout moved onto the picker on 2026-09-02
-            // (`docs/TODO.md` § 122.5).
+            yield return HubFlowTests.OpenHome();
             Press(Button("LoadoutButton"));
             yield return null;
-            var picker = Object.FindFirstObjectByType<ConvertedCharacterSelect>();
-            Assert.IsNotNull(picker);
-            // Deliberately no capture or settling delay before the click: preserve evidence
-            // of the previously unisolated PreviewSurface hit instead of hiding the defect.
-            // the painted picker draws on a scene-root sibling canvas, not under this component
-            // (section 111.2), so its BACK is found globally and is called TumpBack.
-            Press(Button("TumpBack"));
-            yield return null;
-            Assert.IsFalse(picker.gameObject.activeInHierarchy);
+            Assert.IsInstanceOf<HubLoadout>(TumpHub.Current.Top);
+            // No capture or settling delay: the first-frame BACK must already beat the preview.
+            Press(Button("BackButton")); yield return null;
+            Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top);
             Hit(Button("LoadoutButton"));
         }
 

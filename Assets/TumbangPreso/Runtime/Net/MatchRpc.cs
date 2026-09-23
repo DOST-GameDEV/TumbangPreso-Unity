@@ -285,6 +285,7 @@ namespace TumbangPreso.Net
         public void Initialize(NetworkManager nm)
         {
             _nm = nm;
+            ResetQueueArrival();
             RegisterHandlers();
 
             // ⚠️ A CLIENT ASKS FOR THE WORLD ONCE ITS ARENA EXISTS, rather than trusting the
@@ -396,6 +397,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("Tsinelas", OnTsinelasMsg);
             cm.RegisterNamedMessageHandler("SelectMapVote", OnSelectMapVoteMsg);
             cm.RegisterNamedMessageHandler("MapVoteTally", OnMapVoteTallyMsg);
+            cm.RegisterNamedMessageHandler("QueueVoteState", OnQueueVoteStateMsg);
             cm.RegisterNamedMessageHandler("MatchRecord", OnMatchRecordMsg);
             cm.RegisterNamedMessageHandler("Chat", OnChatMsg);
             cm.RegisterNamedMessageHandler("ChatLine", OnChatLineMsg);
@@ -1612,7 +1614,8 @@ namespace TumbangPreso.Net
         {
             if (NetAuthority.IsHost)
             {
-                FindFirstObjectByType<UI.MatchResult>()?.HostReceiveMapVote(NetAuthority.LocalSlot, mapIndex);
+                if (_queueMapVoting) HostReceiveQueueMapVote(NetAuthority.LocalSlot, mapIndex);
+                else FindFirstObjectByType<UI.MatchResult>()?.HostReceiveMapVote(NetAuthority.LocalSlot, mapIndex);
                 return true;
             }
 
@@ -1631,7 +1634,8 @@ namespace TumbangPreso.Net
             if (!TrySenderSeat(senderClientId, out int seat)) return;
 
             reader.ReadValueSafe(out int mapIndex);
-            FindFirstObjectByType<UI.MatchResult>()?.HostReceiveMapVote(seat, mapIndex);
+            if (_queueMapVoting) HostReceiveQueueMapVote(seat, mapIndex);
+            else FindFirstObjectByType<UI.MatchResult>()?.HostReceiveMapVote(seat, mapIndex);
         }
 
         /// <summary>
@@ -1678,7 +1682,43 @@ namespace TumbangPreso.Net
                 votes[i] = vote;
             }
 
-            FindFirstObjectByType<UI.MatchResult>()?.ApplyNetworkMapVotes(votes);
+            if (_queueMapVoting) ApplyQueueMapVotes(votes);
+            else FindFirstObjectByType<UI.MatchResult>()?.ApplyNetworkMapVotes(votes);
+        }
+
+        private void SendQueueVoteState()
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            _queueVoteNextState = Time.unscaledTime + 1;
+            using var writer = new FastBufferWriter(32, Allocator.Temp);
+            writer.WriteValueSafe(_queueVoteSerial);
+            writer.WriteValueSafe(QueueMapSecondsLeft);
+            writer.WriteValueSafe(_queueMapWinner);
+            for (int i = 0; i < Balance.PlayerCount; i++) writer.WriteValueSafe(_queueMapVotes[i]);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("QueueVoteState", writer);
+        }
+
+        private void OnQueueVoteStateMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost || !FromHost(senderClientId) || !InPreparationScene()) return;
+            if (!reader.TryBeginRead(12 + Balance.PlayerCount * 4)) return;
+            reader.ReadValueSafe(out int serial);
+            reader.ReadValueSafe(out float remaining);
+            reader.ReadValueSafe(out int winner);
+            if (!Finite(remaining) || remaining < 0 || remaining > QueueVoteSeconds) return;
+            if (serial <= 0 || serial < _queueVoteSerial || winner < -1 || winner >= UI.SceneFlow.Maps.Length) return;
+            var votes = new int[Balance.PlayerCount];
+            for (int i = 0; i < votes.Length; i++)
+            {
+                reader.ReadValueSafe(out int vote);
+                if (vote < -1 || vote >= UI.SceneFlow.Maps.Length) return;
+                votes[i] = vote;
+            }
+            _queueVoteSerial = serial;
+            _queueVoteEnds = Time.unscaledTime + remaining;
+            _queueMapWinner = winner;
+            _queueMapVoting = true;
+            ApplyQueueMapVotes(votes);
         }
 
         /// <summary>HOST ONLY. Broadcasts "n of m have voted" so every screen can draw it.</summary>

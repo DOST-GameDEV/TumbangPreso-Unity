@@ -1,0 +1,27 @@
+[
+  {
+    "asset": "Assets/TumbangPreso/Resources/UI/map-cards/Eskinita.png",
+    "source": "docs/reports/visual-research-2026-09-23/look-batchB-world/Eskinita-stage-after.png",
+    "sha256": "701ef3eb8376706d3605612b5d9517b5dddcf75e62d946c19d652476ae9ab6e1"
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/UI/map-cards/BayanPlaza.png",
+    "source": "docs/reports/visual-research-2026-09-23/look-batchB-world/BayanPlaza-stage-after.png",
+    "sha256": "98ea447f5e2be9fafe134c45f59c40c65b81b0043b5eb9d80a8d50c45e5fe5b3"
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/UI/map-cards/IlalimNgTulay.png",
+    "source": "docs/reports/visual-research-2026-09-23/look-batchB-world/IlalimNgTulay-stage-after.png",
+    "sha256": "89c216c7244737de420891814866bbdc88d6908c18eb6c73103fdaa3fd71837c"
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/UI/map-cards/SaBubong.png",
+    "source": "docs/reports/visual-research-2026-09-23/look-batchB-world/SaBubong-stage-after.png",
+    "sha256": "26c7b0d4d9c48d74fdc1bacdd36b15977f2c856a3df3b08b4c393d24660aa98e"
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/UI/map-cards/Lagoon.png",
+    "source": "docs/reports/visual-research-2026-09-23/look-batchB-world/Lagoon-stage-after.png",
+    "sha256": "63cbf89a22ea22ff8e725f5eb5690bf7755abdbbe9c450295a2afd808ef478ce"
+  }
+]

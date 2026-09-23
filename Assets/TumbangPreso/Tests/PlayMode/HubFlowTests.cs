@@ -22,8 +22,22 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public sealed class HubFlowTests
     {
-        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        private bool _contrast, _larger;
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _contrast = Settings.SettingsStore.Current.HighContrastHud;
+            _larger = Settings.SettingsStore.Current.LargerText;
+            yield return PlayModeWorld.Reset();
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            // A nested UnityTest enumerator can fail before its parent finally is disposed.
+            var settings = Settings.SettingsStore.Current;
+            settings.HighContrastHud = _contrast; settings.LargerText = _larger;
+            Settings.SettingsStore.Save();
+            Net.NetSession.Instance?.Stop(); HubQueueWatch.End(); SceneFlow.Networked = false;
+            yield return PlayModeWorld.Reset();
+        }
 
         /// <summary>The brief's shapes: 960x540, 1280x720, 1920x1080, 4:3 and the owner's window.</summary>
         internal static readonly Vector2Int[] Shapes =
@@ -34,6 +48,10 @@ namespace TumbangPreso.PlayTests
 
         internal static IEnumerator OpenHome()
         {
+            // This helper means a fresh HOME. Room-preserving return is tested separately.
+            Net.NetSession.Instance?.Stop(); HubQueueWatch.End();
+            yield return new WaitForSecondsRealtime(.4f);
+            SceneFlow.Networked = false;
             SceneFlow.GoHome();
             float until = Time.realtimeSinceStartup + 20;
             while (Time.realtimeSinceStartup < until && (TumpHub.Current == null || !(TumpHub.Current.Top is HubHome))) yield return null;
@@ -66,8 +84,10 @@ namespace TumbangPreso.PlayTests
         internal static IEnumerator Shots(string name)
         {
             var hub = TumpHub.Current;
+            var settings = Settings.SettingsStore.Current;
+            string prefix = settings.HighContrastHud && settings.LargerText ? "Hub-A11y-" : "Hub-";
             foreach (var size in Shapes)
-                yield return TumpUiCapture.Capture("Hub-" + name + "-" + size.x + "x" + size.y, hub.Canvas, size.x, size.y,
+                yield return TumpUiCapture.Capture(prefix + name + "-" + size.x + "x" + size.y, hub.Canvas, size.x, size.y,
                                                    checkPalette: false, checkActionBounds: true);
             AssertFloor(hub.Canvas, name);
         }
@@ -292,12 +312,23 @@ namespace TumbangPreso.PlayTests
                 until = Time.realtimeSinceStartup + 15;
                 while (Time.realtimeSinceStartup < until && !task.IsCompleted) yield return null;
                 Assert.IsTrue(task.IsCompleted && string.IsNullOrEmpty(task.Result), "Hosting a LAN room failed: " + (task.IsCompleted ? task.Result : "timeout"));
-                TumpHub.Current.Push<HubLobby>();
+                until = Time.realtimeSinceStartup + 5;
+                while (Time.realtimeSinceStartup < until && !(TumpHub.Current.Top is HubLobby)) yield return null;
+                Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top,
+                    "A room opened outside the hub's buttons must automatically present LOBBY.");
+                var lobby = TumpHub.Current.Top;
+                TumpHub.Current.ShowLobby();
+                Assert.AreSame(lobby, TumpHub.Current.Top, "Repeated room completion must reuse the lobby.");
                 yield return new WaitForSecondsRealtime(1.0f);
                 yield return Shots("Lobby");
                 Assert.IsTrue(TumpHub.Current.Host.Seats().Any(s => s.Mine && s.Host), "The host's own seat carries the host mark.");
                 yield return Press("CharacterDoor");
                 Assert.IsInstanceOf<HubCharacterSelect>(TumpHub.Current.Top);
+                TumpHub.Current.ShowLobby();
+                yield return null;
+                Assert.IsInstanceOf<HubCharacterSelect>(TumpHub.Current.Top,
+                    "Repeated room observations must not dismiss a lobby's character subpage.");
+                Assert.AreEqual(1, TumpHub.Current.Canvas.GetComponentsInChildren<HubLobby>(true).Length);
                 yield return Shots("CharacterSelect-lobby");
                 Back(); yield return null;
                 Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
@@ -309,8 +340,10 @@ namespace TumbangPreso.PlayTests
                 HubLoading.Begin(SceneFlow.Eskinita, networked: true);
                 yield return new WaitForSecondsRealtime(0.3f);
                 var loading = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).First(c => c.name == "TumpLoadingCanvas");
+                var settings = Settings.SettingsStore.Current;
+                string prefix = settings.HighContrastHud && settings.LargerText ? "Hub-A11y-Loading-" : "Hub-Loading-";
                 foreach (var size in Shapes)
-                    yield return TumpUiCapture.Capture("Hub-Loading-" + size.x + "x" + size.y, loading, size.x, size.y,
+                    yield return TumpUiCapture.Capture(prefix + size.x + "x" + size.y, loading, size.x, size.y,
                                                        checkPalette: false, checkActionBounds: true);
                 AssertFloor(loading, "Loading");
                 Object.Destroy(Object.FindFirstObjectByType<HubLoading>().gameObject);
@@ -319,6 +352,29 @@ namespace TumbangPreso.PlayTests
             {
                 TumbangPreso.Settings.SettingsStore.Current.HubQueueChoice = choice;
                 Net.NetSession.Instance?.Stop();
+            }
+        }
+
+        [UnityTest, Timeout(600000)]
+        public IEnumerator HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable()
+        {
+            var settings = Settings.SettingsStore.Current;
+            bool contrast = settings.HighContrastHud, larger = settings.LargerText;
+            try
+            {
+                settings.HighContrastHud = true;
+                settings.LargerText = true;
+                // Walk the same public routes, with the same bounds and 28-unit assertions.
+                // Distinct capture names retain both settings together without replacing normal evidence.
+                yield return HomeAndEveryDoorOpensItsScreenAndBackReturns();
+                yield return GamemodeSelectSetsTheModeCardAndOpensTheCustomFlow();
+                yield return QueuePlateMatchFoundCharacterSelectLobbyAndLoadingAreDrawn();
+            }
+            finally
+            {
+                Settings.SettingsStore.Current.HighContrastHud = contrast;
+                Settings.SettingsStore.Current.LargerText = larger;
+                Settings.SettingsStore.Save();
             }
         }
     }

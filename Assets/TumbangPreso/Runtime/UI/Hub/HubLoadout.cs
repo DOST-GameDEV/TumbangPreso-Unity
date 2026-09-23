@@ -223,6 +223,7 @@ namespace TumbangPreso.UI.Hub
             bool equipped = owned && IndexOf(id) == EquippedIndex(Kind);
             HubKit.SetLabel(_equip, !owned ? "BUY  " + (EconomyRules.Find(id)?.Price ?? 0).ToString("N0") : equipped ? "EQUIPPED" : "EQUIP");
             HubKit.LabelOf(_equip).fontSize = HubStyle.Size(owned ? HubStyle.Display : HubStyle.Title);
+            HubKit.Fit(HubKit.LabelOf(_equip), 384);
             _equip.interactable = !equipped;
         }
 
@@ -313,8 +314,6 @@ namespace TumbangPreso.UI.Hub
 
             var inspect = HubKit.IconButton(_stage, "InspectButton", HubGlyph.Mark.Expand, HubStyle.Honey, ToggleFull, 433);
             HubKit.Place((RectTransform)inspect.transform, HubKit.BottomRight, new Vector2(-20, 20), new Vector2(86, 86));
-            var hint = HubKit.Text(_stage, "RotateHint", "Drag to turn", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleLeft);
-            HubKit.Place(hint.rectTransform, HubKit.BottomLeft, new Vector2(24, 20), new Vector2(300, 40));
 
             _action = HubKit.Button(_panel, "ItemEquip", "EQUIP", HubStyle.Chartreuse, () =>
             {

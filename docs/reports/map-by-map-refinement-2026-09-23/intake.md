@@ -74,3 +74,22 @@ Existing no-paid-services rule and Asset_Sourcing/licence requirements remain.
 
 Progress/status belongs in TODO; exact resume is in ACTIVE_REWORK_LEDGER. This file
 preserves the new owner's intent until the older queue reaches the research gate.
+
+## Owner clarification: map references after UI,2026-09-23
+
+Finish all currently assigned UI work before starting map refinement. The older map
+feedback remains active: all five maps individually, construction-specific detail
+and material identity, pleasing stylised art rather than realism, more convincing
+Sama Bajau lagoon architecture including detached over-water homes, animated sky
+and island/mountain context, natural ambient movement. Keep good existing work.
+
+Use built-in image generation as an additional reference source during that later
+pass. Critique every result: record useful silhouette/material/composition ideas,
+errors, over-detail, cultural/place mismatches and parts that would not work in the
+actual3D camera or navigable map. Copy only the good ideas into authored game assets.
+Generate further targeted references when the comparison reveals a concrete gap;
+do not turn reference generation into a substitute for implementing and viewing a
+better map. Continue using3d-asset.com and independent real-world/game references.
+Compare actual in-engine before/after at player/spectator distances for each map.
+No global texture/noise/recolour sweep, no deleting older tasks, no premature closure.
+Current generated images are loading-screen illustrations, not a started map rebuild.

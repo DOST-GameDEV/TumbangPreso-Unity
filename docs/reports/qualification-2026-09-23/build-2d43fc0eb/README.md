@@ -15,3 +15,9 @@ final clean certification. Restore after recording does not change this artifact
 Earlier integrated checks:626Corepass,140/141selectedEditModepass,29/30selectedPlayMode
 pass. UIclassification audits and a stale reticle Text-cast fixture remain explicit.
 No full-project qualification or human aesthetic acceptance is claimed.
+
+Native graphics run completed:15/15 declared map-quality rows, positive rendering
+counters, Direct3D12 level12.2 on RX6600, clean wrapper/process exit. Exact scope
+and raw matrix in native-world/. Four parked players with ambient rendering, not
+combat performance. The historical intermittent shutdown crash was not reproduced
+on this route; no claim of a diagnosed engine fix.
