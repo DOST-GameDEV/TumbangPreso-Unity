@@ -182,9 +182,13 @@ export const Chase: React.FC<{ f: number }> = ({ f }) => {
   const dive = clamp01((t - (T_LUNGE - 1)) / 4);
   const seanOn = t > T_TURN - 2;
 
+  // ⚠️ THE PLANT IS A TURN, NOT A SWAP. He spins through facing the camera over a few frames;
+  // flipping yaw from +68 to -68 in one frame measured as a single-frame spike and read as a pop.
+  const turnT = clamp01((t - (T_TURN - 1)) / 3);
+  const turnYaw = t < T_TURN - 1 ? 68 : t > T_TURN + 2 ? -68 : 68 - 136 * (turnT * turnT * (3 - 2 * turnT));
   const place = (wx: number, lift = 0) => ({ x: sx(wx), y: GROUND - 0.4 * PPU - lift });
   const zd = drawActor(zackB, {
-    ...place(x), ppu: PPU, reach: 0.62, yaw: 68 * facing, pitch: 4, pose: act.pose, lift: act.lift, face: act.face,
+    ...place(x), ppu: PPU, reach: 0.62, yaw: turnYaw, pitch: 4, pose: act.pose, lift: act.lift, face: act.face,
     slipper: act.holding ? { at: 'hand', swing: facing * 20, twist: 0 } : { at: 'none' }, res: 1.5 * zoom, light: SIDE_LIGHT,
   });
   const ghost = afterAlpha > 0 && !burst

@@ -1,5 +1,6 @@
 import React from 'react';
 import { random } from 'remotion';
+import { noise2D } from '@remotion/noise';
 import { B, bt, K } from '../lib/beats';
 import { Bolt, boltPoints, branchesFor, Pt } from '../lib/bolt';
 import { inCubic, kf, outBack, outCubic, outQuad } from '../lib/kf';
@@ -73,8 +74,10 @@ export const Reverse: React.FC<{ f: number }> = ({ f }) => {
   const fy = kf(ff, [[B.reverse, 640], [B.snap, 700], [B.hit, CAN_AT.y - 30], [B.tump + bt(6), CAN_AT.y - 90], [B.run, CAN_AT.y - 210]]);
   const roll = kf(ff, [[B.reverse, -1.5], [B.snap - bt(7), 0], [B.snap, 2.5], [B.hit, -3], [B.tump + bt(6), 1.5], [B.run, 3]]);
   const shakeAmt = env(f, B.hit, B.hit + bt(1), B.tump + bt(6), B.tump + bt(22)) * 26;
-  const sx = (random(`rsx${onN(f, 2)}`) - 0.5) * shakeAmt;
-  const sy = (random(`rsy${onN(f, 2)}`) - 0.5) * shakeAmt;
+  // A smooth decaying shake. Stepped to a fresh random offset every two frames, the whole image
+  // strobed through the TUMP! hold (measured as an every-other-frame spike).
+  const sx = noise2D('rsx', f * 0.45, 0) * shakeAmt * 0.7;
+  const sy = noise2D('rsy', f * 0.45, 0) * shakeAmt * 0.7;
   const cam = `translate(${960 + sx} ${540 + sy}) rotate(${roll}) scale(${zoom}) translate(${-fx} ${-fy})`;
   const whipIn = f < B.reverse + 5 ? 1 - (f - B.reverse) / 5 : 0;
   const whipOut = f >= B.run - 4 ? (f - (B.run - 4)) / 4 : 0;

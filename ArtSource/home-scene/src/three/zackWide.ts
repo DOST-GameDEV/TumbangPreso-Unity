@@ -1,6 +1,6 @@
 import { B, bt, K } from '../lib/beats';
 import { inCubic, kf, linear, outBack, outCubic, outElastic, outQuad } from '../lib/kf';
-import { clamp01, env, LOOP, loopNoise, loopSin } from '../lib/time';
+import { clamp01, easeInOut, env, LOOP, loopNoise, loopSin } from '../lib/time';
 import { wind } from '../lib/wind';
 import { addPose, Face, mixPose, Pose, SlipperState } from './actor';
 
@@ -32,6 +32,8 @@ export type ZackFrame = {
   hairStatic: number;
   /** Flat colour wash for the dead-stop flash. */
   flash: number;
+  /** How lit his eyes are, 0..1. Eye glow always RAMPS; switched in one frame it read as a pop. */
+  eyeGlow?: number;
 };
 
 /** The resting hero, before anything else is layered on. */
@@ -127,6 +129,33 @@ export const flipArc = (f: number) => {
 export const arriveDX = (f: number) =>
   f >= B.arrive && f < B.settle + bt(10) ? kf(f, [[B.arrive, -1250], [B.settle, 0, outCubic], [B.settle + bt(3), 22, outQuad], [B.settle + bt(10), 0, outCubic]]) : 0;
 
+const GATHER: Pose = { head: [-12, 16, 0], armR: [0, 0, 22], armL: [0, 0, 22], torso: [-4, -8, 0], root: [0, 0, 1.5] };
+
+/**
+ * The gather at amount `t` (0 at the push-in's start, 1 at the cut to his face). ⚠️ EXPORTED FOR
+ * THE CLOSE-UP, WHICH STARTS FROM `gathered(f, 1)`: the push-in and the close-up are ONE move, and
+ * the close-up opening on its own pose made him visibly pop at the join (🧑 2026-09-23: *"WEIRD
+ * ASS TRANSITION HERE"*).
+ */
+export const gathered = (f: number, t: number): ZackFrame => {
+  const a = alive(f);
+  // His head comes round to face us across the join: begun inside the push, finished in the
+  // close-up's hold, in BOTH shots from this one function so neither side can disagree.
+  const round = kf(f, [[B.cu - bt(10), 0], [B.eyesOpen - bt(6), 1, easeInOut]]);
+  const swing = 6 * loopSin(f, 10, 0.6) + 12 * wind(f);
+  return {
+    yaw: STANCE_YAW + (4 - STANCE_YAW) * Math.min(1, t * 1.4),
+    pose: addPose(STANCE, a.pose, mixPose({}, GATHER, t), mixPose({}, { head: [4, -16, 0] }, round)),
+    lift: [a.lift[0], a.lift[1] + 0.012 * t, 0],
+    face: 'rest',
+    slipper: { at: 'hand', swing: swing + 18 * t * Math.sin(f * 0.9), twist: 0 },
+    dx: 0,
+    charge: 0.15 + 0.5 * t,
+    hairStatic: 0,
+    flash: 0,
+  };
+};
+
 export const zackWide = (f: number): ZackFrame => {
   const a = alive(f);
   const w = wind(f);
@@ -149,18 +178,7 @@ export const zackWide = (f: number): ZackFrame => {
   // ---------------------------------------------------------------- the gather, before the close-up
   // The wind comes up. He squares to the camera, lifts his chin into it, lets his arms float
   // out from his sides as the charge builds, and rises a touch onto his toes.
-  if (f >= B.pushIn && f < B.cu) {
-    const t = kf(f, [[B.pushIn, 0], [B.cu, 1, inCubic]]);
-    const gather: Pose = { head: [-12, 16, 0], armR: [0, 0, 22], armL: [0, 0, 22], torso: [-4, -8, 0], root: [0, 0, 1.5] };
-    return {
-      ...base,
-      yaw: kf(f, [[B.pushIn, STANCE_YAW], [B.cu, 4, outCubic]]),
-      pose: addPose(base.pose, mixPose({}, gather, t)),
-      lift: [a.lift[0], a.lift[1] + 0.012 * t, 0],
-      charge: 0.15 + 0.5 * t,
-      slipper: { at: 'hand', swing: swing + 18 * t * Math.sin(f * 0.9), twist: 0 },
-    };
-  }
+  if (f >= B.pushIn && f < B.cu) return gathered(f, kf(f, [[B.pushIn, 0], [B.cu, 1, inCubic]]));
 
   // ---------------------------------------------------------------- the run home and the skid
   if (f >= B.arrive && f < B.settle) {
@@ -194,6 +212,7 @@ export const zackWide = (f: number): ZackFrame => {
       },
       lift: [0, -0.02, 0],
       face: 'glow',
+      eyeGlow: Math.min(1, t * 2.5),
       slipper: { at: 'hand', swing: -80 + 30 * t, twist: 0 },
       dx: arriveDX(f),
       charge: 1,
@@ -214,8 +233,9 @@ export const zackWide = (f: number): ZackFrame => {
       yaw: turn,
       pose: addPose(mixPose(stop, base.pose, recover), { head: [3 * chatter * Math.sin(f * 2.3), 4 * chatter * Math.sin(f * 1.7), 0] }),
       lift: [0, -0.03 * (1 - squash), 0],
-      // His eyes stay lit through the chatter, then go back to his resting look.
-      face: f < B.settle + bt(14) ? 'glow' : 'rest',
+      // His eyes stay lit through the chatter, then fade back to his resting look.
+      face: f < B.settle + bt(24) ? 'glow' : 'rest',
+      eyeGlow: kf(f, [[B.settle + bt(12), 1], [B.settle + bt(24), 0, outQuad]]),
       slipper: { at: 'hand', swing: kf(f, [[B.settle, -70], [B.settle + bt(8), 40, outQuad], [B.settle + bt(18), -14], [B.settle + bt(30), swing]]), twist: 0 },
       dx: arriveDX(f),
       charge: chatter,
@@ -271,7 +291,8 @@ export const zackWide = (f: number): ZackFrame => {
   if (f >= B.shake && f < B.shake + bt(46)) {
     const build = env(f, B.shake, B.shake + bt(12), B.shake + bt(16), B.shake + bt(22));
     const shake = env(f, B.shake + bt(14), B.shake + bt(16), B.shake + bt(26), B.shake + bt(32));
-    const osc = Math.sin((f - B.shake) * 2.2);
+    // ~4 shakes a second. At 2.2 rad a frame it sat near the frame rate and strobed left-right.
+    const osc = Math.sin((f - B.shake) * 0.85);
     return {
       ...base,
       pose: addPose(base.pose, {
@@ -280,7 +301,8 @@ export const zackWide = (f: number): ZackFrame => {
         armR: [0, 0, 16 * shake * (0.5 + 0.5 * osc)],
         armL: [0, 0, 16 * shake * (0.5 - 0.5 * osc)],
       }),
-      face: build > 0.5 ? 'glow' : 'rest',
+      face: build > 0 ? 'glow' : 'rest',
+      eyeGlow: build,
       hairStatic: build * 0.9,
       slipper: { at: 'hand', swing: swing + 30 * shake * osc, twist: 0 },
     };
