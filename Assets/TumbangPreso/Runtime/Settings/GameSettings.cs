@@ -478,6 +478,27 @@ namespace TumbangPreso.Settings
         public int CanPick = -1;
         public int SlipperPick = -1;
 
+        // -------------------------------------------------------------------
+        // THE HUB (UX-1). Presentation choices only: nothing here is an entitlement.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// What HOME's mode card queues for: 0 RANKED (always Hero Strike), 1 CLASSIC casual,
+        /// 2 HERO STRIKE casual. ⚠️ -1 means never chosen and reads as HERO STRIKE casual, the
+        /// one choice a guest can always queue for.
+        /// </summary>
+        public int HubQueueChoice = -1;
+
+        /// <summary>The profile picture, one of `Avatars.Ids`. Empty means the name's default.</summary>
+        public string AvatarId = "";
+
+        /// <summary>Starred items in LOADOUT, as wallet ids. A preference, never ownership.</summary>
+        public List<string> FavouriteItems = new List<string>();
+
+        /// <summary>Skill variants the SKILL TREE has already shown unlocked. HOME's dot is the
+        /// difference between this and what is unlocked now.</summary>
+        public List<string> SeenVariants = new List<string>();
+
         /// <summary>
         /// Stable identity for reconnection, minted once and kept.
         ///
@@ -634,6 +655,10 @@ namespace TumbangPreso.Settings
             CharacterLoadouts ??= new List<CharacterLoadout>();
             HeroBuilds ??= new List<HeroBuild>();
             AbilityChallenges ??= new List<AbilityChallengeProgress>();
+            FavouriteItems ??= new List<string>();
+            SeenVariants ??= new List<string>();
+            if (HubQueueChoice < -1 || HubQueueChoice > 2) HubQueueChoice = -1;
+            AvatarId ??= "";
 
             if (string.IsNullOrEmpty(PlayerToken)) PlayerToken = MintToken();
         }

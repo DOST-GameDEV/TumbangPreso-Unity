@@ -64,6 +64,9 @@ namespace TumbangPreso
         /// <summary>Friends, blocks and presence. `docs/TODO.md` § 102.</summary>
         public static Net.SocialStore Social { get; private set; }
 
+        /// <summary>The TANSAN wallet, read-only on the client. `docs/TODO.md` UX-1.8.</summary>
+        public static Net.WalletStore Wallet { get; private set; }
+
         /// <summary>The announcer. Godot had it inside AudioManager; it is its own director
         /// here because its take pooling, per-line cooldowns and music ducking are a system,
         /// not three fields on the SFX player.</summary>
@@ -171,6 +174,9 @@ namespace TumbangPreso
             // drawn under another player's name. Same hazard and same answer as the two lines
             // above: order the construction rather than hoping for one.
             Social = _root.AddComponent<Net.SocialStore>();
+
+            // ⚠️ AFTER `Career`, because the wallet listens to career syncs to settle new matches.
+            Wallet = _root.AddComponent<Net.WalletStore>();
         }
 
         /// <summary>
@@ -192,6 +198,7 @@ namespace TumbangPreso
             Stats = null;
             Telemetry = null;
             Social = null;
+            Wallet = null;
 
             _menuTrack = null;
             _matchTrack = null;

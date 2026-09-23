@@ -89,6 +89,20 @@ P7is not done, no fresh final build exists. Original127.3chat clip remains share
 UI acceptance; do not silently remove it. Six other old DC flags remain in
 boot_sting,match_win,round_win,ui_back,ui_click,ui_hover; no unrelated waveform edits.
 
+UX1 LANE (separate machine, 2026-09-23): implementation started from
+reports/front-end-flow-2026-09-23/ux1-plan.md. Touches the front end (MatchSetup view,
+title destination, new Runtime/UI/Hub), Core Economy, ugs/cloud-code/wallet.js and a
+WalletStore. It does not touch the match HUD, halftime popup, results board or world
+lanes. Expect concurrent pushes to ASTRAReworks; rebase, never force.
+UX1 state: all hub screens and the TANSAN economy are built (map: ux1-plan.md 7b).
+Checks: Core 626/626 incl. EconomyTests; node tools/test_wallet_script.js passes;
+PlayMode HubFlowTests + HomeFlowTests + OwnerMenuEditsTests (runs ux1-hub-v1..v7, v7 7/7,
+each run's question "do the hub screens build, navigate and fit the five shapes",
+stop at XML; v1 tooling retry was the only one). Old preparation-board fixtures
+(OwnerPreparationTests, TumpNativePickerTests, LobbyChat*, PaperPurityProbe, etc.)
+still address the retired board and are next to be moved to hub doors.
+External: wallet.js deployment needs a machine with the ugs CLI and project login.
+
 ## Qualification environment and preservation
 
 Installed6000.5.8f1 has Windows/Linux/WebGL support, noAndroidPlayer; adb not onPATH.

@@ -893,6 +893,22 @@ namespace TumbangPreso.UI
             Show(onAccount ? Tab.Account : Tab.Profile);
         }
 
+        /// <summary>Which tab the UX-1 hamburger asks for. `docs/TODO.md` UX-1.10.</summary>
+        public enum Door { Profile, Party, Career }
+
+        /// <summary>
+        /// ⚠️ THE HAMBURGER'S PARTY AND CAREER ROWS OPEN THIS SAME SCREEN ON ANOTHER TAB, and that is
+        /// not a second door to one place: the name plate's door is the PROFILE, the hamburger's are
+        /// the FRIENDS list (a party is the humans in your room, `PartyRules`) and the CAREER. Three
+        /// destinations, one screen that already holds all three.
+        /// </summary>
+        public void OpenTab(Door door)
+        {
+            _root.SetActive(true);
+            VisibleChanged?.Invoke(true);
+            Show(door == Door.Party ? Tab.Friends : door == Door.Career ? Tab.Career : Tab.Profile);
+        }
+
         /// <summary>
         /// ⚠️⚠️ `OpenLoadout` LIVED HERE AND IS DELETED. It was the lobby YOUR SKILLS row's deep
         /// link into the LOADOUT tab; that row opens `ConvertedCharacterSelect` now

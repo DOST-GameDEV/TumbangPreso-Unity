@@ -325,54 +325,74 @@ verification plan are in [ux1-plan.md](reports/front-end-flow-2026-09-23/ux1-pla
 Key decision: HOME is the view of the `MatchSetup` scene over the live court, so every
 existing networking path stays in `ConvertedMatchSetup`; TAP TO START and match exits land there.
 
+**Status 2026-09-23 (UX-1 lane):** every screen and system below is implemented in
+`Runtime/UI/Hub/` (map in ux1-plan.md § 7b) and walked by `HubFlowTests` through its
+real buttons with captures at 960x540, 1280x720, 1920x1080, 1280x960 and 1600x680. An
+item is ticked only when its screen passed that fixture and its captures were looked at.
+Live UGS deployment of `wallet.js` is an external dependency: this machine has no `ugs`
+CLI or project login (rules proven by `Core.Tests/EconomyTests.cs` and
+`node tools/test_wallet_script.js`).
+
 Implementation order within UX-1:
 - [x] **UX-1.0 Plan and route/data audit.** Done in ux1-plan.md (routes, four answers per
   screen, data ownership, saves/IDs, three devices). Read CLAUDE4a,6.2-6.5 and
   Front_End_Design. Answer the four screen-design questions per surface. Map every
   old feature to one visible destination and preserve saves/IDs and three devices.
-- [ ] **UX-1.1 HOME hub after TAP TO START.** Top-left square avatar opens picture
+- [x] **UX-1.1 HOME hub after TAP TO START.** DONE: `HubHome`, walked by `HubFlowTests` and
+  `HomeFlowTests.TapToStartOpensHomeWhoseDoorsReachProfileAndLoadout`, captured at five shapes. Top-left square avatar opens picture
   view/change; adjacent level/name/#tag/XP plate opens Profile Settings. Skill Tree
   card and notification dot below. Left HERO, LOADOUT, larger SHOP with TASK beside
   it. Top-centre elapsed queue/cancel-X only while queued. Top-right currency/+ and
   hamburger. Bottom-right selected map/mode card above PLAY. Reserve a clean
   full-bleed animated-scene layer; use a still/current court now, not a new animated
   background project. Login and main menu remain intact.
-- [ ] **UX-1.2 Mode and match-entry flow.** Mode card opens four-card GAMEMODE SELECT:
+- [ ] **UX-1.2 Mode and match-entry flow.** Built and walked offline (GAMEMODE SELECT, both
+  popups, PRACTICE, the queue plate and X, MATCH FOUND, timed CHARACTER SELECT). Open: a
+  real two-to-four-peer queue pop through MATCH FOUND into a match, which needs UGS Relay. Mode card opens four-card GAMEMODE SELECT:
   small stacked Practice/Custom, tall Classic/Ranked, descriptions on hover/focus,
   top-right currency/menu. Practice enters practice directly. Custom opens HOST/JOIN
   popup. Ranked is Hero Strike and returns Home. Classic asks Classic/Hero Strike
   casual in a popup and returns Home. PLAY queues, then MATCH FOUND, then character
   select for everyone, then loading. Keep real queue cancellation and pick rules.
-- [ ] **UX-1.3 HERO screen.** Large illustration/model left, previous/next/back;
+- [x] **UX-1.3 HERO screen.** DONE: `HubHero` with the real kit, STORY door, UNLOCK/PLAY AS. Large illustration/model left, previous/next/back;
   role/name, actual-kit clickable ability details, biography and real UNLOCK right.
-- [ ] **UX-1.4 LOADOUT and ITEM POPUP.** Owned/unowned tabs, currency/menu, item grid,
+- [x] **UX-1.4 LOADOUT and ITEM POPUP.** DONE: `HubLoadout`, `HubItemPopup` (inspect, star, EQUIP/BUY). Owned/unowned tabs, currency/menu, item grid,
   equipped tag, favourite star, selected corner brackets, dim unowned silhouettes.
   Right categories TSINELAS/LATA only; skill alternatives move to Skill Tree. EQUIP
   bottom-right. Item opens popup over dimmed grid with back/name/favourite, inspectable
   3D model, fullscreen/inspect brackets and EQUIP. Remove old STATS button.
-- [ ] **UX-1.5 Character select.** After match found, big name/model,3x4 portrait grid
+- [ ] **UX-1.5 Character select.** Built (`HubCharacterSelect`, today's pick RPC, lock-in via
+  the ready tally, host start on all-locked or 30 s). Open: a multi-peer lock-in check. After match found, big name/model,3x4 portrait grid
   and SELECT using existing legal pick rules; preserve the complete roster.
-- [ ] **UX-1.6 Custom host/join.** Host: lobby name, defaulted map, game mode,
+- [ ] **UX-1.6 Custom host/join.** Built; a real LAN host is opened by `HubFlowTests`. Open: a
+  second process joining by code and from the LAN and online lists (`tools/net_matrix.py`). Host: lobby name, defaulted map, game mode,
   public/private/friends-only visibility, LAN/Online, CREATE LOBBY; subtle selected-map
   art updates. Join sources: Dedicated Internet, Dedicated LAN, Code. Shared server
   list with name/map/player count/join and correct Online/LAN heading; code field/JOIN.
-- [ ] **UX-1.7 Custom lobby and loading.** Lobby name/back, selected-map background,
+- [ ] **UX-1.7 Custom lobby and loading.** Built (`HubLobby`, `HubLoading`). Open: rematch and
+  reconnect into the hub lobby with real peers. Lobby name/back, selected-map background,
   n/4 portrait list/host mark, START GAME and character/loadout/settings doors.
   Loading uses map art/name/percentage, bottom tips, optional BH Studios mark. Preserve
   UGS Lobby/Relay,4-character codes,LAN discovery,quick/ranked,reconnect and rematch.
-- [ ] **UX-1.8 Real soft currency and hero/item shop.** SHOP is a popup exposing Hero
+- [ ] **UX-1.8 Real soft currency and hero/item shop.** Built: `EconomyRules`, `wallet.js`,
+  `WalletStore`, SHOP popup, UNLOCK/BUY. External dependency: deploy `wallet.js` with the `ugs`
+  CLI on a machine logged in to project dcf0831e..., then the Ugs PlayMode check. SHOP is a popup exposing Hero
   and Loadout shops; Home HERO/LOADOUT open directly. Server-authoritative Cloud Code
   balances/unlocks, profile migration and graceful offline behavior. No client grants,
   real-money purchases or paid services. Keep the existing UGS project/IDs.
-- [ ] **UX-1.9 Tasks, skill tree and unlocks.** Currency+ opens earning/tasks. Skill
+- [ ] **UX-1.9 Tasks, skill tree and unlocks.** Built: `HubTasks`, `HubSkillTree`, server
+  claims. Same external deployment dependency as UX-1.8. Currency+ opens earning/tasks. Skill
   Tree owns actual hero alternatives and integrates XP/levels/mastery,
   HeroBuildRules/AbilityChallenges,Cloud Save/Cloud Code. Real unlock transactions;
   cosmetics never alter gameplay and Classic stays neutral. Verify declared Cloud
   Code params and UGS refused:0 when live service checks are available/authorized.
-- [ ] **UX-1.10 Profile and hamburger doors.** Separate avatar-picture view/change
+- [x] **UX-1.10 Profile and hamburger doors.** DONE: `HubAvatar`, name plate → `PlayerHub`,
+  `HubMenu` (settings, party, career, match rules, learn to play, credits, title, quit). Separate avatar-picture view/change
   from name-plate Profile Settings (name,achievements,friends,etc.). Hamburger retains
   settings,party,career hub and every former feature, with one visible route each.
-- [ ] **UX-1.11 Per-screen acceptance.** Actual mouse/keyboard,controller focus/B and
+- [ ] **UX-1.11 Per-screen acceptance.** Five shapes, 28 floor, bounds and one-press BACK are
+  asserted per screen. Open: moving the retired preparation-board fixtures to hub doors,
+  High contrast / larger text captures, and physical pad and touch passes. Actual mouse/keyboard,controller focus/B and
   thumb-sized touch; live bindings,one-press Back.960x540,1280x720,1920x1080,4:3 and
   1600x680; every label28canvas units or more; High contrast/larger text. Use shared
   approved canvas/input construction. Inspect captures of default,hover,focus,locked,

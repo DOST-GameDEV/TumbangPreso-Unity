@@ -22,7 +22,9 @@ namespace TumbangPreso.UI
             _ownerRoute=PlaySelectionScreen.RequestedLobbyMode??(IsLobby?LobbyMode.Custom:LobbyMode.Practice);
             PlaySelectionScreen.RequestedLobbyMode=null;
             if(_ownerRoute==LobbyMode.Ranked)SceneFlow.SelectedMode=GameMode.HeroStrike;
-            var net=IsLobby?NetSession.Ensure():NetSession.Instance;
+            // ⚠️ UX-1: with the hub as the view a session can start from HOME (a queue, a host, a
+            // join), so the session and every subscription below exist from the start.
+            var net=IsLobby||HubEnabled?NetSession.Ensure():NetSession.Instance;
             if(net!=null)
             {
                 net.Lobby.JoinCodeChanged+=HandleJoinCodeChanged;net.SeatingChanged+=HandleSeatingChanged;
@@ -44,6 +46,7 @@ namespace TumbangPreso.UI
                 OpenJoinPanel,ToggleOnline,ToggleSpectate,OpenOwnerCustomRules,OpenLoadout,OpenPlayerHub,OpenGameSettings,
                 OnMapCycle,OnModeCycle,OnDifficultyCycle,OwnerSeatPressed,OnCodeCopyPressed,OnAddressCopyPressed,SelectOwnerRoute,ToggleOwnerChat);
             _preview=_ownerPreparation.Preview;
+            InstallHubView();
             _codeCopyBtnText=_ownerPreparation.CopyCode.GetComponentInChildren<Text>();
             _addressCopyBtnText=_ownerPreparation.CopyAddress.GetComponentInChildren<Text>();
             _joinPanel=LobbyJoinPanel.Build(transform,net);_joinPanel.Status+=SetStatus;_joinPanel.Joined+=HandleJoinedInPlace;
@@ -51,7 +54,7 @@ namespace TumbangPreso.UI
             _queueCard.Stake=QueueStake.Ranked;
             OwnerUiLayout.Place((RectTransform)_queueCard.transform,0,0,620,440);
             _queueCard.Status+=SetStatus;_queueCard.Joined+=HandleJoinedInPlace;_queueCard.StartWithBots+=StartAgainstBots;
-            _chat=LobbyChat.Attach(_ownerPreparation.Canvas.transform,inMatch:false);
+            _chat=LobbyChat.Attach(ChatParent(),inMatch:false);
             if(_chat!=null){_chat.PlaceBottomRight(770,220,1060);_chat.SetPresented(false);}
             _hub=GetComponent<PlayerHub>();if(_hub==null)_hub=gameObject.AddComponent<PlayerHub>();_hub.Install();
             MatchRpc.OnMapChanged+=HandleMapSynced;MatchRpc.OnDifficultyChanged+=HandleDifficultySynced;

@@ -55,76 +55,75 @@ namespace TumbangPreso.PlayTests
             yield return UiRuntimeShots.Capture("Home-street-v1-shortwide",1920,820);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ UX-1, 2026-09-23: TAP TO START OPENS HOME, AND THIS TEST CHANGED BECAUSE THE FLOW DID,
+        /// BY THE OWNER'S DESIGN. It walked TAP TO START → LET'S PLAY → the preparation board's
+        /// PROFILE and CHANGE LOADOUT doors; those screens are retired (kept on disk, reached by
+        /// nothing). Its intent is unchanged and asserted on the doors that replaced them: the
+        /// profile is one press from where the player lands (HOME's name plate), and so is the
+        /// loadout (HOME's LOADOUT sticker), and each backs out to HOME. Every press is a real
+        /// raycast, so a covered door fails here.
+        /// </summary>
         [UnityTest]
-        public IEnumerator PreparationRemainsReachableFromThePracticeLobby()
+        public IEnumerator TapToStartOpensHomeWhoseDoorsReachProfileAndLoadout()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
             yield return new WaitForSecondsRealtime(.3f);
             yield return PressWhen("StartButton");
-            yield return PressWhen("ClassicButton");
-            yield return PressWhen("PracticeButton");
             yield return WaitForScene(SceneFlow.MatchSetup);
-            yield return PressWhen("ProfileButton");
-            Assert.IsTrue(Object.FindFirstObjectByType<PlayerHub>().IsOpen);
-            // ⚠⚠ TWO MORE NAMES THIS FIXTURE HELD AND THE GAME NO LONGER BUILDS. The hub's
-            // way out is `ClosePlayerHub` (`PlayerHub.OwnerPainted`), not `PlayerHub.cs`'s rail
-            // footer `HubClose`; and preparation reaches the character/equipment picker through
-            // `LoadoutButton`, "CHANGE LOADOUT", because `OpenLoadout` IS `OpenCharacterSelect`.
-            // `CharacterButton` is the converted lobby's door and `ConvertedMatchSetup` still
-            // wires it, so it compiles, builds and is simply never on screen. § 124.11.
-            yield return PressWhen("ClosePlayerHub");yield return null;
+            yield return WaitForButton("PlayButton");
+            Assert.IsInstanceOf<UI.Hub.HubHome>(UI.Hub.TumpHub.Current.Top);
+            yield return new WaitForSecondsRealtime(.6f);
+            yield return PressWhen("NamePlate");
+            Assert.IsTrue(Object.FindFirstObjectByType<PlayerHub>().IsOpen, "The name plate is the door to profile settings.");
+            yield return PressWhen("ClosePlayerHub"); yield return null;
             yield return PressWhen("LoadoutButton");
-            // ⚠️⚠️ THE PICKER A PLAYER SEES IS `TumpPickerView`, NOT THE CONVERTED PANEL.
-            // `OpenLoadout` still switches `CharacterSelectPanel` on and `ConvertedCharacterSelect`
-            // still owns the choice, so asking the scene for that component finds it and proves
-            // nothing: its authored controls (`BackButton`, `ConfirmButton` and the two arrows)
-            // stay switched off, which is exactly what this fixture was reading when it reported
-            // a picker with no way out. The owner-painted screen's door is `TumpBack`.
-            yield return WaitForButton("TumpBack");
-            var picker=Object.FindFirstObjectByType<TumpPickerView>();
-            Assert.IsNotNull(picker,"Preparation must still expose the real character/equipment picker.");
+            yield return new WaitForSecondsRealtime(.5f);
+            Assert.IsInstanceOf<UI.Hub.HubLoadout>(UI.Hub.TumpHub.Current.Top);
+            Assert.IsNotNull(ActiveButton("TsinelasTab"));
+            Assert.IsNotNull(ActiveButton("LataTab"));
             Assert.IsFalse(Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
-                .Any(button=>button.name=="CustomDoor" && button.isActiveAndEnabled));
-            yield return UiRuntimeShots.Capture("Picker-from-lobby-brand-v1",1920,1080);
-            yield return PressWhen("TumpBack");yield return null;
-            Assert.IsNotNull(ActiveButton("LoadoutButton"));
+                .Any(b => b.name == "SkillsTab" && b.isActiveAndEnabled), "SKILLS moved to the SKILL TREE.");
+            yield return UiRuntimeShots.Capture("Hub-loadout-from-home-v1", 1920, 1080);
+            yield return PressWhen("BackButton"); yield return new WaitForSecondsRealtime(.3f);
+            Assert.IsInstanceOf<UI.Hub.HubHome>(UI.Hub.TumpHub.Current.Top);
         }
 
+        /// <summary>
+        /// ⚠️ THE SAME RULE AS BEFORE, ON THE OWNER'S GAMEMODE SELECT: the ruleset (Classic or Hero
+        /// Strike) is separate from the stakes, and there is no Classic ladder. RANKED is always Hero
+        /// Strike; CLASSIC asks which game and is casual. Choosing a mode opens no room.
+        /// </summary>
         [UnityTest]
-        public IEnumerator PlaySeparatesRulesFromRoutesAndNeverPromisesAClassicLadder()
+        public IEnumerator ModeSelectSeparatesRulesFromStakesAndNeverPromisesAClassicLadder()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
             yield return PressWhen("StartButton");
-            yield return WaitForScene(SceneFlow.ModeSelect);
-            Assert.IsNotNull(ActiveButton("TutorialButton"));
-            yield return PressWhen("ClassicButton");
-            Assert.IsNotNull(ActiveButton("PracticeButton"));
-            Assert.IsNotNull(ActiveButton("CustomButton"));
-            Assert.IsFalse(Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
-                .Any(b => b.name == "RankedButton" && b.isActiveAndEnabled));
-            Assert.IsNotNull(ActiveButton("HeroStrikeButton"),"Game choice stays visible beside its access routes.");
-            yield return PressWhen("HeroStrikeButton");
-            Assert.IsNotNull(ActiveButton("RankedButton"));
-            // ⚠⚠ THIS LINE LOOKED FOR `PlayChoiceCanvas/TumpMark` AND THE GAME HAS BUILT
-            // `OwnerPlayCanvas` SINCE THE OWNER-PAINTED PASS. `TumpPlayView.Install` adds
-            // `CourtPlayView`, whose canvas is `OwnerPlayCanvas` and whose logo is
-            // `OriginalOwnerLogo`; `PlaySelectionScreen` still exists and still owns
-            // `RequestedLobbyMode`, which is the only part of it this flow uses, so the old name
-            // resolved to nothing and the test died on a null. § 124.11 again.
-            // The assertion itself is unchanged and is worth keeping: a Default-imported texture
-            // yields a null sprite and draws as a white rectangle where the logo should be.
-            var logo = GameObject.Find("OwnerPlayCanvas").GetComponentsInChildren<Image>(true)
-                .Single(i => i.name == "OriginalOwnerLogo");
-            Assert.IsNotNull(logo.sprite,
-                "A texture imported as Default must not become a white logo rectangle.");
-            yield return UiRuntimeShots.Capture("Play-brand-v2",1920,1080);
-            yield return UiRuntimeShots.Capture("Play-brand-v2-720p",1280,720);
-            yield return UiRuntimeShots.Capture("Play-brand-v2-4by3",1200,900);
-            yield return PressWhen("RankedButton");
             yield return WaitForScene(SceneFlow.MatchSetup);
-            Assert.IsFalse(PlaySelectionScreen.RequestedLobbyMode.HasValue);
+            yield return WaitForButton("ModeCard");
+            yield return new WaitForSecondsRealtime(.6f);
+            yield return PressWhen("ModeCard");
+            yield return new WaitForSecondsRealtime(.4f);
+            foreach (var card in new[] { "PracticeCard", "CustomCard", "ClassicCard", "RankedCard" })
+                Assert.IsNotNull(ActiveButton(card));
+            yield return PressWhen("ClassicCard");
+            yield return new WaitForSecondsRealtime(.4f);
+            Assert.IsNotNull(ActiveButton("ClassicChoice"));
+            Assert.IsNotNull(ActiveButton("HeroStrikeChoice"));
+            Assert.IsFalse(Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
+                .Any(b => b.name.Contains("Ranked") && b.isActiveAndEnabled && b.GetComponentInParent<UI.Hub.HubClassicPopup>() != null),
+                "The casual popup never offers a ladder.");
+            yield return PressWhen("HeroStrikeChoice");
+            yield return new WaitForSecondsRealtime(.3f);
+            Assert.AreEqual(2, UI.Hub.HubHome.Choice);
+            yield return PressWhen("ModeCard");
+            yield return new WaitForSecondsRealtime(.4f);
+            yield return PressWhen("RankedCard");
+            yield return new WaitForSecondsRealtime(.3f);
+            Assert.AreEqual(0, UI.Hub.HubHome.Choice);
+            Assert.AreEqual(Core.GameMode.HeroStrike, SceneFlow.SelectedMode, "Ranked is always Hero Strike.");
             Assert.IsFalse(Net.NetSession.Instance != null && Net.NetSession.Instance.IsNetworked,
-                           "Opening the ranked destination must not open a LAN room.");
+                           "Choosing the ranked mode must not open a room.");
         }
 
         // A scene load is asynchronous, so asserting the scene name after a fixed sleep tests the

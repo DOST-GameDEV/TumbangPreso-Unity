@@ -434,6 +434,9 @@ namespace TumbangPreso.Net
                 if (lobby == null || !NetAuthority.IsNetworked) return "";
                 if (lobby.MatchInProgress) return "";
 
+                // ⚠️ UX-1.6: a PRIVATE room is not shown to friends; FRIENDS ONLY and PUBLIC are.
+                if (NetSession.RoomVisibility == 2) return "";
+
                 return lobby.JoinCode ?? "";
             }
         }

@@ -551,7 +551,24 @@ namespace TumbangPreso.UI
             _pendingFrame = Time.frameCount;
 
             if(MapPreviewSurface.DeferTransition(scene))return;
+
+            // ⚠️ UX-1.7: an arena load is covered by the LOADING screen. Offline it takes the load
+            // over (asynchronously, so its percentage is the real one); a networked load stays the
+            // synchronous one every peer has always used. `Hub.HubLoading`'s header has why.
+            if (Hub.HubLoading.Begin(scene, NetAuthority.IsNetworked)) return;
             SceneManager.LoadScene(scene);
+        }
+
+        /// <summary>
+        /// HOME: the hub, the view of the `MatchSetup` scene (`docs/TODO.md` UX-1.1). Offline, with
+        /// no pending lobby route, so it opens on HOME rather than on a room.
+        /// </summary>
+        public static void GoHome()
+        {
+            Networked = false;
+            PlaySelectionScreen.RequestedLobbyMode = null;
+            Hub.TumpHub.PendingEntry = Hub.HubEntry.Home;
+            Go(MatchSetup);
         }
 
         private static string _pendingScene;
@@ -691,8 +708,10 @@ namespace TumbangPreso.UI
             // is the one place it must not be set.
             GameLaunch.Reset();
 
-            Networked = false;
-            Go(MainMenu);
+            // ⚠️ UX-1: A MATCH EXITS TO HOME, NOT TO THE TITLE. The title is the boot screen now
+            // (TAP TO START and nothing else), so landing there after a match cost a press that
+            // led straight back to HOME. The session is stopped above either way.
+            GoHome();
         }
 
         public static void Quit()

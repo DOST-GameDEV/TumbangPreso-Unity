@@ -74,7 +74,9 @@ namespace TumbangPreso.PlayTests
 
                 buttons[0].onClick.Invoke();
                 yield return new WaitForSecondsRealtime(.5f);
-                Assert.AreEqual(SceneFlow.ModeSelect,SceneManager.GetActiveScene().name,
+                // ⚠️ UX-1, 2026-09-23: the destination is HOME (the `MatchSetup` scene's hub) by the
+                // owner's design; it was LET'S PLAY (`ModeSelect`) until then. Changed on purpose.
+                Assert.AreEqual(SceneFlow.MatchSetup,SceneManager.GetActiveScene().name,
                     "A press anywhere on the street is the way in");
             }
             finally{SceneFlow.BootedThroughSplash=boot;SceneFlow.LoginStepOffered=offered;TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=reduced;}
