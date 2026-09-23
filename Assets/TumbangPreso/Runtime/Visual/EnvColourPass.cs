@@ -110,6 +110,7 @@ namespace TumbangPreso.Visual
         {
             "Bahay", "Likod", "Malayo", "Kanto", "Puno", "TreesNear", "TreesFar",
             "Layer1", "Layer2", "Belt", "CrossRow",
+            "EskinitaContextRefinement", // New outer lots use the same existing roof/facade palette.
         };
 
         /// <summary>Hanging laundry sways. The anchor is the line it hangs from, so the drop

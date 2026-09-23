@@ -1,0 +1,17 @@
+{
+  "date": "2026-09-23",
+  "purpose": "Map refinement concept references only; not shipped textures or finished assets",
+  "tool": "built-in image generation; no external paid API",
+  "files": {
+    "eskinita-v1.png": "1c0178a22a83f6d725e7f6ed618d5fbf9a1e7ea77e2a2cbecc35d199b879939c",
+    "eskinita-v2.png": "801be35e567d767d4fa20a62951cab4235336459fb01be85047c485343995122"
+  },
+  "references": [
+    "owner-references/lobby-map-context.png",
+    "QUAL Logs/p7-native-world-auto/Eskinita-High.png",
+    "docs/reports/improvement-2026-09-12/eskinita-neighborhood-draft-images/b-paired-front-study-v2.png"
+  ],
+  "critique": "docs/reports/map-by-map-refinement-2026-09-23/eskinita-decisions.md",
+  "v1": "Connected neighborhood and functional frontage study; realistic finish and enclosed-court design rejected",
+  "v2": "Fit additions to retained chunky house family; preserve source body and existing good details; concept colours are not recolour instructions"
+}

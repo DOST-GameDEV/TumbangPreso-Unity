@@ -128,6 +128,11 @@ map shader sweep as a substitute for individually improving all five places.
   map, and a context-density plan at actual lobby/introduction/play/spectator angles.
   Owner PEAK and sparse-lobby reference images are preserved in ArtSource.
 - [ ] **REFINE-2.2 Eskinita.** Individual asset/material/shape/detail refinement.
+  First context group implemented:26retained-family outer houses and4connected
+  streets, existing collision preserved. Matched actual-preview/small/grey25
+  inspected; focused1/1passed after correcting new-group roof palette routing.
+  [Evidence and remaining work](reports/map-by-map-refinement-2026-09-23/eskinita-context/report.md).
+  Near assets/materials, vegetation, sky and whole-map acceptance remain open.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.

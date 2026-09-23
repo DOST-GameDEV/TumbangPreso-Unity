@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-23: chat follow-up complete; map reference research
+## Current resume, 2026-09-23: Eskinita first context group inspected
 
 The full assigned goal is NOT complete. Keep working in this conversation after
 status answers/checkpoints. No other chats, delegation, resets, paid services,
@@ -9,8 +9,9 @@ Current owner instructions/adopted designs supersede old OPEN headings and retir
 FUTURE plans. Preserve all tasks and evidence; do not revive obsolete proposals.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Source/last verified remotea7c4d1b35ab409471e5aa52a8b4b1a9ce89cc6e4. P6 documentation,
-functional chat fix and native receipts are published. Stage explicit paths; sole authorM4tyu633, no
+Source/last verified remote6c792aa240d9804976b84620dd9f3b516e9efe99. P6, chat fix/native
+receipts and comparative/per-map plans are published. The first Eskinita context
+batch is pending publication. Stage explicit paths; sole authorM4tyu633, no
 trailers/AI mentions/em dashes. Fetch/reconcile before push and verify remote HEAD.
 Never commit original composition-redesign/home-court.png.meta or loading-street.png.meta.
 Other contributor's HOME video commits are integrated, not generated churn.
@@ -18,7 +19,7 @@ Remote lighting/peak-bright-overhaul exists but is NOT integrated here; inspect
 adopted source before later map work rather than blindly cherry-picking it.
 
 QUAL: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached7a0ae3363 plus the new opt-in chat diagnostic2.cs files and runner.py.
+owned detached6c792aa24 plus current Eskinita author/scene/palette/test inputs.
 Earlier owned inputs saved in Logs/chat-native-candidate-inputs.patch and a retained
 stash named owned chat candidate inputs before published7a0ae3363. Independent warm
 Library. Build78174 and native2108 completed/reaped. No owned Unity/player/helper
@@ -26,7 +27,7 @@ currently running. Native chat passed, full text visible both shapes, exit0/shar
 input unchanged. Generated build churn restored after full diff saved.
 Chat baseline failed1/1in15.997s, targeted follow-up
 passed1/1in8.347s; first message now fully visible at1680x720 and960x540, inspected.
-Those4selector/chat files are now part of QUALHEAD, not uncommitted inputs.
+Selector/chat/diagnostic files are now part of QUALHEAD, not uncommitted inputs.
 Both test jobs reaped, their churn restored and profiles preserved. Old validation
 checkout has111dirtypaths and MUST NOT be reset; preserve main/home/net/ilalim too.
 
@@ -66,6 +67,46 @@ frames personally inspected; no new map edits yet. Current selected scene/author
 paths unchanged2d43fc0eb..7a0ae3363. Remote LIGHT-1at053e5274e inspected read-only:
 grading/toon/coloured-world-edges scope, not integrated. Avoid duplicating that work.
 Next: Eskinita object register and generated reference study, critique before meshes.
+
+Eskinita references v1/v2 and provenance saved under ArtSource/map-refinement-20260923/concepts.
+Critique and per-lot/source decisions: eskinita-decisions.md. v1has useful connected
+context but rejected enclosure/fine realism; v2better fits retained body family.
+No more concept variants for these questions. New Editor-only context author draft
+adds26outer retained-family houses and4connected streets outside the existing lots;
+no original models/materials/colliders changed. New focused case in existing
+MapGraphicsReviewProbe uses the actual preview camera. Next guarded author then
+one focused before/after/small-view check in QUAL. Question: coherent added context,
+grounded nonoverlapping lots, unchanged gameplay collision, visible improvement in
+the real overview? Stop after pass and visual inspection; tooling repair budget0/1.
+Scene generation is still pending, and Eskinita/all maps remain unfinished.
+
+LATEST: scene generation and variant2check now complete.26houses/4streets added;
+existing colliders unchanged. First visual variant's mint roofs rejected and fixed
+through existing EnvColourPass routing. v2passed1/1in1.259s; actual preview1280x720,
+960x540andgrey25personally inspected. Scene structural comparison:218newblocks,
+0removed,1existing Dressing child-list change. All jobs reaped, churn restored.
+DEVhas the copied qualified scene and source; evidence in eskinita-context/report.md.
+Publish this group, then inspect/refine the next actual weak near-house/prop group.
+Do not rerun this group for reassurance or call Eskinita/all maps finished.
+
+Eskinita author resumed successfully:26grounded nonoverlapping bodies,4roads,
+existing collider bounds unchanged. Focused preview case passed1/1in1.431s, but
+the personally inspected images FAILED art acceptance: all added roofs stayed
+mint. Root cause: new root/body names bypassed EnvColourPass's established group
+and Bahay_ classification. Fix registers only this new Eskinita group and uses
+Bahay_Context_ instance names; existing palette/other maps remain unchanged.
+The focused case now asserts actual roof-atlas assignment as well as placement.
+Preserve v1frames/XML; regenerate context and repeat this changed-risk check once.
+This is visual variant2/3, not an unrelated capture-fixture repair. No Unity job
+currently active; v1check/author sessions reaped and their complete diffs saved.
+
+Resume after owner-confirmed accidental app close: previous exec44305handle is
+missing and no matching Unity/Python process exists. The author log stopped during
+startup at19:19:51+08; at21:04:35the work gap was104.7minutes, not a confirmed exact
+app-close interval. No scene generation occurred. Snapshot06b4ce6634b4still matches
+all4named-profile files and shared Editor input preferences. Preserve interrupted
+author.log; resume same frozen candidate with author-resume1.log. QUALHEAD6c792aa24
+plus3map source drafts; earlier native chat inputs retained in named stash/patch.
 
 ### Completed current implementation and evidence, do not repeat without new cause
 
