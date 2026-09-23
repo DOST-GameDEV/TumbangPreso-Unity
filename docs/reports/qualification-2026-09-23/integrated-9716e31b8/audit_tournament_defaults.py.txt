@@ -1,0 +1,4 @@
+ConvertedMatchSetup.Hub.HubEnabled (Assets\TumbangPreso\Runtime\UI\ConvertedMatchSetup.Hub.cs) is a settable static gameplay switch on NEITHER TournamentPreset.Modifiers nor NotModifiers. Every switch this game has for testing survives a scene change by definition, and an operator starting the next bracket match inherits whatever the last one left behind. Add it to the roster with its reason, or to the exemption list with the reason it cannot change a match
+-tp-preparation-board is a launch switch on NEITHER TournamentPreset.NotModifiers nor LaunchSwitchModifier. Say which static it leaves set, or say why it leaves none
+
+12 tournament modifiers named, 108 exempted with a reason, 12 read cases, 12 write cases, 116 launch switches discovered, 2 finding(s).

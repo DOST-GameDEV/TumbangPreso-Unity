@@ -129,7 +129,7 @@ namespace TumbangPreso.Diagnostics
             probe._trace.WriteLine("real,host,local,match,round,elapsed,defender,punchCd,lungeCd,shoveCd,slideCd,stamina," +
                                    "holding,shoeState,shoeHolder,throws,retrievals,shoveAttempts,lungeAttempts,tags," +
                                    "denPunch,denLunge,denShove,denSlide,stompCharges,stompWindup,carapaceCd,carapaceActive," +
-                                   "seat0PunchCd,seat2Holding,seat2Stun,x,z,seat1Bot,heroIndex,characterPick,lobbyPick,characterMode,kitIdentity,epoch");
+                                   "seat0PunchCd,seat2Holding,seat2Stun,x,z,seat1Bot,heroIndex,characterPick,lobbyPick,characterMode,kitIdentity,epoch,localLungeCharge,observedLungeCharge,lungeInput");
             probe._markers = new StreamWriter(Path.ChangeExtension(path, ".markers.csv")) { AutoFlush = true };
             probe._markers.WriteLine("real,local,match,round,elapsed,name");
         }
@@ -463,7 +463,10 @@ namespace TumbangPreso.Diagnostics
                 kit.Skill1.ChargesRemaining, kit.Skill1.WindupRemaining, kit.Skill2.CooldownRemaining, kit.Skill2.IsActive ? 1 : 0,
                 seat0 != null ? seat0.PunchCooldownLeft : -1, seat2.HoldingSlipper ? 1 : 0, seat2.StunLeft,
                 caster.transform.position.x, caster.transform.position.z, caster.IsBot ? 1 : 0,
-                heroIndex, caster.CharacterIndex, lobbyPick, (int)caster.Mode, kitIdentity, GameServices.Match.PresentationMatchId
+                heroIndex, caster.CharacterIndex, lobbyPick, (int)caster.Mode, kitIdentity, GameServices.Match.PresentationMatchId,
+                // Observe the existing legitimate hold/release scenario without
+                // inventing a second driver or changing accepted actions.
+                verbs.LungeChargeRatio,verbs.ObservedLungeCharge,caster.Intent.Pressed(Verb.Lunge)?1:0
             };
             _trace.WriteLine(string.Join(",", row.Select(v => Convert.ToString(v, CultureInfo.InvariantCulture))));
         }

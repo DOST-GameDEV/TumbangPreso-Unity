@@ -18,6 +18,7 @@ namespace TumbangPreso.Diagnostics
     {
         public static bool Active;
         private static string _output;
+        [Serializable] private sealed class Coverage { public string[] maps,qualities; }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Configure()
         {
@@ -47,6 +48,10 @@ namespace TumbangPreso.Diagnostics
         {
             var report=new StringBuilder("map,quality,samples,mean_player_frame_ms,p95_player_frame_ms,mean_draw_calls,mean_triangles,mean_setpass,mesh_renderers,static_batched_renderers,unique_materials,world_width,world_height\n");
             var materials=new StringBuilder("map,shader,renderers,material_slots,unique_materials,static_batched_renderers\n");
+            // Declare the whole registry before sampling. The runner verifies the
+            // exact matrix, including the lagoon, rather than an obsolete12rows.
+            File.WriteAllText(Path.Combine(_output,"coverage.json"),JsonUtility.ToJson(new Coverage{
+                maps=SceneFlow.Maps.ToArray(),qualities=GraphicsProfiles.All.Select(p=>p.Label).ToArray()}));
             File.WriteAllText(Path.Combine(_output,"scope.txt"),
                 "Native player world-camera baseline1920x1080 HDR, four parked players. Not worst-case combat FPS. Ambient life stays active.\n"+
                 SystemInfo.graphicsDeviceName+" / "+SystemInfo.graphicsDeviceType+" / "+SystemInfo.processorType+"\n");
@@ -65,7 +70,11 @@ namespace TumbangPreso.Diagnostics
                     foreach(var input in FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None))input.enabled=false;
                     foreach(var actor in GameServices.Round.Players){actor.Intent.Clear();actor.Intent.Parked=true;}
                     GameServices.Round.BeginRound();Time.timeScale=1;
-                    var who=GameServices.Round.PlayerAt(1);who.Teleport(new Vector3(0,map==SceneFlow.IlalimNgTulay?.212f:.1f,-10));who.transform.rotation=Quaternion.identity;
+                    var who=GameServices.Round.PlayerAt(1);
+                    float court=Visual.WorldLookPresentation.Current!=null?Visual.WorldLookPresentation.Current.Floor:GameServices.Round.Lata.transform.position.y;
+                    var standing=new Vector3(0,court,-10);
+                    if(Visual.WorldGround.TryBelow(standing,1,4,out float support))standing.y=support+.03f;
+                    who.Teleport(standing);who.transform.rotation=Quaternion.identity;
                     var rig=FindFirstObjectByType<CameraRig>();rig.Follow(who);rig.SetAimSource(AimSource.Movement);
                     var camera=rig.Camera;var previous=camera.targetTexture;
                     var target=new RenderTexture(1920,1080,24,RenderTextureFormat.DefaultHDR,RenderTextureReadWrite.Linear){antiAliasing=Mathf.Max(1,QualitySettings.antiAliasing)};

@@ -264,7 +264,8 @@ namespace TumbangPreso.Net
             // run without a display or interactive session and operate on offline tokens.
             var launchArguments=Environment.GetCommandLineArgs();
             bool localUiReview=Array.IndexOf(launchArguments,"-tp-uireview")>=0 && Array.IndexOf(launchArguments,"-tp-tournament")<0;
-            if (Application.isBatchMode || localUiReview)
+            bool localGraphicsReview=Array.IndexOf(launchArguments,"-tp-graphicsreport")>=0 && Array.IndexOf(launchArguments,"-tp-tournament")<0;
+            if (Application.isBatchMode || localUiReview || localGraphicsReview)
             {
                 // ⚠️ RECORDED RATHER THAN RE-ASKED. This is a property of the build, so it joins
                 // `NotLinked` on the permanent side of the retry split above: retrying a headless
@@ -273,6 +274,7 @@ namespace TumbangPreso.Net
                 _buildCannotSignIn = true;
                 Settle(OnlineState.Unreachable,
                     localUiReview ? "Online sign-in is disabled for this local UI review." :
+                    localGraphicsReview ? "Online sign-in is disabled for this local graphics review." :
                     "UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.");
                 return false;
             }

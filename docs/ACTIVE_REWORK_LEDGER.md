@@ -173,3 +173,81 @@ only three standard empty YAML fields in upstreamHub.meta; preserved unchanged.
 Candidate will advance to this integration commit before first Unity run because
 GameServices/NetSession/Core changed. A fresh Core/source stage is warranted; old
 23d959912baseline remains preserved, no production clock validation was changed.
+
+
+Integrated9716e31b8098ffaf5b0c3130a3b69181af8daf34published and remote verified.
+Clean owned candidate advanced to9716e31b8 (new teammate Core/GameServices included),
+no production edits in candidate. Native review's -tp-uireview explicitly bypasses
+UGS sign-in; Editor batch mode does too. Guard uses hidden native windows.
+Next final source stages: fresh Core/audits at9716e31b8 because production dependencies
+changed in teammate commit. Next Editor question: do selected non-UI hardening/input/
+network/graphics/hero/camera contracts compile and pass on the integrated source?
+One guarded EditMode pass, exact filter and XML in candidateLogs/p7-editmode-v1.
+Stop at fresh nonzero XML; record actual failures without widening/repairing old UI
+fixtures. Profilepresentation-validation-20260921, targetWin64, graphics enabled.
+No.cs edits in either relevant source tree while this Editor run is active.
+
+
+P7integrated9716e31b8Core626/626passed, no skips. Source audit stage now11/14gating
+pass: event subscriptions,tournament defaults,gameplay clocks report new findings
+after teammate integration; raw targeted outputs saved candidateLogs/p7-audit_*.txt.
+Finite validation nowpasses. Informational cue audio6flagsunchanged. Session25836
+reaped. EDITOR72612stillrunning; first import in independent checkout reimports
+material cache records, so no.cs edits. Candidate clean before import. Do not treat
+teammate/UI findings as permission to change their UI or repair every stale fixture;
+classify exact scope and continue independently. No native build yet.
+
+
+Exact incoming integration audit findings saved in qualification-2026-09-23/
+integrated-9716e31b8/integration-findings.md with raw outputs. FiveHub anonymous
+subscription classifications; HubEnabled and-tp-preparation-board tournament
+classification; WalletStore daily UTCclock classification. Not assumed runtime bugs,
+not suppressed, upstream code unchanged. Source gate FAILED pending resolution.
+Editor72612stillfirstimport/test attempt in isolatedcandidate, no extra loop.
+
+
+P7Editor firstpass ended/reaped72612:141cases,140passed,1failed,15.071s test duration.
+Onlyfailure is the same incomingHubEnabled missing modifier/exemption classification,
+not a world-runtime failure. No second Editor pass for that unchanged finding.
+Guard275d322db97f restored4profilefiles/1preference. Candidate import/tests dirtied
+Inday2and Rafi2arm meshes by adding tangent channels, bothUIpngmetas and quality;
+ProjectAuditor was stat-only. Candidate was clean before run and solely owned, so
+all8specific paths restored to frozenHEAD after saving generated-churn.patch. DEV's
+original2metas untouched. Candidate nowclean again; no runtimecode fix inferred.
+
+Next one final PlayMode integration question: revised process-audio fixture, actual
+throw/cancel/held ownership, block/skill receipt/round cleanup/shared phase and replay
+contracts still behave together on integrated9716e31b8? Use exact selected non-UI
+fixtures, no retired menu/layout/capture-only group and no re-photographing every
+already-passed world look. Stop at fresh nonzero XML, classify failures. No C#edits
+while run active. Output candidateLogs/p7-playmode-v1, named guard profile.
+
+
+P7PlayMode firstpass ended/reaped47625:30cases,29pass,1fail,227.514s. Guard4b0a7eff3a10
+restored4profilefiles/1preference. Failure ThrowAimIntegrationProbe line73casts
+_crosshair to Text although completedHUD uses HudReticle; it throws before the
+physical release assertion. Stale fixture, not a measured aim defect. Receipt saved,
+NOcast repair/rerun loop. Remaining native aim proof uses existing world paths.
+
+Native route inspection found old OwnerUiPlayerReview navigation still targets
+retired buttons. Do not repair that UI harness. Existing graphics_review.py and
+-tp-graphicsreport bypass it and exercise real rendering. Added that existing local
+probe flag to NetIdentity's already-established local-review sign-in bypass, with
+normal/tournament/UI behaviour untouched, so no live UGS request occurs. The
+existing request-safety native scenario already holds/releases a legitimate lunge
+in round2; added only three CSVobservation columns(local/observedcharge/input), no
+new driver/harness or changed scenario. These tiny diagnostics changes need one
+compilation in the build. No native build yet. Candidate remaining known own
+import churn must be restored after receipt saved, then advance frozen source to
+published diagnostic support commit. Earlier Core/Editor/Play evidence remains
+exactly labelled9716e31b8; don't rerun whole stages merely for an added trace column.
+
+
+Pre-build native coverage adjustment: WorldGraphicsProbe already loops registered
+maps, but its runner still required12rows(only4maps). It now declares the full map/
+quality registry before sampling, and runner requires the exact Cartesian matrix,
+no duplicates and positive real rendering counters. Also replaced the old hardcoded
+playerY.1 with actual support sampling so Lagoon cannot be photographed from below
+its deck. This is required expansion qualification support, not another art pass or
+capture retry. No native run has happened yet. This small support batch will compile
+once in the internal build; no old menu-harness repair and no broad new framework.
