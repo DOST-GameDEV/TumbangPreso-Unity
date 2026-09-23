@@ -82,6 +82,12 @@ inspect provenance first with concurrent work. Stage by explicit path; sole auth
 M4tyu633, no trailers/AI/em dashes. Fetch before push and verify remote. No paid
 services/resets/delegation/main/Desktop replacement. No task-owned tabs remain.
 
+UX1 LANE (separate machine, 2026-09-23): implementation started from
+reports/front-end-flow-2026-09-23/ux1-plan.md. Touches the front end (MatchSetup view,
+title destination, new Runtime/UI/Hub), Core Economy, ugs/cloud-code/wallet.js and a
+WalletStore. It does not touch the match HUD, halftime popup, results board or world
+lanes. Expect concurrent pushes to ASTRAReworks; rebase, never force.
+
 UX1 sources: reports/front-end-flow-2026-09-23/owner-brief.txt,intake.md and
 ArtSource/front-end-flow-20260923 (11sketches). Scope is queued, not implemented.
 Full request and remaining numbered tasks preserved in TODO/Backlog. Do not drop.

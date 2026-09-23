@@ -271,8 +271,15 @@ logo palette, Darumadrop/supporting face and purposeful motion. No generic white
 or pale styling or blue/navy UI chrome; Defense blue remains a rule cue. Preserve
 supplied final artwork. Use actual engine renders for cast/map placeholders.
 
+**Lane, 2026-09-23:** UX-1 is being implemented on a separate machine in parallel with the
+VISUAL-1 batch D lane. The design, routes, per-screen four answers, economy rules and
+verification plan are in [ux1-plan.md](reports/front-end-flow-2026-09-23/ux1-plan.md).
+Key decision: HOME is the view of the `MatchSetup` scene over the live court, so every
+existing networking path stays in `ConvertedMatchSetup`; TAP TO START and match exits land there.
+
 Implementation order within UX-1:
-- [ ] **UX-1.0 Plan and route/data audit.** Read CLAUDE4a,6.2-6.5 and
+- [x] **UX-1.0 Plan and route/data audit.** Done in ux1-plan.md (routes, four answers per
+  screen, data ownership, saves/IDs, three devices). Read CLAUDE4a,6.2-6.5 and
   Front_End_Design. Answer the four screen-design questions per surface. Map every
   old feature to one visible destination and preserve saves/IDs and three devices.
 - [ ] **UX-1.1 HOME hub after TAP TO START.** Top-left square avatar opens picture
