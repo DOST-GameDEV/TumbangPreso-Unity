@@ -336,6 +336,9 @@ item is ticked only when its screen passed that fixture and its captures were lo
 Live UGS deployment of `wallet.js` is an external dependency: this machine has no `ugs`
 CLI or project login (rules proven by `Core.Tests/EconomyTests.cs` and
 `node tools/test_wallet_script.js`).
+Restore path (the § 68.3 keep-the-old-chrome rule): launching with `-tp-preparation-board`
+sets `ConvertedMatchSetup.HubEnabled = false` and the retired preparation board is the view
+again. It is also how the old fixtures are run against the view they were written for.
 
 Implementation order within UX-1:
 - [x] **UX-1.0 Plan and route/data audit.** Done in ux1-plan.md (routes, four answers per
