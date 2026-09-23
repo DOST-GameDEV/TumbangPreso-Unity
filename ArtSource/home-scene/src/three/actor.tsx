@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { continueRender, delayRender, staticFile } from 'remotion';
 import * as THREE from 'three';
 import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 // ⚠️ COLOUR MANAGEMENT OFF. Every hex in this project is an sRGB value meant to reach the screen
@@ -45,6 +46,27 @@ export const PALETTES: Record<string, number[][]> = {
     [0.066667, 0.066667, 0.082353], [1, 0.756863, 0.027451], [0.862745, 0.14902, 0.14902], [0.360784, 0.227451, 0.129412],
     [0.788235, 0.164706, 0.164706], [0.941176, 0.94902, 0.960784], [1, 0.419608, 0.101961], [1, 0.533333, 0],
   ],
+  // person_team-phaister.tres. Her own palette, never repainted: the hat, robe and hair colours are
+  // authored art (CLAUDE.md § 6.0), so the no-blue rule for code-drawn colour does not reach them.
+  'team-phaister': [
+    [0.094118, 0.086275, 0.133333], [0.290196, 0.117647, 0.470588], [0.596078, 0.219608, 0.847059], [0.972549, 0.721569, 0.141176],
+    [0.486275, 0.235294, 0.12549], [0.721569, 0.203922, 0.141176], [0.847059, 0.094118, 0.431373], [0.909804, 0.156863, 0.509804],
+    [0.078431, 0.062745, 0.109804], [0.956863, 0.752941, 0.596078], [0.54902, 0.078431, 0.141176], [0.721569, 0.470588, 0.078431],
+    [1, 1, 1], [0.956863, 0.752941, 0.596078], [0.878431, 0.627451, 0.470588], [0.956863, 0.752941, 0.596078],
+  ],
+};
+
+/**
+ * ⚠️ WHERE EACH MODEL'S EYES ARE, READ OFF ITS GLB, NEVER GUESSED (docs/HOME_SCREEN_ANIMATION_METHOD.md
+ * § 2.1). Both heroes built so far keep their eyes in PALETTE SLOT 8 on the face plane (bind z 0.160);
+ * the band is the bind-pose height range of the eye shapes, which keeps the mouth (the same slot, lower
+ * down) dark. team-zack: eye rows at y 0.464 to 0.491. team-phaister: eye rows at y 0.465 to 0.497,
+ * where the top row is her lashes, so her band ends a step higher than his.
+ */
+const EYE_BAND: Record<string, [number, number]> = {
+  'team-zack': [0.455, 0.497],
+  'team-sean': [0.455, 0.497],
+  'team-phaister': [0.455, 0.505],
 };
 
 export type Light = {
@@ -95,7 +117,7 @@ const toonFragment = `
   uniform sampler2D map; uniform vec3 palette[16]; uniform float usePalette; uniform vec3 tint;
   uniform vec3 lightDir; uniform vec3 lit; uniform vec3 shade; uniform vec3 rim; uniform float rimStrength;
   uniform float flash; uniform vec3 flashColour; uniform float hasMap;
-  uniform float eyeMix; uniform vec3 eyeColour;
+  uniform float eyeMix; uniform vec3 eyeColour; uniform vec2 eyeBand;
   varying vec2 vUv; varying vec3 vN; varying vec3 vView; varying vec3 vWp; varying vec3 vBind;
   void main() {
     vec3 c = vec3(1.0);
@@ -126,7 +148,7 @@ const toonFragment = `
     // not), so the test is the slot itself, limited to the eye band so no other slot-8 surface
     // can light. Nothing is laid over the face, so nothing can float off it at an angle.
     float eye = step(0.5, usePalette) * step(12.0, row) * (1.0 - step(2.0, col))
-      * step(0.455, vBind.y) * (1.0 - step(0.497, vBind.y)) * step(0.1, vBind.z);
+      * step(eyeBand.x, vBind.y) * (1.0 - step(eyeBand.y, vBind.y)) * step(0.1, vBind.z);
     lc = mix(lc, eyeColour, eyeMix * eye);
     gl_FragColor = vec4(lc, 1.0);
   }`;
@@ -187,13 +209,14 @@ const toonMaterial = (map: THREE.Texture | null, palette: number[][] | null, tin
       flashColour: { value: new THREE.Color() },
       eyeMix: { value: 0 },
       eyeColour: { value: new THREE.Color() },
+      eyeBand: { value: new THREE.Vector2(0.455, 0.497) },
     },
     vertexShader: toonVertex,
     fragmentShader: toonFragment,
   });
 
 /** Swap every mesh under `root` onto the toon look and give it an ink hull. */
-const toonify = (root: THREE.Object3D, palette: number[][] | null, mats: Mats, fixedInk: number | null = null) => {
+const toonify = (root: THREE.Object3D, palette: number[][] | null, mats: Mats, fixedInk: number | null = null, eyeBand: [number, number] = [0.455, 0.497]) => {
   const meshes: THREE.Mesh[] = [];
   root.traverse((o) => { if ((o as THREE.Mesh).isMesh) meshes.push(o as THREE.Mesh); });
   for (const m of meshes) {
@@ -205,6 +228,7 @@ const toonify = (root: THREE.Object3D, palette: number[][] | null, mats: Mats, f
     const toon = srcs.map((src) => {
       const s = src as THREE.MeshStandardMaterial;
       const t = toonMaterial(s.map ?? null, palette, `#${(s.color ?? new THREE.Color(1, 1, 1)).getHexString()}`);
+      t.uniforms.eyeBand.value.set(eyeBand[0], eyeBand[1]);
       mats.toon.push(t);
       return t;
     });
@@ -278,7 +302,7 @@ const SLIPPER_SCALE = 0.55;
 const buildActor = (gltf: GLTF, model: string, slipper: GLTF | null): Built => {
   const scene = SkeletonUtils.clone(gltf.scene) as THREE.Group;
   const mats: Mats = { toon: [], hull: [] };
-  toonify(scene, PALETTES[model], mats);
+  toonify(scene, PALETTES[model], mats, null, EYE_BAND[model]);
   const bones: Record<string, THREE.Object3D> = {};
   const rest: Record<string, THREE.Quaternion> = {};
   const restPos: Record<string, THREE.Vector3> = {};
@@ -373,6 +397,8 @@ export type ActorProps = {
   face?: Face;
   /** 0..1 how lit the eyes are when `face` is 'glow' (the strike-up flicker). Default 1. */
   eyeGlow?: number;
+  /** The glow's colour: each hero's own accent. Default Zack's `HeroElectricBright`. */
+  eyeColour?: string;
   slipper?: SlipperState;
   /** Box half-size in model units around the focus. */
   reach?: number;
@@ -473,7 +499,7 @@ const light = (b: Built, p: ActorProps) => {
     (m.uniforms.flashColour.value as THREE.Color).set(L.flashColour ?? '#ffffff');
     const face = p.face ?? 'rest';
     m.uniforms.eyeMix.value = face === 'rest' ? 0 : face === 'glow' ? (p.eyeGlow ?? 1) : 1;
-    (m.uniforms.eyeColour.value as THREE.Color).set(face === 'glow' ? '#F6FFA0' : '#140806');
+    (m.uniforms.eyeColour.value as THREE.Color).set(face === 'glow' ? (p.eyeColour ?? '#F6FFA0') : '#140806');
   }
   for (const h of b.mats.hull) {
     h.m.uniforms.width.value = h.w ?? p.ink ?? 0.0075;
@@ -565,13 +591,45 @@ export const drawActor = (b: Built, p: ActorProps): Drawn => {
   return { url, x: x0, y: y0, size, at };
 };
 
+/**
+ * Where points on the figure land on screen for a set of props, WITHOUT rendering it: the rig is posed
+ * and the same figure camera as `drawActor` is built, then the points are projected. Cheap enough to
+ * sample a figure at a dozen earlier frames, which is how Phaister's sigils are drawn along the path
+ * her hand really took rather than along a guessed circle.
+ */
+export const measureActor = (b: Built, p: ActorProps, pts: [string, [number, number, number]][]): [number, number][] => {
+  poseRig(b, p);
+  const fov = p.fov ?? 16;
+  const reach = p.reach ?? 0.62;
+  const size = Math.round(2 * reach * p.ppu);
+  const dist = reach / Math.tan((fov / 2) * deg);
+  const pitch = (p.pitch ?? 4) * deg;
+  const tgt = p.target === 'handR'
+    ? b.bones['arm-right'].localToWorld(new THREE.Vector3(...HAND_R))
+    : new THREE.Vector3(...(p.target ?? [0, p.focus ?? 0.4, 0])).applyMatrix4(b.scene.matrixWorld);
+  const cam = new THREE.PerspectiveCamera(fov, 1, 0.01, 100);
+  cam.position.set(tgt.x, tgt.y + Math.sin(pitch) * dist, tgt.z + Math.cos(pitch) * dist);
+  const roll = (p.roll ?? 0) * deg;
+  cam.up.set(Math.sin(roll), Math.cos(roll), 0);
+  cam.lookAt(tgt);
+  cam.updateMatrixWorld(true);
+  cam.updateProjectionMatrix();
+  const x0 = p.x - size / 2;
+  const y0 = p.y - size / 2;
+  return pts.map(([bone, local]) => {
+    const v = new THREE.Vector3(...local).applyMatrix4((b.bones[bone] ?? b.scene).matrixWorld);
+    v.project(cam);
+    return [x0 + ((v.x + 1) / 2) * size, y0 + ((1 - v.y) / 2) * size];
+  });
+};
+
 // ------------------------------------------------------------------------------------ hooks
 
 const cacheBuilt: Record<string, Built> = {};
 const pending: Record<string, Promise<Built>> = {};
 
 /** Load once; the rig is re-posed on every draw, so one instance per model serves every shot. */
-export const useActor = (model: 'team-zack' | 'team-sean', withSlipper = false): Built | null => {
+export const useActor = (model: 'team-zack' | 'team-sean' | 'team-phaister', withSlipper = false): Built | null => {
   const key = `${model}${withSlipper ? '+s' : ''}`;
   const [built, setBuilt] = useState<Built | null>(cacheBuilt[key] ?? null);
   const [handle] = useState(() => (cacheBuilt[key] ? null : delayRender(`model ${key}`, { timeoutInMilliseconds: 120000 })));
@@ -597,3 +655,126 @@ export const useActor = (model: 'team-zack' | 'team-sean', withSlipper = false):
 export const ActorImage: React.FC<{ d: Drawn; opacity?: number; filter?: string }> = ({ d, opacity, filter }) => (
   <image href={d.url} x={d.x} y={d.y} width={d.size} height={d.size} opacity={opacity} filter={filter} />
 );
+
+// ------------------------------------------------------------------------------------ props
+
+/**
+ * ⚠️ A GAME PROP, RENDERED LIKE THE CAST. The lata in Phaister's loop is the game's own
+ * `lata_metal.obj` (KALAWANG, one of the four starter cans) with its own texture, through the same
+ * toon look and ink hull as the figures, never a drawing of a can (docs/HOME_SCREEN_ANIMATION_METHOD.md
+ * § 2: props are the game's too, and CLAUDE.md § 6.0: never repainted).
+ */
+export type Prop = { root: THREE.Group; mats: Mats; spin: THREE.Group };
+
+const propCache: Record<string, Prop> = {};
+const propPending: Record<string, Promise<Prop>> = {};
+
+const loadProp = (name: string) =>
+  (propPending[name] ??= Promise.all([
+    new Promise<THREE.Group>((ok, fail) => new OBJLoader().load(staticFile(`ref/${name}.obj`), ok, undefined, fail)),
+    new Promise<THREE.Texture>((ok, fail) => new THREE.TextureLoader().load(staticFile(`ref/${name}.png`), ok, undefined, fail)),
+  ]).then(([obj, tex]) => {
+    tex.magFilter = THREE.NearestFilter;
+    obj.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (!m.isMesh) return;
+      const mats = Array.isArray(m.material) ? m.material : [m.material];
+      for (const mm of mats) {
+        (mm as THREE.MeshStandardMaterial).map = tex;
+        (mm as THREE.MeshStandardMaterial).color = new THREE.Color(1, 1, 1);
+      }
+    });
+    const mats: Mats = { toon: [], hull: [] };
+    toonify(obj, null, mats, 0.006);
+    const spin = new THREE.Group();
+    spin.add(obj);
+    const root = new THREE.Group();
+    root.add(spin);
+    propCache[name] = { root, mats, spin };
+    return propCache[name];
+  }));
+
+export const useProp = (name: string): Prop | null => {
+  const [p, setP] = useState<Prop | null>(propCache[name] ?? null);
+  const [handle] = useState(() => (propCache[name] ? null : delayRender(`prop ${name}`, { timeoutInMilliseconds: 120000 })));
+  useEffect(() => {
+    loadProp(name).then((pp) => {
+      setP(pp);
+      if (handle !== null) continueRender(handle);
+    });
+  }, [name, handle]);
+  return p;
+};
+
+export type PropProps = {
+  x: number;
+  y: number;
+  /** Pixels per prop unit. */
+  ppu: number;
+  yaw?: number;
+  pitch?: number;
+  /** Tumble of the prop about its own base centre, degrees (x, y, z). */
+  rot?: [number, number, number];
+  /** Prop-unit offset of the base centre (hops, lying on its side). */
+  lift?: [number, number, number];
+  /** Prop-space height the camera looks at, and the point (x, y) names. */
+  focus?: number;
+  reach?: number;
+  fov?: number;
+  light?: Light;
+  res?: number;
+};
+
+export const drawProp = (pr: Prop, p: PropProps): Drawn => {
+  const L = p.light ?? DUSK;
+  const ld = new THREE.Vector3(...L.dir).normalize();
+  for (const m of pr.mats.toon) {
+    m.uniforms.lightDir.value.copy(ld);
+    (m.uniforms.lit.value as THREE.Color).set(L.lit);
+    (m.uniforms.shade.value as THREE.Color).set(L.shade);
+    (m.uniforms.rim.value as THREE.Color).set(L.rim);
+    m.uniforms.rimStrength.value = L.rim_strength;
+    m.uniforms.flash.value = L.flash ?? 0;
+    (m.uniforms.flashColour.value as THREE.Color).set(L.flashColour ?? '#ffffff');
+    m.uniforms.eyeMix.value = 0;
+  }
+  for (const h of pr.mats.hull) {
+    h.m.uniforms.width.value = h.w ?? 0.006;
+    h.m.uniforms.flash.value = L.flash ?? 0;
+  }
+  const r = p.rot ?? [0, 0, 0];
+  pr.spin.rotation.set(r[0] * deg, r[1] * deg, r[2] * deg, 'YXZ');
+  pr.spin.position.set(...(p.lift ?? [0, 0, 0]));
+  pr.root.rotation.set(0, (p.yaw ?? 0) * deg, 0);
+  pr.root.updateMatrixWorld(true);
+  const fov = p.fov ?? 16;
+  const reach = p.reach ?? 0.4;
+  const size = Math.round(2 * reach * p.ppu);
+  const px = Math.min(2048, Math.max(8, Math.round(size * (p.res ?? 1.5))));
+  const dist = reach / Math.tan((fov / 2) * deg);
+  const pitch = (p.pitch ?? 4) * deg;
+  const tgt = new THREE.Vector3(0, p.focus ?? 0.19, 0);
+  const cam = new THREE.PerspectiveCamera(fov, 1, 0.01, 100);
+  cam.position.set(tgt.x, tgt.y + Math.sin(pitch) * dist, tgt.z + Math.cos(pitch) * dist);
+  cam.lookAt(tgt);
+  cam.updateMatrixWorld(true);
+  const scene = new THREE.Scene();
+  scene.add(pr.root);
+  const rr = getRenderer();
+  rr.setPixelRatio(1);
+  rr.setSize(px, px, false);
+  rr.clear();
+  rr.render(scene, cam);
+  const url = rr.domElement.toDataURL('image/png');
+  scene.remove(pr.root);
+  const x0 = p.x - size / 2;
+  const y0 = p.y - size / 2;
+  const model = pr.spin.matrixWorld.clone();
+  const cam2 = cam.clone();
+  const at = (_bone: string, local: [number, number, number] = [0, 0, 0]): [number, number] => {
+    const v = new THREE.Vector3(...local).applyMatrix4(model);
+    v.project(cam2);
+    return [x0 + ((v.x + 1) / 2) * size, y0 + ((1 - v.y) / 2) * size];
+  };
+  return { url, x: x0, y: y0, size, at };
+};

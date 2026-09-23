@@ -1,5 +1,9 @@
 # HOME background scene: Zack at Sa Bubong
 
+> **Since 2026-09-24 HOME shows one of several hero loops, picked at random** (`HubSceneVideo.Pick`).
+> This file is Zack's; Phaister's is [phaister.md](phaister.md). Both come from the same
+> `ArtSource/home-scene/` project and share `src/three/actor.tsx`.
+
 The animated scene behind the HOME hub (`docs/TODO.md` UX-1.1 reserves "a clean full-bleed
 animated-scene layer" for it). Source is `ArtSource/home-scene/`, a Remotion project that
 renders one seamless 1920x1080, 30 fps, 42 s loop. The reusable method behind it is

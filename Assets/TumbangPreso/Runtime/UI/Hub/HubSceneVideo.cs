@@ -5,8 +5,17 @@ using UnityEngine.Video;
 namespace TumbangPreso.UI.Hub
 {
     /// <summary>
-    /// The owner's animated HOME scene: Zack at Sa Bubong, a seamless 42 second loop, played in the
-    /// hub's reserved full-bleed <see cref="TumpHub.Scene"/> layer over the live court.
+    /// The owner's animated HOME scenes: one seamless 42 second loop per featured hero (Zack at Sa
+    /// Bubong, Phaister under the tulay), ONE of them picked at random each time the hub is built, and
+    /// played in the hub's reserved full-bleed <see cref="TumpHub.Scene"/> layer over the live court.
+    ///
+    /// ⚠️⚠️ RANDOM, NOT THE SELECTED OR FAVOURITE HERO. 🧑 2026-09-24: *"i decided to make diff character
+    /// lobby screens and the current one will js be random"*, *"make it random which one shows up"*. The
+    /// pick is <see cref="Pick"/> over <see cref="Heroes"/>, limited to the heroes whose clip is actually
+    /// in Resources, so adding a hero's loop is: render it, ship `UI/home/HERO-home-loop.mp4` and
+    /// `HERO-home-poster.png`, add the id to <see cref="Heroes"/>. A hero listed without a clip is
+    /// skipped, and if nothing resolves at all it falls back to Zack's, the first loop that shipped.
+    /// Each loop's design is in `docs/reports/home-scene/` (README.md for Zack, phaister.md for Phaister).
     ///
     /// ⚠️⚠️ THE ANIMATION IS NOT MADE HERE. Its source is `ArtSource/home-scene/` (a Remotion project,
     /// hand-drawn in code, blocky and lineless, copied off team-zack.glb and team-sean.glb) and its
@@ -36,8 +45,38 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubSceneVideo : MonoBehaviour
     {
+        /// <summary>Zack's loop: the fallback when a picked hero's files are missing.</summary>
         public const string ClipPath = "UI/home/zack-home-loop";
         public const string PosterPath = "UI/home/zack-home-poster";
+
+        /// <summary>Every hero with a HOME loop, in the order they shipped. The random pick draws from these.</summary>
+        public static readonly string[] Heroes = { "zack", "phaister" };
+
+        public static string ClipPathFor(string hero) => "UI/home/" + hero + "-home-loop";
+        public static string PosterPathFor(string hero) => "UI/home/" + hero + "-home-poster";
+
+        /// <summary>
+        /// Test hook: when set, the next installed scene plays this hero instead of rolling. Never set by
+        /// the game; tests clear it in their set up and tear down.
+        /// </summary>
+        public static string ForcedHero;
+
+        /// <summary>The hero whose loop this scene is playing.</summary>
+        public string Hero { get; private set; }
+
+        /// <summary>
+        /// The random pick, with the roll injected so a test can ask for every outcome. Only heroes whose
+        /// clip loads are candidates; with none, Zack.
+        /// </summary>
+        public static string Pick(System.Func<int, int> roll, System.Func<string, bool> hasClip = null)
+        {
+            hasClip = hasClip ?? (h => Resources.Load<VideoClip>(ClipPathFor(h)) != null);
+            var candidates = new System.Collections.Generic.List<string>();
+            foreach (var h in Heroes)
+                if (hasClip(h)) candidates.Add(h);
+            if (candidates.Count == 0) return "zack";
+            return candidates[Mathf.Clamp(roll(candidates.Count), 0, candidates.Count - 1)];
+        }
 
         public VideoPlayer Player { get; private set; }
         public bool Prepared { get; private set; }
@@ -69,12 +108,21 @@ namespace TumbangPreso.UI.Hub
         {
             _image = GetComponent<RawImage>();
             _image.raycastTarget = false;
-            _poster = Resources.Load<Texture2D>(PosterPath);
+            Hero = string.IsNullOrEmpty(ForcedHero) ? Pick(n => Random.Range(0, n)) : ForcedHero;
+            // ⚠️ POSTER AND CLIP ARE ONE HERO'S PAIR. The poster is that loop's own frame 0, so a fallback
+            // takes both of Zack's rather than showing one hero's poster before another hero's clip.
+            var clip = Resources.Load<VideoClip>(ClipPathFor(Hero));
+            _poster = Resources.Load<Texture2D>(PosterPathFor(Hero));
+            if (clip == null || _poster == null)
+            {
+                Hero = "zack";
+                clip = Resources.Load<VideoClip>(ClipPath);
+                _poster = Resources.Load<Texture2D>(PosterPath);
+            }
             _image.texture = _poster;
             _image.enabled = _poster != null;
 
             if (Settings.SettingsStore.Current.ReducedUiMotion) return;
-            var clip = Resources.Load<VideoClip>(ClipPath);
             if (clip == null) return;
 
             _target = new RenderTexture(1920, 1080, 0) { name = "HomeSceneVideo" };

@@ -18,12 +18,69 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public sealed class HubSceneVideoTests
     {
-        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        [UnitySetUp] public IEnumerator Before() { HubSceneVideo.ForcedHero = null; yield return PlayModeWorld.Reset(); }
+        [UnityTearDown] public IEnumerator After() { HubSceneVideo.ForcedHero = null; yield return PlayModeWorld.Reset(); }
+
+        /// <summary>
+        /// ⚠️ EVERY HERO THE PICK CAN LAND ON SHIPS BOTH HALVES OF ITS PAIR. A hero listed with a clip and
+        /// no poster would fall back to Zack's pair; with neither, the pick would quietly never choose
+        /// it and nobody would notice that loop was not shipping.
+        /// </summary>
+        [Test]
+        public void EveryListedHeroShipsItsLoopAndPoster()
+        {
+            foreach (var hero in HubSceneVideo.Heroes)
+            {
+                Assert.IsNotNull(Resources.Load<VideoClip>(HubSceneVideo.ClipPathFor(hero)), "No HOME loop for " + hero + ": " + HubSceneVideo.ClipPathFor(hero));
+                Assert.IsNotNull(Resources.Load<Texture2D>(HubSceneVideo.PosterPathFor(hero)), "No HOME poster for " + hero + ": " + HubSceneVideo.PosterPathFor(hero));
+            }
+        }
+
+        /// <summary>
+        /// The pick is random over every hero that has a loop (🧑 2026-09-24: *"make it random which one
+        /// shows up"*), skips a hero whose clip is missing, and falls back to Zack when none resolves.
+        /// </summary>
+        [Test]
+        public void ThePickCanLandOnEveryHeroAndFallsBackToZack()
+        {
+            var seen = new System.Collections.Generic.HashSet<string>();
+            for (int i = 0; i < HubSceneVideo.Heroes.Length; i++)
+            {
+                int k = i;
+                seen.Add(HubSceneVideo.Pick(n => k, _ => true));
+            }
+            CollectionAssert.AreEquivalent(HubSceneVideo.Heroes, seen, "Some hero's loop can never be picked.");
+            Assert.AreEqual("phaister", HubSceneVideo.Pick(n => 0, h => h == "phaister"), "A hero with no clip was still a candidate.");
+            Assert.AreEqual("zack", HubSceneVideo.Pick(n => 0, _ => false), "With no clip anywhere the pick did not fall back to Zack.");
+        }
+
+        /// <summary>Phaister's loop, picked, prepares and advances in the real hub exactly as Zack's does.</summary>
+        [UnityTest, Timeout(240000)]
+        public IEnumerator PhaistersLoopPlaysWhenPicked()
+        {
+            HubSceneVideo.ForcedHero = "phaister";
+            yield return HubFlowTests.OpenHome();
+            var hub = TumpHub.Current;
+            var scene = hub.Scene.GetComponentInChildren<HubSceneVideo>(true);
+            Assert.IsNotNull(scene, "HOME has no animated scene in its reserved layer.");
+            Assert.AreEqual("phaister", scene.Hero, "The forced pick was not honoured.");
+            float until = Time.realtimeSinceStartup + 30;
+            while (Time.realtimeSinceStartup < until && !(scene.Prepared && scene.Player != null && scene.Player.isPlaying && scene.Player.frame > 2))
+                yield return null;
+            Assert.IsTrue(scene.Prepared, "Phaister's loop never prepared.");
+            Assert.IsTrue(scene.ShowingVideo, "The layer is still showing the poster, not the video.");
+            long first = scene.Player.frame;
+            yield return new WaitForSecondsRealtime(1.0f);
+            Assert.Greater(scene.Player.frame, first, "Phaister's loop is not advancing.");
+            yield return TumpUiCapture.Capture("Hub-HomeScene-Phaister-1920x1080", hub.Canvas, 1920, 1080, checkPalette: false);
+            yield return TumpUiCapture.Capture("Hub-HomeScene-Phaister-1600x680", hub.Canvas, 1600, 680, checkPalette: false);
+        }
 
         [UnityTest, Timeout(240000)]
         public IEnumerator HomePlaysTheAnimatedSceneAndHidesItUnderOtherScreens()
         {
+            // Zack's, forced, so these captures stay comparable with every run before the random pick.
+            HubSceneVideo.ForcedHero = "zack";
             Assert.IsNotNull(Resources.Load<VideoClip>(HubSceneVideo.ClipPath), "The loop is not in Resources: " + HubSceneVideo.ClipPath);
             Assert.IsNotNull(Resources.Load<Texture2D>(HubSceneVideo.PosterPath), "The poster is not in Resources: " + HubSceneVideo.PosterPath);
 
