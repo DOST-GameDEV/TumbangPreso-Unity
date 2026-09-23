@@ -246,8 +246,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   this parent remains open until that acceptance. Continue Bayan art next.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
   Next active map. [Primary place references and generated-study critique](reports/map-by-map-refinement-2026-09-23/bayan-reference-notes.md)
-  saved. Inspect mint hedge bars first; retain successful civic landmarks. Broader
-  connected town/planting context must differ from Eskinita's denser district.
+  saved. Eight mint hedge bars now have locally authored low foliage in the retained
+  planter shells; variant3selected after paired/overview/grey25inspection,1/1passed.
+  [Planting evidence](reports/map-by-map-refinement-2026-09-23/bayan-garden/report.md).
+  Next the abrupt town/ground edge: [measured context plan](reports/map-by-map-refinement-2026-09-23/bayan-context-plan.md).
+  Remaining monument pots/buildings/sky stay open; keep successful civic landmarks.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.

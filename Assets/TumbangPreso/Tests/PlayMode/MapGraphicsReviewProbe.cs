@@ -87,6 +87,32 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator BayanGardenMatchedReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=55;GraphicsProfiles.Apply(2);
+            var garden=GameObject.Find("BayanPlaza/Dressing/BayanGardenRefinement");Assert.IsNotNull(garden);
+            Assert.IsEmpty(garden.GetComponentsInChildren<Collider>());
+            var originals=new[]{"Ground/EdgeHedge_0","Ground/EdgeHedge_10","Ground/EdgeHedge_11","Ground/EdgeHedge_12",
+                "Clutter/Clutter_0","Clutter/Clutter_1","Clutter/Clutter_2","Clutter/Clutter_3"}
+                .Select(name=>GameObject.Find("BayanPlaza/Dressing/"+name).GetComponent<MeshRenderer>()).ToArray();
+            foreach(string view in new[]{"overview","west","east"})
+            {
+                camera.transform.position=view=="overview"?new Vector3(16,16,-22):view=="west"?new Vector3(-10,2.2f,0):new Vector3(10,2.2f,7.6f);
+                camera.transform.LookAt(view=="overview"?new Vector3(0,1,1):new Vector3(view=="west"?-13.1f:13.1f,.5f,3.6f));
+                foreach(string state in new[]{"before","after"})
+                {
+                    garden.SetActive(state=="after");foreach(var original in originals)original.enabled=state=="before";
+                    yield return null;
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"Bayan-garden-"+view+"-"+state,false,Output,width:1280,height:800);
+                }
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator EskinitaStreetCompositionReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);

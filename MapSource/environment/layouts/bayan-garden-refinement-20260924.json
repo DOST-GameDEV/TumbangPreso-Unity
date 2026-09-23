@@ -1,0 +1,253 @@
+{
+  "basis": "Actual native scene inventory and bright-look Stage photograph,2026-09-24",
+  "beds": [
+    {
+      "path": "BayanPlaza/Dressing/Ground/EdgeHedge_0",
+      "mesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_03bb98b64ee68e940be44195c6b51b9f_9062396666529705017_2.6000_2.6000_2.6000.asset",
+      "materials": [
+        "Assets/TumbangPreso/Art/EnvironmentSurfaces/Materials/03bb98b64ee68e940be44195c6b51b9f_-658549290488006255_15_plain_BayanPlaza.mat"
+      ],
+      "min": {
+        "x": -13.449999809265137,
+        "y": 0.09999999403953552,
+        "z": 0.4999997615814209
+      },
+      "max": {
+        "x": -12.800000190734863,
+        "y": 0.75,
+        "z": 3.0999996662139893
+      },
+      "longOffsets": [
+        -1.0,
+        -0.47,
+        0.14,
+        0.67,
+        1.03
+      ],
+      "heights": [
+        0.43,
+        0.36,
+        0.48,
+        0.4,
+        0.35
+      ]
+    },
+    {
+      "path": "BayanPlaza/Dressing/Ground/EdgeHedge_10",
+      "mesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_03bb98b64ee68e940be44195c6b51b9f_9062396666529705017_2.6000_2.6000_2.6000.asset",
+      "materials": [
+        "Assets/TumbangPreso/Art/EnvironmentSurfaces/Materials/03bb98b64ee68e940be44195c6b51b9f_-658549290488006255_15_plain_BayanPlaza.mat"
+      ],
+      "min": {
+        "x": 12.800000190734863,
+        "y": 0.09999999403953552,
+        "z": 0.4999997615814209
+      },
+      "max": {
+        "x": 13.449999809265137,
+        "y": 0.75,
+        "z": 3.0999996662139893
+      },
+      "longOffsets": [
+        -1.05,
+        -0.58,
+        -0.02,
+        0.5,
+        0.99
+      ],
+      "heights": [
+        0.37,
+        0.46,
+        0.39,
+        0.47,
+        0.34
+      ]
+    },
+    {
+      "path": "BayanPlaza/Dressing/Ground/EdgeHedge_11",
+      "mesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_03bb98b64ee68e940be44195c6b51b9f_9062396666529705017_2.6000_2.6000_2.6000.asset",
+      "materials": [
+        "Assets/TumbangPreso/Art/EnvironmentSurfaces/Materials/03bb98b64ee68e940be44195c6b51b9f_-658549290488006255_15_plain_BayanPlaza.mat"
+      ],
+      "min": {
+        "x": -13.449999809265137,
+        "y": 0.09999999403953552,
+        "z": 4.09999942779541
+      },
+      "max": {
+        "x": -12.800000190734863,
+        "y": 0.75,
+        "z": 6.699999809265137
+      },
+      "longOffsets": [
+        -1.02,
+        -0.51,
+        0.06,
+        0.61,
+        1.01
+      ],
+      "heights": [
+        0.43,
+        0.36,
+        0.48,
+        0.4,
+        0.35
+      ]
+    },
+    {
+      "path": "BayanPlaza/Dressing/Ground/EdgeHedge_12",
+      "mesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_03bb98b64ee68e940be44195c6b51b9f_9062396666529705017_2.6000_2.6000_2.6000.asset",
+      "materials": [
+        "Assets/TumbangPreso/Art/EnvironmentSurfaces/Materials/03bb98b64ee68e940be44195c6b51b9f_-658549290488006255_15_plain_BayanPlaza.mat"
+      ],
+      "min": {
+        "x": 12.800000190734863,
+        "y": 0.09999999403953552,
+        "z": 4.09999942779541
+      },
+      "max": {
+        "x": 13.449999809265137,
+        "y": 0.75,
+        "z": 6.699999809265137
+      },
+      "longOffsets": [
+        -1.04,
+        -0.62,
+        -0.11,
+        0.44,
+        0.98
+      ],
+      "heights": [
+        0.37,
+        0.46,
+        0.39,
+        0.47,
+        0.34
+      ]
+    },
+    {
+      "path": "BayanPlaza/Dressing/Clutter/Clutter_0",
+      "mesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_03bb98b64ee68e940be44195c6b51b9f_9062396666529705017_2.6000_2.6000_2.6000.asset",
+      "materials": [
+        "Assets/TumbangPreso/Art/EnvironmentSurfaces/Materials/03bb98b64ee68e940be44195c6b51b9f_-658549290488006255_15_plain_BayanPlaza.mat"
+      ],
+      "min": {
+        "x": -13.449999809265137,
+        "y": 0.09999999403953552,
+        "z": -6.699999809265137
+      },
+      "max": {
+        "x": -12.800000190734863,
+        "y": 0.75,
+        "z": -4.100000381469727
+      },
+      "longOffsets": [
+        -1.02,
+        -0.53,
+        0.01,
+        0.57,
+        1.04
+      ],
+      "heights": [
+        0.39,
+        0.46,
+        0.37,
+        0.44,
+        0.35
+      ]
+    },
+    {
+      "path": "BayanPlaza/Dressing/Clutter/Clutter_1",
+      "mesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_03bb98b64ee68e940be44195c6b51b9f_9062396666529705017_2.6000_2.6000_2.6000.asset",
+      "materials": [
+        "Assets/TumbangPreso/Art/EnvironmentSurfaces/Materials/03bb98b64ee68e940be44195c6b51b9f_-658549290488006255_15_plain_BayanPlaza.mat"
+      ],
+      "min": {
+        "x": 12.800000190734863,
+        "y": 0.09999999403953552,
+        "z": -6.699999809265137
+      },
+      "max": {
+        "x": 13.449999809265137,
+        "y": 0.75,
+        "z": -4.100000381469727
+      },
+      "longOffsets": [
+        -1.02,
+        -0.53,
+        0.01,
+        0.57,
+        1.04
+      ],
+      "heights": [
+        0.36,
+        0.42,
+        0.48,
+        0.38,
+        0.43
+      ]
+    },
+    {
+      "path": "BayanPlaza/Dressing/Clutter/Clutter_2",
+      "mesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_03bb98b64ee68e940be44195c6b51b9f_9062396666529705017_2.6000_2.6000_2.6000.asset",
+      "materials": [
+        "Assets/TumbangPreso/Art/EnvironmentSurfaces/Materials/03bb98b64ee68e940be44195c6b51b9f_-658549290488006255_15_plain_BayanPlaza.mat"
+      ],
+      "min": {
+        "x": -13.449999809265137,
+        "y": 0.09999999403953552,
+        "z": -3.1000001430511475
+      },
+      "max": {
+        "x": -12.800000190734863,
+        "y": 0.75,
+        "z": -0.5000002384185791
+      },
+      "longOffsets": [
+        -1.02,
+        -0.53,
+        0.01,
+        0.57,
+        1.04
+      ],
+      "heights": [
+        0.36,
+        0.42,
+        0.48,
+        0.38,
+        0.43
+      ]
+    },
+    {
+      "path": "BayanPlaza/Dressing/Clutter/Clutter_3",
+      "mesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_03bb98b64ee68e940be44195c6b51b9f_9062396666529705017_2.6000_2.6000_2.6000.asset",
+      "materials": [
+        "Assets/TumbangPreso/Art/EnvironmentSurfaces/Materials/03bb98b64ee68e940be44195c6b51b9f_-658549290488006255_15_plain_BayanPlaza.mat"
+      ],
+      "min": {
+        "x": 12.800000190734863,
+        "y": 0.09999999403953552,
+        "z": -3.1000001430511475
+      },
+      "max": {
+        "x": 13.449999809265137,
+        "y": 0.75,
+        "z": -0.5000002384185791
+      },
+      "longOffsets": [
+        -1.02,
+        -0.53,
+        0.01,
+        0.57,
+        1.04
+      ],
+      "heights": [
+        0.39,
+        0.46,
+        0.37,
+        0.44,
+        0.35
+      ]
+    }
+  ]
+}

@@ -1,0 +1,439 @@
+{
+  "status": "Measured authored proposal, not yet generated",
+  "retainedHalfExtent": 55,
+  "groundHalfExtent": 1500,
+  "roadY": 0,
+  "yardY": 0.102,
+  "slotsPerBlock": 4,
+  "columnOffset": 5.6,
+  "blocks": [
+    {
+      "id": "WestLane1",
+      "x": -76,
+      "z": -42,
+      "distant": false,
+      "gardenSlot": 0
+    },
+    {
+      "id": "WestLane2",
+      "x": -76,
+      "z": 4,
+      "distant": false,
+      "gardenSlot": 1
+    },
+    {
+      "id": "WestLane3",
+      "x": -76,
+      "z": 50,
+      "distant": false,
+      "gardenSlot": 0
+    },
+    {
+      "id": "SouthLane1",
+      "x": -36,
+      "z": -78,
+      "distant": false,
+      "gardenSlot": 2
+    },
+    {
+      "id": "SouthLane2",
+      "x": 0,
+      "z": -78,
+      "distant": false,
+      "gardenSlot": -1
+    },
+    {
+      "id": "SouthLane3",
+      "x": 36,
+      "z": -78,
+      "distant": false,
+      "gardenSlot": 2
+    },
+    {
+      "id": "EastLane1",
+      "x": 76,
+      "z": -42,
+      "distant": false,
+      "gardenSlot": 0
+    },
+    {
+      "id": "EastLane2",
+      "x": 76,
+      "z": 4,
+      "distant": false,
+      "gardenSlot": 1
+    },
+    {
+      "id": "EastLane3",
+      "x": 76,
+      "z": 50,
+      "distant": false,
+      "gardenSlot": 0
+    },
+    {
+      "id": "NorthLane1",
+      "x": -36,
+      "z": 78,
+      "distant": false,
+      "gardenSlot": 2
+    },
+    {
+      "id": "NorthLane2",
+      "x": 0,
+      "z": 78,
+      "distant": false,
+      "gardenSlot": -1
+    },
+    {
+      "id": "NorthLane3",
+      "x": 36,
+      "z": 78,
+      "distant": false,
+      "gardenSlot": 2
+    },
+    {
+      "id": "WestOuter1",
+      "x": -112,
+      "z": -84,
+      "distant": true,
+      "gardenSlot": 0
+    },
+    {
+      "id": "WestOuter2",
+      "x": -112,
+      "z": -42,
+      "distant": true,
+      "gardenSlot": -1
+    },
+    {
+      "id": "WestOuter3",
+      "x": -112,
+      "z": 4,
+      "distant": true,
+      "gardenSlot": 2
+    },
+    {
+      "id": "WestOuter4",
+      "x": -112,
+      "z": 50,
+      "distant": true,
+      "gardenSlot": -1
+    },
+    {
+      "id": "WestOuter5",
+      "x": -112,
+      "z": 96,
+      "distant": true,
+      "gardenSlot": 0
+    },
+    {
+      "id": "SouthOuter1",
+      "x": -76,
+      "z": -124,
+      "distant": true,
+      "gardenSlot": 1
+    },
+    {
+      "id": "SouthOuter2",
+      "x": -36,
+      "z": -124,
+      "distant": true,
+      "gardenSlot": -1
+    },
+    {
+      "id": "SouthOuter3",
+      "x": 0,
+      "z": -124,
+      "distant": true,
+      "gardenSlot": 1
+    },
+    {
+      "id": "SouthOuter4",
+      "x": 36,
+      "z": -124,
+      "distant": true,
+      "gardenSlot": -1
+    },
+    {
+      "id": "SouthOuter5",
+      "x": 76,
+      "z": -124,
+      "distant": true,
+      "gardenSlot": 1
+    },
+    {
+      "id": "EastOuter1",
+      "x": 112,
+      "z": -84,
+      "distant": true,
+      "gardenSlot": 0
+    },
+    {
+      "id": "EastOuter2",
+      "x": 112,
+      "z": -42,
+      "distant": true,
+      "gardenSlot": -1
+    },
+    {
+      "id": "EastOuter3",
+      "x": 112,
+      "z": 4,
+      "distant": true,
+      "gardenSlot": 2
+    },
+    {
+      "id": "EastOuter4",
+      "x": 112,
+      "z": 50,
+      "distant": true,
+      "gardenSlot": -1
+    },
+    {
+      "id": "EastOuter5",
+      "x": 112,
+      "z": 96,
+      "distant": true,
+      "gardenSlot": 0
+    },
+    {
+      "id": "NorthOuter1",
+      "x": -76,
+      "z": 124,
+      "distant": true,
+      "gardenSlot": 1
+    },
+    {
+      "id": "NorthOuter2",
+      "x": -36,
+      "z": 124,
+      "distant": true,
+      "gardenSlot": -1
+    },
+    {
+      "id": "NorthOuter3",
+      "x": 0,
+      "z": 124,
+      "distant": true,
+      "gardenSlot": 1
+    },
+    {
+      "id": "NorthOuter4",
+      "x": 36,
+      "z": 124,
+      "distant": true,
+      "gardenSlot": -1
+    },
+    {
+      "id": "NorthOuter5",
+      "x": 76,
+      "z": 124,
+      "distant": true,
+      "gardenSlot": 1
+    }
+  ],
+  "roads": [
+    {
+      "x0": -18.5,
+      "z0": -55,
+      "x1": -18.5,
+      "z1": -144,
+      "width": 6
+    },
+    {
+      "x0": 18.5,
+      "z0": -55,
+      "x1": 18.5,
+      "z1": -144,
+      "width": 6
+    },
+    {
+      "x0": -55,
+      "z0": -20.5,
+      "x1": -136,
+      "z1": -20.5,
+      "width": 6
+    },
+    {
+      "x0": -55,
+      "z0": 29.8,
+      "x1": -136,
+      "z1": 29.8,
+      "width": 6
+    },
+    {
+      "x0": -58.2,
+      "z0": -140,
+      "x1": -58.2,
+      "z1": 140,
+      "width": 6
+    },
+    {
+      "x0": -94.2,
+      "z0": -140,
+      "x1": -94.2,
+      "z1": 140,
+      "width": 6
+    },
+    {
+      "x0": -130.2,
+      "z0": -140,
+      "x1": -130.2,
+      "z1": 140,
+      "width": 6
+    },
+    {
+      "x0": -55.2,
+      "z0": -84,
+      "x1": -134,
+      "z1": -84,
+      "width": 6
+    },
+    {
+      "x0": -55.2,
+      "z0": -42,
+      "x1": -134,
+      "z1": -42,
+      "width": 6
+    },
+    {
+      "x0": -55.2,
+      "z0": 4,
+      "x1": -134,
+      "z1": 4,
+      "width": 6
+    },
+    {
+      "x0": -55.2,
+      "z0": 50,
+      "x1": -134,
+      "z1": 50,
+      "width": 6
+    },
+    {
+      "x0": -55.2,
+      "z0": 96,
+      "x1": -134,
+      "z1": 96,
+      "width": 6
+    },
+    {
+      "x0": -18.5,
+      "z0": 55,
+      "x1": -18.5,
+      "z1": 144,
+      "width": 6
+    },
+    {
+      "x0": 18.5,
+      "z0": 55,
+      "x1": 18.5,
+      "z1": 144,
+      "width": 6
+    },
+    {
+      "x0": 55,
+      "z0": -20.5,
+      "x1": 136,
+      "z1": -20.5,
+      "width": 6
+    },
+    {
+      "x0": 55,
+      "z0": 29.8,
+      "x1": 136,
+      "z1": 29.8,
+      "width": 6
+    },
+    {
+      "x0": 58.2,
+      "z0": -140,
+      "x1": 58.2,
+      "z1": 140,
+      "width": 6
+    },
+    {
+      "x0": 94.2,
+      "z0": -140,
+      "x1": 94.2,
+      "z1": 140,
+      "width": 6
+    },
+    {
+      "x0": 130.2,
+      "z0": -140,
+      "x1": 130.2,
+      "z1": 140,
+      "width": 6
+    },
+    {
+      "x0": 55.2,
+      "z0": -84,
+      "x1": 134,
+      "z1": -84,
+      "width": 6
+    },
+    {
+      "x0": 55.2,
+      "z0": -42,
+      "x1": 134,
+      "z1": -42,
+      "width": 6
+    },
+    {
+      "x0": 55.2,
+      "z0": 4,
+      "x1": 134,
+      "z1": 4,
+      "width": 6
+    },
+    {
+      "x0": 55.2,
+      "z0": 50,
+      "x1": 134,
+      "z1": 50,
+      "width": 6
+    },
+    {
+      "x0": 55.2,
+      "z0": 96,
+      "x1": 134,
+      "z1": 96,
+      "width": 6
+    },
+    {
+      "x0": -134,
+      "z0": -124,
+      "x1": 134,
+      "z1": -124,
+      "width": 6
+    },
+    {
+      "x0": -134,
+      "z0": -78,
+      "x1": 134,
+      "z1": -78,
+      "width": 6
+    },
+    {
+      "x0": -134,
+      "z0": 78,
+      "x1": 134,
+      "z1": 78,
+      "width": 6
+    },
+    {
+      "x0": -134,
+      "z0": 124,
+      "x1": 134,
+      "z1": 124,
+      "width": 6
+    }
+  ],
+  "constraints": [
+    "All new buildings outside retained110m town",
+    "No new gameplay collision or distant shadows",
+    "Keep original civic landmarks and terminal",
+    "Garden slots replace houses deliberately, not random clutter"
+  ]
+}

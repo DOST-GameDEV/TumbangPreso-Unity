@@ -1,66 +1,86 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Eskinita art batch ready, Bayan next
+## Current resume,2026-09-24: Bayan side planting ready, town context next
 
-Overall goal ACTIVE and NOT complete. Continue all independently actionable work
-without checkpoint stops. Owner is asleep and expects quality product work ahead
-of verification tooling. Keep every older task; newer requirements supersede retired
-plans. No other chats/delegation, paid services, credit resets, main edits or Desktop
-replacement. Latest owner: "aight lock in i expect great work".
+Overall goal ACTIVE and NOT complete. Owner is AFK/asleep and asks autonomous
+completion of the full queue, with quality product work ahead of verification/tooling
+loops. No checkpoint stop. Preserve every older task and completed work; newer
+requirements supersede retired plans. No other chats/delegation, paid services,
+credit resets, main edits or Desktop replacement. Normal workers while asleep.
 
-DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Garden published800c282407526d18c2d67376441b5d70638ae545; remote verified. Original home-court.png.meta/loading-street.png.meta in
-Resources/UI/composition-redesign remain dirty and must NEVER be restored/staged.
-QUAL: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached800c28240, published garden candidate stashed after exact match. Do not reset/clean
-other worktrees or discard named candidate stashes. Stage owned paths explicitly.
-Sole authorM4tyu633; no trailers/AI mentions/em dashes. Fetch before push and verify
-remote. Other contributor's UI/Rafi work must be preserved.
+DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
+Last published/verified remote90401410ff60b1ea8e31f28412c6ecd5448e3729. Current Bayan
+garden unit ready to publish. Protected original2PNGmetas under Resources/UI/
+composition-redesign (home-court/loading-street): NEVER restore/stage in DEV.
+QUAL C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
+owned detached90401410f with qualified Bayan garden candidate. No active Unity jobs.
+Original candidate/stash history retained; no resets/clean/force pushes. Other
+worktrees and contributor dirt stay untouched. Explicit path staging, sole author
+M4tyu633, no trailers/AI mentions/em dashes. Fetch before push, verify remote.
 
-## Adopted lighting and current completed product work
+## Adopted lighting and completed current batches
 
-Owner explicitly requested merging/tracking lighting/peak-bright-overhaul, then
-said old lighting was too dark and new lighting MUST inform all remaining decisions.
-Silhouette clarity is approved, alongside materials/textures/place identity.
-Source50f1fc255d0770976808ed12db4ca865f3757b1c is merged at241e13bb5 and published
-with evidence52686a6e1. Latest fetch still50f1fc255, no incoming ASTRA changes.
-Existing Stage/ramp checks2/2passed61.384s; five-map after frames inspected. No
-unchanged rechecks. LIGHT-1.6/1.9remain open. LIGHT-1.8was subsequently integrated
-here after the source branch remained unchanged; evidence below. Track/fetch the
-lighting branch at meaningful publishes and reconcile incoming work safely.
+Source lighting/peak-bright-overhaul50f1fc255d0770976808ed12db4ca865f3757b1c merged
+at241e13bb5, evidence52686a6e1; last source fetch still50f1fc255. Track at publishes.
+The owner said old lighting was too dark; use the adopted bright look in every art
+decision, preserving successful detail it now reveals. Silhouettes approved along
+with materials/texture/place identity. Five-map stage/ramp2/2passed and images inspected.
 
-Eskinita published: connected26-house context40ca8a1b9, deeper96-block district
-2f2c55917; fitted4_Wfinishccd4285f5; timber5_W/east corrections3d80ffbb5;
-domestic3_Wsill/shade/basket3d80ffbb5/62268c257; native tricycle07in bay2_W1b8fc2ee8;
-five individually clipped masonry base/roof/leaf finishes083321bf4. Reports under
-reports/map-by-map-refinement-2026-09-23 retain actual evidence and limits.
-The whole-wall masonry variant was REJECTED; retained broad plaster is the result.
+LIGHT-1.8preview integrationec1d3a9cdnow published: same world-look component with
+explicit selected sun/measured floor, tagged camera scope, cached refresh, ambient
+triplet and immediate cleanup on switch. Actual cached-return ground bug fixed by
+clearing property blocks with null. Initial4/4, focused2/2passed; overview/small/grey
+inspected. No new shaders. LIGHT-1.6/1.9remain open. Do not repeat these checks.
 
-Garden author51930and existing PrimaryHomesMaterialReview96229completed/reaped.
-Baseline1/1in4.801s, after1/1in4.882s. Five named upper crowns narrowed/lifted with
-lower1.4m/roots/colliders unchanged; four other trees retained. Four timber-home
-planters corrected using existing foliage triangles, shared green ramp. Paired
-5_W/1_E/5_E/6_Eand grey25 inspected: useful facade gaps, connected grouped growth.
-Evidence/assets copied to DEV; report in eskinita-garden. No new fixture/test work.
-Full generated patches saved in QUALLogs/refine2-garden-v1, known churn restored.
-No Unity job remains running. No task-owned browsers or temporary servers.
+Eskinita art batch is ready for integrated intro/spectator/native acceptance, so
+REFINE-2.2parent remains open only for that gate. Published contextual district,
+individual ten-frontage finishes, domestic3_W, tricycle07, selective tree crowns/
+planters800c28240, quieter supplied mountain staging4631c1800, shop lettering and
+actual bright map-vote card90401410f. High/Lowcourt and shop views inspected. All
+named reports under reports/map-by-map-refinement-2026-09-23. Continue other maps
+rather than unchanged Eskinita runs. Newest incoming6363f73a6Phaister HOME/random
+loops preserved through mergee3c6c6aa7. Earlier RafiV9/UI work retained.
 
-## Next implementation, exact order
+## Bayan current implementation and exact next actions
 
-1. Review Eskinita's sky/background composition and
-   remaining ordinary props under the bright look. Near frames now show oversized
-   pale mountain triangles: supplied Mountain.png painting stays unchanged; judge
-   apparent height/distance with the actual district and camera before changing it.
-   NeighbourhoodSky already has animated panorama drift, deterministic sample time.
-2. Finish Eskinita remaining-prop/whole-map review and refresh its static map card
-   with the adopted bright look. Bright preview integration is now implemented.
-   Use existing routes. Do not build another capture framework.
-3. Bayan, Ilalim, SaBubong and Lagoon one at a time, each with sourced local identity,
-   critically judged generated concepts, individual weak-asset decisions and context
-   beyond first-row buildings. Lagoon is Sama Bajau, with detached pile homes/boats;
-   no tricycles on its decks or roof courts. Each map's sky/background is in scope.
-4. Natural animals, all-bot stalls, per-character locomotion starting Sean, ordinary
-   throw and left/right pektus, then remaining coherent qualification. All assigned.
+Primary Cabatuan/National Museum text and displayed photos inspected. Built-in
+bayan-civic-v1concept saved with prompt/SHA and critique. Keep grouped planting,
+connected town/material hierarchy; reject invented tuk-tuk/bus, all-orange tiles
+and changed landmark proportions. Browser tab closed; no task-owned tabs/helpers.
+
+Native read-only inventory completed: QUALLogs/refine2-place-inventory contains
+all five JSONs. Bayan289surfaces/8solids. Four named EdgeHedges plus four identical
+Clutter_0..3source meshes form eight mint bars. Original GLB UV split:24white-base
+vertices,74leaf vertices. Eight individually measured recipes in MapSource layouts.
+
+BayanGardenAuthorv3selected: eight original renderers retained disabled; eight
+combined meshes keep exact36base face vertices per planter, with five connected
+low crowns and broad folded leaf accents.6288vertices/two materials/small leaf ramp.
+Collider, court-clearance and height guards passed. v1too stone-like and missed four
+unnamed instances; v2coverage fixed but still hard crown shading; v3soft normals/
+connected proportions accepted from paired sides/overview/grey25. Case55065passed
+1/1in3.763s, all jobs reaped. Qualified scene/assets/evidence copied to DEV. Full
+patches in QUALLogs/refine2-bayan-garden-v1/v2/v3, known churn restored.
+
+1. Publish the garden unit and plans/evidence. No more foliage taste variants or
+   unchanged checks. Four separate monument pots still look block-like and remain
+   a later local item, not already accepted.
+2. Implement bayan-context-plan.md and bayan-town-context-20260924.json. Actual
+   overview exposes abrupt empty town/ground edge. Existing town occupies+/-55m;
+   houses reach+/-46.75m and CivicTown+/-52.6m. Road plan axis means CONSTANT axis:
+   north/south streetsx+/-18.5; east/west streetsz-20.5/+29.8; road0m, yard.102m.
+   Proposed32blocks (12near/20far), four plots each with explicit garden omissions,
+   meaningful connected roads/groves, visual-only ground beyond the camera horizon.
+   Preserve originals/collision, no distant shadows. Distinct lower greener town,
+   not Eskinita's96dense blocks. Validate generated bodies against existing town
+   and roads. Context is planned only; NO context source/geometry authored yet.
+3. Review monument pots, near civic/house material weaknesses, town sky/camera views
+   and Bayan static card. Keep good church/hall forms. Then Ilalim, SaBubong, Lagoon,
+   each individually researched/authored. Lagoon is Sama Bajau, with detached pile
+   homes/boats/islands; no inappropriate tricycles on decks/roof courts.
+4. Natural animals, all-bot stalls, individual character locomotion starting Sean,
+   ordinary throw and left/right pektus, remaining gameplay and final qualification
+   remain assigned. All TODO items preserved; no blanket completion.
 
 ## Older qualification still open
 
@@ -87,16 +107,14 @@ remain unreconciled; no false clean stamp. No native build during these map unit
 ## Execution guardrails
 
 Unity only through python tools/run_unity_guarded.py with
--tp-profile presentation-validation-20260921. Never --help or -nographics. Run in
-background, freeze .cs inputs, read fresh nonzero XML. Save generated diff and restore
-only known own churn after each run. DEV two original PNG metas are protected.
-Use normal workers while owner sleeps; earlier lag caps were temporary overrides.
-No repeat checks after a useful pass; comprehensive regression/build is final gate.
-Blender may author mesh/native source; approval renders are Unity-native only.
+-tp-profile presentation-validation-20260921. Never --help or -nographics. Background
+runs, freeze .cs inputs, read fresh nonzero XML. Save generated diff and restore only
+known owned churn after each run. Native builds internal Builds/<name>/ only at final
+gate. Blender may author models but approval views are Unity-native. No capture-tool
+repair loop. Native screen-capture repair budget is already spent; use existing routes.
 
-History, including old execution receipts/stash IDs and prior continuation notes:
-[through canopy author](reports/map-by-map-refinement-2026-09-23/ledger-through-canopy-author-20260924.md).
-Older pending/running paragraphs there are historical, not current instructions.
+[History through this garden unit](reports/map-by-map-refinement-2026-09-23/ledger-through-bayan-garden-20260924.md)
+retains earlier receipts/stash IDs. Pending/running notes in history are historical.
 
 ## Parallel lane: UI and HUD review (second machine), 2026-09-23
 
@@ -110,59 +128,3 @@ turnaround step needed -rig; bounded repair used), art-batch4 running (Rafi v7 r
 plus ModeCardPoseAuthor poses to Logs/mode-card-poses). Never commit the two original
 composition-redesign .meta files. Next: avatar compile and picker capture, posters,
 Rafi v7 inspection, five-shape captures of the changed screens, push.
-
-Backdrop plan saved in eskinita-backdrop-plan.md; source lowers only three existing
-painted cards. Next guarded StageEskinitaBackdrop, then existing house/preview
-capture routes. Baseline is garden-v1; do not regenerate it.
-
-Backdrop author54802/check31060completed/reaped: two active cards lowered, third
-inside inactive Malayo preserved. Existing2/2passed6.244s, matched game/grey25and
-preview/small inspected. Known churn restored and scene/evidence copied to DEV.
-New observed product gap: preview still uses old dark lighting. Lighting source
-still50f1fc255after fetch, no incoming updates. Complete LIGHT-1.8integration using
-its documented explicit-sun/WorldLookCamera route and reuse same-map install on
-ReapplyEnvironment. This replaces the earlier speculative wait for unpublished
-code; no other contributor files or conversations were touched. One bounded
-preview/transition check, then continue map assets. No new test framework.
-
-LIGHT-1.8source drafted and copied to QUALdetached4631c1800. Backdrop locally
-committed4631c1800, not yet pushed. Four-case bounded preview/transition run next;
-no.cs edits while running. Plan: lighting-integration-2026-09-24/preview-plan.md.
-
-LIGHT-1.8implemented: explicit selected sun/floor, tagged camera scoping, cached
-same-map reapply, ambient-triplet preservation and immediate teardown on switch.
-Run65338initial4/4passed11.934s but output exposed empty property-block ownership
-preventing ground lift on cached return. Fixed actual cleanup with null; run46685
-focused2/2passed3.475s, ground lift2slots on both visits. Both runs reaped. Actual
-preview/before/small/grey25inspected, result much clearer. Qualified runtime source
-in DEV/QUAL, test-only weight save/restore added after run. Churn patches backed up,
-known churn restored. Publish backdrop plus preview, then resume Eskinita props/
-final views/static card and continue next map. No further unchanged lighting checks.
-
-Backdrop4631c1800/previewec1d3a9cdPUBLISHED through mergee3c6c6aa7eccd72d9e5a365b0a86417b44a0fb96,
-remote verified. Incoming6363f73a6Phaister HOME/random loops preserved. Lighting
-branch still50f1fc255. QUAL advanced after matched candidate stash; no source loss.
-Eskinita map-vote card now copied from inspected960x540actual bright preview; its
-importer/GUID retained. Next one bounded art-review set for two remaining street
-shop/seating pockets plus ordinary court directions/Low. This is content inspection,
-not another fixture project. Then record whole-map keep/refine decisions and move
-into Bayan using saved primary reference notes.
-
-Eskinita street survey53742completed1/1in4.838s; signs author2459and check16707
-completed/reaped, after1/1in4.842s. High/Lowcourt directions and both shop fronts
-inspected; opposite shop diagnostic views/south actor occlusion are recorded limits,
-not a capture-tool repair task. Existing props retained, two blank signs lettered,
-shop source scene/assets copied to DEV and paired/grey25inspected. Map-vote card
-uses actual bright preview960x540, importer/GUID unchanged. See eskinita-prop-review.
-Eskinita art implementation ready for integrated intro/spectator/native acceptance;
-REFINE-2.2parent stays open for that gate. Continue Bayan art now, no unchanged loops.
-
-Bayan primary National Museum/Cabatuan refs read, displayed photos inspected;
-browser tab closed/empty list verified. Built-in conceptbayan-civic-v1saved with
-prompt/SHA. Keep layered green civic-edge/context/material separation; reject
-invented tuk-tuk/bus, universal orange tiles and altered landmark proportions.
-Current observed weakness is mint hedge bars; native5-map read-only inventory57869
-running in QUALLogs/refine2-place-inventory to identify their meshes/materials/
-bounds. No.cs edits while active. It changes no scenes/assets intentionally.
-Next inspect Bayan rows, plan local shrub forms/materials inside retained planters,
-then implement that unit and continue buildings/context. No Bayan art change yet.
