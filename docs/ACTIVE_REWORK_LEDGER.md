@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: tower B ready to publish, main condo next
+## Current resume, 2026-09-24: SaBubong art ready to publish, Lagoon next
 
 Overall goal ACTIVE and NOT complete. Owner expects autonomous progress through all
 independently actionable TODO, with quality product work ahead of test/capture loops.
@@ -9,7 +9,7 @@ work; newer owner requirements override retired proposals. No other tasks/chats,
 delegation, paid services, usage resets, main edits or Desktop replacement.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD/verified remote: 4193e9ac68a03982f19c2a7e026c81c8fb687f9a.
+HEAD/verified remote: e09c44e2f7aad269c2b3b8c47997326172745866.
 Only original home-court.png.meta and loading-street.png.meta under
 Resources/UI/composition-redesign remain dirty. NEVER restore or stage these DEV
 files. Own candidate: RooftopTowerBFinishAuthor, builder hook, surface plan, ledger/history. Use explicit staging,
@@ -162,3 +162,41 @@ families untouched. Publish then main condo local material/construction refineme
 source reveals existing concrete floor bands and side sills, but end windows lack
 frames/sills and broad main wall finish remains very uniform. Preserve pool and
 playable roof/collision, no rebuild of full SaBubong.
+
+e09c44e2ftower B PUBLISHED/remote verified. QUAL exact matched/stashed/advanced to
+e09c44e2f. No active job. Main condo local plan now saved: derived painted-mineral
+wall texture using existing metre coordinates, unchanged other material slots/pool,
+fitted end-window details/side divisions and supported corner rainwater pipes below
+deck. Preserve all roof/pool/recovery/collision. Final art cameras follow this unit.
+
+Main condo source/finish and final art-view case copied to QUAL. Author runs
+Logs/refine2-sabubong-condo-v1/author.log. Question: local wall material/UV finish
+and fitted windows/downpipes preserve main mesh topology, pool/material separation,
+below-deck envelope and collision. Freeze.cs. Then one final art case: actual
+preview/card, four scenery directions, Low and sky20/180. No gameplay/native
+performance claim from those scenery-only views.
+
+Condo author42165completed/reaped: local wall slot/UV finish, unchanged source
+positions/topology and all collision,70end windows/98side divisions/four supported
+downpipes, below-deck guard passed. Known profile/PNGmeta churn restored after full
+patch. Final art review now runs Logs/refine2-sabubong-condo-v1/check.log/results.xml.
+Freeze.cs, inspect actual result before copying scene/card.
+
+First condo/final art review89856passed1/1in4.823s. Main condo pair/grey, four world
+directions, Low and card inspected; condo finish kept. Sky labels were NOT valid
+20/180proof: GameplayShots.Render yields two frames and live SkyMotion.Update
+overwrites the sampling scope. Camera also drifted between samples. One local
+fixture correction now holds the clock and camera for this case only, restores
+both in finally; no runtime/capture-framework change. Final-v2 runs
+Logs/refine2-sabubong-final-v2/check.log/results.xml, .cs frozen. Earlier reports
+using the same coroutine sky scope are art views, not reliable timed-motion proof;
+retain that limitation for integrated sky/replay qualification, do not rerun all.
+
+Condo/final-v2review81420completed/reaped1/1in5.189s. Corrected sky pair, four
+roof directions/grey, Low/card inspected. Court crop identical across sky samples;
+clouds change subtly. Main condo finish kept; source topology/material separation/
+collision intact. Qualified assets/scene/native card/evidence copied to DEV, known
+churn restored after patches. No active job. Current Sa art batch disposition saved
+in sabubong-final-art/report.md; parent stays open for integrated acceptance. Publish
+this unit then Lagoon research/current native assessment. Earlier-map new texture
+requirement stays open. No blanket completion or uninspected camera-motion claim.

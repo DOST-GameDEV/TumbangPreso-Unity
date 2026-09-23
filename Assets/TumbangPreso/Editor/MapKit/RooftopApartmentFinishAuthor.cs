@@ -133,7 +133,7 @@ namespace TumbangPreso.EditorTools.MapKit
             string path=Folder+"/ApartmentSurfaces.mat";var saved=AssetDatabase.LoadAssetAtPath<Material>(path);
             if(saved==null){AssetDatabase.CreateAsset(draft,path);saved=draft;}else{EditorUtility.CopySerialized(draft,saved);EditorUtility.SetDirty(saved);Object.DestroyImmediate(draft);}return saved;
         }
-        private static float Noise(float u,float v,int cells,int seed)
+        internal static float Noise(float u,float v,int cells,int seed)
         {
             float x=u*cells,y=v*cells;int ix=Mathf.FloorToInt(x),iy=Mathf.FloorToInt(y);float tx=Mathf.SmoothStep(0,1,x-ix),ty=Mathf.SmoothStep(0,1,y-iy);
             float Hash(int a,int b){uint h=(uint)((a%cells)*73856093^(b%cells)*19349663^seed*83492791);h=(h^(h>>13))*1274126177u;return (h&65535)/65535f;}

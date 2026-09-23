@@ -144,3 +144,14 @@ Reassess previously dark/hidden surfaces before deciding to add geometry, textur
 or brighten materials locally. Preserve good existing details that become visible.
 Recognizable forms remain approved alongside texture/material/place work. Old dark
 captures remain historical diagnosis, not the final visual target or acceptance.
+
+## All-map building texture/detail correction,2026-09-24
+
+> add this to all of map rework idk if uve been adding texture to any building but all buildings feel like they lack in texture and detail
+
+Recorded against every map parent, including earlier art batches. The
+[building-texture brief](building-texture-brief-20260924.md) requires visible
+material/construction improvement where each family is weak, under the adopted
+bright look. Existing shader settings and extra scenery do not close acceptance.
+Do not cover everything with one texture, noise or grime treatment. Preserve good
+parts and the stylized game identity; each map still needs its own material review.

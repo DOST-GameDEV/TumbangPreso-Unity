@@ -308,7 +308,13 @@ scattered across all maps. Execute inside each map's existing refinement row.
   [surface evidence](reports/map-by-map-refinement-2026-09-23/sabubong-apartment-surfaces/report.md),1/1passed after one bounded provenance-fixture fix.
   Retained straight B towers now have fitted secondary glazing divisions while
   source glass/frame materials stay intact. [Family evidence](reports/map-by-map-refinement-2026-09-23/sabubong-tower-b/report.md), native1/1passed/pairs/grey inspected.
-  Main condo, other-family disposition and final integrated map acceptance remain.
+  Main condo now has a local painted-mineral wall finish, fitted end windows and
+  supported exterior rainwater runs; original pool/roof/collision retained. Native
+  pairs/grey/four directions/Low/card inspected,1/1then1/1after a local sky-sampling
+  correction. Other-family keep/refine decisions and timed-sky evidence limits are
+  [recorded here](reports/map-by-map-refinement-2026-09-23/sabubong-final-art/report.md).
+  Native map card refreshed. Current art batch ready for integrated intro/spectator/
+  gameplay/performance acceptance; parent remains open. Continue Lagoon next.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
   Owner2026-09-24: building texture/detail acceptance remains OPEN; inspect and refine
   each family under bright lighting per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).

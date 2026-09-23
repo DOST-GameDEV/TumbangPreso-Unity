@@ -87,6 +87,56 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator SaBubongFinalArtReview()
+        {
+            var canvas=new GameObject("SaBubong final art preview",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.SaBubong);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.SaBubong&&Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.SaBubong,preview.Showing);preview.enabled=false;
+            using(Visual.NeighbourhoodSkyMotion.At(20))
+            {
+                yield return GameplayShots.Render(preview.Camera,"SaBubong-preview",false,Output,width:1280,height:720);
+                yield return GameplayShots.Render(preview.Camera,"SaBubong-card",false,Output,width:960,height:540);
+            }
+            Object.Destroy(canvas);yield return PlayModeWorld.Reset();yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            // These are scenery-only art views. Normal cast/gameplay overlap remains
+            // in the later integrated gate, rather than hiding it in a visual approval claim.
+            foreach(var visual in Object.FindObjectsByType<Visual.CharacterVisual>(FindObjectsSortMode.None))
+                foreach(var renderer in visual.GetComponentsInChildren<Renderer>())renderer.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;var eye=new Vector3(2,1.9f,3);
+            var viewRotation=Quaternion.LookRotation(Vector3.forward*40+Vector3.up*.5f);
+            var skyClock=Object.FindFirstObjectByType<Visual.NeighbourhoodSkyMotion>();
+            bool skyWasEnabled=skyClock!=null&&skyClock.enabled;if(skyClock!=null)skyClock.enabled=false;
+            // Render waits two layout frames. Hold only this fixture's sky clock and
+            // camera during them, so labelled samples are not overwritten by live updates.
+            Camera.CameraCallback pin=cam=>{if(cam==camera){cam.transform.SetPositionAndRotation(eye,viewRotation);cam.fieldOfView=70;}};
+            Camera.onPreCull+=pin;
+            try
+            {
+                var directions=new[]{Vector3.forward,Vector3.right,Vector3.back,Vector3.left};
+                var names=new[]{"north","east","south","west"};GraphicsProfiles.Apply(2);
+                for(int i=0;i<directions.Length;i++)
+                {
+                    viewRotation=Quaternion.LookRotation(directions[i]*40+Vector3.up*.5f);yield return null;
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"SaBubong-final-"+names[i],false,Output,width:1280,height:800);
+                }
+                viewRotation=Quaternion.LookRotation(Vector3.forward*40+Vector3.up*.5f);
+                using(Visual.NeighbourhoodSkyMotion.At(180))
+                    yield return GameplayShots.Render(camera,"SaBubong-final-north-sky180",false,Output,width:1280,height:800);
+                GraphicsProfiles.Apply(0);yield return null;
+                using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(camera,"SaBubong-final-north-low",false,Output,width:960,height:540);
+            }
+            finally{Camera.onPreCull-=pin;if(skyClock!=null)skyClock.enabled=skyWasEnabled;}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator SaBubongApartmentSurfaceReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);

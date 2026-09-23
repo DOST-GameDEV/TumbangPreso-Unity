@@ -43,3 +43,24 @@ primary horizontal floor frames, body positions, source palette and glass respon
 This is construction-scale glass detail, not blanket painted weathering. No new
 colliders/shadows, no treatment of other tower families in this unit. Reuse existing
 native roof-view route for review. Other families retain their own decisions.
+
+
+## Main condo exterior, next local unit
+
+The playable roof's own building remains prominent in preview/intro views. Source
+already provides concrete floor bands and projecting side-window sills, so retain
+them. End facade windows are flat unframed glass rectangles, and the broad body
+shares a uniform weathered-parapet concrete material with unrelated pool pieces.
+
+Give ONLY the condo body's wall material a derived painted-mineral finish with its
+own restrained texture seed, preserving the existing warm colour. Use its authored
+metre UV coordinates for a tiling texture, with a derived mesh and unchanged vertex
+positions/topology. Retain the concrete band and glass slots; never change shared
+pool coping/steps or the source materials. Add fitted end-window sills/jambs, side
+casement divisions and four supported exterior downpipes below deck level. Preserve
+roof/pool/recovery/collision and original balcony sills. The rainwater runs belong
+at actual exterior corners and stop at ground, not floating anywhere in the court.
+
+Then use actual preview and four roof directions/Low/sky samples for final art
+disposition, selected map-card refresh and any justified next correction. Do not
+claim native performance or full gameplay acceptance from these art views.
