@@ -122,7 +122,7 @@ namespace TumbangPreso.Visual
         // because a lavender shadow is the same fault on the ground.
         public MapLook[] Maps={
             new MapLook("BayanPlaza",new Color(.56f,.63f,.80f),new Color(.66f,.62f,.56f),new Color(.56f,.46f,.36f),new Color(.86f,.88f,1.08f),38,210,0,true)
-                .Air(new Color(.87f,.91f,.95f),new Color(.33f,.62f,.93f),new Color(.90f,.93f,.94f),new Color(1,.99f,.96f),new Color(.70f,.76f,.90f))
+                .Air(new Color(.74f,.85f,.94f),new Color(.33f,.62f,.93f),new Color(.76f,.87f,.95f),new Color(1,.99f,.96f),new Color(.70f,.76f,.90f))
                 .Key(new Color(1,.95f,.84f),1.32f,52,.76f,new Color(.012f,.012f,.022f)),
             new MapLook("Eskinita",new Color(.54f,.63f,.8f),new Color(.70f,.60f,.54f),new Color(.60f,.45f,.33f),new Color(.92f,.86f,1.06f),34,190,1,false)
                 .Air(new Color(.95f,.9f,.8f),new Color(.3f,.62f,.94f),new Color(.97f,.93f,.82f),new Color(1,.97f,.90f),new Color(.72f,.78f,.9f))
@@ -134,7 +134,7 @@ namespace TumbangPreso.Visual
                 .Air(new Color(.98f,.88f,.74f),new Color(.32f,.62f,.94f),new Color(1,.91f,.74f),new Color(1,.93f,.82f),new Color(.74f,.78f,.88f))
                 .Key(new Color(1,.87f,.70f),1.32f,42,.74f,new Color(.020f,.012f,.024f)),
             new MapLook("Lagoon",new Color(.52f,.72f,.86f),new Color(.62f,.74f,.72f),new Color(.60f,.56f,.44f),new Color(.84f,.96f,1.06f),55,290,4,false)
-                .Air(new Color(.80f,.92f,.95f),new Color(.26f,.62f,.92f),new Color(.86f,.95f,.96f),new Color(1,1,.97f),new Color(.66f,.78f,.90f))
+                .Air(new Color(.7f,.87f,.94f),new Color(.26f,.62f,.92f),new Color(.74f,.89f,.95f),new Color(1,1,.97f),new Color(.66f,.78f,.90f))
                 .Key(new Color(1,.96f,.86f),1.36f,52,.72f,new Color(.008f,.016f,.022f))
         };
         public MapLook Find(string map)

@@ -44,9 +44,9 @@ MonoBehaviour:
     SunIntensity: 1.32
     SunElevation: 52
     ShadowStrength: 0.76
-    Fog: {r: 0.87, g: 0.91, b: 0.95, a: 1}
+    Fog: {r: 0.74, g: 0.85, b: 0.94, a: 1}
     Zenith: {r: 0.33, g: 0.62, b: 0.93, a: 1}
-    Horizon: {r: 0.9, g: 0.93, b: 0.94, a: 1}
+    Horizon: {r: 0.76, g: 0.87, b: 0.95, a: 1}
     CloudLight: {r: 1, g: 0.99, b: 0.96, a: 1}
     CloudShade: {r: 0.7, g: 0.76, b: 0.9, a: 1}
     Lift: {r: 0.012, g: 0.012, b: 0.022, a: 1}
@@ -124,9 +124,9 @@ MonoBehaviour:
     SunIntensity: 1.36
     SunElevation: 52
     ShadowStrength: 0.72
-    Fog: {r: 0.8, g: 0.92, b: 0.95, a: 1}
+    Fog: {r: 0.7, g: 0.87, b: 0.94, a: 1}
     Zenith: {r: 0.26, g: 0.62, b: 0.92, a: 1}
-    Horizon: {r: 0.86, g: 0.95, b: 0.96, a: 1}
+    Horizon: {r: 0.74, g: 0.89, b: 0.95, a: 1}
     CloudLight: {r: 1, g: 1, b: 0.97, a: 1}
     CloudShade: {r: 0.66, g: 0.78, b: 0.9, a: 1}
     Lift: {r: 0.008, g: 0.016, b: 0.022, a: 1}
