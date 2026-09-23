@@ -112,7 +112,31 @@ and let it flow naturally"*, and NOT *"changing a slider"*. Rules:
   the piece harder to follow, the opposite of the goal.
 - **One timetable file.** Every shot reads the beats from it; nothing hard-codes an absolute frame.
 
+### 4.1 Smoothness: no motion may start, stop or switch on a single frame
+
+🧑 on a push-in that cut to a slightly different close-up: *"WEIRD ASS TRANSITION HERE"*, *"it
+wasnt smooth"*. Every one of these was a real hitch, found by the motion audit in § 5:
+
+- **A push-in and the close-up it arrives at are ONE shot.** The push lands exactly on the
+  close-up's opening camera, the close-up starts from the pose the push ends on, and the figure is
+  rendered with the same figure camera either side. A cut between two near-identical framings is a
+  jump cut, the worst transition there is.
+- **Ease in AND out.** A move that only eases in arrives at full speed and stops dead.
+- **Motions that cross a join are owned by one function** that both shots call, so they cannot
+  disagree about where the head is.
+- **Layer effects ON TOP of the current camera** (a crash zoom adds to the hold), never as absolute
+  values that restart it.
+- **Shakes are smooth noise that decays**, not a fresh random offset every two frames, which
+  strobes the whole image.
+- **Nothing switches:** flashes fade, glows ramp or flicker up like a neon tube, a figure turning
+  round spins through the angles instead of swapping its yaw.
+
 ## 5 · The review loop that actually found the problems
+
+- **Run the motion audit on every full render:** `python scripts/smooth.py out/<video>.mp4`
+  prints each frame whose change from the previous one spikes above its neighbours. Every intended
+  cut and flash appears; anything else is a hitch. It found the strobing shake, the popping turn
+  and the eye flash that switched off, none of which were visible in contact sheets.
 
 - **Look at every frame of a transition, not samples.** The eye transition looked fine in a
   half-second contact sheet and was obviously wrong frame by frame.

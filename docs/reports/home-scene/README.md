@@ -160,6 +160,7 @@ node scripts/sheet.mjs look 4                 # contact sheet of them
 npm run draft        # half-res preview, out/draft_half.mp4, ~5 min
 npm run master       # full 1080p30 master, out/zack_home_loop_1080p30.mp4, ~25 min
 npm run ship         # game copy + poster into Assets/TumbangPreso/Resources/UI/home/
+python scripts/smooth.py out/zack_home_loop_1080p30.mp4   # motion audit: hitches vs intended cuts
 ```
 
 Then run the guard: `Unity.exe -batchmode -runTests -projectPath . -testPlatform PlayMode

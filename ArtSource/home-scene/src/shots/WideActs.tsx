@@ -2,13 +2,13 @@ import React from 'react';
 import { B, bt, K } from '../lib/beats';
 import { Bolt, boltPoints, Crackle, Pt } from '../lib/bolt';
 import { inCubic, kf, outBack } from '../lib/kf';
-import { loopSin, onN } from '../lib/time';
+import { easeInOut, loopSin, onN } from '../lib/time';
 import { Dust } from '../art/props';
 import { Whip } from '../lib/whip';
 import { ActorImage, drawActor, DUSK, HAND_L, HAND_R, HEAD_TOP, useActor } from '../three/actor';
 import { arriveDX, zackWide } from '../three/zackWide';
 import { Cam, Wide, ZACK_AT, zackAnchor } from './Wide';
-import { WindStreaks } from './CloseUp';
+import { CU_CAM, FIGURE, WindStreaks } from './CloseUp';
 
 /**
  * ⚠️ THE CAMERA IS NEVER STILL, EVEN AT REST. 🧑 2026-09-23: *"dynamic camera movement ... not
@@ -24,12 +24,14 @@ export const wideCam = (f: number): Cam => {
     rot: 0.45 * loopSin(f, 2, 0.5),
   };
   if (f >= B.pushIn && f < B.cu) {
-    const z = kf(f, [[B.pushIn, drift.zoom], [B.cu, 1.9, inCubic]]);
+    // ⚠️ The push-in LANDS ON THE CLOSE-UP'S FIRST CAMERA, so the cut to his face is no cut at all.
+    const end = CU_CAM(B.cu);
     return {
-      zoom: z,
-      cx: kf(f, [[B.pushIn, drift.cx], [B.cu, 955]]),
-      cy: kf(f, [[B.pushIn, drift.cy], [B.cu, 470]]),
-      rot: kf(f, [[B.pushIn, drift.rot ?? 0], [B.cu, -5, inCubic]]),
+      // Eased in AND out: an ease-in alone arrived at full speed and stopped dead on the join.
+      zoom: kf(f, [[B.pushIn, drift.zoom], [B.cu, end.zoom, easeInOut]]),
+      cx: kf(f, [[B.pushIn, drift.cx], [B.cu, end.cx, easeInOut]]),
+      cy: kf(f, [[B.pushIn, drift.cy], [B.cu, end.cy, easeInOut]]),
+      rot: kf(f, [[B.pushIn, drift.rot ?? 0], [B.cu, end.rot ?? 0, easeInOut]]),
     };
   }
   if (f >= B.arrive && f < B.settle + bt(40)) {
@@ -65,17 +67,18 @@ export const WideActs: React.FC<{ f: number }> = ({ f }) => {
   const cam = wideCam(f);
   if (!zack) return null;
   const z = zackWide(f);
-  const anchor = zackAnchor(z.dx, 0.4);
   const d = drawActor(zack, {
-    ...anchor,
+    ...zackAnchor(z.dx, FIGURE.focus),
+    focus: FIGURE.focus,
     ppu: ZACK_AT.ppu,
     yaw: z.yaw,
     pose: z.pose,
     lift: z.lift,
     face: z.face,
+    eyeGlow: z.eyeGlow,
     slipper: z.slipper,
-    reach: 0.74,
-    res: Math.min(2.6, 1.4 * cam.zoom),
+    reach: FIGURE.reach,
+    res: Math.min(FIGURE.maxRes, 1.4 * cam.zoom),
     light: { ...DUSK, flash: z.flash, flashColour: '#FFF3C8' },
   });
   const step = onN(f, 2);
@@ -104,7 +107,10 @@ export const WideActs: React.FC<{ f: number }> = ({ f }) => {
 
   const over: React.ReactNode[] = [];
   if (f >= B.settle - bt(7) && f < B.settle + bt(26)) over.push(<Dust key="sd" t={(f - B.settle + bt(5)) / bt(18)} x={feet[0] + 60} y={feet[1]} s={1.5} seed="ad" />);
-  // Electricity on him: at his fists and feet in proportion to the charge.
+  // Electricity on him: at his fists and feet in proportion to the charge. The fist sparks fade
+  // as the push leaves his hands, since the close-up does not draw them.
+  const leave = f >= B.pushIn && f < B.cu ? kf(f, [[B.cu - bt(20), 1], [B.cu - bt(4), 0]]) : 1;
+  z.charge *= leave;
   over.push(<Sparks key="sh" at={hand} step={step} seed="hr" amount={z.charge} n={2 + Math.round(z.charge * 2)} />);
   over.push(<Sparks key="sl" at={handL} step={step} seed="hl" amount={z.charge * 0.8} />);
   if (z.charge > 0.5) over.push(<Sparks key="sf" at={feet} step={step} seed="ft" amount={z.charge - 0.3} r={140} />);
@@ -127,6 +133,8 @@ export const WideActs: React.FC<{ f: number }> = ({ f }) => {
     <Whip id="wwhip" blur={70 * whip} dx={-420 * inCubic(whip)}>
       <Wide f={f} cam={cam} figure={<ActorImage d={d} />} under={under} over={over} />
       <WindStreaks f={f} amount={streaks} />
+      {/* The close-up's vignette arrives with the push, not at a cut. */}
+      {f >= B.pushIn && f < B.cu && <rect x={0} y={0} width={1920} height={1080} fill="url(#vignette)" opacity={kf(f, [[B.pushIn, 0], [B.cu, 1, inCubic]])} />}
       {/* The dead stop lands with a one-frame flash of the whole screen, not of him: washing the
           figure alone read as a grey ghost in the first draft. */}
       {f === B.settle && <rect x={0} y={0} width={1920} height={1080} fill="#FFF3C8" opacity={0.22} />}

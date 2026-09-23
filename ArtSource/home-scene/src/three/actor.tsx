@@ -371,6 +371,8 @@ export type ActorProps = {
   light?: Light;
   ink?: number;
   face?: Face;
+  /** 0..1 how lit the eyes are when `face` is 'glow' (the strike-up flicker). Default 1. */
+  eyeGlow?: number;
   slipper?: SlipperState;
   /** Box half-size in model units around the focus. */
   reach?: number;
@@ -470,7 +472,7 @@ const light = (b: Built, p: ActorProps) => {
     m.uniforms.flash.value = L.flash ?? 0;
     (m.uniforms.flashColour.value as THREE.Color).set(L.flashColour ?? '#ffffff');
     const face = p.face ?? 'rest';
-    m.uniforms.eyeMix.value = face === 'rest' ? 0 : 1;
+    m.uniforms.eyeMix.value = face === 'rest' ? 0 : face === 'glow' ? (p.eyeGlow ?? 1) : 1;
     (m.uniforms.eyeColour.value as THREE.Color).set(face === 'glow' ? '#F6FFA0' : '#140806');
   }
   for (const h of b.mats.hull) {
@@ -527,7 +529,7 @@ export const drawActor = (b: Built, p: ActorProps): Drawn => {
   const fov = p.fov ?? 16;
   const reach = p.reach ?? 0.62;
   const size = Math.round(2 * reach * p.ppu);
-  const px = Math.min(3000, Math.round(size * (p.res ?? 1.5)));
+  const px = Math.min(4096, Math.round(size * (p.res ?? 1.5)));
   const dist = reach / Math.tan((fov / 2) * deg);
   const pitch = (p.pitch ?? 4) * deg;
   const tgt = p.target === 'handR'
