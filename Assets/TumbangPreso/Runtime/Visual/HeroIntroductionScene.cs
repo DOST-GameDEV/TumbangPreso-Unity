@@ -363,7 +363,8 @@ namespace TumbangPreso.Visual
             float distance = Vector3.Distance(position, focus);
             focus = Vector3.Lerp(focus, bounds.center, Ease(ShotStart(ShotIndexAt(seconds)), ShotEnd(ShotIndexAt(seconds)), seconds));
             var inverse = Quaternion.Inverse(Quaternion.LookRotation(-backward, Vector3.up));
-            float vertical = Mathf.Tan(fov * Mathf.Deg2Rad * .5f) * .82f;
+            // .78, not .82: the 4:3 framing check missed by 0.003 of the frame (NemuKeeps...Aspect).
+            float vertical = Mathf.Tan(fov * Mathf.Deg2Rad * .5f) * .78f;
             float horizontal = vertical * Mathf.Max(.5f, aspect);
             for (int corner = 0; corner < 8; corner++)
             {

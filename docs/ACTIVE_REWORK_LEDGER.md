@@ -1,5 +1,32 @@
 # Active TUMP rework ledger
 
+## Model handoff, 2026-09-24
+
+Owner requested continuing these fixes on GPT-6 Sol. Current-turn metadata now
+confirms gpt-6-sol. Work has resumed in this task. No cross-chat action, reset or
+goal-completion claim.
+
+DEV has local repair commit1f01bce1d, NOT pushed yet. A merge of incoming72479a6a8
+is in progress, single grounding conflict resolved/staged. Preserve our fresh-clip
+runtime fix plus incoming whole-vector reset on the editor authoring path; retain
+incoming Nemu16mstage and .78framing margin. TODO auto-merged with NATIVE-CHECK-1.
+QUAL is detached at1f01bce1d plus the three combined incoming C# files. Its focused
+Nemu framing/live-reveal run ended: {'total': '2', 'passed': '1', 'failed': '1', 'duration': '14.0264741'}. Actual 4:3 vertical
+margin was 0.0742304921 against required 0.075. An attempted FitBodies factor
+.78 to .77 failed at0.0738970637: frame17/18 is in the FIRST shot, which has
+no FitBodies. The factor was restored to incoming .78. Widening Nemu's authored
+opening lens44 to46 degrees in both tables passed1/1 in9.2232001s. Actual frame
+sequence and25percent grey pair inspected. Stop testing this marginal frame.
+Source/test outputs:
+Logs/cloud-nemu-merged-v1.xml/.log, frames Logs/cloud-nemu-merged-v1. No Unity job
+remains from this run. Next: preserve focused XML, back up and restore own
+generated QUAL churn, reconcile findings/TODO/ledger and commit the merge.
+Fetch before push, verify remote, align QUAL. Then investigate the observed
+first-person grip and Bayan right pektus head intersections in NATIVE-CHECK-1,
+followed by per-hero visual refinement. Client cohort-duration is a source
+concern until peer behavior gives evidence; no speculative protocol change.
+Do not rerun unchanged successes. All older TODOs remain open as recorded below.
+
 ## Current priority, 2026-09-24: review the owner's cloud push
 
 Owner explicitly confirmed the push after asking us to wait. DEV fast-forwarded

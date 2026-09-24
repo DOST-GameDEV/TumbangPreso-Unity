@@ -110,6 +110,9 @@ namespace TumbangPreso.Visual
                 if (writeRoot != null) writeRoot(curves);
                 else
                 {
+                    // Retain the incoming whole-vector reset for the editor-only
+                    // Rafi authoring path. Runtime introductions build a fresh clip.
+                    clip.SetCurve(rootPath, typeof(Transform), "localPosition", null);
                     clip.SetCurve(rootPath, typeof(Transform), "localPosition.x", curves[0]);
                     clip.SetCurve(rootPath, typeof(Transform), "localPosition.y", curves[1]);
                     clip.SetCurve(rootPath, typeof(Transform), "localPosition.z", curves[2]);

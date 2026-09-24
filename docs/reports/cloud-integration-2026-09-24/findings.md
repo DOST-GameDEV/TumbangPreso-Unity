@@ -67,11 +67,26 @@ very dark ink at the peak; reduced/observer framing still needs its own evidence
 Zack's storm, Dante's divided ridge, Cheska's cold stage and Rafi's wave now have
 distinct visible forms. Their incoming art is retained pending individual critique.
 
-First resolve the separate shared-phase receive concern recorded in plan.md:
-client duration currently depends on local kits before they are confirmed ready.
-Then per-hero visual refinement, live Grand Coven/body/FPP cast review, tree UI and
-missing-recording behavior. The remaining world-skill work and final native/peer/
-performance/device gates are still open. No intermediate player build was made.
+The incoming Nemu16m stage and fit-camera work were preserved during merge.
+The original 4:3 check failed by0.00077 of the viewport in the opening shot.
+Changing the later fit-camera factor did not address that shot; restoring the
+incoming factor and widening only the authored opening lens44 to46 degrees passed
+the focused native case **1/1 in9.2232001s**. The full native sequence and
+25percent grey pair were inspected. This was a marginal crop, so further framing
+tests here would take time from higher-impact product work.
+
+Next fix the separately observed first-person throw grip and Bayan right pektus
+head intersections recorded by NATIVE-CHECK-1. Then per-hero visual refinement,
+live Grand Coven/body/FPP cast review, tree UI and missing-recording behavior.
+The remaining world-skill work and final native/peer/performance/device gates
+are still open. No intermediate player build was made.
+
+Client duration currently depends on local kits before those kits are confirmed
+ready. This is a source-level peer concern, not a reproduced desync. Investigate
+it at the peer gate; do not change the protocol speculatively during art repair.
+
+![Nemu opening after the camera correction](nemu-opening-native-sequence.jpg)
+![Nemu opening before and after in greyscale](nemu-opening-grey25.jpg)
 
 Unity jobs finished; generated churn backed up/restored. Protected DEV PNG metas
 remain untouched. No new browser/helper was opened for this unit. No fixture

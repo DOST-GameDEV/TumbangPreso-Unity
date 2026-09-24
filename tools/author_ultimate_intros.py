@@ -496,7 +496,7 @@ def nemu(held=False):
     p.hold(3.36, 3.8, send)
 
     # A: from her left front so Kuro, on her left, shares the frame with her.
-    p.shot(0, 1.76, (-1.5, 1.2, 3.6), (-.4, .95, 0), 44, eye_to=(-1.3, 1.15, 3.25))
+    p.shot(0, 1.76, (-1.5, 1.2, 3.6), (-.4, .95, 0), 46, eye_to=(-1.3, 1.15, 3.25))
     # B: straight on, close, for the knowing look into the lens.
     p.shot(1.76, 2.26, (.05, 1.25, 3.1), (0, 1.05, 0), 40, eye_to=(.05, 1.22, 2.85), close=True)
     # C: the retained reveal that backs out to keep both bodies as Kuro grows.
