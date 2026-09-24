@@ -628,6 +628,11 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
   person (`ViewmodelArms.CastGesture.cs`), world VFX (`HeroHazards`, `AbilityVfx`) and cast/payload
   SFX (`tools/generate_ability_audio.py`, `build_ability_audio.py`; sourced SFX rules in CLAUDE.md
   section 6). Fix weak ones individually; no shared template.
+- [ ] **SKILL-TREE-1 Per-hero skill tree, owner 2026-09-24. OPEN.** *"create the ui and code for
+  skill tree, ur supposed to unlock the other skills as u play the character more but for now keep it
+  all unlocked and make it easy to lock again (keeping it all unlocked for testing)"*. Build on the
+  existing ability variants/loadout and cast counting (`SettingsStore.NoteAbilityCast`); one switch
+  re-enables locking; all three devices (MenuKit/ConvertedScreen, MenuNav back-out).
 - [ ] **REFINE-2.10 Integrated qualification.** One coherent candidate with specific
   evidence/limits; no blanket completion from screenshots or object-spawn tests.
   Include protocol51edge-climb real peers, dropped/late pose packets, reconnect/seat

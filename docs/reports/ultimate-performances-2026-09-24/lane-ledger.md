@@ -55,6 +55,10 @@ docs/TODO.md, docs/ACTIVE_REWORK_LEDGER.md) still apply.
     only the new introduction.)
 11. "pls put all instructions i give as well as ur plan in a ledger incase compaction triggers"
     (this file)
+12. "also create the ui and code for skill tree, ur supposed to unlock the other skills as u play the
+    character more but for now keep it all unlocked and make it easy to lock again (keeping it all
+    unlocked for testing)" (TODO SKILL-TREE-1; research the existing variant/loadout/unlock code
+    first: `SettingsStore.NoteAbilityCast`, `EffectiveCastCue` alternates, the hub loadout screens)
 
 ## Plan and order
 
@@ -64,7 +68,8 @@ docs/TODO.md, docs/ACTIVE_REWORK_LEDGER.md) still apply.
 2. NEXT: skill research (Valorant, Overwatch, Roblox battlegrounds; Riot VFX principles already
    in reports/visual-research-2026-09-23/findings.md) and a THOROUGH per-skill plan for all
    21 skills plus each ultimate's live part: `docs/reports/skill-performances-2026-09-24/plan.md`.
-3. Then implement, Phaister's LIVE Grand Coven first (owner complaint 10): its cast body clip
+3. DONE for Grand Coven (cast clip, first person, circle; see skill-performances progress.md).
+   Then implement, Phaister's LIVE Grand Coven first (owner complaint 10): its cast body clip
    (glb table in tools/author_hero_action.py, `hero-phaister-eclipse`), first-person gesture
    (`ViewmodelArms.CastGesture.cs`), the ritual circle (`HeroHazards.SpawnGrandCovenEclipse`,
    `CovenCircleBuild`), sound. Then every other skill one at a time, each with its own gesture,
