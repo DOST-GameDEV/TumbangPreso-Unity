@@ -286,6 +286,10 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Art batch ready for integrated intro/spectator/native acceptance; keep parent open
   for that gate and continue Ilalim art next.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
+  Bakery unit now implemented: owner-liked vintagev2fascia fitted3:1, stepped glazed
+  bread showcase and grouped loaves replacing generic cubes. Native1/1passed5.754s;
+  paired front/street/grey inspected. [Bakery evidence](reports/map-by-map-refinement-2026-09-23/ilalim-bakery/report.md).
+  Other signs/storefronts and integrated map qualification remain OPEN.
   Owner explicitly REJECTED print/copy storefront and generic world-sign lettering.
   [Storefront rework](reports/map-by-map-refinement-2026-09-23/ilalim-storefront-rework-plan.md)
   is OPEN and current priority: research actual Philippine shops, distinct functional

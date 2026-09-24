@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: publish qualified edge implementation, return to bakery
+## Current resume, 2026-09-24: recovery published, bakery ready to publish
 
 Overall goal ACTIVE and NOT complete. Owner says finish current work then all map
 refinements. New ultimate research is LATER. One implementation at a time, no
@@ -8,12 +8,15 @@ checkpoint stops/questions, other tasks/delegation, paid external APIs, resets,
 main edits or Desktop replacement. Quality product work before verification loops.
 Every older task remains. Queue audit removed zero existing IDs/legacy rows.
 
-DEV ASTRAReworks and owned detached QUAL start from a55b5b06dbbb5f340badf38de992ab8895848dec.
-Current recovery source/evidence/docs ready to publish. Original DEVhome-court and
-loading-street composition PNG metas remain protected dirt, NEVERstage/restore.
-No active Unity, owned browser tab, server or native player. All previous job IDs
-are historical. QUAL generated churn backed/restored, including only verified
-Rafi arm tangent additions (positions/normals/UV unchanged). No character-source edits.
+DEV ASTRAReworks recovery published and remote verified at59b8dc129bb5a45da07fd52b719048d95686881c.
+QUAL candidate compared21files bytewise, named stash preserved, advanced to that HEAD.
+Protected DEV composition metas untouched. Bakery unit finished: vintagev2sign3:1,
+stepped bread case and grouped loaves, same private collision. Native1/1passed5.754s;
+actual front/street/grey inspected and retained. Evidence/assets copied to DEV.
+Known QUAL churn backed and restored, no active Unity/browser/player/helper.
+Next publish bakery, preserve/advance QUAL, then LAUNDRY sign/frontage as next one
+unfinished unit. Sign register and all map parents remain open. Ultimate research
+stays later. One implementation at a time, no unrelated new work.
 
 Latest edge implementation: real roof catch/hang/mash/pull onto its edge; Lagoon
 fall-to-swim, Jump near bridge and physical climb. Ordinary centre respawn removed,
@@ -31,9 +34,8 @@ witness/camera failures preserved. This does not claim fresh real-peer/native pr
 packet loss/rejoin/seat handover/physical devices/replay/full-match/native performance
 remain explicitly in2.10/P7. Do not conceal those limits or mark all maps/goal done.
 
-Next: explicit stage/commit, fetch-before-push/remote verify, preserve QUAL candidate
-via comparison/named stash before advance. Then resume BAKERY sign/body installation
-and each remaining signage/map item. No new ultimate work or unrelated detour.
+Next: publish bakery with explicit staging/fetch/remote verification, then finish
+remaining Ilalim signs individually. Recovery is published; do not rerun it.
 
 ## Maps and signs remain unfinished
 
@@ -50,11 +52,11 @@ master protected. Eskinita's two old font-only boards are reopened for generated
 Owner requires real PH references, original generated sign art, critique, actual
 physical mounting/light/aspect and front plus gameplay-angle inspection. No stretching.
 
-Bakery next AFTER recovery: primary PFAJulie/Commons storefront/display photos
+Bakery source history: primary PFAJulie/Commons storefront/display photos
 actually viewed and tabs closed. Plan saved. Owner LIKES PANADERIA/PANDESALv1's
 vintage serif/layout, explicitly requested more vintage. V2edit keeps it, adds
 sun-fade/sparse border wear, words crisp; source/prompt/hash saved in ArtSource.
-Neither bakery candidate is installed/native qualified yet. Preserve both.
+V2 now installed/native qualified locally; see ilalim-bakery/report.md. Preserve both source candidates.
 
 Published prior units include Bayan hall e5f340c9f(local plaster,1/1in3.407s),
 Lagoon coast9e9302319and boats96215628c, plus all earlier map units inTODO/reports.

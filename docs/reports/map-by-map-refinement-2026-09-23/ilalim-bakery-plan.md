@@ -48,3 +48,13 @@ brick-red paint, sparse border/edge wear and gentle painted-surface variation.
 Keep lettering crisp, no repeated decorative bursts or heavy grunge. V1remains an
 owner-liked source; v2will be judged against it before native installation. This
 art edit proceeds alongside the higher-priority edge-climb gameplay correction.
+
+Implementation candidate,2026-09-24: vintagev2source copied byte-for-byte into
+Bakery-v2.png. Unity author preserves native2172x724and fits physical board3:1.
+Three stepped metal/glass showcase tiers contain round/oval/split bread groups;
+generic cubes are retained disabled. Bagged bread uses existing back shelves.
+Painted lower panels/brackets are fitted to the retained structure. Collider
+identity/bounds unchanged during authoring. Two new renderers,11944opaque and192glass
+vertices, no new shadow casters. Native front/street comparison pendingv1. No
+redesign of surrounding shops; print's earlier design is retained. Stop after
+focused pass and actual image critique, not another tooling/coverage detour.

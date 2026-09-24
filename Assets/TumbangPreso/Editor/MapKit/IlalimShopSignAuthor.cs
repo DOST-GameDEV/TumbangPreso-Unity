@@ -24,6 +24,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var map=GameObject.Find("IlalimNgTulay");var solids=map.GetComponentsInChildren<Collider>(true).ToDictionary(c=>c,c=>c.bounds);
             // Add other named signs only after their own reference and art review.
             Fit(map.transform,"Print",Folder+"/Print-v3.png",report);
+            Fit(map.transform,"Bakery",Folder+"/Bakery-v2.png",report);
             if(solids.Count!=map.GetComponentsInChildren<Collider>(true).Length||solids.Any(p=>p.Key==null||p.Key.bounds!=p.Value))throw new InvalidOperationException("Sign art changed gameplay collision.");
         }
         private static void Fit(Transform map,string id,string texturePath,StringBuilder report)

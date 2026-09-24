@@ -34,9 +34,11 @@ burst, forced distress, stock-font script or one design repeated on every busine
    No arbitrary food clipart or all-purpose glass stock stand. OPEN.
 9. PISONET: PISO NET. Research real coin-computer shop signs, keep world-business
    meaning distinct from gameplay/economy UI. Do not invent new game pricing. OPEN.
-10. BAKERY: PANADERIA / PANDESAL. Research neighborhood bakery fascia and bread
-    display; identity from meaningful lettering and bread shapes, not repeated
-    comic rays. Existing font-only board is not final acceptance. OPEN.
+10. BAKERY: PANADERIA / PANDESAL. PFA/Julie's and the photographer's Commons
+    neighborhood bakery photos actually viewed. Owner-likedv1refined into vintagev2,
+    installed3:1without stretching. Stepped bread showcase/grouped loaves/lower painted
+    panels implemented. Native1/1passed5.754s; matched front/street/grey inspected.
+    See ilalim-bakery/report.md. No owner approval of mounted result claimed.
 11. HARDWARE id currently means VULCANIZING. Research the actual tire-service shop,
     not a hardware retail store. One strong service word, realistic paint/board
     placement, recognizable tire/air-service objects. OPEN.
