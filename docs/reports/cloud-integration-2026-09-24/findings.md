@@ -1,5 +1,10 @@
 # First local cloud repairs, 2026-09-24
 
+Later native screen follow-up: the cloud skill tree's real HOME door and BACK
+route passed before and after a small player-facing copy correction, at five
+viewport shapes. [Skill-tree report](skill-tree/report.md). Physical input and
+account integration remain separate gates.
+
 Owner confirmed the push; ASTRAReworks fast-forwarded to4f62fcc5c. This review
 takes priority over the previous map/bot/final queue, which remains intact.
 The incoming last commit already removed generated hero voices. Human recordings

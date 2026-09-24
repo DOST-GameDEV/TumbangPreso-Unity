@@ -124,11 +124,11 @@ namespace TumbangPreso.UI.Hub
             var person = Roster.HeroPeople[Mathf.Max(0, Roster.IndexIn(Roster.HeroPeople, Hero))];
             _name.text = person.Name;
             var mastery = GameServices.Career?.Profile != null ? ProgressionRules.MasteryFor(GameServices.Career.Profile, Hero) : null;
-            // ⚠️ THE TREE SAYS WHEN IT IS OPEN FOR TESTING (`HeroLoadoutRules.LockSkillTree`, owner
-            // 2026-09-24), so a tester never reads an open branch as an unlock that fired by mistake.
-            // The counters still count underneath and each node still shows its challenge progress.
-            _mastery.text = "MASTERY " + (mastery != null ? mastery.Level : 1) + "  ·  "
-                          + (HeroLoadoutRules.ChallengesEnforced ? "unlock a branch by using its skill" : "every branch open for testing");
+            // Open branches say UNLOCKED on their tiles. Keep the challenge
+            // instruction only when the tree actually enforces unlocks.
+            // Counters and progress remain available in both modes.
+            _mastery.text = "MASTERY " + (mastery != null ? mastery.Level : 1)
+                          + (HeroLoadoutRules.ChallengesEnforced ? "  ·  unlock a branch by using its skill" : "");
             HubKit.Fit(_mastery, 560);
 
             for (int i = _tree.childCount - 1; i >= 0; i--) Destroy(_tree.GetChild(i).gameObject);

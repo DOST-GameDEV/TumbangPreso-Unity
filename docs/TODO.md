@@ -734,17 +734,21 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
   person (`ViewmodelArms.CastGesture.cs`), world VFX (`HeroHazards`, `AbilityVfx`) and cast/payload
   SFX (`tools/generate_ability_audio.py`, `build_ability_audio.py`; sourced SFX rules in CLAUDE.md
   section 6). Fix weak ones individually; no shared template.
-- [ ] **SKILL-TREE-1 Per-hero skill tree, owner 2026-09-24. IMPLEMENTED, NATIVE CHECK OWED.** *"create
+- [ ] **SKILL-TREE-1 Per-hero skill tree, owner 2026-09-24. IMPLEMENTED, LOCAL NATIVE ROUTE PASSED.** *"create
   the ui and code for skill tree, ur supposed to unlock the other skills as u play the character more
   but for now keep it all unlocked and make it easy to lock again (keeping it all unlocked for
   testing)"*. The tree screen already existed on ASTRAReworks (`UI/Hub/HubSkillTree.cs`, from HOME
   and the hero screen: branches per slot, cast-challenge progress, EQUIP), so it was not rebuilt.
   Added: **`HeroLoadoutRules.LockSkillTree = false`, the one switch** (set `true` to lock again);
   `ChallengesEnforced` follows it; `IsUnlocked(counters, variant, enforced)` overload so the locked
-  path stays asserted (`Phase10Tests`, 630/630 green); the tree reads *"every branch open for
-  testing"* and still shows each alternate's challenge and count; `LoadoutSurfaceProbe` locks the
-  tree for its own run. Owed on Windows: `LoadoutSurfaceProbe`, `HubFlowTests`,
-  `TumpNativePickerTests`, and one look at the tree on pad and touch.
+  path stays asserted (HeroLoadoutTests 14/14); the tree shows UNLOCKED on available alternates
+  and still shows each challenge and count. Its mastery header now omits the internal "open for
+  testing" explanation; the locked path retains its earning instruction. The actual HOME-to-tree
+  and BACK PlayMode route passed 1/1 both before and after the copy fix at five viewport shapes,
+  with inspected screenshots and 25 percent greyscale thumbnails.
+  [Native report](reports/cloud-integration-2026-09-24/skill-tree/report.md).
+  Still owed: `LoadoutSurfaceProbe`, `TumpNativePickerTests`, physical pad and touch review,
+  real progression/account integration. These gates do not reopen the passed local screen route.
 - [ ] **REFINE-2.10 Integrated qualification.** One coherent candidate with specific
   evidence/limits; no blanket completion from screenshots or object-spawn tests.
   Include protocol51edge-climb real peers, dropped/late pose packets, reconnect/seat

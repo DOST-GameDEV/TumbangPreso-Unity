@@ -1,6 +1,28 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-25: Supernova and remaining skill effects
+## Current resume, 2026-09-25: local skill tree verified, continue gameplay work
+
+Owner asleep; autonomous work continues with NO USAGE RESETS, credit spend or
+paid services. DEV/remote/QUAL verified at a8291c76c after Ignition Cannon's
+small impact; report under cloud-integration-2026-09-24/skill-fx/.
+Supernova's staged dome remains translucent with the can readable, but an
+actual player overlap is still needed. Hex already has four standing marks,
+and Kuro's7.4scale was explicitly approved over5.6 by the owner; do not
+shrink Kuro from a close showcase frame. Both remain in their live gates.
+
+SkillTree's native HOME-door and BACK route passed1/1 before in42.053s and
+1/1 after in36.207s. Five actual viewports were captured each time; no
+layout collision observed. Open alternate tiles read UNLOCKED. The mastery
+line exposed "every branch open for testing" to players, so the scoped source
+edit removes that phrase in open mode only; locked mode retains its earning
+instruction. Report, XML, before/after images and 25percent greyscale live
+under reports/cloud-integration-2026-09-24/skill-tree/. Pad/touch hardware,
+real progression, LoadoutSurfaceProbe and TumpNativePickerTests remain open.
+Publish this unit, align QUAL, then resume actionable skill/cast and older
+gameplay/map gates one at a time. Protected DEV composition PNG metas remain
+dirty and must never be staged or restored.
+
+## Published unit, 2026-09-25: Supernova and remaining skill effects
 
 Owner asleep: continue autonomously and NEVER use a usage reset, credit or paid
 service. DEV/remote/QUAL last published at5b4f69489; Ignition Cannon work is
