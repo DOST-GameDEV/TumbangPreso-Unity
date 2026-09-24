@@ -202,6 +202,35 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
 Capture: `WorldCourtCueTests.BrightLookSameCameraCapturesOnAllFiveMaps` writes stage, eye and
 cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 passed on the Mac.
 
+### KANTO-1 · Sample map: a city park block modelled in Blender ⚠️ OPEN, 2026-09-24
+
+A style study the owner directed, from Tiny Talisman's "Stylized Modern City", PEAK and
+Brainchild's cartoon towns. **Not registered**: it is not in `SceneFlow.Maps`, `GameLaunch`,
+`MapGeometryCheck.Gated` or the build settings, so no shipped list or test sees it. Open
+`Scenes/Maps/Kanto.unity` and press Play.
+
+- **The pipeline, source to scene.** `tools/author_kanto_textures.py` paints the tileable
+  textures (flat illustrated style: organic bricks, feathered patches, no grain; the owner
+  rejected two grainier rounds). `tools/author_kanto_models.py` is the building kit (one-piece
+  wall shells with recessed windows, swept mouldings, cut-out frames, shingled leaf foliage)
+  and the hero brick corner. `tools/author_kanto_blockout.py` is the approved layout.
+  `tools/author_kanto_city.py` builds every other model, the ground and wires, exports one
+  `.glb` per model (material NAMES only) and `Art/Kanto/kanto_layout.json`.
+  `Editor/MapKit/KantoSceneBuilder.Run` / `.RunReview` builds the scene and renders
+  `Logs/kanto-unity-vN`. Rebuild order: textures, city (Blender, headless), then the builder.
+- **Play area = Bayan Plaza's**, measured off the shipped Bounds colliders: walls at +/-13,
+  box 14 x 14 on a 20 x 20 paved court, lawns, trees 11.6 m out, clutter under 1 m.
+- **Measured:** 222 pieces placed, 0 missing, 59 materials, 0 unmatched material names
+  (`Logs/kanto-build.log`); review v3 shows the chalk and throwing lines from above.
+- **Not yet verified:** a played match (bots, throws, retrieval) on it; `MapGeometryCheck` /
+  `ArenaCheck` against its bounds (they only walk registered maps); the Hero Strike footprint
+  rule against a 26 x 26 area; frame rate with ~35 k-face buildings and leaf cards.
+- **Open art items:** anti-tiling exists only in the Blender previews (Unity materials tile
+  plainly); the court is large and plain at eye level; far fillers could use more roof life.
+- **Rules learnt:** no two surfaces may share a plane (the ground is non-overlapping cells;
+  everything placed on a surface sinks 1 to 2 cm into it); glTFast negates X, so a Blender
+  point (x, y, z) lands at Unity (-x, z, -y); painted shop bases avoid the role hues.
+
 ### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)
 
 LATEST owner WIP rule: finish the currently active implementation and its actual

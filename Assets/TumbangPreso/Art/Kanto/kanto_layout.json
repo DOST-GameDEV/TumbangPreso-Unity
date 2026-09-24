@@ -1,0 +1,2779 @@
+{
+ "note": "Written by tools/author_kanto_city.py. Positions are UNITY axes: (x, y, z) = (-bx, bz, -by), glTFast's conversion; yaw is degrees about Unity Y.",
+ "gameplay": {
+  "box": 7.0,
+  "throw": 8.0,
+  "spawn": 9.0,
+  "half": 13.0,
+  "walk": 0.12
+ },
+ "materials": [
+  {
+   "name": "stone_blocks",
+   "texture": "stone_blocks",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "brick",
+   "texture": "brick",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "stone",
+   "texture": "stone",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "stone_shade",
+   "texture": "stone",
+   "tint": [
+    0.82,
+    0.78,
+    0.7
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "trim",
+   "texture": "paint",
+   "tint": [
+    0.4144,
+    0.6091,
+    0.5785
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "glass",
+   "texture": "glass",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": true
+  },
+  {
+   "name": "frame",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "roof",
+   "texture": "roof",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.35,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "metal",
+   "texture": "paint",
+   "tint": [
+    0.6828,
+    0.7163,
+    0.7163
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "awning_a",
+   "texture": "paint",
+   "tint": [
+    0.9704,
+    0.4855,
+    0.4587
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "awning_b",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    1.0,
+    0.9816
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "awning_c",
+   "texture": "paint",
+   "tint": [
+    0.5227,
+    0.7782,
+    0.6285
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "tank",
+   "texture": "paint",
+   "tint": [
+    0.7163,
+    0.8613,
+    0.8347
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    0.9704,
+    0.5459
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "wood",
+   "texture": "wood",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plant",
+   "texture": "paint",
+   "tint": [
+    0.8071,
+    0.9474,
+    0.5227
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "leaf_light",
+   "texture": "leaf",
+   "tint": [
+    0.6285,
+    0.8869,
+    0.2784
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "leaf_dark",
+   "texture": "leaf",
+   "tint": [
+    0.3815,
+    0.6563,
+    0.2515
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "leaf_core",
+   "texture": "",
+   "tint": [
+    0.2784,
+    0.4812,
+    0.2031
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "soil",
+   "texture": "",
+   "tint": [
+    0.4347,
+    0.3347,
+    0.2562
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "white",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "ground",
+   "texture": "",
+   "tint": [
+    0.6041,
+    0.5958,
+    0.6205
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plaster_cream",
+   "texture": "plaster",
+   "tint": [
+    1.0,
+    1.0,
+    0.8869
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plaster_mint",
+   "texture": "plaster",
+   "tint": [
+    0.8071,
+    0.959,
+    0.8869
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plaster_butter",
+   "texture": "plaster",
+   "tint": [
+    1.0,
+    0.9816,
+    0.7324
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plaster_rose",
+   "texture": "plaster",
+   "tint": [
+    1.0,
+    0.8279,
+    0.8279
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plaster_sage",
+   "texture": "plaster",
+   "tint": [
+    0.8481,
+    0.9238,
+    0.7928
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plaster_sky",
+   "texture": "plaster",
+   "tint": [
+    0.8279,
+    0.9357,
+    0.9704
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "mustard",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    0.8613,
+    0.4723
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "concrete",
+   "texture": "paint",
+   "tint": [
+    0.9357,
+    0.9238,
+    0.8994
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "tin_teal",
+   "texture": "paint",
+   "tint": [
+    0.5679,
+    0.7928,
+    0.7782
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "tin_red",
+   "texture": "paint",
+   "tint": [
+    0.8742,
+    0.5459,
+    0.4855
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "railing",
+   "texture": "paint",
+   "tint": [
+    0.4445,
+    0.5889,
+    0.5459
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "asphalt",
+   "texture": "asphalt",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.4,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "paving",
+   "texture": "paving",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "court",
+   "texture": "court",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "grass",
+   "texture": "grass",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "kerb",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    0.9982,
+    0.9647
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "road_paint",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "lane_yellow",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    0.9704,
+    0.5227
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "trunk",
+   "texture": "paint",
+   "tint": [
+    0.7163,
+    0.5991,
+    0.4723
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "pole",
+   "texture": "paint",
+   "tint": [
+    0.5889,
+    0.6091,
+    0.5991
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "timber_pole",
+   "texture": "paint",
+   "tint": [
+    0.7324,
+    0.638,
+    0.5459
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "wire",
+   "texture": "",
+   "tint": [
+    0.3347,
+    0.3347,
+    0.3511
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "signal_red",
+   "texture": "",
+   "tint": [
+    0.977,
+    0.4812,
+    0.4347
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": true,
+   "glossy": false
+  },
+  {
+   "name": "signal_amber",
+   "texture": "",
+   "tint": [
+    0.9909,
+    0.9238,
+    0.5025
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": true,
+   "glossy": false
+  },
+  {
+   "name": "signal_green",
+   "texture": "",
+   "tint": [
+    0.5785,
+    0.9288,
+    0.6741
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": true,
+   "glossy": false
+  },
+  {
+   "name": "bin_green",
+   "texture": "paint",
+   "tint": [
+    0.5679,
+    0.7928,
+    0.6653
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "lamp_glass",
+   "texture": "",
+   "tint": [
+    0.9909,
+    0.9723,
+    0.8932
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": true,
+   "glossy": false
+  },
+  {
+   "name": "brick_brown",
+   "texture": "brick_brown",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "panel",
+   "texture": "panel",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "stucco_tan",
+   "texture": "plaster",
+   "tint": [
+    0.8994,
+    0.7928,
+    0.6472
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "stucco_olive",
+   "texture": "plaster",
+   "tint": [
+    0.7928,
+    0.7928,
+    0.6472
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "frame_dark",
+   "texture": "paint",
+   "tint": [
+    0.3024,
+    0.3815,
+    0.3636
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "metal_dark",
+   "texture": "paint",
+   "tint": [
+    0.4144,
+    0.4445,
+    0.4587
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "paint_ochre",
+   "texture": "paint",
+   "tint": [
+    0.9816,
+    0.8279,
+    0.3815
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "paint_red",
+   "texture": "paint",
+   "tint": [
+    0.8279,
+    0.3815,
+    0.3447
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "paint_green",
+   "texture": "paint",
+   "tint": [
+    0.4144,
+    0.6653,
+    0.5227
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "paint_teal",
+   "texture": "paint",
+   "tint": [
+    0.3815,
+    0.6828,
+    0.6828
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  }
+ ],
+ "placements": [
+  {
+   "model": "brick_corner",
+   "position": [
+    -30.0,
+    0.1,
+    -30.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "deco_corner",
+   "position": [
+    30.0,
+    0.1,
+    -30.0
+   ],
+   "yaw": -180.0
+  },
+  {
+   "model": "glass_tower",
+   "position": [
+    -30.0,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "townhouse_row",
+   "position": [
+    30.0,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "loft_red_5",
+   "position": [
+    4.5,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "stucco_tan_6",
+   "position": [
+    -4.8,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "shophouse_mint_4",
+   "position": [
+    -14.6,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "glassmid_7",
+   "position": [
+    30.0,
+    0.1,
+    4.5
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "loft_brown_ph_4",
+   "position": [
+    30.0,
+    0.1,
+    -4.8
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "panel_5",
+   "position": [
+    30.0,
+    0.1,
+    -14.6
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "shophouse_rose_3",
+   "position": [
+    -4.5,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "stucco_olive_5",
+   "position": [
+    4.8,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "loft_red_ph_6",
+   "position": [
+    14.6,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "shophouse_butter_4",
+   "position": [
+    -30.0,
+    0.1,
+    -4.5
+   ],
+   "yaw": 270.0
+  },
+  {
+   "model": "loft_brown_3",
+   "position": [
+    -30.0,
+    0.1,
+    4.8
+   ],
+   "yaw": 270.0
+  },
+  {
+   "model": "glassmid_5",
+   "position": [
+    -30.0,
+    0.1,
+    14.6
+   ],
+   "yaw": 270.0
+  },
+  {
+   "model": "far_loft_brown_ph_5",
+   "position": [
+    30.0,
+    0.1,
+    -57.5
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_panel_6",
+   "position": [
+    30.0,
+    0.1,
+    -68.8
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_shophouse_sky_4",
+   "position": [
+    30.0,
+    0.1,
+    -76.6
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_stucco_olive_4",
+   "position": [
+    30.0,
+    0.1,
+    -85.9
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_loft_red_4",
+   "position": [
+    30.0,
+    0.1,
+    -95.2
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_stucco_tan_7",
+   "position": [
+    30.0,
+    0.1,
+    -106.5
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_glassmid_9",
+   "position": [
+    14.0,
+    0.1,
+    -48.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_shophouse_sage_3",
+   "position": [
+    14.0,
+    0.1,
+    -59.8
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_loft_brown_ph_5",
+   "position": [
+    14.0,
+    0.1,
+    -68.1
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_panel_6",
+   "position": [
+    14.0,
+    0.1,
+    -77.4
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_shophouse_sky_4",
+   "position": [
+    14.0,
+    0.1,
+    -88.7
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_stucco_olive_4",
+   "position": [
+    14.0,
+    0.1,
+    -96.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_loft_red_4",
+   "position": [
+    -14.0,
+    0.1,
+    -57.5
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_stucco_tan_7",
+   "position": [
+    -14.0,
+    0.1,
+    -68.8
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_glassmid_9",
+   "position": [
+    -14.0,
+    0.1,
+    -80.1
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_shophouse_sage_3",
+   "position": [
+    -14.0,
+    0.1,
+    -88.4
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_loft_brown_ph_5",
+   "position": [
+    -14.0,
+    0.1,
+    -97.7
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_panel_6",
+   "position": [
+    -14.0,
+    0.1,
+    -109.0
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_shophouse_sky_4",
+   "position": [
+    -30.0,
+    0.1,
+    -48.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_stucco_olive_4",
+   "position": [
+    -30.0,
+    0.1,
+    -56.3
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_loft_red_4",
+   "position": [
+    -30.0,
+    0.1,
+    -65.6
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_stucco_tan_7",
+   "position": [
+    -30.0,
+    0.1,
+    -74.9
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_glassmid_9",
+   "position": [
+    -30.0,
+    0.1,
+    -86.2
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_shophouse_sage_3",
+   "position": [
+    -30.0,
+    0.1,
+    -97.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_loft_brown_ph_5",
+   "position": [
+    57.5,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "far_panel_6",
+   "position": [
+    68.8,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "far_shophouse_sky_4",
+   "position": [
+    76.6,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "far_stucco_olive_4",
+   "position": [
+    85.9,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "far_loft_red_4",
+   "position": [
+    95.2,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "far_stucco_tan_7",
+   "position": [
+    106.5,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "far_glassmid_9",
+   "position": [
+    48.5,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_shophouse_sage_3",
+   "position": [
+    59.8,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_loft_brown_ph_5",
+   "position": [
+    68.1,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_panel_6",
+   "position": [
+    77.4,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_shophouse_sky_4",
+   "position": [
+    88.7,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_stucco_olive_4",
+   "position": [
+    96.5,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_loft_red_4",
+   "position": [
+    57.5,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "far_stucco_tan_7",
+   "position": [
+    68.8,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "far_glassmid_9",
+   "position": [
+    80.1,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "far_shophouse_sage_3",
+   "position": [
+    88.4,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "far_loft_brown_ph_5",
+   "position": [
+    97.7,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "far_panel_6",
+   "position": [
+    109.0,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0
+  },
+  {
+   "model": "far_shophouse_sky_4",
+   "position": [
+    48.5,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_stucco_olive_4",
+   "position": [
+    56.3,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_loft_red_4",
+   "position": [
+    65.6,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_stucco_tan_7",
+   "position": [
+    74.9,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_glassmid_9",
+   "position": [
+    86.2,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_shophouse_sage_3",
+   "position": [
+    97.5,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_loft_brown_ph_5",
+   "position": [
+    -30.0,
+    0.1,
+    57.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_panel_6",
+   "position": [
+    -30.0,
+    0.1,
+    68.8
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_shophouse_sky_4",
+   "position": [
+    -30.0,
+    0.1,
+    76.6
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_stucco_olive_4",
+   "position": [
+    -30.0,
+    0.1,
+    85.9
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_loft_red_4",
+   "position": [
+    -30.0,
+    0.1,
+    95.2
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_stucco_tan_7",
+   "position": [
+    -30.0,
+    0.1,
+    106.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_glassmid_9",
+   "position": [
+    -14.0,
+    0.1,
+    48.5
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_shophouse_sage_3",
+   "position": [
+    -14.0,
+    0.1,
+    59.8
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_loft_brown_ph_5",
+   "position": [
+    -14.0,
+    0.1,
+    68.1
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_panel_6",
+   "position": [
+    -14.0,
+    0.1,
+    77.4
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_shophouse_sky_4",
+   "position": [
+    -14.0,
+    0.1,
+    88.7
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_stucco_olive_4",
+   "position": [
+    -14.0,
+    0.1,
+    96.5
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_loft_red_4",
+   "position": [
+    14.0,
+    0.1,
+    57.5
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_stucco_tan_7",
+   "position": [
+    14.0,
+    0.1,
+    68.8
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_glassmid_9",
+   "position": [
+    14.0,
+    0.1,
+    80.1
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_shophouse_sage_3",
+   "position": [
+    14.0,
+    0.1,
+    88.4
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_loft_brown_ph_5",
+   "position": [
+    14.0,
+    0.1,
+    97.7
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_panel_6",
+   "position": [
+    14.0,
+    0.1,
+    109.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "far_shophouse_sky_4",
+   "position": [
+    30.0,
+    0.1,
+    48.5
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_stucco_olive_4",
+   "position": [
+    30.0,
+    0.1,
+    56.3
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_loft_red_4",
+   "position": [
+    30.0,
+    0.1,
+    65.6
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_stucco_tan_7",
+   "position": [
+    30.0,
+    0.1,
+    74.9
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_glassmid_9",
+   "position": [
+    30.0,
+    0.1,
+    86.2
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_shophouse_sage_3",
+   "position": [
+    30.0,
+    0.1,
+    97.5
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "far_loft_brown_ph_5",
+   "position": [
+    -57.5,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_panel_6",
+   "position": [
+    -68.8,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_shophouse_sky_4",
+   "position": [
+    -76.6,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_stucco_olive_4",
+   "position": [
+    -85.9,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_loft_red_4",
+   "position": [
+    -95.2,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_stucco_tan_7",
+   "position": [
+    -106.5,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_glassmid_9",
+   "position": [
+    -48.5,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "far_shophouse_sage_3",
+   "position": [
+    -59.8,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "far_loft_brown_ph_5",
+   "position": [
+    -68.1,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "far_panel_6",
+   "position": [
+    -77.4,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "far_shophouse_sky_4",
+   "position": [
+    -88.7,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "far_stucco_olive_4",
+   "position": [
+    -96.5,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "far_loft_red_4",
+   "position": [
+    -57.5,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_stucco_tan_7",
+   "position": [
+    -68.8,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_glassmid_9",
+   "position": [
+    -80.1,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_shophouse_sage_3",
+   "position": [
+    -88.4,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_loft_brown_ph_5",
+   "position": [
+    -97.7,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_panel_6",
+   "position": [
+    -109.0,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0
+  },
+  {
+   "model": "far_shophouse_sky_4",
+   "position": [
+    -48.5,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "far_stucco_olive_4",
+   "position": [
+    -56.3,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "far_loft_red_4",
+   "position": [
+    -65.6,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "far_stucco_tan_7",
+   "position": [
+    -74.9,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "far_glassmid_9",
+   "position": [
+    -86.2,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "far_shophouse_sage_3",
+   "position": [
+    -97.5,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_tree",
+   "position": [
+    -11.6,
+    0.13,
+    -11.6
+   ],
+   "yaw": -40.107
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    -11.6,
+    0.13,
+    -6.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    -6.0,
+    0.13,
+    -11.6
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    -10.8,
+    0.13,
+    -3.0
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    -3.0,
+    0.13,
+    -10.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    -13.0,
+    0.13,
+    -3.4
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    -3.4,
+    0.13,
+    -13.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_tree",
+   "position": [
+    11.6,
+    0.13,
+    -11.6
+   ],
+   "yaw": 40.107
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    11.6,
+    0.13,
+    -6.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    6.0,
+    0.13,
+    -11.6
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    10.8,
+    0.13,
+    -3.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    3.0,
+    0.13,
+    -10.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    13.0,
+    0.13,
+    -3.4
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    3.4,
+    0.13,
+    -13.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_tree",
+   "position": [
+    11.6,
+    0.13,
+    11.6
+   ],
+   "yaw": -40.107
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    11.6,
+    0.13,
+    6.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    6.0,
+    0.13,
+    11.6
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    10.8,
+    0.13,
+    3.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    3.0,
+    0.13,
+    10.8
+   ],
+   "yaw": -180.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    13.0,
+    0.13,
+    3.4
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    3.4,
+    0.13,
+    13.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_tree",
+   "position": [
+    -11.6,
+    0.13,
+    11.6
+   ],
+   "yaw": 40.107
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    -11.6,
+    0.13,
+    6.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    -6.0,
+    0.13,
+    11.6
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    -10.8,
+    0.13,
+    3.0
+   ],
+   "yaw": 90.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    -3.0,
+    0.13,
+    10.8
+   ],
+   "yaw": -180.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    -13.0,
+    0.13,
+    3.4
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    -3.4,
+    0.13,
+    13.0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    7.75,
+    0.13,
+    -13.7
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    -7.75,
+    0.13,
+    -13.7
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    13.7,
+    0.13,
+    7.75
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    13.7,
+    0.13,
+    -7.75
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    -7.75,
+    0.13,
+    13.7
+   ],
+   "yaw": -180.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    7.75,
+    0.13,
+    13.7
+   ],
+   "yaw": -180.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    -13.7,
+    0.13,
+    -7.75
+   ],
+   "yaw": -270.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    -13.7,
+    0.13,
+    7.75
+   ],
+   "yaw": -270.0
+  },
+  {
+   "model": "traffic_signal",
+   "position": [
+    -16.4,
+    0.11,
+    -16.4
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "street_bin",
+   "position": [
+    -15.8,
+    0.12,
+    -5.5
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    -6.0,
+    0.12,
+    -28.5
+   ],
+   "yaw": -343.7747
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    -28.5,
+    0.12,
+    -6.0
+   ],
+   "yaw": -687.5494
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    -12.0,
+    0.12,
+    -28.5
+   ],
+   "yaw": -687.5494
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    -28.5,
+    0.12,
+    -12.0
+   ],
+   "yaw": -1375.0987
+  },
+  {
+   "model": "traffic_signal",
+   "position": [
+    16.4,
+    0.11,
+    -16.4
+   ],
+   "yaw": -180.0
+  },
+  {
+   "model": "street_bin",
+   "position": [
+    15.8,
+    0.12,
+    -5.5
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    6.0,
+    0.12,
+    -28.5
+   ],
+   "yaw": -343.7747
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    28.5,
+    0.12,
+    -6.0
+   ],
+   "yaw": -687.5494
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    12.0,
+    0.12,
+    -28.5
+   ],
+   "yaw": -687.5494
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    28.5,
+    0.12,
+    -12.0
+   ],
+   "yaw": -1375.0987
+  },
+  {
+   "model": "traffic_signal",
+   "position": [
+    16.4,
+    0.11,
+    16.4
+   ],
+   "yaw": -180.0
+  },
+  {
+   "model": "street_bin",
+   "position": [
+    15.8,
+    0.12,
+    5.5
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    6.0,
+    0.12,
+    28.5
+   ],
+   "yaw": -343.7747
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    28.5,
+    0.12,
+    6.0
+   ],
+   "yaw": -687.5494
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    12.0,
+    0.12,
+    28.5
+   ],
+   "yaw": -687.5494
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    28.5,
+    0.12,
+    12.0
+   ],
+   "yaw": -1375.0987
+  },
+  {
+   "model": "traffic_signal",
+   "position": [
+    -16.4,
+    0.11,
+    16.4
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "street_bin",
+   "position": [
+    -15.8,
+    0.12,
+    5.5
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    -6.0,
+    0.12,
+    28.5
+   ],
+   "yaw": -343.7747
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    -28.5,
+    0.12,
+    6.0
+   ],
+   "yaw": -687.5494
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    -12.0,
+    0.12,
+    28.5
+   ],
+   "yaw": -687.5494
+  },
+  {
+   "model": "street_tree",
+   "position": [
+    -28.5,
+    0.12,
+    12.0
+   ],
+   "yaw": -1375.0987
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    104.0,
+    0.12,
+    27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    88.0,
+    0.12,
+    27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    72.0,
+    0.12,
+    27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    56.0,
+    0.12,
+    27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    40.0,
+    0.12,
+    27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    8.0,
+    0.12,
+    27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -8.0,
+    0.12,
+    27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -40.0,
+    0.12,
+    27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -56.0,
+    0.12,
+    27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -72.0,
+    0.12,
+    27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -88.0,
+    0.12,
+    27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -104.0,
+    0.12,
+    27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.12,
+    104.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.12,
+    88.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.12,
+    72.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.12,
+    56.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.12,
+    40.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.12,
+    8.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.12,
+    -8.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.12,
+    -40.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.12,
+    -56.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.12,
+    -72.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.12,
+    -88.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.12,
+    -104.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    104.0,
+    0.12,
+    -27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    88.0,
+    0.12,
+    -27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    72.0,
+    0.12,
+    -27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    56.0,
+    0.12,
+    -27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    40.0,
+    0.12,
+    -27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    8.0,
+    0.12,
+    -27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -8.0,
+    0.12,
+    -27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -40.0,
+    0.12,
+    -27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -56.0,
+    0.12,
+    -27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -72.0,
+    0.12,
+    -27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -88.0,
+    0.12,
+    -27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -104.0,
+    0.12,
+    -27.8
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.12,
+    104.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.12,
+    88.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.12,
+    72.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.12,
+    56.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.12,
+    40.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.12,
+    8.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.12,
+    -8.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.12,
+    -40.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.12,
+    -56.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.12,
+    -72.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.12,
+    -88.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.12,
+    -104.0
+   ],
+   "yaw": -90.0
+  },
+  {
+   "model": "ground",
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "yaw": -0.0
+  },
+  {
+   "model": "wires",
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "yaw": -0.0
+  }
+ ]
+}
