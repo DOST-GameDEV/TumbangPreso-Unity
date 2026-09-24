@@ -91,9 +91,12 @@ EXTRA_PALETTE = {
     "paint_teal":    (0.10, 0.36, 0.36),
     # Downtown curtain walls: reflective, so the sky tints them; kept teal, green and slate
     # rather than blue so no tower reads as the defence colour.
-    "curtain_teal":  (0.02, 0.30, 0.34),
-    "curtain_green": (0.05, 0.32, 0.20),
-    "curtain_dark":  (0.03, 0.10, 0.13),
+    # Owner, review v8: "windows on the glass buildings should be less reflective. make it
+    # match the rest of the windows". These are the window glass's own colours (3f8b86 at the
+    # foot of a pane, lightening upward), with one greener and one deeper variant.
+    "curtain_teal":  (0.050, 0.258, 0.238),
+    "curtain_green": (0.056, 0.262, 0.170),
+    "curtain_dark":  (0.030, 0.165, 0.160),
     "mullion_light": (0.80, 0.82, 0.79),
     "steel":         (0.30, 0.33, 0.33),
     "trunk_grey":    (0.46, 0.40, 0.34),
@@ -126,9 +129,10 @@ for _name, _tex in (("trunk", "bark"), ("trunk_grey", "bark"), ("timber_pole", "
     K.TEXTURED[_name] = _tex
 for _name in ("panel_sand", "panel_terracotta", "panel_sage", "panel_cream"):
     K.TEXTURED[_name] = "panelg"
-for _name in ("roof_tile", "roof_tile_green", "roof_tile_grey"):
-    K.TEXTURED[_name] = "tiles"
-K.NEUTRAL_TEX.update({"bark", "metal", "timber", "panelg", "tiles"})
+# Roof tiles and bark: the drawings the owner approved on swatch sheet v2. They are painted in
+# their own colours (clay, slate, brown), so they are NOT neutral and are never tinted.
+K.TEXTURED["roof_tile"], K.TEXTURED["roof_tile_grey"] = "tiles_clay", "tiles_slate"
+K.NEUTRAL_TEX.update({"metal", "timber", "panelg"})
 K.ANTI_TILE.update({"plaster", "asphalt", "grass"})
 
 # The same, for Unity: texture, tint (sRGB-ish multiplier, 1 = texture as painted), tiling.
@@ -163,17 +167,36 @@ _kit_material = K.material
 
 
 def _material(name):
-    """Curtain glass: no painted texture (a 2 m window tile repeated up a 120 m tower read as
-    stripes), a low roughness and some metal so it mirrors the sky like the reference's glass."""
+    """Curtain glass drawn like the street's windows, not a mirror (owner, review v8: "less
+    reflective ... match the rest of the windows"). The window texture is one soft vertical
+    gradient, darker at the foot of a pane and lighter at the head; here the same gradient
+    repeats once per 3.6 m storey (object height, from the 8.9 m podium top), because the
+    painted 2 m window tile repeated up a 120 m tower read as stripes. No metal, a matte
+    finish: the sky no longer washes the towers out to grey."""
     if name.startswith("curtain_") and bpy.data.materials.get(name) is None:
         m = bpy.data.materials.new(name)
         rgb = K.PALETTE[name]
         m.diffuse_color = (*rgb, 1)
         m.use_nodes = True
-        bsdf = m.node_tree.nodes["Principled BSDF"]
-        bsdf.inputs["Base Color"].default_value = (*rgb, 1)
-        bsdf.inputs["Metallic"].default_value = 0.8
-        bsdf.inputs["Roughness"].default_value = 0.12
+        nodes, links = m.node_tree.nodes, m.node_tree.links
+        bsdf = nodes["Principled BSDF"]
+        bsdf.inputs["Metallic"].default_value = 0.0
+        bsdf.inputs["Roughness"].default_value = 0.45
+        coord, split = nodes.new("ShaderNodeTexCoord"), nodes.new("ShaderNodeSeparateXYZ")
+        links.new(coord.outputs["Object"], split.inputs[0])
+        shift, wrap = nodes.new("ShaderNodeMath"), nodes.new("ShaderNodeMath")
+        shift.operation, shift.inputs[1].default_value = "SUBTRACT", 8.9
+        wrap.operation, wrap.inputs[1].default_value = "FLOORED_MODULO", 3.6
+        scale = nodes.new("ShaderNodeMath")
+        scale.operation, scale.inputs[1].default_value = "DIVIDE", 3.6
+        links.new(split.outputs["Z"], shift.inputs[0])
+        links.new(shift.outputs[0], wrap.inputs[0])
+        links.new(wrap.outputs[0], scale.inputs[0])
+        ramp = nodes.new("ShaderNodeValToRGB")
+        top = tuple(min(1.0, c * 1.55) for c in rgb)   # 45 per cent of the way to 7cc2b8, as the window texture
+        ramp.color_ramp.elements[0].color, ramp.color_ramp.elements[1].color = (*rgb, 1), (*top, 1)
+        links.new(scale.outputs[0], ramp.inputs["Fac"])
+        links.new(ramp.outputs["Color"], bsdf.inputs["Base Color"])
         return m
     return _kit_material(name)
 
@@ -756,7 +779,10 @@ def archetype(name, kind, w, storeys, colour, seed, detail=True, shop="paint_gre
     rr = random.Random(seed * 7 + 3)
     common = dict(seed=seed, planters=detail, acs=detail, keystones=False,
                   roof=rr.choice(("roof", "roof", "roof_warm", "roof_light")))
-    tile = rr.choice(("roof_tile", "roof_tile", "roof_tile_green", "roof_tile_grey"))
+    # Owner: "when using the red clay tiles, dont use it on a building with the bricks texture,
+    # otherwise it'll all look the same". Brick buildings get slate. (Green tiles wait for
+    # their own approved drawing.)
+    tile = "roof_tile_grey" if colour in ("brick", "brick_brown") else rr.choice(("roof_tile", "roof_tile", "roof_tile_grey"))
 
     def extras(c):
         taken = []
@@ -859,6 +885,25 @@ def limb(buf, p, q, r0, r1, mat, sides=10):
     buf._paint(r["verts"], mat)
 
 
+def tube(buf, pts, radii, mat, sides=10):
+    """ONE continuous tapered tube through a polyline: a ring at every point, turned to the
+    average of the segments either side, joined by quads. The trunk used to be one cone per
+    segment, and every join showed as a crack round the trunk (owner, review v8 on the bark)."""
+    pts = [Vector(p) for p in pts]
+    rings = []
+    for i, p in enumerate(pts):
+        d = (pts[min(i + 1, len(pts) - 1)] - pts[max(i - 1, 0)]).normalized()
+        q = d.to_track_quat("Z", "Y").to_matrix()
+        rings.append([buf.bm.verts.new(p + q @ Vector((math.cos(a) * radii[i], math.sin(a) * radii[i], 0)))
+                      for a in (k * math.tau / sides for k in range(sides))])
+    idx = buf.mi(mat)
+    for r0, r1 in zip(rings, rings[1:]):
+        for k in range(sides):
+            buf.bm.faces.new((r0[k], r0[(k + 1) % sides], r1[(k + 1) % sides], r1[k])).material_index = idx
+    buf.bm.faces.new(list(reversed(rings[0]))).material_index = idx
+    buf.bm.faces.new(rings[-1]).material_index = idx
+
+
 # THE TREE ROSTER. Owner on review v3: the trees "all look the same, are oriented the same way,
 # and are all the same size and color and type". Tiny Talisman's trees are big clumpy crowns,
 # often a bright lime, on thick trunks that BEND. Variation here is per TREE (shape, trunk,
@@ -877,6 +922,7 @@ def tree(name, style, seed, tint="", trunk="trunk", s=1.0):
     col = kit(name)
     rng = random.Random(seed)
     wood, leaves = K.Buf("trunk"), K.Buf("foliage", foliage=True)
+    wood.uv_mode = "trunk"   # bark wraps round the tree continuously, trunk and limbs alike
     clumps = []   # (centre, radii)
     # The trunk: a polyline with a bend, tapered, a flare at the root.
     if style == "young":
@@ -892,10 +938,13 @@ def tree(name, style, seed, tint="", trunk="trunk", s=1.0):
         bend = rng.uniform(0.15, 0.35) * s
         pts = [(0, 0, -0.05), (bend, bend * 0.4, 1.3 * s), (bend * 0.4, bend * 0.8, 2.5 * s)]
         radii = [0.3 * s, 0.25 * s, 0.21 * s]
-    for (a, b), r0, r1 in zip(zip(pts, pts[1:]), radii, radii[1:]):
-        limb(wood, a, b, r0, r1, trunk)
-    wood.cylinder((0, 0, 0.12), radii[0] * 1.45, 0.3, trunk, sides=10, top_scale=0.7)   # root flare
+    tube(wood, pts, radii, trunk, sides=12)
+    wood.cylinder((0, 0, 0.12), radii[0] * 1.45, 0.3, trunk, sides=12, top_scale=0.7)   # root flare
     top = Vector(pts[-1])
+    # A rounded knuckle where the limbs leave the trunk, so the fork reads as one piece of
+    # wood instead of separate sticks pushed into a post.
+    if style != "young":
+        wood.blob(tuple(top + Vector((0, 0, 0.05 * s))), (radii[-1] * 1.25, radii[-1] * 1.25, radii[-1] * 1.35), trunk)
     if style == "young":
         clumps.append((top + Vector((0, 0, 0.9 * s)), (1.1 * s, 1.1 * s, 1.0 * s)))
         # A tree guard: four posts and two rings, and an iron grate at its foot.
@@ -1065,8 +1114,14 @@ def traffic_signal(name="traffic_signal", reach=4.6):
         b.box(Matrix.Translation((x, -0.1, z)), (0.42, 0.36, 1.2), "railing")
         for k, m in enumerate(("signal_red", "signal_amber", "signal_green")):
             zz = z + 0.38 - k * 0.38
-            b.cylinder((x, -0.285, zz), 0.12, 0.03, m, sides=14)
-            b.box(Matrix.Translation((x, -0.4, zz + 0.12)) @ Matrix.Rotation(math.radians(-15), 4, "X"), (0.3, 0.24, 0.03), "railing")
+            # The lens is a disc FACING THE ROAD (-Y), sunk 1 cm into the housing's face. It
+            # was a vertical-axis cylinder, i.e. a pancake lying flat, and read as a half-disc
+            # cut by its visor (owner's screenshot, review v8).
+            limb(b, (x, -0.27, zz), (x, -0.31, zz), 0.12, 0.12, m, sides=16)
+            # A hood over the top half of the lens, sticking out 18 cm, and its two cheeks.
+            b.box(Matrix.Translation((x, -0.37, zz + 0.13)), (0.3, 0.2, 0.03), "railing")
+            for sx in (-1, 1):
+                b.box(Matrix.Translation((x + sx * 0.14, -0.37, zz + 0.06)), (0.025, 0.2, 0.15), "railing")
     b.finish(col, bevel=0.012, segments=1)
     return col
 
@@ -1814,6 +1869,8 @@ def city_cameras(scene, col):
     # park corner (tree, fence, crossing, signal, brick corner), and a street toward downtown.
     cam("detail_ne_corner", (7.0, 6.2, 1.9), (14.5, 14.5, 3.0), 26)
     cam("detail_street", (-24.8, 46.0, 1.7), (-22.0, 120.0, 12.0), 20)
+    # The NE corner's traffic signal from the kerb (the owner's own review shot, v8).
+    cam("detail_signal", (13.0, 12.4, 2.3), (16.4, 16.4, 3.4), 30)
     # A tiled roof up close (the owner judged the first tiles from about this distance).
     rose = next((o for o in scene.objects if o.name.startswith("shophouse_rose_3.")), None)
     if rose:
@@ -1890,7 +1947,7 @@ def assemble():
     print(f"[kanto-city] assembled {placed} instances of {len(kits)} models + ground, chalk, wires -> {CITY_BLEND}")
 
 
-def review(version):
+def review(version, only=None):
     """Render every saved review camera in the open file, versioned (chat clients cache images
     by filename)."""
     K.PREVIEWS.mkdir(parents=True, exist_ok=True)
@@ -1902,6 +1959,8 @@ def review(version):
     # edge pixels, un-premultiplied by a tiny alpha, drew as white outlines (review v2).
     scene.render.image_settings.color_mode = "RGB"
     for cam in sorted((o for o in scene.objects if o.type == "CAMERA"), key=lambda o: o.name):
+        if only and cam.name not in only:
+            continue
         scene.camera = cam
         scene.render.filepath = str(K.PREVIEWS / f"kanto_city_{cam.name}_v{version}.png")
         bpy.ops.render.render(write_still=True)
@@ -1918,7 +1977,10 @@ def main():
         if "--assemble" in argv:
             assemble()
         if "--review" in argv:
-            review(int(argv[argv.index("--review") + 1]))
+            # --cams a,b renders just those saved cameras (one change per round needs only the
+            # views that show it).
+            only = argv[argv.index("--cams") + 1].split(",") if "--cams" in argv else None
+            review(int(argv[argv.index("--review") + 1]), only)
         return
     if "--preview-model" in argv:
         version = int(argv[argv.index("--preview") + 1]) if "--preview" in argv else 1

@@ -291,8 +291,29 @@ class Buf:
         """Real-world-scale UVs: walls project horizontally along the face, floors from above.
         A brick is then the same size on every surface, and courses run level round corners."""
         uv = self.bm.loops.layers.uv.verify()
+        if getattr(self, "uv_mode", None) == "trunk":
+            # TREES: u runs AROUND the tree's own vertical axis (one texture tile per turn),
+            # v up it, on every face of trunk and limbs alike. With per-face projection the
+            # bark pattern broke at every facet and at every trunk-to-limb join (owner: "fix
+            # the seams where the trunk and limbs meet so the pattern wraps continuously").
+            for f in self.bm.faces:
+                us = [math.atan2(l.vert.co.y, l.vert.co.x) / math.tau for l in f.loops]
+                if max(us) - min(us) > 0.5:            # a face across the -pi/+pi cut
+                    us = [u + 1 if u < 0 else u for u in us]
+                for l, u in zip(f.loops, us):
+                    l[uv].uv = (u, l.vert.co.z / TILE_M)
+            return
         for f in self.bm.faces:
             n = f.normal
+            if 0.3 < n.z < 0.97 and self.mats[f.material_index].startswith("roof_tile"):
+                # PITCHED TILE ROOFS: u along the eaves, v up the slope, so tile courses run
+                # parallel to the ridge and every course's lower edge points DOWNHILL on both
+                # slopes (a top-down projection flipped them on one side).
+                down = Vector((n.x, n.y, 0)).normalized()
+                t = UP.cross(down)
+                for l in f.loops:
+                    l[uv].uv = (l.vert.co.dot(t) / TILE_M, -l.vert.co.dot(down) / n.z / TILE_M)
+                continue
             if abs(n.z) > 0.7:
                 for l in f.loops:
                     l[uv].uv = (l.vert.co.x / TILE_M, l.vert.co.y / TILE_M)

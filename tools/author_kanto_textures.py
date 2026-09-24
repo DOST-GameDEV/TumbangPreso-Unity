@@ -113,7 +113,7 @@ MORTAR = "9c4636"   # the owner kept the brick-toned grout after comparing three
 STRENGTH = {"brick": 3.0, "stone_blocks": 2.5, "stone": 0.0, "roof": 0.0, "glass": 0.0, "wood": 2.0, "paint": 0.0,
             "asphalt": 0.0, "brick_brown": 3.0, "panel": 1.5, "paving": 2.0, "court": 1.6, "grass": 0.0, "plaster": 0.0,
             "bark": 1.2, "metal": 0.0, "timber": 0.0, "panelg": 1.5, "tiles": 1.5,
-            "tiles_clay": 1.2, "tiles_slate": 1.0}
+            "tiles_clay": 1.2, "tiles_slate": 1.0, "tiles_teal": 1.2}
 
 
 def save(name, albedo, height):
@@ -350,6 +350,23 @@ def tiles_slate():
     save("tiles_slate", img, np.clip(fy, 0, 1) * (1 - past))
 
 
+def tiles_teal():
+    # GREEN-TEAL GLAZED BARREL TILES (owner: "maybe also a green/teal roof tile set too").
+    # Its own drawing, not the clay recoloured: rounded BARRELS running down the slope in
+    # vertical rows (texture Y), each with a soft lit crown and a soft shaded trough beside it,
+    # broken every 45 cm by a course end with a soft shadow band under it. Glaze reads as a
+    # gentle sheen on the crown, never a hard highlight. Contrast stays at the brick's.
+    row, fy, fx, ident = _courses(0.5, 0.4, 0.012, 211)
+    crown = np.cos((fx - 0.5) * np.pi) ** 2                     # 1 on the barrel's crown, 0 in the trough
+    base = hexcol("2f7466") * per_brick(ident, np.array([0.97, 1.0, 1.0, 1.03]), 212)[..., None]
+    shadow = np.clip(1 - np.abs(fy - 0.07) / 0.1, 0, 1)         # under the course above
+    lip = np.clip((fy - 0.86) / 0.1, 0, 1)                     # the rounded end of each tile
+    val = 0.93 + 0.08 * crown - 0.1 * shadow + 0.04 * lip * crown
+    img = base * val[..., None]
+    img = patches(img, np.array([1.04, 1.04, 1.03]), 0.8, 0.2, seed=213, feather=0.6)
+    save("tiles_teal", img, crown * 0.8 + fy * 0.2)
+
+
 def bark():
     # BARK, second attempt. Owner: "flat brown with two or three long, soft, feathered
     # vertical strokes, the same simplicity as the soft painted leaves. No grain." So: one flat
@@ -374,12 +391,14 @@ def bark():
 
 
 def metal():
-    # Painted street metal: poles, railings, signal housings, bench frames. Seen on 10 cm
-    # posts, so the marks are SMALL: a few feathered chips of lighter paint and darker
-    # scuffs a few centimetres across, on a flat coat. NEUTRAL: tinted per material.
-    img = patches(flat("e2e2e2"), np.array([0.86, 0.86, 0.86]), 0.09, 0.14, seed=141, feather=0.45)
-    img = patches(img, np.array([1.1, 1.1, 1.1]), 0.04, 0.06, seed=142, feather=0.35)
-    img = patches(img, np.array([0.93, 0.93, 0.93]), 0.5, 0.25, seed=143, feather=0.6)
+    # Painted street metal, second attempt. The first had dark scuff blotches that read as
+    # camouflage on signal housings, bins and poles (owner, review v8). PEAK paints props as a
+    # FLAT coat, so: one flat coat, one very broad soft lighter patch, and a sprinkle of a
+    # few faint, soft, lighter chips a few centimetres across. Nothing darker than 0.97.
+    # NEUTRAL: tinted per material.
+    img = patches(flat("e4e4e4"), np.array([1.035, 1.035, 1.035]), 0.7, 0.25, seed=141, feather=0.7)
+    img = patches(img, np.array([1.05, 1.05, 1.05]), 0.04, 0.03, seed=142, feather=0.6)
+    img = patches(img, np.array([0.97, 0.97, 0.97]), 0.9, 0.2, seed=143, feather=0.8)
     save("metal", img, np.zeros((SIZE, SIZE)))
 
 
@@ -442,7 +461,7 @@ def normals_only():
 
 if __name__ == "__main__":
     ALL = (brick, brick_brown, panel, stone_blocks, stone, roof, glass, wood, paint, asphalt, paving, court, grass,
-           plaster, panelg, tiles, tiles_clay, tiles_slate, bark, metal, timber, leaf)
+           plaster, panelg, tiles, tiles_clay, tiles_slate, tiles_teal, bark, metal, timber, leaf)
     if "--normals-only" in sys.argv:
         normals_only()
     elif "--only" in sys.argv:
