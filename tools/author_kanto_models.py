@@ -291,6 +291,8 @@ class Buf:
         """Real-world-scale UVs: walls project horizontally along the face, floors from above.
         A brick is then the same size on every surface, and courses run level round corners."""
         uv = self.bm.loops.layers.uv.verify()
+        if getattr(self, "uv_mode", None) == "keep":
+            return   # the builder wrote its own UVs (tree limbs: one cylindrical map per limb)
         if getattr(self, "uv_mode", None) == "trunk":
             # TREES: u runs AROUND the tree's own vertical axis (one texture tile per turn),
             # v up it, on every face of trunk and limbs alike. With per-face projection the

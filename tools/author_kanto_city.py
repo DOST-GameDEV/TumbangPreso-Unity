@@ -100,6 +100,10 @@ EXTRA_PALETTE = {
     "mullion_light": (0.80, 0.82, 0.79),
     "steel":         (0.30, 0.33, 0.33),
     "trunk_grey":    (0.46, 0.40, 0.34),
+    # Tower frames (owner, frame sheet v1: "just have CDE"): bronze, charcoal, deep teal.
+    "frame_bronze":  (0.26, 0.16, 0.09),
+    "frame_charcoal": (0.07, 0.08, 0.08),
+    "frame_teal":    (0.03, 0.11, 0.10),
     "panel_sand":    (0.80, 0.66, 0.48),
     "panel_terracotta": (0.72, 0.42, 0.30),
     "panel_sage":    (0.58, 0.66, 0.52),
@@ -134,6 +138,8 @@ for _name in ("panel_sand", "panel_terracotta", "panel_sage", "panel_cream"):
 K.TEXTURED["roof_tile"], K.TEXTURED["roof_tile_grey"] = "tiles_clay", "tiles_slate"
 K.TEXTURED["roof_tile_green"] = "tiles_teal"   # glazed barrel tiles, swatch sheet v4
 K.NEUTRAL_TEX.update({"metal", "timber", "panelg"})
+for _name in ("frame_bronze", "frame_charcoal", "frame_teal"):
+    K.TEXTURED[_name] = "metal"
 K.ANTI_TILE.update({"plaster", "asphalt", "grass"})
 
 # The same, for Unity: texture, tint (sRGB-ish multiplier, 1 = texture as painted), tiling.
@@ -701,9 +707,21 @@ def pitched_roof(c, w, D, tile, wall, rng, dormers=True):
             zs = TOP + h * (-y0 / (D / 2)) - 0.1   # where the slope is at the dormer face
             dh = 1.7
             p.box(Matrix.Translation((u, y0 - 0.9, zs + dh / 2 - 0.2)), (1.7, 1.8, dh + 0.4), wall)
-            p.box(Matrix.Translation((u, y0 + 0.02, zs + 0.75)), (1.1, 0.08, 1.1), "glass")
-            K.window_frame(c.frames, K.Facade((u - 1, y0), (u + 1, y0), (u, y0 - 1)), 1.0, zs + 0.75, 1.1, 1.1,
-                           cols=2, bar=0.08, depth=0.06, out=0.06, mat="frame")
+            # Z-FIGHT FIX (owner, review v19): the glass front, the frame and the dormer's own
+            # face used to share planes. Now the glass stands 1.5 cm proud of the dormer face,
+            # and the frame starts 2 cm in front of the glass whichever way solidify grows it.
+            p.box(Matrix.Translation((u, y0 - 0.0125, zs + 0.75)), (1.1, 0.055, 1.1), "glass")
+            K.window_frame(c.frames, K.Facade((u - 1, y0), (u + 1, y0), (u, y0 - 1)), 1.0, zs + 0.75, 1.18, 1.18,
+                           cols=2, bar=0.1, depth=0.05, out=0.085, mat="frame")
+            # The gable under the little roof was open (the slope showed through): close it.
+            gh = 0.85 * math.tan(math.radians(38))
+            tri = [Vector((u - 0.85, y0 - 0.03, zs + dh - 0.05)), Vector((u + 0.85, y0 - 0.03, zs + dh - 0.05)),
+                   Vector((u, y0 - 0.03, zs + dh + gh))]
+            back = [v + Vector((0, -0.3, 0)) for v in tri]
+            p.face(tri, wall)
+            p.face(list(reversed(back)), wall)
+            for j in range(3):
+                p.face([tri[j], back[j], back[(j + 1) % 3], tri[(j + 1) % 3]], wall)
             for sd in (-1, 1):
                 mm = Matrix.Translation((u + sd * 0.5, y0 - 0.8, zs + dh + 0.25)) @ Matrix.Rotation(sd * math.radians(38), 4, "Y")
                 p.box(mm, (1.25, 2.1, 0.1), tile)
@@ -802,6 +820,22 @@ def archetype(name, kind, w, storeys, colour, seed, detail=True, shop="paint_gre
                 taken.append((0, -1.8 - 7.4, w, 0))
         if kind in ("panel", "shophouse"):
             walkup_balconies(c)
+        # SHOP SIGNS (tools/author_kanto_signage.py): every shopfront gets its Filipino shop
+        # name on the fascia, about half a hanging blade sign, and some flat-roofed far blocks
+        # a rooftop billboard, as in the Tiny Talisman and Brainchild streets. Imported late:
+        # the signage module imports this one.
+        import author_kanto_signage as SG
+        f0 = c.facades[0]
+        if c.shops:
+            shop = SG.SHOP_NAMES[(seed * 7) % len(SG.SHOP_NAMES)]
+            SG.fascia_sign(c.col, shop, min(w * 0.72, 6.5), ("board", "letters", "lightbox")[seed % 3], seed,
+                           at=f0.frame(w / 2, c.ground - 1.0, 0.40))
+            if rr.random() < 0.5:
+                SG.blade_sign(c.col, shop, seed, at=f0.frame(0.9, c.ground + 1.3, 0.0))
+        if roof == "flat" and not detail and rr.random() < 0.3:
+            SG.billboard(c.col, seed, w=min(w - 1.5, 8.0), h=3.5,
+                         at=Matrix.Translation((w / 2, -D * 0.55, c.TOP - 0.02)))
+            taken.append((w / 2 - 4.5, -D * 0.55 - 2.8, w / 2 + 4.5, -D * 0.55 + 1.2))
         if roof == "pitched":
             pitched_roof(c, w, D, tile, colour, rr)
         else:
@@ -945,6 +979,73 @@ def skin_wood(buf, nodes, edges, radii, mat, root=0, levels=2):
     bpy.data.meshes.remove(baked)
 
 
+def limb_tube(buf, pts, radii, mat, sides=12, phase=0.0):
+    """One limb as its own tapered tube, with its OWN cylindrical UVs: u runs round the limb
+    (a whole number of texture tiles, so the wrap has no seam), v runs along it by length.
+    Owner, review v17: the skinned tree's shared around-the-axis map smeared the bark along
+    every branch ("weird uv issues ... not clearly show the trunk texture"), and "i think we
+    should just continue with a segmented version"."""
+    pts = [Vector(p) for p in pts]
+    uv = buf.bm.loops.layers.uv.verify()
+    idx = buf.mi(mat)
+    rings, vs = [], [0.0]
+    for i in range(1, len(pts)):
+        vs.append(vs[-1] + (pts[i] - pts[i - 1]).length / K.TILE_M)
+    # PARALLEL-TRANSPORTED rings: each ring's frame is the previous one turned by the change
+    # of direction, never re-derived from scratch (to_track_quat picks its own roll per ring,
+    # and consecutive rings twisted into bowties: lineup v18).
+    q = None
+    prev_d = None
+    for i, p in enumerate(pts):
+        d = (pts[min(i + 1, len(pts) - 1)] - pts[max(i - 1, 0)]).normalized()
+        q = d.to_track_quat("Z", "Y").to_matrix() if q is None else prev_d.rotation_difference(d).to_matrix() @ q
+        prev_d = d
+        rings.append([buf.bm.verts.new(p + q @ Vector((math.cos(a) * radii[i], math.sin(a) * radii[i], 0)))
+                      for a in (phase + k * math.tau / sides for k in range(sides))])
+    turns = max(1, round(math.tau * max(radii) / K.TILE_M))
+    for i in range(len(rings) - 1):
+        for k in range(sides):
+            f = buf.bm.faces.new((rings[i][k], rings[i][(k + 1) % sides], rings[i + 1][(k + 1) % sides], rings[i + 1][k]))
+            f.material_index = idx
+            u0, u1 = k / sides * turns, (k + 1) / sides * turns
+            for loop, (u, v) in zip(f.loops, ((u0, vs[i]), (u1, vs[i]), (u1, vs[i + 1]), (u0, vs[i + 1]))):
+                loop[uv].uv = (u, v)
+    for ring_, flip in ((rings[0], True), (rings[-1], False)):
+        f = buf.bm.faces.new(list(reversed(ring_)) if flip else ring_)
+        f.material_index = idx
+        for loop in f.loops:
+            loop[uv].uv = (0.5, 0.5)
+
+
+def segmented_wood(buf, sk, mat):
+    """The skeleton as SEGMENTS: the trunk and each branch are separate tubes. A branch starts
+    at its parent's node, so it grows out of the wood it leaves; a small ball at each fork
+    rounds the joint."""
+    kids = {}
+    for a, b in sk.edges:
+        kids.setdefault(a, []).append(b)
+    starts = [(0, None)]
+    while starts:
+        node, parent = starts.pop()
+        chain = [parent, node] if parent is not None else [node]
+        while len(kids.get(chain[-1], [])) == 1:
+            chain.append(kids[chain[-1]][0])
+        end = chain[-1]
+        for c in kids.get(end, []):
+            starts.append((c, end))
+        if len(kids.get(end, [])) > 1:
+            r = sk.radii[end]
+            buf.blob(tuple(sk.nodes[end]), (r * 1.02, r * 1.02, r * 1.1), mat, subdiv=3)   # smooth, no jagged ring
+        radii = [sk.radii[i] for i in chain]
+        pts = [sk.nodes[i].copy() for i in chain]
+        if parent is not None:
+            # Start INSIDE the parent (a little back along the branch), as thick as the branch,
+            # and turned half a facet, so no vertex lands on the parent's and gets welded.
+            radii[0] = radii[1] * 1.05
+            pts[0] = pts[0] - (pts[1] - pts[0]).normalized() * sk.radii[chain[0]] * 0.6
+        limb_tube(buf, pts, radii, mat, phase=0.0 if parent is None else math.pi / 12)
+
+
 class Skeleton:
     """A growing list of nodes (position, radius) and edges for skin_wood."""
 
@@ -1005,7 +1106,7 @@ def tree(name, style, seed, tint="", trunk="trunk", s=1.0):
     col = kit(name)
     rng = random.Random(seed)
     wood, leaves = K.Buf("trunk"), K.Buf("foliage", foliage=True)
-    wood.uv_mode = "trunk"
+    wood.uv_mode = "keep"   # limb_tube writes each limb's own UVs
     clumps = []   # (centre, radii)
     sk = Skeleton()
     lean = Vector((rng.uniform(-1, 1), rng.uniform(-1, 1), 0)).normalized() * s
@@ -1059,7 +1160,7 @@ def tree(name, style, seed, tint="", trunk="trunk", s=1.0):
         _curve(sk, top, P, P + Vector((0, 0, 0.7 * s)), P + Vector((0, 0, 1.5 * s)), rt * 0.7, 0.04 * s)
         cs = {"round": 1.55, "broad": 1.5, "lean": 1.25}[style] * s
         clumps.append((P + Vector((0, 0, 2.0 * s)), (cs, cs, cs * 0.8)))
-    skin_wood(wood, sk.nodes, sk.edges, sk.radii, trunk, levels=3)   # 3: no crease down the trunk
+    segmented_wood(wood, sk, trunk)
     for c, r in clumps:
         K.foliage(leaves, c, r, int(520 * r[0] * r[1]), 0.34 * s, rng, lift=0.3, spread=0.45, tint=tint)
     wood.finish(col, bevel=0)   # already round; a bevel would only crease the skinned surface
@@ -1352,6 +1453,10 @@ def skyscraper(name, t):
     # as thick, and every spandrel band at least 0.6 m, so a tower reads as a few big panes
     # per floor like the street's windows, not a fine grid.
     spacing = max(2.6, spacing * 2.0)
+    # Frames in the tower's own colour, never white (owner: "idk about the white frame color").
+    frame = t.get("frame", "frame_charcoal")
+    mm = frame if mm in ("mullion_light", "metal_dark") else mm
+    bmat = frame   # the spandrel bands too: stone and concrete bands read as the same white stripes
     bh = max(0.6, bh * 1.6)
     for si, n in enumerate(t["storeys"]):
         if si:
@@ -1375,7 +1480,7 @@ def skyscraper(name, t):
                     brace(frames, f.at(f.length - 0.2, za, 0.32), f.at(0.2, zb, 0.32), 0.34, "steel")
                     frames.box(f.frame(f.length / 2, zb + 0.3, 0.32), (f.length, 0.34, 0.34), "steel")
                 frames.box(f.frame(0.0, (z0 + z1) / 2, 0.3), (0.5, 0.45, z1 - z0), "steel")
-        trim.sweep(ring(poly, z1), COPE, t.get("cope", "concrete"), cv, closed=True)
+        trim.sweep(ring(poly, z1), COPE, t.get("cope", frame), cv, closed=True)
         trim.prism(poly_offset(poly, -0.25), z1 - 0.1, z1 + 0.12, "roof")
         z = z1 + 0.05
     T = z + 0.07
@@ -1407,7 +1512,7 @@ def skyscraper(name, t):
         for k in range(3):
             p = poly_offset(p, -span * 0.1)
             trim.prism(p, zz, zz + 3.2, t.get("step_mat", "concrete"))
-            trim.sweep(ring(p, zz + 3.2), COPE, "mullion_light", cv, closed=True)
+            trim.sweep(ring(p, zz + 3.2), COPE, frame, cv, closed=True)
             zz += 3.25
         T = zz
     elif crown == "fins":
@@ -1446,27 +1551,27 @@ def skyscraper(name, t):
 # Ten towers, all different. Heights are storeys per section (3.6 m each), the first section
 # standing on the 9 m podium.
 TOWERS = {
-    "tower_chamfer_spire": dict(plan=("chamfer", 24, 24, 5), storeys=[20, 8], setback=2.5, glass="curtain_teal",
+    "tower_chamfer_spire": dict(frame="frame_charcoal", plan=("chamfer", 24, 24, 5), storeys=[20, 8], setback=2.5, glass="curtain_teal",
                                 mullion=("mullion_light", 1.5), band=(1, 0.3, "mullion_light"), crown="pyramid",
                                 spire=12),
-    "tower_slant_dark": dict(plan=("rect", 22, 17), storeys=[34], glass="curtain_dark", mullion=("metal_dark", 1.2),
+    "tower_slant_dark": dict(frame="frame_bronze", plan=("rect", 22, 17), storeys=[34], glass="curtain_dark", mullion=("metal_dark", 1.2),
                              band=(2, 0.4, "metal_dark"), crown="slant"),
-    "tower_round_rings": dict(plan=("ngon", 11, 24), storeys=[18, 6], setback=1.6, glass="curtain_green",
+    "tower_round_rings": dict(frame="frame_teal", plan=("ngon", 11, 24), storeys=[18, 6], setback=1.6, glass="curtain_green",
                               mullion=("mullion_light", 1.4), band=(1, 0.55, "concrete"), crown="stepped", spire=6),
-    "tower_lattice": dict(plan=("rect", 20, 20), storeys=[27], glass="curtain_teal", mullion=("metal_dark", 1.25),
+    "tower_lattice": dict(frame="frame_charcoal", plan=("rect", 20, 20), storeys=[27], glass="curtain_teal", mullion=("metal_dark", 1.25),
                           band=(3, 0.3, "metal_dark"), lattice=6, crown="mech", spire=14),
-    "tower_stepped_stone": dict(plan=("rect", 28, 20), storeys=[12, 8, 6, 4], setback=2.4, glass="curtain_dark",
-                                mullion=("mullion_light", 1.6), band=(1, 0.9, "stone"), cope="stone",
+    "tower_stepped_stone": dict(frame="frame_bronze", plan=("rect", 28, 20), storeys=[12, 8, 6, 4], setback=2.4, glass="curtain_dark",
+                                mullion=("mullion_light", 1.6), band=(1, 0.9, "stone"),
                                 podium="stone", crown="stepped", step_mat="stone", spire=8),
-    "tower_octagon_fins": dict(plan=("ngon", 12, 8), storeys=[30], glass="curtain_teal", mullion=("mullion_light", 1.3),
+    "tower_octagon_fins": dict(frame="frame_teal", plan=("ngon", 12, 8), storeys=[30], glass="curtain_teal", mullion=("mullion_light", 1.3),
                                band=(3, 0.5, "mullion_light"), crown="fins"),
-    "tower_slim_pyramid": dict(plan=("rect", 15, 15), storeys=[38], glass="curtain_green", mullion=("mullion_light", 1.0),
+    "tower_slim_pyramid": dict(frame="frame_charcoal", plan=("rect", 15, 15), storeys=[38], glass="curtain_green", mullion=("mullion_light", 1.0),
                                band=(1, 0.25, "mullion_light"), crown="pyramid", crown_h=13, spire=9),
-    "tower_helipad": dict(plan=("chamfer", 26, 20, 3), storeys=[24], glass="curtain_dark",
+    "tower_helipad": dict(frame="frame_teal", plan=("chamfer", 26, 20, 3), storeys=[24], glass="curtain_dark",
                           mullion=("mullion_light", 1.7), band=(1, 0.45, "stone"), crown="helipad"),
-    "tower_round_spire": dict(plan=("ngon", 8, 20), storeys=[16, 12, 6], setback=1.4, glass="curtain_teal",
+    "tower_round_spire": dict(frame="frame_bronze", plan=("ngon", 8, 20), storeys=[16, 12, 6], setback=1.4, glass="curtain_teal",
                               mullion=("metal_dark", 1.2), band=(2, 0.35, "metal_dark"), crown="mech", spire=18),
-    "tower_slant_green": dict(plan=("chamfer", 20, 24, 2), storeys=[16, 10], setback=3.0, glass="curtain_green",
+    "tower_slant_green": dict(frame="frame_charcoal", plan=("chamfer", 20, 24, 2), storeys=[16, 10], setback=3.0, glass="curtain_green",
                               mullion=("metal_dark", 1.4), band=(2, 0.35, "concrete"), crown="slant", crown_h=12),
 }
 
@@ -1999,8 +2104,10 @@ def city_cameras(scene, col):
     # A tiled roof up close (the owner judged the first tiles from about this distance).
     rose = next((o for o in scene.objects if o.name.startswith("shophouse_rose_3.")), None)
     if rose:
-        mw = rose.matrix_world
+        mw = rose.matrix_basis   # matrix_world is stale until the depsgraph updates
         cam("detail_roof", mw @ Vector((-1.5, 6.0, 19.0)), mw @ Vector((4.75, -6.0, 14.5)), 28)
+        # A dormer at arm's length (the owner found z-fighting on its window here).
+        cam("detail_dormer", mw @ Vector((6.3, 2.6, 15.9)), mw @ Vector((4.75, -1.1, 15.2)), 35)
     scene.camera = cams["eye_north"]
     return cams
 
