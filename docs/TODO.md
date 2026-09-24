@@ -290,9 +290,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   fascia, separate load placard, green grille/sachets and supported navy/white
   awning. Native1/1passed4.565s, front/street/grey inspected.
   [Aling Pasing evidence](reports/map-by-map-refinement-2026-09-23/ilalim-aling-pasing/report.md).
-  Owner's latest ukay reference: recognizable CIAO GRAZEY BOUTIQUE variant of
-  Ciao Grazie/Grazia, red/white fascia plus shoe/clothing displays. References saved,
-  still OPEN after current Aling Pasing store. No new task replaces older items.
+  Owner-referenced CIAO GRAZEY BOUTIQUE implemented: red/white3:1fascia, paired
+  shoe shelves and hanging garments. Existing street rack moved beside the shop
+  to reveal its window; original model/colliders retained. Native+both-mode routes
+  2/2passed, actual paired/grey inspected. [Ciao Grazey evidence](reports/map-by-map-refinement-2026-09-23/ilalim-ciao-grazey/report.md).
+  Other signs and integrated map gates remain OPEN.
   Supplied PCExpress source retained byte-for-byte; local import and physical board
   corrected from4:1to original3.783:1. Native1/1passed5.207s, paired/grey inspected.
   [Protected-art fitting](reports/map-by-map-refinement-2026-09-23/ilalim-pcexpress/report.md).

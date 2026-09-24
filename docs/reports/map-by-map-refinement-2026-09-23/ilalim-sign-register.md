@@ -31,13 +31,12 @@ burst, forced distress, stock-font script or one design repeated on every busine
    Originalv2fitted3:1, separate small load card and supported packets/bottles/tins.
    Native1/1passed4.565s; front/street/grey inspected. See
    ilalim-aling-pasing/report.md. Rejectedv1source retained, absent from runtime.
-6. CLOTHING: OWNER2026-09-24supplies Ciao Grazia/Grazie shop references and asks
-   recognizable playful changed name, e.g. Ciao Grazey. Selected implementation
-   intent: CIAO GRAZEY BOUTIQUE, red/white fascia, actual shoe display shelves,
-   hanging clothing racks. Preserve both owner images in owner-storefront-refs.
-   No giant70percent-sale overlay, real dated promo/address or copied original
-   store name. This replaces generic UKAY-UKAY fascia intent. Still OPEN; do AFTER
-   current Aling Pasing unit is finished, per owner WIP discipline.
+6. CLOTHING: owner-referenced CIAO GRAZEY BOUTIQUE implemented. Generated red/white
+   fascia fits3:1,18paired shoes/6hanging garments distinguish the shop. Original
+   street rack moved along same pavement to reveal window, geometry/colliders kept.
+   Native+existing both-mode routes2/2passed140.117s; actual front/street/grey
+   inspected. See ilalim-ciao-grazey/report.md, including rejected composition and
+   one bounded fixture repair. No owner mounted-scene approval claim.
 7. BARBER: BARBER SHOP or GUPIT following actual reference. Consider a painted fascia
    paired with the physical barber pole/chair. Avoid generic circular logo badge.
    Reference and art OPEN.

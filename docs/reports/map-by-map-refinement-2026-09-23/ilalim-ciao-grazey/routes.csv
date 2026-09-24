@@ -1,0 +1,19 @@
+map,mode,target,shoe_x,shoe_y,shoe_z,route_nodes,seconds,picked_up
+IlalimNgTulay,Classic,west wall,-10.740,0.278,-3.240,46,8.238,True
+IlalimNgTulay,Classic,east wall,10.760,0.278,-0.240,39,6.879,True
+IlalimNgTulay,Classic,south wall,-0.240,0.066,-16.240,50,9.121,True
+IlalimNgTulay,Classic,north wall,-0.240,0.066,16.260,16,2.399,True
+IlalimNgTulay,Classic,guideway pillar,4.260,0.066,-11.240,50,8.860,True
+IlalimNgTulay,Classic,utility pole,-9.740,0.278,8.760,20,3.180,True
+IlalimNgTulay,Classic,Vendor_FishballCart,-10.240,0.278,-13.240,64,11.819,True
+IlalimNgTulay,Classic,Vendor_FruitCart,-10.240,0.278,10.260,23,3.957,True
+IlalimNgTulay,Classic,Vendor_ParesCounter,10.260,0.278,-5.240,48,8.662,True
+IlalimNgTulay,HeroStrike,west wall,-10.740,0.278,-3.240,46,7.855,True
+IlalimNgTulay,HeroStrike,east wall,10.760,0.278,-0.240,39,6.541,True
+IlalimNgTulay,HeroStrike,south wall,-0.240,0.066,-16.240,50,8.681,True
+IlalimNgTulay,HeroStrike,north wall,-0.240,0.066,16.260,16,2.282,True
+IlalimNgTulay,HeroStrike,guideway pillar,4.260,0.066,8.760,10,0.981,True
+IlalimNgTulay,HeroStrike,Vendor_ParesCounter,10.260,0.278,-5.240,48,8.240,True
+IlalimNgTulay,HeroStrike,utility pole,-9.740,0.278,-15.740,68,12.003,True
+IlalimNgTulay,HeroStrike,Vendor_FruitCart,-10.240,0.278,10.260,23,3.780,True
+IlalimNgTulay,HeroStrike,Vendor_FishballCart,-10.240,0.278,-13.240,64,11.261,True

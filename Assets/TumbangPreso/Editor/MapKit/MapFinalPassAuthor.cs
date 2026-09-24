@@ -130,6 +130,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(map=="IlalimNgTulay")IlalimLaundryAuthor.FinishLoadedScene(report);
             if(map=="IlalimNgTulay")IlalimRepairShopAuthor.FinishLoadedScene(report);
             if(map=="IlalimNgTulay")IlalimTindahanAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimUkayAuthor.FinishLoadedScene(report);
             if(map=="IlalimNgTulay")IlalimShopSignAuthor.FinishLoadedScene(report);
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }
