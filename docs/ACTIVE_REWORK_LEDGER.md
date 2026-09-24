@@ -1,29 +1,31 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Ilalim underpass bird visits
+## Current resume, 2026-09-24: Sa Bubong bird placement
 
 Overall goal ACTIVE, NOT done. DEV and QUAL at published, remote-verified
-c61bb03187679ca41ef4fd4f40c23d189482295a. Bayan visits published: nine supported
-sites/longer holds, native v2 1/1 in 71.300s after one clear-arrival staging fix.
-Actual sequences/grey inspected; church-step correction and staged close/body
-capture limits retained. QUAL byte-verified/stashed/advanced. Six ground animals,
-Eskinita birds and latest lighting/player-motion merges remain preserved.
+671b391c84e21168f8f0a84099efd313d1a67cd5. Ilalim flight corridor published in
+fdce3ebf8 (native1/1 in72.837s, actual frames/grey inspected). Incoming175cac0dd/
+6bba9d0a4 tag/cast/body review and lighting7d3171549 window/probe findings merged.
+Their source receipts are preserved; no fresh combined Windows build claimed.
+QUAL byte-verified/stashed/advanced. Original two composition PNG metas untouched.
 
-Current REFINE-2.7 map-routing unit complete locally: Ilalim bird visitors.
-Nine supported sites, street-axis flight with air control points x+/-2.4/y0-5.4
-beneath the actual 8m soffit. Native session64123 passed1/1 in72.837s, no retry;
-sampled body/wing ceiling and column-row gap checks passed. Actual pose/flight/
-arrival frames and grey inspected; known staged fade/wing-blend/parked-body limits
-retained. Known churn restored. No Unity job/helper active. Publish, preserve/
-advance QUAL, then remaining local map/environment and behavior work.
+Current local map unit: Sa Bubong bird landing data using the existing behavior.
+Plan saved in sabubong-bird-visits-plan.md. Preserve elevated fantail canopy,
+roof/pool/recovery/residents and models/clips; fit two real alternate sites per
+species, local dwell settings, hook after finished roof geometry. First author
+stopped before saving: fantail needs three supported clear canopy sites. Next:
+sample legal canopy pads against finished geometry, then the one native case.
+This is placement data, not a fixture repair. Fixture allowance0/1.
+No .cs edits during Unity. After this map-data unit, reconcile ambient coverage
+and move to bot inactivity. New animation direction/research/abilities/ultimates
+remain assigned to the owner-run cloud lane; no task is closed by a handoff.
+All older requirements and final integration remain open. Author job reaped;
+no Unity job running. Failed evidence: Logs/sabubong-bird-visits-author-v1.log.
 
-Latest owner direction: all animation research/direction/implementation is being
-assigned to an owner-run cloud lane, including individual ability casts and freely
-directed ultimates. Setup/API/env/handoff blocks and a TLDR were delivered in chat.
-No other conversation contacted. TODO and ultimate plan record newer sequencing;
-that lane can start alongside maps. Do not redo or claim its animation tasks done.
-Current compiled map routing was finished; preserve its integration. All older
-IDs/final gates remain, original two composition PNG meta dirt files untouched.
+Owner-requested AGENTS cleanup finished: consolidated duplicate instructions and
+stale sequencing while preserving current constraints. Original verbatim snapshot,
+coverage mapping and lightweight checks live in
+reports/instructions-cleanup-2026-09-24/. No gameplay or task completion changed.
 
 ## Parallel lane, 2026-09-24: HOME loop and gameplay animation (separate from the map resume above)
 
