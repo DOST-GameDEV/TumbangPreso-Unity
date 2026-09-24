@@ -125,9 +125,19 @@ namespace TumbangPreso.PlayTests
                 Visual.ComicPopup.Spawn(Vector3.up*2,"CURRENT WORLD",Color.magenta,2);
                 yield return null;
                 var liveCanvases=Object.FindObjectsByType<Visual.ComicPopup>().SelectMany(p=>p.GetComponentsInChildren<Canvas>()).ToArray();
-                bool observed=false;
+                var life=Object.FindFirstObjectByType<AmbientLife>();Assert.IsNotNull(life);
+                life.enabled=false;
+                // Staged visibility witness, not an ordinary animal route: this
+                // present-time dog must never enter the recorded exchange.
+                var dog=life.transform.Find("Ambient aspin-tan");Assert.IsNotNull(dog);
+                dog.position=new Vector3(-1.5f,.12f,-1.5f);
+                var ambient=life.GetComponentsInChildren<Renderer>(true);Assert.IsNotEmpty(ambient);
+                ambient[ambient.Length-1].forceRenderingOff=true;
+                var ambientFlags=ambient.Select(r=>r.forceRenderingOff).ToArray();
+                var dogAt=dog.position;
+                bool observed=false,ambientHidden=false;
                 void BeforeRender(Camera camera)
-                {if(camera.name!="RecordedWorldCamera")return;observed=true;Assert.IsTrue(liveEffect.GetComponent<Renderer>().forceRenderingOff);Assert.IsTrue(liveCanvases.All(c=>!c.enabled));}
+                {if(camera.name!="RecordedWorldCamera")return;observed=true;ambientHidden=ambient.All(r=>r.forceRenderingOff);Assert.IsTrue(liveEffect.GetComponent<Renderer>().forceRenderingOff);Assert.IsTrue(liveCanvases.All(c=>!c.enabled));}
                 Camera.onPreRender+=BeforeRender;
                 try{view.Draw(clip.Contact,false);}
                 finally{Camera.onPreRender-=BeforeRender;}
@@ -135,7 +145,12 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(view.Target.IsCreated());
                 var capture=new Texture2D(view.Target.width,view.Target.height,TextureFormat.RGB24,false);
                 var previous=RenderTexture.active;RenderTexture.active=view.Target;capture.ReadPixels(new Rect(0,0,view.Target.width,view.Target.height),0,0);capture.Apply();RenderTexture.active=previous;
-                System.IO.Directory.CreateDirectory("Logs/replay-retained-view");System.IO.File.WriteAllBytes("Logs/replay-retained-view/contact.png",capture.EncodeToPNG());Object.Destroy(capture);
+                string output=System.Environment.GetEnvironmentVariable("TUMP_AMBIENT_REPLAY_OUT")??"Logs/replay-retained-view";
+                System.IO.Directory.CreateDirectory(output);System.IO.File.WriteAllBytes(System.IO.Path.Combine(output,"contact.png"),capture.EncodeToPNG());Object.Destroy(capture);
+                CollectionAssert.AreEqual(ambientFlags,ambient.Select(r=>r.forceRenderingOff).ToArray(),"Replay changed live ambient visibility");
+                Assert.AreEqual(dogAt,dog.position,"Replay moved a live animal");
+                life.enabled=true;
+                Assert.IsTrue(ambientHidden,"Present-time animals leaked into the retained past event");
             }
             round.EndRound();match.AdvanceRound();yield return new WaitForSeconds(.2f);
             Assert.AreEqual(1,archive.Clips.Count,"A round reset cannot delete the halftime shortlist.");

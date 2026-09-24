@@ -160,6 +160,10 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
   updated, importer/GUID preserved. Actual final v2 colour/grey inspected,1/1.
   [Haze/card evidence and corrected persistence mistake](reports/map-by-map-refinement-2026-09-23/rooftop-haze/report.md).
   Lower-ground material/context assessment and integrated map gates remain open.
+  Lower roof streets now have restrained markings and two supported parked native
+  tricycles. Original asphalt/buildings/physics retained; native v2 1/1, actual
+  matched preview/street witness/grey inspected, card refreshed. One camera repair
+  used; visibility limits retained. [Street-context evidence](reports/map-by-map-refinement-2026-09-23/rooftop-street-context/report.md).
 - [x] LIGHT-1.7 The two Stage tests assert the bright look's own claims (`20c977e5`): applied rig,
   bright shade colour, haze past the court, court ground found; toon ramp measured 1.70:1 under the
   look against 1.95:1 authored, asserted inside 1.35 to 2. WorldCourtCueTests 3/3 on the Mac.
@@ -553,6 +557,12 @@ scattered across all maps. Execute inside each map's existing refinement row.
   [Roof bird evidence](reports/map-by-map-refinement-2026-09-23/sabubong-bird-visits/report.md).
   All21 current ambient actors have map/species placement coverage. Ordinary-camera,
   replay and combined qualification remain open; Lagoon flight retained.
+  Replay integration follow-up: present-time animals no longer leak into retained
+  or victim-catch cameras; existing render flags restore after each draw. Native
+  baseline reproduced both leaks, final2/2 passed with actual paired/grey frames.
+  A can-model replacement stale-reference error exposed by the retained test is
+  also fixed, without changing its authored motion or authority.
+  [Replay isolation evidence](reports/map-by-map-refinement-2026-09-23/ambient-replay/report.md).
 - [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
   trace idle decisions and fix actual stalls; distinguish deliberate tactical waits.
   Initial Eskinita samples cover four bots in both modes. A reaction-clock defect
@@ -1080,7 +1090,11 @@ Implementation order within UX-1:
   face; the XP track is a chunky inked bar; fiesta bunting drops in over the winner's banner
   (`HubScenery.Bunting`, still under reduced motion). Routes, names and focus paths unchanged.
   `TumpNativeResultTests`, `MatchFinishPresentationTests`, `PhaseSurfaceLayoutProbe`: 9 of 10,
-  the one red being the known `RematchActuallyLoadsTheChosenArena` gameplay-lane defect.
+  the one red being `RematchActuallyLoadsTheChosenArena`'s one-frame scene check.
+  Reconciled2026-09-24: offline loading is asynchronous; a bounded wait reached
+  BayanPlaza. Final fixture source retains the actual-map/ready checks; its final
+  green rerun stays P7 after the one repair exposed an invalid extra service-scene
+  assumption. [Exact evidence](reports/map-by-map-refinement-2026-09-23/rematch-reconciliation/report.md).
   Open: YOUR MATCH is still one line of text in a large card, and PLAYERS a sparse list.
 
 ### UI-REVIEW · Research-first UI and HUD refinement ⚠️ IN PROGRESS, 2026-09-23
@@ -1160,7 +1174,8 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
   changed screens, 4:3 and 1600x680 checks, and the owner's look approval.
 - Known pre-existing failures, not caused here: `OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms`
   (retired "PLAY FAIR" copy), `TitlePlayCreditsAndSettingsReturnThroughNativeViews` (retired
-  title route), `RematchActuallyLoadsTheChosenArena` (rematch stays on Eskinita; gameplay lane).
+  title route), `RematchActuallyLoadsTheChosenArena` (stale synchronous wait;
+  actual Bayan load observed, final corrected-fixture rerun remains P7).
 
 ### P6 supersession decisions
 
@@ -1193,8 +1208,13 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
   integrated acceptance remain separately in P7.
 - [ ] **Native player shutdown crash.** v57 (and one earlier recorded runner result)
   exited with 0xC0000005 after the review had passed and `CodeReloadManager destroyed`
-  was logged. The verdict stands; the cause is unknown. Reproduce on the next build,
-  read the crash dump if one is written, fix or name the engine-side cause.
+  was logged. On2026-09-24 the exact v57 binary passed15stages on both backends:
+  D3D12 then crashed in D3D12Core1.618.1.0 at0xa1f5; D3D11 exited0 on RX6600.
+  Windows now explicitly prefers D3D11, retaining D3D12 second. Current-source
+  five-map D3D11 rendering passed1/1 and actual views/grey were inspected. This is
+  a machine-supported compatibility mitigation; internal engine/driver cause is
+  unproven. P7 still owes current-player default-backend, exit and performance.
+  [Native comparison and evidence](reports/map-by-map-refinement-2026-09-23/native-shutdown/report.md).
 - [ ] **Rafi B / lagoon C expansion, final integration.** Model, kit, map, v47 to v52
   evidence and the three-peer water checks are done (see the done list). Final coherent
   qualification remains in P7. Local deck sampling refinement is DONE:47deck

@@ -31,6 +31,7 @@ def main():
     parser.add_argument('--exe',required=True)
     parser.add_argument('--out',required=True)
     parser.add_argument('--profile',required=True)
+    parser.add_argument('--graphics-api',choices=('d3d11','d3d12'),help='Select a Windows renderer for a bounded native diagnostic; default keeps the player choice.')
     parser.add_argument('--review-hero',help='Limit new-feature captures to this roster hero id.')
     parser.add_argument('--review-map',help='Start selected hero routes on this registered arena scene.')
     parser.add_argument('--ordinary-skills',action='store_true',help='Capture selected default ordinary skills through accepted input and actual game audio.')
@@ -77,6 +78,7 @@ def main():
     startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
     command=[str(exe),'-screen-fullscreen','0','-screen-width','1280','-screen-height','720',
              '-tp-profile',args.profile,'-tp-uireview',str(out),'-logFile',str(out/'player.log')]
+    if args.graphics_api:command.append('-force-'+args.graphics_api)
     if args.review_hero:command+=['-tp-review-hero',args.review_hero]
     if args.review_map:command+=['-tp-review-map',args.review_map]
     if args.map_surfaces_only:command.append('-tp-map-surfaces-only')
@@ -115,6 +117,7 @@ def main():
     after=read_input_preferences();unchanged=before==after
     result_path=out/'result.json';result=json.loads(result_path.read_text()) if result_path.exists() else {'passed':False,'error':'No review receipt.'}
     receipt={'exitCode':code,'sharedInputUnchanged':unchanged,'profile':args.profile,'existingFilesRestored':len(manifest),
+             'graphicsApiRequested':args.graphics_api or 'default',
              'reviewPassed':result.get('passed',False),'error':result.get('error','')}
     (out/'runner-result.json').write_text(json.dumps(receipt,indent=2));print(json.dumps(receipt),flush=True)
     if not unchanged:print('Shared standalone input preferences changed; retained for investigation, not overwritten.',flush=True)

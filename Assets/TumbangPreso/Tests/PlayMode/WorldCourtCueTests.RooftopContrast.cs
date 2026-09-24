@@ -12,6 +12,35 @@ namespace TumbangPreso.PlayTests
     public sealed partial class WorldCourtCueTests
     {
         [UnityTest]
+        public IEnumerator RooftopLowerStreetsReadAsOccupiedContext()
+        {
+            StageWeights(1);
+            TumbangPreso.Settings.GraphicsProfiles.Apply(2);
+            var root=new GameObject("Roof street preview",typeof(RectTransform),typeof(RawImage));
+            var preview=root.AddComponent<MapPreviewSurface>();string shown=null;
+            preview.MapShown+=map=>shown=map;preview.Show(SceneFlow.SaBubong);
+            try
+            {
+                float until=Time.realtimeSinceStartup+40;
+                while(shown!=SceneFlow.SaBubong&&Time.realtimeSinceStartup<until)yield return null;
+                Assert.AreEqual(SceneFlow.SaBubong,shown);yield return null;yield return null;
+                var context=SceneManager.GetSceneByName(SceneFlow.SaBubong).GetRootGameObjects()
+                    .SelectMany(go=>go.GetComponentsInChildren<Transform>(true)).Single(t=>t.name=="Street activity below roof").gameObject;
+                Assert.IsEmpty(context.GetComponentsInChildren<Collider>());
+                Assert.AreEqual(2,context.GetComponentsInChildren<Transform>().Count(t=>t.name.Contains("parked tricycle")));
+                Time.timeScale=0;
+                foreach(string view in new[]{"preview","street-observer"})
+                {
+                    if(view=="street-observer")
+                    {preview.Camera.transform.position=new Vector3(25.5f,-21,-15);preview.Camera.transform.LookAt(new Vector3(24.75f,-25.5f,-8));preview.Camera.fieldOfView=56;}
+                    context.SetActive(false);SavePreview(preview.Camera,"roof-streets-"+view+"-before");
+                    context.SetActive(true);SavePreview(preview.Camera,"roof-streets-"+view+"-after");
+                }
+            }
+            finally{Object.Destroy(root);Time.timeScale=1;}
+        }
+
+        [UnityTest]
         public IEnumerator RooftopPreviewComparesDistanceHaze()
         {
             StageWeights(1);

@@ -784,6 +784,9 @@ namespace TumbangPreso
 
         private void RestoreRaisePresentation()
         {
+            // Replicated skin changes replace the Visual child. Forget its old
+            // pose before resolving the replacement; never restore into a dead mesh.
+            if (_raiseMesh == null) { _raiseApplied = false; _raiseMeshResolved = false; return; }
             if (!_raiseApplied) return;
             _raiseMesh.localPosition = _raiseMeshPos; _raiseMesh.localRotation = _raiseMeshRot; _raiseMesh.localScale = _raiseMeshScale;
             _raiseApplied = false;
@@ -835,7 +838,8 @@ namespace TumbangPreso
         {
             if (!_raiseMeshResolved)
             {
-                var filter = GetComponentInChildren<MeshFilter>();
+                var visual = transform.Find("Visual");
+                var filter = visual != null ? visual.GetComponentInChildren<MeshFilter>() : GetComponentInChildren<MeshFilter>();
                 _raiseMesh = filter != null && filter.transform != transform ? filter.transform : null;
                 _raiseMeshResolved = true;
             }

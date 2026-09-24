@@ -1,66 +1,66 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Sa Bubong distance haze
+## Current resume, 2026-09-24: ambient replay isolation
 
-Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified at07a387779. The
-tracked lighting branch through a28037622 is merged. One conflict preserved our
-explicit-sun/preview API and cached restoration while adding per-camera InkFloor.
-New native floor-choice1/1 in19.144s; source/local comparisons and grey inspected.
-Default0 retained. Report: lighting-integration-2026-09-24/hull-floor/report.md.
-No Unity job running; known churn backed up/restored. Protected DEV metas intact.
+Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified atd98e592ae. Rematch
+reconciliation published: actual Bayan entry observed after asynchronous loading;
+final bounded test source preserves map/ready checks but has no final green rerun.
+Invalid agent-added DontDestroyOnLoad scene assertion removed. Fixture allowance
+1/1 exhausted, leave final rerun to P7. Do not call it an ongoing runtime map bug.
 
-Current local unit: SaBubong preview court contrast. Saved plan:
-map-by-map-refinement-2026-09-23/rooftop-court-contrast-plan.md. Native same-camera
-current/ivory/dark study1/1 in1.740s; actual images/25percent grey inspected.
-Dark warm-neutral(.23,.19,.15) is clearest; ivory barely improves it. Current
-SaBubongBuilder change gives only the six court lines a separate material and
-updates rebuilds; notice-paper material, lights, geometry/rules are preserved.
-Guarded author8012 completed; exactly six scene material references changed.
-Scene/new material/meta copied to DEV, known churn backed up/restored. Final
-preview9009 completed:1/1 in1.287s, actual authored frame and grey inspected.
-Logs/roof-court-contrast-final.xml/.log and frames. Report in
-map-by-map-refinement-2026-09-23/rooftop-court-contrast/report.md. Known churn
-restored. Court material/scene/builder/report published in07a387779. Study is
-the matched A/B; final checks serialization. No fixture repair used.
+Current plan: native-shutdown-plan.md. Exact original accessibility-v57 build from
+older validation/Builds was copied into QUAL Builds/shutdown-diagnosis-v57-20260924,
+not rebuilt. Core exe/UnityPlayer/runtime hashes match; receipt in
+QUAL Logs/shutdown-diagnosis-20260924/binary.json. Original remains untouched.
+Existing native runner gained optional --graphics-api d3d11/d3d12, syntax checked.
+Native pair reaped: D3D12 process9508/exec5951 passed15stages then crashed with
+0xC0000005. Windows event1000: D3D12Core1.618.1.0, offset0xa1f5, RX6600 driver
+32.0.21043.19003. D3D11 process4792/exec26235 passed the same15stages and exited0.
+Both actual APIs confirmed in logs; same copied binary hashes, fresh profiles,
+input unchanged. Original untouched; no new build/current-binary claim.
 
-New local plan: rooftop-haze-plan.md. Current high preview loses lower streets/
-middle facades in peach haze. Compare SaBubong distances60-300,90-380,120-480m
-only, holding colour/light/materials and camera fixed. Guarded job29799 runs
-RooftopPreviewComparesDistanceHaze: Logs/roof-haze-study-v1.xml/.log and frames
-in the named directory. Study reaped:1/1 in1.438s, actual colour/grey inspected.
-Selected90-380m, more identity in mid facades while far skyline stays softer.
-Only two SaBubong haze distances changed; lower ground material warmth is not
-claimed fixed by haze alone. Existing card route now accepts a single-map selector.
-Final card v1 passed its export check but actual inspection caught old haze:
-Resources/WorldLookProfile.asset overrides code defaults. This is an incomplete
-production data update, not a fixture failure. Preserve that v1 as unselected.
-WorldCueProfileAuthor.ApplyRooftopHaze now updates only the saved roof distances
-from the chosen defaults. Guarded author runs in Logs/roof-haze-author-profile.log;
-Author67188 reaped; saved asset diff is exactly roof FogStart90/FogEnd380 plus
-explicitly serializing the unchanged CastInkFloor0. Asset copied to DEV. Final
-v2 card capture45522 reaped:1/1 in1.155s, actual image/grey inspected. SaBubong
-PNG replaced by final actual scene; original importer/GUID hash and previous-card
-preserved. Report: rooftop-haze/report.md. Known churn restored, no Unity running.
-Publish scoped profile/author/card/evidence; then review remaining map-context/
-contrast and the old actionable queue without redoing the completed micro-pass.
-Fixture0/1, no extra study variants.
+Current mitigation: GameBuilder.PreferCompatibleWindowsRenderer authored Windows
+explicit API order D3D11,D3D12, preserving other platforms/quality. Guarded author
+finished; scoped serialized diff copied to DEV. Current-source five-map D3D11
+case passed1/1 in43.5834526s; actual stage/eye/cast and25percent grey inspected.
+Proof: reports/map-by-map-refinement-2026-09-23/native-shutdown/report.md.
+No game/Unity/crash-handler processes remain. Native receipts/WER event preserved.
+Final current player/default-backend/exit/performance remains P7. Exact internal
+engine/driver cause unknown; no upgrade, intermediate build or indefinite soak.
+Renderer mitigation published ind98e592ae; QUAL aligned. Cleanup of the copied
+diagnostic build was rejected by automatic approval review (blocked by policy).
+No process remains; leave that copy in QUAL Builds, original v57 untouched.
+Do not repeat the old-binary pair or bypass the cleanup rejection.
 
-Bot fixes published:5de3a78f3 reaction timing;043cf804c chase patience;273e5e669
-per-seat difficulty. All five maps have initial four-bot/two-mode ordinary samples.
-Full role/roster/tier and bot water/roof recovery remain actionable final gates.
-Recovery fixture failed twice BEFORE bot handoff, last(16.92,-2.01,16.38), not the
-intended lip. Existing ExerciseEdge also sets camera follow/movement aim; omitted
-input-basis setup is the next diagnostic. Allowance1/1 exhausted: no more fixture
-polishing during feature work. Draft/failures preserved in bot-map-coverage/;
-original compiled LagoonRecoveryProbe restored. No production failure claimed.
+Ambient replay unit ready to publish: both leaks reproduced in native baseline.
+Existing per-render hide/restore now isolates unrecorded live animals in retained
+and catch cameras. First post-fix run exposed a real destroyed-can-mesh reference
+in Lata's existing raise/clunk cache during model replacement. Cache invalidation/
+Visual-subtree rebinding fixed; motion/authority unchanged. Final2/2 passed in
+13.0930289s, actual same-camera before/after and25percent grey inspected.
+Proof: reports/map-by-map-refinement-2026-09-23/ambient-replay/report.md.
+No fixture repair, no active Unity job, own generated churn restored. Publish and
+align QUAL, then reconcile remaining research/per-map acceptance against actual
+reports before selecting the next implementable gap. Do not repeat passing cases.
 
-AGENTS cleanup dc10b68f2 preserves every important instruction in39.7percent fewer
-words plus exact original/archive mapping. SaBubong birds57cf74a9c complete locally.
-All21 ambient actors have local map/species placement coverage; ordinary-camera/
-replay/combined checks remain open. Preserve every older task and evidence.
-New character/ability/ultimate animation direction belongs to the owner-run cloud
-lane; its origin branch exists, but do not merge unfinished work or contact a task.
-Final native/peer/replay/performance/build remains2.10/P7. No checkpoint stops goal.
+Published roof units: court07a387779, haze/card4dde9837a, street contextc85614a42.
+Actual colour/grey inspected; street v2 passed1/1 in1.372s after one close-camera
+repair. Source models/physics/card importer preserved. No more variants/fixtures
+for that completed local unit. Lighting a28037622 merged in5e9b711c7; optional
+cast hull floor remains0, native1/1 and actual comparisons.
+
+Bot fixes5de3a78f3/043cf804c/273e5e669 published. Initial four-bot/two-mode samples
+cover all five maps; full role/roster/tier and bot water/roof recovery stay final
+gates. Recovery fixture failed twice BEFORE handoff at wrong lip position;
+omitted camera/input-basis setup is next diagnostic, allowance1/1 exhausted.
+Exact draft/failures in bot-map-coverage/, original compiled probe restored.
+
+AGENTS cleanup dc10b68f2 preserves important rules in39.7percent fewer words plus
+exact archive. All21 ambient actors have local placement coverage; ordinary-camera/
+replay/combined gates remain. New character/ability/ultimate work belongs to the
+owner-run cloud lane; do not merge unfinished work or contact a conversation.
+Preserve older requirements. Final current-source native/peer/replay/performance/
+build remains2.10/P7. No checkpoint stops goal; no intermediate build.
 
 ## Parallel lane, 2026-09-24: HOME loop and gameplay animation (separate from the map resume above)
 
