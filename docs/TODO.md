@@ -332,7 +332,10 @@ scattered across all maps. Execute inside each map's existing refinement row.
   and representative paired/grey views inspected. Five low palm roofs and four
   woven screens now have fitted materials/fibre axes; source weave/geometry/collision
   retained. [Veranda evidence](reports/map-by-map-refinement-2026-09-23/lagoon-veranda/report.md),
-  native1/1passed and paired/grey inspected. Metal/repair/paint, water/boats/islands
+  native1/1passed and paired/grey inspected. Six metal roofs now have fitted rib
+  direction/pitch and home2alone has a painted lower-board accent; geometry/other
+  palettes/collision retained. [Metal-family evidence](reports/map-by-map-refinement-2026-09-23/lagoon-metal/report.md),
+  native1/1passed/paired/grey inspected. Water depth/contact, boats, islands/sky
   and final map acceptance remain.
 - [x] **REFINE-2.6b Lagoon fall and mash recovery, owner2026-09-24.** Adapt SaBubong's
   physical edge fall and existing press-gated get-up to Lagoon. Both modes, all cast,

@@ -87,6 +87,45 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator LagoonMetalFinishReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Lagoon);
+            var homes=GameObject.Find("Lagoon/Supported homes").transform;
+            var pairs=homes.Cast<Transform>().Where(t=>t.name.EndsWith("PatchedMetal",StringComparison.Ordinal)||t.name.EndsWith("RepairShelter",StringComparison.Ordinal)).Select(t=>
+            {
+                var words=t.name.Split(' ');int id=int.Parse(words[words.Length-2]);
+                var filter=t.GetComponent<MeshFilter>();var renderer=t.GetComponent<MeshRenderer>();
+                var importer=AssetImporter.GetAtPath("Assets/TumbangPreso/Art/LagoonMetalFinish/Metal"+id+".asset");Assert.IsNotNull(importer);
+                Assert.IsTrue(importer.userData.StartsWith("TUMP_LAGOON_METAL_MESH:"));
+                var original=AssetDatabase.LoadAssetAtPath<Mesh>(importer.userData.Substring("TUMP_LAGOON_METAL_MESH:".Length));Assert.IsNotNull(original);
+                var after=renderer.sharedMaterials;var before=after.Select(m=>
+                {string path=m.GetTag("TumpLagoonMetalSource",false);return string.IsNullOrEmpty(path)?m:AssetDatabase.LoadAssetAtPath<Material>(path);}).ToArray();
+                Assert.IsFalse(before.Any(m=>m==null));
+                return new {filter,renderer,original,finished=filter.sharedMesh,before,after};
+            }).ToArray();Assert.AreEqual(6,pairs.Length);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;var camera=rig.Camera;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var eye=Vector3.zero;var rotation=Quaternion.identity;
+            Camera.CameraCallback pin=cam=>{if(cam==camera){cam.transform.SetPositionAndRotation(eye,rotation);cam.fieldOfView=60;}};
+            Camera.onPreCull+=pin;Time.timeScale=0;
+            try
+            {
+                foreach(string view in new[]{"front2","roof2","repair1"})
+                {
+                    eye=view=="front2"?new Vector3(17,2.8f,-11.8f):view=="roof2"?new Vector3(18,6,-18):new Vector3(-20,6,4);
+                    var target=view=="repair1"?new Vector3(-28,3,10):new Vector3(25,view=="front2"?2:3,-12);
+                    rotation=Quaternion.LookRotation(target-eye);
+                    foreach(string state in new[]{"before","after"})
+                    {
+                        bool on=state=="after";foreach(var p in pairs){p.filter.sharedMesh=on?p.finished:p.original;p.renderer.sharedMaterials=on?p.after:p.before;}
+                        yield return GameplayShots.Render(camera,"Lagoon-metal-"+view+"-"+state,false,Output,width:1280,height:800);
+                    }
+                }
+            }
+            finally{Time.timeScale=1;Camera.onPreCull-=pin;}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator LagoonVerandaFinishReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Lagoon);

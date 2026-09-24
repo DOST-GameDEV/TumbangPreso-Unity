@@ -1,0 +1,7 @@
+1 RepairShelter: shader rib pitch=0.2583m and slope direction match existing geometry.
+2 PatchedMetal: shader rib pitch=0.2591m and slope direction match existing geometry; lower painted wall band only onhome2.
+7 PatchedMetal: shader rib pitch=0.2571m and slope direction match existing geometry.
+9 PatchedMetal: shader rib pitch=0.2474m and slope direction match existing geometry.
+13 PatchedMetal: shader rib pitch=0.2571m and slope direction match existing geometry.
+15 RepairShelter: shader rib pitch=0.2476m and slope direction match existing geometry.
+Six metal-roof homes, one painted household; original positions/topology/other slots/collision unchanged. No new geometry, global shader or gameplay change.
