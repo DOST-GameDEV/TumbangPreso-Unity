@@ -555,6 +555,54 @@ def cheska():
 
 HELD["cheska"] = lambda: _cheska(True)
 
+
+@performance
+def rafi():
+    """
+    BREAKWATER, 3.4 s (plan.md section 7). "Draws you into the wrong current. Leaves with his
+    slipper." A teasing competitor who likes making a rival commit too early: he feints one
+    way, then the other, shrugs, beckons twice ("come on"), drops into a boat-deck crouch that
+    rocks like a hull, lifts the wave up behind him and sends it with one sweeping arm.
+    """
+    p = Performance("rafi", 3.4)
+    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
+    feint_l = Pose(torso=(4, -12, 8), head=(0, -16, 4), left=(10, 30, 0), right=(18, 18, 0),
+                   legs=((4, 10), (-4, 10)))
+    feint_r = Pose(torso=(4, 12, -8), head=(0, 16, -4), left=(18, 18, 0), right=(10, 30, 0),
+                   legs=((-4, 10), (4, 10)))
+    shrug = Pose(torso=(-3, 0, 0), head=(-4, 0, 10), left=(20, 34, 0), right=(20, 34, 0),
+                 legs=((2, 6), (-2, 6)))
+    beckon = Pose(torso=(0, -6, 0), head=(0, -6, -8), left=(80, 16, 22), right=(6, 36, -10),
+                  legs=((2, 6), (-2, 6)))
+    beckon_pull = beckon.but(left=(94, 12, -4))
+    deck = Pose(torso=(20, 0, 3), head=(-8, 0, 0), left=(26, 56, 0), right=(26, 56, 0),
+                legs=((10, 16), (-10, 16)))
+    deck_rock = deck.but(torso=(20, 0, -3))
+    raise_ = Pose(torso=(-6, 0, 0), head=(-10, 0, 0), left=(150, 46, 0), right=(150, 46, 0),
+                  legs=((6, 12), (-6, 12)))
+    send = Pose(torso=(22, -15, 0), head=(-4, 8, 0), left=(-30, 22, 0), right=(62, 10, 22),
+                legs=((18, 8), (-16, 8)))
+
+    p.key(0, rest)
+    p.key(.16, feint_l, punch=True).key(.34, feint_l)
+    p.key(.46, feint_r, punch=True).key(.6, feint_r)
+    p.key(.8, shrug)
+    p.key(1.0, beckon).key(1.12, beckon_pull).key(1.24, beckon).key(1.36, beckon_pull)
+    p.key(1.58, deck).key(1.8, deck_rock).key(2.02, deck)
+    p.key(2.28, raise_)
+    p.hold(2.28, 2.72, raise_.but(torso=(-7, 0, 0)))
+    p.key(2.9, send, punch=True)
+    p.hold(2.9, 3.4, send)
+
+    # A: front medium for the feints, the shrug and the beckon: he is talking to the viewer.
+    p.shot(0, 1.46, (.9, 1.35, 3.9), (0, 1.05, 0), 44, eye_to=(.78, 1.3, 3.55))
+    # B: low from his left side as he crouches on the deck and the wave climbs behind him.
+    p.shot(1.46, 2.5, (-3.1, .5, 2.3), (0, 1.2, -.6), 50, eye_to=(-3.3, .45, 2.05))
+    # C: front and low for the send, the wave coming over his shoulders toward the lens.
+    p.shot(2.5, 3.4, (1.1, .55, 4.4), (0, 1.2, 0), 50, eye_to=(1.0, .6, 4.05))
+    p.locked((1.0, 1.05, 4.9), (0, 1.1, -.5), 48)
+    return p
+
 # ----------------------------------------------------------------------------- the 2.8 s baseline
 # The introductions as they shipped before REFINE-2.11, transcribed key for key from the old
 # `HeroAbilityClips.Introductions.cs` (PoseKey arguments: raise = -x, twist = +/-y, spread = z),

@@ -141,12 +141,13 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>A translucent, glowing piece. Returns its index for <see cref="Place"/>.</summary>
-        private int Add(string name, Mesh mesh, Color color, float emission = .32f)
+        private int Add(string name, Mesh mesh, Color color, float emission = .32f, bool plain = false)
         {
             var go = VfxShapes.Stand(_root.transform, name, mesh, 1);
             var renderer = go.GetComponent<Renderer>();
             renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
-            if (_hero == "rafi") RafiWaterVisual.Paint(renderer, color);
+            // Rafi's own water uses his water shader; his sky and land (`plain`) do not.
+            if (_hero == "rafi" && !plain) RafiWaterVisual.Paint(renderer, color);
             else VfxMaterial.Ghost(renderer, color, emission);
             _pieces.Add(new Piece { Transform = go.transform, Renderer = renderer, Color = color });
             return _pieces.Count - 1;
@@ -173,7 +174,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private int Wall(string name, float bottom, float top, Color color, float radius = 8f, int sides = 28, float emission = .25f)
         {
-            int index = Add(name, WallMesh(sides), color, emission);
+            int index = Add(name, WallMesh(sides), color, emission, plain: true);
             var p = _pieces[index];
             p.Transform.localPosition = new Vector3(0, bottom, 0);
             p.Transform.localScale = new Vector3(radius, top - bottom, radius);
