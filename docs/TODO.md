@@ -527,8 +527,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   corridor and supported sites. Native 1/1 passed, sampled ceiling/column-gap
   clearance and actual sequences/grey reviewed.
   [Ilalim bird evidence](reports/map-by-map-refinement-2026-09-23/ilalim-bird-visits/report.md).
-  SaBubong visit data and final integration remain; Lagoon flight retained.
-  Lagoon flight retained.
+  SaBubong visits now use roof-deck pads and actual raised canopy seams; native
+  1/1 passed and before/new sequences/grey inspected.
+  [Roof bird evidence](reports/map-by-map-refinement-2026-09-23/sabubong-bird-visits/report.md).
+  All21 current ambient actors have map/species placement coverage. Ordinary-camera,
+  replay and combined qualification remain open; Lagoon flight retained.
 - [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
   trace idle decisions and fix actual stalls; distinguish deliberate tactical waits.
 Owner assignment update2026-09-24: the owner prepared a separate cloud assignment

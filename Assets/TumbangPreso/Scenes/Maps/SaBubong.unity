@@ -49103,12 +49103,29 @@ MonoBehaviour:
     - {x: -3.000001, y: 0.10300048, z: 4.000001}
     - {x: -3.000001, y: 3.1030004, z: 8.000001}
     Bird: 1
+    AerialWander: 0
+    FlightBounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
+    GlideDuration: {x: 0.8, y: 2.4}
     WalkSpeed: 0.45
     RunSpeed: 2.2
     WalkCycleSpeed: 0.4
     RunCycleSpeed: 1.3
     PeeWaypoint: -1
     PeeTarget: {x: 0, y: 0, z: 0}
+    Habitat: []
+    Activities: []
+    QuietCat: 0
+    Perches:
+    - {x: -3.000001, y: 0.10300048, z: 4.000001}
+    - {x: -4.300002, y: 0.10300058, z: 4.9000015}
+    - {x: -2.100001, y: 0.10300063, z: 5.300002}
+    PerchWait: {x: 4, y: 9}
+    BirdBeatRate: 1.35
+    PeckChance: 0.65
+    FanWatch: 0
+    VisitAxis: {x: 0, y: 0, z: 0}
   - Id: kalapati
     Model: {fileID: 8771091787928289351, guid: 89871430be2577c4a9c9009c86adb490, type: 3}
     Clips:
@@ -49120,12 +49137,29 @@ MonoBehaviour:
     - {x: 4.000001, y: 0.10299952, z: -4.000001}
     - {x: 4.000001, y: 3.1029994, z: -0.0000009536743}
     Bird: 1
+    AerialWander: 0
+    FlightBounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
+    GlideDuration: {x: 0.8, y: 2.4}
     WalkSpeed: 0.45
     RunSpeed: 2.2
     WalkCycleSpeed: 0.4
     RunCycleSpeed: 1.3
     PeeWaypoint: -1
     PeeTarget: {x: 0, y: 0, z: 0}
+    Habitat: []
+    Activities: []
+    QuietCat: 0
+    Perches:
+    - {x: 4.000001, y: 0.10299952, z: -4.000001}
+    - {x: 5.1000013, y: 0.10299942, z: -4.9000015}
+    - {x: 3.100001, y: 0.102999404, z: -5.000002}
+    PerchWait: {x: 8, y: 16}
+    BirdBeatRate: 0.9
+    PeckChance: 0.8
+    FanWatch: 0
+    VisitAxis: {x: 0, y: 0, z: 0}
   - Id: fantail
     Model: {fileID: 8771091787928289351, guid: 6f569a317f91a7b41a49ac9702a5c8a7, type: 3}
     Clips:
@@ -49137,12 +49171,29 @@ MonoBehaviour:
     - {x: -10.2, y: 3.3999999, z: -8.4}
     - {x: -10.2, y: 6.4, z: -4.3999996}
     Bird: 1
+    AerialWander: 0
+    FlightBounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
+    GlideDuration: {x: 0.8, y: 2.4}
     WalkSpeed: 0.45
     RunSpeed: 2.2
     WalkCycleSpeed: 0.4
     RunCycleSpeed: 1.3
     PeeWaypoint: -1
     PeeTarget: {x: 0, y: 0, z: 0}
+    Habitat: []
+    Activities: []
+    QuietCat: 0
+    Perches:
+    - {x: -10.25, y: 3.422, z: -8.4}
+    - {x: -11.375, y: 3.422, z: -7.5999994}
+    - {x: -9.125, y: 3.422, z: -9.2}
+    PerchWait: {x: 6, y: 12}
+    BirdBeatRate: 1.15
+    PeckChance: 0
+    FanWatch: 1
+    VisitAxis: {x: 0, y: 0, z: 0}
 --- !u!1 &1177572983
 GameObject:
   m_ObjectHideFlags: 0

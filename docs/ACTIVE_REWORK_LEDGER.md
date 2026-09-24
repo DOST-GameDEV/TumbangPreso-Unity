@@ -1,31 +1,26 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Sa Bubong bird placement
+## Current resume, 2026-09-24: finish bird placement, then bot inactivity
 
-Overall goal ACTIVE, NOT done. DEV and QUAL at published, remote-verified
-671b391c84e21168f8f0a84099efd313d1a67cd5. Ilalim flight corridor published in
-fdce3ebf8 (native1/1 in72.837s, actual frames/grey inspected). Incoming175cac0dd/
-6bba9d0a4 tag/cast/body review and lighting7d3171549 window/probe findings merged.
-Their source receipts are preserved; no fresh combined Windows build claimed.
-QUAL byte-verified/stashed/advanced. Original two composition PNG metas untouched.
+Overall goal ACTIVE, NOT done. DEV and QUAL baseline dc10b68f2 (AGENTS cleanup
+published and remote-verified). SaBubong bird placement complete locally: author
+v2 uses real raised canopy seams, focused native1/1 in71.825s, actual paired
+frames/sequences/grey inspected. Report: map-by-map-refinement-2026-09-23/
+sabubong-bird-visits/report.md. Failed author v1 retained, no fixture retry used.
+No Unity process running; known generated churn backed up/restored. Original
+DEV composition PNG metas untouched. Publish the explicit map files/report.
 
-Current local map unit: Sa Bubong bird landing data using the existing behavior.
-Plan saved in sabubong-bird-visits-plan.md. Preserve elevated fantail canopy,
-roof/pool/recovery/residents and models/clips; fit two real alternate sites per
-species, local dwell settings, hook after finished roof geometry. First author
-stopped before saving: fantail needs three supported clear canopy sites. Next:
-sample legal canopy pads against finished geometry, then the one native case.
-This is placement data, not a fixture repair. Fixture allowance0/1.
-No .cs edits during Unity. After this map-data unit, reconcile ambient coverage
-and move to bot inactivity. New animation direction/research/abilities/ultimates
-remain assigned to the owner-run cloud lane; no task is closed by a handoff.
-All older requirements and final integration remain open. Author job reaped;
-no Unity job running. Failed evidence: Logs/sabubong-bird-visits-author-v1.log.
+Then REFINE-2.8: inspect current decision/input/recovery paths and trace actual
+bot inactivity, distinguishing planned waits from failed progress. Reuse existing
+probes; no new capture framework or broad reassurance suite. All21 ambient actors
+now have local map/species data coverage; ordinary-camera/replay/combined gates
+remain open under2.7/2.10. Preserve newer animation and lighting integrations.
+New character/ability/ultimate animation direction belongs to the owner-run cloud
+lane, not a new local rewrite. No task closes merely because it was handed off.
 
-Owner-requested AGENTS cleanup finished: consolidated duplicate instructions and
-stale sequencing while preserving current constraints. Original verbatim snapshot,
-coverage mapping and lightweight checks live in
-reports/instructions-cleanup-2026-09-24/. No gameplay or task completion changed.
+Owner-requested AGENTS cleanup published:3263 to1968words (39.7percent shorter),
+original byte-preserved with coverage audit/link/hash checks in
+reports/instructions-cleanup-2026-09-24/. All earlier requirements retained.
 
 ## Parallel lane, 2026-09-24: HOME loop and gameplay animation (separate from the map resume above)
 
@@ -42,7 +37,8 @@ seen: a live networked match, including an observer's estimate of the can raise.
 Ground-animal local units all published: Eskinita dog01d93272b/cat08ac1a178,
 Bayan dog4e2c5bc6d/cat2bcfd0581, Ilalim dog81054255e/catd914a3497. Each has its
 own plan/author/native result/actual frame review under the named report folder.
-Bird visits: Eskinita ad7d57955 complete locally; other three maps remain below.
+Bird visits: Eskinita ad7d57955, Bayan c61bb0318, Ilalim fdce3ebf8 and current
+SaBubong unit complete locally; final integrated review remains open.
 Lighting follow-ups237012904 and43c851b6f include source through429643416; keep
 Windows evidence separate from the incoming Mac native performance receipts.
 
@@ -87,9 +83,9 @@ remaining tuning/native performance are still open, not a reason to darken blind
 Still assigned: remaining animal species/maps, all-bot stalls, per-character
 motion/contact/observer review against the NEW merged implementation, chosen-map
 rematch defect, native D3D12 shutdown 0xC0000005, RafiV9/peer/platform gates and
-all older actionable IDs. Ultimate REFINE-2.11 comes after current map work:
-research multiple praised games first, individual hero plans next, implementation
-last. Phaister laughter/flight example; 2.8 seconds is not a cap. Full requirements
+all older actionable IDs. The owner-run cloud lane may now tackle
+Ultimate REFINE-2.11 alongside local work: research multiple praised games first,
+individual hero plans next, implementation last. Phaister laughter/flight example; 2.8 seconds is not a cap. Full requirements
 are saved in ultimate-performance-research-plan.md. No task silently removed.
 
 Final coherent native/peer/replay/performance regression and internal build are
