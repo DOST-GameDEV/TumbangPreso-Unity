@@ -89,7 +89,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static bool _gateBlowout;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v59";
+        private const string Version = "v64";
 
         [MenuItem("Tumbang Preso/Capture Ability Showcase")]
         public static void RunFromMenu() => Execute();
@@ -271,6 +271,9 @@ namespace TumbangPreso.EditorTools.MapKit
 
                 Transient("blast_fire", () => HeroHazards.CreateExplosionVisual(
                     Vector3.zero, 4.8f, null, HeroHazards.ExplosionStyle.Fire));
+
+                Transient("blast_ignition", () => HeroHazards.CreateExplosionVisual(
+                    Vector3.zero, 2.6f, null, HeroHazards.ExplosionStyle.Ignition));
 
                 Transient("blast_quake", () => HeroHazards.CreateExplosionVisual(
                     Vector3.zero, 4.5f, null, HeroHazards.ExplosionStyle.Quake, Vector3.forward));

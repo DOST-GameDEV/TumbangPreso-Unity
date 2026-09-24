@@ -719,6 +719,12 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
   paths, `Checks.RunAll`, SKILL-TREE-1's pad and touch look, and the Windows and Android builds
   (protocol 52) were not reached.
 - [ ] **SKILL-FX-1 Every skill's VFX, SFX and cast animation, owner 2026-09-24. IN PROGRESS.** Done 2026-09-24 (evidence in `docs/reports/skill-performances-2026-09-24/progress.md`): research and the per-skill plan; Grand Coven's cast, first-person path and circle; the cast-sheet audit and eleven body clips re-authored under an enforced head-pitch bound; one first-person hand path per cast (21); code-driven verbs checked. Still open: the other twenty skills' world VFX and cast SFX, which need `AbilityShowcaseProbe` stills on a Unity machine, one skill at a time against plan section 3.
+  Local2026-09-25: Flame Rush's pushed trail was retained after actual eye/corridor/
+  grey review. Ignition Cannon's generic slipper impact now has its own small
+  five-point fire read; v61 selected from staged native comparisons with ordinary
+  Slipper and Supernova. [Impact evidence](reports/cloud-integration-2026-09-24/skill-fx/ignition-impact.md).
+  Both skills still need live cast/audio/peer qualification; the other skills
+  remain open. Do not infer completion from staged geometry captures.
   Owner: *"refine all their skills VFX SFX and animation and everything too. THOROUGHLY research how
   other games that are good in roblox and or actual games like valorant or overwatch make skill
   effects and try to author one that works in our world"*, and *"REFINE ANY OTHER ANIMATION THAT CAN

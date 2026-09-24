@@ -1157,7 +1157,7 @@ namespace TumbangPreso
                     ? caster.AbilitySystem.VariantCost("sean.2.flare")
                     : 1.0f);
                 Abilities.HeroHazards.CreateExplosion(transform.position, blastRadius, 13.0f, 1.4f, _throwerSlot, "BOOM!",
-                    style: Abilities.HeroHazards.ExplosionStyle.Slipper);
+                    style: Abilities.HeroHazards.ExplosionStyle.Ignition);
             }
             else if (Affinity == SlipperAffinity.ElectricZap)
             {

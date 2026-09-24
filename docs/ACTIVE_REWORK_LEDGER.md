@@ -1,6 +1,33 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Sean's parol read
+## Current resume, 2026-09-25: Supernova and remaining skill effects
+
+Owner asleep: continue autonomously and NEVER use a usage reset, credit or paid
+service. DEV/remote/QUAL last published at5b4f69489; Ignition Cannon work is
+currently dirty in DEV and QUAL and must be published without protected DEV
+composition PNG metas. No Unity run in flight.
+
+SKILL-FX-1 progress: Flame Rush v59 eye/corridor/grey inspected and geometry
+retained, report in cloud-integration-2026-09-24/skill-fx/flame-rush-read.md.
+Ignition Cannon was previously generic Slipper impact. A small separate style
+now preserves radius2.6, knockback13, stun1.4 and neutral element, leaves
+ordinary slipper/Supernova untouched. The v60 floor-only cue was too small at
+eye height; v61 short ember reads; v62/v63 tapered tongues were still thin.
+Final SOURCE selects v61's runtime shape and reserves image versionv64 to avoid
+overwriting evidence. Actual same-camera/grey comparisons and limits:
+cloud-integration-2026-09-24/skill-fx/ignition-impact.md. V60-v63 guarded
+Editor showcases exited0; raw images/failed candidates and churn backups stay
+in QUAL Logs. One accidental unchanged-source v59 run is documented and not
+counted as a new design check. No broad gameplay suite or new player build.
+
+Next: fetch, stage only scoped source/docs/evidence, commit/push with M4tyu633
+and verify remote; align QUAL by byte-normalized comparison, named stash and
+detach published SHA. Then inspect Supernova's large dome with player/lata
+visibility during real overlap before deciding an art change. Continue the
+remaining skills one by one, then older actionable maps/bots/UI/peers/P7. Keep
+all TODO parents open while their live/mix/network gates remain.
+
+## Published unit, 2026-09-24: Sean's parol read
 
 Owner requested autonomous quality work and NO USAGE RESETS while asleep.
 No credit redemption, paid service or cross-chat work. DEV/remote/QUAL at

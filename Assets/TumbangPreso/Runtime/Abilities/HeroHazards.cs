@@ -3633,6 +3633,7 @@ namespace TumbangPreso.Abilities
                 // ultimate" in this enum's own words, and a thrown tsinelas that encased
                 // somebody would be the single least readable thing in the game.
                 case ExplosionStyle.Slipper: return StunElement.None;
+                case ExplosionStyle.Ignition: return StunElement.None;
 
                 default: return StunElement.Fire;
             }
@@ -3651,6 +3652,9 @@ namespace TumbangPreso.Abilities
 
             /// <summary>A thrown tsinelas. Small, light, and the joke rather than an ultimate.</summary>
             Slipper,
+
+            /// <summary>Sean's charged slipper impact, distinct from his ultimate and ordinary throws.</summary>
+            Ignition,
         }
 
         /// <summary>The per-style numbers. See `ExplosionStyle` for why this is not one look.</summary>
@@ -3707,6 +3711,11 @@ namespace TumbangPreso.Abilities
                     case ExplosionStyle.Frost:
                         return VfxShapes.NovaShell(5, 9, 0.0f, seed);
 
+                    // A charged slipper needs a short point of ignition from
+                    // eye height, without borrowing Supernova's broad shell.
+                    case ExplosionStyle.Ignition:
+                        return VfxShapes.Spire(5, .08f, .08f, seed);
+
                     // Fire is the same form roughened. A blast is radial but it is not TIDY.
                     default:
                         return VfxShapes.NovaShell(6, 10, 0.16f, seed);
@@ -3714,7 +3723,8 @@ namespace TumbangPreso.Abilities
             }
 
             /// <summary>How high off the ground the core sits. A ground wave sits ON the road.</summary>
-            public float CoreLift => _style == ExplosionStyle.Quake ? 0.04f : 0.6f;
+            public float CoreLift => _style == ExplosionStyle.Quake ? .04f :
+                _style == ExplosionStyle.Ignition ? .10f : .6f;
 
             /// <summary>
             /// The vertical scale ceiling. ⚠️ ONLY THE GROUND WAVE HAS ONE: a shell is meant to
@@ -3723,7 +3733,8 @@ namespace TumbangPreso.Abilities
             /// rather than a wall standing in a 14 m box.
             /// </summary>
             public float CoreVerticalCap =>
-                _style == ExplosionStyle.Quake ? 0.9f : float.PositiveInfinity;
+                _style == ExplosionStyle.Quake ? .9f :
+                _style == ExplosionStyle.Ignition ? .85f : float.PositiveInfinity;
 
             /// <summary>
             /// ⚠️ ONLY THE FRONT CARES WHICH WAY IT POINTS. A shell is radial, so yawing it
@@ -3756,6 +3767,7 @@ namespace TumbangPreso.Abilities
 
                     // A sandal makes a comic pop, not a crater. Few points, short ones.
                     case ExplosionStyle.Slipper: return VfxShapes.Star(6, 0.62f, seed);
+                    case ExplosionStyle.Ignition: return VfxShapes.StarOutline(5, 0.58f, seed);
 
                     // Burnt ground: ragged, but rounder than a fracture.
                     default: return VfxShapes.Splat(11, 0.22f, seed);
@@ -3781,6 +3793,9 @@ namespace TumbangPreso.Abilities
                             ? new Color(0.24f, 0.45f, 0.72f)
                             : new Color(0.92f, 0.88f, 0.74f);
 
+                    case ExplosionStyle.Ignition:
+                        return new Color(1f, Random.Range(.65f, .9f), .25f);
+
                     default:
                         return new Color(1.0f, Random.Range(0.4f, 0.9f), 0.1f);
                 }
@@ -3799,6 +3814,7 @@ namespace TumbangPreso.Abilities
                     case ExplosionStyle.Quake: Visual.AbilityVfx.SpawnMagmaEruption(at, radius); break;
                     case ExplosionStyle.Frost: Visual.AbilityVfx.SpawnIceBurst(at, radius); break;
                     case ExplosionStyle.Slipper: break;   // deliberately bare. It is a slipper.
+                    case ExplosionStyle.Ignition: break;  // the small BoltHead and embers are its payload.
 
                     // ⚠️ SEAN'S OWN BURST, not `SpawnCastFlash`. That flash is what every
                     // ability in the game plays at cast, so routing the ultimate's PAYLOAD to it
@@ -3838,6 +3854,14 @@ namespace TumbangPreso.Abilities
                         debrisLift: 1.8f, debrisLife: 0.7f,
                         flashIntensity: 1.6f, flashSeconds: 0.14f,
                         shakeAmount: 0.22f, shakeSeconds: 0.16f);
+
+                case ExplosionStyle.Ignition:
+                    return new ExplosionLook(style, new Color(1f, .68f, .2f), new Color(1f, .92f, .5f),
+                        "sfx_slipper_burst", hasCore: true, debrisCount: 6,
+                        debrisSize: new Vector2(.12f, .22f), debrisSpeed: new Vector2(5f, 9f),
+                        debrisLift: 1.3f, debrisLife: .45f,
+                        flashIntensity: 1.5f, flashSeconds: .12f,
+                        shakeAmount: .22f, shakeSeconds: .16f);
 
                 default:
                     return new ExplosionLook(style, AbilityVfx.FireHotColour, AbilityVfx.FireColour,
@@ -3999,6 +4023,11 @@ namespace TumbangPreso.Abilities
                     VfxFlipbook.Play(VfxSheets.Smoke, center + Vector3.up * 0.10f, radius * 1.2f);
                     break;
 
+                case ExplosionStyle.Ignition:
+                    VfxFlipbook.Play(VfxSheets.BoltHead, center + Vector3.up * .22f,
+                        radius * .68f, tint: new Color(1f, .86f, .4f));
+                    break;
+
                 default:
                     // ⚠️ TWO SHEETS FOR SEAN AND ONLY FOR SEAN. `warm-explosion` is the bloom and
                     // `solar-shrapnel` is what it throws, which is the composition
@@ -4040,10 +4069,9 @@ namespace TumbangPreso.Abilities
                 VfxMaterial.Ghost(vfx.GetComponent<Renderer>(), look.CoreColour, 0.9f);
 
                 var anim = vfx.AddComponent<ExplosionVfxAnim>();
-                anim.TargetRadius = radius * 1.1f;
+                anim.TargetRadius = radius * (style == ExplosionStyle.Ignition ? .42f : 1.1f);
 
-                // Every `VfxShapes` mesh is unit RADIUS. See `ExplosionVfxAnim.MeshRadius`.
-                anim.MeshRadius = 1.0f;
+                anim.MeshRadius = 1f;
 
                 // Only the ground wave is capped, and only vertically. 0.9 keeps Dante's rim
                 // around 0.30 m: a lip of broken road you can see over and step across.
@@ -4069,7 +4097,7 @@ namespace TumbangPreso.Abilities
             VfxMaterial.Ghost(shockRing.GetComponent<Renderer>(), look.Edge, 0.8f);
 
             var ringAnim = shockRing.AddComponent<ShockwaveRingAnim>();
-            ringAnim.TargetRadius = radius * 1.4f;
+            ringAnim.TargetRadius = radius * (style == ExplosionStyle.Ignition ? 1f : 1.4f);
             Object.Destroy(shockRing, 0.4f);
 
             // 3. Debris. ⚠️ THE COUNT AND THE SIZE SCALE WITH THE BLAST. Ten cubes at a fixed
@@ -4078,14 +4106,14 @@ namespace TumbangPreso.Abilities
             int shards = Mathf.Clamp(Mathf.RoundToInt(look.DebrisCount * (radius / 3.0f)), 4, 22);
             for (int i = 0; i < shards; i++)
             {
-                var spark = style == ExplosionStyle.Fire
+                var spark = style == ExplosionStyle.Fire || style == ExplosionStyle.Ignition
                     ? SeanBurstEmber.Create() : GameObject.CreatePrimitive(PrimitiveType.Cube);
                 spark.name = "ExplosionSpark";
                 spark.transform.position = center + Vector3.up * 0.5f;
                 spark.transform.localScale = Vector3.one
                     * Random.Range(look.DebrisSize.x, look.DebrisSize.y)
                     * Mathf.Clamp(radius / 3.0f, 0.7f, 1.6f);
-                if (style == ExplosionStyle.Fire) spark.transform.localScale *= .55f;
+                if (style == ExplosionStyle.Fire || style == ExplosionStyle.Ignition) spark.transform.localScale *= .55f;
                 spark.transform.rotation = Random.rotation;
 
                 VfxMaterial.Ghost(spark.GetComponent<Renderer>(), look.DebrisColour(), 0.9f);
@@ -4335,7 +4363,7 @@ namespace TumbangPreso.Abilities
             /// ⚠️⚠️ UNIT RADIUS, NOT UNIT DIAMETER, AND GETTING THIS WRONG DOUBLES EVERY BLAST.
             /// This used to read `TargetRadius * 2.0f` and that was CORRECT for what it animated:
             /// `PrimitiveType.Sphere` is one unit ACROSS, so radius 0.5, so a scale of 2R gives a
-            /// radius of R. Every shape `VfxShapes` generates is built at one unit of RADIUS
+            /// radius of R. Explosion core shapes are built at one unit of RADIUS
             /// instead, so the same line would have drawn a 4.8 m Supernova at 9.9 m and swallowed
             /// most of a 14 m arena. `VISION.md` § 2 exists because of exactly that failure.
             /// </summary>
