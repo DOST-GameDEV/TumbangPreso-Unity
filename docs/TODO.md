@@ -114,22 +114,31 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
   `GroundLift` 1.6 on the Eskinita and Ilalim court asphalt through a property block, sunlit road
   (90,85,71) to (158,150,119) on Eskinita and (124,126,106) to (181,185,156) on Ilalim, found by
   shape and logged (`68d297ba`). Edge close-up checked: no black ink, silhouettes darken their own
-  colour, eaves carry a lighter bevel. Still open: SaBubong read milky in v2, so its haze now runs
-  60 to 300 m (`848e21d4`, NOT yet rendered); whether Ilalim's sunlit road at 181 is too pale is a
-  taste call; overall contrast is lower than PEAK's, left for the owner rather than tuned blind.
+  colour, eaves carry a lighter bevel. SaBubong read milky in v2, so its haze now runs 60 to 300 m
+  (`848e21d4`); the v3 render confirms it: the ring of towers keeps more colour and edge than in
+  v2, and the warm horizon still lightens the farthest ones. Everything left is owner taste, so it
+  stays open rather than being tuned blind: whether Ilalim's sunlit road at 181 is too pale;
+  overall contrast, which is lower than PEAK's; SaBubong's high preview shot, where the street
+  40 m below the roof fogs into flat peach; and Ilalim's preview, which reads very pastel.
 - [x] LIGHT-1.7 The two Stage tests assert the bright look's own claims (`20c977e5`): applied rig,
   bright shade colour, haze past the court, court ground found; toon ramp measured 1.70:1 under the
   look against 1.95:1 authored, asserted inside 1.35 to 2. WorldCourtCueTests 3/3 on the Mac.
-- [ ] LIGHT-1.8 Decided: the map-select and lobby preview SHOULD show the bright look, because
-  `MapPreviewSurface` promises the map is graded the way it will be played. In progress:
-  `WorldLookPresentation.InstallPreview(parent, floor, sun)` (explicit sun, handles only cameras
-  tagged `WorldLookCamera`, never `Camera.main`, so the menu UI is not graded) is written but
-  uncommitted and uncompiled. Remaining: call it from `MapPreviewSurface.ApplyMapEnvironment`
-  after the env is applied (destroy the previous preview install first; parent under the shown
-  arena's first active root; sun = its shadow-casting directional light; floor from
-  `WorldGround.TryBelow` at the pivot rather than the spawn-marker height), add `WorldLookCamera`
-  to the preview camera, and note `ConvertedMatchSetup` calls `ReapplyEnvironment` on refresh, so
-  reinstalling there must stay cheap or reuse the live install for the same map.
+- [x] LIGHT-1.8 The map-select and lobby preview show the bright look, because
+  `MapPreviewSurface` promises the map is graded the way it will be played. Each its own commit:
+  `WorldLookPresentation.InstallPreview` with an explicit sun, grading only `WorldLookCamera`
+  cameras so the menu UI is not graded, plus `Reapply` for lobby refreshes (`596a5da1`); the
+  restore writes ambient and fog back only while the scene it read them from is still active, a
+  guard for the START transition, not a fix for an observed fault (`1535afef`); the preview
+  renders into an HDR target, because an ARGB32 target clamped the frame before the grade and
+  left bloom nothing to find (`18eb0fd8`); `ApplyMapEnvironment` installs the look under the
+  first live root that is not itself `~Match` (it is nested on Ilalim, SaBubong and the Lagoon,
+  which the first cut missed), with that root's shadow-casting sun and the floor from
+  `WorldGround.TryBelow` under the pivot; the same map reuses the live install, and a map change
+  retires it before the new environment is written (`bd6cccc2`). Evidence (`8d73471f`):
+  `MapPreviewShowsTheBrightLookAndHandsEachMapItsLightingBack` drives the real surface through all
+  five maps and a cached revisit, asserting the look, camera scope, ambient, fog, sun, refresh
+  reuse and the parked map's authored sun. 4/4 with the three older look cases on the Mac; target
+  ARGBHalf, bloom live on all five, ground lift found in the preview on Eskinita and Ilalim.
 - [ ] LIGHT-1.9 Performance check of bloom plus edges on the Balanced tier, and a native build
   look at the owner's window shape.
 
