@@ -298,6 +298,57 @@ def phaister():
     p.locked((1.4, 1.15, 6.2), (0, 1.6, 0), 50)
     return p
 
+
+@performance
+def sean():
+    """
+    SUPERNOVA, 3.4 s. Patience turning into commitment (plan.md section 1): "Waits for one
+    opening. Makes it count." He is a lantern maker, so the fire is ASSEMBLED, not summoned:
+    a parol frame of five sticks builds between his cupped hands one stick at a time while he
+    watches it. Then the head snaps up (the opening), a held breath, the coil, and the rise
+    that is the first frame of the live leap.
+    Measured on his real mesh: twist 38 brings both hands together in front of the chest.
+    """
+    p = Performance("sean", 3.4)
+    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
+    plant = Pose(torso=(6, 8, 0), head=(16, -4, 0), left=(6, 18, 0), right=(6, 18, 0),
+                 legs=((4, 7), (-4, 7)))
+    roll = plant.but(torso=(6, -8, 0), head=(16, 4, 0))
+    # Cupped hands at the chest, head bowed over them: the craftsman.
+    cup = Pose(torso=(10, 0, 0), head=(24, 0, 0), left=(75, 5, 38), right=(75, 5, 38),
+               legs=((4, 7), (-4, 7)))
+    inspect_ = cup.but(head=(22, 0, -6), torso=(12, 0, 0))
+    inspect2 = cup.but(head=(22, 0, 5), torso=(11, 0, 0))
+    # The opening: the head snaps up to the target, hands still cupped. Held.
+    look = cup.but(torso=(4, 0, 0), head=(-6, 0, 0))
+    # The coil: chest down over the front leg, arms swept back, the lantern pulled in.
+    coil = Pose(torso=(30, 0, 0), head=(-14, 0, 0), left=(-42, 22, 0), right=(-42, 22, 0),
+                legs=((18, 5), (-22, 5)))
+    # The rise: arms driving up, onto the toes, the first frame of the leap.
+    rise = Pose(torso=(-8, 0, 0), head=(-14, 0, 0), left=(165, 22, 0), right=(165, 22, 0),
+                legs=((-4, 3), (-10, 3)))
+
+    p.key(0, rest)
+    p.key(.22, plant).key(.38, roll).key(.5, plant)
+    p.key(.72, cup)
+    p.key(1.05, inspect_).key(1.35, inspect2).key(1.62, cup)
+    p.key(1.80, look, punch=True)
+    p.hold(1.80, 2.22, look)
+    p.key(2.55, coil)
+    p.hold(2.55, 2.78, coil)
+    p.key(2.98, rise, punch=True)
+    p.hold(2.98, 3.4, rise)
+    p.rise(0, 0).rise(2.9, 0).rise(3.1, .12).rise(3.4, .14)
+
+    # A: three-quarter front medium while he plants and builds the lantern.
+    p.shot(0, 1.75, (1.9, 1.35, 4.1), (0, 1.0, 0), 44, eye_to=(1.6, 1.3, 3.6))
+    # B: close on the lantern and his face as the head snaps up.
+    p.shot(1.75, 2.3, (1.1, 1.45, 3.1), (0, 1.25, .2), 40, eye_to=(1.0, 1.45, 2.85), close=True)
+    # C: low and to his side, so the arms swept back in the coil read, then the rise.
+    p.shot(2.3, 3.4, (-2.9, .5, 3.3), (0, 1.0, 0), 50, eye_to=(-2.6, .55, 3.4), look_to=(0, 1.35, 0))
+    p.locked((1.7, 1.15, 4.8), (0, 1.05, 0), 46)
+    return p
+
 # ----------------------------------------------------------------------------- the 2.8 s baseline
 # The introductions as they shipped before REFINE-2.11, transcribed key for key from the old
 # `HeroAbilityClips.Introductions.cs` (PoseKey arguments: raise = -x, twist = +/-y, spread = z),

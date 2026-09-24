@@ -42,7 +42,7 @@ still unverified. Research: [research.md](research.md). Plan: [plan.md](plan.md)
 | Hero | State | Length | Evidence |
 |---|---|---|---|
 | Phaister | **New performance** (sly hat tip, held-in chuckle, laugh that lifts her 0.58 m with the five laugh syllables shaking her chest, eclipse drawn forward, the claim, a soft landing). Stage: night falls with the laugh, stars, the moon rises, the moon serpent coils round it and swallows it to a violet corona, laugh stars on each "ha", a levitation shadow, her WardCircle claims the ground. Laugh voice moved inside the laugh. | 4.2 s | `previews/phaister_v1.png` to `v5_shots.png` (v1 to v4 are the rejected iterations: shot A too tight, brim turning into a slab with the head thrown back, raised hands hidden inside the brim on chibi arms; all fixed). Stage effects NOT yet seen rendered. |
-| Sean | Retained 2.8 s baseline, transcribed key for key | 2.8 s | next |
+| Sean | **New performance**: plant and shoulder roll, cupped hands at the chest with the head bowed over them while a parol frame of five fire sticks lays itself stick by stick (his lantern craft), the star fills with flame, the head snaps up and holds a breath, the coil with arms swept back, the rise onto his toes. Stage: dusk wall with a glowing horizon band that dims on the held breath, six paper-lantern stars drifting up behind him, coil flames at his feet, sparks racing up on the rise. | 3.4 s | `previews/sean_before_witness.png` (the old one barely moves), `sean_v1_*` (shot B too tight, coil unreadable from the front), `sean_v2_shots.png` (side shot for the coil). Stage effects NOT yet seen rendered. |
 | Zack | Retained baseline | 2.8 s | |
 | Nemu | Retained baseline (Kuro fit reveal kept) | 2.8 s | |
 | Dante | Retained baseline | 2.8 s | |
