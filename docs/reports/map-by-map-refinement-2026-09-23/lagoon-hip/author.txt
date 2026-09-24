@@ -1,0 +1,4 @@
+Neighbourhood home 4 HipThatch: four-slope palm material, 136small eave tufts and three ridge wraps; source/non-roof slots retained.
+Detached stilt home 11 HipThatch: four-slope palm material, 122small eave tufts and three ridge wraps; source/non-roof slots retained.
+Detached stilt home 14 HipThatch: four-slope palm material, 114small eave tufts and three ridge wraps; source/non-roof slots retained.
+Three hip roofs only; 9576added vertices/three renderers, no new colliders/shadow casters. Other families/gameplay/birds unchanged.

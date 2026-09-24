@@ -4462,6 +4462,112 @@ Transform:
   m_Children: []
   m_Father: {fileID: 712711426}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &29242636
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 29242637}
+  - component: {fileID: 29242640}
+  - component: {fileID: 29242639}
+  - component: {fileID: 29242638}
+  m_Layer: 0
+  m_Name: Fitted hip thatch
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &29242637
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29242636}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1901444134}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &29242638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29242636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Small palm ends overlap the retained hip eave beams; ties wrap the existing
+    short ridge.
+--- !u!23 &29242639
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29242636}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 49d93d12228e3304a988203ccfa8c9ba, type: 2}
+  - {fileID: 2100000, guid: ea53f3b0f1fea334586c1426e52b1d45, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &29242640
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29242636}
+  m_Mesh: {fileID: 4300000, guid: 6f136f24315c5654c8413a806659fe8b, type: 2}
 --- !u!1 &29305646
 GameObject:
   m_ObjectHideFlags: 0
@@ -33658,6 +33764,7 @@ Transform:
   - {fileID: 722822680}
   - {fileID: 1435485198}
   - {fileID: 1805973938}
+  - {fileID: 1643568373}
   m_Father: {fileID: 1159714792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &258823074
@@ -33690,7 +33797,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: a5aad16c32e964147acc086b0afdc626, type: 2}
   - {fileID: 2100000, guid: 9cfb951c02633a740bcb0f597130d3e5, type: 2}
   - {fileID: 2100000, guid: c51b5fdb422011441875c8693a49342e, type: 2}
-  - {fileID: 2100000, guid: f1705598fc1463c4ea895f6f9b8f364f, type: 2}
+  - {fileID: 2100000, guid: 1259eca5c3616a140bed8df8ec7c957d, type: 2}
   - {fileID: 2100000, guid: a5b54b63681c96342ae1f5cb83395ce2, type: 2}
   - {fileID: 2100000, guid: 336c32cddd230834da42a76692d10424, type: 2}
   m_StaticBatchInfo:
@@ -33723,7 +33830,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 258823072}
-  m_Mesh: {fileID: 4300000, guid: be0ee644435cb524ebbe3baba35cb2cc, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 3606f3758a1092f48b24d6ed870d88b1, type: 2}
 --- !u!1 &259131515
 GameObject:
   m_ObjectHideFlags: 0
@@ -35130,6 +35237,112 @@ Transform:
   m_Children: []
   m_Father: {fileID: 299214318}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &268570865
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 268570866}
+  - component: {fileID: 268570869}
+  - component: {fileID: 268570868}
+  - component: {fileID: 268570867}
+  m_Layer: 0
+  m_Name: Fitted hip thatch
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &268570866
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268570865}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1722451771}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &268570867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268570865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Small palm ends overlap the retained hip eave beams; ties wrap the existing
+    short ridge.
+--- !u!23 &268570868
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268570865}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 8f4ed40f24b69664593f740d0f3649d0, type: 2}
+  - {fileID: 2100000, guid: ea53f3b0f1fea334586c1426e52b1d45, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &268570869
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268570865}
+  m_Mesh: {fileID: 4300000, guid: 38dd7f007e935a14d82f6bab845b8ac0, type: 2}
 --- !u!1 &269160202
 GameObject:
   m_ObjectHideFlags: 0
@@ -215064,6 +215277,112 @@ Transform:
   m_Children: []
   m_Father: {fileID: 881916680}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1643568372
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1643568373}
+  - component: {fileID: 1643568376}
+  - component: {fileID: 1643568375}
+  - component: {fileID: 1643568374}
+  m_Layer: 0
+  m_Name: Fitted hip thatch
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1643568373
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1643568372}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 258823073}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1643568374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1643568372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Small palm ends overlap the retained hip eave beams; ties wrap the existing
+    short ridge.
+--- !u!23 &1643568375
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1643568372}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 1259eca5c3616a140bed8df8ec7c957d, type: 2}
+  - {fileID: 2100000, guid: ea53f3b0f1fea334586c1426e52b1d45, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1643568376
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1643568372}
+  m_Mesh: {fileID: 4300000, guid: 52d216f8ab76b764f8c3d6e0eb409826, type: 2}
 --- !u!1 &1643921324
 GameObject:
   m_ObjectHideFlags: 0
@@ -225091,6 +225410,7 @@ Transform:
   - {fileID: 60255706}
   - {fileID: 1733816151}
   - {fileID: 1133348472}
+  - {fileID: 268570866}
   m_Father: {fileID: 1159714792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1722451772
@@ -225123,7 +225443,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: a5aad16c32e964147acc086b0afdc626, type: 2}
   - {fileID: 2100000, guid: dec1cafb0d16cfc479ecfe71f8f40c1c, type: 2}
   - {fileID: 2100000, guid: c51b5fdb422011441875c8693a49342e, type: 2}
-  - {fileID: 2100000, guid: bd80f19e39d04c44c82f67be9247b0f9, type: 2}
+  - {fileID: 2100000, guid: 8f4ed40f24b69664593f740d0f3649d0, type: 2}
   - {fileID: 2100000, guid: a5b54b63681c96342ae1f5cb83395ce2, type: 2}
   - {fileID: 2100000, guid: 336c32cddd230834da42a76692d10424, type: 2}
   m_StaticBatchInfo:
@@ -225156,7 +225476,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1722451770}
-  m_Mesh: {fileID: 4300000, guid: 87c6e754682fde44d8be130d8eccfdd8, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 4807651a998cfa943a63fbd434e88003, type: 2}
 --- !u!1 &1723166642
 GameObject:
   m_ObjectHideFlags: 0
@@ -249804,6 +250124,7 @@ Transform:
   - {fileID: 376546206}
   - {fileID: 2008132990}
   - {fileID: 808344675}
+  - {fileID: 29242637}
   m_Father: {fileID: 1159714792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1901444135
@@ -249836,7 +250157,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: a5aad16c32e964147acc086b0afdc626, type: 2}
   - {fileID: 2100000, guid: 9b4855bd71ff48c4dabfd984fc5e7e32, type: 2}
   - {fileID: 2100000, guid: c51b5fdb422011441875c8693a49342e, type: 2}
-  - {fileID: 2100000, guid: e389fa1d3a5470f418b6fffbd9f22e91, type: 2}
+  - {fileID: 2100000, guid: 49d93d12228e3304a988203ccfa8c9ba, type: 2}
   - {fileID: 2100000, guid: a5b54b63681c96342ae1f5cb83395ce2, type: 2}
   - {fileID: 2100000, guid: 336c32cddd230834da42a76692d10424, type: 2}
   m_StaticBatchInfo:
@@ -249869,7 +250190,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1901444133}
-  m_Mesh: {fileID: 4300000, guid: 53829c9c57e0ee84ab7b140876104b60, type: 2}
+  m_Mesh: {fileID: 4300000, guid: c1dda1b9ac4542a4cae0e5ca170df248, type: 2}
 --- !u!1 &1901532639
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,15 +18,17 @@ namespace TumbangPreso.EditorTools.MapKit
         private const string SourceTag="TumpLagoonGableSource",MeshTag="TUMP_LAGOON_GABLE_MESH:";
         private static readonly int[] Ids={0,8,12,16};
         private static readonly Vector2[] Sizes={new Vector2(5.4f,4.5f),new Vector2(4.6f,4.2f),new Vector2(4.2f,4),new Vector2(4.2f,3.7f)};
-        private sealed class Geometry
+        internal sealed class Geometry
         {
             private readonly List<Vector3> vertices=new List<Vector3>();
             private readonly List<int>[] indices={new List<int>(),new List<int>()};
             public void Quad(Vector3 a,Vector3 b,Vector3 c,Vector3 d,int material)
             {int n=vertices.Count;vertices.AddRange(new[]{a,b,c,d});indices[material].AddRange(new[]{n,n+1,n+2,n,n+2,n+3});}
             public void Tuft(Vector3 start,Vector3 end,float width)
+                =>TuftAcross(start,end,width,Vector3.forward);
+            public void TuftAcross(Vector3 start,Vector3 end,float width,Vector3 across)
             {
-                var p=new[]{start-Vector3.forward*width*.5f,start+Vector3.forward*width*.5f,end+Vector3.forward*width*.3f,end-Vector3.forward*width*.3f};
+                var p=new[]{start-across*width*.5f,start+across*width*.5f,end+across*width*.3f,end-across*width*.3f};
                 if(Vector3.Cross(p[1]-p[0],p[2]-p[0]).y<0)Array.Reverse(p);
                 var n=Vector3.Cross(p[1]-p[0],p[2]-p[0]).normalized*.018f;
                 Quad(p[0],p[1],p[2],p[3],0);Quad(p[3]-n,p[2]-n,p[1]-n,p[0]-n,0);
@@ -114,7 +116,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(solids.Count!=map.GetComponentsInChildren<Collider>(true).Length||solids.Any(p=>p.Key==null||p.Key.bounds!=p.Value))throw new InvalidOperationException("Gable finish changed collision.");
             report.AppendLine("Four gabled roofs only; "+total+" added fringe/tie vertices, four renderers, no new collider/shadow caster. Other families, deck, water recovery and flying birds unchanged.");
         }
-        private static Vector2 RoofUv(Vector3 p,Vector3 normal)
+        internal static Vector2 RoofUv(Vector3 p,Vector3 normal)
         {
             var down=Vector3.ProjectOnPlane(Vector3.down,normal).normalized;
             if(down.sqrMagnitude<.1f)down=Vector3.right;

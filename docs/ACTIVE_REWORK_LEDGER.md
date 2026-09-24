@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Lagoon gabled-thatch family
+## Current resume, 2026-09-24: Lagoon hip-roof family
 
 Overall goal ACTIVE and NOT complete. Continue every independently actionable TODO
 without checkpoint stops. Owner is AFK and wants quality product work ahead of test/
@@ -10,7 +10,7 @@ newer requirements supersede retired designs. Do not claim broad completion from
 subset, passing test, report or pushed art batch.
 
 DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD and verified remotefaa9047020112797089b505746ca43c8c44333a9. Protected original
+HEAD and verified remotec0f3221a7f5cfd554d1670e7cfb8f990bf361996. Protected original
 Resources/UI/composition-redesign/home-court.png.meta and loading-street.png.meta
 remain dirty: NEVER restore/stage them. Own current work: LagoonGableFinishAuthor, builder hook, paired review method,
 lagoon-gable-plan.md and ledger. Fall/mash3e0d0c69a and birds faa904702 are published. Explicit staging, sole author M4tyu633, no trailers/AI mentions/
@@ -262,3 +262,27 @@ rows; no Lagoon source/scene overlap. Clean no-commit merge preserved both TODO
 additions, no conflicts, original protected metas untouched. Commit merge/push then
 advance QUAL. Gable tests were againstfaa904702plus candidate, before this UI-only
 arrival; next focused author naturally recompiles the integrated source.
+
+Gable7957d8a96 published through clean integration mergec0f3221a7, remote verified.
+QUAL exact candidate stashed/advancedc0f3221a7. No active Unity. HipThatch4/11/14
+local plan saved lagoon-hip-plan.md: material orientation on four slopes, modest
+four-eave fringe/short ridge ties, retained bodies/material slots/collision. Native
+baseline already inspected; no hip code/assets edited yet. Continue locally.
+
+Hip source and gable geometry-helper exposure copied to QUAL. Author runs
+Logs/refine2-lagoon-hip-v1/author.log. Three HipThatch roofs only, per-slope fibre UVs,
+modest four-sided fringe and short ridge wraps. Original positions/topology/other
+material slots/collision guarded. Freeze.cs. Reuse existing LagoonArtBaselineReview
+for home4/preview comparison; no new capture fixture or unchanged-family tests.
+
+Hip author88260completed/reaped: three original roofs/non-roof slots and collision
+preserved;9576fringe/tie vertices/three renderers, no new collider/shadow caster.
+Current existing native family-view case runs Logs/refine2-lagoon-hip-v1/check.log/
+results.xml. Freeze.cs. Saved full patch/restored known profile and PNGmeta churn.
+Inspect actual home4/preview paired with baseline, then publish if useful.
+
+Hip case20533completed/reaped1/1in5.702s. Representative home4/preview pair and grey
+inspected, keepv1. Three fitted roofs/source slots/collision guarded. Qualified
+scene/assets/meta/evidence copied to DEV; known churn restored after saved patch.
+No active Unity. Publish hip unit then low-palm/screen family; water/boat/island
+work still open. No unchanged gable/physics/bird rechecks.
