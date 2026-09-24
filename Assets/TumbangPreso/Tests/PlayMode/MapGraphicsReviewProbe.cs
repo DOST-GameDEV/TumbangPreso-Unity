@@ -87,6 +87,66 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator LagoonWaterFinishReview()
+        {
+            Action<bool> ReadWater()
+            {
+                var water=Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Single(t=>t.name=="Moving lagoon surface");
+                var bed=Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Single(t=>t.name=="Sandy lagoon bed");
+                var waterMat=water.GetComponent<Renderer>().sharedMaterial;var bedMat=bed.GetComponent<Renderer>().sharedMaterial;
+                Assert.AreEqual("TumbangPreso/LagoonWater",waterMat.shader.name);
+                Assert.AreEqual("TumbangPreso/LagoonBed",bedMat.shader.name,"Runtime material conversion erased the authored seabed shader.");
+                Assert.IsFalse(ShaderUtil.ShaderHasError(waterMat.shader));Assert.IsFalse(ShaderUtil.ShaderHasError(bedMat.shader));
+                Assert.That(water.position.y,Is.EqualTo(LagoonWater.SurfaceY).Within(.0001f));
+                var solid=bed.GetComponent<BoxCollider>();Assert.That(solid.bounds.size.x,Is.EqualTo(180).Within(.001f));
+                Assert.That(solid.bounds.max.y,Is.EqualTo(LagoonWater.FloorY).Within(.0001f));
+                var filter=bed.GetComponent<MeshFilter>();var wide=filter.sharedMesh;
+                var original=AssetDatabase.LoadAssetAtPath<Mesh>("Assets/TumbangPreso/Art/LagoonWaterFinish/OriginalBed.asset");Assert.IsNotNull(original);
+                return on=>{waterMat.SetFloat("_Refinement",on?1:0);bedMat.SetFloat("_Refinement",on?1:0);filter.sharedMesh=on?wide:original;};
+            }
+            var canvas=new GameObject("Lagoon water preview",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.Lagoon);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.Lagoon&&Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.Lagoon,preview.Showing);preview.enabled=false;var change=ReadWater();Time.timeScale=0;
+            try
+            {
+                foreach(string state in new[]{"before","after"})
+                {change(state=="after");yield return GameplayShots.Render(preview.Camera,"Lagoon-water-preview-"+state,false,Output,width:1280,height:720);}
+            }
+            finally{change(true);Time.timeScale=1;}
+            Object.Destroy(canvas);yield return PlayModeWorld.Reset();yield return MapRetrievalProbe.Load(SceneFlow.Lagoon);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;var camera=rig.Camera;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            change=ReadWater();var eye=Vector3.zero;var rotation=Quaternion.identity;
+            var clock=Object.FindFirstObjectByType<Visual.NeighbourhoodSkyMotion>();bool clockEnabled=clock!=null&&clock.enabled;
+            if(clock!=null)clock.enabled=false;
+            Camera.CameraCallback pin=cam=>{if(cam==camera){cam.transform.SetPositionAndRotation(eye,rotation);cam.fieldOfView=60;}};
+            Camera.onPreCull+=pin;Time.timeScale=0;
+            try
+            {
+                foreach(string view in new[]{"piles","boat","overlook"})
+                {
+                    eye=view=="piles"?new Vector3(-22,-.3f,3):view=="boat"?new Vector3(-28,2.2f,17):new Vector3(13,3,9);
+                    var target=view=="piles"?new Vector3(-27,-1.05f,10):view=="boat"?new Vector3(-34,-.25f,26):new Vector3(18,-1.1f,10);
+                    rotation=Quaternion.LookRotation(target-eye);
+                    foreach(string state in new[]{"before","after"})
+                    {
+                        change(state=="after");using(Visual.NeighbourhoodSkyMotion.At(20))
+                            yield return GameplayShots.Render(camera,"Lagoon-water-"+view+"-"+state,false,Output,width:1280,height:800);
+                    }
+                }
+                using(Visual.NeighbourhoodSkyMotion.At(40))
+                    yield return GameplayShots.Render(camera,"Lagoon-water-motion40",false,Output,width:1280,height:800);
+                GraphicsProfiles.Apply(0);using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(camera,"Lagoon-water-low",false,Output,width:960,height:540);
+            }
+            finally{change(true);Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=clockEnabled;}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator LagoonMetalFinishReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Lagoon);

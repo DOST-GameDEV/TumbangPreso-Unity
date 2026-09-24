@@ -335,8 +335,12 @@ scattered across all maps. Execute inside each map's existing refinement row.
   native1/1passed and paired/grey inspected. Six metal roofs now have fitted rib
   direction/pitch and home2alone has a painted lower-board accent; geometry/other
   palettes/collision retained. [Metal-family evidence](reports/map-by-map-refinement-2026-09-23/lagoon-metal/report.md),
-  native1/1passed/paired/grey inspected. Water depth/contact, boats, islands/sky
-  and final map acceptance remain.
+  native1/1passed/paired/grey inspected. Water now reveals submerged supports/hulls,
+  with restrained moving surface/bed detail and a visual-only bed extension. Fixed
+  runtime replacement of LagoonBed via its preserve tag; physical surfaces unchanged.
+  [Water evidence](reports/map-by-map-refinement-2026-09-23/lagoon-water/report.md): final1/1passed,
+  actual paired/grey/Low/held-time views inspected. Boats, islands/coast/sky and
+  final map acceptance remain.
 - [x] **REFINE-2.6b Lagoon fall and mash recovery, owner2026-09-24.** Adapt SaBubong's
   physical edge fall and existing press-gated get-up to Lagoon. Both modes, all cast,
   existing input/camera/animation/authority path. Record effects on intentional water

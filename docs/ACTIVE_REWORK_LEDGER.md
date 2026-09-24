@@ -172,3 +172,47 @@ Metal scene/assets/meta/evidence copied to DEV, known churn restored from saved
 patch. Keep one painted household and fitted metal rib axes/pitches. Publish then
 water presentation first: flat cyan/depth/contact is a larger current weakness than
 boat geometry. Preserve later boat/island/sky tasks and all earlier queue items.
+
+0c9308c19metal/paint unit PUBLISHED/remote verified; QUAL exact candidate stashed/
+advanced0c9308c19. No active Unity. Water plan saved lagoon-water-plan.md. Actual
+shader near opacity0.78hides the real bed; first local pass uses transparency,
+restrained surface/bed variation and visual-only bed extension, preserving all
+water/fall/swim/boat physics. Official Unity depth docs read; no new camera-depth
+ownership framework for this first treatment. Boats/islands remain queued.
+
+Water candidate copied to QUAL: Lagoon-only water/bed shaders with refinement
+blend for matched evidence, clearer shallows/quiet surface and bed fields, visual
+bed mesh extension without collider/transform changes. Author runs
+Logs/refine2-lagoon-water-v1/author.log; .cs frozen. One question: shader compile and
+unchanged physical water/bed/collision. Then native preview/pile/boat/overlook pair,
+Low and held20/40motion samples. Preserve all gameplay and earlier art units.
+
+Water author33771completed/reaped: both Lagoon shaders compile, wide visual bed
+retains its original180m collider/transform/height and water level. Full patch
+saved/known churn restored. Current paired native water case runs
+Logs/refine2-lagoon-water-v1/check.log/results.xml. Freeze.cs; inspect actual
+preview/pile/boat/overlook/Low/time samples before accepting. No gameplay change.
+
+Water v1case18661completed/reaped1/1in5.147s. Paired preview/piles/boat/overlook and
+grey inspected: actual submerged piles/hulls/shadows now read, but surface remains
+too smooth. V2adds restrained broken ripple highlights with derivative filtering,
+and makes bed colour pockets more readable. No physical/gameplay/camera changes.
+Current nativev2runs Logs/refine2-lagoon-water-v2/check.log/results.xml, .cs frozen.
+Preservev1evidence; judge revised actual images before choosing, no broad tests.
+
+Water v2case83735passed1/1in5.097s, inspected preview/overlook/Low/held-time images.
+Visible ripple traces improved, but bed fields still absent. Source diagnosis found
+NearFade.Build converts any lit opaque shader unless NearFade=Preserve; LagoonBed
+lacked this opt-out, so runtime tint-copy erased its procedural bed/caustics. Local
+shader tag now preserves it, and review asserts actual runtime water/bed shader names.
+No shared fade rule or camera framework change. V3runs
+Logs/refine2-lagoon-water-v3/check.log/results.xml, .cs frozen. This is a real material-
+routing correction, not another taste variant. Preservev1/v2and use originalv1before
+frames for honest comparison against the originally flattened runtime bed.
+
+Water v3case13510completed/reaped1/1in5.065s. Preview/piles/boat/overlook/Low/held40
+and original-before grey pair inspected, keepv3. Runtime custom-bed shader assertion
+passes after local preserve tag, no shared fade/camera framework change. Actual
+submerged geometry/shadows read. Qualified scene/materials/visual-bed assets/meta/
+evidence copied to DEV, known churn restored from full patches. No active Unity.
+Publish then boat material/construction and island/coast/sky; all final gates open.

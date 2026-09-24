@@ -5,6 +5,9 @@ Shader "TumbangPreso/LagoonWater"
         _Color ("Water tint",Color)=(0.045,0.46,0.53,0.96)
         _Glossiness ("Smoothness",Range(0,1))=0.52
         _WakeStrength ("Local wake strength",Range(0,1))=1
+        _Refinement ("Authored lagoon clarity",Range(0,1))=1
+        _ShallowAlpha ("Shallow water coverage",Range(0,1))=0.38
+        _DeepAlpha ("Distant water coverage",Range(0,1))=0.88
     }
     SubShader
     {
@@ -14,10 +17,17 @@ Shader "TumbangPreso/LagoonWater"
         #pragma surface surf Standard alpha:fade
         #pragma target 3.0
         fixed4 _Color;
-        half _Glossiness, _WakeStrength;
+        half _Glossiness, _WakeStrength, _Refinement, _ShallowAlpha, _DeepAlpha;
         float _TumpSkyTime;
         float4 _Swimmers[4];
         struct Input { float3 worldPos; float3 viewDir; };
+        float lagoonHash(float2 p){return frac(sin(dot(p,float2(127.1,311.7)))*43758.5453);}
+        float lagoonNoise(float2 p)
+        {
+            float2 cell=floor(p),f=frac(p);f=f*f*(3-2*f);
+            return lerp(lerp(lagoonHash(cell),lagoonHash(cell+float2(1,0)),f.x),
+                lerp(lagoonHash(cell+float2(0,1)),lagoonHash(cell+1),f.x),f.y);
+        }
         void surf(Input IN,inout SurfaceOutputStandard o)
         {
             float2 p=IN.worldPos.xz;
@@ -27,6 +37,7 @@ Shader "TumbangPreso/LagoonWater"
             float ripple=sin(a)*cos(b);
             float footprint=saturate(1-max(fwidth(a),fwidth(b))*.5);
             float2 slope=float2(cos(a)*.030,sin(b)*.025)*footprint;
+            slope*=lerp(1,1.65,saturate(_Refinement));
             float crest=0;
             [unroll] for(int i=0;i<4;i++)
             {
@@ -41,9 +52,24 @@ Shader "TumbangPreso/LagoonWater"
             // Broad depth variation and short glints, no opaque checker caustics.
             float shallows=1-smoothstep(28,100,length(p-float2(0,10)));
             fixed3 baseColour=lerp(_Color.rgb*.76,fixed3(.19,.59,.53),shallows);
-            o.Albedo=lerp(baseColour*(.98+.03*ripple),fixed3(.52,.67,.70),fresnel*.36)+crest;
-            o.Metallic=0;o.Smoothness=min(_Glossiness,.40);
-            o.Alpha=lerp(lerp(.96,.78,shallows),_Color.a,fresnel);
+            fixed3 legacy=lerp(baseColour*(.98+.03*ripple),fixed3(.52,.67,.70),fresnel*.36)+crest;
+            float patch=lagoonNoise(p*.038+float2(1.2,9.7));
+            fixed3 clearColour=lerp(_Color.rgb*.56,fixed3(.12,.36,.33),shallows);
+            clearColour*=lerp(.88,1.06,patch)*(.98+.035*ripple);
+            // Broken broad ripple traces remain readable from a roof/preview view.
+            // Derivative filtering keeps distant water calm instead of shimmering.
+            float tracePhase=dot(p,float2(1.05,.42))-t*.24+.32*sin(dot(p,float2(-.21,.71))+t*.13);
+            float trace=1-smoothstep(.025,.095+fwidth(tracePhase)*.7,abs(sin(tracePhase)));
+            float broken=smoothstep(.46,.70,lagoonNoise(p*.28+float2(t*.018,-t*.011)));
+            float glint=trace*broken*footprint*.085;
+            clearColour=lerp(clearColour,fixed3(.42,.58,.63),fresnel*.40)+crest+glint;
+            float detail=saturate(_Refinement);
+            o.Albedo=lerp(legacy,clearColour,detail);
+            o.Metallic=0;o.Smoothness=lerp(min(_Glossiness,.40),.38,detail);
+            o.Emission=fixed3(.22,.32,.34)*glint*detail;
+            float legacyAlpha=lerp(lerp(.96,.78,shallows),_Color.a,fresnel);
+            float clearAlpha=lerp(lerp(_DeepAlpha,_ShallowAlpha+patch*.055,shallows),_Color.a,fresnel);
+            o.Alpha=lerp(legacyAlpha,clearAlpha,detail);
         }
         ENDCG
     }

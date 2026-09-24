@@ -1,0 +1,1 @@
+Lagoon-only clarity/bed presentation enabled. Visual bed1600m, original180m collider/transform and water levels retained. No new renderer/collider/camera-depth owner; swimming/fall/stock/boat behavior unchanged.
