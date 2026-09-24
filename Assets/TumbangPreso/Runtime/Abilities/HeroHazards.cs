@@ -2752,8 +2752,155 @@ namespace TumbangPreso.Abilities
                 AddFigure("Fig_Core", VfxShapes.Sigil(3, 1, 0.030f, 0.84f, 0, 36, 907),
                           0.212f, 63.0f, pale, 0.64f);
 
-                AddFloatingGlyphs(6);
+                AddFloatingGlyphs(20);
+                AddPresence();
             }
+
+            // -------------------------------------------------------------------
+            // § PRESENCE: WHY THE CIRCLE STOPPED READING AS "A PURPLE EMPTY CIRCLE"
+            //
+            // ⚠️⚠️ 🧑 2026-09-24: *"circle doesnt look that amazing its js a purple empty circle"*.
+            // The line work above is correct and stays; what it lacked was VALUE and HEIGHT (plan:
+            // `docs/reports/skill-performances-2026-09-24/plan.md` § 2, from Riot's VFX style guide:
+            // one readable primary shape, a real value range, illumination). Every rule was a thin
+            // mid purple on mid grey road, so from eye height perspective squeezed it into a faint
+            // ellipse with nothing darker or brighter than anything else. So, still line art and
+            // still no painted floor:
+            //  * a SHADOW POOL: the road inside darkens a little, so the lines glow against a dark
+            //    ground (the lata and players stay bright on it; darkness is not paint);
+            //  * a bright CORE on the three primary rules, with a wide soft underlay;
+            //  * a CURTAIN, a low luminous wall rising from the rim, so the boundary a cursed player
+            //    must escape reads edge-on from anywhere (VALORANT's hard edge, a Jujutsu domain);
+            //  * the sigils COUNTER-ROTATE and twenty distinct glyphs orbit and rise (he asked for
+            //    "like 20 or so" all different);
+            //  * each curse sends a WAVE from the centre to the rim and flares the curtain;
+            //  * the circle CLOSES with one snap of light (none under reduced effects).
+            // -------------------------------------------------------------------
+            private Renderer _pool, _curtainLow, _curtainMid, _curtainHigh, _wave;
+            private readonly List<Renderer> _cores = new List<Renderer>(3);
+            private readonly List<Transform> _spinners = new List<Transform>(3);
+            private readonly List<float> _spinRate = new List<float>(3);
+            private Transform _curtain, _waveRing;
+            private static readonly Color CovenCore = new Color(.96f, .36f, .86f);
+
+            private void AddPresence()
+            {
+                var pool = VfxShapes.Lay(transform, "ShadowPool", VfxShapes.Splat(48, 0.0f, 3), Radius * .985f, 0.012f);
+                _pool = pool.GetComponent<Renderer>();
+                VfxMaterial.Ghost(_pool, new Color(.10f, .03f, .16f, .0f), 0.0f);
+                VfxMaterial.StripCollider(pool); VfxShapes.DrapeToGround(pool);
+
+                foreach (var (name, scale) in new[] { ("Core_Outer", 1.0f), ("Core_Mid", .742f), ("Core_Inner", .238f) })
+                {
+                    var under = VfxShapes.Lay(transform, name + "_Glow", VfxShapes.Collar(72, 0.05f, 0.955f), Radius * scale * 1.012f, 0.0205f);
+                    VfxMaterial.Ghost(under.GetComponent<Renderer>(), new Color(CovenCore.r, CovenCore.g, CovenCore.b, 0), .9f);
+                    VfxMaterial.StripCollider(under); VfxShapes.DrapeToGround(under);
+                    _cores.Add(under.GetComponent<Renderer>());
+                    var core = VfxShapes.Lay(transform, name, VfxShapes.Collar(72, 0.05f, 0.985f), Radius * scale, 0.021f);
+                    VfxMaterial.Ghost(core.GetComponent<Renderer>(), new Color(1, .82f, .98f, 0), 1.1f);
+                    VfxMaterial.StripCollider(core); VfxShapes.DrapeToGround(core);
+                    _cores.Add(core.GetComponent<Renderer>());
+                }
+
+                _curtain = new GameObject("Curtain").transform;
+                _curtain.SetParent(transform, false);
+                _curtainLow = CurtainBand("CurtainLow", 0.00f, .30f, .34f);
+                _curtainMid = CurtainBand("CurtainMid", .30f, .62f, .18f);
+                _curtainHigh = CurtainBand("CurtainHigh", .62f, .95f, .07f);
+
+                var wave = VfxShapes.Lay(transform, "CurseWave", VfxShapes.Collar(64, 0.05f, 0.93f), Radius, 0.022f);
+                _wave = wave.GetComponent<Renderer>(); _waveRing = wave.transform;
+                VfxMaterial.Ghost(_wave, new Color(1, .7f, .97f, 0), 1.0f);
+                VfxMaterial.StripCollider(wave);
+
+                foreach (Transform layer in transform)
+                {
+                    if (layer.name == "Fig_Outer") { _spinners.Add(layer); _spinRate.Add(6); }
+                    if (layer.name == "Fig_Mid") { _spinners.Add(layer); _spinRate.Add(-9); }
+                    if (layer.name == "Fig_Core") { _spinners.Add(layer); _spinRate.Add(15); }
+                }
+            }
+
+            private Renderer CurtainBand(string name, float from, float to, float alpha)
+            {
+                var go = new GameObject(name);
+                go.transform.SetParent(_curtain, false);
+                go.transform.localPosition = new Vector3(0, from, 0);
+                go.transform.localScale = new Vector3(Radius, to - from, Radius);
+                go.AddComponent<MeshFilter>().sharedMesh = CurtainMesh();
+                var r = go.AddComponent<MeshRenderer>();
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; r.receiveShadows = false;
+                VfxMaterial.Ghost(r, new Color(CovenCore.r, CovenCore.g, CovenCore.b, 0), .8f);
+                _curtainAlpha[r] = alpha;
+                return r;
+            }
+
+            private readonly Dictionary<Renderer, float> _curtainAlpha = new Dictionary<Renderer, float>(3);
+            private static Mesh _curtainMesh;
+            private static Mesh CurtainMesh()
+            {
+                if (_curtainMesh != null) return _curtainMesh;
+                const int sides = 64;
+                var vertices = new Vector3[(sides + 1) * 2]; var triangles = new int[sides * 12];
+                for (int i = 0; i <= sides; i++)
+                {
+                    float a = i * Mathf.PI * 2 / sides;
+                    var rim = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
+                    vertices[i * 2] = rim; vertices[i * 2 + 1] = rim + Vector3.up;
+                    if (i == sides) continue;
+                    int n = i * 2, t = i * 12;
+                    int[] faces = { n, n + 1, n + 2, n + 2, n + 1, n + 3, n, n + 2, n + 1, n + 2, n + 3, n + 1 };
+                    for (int k = 0; k < 12; k++) triangles[t + k] = faces[k];
+                }
+                _curtainMesh = new Mesh { name = "Coven curtain", vertices = vertices, triangles = triangles };
+                _curtainMesh.RecalculateNormals(); _curtainMesh.RecalculateBounds();
+                return _curtainMesh;
+            }
+
+            private static void SetAlpha(Renderer r, float alpha)
+            {
+                if (r == null || r.sharedMaterial == null) return;
+                var c = r.sharedMaterial.color; c.a = Mathf.Clamp01(alpha); r.sharedMaterial.color = c;
+                r.enabled = alpha > .003f;
+            }
+
+            private void StepPresence(float seconds, float fade)
+            {
+                bool reduced = Settings.SettingsStore.Current.ReducedEffects;
+                float built = BuildSeconds <= .001f ? 1 : Mathf.Clamp01(seconds / BuildSeconds);
+                float closed = seconds >= BuildSeconds ? 1 : 0;
+                // The pool darkens as the circle is written, and lifts with the fade.
+                SetAlpha(_pool, .30f * Mathf.SmoothStep(0, 1, built) * fade);
+                // The primary cores light as the circle closes.
+                float snap = reduced ? 0 : Mathf.Exp(-Mathf.Max(0, seconds - BuildSeconds) * 7) * closed;
+                float sincePulse = Mathf.Max(0, seconds - _lastPulse);
+                float pulse = seconds >= BuildSeconds && _lastPulse > 0 ? Mathf.Exp(-sincePulse * 5) : 0;
+                for (int i = 0; i < _cores.Count; i++)
+                {
+                    bool glow = i % 2 == 0;
+                    float on = Mathf.SmoothStep(0, 1, Mathf.Clamp01((seconds - BuildSeconds * (.55f + .15f * (i / 2))) / .3f));
+                    SetAlpha(_cores[i], (glow ? .30f + .25f * snap + .15f * pulse : .92f) * on * fade);
+                }
+                // The curtain rises in the last part of the build, breathes, flares on each curse.
+                float rise = Mathf.SmoothStep(0, 1, Mathf.Clamp01((seconds - BuildSeconds * .6f) / (BuildSeconds * .4f + .01f)));
+                float sink = Mathf.Clamp01((Duration - seconds) / .6f);
+                if (_curtain != null)
+                    _curtain.localScale = new Vector3(1, Mathf.Max(.01f, rise * sink * (1 + .25f * pulse + .35f * snap)), 1);
+                float breathe = reduced ? 1 : .9f + .1f * Mathf.Sin(seconds * 2.4f);
+                foreach (var kv in _curtainAlpha)
+                    SetAlpha(kv.Key, kv.Value * rise * sink * breathe * (1 + .8f * pulse + 1.2f * snap));
+                // Each curse: a wave from the centre out to the rim.
+                if (_waveRing != null)
+                {
+                    float u = Mathf.Clamp01(sincePulse / .5f);
+                    _waveRing.localScale = new Vector3(Radius * Mathf.Lerp(.15f, 1, u), Radius, Radius * Mathf.Lerp(.15f, 1, u));
+                    SetAlpha(_wave, pulse > 0 ? .85f * (1 - u) * fade : 0);
+                }
+                // Counter-rotating sigils: a spell being held, not a decal.
+                for (int i = 0; i < _spinners.Count; i++)
+                    if (_spinners[i] != null) _spinners[i].localRotation = Quaternion.Euler(0, _spinRate[i] * seconds, 0) * _spinnerRest[i];
+            }
+            private readonly List<Quaternion> _spinnerRest = new List<Quaternion>(3);
 
             /// <summary>One medallion: a small ring with its own figure in it, or empty.</summary>
             private void AddMedallion(float angleDeg, float at, float size,
@@ -3067,9 +3214,13 @@ namespace TumbangPreso.Abilities
                 {
                     if(_floaters[i]==null)continue;
                     float settle=BuildSeconds<=.001f?1:Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/BuildSeconds));
-                    _floaters[i].localPosition=_floatPosition[i]+Vector3.up*(settle*.20f+Mathf.Sin(seconds*1.4f+_floatPhase[i])*.045f);
-                    _floaters[i].localRotation=_floatRest[i]*Quaternion.Euler(0,(1-settle)*(i%2==0?25:-25),0);
+                    // SKILL-FX-1: the glyphs ORBIT (inner and outer rings opposite ways) and climb.
+                    var orbit=Quaternion.Euler(0,seconds*(i%2==0?7f:-10f),0);
+                    _floaters[i].localPosition=orbit*_floatPosition[i]+Vector3.up*(settle*(.20f+.18f*(i%3))+Mathf.Sin(seconds*1.4f+_floatPhase[i])*.045f);
+                    _floaters[i].localRotation=orbit*_floatRest[i]*Quaternion.Euler(0,(1-settle)*(i%2==0?25:-25),0);
                 }
+                if(_spinnerRest.Count!=_spinners.Count){_spinnerRest.Clear();foreach(var spinner in _spinners)_spinnerRest.Add(spinner!=null?spinner.localRotation:Quaternion.identity);}
+                StepPresence(seconds,fade);
             }
 
         }
