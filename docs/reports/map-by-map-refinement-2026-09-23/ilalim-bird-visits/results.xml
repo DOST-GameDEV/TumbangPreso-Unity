@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 10:50:08Z" end-time="2026-09-24 10:51:21Z" duration="72.8369535">
+  <test-suite type="TestSuite" id="1813" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="634" result="Passed" start-time="2026-09-24 10:50:08Z" end-time="2026-09-24 10:51:21Z" duration="72.836954" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1807" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="634" result="Passed" start-time="2026-09-24 10:50:08Z" end-time="2026-09-24 10:51:21Z" duration="72.826081" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6472" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1808" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="634" result="Passed" start-time="2026-09-24 10:50:08Z" end-time="2026-09-24 10:51:21Z" duration="72.824481" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1809" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="634" result="Passed" start-time="2026-09-24 10:50:08Z" end-time="2026-09-24 10:51:21Z" duration="72.823195" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1029" name="AmbientLifeProbe" fullname="TumbangPreso.PlayTests.AmbientLifeProbe" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-09-24 10:50:08Z" end-time="2026-09-24 10:51:21Z" duration="72.800007" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1032" name="IlalimBirdsKeepTheirFlightsBelowTheGuideway" fullname="TumbangPreso.PlayTests.AmbientLifeProbe.IlalimBirdsKeepTheirFlightsBelowTheGuideway" methodname="IlalimBirdsKeepTheirFlightsBelowTheGuideway" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" seed="1457791093" result="Passed" start-time="2026-09-24 10:50:08Z" end-time="2026-09-24 10:51:21Z" duration="72.780715" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="300000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 325 of 2820 renderers, 0 with a roof variant.
+[NearFade] 3314 occluder nodes matched, 1621 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/ilalim-bird-visits-v1/Ilalim-maya-before-perch.png
+[Play] wrote Logs/ilalim-bird-visits-v1/Ilalim-maya-after-perch.png
+[Play] wrote Logs/ilalim-bird-visits-v1/Ilalim-kalapati-before-perch.png
+[Play] wrote Logs/ilalim-bird-visits-v1/Ilalim-kalapati-after-perch.png
+[Play] wrote Logs/ilalim-bird-visits-v1/Ilalim-fantail-before-perch.png
+[Play] wrote Logs/ilalim-bird-visits-v1/Ilalim-fantail-after-perch.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

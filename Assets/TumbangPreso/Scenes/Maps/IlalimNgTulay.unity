@@ -319202,6 +319202,12 @@ MonoBehaviour:
       LookAt: {x: 0, y: 0.21200001, z: -6}
       HoldSeconds: {x: 4, y: 7}
     QuietCat: 0
+    Perches: []
+    PerchWait: {x: 4, y: 13}
+    BirdBeatRate: 1
+    PeckChance: 0.6
+    FanWatch: 0
+    VisitAxis: {x: 0, y: 0, z: 0}
   - Id: pusakal-tuxedo
     Model: {fileID: 8771091787928289351, guid: 56a3979486a64bb489baad5904965063, type: 3}
     Clips:
@@ -319373,6 +319379,12 @@ MonoBehaviour:
       LookAt: {x: 10, y: 0.21200001, z: 4}
       HoldSeconds: {x: 0, y: 0}
     QuietCat: 1
+    Perches: []
+    PerchWait: {x: 4, y: 13}
+    BirdBeatRate: 1
+    PeckChance: 0.6
+    FanWatch: 0
+    VisitAxis: {x: 0, y: 0, z: 0}
   - Id: maya
     Model: {fileID: 8771091787928289351, guid: bd71817a37a91f54bb702ae7393bdcaf, type: 3}
     Clips:
@@ -319386,8 +319398,8 @@ MonoBehaviour:
     Bird: 1
     AerialWander: 0
     FlightBounds:
-      m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0, y: 0, z: 0}
+      m_Center: {x: 0, y: 2.7, z: 0}
+      m_Extent: {x: 2.4, y: 2.7, z: 80}
     GlideDuration: {x: 0.8, y: 2.4}
     WalkSpeed: 0.45
     RunSpeed: 2.2
@@ -319398,6 +319410,15 @@ MonoBehaviour:
     Habitat: []
     Activities: []
     QuietCat: 0
+    Perches:
+    - {x: -3.0000012, y: 0.0010004769, z: 3.9999979}
+    - {x: -2.1000018, y: 0.00100062, z: 5.1999974}
+    - {x: -3.4000022, y: 0.0010003577, z: 2.9999983}
+    PerchWait: {x: 3, y: 7}
+    BirdBeatRate: 1.35
+    PeckChance: 0.65
+    FanWatch: 0
+    VisitAxis: {x: 0, y: 0, z: 1}
   - Id: kalapati
     Model: {fileID: 8771091787928289351, guid: 89871430be2577c4a9c9009c86adb490, type: 3}
     Clips:
@@ -319411,8 +319432,8 @@ MonoBehaviour:
     Bird: 1
     AerialWander: 0
     FlightBounds:
-      m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0, y: 0, z: 0}
+      m_Center: {x: 0, y: 2.7, z: 0}
+      m_Extent: {x: 2.4, y: 2.7, z: 80}
     GlideDuration: {x: 0.8, y: 2.4}
     WalkSpeed: 0.45
     RunSpeed: 2.2
@@ -319423,6 +319444,15 @@ MonoBehaviour:
     Habitat: []
     Activities: []
     QuietCat: 0
+    Perches:
+    - {x: 4.0000005, y: 0.0009995232, z: -3.9999979}
+    - {x: 2.9000013, y: 0.0009993801, z: -5.1999974}
+    - {x: 3.0000012, y: 0.0009996663, z: -2.7999985}
+    PerchWait: {x: 6, y: 12}
+    BirdBeatRate: 0.9
+    PeckChance: 0.8
+    FanWatch: 0
+    VisitAxis: {x: 0, y: 0, z: 1}
   - Id: fantail
     Model: {fileID: 8771091787928289351, guid: 6f569a317f91a7b41a49ac9702a5c8a7, type: 3}
     Clips:
@@ -319436,8 +319466,8 @@ MonoBehaviour:
     Bird: 1
     AerialWander: 0
     FlightBounds:
-      m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0, y: 0, z: 0}
+      m_Center: {x: 0, y: 2.7, z: 0}
+      m_Extent: {x: 2.4, y: 2.7, z: 80}
     GlideDuration: {x: 0.8, y: 2.4}
     WalkSpeed: 0.45
     RunSpeed: 2.2
@@ -319448,6 +319478,15 @@ MonoBehaviour:
     Habitat: []
     Activities: []
     QuietCat: 0
+    Perches:
+    - {x: -0.00000020861633, y: 0.0010011921, z: 9.999997}
+    - {x: -1.4000008, y: 0.0010010491, z: 8.799998}
+    - {x: 1.3999999, y: 0.0010010491, z: 8.799994}
+    PerchWait: {x: 3, y: 6}
+    BirdBeatRate: 1.15
+    PeckChance: 0
+    FanWatch: 1
+    VisitAxis: {x: 0, y: 0, z: 1}
 --- !u!21 &1865871394
 Material:
   serializedVersion: 8

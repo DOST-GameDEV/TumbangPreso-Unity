@@ -1,5 +1,12 @@
 # Individual ultimate performance rework, owner2026-09-24
 
+Latest owner assignment: a separate cloud animation lane now owns all animation
+research and implementation, including independently authored ability casts and
+freely directed ultimate performances. Its work may start now alongside ongoing
+map/environment work. This supersedes the older wait-for-maps scheduling below
+for that lane; it does not remove any older scope or mark the work completed.
+
+
 Owner asks to add a new TODO to make ALL ultimates more expressive and cooler,
 with thorough research/analysis of VFX and animation in Roblox and other games
 praised for their ultimate effects. Example direction: Phaister starts laughing

@@ -145,6 +145,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(map=="IlalimNgTulay")IlalimCatHabitatAuthor.FinishLoadedScene(report);
             if(map=="Eskinita")EskinitaBirdVisitAuthor.FinishLoadedScene(report);
             if(map=="BayanPlaza")BayanBirdVisitAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimBirdVisitAuthor.FinishLoadedScene(report);
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }
 

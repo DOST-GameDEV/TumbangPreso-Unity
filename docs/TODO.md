@@ -509,10 +509,21 @@ scattered across all maps. Execute inside each map's existing refinement row.
   fantail spots moved clear of church steps. Native v2 1/1 passed after one clear-
   arrival staging correction; actual sequences/grey inspected.
   [Bayan bird evidence](reports/map-by-map-refinement-2026-09-23/bayan-bird-visits/report.md).
-  Next Ilalim/SaBubong visits, then final integration; Lagoon flight retained.
+  Ilalim visits fitted beneath the real guideway with street-axis flight/air
+  corridor and supported sites. Native 1/1 passed, sampled ceiling/column-gap
+  clearance and actual sequences/grey reviewed.
+  [Ilalim bird evidence](reports/map-by-map-refinement-2026-09-23/ilalim-bird-visits/report.md).
+  SaBubong visit data and final integration remain; Lagoon flight retained.
   Lagoon flight retained.
 - [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
   trace idle decisions and fix actual stalls; distinguish deliberate tactical waits.
+Owner assignment update2026-09-24: the owner prepared a separate cloud assignment
+for ALL animation research/direction/implementation, including individual ability
+casts and ultimates. That animation lane can begin now while local map/environment
+and bot work continues. The prompt/setup were delivered for the owner to paste;
+no other conversation was created or contacted, and no task is marked done by
+this handoff. Preserve the newest merged animation work and remaining per-body checks.
+
 - [ ] **REFINE-2.9 Gameplay and animation.** Review actual complete exchanges,
   movement/collision, interaction and interruption, body/FPP/contact/observer timing.
   Owner specifically reopens walking (Sean arms stick to body; similar across cast),

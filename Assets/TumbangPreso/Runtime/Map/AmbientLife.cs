@@ -29,6 +29,7 @@ namespace TumbangPreso
             public Vector2 PerchWait=new Vector2(4,13);
             public float BirdBeatRate=1,PeckChance=.6f;
             public bool FanWatch;
+            public Vector3 VisitAxis;
         }
         public Animal[] Animals=Array.Empty<Animal>();
         private Actor[] _actors;

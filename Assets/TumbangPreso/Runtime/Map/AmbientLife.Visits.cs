@@ -51,11 +51,12 @@ namespace TumbangPreso
             {
                 _perch=perch;var target=_data.Perches[perch];
                 var approach=Quaternion.Euler(0,_owner.Range(0,360),0)*Vector3.forward;
-                _flightFrom=target+approach*_owner.Range(25,34)+Vector3.up*_owner.Range(7,10);
+                if(_data.VisitAxis.sqrMagnitude>.01f)approach=_data.VisitAxis.normalized*(_owner._random.NextDouble()<.5?-1:1);
+                _flightFrom=VisitAirPoint(target+approach*_owner.Range(25,34)+Vector3.up*_owner.Range(7,10));
                 _flightTo=target;
                 var side=Vector3.Cross(Vector3.up,approach)*_owner.Range(-3,3);
-                _flightControl1=Vector3.Lerp(_flightFrom,target,.5f)+side+Vector3.up*1.4f;
-                _flightControl2=target+approach*1.2f+Vector3.up*.6f;
+                _flightControl1=VisitAirPoint(Vector3.Lerp(_flightFrom,target,.5f)+side+Vector3.up*1.4f);
+                _flightControl2=VisitAirPoint(target+approach*1.2f+Vector3.up*.6f);
                 _flightDuration=Vector3.Distance(_flightFrom,target)/_owner.Range(4.6f,5.6f);
                 _flightTime=0;_birdPhase=1;_bank=0;
                 _root.position=_flightFrom;_root.rotation=Quaternion.LookRotation((_flightControl1-_flightFrom).normalized);
@@ -68,12 +69,26 @@ namespace TumbangPreso
                 else away=Quaternion.Euler(0,_owner.Range(-100,100),0)*_root.forward;
                 away.y=0;
                 if(away.sqrMagnitude<.01f)away=Vector3.forward;
+                if(_data.VisitAxis.sqrMagnitude>.01f)
+                {
+                    var axis=_data.VisitAxis.normalized;float side=Vector3.Dot(away,axis);
+                    if(Mathf.Abs(side)<.15f)side=_owner._random.NextDouble()<.5?-1:1;
+                    away=axis*Mathf.Sign(side);
+                }
                 away.Normalize();float distance=_owner.Range(32,40);
-                _flightFrom=_root.position;_flightTo=_flightFrom+away*distance+Vector3.up*_owner.Range(8,12);
-                _flightControl1=_flightFrom+away*distance*.26f+Vector3.up*3.4f;
-                _flightControl2=_flightTo-away*7+Vector3.up*1.2f;
+                _flightFrom=_root.position;_flightTo=VisitAirPoint(_flightFrom+away*distance+Vector3.up*_owner.Range(8,12));
+                _flightControl1=VisitAirPoint(_flightFrom+away*distance*.26f+Vector3.up*3.4f);
+                _flightControl2=VisitAirPoint(_flightTo-away*7+Vector3.up*1.2f);
                 _flightDuration=Vector3.Distance(_flightFrom,_flightTo)/_owner.Range(4.8f,6.0f);
                 _flightTime=0;_birdPhase=3;_bank=0;Play("fly");
+            }
+            private Vector3 VisitAirPoint(Vector3 point)
+            {
+                // An authored underpass uses its open centre lane and ceiling.
+                // Empty bounds preserve the open-sky map visits exactly.
+                var bounds=_data.FlightBounds;if(bounds.size.y<=0)return point;
+                return new Vector3(Mathf.Clamp(point.x,bounds.min.x,bounds.max.x),
+                    Mathf.Clamp(point.y,bounds.min.y,bounds.max.y),Mathf.Clamp(point.z,bounds.min.z,bounds.max.z));
             }
             private void VisitingBird(float dt)
             {

@@ -1,25 +1,29 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Bayan bird visits
+## Current resume, 2026-09-24: Ilalim underpass bird visits
 
 Overall goal ACTIVE, NOT done. DEV and QUAL at published, remote-verified
-ad7d5795500bc446ac12d369344a755ac25f21a5. Eskinita's bird visits published: three
-supported choices/species, shaped landings/long departures, distinct forage/fan
-watch; native 1/1 in 71.548s, actual pose/motion/grey inspected. Close staged dither
-and wing-blend, one parked test body remain explicit capture limits. No further
-Eskinita fixture work. QUAL byte-verified, stashed, advanced. Six ground animals
-and both lighting follow-up merges remain preserved.
+c61bb03187679ca41ef4fd4f40c23d189482295a. Bayan visits published: nine supported
+sites/longer holds, native v2 1/1 in 71.300s after one clear-arrival staging fix.
+Actual sequences/grey inspected; church-step correction and staged close/body
+capture limits retained. QUAL byte-verified/stashed/advanced. Six ground animals,
+Eskinita birds and latest lighting/player-motion merges remain preserved.
 
-Current REFINE-2.7 unit complete locally: Bayan bird visits. Broader landing
-spread/longer holds, original species clips/flight executor retained. Northern
-fantail candidates failed support near the CHURCH FORECOURT STEPS (earlier
-monument label corrected); clear southern alternatives authored. Native v1
-pigeon correctly avoided a parked player. One clear-arrival corner-parking
-fixture correction, runtime unchanged. V2 session 89123 passed 1/1 in 71.300s.
-Actual perch/motion/arrival frames and grey inspected; known staged dither/wing
-blend and visible parked-body limits retained. No more fixture work. Known churn
-restored, no Unity job/helper active. Publish, preserve/advance QUAL, then Ilalim
-visits and SaBubong. Parent/older tasks stay open; original meta dirt preserved.
+Current REFINE-2.7 map-routing unit complete locally: Ilalim bird visitors.
+Nine supported sites, street-axis flight with air control points x+/-2.4/y0-5.4
+beneath the actual 8m soffit. Native session64123 passed1/1 in72.837s, no retry;
+sampled body/wing ceiling and column-row gap checks passed. Actual pose/flight/
+arrival frames and grey inspected; known staged fade/wing-blend/parked-body limits
+retained. Known churn restored. No Unity job/helper active. Publish, preserve/
+advance QUAL, then remaining local map/environment and behavior work.
+
+Latest owner direction: all animation research/direction/implementation is being
+assigned to an owner-run cloud lane, including individual ability casts and freely
+directed ultimates. Setup/API/env/handoff blocks and a TLDR were delivered in chat.
+No other conversation contacted. TODO and ultimate plan record newer sequencing;
+that lane can start alongside maps. Do not redo or claim its animation tasks done.
+Current compiled map routing was finished; preserve its integration. All older
+IDs/final gates remain, original two composition PNG meta dirt files untouched.
 
 ## Published progress, do not redo
 
@@ -154,3 +158,28 @@ parked player, not failed landing interpolation. The taya cannot remain at the
 requested(0,-13). One bounded fixture correction parks all actors at the opposite
 legal court corner for arrival and asserts actual distance>12m. Runtime unchanged;
 retry 1/1. Preserve failed XML/trace, rerun same case v2 only.
+
+Owner steering during Ilalim bird unit: prepare paste-ready Claude Code cloud
+configuration and a broad ALL-animation/research handoff, including independent
+ability animations and freely directed ultimate performances. Do not contact
+another conversation. The owner will paste it. This newer lane assignment lets
+that animation work start without waiting for the older map-first schedule.
+Preserve current map work and avoid duplicating the animation lane. Ilalim bird
+author 42324 completed with three supported sites/species and bounded street-axis
+flight; native test has NOT run yet. Source/scene/meta changes remain local at
+c61bb0318. No Unity process active. Resume map validation after delivering setup.
+
+Cloud setup deliverable prepared as four chat blocks: environment values, empty
+API credentials, Ubuntu bootstrap with deferred heavy Unity install, broad owner-
+directed animation/research prompt. Exact repo Unity6000.5.8f1 / changeset verified;
+local Blender5.2.0LTS verified; Core.Tests targets net9.0. Setup Bash syntax checked
+locally only, not executed in a Claude VM. Unity archive URL HEAD200 (4.35GB);
+Blender primary download returned403 from this connection, so no successful
+cloud download claim. Current map-bird author complete, native validation next.
+
+Requested cloud environment/API/setup/handoff blocks delivered in the conversation.
+Owner explicitly said continue local work afterward. Animation ownership/intended
+parallel sequencing recorded in TODO/ultimate plan; no other task contacted.
+Local work resumes the already-authored Ilalim bird flight corridor native check,
+then remaining environment/behavior work. New hero/ability/ultimate animation
+direction belongs to the owner-run cloud lane. No animation work marked done.
