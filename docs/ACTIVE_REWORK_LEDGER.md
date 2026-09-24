@@ -204,3 +204,11 @@ GraphicsProfiles.Balanced values (2 lights, Medium shadows, 2 cascades, 40m,
 soft particles false). Restored the prior serialized baseline under the standing
 runtime-churn rule; all authored animation/models/arm assets retained. No native
 build or gameplay-animation requalification claimed in this map merge.
+
+Tracked lighting source7d3171549 merged without conflicts. Adds real-window
+captures/on-off measurements to the existing native graphics probe and scoped
+Mac1600x680/2940x1912 evidence. tools/graphics_review.py syntax-checked locally;
+no new Windows player/performance run claimed. Windows D3D qualification stays
+P7, and newly recorded LIGHT-1.10 Mac fullscreen hitching remains open with its
+actual source evidence. No previous queue row removed. Combined C# compilation
+will be exercised by the next necessary map author/run, not an extra build.

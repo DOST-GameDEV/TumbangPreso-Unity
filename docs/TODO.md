@@ -166,11 +166,25 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
   probe edit, Apple M5, Metal, 1920x1080 HDR, 120 uncapped frames per cell. Balanced costs 0.30
   to 0.46 ms per frame with the look on (Lagoon the most); the worst Balanced frame is Ilalim at
   5.63 ms mean and 5.91 ms p95 (off: 5.33 and 5.53). Low, which skips bloom, costs 0.06 to 0.18
-  ms, so most of the cost is the bloom chain. The native frames show the look. Still open, both
-  needing hardware this Mac lacks: the same probe on the Windows tournament machine
-  (`tools/graphics_review.py`; it has no Windows module here), and a frame at the Windows
-  owner's short wide window. The Mac profile plays fullscreen on a 2560x1664 display and was
-  not photographed at that shape either; the probe renders a fixed 1920x1080 target.
+  ms, so most of the cost is the bloom chain. The native frames show the look.
+  The owner's window shape is now photographed natively on the Mac
+  ([report](reports/light-1-2026-09-24/report.md)). The probe takes one extra frame per map on
+  the player's real window at Balanced, measured with the look on and off in the same binary,
+  and re-applies the requested size because `GameSettings.ApplyDisplay` overrides
+  `-screen-width` at boot (the first attempt asked for 1600x680 and photographed 2940x1912).
+  At 1600x680 the look costs 0.11 to 0.22 ms per frame, worst frame Ilalim 5.12 ms mean and
+  5.49 ms p95; all five frames show the look with no black world ink. At the Mac's own
+  fullscreen, 2940x1912, it costs 0.73 to 1.31 ms. Still open, and only this needs hardware the
+  Mac lacks: `tools/graphics_review.py` on the Windows tournament machine. It now defaults
+  `--window` to 1600x680, so that one run also photographs the owner's shape on Direct3D.
+- [ ] LIGHT-1.10 Mac fullscreen hitching, found by LIGHT-1.9 and not caused by the look. At
+  2940x1912 fullscreen on the Apple M5 the Balanced window path runs 8.2 to 13.3 ms mean with
+  the look OFF but 27.5 to 43.4 ms p95, three to four times the mean on every map; with the look
+  on it is 8.9 to 14.2 and 33.4 to 47.7. The same maps at 1600x680 windowed have a p95 within
+  0.1 to 1.7 ms of the mean. Numbers in `reports/light-1-2026-09-24/mac-fullscreen-2940x1912/`.
+  Not yet known: whether it is the present path, the macOS scale from 2940x1912 down to the
+  2560x1664 panel, or fill rate. Done means the cause is named from a measurement and either
+  fixed or recorded as a platform limit with the Mac player's numbers.
 
 Capture: `WorldCourtCueTests.BrightLookSameCameraCapturesOnAllFiveMaps` writes stage, eye and
 cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 passed on the Mac.
