@@ -818,6 +818,11 @@ namespace TumbangPreso.UI
 
         private void ApplyMapEnvironment(string map)
         {
+            // ⚠️ BEFORE THE ENVIRONMENT IS WRITTEN, never after. Retiring a live look restores the
+            // settings it recorded, and doing that after the new map's values are written would
+            // put the previous map's ambient and fog straight back over them.
+            if (_lookMap != map) RetireWorldLook();
+
             if (!_envs.TryGetValue(map, out var env))
             {
                 if (!_cache.TryGetValue(map, out var scene) || !scene.IsValid() || !scene.isLoaded)
@@ -891,7 +896,101 @@ namespace TumbangPreso.UI
 
             cameraGrade.Set(env.Brightness, env.Contrast, env.Saturation,
                             env.Exposure, env.White);
+
+            ApplyWorldLook(map);
         }
+
+        /// <summary>
+        /// ⚠️⚠️ THE BRIGHT LOOK, INSTALLED HERE THE WAY `MatchInstaller` INSTALLS IT (LIGHT-1.8).
+        /// Once the match got the bright look, this screen was still drawing every map in its old
+        /// dark authored lighting, so the first sight of a map contradicted the match it opened.
+        /// That is the same fault as the missing ink recorded on `EnsureWorldOutline`, one layer
+        /// further down.
+        ///
+        /// ⚠️ THE PREVIEW INSTALL DIFFERS FROM THE MATCH INSTALL IN TWO WAYS, and
+        /// `WorldLookPresentation.InstallPreview` explains both: the sun is passed in because every
+        /// map this screen has shown stays loaded, and only a camera tagged `WorldLookCamera` is
+        /// graded, because `Camera.main` here is the menu's UI camera.
+        ///
+        /// ⚠️ PARENTED UNDER A ROOT THAT SURVIVES THE STRIP. `StripMatchObjects` destroys the
+        /// `~Match` root at the end of the frame the map loads in, and a look parented there would
+        /// go with it. Parenting into the arena also means `Park` disables it with the map, which
+        /// hands back the authored lighting and that map's own sun.
+        ///
+        /// ⚠️ THE FLOOR IS THE GROUND UNDER THE PIVOT, NOT THE PIVOT. The pivot is the average of
+        /// the spawn markers, which is near the court but is not the court's surface, and the
+        /// ground lift and the world edges both measure from this height.
+        /// </summary>
+        private void ApplyWorldLook(string map)
+        {
+            if (_camera.GetComponent<Visual.WorldLookCamera>() == null)
+                _camera.gameObject.AddComponent<Visual.WorldLookCamera>();
+
+            // ⚠️ REUSED FOR THE SAME MAP. `ConvertedMatchSetup` calls `ReapplyEnvironment` on
+            // every refresh, which has just written the authored settings back over the look.
+            if (_look != null && _lookMap == map)
+            {
+                _look.Reapply();
+                return;
+            }
+
+            RetireWorldLook();
+
+            if (!_cache.TryGetValue(map, out var scene) || !scene.IsValid() || !scene.isLoaded) return;
+
+            Transform parent = null;
+            Light sun = null;
+
+            foreach (var root in scene.GetRootGameObjects())
+            {
+                // ⚠️ THE ROOT THAT IS THE INSTALLER, NOT A ROOT THAT CONTAINS ONE. `~Match` is a
+                // root of its own on Bayan Plaza and Eskinita and a child of the map's only root
+                // on Ilalim, SaBubong and the Lagoon. The first filter skipped any root holding
+                // it, which left SaBubong and the Lagoon with no parent and no look at all.
+                if (!root.activeInHierarchy || root.GetComponent<MatchInstaller>() != null) continue;
+
+                if (parent == null) parent = root.transform;
+
+                if (sun != null) continue;
+
+                foreach (var light in root.GetComponentsInChildren<Light>())
+                {
+                    if (light.type != LightType.Directional || light.shadows == LightShadows.None ||
+                        light.GetComponentInParent<MatchInstaller>(true) != null) continue;
+
+                    sun = light;
+                    break;
+                }
+            }
+
+            if (parent == null) return;
+
+            float floor = Visual.WorldGround.TryBelow(_pivot, 1.0f, 4.0f, out float ground) ? ground : _pivot.y;
+
+            _look = Visual.WorldLookPresentation.InstallPreview(parent, floor, sun);
+            _lookMap = _look != null ? map : null;
+        }
+
+        /// <summary>
+        /// ⚠️ DISABLED BEFORE IT IS DESTROYED. `Destroy` waits for the end of the frame, and the
+        /// look restores the lighting it recorded in `OnDisable`. Left live until then, it would
+        /// restore over the next map's values, and the next install would record this one's look
+        /// as that map's authored lighting.
+        /// </summary>
+        private void RetireWorldLook()
+        {
+            if (_look != null)
+            {
+                _look.gameObject.SetActive(false);
+                Destroy(_look.gameObject);
+            }
+
+            _look = null;
+            _lookMap = null;
+        }
+
+        private Visual.WorldLookPresentation _look;
+        private string _lookMap;
 
         /// <summary>
         /// Puts the whole arena on <see cref="PreviewLayer"/> so only this screen's camera can
@@ -1116,6 +1215,7 @@ namespace TumbangPreso.UI
         {
             EndPreviewLoad();_busy=false;
             if(_transitionOwner==this)_transitionOwner=null;
+            if (_look != null) Destroy(_look.gameObject);
             if (_camera != null) Destroy(_camera.gameObject);
 
             if (_target == null) return;
