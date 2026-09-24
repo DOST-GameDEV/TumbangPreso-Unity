@@ -1503,9 +1503,9 @@ def place_towers():
         half, h = tower_half(name), tower_height(name)
         for _ in range(4000):
             a = rng.uniform(-math.pi, math.pi)
-            d = rng.uniform(62, 150)
+            d = rng.uniform(62, 205)
             x, y = d * math.cos(a), d * math.sin(a)
-            if max(abs(x), abs(y)) + half > 157:
+            if max(abs(x), abs(y)) + half > 217:
                 continue
             if max(abs(x), abs(y)) - half < 50:
                 continue
@@ -1546,7 +1546,7 @@ def ground():
     col = kit("ground")
     g = K.Buf("ground")
     g.keep_winding = True   # every face below is wound by hand; see Buf.finish
-    E = 160.0
+    E = 220.0   # was 160: room for the downtown behind the street-end buildings
     inner, outer = B.ROAD - B.ROAD_HALF, B.ROAD + B.ROAD_HALF
     lines = sorted({-E, -outer, -inner, -B.PARK, -B.COURT, -1.5, 1.5, B.COURT, B.PARK, inner, outer, E})
     W = B.WALK
@@ -1768,6 +1768,18 @@ for _name in TOWERS:
     BUILDERS[_name] = (lambda n=_name: skyscraper(n, TOWERS[n]))
 for _name, _t in TREES.items():
     BUILDERS[_name] = (lambda n=_name, t=_t: tree(n, **t))
+
+
+def _pine(name, seed, tint, scale):
+    """The tall trees are PINES (owner, review v15: "this tall tree is weird asf, can you
+    actually model it like a pine tree?"). Built in tools/author_kanto_pine.py; imported late
+    because that module imports this one."""
+    import author_kanto_pine as P
+    return P.pine(name, seed, tint=tint, s=scale)
+
+
+BUILDERS["tree_tall_deep"] = lambda: _pine("tree_tall_deep", 1, "", 1.0)
+BUILDERS["street_tall"] = lambda: _pine("street_tall", 2, "_lime", 0.72)
 for _row in PARKSIDE:
     BUILDERS[_row[0]] = (lambda r=_row: archetype(r[0], r[1], r[2], r[3], r[4], r[5], True, r[6],
                                                   PARKSIDE_ROOF.get(r[0], "flat")))
