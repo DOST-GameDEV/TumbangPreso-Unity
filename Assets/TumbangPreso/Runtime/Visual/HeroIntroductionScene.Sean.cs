@@ -36,8 +36,8 @@ namespace TumbangPreso.Visual
             _duskGlow = Wall("DuskHorizon", 1.0f, 2.3f, new Color(.96f, .45f, .12f, .62f), emission: .55f);
             _duskHigh = Wall("DuskSky", 2.3f, 11, new Color(.21f, .08f, .05f, .86f), emission: .12f, cap: true);
             var stick = VfxShapes.Prism(4, 1, 1);
-            for (int i = 0; i < 5; i++) _parolSticks.Add(Add("ParolStick" + i, stick, new Color(1, .62f, .16f, .95f), .8f));
-            _parolFill = Add("ParolFlame", VfxShapes.TwoSided(VfxShapes.Star(5, .42f, 3)), new Color(1, .42f, .08f, .8f), .9f);
+            for (int i = 0; i < 5; i++) _parolSticks.Add(Add("ParolStick" + i, stick, new Color(1, .88f, .48f, .96f), .85f));
+            _parolFill = Add("ParolFlame", VfxShapes.TwoSided(VfxShapes.Star(5, .42f, 3)), new Color(.96f, .22f, .04f, .72f), .7f);
             for (int i = 0; i < LanternSeats.Length; i++)
             {
                 _lanternGlows.Add(Add("LanternGlow" + i, VfxShapes.TwoSided(VfxShapes.Splat(12, .1f, 20 + i)), new Color(1, .55f, .15f, .35f), .6f));
@@ -61,10 +61,10 @@ namespace TumbangPreso.Visual
             Tint(_duskGlow, dusk * breath * (1 + .35f * Ease(2.9f, 3.05f, t)));
 
             // The parol, between his palms, facing out of his chest.
-            Vector3 centre = BothPalms + new Vector3(0, .12f, .16f);
+            Vector3 centre = BothPalms + new Vector3(0, .12f, .24f);
             float gather = Ease(2.4f, 2.7f, t), burst = Ease(2.95f, 3.1f, t);
             centre = Vector3.Lerp(centre, new Vector3(0, 1.0f, .28f), gather);
-            float parolSize = .23f * (1 - gather * .35f) * (1 - burst);
+            float parolSize = .30f * (1 - gather * .35f) * (1 - burst);
             for (int i = 0; i < 5; i++)
             {
                 // Stick i joins outer point i to outer point i + 2: the frame of a real parol.
@@ -79,7 +79,7 @@ namespace TumbangPreso.Visual
                 var along = (p1 - p0);
                 var rotation = Quaternion.FromToRotation(Vector3.up, along.normalized);
                 Place(_parolSticks[i], at - rotation * Vector3.up * along.magnitude * .5f,
-                    new Vector3(.012f, Mathf.Max(.001f, along.magnitude), .012f), rotation, laid * leave * (1 - burst));
+                    new Vector3(.016f, Mathf.Max(.001f, along.magnitude), .016f), rotation, laid * leave * (1 - burst));
             }
             float fill = Ease(1.7f, 1.95f, t) * (1 - burst);
             Place(_parolFill, centre + Vector3.back * .01f, Vector3.one * parolSize * .95f, Quaternion.Euler(90, 0, 0) * Quaternion.Euler(0, 18, 0),

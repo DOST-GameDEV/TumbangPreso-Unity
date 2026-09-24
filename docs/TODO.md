@@ -665,6 +665,10 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
     phase6/6 passed; actual sequence sheets and grey comparisons inspected.
     [Local findings and remaining critique](reports/cloud-integration-2026-09-24/findings.md).
     Per-hero artistic refinement, real-peer timing and final acceptance remain open.
+    Sean's existing parol frame was weak against his orange chest in the actual
+    close shot. Its local material value, size and depth were refined without
+    changing his gesture or stage timing; same-camera color/grey inspected,
+    native introduction study1/1. [Sean evidence](reports/cloud-integration-2026-09-24/sean-parol/report.md).
 - [ ] **VOICE-1 Hero voice lines, owner 2026-09-24. OPEN: HUMAN RECORDINGS ONLY, NONE RECORDED YET.**
   **Owner decision, 2026-09-24 (after hearing a Kokoro/Chatterbox synthetic audition):** *"remove
   voices u made with ai lets js do humans"*. Every generated clip (the stylised babble and the

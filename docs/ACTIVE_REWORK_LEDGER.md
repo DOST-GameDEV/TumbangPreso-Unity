@@ -1,6 +1,26 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: real throw clearance defects
+## Current resume, 2026-09-24: Sean's parol read
+
+Owner requested autonomous quality work and NO USAGE RESETS while asleep.
+No credit redemption, paid service or cross-chat work. DEV/remote/QUAL at
+7727c1f45 after the FPP grip correction. The grip unit is published with native
+owner/body sequences and3/3 focused checks in reports/cloud-integration-2026-09-24/
+throw-clearance/report.md. No pending Unity process from it. Synthetic head test
+remains red but real-input Bayan spin.75 and1 with largest slipper stayed clear;
+do not change healthy body motion to make that fixture green.
+
+Sean's crafted-parol local unit is ready to publish: the cloud-intake baseline
+lost its orange frame against the shirt/horizon. Pale warm0.016m sticks,
+dark-ember inner flame and slightly larger/forward shape now read at the same
+native close camera and25percent grey. Face is clear. Existing guarded native
+intro study1/1 in32.88192s; one variant retained. Proof:
+reports/cloud-integration-2026-09-24/sean-parol/report.md.
+Publish/align QUAL, then continue cloud skill VFX/SFX first, one real weak skill
+at a time from the per-skill plan. Keep older queue open. Do not rerun this
+passing introduction case unchanged.
+
+## Published unit, 2026-09-24: real throw clearance defects
 
 Owner confirmed this turn runs GPT-6 Sol and asked for real product fixes over
 verification loops. The owner is sleeping; NEVER use a usage reset,
