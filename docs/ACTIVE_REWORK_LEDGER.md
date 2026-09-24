@@ -1,19 +1,22 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Eskinita tan aspin natural activity
+## Current resume, 2026-09-24: Eskinita tabby natural activity
 
 Overall goal ACTIVE and NOT done. DEV and QUAL are at published, remote-verified
-02617e9d2732f900c07a81275880d2590e915855. All 13 signage units and the two refreshed
-street-map cards are published. Do not repeat those completed checks. The owner's
-Lugaw King correction is implemented in Pares v2; no owner approval is implied.
+01d93272b51eb87d0a0840cab014527010adcd2b. All 13 signage units and two refreshed
+street-map cards are published. Eskinita tan aspin is implemented and locally
+qualified (native 1/1, actual frames/grey inspected). QUAL preserved in named stash
+before advance. Do not repeat its unchanged checks.
 
-Current unit REFINE-2.7: Eskinita tan aspin implemented. Author compiled and baked
-129 supported nodes / 768 links. Native focused session 80001 passed 1/1 in 32.339s;
-actual before/after, activity frame sequence and grey inspected. Timestamped MP4s
-exported; no unsupported continuous-playback claim. Report in eskinita-dog/report.md.
-Known generated churn backed up and restored. No Unity/helper active. Publish this
-unit, preserve/advance QUAL, then research and fit Eskinita tabby independently.
-Only the two protected composition PNG metas were dirty at intake; preserve them.
+Current unit REFINE-2.7: Eskinita tabby implemented. Author baked 111 nodes / 669
+links and three actual clear sites. Native v2 session 86095 passed 1/1 in 32.072s.
+V1 observer/camera was on the constrained east-house side; one bounded fixture
+correction moved them inward and asserted actual separation. No game behavior
+weakened. Actual before/new, investigation/watch, motion frames and grey inspected.
+Report/eskinita-cat holds results, preserved failed XML and timestamped clips.
+Known generated churn backed up/restored. No Unity job/helper active. Publish,
+preserve/advance QUAL, then Bayan cream aspin research and local implementation.
+Preserve the two original composition PNG meta dirt files.
 
 Map parents, animal coverage, bots, individual character motions, later ultimates
 and final integration remain OPEN. No intermediate build. No validation loops.
@@ -153,3 +156,14 @@ only aspin-tan habitat in Eskinita; then one focused native case. Question: does
 it move between purposeful supported activities, tolerate a stationary observer,
 retreat/recover from intrusion and pause? Stop after actual motion/images and XML
 pass. Tooling retries used 0/1. No .cs edits while Unity is in flight.
+
+Tabby implementation ready; targeted author then only its native case. Check cat
+activity departure/watch/tail, stationary observer, intrusion and pause. Stop on
+actual frame/grey review and XML pass; no dog rerun or all-map suite. Retry 0/1.
+No .cs edits while guarded Unity runs.
+
+Tabby v1 failed observer staging: copied west-side +X offset points into the
+east houses and confinement prevents 2.5m separation; native image also shows
+camera behind fence. One bounded fixture repair: cat observer/camera face inward
+(-X), assert actual separation. No game behavior loosened. Retry allowance 1/1.
+Preserve failed XML/images; run same case v2, no broader tests.

@@ -35,12 +35,23 @@ namespace TumbangPreso
             private float _activityTime,_headDip,_reactionQuiet;
             private Activity _activity=Activity.Watch;
             private Transform _head;
+            private Transform _tailBase,_tailTip;
+            private Quaternion _tailRest,_tipRest;
+            private float _tailWait,_tailFlick;
 
             private void InitializeHabitat(GameObject model)
             {
                 if(!HasHabitat)return;
                 foreach(var bone in model.GetComponentsInChildren<Transform>())if(bone.name=="Head"){_head=bone;break;}
                 _activityTime=_owner.Range(2,5);
+                if(_data.QuietCat)
+                {
+                    foreach(var bone in model.GetComponentsInChildren<Transform>())
+                    {if(bone.name=="TailBase")_tailBase=bone;else if(bone.name=="TailTip")_tailTip=bone;}
+                    if(_tailBase!=null)_tailRest=_tailBase.localRotation;
+                    if(_tailTip!=null)_tipRest=_tailTip.localRotation;
+                    _tailWait=_owner.Range(2,6);
+                }
             }
             private int NearestNode(Vector3 point)
             {
@@ -62,7 +73,7 @@ namespace TumbangPreso
                     // A stationary observer at three metres is not a perpetual
                     // emergency. Close personal space or a closing run matters.
                     bool approaching=distance<3&&Vector3.Dot(player.PresentationTravelVelocity,delta.normalized)>1.3f;
-                    if((distance<1.65f||approaching)&&distance<closest){closest=distance;source=player.transform.position;}
+                    if((distance<(_data.QuietCat?1.45f:1.65f)||approaching)&&distance<closest){closest=distance;source=player.transform.position;}
                 }
                 return !float.IsPositiveInfinity(closest);
             }
@@ -137,7 +148,7 @@ namespace TumbangPreso
                     if(flat.sqrMagnitude<.000001f){_pathAt++;return;}
                     Quaternion facing=Quaternion.LookRotation(flat);
                     float angle=Quaternion.Angle(_root.rotation,facing);
-                    _root.rotation=Quaternion.RotateTowards(_root.rotation,facing,dt*(_panic>0?260:135));
+                    _root.rotation=Quaternion.RotateTowards(_root.rotation,facing,dt*(_panic>0?260:_data.QuietCat?160:135));
                     float desired=_panic>0?_data.RunSpeed:_data.WalkSpeed;
                     if(_pathAt==_path.Count-1)desired=Mathf.Min(desired,Mathf.Sqrt(2*1.3f*delta.magnitude));
                     desired*=Mathf.InverseLerp(85,15,angle);
@@ -149,7 +160,8 @@ namespace TumbangPreso
                 if(_activity==Activity.Transit)
                 {
                     var site=_data.Activities[_site];_activity=site.Kind;_visits++;
-                    _activityTime=_owner.Range(_activity==Activity.Watch?5:2.5f,_activity==Activity.Watch?10:5);
+                    _activityTime=_data.QuietCat?_owner.Range(_activity==Activity.Watch?7:1.4f,_activity==Activity.Watch?14:3):
+                        _owner.Range(_activity==Activity.Watch?5:2.5f,_activity==Activity.Watch?10:5);
                     if(_activity==Activity.Mark&&_peeCooldown<=0){_peeing=true;_peeTime=0;return;}
                 }
                 else if(_activity==Activity.Retreat){_activity=Activity.Watch;_activityTime=_owner.Range(2,4);}
@@ -164,11 +176,24 @@ namespace TumbangPreso
             }
             private void PoseActivity(float dt)
             {
-                float target=_activity==Activity.Investigate&&_pathAt>=_path.Count&&!_peeing?24:0;
+                if(_data.QuietCat)PoseQuietTail(dt);
+                float target=_activity==Activity.Investigate&&_pathAt>=_path.Count&&!_peeing?(_data.QuietCat?15:24):0;
                 _headDip=Mathf.MoveTowards(_headDip,target,dt*45);
                 if(_head==null||_headDip<.01f)return;
                 float sniff=Mathf.Sin(_activityTime*4.2f)*2*_headDip/24;
                 _head.rotation=Quaternion.AngleAxis(_headDip+sniff,_root.right)*_head.rotation;
+            }
+            private void PoseQuietTail(float dt)
+            {
+                _tailWait-=dt;
+                if(_tailWait<=0){_tailFlick=.65f;_tailWait=_owner.Range(3,8);}
+                _tailFlick=Mathf.Max(0,_tailFlick-dt);
+                float motion=Mathf.Sin((1-_tailFlick/.65f)*Mathf.PI*2)*4;
+                // The tabby's upright silhouette is retained. An occasional
+                // tip twitch replaces the source clip's uninterrupted idle wag.
+                if(_tailBase!=null)_tailBase.localRotation=Quaternion.Slerp(_tailRest,_tailBase.localRotation,_speed>.05f?.35f:.08f);
+                if(_tailTip!=null)
+                {_tailTip.localRotation=_tipRest;_tailTip.rotation=Quaternion.AngleAxis(motion,Vector3.up)*_tailTip.rotation;}
             }
 #if UNITY_EDITOR
             public void StageActivity(int site)

@@ -24,6 +24,7 @@ namespace TumbangPreso
             public Vector3 PeeTarget;
             public HabitatNode[] Habitat=Array.Empty<HabitatNode>();
             public ActivitySite[] Activities=Array.Empty<ActivitySite>();
+            public bool QuietCat;
         }
         public Animal[] Animals=Array.Empty<Animal>();
         private Actor[] _actors;

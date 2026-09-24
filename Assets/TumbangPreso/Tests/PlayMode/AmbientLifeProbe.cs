@@ -38,7 +38,9 @@ namespace TumbangPreso.PlayTests
             var life=Object.FindFirstObjectByType<AmbientLife>();
             var spec=life.Animals.Single(a=>a.Id=="aspin-tan");
             Assert.Greater(spec.Habitat.Length,8);Assert.GreaterOrEqual(spec.Activities.Length,3);
-            Assert.IsTrue(life.Animals.Where(a=>a!=spec).All(a=>a.Habitat.Length==0),"First pass must opt in only this dog");
+            // The later separately authored tabby now also has a habitat.
+            Assert.IsFalse(spec.QuietCat,"The dog must retain its own activity presentation");
+            Assert.IsTrue(life.Animals.Where(a=>a.Bird).All(a=>a.Habitat.Length==0));
             foreach(var player in GameServices.Round.Players)player.Teleport(new Vector3(0,.1f,-10));
             var dog=life.transform.Find("Ambient "+spec.Id);
             var camera=new GameObject("Dog activity witness").AddComponent<Camera>();camera.enabled=false;
@@ -98,6 +100,84 @@ namespace TumbangPreso.PlayTests
             {
                 Time.timeScale=1;Object.Destroy(camera.gameObject);if(legacyRoot!=null)Object.Destroy(legacyRoot);
                 File.WriteAllText(Path.Combine(Output,"eskinita-dog-activity.csv"),samples.ToString());
+            }
+        }
+
+        [UnityTest,Timeout(300000)]
+        public IEnumerator EskinitaTabbyInvestigatesWatchesAndRetreats()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);Time.timeScale=1;GraphicsProfiles.Apply(1);
+            var life=Object.FindFirstObjectByType<AmbientLife>();
+            var spec=life.Animals.Single(a=>a.Id=="pusakal-tabby");
+            Assert.Greater(spec.Habitat.Length,8);Assert.GreaterOrEqual(spec.Activities.Length,3);
+            // The later separately authored tabby now also has a habitat.
+            Assert.IsTrue(spec.QuietCat,"This cat must use its own quiet tail and timings");
+            Assert.IsTrue(life.Animals.Where(a=>a.Bird).All(a=>a.Habitat.Length==0));
+            foreach(var player in GameServices.Round.Players)player.Teleport(new Vector3(0,.1f,-10));
+            var cat=life.transform.Find("Ambient "+spec.Id);
+            var camera=new GameObject("Cat activity witness").AddComponent<Camera>();camera.enabled=false;
+            camera.fieldOfView=52;camera.nearClipPlane=.04f;camera.farClipPlane=400;
+            camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            var follow=camera.gameObject.AddComponent<AnimalCamera>();follow.Target=cat;follow.Offset=new Vector3(-1.7f,.9f,1.7f);
+            var samples=new StringBuilder("seconds,x,y,z,state\n");
+            var legacyRoot=new GameObject("Legacy cat comparison");
+            try
+            {
+                // Same scene, source model and follow camera. The legacy animal
+                // is a temporary witness, not a new shipped scene population.
+                life.enabled=false;cat.gameObject.SetActive(false);
+                var legacy=legacyRoot.AddComponent<AmbientLife>();
+                legacy.Animals=new[]{new AmbientLife.Animal{Id=spec.Id,Model=spec.Model,Clips=spec.Clips,Route=spec.Route,
+                    WalkSpeed=.32f,RunSpeed=1.8f,WalkCycleSpeed=spec.WalkCycleSpeed,RunCycleSpeed=spec.RunCycleSpeed,
+                    PeeWaypoint=spec.PeeWaypoint,PeeTarget=spec.PeeTarget}};
+                yield return null;follow.Target=legacyRoot.transform.Find("Ambient "+spec.Id);
+                yield return GameplayShots.Render(camera,"Eskinita-cat-before",false,Output,width:960,height:540);
+                yield return ImprovementEvidenceProbe.Record(camera,"Eskinita-cat-before",6);
+                Object.Destroy(legacyRoot);yield return null;
+                cat.gameObject.SetActive(true);life.enabled=true;follow.Target=cat;
+                yield return GameplayShots.Render(camera,"Eskinita-cat-after",false,Output,width:960,height:540);
+                int investigate=Array.FindIndex(spec.Activities,s=>s.Kind==AmbientLife.Activity.Investigate);
+                Assert.GreaterOrEqual(investigate,0);life.StageActivityForReview(spec.Id,investigate);
+                yield return new WaitForSeconds(.8f);
+                StringAssert.Contains("activity=Investigate",life.DescribeForReview(spec.Id));
+                yield return GameplayShots.Render(camera,"Eskinita-cat-investigates",false,Output,width:960,height:540);
+                var observer=GameServices.Round.PlayerAt(1);observer.Teleport(cat.position+Vector3.left*2.5f);
+                Assert.Greater(Vector3.Distance(observer.transform.position,cat.position),2.3f,"Stationary observer staging must survive player confinement");
+                yield return new WaitForSeconds(.4f);
+                StringAssert.Contains("panic=0.00",life.DescribeForReview(spec.Id));
+                observer.Teleport(new Vector3(0,.1f,-10));
+                int watch=Array.FindIndex(spec.Activities,site=>site.Kind==AmbientLife.Activity.Watch);
+                life.StageActivityForReview(spec.Id,watch);yield return new WaitForSeconds(.6f);
+                StringAssert.Contains("activity=Watch",life.DescribeForReview(spec.Id));
+                yield return GameplayShots.Render(camera,"Eskinita-cat-watches",false,Output,width:960,height:540);
+                life.StageActivityForReview(spec.Id,investigate);yield return new WaitForSeconds(.3f);
+                Vector3 last=cat.position;float travelled=0,maxStep=0;
+                follow.Sample=()=>
+                {
+                    float step=Vector3.Distance(last,cat.position);travelled+=step;maxStep=Mathf.Max(maxStep,step);last=cat.position;
+                    // A node/edge authored over this surface must remain supported.
+                    Assert.That(cat.position.x,Is.InRange(6.0f,8.2f));
+                    var p=cat.position;samples.AppendLine(FormattableString.Invariant($"{Time.time:F3},{p.x:F3},{p.y:F3},{p.z:F3},{life.DescribeForReview(spec.Id)}"));
+                };
+                yield return ImprovementEvidenceProbe.Record(camera,"Eskinita-cat-activities",12);
+                Assert.Greater(travelled,.75f,"Cat never left its investigation for another activity");
+                Assert.Less(maxStep,.35f,"Cat snapped between habitat locations");
+                var before=cat.position;observer.Teleport(before+Vector3.left*1.1f);
+                yield return new WaitForSeconds(2.1f);
+                Assert.Greater(Vector3.Distance(before,cat.position),.55f,"Close intrusion did not cause retreat");
+                observer.Teleport(new Vector3(0,.1f,-10));
+                yield return ImprovementEvidenceProbe.Record(camera,"Eskinita-cat-recovery",6);
+                StringAssert.Contains("panic=0.00",life.DescribeForReview(spec.Id));
+                Time.timeScale=0;yield return null;var paused=cat.position;
+                yield return new WaitForSecondsRealtime(.2f);
+                Assert.Less(Vector3.Distance(paused,cat.position),.0001f);
+                Assert.IsEmpty(life.GetComponentsInChildren<Collider>());
+                Debug.Log("[Eskinita cat] activity departure, stationary observer, intrusion retreat/recovery and pause passed; travel="+travelled.ToString("F2"));
+            }
+            finally
+            {
+                Time.timeScale=1;Object.Destroy(camera.gameObject);if(legacyRoot!=null)Object.Destroy(legacyRoot);
+                File.WriteAllText(Path.Combine(Output,"eskinita-cat-activity.csv"),samples.ToString());
             }
         }
 
@@ -327,10 +407,11 @@ namespace TumbangPreso.PlayTests
         [DefaultExecutionOrder(9999)] private sealed class AnimalCamera:MonoBehaviour
         {
             public Transform Target;public Action Sample;
+            public Vector3 Offset=new Vector3(1.7f,.9f,1.7f);
             private void LateUpdate()
             {
                 if(Target==null)return;
-                var at=Target.position+new Vector3(1.7f,.9f,1.7f);
+                var at=Target.position+Offset;
                 transform.SetPositionAndRotation(at,Quaternion.LookRotation(Target.position+Vector3.up*.4f-at));Sample?.Invoke();
             }
         }

@@ -1,0 +1,4 @@
+Eskinita pusakal-tabby only: 111 supported nodes, 669 clear links.
+Shop threshold watch / Watch at (6.40, 0.10, -8.40)
+South verge investigation / Investigate at (7.30, 0.10, -4.00)
+North fence watch / Watch at (6.80, 0.10, 6.50)
