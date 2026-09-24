@@ -342,8 +342,12 @@ scattered across all maps. Execute inside each map's existing refinement row.
   actual paired/grey/Low/held-time views inspected. Six boats now have restrained
   curved-hull grain and the two houseboats have fitted shelter fibres, with original
   shape, non-target parts, mooring and collision retained. [Boat evidence](reports/map-by-map-refinement-2026-09-23/lagoon-boats/report.md):
-  native1/1passed, three paired views and25percent grey inspected. Islands/coast/sky
-  and final map acceptance remain.
+  native1/1passed, three paired views and25percent grey inspected. Eleven near islands
+  now have fitted land/shore surfaces and distinct grounded woodland/scrub/mangrove/
+  stone groups; nine far silhouettes retained. [Coast and building disposition](reports/map-by-map-refinement-2026-09-23/lagoon-coast/report.md):
+  final native1/1passed, actual pairs/grey/card/Low/heldsky inspected, updated native
+  map card. Current art batch ready for integrated intro/spectator/gameplay/native
+  performance gate; parent remains open for that final acceptance.
 - [x] **REFINE-2.6b Lagoon fall and mash recovery, owner2026-09-24.** Adapt SaBubong's
   physical edge fall and existing press-gated get-up to Lagoon. Both modes, all cast,
   existing input/camera/animation/authority path. Record effects on intentional water

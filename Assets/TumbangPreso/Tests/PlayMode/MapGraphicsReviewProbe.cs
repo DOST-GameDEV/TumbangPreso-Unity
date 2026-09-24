@@ -87,6 +87,66 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator LagoonCoastFinishReview()
+        {
+            Action<bool> Coast()
+            {
+                var root=GameObject.Find("Lagoon/Seeded island and mountain background").transform;
+                Assert.AreEqual(9,root.Cast<Transform>().Count(t=>t.name.StartsWith("Mountain island ")));
+                var pairs=Enumerable.Range(0,11).Select(id=>
+                {
+                    var island=root.Find("Coastal island "+id);var filter=island.GetComponent<MeshFilter>();var renderer=island.GetComponent<MeshRenderer>();
+                    var importer=AssetImporter.GetAtPath("Assets/TumbangPreso/Art/LagoonCoastFinish/Island"+id+".asset");Assert.IsNotNull(importer);
+                    Assert.IsTrue(importer.userData.StartsWith("TUMP_LAGOON_COAST_MESH:"));
+                    var original=AssetDatabase.LoadAssetAtPath<Mesh>(importer.userData.Substring("TUMP_LAGOON_COAST_MESH:".Length));Assert.IsNotNull(original);
+                    var after=renderer.sharedMaterials;var before=after.Select(m=>
+                    {string path=m.GetTag("TumpLagoonCoastSource",false);return string.IsNullOrEmpty(path)?m:AssetDatabase.LoadAssetAtPath<Material>(path);}).ToArray();
+                    var detail=island.Find("Grounded coastal vegetation and stone");Assert.IsNotNull(detail);
+                    Assert.IsEmpty(island.GetComponentsInChildren<Collider>());CollectionAssert.AreEqual(original.vertices,filter.sharedMesh.vertices);
+                    return new {filter,renderer,detail,original,finished=filter.sharedMesh,before,after};
+                }).ToArray();
+                return on=>{foreach(var p in pairs){p.filter.sharedMesh=on?p.finished:p.original;p.renderer.sharedMaterials=on?p.after:p.before;p.detail.gameObject.SetActive(on);}};
+            }
+            var canvas=new GameObject("Coast preview",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.Lagoon);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.Lagoon&&Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.Lagoon,preview.Showing);preview.enabled=false;var change=Coast();Time.timeScale=0;
+            try
+            {
+                foreach(string state in new[]{"before","after"})
+                {change(state=="after");yield return GameplayShots.Render(preview.Camera,"Lagoon-coast-preview-"+state,false,Output,width:1280,height:720);}
+                yield return GameplayShots.Render(preview.Camera,"Lagoon-card",false,Output,width:960,height:540);
+            }
+            finally{change(true);Time.timeScale=1;}
+            Object.Destroy(canvas);yield return PlayModeWorld.Reset();yield return MapRetrievalProbe.Load(SceneFlow.Lagoon);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;var camera=rig.Camera;change=Coast();
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var clock=Object.FindFirstObjectByType<Visual.NeighbourhoodSkyMotion>();bool clockEnabled=clock!=null&&clock.enabled;if(clock!=null)clock.enabled=false;
+            var eye=Vector3.zero;var rotation=Quaternion.identity;
+            Camera.CameraCallback pin=cam=>{if(cam==camera){cam.transform.SetPositionAndRotation(eye,rotation);cam.fieldOfView=60;}};
+            Camera.onPreCull+=pin;Time.timeScale=0;
+            try
+            {
+                foreach(string view in new[]{"court","near"})
+                {
+                    eye=view=="court"?new Vector3(0,2,10):new Vector3(-42,5,46);
+                    var target=view=="court"?new Vector3(0,5,90):new Vector3(-77,4,66);rotation=Quaternion.LookRotation(target-eye);
+                    foreach(string state in new[]{"before","after"})
+                    {change(state=="after");using(Visual.NeighbourhoodSkyMotion.At(20))yield return GameplayShots.Render(camera,"Lagoon-coast-"+view+"-"+state,false,Output,width:1280,height:800);}
+                }
+                eye=new Vector3(0,1.9f,2);rotation=Quaternion.LookRotation(new Vector3(0,14,40));
+                foreach(float t in new[]{20f,180f})using(Visual.NeighbourhoodSkyMotion.At(t))
+                    yield return GameplayShots.Render(camera,"Lagoon-final-sky"+t,false,Output,width:1280,height:800);
+                eye=new Vector3(0,2,10);rotation=Quaternion.LookRotation(new Vector3(0,3,80));GraphicsProfiles.Apply(0);
+                using(Visual.NeighbourhoodSkyMotion.At(20))yield return GameplayShots.Render(camera,"Lagoon-final-court-low",false,Output,width:960,height:540);
+            }
+            finally{change(true);Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=clockEnabled;}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator LagoonBoatFinishReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Lagoon);

@@ -1484,6 +1484,7 @@ Transform:
   - {fileID: 973604620}
   - {fileID: 1520056815}
   - {fileID: 1358073799}
+  - {fileID: 1153576227}
   m_Father: {fileID: 332005636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &8190652
@@ -1511,8 +1512,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e30bc974aeee37e418e8228ebb02d6ea, type: 2}
-  - {fileID: 2100000, guid: ff9950ec9b738974e890544be86e21c4, type: 2}
+  - {fileID: 2100000, guid: 60228ce5e2a85234987827a76fbaab52, type: 2}
+  - {fileID: 2100000, guid: bde36dbfe44904f4ca65921c25c326cc, type: 2}
   - {fileID: 2100000, guid: 1e7b4422856849f46b63c72d4202fe37, type: 2}
   - {fileID: 2100000, guid: 2397fdfdf67f7df4ab0cb5650f8f975e, type: 2}
   m_StaticBatchInfo:
@@ -1545,7 +1546,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8190650}
-  m_Mesh: {fileID: 4300000, guid: e82198ae65aaae941a8b91ac5e416155, type: 2}
+  m_Mesh: {fileID: 4300000, guid: cef436f94e2548341ac799b873772b0b, type: 2}
 --- !u!114 &8190654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15236,6 +15237,7 @@ Transform:
   - {fileID: 593867504}
   - {fileID: 1955886176}
   - {fileID: 1962270186}
+  - {fileID: 1378173722}
   m_Father: {fileID: 332005636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &120208713
@@ -15263,8 +15265,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ca62958cdf9aa274a9edbcb763ca89bc, type: 2}
-  - {fileID: 2100000, guid: c852396532668fb44b0555f9a8ecbae5, type: 2}
+  - {fileID: 2100000, guid: 551820725b0403e4aafce2b2890def39, type: 2}
+  - {fileID: 2100000, guid: bc07953ecbb55d34c8272b2bef9ce6e7, type: 2}
   - {fileID: 2100000, guid: 1e7b4422856849f46b63c72d4202fe37, type: 2}
   - {fileID: 2100000, guid: 2397fdfdf67f7df4ab0cb5650f8f975e, type: 2}
   m_StaticBatchInfo:
@@ -15297,7 +15299,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 120208711}
-  m_Mesh: {fileID: 4300000, guid: 7c4935998e4ea444697ca8c773e269a0, type: 2}
+  m_Mesh: {fileID: 4300000, guid: e42fce24c07b9ef4c9de90c2aed01033, type: 2}
 --- !u!114 &120208715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16403,6 +16405,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 48229601}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &131843581
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 131843582}
+  - component: {fileID: 131843585}
+  - component: {fileID: 131843584}
+  - component: {fileID: 131843583}
+  m_Layer: 0
+  m_Name: Grounded coastal vegetation and stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &131843582
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131843581}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2087345956}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &131843583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131843581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Background trees, roots and stone are sampled onto the retained island
+    terrain; no gameplay collision.
+--- !u!23 &131843584
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131843581}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a5964c6f3d4327f43835dcab79e279cb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &131843585
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131843581}
+  m_Mesh: {fileID: 4300000, guid: edef2c4b9d098be46be600c738a756da, type: 2}
 --- !u!1 &132090605
 GameObject:
   m_ObjectHideFlags: 0
@@ -21682,6 +21789,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 20120117}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &170001373
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 170001374}
+  - component: {fileID: 170001377}
+  - component: {fileID: 170001376}
+  - component: {fileID: 170001375}
+  m_Layer: 0
+  m_Name: Grounded coastal vegetation and stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &170001374
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170001373}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 961386197}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &170001375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170001373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Background trees, roots and stone are sampled onto the retained island
+    terrain; no gameplay collision.
+--- !u!23 &170001376
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170001373}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a5964c6f3d4327f43835dcab79e279cb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &170001377
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170001373}
+  m_Mesh: {fileID: 4300000, guid: a90bb67c50b262b498ea927f1d438a50, type: 2}
 --- !u!1 &170168722
 GameObject:
   m_ObjectHideFlags: 0
@@ -42201,6 +42413,7 @@ Transform:
   - {fileID: 264555176}
   - {fileID: 1147654384}
   - {fileID: 156697810}
+  - {fileID: 492371409}
   m_Father: {fileID: 332005636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &321433237
@@ -42228,8 +42441,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c54c46d033fec9b4caeedd1cf8121379, type: 2}
-  - {fileID: 2100000, guid: 19b77e77e79885940972a858f3ca8561, type: 2}
+  - {fileID: 2100000, guid: c15d17399f44a314490cc46848cd0b50, type: 2}
+  - {fileID: 2100000, guid: f49b22e40efef87489ad975e862544c3, type: 2}
   - {fileID: 2100000, guid: 1e7b4422856849f46b63c72d4202fe37, type: 2}
   - {fileID: 2100000, guid: 2397fdfdf67f7df4ab0cb5650f8f975e, type: 2}
   m_StaticBatchInfo:
@@ -42262,7 +42475,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 321433235}
-  m_Mesh: {fileID: 4300000, guid: 2bb9d99ba55caf941a61e7baeda73524, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 0f5ce98727eca094488e436db8ea0dcc, type: 2}
 --- !u!114 &321433239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -53184,6 +53397,7 @@ Transform:
   - {fileID: 1843499317}
   - {fileID: 1290527871}
   - {fileID: 679176832}
+  - {fileID: 1563891191}
   m_Father: {fileID: 332005636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &399922753
@@ -53211,8 +53425,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3cd0d869c750c0a4bb3c7fd4d555877d, type: 2}
-  - {fileID: 2100000, guid: 188cfbf977d1259448e6a55c983339d1, type: 2}
+  - {fileID: 2100000, guid: e4046abc5b7e03d4598ef88f7238bc27, type: 2}
+  - {fileID: 2100000, guid: 20b9144e8fbb0c440aa2fc79b532c415, type: 2}
   - {fileID: 2100000, guid: 1e7b4422856849f46b63c72d4202fe37, type: 2}
   - {fileID: 2100000, guid: 2397fdfdf67f7df4ab0cb5650f8f975e, type: 2}
   m_StaticBatchInfo:
@@ -53245,7 +53459,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 399922751}
-  m_Mesh: {fileID: 4300000, guid: a40ca4f872c8c93409968f1e521b6a54, type: 2}
+  m_Mesh: {fileID: 4300000, guid: f531868d9e5957b488107016d4ab5fbc, type: 2}
 --- !u!114 &399922755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65400,6 +65614,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1348023982}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &492371408
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 492371409}
+  - component: {fileID: 492371412}
+  - component: {fileID: 492371411}
+  - component: {fileID: 492371410}
+  m_Layer: 0
+  m_Name: Grounded coastal vegetation and stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &492371409
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492371408}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 321433236}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &492371410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492371408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Background trees, roots and stone are sampled onto the retained island
+    terrain; no gameplay collision.
+--- !u!23 &492371411
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492371408}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a5964c6f3d4327f43835dcab79e279cb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &492371412
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492371408}
+  m_Mesh: {fileID: 4300000, guid: a0ccb0e3ac56b024c9a593a6cfd9d635, type: 2}
 --- !u!1 &492378026
 GameObject:
   m_ObjectHideFlags: 0
@@ -69926,6 +70245,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2134432852}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &527942755
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 527942756}
+  - component: {fileID: 527942759}
+  - component: {fileID: 527942758}
+  - component: {fileID: 527942757}
+  m_Layer: 0
+  m_Name: Grounded coastal vegetation and stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &527942756
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527942755}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1811981056}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &527942757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527942755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Background trees, roots and stone are sampled onto the retained island
+    terrain; no gameplay collision.
+--- !u!23 &527942758
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527942755}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a5964c6f3d4327f43835dcab79e279cb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &527942759
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527942755}
+  m_Mesh: {fileID: 4300000, guid: 09e5988ff10058a46942ec049c31f0e3, type: 2}
 --- !u!1 &528205960
 GameObject:
   m_ObjectHideFlags: 0
@@ -74294,6 +74718,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1616113887}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &561929599
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 561929600}
+  - component: {fileID: 561929603}
+  - component: {fileID: 561929602}
+  - component: {fileID: 561929601}
+  m_Layer: 0
+  m_Name: Grounded coastal vegetation and stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &561929600
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 561929599}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1431405997}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &561929601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 561929599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Background trees, roots and stone are sampled onto the retained island
+    terrain; no gameplay collision.
+--- !u!23 &561929602
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 561929599}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a5964c6f3d4327f43835dcab79e279cb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &561929603
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 561929599}
+  m_Mesh: {fileID: 4300000, guid: beaa7f7620cb9cb42bbb4464fc665cc6, type: 2}
 --- !u!1 &561969227
 GameObject:
   m_ObjectHideFlags: 0
@@ -121426,6 +121955,7 @@ Transform:
   - {fileID: 439457492}
   - {fileID: 2138167412}
   - {fileID: 704930635}
+  - {fileID: 1706536198}
   m_Father: {fileID: 332005636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &918507216
@@ -121453,8 +121983,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1576bf980551023489ececd147443e89, type: 2}
-  - {fileID: 2100000, guid: 77513ff1b13999e4a85882654d0a55d3, type: 2}
+  - {fileID: 2100000, guid: faa43bba6eb13004197a1f681f6bd5b6, type: 2}
+  - {fileID: 2100000, guid: 0a6c8defd2b8bd740a74d89e256be725, type: 2}
   - {fileID: 2100000, guid: 1e7b4422856849f46b63c72d4202fe37, type: 2}
   - {fileID: 2100000, guid: 2397fdfdf67f7df4ab0cb5650f8f975e, type: 2}
   m_StaticBatchInfo:
@@ -121487,7 +122017,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 918507214}
-  m_Mesh: {fileID: 4300000, guid: faeb6cd61a525e84b8913c19ae3749bc, type: 2}
+  m_Mesh: {fileID: 4300000, guid: fb64296f96959b44fa8989f8587f3991, type: 2}
 --- !u!114 &918507218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125953,6 +126483,7 @@ Transform:
   - {fileID: 40746601}
   - {fileID: 938299852}
   - {fileID: 2054580770}
+  - {fileID: 170001374}
   m_Father: {fileID: 332005636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &961386198
@@ -125980,8 +126511,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8d7531aefe4633d438ca95b468f40d04, type: 2}
-  - {fileID: 2100000, guid: 019e58ad109a36d4493d12ff0ca0243d, type: 2}
+  - {fileID: 2100000, guid: 9a8b73102260a29438b69d6703b7a76b, type: 2}
+  - {fileID: 2100000, guid: bb9fa8a3566de774092b46dc744f410b, type: 2}
   - {fileID: 2100000, guid: 1e7b4422856849f46b63c72d4202fe37, type: 2}
   - {fileID: 2100000, guid: 2397fdfdf67f7df4ab0cb5650f8f975e, type: 2}
   m_StaticBatchInfo:
@@ -126014,7 +126545,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 961386196}
-  m_Mesh: {fileID: 4300000, guid: 3b27a018a5ae2c6438d15372eda161fd, type: 2}
+  m_Mesh: {fileID: 4300000, guid: b315cb82a06dd124282dccc40c1dc05a, type: 2}
 --- !u!114 &961386200
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151678,6 +152209,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 48229601}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1153576226
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1153576227}
+  - component: {fileID: 1153576230}
+  - component: {fileID: 1153576229}
+  - component: {fileID: 1153576228}
+  m_Layer: 0
+  m_Name: Grounded coastal vegetation and stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1153576227
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1153576226}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8190651}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1153576228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1153576226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Background trees, roots and stone are sampled onto the retained island
+    terrain; no gameplay collision.
+--- !u!23 &1153576229
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1153576226}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a5964c6f3d4327f43835dcab79e279cb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1153576230
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1153576226}
+  m_Mesh: {fileID: 4300000, guid: a4e5eca77be2cdc4e8391b7942870d53, type: 2}
 --- !u!1 &1153904226
 GameObject:
   m_ObjectHideFlags: 0
@@ -171532,6 +172168,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1530793613}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1310639305
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1310639306}
+  - component: {fileID: 1310639309}
+  - component: {fileID: 1310639308}
+  - component: {fileID: 1310639307}
+  m_Layer: 0
+  m_Name: Grounded coastal vegetation and stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1310639306
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310639305}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1516035675}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1310639307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310639305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Background trees, roots and stone are sampled onto the retained island
+    terrain; no gameplay collision.
+--- !u!23 &1310639308
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310639305}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a5964c6f3d4327f43835dcab79e279cb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1310639309
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310639305}
+  m_Mesh: {fileID: 4300000, guid: 7c0458178ee70ab428fb5f1829c7c1b9, type: 2}
 --- !u!1 &1310805372
 GameObject:
   m_ObjectHideFlags: 0
@@ -180058,6 +180799,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1232324264}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1378173721
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1378173722}
+  - component: {fileID: 1378173725}
+  - component: {fileID: 1378173724}
+  - component: {fileID: 1378173723}
+  m_Layer: 0
+  m_Name: Grounded coastal vegetation and stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1378173722
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378173721}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 120208712}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1378173723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378173721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Background trees, roots and stone are sampled onto the retained island
+    terrain; no gameplay collision.
+--- !u!23 &1378173724
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378173721}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a5964c6f3d4327f43835dcab79e279cb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1378173725
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378173721}
+  m_Mesh: {fileID: 4300000, guid: 938740adba8b3d34eab6d4f8718ae016, type: 2}
 --- !u!1 &1378393434
 GameObject:
   m_ObjectHideFlags: 0
@@ -187011,6 +187857,7 @@ Transform:
   - {fileID: 1638443849}
   - {fileID: 678358673}
   - {fileID: 1651068474}
+  - {fileID: 561929600}
   m_Father: {fileID: 332005636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1431405998
@@ -187038,8 +187885,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8335ed7e3af6e1b48ba19885a130b7a5, type: 2}
-  - {fileID: 2100000, guid: 33efc0b6c1e1d3c49b83f5fe666dced2, type: 2}
+  - {fileID: 2100000, guid: 5d517a1b37195b840b7c2df50b2c2680, type: 2}
+  - {fileID: 2100000, guid: 3a34e14661fd0c1448070e2bdc146256, type: 2}
   - {fileID: 2100000, guid: 1e7b4422856849f46b63c72d4202fe37, type: 2}
   - {fileID: 2100000, guid: 2397fdfdf67f7df4ab0cb5650f8f975e, type: 2}
   m_StaticBatchInfo:
@@ -187072,7 +187919,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1431405996}
-  m_Mesh: {fileID: 4300000, guid: 337081e5913e59541a79d7c2372e2371, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 24b98f85118100647b4cff53f29f4408, type: 2}
 --- !u!114 &1431406000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198220,6 +199067,7 @@ Transform:
   - {fileID: 551194811}
   - {fileID: 1214514016}
   - {fileID: 259237643}
+  - {fileID: 1310639306}
   m_Father: {fileID: 332005636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1516035676
@@ -198247,8 +199095,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e65e84a16bc92ea48a0a8fa200aff3c9, type: 2}
-  - {fileID: 2100000, guid: c0115461ed76cff49bf60dcfc027a3f3, type: 2}
+  - {fileID: 2100000, guid: 31d73b9be206fad4a903e6cb6d1492b8, type: 2}
+  - {fileID: 2100000, guid: d166112d1c9bd3647bcf952abce76f94, type: 2}
   - {fileID: 2100000, guid: 1e7b4422856849f46b63c72d4202fe37, type: 2}
   - {fileID: 2100000, guid: 2397fdfdf67f7df4ab0cb5650f8f975e, type: 2}
   m_StaticBatchInfo:
@@ -198281,7 +199129,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1516035674}
-  m_Mesh: {fileID: 4300000, guid: 695027c5e34ada343bc8fa4492e26273, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 4d95ed204fc00bd4294ce35aed4336f2, type: 2}
 --- !u!114 &1516035678
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205208,6 +206056,111 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1563891190
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1563891191}
+  - component: {fileID: 1563891194}
+  - component: {fileID: 1563891193}
+  - component: {fileID: 1563891192}
+  m_Layer: 0
+  m_Name: Grounded coastal vegetation and stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1563891191
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1563891190}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 399922752}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1563891192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1563891190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Background trees, roots and stone are sampled onto the retained island
+    terrain; no gameplay collision.
+--- !u!23 &1563891193
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1563891190}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a5964c6f3d4327f43835dcab79e279cb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1563891194
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1563891190}
+  m_Mesh: {fileID: 4300000, guid: 810df8b4510d78842902032683c1178d, type: 2}
 --- !u!1 &1564353714
 GameObject:
   m_ObjectHideFlags: 0
@@ -223720,6 +224673,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1178493011}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1706536197
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1706536198}
+  - component: {fileID: 1706536201}
+  - component: {fileID: 1706536200}
+  - component: {fileID: 1706536199}
+  m_Layer: 0
+  m_Name: Grounded coastal vegetation and stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1706536198
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1706536197}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 918507215}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1706536199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1706536197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Background trees, roots and stone are sampled onto the retained island
+    terrain; no gameplay collision.
+--- !u!23 &1706536200
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1706536197}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a5964c6f3d4327f43835dcab79e279cb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1706536201
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1706536197}
+  m_Mesh: {fileID: 4300000, guid: 01d22b69ea7e0c84e8dca9bcc37b234b, type: 2}
 --- !u!1001 &1706723653
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -238522,6 +239580,7 @@ Transform:
   - {fileID: 317105516}
   - {fileID: 1739164123}
   - {fileID: 416268135}
+  - {fileID: 527942756}
   m_Father: {fileID: 332005636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1811981057
@@ -238549,8 +239608,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f9476d845b5f04f4897847022501af8d, type: 2}
-  - {fileID: 2100000, guid: 34005557b593f1a48acead9cba425b53, type: 2}
+  - {fileID: 2100000, guid: dbdb39f1ea146964e83a3a15cc0a18ec, type: 2}
+  - {fileID: 2100000, guid: db21a2de506899341a670763ca736488, type: 2}
   - {fileID: 2100000, guid: 1e7b4422856849f46b63c72d4202fe37, type: 2}
   - {fileID: 2100000, guid: 2397fdfdf67f7df4ab0cb5650f8f975e, type: 2}
   m_StaticBatchInfo:
@@ -238583,7 +239642,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1811981055}
-  m_Mesh: {fileID: 4300000, guid: 637b85a72da931543af83629d45e9ad7, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 99725ab6b37f447469a46d35fcbfae26, type: 2}
 --- !u!114 &1811981059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253897,6 +254956,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2001013034}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1929726169
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1929726170}
+  - component: {fileID: 1929726173}
+  - component: {fileID: 1929726172}
+  - component: {fileID: 1929726171}
+  m_Layer: 0
+  m_Name: Grounded coastal vegetation and stone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1929726170
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929726169}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1935068515}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1929726171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929726169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Background trees, roots and stone are sampled onto the retained island
+    terrain; no gameplay collision.
+--- !u!23 &1929726172
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929726169}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a5964c6f3d4327f43835dcab79e279cb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1929726173
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929726169}
+  m_Mesh: {fileID: 4300000, guid: 33db3bfb537a81a43a387334891ad740, type: 2}
 --- !u!1 &1929798512
 GameObject:
   m_ObjectHideFlags: 0
@@ -254729,6 +255893,7 @@ Transform:
   - {fileID: 1720263331}
   - {fileID: 399390707}
   - {fileID: 1218069638}
+  - {fileID: 1929726170}
   m_Father: {fileID: 332005636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1935068516
@@ -254756,8 +255921,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4a4dd2bb132194f48aebba24a870ec19, type: 2}
-  - {fileID: 2100000, guid: d374188309808bc46936a43198c993d2, type: 2}
+  - {fileID: 2100000, guid: b0f5356e3bd26f44b8f3c7f0feda364b, type: 2}
+  - {fileID: 2100000, guid: fff9c10c8b262584fa8434981411a532, type: 2}
   - {fileID: 2100000, guid: 1e7b4422856849f46b63c72d4202fe37, type: 2}
   - {fileID: 2100000, guid: 2397fdfdf67f7df4ab0cb5650f8f975e, type: 2}
   m_StaticBatchInfo:
@@ -254790,7 +255955,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1935068514}
-  m_Mesh: {fileID: 4300000, guid: ea95f0e9e36e1794ab587a3ecf268c3c, type: 2}
+  m_Mesh: {fileID: 4300000, guid: a116f686b37f2d24d9bf249843c9f2fc, type: 2}
 --- !u!114 &1935068518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274428,6 +275593,7 @@ Transform:
   - {fileID: 779841596}
   - {fileID: 865794140}
   - {fileID: 888646258}
+  - {fileID: 131843582}
   m_Father: {fileID: 332005636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &2087345957
@@ -274455,8 +275621,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e7b43d1ed3eed6b40973e911aeaa3b21, type: 2}
-  - {fileID: 2100000, guid: 6a42b776c0294c641b9cd1aa0ac55a37, type: 2}
+  - {fileID: 2100000, guid: 5dcfd09c29941614d883c4b0d7ccd0ec, type: 2}
+  - {fileID: 2100000, guid: 80ce74b5b70321e49a28c8169d39864d, type: 2}
   - {fileID: 2100000, guid: 1e7b4422856849f46b63c72d4202fe37, type: 2}
   - {fileID: 2100000, guid: 2397fdfdf67f7df4ab0cb5650f8f975e, type: 2}
   m_StaticBatchInfo:
@@ -274489,7 +275655,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2087345955}
-  m_Mesh: {fileID: 4300000, guid: d7b4c673208605840bfa44b472ab1334, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 56f45c86f9247f14fb1bb7099ceabffb, type: 2}
 --- !u!114 &2087345959
 MonoBehaviour:
   m_ObjectHideFlags: 0

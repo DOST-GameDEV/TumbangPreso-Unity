@@ -188,6 +188,7 @@ namespace TumbangPreso.EditorTools.MapKit
             LagoonMetalFinishAuthor.FinishLoadedScene(report);
             LagoonWaterFinishAuthor.FinishLoadedScene(report);
             LagoonBoatFinishAuthor.FinishLoadedScene(report);
+            LagoonCoastFinishAuthor.FinishLoadedScene(report);
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene,ScenePath);AssetDatabase.SaveAssets();
             if(!EditorBuildSettings.scenes.Any(s=>s.path==ScenePath))
                 EditorBuildSettings.scenes=EditorBuildSettings.scenes.Concat(new[]{new EditorBuildSettingsScene(ScenePath,true)}).ToArray();

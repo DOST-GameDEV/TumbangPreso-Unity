@@ -1,30 +1,39 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: boats qualified, islands/coast next
+## Current resume, 2026-09-24: Lagoon art ready, earlier surface review next
 
-Overall goal ACTIVE and NOT complete. Owner reiterated do not stop; continue every
+Overall goal ACTIVE and NOT complete. Owner says do not stop; keep advancing all
 independently actionable TODO. No checkpoint stops, routine questions, other tasks,
-delegation, paid services, credit resets, main edits or Desktop replacement. Quality
-product work before verification loops. Preserve old tasks and contributor changes.
+delegation, paid services, resets, main edits or Desktop replacement. Quality product
+work first, bounded checks, no capture/verification perfection loop.
 
-DEV ASTRAReworks and owned detached QUAL were at923ca1946before this boat unit.
-DEV original two composition-redesign PNG metas are protected dirt, never stage or
-restore. QUAL generated churn backed up after each run and restored. No active
-Unity job, owned browser tab, server or native player. All job IDs below historical.
+DEV ASTRAReworks and owned detached QUAL were96215628cbefore this coast unit.
+The two original DEV composition PNG metas are protected dirt, never restore/stage.
+All QUAL generated churn backed up/restored. No active Unity job, owned browser tab,
+server or native player. All job IDs below are historical.
 
-Lagoon boats v1 author completed and native LagoonBoatFinishReview passed1/1in3.693s.
-Actual canoe0, houseboat4 and shelter4 before/after and25percent grey inspected.
-Keep: quiet hull grain follows the curved shell; palm shelter now reads as woven
-covering. Six original meshes/other parts/motion and collision preserved. No added
-geometry/renderers/colliders. Qualified evidence and assets copied to DEV. Publish
-this unit, then nearer islands/coast. Current pictures show smooth green mounds and
-uniform sand bands; retain distant silhouettes, locally improve near landform/
-vegetation/shore material hierarchy. Research/plan before implementation.
+Qualified coast source/assets/evidence/card copied to DEV. Final native case passed
+1/1in4.941s; actual before/after preview/court/near and25percent grey inspected.11near
+islands retain source land/palms with distinct surfaces/groups,9far islands kept.
+47,736extra vertices/11renderers/one palette/no new physics or shadow casters. Three
+art variants, then one real grounding bug fix samples each rock's full footprint.
+Author report use-after-destroy fixed. Full intermediate evidence preserved.
+Native card updated with original importer/GUID; Low and held20/180sky inspected.
+Sky genuinely moves; other time-driven parts also vary, no whole-frame identity claim.
 
-Water547f3901a, metal0c9308c19, veranda903e17220, hipbff55f209, gable7957d8a96,
-fall3e0d0c69a and birds faa904702 remain published. Islands/coast/sky/final Lagoon,
-reopened earlier-map building surfaces, natural animals, bots, per-character motion,
-older defects and final qualification/build all remain. Do not claim overall done.
+Building/material disposition in lagoon-coast/report.md. Keep refined gable/hip/
+veranda/metal and individual board/weave/pile/boat differences. Current Lagoon art
+batch ready for integrated gameplay/intro/spectator/native acceptance, parent OPEN.
+Publish this unit, then earlier-map building-surface acceptance sequentially:
+Eskinita, Bayan, Ilalim. SaBubong/Lagoon dispositions already recorded. Review actual
+bright-look evidence/source first; do not repaint good surfaces or revive rejected
+whole-wall/global noise fixes to create work. Then natural animals, bot stalls,
+per-character walking/throw/pektus, older actual defects and final qualification.
+
+Boat96215628c published/remote verified. Water547f3901a, metal0c9308c19,
+veranda903e17220, hipbff55f209, gable7957d8a96, fall3e0d0c69a and birds faa904702
+remain published. Guarded Unity only, no.cs edits during a run, explicit staging,
+sole author M4tyu633, fetch/inspect before push, verify remote. Never reset/clean.
 
 ## Latest owner requirements and completed additions
 
@@ -233,3 +242,36 @@ Author runs Logs/refine2-lagoon-boats-v1/author.log. Question: correct hull/roof
 targets and UV direction with source geometry/other slots/mooring/collision unchanged.
 Freeze.cs. After author, one native paired material check, inspect and continue to
 islands/coast. No broad verification loop or goal-completion claim.
+
+Boat96215628c pushed and exact remote verified. QUAL candidate matched DEV before
+named stash and detached advance to96215628c. Coast research/selected local plan
+saved in lagoon-coast-plan.md before code. No active Unity.
+
+Coast source implemented in DEV/QUAL. One author run then one native paired review:
+question is improved grounded near-land composition with original topology/palms,
+nine far mountains and collision preserved. Freeze.cs during the run. Evidence
+Logs/refine2-lagoon-coast-v1, author report Logs/lagoon-coast-finish/author.txt.
+
+Coastv1passed1/1in4.545s, native actual preview/near views inspected. Correct two
+demonstrated issues: regular faceted crown bands look gem-like; rocky edges often
+face away from village. V2uses irregular crown outlines with smooth leaf normals,
+keeps stone faceted, and faces localized rock groups toward village. No extra
+scope; same small native case after author. Preservev1evidence.
+
+V2author initially failed only on its reporting path: Save updates an existing mesh
+then destroys the draft, so reading draft.vertexCount afterward is invalid. Fixed
+by retaining count before Save. author-fixed.log completed; nativev2case in flight,
+no.cs edits. This real author idempotence fix is bounded, not a capture-tool rewrite.
+
+Coastv2passed1/1in4.668s. Smooth irregular tree crowns accepted; village-facing
+rocks read as oversized pointed cylinders. Final tastev3changes rocks only to
+lower embedded irregular shelves with tilted flat tops. Same focused case also
+exports final native960card, paused20/180sky and Low court for final art disposition.
+No new broad suite/build. At most three art variants; retain the best thereafter.
+
+Coastv3passed1/1in5.010s. Actual near/preview/card/Low/sky20and180viewed. Keep
+this art choice, no further taste variants. Found a real grounding bug: centre-only
+rock height allows downhill edges to float. Lower-ring footprint now samples the
+original terrain per vertex and sinks below it; same scene/author/code contract.
+Logs/refine2-lagoon-coast-grounded author then one focused check; cs frozen. Sky
+actually changes between heldtimes; card shows current18home village and context.
