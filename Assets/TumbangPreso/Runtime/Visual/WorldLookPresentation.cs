@@ -25,6 +25,8 @@ namespace TumbangPreso.Visual
         // The court's own dark ground, found once every Start has run. See MapLook.GroundLift.
         private readonly List<(Renderer renderer,int index)> _court=new List<(Renderer,int)>();
         private MaterialPropertyBlock _groundBlock;private bool _groundPending=true;
+        // A map-select preview's look: its own sun, and only cameras tagged WorldLookCamera.
+        private bool _previewOnly;private Light _sunOverride;
         private struct ShaderFrame
         {
             public Camera Camera;public Texture Ramp;public Vector4 Shape,Key,GlassSky,GlassHorizon,Soft;
@@ -34,18 +36,34 @@ namespace TumbangPreso.Visual
         private const string RampId="_WorldToonRamp",WeightId="_WorldLookWeight",ShapeId="_WorldLookShape",KeyId="_WorldKeyDirection";
         private const string ArchitectureId="_WorldArchitecture",GlassSkyId="_WorldGlassSky",GlassHorizonId="_WorldGlassHorizon";
         private const string SoftId="_WorldSoftLight";
-        public static WorldLookPresentation Install(Transform parent,float floor)
+        public static WorldLookPresentation Install(Transform parent,float floor)=>Create(parent,floor,false,null);
+        /// <summary>
+        /// ⚠️⚠️ THE MAP SELECT AND THE LOBBY SHOW THE LOOK THE MATCH WILL PLAY IN (LIGHT-1.8).
+        /// `MapPreviewSurface` promises "the map you are picking is graded the way it will be when
+        /// you play it", and after the bright look landed it was showing every map in its old,
+        /// dark authored lighting: the first sight of each map contradicted the match it opened.
+        ///
+        /// ⚠️ TWO DIFFERENCES FROM A MATCH INSTALL, BOTH BECAUSE THE MENU IS NOT A MATCH.
+        ///  * THE SUN IS PASSED IN. The preview keeps every map it has shown loaded and parked,
+        ///    so `SkyEvent.RecordedSun`'s fallbacks can name another map's light.
+        ///  * ONLY A CAMERA TAGGED `WorldLookCamera` IS HANDLED. A match install also claims
+        ///    `Camera.main`, and in the menu that is the UI camera: the lift and vibrance would
+        ///    have graded the whole front end.
+        /// </summary>
+        public static WorldLookPresentation InstallPreview(Transform parent,float floor,Light sun)=>Create(parent,floor,true,sun);
+        private static WorldLookPresentation Create(Transform parent,float floor,bool preview,Light sun)
         {
             var look=WorldLookProfile.Current.Find(parent.gameObject.scene.name);if(look==null)return null;
             var go=new GameObject("WorldLookPresentation");go.SetActive(false);go.transform.SetParent(parent,false);
-            var owner=go.AddComponent<WorldLookPresentation>();owner.Look=look;owner.Floor=floor;owner.Build();go.SetActive(true);return owner;
+            var owner=go.AddComponent<WorldLookPresentation>();owner.Look=look;owner.Floor=floor;
+            owner._previewOnly=preview;owner._sunOverride=sun;owner.Build();go.SetActive(true);return owner;
         }
         private void Build()
         {
             _sky=RenderSettings.ambientSkyColor;_equator=RenderSettings.ambientEquatorColor;_ground=RenderSettings.ambientGroundColor;
             _ambientMode=RenderSettings.ambientMode;_fog=RenderSettings.fog;_fogMode=RenderSettings.fogMode;
             _fogStart=RenderSettings.fogStartDistance;_fogEnd=RenderSettings.fogEndDistance;_fogColour=RenderSettings.fogColor;
-            _sun=SkyEvent.RecordedSun;
+            _sun=_sunOverride!=null?_sunOverride:SkyEvent.RecordedSun;
             if(_sun!=null){_sunColour=_sun.color;_sunIntensity=_sun.intensity;_sunShadow=_sun.shadowStrength;_sunRotation=_sun.transform.rotation;}
             _skyAuthored=RenderSettings.skybox;
             // ⚠️ THE SKYBOX IS INSTANCED, NEVER WRITTEN THROUGH, for SkyEvent's reason: the map's
@@ -70,9 +88,16 @@ namespace TumbangPreso.Visual
             }
             _ramp.Apply(false,true);Current=this;ApplyScene();
         }
+        /// <summary>
+        /// Writes the look back over the scene settings after somebody else rewrote them.
+        /// ⚠️ `MapPreviewSurface.ReapplyEnvironment` rewrites the map's authored ambient, fog and
+        /// sky on every lobby refresh, which erases the look without disabling it. Rebuilding the
+        /// install for that would re-run the ground search on every settings change.
+        /// </summary>
+        public void Reapply()=>ApplyScene();
         public static bool HandlesCamera(Camera camera)
-            =>Current!=null && camera!=null && (camera==Camera.main || camera.GetComponent<WorldLookCamera>()!=null ||
-                camera.GetComponent<CameraSystem.CameraRig>()!=null || camera.name=="RecordedWorldCamera" || camera.name=="UltimateSceneCamera");
+            =>Current!=null && camera!=null && (camera.GetComponent<WorldLookCamera>()!=null || !Current._previewOnly &&
+                (camera==Camera.main || camera.GetComponent<CameraSystem.CameraRig>()!=null || camera.name=="RecordedWorldCamera" || camera.name=="UltimateSceneCamera"));
         private void OnEnable(){Camera.onPreCull+=BeginCamera;Camera.onPostRender+=EndCamera;}
         private void OnDisable()
         {
@@ -200,7 +225,7 @@ namespace TumbangPreso.Visual
             Shader.SetGlobalTexture(RampId,_ramp);
             Shader.SetGlobalVector(ShapeId,new Vector4(profile.BandEdge,profile.UpperRim,profile.FeetShade,profile.MetalHighlight));
             Shader.SetGlobalVector(SoftId,new Vector4(profile.Softness,profile.Wrap,profile.CastInkSelf,profile.CastInkWidth));
-            var sun=SkyEvent.RecordedSun;Vector3 direction=sun!=null?-sun.transform.forward:Vector3.up;
+            var sun=_sunOverride!=null?_sunOverride:SkyEvent.RecordedSun;Vector3 direction=sun!=null?-sun.transform.forward:Vector3.up;
             Shader.SetGlobalVector(KeyId,direction);
             // Use this map's authored sky palette, not a universal blue pane.
             // The same camera scope prevents leakage into character/menu previews.
