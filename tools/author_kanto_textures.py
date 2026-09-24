@@ -386,8 +386,38 @@ BARK_STROKES = {
 BARK_BASE = {"C": "8a5f40"}
 
 
+def _streaks_j(scale_m, seed, coverage, feather, length=9.0):
+    """Long, soft, VERTICAL feathered strokes: smooth noise stretched along the texture's
+    height, thresholded like `patches`."""
+    n = smooth(scale_m, seed, stretch=(1.0, length)) + 0.2 * smooth(scale_m / 2, seed + 1, stretch=(1.0, length))
+    t = np.quantile(n, 1 - coverage)
+    a = np.clip((n - t) / feather + 0.5, 0, 1)
+    return (a * a * (3 - 2 * a))[..., None]
+
+
+def bark_j():
+    """BARK VARIANT J, THE ONE THE OWNER KEPT (2026-09-25, "i like bark swatch v1", after A to
+    I were rejected and a fewer-wider-strokes version of this was compared). One warm brown;
+    many long, soft, feathered VERTICAL strokes, darker and lighter, each a couple of value
+    steps from the base; a broad second coat; gentle furrows in the height. No plates, no
+    cracks, no grid. Painted in its own colour, never tinted."""
+    base = flat("7a5236")
+    dark = _streaks_j(0.09, 131, 0.26, 0.5)
+    light = _streaks_j(0.07, 133, 0.12, 0.5)
+    img = base * (1 - dark * 0.2) * (1 + light * 0.12)
+    img = patches(img, np.array([1.05, 1.03, 1.0]), 0.8, 0.2, seed=135, feather=0.6)
+    height = 1 - dark[..., 0] * 0.8 + light[..., 0] * 0.3
+    old = STRENGTH["bark"]
+    STRENGTH["bark"] = 2.0   # the normal strength v1 was approved at
+    save("bark", img, height)
+    STRENGTH["bark"] = old
+
+
 def bark(variant=None):
-    variant = variant or os.environ.get("KANTO_BARK", "v2")
+    # J is the approved bark and the default; A to I stay available for comparison only.
+    variant = variant or os.environ.get("KANTO_BARK", "J")
+    if variant == "J":
+        return bark_j()
     if variant in ("D", "E"):
         return bark_painted(variant)
     if variant in ("F", "G", "H"):
