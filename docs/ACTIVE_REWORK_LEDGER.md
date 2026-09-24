@@ -1,42 +1,40 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: secure hall, then Philippine shop/sign rework
+## Current resume, 2026-09-24: publish print shop, then bakery reference/art
 
-Overall goal ACTIVE and NOT complete. No checkpoint stops/questions, other tasks,
-delegation, paid external services, resets, main edits or Desktop replacement.
-Quality product work first; bounded verification, no capture-tool perfection loops.
+Overall goal ACTIVE and NOT complete. No checkpoint stops, routine questions,
+other tasks/delegation, paid external APIs, resets, main edits or Desktop replacement.
+Quality product work before verification perfection. Bounded checks then advance.
 
-Latest owner REJECTED Ilalim print/copy as ugly and insufficiently Philippine,
-requests cartoon form, actual local reference research and no plain stock-font signs.
-Supplied stronger photo shows inhabited shop-house, grille/service opening, sachets,
-painted lower panel, shallow awning and attached banner layers. Then explicitly
-requested per-sign message/reference, built-in generated artwork, critique/iteration
-and fitting into the world. See ilalim-storefront-rework-plan.md and saved owner
-refs. PRINT COPY first, then other services separately, Eskinita boards afterward.
-Prior Ilalim shop retain judgment is explicitly superseded; no UI-font change.
+Latest owner direction: each world sign gets deliberate message, real reference,
+built-in generated artwork, critical review and physical fitting. No plain stock-font
+script, decorative burst spam or stretched texture. Shops must feel Philippine while
+cartoonish and part of their actual buildings. Owner rejected first PRINT sign;
+rejected evidence is retained. Stronger supplied shop-house photo guides service
+openings/grilles, stock, shallow awnings, painted panels and fitted sign layers.
 
-DEV ASTRAReworks and owned QUAL currently9e9302319before the hall/doc unit.
-Original two DEV composition PNG metas protected, never restore/stage. QUAL own
-churn backed/restored, no active Unity. Candidate hall assets/evidence copied to DEV.
-Hall author selected8large walls, exact topology/collision kept. Materialv1retained
-following actual paired front/rear/25percent grey review. Focusedv3passed1/1in3.407s.
-Earlier2fixture failures read non-readable runtime mesh vertices/indices; bounded
-metadata check now avoids CPU buffers and leaves author exact checks intact. No
-importer changes or broad diagnostics. Publish hall/docs, then storefront work.
+DEV ASTRAReworks/owned detached QUAL ate5f340c9fbefore current print unit. Protected
+DEV home-court/loading-street PNG metas NEVERstage/restore. No active Unity, owned
+browser tab, server or native player. All generated churn backed/restored.
 
-Coast9e9302319 and boats96215628c are pushed and exact remote verified. Lagoon
-current art batch/card/Low/sky ready for integrated gate; no full-map completion.
-Eskinita building disposition recorded, but its generated world-sign art is OPEN.
-Bayan building disposition in bayan-hall/report.md. Ilalim structure/skyline still
-retained, shops/signs reopened. Animals, bots, per-character motion, older defects
-and final qualification all remain. Do not silently drop any task.
+Current PRINT implementation qualified and copied to DEV: generatedv3JUN PRINTING
+at true3:1(2172x724), NPOT reshaping disabled, physical backing fitted. Sign-only
+1/1passed8.699s; complete-frontage1/1passed4.550s with actual same-camera front/
+street/25percent grey inspected. Copier now recognizable, laminator/reams/supplies,
+side grilles, supported corrugated awning, local lower paint panel and raised sign
+straps.2,400extra vertices/one renderer/material/no collision change. Original old
+parts retained disabled; other shops unchanged. No owner approval claim. Rejected
+v1and corruptv2source images/prompts preserved under ArtSource; v1runtime copy removed
+from DEV after hash-verified archive, but QUALunusedv1PNG/meta still need cleanup.
 
-Storefront sources: MapPlaceAuthor.Shop/StockRoom/Sign plus existing shop meshes;
-old generated text tools/author_shopfront_signs_v2.py uses fonts and is superseded
-for this art route. Source print room does have a crude copier but image does not
-communicate it; improve readable functional shapes, not only nomenclature. Primary
-shop services read at printhouseph.com and blessings.digital; their photos NOT yet
-viewed. Owner stock street photo actually viewed. Research actual shop images next.
+Publish this unit after explicit staging/fetch/remote check, advance QUAL through
+exact candidate preservation/named stash. Then BAKERY reference/art/shape next,
+followed by remaining entries in ilalim-sign-register.md. Do not reuse print design
+for every shop. PCExpress supplied master protected. Eskinita sign art remainsOPEN;
+its individual building materials are retained after review. Bayan hall e5f340c9f,
+Lagoon coast9e9302319and boats96215628c are published with native evidence. Every
+map integrated gate, natural animals, bot stalls, per-character motion and older
+actual defects/final qualification remain. No overall completion.
 
 ## Latest owner requirements and completed additions
 
@@ -321,3 +319,29 @@ method in storefront plan. PRINT COPY first, then each shop separately. It must
 feel physically part of the map; no stock-font rectangles, stretching or UI glow.
 Bayan fixture v2also read uploaded saved indices; changed to GetIndexCount metadata
 while retaining author exact-topology checks. Guardedv3running4046; no.cs edits.
+
+Owner requires judging mounted signs for stretching: native aspect/proportions,
+front and actual gameplay-angle inspection; saved in storefront plan. Hall e5f340c9f
+pushed and exact remote verified. No active Unity. Shop research IABtab5owned/current
+Cheap N Go own storefront photo actually viewed; close after reference intake.
+
+Print artwork v1 is an actual 2172x724 texture, not 4:1. New local sign author fits 3:1 board and disables NPOT reshaping. Guarded author then one native front/street comparison; cs frozen in flight. Logs/refine2-ilalim-print-sign-v1. No storefront-body completion claim. QUAL advanced to e5f340c9f after exact comparison/named stash.
+
+OWNER REJECTED PRINT ART V1: repeated decorative strokes spammed everywhere, very
+ugly. Preserve as rejected, NOTapproved. Existing author57908may finish but do NOT
+run its native art review/publish candidate as accepted. Reap, restore own churn,
+then replace with reviewed v2simpler local shop fascia: no bursts, comic shadows,
+wobbly oversized typography or fake ageing. Full rejection saved in storefront plan.
+
+Printv1author completed/reaped but native review CANCELLED by owner rejection,
+no approval/publication. V2generated output had visible colour/transparency artifacts,
+rejected before import. V3is clean opaque3:1JUN PRINTING with practical block layout
+and no bursts/shadows/grunge; source inspected, native judgment pending. Rejected
+images/prompts/provenance preserved. New artwork actual2172x724, maintain3:1.
+
+Print sign v3native1/1passed8.699s; actualfront/street inspected, artwork aspect3:1preserved. It does NOTclose storefront: body still looked like food display. New local print-shop physical unit authored: readable copier/laminator/reams, grouped supplies, side grille, supported corrugated awning, lower painted panel and raised sign straps. Original room/private boundary/colliders retained. Existing case extended only to compare this complete storefront against original; fixed camera includes actual old/new sign height. Guarded author then one focused native check, Logs/refine2-ilalim-print-shop-v1; freeze.cs.
+
+Per-sign message/design/ref/status register saved as ilalim-sign-register.md. All
+11shop identities listed; PCExpress supplied master protected, other signs remain
+OPEN until researched/generated/fitted/reviewed individually. No claim of references
+viewed for unstarted shops. Print physical author runs24015, cs frozen.

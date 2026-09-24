@@ -87,3 +87,62 @@ Begin Ilalim PRINT COPY as the prototype, then other shop signs one by one. Appl
 this direction when revisiting signs elsewhere; don't globally replace signs/UI
 or use one generated atlas design as every shop's style. The shop physical-use
 refinement remains necessary where it is demonstrably a generic food counter.
+
+Owner adds: judge the mounted result to make sure it does not look stretched.
+Preserve native artwork aspect. Measure physical sign face dimensions including
+parent scale, use matching UVs and either fit board proportions or deliberately
+crop only safe margins. Never squash lettering to fill a slot. Inspect a straight-on
+native view plus ordinary oblique gameplay view, not just the generated PNG. Sign
+support/thickness/lighting and readability stay in the same local approval pass.
+
+Print/copy reference actually viewed: Cheap N Go's own front_orig.jpg on its public
+Weebly shop site. Wide open household-scale entry, red shallow canopy/fascia, a
+framed mounted sign above and a narrow hanging service banner beside the opening,
+visible computer/work area and simple chairs. Keep that hierarchy; reject the tiny
+long service list and exact business/logo. Source:
+https://cheapngoprintingshopservices.weebly.com/destinations.html
+https://cheapngoprintingshopservices.weebly.com/uploads/1/2/2/6/122666392/front_orig.jpg
+PrinthousePh's live About page confirms walk-in photocopy/apparel/tarpaulin/ID/office
+work; its browser text differs from the web tool's older crawl. Neither version is
+used as a photo reference. No downloaded source photos or copied exact brand art.
+
+Floro's own locations-page frontage photo also actually viewed: blue-white main
+identity, glass entry and separate service posters around it. Useful hierarchy and
+mounting, reject dense contact/service copy at TUMP scale. Browser tab5closed and
+empty tab list verified. No downloaded photograph texture.
+https://www.floroblueprinting.com/locations
+
+PRINT candidatev1generated: JUN'S / PRINT & COPY / SCAN - LAMINATE - BIND (art uses
+bullet separators), simple copier illustration. Wording is correct, hierarchy clear.
+Actual output2172x724is3:1rather than requested4:1. Fit board to actual3:1and disable
+Unity NPOT rescale; preserve source dimensions. Do not squash to old4:1face. Judge
+edge wear/blue saturation in-world. No acceptance until native front/oblique view.
+Keep the existing old art/source assets intact. This sign unit precedes the physical
+print-shop service-front rebuild; changing artwork does not close that task.
+
+## V1 rejected by owner before native approval
+
+Owner: "doesnt look good " " is spammed everywhere", then "its very UGLY".
+The repeated red/cream decorative burst strokes, oversized wavy comic lettering,
+red shadows and faux-aged border are NOT accepted. Preservev1as rejected evidence,
+never publish it as approved or call this a completed sign. Stop its native taste
+review; only finish/reap the already-in-flight author. No source edits mid-run.
+
+V2direction: simpler actual neighborhood printing fascia/tarpaulin, composed custom
+block lettering, straight readable hierarchy and intentional spacing; limited
+colours and practical service information. No burst/ray/spark/quotation-like marks,
+no comic offset shadow, no fake vintage/grunge edge. The visual identity should
+come from realistic local sign composition and material placement in cartoon3D,
+not exaggerated cartoon typography. Generate a genuinely revised design, inspect
+it before any native install. At most3taste candidates; owner rejection is decisive.
+
+Print source inspection: MapPlaceAuthor already names a crude Photocopier and lid,
+but the shapes read as generic boxes behind a full-width glass display. Improve the
+actual shape/readability rather than claiming the object is absent. Preserve the
+private-boundary collision and room footprint. Next physical unit: recognizable
+copier lid/output throat/drawers/control panel on the existing counter; stacked
+reams and office supplies grouped on the rear shelves; local shallow corrugated
+awning supported by the existing fascia; select open serving and security-frame
+shapes instead of the full glass food-display impression. Keep head/walk clearance.
+Do not add every sari-sari motif to a print service or block equipment with dense
+bars. Inspect this functional identity in the same native player view.

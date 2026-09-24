@@ -282,6 +282,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   is OPEN and current priority: research actual Philippine shops, distinct functional
   interiors/fronts, cartoon construction and authored sign artwork. Earlier shop
   retain judgment is superseded; structure and skyline decisions remain valid.
+  PRINT prototype now has generatedv3art at verified3:1, readable copier/laminator/
+  paper supplies, side grille, supported awning and painted panel. [Native evidence](reports/map-by-map-refinement-2026-09-23/ilalim-print-shop/report.md):
+  complete-frontage1/1passed, front/street/grey inspected. V1owner rejection and
+  v2artifact output preserved as rejected only. [Each remaining sign](reports/map-by-map-refinement-2026-09-23/ilalim-sign-register.md)
+  stays OPEN, bakery next; this is not whole-map or owner aesthetic approval.
   Next active map. [Primary reference intake and Gilmore/LRT2identity](reports/map-by-map-refinement-2026-09-23/ilalim-reference-notes.md)
   saved. First local finish replaces mint concrete/pink-yellow track lookup colors
   with neutral structural materials on24pillars/28bays/56tracks. Original geometry,
