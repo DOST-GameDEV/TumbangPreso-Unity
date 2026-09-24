@@ -390,6 +390,8 @@ def bark(variant=None):
     variant = variant or os.environ.get("KANTO_BARK", "v2")
     if variant in ("D", "E"):
         return bark_painted(variant)
+    if variant in ("F", "G", "H"):
+        return bark_plates(variant)
     return _bark_strokes(variant)
 
 
@@ -464,6 +466,39 @@ def bark_painted(variant):
         lichen = patches(np.ones((SIZE, SIZE, 3)), np.array([0.93, 1.06, 0.93]), 0.25, 0.18, seed=303, feather=0.6)
         img = img * lichen
     save("bark", img, np.zeros((SIZE, SIZE)))
+
+
+def bark_plates(variant):
+    """BARK AS DRAWN PLATES. Owner on the airbrushed variants D and E: "what is this garbage?
+    can you look into actual stylized hand illustrated textures online and research their
+    style". What the stylized hand-painted barks online (ArtStation packs, llllline, Pinterest
+    boards of game bark) share:
+      * the bark is SHAPES, not smudges: long vertical plates separated by narrow dark
+        crevices whose lines are crisp, wavy, and fork and merge;
+      * each plate is a flat mid tone with a LIGHTER BAND down its lit edge and a darker band
+        down the other: three values, read as a bevel, like our brick's drawn top band;
+      * crevices are a dark, slightly cool purple-brown, never black;
+      * almost no noise; a few broad colour patches at most.
+    So this is the brick's hand-drawn lozenge turned on end: organic_bricks laid out in
+    courses along X, then transposed so plates run up the trunk. F: slim plates. G: broader
+    plates with bolder bands."""
+    # Plates DOMINATE and crevices are narrow lines (sheet v2 had crevices as wide as the plates
+    # and a wobble that turned plates into blobs).
+    rows, cols, mortar, wob, rnd = {"F": (14, 3, 0.016, 0.014, 0.03), "G": (10, 2, 0.02, 0.018, 0.04),
+                                    # H: G's plates twice as big: five or six round a trunk.
+                                    "H": (6, 2, 0.026, 0.024, 0.06)}[variant]
+    ident, inside, h, v = organic_bricks(rows, cols, mortar_m=mortar, wobble_m=wob, round_m=rnd, seed=401)
+    ident, inside, h, v = ident.T, inside.T, h.T, v.T          # plates now run vertically
+    face = hexcol("8e5d3c") * per_brick(ident, np.array([0.9, 0.96, 1.0, 1.04, 1.08]), 402)[..., None]
+    lit, shade = (1.14, 0.9) if variant == "F" else (1.2, 0.86)
+    if variant == "H":
+        lit, shade = 1.18, 0.86
+    face = np.where((v < 0.26)[..., None], face * lit, face)           # the lit edge band
+    face = np.where((v > 0.78)[..., None], face * shade, face)         # the shadowed edge band
+    crevice = flat("4a2e28")
+    img = crevice * (1 - inside[..., None]) + face * inside[..., None]
+    img = patches(img, np.array([1.05, 1.03, 1.0]), 0.6, 0.18, seed=403, feather=0.6)
+    save("bark", img, h)
 
 
 def metal():
