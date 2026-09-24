@@ -23,6 +23,7 @@ and Tiny Talisman, all of which paint surfaces as:
 If a change adds fine noise, streaks or more than two or three value steps, it is going the
 wrong way.
 """
+import os
 import sys
 from pathlib import Path
 
@@ -30,7 +31,8 @@ import numpy as np
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "ArtSource" / "kanto" / "textures"
+# KANTO_TEX_OUT redirects output, so a swatch can be reviewed before it replaces a texture.
+OUT = Path(os.environ.get("KANTO_TEX_OUT", ROOT / "ArtSource" / "kanto" / "textures"))
 SIZE = 1024
 TILE_M = 2.0
 PX = SIZE / TILE_M
@@ -110,7 +112,8 @@ MORTAR = "9c4636"   # the owner kept the brick-toned grout after comparing three
 
 STRENGTH = {"brick": 3.0, "stone_blocks": 2.5, "stone": 0.0, "roof": 0.0, "glass": 0.0, "wood": 2.0, "paint": 0.0,
             "asphalt": 0.0, "brick_brown": 3.0, "panel": 1.5, "paving": 2.0, "court": 1.6, "grass": 0.0, "plaster": 0.0,
-            "bark": 1.2, "metal": 0.0, "timber": 0.0, "panelg": 1.5, "tiles": 1.5}
+            "bark": 1.2, "metal": 0.0, "timber": 0.0, "panelg": 1.5, "tiles": 1.5,
+            "tiles_clay": 1.2, "tiles_slate": 1.0}
 
 
 def save(name, albedo, height):
@@ -286,18 +289,88 @@ def tiles():
     save("tiles", img, height)
 
 
+def _courses(course_m, tile_w, wobble_m, seed):
+    """Hand-drawn tile COURSES: rows running along texture X, domain-warped like the brick so
+    no line is ruled. Returns the course index, fy (0 at a course's top, 1 at its lower edge),
+    fx (0..1 across one tile, staggered by half a tile per course) and a per-tile id."""
+    wx = X + wobble_m * smooth(0.25, seed + 1)
+    wy = Y + wobble_m * 0.7 * smooth(0.3, seed + 2)
+    rows = int(round(TILE_M / course_m))
+    cols = int(round(TILE_M / tile_w))
+    rh, cw = TILE_M / rows, TILE_M / cols
+    row = np.floor(wy / rh).astype(int) % rows
+    fy = (wy % TILE_M) / rh - np.floor((wy % TILE_M) / rh)
+    shift = (row % 2) * 0.5 * cw
+    col = np.floor(((wx + shift) % TILE_M) / cw).astype(int) % cols
+    fx = (((wx + shift) % TILE_M) / cw) % 1.0
+    return row, fy, fx, row * 100 + col
+
+
+def tiles_clay():
+    # RED CLAY ROOF TILES, drawn as overlapping COURSES (owner: "overlapping tile COURSES in
+    # rows, each course with a soft darker shadow band under its lower edge, courses slightly
+    # wobbly and hand-drawn like the brick ... far fewer, bigger tiles").
+    #   * 5 courses per 2 m, 4 tiles across: big and few, so the repeat is not the read.
+    #   * a course is ONE flat colour; its lower edge is a gentle round tile end;
+    #   * the drawn highlight: a flat lighter band along the lip, like the brick's top band;
+    #   * a soft, feathered shadow band falls from that edge onto the course below;
+    #   * joints between tiles in a course: a faint soft line, barely darker.
+    # Contrast is the brick's: every mark sits within about 0.88..1.08 of the base.
+    row, fy, fx, ident = _courses(0.4, 0.5, 0.03, 181)
+    base = hexcol("a9503a") * per_brick(ident, np.array([0.97, 1.0, 1.0, 1.03]), 182)[..., None]
+    edge = 0.84 + 0.12 * np.sqrt(np.clip(1 - (2 * fx - 1) ** 2, 0, 1))      # round tile ends
+    past = np.clip((fy - edge) / 0.025 + 0.5, 0, 1)                         # below this course's end
+    lip = ((fy > edge - 0.14) & (fy < edge)).astype(float)
+    shadow = np.clip(1 - np.abs(fy - 0.08) / 0.12, 0, 1) * (1 - past)       # under the course above
+    joint = np.clip(1 - np.minimum(fx, 1 - fx) / 0.03, 0, 1) * (fy < edge)
+    val = 1 + 0.07 * lip * (1 - past) - 0.12 * shadow - 0.06 * joint - 0.1 * past
+    img = base * val[..., None]
+    img = patches(img, np.array([1.04, 1.03, 1.02]), 0.7, 0.2, seed=183, feather=0.6)
+    save("tiles_clay", img, np.clip(fy, 0, 1) * (1 - past))
+
+
+def tiles_slate():
+    # GREY SLATE: a different DRAWING, not the clay recoloured. Slates are thin flat plates, so:
+    # narrower courses (6 per 2 m), square-cut ends with softened corners and a slight random
+    # length per slate (a ragged, hand-laid line rather than a scallop), a thin highlight on
+    # the cut edge, and a narrow soft shadow. Joints between slates are a hairline, faint.
+    row, fy, fx, ident = _courses(0.333, 0.36, 0.02, 191)
+    rng = np.random.default_rng(192)
+    ends = rng.uniform(0.9, 0.99, ident.max() + 1)[ident]
+    corner = np.clip((np.abs(2 * fx - 1) - 0.82) / 0.18, 0, 1) ** 2 * 0.06
+    edge = ends - corner
+    past = np.clip((fy - edge) / 0.02 + 0.5, 0, 1)
+    lip = ((fy > edge - 0.07) & (fy < edge)).astype(float)
+    shadow = np.clip(1 - np.abs(fy - 0.05) / 0.09, 0, 1) * (1 - past)
+    joint = np.clip(1 - np.minimum(fx, 1 - fx) / 0.018, 0, 1) * (fy < edge)
+    base = hexcol("6c6a6e") * per_brick(ident, np.array([0.96, 1.0, 1.0, 1.04]), 193)[..., None]
+    val = 1 + 0.08 * lip * (1 - past) - 0.1 * shadow - 0.05 * joint - 0.08 * past
+    img = base * val[..., None]
+    img = patches(img, np.array([1.05, 1.05, 1.06]), 0.8, 0.2, seed=194, feather=0.6)
+    save("tiles_slate", img, np.clip(fy, 0, 1) * (1 - past))
+
+
 def bark():
-    # Tree trunks. The first version was the brick lozenge on end and read as "harsh
-    # garbage": hard dark plates. Bark in the reference is a soft painted trunk: a flat
-    # colour, a few long vertical strokes a touch darker with feathered ends, and one broad
-    # lighter coat. Value range about 0.8 to 1.05. NEUTRAL: tinted by each trunk's colour.
-    n = smooth(0.45, 131, stretch=(0.14, 1.0))          # about 6 cm across, 45 cm up the trunk
-    t = np.quantile(n, 0.8)
-    a = np.clip((n - t) / 0.5 + 0.5, 0, 1)
-    a = a * a * (3 - 2 * a)
-    img = flat("d6d6d6") * (1 - 0.16 * a)[..., None]
-    img = patches(img, np.array([1.05, 1.05, 1.05]), 0.45, 0.25, seed=133, feather=0.6)
-    save("bark", img, -a * 0.6)
+    # BARK, second attempt. Owner: "flat brown with two or three long, soft, feathered
+    # vertical strokes, the same simplicity as the soft painted leaves. No grain." So: one flat
+    # brown and three long strokes across the 2 m tile (1.5 to 1.8 m long, 10 to 14 cm wide,
+    # tapered at both ends, a slow gentle lean), two a touch darker and one a touch lighter.
+    # Nothing else. The strokes wrap in x and y, so a trunk's seam and the tile edge are
+    # invisible.
+    rng = np.random.default_rng(201)
+    img = flat("7a5238")
+    for k, (x0, shift) in enumerate(((0.3, 0.9), (0.95, 1.06), (1.55, 0.92))):
+        y0 = rng.uniform(0, TILE_M)
+        length, width = rng.uniform(1.5, 1.8), rng.uniform(0.1, 0.14)
+        dy = ((Y - y0 + TILE_M / 2) % TILE_M) - TILE_M / 2           # periodic, centred on the stroke
+        t = np.clip(1 - np.abs(dy) / (length / 2), 0, 1)             # 1 mid-stroke, 0 at its tips
+        cx = x0 + 0.04 * np.sin(Y / TILE_M * 2 * np.pi + k * 2.1)     # one slow sway per tile
+        dx = ((X - cx + TILE_M / 2) % TILE_M) - TILE_M / 2
+        w = width * np.sin(np.pi * t / 2)                             # tapered ends
+        a = np.clip(1 - np.abs(dx) / np.maximum(w, 1e-4), 0, 1) * (t > 0)
+        a = a * a * (3 - 2 * a)                                       # feathered edges
+        img = img * (1 - a[..., None]) + img * shift * a[..., None]
+    save("bark", img, np.zeros((SIZE, SIZE)))
 
 
 def metal():
@@ -369,7 +442,7 @@ def normals_only():
 
 if __name__ == "__main__":
     ALL = (brick, brick_brown, panel, stone_blocks, stone, roof, glass, wood, paint, asphalt, paving, court, grass,
-           plaster, panelg, tiles, bark, metal, timber, leaf)
+           plaster, panelg, tiles, tiles_clay, tiles_slate, bark, metal, timber, leaf)
     if "--normals-only" in sys.argv:
         normals_only()
     elif "--only" in sys.argv:
