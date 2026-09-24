@@ -34,6 +34,10 @@ seen: a live networked match, including an observer's estimate of the can raise.
 
 ## Parallel lane, 2026-09-24: REFINE-2.11 ultimate performances (cloud Ubuntu session)
 
+**Lane resume file (all owner instructions and the plan):**
+docs/reports/ultimate-performances-2026-09-24/lane-ledger.md . Branch claude/animation-ultimates,
+PR https://github.com/DOST-GameDEV/TumbangPreso-Unity/pull/5 .
+
 Owner assigned all animation work to this lane, ultimates first, one hero at a time (*"dont js spam
 copy paste stuff"*). Research, plan, per-hero evidence and machine limits:
 docs/reports/ultimate-performances-2026-09-24/ (research.md, plan.md, progress.md). No Unity
