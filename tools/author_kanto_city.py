@@ -89,6 +89,25 @@ EXTRA_PALETTE = {
     "paint_red":     (0.55, 0.10, 0.08),
     "paint_green":   (0.12, 0.34, 0.20),
     "paint_teal":    (0.10, 0.36, 0.36),
+    # Downtown curtain walls: reflective, so the sky tints them; kept teal, green and slate
+    # rather than blue so no tower reads as the defence colour.
+    "curtain_teal":  (0.02, 0.30, 0.34),
+    "curtain_green": (0.05, 0.32, 0.20),
+    "curtain_dark":  (0.03, 0.10, 0.13),
+    "mullion_light": (0.80, 0.82, 0.79),
+    "steel":         (0.30, 0.33, 0.33),
+    "trunk_grey":    (0.46, 0.40, 0.34),
+    "panel_sand":    (0.80, 0.66, 0.48),
+    "panel_terracotta": (0.72, 0.42, 0.30),
+    "panel_sage":    (0.58, 0.66, 0.52),
+    "panel_cream":   (0.92, 0.86, 0.72),
+    "roof_warm":     (0.50, 0.42, 0.36),
+    "roof_light":    (0.70, 0.68, 0.64),
+    "roof_tile":     (0.60, 0.22, 0.14),
+    "roof_tile_green": (0.20, 0.38, 0.28),
+    "roof_tile_grey": (0.34, 0.31, 0.30),
+    "brass":         (0.72, 0.55, 0.20),
+    "sign_green":    (0.10, 0.40, 0.22),
 }
 K.PALETTE.update(EXTRA_PALETTE)
 # Which painted texture each material wears in Blender previews (Unity reads MATERIAL_SPECS).
@@ -98,6 +117,18 @@ for name in EXTRA_PALETTE:
     if name.startswith(("plaster_", "stucco_")):
         K.TEXTURED.setdefault(name, "plaster")
 K.TEX_SCALE.update({"plaster": 0.5, "asphalt": 0.4, "grass": 0.5})
+# Owner on review v3: "a lot of models are untextured. like the tree bodies, traffic lamp and
+# streetposts, park railings". Bark, painted street metal and timber, all NEUTRAL (tinted by
+# each material's own colour), painted by author_kanto_textures.py --only bark,metal,timber.
+for _name, _tex in (("trunk", "bark"), ("trunk_grey", "bark"), ("timber_pole", "timber"), ("pole", "metal"),
+                    ("railing", "metal"), ("metal", "metal"), ("metal_dark", "metal"), ("steel", "metal"),
+                    ("bin_green", "metal"), ("brass", "metal"), ("sign_green", "metal")):
+    K.TEXTURED[_name] = _tex
+for _name in ("panel_sand", "panel_terracotta", "panel_sage", "panel_cream"):
+    K.TEXTURED[_name] = "panelg"
+for _name in ("roof_tile", "roof_tile_green", "roof_tile_grey"):
+    K.TEXTURED[_name] = "tiles"
+K.NEUTRAL_TEX.update({"bark", "metal", "timber", "panelg", "tiles"})
 K.ANTI_TILE.update({"plaster", "asphalt", "grass"})
 
 # The same, for Unity: texture, tint (sRGB-ish multiplier, 1 = texture as painted), tiling.
@@ -108,8 +139,12 @@ def material_specs():
     specs = {}
     for name, rgb in K.PALETTE.items():
         tex = K.TEXTURED.get(name, "paint")
-        if name in ("leaf_light", "leaf_dark"):
+        if name.startswith(("leaf_light", "leaf_dark")):
             specs[name] = {"texture": "leaf", "tint": TINTED(rgb), "tiling": 1.0, "foliage": True}
+            continue
+        if name.startswith("curtain_"):
+            specs[name] = {"texture": None, "tint": [round(c ** (1 / 2.2), 4) for c in rgb], "tiling": 1.0,
+                           "glossy": True}
             continue
         if name in ("leaf_core", "soil", "ground", "wire", "signal_red", "signal_amber", "signal_green", "lamp_glass"):
             specs[name] = {"texture": None, "tint": [round(c ** (1 / 2.2), 4) for c in rgb], "tiling": 1.0,
@@ -124,6 +159,28 @@ def material_specs():
     return specs
 
 
+_kit_material = K.material
+
+
+def _material(name):
+    """Curtain glass: no painted texture (a 2 m window tile repeated up a 120 m tower read as
+    stripes), a low roughness and some metal so it mirrors the sky like the reference's glass."""
+    if name.startswith("curtain_") and bpy.data.materials.get(name) is None:
+        m = bpy.data.materials.new(name)
+        rgb = K.PALETTE[name]
+        m.diffuse_color = (*rgb, 1)
+        m.use_nodes = True
+        bsdf = m.node_tree.nodes["Principled BSDF"]
+        bsdf.inputs["Base Color"].default_value = (*rgb, 1)
+        bsdf.inputs["Metallic"].default_value = 0.8
+        bsdf.inputs["Roughness"].default_value = 0.12
+        return m
+    return _kit_material(name)
+
+
+K.material = _material   # Buf.finish looks `material` up in the kit's module at call time
+
+
 # ------------------------------------------------------------------ the generic building
 
 class Ctx:
@@ -135,7 +192,7 @@ def city_building(name, foot, order, ground, storey, upper, zones, *, seed=1, ba
                   courses="stone", cornice=K.CORNICE, cornice_mat="stone", parapet="brick",
                   shops=True, door=None, awnings=None, keystones=True, sills=True,
                   planters=True, acs=True, wrap=False, shop_frame="frame", extras=None,
-                  window_style="classic", fascia="trim", slabs=None):
+                  window_style="classic", fascia="trim", slabs=None, roof="roof"):
     """A building from the house kit. `foot` is the footprint (Blender XY), `order` the street
     facade indices (consecutive), `ground` the ground-floor height, `storey`/`upper` the upper
     floors. `door` is (facade index, u) for a street door. `extras(ctx)` adds anything bespoke
@@ -185,7 +242,7 @@ def city_building(name, foot, order, ground, storey, upper, zones, *, seed=1, ba
             raise ValueError(f"{name}: door at u={door[1]} is off its {f.length:.2f} m wall")
         f.openings.append((door[1] - 1.0, door[1] + 1.0, 0.0, min(2.9, ground - 1.3), 0.5, "glass"))
 
-    K.wall_shell("shell", facades, TOP, ground, zones, "roof").finish(col, bevel=0.035)
+    K.wall_shell("shell", facades, TOP, ground, zones, roof).finish(col, bevel=0.035)
     c = Ctx()
     c.col, c.rng, c.facades, c.order, c.inside, c.ins, c.TOP = col, rng, facades, order, inside, ins, TOP
     c.ground, c.storey, c.upper, c.windows, c.shops = ground, storey, upper, windows, shop_bays
@@ -512,7 +569,179 @@ def bays(c, columns, s0, s1, wall, frame="frame_dark"):
                            out=0.95, mat=frame, transom=[-(c.storey - 0.96) / 6])
 
 
-def archetype(name, kind, w, storeys, colour, seed, detail=True, shop="paint_green"):
+# ------------------------------------------------------------------ roofs and massing
+#
+# Owner on review v3: "most of the other buildings are essentially just big rectangles ... you
+# did not mess around with the shapes at all. i want more organic and fun shapes". Tiny
+# Talisman's roofs are busy (AC units, vents, stair houses, antennas, dishes, skylights, water
+# tanks) and Brainchild's houses wear steep tiled roofs with dormers and corner turrets. These
+# are added to the street archetypes so the same footprint grows a different skyline.
+
+def _free(taken, x0, y0, x1, y1):
+    for a0, b0, a1, b1 in taken:
+        if x0 < a1 and a0 < x1 and y0 < b1 and b0 < y1:
+            return False
+    taken.append((x0, y0, x1, y1))
+    return True
+
+
+def roof_clutter(c, w, D, rng, taken, wall):
+    """Rooftop life on a flat roof (x 0..w, y -D..0; the parapet stands 0.55 m in). Each item
+    sinks 2 cm into the roof slab."""
+    z = c.TOP - 0.02
+    p = c.props
+
+    def spot(sx, sy):
+        for _ in range(30):
+            x = rng.uniform(0.9 + sx / 2, w - 0.9 - sx / 2)
+            y = rng.uniform(-D + 0.9 + sy / 2, -0.9 - sy / 2)
+            if _free(taken, x - sx / 2 - 0.3, y - sy / 2 - 0.3, x + sx / 2 + 0.3, y + sy / 2 + 0.3):
+                return x, y
+        return None
+
+    s = spot(2.6, 2.3)   # a stair house with a door and a little roof
+    if s:
+        x, y = s
+        p.box(Matrix.Translation((x, y, z + 1.3)), (2.6, 2.3, 2.6), wall)
+        p.box(Matrix.Translation((x, y, z + 2.66)), (2.9, 2.6, 0.16), "concrete")
+        p.box(Matrix.Translation((x - 0.3, y + 1.16, z + 1.05)), (0.9, 0.06, 2.0), "wood")
+    for _ in range(rng.randint(1, 3)):   # AC condensers: a box, a fan, a grille
+        s = spot(1.3, 0.9)
+        if s:
+            x, y = s
+            p.box(Matrix.Translation((x, y, z + 0.45)), (1.3, 0.9, 0.9), "white")
+            p.cylinder((x, y, z + 0.92), 0.34, 0.06, "metal_dark", sides=16)
+            for k in range(3):
+                p.box(Matrix.Translation((x - 0.3 + k * 0.3, y, z + 0.95)), (0.03, 0.7, 0.03), "metal")
+    for _ in range(rng.randint(2, 4)):   # vent stacks with caps
+        s = spot(0.4, 0.4)
+        if s:
+            x, y = s
+            h = rng.uniform(0.6, 1.3)
+            p.cylinder((x, y, z + h / 2), 0.13, h, "metal", sides=10)
+            p.cylinder((x, y, z + h + 0.06), 0.22, 0.14, "metal", sides=10, top_scale=0.3)
+    if rng.random() < 0.6:   # a satellite dish on a short post
+        s = spot(1.0, 1.0)
+        if s:
+            x, y = s
+            p.cylinder((x, y, z + 0.4), 0.05, 0.8, "metal", sides=8)
+            m = Matrix.Translation((x, y, z + 0.95)) @ Matrix.Rotation(math.radians(55), 4, "X") @ Matrix.Rotation(rng.uniform(0, 6.3), 4, "Y")
+            r = bmesh.ops.create_cone(p.bm, cap_ends=True, segments=16, radius1=0.45, radius2=0.12, depth=0.16, matrix=m)
+            p._paint(r["verts"], "white")
+    if rng.random() < 0.5:   # an antenna mast
+        s = spot(0.6, 0.6)
+        if s:
+            x, y = s
+            p.cylinder((x, y, z + 2.2), 0.04, 4.4, "metal", sides=6)
+            for k, hh in enumerate((3.2, 3.8, 4.3)):
+                p.box(Matrix.Translation((x, y, z + hh)), (1.2 - k * 0.3, 0.04, 0.04), "metal")
+    if rng.random() < 0.5:   # a skylight
+        s = spot(1.8, 1.2)
+        if s:
+            x, y = s
+            p.box(Matrix.Translation((x, y, z + 0.2)), (1.8, 1.2, 0.4), "metal_dark")
+            p.box(Matrix.Translation((x, y, z + 0.42)), (1.6, 1.0, 0.06), "glass")
+
+
+def pitched_roof(c, w, D, tile, wall, rng, dormers=True):
+    """A steep tiled roof across the whole block, ridge parallel to the street, eaves pushed
+    out too far (Brainchild), solid gable ends in the wall colour, and dormers on the street
+    slope. Replaces the parapet."""
+    TOP, ov = c.TOP, 0.55
+    h = D * 0.36
+    slope = math.atan2(h, D / 2)
+    L = (D / 2 + ov) / math.cos(slope)
+    p = c.props
+    for side in (1, -1):   # +1: the street slope, running from the front eave up to the ridge
+        yc = -D / 2 + side * (D / 2 + ov) / 2
+        zc = TOP + h - (h / (D / 2)) * ((D / 2 + ov) / 2) + 0.1
+        m = Matrix.Translation((w / 2, yc, zc)) @ Matrix.Rotation(-side * slope, 4, "X")
+        p.box(m, (w + 2 * ov * 0.6, L, 0.16), tile)
+    p.box(Matrix.Translation((w / 2, -D / 2, TOP + h + 0.12)), (w + 0.8, 0.34, 0.24), tile)   # ridge cap
+    for x in (0.0, w):   # gable ends, 0.3 thick, inside the eaves
+        xin = x + (0.16 if x == 0 else -0.16)
+        tri = [Vector((xin, 0.02, TOP - 0.02)), Vector((xin, -D - 0.02, TOP - 0.02)), Vector((xin, -D / 2, TOP + h - 0.05))]
+        back = [v + Vector((0.3 if x == 0 else -0.3, 0, 0)) for v in tri]
+        p.face(tri, wall)
+        p.face(list(reversed(back)), wall)
+        for j in range(3):
+            p.face([tri[j], back[j], back[(j + 1) % 3], tri[(j + 1) % 3]], wall)
+    if dormers:
+        n = max(1, round(w / 3.3))
+        b = w / n
+        for k in range(n):
+            if (k + c.upper) % 2:
+                continue
+            u = (k + 0.5) * b
+            y0 = -1.1                              # dormer face, on the slope
+            zs = TOP + h * (-y0 / (D / 2)) - 0.1   # where the slope is at the dormer face
+            dh = 1.7
+            p.box(Matrix.Translation((u, y0 - 0.9, zs + dh / 2 - 0.2)), (1.7, 1.8, dh + 0.4), wall)
+            p.box(Matrix.Translation((u, y0 + 0.02, zs + 0.75)), (1.1, 0.08, 1.1), "glass")
+            K.window_frame(c.frames, K.Facade((u - 1, y0), (u + 1, y0), (u, y0 - 1)), 1.0, zs + 0.75, 1.1, 1.1,
+                           cols=2, bar=0.08, depth=0.06, out=0.06, mat="frame")
+            for sd in (-1, 1):
+                mm = Matrix.Translation((u + sd * 0.5, y0 - 0.8, zs + dh + 0.25)) @ Matrix.Rotation(sd * math.radians(38), 4, "Y")
+                p.box(mm, (1.25, 2.1, 0.1), tile)
+
+
+def turret(c, w, D, wall, cap, rng, at_left=True):
+    """A corner bay tower: square, pushed 0.45 m proud of the street face, rising one storey
+    past the roof with its own windows, a cornice, and a pyramid cap with a finial."""
+    s = 3.0
+    x = 1.6 if at_left else w - 1.6
+    y = -1.5
+    top = c.TOP + c.storey
+    p = c.props
+    p.box(Matrix.Translation((x, y + 0.45, (c.ground + top) / 2)), (s, s, top - c.ground), wall)
+    f = K.Facade((x - s / 2, y + 0.45 + s / 2), (x + s / 2, y + 0.45 + s / 2), (x, y))
+    for k in range(c.upper + 1):
+        zc = c.ground + k * c.storey + c.storey / 2
+        p.box(f.frame(s / 2, zc, -0.08), (1.3, 0.2, 1.6), "glass")
+        K.window_frame(c.frames, f, s / 2, zc, 1.34, 1.64, cols=2, bar=0.08, depth=0.06, out=0.03, mat="frame")
+    p.box(Matrix.Translation((x, y + 0.45, top + 0.12)), (s + 0.5, s + 0.5, 0.24), "stone")
+    m = Matrix.Translation((x, y + 0.45, top + 1.45)) @ Matrix.Rotation(math.pi / 4, 4, "Z")
+    r = bmesh.ops.create_cone(p.bm, cap_ends=True, segments=4, radius1=(s + 0.4) * 0.72, radius2=0.06, depth=2.5, matrix=m)
+    p._paint(r["verts"], cap)
+    p.cylinder((x, y + 0.45, top + 3.0), 0.05, 0.9, "brass", sides=6)
+
+
+# The far street blocks, GENERATED rather than listed: 24 buildings from the six kinds, each
+# with its own width, height, wall paint, shop paint and roof. The first roster had 8, each
+# placed 12 times, and the owner saw it straight away: "noticeable repeating textures and
+# colors". A kind's paints are chosen for it; white panel is gone from the palette entirely.
+WALLS = {
+    "loft": ["brick", "brick_brown"],
+    "loft_ph": ["brick", "brick_brown"],
+    "stucco": ["stucco_tan", "stucco_olive", "plaster_butter", "plaster_rose"],
+    "shophouse": ["plaster_cream", "plaster_mint", "plaster_butter", "plaster_rose", "plaster_sage", "plaster_sky"],
+    "panel": ["panel_sand", "panel_terracotta", "panel_sage", "panel_cream"],
+    "glassmid": ["panel_sand", "panel_terracotta", "panel_sage"],
+}
+SHOPS = ["paint_green", "paint_ochre", "paint_red", "paint_teal"]
+
+
+def _roster():
+    rng = random.Random(404)
+    kinds = ["loft"] * 5 + ["loft_ph"] * 3 + ["stucco"] * 4 + ["shophouse"] * 6 + ["panel"] * 3 + ["glassmid"] * 3
+    rng.shuffle(kinds)
+    out = []
+    for i, kind in enumerate(kinds):
+        storeys = rng.randint(3, 5) if kind == "shophouse" else rng.randint(4, 9)
+        roof = "flat"
+        if storeys <= 5 and kind in ("shophouse", "loft") and rng.random() < 0.6:
+            roof = "pitched"
+        elif rng.random() < 0.3 and kind in ("shophouse", "stucco", "panel"):
+            roof = "turret"
+        out.append((f"far_{kind}_{i:02d}", kind, round(rng.uniform(7.5, 12.0), 1), storeys,
+                    rng.choice(WALLS[kind]), 500 + i, rng.choice(SHOPS), roof))
+    return out
+
+
+FAR_ROSTER = _roster()
+
+
+def archetype(name, kind, w, storeys, colour, seed, detail=True, shop="paint_green", roof="flat"):
     """The street roster: six kinds of building, each a different construction, not a repaint.
       loft      brick, big dark-framed grid windows, painted shop base, water tank
       loft_ph   the loft with a glazed penthouse set back on the roof
@@ -520,43 +749,62 @@ def archetype(name, kind, w, storeys, colour, seed, detail=True, shop="paint_gre
       glassmid  concrete panels, ribbon glazing, projecting floor slabs
       panel     concrete panels, grid windows in cream frames, balconies
       shophouse painted plaster, classic windows and balconies (the first walk-up)
-    `detail=False` drops planters, AC units and roof clutter for the far street blocks."""
+    `detail=False` drops planters and wall AC units for the far street blocks.
+    `roof`: flat (with rooftop clutter), pitched (tiles and dormers), turret (a corner tower)."""
     D = 14.0
     foot = [(0, 0), (w, 0), (w, -D), (0, -D)]
-    common = dict(seed=seed, planters=detail, acs=detail, keystones=False)
+    rr = random.Random(seed * 7 + 3)
+    common = dict(seed=seed, planters=detail, acs=detail, keystones=False,
+                  roof=rr.choice(("roof", "roof", "roof_warm", "roof_light")))
+    tile = rr.choice(("roof_tile", "roof_tile", "roof_tile_green", "roof_tile_grey"))
 
     def extras(c):
-        if kind in ("loft", "loft_ph", "shophouse") and detail:
+        taken = []
+        if kind in ("loft", "loft_ph", "shophouse") and roof != "pitched" and (detail or rr.random() < 0.5):
             water_tank(c.props, w * 0.66, -D * 0.62, c.TOP, r=1.0)
-        if kind == "loft_ph":
+            taken.append((w * 0.66 - 1.8, -D * 0.62 - 1.8, w * 0.66 + 1.8, -D * 0.62 + 1.8))
+        if kind == "loft_ph" and roof != "pitched":
             penthouse(c, 1.6, 1, "brick_brown" if colour == "brick" else "concrete")
+            taken.append((0, -1.6 - 7.4, w, 0))
         if kind == "stucco":
             n = max(1, round(w / 3.3))
             bays(c, [k for k in range(n) if k % 2 == 1] or [0], 0, max(0, c.upper - 2), colour)
-            penthouse(c, 1.8, 1, colour)
+            if roof != "pitched":
+                penthouse(c, 1.8, 1, colour)
+                taken.append((0, -1.8 - 7.4, w, 0))
         if kind in ("panel", "shophouse"):
             walkup_balconies(c)
+        if roof == "pitched":
+            pitched_roof(c, w, D, tile, colour, rr)
+        else:
+            if roof == "turret":
+                at_left = rr.random() < 0.5
+                turret(c, w, D, colour, tile, rr, at_left)
+                taken.append((0, -3.5, 3.6, 0) if at_left else (w - 3.6, -3.5, w, 0))
+            roof_clutter(c, w, D, rr, taken, "concrete" if kind in ("loft", "loft_ph") else colour)
 
     if kind in ("loft", "loft_ph"):
         return city_building(name, foot, [0], 4.4, 3.3, storeys, (shop, colour), window_style="grid",
                              frame="frame_dark", shop_frame="frame_dark", fascia=shop, courses="stone",
-                             cornice=K.COURSE if kind == "loft_ph" else K.CORNICE, parapet=colour, recess=0.22,
+                             cornice=K.COURSE if kind == "loft_ph" else K.CORNICE,
+                             parapet=None if roof == "pitched" else colour, recess=0.22,
                              awnings={0: [["awning_a", "awning_b"], ["awning_c", "awning_b"]][seed % 2]} if detail else None,
                              extras=extras, **common)
     if kind == "stucco":
         return city_building(name, foot, [0], 4.2, 3.2, storeys, ("stone_blocks", colour), window_style="ribbon",
                              frame="metal_dark", shop_frame="metal_dark", fascia=shop, courses=None,
-                             slabs="concrete", cornice=None, parapet=colour, recess=0.18, extras=extras, **common)
+                             slabs="concrete", cornice=None, parapet=None if roof == "pitched" else colour,
+                             recess=0.18, extras=extras, **common)
     if kind == "glassmid":
-        return city_building(name, foot, [0], 4.4, 3.4, storeys, ("panel", "panel"), window_style="ribbon",
+        return city_building(name, foot, [0], 4.4, 3.4, storeys, (colour, colour), window_style="ribbon",
                              frame="metal_dark", shop_frame="metal_dark", fascia="metal_dark", courses=None,
-                             slabs="panel", cornice=None, parapet="panel", recess=0.2, extras=extras, **common)
+                             slabs="concrete", cornice=None, parapet=colour, recess=0.2, extras=extras, **common)
     if kind == "panel":
-        return city_building(name, foot, [0], 4.2, 3.1, storeys, (shop, "panel"), window_style="grid",
+        return city_building(name, foot, [0], 4.2, 3.1, storeys, (shop, colour), window_style="grid",
                              frame="frame", shop_frame="frame", fascia=shop, courses="concrete",
-                             cornice=K.COURSE, parapet="panel", recess=0.2, extras=extras, **common)
+                             cornice=K.COURSE, parapet=colour, recess=0.2, extras=extras, **common)
     return city_building(name, foot, [0], 4.2, 3.2, storeys, ("stone_blocks", colour), bay=3.1, recess=0.26,
-                         parapet=colour, courses="stone", fascia=shop,
+                         parapet=None if roof == "pitched" else colour, courses="stone", fascia=shop,
                          awnings={0: [["awning_a", "awning_b"], ["awning_c", "awning_b"]][seed % 2]} if detail else None,
                          extras=extras, **common)
 
@@ -580,27 +828,20 @@ PARKSIDE = [
     ("loft_red_5", "loft", 9.5, 5, "brick", 21, "paint_green"),
     ("stucco_tan_6", "stucco", 9.0, 6, "stucco_tan", 22, "paint_ochre"),
     ("shophouse_mint_4", "shophouse", 9.5, 4, "plaster_mint", 23, "paint_red"),
-    ("glassmid_7", "glassmid", 9.5, 7, "panel", 24, "metal_dark"),
+    ("glassmid_7", "glassmid", 9.5, 7, "panel_terracotta", 24, "metal_dark"),
     ("loft_brown_ph_4", "loft_ph", 9.0, 4, "brick_brown", 25, "paint_teal"),
-    ("panel_5", "panel", 9.5, 5, "panel", 26, "paint_red"),
+    ("panel_5", "panel", 9.5, 5, "panel_sand", 26, "paint_red"),
     ("shophouse_rose_3", "shophouse", 9.5, 3, "plaster_rose", 27, "paint_green"),
     ("stucco_olive_5", "stucco", 9.0, 5, "stucco_olive", 28, "paint_red"),
     ("loft_red_ph_6", "loft_ph", 9.5, 6, "brick", 29, "paint_ochre"),
     ("shophouse_butter_4", "shophouse", 9.5, 4, "plaster_butter", 30, "paint_teal"),
     ("loft_brown_3", "loft", 9.0, 3, "brick_brown", 31, "paint_green"),
-    ("glassmid_5", "glassmid", 9.5, 5, "panel", 32, "metal_dark"),
+    ("glassmid_5", "glassmid", 9.5, 5, "panel_sage", 32, "metal_dark"),
 ]
-# The far street blocks: the same six kinds, lower detail, other widths and heights.
-FILLERS = [
-    ("far_loft_red_4", "loft", 9.0, 4, "brick", 41, "paint_green"),
-    ("far_stucco_tan_7", "stucco", 11.0, 7, "stucco_tan", 42, "paint_ochre"),
-    ("far_glassmid_9", "glassmid", 11.0, 9, "panel", 43, "metal_dark"),
-    ("far_shophouse_sage_3", "shophouse", 8.0, 3, "plaster_sage", 44, "paint_red"),
-    ("far_loft_brown_ph_5", "loft_ph", 9.0, 5, "brick_brown", 45, "paint_teal"),
-    ("far_panel_6", "panel", 11.0, 6, "panel", 46, "paint_green"),
-    ("far_shophouse_sky_4", "shophouse", 7.5, 4, "plaster_sky", 47, "paint_ochre"),
-    ("far_stucco_olive_4", "stucco", 9.0, 4, "stucco_olive", 48, "paint_red"),
-]
+PARKSIDE_ROOF = {"shophouse_rose_3": "pitched", "loft_brown_3": "pitched", "shophouse_mint_4": "turret",
+                 "panel_5": "turret", "shophouse_butter_4": "pitched"}
+# The far street blocks: FAR_ROSTER, generated above (24 buildings, own widths, paints, roofs).
+FILLERS = FAR_ROSTER
 # ------------------------------------------------------------------ park and street pieces
 
 def kit(name):
@@ -609,32 +850,109 @@ def kit(name):
     return col
 
 
-def park_tree(name="park_tree", scale=1.0, seed=41):
-    """A park tree in the house leaf style: a trunk that forks into three limbs, each carrying
-    a big shingled clump, plus a crown clump. Leaves are larger than the window-box shrubs so
-    the tree reads at 20 m."""
+def limb(buf, p, q, r0, r1, mat, sides=10):
+    """A tapered round branch from p to q (any direction): one cone, capped."""
+    p, q = Vector(p), Vector(q)
+    d = q - p
+    m = Matrix.Translation((p + q) / 2) @ d.to_track_quat("Z", "Y").to_matrix().to_4x4()
+    r = bmesh.ops.create_cone(buf.bm, cap_ends=True, segments=sides, radius1=r0, radius2=r1, depth=d.length + 0.04, matrix=m)
+    buf._paint(r["verts"], mat)
+
+
+# THE TREE ROSTER. Owner on review v3: the trees "all look the same, are oriented the same way,
+# and are all the same size and color and type". Tiny Talisman's trees are big clumpy crowns,
+# often a bright lime, on thick trunks that BEND. Variation here is per TREE (shape, trunk,
+# size, leaf tint); per-LEAF colour was tried and reverted by the owner (design guide 5).
+TREE_TINTS = {
+    "_lime":  ((0.55, 0.80, 0.10), (0.26, 0.50, 0.05)),
+    "_deep":  ((0.16, 0.46, 0.10), (0.05, 0.22, 0.05)),
+    "_olive": ((0.50, 0.60, 0.12), (0.24, 0.32, 0.06)),
+}
+
+
+def tree(name, style, seed, tint="", trunk="trunk", s=1.0):
+    """styles: round (a fork of three limbs and a crown), broad (a wide umbrella of five limbs),
+    tall (a straight trunk carrying three stacked clumps), lean (an S-bent trunk with a
+    lopsided two-clump crown), young (a slim street tree in a guard, one clump)."""
     col = kit(name)
     rng = random.Random(seed)
     wood, leaves = K.Buf("trunk"), K.Buf("foliage", foliage=True)
-    s = scale
-    # A tapered trunk. (sweep() cannot run straight up: it orients its profile from the path's
-    # horizontal direction, and a vertical path has none, which left the first tree trunkless.)
-    wood.cylinder((0, 0, 1.25 * s), 0.24 * s, 2.7 * s, "trunk", sides=10, top_scale=0.7)
-    clumps = [((0, 0, 4.6 * s), 1.7 * s)]
-    for i in range(3):
-        a = i * math.tau / 3 + 0.4
-        tip = Vector((math.cos(a) * 1.4 * s, math.sin(a) * 1.4 * s, 3.8 * s))
-        # A limb: a tapered box from the fork to its clump.
-        mid = (Vector((0, 0, 2.5 * s)) + tip) / 2
-        d = (tip - Vector((0, 0, 2.5 * s)))
-        m = Matrix.Translation(mid) @ d.to_track_quat("Z", "Y").to_matrix().to_4x4()
-        wood.box(m, (0.22 * s, 0.22 * s, d.length), "trunk")
-        clumps.append((tuple(tip + Vector((0, 0, 0.5 * s))), 1.3 * s))
+    clumps = []   # (centre, radii)
+    # The trunk: a polyline with a bend, tapered, a flare at the root.
+    if style == "young":
+        pts = [(0, 0, -0.05), (0.04, 0.02, 1.4 * s), (0.0, 0.05, 2.6 * s)]
+        radii = [0.11 * s, 0.09 * s, 0.07 * s]
+    elif style == "lean":
+        pts = [(0, 0, -0.05), (0.35 * s, 0.1, 1.2 * s), (0.2 * s, 0.25, 2.2 * s), (0.75 * s, 0.3, 3.1 * s)]
+        radii = [0.3 * s, 0.24 * s, 0.2 * s, 0.16 * s]
+    elif style == "tall":
+        pts = [(0, 0, -0.05), (0.1, 0.05, 2.0 * s), (0.05, 0.12, 4.2 * s)]
+        radii = [0.26 * s, 0.2 * s, 0.15 * s]
+    else:
+        bend = rng.uniform(0.15, 0.35) * s
+        pts = [(0, 0, -0.05), (bend, bend * 0.4, 1.3 * s), (bend * 0.4, bend * 0.8, 2.5 * s)]
+        radii = [0.3 * s, 0.25 * s, 0.21 * s]
+    for (a, b), r0, r1 in zip(zip(pts, pts[1:]), radii, radii[1:]):
+        limb(wood, a, b, r0, r1, trunk)
+    wood.cylinder((0, 0, 0.12), radii[0] * 1.45, 0.3, trunk, sides=10, top_scale=0.7)   # root flare
+    top = Vector(pts[-1])
+    if style == "young":
+        clumps.append((top + Vector((0, 0, 0.9 * s)), (1.1 * s, 1.1 * s, 1.0 * s)))
+        # A tree guard: four posts and two rings, and an iron grate at its foot.
+        for k in range(4):
+            a = k * math.tau / 4 + math.pi / 4
+            wood.box(Matrix.Translation((math.cos(a) * 0.42, math.sin(a) * 0.42, 0.7)), (0.05, 0.05, 1.4), "railing")
+        for z in (0.5, 1.35):
+            wood.cylinder((0, 0, z), 0.47, 0.05, "railing", sides=16)
+        wood.cylinder((0, 0, 0.005), 0.75, 0.03, "metal_dark", sides=4)
+    elif style == "broad":
+        n = 5
+        for i in range(n):
+            a = i * math.tau / n + rng.uniform(-0.2, 0.2)
+            reach = rng.uniform(2.1, 2.7) * s
+            tip = top + Vector((math.cos(a) * reach, math.sin(a) * reach, rng.uniform(0.9, 1.4) * s))
+            limb(wood, top, tip, 0.17 * s, 0.08 * s, trunk)
+            clumps.append((tip + Vector((0, 0, 0.45 * s)), (1.6 * s, 1.6 * s, 1.05 * s)))
+        clumps.append((top + Vector((0, 0, 1.9 * s)), (1.7 * s, 1.7 * s, 1.1 * s)))
+    elif style == "tall":
+        for k, (dz, r) in enumerate(((0.4, 1.35), (2.0, 1.2), (3.4, 0.9))):
+            c = top + Vector((rng.uniform(-0.2, 0.2), rng.uniform(-0.2, 0.2), dz * s))
+            clumps.append((c, (r * s, r * s, r * 0.95 * s)))
+    elif style == "lean":
+        tip = top + Vector((1.2 * s, 0.2, 0.9 * s))
+        limb(wood, top, tip, 0.14 * s, 0.08 * s, trunk)
+        clumps.append((tip + Vector((0.2, 0, 0.5 * s)), (1.7 * s, 1.5 * s, 1.25 * s)))
+        clumps.append((top + Vector((-0.4 * s, 0.1, 1.2 * s)), (1.35 * s, 1.3 * s, 1.1 * s)))
+    else:   # round
+        for i in range(3):
+            a = i * math.tau / 3 + rng.uniform(0, 1)
+            tip = top + Vector((math.cos(a) * 1.4 * s, math.sin(a) * 1.4 * s, 1.3 * s))
+            limb(wood, top, tip, 0.15 * s, 0.08 * s, trunk)
+            clumps.append((tip + Vector((0, 0, 0.5 * s)), (1.3 * s, 1.3 * s, 1.1 * s)))
+        clumps.append((top + Vector((0, 0, 2.1 * s)), (1.7 * s, 1.7 * s, 1.45 * s)))
     for c, r in clumps:
-        K.foliage(leaves, c, (r, r, r * 0.85), int(520 * r * r), 0.34 * s, rng, lift=0.3, spread=0.45)
-    wood.finish(col, bevel=0.04)
+        K.foliage(leaves, c, r, int(520 * r[0] * r[1]), 0.34 * s, rng, lift=0.3, spread=0.45, tint=tint)
+    wood.finish(col, bevel=0.03)
     leaves.finish(col)
     return col
+
+
+TREES = {
+    # The park's four corner trees: four shapes, four tints.
+    "tree_broad_lime":   dict(style="broad", seed=201, tint="_lime"),
+    "tree_round":        dict(style="round", seed=202),
+    "tree_lean_olive":   dict(style="lean", seed=203, tint="_olive", trunk="trunk_grey"),
+    "tree_tall_deep":    dict(style="tall", seed=204, tint="_deep"),
+    # Street trees, mixed along the kerbs.
+    "street_young":      dict(style="young", seed=211, tint="_lime", s=0.9),
+    "street_round_deep": dict(style="round", seed=212, tint="_deep", s=0.72),
+    "street_tall":       dict(style="tall", seed=213, trunk="trunk_grey", s=0.75),
+    "street_broad":      dict(style="broad", seed=214, tint="_olive", s=0.62),
+}
+PARK_TREES = ["tree_broad_lime", "tree_round", "tree_lean_olive", "tree_tall_deep"]
+for _t, (_light, _dark) in TREE_TINTS.items():
+    K.PALETTE["leaf_light" + _t], K.PALETTE["leaf_dark" + _t] = _light, _dark
+STREET_TREES = ["street_young", "street_round_deep", "street_tall", "street_broad"]
 
 
 def hedge(name="hedge_bed"):
@@ -654,92 +972,427 @@ def hedge(name="hedge_bed"):
 
 
 def bench(name="park_bench"):
+    """Wooden slats on two cast-iron ends with a curled leg and an armrest, bolt heads on the
+    slats. The back faces +Y."""
     col = kit(name)
     b = K.Buf("bench")
     for i in range(3):
-        b.box(Matrix.Translation((0, -0.2 + i * 0.16, 0.45)), (1.9, 0.12, 0.06), "wood")
+        b.box(Matrix.Translation((0, -0.2 + i * 0.16, 0.45)), (1.9, 0.13, 0.06), "wood")
     for i in range(2):
-        b.box(Matrix.Translation((0, 0.26, 0.62 + i * 0.16)) @ Matrix.Rotation(math.radians(-12), 4, "X"), (1.9, 0.05, 0.11), "wood")
-    for x in (-0.78, 0.78):
-        b.box(Matrix.Translation((x, 0, 0.22)), (0.07, 0.5, 0.44), "railing")
-        b.box(Matrix.Translation((x, 0.25, 0.62)), (0.07, 0.06, 0.4), "railing")
-        b.box(Matrix.Translation((x, 0.0, 0.62)), (0.07, 0.5, 0.05), "railing")
+        b.box(Matrix.Translation((0, 0.28, 0.63 + i * 0.17)) @ Matrix.Rotation(math.radians(-12), 4, "X"), (1.9, 0.05, 0.12), "wood")
+    for x in (-0.82, 0.82):
+        # A cast end: front leg, back leg rising into the back support, a seat rail, an arm.
+        b.box(Matrix.Translation((x, -0.22, 0.21)) @ Matrix.Rotation(math.radians(8), 4, "X"), (0.08, 0.08, 0.44), "railing")
+        b.box(Matrix.Translation((x, 0.22, 0.44)) @ Matrix.Rotation(math.radians(-12), 4, "X"), (0.08, 0.08, 0.9), "railing")
+        b.box(Matrix.Translation((x, 0.0, 0.41)), (0.08, 0.52, 0.06), "railing")
+        b.box(Matrix.Translation((x, -0.05, 0.64)), (0.09, 0.42, 0.05), "railing")
+        b.cylinder((x, -0.26, 0.61), 0.05, 0.09, "railing", sides=10)
+        b.cylinder((x, -0.26, 0.02), 0.07, 0.04, "railing", sides=10)   # a curled foot
+        for i in range(3):
+            b.cylinder((x * 0.97, -0.2 + i * 0.16, 0.485), 0.018, 0.02, "metal", sides=6)
     b.finish(col, bevel=0.015, segments=1)
     return col
 
 
 def lamp(name="park_lamp"):
+    """A park lantern: a stepped base, a fluted post with a brass collar, and a four-pane
+    lantern with a pyramid cap and a finial."""
     col = kit(name)
     b = K.Buf("lamp")
-    b.cylinder((0, 0, 0.2), 0.16, 0.4, "railing", sides=12)
-    b.cylinder((0, 0, 2.1), 0.06, 3.6, "railing", sides=10)
-    b.cylinder((0, 0, 3.95), 0.2, 0.1, "railing", sides=12)
-    b.cylinder((0, 0, 4.2), 0.17, 0.4, "lamp_glass", sides=12, top_scale=1.2)
-    b.cylinder((0, 0, 4.45), 0.24, 0.1, "railing", sides=12, top_scale=0.3)
+    b.cylinder((0, 0, 0.12), 0.22, 0.24, "railing", sides=8)
+    b.cylinder((0, 0, 0.3), 0.16, 0.14, "railing", sides=8, top_scale=0.7)
+    b.cylinder((0, 0, 2.0), 0.065, 3.4, "railing", sides=8)
+    b.cylinder((0, 0, 0.55), 0.1, 0.3, "railing", sides=8, top_scale=0.7)
+    for z in (1.1, 3.55):
+        b.cylinder((0, 0, z), 0.09, 0.08, "brass", sides=10)
+    b.cylinder((0, 0, 3.72), 0.1, 0.2, "railing", sides=8, top_scale=1.6)
+    b.box(Matrix.Translation((0, 0, 3.86)), (0.34, 0.34, 0.06), "railing")
+    b.box(Matrix.Translation((0, 0, 4.12)), (0.26, 0.26, 0.46), "lamp_glass")
+    for dx in (-0.14, 0.14):
+        for dy in (-0.14, 0.14):
+            b.box(Matrix.Translation((dx, dy, 4.12)), (0.04, 0.04, 0.5), "railing")
+    b.box(Matrix.Translation((0, 0, 4.38)), (0.38, 0.38, 0.05), "railing")
+    b.cylinder((0, 0, 4.52), 0.27, 0.24, "railing", sides=4, top_scale=0.15)
+    b.cylinder((0, 0, 4.7), 0.03, 0.16, "brass", sides=6)
     b.finish(col, bevel=0.01, segments=1)
     return col
 
 
 def fence(name="park_fence", length=12.5):
-    """A low painted railing, 0.8 m: under the 1.0 m clutter rule, so it never becomes a
-    platform. It stands just outside the invisible walls."""
+    """The reference's park fence: cream stone piers on a low stone kerb with dark iron
+    railings and spear tips between. 0.85 m at the piers, under the 1.0 m clutter rule, so it
+    never becomes a platform. It stands just outside the invisible walls."""
     col = kit(name)
     b = K.Buf("fence")
-    n = int(length / 1.5)
-    for i in range(n + 1):
-        x = -length / 2 + i * length / n
-        b.box(Matrix.Translation((x, 0, 0.4)), (0.09, 0.09, 0.8), "railing")
-        b.cylinder((x, 0, 0.84), 0.07, 0.08, "railing", sides=8)
-    for z in (0.3, 0.7):
-        b.box(Matrix.Translation((0, 0, z)), (length, 0.04, 0.05), "railing")
-    j = 0
-    x = -length / 2 + 0.15
-    while x < length / 2 - 0.1:
-        b.box(Matrix.Translation((x, 0, 0.5)), (0.025, 0.025, 0.4), "railing")
-        x += 0.15
-        j += 1
+    b.box(Matrix.Translation((0, 0, 0.12)), (length, 0.3, 0.24), "stone")
+    b.box(Matrix.Translation((0, 0, 0.255)), (length + 0.04, 0.36, 0.05), "stone_shade")
+    n = max(2, round(length / 3.0))
+    piers = [-length / 2 + i * length / n for i in range(n + 1)]
+    for x in piers:
+        b.box(Matrix.Translation((x, 0, 0.42)), (0.34, 0.34, 0.8), "stone")
+        b.box(Matrix.Translation((x, 0, 0.83)), (0.42, 0.42, 0.06), "stone_shade")
+        b.cylinder((x, 0, 0.88), 0.1, 0.06, "stone_shade", sides=8, top_scale=0.4)
+    for x0, x1 in zip(piers, piers[1:]):
+        a, c = x0 + 0.17, x1 - 0.17
+        for z in (0.36, 0.7):
+            b.box(Matrix.Translation(((a + c) / 2, 0, z)), (c - a + 0.04, 0.035, 0.04), "railing")
+        x = a + 0.1
+        while x < c - 0.05:
+            b.box(Matrix.Translation((x, 0, 0.53)), (0.022, 0.022, 0.4), "railing")
+            b.cylinder((x, 0, 0.765), 0.022, 0.07, "railing", sides=4, top_scale=0.1)
+            x += 0.14
     b.finish(col, bevel=0.008, segments=1)
     return col
 
 
 def traffic_signal(name="traffic_signal", reach=4.6):
-    """A pole on the kerb, an arm over the road (+X in the model), a signal head facing -Y."""
+    """A pole on the kerb, an arm over the road (+X in the model), a signal head facing -Y.
+    Heads carry yellow-edged backplates and a visor over each lamp; the pole has a footing,
+    a collar, a street-name blade and a push-button box."""
     col = kit(name)
     b = K.Buf("signal")
-    b.cylinder((0, 0, 0.15), 0.22, 0.3, "pole", sides=12)
+    b.cylinder((0, 0, 0.12), 0.26, 0.24, "concrete", sides=12)
+    b.cylinder((0, 0, 0.3), 0.18, 0.18, "pole", sides=12, top_scale=0.75)
     b.cylinder((0, 0, 2.7), 0.12, 5.4, "pole", sides=12)
+    b.cylinder((0, 0, 1.0), 0.14, 0.06, "lane_yellow", sides=12)
     b.box(Matrix.Translation((reach / 2, 0, 5.2)), (reach, 0.12, 0.12), "pole")
     b.box(Matrix.Translation((reach * 0.3, 0, 4.85)) @ Matrix.Rotation(math.radians(-35), 4, "Y"), (1.3, 0.06, 0.06), "pole")
+    b.box(Matrix.Translation((0.55, 0, 5.62)), (1.1, 0.03, 0.26), "sign_green")
+    b.box(Matrix.Translation((0, -0.16, 1.15)), (0.14, 0.12, 0.2), "lane_yellow")
     for x, z in ((reach - 0.2, 4.5), (0.0, 2.6)):
-        b.box(Matrix.Translation((x, 0, z)), (0.45, 0.4, 1.25), "railing")
-        b.box(Matrix.Translation((x, -0.22, z + 0.55)), (0.5, 0.06, 0.08), "railing")
+        b.box(Matrix.Translation((x, 0.02, z)), (0.62, 0.05, 1.42), "lane_yellow")      # the backplate
+        b.box(Matrix.Translation((x, 0.0, z)), (0.56, 0.08, 1.36), "railing")
+        b.box(Matrix.Translation((x, -0.1, z)), (0.42, 0.36, 1.2), "railing")
         for k, m in enumerate(("signal_red", "signal_amber", "signal_green")):
-            b.cylinder((x, -0.21, z + 0.38 - k * 0.38), 0.12, 0.04, m, sides=14)
+            zz = z + 0.38 - k * 0.38
+            b.cylinder((x, -0.285, zz), 0.12, 0.03, m, sides=14)
+            b.box(Matrix.Translation((x, -0.4, zz + 0.12)) @ Matrix.Rotation(math.radians(-15), 4, "X"), (0.3, 0.24, 0.03), "railing")
     b.finish(col, bevel=0.012, segments=1)
     return col
 
 
-def power_pole(name="power_pole"):
+def power_pole(name="power_pole", kind="plain"):
+    """A timber pole with a cross arm, braces and insulators. `kind`: plain, transformer (a
+    drum and a cage), lamp (a curved street-light arm)."""
     col = kit(name)
     b = K.Buf("pole")
-    b.cylinder((0, 0, 4.5), 0.16, 9.0, "timber_pole", sides=10)
+    b.cylinder((0, 0, 4.5), 0.16, 9.0, "timber_pole", sides=10, top_scale=0.8)
+    b.cylinder((0, 0, 0.3), 0.19, 0.6, "timber_pole", sides=10)
     b.box(Matrix.Translation((0, 0, 8.4)), (0.14, 2.4, 0.14), "timber_pole")
     b.box(Matrix.Translation((0, 0, 7.7)), (0.12, 1.6, 0.12), "timber_pole")
+    for side in (-1, 1):
+        b.box(Matrix.Translation((0, side * 0.45, 8.05)) @ Matrix.Rotation(side * math.radians(40), 4, "X"), (0.06, 0.06, 0.9), "metal")
     for y in (-1.0, -0.35, 0.35, 1.0):
         b.cylinder((0, y, 8.55), 0.05, 0.16, "white", sides=8)
-    b.cylinder((0.35, 0, 6.9), 0.32, 0.9, "concrete", sides=14)
-    b.cylinder((0.35, 0, 7.4), 0.34, 0.1, "metal", sides=14)
+        b.cylinder((0, y, 8.6), 0.07, 0.03, "white", sides=8)
+    b.box(Matrix.Translation((0, 0, 2.2)), (0.34, 0.03, 0.16), "lane_yellow")   # a number plate
+    if kind == "transformer":
+        b.cylinder((0.35, 0, 6.9), 0.32, 0.9, "concrete", sides=14)
+        b.cylinder((0.35, 0, 7.4), 0.34, 0.1, "metal", sides=14)
+        for z in (6.7, 7.1):
+            b.cylinder((0.35, 0, z), 0.335, 0.04, "metal", sides=14)
+        b.box(Matrix.Translation((0.16, 0, 6.9)), (0.1, 0.5, 0.1), "metal")
+    elif kind == "lamp":
+        for i in range(6):
+            a0, a1 = i / 6 * math.pi / 2, (i + 1) / 6 * math.pi / 2
+            p = Vector((math.sin(a0) * 1.6, 0, 6.2 + math.cos(a0) * 0.0 + math.sin(a0) * 0.6))
+            q = Vector((math.sin(a1) * 1.6, 0, 6.2 + math.sin(a1) * 0.6))
+            limb(b, p, q, 0.045, 0.045, "metal", sides=6)
+        b.box(Matrix.Translation((1.75, 0, 6.72)), (0.6, 0.26, 0.12), "metal")
+        b.box(Matrix.Translation((1.75, 0, 6.65)), (0.5, 0.2, 0.04), "lamp_glass")
     b.finish(col, bevel=0.012, segments=1)
     return col
 
 
 def street_bin(name="street_bin"):
+    """A painted litter bin: a banded body, a domed lid with a dark mouth, a small plate."""
     col = kit(name)
     b = K.Buf("bin")
-    b.cylinder((0, 0, 0.45), 0.3, 0.9, "bin_green", sides=16)
-    b.cylinder((0, 0, 0.93), 0.33, 0.08, "railing", sides=16)
+    b.cylinder((0, 0, 0.05), 0.33, 0.1, "railing", sides=16)
+    b.cylinder((0, 0, 0.45), 0.3, 0.75, "bin_green", sides=16)
+    for z in (0.22, 0.72):
+        b.cylinder((0, 0, z), 0.31, 0.05, "railing", sides=16)
+    b.cylinder((0, 0, 0.87), 0.33, 0.08, "railing", sides=16)
+    b.cylinder((0, 0, 0.98), 0.31, 0.16, "bin_green", sides=16, top_scale=0.55)
+    b.box(Matrix.Translation((0, -0.26, 0.9)), (0.3, 0.1, 0.07), "frame_dark")
+    b.box(Matrix.Translation((0, -0.29, 0.47)), (0.22, 0.03, 0.14), "white")
     b.finish(col, bevel=0.015, segments=1)
     return col
+
+
+# ------------------------------------------------------------------ downtown skyscrapers
+#
+# Owner, 2026-09-24, on review v3: "theres not even any glass buildings/skyscrapers like the
+# references given". Tiny Talisman's city is dominated by a downtown of 20 to 40 storey
+# curtain-wall towers: glass that reflects the sky, a mullion grid, setbacks, and a different
+# CROWN on every tower (glass pyramids with spires, slanted tops, stepped rings, fins, a
+# helipad), one round tower and one with exposed steel bracing. These replace the grey
+# skyline boxes. Every tower is its own model: no two share massing, glass and crown.
+
+def poly_rect(w, d):
+    return [(-w / 2, -d / 2), (w / 2, -d / 2), (w / 2, d / 2), (-w / 2, d / 2)]
+
+
+def poly_chamfer(w, d, c):
+    x, y = w / 2, d / 2
+    return [(-x + c, -y), (x - c, -y), (x, -y + c), (x, y - c), (x - c, y), (-x + c, y), (-x, y - c), (-x, -y + c)]
+
+
+def poly_ngon(r, n):
+    return [(r * math.cos(math.pi / n + i * math.tau / n), r * math.sin(math.pi / n + i * math.tau / n)) for i in range(n)]
+
+
+def poly_offset(poly, d):
+    """Offset a convex counter-clockwise polygon outward by d (inward if negative), mitred."""
+    n, out, norms = len(poly), [], []
+    for i in range(n):
+        (ax, ay), (bx, by) = poly[i], poly[(i + 1) % n]
+        L = math.hypot(bx - ax, by - ay)
+        norms.append(((by - ay) / L, -(bx - ax) / L))
+    for i in range(n):
+        n1, n2 = norms[i - 1], norms[i]
+        k = 1 + n1[0] * n2[0] + n1[1] * n2[1]
+        out.append((poly[i][0] + (n1[0] + n2[0]) / k * d, poly[i][1] + (n1[1] + n2[1]) / k * d))
+    return out
+
+
+def ring(poly, z):
+    return [Vector((x, y, z)) for x, y in poly]
+
+
+def BAND(h, o=0.16):
+    return [(-0.12, -h / 2), (o, -h / 2), (o + 0.04, -h / 2 + 0.04), (o + 0.04, h / 2 - 0.04), (o, h / 2), (-0.12, h / 2)]
+
+
+COPE = [(-0.35, -0.55), (0.28, -0.55), (0.34, -0.2), (0.34, 0.25), (0.26, 0.32), (-0.35, 0.32)]
+
+
+def brace(buf, p, q, t, mat):
+    d = q - p
+    m = Matrix.Translation((p + q) / 2) @ d.to_track_quat("Z", "Y").to_matrix().to_4x4()
+    buf.box(m, (t, t, d.length), mat)
+
+
+def skyscraper(name, t):
+    """One downtown tower from a spec dict:
+      plan      rect (w, d) | chamfer (w, d, c) | ngon (r, sides)
+      storeys   section heights in storeys; each section after the first is set back
+      setback   metres each section steps in
+      glass     curtain_teal | curtain_green | curtain_dark
+      mullion   (material, spacing m); band = (every n storeys, height, material)
+      lattice   exposed steel X bracing every n storeys, or absent
+      crown     pyramid | slant | stepped | fins | helipad | mech (+ spire)
+    Construction: a stone podium, then per section a glass prism, a proud mullion grid, swept
+    spandrel bands and a coping, all overlapping by a few cm so no two faces share a plane."""
+    col = kit(name)
+    ST = t.get("storey", 3.6)
+    kind, *dims = t["plan"]
+    base = {"rect": poly_rect, "chamfer": poly_chamfer, "ngon": poly_ngon}[kind](*dims)
+    glass, trim, frames, props = K.Buf("curtain"), K.Buf("tower trim"), K.Buf("mullions"), K.Buf("tower props")
+    gm = t["glass"]
+    # The podium: two tall storeys of stone with a shop band and a canopy on every face.
+    pod = poly_offset(base, t.get("podium_out", 2.0))
+    PH = 9.0
+    trim.prism(pod, 0.0, PH, t.get("podium", "stone_blocks"))
+    cen = (sum(p[0] for p in pod) / len(pod), sum(p[1] for p in pod) / len(pod))
+    cv = Vector((*cen, 0))
+    for i in range(len(pod)):
+        f = K.Facade(pod[i], pod[(i + 1) % len(pod)], cen)
+        if f.length < 2.5:
+            continue
+        props.box(f.frame(f.length / 2, 2.4, 0.0), (f.length - 1.6, 0.3, 3.4), "glass")
+        props.box(f.frame(f.length / 2, 4.55, 0.7), (f.length - 1.0, 1.5, 0.2), t.get("canopy", "metal_dark"))
+        m = max(2, round(f.length / 4.5))
+        for k in range(1, m):
+            frames.box(f.frame(k * f.length / m, 2.4, 0.06), (0.22, 0.3, 3.6), "metal_dark")
+    trim.sweep(ring(pod, PH), COPE, "concrete", cv, closed=True)
+    trim.prism(poly_offset(pod, -0.25), PH - 0.1, PH + 0.12, "roof")
+    # The sections.
+    poly, z = base, PH - 0.1
+    mm, spacing = t.get("mullion", ("mullion_light", 1.5))
+    every, bh, bmat = t.get("band", (1, 0.35, "mullion_light"))
+    for si, n in enumerate(t["storeys"]):
+        if si:
+            poly = poly_offset(poly, -t.get("setback", 2.5))
+        z0, z1 = z, z + n * ST
+        glass.prism(poly, z0, z1, gm)
+        fcs = [K.Facade(poly[i], poly[(i + 1) % len(poly)], cen) for i in range(len(poly))]
+        for f in fcs:
+            m = max(1, round(f.length / spacing))
+            for k in range(m):
+                frames.box(f.frame(k * f.length / m, (z0 + z1) / 2 + 0.05, 0.02), (0.13, 0.24, z1 - z0 - 0.1), mm)
+        for s in range(0, n, every):
+            if s or si == 0:
+                trim.sweep(ring(poly, z0 + s * ST + 0.05), BAND(bh), bmat, cv, closed=True)
+        if t.get("lattice"):
+            L = t["lattice"]
+            for f in fcs:
+                for s in range(0, n - L + 1, L):
+                    za, zb = z0 + s * ST + 0.3, z0 + (s + L) * ST - 0.3
+                    brace(frames, f.at(0.2, za, 0.32), f.at(f.length - 0.2, zb, 0.32), 0.34, "steel")
+                    brace(frames, f.at(f.length - 0.2, za, 0.32), f.at(0.2, zb, 0.32), 0.34, "steel")
+                    frames.box(f.frame(f.length / 2, zb + 0.3, 0.32), (f.length, 0.34, 0.34), "steel")
+                frames.box(f.frame(0.0, (z0 + z1) / 2, 0.3), (0.5, 0.45, z1 - z0), "steel")
+        trim.sweep(ring(poly, z1), COPE, t.get("cope", "concrete"), cv, closed=True)
+        trim.prism(poly_offset(poly, -0.25), z1 - 0.1, z1 + 0.12, "roof")
+        z = z1 + 0.05
+    T = z + 0.07
+    crown = t["crown"]
+    top = poly_offset(poly, -0.3)
+    xs, ys = [p[0] for p in top], [p[1] for p in top]
+    span = min(max(xs) - min(xs), max(ys) - min(ys))
+    crown_h = t.get("crown_h", span * 0.9)
+    if crown == "pyramid":
+        apex = Vector((*cen, T + crown_h))
+        bot = ring(top, T - 0.2)
+        for i in range(len(top)):
+            glass.face([bot[i], bot[(i + 1) % len(top)], apex], gm)
+            brace(frames, bot[i], apex, 0.2, mm)
+        glass.face(list(reversed(bot)), gm)
+    elif crown == "slant":
+        h = t.get("crown_h", span * 0.6)
+        lo, hi = min(xs), max(xs)
+        bot = ring(top, T - 0.2)
+        topv = [Vector((x, y, T - 0.2 + 0.3 + h * (x - lo) / (hi - lo))) for x, y in top]
+        glass.face(list(reversed(bot)), gm)
+        glass.face(topv, gm)
+        for i in range(len(top)):
+            j = (i + 1) % len(top)
+            glass.face([bot[i], bot[j], topv[j], topv[i]], gm)
+            brace(frames, topv[i], topv[j], 0.25, mm)
+    elif crown == "stepped":
+        p, zz = top, T - 0.1
+        for k in range(3):
+            p = poly_offset(p, -span * 0.1)
+            trim.prism(p, zz, zz + 3.2, t.get("step_mat", "concrete"))
+            trim.sweep(ring(p, zz + 3.2), COPE, "mullion_light", cv, closed=True)
+            zz += 3.25
+        T = zz
+    elif crown == "fins":
+        for x, y in top:
+            v = Vector((x, y, 0)) - cv
+            m = Matrix.Translation((x, y, T + 3.5)) @ v.to_track_quat("Y", "Z").to_matrix().to_4x4()
+            frames.box(m, (0.3, 2.4, 9.0), mm)
+    elif crown == "helipad":
+        r = span * 0.34
+        props.box(Matrix.Translation((cen[0], cen[1], T + 1.2)), (span * 0.5, span * 0.5, 2.6), "concrete")
+        props.cylinder((cen[0], cen[1], T + 2.6), r, 0.3, "asphalt", sides=32)
+        for k in range(20):
+            a = k * math.tau / 20
+            props.box(Matrix.Translation((cen[0] + math.cos(a) * r * 0.82, cen[1] + math.sin(a) * r * 0.82, T + 2.76))
+                      @ Matrix.Rotation(a, 4, "Z"), (0.3, r * 0.26, 0.04), "lane_yellow")
+        for dx in (-1, 1):
+            props.box(Matrix.Translation((cen[0] + dx * r * 0.22, cen[1], T + 2.76)), (r * 0.1, r * 0.6, 0.04), "road_paint")
+        props.box(Matrix.Translation((cen[0], cen[1], T + 2.76)), (r * 0.44, r * 0.1, 0.04), "road_paint")
+    if crown == "mech":
+        props.box(Matrix.Translation((cen[0] + span * 0.12, cen[1], T + 1.6)), (span * 0.45, span * 0.35, 3.3), "concrete")
+        props.box(Matrix.Translation((cen[0] + span * 0.12, cen[1], T + 3.3)), (span * 0.5, span * 0.4, 0.2), "metal_dark")
+        for k in range(3):
+            props.cylinder((cen[0] - span * 0.25, cen[1] - span * 0.2 + k * 1.6, T + 0.8), 0.55, 1.5, "metal", sides=14)
+    if t.get("spire"):
+        top_z = T + (crown_h if crown == "pyramid" else 0.0) - 0.3
+        tall = t["spire"]
+        props.cylinder((cen[0], cen[1], top_z + tall / 2), 0.35, tall, "metal", sides=10, top_scale=0.25)
+        props.cylinder((cen[0], cen[1], top_z + tall + 0.2), 0.3, 0.4, "signal_red", sides=10)
+    glass.finish(col, bevel=0)
+    trim.finish(col, bevel=0.03)
+    frames.finish(col, bevel=0.012, segments=1)
+    props.finish(col, bevel=0.02, segments=1)
+    return col
+
+
+# Ten towers, all different. Heights are storeys per section (3.6 m each), the first section
+# standing on the 9 m podium.
+TOWERS = {
+    "tower_chamfer_spire": dict(plan=("chamfer", 24, 24, 5), storeys=[20, 8], setback=2.5, glass="curtain_teal",
+                                mullion=("mullion_light", 1.5), band=(1, 0.3, "mullion_light"), crown="pyramid",
+                                spire=12),
+    "tower_slant_dark": dict(plan=("rect", 22, 17), storeys=[34], glass="curtain_dark", mullion=("metal_dark", 1.2),
+                             band=(2, 0.4, "metal_dark"), crown="slant"),
+    "tower_round_rings": dict(plan=("ngon", 11, 24), storeys=[18, 6], setback=1.6, glass="curtain_green",
+                              mullion=("mullion_light", 1.4), band=(1, 0.55, "concrete"), crown="stepped", spire=6),
+    "tower_lattice": dict(plan=("rect", 20, 20), storeys=[27], glass="curtain_teal", mullion=("metal_dark", 1.25),
+                          band=(3, 0.3, "metal_dark"), lattice=6, crown="mech", spire=14),
+    "tower_stepped_stone": dict(plan=("rect", 28, 20), storeys=[12, 8, 6, 4], setback=2.4, glass="curtain_dark",
+                                mullion=("mullion_light", 1.6), band=(1, 0.9, "stone"), cope="stone",
+                                podium="stone", crown="stepped", step_mat="stone", spire=8),
+    "tower_octagon_fins": dict(plan=("ngon", 12, 8), storeys=[30], glass="curtain_teal", mullion=("mullion_light", 1.3),
+                               band=(3, 0.5, "mullion_light"), crown="fins"),
+    "tower_slim_pyramid": dict(plan=("rect", 15, 15), storeys=[38], glass="curtain_green", mullion=("mullion_light", 1.0),
+                               band=(1, 0.25, "mullion_light"), crown="pyramid", crown_h=13, spire=9),
+    "tower_helipad": dict(plan=("chamfer", 26, 20, 3), storeys=[24], glass="curtain_dark",
+                          mullion=("mullion_light", 1.7), band=(1, 0.45, "stone"), crown="helipad"),
+    "tower_round_spire": dict(plan=("ngon", 8, 20), storeys=[16, 12, 6], setback=1.4, glass="curtain_teal",
+                              mullion=("metal_dark", 1.2), band=(2, 0.35, "metal_dark"), crown="mech", spire=18),
+    "tower_slant_green": dict(plan=("chamfer", 20, 24, 2), storeys=[16, 10], setback=3.0, glass="curtain_green",
+                              mullion=("metal_dark", 1.4), band=(2, 0.35, "concrete"), crown="slant", crown_h=12),
+}
+
+
+def tower_half(name):
+    """Half the podium's widest extent, for spacing the downtown."""
+    kind, *dims = TOWERS[name]["plan"]
+    r = dims[0] if kind == "ngon" else math.hypot(dims[0], dims[1]) / 2
+    return r + 2.0
+
+
+def tower_height(name):
+    t = TOWERS[name]
+    return 9.0 + sum(t["storeys"]) * t.get("storey", 3.6)
+
+
+AERIAL = ((-70.0, -78.0, 62.0), (4.0, 4.0, 4.0))   # the saved aerial cameras: where, and what they look at
+AERIAL_CITY = ((-150.0, -40.0, 120.0), (20.0, 10.0, 10.0))
+
+
+def place_towers():
+    """The downtown: every tower twice, never next to its twin, around the city beyond the
+    street blocks, with nothing tall on the sun's line through the court.
+    Keep-outs: the four street arms (|cross| < 44 out to 118 m), the corner lots (48 m), the
+    ground's edge (160 m), and each other. SHADOW RULE: Unity's sun is Euler(44, 140), which
+    is Blender azimuth -50 degrees (south-east) at 44 degrees up, so a tower within 25 degrees
+    of that bearing must be far enough that its shadow (1.04 x height) stops short of the court."""
+    rng = random.Random(90)
+    names = list(TOWERS) * 2
+    rng.shuffle(names)
+    sun_az = math.atan2(-0.551, 0.462)
+    placed = []
+    for name in names:
+        half, h = tower_half(name), tower_height(name)
+        for _ in range(4000):
+            a = rng.uniform(-math.pi, math.pi)
+            d = rng.uniform(62, 150)
+            x, y = d * math.cos(a), d * math.sin(a)
+            if max(abs(x), abs(y)) + half > 157:
+                continue
+            if max(abs(x), abs(y)) - half < 50:
+                continue
+            ok = True
+            for arm in range(4):
+                c, s = math.cos(-arm * math.pi / 2), math.sin(-arm * math.pi / 2)
+                ax, ay = x * c - y * s, x * s + y * c
+                if abs(ax) < 44 + half and ay - half < 119 and ay > 0:
+                    ok = False
+            dang = abs((a - sun_az + math.pi) % math.tau - math.pi)
+            if dang < math.radians(25) and d - half < 1.04 * h + 14:
+                ok = False
+            for (px, py, pname) in placed:
+                gap = math.hypot(x - px, y - py) - half - tower_half(pname)
+                if gap < 8 or (pname == name and gap < 70):
+                    ok = False
+            # Keep the saved aerial camera's sight line clear (review v4 put it inside a tower).
+            for (cx, cy, cz), (tx, ty, tz) in (AERIAL, AERIAL_CITY):
+                sx, sy = tx - cx, ty - cy
+                k = max(0.0, min(1.0, ((x - cx) * sx + (y - cy) * sy) / (sx * sx + sy * sy)))
+                if math.hypot(x - cx - k * sx, y - cy - k * sy) < half + 6 and cz + k * (tz - cz) < h + 15:
+                    ok = False
+            if ok:
+                placed.append((x, y, name))
+                place(name, (x, y, B.WALK - 0.02), rng.choice((0.0, math.pi / 2, math.pi, -math.pi / 2)))
+                break
+        else:
+            print(f"[kanto-city] WARNING: no room for {name}")
+    return placed
 
 
 # ------------------------------------------------------------------ ground, markings, wires
@@ -829,11 +1482,11 @@ def wires(poles):
 
 # ------------------------------------------------------------------ assembly and export
 
-PLACE = []   # (model, blender location, rotation about Z in radians)
+PLACE = []   # (model, blender location, rotation about Z in radians, uniform scale)
 
 
-def place(model, at, rot=0.0):
-    PLACE.append((model, tuple(round(v, 4) for v in at), round(rot, 6)))
+def place(model, at, rot=0.0, scale=1.0):
+    PLACE.append((model, tuple(round(v, 4) for v in at), round(rot, 6), round(scale, 4)))
 
 
 def facing(model, width, front_center, direction):
@@ -879,8 +1532,10 @@ def layout():
                     k += 1
     # The park.
     lawn = B.WALK + 0.01   # 1 cm into the lawn (its top is WALK + 0.02)
-    for sx, sy in B.QUADS:
-        place("park_tree", (sx * 11.6, sy * 11.6, lawn), sx * sy * 0.7)
+    vary = random.Random(77)
+    for q, (sx, sy) in enumerate(B.QUADS):
+        # A different tree on every corner, turned and sized its own way (owner, review v3).
+        place(PARK_TREES[q], (sx * 11.6, sy * 11.6, lawn), vary.uniform(-math.pi, math.pi), vary.uniform(0.95, 1.1))
         place("hedge_bed", (sx * 11.6, sy * 6.0, lawn), math.pi / 2)
         place("hedge_bed", (sx * 6.0, sy * 11.6, lawn), 0.0)
         # The bench model's back is on +Y; turn it so the back faces AWAY from the court.
@@ -901,8 +1556,8 @@ def layout():
         place("traffic_signal", (sx * (inner_k - 0.6), sy * (inner_k - 0.6), B.WALK - 0.01), 0.0 if sx > 0 else math.pi)
         place("street_bin", (sx * (inner_k - 1.2), sy * 5.5, B.WALK), 0.0)
         for d in (6.0, 12.0):
-            place("street_tree", (sx * d, sy * (outer_k + 1.5), B.WALK), d)
-            place("street_tree", (sx * (outer_k + 1.5), sy * d, B.WALK), d * 2)
+            for at in ((sx * d, sy * (outer_k + 1.5), B.WALK - 0.01), (sx * (outer_k + 1.5), sy * d, B.WALK - 0.01)):
+                place(vary.choice(STREET_TREES), at, vary.uniform(-math.pi, math.pi), vary.uniform(0.85, 1.15))
     poles = []
     for c in (-(outer_k + 0.8), outer_k + 0.8):
         for along_x in (True, False):
@@ -911,7 +1566,8 @@ def layout():
             while d <= 104:
                 if not (inner_k - 2 < abs(d) < outer_k + 2):
                     at = Vector((d, c, 0)) if along_x else Vector((c, d, 0))
-                    place("power_pole", (at.x, at.y, B.WALK), 0.0 if along_x else math.pi / 2)
+                    kind = vary.choice(("power_pole", "power_pole", "power_pole_transformer", "power_pole_lamp"))
+                    place(kind, (at.x, at.y, B.WALK - 0.01), (0.0 if along_x else math.pi / 2) + vary.uniform(-0.05, 0.05))
                     line.append(at)
                 else:
                     if len(line) > 1:
@@ -920,6 +1576,7 @@ def layout():
                 d += 16
             if len(line) > 1:
                 poles.append(line)
+    place_towers()
     place("ground", (0, 0, 0), 0.0)
     place("wires", (0, 0, 0), 0.0)
     return poles
@@ -930,21 +1587,26 @@ BUILDERS = {
     "deco_corner": deco_corner,
     "glass_tower": glass_tower,
     "townhouse_row": townhouse_row,
-    "park_tree": park_tree,
-    "street_tree": lambda: park_tree("street_tree", 0.75, 42),
     "hedge_bed": hedge,
     "park_bench": bench,
     "park_lamp": lamp,
     "park_fence": fence,
     "traffic_signal": traffic_signal,
     "power_pole": power_pole,
+    "power_pole_transformer": lambda: power_pole("power_pole_transformer", "transformer"),
+    "power_pole_lamp": lambda: power_pole("power_pole_lamp", "lamp"),
     "street_bin": street_bin,
     "ground": ground,
 }
+for _name in TOWERS:
+    BUILDERS[_name] = (lambda n=_name: skyscraper(n, TOWERS[n]))
+for _name, _t in TREES.items():
+    BUILDERS[_name] = (lambda n=_name, t=_t: tree(n, **t))
 for _row in PARKSIDE:
-    BUILDERS[_row[0]] = (lambda r=_row: archetype(r[0], r[1], r[2], r[3], r[4], r[5], True, r[6]))
+    BUILDERS[_row[0]] = (lambda r=_row: archetype(r[0], r[1], r[2], r[3], r[4], r[5], True, r[6],
+                                                  PARKSIDE_ROOF.get(r[0], "flat")))
 for _row in FILLERS:
-    BUILDERS[_row[0]] = (lambda r=_row: archetype(r[0], r[1], r[2], r[3], r[4], r[5], False, r[6]))
+    BUILDERS[_row[0]] = (lambda r=_row: archetype(r[0], r[1], r[2], r[3], r[4], r[5], False, r[6], r[7]))
 
 
 def export_glb(col, name):
@@ -1012,12 +1674,12 @@ def preview_model(name, version):
 # ------------------------------------------------------------------ the whole map in Blender
 
 CITY_BLEND = K.SOURCE / "kanto_city.blend"
-BUILDING_KINDS = {"brick_corner", "deco_corner", "glass_tower", "townhouse_row",
+BUILDING_KINDS = {"brick_corner", "deco_corner", "glass_tower", "townhouse_row", *TOWERS,
                   *(r[0] for r in PARKSIDE), *(r[0] for r in FILLERS)}
-PARK_KINDS = {"park_tree", "hedge_bed", "park_bench", "park_lamp", "park_fence"}
+PARK_KINDS = {*PARK_TREES, "hedge_bed", "park_bench", "park_lamp", "park_fence"}
 # Unity's fog is linear from 90 m to 360 m (KantoSceneBuilder). The Blender review fades the
 # same way through the compositor's mist pass, capped so the hills stay as faint silhouettes.
-MIST_START, MIST_DEPTH, MIST_CAP = 90.0, 330.0, 0.82
+MIST_START, MIST_DEPTH, MIST_CAP = 110.0, 450.0, 0.7
 # KantoSceneBuilder's sky and fog, sRGB there, linear here: zenith 5c94db, horizon c7ddf0,
 # fog c7dbeb. A flat sky read grey under AgX (review v1), so the gradient is carried over too.
 SRGB = lambda c: tuple(round(((v + 0.055) / 1.055) ** 2.4, 4) for v in c)  # noqa: E731
@@ -1145,7 +1807,13 @@ def city_cameras(scene, col):
     for label, d in (("north", (0, 1)), ("east", (1, 0)), ("south", (0, -1)), ("west", (-1, 0))):
         at = (-d[0] * B.SPAWN, -d[1] * B.SPAWN, EYE_Z)
         cam(f"eye_{label}", at, (d[0] * 45, d[1] * 45, 5.0), EYE_LENS)
-    cam("aerial", (-70, -78, 62), (4, 4, 4), 28)
+    cam("aerial", *AERIAL, 28)
+    # A second, higher aerial that takes in the downtown ring as well as the park.
+    cam("aerial_city", *AERIAL_CITY, 24)
+    # Close-ups at a person's eye, for judging props: the owner's own review shot was the NE
+    # park corner (tree, fence, crossing, signal, brick corner), and a street toward downtown.
+    cam("detail_ne_corner", (7.0, 6.2, 1.9), (14.5, 14.5, 3.0), 26)
+    cam("detail_street", (-24.8, 46.0, 1.7), (-22.0, 120.0, 12.0), 20)
     scene.camera = cams["eye_north"]
     return cams
 
@@ -1179,13 +1847,13 @@ def assemble():
     city = child("City")
     groups = {g: child(g, city) for g in ("Buildings", "Park", "Street")}
     placed = 0
-    for i, (name, at, rot) in enumerate(PLACE):
+    for i, (name, at, rot, sc) in enumerate(PLACE):
         if name in ("ground", "wires"):
             continue
         g = "Buildings" if name in BUILDING_KINDS else "Park" if name in PARK_KINDS else "Street"
         o = bpy.data.objects.new(f"{name}.{i:03d}", None)
         o.instance_type, o.instance_collection = "COLLECTION", kits[name]
-        o.location, o.rotation_euler = at, (0, 0, rot)
+        o.location, o.rotation_euler, o.scale = at, (0, 0, rot), (sc, sc, sc)
         o.empty_display_size = 0.5
         groups[g].objects.link(o)
         placed += 1
@@ -1198,7 +1866,9 @@ def assemble():
     city.children.link(wire_col)
     horizon_col = child("Horizon (Blender only so far)")
     B.horizon(horizon_col)
-    horizon_col.children[0].name = "Skyline ring and hills"
+    horizon_col.children[0].name = "Hills"
+    for o in [o for o in horizon_col.all_objects if o.name.startswith("skyline")]:
+        bpy.data.objects.remove(o)
     city_lighting()
     city_fog(scene)
     city_cameras(scene, child("Review cameras"))
@@ -1274,7 +1944,8 @@ def main():
         "materials": [dict(name=k, texture=v.get("texture") or "", tint=v["tint"], tiling=v["tiling"],
                            foliage=bool(v.get("foliage")), emissive=bool(v.get("emissive")), glossy=bool(v.get("glossy")))
                       for k, v in material_specs().items()],
-        "placements": [{"model": m, "position": [-p[0], p[2], -p[1]], "yaw": round(-math.degrees(r), 4)} for m, p, r in PLACE],
+        "placements": [{"model": m, "position": [-p[0], p[2], -p[1]], "yaw": round(-math.degrees(r), 4), "scale": sc}
+                       for m, p, r, sc in PLACE],
     }
     LAYOUT_OUT.write_text(json.dumps(data, indent=1))
     print(f"[kanto-city] {len(PLACE)} placements, {len(names)} models -> {LAYOUT_OUT}")

@@ -40,7 +40,7 @@ namespace TumbangPreso.EditorTools.MapKit
 
         [Serializable] private class GameplaySpec { public float box, @throw, spawn, half, walk; }
         [Serializable] private class MatSpec { public string name, texture; public float[] tint; public float tiling; public bool foliage, emissive, glossy; }
-        [Serializable] private class Placement { public string model; public float[] position; public float yaw; }
+        [Serializable] private class Placement { public string model; public float[] position; public float yaw; public float scale; }
         [Serializable] private class Layout { public GameplaySpec gameplay; public MatSpec[] materials; public Placement[] placements; }
 
         /// <summary>Park props that a body can walk into get a simple collider. Everything else
@@ -83,6 +83,9 @@ namespace TumbangPreso.EditorTools.MapKit
                 if (!groups.TryGetValue(p.model, out var group)) groups[p.model] = group = Group(dressing, p.model);
                 var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, group);
                 go.transform.SetPositionAndRotation(new Vector3(p.position[0], p.position[1], p.position[2]), Quaternion.Euler(0, p.yaw, 0));
+                // Per-instance size, so repeated trees and poles are not identical. A layout from
+                // before the field existed reads 0, which means "as modelled".
+                if (p.scale > 0f) go.transform.localScale = Vector3.one * p.scale;
                 Rematerial(go, materials);
                 AddColliders(go, p.model);
                 foreach (var t in go.GetComponentsInChildren<Transform>()) t.gameObject.isStatic = true;

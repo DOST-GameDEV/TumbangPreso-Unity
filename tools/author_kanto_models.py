@@ -85,7 +85,7 @@ def material(name):
     bsdf = m.node_tree.nodes.get("Principled BSDF")
     bsdf.inputs["Base Color"].default_value = (r, g, b, 1)
     bsdf.inputs["Roughness"].default_value = 0.15 if name == "glass" else 0.8
-    if name in ("leaf_light", "leaf_dark"):
+    if name.startswith(("leaf_light", "leaf_dark")):
         leaf_material(m, bsdf, (r, g, b))
         return m
     if USE_TEXTURES and name not in ("ground", "leaf_core", "soil"):
@@ -520,7 +520,7 @@ def keystone(trim, f, u, ztop):
         trim.face([fr[j], bk[j], bk[(j + 1) % 4], fr[(j + 1) % 4]], "stone_shade")
 
 
-def foliage(leaves, center, radii, count, leaf_len, rng, floor_z=None, lift=0.25, spread=0.35, basis=None):
+def foliage(leaves, center, radii, count, leaf_len, rng, floor_z=None, lift=0.25, spread=0.35, basis=None, tint=""):
     """A CLUMP OF SHAPED LEAVES: the house pattern for every plant, pot shrub to street tree.
 
     SHINGLED, NOT SCATTERED. The first version pointed every leaf in a random direction and
@@ -533,7 +533,9 @@ def foliage(leaves, center, radii, count, leaf_len, rng, floor_z=None, lift=0.25
     There is NO CORE. It only ever filled gaps, and density does that without a green ball
     showing through. Leaves whose base falls below `floor_z` (inside a planter) are skipped,
     so a clump set down into the soil grows out of it instead of hovering above it.
-    `leaves` must be a foliage Buf. A tree is several clumps on branches."""
+    `leaves` must be a foliage Buf. A tree is several clumps on branches.
+    `tint` picks a leaf pair (leaf_light<tint>, leaf_dark<tint>) for a WHOLE tree. Variation is
+    per tree, never per leaf: per-leaf colour was tried and reverted by the owner."""
     center = Vector(center)
     placed = 0
     golden = math.pi * (3 - math.sqrt(5))
@@ -564,7 +566,7 @@ def foliage(leaves, center, radii, count, leaf_len, rng, floor_z=None, lift=0.25
         n = (d - tip * d.dot(tip)).normalized()
         length = leaf_len * rng.uniform(0.85, 1.15)
         leaves.leaf(p - tip * length * 0.35, tip, n, length, length * 0.7,
-                    "leaf_light" if d.z > -0.2 else "leaf_dark", center)
+                    ("leaf_light" if d.z > -0.2 else "leaf_dark") + tint, center)
         placed += 1
 
 

@@ -109,7 +109,8 @@ def normal_from_height(h, strength):
 MORTAR = "9c4636"   # the owner kept the brick-toned grout after comparing three greys
 
 STRENGTH = {"brick": 3.0, "stone_blocks": 2.5, "stone": 0.0, "roof": 0.0, "glass": 0.0, "wood": 2.0, "paint": 0.0,
-            "asphalt": 0.0, "brick_brown": 3.0, "panel": 1.5, "paving": 2.0, "court": 1.6, "grass": 0.0, "plaster": 0.0}
+            "asphalt": 0.0, "brick_brown": 3.0, "panel": 1.5, "paving": 2.0, "court": 1.6, "grass": 0.0, "plaster": 0.0,
+            "bark": 2.5, "metal": 0.0, "timber": 0.0, "panelg": 1.5, "tiles": 3.0}
 
 
 def save(name, albedo, height):
@@ -244,6 +245,57 @@ def plaster():
     save("plaster", img, np.zeros((SIZE, SIZE)))
 
 
+def panelg():
+    # The panel texture in NEUTRAL grey, so panel blocks can be painted sand, terracotta or
+    # sage. The owner on review v3: "a lot of them are primarily just white".
+    ident, inside, h, v = organic_bricks(2, 2, mortar_m=0.018, wobble_m=0.004, round_m=0.02, seed=121)
+    face = hexcol("eeeeee") * per_brick(ident, np.array([0.96, 1.0, 1.03]), 122)[..., None]
+    img = flat("c6c6c6") * (1 - inside[..., None]) + face * inside[..., None]
+    img = patches(img, np.array([0.95, 0.95, 0.95]), 0.7, 0.2, seed=123, feather=0.5)
+    save("panelg", img, h)
+
+
+def tiles():
+    # Clay roof tiles for the pitched roofs (Brainchild): overlapping rounded courses with a
+    # drawn lighter lip on each, tall joints soft. NEUTRAL: tinted red-brown or green.
+    ident, inside, h, v = organic_bricks(10, 7, mortar_m=0.04, wobble_m=0.012, round_m=0.07, seed=161)
+    face = hexcol("e4e4e4") * per_brick(ident, np.array([0.92, 0.97, 1.0, 1.05]), 162)[..., None]
+    face = np.where((v > 0.72)[..., None], face * 1.12, face)
+    img = flat("8a8a8a") * (1 - inside[..., None]) + face * inside[..., None]
+    img = patches(img, np.array([0.92, 0.92, 0.92]), 0.6, 0.2, seed=163)
+    save("tiles", img, h)
+
+
+def bark():
+    # Tree trunks. The owner: "a lot of models are untextured. like the tree bodies". Tall
+    # narrow hand-drawn plates (the brick lozenge turned on end), soft dark joints, one broad
+    # lighter coat. NEUTRAL: tinted by each trunk's own colour.
+    ident, inside, h, v = organic_bricks(3, 11, mortar_m=0.035, wobble_m=0.03, round_m=0.05, seed=131)
+    face = hexcol("d8d8d8") * per_brick(ident, np.array([0.9, 0.97, 1.0, 1.05]), 132)[..., None]
+    img = flat("8c8c8c") * (1 - inside[..., None]) + face * inside[..., None]
+    img = patches(img, np.array([1.06, 1.06, 1.06]), 0.35, 0.2, seed=133)
+    save("bark", img, h)
+
+
+def metal():
+    # Painted street metal: poles, railings, signal housings, bench frames. Seen on 10 cm
+    # posts, so the marks are SMALL: a few feathered chips of lighter paint and darker
+    # scuffs a few centimetres across, on a flat coat. NEUTRAL: tinted per material.
+    img = patches(flat("e2e2e2"), np.array([0.86, 0.86, 0.86]), 0.09, 0.14, seed=141, feather=0.45)
+    img = patches(img, np.array([1.1, 1.1, 1.1]), 0.04, 0.06, seed=142, feather=0.35)
+    img = patches(img, np.array([0.93, 0.93, 0.93]), 0.5, 0.25, seed=143, feather=0.6)
+    save("metal", img, np.zeros((SIZE, SIZE)))
+
+
+def timber():
+    # Timber power poles: long soft vertical bands, no grain lines. NEUTRAL.
+    n = smooth(0.12, 151, stretch=(1.0, 0.08))
+    a = np.clip(n * 0.6 + 0.5, 0, 1)[..., None]
+    img = flat("c8c8c8") * (1 - a * 0.14) + flat("e8e8e8") * a * 0.14
+    img = patches(img, np.array([0.9, 0.9, 0.9]), 0.4, 0.15, seed=152)
+    save("timber", img, np.zeros((SIZE, SIZE)))
+
+
 def leaf(size=256):
     """ONE drawn leaf with a transparent background, for foliage cards. Greyscale, so each
     foliage material tints it (light leaves on top, dark underneath).
@@ -293,8 +345,17 @@ def normals_only():
 
 
 if __name__ == "__main__":
+    ALL = (brick, brick_brown, panel, stone_blocks, stone, roof, glass, wood, paint, asphalt, paving, court, grass,
+           plaster, panelg, tiles, bark, metal, timber, leaf)
     if "--normals-only" in sys.argv:
         normals_only()
+    elif "--only" in sys.argv:
+        # Paint just the named textures, so hand-painted ones are never overwritten:
+        #   py -3 tools/author_kanto_textures.py --only bark,metal,timber
+        wanted = sys.argv[sys.argv.index("--only") + 1].split(",")
+        for f in ALL:
+            if f.__name__ in wanted:
+                f()
     else:
-        for f in (brick, brick_brown, panel, stone_blocks, stone, roof, glass, wood, paint, asphalt, paving, court, grass, plaster, leaf):
+        for f in ALL:
             f()
