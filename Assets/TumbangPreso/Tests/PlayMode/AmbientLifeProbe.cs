@@ -175,6 +175,77 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest,Timeout(300000)]
+        public IEnumerator IlalimPatchedAspinUsesItsStorefrontHabitat()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);Time.timeScale=1;GraphicsProfiles.Apply(1);
+            var life=Object.FindFirstObjectByType<AmbientLife>();
+            var spec=life.Animals.Single(a=>a.Id=="aspin-patched");
+            Assert.Greater(spec.Habitat.Length,8);Assert.GreaterOrEqual(spec.Activities.Length,3);
+            Assert.IsFalse(spec.QuietCat,"The dog must retain its own activity presentation");
+            Assert.IsTrue(life.Animals.Where(a=>a.Bird).All(a=>a.Habitat.Length==0));
+            foreach(var player in GameServices.Round.Players)player.Teleport(new Vector3(0,.1f,-10));
+            var dog=life.transform.Find("Ambient "+spec.Id);
+            var camera=new GameObject("Dog activity witness").AddComponent<Camera>();camera.enabled=false;
+            camera.fieldOfView=52;camera.nearClipPlane=.04f;camera.farClipPlane=400;
+            camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            var follow=camera.gameObject.AddComponent<AnimalCamera>();follow.Target=dog;
+            var samples=new StringBuilder("seconds,x,y,z,state\n");
+            var legacyRoot=new GameObject("Legacy dog comparison");
+            try
+            {
+                // Same scene, source model and follow camera. The legacy animal
+                // is a temporary witness, not a new shipped scene population.
+                life.enabled=false;dog.gameObject.SetActive(false);
+                var legacy=legacyRoot.AddComponent<AmbientLife>();
+                legacy.Animals=new[]{new AmbientLife.Animal{Id=spec.Id,Model=spec.Model,Clips=spec.Clips,Route=spec.Route,
+                    WalkSpeed=.45f,RunSpeed=spec.RunSpeed,WalkCycleSpeed=spec.WalkCycleSpeed,RunCycleSpeed=spec.RunCycleSpeed,
+                    PeeWaypoint=spec.PeeWaypoint,PeeTarget=spec.PeeTarget}};
+                yield return null;follow.Target=legacyRoot.transform.Find("Ambient "+spec.Id);
+                yield return GameplayShots.Render(camera,"Ilalim-dog-before",false,Output,width:960,height:540);
+                yield return ImprovementEvidenceProbe.Record(camera,"Ilalim-dog-before",6);
+                Object.Destroy(legacyRoot);yield return null;
+                dog.gameObject.SetActive(true);life.enabled=true;follow.Target=dog;
+                yield return GameplayShots.Render(camera,"Ilalim-dog-after",false,Output,width:960,height:540);
+                int investigate=Array.FindIndex(spec.Activities,s=>s.Kind==AmbientLife.Activity.Investigate);
+                Assert.GreaterOrEqual(investigate,0);life.StageActivityForReview(spec.Id,investigate);
+                yield return new WaitForSeconds(.8f);
+                StringAssert.Contains("activity=Investigate",life.DescribeForReview(spec.Id));
+                yield return GameplayShots.Render(camera,"Ilalim-dog-investigates",false,Output,width:960,height:540);
+                var observer=GameServices.Round.PlayerAt(1);observer.Teleport(dog.position+Vector3.right*2.5f);
+                yield return new WaitForSeconds(.4f);
+                StringAssert.Contains("panic=0.00",life.DescribeForReview(spec.Id));
+                observer.Teleport(new Vector3(0,.1f,-10));
+                Vector3 last=dog.position;float travelled=0,maxStep=0;
+                follow.Sample=()=>
+                {
+                    float step=Vector3.Distance(last,dog.position);travelled+=step;maxStep=Mathf.Max(maxStep,step);last=dog.position;
+                    // A node/edge authored over this surface must remain supported.
+                    Assert.That(dog.position.x,Is.InRange(-10.9f,-8.8f));
+                    var p=dog.position;samples.AppendLine(FormattableString.Invariant($"{Time.time:F3},{p.x:F3},{p.y:F3},{p.z:F3},{life.DescribeForReview(spec.Id)}"));
+                };
+                yield return ImprovementEvidenceProbe.Record(camera,"Ilalim-dog-activities",12);
+                Assert.Greater(travelled,1,"Dog never left its investigation for another activity");
+                Assert.Less(maxStep,.35f,"Dog snapped between habitat locations");
+                var before=dog.position;observer.Teleport(before+Vector3.right*1.1f);
+                yield return new WaitForSeconds(1.5f);
+                Assert.Greater(Vector3.Distance(before,dog.position),.55f,"Close intrusion did not cause retreat");
+                observer.Teleport(new Vector3(0,.1f,-10));
+                yield return ImprovementEvidenceProbe.Record(camera,"Ilalim-dog-recovery",6);
+                StringAssert.Contains("panic=0.00",life.DescribeForReview(spec.Id));
+                Time.timeScale=0;yield return null;var paused=dog.position;
+                yield return new WaitForSecondsRealtime(.2f);
+                Assert.Less(Vector3.Distance(paused,dog.position),.0001f);
+                Assert.IsEmpty(life.GetComponentsInChildren<Collider>());
+                Debug.Log("[Ilalim dog] activity departure, stationary observer, intrusion retreat/recovery and pause passed; travel="+travelled.ToString("F2"));
+            }
+            finally
+            {
+                Time.timeScale=1;Object.Destroy(camera.gameObject);if(legacyRoot!=null)Object.Destroy(legacyRoot);
+                File.WriteAllText(Path.Combine(Output,"ilalim-dog-activity.csv"),samples.ToString());
+            }
+        }
+
+        [UnityTest,Timeout(300000)]
         public IEnumerator EskinitaTabbyInvestigatesWatchesAndRetreats()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);Time.timeScale=1;GraphicsProfiles.Apply(1);

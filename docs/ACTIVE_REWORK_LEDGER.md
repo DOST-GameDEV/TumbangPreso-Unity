@@ -1,22 +1,19 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Bayan ginger cat
+## Current resume, 2026-09-24: Ilalim patched aspin
 
 Overall goal ACTIVE, NOT done. DEV and QUAL at published, remote-verified
-23701290423da84e690772d6e93495fcf01a057e. Lighting source 8d73471f3 merged with
-our existing cache/preview fixes; native 2/2 in 25.645s, actual five-map LDR/HDR
-pairs and grey inspected. Preserve bright look. LIGHT-1.6/1.9 still open.
-Bayan cream aspin published 4e2c5bc6d: 89 nodes/691 links, three ordinary sites plus
-rare marking, own walk/watch timing; native 1/1 in 30.345s, actual frames inspected.
-All QUAL candidates byte-verified, preserved in named stashes and advanced.
+2bcfd05812be9221ddbebb205e88352e696986de. Bayan ginger cat published: 108 nodes /
+773 links, three paving/watch sites, own pace/holds, native 1/1 in 32.114s, no retry;
+actual before/new/activity/watch frames and grey inspected. QUAL byte-verified,
+named stash preserved and advanced. No Unity job active at this intake.
 
-Current REFINE-2.7 unit complete locally: Bayan ginger cat has 108 nodes / 773
-links, three actual paving/watch sites and its own pace/holds. Native session
-20526 passed 1/1 in 32.114s, no retry. Actual before/new, activity/watch frames,
-motion sequence and grey inspected; timestamped clips retained, no unsupported
-continuous-playback claim. Known churn restored. No Unity job/helper active.
-Publish this unit, preserve/advance QUAL, then Ilalim patched aspin separately.
-Keep all old IDs and two original composition PNG meta dirt files.
+Current REFINE-2.7 unit complete locally: Ilalim patched aspin, 38 supported
+nodes / 202 links, three ordinary storefront/pavement sites plus rare marking.
+Native session 39622 passed 1/1 in 31.565s, no fixture retry. Actual before/new,
+investigation, movement frames and grey inspected; timestamped clips retained.
+Known churn restored; no Unity job/helper active. Publish, preserve/advance QUAL,
+then Ilalim tuxedo cat. Preserve original two composition PNG meta dirt files.
 
 ## Published progress, do not redo
 
