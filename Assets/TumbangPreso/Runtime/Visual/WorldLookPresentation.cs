@@ -18,6 +18,7 @@ namespace TumbangPreso.Visual
         public float Weight => Mathf.Max(0,_weight);
         private Texture2D _ramp;
         private Color _sky,_equator,_ground;private AmbientMode _ambientMode;
+        private UnityEngine.SceneManagement.Scene _settingsScene;
         private bool _fog;private FogMode _fogMode;private float _fogStart,_fogEnd,_weight=-1;private Color _fogColour;
         // The key light and sky as the scene authored them, restored exactly on the way out.
         private Light _sun;private Color _sunColour;private float _sunIntensity,_sunShadow;private Quaternion _sunRotation;
@@ -63,6 +64,7 @@ namespace TumbangPreso.Visual
             _sky=RenderSettings.ambientSkyColor;_equator=RenderSettings.ambientEquatorColor;_ground=RenderSettings.ambientGroundColor;
             _ambientMode=RenderSettings.ambientMode;_fog=RenderSettings.fog;_fogMode=RenderSettings.fogMode;
             _fogStart=RenderSettings.fogStartDistance;_fogEnd=RenderSettings.fogEndDistance;_fogColour=RenderSettings.fogColor;
+            _settingsScene=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             _sun=_sunOverride!=null?_sunOverride:SkyEvent.RecordedSun;
             if(_sun!=null){_sunColour=_sun.color;_sunIntensity=_sun.intensity;_sunShadow=_sun.shadowStrength;_sunRotation=_sun.transform.rotation;}
             _skyAuthored=RenderSettings.skybox;
@@ -203,12 +205,22 @@ namespace TumbangPreso.Visual
             ApplyGround();
         }
         private void Blend(string id,Color look){if(_skyAuthored.HasProperty(id))_skyLook.SetColor(id,Color.Lerp(_skyAuthored.GetColor(id),look,_weight));}
+        // ⚠️⚠️ THE SETTINGS ARE HANDED BACK ONLY TO THE SCENE THEY WERE READ FROM. `RenderSettings`
+        // reads and writes whichever scene is ACTIVE, and the look is disabled while the scene
+        // around it is being torn down. Once the map-select preview carries a live look, the
+        // player's START is exactly that moment: had the match scene already been made active,
+        // the menu's recorded ambient and fog would be written into the arena before its own
+        // install recorded "authored" lighting. The sun, the sky and the ground blocks are objects
+        // and are always put back.
         private void RestoreScene()
         {
-            RenderSettings.ambientMode=_ambientMode;RenderSettings.ambientSkyColor=_sky;
-            RenderSettings.ambientEquatorColor=_equator;RenderSettings.ambientGroundColor=_ground;
-            RenderSettings.fog=_fog;RenderSettings.fogMode=_fogMode;RenderSettings.fogStartDistance=_fogStart;RenderSettings.fogEndDistance=_fogEnd;
-            RenderSettings.fogColor=_fogColour;
+            if(UnityEngine.SceneManagement.SceneManager.GetActiveScene()==_settingsScene)
+            {
+                RenderSettings.ambientMode=_ambientMode;RenderSettings.ambientSkyColor=_sky;
+                RenderSettings.ambientEquatorColor=_equator;RenderSettings.ambientGroundColor=_ground;
+                RenderSettings.fog=_fog;RenderSettings.fogMode=_fogMode;RenderSettings.fogStartDistance=_fogStart;RenderSettings.fogEndDistance=_fogEnd;
+                RenderSettings.fogColor=_fogColour;
+            }
             if(_sun!=null){_sun.color=_sunColour;_sun.intensity=_sunIntensity;_sun.shadowStrength=_sunShadow;_sun.transform.rotation=_sunRotation;}
             if(_skyLook!=null && RenderSettings.skybox==_skyLook)RenderSettings.skybox=_skyAuthored;
             if(_court.Count>0){_groundBlock??=new MaterialPropertyBlock();_groundBlock.Clear();
