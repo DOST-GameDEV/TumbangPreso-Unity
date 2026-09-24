@@ -367,6 +367,12 @@ namespace TumbangPreso.Core
                 "Use Mirrorwake six times", true, 6),
         };
 
+        /// <summary>⚠️⚠️ THE ONE SWITCH. `false` while the owner tests (every skill open); `true`
+        /// locks each alternate behind its cast challenge again. See <see cref="ChallengesEnforced"/>.
+        /// ⚠️ DECLARED ABOVE `ChallengesEnforced` ON PURPOSE: static initialisers run in text order,
+        /// so a switch declared below the field it seeds would be read as `false` whatever it says.</summary>
+        public static readonly bool LockSkillTree = false;
+
         /// <summary>
         /// Whether a variant's challenge has to be finished before it can be equipped.
         ///
@@ -391,8 +397,22 @@ namespace TumbangPreso.Core
         /// lets the compiler fold the branch and report the ledger lookup below it as unreachable,
         /// which this project builds as an error. The point of the flag is that the path stays
         /// compiled and reachable; a `const` would delete it.
+        ///
+        /// ⚠️⚠️ TESTING BUILD, OWNER 2026-09-24: *"ur supposed to unlock the other skills as u play the
+        /// character more but for now keep it all unlocked and make it easy to lock again"*. So the
+        /// live value comes from <see cref="LockSkillTree"/>, which is `false`: every branch of every
+        /// hero's tree is open, while the cast counters keep counting underneath so nothing earned is
+        /// lost. **To lock the tree again, set `LockSkillTree` to `true`. That is the whole change.**
+        /// `HubSkillTree` says on screen when the tree is open for testing, so a tester never reads an
+        /// open branch as a broken unlock.
+        ///
+        /// ⚠️ A FIELD RATHER THAN A PROPERTY SO THE LOCKED PATH STAYS TESTABLE IN THIS BUILD. The
+        /// PlayMode probes that press a locked branch set it for their own run and put it back; the
+        /// engine-free tests use the <see cref="HeroBuildRules.IsUnlocked(List{AbilityChallengeProgress},
+        /// AbilityVariant, bool)"/> overload instead, because xunit runs classes in parallel and a
+        /// shared static would race.
         /// </summary>
-        public static readonly bool ChallengesEnforced = true;
+        public static bool ChallengesEnforced = LockSkillTree;
 
         public static IReadOnlyList<AbilityVariant> AllVariants => Variants;
 
@@ -591,10 +611,16 @@ namespace TumbangPreso.Core
         /// </summary>
         public static bool IsUnlocked(List<AbilityChallengeProgress> counters,
                                       AbilityVariant variant)
+            => IsUnlocked(counters, variant, HeroLoadoutRules.ChallengesEnforced);
+
+        /// <summary>The same answer with the switch passed in, so a test can ask about the locked
+        /// tree whatever this build ships with (<see cref="HeroLoadoutRules.LockSkillTree"/>).</summary>
+        public static bool IsUnlocked(List<AbilityChallengeProgress> counters,
+                                      AbilityVariant variant, bool enforced)
         {
             if (variant == null) return false;
             if (variant.IsDefault) return true;
-            if (!HeroLoadoutRules.ChallengesEnforced) return true;
+            if (!enforced) return true;
             return ChallengeCount(counters, variant.Id) >= variant.ChallengeTarget;
         }
 

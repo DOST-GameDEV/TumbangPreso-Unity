@@ -124,7 +124,11 @@ namespace TumbangPreso.UI.Hub
             var person = Roster.HeroPeople[Mathf.Max(0, Roster.IndexIn(Roster.HeroPeople, Hero))];
             _name.text = person.Name;
             var mastery = GameServices.Career?.Profile != null ? ProgressionRules.MasteryFor(GameServices.Career.Profile, Hero) : null;
-            _mastery.text = "MASTERY " + (mastery != null ? mastery.Level : 1) + "  ·  unlock a branch by using its skill";
+            // ⚠️ THE TREE SAYS WHEN IT IS OPEN FOR TESTING (`HeroLoadoutRules.LockSkillTree`, owner
+            // 2026-09-24), so a tester never reads an open branch as an unlock that fired by mistake.
+            // The counters still count underneath and each node still shows its challenge progress.
+            _mastery.text = "MASTERY " + (mastery != null ? mastery.Level : 1) + "  ·  "
+                          + (HeroLoadoutRules.ChallengesEnforced ? "unlock a branch by using its skill" : "every branch open for testing");
             HubKit.Fit(_mastery, 560);
 
             for (int i = _tree.childCount - 1; i >= 0; i--) Destroy(_tree.GetChild(i).gameObject);
@@ -246,8 +250,10 @@ namespace TumbangPreso.UI.Hub
             HubKit.Fit(_detailName, 560);
             _detailBody.text = _selected.Description;
             _detailTrade.text = string.IsNullOrEmpty(_selected.GainLabel) ? "" : "+ " + _selected.GainLabel + "\n- " + _selected.CostLabel;
+            string progress = _selected.Challenge + "  (" + HeroBuildRules.ChallengeCount(settings.AbilityChallenges, _selected.Id) + " of " + _selected.ChallengeTarget + ")";
             _detailState.text = unlocked ? (on ? "Equipped on skill " + _selected.Slot + "." : "Ready to equip.")
-                              : _selected.Challenge + "  (" + HeroBuildRules.ChallengeCount(settings.AbilityChallenges, _selected.Id) + " of " + _selected.ChallengeTarget + ")";
+                                           + (!_selected.IsDefault && !HeroLoadoutRules.ChallengesEnforced ? "\nWhen the tree locks: " + progress : "")
+                              : progress;
             HubKit.SetLabel(_equip, on ? "EQUIPPED" : unlocked ? "EQUIP" : "LOCKED");
             HubKit.LabelOf(_equip).fontSize = HubStyle.Size(HubStyle.Display);
             HubKit.Fit(HubKit.LabelOf(_equip), 420);
