@@ -20,3 +20,16 @@ working canoe and houseboat at current water settings, then choose exact local e
 Preserve body/rope/bob alignment and map/gameplay collision. One bounded native
 before/after and motion/contact check for the changed parts. Islands/coast/sky and
 all final integrated qualification remain afterward.
+
+
+Selected material unit: all six existing curved hulls receive restrained painted-
+plank detail using their longitudinal/cross-section UVs. The structural seam follows
+the existing cross-section join and bow curvature, not a fake horizontal waterline.
+Houseboats4/5also receive palm fibre on their shelter covering. Preserve original
+paint colours, every source vertex/index, all non-target materials and the existing
+seats/paddles/storage/mats. No additional clutter or gunwale rebuild is justified by
+the current native view. New materials derive from source assets and keep provenance.
+
+One paused native paired canoe0/hull/houseboat4view will show the actual before state
+as well as the candidate. Check no collider additions and unchanged mooring points;
+retain actual bob/rope behavior. Reject a noisy texture if it harms the simple form.

@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Hull0
+  m_Shader: {fileID: 4800000, guid: 9e26b4f70c8a51d4b83f5a71c6042de9, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap:
+    TumpLagoonBoatSource: Assets/TumbangPreso/Art/Lagoon/Workingboatpaint0.mat
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 30618f0196107794db829abb5e8c7f8d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 1
+    - _DeckSurface: 0
+    - _Glossiness: 0.19
+    - _Metallic: 0
+    - _NearFadeCell: 2
+    - _NearFadeEnd: 0.35
+    - _NearFadeStart: 1.8
+    - _SurfaceBaseY: 0
+    - _SurfaceCoordinates: 0
+    - _SurfaceDebug: 0
+    - _SurfaceHasTexture: 0
+    - _SurfaceKind: 0
+    - _SurfaceScale: 1
+    - _SurfaceStrength: 1
+    - _SurfaceVertexRoles: 0
+    m_Colors:
+    - _Color: {r: 0.31764698, g: 0.52941173, b: 0.52941173, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

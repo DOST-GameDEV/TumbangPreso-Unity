@@ -87,6 +87,47 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator LagoonBoatFinishReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Lagoon);
+            var pairs=Enumerable.Range(0,6).Select(id=>
+            {
+                var boat=GameObject.Find("Lagoon/"+(id<4?"Pointed working canoe ":"Sheltered houseboat ")+id);
+                var filter=boat.GetComponent<MeshFilter>();var renderer=boat.GetComponent<MeshRenderer>();
+                var importer=AssetImporter.GetAtPath("Assets/TumbangPreso/Art/LagoonBoatFinish/Boat"+id+".asset");Assert.IsNotNull(importer);
+                Assert.IsTrue(importer.userData.StartsWith("TUMP_LAGOON_BOAT_MESH:"));
+                var original=AssetDatabase.LoadAssetAtPath<Mesh>(importer.userData.Substring("TUMP_LAGOON_BOAT_MESH:".Length));Assert.IsNotNull(original);
+                var after=renderer.sharedMaterials;var before=after.Select(m=>
+                {string path=m.GetTag("TumpLagoonBoatSource",false);return string.IsNullOrEmpty(path)?m:AssetDatabase.LoadAssetAtPath<Material>(path);}).ToArray();
+                Assert.IsFalse(before.Any(m=>m==null));Assert.IsNotNull(boat.GetComponent<MooredBoatMotion>());Assert.IsEmpty(boat.GetComponentsInChildren<Collider>());
+                return new {filter,renderer,original,finished=filter.sharedMesh,before,after};
+            }).ToArray();
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;var camera=rig.Camera;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var clock=Object.FindFirstObjectByType<Visual.NeighbourhoodSkyMotion>();bool clockEnabled=clock!=null&&clock.enabled;
+            if(clock!=null)clock.enabled=false;
+            var eye=Vector3.zero;var rotation=Quaternion.identity;
+            Camera.CameraCallback pin=cam=>{if(cam==camera){cam.transform.SetPositionAndRotation(eye,rotation);cam.fieldOfView=60;}};
+            Camera.onPreCull+=pin;Time.timeScale=0;
+            try
+            {
+                foreach(string view in new[]{"canoe0","houseboat4","shelter4"})
+                {
+                    eye=view=="canoe0"?new Vector3(-5,1,-33):view=="houseboat4"?new Vector3(-28,2.2f,17):new Vector3(-30,4,23);
+                    var target=view=="canoe0"?new Vector3(-9,-1.0f,-29):new Vector3(-34,view=="shelter4"?.7f:-.25f,26);
+                    rotation=Quaternion.LookRotation(target-eye);
+                    foreach(string state in new[]{"before","after"})
+                    {
+                        bool on=state=="after";foreach(var p in pairs){p.filter.sharedMesh=on?p.finished:p.original;p.renderer.sharedMaterials=on?p.after:p.before;}
+                        using(Visual.NeighbourhoodSkyMotion.At(20))
+                            yield return GameplayShots.Render(camera,"Lagoon-boat-"+view+"-"+state,false,Output,width:1280,height:800);
+                    }
+                }
+            }
+            finally{Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=clockEnabled;}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator LagoonWaterFinishReview()
         {
             Action<bool> ReadWater()

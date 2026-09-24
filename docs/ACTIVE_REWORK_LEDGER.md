@@ -1,38 +1,30 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Lagoon boats, then islands/coast
+## Current resume, 2026-09-24: boats qualified, islands/coast next
 
-Overall goal ACTIVE and NOT complete. Owner expects autonomous implementation through
-all independently actionable TODO. No checkpoint stops, routine questions, other
-chats/tasks, delegation, paid services, credit resets, main edits or Desktop replacement.
-Preserve every older task and contributor work; newer requirements override retired
-plans. Quality product work comes before verification/capture-tool perfection. Keep
-reasoning and reads focused; do not spend long stretches speculating between actions.
+Overall goal ACTIVE and NOT complete. Owner reiterated do not stop; continue every
+independently actionable TODO. No checkpoint stops, routine questions, other tasks,
+delegation, paid services, credit resets, main edits or Desktop replacement. Quality
+product work before verification loops. Preserve old tasks and contributor changes.
 
-DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD/verified remote547f3901ad05d615412fb1695c4651d06f30ffcc. Only the original
-Resources/UI/composition-redesign/home-court.png.meta and loading-street.png.meta
-are protected dirt: NEVER restore/stage them. Current own work is this resume update and lagoon-boats-plan.md; no boat code or
-asset changes yet. Explicit staging, sole author M4tyu633, no trailers/AI mentions/
-em dashes. Fetch/inspect before push and verify remote; never reset/clean/force-push.
-QUAL C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached547f3901a, clean after exact candidate comparison/named stash/advance.
-Preserve all stashes and other dirty worktrees. No active Unity jobs, task-owned
-browser tabs, servers or native players. All prior job IDs below are historical.
+DEV ASTRAReworks and owned detached QUAL were at923ca1946before this boat unit.
+DEV original two composition-redesign PNG metas are protected dirt, never stage or
+restore. QUAL generated churn backed up after each run and restored. No active
+Unity job, owned browser tab, server or native player. All job IDs below historical.
 
-NEXT: boat material/construction review under the newly clear water, then islands/
-coast/sky and final Lagoon art/integration. Plan lagoon-boats-plan.md points to the
-actual six boats and existing motion. Preserve their useful curved hulls, seats,
-paddles/rope and shape. Refine demonstrated plain hull/shelter material weaknesses,
-not every successful part. No boat author or new boat test has been started.
+Lagoon boats v1 author completed and native LagoonBoatFinishReview passed1/1in3.693s.
+Actual canoe0, houseboat4 and shelter4 before/after and25percent grey inspected.
+Keep: quiet hull grain follows the curved shell; palm shelter now reads as woven
+covering. Six original meshes/other parts/motion and collision preserved. No added
+geometry/renderers/colliders. Qualified evidence and assets copied to DEV. Publish
+this unit, then nearer islands/coast. Current pictures show smooth green mounds and
+uniform sand bands; retain distant silhouettes, locally improve near landform/
+vegetation/shore material hierarchy. Research/plan before implementation.
 
-Water547f3901a PUBLISHED/remote verified: clearer shallows, restrained moving surface/
-bed detail, visual-only1600m bed retaining original180m collider/transform/levels.
-Found/fixed runtime NearFade replacing LagoonBed by adding its local Preserve tag.
-Final actual-shader assertion passed1/1in5.065s; original-before pair, preview/piles/
-boat/overlook/Low/held-time views andgrey inspected. Keepv3. Source has no camera-depth
-ownership system or gameplay changes. Full intermediate evidence and limits saved
-in lagoon-water/report.md. Do not repeat unchanged tests. Overall goal remains active.
+Water547f3901a, metal0c9308c19, veranda903e17220, hipbff55f209, gable7957d8a96,
+fall3e0d0c69a and birds faa904702 remain published. Islands/coast/sky/final Lagoon,
+reopened earlier-map building surfaces, natural animals, bots, per-character motion,
+older defects and final qualification/build all remain. Do not claim overall done.
 
 ## Latest owner requirements and completed additions
 
@@ -228,3 +220,16 @@ hipbff55f209 (through524427e69), veranda903e17220, metal/paint0c9308c19, water54
 The owner's fall recovery3e0d0c69a and flying birds faa904702 remain implemented.
 All boats/island/coast/sky/final map work, reopened earlier-map surface acceptance,
 animal/bot/motion and older final qualification are still open. No overall completion.
+
+Current DEV923ca1946 and QUAL923ca1946 confirmed clean apart from protected DEVmetas.
+Previous goal turn was progress: multiple published map/gameplay units and evidence,
+not a wait/no-progress turn. Boat plan now selects restrained curved-hull paint/plank
+material and houseboat shelter fibre only; existing geometry/use/motion kept. No
+new geometry or physics. Implement then one native paired local check.
+
+Owner reiterates do not stop, get everything done. Goal stays active and full scope
+is preserved. Boat source and paired canoe/houseboat/shelter case copied to QUAL.
+Author runs Logs/refine2-lagoon-boats-v1/author.log. Question: correct hull/roof material
+targets and UV direction with source geometry/other slots/mooring/collision unchanged.
+Freeze.cs. After author, one native paired material check, inspect and continue to
+islands/coast. No broad verification loop or goal-completion claim.

@@ -339,8 +339,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   with restrained moving surface/bed detail and a visual-only bed extension. Fixed
   runtime replacement of LagoonBed via its preserve tag; physical surfaces unchanged.
   [Water evidence](reports/map-by-map-refinement-2026-09-23/lagoon-water/report.md): final1/1passed,
-  actual paired/grey/Low/held-time views inspected. Boats, islands/coast/sky and
-  final map acceptance remain.
+  actual paired/grey/Low/held-time views inspected. Six boats now have restrained
+  curved-hull grain and the two houseboats have fitted shelter fibres, with original
+  shape, non-target parts, mooring and collision retained. [Boat evidence](reports/map-by-map-refinement-2026-09-23/lagoon-boats/report.md):
+  native1/1passed, three paired views and25percent grey inspected. Islands/coast/sky
+  and final map acceptance remain.
 - [x] **REFINE-2.6b Lagoon fall and mash recovery, owner2026-09-24.** Adapt SaBubong's
   physical edge fall and existing press-gated get-up to Lagoon. Both modes, all cast,
   existing input/camera/animation/authority path. Record effects on intentional water
