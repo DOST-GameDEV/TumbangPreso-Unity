@@ -118,6 +118,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(map=="Eskinita")EskinitaMasonryFinishAuthor.FinishLoadedScene(report);
             if(map=="Eskinita")EskinitaCanopyAuthor.FinishLoadedScene(report);
             if(map=="Eskinita")EskinitaShopSignAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaAuthoredSignAuthor.FinishLoadedScene(report);
             if(map=="BayanPlaza")BayanGardenAuthor.FinishLoadedScene(report);
             if(map=="BayanPlaza")BayanTownContextAuthor.FinishLoadedScene(report);
             if(map=="BayanPlaza")BayanPottedShrubAuthor.FinishLoadedScene(report);

@@ -258,8 +258,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   [Final art-batch decisions and remaining integrated acceptance](reports/map-by-map-refinement-2026-09-23/eskinita-prop-review.md).
   Art implementation is ready for the integrated intro/spectator/native gate;
   this parent remains open until that acceptance. Continue Bayan art next.
-  Latest owner sign-art direction also applies when revisiting this map's two shop
-  boards: per-sign reference, built-in generated artwork, critique and physical
+  West Lita's Store now uses generated3:1art on a modest supported front-fascia
+  plate, with original booth/body/east retained. Corrected native1/1passed3.959s;
+  actual front/neighborhood/grey inspected. [West sign evidence](reports/map-by-map-refinement-2026-09-23/eskinita-west-sign/report.md).
+  East sign remains OPEN under the latest owner sign-art direction.
+  The original correction for both boards is preserved here: per-sign reference, built-in generated artwork, critique and physical
   fitting remain OPEN. Prior stock-font signs are not the final accepted art route.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
   Owner2026-09-24 building review found the hall body still uniform. Eight large

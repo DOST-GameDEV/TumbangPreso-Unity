@@ -1,5 +1,11 @@
 # Eskinita remaining props and map review, 2026-09-24
 
+LATEST SUPERCESSION: the owner rejected the font-only sign route afterward. West
+Lita's Store is now individually authored/generated and physically fitted; see
+eskinita-west-sign/report.md. East still OPEN. The old font recommendation and
+blank-board comparisons below are preserved history, not current final acceptance.
+Other retained prop/material decisions remain valid unless a concrete issue appears.
+
 Native art survey1/1passed4.838s; source frames in QUALLogs/refine2-eskinita-review.
 Four ordinary court directions viewed at High and Low, and both street shop pockets
 viewed from their accessible front sides. Opposite diagnostic views were obstructed

@@ -1,27 +1,17 @@
 # Active TUMP rework ledger
 
-## Current resume,2026-09-24: publish Vulcanizing, finish Eskinita signs
+## Current resume,2026-09-24: publish Eskinita west, finish east
 
-Overall goal ACTIVE and NOT done. Owner says finish current work before moving.
-All older taskIDs/legacy rows preserved. New requests modify the queue, never erase
-it. Quality product work before verification loops. No checkpoint stops/questions,
-other tasks/delegation, paid external APIs, resets, main edits or Desktop replacement.
-Stage explicit paths, sole-author M4tyu633, no trailers/em dashes; fetch before push
-and verify remote HEAD. Preserve original DEVcomposition metas and all source art.
-
-DEV ASTRAReworks and detached owned QUAL start at publishedef7775e4e. Vulcanizing
-source/assets/evidence now ready in DEV. Native34628completed1/1in5.024s. Actual
-front/street before-after/25percent grey inspected and retained. Paintv2is opaque,
-round sidewall mapped uniformly to a real3Dtire with a real hole/braces. Workshop
-stock/equipment contained, original collision preserved.12792body+256paint vertices,
-2renderers/materials. One bounded fixture repair used for static-batch mesh bounds;
-no further unchanged tests. Known QUALchurn backed/restored. No Unity/helper/player.
-
-Next explicit stage/commit/fetch/push/remote verify (including all saved owner
-feedback and source provenance), preserve/advance QUAL via byte comparison/named
-stash, then Eskinita's two reopened font-only shop signs. Judge/fix those individually;
-retain good building/material/prop work. Then continue actual map integrated gates
-and older gameplay/animal/bot/motion tasks. No ultimate research before map work.
+Overall goal ACTIVE and NOT done. Finish one unit before moving; all older taskIDs
+preserved. No checkpoint stops/questions/delegation/paid APIs/resets/main/Desktop.
+DEV/QUAL start atc7bd3bb2f. West Lita's Store locally finished: generated3:1art,
+modest backing/front-fascia cleats, retained original booth/house/collision/east.
+V1rear mount hid STORE; product mount corrected with same original front camera.
+Native21766completed1/1in3.959s; actual front/neighborhood/grey inspected and retained.
+Assets/evidence copied to DEV, known QUALchurn backed/restored. No Unity/helpers.
+Next publish this unit, preserve/advance QUAL, then EAST sign. No repeated unchanged
+West checks. All map parents/older gameplay/animal/bot/motion/ultimate gates open.
+Owned error-page tab15cleanup remains tool-blocked; no repeated bypass attempts.
 
 ## Ilalim storefront implementation status
 
@@ -55,8 +45,8 @@ Evidence/limits in reports/map-by-map-refinement-2026-09-23/by named shop folder
  replaces it; no copied brand/crown. Pots/bowls/condiment service stock.1/1in4.571s.
 -Pisonetef7775e4e: retained cabinets/chairs/source, measured controls and quieter
  instance-only screens/lower glazing,3:1commercial fascia.1/1in4.549s.
--Vulcanizing current: real painted tire sign/workshop. First sidewallalpha artifact
- rejected before import; opaquev2retained.1/1in5.024s. Ready to publish.
+-Vulcanizingc7bd3bb2f: real painted tire sign/workshop. First sidewallalpha artifact
+ rejected before import; opaquev2retained.1/1in5.024s. Published and remote verified.
 
 All stated native front/street/grey images actually inspected. These are our
 implementation judgments, not unreceived owner aesthetic approval or final native
@@ -111,3 +101,25 @@ Full prior ledger preserved at
 which links earlier full archives. TODO remains canonical status; sign register
 owns per-sign decisions. Queue preservation audit removed zero old IDs/legacy
 rows. That is preservation evidence, not completion. Resume this exact state.
+
+West Lita'sv1generated/inspected, selected. New small face/backing fits actual3:1
+at same supported booth, old fontface retained disabled. East/source model untouched.
+Next guarded RunWest and only EskinitaWestAuthoredSignReview, Logs/eskinita-west-sign-v1.
+Aspect/original collision/front-neighborhood/grey stop gate. No.cs edits during run.
+
+Eskinita West author59736completed:2172x724source fits1.66x.553face at y2.65,
+modest backing, original collision/body/east unchanged. Only native West sign case
+in flight, Logs/eskinita-west-sign-v1. No.cs edits until exit; inspect front,
+neighborhood and25percent grey, read XML before publishing. No other unit active.
+
+Westv1native87285passed1/1in5.031sbut actual front view shows awning hides STORE
+(bottom line); neighborhood view is good. Product mount corrected: board moves
+from rear strip to front fasciay2.65/z.53, with two short supported timber cleats.
+Source rear board/stall stays. Original front witness camera stays fixed, so the
+fix cannot be disguised by raising/reframing the camera. Reauthor then one native
+West casev2. No new art generation or shared capture framework. East untouched.
+
+West corrected mount author28243completed. Only EskinitaWestAuthoredSignReviewv2
+now in flight, Logs/eskinita-west-sign-v2. Same original front camera retained;
+need actual unoccluded full wording/neighbor scale/grey/XML before publishing.
+No.cs edits during run. No other work started, East remains open.
