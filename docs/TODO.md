@@ -54,6 +54,12 @@ to UX-1 and each REFINE-2 map/character/aspect, without dropping unfinished task
 
 ### Priority order, rethought 2026-09-23
 
+**Owner override,2026-09-24:** the cloud work pushed in4f62fcc5c is the immediate
+priority: native review, actual visual critique and bug fixes before resuming the
+older queue. Follow [the local intake plan](reports/cloud-integration-2026-09-24/plan.md).
+Preserve every older item. Cloud compile/pose sheets do not establish Unity quality;
+VOICE-1 uses human recordings only, and the20remaining world-skill VFX/SFX remain open.
+
 1. **P0, finish what is in flight. ✅ DONE 2026-09-23.** The 134.10 reduced-effects link
    (Hitstop, SkyEvent, CanContactAccent, TumpHudEffects, UltimatePresentationDirector and
    others, plus camera shake) and the native `--accessibility-only` route are published;
@@ -653,8 +659,12 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
   - **Progress 2026-09-24 (cloud session):** research, per-hero plan and durations saved in
     [ultimate-performances-2026-09-24](reports/ultimate-performances-2026-09-24/plan.md). Per-hero
     lengths (2.8 to 4.2 s, cohort takes the longest, protocol 52), authored shots, stage walls,
-    lift and voice timing built. Phaister's new performance done at source level (laugh, lift,
-    eclipse serpent). Others next, one at a time. Native checks owed to Windows (progress.md).
+    lift and voice timing built for all seven heroes. Owner-pushed4f62fcc5c is under
+    local review. Runtime grounding assertions, black stage-wall normals and Nemu's
+    held-slipper/head intersection are fixed. Native seven-hero study1/1 and shared
+    phase6/6 passed; actual sequence sheets and grey comparisons inspected.
+    [Local findings and remaining critique](reports/cloud-integration-2026-09-24/findings.md).
+    Per-hero artistic refinement, real-peer timing and final acceptance remain open.
 - [ ] **VOICE-1 Hero voice lines, owner 2026-09-24. OPEN: HUMAN RECORDINGS ONLY, NONE RECORDED YET.**
   **Owner decision, 2026-09-24 (after hearing a Kokoro/Chatterbox synthetic audition):** *"remove
   voices u made with ai lets js do humans"*. Every generated clip (the stylised babble and the

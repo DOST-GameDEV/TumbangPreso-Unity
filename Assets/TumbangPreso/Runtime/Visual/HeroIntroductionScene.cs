@@ -198,7 +198,7 @@ namespace TumbangPreso.Visual
                 vertices.Add(rim); vertices.Add(rim + Vector3.up);
                 if (i == sides) continue;
                 int n = i * 2;
-                triangles.AddRange(new[] { n, n + 1, n + 2, n + 2, n + 1, n + 3, n, n + 2, n + 1, n + 2, n + 3, n + 1 });
+                triangles.AddRange(new[] { n, n + 1, n + 2, n + 2, n + 1, n + 3 });
             }
             if (cap)
             {
@@ -206,11 +206,14 @@ namespace TumbangPreso.Visual
                 for (int i = 0; i < sides; i++)
                 {
                     int a = i * 2 + 1, b = i * 2 + 3;
-                    triangles.AddRange(new[] { centre, a, b, centre, b, a });
+                    triangles.AddRange(new[] { centre, a, b });
                 }
             }
-            mesh.SetVertices(vertices); mesh.SetTriangles(triangles, 0); mesh.RecalculateNormals(); mesh.RecalculateBounds();
-            return mesh;
+            mesh.SetVertices(vertices); mesh.SetTriangles(triangles, 0);
+            // Opposite faces must not share normals. Their cancellation made
+            // these large lit walls black even after TwoSided's other users
+            // were fixed. Reuse its separated front/back vertices here too.
+            return VfxShapes.TwoSided(mesh);
         }
 
         private void Place(int index, Vector3 position, Vector3 scale, Quaternion rotation, float opacity)

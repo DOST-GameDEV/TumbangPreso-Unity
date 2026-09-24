@@ -1,5 +1,44 @@
 # Active TUMP rework ledger
 
+## Current priority, 2026-09-24: review the owner's cloud push
+
+Owner explicitly confirmed the push after asking us to wait. DEV fast-forwarded
+from7fcde1877 to4f62fcc5c, PR5 already merged. Review/fix this cloud work FIRST,
+then resume the older TODO path. No old item is deleted or marked complete.
+Plan: reports/cloud-integration-2026-09-24/plan.md. First check: existing native
+seven-hero introduction study with TUMP_INTRO_SCENE=1 plus SharedUltimatePhaseTests,
+guarded D3D11 in QUAL. Inspect actual frames, then fix observed problems one hero
+at a time; one fixture repair maximum. No new player build or new capture framework.
+Latest cloud voice decision is human recordings only; absent clips stay silent.
+No generated voices, paid tools or contacting another conversation.
+
+Current native defect: baseline7cases2passed/5failed on SetCurve key-index asserts
+in introduction grounding. Removing x/y/z bindings first did not fix it (v2failed,
+preserved). Current dirty fix builds final root curves on a fresh unsampled clip
+through ClipBuilder, retaining authored rotation/punch/lift. Fresh-clip construction removed the assertion. Native v3 reached Nemu, where
+held equipment intersected her head (65vertices); first4grounding clearances were
+within0.7mm. Actual frames also showed black stage walls: WallMesh still shared
+front/back normals. Current dirty repairs use the corrected TwoSided builder and
+a Nemu-held table: shoe by hip, free-hand send. Existing seven-hero study v4
+passed1/1 in33.3963163s: all seven clear their support within1.9mm and have zero
+held-shoe/head intersections. Actual twelve-sample native sheets inspected for
+each hero. Black-wall defect fixed; no blanket artistic approval implied.
+Existing SharedUltimatePhaseTests finished6/6 in73.5436033s; output
+Logs/cloud-shared-phase-after.xml/.log. No active Unity job. First full7run
+failed before these views. Actual sheets for all seven and three25percent grey
+pairs inspected; local findings in reports/cloud-integration-2026-09-24/findings.md.
+Do not repeat these passing cases unchanged. Fixture repairs0/1; these are real
+runtime repairs, no assertion suppression. Core HeroLines7/7
+and HeroLoadout14/14 passed in DEV, separate TRX under Logs/cloud-intake-core.
+Next: publish this repair batch, align QUAL, then investigate client cohort length
+being derived before local actors are ready (plan). After runtime correctness,
+Sean's faint parol/competing horizon is the first concrete visual refinement.
+Preserve the other incoming performances and inspect each before changing it.
+
+Previous local units ARE published: d98e592ae Windows D3D11 preference;7fcde1877
+ambient replay isolation/can-mesh cache repair. Their focused evidence is complete,
+their broader final gates remain. The historical resume notes below are retained.
+
 ## Current resume, 2026-09-24: ambient replay isolation
 
 Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified atd98e592ae. Rematch

@@ -1,0 +1,13 @@
+Private body studies. Ground clearance uses the existing motion-strip deformed-vertex audit.
+[sean] bake space: already scaled (renderer box 2.018 m, baked spans 2.018 and 4.803; rest pose sits at 0.100 m against a floor at 0)
+sean: clearance -0.00044 to 0.00039 metres
+sean: maximum held-shoe vertices inside rigid head surfaces: 0
+[phaister] bake space: already scaled (renderer box 2.397 m, baked spans 2.380 and 5.664; rest pose sits at 0.117 m against a floor at 0)
+phaister: clearance -0.00050 to 0.00043 metres
+phaister: maximum held-shoe vertices inside rigid head surfaces: 0
+[zack] bake space: already scaled (renderer box 1.883 m, baked spans 1.880 and 4.475; rest pose sits at 0.103 m against a floor at 0)
+zack: clearance -0.00008 to 0.00014 metres
+zack: maximum held-shoe vertices inside rigid head surfaces: 0
+[nemu] bake space: already scaled (renderer box 1.423 m, baked spans 1.423 and 3.387; rest pose sits at 0.100 m against a floor at 0)
+nemu: clearance -0.00064 to 0.00004 metres
+nemu: maximum held-shoe vertices inside rigid head surfaces: 65

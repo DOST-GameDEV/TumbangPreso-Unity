@@ -54,8 +54,24 @@ namespace TumbangPreso.Visual
             // SetCurve is supported in native players only for legacy clips.
             // This clip is sampled on a render copy, never put in the live Animator.
             var clip = b.Build(legacy: true);
-            GroundIntroduction(clip, root, paths["root"], lift: performance.Lift.Count > 0 ? performance.LiftAt : null);
-            return clip;
+            AnimationClip grounded = null;
+            try
+            {
+                // Sample the authored pose, then build its final curves on an
+                // unsampled clip. Rewriting a sampled legacy binding asserts in
+                // Unity 6000.5 even after clearing all three position channels.
+                GroundIntroduction(clip, root, paths["root"],
+                    lift: performance.Lift.Count > 0 ? performance.LiftAt : null,
+                    writeRoot: curves => grounded = b.Build(legacy: true, rootPosition: curves));
+                return grounded != null ? grounded : clip;
+            }
+            finally
+            {
+                if (grounded != null)
+                {
+                    if (Application.isPlaying) Object.Destroy(clip); else Object.DestroyImmediate(clip);
+                }
+            }
         }
 
         // Retained for Rafi's authored live casts (`HeroAbilityClips.Rafi.cs`), which still key

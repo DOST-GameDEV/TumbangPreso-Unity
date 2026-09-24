@@ -443,7 +443,7 @@ def zack():
 
 
 @performance
-def nemu():
+def nemu(held=False):
     """
     DEVOURING SEANCE, 3.8 s (plan.md section 4). "Looks distracted. Already knows your next
     move." Two characters act: Nemu is gazing at nothing, hands behind her back; Kuro nudges
@@ -452,7 +452,7 @@ def nemu():
     folded, and points him ahead.
     Kuro sits on her LEFT (hero-local -x), which the camera keeps in frame.
     """
-    p = Performance("nemu", 3.8)
+    p = Performance("nemu-held" if held else "nemu", 3.8)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     # Gazing away up to her right, hands clasped behind her back.
     away = Pose(torso=(-2, 8, 2), head=(-16, 30, 4), left=(-24, 8, -30), right=(-24, 8, -30))
@@ -467,6 +467,20 @@ def nemu():
     calm_sway = calm.but(torso=(0, 0, -2), head=(0, 0, -4))
     send = Pose(torso=(4, -6, 0), head=(4, -4, 0), left=(28, 4, 36), right=(90, 6, 6),
                 legs=((6, 2), (-4, 2)))
+    if held:
+        # Native review caught the fitted shoe crossing her large face during
+        # the folded-hand/send beat. Keep it loosely by her outside hip and
+        # send Kuro with the same free hand that just offered him a nuzzle.
+        shoe = (8, 26, -5)
+        away = away.but(right=shoe)
+        away_sway = away_sway.but(right=shoe)
+        startle = startle.but(right=shoe)
+        to_kuro = to_kuro.but(right=shoe)
+        offer = offer.but(right=shoe)
+        knowing = knowing.but(right=shoe)
+        calm = calm.but(right=shoe)
+        calm_sway = calm_sway.but(right=shoe)
+        send = send.but(left=(80, 30, 0), right=shoe)
 
     p.key(0, rest)
     p.key(.3, away).key(.55, away_sway)
@@ -489,6 +503,10 @@ def nemu():
     p.shot(2.26, 3.8, (2.8, 1.5, 5.6), (-.75, 1.4, 0), 50, eye_to=(2.63, 1.41, 5.26), fit=True)
     p.locked((3.4, 2.4, 8.6), (-.9, 2.1, 0), 52)
     return p
+
+
+HELD["nemu"] = lambda: nemu(True)
+HOLD_DRIFT["nemu-held"] = HOLD_DRIFT["nemu"]
 
 
 @performance

@@ -9,7 +9,7 @@ namespace TumbangPreso.Visual
         // bake root support, as the retained Sean animation workflow does. Work
         // on the supplied render copy, restoring every sampled transform afterward.
         private static void GroundIntroduction(AnimationClip clip, Transform model, string rootPath, bool anchorToRest = false,
-            System.Func<float, float> lift = null)
+            System.Func<float, float> lift = null, System.Action<AnimationCurve[]> writeRoot = null)
         {
             var root = string.IsNullOrEmpty(rootPath) ? model : model.Find(rootPath);
             var skins = model.GetComponentsInChildren<SkinnedMeshRenderer>(true);
@@ -106,9 +106,14 @@ namespace TumbangPreso.Visual
                         key.outTangent = i + 1 == list.Count ? 0 : (list[i+1].value - key.value) / (list[i+1].time - key.time);
                         list[i] = key;
                     }
-                clip.SetCurve(rootPath, typeof(Transform), "localPosition.x", new AnimationCurve(keysX.ToArray()));
-                clip.SetCurve(rootPath, typeof(Transform), "localPosition.y", new AnimationCurve(keys.ToArray()));
-                clip.SetCurve(rootPath, typeof(Transform), "localPosition.z", new AnimationCurve(keysZ.ToArray()));
+                var curves = new[] { new AnimationCurve(keysX.ToArray()), new AnimationCurve(keys.ToArray()), new AnimationCurve(keysZ.ToArray()) };
+                if (writeRoot != null) writeRoot(curves);
+                else
+                {
+                    clip.SetCurve(rootPath, typeof(Transform), "localPosition.x", curves[0]);
+                    clip.SetCurve(rootPath, typeof(Transform), "localPosition.y", curves[1]);
+                    clip.SetCurve(rootPath, typeof(Transform), "localPosition.z", curves[2]);
+                }
             }
             finally
             {

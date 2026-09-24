@@ -256,7 +256,7 @@ namespace TumbangPreso.Visual
                 return Mathf.Abs(dt) < 0.0001f ? 0.0f : (keys[i + 1].y - keys[i - 1].y) / dt;
             }
 
-            public AnimationClip Build(bool legacy = false)
+            public AnimationClip Build(bool legacy = false, AnimationCurve[] rootPosition = null)
             {
                 var clip = new AnimationClip
                 {
@@ -265,9 +265,9 @@ namespace TumbangPreso.Visual
                     wrapMode = WrapMode.Once,
                 };
 
-                clip.SetCurve(_paths["root"], typeof(Transform), "localPosition.x", Curve(_rootX));
-                clip.SetCurve(_paths["root"], typeof(Transform), "localPosition.y", Curve(_rootY));
-                clip.SetCurve(_paths["root"], typeof(Transform), "localPosition.z", Curve(_rootZ));
+                clip.SetCurve(_paths["root"], typeof(Transform), "localPosition.x", rootPosition != null ? rootPosition[0] : Curve(_rootX));
+                clip.SetCurve(_paths["root"], typeof(Transform), "localPosition.y", rootPosition != null ? rootPosition[1] : Curve(_rootY));
+                clip.SetCurve(_paths["root"], typeof(Transform), "localPosition.z", rootPosition != null ? rootPosition[2] : Curve(_rootZ));
 
                 foreach (string bone in Bones)
                 {
