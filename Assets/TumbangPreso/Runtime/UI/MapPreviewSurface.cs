@@ -965,7 +965,18 @@ namespace TumbangPreso.UI
 
             if (_target == null)
             {
-                _target = new RenderTexture(width, height, 24)
+                // ⚠️⚠️ AN HDR TARGET, FOR THE REASON `GameplayShots.Render` WRITES DOWN. A camera
+                // given an ARGB32 target renders LDR whatever `allowHDR` says, so every channel
+                // was clamped at 1.0 before `ColourGrade` ran: its tone roll-off was handed a
+                // flattened frame and the bright look's bloom had nothing above its threshold to
+                // find. The match camera draws to the screen in HDR, so an LDR preview was a
+                // different picture of the same street. Tone-mapped output still lands in 0 to 1,
+                // and the RawImage samples a linear target correctly in this linear project.
+                var format = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.DefaultHDR)
+                    ? RenderTextureFormat.DefaultHDR
+                    : RenderTextureFormat.ARGB32;
+
+                _target = new RenderTexture(width, height, 24, format)
                 {
                     name = "MapPreview",
 
