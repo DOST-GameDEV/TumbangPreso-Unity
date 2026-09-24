@@ -27,9 +27,12 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.Maroon, 28);
+            // ⚠️ POSTERS PASTED ON A YERO WALL (`HubScenery`). The four cards were already posters;
+            // since 2026-09-24 they hang where posters hang on a street, taped to corrugated sheet,
+            // under a title sprayed on it like the TUMP graffiti on the title screen.
+            HubScenery.YeroGround(Root, 28);
             HubChrome.Back(Root, Hub);
-            HubChrome.Title(Root, "GAMEMODE", "SELECT");
+            HubScenery.SprayTitle(HubChrome.Title(Root, "GAMEMODE", "SELECT"));
             HubChrome.TopRight(Root, Hub);
 
             var area = HubKit.Span(HubKit.Rect(Root, "Cards"), new Vector2(0, 0), new Vector2(1, 1),
@@ -65,6 +68,11 @@ namespace TumbangPreso.UI.Hub
                 }, 400);
             HubKit.Place((RectTransform)ranked.transform, HubKit.TopLeft, new Vector2(small + gap + tall + gap, 0), new Vector2(tall, h));
 
+            // Each poster is taped at the top, the tape a little crooked and never the same twice.
+            float[] tilt = { -8, 6, -4, 9 };
+            var posters = new[] { practice.transform, custom.transform, classic.transform, ranked.transform };
+            for (int i = 0; i < posters.Length; i++)
+                HubScenery.Tape(posters[i], "Tape", new Vector2(0.5f, 1), new Vector2(i % 2 == 0 ? -14 : 12, -2), tilt[i], 132);
             HubSlap.On(practice.transform, 0.02f, -3);
             HubSlap.On(custom.transform, 0.08f, 2);
             HubSlap.On(classic.transform, 0.12f, -2);

@@ -255,3 +255,10 @@ Gable scene/assets/meta/evidence copied to DEV; known generated churn restored f
 saved patch. Four roofs only,7200fringe/tie vertices, original topology/non-roof slots
 and collision retained. Ready to publish, then hip/screen/repair roof families and
 local material variation. No replay of successful fall/bird checks. Overall open.
+
+Gable unit committed7957d8a96. Push rejected because concurrent f23738b55hub scenery
+arrived. Inspected incoming paths: UI/Hub, UI-personality report and separate TODO
+rows; no Lagoon source/scene overlap. Clean no-commit merge preserved both TODO
+additions, no conflicts, original protected metas untouched. Commit merge/push then
+advance QUAL. Gable tests were againstfaa904702plus candidate, before this UI-only
+arrival; next focused author naturally recompiles the integrated source.

@@ -23,8 +23,12 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.Night, 1101);
+            // ⚠️ THE COURT AT NIGHT, THE SAME ROAD CHARACTER SELECT STANDS ON (`HubScenery`,
+            // 2026-09-24): choosing the court and choosing who plays on it are one walk onto the
+            // street, so they share the night and the heading is chalked on it.
+            HubScenery.NightCourtGround(Root, 1101, new Vector2(0.5f, 0.42f), new Vector2(1700, 700));
             _heading = HubChrome.Title(Root, "CHOOSE THE COURT");
+            HubScenery.ChalkTitle(_heading);
             _clock = HubKit.Text(Root, "VoteClock", "12", HubStyle.Display, true, HubStyle.Golden, TextAnchor.MiddleRight);
             HubKit.Place(_clock.rectTransform, HubKit.TopRight, new Vector2(-HubKit.Margin, -HubKit.Margin), new Vector2(200, 110));
             _instruction = HubKit.Text(Root, "VoteInstruction", "Highest vote count wins.", HubStyle.Label, false, HubStyle.Honey, TextAnchor.MiddleLeft);

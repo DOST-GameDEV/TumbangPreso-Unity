@@ -723,6 +723,27 @@ Implementation order within UX-1:
   own place and hero moment by the method, never a copy; at 25 to 38 MB per clip and no
   LFS, raise repo size with the owner before shipping all six.
 
+- [x] **UX-1.18 Every hub screen is its own place (owner 2026-09-24).** "check out and refine
+  the look of all other ui", "give them all more personality", "each screen shoudl feel like
+  their own screen". Every pushed screen was the same call (`HubPattern.Ground` in maroon plus
+  the same chalk marks) under the same header, which is `CLAUDE.md` § 6.5's "the same code to
+  generate them all" again. `HubScenery` makes the central theme ONE STREET and each screen a
+  different place on it, all mesh, all logo palette, all still under reduced motion: SKILL
+  TREE is chalk on asphalt (branches chalk themselves in), GAMEMODE is posters taped to a
+  yero wall, JOIN a hollow-block wall with a lone lata for an empty list, TASKS the listahan
+  (cardboard taped to a chipped wall, marker lines, highlighter on a finished task, a red
+  tick once claimed), LOADOUT and SHOP the sari-sari store (planks, awning, a shelf under
+  every row, the item popup on the counter under the bulb), HERO a collector's poster (rays,
+  halftone, slanted role tag), HOST the organiser's clipboard, CHARACTER SELECT and MAP VOTE
+  the court at night (one warm light, a chalk circle under the hero), LOBBY and MATCH FOUND
+  the fiesta (bunting on the title street's breeze; MATCH FOUND bursts, slams and jolts once).
+  Walls get sprayed titles that drip like the TUMP graffiti; roads get chalked ones.
+  Research, before and after captures and every decision:
+  [ui-personality-2026-09-24](reports/ui-personality-2026-09-24/README.md). HOME, the login,
+  the title, LOADING and the in-match HUD are untouched on purpose. Final run: HubFlowTests 4/4,
+  MatchArrivalFlowTests 4/4 (its larger-text ability-name clip, red since 2026-09-23 23:53, is
+  fixed by re-stacking in `HubCharacterSelect.Tick`), title and home suites 8/8.
+
 ### UI-REVIEW · Research-first UI and HUD refinement ⚠️ IN PROGRESS, 2026-09-23
 
 Owner brief: research first, then refine the whole game's UI and HUD, with Settings as a

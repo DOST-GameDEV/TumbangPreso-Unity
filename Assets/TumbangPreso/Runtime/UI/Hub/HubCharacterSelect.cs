@@ -54,7 +54,12 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.Maroon, 51);
+            // ⚠️ THE COURT AT NIGHT (`HubScenery`, 2026-09-24): the last screen before the match is
+            // the street itself after dark, one warm light on the chalk circle the picked hero
+            // steps into. It is the only screen on the road at night,
+            // so the step from here into the match reads as walking onto the court.
+            bool wide = Mode == GameMode.HeroStrike;
+            HubScenery.NightCourtGround(Root, 51, new Vector2(wide ? 0.23f : 0.27f, 0.3f), new Vector2(1150, 640));
             _pick = Mathf.Clamp(Settings.SettingsStore.Current.CharacterPick, 0, People.Count - 1);
 
             // The stage and the name: the left 55 per cent.
@@ -65,6 +70,8 @@ namespace TumbangPreso.UI.Hub
             // text field under the hero's feet and was the largest flat shape on the screen. A
             // soft ink ellipse grounds the figure the way the HOME court's shadows do, and leaves
             // the hero as the one big thing on the left.
+            var circle = HubScenery.ChalkRing(stage, "ChalkCircle", 0.2f);
+            HubKit.Place(circle.rectTransform, HubKit.Bottom, new Vector2(0, 40), new Vector2(560, 92));
             var floor = HubKit.Shape(stage, "Floor", new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, 0.55f), false, 701, 0, 23);
             HubKit.Place(floor.rectTransform, HubKit.Bottom, new Vector2(0, 62), new Vector2(420, 46));
             var model = HubKit.Stretch(HubKit.Rect(stage, "Model"));
@@ -302,6 +309,12 @@ namespace TumbangPreso.UI.Hub
         public override void Tick()
         {
             DrawSeats();
+            // ⚠️ RE-STACK WHEN THE NAME OUTGROWS ITS BOX. The stack is measured once when an ability
+            // is inspected, so turning Larger text on while this screen is open wrapped a one-line
+            // name onto two lines inside a one-line box: `MatchArrivalFlowTests` measured 111 units
+            // of name in 52 (red since 2026-09-23 23:53, before this date's scenery pass).
+            if (_abilityName != null && _abilityName.preferredHeight > _abilityName.rectTransform.rect.height + 2)
+                StackAbilityText();
             if (!Timed) return;
 
             float left = Mathf.Max(0, _endsAt - Time.unscaledTime);

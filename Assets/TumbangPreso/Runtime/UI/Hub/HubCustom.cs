@@ -37,9 +37,14 @@ namespace TumbangPreso.UI.Hub
             HubChrome.Title(Root, "HOST GAME");
 
             var panel = HubKit.Place(HubKit.Rect(Root, "Form"), HubKit.Left, new Vector2(HubKit.Margin, -30), new Vector2(820, 760));
-            var plate = HubKit.Shape(panel, "Plate", HubStyle.Night, false, 901, 6, 30);
+            // ⚠️ THE ORGANISER'S CLIPBOARD (`HubScenery`, 2026-09-24): whoever calls the game holds
+            // the list, so the form is a hardboard clipboard with its clip, held up over the court.
+            var plate = HubKit.Shape(panel, "Plate", HubStyle.Lit(HubScenery.Plank, 0.35f), false, 901, 6, 22);
             HubKit.Stretch(plate.rectTransform);
-            plate.color = new Color(1, 1, 1, 0.94f);
+            plate.ShadowOffset = new Vector2(10, -12);
+            plate.ShadowColor = new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, 0.6f);
+            HubScenery.Clip(panel);
+            panel.localRotation = Quaternion.Euler(0, 0, 0.8f);
 
             string me = GameServices.Account?.DisplayName;
             if (string.IsNullOrWhiteSpace(me)) me = Settings.SettingsStore.Current.PlayerName;
@@ -133,6 +138,7 @@ namespace TumbangPreso.UI.Hub
         private HubButton[] _sources;
         private RectTransform _list, _code;
         private Text _header, _status, _empty;
+        private RectTransform _emptyCan;
         private InputField _codeField;
         private bool _busy;
         private float _nextDraw;
@@ -140,9 +146,11 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.Maroon, 61);
+            // ⚠️ A HOLLOW-BLOCK WALL (`HubScenery`): the barangay wall where a game gets called, with
+            // the two panels taped to it like notices, rather than the maroon every screen shared.
+            HubScenery.BlockGround(Root, 61);
             HubChrome.Back(Root, Hub);
-            HubChrome.Title(Root, "JOIN GAME");
+            HubScenery.SprayTitle(HubChrome.Title(Root, "JOIN GAME"));
 
             var left = HubKit.Place(HubKit.Rect(Root, "Sources"), HubKit.TopLeft, new Vector2(HubKit.Margin, -(HubKit.Margin + 150)), new Vector2(440, 520));
             var sourcePlate = HubKit.Shape(left, "Plate", HubStyle.Night, false, 911, 5, 26);
@@ -179,6 +187,15 @@ namespace TumbangPreso.UI.Hub
             // for names and verbs.
             _empty = HubKit.Text(_list, "EmptyState", "", HubStyle.Label, false, HubStyle.HoneySoft, TextAnchor.MiddleCenter);
             HubKit.Stretch(_empty.rectTransform, 40);
+            // ⚠️ AN EMPTY LIST IS A LATA STANDING ALONE IN ITS CIRCLE (2026-09-24): the game's own
+            // picture of "nobody is playing yet", chalked above the sentence, gone once rooms appear.
+            _emptyCan = HubKit.Rect(_empty.transform, "EmptyCan");
+            HubKit.Place(_emptyCan, HubKit.Centre, new Vector2(0, 120), new Vector2(150, 150));
+            var ring = HubScenery.ChalkRing(_emptyCan, "Circle", 0.2f);
+            HubKit.Place(ring.rectTransform, HubKit.Bottom, new Vector2(0, -6), new Vector2(210, 60));
+            ring.color = new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, 0.35f);
+            var can = HubKit.Glyph(_emptyCan, "Can", HubGlyph.Mark.Can, new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, 0.45f), 0.07f);
+            HubKit.Stretch(can.rectTransform, 12);
 
             _code = HubKit.Span(HubKit.Rect(right, "CodeEntry"), Vector2.zero, Vector2.one, new Vector2(30, 30), new Vector2(30, 110));
             HubField.Label(_code, "ENTER CODE", new Vector2(10, -40));
@@ -194,6 +211,9 @@ namespace TumbangPreso.UI.Hub
 
             _status = HubKit.Text(Root, "Status", "", HubStyle.Body, false, HubStyle.Honey, TextAnchor.MiddleLeft);
             HubKit.Place(_status.rectTransform, HubKit.BottomLeft, new Vector2(HubKit.Margin + 480, HubKit.Margin + 20), new Vector2(1300, 50));
+            HubScenery.Tape(left, "Tape", new Vector2(0.5f, 1), new Vector2(0, -2), -5, 140);
+            HubScenery.Tape(right, "TapeLeft", new Vector2(0, 1), new Vector2(60, -4), 12, 140);
+            HubScenery.Tape(right, "TapeRight", new Vector2(1, 1), new Vector2(-60, -4), -9, 140);
 
             Hub.Host.Browse();
             Source(0);
@@ -244,6 +264,7 @@ namespace TumbangPreso.UI.Hub
                 ? (_source == 1 ? "No rooms on your network yet. Host one, or join with a code."
                                 : "No public rooms yet. Host one, or join with a code.")
                 : "";
+            _emptyCan.gameObject.SetActive(rooms.Count == 0);
 
             for (int i = 0; i < Mathf.Min(rooms.Count, 5); i++)
             {
@@ -302,6 +323,11 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
+            // ⚠️ THE ROOM IS A GATHERING, SO IT GETS THE FIESTA'S BUNTING (`HubScenery`), strung
+            // across the court behind the players' panel and stirring on the same breeze as the
+            // title street. It is built first so every sticker draws over it, and hung 200 units
+            // down so its strings clear the title, the map line and the address above the panel.
+            HubScenery.Bunting(Root, 7, 200, 0.1f);
             HubChrome.Back(Root, Hub);
             _title = HubChrome.Title(Root, "LOBBY");
 
