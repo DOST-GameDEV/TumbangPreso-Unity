@@ -744,6 +744,18 @@ Implementation order within UX-1:
   MatchArrivalFlowTests 4/4 (its larger-text ability-name clip, red since 2026-09-23 23:53, is
   fixed by re-stacking in `HubCharacterSelect.Tick`), title and home suites 8/8.
 
+- [x] **UX-1.19 The match-end board speaks the game's button language (owner 2026-09-24).**
+  "keep trying to improve, include ingame ui in improvements". The in-match HUD, the NEXT
+  ROUND ribbon and the pause card were inspected and kept (VISUAL-1's minimal rules hold).
+  The finish sheet was the outlier: REMATCH a flat gold box, NEXT MAP and MAIN MENU flat dark
+  plates, tabs as bare words. All six are now the hub's pressable sticker (`HubShape`):
+  REMATCH the chartreuse primary, the rest honey, the open tab persimmon, all in the display
+  face; the XP track is a chunky inked bar; fiesta bunting drops in over the winner's banner
+  (`HubScenery.Bunting`, still under reduced motion). Routes, names and focus paths unchanged.
+  `TumpNativeResultTests`, `MatchFinishPresentationTests`, `PhaseSurfaceLayoutProbe`: 9 of 10,
+  the one red being the known `RematchActuallyLoadsTheChosenArena` gameplay-lane defect.
+  Open: YOUR MATCH is still one line of text in a large card, and PLAYERS a sparse list.
+
 ### UI-REVIEW · Research-first UI and HUD refinement ⚠️ IN PROGRESS, 2026-09-23
 
 Owner brief: research first, then refine the whole game's UI and HUD, with Settings as a

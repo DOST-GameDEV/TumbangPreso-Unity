@@ -80,8 +80,12 @@ namespace TumbangPreso.UI
             for(int i=0;i<3;i++)
             {
                 if(_nativePages[i]!=null)_nativePages[i].SetActive(i==page);
-                _nativeTabs[i].GetComponentInChildren<Text>().color=i==page?CourtPresentationPalette.Gold:CourtPresentationPalette.Paper;
-                _nativeTabs[i].transform.Find("SelectedPage").gameObject.SetActive(i==page);
+                // The open page's tab is the persimmon marker sticker, the rest honey: the hub's
+                // own tab language (LOADOUT's OWNED and UNOWNED), in place of a gold underline.
+                var sticker=_nativeTabs[i].transform.Find("ActionPlate")?.GetComponent<TumbangPreso.UI.Hub.HubShape>();
+                if(sticker!=null){sticker.Fill=i==page?TumbangPreso.UI.Hub.HubStyle.Persimmon:TumbangPreso.UI.Hub.HubStyle.Honey;sticker.SetVerticesDirty();}
+                _nativeTabs[i].GetComponentInChildren<Text>().color=TumbangPreso.UI.Hub.HubStyle.Ink;
+                _nativeTabs[i].transform.Find("SelectedPage").gameObject.SetActive(false);
             }
             if(page==2)NativeRecentPlayers();_canvas.GetComponent<ScreenFocus>().Rebuild();
         }

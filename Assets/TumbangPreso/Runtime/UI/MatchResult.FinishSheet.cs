@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TumbangPreso.InputLayer;
+using TumbangPreso.UI.Hub;
 
 namespace TumbangPreso.UI
 {
@@ -21,9 +22,18 @@ namespace TumbangPreso.UI
     /// blocker the cream sheet was (`CLAUDE.md` § 6.2c: name the replacement blocker). The
     /// winner's figure stands on the right, where it always did.
     ///
-    /// ⚠️ ONE OBVIOUS NEXT ACTION. REMATCH is a gold plate; NEXT MAP and MAIN MENU are quiet dark
-    /// plates. Every route, name, tab and focus path is unchanged, so the pad, the thumb and
-    /// `TumpNativeResultTests` reach exactly what they reached before.
+    /// ⚠️ ONE OBVIOUS NEXT ACTION, IN THE GAME'S OWN BUTTON (2026-09-24). REMATCH is the chartreuse
+    /// primary and NEXT MAP and MAIN MENU are honey, all three the hub's pressable sticker
+    /// (`HubShape`: die-cut rim, varnish, lip, hard shadow), and the three tabs are stickers too.
+    /// They were a flat gold box and two flat dark plates, so the last screen of a match spoke a
+    /// different button language from every menu the player walks back into; the owner:
+    /// "each screen shoudl feel like their own screen" and "include ingame ui". Every route,
+    /// name, tab and focus path is unchanged, so the pad, the thumb and `TumpNativeResultTests`
+    /// reach exactly what they reached before.
+    ///
+    /// ⚠️ AND THE FIESTA ARRIVES. Bunting drops in over the winner's banner a beat after it, the
+    /// same strings HubScenery hangs over the lobby and MATCH FOUND and the maps hang across
+    /// their streets, stirring on the title street's breeze. Reduced motion hangs it still.
     /// </summary>
     public sealed partial class MatchResult
     {
@@ -35,6 +45,7 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Fill(backdrop.rectTransform); backdrop.color = new Color(HudDraw.Plate.r, HudDraw.Plate.g, HudDraw.Plate.b, .62f);
             backdrop.raycastTarget = true; // the click blocker the cream sheet used to be
             var root = OwnerUiLayout.DesignArea(_canvas.transform, "ResultsComposition");
+            HubScenery.Bunting(root, 11, -6, 0.35f);
 
             var bannerShadow = OwnerUiLayout.Rect(root, "HeadlineShadow").gameObject.AddComponent<CourtPopupGraphic>();
             bannerShadow.Brush = true; bannerShadow.color = CourtPresentationPalette.Ink; bannerShadow.raycastTarget = false;
@@ -53,10 +64,11 @@ namespace TumbangPreso.UI
             for (int i = 0; i < 3; i++)
             {
                 int page = i;
-                var tab = OwnerTextAction.Create(root, "ResultTab" + i, labels[i], () => NativePage(page), 530 + i * 290, 232, 280, 64, 30);
+                var tab = OwnerTextAction.Create(root, "ResultTab" + i, labels[i], () => NativePage(page), 530 + i * 290, 232, 268, 64, 30);
                 var line = OwnerUiLayout.Rect(tab.transform, "SelectedPage").gameObject.AddComponent<Image>();
                 OwnerUiLayout.Place(line.rectTransform, 50, 58, 180, 5); line.color = CourtPresentationPalette.Gold; line.raycastTarget = false;
-                Keel(tab.GetComponentInChildren<Text>());
+                Sticker((RectTransform)tab.transform, HubStyle.Honey, 930 + i);
+                tab.GetComponentInChildren<Text>().font = OwnerUiTheme.Current.Display;
                 _nativeTabs[i] = tab;
             }
             BuildFinishStandings(root);
@@ -74,7 +86,9 @@ namespace TumbangPreso.UI
             _xpHeadline.color = HudDraw.CardInk; _xpHeadline.gameObject.AddComponent<LayoutElement>().preferredHeight = 93;
             var track = OwnerUiLayout.Rect(content, "XpTrack").gameObject.AddComponent<Image>();
             track.color = new Color32(171, 137, 92, 255); track.raycastTarget = false;
-            track.gameObject.AddComponent<LayoutElement>().preferredHeight = 12; _xpBarTrack = track.rectTransform;
+            // A chunky inked track, the hub's, rather than a 12-unit hairline under a big number.
+            track.gameObject.AddComponent<LayoutElement>().preferredHeight = 26; _xpBarTrack = track.rectTransform;
+            var trackEdge = track.gameObject.AddComponent<Outline>(); trackEdge.effectColor = HudDraw.CardInk; trackEdge.effectDistance = new Vector2(3, -3);
             _xpBarFill = OwnerUiLayout.Rect(track.transform, "XpFill").gameObject.AddComponent<Image>();
             _xpBarFill.color = CourtPresentationPalette.Gold; _xpBarFill.raycastTarget = false; OwnerUiLayout.Fill(_xpBarFill.rectTransform);
             _nativeRank = OwnerUiLayout.Rect(content, "RankBadge").gameObject.AddComponent<TumpRankBadge>(); _nativeRank.raycastTarget = false;
@@ -88,26 +102,37 @@ namespace TumbangPreso.UI
 
             // The one obvious next action, then the two quiet ones.
             _rematch = OwnerTextAction.Create(root, "ResultRematch", "REMATCH", OnRematchPressed, 100, 912, 480, 96, 46);
-            Plate((RectTransform)_rematch.transform, CourtPresentationPalette.Gold, HudDraw.CardInk);
+            Sticker((RectTransform)_rematch.transform, HubStyle.Chartreuse, 940);
             _rematch.GetComponentInChildren<Text>().font = OwnerUiTheme.Current.Display;
             _rematchTally = OwnerUiLayout.Text(root, "RematchTally", "", 28);
             OwnerUiLayout.Place(_rematchTally.rectTransform, 100, 1014, 480, 52); _rematchTally.alignment = TextAnchor.MiddleCenter; Keel(_rematchTally);
             _mapVote = OwnerTextAction.Create(root, "ResultNextMap", "NEXT MAP", OnMapVotePressed, 660, 920, 740, 80, 31);
-            Plate((RectTransform)_mapVote.transform, HudDraw.Plate, CourtPresentationPalette.Paper);
+            Sticker((RectTransform)_mapVote.transform, HubStyle.Honey, 941);
+            _mapVote.GetComponentInChildren<Text>().font = OwnerUiTheme.Current.Display;
             _mapVoteTally = OwnerUiLayout.Text(root, "MapVoteTally", "", 28);
             OwnerUiLayout.Place(_mapVoteTally.rectTransform, 660, 1010, 740, 56); _mapVoteTally.alignment = TextAnchor.MiddleCenter; Keel(_mapVoteTally);
             _menu = OwnerTextAction.Create(root, "ResultMainMenu", "MAIN MENU", OnMenuPressed, 1470, 920, 350, 80, 31);
-            Plate((RectTransform)_menu.transform, HudDraw.Plate, CourtPresentationPalette.Paper);
+            Sticker((RectTransform)_menu.transform, HubStyle.Honey, 942);
+            _menu.GetComponentInChildren<Text>().font = OwnerUiTheme.Current.Display;
             NativePage(0); NativeProgression(null, null); ScreenTakeover.Register(this, () => NativeVisible);
         }
 
-        /// <summary>A card behind a text action, painted as the first child so the label reads over it.</summary>
-        private static void Plate(RectTransform action, Color fill, Color ink)
+        /// <summary>
+        /// The hub's pressable sticker behind a text action, painted as the first child so the label
+        /// reads over it. Named ActionPlate still, because that is what it replaced.
+        /// </summary>
+        private static HubShape Sticker(RectTransform action, Color fill, int seed)
         {
-            var card = OwnerUiLayout.Rect(action, "ActionPlate").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Fill(card.rectTransform); card.color = fill; card.Radius = 20; card.raycastTarget = false;
-            card.transform.SetAsFirstSibling();
-            var label = action.GetComponentInChildren<Text>(); if (label != null) label.color = ink;
+            var sticker = HubKit.Shape(action, "ActionPlate", fill, true, seed, 5, 16);
+            HubKit.Stretch(sticker.rectTransform);
+            sticker.transform.SetAsFirstSibling();
+            var label = action.GetComponentInChildren<Text>();
+            if (label != null)
+            {
+                label.color = HubStyle.TextOn(fill);
+                foreach (var edge in label.GetComponents<Outline>()) Destroy(edge);
+            }
+            return sticker;
         }
 
         /// <summary>Paper type over the dimmed court gets the in-game black outline.</summary>
