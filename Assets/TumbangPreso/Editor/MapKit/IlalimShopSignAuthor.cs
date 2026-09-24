@@ -25,12 +25,13 @@ namespace TumbangPreso.EditorTools.MapKit
             // Add other named signs only after their own reference and art review.
             Fit(map.transform,"Print",Folder+"/Print-v3.png",report);
             Fit(map.transform,"Bakery",Folder+"/Bakery-v2.png",report);
+            Fit(map.transform,"Laundry",Folder+"/Laundry-v1.png",report);
             if(solids.Count!=map.GetComponentsInChildren<Collider>(true).Length||solids.Any(p=>p.Key==null||p.Key.bounds!=p.Value))throw new InvalidOperationException("Sign art changed gameplay collision.");
         }
         private static void Fit(Transform map,string id,string texturePath,StringBuilder report)
         {
             var room=map.Find("Dressing/PlaceRework/Frontage_"+id);if(room==null)throw new InvalidOperationException("Missing shop frontage "+id);
-            var face=room.Find("Sign face "+id);var board=room.Find("Shop sign backing "+id);
+            var face=room.Find("Sign face "+id);var board=room.Find("Shop sign backing "+id)??room.Find("Banner backing "+id);
             if(face==null||board==null)throw new InvalidOperationException("Missing physical sign mounting "+id);
             AssetDatabase.ImportAsset(texturePath);var importer=(TextureImporter)AssetImporter.GetAtPath(texturePath);
             // NPOT rounding would turn 2172x724 into a different aspect before sampling.
@@ -40,6 +41,8 @@ namespace TumbangPreso.EditorTools.MapKit
             var size=face.localScale;float height=size.x/aspect;
             if(height>1.15f||height<.35f)throw new InvalidOperationException("Artwork needs an individually redesigned mounting: "+id);
             size.y=height;face.localScale=size;var support=board.localScale;support.y=height+.025f;board.localScale=support;
+            foreach(Transform fixing in room)if(fixing.name=="Banner fixing "+id)
+            {var fixingSize=fixing.localScale;fixingSize.y=height+.1f;fixing.localScale=fixingSize;}
             var renderer=face.GetComponent<MeshRenderer>();var original=renderer.sharedMaterial;
             string prior=original.GetTag("TumpShopSignSource",false);if(!string.IsNullOrEmpty(prior))original=AssetDatabase.LoadAssetAtPath<Material>(prior);
             var draft=new Material(Shader.Find("Standard")){name=id+" authored painted fascia",color=Color.white,mainTexture=texture};draft.SetFloat("_Glossiness",.04f);

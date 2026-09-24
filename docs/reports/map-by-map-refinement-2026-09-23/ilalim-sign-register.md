@@ -12,9 +12,11 @@ burst, forced distress, stock-font script or one design repeated on every busine
    current native candidate. Aspect3:1verified, native1/1passed, front/street viewed.
    Functional print-front rebuild now implemented/native1/1passed4.550s; front/street/
    grey inspected. See ilalim-print-shop/report.md. No owner-approval claim.
-2. LAUNDRY: LABADA, short wash/dry/fold service line only if reference supports it.
-   Look for local hanging laundry tariff/service fascia; light cloth/blue family,
-   avoid a clone of the print board. Reference/art/native work OPEN.
+2. LAUNDRY: LABADA / WASH - DRY - FOLD. Quicklean original operator graphic and
+   machine photo viewed, WeClean service semantics checked. Original blue/creamv1
+   fitted3:1to retained banner. Lower glazing reveals existing washer drums, layered
+   cloth/parcels refine functional identity. Native1/1passed4.545s; actual paired
+   front/street/grey inspected. See ilalim-laundry/report.md.
 3. REPAIR: COMPUTER REPAIR, laptop/desktop service cue. Research small repair shops,
    workshop panel or fascia, restrained technical illustration only if useful.
    Real parts/bench should establish identity. Reference/art/native work OPEN.

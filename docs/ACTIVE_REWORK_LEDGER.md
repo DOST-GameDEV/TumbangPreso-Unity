@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: recovery published, bakery ready to publish
+## Current resume, 2026-09-24: recovery published, bakery published, laundry ready to publish
 
 Overall goal ACTIVE and NOT complete. Owner says finish current work then all map
 refinements. New ultimate research is LATER. One implementation at a time, no
@@ -10,13 +10,13 @@ Every older task remains. Queue audit removed zero existing IDs/legacy rows.
 
 DEV ASTRAReworks recovery published and remote verified at59b8dc129bb5a45da07fd52b719048d95686881c.
 QUAL candidate compared21files bytewise, named stash preserved, advanced to that HEAD.
-Protected DEV composition metas untouched. Bakery unit finished: vintagev2sign3:1,
-stepped bread case and grouped loaves, same private collision. Native1/1passed5.754s;
-actual front/street/grey inspected and retained. Evidence/assets copied to DEV.
-Known QUAL churn backed and restored, no active Unity/browser/player/helper.
-Next publish bakery, preserve/advance QUAL, then LAUNDRY sign/frontage as next one
-unfinished unit. Sign register and all map parents remain open. Ultimate research
-stays later. One implementation at a time, no unrelated new work.
+Protected DEV composition metas untouched. Bakery48cffe3fdpublished and QUAL advanced.
+Laundry is now locally complete: generatedv1at3:1on its retained banner mounting,
+visible washer drums behind lower glazing, layered cloth/parcels. Native1/1passed
+4.545s, actual front/street/grey inspected and retained. Evidence/assets copied to
+DEV. Known generated churn backed/restored. No active Unity or owned browser tabs.
+Next publish laundry, preserve/advance QUAL, then computer REPAIR as the next
+individual unfinished shop. No new ultimate work. All other signs/map parents open.
 
 Latest edge implementation: real roof catch/hang/mash/pull onto its edge; Lagoon
 fall-to-swim, Jump near bridge and physical climb. Ordinary centre respawn removed,
@@ -34,8 +34,8 @@ witness/camera failures preserved. This does not claim fresh real-peer/native pr
 packet loss/rejoin/seat handover/physical devices/replay/full-match/native performance
 remain explicitly in2.10/P7. Do not conceal those limits or mark all maps/goal done.
 
-Next: publish bakery with explicit staging/fetch/remote verification, then finish
-remaining Ilalim signs individually. Recovery is published; do not rerun it.
+Next: publish laundry then finish computer repair using its own reference/art review.
+Bakery and recovery published; do not rerun their unchanged cases.
 
 ## Maps and signs remain unfinished
 
@@ -105,3 +105,25 @@ Guarded edgev4next: same2behavior cases with corrected lip camera/native prompt 
 Edgev4completed2/2in50.205s, corrected world/owner/reduced-camera images actually viewed. Camera/prompt/witness phase fixed. Final small pose adjustment widens measured grip by arm reach to expose hands beside chibi heads, owner angle30degrees. Source audit found lost final unreliable pose could strand remote owners: begin/end now reliable full snapshots with per-body serial ordering across delivery types; teleport retires edge state. New focused roster contact/reset/paused-request/stale-serial case added. v5runs3edge cases only, Logs/edge-recovery-v5, freeze.cs. No real peer/native build claim yet.
 
 Edgev5completed3/3in66.907s. Seven current Hero grips and both-map hang/pull/landing/owner/reduced-camera/grey actually inspected, keep current pose/camera. Source audit corrected only a real side effect: edge early return skipped stamina idle/fatigue clocks. Same all-roster/contact/reset case now asserts clock continuation; run that ONEcase asv6, not both already-passed fall/stock cases. After pass, publish evidence with explicit real-peer/native gate limits. No more taste variants planned.
+
+Laundry candidate: generatedv1art inspected, selected for3:1native mounting. Retain
+three existing washer models/drums; reveal them through lower glazing, replace
+folded cubes with small layered fabric and stock rear shelves. Original collider
+boundary preserved. Next author and one native case: front/street aspect/readability
+and no new collision. Stop on pass plus actual critique. Tooling retries0/1.
+No .cs edits during run. Bakery/recovery unchanged and not rerun.
+
+Laundry author first run found a real integration mismatch: existing Laundry uses
+Banner backing/fixings, not the print/bakery rigid-board name. Fit now preserves
+that mounting and adapts its edge strips to actual artwork height. No replacement
+of original banner structure. Retrying author then native case; failed log/patch
+retained under ilalim-laundry-v1. No capture-framework change.
+
+Laundry corrected author completed:1440solid vertices plus retained-material glass
+panel,2renderers, unchanged colliders. Native IlalimLaundryReview running as83500,
+Logs/ilalim-laundry-v1. No .cs edits until it exits. Fresh XML and actual images
+are the stopping gate; no broader suite required for this local art unit.
+
+Laundry native session83500completed1/1in4.545s. Mounted texture/aspect, original
+machine visibility and grey/street silhouette inspected; retainv1, no further
+variants/reruns. Detailed report saved. Earlier in-flight notes above are history.
