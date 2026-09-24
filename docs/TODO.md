@@ -534,6 +534,14 @@ scattered across all maps. Execute inside each map's existing refinement row.
   replay and combined qualification remain open; Lagoon flight retained.
 - [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
   trace idle decisions and fix actual stalls; distinguish deliberate tactical waits.
+  Initial Eskinita samples cover four bots in both modes. A reaction-clock defect
+  was reproduced and corrected: intermittent planner calls now use elapsed game
+  time instead of accumulating single-frame deltas. Focused native3/3 passed,
+  including repeat-query/reset/pause and the two ordinary-speed samples.
+  [Research/plan](reports/map-by-map-refinement-2026-09-23/bot-refinement-plan.md),
+  [causal evidence and remaining coverage](reports/map-by-map-refinement-2026-09-23/bot-reaction-fix/report.md).
+  Other maps/roles/transitions/tier/roster coverage remains open. Existing tag-stun
+  waits are intentional, not removed to manufacture activity.
 Owner assignment update2026-09-24: the owner prepared a separate cloud assignment
 for ALL animation research/direction/implementation, including individual ability
 casts and ultimates. That animation lane can begin now while local map/environment

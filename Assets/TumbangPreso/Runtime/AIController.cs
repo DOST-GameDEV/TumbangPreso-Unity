@@ -156,7 +156,7 @@ namespace TumbangPreso
         private float _thinkLeft;
         private float _commitLeft;
 
-        /// <summary>key -> seconds a condition has been continuously true. A reaction is a
+        /// <summary>key -> game time when a condition was first observed. A reaction is a
         /// condition HELD for the tier's React time, not an instant trigger — which is what
         /// stops a bot answering something it could not have seen yet.</summary>
         private readonly Dictionary<string, float> _gates = new Dictionary<string, float>();
@@ -165,12 +165,16 @@ namespace TumbangPreso
         /// Has <paramref name="condition"/> been true long enough for this bot to react to it?
         /// Resets the moment it stops being true, so a flicker never accumulates.
         /// </summary>
-        private bool Reacted(string key, bool condition, float dt)
+        private bool Reacted(string key, bool condition)
         {
-            if (!condition) { _gates[key] = 0.0f; return false; }
-
-            float held = (_gates.TryGetValue(key, out float h) ? h : 0.0f) + dt;
-            _gates[key] = held;
+            if (!condition) { _gates.Remove(key); return false; }
+            // Planner queries are intermittent and sabotage can query repeatedly
+            // in one frame. Counting render deltas here made a 0.3s reaction take
+            // several seconds, or advance twice. Scaled timestamps handle both
+            // cadences and freeze with the game clock.
+            if (!_gates.TryGetValue(key, out float observedAt))
+                _gates[key] = observedAt = Time.time;
+            float held = Time.time - observedAt;
 
             // ⚠️ SCALED BY THE LAPSE. See § ATTENTION WANDERS: a reaction gate is the most
             // honest place for inattention to land, because it is literally how long this bot
@@ -432,6 +436,7 @@ namespace TumbangPreso
         /// </summary>
         private void OnRoundStarted(int roundNumber, int defenderSlot)
         {
+            _gates.Clear();
             _wantedEmote = null;
             _emoteHoldLeft = 0.0f;
             _boredFor = 0.0f;
@@ -712,6 +717,7 @@ namespace TumbangPreso
 
             if (!_motor.CanAct())
             {
+                _gates.Clear();
                 ReleaseAll(intent);
 
                 // ⚠⚠ A BOT MASHES TO GET UP, BECAUSE A BOT PRESSES THE SAME BUTTONS A HUMAN
@@ -975,18 +981,18 @@ namespace TumbangPreso
             var round = GameServices.Round;
             var lata = round?.Lata;
 
-            if (lata == null) return AiPlan.Idle;
-            if (!lata.IsUpright) return AiPlan.Reset;
+            if (lata == null) { _gates.Remove("incoming"); return AiPlan.Idle; }
+            if (!lata.IsUpright) { _gates.Remove("incoming"); return AiPlan.Reset; }
 
             // Stepping into a slipper already in the air. Gated on a held reaction, so a bot
             // cannot answer a throw on the frame it leaves the hand.
             if (Me.Intercept > 0.0f && HasInterceptPoint(lata))
             {
-                if (Reacted("incoming", true, dt)) return AiPlan.Intercept;
+                if (Reacted("incoming", true)) return AiPlan.Intercept;
             }
             else
             {
-                _gates["incoming"] = 0.0f;
+                _gates.Remove("incoming");
             }
 
             var quarry = TagTarget();
@@ -1279,7 +1285,7 @@ namespace TumbangPreso
         {
             if (Me.Dodge <= 0.0f || taya == null || !_motor.IsTaggable())
             {
-                _gates["lunge"] = 0.0f;
+                _gates.Remove("lunge");
                 return false;
             }
 
@@ -1293,7 +1299,7 @@ namespace TumbangPreso
             bool winding = verbs != null && verbs.ObservedLungeCharge >= 0.0f
                            && Flat(transform.position, taya.transform.position) < 4.5f;
 
-            return Reacted("lunge", winding, dt);
+            return Reacted("lunge", winding);
         }
 
         // -------------------------------------------------------------------
@@ -1432,11 +1438,18 @@ namespace TumbangPreso
         /// </summary>
         private void AbandonSabotage(bool cool)
         {
+            ClearSabotageReactions();
             if (cool && _sabotageVictim != null)
                 _sabotageCooldown[_sabotageVictim.PlayerSlot] = SabotageRules.TargetCooldownSeconds;
 
             _sabotageVictim = null;
             _sabotagePursuitLeft = 0.0f;
+        }
+
+        private void ClearSabotageReactions(int exceptSlot = -1)
+        {
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+                if (slot != exceptSlot) _gates.Remove("sabotage" + slot);
         }
 
         /// <summary>
@@ -1450,7 +1463,7 @@ namespace TumbangPreso
         /// </summary>
         private CharacterMotor SabotageTarget(CharacterMotor taya)
         {
-            if (Me.Sabotage <= 0.0f) return null;
+            if (Me.Sabotage <= 0.0f) { ClearSabotageReactions(); return null; }
 
             var round = GameServices.Round;
             if (round == null) { AbandonSabotage(cool: false); return null; }
@@ -1504,6 +1517,7 @@ namespace TumbangPreso
                 best = who;
             }
 
+            ClearSabotageReactions(best != null ? best.PlayerSlot : -1);
             if (best == null) return null;
 
             LastSabotageProjection = bestPlan;
@@ -1516,7 +1530,7 @@ namespace TumbangPreso
             //
             // ⚠️ THE GATE IS KEYED ON THE SEAT, so noticing one victim does not pre-charge the
             // reaction to a different one who walks past a frame later.
-            if (!Reacted("sabotage" + best.PlayerSlot, true, Time.deltaTime)) return null;
+            if (!Reacted("sabotage" + best.PlayerSlot, true)) return null;
 
             if (best != _sabotageVictim)
             {

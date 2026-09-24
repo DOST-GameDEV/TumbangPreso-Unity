@@ -1,16 +1,31 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: finish bird placement, then bot inactivity
+## Current resume, 2026-09-24: bot inactivity diagnosis
 
-Overall goal ACTIVE, NOT done. DEV and QUAL baseline dc10b68f2 (AGENTS cleanup
-published and remote-verified). SaBubong bird placement complete locally: author
+Overall goal ACTIVE, NOT done. DEV and QUAL at remote-verified 57cf74a9c.
+AGENTS cleanup dc10b68f2 published. SaBubong bird placement complete locally: author
 v2 uses real raised canopy seams, focused native1/1 in71.825s, actual paired
 frames/sequences/grey inspected. Report: map-by-map-refinement-2026-09-23/
 sabubong-bird-visits/report.md. Failed author v1 retained, no fixture retry used.
 No Unity process running; known generated churn backed up/restored. Original
-DEV composition PNG metas untouched. Publish the explicit map files/report.
+DEV composition PNG metas untouched. Map files/report published.
 
-Then REFINE-2.8: inspect current decision/input/recovery paths and trace actual
+REFINE-2.8 plan/research saved in bot-refinement-plan.md. Existing native 1x
+Eskinita samples passed2/2 with four bots in both modes; no general AFK-resolution
+claim. Some spawn waits match the intentional five-second tag stun. The initial
+missing-edge-mash suspicion is weakened: edge recovery already sets a trip.
+Real reaction-clock defect reproduced: reaction-before.xml fails because a held
+opportunity outlasted the actual delay but two planner calls counted only two
+render deltas. Current uncommitted AIController fix uses scaled timestamps,
+resets false/stale opportunities and clears clocks across round/input blocks.
+AiReactionTimingTests covers elapsed time, repeated queries, false/reset and pause.
+Guarded job62633 reaped:3/3 passed in88.089s, timer case3.089s. Both new1x samples
+include interception and one accepted shove; no balance comparison claimed.
+Logs/refine-bot-reaction-after.xml and .log. Report bot-reaction-fix/report.md.
+Known churn backed up/restored, no Unity job running. Publish the narrow fix,
+then continue with Lagoon via the existing diagnostic, not another Eskinita rerun.
+Fixture repairs0/1; expected red reproduction is retained, not a tooling failure.
+Inspect current decision/input/recovery paths and trace actual
 bot inactivity, distinguishing planned waits from failed progress. Reuse existing
 probes; no new capture framework or broad reassurance suite. All21 ambient actors
 now have local map/species data coverage; ordinary-camera/replay/combined gates
