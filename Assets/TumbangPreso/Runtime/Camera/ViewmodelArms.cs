@@ -981,6 +981,9 @@ namespace TumbangPreso.CameraSystem
 
         public bool PlayAction(string clip)
         {
+            // While the can is being raised the hands hold the raise pose (`ViewmodelArms.RaiseCan`);
+            // the reset's repeated reach would dip them out of it every 0.4 s.
+            if (clip == "grab" && RaisingCan) return true;
             _clipFromRight = _rightArm != null ? _rightArm.localRotation : Quaternion.identity;
             _clipFromLeft = _leftArm != null ? _leftArm.localRotation : Quaternion.identity;
             _actionName = clip;
@@ -2666,6 +2669,9 @@ namespace TumbangPreso.CameraSystem
         public void StepVisuals(float dt, bool snap = false)
         {
             RestoreReleaseSweep();
+            RestoreThrowReach();
+            RestoreRaiseCan();
+            RestoreRunSway();
             RestoreSwimming();
             _phase += dt;
 
@@ -2703,6 +2709,8 @@ namespace TumbangPreso.CameraSystem
                                _rightRestScale, dt);
                 }
                 ApplySwimming(dt);
+                ApplyRunSway(dt);
+                ApplyRaiseCan(dt);
                 ApplyReleaseSweep();
                 return;
             }
@@ -2744,6 +2752,8 @@ namespace TumbangPreso.CameraSystem
                 StepToward(elbow, Quaternion.LookRotation(forward, dir), Vector3.one * CarryScale, dt);
             }
             ApplySwimming(dt);
+            ApplyRunSway(dt);
+            ApplyThrowReach();
             ApplyReleaseSweep();
         }
 

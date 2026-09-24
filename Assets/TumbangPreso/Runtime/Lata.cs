@@ -440,6 +440,7 @@ namespace TumbangPreso
 
         private void Update()
         {
+            RestoreRaisePresentation();
             StepStatePresentation();
 
             if (_isUpright || _toppleTimer <= 0.0f) return;
@@ -754,6 +755,94 @@ namespace TumbangPreso
         /// lying still must lie still rather than creep.
         /// </summary>
         private void LateUpdate()
+        {
+            RestoreRaisePresentation();
+            try { StepRoll(); }
+            finally { ApplyRaisePresentation(); }
+        }
+
+        // ⚠️⚠️ THE CAN RISES UNDER THE TAYA'S HANDS, IN THE DRAWING ONLY.
+        //
+        // 🧑 2026-09-24, *"refine ... the raising of can"*. It lay flat for the whole 1.5 s reset and popped up at
+        // the end, so nothing on screen said how far along the reset was
+        // (`docs/reports/gameplay-animation-2026-09-24/research-and-analysis.md` § 2.3). Now the MESH tilts from
+        // down toward upright with the raising taya's `CharacterAnimator.ResetRaiseProgress`, pivoting on its
+        // base, and stops just short of upright: only the host's restore stands it up.
+        //
+        // ⚠️ THE CAN'S OWN TRANSFORM IS NEVER TOUCHED BY THIS. That transform is the can's state, the host
+        // broadcasts it (`ApplySnapshotState` reads its rotation back as the topple angle), and a half-raised
+        // angle leaking into it would put a half-raised can on every screen as fact. Only the mesh child moves,
+        // and it is put back at the start of every frame.
+        private Transform _raiseMesh;
+        private bool _raiseMeshResolved, _raiseApplied;
+        private Vector3 _raiseMeshPos, _raiseMeshScale;
+        private Quaternion _raiseMeshRot;
+        /// <summary>The settle after the can is stood up: a squash and a little rebound, in the mesh only.</summary>
+        private float _clunkLeft;
+        private const float ClunkSeconds = .28f;
+        private bool _clunkSubscribed;
+
+        private void RestoreRaisePresentation()
+        {
+            if (!_raiseApplied) return;
+            _raiseMesh.localPosition = _raiseMeshPos; _raiseMesh.localRotation = _raiseMeshRot; _raiseMesh.localScale = _raiseMeshScale;
+            _raiseApplied = false;
+        }
+
+        private void ApplyRaisePresentation()
+        {
+            if (!_clunkSubscribed) { _clunkSubscribed = true; UprightChanged += up => { if (up) _clunkLeft = ClunkSeconds; }; }
+            if (_isUpright)
+            {
+                // ⚠️ SATISFYING, NOT JUST CORRECT (🧑 2026-09-24): the can lands with a CLUNK, squashing into the
+                // road and springing back, instead of appearing upright.
+                if (_clunkLeft <= 0.0f) return;
+                _clunkLeft = Mathf.Max(0.0f, _clunkLeft - Time.deltaTime);
+                if (!ResolveRaiseMesh()) return;
+                float u = 1.0f - _clunkLeft / ClunkSeconds;
+                float squash = Mathf.Sin(u * Mathf.PI * 2.0f) * Mathf.Exp(-4.0f * u) * 0.16f;
+                _raiseMeshPos = _raiseMesh.localPosition; _raiseMeshRot = _raiseMesh.localRotation; _raiseMeshScale = _raiseMesh.localScale;
+                _raiseApplied = true;
+                var sc = _raiseMeshScale;
+                _raiseMesh.localScale = new Vector3(sc.x * (1 + squash * 0.6f), sc.y * (1 - squash), sc.z * (1 + squash * 0.6f));
+                return;
+            }
+            if (_toppleTimer > 0.0f) return;
+            float progress = 0.0f;
+            var players = GameServices.Round?.Players;
+            if (players != null)
+                foreach (var who in players)
+                {
+                    var anim = who != null ? who.GetComponent<Visual.CharacterAnimator>() : null;
+                    if (anim != null) progress = Mathf.Max(progress, anim.ResetRaiseProgress);
+                }
+            if (progress <= 0.0f) return;
+            if (!ResolveRaiseMesh()) return;
+            // Down to 80 per cent of the way up with the channel; the last of it is the host's restore.
+            float shown = Mathf.Lerp(_toppleAngle, 0.0f, 0.8f * Mathf.SmoothStep(0.0f, 1.0f, progress));
+            _raiseMeshPos = _raiseMesh.localPosition; _raiseMeshRot = _raiseMesh.localRotation; _raiseMeshScale = _raiseMesh.localScale;
+            _raiseApplied = true;
+            // About the can's base (its origin), then lowered so it keeps resting on the road.
+            var pivot = transform.position;
+            var turn = transform.rotation * Quaternion.AngleAxis(shown - _toppleAngle, Vector3.right) * Quaternion.Inverse(transform.rotation);
+            _raiseMesh.position = pivot + turn * (_raiseMesh.position - pivot);
+            _raiseMesh.rotation = turn * _raiseMesh.rotation;
+            float drop = DownedLift * (Mathf.Abs(Mathf.Sin(shown * Mathf.Deg2Rad)) - Mathf.Abs(Mathf.Sin(_toppleAngle * Mathf.Deg2Rad)));
+            _raiseMesh.position += Vector3.up * drop;
+        }
+
+        private bool ResolveRaiseMesh()
+        {
+            if (!_raiseMeshResolved)
+            {
+                var filter = GetComponentInChildren<MeshFilter>();
+                _raiseMesh = filter != null && filter.transform != transform ? filter.transform : null;
+                _raiseMeshResolved = true;
+            }
+            return _raiseMesh != null;
+        }
+
+        private void StepRoll()
         {
             if (_isUpright) { _rollAngleDeg = 0.0f; _lastRollPosition = transform.position; return; }
 

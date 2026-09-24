@@ -207,6 +207,8 @@ GROUPS = [
         "ExchangeAudioTests",
         "ExchangeMotionTests",
         "ExchangePresenceTests",
+        "LocomotionArmsProbe",
+        "GameplayActionShots",
         "ExchangePresentationTests",
         "FamiliarReadoutTests",
         "MapPreviewTransitionTests",

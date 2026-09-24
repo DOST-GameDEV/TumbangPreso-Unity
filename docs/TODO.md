@@ -474,6 +474,27 @@ scattered across all maps. Execute inside each map's existing refinement row.
   - [ ] REFINE-2.9e ordinary throw anticipation/release/follow-through/recovery.
   - [ ] REFINE-2.9f left pektus and right pektus, distinct real release/flight intent.
   - [ ] REFINE-2.9g cancel/interruption/pickup and remaining verbs/hero performances.
+  - **Progress 2026-09-24** (owner: *"my biggest issue is where the hands are and what they do when u
+    run"*, *"refine ... the raising of can or throwing of slippers or pektus ... both FPP and TPP"*).
+    Research and per-action analysis: [gameplay-animation-2026-09-24](reports/gameplay-animation-2026-09-24/research-and-analysis.md).
+    - 2.9b/d, arms while moving: the shared rig's `walk`/`sprint` held the arms 10 degrees off vertical,
+      pressed to the torso, swinging +/-12 and +/-24; carrying froze the whole upper body in
+      `holding-right` (slipper held straight out, off hand fixed). `CharacterAnimator.LocomotionArms.cs`
+      now poses the free arms clear of the body and against the opposite leg (sprint -28 to +65, walk
+      -21 to +30), and carries the slipper low at the side with a small swing. `ViewmodelArms.RunSway.cs`
+      gives the first-person hands a footfall bob and the empty hand a pump. `LocomotionArmsProbe` 1/1,
+      pictures in `Logs/locomotion-arms/`. Found on the way: glTF import mirrors X and hero bodies carry
+      a hidden second rig, so limbs are resolved from the visible skin and their axes from the bind pose.
+      Sean seen side-on; 2.9c (every other body individually) is NOT yet inspected.
+    - 2.9e/f, throw and pektus: filmed before (`GameplayActionShots`), all three were the same few degrees
+      of shoulder. `CharacterAnimator.ThrowBody.cs`: chest turned away, arm back and out, free arm pointing
+      at the target; release across the body; pektus is sidearm, wrist-rolled, and finishes open (right)
+      or closed (left). `ViewmodelArms.ThrowReach.cs`: the slipper hand draws back and close, the off hand
+      rises into view, pektus drops and rolls, and the release finish follows the spin. Taya's front view
+      and first person inspected; head-volume clearance of the new overhand pose is NOT re-measured yet.
+    - Can raise: was the `pick-up` one-shot re-fired every 0.4 s beside a flat can. Now a bow to the can,
+      hands rising with `ChannelRatio` (estimated from the relayed reaches on other screens, no wire
+      change), the can's mesh tilting up under them (presentation only), and both first-person hands on it.
 - [ ] **REFINE-2.11 Individual ultimate performances, owner2026-09-24.**
   Thoroughly research/compare VFX and ultimate animations across several relevant
   Roblox and other games FIRST, then plan each hero separately, THEN implement.
@@ -891,6 +912,33 @@ well tgthr with the background", "improve all skill icons" then "do a drawing fo
 look like it belongs in hero cast". Research, critique and plan:
 `docs/reports/ui-hud-review-2026-09-23/` (`research.md`, `critique-and-plan.md`).
 This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
+
+- [x] **UX-1.20 DONE 2026-09-24 · Phaister's HOME loop remade as "Gulatin si Nemu" (owner 2026-09-24).**
+  "make sure it actually loooks like the map too ... like the pc express", "give her more action
+  sequences like zack, he actually moves somewhere", "make it actually reflect our game", "tell a
+  story about tump", "make her use her ult in the end ... big ass magic circle ... eyes are glowing
+  pink and she's floating", "make ur own animation", "the signs we have in the game are not final so
+  js imagine it on ur own, research PH store signs". The direction, research and beat sheet are
+  [phaister.md](reports/home-scene/phaister.md) §§ 1 to 3: a whole round of tumbang preso on the
+  real Ilalim ng Tulay layout (map.ts, read from `IlalimNgTulayBuilder`), a wrong-way throw through
+  the bridge hoop, the overclock pad, the blink under the train, and Grand Coven transcribed from
+  `CovenCircleBuild.BuildRings`; every pose hand-keyed, no game clips; street signs hand-lettered
+  (lettering.tsx), never a typeset font. Done when the master renders, passes `smooth.py` and the
+  seam check, ships through `npm run ship:phaister`, and `HubSceneVideoTests` passes.
+  **Done:** master 1620 frames; `smooth.py` flags only the intended impact and punchline cuts (a 19.57 s
+  camera jump through the blink was found and fixed); seam 0.78 against a 1.14 frame step; shipped at crf
+  23, 35.1 MB, SSIM 0.980; `HubSceneVideoTests` 6/6 in the real hub. After review the throw was remade so
+  every link is seen (`phaister.md` § 3, Act I); the owner approved the result.
+- [x] **UX-1.21 DONE 2026-09-24 · Kuro is cuter and more expressive, in the game and the loop (owner
+  2026-09-24).** "can u make kuro's expressions cuter both ingame and in the animation", "make it
+  more expressive hehe". Board (ArtSource/home-scene `PhaisterBoard` frame 2): his blush shared the
+  eyes' violet slot, so he read as four eyes; his rest mouth was a pupil-sized square; three of eleven
+  idle gestures had a face. `tools/cute_kuro.py` (idempotent, rage form and motion digested
+  unchanged) moves the blush to Nemu's peach slot 13 and shrinks it and the mouth, and authors seven
+  new parts under `KuroExpressions`: happy, sleepy, heart and sparkle eyes, a grin, an "o", a tongue.
+  `GhostPetCompanion.ExpressionFor` maps eight gestures to faces; `KuroIdleClipAuthor` rebakes the
+  trailer clips; `KuroFormTests` covers every face and that every named part exists.
+  **Done:** `KuroFormTests` 14/14 (`Logs/kuro-form3.xml`); the loop wears the same faces.
 
 - [x] Settings (both routes): warm grey palette, grouped sections, loud row focus (band,
   bar, accent label), keycap and pill chips, filled SAVE with UNSAVED marker, patronising

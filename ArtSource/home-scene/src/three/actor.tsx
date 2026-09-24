@@ -54,6 +54,13 @@ export const PALETTES: Record<string, number[][]> = {
     [0.078431, 0.062745, 0.109804], [0.956863, 0.752941, 0.596078], [0.54902, 0.078431, 0.141176], [0.721569, 0.470588, 0.078431],
     [1, 1, 1], [0.956863, 0.752941, 0.596078], [0.878431, 0.627451, 0.470588], [0.956863, 0.752941, 0.596078],
   ],
+  // person_team-nemu.tres. Hers, never repainted: the pale lilac and ghost-white are authored art.
+  'team-nemu': [
+    [0.137255, 0.109804, 0.203922], [0.094118, 0.070588, 0.141176], [0.666667, 0.360784, 0.941176], [0.815686, 0.603922, 0.972549],
+    [0.219608, 0.156863, 0.337255], [0.541176, 0.235294, 0.815686], [0.113725, 0.094118, 0.180392], [0.196078, 0.156863, 0.290196],
+    [0.070588, 0.054902, 0.109804], [0.956863, 0.980392, 1.0], [0.784314, 0.478431, 0.972549], [0.815686, 0.847059, 0.909804],
+    [0.956863, 0.980392, 1.0], [0.878431, 0.686275, 0.517647], [0.839216, 0.6, 0.454902], [0.878431, 0.686275, 0.517647],
+  ],
 };
 
 /**
@@ -67,6 +74,7 @@ const EYE_BAND: Record<string, [number, number]> = {
   'team-zack': [0.455, 0.497],
   'team-sean': [0.455, 0.497],
   'team-phaister': [0.455, 0.505],
+  'team-nemu': [0.455, 0.497],
 };
 
 export type Light = {
@@ -410,27 +418,24 @@ export type ActorProps = {
   res?: number;
   /** Draw only the tsinelas (the thrown one flies in its own image). */
   only?: 'slipper';
+  /**
+   * 0..1 how much of `clip` shows against the keyed `pose` (1, the default, is the clip alone with
+   * `clipPose` added on top). ⚠️ This is what lets a performance hand over between one of the game's
+   * own clips and a keyed pose without a pop (docs/HOME_SCREEN_ANIMATION_METHOD.md § 4.1): each bone
+   * is slerped between the two whole poses.
+   */
+  clipMix?: number;
+  /** Offsets laid over the clip, the way `pose` is laid over the T-pose. */
+  clipPose?: Pose;
 };
 
 const deg = Math.PI / 180;
 
-const poseRig = (b: Built, p: ActorProps) => {
-  for (const k of Object.keys(b.bones)) {
-    b.bones[k].quaternion.copy(b.rest[k]);
-    b.bones[k].position.copy(b.restPos[k]);
-  }
-  b.mixer.stopAllAction();
-  if (p.clip && b.clips[p.clip]) {
-    const a = b.mixer.clipAction(b.clips[p.clip]);
-    a.reset().play();
-    const d = b.clips[p.clip].duration;
-    b.mixer.setTime((((p.t ?? 0) % d) + d) % d);
-  }
+const keyBones = (b: Built, pose: Pose | undefined, drop: number) => {
   const q = new THREE.Quaternion();
   const e = new THREE.Euler();
-  const drop = p.armsDown !== false && !p.clip ? 78 : 0;
   for (const k of Object.keys(BONE) as (keyof Pose)[]) {
-    const v = p.pose?.[k] ?? [0, 0, 0];
+    const v = pose?.[k] ?? [0, 0, 0];
     const bone = b.bones[BONE[k]];
     if (!bone) continue;
     // ⚠️ ARMS: PITCH IN THE SHOULDER'S FRAME, THEN DROP. The T-posed arm lies along its own X
@@ -440,6 +445,49 @@ const poseRig = (b: Built, p: ActorProps) => {
     // outside it. So an arm's x swings it forward and back, y swings it across, z lifts it out.
     const z = k === 'armL' ? -drop + v[2] : k === 'armR' ? drop - v[2] : v[2];
     if (k === 'armL' || k === 'armR' || v[0] || v[1] || v[2]) bone.quaternion.multiply(q.setFromEuler(e.set(v[0] * deg, v[1] * deg, z * deg, 'YXZ')));
+  }
+};
+
+const restBones = (b: Built) => {
+  for (const k of Object.keys(b.bones)) {
+    b.bones[k].quaternion.copy(b.rest[k]);
+    b.bones[k].position.copy(b.restPos[k]);
+  }
+};
+
+const clipBones = (b: Built, p: ActorProps) => {
+  restBones(b);
+  b.mixer.stopAllAction();
+  const a = b.mixer.clipAction(b.clips[p.clip!]);
+  a.reset().play();
+  const d = b.clips[p.clip!].duration;
+  b.mixer.setTime((((p.t ?? 0) % d) + d) % d);
+  keyBones(b, p.clipPose, 0);
+};
+
+const poseRig = (b: Built, p: ActorProps) => {
+  const hasClip = !!(p.clip && b.clips[p.clip]);
+  const mix = hasClip ? Math.max(0, Math.min(1, p.clipMix ?? 1)) : 0;
+  if (hasClip && mix < 1) {
+    // The keyed pose first, kept; then the clip; then each bone slerped from one to the other.
+    restBones(b);
+    b.mixer.stopAllAction();
+    keyBones(b, p.pose, p.armsDown !== false ? 78 : 0);
+    const kq: Record<string, THREE.Quaternion> = {};
+    const kp: Record<string, THREE.Vector3> = {};
+    for (const k of Object.keys(b.bones)) { kq[k] = b.bones[k].quaternion.clone(); kp[k] = b.bones[k].position.clone(); }
+    clipBones(b, p);
+    for (const k of Object.keys(b.bones)) {
+      b.bones[k].quaternion.copy(kq[k].clone().slerp(b.bones[k].quaternion, mix));
+      b.bones[k].position.copy(kp[k].clone().lerp(b.bones[k].position, mix));
+    }
+  } else if (hasClip) {
+    clipBones(b, p);
+    keyBones(b, p.pose, 0);
+  } else {
+    restBones(b);
+    b.mixer.stopAllAction();
+    keyBones(b, p.pose, p.armsDown !== false ? 78 : 0);
   }
   if (p.lift) b.bones.root.position.add(new THREE.Vector3(...p.lift));
   b.scene.rotation.set(0, (p.yaw ?? 0) * deg, 0);
@@ -629,7 +677,7 @@ const cacheBuilt: Record<string, Built> = {};
 const pending: Record<string, Promise<Built>> = {};
 
 /** Load once; the rig is re-posed on every draw, so one instance per model serves every shot. */
-export const useActor = (model: 'team-zack' | 'team-sean' | 'team-phaister', withSlipper = false): Built | null => {
+export const useActor = (model: 'team-zack' | 'team-sean' | 'team-phaister' | 'team-nemu', withSlipper = false): Built | null => {
   const key = `${model}${withSlipper ? '+s' : ''}`;
   const [built, setBuilt] = useState<Built | null>(cacheBuilt[key] ?? null);
   const [handle] = useState(() => (cacheBuilt[key] ? null : delayRender(`model ${key}`, { timeoutInMilliseconds: 120000 })));
@@ -777,4 +825,149 @@ export const drawProp = (pr: Prop, p: PropProps): Drawn => {
     return [x0 + ((v.x + 1) / 2) * size, y0 + ((1 - v.y) / 2) * size];
   };
   return { url, x: x0, y: y0, size, at };
+};
+
+// ------------------------------------------------------------------------------------ Kuro
+
+/**
+ * ⚠️ KURO IS THE GAME'S OWN `pet-nemu-ghost.glb`, AND HIS FACE IS HIS OWN PARTS. Nemu's companion
+ * carries its expressions as geometry (`KuroExpressions`: cross eyes, a goofy mouth, a pout, a shy eye)
+ * and `GhostPetCompanion.PoseIdleFace` animates the SAME parts by scale: lids by squashing the eyes,
+ * a surprised or curious face by growing the mouth taller (`CuriousPeek`: eyes wider, mouth +0.4 tall).
+ * So his surprise here is the game's own recipe on his own meshes, never a drawn face
+ * (docs/HOME_SCREEN_ANIMATION_METHOD.md § 2.1; 🧑: *"dont redraw face bcz u usually suck with that"*).
+ * The rage form is hidden, as the companion hides it outside the ultimate.
+ */
+export type Kuro = { root: THREE.Group; model: THREE.Object3D; mats: Mats; parts: Record<string, THREE.Object3D>; rest: Record<string, { s: THREE.Vector3; q: THREE.Quaternion; p: THREE.Vector3 }>; height: number };
+
+let kuroCache: Kuro | null = null;
+let kuroPending: Promise<Kuro> | null = null;
+
+const loadKuro = () =>
+  (kuroPending ??= Promise.all([
+    loadGlb('pet-nemu-ghost'),
+    new Promise<THREE.Texture>((ok, fail) => new THREE.TextureLoader().load(staticFile('ref/Textures/colormap.png'), ok, undefined, fail)),
+  ]).then(([g, atlas]) => {
+    // ⚠️ HIS BODY IS PAINTED FROM HIS OWNER'S PALETTE. The restored calm form is UV-mapped onto the
+    // person atlas and the game paints it with Nemu's palette (`GhostPetCompanion.ApplyAppearance`,
+    // `ToonSkin.Apply(restored, ..., ownerPalette)`); the glb carries no texture of its own, so without
+    // this he renders as a blank cream box. The retired ghost rig and the rage form stay hidden, as in
+    // a match outside his ultimate.
+    atlas.flipY = false;
+    atlas.magFilter = THREE.NearestFilter;
+    atlas.minFilter = THREE.NearestFilter;
+    const model = g.scene.clone(true);
+    const restored: THREE.Object3D | null = model.getObjectByName('RestoredCalm') ?? null;
+    const expr: THREE.Object3D | null = model.getObjectByName('KuroExpressions') ?? null;
+    const inside = (o: THREE.Object3D, root: THREE.Object3D | null) => {
+      for (let q: THREE.Object3D | null = o; q; q = q.parent) if (q === root) return true;
+      return false;
+    };
+    model.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (!m.isMesh) return;
+      if (!inside(m, restored) && !inside(m, expr)) { m.visible = false; return; }
+      if (inside(m, restored)) (m.material as THREE.MeshStandardMaterial).map = atlas;
+    });
+    const mats: Mats = { toon: [], hull: [] };
+    if (restored) toonify(restored, PALETTES['team-nemu'], mats, 0.0025);
+    if (expr) toonify(expr, null, mats, 0.0);
+    const parts: Record<string, THREE.Object3D> = {};
+    const rest: Kuro['rest'] = {};
+    const collect = (root: THREE.Object3D | null) => root?.traverse((o) => {
+      parts[o.name] = parts[o.name] ?? o;
+      rest[o.name] = rest[o.name] ?? { s: o.scale.clone(), q: o.quaternion.clone(), p: o.position.clone() };
+    });
+    collect(restored);
+    collect(expr);
+    model.traverse((o) => { if (o.name === 'CalmForm' || o.name === 'KuroExpressions') { parts[o.name] = o; rest[o.name] = { s: o.scale.clone(), q: o.quaternion.clone(), p: o.position.clone() }; } });
+    const bb = new THREE.Box3();
+    if (restored) (restored as THREE.Object3D).traverse((o: THREE.Object3D) => { if ((o as THREE.Mesh).isMesh) bb.expandByObject(o); });
+    const root = new THREE.Group();
+    root.add(model);
+    model.position.y = -bb.min.y;
+    kuroCache = { root, model, mats, parts, rest, height: bb.max.y - bb.min.y };
+    return kuroCache;
+  }));
+
+export const useKuro = (): Kuro | null => {
+  const [k, setK] = useState<Kuro | null>(kuroCache);
+  const [handle] = useState(() => (kuroCache ? null : delayRender('kuro', { timeoutInMilliseconds: 120000 })));
+  useEffect(() => {
+    loadKuro().then((kk) => {
+      setK(kk);
+      if (handle !== null) continueRender(handle);
+    });
+  }, [handle]);
+  return k;
+};
+
+export type KuroFace = { eyes?: number; mouthTall?: number; mouthWide?: number; arms?: number; puff?: number; show?: string[]; hide?: string[] };
+
+/** Draw Kuro `h` model-heights tall at (x, y) (his feet, which he does not have: his base). */
+export const drawKuro = (kk: Kuro, p: PropProps & { face?: KuroFace; tilt?: [number, number, number] }): Drawn => {
+  for (const [name, r] of Object.entries(kk.rest)) {
+    const o = kk.parts[name];
+    if (!o) continue;
+    o.scale.copy(r.s);
+    o.quaternion.copy(r.q);
+    o.position.copy(r.p);
+  }
+  const fc = p.face ?? {};
+  // An authored expression, the way `GhostPetCompanion.PoseIdleExpression` shows one: the group opens,
+  // only the named parts keep their scale, and the parts they replace collapse.
+  if (kk.parts.KuroExpressions) {
+    const on = (fc.show?.length ?? 0) > 0;
+    kk.parts.KuroExpressions.scale.set(on ? 1 : 0, on ? 1 : 0, on ? 1 : 0);
+    for (const c of kk.parts.KuroExpressions.children) c.scale.setScalar(fc.show?.includes(c.name) ? 1 : 0);
+  }
+  for (const h of fc.hide ?? []) kk.parts[h]?.scale.set(0, 0, 0);
+  for (const e of ['ghost-eye-l', 'ghost-eye-r']) kk.parts[e]?.scale.multiply(new THREE.Vector3(1 + 0.15 * (fc.eyes ?? 0), 1 + 0.45 * (fc.eyes ?? 0), 1));
+  kk.parts['ghost-mouth-dot']?.scale.multiply(new THREE.Vector3(fc.mouthWide ?? 1, fc.mouthTall ?? 1, 1));
+  // His restored calm form has no arm wisps; his tail tiers swing instead, the lower the more.
+  const arms = fc.arms ?? 0;
+  ['ghost-tail-tier1', 'ghost-tail-tier2', 'ghost-tail-tier3', 'ghost-tail-tip-wisp'].forEach((t, i) => { const o = kk.parts[t]; if (o) o.position.x += (arms / 50) * 0.006 * (i + 1); });
+  const puff = fc.puff ?? 0;
+  // A puff is a uniform swell with a little lift: stretched on one axis he read as a different shape.
+  kk.model.scale.setScalar(1 + 0.16 * puff);
+  const t = p.tilt ?? [0, 0, 0];
+  kk.model.rotation.set(t[0] * deg, t[1] * deg, t[2] * deg);
+  const L = p.light ?? DUSK;
+  const ld = new THREE.Vector3(...L.dir).normalize();
+  for (const m of kk.mats.toon) {
+    m.uniforms.lightDir.value.copy(ld);
+    (m.uniforms.lit.value as THREE.Color).set(L.lit);
+    (m.uniforms.shade.value as THREE.Color).set(L.shade);
+    (m.uniforms.rim.value as THREE.Color).set(L.rim);
+    m.uniforms.rimStrength.value = L.rim_strength;
+    m.uniforms.flash.value = L.flash ?? 0;
+    (m.uniforms.flashColour.value as THREE.Color).set(L.flashColour ?? '#ffffff');
+    m.uniforms.eyeMix.value = 0;
+  }
+  for (const h of kk.mats.hull) h.m.uniforms.width.value = h.w ?? 0.004;
+  kk.root.rotation.set(0, (p.yaw ?? 0) * deg, 0);
+  kk.root.updateMatrixWorld(true);
+  const fov = p.fov ?? 16;
+  const reach = p.reach ?? kk.height * 0.9;
+  const size = Math.round(2 * reach * p.ppu);
+  const px = Math.min(2048, Math.max(8, Math.round(size * (p.res ?? 1.5))));
+  const dist = reach / Math.tan((fov / 2) * deg);
+  const pitch = (p.pitch ?? 4) * deg;
+  const tgt = new THREE.Vector3(0, p.focus ?? kk.height * 0.5, 0);
+  const cam = new THREE.PerspectiveCamera(fov, 1, 0.001, 100);
+  cam.position.set(tgt.x, tgt.y + Math.sin(pitch) * dist, tgt.z + Math.cos(pitch) * dist);
+  cam.lookAt(tgt);
+  cam.updateMatrixWorld(true);
+  const scene = new THREE.Scene();
+  scene.add(kk.root);
+  const rr = getRenderer();
+  rr.setPixelRatio(1);
+  rr.setSize(px, px, false);
+  rr.clear();
+  rr.render(scene, cam);
+  const url = rr.domElement.toDataURL('image/png');
+  scene.remove(kk.root);
+  const x0 = p.x - size / 2;
+  const y0 = p.y - size / 2;
+  return { url, x: x0, y: y0, size, at: () => [p.x, p.y] };
 };

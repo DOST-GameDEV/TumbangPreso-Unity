@@ -56,6 +56,8 @@ screen, menu background, season or hero-showcase animation, read
 behind the Zack HOME loop: research first, the real models never drawn, faces never altered,
 re-timing so every moment breathes, and the review loop. Reuse the method; do not copy the Zack
 loop's shots, timetable or gags.
+**Its § 0 is standing (owner, 2026-09-24): every beat breathes, the characters act out their
+personality, and the piece tells a story about TUMP.**
 
 Historical repository rules and incident receipts. Current rules are in AGENTS.md.
 

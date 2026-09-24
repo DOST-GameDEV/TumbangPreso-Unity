@@ -39,13 +39,13 @@ namespace TumbangPreso.CameraSystem
             if(!ReferenceEquals(_clip,ThrowClip) || _rightPivot==null)return;
             float weight=Mathf.Clamp01(WorldCueProfile.Current.ViewmodelFraming);
             if(Settings.SettingsStore.Current.ReducedUiMotion)weight=0;
-            Vector3 contact=new Vector3(-.20f,.14f,.02f),follow=new Vector3(-.52f,.07f,.06f);
+            Vector3 contact=new Vector3(-.20f,.14f,.02f),follow=ReleaseFollow(ThrowGesture.Spin(_actionName));
             float time=_clipTime;
             if(time<ThrowGesture.ContactSeconds)_releaseSweep=Vector3.Lerp(Vector3.zero,contact,time/ThrowGesture.ContactSeconds);
-            else if(time<ThrowGesture.FollowSeconds)_releaseSweep=Vector3.Lerp(contact,follow,Mathf.SmoothStep(0,1,Mathf.InverseLerp(ThrowGesture.ContactSeconds,ThrowGesture.FollowSeconds,time)));
+            else if(time<ThrowGesture.FollowSeconds)_releaseSweep=Vector3.LerpUnclamped(contact,follow,SweepWhip(Mathf.InverseLerp(ThrowGesture.ContactSeconds,ThrowGesture.FollowSeconds,time)));
             else _releaseSweep=Vector3.Lerp(follow,Vector3.zero,ThrowGesture.Recovery(time));
             _releaseSweep*=weight;
-            _releaseLeftSweep=Vector3.left*(.06f*Mathf.Clamp01(_releaseSweep.magnitude/.5f));
+            _releaseLeftSweep=new Vector3(-.10f,-.10f,-.02f)*Mathf.Clamp01(_releaseSweep.magnitude/.5f);
             _rightPivot.localPosition+=_releaseSweep;
             if(_leftPivot!=null)_leftPivot.localPosition+=_releaseLeftSweep;
         }

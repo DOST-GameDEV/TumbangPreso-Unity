@@ -167,3 +167,12 @@ east houses and confinement prevents 2.5m separation; native image also shows
 camera behind fence. One bounded fixture repair: cat observer/camera face inward
 (-X), assert actual separation. No game behavior loosened. Retry allowance 1/1.
 Preserve failed XML/images; run same case v2, no broader tests.
+
+Concurrent remote integration: fetched 4255265c3 before cat push. It adds the
+owner-approved Phaister HOME loop/Kuro work plus body/FPP locomotion, throws,
+pektus and can-raise presentation. Merged without conflicts; TODO additions and
+all animal progress preserved. Do not redo these motion implementations from the
+old queue wording. Read gameplay-animation-2026-09-24/research-and-analysis.md
+before REFINE-2.9, then inspect remaining individual cast and integration gaps.
+Local cat evidence is from its pre-merge candidate; full combined qualification
+and edge-recovery/body overlay interaction remain REFINE-2.10/P7. No extra build.

@@ -1,76 +1,70 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
-import { ActorImage, ActorProps, drawActor, useActor } from '../three/actor';
+import { ActorImage, drawActor, drawKuro, useActor, useKuro } from '../three/actor';
 
 /**
- * Phaister's model test board (docs/HOME_SCREEN_ANIMATION_METHOD.md § 2.2: "always build a test
- * board first"). Not part of the loop. Frame N picks page N of the cells below.
+ * Her test board (docs/HOME_SCREEN_ANIMATION_METHOD.md § 2.2: always board the model first). Each frame
+ * of this composition is one sheet: frame 0 samples the game clips this loop uses, frame 1 Nemu's, frame
+ * 2 Kuro's faces. Look at it before choreographing to a clip.
  */
-type Cell = [string, Omit<ActorProps, 'x' | 'y' | 'ppu'>];
-
-const PAGES: Cell[][] = [
-  [
-    ['front rest', { yaw: 0 }],
-    ['yaw 25', { yaw: 25 }],
-    ['yaw 90', { yaw: 90 }],
-    ['back 180', { yaw: 180 }],
-    ['glow front', { yaw: 10, face: 'glow', eyeColour: '#F444D4' }],
-    ['idle clip .5', { yaw: 20, clip: 'idle', t: 0.5 }],
-    ['walk clip .3', { yaw: 60, clip: 'walk', t: 0.3 }],
-    ['pitch -14 low', { yaw: 15, pitch: -14 }],
-  ],
-  [
-    ['hex .15', { yaw: 20, clip: 'hero-phaister-hex', t: 0.15 }],
-    ['hex .3', { yaw: 20, clip: 'hero-phaister-hex', t: 0.3 }],
-    ['hex .45', { yaw: 20, clip: 'hero-phaister-hex', t: 0.45 }],
-    ['hex .55', { yaw: 20, clip: 'hero-phaister-hex', t: 0.55 }],
-    ['blink .1', { yaw: 20, clip: 'hero-phaister-blink', t: 0.1 }],
-    ['blink .25', { yaw: 20, clip: 'hero-phaister-blink', t: 0.25 }],
-    ['blink .35', { yaw: 20, clip: 'hero-phaister-blink', t: 0.35 }],
-    ['blink .42', { yaw: 20, clip: 'hero-phaister-blink', t: 0.42 }],
-  ],
-  [
-    ['eclipse .1', { yaw: 10, clip: 'hero-phaister-eclipse', t: 0.1 }],
-    ['eclipse .3', { yaw: 10, clip: 'hero-phaister-eclipse', t: 0.3 }],
-    ['eclipse .45', { yaw: 10, clip: 'hero-phaister-eclipse', t: 0.45 }],
-    ['eclipse .6', { yaw: 10, clip: 'hero-phaister-eclipse', t: 0.6 }],
-    ['eclipse .7', { yaw: 10, clip: 'hero-phaister-eclipse', t: 0.7 }],
-    ['eclipse .85', { yaw: 10, clip: 'hero-phaister-eclipse', t: 0.85 }],
-    ['eclipse .95', { yaw: 10, clip: 'hero-phaister-eclipse', t: 0.95 }],
-    ['eclipse low', { yaw: 10, clip: 'hero-phaister-eclipse', t: 0.7, pitch: -16 }],
-  ],
-  [
-    ['R x-90', { pose: { armR: [-90, 0, 0] } }],
-    ['R x-165', { pose: { armR: [-165, 0, 0] } }],
-    ['R z90', { pose: { armR: [0, 0, 90] } }],
-    ['R z160', { pose: { armR: [0, 0, 160] } }],
-    ['both x-150 z40', { pose: { armR: [-150, 0, 40], armL: [-150, 0, 40] } }],
-    ['OPEN -10,0,128', { pose: { armR: [-10, 0, 128], armL: [-10, 0, 128] } }],
-    ['both z150', { pose: { armR: [0, 0, 150], armL: [0, 0, 150] } }],
-    ['R -30,0,45', { pose: { armR: [-30, 0, 45] } }],
-  ],
+const SHEETS: { model: 'team-phaister' | 'team-nemu'; cells: [string, number, number][] }[] = [
+  {
+    model: 'team-phaister',
+    cells: [
+      ['hero-phaister-eclipse', 0.0, 0], ['hero-phaister-eclipse', 0.3, 0], ['hero-phaister-eclipse', 0.6, 0], ['hero-phaister-eclipse', 0.9, 0],
+      ['hero-phaister-eclipse', 1.2, 0], ['hero-phaister-eclipse', 1.5, 0], ['hero-phaister-eclipse', 1.8, 0], ['hero-phaister-eclipse', 2.1, 0],
+      ['hero-phaister-blink', 0.0, 0], ['hero-phaister-blink', 0.15, 0], ['hero-phaister-blink', 0.3, 0], ['hero-phaister-blink', 0.45, 0],
+      ['hero-phaister-hex', 0.1, 0], ['hero-phaister-hex', 0.3, 0], ['hero-phaister-hex', 0.5, 0], ['sprint', 0.12, 30],
+      ['slide', 0.2, 30], ['slide', 0.5, 30], ['walk', 0.2, 60], ['attack-melee-right', 0.2, 40],
+    ],
+  },
+  {
+    model: 'team-nemu',
+    cells: [
+      ['idle', 0.3, 0], ['hero-nemu-ghoststep', 0.2, 0], ['hero-nemu-ghoststep', 0.5, 20], ['hero-nemu-project', 0.25, 0],
+      ['hero-nemu-seance', 0.3, 0], ['hero-nemu-seance', 0.7, 0], ['emote-no', 0.3, 0], ['static', 0, 30],
+    ],
+  },
 ];
 
-export const PhaisterBoard: React.FC<{ cells?: Cell[] }> = ({ cells }) => {
+export const PhaisterBoard: React.FC = () => {
   const f = useCurrentFrame();
   const ph = useActor('team-phaister', true);
-  if (!ph) return null;
-  const list = cells ?? PAGES[f % PAGES.length];
+  const ne = useActor('team-nemu');
+  const kuro = useKuro();
+  if (!ph || !ne || !kuro) return null;
+  const cells: React.ReactNode[] = [];
+  if (f < 2) {
+    const sh = SHEETS[f];
+    const b = sh.model === 'team-phaister' ? ph : ne;
+    sh.cells.forEach(([clip, t, yaw], i) => {
+      const cx = 120 + (i % 7) * 260;
+      const cy = 150 + Math.floor(i / 7) * 330;
+      const d = drawActor(b, { x: cx, y: cy, ppu: 300, focus: 0.45, reach: 0.62, clip, t, yaw, pitch: 6, res: 1, slipper: sh.model === 'team-phaister' ? { at: 'hand' } : undefined });
+      cells.push(<g key={i}><ActorImage d={d} /><text x={cx} y={cy + 170} textAnchor="middle" fontSize={18} fill="#222">{`${clip} ${t}`}</text></g>);
+    });
+  } else {
+    // The game's faces on his restored body: rest, then CatSmile, GoofyDizzy and ShyPout exactly as
+    // `PoseIdleExpression` shows them, then the loop's surprise.
+    const faces = [
+      {},
+      { show: ['KuroCatMouth'], hide: ['ghost-mouth-dot'] },
+      { show: ['KuroCrossLeft', 'KuroCrossRight', 'KuroGoofyMouth'], hide: ['ghost-mouth-dot', 'ghost-eye-l', 'ghost-eye-r'] },
+      { show: ['KuroShyEye', 'KuroPoutMouth'], hide: ['ghost-mouth-dot', 'ghost-eye-r'] },
+      { show: ['KuroHappyEyeL', 'KuroHappyEyeR', 'KuroGrinMouth'], hide: ['ghost-mouth-dot', 'ghost-eye-l', 'ghost-eye-r'] },
+      { show: ['KuroSparkleL', 'KuroSparkleR', 'KuroOhMouth'], hide: ['ghost-mouth-dot'], eyes: 0.5 },
+      { show: ['KuroSleepEyeL', 'KuroSleepEyeR'], hide: ['ghost-eye-l', 'ghost-eye-r'] },
+      { show: ['KuroHappyEyeL', 'KuroHappyEyeR', 'KuroCatMouth', 'KuroTongue'], hide: ['ghost-mouth-dot', 'ghost-eye-l', 'ghost-eye-r'] },
+      { show: ['KuroHeartEyeL', 'KuroHeartEyeR', 'KuroCatMouth'], hide: ['ghost-mouth-dot', 'ghost-eye-l', 'ghost-eye-r'] },
+    ];
+    faces.forEach((fc, i) => {
+      const d = drawKuro(kuro, { x: 130 + i * 208, y: 540, ppu: 2600, yaw: 0, pitch: 4, face: fc, res: 1 });
+      cells.push(<ActorImage key={i} d={d} />);
+    });
+  }
   return (
-    <AbsoluteFill style={{ background: 'linear-gradient(#3A0A2A, #8A3A3A)' }}>
-      <svg width={1920} height={1080}>
-        {list.map(([label, props], i) => {
-          const cx = 240 + (i % 4) * 480;
-          const cy = 250 + Math.floor(i / 4) * 540;
-          const d = drawActor(ph, { focus: 0.5, reach: 0.6, pitch: 4, slipper: { at: 'hand' }, ...props, x: cx, y: cy, ppu: 400 });
-          return (
-            <g key={i}>
-              <ActorImage d={d} />
-              <text x={cx} y={cy + 270} textAnchor="middle" fontSize={24} fill="#fff" fontFamily="sans-serif">{label}</text>
-            </g>
-          );
-        })}
-      </svg>
+    <AbsoluteFill style={{ backgroundColor: '#E8DCC8' }}>
+      <svg width={1920} height={1080}>{cells}</svg>
     </AbsoluteFill>
   );
 };

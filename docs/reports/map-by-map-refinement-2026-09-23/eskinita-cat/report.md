@@ -43,3 +43,8 @@ The committed CSV is sampled at about 10 Hz for a compact receipt. Known generat
 Inday/meta/ProjectAuditor churn was backed up then restored. No new browser/helper.
 Next: Bayan's cream aspin, individually, followed by its ginger cat. The natural
 life parent and older map/bot/motion/ultimate/final qualification tasks stay open.
+
+Before publication, remote 4255265c3 arrived with separate HOME/Kuro and player
+body/FPP animation work. It was merged without conflicts, preserving both sets
+of TODO progress. This focused animal result predates that merge; combined
+qualification is still open, and no redundant player-motion rewrite is implied.
