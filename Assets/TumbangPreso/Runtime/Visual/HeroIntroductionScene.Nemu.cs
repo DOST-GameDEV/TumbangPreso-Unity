@@ -93,10 +93,15 @@ namespace TumbangPreso.Visual
             // The ink: it pools under Kuro the moment she looks at the viewer, then climbs the stage.
             float spill = Ease(1.88f, 2.4f, t) * leave;
             Place(_inkSpill, new Vector3(-1.2f, .02f, -.2f), Vector3.one * Mathf.Lerp(.3f, 6.5f, Ease(1.88f, 2.7f, t)), Quaternion.Euler(0, 20, 0), spill);
+            // ⚠️⚠️ THE STAGE ENCLOSES THE CAMERA. At 8 m the fitted shot (`FitBodies`, backing out to
+            // hold the grown Kuro) left the wall and filmed its outside: 2.85 to 3.2 s of the first
+            // native render (`Logs/review-v3/nemu-introduction-scene`, 2026-09-24) were solid black
+            // frames. At 16 m the fitted eye stays inside the ink at every probed aspect.
+            const float StageRadius = 16;
             float climb = Ease(2.05f, 2.9f, t);
-            float height = Mathf.Max(.01f, climb * 11);
-            Place(_inkWall, Vector3.zero, new Vector3(8, height, 8), Quaternion.identity, Ease(2.05f, 2.2f, t) * leave);
-            Place(_inkRim, Vector3.up * Mathf.Max(0, height - .12f), new Vector3(7.95f, .12f, 7.95f), Quaternion.identity,
+            float height = Mathf.Max(.01f, climb * 16);
+            Place(_inkWall, Vector3.zero, new Vector3(StageRadius, height, StageRadius), Quaternion.identity, Ease(2.05f, 2.2f, t) * leave);
+            Place(_inkRim, Vector3.up * Mathf.Max(0, height - .12f), new Vector3(StageRadius - .05f, .12f, StageRadius - .05f), Quaternion.identity,
                 Ease(2.05f, 2.2f, t) * (1 - Ease(2.8f, 2.95f, t)) * leave);
 
             // His eyes open in the dark, in pairs, and blink.
@@ -104,11 +109,11 @@ namespace TumbangPreso.Visual
             {
                 int pair = i / 2; float side = i % 2 == 0 ? -.28f : .28f;
                 float angle = (-60 + pair * 40) * Mathf.Deg2Rad;
-                var eye = new Vector3(Mathf.Sin(angle) * 7.6f + side * Mathf.Cos(angle), 2.6f + (pair % 2) * 1.3f, Mathf.Cos(angle) * 7.6f - side * Mathf.Sin(angle));
+                var eye = new Vector3(Mathf.Sin(angle) * 15.2f + side * 2 * Mathf.Cos(angle), 3.4f + (pair % 2) * 2.2f, Mathf.Cos(angle) * 15.2f - side * 2 * Mathf.Sin(angle));
                 var face = Quaternion.LookRotation(-new Vector3(eye.x, 0, eye.z).normalized, Vector3.up) * Quaternion.Euler(90, 0, 0);
                 float open = Ease(2.55f + pair * .12f, 2.7f + pair * .12f, t);
                 float blink = _reducedEffects ? 1 : 1 - .9f * Mathf.Clamp01(1 - Mathf.Abs(Mathf.Repeat(t + pair * .37f, 1.3f) - .65f) / .05f);
-                Place(_inkEyes[i], eye, new Vector3(.2f, 1, .09f * blink + .005f), face, open * leave);
+                Place(_inkEyes[i], eye, new Vector3(.4f, 1, .18f * blink + .01f), face, open * leave);
             }
         }
     }

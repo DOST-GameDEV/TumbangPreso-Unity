@@ -106,6 +106,10 @@ namespace TumbangPreso.Visual
                         key.outTangent = i + 1 == list.Count ? 0 : (list[i+1].value - key.value) / (list[i+1].time - key.time);
                         list[i] = key;
                     }
+                // The builder's own root curves are removed first: writing any one component while
+                // the other two still hold the table's key times is what asserts (the x write did,
+                // once y was fixed).
+                clip.SetCurve(rootPath, typeof(Transform), "localPosition", null);
                 clip.SetCurve(rootPath, typeof(Transform), "localPosition.x", new AnimationCurve(keysX.ToArray()));
                 clip.SetCurve(rootPath, typeof(Transform), "localPosition.y", new AnimationCurve(keys.ToArray()));
                 clip.SetCurve(rootPath, typeof(Transform), "localPosition.z", new AnimationCurve(keysZ.ToArray()));

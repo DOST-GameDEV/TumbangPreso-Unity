@@ -667,6 +667,25 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
   HUMAN.md treats voice casting as scored team work. **Owed on Windows:** a four-hero Hero Strike
   match listened to from a thrower and from the taya (the two ultimate readings), the round-one
   exchange, the announcer hand-off, and the caption row at 4:3 and on a phone.
+- [ ] **NATIVE-CHECK-1 Animation lane native pass, 2026-09-24. IN PROGRESS.** First Windows run of the
+  cloud animation branch. Found and fixed: `VfxShapes.TwoSided` and the Grand Coven curtain lit BLACK
+  (zero normals; every upright effect and most ultimate introductions); the introduction grounding
+  asserted "Key index out of range" on every match warm-up and left roots NaN (25 PlayMode fixtures);
+  Sean's and Zack's skill-1 wakes were invisible from eye height; Nemu's introduction filmed 0.35 s of
+  solid black (camera outside an 8 m ink wall, now 16 m) and cropped at 4:3 by 0.003. Gate before
+  the fixes: 520 cases, 451 passed, 60 failed (`tools/playmode_suite.py --gate`). **Still open:**
+  (1) `UltimateIntroductionProbe`: Nemu puts her HELD slipper through her face (2625 vertices inside
+  the head, `nemu.txt` keys around 1.25 to 1.95 s, hands folded); Dante and Rafi were not filmed
+  because the study stops at Nemu. (2) Re-run the gate on this commit, then run the remaining red
+  fixtures on clean `origin/ASTRAReworks` to split pre-existing from new (CarryTests, MatchRunTests,
+  TumpNativeResultTests rematch, StunFrostTests, ThrowAimIntegrationProbe, TutorialDefenderProbe,
+  HubSceneVideoTests, QueueCardLayoutProbe, TumpNativeFrontEndTests, NemuKitContractProbe possession).
+  (3) EditMode, pre-existing on ASTRAReworks (baseline run 2026-09-24): `ThrowMotionTests` first-person
+  grip at 0.08 m from the lens after `ViewmodelArms.ThrowReach` (4255265c), and
+  `ThrowEquipmentClearanceTests` Bayan right pektus at charge 0.35 through the head
+  (`CharacterAnimator.ThrowBody`). (4) The `CastAndMotionReel` review of all casts and first-person
+  paths, `Checks.RunAll`, SKILL-TREE-1's pad and touch look, and the Windows and Android builds
+  (protocol 52) were not reached.
 - [ ] **SKILL-FX-1 Every skill's VFX, SFX and cast animation, owner 2026-09-24. IN PROGRESS.** Done 2026-09-24 (evidence in `docs/reports/skill-performances-2026-09-24/progress.md`): research and the per-skill plan; Grand Coven's cast, first-person path and circle; the cast-sheet audit and eleven body clips re-authored under an enforced head-pitch bound; one first-person hand path per cast (21); code-driven verbs checked. Still open: the other twenty skills' world VFX and cast SFX, which need `AbilityShowcaseProbe` stills on a Unity machine, one skill at a time against plan section 3.
   Owner: *"refine all their skills VFX SFX and animation and everything too. THOROUGHLY research how
   other games that are good in roblox and or actual games like valorant or overwatch make skill
