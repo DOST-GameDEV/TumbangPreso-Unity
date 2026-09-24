@@ -1009,8 +1009,242 @@ def preview_model(name, version):
         print("[kanto-city] preview", scene.render.filepath)
 
 
+# ------------------------------------------------------------------ the whole map in Blender
+
+CITY_BLEND = K.SOURCE / "kanto_city.blend"
+BUILDING_KINDS = {"brick_corner", "deco_corner", "glass_tower", "townhouse_row",
+                  *(r[0] for r in PARKSIDE), *(r[0] for r in FILLERS)}
+PARK_KINDS = {"park_tree", "hedge_bed", "park_bench", "park_lamp", "park_fence"}
+# Unity's fog is linear from 90 m to 360 m (KantoSceneBuilder). The Blender review fades the
+# same way through the compositor's mist pass, capped so the hills stay as faint silhouettes.
+MIST_START, MIST_DEPTH, MIST_CAP = 90.0, 330.0, 0.82
+# KantoSceneBuilder's sky and fog, sRGB there, linear here: zenith 5c94db, horizon c7ddf0,
+# fog c7dbeb. A flat sky read grey under AgX (review v1), so the gradient is carried over too.
+SRGB = lambda c: tuple(round(((v + 0.055) / 1.055) ** 2.4, 4) for v in c)  # noqa: E731
+ZENITH, HORIZON, FOG = SRGB((0.36, 0.58, 0.86)), SRGB((0.78, 0.87, 0.94)), SRGB((0.78, 0.86, 0.92))
+SKY_STRENGTH = 1.0
+# The game's eye: 1.25 m above the court, 95 degrees horizontal (16.5 mm on 36 mm film).
+EYE_Z = B.WALK + 0.03 + 1.25
+EYE_LENS = 18 / math.tan(math.radians(95 / 2))
+
+
+def city_lighting():
+    """The saved sun and sky, matched to KantoSceneBuilder's clear cool morning: the sun is
+    Unity's Euler(44, 140, 0) brought through the (-x, -z, y) axis swap, so it sits in the
+    south-east and falls over the viewer's shoulder when facing the brick corner."""
+    K.setup_lighting()
+    scene = bpy.context.scene
+    nodes, links = scene.world.node_tree.nodes, scene.world.node_tree.links
+    bg = nodes["Background"]
+    bg.inputs["Strength"].default_value = SKY_STRENGTH
+    # Horizon to zenith by the height of the view direction, like Unity's gradient skybox.
+    coord, split, ramp = nodes.new("ShaderNodeTexCoord"), nodes.new("ShaderNodeSeparateXYZ"), nodes.new("ShaderNodeValToRGB")
+    links.new(coord.outputs["Generated"], split.inputs[0])
+    links.new(split.outputs["Z"], ramp.inputs["Fac"])
+    ramp.color_ramp.elements[0].position, ramp.color_ramp.elements[0].color = 0.0, (*HORIZON, 1)
+    ramp.color_ramp.elements[1].position, ramp.color_ramp.elements[1].color = 0.45, (*ZENITH, 1)
+    links.new(ramp.outputs["Color"], bg.inputs["Color"])
+    sun = bpy.data.objects["sun"]
+    pitch, yaw = math.radians(44), math.radians(140)
+    fwd = Vector((math.sin(yaw) * math.cos(pitch), -math.sin(pitch), math.cos(yaw) * math.cos(pitch)))
+    travel = Vector((-fwd.x, -fwd.z, fwd.y))
+    sun.rotation_euler = travel.to_track_quat("-Z", "Y").to_euler()
+    sun.data.color, sun.data.energy = (1.0, 0.96, 0.9), 4.2
+    scene.world.mist_settings.start = MIST_START
+    scene.world.mist_settings.depth = MIST_DEPTH
+    scene.world.mist_settings.falloff = "LINEAR"
+    for screen in bpy.data.screens:
+        for area in screen.areas:
+            for space in area.spaces:
+                if space.type == "VIEW_3D":
+                    space.clip_start, space.clip_end = 0.1, 2000
+
+
+def city_fog(scene):
+    """Fade into Unity's fog colour by distance, in the compositor, PEAK's layered depth. The
+    sky is excluded by the alpha of a transparent film and laid back underneath, so only
+    geometry fogs."""
+    scene.view_layers[0].use_pass_mist = True
+    scene.view_layers[0].use_pass_environment = True
+    if hasattr(scene, "compositing_node_group"):          # Blender 5
+        tree = bpy.data.node_groups.new("kanto fog", "CompositorNodeTree")
+        scene.compositing_node_group = tree
+        tree.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+        out = tree.nodes.new("NodeGroupOutput")
+    else:
+        scene.use_nodes = True
+        tree = scene.node_tree
+        tree.nodes.clear()
+        out = tree.nodes.new("CompositorNodeComposite")
+    rl = tree.nodes.new("CompositorNodeRLayers")
+    cap = tree.nodes.new("ShaderNodeMath")
+    cap.operation, cap.inputs[1].default_value = "MINIMUM", MIST_CAP
+    L = tree.links.new
+
+    def mix(blend, fac, a, b):
+        n = tree.nodes.new("ShaderNodeMix")
+        n.data_type, n.blend_type = "RGBA", blend
+        for i, v in ((0, fac), (6, a), (7, b)):
+            if isinstance(v, bpy.types.NodeSocket):
+                L(v, n.inputs[i])
+            else:
+                n.inputs[i].default_value = v
+        return n.outputs[2]
+
+    # The film is transparent while rendering (see review), and Image is premultiplied, so:
+    # geometry = Image * (1 - f) + FOG * alpha * f, and the sky (the Environment pass) fills
+    # the rest: + Env * (1 - alpha). Nothing but geometry fogs.
+    L(rl.outputs["Mist"], cap.inputs[0])
+    fog_premul = mix("MULTIPLY", 1.0, (*FOG, 1), rl.outputs["Alpha"])
+    fogged = mix("MIX", cap.outputs[0], rl.outputs["Image"], fog_premul)
+    clear = tree.nodes.new("ShaderNodeMath")
+    clear.operation, clear.inputs[0].default_value = "SUBTRACT", 1.0
+    L(rl.outputs["Alpha"], clear.inputs[1])
+    env = next(o for o in rl.outputs if o.name in ("Env", "Environment"))
+    sky = mix("MULTIPLY", 1.0, env, clear.outputs[0])
+    L(mix("ADD", 1.0, fogged, sky), out.inputs[0])
+
+
+def chalk(col):
+    """The court chalk and throwing lines, as KantoSceneBuilder draws them: 6 mm over the court
+    (whose top is WALK + 0.03), in a plain bright chalk rather than the painted road paint."""
+    m = bpy.data.materials.new("court_chalk")
+    m.use_nodes = True
+    bsdf = m.node_tree.nodes["Principled BSDF"]
+    bsdf.inputs["Base Color"].default_value = (0.98, 0.98, 0.94, 1)
+    bsdf.inputs["Roughness"].default_value = 0.9
+    b = K.Buf("chalk")
+    z = B.WALK + 0.03 + 0.006 - 0.004
+    r = B.BOX
+    for s in (-1, 1):
+        b.box(Matrix.Translation((s * r, 0, z)), (0.14, 2 * r + 0.14, 0.012), "chalk")
+        b.box(Matrix.Translation((0, s * r, z)), (2 * r - 0.14, 0.14, 0.012), "chalk")
+        # Unity puts the throwing lines at +/- z, which is Blender -/+ y: the same pair.
+        b.box(Matrix.Translation((0, s * B.THROW, z)), (10, 0.07, 0.012), "chalk")
+    b.bm.to_mesh(me := bpy.data.meshes.new("chalk"))
+    b.bm.free()
+    me.materials.append(m)
+    col.objects.link(bpy.data.objects.new("chalk", me))
+
+
+def city_cameras(scene, col):
+    """Saved in the file, so the owner can look through each one (Numpad 0 on the active)."""
+    cams = {}
+
+    def cam(name, at, look, lens, kind="PERSP"):
+        c = bpy.data.objects.new(name, bpy.data.cameras.new(name))
+        c.data.type, c.data.lens, c.data.clip_start, c.data.clip_end = kind, lens, 0.05, 2000
+        c.data.sensor_fit = "HORIZONTAL"
+        c.location = at
+        c.rotation_euler = (Vector(look) - Vector(at)).to_track_quat("-Z", "Y").to_euler()
+        col.objects.link(c)
+        cams[name] = c
+        return c
+
+    # From the attacker spawn ring on the opposite side, looking across the court at each side.
+    for label, d in (("north", (0, 1)), ("east", (1, 0)), ("south", (0, -1)), ("west", (-1, 0))):
+        at = (-d[0] * B.SPAWN, -d[1] * B.SPAWN, EYE_Z)
+        cam(f"eye_{label}", at, (d[0] * 45, d[1] * 45, 5.0), EYE_LENS)
+    cam("aerial", (-70, -78, 62), (4, 4, 4), 28)
+    scene.camera = cams["eye_north"]
+    return cams
+
+
+def assemble():
+    """ArtSource/kanto/kanto_city.blend: every model built ONCE, textured, into its own
+    collection under 'Kit' (excluded from the view layer), and placed as COLLECTION INSTANCES
+    from the same PLACE list the Unity layout JSON is written from. So what is reviewed here
+    is exactly what the export places. The ground, markings and wires are unique pieces and
+    are linked in directly; chalk, the horizon ring, sun, sky, fog and review cameras too."""
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    K.USE_TEXTURES = True
+    PLACE.clear()
+    poles = layout()
+    scene = bpy.context.scene
+    root = scene.collection
+
+    def child(name, parent=root):
+        c = bpy.data.collections.new(name)
+        parent.children.link(c)
+        return c
+
+    kit_root = child("Kit")
+    kits = {}
+    for name in sorted({p[0] for p in PLACE} - {"ground", "wires"}):
+        col = BUILDERS[name]()
+        root.children.unlink(col)
+        kit_root.children.link(col)
+        kits[name] = col
+        print(f"[kanto-city] kit {name}: {sum(len(o.data.polygons) for o in col.all_objects if o.type == 'MESH')} faces")
+    city = child("City")
+    groups = {g: child(g, city) for g in ("Buildings", "Park", "Street")}
+    placed = 0
+    for i, (name, at, rot) in enumerate(PLACE):
+        if name in ("ground", "wires"):
+            continue
+        g = "Buildings" if name in BUILDING_KINDS else "Park" if name in PARK_KINDS else "Street"
+        o = bpy.data.objects.new(f"{name}.{i:03d}", None)
+        o.instance_type, o.instance_collection = "COLLECTION", kits[name]
+        o.location, o.rotation_euler = at, (0, 0, rot)
+        o.empty_display_size = 0.5
+        groups[g].objects.link(o)
+        placed += 1
+    ground_col = ground()
+    root.children.unlink(ground_col)
+    city.children.link(ground_col)
+    chalk(ground_col)
+    wire_col = wires(poles)
+    root.children.unlink(wire_col)
+    city.children.link(wire_col)
+    horizon_col = child("Horizon (Blender only so far)")
+    B.horizon(horizon_col)
+    horizon_col.children[0].name = "Skyline ring and hills"
+    city_lighting()
+    city_fog(scene)
+    city_cameras(scene, child("Review cameras"))
+    scene.render.engine = "BLENDER_EEVEE"
+    scene.render.resolution_x, scene.render.resolution_y = 1600, 900
+    bpy.context.view_layer.layer_collection.children["Kit"].exclude = True
+    K.SOURCE.mkdir(parents=True, exist_ok=True)
+    bpy.ops.wm.save_as_mainfile(filepath=str(CITY_BLEND), compress=True)
+    bpy.ops.file.make_paths_relative()
+    bpy.ops.wm.save_as_mainfile(filepath=str(CITY_BLEND), compress=True)
+    backup = CITY_BLEND.with_suffix(".blend1")
+    if backup.exists():
+        backup.unlink()
+    print(f"[kanto-city] assembled {placed} instances of {len(kits)} models + ground, chalk, wires -> {CITY_BLEND}")
+
+
+def review(version):
+    """Render every saved review camera in the open file, versioned (chat clients cache images
+    by filename)."""
+    K.PREVIEWS.mkdir(parents=True, exist_ok=True)
+    scene = bpy.context.scene
+    # Transparent only while rendering: the fog compositor needs the sky's alpha, and a saved
+    # transparent film would show no sky in the owner's Rendered viewport.
+    scene.render.film_transparent = True
+    # RGB, or the PNG keeps the transparent film's alpha: the sky saved as see-through and
+    # edge pixels, un-premultiplied by a tiny alpha, drew as white outlines (review v2).
+    scene.render.image_settings.color_mode = "RGB"
+    for cam in sorted((o for o in scene.objects if o.type == "CAMERA"), key=lambda o: o.name):
+        scene.camera = cam
+        scene.render.filepath = str(K.PREVIEWS / f"kanto_city_{cam.name}_v{version}.png")
+        bpy.ops.render.render(write_still=True)
+        print("[kanto-city] review", scene.render.filepath)
+    scene.render.film_transparent = False
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
+    if "--assemble" in argv or "--review" in argv:
+        # blender -b --python tools/author_kanto_city.py -- --assemble [--review N]
+        # blender -b ArtSource/kanto/kanto_city.blend --python tools/author_kanto_city.py -- --review N
+        #   (the second renders the file as saved, including any hand edits in it)
+        if "--assemble" in argv:
+            assemble()
+        if "--review" in argv:
+            review(int(argv[argv.index("--review") + 1]))
+        return
     if "--preview-model" in argv:
         version = int(argv[argv.index("--preview") + 1]) if "--preview" in argv else 1
         for name in argv[argv.index("--preview-model") + 1].split(","):

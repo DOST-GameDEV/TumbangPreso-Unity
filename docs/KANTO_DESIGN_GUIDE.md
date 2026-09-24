@@ -138,16 +138,25 @@ blue `#0080e8`. The reference's bright orange shopfront became ochre; glass is t
 | Hero building | `blender -b --python tools/author_kanto_models.py -- brick_corner --textured --preview N` | `brick_corner.blend`, previews |
 | Layout | `blender -b --python tools/author_kanto_blockout.py -- --preview N` | `kanto_blockout.blend` |
 | Other models | `blender -b --python tools/author_kanto_city.py -- --preview-model a,b --preview N` | `<model>.blend`, previews |
+| **Whole map** | `blender -b --python tools/author_kanto_city.py -- --assemble --review N` | `kanto_city.blend`, `Logs/kanto-blender/kanto_city_<camera>_vN.png` |
+| Re-render a hand-edited map | `blender -b ArtSource/kanto/kanto_city.blend --python tools/author_kanto_city.py -- --review N` | the same renders, from the file as saved |
 | Export | `blender -b --python tools/author_kanto_city.py` | `Art/Kanto/Models/*.glb`, `kanto_layout.json` |
 | Unity | `KantoSceneBuilder.RunReview` (batch mode) | `Kanto.unity`, `Logs/kanto-unity-vN` |
 
-⚠️⚠️ **NEXT: THE WHOLE MAP IN BLENDER.** `author_kanto_city.py`'s docstring promises
-`ArtSource/kanto/kanto_city.blend` but it does not exist yet. Add a step that builds every
-model once, textured, into its own collection, and places **collection instances** from the
-same `PLACE` list the Unity layout uses, plus the ground, markings and wires, with the saved
-sun and sky. Then render reviews from the **game's eye** (1.25 m above the court, 95° FOV,
-lens 16.5 mm on 36 mm) toward every side, plus an aerial, versioned. Iterate there with the
-owner. Only after approval: re-export `.glb` + layout and rebuild the Unity scene.
+⚠️⚠️ **THE WHOLE MAP IS IN BLENDER NOW (`--assemble`, 2026-09-24). ITERATE THERE WITH THE
+OWNER; ONLY AFTER APPROVAL re-export `.glb` + layout and rebuild the Unity scene.**
+`kanto_city.blend` holds every model once, textured, under **Kit** (excluded from the view
+layer), and **City** holds collection instances placed from the same `PLACE` list the Unity
+layout JSON is written from, plus the ground cells, road markings, court chalk and wires.
+The sun, flat sky and a compositor distance fog (Unity's 90 to 360 m, capped at 82 per cent)
+are saved in the file, and so are the review cameras: `eye_north/east/south/west` stand on
+the attacker spawn ring at the **game's eye** (1.25 m above the court, 95°, 16.5 mm) looking
+across the court, plus `aerial`.
+- ⚠️ **Edit in the file, or edit the script, not both.** `--assemble` rebuilds the file from
+  the scripts and overwrites any hand edits in it; `--review N` alone renders the file as
+  saved.
+- ⚠️ **The skyline ring and hills (`B.horizon`) exist only in Blender so far.** The Unity
+  scene has fog and no horizon; the re-export has to carry them.
 
 ## 9 · Working rules learnt this session
 

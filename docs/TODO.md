@@ -209,6 +209,17 @@ models, textures, foliage and layout. ⚠️ **Next step (owner): "i want the ma
 first before finalizing in unity"**: assemble `ArtSource/kanto/kanto_city.blend` and iterate
 there before re-exporting (guide § 8).
 
+- **2026-09-24, assembled.** `author_kanto_city.py -- --assemble --review N` writes
+  `kanto_city.blend`: 33 models built once, textured, under Kit; 220 collection instances from
+  the same `PLACE` list as the Unity JSON, plus ground, road markings, court chalk and wires
+  (222 placements, matching `Logs/kanto-build.log`); the horizon ring and hills; Unity's sun,
+  gradient sky and 90 to 360 m fog; saved cameras `eye_north/east/south/west` (spawn ring,
+  1.25 m, 95°) and `aerial`. Renders: `Logs/kanto-blender/kanto_city_<camera>_vN.png`.
+  ⚠️ **Awaiting owner review in Blender. Do not re-export until approved.**
+- **Seen in review v1, open:** at Unity's sun (Euler 44, 140) the south-east glass tower and
+  its neighbours throw long shadows across about half the court in the east and south views.
+  A readability question for the owner, not yet changed.
+
 A style study the owner directed, from Tiny Talisman's "Stylized Modern City", PEAK and
 Brainchild's cartoon towns. **Not registered**: it is not in `SceneFlow.Maps`, `GameLaunch`,
 `MapGeometryCheck.Gated` or the build settings, so no shipped list or test sees it. Open
