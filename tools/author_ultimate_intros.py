@@ -18,8 +18,10 @@ typed is not reviewed. This follows `tools/author_hero_action.py`, which is wher
 cast clips already live.
 
 CONVENTIONS for the helpers below (Unity space, from `HeroAbilityClips.cs`):
-  torso(x, y, z): +x leans forward, +y twists to the character's left, +z leans left.
-  head(x, y, z):  +x tilts down, -x up, +y turns left, +z tilts left.
+  torso(x, y, z): +x leans forward, +y twists to the character's RIGHT, +z leans left.
+  head(x, y, z):  +x tilts down, -x up, +y turns to the character's RIGHT, +z tilts left.
+  (Measured on the skinned glb in Unity space, 2026-09-24: HeroAbilityClips.cs's header says
+  "+Y turns left", which is the view from the front, i.e. the viewer's left.)
   arm(raise, spread, twist): raise swings the arm forward and up from hanging (90 = pointing
                   forward, 180 = straight up); spread takes it away from the side (15 = rest,
                   90 = straight out); twist swings it round the vertical axis.
@@ -241,12 +243,12 @@ def phaister():
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     # The sly beat: hand to the hat brim, head dipped and turned to the camera side, the other
     # hand on the hip, weight on one leg.
-    sly = Pose(torso=(3, -8, 4), head=(10, -16, 6), left=(12, 38, -10), right=(150, 40, 18),
+    sly = Pose(torso=(3, 8, 4), head=(10, 16, 6), left=(12, 38, -10), right=(150, 40, 18),
                legs=((4, 4), (-2, 6)))
     # The chuckle she is holding in: hand brought in front of the chin, head tilted, shoulders up.
-    hold_in = Pose(torso=(5, -4, 2), head=(6, -10, 10), left=(18, 34, -10), right=(112, 10, 40),
+    hold_in = Pose(torso=(5, 4, 2), head=(6, 10, 10), left=(18, 34, -10), right=(112, 10, 40),
                    legs=((2, 3), (0, 4)))
-    hold_hop = hold_in.but(torso=(-2, -4, 2), head=(0, -10, 12))
+    hold_hop = hold_in.but(torso=(-2, 4, 2), head=(0, 10, 12))
     # The laugh: chest open, arms flung up and out past the shoulders, legs trailing together.
     # ⚠️ THE HEAD GOES BACK ONLY 12 DEGREES. Further and the wide brim turns into a flat slab
     # toward the camera (the Hex complaint in the gameplay-animation report); the laugh reads
@@ -397,6 +399,55 @@ def zack():
     # C: front and low for the snap and the shrug.
     p.shot(1.82, 2.8, (.95, .65, 3.7), (0, 1.2, 0), 46, eye_to=(.85, .7, 3.4))
     p.locked((-2.0, 1.1, 4.3), (0, 1.1, 0), 46)
+    return p
+
+
+@performance
+def nemu():
+    """
+    DEVOURING SEANCE, 3.8 s (plan.md section 4). "Looks distracted. Already knows your next
+    move." Two characters act: Nemu is gazing at nothing, hands behind her back; Kuro nudges
+    her; she turns to him and offers a hand; then she opens it and looks straight at the viewer,
+    the one beat she is fully present, while Kuro swells behind her. She stays calm, hands
+    folded, and points him ahead.
+    Kuro sits on her LEFT (hero-local -x), which the camera keeps in frame.
+    """
+    p = Performance("nemu", 3.8)
+    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
+    # Gazing away up to her right, hands clasped behind her back.
+    away = Pose(torso=(-2, 8, 2), head=(-16, 30, 4), left=(-24, 8, -30), right=(-24, 8, -30))
+    away_sway = away.but(torso=(-2, 8, -2), head=(-18, 32, 6))
+    startle = away.but(torso=(-5, 2, 0), head=(-6, 10, 0))
+    to_kuro = Pose(torso=(0, -8, 0), head=(4, -34, 6), left=(-10, 10, -20), right=(-20, 8, -30))
+    offer = Pose(torso=(3, -12, 0), head=(6, -30, 10), left=(72, 30, -10), right=(-18, 8, -30))
+    # The knowing look, straight down the lens, the open hand still out.
+    knowing = Pose(torso=(0, 2, 0), head=(2, 0, 0), left=(48, 34, -6), right=(-10, 12, -20))
+    # Calm while the giant grows: hands folded in front, a slow sway.
+    calm = Pose(torso=(0, 0, 2), head=(0, 0, 6), left=(30, 2, 38), right=(30, 2, 38))
+    calm_sway = calm.but(torso=(0, 0, -2), head=(0, 0, -4))
+    send = Pose(torso=(4, -6, 0), head=(4, -4, 0), left=(28, 4, 36), right=(90, 6, 6),
+                legs=((6, 2), (-4, 2)))
+
+    p.key(0, rest)
+    p.key(.3, away).key(.55, away_sway)
+    p.key(.72, startle, punch=True)
+    p.key(.9, to_kuro)
+    p.hold(.9, 1.12, to_kuro)
+    p.key(1.3, offer)
+    p.hold(1.3, 1.68, offer)
+    p.key(1.86, knowing, punch=True)
+    p.hold(1.86, 2.28, knowing)
+    p.key(2.5, calm).key(2.85, calm_sway).key(3.15, calm)
+    p.key(3.36, send, punch=True)
+    p.hold(3.36, 3.8, send)
+
+    # A: from her left front so Kuro, on her left, shares the frame with her.
+    p.shot(0, 1.76, (-1.5, 1.2, 3.6), (-.4, .95, 0), 44, eye_to=(-1.3, 1.15, 3.25))
+    # B: straight on, close, for the knowing look into the lens.
+    p.shot(1.76, 2.26, (.05, 1.25, 3.1), (0, 1.05, 0), 40, eye_to=(.05, 1.22, 2.85), close=True)
+    # C: the retained reveal that backs out to keep both bodies as Kuro grows.
+    p.shot(2.26, 3.8, (2.8, 1.5, 5.6), (-.75, 1.4, 0), 50, eye_to=(2.63, 1.41, 5.26), fit=True)
+    p.locked((3.4, 2.4, 8.6), (-.9, 2.1, 0), 52)
     return p
 
 # ----------------------------------------------------------------------------- the 2.8 s baseline
