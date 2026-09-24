@@ -286,3 +286,10 @@ inspected, keepv1. Three fitted roofs/source slots/collision guarded. Qualified
 scene/assets/meta/evidence copied to DEV; known churn restored after saved patch.
 No active Unity. Publish hip unit then low-palm/screen family; water/boat/island
 work still open. No unchanged gable/physics/bird rechecks.
+
+Hip unit committedbff55f209. Incoming280157729changes two match-result UI files and
+separate TODO row; inspected and merged without conflicts, both task lists retained.
+Its reported chosen-arena rematch defect is already in our preserved final queue;
+not dismissed as a fixture failure. No Lagoon overlap or protected-meta changes.
+Hip native check preceded this independent UI arrival. Finish merge/push, then
+continue low-palm/screen materials; next focused author compiles integrated source.
