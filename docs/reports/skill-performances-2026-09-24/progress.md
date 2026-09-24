@@ -50,3 +50,20 @@ changed).
 
 Rafi's casts are Unity `.anim` files built in `HeroAbilityClips.Rafi.cs` and are not covered by the
 sheet tool; they are reviewed from the code in the next pass. Engine look NOT seen for any of this.
+
+## First-person cast paths, one per skill (2026-09-24)
+
+`ViewmodelArms.CastGesture.cs` drew all 21 casts from seven shared shapes (Ignition Cannon, Ice
+Barricade and Thunderstrike's call were one gesture). Each cast now has its own keyed path for both
+hands, written from its body clip and the plan's section 3 and in its hero's motion language: Flame Rush
+rakes back then drives down the middle; Ignition Cannon cups the free hand over the slipper at the
+shoulder; Supernova rises out of frame and slams to the bottom centre; Bolt Sprint swings like a skater;
+Magnet aims the off hand then snaps in with a chatter; Thunderstrike holds the call then points level;
+Stomp hammers down and out; Carapace flexes wide and trembles; Fissure hangs then drives forward;
+Permafrost is one flat right-to-left pass and Barricade one vertical line, both held with the left still;
+Nova compresses then opens flat; Veil, Hijack and Seance float (no snap), Hijack flings after the spirit
+and Seance collapses inward; Hex draws a circle then stamps; Blink collapses and throws open; Grand Coven
+keeps its path; Crosscurrent is the off-hand cut, Mirrorwake a sell and cut back, Breakwater a cupped
+hip-to-side release. Timings (contact and end) are unchanged. Evidence: `sheets/fpp-cast-paths_v1.png`,
+the two hands' offset paths projected into a 16:9 frame (schematic: pivot offsets only, not the clip
+rotations under them). Engine view NOT seen; owed on Windows through `CastAndMotionReel`.
