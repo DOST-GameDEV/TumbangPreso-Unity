@@ -140,6 +140,10 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
   state; cached-map court brightening fixed by clearing property-block ownership.
   Initial preview/transitions4/4passed, focused revisit/preview2/2passed; actual
   overview/small/grey25inspected. [Evidence](reports/lighting-integration-2026-09-24/preview/report.md).
+  Tracked source advanced to 8d73471f3 on2026-09-24: HDR preview target and
+  active-scene handback guard merged with our existing cache/preview fixes.
+  Focused native 2/2 passed; actual five-map LDR/HDR pairs and grey inspected.
+  [Follow-up evidence](reports/lighting-integration-2026-09-24/preview-followup/report.md).
 - [ ] LIGHT-1.9 Performance check of bloom plus edges on the Balanced tier, and a native build
   look at the owner's window shape.
 

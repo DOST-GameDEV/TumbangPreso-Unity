@@ -1,20 +1,21 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Bayan cream aspin
+## Current resume, 2026-09-24: lighting branch follow-up merge
 
-Overall goal ACTIVE, NOT done. DEV ASTRAReworks and detached QUAL are both at
-published, remote-verified 21efec0c7fed20b6179dd9e60eb0f2e70382a22a. Bayan native session 58576 completed 1/1 in 30.345s.
-Actual comparison/activity frames/grey inspected; no fixture retry. No Unity job
-active. Publish this unit, preserve/advance QUAL, then Bayan ginger cat. No preview server or new
-browser was started for the animal units. DEV retains only
-the two protected composition PNG meta changes outside this work.
+Overall goal ACTIVE, NOT done. DEV and QUAL are at published, remote-verified
+4e2c5bc6d112c2fa68de6fb5757bf311d4ac3a05. Bayan cream aspin unit completed and
+published: 89 nodes / 691 links, three ordinary activity sites plus rare marking,
+local pace/watch holds; native 1/1 in 30.345s, actual frames/grey inspected. Known
+churn restored, QUAL byte-verified/stashed/advanced. No Unity job active.
 
-Current REFINE-2.7 unit: BayanPlaza aspin-cream, individually. Read the local
-bayan-dog-plan.md before code: actual bench/planting/court-watch destinations,
-connected safe west-side habitat, own slower pace and longer bench-side watch.
-Keep original body/gait, no invented sitting or distant-tree interaction. Smallest
-native case only, one fixture repair allowance (0/1 used). Do not edit .cs during
-Unity. After this unit, ginger cat, then Ilalim dog/cat and perched bird review.
+Current unit: tracked lighting source 8d73471f3 integrated locally. Both owner
+conflicts resolved, preserving existing cache/preview behavior. HDR target,
+surviving root/sun and active-scene handback guard added. Native session 46818
+passed 2/2 in 25.645s, actual five-map LDR/HDR pairs and grey inspected. No fixture
+retry. Known churn restored, no Unity job active. Publish merge, preserve/advance
+QUAL, then Bayan ginger cat. Detailed report is
+reports/lighting-integration-2026-09-24/preview-followup/report.md.
+Preserve original two composition PNG meta dirt files.
 
 ## Published progress, do not redo
 
@@ -89,3 +90,9 @@ Bayan first bake found 89 nodes / 691 links but no reachable bench/tree. Adjuste
 to planting plus two distinct court watches and rare marking; require three
 ordinary sites so cooldown cannot reduce behavior to two alternating stops.
 Reauthor before first native test; no fixture retry used. No .cs edits in flight.
+
+Lighting conflicts resolved: kept existing preview API/cache property-block fix,
+ported HDR target, surviving root/sun choice, active-scene handback guard. Incoming
+five-map case now also captures same-camera LDR/HDR and asserts new-scene settings
+survive preview destruction. Next focused run with existing cached-map lift case
+(two cases total). Stop on XML and actual colour/grey review; retry 0/1.

@@ -821,6 +821,9 @@ namespace TumbangPreso.UI
 
         private void ApplyMapEnvironment(string map)
         {
+            // Retire the previous look before writing the next authored settings;
+            // otherwise its deferred handback can overwrite the selected map.
+            if(_previewLook!=null && _previewLook.Look.Map!=map)ReleasePreviewLook();
             if (!_envs.TryGetValue(map, out var env))
             {
                 if (!_cache.TryGetValue(map, out var scene) || !scene.IsValid() || !scene.isLoaded)
@@ -912,11 +915,11 @@ namespace TumbangPreso.UI
             Transform parent=null;Light sun=null;
             foreach(var root in scene.GetRootGameObjects())
             {
-                if(!root.activeInHierarchy)continue;
+                if(!root.activeInHierarchy || root.GetComponent<MatchInstaller>()!=null)continue;
                 if(parent==null)parent=root.transform;
                 foreach(var light in root.GetComponentsInChildren<Light>())
-                    if(light.enabled && light.type==LightType.Directional &&
-                        (sun==null || light.shadows!=LightShadows.None))sun=light;
+                    if(sun==null && light.enabled && light.type==LightType.Directional && light.shadows!=LightShadows.None &&
+                        light.GetComponentInParent<MatchInstaller>(true)==null) sun=light;
             }
             if(parent==null)return;
             if(_camera.GetComponent<Visual.WorldLookCamera>()==null)
@@ -1007,7 +1010,12 @@ namespace TumbangPreso.UI
 
             if (_target == null)
             {
-                _target = new RenderTexture(width, height, 24)
+                // Keep highlights above one until the same grade used by the
+                // match rolls them off. An LDR target clips them before grading
+                // even if the camera allows HDR. Retain a supported fallback.
+                var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.DefaultHDR)
+                    ?RenderTextureFormat.DefaultHDR:RenderTextureFormat.ARGB32;
+                _target = new RenderTexture(width, height, 24, format)
                 {
                     name = "MapPreview",
 
