@@ -1,50 +1,37 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: bot inactivity diagnosis
+## Current resume, 2026-09-24: close bot fixes, then visible map/light findings
 
-Overall goal ACTIVE, NOT done. DEV and QUAL at remote-verified 5de3a78f3.
-AGENTS cleanup dc10b68f2 published. SaBubong bird placement complete locally: author
-v2 uses real raised canopy seams, focused native1/1 in71.825s, actual paired
-frames/sequences/grey inspected. Report: map-by-map-refinement-2026-09-23/
-sabubong-bird-visits/report.md. Failed author v1 retained, no fixture retry used.
-No Unity process running; known generated churn backed up/restored. Original
-DEV composition PNG metas untouched. Map files/report published.
+Overall goal ACTIVE, NOT done. DEV and QUAL baseline043cf804c, published and
+remote-verified. AGENTS cleanup dc10b68f2 and SaBubong bird placement57cf74a9c
+published. All21 ambient actors have local map/species placement coverage, with
+ordinary-camera/replay/combined qualification still open.
 
-REFINE-2.8 plan/research saved in bot-refinement-plan.md. Existing native 1x
-Eskinita samples passed2/2 with four bots in both modes; no general AFK-resolution
-claim. Some spawn waits match the intentional five-second tag stun. The initial
-missing-edge-mash suspicion is weakened: edge recovery already sets a trip.
-Real reaction-clock defect reproduced: reaction-before.xml fails because a held
-opportunity outlasted the actual delay but two planner calls counted only two
-render deltas. Current uncommitted AIController fix uses scaled timestamps,
-resets false/stale opportunities and clears clocks across round/input blocks.
-AiReactionTimingTests covers elapsed time, repeated queries, false/reset and pause.
-Guarded job62633 reaped:3/3 passed in88.089s, timer case3.089s. Both new1x samples
-include interception and one accepted shove; no balance comparison claimed.
-Logs/refine-bot-reaction-after.xml and .log. Report bot-reaction-fix/report.md.
-Known churn backed up/restored. Narrow fix published in5de3a78f3. Lagoon job21238
-passed2/2 in87.850s; actual plan/position traces reviewed. No water-fall sample,
-so bot water recovery remains uncovered. Existing diagnostic now has an optional
-TUMP_AI_MAP selector; default Eskinita behavior/filenames unchanged.
-Second source defect: chase patience also added frame dt only on planner ticks.
-Uncommitted fix measures time since last real progress; preserves thresholds.
-Job69498 reaped: chase-clock regression and Ilalim's two first1x samples3/3
-passed in96.089s. Logs/refine-bot-ilalim-v1.xml/.log; actual traces reviewed.
-Known churn backed up/restored. Coverage/findings in bot-map-coverage/report.md.
-Publish this narrow change, then remaining Bayan/SaBubong samples and deliberate
-bot recovery at water/roof edges. Do not redo successful samples unchanged.
-Fixture repairs0/1; expected red reproduction is retained, not a tooling failure.
-Inspect current decision/input/recovery paths and trace actual
-bot inactivity, distinguishing planned waits from failed progress. Reuse existing
-probes; no new capture framework or broad reassurance suite. All21 ambient actors
-now have local map/species data coverage; ordinary-camera/replay/combined gates
-remain open under2.7/2.10. Preserve newer animation and lighting integrations.
+Bot production fixes:5de3a78f3 reaction timing (red reproduction, then3/3 native),
+043cf804c chase patience (focused case plus Ilalim3/3). Current uncommitted change:
+per-seat pektus/lunge decisions consistently use EffectiveDifficulty. Existing
+rule checks/compile3/3 in0.121s. No Unity process running; known churn backed up
+and restored. Publish the explicit AIController/docs/new evidence only. Original
+DEV composition PNG metas remain untouched.
+
+Initial ordinary1x samples now cover four bots in both modes on all five maps.
+No broad AFK or full-role/roster/tier completion claim. Exact evidence and limits:
+reports/map-by-map-refinement-2026-09-23/bot-map-coverage/report.md.
+Bot recovery fixture failed twice BEFORE handoff, last at(16.92,-2.01,16.38), not
+the intended outer bridge lip. Existing ExerciseEdge sets camera follow/movement
+aim too; the draft omitted that input-basis setup. Fixture allowance1/1 exhausted.
+Exact draft/failures retained in the report directory, original compiled
+LagoonRecoveryProbe restored. Do not reopen fixture polishing during feature work.
+Full role/roster/tier and actual bot recovery remain actionable final gates.
+
+Next: outstanding visible map/light findings in LIGHT-1.6 and individual map
+parents. Inspect the existing native evidence first, choose a concrete weak area
+and save its local plan. Preserve bright readable lighting and successful art;
+no gratuitous global darkening or completed HUD redesign. Final coherent native/
+peer/replay/performance/build checks remain2.10/P7, not intermediate builds.
 New character/ability/ultimate animation direction belongs to the owner-run cloud
-lane, not a new local rewrite. No task closes merely because it was handed off.
-
-Owner-requested AGENTS cleanup published:3263 to1968words (39.7percent shorter),
-original byte-preserved with coverage audit/link/hash checks in
-reports/instructions-cleanup-2026-09-24/. All earlier requirements retained.
+lane. Its branch is present on origin; do not merge unfinished work or contact a
+conversation. Preserve all older tasks. No phase checkpoint ends this goal.
 
 ## Parallel lane, 2026-09-24: HOME loop and gameplay animation (separate from the map resume above)
 

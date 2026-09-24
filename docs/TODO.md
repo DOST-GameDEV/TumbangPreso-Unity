@@ -546,6 +546,13 @@ scattered across all maps. Execute inside each map's existing refinement row.
   time since real closing progress. Focused chase plus Ilalim samples3/3 passed;
   Lagoon samples2/2 passed. [Map findings and limits](reports/map-by-map-refinement-2026-09-23/bot-map-coverage/report.md).
   No Lagoon water falls occurred in the sample; explicit bot recovery remains open.
+  Bayan/SaBubong samples also passed: initial four-bot, two-mode traces now cover
+  all five maps. Per-seat pektus/lunge decisions now use the assigned room tier,
+  consistently with the existing personality lookup; rule checks/compile3/3.
+  These samples do not close full role/roster/tier qualification. The added bot
+  recovery setup failed twice before control handoff; its draft/failures/next
+  input-basis diagnostic are preserved in the map report, with no more fixture
+  retries during implementation. Bot recovery remains an actionable final gate.
 Owner assignment update2026-09-24: the owner prepared a separate cloud assignment
 for ALL animation research/direction/implementation, including individual ability
 casts and ultimates. That animation lane can begin now while local map/environment

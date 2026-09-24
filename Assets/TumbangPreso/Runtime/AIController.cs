@@ -138,7 +138,8 @@ namespace TumbangPreso
         /// personality goes through here, so a seat that was handed over is a different opponent
         /// in every decision it makes rather than only in the ones somebody remembered.
         /// </summary>
-        private AiPersonality Me => AiTuning.For(SeatDifficulty ?? ActiveDifficulty);
+        private Difficulty EffectiveDifficulty => SeatDifficulty ?? ActiveDifficulty;
+        private AiPersonality Me => AiTuning.For(EffectiveDifficulty);
 
         /// <summary>
         /// This bot's own jitter on top of the tier, seeded from its SEAT so two runs of the
@@ -1824,10 +1825,10 @@ namespace TumbangPreso
 
         private float ChoosePektusSpin(Vector3 origin, Vector3 target, float power)
         {
-            if (ActiveDifficulty == Difficulty.Bata) return 0.0f;
+            if (EffectiveDifficulty == Difficulty.Bata) return 0.0f;
             if (!LaneBlockedWithSpin(origin, target, target, power, 0.0f)) return 0.0f;
 
-            float[] candidates = ActiveDifficulty == Difficulty.Astig
+            float[] candidates = EffectiveDifficulty == Difficulty.Astig
                 ? new[] { -0.55f, 0.55f, -1.0f, 1.0f }
                 : new[] { -0.55f, 0.55f };
 
@@ -2752,7 +2753,7 @@ namespace TumbangPreso
             // `LungeConeFloor`, so a tighter tier value would ask for an angle the bot has no
             // key for and the release would never pass its own test.
             if (_lungeHeld >= AiTuning.LungeHoldTime
-                && Facing(victim, AiTuning.EffectiveLungeCone(ActiveDifficulty)))
+                && Facing(victim, AiTuning.EffectiveLungeCone(EffectiveDifficulty)))
             {
                 _lungeHeld = -1.0f;
                 Press(intent, Verb.Lunge, false);   // the release edge is what fires it

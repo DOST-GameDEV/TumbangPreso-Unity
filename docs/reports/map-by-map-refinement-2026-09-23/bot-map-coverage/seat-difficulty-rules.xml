@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 12:08:15Z" end-time="2026-09-24 12:08:15Z" duration="0.1214033">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="609" result="Passed" start-time="2026-09-24 12:08:15Z" end-time="2026-09-24 12:08:15Z" duration="0.121403" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1710" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="609" result="Passed" start-time="2026-09-24 12:08:15Z" end-time="2026-09-24 12:08:15Z" duration="0.104700" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14280" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1711" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="609" result="Passed" start-time="2026-09-24 12:08:15Z" end-time="2026-09-24 12:08:15Z" duration="0.102592" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1712" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="609" result="Passed" start-time="2026-09-24 12:08:15Z" end-time="2026-09-24 12:08:15Z" duration="0.100828" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1014" name="AiLungeRulesTests" fullname="TumbangPreso.Tests.AiLungeRulesTests" classname="TumbangPreso.Tests.AiLungeRulesTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-24 12:08:15Z" end-time="2026-09-24 12:08:15Z" duration="0.036622" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1017" name="APunchStillCoolingPastTheHoldLeavesTheLungeAvailable" fullname="TumbangPreso.Tests.AiLungeRulesTests.APunchStillCoolingPastTheHoldLeavesTheLungeAvailable" methodname="APunchStillCoolingPastTheHoldLeavesTheLungeAvailable" classname="TumbangPreso.Tests.AiLungeRulesTests" runstate="Runnable" seed="1389121425" result="Passed" start-time="2026-09-24 12:08:15Z" end-time="2026-09-24 12:08:15Z" duration="0.016012" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1015" name="AReadyPunchThatWillBeInRangeWhenTheHoldEndsRefusesTheCharge" fullname="TumbangPreso.Tests.AiLungeRulesTests.AReadyPunchThatWillBeInRangeWhenTheHoldEndsRefusesTheCharge" methodname="AReadyPunchThatWillBeInRangeWhenTheHoldEndsRefusesTheCharge" classname="TumbangPreso.Tests.AiLungeRulesTests" runstate="Runnable" seed="1791330637" result="Passed" start-time="2026-09-24 12:08:15Z" end-time="2026-09-24 12:08:15Z" duration="0.000266" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1016" name="AVictimTheWalkCannotCatchStillGetsTheLunge" fullname="TumbangPreso.Tests.AiLungeRulesTests.AVictimTheWalkCannotCatchStillGetsTheLunge" methodname="AVictimTheWalkCannotCatchStillGetsTheLunge" classname="TumbangPreso.Tests.AiLungeRulesTests" runstate="Runnable" seed="1285313342" result="Passed" start-time="2026-09-24 12:08:15Z" end-time="2026-09-24 12:08:15Z" duration="0.000149" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
