@@ -21,7 +21,9 @@ const HEROES = {
   // ⚠️ crf 22 FOR HER NIGHT: the dark grain costs bits, and at 21 her copy was 41.2 MB against the
   // 25 to 38 MB budget. Measured 2026-09-24 against the crf 17 master: crf 21 SSIM 0.977 at 41.2 MB,
   // crf 22 SSIM 0.974 at 33.9 MB, crf 23 SSIM 0.970 at 27.6 MB.
-  phaister: { master: 'out/phaister_home_loop_1080p30.mp4', composition: 'PhaisterScene', crf: 22 },
+  // ⚠️ crf 23 FOR THE 54 s REMAKE: at 22 it shipped 41.8 MB, over the 38 MB budget; at 23 it is 35.1 MB,
+  // SSIM 0.980 against the master (2026-09-24).
+  phaister: { master: 'out/phaister_home_loop_1080p30.mp4', composition: 'PhaisterScene', crf: 23 },
 };
 const h = HEROES[hero];
 if (!h) throw new Error(`Unknown hero ${hero}; add it to HEROES in scripts/ship.mjs.`);

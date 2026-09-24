@@ -187,8 +187,10 @@ superseded designs do not override the current queue or justify repeating done w
 - Owner, 2026-09-23: any home-screen, menu-background, season or hero-showcase animation starts
   from [docs/HOME_SCREEN_ANIMATION_METHOD.md](docs/HOME_SCREEN_ANIMATION_METHOD.md). Reuse its
   method (research, real posed models, unaltered faces, re-timed beats, frame-by-frame review);
-  never copy the existing Zack loop's content. The current loop's source and doc are
-  `ArtSource/home-scene/` and `docs/reports/home-scene/README.md`.
+  never copy the existing Zack loop's content. The current loops' source and docs are
+  `ArtSource/home-scene/` and `docs/reports/home-scene/` (README.md is Zack's, phaister.md hers).
+- Owner, 2026-09-24, the method's § 0, standing: every beat has time to breathe, the characters
+  are expressive and show their personality, and the animation tells a story about TUMP.
 
 ## Workspace, ownership and delivery
 

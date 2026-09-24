@@ -475,6 +475,9 @@ namespace TumbangPreso.Visual
         private void ReleaseGraph()
         {
             ClearIntroductionPose();
+            ClearLocomotionArms();
+            ClearThrowBody();
+            ClearResetRaise();
             ClearLocomotionWeight();
             ClearChargePose();
             _throwReleaseTime=-1;_lastThrowPose=ThrowGesture.Rest;
@@ -499,6 +502,9 @@ namespace TumbangPreso.Visual
         {
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
+            RestoreLocomotionArms();
+            RestoreThrowBody();
+            RestoreResetRaise();
             RestoreLocomotionWeight();
             if (!_graph.IsValid()) return;
 
@@ -927,6 +933,9 @@ namespace TumbangPreso.Visual
         {
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
+            RestoreLocomotionArms();
+            RestoreThrowBody();
+            RestoreResetRaise();
             RestoreLocomotionWeight();
             try
             {
@@ -960,8 +969,9 @@ namespace TumbangPreso.Visual
                 if(_chargeHead!=null)_chargeHead.localRotation=drawn.Head;
                 if(_chargeOff!=null)_chargeOff.localRotation=drawn.Left;
                 _chargeOffsetsApplied=true;_lastThrowPose=pose;
+                ApplyThrowBody(throwing);
             }
-            finally { ApplyLocomotionWeight(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); }
+            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); }
         }
 
         private void RestoreChargeOffsets()
@@ -1112,6 +1122,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void PlayAction(string action, string viewmodelAction)
         {
+            if (action == "grab") NoteResetGesture();
             if (_introductionAbility != null && action != _introductionAbility.CastAction) ClearIntroductionPose();
             // ⚠️⚠️ THE FIRST-PERSON ARM IS DRIVEN FROM HERE, AND FROM NOWHERE ELSE.
             // `character_visual.gd::play_action` opens with exactly this call and says why:

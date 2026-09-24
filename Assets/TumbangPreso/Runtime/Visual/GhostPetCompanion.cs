@@ -1558,6 +1558,32 @@ namespace TumbangPreso.Visual
             PoseIdleExpression(gesture,p,expression);
         }
 
+        /// <summary>One authored face: the expression parts it shows and which of his own features they replace.</summary>
+        public readonly struct KuroFace
+        {
+            public readonly string[] Parts;public readonly bool HideEyeL,HideEyeR,HideMouth;
+            public KuroFace(string[] parts,bool eyeL,bool eyeR,bool mouth){Parts=parts;HideEyeL=eyeL;HideEyeR=eyeR;HideMouth=mouth;}
+        }
+
+        /// <summary>
+        /// The face each idle gesture wears, or none. Every name is a child of `KuroExpressions` in
+        /// pet-nemu-ghost.glb; `KuroFormTests` asserts each set shows and clears.
+        /// </summary>
+        public static KuroFace ExpressionFor(FidgetState gesture) => gesture switch
+        {
+            FidgetState.CatSmile=>new KuroFace(new[]{"KuroCatMouth"},false,false,true),
+            FidgetState.GoofyDizzy=>new KuroFace(new[]{"KuroCrossLeft","KuroCrossRight","KuroGoofyMouth"},true,true,true),
+            FidgetState.ShyPout=>new KuroFace(new[]{"KuroShyEye","KuroPoutMouth"},false,true,true),
+            FidgetState.HappyHop=>new KuroFace(new[]{"KuroHappyEyeL","KuroHappyEyeR","KuroGrinMouth"},true,true,true),
+            FidgetState.CuriousPeek=>new KuroFace(new[]{"KuroSparkleL","KuroSparkleR","KuroOhMouth"},false,false,true),
+            FidgetState.SleepySnooze=>new KuroFace(new[]{"KuroSleepEyeL","KuroSleepEyeR"},true,true,false),
+            FidgetState.CheekyGiggle=>new KuroFace(new[]{"KuroHappyEyeL","KuroHappyEyeR","KuroCatMouth","KuroTongue"},true,true,true),
+            FidgetState.HeartbeatPulse=>new KuroFace(new[]{"KuroHeartEyeL","KuroHeartEyeR","KuroCatMouth"},true,true,true),
+            FidgetState.TwirlSpin=>new KuroFace(new[]{"KuroHappyEyeL","KuroHappyEyeR","KuroCatMouth"},true,true,true),
+            FidgetState.OrbitArc=>new KuroFace(new[]{"KuroSparkleL","KuroSparkleR","KuroCatMouth"},false,false,true),
+            _=>new KuroFace(null,false,false,false),
+        };
+
         private void PoseIdleExpression(FidgetState gesture,float p,float amount)
         {
             if(_expressionRoot==null)return;
@@ -1566,22 +1592,23 @@ namespace TumbangPreso.Visual
             bool cat=gesture==FidgetState.CatSmile;
             bool goofy=gesture==FidgetState.GoofyDizzy;
             bool shy=gesture==FidgetState.ShyPout;
+            // ⚠️ EVERY GESTURE HAS A FACE OF ITS OWN NOW; THREE DID. 🧑 2026-09-24: *"make kuro's
+            // expressions cuter"*, *"make it more expressive hehe"*. `tools/cute_kuro.py` authored the
+            // new parts (happy, sleepy, heart and sparkle eyes; a grin, an "o", a tongue) the same way
+            // `tools/author_kuro.py` authored the first three. The table is the whole mapping: which
+            // parts show, and which of his own eyes and mouth they stand in for.
+            var face=ExpressionFor(gesture);
             // Graphic faces switch crisply after the anticipation and before the
             // recovery. Blending overlapping line art makes an unreadable face.
-            bool show=(cat||goofy||shy) && p>=.15f && p<=.82f;
+            bool show=face.Parts!=null && p>=.15f && p<=.82f;
             _expressionRoot.localScale=show?Vector3.one:Vector3.zero;
             if(show)
             {
                 foreach(var pair in _expressionParts)
-                {
-                    bool selected=cat?pair.Key=="KuroCatMouth":goofy?
-                        pair.Key=="KuroCrossLeft"||pair.Key=="KuroCrossRight"||pair.Key=="KuroGoofyMouth":
-                        pair.Key=="KuroShyEye"||pair.Key=="KuroPoutMouth";
-                    pair.Value.localScale=selected?Vector3.one:Vector3.zero;
-                }
-                if(_mouth!=null)_mouth.localScale=Vector3.zero;
-                if(goofy && _eyeL!=null)_eyeL.localScale=Vector3.zero;
-                if((goofy||shy) && _eyeR!=null)_eyeR.localScale=Vector3.zero;
+                    pair.Value.localScale=System.Array.IndexOf(face.Parts,pair.Key)>=0?Vector3.one:Vector3.zero;
+                if(face.HideMouth && _mouth!=null)_mouth.localScale=Vector3.zero;
+                if(face.HideEyeL && _eyeL!=null)_eyeL.localScale=Vector3.zero;
+                if(face.HideEyeR && _eyeR!=null)_eyeR.localScale=Vector3.zero;
             }
             else foreach(var part in _expressionParts.Values)part.localScale=Vector3.zero;
             if(cat)

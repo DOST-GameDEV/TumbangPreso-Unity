@@ -5,8 +5,9 @@ using UnityEngine.Video;
 namespace TumbangPreso.UI.Hub
 {
     /// <summary>
-    /// The owner's animated HOME scenes: one seamless 42 second loop per featured hero (Zack at Sa
-    /// Bubong, Phaister under the tulay), ONE of them picked at random each time the hub is built, and
+    /// The owner's animated HOME scenes: one seamless loop per featured hero (Zack at Sa Bubong, 42 s;
+    /// Phaister and Nemu under the tulay, 54 s: a loop is as long as its story needs, and the player
+    /// loops whatever length it is given), ONE of them picked at random each time the hub is built, and
     /// played in the hub's reserved full-bleed <see cref="TumpHub.Scene"/> layer over the live court.
     ///
     /// ⚠️⚠️ RANDOM, NOT THE SELECTED OR FAVOURITE HERO. 🧑 2026-09-24: *"i decided to make diff character

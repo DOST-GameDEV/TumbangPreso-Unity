@@ -12,8 +12,8 @@
     "master": "remotion render src/index.ts HomeScene out/zack_home_loop_1080p30.mp4 --concurrency=6 --crf=17 --pixel-format=yuv420p --gl=angle",
     "ship": "node scripts/ship.mjs",
     "typecheck": "tsc --noEmit",
-    "draft:phaister": "remotion render src/index.ts PhaisterScene out/phaister_draft_half.mp4 --scale=0.5 --concurrency=6 --crf=20 --gl=angle",
-    "master:phaister": "remotion render src/index.ts PhaisterScene out/phaister_home_loop_1080p30.mp4 --concurrency=6 --crf=17 --pixel-format=yuv420p --gl=angle",
+    "draft:phaister": "node scripts/chunks.mjs PhaisterScene out/phaister_draft_half.mp4 0.5 20 270 2 45",
+    "master:phaister": "node scripts/chunks.mjs PhaisterScene out/phaister_home_loop_1080p30.mp4 1 17 270 2 45",
     "ship:phaister": "node scripts/ship.mjs phaister"
   },
   "dependencies": {
