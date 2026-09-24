@@ -89,6 +89,7 @@ class Performance:
         self.voice = None
         self.still = None
         self.notes = []
+        self.holds = []
 
     def key(self, t, pose, punch=False):
         self.keys.append((round(t, 3), pose))
@@ -97,7 +98,10 @@ class Performance:
         return self
 
     def hold(self, t0, t1, pose):
-        """A held shape: the same pose at both ends, so the curve rests between them."""
+        """A held shape. It is written as the same pose at both ends and turned into a MOVING hold
+        when the table is written (`_moving_holds`): the body keeps drifting a little the way it
+        was going, so no signature pose is ever dead still."""
+        self.holds.append((round(t0, 3), round(t1, 3)))
         return self.key(t0, pose).key(t1, pose)
 
     def rise(self, t, metres):
@@ -124,7 +128,7 @@ class Performance:
         ]
         if self.voice:
             lines.append(f"voice {self.voice[0]:g} {self.voice[1]}")
-        for t, pose in sorted(self.keys, key=lambda k: k[0]):
+        for t, pose in _moving_holds(self):
             raw = pose.raw()
             values = " ".join(f"{v:g}" for b in BONES for v in raw[b])
             lines.append(f"key {t:g} {values}")
@@ -145,6 +149,40 @@ class Performance:
         _ensure_meta(path, folder=False)
         _ensure_meta(OUT, folder=True)
         return path
+
+
+# ⚠️⚠️ REFINEMENT PASS 2 (2026-09-24): MOVING HOLDS. The first pass held every signature shape
+# with the same pose at both ends (`Performance.hold`), which the curve then renders as a statue
+# for up to 0.6 s: the "dead still pose" animators call a held drawing. A moving hold keeps the
+# motion that arrived going, a little, and settles: the end of each hold is pushed a few per cent
+# further along the direction the body came from, capped at 3 degrees per axis so the pose never
+# changes what it says. The amount is the hero's character: Cheska is the one who stops (her
+# holds barely drift), Phaister and Zack keep moving, Dante's holds already tremble as authored.
+HOLD_DRIFT = {"sean": .06, "zack": .09, "dante": .05, "cheska": .02, "nemu": .08, "phaister": .09, "rafi": .08}
+HOLD_CAP = 3.0
+
+
+def _drift(a, b, k):
+    """b pushed further away from a by k of their difference, capped per axis."""
+    if isinstance(b, (tuple, list)) and b and isinstance(b[0], (tuple, list)):
+        return tuple(_drift(x, y, k) for x, y in zip(a, b))
+    return tuple(y + max(-HOLD_CAP, min(HOLD_CAP, (y - x) * k)) for x, y in zip(a, b))
+
+
+def _moving_holds(perf):
+    keys = sorted(perf.keys, key=lambda k: k[0])
+    k = HOLD_DRIFT.get(perf.hero.split("-")[0], .06)
+    out = []
+    for i, (t, pose) in enumerate(keys):
+        hold = next((h for h in perf.holds if abs(h[1] - t) < 1e-6 and h[1] - h[0] >= .2), None)
+        start = next((j for j in range(i) if abs(keys[j][0] - (hold[0] if hold else -1)) < 1e-6), None)
+        if hold and start is not None and start > 0:
+            prev = keys[start - 1][1]
+            pose = pose.but(torso=_drift(prev.torso, pose.torso, k), head=_drift(prev.head, pose.head, k * 1.4),
+                            left=_drift(prev.left, pose.left, k), right=_drift(prev.right, pose.right, k),
+                            legs=_drift(prev.legs, pose.legs, k * .5))
+        out.append((t, pose))
+    return out
 
 
 def _ensure_meta(path, folder):
@@ -187,7 +225,7 @@ def _sample_track(keys, t, punches):
 
 
 def sample(perf, t):
-    keys = sorted(perf.keys, key=lambda k: k[0])
+    keys = _moving_holds(perf)
     raws = [(k, p.raw()) for k, p in keys]
     out = {}
     for b in BONES:

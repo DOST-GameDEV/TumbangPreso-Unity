@@ -64,3 +64,16 @@ placement, not the look.
 | Dante | **New performance**: plants wide and unhurried, gets under a weight with a strain tremble, stands into it and pushes two stone slabs apart overhead (held, trembling), loads both fists over his right shoulder, stamps forward. Stage: a dust haze settles, a ridge lifts on the horizon, two opaque stone slabs shoulder up out of the road and part with his push, molten seams split forward on the stamp and dust kicks up. | 3.8 s | `previews/dante_before_witness.png`, `dante_v1_shots.png` (every beat read on the first sheet). Stage NOT yet seen rendered. |
 | Cheska | **New performance** (and a matching held-slipper variant with the camera mirrored so the shoe stays far side): still, reading the court with a slow head turn and a cold breath, one fingertip draws an exact frost line that buds as it goes, hands close round it into a crystal, lift it to eye height, snap apart. Stage: pale highland mist with a Benguet pine ridge (low contrast: she is the one warm shape), frost plates spreading from her feet, a ring of ice spires rising behind like a route being shut, the crystal shattering on the snap. | 3.2 s | `previews/cheska_before_witness.png`, `cheska_v1` (close shots too tight, hands out of frame), `cheska_v2_shots.png`. Stage NOT yet seen rendered. |
 | Rafi | **New performance**: feints left then right (a ripple at his feet each time), straightens with a shrug, beckons twice, drops into a rocking boat-deck crouch with currents at his palms, lifts the wave behind him and sends it with one sweeping arm. Stage: a turquoise Tawi-Tawi horizon with a foam line and fixed stilt-house silhouettes, a curling wave that climbs behind him and pitches over on the send with spray. | 3.4 s | `previews/rafi_before_witness.png`, `rafi_v1_shots.png` (every beat read). Stage NOT yet seen rendered. |
+
+## Refinement pass 2: moving holds (2026-09-24)
+
+Every `Performance.hold` in `tools/author_ultimate_intros.py` was the same pose at both ends, so the
+curve rendered a statue for up to 0.6 s. The end of each hold (0.2 s or longer, after a real move) is now
+pushed a few per cent further along the direction the body arrived from, capped at 3 degrees per axis:
+the motion that arrived keeps going a little and settles, and the pose still says the same thing.
+Per hero: Zack and Phaister 9 per cent, Nemu and Rafi 8, Sean 6, Dante 5 (his holds already tremble),
+Cheska 2 (she is the one who stops). The head drifts 1.4 times the body (it follows through), the legs
+half. The preview samples the same keys. Tables regenerated (22 key rows changed across 8 files).
+Evidence: `previews/zack-moving-holds_v1.png` (through the point-up and sight holds). Overlapping
+action between head and torso on moves (not holds) is still open, because the table format keys every
+bone at one time.
