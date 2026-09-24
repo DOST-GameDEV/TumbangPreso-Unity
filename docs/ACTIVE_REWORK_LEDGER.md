@@ -2,7 +2,7 @@
 
 ## Current resume, 2026-09-24: bot inactivity diagnosis
 
-Overall goal ACTIVE, NOT done. DEV and QUAL at remote-verified 57cf74a9c.
+Overall goal ACTIVE, NOT done. DEV and QUAL at remote-verified 5de3a78f3.
 AGENTS cleanup dc10b68f2 published. SaBubong bird placement complete locally: author
 v2 uses real raised canopy seams, focused native1/1 in71.825s, actual paired
 frames/sequences/grey inspected. Report: map-by-map-refinement-2026-09-23/
@@ -22,8 +22,17 @@ AiReactionTimingTests covers elapsed time, repeated queries, false/reset and pau
 Guarded job62633 reaped:3/3 passed in88.089s, timer case3.089s. Both new1x samples
 include interception and one accepted shove; no balance comparison claimed.
 Logs/refine-bot-reaction-after.xml and .log. Report bot-reaction-fix/report.md.
-Known churn backed up/restored, no Unity job running. Publish the narrow fix,
-then continue with Lagoon via the existing diagnostic, not another Eskinita rerun.
+Known churn backed up/restored. Narrow fix published in5de3a78f3. Lagoon job21238
+passed2/2 in87.850s; actual plan/position traces reviewed. No water-fall sample,
+so bot water recovery remains uncovered. Existing diagnostic now has an optional
+TUMP_AI_MAP selector; default Eskinita behavior/filenames unchanged.
+Second source defect: chase patience also added frame dt only on planner ticks.
+Uncommitted fix measures time since last real progress; preserves thresholds.
+Job69498 reaped: chase-clock regression and Ilalim's two first1x samples3/3
+passed in96.089s. Logs/refine-bot-ilalim-v1.xml/.log; actual traces reviewed.
+Known churn backed up/restored. Coverage/findings in bot-map-coverage/report.md.
+Publish this narrow change, then remaining Bayan/SaBubong samples and deliberate
+bot recovery at water/roof edges. Do not redo successful samples unchanged.
 Fixture repairs0/1; expected red reproduction is retained, not a tooling failure.
 Inspect current decision/input/recovery paths and trace actual
 bot inactivity, distinguishing planned waits from failed progress. Reuse existing

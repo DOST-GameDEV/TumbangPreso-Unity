@@ -437,6 +437,7 @@ namespace TumbangPreso
         private void OnRoundStarted(int roundNumber, int defenderSlot)
         {
             _gates.Clear();
+            _chasing = null;
             _wantedEmote = null;
             _emoteHoldLeft = 0.0f;
             _boredFor = 0.0f;
@@ -718,6 +719,7 @@ namespace TumbangPreso
             if (!_motor.CanAct())
             {
                 _gates.Clear();
+                _chasing = null;
                 ReleaseAll(intent);
 
                 // ⚠⚠ A BOT MASHES TO GET UP, BECAUSE A BOT PRESSES THE SAME BUTTONS A HUMAN
@@ -1001,7 +1003,7 @@ namespace TumbangPreso
             // used to ask, so a taya could be walked to the far end of Aurora Boulevard by an
             // attacker who was simply faster, leaving the can unguarded and the passive score
             // stopped for the rest of the round.
-            if (quarry != null && ChaseIsGoingSomewhere(quarry, dt)) return AiPlan.Hunt;
+            if (quarry != null && ChaseIsGoingSomewhere(quarry)) return AiPlan.Hunt;
 
             if (Me.Camp > 0.0f && HasCoverPoint(lata)) return AiPlan.Cover;
 
@@ -1028,8 +1030,9 @@ namespace TumbangPreso
         private CharacterMotor _chasing;
         private float _chaseBestDistance = float.MaxValue;
         private float _chaseStaleFor;
+        private float _chaseProgressAt;
 
-        private bool ChaseIsGoingSomewhere(CharacterMotor quarry, float dt)
+        private bool ChaseIsGoingSomewhere(CharacterMotor quarry)
         {
             float now = Flat(transform.position, At(quarry));
 
@@ -1038,6 +1041,7 @@ namespace TumbangPreso
                 _chasing = quarry;
                 _chaseBestDistance = now;
                 _chaseStaleFor = 0.0f;
+                _chaseProgressAt = Time.time;
                 return true;
             }
 
@@ -1049,10 +1053,13 @@ namespace TumbangPreso
             {
                 _chaseBestDistance = now;
                 _chaseStaleFor = 0.0f;
+                _chaseProgressAt = Time.time;
                 return true;
             }
 
-            _chaseStaleFor += dt;
+            // Like perception, this is sampled on planner ticks, not every
+            // render frame. Two seconds without closing means two game seconds.
+            _chaseStaleFor = Time.time - _chaseProgressAt;
 
             // ⚠️ A HELPLESS QUARRY IS NEVER ABANDONED. Somebody stunned or face down cannot run,
             // so a chase that is not closing on them is a pathing problem rather than a losing

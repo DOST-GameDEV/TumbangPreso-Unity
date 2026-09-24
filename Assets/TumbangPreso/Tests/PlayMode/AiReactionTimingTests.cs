@@ -15,6 +15,29 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
 
         [UnityTest]
+        public IEnumerator ChasePatienceMeasuresTimeSinceRealProgress()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+            var bot=Object.FindObjectsByType<AIController>(FindObjectsSortMode.None).First();
+            var quarry=GameServices.Round.Players.First(p=>p!=bot.GetComponent<CharacterMotor>());
+            Assert.IsFalse(quarry.IsStunned);
+            var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+            var chase=typeof(AIController).GetMethod("ChaseIsGoingSomewhere",flags);
+            bool Progress()=>(bool)chase.Invoke(bot,new object[]{quarry});
+            Time.timeScale=1;
+            Assert.IsTrue(Progress());
+            yield return new WaitForSeconds(AiTuning.ChasePatienceSeconds+.06f);
+            Assert.IsFalse(Progress(),"The taya kept a stale chase beyond its authored patience");
+            Assert.IsTrue(Progress(),"A new chase must get its own window");
+            yield return new WaitForSeconds(AiTuning.ChasePatienceSeconds*.65f);
+            var target=(Vector3)typeof(AIController).GetMethod("At",flags).Invoke(bot,new object[]{quarry});
+            bot.GetComponent<CharacterMotor>().Teleport(Vector3.MoveTowards(bot.transform.position,target,AiTuning.ChaseProgressMetres+.2f));
+            Assert.IsTrue(Progress(),"Closing distance must refresh patience");
+            yield return new WaitForSeconds(AiTuning.ChasePatienceSeconds*.65f);
+            Assert.IsTrue(Progress(),"Patience was measured from chase start instead of the last progress");
+        }
+
+        [UnityTest]
         public IEnumerator ReactionUsesObservedTimeNotNumberOfPlannerCalls()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);

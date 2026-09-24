@@ -542,6 +542,10 @@ scattered across all maps. Execute inside each map's existing refinement row.
   [causal evidence and remaining coverage](reports/map-by-map-refinement-2026-09-23/bot-reaction-fix/report.md).
   Other maps/roles/transitions/tier/roster coverage remains open. Existing tag-stun
   waits are intentional, not removed to manufacture activity.
+  The chase-patience clock had the same planner/frame mismatch and now measures
+  time since real closing progress. Focused chase plus Ilalim samples3/3 passed;
+  Lagoon samples2/2 passed. [Map findings and limits](reports/map-by-map-refinement-2026-09-23/bot-map-coverage/report.md).
+  No Lagoon water falls occurred in the sample; explicit bot recovery remains open.
 Owner assignment update2026-09-24: the owner prepared a separate cloud assignment
 for ALL animation research/direction/implementation, including individual ability
 casts and ultimates. That animation lane can begin now while local map/environment
