@@ -9848,6 +9848,7 @@ Transform:
   - {fileID: 178893625}
   - {fileID: 1134990014}
   - {fileID: 324009784}
+  - {fileID: 742120424}
   m_Father: {fileID: 1159714792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &73606170
@@ -9880,7 +9881,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: a5aad16c32e964147acc086b0afdc626, type: 2}
   - {fileID: 2100000, guid: d1c260aa0cfd71e46b72b051af74b636, type: 2}
   - {fileID: 2100000, guid: c51b5fdb422011441875c8693a49342e, type: 2}
-  - {fileID: 2100000, guid: 523d2b1eb56d2024fbb4a97271e2f7e4, type: 2}
+  - {fileID: 2100000, guid: fb9b953707a07074f85f4e067e1d47df, type: 2}
   - {fileID: 2100000, guid: a5b54b63681c96342ae1f5cb83395ce2, type: 2}
   - {fileID: 2100000, guid: 336c32cddd230834da42a76692d10424, type: 2}
   m_StaticBatchInfo:
@@ -9913,7 +9914,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 73606168}
-  m_Mesh: {fileID: 4300000, guid: b5603878a31fb834ebd5032020bad7a1, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 3fc5272a57d391843a843d818b4be283, type: 2}
 --- !u!1 &74616368
 GameObject:
   m_ObjectHideFlags: 0
@@ -85333,6 +85334,112 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1017046874}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &645838247
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 645838248}
+  - component: {fileID: 645838251}
+  - component: {fileID: 645838250}
+  - component: {fileID: 645838249}
+  m_Layer: 0
+  m_Name: Fitted gable thatch
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &645838248
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645838247}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1046406407}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &645838249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645838247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Modest eave fibres overlap the retained roof; ridge ties wrap its existing
+    cap.
+--- !u!23 &645838250
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645838247}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 6e631e6f321965649add1b87bff44777, type: 2}
+  - {fileID: 2100000, guid: ea53f3b0f1fea334586c1426e52b1d45, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &645838251
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645838247}
+  m_Mesh: {fileID: 4300000, guid: 8c4095d8236a56e4a980331e335618ad, type: 2}
 --- !u!1 &646285182
 GameObject:
   m_ObjectHideFlags: 0
@@ -97673,6 +97780,112 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &742120423
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 742120424}
+  - component: {fileID: 742120427}
+  - component: {fileID: 742120426}
+  - component: {fileID: 742120425}
+  m_Layer: 0
+  m_Name: Fitted gable thatch
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &742120424
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742120423}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 73606169}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &742120425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742120423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Modest eave fibres overlap the retained roof; ridge ties wrap its existing
+    cap.
+--- !u!23 &742120426
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742120423}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: fb9b953707a07074f85f4e067e1d47df, type: 2}
+  - {fileID: 2100000, guid: ea53f3b0f1fea334586c1426e52b1d45, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &742120427
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742120423}
+  m_Mesh: {fileID: 4300000, guid: 62a24e55bd0cb8b4f979737724083dfe, type: 2}
 --- !u!1 &742794553
 GameObject:
   m_ObjectHideFlags: 0
@@ -137289,6 +137502,7 @@ Transform:
   - {fileID: 506181249}
   - {fileID: 795904349}
   - {fileID: 1540600679}
+  - {fileID: 645838248}
   m_Father: {fileID: 1159714792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1046406408
@@ -137321,7 +137535,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: a5aad16c32e964147acc086b0afdc626, type: 2}
   - {fileID: 2100000, guid: c6ce9e23fab9e7e4982732672845f057, type: 2}
   - {fileID: 2100000, guid: c51b5fdb422011441875c8693a49342e, type: 2}
-  - {fileID: 2100000, guid: fefbf837626960c4abaee84a59ee0f63, type: 2}
+  - {fileID: 2100000, guid: 6e631e6f321965649add1b87bff44777, type: 2}
   - {fileID: 2100000, guid: a5b54b63681c96342ae1f5cb83395ce2, type: 2}
   - {fileID: 2100000, guid: 336c32cddd230834da42a76692d10424, type: 2}
   - {fileID: 2100000, guid: 65510114790472f4aa12520f8ea61e43, type: 2}
@@ -137355,7 +137569,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1046406406}
-  m_Mesh: {fileID: 4300000, guid: 6ab7eb7978392a44081362e3b1c02507, type: 2}
+  m_Mesh: {fileID: 4300000, guid: c52bbf80362da564b830bab93d352b25, type: 2}
 --- !u!1 &1046421063
 GameObject:
   m_ObjectHideFlags: 0
@@ -146857,6 +147071,7 @@ Transform:
   - {fileID: 848980119}
   - {fileID: 633314534}
   - {fileID: 1095618639}
+  - {fileID: 1402995033}
   m_Father: {fileID: 1159714792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1125412259
@@ -146889,7 +147104,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: a5aad16c32e964147acc086b0afdc626, type: 2}
   - {fileID: 2100000, guid: dee4f3d012bd8d2478e29ddcf3d57c90, type: 2}
   - {fileID: 2100000, guid: c51b5fdb422011441875c8693a49342e, type: 2}
-  - {fileID: 2100000, guid: cd32fced37288054b86729c7ed42cc17, type: 2}
+  - {fileID: 2100000, guid: 5cc0bc79df6b57a49a5aeb6cf5a15a49, type: 2}
   - {fileID: 2100000, guid: a5b54b63681c96342ae1f5cb83395ce2, type: 2}
   - {fileID: 2100000, guid: 336c32cddd230834da42a76692d10424, type: 2}
   - {fileID: 2100000, guid: 65510114790472f4aa12520f8ea61e43, type: 2}
@@ -146923,7 +147138,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1125412257}
-  m_Mesh: {fileID: 4300000, guid: 8f4edbb7b9f58794a9220fe263aa8b72, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 1ff2d8e9abb639b4ba12684ab8beb320, type: 2}
 --- !u!1 &1125535288
 GameObject:
   m_ObjectHideFlags: 0
@@ -182275,6 +182490,112 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1549520338}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1402995032
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1402995033}
+  - component: {fileID: 1402995036}
+  - component: {fileID: 1402995035}
+  - component: {fileID: 1402995034}
+  m_Layer: 0
+  m_Name: Fitted gable thatch
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1402995033
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402995032}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1125412258}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1402995034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402995032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Modest eave fibres overlap the retained roof; ridge ties wrap its existing
+    cap.
+--- !u!23 &1402995035
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402995032}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 5cc0bc79df6b57a49a5aeb6cf5a15a49, type: 2}
+  - {fileID: 2100000, guid: ea53f3b0f1fea334586c1426e52b1d45, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1402995036
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402995032}
+  m_Mesh: {fileID: 4300000, guid: d60b83093d478074eac000916d2ffb67, type: 2}
 --- !u!1 &1403138633
 GameObject:
   m_ObjectHideFlags: 0
@@ -263211,6 +263532,112 @@ Transform:
   m_Children: []
   m_Father: {fileID: 20120117}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2011074659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2011074660}
+  - component: {fileID: 2011074663}
+  - component: {fileID: 2011074662}
+  - component: {fileID: 2011074661}
+  m_Layer: 0
+  m_Name: Fitted gable thatch
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &2011074660
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011074659}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2023126041}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2011074661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011074659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Modest eave fibres overlap the retained roof; ridge ties wrap its existing
+    cap.
+--- !u!23 &2011074662
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011074659}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 779ca09ae9feb51428494634dd96827d, type: 2}
+  - {fileID: 2100000, guid: ea53f3b0f1fea334586c1426e52b1d45, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &2011074663
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2011074659}
+  m_Mesh: {fileID: 4300000, guid: d73b408fa653a2f4192ec80ebd770de3, type: 2}
 --- !u!1 &2011291952
 GameObject:
   m_ObjectHideFlags: 0
@@ -264784,6 +265211,7 @@ Transform:
   - {fileID: 256459136}
   - {fileID: 1970500222}
   - {fileID: 1016963424}
+  - {fileID: 2011074660}
   m_Father: {fileID: 1159714792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &2023126042
@@ -264816,7 +265244,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: a5aad16c32e964147acc086b0afdc626, type: 2}
   - {fileID: 2100000, guid: 2cc81ad1ba7f5124a82ee14e081896b6, type: 2}
   - {fileID: 2100000, guid: c51b5fdb422011441875c8693a49342e, type: 2}
-  - {fileID: 2100000, guid: 0a1415b7500f24548a2ca1afe45ef9bf, type: 2}
+  - {fileID: 2100000, guid: 779ca09ae9feb51428494634dd96827d, type: 2}
   - {fileID: 2100000, guid: a5b54b63681c96342ae1f5cb83395ce2, type: 2}
   - {fileID: 2100000, guid: 336c32cddd230834da42a76692d10424, type: 2}
   m_StaticBatchInfo:
@@ -264849,7 +265277,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2023126040}
-  m_Mesh: {fileID: 4300000, guid: 8f8ce51c21f584444b308fbf836c4ffa, type: 2}
+  m_Mesh: {fileID: 4300000, guid: ffa35489f8af0454485d9d302ba68874, type: 2}
 --- !u!1 &2023481883
 GameObject:
   m_ObjectHideFlags: 0

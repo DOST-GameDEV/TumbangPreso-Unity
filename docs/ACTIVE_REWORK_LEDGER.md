@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Lagoon fall/mash mechanic, then birds and art
+## Current resume, 2026-09-24: Lagoon gabled-thatch family
 
 Overall goal ACTIVE and NOT complete. Continue every independently actionable TODO
 without checkpoint stops. Owner is AFK and wants quality product work ahead of test/
@@ -10,23 +10,28 @@ newer requirements supersede retired designs. Do not claim broad completion from
 subset, passing test, report or pushed art batch.
 
 DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD and verified remote6cc04ebb65713729e4bcacee133fcece42a7a0a4. Protected original
+HEAD and verified remotefaa9047020112797089b505746ca43c8c44333a9. Protected original
 Resources/UI/composition-redesign/home-court.png.meta and loading-street.png.meta
-remain dirty: NEVER restore/stage them. Own current work: Lagoon baseline method
-in MapGraphicsReviewProbe, lagoon-reference-notes.md, TODO, ledger/history. No Lagoon
-scene/art edits yet. Explicit staging, sole author M4tyu633, no trailers/AI mentions/
+remain dirty: NEVER restore/stage them. Own current work: LagoonGableFinishAuthor, builder hook, paired review method,
+lagoon-gable-plan.md and ledger. Fall/mash3e0d0c69a and birds faa904702 are published. Explicit staging, sole author M4tyu633, no trailers/AI mentions/
 em dashes. Fetch before push, verify remote; never reset/clean/force-push.
 QUAL C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached6cc04ebb6 with baseline case copied. Previous exact candidates stashed
+owned detachedfaa904702 with the gable candidate copied. Previous exact candidates stashed
 and advanced safely; preserve all named stashes/other dirty worktrees.
 
-No active job. Baseline38101completed/reaped1/1in8.653s; actual preview, six near
-families, piles, houseboat and islands inspected. Full patch saved, known generated
-churn restored. Existing18homes/boats/structures retained. First weak family is
-ThatchGable0/8/12/16: plain roof reads as wood slabs. Native reference/concept study
-and local fibre/fringe plan precede edits. Water depth/contact, brown value
-repetition and near island detail remain later local units. No art edits yet.
+Author84259and review2297completed/reaped. Native1/1in6.153s; paired
+preview/front/roof/detached/grey25 and full roof detail inspected, keepv1. No active Unity.
+First art unit targets ThatchGable0/8/12/16: local down-slope fibre UV/material,
+modest eave fringe and ridge ties. Original topology/non-roof slots/collision kept.
+After author, one native paired preview/home0/detached8review and actual inspection.
 No native player, task browser tab or temporary server remains active.
+
+Baseline38101passed1/1in8.653s; preview/six families/piles/houseboat/islands inspected.
+Existing18homes/sixboats remain useful. Other roof/screen/repair families, brown
+value repetition, flat water/depth/contact and near island detail remain later units.
+Gable concept/prompt/hash and accepted/rejected directions saved. New owner fall/mash
+and birds requests are implemented; full integration and all-map natural movement
+remain open. Do not rerun their successful checks during this roof-material edit.
 
 ## Latest all-map building requirement
 
@@ -225,3 +230,28 @@ and grey25 inspected, keepv2. Three native birds move/animate within air volumes
 pause correctly. Scene/test metadata/evidence copied to DEV, known churn restored
 after patch. No active Unity. Ready to publish, then gable-family art resumes.
 This does not close full-map performance/visibility or broader natural-animal2.7.
+
+LATEST VERIFIED: faa904702 birds PUBLISHED/remote verified. QUAL exact candidate
+matched/stashed/advancedfaa904702. No active Unity jobs, task tabs or native players.
+3e0d0c69a fall/mash recovery and faa904702birds are implemented with bounded evidence;
+2.6b/cchecked, broader integration and2.7remain open. Gable-family work now resumes
+from saved native baseline/concept. Detailed plan: lagoon-gable-plan.md. Targets
+onlyThatchGable0/8/12/16; fibre material, modest fringe/ridge ties, preserve other
+slots/pitch/piles/route/collision. No gable code/assets changed yet.
+
+Gable author/source and paired review case copied to QUAL. Guarded author runs
+Logs/refine2-lagoon-gable-v1/author.log. Four roofs only: down-slope fibre texture,
+small supported eave tufts/ridge ties, source geometry/non-roof slots/collision kept.
+Question: correct material/mesh targeting and fitted bounds without changing other
+families or new fall/bird behavior. Freeze.cs. Then one paired native preview/home0/
+detached8case with paused matching cameras, inspect before publishing.
+
+Gable author passed: four source roofs/non-roof material slots and all collision
+preserved;7200added fringe/tie vertices/four renderers, no new collision/shadows.
+Saved full patch and restored known profile/PNGmeta churn. Paired native review
+now runs; do not accept appearance until actual images/grey are inspected.
+
+Gable scene/assets/meta/evidence copied to DEV; known generated churn restored from
+saved patch. Four roofs only,7200fringe/tie vertices, original topology/non-roof slots
+and collision retained. Ready to publish, then hip/screen/repair roof families and
+local material variation. No replay of successful fall/bird checks. Overall open.

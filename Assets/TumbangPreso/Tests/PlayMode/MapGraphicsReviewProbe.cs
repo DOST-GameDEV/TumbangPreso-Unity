@@ -87,6 +87,59 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator LagoonGableFinishReview()
+        {
+            Action<bool> ReadFinish()
+            {
+                var homes=Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Single(t=>t.name=="Supported homes");
+                var pairs=homes.Cast<Transform>().Where(t=>t.name.EndsWith("ThatchGable",StringComparison.Ordinal)).Select(t=>
+                {
+                    string[] words=t.name.Split(' ');int id=int.Parse(words[words.Length-2]);
+                    var filter=t.GetComponent<MeshFilter>();var renderer=t.GetComponent<MeshRenderer>();
+                    var saved=AssetImporter.GetAtPath("Assets/TumbangPreso/Art/LagoonGableFinish/Gable"+id+".asset");
+                    Assert.IsNotNull(saved);Assert.IsTrue(saved.userData.StartsWith("TUMP_LAGOON_GABLE_MESH:"));
+                    var original=AssetDatabase.LoadAssetAtPath<Mesh>(saved.userData.Substring("TUMP_LAGOON_GABLE_MESH:".Length));Assert.IsNotNull(original);
+                    var after=renderer.sharedMaterials;var before=after.Select(m=>
+                    {string path=m.GetTag("TumpLagoonGableSource",false);return string.IsNullOrEmpty(path)?m:AssetDatabase.LoadAssetAtPath<Material>(path);}).ToArray();
+                    Assert.IsFalse(before.Any(m=>m==null));var details=t.Find("Fitted gable thatch").gameObject;Assert.IsEmpty(details.GetComponentsInChildren<Collider>());
+                    return new {filter,renderer,original,finished=filter.sharedMesh,before,after,details};
+                }).ToArray();
+                Assert.AreEqual(4,pairs.Length);
+                return on=>{foreach(var p in pairs){p.filter.sharedMesh=on?p.finished:p.original;p.renderer.sharedMaterials=on?p.after:p.before;p.details.SetActive(on);}};
+            }
+            var canvas=new GameObject("Lagoon gable preview",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.Lagoon);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.Lagoon&&Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.Lagoon,preview.Showing);preview.enabled=false;var switchFinish=ReadFinish();Time.timeScale=0;
+            try
+            {
+                foreach(string state in new[]{"before","after"})
+                {switchFinish(state=="after");yield return GameplayShots.Render(preview.Camera,"Lagoon-gable-preview-"+state,false,Output,width:1280,height:720);}
+            }
+            finally{Time.timeScale=1;}
+            Object.Destroy(canvas);yield return PlayModeWorld.Reset();yield return MapRetrievalProbe.Load(SceneFlow.Lagoon);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;var camera=rig.Camera;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            switchFinish=ReadFinish();var eye=Vector3.zero;var rotation=Quaternion.identity;
+            Camera.CameraCallback pin=cam=>{if(cam==camera){cam.transform.SetPositionAndRotation(eye,rotation);cam.fieldOfView=60;}};
+            Camera.onPreCull+=pin;Time.timeScale=0;
+            try
+            {
+                foreach(string view in new[]{"front0","roof0","detached8"})
+                {
+                    eye=view=="front0"?new Vector3(-17,2.8f,-10.5f):view=="roof0"?new Vector3(-18,6,-16):new Vector3(-34,6,19);
+                    var target=view=="detached8"?new Vector3(-42,3.8f,23):new Vector3(-25,3.1f,-10.5f);rotation=Quaternion.LookRotation(target-eye);
+                    foreach(string state in new[]{"before","after"})
+                    {switchFinish(state=="after");yield return GameplayShots.Render(camera,"Lagoon-gable-"+view+"-"+state,false,Output,width:1280,height:800);}
+                }
+            }
+            finally{Time.timeScale=1;Camera.onPreCull-=pin;}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator LagoonArtBaselineReview()
         {
             var canvas=new GameObject("Lagoon art preview",typeof(Canvas));

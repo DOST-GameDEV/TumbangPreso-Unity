@@ -322,6 +322,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   intake](reports/map-by-map-refinement-2026-09-23/lagoon-reference-notes.md) includes
   actually viewed Embassy stilt-house and NCCA boat photos. Native family/material
   assessment precedes local edits; preserve court/deck/water recovery and collision.
+  Four gabled-thatch roofs now have slope-aligned fibre/bundle texture, modest
+  eave fringe and ridge ties; source geometry/other material slots/collision retained.
+  [Family evidence](reports/map-by-map-refinement-2026-09-23/lagoon-gable/report.md): native
+  paired preview/front/roof/detached views and grey inspected, focused1/1passed.
+  Other roof/house families, water/boats/islands and final map acceptance remain.
 - [x] **REFINE-2.6b Lagoon fall and mash recovery, owner2026-09-24.** Adapt SaBubong's
   physical edge fall and existing press-gated get-up to Lagoon. Both modes, all cast,
   existing input/camera/animation/authority path. Record effects on intentional water

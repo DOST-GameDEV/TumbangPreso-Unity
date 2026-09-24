@@ -1,0 +1,5 @@
+Neighbourhood home 0 ThatchGable: original topology/non-roof slots retained; roof fibre material and 68 small supported eave tufts.
+Detached stilt home 8 ThatchGable: original topology/non-roof slots retained; roof fibre material and 64 small supported eave tufts.
+Detached stilt home 12 ThatchGable: original topology/non-roof slots retained; roof fibre material and 62 small supported eave tufts.
+Detached stilt home 16 ThatchGable: original topology/non-roof slots retained; roof fibre material and 58 small supported eave tufts.
+Four gabled roofs only; 7200 added fringe/tie vertices, four renderers, no new collider/shadow caster. Other families, deck, water recovery and flying birds unchanged.
