@@ -21,6 +21,16 @@ blend and visible parked-body limits retained. No more fixture work. Known churn
 restored, no Unity job/helper active. Publish, preserve/advance QUAL, then Ilalim
 visits and SaBubong. Parent/older tasks stay open; original meta dirt preserved.
 
+## Parallel lane, 2026-09-24: HOME loop and gameplay animation (separate from the map resume above)
+
+Published 4255265c and 175cac0d on ASTRAReworks. UX-1.20 (Phaister's HOME loop, shipped crf 23,
+35.1 MB) and UX-1.21 (Kuro) DONE. REFINE-2.9 progress: arms while moving, throw and pektus, the can
+raise, the tag, and all 21 hero casts refined in both views; REFINE-2.9c (every body) done. Evidence and
+reasoning: docs/reports/gameplay-animation-2026-09-24/. Probes: LocomotionArmsProbe, GameplayActionShots,
+CastAndMotionReel. Shipping casts are the glb tables in tools/author_hero_action.py, NOT HeroAbilityClips
+(editor fallback only). Last checks: PlayMode 11/11, EditMode 44/44, 18 glb casts verified. Not yet
+seen: a live networked match, including an observer's estimate of the can raise.
+
 ## Published progress, do not redo
 
 Ground-animal local units all published: Eskinita dog01d93272b/cat08ac1a178,
