@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: publish print shop, then bakery reference/art
+## Current resume, 2026-09-24: actual rooftop/bridge climbing correction first
 
 Overall goal ACTIVE and NOT complete. No checkpoint stops, routine questions,
 other tasks/delegation, paid external APIs, resets, main edits or Desktop replacement.
@@ -345,3 +345,39 @@ Per-sign message/design/ref/status register saved as ilalim-sign-register.md. Al
 11shop identities listed; PCExpress supplied master protected, other signs remain
 OPEN until researched/generated/fitted/reviewed individually. No claim of references
 viewed for unstarted shops. Print physical author runs24015, cs frozen.
+
+Print shop ccd8a7c4b pushed and exact remote verified. QUAL unused rejectedv1runtime
+PNG/meta removed only after image-hash archive check; old importer retained in its
+Logs folder. All19candidate paths matched DEV, named stash preserved, QUAL advanced
+toccd8a7c4b. DEV only protected PNG metas plus this resume update. No active Unity
+or owned browser tabs. Next bakery primary reference intake has begun with Julie's
+own2021franchise brochure; financial/network figures are dated and irrelevant to
+our art task. Use only actual frontage/equipment/product visuals; no brand-copying.
+
+Bakery primary visual intake actually completed: PFAJulie listing counter photo and
+Zirconaut Commons bakery image viewed. Slim tiered glass/metal displays, separate
+round/scored/bagged bread groups; no opening-party clutter, copied logos or dense
+grocery-sachet spam. New bakery plan saved before code/art; generated sign is next.
+Owned IABtab6closed, empty list verified. No active Unity.
+
+LATEST OWNER GAMEPLAY CORRECTION overrides next bakery unit: SaBubong recovery must
+animate getting up FROM real railing, no teleport to middle. Lagoon falling means
+swimming; Jump near bridge initiates button-mash climb onto that bridge. New
+edge-climb-recovery-plan.md saved and REFINE-2.6b REOPENED,2.6d added. Prior
+Respawn+floor-get-up behavior confirmed in Lagoon source, not accepted for this.
+Inspect state/authority/animation first, then implement. No active Unity.
+
+Bakery work is preserved: primary references actually viewed and plan saved;
+built-in PANADERIA/PANDESAL candidatev1saved to ArtSource with prompt/hash. Not
+imported or native qualified. Resume storefront/sign register after actual recovery
+correction; do not lose remaining signs, animals, bots, character motion or old TODO.
+
+Owner LIKES bakeryv1vintage lettering/layout and requests more vintage. Preserve
+that design; restrained sun-fade/paint/border wear edit authorized specifically for
+bakery, overrides earlier no-age note for this sign only. Source/provenance saved,
+not yet native installed. Edge-climb correction remains main gameplay priority.
+
+Bakeryv2vintage edit completed and inspected: approved-v1letterforms/layout kept,
+sun-faded yellow with sparse worn border/corners, words clear. Saved source/edit
+prompt/hash besidev1. No native installation yet; no further art generation needed
+before mounting. Continue actual edge recovery architecture/implementation now.

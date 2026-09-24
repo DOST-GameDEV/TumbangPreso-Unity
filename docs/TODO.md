@@ -365,7 +365,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   final native1/1passed, actual pairs/grey/card/Low/heldsky inspected, updated native
   map card. Current art batch ready for integrated intro/spectator/gameplay/native
   performance gate; parent remains open for that final acceptance.
-- [x] **REFINE-2.6b Lagoon fall and mash recovery, owner2026-09-24.** Adapt SaBubong's
+- [ ] **REFINE-2.6b Lagoon fall and mash recovery, owner2026-09-24, REOPENED.**
+  LATEST: ordinary falls must enter swimming; jump beside a reachable bridge starts
+  button-mash climb at that bridge. Earlier respawn/get-up interpretation is superseded.
+  [Actual edge-recovery plan](reports/map-by-map-refinement-2026-09-23/edge-climb-recovery-plan.md) is current priority.
+  Historical implementation below remains as evidence, not acceptance of this correction. Adapt SaBubong's
   physical edge fall and existing press-gated get-up to Lagoon. Both modes, all cast,
   existing input/camera/animation/authority path. Record effects on intentional water
   access and slipper return; no new protocol or duplicate recovery UI unless required.
@@ -382,6 +386,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   inspected. [Evidence](reports/map-by-map-refinement-2026-09-23/lagoon-birds/report.md).
   Full-map visibility/performance remains in final Lagoon integration; broader
   all-map animal behavior stays open.
+- [ ] **REFINE-2.6d SaBubong actual railing recovery, owner2026-09-24.**
+  Catch/hang/struggle/pull up at the real roof edge with button presses and fitting
+  body animation; no normal-recovery teleport to the middle. Shares the current
+  [edge-recovery plan](reports/map-by-map-refinement-2026-09-23/edge-climb-recovery-plan.md),
+  with per-map anchors and correct network/input/reset behavior.
 - [ ] **REFINE-2.6a Skies, islands and backgrounds.** After UI, inspect and improve
   animated skies, island/mountain layers and other distant/background scenery on
   every map. Evaluate composition, silhouettes, depth, materials, motion and harmony
