@@ -21,8 +21,10 @@ burst, forced distress, stock-font script or one design repeated on every busine
    reference reviewed. Originalv1service art fitted3:1; open laptop/case/parts
    bench distinguishes it from retail. Native1/1passed4.587s, matched front/street/
    grey inspected. See ilalim-repair/report.md.
-4. PC_EXPRESS: existing supplied branded source art stays protected. Review mounting,
-   aspect, wear/light and surroundings first; no unauthorized repaint of the logo.
+4. PC_EXPRESS: supplied branded source kept byte-identical. Corrected local import/
+   board from4:1to original3.78305:1; original master/importer/other uses untouched.
+   Native1/1passed5.207s, actual front/street/grey inspected; existing retail body
+   retained. See ilalim-pcexpress/report.md. No logo repaint/generation.
 5. LOAD: LOAD NA DITO. Owner's provided signage collage is an explicit directional
    reference. Research local service placards; strong compact yellow/dark grouping,
    no invented payment-network logos or unreadable long service lists. OPEN.

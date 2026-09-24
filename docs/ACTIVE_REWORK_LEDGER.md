@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: recovery published, bakery published, laundry published, repair ready to publish
+## Current resume, 2026-09-24: recovery published, bakery published, laundry published, repair published, PCExpress ready to publish
 
 Overall goal ACTIVE and NOT complete. Owner says finish current work then all map
 refinements. New ultimate research is LATER. One implementation at a time, no
@@ -10,13 +10,15 @@ Every older task remains. Queue audit removed zero existing IDs/legacy rows.
 
 DEV ASTRAReworks recovery published and remote verified at59b8dc129bb5a45da07fd52b719048d95686881c.
 QUAL candidate compared21files bytewise, named stash preserved, advanced to that HEAD.
-Protected DEV composition metas untouched. Bakery48cffe3fdand Laundryc75765887
-published/remote verified, QUAL advanced. Computer repair now locally complete:
-generatedv1fitted3:1, working laptop/open-case bench and component stock. Native
-1/1passed4.587s; actual front/street/grey inspected and retained. Assets/evidence
-copied to DEV, known QUAL churn backed/restored. No active Unity/browser/helpers.
-Next publish repair, preserve/advance QUAL, then protected PCExpress mounting
-review followed by Load. One unit at a time; no ultimate research before maps.
+Protected DEV composition metas untouched. DEV/QUAL startb32ccf428, repair published
+and remote verified. Bakery48cffe3fd, Laundryc75765887and recovery59b8dc129also pushed.
+QUAL candidate copies compared and preserved in named stashes before each advance.
+PCExpress aspect-only unit finished: byte-identical source copy, local import and
+board fitted3.78305:1, original master/importer/retail body unchanged. Native1/1
+passed5.207s; actual paired front/street/grey inspected. Small correction retained.
+Known QUAL churn restored after patch backup, assets/evidence copied to DEV.
+No active Unity/browser/helpers. Next publish this, preserve/advance QUAL, then
+finish Load/Tindahan. Other signs/map parents and later tasks remain open.
 
 Latest edge implementation: real roof catch/hang/mash/pull onto its edge; Lagoon
 fall-to-swim, Jump near bridge and physical climb. Ordinary centre respawn removed,
@@ -34,7 +36,7 @@ witness/camera failures preserved. This does not claim fresh real-peer/native pr
 packet loss/rejoin/seat handover/physical devices/replay/full-match/native performance
 remain explicitly in2.10/P7. Do not conceal those limits or mark all maps/goal done.
 
-Next: publish computer repair then review protected PCExpress mounting before Load.
+Next: complete PCExpress aspect-only native review/publication, then Load.
 Bakery and recovery published; do not rerun their unchanged cases.
 
 ## Maps and signs remain unfinished
@@ -144,3 +146,13 @@ running. Fresh XML and front/street/grey inspection required before publication.
 Repair native6308completed1/1in4.587s. Actual paired/grey inspected, retain. Evidence
 in ilalim-repair/report.md. No more repair variants/tests. All earlier in-flight
 notes are history; source/assets ready to publish at current resume above.
+
+Repairb32ccf428published/remote verified; QUAL candidate preserved and advanced.
+PCExpress review found3.783:1source displayed4:1. Protected original stays intact;
+byte-identical separate import copy now uses source aspect and2048ceiling. Next
+IlalimShopSignAuthor.Run then ONLY IlalimPCExpressAspectReview. Stop on source
+byte equality/aspect and native paired/grey inspection. No other body/art changes.
+No .cs edits in Unity run. Tooling retries0/1, no new art generation required.
+
+PCExpress60834completed1/1in5.207s. Actual paired/grey inspected and kept. No further
+unchanged checks. Earlier author/test session notes are history. Ready to publish.

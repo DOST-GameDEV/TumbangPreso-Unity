@@ -27,18 +27,22 @@ namespace TumbangPreso.EditorTools.MapKit
             Fit(map.transform,"Bakery",Folder+"/Bakery-v2.png",report);
             Fit(map.transform,"Laundry",Folder+"/Laundry-v1.png",report);
             Fit(map.transform,"Repair",Folder+"/Repair-v1.png",report);
+            // Byte-identical supplied master, separate import settings only for this map.
+            Fit(map.transform,"PC_Express",Folder+"/PCExpress-preserved.png",report,2048);
             if(solids.Count!=map.GetComponentsInChildren<Collider>(true).Length||solids.Any(p=>p.Key==null||p.Key.bounds!=p.Value))throw new InvalidOperationException("Sign art changed gameplay collision.");
         }
-        private static void Fit(Transform map,string id,string texturePath,StringBuilder report)
+        private static void Fit(Transform map,string id,string texturePath,StringBuilder report,int maxSize=4096)
         {
             var room=map.Find("Dressing/PlaceRework/Frontage_"+id);if(room==null)throw new InvalidOperationException("Missing shop frontage "+id);
             var face=room.Find("Sign face "+id);var board=room.Find("Shop sign backing "+id)??room.Find("Banner backing "+id);
             if(face==null||board==null)throw new InvalidOperationException("Missing physical sign mounting "+id);
             AssetDatabase.ImportAsset(texturePath);var importer=(TextureImporter)AssetImporter.GetAtPath(texturePath);
             // NPOT rounding would turn 2172x724 into a different aspect before sampling.
-            importer.npotScale=TextureImporterNPOTScale.None;importer.maxTextureSize=4096;importer.wrapMode=TextureWrapMode.Clamp;
+            importer.npotScale=TextureImporterNPOTScale.None;importer.maxTextureSize=maxSize;importer.wrapMode=TextureWrapMode.Clamp;
             importer.mipmapEnabled=true;importer.filterMode=FilterMode.Trilinear;importer.textureCompression=TextureImporterCompression.Uncompressed;importer.SaveAndReimport();
-            var texture=AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);float aspect=texture.width/(float)texture.height;
+            var texture=AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+            importer.GetSourceTextureWidthAndHeight(out int sourceWidth,out int sourceHeight);
+            float aspect=sourceWidth/(float)sourceHeight;
             var size=face.localScale;float height=size.x/aspect;
             if(height>1.15f||height<.35f)throw new InvalidOperationException("Artwork needs an individually redesigned mounting: "+id);
             size.y=height;face.localScale=size;var support=board.localScale;support.y=height+.025f;board.localScale=support;

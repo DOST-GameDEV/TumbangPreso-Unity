@@ -931,6 +931,48 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator IlalimPCExpressAspectReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);
+            var room=GameObject.Find("IlalimNgTulay/Dressing/PlaceRework/Frontage_PC_Express").transform;
+            var face=room.Find("Sign face PC_Express");var board=room.Find("Shop sign backing PC_Express");Assert.IsNotNull(face);Assert.IsNotNull(board);
+            var renderer=face.GetComponent<MeshRenderer>();var after=renderer.sharedMaterial;
+            var saved=AssetDatabase.LoadAssetAtPath<Material>("Assets/TumbangPreso/Art/IlalimShopSigns/PC_Express.mat");Assert.IsNotNull(saved);
+            var original=AssetDatabase.LoadAssetAtPath<Material>(saved.GetTag("TumpShopSignSource",false));Assert.IsNotNull(original);
+            var texture=saved.mainTexture;var scale=face.localScale;var backing=board.localScale;
+            var facePosition=face.localPosition;var boardPosition=board.localPosition;
+            CollectionAssert.AreEqual(File.ReadAllBytes("Assets/TumbangPreso/Art/models/textures/pc_express_horizontal_rgb.png"),File.ReadAllBytes("Assets/TumbangPreso/Art/IlalimShopSigns/PCExpress-preserved.png"));
+            var sourceImporter=(TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture));
+            sourceImporter.GetSourceTextureWidthAndHeight(out int sourceWidth,out int sourceHeight);
+            Assert.That(Mathf.Abs(face.lossyScale.x/face.lossyScale.y),Is.EqualTo(sourceWidth/(float)sourceHeight).Within(.002f));
+            Assert.AreEqual(TextureImporterNPOTScale.None,((TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture))).npotScale);
+            Assert.That(backing.y,Is.GreaterThan(scale.y));Assert.IsFalse(ShaderUtil.ShaderHasError(after.shader));
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;var camera=rig.Camera;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var clock=Object.FindFirstObjectByType<Visual.NeighbourhoodSkyMotion>();bool enabled=clock!=null&&clock.enabled;if(clock!=null)clock.enabled=false;
+            var eye=Vector3.zero;var rotation=Quaternion.identity;Time.timeScale=0;
+            Camera.CameraCallback pin=cam=>{if(cam==camera){cam.transform.SetPositionAndRotation(eye,rotation);cam.fieldOfView=60;}};Camera.onPreCull+=pin;
+            try
+            {
+                foreach(string view in new[]{"front","street"})
+                {
+                    var target=room.TransformPoint(new Vector3(0,1.90f,-.20f));
+                    eye=view=="front"?target+room.forward*6:room.TransformPoint(new Vector3(3,1.7f,7));
+                    rotation=Quaternion.LookRotation(target-eye);
+                    foreach(string state in new[]{"before","after"})
+                    {
+                        bool on=state=="after";renderer.sharedMaterial=on?after:original;face.localScale=on?scale:new Vector3(scale.x,scale.x*.25f,scale.z);
+                        board.localScale=on?backing:new Vector3(backing.x,scale.x*.25f+.025f,backing.z);
+                        face.localPosition=facePosition;
+                        board.localPosition=on?boardPosition:new Vector3(boardPosition.x,2.92f,boardPosition.z);
+                        using(Visual.NeighbourhoodSkyMotion.At(20))yield return GameplayShots.Render(camera,"Ilalim-pcexpress-"+view+"-"+state,false,Output,width:1280,height:800);
+                    }
+                }
+            }
+            finally{renderer.sharedMaterial=after;face.localScale=scale;board.localScale=backing;face.localPosition=facePosition;board.localPosition=boardPosition;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator IlalimRepairReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);

@@ -286,6 +286,9 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Art batch ready for integrated intro/spectator/native acceptance; keep parent open
   for that gate and continue Ilalim art next.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
+  Supplied PCExpress source retained byte-for-byte; local import and physical board
+  corrected from4:1to original3.783:1. Native1/1passed5.207s, paired/grey inspected.
+  [Protected-art fitting](reports/map-by-map-refinement-2026-09-23/ilalim-pcexpress/report.md).
   Computer repair now has a supported open-laptop/case workbench and original
  3:1service sign. Native1/1passed4.587s, actual front/street/grey inspected.
   [Repair evidence](reports/map-by-map-refinement-2026-09-23/ilalim-repair/report.md).
