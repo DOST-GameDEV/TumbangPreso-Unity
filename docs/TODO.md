@@ -160,6 +160,10 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
   updated, importer/GUID preserved. Actual final v2 colour/grey inspected,1/1.
   [Haze/card evidence and corrected persistence mistake](reports/map-by-map-refinement-2026-09-23/rooftop-haze/report.md).
   Lower-ground material/context assessment and integrated map gates remain open.
+  Lower roof streets now have restrained markings and two supported parked native
+  tricycles. Original asphalt/buildings/physics retained; native v2 1/1, actual
+  matched preview/street witness/grey inspected, card refreshed. One camera repair
+  used; visibility limits retained. [Street-context evidence](reports/map-by-map-refinement-2026-09-23/rooftop-street-context/report.md).
 - [x] LIGHT-1.7 The two Stage tests assert the bright look's own claims (`20c977e5`): applied rig,
   bright shade colour, haze past the court, court ground found; toon ramp measured 1.70:1 under the
   look against 1.95:1 authored, asserted inside 1.35 to 2. WorldCourtCueTests 3/3 on the Mac.

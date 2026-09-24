@@ -1,66 +1,50 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Sa Bubong distance haze
+## Current resume, 2026-09-24: lower street context for Sa Bubong
 
-Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified at07a387779. The
-tracked lighting branch through a28037622 is merged. One conflict preserved our
-explicit-sun/preview API and cached restoration while adding per-camera InkFloor.
-New native floor-choice1/1 in19.144s; source/local comparisons and grey inspected.
-Default0 retained. Report: lighting-integration-2026-09-24/hull-floor/report.md.
-No Unity job running; known churn backed up/restored. Protected DEV metas intact.
+Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified at4dde9837a. Local
+roof court paint07a387779 and haze/card4dde9837a published. Haze study selected
+90-380m; saved Resources profile updated after catching a defaults-only mistake.
+Final v2 actual image/grey inspected, card importer/GUID preserved. Lighting source
+a28037622 integrated in5e9b711c7, optional hull floor stays0; native1/1 and pairs.
 
-Current local unit: SaBubong preview court contrast. Saved plan:
-map-by-map-refinement-2026-09-23/rooftop-court-contrast-plan.md. Native same-camera
-current/ivory/dark study1/1 in1.740s; actual images/25percent grey inspected.
-Dark warm-neutral(.23,.19,.15) is clearest; ivory barely improves it. Current
-SaBubongBuilder change gives only the six court lines a separate material and
-updates rebuilds; notice-paper material, lights, geometry/rules are preserved.
-Guarded author8012 completed; exactly six scene material references changed.
-Scene/new material/meta copied to DEV, known churn backed up/restored. Final
-preview9009 completed:1/1 in1.287s, actual authored frame and grey inspected.
-Logs/roof-court-contrast-final.xml/.log and frames. Report in
-map-by-map-refinement-2026-09-23/rooftop-court-contrast/report.md. Known churn
-restored. Court material/scene/builder/report published in07a387779. Study is
-the matched A/B; final checks serialization. No fixture repair used.
-
-New local plan: rooftop-haze-plan.md. Current high preview loses lower streets/
-middle facades in peach haze. Compare SaBubong distances60-300,90-380,120-480m
-only, holding colour/light/materials and camera fixed. Guarded job29799 runs
-RooftopPreviewComparesDistanceHaze: Logs/roof-haze-study-v1.xml/.log and frames
-in the named directory. Study reaped:1/1 in1.438s, actual colour/grey inspected.
-Selected90-380m, more identity in mid facades while far skyline stays softer.
-Only two SaBubong haze distances changed; lower ground material warmth is not
-claimed fixed by haze alone. Existing card route now accepts a single-map selector.
-Final card v1 passed its export check but actual inspection caught old haze:
-Resources/WorldLookProfile.asset overrides code defaults. This is an incomplete
-production data update, not a fixture failure. Preserve that v1 as unselected.
-WorldCueProfileAuthor.ApplyRooftopHaze now updates only the saved roof distances
-from the chosen defaults. Guarded author runs in Logs/roof-haze-author-profile.log;
-Author67188 reaped; saved asset diff is exactly roof FogStart90/FogEnd380 plus
-explicitly serializing the unchanged CastInkFloor0. Asset copied to DEV. Final
-v2 card capture45522 reaped:1/1 in1.155s, actual image/grey inspected. SaBubong
-PNG replaced by final actual scene; original importer/GUID hash and previous-card
-preserved. Report: rooftop-haze/report.md. Known churn restored, no Unity running.
-Publish scoped profile/author/card/evidence; then review remaining map-context/
-contrast and the old actionable queue without redoing the completed micro-pass.
-Fixture0/1, no extra study variants.
+Current local plan: map-by-map-refinement-2026-09-23/rooftop-street-context-plan.md.
+Actual lower streets read as empty dark ribbons despite existing asphalt texture.
+RooftopStreetLifeAuthor adds two existing native passenger-tricycle models at
+supported street edges plus restrained centre/crossing paint. No new collision/
+shadow casters, no facade/asphalt/roof repaint. Existing builder hook added.
+Author91330 completed: two supported tricycles,136dashes/four crossings, no
+collision change. First native4948 passed1/1 in1.324s; actual preview shows useful
+street cues but the external close witness is blocked by a neighboring roof.
+One bounded fixture repair moves that camera into the street and fixes High
+capture quality. Fixture allowance now1/1 across compaction. Product refinement:
+thin paint planes now reuse depth-biased CourtSurface to avoid distant road depth
+fighting; geometry stays3mm above asphalt. Author73171 completed, native14457
+v2 passed1/1 in1.372s. Actual high preview, clearer east-street witness and matched
+grey inspected. Retain restrained additions; tricycles are not prominent in the
+high card and west is not separately framed. Final High preview installed as roof
+card with importer hash preserved. Known churn restored; no Unity job running.
+Report: rooftop-street-context/report.md. Publish explicit scoped files, then
+reconcile/fix the known chosen-map rematch issue in the older queue. No more
+fixture polishing or gratuitous art variants for this completed local unit.
 
 Bot fixes published:5de3a78f3 reaction timing;043cf804c chase patience;273e5e669
 per-seat difficulty. All five maps have initial four-bot/two-mode ordinary samples.
 Full role/roster/tier and bot water/roof recovery remain actionable final gates.
-Recovery fixture failed twice BEFORE bot handoff, last(16.92,-2.01,16.38), not the
+Recovery fixture failed twice BEFORE handoff, last(16.92,-2.01,16.38), not the
 intended lip. Existing ExerciseEdge also sets camera follow/movement aim; omitted
 input-basis setup is the next diagnostic. Allowance1/1 exhausted: no more fixture
 polishing during feature work. Draft/failures preserved in bot-map-coverage/;
 original compiled LagoonRecoveryProbe restored. No production failure claimed.
 
-AGENTS cleanup dc10b68f2 preserves every important instruction in39.7percent fewer
+AGENTS cleanup dc10b68f2 preserves important instructions in39.7percent fewer
 words plus exact original/archive mapping. SaBubong birds57cf74a9c complete locally.
 All21 ambient actors have local map/species placement coverage; ordinary-camera/
 replay/combined checks remain open. Preserve every older task and evidence.
 New character/ability/ultimate animation direction belongs to the owner-run cloud
-lane; its origin branch exists, but do not merge unfinished work or contact a task.
-Final native/peer/replay/performance/build remains2.10/P7. No checkpoint stops goal.
+lane; its origin branch exists and is advancing, but do not merge unfinished work
+or contact a task. Final native/peer/replay/performance/build remains2.10/P7.
+No checkpoint stops the goal; one heavy workload and no intermediate player build.
 
 ## Parallel lane, 2026-09-24: HOME loop and gameplay animation (separate from the map resume above)
 

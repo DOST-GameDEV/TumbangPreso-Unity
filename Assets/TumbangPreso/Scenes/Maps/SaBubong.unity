@@ -11791,6 +11791,41 @@ Transform:
   m_Children: []
   m_Father: {fileID: 256789751}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &283134787
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 283134788}
+  m_Layer: 0
+  m_Name: Street activity below roof
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &283134788
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 283134787}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1583951471}
+  - {fileID: 1631845988}
+  - {fileID: 1848508420}
+  - {fileID: 1143613430}
+  m_Father: {fileID: 443450674}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &283249507
 GameObject:
   m_ObjectHideFlags: 0
@@ -20209,6 +20244,7 @@ Transform:
   - {fileID: 1075177155}
   - {fileID: 1206867437}
   - {fileID: 70240786}
+  - {fileID: 283134788}
   m_Father: {fileID: 981593271}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &446501668
@@ -47635,6 +47671,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 703424784}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1143613429
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1143613430}
+  - component: {fileID: 1143613433}
+  - component: {fileID: 1143613432}
+  - component: {fileID: 1143613431}
+  m_Layer: 0
+  m_Name: Corner crossing blocks
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1143613430
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143613429}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 283134788}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1143613431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143613429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Paint just above the retained asphalt surface, aligned to the existing
+    street grid.
+--- !u!23 &1143613432
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143613429}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a0a931e23f85d9c4c844c95ea53c0df4, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1143613433
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143613429}
+  m_Mesh: {fileID: 4300000, guid: fb71ccf3b18b6cf46ae563fb0fdc0e46, type: 2}
 --- !u!1 &1144171008
 GameObject:
   m_ObjectHideFlags: 0
@@ -66556,6 +66697,98 @@ Transform:
   m_Children: []
   m_Father: {fileID: 703424784}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1583951470
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 283134788}
+    m_Modifications:
+    - target: {fileID: -2997913264599247197, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_Name
+      value: East parked tricycle
+      objectReference: {fileID: 0}
+    - target: {fileID: -2997913264599247197, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: -808088839507384794, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 24.695
+      objectReference: {fileID: 0}
+    - target: {fileID: -808088839507384794, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -26.004
+      objectReference: {fileID: 0}
+    - target: {fileID: -808088839507384794, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -8.04
+      objectReference: {fileID: 0}
+    - target: {fileID: -808088839507384794, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -808088839507384794, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -808088839507384794, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -808088839507384794, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -808088839507384794, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -808088839507384794, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -808088839507384794, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4481731473540424046, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: -2997913264599247197, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1583951473}
+  m_SourcePrefab: {fileID: -4161369568681901532, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+--- !u!4 &1583951471 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -808088839507384794, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+  m_PrefabInstance: {fileID: 1583951470}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1583951472 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -2997913264599247197, guid: 2eac1b82dbaa6df47b50777b920930e3, type: 3}
+  m_PrefabInstance: {fileID: 1583951470}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1583951473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583951472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Parked with original tyre contact on the retained lower street; background
+    scenery below the playing roof.
 --- !u!1 &1584555725
 GameObject:
   m_ObjectHideFlags: 0
@@ -68793,6 +69026,98 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2073220772}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1631845987
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 283134788}
+    m_Modifications:
+    - target: {fileID: -8793756247718288109, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -24.695
+      objectReference: {fileID: 0}
+    - target: {fileID: -8793756247718288109, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -26.004
+      objectReference: {fileID: 0}
+    - target: {fileID: -8793756247718288109, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 10.085
+      objectReference: {fileID: 0}
+    - target: {fileID: -8793756247718288109, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8793756247718288109, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8793756247718288109, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8793756247718288109, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8793756247718288109, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8793756247718288109, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8793756247718288109, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6910087171789856069, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4990443725353949065, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_Name
+      value: West parked tricycle
+      objectReference: {fileID: 0}
+    - target: {fileID: 4990443725353949065, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4990443725353949065, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1631845990}
+  m_SourcePrefab: {fileID: -4161369568681901532, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+--- !u!4 &1631845988 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8793756247718288109, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+  m_PrefabInstance: {fileID: 1631845987}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1631845989 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4990443725353949065, guid: ea35e4e55db8a17408c677c5d682b0d4, type: 3}
+  m_PrefabInstance: {fileID: 1631845987}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1631845990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1631845989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Parked with original tyre contact on the retained lower street; background
+    scenery below the playing roof.
 --- !u!1 &1631993592
 GameObject:
   m_ObjectHideFlags: 0
@@ -79641,6 +79966,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2073220772}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1848508419
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1848508420}
+  - component: {fileID: 1848508423}
+  - component: {fileID: 1848508422}
+  - component: {fileID: 1848508421}
+  m_Layer: 0
+  m_Name: Faded centre dashes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1848508420
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848508419}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 283134788}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1848508421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848508419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Paint just above the retained asphalt surface, aligned to the existing
+    street grid.
+--- !u!23 &1848508422
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848508419}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 791a17be064a95f49b95e5dab74f9798, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1848508423
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848508419}
+  m_Mesh: {fileID: 4300000, guid: 66a12fddd4a470b4c805809605c01f0f, type: 2}
 --- !u!1 &1848700179
 GameObject:
   m_ObjectHideFlags: 0
