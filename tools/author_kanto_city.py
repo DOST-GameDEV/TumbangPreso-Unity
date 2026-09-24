@@ -1027,36 +1027,45 @@ def limb_tube(buf, pts, radii, mat, sides=12, phase=0.0, wobble=0.0, rng=None):
 
 
 def segmented_wood(buf, sk, mat, rng=None):
-    """The skeleton as SEGMENTS: the trunk and each branch are separate tubes. A branch starts
-    at its parent's node, so it grows out of the wood it leaves; a small ball at each fork
-    rounds the joint."""
-    kids = {}
+    """The skeleton as SEGMENTS: the trunk and each branch are separate tubes.
+    A limb CONTINUES THROUGH a fork as one tube along its straightest child; only the other
+    children start new tubes. Splitting every limb at every fork left boxy steps along the
+    branches where the twigs leave (owner's screenshot, review v28). A new tube starts buried
+    back ALONG THE LIMB IT LEAVES, a little thinner than that limb, so it grows out of it."""
+    kids, parent_of = {}, {}
     for a, b in sk.edges:
         kids.setdefault(a, []).append(b)
+        parent_of[b] = a
+
+    def heading(i):
+        return (sk.nodes[i] - sk.nodes[parent_of[i]]).normalized() if i in parent_of else Vector((0, 0, 1))
+
     starts = [(0, None)]
     while starts:
         node, parent = starts.pop()
         chain = [parent, node] if parent is not None else [node]
-        while len(kids.get(chain[-1], [])) == 1:
-            chain.append(kids[chain[-1]][0])
+        while kids.get(chain[-1]):
+            last = chain[-1]
+            h = heading(last)
+            ranked = sorted(kids[last], key=lambda k: -h.dot((sk.nodes[k] - sk.nodes[last]).normalized()))
+            best = ranked[0]
+            straight = h.dot((sk.nodes[best] - sk.nodes[last]).normalized()) > 0.8   # within ~37 degrees
+            others = ranked[1:] if straight else ranked
+            for c in others:
+                starts.append((c, last))
+            if not straight:
+                break
+            chain.append(best)
         end = chain[-1]
-        for c in kids.get(end, []):
-            starts.append((c, end))
-        # (No ball at the fork: its UVs were all zero and it drew a pale jagged ring, review v27.
-        # The branches start inside the trunk's top instead.)
         radii = [sk.radii[i] for i in chain]
         pts = [sk.nodes[i].copy() for i in chain]
-        if len(kids.get(end, [])) > 1:
-            # Taper INTO the branches: a trunk top wider than the branch bases showed as a
-            # collar round the fork (faceted review v4).
+        if kids.get(end):
+            # Taper into the limbs leaving this end, so it never shows as a collar.
             radii[-1] *= 0.92
         if parent is not None:
-            # Start INSIDE the parent (a little back along the branch), as thick as the branch,
-            # and turned half a facet, so no vertex lands on the parent's and gets welded.
-            # Sink the base 1.8 parent radii back INTO the parent, so the joint is buried in the
-            # trunk's top rather than showing as a collar or a waist (faceted reviews v4, v5).
-            radii[0] = min(radii[1] * 0.95, sk.radii[chain[0]] * 0.75)
-            pts[0] = pts[0] - Vector((0, 0, sk.radii[chain[0]] * 1.6))
+            pr = sk.radii[parent]
+            radii[0] = min(radii[1] * 0.95, pr * 0.8)
+            pts[0] = pts[0] - heading(parent) * pr * 1.6
         # POLYGONAL WOOD (owner, review v27: "switching to a more polygonal tree trunk design
         # instead of a cylindrical one"): 7 flat faces on the trunk, 5 on branches, flat shaded,
         # each face a few per cent off round, so every facet catches the light on its own.
