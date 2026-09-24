@@ -539,24 +539,32 @@ HEROES = {
             "grounded": (0.00, 0.12, 0.32, 0.42),
         },
         "hero-phaister-eclipse": {
-            # GRAND COVEN. ⚠️⚠️ THE HOLD IS THE POINT AND IT IS THE LONGEST ANTICIPATION
-            # IN THE SIX KITS, which `BuildPhaisterEclipse` states as a requirement rather
-            # than a flourish: *"`Hero_Strike_Balance.md` § 4.3 asks for a wind-up so the
-            # payoff has a moment; this is the longest anticipation of the six kits, which
-            # is what an arena-wide power should cost to cast."* Sixteen frames pass
-            # between the arms reaching the sky and the night coming down.
-            "punch": 0.62,
+            # GRAND COVEN, REBUILT 2026-09-24 (SKILL-FX-1). 🧑: *"its cast/animation is awkward and
+            # ugly"*. The cast sheet showed why (`reports/skill-performances-2026-09-24/sheets/
+            # hero-phaister-eclipse_before.png`): she leant back about 45 degrees with the arms
+            # straight overhead, where her short arms vanish inside the brim, then folded forward
+            # 34 degrees and pitched the brim at the viewer, the Hex's slab fault.
+            #
+            # ⚠️ SHE DRAWS THE CIRCLE NOW. From rest (every cast clip starts and ends at rest; the
+            # intro handoff blends into it) she reaches the pose the new introduction ends on, one
+            # hand up and one pointing down; the pointing hand sweeps across in front of her while
+            # the chest turns with it; both hands come up FORWARD, palms up, lifting the curtain
+            # (in front of the brim, where they read); and on the close (1.55 s, the ritual's own
+            # `RitualBuildSeconds`) a sharp clench out and down, head level. The torso never leans
+            # back past 6 degrees and the head never pitches down past 8.
+            "punch": 1.55,
             "beats": [
                 (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,     0, 0,     0, 0),
-                (0.20, 1.0, 0.00, -0.02, 20, 0, 0,   16, 0,   -5, 0,   4, 0,    40, -14,  40, 14),
-                (0.36, 1.0, 0.00, -0.01, -10, 0, 0, -20, 0,   -6, 4,   5, -4,  -96, 62,  -96, -62),
-                (0.44, 0.80, 0.03, 0.01, -34, 0, 0, -46, 0,   -8, 6,   6, -6, -166, 18, -166, -18),
-                (0.52, 0.80, 0.03, 0.01, -33, 0, 0, -45, 0,   -8, 6,   6, -6, -164, 17, -164, -17),
-                (0.62, 1.0, 0.00, 0.06,  34, 0, 0,   28, 0,  -16, 16, 13, -16,  -10, 66,  -10, -66),
-                (0.74, 1.0, 0.00, 0.05,  26, 0, 0,   21, 0,  -12, 12, 10, -12,   -6, 58,   -6, -58),
-                (0.95, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,     0, 0,     0, 0),
+                (0.36, 1.0, 0.00, 0.00,   6, 0, 0,    4, 0,    0, 4,   0, -4,  -120, 45,  -42, -10),
+                (0.56, 1.0, 0.00, 0.00,   6, -30, 3,  2, -20,  0, 4,   0, -4,  -118, 40,  -46, -16),
+                (0.80, 1.0, 0.00, 0.00,   5, 0, 0,    2, 0,    0, 4,   0, -4,  -116, 38,  -50, -8),
+                (1.04, 1.0, 0.00, 0.00,   6, 30, -3,  2, 20,   0, 4,   0, -4,  -118, 40,  -46, -16),
+                (1.26, 1.0, 0.00, 0.00,  -6, 0, 0,   -6, 0,    0, 5,   0, -5,  -128, 30, -128, -30),
+                (1.55, 1.0, 0.00, 0.00,   8, 0, 0,    0, 0,    0, 8,   0, -8,   -30, 58,  -30, -58),
+                (1.76, 1.0, 0.00, 0.00,   7, 0, 0,    0, 0,    0, 8,   0, -8,   -32, 56,  -32, -56),
+                (2.12, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,     0, 0,     0, 0),
             ],
-            "grounded": (0.00, 0.20, 0.36, 0.62, 0.74, 0.95),
+            "grounded": (0.00, 0.36, 0.56, 0.80, 1.04, 1.26, 1.55, 1.76, 2.12),
         },
     },
 }
@@ -583,7 +591,7 @@ CAST_PRESENTATION_TIMES = {
     "hero-nemu-seance": (0,.18,.31,.40,.57,.73,.95),
     "hero-phaister-hex": (0,.045,.085,.14,.30,.64),
     "hero-phaister-blink": (0,.04,.09,.22,.46),
-    "hero-phaister-eclipse": (0,.20,.50,.82,1.22,1.55,1.74,2.12),
+    "hero-phaister-eclipse": (0,.36,.56,.80,1.04,1.26,1.55,1.76,2.12),
 }
 for actions in HEROES.values():
     for name,spec in actions.items():

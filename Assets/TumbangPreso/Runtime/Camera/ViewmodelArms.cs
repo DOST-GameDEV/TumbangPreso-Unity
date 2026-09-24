@@ -846,15 +846,20 @@ namespace TumbangPreso.CameraSystem
         /// from0.82 to1.22seconds, before the1.55second ritual release, which is what makes the
         /// throw land.
         /// </summary>
+        // ⚠️ RETIMED 2026-09-24 (SKILL-FX-1) to the rebuilt body cast (`author_hero_action.py`
+        // `hero-phaister-eclipse`): point at 0.36, the drawing sweep to 1.04, both hands up at
+        // 1.26, the clench on the ritual's close at 1.55. `CastGesture` carries the hand PATH
+        // (`CovenPath`); these keys only turn the forearms with it.
         private static readonly Key[] CovenEclipseClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
-            new Key(0.200f, 0.350f, 0.200f, 0.120f, 0.250f, -0.200f, -0.120f),
-            new Key(0.500f, 0.380f, 0.220f, -0.160f, 0.700f, -0.100f, 0.100f),
-            new Key(0.820f, 0.420f, 0.160f, -0.160f, 0.680f, -0.050f, 0.080f),
-            new Key(1.220f, 0.460f, 0.020f, -0.120f, 0.730f, 0.100f, 0.050f),
+            new Key(0.360f, -0.250f, 0.120f, 0.100f, 0.300f, -0.150f, -0.100f),
+            new Key(0.560f, -0.220f, 0.300f, 0.120f, 0.300f, -0.120f, -0.080f),
+            new Key(0.800f, -0.200f, 0.000f, 0.100f, 0.280f, -0.100f, -0.060f),
+            new Key(1.040f, -0.220f, -0.300f, 0.080f, 0.300f, -0.120f, -0.080f),
+            new Key(1.260f, 0.460f, 0.020f, -0.120f, 0.730f, 0.100f, 0.050f),
             new Key(1.550f, -0.750f, -0.300f, 0.350f, -0.600f, 0.380f, -0.300f, true),
-            new Key(1.740f, -0.200f, -0.120f, 0.150f, -0.160f, 0.150f, -0.120f),
+            new Key(1.760f, -0.200f, -0.120f, 0.150f, -0.160f, 0.150f, -0.120f),
             new Key(2.120f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 

@@ -51,6 +51,7 @@ class Model:
     def __init__(self, path):
         g = pygltflib.GLTF2().load(path)
         blob = g.binary_blob()
+        self._g, self._blob = g, blob
         self.nodes = g.nodes
         self.names = {i: n.name for i, n in enumerate(g.nodes)}
         self.parent = {}
@@ -115,6 +116,37 @@ class Model:
         for i in range(len(self.nodes)):
             get(i)
         return mats
+
+    def action(self, name, t):
+        """
+        A glb animation sampled at t (linear, as authored) as a pose in Unity space.
+        glTF quaternions convert to Unity's mirrored-X space as (x, -y, -z, w); translations (-x, y, z).
+        Returns (pose, duration).
+        """
+        g, blob = self._g, self._blob
+        anim = next(a for a in g.animations if a.name == name)
+        pose, duration = {}, 0.0
+        for ch in anim.channels:
+            smp = anim.samplers[ch.sampler]
+            times = _accessor(g, blob, smp.input).astype(float).reshape(-1)
+            vals = _accessor(g, blob, smp.output).astype(float)
+            duration = max(duration, times[-1])
+            k = int(np.searchsorted(times, t, side="right") - 1)
+            k = max(0, min(k, len(times) - 2))
+            u = 0.0 if times[k + 1] == times[k] else min(1.0, max(0.0, (t - times[k]) / (times[k + 1] - times[k])))
+            v = vals[k] * (1 - u) + vals[k + 1] * u
+            node = g.nodes[ch.target.node].name
+            rot, pos = pose.get(node, (None, None))
+            if ch.target.path == "rotation":
+                x, y, z, w = v / np.linalg.norm(v)
+                x, y, z = x, -y, -z
+                rot = np.array([[1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+                                [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+                                [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]])
+            elif ch.target.path == "translation":
+                pos = np.array([-v[0], v[1], v[2]])
+            pose[node] = (rot, pos)
+        return pose, duration
 
     def hands(self, pose):
         """Farthest skinned vertex of each arm from its shoulder: a palm, in Unity space (glb units)."""

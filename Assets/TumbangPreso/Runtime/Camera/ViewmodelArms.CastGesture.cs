@@ -21,7 +21,7 @@ namespace TumbangPreso.CameraSystem
     /// </summary>
     public sealed partial class ViewmodelArms
     {
-        private enum Gesture { Thrust, Raise, Slam, Sweep, Pull, Spread, Glide }
+        private enum Gesture { Thrust, Raise, Slam, Sweep, Pull, Spread, Glide, Coven }
 
         private readonly struct CastShape
         {
@@ -48,7 +48,8 @@ namespace TumbangPreso.CameraSystem
             { "seance-channel", new CastShape(Gesture.Spread, .40f, .25f, 1.0f) },
             { "cast-hex", new CastShape(Gesture.Slam, .34f, .16f, .71f) },
             { "blink", new CastShape(Gesture.Pull, .12f, .12f, .54f) },
-            { "coven-eclipse", new CastShape(Gesture.Raise, .40f, .25f, 1.0f) },
+            // SKILL-FX-1: her own path, not the shared Raise (see `CovenPath`).
+            { "coven-eclipse", new CastShape(Gesture.Coven, 1.55f, .21f, 2.12f) },
             { "current-cut", new CastShape(Gesture.Sweep, .18f, .18f, .76f) },
             { "mirror-feint", new CastShape(Gesture.Sweep, .14f, .12f, .78f) },
             { "breakwater-release", new CastShape(Gesture.Thrust, .55f, .2f, 1.25f) },
@@ -76,6 +77,14 @@ namespace TumbangPreso.CameraSystem
             float rise = t < shape.Contact ? 1 - Mathf.Pow(1 - t / shape.Contact, 3) : 1;
             float fall = t > shape.Contact + shape.Hold ? Mathf.SmoothStep(1, 0, Mathf.InverseLerp(shape.Contact + shape.Hold, shape.End, t)) : 1;
             float w = rise * fall;
+            if (shape.Kind == Gesture.Coven)
+            {
+                CovenPath(t, out var coven, out var covenLeft);
+                _castRight = coven; _castLeft = covenLeft;
+                _rightPivot.localPosition += coven; _leftPivot.localPosition += covenLeft;
+                _castApplied = true;
+                return;
+            }
             // The first half of the rise, for gestures with an anticipation before their contact.
             float early = t < shape.Contact ? Mathf.Sin(Mathf.Clamp01(t / shape.Contact) * Mathf.PI) : 0;
             Vector3 r, l;
@@ -98,6 +107,39 @@ namespace TumbangPreso.CameraSystem
             _castRight = r; _castLeft = l;
             _rightPivot.localPosition += r; _leftPivot.localPosition += l;
             _castApplied = true;
+        }
+
+        // ⚠️⚠️ GRAND COVEN IN FIRST PERSON (SKILL-FX-1, 2026-09-24). 🧑: *"its cast/animation is awkward
+        // and ugly"*. The shared Raise put both hands up and back, which says "summon" and not "draw a
+        // circle". This is the body cast seen from her eyes, on the same clock: the right hand drops
+        // to point low, SWEEPS across the bottom of the screen from right to left (drawing the ring
+        // on the road), both hands lift into view palms up, then clench out and down on the close
+        // (1.55 s, `RitualBuildSeconds`), hold, and recover by 2.12 s.
+        private static readonly (float t, Vector3 r, Vector3 l)[] CovenKeys =
+        {
+            (0.00f, Vector3.zero, Vector3.zero),
+            (0.36f, new Vector3(.14f, -.06f, .12f), new Vector3(.10f, .34f, .05f)),
+            (0.80f, new Vector3(-.06f, -.07f, .14f), new Vector3(.10f, .34f, .05f)),
+            (1.04f, new Vector3(-.28f, -.06f, .12f), new Vector3(.10f, .34f, .05f)),
+            (1.26f, new Vector3(-.06f, .34f, .08f), new Vector3(.08f, .40f, .08f)),
+            (1.55f, new Vector3(.10f, -.16f, .10f), new Vector3(-.10f, -.10f, .10f)),
+            (1.76f, new Vector3(.09f, -.14f, .10f), new Vector3(-.09f, -.09f, .10f)),
+            (2.12f, Vector3.zero, Vector3.zero),
+        };
+
+        private static void CovenPath(float t, out Vector3 right, out Vector3 left)
+        {
+            right = left = Vector3.zero;
+            for (int i = 1; i < CovenKeys.Length; i++)
+            {
+                if (t > CovenKeys[i].t) continue;
+                var a = CovenKeys[i - 1]; var b = CovenKeys[i];
+                float u = Mathf.InverseLerp(a.t, b.t, t);
+                // The close arrives fast and stops (the body's punch); everything else eases.
+                u = Mathf.Approximately(b.t, 1.55f) ? u * u * u : u * u * (3 - 2 * u);
+                right = Vector3.Lerp(a.r, b.r, u); left = Vector3.Lerp(a.l, b.l, u);
+                return;
+            }
         }
     }
 }
