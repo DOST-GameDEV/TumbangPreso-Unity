@@ -387,6 +387,13 @@ BARK_BASE = {"C": "8a5f40"}
 
 
 def bark(variant=None):
+    variant = variant or os.environ.get("KANTO_BARK", "v2")
+    if variant in ("D", "E"):
+        return bark_painted(variant)
+    return _bark_strokes(variant)
+
+
+def _bark_strokes(variant=None):
     # BARK. Owner: "flat brown with two or three long, soft, feathered vertical strokes, the
     # same simplicity as the soft painted leaves. No grain." One flat brown and long tapered
     # strokes (1.5 to 1.8 m long, a slow gentle lean), some darker and some lighter. Nothing
@@ -406,6 +413,56 @@ def bark(variant=None):
         a = np.clip(1 - np.abs(dx) / np.maximum(w, 1e-4), 0, 1) * (t > 0)
         a = a * a * (3 - 2 * a)                                       # feathered edges
         img = img * (1 - a[..., None]) + img * shift * a[..., None]
+    save("bark", img, np.zeros((SIZE, SIZE)))
+
+
+def _stroke(x0, y0, length, width, sway, seed_k):
+    """One soft painted stroke's coverage (0..1): tapered ends, feathered edges, a slow sway,
+    wrapping in x and y so the tile has no seam."""
+    dy = ((Y - y0 + TILE_M / 2) % TILE_M) - TILE_M / 2
+    t = np.clip(1 - np.abs(dy) / (length / 2), 0, 1)
+    cx = x0 + sway * np.sin(Y / TILE_M * 2 * np.pi + seed_k * 2.1)
+    dx = ((X - cx + TILE_M / 2) % TILE_M) - TILE_M / 2
+    w = width * np.sin(np.pi * t / 2)
+    a = np.clip(1 - np.abs(dx) / np.maximum(w, 1e-4), 0, 1) * (t > 0)
+    return a * a * (3 - 2 * a)
+
+
+def bark_painted(variant):
+    """MORE PAINTED BARK (owner, 2026-09-25: "can we have more detail in the trunk texture so it
+    looks more painted"). Built like a painter lays a trunk in, in LAYERS of soft strokes, all
+    long, vertical, tapered and feathered; still no grain, no noise, no outlines:
+      1. a flat mid brown;
+      2. a few broad dark strokes (the shadowed furrows);
+      3. more medium strokes, some a touch warmer, some a touch cooler, for variety in the brown;
+      4. a few thin light strokes on the ridges (the painted highlight);
+      5. (E only) two or three knots: a soft dark oval with a light lower lip, and a faint wash
+         of green-grey lichen patches low on the trunk, like the owner's reference trunks.
+    Contrast is at variant C's level, the first one that read on a lit trunk."""
+    rng = np.random.default_rng(301 if variant == "D" else 302)
+    img = flat("86593b")
+    warm, cool = np.array([1.08, 1.0, 0.9]), np.array([0.92, 0.95, 1.0])
+    layers = [(5, 0.52, (0.14, 0.24), None), (9, None, (0.05, 0.1), "tint"), (6, 1.42, (0.025, 0.05), None)]
+    for n, value, (w0, w1), mode in layers:
+        for k in range(n):
+            a = _stroke(rng.uniform(0, TILE_M), rng.uniform(0, TILE_M), rng.uniform(0.7, 1.7), rng.uniform(w0, w1),
+                        rng.uniform(0.01, 0.05), k + n)
+            if mode == "tint":
+                col = rng.choice([0.8, 0.88, 1.12]) * (warm if rng.random() < 0.5 else cool)
+            else:
+                col = np.array([value] * 3)
+            img = img * (1 - a[..., None]) + img * col * a[..., None]
+    if variant == "E":
+        for k in range(3):   # knots
+            cx, cy = rng.uniform(0, TILE_M), rng.uniform(0, TILE_M)
+            dx = ((X - cx + TILE_M / 2) % TILE_M) - TILE_M / 2
+            dy = ((Y - cy + TILE_M / 2) % TILE_M) - TILE_M / 2
+            r = np.sqrt((dx / 0.06) ** 2 + (dy / 0.11) ** 2)
+            ring = np.clip(1 - np.abs(r - 1.0) / 0.35, 0, 1) * (dy < 0)   # light lower lip
+            core = np.clip(1 - r / 0.9, 0, 1) ** 0.7
+            img = img * (1 - 0.5 * core[..., None]) * (1 + 0.35 * ring[..., None])
+        lichen = patches(np.ones((SIZE, SIZE, 3)), np.array([0.93, 1.06, 0.93]), 0.25, 0.18, seed=303, feather=0.6)
+        img = img * lichen
     save("bark", img, np.zeros((SIZE, SIZE)))
 
 
