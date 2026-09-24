@@ -134,6 +134,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(map=="IlalimNgTulay")IlalimBarberAuthor.FinishLoadedScene(report);
             if(map=="IlalimNgTulay")IlalimParesAuthor.FinishLoadedScene(report);
             if(map=="IlalimNgTulay")IlalimPisonetAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimVulcanizingAuthor.FinishLoadedScene(report);
             if(map=="IlalimNgTulay")IlalimShopSignAuthor.FinishLoadedScene(report);
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }

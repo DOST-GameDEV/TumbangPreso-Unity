@@ -1,0 +1,6 @@
+{
+  "source": "built-in image generation",
+  "sha256": "0a8192ab5700d278b7f388a52b98afae05e821d6a7c974ff6bed96e0ef2f0d81",
+  "status": "REJECTED before import",
+  "critique": "Requested opaque white paint sheet but output has cleared background and red alpha/noise artifacts. RGBA 1254x1254, corner/centre(0,0,0,0). Not acceptable for sidewall, not used in game."
+}

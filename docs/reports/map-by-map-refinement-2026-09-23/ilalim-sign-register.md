@@ -1,8 +1,8 @@
 # Ilalim sign-by-sign art register, 2026-09-24
 
 Owner requires actual local references, generated artwork, critique and native
-fitting per sign. These are message/design intents, not approved art or completed
-research. Preserve existing supplied masters. Each approved texture gets its own
+fitting per sign. All11entries now record individual implementation or protected-art fitting,
+with native evidence. This is not owner approval or full-map final acceptance. Preserve existing supplied masters. Each approved texture gets its own
 prompt/provenance, actual aspect and front/street native evidence. No shared comic
 burst, forced distress, stock-font script or one design repeated on every business.
 
@@ -56,9 +56,11 @@ burst, forced distress, stock-font script or one design repeated on every busine
     installed3:1without stretching. Stepped bread showcase/grouped loaves/lower painted
     panels implemented. Native1/1passed5.754s; matched front/street/grey inspected.
     See ilalim-bakery/report.md. No owner approval of mounted result claimed.
-11. HARDWARE id currently means VULCANIZING. Research the actual tire-service shop,
-    not a hardware retail store. One strong service word, realistic paint/board
-    placement, recognizable tire/air-service objects. OPEN.
+11. HARDWARE id means VULCANIZING. Actual Lapasan painted-tire and Cavite workshop
+    photos inspected. Real3Dhollow tire/annular painted-sidewall sign, supported
+    tires/work stand/air-service equipment replace generic retail appearance.
+    First alpha-artifact source rejected before import, opaquev2retained. Native
+    1/1passed5.024s; front/street/grey inspected. See ilalim-vulcanizing/report.md.
 
 After Ilalim, revisit Eskinita's two generated-by-font boards under this owner art
 requirement; their buildings/material disposition remains separate. Every older

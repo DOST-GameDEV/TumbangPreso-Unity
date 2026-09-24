@@ -887,6 +887,41 @@ namespace TumbangPreso.PlayTests
             finally{renderer.sharedMaterial=after;face.localScale=scale;board.localScale=backing;face.localPosition=facePosition;board.localPosition=boardPosition;equipment.gameObject.SetActive(true);foreach(var part in oldParts)part.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
         }
 
+        [UnityTest,Timeout(90000)]
+        public IEnumerator IlalimVulcanizingReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);
+            var room=GameObject.Find("IlalimNgTulay/Dressing/PlaceRework/Frontage_Hardware").transform;
+            var equipment=room.Find("Vulcanizing tire sign and workshop");Assert.IsNotNull(equipment);Assert.IsEmpty(equipment.GetComponentsInChildren<Collider>());
+            var painted=equipment.Find("Painted tire sidewall");var paint=painted.GetComponent<MeshRenderer>().sharedMaterial;var texture=paint.mainTexture;
+            Assert.AreEqual(texture.width,texture.height);Assert.That(painted.lossyScale.x,Is.EqualTo(painted.lossyScale.y).Within(.0001f));
+            // Static batching replaces runtime sharedMesh with the whole batch buffer.
+            // Check the actual authored annulus, plus the live transform scale above.
+            var bounds=AssetDatabase.LoadAssetAtPath<Mesh>("Assets/TumbangPreso/Art/IlalimVulcanizing/PaintedSidewall.asset").bounds;Assert.That(bounds.size.x,Is.EqualTo(bounds.size.y).Within(.0001f));
+            Assert.AreEqual(TextureImporterAlphaSource.None,((TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture))).alphaSource);
+            Assert.IsFalse(ShaderUtil.ShaderHasError(paint.shader));
+            var oldParts=room.GetComponentsInChildren<MeshRenderer>().Where(r=>new[]{"Boxed shop stock","Service counter body","Service counter top","Back shelf","Shopfront lower wall","Glazed private shop boundary","Window frame","Sign face Hardware","Shop sign backing Hardware"}.Contains(r.name)).ToArray();
+            Assert.IsTrue(oldParts.All(r=>!r.enabled));
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;var camera=rig.Camera;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var clock=Object.FindFirstObjectByType<Visual.NeighbourhoodSkyMotion>();bool enabled=clock!=null&&clock.enabled;if(clock!=null)clock.enabled=false;
+            var eye=Vector3.zero;var rotation=Quaternion.identity;Time.timeScale=0;
+            Camera.CameraCallback pin=cam=>{if(cam==camera){cam.transform.SetPositionAndRotation(eye,rotation);cam.fieldOfView=60;}};Camera.onPreCull+=pin;
+            try
+            {
+                foreach(string view in new[]{"front","street"})
+                {
+                    var target=room.TransformPoint(new Vector3(0,1.95f,-.20f));eye=view=="front"?target+room.forward*6:room.TransformPoint(new Vector3(3,1.7f,7));rotation=Quaternion.LookRotation(target-eye);
+                    foreach(string state in new[]{"before","after"})
+                    {
+                        bool on=state=="after";equipment.gameObject.SetActive(on);foreach(var part in oldParts)part.enabled=!on;
+                        using(Visual.NeighbourhoodSkyMotion.At(20))yield return GameplayShots.Render(camera,"Ilalim-vulcanizing-"+view+"-"+state,false,Output,width:1280,height:800);
+                    }
+                }
+            }
+            finally{equipment.gameObject.SetActive(true);foreach(var part in oldParts)part.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
+        }
+
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimBakeryReview()
         {

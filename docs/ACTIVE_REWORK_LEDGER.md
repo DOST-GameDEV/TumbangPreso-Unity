@@ -1,214 +1,113 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: publish Pisonet, then Vulcanizing
+## Current resume,2026-09-24: publish Vulcanizing, finish Eskinita signs
 
-DEV/QUAL start at published065ad6480. Pisonet locally complete: retained source
-cabinets/chairs with measured controls, quiet scene-only screens/lower glazing,
-original3:1commercial fascia.2160solid vertices/2added renderers, collision unchanged.
-Native97933completed1/1in4.549s; actual front/street/grey inspected and retained.
-Assets/evidence copied to DEV, known QUAL churn backed/restored. No Unity/browser/
-helpers active. Next publish, preserve/advance QUAL, then Vulcanizing. No further
-unchanged Pisonet checks. All older tasks/map parents remain OPEN.
+Overall goal ACTIVE and NOT done. Owner says finish current work before moving.
+All older taskIDs/legacy rows preserved. New requests modify the queue, never erase
+it. Quality product work before verification loops. No checkpoint stops/questions,
+other tasks/delegation, paid external APIs, resets, main edits or Desktop replacement.
+Stage explicit paths, sole-author M4tyu633, no trailers/em dashes; fetch before push
+and verify remote HEAD. Preserve original DEVcomposition metas and all source art.
 
-Overall goal ACTIVE and NOT done. Finish current work before moving on. Every older
-TODO/task ID remains; new requests do not replace it. Quality/product work before
-verification loops. No checkpoint stops/questions, delegation/other chats, paid
-external APIs, resets, main edits or Desktop replacement. Stage explicit paths,
-sole-author M4tyu633, fetch before push and verify remote HEAD.
+DEV ASTRAReworks and detached owned QUAL start at publishedef7775e4e. Vulcanizing
+source/assets/evidence now ready in DEV. Native34628completed1/1in5.024s. Actual
+front/street before-after/25percent grey inspected and retained. Paintv2is opaque,
+round sidewall mapped uniformly to a real3Dtire with a real hole/braces. Workshop
+stock/equipment contained, original collision preserved.12792body+256paint vertices,
+2renderers/materials. One bounded fixture repair used for static-batch mesh bounds;
+no further unchanged tests. Known QUALchurn backed/restored. No Unity/helper/player.
 
-DEV ASTRAReworks and owned detached QUAL start at0b25238a7901299c465e0745ada3ddc2721bd1f1.
-AlingPasing published/remote verified;21QUALcandidate files compared, named stash
-preserved and checkout advanced. CIAO GRAZEY is locally finished and ready to publish.
-Original DEVhome-court/loading-street composition PNG metas remain protected dirt.
-All earlier QUAL candidates compared against DEV and saved in named stashes before
-advance. Keep all stashes. Do not touch other dirty worktrees or character assets.
-Lighting branch remains50f1fc255d0770976808ed12db4ca865f3757b1c, already an ancestor.
+Next explicit stage/commit/fetch/push/remote verify (including all saved owner
+feedback and source provenance), preserve/advance QUAL via byte comparison/named
+stash, then Eskinita's two reopened font-only shop signs. Judge/fix those individually;
+retain good building/material/prop work. Then continue actual map integrated gates
+and older gameplay/animal/bot/motion tasks. No ultimate research before map work.
 
-Finished prior unit history: Load/sari-sari frontage. Generic TINDAHANv1was rejected by owner.
-Rejected source/prompt/provenance preserved in ArtSource; its runtime copies removed
-only after byte/ownership verification. Never reinstall it or run approval captures
-for it. AlingNena suggestion/prompt was never generated, superseded by owner's next
-explicit name/reference selection: **ALING PASING / SARI-SARI STORE**.
+## Ilalim storefront implementation status
 
-Owner supplied AlingPasing and Christine's Store images. First governs sign name,
-white hand-painted capitals on red with navy service text on white, green grille,
-white ledge and navy/white awning edge. Second guides stock/sachet grouping only.
-Do not copy product/soda branding or Christine's name. Both sources saved under
-ArtSource/map-refinement-20260923/owner-storefront-refs. V2main sign and small
-square LOAD NA DITO placard generated/inspected, actual artwork3:1and1:1.
+All11sign-register units now have individual implementation/protected-art fitting
+and native evidence. This does NOT close the Ilalim parent or all map refinement.
+Evidence/limits in reports/map-by-map-refinement-2026-09-23/by named shop folder:
 
-Current author IlalimTindahanAuthor: packets/grilles, counter crate/tins, shelf
-bottles/tins, supported navy/white awning/valance, white ledge, raised fascia3.15m,
-small load placard. Retains TaraLaro wall paint, actual counter/private collision,
-upper building/cart.11528solid vertices,2renderers/materials, no new collision or
-shadow casters. Local signPosition name fixed after one compiler failure; no
-capture-framework detour. Oldv1author.txt is not evidence forv2.
+-Print ccd8a7c4b: JUN PRINTINGv3, copier/laminator/reams/awning. V1owner-rejected
+ comic bursts andv2corrupt output archived, absent from runtime. Native1/1in4.550s.
+-Bakery48cffe3fd: owner-liked PANADERIA/PANDESALv1refined into vintagev2,3:1,
+ tiered bread case/loaves. Native1/1in5.754s. Owner-liked source not mounted approval.
+-Laundryc75765887: LABADA3:1, retained drums visible through lower glazing,
+ layered cloth/parcels. Native1/1in4.545s.
+-Repairb32ccf428: COMPUTER REPAIR3:1, laptop/open-case bench/parts.1/1in4.587s.
+-PCExpress615969f52: supplied source byte-identical; local importer and board
+ corrected4:1to3.78305:1. Master/importer/other uses untouched.1/1in5.207s.
+-AlingPasingdbb371b03: owner rejected generic TINDAHANv1, then explicitly chose
+ AlingPasing photo/name. ALING PASING / SARI-SARI STOREv2, separate load card,
+ green grille/packets/stock, white ledge/navy-white awning.1/1in4.565s. Nena draft
+ never generated/installed. Owner photos preserved in owner-storefront-refs.
+-CiaoGrazey0b25238a7: owner wants recognizable changed CiaoGrazie/Grazia name,
+ CIAO GRAZEY BOUTIQUEred/white3:1,18paired shoes/6garments. Retained street rack
+ movedz-15.3to-19.4to reveal shop, model/colliders preserved. Both-mode route/native
+ 2/2in140.117s; eachmode2532connected nodes,2675shoe samples,0unreachable,18real
+ retrieval routes succeed. V1occluded composition rejected; one fixture assumption
+ aboutxextent corrected and actual routes checked. Do NOT rerun this unchanged.
+-Barbereb6557a95: Tony's3:1, retained chairs face mirrors with fitted supports,
+ work ledges/tools/towels and interior tiles/lower glazing.1/1in4.634s.
+-Pares065ad6480: owner rejected painterlyv1as looking too generated, requested
+ LugawKing reference. Actual photo inspected; v2wood fascia/simple graphic bowl
+ replaces it; no copied brand/crown. Pots/bowls/condiment service stock.1/1in4.571s.
+-Pisonetef7775e4e: retained cabinets/chairs/source, measured controls and quieter
+ instance-only screens/lower glazing,3:1commercial fascia.1/1in4.549s.
+-Vulcanizing current: real painted tire sign/workshop. First sidewallalpha artifact
+ rejected before import; opaquev2retained.1/1in5.024s. Ready to publish.
 
-Guarded corrected author84059completed. Native IlalimTindahanReview64255completed
-1/1in4.565s. Actual fixed front/street before-after and25percent grey inspected:
-retain reference-based sign/frontage. Assets/evidence copied to DEV. Known generated
-QUAL churn backed/restored, no active Unity/browser/helper/player. Report in
-ilalim-aling-pasing/report.md. No further unchanged tests or taste variants.
-This unit is publisheddbb371b03. No more AlingPasing checks. Finish CIAO GRAZEY
-using saved ilalim-ciao-grazey-plan.md.
-All remaining tasks/parents stay OPEN.
+All stated native front/street/grey images actually inspected. These are our
+implementation judgments, not unreceived owner aesthetic approval or final native
+performance. All completed pushes verified; QUALcandidates preserved in named
+stashes before advance. Keep all stashes and unrelated dirty worktrees untouched.
 
-## Ciao Grazey unit, ready to publish
+## Technical recovery published earlier, not lost
 
-**CIAO GRAZEY BOUTIQUE**: owner supplied Ciao Grazia/Grazie photos and asks a recognizable
-slightly changed name ("Ciao Grazey or smtg"). Adopt red/white fascia, shoe display
-shelves and hanging clothing racks. References saved. No giant70percent promotional
-overlay/date/address. This supersedes generic UKAY-UKAY fascia intent in the sign
-register. AlingPasing is finished/published; this Clothing unit now proceeds alone.
+59b8dc129: actual roof rail catch/hang/mash/pull onto its nearby lip; Lagoon fall
+swims, Jump near a reachable public bridge starts mash climb. No ordinary centre
+respawn; stock10/8second returns/stairs preserved. Actual-palm rig fitting, owner/
+reduced cameras, native climb wording, host-owned trajectory/epochs/reliable begin-
+end snapshots/pose serial ordering, protocol51. Native3/3plus final roster/reset/
+resource-clock1/1passed; seven Hero grip sheet and both-map sequence/grey inspected.
+Real peer/packet-loss/rejoin/device/replay/native full-match gates remain2.10/P7.
+No more unchanged recovery checks; maps/goal are NOT complete.
 
-Other remaining Ilalim units: Barber, Pares, Pisonet, Vulcanizing. Revisit Eskinita's
-two old font-only sign boards afterward. Each needs individual reference/art/native
-critique; never one repeated sign template. All map parents remain OPEN for their
-integrated gameplay/intro/spectator/native-performance gates.
+## Larger assignment remains
 
-## Published this continuation
+All5map parents OPEN for remaining signs/integrated gameplay/intro/spectator/native
+performance. Lighting branch50f1fc255d0770976808ed12db4ca865f3757b1cwas fetched and
+confirmed an ancestor; keep the adopted bright look, not old darkness. Earlier
+Eskinita/Bayan/Ilalim/SaBubong/Lagoon building/sky/coast/water/boat/material work is
+preserved in reports and TODO. Do not restart/repaint it without a concrete issue.
 
--59b8dc129: actual roof/bridge catch-swim-grip/mash/pull recovery, protocol51,
- fitted actual-palm rigs and owner/reduced cameras. Native3/3plus final roster/clock
- 1/1passed; seven Hero grip sheet and both-map sequences/grey inspected. Real peer,
- packet loss/rejoin/device/native/replay/full-match gates still OPEN in2.10/P7.
--48cffe3fd: owner-liked vintage PANADERIA/PANDESALv2at3:1, tiered bread/glass case,
- grouped loaves/bags. Native1/1in5.754s, front/street/grey inspected.
--c75765887: original LABADA3:1, lower glazing exposes retained washer drums,
- layered folded fabric/parcels. Native1/1in4.545s, front/street/grey inspected.
--b32ccf428: COMPUTER REPAIR3:1, working laptop/open-case bench and parts stock.
- Native1/1in4.587s, front/street/grey inspected.
--615969f52: supplied PCExpress source kept byte-identical; corrected local import
- and physical board from4:1to3.78305:1. Original master/importer/other uses untouched.
- Native1/1in5.207s; front/street/grey inspected, retail interior retained.
--ccd8a7c4bpreviously: JUN PRINTINGv3and distinct copier/laminator/paper frontage.
- Native1/1in4.550s. Printv1owner-rejected bursts andv2corrupt output preserved as
- rejected sources, not runtime assets.
+Still open: natural ground animals, all-bot stalls across roles/modes/maps,
+per-character walks(Sean first), run/strafe/transitions/throws/left-rightpektus,
+chosen-map rematch bug, nativeD3D12shutdown0xC0000005, currentRafiV9/peer/platform
+checks and final coherent build/regression. No intermediate player builds; final
+build internal Builds/name only, never Desktop. Real UGS/device/human-listening
+limits are scoped, not blanket excuses for unfinished autonomous work.
 
-All pushed/remote verified. These are local implementation/art decisions, not owner
-approval of mounted results or fresh real-peer/native integrated qualification.
-Evidence reports in docs/reports/map-by-map-refinement-2026-09-23 by shop name.
+REFINE-2.11ultimate upgrade is saved for AFTER current maps: thorough multi-game
+Roblox/other VFX research FIRST, per-hero body/FPP/VFX/sound/stage plans SECOND,
+individual implementation THIRD. Phaister laughing/airborne example;2.8seconds NOTa
+cap. Existing shared2.8sphase is not completion of this deeper request. Full plan
+in ultimate-performance-research-plan.md. Owner explicitly says finish current
+work/maps first. No new ultimate work during this storefront continuation.
 
-## Preserve the larger assignment
+## Browser cleanup limitation and history
 
-New ultimate passREFINE-2.11is saved for AFTER current maps: many Roblox/other strong
-examples researched first, then individual hero body/FPP/VFX/sound/stage plans, then
-implementation. Phaister laughing/airborne example;2.8seconds NOTa cap. Existing
-shared2.8sphase code is not completion of this deeper request. No ultimate research
-during unfinished maps. Plan in ultimate-performance-research-plan.md.
+Owned hidden IABtab15is stuck on the PNA certificate-error data page. CUA refuses
+even documented close because URL policy rejects that error-page URL. Alternative
+documented close also refused, no useful dedicated close tool found. No bypass,
+no security settings changed, no browser process killed. Other tabs16and all earlier
+research tabs closed. Do not loop on this; preserve exact cleanup issue until
+safely closable. It does not block game implementation. No browser research helper
+or local server was launched outside the documented tools.
 
-Also open: remaining map/background/building work and integrated gates, natural
-animals, bot stalls across roles/modes/maps, character-specific walks (Sean first),
-throws/left-rightpektus, chosen-map rematch bug, nativeD3D12shutdown0xC0000005,
-current RafiV9/live peers/platform checks and final coherent build/regression. Older
-external UGS/device/human-listening limits remain scoped, not blanket completion.
-No intermediate builds; internal Builds/name only when final gate is ready.
-
-All older requests/evidence preserved in TODO, reports and history. Queue audit
-removed zero existing IDs or legacy rows; that proves preservation, not completion.
-Full previous ledger:
-[through PCExpress and AlingPasing draft](reports/map-by-map-refinement-2026-09-23/ledger-through-pcexpress-and-aling-pasing-draft-20260924.md).
-Its earlier archive links preserve original edge/map/print history. Do not re-onboard
-giant docs or rerun successful unchanged checks after compaction. Finish this unit.
-
-CiaoGrazeyv1generated from owner refs, inspected spelling/red-white hierarchy;3:1
-selected. Clothing author adds18paired shoes on3supported tiers and6garments on
-rear hanger rail, preserves room/window/collision. Next guarded author then only
-IlalimUkayReview: aspect/collision and actual front/street/grey. Tooling retry0/1.
-No .cs edits during run. Other signs/older tasks unchanged.
-
-CiaoGrazey author16205completed:5592vertices/one renderer/material, unchanged original
-collision/window. Native IlalimUkayReview running12254, Logs/ilalim-ukay-v1. No.cs
-edits in flight. Need fresh XML and actual front/street/grey critique, then publish
-this unit before starting Barber. No other current tasks or browser tabs active.
-
-Ukayv1native12254passed1/1in4.574sbut visual inspection REJECTS composition: original
-street rack blocks new shoes. Current product fix translates same vendor instance
-z-15.3to-19.4on same pavement, outside shop bay/play court, preserves geometry/
-height/scale/colliders and every other collision. Layout source updated. Revised
-native case includes old/new actual rack positions and outside-court bound assertion.
-Next author and only IlalimUkayReviewv2, no capture-framework fix/tooling loop.
-
-Ukay revised author47276completed. Native IlalimUkayReviewv2running77968,
-Logs/ilalim-ukay-v2. No.cs edits in flight. Product layout fix only; no added tests
-outside this case. Need view front/street/grey and read XML, then finish/publication.
-
-Correction afterv2: new fixture assertion wrongly equated the court with full
-AIPlayableHalfX. Actual bounds include this pavement (halfX11), so the rack is NOT
-outside the whole playable area. The statement/assertion is withdrawn, not hidden.
-Author still checks every old collider/shape and exact rack-only translation.
-Use existing MapRouteProbe on Ilalim BOTHmodes for actual connectivity/retrieval,
-plus retry the one native case now free of the incorrect premise. This is the ONE
-bounded fixture repair (1/1used); no new framework or broad unrelated suite. If
-route fails, fix any genuine layout defect or keep the previous placement with
-visual acceptance open. No false outside-play-area claim. Logs/ilalim-ukay-v3.
-
-Ukayv3actual native front/street/grey images produced and inspected while existing
-route case continues. Revised layout visibly resolves rack occlusion; shoes/clothes
-read, retain current art. Route process60479still active, no .cs edits. Classic
-body grid produced, unreachable.txtempty so far, NOTfinal pass yet. Need fresh
-results.xml before publishing. Full native proof is already viewed; do not rerender
-it if route yields a separate issue. Geometry5592vertices, one added renderer.
-
-CURRENT COMPLETION: Ukayv3process60479completed2/2in140.117s(native4.441,route135.580).
-Bothmodes2532connected nodes,2675clear samples,0unreachable;18real retrievals pass.
-Actual revised front/street/grey inspected, retain. Assets/evidence copied to DEV,
-known churn backed/restored. No active Unity/browser/helper/player. Publish this
-unit, preserve/advance QUAL, then Barber. Do not rerun these successful cases.
-
-CURRENT RESUME: CiaoGrazey0b25238a7published and remote verified. QUAL18candidate
-files compared, named stash preserved, advanced. ONLY active unit now Barber;
-primary interior and firsthand local sign photo inspected, source-specific plan
-saved. Original fictional TONY'S / BARBER SHOP artwork next, then chair/workstation
-refinement. No Unity active. All owned browser tabs closed. No other unit started.
-
-Barberv1generated/inspected, actual3:1 selected. Current author preserves original
-chair/mirror sources, rotates non-colliding chairs toward mirrors, adds fitted
-supports/headrests/tools/towels/interior tiles/lower glazing. Next guarded author
-and ONLY IlalimBarberReview: unchanged original collision, aspect and native
-front/street/grey. Tooling0/1; no .cs edits during run. Other tasks unchanged.
-
-Paresv1generated and inspected: clear service, modest painted bowl,3:1native fit
-candidate. Body authored with shaped stockpot/ladle, soup pot, bowl stacks and
-condiment/covered-pan stock; keeps street cart and collision. Next guarded author
-then only IlalimParesReview, Logs/ilalim-pares-v1. Stop on aspect/collision/native
-front/street/grey pass. Tooling0/1; no .cs edits in flight.
-
-Pares author26939completed8624vertices,1renderer/material, original collision/cart
-retained. Native IlalimParesReview in flight, Logs/ilalim-pares-v1. No.cs edits
-until exit. Need fresh XML plus native front/street/grey then publish if retained.
-
-Actual Lugaw King source inspected: Zarate123Commons2023photo, wood fascia/dark
-serif letters with light contour/flat orange bowl emblem, yellow-black counter.
-Do not repeat the rejected painterly bowl or faux-aged sign. V2keeps PARES/MAMI
-service words, clean graphic bowl and wood-faced sign; no literal copied brand or
-crown. Reference source/limits saved in plan; browser tab12closed, empty verified.
-No Unity active. V1source remains rejected, body still candidate/native critique.
-
-Paresv2generated from actual LugawKing screenshot: wood-faced sign, dark/light-serif
-letters and simple graphic bowl, no detailed food painting. Inspected source,
-selected for native review; not owner-approved. V1runtime copies removed only as
-verified-owned untracked duplicates of preserved rejected source. Body unchanged.
-Next sign author then ONLY IlalimParesReviewv2. Stop on native front/street/grey
-review and fit; no unchanged broader tests. No .cs edits during run.
-
-Paresv2sign author56922completed actual3:1fit. Only IlalimParesReview now running
-5082, Logs/ilalim-pares-v2. Body unchanged, all old-sign render/material source
-preserved. No.cs edits in flight. Need fresh XML and actual front/street/grey
-inspection, then publish retained replacement before Pisonet. Owner-rejectedv1
-must not appear as final runtime/evidence approval.
-
-Pisonetv1sign generated/inspected,3:1commercial reference direction selected. Author
-keeps source cabinets/chairs, adds fitted keys/mouse/coin slot and quiet per-instance
-screen panels, lower glazing. Next guarded author and ONLY IlalimPisonetReview,
-Logs/ilalim-pisonet-v1. Aspect/original collision/native front/street/grey stop gate.
-Tooling0/1; no .cs edits during run. No other current unit.
-
-Pisonet author43271failed compile on localrenderer shadowing later outerrenderer.
-Renamed innerkioskRenderer directly; no runtime/capture framework change. Retrying
-author, no native case run yet. Failed log preserved. No .cs edits during run.
-
-Pisonet corrected author96036completed2160solid vertices plus lower glass,2added
-renderers, retained original kiosk source/importer/collision. Only native case
-97933in flight, Logs/ilalim-pisonet-v1. Need actual image/grey/XML review before
-publication. No.cs edits while running, no other unit started.
+Full prior ledger preserved at
+[through Ilalim storefronts](reports/map-by-map-refinement-2026-09-23/ledger-through-ilalim-storefronts-20260924.md),
+which links earlier full archives. TODO remains canonical status; sign register
+owns per-sign decisions. Queue preservation audit removed zero old IDs/legacy
+rows. That is preservation evidence, not completion. Resume this exact state.
