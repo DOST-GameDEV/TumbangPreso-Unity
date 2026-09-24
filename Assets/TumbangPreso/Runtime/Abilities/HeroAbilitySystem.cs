@@ -13,6 +13,10 @@ namespace TumbangPreso.Abilities
     public sealed partial class HeroAbilitySystem : MonoBehaviour
     {
         public HeroKit Kit { get; private set; }
+
+        /// <summary>⚠️ FALSE FOR A CUSTOM CHARACTER, which borrows a hero's kit but is not that
+        /// hero, so `Audio.HeroVoice` never gives it Sean's voice (`MatchInstaller` sets it).</summary>
+        public bool SpeaksAsHero { get; set; } = true;
         public string HeroId { get; private set; } = "dante";
         private AbilityVariant _skill1Variant;
         private AbilityVariant _skill2Variant;
@@ -737,6 +741,10 @@ namespace TumbangPreso.Abilities
                 using (NetCue.SuppressRelay())
                     NetCue.Play(ability.EffectiveCastCue, transform.position);
             }
+
+            // VOICE-1: the hero calls the power, on this peer, from the same per-peer presentation
+            // path as the cue above. `HeroVoice` rests a skill's voice between casts; the cue does not.
+            GameServices.HeroVoice?.OnCast(_motor, slot == Slot.Skill1 ? 1 : slot == Slot.Skill2 ? 2 : 0);
 
             // ⚠️⚠️ COUNT THE CAST ONLY ON THE OWNER. `ApplyNetworkCast` also calls this method on
             // observers, so counting every presentation would award one step per connected peer.

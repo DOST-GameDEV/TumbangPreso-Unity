@@ -296,6 +296,11 @@ namespace TumbangPreso.Settings
         public float HudScale = 1f;
         public bool LargerText = false;
         public bool CalloutCaptions = false;
+        /// <summary>⚠️ OFF BY DEFAULT, LIKE THE ANNOUNCER'S, BECAUSE `docs/VISION.md` § 3 SAYS *"the
+        /// in-match HUD carries no sentences"*. Until the team records them the hero voices are a
+        /// stylised babble (`tools/generate_hero_voice.py`) whose tone and rhythm carry the
+        /// character and the moment; this shows the words for whoever wants them.</summary>
+        public bool HeroLineCaptions = false;
         public bool ReducedEffects = false;
         public bool HighContrastHud = false;
         public static float ValidHudScale(float value) =>

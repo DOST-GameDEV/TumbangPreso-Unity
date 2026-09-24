@@ -142,6 +142,9 @@ namespace TumbangPreso.Audio
             }
         }
 
+        /// <summary>Whether the announcer is mid-line; `HeroVoice` waits for it.</summary>
+        public bool Speaking => Time.unscaledTime < _busyUntil;
+
         public void Play(string lineId)
         {
             if (!_takes.TryGetValue(lineId, out var takes) || takes.Count == 0) return;

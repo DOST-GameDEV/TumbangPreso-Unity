@@ -151,6 +151,7 @@ namespace TumbangPreso.UI
             Toggle("HighContrastHud","High-contrast HUD",s.HighContrastHud,v=>s.HighContrastHud=v);
             Toggle("CalloutCaptions","Announcer captions",s.CalloutCaptions,v=>s.CalloutCaptions=v);
             Note("English captions follow the recorded announcer, including when announcer volume is muted.");
+            Toggle("HeroLineCaptions","Hero line captions",s.HeroLineCaptions,v=>s.HeroLineCaptions=v);
             Choice("SlipperHighlight","Slipper highlight",SlipperHighlights.All.Select(p=>p.Label).ToArray(),s.SlipperHighlight,v=>s.SlipperHighlight=v);
             // ⚠️ "Interface motion can be reduced while gameplay movement stays visible" used to close
             // this page: its own row already says so, and the owner's concise-copy rule removes a

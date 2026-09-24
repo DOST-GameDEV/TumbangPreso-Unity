@@ -637,19 +637,22 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
     lengths (2.8 to 4.2 s, cohort takes the longest, protocol 52), authored shots, stage walls,
     lift and voice timing built. Phaister's new performance done at source level (laugh, lift,
     eclipse serpent). Others next, one at a time. Native checks owed to Windows (progress.md).
-- [ ] **VOICE-1 Hero voice lines, owner 2026-09-24. OPEN, queued after REFINE-2.11.**
+- [ ] **VOICE-1 Hero voice lines, owner 2026-09-24. IMPLEMENTED, LISTENING PASS OWED.**
   Owner: *"can u give them all their own voice lines too or with actual audio and connect it to
-  their story and personality"*, *"make sure theres voicelines wherein they interact with each
-  other and voicelines related to skills and yk js voicelines overall, use valorant as reference
-  for when voiceliens are used or how theyre constructed, research other games too"*.
-  Scope: every hero (Sean, Phaister, Zack, Nemu/Kuro, Dante, Cheska, Rafi); lines for skills and
-  ultimates (Valorant's self/ally/enemy variants), hero-to-hero interactions (pre-round banter,
-  reactions) grounded in `docs/CHARACTER_ORIGINS.md` relationships, and general match lines.
-  Research first (Valorant's trigger rules and line construction, then other games), then choose
-  the audio route honestly: no voice actor exists; options are a text-to-speech engine if one can
-  be installed at acceptable quality, or stylised non-verbal voices from the existing formant
-  synth (`tools/generate_hero_audio.py`). Existing announcer lines live in `Resources/Vo` via
-  `VoiceDirector`; no sentences in ordinary play (VISION section 3) constrains any on-screen text.
+  their story and personality"*, *"voicelines wherein they interact with each other and voicelines
+  related to skills ... use valorant as reference"*. Research and decisions:
+  `docs/reports/voice-lines-2026-09-24/research.md`. Built: the script (`Core/HeroLines.cs`, 171
+  lines: two skills, the ultimate's ally and opponent readings, round start, tag, tagged, knockdown,
+  lead, win, and twelve biography-grounded exchanges), `HeroLinesTests` (7 cases, 637/637 green), a
+  per-hero stylised babble voice (`tools/generate_hero_voice.py`; a recording replaces a clip by file
+  name, and the generator never overwrites one), `Audio/HeroVoice` (per peer, no wire change,
+  announcer first, one line at a time, skill voice rests 14 s, customs do not speak as heroes) and an
+  optional `HeroLineCaptions` setting (off by default: VISION section 3). `docs/HUMAN.md` Table E is
+  the recording list. **Owner decision owed:** whether to record the lines (Table E) or accept a
+  synthetic speaking voice; a Piper TTS voice was available and deliberately not used, because
+  HUMAN.md treats voice casting as scored team work. **Owed on Windows:** a four-hero Hero Strike
+  match listened to from a thrower and from the taya (the two ultimate readings), the round-one
+  exchange, the announcer hand-off, and the caption row at 4:3 and on a phone.
 - [ ] **SKILL-FX-1 Every skill's VFX, SFX and cast animation, owner 2026-09-24. OPEN, after REFINE-2.11.**
   Owner: *"refine all their skills VFX SFX and animation and everything too. THOROUGHLY research how
   other games that are good in roblox and or actual games like valorant or overwatch make skill

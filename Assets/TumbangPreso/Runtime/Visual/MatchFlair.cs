@@ -405,6 +405,7 @@ namespace TumbangPreso.Visual
             // for a commentary track: each machine says its own line off the event it has just
             // been told about, and nobody hears somebody else's announcer.
             GameServices.Voice?.OnAttackerTagged();
+            GameServices.HeroVoice?.OnTagged(taya, victim);
         }
 
         private static void PlayBlock(CharacterMotor blocker, Vector3 at, float alongSpeed)

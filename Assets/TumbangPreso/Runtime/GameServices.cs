@@ -71,6 +71,7 @@ namespace TumbangPreso
         /// here because its take pooling, per-line cooldowns and music ducking are a system,
         /// not three fields on the SFX player.</summary>
         public static Audio.VoiceDirector Voice { get; private set; }
+        public static Audio.HeroVoice HeroVoice { get; private set; }
 
         public static bool Ready => _root != null;
 
@@ -149,6 +150,7 @@ namespace TumbangPreso
 
             Music = _root.AddComponent<Audio.MusicDirector>();
             Voice = _root.AddComponent<Audio.VoiceDirector>();
+            HeroVoice = _root.AddComponent<Audio.HeroVoice>();
             Account = _root.AddComponent<Net.PlayerAccount>();
 
             // ⚠️ THE CAREER IS ADDED AFTER THE ACCOUNT, DELIBERATELY. `CareerStore.Awake`

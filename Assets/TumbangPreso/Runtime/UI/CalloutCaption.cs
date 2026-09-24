@@ -8,7 +8,7 @@ namespace TumbangPreso.UI
     public sealed class CalloutCaption : MonoBehaviour
     {
         private RectTransform _panel;
-        private Text _words;
+        private Text _words, _speaker;
         private float _until;
         public string VisibleText => _panel != null && _panel.gameObject.activeSelf ? _words.text : "";
         public static CalloutCaption Create(RectTransform parent)
@@ -19,27 +19,40 @@ namespace TumbangPreso.UI
             panel.anchorMin = panel.anchorMax = panel.pivot = new Vector2(.5f, 1);
             panel.anchoredPosition = new Vector2(0, -250); panel.sizeDelta = new Vector2(500, 92);
             var backing = panel.gameObject.AddComponent<Image>(); backing.color = new Color(0,0,0,.9f); backing.raycastTarget = false;
-            var speaker = OwnerUiLayout.Text(panel, "CaptionSpeaker", "ANNOUNCER", 20);
+            var speaker = caption._speaker = OwnerUiLayout.Text(panel, "CaptionSpeaker", "ANNOUNCER", 20);
             OwnerUiLayout.Place(speaker.rectTransform, 16, 5, 468, 28); speaker.color = Color.white; speaker.alignment = TextAnchor.MiddleCenter;
             caption._words = OwnerUiLayout.Text(panel, "CaptionWords", "", 32);
             OwnerUiLayout.Place(caption._words.rectTransform, 16, 34, 468, 50);
             caption._words.alignment = TextAnchor.MiddleCenter; caption._words.color = Color.white;
             panel.gameObject.SetActive(false); return caption;
         }
-        private void OnEnable() => VoiceDirector.Captioned += Show;
+        private void OnEnable() { VoiceDirector.Captioned += Show; HeroVoice.Captioned += ShowHero; }
         private void OnDisable()
         {
-            VoiceDirector.Captioned -= Show; _until = 0;
+            VoiceDirector.Captioned -= Show; HeroVoice.Captioned -= ShowHero; _until = 0;
             if (_panel != null) _panel.gameObject.SetActive(false);
         }
         private void Show(string words, float seconds)
         {
             if (_panel == null || !SettingsStore.Current.CalloutCaptions) return;
+            _speaker.text = "ANNOUNCER";
             _words.text = words; _until = Time.unscaledTime + seconds; _panel.gameObject.SetActive(true);
+        }
+
+        /// <summary>A hero's line, under its own setting and with the hero's name as the speaker.
+        /// ⚠️ THE WORDS FIT BY SHRINKING, NOT BY WRAPPING OFF THE PANEL: the longest hero line is
+        /// seven words (`HeroLinesTests`), a little over the announcer's longest.</summary>
+        private void ShowHero(string speaker, string words, float seconds)
+        {
+            if (_panel == null || !SettingsStore.Current.HeroLineCaptions) return;
+            _speaker.text = speaker;
+            _words.text = words; _words.resizeTextForBestFit = true; _words.resizeTextMinSize = 20; _words.resizeTextMaxSize = 32;
+            _until = Time.unscaledTime + seconds; _panel.gameObject.SetActive(true);
         }
         private void Update()
         {
-            if (_panel != null && (!SettingsStore.Current.CalloutCaptions || Time.unscaledTime >= _until))
+            if (_panel != null && (Time.unscaledTime >= _until
+                || (_speaker.text == "ANNOUNCER" ? !SettingsStore.Current.CalloutCaptions : !SettingsStore.Current.HeroLineCaptions)))
                 _panel.gameObject.SetActive(false);
         }
     }

@@ -4993,7 +4993,10 @@ namespace TumbangPreso.Net
             // ⚠️ AND IT IS ABOVE THE CARD'S NULL GUARD ON PURPOSE. The announcer is not the card
             // and must not stop working on a screen that has no card on it.
             if (!wasRoundActive && roundActive)
+            {
                 GameServices.Voice?.OnRoundStarted(roundNumber);
+                GameServices.HeroVoice?.OnRoundStarted(roundNumber);
+            }
 
             var card = FindFirstObjectByType<UI.RoleSwapCard>();
             if (card == null) return;
