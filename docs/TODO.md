@@ -530,7 +530,10 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
   throwing and left/right pektus. Earlier tests are not final visual acceptance.
   - [ ] REFINE-2.9a motion reference research and every-character/state coverage list.
   - [ ] REFINE-2.9b Sean walking/arm clearance, weight and carrying blends first.
-  - [ ] REFINE-2.9c each other character walking, inspected and fitted individually.
+  - [x] REFINE-2.9c each other character walking, inspected and fitted individually. Done 2026-09-24:
+    all 19 roster bodies filmed sprinting and walking side-on and front-on (`CastAndMotionReel`,
+    `Logs/reel/all2`); every one swings clear of its torso against its legs, including the wide and
+    costumed bodies (Dante, Cheska's pack, Nemu's sleeves); no body needed its own fitting.
   - [ ] REFINE-2.9d run/strafe/start/stop/turn and locomotion transitions separately.
   - [ ] REFINE-2.9e ordinary throw anticipation/release/follow-through/recovery.
   - [ ] REFINE-2.9f left pektus and right pektus, distinct real release/flight intent.
@@ -556,6 +559,18 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
     - Can raise: was the `pick-up` one-shot re-fired every 0.4 s beside a flat can. Now a bow to the can,
       hands rising with `ChannelRatio` (estimated from the relayed reaches on other screens, no wire
       change), the can's mesh tilting up under them (presentation only), and both first-person hands on it.
+    - The tag (owner: *"make tagging better too"*): the dash tag played a 104-degree KICK and the jab an
+      overhead CHOP. `CharacterAnimator.TagBody.cs` makes both a reach to touch (a jab snapped out and home;
+      a dive with the arm held long while the sweep can land); `ViewmodelArms.TagReach.cs` moves the
+      first-person hand toward the crosshair.
+    - Every hero cast (owner: *"and the animation of all skill casting"*): 11 of 21 filmed as a few degrees
+      and back at rest in half a second. The SHIPPING casts are the glb tables in `tools/author_hero_action.py`
+      (`HeroAbilityClips` is only an editor fallback), so a readability pass there scales those eleven about
+      rest and holds their contact pose; baked by `polish_hero_actions.py`, all 18 verified by
+      `verify_hero_action.py`. Rafi's three are re-keyed in `HeroAbilityClips.Rafi.cs` and rebaked by
+      `RosterBookBuilder`. Phaister's Hex no longer folds her brim into a slab. First person:
+      `ViewmodelArms.CastGesture.cs` gives each cast a hand gesture through the screen (thrust, raise, slam,
+      sweep, pull, spread, glide), keyed by the first-person action each ability sends.
 - [ ] **REFINE-2.11 Individual ultimate performances, owner2026-09-24.**
   Thoroughly research/compare VFX and ultimate animations across several relevant
   Roblox and other games FIRST, then plan each hero separately, THEN implement.

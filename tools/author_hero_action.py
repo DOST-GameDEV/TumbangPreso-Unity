@@ -611,6 +611,53 @@ HEROES["zack"]["hero-zack-charge"] = {
 }
 
 
+# ⚠️⚠️ THE READABILITY PASS, 2026-09-24. 🧑: *"and the animation of all skill casting"*, *"make ALL
+# animations and actions ... look and feel better and look satisfying"*. Filmed in the game from an
+# opponent's three-quarter view (`CastAndMotionReel`), these casts moved a few degrees and were back at
+# rest before they registered, next to Supernova, Summon, Stomp, Fissure, Seance and Eclipse, which read.
+# Two changes, both shape-preserving:
+#
+#  * SCALE every angle about rest (rest is all zeros after the T-pose drop). The rhythm, which moment is
+#    fastest, and the stop after the punch are unchanged, so `verify_hero_action.py`'s strike checks
+#    still describe the same clip, only bigger.
+#  * HOLD the contact pose: a copy of the punch beat `hold` seconds later, everything after it shifted.
+#    The research's first rule for a readable action (`docs/reports/gameplay-animation-2026-09-24`).
+#
+# Phaister's Hex is not scaled: its stamp folded her forward with the head pitched DOWN 24 degrees, and
+# her brim's underside became a black slab over her face in the film (the hat hazard the HOME loop
+# records). The fold and the head are eased so the stamp is carried by the arm.
+READABILITY = {
+    "hero-sean-dash": (1.35, .12),
+    "hero-sean-ignite": (1.4, .14),
+    "hero-zack-charge": (1.4, .12),
+    "hero-dante-roar": (1.35, .16),
+    "hero-cheska-frostwave": (1.4, .14),
+    "hero-cheska-raise": (1.35, .14),
+    "hero-cheska-nova": (1.3, .16),
+    "hero-nemu-ghoststep": (1.5, .0),
+}
+ANGLES = slice(4, 17)  # tp..ars in a beat row
+
+
+def readable(spec, scale, hold):
+    beats = [(b[0], b[1], b[2], b[3], *[v * scale for v in b[ANGLES]]) for b in spec["beats"]]
+    punch = spec["punch"]
+    if hold > 0 and punch is not None:
+        i = next(k for k, b in enumerate(beats) if abs(b[0] - punch) < 1e-6)
+        beats = beats[:i + 1] + [(punch + hold, *beats[i][1:])] + [(b[0] + hold, *b[1:]) for b in beats[i + 1:]]
+        spec["grounded"] = tuple(sorted(set([g if g <= punch + 1e-6 else g + hold for g in spec["grounded"]] + [punch + hold])))
+    spec["beats"] = beats
+
+
+for actions in HEROES.values():
+    for name, spec in actions.items():
+        if name in READABILITY:
+            readable(spec, *READABILITY[name])
+        if name == "hero-phaister-hex":
+            # The head never pitches DOWN (hp > 0) in the Hex: the second film still showed the slab on the draw.
+            spec["beats"] = [(b[0], b[1], b[2], b[3], b[4] * .6, b[5], b[6], min(b[7], 0), *b[8:]) for b in spec["beats"]]
+
+
 def sample(beats, punch, t):
     """The pose at t, with the hang-and-snap ease on the run into the impact.
 
