@@ -1,8 +1,8 @@
 # Eskinita remaining props and map review, 2026-09-24
 
 LATEST SUPERCESSION: the owner rejected the font-only sign route afterward. West
-Lita's Store is now individually authored/generated and physically fitted; see
-eskinita-west-sign/report.md. East still OPEN. The old font recommendation and
+Lita's Store and east Aling Luz are now individually authored/generated and
+physically fitted; see eskinita-west-sign/report.md and eskinita-east-sign/report.md. The old font recommendation and
 blank-board comparisons below are preserved history, not current final acceptance.
 Other retained prop/material decisions remain valid unless a concrete issue appears.
 

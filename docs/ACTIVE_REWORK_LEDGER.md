@@ -1,17 +1,22 @@
 # Active TUMP rework ledger
 
-## Current resume,2026-09-24: publish Eskinita west, finish east
+## Current resume,2026-09-24: publish east sign, resume remaining map work
 
-Overall goal ACTIVE and NOT done. Finish one unit before moving; all older taskIDs
-preserved. No checkpoint stops/questions/delegation/paid APIs/resets/main/Desktop.
-DEV/QUAL start atc7bd3bb2f. West Lita's Store locally finished: generated3:1art,
-modest backing/front-fascia cleats, retained original booth/house/collision/east.
-V1rear mount hid STORE; product mount corrected with same original front camera.
-Native21766completed1/1in3.959s; actual front/neighborhood/grey inspected and retained.
+Overall goal ACTIVE and NOT done. Finish current unit before moving; all older
+IDs remain. No checkpoint stops/questions/delegation/paid APIs/resets/main/Desktop.
+DEV/QUAL start ata76ea0f68. EAST locally finished: generated ALING LUZ/SARI-SARI,
+3:1supported front-fascia mount, existing booth/west/house/collision retained.
+Native64118completed1/1in3.997s; actual front/neighborhood/grey inspected and kept.
 Assets/evidence copied to DEV, known QUALchurn backed/restored. No Unity/helpers.
-Next publish this unit, preserve/advance QUAL, then EAST sign. No repeated unchanged
-West checks. All map parents/older gameplay/animal/bot/motion/ultimate gates open.
-Owned error-page tab15cleanup remains tool-blocked; no repeated bypass attempts.
+Next explicit stage/commit/fetch/push/remote verify, preserve/advance QUAL.
+
+All13current signage units(11Ilalim,2Eskinita)now have individual local implementation/
+native evidence. This does NOT close map parents/overall goal. Next reconcile the
+canonical remaining map queue and update affected native map previews/cards and
+necessary integrated camera views, then continue older animal/bot/motion/gameplay
+work. Do not rerun every completed shop test or start ultimate work prematurely.
+Final native build/performance/regression remains P7after features, not an excuse
+to stop independent implementation. Error-page tab15cleanup still tool-blocked.
 
 ## Ilalim storefront implementation status
 
@@ -123,3 +128,14 @@ West corrected mount author28243completed. Only EskinitaWestAuthoredSignReviewv2
 now in flight, Logs/eskinita-west-sign-v2. Same original front camera retained;
 need actual unoccluded full wording/neighbor scale/grey/XML before publishing.
 No.cs edits during run. No other work started, East remains open.
+
+East AlingLuzv1generated/inspected, selected. RunEast targets east only, reuses
+front-fascia mounting from west without repainting/rebuilding west. Full rebuild
+handles both independently. Next guardedRunEast then ONLY EastAuthoredSignReview,
+Logs/eskinita-east-sign-v1. Native unoccluded wording/neighbor scale/grey/source
+aspect/original collision are stop gate. No.cs edits in flight, no other work.
+
+East author2908completed, same supported source-aspect fit; west/source collision
+unchanged. Only nativeEast case now in flight, Logs/eskinita-east-sign-v1. No.cs
+edits until exit. Actual front/neighborhood/grey/XML then publish and resume map
+integration/older tasks. No other feature or ultimate work started.

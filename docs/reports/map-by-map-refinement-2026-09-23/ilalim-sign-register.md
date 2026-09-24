@@ -62,6 +62,8 @@ burst, forced distress, stock-font script or one design repeated on every busine
     First alpha-artifact source rejected before import, opaquev2retained. Native
     1/1passed5.024s; front/street/grey inspected. See ilalim-vulcanizing/report.md.
 
-After Ilalim, revisit Eskinita's two generated-by-font boards under this owner art
-requirement; their buildings/material disposition remains separate. Every older
-map/gameplay/animal/bot/motion/final qualification task remains tracked.
+Eskinita's two older font boards now also have separate generated-art/native
+implementation: Lita's Store west and Aling Luz east. See eskinita-west-sign/report.md
+and eskinita-east-sign/report.md. All13current signage units are implemented and
+locally reviewed; their map parents/integrated gates remain open. Every older
+map/gameplay/animal/bot/motion/ultimate/final qualification task remains tracked.

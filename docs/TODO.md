@@ -261,9 +261,13 @@ scattered across all maps. Execute inside each map's existing refinement row.
   West Lita's Store now uses generated3:1art on a modest supported front-fascia
   plate, with original booth/body/east retained. Corrected native1/1passed3.959s;
   actual front/neighborhood/grey inspected. [West sign evidence](reports/map-by-map-refinement-2026-09-23/eskinita-west-sign/report.md).
-  East sign remains OPEN under the latest owner sign-art direction.
+  East Aling Luz now has its own generated3:1cream/charcoal/red fascia; same
+  supported fitting, existing booth/west retained. Native1/1passed3.997s, actual
+  front/neighborhood/grey inspected. [East sign evidence](reports/map-by-map-refinement-2026-09-23/eskinita-east-sign/report.md).
+  Both reopened sign units implemented/reviewed; integrated map gates stay OPEN.
   The original correction for both boards is preserved here: per-sign reference, built-in generated artwork, critique and physical
-  fitting remain OPEN. Prior stock-font signs are not the final accepted art route.
+  fitting are now implemented in the two named reports above. Prior stock-font
+  signs are preserved baselines, not current final art.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
   Owner2026-09-24 building review found the hall body still uniform. Eight large
   wall triangles now have fitted plaster wash, preserving arches/slats/roof/physics.

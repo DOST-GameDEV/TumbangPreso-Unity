@@ -1544,6 +1544,40 @@ namespace TumbangPreso.PlayTests
             finally{added.gameObject.SetActive(true);old.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
         }
 
+        [UnityTest,Timeout(90000)]
+        public IEnumerator EskinitaEastAuthoredSignReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+            var shop=GameObject.Find("Eskinita/Dressing/Kalat/SariSari_E").transform;
+            var added=shop.Find("Authored home-shop sign");Assert.IsNotNull(added);Assert.IsEmpty(added.GetComponentsInChildren<Collider>());
+            var old=shop.Find("RefinedShopLettering").GetComponent<MeshRenderer>();Assert.IsFalse(old.enabled);
+            var face=added.Find("Generated shop lettering");var texture=face.GetComponent<MeshRenderer>().sharedMaterial.mainTexture;
+            var importer=(TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture));importer.GetSourceTextureWidthAndHeight(out int width,out int height);
+            Assert.That(Mathf.Abs(face.lossyScale.x/face.lossyScale.y),Is.EqualTo(width/(float)height).Within(.002f));
+            Assert.AreEqual(TextureImporterNPOTScale.None,importer.npotScale);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;var camera=rig.Camera;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var clock=Object.FindFirstObjectByType<Visual.NeighbourhoodSkyMotion>();bool enabled=clock!=null&&clock.enabled;if(clock!=null)clock.enabled=false;
+            var bodies=shop.GetComponentsInChildren<MeshRenderer>();var bounds=bodies[0].bounds;foreach(var body in bodies)bounds.Encapsulate(body.bounds);
+            var eye=Vector3.zero;var rotation=Quaternion.identity;Time.timeScale=0;
+            Camera.CameraCallback pin=cam=>{if(cam==camera){cam.transform.SetPositionAndRotation(eye,rotation);cam.fieldOfView=55;}};Camera.onPreCull+=pin;
+            try
+            {
+                foreach(string view in new[]{"front","neighborhood"})
+                {
+                    // Keep the original front witness camera even when the sign moves forward.
+                    var target=view=="front"?shop.TransformPoint(new Vector3(0,2.10f,-.891f)):bounds.center+Vector3.up*.2f;
+                    eye=view=="front"?target+shop.forward*4:bounds.center+new Vector3(5,1.6f,6);rotation=Quaternion.LookRotation(target-eye);
+                    foreach(string state in new[]{"before","after"})
+                    {
+                        bool on=state=="after";added.gameObject.SetActive(on);old.enabled=!on;
+                        using(Visual.NeighbourhoodSkyMotion.At(20))yield return GameplayShots.Render(camera,"Eskinita-east-sign-"+view+"-"+state,false,Output,width:1280,height:800);
+                    }
+                }
+            }
+            finally{added.gameObject.SetActive(true);old.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
+        }
+
         [UnityTest, Timeout(90000)]
         public IEnumerator EskinitaStreetCompositionReview()
         {

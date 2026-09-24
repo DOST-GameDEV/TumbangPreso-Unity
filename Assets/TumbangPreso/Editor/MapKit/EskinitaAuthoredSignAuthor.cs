@@ -21,7 +21,14 @@ namespace TumbangPreso.EditorTools.MapKit
             Fit("W","West-authored-v1.png",report);EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
             Directory.CreateDirectory("Logs/eskinita-authored-west");File.WriteAllText("Logs/eskinita-authored-west/author.txt",report.ToString());Debug.Log(report.ToString());EditorApplication.Exit(0);
         }
-        public static void FinishLoadedScene(StringBuilder report)=>Fit("W","West-authored-v1.png",report);
+        public static void RunEast()
+        {
+            var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/Eskinita.unity");var report=new StringBuilder();
+            Fit("E","East-authored-v1.png",report);EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
+            Directory.CreateDirectory("Logs/eskinita-authored-east");File.WriteAllText("Logs/eskinita-authored-east/author.txt",report.ToString());Debug.Log(report.ToString());EditorApplication.Exit(0);
+        }
+        public static void FinishLoadedScene(StringBuilder report)
+        {Fit("W","West-authored-v1.png",report);Fit("E","East-authored-v1.png",report);}
         private static void Fit(string side,string file,StringBuilder report)
         {
             var map=GameObject.Find("Eskinita");var solids=map.GetComponentsInChildren<Collider>(true).ToDictionary(c=>c,c=>c.bounds);
