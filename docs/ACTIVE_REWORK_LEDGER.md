@@ -1,11 +1,15 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: publish Barber, then Pares
+## Current resume, 2026-09-24: publish Pares replacement, then Pisonet
 
-Barber native91592completed1/1in4.634s. Actual front/street/grey inspected and
-retained. Assets/evidence copied to DEV; known QUAL churn backed/restored. No active
-Unity/browser/helpers. Next publish this unit, preserve/advance QUAL, then Pares.
-No further unchanged barber checks. Older in-flight notes below are history.
+DEV/QUAL start at publishedeb6557a95. Pares candidate finished locally: owner-
+rejected painterlyv1replaced after actual LugawKing photo study withv2wood fascia/
+simple bowl. V1source archived REJECTED, absent from runtime. Body8624vertices,
+1renderer/material, original collision/cart retained. Native5082completed1/1in
+4.571s; actual front/street/grey inspected and retained. No owner approval claim.
+Assets/evidence copied to DEV, known QUAL churn backed/restored. No Unity/browser/
+helpers active. Next publish, preserve/advance QUAL, then Pisonet and Vulcanizing.
+All older tasks/map parents remain OPEN. No more unchanged Pares checks.
 
 Overall goal ACTIVE and NOT done. Finish current work before moving on. Every older
 TODO/task ID remains; new requests do not replace it. Quality/product work before
@@ -164,3 +168,33 @@ chair/mirror sources, rotates non-colliding chairs toward mirrors, adds fitted
 supports/headrests/tools/towels/interior tiles/lower glazing. Next guarded author
 and ONLY IlalimBarberReview: unchanged original collision, aspect and native
 front/street/grey. Tooling0/1; no .cs edits during run. Other tasks unchanged.
+
+Paresv1generated and inspected: clear service, modest painted bowl,3:1native fit
+candidate. Body authored with shaped stockpot/ladle, soup pot, bowl stacks and
+condiment/covered-pan stock; keeps street cart and collision. Next guarded author
+then only IlalimParesReview, Logs/ilalim-pares-v1. Stop on aspect/collision/native
+front/street/grey pass. Tooling0/1; no .cs edits in flight.
+
+Pares author26939completed8624vertices,1renderer/material, original collision/cart
+retained. Native IlalimParesReview in flight, Logs/ilalim-pares-v1. No.cs edits
+until exit. Need fresh XML plus native front/street/grey then publish if retained.
+
+Actual Lugaw King source inspected: Zarate123Commons2023photo, wood fascia/dark
+serif letters with light contour/flat orange bowl emblem, yellow-black counter.
+Do not repeat the rejected painterly bowl or faux-aged sign. V2keeps PARES/MAMI
+service words, clean graphic bowl and wood-faced sign; no literal copied brand or
+crown. Reference source/limits saved in plan; browser tab12closed, empty verified.
+No Unity active. V1source remains rejected, body still candidate/native critique.
+
+Paresv2generated from actual LugawKing screenshot: wood-faced sign, dark/light-serif
+letters and simple graphic bowl, no detailed food painting. Inspected source,
+selected for native review; not owner-approved. V1runtime copies removed only as
+verified-owned untracked duplicates of preserved rejected source. Body unchanged.
+Next sign author then ONLY IlalimParesReviewv2. Stop on native front/street/grey
+review and fit; no unchanged broader tests. No .cs edits during run.
+
+Paresv2sign author56922completed actual3:1fit. Only IlalimParesReview now running
+5082, Logs/ilalim-pares-v2. Body unchanged, all old-sign render/material source
+preserved. No.cs edits in flight. Need fresh XML and actual front/street/grey
+inspection, then publish retained replacement before Pisonet. Owner-rejectedv1
+must not appear as final runtime/evidence approval.

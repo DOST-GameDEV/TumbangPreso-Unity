@@ -41,9 +41,11 @@ burst, forced distress, stock-font script or one design repeated on every busine
    local-sign photos inspected. Retained chairs face mirrors, fitted supports and
    worktops/lower glazing/interior floor refine function. Native1/1passed4.634s;
    front/street/grey inspected. See ilalim-barber/report.md.
-8. PARES: PARES / MAMI, food-service panel at the actual counter. Research local
-   carinderia/pares signage; warm maintained paint, purposeful service hierarchy.
-   No arbitrary food clipart or all-purpose glass stock stand. OPEN.
+8. PARES: original cooking/serving counter implemented. Owner rejectedv1painted
+   meal art as too generated and named LugawKing. Actual source photo inspected;
+   v2wood fascia/dark-light letters/simple bowl selected and fitted3:1. V1archived
+   rejected, absent from runtime. Native1/1passed4.571s; front/street/grey inspected.
+   See ilalim-pares/report.md. V2not yet owner-approved.
 9. PISONET: PISO NET. Research real coin-computer shop signs, keep world-business
    meaning distinct from gameplay/economy UI. Do not invent new game pricing. OPEN.
 10. BAKERY: PANADERIA / PANDESAL. PFA/Julie's and the photographer's Commons
