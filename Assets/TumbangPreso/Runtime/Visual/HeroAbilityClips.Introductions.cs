@@ -7,88 +7,59 @@ namespace TumbangPreso.Visual
         // Render-copy performances for the shared phase. They are deliberately
         // not registered as live ability clips: accepted-cast transport and the
         // common pause/resume boundary must be integrated before live activation.
-        public const float IntroductionSeconds = 2.8f;
-        public const float IntroductionReturnSeconds = .4f;
+        //
+        // ⚠️⚠️ REFINE-2.11, 2026-09-24: THE POSES ARE NO LONGER TYPED HERE. Each hero's
+        // introduction is authored in `tools/author_ultimate_intros.py` and read through
+        // `UltimatePerformance`, with its own length (2.8 to 4.2 s) instead of one shared 2.8.
+        // The previous tables were four or five keys each on a fixed clock, and the pose sheets
+        // showed why they did not read: at 2.8 s with no holds, "arms overhead" (-140 raise at a
+        // 35 degree drop) was in fact arms out sideways, and nothing registered long enough to be
+        // a character. The new tables hold every signature shape and carry per-hero lift.
+        public const float IntroductionSeconds = UltimatePerformance.DefaultSeconds;
+        public const float IntroductionReturnSeconds = UltimatePerformance.HandoffLead;
 
         public static AnimationClip BuildUltimateIntroduction(Transform root, string hero, bool holdingSlipper = false)
         {
             var paths = ResolvePaths(root);
             if (paths == null) return null;
+            var performance = UltimatePerformance.For(hero, holdingSlipper);
+            if (performance == null || performance.Keys.Count < 2) return null;
             var b = new ClipBuilder("intro-" + hero, paths);
-            PoseKey(b, 0, 0, Vector3.zero, Vector3.zero, new Vector3(0, 0, 15), new Vector3(0, 0, -15));
-            switch (hero)
+            foreach (var key in performance.Keys)
             {
-                case "sean":
-                    // Weight drops first, hands gather heat toward the ribs, then
-                    // the whole silhouette coils into the start of the live leap.
-                    PoseKey(b, .30f, -.06f, V(10, -8, 0), V(8, 6, 0), V(-25, 15, 22), V(15, -20, -25), V(-12, 0, 5), V(14, 0, -5));
-                    PoseKey(b, .85f, -.12f, V(18, -12, 0), V(-8, 10, 0), V(-55, 25, 18), V(-35, -30, -20), V(-18, 0, 8), V(22, 0, -8));
-                    PoseKey(b, 1.45f, -.12f, V(14, 4, 0), V(-14, -4, 0), V(-60, 12, 32), V(-60, -12, -32), V(-18, 0, 8), V(22, 0, -8));
-                    PoseKey(b, 2.10f, -.17f, V(26, 0, 0), V(-18, 0, 0), V(24, 0, 24), V(24, 0, -24), V(-24, 0, 10), V(28, 0, -10));
-                    PoseKey(b, 2.8f, -.17f, V(26, 0, 0), V(-18, 0, 0), V(24, 0, 24), V(24, 0, -24), V(-24, 0, 10), V(28, 0, -10));
-                    break;
-                case "phaister":
-                    // An asymmetric trace becomes one wide overhead eclipse.
-                    // The head remains visible; no deep backward face occlusion.
-                    PoseKey(b, .45f, -.025f, V(0, 15, -3), V(-5, -12, 0), V(-30, 25, 25), V(-80, -25, -28));
-                    PoseKey(b, 1.10f, .02f, V(-5, 8, 0), V(-12, -5, 0), V(-100, 12, 42), V(-135, -12, -38));
-                    PoseKey(b, 1.75f, .02f, V(-5, 0, 0), V(-16, 0, 0), V(-140, 0, 45), V(-140, 0, -45));
-                    PoseKey(b, 2.40f, 0, V(5, 0, 0), V(-5, 0, 0), V(-85, 12, 40), V(-85, -12, -40));
-                    PoseKey(b, 2.8f, 0, V(5, 0, 0), V(-5, 0, 0), V(-85, 12, 40), V(-85, -12, -40));
-                    break;
-                case "zack":
-                    // A narrow, angular silhouette: one conductor hand and one
-                    // quiet counterweight, with a decisive change of attention.
-                    PoseKey(b, .32f, -.03f, V(3, -20, 0), V(0, 18, 0), V(-15, 0, 12), V(-55, -20, -28), V(-8, 0, 3), V(10, 0, -3));
-                    PoseKey(b, .95f, 0, V(-4, -20, 0), V(-18, 20, 0), V(8, 0, 15), V(-145, -15, -12), V(-8, 0, 3), V(10, 0, -3));
-                    PoseKey(b, 1.75f, 0, V(-4, -20, 0), V(-18, 20, 0), V(8, 0, 15), V(-145, -15, -12), V(-8, 0, 3), V(10, 0, -3));
-                    b.PunchAt(2.15f);
-                    PoseKey(b, 2.15f, -.035f, V(8, 15, 0), V(5, -10, 0), V(12, 0, 15), V(-80, 5, -8), V(-8, 0, 3), V(10, 0, -3));
-                    PoseKey(b, 2.8f, -.035f, V(8, 15, 0), V(5, -10, 0), V(12, 0, 15), V(-80, 5, -8), V(-8, 0, 3), V(10, 0, -3));
-                    break;
-                case "nemu":
-                    // A conversation with Kuro's left-side staging: look, offer,
-                    // draw inward, then open the space for the transformed familiar.
-                    PoseKey(b, .45f, 0, V(0, -12, 0), V(4, -28, -5), V(-65, -15, 22), V(-15, 10, -15));
-                    PoseKey(b, 1.0f, -.025f, V(6, -8, 0), V(8, -20, 0), V(-80, -10, 30), V(-60, 15, -22));
-                    PoseKey(b, 1.60f, -.04f, V(8, 0, 0), V(6, 0, 0), V(-45, 28, 14), V(-45, -28, -14));
-                    PoseKey(b, 2.35f, 0, V(-4, 0, 0), V(-5, 0, 0), V(-35, -18, 55), V(-35, 18, -55));
-                    PoseKey(b, 2.8f, 0, V(-4, 0, 0), V(-5, 0, 0), V(-35, -18, 55), V(-35, 18, -55));
-                    break;
-                case "dante":
-                    // Feet and hips lead. The striking shoulder loads last; the
-                    // actual forward fissure remains a live, separate impact.
-                    PoseKey(b, .45f, -.07f, V(8, -14, 0), V(-4, 12, 0), V(-25, 0, 30), V(20, -10, -30), V(0, -6, 5), V(0, 6, -5));
-                    PoseKey(b, 1.05f, -.11f, V(12, -26, -5), V(-8, 24, 0), V(-55, 15, 24), V(45, -25, -35), V(0, -8, 8), V(0, 8, -8));
-                    PoseKey(b, 1.80f, -.13f, V(18, -30, -6), V(-12, 28, 0), V(-65, 8, 30), V(65, -30, -32), V(0, -10, 10), V(0, 10, -10));
-                    PoseKey(b, 2.40f, -.13f, V(18, -30, -6), V(-12, 28, 0), V(-65, 8, 30), V(65, -30, -32), V(0, -10, 10), V(0, 10, -10));
-                    PoseKey(b, 2.8f, -.13f, V(18, -30, -6), V(-12, 28, 0), V(-65, 8, 30), V(65, -30, -32), V(0, -10, 10), V(0, 10, -10));
-                    break;
-                case "cheska":
-                    // Still shoulders make the small precise hand phrase legible.
-                    // Gathering ice belongs between the hands, not over the face.
-                    PoseKey(b, .55f, 0, V(0, 8, 0), V(8, -8, 0), V(-65, 16, holdingSlipper ? 35 : 18), V(-30, -12, -16));
-                    PoseKey(b, 1.25f, 0, V(0, 4, 0), V(7, -4, 0), V(-70, 18, holdingSlipper ? 55 : 24), V(-70, -18, -24));
-                    PoseKey(b, 1.90f, -.02f, V(3, 0, 0), V(4, 0, 0), V(-55, 30, holdingSlipper ? 60 : 15), V(-55, -30, -15));
-                    PoseKey(b, 2.35f, 0, V(0, 0, 0), V(0, 0, 0), V(-85, -8, holdingSlipper ? 75 : 42), V(-85, 8, -42));
-                    PoseKey(b, 2.8f, 0, V(0, 0, 0), V(0, 0, 0), V(-85, -8, holdingSlipper ? 75 : 42), V(-85, 8, -42));
-                    break;
-                case "rafi":
-                    PoseKey(b, .40f, -.025f, V(4,12,-3), V(0,-14,0), V(-25,10,28), V(-12,0,-20));
-                    PoseKey(b, 1.05f, -.045f, V(8,-15,-4), V(-4,16,0), V(-38,-20,35), V(-20,-15,-25), V(-6,0,3), V(5,0,-3));
-                    PoseKey(b, 1.70f, -.06f, V(8,-25,-6), V(-4,20,0), V(-40,-24,32), V(-26,-24,-25), V(-10,0,5), V(8,0,-5));
-                    PoseKey(b, 2.30f, -.06f, V(8,-25,-6), V(-4,20,0), V(-40,-24,32), V(-26,-24,-25), V(-10,0,5), V(8,0,-5));
-                    PoseKey(b, 2.8f, -.06f, V(8,-25,-6), V(-4,20,0), V(-40,-24,32), V(-26,-24,-25), V(-10,0,5), V(8,0,-5));
-                    break;
-                default: return null;
+                // Raw local eulers, already converted by the authoring script (arm drop from the
+                // T-pose, Unity's imported handedness). The root y is replaced by grounding below.
+                b.KeyPos(key.Time, 0, 0, 0);
+                b.KeyRot("torso", key.Time, key.Torso.x, key.Torso.y, key.Torso.z);
+                b.KeyRot("head", key.Time, key.Head.x, key.Head.y, key.Head.z);
+                b.KeyRot("arm-left", key.Time, key.ArmLeft.x, key.ArmLeft.y, key.ArmLeft.z);
+                b.KeyRot("arm-right", key.Time, key.ArmRight.x, key.ArmRight.y, key.ArmRight.z);
+                b.KeyRot("leg-left", key.Time, key.LegLeft.x, key.LegLeft.y, key.LegLeft.z);
+                b.KeyRot("leg-right", key.Time, key.LegRight.x, key.LegRight.y, key.LegRight.z);
+            }
+            foreach (float punch in performance.Punches) b.PunchAt(punch);
+            // Hold the final authored pose to the boundary so a table that ends early never
+            // leaves the curve extrapolating.
+            var last = performance.Keys[performance.Keys.Count - 1];
+            if (last.Time < performance.Seconds - .001f)
+            {
+                b.KeyPos(performance.Seconds, 0, 0, 0);
+                b.KeyRot("torso", performance.Seconds, last.Torso.x, last.Torso.y, last.Torso.z);
+                b.KeyRot("head", performance.Seconds, last.Head.x, last.Head.y, last.Head.z);
+                b.KeyRot("arm-left", performance.Seconds, last.ArmLeft.x, last.ArmLeft.y, last.ArmLeft.z);
+                b.KeyRot("arm-right", performance.Seconds, last.ArmRight.x, last.ArmRight.y, last.ArmRight.z);
+                b.KeyRot("leg-left", performance.Seconds, last.LegLeft.x, last.LegLeft.y, last.LegLeft.z);
+                b.KeyRot("leg-right", performance.Seconds, last.LegRight.x, last.LegRight.y, last.LegRight.z);
             }
             // SetCurve is supported in native players only for legacy clips.
             // This clip is sampled on a render copy, never put in the live Animator.
             var clip = b.Build(legacy: true);
-            GroundIntroduction(clip, root, paths["root"]);
+            GroundIntroduction(clip, root, paths["root"], lift: performance.Lift.Count > 0 ? performance.LiftAt : null);
             return clip;
         }
 
+        // Retained for Rafi's authored live casts (`HeroAbilityClips.Rafi.cs`), which still key
+        // in this shape. The introductions above take raw values from their tables instead.
         private static Vector3 V(float x, float y, float z) => new Vector3(x, y, z);
         private static void PoseKey(ClipBuilder b, float t, float y, Vector3 torso, Vector3 head,
             Vector3 left, Vector3 right, Vector3 leftLeg = default, Vector3 rightLeg = default)

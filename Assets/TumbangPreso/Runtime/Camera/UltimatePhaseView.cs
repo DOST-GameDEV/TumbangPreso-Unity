@@ -36,11 +36,18 @@ namespace TumbangPreso.CameraSystem
         private Slipper[] _slippers;
         private bool _handedOff;
         private readonly RaycastHit[] _shotHits = new RaycastHit[32];
-        private bool _mirrorShot, _safeShot = true;
+        // Per authored shot: mirror it, replace it with another clear shot, or give up (card).
+        private bool[] _mirror;
+        private int[] _useShot;
+        private bool _safeShot = true, _stillMirror, _stillSafe;
+        private float _duration = UltimatePerformance.DefaultSeconds;
         public bool SoundPlayed { get; private set; }
+        /// <summary>Seats whose own voice line already played inside this introduction.</summary>
+        public IEnumerable<int> VoicedSeats { get { foreach (var entry in _actors) if (entry.Scene != null && entry.Scene.VoicePlayed) yield return entry.Actor.PlayerSlot; } }
 
-        public UltimatePhaseView(Transform owner, IReadOnlyList<UltimateCommit> commits)
+        public UltimatePhaseView(Transform owner, IReadOnlyList<UltimateCommit> commits, double duration = UltimatePerformance.DefaultSeconds)
         {
+            _duration = (float)duration;
             try
             {
                 var liveCamera = Camera.main;
@@ -76,7 +83,7 @@ namespace TumbangPreso.CameraSystem
                             actorStage.transform.position+=Vector3.up*(Slipper.GroundY(actor.transform.position)-surfaces.Min(r=>r.bounds.min.y));
                     }
                     foreach (var surface in body.Renderers) surface.shadowCastingMode = ShadowCastingMode.On;
-                    entry.Scene = new HeroIntroductionScene(actorStage.transform, actor.AbilitySystem.HeroId, actor, body);
+                    entry.Scene = new HeroIntroductionScene(actorStage.transform, actor.AbilitySystem.HeroId, actor, body) { Boundary = _duration };
                     if (_primary == null || commit.Seat == watching) _primary = entry;
                 }
                 _stage.SetActive(true);
@@ -142,7 +149,9 @@ namespace TumbangPreso.CameraSystem
                 if (entry.Clip == null || entry.Body.Root == null) continue;
                 entry.Clip.SampleAnimation(entry.Body.Root,age); entry.Scene?.Sample(age);
             }
-            if (!_handedOff && age >= 2.4f)
+            // Each body starts blending back into live play 0.4 s before the SHARED boundary, which
+            // is the longest caster's length: a shorter hero holds its last authored pose until then.
+            if (!_handedOff && age >= Mathf.Max(0, _duration - UltimatePerformance.HandoffLead))
             {
                 _handedOff = true;
                 foreach (var entry in _actors)
@@ -150,14 +159,28 @@ namespace TumbangPreso.CameraSystem
             }
             // Keep one readable 3D view until the last beat. A full .4s dissolve
             // stacked two different court perspectives and washed out the handoff.
-            // Pose staging still starts at2.4; shared time and live warning do not change.
-            float returnBlend=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(2.68f,2.8f,age));
-            _fade.alpha=returnBlend;
+            // Pose staging starts HandoffLead before the boundary; shared time and live warning do not change.
+            float returnBlend=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(_duration-UltimatePerformance.ReturnSeconds,_duration,age));
+            // ⚠️ REDUCED MOTION OR EFFECTS STILL GET THE PERFORMANCE (REFINE-2.11). Until now they
+            // got no picture at all. They get the same acting from ONE locked shot with no cut and
+            // no camera move, faded in rather than cut in; the scene itself drops its flashes.
             bool moving=Settings.SettingsStore.Current.CinematicCameraMotion && !Settings.SettingsStore.Current.ReducedUiMotion && !Settings.SettingsStore.Current.ReducedEffects;
-            _picture.enabled=moving && _safeShot && _camera!=null && _primary?.Scene!=null;
+            _fade.alpha=returnBlend*(moving?1:Mathf.SmoothStep(0,1,Mathf.Clamp01(age/.3f)));
+            _picture.enabled=(moving?_safeShot:_stillSafe) && _camera!=null && _primary?.Scene!=null;
             if (!_picture.enabled) return;
-            _primary.Scene.Shot(age,out var eye,out var target,out var fov,_camera.aspect);
-            if(_mirrorShot)eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
+            Vector3 eye, target; float fov;
+            if(moving)
+            {
+                int shot=_primary.Scene.ShotIndexAt(age);
+                int use=_useShot!=null&&shot>=0?_useShot[shot]:shot;
+                _primary.Scene.ShotAt(use,age,out eye,out target,out fov,_camera.aspect);
+                if(_mirror!=null&&use>=0&&_mirror[use])eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
+            }
+            else
+            {
+                _primary.Scene.StillShot(out eye,out target,out fov);
+                if(_stillMirror)eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
+            }
             _camera.transform.position=eye; _camera.transform.LookAt(target); _camera.fieldOfView=fov;
             _hidden.Clear();_wasHidden.Clear();_seen.Clear();
             foreach(var actor in GameServices.Round.Players)
@@ -183,14 +206,41 @@ namespace TumbangPreso.CameraSystem
         }
         private void ChooseShot()
         {
-            // Judge both sides at the largest/revealed composition once. A tight
-            // alley gets the same-duration low-motion card, not a camera inside a wall.
-            _primary.Clip.SampleAnimation(_primary.Body.Root,2.35f);_primary.Scene.Sample(2.35f);
-            _primary.Scene.Shot(2.35f,out var eye,out var target,out var fov,_camera.aspect);
-            Vector3 alternate=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
-            bool first=ClearShot(target,eye),second=ClearShot(target,alternate);
-            _mirrorShot=!first&&second;_safeShot=first||second;
-            _primary.Clip.SampleAnimation(_primary.Body.Root,0);_primary.Scene.Sample(0);
+            // Judge every authored shot on both sides at its own most revealed moment (its end,
+            // where the moves settle). A blocked shot is mirrored; one blocked on both sides
+            // borrows the nearest clear shot; a tight alley with none clear gets the same-duration
+            // card, never a camera inside a wall. The reduced-motion still is judged the same way.
+            var scene=_primary.Scene;int count=scene.ShotCount;
+            _mirror=new bool[Mathf.Max(0,count)];_useShot=new int[Mathf.Max(0,count)];
+            var clear=new bool[Mathf.Max(0,count)];bool any=false;
+            for(int i=0;i<count;i++)
+            {
+                float at=Mathf.Max(scene.ShotStart(i),scene.ShotEnd(i)-.05f);
+                _primary.Clip.SampleAnimation(_primary.Body.Root,at);scene.Sample(at,false);
+                scene.ShotAt(i,at,out var eye,out var target,out _,_camera.aspect);
+                Vector3 alternate=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
+                bool first=ClearShot(target,eye),second=ClearShot(target,alternate);
+                _mirror[i]=!first&&second;clear[i]=first||second;any|=clear[i];_useShot[i]=i;
+            }
+            for(int i=0;i<count;i++)
+            {
+                if(clear[i])continue;
+                for(int d=1;d<count;d++)
+                {
+                    if(i+d<count&&clear[i+d]){_useShot[i]=i+d;break;}
+                    if(i-d>=0&&clear[i-d]){_useShot[i]=i-d;break;}
+                }
+            }
+            _safeShot=any;
+            {
+                float at=_duration*.6f;
+                _primary.Clip.SampleAnimation(_primary.Body.Root,at);scene.Sample(at,false);
+                scene.StillShot(out var eye,out var target,out _);
+                Vector3 alternate=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
+                bool first=ClearShot(target,eye),second=ClearShot(target,alternate);
+                _stillMirror=!first&&second;_stillSafe=first||second;
+            }
+            _primary.Clip.SampleAnimation(_primary.Body.Root,0);scene.Sample(0,false);
         }
         private bool ClearShot(Vector3 focus,Vector3 eye)
         {

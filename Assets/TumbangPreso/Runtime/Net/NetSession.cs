@@ -389,7 +389,10 @@ namespace TumbangPreso.Net
         // Round retirement must remove solid ability fields on every peer.
         // 50 carries authenticated peer-leave intent and host-confirmed departure notices.
         // 51 adds explicit host-owned edge-climb pose state and the swim-to-climb request.
-        public const int ProtocolVersion = 51;
+        // 52 derives the shared ultimate phase's length from the accepted heroes' authored
+        // introductions (2.8 to 4.2 s, REFINE-2.11) instead of a fixed 2.8. No bytes changed, but
+        // a 51 peer would release its presentation clock at a different moment from the host.
+        public const int ProtocolVersion = 52;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

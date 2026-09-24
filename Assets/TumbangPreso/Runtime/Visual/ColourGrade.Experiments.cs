@@ -95,7 +95,7 @@ namespace TumbangPreso.Visual
             if(WorldCueCamera && phase!=null && phase.Active && !settings.ReducedEffects && !settings.ReducedUiMotion)
             {
                 float age=(float)(SharedUltimatePhase.Now-phase.Began);
-                float envelope=Mathf.SmoothStep(0,1,Mathf.Clamp01(age/.18f))*Mathf.Clamp01(((float)SharedUltimatePhase.Duration-age)/.35f);
+                float envelope=Mathf.SmoothStep(0,1,Mathf.Clamp01(age/.18f))*Mathf.Clamp01(((float)phase.Duration-age)/.35f);
                 _cueWorld=Mathf.Clamp01(profile.UltimateDesaturation)*envelope;
             }
         }

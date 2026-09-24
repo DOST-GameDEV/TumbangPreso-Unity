@@ -22,7 +22,7 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
         [UnityTest, Timeout(90000)]
         public IEnumerator SixDistinctRenderOnlyIntroductionPerformances()
-            => Study(new[] { "sean", "phaister", "zack", "nemu", "dante", "cheska" }, false);
+            => Study(new[] { "sean", "phaister", "zack", "nemu", "dante", "cheska", "rafi" }, false);
         [UnityTest, Timeout(90000)]
         public IEnumerator NemuKeepsBothCharactersFramedAcrossGrowthAndAspect()
             => Study(new[] { "nemu" }, true);
@@ -47,7 +47,7 @@ namespace TumbangPreso.PlayTests
             var sourceCamera = Camera.main.GetComponent<CameraRig>(); sourceCamera.SetActive(false);
             Vector3[] offsets = { new Vector3(2.2f, 1.1f, 3.8f), new Vector3(1.7f, 1.2f, 4),
                 new Vector3(-2.4f, 1.3f, 3.6f), new Vector3(2.2f, 1.2f, 3.8f),
-                new Vector3(-2.7f, 1.0f, 4), new Vector3(1.4f, 1.3f, 3.4f) };
+                new Vector3(-2.7f, 1.0f, 4), new Vector3(1.4f, 1.3f, 3.4f), new Vector3(-2.2f, 1.1f, 3.8f) };
             // Reuse the existing editor motion-strip geometry audit rather than
             // validating root keys against a copy of the new grounding calculation.
             var audit = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType("TumbangPreso.EditorTools.ClipMotionStrip")).First(t => t != null);
@@ -71,7 +71,11 @@ namespace TumbangPreso.PlayTests
                     var copy = track.Clone(stage.transform); Assert.IsNotNull(copy);
                     track.Apply(copy, track.Newest);
                     var clip = HeroAbilityClips.BuildUltimateIntroduction(copy.Root.transform, hero, actor.GetComponent<Carrier>().Held != null);
-                    Assert.IsNotNull(clip); Assert.IsTrue(clip.legacy, "Runtime-authored sampling must work in the native player."); Assert.AreEqual(2.8f, clip.length, .01f);
+                    // REFINE-2.11: each hero's introduction has its own authored length and lift.
+                    var performance = UltimatePerformance.For(hero, actor.GetComponent<Carrier>().Held != null);
+                    Assert.IsNotNull(performance, hero + " has no authored introduction table.");
+                    float seconds = performance.Seconds;
+                    Assert.IsNotNull(clip); Assert.IsTrue(clip.legacy, "Runtime-authored sampling must work in the native player."); Assert.AreEqual(seconds, clip.length, .01f);
                     int score = GameServices.Match.ScoreFor(1); Vector3 at = actor.transform.position;
                     bool active = visual.Model.activeSelf;
                     var held = actor.GetComponent<Carrier>().Held;
@@ -126,10 +130,10 @@ namespace TumbangPreso.PlayTests
                             Assert.IsTrue(scene.StartSound(), hero + " must resolve its retained theme mapping.");
                             scene.SetVisibleForCapture(true);
                         }
-                        yield return ImprovementEvidenceProbe.Record(camera, hero + (withScene ? "-introduction-scene" : "-introduction-body"), 2.8f,
+                        yield return ImprovementEvidenceProbe.Record(camera, hero + (withScene ? "-introduction-scene" : "-introduction-body"), seconds,
                             drive: age =>
                             {
-                                clip.SampleAnimation(copy.Root, Mathf.Min(age, 2.8f));
+                                clip.SampleAnimation(copy.Root, Mathf.Min(age, seconds));
                                 if (scene != null)
                                 {
                                     scene.Sample(age); scene.Shot(age, out var eye, out var target, out var lens, camera.aspect);
@@ -146,7 +150,8 @@ namespace TumbangPreso.PlayTests
                                             shoeInsideHead = Mathf.Max(shoeInsideHead, inside);
                                         }
                                     }
-                                    if (checkFraming)
+                                    // A close shot crops the body on purpose (a face or the hands).
+                                    if (checkFraming && !scene.IsCloseShot(age))
                                     {
                                         Assert.IsTrue(scene.TryCharacterBounds(out var bounds));
                                         foreach (float aspect in new[] { 4f / 3, 16f / 9, 21f / 9 })
@@ -169,7 +174,8 @@ namespace TumbangPreso.PlayTests
                                         camera.transform.position = eye; camera.transform.LookAt(target); camera.fieldOfView = lens;
                                     }
                                 }
-                                float clearance = Low(age) - floor;
+                                // Authored lift (Phaister's levitation) is intended height, not float.
+                                float clearance = Low(age) - floor - performance.LiftAt(Mathf.Min(age, seconds));
                                 lowest = Mathf.Min(lowest, clearance); highest = Mathf.Max(highest, clearance);
                             });
                         report.AppendLine(FormattableString.Invariant($"{hero}: clearance {lowest:F5} to {highest:F5} metres"));

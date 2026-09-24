@@ -9,7 +9,19 @@ namespace TumbangPreso.Visual
     // Private scene authoring, driven explicitly by presentation time. No ability,
     // physics, score, input or global-clock callbacks. Activation in a live match
     // still requires the accepted shared phase; only opt-in art probes use this now.
-    public sealed class HeroIntroductionScene : IDisposable
+    //
+    // ⚠️⚠️ REFINE-2.11 (owner 2026-09-24): "give every hero a memorable moment in which the stage
+    // briefly feels like theirs", authored one hero at a time, "dont js spam copy paste stuff bcz
+    // it will be boring". THIS FILE IS ONLY THE PLUMBING every hero needs: pieces, the stage wall,
+    // the authored shots, the voice clock and capture visibility. Each hero's stage, props and
+    // timing live in their own partial file (`HeroIntroductionScene.<Hero>.cs`), written from
+    // their own section of `docs/reports/ultimate-performances-2026-09-24/plan.md`, and share no
+    // shapes, colours or beats. The body keys and shots come from `UltimatePerformance`.
+    //
+    // ⚠️ EVERYTHING HERE EXISTS ONLY IN THE OVERLAY'S RENDER COPY. The stage is forced off except
+    // inside `UltimatePhaseView`'s own camera render, so the live court never changes and nobody's
+    // aim or information is affected by it.
+    public sealed partial class HeroIntroductionScene : IDisposable
     {
         private sealed class Piece
         {
@@ -24,19 +36,20 @@ namespace TumbangPreso.Visual
         private readonly Quaternion _facing;
         private readonly List<Piece> _pieces = new List<Piece>();
         private readonly List<LineRenderer> _lines = new List<LineRenderer>();
-        private MatchPoseHistory.Copy _kuro;
-        private KuroRagePresentation _rage;
-        private Vector3 _kuroScale;
-        private Quaternion _kuroFront;
-        private readonly Transform _rightHand, _leftArm;
+        private readonly Transform _rightHand, _leftArm, _head;
         private readonly Vector3 _leftPalm;
         private Renderer[] _renderers;
         private readonly Renderer[] _bodyRenderers;
-        private Renderer[] _kuroRenderers;
         private GameObject _heldItem;
         private Renderer[] _heldRenderers;
-        private AudioSource _sound;
+        private AudioSource _sound, _voice;
+        private readonly UltimatePerformance _performance;
+        private readonly bool _reducedEffects;
         public GameObject Root => _root;
+        public UltimatePerformance Performance => _performance;
+        public float Seconds => _performance?.Seconds ?? UltimatePerformance.DefaultSeconds;
+        /// <summary>True once this introduction has spoken the hero's own line inside the gesture.</summary>
+        public bool VoicePlayed { get; private set; }
 
         public HeroIntroductionScene(Transform parent, string hero, CharacterMotor source, MatchPoseHistory.Copy body)
         {
@@ -45,6 +58,7 @@ namespace TumbangPreso.Visual
             {
                 if (bone.name == "HandAnchor") _rightHand = bone;
                 if (bone.name == "arm-left") _leftArm = bone;
+                if (bone.name == "head") _head = bone;
             }
             if (_rightHand != null)
             { _leftPalm = _rightHand.localPosition; _leftPalm.x = -_leftPalm.x; }
@@ -58,6 +72,8 @@ namespace TumbangPreso.Visual
             }
             _hero = hero; _ground = VfxShapes.GroundPoint(source.transform.position);
             _facing = Quaternion.Euler(0, source.transform.eulerAngles.y, 0);
+            _performance = UltimatePerformance.For(hero, source.GetComponent<Carrier>()?.Held != null);
+            _reducedEffects = Settings.SettingsStore.Current.ReducedEffects;
             _root = new GameObject("IntroductionScene-" + hero);
             _root.transform.SetParent(parent, false); _root.transform.SetPositionAndRotation(_ground, _facing);
             try
@@ -65,64 +81,13 @@ namespace TumbangPreso.Visual
                 CopyHeldItem(source);
                 switch (hero)
                 {
-                    case "sean":
-                        for (int i = 0; i < 6; i++)
-                            Add("InwardHeat" + i, VfxShapes.Tongue(5, .24f, .15f, .35f, .08f, 240 + i),
-                                new Color(1, i % 2 == 0 ? .32f : .58f, .04f, .68f));
-                        break;
-                    case "phaister":
-                        Add("EclipseBody", MoonDisc(), new Color(.035f, .012f, .075f, .96f));
-                        Add("EclipseRim", VfxShapes.Collar(40, .025f, .92f), new Color(.63f, .23f, .86f, .8f));
-                        break;
-                    case "zack":
-                        for (int i = 0; i < 3; i++)
-                        {
-                            var go = new GameObject("FineCharge" + i); go.transform.SetParent(_root.transform, false);
-                            var line = go.AddComponent<LineRenderer>(); line.useWorldSpace = false;
-                            line.positionCount = 7; line.widthMultiplier = .018f; line.numCapVertices = 2;
-                            line.shadowCastingMode = ShadowCastingMode.Off;
-                            VfxMaterial.Ghost(line, new Color(1, .78f, .17f, .85f), .65f);
-                            _lines.Add(line);
-                        }
-                        break;
-                    case "nemu":
-                        var companion = source.GetComponent<CharacterVisual>()?.Companion;
-                        if (companion == null) throw new InvalidOperationException("Nemu's introduction requires retained Kuro.");
-                        var track = new MatchPoseHistory.Track(source, companion.gameObject);
-                        track.Record(0); track.Record(.05f); _kuro = track.Clone(_root.transform);
-                        if (_kuro == null) throw new InvalidOperationException("Kuro exceeded the render-copy contract.");
-                        track.Apply(_kuro, .05f); _kuro.Root.SetActive(true);
-                        _kuro.Root.transform.localPosition = new Vector3(-.95f, .65f, .15f);
-                        _kuro.Root.transform.localRotation = Quaternion.Euler(0, -18, 0);
-                        // The live pet's idle fidget can stretch its current scale.
-                        // Use the same canonical base as the actual devour, not that transient pose.
-                        _kuroScale = companion.RestScale;
-                        Vector3 face = companion.MouthPosition - companion.transform.position; face.y = 0;
-                        Vector3 localFace = companion.transform.InverseTransformDirection(face.normalized);
-                        _kuroFront = localFace.sqrMagnitude > .01f ? Quaternion.FromToRotation(localFace, Vector3.forward) : Quaternion.identity;
-                        var calm = GhostPetCompanion.FindForm(_kuro.Root.transform, "CalmForm");
-                        var rage = GhostPetCompanion.FindForm(_kuro.Root.transform, "RageForm");
-                        if (calm == null || rage == null) throw new InvalidOperationException("Retained Kuro calm/rage forms are missing.");
-                        // The live helper has already made six inactive eye wisps.
-                        // Copies of those have no timeline; the private helper below
-                        // owns fresh ones. Do not grow dormant source spheres too.
-                        foreach (var bone in _kuro.Bones)
-                            if (bone.name == "KuroEyeWisp")
-                            { bone.gameObject.SetActive(false); bone.SetParent(_root.transform, false); ObjectDestroy(bone.gameObject); }
-                        _rage = new KuroRagePresentation(_kuro.Root, calm, rage);
-                        _kuroRenderers = _kuro.Root.GetComponentsInChildren<Renderer>(true);
-                        break;
-                    case "dante":
-                        for (int i = 0; i < 3; i++)
-                            Add("LoadedGround" + i, VfxShapes.Prism(5, .10f, .86f), new Color(.26f, .22f, .15f, .92f));
-                        break;
-                    case "cheska":
-                        for (int i = 0; i < 3; i++)
-                            Add("GatheredIce" + i, VfxShapes.Spire(6, .12f, 0, i * 3), new Color(.18f, .65f, .92f, .88f));
-                        break;
-                    case "rafi":
-                        for(int i=0;i<4;i++)Add("GatheredCurrent"+i,WaterRibbon(),new Color(.25f,.67f,.78f,.46f));
-                        break;
+                    case "sean": BuildSean(); break;
+                    case "phaister": BuildPhaister(); break;
+                    case "zack": BuildZack(); break;
+                    case "nemu": BuildNemu(source); break;
+                    case "dante": BuildDante(); break;
+                    case "cheska": BuildCheska(); break;
+                    case "rafi": BuildRafi(); break;
                     default: throw new ArgumentOutOfRangeException(nameof(hero));
                 }
                 _renderers = _root.GetComponentsInChildren<Renderer>(true);
@@ -132,28 +97,16 @@ namespace TumbangPreso.Visual
             catch { Dispose(); throw; }
         }
 
-        private static Mesh WaterRibbon()
-        {
-            var mesh=new Mesh{name="Rafi cupped current ribbon"};var vertices=new Vector3[26];var triangles=new int[72];
-            for(int i=0;i<13;i++)
-            {
-                float t=i/12f,a=t*2.1f;
-                var point=new Vector3(Mathf.Sin(a)*.28f,t*.4f,Mathf.Cos(a)*.28f);
-                vertices[i*2]=point-Vector3.up*.035f;vertices[i*2+1]=point+Vector3.up*.035f;
-                if(i==12)continue;int n=i*2,j=i*6;
-                int[] faces={n,n+2,n+1,n+2,n+3,n+1};
-                for(int k=0;k<6;k++)triangles[j+k]=faces[k];
-            }
-            mesh.vertices=vertices;mesh.triangles=triangles;mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
-        }
-        private static Mesh MoonDisc()
-        {
-            var mesh = VfxShapes.TwoSided(VfxShapes.Splat(40, 0, 7));
-            var normals = new Vector3[mesh.vertexCount];
-            for (int i = 0; i < normals.Length; i++) normals[i] = Vector3.up;
-            mesh.normals = normals; return mesh;
-        }
+        // ------------------------------------------------------------------ shared plumbing
+
         private Vector3 RightPalm => _rightHand != null ? _root.transform.InverseTransformPoint(_rightHand.position) : new Vector3(-.4f, 1.2f, .3f);
+        private Vector3 BothPalms => _rightHand != null && _leftArm != null
+            ? _root.transform.InverseTransformPoint((_rightHand.position + _leftArm.TransformPoint(_leftPalm)) * .5f)
+            : new Vector3(0, .7f, .5f);
+        private Vector3 HeadPoint => _head != null ? _root.transform.InverseTransformPoint(_head.position) + Vector3.up * .35f : new Vector3(0, 1.6f, 0);
+        private float LiftAt(float t) => _performance?.LiftAt(t) ?? 0;
+        private Vector3 FreePalm => _leftArm != null ? _root.transform.InverseTransformPoint(_leftArm.TransformPoint(_leftPalm)) : BothPalms;
+
         private void CopyHeldItem(CharacterMotor actor)
         {
             var held = actor.GetComponent<Carrier>()?.Held;
@@ -186,29 +139,103 @@ namespace TumbangPreso.Visual
             }
             _heldRenderers = surfaces.ToArray();
         }
-        private Vector3 BothPalms => _rightHand != null && _leftArm != null
-            ? _root.transform.InverseTransformPoint((_rightHand.position + _leftArm.TransformPoint(_leftPalm)) * .5f)
-            : new Vector3(0, .7f, .5f);
-        private Vector3 FreePalm => _leftArm != null ? _root.transform.InverseTransformPoint(_leftArm.TransformPoint(_leftPalm)) : BothPalms;
-        private void Add(string name, Mesh mesh, Color color)
+
+        /// <summary>A translucent, glowing piece. Returns its index for <see cref="Place"/>.</summary>
+        private int Add(string name, Mesh mesh, Color color, float emission = .32f)
         {
             var go = VfxShapes.Stand(_root.transform, name, mesh, 1);
             var renderer = go.GetComponent<Renderer>();
             renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
             if (_hero == "rafi") RafiWaterVisual.Paint(renderer, color);
-            else VfxMaterial.Ghost(renderer, color, .32f);
+            else VfxMaterial.Ghost(renderer, color, emission);
             _pieces.Add(new Piece { Transform = go.transform, Renderer = renderer, Color = color });
+            return _pieces.Count - 1;
         }
+
+        /// <summary>An opaque, lit piece: stone and ice that must read as objects, not light.</summary>
+        private int AddSolid(string name, Mesh mesh, Color color)
+        {
+            var go = VfxShapes.Stand(_root.transform, name, mesh, 1);
+            var renderer = go.GetComponent<Renderer>();
+            renderer.shadowCastingMode = ShadowCastingMode.On;
+            VfxMaterial.Solid(renderer, color);
+            _pieces.Add(new Piece { Transform = go.transform, Renderer = renderer, Color = color });
+            return _pieces.Count - 1;
+        }
+
+        /// <summary>
+        /// ⚠️ THE STAGE WALL. A cylinder round the hero, open at the top, seen from inside, so every
+        /// authored shot (front, side, over the shoulder, from below) has THEIR world behind them
+        /// instead of the court. Radius 8 m keeps every intro camera (3 to 6 m out) inside it.
+        /// Translucent on purpose: the court recedes behind it rather than vanishing, which is
+        /// Sepak U's rule that the summoned world sits BEHIND the action (research.md § 1).
+        /// Each hero builds its own bands from this, in its own colours; nobody shares a wall.
+        /// </summary>
+        private int Wall(string name, float bottom, float top, Color color, float radius = 8f, int sides = 28, float emission = .25f)
+        {
+            int index = Add(name, WallMesh(sides), color, emission);
+            var p = _pieces[index];
+            p.Transform.localPosition = new Vector3(0, bottom, 0);
+            p.Transform.localScale = new Vector3(radius, top - bottom, radius);
+            return index;
+        }
+
+        private static Mesh WallMesh(int sides)
+        {
+            var mesh = new Mesh { name = "Introduction stage wall" };
+            var vertices = new Vector3[(sides + 1) * 2];
+            var triangles = new int[sides * 12];
+            for (int i = 0; i <= sides; i++)
+            {
+                float a = i * Mathf.PI * 2 / sides;
+                var rim = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
+                vertices[i * 2] = rim; vertices[i * 2 + 1] = rim + Vector3.up;
+                if (i == sides) continue;
+                int n = i * 2, t = i * 12;
+                int[] faces = { n, n + 1, n + 2, n + 2, n + 1, n + 3, n, n + 2, n + 1, n + 2, n + 3, n + 1 };
+                for (int k = 0; k < 12; k++) triangles[t + k] = faces[k];
+            }
+            mesh.vertices = vertices; mesh.triangles = triangles; mesh.RecalculateNormals(); mesh.RecalculateBounds();
+            return mesh;
+        }
+
         private void Place(int index, Vector3 position, Vector3 scale, Quaternion rotation, float opacity)
         {
             var p = _pieces[index]; p.Transform.localPosition = position;
             p.Transform.localScale = scale; p.Transform.localRotation = rotation;
-            Color color = p.Color; color.a *= Mathf.Clamp01(opacity);
+            Tint(index, opacity);
+        }
+
+        private void Tint(int index, float opacity, Color? colour = null)
+        {
+            var p = _pieces[index];
+            Color color = colour ?? p.Color; color.a *= Mathf.Clamp01(opacity);
             p.Block.SetColor("_Color", color); p.Block.SetColor("_BaseColor", color);
             p.Renderer.SetPropertyBlock(p.Block);
+            p.Renderer.enabled = opacity > .002f;
         }
+
+        private LineRenderer Line(string name, int points, float width, Color color)
+        {
+            var go = new GameObject(name); go.transform.SetParent(_root.transform, false);
+            var line = go.AddComponent<LineRenderer>(); line.useWorldSpace = false;
+            line.positionCount = points; line.widthMultiplier = width; line.numCapVertices = 2;
+            line.shadowCastingMode = ShadowCastingMode.Off;
+            VfxMaterial.Ghost(line, color, .65f);
+            _lines.Add(line);
+            return line;
+        }
+
         private static float Ease(float from, float to, float time)
         { float u = Mathf.InverseLerp(from, to, time); return u * u * (3 - 2 * u); }
+
+        /// <summary>0 before the stage arrives, 1 while it holds, 0 again as play returns.</summary>
+        private float StagePresence(float t, float arrive = .35f)
+            => Ease(0, arrive, t) * (1 - Ease(Seconds - .45f, Seconds - .05f, t));
+
+        /// <summary>A flash is one bright moment. Reduced effects keeps the shape and drops the flash.</summary>
+        private float Flash(float t, float at, float width = .08f)
+            => _reducedEffects ? 0 : Mathf.Clamp01(1 - Mathf.Abs(t - at) / width);
 
         public bool StartSound()
         {
@@ -222,111 +249,116 @@ namespace TumbangPreso.Visual
             return true;
         }
 
-        public void Sample(float seconds)
+        /// <summary>
+        /// ⚠️ THE HERO'S OWN LINE PLAYS INSIDE THE GESTURE IT DESCRIBES (Phaister's laugh while she
+        /// laughs), at the authored `voice` time, once. Overwatch's ultimate lines are the model
+        /// (research.md § 1): the voice is part of the performance, not a stinger afterwards. The
+        /// live ability skips its copy when this one played (`HeroAbility.IntroductionVoiced`).
+        /// </summary>
+        private void SampleVoice(float t)
         {
-            float t = Mathf.Clamp(seconds, 0, HeroAbilityClips.IntroductionSeconds);
-            float enter = Ease(.15f, .65f, t), leave = 1 - Ease(2.38f, 2.8f, t);
+            if (VoicePlayed || _performance == null || _performance.VoiceAt < 0 || t < _performance.VoiceAt) return;
+            VoicePlayed = true;
+            var clip = Resources.Load<AudioClip>("Sfx/" + Audio.AudioCues.FileStemFor(_performance.VoiceCue));
+            if (clip == null) { VoicePlayed = false; return; }
+            _voice = _root.AddComponent<AudioSource>(); _voice.playOnAwake = false; _voice.spatialBlend = 0;
+            _voice.clip = clip; _voice.volume = Settings.SettingsStore.Current.SfxGain * .85f; _voice.Play();
+        }
+
+        /// <summary>
+        /// The shared boundary when this hero is one of a cohort. A shorter performance holds its
+        /// last full moment and only plays its exit as the LONGEST caster's ends, so no stage
+        /// vanishes while the overlay is still up.
+        /// </summary>
+        public float Boundary { get; set; } = -1;
+
+        private float Local(float seconds)
+        {
+            float t = Mathf.Max(0, seconds);
+            if (Boundary <= Seconds + .001f) return Mathf.Min(t, Seconds);
+            float holdFrom = Seconds - .45f;
+            if (t <= holdFrom) return t;
+            if (t >= Boundary - .45f) return Mathf.Min(Seconds, Seconds - (Boundary - t));
+            return holdFrom;
+        }
+
+        /// <summary>
+        /// Pose the stage at this moment. `audible` false is for judging shots ahead of time: it
+        /// must never fire the voice line early.
+        /// </summary>
+        public void Sample(float seconds, bool audible = true)
+        {
+            float t = Local(seconds);
+            float leave = 1 - Ease(Seconds - .42f, Seconds, t);
             if (_sound != null) _sound.volume = Settings.SettingsStore.Current.SfxGain * .60f * Ease(0, .15f, t) * leave;
+            if (audible) SampleVoice(t);
             switch (_hero)
             {
-                case "sean":
-                    float gather = Ease(.65f, 2.15f, t);
-                    for (int i = 0; i < _pieces.Count; i++)
-                    {
-                        float a = i * Mathf.PI / 3 + t * .65f;
-                        float radius = Mathf.Lerp(1.05f, .60f, gather);
-                        Place(i, new Vector3(Mathf.Cos(a) * radius, .06f + gather * .32f, Mathf.Sin(a) * radius),
-                            new Vector3(.8f, Mathf.Lerp(.9f, .6f, gather), .8f) * enter,
-                            Quaternion.Euler(-18, -a * Mathf.Rad2Deg, 0), enter * leave);
-                    }
-                    break;
-                case "phaister":
-                    float moon = Mathf.Lerp(.08f, .55f, Ease(.35f, 1.75f, t));
-                    for (int i = 0; i < 2; i++)
-                        Place(i, new Vector3(0, 2.7f, -.15f - i * .025f),
-                            Vector3.one * moon * (i == 0 ? .97f : 1), Quaternion.Euler(90, 0, 0), enter * leave);
-                    break;
-                case "zack":
-                    for (int i = 0; i < _lines.Count; i++)
-                    {
-                        var line = _lines[i]; line.widthMultiplier = .018f * enter * leave;
-                        for (int k = 0; k < 7; k++)
-                        {
-                            float u = k / 6f;
-                            float jag = k == 0 || k == 6 ? 0 : Mathf.Sin(k * 8.2f + i * 2.7f + t * 13) * .055f;
-                            line.SetPosition(k, RightPalm + new Vector3((i - 1) * .10f + jag, u * .85f * enter, .08f + jag));
-                        }
-                    }
-                    break;
-                case "nemu":
-                    float amount = Ease(1.05f, 2.28f, t);
-                    _kuro.Root.transform.localPosition = new Vector3(-.95f - amount * .6f, (.65f + .06f * Mathf.Sin(t * 2)) * (1 - amount), .15f);
-                    _kuro.Root.transform.localRotation = Quaternion.Euler(0, Mathf.Lerp(-18, 0, amount), 0) * _kuroFront;
-                    _kuro.Root.transform.localScale = _kuroScale * Mathf.Lerp(1, GhostPetCompanion.DevourScale, amount);
-                    _rage.Sample(amount, t, .12f);
-                    break;
-                case "dante":
-                    float weight = Ease(.3f, 1.9f, t);
-                    for (int i = 0; i < 3; i++)
-                        Place(i, new Vector3((i - 1) * .55f, .015f + weight * .035f, .25f + i * .1f),
-                            new Vector3(.30f, .3f, .40f), Quaternion.Euler(weight * (i - 1) * 8, 20 + i * 38, 0), enter * leave);
-                    break;
-                case "rafi":
-                    float current=Ease(.3f,1.9f,t);
-                    for(int i=0;i<4;i++)
-                    {
-                        float angle=i*Mathf.PI*.5f+t*.65f;
-                        var origin=FreePalm+new Vector3(Mathf.Cos(angle)*.12f,.04f+i*.025f,Mathf.Sin(angle)*.12f);
-                        Place(i,origin,Vector3.one*Mathf.Lerp(.25f,.75f,current),Quaternion.Euler(8,i*90+t*32,18),enter*leave);
-                    }
-                    break;
-                case "cheska":
-                    float form = Ease(.4f, 1.85f, t);
-                    Vector3 gatherAt = _heldItem != null ? FreePalm : BothPalms;
-                    for (int i = 0; i < 3; i++)
-                        Place(i, gatherAt + new Vector3((i - 1) * Mathf.Lerp(.22f, .13f, form) - (_heldItem != null ? .15f : 0), .14f + Mathf.Abs(i - 1) * .04f, .17f),
-                            new Vector3(.10f, .36f, .10f) * form, Quaternion.Euler(18, i * 65, (i - 1) * 28), enter * leave);
-                    break;
+                case "sean": SampleSean(t); break;
+                case "phaister": SamplePhaister(t); break;
+                case "zack": SampleZack(t); break;
+                case "nemu": SampleNemu(t); break;
+                case "dante": SampleDante(t); break;
+                case "cheska": SampleCheska(t); break;
+                case "rafi": SampleRafi(t); break;
             }
         }
 
+        // ------------------------------------------------------------------ shots
+
+        public int ShotCount => _performance?.Shots.Count ?? 0;
+        public int ShotIndexAt(float seconds) => ShotCount > 0 ? _performance.ShotIndexAt(seconds) : -1;
+        public bool IsCloseShot(float seconds) { int i = ShotIndexAt(seconds); return i >= 0 && _performance.Shots[i].Close; }
+        public float ShotStart(int index) => _performance.Shots[index].Start;
+        public float ShotEnd(int index) => _performance.Shots[index].End;
+
+        /// <summary>The authored shot covering this moment, in world space. Convenience for probes.</summary>
         public void Shot(float seconds, out Vector3 position, out Vector3 focus, out float fov, float aspect = 16f / 9)
+            => ShotAt(ShotIndexAt(seconds), seconds, out position, out focus, out fov, aspect);
+
+        public void ShotAt(int index, float seconds, out Vector3 position, out Vector3 focus, out float fov, float aspect = 16f / 9)
         {
-            Vector3 offset; Vector3 look = Vector3.up * 1.05f; fov = 46;
-            switch (_hero)
+            if (index < 0)
             {
-                case "phaister": offset = new Vector3(1.8f, 1.5f, 5.2f); look.y = 1.45f; fov = 48; break;
-                case "zack": offset = new Vector3(-2.8f, 1.35f, 4.6f); fov = 44; break;
-                case "nemu": offset = new Vector3(2.8f, 1.5f, 5.6f); look.x = -.75f; look.y = 1.4f; fov = 50; break;
-                case "rafi": offset = new Vector3(-2.6f,1.15f,4.7f);look.y=1.0f;fov=47;break;
-                case "dante": offset = new Vector3(-3, 1, 4.3f); look.y = .8f; fov = 50; break;
-                case "cheska": offset = new Vector3(_heldItem != null ? -1.8f : 1.8f, 1.3f, 4); look.y = 1.1f; fov = 43; break;
-                default: offset = new Vector3(2.2f, 1.1f, 4.5f); break;
+                position = _ground + _facing * new Vector3(2.2f, 1.1f, 4.5f); focus = _ground + _facing * (Vector3.up * 1.05f); fov = 46; return;
             }
-            offset = Vector3.Lerp(offset, offset * .94f, Ease(.35f, 2.25f, seconds));
-            position = _ground + _facing * offset; focus = _ground + _facing * look;
-            if (_hero == "nemu" && TryCharacterBounds(out var bounds))
-            {
-                Vector3 backward = (position - focus).normalized;
-                float distance = Vector3.Distance(position, focus);
-                // A controlled reveal changes composition as Kuro grows, keeping
-                // the lens constant and retaining both Nemu and the whole familiar.
-                focus = Vector3.Lerp(focus, bounds.center, Ease(1.05f, 2.25f, seconds));
-                var rotation = Quaternion.LookRotation(-backward, Vector3.up);
-                var inverse = Quaternion.Inverse(rotation);
-                float vertical = Mathf.Tan(fov * Mathf.Deg2Rad * .5f) * .82f;
-                float horizontal = vertical * Mathf.Max(.5f, aspect);
-                for (int corner = 0; corner < 8; corner++)
-                {
-                    Vector3 at = bounds.center + Vector3.Scale(bounds.extents, new Vector3(
-                        (corner & 1) == 0 ? -1 : 1, (corner & 2) == 0 ? -1 : 1, (corner & 4) == 0 ? -1 : 1));
-                    Vector3 view = inverse * (at - focus);
-                    distance = Mathf.Max(distance, Mathf.Max(Mathf.Abs(view.x) / horizontal - view.z + .1f,
-                        Mathf.Abs(view.y) / vertical - view.z + .1f));
-                }
-                position = focus + backward * distance;
-            }
+            _performance.Shot(index, seconds, out var eye, out var look, out fov);
+            position = _ground + _facing * eye; focus = _ground + _facing * look;
+            if (_performance.Shots[index].Fit) FitBodies(ref position, ref focus, fov, aspect, seconds);
         }
+
+        /// <summary>The single locked shot for reduced motion: no cut and no camera move.</summary>
+        public void StillShot(out Vector3 position, out Vector3 focus, out float fov)
+        {
+            if (_performance != null && _performance.HasStill)
+            { position = _ground + _facing * _performance.StillEye; focus = _ground + _facing * _performance.StillLook; fov = _performance.StillFov; return; }
+            ShotAt(ShotCount - 1, Seconds, out position, out focus, out fov);
+        }
+
+        /// <summary>
+        /// Keep every body in frame (Nemu with the growing Kuro), keeping the lens constant and
+        /// backing the camera out along its own line. Retained from the previous Nemu reveal.
+        /// </summary>
+        private void FitBodies(ref Vector3 position, ref Vector3 focus, float fov, float aspect, float seconds)
+        {
+            if (!TryCharacterBounds(out var bounds)) return;
+            Vector3 backward = (position - focus).normalized;
+            float distance = Vector3.Distance(position, focus);
+            focus = Vector3.Lerp(focus, bounds.center, Ease(ShotStart(ShotIndexAt(seconds)), ShotEnd(ShotIndexAt(seconds)), seconds));
+            var inverse = Quaternion.Inverse(Quaternion.LookRotation(-backward, Vector3.up));
+            float vertical = Mathf.Tan(fov * Mathf.Deg2Rad * .5f) * .82f;
+            float horizontal = vertical * Mathf.Max(.5f, aspect);
+            for (int corner = 0; corner < 8; corner++)
+            {
+                Vector3 at = bounds.center + Vector3.Scale(bounds.extents, new Vector3(
+                    (corner & 1) == 0 ? -1 : 1, (corner & 2) == 0 ? -1 : 1, (corner & 4) == 0 ? -1 : 1));
+                Vector3 view = inverse * (at - focus);
+                distance = Mathf.Max(distance, Mathf.Max(Mathf.Abs(view.x) / horizontal - view.z + .1f,
+                    Mathf.Abs(view.y) / vertical - view.z + .1f));
+            }
+            position = focus + backward * distance;
+        }
+
         public bool TryCharacterBounds(out Bounds bounds)
         {
             bounds = default; bool found = false; Bounds result = default;
@@ -342,14 +374,17 @@ namespace TumbangPreso.Visual
             Include(_bodyRenderers); Include(_kuroRenderers); Include(_heldRenderers); bounds = result;
             return found;
         }
+
         public void SetVisibleForCapture(bool visible)
         {
             if (_renderers != null) foreach (var r in _renderers) if (r != null) r.forceRenderingOff = !visible;
             if (_heldRenderers != null) foreach (var r in _heldRenderers) if (r != null) r.forceRenderingOff = !visible;
         }
+
         public void Dispose()
         {
             if (_sound != null) _sound.Stop();
+            if (_voice != null) _voice.Stop();
             _rage?.Dispose(); _rage = null;
             if (_heldItem != null) { _heldItem.SetActive(false); ObjectDestroy(_heldItem); }
             if (_root != null) { _root.SetActive(false); ObjectDestroy(_root); }

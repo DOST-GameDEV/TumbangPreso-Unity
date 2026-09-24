@@ -8,7 +8,8 @@ namespace TumbangPreso.Visual
         // These rigs have no knees. Author compression through spine/stance and
         // bake root support, as the retained Sean animation workflow does. Work
         // on the supplied render copy, restoring every sampled transform afterward.
-        private static void GroundIntroduction(AnimationClip clip, Transform model, string rootPath, bool anchorToRest = false)
+        private static void GroundIntroduction(AnimationClip clip, Transform model, string rootPath, bool anchorToRest = false,
+            System.Func<float, float> lift = null)
         {
             var root = string.IsNullOrEmpty(rootPath) ? model : model.Find(rootPath);
             var skins = model.GetComponentsInChildren<SkinnedMeshRenderer>(true);
@@ -72,6 +73,10 @@ namespace TumbangPreso.Visual
                     float time = clip.length * i / steps;
                     clip.SampleAnimation(model.gameObject, time);
                     float local = root.localPosition.y + (floor - Lowest()) / worldPerLocalY;
+                    // ⚠️ AUTHORED LIFT IS ADDED AFTER THE FLOOR IS FOUND, so a performance that
+                    // leaves the ground on purpose (Phaister's laughing levitation, REFINE-2.11)
+                    // rises from wherever her feet really were rather than being pulled back down.
+                    if (lift != null) local += lift(time) / worldPerLocalY;
                     keys[i] = new Keyframe(time, local);
                 }
                 for (int i = 0; i < keys.Length; i++)

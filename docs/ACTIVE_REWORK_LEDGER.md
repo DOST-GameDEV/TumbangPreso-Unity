@@ -32,6 +32,17 @@ CastAndMotionReel. Shipping casts are the glb tables in tools/author_hero_action
 (editor fallback only). Last checks: PlayMode 11/11, EditMode 44/44, 18 glb casts verified. Not yet
 seen: a live networked match, including an observer's estimate of the can raise.
 
+## Parallel lane, 2026-09-24: REFINE-2.11 ultimate performances (cloud Ubuntu session)
+
+Owner assigned all animation work to this lane, ultimates first, one hero at a time (*"dont js spam
+copy paste stuff"*). Research, plan, per-hero evidence and machine limits:
+docs/reports/ultimate-performances-2026-09-24/ (research.md, plan.md, progress.md). No Unity
+licence on this machine: native checks are owed to Windows (list in progress.md); C# is verified by
+a Roslyn check against Unity 6000.5.8 DLLs and the locked package versions, poses by skinned glb
+sheets from the authored shots. Per-hero intro lengths (2.8 to 4.2 s), protocol 52. Phaister DONE
+at source level; Sean, Zack, Nemu, Dante, Cheska, Rafi still on transcribed 2.8 s baselines, next
+in that order. Then VOICE-1 (hero voice lines, TODO) and the CLAUDE.md condensation request.
+
 ## Published progress, do not redo
 
 Ground-animal local units all published: Eskinita dog01d93272b/cat08ac1a178,

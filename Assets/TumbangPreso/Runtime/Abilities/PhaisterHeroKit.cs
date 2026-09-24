@@ -557,7 +557,8 @@ namespace TumbangPreso.Abilities
                 // (`sfx_eclipse_toll`), given a mix level and registered, and the CALL SITE was
                 // never changed, so the biggest moment in the newest kit went on logging
                 // `no cue registered` and playing nothing.
-                NetCue.Play("hero_phaister_ult", ctx.Position);
+                // REFINE-2.11: her laugh now plays inside the introduction, while her body laughs.
+                if (!IntroductionVoiced) NetCue.Play("hero_phaister_ult", ctx.Position);
                 NetCue.Play("sfx_eclipse_toll", ctx.Position);
 
                 if(_ritual==null)_ritual=HeroHazards.SpawnGrandCovenEclipse(ctx.Position,Reach,Duration);

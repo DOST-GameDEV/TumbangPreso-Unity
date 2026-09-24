@@ -600,6 +600,24 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
   Explicit sequencing: finish current recovery work FIRST; log this for LATER.
   No ultimate research/implementation detour during the current feature. Preserve accepted costs/warnings/cohorts and reduced-setting fairness.
   No older task deleted; this pass must precede final integrated qualification.
+  - **Progress 2026-09-24 (cloud session):** research, per-hero plan and durations saved in
+    [ultimate-performances-2026-09-24](reports/ultimate-performances-2026-09-24/plan.md). Per-hero
+    lengths (2.8 to 4.2 s, cohort takes the longest, protocol 52), authored shots, stage walls,
+    lift and voice timing built. Phaister's new performance done at source level (laugh, lift,
+    eclipse serpent). Others next, one at a time. Native checks owed to Windows (progress.md).
+- [ ] **VOICE-1 Hero voice lines, owner 2026-09-24. OPEN, queued after REFINE-2.11.**
+  Owner: *"can u give them all their own voice lines too or with actual audio and connect it to
+  their story and personality"*, *"make sure theres voicelines wherein they interact with each
+  other and voicelines related to skills and yk js voicelines overall, use valorant as reference
+  for when voiceliens are used or how theyre constructed, research other games too"*.
+  Scope: every hero (Sean, Phaister, Zack, Nemu/Kuro, Dante, Cheska, Rafi); lines for skills and
+  ultimates (Valorant's self/ally/enemy variants), hero-to-hero interactions (pre-round banter,
+  reactions) grounded in `docs/CHARACTER_ORIGINS.md` relationships, and general match lines.
+  Research first (Valorant's trigger rules and line construction, then other games), then choose
+  the audio route honestly: no voice actor exists; options are a text-to-speech engine if one can
+  be installed at acceptable quality, or stylised non-verbal voices from the existing formant
+  synth (`tools/generate_hero_audio.py`). Existing announcer lines live in `Resources/Vo` via
+  `VoiceDirector`; no sentences in ordinary play (VISION section 3) constrains any on-screen text.
 - [ ] **REFINE-2.10 Integrated qualification.** One coherent candidate with specific
   evidence/limits; no blanket completion from screenshots or object-spawn tests.
   Include protocol51edge-climb real peers, dropped/late pose packets, reconnect/seat

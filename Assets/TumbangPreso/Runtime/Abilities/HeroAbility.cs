@@ -192,12 +192,19 @@ namespace TumbangPreso.Abilities
         private bool _reservedForIntroduction;
         public bool ReservedForIntroduction => _reservedForIntroduction;
         protected bool HadSharedIntroduction { get; private set; }
+        /// <summary>
+        /// ⚠️ THE HERO'S OWN LINE ALREADY PLAYED INSIDE THE INTRODUCTION (REFINE-2.11: Phaister laughs
+        /// while she laughs). The live activation must not say it a second time. Set per peer by
+        /// `SharedUltimatePhase.Complete` from what that peer's view actually played, so a peer whose
+        /// view failed still hears the line from the live cast.
+        /// </summary>
+        internal bool IntroductionVoiced { get; set; }
         public bool IsReady => !_reservedForIntroduction && (UsesCharges ? ChargesRemaining > 0 : CooldownRemaining <= 0.0f);
         internal void ReserveForIntroduction()
         {
             if (_reservedForIntroduction) return;
             _reservedForIntroduction = true;
-            HadSharedIntroduction = false;
+            HadSharedIntroduction = false; IntroductionVoiced = false;
             if (UsesCharges) ChargesRemaining = Mathf.Max(0, ChargesRemaining - 1);
             else CooldownRemaining = Cooldown;
         }

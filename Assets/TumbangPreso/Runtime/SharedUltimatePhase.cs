@@ -22,7 +22,30 @@ namespace TumbangPreso
     [DefaultExecutionOrder(2500)]
     public sealed class SharedUltimatePhase : MonoBehaviour
     {
-        public const double Duration = 2.8;
+        public const double DefaultDuration = Visual.UltimatePerformance.DefaultSeconds;
+        /// <summary>
+        /// ⚠️⚠️ THIS PHASE'S LENGTH, NOT A CONSTANT, SINCE REFINE-2.11 (owner 2026-09-24: *"its fine if
+        /// its longer than 2.8 seconds part of the work is researching and thinking about how long it
+        /// should be"*). It is the LONGEST accepted hero's authored introduction
+        /// (`Visual.UltimatePerformance.Seconds`, 2.8 to 4.2 s), derived from the same accepted
+        /// commits on the host and on every peer, so the shared boundary is still one number that
+        /// nobody sends. Protocol 52 marks the change: a peer on the old fixed 2.8 would release
+        /// its clock at a different moment from the host.
+        /// </summary>
+        public double Duration { get; private set; } = DefaultDuration;
+        /// <summary>The shared length for a cohort: its longest member's introduction.</summary>
+        public static double CohortSeconds(IReadOnlyList<UltimateCommit> commits)
+        {
+            double longest = 0;
+            if (commits != null)
+                foreach (var cast in commits) longest = Math.Max(longest, SecondsFor(cast.Seat));
+            return longest > 0 ? longest : DefaultDuration;
+        }
+        private static double SecondsFor(int seat)
+        {
+            string hero = GameServices.Round?.PlayerAt(seat)?.AbilitySystem?.HeroId;
+            return Visual.UltimatePerformance.SecondsFor(hero);
+        }
         public static SharedUltimatePhase Instance { get; private set; }
         public static bool BlocksActions => Instance != null && Instance.Active && Instance._sealed;
         public static bool Collecting => Instance != null && Instance.Active && !Instance._sealed;
@@ -71,11 +94,12 @@ namespace TumbangPreso
                 MatchId = GameServices.Match.PresentationMatchId; Round = GameServices.Match.RoundNumber;
                 PhaseId = ++_sequence; Began = Now; _frame = Time.frameCount;
                 FrozenRoundTime=_deferredRoundTime=GameServices.Round.TimeLeft;ReleasedAt=ActivationMilliseconds=0;
-                _commits.Clear(); Active = true; _sealed = false; _actorsReady = true;
+                _commits.Clear(); Active = true; _sealed = false; _actorsReady = true; Duration = 0;
                 _scene = SceneManager.GetActiveScene();
                 PresentationClock.Hold();
             }
             _commits.Add(cast);
+            Duration = Math.Max(Duration, SecondsFor(cast.Seat));
         }
         internal void Receive(long match, int round, long phase, double began, float resume, UltimateCommit[] commits, float frozenRoundTime)
         {
@@ -86,12 +110,13 @@ namespace TumbangPreso
             if (MatchId != match) { Cancel(); _lastReceived = 0; }
             if (phase <= _lastReceived) return;
             _lastReceived = phase;
-            if (Now >= began + Duration)
+            double length = CohortSeconds(commits);
+            if (Now >= began + length)
             {
                 foreach (var cast in commits) GameServices.Round?.PlayerAt(cast.Seat)?.AbilitySystem?.AcknowledgeSharedUltimate(cast.Request);
                 Net.MatchRpc.Instance?.RequestWorldSnapshot(); return;
             }
-            Cancel(); MatchId=match; Round=round; PhaseId=phase; Began=began;
+            Cancel(); MatchId=match; Round=round; PhaseId=phase; Began=began; Duration=length;
             FrozenRoundTime=_deferredRoundTime=frozenRoundTime;
             _commits.Clear(); _commits.AddRange(commits); Active=true; _sealed=true; _actorsReady=false;
             PresentationClock.RequestScale(resume); PresentationClock.Hold();
@@ -153,7 +178,7 @@ namespace TumbangPreso
             if (_actorsReady && !_viewAttempted)
             {
                 _viewAttempted = true;
-                try { _view = new CameraSystem.UltimatePhaseView(transform, _commits); }
+                try { _view = new CameraSystem.UltimatePhaseView(transform, _commits, Duration); }
                 catch (Exception error) { Debug.LogException(error); }
             }
             try { _view?.Draw((float)Math.Max(0, Now - Began)); }
@@ -168,6 +193,12 @@ namespace TumbangPreso
             var accepted = _commits.ToArray();
             if(!NetAuthority.ShouldResolve())round?.ApplyPresentationTime(_deferredRoundTime);
             bool themePlayed = _view != null && _view.SoundPlayed;
+            if (_view != null)
+                foreach (int seat in _view.VoicedSeats)
+                {
+                    var voiced = round?.PlayerAt(seat)?.AbilitySystem?.Kit?.Ultimate;
+                    if (voiced != null) voiced.IntroductionVoiced = true;
+                }
             _view?.Dispose(); _view=null;
             ReleasedAt=Now;double activationBegan=Time.realtimeSinceStartupAsDouble;
             Active=false; _sealed=false; _viewAttempted=false; PresentationClock.Release();

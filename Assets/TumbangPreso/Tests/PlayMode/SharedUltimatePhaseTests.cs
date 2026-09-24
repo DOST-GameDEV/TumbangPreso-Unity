@@ -142,10 +142,14 @@ namespace TumbangPreso.PlayTests
             // PNG encoding inside this deadline test would itself stall the player.
             // Keep the original duration bound and measure ordinary frame updates.
             PresentationClock.RequestScale(.5f);Assert.AreEqual(0,Time.timeScale);
-            while(phase.Active&&Time.realtimeSinceStartup-started<4)yield return null;
+            // REFINE-2.11: the cohort shares its LONGEST hero's authored introduction.
+            double length=SharedUltimatePhase.CohortSeconds(phase.Commits);
+            Assert.AreEqual(length,phase.Duration,.001);
+            Assert.AreEqual(System.Math.Max(Visual.UltimatePerformance.SecondsFor("sean"),Visual.UltimatePerformance.SecondsFor("phaister")),length,.001);
+            while(phase.Active&&Time.realtimeSinceStartup-started<length+1.5f)yield return null;
             Assert.IsFalse(phase.Active);Assert.AreEqual(.5f,Time.timeScale);
             Debug.Log($"[SharedClock] input-to-accept={phase.Began-started:F4} hold={phase.ReleasedAt-phase.Began:F4} activation-ms={phase.ActivationMilliseconds:F3} observed={Time.realtimeSinceStartup-started:F4}");
-            Assert.That(Time.realtimeSinceStartup-started,Is.InRange(2.65f,3.1f));
+            Assert.That(Time.realtimeSinceStartup-started,Is.InRange((float)length-.15f,(float)length+.3f));
             Assert.AreEqual(1.55f,_ritualStart,.001f,"Measure the actual execution boundary, before the next frame legitimately advances its warning.");
             Assert.AreEqual(Mathf.Max(0,1.55f-(float)(Time.timeAsDouble-_ritualStartedAt)),phaister.AbilitySystem.Kit.Ultimate.WindupRemaining,.02f);
             Assert.IsFalse(phaister.AbilitySystem.Kit.Ultimate.ReservedForIntroduction);
@@ -217,8 +221,10 @@ namespace TumbangPreso.PlayTests
                     }
                     previous=phase.PhaseId;double began=phase.Began;
                     foreach(var actor in actors)Assert.AreEqual(0,actor.AbilitySystem.Kit.UltimateCharge);
-                    while(phase.Active&&SharedUltimatePhase.Now-began<4)yield return null;
-                    Assert.IsFalse(phase.Active);Assert.That(phase.ReleasedAt-began,Is.InRange(2.79,3.05));Assert.AreEqual((run+1)*4,starts);
+                    double length=phase.Duration;
+                    Assert.AreEqual(SharedUltimatePhase.CohortSeconds(phase.Commits),length,.001,"Four casters must share their longest member's introduction.");
+                    while(phase.Active&&SharedUltimatePhase.Now-began<length+1.2)yield return null;
+                    Assert.IsFalse(phase.Active);Assert.That(phase.ReleasedAt-began,Is.InRange(length-.01,length+.25));Assert.AreEqual((run+1)*4,starts);
                     Assert.IsFalse(PresentationClock.Held);Assert.IsEmpty(phase.Commits);
                 }
             }
