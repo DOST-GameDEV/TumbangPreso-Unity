@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Lagoon hip-roof family
+## Current resume, 2026-09-24: Lagoon low-palm and screen family
 
 Overall goal ACTIVE and NOT complete. Continue every independently actionable TODO
 without checkpoint stops. Owner is AFK and wants quality product work ahead of test/
@@ -10,7 +10,7 @@ newer requirements supersede retired designs. Do not claim broad completion from
 subset, passing test, report or pushed art batch.
 
 DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD and verified remotec0f3221a7f5cfd554d1670e7cfb8f990bf361996. Protected original
+HEAD and verified remote524427e69976346b3bc8435438c8cb4ec75baadf. Protected original
 Resources/UI/composition-redesign/home-court.png.meta and loading-street.png.meta
 remain dirty: NEVER restore/stage them. Own current work: LagoonGableFinishAuthor, builder hook, paired review method,
 lagoon-gable-plan.md and ledger. Fall/mash3e0d0c69a and birds faa904702 are published. Explicit staging, sole author M4tyu633, no trailers/AI mentions/
@@ -293,3 +293,27 @@ Its reported chosen-arena rematch defect is already in our preserved final queue
 not dismissed as a fixture failure. No Lagoon overlap or protected-meta changes.
 Hip native check preceded this independent UI arrival. Finish merge/push, then
 continue low-palm/screen materials; next focused author compiles integrated source.
+
+Hip bff55f209 published through524427e69, remote verified. QUAL exact candidate
+stashed/advanced524427e69. No active Unity. Next local unit planned in
+lagoon-veranda-plan.md: low palm roofs3/5/6/10/17 and existing woven bamboo strips
+on screen homes. Preserve weave geometry, use long-axis strip fibres rather than
+generic timber-board seams. No veranda implementation yet; all later tasks remain.
+
+Veranda candidate copied to QUAL. Author runs Logs/refine2-lagoon-veranda-v1/author.log.
+Five lower palm roofs, four real woven screens: per-slope roof UVs and long-axis
+bamboo fibres from each strip's UV derivatives, replacing fake timber-board seams
+only on those screens. Source geometry/non-target slots/collision guarded. Freeze.cs.
+After author: one paired screen3/roof3/shared5native case, then inspect/ship if useful.
+
+Veranda author50187completed/reaped: five low roofs/four woven screens,8040edge
+vertices/five renderers. Original topology/non-target slots/collision preserved.
+Full patch saved and known profile/PNGmeta churn restored. Current focused paired
+native review runs Logs/refine2-lagoon-veranda-v1/check.log/results.xml; .cs frozen.
+Inspect strip direction, roof detail and readable value separation before accepting.
+
+Veranda case6005completed/reaped1/1in3.793s. Paired screen3/roof3/shared5and grey25
+inspected, keepv1. Five low roofs/four woven screens retain geometry/other slots/
+collision. Qualified scene/assets/meta/evidence copied to DEV; known churn restored
+after full patch. No active Unity. Publish then metal/repair-house decisions and
+one considered painted landmark, followed by water/boats/islands. Still not done.
