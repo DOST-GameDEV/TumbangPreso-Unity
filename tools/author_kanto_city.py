@@ -132,6 +132,7 @@ for _name in ("panel_sand", "panel_terracotta", "panel_sage", "panel_cream"):
 # Roof tiles and bark: the drawings the owner approved on swatch sheet v2. They are painted in
 # their own colours (clay, slate, brown), so they are NOT neutral and are never tinted.
 K.TEXTURED["roof_tile"], K.TEXTURED["roof_tile_grey"] = "tiles_clay", "tiles_slate"
+K.TEXTURED["roof_tile_green"] = "tiles_teal"   # glazed barrel tiles, swatch sheet v4
 K.NEUTRAL_TEX.update({"metal", "timber", "panelg"})
 K.ANTI_TILE.update({"plaster", "asphalt", "grass"})
 
@@ -782,7 +783,8 @@ def archetype(name, kind, w, storeys, colour, seed, detail=True, shop="paint_gre
     # Owner: "when using the red clay tiles, dont use it on a building with the bricks texture,
     # otherwise it'll all look the same". Brick buildings get slate. (Green tiles wait for
     # their own approved drawing.)
-    tile = "roof_tile_grey" if colour in ("brick", "brick_brown") else rr.choice(("roof_tile", "roof_tile", "roof_tile_grey"))
+    tile = (rr.choice(("roof_tile_grey", "roof_tile_green")) if colour in ("brick", "brick_brown")
+            else rr.choice(("roof_tile", "roof_tile", "roof_tile_grey", "roof_tile_green")))
 
     def extras(c):
         taken = []
@@ -868,6 +870,15 @@ PARKSIDE_ROOF = {"shophouse_rose_3": "pitched", "loft_brown_3": "pitched", "shop
                  "panel_5": "turret", "shophouse_butter_4": "pitched"}
 # The far street blocks: FAR_ROSTER, generated above (24 buildings, own widths, paints, roofs).
 FILLERS = FAR_ROSTER
+# STREET ENDS. Review v7 looked down a street and saw it run off the edge of the ground into
+# nothing. Each outward street now ends at a long building across its far end (a vista), one
+# per arm, each its own construction and colour.
+TERMINI = [
+    ("terminus_n", "shophouse", 62.0, 4, "plaster_cream", 601, "paint_green", "pitched"),
+    ("terminus_e", "loft", 62.0, 6, "brick", 602, "paint_ochre", "flat"),
+    ("terminus_s", "stucco", 62.0, 5, "stucco_tan", 603, "paint_red", "flat"),
+    ("terminus_w", "panel", 62.0, 6, "panel_sage", 604, "paint_teal", "turret"),
+]
 # ------------------------------------------------------------------ park and street pieces
 
 def kit(name):
@@ -904,6 +915,61 @@ def tube(buf, pts, radii, mat, sides=10):
     buf.bm.faces.new(rings[-1]).material_index = idx
 
 
+def skin_wood(buf, nodes, edges, radii, mat, root=0, levels=2):
+    """ONE FLUID PIECE OF WOOD from a skeleton. Owner, review v10: "can you make it so that tree
+    trunks are actually fluidly one model? this one is a bunch of cylindrical segments". The
+    trunk, root spurs, fork and every limb are the vertices and edges of one skeleton; Blender's
+    Skin modifier wraps it in a single closed surface with smooth crotches where branches
+    leave, and a subdivision pass rounds it. The result is baked into `buf` as ordinary faces,
+    so the exported model is plain geometry. `radii` are the wanted radii; the skin is built
+    a little fatter because subdivision shrinks it."""
+    me = bpy.data.meshes.new("skeleton")
+    me.from_pydata([tuple(n) for n in nodes], edges, [])
+    ob = bpy.data.objects.new("skeleton", me)
+    bpy.context.scene.collection.objects.link(ob)
+    sk = ob.modifiers.new("skin", "SKIN")
+    sk.branch_smoothing = 0.6
+    sk.use_smooth_shade = True
+    for i, r in enumerate(radii):
+        v = me.skin_vertices[0].data[i]
+        v.radius = (r * 1.3, r * 1.3)
+        v.use_root = (i == root)
+    sub = ob.modifiers.new("round", "SUBSURF")
+    sub.levels = sub.render_levels = levels
+    dg = bpy.context.evaluated_depsgraph_get()
+    baked = bpy.data.meshes.new_from_object(ob.evaluated_get(dg))
+    for poly in baked.polygons:
+        buf.face([baked.vertices[i].co.copy() for i in poly.vertices], mat)
+    bpy.data.objects.remove(ob)
+    bpy.data.meshes.remove(me)
+    bpy.data.meshes.remove(baked)
+
+
+class Skeleton:
+    """A growing list of nodes (position, radius) and edges for skin_wood."""
+
+    def __init__(self):
+        self.nodes, self.radii, self.edges = [], [], []
+
+    def add(self, p, r, parent=None):
+        self.nodes.append(Vector(p))
+        self.radii.append(r)
+        i = len(self.nodes) - 1
+        if parent is not None:
+            self.edges.append((parent, i))
+        return i
+
+    def branch(self, start, tip, r0, r1, parent, steps=3, rise=0.0):
+        """A limb from node `parent` (at `start`) to `tip`, bowed upward by `rise` mid-way."""
+        start, tip = Vector(start), Vector(tip)
+        last = parent
+        for k in range(1, steps + 1):
+            t = k / steps
+            p = start.lerp(tip, t) + Vector((0, 0, rise * 4 * t * (1 - t)))
+            last = self.add(p, r0 + (r1 - r0) * t, last)
+        return last
+
+
 # THE TREE ROSTER. Owner on review v3: the trees "all look the same, are oriented the same way,
 # and are all the same size and color and type". Tiny Talisman's trees are big clumpy crowns,
 # often a bright lime, on thick trunks that BEND. Variation here is per TREE (shape, trunk,
@@ -915,73 +981,88 @@ TREE_TINTS = {
 }
 
 
+def _curve(sk, parent, p0, p1, p2, r0, r1, step=0.22):
+    """A smooth limb along a quadratic curve p0 -> p2 (pulled toward p1), a node every ~22 cm,
+    radius easing from r0 to r1. Returns the last node."""
+    p0, p1, p2 = Vector(p0), Vector(p1), Vector(p2)
+    n = max(3, int(((p1 - p0).length + (p2 - p1).length) / step))
+    last = parent
+    for k in range(1, n + 1):
+        t = k / n
+        p = p0 * (1 - t) ** 2 + p1 * 2 * t * (1 - t) + p2 * t * t
+        last = sk.add(p, r0 + (r1 - r0) * t ** 0.8, last)
+    return last
+
+
 def tree(name, style, seed, tint="", trunk="trunk", s=1.0):
-    """styles: round (a fork of three limbs and a crown), broad (a wide umbrella of five limbs),
-    tall (a straight trunk carrying three stacked clumps), lean (an S-bent trunk with a
-    lopsided two-clump crown), young (a slim street tree in a guard, one clump)."""
+    """THE TREE, third build, drawn from the owner's references (review v15: "the trunk designs
+    look horrible and wonky. i need you to reference actual stylized designs"). A stylized
+    painted tree is a SLENDER trunk with one gentle curve and a smooth taper, a small flare only
+    in its own radius at the foot (no root claws, no knobs), that SPLITS into two or three thin
+    branches rising steeply into the crown, each ending in a leaf cluster; the broad tree forks
+    once more. All of it is one skinned piece of wood (skin_wood).
+    styles: round, broad, lean, young, tall (tall is replaced by the pine)."""
     col = kit(name)
     rng = random.Random(seed)
     wood, leaves = K.Buf("trunk"), K.Buf("foliage", foliage=True)
-    wood.uv_mode = "trunk"   # bark wraps round the tree continuously, trunk and limbs alike
+    wood.uv_mode = "trunk"
     clumps = []   # (centre, radii)
-    # The trunk: a polyline with a bend, tapered, a flare at the root.
+    sk = Skeleton()
+    lean = Vector((rng.uniform(-1, 1), rng.uniform(-1, 1), 0)).normalized() * s
+    H = {"young": 2.3, "round": 2.4, "broad": 1.9, "lean": 2.2, "tall": 3.8}[style] * s
+    R = {"young": 0.09, "round": 0.2, "broad": 0.24, "lean": 0.19, "tall": 0.17}[style] * s
+    base = sk.add((0, 0, -0.06), R * 1.3)
+    foot = sk.add((0, 0, 0.25 * s), R * 1.05, base)
+    bow = 0.45 if style == "lean" else 0.18
+    split_at = Vector(lean * (0.6 if style == "lean" else 0.12)) + Vector((0, 0, H))
+    top = _curve(sk, foot, (0, 0, 0.25 * s), lean * bow + Vector((0, 0, H * 0.55)), split_at, R, R * 0.62)
+    P = sk.nodes[top]
+    rt = R * 0.62
     if style == "young":
-        pts = [(0, 0, -0.05), (0.04, 0.02, 1.4 * s), (0.0, 0.05, 2.6 * s)]
-        radii = [0.11 * s, 0.09 * s, 0.07 * s]
-    elif style == "lean":
-        pts = [(0, 0, -0.05), (0.35 * s, 0.1, 1.2 * s), (0.2 * s, 0.25, 2.2 * s), (0.75 * s, 0.3, 3.1 * s)]
-        radii = [0.3 * s, 0.24 * s, 0.2 * s, 0.16 * s]
-    elif style == "tall":
-        pts = [(0, 0, -0.05), (0.1, 0.05, 2.0 * s), (0.05, 0.12, 4.2 * s)]
-        radii = [0.26 * s, 0.2 * s, 0.15 * s]
-    else:
-        bend = rng.uniform(0.15, 0.35) * s
-        pts = [(0, 0, -0.05), (bend, bend * 0.4, 1.3 * s), (bend * 0.4, bend * 0.8, 2.5 * s)]
-        radii = [0.3 * s, 0.25 * s, 0.21 * s]
-    tube(wood, pts, radii, trunk, sides=12)
-    wood.cylinder((0, 0, 0.12), radii[0] * 1.45, 0.3, trunk, sides=12, top_scale=0.7)   # root flare
-    top = Vector(pts[-1])
-    # A rounded knuckle where the limbs leave the trunk, so the fork reads as one piece of
-    # wood instead of separate sticks pushed into a post.
-    if style != "young":
-        wood.blob(tuple(top + Vector((0, 0, 0.05 * s))), (radii[-1] * 1.25, radii[-1] * 1.25, radii[-1] * 1.35), trunk)
-    if style == "young":
-        clumps.append((top + Vector((0, 0, 0.9 * s)), (1.1 * s, 1.1 * s, 1.0 * s)))
-        # A tree guard: four posts and two rings, and an iron grate at its foot.
-        for k in range(4):
+        _curve(sk, top, P, P + Vector((0, 0, 0.3 * s)), P + Vector((0, 0, 0.7 * s)), rt, 0.025)
+        clumps.append((P + Vector((0, 0, 0.8 * s)), (1.05 * s, 1.05 * s, 0.95 * s)))
+        for k in range(4):   # a tree guard and an iron grate, as before
             a = k * math.tau / 4 + math.pi / 4
             wood.box(Matrix.Translation((math.cos(a) * 0.42, math.sin(a) * 0.42, 0.7)), (0.05, 0.05, 1.4), "railing")
         for z in (0.5, 1.35):
             wood.cylinder((0, 0, z), 0.47, 0.05, "railing", sides=16)
         wood.cylinder((0, 0, 0.005), 0.75, 0.03, "metal_dark", sides=4)
-    elif style == "broad":
-        n = 5
-        for i in range(n):
-            a = i * math.tau / n + rng.uniform(-0.2, 0.2)
-            reach = rng.uniform(2.1, 2.7) * s
-            tip = top + Vector((math.cos(a) * reach, math.sin(a) * reach, rng.uniform(0.9, 1.4) * s))
-            limb(wood, top, tip, 0.17 * s, 0.08 * s, trunk)
-            clumps.append((tip + Vector((0, 0, 0.45 * s)), (1.6 * s, 1.6 * s, 1.05 * s)))
-        clumps.append((top + Vector((0, 0, 1.9 * s)), (1.7 * s, 1.7 * s, 1.1 * s)))
     elif style == "tall":
-        for k, (dz, r) in enumerate(((0.4, 1.35), (2.0, 1.2), (3.4, 0.9))):
-            c = top + Vector((rng.uniform(-0.2, 0.2), rng.uniform(-0.2, 0.2), dz * s))
-            clumps.append((c, (r * s, r * s, r * 0.95 * s)))
-    elif style == "lean":
-        tip = top + Vector((1.2 * s, 0.2, 0.9 * s))
-        limb(wood, top, tip, 0.14 * s, 0.08 * s, trunk)
-        clumps.append((tip + Vector((0.2, 0, 0.5 * s)), (1.7 * s, 1.5 * s, 1.25 * s)))
-        clumps.append((top + Vector((-0.4 * s, 0.1, 1.2 * s)), (1.35 * s, 1.3 * s, 1.1 * s)))
-    else:   # round
-        for i in range(3):
-            a = i * math.tau / 3 + rng.uniform(0, 1)
-            tip = top + Vector((math.cos(a) * 1.4 * s, math.sin(a) * 1.4 * s, 1.3 * s))
-            limb(wood, top, tip, 0.15 * s, 0.08 * s, trunk)
-            clumps.append((tip + Vector((0, 0, 0.5 * s)), (1.3 * s, 1.3 * s, 1.1 * s)))
-        clumps.append((top + Vector((0, 0, 2.1 * s)), (1.7 * s, 1.7 * s, 1.45 * s)))
+        _curve(sk, top, P, P + Vector((0, 0, 1.2 * s)), P + Vector((0, 0, 2.6 * s)), rt, 0.03)
+        for dz, r in ((0.2, 1.3), (1.6, 1.15), (2.9, 0.85)):
+            clumps.append((P + Vector((0, 0, dz * s)), (r * s, r * s, r * 0.95 * s)))
+    else:
+        n = {"round": 3, "broad": 4, "lean": 2}[style]
+        a0 = rng.uniform(0, math.tau)
+        spread = {"round": 0.62, "broad": 0.95, "lean": 0.55}[style]      # radians from vertical
+        reach = {"round": 1.9, "broad": 2.4, "lean": 1.9}[style] * s
+        for i in range(n):
+            a = a0 + i * math.tau / n + rng.uniform(-0.25, 0.25)
+            d = Vector((math.cos(a) * math.sin(spread), math.sin(a) * math.sin(spread), math.cos(spread)))
+            tip = P + d * reach + Vector((0, 0, 0.35 * s))
+            mid = P + d * reach * 0.45
+            end = _curve(sk, top, P, mid, tip, rt * 0.8, 0.035 * s)
+            size = {"round": 1.25, "broad": 1.35, "lean": 1.45}[style] * s
+            # Lifted above the branch tip, so the branches show under the canopy (reference).
+            clumps.append((tip + Vector((0, 0, 0.75 * s)), (size, size, size * 0.8)))
+            if style == "broad":
+                # One more fork half-way out: a twig rising to its own cluster.
+                j = sk.nodes[end]
+                fork = P + d * reach * 0.55 + Vector((0, 0, 0.2 * s))
+                twig = fork + Vector((math.cos(a + 0.9), math.sin(a + 0.9), 0)) * 0.9 * s + Vector((0, 0, 1.1 * s))
+                near = min(range(len(sk.nodes)), key=lambda q: (sk.nodes[q] - fork).length)
+                _curve(sk, near, sk.nodes[near], sk.nodes[near].lerp(twig, 0.5) + Vector((0, 0, 0.1)), twig,
+                       rt * 0.45, 0.03 * s)
+                clumps.append((twig + Vector((0, 0, 0.3 * s)), (1.1 * s, 1.1 * s, 0.95 * s)))
+                del j
+        # The crown's centre, carried by a short leader so no cluster floats.
+        _curve(sk, top, P, P + Vector((0, 0, 0.7 * s)), P + Vector((0, 0, 1.5 * s)), rt * 0.7, 0.04 * s)
+        cs = {"round": 1.55, "broad": 1.5, "lean": 1.25}[style] * s
+        clumps.append((P + Vector((0, 0, 2.0 * s)), (cs, cs, cs * 0.8)))
+    skin_wood(wood, sk.nodes, sk.edges, sk.radii, trunk, levels=3)   # 3: no crease down the trunk
     for c, r in clumps:
         K.foliage(leaves, c, r, int(520 * r[0] * r[1]), 0.34 * s, rng, lift=0.3, spread=0.45, tint=tint)
-    wood.finish(col, bevel=0.03)
+    wood.finish(col, bevel=0)   # already round; a bevel would only crease the skinned surface
     leaves.finish(col)
     return col
 
@@ -1215,7 +1296,7 @@ def ring(poly, z):
     return [Vector((x, y, z)) for x, y in poly]
 
 
-def BAND(h, o=0.16):
+def BAND(h, o=0.24):
     return [(-0.12, -h / 2), (o, -h / 2), (o + 0.04, -h / 2 + 0.04), (o + 0.04, h / 2 - 0.04), (o, h / 2), (-0.12, h / 2)]
 
 
@@ -1266,6 +1347,12 @@ def skyscraper(name, t):
     poly, z = base, PH - 0.1
     mm, spacing = t.get("mullion", ("mullion_light", 1.5))
     every, bh, bmat = t.get("band", (1, 0.35, "mullion_light"))
+    # Owner, review v15: "make the window panes less dense. and also thicken the frames".
+    # Panes are twice as wide as the spec's spacing (never under 2.6 m), mullions about twice
+    # as thick, and every spandrel band at least 0.6 m, so a tower reads as a few big panes
+    # per floor like the street's windows, not a fine grid.
+    spacing = max(2.6, spacing * 2.0)
+    bh = max(0.6, bh * 1.6)
     for si, n in enumerate(t["storeys"]):
         if si:
             poly = poly_offset(poly, -t.get("setback", 2.5))
@@ -1275,7 +1362,7 @@ def skyscraper(name, t):
         for f in fcs:
             m = max(1, round(f.length / spacing))
             for k in range(m):
-                frames.box(f.frame(k * f.length / m, (z0 + z1) / 2 + 0.05, 0.02), (0.13, 0.24, z1 - z0 - 0.1), mm)
+                frames.box(f.frame(k * f.length / m, (z0 + z1) / 2 + 0.05, 0.05), (0.3, 0.36, z1 - z0 - 0.1), mm)
         for s in range(0, n, every):
             if s or si == 0:
                 trim.sweep(ring(poly, z0 + s * ST + 0.05), BAND(bh), bmat, cv, closed=True)
@@ -1426,7 +1513,7 @@ def place_towers():
             for arm in range(4):
                 c, s = math.cos(-arm * math.pi / 2), math.sin(-arm * math.pi / 2)
                 ax, ay = x * c - y * s, x * s + y * c
-                if abs(ax) < 44 + half and ay - half < 119 and ay > 0:
+                if abs(ax) < 44 + half and ay - half < 160 and ay > 0:
                     ok = False
             dang = abs((a - sun_az + math.pi) % math.tau - math.pi)
             if dang < math.radians(25) and d - half < 1.04 * h + 14:
@@ -1520,6 +1607,26 @@ def wires(poles):
     col = kit("wires")
     b = K.Buf("wires")
     prof = [(math.cos(a) * 0.022, math.sin(a) * 0.022) for a in [i * math.tau / 6 for i in range(6)]]
+    # SPANS ACROSS THE STREET: every other pole along an outward street sends a sagging pair
+    # over the road to a bracket on the building opposite (its face is 14 m off the centre).
+    for line in poles:
+        along_y = abs(line[0].x - line[-1].x) < 1e-3
+        for i, p in enumerate(line):
+            d = p.y if along_y else p.x
+            if i % 2 or abs(d) < 50:
+                continue
+            c = p.x if along_y else p.y
+            far = (Vector((math.copysign(14.3, c), p.y, 0)) if along_y else Vector((p.x, math.copysign(14.3, c), 0)))
+            for k, (off, h_end, sag) in enumerate(((-0.35, 7.4, 0.9), (0.35, 7.1, 1.1))):
+                a = p + Vector((0, off, 0) if along_y else (off, 0, 0)) + UP * 8.55
+                bq = far + Vector((0, off, 0) if along_y else (off, 0, 0)) + UP * h_end
+                pts = [a.lerp(bq, t) - UP * sag * 4 * t * (1 - t) for t in [i2 / 14 for i2 in range(15)]]
+                for u, v in zip(pts, pts[1:]):
+                    dd = v - u
+                    mtx = Matrix.Translation((u + v) / 2) @ dd.to_track_quat("Z", "Y").to_matrix().to_4x4()
+                    b.box(mtx, (0.04, 0.04, dd.length + 0.01), "wire")
+                b.box(Matrix.Translation(bq + Vector((math.copysign(-0.15, c), 0, 0) if along_y else (0, math.copysign(-0.15, c), 0))),
+                      (0.3, 0.3, 0.12), "metal_dark")   # the bracket on the wall
     for line in poles:
         for p, q in zip(line, line[1:]):
             for k, (off, sag) in enumerate(((-0.9, 0.55), (0.0, 0.8), (0.9, 0.65))):
@@ -1578,13 +1685,17 @@ def layout():
         for c in (-B.ROAD, B.ROAD):
             for side in (-1, 1):
                 d = F + LOT + 0.5
-                while d < 105:
+                while d < 131:   # was 105: the street walls stopped and the street ran into the void
                     name, _kind, w, *_ = FILLERS[k % len(FILLERS)]
                     x = c + side * (B.ROAD_HALF + B.SIDE)
                     front = r @ Vector((x, d + w / 2, 0))
                     facing(name, w, (front.x, front.y), tuple(r @ Vector((-side, 0, 0)))[:2])
                     d += w + 0.3
                     k += 1
+    for arm, row in enumerate(TERMINI):
+        r = Matrix.Rotation(arm * math.pi / 2, 3, "Z")
+        front = r @ Vector((0, 144.0, 0))
+        facing(row[0], row[2], (front.x, front.y), tuple(r @ Vector((0, -1, 0)))[:2])
     # The park.
     lawn = B.WALK + 0.01   # 1 cm into the lawn (its top is WALK + 0.02)
     vary = random.Random(77)
@@ -1660,6 +1771,8 @@ for _name, _t in TREES.items():
 for _row in PARKSIDE:
     BUILDERS[_row[0]] = (lambda r=_row: archetype(r[0], r[1], r[2], r[3], r[4], r[5], True, r[6],
                                                   PARKSIDE_ROOF.get(r[0], "flat")))
+for _row in TERMINI:
+    BUILDERS[_row[0]] = (lambda r=_row: archetype(r[0], r[1], r[2], r[3], r[4], r[5], False, r[6], r[7]))
 for _row in FILLERS:
     BUILDERS[_row[0]] = (lambda r=_row: archetype(r[0], r[1], r[2], r[3], r[4], r[5], False, r[6], r[7]))
 
@@ -1729,7 +1842,7 @@ def preview_model(name, version):
 # ------------------------------------------------------------------ the whole map in Blender
 
 CITY_BLEND = K.SOURCE / "kanto_city.blend"
-BUILDING_KINDS = {"brick_corner", "deco_corner", "glass_tower", "townhouse_row", *TOWERS,
+BUILDING_KINDS = {"brick_corner", "deco_corner", "glass_tower", "townhouse_row", *TOWERS, *(r[0] for r in TERMINI),
                   *(r[0] for r in PARKSIDE), *(r[0] for r in FILLERS)}
 PARK_KINDS = {*PARK_TREES, "hedge_bed", "park_bench", "park_lamp", "park_fence"}
 # Unity's fog is linear from 90 m to 360 m (KantoSceneBuilder). The Blender review fades the
