@@ -505,7 +505,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   fantail lookout. Native 1/1 passed; actual frames/grey inspected, staged-close
   dither/wing-blend limitation retained for final camera review.
   [Bird evidence](reports/map-by-map-refinement-2026-09-23/eskinita-bird-visits/report.md).
-  Next Bayan/Ilalim/SaBubong visits, then final integration; Lagoon flight retained.
+  Bayan visits fitted separately to broader civic paving/longer pauses; northern
+  fantail spots moved clear of church steps. Native v2 1/1 passed after one clear-
+  arrival staging correction; actual sequences/grey inspected.
+  [Bayan bird evidence](reports/map-by-map-refinement-2026-09-23/bayan-bird-visits/report.md).
+  Next Ilalim/SaBubong visits, then final integration; Lagoon flight retained.
   Lagoon flight retained.
 - [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
   trace idle decisions and fix actual stalls; distinguish deliberate tactical waits.

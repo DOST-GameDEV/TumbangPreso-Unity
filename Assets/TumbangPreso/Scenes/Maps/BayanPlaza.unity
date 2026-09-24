@@ -27954,6 +27954,11 @@ MonoBehaviour:
       LookAt: {x: 0, y: 0.102, z: 2.8000002}
       HoldSeconds: {x: 6, y: 10}
     QuietCat: 0
+    Perches: []
+    PerchWait: {x: 4, y: 13}
+    BirdBeatRate: 1
+    PeckChance: 0.6
+    FanWatch: 0
   - Id: pusakal-ginger
     Model: {fileID: 8771091787928289351, guid: 7f8a83d85268ba04ea42094914a5d240, type: 3}
     Clips:
@@ -28245,6 +28250,11 @@ MonoBehaviour:
       LookAt: {x: 0, y: 0.10199999, z: -11.599998}
       HoldSeconds: {x: 6, y: 10}
     QuietCat: 1
+    Perches: []
+    PerchWait: {x: 4, y: 13}
+    BirdBeatRate: 1
+    PeckChance: 0.6
+    FanWatch: 0
   - Id: maya
     Model: {fileID: 8771091787928289351, guid: bd71817a37a91f54bb702ae7393bdcaf, type: 3}
     Clips:
@@ -28270,6 +28280,14 @@ MonoBehaviour:
     Habitat: []
     Activities: []
     QuietCat: 0
+    Perches:
+    - {x: -2.999999, y: 0.102, z: 4.000001}
+    - {x: -4.7999983, y: 0.10199999, z: 5.000002}
+    - {x: -2.2999988, y: 0.102, z: 6.200001}
+    PerchWait: {x: 4.5, y: 10}
+    BirdBeatRate: 1.35
+    PeckChance: 0.65
+    FanWatch: 0
   - Id: kalapati
     Model: {fileID: 8771091787928289351, guid: 89871430be2577c4a9c9009c86adb490, type: 3}
     Clips:
@@ -28295,6 +28313,14 @@ MonoBehaviour:
     Habitat: []
     Activities: []
     QuietCat: 0
+    Perches:
+    - {x: 4.0000005, y: 0.102, z: -3.999999}
+    - {x: 6.4000025, y: 0.102, z: -4.7999983}
+    - {x: 4.4000044, y: 0.102, z: -6.3999996}
+    PerchWait: {x: 9, y: 16}
+    BirdBeatRate: 0.9
+    PeckChance: 0.8
+    FanWatch: 0
   - Id: fantail
     Model: {fileID: 8771091787928289351, guid: 6f569a317f91a7b41a49ac9702a5c8a7, type: 3}
     Clips:
@@ -28320,6 +28346,14 @@ MonoBehaviour:
     Habitat: []
     Activities: []
     QuietCat: 0
+    Perches:
+    - {x: 0, y: 0.102, z: 10.000002}
+    - {x: -1.7999988, y: 0.102, z: 8.600006}
+    - {x: 1.8000002, y: 0.102, z: 8.600006}
+    PerchWait: {x: 4, y: 9}
+    BirdBeatRate: 1.15
+    PeckChance: 0
+    FanWatch: 1
 --- !u!1001 &734096729
 PrefabInstance:
   m_ObjectHideFlags: 0

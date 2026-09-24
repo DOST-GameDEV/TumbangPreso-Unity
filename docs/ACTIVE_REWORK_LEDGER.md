@@ -1,26 +1,35 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Eskinita perched-bird visits
+## Current resume, 2026-09-24: Bayan bird visits
 
 Overall goal ACTIVE, NOT done. DEV and QUAL at published, remote-verified
-d914a34972254bf6f212066bac2d93c787c4b318. All six ground animals individually
-implemented, native checked and actual frames/grey inspected. Latest tuxedo cat:
-53 nodes / 310 links, native 1/1 in 33.349s, no retry. QUAL byte-verified, named
-stash preserved, advanced. Only original two composition PNG metas dirty at intake.
+ad7d5795500bc446ac12d369344a755ac25f21a5. Eskinita's bird visits published: three
+supported choices/species, shaped landings/long departures, distinct forage/fan
+watch; native 1/1 in 71.548s, actual pose/motion/grey inspected. Close staged dither
+and wing-blend, one parked test body remain explicit capture limits. No further
+Eskinita fixture work. QUAL byte-verified, stashed, advanced. Six ground animals
+and both lighting follow-up merges remain preserved.
 
-Current REFINE-2.7 unit complete locally: Eskinita visiting birds. Three supported
-sites per species, curved/eased landing, long outward departure and distinct
-foraging/fantail lookout. Original assets/Lagoon flight/other maps preserved.
-Native session 87205 passed 1/1 in 71.548s. Initial missing-namespace compile fix
-used fixture allowance 1/1, no subsequent repair. Actual perch pairs, each flight/
-arrival sequence and grey inspected; raw/encoded timing retained. Close staged
-after poses show dither/wing blend, and a parked player borders one witness; keep
-these limitations for final ordinary-camera review, no further fixture loop.
-Known churn restored, no Unity job/helper active. Publish, preserve/advance QUAL,
-then fit Bayan visits, followed by Ilalim/SaBubong. No whole-parent completion.
-Preserve original two composition PNG meta dirt files and every older ID.
+Current REFINE-2.7 unit complete locally: Bayan bird visits. Broader landing
+spread/longer holds, original species clips/flight executor retained. Northern
+fantail candidates failed support near the CHURCH FORECOURT STEPS (earlier
+monument label corrected); clear southern alternatives authored. Native v1
+pigeon correctly avoided a parked player. One clear-arrival corner-parking
+fixture correction, runtime unchanged. V2 session 89123 passed 1/1 in 71.300s.
+Actual perch/motion/arrival frames and grey inspected; known staged dither/wing
+blend and visible parked-body limits retained. No more fixture work. Known churn
+restored, no Unity job/helper active. Publish, preserve/advance QUAL, then Ilalim
+visits and SaBubong. Parent/older tasks stay open; original meta dirt preserved.
 
 ## Published progress, do not redo
+
+Ground-animal local units all published: Eskinita dog01d93272b/cat08ac1a178,
+Bayan dog4e2c5bc6d/cat2bcfd0581, Ilalim dog81054255e/catd914a3497. Each has its
+own plan/author/native result/actual frame review under the named report folder.
+Bird visits: Eskinita ad7d57955 complete locally; other three maps remain below.
+Lighting follow-ups237012904 and43c851b6f include source through429643416; keep
+Windows evidence separate from the incoming Mac native performance receipts.
+
 
 - All 11 Ilalim storefronts and both Eskinita shop signs have individual authored
   work/native evidence. Sign register and each report preserve exact source,
@@ -128,3 +137,20 @@ Bird author v2 completed: all three species have three supported sites; distinct
 beat/wait/forage/fan settings saved. Next single native Eskinita case records all
 three legacy/new departures and arrivals, supported contact, reaction and pause.
 Only prior missing-namespace fixture fix consumed retry 1/1. No .cs edits in flight.
+
+Bayan bird author v1 rejected fantail northern landings near the monument. No
+scene saved. Revised only that bird candidate list to clear court-facing/southern
+paving; clearance unchanged. Reauthor v2 before first native case. No fixture
+repair used (0/1); no .cs edits during run. Failed log/patch retained.
+
+Bayan author v2 completed with three supported sites for each species, corrected
+fantu alternatives at (+/-1.8,8.6). Only the Bayan bird native case next, with
+original species clips, larger paving spread/longer holds. No fixture retries
+used; no .cs edits while it runs.
+
+Bayan native v1 failed clear-arrival assumption for pigeon. Trace shows arrival
+turning into phase3 at(-.193,2.714,-4.993), near=True: correct avoidance of a
+parked player, not failed landing interpolation. The taya cannot remain at the
+requested(0,-13). One bounded fixture correction parks all actors at the opposite
+legal court corner for arrival and asserts actual distance>12m. Runtime unchanged;
+retry 1/1. Preserve failed XML/trace, rerun same case v2 only.
