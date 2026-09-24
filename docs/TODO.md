@@ -703,10 +703,15 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
   fixtures on clean `origin/ASTRAReworks` to split pre-existing from new (CarryTests, MatchRunTests,
   TumpNativeResultTests rematch, StunFrostTests, ThrowAimIntegrationProbe, TutorialDefenderProbe,
   HubSceneVideoTests, QueueCardLayoutProbe, TumpNativeFrontEndTests, NemuKitContractProbe possession).
-  (3) EditMode, pre-existing on ASTRAReworks (baseline run 2026-09-24): `ThrowMotionTests` first-person
-  grip at 0.08 m from the lens after `ViewmodelArms.ThrowReach` (4255265c), and
-  `ThrowEquipmentClearanceTests` Bayan right pektus at charge 0.35 through the head
-  (`CharacterAnimator.ThrowBody`). (4) The `CastAndMotionReel` review of all casts and first-person
+  (3) EditMode, pre-existing on ASTRAReworks (baseline run 2026-09-24):
+  `ThrowMotionTests` first-person grip at0.08m from lens is corrected at the actual
+  fingertip; three focused EditMode cases3/3 and native owner/body throw views1/1
+  passed. `ThrowEquipmentClearanceTests` still fails for190/190 synthetic pairs,
+  mostly35% right pektus. Real-input Bayan runs at75% and100% right spin, including
+  the largest alpombra, passed with0vertices in the head across charged samples.
+  Preserve the healthy body motion; reconcile the fixture representation at P7.
+  [Evidence](reports/cloud-integration-2026-09-24/throw-clearance/report.md).
+  (4) The `CastAndMotionReel` review of all casts and first-person
   paths, `Checks.RunAll`, SKILL-TREE-1's pad and touch look, and the Windows and Android builds
   (protocol 52) were not reached.
 - [ ] **SKILL-FX-1 Every skill's VFX, SFX and cast animation, owner 2026-09-24. IN PROGRESS.** Done 2026-09-24 (evidence in `docs/reports/skill-performances-2026-09-24/progress.md`): research and the per-skill plan; Grand Coven's cast, first-person path and circle; the cast-sheet audit and eleven body clips re-authored under an enforced head-pitch bound; one first-person hand path per cast (21); code-driven verbs checked. Still open: the other twenty skills' world VFX and cast SFX, which need `AbilityShowcaseProbe` stills on a Unity machine, one skill at a time against plan section 3.

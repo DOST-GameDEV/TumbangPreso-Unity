@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 15:22:52Z" end-time="2026-09-24 15:23:11Z" duration="18.9258491">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="609" result="Failed" site="Child" start-time="2026-09-24 15:22:52Z" end-time="2026-09-24 15:23:11Z" duration="18.925849" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1710" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="609" result="Failed" site="Child" start-time="2026-09-24 15:22:52Z" end-time="2026-09-24 15:23:11Z" duration="18.906110" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19360" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1711" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="609" result="Failed" site="Child" start-time="2026-09-24 15:22:52Z" end-time="2026-09-24 15:23:11Z" duration="18.896311" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1712" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="609" result="Failed" site="Child" start-time="2026-09-24 15:22:52Z" end-time="2026-09-24 15:23:11Z" duration="18.886721" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1651" name="ThrowEquipmentClearanceTests" fullname="TumbangPreso.Tests.ThrowEquipmentClearanceTests" classname="TumbangPreso.Tests.ThrowEquipmentClearanceTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-24 15:22:52Z" end-time="2026-09-24 15:23:11Z" duration="18.795525" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1652" name="EveryRetainedPersonCanPrepareEveryEquipmentWithoutEnteringTheHead" fullname="TumbangPreso.Tests.ThrowEquipmentClearanceTests.EveryRetainedPersonCanPrepareEveryEquipmentWithoutEnteringTheHead" methodname="EveryRetainedPersonCanPrepareEveryEquipmentWithoutEnteringTheHead" classname="TumbangPreso.Tests.ThrowEquipmentClearanceTests" runstate="Runnable" seed="1182553976" result="Failed" start-time="2026-09-24 15:22:52Z" end-time="2026-09-24 15:23:11Z" duration="18.778522" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Equipment entered an actual rigid head surface.
+  Expected: <empty>
+  But was:  < "bayan/tsinelas: 18991 at charge 0.35, spin 1", "bayan/crocs: 11561 at charge 0.35, spin 1", "bayan/pantulog: 1890 at charge 0.35, spin 1", "bayan/sike: 22895 at charge 0.35, spin 1", "bayan/spartan: 4970 at charge 0.35, spin 1", "bayan/alpombra: 40541 at charge 0.35, spin 1", "bayan/pambahay: 2258 at charge 0.35, spin 1", "bayan/heels: 8869 at charge 0.35, spin 1", "bayan/sandals: 6069 at charge 0.35, spin 1", "bayan/loafers: 633 at charge 0.35, spin 1"... >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.ThrowEquipmentClearanceTests.EveryRetainedPersonCanPrepareEveryEquipmentWithoutEnteringTheHead () [0x00000] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-world-qualification-20260923\Assets\TumbangPreso\Tests\ThrowEquipmentClearanceTests.cs:25
+]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1657" name="ThrowMotionTests" fullname="TumbangPreso.Tests.ThrowMotionTests" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-09-24 15:23:11Z" end-time="2026-09-24 15:23:11Z" duration="0.056959" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1662" name="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength" fullname="TumbangPreso.Tests.ThrowMotionTests.PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-24 15:23:11Z" end-time="2026-09-24 15:23:11Z" duration="0.048231" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1659" name="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength(-1.0f)" fullname="TumbangPreso.Tests.ThrowMotionTests.PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength(-1.0f)" methodname="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" seed="1831892490" result="Failed" start-time="2026-09-24 15:23:11Z" end-time="2026-09-24 15:23:11Z" duration="0.044636" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The slipper rotated back into the camera.
+  Expected: greater than 0.400000006f
+  But was:  0.379999936f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ThrowMotionTests.PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength (System.Single spin) [0x0008e] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-world-qualification-20260923\Assets\TumbangPreso\Tests\ThrowMotionTests.cs:67
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1660" name="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength(0.0f)" fullname="TumbangPreso.Tests.ThrowMotionTests.PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength(0.0f)" methodname="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" seed="81696442" result="Failed" start-time="2026-09-24 15:23:11Z" end-time="2026-09-24 15:23:11Z" duration="0.001192" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The slipper rotated back into the camera.
+  Expected: greater than 0.400000006f
+  But was:  0.0824145675f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ThrowMotionTests.PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength (System.Single spin) [0x0008e] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-world-qualification-20260923\Assets\TumbangPreso\Tests\ThrowMotionTests.cs:67
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1661" name="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength(1.0f)" fullname="TumbangPreso.Tests.ThrowMotionTests.PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength(1.0f)" methodname="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" seed="589104003" result="Failed" start-time="2026-09-24 15:23:11Z" end-time="2026-09-24 15:23:11Z" duration="0.000999" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The slipper rotated back into the camera.
+  Expected: greater than 0.400000006f
+  But was:  0.399999976f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ThrowMotionTests.PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength (System.Single spin) [0x0008e] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-world-qualification-20260923\Assets\TumbangPreso\Tests\ThrowMotionTests.cs:67
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

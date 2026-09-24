@@ -1,31 +1,45 @@
 # Active TUMP rework ledger
 
-## Model handoff, 2026-09-24
+## Current resume, 2026-09-24: real throw clearance defects
 
-Owner requested continuing these fixes on GPT-6 Sol. Current-turn metadata now
-confirms gpt-6-sol. Work has resumed in this task. No cross-chat action, reset or
-goal-completion claim.
+Owner confirmed this turn runs GPT-6 Sol and asked for real product fixes over
+verification loops. The owner is sleeping; NEVER use a usage reset,
+credit redemption or paid service. Keep working autonomously without questions. The cloud branch plus local repairs were merged/pushed to
+ASTRAReworks at17f572be8; QUAL was byte-compared, stashed, detached at that SHA.
+Seven-hero introduction study1/1, shared-phase6/6, Nemu opening framing1/1, Core
+HeroLines7/7 and HeroLoadout14/14. Actual sequences/grey were inspected; this
+is not artistic or real-peer acceptance. See reports/cloud-integration-2026-09-24/
+findings.md. No more unchanged runs of that passing set.
 
-DEV has local repair commit1f01bce1d, NOT pushed yet. A merge of incoming72479a6a8
-is in progress, single grounding conflict resolved/staged. Preserve our fresh-clip
-runtime fix plus incoming whole-vector reset on the editor authoring path; retain
-incoming Nemu16mstage and .78framing margin. TODO auto-merged with NATIVE-CHECK-1.
-QUAL is detached at1f01bce1d plus the three combined incoming C# files. Its focused
-Nemu framing/live-reveal run ended: {'total': '2', 'passed': '1', 'failed': '1', 'duration': '14.0264741'}. Actual 4:3 vertical
-margin was 0.0742304921 against required 0.075. An attempted FitBodies factor
-.78 to .77 failed at0.0738970637: frame17/18 is in the FIRST shot, which has
-no FitBodies. The factor was restored to incoming .78. Widening Nemu's authored
-opening lens44 to46 degrees in both tables passed1/1 in9.2232001s. Actual frame
-sequence and25percent grey pair inspected. Stop testing this marginal frame.
-Source/test outputs:
-Logs/cloud-nemu-merged-v1.xml/.log, frames Logs/cloud-nemu-merged-v1. No Unity job
-remains from this run. Next: preserve focused XML, back up and restore own
-generated QUAL churn, reconcile findings/TODO/ledger and commit the merge.
-Fetch before push, verify remote, align QUAL. Then investigate the observed
-first-person grip and Bayan right pektus head intersections in NATIVE-CHECK-1,
-followed by per-hero visual refinement. Client cohort-duration is a source
-concern until peer behavior gives evidence; no speculative protocol change.
-Do not rerun unchanged successes. All older TODOs remain open as recorded below.
+Current unit: reports/cloud-integration-2026-09-24/throw-clearance-plan.md.
+EditMode baseline4/4 failed: three FPP spin cases (straight grip depth.082m,
+curves .38/.40m vs.40 minimum) and head-volume case. Full CSV, not truncated
+failure text, has190/190 person/shoe pairs red,175atcharge.35/rightspin1.
+This is not proof that every live body throw clips. Existing real-input Bayan
+PlayMode case at spin.75 passed1/1: quick/left/right normal-speed sequences
+inspected, right-side and other charging sampled98/100 frames with0shoe vertices
+inside the head. One scoped worst-condition run is in flight, QUAL session96919,
+TUMP_THROW_REVIEW_PERSON=bayan, SLIPPER=alpombra, RIGHT_SPIN=1, output
+Logs/cloud-throw-native-spin1.xml and frames. It uses the existing review probe's
+optional legal spin; no gameplay code changed yet. Do not edit .cs while running.
+Exact native Bayan/alpombra case passed1/1 in19.5313924s at legal right spin1,
+0of41696vertices inside the head across92charged samples. Native source at.75
+also passed with0. Preserve healthy body pose. EditMode's190/190 failure is a
+fixture discrepancy to reconcile at final qualification, not authorization for
+a global body rewrite.
+
+FPP baseline .082m straight grip near eye. First offset pass fixed z but dropped
+all hands below the frame. Pivot-target pass still gave .22-.27m depth: the shoe
+follows the rotating Arm child, not its parent pivot. Current product fix tracks
+that actual fingertip near CarryAnchor with short separate straight/left/right
+travel and keeps the roll/tremor. Existing focused EditMode grip cases passed3/3
+in0.2114822s, with unchanged assertions. Normal-speed owner/body capture passed
+1/1 in20.3993265s; owner straight/left/right and court-side right views and
+25percent grey inspected. No active Unity job. Detailed findings and preserved
+failed/native proof: reports/cloud-integration-2026-09-24/throw-clearance/report.md.
+Publish scoped fix and align QUAL, then resume remaining cloud skills/VFX art and
+real gameplay issues. No reset, no broad unchanged verification loop.
+Keep checks bounded. Protected DEV PNG metas untouched.
 
 ## Current priority, 2026-09-24: review the owner's cloud push
 

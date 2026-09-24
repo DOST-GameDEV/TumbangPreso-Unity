@@ -38,15 +38,15 @@ namespace TumbangPreso.CameraSystem
 
         private void ApplyThrowReach()
         {
-            if (!_carrying || _charge < 0 || _rightPivot == null || _leftPivot == null) return;
+            if (!_carrying || _charge < 0 || _rightPivot == null || _leftPivot == null || _rightArm == null) return;
             if (Settings.SettingsStore.Current.ReducedUiMotion) return;
             float weight = Mathf.Clamp01(WorldCueProfile.Current.ViewmodelFraming);
             float p = (1 - Mathf.Exp(-4.5f * Mathf.Clamp01(_charge))) / (1 - Mathf.Exp(-4.5f)) * weight;
             float spin = _chargeSpin, side = Mathf.Abs(spin);
             // Overhand: back, up, to the right edge. Sidearm: low and wide.
             // ⚠️ MEASURED ON SCREEN, NOT GUESSED (`GameplayActionShots` logs hands.csv). The existing charge
-            // cocks the forearm back and pushes the elbow AWAY to keep the hand still, so at full charge the
-            // slipper shrank and went end-on. The draw-back therefore pulls the whole arm clearly CLOSER and up.
+            // cocks the forearm back and pushes the elbow away. The authored arm movement stays,
+            // while the fingertip is re-anchored below so the slipper remains visible and clear of the lens.
             // The off hand started 0.5 of a screen below the bottom edge; it needs this much to be seen.
             var over = new Vector3(.08f, .12f, -.26f);
             // The left roll turns the hand down out of frame, so the left sidearm sits higher (the fifth film).
@@ -68,6 +68,19 @@ namespace TumbangPreso.CameraSystem
             // linearly with it: at full charge it turned the slipper
             // end-on to the lens and it shrank to a sliver (the second film). Pektus keeps its roll instead.
             _rightPivot.localRotation = Quaternion.AngleAxis(-30f * Mathf.Clamp01(_charge) * weight * (1 - side), Vector3.right) * _rightPivot.localRotation;
+            // Rotating the pivot after anchoring the hand swung the held slipper
+            // into the eye (8 cm at a full straight charge). Keep its grip near
+            // the established carry point while the forearm and rolled wrist
+            // make the three windups distinct.
+            var straightGrip = new Vector3(.04f, .06f, -.04f);
+            var curveGrip = spin < 0 ? new Vector3(.07f, .01f, -.02f) : new Vector3(.10f, -.03f, -.02f);
+            Vector3 tremor = _reachRight - Vector3.Lerp(over, sidearm, side) * p;
+            Vector3 wanted = transform.TransformPoint(CarryAnchor + Vector3.Lerp(straightGrip, curveGrip, side) * p + tremor);
+            // The slipper follows Arm, whose own local rotation also changes
+            // during charge. Measure that child's fingertip, not the pivot axis.
+            Vector3 shift = _rightPivot.parent.InverseTransformVector(wanted - _rightArm.TransformPoint(Vector3.up * ArmLength));
+            _rightPivot.localPosition += shift;
+            _reachRight += shift;
             _reachApplied = true;
         }
 
