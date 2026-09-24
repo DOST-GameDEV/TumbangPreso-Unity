@@ -450,6 +450,55 @@ def nemu():
     p.locked((3.4, 2.4, 8.6), (-.9, 2.1, 0), 52)
     return p
 
+
+@performance
+def dante():
+    """
+    TITAN FISSURE, 3.8 s (plan.md section 5). "Holds the difficult space. Refuses to be rushed."
+    Weight is shown by SLOWNESS: he plants, gets under something heavy, stands into it and
+    pushes two stone slabs apart overhead (the divided-mountain image he grew up with, as his
+    own), holds it, loads both fists over his right shoulder and stamps forward into the
+    strike the live fissure continues. Every hold trembles slightly: effort, not stillness.
+    Signs measured on the sheets: +twist brings an arm inward, +torso yaw turns to his right.
+    """
+    p = Performance("dante", 3.8)
+    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
+    plant = Pose(torso=(6, 0, 0), head=(18, 0, 0), left=(8, 24, 0), right=(8, 24, 0),
+                 legs=((2, 14), (-2, 14)))
+    brace = Pose(torso=(22, 0, 0), head=(2, 0, 0), left=(42, 12, 22), right=(42, 12, 22),
+                 legs=((4, 16), (-4, 16)))
+    brace_shake = brace.but(torso=(23, 0, 1.5))
+    # The push: arms up and out, hands clear of his head, chest open, looking up at it.
+    push = Pose(torso=(-6, 0, 0), head=(-12, 0, 0), left=(150, 58, 0), right=(150, 58, 0),
+                legs=((0, 16), (0, 16)))
+    push_shake = push.but(torso=(-6, 0, -1.5), left=(152, 60, 0))
+    # The load: both fists together over his right shoulder, chest turned right.
+    load = Pose(torso=(-4, 22, 0), head=(0, -14, 0), left=(150, 20, 50), right=(150, 20, -8),
+                legs=((8, 12), (-10, 12)))
+    # The stamp: driving forward and down over the front leg.
+    stamp = Pose(torso=(28, -10, 0), head=(-8, 6, 0), left=(72, 6, 30), right=(72, 6, 30),
+                 legs=((22, 10), (-18, 10)))
+
+    p.key(0, rest)
+    p.key(.45, plant).key(.8, plant.but(torso=(7, 0, 0)))
+    p.key(1.12, brace).key(1.25, brace_shake).key(1.38, brace).key(1.48, brace_shake)
+    p.key(1.82, push)
+    for i, t in enumerate((1.95, 2.08, 2.2, 2.32)):
+        p.key(t, push_shake if i % 2 == 0 else push)
+    p.key(2.66, load)
+    p.hold(2.66, 2.98, load)
+    p.key(3.18, stamp, punch=True)
+    p.hold(3.18, 3.8, stamp)
+
+    # A: low and in front, slow, while he plants and gets under the weight.
+    p.shot(0, 1.5, (1.4, .6, 3.8), (0, 1.0, 0), 48, eye_to=(1.15, .58, 3.35))
+    # B: wide and very low, the slabs parting behind him.
+    p.shot(1.5, 2.5, (-1.7, .35, 4.7), (0, 1.45, -1.0), 54, eye_to=(-1.9, .32, 5.0))
+    # C: low front-side for the load and the stamp, the seams running toward the lens.
+    p.shot(2.5, 3.8, (2.5, .6, 3.5), (0, .9, .6), 48, eye_to=(2.2, .55, 3.1))
+    p.locked((1.3, .9, 5.4), (0, 1.2, -1.0), 52)
+    return p
+
 # ----------------------------------------------------------------------------- the 2.8 s baseline
 # The introductions as they shipped before REFINE-2.11, transcribed key for key from the old
 # `HeroAbilityClips.Introductions.cs` (PoseKey arguments: raise = -x, twist = +/-y, spread = z),
