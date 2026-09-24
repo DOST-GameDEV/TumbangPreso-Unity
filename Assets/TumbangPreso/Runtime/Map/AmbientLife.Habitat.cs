@@ -192,7 +192,7 @@ namespace TumbangPreso
                 if(_tailWait<=0){_tailFlick=.65f;_tailWait=_owner.Range(3,8);}
                 _tailFlick=Mathf.Max(0,_tailFlick-dt);
                 float motion=Mathf.Sin((1-_tailFlick/.65f)*Mathf.PI*2)*4;
-                // The tabby's upright silhouette is retained. An occasional
+                // Each cat's authored tail silhouette is retained. An occasional
                 // tip twitch replaces the source clip's uninterrupted idle wag.
                 if(_tailBase!=null)_tailBase.localRotation=Quaternion.Slerp(_tailRest,_tailBase.localRotation,_speed>.05f?.35f:.08f);
                 if(_tailTip!=null)

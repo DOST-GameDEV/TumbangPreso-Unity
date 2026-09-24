@@ -1,21 +1,22 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: second tracked lighting follow-up
+## Current resume, 2026-09-24: Ilalim tuxedo cat
 
 Overall goal ACTIVE, NOT done. DEV and QUAL at published, remote-verified
-81054255e8ce1488995c8c1b842e4d08f60ed7e3. Ilalim patched aspin published: 38 nodes /
-202 links, three ordinary storefront sites plus marking, native 1/1 in 31.565s,
-no retry; actual frames/grey inspected. QUAL byte-verified/stashed/advanced.
+43c851b6f0842f3ffa290b7f7f157d0962341b9b. Latest lighting source 429643416 is
+integrated: selected edge sun plus same-binary look-off native probe; Mac-only
+receipts scoped in TODO. Local five-map native v2 1/1 in 7.056s, actual matched
+same-frame key pairs and grey inspected. One orbit-capture repair only, finished.
+QUAL byte-verified, stashed and advanced. No Unity job active at this intake.
 
-Tracked lighting source 429643416 integrated locally. WorldOutline uses the
-cached selected KeyLight; incoming same-binary look-off native probe and scoped
-Mac receipts retained. Conflicts resolved, Windows performance/contrast/dark-skin
-hull review still open. Native v1 1/1 passed but cross-run camera orbit differed;
-one bounded capture correction produced actual same-frame old/new key pairs.
-V2 session 78470 passed 1/1 in 7.056s, matched five-map colour/grey inspected.
-No more fixture work. Known churn restored; no Unity job/helper active. Publish
-merge, preserve/advance QUAL, then Ilalim tuxedo cat. No intermediate build.
-Preserve original two composition PNG meta dirt files and all old IDs.
+Current REFINE-2.7 unit complete locally: Ilalim tuxedo cat, 53 nodes / 310 links,
+three storefront/pavement sites, own pace/holds, original curled tail retained.
+Native session 89164 passed 1/1 in 33.349s, no retry. Actual before/new, activity/
+watch images, movement frames and grey inspected; timestamped clips retained.
+Known churn restored; no Unity job/helper active. Publish, preserve/advance QUAL,
+then research/inspect perched bird visits per map. All six ground animals have
+individual authoring and local evidence, but REFINE-2.7/map parents stay open.
+Preserve original two composition PNG meta dirt files and all older IDs.
 
 ## Published progress, do not redo
 
@@ -103,3 +104,9 @@ unmatched v1, not causal visual proof. One bounded capture correction: editor-on
 legacy edge-key switch reproduces the old fallback with a portrait sun, then new
 selection renders immediately through the same camera without yielding. Shipping
 player has no switch. Retry 1/1; next v2 same single case, no fixture expansion.
+
+Ilalim cat author completed: 53 nodes / 310 links, Pisonet watch (9.5,3.5),
+bakeryward watch (9.5,9.5), seam investigation (10,3), y0.212. Before the first
+run, movement assertion fitted to its shortest real trip (0.707m), not the other
+cats fixed0.75m threshold. No failure/retry yet; actual successful movement still
+required. Next only this cat native case. No .cs edits while running.

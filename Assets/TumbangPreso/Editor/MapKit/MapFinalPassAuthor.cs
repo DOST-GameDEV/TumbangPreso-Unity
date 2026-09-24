@@ -142,6 +142,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(map=="BayanPlaza")BayanDogHabitatAuthor.FinishLoadedScene(report);
             if(map=="BayanPlaza")BayanCatHabitatAuthor.FinishLoadedScene(report);
             if(map=="IlalimNgTulay")IlalimDogHabitatAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimCatHabitatAuthor.FinishLoadedScene(report);
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }
 
