@@ -107,6 +107,14 @@ namespace TumbangPreso.Visual
         [Range(0,1)] public float CastInkSelf=.88f;
         // The cast's hull width against its authored width.
         [Range(.3f,1)] public float CastInkWidth=.72f;
+        // ⚠️ 0 IS TODAY'S HULL AND THE SHIPPED VALUE, BECAUSE THIS IS AN OWNER TASTE CALL
+        // (docs/TODO.md LIGHT-1.6). Above 0 the hull keeps at least that share of the luminance
+        // of the colour it frames, so dark skin gets a deep brown line instead of near ink.
+        // Every hull darker than the floor moves, not only skin: the first render lifted tan
+        // skin, greys and greens at 0.25 and orange at 0.35, and a blue strap takes a deep blue
+        // line. True black keeps its ink at any floor, because a share of nothing is nothing.
+        // `WorldCourtCueTests.BrightLookDarkHullChoiceCaptures` renders the choice.
+        [Range(0,.6f)] public float CastInkFloor=0;
 
         [Header("Grade")]
         // Colour-protecting saturation lift after the tonemap.

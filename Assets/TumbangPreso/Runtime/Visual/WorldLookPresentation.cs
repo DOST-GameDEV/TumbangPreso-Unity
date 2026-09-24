@@ -31,12 +31,12 @@ namespace TumbangPreso.Visual
         private struct ShaderFrame
         {
             public Camera Camera;public Texture Ramp;public Vector4 Shape,Key,GlassSky,GlassHorizon,Soft;
-            public float Weight,Architecture;
+            public float Weight,Architecture,InkFloor;
         }
         private readonly List<ShaderFrame> _frames=new List<ShaderFrame>();
         private const string RampId="_WorldToonRamp",WeightId="_WorldLookWeight",ShapeId="_WorldLookShape",KeyId="_WorldKeyDirection";
         private const string ArchitectureId="_WorldArchitecture",GlassSkyId="_WorldGlassSky",GlassHorizonId="_WorldGlassHorizon";
-        private const string SoftId="_WorldSoftLight";
+        private const string SoftId="_WorldSoftLight",InkFloorId="_WorldCastInkFloor";
         public static WorldLookPresentation Install(Transform parent,float floor)=>Create(parent,floor,false,null);
         /// <summary>
         /// ⚠️⚠️ THE MAP SELECT AND THE LOBBY SHOW THE LOOK THE MATCH WILL PLAY IN (LIGHT-1.8).
@@ -238,12 +238,14 @@ namespace TumbangPreso.Visual
             if(Current!=this)return;
             _frames.Add(new ShaderFrame{Camera=camera,Ramp=Shader.GetGlobalTexture(RampId),Weight=Shader.GetGlobalFloat(WeightId),
                 Shape=Shader.GetGlobalVector(ShapeId),Key=Shader.GetGlobalVector(KeyId),Architecture=Shader.GetGlobalFloat(ArchitectureId),
-                GlassSky=Shader.GetGlobalVector(GlassSkyId),GlassHorizon=Shader.GetGlobalVector(GlassHorizonId),Soft=Shader.GetGlobalVector(SoftId)});
+                GlassSky=Shader.GetGlobalVector(GlassSkyId),GlassHorizon=Shader.GetGlobalVector(GlassHorizonId),Soft=Shader.GetGlobalVector(SoftId),
+                InkFloor=Shader.GetGlobalFloat(InkFloorId)});
             var profile=WorldLookProfile.Current;
             Shader.SetGlobalFloat(WeightId,HandlesCamera(camera)?_weight:0);
             Shader.SetGlobalTexture(RampId,_ramp);
             Shader.SetGlobalVector(ShapeId,new Vector4(profile.BandEdge,profile.UpperRim,profile.FeetShade,profile.MetalHighlight));
             Shader.SetGlobalVector(SoftId,new Vector4(profile.Softness,profile.Wrap,profile.CastInkSelf,profile.CastInkWidth));
+            Shader.SetGlobalFloat(InkFloorId,profile.CastInkFloor);
             var sun=KeyLight;Vector3 direction=sun!=null?-sun.transform.forward:Vector3.up;
             Shader.SetGlobalVector(KeyId,direction);
             // Use this map's authored sky palette, not a universal blue pane.
@@ -264,6 +266,7 @@ namespace TumbangPreso.Visual
         {
             Shader.SetGlobalTexture(RampId,frame.Ramp);Shader.SetGlobalFloat(WeightId,frame.Weight);
             Shader.SetGlobalVector(ShapeId,frame.Shape);Shader.SetGlobalVector(KeyId,frame.Key);Shader.SetGlobalVector(SoftId,frame.Soft);
+            Shader.SetGlobalFloat(InkFloorId,frame.InkFloor);
             Shader.SetGlobalFloat(ArchitectureId,frame.Architecture);Shader.SetGlobalVector(GlassSkyId,frame.GlassSky);Shader.SetGlobalVector(GlassHorizonId,frame.GlassHorizon);
         }
         public static Color CourtChalk
