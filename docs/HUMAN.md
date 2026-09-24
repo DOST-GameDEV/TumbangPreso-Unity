@@ -255,11 +255,13 @@ Big. Street-corner big. This is the first thing anyone hears.
 
 ## 📋 TABLE E — HERO LINES · each hero's own voice (VOICE-1, 2026-09-24)
 
-The seven heroes speak now, in a **stylised babble** per hero, with the words as an optional
-caption (`tools/generate_hero_voice.py`). **Your recordings are what turn the babble into words.** **A recording replaces the babble by file name, with no code change**:
+**The heroes speak only in the team's own recorded voices** (owner, 2026-09-24, after hearing
+generated voices: *"remove voices u made with ai lets js do humans"*; the stylised babble and the
+synthetic speech were both deleted). Until a line is recorded the hero is silent for it: nothing
+plays, nothing is captioned, nothing holds the room. **A recording plays with no code change**:
 record the line, name it `hvo_<id with dots as underscores>.wav` (the File column), and drop it in
-`Assets/TumbangPreso/Resources/HeroVo/` over the generated one. The generator never overwrites a file it
-did not write. Same spec as above: mono, 48 kHz, 24-bit masters, -6 dBFS peak.
+`Assets/TumbangPreso/Resources/HeroVo/`. Same spec as above: mono, 48 kHz, 24-bit masters, -6 dBFS
+peak.
 
 ⚠️ **If a line is wrong for the character, or the Filipino is off, change it** in
 `Packages/com.tumbangpreso.core/Runtime/HeroLines.cs` (the script the game reads) and here. Keep the

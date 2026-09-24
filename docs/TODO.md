@@ -645,7 +645,13 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
     lengths (2.8 to 4.2 s, cohort takes the longest, protocol 52), authored shots, stage walls,
     lift and voice timing built. Phaister's new performance done at source level (laugh, lift,
     eclipse serpent). Others next, one at a time. Native checks owed to Windows (progress.md).
-- [ ] **VOICE-1 Hero voice lines, owner 2026-09-24. IMPLEMENTED, LISTENING PASS OWED.**
+- [ ] **VOICE-1 Hero voice lines, owner 2026-09-24. OPEN: HUMAN RECORDINGS ONLY, NONE RECORDED YET.**
+  **Owner decision, 2026-09-24 (after hearing a Kokoro/Chatterbox synthetic audition):** *"remove
+  voices u made with ai lets js do humans"*. Every generated clip (the stylised babble and the
+  synthetic speech) and both generators were deleted; `HeroVoice.Play` now skips a line that has no
+  recording (no sound, no caption, no held room). Done looks like: the team records `docs/HUMAN.md`
+  Table E into `Resources/HeroVo/hvo_<id>.wav`, then the listening pass below. The history below is
+  kept as written.
   Owner: *"can u give them all their own voice lines too or with actual audio and connect it to
   their story and personality"*, *"voicelines wherein they interact with each other and voicelines
   related to skills ... use valorant as reference"*. Research and decisions:

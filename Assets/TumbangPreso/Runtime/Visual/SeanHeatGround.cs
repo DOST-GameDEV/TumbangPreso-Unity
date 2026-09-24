@@ -5,10 +5,11 @@ namespace TumbangPreso.Visual
 {
     // Heat follows the travelled lane; the landing leaves a wider burned edge.
     // Neither is a magic inscription or a scaled copy of the carried ember.
-    public sealed class SeanHeatGround : MonoBehaviour
+    public sealed class SeanHeatGround : MonoBehaviour, IVfxTimeline
     {
         private readonly List<Renderer> _parts = new List<Renderer>();
         private readonly List<Color> _colours = new List<Color>();
+        private readonly List<float> _glow = new List<float>();
         private readonly List<Transform> _ribbons = new List<Transform>();
         private readonly List<Vector3> _ribbonSizes = new List<Vector3>();
         private MaterialPropertyBlock _block;
@@ -26,29 +27,43 @@ namespace TumbangPreso.Visual
             int seed = Mathf.RoundToInt(parent.position.x * 137 + parent.position.z * 53);
             var bed = VfxShapes.Lay(visual.transform, "CoolingAsh", crater
                 ? VfxShapes.Splat(36, .09f, seed) : VfxShapes.Streak(.85f, 18, seed), radius * .97f, .014f);
-            effect.Paint(bed, new Color(.15f, .105f, .07f, crater ? .32f : .40f), 0);
+            effect.Paint(bed, new Color(.15f, .105f, .07f, crater ? .32f : .55f), 0);
             VfxShapes.DrapeToGround(bed, .004f);
 
+            // ⚠️⚠️ THE RUSH'S WAKE IS A BRIGHT LINE, NOT A SMUDGE (SKILL-FX-1, 2026-09-24). The first
+            // native stills (`ability_fire_trail_eye_v56.png`) showed a dark ash streak on dark road
+            // with three 20 cm flames at a quarter emission: from eye height the live hazard was
+            // three orange specks. Plan § 3 (Flame Rush) asks for "a clean ribbon of flame tongues
+            // along the ground": an ember CORE down the travelled line, hot at first and cooling
+            // (`StepTo`), is the one primary shape; the tongues stand on it.
+            if (!crater)
+            {
+                var core = VfxShapes.Lay(visual.transform, "EmberCore", VfxShapes.Streak(.16f, 14, seed + 5), radius * .95f, .016f);
+                effect.Paint(core, new Color(1, .62f, .12f, .9f), 1.0f);
+                VfxShapes.DrapeToGround(core, .006f);
+            }
             if (crater)
             {
                 var edge = VfxShapes.Lay(visual.transform, "BrokenHotEdge", Rim(seed), radius, .017f);
                 effect.Paint(edge, new Color(1, .36f, .055f, .70f), .25f);
                 VfxShapes.DrapeToGround(edge, .006f);
             }
-            int count = crater ? 7 : 3;
+            int count = crater ? 7 : 5;
             for (int i = 0; i < count; i++)
             {
                 float angle = i * 137.5f * Mathf.Deg2Rad;
+                // The rush's tongues stand ALONG the travelled line (z), tallest in the middle, so
+                // the wake reads as one direction from any side; two-sided so no angle culls them.
                 var ribbon = VfxShapes.Stand(visual.transform, "HeatRibbon_" + i,
-                    Ribbon(i + seed), radius * (crater ? .24f : .48f),
-                    crater ? .12f + (i % 3) * .025f : .18f + i * .025f,
+                    crater ? Ribbon(i + seed) : VfxShapes.TwoSided(Ribbon(i + seed)), radius * (crater ? .24f : .17f),
+                    crater ? .12f + (i % 3) * .025f : .30f + .12f * Mathf.Sin((i + .5f) / count * Mathf.PI),
                     yaw: crater ? -i * 137.5f : 0);
                 var offset = crater
                     ? new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * radius * (.48f + (i % 3) * .16f)
-                    : new Vector3((i - 1) * radius * .52f, 0, (i % 2 == 0 ? -.10f : .18f) * radius);
+                    : new Vector3((i % 2 == 0 ? -.09f : .09f) * radius, 0, (i - (count - 1) * .5f) * radius * .4f);
                 var ground = VfxShapes.GroundPoint(visual.transform.TransformPoint(offset));
                 ribbon.transform.position = ground + Vector3.up * .012f;
-                effect.Paint(ribbon, new Color(1, .32f + (i % 3) * .075f, .035f, .76f), .25f);
+                effect.Paint(ribbon, new Color(1, .32f + (i % 3) * .075f, .035f, .86f), crater ? .25f : .8f);
                 effect._ribbons.Add(ribbon.transform); effect._ribbonSizes.Add(ribbon.transform.localScale);
             }
         }
@@ -57,7 +72,7 @@ namespace TumbangPreso.Visual
         {
             var renderer = part.GetComponent<Renderer>();
             VfxMaterial.Ghost(renderer, colour, emission);
-            _parts.Add(renderer); _colours.Add(colour);
+            _parts.Add(renderer); _colours.Add(colour); _glow.Add(emission);
         }
 
         // A low sweep with a hooked trailing tip and a folded cross-section.
@@ -106,10 +121,13 @@ namespace TumbangPreso.Visual
             mesh.RecalculateNormals(); mesh.RecalculateBounds(); return mesh;
         }
 
+        public float LifeSeconds => _duration;
         private void Update() => StepTo(_age + Time.deltaTime);
         public void StepTo(float seconds)
         {
             _age = Mathf.Max(0, seconds);
+            // Edit-mode captures (`VfxTimeline.StepAll`) step this without `Awake` ever running.
+            if (_block == null) _block = new MaterialPropertyBlock();
             float cooling = Mathf.Clamp01(_age / Mathf.Max(.01f, _duration));
             float fade = Mathf.Clamp01((_duration - _age) / .55f);
             for (int i = 0; i < _parts.Count; i++)
@@ -117,7 +135,9 @@ namespace TumbangPreso.Visual
                 var colour = Color.Lerp(_colours[i], new Color(.34f, .13f, .035f, _colours[i].a), cooling * .6f);
                 colour.a *= fade;
                 _block.Clear(); _block.SetColor("_Color", colour); _block.SetColor("_BaseColor", colour);
-                _block.SetColor("_EmissionColor", new Color(colour.r, colour.g, colour.b) * (.25f * fade));
+                // Each part keeps the glow it was painted with (the ember core and the tongues burn,
+                // the ash does not), dimming as it cools.
+                _block.SetColor("_EmissionColor", new Color(colour.r, colour.g, colour.b) * (Mathf.Max(.25f, _glow[i]) * (1 - cooling * .5f) * fade));
                 _parts[i].SetPropertyBlock(_block);
             }
             for (int i = 0; i < _ribbons.Count; i++)

@@ -24,9 +24,10 @@ namespace TumbangPreso.Audio
     /// (`CustomCharacterRules.KitFor`) and would otherwise talk in Sean's voice while not being
     /// Sean; `HeroAbilitySystem.SpeaksAsHero` is false for one. Classic has no kits and is silent.
     ///
-    /// ⚠️ THE CLIP IS A RECORDING WHEN THE TEAM HAS MADE ONE. `tools/generate_hero_voice.py` writes
-    /// a stylised babble per line and never overwrites a file it did not write, so a take dropped
-    /// in under the same name (`HeroLines.ClipName`) is what plays, with no code change.
+    /// ⚠️⚠️ EVERY CLIP IS A HUMAN RECORDING OR THERE IS NO CLIP. 🧑 2026-09-24: *"remove voices u
+    /// made with ai lets js do humans"*; the generated babble and speech were deleted. A take
+    /// dropped in under its name (`HeroLines.ClipName`, `docs/HUMAN.md` Table E) plays with no
+    /// code change, and an unrecorded line is skipped (`Play`).
     /// </summary>
     public sealed class HeroVoice : MonoBehaviour
     {
@@ -215,7 +216,13 @@ namespace TumbangPreso.Audio
         private void Play(HeroLine line, Transform speaker, int priority)
         {
             var clip = ClipFor(line);
-            float seconds = clip != null ? clip.length : 1.4f;
+            // ⚠️⚠️ NO RECORDING, NO LINE. 🧑 2026-09-24, after hearing generated voices: *"remove
+            // voices u made with ai lets js do humans"*. Every hero line is the team's own take
+            // (`docs/HUMAN.md` Table E), dropped in as `Resources/HeroVo/hvo_<id>.wav`; a line not
+            // recorded yet says nothing, holds nothing and captions nothing, so the room is not
+            // kept busy by a line nobody hears.
+            if (clip == null) return;
+            float seconds = clip.length;
             _follow = speaker;
             _source.transform.position = speaker.position + Vector3.up * 1.6f;
             _source.Stop();

@@ -67,26 +67,48 @@ namespace TumbangPreso.Visual
                 float worldPerLocalY = root.parent != null ? root.parent.TransformVector(Vector3.up).y : 1;
                 if ((float.IsNaN(floor) || float.IsInfinity(floor)) || Mathf.Abs(worldPerLocalY) < .001f) return;
                 int steps = Mathf.CeilToInt(clip.length * 60);
-                var keys = new Keyframe[steps + 1];
+                // ⚠️⚠️ X, Y AND Z ARE WRITTEN TOGETHER ON THE SAME KEY TIMES. A legacy clip binds
+                // `localPosition.x/y/z` as ONE vector curve; replacing only y with ~200 grounding
+                // keys while x and z kept the table's handful made `SetCurve` assert "Key index
+                // (198) is out of range [0, 198)" on every match's warm-up
+                // (`UltimateIntroductionCache.WarmOne`, 2026-09-24 PlayMode gate: 25 fixtures red,
+                // from the HUD probes to `BotBehaviourProbe`), and left the root sampling NaN
+                // (`RecordedBody-P2`, Zack's `FingerSpark`). x and z are read off the same samples.
+                // Every key is also finite: `Lowest()` is infinite on a sample where no skin has a
+                // vertex, and such a sample keeps the previous support.
+                var keys = new List<Keyframe>(steps + 1);
+                var keysX = new List<Keyframe>(steps + 1); var keysZ = new List<Keyframe>(steps + 1);
+                float last = root.localPosition.y;
                 for (int i = 0; i <= steps; i++)
                 {
                     float time = clip.length * i / steps;
+                    if (keys.Count > 0 && time <= keys[keys.Count - 1].time + 1e-5f) continue;
                     clip.SampleAnimation(model.gameObject, time);
-                    float local = root.localPosition.y + (floor - Lowest()) / worldPerLocalY;
+                    float low = Lowest();
+                    float local = float.IsNaN(low) || float.IsInfinity(low)
+                        ? last : root.localPosition.y + (floor - low) / worldPerLocalY;
+                    last = local;
                     // ⚠️ AUTHORED LIFT IS ADDED AFTER THE FLOOR IS FOUND, so a performance that
                     // leaves the ground on purpose (Phaister's laughing levitation, REFINE-2.11)
                     // rises from wherever her feet really were rather than being pulled back down.
                     if (lift != null) local += lift(time) / worldPerLocalY;
-                    keys[i] = new Keyframe(time, local);
+                    if (float.IsNaN(local) || float.IsInfinity(local)) continue;
+                    keys.Add(new Keyframe(time, local));
+                    keysX.Add(new Keyframe(time, root.localPosition.x));
+                    keysZ.Add(new Keyframe(time, root.localPosition.z));
                 }
-                for (int i = 0; i < keys.Length; i++)
-                {
-                    var key = keys[i];
-                    key.inTangent = i == 0 ? 0 : (key.value - keys[i-1].value) / (key.time - keys[i-1].time);
-                    key.outTangent = i + 1 == keys.Length ? 0 : (keys[i+1].value - key.value) / (keys[i+1].time - key.time);
-                    keys[i] = key;
-                }
-                clip.SetCurve(rootPath, typeof(Transform), "localPosition.y", new AnimationCurve(keys));
+                if (keys.Count < 2) return;
+                foreach (var list in new[] { keysX, keys, keysZ })
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        var key = list[i];
+                        key.inTangent = i == 0 ? 0 : (key.value - list[i-1].value) / (key.time - list[i-1].time);
+                        key.outTangent = i + 1 == list.Count ? 0 : (list[i+1].value - key.value) / (list[i+1].time - key.time);
+                        list[i] = key;
+                    }
+                clip.SetCurve(rootPath, typeof(Transform), "localPosition.x", new AnimationCurve(keysX.ToArray()));
+                clip.SetCurve(rootPath, typeof(Transform), "localPosition.y", new AnimationCurve(keys.ToArray()));
+                clip.SetCurve(rootPath, typeof(Transform), "localPosition.z", new AnimationCurve(keysZ.ToArray()));
             }
             finally
             {

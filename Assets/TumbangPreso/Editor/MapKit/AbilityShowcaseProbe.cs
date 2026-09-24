@@ -89,7 +89,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static bool _gateBlowout;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v56";
+        private const string Version = "v59";
 
         [MenuItem("Tumbang Preso/Capture Ability Showcase")]
         public static void RunFromMenu() => Execute();

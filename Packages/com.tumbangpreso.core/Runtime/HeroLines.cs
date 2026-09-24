@@ -70,9 +70,9 @@ namespace TumbangPreso.Core
     /// common (tara, sige, ayos, tumbang, taya, grabe, hala) and `docs/HUMAN.md` asks the team to
     /// correct any that sound wrong.
     ///
-    /// ⚠️ THE IDS ARE FILE NAMES. `tools/generate_hero_voice.py` reads this file as text and writes
-    /// one clip per id; a recorded take dropped in under the same name replaces the voice with no
-    /// code change. Add lines with new ids; never renumber one.
+    /// ⚠️ THE IDS ARE FILE NAMES. The team records one take per id (`docs/HUMAN.md` Table E) and a
+    /// take dropped in under its name plays with no code change; there are no generated voices
+    /// (owner, 2026-09-24). Add lines with new ids; never renumber one, or a recording goes silent.
     /// </summary>
     public static class HeroLines
     {

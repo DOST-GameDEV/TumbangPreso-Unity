@@ -2840,20 +2840,32 @@ namespace TumbangPreso.Abilities
             private static Mesh CurtainMesh()
             {
                 if (_curtainMesh != null) return _curtainMesh;
-                const int sides = 64;
-                var vertices = new Vector3[(sides + 1) * 2]; var triangles = new int[sides * 12];
+                // ⚠️⚠️ TWO SHEETS, NOT ONE SHEET WOUND BOTH WAYS. The first version shared each
+                // vertex between the outward and the inward triangle, so `RecalculateNormals`
+                // averaged opposite faces to a ZERO normal and the whole wall lit pure black: the
+                // first native still (`ability_coven_eclipse_eye_v56.png`, 2026-09-24) showed an
+                // opaque black ring standing round the circle instead of a luminous curtain. Each
+                // side now owns its vertices and its normal (out on the outer sheet, in on the inner).
+                const int sides = 64, ring = (sides + 1) * 2;
+                var vertices = new Vector3[ring * 2]; var normals = new Vector3[ring * 2];
+                var triangles = new int[sides * 12];
                 for (int i = 0; i <= sides; i++)
                 {
                     float a = i * Mathf.PI * 2 / sides;
                     var rim = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
-                    vertices[i * 2] = rim; vertices[i * 2 + 1] = rim + Vector3.up;
+                    for (int side = 0; side < 2; side++)
+                    {
+                        int v = side * ring + i * 2;
+                        vertices[v] = rim; vertices[v + 1] = rim + Vector3.up;
+                        normals[v] = normals[v + 1] = side == 0 ? rim : -rim;
+                    }
                     if (i == sides) continue;
-                    int n = i * 2, t = i * 12;
-                    int[] faces = { n, n + 1, n + 2, n + 2, n + 1, n + 3, n, n + 2, n + 1, n + 2, n + 3, n + 1 };
+                    int n = i * 2, m = ring + i * 2, t = i * 12;
+                    int[] faces = { n, n + 1, n + 2, n + 2, n + 1, n + 3, m, m + 2, m + 1, m + 2, m + 3, m + 1 };
                     for (int k = 0; k < 12; k++) triangles[t + k] = faces[k];
                 }
-                _curtainMesh = new Mesh { name = "Coven curtain", vertices = vertices, triangles = triangles };
-                _curtainMesh.RecalculateNormals(); _curtainMesh.RecalculateBounds();
+                _curtainMesh = new Mesh { name = "Coven curtain", vertices = vertices, normals = normals, triangles = triangles };
+                _curtainMesh.RecalculateBounds();
                 return _curtainMesh;
             }
 

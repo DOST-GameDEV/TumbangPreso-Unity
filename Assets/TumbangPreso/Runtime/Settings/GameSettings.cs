@@ -297,9 +297,8 @@ namespace TumbangPreso.Settings
         public bool LargerText = false;
         public bool CalloutCaptions = false;
         /// <summary>⚠️ OFF BY DEFAULT, LIKE THE ANNOUNCER'S, BECAUSE `docs/VISION.md` § 3 SAYS *"the
-        /// in-match HUD carries no sentences"*. Until the team records them the hero voices are a
-        /// stylised babble (`tools/generate_hero_voice.py`) whose tone and rhythm carry the
-        /// character and the moment; this shows the words for whoever wants them.</summary>
+        /// in-match HUD carries no sentences"*. It shows the words of a recorded hero line for whoever
+        /// wants them; a line the team has not recorded yet is never captioned (`HeroVoice.Play`).</summary>
         public bool HeroLineCaptions = false;
         public bool ReducedEffects = false;
         public bool HighContrastHud = false;
