@@ -653,7 +653,7 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
   HUMAN.md treats voice casting as scored team work. **Owed on Windows:** a four-hero Hero Strike
   match listened to from a thrower and from the taya (the two ultimate readings), the round-one
   exchange, the announcer hand-off, and the caption row at 4:3 and on a phone.
-- [ ] **SKILL-FX-1 Every skill's VFX, SFX and cast animation, owner 2026-09-24. OPEN, after REFINE-2.11.**
+- [ ] **SKILL-FX-1 Every skill's VFX, SFX and cast animation, owner 2026-09-24. IN PROGRESS.** Done 2026-09-24 (evidence in `docs/reports/skill-performances-2026-09-24/progress.md`): research and the per-skill plan; Grand Coven's cast, first-person path and circle; the cast-sheet audit and eleven body clips re-authored under an enforced head-pitch bound; one first-person hand path per cast (21); code-driven verbs checked. Still open: the other twenty skills' world VFX and cast SFX, which need `AbilityShowcaseProbe` stills on a Unity machine, one skill at a time against plan section 3.
   Owner: *"refine all their skills VFX SFX and animation and everything too. THOROUGHLY research how
   other games that are good in roblox and or actual games like valorant or overwatch make skill
   effects and try to author one that works in our world"*, and *"REFINE ANY OTHER ANIMATION THAT CAN

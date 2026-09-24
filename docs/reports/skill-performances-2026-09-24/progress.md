@@ -67,3 +67,19 @@ keeps its path; Crosscurrent is the off-hand cut, Mirrorwake a sell and cut back
 hip-to-side release. Timings (contact and end) are unchanged. Evidence: `sheets/fpp-cast-paths_v1.png`,
 the two hands' offset paths projected into a 16:9 frame (schematic: pivot offsets only, not the clip
 rotations under them). Engine view NOT seen; owed on Windows through `CastAndMotionReel`.
+
+## Code-driven verbs checked against the same bound (2026-09-24)
+
+`CharacterAnimator.ThrowBody` (lean -6 to +16, head counter-pitched by half), `TagBody` (16, the lunge
+34, head counter-pitched by 0.7 so the face stays up) and `ResetRaise` (a bow with the head at 0.35
+against it) all keep the head within the silhouette bound the cast tables now enforce. No change made.
+The procedural hero clips left in `HeroAbilityClips.cs` are fallbacks that every Hero Strike rig
+overrides by name with its authored glb clip, so they are not what plays.
+
+## What is still owed and why (read before the next pass)
+
+The world VFX and cast SFX of the other twenty skills (plan section 3) were NOT changed in this pass.
+Their current source carries owner-reviewed decisions (the Hex that deliberately does not rotate, the
+Blink ends that deliberately differ), and changing a look nobody here can see risks undoing one of them.
+They need a machine with Unity: `AbilityShowcaseProbe` stills of each skill before and after, one skill
+at a time, against plan section 3 and the research table in section 1.
