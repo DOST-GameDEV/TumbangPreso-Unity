@@ -204,6 +204,11 @@ cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 pass
 
 ### KANTO-1 · Sample map: a city park block modelled in Blender ⚠️ OPEN, 2026-09-24
 
+**Read [KANTO_DESIGN_GUIDE.md](KANTO_DESIGN_GUIDE.md) first**: every owner decision on style,
+models, textures, foliage and layout. ⚠️ **Next step (owner): "i want the map in full in blender
+first before finalizing in unity"**: assemble `ArtSource/kanto/kanto_city.blend` and iterate
+there before re-exporting (guide § 8).
+
 A style study the owner directed, from Tiny Talisman's "Stylized Modern City", PEAK and
 Brainchild's cartoon towns. **Not registered**: it is not in `SceneFlow.Maps`, `GameLaunch`,
 `MapGeometryCheck.Gated` or the build settings, so no shipped list or test sees it. Open

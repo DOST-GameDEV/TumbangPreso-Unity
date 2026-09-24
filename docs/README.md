@@ -67,6 +67,7 @@ reactivate work. Preserve their history and record the current replacement/reaso
 
 | File | Status | What it is |
 |---|---|---|
+| [`KANTO_DESIGN_GUIDE.md`](KANTO_DESIGN_GUIDE.md) | Active (KANTO-1) | The Kanto sample map: every owner decision on style, Blender models, textures, foliage, layout and pipeline. Read before touching Kanto. |
 | [`MAP_FINAL_PASS.md`](MAP_FINAL_PASS.md) | Active (152.4) | Map final pass, reactivated 2026-09-21. Resume from current source and evidence. |
 | [`MAP_TRANSFORMATION_PLAN.md`](MAP_TRANSFORMATION_PLAN.md) | Active (152.4) | The 2026-09-12 map transformation: Filipino architecture, shops, signs, paving, town context. |
 | [`OWNER_PLAYTEST_REVISION.md`](OWNER_PLAYTEST_REVISION.md) | Active (152.4) | Owner playtest corrections of 2026-09-13: rooftop pool, swimming, throwing. |
