@@ -338,8 +338,9 @@ class Buf:
         self.bm.free()
         for m in self.mats:
             mesh.materials.append(material(m))
+        flat = getattr(self, "flat", False)   # faceted wood: every face lit on its own
         for p in mesh.polygons:
-            p.use_smooth = True
+            p.use_smooth = not flat
         if self.foliage:
             # ROUNDED FOLIAGE NORMALS. Every card's normal points away from the centre of the
             # clump it belongs to, so a clump of flat cards shades like one soft ball: lit on

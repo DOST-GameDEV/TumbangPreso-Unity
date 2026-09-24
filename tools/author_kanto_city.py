@@ -979,7 +979,7 @@ def skin_wood(buf, nodes, edges, radii, mat, root=0, levels=2):
     bpy.data.meshes.remove(baked)
 
 
-def limb_tube(buf, pts, radii, mat, sides=12, phase=0.0):
+def limb_tube(buf, pts, radii, mat, sides=12, phase=0.0, wobble=0.0, rng=None):
     """One limb as its own tapered tube, with its OWN cylindrical UVs: u runs round the limb
     (a whole number of texture tiles, so the wrap has no seam), v runs along it by length.
     Owner, review v17: the skinned tree's shared around-the-axis map smeared the bark along
@@ -1008,8 +1008,10 @@ def limb_tube(buf, pts, radii, mat, sides=12, phase=0.0):
         d = (pts[min(i + 1, len(pts) - 1)] - pts[max(i - 1, 0)]).normalized()
         q = d.to_track_quat("Z", "Y").to_matrix() if q is None else prev_d.rotation_difference(d).to_matrix() @ q
         prev_d = d
-        rings.append([buf.bm.verts.new(p + q @ Vector((math.cos(a) * radii[i], math.sin(a) * radii[i], 0)))
-                      for a in (phase + k * math.tau / sides for k in range(sides))])
+        # A hand-cut wobble per vertex (never on the end rings, so joints stay closed).
+        jig = [1.0 + (rng.uniform(-wobble, wobble) if rng and 0 < i < len(pts) - 1 else 0.0) for _ in range(sides)]
+        rings.append([buf.bm.verts.new(p + q @ Vector((math.cos(a) * radii[i] * j, math.sin(a) * radii[i] * j, 0)))
+                      for a, j in zip((phase + k * math.tau / sides for k in range(sides)), jig)])
     for i in range(len(rings) - 1):
         for k in range(sides):
             f = buf.bm.faces.new((rings[i][k], rings[i][(k + 1) % sides], rings[i + 1][(k + 1) % sides], rings[i + 1][k]))
@@ -1024,7 +1026,7 @@ def limb_tube(buf, pts, radii, mat, sides=12, phase=0.0):
             loop[uv].uv = (0.5, 0.5)
 
 
-def segmented_wood(buf, sk, mat):
+def segmented_wood(buf, sk, mat, rng=None):
     """The skeleton as SEGMENTS: the trunk and each branch are separate tubes. A branch starts
     at its parent's node, so it grows out of the wood it leaves; a small ball at each fork
     rounds the joint."""
@@ -1040,17 +1042,27 @@ def segmented_wood(buf, sk, mat):
         end = chain[-1]
         for c in kids.get(end, []):
             starts.append((c, end))
-        if len(kids.get(end, [])) > 1:
-            r = sk.radii[end]
-            buf.blob(tuple(sk.nodes[end]), (r * 1.02, r * 1.02, r * 1.1), mat, subdiv=3)   # smooth, no jagged ring
+        # (No ball at the fork: its UVs were all zero and it drew a pale jagged ring, review v27.
+        # The branches start inside the trunk's top instead.)
         radii = [sk.radii[i] for i in chain]
         pts = [sk.nodes[i].copy() for i in chain]
+        if len(kids.get(end, [])) > 1:
+            # Taper INTO the branches: a trunk top wider than the branch bases showed as a
+            # collar round the fork (faceted review v4).
+            radii[-1] *= 0.92
         if parent is not None:
             # Start INSIDE the parent (a little back along the branch), as thick as the branch,
             # and turned half a facet, so no vertex lands on the parent's and gets welded.
-            radii[0] = radii[1] * 1.05
-            pts[0] = pts[0] - (pts[1] - pts[0]).normalized() * sk.radii[chain[0]] * 0.6
-        limb_tube(buf, pts, radii, mat, phase=0.0 if parent is None else math.pi / 12)
+            # Sink the base 1.8 parent radii back INTO the parent, so the joint is buried in the
+            # trunk's top rather than showing as a collar or a waist (faceted reviews v4, v5).
+            radii[0] = min(radii[1] * 0.95, sk.radii[chain[0]] * 0.75)
+            pts[0] = pts[0] - Vector((0, 0, sk.radii[chain[0]] * 1.6))
+        # POLYGONAL WOOD (owner, review v27: "switching to a more polygonal tree trunk design
+        # instead of a cylindrical one"): 7 flat faces on the trunk, 5 on branches, flat shaded,
+        # each face a few per cent off round, so every facet catches the light on its own.
+        trunk_piece = parent is None
+        limb_tube(buf, pts, radii, mat, sides=7 if trunk_piece else 5,
+                  phase=0.0 if trunk_piece else math.pi / 5, wobble=0.07, rng=rng)
 
 
 class Skeleton:
@@ -1114,6 +1126,7 @@ def tree(name, style, seed, tint="", trunk="trunk", s=1.0):
     rng = random.Random(seed)
     wood, leaves = K.Buf("trunk"), K.Buf("foliage", foliage=True)
     wood.uv_mode = "keep"   # limb_tube writes each limb's own UVs
+    wood.flat = True
     clumps = []   # (centre, radii)
     sk = Skeleton()
     lean = Vector((rng.uniform(-1, 1), rng.uniform(-1, 1), 0)).normalized() * s
@@ -1167,7 +1180,7 @@ def tree(name, style, seed, tint="", trunk="trunk", s=1.0):
         _curve(sk, top, P, P + Vector((0, 0, 0.7 * s)), P + Vector((0, 0, 1.5 * s)), rt * 0.7, 0.04 * s)
         cs = {"round": 1.55, "broad": 1.5, "lean": 1.25}[style] * s
         clumps.append((P + Vector((0, 0, 2.0 * s)), (cs, cs, cs * 0.8)))
-    segmented_wood(wood, sk, trunk)
+    segmented_wood(wood, sk, trunk, rng)
     for c, r in clumps:
         K.foliage(leaves, c, r, int(520 * r[0] * r[1]), 0.34 * s, rng, lift=0.3, spread=0.45, tint=tint)
     wood.finish(col, bevel=0)   # already round; a bevel would only crease the skinned surface
@@ -2197,7 +2210,7 @@ def city_cameras(scene, col):
 
 def assemble():
     """ArtSource/kanto/kanto_city.blend: every model built ONCE, textured, into its own
-    collection under 'Kit' (excluded from the view layer), and placed as COLLECTION INSTANCES
+    collection under 'Kit' (excluded from the view layer), and placed as LINKED DUPLICATES
     from the same PLACE list the Unity layout JSON is written from. So what is reviewed here
     is exactly what the export places. The ground, markings and wires are unique pieces and
     are linked in directly; chalk, the horizon ring, sun, sky, fog and review cameras too."""
@@ -2228,11 +2241,21 @@ def assemble():
         if name in ("ground", "wires"):
             continue
         g = "Buildings" if name in BUILDING_KINDS else "Park" if name in PARK_KINDS else "Street"
+        # EDITABLE PLACEMENTS (owner: "can you fix this whole map so im actually able to edit
+        # meshes?"). A collection instance cannot enter Edit Mode, so each placement is an
+        # empty carrying LINKED DUPLICATES of the model's objects: real mesh objects that share
+        # one mesh per part. Click any piece, Tab, edit, and every copy of that model follows.
         o = bpy.data.objects.new(f"{name}.{i:03d}", None)
-        o.instance_type, o.instance_collection = "COLLECTION", kits[name]
         o.location, o.rotation_euler, o.scale = at, (0, 0, rot), (sc, sc, sc)
         o.empty_display_size = 0.5
         groups[g].objects.link(o)
+        for src in kits[name].all_objects:
+            dup = src.copy()            # shares src.data: a linked duplicate
+            dup.name = f"{name}.{i:03d} {src.name.split('.')[0]}"
+            dup.parent = o
+            dup.matrix_parent_inverse.identity()
+            dup.matrix_basis = src.matrix_world.copy()
+            groups[g].objects.link(dup)
         placed += 1
     ground_col = ground()
     root.children.unlink(ground_col)
