@@ -223,6 +223,9 @@ GROUPS = [
         "SkillReceiptTests",
         "RafiExpansionProbe",
         "SpectatorExchangeTests",
+        # Placed 2026-09-24: both load an arena (Eskinita for the bot's chase clock, the Lagoon
+        # for its swim-and-climb recovery) and run bodies inside it.
+        "AiReactionTimingTests", "LagoonRecoveryProbe",
     ]),
 
     ("capture", """
@@ -241,6 +244,8 @@ GROUPS = [
         "SlipperRecallShots",
         # These three own continuous render/camera capture routes.
         "BusyExchangeProbe", "ThrowCancellationProbe", "UltimateIntroductionProbe",
+        # Placed 2026-09-24: it photographs the HUD icon sheet, a camera-replacing capture.
+        "HudIconSheetShots",
     ]),
 
     ("services", """
@@ -294,6 +299,12 @@ def discover_fixtures():
             name = m.group(1)
             # An abstract base carries no cases of its own.
             if re.search(rf"abstract\s+class\s+{name}\b", text):
+                continue
+            # ⚠️ A MonoBehaviour declared inside a fixture file (`WorldCourtCueTests`'
+            # `AcceptedPhaseWitness` and `ReleaseFramePump`) is a component the fixture adds to a
+            # GameObject, not a fixture: NUnit never runs it, so asking for it in a group made
+            # `--plan` refuse a partition that was complete.
+            if re.search(rf"class\s+{name}\s*:\s*MonoBehaviour\b", text):
                 continue
             found.setdefault(name, path.name)
 
