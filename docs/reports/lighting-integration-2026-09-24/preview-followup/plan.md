@@ -17,3 +17,12 @@ does not overwrite that new scene's ambient/fog. One focused run, exact XML and
 actual image/grey review; one fixture repair allowance, zero used. No broad suite,
 unchanged shop/card rerun or intermediate build. Resume Bayan ginger cat after
 this requested branch integration. Animal/map/gameplay parents remain open.
+
+Second source advance: 429643416 adds a public selected KeyLight for screen-space
+edges, replacing their ambiguous menu fallback. Port to our cached explicit sun,
+not the other branch's duplicate backing fields. Keep same-binary look-off native
+probe and its Mac-only receipts. One focused five-map case asserts the rendered
+edge material vector with an unrelated portrait light present. Prior qualified
+HDR views are the same-camera baseline; moving ambient content/time may differ,
+so this is visual review, not an isolated pixel-difference measurement. No new
+camera fixture or intermediate native build. Resume tuxedo cat afterward.

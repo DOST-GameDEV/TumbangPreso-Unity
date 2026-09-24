@@ -1,19 +1,21 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Ilalim patched aspin
+## Current resume, 2026-09-24: second tracked lighting follow-up
 
 Overall goal ACTIVE, NOT done. DEV and QUAL at published, remote-verified
-2bcfd05812be9221ddbebb205e88352e696986de. Bayan ginger cat published: 108 nodes /
-773 links, three paving/watch sites, own pace/holds, native 1/1 in 32.114s, no retry;
-actual before/new/activity/watch frames and grey inspected. QUAL byte-verified,
-named stash preserved and advanced. No Unity job active at this intake.
+81054255e8ce1488995c8c1b842e4d08f60ed7e3. Ilalim patched aspin published: 38 nodes /
+202 links, three ordinary storefront sites plus marking, native 1/1 in 31.565s,
+no retry; actual frames/grey inspected. QUAL byte-verified/stashed/advanced.
 
-Current REFINE-2.7 unit complete locally: Ilalim patched aspin, 38 supported
-nodes / 202 links, three ordinary storefront/pavement sites plus rare marking.
-Native session 39622 passed 1/1 in 31.565s, no fixture retry. Actual before/new,
-investigation, movement frames and grey inspected; timestamped clips retained.
-Known churn restored; no Unity job/helper active. Publish, preserve/advance QUAL,
-then Ilalim tuxedo cat. Preserve original two composition PNG meta dirt files.
+Tracked lighting source 429643416 integrated locally. WorldOutline uses the
+cached selected KeyLight; incoming same-binary look-off native probe and scoped
+Mac receipts retained. Conflicts resolved, Windows performance/contrast/dark-skin
+hull review still open. Native v1 1/1 passed but cross-run camera orbit differed;
+one bounded capture correction produced actual same-frame old/new key pairs.
+V2 session 78470 passed 1/1 in 7.056s, matched five-map colour/grey inspected.
+No more fixture work. Known churn restored; no Unity job/helper active. Publish
+merge, preserve/advance QUAL, then Ilalim tuxedo cat. No intermediate build.
+Preserve original two composition PNG meta dirt files and all old IDs.
 
 ## Published progress, do not redo
 
@@ -94,3 +96,10 @@ ported HDR target, surviving root/sun choice, active-scene handback guard. Incom
 five-map case now also captures same-camera LDR/HDR and asserts new-scene settings
 survive preview destruction. Next focused run with existing cached-map lift case
 (two cases total). Stop on XML and actual colour/grey review; retry 0/1.
+
+Edge-key v1 passed 1/1 in 8.235s, but cross-run image comparison was NOT camera
+matched because preview idle orbit advanced differently. Images retained as
+unmatched v1, not causal visual proof. One bounded capture correction: editor-only
+legacy edge-key switch reproduces the old fallback with a portrait sun, then new
+selection renders immediately through the same camera without yielding. Shipping
+player has no switch. Retry 1/1; next v2 same single case, no fixture expansion.

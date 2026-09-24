@@ -25,6 +25,8 @@ namespace TumbangPreso.PlayTests
             StageWeights(1);
             var menu=new GameObject("Menu UI camera stand-in"){tag="MainCamera"}.AddComponent<Camera>();
             menu.cullingMask=0;menu.clearFlags=CameraClearFlags.Depth;
+            var portrait=new GameObject("Unrelated portrait key").AddComponent<Light>();
+            portrait.type=LightType.Directional;portrait.transform.rotation=Quaternion.Euler(12,147,0);portrait.intensity=0;
             var root=new GameObject("Bright look preview",typeof(RectTransform),typeof(RawImage));
             var preview=root.AddComponent<MapPreviewSurface>();
             string shown=null;preview.MapShown+=map=>shown=map;
@@ -49,6 +51,7 @@ namespace TumbangPreso.PlayTests
                     var main=Camera.main;Assert.IsNotNull(main);Assert.AreNotSame(preview.Camera,main);
                     Assert.IsFalse(WorldLookPresentation.HandlesCamera(main),map+": the menu's main camera was graded");
                     var sun=PreviewSun(map);Assert.IsNotNull(sun,map+" has no shadow-casting sun");
+                    Assert.AreSame(sun,look.KeyLight,map+": selected look used another scene's key");
                     if(!authored.ContainsKey(map))
                     {
                         // Weight 0 is the scene's own lighting, so this is the authored sun.
@@ -74,7 +77,19 @@ namespace TumbangPreso.PlayTests
                     if(SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.DefaultHDR))
                         Assert.AreNotEqual(RenderTextureFormat.ARGB32,preview.Camera.targetTexture.format,"Preview highlights were clipped to an LDR target");
                     SavePreview(preview.Camera,"preview-"+map+"-before-LDR",true);
+                    var outline=preview.Camera.GetComponent<WorldOutline>();Assert.IsNotNull(outline);
+                    var previousSun=RenderSettings.sun;
+                    try
+                    {
+                        RenderSettings.sun=portrait;outline.LegacyKeyForReview=true;
+                        SavePreview(preview.Camera,"preview-"+map+"-before-key");
+                    }
+                    finally{RenderSettings.sun=previousSun;outline.LegacyKeyForReview=false;}
                     SavePreview(preview.Camera,"preview-"+map);
+                    var material=(Material)typeof(WorldOutline).GetField("_material",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(outline);
+                    Assert.IsNotNull(material,"Native edge material was not rendered");
+                    var expected=preview.Camera.worldToCameraMatrix.MultiplyVector(-sun.transform.forward).normalized;
+                    Assert.Less(Vector3.Distance(expected,(Vector3)material.GetVector("_PeakSunView")),.001f,map+": edges used the portrait or a stale map light");
                     report.AppendLine(System.FormattableString.Invariant(
                         $"{map},{look.Floor:F3},{preview.Pivot.y:F3},{RenderSettings.fogEndDistance:F1},{sun.intensity:F3},{grade!=null && grade.BloomLive},{preview.Camera.targetTexture.format}"));
                     previous=map;
@@ -95,7 +110,7 @@ namespace TumbangPreso.PlayTests
             }
             finally
             {
-                if(root!=null)Object.Destroy(root);Object.Destroy(menu.gameObject);
+                if(root!=null)Object.Destroy(root);Object.Destroy(menu.gameObject);Object.Destroy(portrait.gameObject);
                 if(handbackScene.IsValid()&&handbackScene.isLoaded)
                 {if(priorActive.IsValid()&&priorActive.isLoaded)SceneManager.SetActiveScene(priorActive);SceneManager.UnloadSceneAsync(handbackScene);}
                 System.IO.Directory.CreateDirectory(Output);

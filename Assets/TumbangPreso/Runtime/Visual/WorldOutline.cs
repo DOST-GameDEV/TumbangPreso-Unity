@@ -909,10 +909,18 @@ namespace TumbangPreso.Visual
         /// </summary>
         // ⚠️⚠️ § THE BRIGHT LOOK'S EDGES. Only a camera the map's world look owns trades the
         // black ink for PEAK-style edges (see the shader's note of the same name), and it does so
-        // by the look's own weight, so WorldLighting 0 is the old ink exactly. A menu portrait or
-        // map preview that happens to carry this component keeps its ink.
+        // by the look's own weight, so WorldLighting 0 is the old ink exactly. A menu portrait
+        // that happens to carry this component keeps its ink. The map preview wears these edges
+        // since LIGHT-1.8, because its camera is tagged WorldLookCamera, and its sun is the
+        // preview's own through KeyLight rather than SkyEvent.RecordedSun, whose menu fallback is
+        // the first active directional light and can be the portrait's key.
         private static readonly int PeakEdgeId = Shader.PropertyToID("_PeakEdge");
         private static readonly int PeakSunViewId = Shader.PropertyToID("_PeakSunView");
+#if UNITY_EDITOR
+        // Native review only: reproduce the old ambiguous menu key in the same
+        // camera frame. This switch does not exist in a built player.
+        [System.NonSerialized] public bool LegacyKeyForReview;
+#endif
         private static readonly int PeakShadeId = Shader.PropertyToID("_PeakShade");
         private static readonly int PeakLightId = Shader.PropertyToID("_PeakLight");
         private void ApplyBrightLookEdges()
@@ -922,7 +930,10 @@ namespace TumbangPreso.Visual
             var profile=WorldLookProfile.Current;
             _material.SetVector(PeakEdgeId,new Vector4(profile.SilhouetteShade,profile.EdgeHighlight,profile.CreaseShade,weight));
             if(weight<=0)return;
-            var sun=SkyEvent.RecordedSun;
+            var sun=look.KeyLight;
+#if UNITY_EDITOR
+            if(LegacyKeyForReview)sun=SkyEvent.RecordedSun;
+#endif
             Vector3 toLight=sun!=null?-sun.transform.forward:Vector3.up;
             _material.SetVector(PeakSunViewId,_camera.worldToCameraMatrix.MultiplyVector(toLight).normalized);
             _material.SetColor(PeakShadeId,look.Look.ShadowTint);

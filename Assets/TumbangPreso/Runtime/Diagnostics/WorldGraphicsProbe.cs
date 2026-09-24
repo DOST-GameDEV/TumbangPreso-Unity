@@ -46,7 +46,14 @@ namespace TumbangPreso.Diagnostics
         }
         private IEnumerator Run()
         {
-            var report=new StringBuilder("map,quality,samples,mean_player_frame_ms,p95_player_frame_ms,mean_draw_calls,mean_triangles,mean_setpass,mesh_renderers,static_batched_renderers,unique_materials,world_width,world_height\n");
+            const string Header="map,quality,samples,mean_player_frame_ms,p95_player_frame_ms,mean_draw_calls,mean_triangles,mean_setpass,mesh_renderers,static_batched_renderers,unique_materials,world_width,world_height\n";
+            var report=new StringBuilder(Header);
+            // ⚠️ THE SAME FRAME WITH THE BRIGHT LOOK OFF, IN ITS OWN FILE. LIGHT-1.9 asks what the
+            // look's bloom and coloured edges cost, and a baseline from another build is a
+            // different binary on a different day. WorldLighting 0 is the scene's own lighting,
+            // no bloom and the ink edges. It stays out of world-render.csv because
+            // tools/graphics_review.py requires exactly one row per map and quality.
+            var lookOff=new StringBuilder(Header);
             var materials=new StringBuilder("map,shader,renderers,material_slots,unique_materials,static_batched_renderers\n");
             // Declare the whole registry before sampling. The runner verifies the
             // exact matrix, including the lagoon, rather than an obsolete12rows.
@@ -90,17 +97,8 @@ namespace TumbangPreso.Diagnostics
                         {
                             GraphicsProfiles.Apply(quality);QualitySettings.vSyncCount=0;Application.targetFrameRate=-1;
                             for(int warm=0;warm<30;warm++)yield return null;
-                            using var draws=ProfilerRecorder.StartNew(ProfilerCategory.Render,"Draw Calls Count",1);
-                            using var tris=ProfilerRecorder.StartNew(ProfilerCategory.Render,"Triangles Count",1);
-                            using var passes=ProfilerRecorder.StartNew(ProfilerCategory.Render,"SetPass Calls Count",1);
-                            var times=new float[120];long draw=0,triangles=0,setpass=0;
-                            for(int sample=0;sample<times.Length;sample++)
-                            {
-                                yield return null;times[sample]=Time.unscaledDeltaTime*1000;
-                                if(draws.Valid)draw+=draws.LastValue;if(tris.Valid)triangles+=tris.LastValue;if(passes.Valid)setpass+=passes.LastValue;
-                            }
-                            float mean=times.Average();Array.Sort(times);float p95=times[(int)(times.Length*.95f)-1];
-                            report.AppendLine(FormattableString.Invariant($"{map},{GraphicsProfiles.Of(quality).Label},120,{mean:F3},{p95:F3},{(draw>0?draw/120d:-1):F1},{(triangles>0?triangles/120d:-1):F0},{(setpass>0?setpass/120d:-1):F1},{renderers.Length},{renderers.Count(r=>r.isPartOfStaticBatch)},{renderers.SelectMany(r=>r.sharedMaterials).Distinct().Count()},1920,1080"));
+                            string Row(Sampled at)=>FormattableString.Invariant($"{map},{GraphicsProfiles.Of(quality).Label},120,{at.Mean:F3},{at.P95:F3},{at.Draw:F1},{at.Triangles:F0},{at.SetPass:F1},{renderers.Length},{renderers.Count(r=>r.isPartOfStaticBatch)},{renderers.SelectMany(r=>r.sharedMaterials).Distinct().Count()},1920,1080");
+                            var shipped=new Sampled();yield return Measure(shipped);report.AppendLine(Row(shipped));
                             Debug.Log("[WorldGraphicsProbe] recorded "+map+" / "+GraphicsProfiles.Of(quality).Label);
                             var readback=new Texture2D(1920,1080,TextureFormat.RGB24,false);
                             var active=RenderTexture.active;
@@ -114,6 +112,17 @@ namespace TumbangPreso.Diagnostics
                                 File.WriteAllBytes(Path.Combine(_output,map+"-"+GraphicsProfiles.Of(quality).Label+".png"),readback.EncodeToPNG());
                             }
                             finally{RenderTexture.active=active;RenderTexture.ReleaseTemporary(resolved);Destroy(readback);}
+                            if(Visual.WorldLookPresentation.Current!=null)
+                            {
+                                var cue=Visual.WorldCueProfile.Current;float weight=cue.WorldLighting;
+                                cue.WorldLighting=0;
+                                try
+                                {
+                                    for(int warm=0;warm<30;warm++)yield return null;
+                                    var off=new Sampled();yield return Measure(off);lookOff.AppendLine(Row(off));
+                                }
+                                finally{cue.WorldLighting=weight;}
+                            }
                         }
                     }
                     finally{camera.targetTexture=previous;target.Release();Destroy(target);}
@@ -122,9 +131,25 @@ namespace TumbangPreso.Diagnostics
             finally
             {
                 File.WriteAllText(Path.Combine(_output,"world-render.csv"),report.ToString());
+                File.WriteAllText(Path.Combine(_output,"world-render-look-off.csv"),lookOff.ToString());
                 File.WriteAllText(Path.Combine(_output,"materials.csv"),materials.ToString());
             }
         }
-
+        private sealed class Sampled{public float Mean,P95;public double Draw,Triangles,SetPass;}
+        // 120 uncapped frames. A counter the player does not support reads -1.
+        private static IEnumerator Measure(Sampled into)
+        {
+            using var draws=ProfilerRecorder.StartNew(ProfilerCategory.Render,"Draw Calls Count",1);
+            using var tris=ProfilerRecorder.StartNew(ProfilerCategory.Render,"Triangles Count",1);
+            using var passes=ProfilerRecorder.StartNew(ProfilerCategory.Render,"SetPass Calls Count",1);
+            var times=new float[120];long draw=0,triangles=0,setpass=0;
+            for(int sample=0;sample<times.Length;sample++)
+            {
+                yield return null;times[sample]=Time.unscaledDeltaTime*1000;
+                if(draws.Valid)draw+=draws.LastValue;if(tris.Valid)triangles+=tris.LastValue;if(passes.Valid)setpass+=passes.LastValue;
+            }
+            into.Mean=times.Average();Array.Sort(times);into.P95=times[(int)(times.Length*.95f)-1];
+            into.Draw=draw>0?draw/120d:-1;into.Triangles=triangles>0?triangles/120d:-1;into.SetPass=setpass>0?setpass/120d:-1;
+        }
     }
 }

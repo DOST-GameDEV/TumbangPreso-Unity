@@ -128,9 +128,17 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
   `GroundLift` 1.6 on the Eskinita and Ilalim court asphalt through a property block, sunlit road
   (90,85,71) to (158,150,119) on Eskinita and (124,126,106) to (181,185,156) on Ilalim, found by
   shape and logged (`68d297ba`). Edge close-up checked: no black ink, silhouettes darken their own
-  colour, eaves carry a lighter bevel. Still open: SaBubong read milky in v2, so its haze now runs
-  60 to 300 m (`848e21d4`, NOT yet rendered); whether Ilalim's sunlit road at 181 is too pale is a
-  taste call; overall contrast is lower than PEAK's, left for the owner rather than tuned blind.
+  colour, eaves carry a lighter bevel. SaBubong read milky in v2, so its haze now runs 60 to 300 m
+  (`848e21d4`); the v3 render confirms it: the ring of towers keeps more colour and edge than in
+  v2, and the warm horizon still lightens the farthest ones. Remaining visual review stays
+  open: whether Ilalim's sunlit road at 181 is too pale;
+  overall contrast, which is lower than PEAK's; SaBubong's high preview shot, where the street
+  40 m below the roof fogs into flat peach; Ilalim's preview, which reads very pastel; and the
+  cast hull on dark colours. The self-shade rule (`pow(albedo, 1.6) * 0.42`, Toon's OUTLINE
+  pass) turns light skin into a deeper peach but dark brown skin into near ink: the native
+  Ilalim first-person arms sample (32,23,22) at the edge against (151,90,51) skin. A PlayMode
+  A/B confirmed the viewmodel does get the look (weight 1, CastInkSelf 0.88, black ink with the
+  look off), so this is the formula, not a missing hookup. Softening it changes every cast edge.
 - [x] LIGHT-1.7 The two Stage tests assert the bright look's own claims (`20c977e5`): applied rig,
   bright shade colour, haze past the court, court ground found; toon ramp measured 1.70:1 under the
   look against 1.95:1 authored, asserted inside 1.35 to 2. WorldCourtCueTests 3/3 on the Mac.
@@ -144,8 +152,25 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
   active-scene handback guard merged with our existing cache/preview fixes.
   Focused native 2/2 passed; actual five-map LDR/HDR pairs and grey inspected.
   [Follow-up evidence](reports/lighting-integration-2026-09-24/preview-followup/report.md).
+  Source branch also records 4/4 on macOS for its original preview/look cases;
+  the Windows integration evidence above remains the current local receipt.
+
+  Source 429643416 also integrated: edges use the selected preview sun, and the
+  native probe records a same-binary look-off comparison. Local five-map edge-key
+  case v2 1/1 passed; matched colour/grey inspected after one orbit-capture repair.
+  [Edge-key integration](reports/lighting-integration-2026-09-24/preview-edge-key/report.md).
 - [ ] LIGHT-1.9 Performance check of bloom plus edges on the Balanced tier, and a native build
-  look at the owner's window shape.
+  look at the owner's window shape. Mac half done: the native graphics probe now measures every
+  map and tier a second time with `WorldLighting` 0 into `world-render-look-off.csv`
+  (`f2685884`). Native macOS player built by `GameBuilder.BuildMac` from `8d73471f` plus that
+  probe edit, Apple M5, Metal, 1920x1080 HDR, 120 uncapped frames per cell. Balanced costs 0.30
+  to 0.46 ms per frame with the look on (Lagoon the most); the worst Balanced frame is Ilalim at
+  5.63 ms mean and 5.91 ms p95 (off: 5.33 and 5.53). Low, which skips bloom, costs 0.06 to 0.18
+  ms, so most of the cost is the bloom chain. The native frames show the look. Still open, both
+  needing hardware this Mac lacks: the same probe on the Windows tournament machine
+  (`tools/graphics_review.py`; it has no Windows module here), and a frame at the Windows
+  owner's short wide window. The Mac profile plays fullscreen on a 2560x1664 display and was
+  not photographed at that shape either; the probe renders a fixed 1920x1080 target.
 
 Capture: `WorldCourtCueTests.BrightLookSameCameraCapturesOnAllFiveMaps` writes stage, eye and
 cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 passed on the Mac.

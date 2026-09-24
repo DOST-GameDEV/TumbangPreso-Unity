@@ -78,6 +78,9 @@ namespace TumbangPreso.Visual
             }
             _ramp.Apply(false,true);Current=this;ApplyScene();
         }
+        // The explicit preview sun (or the match sun captured at installation).
+        // Screen-space edges must not pick a menu portrait light instead.
+        public Light KeyLight=>_sun;
         public static bool HandlesCamera(Camera camera)
             =>Current!=null && camera!=null && (camera.GetComponent<WorldLookCamera>()!=null ||
                 (!Current._preview && (camera==Camera.main || camera.GetComponent<CameraSystem.CameraRig>()!=null ||
@@ -218,7 +221,7 @@ namespace TumbangPreso.Visual
             Shader.SetGlobalTexture(RampId,_ramp);
             Shader.SetGlobalVector(ShapeId,new Vector4(profile.BandEdge,profile.UpperRim,profile.FeetShade,profile.MetalHighlight));
             Shader.SetGlobalVector(SoftId,new Vector4(profile.Softness,profile.Wrap,profile.CastInkSelf,profile.CastInkWidth));
-            Vector3 direction=_sun!=null?-_sun.transform.forward:Vector3.up;
+            var sun=KeyLight;Vector3 direction=sun!=null?-sun.transform.forward:Vector3.up;
             Shader.SetGlobalVector(KeyId,direction);
             // Use this map's authored sky palette, not a universal blue pane.
             // The same camera scope prevents leakage into character/menu previews.
