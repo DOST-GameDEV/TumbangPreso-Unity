@@ -178,3 +178,31 @@ across the court, plus `aerial`.
   with `*` (unsaved owner work).
 - **Commit locally; do not push** until the owner has played it (standing preference).
 - Bash heredocs with nested quotes broke twice here; write patch scripts to a file.
+
+## 10 · Gap review against the references (owner, 2026-09-24, on review v3)
+
+🧑 on the assembled map: *"i dont like to see these really noticeable repeating textures and
+colors"*, *"a lot of models are untextured"* (tree trunks, signal and street posts, railings),
+*"most of the other buildings are essentially just big rectangles, and a lot of them are
+primarily just white"*, *"theres not even any glass buildings/skyscrapers"*, and the trees are
+*"all the same size and color and type"*, all facing the same way. Measured from
+`kanto_layout.json`, and compared shot by shot with the 15 Tiny Talisman frames and the
+Brainchild set:
+
+| Gap | Ours now | The reference |
+|---|---|---|
+| Skyscrapers | None. The tallest real model is 9 storeys; the "skyline" is 46 untextured grey boxes. `glass_tower` is a grid of punched windows, not a curtain wall. | A downtown of 20 to 40 storey curtain-wall towers: dark sky-reflecting glass, mullion grids, chamfered and faceted crowns, glass pyramids with spires, a round tower, exposed steel lattice. |
+| Massing | Each building is one extruded footprint with a parapet. | Stacked volumes: stepped podiums, setbacks, corner towers, bays running full height, rooftop stair and lift houses, chimneys, two or three heights in one block. |
+| Colour | Big areas of white `panel` and cream; every roof the same flat grey. | Saturated warm brick, red and green shopfronts, yellow accents, next to dark glass. White is trim, not whole buildings. |
+| Repetition | 8 filler models placed 12 times each, 48 identical power poles, 16 identical street trees and 4 identical park trees; placed at one scale. | Modular pieces recombined, so the same kit never reads as the same building. |
+| Untextured props | Trunk, poles, railing, metal, signals, bins, lamps and fence wear only the flat `paint` tint. | Every prop has painted wear, bands and colour breaks. |
+| Roofs | Empty grey slabs, sometimes a water tank. | HVAC units, vents, antennas, satellite dishes, skylights, water tanks, a helipad. |
+| Trees | One dark-green model per use, same size, three yaws. | Big, bright lime clumpy crowns on thick bent trunks; several sizes and shapes. |
+| Street life | Benches, bins, lamps, one signal per corner. | Cars, taxis, buses and trucks; food carts; road barriers; hydrants; warning signs; shop names; hanging signs; billboards with art; wires crossing the streets overhead. |
+| Windows | Every pane the same teal. | Interiors: some panes lit warm or green, some dark, some with blinds. |
+| Park | Rectangles only. | A pond, curved paths, a playground, umbrellas, a pillared fence. |
+| Sky | Flat gradient, no clouds. | Big painted clouds, high sun, strong contrast. |
+| Brainchild | Nothing from it yet. | Steep tiled roofs with dormers, fire escapes, bunting, big shop lettering, leaning facades. |
+
+⚠️ **Role hues still apply** (§ 4): the reference's orange shopfronts and orange brick sit near
+offence orange `#f87020`, so warm brick stays red-brown and shops stay ochre or red.
