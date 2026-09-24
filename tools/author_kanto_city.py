@@ -1277,33 +1277,53 @@ def fence(name="park_fence", length=12.5):
 
 
 def traffic_signal(name="traffic_signal", reach=4.6):
-    """A pole on the kerb, an arm over the road (+X in the model), a signal head facing -Y.
-    Heads carry yellow-edged backplates and a visor over each lamp; the pole has a footing,
-    a collar, a street-name blade and a push-button box."""
+    """A pole on the kerb, an arm over the road (+X in the model), signal heads facing -Y.
+    Owner, review v23: "street lamp model is broken". The pole ran straight THROUGH the lower
+    head, the diagonal brace touched neither pole nor arm, and the street-name blade floated
+    above the pole top. Now: the arm leaves the pole 30 cm below its capped top; a curved
+    brace runs from the pole into the arm; the name blade is clamped to the pole top; the
+    lower head hangs IN FRONT of the pole on two brackets; the arm head hangs from the arm on
+    a short drop, with its backplate clear of the arm."""
     col = kit(name)
     b = K.Buf("signal")
+    TOP = 5.7
+    ARM = TOP - 0.3
     b.cylinder((0, 0, 0.12), 0.26, 0.24, "concrete", sides=12)
     b.cylinder((0, 0, 0.3), 0.18, 0.18, "pole", sides=12, top_scale=0.75)
-    b.cylinder((0, 0, 2.7), 0.12, 5.4, "pole", sides=12)
+    b.cylinder((0, 0, TOP / 2), 0.12, TOP, "pole", sides=12)
+    b.cylinder((0, 0, TOP + 0.04), 0.15, 0.1, "pole", sides=12, top_scale=0.5)          # the cap
     b.cylinder((0, 0, 1.0), 0.14, 0.06, "lane_yellow", sides=12)
-    b.box(Matrix.Translation((reach / 2, 0, 5.2)), (reach, 0.12, 0.12), "pole")
-    b.box(Matrix.Translation((reach * 0.3, 0, 4.85)) @ Matrix.Rotation(math.radians(-35), 4, "Y"), (1.3, 0.06, 0.06), "pole")
-    b.box(Matrix.Translation((0.55, 0, 5.62)), (1.1, 0.03, 0.26), "sign_green")
+    # The arm, from inside the pole out over the road, with a collar where it leaves.
+    b.box(Matrix.Translation((reach / 2 + 0.05, 0, ARM)), (reach + 0.1, 0.12, 0.12), "pole")
+    b.cylinder((0, 0, ARM), 0.16, 0.26, "pole", sides=12)
+    # The brace: a curve from the pole 1.2 m down, up into the arm 1.6 m out.
+    pts = [Vector((0.05, 0, ARM - 1.2)), Vector((0.55, 0, ARM - 0.55)), Vector((1.1, 0, ARM - 0.2)), Vector((1.6, 0, ARM - 0.02))]
+    for p, q in zip(pts, pts[1:]):
+        limb(b, p, q, 0.035, 0.035, "pole", sides=8)
+    # Street-name blade on a clamp at the pole top, pointing along the arm's street.
+    b.cylinder((0, 0, TOP - 0.1), 0.14, 0.12, "metal_dark", sides=12)
+    b.box(Matrix.Translation((0, 0.62, TOP - 0.1)), (0.03, 1.1, 0.26), "sign_green")
+    b.box(Matrix.Translation((0, 0.08, TOP - 0.1)), (0.06, 0.2, 0.08), "metal_dark")
     b.box(Matrix.Translation((0, -0.16, 1.15)), (0.14, 0.12, 0.2), "lane_yellow")
-    for x, z in ((reach - 0.2, 4.5), (0.0, 2.6)):
-        b.box(Matrix.Translation((x, 0.02, z)), (0.62, 0.05, 1.42), "lane_yellow")      # the backplate
-        b.box(Matrix.Translation((x, 0.0, z)), (0.56, 0.08, 1.36), "railing")
-        b.box(Matrix.Translation((x, -0.1, z)), (0.42, 0.36, 1.2), "railing")
+    # Heads: (x, centre z, y offset of the housing's back from the pole/arm axis).
+    for x, z, dy in ((reach - 0.2, ARM - 0.85, 0.0), (0.0, 2.6, -0.32)):
+        if dy:   # two brackets from the pole to the head's back
+            for zz in (z + 0.45, z - 0.45):
+                b.box(Matrix.Translation((0, dy / 2 - 0.02, zz)), (0.08, abs(dy) + 0.1, 0.06), "metal_dark")
+        else:    # a short drop from the arm into the head's top
+            b.box(Matrix.Translation((x, -0.05, ARM - 0.1)), (0.08, 0.08, 0.2), "metal_dark")
+        y0 = dy
+        b.box(Matrix.Translation((x, y0 + 0.02, z)), (0.62, 0.05, 1.42), "lane_yellow")      # the backplate
+        b.box(Matrix.Translation((x, y0, z)), (0.56, 0.08, 1.36), "railing")
+        b.box(Matrix.Translation((x, y0 - 0.1, z)), (0.42, 0.36, 1.2), "railing")
         for k, m in enumerate(("signal_red", "signal_amber", "signal_green")):
             zz = z + 0.38 - k * 0.38
-            # The lens is a disc FACING THE ROAD (-Y), sunk 1 cm into the housing's face. It
-            # was a vertical-axis cylinder, i.e. a pancake lying flat, and read as a half-disc
-            # cut by its visor (owner's screenshot, review v8).
-            limb(b, (x, -0.27, zz), (x, -0.31, zz), 0.12, 0.12, m, sides=16)
+            # The lens is a disc FACING THE ROAD (-Y), sunk 1 cm into the housing's face.
+            limb(b, (x, y0 - 0.27, zz), (x, y0 - 0.31, zz), 0.12, 0.12, m, sides=16)
             # A hood over the top half of the lens, sticking out 18 cm, and its two cheeks.
-            b.box(Matrix.Translation((x, -0.37, zz + 0.13)), (0.3, 0.2, 0.03), "railing")
+            b.box(Matrix.Translation((x, y0 - 0.37, zz + 0.13)), (0.3, 0.2, 0.03), "railing")
             for sx in (-1, 1):
-                b.box(Matrix.Translation((x + sx * 0.14, -0.37, zz + 0.06)), (0.025, 0.2, 0.15), "railing")
+                b.box(Matrix.Translation((x + sx * 0.14, y0 - 0.37, zz + 0.06)), (0.025, 0.2, 0.15), "railing")
     b.finish(col, bevel=0.012, segments=1)
     return col
 
@@ -1592,6 +1612,54 @@ AERIAL = ((-70.0, -78.0, 62.0), (4.0, 4.0, 4.0))   # the saved aerial cameras: w
 AERIAL_CITY = ((-150.0, -40.0, 120.0), (20.0, 10.0, 10.0))
 
 
+def place_traffic():
+    """STREET LIFE (tools/author_kanto_vehicles.py): moving traffic in both lanes of the ring
+    road and the outward streets (driving on the right, as in the Philippines), cars parked at
+    the kerbs, a jeepney and tricycles waiting by the park. Nothing inside the walls at +/-13,
+    and nothing in an intersection. Importing the module also merges its materials into the
+    palette before the Unity material list is written."""
+    import author_kanto_vehicles as V
+    rng = random.Random(123)
+    movers = ["sedan_red", "sedan_cream", "hatch_mint", "taxi", "taxi", "pickup_mustard", "van_delivery",
+              "jeepney", "jeepney", "bus_city", "tricycle"]
+    parked = ["sedan_red", "sedan_cream", "hatch_mint", "taxi", "van_delivery", "pickup_mustard"]
+    z = -0.0
+    for arm in range(4):
+        r = Matrix.Rotation(arm * math.pi / 2, 3, "Z")
+        # The ring road side of this arm runs along x at y = +22; the outward street along y at x = +/-22.
+        for lane, heading in ((-1.8, 1), (1.8, -1)):   # right-hand traffic: +x traffic in the y<22 lane
+            for along in (-10.0, 7.0):
+                if rng.random() < 0.75:
+                    name = rng.choice(movers)
+                    at = r @ Vector((along + rng.uniform(-2, 2), B.ROAD + lane, 0))
+                    d = r @ Vector((heading, 0, 0))
+                    place(name, (at.x, at.y, z), math.atan2(d.y, d.x))
+        for c in (-B.ROAD, B.ROAD):
+            for lane, heading in ((1.8, 1), (-1.8, -1)):
+                d0 = 40.0
+                while d0 < 125:
+                    d0 += rng.uniform(9, 22)
+                    if d0 > 125 or rng.random() < 0.35:
+                        continue
+                    at = r @ Vector((c + lane, d0, 0))
+                    d = r @ Vector((0, heading, 0))
+                    place(rng.choice(movers), (at.x, at.y, z), math.atan2(d.y, d.x))
+            for side in (-1, 1):   # parked along both kerbs
+                d0 = 36.0
+                while d0 < 122:
+                    d0 += rng.uniform(6.5, 14)
+                    if rng.random() < 0.45:
+                        continue
+                    at = r @ Vector((c + side * (B.ROAD_HALF - 1.05), d0, 0))
+                    d = r @ Vector((0, 1 if side > 0 else -1, 0))
+                    place(rng.choice(parked), (at.x, at.y, z), math.atan2(d.y, d.x) + rng.uniform(-0.03, 0.03))
+    # A jeepney stop and a tricycle rank on the park's south and west kerbs.
+    place("jeepney", (-4.0, -(B.ROAD - B.ROAD_HALF + 0.95), z), math.pi)   # kerb lane heads -x here
+    for k in range(3):
+        place("tricycle", (-(B.ROAD - B.ROAD_HALF + 1.0), 3.0 + k * 2.6, z), math.pi / 2)
+    del V
+
+
 def place_towers():
     """The downtown: every tower twice, never next to its twin, around the city beyond the
     street blocks, with nothing tall on the sun's line through the court.
@@ -1848,6 +1916,7 @@ def layout():
             if len(line) > 1:
                 poles.append(line)
     place_towers()
+    place_traffic()
     place("ground", (0, 0, 0), 0.0)
     place("wires", (0, 0, 0), 0.0)
     return poles
@@ -1867,6 +1936,9 @@ BUILDERS = {
     "power_pole_transformer": lambda: power_pole("power_pole_transformer", "transformer"),
     "power_pole_lamp": lambda: power_pole("power_pole_lamp", "lamp"),
     "street_bin": street_bin,
+    **{n: (lambda n=n: __import__("author_kanto_vehicles").build_vehicle(n))
+       for n in ("sedan_red", "sedan_cream", "hatch_mint", "taxi", "pickup_mustard", "van_delivery", "bus_city",
+                 "jeepney", "tricycle")},
     "ground": ground,
 }
 for _name in TOWERS:
@@ -2098,7 +2170,11 @@ def city_cameras(scene, col):
     # Close-ups at a person's eye, for judging props: the owner's own review shot was the NE
     # park corner (tree, fence, crossing, signal, brick corner), and a street toward downtown.
     cam("detail_ne_corner", (7.0, 6.2, 1.9), (14.5, 14.5, 3.0), 26)
-    cam("detail_street", (-24.8, 46.0, 1.7), (-22.0, 120.0, 12.0), 20)
+    cam("detail_street", (-28.4, 46.0, 1.7), (-22.0, 120.0, 12.0), 20)   # on the pavement, clear of traffic
+    # The jeepney stop and tricycle rank from the park's corner.
+    cam("detail_traffic", (-13.5, -13.5, 1.6), (-19.0, -4.0, 1.2), 26)
+    # The NE signal from above, the angle the owner found it broken from (review v23).
+    cam("detail_signal_top", (14.0, 19.5, 9.0), (18.2, 16.4, 3.5), 30)
     # The NE corner's traffic signal from the kerb (the owner's own review shot, v8).
     cam("detail_signal", (13.0, 12.4, 2.3), (16.4, 16.4, 3.4), 30)
     # A tiled roof up close (the owner judged the first tiles from about this distance).
