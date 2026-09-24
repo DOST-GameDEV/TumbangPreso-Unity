@@ -110,7 +110,7 @@ MORTAR = "9c4636"   # the owner kept the brick-toned grout after comparing three
 
 STRENGTH = {"brick": 3.0, "stone_blocks": 2.5, "stone": 0.0, "roof": 0.0, "glass": 0.0, "wood": 2.0, "paint": 0.0,
             "asphalt": 0.0, "brick_brown": 3.0, "panel": 1.5, "paving": 2.0, "court": 1.6, "grass": 0.0, "plaster": 0.0,
-            "bark": 2.5, "metal": 0.0, "timber": 0.0, "panelg": 1.5, "tiles": 3.0}
+            "bark": 1.2, "metal": 0.0, "timber": 0.0, "panelg": 1.5, "tiles": 1.5}
 
 
 def save(name, albedo, height):
@@ -256,25 +256,48 @@ def panelg():
 
 
 def tiles():
-    # Clay roof tiles for the pitched roofs (Brainchild): overlapping rounded courses with a
-    # drawn lighter lip on each, tall joints soft. NEUTRAL: tinted red-brown or green.
-    ident, inside, h, v = organic_bricks(10, 7, mortar_m=0.04, wobble_m=0.012, round_m=0.07, seed=161)
-    face = hexcol("e4e4e4") * per_brick(ident, np.array([0.92, 0.97, 1.0, 1.05]), 162)[..., None]
-    face = np.where((v > 0.72)[..., None], face * 1.12, face)
-    img = flat("8a8a8a") * (1 - inside[..., None]) + face * inside[..., None]
-    img = patches(img, np.array([0.92, 0.92, 0.92]), 0.6, 0.2, seed=163)
-    save("tiles", img, h)
+    # Clay roof tiles for the pitched roofs (Brainchild). DRAWN AS COURSES, NOT PEBBLES.
+    # The first version ran the brick lozenge generator at 10 x 7 and the owner called it
+    # "harsh garbage ... did you just repurpose the brick texture?". It had: a blob per tile,
+    # a dark joint all round every blob, and a contrast of about 0.6. A painted roof reads as
+    # ONE colour with ROWS drawn on it, so here:
+    #   * each course is a flat band, 0.25 m tall, running along the ridge (texture X);
+    #   * its lower edge is a soft scallop (one arc per 0.32 m tile), staggered per course;
+    #   * the lip just above that edge is a touch lighter, and a thin feathered shadow falls
+    #     just below it onto the next course. Nothing else: no joint outlines, no per-tile
+    #     colour, total value range about 0.82 to 1.05.
+    course, tile_w = 0.25, 0.32
+    wob = 0.012 * smooth(0.3, 171)
+    yy = Y + wob
+    row = np.floor(yy / course)
+    fy = yy / course - row                       # 0 at the top of a course, 1 at its lower edge
+    shift = (row % 2) * 0.5 * tile_w
+    fx = ((X + shift) % tile_w) / tile_w         # 0..1 across one tile
+    edge = 0.8 + 0.18 * np.sqrt(np.clip(1 - (2 * fx - 1) ** 2, 0, 1))   # the scallop: lowest mid-tile
+    below = np.clip((fy - edge) / 0.05 + 0.5, 0, 1)      # past the scallop: the next course's top
+    lip = np.clip(1 - np.abs(fy - (edge - 0.1)) / 0.12, 0, 1)
+    shade = np.clip(1 - (fy - edge + 0.0) / 0.1, 0, 1) * below          # shadow under the lip
+    val = 1.0 + 0.05 * lip * (1 - below) - 0.16 * shade
+    split = np.clip(1 - np.minimum(fx, 1 - fx) / 0.035, 0, 1) * (fy < edge) * 0.05
+    val = val - split
+    img = flat("dedede") * val[..., None]
+    img = patches(img, np.array([0.95, 0.95, 0.95]), 0.8, 0.25, seed=173, feather=0.6)
+    height = np.clip(fy / np.maximum(edge, 1e-3), 0, 1) * (1 - below)
+    save("tiles", img, height)
 
 
 def bark():
-    # Tree trunks. The owner: "a lot of models are untextured. like the tree bodies". Tall
-    # narrow hand-drawn plates (the brick lozenge turned on end), soft dark joints, one broad
-    # lighter coat. NEUTRAL: tinted by each trunk's own colour.
-    ident, inside, h, v = organic_bricks(3, 11, mortar_m=0.035, wobble_m=0.03, round_m=0.05, seed=131)
-    face = hexcol("d8d8d8") * per_brick(ident, np.array([0.9, 0.97, 1.0, 1.05]), 132)[..., None]
-    img = flat("8c8c8c") * (1 - inside[..., None]) + face * inside[..., None]
-    img = patches(img, np.array([1.06, 1.06, 1.06]), 0.35, 0.2, seed=133)
-    save("bark", img, h)
+    # Tree trunks. The first version was the brick lozenge on end and read as "harsh
+    # garbage": hard dark plates. Bark in the reference is a soft painted trunk: a flat
+    # colour, a few long vertical strokes a touch darker with feathered ends, and one broad
+    # lighter coat. Value range about 0.8 to 1.05. NEUTRAL: tinted by each trunk's colour.
+    n = smooth(0.45, 131, stretch=(0.14, 1.0))          # about 6 cm across, 45 cm up the trunk
+    t = np.quantile(n, 0.8)
+    a = np.clip((n - t) / 0.5 + 0.5, 0, 1)
+    a = a * a * (3 - 2 * a)
+    img = flat("d6d6d6") * (1 - 0.16 * a)[..., None]
+    img = patches(img, np.array([1.05, 1.05, 1.05]), 0.45, 0.25, seed=133, feather=0.6)
+    save("bark", img, -a * 0.6)
 
 
 def metal():

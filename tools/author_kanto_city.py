@@ -1814,6 +1814,11 @@ def city_cameras(scene, col):
     # park corner (tree, fence, crossing, signal, brick corner), and a street toward downtown.
     cam("detail_ne_corner", (7.0, 6.2, 1.9), (14.5, 14.5, 3.0), 26)
     cam("detail_street", (-24.8, 46.0, 1.7), (-22.0, 120.0, 12.0), 20)
+    # A tiled roof up close (the owner judged the first tiles from about this distance).
+    rose = next((o for o in scene.objects if o.name.startswith("shophouse_rose_3.")), None)
+    if rose:
+        mw = rose.matrix_world
+        cam("detail_roof", mw @ Vector((-1.5, 6.0, 19.0)), mw @ Vector((4.75, -6.0, 14.5)), 28)
     scene.camera = cams["eye_north"]
     return cams
 
