@@ -1,0 +1,5 @@
+Eskinita aspin-tan only: 129 supported nodes, 768 clear links.
+Existing marking surface / Mark at (-6.40, 0.10, -11.60)
+Tree-side investigation / Investigate at (-7.30, 0.10, -10.50)
+South court watch / Watch at (-6.30, 0.10, -5.50)
+North verge investigation / Investigate at (-7.30, 0.10, 6.50)

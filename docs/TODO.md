@@ -450,6 +450,12 @@ scattered across all maps. Execute inside each map's existing refinement row.
   refinement. Carry out changes within each individual map pass, keeping good parts.
 - [ ] **REFINE-2.7 Natural ambient movement.** Diagnose repeated paths and author
   plausible habitat/goal/activity choices, motion and reactions per map.
+  Eskinita tan aspin now chooses connected investigate/watch/rare marking sites,
+  eases movement and retreats from intrusion without panicking at a stationary
+  observer. Focused native 1/1 passed; actual frames/grey inspected.
+  [Research/plan](reports/map-by-map-refinement-2026-09-23/ambient-life-plan.md),
+  [implementation and evidence limits](reports/map-by-map-refinement-2026-09-23/eskinita-dog/report.md).
+  Next Eskinita tabby; other species/maps remain open. Lagoon flight retained.
 - [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
   trace idle decisions and fix actual stalls; distinguish deliberate tactical waits.
 - [ ] **REFINE-2.9 Gameplay and animation.** Review actual complete exchanges,

@@ -125,7 +125,7 @@ namespace TumbangPreso.EditorTools.MapKit
             root.AddComponent<AmbientLife>().Animals=specs.ToArray();
             report.AppendLine(map+": "+specs.Count+" ambient animals, private cosmetic visits, no gameplay colliders");
         }
-        private static bool Ground(Vector3 near,out Vector3 foot)
+        internal static bool Ground(Vector3 near,out Vector3 foot)
         {
             foot=default;float best=float.NegativeInfinity;
             foreach(var hit in Physics.RaycastAll(near+Vector3.up*.45f,Vector3.down,5,~0,QueryTriggerInteraction.Ignore))
@@ -135,9 +135,9 @@ namespace TumbangPreso.EditorTools.MapKit
             }
             return !float.IsNegativeInfinity(best);
         }
-        private static bool ClearBody(Vector3 at)
+        internal static bool ClearBody(Vector3 at)
             =>Physics.OverlapBox(at+Vector3.up*.5f,new Vector3(.67f,.48f,.67f),Quaternion.identity,~0,QueryTriggerInteraction.Ignore).Length==0;
-        private static bool ClearStep(Vector3 a,Vector3 b)
+        internal static bool ClearStep(Vector3 a,Vector3 b)
         {
             if(Mathf.Abs(a.y-b.y)>.15f)return false;
             var delta=b-a;
@@ -195,7 +195,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 }
                 return parent;
         }
-        private sealed class SurfaceQueries:IDisposable
+        internal sealed class SurfaceQueries:IDisposable
         {
             private readonly List<MeshCollider> _temporary=new List<MeshCollider>();
             public SurfaceQueries()

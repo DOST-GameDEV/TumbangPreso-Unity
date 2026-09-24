@@ -6,7 +6,7 @@ using UnityEngine.Playables;
 namespace TumbangPreso
 {
     /// <summary>Sparse, non-colliding neighborhood animals on authored clear routes.</summary>
-    public sealed class AmbientLife : MonoBehaviour
+    public sealed partial class AmbientLife : MonoBehaviour
     {
         [Serializable] public sealed class Animal
         {
@@ -22,6 +22,8 @@ namespace TumbangPreso
             public float WalkCycleSpeed=.391f,RunCycleSpeed=1.278f;
             public int PeeWaypoint=-1;
             public Vector3 PeeTarget;
+            public HabitatNode[] Habitat=Array.Empty<HabitatNode>();
+            public ActivitySite[] Activities=Array.Empty<ActivitySite>();
         }
         public Animal[] Animals=Array.Empty<Animal>();
         private Actor[] _actors;
@@ -79,7 +81,7 @@ namespace TumbangPreso
         }
 #endif
 
-        private sealed class Actor
+        private sealed partial class Actor
         {
             private readonly AmbientLife _owner;
             private readonly Animal _data;
@@ -139,6 +141,7 @@ namespace TumbangPreso
                 _clipTime=owner.Range(0,_clip.length);
                 _wait=owner.Range(data.Bird?3:1,data.Bird?20:9)+index*.7f;
                 _peeCooldown=owner.Range(90,180);
+                InitializeHabitat(model);
                 if(data.Bird)_root.gameObject.SetActive(false);
                 if(data.AerialWander)
                 {
@@ -192,6 +195,10 @@ namespace TumbangPreso
                 {
                     if (_panic > 0) return false;
                     if (_peeing) EndDogPause();
+                    if (HasHabitat)
+                    {
+                        Retreat(at);_impactQuietUntil=Time.time+4;return true;
+                    }
                     int before=Mathf.Clamp(_target-_direction,0,_data.Route.Length-1);
                     if ((_data.Route[before]-at).sqrMagnitude > (_data.Route[_target]-at).sqrMagnitude)
                     { _target=before; _direction=-_direction; }
@@ -202,7 +209,7 @@ namespace TumbangPreso
             }
             public void Step(float dt)
             {
-                if(_data.AerialWander)AerialBird(dt);else if(_data.Bird)Bird(dt);else GroundAnimal(dt);
+                if(_data.AerialWander)AerialBird(dt);else if(_data.Bird)Bird(dt);else if(HasHabitat)HabitatAnimal(dt);else GroundAnimal(dt);
                 if(!Visible)return;
                 float rate=_action=="walk"?Mathf.Max(.25f,_speed/Mathf.Max(.1f,_data.WalkCycleSpeed)):
                     _action=="run"?Mathf.Max(.5f,_speed/Mathf.Max(.1f,_data.RunCycleSpeed)):1;
@@ -213,6 +220,7 @@ namespace TumbangPreso
                 if(_previous.IsValid()){_oldTime+=dt;_previous.SetTime(Mathf.Repeat(_oldTime,Mathf.Max(.01f,_oldClip.length)));}
                 _blend=Mathf.MoveTowards(_blend,1,dt*8);
                 _mixer.SetInputWeight(0,1-_blend);_mixer.SetInputWeight(1,_blend);_graph.Evaluate(0);
+                if(HasHabitat)PoseActivity(dt);
             }
             private void GroundAnimal(float dt)
             {
@@ -379,7 +387,7 @@ namespace TumbangPreso
                 if(_fidgetWait<=0){Play(_action=="idle"?"peck":"idle");_fidgetWait=_owner.Range(_action=="peck"?.8f:1.5f,_action=="peck"?1.4f:4);}
             }
 #if UNITY_EDITOR
-            public string Description=>FormattableString.Invariant($"{_action}|wait={_wait:F2}|panic={_panic:F2}|target={_target}|speed={_speed:F2}|near={Threat(out _)}|yaw={_root.eulerAngles.y:F1}|peeing={_peeing}|peeCooldown={_peeCooldown:F1}|aerial={_data.AerialWander}|glide={_gliding}|legs={_flightLegs}");
+            public string Description=>FormattableString.Invariant($"{_action}|wait={_wait:F2}|panic={_panic:F2}|target={_target}|speed={_speed:F2}|near={Threat(out _)}|yaw={_root.eulerAngles.y:F1}|peeing={_peeing}|peeCooldown={_peeCooldown:F1}|aerial={_data.AerialWander}|glide={_gliding}|legs={_flightLegs}|activity={_activity}|site={_site}|visits={_visits}");
             public void StageBird()
             {
                 if(_data.AerialWander)

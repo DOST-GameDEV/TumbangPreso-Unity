@@ -137,6 +137,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(map=="IlalimNgTulay")IlalimPisonetAuthor.FinishLoadedScene(report);
             if(map=="IlalimNgTulay")IlalimVulcanizingAuthor.FinishLoadedScene(report);
             if(map=="IlalimNgTulay")IlalimShopSignAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaDogHabitatAuthor.FinishLoadedScene(report);
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }
 

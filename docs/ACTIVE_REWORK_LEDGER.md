@@ -1,22 +1,23 @@
 # Active TUMP rework ledger
 
-## Current resume,2026-09-24: publish refreshed cards, start natural ambient life
+## Current resume, 2026-09-24: Eskinita tan aspin natural activity
 
-Overall goal ACTIVE and NOT done. Finish one unit before moving; all older IDs kept.
-DEV/QUAL start at5b51ee1b9. All13signage units published. Card refresh locally done:
-Eskinita actual current preview retained; Ilalim axial under-bridge thumbnail chosen
-from2native angles because high card hid court and oblique variant hid behind pillar.
-Initial capture1/1in4.334s, framing1/1in2.644s. Actual finalcolour/grey inspected.
-Only2cardPNGbytes replaced, original importer hashes/GUIDs preserved. No runtime
-camera/lobby/intro/UI behavior changes, other3cards untouched. Evidence/report saved.
+Overall goal ACTIVE and NOT done. DEV and QUAL are at published, remote-verified
+02617e9d2732f900c07a81275880d2590e915855. All 13 signage units and the two refreshed
+street-map cards are published. Do not repeat those completed checks. The owner's
+Lugaw King correction is implemented in Pares v2; no owner approval is implied.
 
-Known QUALchurn restored; no Unity/helpers active. Publish cards/docs/source capture
-case, preserve/advance QUAL, then REFINE-2.7natural ambient movement, one actual
-species/map behavior at a time. Research/plan/source diagnosis first; no blind global
-animal animation patch. Then bots2.8/character-gameplay motion2.9/later ultimate2.11.
-Map intro/spectator/peer/replay/native performance stay2.10/P7on final coherent
-candidate. Do not claim map parents/goal complete or rerun completed shops/cards.
-Error-page tab15cleanup remains tool-blocked; do not bypass/repeat failed attempts.
+Current unit REFINE-2.7: Eskinita tan aspin implemented. Author compiled and baked
+129 supported nodes / 768 links. Native focused session 80001 passed 1/1 in 32.339s;
+actual before/after, activity frame sequence and grey inspected. Timestamped MP4s
+exported; no unsupported continuous-playback claim. Report in eskinita-dog/report.md.
+Known generated churn backed up and restored. No Unity/helper active. Publish this
+unit, preserve/advance QUAL, then research and fit Eskinita tabby independently.
+Only the two protected composition PNG metas were dirty at intake; preserve them.
+
+Map parents, animal coverage, bots, individual character motions, later ultimates
+and final integration remain OPEN. No intermediate build. No validation loops.
+Error-page tab15 cleanup remains tool-blocked; do not bypass/repeat failed attempts.
 
 ## Ilalim storefront implementation status
 
@@ -146,3 +147,9 @@ thumbnail angles under bridge, no production camera/UI/intro behavior change.
 Existing preview scene/look reused, Logs/map-card-ilalim-framing. Choose best actual
 image then publish card PNGs. No further variants after these, no broader tests.
 No.cs edits during run. Natural ambient life remains next implementation.
+
+Eskinita dog code and targeted author ready. Next guarded author compiles and bakes
+only aspin-tan habitat in Eskinita; then one focused native case. Question: does
+it move between purposeful supported activities, tolerate a stationary observer,
+retreat/recover from intrusion and pause? Stop after actual motion/images and XML
+pass. Tooling retries used 0/1. No .cs edits while Unity is in flight.
