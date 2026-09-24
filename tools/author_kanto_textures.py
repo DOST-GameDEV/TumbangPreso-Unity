@@ -392,6 +392,8 @@ def bark(variant=None):
         return bark_painted(variant)
     if variant in ("F", "G", "H"):
         return bark_plates(variant)
+    if variant == "I":
+        return bark_cracks(variant)
     return _bark_strokes(variant)
 
 
@@ -499,6 +501,76 @@ def bark_plates(variant):
     img = crevice * (1 - inside[..., None]) + face * inside[..., None]
     img = patches(img, np.array([1.05, 1.03, 1.0]), 0.6, 0.18, seed=403, feather=0.6)
     save("bark", img, h)
+
+
+def bark_cracks(variant="I"):
+    """BARK FROM CRACK LINES, not from a grid. The drawn-plate variants were rejected: "it
+    genuinely just looks like a repurposed brick texture". It was (organic_bricks on its side).
+    Stylized hand-painted bark is drawn the other way round: the artist draws the CRACKS, long
+    flowing lines running up the trunk that start and stop, drift, and now and then fork across
+    into a neighbour, and the plates are simply what is left between them. So:
+      * 7 crack lines across the 2 m tile, each a slow sway plus a smooth wander (periodic in
+        y, so the tile has no seam), active for only part of the height with pointed tapered
+        ends: where a crack stops, the two plates beside it merge into one;
+      * a few diagonal fork cracks joining one line to the next;
+      * each plate is shaded ACROSS its width by where the pixel sits between the crack on its
+        left and the crack on its right: a light band on the lit (left) side, a darker band on
+        the right, flat in between. Three values, no noise, crack colour a dark cool brown."""
+    rng = np.random.default_rng(501)
+    n = 9
+    ys = np.arange(SIZE) / PX                    # metres, one per row
+    xc, wid = [], []
+    for k in range(n):
+        x0 = (k + rng.uniform(-0.25, 0.25)) * TILE_M / n
+        wander = smooth(0.35, 510 + k)[:, 0] * 0.018 + 0.02 * np.sin(ys / TILE_M * 2 * np.pi * rng.integers(1, 3) + rng.uniform(0, 6.3))
+        xc.append(x0 + wander)
+        y0, L = rng.uniform(0, TILE_M), rng.uniform(0.6, 1.8)
+        d = ((ys - y0) % TILE_M)
+        t = np.clip(np.minimum(d, L - d) / 0.25, 0, 1) * (d < L)       # pointed ends over 25 cm
+        wid.append((0.009 + rng.uniform(0, 0.006)) * np.sqrt(t))
+    xc, wid = np.array(xc), np.array(wid)        # (n, SIZE): per crack, per row
+    rows = (Y * PX).astype(int) % SIZE           # pixel row index grid
+    dx = (X[None] - xc[:, rows] + TILE_M / 2) % TILE_M - TILE_M / 2   # signed x distance to each crack
+    w = wid[:, rows]
+    fade = np.clip(w / 0.009, 0, 1)              # 0 where a crack is absent, 1 along its body
+    # BANDS BELONG TO THE CRACK, NOT TO A PLATE. The first pass shaded each plate by its left and
+    # right cracks, so every crack end cut the shading into a hard horizontal step. Now the lit
+    # band sits just right of each crack (the plate edge catching the light) and the shaded band
+    # just left of it, both fading with the crack, so where a crack ends the plates merge.
+    # Band WIDTH follows the crack's taper too, so a band ends in a point, never a square cut.
+    lit_band = np.clip((0.034 * fade - (dx - w)) / 0.004 + 0.5, 0, 1) * (dx > 0)
+    shade_band = np.clip((0.028 * fade - (-dx - w)) / 0.004 + 0.5, 0, 1) * (dx < 0)
+    lit = (lit_band * (fade > 0.02)).max(0)
+    shade = (shade_band * (fade > 0.02)).max(0)
+    # No +0.5 bias: with it, an absent crack (w = 0) still drew a half-dark hairline.
+    crack = np.clip((w - np.abs(dx)) * PX / 1.2, 0, 1).max(0)
+    # FORK CRACKS: a short CURVED crack leaving one line and bending into its neighbour, fat in
+    # the middle and pointed at both ends, like a brush flick (the first ones were ruled lines).
+    for f in range(7):
+        k = int(rng.integers(0, n))
+        ya = rng.uniform(0, TILE_M)
+        yb = ya + rng.uniform(0.2, 0.36)
+        ia, ib = int(ya * PX) % SIZE, int(yb * PX) % SIZE
+        ax = xc[k, ia]
+        bx = xc[(k + 1) % n, ib] + (TILE_M if k == n - 1 else 0)
+        mid = np.array([(ax + bx) / 2 + rng.uniform(-0.03, 0.03), ya + (yb - ya) * 0.65])
+        pts = [np.array([ax, ya]) * (1 - q) ** 2 + mid * 2 * q * (1 - q) + np.array([bx, yb]) * q * q
+               for q in np.linspace(0, 1, 9)]
+        for i in range(8):
+            pa, pb = pts[i], pts[i + 1]
+            seg = pb - pa
+            wmid = 0.0075 * np.sin(np.pi * (i + 0.5) / 8) ** 0.6
+            for ox in (-TILE_M, 0.0, TILE_M):
+                for oy in (-TILE_M, 0.0, TILE_M):
+                    qx, qy = X - pa[0] - ox, Y - pa[1] - oy
+                    u = np.clip((qx * seg[0] + qy * seg[1]) / (seg @ seg), 0, 1)
+                    dist = np.hypot(qx - u * seg[0], qy - u * seg[1])
+                    crack = np.maximum(crack, np.clip((wmid - dist) * PX / 1.2, 0, 1))
+    face = flat("8d5c3b")
+    face = face * (1 + 0.17 * lit[..., None]) * (1 - 0.15 * shade[..., None])
+    img = flat("45302c") * crack[..., None] + face * (1 - crack[..., None])
+    img = patches(img, np.array([1.04, 1.03, 1.0]), 0.7, 0.18, seed=503, feather=0.6)
+    save("bark", img, 1 - crack)
 
 
 def metal():
