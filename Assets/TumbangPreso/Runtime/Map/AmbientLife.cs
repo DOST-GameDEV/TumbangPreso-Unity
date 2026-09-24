@@ -25,6 +25,10 @@ namespace TumbangPreso
             public HabitatNode[] Habitat=Array.Empty<HabitatNode>();
             public ActivitySite[] Activities=Array.Empty<ActivitySite>();
             public bool QuietCat;
+            public Vector3[] Perches=Array.Empty<Vector3>();
+            public Vector2 PerchWait=new Vector2(4,13);
+            public float BirdBeatRate=1,PeckChance=.6f;
+            public bool FanWatch;
         }
         public Animal[] Animals=Array.Empty<Animal>();
         private Actor[] _actors;
@@ -143,6 +147,7 @@ namespace TumbangPreso
                 _wait=owner.Range(data.Bird?3:1,data.Bird?20:9)+index*.7f;
                 _peeCooldown=owner.Range(90,180);
                 InitializeHabitat(model);
+                InitializeVisits(model);
                 if(data.Bird)_root.gameObject.SetActive(false);
                 if(data.AerialWander)
                 {
@@ -186,6 +191,11 @@ namespace TumbangPreso
                 {
                     if(_data.AerialWander)
                     {ChooseAerialLeg(true);_gliding=false;_wingWait=_owner.Range(1.2f,2.4f);}
+                    else if(HasVisits)
+                    {
+                        if(_birdPhase!=1&&_birdPhase!=2)return false;
+                        DepartVisit(at);
+                    }
                     else
                     {
                         if (_birdPhase != 1 && _birdPhase != 2) return false;
@@ -210,10 +220,11 @@ namespace TumbangPreso
             }
             public void Step(float dt)
             {
-                if(_data.AerialWander)AerialBird(dt);else if(_data.Bird)Bird(dt);else if(HasHabitat)HabitatAnimal(dt);else GroundAnimal(dt);
+                if(_data.AerialWander)AerialBird(dt);else if(HasVisits)VisitingBird(dt);else if(_data.Bird)Bird(dt);else if(HasHabitat)HabitatAnimal(dt);else GroundAnimal(dt);
                 if(!Visible)return;
                 float rate=_action=="walk"?Mathf.Max(.25f,_speed/Mathf.Max(.1f,_data.WalkCycleSpeed)):
                     _action=="run"?Mathf.Max(.5f,_speed/Mathf.Max(.1f,_data.RunCycleSpeed)):1;
+                if(HasVisits&&_action=="fly")rate=_data.BirdBeatRate;
                 if(_data.AerialWander&&_gliding)
                     _clipTime=Mathf.MoveTowards(_clipTime,_glideHoldTime,dt*.75f);
                 else _clipTime+=dt*rate;
@@ -222,6 +233,7 @@ namespace TumbangPreso
                 _blend=Mathf.MoveTowards(_blend,1,dt*8);
                 _mixer.SetInputWeight(0,1-_blend);_mixer.SetInputWeight(1,_blend);_graph.Evaluate(0);
                 if(HasHabitat)PoseActivity(dt);
+                if(HasVisits)PoseVisit(dt);
             }
             private void GroundAnimal(float dt)
             {
@@ -388,7 +400,7 @@ namespace TumbangPreso
                 if(_fidgetWait<=0){Play(_action=="idle"?"peck":"idle");_fidgetWait=_owner.Range(_action=="peck"?.8f:1.5f,_action=="peck"?1.4f:4);}
             }
 #if UNITY_EDITOR
-            public string Description=>FormattableString.Invariant($"{_action}|wait={_wait:F2}|panic={_panic:F2}|target={_target}|speed={_speed:F2}|near={Threat(out _)}|yaw={_root.eulerAngles.y:F1}|peeing={_peeing}|peeCooldown={_peeCooldown:F1}|aerial={_data.AerialWander}|glide={_gliding}|legs={_flightLegs}|activity={_activity}|site={_site}|visits={_visits}");
+            public string Description=>FormattableString.Invariant($"{_action}|wait={_wait:F2}|panic={_panic:F2}|target={_target}|speed={_speed:F2}|near={Threat(out _)}|yaw={_root.eulerAngles.y:F1}|peeing={_peeing}|peeCooldown={_peeCooldown:F1}|aerial={_data.AerialWander}|glide={_gliding}|legs={_flightLegs}|activity={_activity}|site={_site}|visits={_visits}|perch={_perch}|birdPhase={_birdPhase}|landings={_landings}");
             public void StageBird()
             {
                 if(_data.AerialWander)
@@ -397,6 +409,7 @@ namespace TumbangPreso
                     _gliding=false;_wingWait=1;ChooseAerialLeg();return;
                 }
                 _root.position=_data.Route[1];_root.rotation=Quaternion.identity;_root.gameObject.SetActive(true);
+                if(HasVisits){_perch=0;_root.position=_data.Perches[0];}
                 _birdPhase=2;_wait=30;_fidgetWait=1;Play("idle");
             }
             public void StageDogPause()

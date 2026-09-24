@@ -16,7 +16,7 @@ using Object=UnityEngine.Object;
 namespace TumbangPreso.PlayTests
 {
     [Category("WallClock")]
-    public sealed class AmbientLifeProbe
+    public sealed partial class AmbientLifeProbe
     {
         private bool _bots,_spectator,_pinned;private int _seat,_quality;private CustomRules _rules;
         private static string Output=>Environment.GetEnvironmentVariable("TUMP_AMBIENT_REVIEW")??"Logs/ambient-life-v1";

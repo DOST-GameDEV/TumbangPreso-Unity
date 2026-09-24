@@ -9913,19 +9913,28 @@ MonoBehaviour:
       Node: 1
       Kind: 3
       LookAt: {x: -7.301754, y: 0.35, z: -11.6}
+      HoldSeconds: {x: 0, y: 0}
     - Name: Tree-side investigation
       Node: 2
       Kind: 1
       LookAt: {x: -7.388775, y: 0.1067077, z: -11.476691}
+      HoldSeconds: {x: 0, y: 0}
     - Name: South court watch
       Node: 93
       Kind: 2
       LookAt: {x: 0, y: 0.1, z: -5.5}
+      HoldSeconds: {x: 0, y: 0}
     - Name: North verge investigation
       Node: 27
       Kind: 1
       LookAt: {x: -8.300001, y: 0.1, z: 6.499999}
+      HoldSeconds: {x: 0, y: 0}
     QuietCat: 0
+    Perches: []
+    PerchWait: {x: 4, y: 13}
+    BirdBeatRate: 1
+    PeckChance: 0.6
+    FanWatch: 0
   - Id: pusakal-tabby
     Model: {fileID: 8771091787928289351, guid: 617f5921e15b2ee4585da4aa1d04ea2d, type: 3}
     Clips:
@@ -10228,15 +10237,23 @@ MonoBehaviour:
       Node: 0
       Kind: 2
       LookAt: {x: 16.210001, y: 0.1, z: -34.850002}
+      HoldSeconds: {x: 0, y: 0}
     - Name: South verge investigation
       Node: 88
       Kind: 1
       LookAt: {x: 8.3, y: 0.1, z: -4.000001}
+      HoldSeconds: {x: 0, y: 0}
     - Name: North fence watch
       Node: 71
       Kind: 2
       LookAt: {x: 0, y: 0.1, z: 6.5000005}
+      HoldSeconds: {x: 0, y: 0}
     QuietCat: 1
+    Perches: []
+    PerchWait: {x: 4, y: 13}
+    BirdBeatRate: 1
+    PeckChance: 0.6
+    FanWatch: 0
   - Id: maya
     Model: {fileID: 8771091787928289351, guid: bd71817a37a91f54bb702ae7393bdcaf, type: 3}
     Clips:
@@ -10262,6 +10279,14 @@ MonoBehaviour:
     Habitat: []
     Activities: []
     QuietCat: 0
+    Perches:
+    - {x: -3.0000002, y: 0.1, z: 4}
+    - {x: -4.1000013, y: 0.1, z: 4.5999994}
+    - {x: -2.1000006, y: 0.1, z: 4.9999995}
+    PerchWait: {x: 3.5, y: 8}
+    BirdBeatRate: 1.35
+    PeckChance: 0.65
+    FanWatch: 0
   - Id: kalapati
     Model: {fileID: 8771091787928289351, guid: 89871430be2577c4a9c9009c86adb490, type: 3}
     Clips:
@@ -10287,6 +10312,14 @@ MonoBehaviour:
     Habitat: []
     Activities: []
     QuietCat: 0
+    Perches:
+    - {x: 4.0000005, y: 0.1, z: -4.000001}
+    - {x: 2.9, y: 0.1, z: -3.400001}
+    - {x: 4.9000006, y: 0.1, z: -3.000002}
+    PerchWait: {x: 7, y: 14}
+    BirdBeatRate: 0.9
+    PeckChance: 0.8
+    FanWatch: 0
   - Id: fantail
     Model: {fileID: 8771091787928289351, guid: 6f569a317f91a7b41a49ac9702a5c8a7, type: 3}
     Clips:
@@ -10312,6 +10345,14 @@ MonoBehaviour:
     Habitat: []
     Activities: []
     QuietCat: 0
+    Perches:
+    - {x: -0.00000011920929, y: 0.1, z: 10.000001}
+    - {x: -1.1000004, y: 0.1, z: 10.600001}
+    - {x: 0.89999986, y: 0.1, z: 11.000001}
+    PerchWait: {x: 3, y: 7}
+    BirdBeatRate: 1.15
+    PeckChance: 0
+    FanWatch: 1
 --- !u!1 &201170061
 GameObject:
   m_ObjectHideFlags: 0

@@ -500,8 +500,12 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Ilalim tuxedo cat implemented: three storefront/pavement sites, original curled
   tail and its own pace/holds. Native 1/1 passed without retry, actual frames/grey
   inspected. [Evidence](reports/map-by-map-refinement-2026-09-23/ilalim-cat/report.md).
-  All six ground animals individually authored/reviewed. Perched-bird visits and
-  final integration remain open; retained Lagoon flight is not redone.
+  All six ground animals individually authored/reviewed. Eskinita bird visits now
+  use supported alternatives, shaped landing/long departure and distinct forage/
+  fantail lookout. Native 1/1 passed; actual frames/grey inspected, staged-close
+  dither/wing-blend limitation retained for final camera review.
+  [Bird evidence](reports/map-by-map-refinement-2026-09-23/eskinita-bird-visits/report.md).
+  Next Bayan/Ilalim/SaBubong visits, then final integration; Lagoon flight retained.
   Lagoon flight retained.
 - [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
   trace idle decisions and fix actual stalls; distinguish deliberate tactical waits.

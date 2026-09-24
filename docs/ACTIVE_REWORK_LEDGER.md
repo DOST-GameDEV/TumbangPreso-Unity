@@ -1,22 +1,24 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Ilalim tuxedo cat
+## Current resume, 2026-09-24: Eskinita perched-bird visits
 
 Overall goal ACTIVE, NOT done. DEV and QUAL at published, remote-verified
-43c851b6f0842f3ffa290b7f7f157d0962341b9b. Latest lighting source 429643416 is
-integrated: selected edge sun plus same-binary look-off native probe; Mac-only
-receipts scoped in TODO. Local five-map native v2 1/1 in 7.056s, actual matched
-same-frame key pairs and grey inspected. One orbit-capture repair only, finished.
-QUAL byte-verified, stashed and advanced. No Unity job active at this intake.
+d914a34972254bf6f212066bac2d93c787c4b318. All six ground animals individually
+implemented, native checked and actual frames/grey inspected. Latest tuxedo cat:
+53 nodes / 310 links, native 1/1 in 33.349s, no retry. QUAL byte-verified, named
+stash preserved, advanced. Only original two composition PNG metas dirty at intake.
 
-Current REFINE-2.7 unit complete locally: Ilalim tuxedo cat, 53 nodes / 310 links,
-three storefront/pavement sites, own pace/holds, original curled tail retained.
-Native session 89164 passed 1/1 in 33.349s, no retry. Actual before/new, activity/
-watch images, movement frames and grey inspected; timestamped clips retained.
-Known churn restored; no Unity job/helper active. Publish, preserve/advance QUAL,
-then research/inspect perched bird visits per map. All six ground animals have
-individual authoring and local evidence, but REFINE-2.7/map parents stay open.
-Preserve original two composition PNG meta dirt files and all older IDs.
+Current REFINE-2.7 unit complete locally: Eskinita visiting birds. Three supported
+sites per species, curved/eased landing, long outward departure and distinct
+foraging/fantail lookout. Original assets/Lagoon flight/other maps preserved.
+Native session 87205 passed 1/1 in 71.548s. Initial missing-namespace compile fix
+used fixture allowance 1/1, no subsequent repair. Actual perch pairs, each flight/
+arrival sequence and grey inspected; raw/encoded timing retained. Close staged
+after poses show dither/wing blend, and a parked player borders one witness; keep
+these limitations for final ordinary-camera review, no further fixture loop.
+Known churn restored, no Unity job/helper active. Publish, preserve/advance QUAL,
+then fit Bayan visits, followed by Ilalim/SaBubong. No whole-parent completion.
+Preserve original two composition PNG meta dirt files and every older ID.
 
 ## Published progress, do not redo
 
@@ -110,3 +112,19 @@ bakeryward watch (9.5,9.5), seam investigation (10,3), y0.212. Before the first
 run, movement assertion fitted to its shortest real trip (0.707m), not the other
 cats fixed0.75m threshold. No failure/retry yet; actual successful movement still
 required. Next only this cat native case. No .cs edits while running.
+
+Bird verification question: do the real visitors retain original models, land
+on supported alternatives, react and keep flying beyond the old four-metre hide
+point, with distinct foraging/fantail lookout and frozen pause? Stop after native
+XML and actual legacy/new perch/departure/arrival frames plus grey. Retry 0/1.
+No .cs edits during the author/test run.
+
+Bird author v1 stopped on one compile error in the new review file: missing
+TumbangPreso.UI import for SceneFlow. Added that import only; this consumes the
+unit fixture repair allowance (1/1). Preserve failed log. Reauthor, then the
+same focused native case; no extra fixture refactor/reassurance runs.
+
+Bird author v2 completed: all three species have three supported sites; distinct
+beat/wait/forage/fan settings saved. Next single native Eskinita case records all
+three legacy/new departures and arrivals, supported contact, reaction and pause.
+Only prior missing-namespace fixture fix consumed retry 1/1. No .cs edits in flight.
