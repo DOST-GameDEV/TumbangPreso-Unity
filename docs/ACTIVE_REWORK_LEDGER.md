@@ -1,21 +1,22 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: lighting branch follow-up merge
+## Current resume, 2026-09-24: Bayan ginger cat
 
-Overall goal ACTIVE, NOT done. DEV and QUAL are at published, remote-verified
-4e2c5bc6d112c2fa68de6fb5757bf311d4ac3a05. Bayan cream aspin unit completed and
-published: 89 nodes / 691 links, three ordinary activity sites plus rare marking,
-local pace/watch holds; native 1/1 in 30.345s, actual frames/grey inspected. Known
-churn restored, QUAL byte-verified/stashed/advanced. No Unity job active.
+Overall goal ACTIVE, NOT done. DEV and QUAL at published, remote-verified
+23701290423da84e690772d6e93495fcf01a057e. Lighting source 8d73471f3 merged with
+our existing cache/preview fixes; native 2/2 in 25.645s, actual five-map LDR/HDR
+pairs and grey inspected. Preserve bright look. LIGHT-1.6/1.9 still open.
+Bayan cream aspin published 4e2c5bc6d: 89 nodes/691 links, three ordinary sites plus
+rare marking, own walk/watch timing; native 1/1 in 30.345s, actual frames inspected.
+All QUAL candidates byte-verified, preserved in named stashes and advanced.
 
-Current unit: tracked lighting source 8d73471f3 integrated locally. Both owner
-conflicts resolved, preserving existing cache/preview behavior. HDR target,
-surviving root/sun and active-scene handback guard added. Native session 46818
-passed 2/2 in 25.645s, actual five-map LDR/HDR pairs and grey inspected. No fixture
-retry. Known churn restored, no Unity job active. Publish merge, preserve/advance
-QUAL, then Bayan ginger cat. Detailed report is
-reports/lighting-integration-2026-09-24/preview-followup/report.md.
-Preserve original two composition PNG meta dirt files.
+Current REFINE-2.7 unit complete locally: Bayan ginger cat has 108 nodes / 773
+links, three actual paving/watch sites and its own pace/holds. Native session
+20526 passed 1/1 in 32.114s, no retry. Actual before/new, activity/watch frames,
+motion sequence and grey inspected; timestamped clips retained, no unsupported
+continuous-playback claim. Known churn restored. No Unity job/helper active.
+Publish this unit, preserve/advance QUAL, then Ilalim patched aspin separately.
+Keep all old IDs and two original composition PNG meta dirt files.
 
 ## Published progress, do not redo
 

@@ -466,7 +466,10 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Bayan cream aspin implemented independently: three ordinary plaza activities
   plus rare marking, its own walk pace/watch holds. Native 1/1 passed, actual
   frames/grey inspected. [Evidence](reports/map-by-map-refinement-2026-09-23/bayan-dog/report.md).
-  Next Bayan ginger cat; other species/maps remain open.
+  Bayan ginger cat implemented independently: paving investigation/two watch
+  sites, own relaxed pace/watch durations. Native 1/1 passed without retry; actual
+  frames/grey inspected. [Evidence](reports/map-by-map-refinement-2026-09-23/bayan-cat/report.md).
+  Next Ilalim patched aspin, then tuxedo cat and bird visits; coverage remains open.
   Lagoon flight retained.
 - [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
   trace idle decisions and fix actual stalls; distinguish deliberate tactical waits.
