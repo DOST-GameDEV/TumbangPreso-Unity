@@ -1,0 +1,62 @@
+        [UnityTest,Timeout(120000)]
+        public IEnumerator BotsClimbFromTheActualEdgeInBothModes()
+        {
+            var trace=new System.Text.StringBuilder();
+            try
+            {
+                foreach(bool lagoon in new[]{true,false})
+                foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})
+                {
+                    yield return MapRetrievalProbe.Load(lagoon?SceneFlow.Lagoon:SceneFlow.SaBubong,mode);
+                    Time.timeScale=1;GameServices.Round.BeginRound();
+                    var who=GameServices.Round.PlayerAt(1);who.Intent.Parked=false;
+                    var brain=who.GetComponent<AIController>();
+                    if(brain==null)brain=who.gameObject.AddComponent<AIController>();
+                    brain.enabled=false;
+                    var input=who.gameObject.AddComponent<LagoonInput>();
+                    who.Teleport(lagoon?new Vector3(20,.04f,17):new Vector3(18,.1f,5));
+                    yield return new WaitForSeconds(.30f);
+                    input.Move=Vector2.right;yield return new WaitForSeconds(.35f);
+                    input.Jump=true;yield return new WaitForSeconds(.10f);input.Jump=false;
+                    float deadline=Time.time+5;
+                    while(Time.time<deadline&&(lagoon?(!who.IsSwimming||who.HoldingSlipper):!who.IsEdgeRecovering))yield return null;
+                    input.Move=Vector2.zero;
+                    if(lagoon)
+                    {
+                        Assert.IsTrue(who.IsSwimming,"Real fall did not reach water");
+                        // Match ExerciseEdge's settled-swim handoff. The first
+                        // IsSwimming frame may still be descending past the lip.
+                        yield return new WaitForSeconds(.35f);
+                        input.Move=Vector2.left;deadline=Time.time+4;
+                        while(who.transform.position.x>22.65f&&Time.time<deadline)yield return null;
+                        input.Move=Vector2.zero;yield return new WaitForSeconds(.08f);
+                        trace.AppendLine($"handoff {mode} at={who.transform.position} swim={who.IsSwimming}");
+                        Assert.IsTrue(MapEdgeGeometry.TryLagoon(who,out _),"Staged swim is not beside a reachable bridge at "+who.transform.position);
+                    }
+                    else Assert.IsTrue(who.IsEdgeRecovering,"Real roof fall did not catch its rail");
+                    input.enabled=false;Object.Destroy(input);
+                    who.Intent.Clear();who.Intent.CommitFrame();brain.enabled=true;
+                    bool sawEdge=who.IsEdgeRecovering;int presses=0;float next=0;deadline=Time.time+9;
+                    while(Time.time<deadline)
+                    {
+                        sawEdge|=who.IsEdgeRecovering;presses=Mathf.Max(presses,who.MashPresses);
+                        if(Time.time>=next)
+                        {
+                            next=Time.time+.25f;
+                            trace.AppendLine($"{(lagoon?"Lagoon":"SaBubong")} {mode} t={Time.time:F2} at={who.transform.position} swim={who.IsSwimming} edge={who.IsEdgeRecovering} phase={who.EdgePhase} mash={who.MashPresses} trip={who.TripLeft:F2} plan={brain.Plan} move={who.Intent.MoveAxis}");
+                        }
+                        if(sawEdge&&!who.IsEdgeRecovering&&!who.IsSwimming&&who.transform.position.y>-.1f)break;
+                        yield return null;
+                    }
+                    brain.enabled=false;
+                    Assert.IsTrue(sawEdge,"Bot never requested the nearby climb");
+                    Assert.Greater(presses,1,"Bot supplied no repeated recovery presses");
+                    Assert.IsFalse(who.IsEdgeRecovering,"Bot remained hanging after its recovery window");
+                    Assert.IsFalse(who.IsSwimming,"Bot did not return to the deck");
+                    Assert.Greater(who.transform.position.x,17,"Bot recovery teleported to the court centre");
+                    Assert.IsTrue(who.CanAct());
+                }
+            }
+            finally{Time.timeScale=1;System.IO.Directory.CreateDirectory("Logs");System.IO.File.WriteAllText("Logs/bot-edge-recovery.txt",trace.ToString());}
+        }
+

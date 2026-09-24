@@ -1,26 +1,50 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: finish bird placement, then bot inactivity
+## Current resume, 2026-09-24: close bot fixes, then visible map/light findings
 
-Overall goal ACTIVE, NOT done. DEV and QUAL baseline dc10b68f2 (AGENTS cleanup
-published and remote-verified). SaBubong bird placement complete locally: author
-v2 uses real raised canopy seams, focused native1/1 in71.825s, actual paired
-frames/sequences/grey inspected. Report: map-by-map-refinement-2026-09-23/
-sabubong-bird-visits/report.md. Failed author v1 retained, no fixture retry used.
-No Unity process running; known generated churn backed up/restored. Original
-DEV composition PNG metas untouched. Publish the explicit map files/report.
+Overall goal ACTIVE, NOT done. DEV and QUAL baseline273e5e669, published and
+remote-verified. AGENTS cleanup dc10b68f2 and SaBubong bird placement57cf74a9c
+published. All21 ambient actors have local map/species placement coverage, with
+ordinary-camera/replay/combined qualification still open.
 
-Then REFINE-2.8: inspect current decision/input/recovery paths and trace actual
-bot inactivity, distinguishing planned waits from failed progress. Reuse existing
-probes; no new capture framework or broad reassurance suite. All21 ambient actors
-now have local map/species data coverage; ordinary-camera/replay/combined gates
-remain open under2.7/2.10. Preserve newer animation and lighting integrations.
+Bot production fixes:5de3a78f3 reaction timing (red reproduction, then3/3 native),
+043cf804c chase patience (focused case plus Ilalim3/3). Current uncommitted change:
+per-seat pektus/lunge decisions consistently use EffectiveDifficulty, published
+in273e5e669. Existing rule checks/compile3/3 in0.121s. Known churn backed up
+and restored. Original
+DEV composition PNG metas remain untouched.
+
+Initial ordinary1x samples now cover four bots in both modes on all five maps.
+No broad AFK or full-role/roster/tier completion claim. Exact evidence and limits:
+reports/map-by-map-refinement-2026-09-23/bot-map-coverage/report.md.
+Bot recovery fixture failed twice BEFORE handoff, last at(16.92,-2.01,16.38), not
+the intended outer bridge lip. Existing ExerciseEdge sets camera follow/movement
+aim too; the draft omitted that input-basis setup. Fixture allowance1/1 exhausted.
+Exact draft/failures retained in the report directory, original compiled
+LagoonRecoveryProbe restored. Do not reopen fixture polishing during feature work.
+Full role/roster/tier and actual bot recovery remain actionable final gates.
+
+Current integration: tracked lighting branch advanced to a28037622 (aba9b9d51
+adds optional CastInkFloor, default0, and native source comparison images).
+DEV merge is IN PROGRESS, not committed. One WorldLookPresentation conflict
+resolved: preserve our explicit-sun/preview API and cached restoration behavior,
+add the new per-camera InkFloor capture/set/restore. QUAL has only four changed
+source/test inputs copied. Guarded new floor-choice case is running; no .cs edits.
+Logs/light-hull-integration-v1.xml/.log and frames in the same named directory.
+Job3010 reaped: native floor-choice1/1 passed in19.144s. Source and actual Windows
+comparison sheets/grey inspected; default0 retained. Report at
+reports/lighting-integration-2026-09-24/hull-floor/report.md. Known churn backed
+up/restored, no active Unity job. Finish the merge commit and push, then inspect
+existing high-preview map evidence for a concrete remaining weakness. Fixture0/1.
+
+Then outstanding visible map/light findings in LIGHT-1.6 and individual map
+parents. Choose a concrete weak area and save its local plan. Preserve bright
+readable lighting and successful art;
+no gratuitous global darkening or completed HUD redesign. Final coherent native/
+peer/replay/performance/build checks remain2.10/P7, not intermediate builds.
 New character/ability/ultimate animation direction belongs to the owner-run cloud
-lane, not a new local rewrite. No task closes merely because it was handed off.
-
-Owner-requested AGENTS cleanup published:3263 to1968words (39.7percent shorter),
-original byte-preserved with coverage audit/link/hash checks in
-reports/instructions-cleanup-2026-09-24/. All earlier requirements retained.
+lane. Its branch is present on origin; do not merge unfinished work or contact a
+conversation. Preserve all older tasks. No phase checkpoint ends this goal.
 
 ## Parallel lane, 2026-09-24: HOME loop and gameplay animation (separate from the map resume above)
 

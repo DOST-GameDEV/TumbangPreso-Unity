@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 12:14:00Z" end-time="2026-09-24 12:14:20Z" duration="19.1442671">
+  <test-suite type="TestSuite" id="1820" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="639" result="Passed" start-time="2026-09-24 12:14:00Z" end-time="2026-09-24 12:14:20Z" duration="19.144267" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1814" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="639" result="Passed" start-time="2026-09-24 12:14:00Z" end-time="2026-09-24 12:14:20Z" duration="19.119955" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18428" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1815" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="639" result="Passed" start-time="2026-09-24 12:14:00Z" end-time="2026-09-24 12:14:20Z" duration="19.105913" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1816" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="639" result="Passed" start-time="2026-09-24 12:14:00Z" end-time="2026-09-24 12:14:20Z" duration="19.092126" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1771" name="WorldCourtCueTests" fullname="TumbangPreso.PlayTests.WorldCourtCueTests" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" testcasecount="26" result="Passed" start-time="2026-09-24 12:14:00Z" end-time="2026-09-24 12:14:20Z" duration="19.067024" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1774" name="BrightLookDarkHullChoiceCaptures" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.BrightLookDarkHullChoiceCaptures" methodname="BrightLookDarkHullChoiceCaptures" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="1324647573" result="Passed" start-time="2026-09-24 12:14:00Z" end-time="2026-09-24 12:14:20Z" duration="19.047819" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 325 of 2820 renderers, 0 with a roof variant.
+[NearFade] 3314 occluder nodes matched, 1621 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+IlalimNgTulay: seat 1 wears character 3
+[Play] wrote Logs/light-hull-integration-v1/IlalimNgTulay-hull-floor-000-fpp.png
+[Play] wrote Logs/light-hull-integration-v1/IlalimNgTulay-hull-floor-000-cast.png
+[Play] wrote Logs/light-hull-integration-v1/IlalimNgTulay-hull-floor-025-fpp.png
+[Play] wrote Logs/light-hull-integration-v1/IlalimNgTulay-hull-floor-025-cast.png
+[Play] wrote Logs/light-hull-integration-v1/IlalimNgTulay-hull-floor-035-fpp.png
+[Play] wrote Logs/light-hull-integration-v1/IlalimNgTulay-hull-floor-035-cast.png
+[Play] wrote Logs/light-hull-integration-v1/IlalimNgTulay-hull-floor-000-again-fpp.png
+[Play] wrote Logs/light-hull-integration-v1/IlalimNgTulay-hull-floor-000-again-cast.png
+IlalimNgTulay fpp: floor 0.35 moved 7454 pixels (0.69% of the frame); 0 against 0 moved 0
+IlalimNgTulay cast: floor 0.35 moved 3324 pixels (0.36% of the frame); 0 against 0 moved 0
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Eskinita: seat 1 wears character 3
+[Play] wrote Logs/light-hull-integration-v1/Eskinita-hull-floor-000-fpp.png
+[Play] wrote Logs/light-hull-integration-v1/Eskinita-hull-floor-000-cast.png
+[Play] wrote Logs/light-hull-integration-v1/Eskinita-hull-floor-025-fpp.png
+[Play] wrote Logs/light-hull-integration-v1/Eskinita-hull-floor-025-cast.png
+[Play] wrote Logs/light-hull-integration-v1/Eskinita-hull-floor-035-fpp.png
+[Play] wrote Logs/light-hull-integration-v1/Eskinita-hull-floor-035-cast.png
+[Play] wrote Logs/light-hull-integration-v1/Eskinita-hull-floor-000-again-fpp.png
+[Play] wrote Logs/light-hull-integration-v1/Eskinita-hull-floor-000-again-cast.png
+Eskinita fpp: floor 0.35 moved 7532 pixels (0.69% of the frame); 0 against 0 moved 0
+Eskinita cast: floor 0.35 moved 3237 pixels (0.35% of the frame); 0 against 0 moved 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

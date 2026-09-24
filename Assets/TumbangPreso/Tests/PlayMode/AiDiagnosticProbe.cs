@@ -194,11 +194,16 @@ namespace TumbangPreso.PlayTests
         {
             var previousMode = UI.SceneFlow.SelectedMode;
             UI.SceneFlow.SelectedMode = mode;
+            // Reuse the same decision trace for map-specific stall reports.
+            // The default and its historic filenames remain Eskinita.
+            string map = System.Environment.GetEnvironmentVariable("TUMP_AI_MAP");
+            if (string.IsNullOrEmpty(map)) map = UI.SceneFlow.Eskinita;
+            Assert.Contains(map, UI.SceneFlow.Maps, "Unknown diagnostic map");
 
             Hitstop.End();
             Time.timeScale = 1.0f;
 
-            var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
+            var load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
             yield return ProbeWait.Done(load, "scene load");
             for (int i = 0; i < 25; i++) yield return null;
 
@@ -213,7 +218,7 @@ namespace TumbangPreso.PlayTests
             var planTime = new Dictionary<string, float>();
             var log = new StringBuilder();
 
-            log.AppendLine($"ai diagnostic  ·  {mode}  ·  {bots.Length} bots  ·  1x");
+            log.AppendLine($"ai diagnostic  ·  {mode}  ·  {map}  ·  {bots.Length} bots  ·  1x");
 
             var lunges = new LungeTracker();
             int lungeFrame = 0;
@@ -436,7 +441,8 @@ namespace TumbangPreso.PlayTests
             log.Append(lunges.Describe());
 
             Directory.CreateDirectory("Logs");
-            File.WriteAllText($"Logs/ai-diagnostic-{mode}.txt", log.ToString());
+            string mapSuffix = map == UI.SceneFlow.Eskinita ? "" : "-" + map;
+            File.WriteAllText($"Logs/ai-diagnostic-{mode}{mapSuffix}.txt", log.ToString());
             Debug.Log(log.ToString());
 
             UI.SceneFlow.SelectedMode = previousMode;

@@ -195,6 +195,22 @@ Shader "TumbangPreso/Toon"
             // chosen in settings, so only an ink-dark outline is replaced.
             half _WorldLookWeight;
             float4 _WorldSoftLight;
+
+            // ⚠️ THE HULL'S LUMINANCE FLOOR, AND 0 IS TODAY'S HULL. pow 1.6 deepens each channel by
+            // a ratio that shrinks as the channel darkens, which is what saturates orange into rust,
+            // and it is also what takes dark brown skin to near ink: the native Ilalim first-person
+            // arms sample (32,23,22) at the edge against (151,90,51) skin (docs/TODO.md LIGHT-1.6).
+            // A floor above 0 scales the whole deepened colour up, hue kept, until it is at least
+            // that fraction of the colour's own luminance, so only colours whose hull falls below
+            // it move. The value is the owner's call; `WorldLookProfile.CastInkFloor` ships at 0.
+            //
+            // ⚠️ IT IS ONE RULE FOR EVERY COLOUR, AND A LUMINANCE FADE WAS TRIED AND REMOVED. True
+            // black keeps its ink anyway (a share of nothing is nothing), and a fade meant to spare
+            // near-black also spared the arms it exists for: `ViewmodelArms.SkinMangKanor`
+            // (49,36,29) sits at luminance 0.020, level with dark hair, and the brown arms it was
+            // tested on sit inside any band that excludes them. The other pixels the floor moves
+            // are coloured parts, such as a blue strap taking a deep blue line.
+            half _WorldCastInkFloor;
             sampler2D _MainTex;
             float4 _MainTex_ST;
             fixed4 _Color;
@@ -262,9 +278,13 @@ Shader "TumbangPreso/Toon"
                             * lerp(1.0, _WorldSoftLight.w, look);
 
                 // § THE BRIGHT LOOK'S EDGE. pow 1.6 then 0.42 deepens and saturates: white
-                // lands on a mid grey, orange on rust, and black stays black.
+                // lands on a mid grey, orange on rust, and black stays black. The floor above
+                // then lifts only a hull darker than that share of its own colour.
                 half inkish = 1.0h - smoothstep(0.08h, 0.2h, max(_OutlineColor.r, max(_OutlineColor.g, _OutlineColor.b)));
-                fixed3 self = pow(OutlineAlbedo(v.texcoord), 1.6) * 0.42 + 0.012;
+                fixed3 albedo = OutlineAlbedo(v.texcoord);
+                fixed3 self = pow(albedo, 1.6) * 0.42;
+                const half3 luma = half3(0.2126h, 0.7152h, 0.0722h);
+                self = self * max(1.0h, _WorldCastInkFloor * dot(albedo, luma) / max(dot(self, luma), 1e-4h)) + 0.012;
                 o.colour = fixed4(lerp(_OutlineColor.rgb, self, look * saturate(_WorldSoftLight.z) * inkish), 1.0);
 
                 // ⚠️⚠️ A ZERO WIDTH IS COLLAPSED TO A DEGENERATE TRIANGLE RATHER THAN DRAWN, AND

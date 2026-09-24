@@ -138,7 +138,20 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
   pass) turns light skin into a deeper peach but dark brown skin into near ink: the native
   Ilalim first-person arms sample (32,23,22) at the edge against (151,90,51) skin. A PlayMode
   A/B confirmed the viewmodel does get the look (weight 1, CastInkSelf 0.88, black ink with the
-  look off), so this is the formula, not a missing hookup. Softening it changes every cast edge.
+  look off), so this is the formula, not a missing hookup. The hull call is now a number rather
+  than a description: `WorldLookProfile.CastInkFloor` keeps the hull at no less than that share of
+  its colour's luminance and ships at 0, today's hull exactly. Rendered at 0, 0.25 and 0.35 on the
+  native probe's brown-skinned seat 1 ([report](reports/light-1-2026-09-24/report.md), frames in
+  `hull-choice/`): the darkest tenth of the Ilalim arm edge goes (25,19,18), (47,32,31),
+  (55,38,35), a near-black line becoming a dark brown one. It is not only dark skin: 0.25 also
+  lifts the hulls around tan skin, greys and greens in the cast shot, 0.35 adds orange, and the
+  black loafer's edge goes from near black to dark grey. A fade sparing
+  near-black was tried and removed, because `ViewmodelArms.SkinMangKanor` sits at luminance
+  0.020, level with dark hair. The owner picks 0, 0.25 or 0.35, or asks for more.
+  Source a28037622 integrated with our explicit-sun/preview restoration preserved.
+  Windows focused floor-choice case1/1 passed; actual current-map comparisons and
+  grey inspected. Default0 retained, alternatives available without blocking maps.
+  [Local integration evidence](reports/lighting-integration-2026-09-24/hull-floor/report.md).
 - [x] LIGHT-1.7 The two Stage tests assert the bright look's own claims (`20c977e5`): applied rig,
   bright shade colour, haze past the court, court ground found; toon ramp measured 1.70:1 under the
   look against 1.95:1 authored, asserted inside 1.35 to 2. WorldCourtCueTests 3/3 on the Mac.
@@ -534,6 +547,25 @@ scattered across all maps. Execute inside each map's existing refinement row.
   replay and combined qualification remain open; Lagoon flight retained.
 - [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
   trace idle decisions and fix actual stalls; distinguish deliberate tactical waits.
+  Initial Eskinita samples cover four bots in both modes. A reaction-clock defect
+  was reproduced and corrected: intermittent planner calls now use elapsed game
+  time instead of accumulating single-frame deltas. Focused native3/3 passed,
+  including repeat-query/reset/pause and the two ordinary-speed samples.
+  [Research/plan](reports/map-by-map-refinement-2026-09-23/bot-refinement-plan.md),
+  [causal evidence and remaining coverage](reports/map-by-map-refinement-2026-09-23/bot-reaction-fix/report.md).
+  Other maps/roles/transitions/tier/roster coverage remains open. Existing tag-stun
+  waits are intentional, not removed to manufacture activity.
+  The chase-patience clock had the same planner/frame mismatch and now measures
+  time since real closing progress. Focused chase plus Ilalim samples3/3 passed;
+  Lagoon samples2/2 passed. [Map findings and limits](reports/map-by-map-refinement-2026-09-23/bot-map-coverage/report.md).
+  No Lagoon water falls occurred in the sample; explicit bot recovery remains open.
+  Bayan/SaBubong samples also passed: initial four-bot, two-mode traces now cover
+  all five maps. Per-seat pektus/lunge decisions now use the assigned room tier,
+  consistently with the existing personality lookup; rule checks/compile3/3.
+  These samples do not close full role/roster/tier qualification. The added bot
+  recovery setup failed twice before control handoff; its draft/failures/next
+  input-basis diagnostic are preserved in the map report, with no more fixture
+  retries during implementation. Bot recovery remains an actionable final gate.
 Owner assignment update2026-09-24: the owner prepared a separate cloud assignment
 for ALL animation research/direction/implementation, including individual ability
 casts and ultimates. That animation lane can begin now while local map/environment

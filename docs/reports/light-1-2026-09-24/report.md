@@ -64,3 +64,40 @@ is how the mismatch was caught instead of being filed as the owner's shape.
 - A parked warm-up frame, not combat. The same limit as the 1920x1080 matrix.
 - The 1920x1080 matrix in these two runs agrees with the earlier Mac numbers: look cost
   0.32 to 0.50 ms on Balanced in the windowed run.
+
+# LIGHT-1.6: the dark-skin hull as a choice
+
+`WorldLookProfile.CastInkFloor` keeps the cast hull at no less than that share of the
+luminance of the colour it frames. **It ships at 0, which is today's hull exactly**, because
+this is the owner's call. `WorldCourtCueTests.BrightLookDarkHullChoiceCaptures` renders the
+choice: seat 1 with a fresh profile's character and slipper (the brown-skinned arms and black
+loafer of the native probe frame), first person at 1600x680 and the close cast shot, on Ilalim
+and Eskinita, at floors 0, 0.25 and 0.35 and then 0 again. PlayMode 1/1 on the Mac. The floor
+moves 0.35 to 0.69 per cent of each frame; 0 against 0 moves 0 pixels.
+
+Arm edge on the first-person frame (pixels within 2 px of skin that the floor moved):
+
+| | Floor 0 (today) | 0.25 | 0.35 |
+|---|---|---|---|
+| Ilalim, darkest tenth | (25,19,18) | (47,32,31) | (55,38,35) |
+| Ilalim, median | (74,55,38) | (87,60,42) | (95,63,44) |
+| Eskinita, darkest tenth | (13,9,12) | (33,29,29) | (41,34,33) |
+| Eskinita, median | (74,46,29) | (87,52,34) | (96,56,38) |
+
+`hull-choice/arm-edge-zoom.png` shows it at 3x: a near-black line at 0, a dark brown one at
+0.25, a slightly lighter brown at 0.35. At native size the change is subtle; the edge stops
+reading as ink rather than becoming an obvious brown line. The black loafer's edge moves from
+near black to a dark grey, (15,15,17) to (30,30,34) at 0.25 on Ilalim, because its checks are
+dark grey rather than black.
+
+It is not only dark skin. In the cast shot, sorting each moved pixel by the brightest colour
+within 3 px of it, 0.25 also lifts the hulls around tan skin, greys and greens (2,006 moved
+pixels on Ilalim), and 0.35 adds the orange skin and shirts (3,329). Any floor is a change to
+every hull darker than it, which is what the owner is choosing.
+
+**A fade that spared near-black colours was tried and removed.** `ViewmodelArms.SkinMangKanor`
+(49,36,29) sits at luminance 0.020, level with dark hair, so any band that spares black spares
+the darkest skin too, and on these brown arms it cancelled most of the lift (darkest tenth only
+(55,39,30) at 0.35 in that run). The first capture also photographed the wrong person: the
+editor's saved character pick was light-skinned, which is why the test now copies a fresh
+profile's picks.
