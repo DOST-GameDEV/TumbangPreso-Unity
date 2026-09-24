@@ -60,7 +60,11 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.Maroon, 23);
+            // ⚠️ THE SARI-SARI STORE (`HubScenery`, 2026-09-24): the loadout is where your slippers
+            // and cans are kept, so it is the corner store's front, planks under a striped awning,
+            // with every row of items standing on a shelf. The top bar's stickers hang in front of
+            // the awning the way a store's signs do.
+            HubScenery.StoreGround(Root, 23, 118);
             HubChrome.Back(Root, Hub);
             HubChrome.TopRight(Root, Hub);
             _unowned = StartUnowned;
@@ -88,6 +92,10 @@ namespace TumbangPreso.UI.Hub
             layout.padding = new RectOffset(16, 16, 16, 16);
             layout.constraint = GridLayoutGroup.Constraint.Flexible;
             _grid.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var shelves = HubKit.Stretch(HubKit.Rect(_grid, "Shelves")).gameObject.AddComponent<HubShelves>();
+            shelves.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+            shelves.raycastTarget = false;
+            shelves.Cell = layout.cellSize.y; shelves.Gap = layout.spacing.y; shelves.Top = layout.padding.top;
             scroll.content = _grid;
             scroll.viewport = view;
 
@@ -320,6 +328,17 @@ namespace TumbangPreso.UI.Hub
             _stage = HubKit.Place(HubKit.Rect(_panel, "ModelStage"), HubKit.TopLeft, new Vector2(48, -160), new Vector2(1224, 470));
             var plate = HubKit.Shape(_stage, "StagePlate", HubStyle.Night, false, 432, 5, 26);
             HubKit.Stretch(plate.rectTransform);
+            // ⚠️ THE ITEM ON THE STORE COUNTER (`HubScenery`, 2026-09-24): the loadout is the
+            // sari-sari store, so an item lifted off its shelf is shown under the shop's one bulb,
+            // standing on the counter's edge, rather than floating in a dark box.
+            var bulb = HubKit.Rect(_stage, "Light").gameObject.AddComponent<HubGlow>();
+            bulb.color = new Color(HubStyle.Golden.r, HubStyle.Golden.g, HubStyle.Golden.b, 0.30f);
+            bulb.raycastTarget = false;
+            HubKit.Place(bulb.rectTransform, HubKit.Centre, new Vector2(0, 10), new Vector2(760, 440));
+            var counter = HubKit.Rect(_stage, "Counter").gameObject.AddComponent<HubShelves>();
+            counter.raycastTarget = false;
+            HubKit.Stretch(counter.rectTransform, 6);
+            counter.Cell = 446; counter.Gap = 0; counter.Top = 6;
             var model = HubKit.Stretch(HubKit.Rect(_stage, "Model"), 8);
             var preview = model.gameObject.AddComponent<ModelPreview>();
             preview.Attach(model);

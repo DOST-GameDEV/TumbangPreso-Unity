@@ -46,9 +46,12 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.Maroon, 31);
+            // ⚠️ THE TREE IS CHALKED ON THE ROAD (`HubScenery`): kids draw the court on the street,
+            // so the branches a hero grows are drawn the same way, and the screen is a place of its
+            // own rather than the maroon every other screen shared until 2026-09-24.
+            HubScenery.AsphaltGround(Root, 31);
             HubChrome.Back(Root, Hub);
-            HubChrome.Title(Root, "SKILL TREE");
+            HubScenery.ChalkTitle(HubChrome.Title(Root, "SKILL TREE"));
             HubChrome.TopRight(Root, Hub);
 
             if (string.IsNullOrEmpty(Hero))
@@ -131,6 +134,8 @@ namespace TumbangPreso.UI.Hub
 
             // The trunk: the hero at the bottom centre, two branches rising left and right.
             var trunk = HubKit.Place(HubKit.Rect(_tree, "Trunk"), HubKit.Bottom, new Vector2(0, 10), new Vector2(200, 200));
+            var ring = HubScenery.ChalkRing(trunk, "ChalkRing", 0.05f);
+            HubKit.Stretch(ring.rectTransform, -34);
             var trunkPlate = HubKit.Shape(trunk, "Plate", HubStyle.Golden, false, 550, 5, 60);
             HubKit.Stretch(trunkPlate.rectTransform);
             HubKit.Stretch(HubKit.Picture(trunk, "Face", HubKit.Portrait(Hero)).rectTransform, 12);
@@ -144,7 +149,7 @@ namespace TumbangPreso.UI.Hub
 
                 // A branch: a chalk line from the trunk up to the slot's label, then its nodes.
                 var line = HubKit.Rect(_tree, "Branch" + slot).gameObject.AddComponent<HubBranch>();
-                line.color = new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, 0.55f);
+                line.color = HubScenery.Chalk;
                 line.raycastTarget = false;
                 line.Side = side;
                 line.Nodes = options.Count;
@@ -271,12 +276,32 @@ namespace TumbangPreso.UI.Hub
         }
     }
 
-    /// <summary>A chalk branch from the trunk up through a slot's nodes.</summary>
+    /// <summary>
+    /// A chalk branch from the trunk up through a slot's nodes, drawn in as the tree opens: the
+    /// first stroke leaves the hero, then climbs node to node, the way a hand would chalk it.
+    /// </summary>
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class HubBranch : MaskableGraphic
     {
         public float Side = 1;
         public int Nodes = 2;
+        private float _start = -1, _progress = 1;
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            if (HubStyle.ReducedMotion) { _progress = 1; return; }
+            _start = Time.unscaledTime + 0.12f;
+            _progress = 0;
+        }
+
+        private void Update()
+        {
+            if (_start < 0 || _progress >= 1) return;
+            float t = Mathf.Clamp01((Time.unscaledTime - _start) / 0.7f);
+            _progress = 1 - (1 - t) * (1 - t);
+            SetVerticesDirty();
+        }
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {
@@ -284,25 +309,41 @@ namespace TumbangPreso.UI.Hub
             var r = GetPixelAdjustedRect();
             var trunk = new Vector2(r.center.x, r.yMin + 210);
             var column = r.center.x + Side * r.width * 0.27f;
-            Vector2 last = trunk;
+            var points = new System.Collections.Generic.List<Vector2> { trunk };
             for (int n = Nodes - 1; n >= 0; n--)
-            {
-                var node = new Vector2(column + Side * n * 20, r.yMax - 60 - n * 170 - 70);
-                Segment(vh, last, node, 7);
-                last = node;
-            }
-        }
+                points.Add(new Vector2(column + Side * n * 20, r.yMax - 60 - n * 170 - 70));
 
-        private void Segment(VertexHelper vh, Vector2 a, Vector2 b, float width)
-        {
-            var d = b - a;
-            if (d.sqrMagnitude < 1) return;
-            var n = new Vector2(-d.y, d.x).normalized * width * 0.5f;
-            int i = vh.currentVertCount;
-            Color32 c = color;
-            vh.AddVert(a + n, c, Vector2.zero); vh.AddVert(b + n, c, Vector2.zero);
-            vh.AddVert(b - n, c, Vector2.zero); vh.AddVert(a - n, c, Vector2.zero);
-            vh.AddTriangle(i, i + 1, i + 2); vh.AddTriangle(i, i + 2, i + 3);
+            float total = 0;
+            for (int k = 1; k < points.Count; k++) total += Vector2.Distance(points[k - 1], points[k]);
+            float drawn = total * _progress;
+            var rng = new System.Random(Nodes * 13 + (Side > 0 ? 7 : 3));
+            // Two passes: the stroke, and a fainter second pass a hair off it, which is what makes
+            // a line read as chalk rather than as a vector.
+            for (int pass = 0; pass < 2; pass++)
+            {
+                Color32 c = pass == 0 ? color : new Color(color.r, color.g, color.b, color.a * 0.4f);
+                var offset = pass == 0 ? Vector2.zero : new Vector2(3, -2);
+                float walked = 0;
+                for (int k = 1; k < points.Count && walked < drawn; k++)
+                {
+                    var a = points[k - 1]; var b = points[k];
+                    float length = Vector2.Distance(a, b);
+                    // Each leg is chalked in short pieces that wander a little and skip now and then.
+                    int pieces = Mathf.Max(1, Mathf.RoundToInt(length / 26));
+                    for (int p = 0; p < pieces && walked < drawn; p++)
+                    {
+                        var from = Vector2.Lerp(a, b, p / (float)pieces);
+                        var to = Vector2.Lerp(a, b, (p + 1) / (float)pieces);
+                        float piece = length / pieces;
+                        if (walked + piece > drawn) to = from + (to - from) * ((drawn - walked) / piece);
+                        walked += piece;
+                        var n = new Vector2(-(b - a).y, (b - a).x).normalized;
+                        float jitter = ((float)rng.NextDouble() - 0.5f) * 3.5f;
+                        if (rng.NextDouble() < 0.1) continue;
+                        HubMesh.Quad(vh, from + offset + n * jitter, to + offset + n * jitter, pass == 0 ? 8 : 5, c);
+                    }
+                }
+            }
         }
     }
 }

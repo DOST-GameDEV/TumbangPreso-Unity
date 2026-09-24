@@ -178,6 +178,17 @@ namespace TumbangPreso.UI.Hub
         public override void Build()
         {
             var panel = HubCards.Panel(Root, this, "SHOP", "Spend " + EconomyRules.CurrencyName + " on heroes and items. Earn it by playing.", new Vector2(1180, 700));
+            // ⚠️ THE STORE'S OWN AWNING OVER THE PANEL (`HubScenery`, 2026-09-24), so SHOP opens as the
+            // sari-sari store's window, the same store LOADOUT is the inside of. It sits behind the
+            // panel, so its shadow never falls on the heading.
+            var awning = HubKit.Rect(panel, "Awning").gameObject.AddComponent<HubAwning>();
+            awning.raycastTarget = false;
+            awning.rectTransform.anchorMin = awning.rectTransform.anchorMax = new Vector2(0.5f, 1);
+            awning.rectTransform.pivot = new Vector2(0.5f, 0);
+            awning.rectTransform.anchoredPosition = new Vector2(0, -14);
+            awning.rectTransform.sizeDelta = new Vector2(1240, 126);
+            awning.transform.SetAsFirstSibling();
+            HubSlap.On(awning, 0, 1.5f);
             var heroes = HubCards.Art(panel, "HeroShopDoor", "HEROES", HubStyle.Persimmon, 181,
                 "Unlock heroes for online play. Every hero is free to try in Practice.",
                 new[] { "rafi", "phaister", "nemu" }, HubGlyph.Mark.Hero, () => { Close(); Hub.Push<HubHero>(h => h.ShopMode = true); });

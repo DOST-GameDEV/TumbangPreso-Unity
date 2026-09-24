@@ -50,21 +50,26 @@ namespace TumbangPreso.UI.Hub
 
         public override Selectable FirstFocus => _primary;
         private GameObject _ownedTag;
+        private HubShape _roleTag;
 
         private static System.Collections.Generic.IReadOnlyList<RosterEntry> Heroes => Roster.HeroPeople;
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.Maroon, 22);
+            // ⚠️ A COLLECTOR'S POSTER (`HubScenery`, 2026-09-24): the hero stands in a burst of
+            // rays on the printed stage, over a halftone-printed ground, with the role on a slanted
+            // red tag. The screen is about ONE person, and now it looks like it is.
+            HubScenery.PosterGround(Root);
 
             // The stage: the left half, a Persimmon sticker the hero stands on.
             var stage = HubKit.Span(HubKit.Rect(Root, "Stage"), new Vector2(0, 0), new Vector2(0.46f, 1),
                                     new Vector2(HubKit.Margin, HubKit.Margin), new Vector2(0, HubKit.Margin + 110));
             var plate = HubKit.Shape(stage, "StagePlate", HubStyle.Persimmon, false, 301, 6, 32);
             HubKit.Stretch(plate.rectTransform);
-            var chalk = HubKit.Stretch(HubKit.Rect(stage, "Chalk"), 10).gameObject.AddComponent<HubPattern>();
-            chalk.Seed = 301; chalk.Density = 1.4f; chalk.raycastTarget = false;
-            chalk.color = new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, 0.09f);
+            var rays = HubKit.Stretch(HubKit.Rect(stage, "Rays"), 18);
+            rays.gameObject.AddComponent<RectMask2D>();
+            var burst = HubScenery.Burst(rays, "Burst", new Color(1f, 0.93f, 0.62f, 0.26f), 2.5f, 20);
+            HubKit.Place(burst.rectTransform, HubKit.Bottom, new Vector2(0, 90), new Vector2(40, 40));
             var model = HubKit.Stretch(HubKit.Rect(stage, "Model"), 10);
             _preview = model.gameObject.AddComponent<ModelPreview>();
             _preview.Attach(model);
@@ -81,8 +86,12 @@ namespace TumbangPreso.UI.Hub
             // The right side: a column that starts at the stage's edge and ends at the margin.
             var side = HubKit.Span(HubKit.Rect(Root, "Details"), new Vector2(0.46f, 0), new Vector2(1, 1),
                                    new Vector2(70, HubKit.Margin), new Vector2(HubKit.Margin, 190));
-            _role = HubKit.Text(side, "Role", "", HubStyle.Label, false, HubStyle.Golden, TextAnchor.MiddleLeft);
-            HubKit.Place(_role.rectTransform, HubKit.TopLeft, new Vector2(0, 0), new Vector2(800, 56));
+            _roleTag = HubKit.Shape(side, "RoleTag", HubStyle.DeepRed, false, 331, 4, 8);
+            HubKit.Place(_roleTag.rectTransform, HubKit.TopLeft, new Vector2(-14, 4), new Vector2(400, 60));
+            _roleTag.rectTransform.localRotation = Quaternion.Euler(0, 0, 2.5f);
+            _role = HubKit.Text(side, "Role", "", HubStyle.Label, false, HubStyle.Paper, TextAnchor.MiddleLeft);
+            HubKit.Place(_role.rectTransform, HubKit.TopLeft, new Vector2(8, 0), new Vector2(800, 56));
+            _role.rectTransform.localRotation = Quaternion.Euler(0, 0, 2.5f);
             _name = HubKit.Text(side, "Heading", "", HubStyle.Hero, true, HubStyle.Honey, TextAnchor.MiddleLeft);
             HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(-4, -56), new Vector2(820, 150));
             var nameShadow = _name.gameObject.AddComponent<Shadow>();
@@ -148,6 +157,7 @@ namespace TumbangPreso.UI.Hub
             string tagline = ConvertedCharacterSelect.TaglineFor(hero.Id) ?? "";
             string[] parts = tagline.Split('\n');
             _role.text = "//  " + (parts.Length > 0 ? parts[0] : "HERO");
+            _roleTag.rectTransform.sizeDelta = new Vector2(_role.preferredWidth + 48, 60);
             _name.text = hero.Name;
             _name.fontSize = HubStyle.Size(HubStyle.Hero);
             HubKit.Fit(_name, 820);

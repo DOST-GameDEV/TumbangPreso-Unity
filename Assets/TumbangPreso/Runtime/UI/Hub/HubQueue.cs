@@ -196,6 +196,13 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
+            // ⚠️ THE ONE BIG BEAT IN THE FRONT END (`HubScenery`, 2026-09-24). It was a flat band
+            // with a word on it. Now the fiesta arrives: rays burst out over the court, the band
+            // slams down too big and jolts the screen once, and the bunting drops in on its
+            // strings. 1.6 seconds, no decision on it, and reduced motion keeps it all still.
+            var rays = HubScenery.Burst(Root, "Rays", new Color(HubStyle.Golden.r, HubStyle.Golden.g, HubStyle.Golden.b, 0.22f), 9, 24);
+            HubKit.Place(rays.rectTransform, HubKit.Centre, new Vector2(0, 40), new Vector2(40, 40));
+            HubScenery.Bunting(Root, 3, 0, 0.12f);
             var band = HubKit.Span(HubKit.Rect(Root, "Band"), new Vector2(0, 0.5f), new Vector2(1, 0.5f),
                                    new Vector2(-40, -150), new Vector2(-40, -150));
             var tape = HubKit.Shape(band, "Tape", HubStyle.Chartreuse, true, 12, 6, 10);
@@ -210,8 +217,9 @@ namespace TumbangPreso.UI.Hub
             var line = HubKit.Text(Root, "ModeLine", mode, HubStyle.Title, true, HubStyle.Honey, TextAnchor.MiddleCenter);
             HubKit.Place(line.rectTransform, HubKit.Centre, new Vector2(0, -200), new Vector2(1200, 70));
 
-            HubSlap.On(band, 0, -4);
-            HubSlap.On(line.rectTransform, 0.12f, 2);
+            band.localRotation = Quaternion.Euler(0, 0, -3);
+            HubImpact.On(band, Root, 0);
+            HubSlap.On(line.rectTransform, 0.24f, 2);
             MenuSfx.Start();
             _until = Time.unscaledTime + 1.6f;
         }
