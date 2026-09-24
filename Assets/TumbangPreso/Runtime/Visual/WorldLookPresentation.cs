@@ -97,6 +97,13 @@ namespace TumbangPreso.Visual
         /// install for that would re-run the ground search on every settings change.
         /// </summary>
         public void Reapply()=>ApplyScene();
+        /// <summary>
+        /// The key light this look reads its sun direction from: the preview's own sun, or the
+        /// match's recorded one. ⚠️ Read this, never `SkyEvent.RecordedSun` directly, for the
+        /// reason on `InstallPreview`: in the menu its fallback is the first active directional
+        /// light, which can be the character portrait's key.
+        /// </summary>
+        public Light KeyLight=>_sunOverride!=null?_sunOverride:SkyEvent.RecordedSun;
         public static bool HandlesCamera(Camera camera)
             =>Current!=null && camera!=null && (camera.GetComponent<WorldLookCamera>()!=null || !Current._previewOnly &&
                 (camera==Camera.main || camera.GetComponent<CameraSystem.CameraRig>()!=null || camera.name=="RecordedWorldCamera" || camera.name=="UltimateSceneCamera"));
@@ -237,7 +244,7 @@ namespace TumbangPreso.Visual
             Shader.SetGlobalTexture(RampId,_ramp);
             Shader.SetGlobalVector(ShapeId,new Vector4(profile.BandEdge,profile.UpperRim,profile.FeetShade,profile.MetalHighlight));
             Shader.SetGlobalVector(SoftId,new Vector4(profile.Softness,profile.Wrap,profile.CastInkSelf,profile.CastInkWidth));
-            var sun=_sunOverride!=null?_sunOverride:SkyEvent.RecordedSun;Vector3 direction=sun!=null?-sun.transform.forward:Vector3.up;
+            var sun=KeyLight;Vector3 direction=sun!=null?-sun.transform.forward:Vector3.up;
             Shader.SetGlobalVector(KeyId,direction);
             // Use this map's authored sky palette, not a universal blue pane.
             // The same camera scope prevents leakage into character/menu previews.
