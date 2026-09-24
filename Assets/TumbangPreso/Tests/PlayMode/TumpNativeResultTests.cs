@@ -66,6 +66,11 @@ namespace TumbangPreso.PlayTests
             int next=System.Array.IndexOf(SceneFlow.Maps,SceneFlow.BayanPlaza);
             result.HostReceiveMapVote(GameLaunch.SoloSeat,next);result.RequestRematch();yield return null;
             Assert.AreEqual(SceneFlow.BayanPlaza,SceneFlow.SelectedMap);
+            // UX-1 now enters offline arenas through HubLoading.LoadSceneAsync.
+            // One frame is not load completion; keep the real arena assertion.
+            float deadline=Time.realtimeSinceStartup+30;int frames=0;
+            while((SceneManager.GetActiveScene().name!=SceneFlow.BayanPlaza||Object.FindFirstObjectByType<ReadyGate>()==null)
+                &&Time.realtimeSinceStartup<deadline&&frames++<ProbeWait.MaxFrames)yield return null;
             Assert.AreEqual(SceneFlow.BayanPlaza,SceneManager.GetActiveScene().name,"Rematch selected the next map but kept playing on the old court.");
             Assert.IsNotNull(Object.FindFirstObjectByType<ReadyGate>());
         }

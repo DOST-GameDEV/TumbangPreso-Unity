@@ -1036,7 +1036,11 @@ Implementation order within UX-1:
   face; the XP track is a chunky inked bar; fiesta bunting drops in over the winner's banner
   (`HubScenery.Bunting`, still under reduced motion). Routes, names and focus paths unchanged.
   `TumpNativeResultTests`, `MatchFinishPresentationTests`, `PhaseSurfaceLayoutProbe`: 9 of 10,
-  the one red being the known `RematchActuallyLoadsTheChosenArena` gameplay-lane defect.
+  the one red being `RematchActuallyLoadsTheChosenArena`'s one-frame scene check.
+  Reconciled2026-09-24: offline loading is asynchronous; a bounded wait reached
+  BayanPlaza. Final fixture source retains the actual-map/ready checks; its final
+  green rerun stays P7 after the one repair exposed an invalid extra service-scene
+  assumption. [Exact evidence](reports/map-by-map-refinement-2026-09-23/rematch-reconciliation/report.md).
   Open: YOUR MATCH is still one line of text in a large card, and PLAYERS a sparse list.
 
 ### UI-REVIEW · Research-first UI and HUD refinement ⚠️ IN PROGRESS, 2026-09-23
@@ -1116,7 +1120,8 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
   changed screens, 4:3 and 1600x680 checks, and the owner's look approval.
 - Known pre-existing failures, not caused here: `OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms`
   (retired "PLAY FAIR" copy), `TitlePlayCreditsAndSettingsReturnThroughNativeViews` (retired
-  title route), `RematchActuallyLoadsTheChosenArena` (rematch stays on Eskinita; gameplay lane).
+  title route), `RematchActuallyLoadsTheChosenArena` (stale synchronous wait;
+  actual Bayan load observed, final corrected-fixture rerun remains P7).
 
 ### P6 supersession decisions
 

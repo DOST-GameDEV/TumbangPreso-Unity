@@ -1,50 +1,43 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: lower street context for Sa Bubong
+## Current resume, 2026-09-24: chosen-map rematch reconciliation
 
-Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified at4dde9837a. Local
-roof court paint07a387779 and haze/card4dde9837a published. Haze study selected
-90-380m; saved Resources profile updated after catching a defaults-only mistake.
-Final v2 actual image/grey inspected, card importer/GUID preserved. Lighting source
-a28037622 integrated in5e9b711c7, optional hull floor stays0; native1/1 and pairs.
+Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified atc85614a42. Roof
+court07a387779, haze/card4dde9837a and lower-street contextc85614a42 published.
+All native colour/grey reviewed. Last street v2 passed1/1 in1.372s after one close-
+camera repair; root/source models/physics/card importer preserved. No more art
+variants or fixture polishing for that completed unit. Lighting a28037622 merged
+in5e9b711c7; optional cast hull floor remains0 with native evidence.
 
-Current local plan: map-by-map-refinement-2026-09-23/rooftop-street-context-plan.md.
-Actual lower streets read as empty dark ribbons despite existing asphalt texture.
-RooftopStreetLifeAuthor adds two existing native passenger-tricycle models at
-supported street edges plus restrained centre/crossing paint. No new collision/
-shadow casters, no facade/asphalt/roof repaint. Existing builder hook added.
-Author91330 completed: two supported tricycles,136dashes/four crossings, no
-collision change. First native4948 passed1/1 in1.324s; actual preview shows useful
-street cues but the external close witness is blocked by a neighboring roof.
-One bounded fixture repair moves that camera into the street and fixes High
-capture quality. Fixture allowance now1/1 across compaction. Product refinement:
-thin paint planes now reuse depth-biased CourtSurface to avoid distant road depth
-fighting; geometry stays3mm above asphalt. Author73171 completed, native14457
-v2 passed1/1 in1.372s. Actual high preview, clearer east-street witness and matched
-grey inspected. Retain restrained additions; tricycles are not prominent in the
-high card and west is not separately framed. Final High preview installed as roof
-card with importer hash preserved. Known churn restored; no Unity job running.
-Report: rooftop-street-context/report.md. Publish explicit scoped files, then
-reconcile/fix the known chosen-map rematch issue in the older queue. No more
-fixture polishing or gratuitous art variants for this completed local unit.
+Current plan: rematch-reconciliation-plan.md. September15's real old-map bug is
+already fixed in current MatchResult. New UX-1 offline entry is asynchronous via
+HubLoading. The old regression waits one frame; baseline72063 failed exactly on
+active scene (Eskinita) after the selected-map assertion passed for Bayan.
+Preserve XML at rematch-reconciliation/before.xml. One bounded test correction
+now waits on chosen scene AND its installed round, retaining destination/scene/
+ready assertions and a30s/frame ceiling. After78264 reached Bayan and passed the
+original map assertions, then failed an extra agent-added assumption: RoundDirector
+lives in DontDestroyOnLoad. Final source removes that invalid ownership condition
+and waits for active arena/ready gate. No production change and NO final green
+rerun claimed. Both failures retained; fixture allowance1/1 exhausted. Final
+corrected case waits for P7, not another loop. Report rematch-reconciliation/report.md.
+Known churn restored; no active Unity. Publish the bounded reconciliation and
+continue native shutdown-crash diagnosis from existing evidence/binaries without
+creating an intermediate build. Preserve current-binary peer rematch as a final gate.
 
-Bot fixes published:5de3a78f3 reaction timing;043cf804c chase patience;273e5e669
-per-seat difficulty. All five maps have initial four-bot/two-mode ordinary samples.
-Full role/roster/tier and bot water/roof recovery remain actionable final gates.
-Recovery fixture failed twice BEFORE handoff, last(16.92,-2.01,16.38), not the
-intended lip. Existing ExerciseEdge also sets camera follow/movement aim; omitted
-input-basis setup is the next diagnostic. Allowance1/1 exhausted: no more fixture
-polishing during feature work. Draft/failures preserved in bot-map-coverage/;
-original compiled LagoonRecoveryProbe restored. No production failure claimed.
+Bot fixes5de3a78f3/043cf804c/273e5e669 published. Initial four-bot/two-mode samples
+cover all five maps; full role/roster/tier and bot water/roof recovery stay final
+gates. Recovery fixture failed twice BEFORE handoff at wrong lip position;
+omitted camera/input-basis setup is the next diagnostic, allowance1/1 exhausted.
+Exact draft/failures remain in bot-map-coverage/, compiled original restored.
+No production recovery failure is claimed; do not restart that fixture loop.
 
-AGENTS cleanup dc10b68f2 preserves important instructions in39.7percent fewer
-words plus exact original/archive mapping. SaBubong birds57cf74a9c complete locally.
-All21 ambient actors have local map/species placement coverage; ordinary-camera/
-replay/combined checks remain open. Preserve every older task and evidence.
-New character/ability/ultimate animation direction belongs to the owner-run cloud
-lane; its origin branch exists and is advancing, but do not merge unfinished work
-or contact a task. Final native/peer/replay/performance/build remains2.10/P7.
-No checkpoint stops the goal; one heavy workload and no intermediate player build.
+AGENTS cleanup dc10b68f2 preserves important rules in39.7percent fewer words plus
+exact original/archive mapping. All21 ambient actors have local placement coverage;
+ordinary-camera/replay/combined gates remain. New character/ability/ultimate work
+belongs to owner-run cloud lane; do not merge unfinished branch work or contact a
+conversation. Preserve all older requirements. Final native/peer/replay/performance/
+build remains2.10/P7; native shutdown crash remains open. No checkpoint stops goal.
 
 ## Parallel lane, 2026-09-24: HOME loop and gameplay animation (separate from the map resume above)
 
