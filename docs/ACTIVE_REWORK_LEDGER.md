@@ -1,43 +1,53 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: chosen-map rematch reconciliation
+## Current resume, 2026-09-24: Windows renderer mitigation ready to publish
 
-Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified atc85614a42. Roof
-court07a387779, haze/card4dde9837a and lower-street contextc85614a42 published.
-All native colour/grey reviewed. Last street v2 passed1/1 in1.372s after one close-
-camera repair; root/source models/physics/card importer preserved. No more art
-variants or fixture polishing for that completed unit. Lighting a28037622 merged
-in5e9b711c7; optional cast hull floor remains0 with native evidence.
+Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified at45aa55558. Rematch
+reconciliation published: actual Bayan entry observed after asynchronous loading;
+final bounded test source preserves map/ready checks but has no final green rerun.
+Invalid agent-added DontDestroyOnLoad scene assertion removed. Fixture allowance
+1/1 exhausted, leave final rerun to P7. Do not call it an ongoing runtime map bug.
 
-Current plan: rematch-reconciliation-plan.md. September15's real old-map bug is
-already fixed in current MatchResult. New UX-1 offline entry is asynchronous via
-HubLoading. The old regression waits one frame; baseline72063 failed exactly on
-active scene (Eskinita) after the selected-map assertion passed for Bayan.
-Preserve XML at rematch-reconciliation/before.xml. One bounded test correction
-now waits on chosen scene AND its installed round, retaining destination/scene/
-ready assertions and a30s/frame ceiling. After78264 reached Bayan and passed the
-original map assertions, then failed an extra agent-added assumption: RoundDirector
-lives in DontDestroyOnLoad. Final source removes that invalid ownership condition
-and waits for active arena/ready gate. No production change and NO final green
-rerun claimed. Both failures retained; fixture allowance1/1 exhausted. Final
-corrected case waits for P7, not another loop. Report rematch-reconciliation/report.md.
-Known churn restored; no active Unity. Publish the bounded reconciliation and
-continue native shutdown-crash diagnosis from existing evidence/binaries without
-creating an intermediate build. Preserve current-binary peer rematch as a final gate.
+Current plan: native-shutdown-plan.md. Exact original accessibility-v57 build from
+older validation/Builds was copied into QUAL Builds/shutdown-diagnosis-v57-20260924,
+not rebuilt. Core exe/UnityPlayer/runtime hashes match; receipt in
+QUAL Logs/shutdown-diagnosis-20260924/binary.json. Original remains untouched.
+Existing native runner gained optional --graphics-api d3d11/d3d12, syntax checked.
+Native pair reaped: D3D12 process9508/exec5951 passed15stages then crashed with
+0xC0000005. Windows event1000: D3D12Core1.618.1.0, offset0xa1f5, RX6600 driver
+32.0.21043.19003. D3D11 process4792/exec26235 passed the same15stages and exited0.
+Both actual APIs confirmed in logs; same copied binary hashes, fresh profiles,
+input unchanged. Original untouched; no new build/current-binary claim.
+
+Current mitigation: GameBuilder.PreferCompatibleWindowsRenderer authored Windows
+explicit API order D3D11,D3D12, preserving other platforms/quality. Guarded author
+finished; scoped serialized diff copied to DEV. Current-source five-map D3D11
+case passed1/1 in43.5834526s; actual stage/eye/cast and25percent grey inspected.
+Proof: reports/map-by-map-refinement-2026-09-23/native-shutdown/report.md.
+No game/Unity/crash-handler processes remain. Native receipts/WER event preserved.
+Final current player/default-backend/exit/performance remains P7. Exact internal
+engine/driver cause unknown; no upgrade, intermediate build or indefinite soak.
+Publish this bounded unit, align QUAL, remove only its copied diagnostic build,
+then continue remaining actionable queue. Do not repeat the old-binary pair.
+
+Published roof units: court07a387779, haze/card4dde9837a, street contextc85614a42.
+Actual colour/grey inspected; street v2 passed1/1 in1.372s after one close-camera
+repair. Source models/physics/card importer preserved. No more variants/fixtures
+for that completed local unit. Lighting a28037622 merged in5e9b711c7; optional
+cast hull floor remains0, native1/1 and actual comparisons.
 
 Bot fixes5de3a78f3/043cf804c/273e5e669 published. Initial four-bot/two-mode samples
 cover all five maps; full role/roster/tier and bot water/roof recovery stay final
 gates. Recovery fixture failed twice BEFORE handoff at wrong lip position;
-omitted camera/input-basis setup is the next diagnostic, allowance1/1 exhausted.
-Exact draft/failures remain in bot-map-coverage/, compiled original restored.
-No production recovery failure is claimed; do not restart that fixture loop.
+omitted camera/input-basis setup is next diagnostic, allowance1/1 exhausted.
+Exact draft/failures in bot-map-coverage/, original compiled probe restored.
 
 AGENTS cleanup dc10b68f2 preserves important rules in39.7percent fewer words plus
-exact original/archive mapping. All21 ambient actors have local placement coverage;
-ordinary-camera/replay/combined gates remain. New character/ability/ultimate work
-belongs to owner-run cloud lane; do not merge unfinished branch work or contact a
-conversation. Preserve all older requirements. Final native/peer/replay/performance/
-build remains2.10/P7; native shutdown crash remains open. No checkpoint stops goal.
+exact archive. All21 ambient actors have local placement coverage; ordinary-camera/
+replay/combined gates remain. New character/ability/ultimate work belongs to the
+owner-run cloud lane; do not merge unfinished work or contact a conversation.
+Preserve older requirements. Final current-source native/peer/replay/performance/
+build remains2.10/P7. No checkpoint stops goal; no intermediate build.
 
 ## Parallel lane, 2026-09-24: HOME loop and gameplay animation (separate from the map resume above)
 

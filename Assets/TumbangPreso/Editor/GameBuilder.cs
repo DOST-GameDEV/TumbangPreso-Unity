@@ -45,6 +45,24 @@ namespace TumbangPreso.EditorTools
             EditorApplication.Exit(ok ? 0 : 1);
         }
 
+        public static void PreferCompatibleWindowsRenderer()
+        {
+            // The same v57 accessibility route crashed in D3D12Core at shutdown
+            // on RX6600 and exited cleanly with D3D11. Prefer the compatible
+            // backend; retain D3D12 for explicit diagnostics/fallback. Other
+            // platforms and all shader/quality settings keep their own choices.
+            const BuildTarget target=BuildTarget.StandaloneWindows64;
+            var apis=new[]{UnityEngine.Rendering.GraphicsDeviceType.Direct3D11,UnityEngine.Rendering.GraphicsDeviceType.Direct3D12};
+            PlayerSettings.SetUseDefaultGraphicsAPIs(target,false);
+            PlayerSettings.SetGraphicsAPIs(target,apis);AssetDatabase.SaveAssets();
+            var saved=PlayerSettings.GetGraphicsAPIs(target);
+            if(PlayerSettings.GetUseDefaultGraphicsAPIs(target)||!saved.SequenceEqual(apis))
+                throw new InvalidOperationException("Windows renderer preference was not saved.");
+            Directory.CreateDirectory("Logs/native-shutdown");
+            File.WriteAllText("Logs/native-shutdown/renderer-preference.txt","Windows automatic=False; preferred="+string.Join(",",saved)+"; authoring editor="+SystemInfo.graphicsDeviceType+"\n");
+            EditorApplication.Exit(0);
+        }
+
         public static void BuildMac()
         {
             bool ok = Execute(CommandLineOutput() ?? DefaultMacOutput(), BuildTarget.StandaloneOSX);

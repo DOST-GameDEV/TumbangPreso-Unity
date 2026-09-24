@@ -1154,8 +1154,13 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
   integrated acceptance remain separately in P7.
 - [ ] **Native player shutdown crash.** v57 (and one earlier recorded runner result)
   exited with 0xC0000005 after the review had passed and `CodeReloadManager destroyed`
-  was logged. The verdict stands; the cause is unknown. Reproduce on the next build,
-  read the crash dump if one is written, fix or name the engine-side cause.
+  was logged. On2026-09-24 the exact v57 binary passed15stages on both backends:
+  D3D12 then crashed in D3D12Core1.618.1.0 at0xa1f5; D3D11 exited0 on RX6600.
+  Windows now explicitly prefers D3D11, retaining D3D12 second. Current-source
+  five-map D3D11 rendering passed1/1 and actual views/grey were inspected. This is
+  a machine-supported compatibility mitigation; internal engine/driver cause is
+  unproven. P7 still owes current-player default-backend, exit and performance.
+  [Native comparison and evidence](reports/map-by-map-refinement-2026-09-23/native-shutdown/report.md).
 - [ ] **Rafi B / lagoon C expansion, final integration.** Model, kit, map, v47 to v52
   evidence and the three-peer water checks are done (see the done list). Final coherent
   qualification remains in P7. Local deck sampling refinement is DONE:47deck

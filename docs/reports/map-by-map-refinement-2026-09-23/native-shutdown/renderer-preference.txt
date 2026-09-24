@@ -1,0 +1,1 @@
+Windows automatic=False; preferred=Direct3D11,Direct3D12; authoring editor=Direct3D11
