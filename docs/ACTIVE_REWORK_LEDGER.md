@@ -1,22 +1,22 @@
 # Active TUMP rework ledger
 
-## Current resume,2026-09-24: publish east sign, resume remaining map work
+## Current resume,2026-09-24: publish refreshed cards, start natural ambient life
 
-Overall goal ACTIVE and NOT done. Finish current unit before moving; all older
-IDs remain. No checkpoint stops/questions/delegation/paid APIs/resets/main/Desktop.
-DEV/QUAL start ata76ea0f68. EAST locally finished: generated ALING LUZ/SARI-SARI,
-3:1supported front-fascia mount, existing booth/west/house/collision retained.
-Native64118completed1/1in3.997s; actual front/neighborhood/grey inspected and kept.
-Assets/evidence copied to DEV, known QUALchurn backed/restored. No Unity/helpers.
-Next explicit stage/commit/fetch/push/remote verify, preserve/advance QUAL.
+Overall goal ACTIVE and NOT done. Finish one unit before moving; all older IDs kept.
+DEV/QUAL start at5b51ee1b9. All13signage units published. Card refresh locally done:
+Eskinita actual current preview retained; Ilalim axial under-bridge thumbnail chosen
+from2native angles because high card hid court and oblique variant hid behind pillar.
+Initial capture1/1in4.334s, framing1/1in2.644s. Actual finalcolour/grey inspected.
+Only2cardPNGbytes replaced, original importer hashes/GUIDs preserved. No runtime
+camera/lobby/intro/UI behavior changes, other3cards untouched. Evidence/report saved.
 
-All13current signage units(11Ilalim,2Eskinita)now have individual local implementation/
-native evidence. This does NOT close map parents/overall goal. Next reconcile the
-canonical remaining map queue and update affected native map previews/cards and
-necessary integrated camera views, then continue older animal/bot/motion/gameplay
-work. Do not rerun every completed shop test or start ultimate work prematurely.
-Final native build/performance/regression remains P7after features, not an excuse
-to stop independent implementation. Error-page tab15cleanup still tool-blocked.
+Known QUALchurn restored; no Unity/helpers active. Publish cards/docs/source capture
+case, preserve/advance QUAL, then REFINE-2.7natural ambient movement, one actual
+species/map behavior at a time. Research/plan/source diagnosis first; no blind global
+animal animation patch. Then bots2.8/character-gameplay motion2.9/later ultimate2.11.
+Map intro/spectator/peer/replay/native performance stay2.10/P7on final coherent
+candidate. Do not claim map parents/goal complete or rerun completed shops/cards.
+Error-page tab15cleanup remains tool-blocked; do not bypass/repeat failed attempts.
 
 ## Ilalim storefront implementation status
 
@@ -139,3 +139,10 @@ East author2908completed, same supported source-aspect fit; west/source collisio
 unchanged. Only nativeEast case now in flight, Logs/eskinita-east-sign-v1. No.cs
 edits until exit. Actual front/neighborhood/grey/XML then publish and resume map
 integration/older tasks. No other feature or ultimate work started.
+
+Mapcards24603completed1/1in4.334s. Actual outputs/grey inspected: Eskinita keep;
+Ilalim roof dominates/hides court. Current SAMEunit now evaluates exactly2native
+thumbnail angles under bridge, no production camera/UI/intro behavior change.
+Existing preview scene/look reused, Logs/map-card-ilalim-framing. Choose best actual
+image then publish card PNGs. No further variants after these, no broader tests.
+No.cs edits during run. Natural ambient life remains next implementation.

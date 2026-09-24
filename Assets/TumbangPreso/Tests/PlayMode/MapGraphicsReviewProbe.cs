@@ -633,6 +633,52 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [UnityTest,Timeout(90000)]
+        public IEnumerator UpdatedStreetMapCardsUseTheirRealPreviewCameras()
+        {
+            GraphicsProfiles.Apply(2);
+            foreach(string map in new[]{SceneFlow.Eskinita,SceneFlow.IlalimNgTulay})
+            {
+                yield return PlayModeWorld.Reset();
+                var canvas=new GameObject("Updated map card",typeof(Canvas));
+                var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+                surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+                var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(map);
+                float deadline=Time.realtimeSinceStartup+30;
+                while(preview.Showing!=map&&Time.realtimeSinceStartup<deadline)yield return null;
+                Assert.AreEqual(map,preview.Showing);Assert.IsNotNull(preview.Camera);preview.enabled=false;
+                using(Visual.NeighbourhoodSkyMotion.At(20))yield return GameplayShots.Render(preview.Camera,map+"-updated-card",false,Output,width:960,height:540);
+                Object.Destroy(canvas);yield return PlayModeWorld.Reset();
+            }
+        }
+
+        [UnityTest,Timeout(90000)]
+        public IEnumerator IlalimMapCardFramesTheCourtBelowTheBridge()
+        {
+            GraphicsProfiles.Apply(2);
+            var canvas=new GameObject("Under-bridge card",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.IlalimNgTulay);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.IlalimNgTulay&&Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.IlalimNgTulay,preview.Showing);preview.enabled=false;
+            // Thumbnail art direction only. Live lobby/preview and match-introduction
+            // descriptors stay unchanged; reuse their actual loaded scene and look.
+            var pivot=(Vector3)typeof(MapPreviewSurface).GetField("_pivot",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance).GetValue(preview);
+            var offsets=new[]{new Vector3(0,6.5f,-24),new Vector3(2.8f,5.2f,-24)};
+            try
+            {
+                for(int i=0;i<offsets.Length;i++)
+                {
+                    preview.Camera.transform.position=pivot+offsets[i];preview.Camera.transform.LookAt(pivot+Vector3.up*1.6f);preview.Camera.fieldOfView=58;
+                    using(Visual.NeighbourhoodSkyMotion.At(20))yield return GameplayShots.Render(preview.Camera,"IlalimNgTulay-under-bridge-"+i,false,Output,width:960,height:540);
+                }
+            }
+            finally{Object.Destroy(canvas);}
+            yield return PlayModeWorld.Reset();
+        }
+
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimFinalArtReview()
         {

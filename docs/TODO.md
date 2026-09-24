@@ -295,6 +295,9 @@ scattered across all maps. Execute inside each map's existing refinement row.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
   Vulcanizing now uses a real painted3Dtire sign and supported tire-service bay.
   Native1/1passed5.024s, actual front/street/grey inspected. [Vulcanizing evidence](reports/map-by-map-refinement-2026-09-23/ilalim-vulcanizing/report.md).
+  Current map-vote card now shows the actual street/court beneath the bridge; two
+  native framing variants inspected, axial retained. Eskinita card refreshed too,
+  original importers/GUIDs verified unchanged. [Card evidence](reports/map-by-map-refinement-2026-09-23/map-cards-after-storefronts/report.md).
   All11Ilalim storefront units now have individual implementation/retention evidence;
   this parent stays OPEN for integrated map/camera/native-performance acceptance.
   Pisonet retains its source cabinets/chairs with fitted controls, quiet screen
