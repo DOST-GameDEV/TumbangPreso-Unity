@@ -32,6 +32,60 @@ namespace TumbangPreso.PlayTests
             SceneFlow.AdoptRemoteRules(_rules);if(_pinned)SceneFlow.PinSelectedRules(_rules);else SceneFlow.UnpinSelectedRules();
         }
         [UnityTest,Timeout(300000)]
+        public IEnumerator LagoonBirdsFlyGlideAndPause()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Lagoon);Time.timeScale=1;GraphicsProfiles.Apply(1);
+            var life=GameObject.Find("Lagoon/Coastal bird life").GetComponent<AmbientLife>();
+            Assert.AreEqual(3,life.Animals.Length);Assert.IsTrue(life.Animals.All(a=>a.Bird&&a.AerialWander));
+            foreach(var spec in life.Animals)life.StageBirdVisitForReview(spec.Id);
+            var birds=life.Animals.Select(a=>life.transform.Find("Ambient "+a.Id)).ToArray();
+            Assert.IsEmpty(life.GetComponentsInChildren<Collider>());
+            var last=birds.Select(t=>t.position).ToArray();var travel=new float[birds.Length];
+            var wing=birds[0].GetComponentsInChildren<Transform>().FirstOrDefault(t=>t.name=="WingL");Assert.IsNotNull(wing);
+            var firstWing=wing.localRotation;float wingMotion=0;
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;var camera=rig.Camera;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            bool close=true,flap=false,glide=false;
+            Camera.CameraCallback pin=cam=>
+            {
+                if(cam!=camera)return;var at=birds[0].position+Vector3.up*.16f;
+                var eye=close?at+birds[0].forward*1.9f+birds[0].right*1.1f+Vector3.up*.65f:new Vector3(2,1.9f,3);
+                cam.transform.SetPositionAndRotation(eye,Quaternion.LookRotation(at-eye));cam.fieldOfView=close?45:70;
+            };
+            Camera.onPreCull+=pin;var report=new StringBuilder("time,id,x,y,z,state\n");
+            try
+            {
+                float end=Time.time+12,nextSample=0;
+                while(Time.time<end)
+                {
+                    yield return null;
+                    for(int i=0;i<birds.Length;i++)
+                    {
+                        var point=birds[i].position;travel[i]+=Vector3.Distance(point,last[i]);last[i]=point;
+                        Assert.IsTrue(life.Animals[i].FlightBounds.Contains(point),life.Animals[i].Id+" left its aerial habitat");
+                    }
+                    wingMotion=Mathf.Max(wingMotion,Quaternion.Angle(firstWing,wing.localRotation));
+                    string state=life.DescribeForReview(life.Animals[0].Id);
+                    if(Time.time>=nextSample)
+                    {nextSample=Time.time+.25f;for(int i=0;i<birds.Length;i++){var p=birds[i].position;report.AppendLine(FormattableString.Invariant($"{Time.time:F3},{life.Animals[i].Id},{p.x:F3},{p.y:F3},{p.z:F3},{life.DescribeForReview(life.Animals[i].Id)}"));}}
+                    if(!flap&&state.Contains("glide=False"))
+                    {yield return GameplayShots.Render(camera,"Lagoon-bird-flap",false,Output,width:960,height:720);flap=true;}
+                    if(!glide&&state.Contains("glide=True"))
+                    {yield return new WaitForSeconds(.3f);yield return GameplayShots.Render(camera,"Lagoon-bird-glide",false,Output,width:960,height:720);glide=true;}
+                }
+                Assert.IsTrue(flap&&glide,"Actual wingbeat and glide states were not both observed");
+                Assert.Greater(wingMotion,15,"Wing clip did not animate");
+                for(int i=0;i<travel.Length;i++)Assert.Greater(travel[i],8,life.Animals[i].Id+" remained stationary");
+                close=false;yield return GameplayShots.Render(camera,"Lagoon-birds-world-scale",false,Output,width:1280,height:720);
+                Time.timeScale=0;yield return null;var paused=birds.Select(t=>t.position).ToArray();
+                yield return new WaitForSecondsRealtime(.25f);
+                for(int i=0;i<birds.Length;i++)Assert.Less(Vector3.Distance(paused[i],birds[i].position),.0001f,"Paused bird moved");
+                Debug.Log("[Lagoon birds] native wing motion "+wingMotion+", travelled "+string.Join(",",travel.Select(x=>x.ToString("F2")))+"m; pause and habitat bounds held.");
+            }
+            finally{Time.timeScale=1;Camera.onPreCull-=pin;File.WriteAllText(Path.Combine(Output,"lagoon-bird-flight.csv"),report.ToString());}
+        }
+
+        [UnityTest,Timeout(300000)]
         public IEnumerator OriginalAnimalsRenderAnimateAndReactOnTheirMaps()
         {
             var report=new StringBuilder("map,id,width,height,depth,start_x,start_y,start_z,end_x,end_y,end_z,travel,player_x,player_y,player_z,state\n");

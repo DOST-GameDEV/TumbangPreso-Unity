@@ -330,10 +330,15 @@ scattered across all maps. Execute inside each map's existing refinement row.
   second held-stock return. Both-mode fall/press/stock and existing stair cases2/2pass.
   [Evidence and debug-view limits](reports/map-by-map-refinement-2026-09-23/lagoon-fall-recovery/report.md);
   real-peer/device/normal-match presentation remain in the final integrated gate.
-- [ ] **REFINE-2.6c Lagoon flying birds, owner2026-09-24.** Check existing ambient
+- [x] **REFINE-2.6c Lagoon flying birds, owner2026-09-24.** Check existing ambient
   birds first; add coastal flying life if absent, with varied glide/flap/transit
   choices around village/islands. Preserve readable action and avoid repetitive
   fixed circles. Coordinate with REFINE-2.7natural ambient movement.
+  Added three existing native birds with private curved goals, banked turns and
+  wingbeat/glide variation. Local bird check1/1passed; revised world scale/poses/grey
+  inspected. [Evidence](reports/map-by-map-refinement-2026-09-23/lagoon-birds/report.md).
+  Full-map visibility/performance remains in final Lagoon integration; broader
+  all-map animal behavior stays open.
 - [ ] **REFINE-2.6a Skies, islands and backgrounds.** After UI, inspect and improve
   animated skies, island/mountain layers and other distant/background scenery on
   every map. Evaluate composition, silhouettes, depth, materials, motion and harmony

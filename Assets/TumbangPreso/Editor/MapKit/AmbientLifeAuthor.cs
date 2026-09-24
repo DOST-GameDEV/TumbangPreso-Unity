@@ -50,7 +50,7 @@ namespace TumbangPreso.EditorTools.MapKit
             }
             _prepared=true;
         }
-        private static AmbientLife.Animal Animal(string id,Vector3[] route,bool bird)
+        internal static AmbientLife.Animal Animal(string id,Vector3[] route,bool bird)
         {
             string path=Folder+"/"+id+".glb";
             var clips=AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>().OrderBy(c=>c.name,StringComparer.Ordinal).ToArray();

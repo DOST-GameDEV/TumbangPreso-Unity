@@ -191,3 +191,37 @@ mechanic. Files are UI/title-weather and separate backlog/report, no overlap wit
 Lagoon implementation; contributor work retained unchanged. Focused mechanic tests
 ran on6cc04ebb6plus this candidate, before that independent UI arrival. No repeated
 world check justified by the UI-only merge; full integration gate remains open.
+
+3e0d0c69a Lagoon fall PUBLISHED/remote verified after safe incoming UI fast-forward.
+QUAL exact candidate stashed/advanced3e0d0c69a. No active Unity. Birds absent by scene
+component GUID and author map list. New opt-in aerial-wander branch, LagoonBirdAuthor
+and builder hook drafted in DEV, not yet run. Existing kalapati/maya assets/clips,
+curved private goal selection, bank and short glide/wingbeat variation. Other maps
+stay on old branches; broader REFINE-2.7 remains open. Plan saved lagoon-birds-plan.md.
+
+Bird candidate copied to QUAL: optional AmbientLife aerial branch, three native
+birds in LagoonBirdAuthor, builder hook and one focused movement/flap/glide/pause
+case. Author runs Logs/refine2-lagoon-birds-v1/author.log. Question: correct existing
+model/clip references, exactly three sparse flight configurations and untouched
+collision. Freeze.cs while active. After author, one native behaviour/art case;
+then publish and resume the saved gabled-thatch/material/water/island queue.
+
+Bird author6394completed/reaped: references/clip checks and collision preservation
+passed; scene has three independent aerial configurations. Full diff saved and
+known profile/PNGmeta churn restored. Current focused native bird case runs
+Logs/refine2-lagoon-birds-v1/check.log/results.xml; .cs frozen. Review world scale,
+flap/glide frames and flight/pause evidence once before publishing.
+
+Bird v1check38327completed/reaped1/1in18.246s. Native flap/glide/world images inspected:
+model/wing motion works but world-scale first bird is too distant/subtle. Variant2
+moves one kalapati and maya into nearer/lower village volumes (still above roofs),
+keeps second kalapati farther over water. No model enlargement or palette change.
+Actual aerial speed now reported in existing diagnostics. V2author runs
+Logs/refine2-lagoon-birds-v2/author.log; .cs frozen. Preservev1evidence. Recheck this
+changed visibility unit once, then publish if useful and return to gabled roof art.
+
+Bird v2check76329completed/reaped1/1in19.378s. Revised world scale, close flap/glide
+and grey25 inspected, keepv2. Three native birds move/animate within air volumes and
+pause correctly. Scene/test metadata/evidence copied to DEV, known churn restored
+after patch. No active Unity. Ready to publish, then gable-family art resumes.
+This does not close full-map performance/visibility or broader natural-animal2.7.

@@ -1,0 +1,1 @@
+Lagoon: two existing kalapati and one maya, independent curved destination flights and glide/wingbeat timing above the village. No new models, gameplay collider, network state, fixed waypoint loop or changes to other maps' ambient actors.

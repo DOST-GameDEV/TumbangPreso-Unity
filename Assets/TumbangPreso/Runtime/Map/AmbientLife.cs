@@ -15,6 +15,9 @@ namespace TumbangPreso
             public AnimationClip[] Clips;
             public Vector3[] Route;
             public bool Bird;
+            public bool AerialWander;
+            public Bounds FlightBounds;
+            public Vector2 GlideDuration=new Vector2(.8f,2.4f);
             public float WalkSpeed=.65f,RunSpeed=3.6f;
             public float WalkCycleSpeed=.391f,RunCycleSpeed=1.278f;
             public int PeeWaypoint=-1;
@@ -91,6 +94,10 @@ namespace TumbangPreso
             private string _action;
             private Vector3 _flightFrom,_flightTo;
             private float _flightTime,_flightDuration;
+            private Vector3 _flightControl1,_flightControl2;
+            private bool _gliding;
+            private float _wingWait,_glideHoldTime,_bank;
+            private int _flightLegs;
             private float _peeCooldown,_peeTime;
             private float _impactQuietUntil;
             private float _raisedLegSide=1;
@@ -133,6 +140,14 @@ namespace TumbangPreso
                 _wait=owner.Range(data.Bird?3:1,data.Bird?20:9)+index*.7f;
                 _peeCooldown=owner.Range(90,180);
                 if(data.Bird)_root.gameObject.SetActive(false);
+                if(data.AerialWander)
+                {
+                    if(!data.Bird||data.FlightBounds.size.x<=0||data.FlightBounds.size.y<=0||data.FlightBounds.size.z<=0)
+                        throw new InvalidOperationException("Invalid aerial habitat: "+data.Id);
+                    _root.rotation=Quaternion.LookRotation((data.Route[1]-data.Route[0]).normalized);
+                    _wait=owner.Range(.2f,1.8f)+index*.7f;
+                    foreach(var renderer in model.GetComponentsInChildren<Renderer>())renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
+                }
             }
             private AnimationClip FindClip(string name)
             {foreach(var clip in _data.Clips)if(clip!=null&&clip.name==name)return clip;return null;}
@@ -165,8 +180,13 @@ namespace TumbangPreso
                 if (!Visible || Time.time < _impactQuietUntil || (_root.position-at).sqrMagnitude > radius*radius) return false;
                 if (_data.Bird)
                 {
-                    if (_birdPhase != 1 && _birdPhase != 2) return false;
-                    BeginFlight(_root.position,_data.Route[_data.Route.Length-1],3);
+                    if(_data.AerialWander)
+                    {ChooseAerialLeg(true);_gliding=false;_wingWait=_owner.Range(1.2f,2.4f);}
+                    else
+                    {
+                        if (_birdPhase != 1 && _birdPhase != 2) return false;
+                        BeginFlight(_root.position,_data.Route[_data.Route.Length-1],3);
+                    }
                 }
                 else
                 {
@@ -182,11 +202,13 @@ namespace TumbangPreso
             }
             public void Step(float dt)
             {
-                if(_data.Bird)Bird(dt);else GroundAnimal(dt);
+                if(_data.AerialWander)AerialBird(dt);else if(_data.Bird)Bird(dt);else GroundAnimal(dt);
                 if(!Visible)return;
                 float rate=_action=="walk"?Mathf.Max(.25f,_speed/Mathf.Max(.1f,_data.WalkCycleSpeed)):
                     _action=="run"?Mathf.Max(.5f,_speed/Mathf.Max(.1f,_data.RunCycleSpeed)):1;
-                _clipTime+=dt*rate;
+                if(_data.AerialWander&&_gliding)
+                    _clipTime=Mathf.MoveTowards(_clipTime,_glideHoldTime,dt*.75f);
+                else _clipTime+=dt*rate;
                 _current.SetTime(Mathf.Repeat(_clipTime,Mathf.Max(.01f,_clip.length)));
                 if(_previous.IsValid()){_oldTime+=dt;_previous.SetTime(Mathf.Repeat(_oldTime,Mathf.Max(.01f,_oldClip.length)));}
                 _blend=Mathf.MoveTowards(_blend,1,dt*8);
@@ -267,6 +289,65 @@ namespace TumbangPreso
                 _flightDuration=Mathf.Max(.6f,Vector3.Distance(from,to)/_owner.Range(3.5f,5));
                 _birdPhase=phase;_root.gameObject.SetActive(true);Play("fly");
             }
+            private Vector3 InFlightBounds(Vector3 p)
+            {
+                var b=_data.FlightBounds;
+                return new Vector3(Mathf.Clamp(p.x,b.min.x,b.max.x),Mathf.Clamp(p.y,b.min.y,b.max.y),Mathf.Clamp(p.z,b.min.z,b.max.z));
+            }
+            private void ChooseAerialLeg(bool startled=false)
+            {
+                var b=_data.FlightBounds;var from=InFlightBounds(_root.position);var forward=_root.forward;
+                Vector3 target=from;float best=float.NegativeInfinity;
+                // Prefer a continuing transit, while giving each leg a new destination
+                // and allowing a broad turn when approaching the habitat boundary.
+                for(int i=0;i<12;i++)
+                {
+                    var candidate=new Vector3(_owner.Range(b.min.x,b.max.x),_owner.Range(b.min.y,b.max.y),_owner.Range(b.min.z,b.max.z));
+                    if(startled)candidate.y=Mathf.Max(candidate.y,Mathf.Min(b.max.y,from.y+3));
+                    var delta=candidate-from;float distance=delta.magnitude;
+                    if(distance<12)continue;
+                    float score=Vector3.Dot(forward,delta/distance)*24+Mathf.Min(distance,70)*.15f;
+                    if(score>best){best=score;target=candidate;}
+                }
+                if(float.IsNegativeInfinity(best))target=InFlightBounds(from+(b.center-from)*.8f+Vector3.up);
+                float length=Vector3.Distance(from,target);var heading=(target-from).normalized;
+                var endHeading=Vector3.Slerp(forward,heading,.75f).normalized;
+                _flightFrom=from;_flightTo=target;
+                _flightControl1=InFlightBounds(from+forward*length*.30f);
+                _flightControl2=InFlightBounds(target-endHeading*length*.30f);
+                _flightTime=0;_flightDuration=Mathf.Max(2,length/_owner.Range(startled?5:3.8f,startled?6.2f:5.2f));
+                _flightLegs++;_birdPhase=4;_root.gameObject.SetActive(true);Play("fly");
+            }
+            private void AerialBird(float dt)
+            {
+                if(_birdPhase==0)
+                {
+                    _wait-=dt;if(_wait>0)return;
+                    ChooseAerialLeg();_wingWait=_owner.Range(.8f,1.8f);
+                }
+                _flightTime+=dt;float t=Mathf.Clamp01(_flightTime/_flightDuration),u=1-t;
+                var next=u*u*u*_flightFrom+3*u*u*t*_flightControl1+3*u*t*t*_flightControl2+t*t*t*_flightTo;
+                var tangent=3*u*u*(_flightControl1-_flightFrom)+6*u*t*(_flightControl2-_flightControl1)+3*t*t*(_flightTo-_flightControl2);
+                _speed=tangent.magnitude/Mathf.Max(.01f,_flightDuration);
+                _root.position=next;
+                if(tangent.sqrMagnitude>.00001f)
+                {
+                    float turn=Vector3.SignedAngle(_root.forward,tangent,Vector3.up);
+                    _bank=Mathf.MoveTowards(_bank,Mathf.Clamp(-turn*2,-25,25),dt*45);
+                    var facing=Quaternion.LookRotation(tangent.normalized,Vector3.up)*Quaternion.AngleAxis(_bank,Vector3.forward);
+                    _root.rotation=Quaternion.Slerp(_root.rotation,facing,1-Mathf.Exp(-dt*4));
+                }
+                _wingWait-=dt;
+                if(_wingWait<=0)
+                {
+                    _gliding=!_gliding;
+                    _wingWait=_gliding?_owner.Range(_data.GlideDuration.x,_data.GlideDuration.y):_owner.Range(.8f,1.8f);
+                    // Authored fly phase zero has spread wings. Settle into that pose,
+                    // instead of freezing a randomly folded wing midway through a flap.
+                    if(_gliding)_glideHoldTime=Mathf.Round(_clipTime/_clip.length)*_clip.length;
+                }
+                if(t>=1)ChooseAerialLeg();
+            }
             private void Bird(float dt)
             {
                 if(_birdPhase==0)
@@ -298,9 +379,14 @@ namespace TumbangPreso
                 if(_fidgetWait<=0){Play(_action=="idle"?"peck":"idle");_fidgetWait=_owner.Range(_action=="peck"?.8f:1.5f,_action=="peck"?1.4f:4);}
             }
 #if UNITY_EDITOR
-            public string Description=>FormattableString.Invariant($"{_action}|wait={_wait:F2}|panic={_panic:F2}|target={_target}|speed={_speed:F2}|near={Threat(out _)}|yaw={_root.eulerAngles.y:F1}|peeing={_peeing}|peeCooldown={_peeCooldown:F1}");
+            public string Description=>FormattableString.Invariant($"{_action}|wait={_wait:F2}|panic={_panic:F2}|target={_target}|speed={_speed:F2}|near={Threat(out _)}|yaw={_root.eulerAngles.y:F1}|peeing={_peeing}|peeCooldown={_peeCooldown:F1}|aerial={_data.AerialWander}|glide={_gliding}|legs={_flightLegs}");
             public void StageBird()
             {
+                if(_data.AerialWander)
+                {
+                    _root.position=_data.Route[0];_root.rotation=Quaternion.LookRotation((_data.Route[1]-_data.Route[0]).normalized);
+                    _gliding=false;_wingWait=1;ChooseAerialLeg();return;
+                }
                 _root.position=_data.Route[1];_root.rotation=Quaternion.identity;_root.gameObject.SetActive(true);
                 _birdPhase=2;_wait=30;_fidgetWait=1;Play("idle");
             }
