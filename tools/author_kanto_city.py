@@ -30,6 +30,7 @@ mirrored. A rotation of t about Blender Z is -t degrees about Unity Y.
 """
 import json
 import math
+import shutil
 import random
 import sys
 from pathlib import Path
@@ -2351,6 +2352,18 @@ def main():
         if export:
             export_glb(col, "wires")
     LAYOUT_OUT.parent.mkdir(parents=True, exist_ok=True)
+    # UNITY READS TEXTURES FROM Art/Kanto/Textures, not from ArtSource. Every texture a material
+    # names is copied there on export; the first export's set was copied by hand, and textures
+    # added since (bark, metal, timber, panelg, the three roof tiles) never reached Unity.
+    tex_out = LAYOUT_OUT.parent / "Textures"
+    tex_out.mkdir(parents=True, exist_ok=True)
+    for tex in sorted({v["texture"] for v in material_specs().values() if v.get("texture")}):
+        for part in ("albedo", "normal"):
+            src = K.TEXTURES / f"{tex}_{part}.png"
+            if src.exists():
+                shutil.copyfile(src, tex_out / src.name)
+            elif part == "albedo":
+                print(f"[kanto-city] WARNING: texture {src.name} is missing")
     data = {
         "note": "Written by tools/author_kanto_city.py. Positions are UNITY axes: (x, y, z) = (-bx, bz, -by), glTFast's conversion; yaw is degrees about Unity Y.",
         "gameplay": {"box": B.BOX, "throw": B.THROW, "spawn": B.SPAWN, "half": B.HALF, "walk": B.WALK},
