@@ -2670,6 +2670,8 @@ namespace TumbangPreso.CameraSystem
         {
             RestoreReleaseSweep();
             RestoreThrowReach();
+            RestoreTagReach();
+            RestoreCastGesture();
             RestoreRaiseCan();
             RestoreRunSway();
             RestoreSwimming();
@@ -2711,6 +2713,8 @@ namespace TumbangPreso.CameraSystem
                 ApplySwimming(dt);
                 ApplyRunSway(dt);
                 ApplyRaiseCan(dt);
+                ApplyTagReach();
+                ApplyCastGesture();
                 ApplyReleaseSweep();
                 return;
             }
@@ -2754,6 +2758,8 @@ namespace TumbangPreso.CameraSystem
             ApplySwimming(dt);
             ApplyRunSway(dt);
             ApplyThrowReach();
+            ApplyTagReach();
+            ApplyCastGesture();
             ApplyReleaseSweep();
         }
 

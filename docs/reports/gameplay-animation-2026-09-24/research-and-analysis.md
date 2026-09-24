@@ -111,3 +111,42 @@ straight in front of the thrower where the taya stands, and the owner's own firs
 Still owed before calling this finished: the shoe's head-volume clearance re-measured on the new
 overhand pose (`ThrowMotionReviewProbe`), every other body's walk inspected individually (REFINE-2.9c),
 and a look at a live match at normal speed, including an observer's view of the raise estimate.
+
+## 5 · The tag, the other verbs and every hero cast (second pass)
+
+🧑, after the first pass: *"can u finish all other characters and all otehr animations"*, *"make tagging
+better too"*, *"and the animation of all skill casting"*. `CastAndMotionReel` films every roster body
+moving (side and front), the base verbs, and all 21 hero casts in both views.
+
+**The tag.** A tag is a touch, and what it must say to the chased attacker is *that hand is coming for
+you, and now it has reached you*. Measured on the shared rig, the dash tag (`lunge`) played
+`attack-kick-right`, a 104-degree KICK, and the quick tag (`punch`) played `attack-melee-right`, an
+overhead CHOP. `CharacterAnimator.TagBody.cs` poses both as reaches: the jab leans in with the arm straight
+out at chest height and snaps home; the dive leans deep with the arm long and low and the legs split, and
+HOLDS the reach while the sweep can still land. `ViewmodelArms.TagReach.cs` makes the first-person hand
+travel toward the crosshair (it only pitched in place before).
+
+**The casts.** Filmed, six already read (Supernova, Summon, Stomp, Fissure, Seance, Eclipse). Eleven did
+not: each was a few degrees and back at rest within about half a second, so the pose that says what the
+skill did never registered.
+
+⚠️⚠️ **WHERE THE SHIPPING CASTS LIVE.** The first attempt re-keyed `HeroAbilityClips.cs` and the film did
+not change: that file is only the EDITOR's fallback for a clip a rig lacks. The shipping casts are baked
+into each hero's glb from the beat tables in `tools/author_hero_action.py` (Blender, `polish_hero_actions.py`,
+checked by `verify_hero_action.py`); Rafi's come from `HeroAbilityClips.Rafi.cs` through
+`RosterBookBuilder` into `rafi-motion/*.anim`. So the fix went there:
+
+1. **Bigger, same shape.** A readability pass in `author_hero_action.py` scales the weak casts' angles
+   about rest (1.3 to 1.5), so the rhythm, the fastest-at-contact moment and the stop after it are the
+   verifier's same clip, only larger. All 18 re-baked glb casts pass `verify_hero_action.py`.
+2. **Held.** The contact pose is copied 0.12 to 0.16 s later, so the pose that says the skill registers.
+   Rafi's use `ClipBuilder.HoldAt` for the same thing.
+3. **First person.** The casts barely moved the hands at all; `ViewmodelArms.CastGesture.cs` gives each a
+   gesture through the screen, keyed by the first-person action the ability sends.
+
+Each re-keyed cast is shaped to say its skill: Permafrost Sheet a low sweep over the road; Ice Barricade a
+scoop and an overhead heave; Glacial Nova a curl then a burst; Flame Rush a rocket launch; Ignition Cannon
+a fist punched up; Magnet a reach and a yank; Demonic Carapace a double-arm flex and roar; Phantom Veil a
+rise and a trailing glide; Crosscurrent a wide held sweep; Mirrorwake a big sell and a cut back;
+Breakwater the wave sent with the whole body. Phaister's Hex no longer pitches her head at the viewer,
+which turned her brim into a black slab.

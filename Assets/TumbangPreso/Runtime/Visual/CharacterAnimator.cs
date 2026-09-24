@@ -130,8 +130,11 @@ namespace TumbangPreso.Visual
         /// ⚠️⚠️ LUNGE AND PUNCH HAVE THEIR OWN CLIPS AND MUST KEEP THEM. Both used to play the
         /// shove animation, so the taya's one-metre lunge, their close jab and an attacker
         /// shoving a rival were three different commitments with one animation between them.
-        /// `attack-kick-right` leads with the body, which is what a dash INTO somebody looks
-        /// like; `attack-melee-right` is the arm, which is the punch.
+        /// ⚠️⚠️ SINCE 2026-09-24 THE TWO TAGS ARE TOLD APART BY `TagBody`, NOT BY THESE CLIPS. 🧑:
+        /// *"make tagging better too"*. The dash tag played `attack-kick-right`, a 104-degree KICK, and the
+        /// jab `attack-melee-right`, an overhead chop; a tag is a touch. `CharacterAnimator.TagBody.cs` now
+        /// poses both over the clip (a dive with the arm held out, and a jab), and its leg split is ADDED to
+        /// the clip's legs, so the lunge sits on the milder melee clip: over a kick, the kick showed through.
         ///
         /// ⚠️ "shove" WAS RENAMED FROM "bump". The bump meter it was built for is deleted, and
         /// a clip key naming a mechanic that no longer exists is how the next reader concludes
@@ -150,7 +153,7 @@ namespace TumbangPreso.Visual
             { "shove", new[] { "attack-melee-left", "attack-melee-right", Interact } },
             { "ready", new[] { "emote-yes", Interact } },
             { "grab", new[] { PickUp, Interact, "interact-left" } },
-            { "lunge", new[] { "attack-kick-right", "attack-melee-right", Interact } },
+            { "lunge", new[] { "attack-melee-right", Interact } },
             { "punch", new[] { "attack-melee-right", "attack-kick-left", Interact } },
 
             // ⚠️⚠️ THE RETRIEVAL SLIDE HAS ITS OWN ACTION NAME AND DELIBERATELY NO CLIP OF ITS
@@ -478,6 +481,7 @@ namespace TumbangPreso.Visual
             ClearLocomotionArms();
             ClearThrowBody();
             ClearResetRaise();
+            ClearTagBody();
             ClearLocomotionWeight();
             ClearChargePose();
             _throwReleaseTime=-1;_lastThrowPose=ThrowGesture.Rest;
@@ -505,6 +509,7 @@ namespace TumbangPreso.Visual
             RestoreLocomotionArms();
             RestoreThrowBody();
             RestoreResetRaise();
+            RestoreTagBody();
             RestoreLocomotionWeight();
             if (!_graph.IsValid()) return;
 
@@ -936,6 +941,7 @@ namespace TumbangPreso.Visual
             RestoreLocomotionArms();
             RestoreThrowBody();
             RestoreResetRaise();
+            RestoreTagBody();
             RestoreLocomotionWeight();
             try
             {
@@ -971,7 +977,7 @@ namespace TumbangPreso.Visual
                 _chargeOffsetsApplied=true;_lastThrowPose=pose;
                 ApplyThrowBody(throwing);
             }
-            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); }
+            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyTagBody(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); }
         }
 
         private void RestoreChargeOffsets()
@@ -1123,6 +1129,7 @@ namespace TumbangPreso.Visual
         public void PlayAction(string action, string viewmodelAction)
         {
             if (action == "grab") NoteResetGesture();
+            NoteTag(action);
             if (_introductionAbility != null && action != _introductionAbility.CastAction) ClearIntroductionPose();
             // ⚠️⚠️ THE FIRST-PERSON ARM IS DRIVEN FROM HERE, AND FROM NOWHERE ELSE.
             // `character_visual.gd::play_action` opens with exactly this call and says why:

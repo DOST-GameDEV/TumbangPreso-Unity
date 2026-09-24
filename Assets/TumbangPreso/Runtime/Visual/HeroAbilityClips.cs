@@ -160,6 +160,36 @@ namespace TumbangPreso.Visual
             /// </summary>
             public void PunchAt(float time) => _punches.Add(time);
 
+            private float _holdAt = -1, _hold;
+
+            /// <summary>
+            /// ⚠️ HOLD THE CONTACT POSE, THEN RECOVER (2026-09-24, 🧑 *"the animation of all skill casting"*).
+            /// Every key after `time` moves later by `seconds` and the pose at `time` is held flat across the gap:
+            /// the research's first rule for a readable action
+            /// (`docs/reports/gameplay-animation-2026-09-24/research-and-analysis.md` § 1). Used by Rafi's
+            /// authored casts; the other heroes' shipping casts are the glb tables in `tools/author_hero_action.py`.
+            /// </summary>
+            public void HoldAt(float time, float seconds) { _holdAt = time; _hold = seconds; }
+
+            private List<Vector2> WithHold(List<Vector2> keys)
+            {
+                if (_hold <= 0 || keys.Count < 2) return keys;
+                var sorted = new List<Vector2>(keys); sorted.Sort((a, b) => a.x.CompareTo(b.x));
+                float v = sorted[0].y;
+                for (int i = 0; i < sorted.Count; i++)
+                {
+                    if (sorted[i].x <= _holdAt) v = sorted[i].y;
+                    if (i + 1 < sorted.Count && sorted[i].x <= _holdAt && sorted[i + 1].x > _holdAt)
+                        v = Mathf.Lerp(sorted[i].y, sorted[i + 1].y, Mathf.InverseLerp(sorted[i].x, sorted[i + 1].x, _holdAt));
+                }
+                var held = new List<Vector2>();
+                foreach (var k in sorted) if (k.x < _holdAt - PunchEpsilon) held.Add(k);
+                held.Add(new Vector2(_holdAt, v));
+                held.Add(new Vector2(_holdAt + _hold, v));
+                foreach (var k in sorted) if (k.x > _holdAt + PunchEpsilon) held.Add(new Vector2(k.x + _hold, k.y));
+                return held;
+            }
+
             private bool IsPunch(float time)
             {
                 for (int i = 0; i < _punches.Count; i++)
@@ -178,6 +208,7 @@ namespace TumbangPreso.Visual
             /// </summary>
             private AnimationCurve Curve(List<Vector2> keys)
             {
+                keys = WithHold(keys);
                 if (keys.Count == 0) return new AnimationCurve();
                 if (keys.Count == 1) return new AnimationCurve(new Keyframe(keys[0].x, keys[0].y));
 

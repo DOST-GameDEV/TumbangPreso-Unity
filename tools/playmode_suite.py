@@ -209,6 +209,7 @@ GROUPS = [
         "ExchangePresenceTests",
         "LocomotionArmsProbe",
         "GameplayActionShots",
+        "CastAndMotionReel",
         "ExchangePresentationTests",
         "FamiliarReadoutTests",
         "MapPreviewTransitionTests",
