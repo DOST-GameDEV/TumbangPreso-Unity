@@ -381,6 +381,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("CastAccepted", OnCastAccepted);
             cm.RegisterNamedMessageHandler("VerbDenied", OnVerbDeniedMsg);
             cm.RegisterNamedMessageHandler("ReqMash", OnReqMashMsg);
+            cm.RegisterNamedMessageHandler("ReqEdgeClimb", OnReqEdgeClimbMsg);
             cm.RegisterNamedMessageHandler("ThrowCharge", OnThrowChargeMsg);
             cm.RegisterNamedMessageHandler("ReqThrowCharge", OnReqThrowChargeMsg);
             cm.RegisterNamedMessageHandler("PlayAction", OnPlayActionMsg);
@@ -507,6 +508,7 @@ namespace TumbangPreso.Net
         {
             if (PresentationClock.BlocksInput) return false;
             if (unit == null || !Finite(position) || !Finite(yaw) || !Finite(velocity)) return false;
+            if (unit.IsEdgeRecovering) return false;
 
             if (Mathf.Abs(position.x) > AIController.PlayableHalfX + 1.0f ||
                 Mathf.Abs(position.z) > AIController.PlayableHalfZ + 1.0f ||
@@ -2149,6 +2151,7 @@ namespace TumbangPreso.Net
             var unit=Unit(slot);if(unit==null || epoch<=unit.MovementEpoch)return;
             unit.AdoptMovementEpoch(epoch);
             float facing=slot==NetAuthority.LocalSlot?unit.transform.eulerAngles.y:yaw;
+            unit.ApplyEdgeRecoverySnapshot(EdgeRecoveryKind.None,Vector3.zero,Vector3.zero,0,0);
             unit.ApplyNetworkTransform(position,facing,Vector3.zero,true,reconcileLocal:false,force:true);
             unit.GetComponent<Visual.CharacterVisual>()?.SnapRemoteTransform();
         }
@@ -2219,6 +2222,9 @@ namespace TumbangPreso.Net
         }
 
         public void SyncUnitTransformClientRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
+            =>SendUnitPose(slot,pos,yaw,velocity,false);
+
+        private void SendUnitPose(int slot,Vector3 pos,float yaw,Vector3 velocity,bool reliable)
         {
             if (!NetAuthority.IsHost) return;
             if (_nm == null || _nm.CustomMessagingManager == null) return;
@@ -2229,6 +2235,7 @@ namespace TumbangPreso.Net
             using var writer = new FastBufferWriter(192, Allocator.Temp);
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe(_movementEpochs[slot]);
+            writer.WriteValueSafe(++_unitPoseSerial[slot]);
             writer.WriteValueSafe(pos);
             writer.WriteValueSafe(yaw);
             writer.WriteValueSafe(velocity);
@@ -2252,7 +2259,12 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.Stamina.FatigueLeft);
             writer.WriteValueSafe(unit.RecoveryEpisode);
             writer.WriteValueSafe(unit.RecoveryAcknowledged);
-            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer, PoseDelivery);
+            writer.WriteValueSafe((byte)unit.EdgeKind);
+            writer.WriteValueSafe(unit.EdgeGrip);
+            writer.WriteValueSafe(unit.EdgeOutward);
+            writer.WriteValueSafe(unit.EdgePhase);
+            writer.WriteValueSafe(unit.EdgePhaseRatio);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer,reliable?NetworkDelivery.ReliableSequenced:PoseDelivery);
         }
 
         private void OnSyncUnitMsg(ulong senderClientId, FastBufferReader reader)
@@ -2266,6 +2278,7 @@ namespace TumbangPreso.Net
 
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int epoch);
+            reader.ReadValueSafe(out ulong poseSerial);
             reader.ReadValueSafe(out Vector3 pos);
             reader.ReadValueSafe(out float yaw);
             reader.ReadValueSafe(out Vector3 velocity);
@@ -2284,7 +2297,14 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float fatigueLeft);
             reader.ReadValueSafe(out int recoveryEpisode);
             reader.ReadValueSafe(out int recoveryAcknowledged);
+            reader.ReadValueSafe(out byte edgeKind);
+            reader.ReadValueSafe(out Vector3 edgeGrip);
+            reader.ReadValueSafe(out Vector3 edgeOutward);
+            reader.ReadValueSafe(out byte edgePhase);
+            reader.ReadValueSafe(out float edgeRatio);
             if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
+            if(edgeKind>(byte)EdgeRecoveryKind.Lagoon||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
+            if(edgeKind!=0&&(edgeOutward.sqrMagnitude<.9f||edgeOutward.sqrMagnitude>1.1f||edgeRatio<0||edgeRatio>1))return;
 
             // ⚠️⚠️ A NON-FINITE POSE MAKES A BODY VANISH AND SPAMS THE LOG ONCE A FRAME, and at a
             // venue that reads as "the game broke" rather than as one bad packet. `Transform`
@@ -2301,12 +2321,17 @@ namespace TumbangPreso.Net
 
             var unit = Unit(slot);
             if (unit == null || epoch<unit.MovementEpoch) return;
+            // Reliable handovers can arrive after newer ordinary poses. One serial
+            // across both deliveries prevents replaying an old grip or old position.
+            if(!unit.AcceptNetworkPoseSerial(poseSerial))return;
             bool newEpoch=epoch>unit.MovementEpoch;
             unit.AdoptMovementEpoch(epoch);
 
             bool local = slot == NetAuthority.LocalSlot;
-            float facing=local && newEpoch?unit.transform.eulerAngles.y:yaw;
-            unit.ApplyNetworkTransform(pos, facing, velocity, grounded, reconcileLocal: local,force:newEpoch);
+            bool edgeOwned=unit.IsEdgeRecovering||edgeKind!=0;
+            unit.ApplyEdgeRecoverySnapshot((EdgeRecoveryKind)edgeKind,edgeGrip,edgeOutward,edgePhase,edgeRatio);
+            float facing=local && newEpoch&&!edgeOwned?unit.transform.eulerAngles.y:yaw;
+            unit.ApplyNetworkTransform(pos, facing, velocity, grounded, reconcileLocal: local&&!edgeOwned,force:newEpoch);
             if(newEpoch)unit.GetComponent<Visual.CharacterVisual>()?.SnapRemoteTransform();
             unit.ApplyNetworkState(stunLeft, stunTotal, (StunElement)stunElement,
                                    stunBreakPresses, stunMashPresses,

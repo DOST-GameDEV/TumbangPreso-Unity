@@ -2604,6 +2604,7 @@ namespace TumbangPreso.CameraSystem
         private float _swimForwardBlend;
         private Quaternion _swimLeftBase,_swimRightBase;
         private Vector3 _swimLeftPosition,_swimRightPosition;
+        private float _edgeHandsBlend,_edgeHandsPull,_edgeHandsReach;
 
         private void RestoreSwimming()
         {
@@ -2615,6 +2616,27 @@ namespace TumbangPreso.CameraSystem
 
         private void ApplySwimming(float dt)
         {
+            bool climbing=_characterMotor!=null&&_characterMotor.IsEdgeRecovering;
+            _edgeHandsBlend=Mathf.MoveTowards(_edgeHandsBlend,climbing?1:0,Mathf.Max(0,dt)*8);
+            if(_edgeHandsBlend>0&&_leftPivot!=null&&_rightPivot!=null)
+            {
+                if(climbing)
+                {
+                    _edgeHandsPull=_characterMotor.EdgePhase==2?_characterMotor.EdgePhaseRatio:0;
+                    _edgeHandsReach=_characterMotor.EdgePhase==0?Mathf.SmoothStep(0,1,_characterMotor.EdgePhaseRatio):1;
+                }
+                _swimBlend=0;_swimApplied=true;
+                _swimLeftBase=_leftPivot.localRotation;_swimRightBase=_rightPivot.localRotation;
+                _swimLeftPosition=_leftPivot.localPosition;_swimRightPosition=_rightPivot.localPosition;
+                float grip=_edgeHandsBlend*_edgeHandsReach;
+                float pitch=Mathf.Lerp(-44,18,_edgeHandsPull);
+                float climbEffort=climbing&&_characterMotor.EdgePhase==1?Mathf.Sin(Time.time*7)*.009f:0;
+                var offset=new Vector3(0,.19f-_edgeHandsPull*.27f+climbEffort,.11f-_edgeHandsPull*.10f)*grip;
+                _leftPivot.localPosition+=offset;_rightPivot.localPosition+=offset;
+                _leftPivot.localRotation*=Quaternion.Slerp(Quaternion.identity,Quaternion.Euler(pitch,10,12),grip);
+                _rightPivot.localRotation*=Quaternion.Slerp(Quaternion.identity,Quaternion.Euler(pitch,-10,-12),grip);
+                return;
+            }
             bool active=_characterMotor!=null&&_characterMotor.IsSwimming&&_charge<0&&_clip==null&&_actionReturnLeft<=0&&string.IsNullOrEmpty(_aimPreview);
             _swimBlend=Mathf.MoveTowards(_swimBlend,active?1:0,Mathf.Max(0,dt)*6);
             if(_swimBlend<=0||_leftPivot==null||_rightPivot==null||_characterMotor==null)return;

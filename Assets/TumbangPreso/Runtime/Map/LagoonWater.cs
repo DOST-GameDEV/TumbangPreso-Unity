@@ -15,7 +15,6 @@ namespace TumbangPreso
         private readonly List<Slipper> _returned = new List<Slipper>();
         private readonly Vector4[] _swimmers = new Vector4[4];
         private MaterialPropertyBlock _properties;
-        private readonly float[] _underDeck = new float[4];
         private readonly CharacterMotor[] _tracked = new CharacterMotor[4];
         private readonly int[] _teleportSerial = new int[4];
         private readonly float[] _supportedY = new float[4];
@@ -73,7 +72,6 @@ namespace TumbangPreso
             System.Array.Clear(_tracked, 0, _tracked.Length);
             System.Array.Clear(_drySupport, 0, _drySupport.Length);
             System.Array.Clear(_falling, 0, _falling.Length);
-            System.Array.Clear(_underDeck, 0, _underDeck.Length);
         }
         private void SyncRound()
         {
@@ -89,7 +87,7 @@ namespace TumbangPreso
             if (_tracked[slot] != player || _teleportSerial[slot] != player.PresentationTeleportSerial)
             {
                 _tracked[slot] = player; _teleportSerial[slot] = player.PresentationTeleportSerial;
-                _drySupport[slot] = false; _falling[slot] = false; _underDeck[slot] = 0;
+                _drySupport[slot] = false; _falling[slot] = false;
             }
             if (player.IsGrounded)
             {
@@ -113,21 +111,21 @@ namespace TumbangPreso
             foreach (var player in GameServices.Round.Players)
             {
                 if (player == null || !player.gameObject.activeInHierarchy || player.PlayerSlot < 0 || player.PlayerSlot >= 4) continue;
+                if(player.IsEdgeRecovering)continue;
                 var p = player.transform.position;
                 bool platformFall = ReachedWaterAfterPlatformFall(player);
-                bool under = p.y < -.55f && Physics.Raycast(p + Vector3.up * .3f, Vector3.up, out var hit, 1.7f,
-                    ~0, QueryTriggerInteraction.Ignore) && hit.collider.GetComponentInParent<CharacterMotor>() == null;
-                _underDeck[player.PlayerSlot] = under ? _underDeck[player.PlayerSlot] + Time.fixedDeltaTime : 0;
-                if (platformFall || Mathf.Abs(p.x) > Limit || Mathf.Abs(p.z) > Limit || p.y < FloorY - 1 || _underDeck[player.PlayerSlot] > 2)
+                if(platformFall)
                 {
-                    // Same prone, press-gated recovery as SaBubong. Keep Lagoon's
-                    // established stock-return delay and existing water stair routes.
-                    if (platformFall)
-                    {
-                        var held = player.GetComponent<Carrier>()?.Held;
-                        if (held != null) BeginSlipperReturn(held);
-                    }
-                    player.Respawn(); player.ApplyFallRecovery(); _underDeck[player.PlayerSlot] = 0;
+                    var held=player.GetComponent<Carrier>()?.Held;if(held!=null)BeginSlipperReturn(held);
+                    // Stay where the fall reached the water and let buoyancy/swim
+                    // take over. Jump near a public bridge initiates its real climb.
+                    _drySupport[player.PlayerSlot]=false;_falling[player.PlayerSlot]=false;
+                }
+                if (Mathf.Abs(p.x)>Limit || Mathf.Abs(p.z)>Limit || p.y<FloorY-1)
+                {
+                    // Off-world only. Keep the nearest water position instead of
+                    // silently changing swimming into a centre-floor get-up.
+                    player.Teleport(new Vector3(Mathf.Clamp(p.x,-Limit+.5f,Limit-.5f),SurfaceY-RooftopPool.FloatDepth,Mathf.Clamp(p.z,-Limit+.5f,Limit-.5f)));
                     _drySupport[player.PlayerSlot] = false; _falling[player.PlayerSlot] = false;
                 }
             }

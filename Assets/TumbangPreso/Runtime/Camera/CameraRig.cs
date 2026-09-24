@@ -226,6 +226,8 @@ namespace TumbangPreso.CameraSystem
         /// <summary>True while the third-person swing is being held by a FALL rather than by an
         /// emote. See <see cref="StepFallView"/>.</summary>
         private bool _fallView;
+        private int _edgeViewEpisode=-1;
+        private readonly RaycastHit[] _edgeViewHits=new RaycastHit[16];
 
         private bool _wasPossessing;
         private float _possessBlend;
@@ -462,6 +464,7 @@ namespace TumbangPreso.CameraSystem
             // set here, `StepFallView` would believe it had already swung out and would refuse
             // to swing again for the next fall on this body.
             _fallView = false;
+            _edgeViewEpisode=-1;
 
             // ⚠️⚠️ THE HITSTOP BELONGS TO THE BODY THAT TOOK THE HIT, AND CLEARING IT HERE IS
             // REQUIRED RATHER THAN TIDY. `StepHold` anchors the camera to the pose it froze at,
@@ -1416,6 +1419,7 @@ namespace TumbangPreso.CameraSystem
 
         public void EndEmoteView()
         {
+            _edgeViewEpisode=-1;
             if (!_emoteView) return;
 
             _emoteView = false;
@@ -1476,6 +1480,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void ApplyEmoteView()
         {
+            if(_character!=null&&_character.IsEdgeRecovering){ApplyEdgeRecoveryView();return;}
             _emotePitchDeg = Mathf.Clamp(_emotePitchDeg,
                                          _fallView ? FallPitchMinDeg : EmotePitchMinDeg,
                                          _fallView ? FallPitchMaxDeg : EmotePitchMaxDeg);
@@ -1505,6 +1510,26 @@ namespace TumbangPreso.CameraSystem
             }
 
             transform.SetPositionAndRotation(mount - (rot * Vector3.forward) * length, rot);
+        }
+
+        private void ApplyEdgeRecoveryView()
+        {
+            var outward=_character.EdgeOutward;
+            float inwardYaw=Mathf.Atan2(-outward.x,-outward.z)*Mathf.Rad2Deg;
+            if(_edgeViewEpisode!=_character.RecoveryEpisode)
+            {_edgeViewEpisode=_character.RecoveryEpisode;_emoteYawDeg=inwardYaw+30;_emotePitchDeg=12;}
+            _emoteYawDeg=inwardYaw+Mathf.Clamp(Mathf.DeltaAngle(inwardYaw,_emoteYawDeg),-65,65);
+            _emotePitchDeg=Mathf.Clamp(_emotePitchDeg,-5,35);
+            var mount=_character.EdgeGrip+outward*.50f-Vector3.up*.35f;
+            if(_character.EdgePhase==2)mount=Vector3.Lerp(mount,_character.transform.position+Vector3.up*.85f,
+                Mathf.SmoothStep(0,1,Mathf.InverseLerp(.40f,1,_character.EdgePhaseRatio)));
+            var rotation=Quaternion.Euler(_emotePitchDeg,_emoteYawDeg,0);var direction=-(rotation*Vector3.forward);
+            float length=3.2f;
+            int hits=Physics.SphereCastNonAlloc(mount,.16f,direction,_edgeViewHits,length,~0,QueryTriggerInteraction.Ignore);
+            for(int i=0;i<hits;i++)
+                if(_edgeViewHits[i].collider.GetComponentInParent<CharacterMotor>()==null)
+                    length=Mathf.Min(length,Mathf.Max(.8f,_edgeViewHits[i].distance-TppArmMargin));
+            transform.SetPositionAndRotation(mount+direction*length,rotation);
         }
 
         // -------------------------------------------------------------------

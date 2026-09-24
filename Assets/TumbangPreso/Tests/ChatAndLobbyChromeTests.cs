@@ -261,7 +261,8 @@ namespace TumbangPreso.Tests
             //37 extends atomic ground snapshots beyond the two ice field types.
             //49 adds the seventh Hero roster index and bounded Rafi water snapshots.
             //50 distinguishes an explicit peer leave from an unclassified disconnection.
-            Assert.AreEqual(50, NetSession.ProtocolVersion,
+            //51 carries explicit edge-climb state and requests; mixed builds cannot decode it.
+            Assert.AreEqual(51, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

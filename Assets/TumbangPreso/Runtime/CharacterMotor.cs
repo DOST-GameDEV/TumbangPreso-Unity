@@ -32,7 +32,7 @@ namespace TumbangPreso
     /// </remarks>
     [DefaultExecutionOrder(-100)]
     [RequireComponent(typeof(CharacterController))]
-    public sealed class CharacterMotor : MonoBehaviour
+    public sealed partial class CharacterMotor : MonoBehaviour
     {
         [Header("Role")]
         [SerializeField] private bool _isDefender;
@@ -427,6 +427,7 @@ namespace TumbangPreso
         public void Teleport(Vector3 position)
         {
             if (!MayMutateGameplayState()) return;
+            if(IsEdgeRecovering)ClearTrip();
             if(_predictingAbility>=0)ExpectAbilityTeleport(_predictingAbility);
             // ⚠️⚠️ THE ARENA WALL IS ENFORCED HERE TOO, AND THIS IS THE PATH THAT ACTUALLY
             // BROKE IT. `Confine` holds a body that WALKS or is PUSHED at the edge, and a
@@ -791,6 +792,8 @@ namespace TumbangPreso
             float dt = Time.fixedDeltaTime;
 
             ResolveRig();
+
+            if(StepEdgeRecoveryFixed(dt))return;
 
             // A remote body is a host-authored picture, not a second simulation. Before this
             // guard every client applied gravity and confinement to remote seats between
@@ -1656,12 +1659,20 @@ namespace TumbangPreso
         public void ClearTrip()
         {
             if (!MayMutateGameplayState()) return;
+            bool wasEdge=IsEdgeRecovering;
+            ResetEdgeRecovery();
             AdvanceRecoveryEpisode();
             _tripLeft = 0.0f;
             _tripTotal = 0.0f;
             _mashPresses = 0;
             _mashRemoved = 0.0f;
             _tripElapsed = 0.0f;
+
+            if(wasEdge&&NetAuthority.IsHost)
+            {
+                Net.MatchRpc.Instance?.BeginEdgeMovementOwnership(_playerSlot);
+                Net.MatchRpc.Instance?.SyncUnitTransformClientRpc(_playerSlot,transform.position,transform.eulerAngles.y,_velocity);
+            }
 
             // ⚠️ NO GRACE FROM HERE. `ClearTrip` is the round and seat reset path, not the
             // player answering a fall, and handing a fresh round a window of hazard immunity
@@ -1838,6 +1849,7 @@ namespace TumbangPreso
                 sequence<=_recoveryAcknowledged || sequence-_recoveryAcknowledged>32) return false;
             // A refusal is also acknowledged so it cannot remain predicted forever.
             _recoveryAcknowledged=sequence;
+            if(IsEdgeRecovering&&PresentationClock.BlocksInput)return false;
             return IsTripped ? MashRecover() : MashOutOfStun();
         }
 
@@ -2005,7 +2017,7 @@ namespace TumbangPreso
 
         private void Update()
         {
-            if (_tripLeft > 0.0f)
+            if (_tripLeft > 0.0f && !IsEdgeRecovering)
             {
                 // ⚠️⚠️ ABOVE THE FLOOR NOTHING RUNS DOWN ON ITS OWN. THAT IS THE WHOLE RULE.
                 // 🧑, 2026-08-26, off the 4.70 player: *"u randomly get up after set amt of

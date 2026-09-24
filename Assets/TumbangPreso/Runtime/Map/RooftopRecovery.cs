@@ -76,15 +76,28 @@ namespace TumbangPreso
             foreach(var who in GameServices.Round.Players)
             {
                 if(who==null||!who.gameObject.activeSelf||who.PlayerSlot<0||who.PlayerSlot>=_falling.Length)continue;
+                if(who.IsEdgeRecovering)continue;
                 var p=who.transform.position;
                 if(who.IsGrounded&&p.y>=RoofY-.05f)_falling[who.PlayerSlot]=false;
+                // Catch the rail while the body is still close enough to reach it.
+                // Waiting for the old two-metre kill depth put a normal outward
+                // jump several metres away and forced a centre respawn.
+                if(OutsideDeck(p)&&p.y<RoofY+1.5f&&MapEdgeGeometry.TryRooftop(who,out var edge))
+                {
+                    var carried=who.GetComponent<Carrier>()?.Held;if(carried!=null)Lose(carried);
+                    who.BeginEdgeRecovery(edge);_falling[who.PlayerSlot]=false;continue;
+                }
                 if(OutsideDeck(p)&&p.y<RoofY-.35f)_falling[who.PlayerSlot]=true;
-                if(!_falling[who.PlayerSlot]||p.y>=-2)continue;
-                // A real two-metre descent has happened. Returning prone keeps
-                // the sporting recovery quick, with the existing mash input.
+                if(!_falling[who.PlayerSlot]||p.y>=-4)continue;
+                // Exceptional off-world rescue still returns to a real outer edge,
+                // never to the court centre. Ordinary falls use the continuous catch.
                 var held=who.GetComponent<Carrier>()?.Held;
                 if(held!=null)Lose(held);
-                who.Respawn();who.ApplyFallRecovery();
+                if(MapEdgeGeometry.TryRooftop(who,out edge,true))
+                {
+                    who.Teleport(edge.Grip+edge.Outward*.49f-Vector3.up*1.28f);
+                    who.BeginEdgeRecovery(edge);
+                }
                 _falling[who.PlayerSlot]=false;
             }
             _finished.Clear();

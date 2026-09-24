@@ -301,6 +301,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void Bind(GameObject model, AnimationClip[] clips)
         {
+            RestoreEdgeRecoveryPose();_edgeBones=null;_edgePlaying=false;
             // ⚠️ A wardrobe/seat swap can rebind a live component. Retire the old output
             // before replacing its Animator, including when the replacement has no clips.
             ReleaseGraph();
@@ -496,6 +497,7 @@ namespace TumbangPreso.Visual
 
         private void Update()
         {
+            RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
             RestoreLocomotionWeight();
             if (!_graph.IsValid()) return;
@@ -524,6 +526,7 @@ namespace TumbangPreso.Visual
 
             // ⚠️ BEFORE THE ONE-SHOT, because a fall interrupts whatever the body was doing.
             // A player tripped mid-throw must be on the tarmac, not finishing the throw.
+            if (StepEdgeRecoveryPose()) return;
             if (StepTripPose()) return;
 
             // Sample the retained cast against the actual leap/landing clock. This
@@ -922,6 +925,7 @@ namespace TumbangPreso.Visual
 
         private void LateUpdate()
         {
+            RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
             RestoreLocomotionWeight();
             try
@@ -957,7 +961,7 @@ namespace TumbangPreso.Visual
                 if(_chargeOff!=null)_chargeOff.localRotation=drawn.Left;
                 _chargeOffsetsApplied=true;_lastThrowPose=pose;
             }
-            finally { ApplyLocomotionWeight(); ApplyIntroductionPose(); }
+            finally { ApplyLocomotionWeight(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); }
         }
 
         private void RestoreChargeOffsets()

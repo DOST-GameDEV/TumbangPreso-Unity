@@ -388,7 +388,8 @@ namespace TumbangPreso.Net
         // 44 adds accepted ultimate requests/cohorts; owners no longer predict ultimate effects.
         // Round retirement must remove solid ability fields on every peer.
         // 50 carries authenticated peer-leave intent and host-confirmed departure notices.
-        public const int ProtocolVersion = 50;
+        // 51 adds explicit host-owned edge-climb pose state and the swim-to-climb request.
+        public const int ProtocolVersion = 51;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

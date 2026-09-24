@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 04:26:31Z" end-time="2026-09-24 04:27:38Z" duration="66.907251">
+  <test-suite type="TestSuite" id="1784" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="607" result="Passed" start-time="2026-09-24 04:26:31Z" end-time="2026-09-24 04:27:38Z" duration="66.907251" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1778" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="607" result="Passed" start-time="2026-09-24 04:26:31Z" end-time="2026-09-24 04:27:38Z" duration="66.894043" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12408" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1779" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="607" result="Passed" start-time="2026-09-24 04:26:31Z" end-time="2026-09-24 04:27:38Z" duration="66.889405" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1780" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="607" result="Passed" start-time="2026-09-24 04:26:31Z" end-time="2026-09-24 04:27:38Z" duration="66.879429" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1253" name="LagoonRecoveryProbe" fullname="TumbangPreso.PlayTests.LagoonRecoveryProbe" classname="TumbangPreso.PlayTests.LagoonRecoveryProbe" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-24 04:26:31Z" end-time="2026-09-24 04:27:38Z" duration="66.858711" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1256" name="CurrentCastFitsTheGripAndRecoveryCancelsCleanly" fullname="TumbangPreso.PlayTests.LagoonRecoveryProbe.CurrentCastFitsTheGripAndRecoveryCancelsCleanly" methodname="CurrentCastFitsTheGripAndRecoveryCancelsCleanly" classname="TumbangPreso.PlayTests.LagoonRecoveryProbe" runstate="Runnable" seed="1677490140" result="Passed" start-time="2026-09-24 04:26:31Z" end-time="2026-09-24 04:26:49Z" duration="18.174495" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="150000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 293 renderers, 0 with a roof variant.
+[NearFade] 2297 occluder nodes matched, 28 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Env] repainted 0 of 293 renderers, 0 with a roof variant.
+[NearFade] 2297 occluder nodes matched, 28 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/edge-recovery-v5/grip-dante.png
+[Play] wrote Logs/edge-recovery-v5/grip-cheska.png
+[Play] wrote Logs/edge-recovery-v5/grip-sean.png
+[Play] wrote Logs/edge-recovery-v5/grip-zack.png
+[Play] wrote Logs/edge-recovery-v5/grip-nemu.png
+[Play] wrote Logs/edge-recovery-v5/grip-phaister.png
+[Play] wrote Logs/edge-recovery-v5/grip-rafi.png
+]]></output>
+            </test-case>
+            <test-case id="1254" name="PlatformFallSwimsThenJumpClimbsAtTheBridgeInBothModes" fullname="TumbangPreso.PlayTests.LagoonRecoveryProbe.PlatformFallSwimsThenJumpClimbsAtTheBridgeInBothModes" methodname="PlatformFallSwimsThenJumpClimbsAtTheBridgeInBothModes" classname="TumbangPreso.PlayTests.LagoonRecoveryProbe" runstate="Runnable" seed="424818802" result="Passed" start-time="2026-09-24 04:26:49Z" end-time="2026-09-24 04:27:12Z" duration="22.944143" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 218 renderers, 0 with a roof variant.
+[NearFade] 7805 occluder nodes matched, 51 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/edge-recovery-v5/Lagoon-hang.png
+[Play] wrote Logs/edge-recovery-v5/Lagoon-hang-owner.png
+[Play] wrote Logs/edge-recovery-v5/Lagoon-hang-owner-reduced-camera.png
+[Play] wrote Logs/edge-recovery-v5/Lagoon-pull.png
+[Play] wrote Logs/edge-recovery-v5/Lagoon-on-deck.png
+[Env] repainted 0 of 218 renderers, 0 with a roof variant.
+[NearFade] 7805 occluder nodes matched, 51 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1255" name="RooftopFallCatchesAndClimbsItsActualRailingInBothModes" fullname="TumbangPreso.PlayTests.LagoonRecoveryProbe.RooftopFallCatchesAndClimbsItsActualRailingInBothModes" methodname="RooftopFallCatchesAndClimbsItsActualRailingInBothModes" classname="TumbangPreso.PlayTests.LagoonRecoveryProbe" runstate="Runnable" seed="83372905" result="Passed" start-time="2026-09-24 04:27:12Z" end-time="2026-09-24 04:27:38Z" duration="25.723675" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 293 renderers, 0 with a roof variant.
+[NearFade] 2297 occluder nodes matched, 28 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/edge-recovery-v5/Rooftop-hang.png
+[Play] wrote Logs/edge-recovery-v5/Rooftop-hang-owner.png
+[Play] wrote Logs/edge-recovery-v5/Rooftop-hang-owner-reduced-camera.png
+[Play] wrote Logs/edge-recovery-v5/Rooftop-pull.png
+[Play] wrote Logs/edge-recovery-v5/Rooftop-on-deck.png
+[Env] repainted 0 of 293 renderers, 0 with a roof variant.
+[NearFade] 2297 occluder nodes matched, 28 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

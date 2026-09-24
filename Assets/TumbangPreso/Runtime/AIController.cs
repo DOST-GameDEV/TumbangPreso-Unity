@@ -2966,6 +2966,10 @@ namespace TumbangPreso
         private void Drive(InputIntent intent, Vector3 direction, bool sprint,
                            bool pausesOnTurn = true)
         {
+            if(_motor.IsSwimming&&!_motor.IsEdgeRecovering&&MapEdgeGeometry.TryLagoon(_motor,out _))
+            {
+                intent.Move=Vector2.zero;intent.BufferPress(Verb.Jump);Press(intent,Verb.Jump,true);_driving=false;return;
+            }
             if(LagoonWater.TryExitAim(transform.position,out var waterExit))direction=waterExit-transform.position;
             Vector3 flat = new Vector3(direction.x, 0.0f, direction.z);
 

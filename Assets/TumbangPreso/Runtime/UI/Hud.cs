@@ -2582,8 +2582,8 @@ namespace TumbangPreso.UI
             if (OnTouch && buying) InputLayer.TouchHud.Emphasise(Verb.Jump);
 
             string text = buying
-                ? MashVerb("Jump") + " TO GET UP"
-                : "GETTING UP";
+                ? MashVerb("Jump") + (_local.IsEdgeRecovering?" TO CLIMB":" TO GET UP")
+                : _local.IsEdgeRecovering?"CLIMBING UP":"GETTING UP";
 
             // ⚠️ THE STRING IS ONLY REBUILT WHEN IT CHANGES. A HUD string rebuilt every frame
             // once cost the 6x behaviour probe an eighth of its frames and most of its physics

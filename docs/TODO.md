@@ -148,6 +148,15 @@ cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 pass
 
 ### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)
 
+LATEST owner WIP rule: finish the currently active implementation and its actual
+in-game review before starting another pass; log new requests without dropping old work.
+
+LATEST owner priority,2026-09-24: MAP REFINEMENTS ARE NOT FINISHED. Complete the
+remaining per-map storefront/sign/asset work, actual SaBubong/Lagoon edge recovery
+and integrated map camera/gameplay qualification. Keep new REFINE-2.11ultimate
+research/upgrade queued AFTER this map work. Do not let a new request erase or
+prematurely close the map parents, or interpret earlier art batches as full acceptance.
+
 Owner reference: [3D Asset](https://3d-asset.com/). Requirements, order and research
 questions are preserved in [the intake](reports/map-by-map-refinement-2026-09-23/intake.md).
 [Exact owner feedback](reports/map-by-map-refinement-2026-09-23/owner-request.md) and
@@ -365,18 +374,15 @@ scattered across all maps. Execute inside each map's existing refinement row.
   final native1/1passed, actual pairs/grey/card/Low/heldsky inspected, updated native
   map card. Current art batch ready for integrated intro/spectator/gameplay/native
   performance gate; parent remains open for that final acceptance.
-- [ ] **REFINE-2.6b Lagoon fall and mash recovery, owner2026-09-24, REOPENED.**
-  LATEST: ordinary falls must enter swimming; jump beside a reachable bridge starts
-  button-mash climb at that bridge. Earlier respawn/get-up interpretation is superseded.
-  [Actual edge-recovery plan](reports/map-by-map-refinement-2026-09-23/edge-climb-recovery-plan.md) is current priority.
-  Historical implementation below remains as evidence, not acceptance of this correction. Adapt SaBubong's
-  physical edge fall and existing press-gated get-up to Lagoon. Both modes, all cast,
-  existing input/camera/animation/authority path. Record effects on intentional water
-  access and slipper return; no new protocol or duplicate recovery UI unless required.
-  Implemented real platform-fall detection, existing press-gated recovery and eight-
-  second held-stock return. Both-mode fall/press/stock and existing stair cases2/2pass.
-  [Evidence and debug-view limits](reports/map-by-map-refinement-2026-09-23/lagoon-fall-recovery/report.md);
-  real-peer/device/normal-match presentation remain in the final integrated gate.
+- [x] **REFINE-2.6b Lagoon actual swim-to-bridge recovery, owner2026-09-24.**
+  Latest correction implemented: falling enters swimming; Jump beside a reachable
+  public bridge/deck starts press-gated physical climb onto that same edge. Normal
+  centre respawn/prone get-up removed; stairs and8second stock delay preserved.
+  [Native/state/rig evidence and remaining peer gate](reports/map-by-map-refinement-2026-09-23/edge-recovery/report.md):
+  final3/3plus focused clock/reset1/1passed, actual world/owner/reduced/grey inspected.
+  Protocol51has explicit host-owned edge state and reliable ownership handover.
+  Prior3e0d0c69a/2passed respawn-get-up proof is historical and superseded, preserved
+  in lagoon-fall-recovery/report.md. Fresh real-peer/native gate stays in2.10/P7.
 - [x] **REFINE-2.6c Lagoon flying birds, owner2026-09-24.** Check existing ambient
   birds first; add coastal flying life if absent, with varied glide/flap/transit
   choices around village/islands. Preserve readable action and avoid repetitive
@@ -386,11 +392,12 @@ scattered across all maps. Execute inside each map's existing refinement row.
   inspected. [Evidence](reports/map-by-map-refinement-2026-09-23/lagoon-birds/report.md).
   Full-map visibility/performance remains in final Lagoon integration; broader
   all-map animal behavior stays open.
-- [ ] **REFINE-2.6d SaBubong actual railing recovery, owner2026-09-24.**
-  Catch/hang/struggle/pull up at the real roof edge with button presses and fitting
-  body animation; no normal-recovery teleport to the middle. Shares the current
-  [edge-recovery plan](reports/map-by-map-refinement-2026-09-23/edge-climb-recovery-plan.md),
-  with per-map anchors and correct network/input/reset behavior.
+- [x] **REFINE-2.6d SaBubong actual railing recovery, owner2026-09-24.**
+  Real rail catch/effort/pull-over and supported same-edge landing implemented;
+  normal centre respawn removed. Current cast palm fitting, owner camera, reduced
+  first-person view, no passive climb, held-vs-tapped input, reset and stock checks
+  are covered in [edge evidence](reports/map-by-map-refinement-2026-09-23/edge-recovery/report.md).
+  Fresh transport/rejoin/full-match/native qualification remains in2.10/P7.
 - [ ] **REFINE-2.6a Skies, islands and backgrounds.** After UI, inspect and improve
   animated skies, island/mountain layers and other distant/background scenery on
   every map. Evaluate composition, silhouettes, depth, materials, motion and harmony
@@ -411,8 +418,23 @@ scattered across all maps. Execute inside each map's existing refinement row.
   - [ ] REFINE-2.9e ordinary throw anticipation/release/follow-through/recovery.
   - [ ] REFINE-2.9f left pektus and right pektus, distinct real release/flight intent.
   - [ ] REFINE-2.9g cancel/interruption/pickup and remaining verbs/hero performances.
+- [ ] **REFINE-2.11 Individual ultimate performances, owner2026-09-24.**
+  Thoroughly research/compare VFX and ultimate animations across several relevant
+  Roblox and other games FIRST, then plan each hero separately, THEN implement.
+  Each hero gets their own expressive animation/effect/sound theme and temporary
+  stage treatment, with readable body/FPP/other-player/spectator views and truthful
+  live-ability handoff. Phaister laughing and becoming airborne is an explicit
+  direction to investigate. [Full requirements and research/plan gates](reports/map-by-map-refinement-2026-09-23/ultimate-performance-research-plan.md).
+  Existing shared2.8second pause/introduction is implemented; the deeper new pass
+  is OPEN. Owner allows longer durations: research and choose pacing,2.8is NOTa cap.
+  Explicit sequencing: finish current recovery work FIRST; log this for LATER.
+  No ultimate research/implementation detour during the current feature. Preserve accepted costs/warnings/cohorts and reduced-setting fairness.
+  No older task deleted; this pass must precede final integrated qualification.
 - [ ] **REFINE-2.10 Integrated qualification.** One coherent candidate with specific
   evidence/limits; no blanket completion from screenshots or object-spawn tests.
+  Include protocol51edge-climb real peers, dropped/late pose packets, reconnect/seat
+  handover, physical input and actual replay playback; local focused tests are not
+  transport proof. All map introduction/spectator/native performance gates remain.
 
 ### VISUAL-1 · Visual communication and appeal pass ⚠️ OPEN, 2026-09-23
 

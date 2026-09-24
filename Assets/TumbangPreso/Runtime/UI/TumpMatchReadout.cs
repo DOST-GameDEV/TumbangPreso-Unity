@@ -362,7 +362,7 @@ namespace TumbangPreso.UI
             var carrier = local.GetComponent<Carrier>(); var round = GameServices.Round;
             if (local.IsTripped)
             {
-                _prompt.text = local.CanMashUp ? Hud.MashVerb("Jump") + " to get up" : "Getting up";
+                _prompt.text = local.CanMashUp ? Hud.MashVerb("Jump") + (local.IsEdgeRecovering?" to climb":" to get up") : local.IsEdgeRecovering?"Climbing up":"Getting up";
                 float ratio = local.MashRemoved / Mathf.Max(.01f, local.TripTotal - Balance.MinTripDown); Progress(ratio);
                 if (local.CanMashUp && Hud.OnTouch) TouchHud.Emphasise(Verb.Jump); return;
             }
