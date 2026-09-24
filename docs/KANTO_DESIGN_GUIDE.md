@@ -63,6 +63,14 @@ approved there, and only then re-export to Unity. See § 8.
 - Repetition: 🧑 *"this roof repeats too much"*. Large-area textures get a bigger tile and an
   **anti-tiling** blend (a second sample rotated 37°, scaled 0.61, mixed by a soft noise mask).
   ⚠️ This exists in the Blender material only; Unity's materials still tile plainly.
+- ⚠️⚠️ **BARK IS SETTLED ON VARIANT J. DO NOT REOPEN IT UNLESS THE OWNER ASKS.** J is
+  `bark_j()` in `tools/author_kanto_textures.py`, the default (commit `fbb2711ae`): **one warm
+  brown with many long, soft, feathered vertical strokes**. As kept on the park trees:
+  `Logs/kanto-blender/bark_J_near_v1.png` and `bark_J_eye_v1.png`. **Rejected, in order:**
+  A to I (faint strokes; broad shadow strokes; airbrushed layered strokes and knots/lichen,
+  *"what is this garbage?"*; drawn plates from the brick generator, *"it genuinely just looks
+  like a repurposed brick texture"*; crack lines) and a fewer-wider-strokes version of J. The
+  variant code stays in the script for reference only.
 - **Photoshop loop** (the owner paints with his own brushes): paint `<name>_albedo.png` and
   `<name>_height.png` in `ArtSource/kanto/textures/`, then
   `py -3 tools/author_kanto_textures.py --normals-only`. ⚠️ Running the script WITHOUT that
