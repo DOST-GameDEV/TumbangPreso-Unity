@@ -367,18 +367,37 @@ def tiles_teal():
     save("tiles_teal", img, crown * 0.8 + fy * 0.2)
 
 
-def bark():
-    # BARK, second attempt. Owner: "flat brown with two or three long, soft, feathered
-    # vertical strokes, the same simplicity as the soft painted leaves. No grain." So: one flat
-    # brown and three long strokes across the 2 m tile (1.5 to 1.8 m long, 10 to 14 cm wide,
-    # tapered at both ends, a slow gentle lean), two a touch darker and one a touch lighter.
-    # Nothing else. The strokes wrap in x and y, so a trunk's seam and the tile edge are
-    # invisible.
+BARK_STROKES = {
+    # (x centre m, value multiplier, width m) per stroke across the 2 m tile.
+    # "v2": the approved drawing. On a real trunk it was "still barely visible" (owner, review
+    # v27): three strokes at 0.9 to 1.06 of the base, so a 1.3 m trunk showed one or two, faint.
+    "v2": [(0.3, 0.9, 0.12), (0.95, 1.06, 0.12), (1.55, 0.92, 0.12)],
+    # "A": the same drawing, bolder: six strokes, darker darks and lighter lights.
+    "A": [(0.15, 0.72, 0.11), (0.48, 1.16, 0.08), (0.8, 0.76, 0.13), (1.15, 0.7, 0.1), (1.5, 1.18, 0.08),
+          (1.8, 0.74, 0.12)],
+    # "B": fewer, BROADER dark strokes, like the reference trunks' painted shadow side, with one
+    # lighter highlight stroke between each pair.
+    "B": [(0.2, 0.68, 0.22), (0.62, 1.2, 0.07), (1.0, 0.7, 0.24), (1.42, 1.2, 0.07), (1.78, 0.72, 0.2)],
+    # "C": B's layout at the reference trunks' contrast. Plus or minus 25 per cent vanished on a
+    # lit, tone-mapped dark brown (review v27), so darks at half value, lights at +45 per cent,
+    # on a slightly lighter base.
+    "C": [(0.2, 0.5, 0.22), (0.62, 1.45, 0.08), (1.0, 0.52, 0.24), (1.42, 1.45, 0.08), (1.78, 0.55, 0.2)],
+}
+BARK_BASE = {"C": "8a5f40"}
+
+
+def bark(variant=None):
+    # BARK. Owner: "flat brown with two or three long, soft, feathered vertical strokes, the
+    # same simplicity as the soft painted leaves. No grain." One flat brown and long tapered
+    # strokes (1.5 to 1.8 m long, a slow gentle lean), some darker and some lighter. Nothing
+    # else. The strokes wrap in x and y, so a trunk's seam and the tile edge are invisible.
+    # KANTO_BARK picks the stroke set (BARK_STROKES) for side-by-side review.
+    variant = variant or os.environ.get("KANTO_BARK", "v2")
     rng = np.random.default_rng(201)
-    img = flat("7a5238")
-    for k, (x0, shift) in enumerate(((0.3, 0.9), (0.95, 1.06), (1.55, 0.92))):
+    img = flat(BARK_BASE.get(variant, "7a5238"))
+    for k, (x0, shift, width) in enumerate(BARK_STROKES[variant]):
         y0 = rng.uniform(0, TILE_M)
-        length, width = rng.uniform(1.5, 1.8), rng.uniform(0.1, 0.14)
+        length = rng.uniform(1.5, 1.8)
         dy = ((Y - y0 + TILE_M / 2) % TILE_M) - TILE_M / 2           # periodic, centred on the stroke
         t = np.clip(1 - np.abs(dy) / (length / 2), 0, 1)             # 1 mid-stroke, 0 at its tips
         cx = x0 + 0.04 * np.sin(Y / TILE_M * 2 * np.pi + k * 2.1)     # one slow sway per tile

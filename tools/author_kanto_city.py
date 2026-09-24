@@ -988,9 +988,17 @@ def limb_tube(buf, pts, radii, mat, sides=12, phase=0.0):
     pts = [Vector(p) for p in pts]
     uv = buf.bm.loops.layers.uv.verify()
     idx = buf.mi(mat)
+    # SQUARE TEXELS. u wraps a WHOLE number of tiles round the limb (no seam), so the tiles
+    # per metre around it are turns / circumference; v uses the same tiles per metre along it.
+    # It used to run 1 tile per 2 m along but 1 tile per circumference (1.4 m on a trunk, 0.6 m
+    # on a branch) around: the bark was squashed sideways and stretched lengthwise, up to 3x
+    # (owner, review v27: "the textures are being stretched out").
+    circ = math.tau * sum(radii) / len(radii)
+    turns = max(1, round(circ / K.TILE_M))
+    per_m = turns / circ
     rings, vs = [], [0.0]
     for i in range(1, len(pts)):
-        vs.append(vs[-1] + (pts[i] - pts[i - 1]).length / K.TILE_M)
+        vs.append(vs[-1] + (pts[i] - pts[i - 1]).length * per_m)
     # PARALLEL-TRANSPORTED rings: each ring's frame is the previous one turned by the change
     # of direction, never re-derived from scratch (to_track_quat picks its own roll per ring,
     # and consecutive rings twisted into bowties: lineup v18).
@@ -1002,7 +1010,6 @@ def limb_tube(buf, pts, radii, mat, sides=12, phase=0.0):
         prev_d = d
         rings.append([buf.bm.verts.new(p + q @ Vector((math.cos(a) * radii[i], math.sin(a) * radii[i], 0)))
                       for a in (phase + k * math.tau / sides for k in range(sides))])
-    turns = max(1, round(math.tau * max(radii) / K.TILE_M))
     for i in range(len(rings) - 1):
         for k in range(sides):
             f = buf.bm.faces.new((rings[i][k], rings[i][(k + 1) % sides], rings[i + 1][(k + 1) % sides], rings[i + 1][k]))
