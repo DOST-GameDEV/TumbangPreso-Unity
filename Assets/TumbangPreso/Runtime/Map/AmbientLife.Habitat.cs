@@ -18,6 +18,7 @@ namespace TumbangPreso
             public int Node;
             public Activity Kind;
             public Vector3 LookAt;
+            public Vector2 HoldSeconds;
         }
 #if UNITY_EDITOR
         public void StageActivityForReview(string id,int site)
@@ -162,6 +163,8 @@ namespace TumbangPreso
                     var site=_data.Activities[_site];_activity=site.Kind;_visits++;
                     _activityTime=_data.QuietCat?_owner.Range(_activity==Activity.Watch?7:1.4f,_activity==Activity.Watch?14:3):
                         _owner.Range(_activity==Activity.Watch?5:2.5f,_activity==Activity.Watch?10:5);
+                    if(site.HoldSeconds.x>0&&site.HoldSeconds.y>=site.HoldSeconds.x)
+                        _activityTime=_owner.Range(site.HoldSeconds.x,site.HoldSeconds.y);
                     if(_activity==Activity.Mark&&_peeCooldown<=0){_peeing=true;_peeTime=0;return;}
                 }
                 else if(_activity==Activity.Retreat){_activity=Activity.Watch;_activityTime=_owner.Range(2,4);}
