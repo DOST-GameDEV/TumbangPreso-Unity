@@ -199,8 +199,10 @@ scattered across all maps. Execute inside each map's existing refinement row.
   map, and a context-density plan at actual lobby/introduction/play/spectator angles.
   Owner PEAK and sparse-lobby reference images are preserved in ArtSource.
 - [ ] **REFINE-2.2 Eskinita.** Individual asset/material/shape/detail refinement.
-  Owner2026-09-24: building texture/detail acceptance remains OPEN; inspect and refine
-  each family under bright lighting per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).
+  Owner2026-09-24 building request reviewed per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).
+  [Per-house surface disposition](reports/map-by-map-refinement-2026-09-23/eskinita-building-disposition.md) retains
+  the individually refined plaster/timber/metal/glass families after actual bright
+  views/source review. No new blanket texture pass or unchanged tests justified.
   First context group implemented:26retained-family outer houses and4connected
   streets, existing collision preserved. Matched actual-preview/small/grey25
   inspected; focused1/1passed after correcting new-group roof palette routing.
@@ -220,7 +222,8 @@ scattered across all maps. Execute inside each map's existing refinement row.
   The same demonstrated cladding/material mismatch is now corrected individually
   at2_E/5_E/6_E, each inspected from a lit side and its shadowed street frontage;
   focused1/1passed. [East timber evidence](reports/map-by-map-refinement-2026-09-23/eskinita-east-timber/report.md).
-  Other primary homes and5_W's remaining roof/composition details remain open.
+  Later masonry/garden/final-art work below resolves the remaining primary-home
+  roof/composition decisions; integrated camera/performance acceptance stays open.
   Home3_Wnow differs from0_W's shop: raised bamboo shade, basket and folded cloth
   on the retained sill. Neighbor shop/windows/steps preserved, no new collision.
   Matched near/street/small/grey inspected; focused1/1passed including the corrected
@@ -246,9 +249,15 @@ scattered across all maps. Execute inside each map's existing refinement row.
   [Final art-batch decisions and remaining integrated acceptance](reports/map-by-map-refinement-2026-09-23/eskinita-prop-review.md).
   Art implementation is ready for the integrated intro/spectator/native gate;
   this parent remains open until that acceptance. Continue Bayan art next.
+  Latest owner sign-art direction also applies when revisiting this map's two shop
+  boards: per-sign reference, built-in generated artwork, critique and physical
+  fitting remain OPEN. Prior stock-font signs are not the final accepted art route.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
-  Owner2026-09-24: building texture/detail acceptance remains OPEN; inspect and refine
-  each family under bright lighting per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).
+  Owner2026-09-24 building review found the hall body still uniform. Eight large
+  wall triangles now have fitted plaster wash, preserving arches/slats/roof/physics.
+  [Hall and other building disposition](reports/map-by-map-refinement-2026-09-23/bayan-hall/report.md):
+  native1/1passed, actual paired front/rear/grey inspected; church stone and existing
+  fitted timber/paint families retained. Integrated camera/native gate stays open.
   Next active map. [Primary place references and generated-study critique](reports/map-by-map-refinement-2026-09-23/bayan-reference-notes.md)
   saved. Eight mint hedge bars now have locally authored low foliage in the retained
   planter shells; variant3selected after paired/overview/grey25inspection,1/1passed.
@@ -268,8 +277,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Art batch ready for integrated intro/spectator/native acceptance; keep parent open
   for that gate and continue Ilalim art next.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
-  Owner2026-09-24: building texture/detail acceptance remains OPEN; inspect and refine
-  each family under bright lighting per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).
+  Owner explicitly REJECTED print/copy storefront and generic world-sign lettering.
+  [Storefront rework](reports/map-by-map-refinement-2026-09-23/ilalim-storefront-rework-plan.md)
+  is OPEN and current priority: research actual Philippine shops, distinct functional
+  interiors/fronts, cartoon construction and authored sign artwork. Earlier shop
+  retain judgment is superseded; structure and skyline decisions remain valid.
   Next active map. [Primary reference intake and Gilmore/LRT2identity](reports/map-by-map-refinement-2026-09-23/ilalim-reference-notes.md)
   saved. First local finish replaces mint concrete/pink-yellow track lookup colors
   with neutral structural materials on24pillars/28bays/56tracks. Original geometry,

@@ -845,6 +845,39 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator BayanHallFinishReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza);
+            var saved=AssetDatabase.LoadAssetAtPath<Mesh>("Assets/TumbangPreso/Art/BayanHallFinish/HallWalls.asset");Assert.IsNotNull(saved);
+            var importer=AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(saved));Assert.IsTrue(importer.userData.StartsWith("TUMP_BAYAN_HALL_MESH:"));
+            var original=AssetDatabase.LoadAssetAtPath<Mesh>(importer.userData.Substring("TUMP_BAYAN_HALL_MESH:".Length));Assert.IsNotNull(original);
+            var renderer=GameObject.Find("BayanPlaza").GetComponentsInChildren<MeshRenderer>().Single(r=>r.sharedMaterials.Any(m=>!string.IsNullOrEmpty(m.GetTag("TumpBayanHallSource",false))));
+            var filter=renderer.GetComponent<MeshFilter>();var finished=filter.sharedMesh;var after=renderer.sharedMaterials;var before=after.Take(after.Length-1).ToArray();
+            // The retained OBJ is deliberately non-readable during play. Exact vertices
+            // and index preservation are checked by the author before scene save.
+            Assert.AreEqual(original.vertexCount,saved.vertexCount);Assert.AreEqual(24u,saved.GetIndexCount(saved.subMeshCount-1));
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;var camera=rig.Camera;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var clock=Object.FindFirstObjectByType<Visual.NeighbourhoodSkyMotion>();bool enabled=clock!=null&&clock.enabled;if(clock!=null)clock.enabled=false;
+            var eye=Vector3.zero;var rotation=Quaternion.identity;Time.timeScale=0;
+            Camera.CameraCallback pin=cam=>{if(cam==camera){cam.transform.SetPositionAndRotation(eye,rotation);cam.fieldOfView=60;}};Camera.onPreCull+=pin;
+            try
+            {
+                foreach(string view in new[]{"front","rear"})
+                {
+                    eye=view=="front"?new Vector3(10,3.8f,3.5f):new Vector3(6,4.3f,30);
+                    var target=view=="front"?new Vector3(7.8f,3.5f,15):new Vector3(5,3,20);rotation=Quaternion.LookRotation(target-eye);
+                    foreach(string state in new[]{"before","after"})
+                    {
+                        bool on=state=="after";filter.sharedMesh=on?finished:original;renderer.sharedMaterials=on?after:before;
+                        using(Visual.NeighbourhoodSkyMotion.At(20))yield return GameplayShots.Render(camera,"Bayan-hall-"+view+"-"+state,false,Output,width:1280,height:800);
+                    }
+                }
+            }
+            finally{filter.sharedMesh=finished;renderer.sharedMaterials=after;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator BayanHouseFinishReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza);

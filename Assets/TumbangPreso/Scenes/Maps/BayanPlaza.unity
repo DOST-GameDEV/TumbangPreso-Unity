@@ -27742,6 +27742,11 @@ MonoBehaviour:
     - {x: -8, y: 0.102, z: 11.200003}
     - {x: -8, y: 0.102000006, z: 11.6}
     Bird: 0
+    AerialWander: 0
+    FlightBounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
+    GlideDuration: {x: 0.8, y: 2.4}
     WalkSpeed: 0.45
     RunSpeed: 2.2
     WalkCycleSpeed: 0.29995126
@@ -27794,6 +27799,11 @@ MonoBehaviour:
     - {x: 9.600004, y: 0.102, z: 0.80000186}
     - {x: 9.600002, y: 0.102, z: 1.2000022}
     Bird: 0
+    AerialWander: 0
+    FlightBounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
+    GlideDuration: {x: 0.8, y: 2.4}
     WalkSpeed: 0.32
     RunSpeed: 1.8
     WalkCycleSpeed: 0.12653176
@@ -27811,6 +27821,11 @@ MonoBehaviour:
     - {x: -2.999999, y: 0.102, z: 4.000001}
     - {x: -2.999999, y: 3.102, z: 8.000001}
     Bird: 1
+    AerialWander: 0
+    FlightBounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
+    GlideDuration: {x: 0.8, y: 2.4}
     WalkSpeed: 0.45
     RunSpeed: 2.2
     WalkCycleSpeed: 0.4
@@ -27828,6 +27843,11 @@ MonoBehaviour:
     - {x: 4.0000005, y: 0.102, z: -3.999999}
     - {x: 4.0000005, y: 3.102, z: 0.0000009536743}
     Bird: 1
+    AerialWander: 0
+    FlightBounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
+    GlideDuration: {x: 0.8, y: 2.4}
     WalkSpeed: 0.45
     RunSpeed: 2.2
     WalkCycleSpeed: 0.4
@@ -27845,6 +27865,11 @@ MonoBehaviour:
     - {x: 0, y: 0.102, z: 10.000002}
     - {x: 0, y: 3.102, z: 6.000002}
     Bird: 1
+    AerialWander: 0
+    FlightBounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
+    GlideDuration: {x: 0.8, y: 2.4}
     WalkSpeed: 0.45
     RunSpeed: 2.2
     WalkCycleSpeed: 0.4
@@ -40313,6 +40338,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 0bf1ffdb806f63b4fa62fe3a97af14d6, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: 0bf1ffdb806f63b4fa62fe3a97af14d6, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 047a6a7005cafab46939c3071da9c196, type: 2}
@@ -40332,10 +40361,14 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[4]'
       value: 
       objectReference: {fileID: 2100000, guid: 664084a377b8ff946942043c8c0cd46b, type: 2}
+    - target: {fileID: -7635826562936255635, guid: 0bf1ffdb806f63b4fa62fe3a97af14d6, type: 3}
+      propertyPath: 'm_Materials.Array.data[5]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 453e78693a411114f9c2a4d4a26f9d02, type: 2}
     - target: {fileID: -6400281290468069383, guid: 0bf1ffdb806f63b4fa62fe3a97af14d6, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 4300000, guid: a83ac053930186f4890dffe9e51b3e0d, type: 2}
+      objectReference: {fileID: 4300000, guid: e107dd1dbf2505a4e91483f7d55655b0, type: 2}
     - target: {fileID: 919132149155446097, guid: 0bf1ffdb806f63b4fa62fe3a97af14d6, type: 3}
       propertyPath: m_Name
       value: MunicipalHall

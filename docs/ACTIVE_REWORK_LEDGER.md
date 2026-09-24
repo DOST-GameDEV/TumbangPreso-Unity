@@ -1,39 +1,42 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Lagoon art ready, earlier surface review next
+## Current resume, 2026-09-24: secure hall, then Philippine shop/sign rework
 
-Overall goal ACTIVE and NOT complete. Owner says do not stop; keep advancing all
-independently actionable TODO. No checkpoint stops, routine questions, other tasks,
-delegation, paid services, resets, main edits or Desktop replacement. Quality product
-work first, bounded checks, no capture/verification perfection loop.
+Overall goal ACTIVE and NOT complete. No checkpoint stops/questions, other tasks,
+delegation, paid external services, resets, main edits or Desktop replacement.
+Quality product work first; bounded verification, no capture-tool perfection loops.
 
-DEV ASTRAReworks and owned detached QUAL were96215628cbefore this coast unit.
-The two original DEV composition PNG metas are protected dirt, never restore/stage.
-All QUAL generated churn backed up/restored. No active Unity job, owned browser tab,
-server or native player. All job IDs below are historical.
+Latest owner REJECTED Ilalim print/copy as ugly and insufficiently Philippine,
+requests cartoon form, actual local reference research and no plain stock-font signs.
+Supplied stronger photo shows inhabited shop-house, grille/service opening, sachets,
+painted lower panel, shallow awning and attached banner layers. Then explicitly
+requested per-sign message/reference, built-in generated artwork, critique/iteration
+and fitting into the world. See ilalim-storefront-rework-plan.md and saved owner
+refs. PRINT COPY first, then other services separately, Eskinita boards afterward.
+Prior Ilalim shop retain judgment is explicitly superseded; no UI-font change.
 
-Qualified coast source/assets/evidence/card copied to DEV. Final native case passed
-1/1in4.941s; actual before/after preview/court/near and25percent grey inspected.11near
-islands retain source land/palms with distinct surfaces/groups,9far islands kept.
-47,736extra vertices/11renderers/one palette/no new physics or shadow casters. Three
-art variants, then one real grounding bug fix samples each rock's full footprint.
-Author report use-after-destroy fixed. Full intermediate evidence preserved.
-Native card updated with original importer/GUID; Low and held20/180sky inspected.
-Sky genuinely moves; other time-driven parts also vary, no whole-frame identity claim.
+DEV ASTRAReworks and owned QUAL currently9e9302319before the hall/doc unit.
+Original two DEV composition PNG metas protected, never restore/stage. QUAL own
+churn backed/restored, no active Unity. Candidate hall assets/evidence copied to DEV.
+Hall author selected8large walls, exact topology/collision kept. Materialv1retained
+following actual paired front/rear/25percent grey review. Focusedv3passed1/1in3.407s.
+Earlier2fixture failures read non-readable runtime mesh vertices/indices; bounded
+metadata check now avoids CPU buffers and leaves author exact checks intact. No
+importer changes or broad diagnostics. Publish hall/docs, then storefront work.
 
-Building/material disposition in lagoon-coast/report.md. Keep refined gable/hip/
-veranda/metal and individual board/weave/pile/boat differences. Current Lagoon art
-batch ready for integrated gameplay/intro/spectator/native acceptance, parent OPEN.
-Publish this unit, then earlier-map building-surface acceptance sequentially:
-Eskinita, Bayan, Ilalim. SaBubong/Lagoon dispositions already recorded. Review actual
-bright-look evidence/source first; do not repaint good surfaces or revive rejected
-whole-wall/global noise fixes to create work. Then natural animals, bot stalls,
-per-character walking/throw/pektus, older actual defects and final qualification.
+Coast9e9302319 and boats96215628c are pushed and exact remote verified. Lagoon
+current art batch/card/Low/sky ready for integrated gate; no full-map completion.
+Eskinita building disposition recorded, but its generated world-sign art is OPEN.
+Bayan building disposition in bayan-hall/report.md. Ilalim structure/skyline still
+retained, shops/signs reopened. Animals, bots, per-character motion, older defects
+and final qualification all remain. Do not silently drop any task.
 
-Boat96215628c published/remote verified. Water547f3901a, metal0c9308c19,
-veranda903e17220, hipbff55f209, gable7957d8a96, fall3e0d0c69a and birds faa904702
-remain published. Guarded Unity only, no.cs edits during a run, explicit staging,
-sole author M4tyu633, fetch/inspect before push, verify remote. Never reset/clean.
+Storefront sources: MapPlaceAuthor.Shop/StockRoom/Sign plus existing shop meshes;
+old generated text tools/author_shopfront_signs_v2.py uses fonts and is superseded
+for this art route. Source print room does have a crude copier but image does not
+communicate it; improve readable functional shapes, not only nomenclature. Primary
+shop services read at printhouseph.com and blessings.digital; their photos NOT yet
+viewed. Owner stock street photo actually viewed. Research actual shop images next.
 
 ## Latest owner requirements and completed additions
 
@@ -275,3 +278,46 @@ rock height allows downhill edges to float. Lower-ring footprint now samples the
 original terrain per vertex and sinks below it; same scene/author/code contract.
 Logs/refine2-lagoon-coast-grounded author then one focused check; cs frozen. Sky
 actually changes between heldtimes; card shows current18home village and context.
+
+Coast9e9302319 pushed and exact remote verified. QUAL candidate compared/preserved
+via named stash, detached advanced to9e9302319. No active Unity. Eskinita material
+review now records all ten near homes and outer/distant construction separately
+in eskinita-building-disposition.md; retain existing successful local finishes,
+no additional noise/unchanged test justified. Proceed Bayan surface review next.
+
+Bayan review found a concrete remaining weak surface: broad rear hall plaster is
+uniform behind already fitted openings. Plan bayan-hall-plan.md saved before code.
+Church stone/roof/arches and16e/o timber/jalousie additions retained after actual
+images/source review. Hall body material also owns tiny slats/arches, so target only
+large vertical body faces, not whole material/global shader. Implement locally next.
+
+Hall implementation/source and one paired native case copied to QUAL. Run guarded author then smallest front/rear comparison. No .cs edits in flight. Logs/refine2-bayan-hall-v1. Preserve source topology/small slots/collision; qualified coast remains9e9302319.
+
+LATEST OWNER OVERRIDE: print/copy storefront is ugly, must resemble Philippine
+shops while cartoonish; research beyond supplied admittedly bad signage examples;
+"dont outright use fonts". Save in ilalim-storefront-rework-plan.md and TODO. Prior
+shop keep judgment is explicitly superseded. World signs need authored lettering
+art and real material/mounting, and each shop needs functional identity. PRINT COPY
+first; no UI-font changes. Owner references saved locally, not shipped source art.
+
+Bayan hall author succeeded targeting8large wall triangles only. First focused
+case failed on fixture reading runtime non-readable OBJ clone vertices, before
+captures. Author already verifies exact topology in Edit mode. Correct that bounded
+fixture check to saved vertex counts/topology receipt, rerun once, inspect/publish
+hall unit, then Ilalim shop research/implementation. No active Unity right now,
+all churn backed/restored. DEV/QUAL9e9302319 plus hall source/artwork in QUAL and
+Eskinita/Ilalim disposition/new-owner docs in DEV. Nothing discarded.
+
+Owner then supplied stronger shop-house street photo (watermarked stock reference):
+service grille/opening, sachet strips, stocked shelves, painted lower panels, shallow
+awning and fitted banner/board layers, upper household use. Exact translation/limits
+saved in storefront plan. This is the new primary taste direction for shops; prior
+generic kiosk acceptance stays superseded. Keep cartoon forms, original artwork,
+functional variation and bright lighting. Current Bayan v2focused run remains8255.
+
+Newest owner explicitly wants per-sign message/reference, built-in generated sign
+art, critique/iteration and fitting into the actual world. Save the production
+method in storefront plan. PRINT COPY first, then each shop separately. It must
+feel physically part of the map; no stock-font rectangles, stretching or UI glow.
+Bayan fixture v2also read uploaded saved indices; changed to GetIndexCount metadata
+while retaining author exact-topology checks. Guardedv3running4046; no.cs edits.
