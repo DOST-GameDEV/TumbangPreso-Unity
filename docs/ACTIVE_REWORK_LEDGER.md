@@ -1,50 +1,46 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: close bot fixes, then visible map/light findings
+## Current resume, 2026-09-24: Sa Bubong preview court contrast
 
-Overall goal ACTIVE, NOT done. DEV and QUAL baseline273e5e669, published and
-remote-verified. AGENTS cleanup dc10b68f2 and SaBubong bird placement57cf74a9c
-published. All21 ambient actors have local map/species placement coverage, with
-ordinary-camera/replay/combined qualification still open.
+Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified at5e9b711c7. The
+tracked lighting branch through a28037622 is merged. One conflict preserved our
+explicit-sun/preview API and cached restoration while adding per-camera InkFloor.
+New native floor-choice1/1 in19.144s; source/local comparisons and grey inspected.
+Default0 retained. Report: lighting-integration-2026-09-24/hull-floor/report.md.
+No Unity job running; known churn backed up/restored. Protected DEV metas intact.
 
-Bot production fixes:5de3a78f3 reaction timing (red reproduction, then3/3 native),
-043cf804c chase patience (focused case plus Ilalim3/3). Current uncommitted change:
-per-seat pektus/lunge decisions consistently use EffectiveDifficulty, published
-in273e5e669. Existing rule checks/compile3/3 in0.121s. Known churn backed up
-and restored. Original
-DEV composition PNG metas remain untouched.
+Current local unit: SaBubong preview court contrast. Saved plan:
+map-by-map-refinement-2026-09-23/rooftop-court-contrast-plan.md. Native same-camera
+current/ivory/dark study1/1 in1.740s; actual images/25percent grey inspected.
+Dark warm-neutral(.23,.19,.15) is clearest; ivory barely improves it. Current
+SaBubongBuilder change gives only the six court lines a separate material and
+updates rebuilds; notice-paper material, lights, geometry/rules are preserved.
+Guarded author8012 completed; exactly six scene material references changed.
+Scene/new material/meta copied to DEV, known churn backed up/restored. Final
+preview9009 completed:1/1 in1.287s, actual authored frame and grey inspected.
+Logs/roof-court-contrast-final.xml/.log and frames. Report in
+map-by-map-refinement-2026-09-23/rooftop-court-contrast/report.md. Known churn
+restored, no active Unity. Publish the local material/scene/builder/report, then
+address the separately visible high-preview distance haze/context before the
+final static card refresh. Study is the matched A/B; final checks serialization.
+Fixture allowance0/1. No new framework or broad lighting darkening.
 
-Initial ordinary1x samples now cover four bots in both modes on all five maps.
-No broad AFK or full-role/roster/tier completion claim. Exact evidence and limits:
-reports/map-by-map-refinement-2026-09-23/bot-map-coverage/report.md.
-Bot recovery fixture failed twice BEFORE handoff, last at(16.92,-2.01,16.38), not
-the intended outer bridge lip. Existing ExerciseEdge sets camera follow/movement
-aim too; the draft omitted that input-basis setup. Fixture allowance1/1 exhausted.
-Exact draft/failures retained in the report directory, original compiled
-LagoonRecoveryProbe restored. Do not reopen fixture polishing during feature work.
-Full role/roster/tier and actual bot recovery remain actionable final gates.
+Bot fixes published:5de3a78f3 reaction timing;043cf804c chase patience;273e5e669
+per-seat difficulty. All five maps have initial four-bot/two-mode ordinary samples.
+Full role/roster/tier and bot water/roof recovery remain actionable final gates.
+Recovery fixture failed twice BEFORE bot handoff, last(16.92,-2.01,16.38), not the
+intended lip. Existing ExerciseEdge also sets camera follow/movement aim; omitted
+input-basis setup is the next diagnostic. Allowance1/1 exhausted: no more fixture
+polishing during feature work. Draft/failures preserved in bot-map-coverage/;
+original compiled LagoonRecoveryProbe restored. No production failure claimed.
 
-Current integration: tracked lighting branch advanced to a28037622 (aba9b9d51
-adds optional CastInkFloor, default0, and native source comparison images).
-DEV merge is IN PROGRESS, not committed. One WorldLookPresentation conflict
-resolved: preserve our explicit-sun/preview API and cached restoration behavior,
-add the new per-camera InkFloor capture/set/restore. QUAL has only four changed
-source/test inputs copied. Guarded new floor-choice case is running; no .cs edits.
-Logs/light-hull-integration-v1.xml/.log and frames in the same named directory.
-Job3010 reaped: native floor-choice1/1 passed in19.144s. Source and actual Windows
-comparison sheets/grey inspected; default0 retained. Report at
-reports/lighting-integration-2026-09-24/hull-floor/report.md. Known churn backed
-up/restored, no active Unity job. Finish the merge commit and push, then inspect
-existing high-preview map evidence for a concrete remaining weakness. Fixture0/1.
-
-Then outstanding visible map/light findings in LIGHT-1.6 and individual map
-parents. Choose a concrete weak area and save its local plan. Preserve bright
-readable lighting and successful art;
-no gratuitous global darkening or completed HUD redesign. Final coherent native/
-peer/replay/performance/build checks remain2.10/P7, not intermediate builds.
+AGENTS cleanup dc10b68f2 preserves every important instruction in39.7percent fewer
+words plus exact original/archive mapping. SaBubong birds57cf74a9c complete locally.
+All21 ambient actors have local map/species placement coverage; ordinary-camera/
+replay/combined checks remain open. Preserve every older task and evidence.
 New character/ability/ultimate animation direction belongs to the owner-run cloud
-lane. Its branch is present on origin; do not merge unfinished work or contact a
-conversation. Preserve all older tasks. No phase checkpoint ends this goal.
+lane; its origin branch exists, but do not merge unfinished work or contact a task.
+Final native/peer/replay/performance/build remains2.10/P7. No checkpoint stops goal.
 
 ## Parallel lane, 2026-09-24: HOME loop and gameplay animation (separate from the map resume above)
 

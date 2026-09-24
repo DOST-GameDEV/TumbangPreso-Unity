@@ -152,6 +152,10 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
   Windows focused floor-choice case1/1 passed; actual current-map comparisons and
   grey inspected. Default0 retained, alternatives available without blocking maps.
   [Local integration evidence](reports/lighting-integration-2026-09-24/hull-floor/report.md).
+  SaBubong's preview court marks now use separate dark warm paint on only six
+  lines, following a fixed-camera three-colour study. Study/final native1/1 each,
+  actual colour/grey inspected. [Court-paint evidence](reports/map-by-map-refinement-2026-09-23/rooftop-court-contrast/report.md).
+  High-preview haze/context and final static card refresh remain open.
 - [x] LIGHT-1.7 The two Stage tests assert the bright look's own claims (`20c977e5`): applied rig,
   bright shade colour, haze past the court, court ground found; toon ramp measured 1.70:1 under the
   look against 1.95:1 authored, asserted inside 1.35 to 2. WorldCourtCueTests 3/3 on the Mac.
