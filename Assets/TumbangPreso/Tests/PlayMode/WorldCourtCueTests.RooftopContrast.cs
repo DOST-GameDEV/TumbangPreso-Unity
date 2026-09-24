@@ -12,6 +12,31 @@ namespace TumbangPreso.PlayTests
     public sealed partial class WorldCourtCueTests
     {
         [UnityTest]
+        public IEnumerator RooftopPreviewComparesDistanceHaze()
+        {
+            StageWeights(1);
+            var root=new GameObject("Roof haze preview",typeof(RectTransform),typeof(RawImage));
+            var preview=root.AddComponent<MapPreviewSurface>();string shown=null;
+            preview.MapShown+=map=>shown=map;preview.Show(SceneFlow.SaBubong);
+            var look=TumbangPreso.Visual.WorldLookProfile.Current.Find(SceneFlow.SaBubong);
+            float start=look.FogStart,end=look.FogEnd;
+            try
+            {
+                float until=Time.realtimeSinceStartup+40;
+                while(shown!=SceneFlow.SaBubong&&Time.realtimeSinceStartup<until)yield return null;
+                Assert.AreEqual(SceneFlow.SaBubong,shown);yield return null;yield return null;
+                Time.timeScale=0;
+                SavePreview(preview.Camera,"roof-haze-current");
+                look.FogStart=90;look.FogEnd=380;preview.ReapplyEnvironment();
+                SavePreview(preview.Camera,"roof-haze-middle");
+                look.FogStart=120;look.FogEnd=480;preview.ReapplyEnvironment();
+                SavePreview(preview.Camera,"roof-haze-far");
+            }
+            finally
+            {look.FogStart=start;look.FogEnd=end;Object.Destroy(root);Time.timeScale=1;}
+        }
+
+        [UnityTest]
         public IEnumerator RooftopPreviewComparesOnlyCourtPaint()
         {
             StageWeights(1);

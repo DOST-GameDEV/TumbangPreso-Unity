@@ -637,7 +637,10 @@ namespace TumbangPreso.PlayTests
         public IEnumerator UpdatedStreetMapCardsUseTheirRealPreviewCameras()
         {
             GraphicsProfiles.Apply(2);
-            foreach(string map in new[]{SceneFlow.Eskinita,SceneFlow.IlalimNgTulay})
+            string selected=Environment.GetEnvironmentVariable("TUMP_CARD_MAP");
+            if(!string.IsNullOrEmpty(selected))Assert.Contains(selected,SceneFlow.Maps);
+            var maps=string.IsNullOrEmpty(selected)?new[]{SceneFlow.Eskinita,SceneFlow.IlalimNgTulay}:new[]{selected};
+            foreach(string map in maps)
             {
                 yield return PlayModeWorld.Reset();
                 var canvas=new GameObject("Updated map card",typeof(Canvas));

@@ -1,8 +1,8 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Sa Bubong preview court contrast
+## Current resume, 2026-09-24: Sa Bubong distance haze
 
-Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified at5e9b711c7. The
+Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified at07a387779. The
 tracked lighting branch through a28037622 is merged. One conflict preserved our
 explicit-sun/preview API and cached restoration while adding per-camera InkFloor.
 New native floor-choice1/1 in19.144s; source/local comparisons and grey inspected.
@@ -20,10 +20,30 @@ Scene/new material/meta copied to DEV, known churn backed up/restored. Final
 preview9009 completed:1/1 in1.287s, actual authored frame and grey inspected.
 Logs/roof-court-contrast-final.xml/.log and frames. Report in
 map-by-map-refinement-2026-09-23/rooftop-court-contrast/report.md. Known churn
-restored, no active Unity. Publish the local material/scene/builder/report, then
-address the separately visible high-preview distance haze/context before the
-final static card refresh. Study is the matched A/B; final checks serialization.
-Fixture allowance0/1. No new framework or broad lighting darkening.
+restored. Court material/scene/builder/report published in07a387779. Study is
+the matched A/B; final checks serialization. No fixture repair used.
+
+New local plan: rooftop-haze-plan.md. Current high preview loses lower streets/
+middle facades in peach haze. Compare SaBubong distances60-300,90-380,120-480m
+only, holding colour/light/materials and camera fixed. Guarded job29799 runs
+RooftopPreviewComparesDistanceHaze: Logs/roof-haze-study-v1.xml/.log and frames
+in the named directory. Study reaped:1/1 in1.438s, actual colour/grey inspected.
+Selected90-380m, more identity in mid facades while far skyline stays softer.
+Only two SaBubong haze distances changed; lower ground material warmth is not
+claimed fixed by haze alone. Existing card route now accepts a single-map selector.
+Final card v1 passed its export check but actual inspection caught old haze:
+Resources/WorldLookProfile.asset overrides code defaults. This is an incomplete
+production data update, not a fixture failure. Preserve that v1 as unselected.
+WorldCueProfileAuthor.ApplyRooftopHaze now updates only the saved roof distances
+from the chosen defaults. Guarded author runs in Logs/roof-haze-author-profile.log;
+Author67188 reaped; saved asset diff is exactly roof FogStart90/FogEnd380 plus
+explicitly serializing the unchanged CastInkFloor0. Asset copied to DEV. Final
+v2 card capture45522 reaped:1/1 in1.155s, actual image/grey inspected. SaBubong
+PNG replaced by final actual scene; original importer/GUID hash and previous-card
+preserved. Report: rooftop-haze/report.md. Known churn restored, no Unity running.
+Publish scoped profile/author/card/evidence; then review remaining map-context/
+contrast and the old actionable queue without redoing the completed micro-pass.
+Fixture0/1, no extra study variants.
 
 Bot fixes published:5de3a78f3 reaction timing;043cf804c chase patience;273e5e669
 per-seat difficulty. All five maps have initial four-bot/two-mode ordinary samples.
