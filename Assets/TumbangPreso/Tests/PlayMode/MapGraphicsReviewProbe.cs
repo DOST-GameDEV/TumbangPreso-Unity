@@ -931,6 +931,53 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator IlalimPisonetReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);
+            var room=GameObject.Find("IlalimNgTulay/Dressing/PlaceRework/Frontage_Pisonet").transform;
+            var face=room.Find("Sign face Pisonet");var board=room.Find("Shop sign backing Pisonet");Assert.IsNotNull(face);Assert.IsNotNull(board);
+            var kioskRenderers=room.Cast<Transform>().Where(t=>t.name.StartsWith("InteriorPisonet_")).SelectMany(t=>t.GetComponentsInChildren<MeshRenderer>()).ToArray();
+            var kioskMaterials=kioskRenderers.Select(r=>r.sharedMaterials).ToArray();
+            var oldScreen=AssetDatabase.LoadAllAssetsAtPath("Assets/TumbangPreso/Art/models/env_pisonet_kiosk.obj").OfType<Material>().Single(m=>m.name=="piso_screen");
+            void Screens(bool afterState){for(int i=0;i<kioskRenderers.Length;i++)kioskRenderers[i].sharedMaterials=kioskMaterials[i].Select(m=>!afterState&&m.GetTag("TumpPisonetQuietScreen",false)=="1"?oldScreen:m).ToArray();}
+            var renderer=face.GetComponent<MeshRenderer>();var after=renderer.sharedMaterial;
+            var saved=AssetDatabase.LoadAssetAtPath<Material>("Assets/TumbangPreso/Art/IlalimShopSigns/Pisonet.mat");Assert.IsNotNull(saved);
+            var original=AssetDatabase.LoadAssetAtPath<Material>(saved.GetTag("TumpShopSignSource",false));Assert.IsNotNull(original);
+            var texture=saved.mainTexture;var scale=face.localScale;var backing=board.localScale;
+            var facePosition=face.localPosition;var boardPosition=board.localPosition;
+            var equipment=room.Find("Pisonet controls and lower glazing");Assert.IsNotNull(equipment);Assert.IsEmpty(equipment.GetComponentsInChildren<Collider>());
+            var oldParts=room.GetComponentsInChildren<MeshRenderer>().Where(r=>new[]{"Shopfront lower wall"}.Contains(r.name)).ToArray();
+            Assert.IsTrue(oldParts.All(r=>!r.enabled));
+            Assert.That(Mathf.Abs(face.lossyScale.x/face.lossyScale.y),Is.EqualTo(texture.width/(float)texture.height).Within(.002f));
+            Assert.AreEqual(TextureImporterNPOTScale.None,((TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture))).npotScale);
+            Assert.That(backing.y,Is.GreaterThan(scale.y));Assert.IsFalse(ShaderUtil.ShaderHasError(after.shader));
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;var camera=rig.Camera;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var clock=Object.FindFirstObjectByType<Visual.NeighbourhoodSkyMotion>();bool enabled=clock!=null&&clock.enabled;if(clock!=null)clock.enabled=false;
+            var eye=Vector3.zero;var rotation=Quaternion.identity;Time.timeScale=0;
+            Camera.CameraCallback pin=cam=>{if(cam==camera){cam.transform.SetPositionAndRotation(eye,rotation);cam.fieldOfView=60;}};Camera.onPreCull+=pin;
+            try
+            {
+                foreach(string view in new[]{"front","street"})
+                {
+                    var target=room.TransformPoint(new Vector3(0,1.90f,-.20f));
+                    eye=view=="front"?target+room.forward*6:room.TransformPoint(new Vector3(3,1.7f,7));
+                    rotation=Quaternion.LookRotation(target-eye);
+                    foreach(string state in new[]{"before","after"})
+                    {
+                        bool on=state=="after";Screens(on);renderer.sharedMaterial=on?after:original;face.localScale=on?scale:new Vector3(scale.x,scale.x*.25f,scale.z);
+                        board.localScale=on?backing:new Vector3(backing.x,scale.x*.25f+.025f,backing.z);
+                        face.localPosition=facePosition;
+                        board.localPosition=on?boardPosition:new Vector3(boardPosition.x,2.92f,boardPosition.z);
+                        equipment.gameObject.SetActive(on);foreach(var part in oldParts)part.enabled=!on;
+                        using(Visual.NeighbourhoodSkyMotion.At(20))yield return GameplayShots.Render(camera,"Ilalim-pisonet-"+view+"-"+state,false,Output,width:1280,height:800);
+                    }
+                }
+            }
+            finally{Screens(true);renderer.sharedMaterial=after;face.localScale=scale;board.localScale=backing;face.localPosition=facePosition;board.localPosition=boardPosition;equipment.gameObject.SetActive(true);foreach(var part in oldParts)part.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator IlalimParesReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);

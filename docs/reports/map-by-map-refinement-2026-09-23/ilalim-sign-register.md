@@ -46,8 +46,11 @@ burst, forced distress, stock-font script or one design repeated on every busine
    v2wood fascia/dark-light letters/simple bowl selected and fitted3:1. V1archived
    rejected, absent from runtime. Native1/1passed4.571s; front/street/grey inspected.
    See ilalim-pares/report.md. V2not yet owner-approved.
-9. PISONET: PISO NET. Research real coin-computer shop signs, keep world-business
-   meaning distinct from gameplay/economy UI. Do not invent new game pricing. OPEN.
+9. PISONET: original3:1green/navy commercial service fascia, actual PH cabinet/
+   cafe-sign photos inspected. Source kiosks/chairs retained, fitted keyboard/mouse/
+   coin slot, quiet per-instance screen panels and lower glazing. Native1/1passed
+   4.549s, front/street/grey inspected. No pricing/game-economy change. See
+   ilalim-pisonet/report.md.
 10. BAKERY: PANADERIA / PANDESAL. PFA/Julie's and the photographer's Commons
     neighborhood bakery photos actually viewed. Owner-likedv1refined into vintagev2,
     installed3:1without stretching. Stepped bread showcase/grouped loaves/lower painted

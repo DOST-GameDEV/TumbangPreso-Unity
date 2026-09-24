@@ -286,6 +286,9 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Art batch ready for integrated intro/spectator/native acceptance; keep parent open
   for that gate and continue Ilalim art next.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
+  Pisonet retains its source cabinets/chairs with fitted controls, quiet screen
+  panes and lower glazing; original3:1commercial sign. Native1/1passed4.549s,
+  actual paired/grey inspected. [Pisonet evidence](reports/map-by-map-refinement-2026-09-23/ilalim-pisonet/report.md).
   Pares counter implemented with actual pot/bowl/condiment forms. Owner-rejected
   painterlyv1replaced after LugawKing study: wood fascia/simple graphic bowl,3:1.
   Native1/1passed4.571s, actual paired/grey inspected. [Pares evidence and rejection](reports/map-by-map-refinement-2026-09-23/ilalim-pares/report.md).

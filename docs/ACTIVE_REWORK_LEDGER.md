@@ -1,15 +1,14 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: publish Pares replacement, then Pisonet
+## Current resume, 2026-09-24: publish Pisonet, then Vulcanizing
 
-DEV/QUAL start at publishedeb6557a95. Pares candidate finished locally: owner-
-rejected painterlyv1replaced after actual LugawKing photo study withv2wood fascia/
-simple bowl. V1source archived REJECTED, absent from runtime. Body8624vertices,
-1renderer/material, original collision/cart retained. Native5082completed1/1in
-4.571s; actual front/street/grey inspected and retained. No owner approval claim.
+DEV/QUAL start at published065ad6480. Pisonet locally complete: retained source
+cabinets/chairs with measured controls, quiet scene-only screens/lower glazing,
+original3:1commercial fascia.2160solid vertices/2added renderers, collision unchanged.
+Native97933completed1/1in4.549s; actual front/street/grey inspected and retained.
 Assets/evidence copied to DEV, known QUAL churn backed/restored. No Unity/browser/
-helpers active. Next publish, preserve/advance QUAL, then Pisonet and Vulcanizing.
-All older tasks/map parents remain OPEN. No more unchanged Pares checks.
+helpers active. Next publish, preserve/advance QUAL, then Vulcanizing. No further
+unchanged Pisonet checks. All older tasks/map parents remain OPEN.
 
 Overall goal ACTIVE and NOT done. Finish current work before moving on. Every older
 TODO/task ID remains; new requests do not replace it. Quality/product work before
@@ -198,3 +197,18 @@ Paresv2sign author56922completed actual3:1fit. Only IlalimParesReview now runnin
 preserved. No.cs edits in flight. Need fresh XML and actual front/street/grey
 inspection, then publish retained replacement before Pisonet. Owner-rejectedv1
 must not appear as final runtime/evidence approval.
+
+Pisonetv1sign generated/inspected,3:1commercial reference direction selected. Author
+keeps source cabinets/chairs, adds fitted keys/mouse/coin slot and quiet per-instance
+screen panels, lower glazing. Next guarded author and ONLY IlalimPisonetReview,
+Logs/ilalim-pisonet-v1. Aspect/original collision/native front/street/grey stop gate.
+Tooling0/1; no .cs edits during run. No other current unit.
+
+Pisonet author43271failed compile on localrenderer shadowing later outerrenderer.
+Renamed innerkioskRenderer directly; no runtime/capture framework change. Retrying
+author, no native case run yet. Failed log preserved. No .cs edits during run.
+
+Pisonet corrected author96036completed2160solid vertices plus lower glass,2added
+renderers, retained original kiosk source/importer/collision. Only native case
+97933in flight, Logs/ilalim-pisonet-v1. Need actual image/grey/XML review before
+publication. No.cs edits while running, no other unit started.
