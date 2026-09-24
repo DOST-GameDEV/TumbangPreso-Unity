@@ -74,6 +74,11 @@ docs/TODO.md, docs/ACTIVE_REWORK_LEDGER.md) still apply.
    (`ViewmodelArms.CastGesture.cs`), the ritual circle (`HeroHazards.SpawnGrandCovenEclipse`,
    `CovenCircleBuild`), sound. Then every other skill one at a time, each with its own gesture,
    silhouette, VFX shape and sound.
+3b. DONE 2026-09-24: cast-sheet audit of all glb casts; eleven clips re-authored under a head-pitch
+   bound the tool now enforces; rigs compacted (skill-performances progress.md). SKILL-TREE-1: the
+   tree already existed (HubSkillTree); added the `LockSkillTree` switch (open for testing). VOICE-1:
+   script, tests, babble voices, HeroVoice runtime, HUMAN.md Table E (reports/voice-lines-2026-09-24).
+   CLAUDE.md condensed (archive copy docs/archive/CLAUDE_full_2026-09-24.md).
 4. Refinement pass 2 on the introductions: moving holds (no dead-still poses), overlapping action
    (head and arms lagging the torso), timing polish per hero.
 5. Other animation review (instruction 7): hero cast clips and code-driven verbs (ThrowBody,

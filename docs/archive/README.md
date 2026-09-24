@@ -22,3 +22,4 @@ name the old path. Use the table.
 Rules: an archived file is history, never a task source. If something here turns out to
 still be needed, move the live part into the owning document (TODO, NATIONALS_POLISH,
 AGENTS) and leave this copy alone.
+| (new) `CLAUDE_full_2026-09-24.md` | the whole CLAUDE.md with every incident receipt, before the owner-requested condensation | [CLAUDE.md](../../CLAUDE.md) (same rules and section numbers, receipts cut to one line) |
