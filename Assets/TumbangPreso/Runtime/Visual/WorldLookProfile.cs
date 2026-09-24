@@ -138,10 +138,10 @@ namespace TumbangPreso.Visual
         // blend passes through pale neutral. Warmth comes from the sun, the haze and the clouds'
         // lit faces instead. The shade tints (Sky ambient, CloudShade) moved the same way,
         // because a lavender shadow is the same fault on the ground.
-        // ⚠️ SABUBONG'S HAZE STARTS AT 60 M, NOT 40. The rooftop is the one court ringed by
-        // tall buildings at mid distance, and a haze starting at 40 m washed their faces to
-        // the horizon gold, so the whole frame read milky rather than bright. Pushed out, the
-        // towers keep their colour and only the skyline beyond them dissolves.
+        // SaBubong's high preview still washed middle-distance facades at 60-300m.
+        // The fixed-camera 60/90/120m study selected 90-380m: nearby occupied
+        // buildings keep their colours, while the far skyline remains softer.
+        // Lighting and haze hue stay warm; this does not darken the court.
         public MapLook[] Maps={
             new MapLook("BayanPlaza",new Color(.56f,.63f,.80f),new Color(.66f,.62f,.56f),new Color(.56f,.46f,.36f),new Color(.86f,.88f,1.08f),38,210,0,true)
                 .Air(new Color(.74f,.85f,.94f),new Color(.33f,.62f,.93f),new Color(.76f,.87f,.95f),new Color(1,.99f,.96f),new Color(.70f,.76f,.90f))
@@ -152,7 +152,7 @@ namespace TumbangPreso.Visual
             new MapLook("IlalimNgTulay",new Color(.52f,.66f,.76f),new Color(.60f,.64f,.62f),new Color(.52f,.47f,.40f),new Color(.84f,.94f,1.06f),36,180,2,false)
                 .Air(new Color(.82f,.91f,.92f),new Color(.36f,.66f,.88f),new Color(.88f,.93f,.90f),new Color(1,.99f,.95f),new Color(.66f,.76f,.84f))
                 .Key(new Color(1,.94f,.82f),1.30f,52,.72f,new Color(.010f,.016f,.020f)).Floor(1.6f),
-            new MapLook("SaBubong",new Color(.58f,.62f,.82f),new Color(.74f,.60f,.56f),new Color(.62f,.46f,.38f),new Color(.96f,.84f,1.08f),60,300,3,true)
+            new MapLook("SaBubong",new Color(.58f,.62f,.82f),new Color(.74f,.60f,.56f),new Color(.62f,.46f,.38f),new Color(.96f,.84f,1.08f),90,380,3,true)
                 .Air(new Color(.98f,.88f,.74f),new Color(.32f,.62f,.94f),new Color(1,.91f,.74f),new Color(1,.93f,.82f),new Color(.74f,.78f,.88f))
                 .Key(new Color(1,.87f,.70f),1.32f,42,.74f,new Color(.020f,.012f,.024f)),
             new MapLook("Lagoon",new Color(.52f,.72f,.86f),new Color(.62f,.74f,.72f),new Color(.60f,.56f,.44f),new Color(.84f,.96f,1.06f),55,290,4,false)

@@ -526,11 +526,12 @@ namespace TumbangPreso.EditorTools.MapKit
                 var z=Group(bounds,"Limit Z "+side).gameObject.AddComponent<BoxCollider>();z.isTrigger=true;z.center=new Vector3(0,5,side*(RooftopRecovery.HalfZ+1));z.size=new Vector3(42,30,.2f);
             }
             var chalk=Group(root,"Chalk");float r=Balance.ConfinementRadius;
+            var courtInk=Mat("Readable court marking",new Color(.23f,.19f,.15f));
             foreach(float side in new[]{-1f,1f})
             {
-                Box(chalk,"Court X",new Vector3(side*r,.109f,0),new Vector3(.085f,.015f,r*2),Paint);
-                Box(chalk,"Court Z",new Vector3(0,.109f,side*r),new Vector3(r*2,.015f,.085f),Paint);
-                Box(chalk,"Throwing line",new Vector3(0,.109f,side*Confinement.ThrowingLine()),new Vector3(14,.015f,.06f),Paint);
+                Box(chalk,"Court X",new Vector3(side*r,.109f,0),new Vector3(.085f,.015f,r*2),courtInk);
+                Box(chalk,"Court Z",new Vector3(0,.109f,side*r),new Vector3(r*2,.015f,.085f),courtInk);
+                Box(chalk,"Throwing line",new Vector3(0,.109f,side*Confinement.ThrowingLine()),new Vector3(14,.015f,.06f),courtInk);
             }
             var spawns=Group(root,"SpawnPoints");Group(spawns,"Spawn0").localPosition=new Vector3(0,.1f,0);
             foreach(var renderer in chalk.GetComponentsInChildren<Renderer>())renderer.shadowCastingMode=ShadowCastingMode.Off;
@@ -539,6 +540,21 @@ namespace TumbangPreso.EditorTools.MapKit
 
         private static Transform Group(Transform parent,string name)
         {var t=new GameObject(name).transform;t.SetParent(parent,false);return t;}
+        public static void RefineCourtMarkings()
+        {
+            var scene=EditorSceneManager.OpenScene(ScenePath,OpenSceneMode.Single);
+            var lines=scene.GetRootGameObjects().SelectMany(go=>go.GetComponentsInChildren<Renderer>(true))
+                .Where(r=>r.name=="Court X"||r.name=="Court Z"||r.name=="Throwing line").ToArray();
+            if(lines.Length!=6)throw new InvalidOperationException("Expected six existing roof court lines.");
+            // The old chalk is shared by the stairhead paper. Give only the
+            // court its own paint; retain geometry, widths, collision and GUIDs.
+            var ink=Mat("Readable court marking",new Color(.23f,.19f,.15f));
+            foreach(var line in lines)line.sharedMaterial=ink;
+            EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
+            Debug.Log("SaBubong: six existing court lines assigned dark warm paint; notice paper and geometry retained.");
+            EditorApplication.Exit(0);
+        }
+
         private static Material Mat(string name,Color color)
         {
             string path=Folder+"/"+name.Replace(" ","")+".mat";var m=AssetDatabase.LoadAssetAtPath<Material>(path);
