@@ -26,6 +26,7 @@ namespace TumbangPreso.EditorTools.MapKit
             Fit(map.transform,"Print",Folder+"/Print-v3.png",report);
             Fit(map.transform,"Bakery",Folder+"/Bakery-v2.png",report);
             Fit(map.transform,"Laundry",Folder+"/Laundry-v1.png",report);
+            Fit(map.transform,"Repair",Folder+"/Repair-v1.png",report);
             if(solids.Count!=map.GetComponentsInChildren<Collider>(true).Length||solids.Any(p=>p.Key==null||p.Key.bounds!=p.Value))throw new InvalidOperationException("Sign art changed gameplay collision.");
         }
         private static void Fit(Transform map,string id,string texturePath,StringBuilder report)

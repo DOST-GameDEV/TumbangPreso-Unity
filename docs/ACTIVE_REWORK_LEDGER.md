@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: recovery published, bakery published, laundry ready to publish
+## Current resume, 2026-09-24: recovery published, bakery published, laundry published, repair ready to publish
 
 Overall goal ACTIVE and NOT complete. Owner says finish current work then all map
 refinements. New ultimate research is LATER. One implementation at a time, no
@@ -10,13 +10,13 @@ Every older task remains. Queue audit removed zero existing IDs/legacy rows.
 
 DEV ASTRAReworks recovery published and remote verified at59b8dc129bb5a45da07fd52b719048d95686881c.
 QUAL candidate compared21files bytewise, named stash preserved, advanced to that HEAD.
-Protected DEV composition metas untouched. Bakery48cffe3fdpublished and QUAL advanced.
-Laundry is now locally complete: generatedv1at3:1on its retained banner mounting,
-visible washer drums behind lower glazing, layered cloth/parcels. Native1/1passed
-4.545s, actual front/street/grey inspected and retained. Evidence/assets copied to
-DEV. Known generated churn backed/restored. No active Unity or owned browser tabs.
-Next publish laundry, preserve/advance QUAL, then computer REPAIR as the next
-individual unfinished shop. No new ultimate work. All other signs/map parents open.
+Protected DEV composition metas untouched. Bakery48cffe3fdand Laundryc75765887
+published/remote verified, QUAL advanced. Computer repair now locally complete:
+generatedv1fitted3:1, working laptop/open-case bench and component stock. Native
+1/1passed4.587s; actual front/street/grey inspected and retained. Assets/evidence
+copied to DEV, known QUAL churn backed/restored. No active Unity/browser/helpers.
+Next publish repair, preserve/advance QUAL, then protected PCExpress mounting
+review followed by Load. One unit at a time; no ultimate research before maps.
 
 Latest edge implementation: real roof catch/hang/mash/pull onto its edge; Lagoon
 fall-to-swim, Jump near bridge and physical climb. Ordinary centre respawn removed,
@@ -34,7 +34,7 @@ witness/camera failures preserved. This does not claim fresh real-peer/native pr
 packet loss/rejoin/seat handover/physical devices/replay/full-match/native performance
 remain explicitly in2.10/P7. Do not conceal those limits or mark all maps/goal done.
 
-Next: publish laundry then finish computer repair using its own reference/art review.
+Next: publish computer repair then review protected PCExpress mounting before Load.
 Bakery and recovery published; do not rerun their unchanged cases.
 
 ## Maps and signs remain unfinished
@@ -127,3 +127,20 @@ are the stopping gate; no broader suite required for this local art unit.
 Laundry native session83500completed1/1in4.545s. Mounted texture/aspect, original
 machine visibility and grey/street silhouette inspected; retainv1, no further
 variants/reruns. Detailed report saved. Earlier in-flight notes above are history.
+
+Computer repair plan saved with actually viewed local service graphic and technical
+case reference, and clear rejected/unsupported claims. Art generation next, then
+one individual bench implementation and native review. No Unity currently active.
+
+Repairv1art inspected, selected for native3:1fit. Candidate bench replaces repeated
+retail monitors with laptop/open case and supporting parts. Next guarded author
+then ONLY IlalimRepairReview: unchanged collision, correct aspect and native front/
+street/grey readability are stop conditions. Tooling retry0/1. No .cs edits in run.
+
+Repair author completed,2208vertices/one renderer/material, no new collider/shadows.
+Native IlalimRepairReview running as6308, Logs/ilalim-repair-v1. No .cs edits while
+running. Fresh XML and front/street/grey inspection required before publication.
+
+Repair native6308completed1/1in4.587s. Actual paired/grey inspected, retain. Evidence
+in ilalim-repair/report.md. No more repair variants/tests. All earlier in-flight
+notes are history; source/assets ready to publish at current resume above.

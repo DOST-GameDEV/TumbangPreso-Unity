@@ -17,9 +17,10 @@ burst, forced distress, stock-font script or one design repeated on every busine
    fitted3:1to retained banner. Lower glazing reveals existing washer drums, layered
    cloth/parcels refine functional identity. Native1/1passed4.545s; actual paired
    front/street/grey inspected. See ilalim-laundry/report.md.
-3. REPAIR: COMPUTER REPAIR, laptop/desktop service cue. Research small repair shops,
-   workshop panel or fascia, restrained technical illustration only if useful.
-   Real parts/bench should establish identity. Reference/art/native work OPEN.
+3. REPAIR: COMPUTER / REPAIR. Local service source/graphic and technical case
+   reference reviewed. Originalv1service art fitted3:1; open laptop/case/parts
+   bench distinguishes it from retail. Native1/1passed4.587s, matched front/street/
+   grey inspected. See ilalim-repair/report.md.
 4. PC_EXPRESS: existing supplied branded source art stays protected. Review mounting,
    aspect, wear/light and surroundings first; no unauthorized repaint of the logo.
 5. LOAD: LOAD NA DITO. Owner's provided signage collage is an explicit directional
