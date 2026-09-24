@@ -25,12 +25,19 @@ burst, forced distress, stock-font script or one design repeated on every busine
    board from4:1to original3.78305:1; original master/importer/other uses untouched.
    Native1/1passed5.207s, actual front/street/grey inspected; existing retail body
    retained. See ilalim-pcexpress/report.md. No logo repaint/generation.
-5. LOAD: LOAD NA DITO. Owner's provided signage collage is an explicit directional
-   reference. Research local service placards; strong compact yellow/dark grouping,
-   no invented payment-network logos or unreadable long service lists. OPEN.
-6. CLOTHING: UKAY-UKAY. Research actual local clothing fascia/banner and garment
-   storefront. Cloth mounting, large simple service word and distinct shop palette.
-   Do not reuse a photocopy board layout. OPEN.
+5. LOAD: owner-selected ALING PASING / SARI-SARI STORE, replaces rejected generic
+   TINDAHANv1and unexecuted Nena suggestion. First supplied photo governs red/white/
+   navy sign, green grille/white ledge/blue-white awning; second guides stock only.
+   Originalv2fitted3:1, separate small load card and supported packets/bottles/tins.
+   Native1/1passed4.565s; front/street/grey inspected. See
+   ilalim-aling-pasing/report.md. Rejectedv1source retained, absent from runtime.
+6. CLOTHING: OWNER2026-09-24supplies Ciao Grazia/Grazie shop references and asks
+   recognizable playful changed name, e.g. Ciao Grazey. Selected implementation
+   intent: CIAO GRAZEY BOUTIQUE, red/white fascia, actual shoe display shelves,
+   hanging clothing racks. Preserve both owner images in owner-storefront-refs.
+   No giant70percent-sale overlay, real dated promo/address or copied original
+   store name. This replaces generic UKAY-UKAY fascia intent. Still OPEN; do AFTER
+   current Aling Pasing unit is finished, per owner WIP discipline.
 7. BARBER: BARBER SHOP or GUPIT following actual reference. Consider a painted fascia
    paired with the physical barber pole/chair. Avoid generic circular logo badge.
    Reference and art OPEN.
