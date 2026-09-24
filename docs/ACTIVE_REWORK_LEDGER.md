@@ -2,16 +2,16 @@
 
 ## Current resume, 2026-09-24: close bot fixes, then visible map/light findings
 
-Overall goal ACTIVE, NOT done. DEV and QUAL baseline043cf804c, published and
+Overall goal ACTIVE, NOT done. DEV and QUAL baseline273e5e669, published and
 remote-verified. AGENTS cleanup dc10b68f2 and SaBubong bird placement57cf74a9c
 published. All21 ambient actors have local map/species placement coverage, with
 ordinary-camera/replay/combined qualification still open.
 
 Bot production fixes:5de3a78f3 reaction timing (red reproduction, then3/3 native),
 043cf804c chase patience (focused case plus Ilalim3/3). Current uncommitted change:
-per-seat pektus/lunge decisions consistently use EffectiveDifficulty. Existing
-rule checks/compile3/3 in0.121s. No Unity process running; known churn backed up
-and restored. Publish the explicit AIController/docs/new evidence only. Original
+per-seat pektus/lunge decisions consistently use EffectiveDifficulty, published
+in273e5e669. Existing rule checks/compile3/3 in0.121s. Known churn backed up
+and restored. Original
 DEV composition PNG metas remain untouched.
 
 Initial ordinary1x samples now cover four bots in both modes on all five maps.
@@ -24,9 +24,22 @@ Exact draft/failures retained in the report directory, original compiled
 LagoonRecoveryProbe restored. Do not reopen fixture polishing during feature work.
 Full role/roster/tier and actual bot recovery remain actionable final gates.
 
-Next: outstanding visible map/light findings in LIGHT-1.6 and individual map
-parents. Inspect the existing native evidence first, choose a concrete weak area
-and save its local plan. Preserve bright readable lighting and successful art;
+Current integration: tracked lighting branch advanced to a28037622 (aba9b9d51
+adds optional CastInkFloor, default0, and native source comparison images).
+DEV merge is IN PROGRESS, not committed. One WorldLookPresentation conflict
+resolved: preserve our explicit-sun/preview API and cached restoration behavior,
+add the new per-camera InkFloor capture/set/restore. QUAL has only four changed
+source/test inputs copied. Guarded new floor-choice case is running; no .cs edits.
+Logs/light-hull-integration-v1.xml/.log and frames in the same named directory.
+Job3010 reaped: native floor-choice1/1 passed in19.144s. Source and actual Windows
+comparison sheets/grey inspected; default0 retained. Report at
+reports/lighting-integration-2026-09-24/hull-floor/report.md. Known churn backed
+up/restored, no active Unity job. Finish the merge commit and push, then inspect
+existing high-preview map evidence for a concrete remaining weakness. Fixture0/1.
+
+Then outstanding visible map/light findings in LIGHT-1.6 and individual map
+parents. Choose a concrete weak area and save its local plan. Preserve bright
+readable lighting and successful art;
 no gratuitous global darkening or completed HUD redesign. Final coherent native/
 peer/replay/performance/build checks remain2.10/P7, not intermediate builds.
 New character/ability/ultimate animation direction belongs to the owner-run cloud
