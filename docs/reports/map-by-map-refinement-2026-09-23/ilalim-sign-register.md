@@ -37,9 +37,10 @@ burst, forced distress, stock-font script or one design repeated on every busine
    Native+existing both-mode routes2/2passed140.117s; actual front/street/grey
    inspected. See ilalim-ciao-grazey/report.md, including rejected composition and
    one bounded fixture repair. No owner mounted-scene approval claim.
-7. BARBER: BARBER SHOP or GUPIT following actual reference. Consider a painted fascia
-   paired with the physical barber pole/chair. Avoid generic circular logo badge.
-   Reference and art OPEN.
+7. BARBER: original TONY'S / BARBER SHOP fascia3:1, primary interior and firsthand
+   local-sign photos inspected. Retained chairs face mirrors, fitted supports and
+   worktops/lower glazing/interior floor refine function. Native1/1passed4.634s;
+   front/street/grey inspected. See ilalim-barber/report.md.
 8. PARES: PARES / MAMI, food-service panel at the actual counter. Research local
    carinderia/pares signage; warm maintained paint, purposeful service hierarchy.
    No arbitrary food clipart or all-purpose glass stock stand. OPEN.

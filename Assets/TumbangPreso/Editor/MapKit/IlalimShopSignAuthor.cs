@@ -31,6 +31,7 @@ namespace TumbangPreso.EditorTools.MapKit
             Fit(map.transform,"PC_Express",Folder+"/PCExpress-preserved.png",report,2048);
             Fit(map.transform,"Load",Folder+"/Load-v2.png",report);
             Fit(map.transform,"Clothing",Folder+"/Clothing-v1.png",report);
+            Fit(map.transform,"Barber",Folder+"/Barber-v1.png",report);
             if(solids.Count!=map.GetComponentsInChildren<Collider>(true).Length||solids.Any(p=>p.Key==null||p.Key.bounds!=p.Value))throw new InvalidOperationException("Sign art changed gameplay collision.");
         }
         private static void Fit(Transform map,string id,string texturePath,StringBuilder report,int maxSize=4096)

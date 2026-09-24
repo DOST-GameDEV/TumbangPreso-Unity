@@ -286,6 +286,9 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Art batch ready for integrated intro/spectator/native acceptance; keep parent open
   for that gate and continue Ilalim art next.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
+  Tony's barber unit implemented:3:1original fascia, retained chairs face mirrors,
+  fitted supports/worktops and lower glazing. Native1/1passed4.634s; actual paired/
+  grey inspected. [Barber evidence](reports/map-by-map-refinement-2026-09-23/ilalim-barber/report.md).
   Owner-selected ALING PASING replaces rejected generic TINDAHAN: original3:1
   fascia, separate load placard, green grille/sachets and supported navy/white
   awning. Native1/1passed4.565s, front/street/grey inspected.

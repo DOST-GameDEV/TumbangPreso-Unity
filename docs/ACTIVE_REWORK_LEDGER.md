@@ -1,6 +1,11 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: publish Ciao Grazey, then finish Barber
+## Current resume, 2026-09-24: publish Barber, then Pares
+
+Barber native91592completed1/1in4.634s. Actual front/street/grey inspected and
+retained. Assets/evidence copied to DEV; known QUAL churn backed/restored. No active
+Unity/browser/helpers. Next publish this unit, preserve/advance QUAL, then Pares.
+No further unchanged barber checks. Older in-flight notes below are history.
 
 Overall goal ACTIVE and NOT done. Finish current work before moving on. Every older
 TODO/task ID remains; new requests do not replace it. Quality/product work before
@@ -8,7 +13,7 @@ verification loops. No checkpoint stops/questions, delegation/other chats, paid
 external APIs, resets, main edits or Desktop replacement. Stage explicit paths,
 sole-author M4tyu633, fetch before push and verify remote HEAD.
 
-DEV ASTRAReworks and owned detached QUAL start atdbb371b036982391de180d2c7090b949a0bfdd56.
+DEV ASTRAReworks and owned detached QUAL start at0b25238a7901299c465e0745ada3ddc2721bd1f1.
 AlingPasing published/remote verified;21QUALcandidate files compared, named stash
 preserved and checkout advanced. CIAO GRAZEY is locally finished and ready to publish.
 Original DEVhome-court/loading-street composition PNG metas remain protected dirt.
@@ -147,3 +152,15 @@ Bothmodes2532connected nodes,2675clear samples,0unreachable;18real retrievals pa
 Actual revised front/street/grey inspected, retain. Assets/evidence copied to DEV,
 known churn backed/restored. No active Unity/browser/helper/player. Publish this
 unit, preserve/advance QUAL, then Barber. Do not rerun these successful cases.
+
+CURRENT RESUME: CiaoGrazey0b25238a7published and remote verified. QUAL18candidate
+files compared, named stash preserved, advanced. ONLY active unit now Barber;
+primary interior and firsthand local sign photo inspected, source-specific plan
+saved. Original fictional TONY'S / BARBER SHOP artwork next, then chair/workstation
+refinement. No Unity active. All owned browser tabs closed. No other unit started.
+
+Barberv1generated/inspected, actual3:1 selected. Current author preserves original
+chair/mirror sources, rotates non-colliding chairs toward mirrors, adds fitted
+supports/headrests/tools/towels/interior tiles/lower glazing. Next guarded author
+and ONLY IlalimBarberReview: unchanged original collision, aspect and native
+front/street/grey. Tooling0/1; no .cs edits during run. Other tasks unchanged.
