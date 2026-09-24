@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 14:29:33Z" end-time="2026-09-24 14:29:46Z" duration="12.7340348">
+  <test-suite type="TestSuite" id="1824" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="643" result="Failed" site="Child" start-time="2026-09-24 14:29:33Z" end-time="2026-09-24 14:29:46Z" duration="12.734035" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1818" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="643" result="Failed" site="Child" start-time="2026-09-24 14:29:33Z" end-time="2026-09-24 14:29:46Z" duration="12.715376" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18036" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1819" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="643" result="Failed" site="Child" start-time="2026-09-24 14:29:33Z" end-time="2026-09-24 14:29:46Z" duration="12.702635" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1820" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="643" result="Failed" site="Child" start-time="2026-09-24 14:29:33Z" end-time="2026-09-24 14:29:46Z" duration="12.693280" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1097" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-24 14:29:33Z" end-time="2026-09-24 14:29:40Z" duration="6.170895" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1098" name="CatchCameraHidesUnrecordedAnimalsAndRestoresTheirVisibility" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.CatchCameraHidesUnrecordedAnimalsAndRestoresTheirVisibility" methodname="CatchCameraHidesUnrecordedAnimalsAndRestoresTheirVisibility" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1204164577" result="Passed" start-time="2026-09-24 14:29:33Z" end-time="2026-09-24 14:29:39Z" duration="6.152955" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1573" name="ReplayRetentionTests" fullname="TumbangPreso.PlayTests.ReplayRetentionTests" classname="TumbangPreso.PlayTests.ReplayRetentionTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-24 14:29:40Z" end-time="2026-09-24 14:29:46Z" duration="6.475655" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1577" name="RealExchangeRetainsDetachedBodiesAndPropsAcrossTheRoundBoundary" fullname="TumbangPreso.PlayTests.ReplayRetentionTests.RealExchangeRetainsDetachedBodiesAndPropsAcrossTheRoundBoundary" methodname="RealExchangeRetainsDetachedBodiesAndPropsAcrossTheRoundBoundary" classname="TumbangPreso.PlayTests.ReplayRetentionTests" runstate="Runnable" seed="238464421" result="Failed" start-time="2026-09-24 14:29:40Z" end-time="2026-09-24 14:29:46Z" duration="6.473535" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Exception] MissingReferenceException: The object of type 'UnityEngine.Transform' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.'. Use UnityEngine.TestTools.LogAssert.Expect
+TearDown : Unhandled log message: '[Exception] MissingReferenceException: The object of type 'UnityEngine.Transform' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+UnityEngine.Transform.set_localPosition (UnityEngine.Vector3 value) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+TumbangPreso.Lata.RestoreRaisePresentation () (at Assets/TumbangPreso/Runtime/Lata.cs:788)
+TumbangPreso.Lata.LateUpdate () (at Assets/TumbangPreso/Runtime/Lata.cs:759)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+MissingReferenceException: The object of type 'UnityEngine.Transform' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+UnityEngine.Transform.set_localPosition (UnityEngine.Vector3 value) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+TumbangPreso.Lata.RestoreRaisePresentation () (at Assets/TumbangPreso/Runtime/Lata.cs:788)
+TumbangPreso.Lata.Update () (at Assets/TumbangPreso/Runtime/Lata.cs:443)
+
+MissingReferenceException: The object of type 'UnityEngine.Transform' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+UnityEngine.Transform.set_localPosition (UnityEngine.Vector3 value) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+TumbangPreso.Lata.RestoreRaisePresentation () (at Assets/TumbangPreso/Runtime/Lata.cs:788)
+TumbangPreso.Lata.LateUpdate () (at Assets/TumbangPreso/Runtime/Lata.cs:759)
+
+MissingReferenceException: The object of type 'UnityEngine.Transform' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+UnityEngine.Transform.set_localPosition (UnityEngine.Vector3 value) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+TumbangPreso.Lata.RestoreRaisePresentation () (at Assets/TumbangPreso/Runtime/Lata.cs:788)
+TumbangPreso.Lata.Update () (at Assets/TumbangPreso/Runtime/Lata.cs:443)
+
+MissingReferenceException: The object of type 'UnityEngine.Transform' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+UnityEngine.Transform.set_localPosition (UnityEngine.Vector3 value) (at <858f0765bd8f497aacadfc2cd49efcc0>:0)
+TumbangPreso.Lata.RestoreRaisePresentation () (at Assets/TumbangPreso/Runtime/Lata.cs:788)
+TumbangPreso.Lata.LateUpdate () (at Assets/TumbangPreso/Runtime/Lata.cs:759)
+
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -557,6 +557,12 @@ scattered across all maps. Execute inside each map's existing refinement row.
   [Roof bird evidence](reports/map-by-map-refinement-2026-09-23/sabubong-bird-visits/report.md).
   All21 current ambient actors have map/species placement coverage. Ordinary-camera,
   replay and combined qualification remain open; Lagoon flight retained.
+  Replay integration follow-up: present-time animals no longer leak into retained
+  or victim-catch cameras; existing render flags restore after each draw. Native
+  baseline reproduced both leaks, final2/2 passed with actual paired/grey frames.
+  A can-model replacement stale-reference error exposed by the retained test is
+  also fixed, without changing its authored motion or authority.
+  [Replay isolation evidence](reports/map-by-map-refinement-2026-09-23/ambient-replay/report.md).
 - [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
   trace idle decisions and fix actual stalls; distinguish deliberate tactical waits.
   Initial Eskinita samples cover four bots in both modes. A reaction-clock defect

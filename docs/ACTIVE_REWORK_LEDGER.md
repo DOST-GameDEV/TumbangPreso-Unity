@@ -1,8 +1,8 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Windows renderer mitigation ready to publish
+## Current resume, 2026-09-24: ambient replay isolation
 
-Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified at45aa55558. Rematch
+Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified atd98e592ae. Rematch
 reconciliation published: actual Bayan entry observed after asynchronous loading;
 final bounded test source preserves map/ready checks but has no final green rerun.
 Invalid agent-added DontDestroyOnLoad scene assertion removed. Fixture allowance
@@ -27,8 +27,21 @@ Proof: reports/map-by-map-refinement-2026-09-23/native-shutdown/report.md.
 No game/Unity/crash-handler processes remain. Native receipts/WER event preserved.
 Final current player/default-backend/exit/performance remains P7. Exact internal
 engine/driver cause unknown; no upgrade, intermediate build or indefinite soak.
-Publish this bounded unit, align QUAL, remove only its copied diagnostic build,
-then continue remaining actionable queue. Do not repeat the old-binary pair.
+Renderer mitigation published ind98e592ae; QUAL aligned. Cleanup of the copied
+diagnostic build was rejected by automatic approval review (blocked by policy).
+No process remains; leave that copy in QUAL Builds, original v57 untouched.
+Do not repeat the old-binary pair or bypass the cleanup rejection.
+
+Ambient replay unit ready to publish: both leaks reproduced in native baseline.
+Existing per-render hide/restore now isolates unrecorded live animals in retained
+and catch cameras. First post-fix run exposed a real destroyed-can-mesh reference
+in Lata's existing raise/clunk cache during model replacement. Cache invalidation/
+Visual-subtree rebinding fixed; motion/authority unchanged. Final2/2 passed in
+13.0930289s, actual same-camera before/after and25percent grey inspected.
+Proof: reports/map-by-map-refinement-2026-09-23/ambient-replay/report.md.
+No fixture repair, no active Unity job, own generated churn restored. Publish and
+align QUAL, then reconcile remaining research/per-map acceptance against actual
+reports before selecting the next implementable gap. Do not repeat passing cases.
 
 Published roof units: court07a387779, haze/card4dde9837a, street contextc85614a42.
 Actual colour/grey inspected; street v2 passed1/1 in1.372s after one close-camera
