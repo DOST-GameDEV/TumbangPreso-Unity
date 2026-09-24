@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Lagoon metal roofs and one painted home
+## Current resume, 2026-09-24: Lagoon boats, then islands/coast
 
 Overall goal ACTIVE and NOT complete. Owner expects autonomous implementation through
 all independently actionable TODO. No checkpoint stops, routine questions, other
@@ -10,23 +10,29 @@ plans. Quality product work comes before verification/capture-tool perfection. K
 reasoning and reads focused; do not spend long stretches speculating between actions.
 
 DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD/verified remote903e17220c70cc31f7605270d8a5d443fb93c1bd. Only the original
+HEAD/verified remote547f3901ad05d615412fb1695c4651d06f30ffcc. Only the original
 Resources/UI/composition-redesign/home-court.png.meta and loading-street.png.meta
-are protected dirt: NEVER restore/stage them. Own candidate: LagoonMetalFinishAuthor,
-builder hook, paired review method, metal plan, ledger/history; assets currently in
-QUAL until inspected. Explicit staging, sole author M4tyu633, no trailers/AI mentions/
+are protected dirt: NEVER restore/stage them. Current own work is this resume update and lagoon-boats-plan.md; no boat code or
+asset changes yet. Explicit staging, sole author M4tyu633, no trailers/AI mentions/
 em dashes. Fetch/inspect before push and verify remote; never reset/clean/force-push.
 QUAL C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached903e17220 plus metal candidate. Preserve named exact-match stashes and
-other dirty worktrees. No task-owned browser tabs, servers or native players remain.
+owned detached547f3901a, clean after exact candidate comparison/named stash/advance.
+Preserve all stashes and other dirty worktrees. No active Unity jobs, task-owned
+browser tabs, servers or native players. All prior job IDs below are historical.
 
-Review49038completed/reaped1/1in3.768s. Paired front2/roof2/repair1andgrey
-inspected, keepv1. No active Unity. Author63204completed/reaped: six metal-roof rib axes/pitches fitted to actual
-geometry; house2alone has a restrained blue-green lower painted band and long-axis
-single-board grain. Original geometry/topology/other slots/collision unchanged, no
-new geometry or global shader edit. Full patch saved/known churn restored. Inspect
-paused paired front2/roof2/repair1and grey before accepting/publishing. Then boats,
-water depth/contact, islands/sky and final Lagoon art/integration remain.
+NEXT: boat material/construction review under the newly clear water, then islands/
+coast/sky and final Lagoon art/integration. Plan lagoon-boats-plan.md points to the
+actual six boats and existing motion. Preserve their useful curved hulls, seats,
+paddles/rope and shape. Refine demonstrated plain hull/shelter material weaknesses,
+not every successful part. No boat author or new boat test has been started.
+
+Water547f3901a PUBLISHED/remote verified: clearer shallows, restrained moving surface/
+bed detail, visual-only1600m bed retaining original180m collider/transform/levels.
+Found/fixed runtime NearFade replacing LagoonBed by adding its local Preserve tag.
+Final actual-shader assertion passed1/1in5.065s; original-before pair, preview/piles/
+boat/overlook/Low/held-time views andgrey inspected. Keepv3. Source has no camera-depth
+ownership system or gameplay changes. Full intermediate evidence and limits saved
+in lagoon-water/report.md. Do not repeat unchanged tests. Overall goal remains active.
 
 ## Latest owner requirements and completed additions
 
@@ -216,3 +222,9 @@ passes after local preserve tag, no shared fade/camera framework change. Actual
 submerged geometry/shadows read. Qualified scene/materials/visual-bed assets/meta/
 evidence copied to DEV, known churn restored from full patches. No active Unity.
 Publish then boat material/construction and island/coast/sky; all final gates open.
+
+Resume precision: published roof/material sequence is gable7957d8a96 (throughc0f3221a7),
+hipbff55f209 (through524427e69), veranda903e17220, metal/paint0c9308c19, water547f3901a.
+The owner's fall recovery3e0d0c69a and flying birds faa904702 remain implemented.
+All boats/island/coast/sky/final map work, reopened earlier-map surface acceptance,
+animal/bot/motion and older final qualification are still open. No overall completion.
