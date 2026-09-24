@@ -58,7 +58,7 @@ namespace TumbangPreso.Visual
             _rage = new KuroRagePresentation(_kuro.Root, calm, rage);
             _kuroRenderers = _kuro.Root.GetComponentsInChildren<Renderer>(true);
 
-            _inkWall = Add("InkRising", WallMesh(30), new Color(.05f, .02f, .08f, .9f), .04f);
+            _inkWall = Add("InkRising", WallMesh(30, true), new Color(.05f, .02f, .08f, .9f), .04f);
             _inkRim = Add("InkRisingEdge", WallMesh(30), new Color(.42f, .2f, .62f, .7f), .5f);
             _inkSpill = Add("InkSpill", VfxShapes.Splat(18, .3f, 44), new Color(.04f, .01f, .06f, .92f), .02f);
             for (int i = 0; i < 8; i++)

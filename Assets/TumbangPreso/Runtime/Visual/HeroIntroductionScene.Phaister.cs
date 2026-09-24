@@ -31,14 +31,16 @@ namespace TumbangPreso.Visual
         private Renderer _serpentRenderer;
         private MaterialPropertyBlock _serpentBlock;
         private const int SerpentSegments = 48;
-        // Behind her from shot C (the eclipse shot): along its line of sight, just inside the wall.
-        private static readonly Vector3 MoonAt = new Vector3(-1.3f, 4.3f, -7.1f);
+        // Up and to the side of her in shot C, just inside the wall. The first placement sat on
+        // shot C's line of sight and the stage sketch showed the whole eclipse hidden behind her
+        // hat (`previews/phaister_v7_stage.png`); here she and the eclipse share the frame.
+        private static readonly Vector3 MoonAt = new Vector3(-4.2f, 5.3f, -5.4f);
         private const float MoonRadius = 1.55f;
 
         private void BuildPhaister()
         {
             _nightGround = Wall("NightFallsGround", 0, 1.1f, new Color(.06f, .02f, .09f, .88f));
-            _nightSky = Wall("NightFallsSky", 1.1f, 11, new Color(.16f, .06f, .25f, .84f), emission: .18f);
+            _nightSky = Wall("NightFallsSky", 1.1f, 11, new Color(.16f, .06f, .25f, .84f), emission: .18f, cap: true);
             for (int i = 0; i < 7; i++)
                 _stars.Add(Add("NightStar" + i, VfxShapes.TwoSided(VfxShapes.Star(4, .38f, 60 + i)), new Color(1, .93f, .78f, .9f), .6f));
             _moon = Add("RisingMoon", MoonDisc(0), new Color(.95f, .91f, .8f, .95f), .5f);
@@ -112,7 +114,7 @@ namespace TumbangPreso.Visual
             }
 
             // The moon rises over her shoulder as she reaches the top of the laugh.
-            var moonFacing = Quaternion.LookRotation(-new Vector3(MoonAt.x - .6f, 0, MoonAt.z - 5).normalized, Vector3.up) * Quaternion.Euler(90, 0, 0);
+            var moonFacing = Quaternion.LookRotation(-new Vector3(MoonAt.x - 1.2f, 0, MoonAt.z - 5.6f).normalized, Vector3.up) * Quaternion.Euler(90, 0, 0);
             float rise = Ease(2.2f, 2.75f, t);
             Vector3 moonAt = MoonAt + Vector3.down * (1 - rise) * .9f;
             Place(_moon, moonAt, Vector3.one * MoonRadius * Mathf.Lerp(.7f, 1, rise), moonFacing, rise * leave);

@@ -27,9 +27,11 @@ namespace TumbangPreso.Visual
         private void BuildZack()
         {
             _stormLow = Wall("StormGround", 0, 1.3f, new Color(.09f, .09f, .1f, .86f));
-            _stormHigh = Wall("StormSky", 1.3f, 11, new Color(.24f, .25f, .26f, .84f), emission: .1f);
-            // A roofline skyline cut into the low band: condo blocks at different heights.
-            for (int i = 0; i < 7; i++)
+            _stormHigh = Wall("StormSky", 1.3f, 11, new Color(.24f, .25f, .26f, .84f), emission: .1f, cap: true);
+            // A roofline skyline cut into the low band: condo blocks at different heights. Sixteen
+            // shoulder to shoulder: seven spaced ones read as monoliths on the stage sketch
+            // (`previews/zack_v3_stage.png`), a continuous row reads as a city.
+            for (int i = 0; i < 16; i++)
                 _rooftops.Add(Add("Skyline" + i, VfxShapes.Prism(4, 1, 1), new Color(.07f, .07f, .08f, .92f), .02f));
             _skyline = Add("SkylineWindows", VfxShapes.TwoSided(VfxShapes.Wedges(9, .9f, 22, 0, .1f, 17)), new Color(1, .84f, .45f, .5f), .6f);
             for (int i = 0; i < 5; i++)
@@ -54,10 +56,10 @@ namespace TumbangPreso.Visual
 
             for (int i = 0; i < _rooftops.Count; i++)
             {
-                float angle = (-120 + i * 36) * Mathf.Deg2Rad;
-                var at = new Vector3(Mathf.Sin(angle) * 7.4f, 0, Mathf.Cos(angle) * 7.4f - .3f);
-                float height = 1.6f + (i * 53 % 7) * .32f;
-                Place(_rooftops[i], at, new Vector3(.9f + (i % 3) * .3f, height, .5f), Quaternion.LookRotation(-at.normalized, Vector3.up) * Quaternion.Euler(0, 45, 0), storm);
+                float angle = (-160 + i * 21.3f) * Mathf.Deg2Rad;
+                var at = new Vector3(Mathf.Sin(angle) * 7.5f, 0, Mathf.Cos(angle) * 7.5f);
+                float height = 1.5f + (i * 53 % 7) * .28f + (i % 5 == 2 ? .9f : 0);
+                Place(_rooftops[i], at, new Vector3(1.95f, height, .9f), Quaternion.LookRotation(-at.normalized, Vector3.up) * Quaternion.Euler(0, 45, 0), storm);
             }
             Place(_skyline, new Vector3(0, 1.2f, -.3f), new Vector3(7.2f, 1, 7.2f), Quaternion.Euler(0, 180, 0), storm * .6f);
 

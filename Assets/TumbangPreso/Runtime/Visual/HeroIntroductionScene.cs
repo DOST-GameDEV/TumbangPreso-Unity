@@ -172,31 +172,44 @@ namespace TumbangPreso.Visual
         /// Sepak U's rule that the summoned world sits BEHIND the action (research.md § 1).
         /// Each hero builds its own bands from this, in its own colours; nobody shares a wall.
         /// </summary>
-        private int Wall(string name, float bottom, float top, Color color, float radius = 8f, int sides = 28, float emission = .25f)
+        private int Wall(string name, float bottom, float top, Color color, float radius = 8f, int sides = 28, float emission = .25f, bool cap = false)
         {
-            int index = Add(name, WallMesh(sides), color, emission, plain: true);
+            int index = Add(name, WallMesh(sides, cap), color, emission, plain: true);
             var p = _pieces[index];
             p.Transform.localPosition = new Vector3(0, bottom, 0);
             p.Transform.localScale = new Vector3(radius, top - bottom, radius);
             return index;
         }
 
-        private static Mesh WallMesh(int sides)
+        /// <summary>
+        /// A cylinder wall of unit radius and height. `cap` closes the top: the stage sketch showed
+        /// every low shot looking up through the open top into the bright real sky, which reads
+        /// as a hole in the night (`previews/phaister_v7_stage.png`).
+        /// </summary>
+        private static Mesh WallMesh(int sides, bool cap = false)
         {
             var mesh = new Mesh { name = "Introduction stage wall" };
-            var vertices = new Vector3[(sides + 1) * 2];
-            var triangles = new int[sides * 12];
+            var vertices = new List<Vector3>((sides + 1) * 2 + 1);
+            var triangles = new List<int>(sides * 18);
             for (int i = 0; i <= sides; i++)
             {
                 float a = i * Mathf.PI * 2 / sides;
                 var rim = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
-                vertices[i * 2] = rim; vertices[i * 2 + 1] = rim + Vector3.up;
+                vertices.Add(rim); vertices.Add(rim + Vector3.up);
                 if (i == sides) continue;
-                int n = i * 2, t = i * 12;
-                int[] faces = { n, n + 1, n + 2, n + 2, n + 1, n + 3, n, n + 2, n + 1, n + 2, n + 3, n + 1 };
-                for (int k = 0; k < 12; k++) triangles[t + k] = faces[k];
+                int n = i * 2;
+                triangles.AddRange(new[] { n, n + 1, n + 2, n + 2, n + 1, n + 3, n, n + 2, n + 1, n + 2, n + 3, n + 1 });
             }
-            mesh.vertices = vertices; mesh.triangles = triangles; mesh.RecalculateNormals(); mesh.RecalculateBounds();
+            if (cap)
+            {
+                int centre = vertices.Count; vertices.Add(Vector3.up);
+                for (int i = 0; i < sides; i++)
+                {
+                    int a = i * 2 + 1, b = i * 2 + 3;
+                    triangles.AddRange(new[] { centre, a, b, centre, b, a });
+                }
+            }
+            mesh.SetVertices(vertices); mesh.SetTriangles(triangles, 0); mesh.RecalculateNormals(); mesh.RecalculateBounds();
             return mesh;
         }
 

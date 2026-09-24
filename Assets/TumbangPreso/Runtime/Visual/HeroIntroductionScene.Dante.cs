@@ -26,7 +26,7 @@ namespace TumbangPreso.Visual
         private void BuildDante()
         {
             _dustLow = Wall("DustGround", 0, 1.2f, new Color(.2f, .14f, .09f, .8f));
-            _dustHigh = Wall("DustSky", 1.2f, 11, new Color(.42f, .32f, .22f, .72f), emission: .08f);
+            _dustHigh = Wall("DustSky", 1.2f, 11, new Color(.42f, .32f, .22f, .72f), emission: .08f, cap: true);
             for (int i = 0; i < 9; i++)
                 _ridge.Add(AddSolid("Ridge" + i, VfxShapes.Prism(4, 1, .25f, .2f, 0, 60 + i), new Color(.24f, .19f, .15f, 1)));
             var slab = VfxShapes.Prism(5, 1, .72f, .18f, 0, 7);

@@ -25,7 +25,7 @@ namespace TumbangPreso.Visual
         private void BuildCheska()
         {
             _mistLow = Wall("HighlandMistGround", 0, 1.4f, new Color(.6f, .66f, .64f, .55f), emission: .2f);
-            _mistHigh = Wall("HighlandMistSky", 1.4f, 11, new Color(.8f, .86f, .88f, .5f), emission: .3f);
+            _mistHigh = Wall("HighlandMistSky", 1.4f, 11, new Color(.8f, .86f, .88f, .5f), emission: .3f, cap: true);
             for (int i = 0; i < 10; i++)
                 _pines.Add(AddSolid("RidgePine" + i, VfxShapes.Spire(6, .08f, .25f, 120 + i), new Color(.26f, .34f, .31f, 1)));
             _breath = Add("ColdBreath", VfxShapes.TwoSided(VfxShapes.Splat(10, .3f, 5)), new Color(.95f, .98f, 1, .5f), .4f);

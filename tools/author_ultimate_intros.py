@@ -296,7 +296,9 @@ def phaister():
     # B: low from her right front, tilting up as she rises and laughs.
     p.shot(1.08, 2.42, (-2.1, .8, 4.3), (0, 1.3, 0), 48, eye_to=(-2.3, .75, 4.6), look_to=(0, 1.85, 0))
     # C: wide and a little below her, the eclipse filling the sky behind; follows her down.
-    p.shot(2.42, 4.2, (1.3, 1.05, 6.1), (0, 2.1, 0), 52, eye_to=(1.1, 1.05, 5.5), look_to=(0, 1.35, 0))
+    # Aimed between her and the moon (up and to her left) so both share the frame, settling
+    # onto her as she lands.
+    p.shot(2.42, 4.2, (1.3, 1.05, 6.1), (-1.0, 2.5, -.6), 54, eye_to=(1.1, 1.05, 5.5), look_to=(-.3, 1.55, 0))
     p.locked((1.4, 1.15, 6.2), (0, 1.6, 0), 50)
     return p
 
@@ -671,10 +673,11 @@ LEGACY = {
 
 
 
-def preview(hero, times=None, out=None, legacy=False, witness=False):
+def preview(hero, times=None, out=None, legacy=False, witness=False, stage=True):
     import numpy as np
     from PIL import Image
     import intro_pose_preview as ipp
+    import intro_stage_sketch as iss
 
     perf = build(hero, legacy)
     model = ipp.Model(os.path.join(MODELS, f"team-{hero}.glb"))
@@ -688,15 +691,23 @@ def preview(hero, times=None, out=None, legacy=False, witness=False):
         pose = {b: (ipp.quat_euler(*raw[b]), None) for b in BONES}
         tris, cols = model.skinned(pose)
         tris = tris * scale
-        tris[:, :, 1] -= tris[:, :, 1].min()
+        floor = tris[:, :, 1].min()
+        tris[:, :, 1] -= floor
         tris[:, :, 1] += lift
         eye, look, fov = shot_at(perf, t)
+        if stage and hero in iss.STAGES and not legacy:
+            hands = {k: v * scale - np.array([0, floor - lift, 0]) for k, v in model.hands(pose).items()}
+            sketch = iss.Sketch()
+            iss.STAGES[hero](t, sketch, hands, perf.seconds, np.array(eye))
+            st, sc = sketch.result()
+            if len(st):
+                tris = np.concatenate([tris, st]); cols = np.concatenate([cols, sc])
         if witness:
             # A fixed three-quarter front witness at mid distance: judges the POSE, not the shot.
             eye, look, fov = (2.2, 1.7, 5.4), (0, 1.15 + lift, 0), 44
         # Unity: the hero faces +z; a shot offset with +z is in front of them.
         img = ipp.render(tris, cols, np.array(eye), np.array(look), fov,
-                         label=f"{hero} t={t:.2f}s lift={lift:.2f}m")
+                         label=f"{hero} t={t:.2f}s lift={lift:.2f}m" + ("  + stage sketch" if stage and not legacy else ""))
         frames.append(img)
     cols_n = 3
     rows = (len(frames) + cols_n - 1) // cols_n
@@ -719,10 +730,11 @@ if __name__ == "__main__":
     ap.add_argument("--out", default=None)
     ap.add_argument("--legacy", action="store_true", help="preview the pre-REFINE-2.11 baseline")
     ap.add_argument("--witness", action="store_true", help="fixed front witness instead of the authored shots")
+    ap.add_argument("--no-stage", action="store_true", help="body only, no stage sketch")
     args = ap.parse_args()
     if args.preview:
         times = [float(x) for x in args.times.split(",")] if args.times else None
-        print(preview(args.preview, times, args.out, args.legacy, args.witness))
+        print(preview(args.preview, times, args.out, args.legacy, args.witness, not args.no_stage))
     else:
         for name in LEGACY:
             print(build(name).write())

@@ -34,7 +34,7 @@ namespace TumbangPreso.Visual
         {
             _duskLow = Wall("DuskGround", 0, 1.0f, new Color(.14f, .05f, .03f, .88f));
             _duskGlow = Wall("DuskHorizon", 1.0f, 2.3f, new Color(.96f, .45f, .12f, .62f), emission: .55f);
-            _duskHigh = Wall("DuskSky", 2.3f, 11, new Color(.21f, .08f, .05f, .86f), emission: .12f);
+            _duskHigh = Wall("DuskSky", 2.3f, 11, new Color(.21f, .08f, .05f, .86f), emission: .12f, cap: true);
             var stick = VfxShapes.Prism(4, 1, 1);
             for (int i = 0; i < 5; i++) _parolSticks.Add(Add("ParolStick" + i, stick, new Color(1, .62f, .16f, .95f), .8f));
             _parolFill = Add("ParolFlame", VfxShapes.TwoSided(VfxShapes.Star(5, .42f, 3)), new Color(1, .42f, .08f, .8f), .9f);

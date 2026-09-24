@@ -37,6 +37,22 @@ still unverified. Research: [research.md](research.md). Plan: [plan.md](plan.md)
 - The hero's own voice line can play inside the performance; the live cast then skips it on that
   peer (`HeroAbility.IntroductionVoiced`).
 
+## Refinement pass 1: stage sketch (2026-09-24)
+
+`tools/intro_stage_sketch.py` adds each stage's main shapes (copied from the C#) to the pose
+sheets, so composition was finally judged next to the bodies. It caught four real problems:
+- Phaister's eclipse sat exactly behind her hat in the wide shot: moon moved up and to the side,
+  shot C re-aimed between her and the moon (`phaister_v7_stage` before, `v8_stage` after).
+- Every low shot looked up through the open top of the stage into the bright real sky: the top
+  wall bands now carry a lid (all seven heroes; Nemu's ink lid rises with the ink).
+- Zack's seven spaced rooftops read as monoliths: sixteen shoulder-to-shoulder blocks now read as
+  a skyline (`zack_v3_stage` before, `zack_v5_stage` after).
+- Rafi's stilt-house piles started 0.6 m above the water: they now stand in it, two per house
+  (`rafi_v2_stage` before, `rafi_v3_stage` after).
+Sean, Nemu, Dante and Cheska compositions read as planned (`sean_v3_stage`, `nemu_v3_stage`,
+`dante_v2_stage`, `cheska_v3_stage`). The sketch is flat colour with fake transparency; it judges
+placement, not the look.
+
 ## Per hero
 
 | Hero | State | Length | Evidence |

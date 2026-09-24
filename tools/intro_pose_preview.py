@@ -116,6 +116,24 @@ class Model:
             get(i)
         return mats
 
+    def hands(self, pose):
+        """Farthest skinned vertex of each arm from its shoulder: a palm, in Unity space (glb units)."""
+        mats = self.world(pose)
+        out = {}
+        part = self.parts[0]
+        names = [self.names[j] for j in part["skin"]]
+        for side in ("left", "right"):
+            bone = "arm-" + side
+            li = names.index(bone)
+            mask = (part["joints"][:, 0] == li) & (part["weights"][:, 0] > .9)
+            node = [i for i in self.names if self.names[i] == bone][0]
+            jm = mats[node] @ (S @ part["ibm"][li] @ S)
+            v = np.c_[part["pos"][mask] * np.array([-1, 1, 1]), np.ones(mask.sum())]
+            pts = (v @ jm.T)[:, :3]
+            shoulder = mats[node][:3, 3]
+            out[side] = pts[np.argmax(np.linalg.norm(pts - shoulder, axis=1))]
+        return out
+
     def skinned(self, pose):
         mats = self.world(pose)
         tris, cols = [], []
@@ -174,9 +192,9 @@ def render(tris, cols, eye, target, fov, size=(640, 360), extra=None, ground=0.0
     shade = 0.55 + 0.45 * np.abs(normals @ light)
     order = np.argsort(-depth)
     for i in order:
-        if depth[i] <= 0.05:
-            continue
         c = cam[i]
+        if c[:, 2].min() <= 0.1:
+            continue
         pts = [(w / 2 + focal * p[0] / p[2], h / 2 - focal * p[1] / p[2]) for p in c]
         col = tuple(int(255 * min(1, v * shade[i])) for v in cols[i])
         d.polygon(pts, fill=col, outline=tuple(int(v * 0.55) for v in col))

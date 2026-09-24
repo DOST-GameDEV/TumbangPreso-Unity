@@ -19,19 +19,20 @@ namespace TumbangPreso.Visual
         // lagoon correction, AGENTS.md). They are silhouettes on the far wall, nothing more.
         // =========================================================================================
         private int _seaLow, _foamLine, _seaSky, _wave, _waveCrest;
-        private readonly List<int> _stilts = new List<int>(12), _ripples = new List<int>(3), _currents = new List<int>(4), _spray = new List<int>(6);
+        private readonly List<int> _stilts = new List<int>(16), _ripples = new List<int>(3), _currents = new List<int>(4), _spray = new List<int>(6);
         private static readonly float[] RafiSteps = { .16f, .46f, 1.12f };
 
         private void BuildRafi()
         {
             _seaLow = Wall("SeaGround", 0, 1.0f, new Color(.04f, .22f, .25f, .88f), emission: .1f);
             _foamLine = Wall("SeaHorizonFoam", 1.0f, 1.07f, new Color(.9f, .97f, .95f, .85f), emission: .5f);
-            _seaSky = Wall("SeaSky", 1.07f, 11, new Color(.55f, .78f, .76f, .6f), emission: .3f);
+            _seaSky = Wall("SeaSky", 1.07f, 11, new Color(.55f, .78f, .76f, .6f), emission: .3f, cap: true);
             for (int i = 0; i < 4; i++)
             {
                 _stilts.Add(AddSolid("StiltHouse" + i, VfxShapes.Prism(4, 1, .8f), new Color(.1f, .12f, .12f, 1)));
                 _stilts.Add(AddSolid("StiltRoof" + i, VfxShapes.Prism(4, 1, .05f), new Color(.08f, .09f, .09f, 1)));
-                _stilts.Add(AddSolid("StiltPile" + i, VfxShapes.Prism(4, 1, 1), new Color(.08f, .09f, .09f, 1)));
+                _stilts.Add(AddSolid("StiltPileA" + i, VfxShapes.Prism(4, 1, 1), new Color(.08f, .09f, .09f, 1)));
+                _stilts.Add(AddSolid("StiltPileB" + i, VfxShapes.Prism(4, 1, 1), new Color(.08f, .09f, .09f, 1)));
             }
             for (int i = 0; i < 3; i++) _ripples.Add(Add("FalseStepRipple" + i, VfxShapes.Collar(24, .02f, .82f), new Color(.6f, .9f, .92f, .7f)));
             for (int i = 0; i < 4; i++) _currents.Add(Add("GatheredCurrent" + i, WaterRibbon(), new Color(.25f, .67f, .78f, .5f)));
@@ -73,9 +74,13 @@ namespace TumbangPreso.Visual
                 var at = new Vector3(Mathf.Sin(angle) * 7.3f, 0, Mathf.Cos(angle) * 7.3f);
                 var face = Quaternion.LookRotation(-at.normalized, Vector3.up);
                 float stand = sea > .01f ? 1 : 0;
-                Place(_stilts[i * 3 + 2], at + Vector3.up * .6f, new Vector3(.08f, .7f, .08f), face, stand);
-                Place(_stilts[i * 3], at + Vector3.up * 1.3f, new Vector3(.55f, .45f, .4f), face * Quaternion.Euler(0, 45, 0), stand);
-                Place(_stilts[i * 3 + 1], at + Vector3.up * 1.75f, new Vector3(.62f, .35f, .46f), face * Quaternion.Euler(0, 45, 0), stand);
+                // Two piles from the water up to the floor, the house, then a hipped roof. The first
+                // pass started the piles 0.6 m above the water; the stage sketch caught it.
+                var across = face * Vector3.right * .45f;
+                Place(_stilts[i * 4 + 2], at - across, new Vector3(.07f, 1.3f, .07f), face, stand);
+                Place(_stilts[i * 4 + 3], at + across, new Vector3(.07f, 1.3f, .07f), face, stand);
+                Place(_stilts[i * 4], at + Vector3.up * 1.3f, new Vector3(.8f, .6f, .6f), face * Quaternion.Euler(0, 45, 0), stand);
+                Place(_stilts[i * 4 + 1], at + Vector3.up * 1.9f, new Vector3(.9f, .42f, .68f), face * Quaternion.Euler(0, 45, 0), stand);
             }
 
             // Every false step leaves a ripple at his feet.
