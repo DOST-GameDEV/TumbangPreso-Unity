@@ -8,7 +8,13 @@ ROOT=Path(__file__).resolve().parents[1]
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('exe',type=Path);parser.add_argument('--out',type=Path,required=True)
     parser.add_argument('--graphics-api',choices=['d3d11','d3d12'],help='Explicit backend for the bounded native shutdown comparison.')
+    # The matrix renders into a fixed 1920x1080 target whatever the window is, so the window
+    # only shapes the one extra frame per map the probe takes of the real back buffer. It
+    # defaults to the owner's short wide window (ProbeResolutions' last row) because that is
+    # the shape LIGHT-1.9 asks to see the look at.
+    parser.add_argument('--window',default='1600x680',help='Player window WIDTHxHEIGHT for the per-map window frame.')
     args=parser.parse_args();exe=args.exe.resolve();folder=args.out.resolve()
+    width,height=(int(part) for part in args.window.lower().split('x'))
     if not exe.is_file():raise FileNotFoundError(exe)
     folder.mkdir(parents=True,exist_ok=False)
     profile=profile_root(['-tp-profile','graphics-review-player']);backup=folder/'profile';manifest={}
@@ -23,7 +29,7 @@ def main():
         startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
     process=None
     try:
-        command=[str(exe),'-screen-width','1920','-screen-height','1080','-screen-fullscreen','0',
+        command=[str(exe),'-screen-width',str(width),'-screen-height',str(height),'-screen-fullscreen','0',
             '-tp-profile','graphics-review-player','-tp-graphicsreport',str(folder),'-logFile',str(folder/'player.log')]
         if args.graphics_api:command.append('-force-'+args.graphics_api)
         process=subprocess.Popen(command,
@@ -42,7 +48,7 @@ def main():
         if not expected or actual!=expected or len(rows)!=len(expected) or any(float(row['mean_setpass'])<=0 or float(row['mean_triangles'])<=0 for row in rows):
             raise RuntimeError('Missing/unsupported rendering counter coverage')
         dll=exe.parent/(exe.stem+'_Data')/'Managed/TumbangPreso.Runtime.dll'
-        identity={'exe':str(exe),'runtimeSha256':hashlib.sha256(dll.read_bytes()).hexdigest(),'rows':len(rows),'scope':'1920x1080 native world-camera rendering; not worst-case combat FPS'}
+        identity={'exe':str(exe),'runtimeSha256':hashlib.sha256(dll.read_bytes()).hexdigest(),'rows':len(rows),'scope':'1920x1080 native world-camera rendering plus one '+args.window+' window frame per map; not worst-case combat FPS'}
         (folder/'identity.json').write_text(json.dumps(identity,indent=2));print(json.dumps(identity,indent=2),flush=True)
         return 0
     finally:
