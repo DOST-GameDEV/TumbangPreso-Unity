@@ -499,6 +499,62 @@ def dante():
     p.locked((1.3, .9, 5.4), (0, 1.2, -1.0), 52)
     return p
 
+
+def _cheska(held):
+    """
+    GLACIAL NOVA, 3.2 s (plan.md section 6). "Reads the space. Leaves you the harder route."
+    Quiet and precise: she stands still and READS the court with a slow head turn, draws one
+    exact line of frost in the air with a fingertip, closes her hands round it into a crystal,
+    lifts it to eye height, a beat, and snaps her hands apart: the frame before the live nova.
+    Holding a slipper, the free (left) hand does the fine work and the shoe stays low and out
+    of the way, and the camera takes her other side so the shoe is on the far side.
+    """
+    p = Performance("cheska-held" if held else "cheska", 3.2)
+    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
+    shoe = (18, 26, -6)  # the slipper hand, low and clear of the body
+    read_l = Pose(torso=(0, -4, 0), head=(2, -24, 0), left=(4, 12, 0), right=shoe if held else (4, 12, 0))
+    read_r = read_l.but(torso=(0, 4, 0), head=(2, 24, 0))
+    if held:
+        draw_a = Pose(torso=(2, -6, 0), head=(8, -10, 0), left=(82, 10, 6), right=shoe)
+        draw_b = draw_a.but(left=(86, 22, -22), head=(8, -18, 0))
+        close = Pose(torso=(4, -4, 0), head=(14, -8, 0), left=(72, 4, 30), right=shoe)
+        lift = close.but(left=(104, 4, 30), head=(-2, -8, 6))
+        snap = Pose(torso=(-4, 0, 0), head=(-4, 0, 0), left=(72, 74, 0), right=(30, 40, 0))
+    else:
+        draw_a = Pose(torso=(2, 6, 0), head=(8, 10, 0), left=(4, 12, 0), right=(82, 10, 6))
+        draw_b = draw_a.but(right=(86, 22, -22), head=(8, 18, 0))
+        close = Pose(torso=(4, 0, 0), head=(14, 0, 0), left=(70, 4, 36), right=(70, 4, 36))
+        lift = close.but(left=(102, 4, 36), right=(102, 4, 36), head=(-2, 0, 6))
+        snap = Pose(torso=(-4, 0, 0), head=(-4, 0, 0), left=(72, 74, 0), right=(72, 74, 0))
+
+    p.key(0, rest)
+    p.key(.18, read_l).key(.72, read_r)
+    p.key(.9, draw_a).key(1.3, draw_b)
+    p.key(1.5, close)
+    p.hold(1.5, 1.98, close)
+    p.key(2.18, lift)
+    p.hold(2.18, 2.76, lift)
+    p.key(2.9, snap, punch=True)
+    p.hold(2.9, 3.2, snap)
+
+    m = -1 if held else 1  # mirror the camera so a held shoe stays on the far side
+    # A: a still, close medium: nothing moves but her eyes and one hand.
+    p.shot(0, 1.42, (m * 1.8, 1.45, 4.1), (0, 1.1, 0), 42, eye_to=(m * 1.62, 1.42, 3.75), close=True)
+    # B: close on the hands as the frost gathers into the crystal.
+    p.shot(1.42, 2.12, (m * .95, 1.05, 3.1), (0, .9, .3), 40, eye_to=(m * .85, 1.05, 2.85), close=True)
+    # C: wider and low for the lift, the frost spreading and the snap.
+    p.shot(2.12, 3.2, (m * -1.6, .7, 3.7), (0, 1.1, 0), 48, eye_to=(m * -1.45, .68, 3.45))
+    p.locked((m * 1.5, 1.1, 4.6), (0, 1.05, 0), 46)
+    return p
+
+
+@performance
+def cheska():
+    return _cheska(False)
+
+
+HELD["cheska"] = lambda: _cheska(True)
+
 # ----------------------------------------------------------------------------- the 2.8 s baseline
 # The introductions as they shipped before REFINE-2.11, transcribed key for key from the old
 # `HeroAbilityClips.Introductions.cs` (PoseKey arguments: raise = -x, twist = +/-y, spread = z),
@@ -565,14 +621,6 @@ LEGACY = {
     ], (-2.6, 1.15, 4.7), (0, 1.0, 0), 47),
 }
 
-# Cheska holding a slipper gathers at her free palm; the old table widened that arm and mirrored
-# the camera so the held shoe stays on the far side.
-HELD["cheska"] = lambda: _legacy("cheska-held", [
-    (.55, (0, 8, 0), (8, -8, 0), (-65, 16, 35), (-30, -12, -16)),
-    (1.25, (0, 4, 0), (7, -4, 0), (-70, 18, 55), (-70, -18, -24)),
-    (1.90, (3, 0, 0), (4, 0, 0), (-55, 30, 60), (-55, -30, -15)),
-    (2.35, (0, 0, 0), (0, 0, 0), (-85, -8, 75), (-85, 8, -42)),
-], (-1.8, 1.3, 4), (0, 1.1, 0), 43)
 
 
 def preview(hero, times=None, out=None, legacy=False, witness=False):

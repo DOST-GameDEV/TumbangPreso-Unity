@@ -618,6 +618,16 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
   be installed at acceptable quality, or stylised non-verbal voices from the existing formant
   synth (`tools/generate_hero_audio.py`). Existing announcer lines live in `Resources/Vo` via
   `VoiceDirector`; no sentences in ordinary play (VISION section 3) constrains any on-screen text.
+- [ ] **SKILL-FX-1 Every skill's VFX, SFX and cast animation, owner 2026-09-24. OPEN, after REFINE-2.11.**
+  Owner: *"refine all their skills VFX SFX and animation and everything too. THOROUGHLY research how
+  other games that are good in roblox and or actual games like valorant or overwatch make skill
+  effects and try to author one that works in our world"*, and *"REFINE ANY OTHER ANIMATION THAT CAN
+  BE REFINED/STILL SUCKS"*. Research first (extend `reports/visual-research-2026-09-23/findings.md`
+  with Valorant, Overwatch and Roblox skill-effect practice), then audit all 21 skills one at a time:
+  cast body (`tools/author_hero_action.py` glb tables, Rafi's `HeroAbilityClips.Rafi.cs`), first
+  person (`ViewmodelArms.CastGesture.cs`), world VFX (`HeroHazards`, `AbilityVfx`) and cast/payload
+  SFX (`tools/generate_ability_audio.py`, `build_ability_audio.py`; sourced SFX rules in CLAUDE.md
+  section 6). Fix weak ones individually; no shared template.
 - [ ] **REFINE-2.10 Integrated qualification.** One coherent candidate with specific
   evidence/limits; no blanket completion from screenshots or object-spawn tests.
   Include protocol51edge-climb real peers, dropped/late pose packets, reconnect/seat
