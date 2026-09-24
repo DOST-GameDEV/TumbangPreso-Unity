@@ -349,6 +349,56 @@ def sean():
     p.locked((1.7, 1.15, 4.8), (0, 1.05, 0), 46)
     return p
 
+
+@performance
+def zack():
+    """
+    THUNDERSTRIKE, 2.8 s, the shortest on purpose (plan.md section 3): "Finds the angle before
+    you see the opening", and makes difficult plays look casual. So nothing here strains: a hip
+    cocked, a spark flicked off a fingertip, one lazy finger to the sky that the storm answers,
+    then he SIGHTS the shot down his arm like a trick shot, snaps it down, and shrugs.
+    The old intro raised his hand in front of his own face for a second; every pose here keeps
+    the face clear.
+    """
+    p = Performance("zack", 2.8)
+    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
+    cocky = Pose(torso=(0, -6, 6), head=(0, -12, -10), left=(6, 34, -12), right=(58, 18, 24),
+                 legs=((2, 3), (-2, 8)))
+    flick = cocky.but(right=(74, 22, 24))
+    # One finger to the sky. Straight up vanished behind his hair on the sheet, so the arm goes
+    # up and a little forward and out, where it is a clear diagonal from every shot.
+    point_up = Pose(torso=(-4, -4, 4), head=(-18, -6, -6), left=(6, 34, -12), right=(158, 44, 0),
+                    legs=((2, 3), (-2, 8)))
+    # Lining it up: the arm straight down the line, the other hand low as a guide, head along it.
+    sight = Pose(torso=(4, -16, 0), head=(4, -10, 8), left=(70, 22, 22), right=(88, 6, 12),
+                 legs=((10, 4), (-12, 4)))
+    snap = Pose(torso=(10, -8, 0), head=(6, -6, 4), left=(40, 26, 10), right=(22, 34, 0),
+                legs=((10, 4), (-12, 4)))
+    shrug = Pose(torso=(0, -4, 4), head=(-2, -10, -12), left=(6, 34, -12), right=(12, 30, -8),
+                 legs=((2, 3), (-2, 8)))
+
+    p.key(0, rest)
+    p.key(.26, cocky).key(.40, flick, punch=True).key(.50, cocky)
+    p.key(.66, point_up)
+    p.hold(.66, 1.12, point_up)
+    p.key(1.30, sight)
+    p.hold(1.30, 1.74, sight)
+    p.key(1.88, snap, punch=True)
+    p.hold(1.88, 2.02, snap)
+    p.key(2.32, shrug)
+    p.hold(2.32, 2.8, shrug)
+
+    # A: low from his left side for the cocky stance and the finger to the sky.
+    p.shot(0, .98, (-2.7, .75, 2.8), (0, 1.15, 0), 46, eye_to=(-2.5, .7, 2.9))
+    # B: a profile from his right, level with the arm, so the arm and the line it sights run
+    # across the frame: the angle he found. (Over the shoulder was tried and his head, which is
+    # most of him, hid the arm completely.)
+    p.shot(.98, 1.82, (3.6, 1.25, .5), (0, 1.1, 1.4), 46, eye_to=(3.35, 1.22, .6))
+    # C: front and low for the snap and the shrug.
+    p.shot(1.82, 2.8, (.95, .65, 3.7), (0, 1.2, 0), 46, eye_to=(.85, .7, 3.4))
+    p.locked((-2.0, 1.1, 4.3), (0, 1.1, 0), 46)
+    return p
+
 # ----------------------------------------------------------------------------- the 2.8 s baseline
 # The introductions as they shipped before REFINE-2.11, transcribed key for key from the old
 # `HeroAbilityClips.Introductions.cs` (PoseKey arguments: raise = -x, twist = +/-y, spread = z),
