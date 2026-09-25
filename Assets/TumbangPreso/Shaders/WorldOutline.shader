@@ -549,14 +549,13 @@ Shader "TumbangPreso/WorldOutline"
                 // the foot of a wall deepens in hue and never goes grey.
                 if(_WorldAOParams.x>0)
                 {
-                    // ⚠️ THE CURVE IS STEEPENED AND THE HUE DEEPENED, BECAUSE THE FIRST CUT WAS
-                    // INVISIBLE. Straight occlusion times 0.6 toward the cavity hue darkened the
-                    // deepest corner by 14 levels in 255 and under 3 per cent of any frame: the
-                    // heat map showed it in exactly the right places and nobody would ever see it.
-                    // x1.8 then 0.8 of the way to a deeper violet puts a real inside corner about
-                    // 30 per cent down and a foot on the court about 15 to 20.
-                    float occlusion=saturate((1-tex2D(_WorldAO,duv).r)*1.8)*_WorldAOParams.x;
-                    source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb*.8,saturate(occlusion));
+                    // ⚠️ The first cut (cosine hemisphere, 0.6 toward the cavity hue) moved the
+                    // deepest corner 14 levels in 255; the second steepened it, and the owner
+                    // still saw no AO in face-to-face creases. See the kernel note in pass 2.
+                    // The pass already maps a full inside corner to 1, so no steepening here; 0.7
+                    // of the way to the violet is about a third darker on screen at the crease.
+                    float occlusion=(1-tex2D(_WorldAO,duv).r)*_WorldAOParams.x;
+                    source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb*.7,saturate(occlusion));
                 }
                 if(_PeakDepth.w>0)
                 {
@@ -724,9 +723,9 @@ Shader "TumbangPreso/WorldOutline"
         // ⚠️⚠️ § AMBIENT OCCLUSION. The built-in pipeline has none and this project carries no
         // post-processing package, so it is written here, where the depth and normals already
         // are. Per pixel: rebuild the view-space point and normal from the depth-normals
-        // texture, take twelve samples in a hemisphere round the normal (cosine-weighted, packed
-        // toward the point so near contact counts most), rotate the set per pixel by interleaved
-        // gradient noise, and count how many land behind the scene's own depth. The range check
+        // texture, take sixteen samples that skim the surface (see the kernel note below),
+        // rotate the set per pixel by interleaved gradient noise, and count how many land behind
+        // the scene's own depth. The range check
         // stops a wall far behind a railing from darkening the railing. Radius in metres,
         // fading out by 60 m where the samples would be sub-pixel noise. Pass 3 blurs it.
         Pass
@@ -761,21 +760,33 @@ Shader "TumbangPreso/WorldOutline"
                 float angle=noise*6.2831853;
                 float3 r=float3(cos(angle),sin(angle),0);
                 float3 t=normalize(r-n*dot(r,n)),b=cross(n,t);
-                float occluded=0;
-                [unroll] for(int k=0;k<12;k++)
+                // ⚠️⚠️ THE KERNEL SKIMS THE SURFACE, LIKE MINECRAFT'S NEIGHBOUR TEST, NOT THE
+                // CLASSIC UPWARD HEMISPHERE (owner 2026-09-25: "im not noticing any ao in the
+                // concave intersections of faces like what minecraft does"). A cosine-weighted
+                // kernel sends most samples straight out along the normal, where they almost
+                // never reach the face meeting this one, so a wall's foot or a roof's inner
+                // corner stayed nearly clean. Minecraft darkens a face by the blocks BESIDE it.
+                // So the sixteen samples here leave the surface at 8 to 40 degrees, in four
+                // rings out to the radius, and a hit counts more the nearer it is. A 90 degree
+                // inside corner blocks about half the directions, and that half is mapped to full
+                // occlusion, ramping to clean by about one radius from the edge.
+                float occluded=0,total=0;
+                [unroll] for(int k=0;k<16;k++)
                 {
-                    float f=(k+.5)/12.0,phi=k*2.3999632;
-                    float cosTheta=sqrt(1-f),sinTheta=sqrt(f);
-                    float3 dir=float3(cos(phi)*sinTheta,sin(phi)*sinTheta,cosTheta);
-                    float scale=lerp(.15,1.0,f*f);
-                    float3 probe=p+(t*dir.x+b*dir.y+n*dir.z)*radius*scale;
+                    float phi=k*2.3999632+angle;
+                    float elevation=lerp(.14,.7,frac(k*.618034+noise));
+                    float ring=(fmod(k,4)+.5)/4;
+                    float reach=radius*lerp(.12,1.0,ring);
+                    float3 dir=(t*cos(phi)+b*sin(phi))*cos(elevation)+n*sin(elevation);
+                    float3 probe=p+dir*reach;
                     float2 uv=(probe.xy/-probe.z)/_ViewRay.xy*.5+.5;
                     float sceneZ=-EyeDepth(uv);
                     float range=smoothstep(0,1,radius/max(abs(p.z-sceneZ),1e-4));
-                    occluded+=step(probe.z+bias,sceneZ)*range;
+                    float weight=1-ring*.6;
+                    occluded+=step(probe.z+bias,sceneZ)*range*weight;total+=weight;
                 }
-                float ao=1-occluded/12.0;
-                // Fade out with distance, where twelve samples inside a pixel are only noise.
+                float ao=1-saturate(occluded/max(total,1e-4)*2.0);
+                // Fade out with distance, where the samples fall inside a pixel.
                 ao=lerp(ao,1,smoothstep(40,60,-p.z));
                 return half4(ao,ao,ao,1);
             }

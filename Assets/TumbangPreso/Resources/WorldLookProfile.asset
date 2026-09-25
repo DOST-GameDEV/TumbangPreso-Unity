@@ -28,7 +28,7 @@ MonoBehaviour:
   GroundOcclusion: 0.28
   GroundOcclusionHeight: 2.8
   AmbientOcclusion: 0.8
-  AmbientOcclusionRadius: 0.9
+  AmbientOcclusionRadius: 1
   CastInkSelf: 0.88
   CastInkWidth: 0.72
   CastInkFloor: 0

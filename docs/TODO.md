@@ -355,7 +355,11 @@ light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
   `Eskinita-stage-aomap.png`: feet, fences, house joins and props. It was too faint, so v2
   steepened it. Sheets are in
   [reports/light-3-2026-09-25/ambient-occlusion/](reports/light-3-2026-09-25/ambient-occlusion/).
-  Open for the owner's playtest.
+  v3, after the owner's playtest ("im not noticing any ao in the concave intersections of faces
+  like what minecraft does"): the kernel skims the surface at 8 to 40 degrees in four rings to 1 m,
+  nearer hits weigh more, and a 90 degree inside corner maps to full occlusion (about a third
+  darker on screen, toward violet). The cosine hemisphere had sent most samples straight out,
+  where they never reached the neighbouring face. Open for the owner's playtest.
 - [ ] LIGHT-3.5 The owner's look at the final comparison. The rendering is done: `e26eeb04`,
   Mac, one PlayMode launch, total 3 failed 0 (`FiveMapStageCapturesPreserveGeometryAndRestore
   OriginalLighting`, `LightingStyleThumbnails` and a scratch same-camera review that was not
