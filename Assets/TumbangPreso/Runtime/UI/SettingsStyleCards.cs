@@ -27,10 +27,13 @@ namespace TumbangPreso.UI
     /// </summary>
     public static class SettingsStyleCards
     {
-        // ⚠️ THE ARITHMETIC. The settings column is 1240 units wide with a scrollbar down its
-        // right edge; three 384-unit cards with 22-unit gaps take 1196 and leave the bar clear.
-        // 384 x 216 is 16:9, the shape the thumbnails are rendered at.
-        private const float CardWidth = 384, ImageHeight = 216, Caption = 56, Gap = 22, Label = 64;
+        // ⚠️ THE ARITHMETIC. The settings column is 1240 units wide and every row's rule stops 15
+        // short of it, at 1225, to clear the scrollbar. Three 376-unit cards with 20-unit gaps
+        // take 1168, which leaves the selected card's 5-unit ring inside the rule too. The first
+        // cut used 384 and 22 (1196) and its third card ran past the rule once measured against
+        // the list's real width, photographed at 1920x1080. 376 x 211.5 is 16:9, the shape the
+        // thumbnails are rendered at.
+        private const float CardWidth = 376, ImageHeight = 211.5f, Caption = 56, Gap = 20, Label = 64;
         private const float Ring = 5;
 
         public static RectTransform Row(Transform list, string name, string label, int current, Action<int> picked)

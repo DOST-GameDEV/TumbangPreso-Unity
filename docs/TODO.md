@@ -202,7 +202,7 @@ material and court work; only the lighting is `main`'s.
   normalises to the default), and `WorldCueProfile.LightingWeight`, the product of the profile's
   `WorldLighting` and the style. Every runtime read of `WorldLighting` goes through it (look,
   contact shadows, world outline, recorded and ultimate views). Local only, never on the wire.
-- [ ] LIGHT-2.2 The card row (`SettingsStyleCards`), second on the Graphics tab, three 384x216
+- [ ] LIGHT-2.2 The card row (`SettingsStyleCards`), second on the Graphics tab, three 376x211.5
   cards with a caption and an accent ring on the pick. It applies live and joins save and
   discard. Thumbnails in `Resources/UI/lighting-styles/`, rendered by
   `WorldCourtCueTests.LightingStyleThumbnails` from one Eskinita camera, which also asserts that
