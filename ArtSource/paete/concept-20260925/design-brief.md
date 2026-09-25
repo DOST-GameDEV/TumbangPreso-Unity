@@ -171,3 +171,28 @@ beside the cast before the next:
 Hero rows are distinct (`BalanceTests.AllPersonRows_AreDistinct`). A tree is grit: proposed
 bilis 3, lakas 3, tatag 5, a row no hero or street character has. A prototype number, not a
 balance verdict.
+
+## 8. The model, v1 to v10 (2026-09-25)
+
+Builder: `tools/build_paete_voxel.py`. Review: `PaeteNativeModelReview.Run -out Logs/paete-vNN`
+(lineup beside the eight heroes, turnaround, head study). Evidence in `evidence/`.
+
+- **v1 to v4, rejected.** Built on the cast's chibi proportions (head 53 %) with bark planks, then
+  vertical ridges and a leaf canopy. Owner: *"what the fuck is this it DOES NOTTT LOOK LIEK
+  REFERECNES AT ALL"*, *"its body is js brown with greenshit coming out (leaves and mosss and
+  engravings) and it doesnt have hair"*, *"i want u to really analyze all details in references"*.
+  The canopy read as hair; the proportions were the cast's, not the concept's.
+- **The idea board** (owner, same day: *"ideaboard of chat gpt pls use it well"*), read part by
+  part: a tall plank mask split down the centre with a carved spiral forehead and angled glowing
+  slits under a heavy brow; square-section horns with right-angle elbows; a V chest round a spiral
+  boss; layered slanted shoulder planks; long plank-bundle arms ending in claws that hang to the
+  knee; plank legs on root feet; thick vines round the torso, a forearm and a leg; moss in the
+  crevices; big leaves sprouting from the seams; five browns and four greens.
+- **v5 to v10.** His own skeleton (hips 0.260, shoulders 0.470, neck 0.495, crown 0.668, horn
+  tips 0.79, inside the cast's height range); every plank, horn, root, vine, moss tuft, leaf and
+  engraving typed as its own row. v6 raised the moss off the bark (flat patches read as
+  stickers), v8 thickened the horns and turned the leaves to face out, v9 gave each eye a bright
+  core in a green rim, v10 took the long nose and the dark jaw wedge out and calmed the brow to
+  4 degrees (the owner asked for a nonchalant face).
+- **Open:** the three face states (NEUTRAL, FOCUSED, ANGRY), the owner's read of v10, the
+  palette check on the deck tile.

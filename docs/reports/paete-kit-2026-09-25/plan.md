@@ -138,3 +138,27 @@ and single leaves.
 10. Can a rooted player be tagged? (With Paete as taya this is the strongest play in the kit.)
 11. The ultimate's price in objective points.
 12. The four names above.
+
+## 7. The owner's answers, 2026-09-25
+
+| Question | Answer | What it becomes |
+|---|---|---|
+| 1. Vine Pull | *"yes on 1., i want it to be an escape"* | world anchors only (walls, props, floor), 8 m, 30 s. **No slipper guard**: it may carry a retrieved slipper out of the box. That is the one escape tool in his kit, and it has a 30 s cooldown and a readable 0.12 s tell. |
+| 2. Shot timing | (defaults accepted) | one wooden slipper per 15 s, fired on the next press at the aim point |
+| 3. Wooden slippers | *"maybe lessened plus"* | a wooden slipper that knocks the lata scores **less than a real knockdown** (+50, the sabotage tier, through `MatchDirector.AddScore`); it withers where it lands and is never picked up |
+| 4. Uprooting | *"invincible for the first 15 seconds but after that make a visual indicator showing that it can be pulled out? maybe make the model gradually change too"*, *"i want the animation for pull out to be good and dont make the keybind shove maybe make like a general keybind for interact and remove and shit"* | 15 s rooted and untouchable (upright, bright, roots gripping); then a clear "can be pulled" read (the roots lift out of the soil, the pod head droops, a loose ring of soil) that keeps changing over its remaining life. Any opponent pulls it out with a **new general INTERACT verb** (hold), with its own pull-out animation (grip, lean back, heave, the roots tear free, stumble). |
+| 5. Thorn Pull | *"i want it too be ALL, even the ones on the hands"* | every slipper within range: loose, in flight and in hands (a held slipper is yanked out of the hand). Never the lata. |
+| 6. Ultimate reach | *"WITHIN 9 meters"* | 9 m from the sentry |
+| 7. Break free | *"i suggest the general interact button"* | hold INTERACT, 7 s of holding, progress kept on release |
+| 8. Tags | *"a rooted player can be tagged and theyre out of the root after getting tagged"* | a tag ends Rooted (the Tagged status replaces it) |
+| 9. Price | *"yes"* | 16 objective points |
+
+Also, on everything: *"thoroughly refine ALL details of EVERYTHINg ur making and do it carefully
+dont auto make it all with a script"* and, on the model, *"it has to really look like a tree and
+very detailed but blocky"*.
+
+**The INTERACT verb.** One control for "do the thing in front of me" that is not a pickup: pull
+out a plant, break out of roots, and whatever needs it later. Keyboard **G** (free in gameplay;
+X is Grab, E and F are skills). Pad and thumb are answered when it is added (CLAUDE.md 4a); the
+natural pad button, East, currently carries ReadyUp, which is read between rounds, so the two are
+reconciled in the same change rather than doubled up.
