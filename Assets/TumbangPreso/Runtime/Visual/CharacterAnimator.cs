@@ -230,6 +230,12 @@ namespace TumbangPreso.Visual
             { "hero-amihan-updraft", new[] { "hero-amihan-updraft", Jump } },
             { "hero-amihan-whirlwind", new[] { "hero-amihan-whirlwind", "attack-melee-left" } },
             { "hero-amihan-storm", new[] { "hero-amihan-storm", "holding-both-shoot" } },
+            // PAETE (2026-09-25). His own clips first (baked by `PaeteMotionAuthor`), then the
+            // nearest base clip so a cast is never a freeze.
+            { "hero-paete-vine", new[] { "hero-paete-vine", "holding-both-shoot" } },
+            { "hero-paete-sprout", new[] { "hero-paete-sprout", "attack-melee-right" } },
+            { "hero-paete-thorns", new[] { "hero-paete-thorns", "attack-kick-right" } },
+            { "hero-paete-sentry", new[] { "hero-paete-sentry", "holding-both-shoot" } },
         };
 
         /// <summary>Amihan's flight pose, held while `CharacterMotor.IsFlying` (Updraft).</summary>

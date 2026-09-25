@@ -80,7 +80,7 @@ namespace TumbangPreso.CameraSystem
             {
                 var kit=actor?.AbilitySystem?.Kit;if(kit==null)continue;
                 string hero=kit.HeroId;
-                if(hero!="sean"&&hero!="zack"&&hero!="nemu"&&hero!="phaister"&&hero!="cheska"&&hero!="dante"&&hero!="rafi"&&hero!="amihan")_unsafeAt=time;
+                if(hero!="sean"&&hero!="zack"&&hero!="nemu"&&hero!="phaister"&&hero!="cheska"&&hero!="dante"&&hero!="rafi"&&hero!="amihan"&&hero!="paete")_unsafeAt=time;
             }
             for(int i=0;i<_pending.Count;)
             {

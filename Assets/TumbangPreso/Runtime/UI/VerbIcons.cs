@@ -113,6 +113,13 @@ namespace TumbangPreso.UI
 
         /// <summary>The ultimate: a star.</summary>
         Ultimate,
+
+        /// <summary>
+        /// INTERACT (2026-09-25): a grip ring being pulled up off a ground line, an arrow over it.
+        /// What the button does to the world is pull something out or pull free, and that is the
+        /// picture, not a hand (GRAB already is one).
+        /// </summary>
+        Interact,
     }
 
     /// <summary>
@@ -169,6 +176,7 @@ namespace TumbangPreso.UI
                 case VerbGlyph.Jump: return "LIFT OFF A LINE";
                 case VerbGlyph.Lunge: return "FORWARD THRUST";
                 case VerbGlyph.Emote: return "FACE";
+                case VerbGlyph.Interact: return "PULL UP";
                 case VerbGlyph.SkillPrimary: return "SKILL PLATE";
                 case VerbGlyph.SkillSecondary: return "SKILL PLATE";
                 default: return "STAR";
@@ -255,6 +263,15 @@ namespace TumbangPreso.UI
 
                 case VerbGlyph.Emote:
                     return Face(u, v);
+
+                // A grip ring lifting off a ground line, an arrow pointing up out of it.
+                case VerbGlyph.Interact:
+                    return Mathf.Max(
+                        Mathf.Max(Ring(u, v + 0.12f, 0.30f, Stroke * 0.80f),
+                                  Segment(u, v, -0.70f, -0.62f, 0.70f, -0.62f, Stroke * 0.70f)),
+                        Mathf.Max(Segment(u, v, 0.0f, 0.18f, 0.0f, 0.78f, Stroke * 0.70f),
+                                  Mathf.Max(Segment(u, v, -0.26f, 0.52f, 0.0f, 0.78f, Stroke * 0.70f),
+                                            Segment(u, v, 0.26f, 0.52f, 0.0f, 0.78f, Stroke * 0.70f))));
 
                 case VerbGlyph.SkillPrimary:
                     return Mathf.Max(Plate(u, v),

@@ -119,6 +119,16 @@ namespace TumbangPreso.UI
         AmihanWhirlwind,
         /// <summary>Amihan ultimate: Storm Surge (a fan of wind lines from a kasikus diamond).</summary>
         AmihanStormSurge,
+
+        // ⚠️ PAETE (2026-09-25): signature, attacking, defending, ultimate.
+        /// <summary>Paete signature: Kapit-Baging (two vines converging on a hooked anchor).</summary>
+        PaeteVine,
+        /// <summary>Paete attacking: Punlang Tsinelas (a seedling with a slipper in its pod).</summary>
+        PaeteSprout,
+        /// <summary>Paete defending: Bawi (thorns drawing slippers inward).</summary>
+        PaeteThorn,
+        /// <summary>Paete ultimate: Yakap ng Makiling (a core with roots pulling in from all sides).</summary>
+        PaeteSentry,
     }
 
     /// <summary>
@@ -305,6 +315,10 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.AmihanUpdraft: return "FLIGHT";
                 case AbilityGlyph.AmihanWhirlwind: return "MOVING GALE";
                 case AbilityGlyph.AmihanStormSurge: return "MAP-WIDE PUSH";
+                case AbilityGlyph.PaeteVine: return "GRAPPLE";
+                case AbilityGlyph.PaeteSprout: return "THROWING PLANT";
+                case AbilityGlyph.PaeteThorn: return "SLIPPER PULL";
+                case AbilityGlyph.PaeteSentry: return "PULL AND ROOT";
                 default:
                     return "POWER";
             }
@@ -368,6 +382,17 @@ namespace TumbangPreso.UI
                         Sub(Disc(u, v + 0.55f, 0.6f), Disc(u, v + 0.78f, 0.56f)));
                 case AbilityGlyph.AmihanStormSurge:
                     return Mathf.Max(Disc(u, v + 0.62f, 0.2f), Spokes(u, v + 0.62f, 9, 0.34f, 1.35f, Stroke * 0.7f));
+                // Paete's fallbacks, drawn only until `tools/build_ability_icons.py`'s drawings load.
+                case AbilityGlyph.PaeteVine:
+                    return Mathf.Max(Mathf.Max(Box(u + 0.25f, v - 0.28f, 0.52f, 0.06f), Box(u + 0.25f, v + 0.28f, 0.52f, 0.06f)),
+                        Disc(u - 0.52f, v, 0.2f));
+                case AbilityGlyph.PaeteSprout:
+                    return Mathf.Max(Mathf.Max(Box(u, v - 0.35f, 0.08f, 0.45f), Disc(u, v + 0.25f, 0.34f)),
+                        Box(u, v + 0.62f, 0.5f, 0.07f));
+                case AbilityGlyph.PaeteThorn:
+                    return Mathf.Max(Disc(u, v, 0.2f), Spokes(u, v, 7, 0.3f, 0.9f, Stroke * 0.8f));
+                case AbilityGlyph.PaeteSentry:
+                    return Mathf.Max(Disc(u, v, 0.3f), Spokes(u, v, 8, 0.4f, 1.0f, Stroke));
                 case AbilityGlyph.RafiCrosscurrent:
                     return Mathf.Max(Sub(EllipseRing(u + .12f, v, .67f, .60f, .16f), Box(u - .5f, v + .4f, .6f, .65f)),
                         RightTriangle(u - .38f, v - .44f, .24f, .28f));

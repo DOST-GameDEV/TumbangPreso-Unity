@@ -98,11 +98,34 @@ namespace TumbangPreso.Tests
                     float a = Hue(UiTheme.ColorForHero(Heroes[i]));
                     float b = Hue(UiTheme.ColorForHero(Heroes[j]));
 
-                    Assert.GreaterOrEqual(HueDistance(a, b), 30.0f,
+                    // ⚠️ AMENDED 2026-09-25 FOR PAETE (see `UiTheme.HeroGrove`): 30 degrees of hue OR
+                    // 0.15 of OKLab distance, so a dark moss can sit beside a mid jade. The role
+                    // colours keep their hue rule above.
+                    float seen = OkLabDistance(UiTheme.ColorForHero(Heroes[i]), UiTheme.ColorForHero(Heroes[j]));
+                    Assert.IsTrue(HueDistance(a, b) >= 30.0f || seen >= 0.15f,
                         $"{Heroes[i]} and {Heroes[j]} are only {HueDistance(a, b):0.#} degrees " +
-                        "apart, which is one colour on a deck tile");
+                        $"and {seen:0.000} OKLab apart, which is one colour on a deck tile");
                 }
             }
+        }
+
+        /// <summary>OKLab distance between two sRGB colours (Björn Ottosson's transform).</summary>
+        private static float OkLabDistance(Color x, Color y)
+        {
+            Vector3 a = OkLab(x), b = OkLab(y);
+            return Vector3.Distance(a, b);
+        }
+
+        private static Vector3 OkLab(Color c)
+        {
+            float Lin(float v) => v <= 0.04045f ? v / 12.92f : Mathf.Pow((v + 0.055f) / 1.055f, 2.4f);
+            float r = Lin(c.r), g = Lin(c.g), bl = Lin(c.b);
+            float l = Mathf.Pow(0.4122214708f * r + 0.5363325363f * g + 0.0514459929f * bl, 1f / 3f);
+            float m = Mathf.Pow(0.2119034982f * r + 0.6806995451f * g + 0.1073969566f * bl, 1f / 3f);
+            float s = Mathf.Pow(0.0883024619f * r + 0.2817188376f * g + 0.6299787005f * bl, 1f / 3f);
+            return new Vector3(0.2104542553f * l + 0.7936177850f * m - 0.0040720468f * s,
+                               1.9779984951f * l - 2.4285922050f * m + 0.4505937099f * s,
+                               0.0259040371f * l + 0.7827717662f * m - 0.8086757660f * s);
         }
 
         /// <summary>
@@ -692,8 +715,8 @@ namespace TumbangPreso.Tests
             }
 
             // Seven legacy kits of three and Amihan's role kit of four (2026-09-25).
-            Assert.AreEqual(25, totalAbilities, "Expected 25 total abilities across 8 heroes");
-            Assert.AreEqual(25, seenGlyphs.Count, "Expected 25 unique glyphs across 25 abilities");
+            Assert.AreEqual(29, totalAbilities, "Expected 29 total abilities across 9 heroes");
+            Assert.AreEqual(29, seenGlyphs.Count, "Expected 29 unique glyphs across 29 abilities");
         }
 
         private static void AssertSameRgb(Color actual, Color expected, string name)

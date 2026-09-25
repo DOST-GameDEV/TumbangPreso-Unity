@@ -195,11 +195,23 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   references from footage (Groot, Kinich, Zyra, Scorpion, Dead by Daylight) and wikis.
 - [x] Lore, colour decision (dark moss `4f6b1f` under an amended accent law), stats 3/3/5, names
   proposed, the six beats per ability, the part-by-part plan.
-- [ ] Owner answers to plan.md section 6 (one batch, asked 2026-09-25).
-- [ ] Model: `tools/build_paete_voxel.py`, one part at a time, rendered beside the cast each step.
-- [ ] Core `PaeteRules` and tests; the Rooted status; `PaeteHeroKit`; wiring; bots.
-- [ ] VFX, casts, FPP hands, audio, glyphs, the introduction, the sky, the lines (HUMAN.md rows).
-- [ ] Protocol bump (next free after 53), verification per CLAUDE.md section 7, a build in `Builds/`.
+- [x] Owner answers (plan.md section 7).
+- [x] Model v17 (`tools/build_paete_voxel.py`, evidence in `ArtSource/paete/concept-20260925/evidence/`),
+  rebuilt from the owner's idea board; vine arms, no fingers. Owner's verdict on v17 still owed.
+- [x] Core: `PaeteRules`, Rooted status, `ScoreEvent.SproutKnock`, roster row, lines, loadout rows;
+  Core.Tests 646/646.
+- [ ] Runtime kit written, NOT yet played: `PaeteHeroKit`, `PaeteHazards`, `GrowthVfx`, `PaeteVfx`,
+  intro scene, `SkyEvent.Look.Canopy`, the INTERACT verb (G / R3 / touch), Rooted on the motor and
+  `SyncUnit`, `ReqBreakFree` / `ReqUproot` / `PlantPulled`, protocol 54. EditMode was 601/609 at the
+  last run; the fixes for 6 of the 8 are in but not re-run; `RosterArmGeometryTests` and
+  `ThrowEquipmentClearanceTests` need the roster book refreshed for him (`RosterBookBuilder.RefreshPerson("paete")`,
+  then `FppArmsSnapshotTool.CaptureAll`); the two `ToonLightFalloffTests` failures look unrelated (check on a clean tree).
+- [ ] Still to do: roster book, FPP arms, portrait and avatar, `character-stories.json`, motion bake
+  (`PaeteMotionAuthor`), `UltimateIntros/paete.txt`, audio (`tools/build_paete_audio.py`, cues named
+  in the kit), ability icons (`tools/build_ability_icons.py`), HUD prompt and ring for Interact,
+  FPP vines from the viewmodel hands, `WorldEffectSnapshot`/`RecordedSpecialFields` for plant, sentry
+  and thorns, bots (`AIController`: Interact while rooted, pull plants, use his kit), HUMAN.md rows,
+  CHARACTER_ORIGINS and LORE, then play it, PlayMode gate, Checks.RunAll, audits, a build.
 - [ ] Deploy the cloud-code hero lists once they name him; record his lines (human voices only).
 
 ### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23

@@ -45,7 +45,7 @@ namespace TumbangPreso.UI
         public static readonly string[] Ids =
         {
             "avatar_dante", "avatar_sean", "avatar_cheska", "avatar_zack", "avatar_nemu",
-            "avatar_phaister", "avatar_rafi", "avatar_amihan",
+            "avatar_phaister", "avatar_rafi", "avatar_amihan", "avatar_paete",
             "avatar_maring", "avatar_totoy", "avatar_inday", "avatar_kuya_boy", "avatar_ate_girlie",
             "avatar_tikboy", "avatar_bebang", "avatar_jun_jun", "avatar_lola_pacing", "avatar_mang_kanor",
             "avatar_aling_nena",
@@ -53,7 +53,7 @@ namespace TumbangPreso.UI
         };
 
         /// <summary>How many of <see cref="Ids"/> are faces (the rest are objects).</summary>
-        public const int FaceCount = 19;
+        public const int FaceCount = 20;
 
         /// <summary>
 

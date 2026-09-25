@@ -636,6 +636,13 @@ namespace TumbangPreso.UI
 
                 // A gust: three thin swept streaks, curving up and thinning as they run right,
                 // the edges-not-fills rule of her wind (direction.md § 2).
+                // Growth: a vine along the band with two leaves off it, thick at the left, thin at
+                // the right, the way a vine grows out of his arm.
+                case "paete":
+                    return Mathf.Max(Line(v, Mathf.Sin(u * 5f) * .16f, .12f * (1.2f - u * .7f)),
+                        Mathf.Max(Line(v, .34f - (u - .3f) * (u - .3f) * 4f, .07f * (1f - Mathf.Abs(u - .3f) * 4f)),
+                                  Line(v, -.30f + (u - .7f) * (u - .7f) * 4f, .06f * (1f - Mathf.Abs(u - .7f) * 4f))));
+
                 case "amihan":
                     return Mathf.Max(Mathf.Max(
                         Line(v, 0.34f + u * u * 0.28f, 0.10f * (1.1f - u)),

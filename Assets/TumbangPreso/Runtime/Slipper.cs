@@ -847,6 +847,24 @@ namespace TumbangPreso
             return true;
         }
 
+        /// <summary>
+        /// Host: Paete's thorns take this slipper wherever it is (owner: *"i want it too be ALL, even
+        /// the ones on the hands"*). Out of a hand it is disarmed; out of the air its throw ends as a
+        /// miss and it drops where it is; on the ground it is already loose. True if it is loose now.
+        /// </summary>
+        public bool HostSnatch()
+        {
+            if (!NetAuthority.ShouldResolve() || !gameObject.activeInHierarchy) return false;
+            if (State == SlipperState.Held) return HostDisarm();
+            if (State == SlipperState.InFlight)
+            {
+                FinishChain(ThrowChainEnd.Miss);
+                Land(true);
+                return true;
+            }
+            return State == SlipperState.Loose;
+        }
+
         public float PektusSpin { get; private set; }
 
         /// <summary>

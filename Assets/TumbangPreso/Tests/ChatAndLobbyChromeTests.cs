@@ -264,7 +264,8 @@ namespace TumbangPreso.Tests
             //51 carries explicit edge-climb state and requests; mixed builds cannot decode it.
             //52 derives the shared ultimate phase length from the accepted heroes' introductions.
             //53 carries the Whirled and Chilled status clocks and the Carry message (ability overhaul).
-            Assert.AreEqual(53, NetSession.ProtocolVersion,
+            //54 adds Paete: his roster index, the Rooted clock, SproutKnock, ReqBreakFree, ReqUproot.
+            Assert.AreEqual(54, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

@@ -394,7 +394,9 @@ namespace TumbangPreso.Net
         // a 51 peer would release its presentation clock at a different moment from the host.
         // 53 is the ability overhaul (2026-09-25): `SyncUnit` carries the Whirled and Chilled
         // status clocks, and the new `Carry` message holds a wind or dash hit on a client's body.
-        public const int ProtocolVersion = 53;
+        // 54 is Paete, the ninth hero (2026-09-25): his roster index, `SyncUnit` carries the Rooted
+        // clock, `ScoreEvent.SproutKnock` is appended, and `ReqBreakFree` and `ReqUproot` are new.
+        public const int ProtocolVersion = 54;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

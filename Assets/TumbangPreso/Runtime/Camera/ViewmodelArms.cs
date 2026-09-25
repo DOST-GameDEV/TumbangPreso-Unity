@@ -1006,6 +1006,26 @@ namespace TumbangPreso.CameraSystem
             new Key(2.36f,-.30f,.02f,.04f,-.34f,-.02f,-.04f,true), new Key(2.5f,-.58f,.00f,.02f,-.62f,.00f,-.02f,true),
             new Key(2.66f,-.56f,.00f,.02f,-.60f,.00f,-.02f,true), new Key(2.85f,0,0,0,0,0,0,true) };
 
+        // PAETE (2026-09-25): the growth in first person. The vine reach is both hands thrown out
+        // together and held while he is reeled (owner: *"his arms in tpp/fpp view both extend in
+        // sync"*); the seed is an underhand lob off the right hand; the thorns are both palms
+        // driven down at the ground; the sentry seed is a big overhand throw off the right.
+        private static readonly Key[] VineReachClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.10f,.24f,.10f,.04f,.26f,-.10f,-.04f,true),
+            new Key(.16f,-.64f,.04f,.06f,-.68f,-.04f,-.06f,true), new Key(.55f,-.60f,.02f,.05f,-.64f,-.02f,-.05f,true),
+            new Key(.90f,0,0,0,0,0,0,true) };
+        private static readonly Key[] SeedTossClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.14f,.34f,-.12f,.02f,.06f,.04f,0,true),
+            new Key(.28f,-.52f,.12f,.06f,-.04f,.02f,0,true), new Key(.62f,0,0,0,0,0,0,true) };
+        private static readonly Key[] ThornStampClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.12f,.30f,.06f,.10f,.30f,-.06f,-.10f,true),
+            new Key(.22f,-.34f,.28f,.12f,-.34f,-.28f,-.12f,true), new Key(.40f,-.30f,.24f,.10f,-.30f,-.24f,-.10f,true),
+            new Key(.75f,0,0,0,0,0,0,true) };
+        private static readonly Key[] SentryThrowClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.20f,.56f,-.22f,-.08f,-.18f,.10f,0,true),
+            new Key(.36f,-.74f,.24f,.10f,-.08f,.04f,0,true), new Key(.52f,-.66f,.20f,.08f,-.04f,.02f,0,true),
+            new Key(.90f,0,0,0,0,0,0,true) };
+
         public bool PlayAction(string clip)
         {
             // While the can is being raised the hands hold the raise pose (`ViewmodelArms.RaiseCan`);
@@ -1072,6 +1092,10 @@ namespace TumbangPreso.CameraSystem
                   : clip == "updraft-lift" ? UpdraftLiftClip
                   : clip == "gale-sweep" ? GaleSweepClip
                   : clip == "storm-call" ? StormCallClip
+                  : clip == "vine-reach" ? VineReachClip
+                  : clip == "seed-toss" ? SeedTossClip
+                  : clip == "thorn-stamp" ? ThornStampClip
+                  : clip == "sentry-throw" ? SentryThrowClip
                   : clip == "coven-eclipse" ? CovenEclipseClip
                   : null;
 
@@ -1313,6 +1337,8 @@ namespace TumbangPreso.CameraSystem
                 case "phaister": return SkinPhaister;
                 case "rafi": return new Color32(178,118,74,255);
                 case "amihan": return new Color32(213,154,110,255);
+                // Paete is bark: the model's slot 13.
+                case "paete": return new Color32(140,100,64,255);
 
                 // Classic Characters
                 case "bayan": return SkinBayan;
@@ -1360,6 +1386,8 @@ namespace TumbangPreso.CameraSystem
                     return "rafi";
                 case "amihan":
                     return "amihan";
+                case "paete":
+                    return "paete";
 
                 case "bayan":
                 case "berto":
@@ -1470,6 +1498,8 @@ namespace TumbangPreso.CameraSystem
             if(characterId=="rafi" && UseRosterArms(characterId))return;
             // Amihan's wide cream sleeves and banded cuffs are her own; show them, not the kit.
             if(characterId=="amihan" && UseRosterArms(characterId))return;
+            // Paete's arms are bark and tangled vines ending in points; the generic wrist kit would hide them.
+            if(characterId=="paete" && UseRosterArms(characterId))return;
             // Use the retained solid block-hand frame with character-specific
             // sleeves and skin. Extracting every body gauntlet/prop into this
             // close view created the rejected fragmented hands. All action

@@ -190,6 +190,15 @@ namespace TumbangPreso.InputLayer
             Verb.EmoteWheel => new VerbInput(
                 Verb.EmoteWheel, "EmoteWheel", "<Gamepad>/dpad/up",
                 TouchZone.UtilityChip, 0, TouchSize.Small, "EMOTE", UI.VerbGlyph.Emote),
+
+            // ⚠️ INTERACT (2026-09-25): pull out a plant, break out of roots. The pad's free control
+            // is the right stick's press: B is `ReadyUp` in the same context, and every face and
+            // shoulder is a verb. On a phone it rides beside the MOVE stick, because the two things
+            // it does both happen with the left thumb idle (a rooted body cannot walk; a player
+            // pulling a plant stands still), and the right thumb's cluster keeps its layout.
+            Verb.Interact => new VerbInput(
+                Verb.Interact, "Interact", "<Gamepad>/rightStickPress",
+                TouchZone.MoveStick, 1, TouchSize.Medium, "INTERACT", UI.VerbGlyph.Interact),
         };
 
         /// <summary>Every verb's entry, in enum order.</summary>

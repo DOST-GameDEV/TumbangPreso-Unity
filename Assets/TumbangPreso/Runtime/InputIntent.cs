@@ -15,6 +15,12 @@ namespace TumbangPreso
         Skill1,         // Hero Skill 1. Q
         Skill2,         // Hero Skill 2. E
         Ultimate,       // Hero Ultimate. F
+
+        // ⚠️ APPENDED (2026-09-25). The general INTERACT: do the thing in front of me that is not a
+        // pickup. Owner, on pulling out Paete's plant: *"dont make the keybind shove maybe make like
+        // a general keybind for interact and remove and shit"*, and on breaking out of his roots:
+        // *"i suggest the general interact button"*. G on a keyboard.
+        Interact,
     }
 
     /// <summary>

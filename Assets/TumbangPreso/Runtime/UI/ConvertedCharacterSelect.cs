@@ -2734,6 +2734,7 @@ namespace TumbangPreso.UI
                 case "nemu": return "SPIRIT TRICKSTER\nSlip beyond reach, possess the street, and turn a seance into a trap.";
                 case "phaister": return "STREET WITCH\nCurse the ground, blink out of trouble, and black out the whole street.";
                 case "rafi": return "CURRENT TRICKSTER\nBend a throw, leave a watery feint, and send a low wave through a chase.";
+                case "paete": return "THE FOREST OF MOUNT MAKILING\nVines to cross the court, a seedling that throws, thorns that take your slipper.";
                 case "amihan": return "WIND RUNNER FROM VIGAN\nThe fastest hero on the court. Her skills are still being designed.";
 
                 // Classic Roster

@@ -89,6 +89,7 @@ namespace TumbangPreso.Visual
                     case "cheska": BuildCheska(); break;
                     case "rafi": BuildRafi(); break;
                     case "amihan": BuildAmihan(); break;
+                    case "paete": BuildPaete(); break;
                     default: throw new ArgumentOutOfRangeException(nameof(hero));
                 }
                 _renderers = _root.GetComponentsInChildren<Renderer>(true);
@@ -320,6 +321,7 @@ namespace TumbangPreso.Visual
                 case "cheska": SampleCheska(t); break;
                 case "rafi": SampleRafi(t); break;
                 case "amihan": SampleAmihan(t); break;
+                case "paete": SamplePaete(t); break;
             }
         }
 

@@ -53,6 +53,7 @@ namespace TumbangPreso
                 case StatusKind.Chilled: return _chilledLeft;
                 case StatusKind.Frozen: return IsFrozen ? _stunLeft : 0.0f;
                 case StatusKind.Tagged: return IsTagged ? _stunLeft : 0.0f;
+                case StatusKind.Rooted: return _rootedLeft;
                 default: return 0.0f;
             }
         }
@@ -69,7 +70,7 @@ namespace TumbangPreso
         }
 
         /// <summary>The movement multiplier every live status puts on this body. 1 = none.</summary>
-        public float StatusSpeedScale => IsChilled ? StatusRules.ChilledSpeedScale : 1.0f;
+        public float StatusSpeedScale => IsRooted ? 0.0f : IsChilled ? StatusRules.ChilledSpeedScale : 1.0f;
 
         /// <summary>
         /// WHIRLED: *"Drops slipper if currently in hand. Prevents slipper retrieval for 2.5
@@ -134,7 +135,81 @@ namespace TumbangPreso
             _stunElement = StunElement.None;
             _stunBreakPresses = Balance.StunBreakPressesDefault;
             _stunMashPresses = 0;
+            // Owner, 2026-09-25: *"a rooted player can be tagged and theyre out of the root after
+            // getting tagged"*. The tag's five seconds replace the roots.
+            EndRooted();
             StatusGained?.Invoke(this, StatusKind.Tagged);
+        }
+
+        // ------------------------------------------------------------------ ROOTED (Paete)
+
+        private float _rootedLeft, _breakFreeHeld;
+        private bool _breakFreeRequested;
+
+        /// <summary>Seconds of Rooted left: the sentry's remaining life, at most.</summary>
+        public float RootedLeft => _rootedLeft;
+        public bool IsRooted => _rootedLeft > 0.0f;
+
+        /// <summary>How much of the break-free hold is done, 0 to 1 (the ring on the HUD).</summary>
+        public float BreakFreeProgress => Mathf.Clamp01(_breakFreeHeld / PaeteRules.BreakFreeHoldSeconds);
+
+        /// <summary>How far this body's pull on Paete's plant has got, 0 to 1 (the HUD ring and the heave pose).</summary>
+        public float PullingPlantProgress { get; set; }
+
+        /// <summary>True while this body's owner is holding Interact against the roots, for the struggle pose.</summary>
+        public bool IsStruggling { get; private set; }
+
+        /// <summary>
+        /// ROOTED: pulled to Paete's sentry and held by the roots. No movement; throwing and skills
+        /// still work (owner: *"theyre js rooted"*). Host-decided: the sentry calls this after the
+        /// pull lands, and `SyncUnit` carries it to everyone.
+        /// </summary>
+        public void ApplyRooted(float seconds = StatusRules.RootedSeconds)
+        {
+            if (!MayMutateGameplayState()) return;
+            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+            if (IsTagged) return; // already held harder, and a tag ends roots anyway
+            bool fresh = _rootedLeft <= 0.0f;
+            _rootedLeft = StatusRules.Refresh(_rootedLeft, seconds);
+            if (fresh) { _breakFreeHeld = 0.0f; _breakFreeRequested = false; }
+            EndFlightImmediately();
+            ReleaseCommitment();
+            if (fresh) StatusGained?.Invoke(this, StatusKind.Rooted);
+        }
+
+        /// <summary>Ends Rooted: the hold was finished, a tag landed, or the sentry withered.</summary>
+        public void EndRooted()
+        {
+            _rootedLeft = 0.0f;
+            _breakFreeHeld = 0.0f;
+            _breakFreeRequested = false;
+            IsStruggling = false;
+        }
+
+        /// <summary>
+        /// The owner's half of breaking free: while rooted and holding Interact, the hold fills
+        /// (progress is kept if they let go, plan § 7). On the host it ends the roots at once; a
+        /// client asks the host once, and the host checks the roots have been on long enough.
+        /// </summary>
+        private void StepBreakFree(float dt)
+        {
+            IsStruggling = false;
+            if (!IsRooted || !IsLocallySimulated()) return;
+            if (Intent == null || !Intent.Pressed(Verb.Interact)) return;
+            IsStruggling = true;
+            _breakFreeHeld += dt;
+            if (_breakFreeHeld < PaeteRules.BreakFreeHoldSeconds) return;
+            if (NetAuthority.ShouldResolve()) { EndRooted(); return; }
+            if (_breakFreeRequested) return;
+            _breakFreeRequested = true;
+            Net.MatchRpc.Instance?.RequestBreakFree(_playerSlot);
+        }
+
+        /// <summary>The host's answer to a client's break-free request.</summary>
+        public void HostBreakFree()
+        {
+            if (!NetAuthority.ShouldResolve() || !IsRooted) return;
+            EndRooted();
         }
 
         /// <summary>Ends Whirled and Chilled. For the round reset and the respawn only.</summary>
@@ -143,12 +218,21 @@ namespace TumbangPreso
             _whirledLeft = 0.0f;
             _chilledLeft = 0.0f;
             _carryLeft = 0.0f;
+            EndRooted();
             EndFlightImmediately();
         }
 
         /// <summary>The host's status timers, off the wire (`SyncUnit`).</summary>
-        public void ApplyNetworkStatuses(float whirledLeft, float chilledLeft)
+        public void ApplyNetworkStatuses(float whirledLeft, float chilledLeft, float rootedLeft = 0.0f)
         {
+            bool rooted = _rootedLeft <= 0.0f && rootedLeft > 0.0f;
+            if (rootedLeft <= 0.0f && _rootedLeft > 0.0f) EndRooted();
+            else if (rootedLeft > 0.0f)
+            {
+                if (rooted) { _breakFreeHeld = 0.0f; _breakFreeRequested = false; }
+                _rootedLeft = Mathf.Clamp(rootedLeft, 0.0f, StatusRules.RootedSeconds + 0.01f);
+            }
+            if (rooted) StatusGained?.Invoke(this, StatusKind.Rooted);
             bool whirled = _whirledLeft <= 0.0f && whirledLeft > 0.0f;
             bool chilled = _chilledLeft <= 0.0f && chilledLeft > 0.0f;
             _whirledLeft = Mathf.Clamp(whirledLeft, 0.0f, StatusRules.WhirledSeconds + 0.01f);
@@ -161,6 +245,12 @@ namespace TumbangPreso
         {
             if (_whirledLeft > 0.0f) _whirledLeft = Mathf.Max(0.0f, _whirledLeft - dt);
             if (_chilledLeft > 0.0f) _chilledLeft = Mathf.Max(0.0f, _chilledLeft - dt);
+            if (_rootedLeft > 0.0f)
+            {
+                _rootedLeft = Mathf.Max(0.0f, _rootedLeft - dt);
+                if (_rootedLeft <= 0.0f) EndRooted();
+            }
+            StepBreakFree(dt);
         }
 
         // ------------------------------------------------------------------ THE CARRY

@@ -47,6 +47,10 @@ namespace TumbangPreso.UI
             { "amihan_skill2", AbilityGlyph.AmihanUpdraft },
             { "amihan_skill2d", AbilityGlyph.AmihanWhirlwind },
             { "amihan_ultimate", AbilityGlyph.AmihanStormSurge },
+            { "paete_skill1", AbilityGlyph.PaeteVine },
+            { "paete_skill2", AbilityGlyph.PaeteSprout },
+            { "paete_skill2d", AbilityGlyph.PaeteThorn },
+            { "paete_ultimate", AbilityGlyph.PaeteSentry },
         };
 
         /// <summary>

@@ -26,6 +26,7 @@ namespace TumbangPreso.EditorTools
             ("zack",     "Zack",     "Assets/TumbangPreso/Art/characters/persons/team-zack.glb"),
             ("rafi",     "Rafi",     "Assets/TumbangPreso/Art/characters/persons/team-rafi.glb"),
             ("amihan",   "Amihan",   "Assets/TumbangPreso/Art/characters/persons/team-amihan.glb"),
+            ("paete",    "Paete",    "Assets/TumbangPreso/Art/characters/persons/team-paete.glb"),
         };
 
         private static readonly (string Label, float Yaw)[] Angles =
@@ -74,7 +75,7 @@ namespace TumbangPreso.EditorTools
             if (File.Exists(output)) throw new IOException("Use a new review filename: " + output);
             Directory.CreateDirectory(Path.GetDirectoryName(output));
             var people = Core.Roster.HeroPeople.Concat(Core.Roster.ClassicPeople).ToArray();
-            if (people.Length != 20 || people.Select(p => p.Id).Distinct().Count() != 20)
+            if (people.Length != 21 || people.Select(p => p.Id).Distinct().Count() != 21)
                 throw new InvalidOperationException("Review the changed playable roster before rendering this sheet.");
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             BuildLight();

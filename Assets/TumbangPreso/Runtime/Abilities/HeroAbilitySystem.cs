@@ -376,6 +376,10 @@ namespace TumbangPreso.Abilities
                 case "amihan":
                     return new AmihanHeroKit();
 
+                // The ninth hero, a plant: signature, attacking, defending, ultimate (2026-09-25).
+                case "paete":
+                    return new PaeteHeroKit();
+
                 default:
                     return new DanteHeroKit();
             }
@@ -823,7 +827,7 @@ namespace TumbangPreso.Abilities
             }
             // Amihan's casts carry their own tell (the heel kick, the lift ring, the gale's unroll;
             // `AmihanVfx`), so the generic flash would be a second picture of one beat.
-            if (Kit != null && (Kit.HeroId == "phaister" || Kit.HeroId == "sean" || Kit.HeroId == "amihan")) return;
+            if (Kit != null && (Kit.HeroId == "phaister" || Kit.HeroId == "sean" || Kit.HeroId == "amihan" || Kit.HeroId == "paete")) return;
             if (Kit == null || Kit.HeroId != "zack")
                 Visual.AbilityVfx.SpawnCastFlash(transform.position, AccentColour(), .55f);
 
@@ -983,6 +987,7 @@ namespace TumbangPreso.Abilities
                 case "nemu": return "sfx_ult_theme_nemu";
                 case "rafi": return "sfx_ult_theme_rafi";
                 case "amihan": return "sfx_ult_theme_amihan";
+                case "paete": return "sfx_ult_theme_paete";
                 default: return null;
             }
         }
@@ -998,6 +1003,7 @@ namespace TumbangPreso.Abilities
                 case "dante": return Visual.SkyEvent.Look.Dustveil;
                 case "nemu": return Visual.SkyEvent.Look.Seance;
                 case "amihan": return Visual.SkyEvent.Look.Monsoon;
+                case "paete": return Visual.SkyEvent.Look.Canopy;
                 default: return null;
             }
         }
@@ -1078,7 +1084,7 @@ namespace TumbangPreso.Abilities
             // bleached the court for 2.2 seconds after a 0.4-second preparation.
             if (Kit != null && Kit.HeroId == "cheska")
                 Visual.CheskaColdGather.Begin(_motor.transform,Kit.Ultimate.Windup);
-            else if (Kit == null || (Kit.HeroId != "nemu" && Kit.HeroId != "dante" && Kit.HeroId != "phaister" && Kit.HeroId != "sean" && Kit.HeroId != "zack" && Kit.HeroId != "rafi" && Kit.HeroId != "amihan"))
+            else if (Kit == null || (Kit.HeroId != "nemu" && Kit.HeroId != "dante" && Kit.HeroId != "phaister" && Kit.HeroId != "sean" && Kit.HeroId != "zack" && Kit.HeroId != "rafi" && Kit.HeroId != "amihan" && Kit.HeroId != "paete"))
                 Visual.UltimateColumn.Raise(_context.Position, AccentColour());
 
             // ⚠️⚠️ THE WEATHER IS THE SECOND THING THAT IS NOT LOCAL, AND IT IS HERE RATHER THAN
@@ -1134,7 +1140,7 @@ namespace TumbangPreso.Abilities
             // the actual ground contact, not a long chromatic blast on keypress.
             // Amihan's weight lands at the RELEASE, 2.5 s after the press (`AmihanStorm.Release`
             // punches the camera); a punch here would spend the impact on the gather.
-            if (afterIntroduction || (Kit != null && (Kit.HeroId == "dante" || Kit.HeroId == "phaister" || Kit.HeroId == "sean" || Kit.HeroId == "zack" || Kit.HeroId == "amihan"))) return;
+            if (afterIntroduction || (Kit != null && (Kit.HeroId == "dante" || Kit.HeroId == "phaister" || Kit.HeroId == "sean" || Kit.HeroId == "zack" || Kit.HeroId == "amihan" || Kit.HeroId == "paete"))) return;
 
             var camera = UnityEngine.Camera.main;
             if (camera == null) return;

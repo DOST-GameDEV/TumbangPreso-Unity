@@ -359,6 +359,10 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("Teleport", OnTeleportMsg);
             cm.RegisterNamedMessageHandler("Impact", OnImpactMsg);
             cm.RegisterNamedMessageHandler("Carry", OnCarryMsg);
+            // Paete (protocol 54): a rooted player breaking free, a player pulling out his plant.
+            cm.RegisterNamedMessageHandler("ReqBreakFree", OnReqBreakFreeMsg);
+            cm.RegisterNamedMessageHandler("ReqUproot", OnReqUprootMsg);
+            cm.RegisterNamedMessageHandler("PlantPulled", OnPlantPulledMsg);
             cm.RegisterNamedMessageHandler("ReqPunch", OnReqPunchMsg);
             cm.RegisterNamedMessageHandler("ReqLunge", OnReqLungeMsg);
             cm.RegisterNamedMessageHandler("ReqSlide", OnReqSlideMsg);
@@ -2158,6 +2162,72 @@ namespace TumbangPreso.Net
             unit.BeginCarry(velocity,seconds);
         }
 
+        /// <summary>
+        /// ⚠️ A ROOTED CLIENT HAS HELD INTERACT FOR THE WHOLE `PaeteRules.BreakFreeHoldSeconds`
+        /// (2026-09-25). The hold is read where the input is, on the owner; the host decides. It
+        /// only accepts from the seat's own peer and only while that body is rooted, so a forged
+        /// request can at worst end a root the owner could have ended by holding a key.
+        /// </summary>
+        public void RequestBreakFree(int slot)
+        {
+            if (NetAuthority.IsHost) { Unit(slot)?.HostBreakFree(); return; }
+            if (_nm?.CustomMessagingManager == null || !ValidSlot(slot)) return;
+            using var writer = new FastBufferWriter(8, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqBreakFree", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqBreakFreeMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int slot);
+            if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who) || who == null) return;
+            who.HostBreakFree();
+        }
+
+        /// <summary>
+        /// A client holding Interact at Paete's plant for `PaeteRules.PlantPullSeconds`. The host
+        /// finds the plant itself and checks reach and age (`PaetePlant.HostTryUproot`).
+        /// </summary>
+        public void RequestUproot(int slot, Vector3 from)
+        {
+            if (NetAuthority.IsHost) { Abilities.PaetePlant.HostTryUproot(Unit(slot)); return; }
+            if (_nm?.CustomMessagingManager == null || !ValidSlot(slot) || !Finite(from)) return;
+            using var writer = new FastBufferWriter(24, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(from);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqUproot", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqUprootMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out Vector3 from);
+            if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who) || who == null) return;
+            if (!PlausibleIntentPose(who, from)) return;
+            Abilities.PaetePlant.HostTryUproot(who);
+        }
+
+        /// <summary>Host: someone pulled out Paete's plant. Every peer plays the pull and removes it.</summary>
+        public void BroadcastPlantPulled(int ownerSlot, int pullerSlot)
+        {
+            if (!NetAuthority.ShouldResolve() || _nm?.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(ownerSlot);
+            writer.WriteValueSafe(pullerSlot);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("PlantPulled", writer);
+        }
+
+        private void OnPlantPulledMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!FromHost(senderClientId)) return;
+            reader.ReadValueSafe(out int ownerSlot);
+            reader.ReadValueSafe(out int pullerSlot);
+            if (!ValidSlot(ownerSlot)) return;
+            Abilities.PaetePlant.ApplyPulled(ownerSlot, pullerSlot);
+        }
+
         public void BroadcastTeleport(int slot,Vector3 position,float yaw)
         {
             if(!NetAuthority.ShouldResolve() || !ValidSlot(slot) || _nm?.CustomMessagingManager==null)return;
@@ -2300,6 +2370,8 @@ namespace TumbangPreso.Net
             // already ride the stun fields above; Whirled and Chilled have their own clocks.
             writer.WriteValueSafe(unit.WhirledLeft);
             writer.WriteValueSafe(unit.ChilledLeft);
+            // ⚠️ PAETE'S ROOTS (protocol 54, 2026-09-25): appended after the two above.
+            writer.WriteValueSafe(unit.RootedLeft);
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer,reliable?NetworkDelivery.ReliableSequenced:PoseDelivery);
         }
 
@@ -2340,7 +2412,8 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float edgeRatio);
             reader.ReadValueSafe(out float whirledLeft);
             reader.ReadValueSafe(out float chilledLeft);
-            if(!Finite(whirledLeft) || !Finite(chilledLeft))return;
+            reader.ReadValueSafe(out float rootedLeft);
+            if(!Finite(whirledLeft) || !Finite(chilledLeft) || !Finite(rootedLeft))return;
             if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
             if(edgeKind>(byte)EdgeRecoveryKind.Lagoon||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
             if(edgeKind!=0&&(edgeOutward.sqrMagnitude<.9f||edgeOutward.sqrMagnitude>1.1f||edgeRatio<0||edgeRatio>1))return;
@@ -2377,7 +2450,7 @@ namespace TumbangPreso.Net
                                    tripLeft, tripTotal, tripMashPresses, tripMashRemoved,
                                    staminaCurrent, staminaIdle, fatigueLeft,
                                    recoveryEpisode,recoveryAcknowledged);
-            unit.ApplyNetworkStatuses(whirledLeft, chilledLeft);
+            unit.ApplyNetworkStatuses(whirledLeft, chilledLeft, rootedLeft);
         }
 
         // -------------------------------------------------------------------

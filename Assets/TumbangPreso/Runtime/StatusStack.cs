@@ -96,6 +96,10 @@ namespace TumbangPreso
                 into.Add(new StatusRow { Label = "WHIRLED", Remaining = m.WhirledLeft, Total = StatusRules.WhirledSeconds, Timed = true });
             if (m.IsChilled)
                 into.Add(new StatusRow { Label = "CHILLED", Remaining = m.ChilledLeft, Total = StatusRules.ChilledSeconds, Timed = true });
+            // Paete's roots: the row counts the sentry's time down; the break-free ring is drawn
+            // by the readout from `BreakFreeProgress`.
+            if (m.IsRooted)
+                into.Add(new StatusRow { Label = "ROOTED", Remaining = m.RootedLeft, Total = StatusRules.RootedSeconds, Timed = true });
 
             if (m.Stamina.IsFatigued)
                 into.Add(new StatusRow

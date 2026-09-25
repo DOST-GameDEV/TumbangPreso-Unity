@@ -57,7 +57,7 @@ namespace TumbangPreso.EditorTools
                 // would break these again for no reason a reader could act on; what this check
                 // is actually for is proving the rules package is REACHABLE from Unity at all
                 // (see the note above), so it asserts the relationship rather than the totals.
-                Check(ref failures, "hero roster size", Roster.HeroPeople.Count == 8);
+                Check(ref failures, "hero roster size", Roster.HeroPeople.Count == 9);
                 Check(ref failures, "all roster size",
                       Roster.AllPeople.Count == Roster.ClassicPeople.Count + Roster.HeroPeople.Count);
                 // ⚠️⚠️ THESE TWO WERE `== 4` AND `== 9` AND THEY BROKE THE MOMENT A CAN WAS

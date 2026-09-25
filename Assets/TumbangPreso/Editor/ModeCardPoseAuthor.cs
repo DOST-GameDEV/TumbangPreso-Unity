@@ -33,7 +33,7 @@ namespace TumbangPreso.EditorTools
 
         private static readonly string[] Ids =
         {
-            "sean", "cheska", "dante", "zack", "nemu", "phaister", "rafi", "amihan",
+            "sean", "cheska", "dante", "zack", "nemu", "phaister", "rafi", "amihan", "paete",
             "maring", "totoy", "inday", "kuya_boy", "ate_girlie", "tikboy", "bebang", "jun_jun",
         };
 
