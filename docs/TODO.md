@@ -349,8 +349,13 @@ light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
   cosine-weighted hemisphere samples round the depth-normals normal, 0.9 m radius, per-pixel
   noise rotation, a range check and a fade out by 60 m. A 3x3 depth-aware blur follows, and the
   composite leans the occluded part toward the violet `CavityHue`. `AmbientOcclusion` 0.8 on a steepened curve (the first cut at 0.6 moved the deepest corner 14 levels in 255). On the
-  Bright style's own gate (not Classic, not the Low tier, perspective cameras only). Open until
-  the before/after renders and the owner's playtest.
+  Bright style's own gate (not Classic, not the Low tier, perspective cameras only). Rendered
+  with it off and on from the same cameras on all five maps, Mac, 1/1 each run, with the owner's
+  profile untouched (`-tp-profile`). The first cut darkened the right places, per the heat map
+  `Eskinita-stage-aomap.png`: feet, fences, house joins and props. It was too faint, so v2
+  steepened it. Sheets are in
+  [reports/light-3-2026-09-25/ambient-occlusion/](reports/light-3-2026-09-25/ambient-occlusion/).
+  Open for the owner's playtest.
 - [ ] LIGHT-3.5 The owner's look at the final comparison. The rendering is done: `e26eeb04`,
   Mac, one PlayMode launch, total 3 failed 0 (`FiveMapStageCapturesPreserveGeometryAndRestore
   OriginalLighting`, `LightingStyleThumbnails` and a scratch same-camera review that was not
