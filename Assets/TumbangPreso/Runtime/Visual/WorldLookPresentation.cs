@@ -77,18 +77,23 @@ namespace TumbangPreso.Visual
             var profile=WorldLookProfile.Current;
             Color shade=Look.ShadowTint*profile.ShadowLevel;shade.a=1;
             // ⚠️ THE WARM BAND IS WHERE LIGHT TURNS TO SHADE, NOT A SECOND LIGHT. It peaks at
-            // 42 per cent of the ramp and is gone by the lit side, which is what reads as the
-            // soft-toy warmth on PEAK's scouts. Kept small: a strong one reads as sunburn.
-            var warm=new Color(1,.62f,.42f);
+            // 42 per cent of the ramp and is gone by the lit side: the "fuzzy orange" a painter
+            // lays on a turning form under a warm key (owner, 2026-09-25).
+            // ⚠️⚠️ AT CONSTANT LUMINANCE. The first band multiplied by a warm colour times 1.25,
+            // which brightened as it warmed and clipped orange skin; this one divides the orange
+            // by its own luminance (0.948), so the band turns hue and adds no light.
+            var orange=new Color(1.22f,.90f,.62f);
+            float orangeLuma=.2126f*orange.r+.7152f*orange.g+.0722f*orange.b;
             for(int i=0;i<64;i++)
             {
                 float t=i/63f,s=t*t*(3-2*t);
                 Color c=Color.Lerp(shade,Color.white,s);
                 float band=Mathf.Exp(-Mathf.Pow((t-.42f)/.2f,2))*profile.Terminator;
-                c=Color.Lerp(c,new Color(c.r*warm.r*1.25f,c.g*warm.g*1.25f,c.b*warm.b*1.25f),band);c.a=1;
+                c=Color.Lerp(c,new Color(c.r*orange.r,c.g*orange.g,c.b*orange.b)/orangeLuma,band);c.a=1;
                 _ramp.SetPixel(i,0,c);
             }
-            _ramp.Apply(false,true);Current=this;ApplyScene();
+            _ramp.Apply(false,true);
+            Current=this;ApplyScene();
         }
         /// <summary>
         /// Writes the look back over the scene settings after somebody else rewrote them.
