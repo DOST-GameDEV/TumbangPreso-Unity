@@ -76,10 +76,13 @@ Shader "TumbangPreso/NeighbourhoodSky"
                 // This retains shaded billows without letting the source sun
                 // flatten an entire panorama into the light endpoint.
                 // A painted edge: the blurred coverage steps into a shape with a narrow soft rim.
-                cloud=lerp(cloud,smoothstep(.28,.52,cloud),_CloudPaint);
+                cloud=lerp(cloud,smoothstep(.24,.56,cloud),_CloudPaint);
                 float light=smoothstep(_CloudLumaLow,_CloudLumaHigh,luma);
                 // Two tones, lit top and body, with a brushed rather than a hard transition.
-                light=lerp(light,smoothstep(.40,.62,light),_CloudPaint);
+                // ⚠️ THE STEP SITS LOW (0.22 to 0.50) SO MOST OF A CLOUD IS ITS LIT CREAM TONE and
+                // the teal-grey body is its underside. At 0.40 to 0.62 the first render left the
+                // clouds almost all body: one cold cut-out tone.
+                light=lerp(light,smoothstep(.22,.50,light),_CloudPaint);
                 half3 cloudColor=lerp(_CloudShade.rgb,_CloudLight.rgb,light);
                 sky=lerp(sky,cloudColor,cloud*_CloudOpacity);
 

@@ -186,22 +186,27 @@ namespace TumbangPreso.Visual
         //    the sky reads as PEAK's soft teal-blue rather than a saturated poster blue, and
         //    CLOUD SHADES in a teal-grey near that sky, low contrast as PEAK's are. The lavender
         //    rule above still holds: every zenith keeps green well above red.
+        //  * A DEEPER COLOURED BLACK FLOOR, `Lift` about 2.5 TIMES ITS OLD VALUE (0.02 to 0.06 in
+        //    linear, luma about 45 to 60 in sRGB). PEAK's darkest 1 per cent sits at luma 64 and
+        //    is coloured. The first tone-down frame took the cream rim off, and with it the only
+        //    thing lifting black hair and hats: black cast pixels went from 2 to 16 per cent of the
+        //    cast shot, flat blobs against the hull. The floor answers it without a finish.
         public MapLook[] Maps={
             new MapLook("BayanPlaza",new Color(.48f,.54f,.62f),new Color(.54f,.51f,.46f),new Color(.46f,.38f,.30f),new Color(.86f,.88f,1.08f),38,210,0,true)
                 .Air(new Color(.74f,.85f,.94f),new Color(.44f,.70f,.88f),new Color(.76f,.87f,.95f),new Color(.97f,.97f,.94f),new Color(.70f,.80f,.84f))
-                .Key(new Color(1,.95f,.84f),1.08f,52,.76f,new Color(.012f,.012f,.022f)),
+                .Key(new Color(1,.95f,.84f),1.08f,52,.76f,new Color(.03f,.03f,.055f)),
             new MapLook("Eskinita",new Color(.46f,.53f,.62f),new Color(.57f,.49f,.44f),new Color(.49f,.37f,.27f),new Color(.92f,.86f,1.06f),34,190,1,false)
                 .Air(new Color(.95f,.9f,.8f),new Color(.42f,.69f,.88f),new Color(.97f,.93f,.82f),new Color(.97f,.95f,.89f),new Color(.74f,.80f,.84f))
-                .Key(new Color(1,.91f,.76f),1.10f,50,.74f,new Color(.018f,.011f,.020f)).Floor(1.6f),
+                .Key(new Color(1,.91f,.76f),1.10f,50,.74f,new Color(.045f,.028f,.05f)).Floor(1.6f),
             new MapLook("IlalimNgTulay",new Color(.44f,.55f,.60f),new Color(.49f,.52f,.50f),new Color(.43f,.38f,.33f),new Color(.84f,.94f,1.06f),36,180,2,false)
                 .Air(new Color(.82f,.91f,.92f),new Color(.44f,.72f,.84f),new Color(.88f,.93f,.90f),new Color(.97f,.97f,.93f),new Color(.68f,.79f,.82f))
-                .Key(new Color(1,.94f,.82f),1.06f,52,.72f,new Color(.010f,.016f,.020f)).Floor(1.6f),
+                .Key(new Color(1,.94f,.82f),1.06f,52,.72f,new Color(.025f,.04f,.05f)).Floor(1.6f),
             new MapLook("SaBubong",new Color(.49f,.52f,.63f),new Color(.60f,.49f,.45f),new Color(.51f,.38f,.31f),new Color(.96f,.84f,1.08f),60,300,3,true)
                 .Air(new Color(.98f,.88f,.74f),new Color(.42f,.68f,.88f),new Color(1,.91f,.74f),new Color(.97f,.91f,.81f),new Color(.78f,.78f,.82f))
-                .Key(new Color(1,.87f,.70f),1.08f,42,.74f,new Color(.020f,.012f,.024f)),
+                .Key(new Color(1,.87f,.70f),1.08f,42,.74f,new Color(.05f,.03f,.06f)),
             new MapLook("Lagoon",new Color(.43f,.58f,.65f),new Color(.51f,.60f,.58f),new Color(.49f,.46f,.36f),new Color(.84f,.96f,1.06f),55,290,4,false)
                 .Air(new Color(.7f,.87f,.94f),new Color(.38f,.70f,.86f),new Color(.74f,.89f,.95f),new Color(.96f,.98f,.95f),new Color(.66f,.80f,.84f))
-                .Key(new Color(1,.96f,.86f),1.10f,52,.72f,new Color(.008f,.016f,.022f))
+                .Key(new Color(1,.96f,.86f),1.10f,52,.72f,new Color(.02f,.04f,.055f))
         };
         public MapLook Find(string map)
         {foreach(var entry in Maps)if(entry.Map==map)return entry;return null;}
