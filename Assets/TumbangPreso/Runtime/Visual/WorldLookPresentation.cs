@@ -207,6 +207,8 @@ namespace TumbangPreso.Visual
                 Blend("_Zenith",Look.Zenith);Blend("_Horizon",Look.Horizon);
                 Blend("_CloudLight",Look.CloudLight);Blend("_CloudShade",Look.CloudShade);Blend("_SunColor",Look.Sun);
                 if(_sun!=null)_skyLook.SetVector("_SunDirection",-_sun.transform.forward);
+                // Painted clouds live on the look's own sky instance only; Classic's is untouched.
+                if(_skyLook.HasProperty("_CloudPaint"))_skyLook.SetFloat("_CloudPaint",WorldLookProfile.Current.CloudPaint*_weight);
                 RenderSettings.skybox=_weight>0?_skyLook:_skyAuthored;
             }
             ApplyGround();

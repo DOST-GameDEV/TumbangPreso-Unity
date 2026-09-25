@@ -19,6 +19,7 @@ Shader "TumbangPreso/NeighbourhoodSky"
         _CloudLumaLow("Cloud shaded radiance", Float)=0
         _CloudLumaHigh("Cloud lit radiance", Float)=1
         _CloudOpacity("Cloud body opacity", Range(0,1))=.94
+        _CloudPaint("Painted clouds (bright look)", Range(0,1))=0
     }
     SubShader
     {
@@ -34,7 +35,7 @@ Shader "TumbangPreso/NeighbourhoodSky"
             float4 _Zenith,_Horizon,_Ground,_SunColor,_SunDirection,_Tint,_CloudLight,_CloudShade;
             float _TumpSkyTime;
             float _CloudSpeed;
-            float _Exposure,_CloudYaw,_CloudLumaScale,_CloudSunCutoff,_CloudOpacity,_CloudLumaLow,_CloudLumaHigh;
+            float _Exposure,_CloudYaw,_CloudLumaScale,_CloudSunCutoff,_CloudOpacity,_CloudLumaLow,_CloudLumaHigh,_CloudPaint;
             struct appdata { float4 vertex:POSITION; };
             struct v2f { float4 vertex:SV_POSITION;float3 direction:TEXCOORD0; };
             v2f vert(appdata v)
@@ -54,6 +55,17 @@ Shader "TumbangPreso/NeighbourhoodSky"
                 float2 uv=float2(atan2(direction.x,direction.z)*.159154943+.5+_CloudYaw+frac(_TumpSkyTime*_CloudSpeed),
                                  asin(clamp(direction.y,-1,1))*.318309886+.5);
                 float3 source=tex2D(_CloudMap,uv).rgb;
+                // ⚠️⚠️ § PAINTED CLOUDS, THE BRIGHT LOOK ONLY (owner 2026-09-25: "do not make the
+                // cloud realistic"). The panorama is a photograph, so at full resolution its
+                // silhouettes carry every wisp and billow of a real sky. PEAK's clouds are
+                // brushed shapes in two flat tones. So the look reads the panorama three mips
+                // down (a 2048-wide source becomes 256 texels round the whole sky, about 1.4
+                // degrees each), which keeps where the clouds are and loses their photographic
+                // detail, then below re-edges the soft result into a shape and splits its light
+                // into two tones. tex2Dlod also sidesteps the derivative seam atan2 puts at the
+                // back of the sky. The authored material leaves this 0, so Classic's sky is
+                // untouched; `WorldLookPresentation` sets it on its own sky instance.
+                if(_CloudPaint>0)source=lerp(source,tex2Dlod(_CloudMap,float4(uv,0,3)).rgb,_CloudPaint);
                 float maximum=max(max(source.r,source.g),source.b);
                 float luma=dot(source,float3(.2126,.7152,.0722));
                 float blueness=(source.b-source.r)/max(maximum,.00001);
@@ -63,7 +75,11 @@ Shader "TumbangPreso/NeighbourhoodSky"
                 // Normalize within the cloud body, not against mostly blue sky.
                 // This retains shaded billows without letting the source sun
                 // flatten an entire panorama into the light endpoint.
+                // A painted edge: the blurred coverage steps into a shape with a narrow soft rim.
+                cloud=lerp(cloud,smoothstep(.28,.52,cloud),_CloudPaint);
                 float light=smoothstep(_CloudLumaLow,_CloudLumaHigh,luma);
+                // Two tones, lit top and body, with a brushed rather than a hard transition.
+                light=lerp(light,smoothstep(.40,.62,light),_CloudPaint);
                 half3 cloudColor=lerp(_CloudShade.rgb,_CloudLight.rgb,light);
                 sky=lerp(sky,cloudColor,cloud*_CloudOpacity);
 

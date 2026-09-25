@@ -129,6 +129,12 @@ namespace TumbangPreso.Visual
         [Range(0,1)] public float Bloom=.12f;
         [Range(.5f,3)] public float BloomThreshold=1.7f;
 
+        [Header("Sky")]
+        // ⚠️ PAINTED CLOUDS (owner 2026-09-25: "do not make the cloud realistic"). 1 reads the
+        // cloud panorama three mips down and re-edges it into two flat tones, PEAK's brushed
+        // shapes; 0 keeps the photographic silhouettes. See `NeighbourhoodSky.shader`.
+        [Range(0,1)] public float CloudPaint=1;
+
         // ⚠️⚠️ A WARM HORIZON NEEDS A CYAN ZENITH OR THE SKY BETWEEN THEM TURNS LAVENDER. The
         // sky shader blends horizon to zenith in linear light, and the first render paired a
         // peach horizon (red well above green) with a violet-leaning blue: every sky pixel in

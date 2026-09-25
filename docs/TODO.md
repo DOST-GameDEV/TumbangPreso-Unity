@@ -218,7 +218,53 @@ material and court work; only the lighting is `main`'s.
   past the row rule; cards went from 384 to 376 (`daf427e2`). Not done: a native player build,
   a pad walk of the row, and a look inside a live match's pause menu. That menu opens the same
   `TumpSettingsView` through `ConvertedSettingsPanel`, so the row is there by construction.
-- [ ] LIGHT-2.3 Slot 3 content. The owner's call: the card shows an empty slot until then.
+- [ ] LIGHT-2.3 Slot 3 content.
+
+### LIGHT-3 · Tone down the Bright style, matte cast, painted clouds ⚠️ IN PROGRESS, 2026-09-25
+
+Owner request (2026-09-25), with a PEAK frame of three climbers on sand as the reference: "tone
+down the brightness on the bright lighting style. it currently is too bright and the character
+glows", "overhaul the lighting if needed, remove the bright finish on all characters", "do not
+make the cloud realistic. do not go towards the route of realism". Classic is not touched.
+
+**Reference, measured from the owner's frame:**
+- The lit green body is (48,160,77), luma 130, and the khaki shirt is (239,194,97). Nothing on a
+  character is near white.
+- The darkest 1 per cent sits at luma 64.
+- Shadow on sand is a deeper, more saturated sand, (165,92,51).
+- The sky is a pale mint, (210,230,222), with low-contrast brushed clouds, and the far mountain
+  dissolves into teal air.
+
+Public write-ups of PEAK's lighting internals were not found (searched 2026-09-25), so the frame
+is the evidence.
+
+**Before, measured at `d27c9712`:**
+- The Eskinita cast shot had the yellow jacket at (255,225,5) and orange skin at (244,121,5), so
+  red was clipped, blue had collapsed and the colours read neon.
+- The Bright sky was a saturated poster blue, (131,184,241) on Bayan.
+- The current renders of both styles on all five maps (sky, wide, eye, stage, cast) are in
+  [reports/light-3-2026-09-25/before/](reports/light-3-2026-09-25/before/).
+
+**Causes found:**
+- The cast was lit at albedo x (1.34 sun + ~0.65 ambient), about 1.9 before the curve.
+- Vibrance 0.24 drove already saturated colours to their floor.
+- The bloom soft knee was a hard-coded 0.6 of the 1.7 threshold, so the chain collected every
+  value above 0.68, which is every sunlit body.
+- Three finishes sat on the cast: the cream upper rim, the metal glint, and the
+  distance-readability lift with its cream rim past 5 m.
+- The warm terminator band pushed red by 1.25.
+
+- [ ] LIGHT-3.1 Painted clouds under the look: the sky instance reads the panorama three mips
+  down, re-edges it into a shape and splits it into two tones (`CloudPaint`, `_CloudPaint`).
+  Classic's sky material is untouched.
+- [ ] LIGHT-3.2 The tone-down:
+  - the sun goes to about 1.08 and the ambient to about 0.8 of its old value, with less blue;
+  - the zenith is softer and teal-leaning, and the cloud shades are teal-grey;
+  - vibrance drops to 0.08, and bloom to 0.05 at threshold 2.2 with a 0.2 knee (`BloomKnee`);
+  - `UpperRim` and `MetalHighlight` go to 0, and `Terminator` to 0.06;
+  - the distance-readability lift fades out under the look (`Toon.shader`), while Classic keeps it.
+- [ ] LIGHT-3.3 Same-camera after frames on all five maps, measured against the reference and
+  the before frames, with one tuning pass if a number misses. The owner's call: the card shows an empty slot until then.
 
 ### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)
 
