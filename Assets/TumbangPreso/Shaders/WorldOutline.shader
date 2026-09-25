@@ -755,8 +755,15 @@ Shader "TumbangPreso/WorldOutline"
                 float3 n;float3 p=ViewPoint(i.uv,n);
                 if(-p.z>_WorldContactProjection.x*.999)return 1;
                 float radius=_WorldAOParams.y,bias=_WorldAOParams.z;
-                // Interleaved gradient noise: a per-pixel rotation the blur can average out.
-                float noise=frac(52.9829189*frac(dot(i.pos.xy,float2(.06711056,.00583715))));
+                // ⚠️⚠️ A 4x4 TILE OF SIXTEEN ROTATIONS, NOT FREE NOISE, BECAUSE THE OWNER SAW THE
+                // NOISE (2026-09-25: "theres some noising artifacts"). Interleaved gradient noise
+                // never repeats inside a small tile, so the 3x3 blur averaged it only partly and a
+                // diagonal hatch survived on the tree canopies, walls and windows. Here every 4x4
+                // block holds each of sixteen evenly spaced rotations exactly once (the x5 walks
+                // all sixteen, since 5 and 16 share no factor), and pass 3 averages exactly that
+                // block, so the pattern cancels instead of leaving a residue.
+                float2 cell=fmod(floor(i.pos.xy),4);
+                float noise=(fmod((cell.x*4+cell.y)*5,16)+.5)/16;
                 float angle=noise*6.2831853;
                 float3 r=float3(cos(angle),sin(angle),0);
                 float3 t=normalize(r-n*dot(r,n)),b=cross(n,t);
@@ -794,7 +801,7 @@ Shader "TumbangPreso/WorldOutline"
         }
 
         // -------------------------------------------------------------------
-        // PASS 3. AO BLUR: 3x3, depth-aware, so the grain goes and edges stay put.
+        // PASS 3. AO BLUR: 4x4, depth-aware, matched to pass 2's rotation tile.
         // -------------------------------------------------------------------
         Pass
         {
@@ -814,11 +821,15 @@ Shader "TumbangPreso/WorldOutline"
             }
             half4 frag(v2f_img i):SV_Target
             {
+                // The 4x4 block that holds all sixteen rotations of pass 2, so the rotation
+                // pattern averages out exactly; depth-aware, so an edge does not smear.
                 float centre=EyeDepth(i.uv);float sum=0,weight=0;
-                [unroll] for(int y=-1;y<=1;y++)
-                [unroll] for(int x=-1;x<=1;x++)
+                [unroll] for(int y=-2;y<=1;y++)
+                [unroll] for(int x=-2;x<=1;x++)
                 {
-                    float2 uv=i.uv+float2(x,y)*_MainTex_TexelSize.xy*1.5;
+                    // Whole texels: any 4x4 window of a 4-periodic tile holds each rotation once.
+                    // A half-texel offset would let bilinear filtering widen it to 5x5.
+                    float2 uv=i.uv+float2(x,y)*_MainTex_TexelSize.xy;
                     // A tap on a different surface (a depth jump of more than ~5%) barely counts.
                     float w=1/(1e-3+abs(EyeDepth(uv)-centre)/max(centre,1e-3)*20);
                     sum+=tex2Dlod(_MainTex,float4(uv,0,0)).r*w;weight+=w;
