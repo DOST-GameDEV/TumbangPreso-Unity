@@ -157,6 +157,27 @@ rework of skills". Design, research and direction: `docs/reports/amihan-kit-2026
 - [ ] Full verification (Core, EditMode, PlayMode gate, Checks.RunAll, audits, BotBehaviourProbe,
   AbilityShowcaseProbe, Windows build).
 
+### HERO-9 · Paete, the ninth hero (Mount Makiling, plant) ⚠️ OPEN, 2026-09-25
+
+Owner, 2026-09-25: a PLANT hero on the signature plus role ability system; from Mount Makiling,
+Laguna; named Paete; concepts (GUARDY sheet, a blocky treant with three face states and an
+arm-extension panel, a carved-plank face close-up) with *"engraved sunked green eyes and a
+nonchalant calm expresison"*; the kit table (Vine Pull, Throwing Slipper Plant, Thorn Pull,
+Nature's Wrath); *"thoroughly plan how to do it first and research"*; *"do it one by one dont
+try to mass generate it"*. Brief and lore: `ArtSource/paete/concept-20260925/design-brief.md`.
+Research and plan: `docs/reports/paete-kit-2026-09-25/`.
+
+- [x] Research: Makiling, the Mariang Makiling stories, Paete's carvers, narra; animation
+  references from footage (Groot, Kinich, Zyra, Scorpion, Dead by Daylight) and wikis.
+- [x] Lore, colour decision (dark moss `4f6b1f` under an amended accent law), stats 3/3/5, names
+  proposed, the six beats per ability, the part-by-part plan.
+- [ ] Owner answers to plan.md section 6 (one batch, asked 2026-09-25).
+- [ ] Model: `tools/build_paete_voxel.py`, one part at a time, rendered beside the cast each step.
+- [ ] Core `PaeteRules` and tests; the Rooted status; `PaeteHeroKit`; wiring; bots.
+- [ ] VFX, casts, FPP hands, audio, glyphs, the introduction, the sky, the lines (HUMAN.md rows).
+- [ ] Protocol bump (next free after 53), verification per CLAUDE.md section 7, a build in `Builds/`.
+- [ ] Deploy the cloud-code hero lists once they name him; record his lines (human voices only).
+
 ### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23
 
 Integrated into ASTRAReworks on2026-09-24at owner request, through lighting branch
