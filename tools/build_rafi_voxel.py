@@ -507,20 +507,20 @@ CHEST_DECALS = [
     # Bold Right Clavicle Bar
     ('chest', 'front', TATTOO, [(-0.046, 0.412), (-0.046, 0.400), (-0.126, 0.418), (-0.126, 0.430)], 2),
 
-    # === PECTORALS (Chaklag - Bold Muscular Warrior Crescents) ===
-    # Left Pec Nipple Diamond
+    # === PECTORALS (Chaklag & Matmata - Muscular Warrior Crescents) ===
+    # Left Pec Nipple Matmata Diamond
     ('pec-left', 'front', TATTOO, [(0.064, 0.334), (0.078, 0.347), (0.064, 0.360), (0.050, 0.347)], 2),
-    # Left Pec Solid Sweeping Arch (Bold band defining the muscular pec contour)
-    ('pec-left', 'front', TATTOO, [(0.056, 0.346), (0.116, 0.392), (0.108, 0.402), (0.046, 0.358)], 2),
+    # Left Pec Sweeping Arch
+    ('pec-left', 'front', TATTOO, [(0.054, 0.346), (0.116, 0.392), (0.108, 0.402), (0.044, 0.358)], 2),
     # Left Pec Accent Diamond
-    ('pec-left', 'front', TATTOO, [(0.082, 0.360), (0.096, 0.372), (0.082, 0.384), (0.068, 0.372)], 2),
+    ('pec-left', 'front', TATTOO, [(0.082, 0.362), (0.096, 0.374), (0.082, 0.386), (0.068, 0.374)], 2),
 
-    # Right Pec Nipple Diamond
+    # Right Pec Nipple Matmata Diamond
     ('pec-right', 'front', TATTOO, [(-0.064, 0.334), (-0.050, 0.347), (-0.064, 0.360), (-0.078, 0.347)], 2),
-    # Right Pec Solid Sweeping Arch
-    ('pec-right', 'front', TATTOO, [(-0.056, 0.346), (-0.046, 0.358), (-0.108, 0.402), (-0.116, 0.392)], 2),
+    # Right Pec Sweeping Arch
+    ('pec-right', 'front', TATTOO, [(-0.054, 0.346), (-0.044, 0.358), (-0.108, 0.402), (-0.116, 0.392)], 2),
     # Right Pec Accent Diamond
-    ('pec-right', 'front', TATTOO, [(-0.082, 0.360), (-0.068, 0.372), (-0.082, 0.384), (-0.096, 0.372)], 2),
+    ('pec-right', 'front', TATTOO, [(-0.082, 0.362), (-0.068, 0.374), (-0.082, 0.386), (-0.096, 0.374)], 2),
 
     # === STERNUM & ABDOMEN (Tud-tud River & Inagdan Chevron Armor) ===
     # Central solid vertical spine/river from chest down to waist
@@ -528,30 +528,62 @@ CHEST_DECALS = [
     # Navel Solar Diamond Anchor
     ('chest', 'front', TATTOO, [(0.000, 0.320), (0.014, 0.331), (0.000, 0.342), (-0.014, 0.331)], 2),
 
-    # Inagdan Abdominal Chevron Armor (3 bold, clean, solid chevron tiers)
-    # Tier 1 (Upper Abs)
-    ('chest', 'front', TATTOO, [(0.010, 0.340), (0.110, 0.324), (0.110, 0.334), (0.010, 0.350)], 2),
-    ('chest', 'front', TATTOO, [(-0.010, 0.340), (-0.010, 0.350), (-0.110, 0.334), (-0.110, 0.324)], 2),
-    # Tier 2 (Mid Abs)
-    ('chest', 'front', TATTOO, [(0.010, 0.312), (0.110, 0.298), (0.110, 0.308), (0.010, 0.322)], 2),
-    ('chest', 'front', TATTOO, [(-0.010, 0.312), (-0.010, 0.322), (-0.110, 0.308), (-0.110, 0.298)], 2),
-    # Tier 3 (Lower Abs into Bahag)
-    ('chest', 'front', TATTOO, [(0.010, 0.284), (0.110, 0.272), (0.110, 0.282), (0.010, 0.294)], 2),
-    ('chest', 'front', TATTOO, [(-0.010, 0.284), (-0.010, 0.294), (-0.110, 0.282), (-0.110, 0.272)], 2),
+    # Inagdan Abdominal Chevron Armor (3 bold tiers)
+    ('chest', 'front', TATTOO, [(0.010, 0.340), (0.112, 0.324), (0.112, 0.334), (0.010, 0.350)], 2),
+    ('chest', 'front', TATTOO, [(-0.010, 0.340), (-0.010, 0.350), (-0.112, 0.334), (-0.112, 0.324)], 2),
+    ('chest', 'front', TATTOO, [(0.010, 0.312), (0.112, 0.298), (0.112, 0.308), (0.010, 0.322)], 2),
+    ('chest', 'front', TATTOO, [(-0.010, 0.312), (-0.010, 0.322), (-0.112, 0.308), (-0.112, 0.298)], 2),
+    ('chest', 'front', TATTOO, [(0.010, 0.284), (0.112, 0.272), (0.112, 0.282), (0.010, 0.294)], 2),
+    ('chest', 'front', TATTOO, [(-0.010, 0.284), (-0.010, 0.294), (-0.112, 0.282), (-0.112, 0.272)], 2),
 
-    # === BACK (Dakag - Bold Winged Warrior Armor) ===
-    # Central spine pillar
-    ('chest', 'back', TATTOO, [(-0.012, 0.280), (0.012, 0.280), (0.012, 0.438), (-0.012, 0.438)], 2),
-    # 4 Bold Sweeping Wing Bars on Left
-    ('chest', 'back', TATTOO, [(0.046, 0.422), (0.128, 0.412), (0.128, 0.402), (0.046, 0.412)], 2),
-    ('chest', 'back', TATTOO, [(0.046, 0.384), (0.130, 0.370), (0.130, 0.360), (0.046, 0.374)], 2),
-    ('chest', 'back', TATTOO, [(0.046, 0.346), (0.130, 0.332), (0.130, 0.322), (0.046, 0.336)], 2),
-    ('chest', 'back', TATTOO, [(0.046, 0.308), (0.126, 0.294), (0.126, 0.284), (0.046, 0.298)], 2),
-    # 4 Bold Sweeping Wing Bars on Right
-    ('chest', 'back', TATTOO, [(-0.046, 0.422), (-0.046, 0.412), (-0.128, 0.402), (-0.128, 0.412)], 2),
-    ('chest', 'back', TATTOO, [(-0.046, 0.384), (-0.046, 0.374), (-0.130, 0.360), (-0.130, 0.370)], 2),
-    ('chest', 'back', TATTOO, [(-0.046, 0.346), (-0.046, 0.336), (-0.130, 0.322), (-0.130, 0.332)], 2),
-    ('chest', 'back', TATTOO, [(-0.046, 0.308), (-0.046, 0.298), (-0.126, 0.284), (-0.126, 0.294)], 2),
+    # === BACK (Dakag - Central Stacked Diamond Spine & Ginawang Spear Wing Array) ===
+    # Central spine vertical pillar
+    ('chest', 'back', TATTOO, [(-0.008, 0.260), (0.008, 0.260), (0.008, 0.438), (-0.008, 0.438)], 2),
+
+    # Upper Diamond Shield (spanning upper back between shoulder blades)
+    ('chest', 'back', TATTOO, [(0.000, 0.436), (0.038, 0.388), (0.028, 0.388), (0.000, 0.422)], 2),
+    ('chest', 'back', TATTOO, [(0.038, 0.388), (0.000, 0.340), (0.000, 0.354), (0.028, 0.388)], 2),
+    ('chest', 'back', TATTOO, [(0.000, 0.436), (0.000, 0.422), (-0.028, 0.388), (-0.038, 0.388)], 2),
+    ('chest', 'back', TATTOO, [(-0.038, 0.388), (-0.028, 0.388), (0.000, 0.354), (0.000, 0.340)], 2),
+    ('chest', 'back', TATTOO, [(0.000, 0.374), (0.014, 0.388), (0.000, 0.402), (-0.014, 0.388)], 2),
+
+    # Lower Diamond Shield (spanning mid/lower back)
+    ('chest', 'back', TATTOO, [(0.000, 0.340), (0.032, 0.296), (0.024, 0.296), (0.000, 0.328)], 2),
+    ('chest', 'back', TATTOO, [(0.032, 0.296), (0.000, 0.252), (0.000, 0.264), (0.024, 0.296)], 2),
+    ('chest', 'back', TATTOO, [(0.000, 0.340), (0.000, 0.328), (-0.024, 0.296), (-0.032, 0.296)], 2),
+    ('chest', 'back', TATTOO, [(-0.032, 0.296), (-0.024, 0.296), (0.000, 0.264), (0.000, 0.252)], 2),
+
+    # Left Scapular Shoulder Cap & Guide Rails
+    ('chest', 'back', TATTOO, [(0.054, 0.418), (0.128, 0.434), (0.128, 0.412), (0.054, 0.406)], 2),
+    ('chest', 'back', TATTOO, [(0.046, 0.398), (0.128, 0.398), (0.128, 0.406), (0.046, 0.406)], 2),
+    ('chest', 'back', TATTOO, [(0.046, 0.378), (0.128, 0.378), (0.128, 0.386), (0.046, 0.386)], 2),
+    # Left Hanging Ginawang Spear Array with Pointed Tips
+    ('chest', 'back', TATTOO, [(0.052, 0.354), (0.060, 0.354), (0.060, 0.406), (0.052, 0.406)], 2),
+    ('chest', 'back', TATTOO, [(0.052, 0.354), (0.056, 0.344), (0.060, 0.354)], 2),
+    ('chest', 'back', TATTOO, [(0.072, 0.358), (0.080, 0.358), (0.080, 0.406), (0.072, 0.406)], 2),
+    ('chest', 'back', TATTOO, [(0.072, 0.358), (0.076, 0.348), (0.080, 0.358)], 2),
+    ('chest', 'back', TATTOO, [(0.092, 0.362), (0.100, 0.362), (0.100, 0.406), (0.092, 0.406)], 2),
+    ('chest', 'back', TATTOO, [(0.092, 0.362), (0.096, 0.352), (0.100, 0.362)], 2),
+    ('chest', 'back', TATTOO, [(0.112, 0.366), (0.120, 0.366), (0.120, 0.406), (0.112, 0.406)], 2),
+    ('chest', 'back', TATTOO, [(0.112, 0.366), (0.116, 0.356), (0.120, 0.366)], 2),
+
+    # Right Scapular Shoulder Cap & Guide Rails
+    ('chest', 'back', TATTOO, [(-0.128, 0.434), (-0.054, 0.418), (-0.054, 0.406), (-0.128, 0.412)], 2),
+    ('chest', 'back', TATTOO, [(-0.128, 0.398), (-0.046, 0.398), (-0.046, 0.406), (-0.128, 0.406)], 2),
+    ('chest', 'back', TATTOO, [(-0.128, 0.378), (-0.046, 0.378), (-0.046, 0.386), (-0.128, 0.386)], 2),
+    # Right Hanging Ginawang Spear Array with Pointed Tips
+    ('chest', 'back', TATTOO, [(-0.060, 0.354), (-0.052, 0.354), (-0.052, 0.406), (-0.060, 0.406)], 2),
+    ('chest', 'back', TATTOO, [(-0.060, 0.354), (-0.052, 0.354), (-0.056, 0.344)], 2),
+    ('chest', 'back', TATTOO, [(-0.080, 0.358), (-0.072, 0.358), (-0.072, 0.406), (-0.080, 0.406)], 2),
+    ('chest', 'back', TATTOO, [(-0.080, 0.358), (-0.072, 0.358), (-0.076, 0.348)], 2),
+    ('chest', 'back', TATTOO, [(-0.100, 0.362), (-0.092, 0.362), (-0.092, 0.406), (-0.100, 0.406)], 2),
+    ('chest', 'back', TATTOO, [(-0.100, 0.362), (-0.092, 0.362), (-0.096, 0.352)], 2),
+    ('chest', 'back', TATTOO, [(-0.120, 0.366), (-0.112, 0.366), (-0.112, 0.406), (-0.120, 0.406)], 2),
+    ('chest', 'back', TATTOO, [(-0.120, 0.366), (-0.112, 0.366), (-0.116, 0.356)], 2),
+
+    # Lower Rib Wings
+    ('chest', 'back', TATTOO, [(0.044, 0.312), (0.126, 0.300), (0.126, 0.290), (0.044, 0.302)], 2),
+    ('chest', 'back', TATTOO, [(-0.044, 0.312), (-0.044, 0.302), (-0.126, 0.290), (-0.126, 0.300)], 2),
 
     # === LATERAL RIBS & FLANKS (Connecting 360° Flow) ===
     ('chest', 'left', TATTOO, [(-0.065, 0.346), (0.065, 0.346), (0.065, 0.358), (-0.065, 0.358)], 2),
@@ -601,9 +633,10 @@ ARM_DECALS = [
     ('arm-left', 'top', TATTOO, [(0.234, -0.038), (0.252, 0.038), (0.244, 0.038), (0.226, -0.038)], 2),
     ('arm-left', 'front', TATTOO, [(0.234, 0.360), (0.252, 0.440), (0.244, 0.440), (0.226, 0.360)], 2),
 
-    # Pre-cuff wrist solid band
+    # Pre-cuff wrist solid band with pointed spear teeth
     ('arm-left', 'front', TATTOO, [(0.246, 0.345), (0.254, 0.345), (0.254, 0.455), (0.246, 0.455)], 2),
     ('arm-left', 'top', TATTOO, [(0.246, -0.058), (0.254, -0.058), (0.254, 0.058), (0.246, 0.058)], 2),
+    ('arm-left', 'front', TATTOO, [(0.246, 0.380), (0.238, 0.400), (0.246, 0.420)], 2),
 
     # === RIGHT SHOULDER & ARM (Ablay & Tagur) ===
     # Deltoid top plate solid double bands
@@ -629,9 +662,10 @@ ARM_DECALS = [
     ('arm-right', 'top', TATTOO, [(-0.240, -0.030), (-0.224, 0.000), (-0.240, 0.030), (-0.254, 0.000)], 2),
     ('arm-right', 'front', TATTOO, [(-0.240, 0.360), (-0.224, 0.400), (-0.240, 0.440), (-0.254, 0.400)], 2),
 
-    # Pre-cuff wrist solid band
+    # Pre-cuff wrist solid band with pointed spear teeth
     ('arm-right', 'front', TATTOO, [(-0.254, 0.345), (-0.246, 0.345), (-0.246, 0.455), (-0.254, 0.455)], 2),
     ('arm-right', 'top', TATTOO, [(-0.254, -0.058), (-0.246, -0.058), (-0.246, 0.058), (-0.254, 0.058)], 2),
+    ('arm-right', 'front', TATTOO, [(-0.246, 0.380), (-0.246, 0.420), (-0.238, 0.400)], 2),
 
     # === HANDS (Gulot solid knuckle stripes) ===
     ('hand-left', 'top', TATTOO, [(0.296, -0.046), (0.306, -0.046), (0.306, 0.054), (0.296, 0.054)], 2),
@@ -676,11 +710,20 @@ LEG_DECALS = [
     ('shin-right', 'front', TATTOO, [(-0.076, 0.120), (-0.076, 0.132), (-0.116, 0.144)], 2),
     ('shin-right', 'front', TATTOO, [(-0.076, 0.160), (-0.076, 0.172), (-0.116, 0.184)], 2),
 
-    # === THIGHS (Labid Upward Continuation) ===
-    ('thigh-left', 'front', TATTOO, [(0.106, 0.180), (0.116, 0.180), (0.116, 0.250), (0.106, 0.250)], 2),
-    ('thigh-left', 'front', TATTOO, [(0.076, 0.200), (0.116, 0.224), (0.076, 0.212)], 2),
-    ('thigh-right', 'front', TATTOO, [(-0.116, 0.180), (-0.106, 0.180), (-0.106, 0.250), (-0.116, 0.250)], 2),
-    ('thigh-right', 'front', TATTOO, [(-0.076, 0.200), (-0.076, 0.212), (-0.116, 0.224)], 2),
+    # === THIGHS (Panay Thigh Solar Stars & Framing Bands) ===
+    # Left Thigh: Upper & Lower Framing Bands + Central Adlaw Solar Star
+    ('thigh-left', 'front', TATTOO, [(0.030, 0.246), (0.138, 0.246), (0.138, 0.254), (0.030, 0.254)], 2),
+    ('thigh-left', 'front', TATTOO, [(0.030, 0.186), (0.138, 0.186), (0.138, 0.194), (0.030, 0.194)], 2),
+    ('thigh-left', 'front', TATTOO, [(0.084, 0.208), (0.096, 0.220), (0.084, 0.232), (0.072, 0.220)], 2),
+    ('thigh-left', 'front', TATTOO, [(0.052, 0.215), (0.062, 0.220), (0.052, 0.225)], 2),
+    ('thigh-left', 'front', TATTOO, [(0.116, 0.215), (0.106, 0.220), (0.116, 0.225)], 2),
+
+    # Right Thigh: Upper & Lower Framing Bands + Central Adlaw Solar Star
+    ('thigh-right', 'front', TATTOO, [(-0.138, 0.246), (-0.030, 0.246), (-0.030, 0.254), (-0.138, 0.254)], 2),
+    ('thigh-right', 'front', TATTOO, [(-0.138, 0.186), (-0.030, 0.186), (-0.030, 0.194), (-0.138, 0.194)], 2),
+    ('thigh-right', 'front', TATTOO, [(-0.084, 0.208), (-0.072, 0.220), (-0.084, 0.232), (-0.096, 0.220)], 2),
+    ('thigh-right', 'front', TATTOO, [(-0.062, 0.220), (-0.052, 0.215), (-0.052, 0.225)], 2),
+    ('thigh-right', 'front', TATTOO, [(-0.106, 0.220), (-0.116, 0.215), (-0.116, 0.225)], 2),
 ]
 
 BODY_DECALS = CHEST_DECALS + BAHAG_DECALS + ARM_DECALS + CUFF_DECALS + LEG_DECALS

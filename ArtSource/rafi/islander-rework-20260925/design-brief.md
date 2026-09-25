@@ -170,6 +170,7 @@ The model at v31 (superseded in its tattoo, face and back hair by v35, section 7
 | v43 | elevated front Dubdub collar sawteeth, Chaklag pectoral gin-ginnam sawteeth, 4-point navel star, and 3 dense interlocking Inagdan abdominal tiers | "make the markings even better as well as the markings on the front" |
 | v44 | cleared forehead marks, smoothed chunky lock masses for hair crown, bold high-contrast graphic warrior plates with generous negative space across chest, back, arms, shins | "hmm thoroughly think of diff way to do his marks, pls refine wtv the fuck is on his head, it looks bad.." |
 | v45 | authentic Visayan Pintados (Boxer Codex) & Kalinga Batok research pass: Dubdub breastplate arch with Init sun satellites, Pakpak clavicle wings, Chaklag pectoral crescents, Tud-tud river, Inagdan abdominal chevrons, Dakag eagle wings, Ablay/Dayadaya arm bands, Labid python scales | "thoroughly resaerch tribal shit in ph and refine his tattooos based on that TY" |
+| v46 | Panay Tattoos & Kalinga Ginawang reference overhaul: dual stacked diamond spine shields, hanging Ginawang spear wing array with pointed tips, Panay thigh solar stars (Adlaw) with framing bands, wrist spear notches | "refine musually filipino markings look like this can u research more" (uploaded Kalinga back & Panay look sheet) |
 
 The method this produced is written up for every future character in
 [docs/CHARACTER_MODEL_METHOD.md](../../../docs/CHARACTER_MODEL_METHOD.md).
