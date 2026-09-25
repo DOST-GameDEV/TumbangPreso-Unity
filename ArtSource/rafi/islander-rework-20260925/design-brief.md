@@ -164,6 +164,7 @@ The model at v31 (superseded in its tattoo, face and back hair by v35, section 7
 | v36 | baseline islander rework committed at 8efb0522 | "rework Rafi as a tattooed islander hero" |
 | v37 | bold batok upgrade: collar solar burst, interlocking rung ladders, lower pectoral gin-ginnam sawteeth, deltoid Ablay caps, forearm serpent ladders, leg Labid | "reallly try to improve tattoos" |
 | v38 | 5-tier winged back armor (Dakag) flanking spine ladder, connected thigh-to-shin routes, pre-cuff wrist chevrons, bold pectoral sweep | "improve construction, silhouette, proportion, detail quality and appeal" |
+| v39 to v40 | continuous abdominal batok tiers connecting chest to bahag waistband; facial markings removed; nonchalant calm eyes and relaxed mouth | "those markings suck its also weird theres none that continues to here", "make him look nonchalant" |
 
 The method this produced is written up for every future character in
 [docs/CHARACTER_MODEL_METHOD.md](../../../docs/CHARACTER_MODEL_METHOD.md).
