@@ -132,7 +132,7 @@ namespace TumbangPreso.Visual
         // ground occlusion. Strength of the darkening, and the sample radius in metres: about a
         // bench or a doorstep, so it gathers in corners and under things and never haloes a
         // whole building. Off on the Low tier and under Classic, with the rest of the look.
-        [Range(0,1)] public float AmbientOcclusion=.6f;
+        [Range(0,1)] public float AmbientOcclusion=.8f;
         [Range(.2f,3)] public float AmbientOcclusionRadius=.9f;
         // 1 draws the cast's hull in a deeper shade of its own colour, 0 in black.
         [Range(0,1)] public float CastInkSelf=.88f;

@@ -549,8 +549,14 @@ Shader "TumbangPreso/WorldOutline"
                 // the foot of a wall deepens in hue and never goes grey.
                 if(_WorldAOParams.x>0)
                 {
-                    float occlusion=(1-tex2D(_WorldAO,duv).r)*_WorldAOParams.x;
-                    source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb,saturate(occlusion));
+                    // ⚠️ THE CURVE IS STEEPENED AND THE HUE DEEPENED, BECAUSE THE FIRST CUT WAS
+                    // INVISIBLE. Straight occlusion times 0.6 toward the cavity hue darkened the
+                    // deepest corner by 14 levels in 255 and under 3 per cent of any frame: the
+                    // heat map showed it in exactly the right places and nobody would ever see it.
+                    // x1.8 then 0.8 of the way to a deeper violet puts a real inside corner about
+                    // 30 per cent down and a foot on the court about 15 to 20.
+                    float occlusion=saturate((1-tex2D(_WorldAO,duv).r)*1.8)*_WorldAOParams.x;
+                    source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb*.8,saturate(occlusion));
                 }
                 if(_PeakDepth.w>0)
                 {

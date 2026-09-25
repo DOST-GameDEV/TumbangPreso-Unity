@@ -27,7 +27,7 @@ MonoBehaviour:
   CavityHue: {r: 0.62, g: 0.52, b: 0.8, a: 1}
   GroundOcclusion: 0.28
   GroundOcclusionHeight: 2.8
-  AmbientOcclusion: 0.6
+  AmbientOcclusion: 0.8
   AmbientOcclusionRadius: 0.9
   CastInkSelf: 0.88
   CastInkWidth: 0.72

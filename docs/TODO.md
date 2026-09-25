@@ -348,7 +348,7 @@ light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
   post-processing package is installed. The pass runs at half resolution with twelve
   cosine-weighted hemisphere samples round the depth-normals normal, 0.9 m radius, per-pixel
   noise rotation, a range check and a fade out by 60 m. A 3x3 depth-aware blur follows, and the
-  composite leans the occluded part toward the violet `CavityHue`. `AmbientOcclusion` 0.6. On the
+  composite leans the occluded part toward the violet `CavityHue`. `AmbientOcclusion` 0.8 on a steepened curve (the first cut at 0.6 moved the deepest corner 14 levels in 255). On the
   Bright style's own gate (not Classic, not the Low tier, perspective cameras only). Open until
   the before/after renders and the owner's playtest.
 - [ ] LIGHT-3.5 The owner's look at the final comparison. The rendering is done: `e26eeb04`,
