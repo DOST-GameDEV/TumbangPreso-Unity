@@ -165,6 +165,7 @@ The model at v31 (superseded in its tattoo, face and back hair by v35, section 7
 | v37 | bold batok upgrade: collar solar burst, interlocking rung ladders, lower pectoral gin-ginnam sawteeth, deltoid Ablay caps, forearm serpent ladders, leg Labid | "reallly try to improve tattoos" |
 | v38 | 5-tier winged back armor (Dakag) flanking spine ladder, connected thigh-to-shin routes, pre-cuff wrist chevrons, bold pectoral sweep | "improve construction, silhouette, proportion, detail quality and appeal" |
 | v39 to v40 | continuous abdominal batok tiers connecting chest to bahag waistband; facial markings removed; nonchalant calm eyes and relaxed mouth | "those markings suck its also weird theres none that continues to here", "make him look nonchalant" |
+| v41 | necklace chain clearance & pendant stand-off (>18 mm proud, 0 body clipping); 360-degree lateral rib & flank batok connecting front abs to back wings | "REFINE MARKINGS EVEN MORE AND THE NECKLACE AS WELL COZ IT ENTER HIS BODY" |
 
 The method this produced is written up for every future character in
 [docs/CHARACTER_MODEL_METHOD.md](../../../docs/CHARACTER_MODEL_METHOD.md).

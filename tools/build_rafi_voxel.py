@@ -295,10 +295,10 @@ TORSO = [('chest', 'torso', (-0.132, 0.232, -0.088), (0.132, 0.442, 0.090), SKIN
  # a row (a second mouth), v14 to v26 one thin fang between silver beads (the beads read as
  # teeth too). They stand in front of the pectoral slabs (z -0.124) so the muscle cannot
  # swallow them.
- ('shark-tooth', 'torso', (-0.017, 0.310, -0.118), (0.017, 0.354, -0.104), WEAVE),
- ('tooth-bail', 'torso', (-0.007, 0.351, -0.117), (0.007, 0.365, -0.101), SILVER),
- ('shark-tooth-l', 'torso', (0.024, 0.350, -0.118), (0.040, 0.376, -0.106), WEAVE),
- ('shark-tooth-r', 'torso', (-0.039, 0.354, -0.118), (-0.025, 0.377, -0.106), WEAVE),
+ ('shark-tooth', 'torso', (-0.018, 0.306, -0.134), (0.018, 0.354, -0.116), WEAVE),
+ ('tooth-bail', 'torso', (-0.008, 0.350, -0.132), (0.008, 0.365, -0.114), SILVER),
+ ('shark-tooth-l', 'torso', (0.024, 0.346, -0.130), (0.042, 0.374, -0.116), WEAVE),
+ ('shark-tooth-r', 'torso', (-0.042, 0.350, -0.130), (-0.024, 0.375, -0.116), WEAVE),
  ('bahag-waist', 'torso', (-0.128, 0.236, -0.100), (0.128, 0.296, 0.102), CLOTH),
  ('bahag-flap-front', 'torso', (-0.048, 0.100, -0.116), (0.048, 0.274, -0.098), CLOTH),
  ('bahag-flap-back', 'torso', (-0.062, 0.130, 0.098), (0.062, 0.274, 0.116), CLOTH),
@@ -627,6 +627,29 @@ CHEST_DECALS = [
     # Tier 5 (Lower Ribs / Flank)
     ('chest', 'back', TATTOO, [(0.055, 0.308), (0.126, 0.294), (0.126, 0.286), (0.055, 0.300)], 2),
     ('chest', 'back', TATTOO, [(-0.055, 0.308), (-0.055, 0.300), (-0.126, 0.286), (-0.126, 0.294)], 2),
+
+    # === LATERAL RIBS & FLANKS (Continuous 360° Batok wrap connecting front & back) ===
+    # Left Rib Band & Teeth (Upper)
+    ('chest', 'left', TATTOO, [(-0.065, 0.354), (0.065, 0.354), (0.065, 0.364), (-0.065, 0.364)], 2),
+    ('chest', 'left', TATTOO, [(-0.045, 0.364), (-0.025, 0.378), (-0.045, 0.378)], 2),
+    ('chest', 'left', TATTOO, [(0.005, 0.364), (0.025, 0.378), (0.005, 0.378)], 2),
+    # Right Rib Band & Teeth (Upper)
+    ('chest', 'right', TATTOO, [(-0.065, 0.354), (0.065, 0.354), (0.065, 0.364), (-0.065, 0.364)], 2),
+    ('chest', 'right', TATTOO, [(-0.045, 0.364), (-0.025, 0.378), (-0.045, 0.378)], 2),
+    ('chest', 'right', TATTOO, [(0.005, 0.364), (0.025, 0.378), (0.005, 0.378)], 2),
+
+    # Left Rib Band & Teeth (Lower)
+    ('chest', 'left', TATTOO, [(-0.065, 0.324), (0.065, 0.324), (0.065, 0.334), (-0.065, 0.334)], 2),
+    ('chest', 'left', TATTOO, [(-0.045, 0.334), (-0.025, 0.348), (-0.045, 0.348)], 2),
+    ('chest', 'left', TATTOO, [(0.005, 0.334), (0.025, 0.348), (0.005, 0.348)], 2),
+    # Right Rib Band & Teeth (Lower)
+    ('chest', 'right', TATTOO, [(-0.065, 0.324), (0.065, 0.324), (0.065, 0.334), (-0.065, 0.334)], 2),
+    ('chest', 'right', TATTOO, [(-0.045, 0.334), (-0.025, 0.348), (-0.045, 0.348)], 2),
+    ('chest', 'right', TATTOO, [(0.005, 0.334), (0.025, 0.348), (0.005, 0.348)], 2),
+
+    # Left & Right Flank Bands (Above Bahag)
+    ('chest', 'left', TATTOO, [(-0.060, 0.294), (0.060, 0.294), (0.060, 0.302), (-0.060, 0.302)], 2),
+    ('chest', 'right', TATTOO, [(-0.060, 0.294), (0.060, 0.294), (0.060, 0.302), (-0.060, 0.302)], 2),
 ]
 
 # The bahag's woven border: a light teal band over a cream thread
@@ -1688,11 +1711,11 @@ def _rafi_forms(head):
         # it cannot be read as one of the black tattoo lines beside it. The torc is gone.
         # v31: it hangs to the sternum (0.362), 26 mm lower than v30's, and is 12 mm thick, so
         # the drape from under the jaw down the chest is what you see, not a V under the chin.
-        chain = [(0.0, .449, .066), (.044, .449, .052), (.066, .449, .012), (.064, .449, -.040),
-                 (.054, .436, -.066), (.044, .412, -.090), (.030, .388, -.104), (.015, .370, -.106),
-                 (0.0, .362, -.106), (-.015, .370, -.106), (-.030, .388, -.104), (-.044, .412, -.090),
-                 (-.054, .436, -.066), (-.064, .449, -.040), (-.066, .449, .012), (-.044, .449, .052)]
-        yield 'torso', SILVER, _rafi_tube(chain, .006, (0, 1, 0), closed=True, sides=6)
+        chain = [(0.0, .449, .068), (.044, .449, .054), (.066, .449, .012), (.064, .446, -.044),
+                 (.056, .432, -.082), (.042, .408, -.108), (.028, .384, -.116), (.014, .366, -.118),
+                 (0.0, .358, -.118), (-.014, .366, -.118), (-.028, .384, -.116), (-.042, .408, -.108),
+                 (-.056, .432, -.082), (-.064, .446, -.044), (-.066, .449, .012), (-.044, .449, .054)]
+        yield 'torso', SILVER, _rafi_tube(chain, .0065, (0, 1, 0), closed=True, sides=6)
 
 
 def _box_facets(name, lo, hi, skip):
