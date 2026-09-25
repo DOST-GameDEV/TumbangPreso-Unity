@@ -179,6 +179,28 @@ namespace TumbangPreso.Visual
         // cloud panorama three mips down and re-edges it into two flat tones, PEAK's brushed
         // shapes; 0 keeps the photographic silhouettes. See `NeighbourhoodSky.shader`.
         [Range(0,1)] public float CloudPaint=1;
+        // ⚠️⚠️ § BLOCKY CLOUDS (owner 2026-09-25: the sky "should be either 2d hand painted
+        // designs, or maybe try a more blocky style of clouds where they are real 3d assets").
+        // Voxel cumulus on a ring past the skyline, lit by the look's own rule: a warm cream crown,
+        // a lavender belly, darker crevices. See `BlockyClouds` for why they are domed voxel
+        // masses and not the stacked slabs of the first cut ("too small", "less volume-y", "too
+        // sharp"). The painted panorama stays behind them at `PaintedCloudOpacity`, a far layer.
+        [Range(0,40)] public int BlockyCloudCount=10;
+        // Ring radius, belly height, and a cloud's width, metres. ⚠️ The play camera's far plane
+        // is 240 m (`CameraRig`): the farthest block of the widest, highest cloud is about 150 +
+        // 42 m out and 64 + 47 m up, 220 m from a standing eye, so it stays inside.
+        public Vector2 BlockyCloudRadius=new Vector2(100,150);
+        public Vector2 BlockyCloudHeight=new Vector2(40,64);
+        public Vector2 BlockyCloudSize=new Vector2(50,85);
+        // The block size, metres. About a fourteenth of a cloud: blocky at a glance, but enough
+        // blocks for the dome to read round.
+        [Range(2,12)] public float BlockyCloudVoxel=5.5f;
+        // Degrees per second the whole ring turns, off the shared sky clock, so pause and replay
+        // sample it for free.
+        [Range(0,1)] public float BlockyCloudDrift=.06f;
+        // How far a cloud's colour leans into the horizon, the air between it and the court.
+        [Range(0,1)] public float BlockyCloudAir=.14f;
+        [Range(0,1)] public float PaintedCloudOpacity=.18f;
 
         // ⚠️⚠️ A WARM HORIZON NEEDS A CYAN ZENITH OR THE SKY BETWEEN THEM TURNS LAVENDER. The
         // sky shader blends horizon to zenith in linear light, and the first render paired a

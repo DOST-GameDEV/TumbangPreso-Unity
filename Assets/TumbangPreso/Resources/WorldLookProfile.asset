@@ -37,6 +37,14 @@ MonoBehaviour:
   BloomThreshold: 2.2
   BloomKnee: 0.2
   CloudPaint: 1
+  BlockyCloudCount: 10
+  BlockyCloudRadius: {x: 100, y: 150}
+  BlockyCloudHeight: {x: 40, y: 64}
+  BlockyCloudSize: {x: 50, y: 85}
+  BlockyCloudVoxel: 5.5
+  BlockyCloudDrift: 0.06
+  BlockyCloudAir: 0.14
+  PaintedCloudOpacity: 0.18
   Maps:
   - Map: BayanPlaza
     Sky: {r: 0.5, g: 0.47, b: 0.64, a: 1}

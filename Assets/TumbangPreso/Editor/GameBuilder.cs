@@ -878,6 +878,11 @@ namespace TumbangPreso.EditorTools
                 // instead of a model. The editor would be fixed and the .exe would show the
                 // original complaint, with one warning in a log nobody reads during a playtest.
                 "TumbangPreso/SlipperBeam",
+
+                // ⚠️ § THE BLOCKY CLOUDS (LIGHT-3). `BlockyClouds` reaches it through
+                // `Shader.Find` and no scene references it. Stripped, the look's sky simply has
+                // no near clouds, with one warning in the log.
+                "TumbangPreso/BlockyCloud",
             };
 
             var settings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset");

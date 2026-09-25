@@ -23,6 +23,8 @@ namespace TumbangPreso.Visual
         // The key light and sky as the scene authored them, restored exactly on the way out.
         private Light _sun;private Color _sunColour;private float _sunIntensity,_sunShadow;private Quaternion _sunRotation;
         private Material _skyAuthored,_skyLook;
+        // The look's near sky: real blocky clouds (LIGHT-3), shown only at a non-zero weight.
+        private BlockyClouds _clouds;private float _cloudOpacity=-1;
         // The court's own dark ground, found once every Start has run. See MapLook.GroundLift.
         private readonly List<(Renderer renderer,int index)> _court=new List<(Renderer,int)>();
         private MaterialPropertyBlock _groundBlock;private bool _groundPending=true;
@@ -93,6 +95,8 @@ namespace TumbangPreso.Visual
                 _ramp.SetPixel(i,0,c);
             }
             _ramp.Apply(false,true);
+            if(_skyAuthored!=null && _skyAuthored.HasProperty("_CloudOpacity"))_cloudOpacity=_skyAuthored.GetFloat("_CloudOpacity");
+            _clouds=BlockyClouds.Create(this,Look,Floor);
             Current=this;ApplyScene();
         }
         /// <summary>
@@ -214,8 +218,13 @@ namespace TumbangPreso.Visual
                 if(_sun!=null)_skyLook.SetVector("_SunDirection",-_sun.transform.forward);
                 // Painted clouds live on the look's own sky instance only; Classic's is untouched.
                 if(_skyLook.HasProperty("_CloudPaint"))_skyLook.SetFloat("_CloudPaint",WorldLookProfile.Current.CloudPaint*_weight);
+                // ⚠️ The painted panorama becomes the FAR layer behind the blocky clouds: faint,
+                // so the near sky is the 3D one and the far one only hints at more weather.
+                if(_cloudOpacity>=0)_skyLook.SetFloat("_CloudOpacity",Mathf.Lerp(_cloudOpacity,_cloudOpacity*WorldLookProfile.Current.PaintedCloudOpacity,
+                    _clouds!=null?_weight:0));
                 RenderSettings.skybox=_weight>0?_skyLook:_skyAuthored;
             }
+            if(_clouds!=null)_clouds.SetVisible(_weight>0);
             ApplyGround();
         }
         private void Blend(string id,Color look){if(_skyAuthored.HasProperty(id))_skyLook.SetColor(id,Color.Lerp(_skyAuthored.GetColor(id),look,_weight));}
