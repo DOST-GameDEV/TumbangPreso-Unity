@@ -358,6 +358,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SyncUnit", OnSyncUnitMsg);
             cm.RegisterNamedMessageHandler("Teleport", OnTeleportMsg);
             cm.RegisterNamedMessageHandler("Impact", OnImpactMsg);
+            cm.RegisterNamedMessageHandler("Carry", OnCarryMsg);
             cm.RegisterNamedMessageHandler("ReqPunch", OnReqPunchMsg);
             cm.RegisterNamedMessageHandler("ReqLunge", OnReqLungeMsg);
             cm.RegisterNamedMessageHandler("ReqSlide", OnReqSlideMsg);
@@ -2126,6 +2127,37 @@ namespace TumbangPreso.Net
             unit.ApplyImpulse(impulse);
         }
 
+        /// <summary>
+        /// ⚠️ A CARRY IS AN IMPACT THAT LASTS (ability overhaul, 2026-09-25): the host resolved a
+        /// wind or a dash hit on a body another peer simulates, and only that peer can move it.
+        /// Same shape and same epoch guard as `Impact`, one float longer: how long the velocity is
+        /// held before `Friction` takes it (`Core.CarryRules`).
+        /// </summary>
+        public void BroadcastCarry(int slot,Vector3 velocity,float seconds)
+        {
+            if(!NetAuthority.ShouldResolve() || !ValidSlot(slot) || !Finite(velocity) || !Finite(seconds) || _nm?.CustomMessagingManager==null)return;
+            using var writer=new FastBufferWriter(40,Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(_movementEpochs[slot]);
+            writer.WriteValueSafe(velocity);
+            writer.WriteValueSafe(seconds);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("Carry",writer);
+        }
+
+        private void OnCarryMsg(ulong senderClientId,FastBufferReader reader)
+        {
+            if(NetAuthority.IsHost || !FromHost(senderClientId))return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out int epoch);
+            reader.ReadValueSafe(out Vector3 velocity);
+            reader.ReadValueSafe(out float seconds);
+            if(!ValidSlot(slot) || slot!=NetAuthority.LocalSlot || !Finite(velocity) || !Finite(seconds)
+               || seconds<0 || seconds>3 || velocity.sqrMagnitude>40*40)return;
+            var unit=Unit(slot);
+            if(unit==null || epoch!=unit.MovementEpoch)return;
+            unit.BeginCarry(velocity,seconds);
+        }
+
         public void BroadcastTeleport(int slot,Vector3 position,float yaw)
         {
             if(!NetAuthority.ShouldResolve() || !ValidSlot(slot) || _nm?.CustomMessagingManager==null)return;
@@ -2264,6 +2296,10 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.EdgeOutward);
             writer.WriteValueSafe(unit.EdgePhase);
             writer.WriteValueSafe(unit.EdgePhaseRatio);
+            // ⚠️ THE TWO STATUSES THAT ARE NOT STUNS (protocol 53, 2026-09-25). Frozen and Tagged
+            // already ride the stun fields above; Whirled and Chilled have their own clocks.
+            writer.WriteValueSafe(unit.WhirledLeft);
+            writer.WriteValueSafe(unit.ChilledLeft);
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer,reliable?NetworkDelivery.ReliableSequenced:PoseDelivery);
         }
 
@@ -2302,6 +2338,9 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 edgeOutward);
             reader.ReadValueSafe(out byte edgePhase);
             reader.ReadValueSafe(out float edgeRatio);
+            reader.ReadValueSafe(out float whirledLeft);
+            reader.ReadValueSafe(out float chilledLeft);
+            if(!Finite(whirledLeft) || !Finite(chilledLeft))return;
             if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
             if(edgeKind>(byte)EdgeRecoveryKind.Lagoon||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
             if(edgeKind!=0&&(edgeOutward.sqrMagnitude<.9f||edgeOutward.sqrMagnitude>1.1f||edgeRatio<0||edgeRatio>1))return;
@@ -2338,6 +2377,7 @@ namespace TumbangPreso.Net
                                    tripLeft, tripTotal, tripMashPresses, tripMashRemoved,
                                    staminaCurrent, staminaIdle, fatigueLeft,
                                    recoveryEpisode,recoveryAcknowledged);
+            unit.ApplyNetworkStatuses(whirledLeft, chilledLeft);
         }
 
         // -------------------------------------------------------------------

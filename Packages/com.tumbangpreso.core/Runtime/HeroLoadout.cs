@@ -366,25 +366,29 @@ namespace TumbangPreso.Core
                 .35f, -.35f, "Lingers in view", "Easier to read",
                 "Use Mirrorwake six times", true, 6),
 
-            // ⚠️⚠️ AMIHAN'S SKILLS ARE PLACEHOLDERS (owner, 2026-09-25: "dont make skills yet js put
-            // placeholders"). Two options per slot so her screen draws like every hero's
-            // (`EveryHeroHasOptionsInBothSlots`); generic glyphs, because a bespoke icon would claim
-            // a design that does not exist yet. `AmihanHeroKit` casts them and nothing happens; the
-            // alternates' +/-0.30 is only there to keep the sidegrade rule true, and nothing reads it.
-            new AbilityVariant("amihan.1.placeholder", "amihan", 1, "PLACEHOLDER 1", "Dash",
-                "PLACEHOLDER 1", "Not designed yet. Pressing it does nothing.",
-                0, 0, "Not designed yet", "Does nothing"),
-            new AbilityVariant("amihan.1.placeholder_alt", "amihan", 1, "PLACEHOLDER 1", "Dash",
-                "PLACEHOLDER 1B", "The second reading. Also not designed yet.",
-                .30f, -.30f, "A second reading", "Still does nothing",
-                "Use Placeholder 1 eight times", true, 8),
-            new AbilityVariant("amihan.2.placeholder", "amihan", 2, "PLACEHOLDER 2", "Zone",
-                "PLACEHOLDER 2", "Not designed yet. Pressing it does nothing.",
-                0, 0, "Not designed yet", "Does nothing"),
-            new AbilityVariant("amihan.2.placeholder_alt", "amihan", 2, "PLACEHOLDER 2", "Zone",
-                "PLACEHOLDER 2B", "The second reading. Also not designed yet.",
-                .30f, -.30f, "A second reading", "Still does nothing",
-                "Use Placeholder 2 eight times", true, 8),
+            // ⚠️⚠️ AMIHAN'S REAL KIT (2026-09-25), WITH NO SIDEGRADE TUNING YET. Owner, asked how the
+            // loadout variants fit the new signature plus role abilities: *"we will figure out the
+            // variants soon, keep them all as extra skills for now"*. So every hero's existing
+            // variants are untouched, and hers are named for her real abilities with the second
+            // reading of each slot marked as still being designed: it plays exactly as the default
+            // (nothing in `AmihanHeroKit` reads the alternates), and the +/-0.30 is only there to
+            // keep the sidegrade rule true (`EveryVariantIsBudgetNeutral`). Slot 2 is her ROLE
+            // ability, named for the attacking one her kit reports before a role is known; the
+            // screens show both role abilities beside it (`HeroKit.AttackingSkill`, `DefendingSkill`).
+            new AbilityVariant("amihan.1.quickdash", "amihan", 1, "QUICK DASH", "AmihanQuickDash",
+                "QUICK DASH", "Dash where you aim. Whoever you pass is Whirled and shoved.",
+                0, 0, "Dash through a crowd", "40 s to come back"),
+            new AbilityVariant("amihan.1.quickdash_next", "amihan", 1, "QUICK DASH", "AmihanQuickDash",
+                "QUICK DASH II", "A second reading, still being designed. Plays as Quick Dash.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Quick Dash eight times", true, 8),
+            new AbilityVariant("amihan.2.updraft", "amihan", 2, "UPDRAFT", "AmihanUpdraft",
+                "UPDRAFT", "Attacking: fly high for 10 s. Throw from the air, land to grab.",
+                0, 0, "Throw from above", "Land to pick up"),
+            new AbilityVariant("amihan.2.updraft_next", "amihan", 2, "UPDRAFT", "AmihanUpdraft",
+                "UPDRAFT II", "A second reading, still being designed. Plays as Updraft.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Updraft six times", true, 6),
         };
 
         /// <summary>⚠️⚠️ THE ONE SWITCH. `false` while the owner tests (every skill open); `true`

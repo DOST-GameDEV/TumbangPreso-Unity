@@ -101,6 +101,17 @@ namespace TumbangPreso.Audio
                 { "sfx_cast_rafi_current", -6.0f }, { "sfx_cast_rafi_mirror", -7.0f },
                 { "sfx_cast_rafi_breakwater", -7.0f }, { "sfx_rafi_intercept", -8.0f },
                 { "sfx_var_rafi_tightcut", -6.0f }, { "sfx_var_rafi_longwake", -7.0f },
+                // Amihan (2026-09-25, `tools/build_amihan_audio.py`). The gather is a sustained
+                // pressure rise under 2.5 s of telegraph and is mixed as a bed; the release is the
+                // loudest moment of her kit and is mixed as an ultimate payload.
+                { "sfx_ult_theme_amihan", -14.0f },
+                { "sfx_cast_amihan_dash", -6.0f }, { "sfx_cast_amihan_updraft", -7.0f },
+                { "sfx_amihan_updraft_settle", -10.0f }, { "sfx_cast_amihan_whirlwind", -6.0f },
+                { "sfx_cast_amihan_storm", -6.0f }, { "sfx_amihan_storm_gather", -9.0f },
+                { "sfx_amihan_storm_release", -3.0f },
+                // The two new statuses sound on the victim, mixed like `sfx_hex_afflict`: several
+                // can land inside a second.
+                { "sfx_status_whirled", -9.0f }, { "sfx_status_chilled", -11.0f },
                 { "sfx_hex_cast",     -4.0f },
 
                 // ⚠️ THE BREAK IS MIXED LIKE A STATUS, NOT AN EVENT, for the same reason
@@ -126,6 +137,7 @@ namespace TumbangPreso.Audio
                 { "sfx_sky_emberfall", -12.0f },
                 { "sfx_sky_whiteout", -13.0f },
                 { "sfx_sky_seance",   -14.0f },
+                { "sfx_sky_monsoon",  -12.0f },
 
                 { "sfx_stun_break",  -9.0f },
                 { "sfx_blink_arrive", -4.0f },
@@ -367,6 +379,11 @@ namespace TumbangPreso.Audio
             "sfx_cast_rafi_current", "sfx_cast_rafi_mirror", "sfx_cast_rafi_breakwater", "sfx_rafi_intercept",
             "sfx_ult_theme_rafi", "sfx_var_rafi_tightcut", "sfx_var_rafi_longwake",
             "sfx_step_deck", "sfx_swim_stroke", "sfx_lagoon_lap",
+            // Amihan, 2026-09-25: one recipe per ability and per status (`tools/build_amihan_audio.py`).
+            "sfx_cast_amihan_dash", "sfx_cast_amihan_updraft", "sfx_amihan_updraft_settle",
+            "sfx_cast_amihan_whirlwind", "sfx_cast_amihan_storm", "sfx_amihan_storm_gather",
+            "sfx_amihan_storm_release", "sfx_ult_theme_amihan", "sfx_sky_monsoon",
+            "sfx_status_whirled", "sfx_status_chilled",
 
             // ⚠️ THE TWELVE ALTERNATES. A sidegrade changes what the power does, so it changes
             // what the power sounds like doing it: Long Tremor sweeps feet instead of throwing

@@ -674,6 +674,12 @@ namespace TumbangPreso
             if(who.HoldingSlipper) return false;
             if (!who.CanAct()) return false;
 
+            // ⚠️ THE STATUS GATES (owner's status table, 2026-09-25). WHIRLED: *"Prevents slipper
+            // retrieval for 2.5 seconds."* ALOFT (Updraft): *"cant pick up unless they choose to go
+            // down"*. Both live here, in the one gate every pickup path already asks (the local grab,
+            // `HostPickUp` and the networked request), so no path can skip them.
+            if (who.IsWhirled || who.IsAloft) return false;
+
             return true;
         }
 
@@ -842,6 +848,21 @@ namespace TumbangPreso
         }
 
         public float PektusSpin { get; private set; }
+
+        /// <summary>
+        /// Put a LOOSE slipper on the ground a short way from where it is: a slipper knocked out
+        /// of a hand (Whirled) lands beside the body rather than hanging where the hand was.
+        /// </summary>
+        public void HostScatter(Vector3 offset)
+        {
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.Loose) return;
+            offset.y = 0.0f;
+            var at = transform.position + offset;
+            at.x = Mathf.Clamp(at.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
+            at.z = Mathf.Clamp(at.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            transform.position = at;
+            Land(false, FindGroundY(at, Balance.SlipperRestHeight + 2.0f));
+        }
 
         public bool HostBeginMapRecovery()
         {

@@ -10,7 +10,9 @@ namespace TumbangPreso.Net
     public static class WorldEffectSnapshot
     {
         public const int MaxFields = 256;
-        public enum Kind { Sheet = 1, Barricade = 2, Fire = 3, Shock = 4, Crater = 5, Hex = 6, Fissure = 7, Current = 8, Mirrorwake = 9, Breakwater = 10 }
+        public enum Kind { Sheet = 1, Barricade = 2, Fire = 3, Shock = 4, Crater = 5, Hex = 6, Fissure = 7, Current = 8, Mirrorwake = 9, Breakwater = 10,
+            // ⚠️ APPEND ONLY (protocol 53): Amihan's Whirlwind gale, a travelling front.
+            Gale = 11 }
         public struct Field
         {
             public Kind Type;
@@ -86,6 +88,8 @@ namespace TumbangPreso.Net
                 if (pillar.isActiveAndEnabled && pillar.Remaining > .02f) fields.Add(new Field { Type = Kind.Fissure, Source = pillar.gameObject,
                     Position = pillar.transform.position, Forward = pillar.transform.forward,
                     Duration = pillar.LifeSeconds, Remaining = pillar.Remaining, Owner = -1, FirstScale = pillar.Side });
+            foreach (var gale in Object.FindObjectsByType<AmihanGale>())
+                if (gale.isActiveAndEnabled && gale.Remaining > .02f) fields.Add(gale.Capture());
             foreach (var water in RafiWaterField.Active)
                 if (water != null && water.isActiveAndEnabled && water.Remaining > .02f) fields.Add(water.Capture());
             return fields;
@@ -117,6 +121,9 @@ namespace TumbangPreso.Net
             }
             if (field.Type == Kind.Crater) return true;
             if (field.Type == Kind.Hex) return field.FirstScale > 0 && field.FirstScale <= 3;
+            if (field.Type == Kind.Gale)
+                return field.Forward.sqrMagnitude > .5f && field.Forward.sqrMagnitude < 1.5f
+                    && field.Duration <= Core.AmihanRules.WhirlwindSeconds + .05f;
             return false;
         }
 
@@ -168,6 +175,11 @@ namespace TumbangPreso.Net
                     go.GetComponent<HeroHazards.HexSigilComponent>().RestoreRemaining(remaining);
                     go.GetComponent<HeroHazards.WardInscribe>().StepTo(field.Duration - remaining);
                 }
+                else if (field.Type == Kind.Gale)
+                {
+                    // A rejoiner's gale is the same front at the same age; the host alone hits.
+                    AmihanGale.Spawn(field.Position, field.Forward, field.Owner, field.Duration - remaining);
+                }
                 else if (field.Type == Kind.Fissure)
                 {
                     var pillar = DanteFissurePillar.Create(field.Position, field.Forward, (int)field.FirstScale, field.Duration);
@@ -197,6 +209,8 @@ namespace TumbangPreso.Net
             Retire<HeroHazards.ShockTrailComponent>();
             Retire<HeroHazards.SupernovaCraterComponent>();
             Retire<HeroHazards.HexSigilComponent>();
+            Retire<AmihanGale>();
+            Retire<AmihanStorm>();
             // Render-only fissures have no gameplay lifetime component.
             Retire<HeroHazards.EarthPillarComponent>();
             Physics.SyncTransforms();

@@ -183,10 +183,7 @@ namespace TumbangPreso.Abilities
                     // Same rule as the entry: see the note in `Update`. ⚠️ BRACED, because
                     // `tools/audit_ability_authority.py` tracks the gate by brace depth and reads
                     // a braceless one-liner as ungated.
-                    if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)
-                    {
-                        p.ExitSpeedZone(ChillMultiplier);
-                    }
+                    // The speed half is the Chilled status now and runs out on its own clock.
                 }
 
                 _chilled.Clear();
@@ -278,15 +275,19 @@ namespace TumbangPreso.Abilities
                         {
                             p.SetIceSurface(this,SlipScale);
                             _tractionTargets.Add(p);
+                            // ⚠️⚠️ CHILLED, NOT A SPEED ZONE (owner's status table, 2026-09-25:
+                            // *"Decreases movement speed by 50% for 5 seconds"*, and the answer that
+                            // Cheska's sheet applies it). Refreshed every frame on the ice by `Max`,
+                            // so it runs its full five seconds from the moment you step OFF. The old
+                            // 0.55 speed zone ended at the edge; the slip below is unchanged.
+                            p.ApplyChilled();
                         }
                         if (inside && !chilled)
                         {
-                            p.EnterSpeedZone(ChillMultiplier);
                             _chilled.Add(p.PlayerSlot);
                         }
                         else if (!inside && chilled)
                         {
-                            p.ExitSpeedZone(ChillMultiplier);
                             p.SetIceSurface(this,0);
                             _tractionTargets.Remove(p);
                             _chilled.Remove(p.PlayerSlot);

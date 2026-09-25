@@ -43,6 +43,10 @@ namespace TumbangPreso.UI
             { "rafi_skill1", AbilityGlyph.RafiCrosscurrent },
             { "rafi_skill2", AbilityGlyph.RafiMirrorwake },
             { "rafi_ultimate", AbilityGlyph.RafiBreakwater },
+            { "amihan_skill1", AbilityGlyph.AmihanQuickDash },
+            { "amihan_skill2", AbilityGlyph.AmihanUpdraft },
+            { "amihan_skill2d", AbilityGlyph.AmihanWhirlwind },
+            { "amihan_ultimate", AbilityGlyph.AmihanStormSurge },
         };
 
         /// <summary>

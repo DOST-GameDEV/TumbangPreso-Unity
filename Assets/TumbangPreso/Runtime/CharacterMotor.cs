@@ -342,6 +342,8 @@ namespace TumbangPreso
             _cc = GetComponent<CharacterController>();
             Stamina = new Stamina();
             if (GetComponent<Visual.MotionFoley>() == null) gameObject.AddComponent<Visual.MotionFoley>();
+            // The Whirled and Chilled body tells, on every peer (`Visual.StatusBodyMarks`).
+            if (GetComponent<Visual.StatusBodyMarks>() == null) gameObject.AddComponent<Visual.StatusBodyMarks>();
         }
 
         /// ⚠️ THE SPECTATABLE REGISTRY IS POPULATED HERE, NOT AT THE SPAWN SITE. Godot's
@@ -378,6 +380,10 @@ namespace TumbangPreso
             _spawnSettleAt = transform.position;
             _velocity = Vector3.zero;
             _externalVelocity = Vector3.zero;
+            // ⚠️ A SPAWN IS A FRESH START FOR EVERY STATUS THAT IS NOT A STUN (the stun stack has
+            // its own resets). A Whirl or a Chill must not follow a body across a round boundary,
+            // and a flight must not survive a teleport to the mark.
+            ClearStatuses();
         }
 
         /// <summary>
@@ -890,6 +896,7 @@ namespace TumbangPreso
                           * Stamina.SpeedZones.Value
                           * (AbilitySystem?.Kit?.MovementSpeedScale ?? 1.0f)
                           * (CommitLeft > 0.0f ? Balance.SlideSteerScale : 1.0f)
+                          * StatusSpeedScale
                           * RooftopPool.MovementScale(transform.position);
 
             if (canSteer)
@@ -912,6 +919,10 @@ namespace TumbangPreso
             // Every published knockback distance in the game is that solve, so this
             // deceleration is not a feel parameter: changing it invalidates SHOVE_SPEED,
             // LUNGE_SPEED and BLOCK_KNOCKBACK_SPEED all at once.
+            // ⚠️ THE CARRY IS HELD FIRST, THEN RELEASED INTO THE SAME `Friction` DECAY BELOW, which
+            // is what makes its tail the old v^2/(2 x Friction) exactly (`Core.CarryRules`).
+            StepCarry(dt);
+
             if (_externalVelocity.sqrMagnitude > 0.0001f)
             {
                 float mag = _externalVelocity.magnitude;
@@ -1287,6 +1298,8 @@ namespace TumbangPreso
 
         private void ApplyGravity(float dt)
         {
+            // Flight owns the vertical while it lasts (`CharacterMotor.Status.cs`).
+            if (StepFlightVertical(dt)) return;
             if(_swimLeap&&(_grounded||_velocity.y<=0))_swimLeap=false;
             if(IsSwimming&&!_swimLeap)
             {
@@ -1556,6 +1569,11 @@ namespace TumbangPreso
         {
             if (_isDefender || !RoundActive) return false;
             if (AbilitySystem != null && AbilitySystem.IsImmuneToTags) return false;
+            // ⚠️ A BODY HELD ALOFT (Updraft, 2.8 m up) IS OUT OF THE TAYA'S REACH. The reach is a
+            // flat distance, so without this a taya would tag somebody over their head. It is safe
+            // because Updraft cannot START with a slipper inside the box (`AmihanHeroKit`), and a
+            // body aloft cannot pick one up: the retrieval is still made on the ground, in reach.
+            if (IsAloft) return false;
             if (!HoldingSlipper) return false;
             return IsInsideBox();
         }
@@ -2017,6 +2035,10 @@ namespace TumbangPreso
 
         private void Update()
         {
+            // ⚠️ ON EVERY PEER, like the stun clock below: the icons and the pickup gate read these
+            // timers, and a replica never runs the physics step.
+            if (!PresentationClock.Held) StepStatuses(Time.deltaTime);
+
             if (_tripLeft > 0.0f && !IsEdgeRecovering)
             {
                 // ⚠️⚠️ ABOVE THE FLOOR NOTHING RUNS DOWN ON ITS OWN. THAT IS THE WHOLE RULE.

@@ -158,7 +158,8 @@ class Performance:
 # further along the direction the body came from, capped at 3 degrees per axis so the pose never
 # changes what it says. The amount is the hero's character: Cheska is the one who stops (her
 # holds barely drift), Phaister and Zack keep moving, Dante's holds already tremble as authored.
-HOLD_DRIFT = {"sean": .06, "zack": .09, "dante": .05, "cheska": .02, "nemu": .08, "phaister": .09, "rafi": .08}
+HOLD_DRIFT = {"sean": .06, "zack": .09, "dante": .05, "cheska": .02, "nemu": .08, "phaister": .09, "rafi": .08,
+              "amihan": .10}
 HOLD_CAP = 3.0
 
 
@@ -661,6 +662,83 @@ def rafi():
     p.locked((1.0, 1.05, 4.9), (0, 1.1, -.5), 48)
     return p
 
+@performance
+def amihan():
+    """
+    STORM SURGE, 3.6 s (docs/reports/amihan-kit-2026-09-25/direction.md section 7, research.md).
+
+    The four beats the reference research found in every good ultimate cutscene (Genshin's Venti
+    and Kazuha, Star Rail's Feixiao): WHO, INTENT, GATHER, RELEASE.
+
+    WHO (0 to 0.62): a wide low shot. She has been waiting for this and hates waiting: weight on
+    one hip, a hand on it, and an impatient look straight down the lens ("enough"). The wind is
+    already lifting her hair and robe.
+    INTENT (0.62 to 1.32): the ONE close-up, on her face and hand. She catches a tuft of cotton out
+    of the air and BLOWS it off her palm. That is Vigan's Binatbatan (beating cotton free for the
+    loom) and it is the breath of the amihan: the cotton becomes the first wind lines.
+    GATHER (1.32 to 2.46): wide and low from her left. She sweeps her arms round in two big turns,
+    the kasikus whirlwind her family weaves blooms in diamonds on the ground under her, abel
+    threads and cotton spiral up, and the vortex lifts her off the road.
+    RELEASE (2.46 to 3.6): over her shoulder, looking down the court the way the wind will go. She
+    draws the whole storm back to her right side, then drives both palms forward. The wall of wind
+    leaves toward the far end of the map and the camera watches it go; she lands braced in the
+    push, which is the first frame of the live 2.5 s gather.
+    """
+    p = Performance("amihan", 3.6)
+    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
+    # Hand on her left hip, weight on the right leg, looking round at the lens (shot A is on her
+    # right, so the head turns right).
+    who = Pose(torso=(-3, 12, 4), head=(-6, 24, -6), left=(24, 58, 38), right=(6, 20, 0),
+               legs=((4, 6), (-6, 12)))
+    who_tap = who.but(head=(-2, 28, -8))
+    # A cotton tuft caught at the face: right hand up and open in front of her mouth.
+    catch = Pose(torso=(3, 4, 0), head=(6, 6, 0), left=(14, 26, 0), right=(122, 8, -34),
+                 legs=((2, 6), (-2, 6)))
+    # The blow: she leans in over the palm, and the hand opens away from her.
+    blow = catch.but(torso=(9, 2, 0), head=(14, 2, 0), right=(110, 16, -22))
+    # Two sweeping turns, arms wide, the torso twisting across the whole range the rig allows.
+    sweep_l = Pose(torso=(2, -38, -4), head=(-4, -24, 0), left=(86, 72, -10), right=(96, 62, 30),
+                   legs=((6, 10), (-6, 10)))
+    sweep_r = Pose(torso=(2, 38, 4), head=(-4, 24, 0), left=(96, 62, -30), right=(86, 72, 10),
+                   legs=((-6, 10), (6, 10)))
+    # Lifted on the vortex: arms up and open, head back, feet trailing.
+    lifted = Pose(torso=(-10, 0, 0), head=(-20, 0, 0), left=(158, 38, 0), right=(158, 38, 0),
+                  legs=((-10, 4), (8, 8)))
+    # The storm drawn back to her right side before the push.
+    load = Pose(torso=(-8, 40, -6), head=(-2, -26, 0), left=(78, 20, 46), right=(64, 58, -12),
+                legs=((16, 10), (-14, 14)))
+    # The push: both palms driven forward, low and wide, braced. Held into the handoff.
+    push = Pose(torso=(18, -4, 0), head=(-8, 0, 0), left=(94, 16, -8), right=(94, 16, 8),
+                legs=((22, 12), (-20, 14)))
+
+    p.key(0, rest.but(head=(0, 10, 0)))
+    p.key(.2, who, punch=True)
+    p.hold(.2, .42, who)
+    p.key(.52, who_tap)
+    p.key(.74, catch, punch=True)
+    p.hold(.74, .98, catch)
+    p.key(1.1, blow, punch=True)
+    p.hold(1.1, 1.28, blow)
+    p.key(1.5, sweep_l).key(1.78, sweep_r).key(2.02, sweep_l)
+    p.key(2.22, lifted)
+    p.hold(2.22, 2.46, lifted)
+    p.key(2.74, load)
+    p.hold(2.74, 2.98, load)
+    p.key(3.1, push, punch=True)
+    p.hold(3.1, 3.6, push)
+    # The vortex lifts her in the gather and sets her down braced for the push.
+    p.rise(0, 0).rise(1.6, 0).rise(2.3, .38).rise(2.62, .34).rise(3.0, 0)
+    # A: WHO. Low wide three-quarter from her right, easing in a little.
+    p.shot(0, .62, (1.9, .55, 3.6), (0, 1.0, 0), 46, eye_to=(1.7, .6, 3.2))
+    # B: INTENT. The close-up: face and cotton hand, slightly below eye level.
+    p.shot(.62, 1.32, (.42, 1.42, 1.05), (0, 1.5, 0), 34, eye_to=(.34, 1.45, .92), close=True)
+    # C: GATHER. Wide and low from her left, drifting round with the turns.
+    p.shot(1.32, 2.46, (-3.1, .45, 2.7), (0, 1.25, 0), 52, eye_to=(-2.4, .55, 3.5))
+    # D: RELEASE. Over her right shoulder, down the court the wind is about to cross.
+    p.shot(2.46, 3.6, (1.05, 1.85, -2.3), (0, 1.1, 5.0), 54, eye_to=(.8, 1.65, -1.9), look_to=(0, 1.0, 7.0))
+    p.locked((1.6, 1.1, 4.2), (0, 1.15, 0), 48)
+    return p
+
 # ----------------------------------------------------------------------------- the 2.8 s baseline
 # The introductions as they shipped before REFINE-2.11, transcribed key for key from the old
 # `HeroAbilityClips.Introductions.cs` (PoseKey arguments: raise = -x, twist = +/-y, spread = z),
@@ -794,5 +872,9 @@ if __name__ == "__main__":
     else:
         for name in LEGACY:
             print(build(name).write())
+        # Heroes authored after the 2.8 s baseline have no legacy row (Amihan, 2026-09-25).
+        for name in PERFORMANCES:
+            if name not in LEGACY:
+                print(build(name).write())
         for name in HELD:
             print(HELD[name]().write())

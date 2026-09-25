@@ -392,7 +392,9 @@ namespace TumbangPreso.Net
         // 52 derives the shared ultimate phase's length from the accepted heroes' authored
         // introductions (2.8 to 4.2 s, REFINE-2.11) instead of a fixed 2.8. No bytes changed, but
         // a 51 peer would release its presentation clock at a different moment from the host.
-        public const int ProtocolVersion = 52;
+        // 53 is the ability overhaul (2026-09-25): `SyncUnit` carries the Whirled and Chilled
+        // status clocks, and the new `Carry` message holds a wind or dash hit on a client's body.
+        public const int ProtocolVersion = 53;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

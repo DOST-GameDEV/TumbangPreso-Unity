@@ -16,6 +16,14 @@ namespace TumbangPreso.Core
     {
         Skill1, Skill2, UltimateAlly, UltimateOpponent, RoundStart,
         TagLanded, WasTagged, CanKnocked, TookLead, MatchWon, Banter, Reply,
+
+        /// <summary>
+        /// ⚠️ APPENDED 2026-09-25 FOR THE ABILITY OVERHAUL: the role ability a hero casts while
+        /// DEFENDING, when it is a different power from the attacking one. `Skill2` is the attacking
+        /// reading (and every legacy kit's only one). A hero with no lines here falls back to its
+        /// `Skill2` lines (<see cref="HeroLines.ForRoleSkill"/>), so it is not a `SoloTriggers` row.
+        /// </summary>
+        Skill2Defending,
     }
 
     /// <summary>One spoken line. The id is also its audio file (<see cref="HeroLines.ClipName"/>)
@@ -80,7 +88,8 @@ namespace TumbangPreso.Core
             UA = HeroLineTrigger.UltimateAlly, UO = HeroLineTrigger.UltimateOpponent,
             RS = HeroLineTrigger.RoundStart, TL = HeroLineTrigger.TagLanded,
             WT = HeroLineTrigger.WasTagged, CK = HeroLineTrigger.CanKnocked,
-            LD = HeroLineTrigger.TookLead, MW = HeroLineTrigger.MatchWon;
+            LD = HeroLineTrigger.TookLead, MW = HeroLineTrigger.MatchWon,
+            S2D = HeroLineTrigger.Skill2Defending;
 
         private static HeroLine L(string id, HeroLineTrigger trigger, string text) => new HeroLine(id, trigger, text);
 
@@ -246,16 +255,23 @@ namespace TumbangPreso.Core
             L("rafi.lead.1", LD, "Out in front. Don't copy me."),
             L("rafi.win.1", MW, "Ayos! Good game, all."),
             L("rafi.win.2", MW, "Next time, bring a boat."),
-            // Amihan (2026-09-25). Her skills are placeholders, so her skill and ultimate lines
-            // speak to the wind rather than to a mechanic; revisit them when the kit is designed.
-            L("amihan.skill1.1", S1, "Here comes the breeze!"),
-            L("amihan.skill1.2", S1, "Catch this wind."),
-            L("amihan.skill1.3", S1, "Straight from the Ilocos coast!"),
-            L("amihan.skill2.1", S2, "Too slow for the wind!"),
-            L("amihan.skill2.2", S2, "Blink and I'm gone."),
-            L("amihan.skill2.3", S2, "Feel that draft?"),
-            L("amihan.ultally.1", UA, "Wind's with us, go!"),
-            L("amihan.ultally.2", UA, "Ride it, everyone!"),
+            // AMIHAN (2026-09-25, real kit). Bright, proud of Vigan, hates a stalled game and commits
+            // early. Each line names what the power does to the court, not the mechanic: the dash
+            // is her refusing to wait, the flight is her reading the court from above, the gale is
+            // the taya sweeping a lane clear, and the storm is the amihan season arriving.
+            // ⚠️ THE IDS WERE WRITTEN FOR THE PLACEHOLDERS THE SAME DAY AND NOTHING WAS RECORDED UNDER
+            // THEM, so their text changes here rather than retiring them (`docs/HUMAN.md` Table E).
+            L("amihan.skill1.1", S1, "Out of my way!"),
+            L("amihan.skill1.2", S1, "Catch me, if you can."),
+            L("amihan.skill1.3", S1, "No waiting. Go!"),
+            L("amihan.skill2.1", S2, "Up we go!"),
+            L("amihan.skill2.2", S2, "Better view from here."),
+            L("amihan.skill2.3", S2, "Watch the sky, taya."),
+            L("amihan.skill2d.1", S2D, "Sweep the lane!"),
+            L("amihan.skill2d.2", S2D, "Drop it. Now."),
+            L("amihan.skill2d.3", S2D, "Hands off my court."),
+            L("amihan.ultally.1", UA, "Storm's coming. Get behind me!"),
+            L("amihan.ultally.2", UA, "Stay clear of the wind!"),
             L("amihan.ultopp.1", UO, "Hold onto your slippers."),
             L("amihan.ultopp.2", UO, "Amihan season came early."),
             L("amihan.round.1", RS, "Kalesa's gone. Court's open!"),
@@ -321,6 +337,21 @@ namespace TumbangPreso.Core
             return found;
         }
 
+        /// <summary>
+        /// The lines for a ROLE ability cast. A defending cast asks <see cref="HeroLineTrigger.Skill2Defending"/>
+        /// first and falls back to `Skill2`, so a hero whose two role readings share a voice (every
+        /// legacy kit) needs no new rows.
+        /// </summary>
+        public static List<HeroLine> ForRoleSkill(string heroId, bool defending)
+        {
+            if (defending)
+            {
+                var own = For(heroId, HeroLineTrigger.Skill2Defending);
+                if (own.Count > 0) return own;
+            }
+            return For(heroId, HeroLineTrigger.Skill2);
+        }
+
         /// <summary>The audio clip a line plays, under `Resources/HeroVo`.</summary>
         public static string ClipName(string lineId) => "hvo_" + lineId.Replace('.', '_');
 
@@ -361,7 +392,7 @@ namespace TumbangPreso.Core
             HeroLineTrigger.Banter or HeroLineTrigger.Reply => 4,
             HeroLineTrigger.CanKnocked or HeroLineTrigger.TookLead => 3,
             HeroLineTrigger.TagLanded or HeroLineTrigger.WasTagged => 2,
-            HeroLineTrigger.Skill1 or HeroLineTrigger.Skill2 => 1,
+            HeroLineTrigger.Skill1 or HeroLineTrigger.Skill2 or HeroLineTrigger.Skill2Defending => 1,
             _ => 0,
         };
 
@@ -376,7 +407,8 @@ namespace TumbangPreso.Core
         public const float RoomGapSeconds = 0.6f;
 
         public static float CooldownFor(HeroLineTrigger trigger)
-            => trigger == HeroLineTrigger.Skill1 || trigger == HeroLineTrigger.Skill2 ? SkillCooldownSeconds : HeroCooldownSeconds;
+            => trigger == HeroLineTrigger.Skill1 || trigger == HeroLineTrigger.Skill2
+               || trigger == HeroLineTrigger.Skill2Defending ? SkillCooldownSeconds : HeroCooldownSeconds;
 
         public static int WordCount(string text)
         {

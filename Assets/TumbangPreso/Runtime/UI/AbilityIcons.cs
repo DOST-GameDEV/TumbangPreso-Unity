@@ -108,6 +108,17 @@ namespace TumbangPreso.UI
         RafiCrosscurrent,
         RafiMirrorwake,
         RafiBreakwater,
+
+        // ⚠️ AMIHAN (2026-09-25), the first kit with a signature and two ROLE abilities, so four
+        // glyphs: her signature, the attacking and the defending role ability, and the ultimate.
+        /// <summary>Amihan signature: Quick Dash (a figure's slipstream: three swept lines past a chevron).</summary>
+        AmihanQuickDash,
+        /// <summary>Amihan attacking: Updraft (a rising spiral column under a lifted figure).</summary>
+        AmihanUpdraft,
+        /// <summary>Amihan defending: Whirlwind (a curved gale front rolling forward).</summary>
+        AmihanWhirlwind,
+        /// <summary>Amihan ultimate: Storm Surge (a fan of wind lines from a kasikus diamond).</summary>
+        AmihanStormSurge,
     }
 
     /// <summary>
@@ -290,6 +301,10 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.RafiCrosscurrent: return "REDIRECTION";
                 case AbilityGlyph.RafiMirrorwake: return "DECOY";
                 case AbilityGlyph.RafiBreakwater: return "MOVING WAVE";
+                case AbilityGlyph.AmihanQuickDash: return "MOBILITY";
+                case AbilityGlyph.AmihanUpdraft: return "FLIGHT";
+                case AbilityGlyph.AmihanWhirlwind: return "MOVING GALE";
+                case AbilityGlyph.AmihanStormSurge: return "MAP-WIDE PUSH";
                 default:
                     return "POWER";
             }
@@ -339,6 +354,20 @@ namespace TumbangPreso.UI
         {
             switch (glyph)
             {
+                // Amihan's fallbacks, drawn only until `tools/build_ability_icons.py`'s drawings load.
+                case AbilityGlyph.AmihanQuickDash:
+                    return Mathf.Max(Mathf.Max(Chevron(u - 0.34f, v, 0.6f, Stroke),
+                        Box(u + 0.3f, v - 0.3f, 0.42f, 0.055f)),
+                        Mathf.Max(Box(u + 0.4f, v, 0.5f, 0.055f), Box(u + 0.3f, v + 0.3f, 0.42f, 0.055f)));
+                case AbilityGlyph.AmihanUpdraft:
+                    return Mathf.Max(Mathf.Max(EllipseRing(u, v + 0.55f, 0.62f, 0.18f, 0.07f),
+                        EllipseRing(u, v + 0.18f, 0.46f, 0.14f, 0.07f)),
+                        Mathf.Max(EllipseRing(u, v - 0.14f, 0.3f, 0.1f, 0.06f), Disc(u, v - 0.6f, 0.18f)));
+                case AbilityGlyph.AmihanWhirlwind:
+                    return Mathf.Max(Sub(Disc(u, v + 0.15f, 0.86f), Disc(u, v + 0.42f, 0.8f)),
+                        Sub(Disc(u, v + 0.55f, 0.6f), Disc(u, v + 0.78f, 0.56f)));
+                case AbilityGlyph.AmihanStormSurge:
+                    return Mathf.Max(Disc(u, v + 0.62f, 0.2f), Spokes(u, v + 0.62f, 9, 0.34f, 1.35f, Stroke * 0.7f));
                 case AbilityGlyph.RafiCrosscurrent:
                     return Mathf.Max(Sub(EllipseRing(u + .12f, v, .67f, .60f, .16f), Box(u - .5f, v + .4f, .6f, .65f)),
                         RightTriangle(u - .38f, v - .44f, .24f, .28f));

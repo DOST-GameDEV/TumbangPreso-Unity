@@ -37,6 +37,10 @@ namespace TumbangPreso.CameraSystem
             {Root.transform.rotation=Quaternion.LookRotation(field.Forward);CheskaIceVisuals.BuildWall(Root.transform,field.FirstScale,field.SecondScale,field.Split,renderOnly:true);}
             else if(field.Type==WorldEffectSnapshot.Kind.Hex)
             {var visual=HeroHazards.SpawnHexSigil(field.Position,field.Radius,field.Duration,field.Owner,field.FirstScale,silent:true,renderOnly:true);visual.transform.SetParent(Root.transform,true);var fx=visual.GetComponent<HeroHazards.WardInscribe>();fx.enabled=false;_step=fx.StepTo;}
+            else if(field.Type==WorldEffectSnapshot.Kind.Gale)
+            {var fx=AmihanGaleFront.Build(Root.transform,field.Position,field.Forward,field.Duration,Core.AmihanRules.WhirlwindSpeed,Core.AmihanRules.WhirlwindStart,Core.AmihanRules.WhirlwindWidth);fx.enabled=false;_step=fx.StepTo;}
+            else if(field.Type==RecordedSpecialFields.Storm)
+            {var fx=AmihanStormFan.Build(Root.transform,field.Position,field.Forward,Core.AmihanRules.StormSurgeGatherSeconds);fx.enabled=false;_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Fissure)
             {var fx=DanteFissurePillar.Create(field.Position,field.Forward,(int)field.FirstScale,field.Duration,renderOnly:true);fx.transform.SetParent(Root.transform,true);fx.enabled=false;_step=fx.StepTo;}
             else if(field.Type==RecordedSpecialFields.Coven)

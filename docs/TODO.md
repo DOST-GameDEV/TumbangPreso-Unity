@@ -120,13 +120,42 @@ method `docs/CHARACTER_MODEL_METHOD.md`.
 - [ ] **Owner pick: her colour.** Concept teal (default) or abel indigo (`AMIHAN_CLOTH=abel`),
   compared beside the cast in `Logs/rafi-share/amihan-v4-colour-compare.png`; the teal sits in
   Rafi's family.
-- [ ] **Her skills and ultimate** (owner to design), then her introduction scene (it is staged
-  around the ultimate), ultimate presentation, VFX, cast clips and first-person actions, and
-  the skill and ultimate lines rewritten to match.
+- [ ] **Her skills and ultimate.** Owner designed them 2026-09-25 (QUICK DASH signature,
+  UPDRAFT attacking, WHIRLWIND defending, STORM SURGE ultimate) and answered the open questions;
+  see ABILITY-1 below and `docs/reports/amihan-kit-2026-09-25/`. Done so far: gameplay
+  (`AmihanHeroKit`, `AmihanHazards`, `Core.AmihanRules`), wind VFX toolkit and every ability's
+  effects (`WindVfx`, `AmihanVfx`, `Shaders/WindRibbon`), audio (`tools/build_amihan_audio.py`),
+  lines, glyph ids, sky look, the introduction's body table (`tools/author_ultimate_intros.py`).
+  Open: cast clips and first-person actions, glyph drawings, the introduction's stage, HUD role
+  badge and status icons, screens, bots, in-engine review of every beat.
 - [ ] Deploy the two cloud-code scripts that now list her (`ugs/cloud-code/match-record.js`,
   `wallet.js`) to the live UGS project; until then the server does not know her id.
 - [ ] Record her voice lines (human voices only; the rows are in `docs/HUMAN.md`).
 - [ ] A home court (brief section 3 names one) when maps are next opened.
+
+### ABILITY-1 · Signature + role abilities, the status table, and the ability direction ⚠️ IN PROGRESS, 2026-09-25
+
+Owner, 2026-09-25: "we are overhauling how abilities work ... there will be 2 abilities, one
+signature ability that doesnt change and stays no matter what role and one that changes", then
+the status table (Whirled, Chilled, Frozen, Tagged), "thoroughly try to direct all vfx and sfx of
+the skills so that it will look cohesive, good and satisfying", "it will be the baseline for all
+rework of skills". Design, research and direction: `docs/reports/amihan-kit-2026-09-25/`
+(`plan.md`, `research.md`, `direction.md`). Amihan (HERO-8) is the first kit in the new shape.
+
+- [x] Role kit data shape: `HeroKit.AttackingSkill`/`DefendingSkill`, `Skill2` is the live one,
+  `SetRole` from the derived taya each frame; legacy kits unchanged.
+- [x] Status system: `Core.StatusRules` (the owner's four rows), `CharacterMotor.Status.cs`
+  (Whirled, Chilled timers; Tagged ignores stun immunity; flight; carry), pickup gate,
+  Cheska's ice sheet applies Chilled, `SyncUnit` carries both new timers, `Carry` message,
+  protocol 53.
+- [ ] HUD: role badge and swap on the slot-2 tile, status icons with tooltips over bodies and on
+  the local HUD, on mouse and keyboard, pad and touch.
+- [ ] Screens: character select, skill tree and loadout show signature, attacking, defending and
+  ultimate for a role kit.
+- [ ] Owner approval of the proposed mapping for the other seven heroes (`plan.md` § 6); until
+  then they are unchanged.
+- [ ] Full verification (Core, EditMode, PlayMode gate, Checks.RunAll, audits, BotBehaviourProbe,
+  AbilityShowcaseProbe, Windows build).
 
 ### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23
 

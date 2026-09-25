@@ -81,9 +81,15 @@ namespace TumbangPreso.Audio
                 Say(caster, UltimateReadingFor(caster));
                 return;
             }
-            string key = hero + slot;
+            // ⚠️ THE ROLE ABILITY SPEAKS IN ITS ROLE (ability overhaul, 2026-09-25). A defending cast
+            // of a hero whose two role abilities differ uses its own lines; every other kit has none,
+            // and `HeroLines.ForRoleSkill`'s fallback keeps them on `Skill2` exactly as before.
+            var trigger = slot == 1 ? HeroLineTrigger.Skill1
+                : caster.IsDefender && HeroLines.For(hero, HeroLineTrigger.Skill2Defending).Count > 0
+                    ? HeroLineTrigger.Skill2Defending : HeroLineTrigger.Skill2;
+            string key = hero + trigger;
             if (_skillQuietUntil.TryGetValue(key, out float until) && Time.unscaledTime < until) return;
-            if (Say(caster, slot == 1 ? HeroLineTrigger.Skill1 : HeroLineTrigger.Skill2))
+            if (Say(caster, trigger))
                 _skillQuietUntil[key] = Time.unscaledTime + HeroLines.SkillCooldownSeconds;
         }
 
