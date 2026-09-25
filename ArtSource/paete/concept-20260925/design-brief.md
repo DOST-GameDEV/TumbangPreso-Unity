@@ -199,5 +199,10 @@ Builder: `tools/build_paete_voxel.py`. Review: `PaeteNativeModelReview.Run -out 
   remove those"*) and v12 took them out; leaves gathered into clusters (singles read as
   confetti), moss as seam strips, shins flaring into thicker roots, bark plates over the thighs,
   and the back given shoulder blades, a lower plate, moss seams and grain.
+- **v15 to v17: no fingers.** Owner: *"none of our characters have fingers so try to make his
+  arms js look like pointy vines tangling on each other"*. The claws are gone; from the elbow
+  down each arm is four strands (two bark, one light bark, one green) twisting round each other
+  and tapering to points, with a tendril curling off. (v16's render was stale: its build had
+  refused two decals on removed boxes. Build and render are chained since.)
 - **Open:** the three face states (NEUTRAL, FOCUSED, ANGRY), the owner's read of v10, the
   palette check on the deck tile.

@@ -245,7 +245,8 @@ MAX_FACE_LUMINANCE = 0.30
 #            forehead plank
 #   horns    square-section branches with right-angle elbows, small tines, a few leaves
 #   chest    two plank slabs in a V round a diamond boss carrying a spiral, a narrowing plank waist
-#   arms     layered slanted shoulder planks, long plank-bundle arms, long blocky claws
+#   arms     layered slanted shoulder planks, long plank-bundle arms (v15: ending in braided
+#            pointed vines, not claws: the cast has no fingers)
 #   legs     long plank-bundle legs on spreading root feet
 #   green    thick vines wrapping the torso, a forearm and a leg; moss in the crevices; clusters
 #            of big leaves sprouting from the seams
@@ -358,8 +359,8 @@ TORSO = [
 
 # ---------------------------------------------------------------------------
 # ARMS: slanted shoulder planks over a dark block, an upper-arm bundle, an elbow, a long
-# forearm bundle, a palm and three long claws. Shoulder at 0.470, so the palm is 0.4083 to
-# 0.5317 (`HandTopLift` either side) and the claws reach x 0.60: in the idle they hang to the knee.
+# forearm bundle ending in pointed vines twisted round each other. Shoulder at 0.470, so the palm is 0.4083 to
+# 0.5317 (`HandTopLift` either side) and the vine points reach x 0.62: in the idle they hang to the knee.
 # ---------------------------------------------------------------------------
 ARM_LEFT = [
  ('pauldron-left', 'arm-left', (0.118, 0.418, -0.094), (0.250, 0.522, 0.094), BARK_DARK),
@@ -378,22 +379,8 @@ ARM_LEFT = [
  ('upper-arm-left', 'arm-left', (0.240, 0.430, -0.052), (0.340, 0.508, 0.052), BARK_DARK),
  ('upper-arm-top-left', 'arm-left', (0.244, 0.500, -0.040), (0.336, 0.520, 0.036), BARK),
  ('upper-arm-front-left', 'arm-left', (0.246, 0.440, -0.066), (0.334, 0.496, -0.048), BARK_LIT),
- ('elbow-left', 'arm-left', (0.330, 0.426, -0.064), (0.372, 0.514, 0.064), BARK),
- ('forearm-left', 'arm-left', (0.366, 0.414, -0.070), (0.480, 0.524, 0.070), BARK_DARK),
- ('forearm-top-left', 'arm-left', (0.362, 0.518, -0.050), (0.486, 0.538, 0.040), BARK_LIT),
- ('forearm-front-left', 'arm-left', (0.368, 0.428, -0.086), (0.482, 0.500, -0.066), BARK),
- ('forearm-back-left', 'arm-left', (0.372, 0.436, 0.066), (0.478, 0.508, 0.084), BARK),
- ('forearm-under-left', 'arm-left', (0.366, 0.400, -0.044), (0.480, 0.418, 0.050), BARK_LIT),
- ('forearm-split-left', 'arm-left', (0.380, 0.470, -0.098), (0.470, 0.488, -0.084), BARK),
- ('forearm-moss-left', 'arm-left', (0.450, 0.534, -0.020), (0.478, 0.548, 0.020), MOSS),
- ('palm-left', 'arm-left', (0.472, 0.4083, -0.074), (0.532, 0.5317, 0.074), BARK),
- # ⚠️ v11: each claw is two segments, the tip bent (the board's claws curl).
- ('claw-left-a', 'arm-left', (0.524, 0.412, -0.062), (0.566, 0.448, -0.028), BARK),
- ('claw-left-a-tip', 'arm-left', (0.560, 0.404, -0.058), (0.600, 0.436, -0.032), BARK_LIT),
- ('claw-left-b', 'arm-left', (0.524, 0.454, -0.018), (0.572, 0.490, 0.016), BARK_LIT),
- ('claw-left-b-tip', 'arm-left', (0.566, 0.446, -0.014), (0.612, 0.478, 0.012), BARK),
- ('claw-left-c', 'arm-left', (0.524, 0.494, 0.024), (0.562, 0.530, 0.060), BARK),
- ('claw-left-c-tip', 'arm-left', (0.556, 0.486, 0.028), (0.594, 0.516, 0.056), BARK_LIT),
+ ('elbow-left', 'arm-left', (0.326, 0.422, -0.068), (0.376, 0.518, 0.068), BARK),
+ ('elbow-moss-left', 'arm-left', (0.360, 0.508, -0.050), (0.384, 0.524, 0.030), MOSS),
 ]
 
 ARM_RIGHT = [
@@ -412,21 +399,8 @@ ARM_RIGHT = [
  ('upper-arm-right', 'arm-right', (-0.342, 0.428, -0.050), (-0.242, 0.506, 0.054), BARK_DARK),
  ('upper-arm-top-right', 'arm-right', (-0.338, 0.498, -0.034), (-0.246, 0.518, 0.042), BARK_LIT),
  ('upper-arm-back-right', 'arm-right', (-0.334, 0.444, 0.050), (-0.248, 0.500, 0.068), BARK),
- ('elbow-right', 'arm-right', (-0.374, 0.424, -0.062), (-0.332, 0.512, 0.066), BARK),
- ('forearm-right', 'arm-right', (-0.482, 0.412, -0.068), (-0.368, 0.526, 0.072), BARK_DARK),
- ('forearm-top-right', 'arm-right', (-0.488, 0.520, -0.036), (-0.364, 0.540, 0.054), BARK),
- ('forearm-front-right', 'arm-right', (-0.484, 0.426, -0.084), (-0.370, 0.502, -0.064), BARK_LIT),
- ('forearm-back-right', 'arm-right', (-0.480, 0.432, 0.068), (-0.374, 0.506, 0.086), BARK),
- ('forearm-under-right', 'arm-right', (-0.482, 0.398, -0.050), (-0.368, 0.416, 0.044), BARK),
- ('forearm-split-right', 'arm-right', (-0.468, 0.442, -0.096), (-0.384, 0.458, -0.082), BARK_LIT),
- ('forearm-moss-right', 'arm-right', (-0.470, 0.496, -0.090), (-0.380, 0.506, -0.078), MOSS),
- ('palm-right', 'arm-right', (-0.534, 0.4083, -0.072), (-0.474, 0.5317, 0.076), BARK),
- ('claw-right-a', 'arm-right', (-0.570, 0.410, -0.060), (-0.526, 0.446, -0.026), BARK_LIT),
- ('claw-right-a-tip', 'arm-right', (-0.606, 0.400, -0.056), (-0.564, 0.432, -0.030), BARK),
- ('claw-right-b', 'arm-right', (-0.566, 0.452, -0.016), (-0.526, 0.488, 0.018), BARK),
- ('claw-right-b-tip', 'arm-right', (-0.600, 0.444, -0.012), (-0.560, 0.474, 0.014), BARK_LIT),
- ('claw-right-c', 'arm-right', (-0.560, 0.494, 0.026), (-0.526, 0.5317, 0.062), BARK),
- ('claw-right-c-tip', 'arm-right', (-0.590, 0.488, 0.030), (-0.554, 0.520, 0.058), BARK_LIT),
+ ('elbow-right', 'arm-right', (-0.378, 0.420, -0.066), (-0.328, 0.516, 0.070), BARK),
+ ('elbow-moss-right', 'arm-right', (-0.386, 0.418, -0.040), (-0.362, 0.434, 0.050), MOSS_LIT),
 ]
 
 # ---------------------------------------------------------------------------
@@ -480,9 +454,9 @@ BOX_TILTS = {
  'pauldron-top-right': 7.0, 'pauldron-front-right': 5.0, 'pauldron-back-right': 6.0,
  'pauldron-lower-left': -14.0, 'pauldron-lower-right': 13.0,
  'knee-left': -4.0, 'knee-right': 3.0,
- 'forearm-split-left': -3.0, 'forearm-split-right': 2.5,
- 'claw-left-a-tip': -14.0, 'claw-left-b-tip': -18.0, 'claw-left-c-tip': -12.0,
- 'claw-right-a-tip': 16.0, 'claw-right-b-tip': 13.0, 'claw-right-c-tip': 18.0,
+
+
+
  'shin-plank-left-a': 2.0, 'shin-plank-left-b': -2.0, 'shin-plank-right-a': -1.5, 'shin-plank-right-b': 2.5,
  'thigh-plank-left-b': -2.0, 'thigh-plank-right-a': 2.0,
 }
@@ -498,15 +472,15 @@ BOX_TAPERS = {
  'shin-plank-left-a': (1, 0, 1.30, 1.0), 'shin-plank-left-b': (1, 0, 1.26, 1.0),
  'shin-plank-right-a': (1, 0, 1.28, 1.0), 'shin-plank-right-b': (1, 0, 1.32, 1.0),
  # The forearms narrow toward the wrist.
- 'forearm-left': (0, 1, 1.0, .82), 'forearm-right': (0, 1, .82, 1.0),
- 'forearm-front-left': (0, 1, 1.0, .80), 'forearm-front-right': (0, 1, .80, 1.0),
+
+
  # The mask narrows to the jaw: the core, and each lower face plank toward its inner edge.
  'head-core': (1, 0, .74, 1.0),
   'nose-ridge': (1, 0, .70, 1.0),
  'waist-core': (1, 0, .86, 1.0),
  # Claws thin toward their tips.
- 'claw-left-a-tip': (0, 1, 1.0, .40), 'claw-left-b-tip': (0, 1, 1.0, .36), 'claw-left-c-tip': (0, 1, 1.0, .44),
- 'claw-right-a-tip': (0, 1, .38, 1.0), 'claw-right-b-tip': (0, 1, .42, 1.0), 'claw-right-c-tip': (0, 1, .40, 1.0),
+
+
 }
 
 
@@ -587,9 +561,6 @@ ENGRAVE_BODY = (
  ('thigh-plank-right-a', 'front', BARK_DARK, [(-0.070, 0.190), (-0.065, 0.190), (-0.066, 0.262), (-0.071, 0.262)], 1),
  ('shin-plank-left-b', 'front', BARK_DARK, [(0.110, 0.052), (0.115, 0.052), (0.117, 0.124), (0.112, 0.124)], 1),
  ('shin-plank-right-b', 'front', BARK_DARK, [(-0.118, 0.060), (-0.113, 0.060), (-0.112, 0.100), (-0.117, 0.100)], 1),
- # Forearms: a grain line along each.
- ('forearm-front-left', 'front', BARK_DARK, [(0.376, 0.462), (0.474, 0.458), (0.474, 0.464), (0.376, 0.468)], 1),
- ('forearm-front-right', 'front', BARK_DARK, [(-0.470, 0.470), (-0.380, 0.474), (-0.380, 0.480), (-0.470, 0.476)], 1),
  # Back: a cut across each slab.
  ('back-plank-left', 'back', BARK_DARK, [(0.024, 0.420), (0.140, 0.428), (0.140, 0.434), (0.024, 0.426)], 1),
  ('back-plank-right', 'back', BARK_DARK, [(-0.136, 0.392), (-0.030, 0.386), (-0.030, 0.392), (-0.136, 0.398)], 1),
@@ -719,6 +690,51 @@ def _forms(part):
                                      [0.020, 0.015, 0.009], sides=4)
     yield 'leg-right', ROOT, _branch([(-0.070, 0.030, 0.068), (-0.058, 0.016, 0.108), (-0.052, 0.010, 0.132)],
                                      [0.016, 0.012, 0.009], sides=4)
+    # ⚠️ v16: FROM THE ELBOW DOWN EACH ARM IS VINES, TANGLED. The owner: *"none of our characters have
+    # fingers so try to make his arms js look like pointy vines tangling on each other"*. v15 kept
+    # the square forearm and hung thin strands off it, which read as an afterthought. Now four
+    # strands leave the elbow block thick (28 to 34 mm), twist round each other along the arm and
+    # taper to separate points past the wrist; one thin tendril curls off. Two strands are bark,
+    # one light bark, one green; every point and radius is typed, and the two arms twist differently.
+    #
+    # ⚠️ THE BARK STRANDS ARE IN THE SKIN SLOTS ON PURPOSE: `CharacterVisual.PalmCentre` finds the
+    # hand as the far end of the arm's skin-slot vertices, so the slipper anchor lands in the braid.
+    yield 'arm-left', BARK, _branch([(0.360, 0.500, -0.036), (0.404, 0.506, 0.010), (0.448, 0.476, 0.044),
+                                     (0.492, 0.440, 0.022), (0.534, 0.438, -0.020), (0.572, 0.458, -0.030),
+                                     (0.604, 0.474, -0.012), (0.630, 0.478, 0.004)],
+                                    [0.034, 0.031, 0.028, 0.025, 0.020, 0.015, 0.009, 0.004])
+    yield 'arm-left', BARK_LIT, _branch([(0.360, 0.440, 0.030), (0.404, 0.434, -0.012), (0.448, 0.458, -0.046),
+                                         (0.492, 0.494, -0.030), (0.534, 0.502, 0.012), (0.570, 0.486, 0.034),
+                                         (0.600, 0.466, 0.022), (0.624, 0.456, 0.008)],
+                                        [0.032, 0.030, 0.027, 0.024, 0.019, 0.014, 0.009, 0.004])
+    yield 'arm-left', BARK, _branch([(0.362, 0.470, 0.050), (0.404, 0.486, 0.052), (0.446, 0.508, 0.014),
+                                     (0.488, 0.494, -0.030), (0.528, 0.462, -0.040), (0.562, 0.440, -0.014),
+                                     (0.590, 0.440, 0.010), (0.612, 0.448, 0.020)],
+                                    [0.028, 0.026, 0.024, 0.021, 0.017, 0.012, 0.008, 0.004])
+    yield 'arm-left', VINE, _branch([(0.362, 0.476, -0.054), (0.406, 0.450, -0.050), (0.448, 0.434, -0.010),
+                                     (0.490, 0.450, 0.036), (0.530, 0.484, 0.040), (0.566, 0.504, 0.008),
+                                     (0.596, 0.496, -0.016), (0.616, 0.484, -0.020)],
+                                    [0.024, 0.023, 0.021, 0.019, 0.016, 0.012, 0.008, 0.004])
+    yield 'arm-left', VINE, _branch([(0.520, 0.500, 0.036), (0.548, 0.524, 0.056), (0.566, 0.542, 0.044),
+                                     (0.574, 0.550, 0.028)], [0.009, 0.007, 0.005, 0.003])
+    yield 'arm-right', BARK, _branch([(-0.362, 0.444, -0.034), (-0.406, 0.438, 0.012), (-0.450, 0.462, 0.046),
+                                      (-0.494, 0.498, 0.030), (-0.536, 0.504, -0.010), (-0.574, 0.486, -0.034),
+                                      (-0.606, 0.466, -0.024), (-0.632, 0.458, -0.008)],
+                                     [0.034, 0.031, 0.028, 0.025, 0.020, 0.015, 0.009, 0.004])
+    yield 'arm-right', BARK_LIT, _branch([(-0.360, 0.500, 0.032), (-0.402, 0.508, -0.010), (-0.446, 0.484, -0.046),
+                                          (-0.490, 0.448, -0.034), (-0.532, 0.436, 0.006), (-0.568, 0.448, 0.032),
+                                          (-0.600, 0.468, 0.026), (-0.626, 0.480, 0.010)],
+                                         [0.032, 0.030, 0.027, 0.023, 0.019, 0.014, 0.009, 0.004])
+    yield 'arm-right', BARK, _branch([(-0.364, 0.470, -0.052), (-0.406, 0.456, -0.054), (-0.448, 0.436, -0.018),
+                                      (-0.490, 0.444, 0.028), (-0.528, 0.474, 0.042), (-0.560, 0.500, 0.020),
+                                      (-0.588, 0.502, -0.006), (-0.610, 0.494, -0.018)],
+                                     [0.028, 0.026, 0.024, 0.021, 0.017, 0.012, 0.008, 0.004])
+    yield 'arm-right', VINE, _branch([(-0.362, 0.470, 0.056), (-0.404, 0.496, 0.048), (-0.446, 0.510, 0.006),
+                                      (-0.488, 0.494, -0.036), (-0.528, 0.462, -0.042), (-0.564, 0.440, -0.010),
+                                      (-0.594, 0.444, 0.016), (-0.614, 0.456, 0.022)],
+                                     [0.024, 0.023, 0.021, 0.019, 0.016, 0.012, 0.008, 0.004])
+    yield 'arm-right', VINE, _branch([(-0.530, 0.440, -0.040), (-0.556, 0.420, -0.058), (-0.572, 0.404, -0.046),
+                                      (-0.580, 0.398, -0.030)], [0.009, 0.007, 0.005, 0.003])
     # The torso vine: over his right shoulder, down across the chest under the boss, round his
     # left side and onto the back. Thick, the board's.
     yield 'torso', VINE, _branch([(-0.152, 0.476, 0.060), (-0.156, 0.470, -0.080), (-0.090, 0.428, -0.148),
@@ -730,10 +746,6 @@ def _forms(part):
                                   (-0.084, 0.500, 0.190)], [0.016, 0.013, 0.010, 0.007], sides=4)
     yield 'torso', LEAF, _leaf((-0.090, 0.512, 0.192), 0.050, 0.030, 0.007, 120, 40, 30)
     yield 'torso', LEAF_DARK, _leaf((-0.050, 0.466, 0.196), 0.044, 0.026, 0.007, 60, 20, -40)
-    # The signature's vine round the left forearm.
-    yield 'arm-left', VINE, _branch([(0.370, 0.538, -0.030), (0.384, 0.500, -0.094), (0.398, 0.420, -0.092),
-                                     (0.412, 0.396, 0.000), (0.426, 0.450, 0.092), (0.440, 0.538, 0.050)],
-                                    [0.013, 0.014, 0.014, 0.013, 0.014, 0.012])
     # A vine coiling up his right leg.
     yield 'leg-right', VINE, _branch([(-0.030, 0.040, -0.080), (-0.080, 0.070, -0.100), (-0.150, 0.100, -0.084),
                                       (-0.168, 0.140, 0.000), (-0.130, 0.180, 0.084), (-0.050, 0.210, 0.086),
