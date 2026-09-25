@@ -42,7 +42,7 @@ namespace TumbangPreso.Visual
             bool hdr=format==RenderTextureFormat.ARGBHalf || format==RenderTextureFormat.ARGBFloat ||
                      format==RenderTextureFormat.RGB111110Float || format==RenderTextureFormat.DefaultHDR;
             if(!hdr && SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.DefaultHDR))format=RenderTextureFormat.DefaultHDR;
-            _material.SetVector(BloomThresholdId,new Vector4(profile.BloomThreshold,.6f,0,0));
+            _material.SetVector(BloomThresholdId,new Vector4(profile.BloomThreshold,Mathf.Max(.01f,profile.BloomKnee),0,0));
             int width=Mathf.Max(1,source.width/2),height=Mathf.Max(1,source.height/2);
             var current=RenderTexture.GetTemporary(width,height,0,format,RenderTextureReadWrite.Linear);
             Graphics.Blit(source,current,_material,PassPrefilter);
