@@ -389,6 +389,25 @@ namespace TumbangPreso.Core
                 "UPDRAFT II", "A second reading, still being designed. Plays as Updraft.",
                 .30f, -.30f, "Being designed", "Same as the default",
                 "Use Updraft six times", true, 6),
+
+            // ⚠️ PAETE (2026-09-25), SAME RULE AS AMIHAN'S ROWS ABOVE: named for his real abilities,
+            // the second reading of each slot plays as the default until the owner designs the
+            // variants (*"keep them all as extra skills for now"*). Slot 2 is named for the
+            // attacking role ability.
+            new AbilityVariant("paete.1.vine", "paete", 1, "KAPIT-BAGING", "PaeteVine",
+                "KAPIT-BAGING", "Both arms shoot vines where you aim and reel you to the anchor.",
+                0, 0, "Escape with a slipper", "30 s to come back"),
+            new AbilityVariant("paete.1.vine_next", "paete", 1, "KAPIT-BAGING", "PaeteVine",
+                "KAPIT-BAGING II", "A second reading, still being designed. Plays as Kapit-Baging.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Kapit-Baging eight times", true, 8),
+            new AbilityVariant("paete.2.sprout", "paete", 2, "PUNLANG TSINELAS", "PaeteSprout",
+                "PUNLANG TSINELAS", "Attacking: a seedling grows wooden slippers you fire at will.",
+                0, 0, "A second thrower", "Pulled out after 15 s"),
+            new AbilityVariant("paete.2.sprout_next", "paete", 2, "PUNLANG TSINELAS", "PaeteSprout",
+                "PUNLANG TSINELAS II", "A second reading, still being designed. Plays as Punlang Tsinelas.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Punlang Tsinelas six times", true, 6),
         };
 
         /// <summary>⚠️⚠️ THE ONE SWITCH. `false` while the owner tests (every skill open); `true`

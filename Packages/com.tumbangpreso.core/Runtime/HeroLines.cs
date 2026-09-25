@@ -285,6 +285,34 @@ namespace TumbangPreso.Core
             L("amihan.lead.1", LD, "Ahead of the wind now!"),
             L("amihan.win.1", MW, "Salamat! Come visit Vigan!"),
             L("amihan.win.2", MW, "Good game! Empanada's on me."),
+            // PAETE (2026-09-25). The forest on Mount Makiling, given a face by a carver from Paete.
+            // Calm, few words, a little amused by everyone's panic. The thorn lines are the forest's
+            // rule (eat the fruit, never carry it home); the ultimate is the mountain keeping what
+            // it catches. Human recordings only (`docs/HUMAN.md`).
+            L("paete.skill1.1", S1, "Kapit."),
+            L("paete.skill1.2", S1, "I'll be right there."),
+            L("paete.skill1.3", S1, "The vines know the way."),
+            L("paete.skill2.1", S2, "Grow."),
+            L("paete.skill2.2", S2, "Aim for the can, little one."),
+            L("paete.skill2.3", S2, "It throws better than you."),
+            L("paete.skill2d.1", S2D, "That's mine now."),
+            L("paete.skill2d.2", S2D, "Eat the fruit. Leave it here."),
+            L("paete.skill2d.3", S2D, "Nothing leaves the mountain."),
+            L("paete.ultally.1", UA, "Stay out of the roots!"),
+            L("paete.ultally.2", UA, "Step back. The forest is waking."),
+            L("paete.ultopp.1", UO, "Dito ka muna."),
+            L("paete.ultopp.2", UO, "The mountain keeps what it catches."),
+            L("paete.round.1", RS, "No rush."),
+            L("paete.round.2", RS, "The mountain waited longer than this."),
+            L("paete.tag.1", TL, "Found you."),
+            L("paete.tag.2", TL, "Too loud, little bird."),
+            L("paete.tagged.1", WT, "Hm. Fair."),
+            L("paete.tagged.2", WT, "I'll grow back."),
+            L("paete.can.1", CK, "Tumbang. Slowly, but tumbang."),
+            L("paete.can.2", CK, "Timber."),
+            L("paete.lead.1", LD, "Still growing."),
+            L("paete.win.1", MW, "Good game. Come climb Makiling."),
+            L("paete.win.2", MW, "Salamat. Now, rest."),
         };
 
         /// <summary>Opener and reply, both in <see cref="All"/>. The ids read "who speaks, then who

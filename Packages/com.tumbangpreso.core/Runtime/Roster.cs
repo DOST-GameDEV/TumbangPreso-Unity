@@ -144,6 +144,10 @@ namespace TumbangPreso.Core
             // row no other hero has (`AllPersonRows_AreDistinct`). A prototype number, not a
             // balance verdict. Her skills are placeholders until the owner designs them.
             new RosterEntry("amihan",      "AMIHAN",          5,    2,    3),
+            // ⚠️ PAETE, APPENDED (2026-09-25), for the same wire reason as Amihan. A tree is grit:
+            // average pace and strength, the toughest in the cast beside Dante. A row no hero or
+            // street character has (`AllPersonRows_AreDistinct`). A prototype number.
+            new RosterEntry("paete",       "PAETE",           3,    3,    5),
         };
 
         /// <summary>
@@ -176,6 +180,10 @@ namespace TumbangPreso.Core
             // row no other hero has (`AllPersonRows_AreDistinct`). A prototype number, not a
             // balance verdict. Her skills are placeholders until the owner designs them.
             new RosterEntry("amihan",      "AMIHAN",          5,    2,    3),
+            // ⚠️ PAETE, APPENDED (2026-09-25), for the same wire reason as Amihan. A tree is grit:
+            // average pace and strength, the toughest in the cast beside Dante. A row no hero or
+            // street character has (`AllPersonRows_AreDistinct`). A prototype number.
+            new RosterEntry("paete",       "PAETE",           3,    3,    5),
         };
 
         /// <summary>Default people list for global lookups.</summary>

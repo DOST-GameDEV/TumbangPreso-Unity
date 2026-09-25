@@ -29,6 +29,14 @@ namespace TumbangPreso.Core
 
         /// <summary>The taya's tag. No movement or interaction, cannot be removed or resisted.</summary>
         Tagged = 4,
+
+        /// <summary>
+        /// Growth (Paete's ultimate, 2026-09-25). No movement; throwing and skills still work
+        /// (owner: *"THEY CAN STILL THROW AND USE SKILLS WHILE STUCK BTW theyre js rooted"*). Ends
+        /// when they have held Interact for `PaeteRules.BreakFreeHoldSeconds`, when they are
+        /// tagged, or when the sentry withers.
+        /// </summary>
+        Rooted = 5,
     }
 
     /// <summary>One row of the owner's status table.</summary>
@@ -83,6 +91,9 @@ namespace TumbangPreso.Core
         /// <summary>*"Prevents movement or interaction for 2.5 seconds."* Glacial Nova's number already.</summary>
         public const float FrozenSeconds = 2.5f;
 
+        /// <summary>At most the sentry's life; the hold or a tag ends it sooner.</summary>
+        public const float RootedSeconds = PaeteRules.SentryLifeSeconds;
+
         /// <summary>*"Prevents movement or interaction for 5 seconds."* The tag's own number.</summary>
         public const float TaggedSeconds = Balance.TagStunTime;
 
@@ -108,6 +119,13 @@ namespace TumbangPreso.Core
                 "Disabled Movement and Interaction",
                 TaggedSeconds, 0.0f, blocksMovement: true, blocksInteraction: true,
                 blocksSlipperRetrieval: true, dropsHeldSlipper: false, removable: false, immunityApplies: false),
+            // ⚠️ APPENDED, NOT INSERTED (the enum's note). Its seconds are the sentry's whole life:
+            // what actually ends it early is the break-free hold or a tag.
+            new StatusRule(StatusKind.Rooted, "ROOTED",
+                "Pulled to the sentry and held by the roots. Throwing and skills still work. Hold Interact for 7 seconds to break free; a tag also frees you.",
+                "Rooted: Hold Interact to Break Free",
+                RootedSeconds, 0.0f, blocksMovement: true, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
         };
 
         public static IReadOnlyList<StatusRule> All => Table;

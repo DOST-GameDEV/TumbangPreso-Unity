@@ -162,3 +162,9 @@ out a plant, break out of roots, and whatever needs it later. Keyboard **G** (fr
 X is Grab, E and F are skills). Pad and thumb are answered when it is added (CLAUDE.md 4a); the
 natural pad button, East, currently carries ReadyUp, which is read between rounds, so the two are
 reconciled in the same change rather than doubled up.
+
+**The signature's vines come out of his arm** (owner, 2026-09-25: *"i want u to make it look like
+his vines actually come from his arm when he swings"*). The four strands of each forearm braid
+(model v16) are what reach: at the release the braid unravels, the strands stretch from the elbow
+to the anchor in both TPP and FPP, and on arrival they reel back into the forearm. Nothing is
+spawned from empty air; the effect starts on the arm's own strands and ends back in them.

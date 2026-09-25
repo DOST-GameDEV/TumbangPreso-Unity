@@ -55,6 +55,13 @@ namespace TumbangPreso.Core
         AccuracyChainLong,
         DoubleCatch,
         TripleCatch,
+
+        /// <summary>
+        /// A wooden slipper from Paete's plant knocked the lata (2026-09-25). To Paete. Owner:
+        /// *"maybe lessened plus"*: half a knockdown. ⚠️ APPENDED for the wire, like every value
+        /// above, and the reason the protocol moved when it arrived.
+        /// </summary>
+        SproutKnock,
     }
 
     /// <summary>
@@ -109,6 +116,7 @@ namespace TumbangPreso.Core
                 case ScoreEvent.AccuracyChainThree: return 20;
                 case ScoreEvent.AccuracyChainLong:
                 case ScoreEvent.TripleCatch: return 25;
+                case ScoreEvent.SproutKnock: return PaeteRules.SproutKnockPoints;
 
                 default: return 0;
             }

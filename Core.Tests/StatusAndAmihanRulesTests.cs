@@ -34,7 +34,13 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(5.0f, tagged.Seconds);
             Assert.False(tagged.Removable, "Tagged cannot be removed (owner's table).");
             Assert.False(tagged.ImmunityApplies, "Nothing may be immune to Tagged (owner's table).");
-            Assert.Equal(4, StatusRules.All.Count);
+            // Paete's Rooted (2026-09-25): no movement, but throws and skills still work.
+            var rooted = StatusRules.For(StatusKind.Rooted);
+            Assert.True(rooted.BlocksMovement);
+            Assert.False(rooted.BlocksInteraction, "Rooted players can still throw and use skills (owner).");
+            Assert.True(rooted.Removable, "A hold or a tag ends Rooted.");
+            Assert.Equal(PaeteRules.SentryLifeSeconds, rooted.Seconds);
+            Assert.Equal(5, StatusRules.All.Count);
         }
 
         [Fact]
