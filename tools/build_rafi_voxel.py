@@ -432,6 +432,10 @@ def _quad(x0, y0, x1, y1):
     return [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
 
 
+def _diamond(cx, cy, rx, ry):
+    return [(cx, cy - ry), (cx + rx, cy), (cx, cy + ry), (cx - rx, cy)]
+
+
 def _stroke(points, width):
     """A polyline as convex quads, with a square at each inner joint so zigzags stay solid."""
     out, half = [], width * 0.5
@@ -496,237 +500,162 @@ def _mirror_decals(decals):
 # ---------------------------------------------------------------------------
 
 CHEST_DECALS = [
-    # === COLLAR & CLAVICLE (Dubdub - Boxer Codex & Panay Radiant Solar Armor) ===
-    # Central Init / Adlaw Solar Core at Throat (0, 0.424)
-    ('chest', 'front', TATTOO, [(0.000, 0.408), (0.016, 0.424), (0.000, 0.440), (-0.016, 0.424)], 2),
-    ('chest', 'front', TATTOO, [(0.000, 0.418), (0.008, 0.424), (0.000, 0.430), (-0.008, 0.424)], 3),
-    # Solar Cardinal Rays radiating from Central Core
+    # === COLLAR & CLAVICLE (Dubdub - Radiant Panay Solar Armor) ===
+    # Throat Central Solar Star (Adlaw / Init)
+    ('chest', 'front', TATTOO, _diamond(0.000, 0.422, 0.016, 0.016), 2),
+    ('chest', 'front', TATTOO, _diamond(0.000, 0.422, 0.007, 0.007), 3),
+    # Solar Cardinal Rays
     ('chest', 'front', TATTOO, [(-0.003, 0.438), (0.000, 0.442), (0.003, 0.438)], 2),
-    ('chest', 'front', TATTOO, [(-0.003, 0.408), (0.003, 0.408), (0.000, 0.402)], 2),
-    # Throat Collar Satellite Adlaw Diamonds
-    ('chest', 'front', TATTOO, [(0.026, 0.418), (0.034, 0.424), (0.026, 0.430), (0.018, 0.424)], 2),
-    ('chest', 'front', TATTOO, [(-0.026, 0.418), (-0.018, 0.424), (-0.026, 0.430), (-0.034, 0.424)], 2),
-    # Clavicle Sweeping Wing Dual Rails (Pakpak)
-    ('chest', 'front', TATTOO, [(0.038, 0.424), (0.126, 0.434), (0.126, 0.426), (0.038, 0.416)], 2),
-    ('chest', 'front', TATTOO, [(0.038, 0.408), (0.126, 0.418), (0.126, 0.410), (0.038, 0.400)], 2),
-    ('chest', 'front', TATTOO, [(-0.038, 0.424), (-0.038, 0.416), (-0.126, 0.426), (-0.126, 0.434)], 2),
-    ('chest', 'front', TATTOO, [(-0.038, 0.408), (-0.038, 0.400), (-0.126, 0.410), (-0.126, 0.418)], 2),
-    # Clavicle Sawtooth Fringes (Pakpak Gin-ginnam Teeth)
+    ('chest', 'front', TATTOO, [(-0.003, 0.406), (0.003, 0.406), (0.000, 0.400)], 2),
+    ('chest', 'front', TATTOO, [(0.016, 0.420), (0.024, 0.422), (0.016, 0.424)], 2),
+    ('chest', 'front', TATTOO, [(-0.016, 0.420), (-0.016, 0.424), (-0.024, 0.422)], 2),
+    
+    # Clavicle Sweeping Wing Rails (Pakpak) with Interlocking Diamond Chain
+    ('chest', 'front', TATTOO, [(0.034, 0.424), (0.124, 0.434), (0.124, 0.428), (0.034, 0.418)], 2),
+    ('chest', 'front', TATTOO, [(0.034, 0.406), (0.124, 0.416), (0.124, 0.410), (0.034, 0.400)], 2),
+    ('chest', 'front', TATTOO, [(-0.034, 0.424), (-0.034, 0.418), (-0.124, 0.428), (-0.124, 0.434)], 2),
+    ('chest', 'front', TATTOO, [(-0.034, 0.406), (-0.034, 0.400), (-0.124, 0.410), (-0.124, 0.416)], 2),
+    
+    # Clavicle Diamond Chain (Argyle motif along clavicle)
+    ('chest', 'front', TATTOO, _diamond(0.052, 0.418, 0.008, 0.005), 2),
+    ('chest', 'front', TATTOO, _diamond(0.076, 0.421, 0.008, 0.005), 2),
+    ('chest', 'front', TATTOO, _diamond(0.100, 0.424, 0.008, 0.005), 2),
+    ('chest', 'front', TATTOO, _diamond(-0.052, 0.418, 0.008, 0.005), 2),
+    ('chest', 'front', TATTOO, _diamond(-0.076, 0.421, 0.008, 0.005), 2),
+    ('chest', 'front', TATTOO, _diamond(-0.100, 0.424, 0.008, 0.005), 2),
+
+    # Clavicle Sawtooth Fringes (Pakpak Gin-ginnam)
     ('chest', 'front', TATTOO, [(0.046, 0.425), (0.054, 0.434), (0.062, 0.427)], 2),
-    ('chest', 'front', TATTOO, [(0.068, 0.427), (0.076, 0.436), (0.084, 0.429)], 2),
-    ('chest', 'front', TATTOO, [(0.090, 0.430), (0.098, 0.439), (0.106, 0.432)], 2),
-    ('chest', 'front', TATTOO, [(0.112, 0.432), (0.118, 0.441), (0.124, 0.434)], 2),
+    ('chest', 'front', TATTOO, [(0.070, 0.428), (0.078, 0.437), (0.086, 0.430)], 2),
+    ('chest', 'front', TATTOO, [(0.094, 0.431), (0.102, 0.440), (0.110, 0.433)], 2),
     ('chest', 'front', TATTOO, [(-0.062, 0.427), (-0.054, 0.434), (-0.046, 0.425)], 2),
-    ('chest', 'front', TATTOO, [(-0.084, 0.429), (-0.076, 0.436), (-0.068, 0.427)], 2),
-    ('chest', 'front', TATTOO, [(-0.106, 0.432), (-0.098, 0.439), (-0.090, 0.430)], 2),
-    ('chest', 'front', TATTOO, [(-0.124, 0.434), (-0.118, 0.441), (-0.112, 0.432)], 2),
-    # Downward Sawtooth Fringe between Rails
-    ('chest', 'front', TATTOO, [(0.054, 0.410), (0.062, 0.402), (0.070, 0.412)], 2),
-    ('chest', 'front', TATTOO, [(0.076, 0.412), (0.084, 0.404), (0.092, 0.414)], 2),
-    ('chest', 'front', TATTOO, [(0.098, 0.415), (0.106, 0.407), (0.114, 0.417)], 2),
-    ('chest', 'front', TATTOO, [(-0.070, 0.412), (-0.062, 0.402), (-0.054, 0.410)], 2),
-    ('chest', 'front', TATTOO, [(-0.092, 0.414), (-0.084, 0.404), (-0.076, 0.412)], 2),
-    ('chest', 'front', TATTOO, [(-0.114, 0.417), (-0.106, 0.407), (-0.098, 0.415)], 2),
+    ('chest', 'front', TATTOO, [(-0.086, 0.430), (-0.078, 0.437), (-0.070, 0.428)], 2),
+    ('chest', 'front', TATTOO, [(-0.110, 0.433), (-0.102, 0.440), (-0.094, 0.431)], 2),
 
-    # === PECTORALS (Chaklag & Matmata - Ancestral Eye & Muscular Crescent Armor) ===
-    # Left Pec Nipple Nested Matmata Diamond (0.064, 0.352)
-    ('pec-left', 'front', TATTOO, [(0.064, 0.338), (0.080, 0.352), (0.064, 0.366), (0.048, 0.352)], 2),
-    ('pec-left', 'front', TATTOO, [(0.064, 0.344), (0.072, 0.352), (0.064, 0.360), (0.056, 0.352)], 3),
-    # Matmata Radiating Cardinal Rays
-    ('pec-left', 'front', TATTOO, [(0.061, 0.366), (0.064, 0.374), (0.067, 0.366)], 2),
-    ('pec-left', 'front', TATTOO, [(0.061, 0.338), (0.067, 0.338), (0.064, 0.335)], 2),
-    ('pec-left', 'front', TATTOO, [(0.080, 0.348), (0.088, 0.352), (0.080, 0.356)], 2),
-    ('pec-left', 'front', TATTOO, [(0.048, 0.348), (0.048, 0.356), (0.040, 0.352)], 2),
-    # Concentric Sweeping Muscular Crescent Arcs (wrapping over pectorals to shoulder)
-    ('pec-left', 'front', TATTOO, [(0.044, 0.344), (0.116, 0.388), (0.110, 0.398), (0.036, 0.356)], 2),
-    ('pec-left', 'front', TATTOO, [(0.052, 0.356), (0.110, 0.392), (0.104, 0.400), (0.044, 0.366)], 2),
-    # Upper Pectoral Gin-ginnam Solar Star
-    ('pec-left', 'front', TATTOO, [(0.084, 0.366), (0.098, 0.378), (0.084, 0.390), (0.070, 0.378)], 2),
-    # Medial Gayaman (Centipede) Inner Chevron Teeth
-    ('pec-left', 'front', TATTOO, [(0.014, 0.348), (0.026, 0.356), (0.014, 0.364)], 2),
-    ('pec-left', 'front', TATTOO, [(0.014, 0.368), (0.026, 0.376), (0.014, 0.384)], 2),
-    ('pec-left', 'front', TATTOO, [(0.014, 0.388), (0.026, 0.396), (0.014, 0.404)], 2),
-    # Lower Pectoral Gin-ginnam Sawteeth
-    ('pec-left', 'front', TATTOO, [(0.038, 0.336), (0.044, 0.344), (0.050, 0.336)], 2),
-    ('pec-left', 'front', TATTOO, [(0.060, 0.336), (0.066, 0.344), (0.072, 0.336)], 2),
-    ('pec-left', 'front', TATTOO, [(0.082, 0.338), (0.088, 0.346), (0.094, 0.338)], 2),
+    # === PECTORALS (Chaklag & Matmata - Ancestral Eye Shield) ===
+    # Left Pec Matmata Ancestral Eye Emblem (0.064, 0.360)
+    ('pec-left', 'front', TATTOO, _diamond(0.064, 0.360, 0.018, 0.018), 2),
+    ('pec-left', 'front', TATTOO, _diamond(0.064, 0.360, 0.010, 0.010), 3),
+    ('pec-left', 'front', TATTOO, _diamond(0.064, 0.360, 0.004, 0.004), 2),
+    # Matmata Radiating Eye Rays
+    ('pec-left', 'front', TATTOO, [(0.061, 0.378), (0.064, 0.388), (0.067, 0.378)], 2),
+    ('pec-left', 'front', TATTOO, [(0.061, 0.342), (0.067, 0.342), (0.064, 0.336)], 2),
+    ('pec-left', 'front', TATTOO, [(0.082, 0.357), (0.092, 0.360), (0.082, 0.363)], 2),
+    ('pec-left', 'front', TATTOO, [(0.046, 0.357), (0.046, 0.363), (0.036, 0.360)], 2),
+    # Sweeping Muscular Contour Crescent
+    ('pec-left', 'front', TATTOO, [(0.038, 0.346), (0.116, 0.390), (0.110, 0.398), (0.030, 0.356)], 2),
+    # Medial Gayaman (Centipede) Inner Sawteeth along sternum
+    ('pec-left', 'front', TATTOO, [(0.012, 0.348), (0.026, 0.358), (0.012, 0.366)], 2),
+    ('pec-left', 'front', TATTOO, [(0.012, 0.372), (0.026, 0.380), (0.012, 0.388)], 2),
+    ('pec-left', 'front', TATTOO, [(0.012, 0.392), (0.024, 0.398), (0.012, 0.402)], 2),
+    # Lower Pec Gin-ginnam Teeth
+    ('pec-left', 'front', TATTOO, [(0.040, 0.336), (0.048, 0.344), (0.056, 0.336)], 2),
+    ('pec-left', 'front', TATTOO, [(0.068, 0.336), (0.076, 0.344), (0.084, 0.336)], 2),
 
-    # Right Pec Nipple Nested Matmata Diamond (-0.064, 0.352)
-    ('pec-right', 'front', TATTOO, [(-0.064, 0.338), (-0.048, 0.352), (-0.064, 0.366), (-0.080, 0.352)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.064, 0.344), (-0.056, 0.352), (-0.064, 0.360), (-0.072, 0.352)], 3),
-    # Matmata Radiating Cardinal Rays
-    ('pec-right', 'front', TATTOO, [(-0.067, 0.366), (-0.064, 0.374), (-0.061, 0.366)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.067, 0.338), (-0.061, 0.338), (-0.064, 0.335)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.080, 0.348), (-0.080, 0.356), (-0.088, 0.352)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.048, 0.348), (-0.040, 0.352), (-0.048, 0.356)], 2),
-    # Concentric Sweeping Muscular Crescent Arcs
-    ('pec-right', 'front', TATTOO, [(-0.044, 0.344), (-0.036, 0.356), (-0.110, 0.398), (-0.116, 0.388)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.052, 0.356), (-0.044, 0.366), (-0.104, 0.400), (-0.110, 0.392)], 2),
-    # Upper Pectoral Gin-ginnam Solar Star
-    ('pec-right', 'front', TATTOO, [(-0.084, 0.366), (-0.070, 0.378), (-0.084, 0.390), (-0.098, 0.378)], 2),
-    # Medial Gayaman (Centipede) Inner Chevron Teeth
-    ('pec-right', 'front', TATTOO, [(-0.014, 0.348), (-0.014, 0.364), (-0.026, 0.356)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.014, 0.368), (-0.014, 0.384), (-0.026, 0.376)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.014, 0.388), (-0.014, 0.404), (-0.026, 0.396)], 2),
-    # Lower Pectoral Gin-ginnam Sawteeth
-    ('pec-right', 'front', TATTOO, [(-0.050, 0.336), (-0.044, 0.344), (-0.038, 0.336)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.072, 0.336), (-0.066, 0.344), (-0.060, 0.336)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.094, 0.338), (-0.088, 0.346), (-0.082, 0.338)], 2),
+    # Right Pec Matmata Ancestral Eye Emblem (-0.064, 0.360)
+    ('pec-right', 'front', TATTOO, _diamond(-0.064, 0.360, 0.018, 0.018), 2),
+    ('pec-right', 'front', TATTOO, _diamond(-0.064, 0.360, 0.010, 0.010), 3),
+    ('pec-right', 'front', TATTOO, _diamond(-0.064, 0.360, 0.004, 0.004), 2),
+    # Matmata Radiating Eye Rays
+    ('pec-right', 'front', TATTOO, [(-0.067, 0.378), (-0.064, 0.388), (-0.061, 0.378)], 2),
+    ('pec-right', 'front', TATTOO, [(-0.067, 0.342), (-0.061, 0.342), (-0.064, 0.336)], 2),
+    ('pec-right', 'front', TATTOO, [(-0.082, 0.357), (-0.082, 0.363), (-0.092, 0.360)], 2),
+    ('pec-right', 'front', TATTOO, [(-0.046, 0.357), (-0.036, 0.360), (-0.046, 0.363)], 2),
+    # Sweeping Muscular Contour Crescent
+    ('pec-right', 'front', TATTOO, [(-0.038, 0.346), (-0.030, 0.356), (-0.110, 0.398), (-0.116, 0.390)], 2),
+    # Medial Gayaman (Centipede) Inner Sawteeth
+    ('pec-right', 'front', TATTOO, [(-0.012, 0.348), (-0.012, 0.366), (-0.026, 0.358)], 2),
+    ('pec-right', 'front', TATTOO, [(-0.012, 0.372), (-0.012, 0.388), (-0.026, 0.380)], 2),
+    ('pec-right', 'front', TATTOO, [(-0.012, 0.392), (-0.012, 0.402), (-0.024, 0.398)], 2),
+    # Lower Pec Gin-ginnam Teeth
+    ('pec-right', 'front', TATTOO, [(-0.056, 0.336), (-0.048, 0.344), (-0.040, 0.336)], 2),
+    ('pec-right', 'front', TATTOO, [(-0.084, 0.336), (-0.076, 0.344), (-0.068, 0.336)], 2),
 
-    # === STERNUM & ABDOMEN (Tud-tud River of Life & 4 Inagdan Chevron Ladder Tiers) ===
-    # Central vertical river rails
-    ('chest', 'front', TATTOO, [(-0.010, 0.264), (0.010, 0.264), (0.010, 0.412), (-0.010, 0.412)], 2),
-    # Mid-sternum diamond checkpoint
-    ('chest', 'front', TATTOO, [(0.000, 0.352), (0.014, 0.364), (0.000, 0.376), (-0.014, 0.364)], 2),
-    # Navel solar diamond (Adlaw anchor) with inner layer 3 core
-    ('chest', 'front', TATTOO, [(0.000, 0.316), (0.016, 0.330), (0.000, 0.344), (-0.016, 0.330)], 2),
-    ('chest', 'front', TATTOO, [(0.000, 0.323), (0.008, 0.330), (0.000, 0.337), (-0.008, 0.330)], 3),
-    # Lower waist diamond checkpoint
-    ('chest', 'front', TATTOO, [(0.000, 0.274), (0.012, 0.286), (0.000, 0.298), (-0.012, 0.286)], 2),
+    # === STERNUM & ABDOMEN (Tud-tud River & Sculpted Inagdan Flank Wings) ===
+    # Central River Column
+    ('chest', 'front', TATTOO, _quad(-0.007, 0.250, 0.007, 0.412), 2),
+    # Mid-Sternum Diamond Anchor
+    ('chest', 'front', TATTOO, _diamond(0.000, 0.362, 0.014, 0.014), 2),
+    # Navel Radiant Adlaw Sunburst (Center at 0.000, 0.320)
+    ('chest', 'front', TATTOO, _diamond(0.000, 0.320, 0.016, 0.016), 2),
+    ('chest', 'front', TATTOO, _diamond(0.000, 0.320, 0.008, 0.008), 3),
+    ('chest', 'front', TATTOO, [(-0.003, 0.336), (0.000, 0.344), (0.003, 0.336)], 2),
+    ('chest', 'front', TATTOO, [(-0.003, 0.304), (0.003, 0.304), (0.000, 0.296)], 2),
+    ('chest', 'front', TATTOO, [(0.016, 0.318), (0.024, 0.320), (0.016, 0.322)], 2),
+    ('chest', 'front', TATTOO, [(-0.016, 0.318), (-0.016, 0.322), (-0.024, 0.320)], 2),
 
-    # 4 Dense Inagdan Abdominal Chevron Tiers (Dual-Rail Chevrons with Ladder Rungs)
-    # Tier 1 (Upper Abs)
-    ('chest', 'front', TATTOO, [(0.012, 0.354), (0.116, 0.338), (0.116, 0.346), (0.012, 0.362)], 2),
-    ('chest', 'front', TATTOO, [(0.012, 0.340), (0.116, 0.324), (0.116, 0.332), (0.012, 0.348)], 2),
-    ('chest', 'front', TATTOO, [(-0.012, 0.354), (-0.012, 0.362), (-0.116, 0.346), (-0.116, 0.338)], 2),
-    ('chest', 'front', TATTOO, [(-0.012, 0.340), (-0.012, 0.348), (-0.116, 0.332), (-0.116, 0.324)], 2),
-    # Tier 1 Ladder Rungs
-    ('chest', 'front', TATTOO, [(0.042, 0.336), (0.046, 0.336), (0.046, 0.355), (0.042, 0.355)], 2),
-    ('chest', 'front', TATTOO, [(0.076, 0.331), (0.080, 0.331), (0.080, 0.350), (0.076, 0.350)], 2),
-    ('chest', 'front', TATTOO, [(-0.046, 0.336), (-0.042, 0.336), (-0.042, 0.355), (-0.046, 0.355)], 2),
-    ('chest', 'front', TATTOO, [(-0.080, 0.331), (-0.076, 0.331), (-0.076, 0.350), (-0.080, 0.350)], 2),
+    # 2 Bold Sculpted Inagdan Oblique Wings (Generous negative space!)
+    # Upper Oblique Wing (Tier 1, Y ~ 0.338)
+    ('chest', 'front', TATTOO, [(0.014, 0.344), (0.116, 0.326), (0.116, 0.336), (0.014, 0.354)], 2),
+    ('chest', 'front', TATTOO, [(-0.014, 0.344), (-0.014, 0.354), (-0.116, 0.336), (-0.116, 0.326)], 2),
+    # Upper Wing Flank Diamond Emblems
+    ('chest', 'front', TATTOO, _diamond(0.065, 0.340, 0.010, 0.008), 2),
+    ('chest', 'front', TATTOO, _diamond(-0.065, 0.340, 0.010, 0.008), 2),
 
-    # Tier 2 (Mid-Upper Abs)
-    ('chest', 'front', TATTOO, [(0.012, 0.324), (0.116, 0.308), (0.116, 0.316), (0.012, 0.332)], 2),
-    ('chest', 'front', TATTOO, [(0.012, 0.310), (0.116, 0.294), (0.116, 0.302), (0.012, 0.318)], 2),
-    ('chest', 'front', TATTOO, [(-0.012, 0.324), (-0.012, 0.332), (-0.116, 0.316), (-0.116, 0.308)], 2),
-    ('chest', 'front', TATTOO, [(-0.012, 0.310), (-0.012, 0.318), (-0.116, 0.302), (-0.116, 0.294)], 2),
-    # Tier 2 Ladder Rungs
-    ('chest', 'front', TATTOO, [(0.042, 0.306), (0.046, 0.306), (0.046, 0.325), (0.042, 0.325)], 2),
-    ('chest', 'front', TATTOO, [(0.076, 0.301), (0.080, 0.301), (0.080, 0.320), (0.076, 0.320)], 2),
-    ('chest', 'front', TATTOO, [(-0.046, 0.306), (-0.042, 0.306), (-0.042, 0.325), (-0.046, 0.325)], 2),
-    ('chest', 'front', TATTOO, [(-0.080, 0.301), (-0.076, 0.301), (-0.076, 0.320), (-0.080, 0.320)], 2),
+    # Lower Oblique Wing (Tier 2, Y ~ 0.282)
+    ('chest', 'front', TATTOO, [(0.014, 0.284), (0.116, 0.266), (0.116, 0.276), (0.014, 0.294)], 2),
+    ('chest', 'front', TATTOO, [(-0.014, 0.284), (-0.014, 0.294), (-0.116, 0.276), (-0.116, 0.266)], 2),
+    # Lower Wing Flank Diamond Emblems
+    ('chest', 'front', TATTOO, _diamond(0.065, 0.280, 0.010, 0.008), 2),
+    ('chest', 'front', TATTOO, _diamond(-0.065, 0.280, 0.010, 0.008), 2),
 
-    # Tier 3 (Mid-Lower Abs)
-    ('chest', 'front', TATTOO, [(0.012, 0.294), (0.116, 0.278), (0.116, 0.286), (0.012, 0.302)], 2),
-    ('chest', 'front', TATTOO, [(0.012, 0.280), (0.116, 0.264), (0.116, 0.272), (0.012, 0.288)], 2),
-    ('chest', 'front', TATTOO, [(-0.012, 0.294), (-0.012, 0.302), (-0.116, 0.286), (-0.116, 0.278)], 2),
-    ('chest', 'front', TATTOO, [(-0.012, 0.280), (-0.012, 0.288), (-0.116, 0.272), (-0.116, 0.264)], 2),
-    # Tier 3 Ladder Rungs
-    ('chest', 'front', TATTOO, [(0.042, 0.276), (0.046, 0.276), (0.046, 0.295), (0.042, 0.295)], 2),
-    ('chest', 'front', TATTOO, [(0.076, 0.271), (0.080, 0.271), (0.080, 0.290), (0.076, 0.290)], 2),
-    ('chest', 'front', TATTOO, [(-0.046, 0.276), (-0.042, 0.276), (-0.042, 0.295), (-0.046, 0.295)], 2),
-    ('chest', 'front', TATTOO, [(-0.080, 0.271), (-0.076, 0.271), (-0.076, 0.290), (-0.080, 0.290)], 2),
+    # === BACK (Dakag - Kalinga Giant Stacked Diamond Spine & 5-Spear Ginawang Array) ===
+    # Central spine column
+    ('chest', 'back', TATTOO, _quad(-0.006, 0.246, 0.006, 0.438), 2),
+    
+    # Upper Giant Diamond Shield (Vertebrae between shoulder blades, Y = 0.348 to 0.434)
+    ('chest', 'back', TATTOO, [(0.000, 0.434), (0.038, 0.392), (0.026, 0.392), (0.000, 0.420)], 2),
+    ('chest', 'back', TATTOO, [(0.038, 0.392), (0.000, 0.350), (0.000, 0.362), (0.026, 0.392)], 2),
+    ('chest', 'back', TATTOO, [(0.000, 0.434), (0.000, 0.420), (-0.026, 0.392), (-0.038, 0.392)], 2),
+    ('chest', 'back', TATTOO, [(-0.038, 0.392), (-0.026, 0.392), (0.000, 0.362), (0.000, 0.350)], 2),
+    # Inner nested diamond frame (layer 3)
+    ('chest', 'back', TATTOO, [(0.000, 0.410), (0.018, 0.392), (0.012, 0.392), (0.000, 0.400)], 2),
+    ('chest', 'back', TATTOO, [(0.018, 0.392), (0.000, 0.372), (0.000, 0.380), (0.012, 0.392)], 2),
+    ('chest', 'back', TATTOO, [(0.000, 0.410), (0.000, 0.400), (-0.012, 0.392), (-0.018, 0.392)], 2),
+    ('chest', 'back', TATTOO, [(-0.018, 0.392), (-0.012, 0.392), (0.000, 0.380), (0.000, 0.372)], 2),
 
-    # Tier 4 (Waistband Transition Tier)
-    ('chest', 'front', TATTOO, [(0.012, 0.264), (0.116, 0.248), (0.116, 0.256), (0.012, 0.272)], 2),
-    ('chest', 'front', TATTOO, [(-0.012, 0.264), (-0.012, 0.272), (-0.116, 0.256), (-0.116, 0.248)], 2),
+    # Lower Giant Diamond Shield (Mid-to-lower back, Y = 0.252 to 0.344)
+    ('chest', 'back', TATTOO, [(0.000, 0.344), (0.034, 0.298), (0.024, 0.298), (0.000, 0.330)], 2),
+    ('chest', 'back', TATTOO, [(0.034, 0.298), (0.000, 0.252), (0.000, 0.266), (0.024, 0.298)], 2),
+    ('chest', 'back', TATTOO, [(0.000, 0.344), (0.000, 0.330), (-0.024, 0.298), (-0.034, 0.298)], 2),
+    ('chest', 'back', TATTOO, [(-0.034, 0.298), (-0.024, 0.298), (0.000, 0.266), (0.000, 0.252)], 2),
 
-    # === BACK (Dakag - Kalinga Ginawang Hawk Wings, 8-Spear Array & Spine Shields) ===
-    # Central spine pillar
-    ('chest', 'back', TATTOO, [(-0.008, 0.246), (0.008, 0.246), (0.008, 0.440), (-0.008, 0.440)], 2),
+    # Trapezius High Solid Shoulder Wedges
+    ('chest', 'back', TATTOO, [(0.038, 0.418), (0.126, 0.438), (0.126, 0.424), (0.038, 0.410)], 2),
+    ('chest', 'back', TATTOO, [(-0.126, 0.438), (-0.038, 0.418), (-0.038, 0.410), (-0.126, 0.424)], 2),
 
-    # Upper Diamond Shield (spanning upper back vertebrae)
-    ('chest', 'back', TATTOO, [(0.000, 0.436), (0.040, 0.388), (0.030, 0.388), (0.000, 0.424)], 2),
-    ('chest', 'back', TATTOO, [(0.040, 0.388), (0.000, 0.340), (0.000, 0.352), (0.030, 0.388)], 2),
-    ('chest', 'back', TATTOO, [(0.000, 0.436), (0.000, 0.424), (-0.030, 0.388), (-0.040, 0.388)], 2),
-    ('chest', 'back', TATTOO, [(-0.040, 0.388), (-0.030, 0.388), (0.000, 0.352), (0.000, 0.340)], 2),
-    # Inner nested diamond frame
-    ('chest', 'back', TATTOO, [(0.000, 0.412), (0.022, 0.388), (0.016, 0.388), (0.000, 0.402)], 2),
-    ('chest', 'back', TATTOO, [(0.022, 0.388), (0.000, 0.364), (0.000, 0.374), (0.016, 0.388)], 2),
-    ('chest', 'back', TATTOO, [(0.000, 0.412), (0.000, 0.402), (-0.016, 0.388), (-0.022, 0.388)], 2),
-    ('chest', 'back', TATTOO, [(-0.022, 0.388), (-0.016, 0.388), (0.000, 0.374), (0.000, 0.364)], 2),
+    # Scapular Sweeping Wing Band (Dual rails with nested diamond chain)
+    # Left Upper Wing Band
+    ('chest', 'back', TATTOO, [(0.036, 0.408), (0.126, 0.418), (0.126, 0.412), (0.036, 0.402)], 2),
+    ('chest', 'back', TATTOO, [(0.036, 0.384), (0.126, 0.394), (0.126, 0.388), (0.036, 0.378)], 2),
+    ('chest', 'back', TATTOO, _diamond(0.054, 0.396, 0.008, 0.006), 2),
+    ('chest', 'back', TATTOO, _diamond(0.081, 0.399, 0.008, 0.006), 2),
+    ('chest', 'back', TATTOO, _diamond(0.108, 0.402, 0.008, 0.006), 2),
 
-    # Lower Diamond Shield (spanning mid-to-lower back)
-    ('chest', 'back', TATTOO, [(0.000, 0.340), (0.034, 0.296), (0.026, 0.296), (0.000, 0.328)], 2),
-    ('chest', 'back', TATTOO, [(0.034, 0.296), (0.000, 0.252), (0.000, 0.264), (0.026, 0.296)], 2),
-    ('chest', 'back', TATTOO, [(0.000, 0.340), (0.000, 0.328), (-0.026, 0.296), (-0.034, 0.296)], 2),
-    ('chest', 'back', TATTOO, [(-0.034, 0.296), (-0.026, 0.296), (0.000, 0.264), (0.000, 0.252)], 2),
-    # Inner nested diamond frame
-    ('chest', 'back', TATTOO, [(0.000, 0.324), (0.018, 0.296), (0.012, 0.296), (0.000, 0.314)], 2),
-    ('chest', 'back', TATTOO, [(0.018, 0.296), (0.000, 0.268), (0.000, 0.278), (0.012, 0.296)], 2),
-    ('chest', 'back', TATTOO, [(0.000, 0.324), (0.000, 0.314), (-0.012, 0.296), (-0.018, 0.296)], 2),
-    ('chest', 'back', TATTOO, [(-0.018, 0.296), (-0.012, 0.296), (0.000, 0.278), (0.000, 0.268)], 2),
+    # Right Upper Wing Band
+    ('chest', 'back', TATTOO, [(-0.036, 0.408), (-0.036, 0.402), (-0.126, 0.412), (-0.126, 0.418)], 2),
+    ('chest', 'back', TATTOO, [(-0.036, 0.384), (-0.036, 0.378), (-0.126, 0.388), (-0.126, 0.394)], 2),
+    ('chest', 'back', TATTOO, _diamond(-0.054, 0.396, 0.008, 0.006), 2),
+    ('chest', 'back', TATTOO, _diamond(-0.081, 0.399, 0.008, 0.006), 2),
+    ('chest', 'back', TATTOO, _diamond(-0.108, 0.402, 0.008, 0.006), 2),
 
-    # Left Trapezius High Solid Shoulder Wedge & 3 Scapular Horizontal Guide Crossbars
-    ('chest', 'back', TATTOO, [(0.038, 0.414), (0.128, 0.436), (0.128, 0.416), (0.038, 0.408)], 2),
-    ('chest', 'back', TATTOO, [(0.034, 0.404), (0.128, 0.404), (0.128, 0.410), (0.034, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(0.034, 0.388), (0.128, 0.388), (0.128, 0.394), (0.034, 0.394)], 2),
-    ('chest', 'back', TATTOO, [(0.034, 0.372), (0.128, 0.372), (0.128, 0.378), (0.034, 0.378)], 2),
+    # Mid-Back Ginawang Diagonal Hawk Wings (Tier 1)
+    ('chest', 'back', TATTOO, [(0.034, 0.366), (0.124, 0.344), (0.124, 0.334), (0.034, 0.356)], 2),
+    ('chest', 'back', TATTOO, [(-0.034, 0.366), (-0.034, 0.356), (-0.124, 0.334), (-0.124, 0.344)], 2),
+    ('chest', 'back', TATTOO, _diamond(0.075, 0.350, 0.010, 0.007), 2),
+    ('chest', 'back', TATTOO, _diamond(-0.075, 0.350, 0.010, 0.007), 2),
 
-    # Left Dense 8-Spear Ginawang Wing Array (Shaft + Downward Pointed Spearhead)
-    # Spear 1
-    ('chest', 'back', TATTOO, [(0.038, 0.354), (0.044, 0.354), (0.044, 0.410), (0.038, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(0.038, 0.354), (0.041, 0.344), (0.044, 0.354)], 2),
-    # Spear 2
-    ('chest', 'back', TATTOO, [(0.050, 0.356), (0.056, 0.356), (0.056, 0.410), (0.050, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(0.050, 0.356), (0.053, 0.346), (0.056, 0.356)], 2),
-    # Spear 3
-    ('chest', 'back', TATTOO, [(0.062, 0.358), (0.068, 0.358), (0.068, 0.410), (0.062, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(0.062, 0.358), (0.065, 0.348), (0.068, 0.358)], 2),
-    # Spear 4
-    ('chest', 'back', TATTOO, [(0.074, 0.360), (0.080, 0.360), (0.080, 0.410), (0.074, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(0.074, 0.360), (0.077, 0.350), (0.080, 0.360)], 2),
-    # Spear 5
-    ('chest', 'back', TATTOO, [(0.086, 0.362), (0.092, 0.362), (0.092, 0.410), (0.086, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(0.086, 0.362), (0.089, 0.352), (0.092, 0.362)], 2),
-    # Spear 6
-    ('chest', 'back', TATTOO, [(0.098, 0.364), (0.104, 0.364), (0.104, 0.410), (0.098, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(0.098, 0.364), (0.101, 0.354), (0.104, 0.364)], 2),
-    # Spear 7
-    ('chest', 'back', TATTOO, [(0.110, 0.366), (0.116, 0.366), (0.116, 0.410), (0.110, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(0.110, 0.366), (0.113, 0.356), (0.116, 0.366)], 2),
-    # Spear 8
-    ('chest', 'back', TATTOO, [(0.122, 0.368), (0.128, 0.368), (0.128, 0.410), (0.122, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(0.122, 0.368), (0.125, 0.358), (0.128, 0.368)], 2),
+    # Lower-Back Ginawang Diagonal Hawk Wings (Tier 2)
+    ('chest', 'back', TATTOO, [(0.034, 0.312), (0.124, 0.290), (0.124, 0.280), (0.034, 0.302)], 2),
+    ('chest', 'back', TATTOO, [(-0.034, 0.312), (-0.034, 0.302), (-0.124, 0.280), (-0.124, 0.290)], 2),
+    ('chest', 'back', TATTOO, _diamond(0.075, 0.296, 0.010, 0.007), 2),
+    ('chest', 'back', TATTOO, _diamond(-0.075, 0.296, 0.010, 0.007), 2),
 
-    # Right Trapezius High Solid Shoulder Wedge & 3 Scapular Horizontal Guide Crossbars
-    ('chest', 'back', TATTOO, [(-0.128, 0.436), (-0.038, 0.414), (-0.038, 0.408), (-0.128, 0.416)], 2),
-    ('chest', 'back', TATTOO, [(-0.128, 0.404), (-0.034, 0.404), (-0.034, 0.410), (-0.128, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(-0.128, 0.388), (-0.034, 0.388), (-0.034, 0.394), (-0.128, 0.394)], 2),
-    ('chest', 'back', TATTOO, [(-0.128, 0.372), (-0.034, 0.372), (-0.034, 0.378), (-0.128, 0.378)], 2),
-
-    # Right Dense 8-Spear Ginawang Wing Array (Shaft + Downward Pointed Spearhead)
-    # Spear 1
-    ('chest', 'back', TATTOO, [(-0.044, 0.354), (-0.038, 0.354), (-0.038, 0.410), (-0.044, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(-0.044, 0.354), (-0.038, 0.354), (-0.041, 0.344)], 2),
-    # Spear 2
-    ('chest', 'back', TATTOO, [(-0.056, 0.356), (-0.050, 0.356), (-0.050, 0.410), (-0.056, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(-0.056, 0.356), (-0.050, 0.356), (-0.053, 0.346)], 2),
-    # Spear 3
-    ('chest', 'back', TATTOO, [(-0.068, 0.358), (-0.062, 0.358), (-0.062, 0.410), (-0.068, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(-0.068, 0.358), (-0.062, 0.358), (-0.065, 0.348)], 2),
-    # Spear 4
-    ('chest', 'back', TATTOO, [(-0.080, 0.360), (-0.074, 0.360), (-0.074, 0.410), (-0.080, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(-0.080, 0.360), (-0.074, 0.360), (-0.077, 0.350)], 2),
-    # Spear 5
-    ('chest', 'back', TATTOO, [(-0.092, 0.362), (-0.086, 0.362), (-0.086, 0.410), (-0.092, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(-0.092, 0.362), (-0.086, 0.362), (-0.089, 0.352)], 2),
-    # Spear 6
-    ('chest', 'back', TATTOO, [(-0.104, 0.364), (-0.098, 0.364), (-0.098, 0.410), (-0.104, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(-0.104, 0.364), (-0.098, 0.364), (-0.101, 0.354)], 2),
-    # Spear 7
-    ('chest', 'back', TATTOO, [(-0.116, 0.366), (-0.110, 0.366), (-0.110, 0.410), (-0.116, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(-0.116, 0.366), (-0.110, 0.366), (-0.113, 0.356)], 2),
-    # Spear 8
-    ('chest', 'back', TATTOO, [(-0.128, 0.368), (-0.122, 0.368), (-0.122, 0.410), (-0.128, 0.410)], 2),
-    ('chest', 'back', TATTOO, [(-0.128, 0.368), (-0.122, 0.368), (-0.125, 0.358)], 2),
-
-    # Lower Rib Chevron Wings (Sweeping fanned chevrons down to flanks)
-    ('chest', 'back', TATTOO, [(0.032, 0.316), (0.126, 0.298), (0.126, 0.288), (0.032, 0.306)], 2),
-    ('chest', 'back', TATTOO, [(0.032, 0.288), (0.126, 0.270), (0.126, 0.260), (0.032, 0.278)], 2),
-    ('chest', 'back', TATTOO, [(0.032, 0.260), (0.126, 0.242), (0.126, 0.232), (0.032, 0.250)], 2),
-    ('chest', 'back', TATTOO, [(-0.032, 0.316), (-0.032, 0.306), (-0.126, 0.288), (-0.126, 0.298)], 2),
-    ('chest', 'back', TATTOO, [(-0.032, 0.288), (-0.032, 0.278), (-0.126, 0.260), (-0.126, 0.270)], 2),
-    ('chest', 'back', TATTOO, [(-0.032, 0.260), (-0.032, 0.250), (-0.126, 0.232), (-0.126, 0.242)], 2),
-
-    # === LATERAL RIBS & FLANKS (Connecting 360° Flow around Torso) ===
-    ('chest', 'left', TATTOO, [(-0.065, 0.344), (0.065, 0.344), (0.065, 0.356), (-0.065, 0.356)], 2),
-    ('chest', 'left', TATTOO, [(-0.060, 0.306), (0.060, 0.306), (0.060, 0.318), (-0.060, 0.318)], 2),
-    ('chest', 'left', TATTOO, [(-0.055, 0.268), (0.055, 0.268), (0.055, 0.280), (-0.055, 0.280)], 2),
-    ('chest', 'right', TATTOO, [(-0.065, 0.344), (0.065, 0.344), (0.065, 0.356), (-0.065, 0.356)], 2),
-    ('chest', 'right', TATTOO, [(-0.060, 0.306), (0.060, 0.306), (0.060, 0.318), (-0.060, 0.318)], 2),
-    ('chest', 'right', TATTOO, [(-0.055, 0.268), (0.055, 0.268), (0.055, 0.280), (-0.055, 0.280)], 2),
+    # Lateral Flank Wraps
+    ('chest', 'left', TATTOO, _quad(-0.060, 0.336, 0.060, 0.348), 2),
+    ('chest', 'left', TATTOO, _quad(-0.055, 0.272, 0.055, 0.284), 2),
+    ('chest', 'right', TATTOO, _quad(-0.060, 0.336, 0.060, 0.348), 2),
+    ('chest', 'right', TATTOO, _quad(-0.055, 0.272, 0.055, 0.284), 2),
 ]
 
 # The bahag's woven border: a light teal band over a cream thread
@@ -745,56 +674,56 @@ BAHAG_DECALS = (
     + _decals('bahag-flap-back', 'back', WEAVE, [_quad(-0.070, 0.162, 0.070, 0.168)])
 )
 
-ARM_DECALS = [
+ARM_DECALS_LEFT = [
     # === LEFT SHOULDER & ARM (Ablay & Dayadaya - Full Geometric Sleeve) ===
-    # Deltoid top plate double bands & central diamond crest
-    ('deltoid-left', 'top', TATTOO, [(0.100, -0.052), (0.170, -0.052), (0.170, -0.024), (0.100, -0.024)], 2),
-    ('deltoid-left', 'top', TATTOO, [(0.100, 0.024), (0.170, 0.024), (0.170, 0.052), (0.100, 0.052)], 2),
-    ('deltoid-left', 'top', TATTOO, [(0.135, -0.016), (0.150, 0.000), (0.135, 0.016), (0.120, 0.000)], 2),
-    # Deltoid front chevron plate with layer 3 inset
+    # Deltoid top plate & crest
+    ('deltoid-left', 'top', TATTOO, _quad(0.100, -0.052, 0.170, -0.024), 2),
+    ('deltoid-left', 'top', TATTOO, _quad(0.100, 0.024, 0.170, 0.052), 2),
+    ('deltoid-left', 'top', TATTOO, _diamond(0.135, 0.000, 0.015, 0.016), 2),
+    # Deltoid front chevron plate
     ('deltoid-left', 'front', TATTOO, [(0.110, 0.350), (0.160, 0.380), (0.110, 0.410)], 2),
     ('deltoid-left', 'front', TATTOO, [(0.116, 0.362), (0.148, 0.380), (0.116, 0.398)], 3),
-    # Deltoid back chevron plate with layer 3 inset
+    # Deltoid back chevron plate
     ('deltoid-left', 'back', TATTOO, [(0.110, 0.350), (0.110, 0.410), (0.160, 0.380)], 2),
     ('deltoid-left', 'back', TATTOO, [(0.116, 0.362), (0.116, 0.398), (0.148, 0.380)], 3),
 
-    # Full Arm Length Outer Bounding Guide Rails (top of arm)
-    ('arm-left', 'top', TATTOO, [(0.170, -0.052), (0.252, -0.052), (0.252, -0.046), (0.170, -0.046)], 2),
-    ('arm-left', 'top', TATTOO, [(0.170, 0.046), (0.252, 0.046), (0.252, 0.052), (0.170, 0.052)], 2),
+    # Outer Arm Boundary Rails
+    ('arm-left', 'top', TATTOO, _quad(0.170, -0.052, 0.252, -0.046), 2),
+    ('arm-left', 'top', TATTOO, _quad(0.170, 0.046, 0.252, 0.052), 2),
 
-    # Upper arm 4 rhythmic wrap-around warrior rings (Dayadaya)
-    ('arm-left', 'front', TATTOO, [(0.168, 0.338), (0.176, 0.338), (0.176, 0.462), (0.168, 0.462)], 2),
-    ('arm-left', 'top', TATTOO, [(0.168, -0.058), (0.176, -0.058), (0.176, 0.058), (0.168, 0.058)], 2),
-    ('arm-left', 'back', TATTOO, [(0.168, 0.338), (0.176, 0.338), (0.176, 0.462), (0.168, 0.462)], 2),
+    # Unified Dayadaya Bicep Armlet (Dual rails + Diamond Chain)
+    ('arm-left', 'front', TATTOO, _quad(0.180, 0.338, 0.186, 0.462), 2),
+    ('arm-left', 'front', TATTOO, _quad(0.208, 0.338, 0.214, 0.462), 2),
+    ('arm-left', 'top', TATTOO, _quad(0.180, -0.058, 0.186, 0.058), 2),
+    ('arm-left', 'top', TATTOO, _quad(0.208, -0.058, 0.214, 0.058), 2),
+    ('arm-left', 'back', TATTOO, _quad(0.180, 0.338, 0.186, 0.462), 2),
+    ('arm-left', 'back', TATTOO, _quad(0.208, 0.338, 0.214, 0.462), 2),
 
-    ('arm-left', 'front', TATTOO, [(0.186, 0.338), (0.194, 0.338), (0.194, 0.462), (0.186, 0.462)], 2),
-    ('arm-left', 'top', TATTOO, [(0.186, -0.058), (0.194, -0.058), (0.194, 0.058), (0.186, 0.058)], 2),
-    ('arm-left', 'back', TATTOO, [(0.186, 0.338), (0.194, 0.338), (0.194, 0.462), (0.186, 0.462)], 2),
+    # Bicep Diamond Chain (Argyle lattice inside armlet)
+    ('arm-left', 'front', TATTOO, _diamond(0.197, 0.370, 0.008, 0.012), 2),
+    ('arm-left', 'front', TATTOO, _diamond(0.197, 0.400, 0.008, 0.012), 2),
+    ('arm-left', 'front', TATTOO, _diamond(0.197, 0.430, 0.008, 0.012), 2),
+    ('arm-left', 'back', TATTOO, _diamond(0.197, 0.370, 0.008, 0.012), 2),
+    ('arm-left', 'back', TATTOO, _diamond(0.197, 0.400, 0.008, 0.012), 2),
+    ('arm-left', 'back', TATTOO, _diamond(0.197, 0.430, 0.008, 0.012), 2),
 
-    ('arm-left', 'front', TATTOO, [(0.204, 0.338), (0.212, 0.338), (0.212, 0.462), (0.204, 0.462)], 2),
-    ('arm-left', 'top', TATTOO, [(0.204, -0.058), (0.212, -0.058), (0.212, 0.058), (0.204, 0.058)], 2),
-    ('arm-left', 'back', TATTOO, [(0.204, 0.338), (0.212, 0.338), (0.212, 0.462), (0.204, 0.462)], 2),
+    # Forearm Pako Fern / Gayaman Spine & Alternating Fronds
+    ('arm-left', 'front', TATTOO, _quad(0.220, 0.397, 0.248, 0.403), 2),
+    ('arm-left', 'front', TATTOO, [(0.222, 0.403), (0.228, 0.418), (0.224, 0.418), (0.218, 0.403)], 2),
+    ('arm-left', 'front', TATTOO, [(0.226, 0.397), (0.232, 0.382), (0.228, 0.382), (0.222, 0.397)], 2),
+    ('arm-left', 'front', TATTOO, [(0.234, 0.403), (0.240, 0.418), (0.236, 0.418), (0.230, 0.403)], 2),
+    ('arm-left', 'front', TATTOO, [(0.238, 0.397), (0.244, 0.382), (0.240, 0.382), (0.234, 0.397)], 2),
 
-    ('arm-left', 'front', TATTOO, [(0.222, 0.338), (0.230, 0.338), (0.230, 0.462), (0.222, 0.462)], 2),
-    ('arm-left', 'top', TATTOO, [(0.222, -0.058), (0.230, -0.058), (0.230, 0.058), (0.222, 0.058)], 2),
-    ('arm-left', 'back', TATTOO, [(0.222, 0.338), (0.230, 0.338), (0.230, 0.462), (0.222, 0.462)], 2),
+    ('arm-left', 'back', TATTOO, _quad(0.220, 0.397, 0.248, 0.403), 2),
+    ('arm-left', 'back', TATTOO, [(0.222, 0.403), (0.228, 0.418), (0.224, 0.418), (0.218, 0.403)], 2),
+    ('arm-left', 'back', TATTOO, [(0.226, 0.397), (0.232, 0.382), (0.228, 0.382), (0.222, 0.397)], 2),
+    ('arm-left', 'back', TATTOO, [(0.234, 0.403), (0.240, 0.418), (0.236, 0.418), (0.230, 0.403)], 2),
+    ('arm-left', 'back', TATTOO, [(0.238, 0.397), (0.244, 0.382), (0.240, 0.382), (0.234, 0.397)], 2),
 
-    # Left Forearm Centipede / Herringbone Ladder (Gayaman - front, top, back)
-    ('arm-left', 'front', TATTOO, [(0.232, 0.370), (0.244, 0.380), (0.232, 0.390)], 2),
-    ('arm-left', 'front', TATTOO, [(0.232, 0.400), (0.244, 0.410), (0.232, 0.420)], 2),
-    ('arm-left', 'front', TATTOO, [(0.232, 0.430), (0.244, 0.440), (0.232, 0.450)], 2),
-
-    ('arm-left', 'back', TATTOO, [(0.232, 0.370), (0.244, 0.380), (0.232, 0.390)], 2),
-    ('arm-left', 'back', TATTOO, [(0.232, 0.400), (0.244, 0.410), (0.232, 0.420)], 2),
-    ('arm-left', 'back', TATTOO, [(0.232, 0.430), (0.244, 0.440), (0.232, 0.450)], 2),
-
-    ('arm-left', 'top', TATTOO, [(0.232, -0.030), (0.244, 0.000), (0.232, 0.030)], 2),
-
-    # Pre-cuff wrist solid band with pointed spearhead teeth (notches)
-    ('arm-left', 'front', TATTOO, [(0.246, 0.345), (0.254, 0.345), (0.254, 0.455), (0.246, 0.455)], 2),
-    ('arm-left', 'top', TATTOO, [(0.246, -0.058), (0.254, -0.058), (0.254, 0.058), (0.246, 0.058)], 2),
-    ('arm-left', 'back', TATTOO, [(0.246, 0.345), (0.254, 0.345), (0.254, 0.455), (0.246, 0.455)], 2),
-    # Pointed spearhead notches
+    # Wrist Gauntlet Band + Spear Notches
+    ('arm-left', 'front', TATTOO, _quad(0.246, 0.345, 0.254, 0.455), 2),
+    ('arm-left', 'top', TATTOO, _quad(0.246, -0.058, 0.254, 0.058), 2),
+    ('arm-left', 'back', TATTOO, _quad(0.246, 0.345, 0.254, 0.455), 2),
     ('arm-left', 'front', TATTOO, [(0.246, 0.365), (0.238, 0.375), (0.246, 0.385)], 2),
     ('arm-left', 'front', TATTOO, [(0.246, 0.395), (0.238, 0.405), (0.246, 0.415)], 2),
     ('arm-left', 'front', TATTOO, [(0.246, 0.425), (0.238, 0.435), (0.246, 0.445)], 2),
@@ -802,68 +731,25 @@ ARM_DECALS = [
     ('arm-left', 'back', TATTOO, [(0.246, 0.395), (0.238, 0.405), (0.246, 0.415)], 2),
     ('arm-left', 'back', TATTOO, [(0.246, 0.425), (0.238, 0.435), (0.246, 0.445)], 2),
 
-    # === RIGHT SHOULDER & ARM (Ablay & Tagur - Full Geometric Sleeve) ===
-    # Deltoid top plate double bands & central diamond crest
-    ('deltoid-right', 'top', TATTOO, [(-0.170, -0.052), (-0.100, -0.052), (-0.100, -0.024), (-0.170, -0.024)], 2),
-    ('deltoid-right', 'top', TATTOO, [(-0.170, 0.024), (-0.100, 0.024), (-0.100, 0.052), (-0.170, 0.052)], 2),
-    ('deltoid-right', 'top', TATTOO, [(-0.135, -0.016), (-0.120, 0.000), (-0.135, 0.016), (-0.150, 0.000)], 2),
-    # Deltoid front chevron plate with layer 3 inset
-    ('deltoid-right', 'front', TATTOO, [(-0.160, 0.380), (-0.110, 0.350), (-0.110, 0.410)], 2),
-    ('deltoid-right', 'front', TATTOO, [(-0.148, 0.380), (-0.116, 0.362), (-0.116, 0.398)], 3),
-    # Deltoid back chevron plate with layer 3 inset
-    ('deltoid-right', 'back', TATTOO, [(-0.110, 0.350), (-0.160, 0.380), (-0.110, 0.410)], 2),
-    ('deltoid-right', 'back', TATTOO, [(-0.116, 0.362), (-0.148, 0.380), (-0.116, 0.398)], 3),
-
-    # Full Arm Length Outer Bounding Guide Rails (top of arm)
-    ('arm-right', 'top', TATTOO, [(-0.252, -0.052), (-0.170, -0.052), (-0.170, -0.046), (-0.252, -0.046)], 2),
-    ('arm-right', 'top', TATTOO, [(-0.252, 0.046), (-0.170, 0.046), (-0.170, 0.052), (-0.252, 0.052)], 2),
-
-    # Upper arm 4 rhythmic wrap-around warrior rings (Tagur)
-    ('arm-right', 'front', TATTOO, [(-0.176, 0.338), (-0.168, 0.338), (-0.168, 0.462), (-0.176, 0.462)], 2),
-    ('arm-right', 'top', TATTOO, [(-0.176, -0.058), (-0.168, -0.058), (-0.168, 0.058), (-0.176, 0.058)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.176, 0.338), (-0.168, 0.338), (-0.168, 0.462), (-0.176, 0.462)], 2),
-
-    ('arm-right', 'front', TATTOO, [(-0.194, 0.338), (-0.186, 0.338), (-0.186, 0.462), (-0.194, 0.462)], 2),
-    ('arm-right', 'top', TATTOO, [(-0.194, -0.058), (-0.186, -0.058), (-0.186, 0.058), (-0.194, 0.058)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.194, 0.338), (-0.186, 0.338), (-0.186, 0.462), (-0.194, 0.462)], 2),
-
-    ('arm-right', 'front', TATTOO, [(-0.212, 0.338), (-0.204, 0.338), (-0.204, 0.462), (-0.212, 0.462)], 2),
-    ('arm-right', 'top', TATTOO, [(-0.212, -0.058), (-0.204, -0.058), (-0.204, 0.058), (-0.212, 0.058)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.212, 0.338), (-0.204, 0.338), (-0.204, 0.462), (-0.212, 0.462)], 2),
-
-    ('arm-right', 'front', TATTOO, [(-0.230, 0.338), (-0.222, 0.338), (-0.222, 0.462), (-0.230, 0.462)], 2),
-    ('arm-right', 'top', TATTOO, [(-0.230, -0.058), (-0.222, -0.058), (-0.222, 0.058), (-0.230, 0.058)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.230, 0.338), (-0.222, 0.338), (-0.222, 0.462), (-0.230, 0.462)], 2),
-
-    # Right Forearm Centipede / Herringbone Ladder (Gayaman - front, top, back)
-    ('arm-right', 'front', TATTOO, [(-0.244, 0.380), (-0.232, 0.370), (-0.232, 0.390)], 2),
-    ('arm-right', 'front', TATTOO, [(-0.244, 0.410), (-0.232, 0.400), (-0.232, 0.420)], 2),
-    ('arm-right', 'front', TATTOO, [(-0.244, 0.440), (-0.232, 0.430), (-0.232, 0.450)], 2),
-
-    ('arm-right', 'back', TATTOO, [(-0.244, 0.380), (-0.232, 0.370), (-0.232, 0.390)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.244, 0.410), (-0.232, 0.400), (-0.232, 0.420)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.244, 0.440), (-0.232, 0.430), (-0.232, 0.450)], 2),
-
-    ('arm-right', 'top', TATTOO, [(-0.244, 0.000), (-0.232, -0.030), (-0.232, 0.030)], 2),
-
-    # Pre-cuff wrist solid band with pointed spearhead teeth (notches)
-    ('arm-right', 'front', TATTOO, [(-0.254, 0.345), (-0.246, 0.345), (-0.246, 0.455), (-0.254, 0.455)], 2),
-    ('arm-right', 'top', TATTOO, [(-0.254, -0.058), (-0.246, -0.058), (-0.246, 0.058), (-0.254, 0.058)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.254, 0.345), (-0.246, 0.345), (-0.246, 0.455), (-0.254, 0.455)], 2),
-    # Pointed spearhead notches
-    ('arm-right', 'front', TATTOO, [(-0.246, 0.365), (-0.246, 0.385), (-0.238, 0.375)], 2),
-    ('arm-right', 'front', TATTOO, [(-0.246, 0.395), (-0.246, 0.415), (-0.238, 0.405)], 2),
-    ('arm-right', 'front', TATTOO, [(-0.246, 0.425), (-0.246, 0.445), (-0.238, 0.435)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.246, 0.365), (-0.246, 0.385), (-0.238, 0.375)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.246, 0.395), (-0.246, 0.415), (-0.238, 0.405)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.246, 0.425), (-0.246, 0.445), (-0.238, 0.435)], 2),
-
-    # === HANDS (Gulot solid knuckle stripes) ===
-    ('hand-left', 'top', TATTOO, [(0.296, -0.046), (0.306, -0.046), (0.306, 0.054), (0.296, 0.054)], 2),
-    ('hand-left', 'top', TATTOO, [(0.316, -0.044), (0.326, -0.044), (0.326, 0.052), (0.316, 0.052)], 2),
-    ('hand-right', 'top', TATTOO, [(-0.306, -0.046), (-0.296, -0.046), (-0.296, 0.054), (-0.306, 0.054)], 2),
-    ('hand-right', 'top', TATTOO, [(-0.326, -0.044), (-0.316, -0.044), (-0.316, 0.052), (-0.326, 0.052)], 2),
+    # Hands (Gulot)
+    ('hand-left', 'top', TATTOO, _quad(0.296, -0.046, 0.306, 0.054), 2),
+    ('hand-left', 'top', TATTOO, _quad(0.316, -0.044, 0.326, 0.052), 2),
 ]
+
+ARM_DECALS_RIGHT = []
+for box, view, slot, poly, layer in ARM_DECALS_LEFT:
+    new_box = box.replace('left', 'right')
+    if view in ('front', 'back'):
+        new_poly = [(-x, y) for x, y in poly]
+        new_poly.reverse()
+    elif view == 'top':
+        new_poly = [(-x, z) for x, z in poly]
+        new_poly.reverse()
+    else:
+        new_poly = list(poly)
+    ARM_DECALS_RIGHT.append((new_box, view, slot, new_poly, layer))
+
+ARM_DECALS = ARM_DECALS_LEFT + ARM_DECALS_RIGHT
 
 CUFF_DECALS = [
     # Left cuff: distinct dual grooves
@@ -891,60 +777,65 @@ LEG_DECALS = [
     ('foot-right', 'top', TATTOO, [(-0.082, -0.022), (-0.058, -0.006), (-0.066, 0.006), (-0.082, -0.010)], 2),
     ('foot-right', 'top', TATTOO, [(-0.106, -0.006), (-0.082, -0.022), (-0.082, -0.010), (-0.098, 0.006)], 2),
 
-    # === SHINS (Labid - Double Rails, 7 Alternating Python Scales & Lateral Wrap) ===
+    # === SHINS (Labid - Double Rails & Stacked Matmata Diamond Scale Chain) ===
     # Ankle wrap double bands
-    ('shin-left', 'front', TATTOO, [(0.030, 0.078), (0.138, 0.078), (0.138, 0.086), (0.030, 0.086)], 2),
-    ('shin-left', 'front', TATTOO, [(0.030, 0.090), (0.138, 0.090), (0.138, 0.098), (0.030, 0.098)], 2),
-    ('shin-left', 'back', TATTOO, [(0.030, 0.078), (0.138, 0.078), (0.138, 0.086), (0.030, 0.086)], 2),
-    ('shin-left', 'back', TATTOO, [(0.030, 0.090), (0.138, 0.090), (0.138, 0.098), (0.030, 0.098)], 2),
+    ('shin-left', 'front', TATTOO, _quad(0.030, 0.078, 0.138, 0.086), 2),
+    ('shin-left', 'front', TATTOO, _quad(0.030, 0.090, 0.138, 0.098), 2),
+    ('shin-left', 'back', TATTOO, _quad(0.030, 0.078, 0.138, 0.086), 2),
+    ('shin-left', 'back', TATTOO, _quad(0.030, 0.090, 0.138, 0.098), 2),
 
-    ('shin-right', 'front', TATTOO, [(-0.138, 0.078), (-0.030, 0.078), (-0.030, 0.086), (-0.138, 0.086)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.138, 0.090), (-0.030, 0.090), (-0.030, 0.098), (-0.138, 0.098)], 2),
-    ('shin-right', 'back', TATTOO, [(-0.138, 0.078), (-0.030, 0.078), (-0.030, 0.086), (-0.138, 0.086)], 2),
-    ('shin-right', 'back', TATTOO, [(-0.138, 0.090), (-0.030, 0.090), (-0.030, 0.098), (-0.138, 0.098)], 2),
+    ('shin-right', 'front', TATTOO, _quad(-0.138, 0.078, -0.030, 0.086), 2),
+    ('shin-right', 'front', TATTOO, _quad(-0.138, 0.090, -0.030, 0.098), 2),
+    ('shin-right', 'back', TATTOO, _quad(-0.138, 0.078, -0.030, 0.086), 2),
+    ('shin-right', 'back', TATTOO, _quad(-0.138, 0.090, -0.030, 0.098), 2),
 
-    # Left Shin Double Guide Rails & 7 Alternating Python Scales
-    ('shin-left', 'front', TATTOO, [(0.076, 0.098), (0.084, 0.098), (0.084, 0.196), (0.076, 0.196)], 2),
-    ('shin-left', 'front', TATTOO, [(0.116, 0.098), (0.124, 0.098), (0.124, 0.196), (0.116, 0.196)], 2),
-    ('shin-left', 'front', TATTOO, [(0.084, 0.100), (0.116, 0.112), (0.084, 0.118)], 2),
-    ('shin-left', 'front', TATTOO, [(0.116, 0.114), (0.084, 0.126), (0.116, 0.132)], 2),
-    ('shin-left', 'front', TATTOO, [(0.084, 0.128), (0.116, 0.140), (0.084, 0.146)], 2),
-    ('shin-left', 'front', TATTOO, [(0.116, 0.142), (0.084, 0.154), (0.116, 0.160)], 2),
-    ('shin-left', 'front', TATTOO, [(0.084, 0.156), (0.116, 0.168), (0.084, 0.174)], 2),
-    ('shin-left', 'front', TATTOO, [(0.116, 0.170), (0.084, 0.182), (0.116, 0.188)], 2),
-    ('shin-left', 'front', TATTOO, [(0.084, 0.184), (0.116, 0.194), (0.084, 0.196)], 2),
+    # Left Shin Double Guide Rails
+    ('shin-left', 'front', TATTOO, _quad(0.076, 0.098, 0.084, 0.196), 2),
+    ('shin-left', 'front', TATTOO, _quad(0.116, 0.098, 0.124, 0.196), 2),
+    # Left Shin Stacked Diamond Chain (Argyle lattice)
+    ('shin-left', 'front', TATTOO, _diamond(0.100, 0.118, 0.012, 0.010), 2),
+    ('shin-left', 'front', TATTOO, _diamond(0.100, 0.118, 0.005, 0.004), 3),
+    ('shin-left', 'front', TATTOO, _diamond(0.100, 0.147, 0.012, 0.010), 2),
+    ('shin-left', 'front', TATTOO, _diamond(0.100, 0.147, 0.005, 0.004), 3),
+    ('shin-left', 'front', TATTOO, _diamond(0.100, 0.176, 0.012, 0.010), 2),
+    ('shin-left', 'front', TATTOO, _diamond(0.100, 0.176, 0.005, 0.004), 3),
 
-    # Right Shin Double Guide Rails & 7 Alternating Python Scales
-    ('shin-right', 'front', TATTOO, [(-0.124, 0.098), (-0.116, 0.098), (-0.116, 0.196), (-0.124, 0.196)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.084, 0.098), (-0.076, 0.098), (-0.076, 0.196), (-0.084, 0.196)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.084, 0.100), (-0.084, 0.118), (-0.116, 0.112)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.116, 0.114), (-0.116, 0.132), (-0.084, 0.126)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.084, 0.128), (-0.084, 0.146), (-0.116, 0.140)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.116, 0.142), (-0.116, 0.160), (-0.084, 0.154)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.084, 0.156), (-0.084, 0.174), (-0.116, 0.168)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.116, 0.170), (-0.116, 0.188), (-0.084, 0.182)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.084, 0.184), (-0.084, 0.196), (-0.116, 0.194)], 2),
+    # Right Shin Double Guide Rails
+    ('shin-right', 'front', TATTOO, _quad(-0.124, 0.098, -0.116, 0.196), 2),
+    ('shin-right', 'front', TATTOO, _quad(-0.084, 0.098, -0.076, 0.196), 2),
+    # Right Shin Stacked Diamond Chain
+    ('shin-right', 'front', TATTOO, _diamond(-0.100, 0.118, 0.012, 0.010), 2),
+    ('shin-right', 'front', TATTOO, _diamond(-0.100, 0.118, 0.005, 0.004), 3),
+    ('shin-right', 'front', TATTOO, _diamond(-0.100, 0.147, 0.012, 0.010), 2),
+    ('shin-right', 'front', TATTOO, _diamond(-0.100, 0.147, 0.005, 0.004), 3),
+    ('shin-right', 'front', TATTOO, _diamond(-0.100, 0.176, 0.012, 0.010), 2),
+    ('shin-right', 'front', TATTOO, _diamond(-0.100, 0.176, 0.005, 0.004), 3),
 
     # Lateral Shin Wrap (360° leg flow)
-    ('shin-left', 'left', TATTOO, [(-0.040, 0.110), (0.040, 0.110), (0.040, 0.118), (-0.040, 0.118)], 2),
-    ('shin-left', 'left', TATTOO, [(-0.040, 0.146), (0.040, 0.146), (0.040, 0.154), (-0.040, 0.154)], 2),
-    ('shin-left', 'left', TATTOO, [(-0.040, 0.178), (0.040, 0.178), (0.040, 0.186), (-0.040, 0.186)], 2),
-    ('shin-right', 'right', TATTOO, [(-0.040, 0.110), (0.040, 0.110), (0.040, 0.118), (-0.040, 0.118)], 2),
-    ('shin-right', 'right', TATTOO, [(-0.040, 0.146), (0.040, 0.146), (0.040, 0.154), (-0.040, 0.154)], 2),
-    ('shin-right', 'right', TATTOO, [(-0.040, 0.178), (0.040, 0.178), (0.040, 0.186), (-0.040, 0.186)], 2),
+    ('shin-left', 'left', TATTOO, _quad(-0.040, 0.110, 0.040, 0.118), 2),
+    ('shin-left', 'left', TATTOO, _quad(-0.040, 0.146, 0.040, 0.154), 2),
+    ('shin-left', 'left', TATTOO, _quad(-0.040, 0.178, 0.040, 0.186), 2),
+    ('shin-right', 'right', TATTOO, _quad(-0.040, 0.110, 0.040, 0.118), 2),
+    ('shin-right', 'right', TATTOO, _quad(-0.040, 0.146, 0.040, 0.154), 2),
+    ('shin-right', 'right', TATTOO, _quad(-0.040, 0.178, 0.040, 0.186), 2),
 
-    # === THIGHS (Panay Master Sunburst & Multi-Banded Panels) ===
+    # === THIGHS (Panay Master Sunburst & Woven Diamond Borders) ===
     # Left Thigh: Triple Framing Bands + 8-Ray Master Solar Star
-    ('thigh-left', 'front', TATTOO, [(0.026, 0.250), (0.144, 0.250), (0.144, 0.258), (0.026, 0.258)], 2),
-    ('thigh-left', 'front', TATTOO, [(0.026, 0.238), (0.144, 0.238), (0.144, 0.244), (0.026, 0.244)], 2),
-    # Upper Band Tooth Fringe
-    ('thigh-left', 'front', TATTOO, [(0.042, 0.244), (0.048, 0.250), (0.054, 0.244)], 2),
-    ('thigh-left', 'front', TATTOO, [(0.066, 0.244), (0.072, 0.250), (0.078, 0.244)], 2),
-    ('thigh-left', 'front', TATTOO, [(0.090, 0.244), (0.096, 0.250), (0.102, 0.244)], 2),
-    ('thigh-left', 'front', TATTOO, [(0.114, 0.244), (0.120, 0.250), (0.126, 0.244)], 2),
+    ('thigh-left', 'front', TATTOO, _quad(0.026, 0.250, 0.144, 0.258), 2),
+    ('thigh-left', 'front', TATTOO, _quad(0.026, 0.238, 0.144, 0.244), 2),
+    # Upper Band Diamond Chain
+    ('thigh-left', 'front', TATTOO, _diamond(0.048, 0.244, 0.007, 0.005), 2),
+    ('thigh-left', 'front', TATTOO, _diamond(0.072, 0.244, 0.007, 0.005), 2),
+    ('thigh-left', 'front', TATTOO, _diamond(0.096, 0.244, 0.007, 0.005), 2),
+    ('thigh-left', 'front', TATTOO, _diamond(0.120, 0.244, 0.007, 0.005), 2),
     # Lower Framing Bands
-    ('thigh-left', 'front', TATTOO, [(0.026, 0.184), (0.144, 0.184), (0.144, 0.190), (0.026, 0.190)], 2),
-    ('thigh-left', 'front', TATTOO, [(0.026, 0.194), (0.144, 0.194), (0.144, 0.200), (0.026, 0.200)], 2),
+    ('thigh-left', 'front', TATTOO, _quad(0.026, 0.184, 0.144, 0.190), 2),
+    ('thigh-left', 'front', TATTOO, _quad(0.026, 0.194, 0.144, 0.200), 2),
+    # Lower Band Diamond Chain
+    ('thigh-left', 'front', TATTOO, _diamond(0.048, 0.192, 0.007, 0.005), 2),
+    ('thigh-left', 'front', TATTOO, _diamond(0.072, 0.192, 0.007, 0.005), 2),
+    ('thigh-left', 'front', TATTOO, _diamond(0.096, 0.192, 0.007, 0.005), 2),
+    ('thigh-left', 'front', TATTOO, _diamond(0.120, 0.192, 0.007, 0.005), 2),
     # Center 8-Ray Solar Star (Adlaw) centered at (0.092, 0.220)
     ('thigh-left', 'front', TATTOO, [(0.092, 0.206), (0.106, 0.220), (0.092, 0.234), (0.078, 0.220)], 2),
     ('thigh-left', 'front', TATTOO, [(0.092, 0.212), (0.100, 0.220), (0.092, 0.228), (0.084, 0.220)], 3),
@@ -963,16 +854,21 @@ LEG_DECALS = [
     ('thigh-left', 'front', TATTOO, [(0.134, 0.216), (0.138, 0.220), (0.134, 0.224), (0.130, 0.220)], 2),
 
     # Right Thigh: Triple Framing Bands + 8-Ray Master Solar Star
-    ('thigh-right', 'front', TATTOO, [(-0.144, 0.250), (-0.026, 0.250), (-0.026, 0.258), (-0.144, 0.258)], 2),
-    ('thigh-right', 'front', TATTOO, [(-0.144, 0.238), (-0.026, 0.238), (-0.026, 0.244), (-0.144, 0.244)], 2),
-    # Upper Band Tooth Fringe
-    ('thigh-right', 'front', TATTOO, [(-0.054, 0.244), (-0.048, 0.250), (-0.042, 0.244)], 2),
-    ('thigh-right', 'front', TATTOO, [(-0.078, 0.244), (-0.072, 0.250), (-0.066, 0.244)], 2),
-    ('thigh-right', 'front', TATTOO, [(-0.102, 0.244), (-0.096, 0.250), (-0.090, 0.244)], 2),
-    ('thigh-right', 'front', TATTOO, [(-0.126, 0.244), (-0.120, 0.250), (-0.114, 0.244)], 2),
+    ('thigh-right', 'front', TATTOO, _quad(-0.144, 0.250, -0.026, 0.258), 2),
+    ('thigh-right', 'front', TATTOO, _quad(-0.144, 0.238, -0.026, 0.244), 2),
+    # Upper Band Diamond Chain
+    ('thigh-right', 'front', TATTOO, _diamond(-0.048, 0.244, 0.007, 0.005), 2),
+    ('thigh-right', 'front', TATTOO, _diamond(-0.072, 0.244, 0.007, 0.005), 2),
+    ('thigh-right', 'front', TATTOO, _diamond(-0.096, 0.244, 0.007, 0.005), 2),
+    ('thigh-right', 'front', TATTOO, _diamond(-0.120, 0.244, 0.007, 0.005), 2),
     # Lower Framing Bands
-    ('thigh-right', 'front', TATTOO, [(-0.144, 0.184), (-0.026, 0.184), (-0.026, 0.190), (-0.144, 0.190)], 2),
-    ('thigh-right', 'front', TATTOO, [(-0.144, 0.194), (-0.026, 0.194), (-0.026, 0.200), (-0.144, 0.200)], 2),
+    ('thigh-right', 'front', TATTOO, _quad(-0.144, 0.184, -0.026, 0.190), 2),
+    ('thigh-right', 'front', TATTOO, _quad(-0.144, 0.194, -0.026, 0.200), 2),
+    # Lower Band Diamond Chain
+    ('thigh-right', 'front', TATTOO, _diamond(-0.048, 0.192, 0.007, 0.005), 2),
+    ('thigh-right', 'front', TATTOO, _diamond(-0.072, 0.192, 0.007, 0.005), 2),
+    ('thigh-right', 'front', TATTOO, _diamond(-0.096, 0.192, 0.007, 0.005), 2),
+    ('thigh-right', 'front', TATTOO, _diamond(-0.120, 0.192, 0.007, 0.005), 2),
     # Center 8-Ray Solar Star (Adlaw) centered at (-0.092, 0.220)
     ('thigh-right', 'front', TATTOO, [(-0.092, 0.206), (-0.078, 0.220), (-0.092, 0.234), (-0.106, 0.220)], 2),
     ('thigh-right', 'front', TATTOO, [(-0.092, 0.212), (-0.084, 0.220), (-0.092, 0.228), (-0.100, 0.220)], 3),
