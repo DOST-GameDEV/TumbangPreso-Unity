@@ -24,6 +24,8 @@ namespace TumbangPreso.Visual
         // The key light and sky as the scene authored them, restored exactly on the way out.
         private Light _sun;private Color _sunColour;private float _sunIntensity,_sunShadow;private Quaternion _sunRotation;
         private Material _skyAuthored,_skyLook;
+        // The look's near sky: real blocky clouds (LIGHT-3), shown only at a non-zero weight.
+        private BlockyClouds _clouds;private float _cloudOpacity=-1;
         // The court's own dark ground, found once every Start has run. See MapLook.GroundLift.
         private readonly List<(Renderer renderer,int index)> _court=new List<(Renderer,int)>();
         private MaterialPropertyBlock _groundBlock;private bool _groundPending=true;
@@ -65,18 +67,25 @@ namespace TumbangPreso.Visual
             var profile=WorldLookProfile.Current;
             Color shade=Look.ShadowTint*profile.ShadowLevel;shade.a=1;
             // ⚠️ THE WARM BAND IS WHERE LIGHT TURNS TO SHADE, NOT A SECOND LIGHT. It peaks at
-            // 42 per cent of the ramp and is gone by the lit side, which is what reads as the
-            // soft-toy warmth on PEAK's scouts. Kept small: a strong one reads as sunburn.
-            var warm=new Color(1,.62f,.42f);
+            // 42 per cent of the ramp and is gone by the lit side: the "fuzzy orange" a painter
+            // lays on a turning form under a warm key (owner, 2026-09-25).
+            // ⚠️⚠️ AT CONSTANT LUMINANCE. The first band multiplied by a warm colour times 1.25,
+            // which brightened as it warmed and clipped orange skin; this one divides the orange
+            // by its own luminance (0.948), so the band turns hue and adds no light.
+            var orange=new Color(1.22f,.90f,.62f);
+            float orangeLuma=.2126f*orange.r+.7152f*orange.g+.0722f*orange.b;
             for(int i=0;i<64;i++)
             {
                 float t=i/63f,s=t*t*(3-2*t);
                 Color c=Color.Lerp(shade,Color.white,s);
                 float band=Mathf.Exp(-Mathf.Pow((t-.42f)/.2f,2))*profile.Terminator;
-                c=Color.Lerp(c,new Color(c.r*warm.r*1.25f,c.g*warm.g*1.25f,c.b*warm.b*1.25f),band);c.a=1;
+                c=Color.Lerp(c,new Color(c.r*orange.r,c.g*orange.g,c.b*orange.b)/orangeLuma,band);c.a=1;
                 _ramp.SetPixel(i,0,c);
             }
-            _ramp.Apply(false,true);Current=this;ApplyScene();
+            _ramp.Apply(false,true);
+            if(_skyAuthored!=null && _skyAuthored.HasProperty("_CloudOpacity"))_cloudOpacity=_skyAuthored.GetFloat("_CloudOpacity");
+            _clouds=BlockyClouds.Create(this,Look,Floor);
+            Current=this;ApplyScene();
         }
         // The explicit preview sun (or the match sun captured at installation).
         // Screen-space edges must not pick a menu portrait light instead.
@@ -99,7 +108,7 @@ namespace TumbangPreso.Visual
         private void Update()
         {
             if(_groundPending){_groundPending=false;FindGround();ApplyGround();}
-            if(_weight!=Mathf.Clamp01(WorldCueProfile.Current.WorldLighting))ApplyScene();
+            if(_weight!=WorldCueProfile.LightingWeight)ApplyScene();
         }
         // ⚠️⚠️ FOUND BY SHAPE, NOT BY NAME, AND ONLY FLAT RENDERERS ARE LIFTED. The court floor
         // arrives through generated meshes and kit prefabs, and no material name is shared by
@@ -157,7 +166,7 @@ namespace TumbangPreso.Visual
         }
         private void ApplyScene()
         {
-            if(Look==null)return;_weight=Mathf.Clamp01(WorldCueProfile.Current.WorldLighting);
+            if(Look==null)return;_weight=WorldCueProfile.LightingWeight;
             RenderSettings.ambientMode=_weight>0?AmbientMode.Trilight:_ambientMode;
             RenderSettings.ambientSkyColor=Color.Lerp(_sky,Look.Sky,_weight);
             RenderSettings.ambientEquatorColor=Color.Lerp(_equator,Look.Equator,_weight);
@@ -189,8 +198,15 @@ namespace TumbangPreso.Visual
                 Blend("_Zenith",Look.Zenith);Blend("_Horizon",Look.Horizon);
                 Blend("_CloudLight",Look.CloudLight);Blend("_CloudShade",Look.CloudShade);Blend("_SunColor",Look.Sun);
                 if(_sun!=null)_skyLook.SetVector("_SunDirection",-_sun.transform.forward);
+                // Painted clouds live on the look's own sky instance only; Classic's is untouched.
+                if(_skyLook.HasProperty("_CloudPaint"))_skyLook.SetFloat("_CloudPaint",WorldLookProfile.Current.CloudPaint*_weight);
+                // ⚠️ The painted panorama becomes the FAR layer behind the blocky clouds: faint,
+                // so the near sky is the 3D one and the far one only hints at more weather.
+                if(_cloudOpacity>=0)_skyLook.SetFloat("_CloudOpacity",Mathf.Lerp(_cloudOpacity,_cloudOpacity*WorldLookProfile.Current.PaintedCloudOpacity,
+                    _clouds!=null?_weight:0));
                 RenderSettings.skybox=_weight>0?_skyLook:_skyAuthored;
             }
+            if(_clouds!=null)_clouds.SetVisible(_weight>0);
             ApplyGround();
         }
         private void Blend(string id,Color look){if(_skyAuthored.HasProperty(id))_skyLook.SetColor(id,Color.Lerp(_skyAuthored.GetColor(id),look,_weight));}

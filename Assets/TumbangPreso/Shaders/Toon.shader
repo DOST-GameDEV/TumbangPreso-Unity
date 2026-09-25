@@ -517,6 +517,13 @@ Shader "TumbangPreso/Toon"
             base *= _Color.rgb;
 
             half depth = saturate((distance(_WorldSpaceCameraPos,IN.worldPos)-5.0h)/9.0h)*_DepthReadability;
+            // ⚠️ NO BRIGHT FINISH UNDER THE WORLD LOOK (owner 2026-09-25: "the character glows",
+            // "remove the bright finish on all characters"). The distance lift and its cream rim
+            // were tuned against the authored, darker lighting; under the look they stacked on
+            // an already lit body and read as a glow round every player past five metres. The
+            // look's own haze starts past the court, so a far player stays readable without it.
+            // Classic (weight 0) keeps the cue exactly as it was.
+            depth *= 1.0h - saturate(_WorldLookWeight);
             // A small value lift preserves the painted palette. Only registered
             // cast/lata renderers opt in; map materials and viewmodels stay unchanged.
             base = lerp(base,base*1.12h+0.025h,depth);

@@ -106,6 +106,10 @@ namespace TumbangPreso.UI
             Header("DISPLAY");
             Choice("GraphicsQuality","Graphics quality",GraphicsProfiles.All.Select(p=>p.Label).ToArray(),s.GraphicsQuality,
                 v=>{s.GraphicsQuality=v;GraphicsProfiles.Apply(v);});
+            // Second, as in the owner's PUBG reference: quality, then the style strip. It changes
+            // the lighting live, behind the pause menu, and Discard puts the old one back.
+            SettingsStyleCards.Row(_list,"LightingStyle","Lighting style",s.LightingStyle,
+                v=>{s.LightingStyle=v;LightingStyles.Apply(v);_session.Preview();});
             Choice("RenderStyle","Visual style",RenderStyles.All.Select(p=>p.Label).ToArray(),s.RenderStyle,
                 v=>{s.RenderStyle=v;RenderStyles.Apply(v);});
             Choice("AntiAliasing","Smooth edges",AntiAliasModes.All.Select(p=>p.Label).ToArray(),s.AntiAliasMode,

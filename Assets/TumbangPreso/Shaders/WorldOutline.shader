@@ -138,6 +138,9 @@ Shader "TumbangPreso/WorldOutline"
             float4 _PeakSunView;  // key light direction in view space
             float4 _PeakShade;    // map shade tint
             float4 _PeakLight;    // key light colour
+            // x ground occlusion strength, y the height it fades out by (m), z the court floor,
+            // w weight. See the ground occlusion note in the composite.
+            float4 _PeakDepth;
 
             // ⚠️ NOT NAMED `Sample`, AND `offset` BELOW IS NOT NAMED `step`. Both of those are
             // HLSL intrinsics or reserved in one of the compilers this project targets, and a
@@ -526,6 +529,32 @@ Shader "TumbangPreso/WorldOutline"
                         float side=1-smoothstep(.35,.70,abs(normal.y));
                         float contact=max(first,second)*side*_WorldGroundContact.z*(1-saturate(mask*_WorldContactMask));
                         source.rgb*=1-contact;
+                    }
+                }
+                // ⚠️⚠️ § GROUND OCCLUSION, THE BRIGHT LOOK ONLY (2026-09-25, "the current lighting
+                // looks flat"). A wall darkens toward the violet cavity hue as it nears the court,
+                // the soft occlusion a painter puts where a building meets the ground, so a
+                // blocky street sits IN its light instead of being pasted on it. It is a lighting
+                // term drawn from the depth this pass already reads, not a texture: nothing is
+                // added to any material, and the cast is left out through the exclusion mask.
+                // Side-facing surfaces only; the ground's own shade is the sun's business.
+                if(_PeakDepth.w>0)
+                {
+                    float occDepth;float3 occNormal;
+                    DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture,duv),occDepth,occNormal);
+                    if(occDepth<.99999)
+                    {
+                        float eye=occDepth*_WorldContactProjection.x;
+                        float3 viewPoint=float3((duv*2-1)*_ViewRay.xy*eye,-eye);
+                        if(_WorldContactProjection.y>.5)
+                            viewPoint.xy=(duv*2-1)*float2(_WorldContactProjection.z*_WorldContactProjection.w,_WorldContactProjection.z);
+                        float3 world=mul(_WorldContactToWorld,float4(viewPoint,1)).xyz;
+                        float3 normal=normalize(mul((float3x3)_WorldContactToWorld,occNormal));
+                        float h=world.y-_PeakDepth.z;
+                        float fall=1-saturate(h/_PeakDepth.y);
+                        float occ=fall*fall*step(-.05,h)*(1-smoothstep(.45,.75,abs(normal.y)))
+                                 *_PeakDepth.x*_PeakDepth.w*(1-saturate(mask*_WorldContactMask));
+                        source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb,occ);
                     }
                 }
                 if (coverage <= 0.0) return source;

@@ -194,7 +194,7 @@ namespace TumbangPreso.CameraSystem
             if(WorldContactPresentation.Current!=null)Hide(WorldContactPresentation.Current.transform);
             _primary.Body.ShowOnlyForCapture(true);_primary.Scene.SetVisibleForCapture(true);
             float foot=WorldContactPresentation.ModelBottom(_primary.Body.Renderers,_primary.Body.Root.transform.position.y);
-            _primary.Contact.Place(_primary.Body.Root.transform.position,foot,new Vector2(.45f,.45f),WorldCueProfile.Current.WorldLighting*.20f);
+            _primary.Contact.Place(_primary.Body.Root.transform.position,foot,new Vector2(.45f,.45f),WorldCueProfile.LightingWeight*.20f);
             _primary.Contact.Visible(true);
             try{_camera.Render();}
             finally

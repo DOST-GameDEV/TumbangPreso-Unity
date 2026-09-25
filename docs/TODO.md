@@ -220,6 +220,138 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
 Capture: `WorldCourtCueTests.BrightLookSameCameraCapturesOnAllFiveMaps` writes stage, eye and
 cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 passed on the Mac.
 
+### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
+
+Owner request (2026-09-25), with a PUBG Mobile Style row as the reference: a style setting in
+the graphics settings with three slots. Slot 1 is the lighting on `main`, slot 2 is this
+branch's bright look, slot 3 is a placeholder. Picking a style changes the game's lighting.
+
+**What slot 1 is, measured.** `main` has no world look at all. Every map's authored
+RenderSettings (fog, ambient trilight, skybox) and directional sun (colour, intensity) are
+identical on `main` (`85504a52`) and this branch, checked scene by scene for Bayan, Eskinita,
+Ilalim and SaBubong (the Lagoon is not on `main`). So slot 1 is the look at weight 0, which
+every consumer already treats as the scene's own lighting. It keeps this branch's newer map,
+material and court work; only the lighting is `main`'s.
+
+- [x] LIGHT-2.1 `Settings.LightingStyles` (Classic weight 0, Bright weight 1, a placeholder that
+  is not selectable), `GameSettings.LightingStyle` (default Bright, the look this branch already
+  draws for everybody, so an upgraded `settings.json` changes nothing; a stored placeholder
+  normalises to the default), and `WorldCueProfile.LightingWeight`, the product of the profile's
+  `WorldLighting` and the style. Every runtime read of `WorldLighting` goes through it (look,
+  contact shadows, world outline, recorded and ultimate views). Local only, never on the wire.
+- [x] LIGHT-2.2 The card row (`SettingsStyleCards`), second on the Graphics tab, three 376x211.5
+  cards with a caption and an accent ring on the pick. It applies live and joins save and
+  discard. Thumbnails in `Resources/UI/lighting-styles/`, rendered by
+  `WorldCourtCueTests.LightingStyleThumbnails` from one Eskinita camera, which also asserts that
+  Classic hands the authored ambient and fog back exactly.
+  Evidence (`daf427e2`, Mac, one PlayMode launch, total 3 failed 0):
+  `TumpNativeSettingsTests.LightingStyleCardsSwitchTheLookAndJoinSaveAndDiscard` presses a card
+  through a real raycast (live weight, ring, dirty session, discard restores);
+  `WorldCourtCueTests.LightingStyleThumbnails`; and the older
+  `FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting`, rerun because every look
+  consumer now reads the weight through the style. Frames in
+  [reports/light-2-2026-09-25/](reports/light-2-2026-09-25/): the row at 1920x1080 and the owner's
+  1600x680, a Classic pick, and both thumbnails. The first photograph put the third card 3 units
+  past the row rule; cards went from 384 to 376 (`daf427e2`). Not done: a native player build,
+  a pad walk of the row, and a look inside a live match's pause menu. That menu opens the same
+  `TumpSettingsView` through `ConvertedSettingsPanel`, so the row is there by construction.
+- [ ] LIGHT-2.3 Slot 3 content. The owner's call: the card shows an empty slot until then.
+
+### LIGHT-3 · Tone down the Bright style: colour-theory light, depth, blocky clouds ⚠️ IN PROGRESS, 2026-09-25
+
+Owner request (2026-09-25), with a PEAK frame of three climbers on sand as the reference: "tone
+down the brightness on the bright lighting style. it currently is too bright and the character
+glows", "overhaul the lighting if needed, remove the bright finish on all characters", "do not
+make the cloud realistic. do not go towards the route of realism". Classic is not touched.
+
+**Reference, measured from the owner's frame:**
+- The lit green body is (48,160,77), luma 130, and the khaki shirt is (239,194,97). Nothing on a
+  character is near white.
+- The darkest 1 per cent sits at luma 64.
+- Shadow on sand is a deeper, more saturated sand, (165,92,51).
+- The sky is a pale mint, (210,230,222), with low-contrast brushed clouds, and the far mountain
+  dissolves into teal air.
+
+Public write-ups of PEAK's lighting internals were not found (searched 2026-09-25), so the frame
+is the evidence.
+
+**Before, measured at `d27c9712`:**
+- The Eskinita cast shot had the yellow jacket at (255,225,5) and orange skin at (244,121,5), so
+  red was clipped, blue had collapsed and the colours read neon.
+- The Bright sky was a saturated poster blue, (131,184,241) on Bayan.
+- The current renders of both styles on all five maps (sky, wide, eye, stage, cast) are in
+  [reports/light-3-2026-09-25/before/](reports/light-3-2026-09-25/before/).
+
+**Causes found:**
+- The cast was lit at albedo x (1.34 sun + ~0.65 ambient), about 1.9 before the curve.
+- Vibrance 0.24 drove already saturated colours to their floor.
+- The bloom soft knee was a hard-coded 0.6 of the 1.7 threshold, so the chain collected every
+  value above 0.68, which is every sunlit body.
+- Three finishes sat on the cast: the cream upper rim, the metal glint, and the
+  distance-readability lift with its cream rim past 5 m.
+- The warm terminator band pushed red by 1.25.
+
+**Second owner direction, same day, after the first tone-down render:** the lighting looked flat,
+for three reasons in the owner's words. (1) "the textures are flat with no depth/normal map
+added". (2) "the lighting itself leans towards adjusting the shadows and brightness instead of
+adjusting the ambient hues", while PEAK uses "artistic color theory for shadow and light colors
+(leaning more towards a slight purple instead of a plain dark shadow for cooler areas, and a more
+fuzzy orange for warmer settings)"; look at illustrated environment concept art and stylised 3D
+environments. (3) "skybox should be either 2d hand painted designs, or maybe try a more blocky
+style of clouds where they are real 3d assets". On the first blocky clouds: "too small", "less
+volume-y", "too sharp", look at blocky cloud references. Then: "aren't they being rendered inside
+out?" They were (winding, below). The owner put character shading (cel against normal) off for
+now; the study is in the scratchpad and not part of this entry.
+
+**Research used:** the colour-theory sources agree that lit areas shift toward the light's hue
+and shadows away from it, and that warm light against cool shade makes depth. So the shade leans
+violet under a peach key. The blocky-cloud references (Minecraft Better Clouds, Photon's blocky
+mode, voxel cloud renders) read as volume through four things: a domed mass of many blocks,
+light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
+
+- [x] LIGHT-3.1 The tone-down (`8e7b9707`, black floor `a234bc4b`):
+  - the sun goes to about 1.08 and the ambient to about 0.8 of its old strength;
+  - vibrance drops to 0.14, and bloom to 0.05 at threshold 2.2 with a 0.2 knee (`BloomKnee`);
+  - `UpperRim` and `MetalHighlight` go to 0;
+  - the distance-readability lift fades out under the look (`Toon.shader`), while Classic keeps it.
+  Measured on the Eskinita cast shot, the share of neon-clipped cast pixels went from 7.2 to 2.8
+  per cent; on Bayan and the Lagoon it went from 4.8 to 0.
+- [x] LIGHT-3.2 Colour-theory light, per map:
+  - a warm key: peach, orange on the alley and rooftop, cream under the bridge and on the lagoon;
+  - the ambient sky term, which is every shadow's colour here, goes violet, the equator mauve and
+    the ground term a warm orange bounce;
+  - the cast's `ShadowTint` leans violet;
+  - the terminator is a fuzzy orange at constant luminance (0.22, adds no light);
+  - a split tone in the grade (`SplitTone` 0.18, `ShadowHue` violet, `HighlightHue` warm).
+  - `Lift` was being sent through `SetColor`, which converts it from sRGB, so the linear black
+    floor reached the shader at about a thirteenth of its authored value. It is a vector now, set
+    at 0.03 to 0.06 linear, a violet-tinted floor near PEAK's luma 64.
+- [x] LIGHT-3.3 Depth without a texture sweep (`WorldOutline`): inside corners take a violet
+  cavity (`CavityHue`, `CreaseShade` 0.45), and walls take ground occlusion toward it within 2.8 m
+  of the court (`GroundOcclusion` 0.28), from the depth the pass already reads. The cast is excluded
+  through the mask, and the Low tier skips it.
+  Not done, and why: real normal maps are per-asset art, and AGENTS.md forbids one texture or
+  noise sweep across every building (REFINE-2 does maps one at a time). If the owner still wants
+  normal detail after this, it belongs in each map's REFINE-2 pass.
+- [x] LIGHT-3.4 Blocky clouds (`BlockyClouds`, `BlockyCloud.shader`): 10 voxel cumulus per map,
+  50 to 85 m across in 5.5 m blocks, 100 to 150 m out and 40 to 64 m up, inside the 240 m far
+  plane. Each is filled from two or three dome lobes with a flat belly, and only outer faces are
+  drawn. The normals roll over the blocks, the crevices darken, the colour runs from a cream crown
+  to a lavender belly, and the edges melt into the sky's own colour at their elevation. The ring
+  drifts on the shared sky clock, and the build is seeded from the map name. The photo panorama
+  stays behind as a faint far layer (`PaintedCloudOpacity` 0.18, painted mip, `CloudPaint`).
+  Classic's sky is untouched. The shader is on `GameBuilder`'s always-included list.
+  ⚠️ The first two cuts had their triangle winding reversed (left-handed Unity read as
+  right-handed), so every cloud drew inside out. The owner caught it; the winding is fixed.
+- [ ] LIGHT-3.5 The owner's look at the final comparison. The rendering is done: `e26eeb04`,
+  Mac, one PlayMode launch, total 3 failed 0 (`FiveMapStageCapturesPreserveGeometryAndRestore
+  OriginalLighting`, `LightingStyleThumbnails` and a scratch same-camera review that was not
+  committed). Sheets in [reports/light-3-2026-09-25/after/](reports/light-3-2026-09-25/after/):
+  per map Classic, Bright before and Bright after for sky, wide, eye, stage and cast, plus
+  all-map sky and cast sheets. The Bright card thumbnail is re-rendered from the same launch.
+  Taste calls left to the owner: SaBubong's clouds run pink under its golden-hour palette, and
+  character shading (cel against normal) is deferred at the owner's word.
+
 ### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)
 
 LATEST owner WIP rule: finish the currently active implementation and its actual

@@ -19,6 +19,8 @@ namespace TumbangPreso.Visual
         private readonly RenderTexture[] _bloomChain=new RenderTexture[BloomLevels];
         private static readonly int LiftId=Shader.PropertyToID("_Lift");
         private static readonly int VibranceId=Shader.PropertyToID("_Vibrance");
+        private static readonly int ShadowHueId=Shader.PropertyToID("_ShadowHue");
+        private static readonly int HighlightHueId=Shader.PropertyToID("_HighlightHue");
         private static readonly int BloomTexId=Shader.PropertyToID("_BloomTex");
         private static readonly int BloomIntensityId=Shader.PropertyToID("_BloomIntensity");
         private static readonly int BloomThresholdId=Shader.PropertyToID("_BloomThreshold");
@@ -32,7 +34,12 @@ namespace TumbangPreso.Visual
         {
             float weight=BrightLookWeight;var profile=WorldLookProfile.Current;
             Color lift=weight>0?WorldLookPresentation.Current.Look.Lift*weight:Color.clear;
-            _material.SetColor(LiftId,new Color(lift.r,lift.g,lift.b,weight>0?1:0));
+            // ⚠️ A VECTOR, NOT A COLOUR. `SetColor` converts from sRGB in a linear project, which
+            // turned the documented linear floor into about a thirteenth of itself.
+            _material.SetVector(LiftId,new Vector4(lift.r,lift.g,lift.b,weight>0?1:0));
+            Color shadowHue=profile.ShadowHue.linear,highlightHue=profile.HighlightHue.linear;
+            _material.SetVector(ShadowHueId,new Vector4(shadowHue.r,shadowHue.g,shadowHue.b,profile.SplitTone*weight));
+            _material.SetVector(HighlightHueId,new Vector4(highlightHue.r,highlightHue.g,highlightHue.b,0));
             _material.SetFloat(VibranceId,profile.Vibrance*weight);
             _material.SetFloat(BloomIntensityId,0);_material.SetTexture(BloomTexId,Texture2D.blackTexture);
             BloomLive=false;
@@ -43,7 +50,7 @@ namespace TumbangPreso.Visual
             bool hdr=format==RenderTextureFormat.ARGBHalf || format==RenderTextureFormat.ARGBFloat ||
                      format==RenderTextureFormat.RGB111110Float || format==RenderTextureFormat.DefaultHDR;
             if(!hdr && SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.DefaultHDR))format=RenderTextureFormat.DefaultHDR;
-            _material.SetVector(BloomThresholdId,new Vector4(profile.BloomThreshold,.6f,0,0));
+            _material.SetVector(BloomThresholdId,new Vector4(profile.BloomThreshold,Mathf.Max(.01f,profile.BloomKnee),0,0));
             int width=Mathf.Max(1,source.width/2),height=Mathf.Max(1,source.height/2);
             var current=RenderTexture.GetTemporary(width,height,0,format,RenderTextureReadWrite.Linear);
             Graphics.Blit(source,current,_material,PassPrefilter);
