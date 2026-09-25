@@ -37,7 +37,7 @@ namespace TumbangPreso.Visual
         private void LateUpdate()
         {
             var round=GameServices.Round;if(round==null || _canShadow==null)return;
-            float weight=WorldCueProfile.Current.WorldLighting;
+            float weight=WorldCueProfile.LightingWeight;
             for(int seat=0;seat<Balance.PlayerCount;seat++)
             {
                 var actor=round.PlayerAt(seat);

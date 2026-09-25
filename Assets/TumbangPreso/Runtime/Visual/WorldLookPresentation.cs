@@ -118,7 +118,7 @@ namespace TumbangPreso.Visual
         private void Update()
         {
             if(_groundPending){_groundPending=false;FindGround();ApplyGround();}
-            if(_weight!=Mathf.Clamp01(WorldCueProfile.Current.WorldLighting))ApplyScene();
+            if(_weight!=WorldCueProfile.LightingWeight)ApplyScene();
         }
         // ⚠️⚠️ FOUND BY SHAPE, NOT BY NAME, AND ONLY FLAT RENDERERS ARE LIFTED. The court floor
         // arrives through generated meshes and kit prefabs, and no material name is shared by
@@ -175,7 +175,7 @@ namespace TumbangPreso.Visual
         }
         private void ApplyScene()
         {
-            if(Look==null)return;_weight=Mathf.Clamp01(WorldCueProfile.Current.WorldLighting);
+            if(Look==null)return;_weight=WorldCueProfile.LightingWeight;
             RenderSettings.ambientMode=_weight>0?AmbientMode.Trilight:_ambientMode;
             RenderSettings.ambientSkyColor=Color.Lerp(_sky,Look.Sky,_weight);
             RenderSettings.ambientEquatorColor=Color.Lerp(_equator,Look.Equator,_weight);

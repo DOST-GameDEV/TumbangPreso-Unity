@@ -357,7 +357,7 @@ namespace TumbangPreso.Visual
         /// mask rebuild rather than only for the composite.
         /// </summary>
         private bool HasWorldContact => WorldLookPresentation.HandlesCamera(_camera)
-            && WorldCueProfile.Current.WorldLighting>0 && WorldLookProfile.Current.EnvironmentContact>0
+            && WorldCueProfile.LightingWeight>0 && WorldLookProfile.Current.EnvironmentContact>0
             && Settings.SettingsStore.Current.GraphicsQuality>0;
         private bool InkLive => _prototypeEnabled && Settings.RenderStyles.InkOutlinesActive && _opacity>0;
         private bool Live => !_missing && (InkLive || HasWorldContact);
@@ -883,7 +883,7 @@ namespace TumbangPreso.Visual
             bool masked=_exclusion!=Exclusion.Overlap && maskReady;
             _material.SetTexture(MaskId,maskReady?(Texture)_mask:Texture2D.blackTexture);
             _material.SetFloat(MaskStrengthId,masked?_maskStrength:0);
-            float contact=HasWorldContact?WorldLookProfile.Current.EnvironmentContact*WorldCueProfile.Current.WorldLighting:0;
+            float contact=HasWorldContact?WorldLookProfile.Current.EnvironmentContact*WorldCueProfile.LightingWeight:0;
             _material.SetVector("_WorldGroundContact",new Vector4(WorldLookPresentation.Current!=null?WorldLookPresentation.Current.Floor:0,0,contact,.5f));
             _material.SetFloat("_WorldContactMask",maskReady?1:0);
             _material.SetMatrix("_WorldContactToWorld",_camera.cameraToWorldMatrix);

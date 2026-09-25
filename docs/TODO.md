@@ -183,6 +183,32 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
 Capture: `WorldCourtCueTests.BrightLookSameCameraCapturesOnAllFiveMaps` writes stage, eye and
 cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 passed on the Mac.
 
+### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25
+
+Owner request (2026-09-25), with a PUBG Mobile Style row as the reference: a style setting in
+the graphics settings with three slots. Slot 1 is the lighting on `main`, slot 2 is this
+branch's bright look, slot 3 is a placeholder. Picking a style changes the game's lighting.
+
+**What slot 1 is, measured.** `main` has no world look at all. Every map's authored
+RenderSettings (fog, ambient trilight, skybox) and directional sun (colour, intensity) are
+identical on `main` (`85504a52`) and this branch, checked scene by scene for Bayan, Eskinita,
+Ilalim and SaBubong (the Lagoon is not on `main`). So slot 1 is the look at weight 0, which
+every consumer already treats as the scene's own lighting. It keeps this branch's newer map,
+material and court work; only the lighting is `main`'s.
+
+- [ ] LIGHT-2.1 `Settings.LightingStyles` (Classic weight 0, Bright weight 1, a placeholder that
+  is not selectable), `GameSettings.LightingStyle` (default Bright, the look this branch already
+  draws for everybody, so an upgraded `settings.json` changes nothing; a stored placeholder
+  normalises to the default), and `WorldCueProfile.LightingWeight`, the product of the profile's
+  `WorldLighting` and the style. Every runtime read of `WorldLighting` goes through it (look,
+  contact shadows, world outline, recorded and ultimate views). Local only, never on the wire.
+- [ ] LIGHT-2.2 The card row (`SettingsStyleCards`), second on the Graphics tab, three 384x216
+  cards with a caption and an accent ring on the pick. It applies live and joins save and
+  discard. Thumbnails in `Resources/UI/lighting-styles/`, rendered by
+  `WorldCourtCueTests.LightingStyleThumbnails` from one Eskinita camera, which also asserts that
+  Classic hands the authored ambient and fog back exactly.
+- [ ] LIGHT-2.3 Slot 3 content. The owner's call: the card shows an empty slot until then.
+
 ### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)
 
 Owner reference: [3D Asset](https://3d-asset.com/). Requirements, order and research
