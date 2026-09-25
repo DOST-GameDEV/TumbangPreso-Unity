@@ -98,6 +98,36 @@ reads better even with today's lighting, and because it removes HUD and text tha
 captures would otherwise have to be retaken around. Paperwork (P6) moved behind visible
 work because the owner's standing complaint is loops that do not change the game.
 
+### HERO-8 · Amihan, the eighth hero (Vigan, wind) ⚠️ OPEN, 2026-09-25
+
+Owner, 2026-09-25: "start working on a new character u figure out her lore and everything
+else needed but dont make skills yet js put placeholders", "she comes from vigan city and is
+a wind character", with a concept sheet ("use this as reference u can change facial
+expression"), then of v1: "that dont look like reference at all haha pls make it look very
+similar or better". Brief, research and lore: `ArtSource/amihan/concept-20260925/design-brief.md`;
+method `docs/CHARACTER_MODEL_METHOD.md`.
+
+- [x] Research (Vigan, Abel Iloko, the binakol "kasikus" whirlwind, the amihan wind) and lore
+  (`docs/CHARACTER_ORIGINS.md`, `LORE.md`), stats 5/2/3 (fastest hero).
+- [x] Model: her own builder `tools/build_amihan_voxel.py` (female-a base, native skull), v4
+  matched to the concept (swept fringe, three pixel flowers and a tassel, teal mantle and gold
+  brooch, open cream coat over a teal inner, banded sleeves, rust belt, abel sash, teal shorts,
+  cream sandals, the kasikus on her back). Slide re-solved on her mesh at every build.
+- [x] Playable with PLACEHOLDER skills: roster row (appended), `AmihanHeroKit` (three slots that
+  cast and do nothing), two placeholder options per slot, UI accent (hue 100, the one legal
+  window), select blurb, FPP arms from her model, portrait, avatar, lines (text) with the
+  HUMAN.md recording rows, cloud-code hero lists in the repo.
+- [ ] **Owner pick: her colour.** Concept teal (default) or abel indigo (`AMIHAN_CLOTH=abel`),
+  compared beside the cast in `Logs/rafi-share/amihan-v4-colour-compare.png`; the teal sits in
+  Rafi's family.
+- [ ] **Her skills and ultimate** (owner to design), then her introduction scene (it is staged
+  around the ultimate), ultimate presentation, VFX, cast clips and first-person actions, and
+  the skill and ultimate lines rewritten to match.
+- [ ] Deploy the two cloud-code scripts that now list her (`ugs/cloud-code/match-record.js`,
+  `wallet.js`) to the live UGS project; until then the server does not know her id.
+- [ ] Record her voice lines (human voices only; the rows are in `docs/HUMAN.md`).
+- [ ] A home court (brief section 3 names one) when maps are next opened.
+
 ### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23
 
 Integrated into ASTRAReworks on2026-09-24at owner request, through lighting branch

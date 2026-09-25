@@ -160,3 +160,24 @@ courts until a separately scheduled map expansion. All athletes can play all map
 
 Sources reviewed 2026-09-14. Most biography content is original character fiction.
 Names, neighbourhoods and relationships must not be presented as researched facts.
+
+## Amihan: Vigan, Ilocos Sur
+
+Home court: **Calle Hangin**, a fictional courtyard behind her family's loom off the
+heritage streets of Vigan, a court whenever the kalesas stop running.
+
+Character-select line: **Reads the wind. Gets there first.**
+
+Long introduction:
+
+Amihan grew up in the rooms behind her family's loom, where the cobbled street outside was a
+court whenever the kalesas stopped. Cobbles send a slipper anywhere but straight, so she
+learned to throw with the wind instead of against it, reading it off the abel hung out to
+air. She is bright, proud of her town and cannot stand a stalled game: when a match slows
+she is the one moving, calling, pulling the court back into motion. Sean's patience drives
+her up the wall. She tells Rafi his current goes nowhere without her wind, and argues with
+Cheska, the other northerner, about whose mountains are colder.
+
+Her impatience is the flaw inside the strength: she will commit to a play before it is ready
+rather than wait for it. The whirlwind on her capelet is the binakol weave's "kasikus", her
+family's craft and not a sacred emblem; the wind itself is her talent, not a deity.

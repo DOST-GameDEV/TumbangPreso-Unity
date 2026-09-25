@@ -1286,6 +1286,7 @@ namespace TumbangPreso.CameraSystem
                 case "nemu": return SkinNemu;
                 case "phaister": return SkinPhaister;
                 case "rafi": return new Color32(178,118,74,255);
+                case "amihan": return new Color32(213,154,110,255);
 
                 // Classic Characters
                 case "bayan": return SkinBayan;
@@ -1331,6 +1332,8 @@ namespace TumbangPreso.CameraSystem
                     return "phaister";
                 case "rafi":
                     return "rafi";
+                case "amihan":
+                    return "amihan";
 
                 case "bayan":
                 case "berto":
@@ -1439,6 +1442,8 @@ namespace TumbangPreso.CameraSystem
             // Rafi has simple source hands/sleeves. Keep their exact palette and
             // geometry instead of giving this new hero the generic wrist kit.
             if(characterId=="rafi" && UseRosterArms(characterId))return;
+            // Amihan's wide cream sleeves and banded cuffs are her own; show them, not the kit.
+            if(characterId=="amihan" && UseRosterArms(characterId))return;
             // Use the retained solid block-hand frame with character-specific
             // sleeves and skin. Extracting every body gauntlet/prop into this
             // close view created the rejected fragmented hands. All action

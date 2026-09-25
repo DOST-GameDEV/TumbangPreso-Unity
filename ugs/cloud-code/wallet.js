@@ -39,7 +39,7 @@ const STARTER_CANS = ["pasip", "boyben", "decades", "metal"];
 
 // Mirrors Roster.HeroPeople, Roster.Slippers and Roster.Cans, in roster order. ⚠️ A new hero or
 // prop appended to the roster must be appended here too, or the shop cannot sell it.
-const HEROES = ["dante", "cheska", "sean", "zack", "nemu", "phaister", "rafi"];
+const HEROES = ["dante", "cheska", "sean", "zack", "nemu", "phaister", "rafi", "amihan"];
 const SLIPPERS = ["tsinelas", "crocs", "pantulog", "sike", "spartan", "alpombra", "pambahay",
                   "heels", "sandals", "loafers"];
 const CANS = ["pasip", "boyben", "decades", "metal", "piyesta", "karne"];

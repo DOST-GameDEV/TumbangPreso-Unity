@@ -395,7 +395,7 @@ namespace TumbangPreso.Tests
             // than derived on purpose: a hero appearing or disappearing from the Hero Strike
             // roster is a product decision and should have to be typed here, not noticed later.
             // `docs/TODO.md` § 21.
-            Assert.AreEqual(7, heroes.Count);
+            Assert.AreEqual(8, heroes.Count);
             Assert.IsTrue(heroes.Any(person => person.Id == "rafi"));
             Assert.IsFalse(classic.Any(person => person.Id == "rafi"));
             Assert.AreEqual("bayan", classic[0].Id);

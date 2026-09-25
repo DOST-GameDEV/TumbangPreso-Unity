@@ -357,6 +357,10 @@ namespace TumbangPreso.Abilities
                 case "rafi":
                     return new RafiHeroKit();
 
+                // ⚠️ A PLACEHOLDER KIT: her three slots cast and change nothing (AmihanHeroKit).
+                case "amihan":
+                    return new AmihanHeroKit();
+
                 default:
                     return new DanteHeroKit();
             }

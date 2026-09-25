@@ -138,6 +138,12 @@ namespace TumbangPreso.Core
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
             new RosterEntry("phaister",    "PHAISTER",        4,    4,    3),
             new RosterEntry("rafi",        "RAFI",            4,    2,    4),
+            // ⚠️ AMIHAN, APPENDED (2026-09-25). Append only: a person index crosses the wire as a
+            // bare int, so a row inserted above an existing one renders another character for
+            // the same pick on a peer. Wind is speed: the fastest hero, light, average grit, a
+            // row no other hero has (`AllPersonRows_AreDistinct`). A prototype number, not a
+            // balance verdict. Her skills are placeholders until the owner designs them.
+            new RosterEntry("amihan",      "AMIHAN",          5,    2,    3),
         };
 
         /// <summary>
@@ -164,6 +170,12 @@ namespace TumbangPreso.Core
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
             new RosterEntry("phaister",    "PHAISTER",        4,    4,    3),
             new RosterEntry("rafi",        "RAFI",            4,    2,    4),
+            // ⚠️ AMIHAN, APPENDED (2026-09-25). Append only: a person index crosses the wire as a
+            // bare int, so a row inserted above an existing one renders another character for
+            // the same pick on a peer. Wind is speed: the fastest hero, light, average grit, a
+            // row no other hero has (`AllPersonRows_AreDistinct`). A prototype number, not a
+            // balance verdict. Her skills are placeholders until the owner designs them.
+            new RosterEntry("amihan",      "AMIHAN",          5,    2,    3),
         };
 
         /// <summary>Default people list for global lookups.</summary>

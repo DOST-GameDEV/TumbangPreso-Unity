@@ -13,6 +13,40 @@ namespace TumbangPreso.EditorTools
         private const string Output = "Assets/TumbangPreso/Resources/UI/portraits";
         private const int Size = 320;
 
+        /// <summary>
+        /// One roster person only, by `-tp-portrait-id amihan`, added to the manifest if new.
+        /// ⚠️ Added 2026-09-25 for the eighth hero: `CaptureAll` re-bakes every portrait, and a new
+        /// hero should not rewrite nineteen approved thumbnails to add one.
+        /// </summary>
+        public static void CaptureOnly()
+        {
+            var args = System.Environment.GetCommandLineArgs();
+            int at = System.Array.IndexOf(args, "-tp-portrait-id");
+            if (at < 0 || at + 1 >= args.Length) throw new System.ArgumentException("-tp-portrait-id <id> is required.");
+            string id = args[at + 1];
+            var art = RosterBook.Load()?.FindPersonArt(id);
+            if (art == null || art.Model == null) throw new System.InvalidOperationException("Missing approved art for " + id);
+            string path = Output + "/" + id + ".png";
+            Capture(art, 0, path);
+            AssetDatabase.Refresh();
+            var importer = (TextureImporter)AssetImporter.GetAtPath(path);
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.alphaIsTransparency = true;
+            importer.mipmapEnabled = false;
+            importer.maxTextureSize = Size;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.SaveAndReimport();
+            string manifestPath = Output + "/portrait-manifest.json";
+            var manifest = File.Exists(manifestPath) ? JsonUtility.FromJson<Manifest>(File.ReadAllText(manifestPath)) : new Manifest { pixels = Size };
+            var ids = new List<string>(manifest.ids ?? new string[0]);
+            if (!ids.Contains(id)) ids.Add(id);
+            manifest.ids = ids.ToArray();
+            File.WriteAllText(manifestPath, JsonUtility.ToJson(manifest, true));
+            AssetDatabase.Refresh();
+            Debug.Log("[TumpPortraitAuthor] Baked " + id);
+        }
+
         [MenuItem("Tumbang Preso/UI/Bake roster portraits")]
         public static void CaptureAll()
         {

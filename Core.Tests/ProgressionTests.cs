@@ -334,7 +334,7 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void OnlyHeroRosterPeopleHaveAMasteryPath()
         {
-            Assert.Equal(7, Roster.HeroPeople.Count);
+            Assert.Equal(8, Roster.HeroPeople.Count);
 
             foreach (var hero in Roster.HeroPeople)
                 Assert.True(ProgressionRules.HasMasteryPath(hero.Id), hero.Id);

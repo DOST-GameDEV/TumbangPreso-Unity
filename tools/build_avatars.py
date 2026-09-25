@@ -44,7 +44,7 @@ MAROON = (91, 15, 15)
 # Grounds are chosen for contrast with each character's own dominant colour.
 SET = [
     ("dante", GOLD), ("sean", GOLD), ("cheska", PERSIMMON), ("zack", DEEPRED), ("nemu", GOLD),
-    ("phaister", HONEY), ("rafi", PERSIMMON),
+    ("phaister", HONEY), ("rafi", PERSIMMON), ("amihan", DEEPRED),
     ("maring", PERSIMMON), ("totoy", GOLD), ("inday", PERSIMMON), ("kuya_boy", GOLD), ("ate_girlie", HONEY),
     ("tikboy", PERSIMMON), ("bebang", RIMRED), ("jun_jun", GOLD), ("lola_pacing", PERSIMMON),
     ("mang_kanor", GOLD), ("aling_nena", RIMRED),

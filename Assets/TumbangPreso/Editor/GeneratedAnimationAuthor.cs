@@ -28,6 +28,8 @@ namespace TumbangPreso.EditorTools
 
         public static void RunRafi() => EditorApplication.Exit(Execute("rafi") ? 0 : 1);
 
+        public static void RunAmihan() => EditorApplication.Exit(Execute("amihan") ? 0 : 1);
+
         public static bool Execute(string onlyId = null)
         {
             Directory.CreateDirectory(OutputDirectory);

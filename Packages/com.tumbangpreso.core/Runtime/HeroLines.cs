@@ -246,6 +246,29 @@ namespace TumbangPreso.Core
             L("rafi.lead.1", LD, "Out in front. Don't copy me."),
             L("rafi.win.1", MW, "Ayos! Good game, all."),
             L("rafi.win.2", MW, "Next time, bring a boat."),
+            // Amihan (2026-09-25). Her skills are placeholders, so her skill and ultimate lines
+            // speak to the wind rather than to a mechanic; revisit them when the kit is designed.
+            L("amihan.skill1.1", S1, "Here comes the breeze!"),
+            L("amihan.skill1.2", S1, "Catch this wind."),
+            L("amihan.skill1.3", S1, "Straight from the Ilocos coast!"),
+            L("amihan.skill2.1", S2, "Too slow for the wind!"),
+            L("amihan.skill2.2", S2, "Blink and I'm gone."),
+            L("amihan.skill2.3", S2, "Feel that draft?"),
+            L("amihan.ultally.1", UA, "Wind's with us, go!"),
+            L("amihan.ultally.2", UA, "Ride it, everyone!"),
+            L("amihan.ultopp.1", UO, "Hold onto your slippers."),
+            L("amihan.ultopp.2", UO, "Amihan season came early."),
+            L("amihan.round.1", RS, "Kalesa's gone. Court's open!"),
+            L("amihan.round.2", RS, "Let's keep it moving!"),
+            L("amihan.tag.1", TL, "Too slow, manong!"),
+            L("amihan.tag.2", TL, "Caught you thinking."),
+            L("amihan.tagged.1", WT, "Hala, I rushed it."),
+            L("amihan.tagged.2", WT, "Okay, okay. Your point."),
+            L("amihan.can.1", CK, "Tumbang! Straight from Vigan!"),
+            L("amihan.can.2", CK, "That one flew!"),
+            L("amihan.lead.1", LD, "Ahead of the wind now!"),
+            L("amihan.win.1", MW, "Salamat! Come visit Vigan!"),
+            L("amihan.win.2", MW, "Good game! Empanada's on me."),
         };
 
         /// <summary>Opener and reply, both in <see cref="All"/>. The ids read "who speaks, then who
@@ -268,6 +291,9 @@ namespace TumbangPreso.Core
             B("sean", "rafi", "No tricks today, Rafi.", "Then watch really closely."),
             B("rafi", "cheska", "Bet I get one past you.", "You won't. I've seen them all."),
             B("rafi", "dante", "Dante, teach me how you stand.", "Stand still. Watch. That's the lesson."),
+            B("amihan", "sean", "Sean, the wind won't wait!", "Then it can go without me."),
+            B("amihan", "rafi", "Your current needs my wind.", "Then blow harder."),
+            B("cheska", "amihan", "Benguet's colder. Admit it.", "Vigan's windier. Admit that."),
         };
 
         private static readonly List<HeroLine> Everything = Build();

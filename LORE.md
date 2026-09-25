@@ -5,7 +5,8 @@ contains the six hometowns, short selection lines and longer introduction copy.
 Zack grew up at the Pasig condo behind Sa Bubong; Cheska comes from La Trinidad,
 Benguet. Sean's Eskinita and Dante's Bayan Plaza are fictional home courts in
 San Fernando and Montalban. Phaister grew up on Capul and now plays at Ilalim
-near Gilmore; Nemu comes from Dumaguete. These are fictional sporting lives.
+near Gilmore; Nemu comes from Dumaguete; Amihan, the eighth hero (skills still to be
+designed), comes from Vigan. These are fictional sporting lives.
 Longer lore now belongs in the optional introduction/unlock presentation, while
 selection keeps a short line. This extends the earlier short-copy guidance below.
 
@@ -127,6 +128,7 @@ not biographies of the real people their names may reference.
 | Dante | The player people trust to hold the difficult space. Patient, grounded and hard to rush | A planted base, protective shapes, broken stone with weight. His strongest motion begins in the floor rather than with a generic leap |
 | Cheska | Reads a crowded court as a set of useful spaces. Practical, observant and quietly competitive | Exact gestures, clear ice boundaries and a composed finish. She changes the route with the least motion needed |
 | Nemu | Often looks as if she is paying attention to something else, until the opening she anticipated appears. Kuro belongs at her side | Light, slightly uncanny motion, inward effects and patient timing. The ghostly identity is curious and playful, not a threat to the neighborhood |
+| Amihan | Cannot stand a stalled game. Reads which way the play is blowing and gets there first, sometimes before it is ready | Quick, light motion that keeps travelling; a swept fringe and a flash of the woven whirlwind on her back. Wind is her talent, not a spirit or deity |
 | Phaister | Enjoys the audience almost as much as the contest. Treats a good setup like a performance whose reveal should arrive at exactly the right time | Deliberate flourishes, readable sigils and an open finish. Stagecraft and sporting mischief, not cruelty or a sinister conquest |
 
 Their rivalry is affectionate without making every character friendly in the same

@@ -271,6 +271,7 @@ id. Seven words at most; `HeroLinesTests` holds it.
 
 | File | Line | When |
 |---|---|---|
+| `hvo_sean_reply_amihan` | "Then it can go without me." | Round 1, answers (with Amihan) |
 | `hvo_sean_banter_rafi` | "No tricks today, Rafi." | Round 1, opens an exchange (with Rafi) |
 | `hvo_sean_banter_zack` | "Finish one play first, Zack." | Round 1, opens an exchange (with Zack) |
 | `hvo_sean_can_1` | "Tumbang! Counted." | First or late knockdown |
@@ -360,6 +361,7 @@ id. Seven words at most; `HeroLinesTests` holds it.
 
 | File | Line | When |
 |---|---|---|
+| `hvo_cheska_banter_amihan` | "Benguet's colder. Admit it." | Round 1, opens an exchange (with Amihan) |
 | `hvo_cheska_banter_dante` | "Don't defend a bad spot all day." | Round 1, opens an exchange (with Dante) |
 | `hvo_cheska_banter_zack` | "Pick one route, Zack." | Round 1, opens an exchange (with Zack) |
 | `hvo_cheska_can_1` | "Tumbang. As planned." | First or late knockdown |
@@ -447,6 +449,7 @@ id. Seven words at most; `HeroLinesTests` holds it.
 
 | File | Line | When |
 |---|---|---|
+| `hvo_rafi_reply_amihan` | "Then blow harder." | Round 1, answers (with Amihan) |
 | `hvo_rafi_banter_cheska` | "Bet I get one past you." | Round 1, opens an exchange (with Cheska) |
 | `hvo_rafi_banter_dante` | "Dante, teach me how you stand." | Round 1, opens an exchange (with Dante) |
 | `hvo_rafi_banter_sean` | "Bet you can't read this throw." | Round 1, opens an exchange (with Sean) |
@@ -472,6 +475,38 @@ id. Seven words at most; `HeroLinesTests` holds it.
 | `hvo_rafi_ultopp_2` | "Hope you can swim." | Ultimate, heard by the other side |
 | `hvo_rafi_win_1` | "Ayos! Good game, all." | Wins the match |
 | `hvo_rafi_win_2` | "Next time, bring a boat." | Wins the match |
+
+### AMIHAN
+
+Her skills are placeholders (2026-09-25): the skill and ultimate lines may change when her
+kit is designed, so record the round, tag, knockdown, lead and win lines first.
+
+| File | Line | When |
+|---|---|---|
+| `hvo_amihan_banter_rafi` | "Your current needs my wind." | Round 1, opens an exchange (with Rafi) |
+| `hvo_amihan_banter_sean` | "Sean, the wind won't wait!" | Round 1, opens an exchange (with Sean) |
+| `hvo_amihan_can_1` | "Tumbang! Straight from Vigan!" | First or late knockdown |
+| `hvo_amihan_can_2` | "That one flew!" | First or late knockdown |
+| `hvo_amihan_lead_1` | "Ahead of the wind now!" | Takes the lead |
+| `hvo_amihan_reply_cheska` | "Vigan's windier. Admit that." | Round 1, answers (with Cheska) |
+| `hvo_amihan_round_1` | "Kalesa's gone. Court's open!" | Round start, as the taya (odd rounds) |
+| `hvo_amihan_round_2` | "Let's keep it moving!" | Round start, as the taya (odd rounds) |
+| `hvo_amihan_skill1_1` | "Here comes the breeze!" | Casts skill 1 (rests 14 s after) |
+| `hvo_amihan_skill1_2` | "Catch this wind." | Casts skill 1 (rests 14 s after) |
+| `hvo_amihan_skill1_3` | "Straight from the Ilocos coast!" | Casts skill 1 (rests 14 s after) |
+| `hvo_amihan_skill2_1` | "Too slow for the wind!" | Casts skill 2 (rests 14 s after) |
+| `hvo_amihan_skill2_2` | "Blink and I'm gone." | Casts skill 2 (rests 14 s after) |
+| `hvo_amihan_skill2_3` | "Feel that draft?" | Casts skill 2 (rests 14 s after) |
+| `hvo_amihan_tag_1` | "Too slow, manong!" | Lands a tag |
+| `hvo_amihan_tag_2` | "Caught you thinking." | Lands a tag |
+| `hvo_amihan_tagged_1` | "Hala, I rushed it." | Gets tagged |
+| `hvo_amihan_tagged_2` | "Okay, okay. Your point." | Gets tagged |
+| `hvo_amihan_ultally_1` | "Wind's with us, go!" | Ultimate, heard by the caster's side |
+| `hvo_amihan_ultally_2` | "Ride it, everyone!" | Ultimate, heard by the caster's side |
+| `hvo_amihan_ultopp_1` | "Hold onto your slippers." | Ultimate, heard by the other side |
+| `hvo_amihan_ultopp_2` | "Amihan season came early." | Ultimate, heard by the other side |
+| `hvo_amihan_win_1` | "Salamat! Come visit Vigan!" | Wins the match |
+| `hvo_amihan_win_2` | "Good game! Empanada's on me." | Wins the match |
 
 ---
 

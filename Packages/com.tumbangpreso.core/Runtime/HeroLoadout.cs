@@ -365,6 +365,26 @@ namespace TumbangPreso.Core
                 "LONG WAKE", "The echo lasts longer, but reveals its watery ribbons sooner.",
                 .35f, -.35f, "Lingers in view", "Easier to read",
                 "Use Mirrorwake six times", true, 6),
+
+            // ⚠️⚠️ AMIHAN'S SKILLS ARE PLACEHOLDERS (owner, 2026-09-25: "dont make skills yet js put
+            // placeholders"). Two options per slot so her screen draws like every hero's
+            // (`EveryHeroHasOptionsInBothSlots`); generic glyphs, because a bespoke icon would claim
+            // a design that does not exist yet. `AmihanHeroKit` casts them and nothing happens; the
+            // alternates' +/-0.30 is only there to keep the sidegrade rule true, and nothing reads it.
+            new AbilityVariant("amihan.1.placeholder", "amihan", 1, "PLACEHOLDER 1", "Dash",
+                "PLACEHOLDER 1", "Not designed yet. Pressing it does nothing.",
+                0, 0, "Not designed yet", "Does nothing"),
+            new AbilityVariant("amihan.1.placeholder_alt", "amihan", 1, "PLACEHOLDER 1", "Dash",
+                "PLACEHOLDER 1B", "The second reading. Also not designed yet.",
+                .30f, -.30f, "A second reading", "Still does nothing",
+                "Use Placeholder 1 eight times", true, 8),
+            new AbilityVariant("amihan.2.placeholder", "amihan", 2, "PLACEHOLDER 2", "Zone",
+                "PLACEHOLDER 2", "Not designed yet. Pressing it does nothing.",
+                0, 0, "Not designed yet", "Does nothing"),
+            new AbilityVariant("amihan.2.placeholder_alt", "amihan", 2, "PLACEHOLDER 2", "Zone",
+                "PLACEHOLDER 2B", "The second reading. Also not designed yet.",
+                .30f, -.30f, "A second reading", "Still does nothing",
+                "Use Placeholder 2 eight times", true, 8),
         };
 
         /// <summary>⚠️⚠️ THE ONE SWITCH. `false` while the owner tests (every skill open); `true`

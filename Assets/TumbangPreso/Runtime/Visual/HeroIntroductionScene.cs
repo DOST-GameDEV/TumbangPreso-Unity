@@ -88,6 +88,9 @@ namespace TumbangPreso.Visual
                     case "dante": BuildDante(); break;
                     case "cheska": BuildCheska(); break;
                     case "rafi": BuildRafi(); break;
+                    // ⚠️ No stage yet: her ultimate is a placeholder, and an introduction is
+                    // staged around the ultimate. Listed so a request for her never throws.
+                    case "amihan": break;
                     default: throw new ArgumentOutOfRangeException(nameof(hero));
                 }
                 _renderers = _root.GetComponentsInChildren<Renderer>(true);

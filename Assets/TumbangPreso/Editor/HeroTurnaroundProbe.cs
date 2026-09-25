@@ -25,6 +25,7 @@ namespace TumbangPreso.EditorTools
             ("sean",     "Sean",     "Assets/TumbangPreso/Art/characters/persons/team-sean.glb"),
             ("zack",     "Zack",     "Assets/TumbangPreso/Art/characters/persons/team-zack.glb"),
             ("rafi",     "Rafi",     "Assets/TumbangPreso/Art/characters/persons/team-rafi.glb"),
+            ("amihan",   "Amihan",   "Assets/TumbangPreso/Art/characters/persons/team-amihan.glb"),
         };
 
         private static readonly (string Label, float Yaw)[] Angles =
@@ -73,12 +74,12 @@ namespace TumbangPreso.EditorTools
             if (File.Exists(output)) throw new IOException("Use a new review filename: " + output);
             Directory.CreateDirectory(Path.GetDirectoryName(output));
             var people = Core.Roster.HeroPeople.Concat(Core.Roster.ClassicPeople).ToArray();
-            if (people.Length != 18 || people.Select(p => p.Id).Distinct().Count() != 18)
+            if (people.Length != 20 || people.Select(p => p.Id).Distinct().Count() != 20)
                 throw new InvalidOperationException("Review the changed playable roster before rendering this sheet.");
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             BuildLight();
             var book = RosterBook.Load();
-            var report = new StringBuilder("Current playable cast: six heroes, twelve Classic characters.\n");
+            var report = new StringBuilder("Current playable cast: eight heroes, twelve Classic characters.\n");
             for (int i = 0; i < people.Length; i++)
             {
                 var person = people[i];
@@ -89,9 +90,11 @@ namespace TumbangPreso.EditorTools
                     i % 6, i / 6, 1.16f, 1.16f);
                 report.AppendLine(person.Id + " | " + person.Name + " | " + model);
             }
-            var camera = BuildCamera(6, 3, 1.16f, 1.16f);
-            camera.orthographicSize = 3.25f * 1.16f * .5f;
-            bool ok = CaptureTo(camera, 2400, 1300, output);
+            // Sized to the roster: rows of six, as many as it takes.
+            int castRows = (people.Length + 5) / 6;
+            var camera = BuildCamera(6, castRows, 1.16f, 1.16f);
+            camera.orthographicSize = (castRows + .25f) * 1.16f * .5f;
+            bool ok = CaptureTo(camera, 2400, Mathf.RoundToInt(1300f * (castRows + .25f) / 3.25f), output);
             File.WriteAllText(Path.ChangeExtension(output, ".txt"), report.ToString());
             EditorSceneManager.CloseScene(scene, true);
             EditorApplication.Exit(ok ? 0 : 1);
