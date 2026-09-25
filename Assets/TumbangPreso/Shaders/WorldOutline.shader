@@ -141,6 +141,10 @@ Shader "TumbangPreso/WorldOutline"
             // x ground occlusion strength, y the height it fades out by (m), z the court floor,
             // w weight. See the ground occlusion note in the composite.
             float4 _PeakDepth;
+            // The blurred half-resolution ambient occlusion (passes 2 and 3), 1 open, 0 closed,
+            // and its strength in x. See § AMBIENT OCCLUSION below.
+            sampler2D _WorldAO;
+            float4 _WorldAOParams;
 
             // ⚠️ NOT NAMED `Sample`, AND `offset` BELOW IS NOT NAMED `step`. Both of those are
             // HLSL intrinsics or reserved in one of the compilers this project targets, and a
@@ -538,6 +542,16 @@ Shader "TumbangPreso/WorldOutline"
                 // term drawn from the depth this pass already reads, not a texture: nothing is
                 // added to any material, and the cast is left out through the exclusion mask.
                 // Side-facing surfaces only; the ground's own shade is the sun's business.
+                // ⚠️ § AMBIENT OCCLUSION, THE BRIGHT LOOK ONLY (owner 2026-09-25: "can we try
+                // adding ambient occlusion"). Passes 2 and 3 work out how enclosed each pixel is;
+                // here the enclosed part leans toward the violet cavity hue, the same colour the
+                // crease and the ground occlusion use, so a doorway, the gap under a bench or
+                // the foot of a wall deepens in hue and never goes grey.
+                if(_WorldAOParams.x>0)
+                {
+                    float occlusion=(1-tex2D(_WorldAO,duv).r)*_WorldAOParams.x;
+                    source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb,saturate(occlusion));
+                }
                 if(_PeakDepth.w>0)
                 {
                     float occDepth;float3 occNormal;
@@ -694,6 +708,106 @@ Shader "TumbangPreso/WorldOutline"
                     clip(coverage-.001);
                 }
                 return fixed4(coverage,coverage,coverage,coverage);
+            }
+            ENDCG
+        }
+
+        // -------------------------------------------------------------------
+        // PASS 2. AMBIENT OCCLUSION, half resolution, blitted by `WorldOutline` under the look.
+        // -------------------------------------------------------------------
+        // ⚠️⚠️ § AMBIENT OCCLUSION. The built-in pipeline has none and this project carries no
+        // post-processing package, so it is written here, where the depth and normals already
+        // are. Per pixel: rebuild the view-space point and normal from the depth-normals
+        // texture, take twelve samples in a hemisphere round the normal (cosine-weighted, packed
+        // toward the point so near contact counts most), rotate the set per pixel by interleaved
+        // gradient noise, and count how many land behind the scene's own depth. The range check
+        // stops a wall far behind a railing from darkening the railing. Radius in metres,
+        // fading out by 60 m where the samples would be sub-pixel noise. Pass 3 blurs it.
+        Pass
+        {
+            Name "AMBIENT_OCCLUSION"
+            Cull Off ZWrite Off ZTest Always
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment frag
+            #pragma target 3.0
+            #include "UnityCG.cginc"
+            sampler2D _CameraDepthNormalsTexture;
+            float4 _ViewRay,_WorldContactProjection,_WorldAOParams;
+            float3 ViewPoint(float2 uv,out float3 normal)
+            {
+                float depth;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
+                float eye=depth*_WorldContactProjection.x;
+                return float3((uv*2-1)*_ViewRay.xy*eye,-eye);
+            }
+            float EyeDepth(float2 uv)
+            {
+                float depth;float3 normal;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
+                return depth*_WorldContactProjection.x;
+            }
+            half4 frag(v2f_img i):SV_Target
+            {
+                float3 n;float3 p=ViewPoint(i.uv,n);
+                if(-p.z>_WorldContactProjection.x*.999)return 1;
+                float radius=_WorldAOParams.y,bias=_WorldAOParams.z;
+                // Interleaved gradient noise: a per-pixel rotation the blur can average out.
+                float noise=frac(52.9829189*frac(dot(i.pos.xy,float2(.06711056,.00583715))));
+                float angle=noise*6.2831853;
+                float3 r=float3(cos(angle),sin(angle),0);
+                float3 t=normalize(r-n*dot(r,n)),b=cross(n,t);
+                float occluded=0;
+                [unroll] for(int k=0;k<12;k++)
+                {
+                    float f=(k+.5)/12.0,phi=k*2.3999632;
+                    float cosTheta=sqrt(1-f),sinTheta=sqrt(f);
+                    float3 dir=float3(cos(phi)*sinTheta,sin(phi)*sinTheta,cosTheta);
+                    float scale=lerp(.15,1.0,f*f);
+                    float3 probe=p+(t*dir.x+b*dir.y+n*dir.z)*radius*scale;
+                    float2 uv=(probe.xy/-probe.z)/_ViewRay.xy*.5+.5;
+                    float sceneZ=-EyeDepth(uv);
+                    float range=smoothstep(0,1,radius/max(abs(p.z-sceneZ),1e-4));
+                    occluded+=step(probe.z+bias,sceneZ)*range;
+                }
+                float ao=1-occluded/12.0;
+                // Fade out with distance, where twelve samples inside a pixel are only noise.
+                ao=lerp(ao,1,smoothstep(40,60,-p.z));
+                return half4(ao,ao,ao,1);
+            }
+            ENDCG
+        }
+
+        // -------------------------------------------------------------------
+        // PASS 3. AO BLUR: 3x3, depth-aware, so the grain goes and edges stay put.
+        // -------------------------------------------------------------------
+        Pass
+        {
+            Name "AMBIENT_OCCLUSION_BLUR"
+            Cull Off ZWrite Off ZTest Always
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment frag
+            #pragma target 3.0
+            #include "UnityCG.cginc"
+            sampler2D _MainTex,_CameraDepthNormalsTexture;
+            float4 _MainTex_TexelSize,_WorldContactProjection;
+            float EyeDepth(float2 uv)
+            {
+                float depth;float3 normal;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
+                return depth*_WorldContactProjection.x;
+            }
+            half4 frag(v2f_img i):SV_Target
+            {
+                float centre=EyeDepth(i.uv);float sum=0,weight=0;
+                [unroll] for(int y=-1;y<=1;y++)
+                [unroll] for(int x=-1;x<=1;x++)
+                {
+                    float2 uv=i.uv+float2(x,y)*_MainTex_TexelSize.xy*1.5;
+                    // A tap on a different surface (a depth jump of more than ~5%) barely counts.
+                    float w=1/(1e-3+abs(EyeDepth(uv)-centre)/max(centre,1e-3)*20);
+                    sum+=tex2Dlod(_MainTex,float4(uv,0,0)).r*w;weight+=w;
+                }
+                float ao=sum/max(weight,1e-4);
+                return half4(ao,ao,ao,1);
             }
             ENDCG
         }

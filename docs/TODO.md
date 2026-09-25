@@ -343,6 +343,14 @@ light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
   Classic's sky is untouched. The shader is on `GameBuilder`'s always-included list.
   ⚠️ The first two cuts had their triangle winding reversed (left-handed Unity read as
   right-handed), so every cloud drew inside out. The owner caught it; the winding is fixed.
+- [ ] LIGHT-3.6 Ambient occlusion (owner 2026-09-25: "can we try adding ambient occlusion").
+  Screen-space, in `WorldOutline` passes 2 and 3 because the built-in pipeline has none and no
+  post-processing package is installed. The pass runs at half resolution with twelve
+  cosine-weighted hemisphere samples round the depth-normals normal, 0.9 m radius, per-pixel
+  noise rotation, a range check and a fade out by 60 m. A 3x3 depth-aware blur follows, and the
+  composite leans the occluded part toward the violet `CavityHue`. `AmbientOcclusion` 0.6. On the
+  Bright style's own gate (not Classic, not the Low tier, perspective cameras only). Open until
+  the before/after renders and the owner's playtest.
 - [ ] LIGHT-3.5 The owner's look at the final comparison. The rendering is done: `e26eeb04`,
   Mac, one PlayMode launch, total 3 failed 0 (`FiveMapStageCapturesPreserveGeometryAndRestore
   OriginalLighting`, `LightingStyleThumbnails` and a scratch same-camera review that was not

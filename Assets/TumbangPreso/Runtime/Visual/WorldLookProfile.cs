@@ -126,6 +126,14 @@ namespace TumbangPreso.Visual
         // metres it fades out by. Drawn in `WorldOutline`'s pass from the depth it already reads.
         [Range(0,.6f)] public float GroundOcclusion=.28f;
         [Range(.5f,6)] public float GroundOcclusionHeight=2.8f;
+        // ⚠️ § AMBIENT OCCLUSION (owner 2026-09-25: "can we try adding ambient occlusion").
+        // Screen-space, half resolution, drawn in `WorldOutline`'s pass from the depth and
+        // normals it already reads, and leaning toward `CavityHue` like the crease and the
+        // ground occlusion. Strength of the darkening, and the sample radius in metres: about a
+        // bench or a doorstep, so it gathers in corners and under things and never haloes a
+        // whole building. Off on the Low tier and under Classic, with the rest of the look.
+        [Range(0,1)] public float AmbientOcclusion=.6f;
+        [Range(.2f,3)] public float AmbientOcclusionRadius=.9f;
         // 1 draws the cast's hull in a deeper shade of its own colour, 0 in black.
         [Range(0,1)] public float CastInkSelf=.88f;
         // The cast's hull width against its authored width.

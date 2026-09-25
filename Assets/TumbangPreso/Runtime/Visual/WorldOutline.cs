@@ -284,6 +284,14 @@ namespace TumbangPreso.Visual
 
         private const int MaskPass = 1;
 
+        // ⚠️ PASSES 2 AND 3 ARE THE AMBIENT OCCLUSION AND ITS BLUR (LIGHT-3.6). Appended rather
+        // than inserted, so the composite and the mask keep the indices every other line here
+        // and in the shader already names.
+        private const int AmbientOcclusionPass = 2;
+        private const int AmbientOcclusionBlurPass = 3;
+        private static readonly int WorldAOId = Shader.PropertyToID("_WorldAO");
+        private static readonly int WorldAOParamsId = Shader.PropertyToID("_WorldAOParams");
+
         private const string ToonShaderName = "TumbangPreso/Toon";
 
         private Camera _camera;
@@ -359,6 +367,13 @@ namespace TumbangPreso.Visual
         private bool HasWorldContact => WorldLookPresentation.HandlesCamera(_camera)
             && WorldCueProfile.LightingWeight>0 && WorldLookProfile.Current.EnvironmentContact>0
             && Settings.SettingsStore.Current.GraphicsQuality>0;
+        /// <summary>
+        /// Whether this frame draws ambient occlusion: the contact term's gate (the look owns the
+        /// camera, the weight is up, not the Low tier), a perspective camera, since the pass
+        /// rebuilds points from a perspective view ray, and a non-zero strength.
+        /// </summary>
+        private bool AmbientOcclusionLive => HasWorldContact && !_camera.orthographic
+            && WorldLookPresentation.Current!=null && WorldLookProfile.Current.AmbientOcclusion>0;
         private bool InkLive => _prototypeEnabled && Settings.RenderStyles.InkOutlinesActive && _opacity>0;
         private bool Live => !_missing && (InkLive || HasWorldContact);
 
@@ -891,12 +906,34 @@ namespace TumbangPreso.Visual
             ApplyBrightLookEdges();
             bool lagoonDeck=WorldLookPresentation.HandlesCamera(_camera) && WorldLookPresentation.Current.Look.Map==UI.SceneFlow.Lagoon;
             _material.SetFloat("_LagoonDeckDetail",lagoonDeck?WorldCueProfile.Current.LagoonDeckDetail:0);
+            RenderTexture occlusion=null,occlusionBlur=null;
+            float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
+            if(aoStrength>0)
+            {
+                // Half resolution: occlusion is a soft, low-frequency term, and the blur hides
+                // the step back up.
+                int w=Mathf.Max(1,source.width/2),h=Mathf.Max(1,source.height/2);
+                var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8)?RenderTextureFormat.R8:RenderTextureFormat.ARGB32;
+                occlusion=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
+                occlusionBlur=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
+                _material.SetVector(WorldAOParamsId,new Vector4(aoStrength,WorldLookProfile.Current.AmbientOcclusionRadius,.03f,0));
+                Graphics.Blit(source,occlusion,_material,AmbientOcclusionPass);
+                Graphics.Blit(occlusion,occlusionBlur,_material,AmbientOcclusionBlurPass);
+                _material.SetTexture(WorldAOId,occlusionBlur);
+            }
+            else
+            {
+                _material.SetVector(WorldAOParamsId,Vector4.zero);
+                _material.SetTexture(WorldAOId,Texture2D.whiteTexture);
+            }
             _material.SetTexture(MainTexId, source);
 
             // ⚠️ THE PASS INDEX IS NOT OPTIONAL. `Graphics.Blit` without one runs EVERY pass in
             // the SubShader, and pass 1 is the exclusion mask: blitted full-screen it writes
             // white over the entire frame. See the note at the top of the shader.
             Graphics.Blit(source, destination, _material, CompositePass);
+            if(occlusion!=null)RenderTexture.ReleaseTemporary(occlusion);
+            if(occlusionBlur!=null)RenderTexture.ReleaseTemporary(occlusionBlur);
         }
 
         /// <summary>
