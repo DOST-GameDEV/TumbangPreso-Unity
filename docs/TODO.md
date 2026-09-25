@@ -183,7 +183,7 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
 Capture: `WorldCourtCueTests.BrightLookSameCameraCapturesOnAllFiveMaps` writes stage, eye and
 cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 passed on the Mac.
 
-### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25
+### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
 
 Owner request (2026-09-25), with a PUBG Mobile Style row as the reference: a style setting in
 the graphics settings with three slots. Slot 1 is the lighting on `main`, slot 2 is this
@@ -196,17 +196,28 @@ Ilalim and SaBubong (the Lagoon is not on `main`). So slot 1 is the look at weig
 every consumer already treats as the scene's own lighting. It keeps this branch's newer map,
 material and court work; only the lighting is `main`'s.
 
-- [ ] LIGHT-2.1 `Settings.LightingStyles` (Classic weight 0, Bright weight 1, a placeholder that
+- [x] LIGHT-2.1 `Settings.LightingStyles` (Classic weight 0, Bright weight 1, a placeholder that
   is not selectable), `GameSettings.LightingStyle` (default Bright, the look this branch already
   draws for everybody, so an upgraded `settings.json` changes nothing; a stored placeholder
   normalises to the default), and `WorldCueProfile.LightingWeight`, the product of the profile's
   `WorldLighting` and the style. Every runtime read of `WorldLighting` goes through it (look,
   contact shadows, world outline, recorded and ultimate views). Local only, never on the wire.
-- [ ] LIGHT-2.2 The card row (`SettingsStyleCards`), second on the Graphics tab, three 376x211.5
+- [x] LIGHT-2.2 The card row (`SettingsStyleCards`), second on the Graphics tab, three 376x211.5
   cards with a caption and an accent ring on the pick. It applies live and joins save and
   discard. Thumbnails in `Resources/UI/lighting-styles/`, rendered by
   `WorldCourtCueTests.LightingStyleThumbnails` from one Eskinita camera, which also asserts that
   Classic hands the authored ambient and fog back exactly.
+  Evidence (`daf427e2`, Mac, one PlayMode launch, total 3 failed 0):
+  `TumpNativeSettingsTests.LightingStyleCardsSwitchTheLookAndJoinSaveAndDiscard` presses a card
+  through a real raycast (live weight, ring, dirty session, discard restores);
+  `WorldCourtCueTests.LightingStyleThumbnails`; and the older
+  `FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting`, rerun because every look
+  consumer now reads the weight through the style. Frames in
+  [reports/light-2-2026-09-25/](reports/light-2-2026-09-25/): the row at 1920x1080 and the owner's
+  1600x680, a Classic pick, and both thumbnails. The first photograph put the third card 3 units
+  past the row rule; cards went from 384 to 376 (`daf427e2`). Not done: a native player build,
+  a pad walk of the row, and a look inside a live match's pause menu. That menu opens the same
+  `TumpSettingsView` through `ConvertedSettingsPanel`, so the row is there by construction.
 - [ ] LIGHT-2.3 Slot 3 content. The owner's call: the card shows an empty slot until then.
 
 ### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)
