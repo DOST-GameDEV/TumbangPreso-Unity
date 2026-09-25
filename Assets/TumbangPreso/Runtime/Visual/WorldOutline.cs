@@ -919,14 +919,15 @@ namespace TumbangPreso.Visual
                 var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8)?RenderTextureFormat.R8:RenderTextureFormat.ARGB32;
                 occlusion=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
                 occlusionBlur=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
-                _material.SetVector(WorldAOParamsId,new Vector4(aoStrength,WorldLookProfile.Current.AmbientOcclusionRadius,.03f,0));
+                _material.SetVector(WorldAOParamsId,new Vector4(aoStrength,WorldLookProfile.Current.AmbientOcclusionRadius,.03f,NearFade.FadeStartMetres));
                 Graphics.Blit(source,occlusion,_material,AmbientOcclusionPass);
                 Graphics.Blit(occlusion,occlusionBlur,_material,AmbientOcclusionBlurPass);
                 _material.SetTexture(WorldAOId,occlusionBlur);
             }
             else
             {
-                _material.SetVector(WorldAOParamsId,Vector4.zero);
+                // w still carries the near-fade guard: the ground occlusion reads it with AO off.
+                _material.SetVector(WorldAOParamsId,new Vector4(0,0,0,NearFade.FadeStartMetres));
                 _material.SetTexture(WorldAOId,Texture2D.whiteTexture);
             }
             _material.SetTexture(MainTexId, source);

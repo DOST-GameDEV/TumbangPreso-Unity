@@ -362,7 +362,20 @@ light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
   where they never reached the neighbouring face. v4 and v5, after the owner saw a noise
   pattern in play. The rotation is now a 4x4 tile of sixteen angles, the blur averages exactly a 4x4
   window with a Gaussian depth weight (the old 1/(0.001 + difference) weight hardly blurred sloped
-  surfaces), and the pass runs at full resolution. Open for the owner's playtest.
+  surfaces), and the pass runs at full resolution.
+  v6, after the owner's playtest: "the lighting suddenly changes when i look in different
+  directions" (it went darker).
+  - Measured on Ilalim: the lighting state never changed with view direction, but from 90 to 225
+    degrees the AO darkened the whole frame (mean 107 against 131 with AO off at 180 degrees).
+  - Cause: a bridge pillar beside the camera. It is dissolved by NearFade in the colour pass, but
+    Unity's depth-normals prepass draws it solid with its internal shader, so it filled the texture
+    as a wall at the lens (depth about 0, one flat normal, about 80 per cent of the frame).
+    Isolated by switching renderer groups off one at a time; the LRT pillars alone.
+  - Fix: the AO and the ground occlusion ignore any depth-normals pixel nearer than
+    `NearFade.FadeStartMetres` (1.8 m).
+  - The ink edges and ground contact read the same texture and may still show this near a
+    dissolved prop. That is older than LIGHT-3 and not fixed here.
+  Open for the owner's playtest.
 - [ ] LIGHT-3.5 The owner's look at the final comparison. The rendering is done: `e26eeb04`,
   Mac, one PlayMode launch, total 3 failed 0 (`FiveMapStageCapturesPreserveGeometryAndRestore
   OriginalLighting`, `LightingStyleThumbnails` and a scratch same-camera review that was not

@@ -561,7 +561,9 @@ Shader "TumbangPreso/WorldOutline"
                 {
                     float occDepth;float3 occNormal;
                     DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture,duv),occDepth,occNormal);
-                    if(occDepth<.99999)
+                    // Same near-fade guard as the AO pass: a dissolved pillar at the lens is not a
+                    // wall standing on the court.
+                    if(occDepth<.99999 && occDepth*_WorldContactProjection.x>_WorldAOParams.w)
                     {
                         float eye=occDepth*_WorldContactProjection.x;
                         float3 viewPoint=float3((duv*2-1)*_ViewRay.xy*eye,-eye);
@@ -754,6 +756,18 @@ Shader "TumbangPreso/WorldOutline"
             {
                 float3 n;float3 p=ViewPoint(i.uv,n);
                 if(-p.z>_WorldContactProjection.x*.999)return 1;
+                // ⚠️⚠️ NOTHING NEARER THAN THE NEAR-FADE START IS TRUSTED (`_WorldAOParams.w`,
+                // `NearFade.FadeStartMetres`, 1.8 m). A NearFade prop close to the camera (a bridge
+                // pillar you stand beside) dissolves in the colour pass so you can see past it, but
+                // Unity's depth-normals prepass draws every Opaque object with its own internal
+                // shader, which knows nothing of the fade: the pillar lands in the texture as a
+                // solid wall at the lens, depth about 0 and one flat normal, over most of the
+                // frame. The owner saw the result as "the lighting suddenly changes when i look in
+                // different directions" (2026-09-25): facing the pillar, this pass read nearly
+                // every pixel as occluded. Found by a yaw sweep on Ilalim and switching renderer
+                // groups off one at a time: the LRT pillars alone. So a pixel that near gets no
+                // occlusion, and a probe that lands on one is not an occluder.
+                if(-p.z<_WorldAOParams.w)return 1;
                 float radius=_WorldAOParams.y,bias=_WorldAOParams.z;
                 // ⚠️⚠️ A 4x4 TILE OF SIXTEEN ROTATIONS, NOT FREE NOISE, BECAUSE THE OWNER SAW THE
                 // NOISE (2026-09-25: "theres some noising artifacts"). Interleaved gradient noise
@@ -787,8 +801,8 @@ Shader "TumbangPreso/WorldOutline"
                     float3 dir=(t*cos(phi)+b*sin(phi))*cos(elevation)+n*sin(elevation);
                     float3 probe=p+dir*reach;
                     float2 uv=(probe.xy/-probe.z)/_ViewRay.xy*.5+.5;
-                    float sceneZ=-EyeDepth(uv);
-                    float range=smoothstep(0,1,radius/max(abs(p.z-sceneZ),1e-4));
+                    float sceneEye=EyeDepth(uv);float sceneZ=-sceneEye;
+                    float range=smoothstep(0,1,radius/max(abs(p.z-sceneZ),1e-4))*step(_WorldAOParams.w,sceneEye);
                     float weight=1-ring*.6;
                     occluded+=step(probe.z+bias,sceneZ)*range*weight;total+=weight;
                 }
