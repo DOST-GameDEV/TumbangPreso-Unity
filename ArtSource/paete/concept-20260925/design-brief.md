@@ -194,5 +194,10 @@ Builder: `tools/build_paete_voxel.py`. Review: `PaeteNativeModelReview.Run -out 
   stickers), v8 thickened the horns and turned the leaves to face out, v9 gave each eye a bright
   core in a green rim, v10 took the long nose and the dark jaw wedge out and calmed the brow to
   4 degrees (the owner asked for a nonchalant face).
+- **v11 to v14.** Layered shoulder planks with hanging moss strands, two-segment curling claws,
+  a back branch; the owner circled two thin side planks hanging beside the waist (*"can u
+  remove those"*) and v12 took them out; leaves gathered into clusters (singles read as
+  confetti), moss as seam strips, shins flaring into thicker roots, bark plates over the thighs,
+  and the back given shoulder blades, a lower plate, moss seams and grain.
 - **Open:** the three face states (NEUTRAL, FOCUSED, ANGRY), the owner's read of v10, the
   palette check on the deck tile.
