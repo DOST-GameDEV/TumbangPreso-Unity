@@ -345,7 +345,7 @@ light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
   right-handed), so every cloud drew inside out. The owner caught it; the winding is fixed.
 - [ ] LIGHT-3.6 Ambient occlusion (owner 2026-09-25: "can we try adding ambient occlusion").
   Screen-space, in `WorldOutline` passes 2 and 3 because the built-in pipeline has none and no
-  post-processing package is installed. The pass runs at half resolution with twelve
+  post-processing package is installed. The pass first ran at half resolution with twelve
   cosine-weighted hemisphere samples round the depth-normals normal, 0.9 m radius, per-pixel
   noise rotation, a range check and a fade out by 60 m. A 3x3 depth-aware blur follows, and the
   composite leans the occluded part toward the violet `CavityHue`. `AmbientOcclusion` 0.8 on a steepened curve (the first cut at 0.6 moved the deepest corner 14 levels in 255). On the
@@ -359,7 +359,10 @@ light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
   like what minecraft does"): the kernel skims the surface at 8 to 40 degrees in four rings to 1 m,
   nearer hits weigh more, and a 90 degree inside corner maps to full occlusion (about a third
   darker on screen, toward violet). The cosine hemisphere had sent most samples straight out,
-  where they never reached the neighbouring face. Open for the owner's playtest.
+  where they never reached the neighbouring face. v4 and v5, after the owner saw a noise
+  pattern in play. The rotation is now a 4x4 tile of sixteen angles, the blur averages exactly a 4x4
+  window with a Gaussian depth weight (the old 1/(0.001 + difference) weight hardly blurred sloped
+  surfaces), and the pass runs at full resolution. Open for the owner's playtest.
 - [ ] LIGHT-3.5 The owner's look at the final comparison. The rendering is done: `e26eeb04`,
   Mac, one PlayMode launch, total 3 failed 0 (`FiveMapStageCapturesPreserveGeometryAndRestore
   OriginalLighting`, `LightingStyleThumbnails` and a scratch same-camera review that was not

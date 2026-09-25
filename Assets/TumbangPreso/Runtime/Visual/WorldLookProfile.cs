@@ -127,7 +127,7 @@ namespace TumbangPreso.Visual
         [Range(0,.6f)] public float GroundOcclusion=.28f;
         [Range(.5f,6)] public float GroundOcclusionHeight=2.8f;
         // ⚠️ § AMBIENT OCCLUSION (owner 2026-09-25: "can we try adding ambient occlusion").
-        // Screen-space, half resolution, drawn in `WorldOutline`'s pass from the depth and
+        // Screen-space, full resolution, drawn in `WorldOutline`'s pass from the depth and
         // normals it already reads, and leaning toward `CavityHue` like the crease and the
         // ground occlusion. Strength of the darkening, and the sample radius in metres: about a
         // bench or a doorstep, so it gathers in corners and under things and never haloes a

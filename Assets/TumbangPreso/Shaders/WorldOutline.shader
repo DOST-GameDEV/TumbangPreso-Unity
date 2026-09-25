@@ -141,7 +141,7 @@ Shader "TumbangPreso/WorldOutline"
             // x ground occlusion strength, y the height it fades out by (m), z the court floor,
             // w weight. See the ground occlusion note in the composite.
             float4 _PeakDepth;
-            // The blurred half-resolution ambient occlusion (passes 2 and 3), 1 open, 0 closed,
+            // The blurred full-resolution ambient occlusion (passes 2 and 3), 1 open, 0 closed,
             // and its strength in x. See § AMBIENT OCCLUSION below.
             sampler2D _WorldAO;
             float4 _WorldAOParams;
@@ -718,7 +718,7 @@ Shader "TumbangPreso/WorldOutline"
         }
 
         // -------------------------------------------------------------------
-        // PASS 2. AMBIENT OCCLUSION, half resolution, blitted by `WorldOutline` under the look.
+        // PASS 2. AMBIENT OCCLUSION, full resolution, blitted by `WorldOutline` under the look.
         // -------------------------------------------------------------------
         // ⚠️⚠️ § AMBIENT OCCLUSION. The built-in pipeline has none and this project carries no
         // post-processing package, so it is written here, where the depth and normals already
@@ -830,8 +830,14 @@ Shader "TumbangPreso/WorldOutline"
                     // Whole texels: any 4x4 window of a 4-periodic tile holds each rotation once.
                     // A half-texel offset would let bilinear filtering widen it to 5x5.
                     float2 uv=i.uv+float2(x,y)*_MainTex_TexelSize.xy;
-                    // A tap on a different surface (a depth jump of more than ~5%) barely counts.
-                    float w=1/(1e-3+abs(EyeDepth(uv)-centre)/max(centre,1e-3)*20);
+                    // ⚠️ A GAUSSIAN ON RELATIVE DEPTH, 2 PER CENT WIDE. The first weight was
+                    // 1/(0.001 + difference), which made the centre tap worth about 1000 and a
+                    // tap on the SAME sloped wall 0.5 per cent deeper worth about 10, so on any
+                    // surface not facing the camera squarely the blur barely blurred and the
+                    // rotation tile showed through as a grid. Here a tap on the same surface
+                    // counts almost fully and only a real depth break drops out.
+                    float rel=abs(EyeDepth(uv)-centre)/max(centre,1e-3);
+                    float w=exp(-(rel/.02)*(rel/.02));
                     sum+=tex2Dlod(_MainTex,float4(uv,0,0)).r*w;weight+=w;
                 }
                 float ao=sum/max(weight,1e-4);

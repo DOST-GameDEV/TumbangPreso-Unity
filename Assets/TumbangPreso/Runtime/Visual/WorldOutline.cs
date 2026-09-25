@@ -910,9 +910,12 @@ namespace TumbangPreso.Visual
             float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
             if(aoStrength>0)
             {
-                // Half resolution: occlusion is a soft, low-frequency term, and the blur hides
-                // the step back up.
-                int w=Mathf.Max(1,source.width/2),h=Mathf.Max(1,source.height/2);
+                // ⚠️ FULL RESOLUTION. It was half, on the reasoning that occlusion is soft; the
+                // owner then saw its noise, and at half resolution the 4x4 rotation tile the blur
+                // cancels spans 8x8 screen pixels, big enough to read as a grid wherever the
+                // cancellation is imperfect. Full resolution also keeps the crease ramps crisp,
+                // which is what Minecraft's corners look like.
+                int w=Mathf.Max(1,source.width),h=Mathf.Max(1,source.height);
                 var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8)?RenderTextureFormat.R8:RenderTextureFormat.ARGB32;
                 occlusion=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
                 occlusionBlur=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
