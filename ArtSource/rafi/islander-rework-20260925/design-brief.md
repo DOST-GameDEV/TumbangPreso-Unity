@@ -167,6 +167,7 @@ The model at v31 (superseded in its tattoo, face and back hair by v35, section 7
 | v39 to v40 | continuous abdominal batok tiers connecting chest to bahag waistband; facial markings removed; nonchalant calm eyes and relaxed mouth | "those markings suck its also weird theres none that continues to here", "make him look nonchalant" |
 | v41 | necklace chain clearance & pendant stand-off (>18 mm proud, 0 body clipping); 360-degree lateral rib & flank batok connecting front abs to back wings | "REFINE MARKINGS EVEN MORE AND THE NECKLACE AS WELL COZ IT ENTER HIS BODY" |
 | v42 | subtle forehead Init solar crest diamond & warrior accents; 6-tier bold trapezius/scapular back armor (Dakag) framing hair tail | "refine tattoos more try to give him subtle forehead markings", "does he have back markings" |
+| v43 | elevated front Dubdub collar sawteeth, Chaklag pectoral gin-ginnam sawteeth, 4-point navel star, and 3 dense interlocking Inagdan abdominal tiers | "make the markings even better as well as the markings on the front" |
 
 The method this produced is written up for every future character in
 [docs/CHARACTER_MODEL_METHOD.md](../../../docs/CHARACTER_MODEL_METHOD.md).
