@@ -55,6 +55,7 @@ reactivate work. Preserve their history and record the current replacement/reaso
 | Current reference | Status | Purpose |
 |---|---|---|
 | [UX-1 plan](reports/front-end-flow-2026-09-23/ux1-plan.md) | Adopted design | Current HOME/front-end routes and ownership. |
+| [CHARACTER_MODEL_METHOD.md](CHARACTER_MODEL_METHOD.md) | Standing method | How a hero model is made or reworked: research, the three questions, colour, hand-drawn markings, the review loop (from the Rafi islander rework, 2026-09-25). |
 | [HOME loops: Zack](reports/home-scene/README.md), [Phaister](reports/home-scene/phaister.md) | Adopted design | The per-hero HOME background loops, picked at random; the method is [HOME_SCREEN_ANIMATION_METHOD.md](HOME_SCREEN_ANIMATION_METHOD.md). |
 | [UX-1 completion plan](reports/front-end-flow-2026-09-23/completion-plan.md) | Current implementation reference | Owner additions and concrete integration decisions; status stays in TODO. |
 | [UI authorship inventory](reports/front-end-flow-2026-09-23/ui-authorship-inventory.md) | Reference | Surfaces, source owners, evidence and limits for later refinement. |

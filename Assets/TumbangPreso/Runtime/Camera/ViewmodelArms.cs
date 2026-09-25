@@ -1285,7 +1285,7 @@ namespace TumbangPreso.CameraSystem
                 case "cheska": return SkinCheska;
                 case "nemu": return SkinNemu;
                 case "phaister": return SkinPhaister;
-                case "rafi": return new Color32(184,129,81,255);
+                case "rafi": return new Color32(178,118,74,255);
 
                 // Classic Characters
                 case "bayan": return SkinBayan;

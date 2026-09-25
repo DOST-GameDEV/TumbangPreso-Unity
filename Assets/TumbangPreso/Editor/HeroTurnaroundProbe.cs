@@ -101,7 +101,7 @@ namespace TumbangPreso.EditorTools
         {
             var report = new StringBuilder();
             report.AppendLine("==================================================");
-            report.AppendLine("HERO TURNAROUND PROBE - ALL 6 HEROES (4 ANGLES)");
+            report.AppendLine($"HERO TURNAROUND PROBE - ALL {Heroes.Length} HEROES (4 ANGLES)");
             report.AppendLine("==================================================");
 
             Directory.CreateDirectory("Logs");
@@ -129,7 +129,7 @@ namespace TumbangPreso.EditorTools
             string combinedPath = "Logs/all_heroes_4angles.png";
             bool compOk = ShootAllHeroesGrid(combinedPath, report);
             ok &= compOk;
-            report.AppendLine($"All Heroes 6x4 Grid: {(compOk ? "SUCCESS -> " + combinedPath : "FAIL")}");
+            report.AppendLine($"All Heroes {Heroes.Length}x4 Grid: {(compOk ? "SUCCESS -> " + combinedPath : "FAIL")}");
 
             // 4. Render 6-hero lineup (Front view side-by-side)
             string lineupPath = "Logs/all_heroes_lineup.png";
@@ -189,9 +189,14 @@ namespace TumbangPreso.EditorTools
                 }
             }
 
+            // ⚠️ THE SHEET IS SIZED FROM THE ROSTER, NOT WRITTEN FOR SIX. It was a fixed 3600 px
+            // at an orthographic size of 3.65, which is six rows of 1.15; Rafi made seven and his
+            // row fell off the bottom of every sheet with nothing reporting it. The pixel density
+            // (about 493 px per unit, the old 3600 over 7.3) is kept so the cells are the same size.
+            float gridView = Heroes.Length * spacingY;
             var camera = BuildCamera(Angles.Length, Heroes.Length, spacingX, spacingY);
-            camera.orthographicSize = 3.65f;
-            bool success = CaptureTo(camera, 2400, 3600, outPath);
+            camera.orthographicSize = gridView * 0.5f;
+            bool success = CaptureTo(camera, 2400, Mathf.RoundToInt(gridView * 3600.0f / 7.3f), outPath);
 
             EditorSceneManager.CloseScene(scene, true);
             return success;
@@ -253,9 +258,12 @@ namespace TumbangPreso.EditorTools
                 Caption(pivot.transform, hero.Name.ToUpper(), -0.48f);
             }
 
+            // ⚠️ SAME FAULT AS THE GRID: 2400 px at a size of 0.70 is 5.6 units across, room for six
+            // heroes at 0.92, so the seventh pushed the first and last half off the image. The
+            // width now follows the roster at the original density (600 px over 1.4 units).
             var camera = BuildCamera(Heroes.Length, 1, spacingX, 1.0f);
             camera.orthographicSize = 0.70f;
-            bool success = CaptureTo(camera, 2400, 600, outPath);
+            bool success = CaptureTo(camera, Mathf.RoundToInt((Heroes.Length * spacingX + 0.2f) * 600.0f / 1.4f), 600, outPath);
 
             EditorSceneManager.CloseScene(scene, true);
             return success;

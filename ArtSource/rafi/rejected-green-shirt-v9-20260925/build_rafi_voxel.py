@@ -170,83 +170,39 @@ def cell_uv(slot):
 # scene. Author against the BONE NAMES, never against which side of a screenshot
 # something appears on.
 #
-# ⚠️⚠️ THE ISLANDER REWORK (owner, 2026-09-25): *"rework RAFI's 3d model because it looks so
-# bad"*, *"research first on islanders (look pics attached)"*, *"make sure whatever u make
-# genuinely looks like it still"*. The two references are a painted Visayan datu in the
-# Lapu-Lapu tradition and Maui. The brief, the research and what it replaces are in
-# `ArtSource/rafi/islander-rework-20260925/design-brief.md`; the green-shirt v9 this replaces
-# is archived beside it in `rejected-green-shirt-v9-20260925/`.
-#
-# What carries over unchanged, because they were owner rulings and not a style: the native
-# skull, block-built hair, no eyebrows, the family proportions, the seven bone names.
-#
-# What the research put on him, and where each one sits:
-#   putong    a headcloth band round the outside of the hair, knotted at the back, two tails
-#   batok     tattoos, designed per part rather than stamped (Art_Direction, 2026-09-14):
-#             dubdub on the chest "like breast plates", ablay on the shoulders, dayadaya
-#             along the arms, labid up the legs, and a back left mostly plain
-#   gold      a torc at the neck, a calombiga armlet on each upper arm, cuffs, ear drops
-#   bahag     a wrapped loincloth with a woven border and a front flap to mid thigh
-# And from Maui, a lesson in stylisation rather than dress: the hair is one big mass that is
-# most of the silhouette, and the torso is broad at the chest and narrow at the waist.
-#
-# ⚠️⚠️ HIS COLOUR IS A DEEP, MUTED SEA TEAL, AND IT IS MEANT TO BE QUIET (owner, 2026-09-25).
-# The route here, so nobody re-litigates it:
-#   v10 to v14  red putong over a bright sea-teal bahag: two palettes on one body
-#   v15 to v17  all red like the painting: "looks a bit too much like sean give it its own colors"
-#   v18 to v21  saturated ocean blue, tattoos included: "ocean blue color u used is ugly af",
-#               "whyd u give it blue markings not black", "it feels forced ocean, it should be
-#               subtle"
-# So the cloth is a dark sea teal at low saturation, the colour of a natural-dyed cloth that
-# has been in the sun and the sea, with a sand stripe and a cream thread. It is his
-# own (no hero wears it: Dante's green is warmer and yellower, Cheska's cyan is light and
-# bright) without shouting. What carries him is the shape: the mane, the band, the bare inked
-# body. The owner's model for this is Harbor (Valorant): a water character whose costume is
-# a muted sea teal with sand and dark accents, one bracelet, one tattoo; the water is in his
-# abilities, and it "doesnt feel forced". Rafi's water is likewise in his kit's VFX.
-# `RAFI_CLOTH=red`, `teal` or `ocean` still build the rejected ones for comparison.
-#
-# Slot key:
-#   0 bahag            1 cloth shadow     2 gold (unused)   3 silver
-#   4 tattoo ink       5 woven cream      6 hair            7 cloth light
-#   8 face ink         9 sandal sole      10 sandal bed     11 putong
-#   12 silver engraving   13/14/15 skin, shadow, skin (15 is what the donor skull wears)
+# Slot key, and what the reference art puts there:
+#   0 jacket purple    1 black cloth      2 clip magenta   3 buckle gold
+#   4 shoe purple      5 chain silver     6 hair black     7 jacket shadow
+#   8 face and ink     12 white           13/14/15 skin ramp
 # ---------------------------------------------------------------------------
 
-CLOTH, CLOTH_DARK, GOLD, SILVER = 0, 1, 2, 3
-TATTOO, WEAVE, HAIR, CLOTH_LIT = 4, 5, 6, 7
-INK, SOLE, SOLE_BED, PUTONG = 8, 9, 10, 11
-SILVER_DARK, SKIN, SKIN_DARK, SKIN_LIT = 12, 13, 14, 15
+OVERALLS, OVERALLS_DARK, CYAN_TRIM, BUTTONS = 0, 1, 2, 3
+SHOE_CYAN, COLLAR_TRIM, HAIR, SHADOW_CYAN = 4, 5, 6, 7
+INK, SILVER, WOOD_GOLD, FROST_ACCENT = 8, 9, 10, 11
+WHITE, SKIN, SKIN_DARK, SKIN_LIT = 12, 13, 14, 15
 
-# ⚠️ THE TATTOO INK IS ITS OWN SLOT, NOT THE FACE'S. Slot 8 is held under 0.30 luminance for
-# the face and is a warm black; pintados ink was soot and reads blue-black on skin in every
-# painted reference, and a separate slot keeps that choice from touching the eyes.
-# ⚠️⚠️ BLACK, NOT BLUE. v20 and v21 inked him in a deep blue to spread a signature hue over the
-# body, after the painting; the owner: "whyd u give it blue markings not black". Tattoos are
-# black. The cloth carries the colour; the ink is ink. The palette
-# entries for slots 0, 1, 7 and 11 below are overwritten by `CLOTH_VARIANTS`.
-PALETTE = {0: '12918A',
- 1: '0B5F60',
- 2: 'F4B53A',
- 3: 'C9CFD4',
- 4: '17161C',
- 5: 'F2E2BC',
- 6: '1D191C',
- 7: '47CDBB',
- 8: '181418',
- 9: 'F1E2C2',
- 10: '9A6538',
- 11: '2A7BDB',
- 12: '7E868E',
- 13: 'B2764A',
- 14: '8F5A36',
- 15: 'B2764A'}
-
-CLOTH_VARIANTS = {'sea': {0: '2B6664', 1: '1A4543', 7: 'BDAE84', 11: '357C77'},
-                  'ocean': {0: '1B55A8', 1: '0F3470', 7: '74C6F4', 11: '2A7BDB'},
-                  'teal': {0: '12918A', 1: '0B5F60', 7: '47CDBB', 11: 'C0202C'},
-                  'red': {0: 'B51E2B', 1: '7A1119', 7: 'F4B53A', 11: 'C0202C'}}
-PALETTE.update(CLOTH_VARIANTS[os.environ.get('RAFI_CLOTH', 'sea')])
+# ⚠️⚠️ THE CAST'S COLOUR INTENSITY (2026-09-23, owner: "it doesnt look like it belongs in
+# hero cast"). Every other hero owns one saturated signature hue (Sean red, Cheska cyan, Zack
+# yellow, Nemu violet, Phaister magenta, Dante gold and green); Rafi's shirt was a muted sage
+# (568565) with a darker sage trim, which next to them read as a background extra. The same
+# hues, pushed to the cast's saturation: a clear sea-green, a richer navy, a brighter orange
+# accent and a cleaner cream.
+PALETTE = {0: '2D3C6E',
+ 1: '1F2A55',
+ 2: '458EAD',
+ 3: 'F7EACB',
+ 4: '3FA06E',
+ 5: '2A7650',
+ 6: '342B29',
+ 7: '465673',
+ 8: '211B21',
+ 9: '775737',
+ 10: 'F27A2C',
+ 11: '72C9C4',
+ 12: 'F3DEB8',
+ 13: 'B88151',
+ 14: 'AA7246',
+ 15: 'B88151'}
 
 MAX_FACE_LUMINANCE = 0.30
 
@@ -260,429 +216,122 @@ def mirrored(boxes, bone_from, bone_to):
     return out
 
 
-# Legs own everything below the hips at 0.232. Bare legs on a chunky sole with one strap:
-# a tsinelas, which in a game about throwing one is the right shoe, and which keeps the cast's
-# thick grounding sole under him.
-LEG_LEFT = [('tsinelas-sole-left', 'leg-left', (0.004, 0.000, -0.142), (0.162, 0.034, 0.088), SOLE),
- ('tsinelas-bed-left', 'leg-left', (0.010, 0.030, -0.136), (0.156, 0.042, 0.082), SOLE_BED),
- ('foot-left', 'leg-left', (0.020, 0.040, -0.128), (0.146, 0.084, 0.066), SKIN),
- ('tsinelas-strap-left', 'leg-left', (0.016, 0.058, -0.104), (0.150, 0.080, -0.064), CLOTH),
- ('shin-left', 'leg-left', (0.030, 0.076, -0.062), (0.138, 0.196, 0.060), SKIN),
- ('thigh-left', 'leg-left', (0.020, 0.180, -0.074), (0.148, 0.262, 0.074), SKIN)]
+# Hips at 0.240, so the leg owns everything below it.
+# Rafi's compact shorts and practical sandals use the retained cast leg proportions.
+LEG_LEFT = [('sandal-sole-left', 'leg-left', (0.004, 0, -0.138), (0.160, 0.040, 0.086), 3),
+ ('sandal-foot-left', 'leg-left', (0.015, 0.038, -0.126), (0.149, 0.078, 0.069), 15),
+ ('sandal-strap-left', 'leg-left', (0.013, 0.069, -0.073), (0.151, 0.09, -0.036), 1),
+ ('sandal-heel-strap-left', 'leg-left', (0.023, 0.067, 0.032), (0.143, 0.091, 0.067), 1),
+ ('sandal-side-strap-left', 'leg-left', (0.138, 0.064, -0.041), (0.151, 0.087, 0.052), 1),
+ ('calf-left', 'leg-left', (0.033, 0.061, -0.059), (0.133, 0.176, 0.058), 15),
+ ('shorts-left', 'leg-left', (0.008, 0.147, -0.081), (0.16, 0.258, 0.079), 0),
+ ('shorts-cuff-left', 'leg-left', (0.006, 0.143, -0.085), (0.162, 0.166, 0.082), 3),
+ ('shorts-pocket-left', 'leg-left', (0.041, 0.19, -0.094), (0.14, 0.239, -0.079), 1)]
 
+# Same sandal construction on the other foot.
 LEG_RIGHT = mirrored(LEG_LEFT, "leg-left", "leg-right")
 
-# Torso owns 0.232 to 0.445. ⚠️ THE CHEST IS WIDER THAN THE WAIST (`BOX_TAPERS`): 0.130 at the
-# collarbone, 0.109 at the belt. That V is the Maui and datu read, bought inside the family
-# proportions rather than by lengthening anything.
-TORSO = [('chest', 'torso', (-0.132, 0.232, -0.088), (0.132, 0.442, 0.090), SKIN),
- ('neck', 'torso', (-0.064, 0.400, -0.056), (0.064, 0.452, 0.058), SKIN),
- # ⚠️⚠️ MUSCLE AS BLOCKS (owner, 2026-09-25: "can u make him look a bit muscular too"). Two
- # pectoral slabs standing 12 mm off the chest: their chamfered lower edge throws the one
- # shadow line a pectoral needs, and the left one is the surface his breastplate tattoo sits
- # on. Sean's muscle is drawn with shading slots; Rafi's is form, which keeps them apart.
- # "A bit" muscular, the owner's words: v26 stood them 18 mm proud with big deltoids and thick
- # forearms and it read "too muscular now"; they stand 10 mm proud, the deltoid is only just
- # fuller than the arm, and the forearm is the arm again. Legs untouched ("js the chest and arms").
- ('pec-left', 'torso', (0.008, 0.334, -0.098), (0.122, 0.404, -0.080), SKIN),
- ('pec-right', 'torso', (-0.122, 0.334, -0.098), (-0.008, 0.404, -0.080), SKIN),
- # ⚠️⚠️ A SHARK TOOTH NECKLACE (owner, 2026-09-25: "give him a shark tooth necklace too maybe?").
- # One broad flat tooth, a true triangle (the taper takes its point to a tenth of its width),
- # hung from a silver bail on a silver chain, with a smaller tooth either side, each its own
- # size and tilt. ⚠️ v27 hung the teeth straight under the chin with no cord, and three white
- # triangles under his mouth read as fangs; v28 dropped the pendant onto the sternum, and v30
- # lays the chain on the body (`_rafi_forms`) so the teeth hang from something you can see. History: v10 to v13 five teeth in
- # a row (a second mouth), v14 to v26 one thin fang between silver beads (the beads read as
- # teeth too). They stand in front of the pectoral slabs (z -0.124) so the muscle cannot
- # swallow them.
- ('shark-tooth', 'torso', (-0.017, 0.310, -0.118), (0.017, 0.354, -0.104), WEAVE),
- ('tooth-bail', 'torso', (-0.007, 0.351, -0.117), (0.007, 0.365, -0.101), SILVER),
- ('shark-tooth-l', 'torso', (0.024, 0.350, -0.118), (0.040, 0.376, -0.106), WEAVE),
- ('shark-tooth-r', 'torso', (-0.039, 0.354, -0.118), (-0.025, 0.377, -0.106), WEAVE),
- ('bahag-waist', 'torso', (-0.128, 0.236, -0.100), (0.128, 0.296, 0.102), CLOTH),
- ('bahag-flap-front', 'torso', (-0.048, 0.100, -0.116), (0.048, 0.274, -0.098), CLOTH),
- ('bahag-flap-back', 'torso', (-0.062, 0.130, 0.098), (0.062, 0.274, 0.116), CLOTH),
- ('bahag-knot', 'torso', (-0.144, 0.244, -0.072), (-0.110, 0.290, -0.022), CLOTH_DARK),
- ('bahag-knot-tail', 'torso', (-0.140, 0.180, -0.064), (-0.116, 0.250, -0.040), CLOTH_DARK)]
+# Torso owns everything between 0.240 and 0.440
+TORSO = [('shirt-body', 'torso', (-0.108, 0.252, -0.082), (0.108, 0.43, 0.086), 4),
+ ('shirt-back-yoke', 'torso', (-0.106, 0.389, 0.082), (0.106, 0.431, 0.098), 5),
+ ('shirt-bottom-hem', 'torso', (-0.111, 0.248, -0.087), (0.111, 0.275, 0.09), 5),
+ ('neck-skin', 'torso', (-0.065, 0.39, -0.048), (0.065, 0.449, 0.058), 15),
+ ('cream-undershirt', 'torso', (-0.042, 0.367, -0.098), (0.042, 0.443, -0.081), 3),
+ ('open-collar-left', 'torso', (0.018, 0.382, -0.113), (0.079, 0.448, -0.08), 5),
+ ('open-collar-right', 'torso', (-0.079, 0.382, -0.113), (-0.018, 0.448, -0.08), 5),
+ ('folded-shoulder-lining', 'torso', (-0.113, 0.388, -0.114), (-0.028, 0.445, -0.086), 3),
+ ('shoulder-loop-fastener', 'torso', (-0.082, 0.405, -0.126), (-0.066, 0.422, -0.11), 9),
+ ('navy-wrap-belt', 'torso', (-0.122, 0.267, -0.108), (0.123, 0.3, 0.106), 0),
+ ('sash-knot', 'torso', (0.052, 0.265, -0.141), (0.095, 0.308, -0.1), 1),
+ ('sash-long-tail', 'torso', (0.052, 0.172, -0.132), (0.087, 0.281, -0.103), 0),
+ ('sailcloth-hip-wrap', 'torso', (-0.118, 0.205, -0.100), (0.118, 0.267, -0.084), 3),
+ ('sailcloth-back-wrap', 'torso', (-0.124, 0.189, 0.079), (0.112, 0.267, 0.111), 3),
+ ('sailcloth-back-seam', 'torso', (-0.07, 0.221, 0.109), (0.106, 0.229, 0.118), 12),
+ # ⚠️ A CHEST POCKET WITH ONE CREAM BUTTON (v9): the cast's clothing carries two or three small
+ # accents (Zack's jacket pockets, Dante's trims); Rafi's shirt front was one plain green block.
+ ('shirt-pocket-left', 'torso', (0.028, 0.328, -0.091), (0.086, 0.380, -0.081), 5),
+ ('pocket-button-left', 'torso', (0.050, 0.364, -0.095), (0.064, 0.377, -0.089), 3),
+ ('rope-hanger', 'torso', (-0.150, 0.262, -0.128), (-0.132, 0.298, -0.106), 9),
+ # ⚠️ THE ORANGE FLOAT HANGS UNDER THE COIL (the reference sheet's one warm accent at the hip).
+ ('hip-float', 'torso', (-0.165, 0.176, -0.132), (-0.120, 0.230, -0.090), 10)]
 
-# ⚠️ ARMS ARE BARE AND A LITTLE THICKER THAN THE OLD SLEEVES: Dante's 120 mm section, so the
-# gold and the tattoos have a surface to sit on. The hand keeps its exact 0.3383 to 0.4617 span:
-# that is shoulder +/- `HandTopLift`, and the tsinelas anchors against it.
-ARM_LEFT = [('arm-left', 'arm-left', (0.0999, 0.340, -0.058), (0.296, 0.460, 0.058), SKIN),
- ('hand-left', 'arm-left', (0.286, 0.3383, -0.050), (0.3836, 0.4617, 0.058), SKIN),
- # A rounded deltoid, just fuller than the arm, capping the shoulder.
- ('deltoid-left', 'arm-left', (0.100, 0.332, -0.066), (0.172, 0.468, 0.066), SKIN),
- # ⚠️ SILVER CUFFS (owner: "it still has yellow rings", "i like the gold cuffs js change color",
- # then "i think arm bands should be silver"). Every metal on him is silver now (cuffs, ear
- # drops, beads): silver beside the sea teal is the quiet ocean note, and it keeps him off
- # Sean's gold. The upper-arm armlets are gone; each wrist keeps one cuff, and each cuff is
- # engraved differently (decals below), never one pattern copied to both.
- ('cuff-left', 'arm-left', (0.256, 0.329, -0.070), (0.286, 0.471, 0.070), SILVER)]
+# One fitted rope coil is a useful belonging and a broad silhouette feature.
+# Each segment is native chamfered geometry, not a repeated surface decoration.
+# Continuous fitted coils are emitted by _rafi_forms, not a ring of cubes.
 
+# Actual source cuffs and one modest cord also supply the matching FPP mesh.
+ARM_LEFT = [('sleeve-left', 'arm-left', (0.0999, 0.342, -0.064), (0.207, 0.458, 0.068), 4),
+ ('rolled-cuff-left', 'arm-left', (0.192, 0.331, -0.073), (0.226, 0.469, 0.077), 3),
+ ('forearm-left', 'arm-left', (0.218, 0.35, -0.032), (0.284, 0.45, 0.042), 15),
+ ('hand-left', 'arm-left', (0.265, 0.3383, -0.043), (0.3836, 0.4617, 0.061), 15)]
+
+# The right hand stays clear; the personal cord is on the left only.
 ARM_RIGHT = mirrored(ARM_LEFT, "arm-left", "arm-right")
+ARM_LEFT += [('wrist-glass-bead-left','arm-left',(.260,.383,-.05),(.272,.4,-.04),11)]
 
-# ---------------------------------------------------------------------------
-# THE HEAD, in the donor's own space (+Z is the face; see `_family`'s as_authored note).
-# The skull shell spans y 0.343 to 0.661, |x| 0.227, z -0.162 to 0.158.
-#
-# ⚠️⚠️ LONG HAIR, BLOCK BUILT, AND THE PUTONG GOES ROUND THE OUTSIDE OF IT. The band is sized
-# off the hair (`_rafi_headband`), not the skull: the old band sat on the skull and the hair
-# swallowed it at the sides, which is not how a headcloth is worn over long hair.
-#
-# Three tiers fall down the back to the top of the shoulders, each narrower, their tips
-# staggered so the hem is not one straight cut. The sides fall BEHIND the ears so the gold ear
-# drops show (the painting's read); a lock in front of each ear still frames the face (the v7
-# ruling: "theirs comes down the sides past the temples"). Two front locks spill over the band.
-# Tops stay under the cast's 0.7928 ceiling (`verify`).
-# ---------------------------------------------------------------------------
+# Match the established HERO construction: flat box faces, squared locks and
+# small native chamfers. The asymmetric cropped silhouette is Rafi's own; no
+# lofted hair, sculpted sweep or bun. All coordinates use the donor head space.
 HEAD = [
- # ⚠️⚠️ THE CROWN IS WIDER THAN THE BAND, AND THE SIDES FLARE UNDER IT (v14). v10 to v13 had
- # a 0.200 crown above a 0.250 band, so the band stuck out of the head like a plank laid
- # across it. Hair pushed up by a tied band bulges over it and springs out below it; that
- # bulge is what makes the band read as tied ON the hair (the painting, the concept sheet).
- # The top is broken into stepped tufts of different heights so the crown is a shape, not
- # the flat-topped helmet it was.
- # ⚠️⚠️ v16: A CORE AND A RING OF CURLS. v14 stacked full-width layers (a tiered cake) and v15
- # set lumps of one height on straight sides (a crate). Curly volume in this style is a core
- # with separate chunky blocks set round its outline: each curl is near cubic, so the 0.45
- # chamfer rounds it almost to a ball, and their centres step round the dome at different
- # heights and depths so the outline goes bump, gap, bump from every angle. The core stays
- # inside the ring so it never shows a straight edge of its own.
- ('hair-crown', 'head', (-.214, .612, -.214), (.214, .706, .146), HAIR)]
-HEAD += [(f'hair-curl-{i}', 'head', (x - w, y - w, z - w), (x + w, y + w, z + w), HAIR)
-         for i, (x, y, z, w) in enumerate([
-             # ⚠️ GRADED INTO A DOME (v17): tops step down from 0.794 at the centre to about
-             # 0.71 at the sides. v16 topped the middle five at one height and the front read
-             # as a flat plateau with notches in it.
-             # front arc, left to right as he faces
-             (.206, .664, .058, .042), (.168, .710, .040, .042), (.090, .736, .072, .040),
-             (.004, .750, .052, .044), (-.084, .734, .074, .040), (-.160, .704, .044, .042),
-             (-.212, .656, .052, .040),
-             # the crown, set back: the highest point, just behind the brow line
-             (.080, .744, -.058, .046), (-.034, .746, -.050, .048), (-.140, .720, -.090, .044),
-             # the back arc, lower again
-             (.196, .664, -.140, .042), (.092, .716, -.166, .044), (-.020, .726, -.184, .046),
-             (-.130, .700, -.176, .044), (-.210, .650, -.118, .040),
-             # ⚠️ the sides (v21): the long side hair was one flat slab from the quarter view,
-             # the only straight plane left on the head. Two curls break each side of it.
-             (.236, .560, -.120, .036), (.232, .470, -.160, .034),
-             (-.236, .552, -.126, .036), (-.232, .478, -.156, .034)])]
-HEAD += [
- ('hair-part', 'head', (-.170, .612, .120), (.170, .700, .172), HAIR),
- ('hair-temple-left', 'head', (.186, .500, .030), (.226, .640, .110), HAIR),
- ('hair-temple-right', 'head', (-.226, .500, .030), (-.186, .640, .110), HAIR),
- ('hair-side-left', 'head', (.200, .420, -.206), (.246, .600, -.030), HAIR),
- ('hair-side-right', 'head', (-.246, .420, -.206), (-.200, .600, -.030), HAIR),
- ('hair-side-tip-left', 'head', (.198, .326, -.196), (.236, .428, -.110), HAIR),
- ('hair-side-tip-right', 'head', (-.236, .344, -.196), (-.198, .428, -.092), HAIR),
- ('hair-back-1', 'head', (-.222, .430, -.232), (.222, .650, -.110), HAIR),
- # ⚠️⚠️ BELOW THE BAND THE LONG HAIR IS GATHERED INTO ONE TIED TAIL (v34). Owner, of v31: "does
- # his back have markings too". Through v33 the back hair fell in three tiers the full width
- # of his shoulders, down to the bahag, and no back tattoo could ever be seen. Gathered at
- # the nape and tied with a band of his sea teal, it is still long hair down the back (the
- # concept sheet's read from behind), his shoulder blades show either side of it, and the
- # dakag rib bars read. It also gives the side view a stronger line than the curtain did.
- ('hair-tail-root', 'head', (-.072, .398, -.252), (.072, .470, -.168), HAIR),
- ('tail-tie', 'head', (-.060, .380, -.262), (.060, .402, -.170), PUTONG),
- ('hair-tail', 'head', (-.056, .236, -.250), (.056, .384, -.176), HAIR),
- ('hair-tail-tip', 'head', (-.040, .204, -.244), (.040, .242, -.184), HAIR),
- # Gold ear drops, below the lobe the donor skull already has.
- ('earring-left', 'head', (.176, .372, -.014), (.198, .410, .006), SILVER),
- ('earring-right', 'head', (-.198, .372, -.014), (-.176, .410, .006), SILVER),
- # The putong's knot sits at the back, a little to his right (-X), and two tails fall over
- # the hair down the back (the concept sheet's read from behind, and the painting's tails).
- ('putong-knot', 'head', (-.100, .526, -.286), (-.014, .598, -.244), PUTONG),
- ('putong-tail-a', 'head', (-.096, .372, -.268), (-.058, .532, -.248), PUTONG),
- ('putong-tail-b', 'head', (-.050, .400, -.264), (-.014, .528, -.246), PUTONG)]
+ # ⚠️⚠️ A CREST, BUILT FROM STEPPED BLOCKS (2026-09-23). The previous hair was ten big slabs
+ # topping out at 0.744, a flat helmet-shaped cap: from the lineup it was the one head in the
+ # cast with no silhouette of its own, while Zack's bolt fringe, Dante's horn and mop,
+ # Cheska's goggles and Phaister's hat all read at game distance. The reference sheet's
+ # identity IS a tall messy crest over the headwrap. It is rebuilt here the way the cast
+ # builds hair, as stacked stepped blocks (a wide lower block and a narrower upper one per
+ # tuft, so every tuft has the voxel step), plus side flares and chunky locks falling over the
+ # wrap. Owner rulings kept: block-built only, no brows, no swept or lofted curve, no bun.
+ # ⚠️ THE TOP IS 0.788, UNDER THE CAST'S MEASURED 0.7928 CAP (`verify`), on purpose.
+ ('hair-back-core','head',(-.178,.470,-.196),(.178,.690,-.090),HAIR),
+ # the back of the head down to the nape: the previous back view showed skin below the band
+ ('hair-nape','head',(-.160,.400,-.192),(.160,.475,-.118),HAIR),
+ ('hair-crown-core','head',(-.182,.640,-.160),(.182,.715,.132),HAIR),
+ ('hair-side-left','head',(-.192,.545,-.110),(-.155,.672,.112),HAIR),
+ ('hair-side-right','head',(.155,.556,-.112),(.192,.668,.082),HAIR),
+ ('hair-temple-left','head',(-.186,.520,.068),(-.152,.628,.126),HAIR),
+ ('hair-tuft-a1','head',(-.176,.700,-.030),(-.080,.748,.120),HAIR),
+ ('hair-tuft-a2','head',(-.160,.742,.000),(-.105,.776,.080),HAIR),
+ ('hair-tuft-b1','head',(-.085,.708,-.070),(.035,.762,.110),HAIR),
+ ('hair-tuft-b2','head',(-.060,.755,-.040),(.015,.788,.060),HAIR),
+ ('hair-tuft-c1','head',(.030,.700,-.120),(.150,.752,.080),HAIR),
+ ('hair-tuft-c2','head',(.055,.745,-.090),(.125,.778,.020),HAIR),
+ ('hair-tuft-d1','head',(-.120,.690,-.175),(.110,.742,-.060),HAIR),
+ ('hair-tuft-d2','head',(-.070,.735,-.160),(.040,.768,-.090),HAIR),
+ ('hair-flare-right','head',(.182,.628,-.060),(.222,.700,.060),HAIR),
+ ('hair-flare-left','head',(-.222,.640,-.020),(-.182,.708,.080),HAIR),
+ ('hair-lock-1','head',(-.170,.598,.122),(-.098,.712,.194),HAIR),
+ # ⚠️⚠️ THE HAIR FRAMES THE FACE (owner 2026-09-23, of v7: "rafi looks weird"). Beside Dante and
+ # Zack his crest sat ON TOP of the head like a small wig: theirs comes down the sides past the
+ # temples and over the forehead to just above the eyes, and his stopped at the headband, leaving
+ # a tall bald band of forehead. The locks now fall in front of the wrap to just above the eyes
+ # (0.52, eyes top out at 0.507) and sideburn blocks come down the temples to 0.49.
+ ('hair-lock-1-tip','head',(-.160,.520,.132),(-.112,.600,.190),HAIR),
+ ('hair-lock-2-tip','head',(-.078,.548,.140),(-.030,.625,.200),HAIR),
+ ('hair-sideburn-left','head',(-.234,.490,-.010),(-.190,.612,.128),HAIR),
+ ('hair-sideburn-right','head',(.190,.490,-.010),(.234,.612,.128),HAIR),
+ ('hair-lock-2','head',(-.092,.622,.128),(-.012,.716,.198),HAIR),
+ ('hair-lock-3','head',(-.005,.640,.120),(.078,.712,.192),HAIR),
+ ('hair-lock-3-tip','head',(.012,.556,.130),(.058,.642,.192),HAIR),
+ ('hair-lock-4','head',(.082,.652,.112),(.160,.708,.176),HAIR),
+ ('headwrap-knot' ,'head',(.126,.554,-.222),(.176,.603,-.182),1),
+ ('float-clip-saddle','head',(.136,.559,.166),(.185,.619,.184),1),
+ ('float-clip-glint','head',(.148,.608,.198),(.163,.62,.208),3)]
 
-# Tilts rotate a box in its own XY plane about its centre; tapers narrow one axis along
-# another. Cloth ends, hair tips and palms only; the masses keep square native ends.
-BOX_TILTS = {'putong-tail-a': -9, 'putong-tail-b': 7, 'bahag-knot-tail': 8,
-             'shark-tooth-l': 14, 'shark-tooth-r': -10}
+# Recipe-local tilts belong to cloth only. Hair keeps the native block construction.
+# Geometry and normals rotate together; the donor skull, skin and rig are untouched.
+BOX_TILTS = {'headwrap-tail-long':-13,'headwrap-tail-short':31,
+             'folded-shoulder-lining':-12,'shoulder-loop-fastener':-12,
+             'open-collar-left':-22,'open-collar-right':22,
+             'sailcloth-hip-wrap':0,'sailcloth-back-wrap':0,
+             'sailcloth-repair-seam':-6,'sailcloth-back-seam':7,
+             'sash-short-tail':16,'sash-long-tail':-8}
 
-BOX_TAPERS = {'chest': (1, 0, .82, 1),
-              'shark-tooth': (1, 0, .10, 1), 'shark-tooth-l': (1, 0, .12, 1), 'shark-tooth-r': (1, 0, .12, 1),
-              'bahag-flap-front': (1, 0, .92, 1), 'bahag-flap-back': (1, 0, .94, 1),
-              'bahag-knot-tail': (1, 0, .60, 1),
-              'hair-temple-left': (1, 2, .60, 1), 'hair-temple-right': (1, 2, .60, 1),
-              'hair-side-tip-left': (1, 2, .55, 1), 'hair-side-tip-right': (1, 2, .55, 1),
-              'hair-tail': (1, 0, .72, 1), 'hair-tail-tip': (1, 0, .45, 1),
-              'hair-side-left': (1, 0, .86, 1), 'hair-side-right': (1, 0, .86, 1),
-              'putong-tail-a': (1, 0, .75, 1), 'putong-tail-b': (1, 0, .75, 1),
-              'hand-left': (0, 2, .72, 1), 'hand-right': (0, 2, 1, .72)}
-
-
-# ---------------------------------------------------------------------------
-# § THE TATTOOS: projected decals.
-#
-# ⚠️⚠️ A DECAL IS DRAWN IN A VIEW AND PROJECTED ONTO ONE NAMED BOX, AND IT WRAPS THE CHAMFER.
-# Dante's arm markings are quads pinned to hard-coded planes (his arm faces at 0.055 and
-# 0.310), so they stop dead where the chamfer starts, and a 0.45 chamfer is most of a limb's
-# face. A breastplate tattoo that stops 40 mm short of each side of the chest reads as a
-# sticker. `_project_decal` clips each polygon against every facet of the chamfered box that
-# faces the projector and lifts the piece onto that facet, so a band drawn across the front
-# rolls round the edge with the skin.
-#
-# Entry: (box name, view, slot, convex polygon, layer). View is where the projector stands:
-#   front, back   polygon in (x, y)      left, right   polygon in (z, y)      top   (x, z)
-# Authored in the TABLE space above (facing -Z, pre family pass), so a decal is written
-# against the same numbers as the box it sits on. Polygons must be CONVEX (Sutherland-Hodgman
-# needs only the clipper convex, but the fan that triangulates the result needs both).
-# ---------------------------------------------------------------------------
-
-def _quad(x0, y0, x1, y1):
-    return [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
-
-
-def _stroke(points, width):
-    """A polyline as convex quads, with a square at each inner joint so zigzags stay solid."""
-    out, half = [], width * 0.5
-    for (ax, ay), (bx, by) in zip(points, points[1:]):
-        length = math.hypot(bx - ax, by - ay)
-        nx, ny = -(by - ay) / length * half, (bx - ax) / length * half
-        out.append([(ax + nx, ay + ny), (bx + nx, by + ny), (bx - nx, by - ny), (ax - nx, ay - ny)])
-    for x, y in points[1:-1]:
-        out.append(_quad(x - half, y - half, x + half, y + half))
-    return out
-
-
-def _decals(box, view, slot, polygons, layer=2):
-    return [(box, view, slot, polygon, layer) for polygon in polygons]
-
-
-def _mirror_decals(decals):
-    swap = {'left': 'right', 'right': 'left'}
-    out = []
-    for box, view, slot, polygon, layer in decals:
-        if view in ('left', 'right'):
-            flipped = list(polygon)
-        else:
-            flipped = [(-a, b) for a, b in polygon]
-        out.append((box.replace('left', 'right'), swap.get(view, view), slot, flipped, layer))
-    return out
-
-
-# ⚠️⚠️ THE TATTOO, v32: RESEARCHED, PLANNED AS ONE BODY, THEN DRAWN (owner, 2026-09-25: "do
-# proper research on tribal markings", "thoroughly plan how to make tattoos", "it has to be
-# cohesive throughout the body and not repetitive", "give him foot markings too", "does his
-# back have markings too", "make some of that tattoos extend to his face").
-#
-# THE PLAN (in full in ArtSource/rafi/islander-rework-20260925/design-brief.md, section 7).
-# Philippine men's batok is a few ROUTES that follow the body, each with its own fill, in one
-# line language, not motifs placed about it (Wikipedia "Batok"; Lars Krutak on Kalinga batok;
-# the Boxer Codex accounts of the Visayan pintados):
-#   chaklag  nipple, up over the pectoral, round the shoulder, ending on the upper arm in
-#            "two or three horizontal line sets"; filled as a centipede body or ladder:
-#            two rails with rungs between them.
-#   labid    the first tattoo: from the ankle up the leg, an inch wide, python or crocodile
-#            scales: triangles alternating between two rails. It starts on the foot.
-#   dakag    the back: a ladder down the spine, bars following the ribs.
-#   gulot    stripes across the back of each hand.
-#   bangut   the face (in `_donor_head`): the full Visayan "crocodile jaw" mask would bury his
-#            face, so it is taken as two war lines on each cheek and a double line on the chin.
-# COHESION: black ink; rails 7 mm, rungs and stripes 4 to 6 mm; every field held between
-# rails. NOT REPETITIVE: each route has its own fill, so no motif appears twice on the body,
-# and the two sides are drawn separately (their rungs fall at different places).
-#
-# HOW THESE NUMBERS WERE MADE. Straight pieces are typed by hand. The curved chaklag rails,
-# the labid scales and the dakag were laid out on a drafting script (offset rails along a
-# hand-drawn centreline, rungs at hand-picked distances) and pasted here as literals: the
-# builder runs no generator, and every mark is its own polygon, to be moved on its own.
-#
-# History: v10 to v21 a dozen scattered motifs ("ugly af"); v22/v23 a sun emblem (a sticker,
-# then a gear); v24 a flat pec plate (a badge); v25 to v27 a one-sided sleeve that doubled the
-# necklace's teeth; v28 to v31 shoulder caps with teeth and a doubled V, better but still
-# motifs placed on him rather than routes, with a bare back and bare feet.
-CHEST_DECALS = [
-    # --- chaklag, his left: it begins at the nipple...
-    ('pec-left', 'front', TATTOO, [(0.0640, 0.3250), (0.0730, 0.3360), (0.0640, 0.3470), (0.0550, 0.3360)], 2),
-    ('pec-left', 'front', TATTOO, [(0.0580, 0.3425), (0.0680, 0.3665), (0.0615, 0.3692), (0.0515, 0.3452)], 2),
-    ('pec-left', 'front', TATTOO, [(0.0690, 0.3681), (0.0880, 0.3911), (0.0826, 0.3956), (0.0636, 0.3726)], 2),
-    ('pec-left', 'front', TATTOO, [(0.0903, 0.3929), (0.1233, 0.4079), (0.1204, 0.4143), (0.0874, 0.3993)], 2),
-    ('pec-left', 'front', TATTOO, [(0.0765, 0.3348), (0.0865, 0.3588), (0.0800, 0.3615), (0.0700, 0.3375)], 2),
-    ('pec-left', 'front', TATTOO, [(0.0844, 0.3554), (0.1034, 0.3784), (0.0980, 0.3829), (0.0790, 0.3599)], 2),
-    ('pec-left', 'front', TATTOO, [(0.0986, 0.3747), (0.1316, 0.3897), (0.1287, 0.3961), (0.0957, 0.3811)], 2),
-    ('pec-left', 'front', TATTOO, [(0.0727, 0.3436), (0.0744, 0.3479), (0.0623, 0.3530), (0.0605, 0.3487)], 2),
-    ('pec-left', 'front', TATTOO, [(0.0777, 0.3556), (0.0794, 0.3599), (0.0673, 0.3650), (0.0655, 0.3607)], 2),
-    ('pec-left', 'front', TATTOO, [(0.0846, 0.3665), (0.0876, 0.3701), (0.0774, 0.3785), (0.0745, 0.3749)], 2),
-    ('pec-left', 'front', TATTOO, [(0.0929, 0.3765), (0.0958, 0.3801), (0.0857, 0.3885), (0.0827, 0.3849)], 2),
-    ('pec-left', 'front', TATTOO, [(0.1011, 0.3834), (0.1053, 0.3853), (0.0998, 0.3973), (0.0956, 0.3954)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.0613, 0.3506), (-0.0630, 0.3548), (-0.0752, 0.3497), (-0.0734, 0.3455)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.0666, 0.3635), (-0.0684, 0.3677), (-0.0806, 0.3627), (-0.0788, 0.3584)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.0751, 0.3757), (-0.0780, 0.3792), (-0.0882, 0.3708), (-0.0853, 0.3673)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.0840, 0.3865), (-0.0869, 0.3900), (-0.0971, 0.3816), (-0.0942, 0.3781)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.0947, 0.3950), (-0.0989, 0.3969), (-0.1043, 0.3849), (-0.1002, 0.3830)], 2),
-    # --- chaklag, his right, drawn on its own (its rungs fall at different distances).
-    ('pec-right', 'front', TATTOO, [(-0.0640, 0.3260), (-0.0550, 0.3365), (-0.0640, 0.3470), (-0.0730, 0.3365)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.0700, 0.3375), (-0.0800, 0.3615), (-0.0865, 0.3588), (-0.0765, 0.3348)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.0790, 0.3599), (-0.0980, 0.3829), (-0.1034, 0.3784), (-0.0844, 0.3554)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.0957, 0.3811), (-0.1287, 0.3961), (-0.1316, 0.3897), (-0.0986, 0.3747)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.0515, 0.3452), (-0.0615, 0.3692), (-0.0680, 0.3665), (-0.0580, 0.3425)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.0636, 0.3726), (-0.0826, 0.3956), (-0.0880, 0.3911), (-0.0690, 0.3681)], 2),
-    ('pec-right', 'front', TATTOO, [(-0.0874, 0.3993), (-0.1204, 0.4143), (-0.1233, 0.4079), (-0.0903, 0.3929)], 2),
-    ('shin-left', 'front', TATTOO, [(0.0980, 0.0920), (0.1050, 0.0920), (0.1050, 0.1960), (0.0980, 0.1960)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1210, 0.0920), (0.1280, 0.0920), (0.1280, 0.1960), (0.1210, 0.1960)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1050, 0.0940), (0.1190, 0.1023), (0.1050, 0.1105)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1210, 0.1105), (0.1210, 0.1270), (0.1070, 0.1187)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1050, 0.1270), (0.1190, 0.1353), (0.1050, 0.1435)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1210, 0.1435), (0.1210, 0.1600), (0.1070, 0.1518)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1050, 0.1600), (0.1190, 0.1683), (0.1050, 0.1765)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1210, 0.1765), (0.1210, 0.1930), (0.1070, 0.1848)], 2),
-    # --- dakag: the ladder down the spine...
-    ('chest', 'back', TATTOO, [(-0.0180, 0.2960), (-0.0110, 0.2960), (-0.0110, 0.4340), (-0.0180, 0.4340)], 2),
-    ('chest', 'back', TATTOO, [(0.0110, 0.2960), (0.0180, 0.2960), (0.0180, 0.4340), (0.0110, 0.4340)], 2),
-    ('chest', 'back', TATTOO, [(-0.0110, 0.3060), (0.0110, 0.3060), (0.0110, 0.3105), (-0.0110, 0.3105)], 2),
-    ('chest', 'back', TATTOO, [(-0.0110, 0.3230), (0.0110, 0.3230), (0.0110, 0.3275), (-0.0110, 0.3275)], 2),
-    ('chest', 'back', TATTOO, [(-0.0110, 0.3410), (0.0110, 0.3410), (0.0110, 0.3455), (-0.0110, 0.3455)], 2),
-    ('chest', 'back', TATTOO, [(-0.0110, 0.3580), (0.0110, 0.3580), (0.0110, 0.3625), (-0.0110, 0.3625)], 2),
-    ('chest', 'back', TATTOO, [(-0.0110, 0.3770), (0.0110, 0.3770), (0.0110, 0.3815), (-0.0110, 0.3815)], 2),
-    ('chest', 'back', TATTOO, [(-0.0110, 0.3950), (0.0110, 0.3950), (0.0110, 0.3995), (-0.0110, 0.3995)], 2),
-    ('chest', 'back', TATTOO, [(-0.0110, 0.4140), (0.0110, 0.4140), (0.0110, 0.4185), (-0.0110, 0.4185)], 2),
-    # ...and the bars that follow the ribs, falling outward, three a side, set out beside the
-    # hair tail (v34) so they show; the spine ladder sits under the tail and shows as he moves.
-    ('chest', 'back', TATTOO, [(0.0620, 0.4120), (0.1280, 0.4000), (0.1280, 0.3920), (0.0620, 0.4040)], 2),
-    ('chest', 'back', TATTOO, [(0.0620, 0.3860), (0.1300, 0.3740), (0.1300, 0.3660), (0.0620, 0.3780)], 2),
-    ('chest', 'back', TATTOO, [(0.0620, 0.3600), (0.1300, 0.3480), (0.1300, 0.3400), (0.0620, 0.3520)], 2),
-    ('chest', 'back', TATTOO, [(-0.0620, 0.4140), (-0.1280, 0.4020), (-0.1280, 0.3940), (-0.0620, 0.4060)], 2),
-    ('chest', 'back', TATTOO, [(-0.0620, 0.3880), (-0.1300, 0.3760), (-0.1300, 0.3680), (-0.0620, 0.3800)], 2),
-    ('chest', 'back', TATTOO, [(-0.0620, 0.3620), (-0.1300, 0.3500), (-0.1300, 0.3420), (-0.0620, 0.3540)], 2),
-]
-
-# The bahag's woven border: a light teal band over a cream thread, the Sama destar's bold
-# stripe, round the waist and across the foot of each flap.
-_WAIST = [_quad(-0.140, 0.266, 0.140, 0.276), ]
-BAHAG_DECALS = (
-    _decals('bahag-waist', 'front', CLOTH_LIT, _WAIST)
-    + _decals('bahag-waist', 'back', CLOTH_LIT, _WAIST)
-    + _decals('bahag-waist', 'left', CLOTH_LIT, [_quad(-0.110, 0.266, 0.110, 0.276)])
-    + _decals('bahag-waist', 'right', CLOTH_LIT, [_quad(-0.110, 0.266, 0.110, 0.276)])
-    + _decals('bahag-waist', 'front', WEAVE, [_quad(-0.140, 0.256, 0.140, 0.261)])
-    + _decals('bahag-waist', 'back', WEAVE, [_quad(-0.140, 0.256, 0.140, 0.261)])
-    + _decals('bahag-flap-front', 'front', CLOTH_LIT, [_quad(-0.070, 0.112, 0.070, 0.126)])
-    + _decals('bahag-flap-front', 'front', WEAVE, [_quad(-0.070, 0.132, 0.070, 0.138)])
-    + _decals('bahag-flap-front', 'front', CLOTH_LIT, [_quad(-0.070, 0.146, 0.070, 0.152)])
-    + _decals('bahag-flap-back', 'back', CLOTH_LIT, [_quad(-0.070, 0.142, 0.070, 0.156)])
-    + _decals('bahag-flap-back', 'back', WEAVE, [_quad(-0.070, 0.162, 0.070, 0.168)])
-)
-
-# Arms (ablay on the shoulder, dayadaya down the forearm). ⚠️ THE TWO ARMS ARE DIFFERENT ON
-# PURPOSE (the 2026-09-14 no-stamping rule): chevrons on the left shoulder and a toothed line
-# down that forearm; three blocks on the right shoulder and a zigzag down that forearm. Top is
-# the face that turns outward when the idle drops the arms, front is the face toward camera.
-ARM_DECALS = [
-    # --- chaklag over his left shoulder: the rails run across the top of the deltoid and down
-    # the arm, rungs between them (top view is the outer face once the idle drops the arm).
-    ('deltoid-left', 'top', TATTOO, [(0.100, -0.0500), (0.168, -0.0500), (0.168, -0.0430), (0.100, -0.0430)], 2),
-    ('deltoid-left', 'top', TATTOO, [(0.100, -0.0270), (0.168, -0.0270), (0.168, -0.0200), (0.100, -0.0200)], 2),
-    ('deltoid-left', 'top', TATTOO, [(0.1080, -0.0430), (0.1125, -0.0430), (0.1125, -0.0270), (0.1080, -0.0270)], 2),
-    ('deltoid-left', 'top', TATTOO, [(0.1215, -0.0430), (0.1260, -0.0430), (0.1260, -0.0270), (0.1215, -0.0270)], 2),
-    ('deltoid-left', 'top', TATTOO, [(0.1350, -0.0430), (0.1395, -0.0430), (0.1395, -0.0270), (0.1350, -0.0270)], 2),
-    ('deltoid-left', 'top', TATTOO, [(0.1490, -0.0430), (0.1535, -0.0430), (0.1535, -0.0270), (0.1490, -0.0270)], 2),
-    ('deltoid-left', 'top', TATTOO, [(0.1620, -0.0430), (0.1665, -0.0430), (0.1665, -0.0270), (0.1620, -0.0270)], 2),
-    # ...and ends on the upper arm in three horizontal line sets, all the way round.
-    ('arm-left', 'front', TATTOO, [(0.1780, 0.338), (0.1830, 0.338), (0.1830, 0.462), (0.1780, 0.462)], 2),
-    ('arm-left', 'top', TATTOO, [(0.1780, -0.062), (0.1830, -0.062), (0.1830, 0.062), (0.1780, 0.062)], 2),
-    ('arm-left', 'back', TATTOO, [(0.1780, 0.338), (0.1830, 0.338), (0.1830, 0.462), (0.1780, 0.462)], 2),
-    ('arm-left', 'front', TATTOO, [(0.1885, 0.338), (0.1935, 0.338), (0.1935, 0.462), (0.1885, 0.462)], 2),
-    ('arm-left', 'top', TATTOO, [(0.1885, -0.062), (0.1935, -0.062), (0.1935, 0.062), (0.1885, 0.062)], 2),
-    ('arm-left', 'back', TATTOO, [(0.1885, 0.338), (0.1935, 0.338), (0.1935, 0.462), (0.1885, 0.462)], 2),
-    ('arm-left', 'front', TATTOO, [(0.1990, 0.338), (0.2040, 0.338), (0.2040, 0.462), (0.1990, 0.462)], 2),
-    ('arm-left', 'top', TATTOO, [(0.1990, -0.062), (0.2040, -0.062), (0.2040, 0.062), (0.1990, 0.062)], 2),
-    ('arm-left', 'back', TATTOO, [(0.1990, 0.338), (0.2040, 0.338), (0.2040, 0.462), (0.1990, 0.462)], 2),
-    # --- chaklag over his right shoulder, drawn on its own.
-    ('deltoid-right', 'top', TATTOO, [(-0.168, -0.0500), (-0.100, -0.0500), (-0.100, -0.0430), (-0.168, -0.0430)], 2),
-    ('deltoid-right', 'top', TATTOO, [(-0.168, -0.0270), (-0.100, -0.0270), (-0.100, -0.0200), (-0.168, -0.0200)], 2),
-    ('deltoid-right', 'top', TATTOO, [(-0.1105, -0.0430), (-0.1060, -0.0430), (-0.1060, -0.0270), (-0.1105, -0.0270)], 2),
-    ('deltoid-right', 'top', TATTOO, [(-0.1240, -0.0430), (-0.1195, -0.0430), (-0.1195, -0.0270), (-0.1240, -0.0270)], 2),
-    ('deltoid-right', 'top', TATTOO, [(-0.1385, -0.0430), (-0.1340, -0.0430), (-0.1340, -0.0270), (-0.1385, -0.0270)], 2),
-    ('deltoid-right', 'top', TATTOO, [(-0.1520, -0.0430), (-0.1475, -0.0430), (-0.1475, -0.0270), (-0.1520, -0.0270)], 2),
-    ('deltoid-right', 'top', TATTOO, [(-0.1650, -0.0430), (-0.1605, -0.0430), (-0.1605, -0.0270), (-0.1650, -0.0270)], 2),
-    ('arm-right', 'front', TATTOO, [(-0.1830, 0.338), (-0.1780, 0.338), (-0.1780, 0.462), (-0.1830, 0.462)], 2),
-    ('arm-right', 'top', TATTOO, [(-0.1830, -0.062), (-0.1780, -0.062), (-0.1780, 0.062), (-0.1830, 0.062)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.1830, 0.338), (-0.1780, 0.338), (-0.1780, 0.462), (-0.1830, 0.462)], 2),
-    ('arm-right', 'front', TATTOO, [(-0.1940, 0.338), (-0.1890, 0.338), (-0.1890, 0.462), (-0.1940, 0.462)], 2),
-    ('arm-right', 'top', TATTOO, [(-0.1940, -0.062), (-0.1890, -0.062), (-0.1890, 0.062), (-0.1940, 0.062)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.1940, 0.338), (-0.1890, 0.338), (-0.1890, 0.462), (-0.1940, 0.462)], 2),
-    ('arm-right', 'front', TATTOO, [(-0.2050, 0.338), (-0.2000, 0.338), (-0.2000, 0.462), (-0.2050, 0.462)], 2),
-    ('arm-right', 'top', TATTOO, [(-0.2050, -0.062), (-0.2000, -0.062), (-0.2000, 0.062), (-0.2050, 0.062)], 2),
-    ('arm-right', 'back', TATTOO, [(-0.2050, 0.338), (-0.2000, 0.338), (-0.2000, 0.462), (-0.2050, 0.462)], 2),
-    # --- gulot: stripes across the back of each hand, beyond the cuff.
-    ('hand-left', 'top', TATTOO, [(0.2980, -0.044), (0.3040, -0.044), (0.3040, 0.052), (0.2980, 0.052)], 2),
-    ('hand-left', 'top', TATTOO, [(0.3110, -0.043), (0.3170, -0.043), (0.3170, 0.051), (0.3110, 0.051)], 2),
-    ('hand-left', 'top', TATTOO, [(0.3240, -0.041), (0.3300, -0.041), (0.3300, 0.049), (0.3240, 0.049)], 2),
-    ('hand-right', 'top', TATTOO, [(-0.3050, -0.044), (-0.2990, -0.044), (-0.2990, 0.052), (-0.3050, 0.052)], 2),
-    ('hand-right', 'top', TATTOO, [(-0.3180, -0.043), (-0.3120, -0.043), (-0.3120, 0.051), (-0.3180, 0.051)], 2),
-    ('hand-right', 'top', TATTOO, [(-0.3310, -0.041), (-0.3250, -0.041), (-0.3250, 0.049), (-0.3310, 0.049)], 2),
-]
-
-# The cuffs' engraving, each wrist its own. Left: two grooves near the edges. Right: one groove
-# round the middle, and three studs across the front of it.
-CUFF_DECALS = [
-    ('cuff-left', 'front', SILVER_DARK, [(0.2610, 0.333), (0.2645, 0.333), (0.2645, 0.467), (0.2610, 0.467)], 2),
-    ('cuff-left', 'front', SILVER_DARK, [(0.2775, 0.333), (0.2810, 0.333), (0.2810, 0.467), (0.2775, 0.467)], 2),
-    ('cuff-left', 'top', SILVER_DARK, [(0.2610, -0.068), (0.2645, -0.068), (0.2645, 0.068), (0.2610, 0.068)], 2),
-    ('cuff-left', 'top', SILVER_DARK, [(0.2775, -0.068), (0.2810, -0.068), (0.2810, 0.068), (0.2775, 0.068)], 2),
-    ('cuff-right', 'front', SILVER_DARK, [(-0.2730, 0.333), (-0.2690, 0.333), (-0.2690, 0.467), (-0.2730, 0.467)], 2),
-    ('cuff-right', 'top', SILVER_DARK, [(-0.2730, -0.068), (-0.2690, -0.068), (-0.2690, 0.068), (-0.2730, 0.068)], 2),
-    ('cuff-right', 'front', SILVER_DARK, [(-0.2775, 0.3620), (-0.2645, 0.3620), (-0.2645, 0.3740), (-0.2775, 0.3740)], 3),
-    ('cuff-right', 'front', SILVER_DARK, [(-0.2775, 0.3940), (-0.2645, 0.3940), (-0.2645, 0.4060), (-0.2775, 0.4060)], 3),
-    ('cuff-right', 'front', SILVER_DARK, [(-0.2775, 0.4260), (-0.2645, 0.4260), (-0.2645, 0.4380), (-0.2775, 0.4380)], 3),
-]
-
-# --- labid: from the foot, round the ankle, up the front of each shin and on up the thigh
-# until the bahag covers it. The scales are triangles alternating between the two rails.
-LEG_DECALS = [
-    # His left foot: two chevrons on top of the foot pointing to the toes, behind the tsinelas
-    # strap. This is where the first tattoo begins.
-    ('foot-left', 'top', TATTOO, [(0.0476, -0.0292), (0.0806, -0.0532), (0.0854, -0.0468), (0.0524, -0.0228)], 2),
-    ('foot-left', 'top', TATTOO, [(0.0854, -0.0532), (0.1184, -0.0292), (0.1136, -0.0228), (0.0806, -0.0468)], 2),
-    ('foot-left', 'top', TATTOO, [(0.0806, -0.0532), (0.0830, -0.0550), (0.0854, -0.0532)], 2),
-    ('foot-left', 'top', TATTOO, [(0.0560, -0.0068), (0.0810, -0.0248), (0.0850, -0.0192), (0.0600, -0.0012)], 2),
-    ('foot-left', 'top', TATTOO, [(0.0850, -0.0248), (0.1100, -0.0068), (0.1060, -0.0012), (0.0810, -0.0192)], 2),
-    ('foot-left', 'top', TATTOO, [(0.0810, -0.0248), (0.0830, -0.0262), (0.0850, -0.0248)], 2),
-    # The ring round his left ankle.
-    ('shin-left', 'front', TATTOO, [(0.030, 0.086), (0.138, 0.086), (0.138, 0.093), (0.030, 0.093)], 2),
-    ('shin-left', 'back', TATTOO, [(0.030, 0.086), (0.138, 0.086), (0.138, 0.093), (0.030, 0.093)], 2),
-    ('shin-left', 'left', TATTOO, [(-0.062, 0.086), (0.060, 0.086), (0.060, 0.093), (-0.062, 0.093)], 2),
-    ('shin-left', 'right', TATTOO, [(-0.062, 0.086), (0.060, 0.086), (0.060, 0.093), (-0.062, 0.093)], 2),
-    ('shin-left', 'front', TATTOO, [(0.0980, 0.0920), (0.1050, 0.0920), (0.1050, 0.1960), (0.0980, 0.1960)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1210, 0.0920), (0.1280, 0.0920), (0.1280, 0.1960), (0.1210, 0.1960)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1050, 0.0940), (0.1190, 0.1023), (0.1050, 0.1105)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1210, 0.1105), (0.1210, 0.1270), (0.1070, 0.1187)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1050, 0.1270), (0.1190, 0.1353), (0.1050, 0.1435)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1210, 0.1435), (0.1210, 0.1600), (0.1070, 0.1518)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1050, 0.1600), (0.1190, 0.1683), (0.1050, 0.1765)], 2),
-    ('shin-left', 'front', TATTOO, [(0.1210, 0.1765), (0.1210, 0.1930), (0.1070, 0.1848)], 2),
-    ('thigh-left', 'front', TATTOO, [(0.1000, 0.1840), (0.1070, 0.1840), (0.1070, 0.2360), (0.1000, 0.2360)], 2),
-    ('thigh-left', 'front', TATTOO, [(0.1230, 0.1840), (0.1300, 0.1840), (0.1300, 0.2360), (0.1230, 0.2360)], 2),
-    ('thigh-left', 'front', TATTOO, [(0.1230, 0.1860), (0.1230, 0.2030), (0.1090, 0.1945)], 2),
-    ('thigh-left', 'front', TATTOO, [(0.1070, 0.2030), (0.1210, 0.2115), (0.1070, 0.2200)], 2),
-    # His right foot, drawn on its own: the second chevron sits a little further back.
-    ('foot-right', 'top', TATTOO, [(-0.0524, -0.0228), (-0.0854, -0.0468), (-0.0806, -0.0532), (-0.0476, -0.0292)], 2),
-    ('foot-right', 'top', TATTOO, [(-0.0806, -0.0468), (-0.1136, -0.0228), (-0.1184, -0.0292), (-0.0854, -0.0532)], 2),
-    ('foot-right', 'top', TATTOO, [(-0.0854, -0.0532), (-0.0830, -0.0550), (-0.0806, -0.0532)], 2),
-    ('foot-right', 'top', TATTOO, [(-0.0600, 0.0008), (-0.0850, -0.0172), (-0.0810, -0.0228), (-0.0560, -0.0048)], 2),
-    ('foot-right', 'top', TATTOO, [(-0.0810, -0.0172), (-0.1060, 0.0008), (-0.1100, -0.0048), (-0.0850, -0.0228)], 2),
-    ('foot-right', 'top', TATTOO, [(-0.0850, -0.0228), (-0.0830, -0.0242), (-0.0810, -0.0228)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.138, 0.086), (-0.030, 0.086), (-0.030, 0.093), (-0.138, 0.093)], 2),
-    ('shin-right', 'back', TATTOO, [(-0.138, 0.086), (-0.030, 0.086), (-0.030, 0.093), (-0.138, 0.093)], 2),
-    ('shin-right', 'left', TATTOO, [(-0.062, 0.086), (0.060, 0.086), (0.060, 0.093), (-0.062, 0.093)], 2),
-    ('shin-right', 'right', TATTOO, [(-0.062, 0.086), (0.060, 0.086), (0.060, 0.093), (-0.062, 0.093)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.1280, 0.0920), (-0.1210, 0.0920), (-0.1210, 0.1960), (-0.1280, 0.1960)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.1050, 0.0920), (-0.0980, 0.0920), (-0.0980, 0.1960), (-0.1050, 0.1960)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.1050, 0.0940), (-0.1050, 0.1100), (-0.1190, 0.1020)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.1210, 0.1100), (-0.1070, 0.1180), (-0.1210, 0.1260)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.1050, 0.1260), (-0.1050, 0.1420), (-0.1190, 0.1340)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.1210, 0.1420), (-0.1070, 0.1500), (-0.1210, 0.1580)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.1050, 0.1580), (-0.1050, 0.1740), (-0.1190, 0.1660)], 2),
-    ('shin-right', 'front', TATTOO, [(-0.1210, 0.1740), (-0.1070, 0.1820), (-0.1210, 0.1900)], 2),
-    ('thigh-right', 'front', TATTOO, [(-0.1300, 0.1840), (-0.1230, 0.1840), (-0.1230, 0.2360), (-0.1300, 0.2360)], 2),
-    ('thigh-right', 'front', TATTOO, [(-0.1070, 0.1840), (-0.1000, 0.1840), (-0.1000, 0.2360), (-0.1070, 0.2360)], 2),
-    ('thigh-right', 'front', TATTOO, [(-0.1230, 0.1860), (-0.1090, 0.1948), (-0.1230, 0.2035)], 2),
-    ('thigh-right', 'front', TATTOO, [(-0.1070, 0.2035), (-0.1070, 0.2210), (-0.1210, 0.2123)], 2),
-]
-
-BODY_DECALS = CHEST_DECALS + BAHAG_DECALS + ARM_DECALS + CUFF_DECALS + LEG_DECALS
+# Taper cloth ends and palms only. Hair retains squared native box ends.
+# Tuple: driving axis, narrowed axis, low/high end width.
+BOX_TAPERS = {'headwrap-tail-long':(1,0,.55,1),'headwrap-tail-short':(0,1,1,.45),
+              'sailcloth-hip-wrap':(1,0,.72,1),'sailcloth-back-wrap':(1,0,.77,1),
+              'cream-undershirt':(1,0,.12,1),'folded-shoulder-lining':(1,0,1,.72),
+              'hand-left':(0,2,.72,1),'hand-right':(0,2,1,.72)}
 
 DONOR_SPACE = tuple(entry[0] for entry in HEAD)
 
@@ -1069,70 +718,26 @@ def _verify_expression(before, after, uv, moved):
 
 
 # ---------------------------------------------------------------------------
-# RAFI'S FACE: FIERCE (owner, 2026-09-25: "it should be fierce").
-#
-# ⚠️⚠️ THE ATTITUDE IS IN THE EYE'S TOP EDGE, BECAUSE HE HAS NO BROWS. Brows are an owner ruling
-# for this cast, so the lid a scowling brow would draw is the eye's own top edge: it drops
-# 26 mm toward the nose over a 42 mm eye, steeper than Sean's scowl, with a flat hard bottom.
-#
-# ⚠️ THE MOUTH IS A HEAVY SCOWL: a 13 mm bar, tilted, hooked down hard at his left corner.
-# v11 and v12 drew a filled wedge opening to one side; at every distance it read as an
-# arrowhead ("<"), because a filled triangle has no stroke to read as lips. v13 bent both
-# corners of a thin bar down and read as grumpy, not fierce: a thin frown is sulking. Weight
-# is what makes it hard, and one hooked corner is what makes it his (Sean's and Dante's
-# mouths are both a bar with a bent corner; his is heavier and bends the other way).
-#
-# ⚠️⚠️ INK ONLY (owner, 2026-09-25, of v11: "everyone else has just black eyes and just black
-# mouth"). v10 and v11 carried a white glint in each eye and a strip of teeth with one gold
-# peg in the snarl (the gold was sourced: Visayan accounts describe gold pegs in high-status
-# men's teeth). On this cast a face is two ink shapes and a third, nothing else; the extra
-# colours made his the only face that did not belong. The attitude has to come from shape.
+# RAFI: focused graphic eyes and a restrained closed mouth.
 # ---------------------------------------------------------------------------
 MOUTH_Z = 0.1596
 
+
+def _mouth_ribbon():
+    # A short closed stroke, with only a small corner lift. No broad U grin.
+    half_w, base_y, thickness, steps = 0.038, 0.422, 0.007, 16
+    upper, lower = [], []
+    for k in range(steps + 1):
+        x = -half_w + k / steps * (2 * half_w)
+        u = x / half_w
+        centre = base_y + .0025*u + .003*max(0,(u-.65)/.35)
+        weight = thickness*(.72+.28*(1-u*u))
+        upper.append((x, centre + weight * .5))
+        lower.append((x, centre - weight * .5))
+    return upper, lower
+
 EYE_SCALE = 0.82
 
-# Eye, per side, in file space: half width, outer top, inner top, bottom, corner cut.
-EYE_X, EYE_HALF, EYE_TOP_OUT, EYE_TOP_IN, EYE_BOTTOM, EYE_CUT = 0.080, 0.026, 0.514, 0.480, 0.456, 0.006
-
-# The scowl's centre line, his right (-X) to his left, and its weight.
-# ⚠️ THREE MOUTHS, ONE SWITCH (v32; owner of v31: "still a bit ugly ... especially the facial
-# expression"). The face is judged by rendering these side by side, not by argument:
-#   scowl  v14 to v31: a tilted bar hooked down at his left corner
-#   stern  a wide heavy bar, both corners pulled down: the war face
-#   snarl  a heavy bar lifted at his left corner and dropped at his right: a dare
-MOUTHS = {
-    # v34 adds two simpler ones: a single tilted bar, and an open war cry (a filled shape).
-    'grit': ([(-0.040, 0.411), (0.042, 0.425)], 0.014),
-    'roar': ([(-0.042, 0.430), (0.042, 0.430), (0.026, 0.401), (-0.026, 0.401)], None),
-    'scowl': ([(-0.042, 0.417), (0.030, 0.425), (0.046, 0.408)], 0.013),
-    'stern': ([(-0.050, 0.405), (-0.036, 0.418), (0.036, 0.418), (0.050, 0.405)], 0.013),
-    'snarl': ([(-0.046, 0.405), (-0.032, 0.416), (0.028, 0.421), (0.048, 0.434)], 0.014),
-}
-# Rendered side by side twice (Logs/rafi-share/rafi-v32-mouths-zoom.png, rafi-v34-mouths-zoom.png):
-# stern read sad, scowl was the face the owner called ugly, snarl read as a squiggle and roar
-# as a cute cat mouth. Grit, one heavy tilted bar, is the toughest and the most like how the
-# cast draws a mouth.
-SCOWL, SCOWL_WEIGHT = MOUTHS[os.environ.get('RAFI_MOUTH', 'grit')]
-
-# ⚠️⚠️ THE BANGUT, TAKEN LIGHTLY (owner: "make some of that tattoos extend to his face"). The
-# Visayan elite warrior's face mask ran "from ear to chin and eye", "like crocodile jaws"; on
-# this cast's flat face that would bury the eyes and mouth, which have to read first. So the
-# face carries a bar under each eye and a stripe down the chin, lighter than the eyes and
-# mouth so those still read first. The face plate is
-# flat (z 0.158 to 0.160) across x +/-0.12, y 0.343 to 0.614, measured off the donor; every
-# mark stays inside it. Each is typed on its own; the two cheeks differ a little.
-BANGUT = [
-    # A war slash from each outer eye corner down and out across the cheek. ⚠️ v32 drew two
-    # thin lines per cheek beside the mouth (cat whiskers); v33 a bar tight under each eye
-    # (tired lower lids). A single diagonal stroke off the corner of the eye reads as war
-    # paint and stretches the eye's own slant, so it adds to the glare instead of softening it.
-    # v35: angled about 35 degrees outward; drawn near vertical (v34) they hinted at tears.
-    [(0.094, 0.4520), (0.106, 0.4520), (0.119, 0.4230), (0.107, 0.4230)],
-    [(-0.106, 0.4525), (-0.094, 0.4525), (-0.106, 0.4240), (-0.118, 0.4240)],
-    # One stripe down the chin (a double line read as the number 11).
-    [(-0.0045, 0.3600), (0.0045, 0.3600), (0.0045, 0.3890), (-0.0045, 0.3890)],
-]
 
 SKULL_SLOTS = {15: SKIN, 8: INK}
 
@@ -1165,35 +770,56 @@ def _donor_head():
 
     # Replace only the donor's graphic ink, keeping all native skull/ear skin.
     tris = [t for t in tris if t not in mouth_tris and t not in eyes]
+    plate = MOUTH_Z + PANEL_PROUD
 
-    def polygon(points, slot, layer):
-        """A convex polygon flat on the face plate, `layer` steps of PANEL_PROUD proud."""
-        points = list(points)
-        area = sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(points, points[1:] + points[:1]))
-        if area < 0:
-            points.reverse()
-        z = MOUTH_Z + PANEL_PROUD * layer
-        first = len(pos)
-        for x, y in points:
-            pos.append((x, y, z)); nrm.append((0, 0, 1)); uv.append(cell_uv(slot))
-        tris.extend((first, first + i, first + i + 1) for i in range(1, len(points) - 1))
+    upper, lower = _mouth_ribbon()
+    steps = len(upper) - 1
 
-    for centre in (-EYE_X, EYE_X):
-        out = 1.0 if centre > 0 else -1.0          # away from the nose
-        xo, xi = centre + out * EYE_HALF, centre - out * EYE_HALF
-        polygon([(xo, EYE_TOP_OUT), (xi, EYE_TOP_IN), (xi, EYE_BOTTOM + EYE_CUT),
-                 (xi + out * EYE_CUT, EYE_BOTTOM), (xo - out * EYE_CUT, EYE_BOTTOM),
-                 (xo, EYE_BOTTOM + EYE_CUT)], INK, 1)
+    # Add vertices for ribbon: upper[0..steps] then lower[0..steps]
+    u_base = len(pos)
+    for x, y in upper:
+        pos.append((x, y, plate))
+        nrm.append((0.0, 0.0, 1.0))
+        uv.append(cell_uv(INK))
 
-    if SCOWL_WEIGHT is None:
-        polygon(SCOWL, INK, 1)
-    else:
-        for piece in _stroke(SCOWL, SCOWL_WEIGHT):
-            polygon(piece, INK, 1)
-    for mark in BANGUT:
-        polygon(mark, INK, 1)
+    l_base = len(pos)
+    for x, y in lower:
+        pos.append((x, y, plate))
+        nrm.append((0.0, 0.0, 1.0))
+        uv.append(cell_uv(INK))
 
-    # No eyebrows: the owner's cast rule. The eyes carry the brow's job (see above).
+    # Clean quad-strip triangulation (Counter-Clockwise facing +Z)
+    for k in range(steps):
+        u0 = u_base + k
+        u1 = u_base + k + 1
+        l0 = l_base + k
+        l1 = l_base + k + 1
+        tris.append((u0, l0, u1))
+        tris.append((u1, l0, l1))
+
+    def ink_polygon(points):
+        points=list(points)
+        area=sum(a[0]*b[1]-b[0]*a[1] for a,b in zip(points,points[1:]+points[:1]))
+        if area<0:points.reverse()
+        first=len(pos)
+        for x,y in points:
+            pos.append((x,y,plate));nrm.append((0,0,1));uv.append(cell_uv(INK))
+        tris.extend((first,first+i,first+i+1) for i in range(1,len(points)-1))
+
+    # ⚠️⚠️ THE EYES CARRY THE ATTITUDE, BECAUSE THE BROWS ARE GONE (2026-09-23). The owner
+    # ruled brows off; the upright 24 by 42 mm rounded slots that were left made his face the
+    # blandest in the cast (two dots beside Sean's scowl, Zack's smug lids, Dante's glare).
+    # The concept sheet's read is "observant, quietly mischievous": so each eye is larger and
+    # its TOP edge slopes down toward the nose, the lid a brow would otherwise have drawn.
+    # Bottom corners keep a small cut, the top keeps its hard slant.
+    for x in (-.077,.077):
+        w,h,cut,slant=.016,.026,.004,.013
+        inner=-1.0 if x>0 else 1.0          # which side of this eye faces the nose
+        xi,xo=x+inner*w,x-inner*w
+        pts=[(xo,.481-h+cut),(xo,.481+h),(xi,.481+h-slant),(xi,.481-h+cut),
+             (xi-inner*cut*-1 if False else xi+(-inner)*cut,.481-h),(xo+inner*cut,.481-h)]
+        ink_polygon(pts)
+    # No eyebrows: the retained HERO cast communicates through eyes and mouth.
 
     return _compact(pos, nrm, uv, tris)
 
@@ -1517,198 +1143,67 @@ def _rafi_tube(path, radius, plane_normal, closed=True, sides=6):
 
 
 def _rafi_headband():
-    """The putong: an octagonal band sized round the HAIR, not the skull.
-
-    ⚠️ THE OLD BAND (outer 0.179) SAT ON THE SKULL, and long hair at 0.240 swallowed it at
-    the sides and back. Worn over long hair a headcloth is the outermost thing on the head,
-    so the outer ring clears the side hair (0.240) and the back tier (-0.240); the inner ring
-    meets the forehead at the skull's own front (0.158).
-    """
-    def perimeter(x, z0, z1, cut):
-        return [(-x + cut, z0), (x - cut, z0), (x, z0 + cut), (x, z1 - cut),
-                (x - cut, z1), (-x + cut, z1), (-x, z1 - cut), (-x, z0 + cut)]
-    outer = perimeter(.250, -.252, .182, .052)
-    inner = perimeter(.226, -.232, .160, .046)
-    lo, hi = .558, .606
-    # ⚠️ TIPPED, NOT LEVEL (v14): 14 mm higher at the forehead, 20 mm lower at the knot. A
-    # level ring read as a plank; a tied headcloth rides up the brow and drops to the knot.
-    tip = .08
-    faces = []
+    def perimeter(x,z0,z1,cut):
+        return [(-x+cut,z0),(x-cut,z0),(x,z0+cut),(x,z1-cut),
+                (x-cut,z1),(-x+cut,z1),(-x,z1-cut),(-x,z0+cut)]
+    outer=perimeter(.179,-.191,.174,.031)
+    inner=perimeter(.165,-.178,.1602,.027)
+    lo,hi=.564,.596;faces=[]
     for i in range(8):
-        j = (i + 1) % 8
-        for edge, sign in [(outer, 1), (inner, -1)]:
-            poly = [(edge[i][0], lo + tip * edge[i][1], edge[i][1]), (edge[j][0], lo + tip * edge[j][1], edge[j][1]),
-                    (edge[j][0], hi + tip * edge[j][1], edge[j][1]), (edge[i][0], hi + tip * edge[i][1], edge[i][1])]
-            centre = _rafi_mean(poly)
-            faces.append(_rafi_orient(poly, (centre[0] * sign, 0, centre[2] * sign)))
-        for y, direction in [(lo, -1), (hi, 1)]:
-            poly = [(outer[i][0], y + tip * outer[i][1], outer[i][1]), (outer[j][0], y + tip * outer[j][1], outer[j][1]),
-                    (inner[j][0], y + tip * inner[j][1], inner[j][1]), (inner[i][0], y + tip * inner[i][1], inner[i][1])]
-            faces.append(_rafi_orient(poly, (0, direction, 0)))
+        j=(i+1)%8
+        for edge,sign in [(outer,1),(inner,-1)]:
+            poly=[(edge[i][0],lo,edge[i][1]),(edge[j][0],lo,edge[j][1]),
+                  (edge[j][0],hi,edge[j][1]),(edge[i][0],hi,edge[i][1])]
+            centre=_rafi_mean(poly)
+            faces.append(_rafi_orient(poly,(centre[0]*sign,0,centre[2]*sign)))
+        for y,direction in [(lo,-1),(hi,1)]:
+            poly=[(outer[i][0],y,outer[i][1]),(outer[j][0],y,outer[j][1]),
+                  (inner[j][0],y,inner[j][1]),(inner[i][0],y,inner[i][1])]
+            faces.append(_rafi_orient(poly,(0,direction,0)))
     return faces
 
 
 def _rafi_forms(head):
     # All forms feed the copied builder's own mesh/UV/weight/outline pipeline.
     if head:
-        yield 'head', PUTONG, _rafi_headband()
+        yield 'head',OVERALLS,_rafi_headband()
+        yield 'head',OVERALLS,_rafi_loft([
+            (.57,.153,-.212,.043,.014),(.522,.166,-.227,.05,.014),
+            (.474,.152,-.241,.031,.012)])
+        yield 'head',OVERALLS,_rafi_loft([
+            (.583,.162,-.209,.043,.014),(.552,.20,-.225,.047,.014),
+            (.523,.216,-.231,.017,.011)])
+        yield 'head',WOOD_GOLD,_rafi_loft([
+            (.625,.160,.187,.021,.018),(.616,.160,.190,.042,.03),
+            (.570,.160,.190,.042,.03),(.559,.160,.187,.024,.019)])
     else:
-        # ⚠️⚠️ THE NECKLACE'S CHAIN LIES ON THE BODY (owner, of v29: "the necklace doesnt look
-        # liek a necklace bcz its js floating"). v28 and v29 hung the cord from a torc under the
-        # chin, where the head hides both, so the teeth looked pinned to the skin. The chain is
-        # now one closed loop: round the back of the neck, across the top of the shoulders, down
-        # over the chest's chamfered edge and onto the pectorals, every point measured to sit
-        # 6 mm off the surface it crosses, and the teeth hang from it on silver bails. Silver so
-        # it cannot be read as one of the black tattoo lines beside it. The torc is gone.
-        # v31: it hangs to the sternum (0.362), 26 mm lower than v30's, and is 12 mm thick, so
-        # the drape from under the jaw down the chest is what you see, not a V under the chin.
-        chain = [(0.0, .449, .066), (.044, .449, .052), (.066, .449, .012), (.064, .449, -.040),
-                 (.054, .436, -.066), (.044, .412, -.090), (.030, .388, -.104), (.015, .370, -.106),
-                 (0.0, .362, -.106), (-.015, .370, -.106), (-.030, .388, -.104), (-.044, .412, -.090),
-                 (-.054, .436, -.066), (-.064, .449, -.040), (-.066, .449, .012), (-.044, .449, .052)]
-        yield 'torso', SILVER, _rafi_tube(chain, .006, (0, 1, 0), closed=True, sides=6)
+        # ⚠️ A SMALL HORIZONTAL COIL, NOT AN UPRIGHT RING (2026-09-23). Two 0.079-tall loops
+        # stood on the hip like a shield and were the largest shape on the front of the body.
+        # A rope carried coiled is three short loops lying across the hip.
+        # ⚠️ NO COIL (v8). Even small and flat, three loops on the hip read as a toy spring
+        # beside the cast's one clean belt line; the orange float on its hanger carries the
+        # sea-going identity alone.
+        pass
+        # Fit the forearm just before the palm, not the palm itself. An ellipse
+        # clips block-wrist corners; this path keeps clearance on every side.
+        wrist=[]
+        for i in range(20):
+            angle=(i+.25)*math.tau/20;c,s=math.cos(angle),math.sin(angle)
+            wrist.append((.254,.400+math.copysign(.047,c)+.0085*c,
+                          .005+math.copysign(.0325,s)+.0085*s))
+        yield 'arm-left',WHITE,_rafi_tube(wrist,.0035,(1,0,0))
+        knot=[(.245,.398,-.04),(.252,.405,-.045),(.260,.398,-.046),
+              (.252,.393,-.041),(.243,.388,-.042),(.248,.384,-.045),(.257,.39,-.046)]
+        yield 'arm-left',OVERALLS_DARK,_rafi_tube(knot,.0031,(0,0,1),closed=False)
 
 
-def _box_facets(name, lo, hi, skip):
-    """Every facet of one box in FILE space: chamfered, tapered and tilted.
-
-    `lo`/`hi` are already flipped to the file's +Z front. Split out of `build_mesh` so the
-    decals project onto exactly the surface the mesh draws, taper and tilt included; a
-    decal measured against the untapered box would float off the V of the chest.
-    """
-    for axis in range(3):
-        if hi[axis] <= lo[axis]:
-            raise SystemExit(f"box '{name}' is inside out on axis {axis}")
-
-    # ⚠️ A BOX THAT DROPS A FACE STAYS SQUARE. See the chamfer block: the face panel
-    # is a full rectangle drawn into the plane of the wall this removes, and an
-    # octagonal hole leaves its corners outside the model.
-    bevel = 0.0 if skip >= 0 else bevel_for(lo, hi)
-
-    angle = math.radians(BOX_TILTS.get(name, 0))
-    cosine, sine = math.cos(angle), math.sin(angle)
-    centre = tuple((lo[i] + hi[i]) * .5 for i in range(3))
-    taper = BOX_TAPERS.get(name)
-    out = []
-
-    for normal, points in box_polygons(lo, hi, skip, bevel):
-        if taper:
-            driving, narrowed, low_width, high_width = taper
-            shaped = []
-            for point in points:
-                p = list(point)
-                t = (p[driving] - lo[driving]) / (hi[driving] - lo[driving])
-                p[narrowed] = centre[narrowed] + (p[narrowed] - centre[narrowed]) * (low_width + (high_width - low_width) * t)
-                shaped.append(tuple(p))
-            points = shaped
-            # Recompute the changed polygon normal before the existing
-            # chamfer/outline smoothing stages consume it.
-            n = [0., 0., 0.]
-            for a, b in zip(points, points[1:] + points[:1]):
-                n[0] += (a[1] - b[1]) * (a[2] + b[2])
-                n[1] += (a[2] - b[2]) * (a[0] + b[0])
-                n[2] += (a[0] - b[0]) * (a[1] + b[1])
-            normal = _unit(tuple(n))
-        if angle:
-            normal = (normal[0] * cosine - normal[1] * sine,
-                      normal[0] * sine + normal[1] * cosine, normal[2])
-            turned = []
-            for p in points:
-                x, y = p[0] - centre[0], p[1] - centre[1]
-                turned.append((centre[0] + x * cosine - y * sine, centre[1] + x * sine + y * cosine, p[2]))
-            points = turned
-        out.append((normal, points))
-    return out
-
-
-# Where each decal view's projector stands, as the direction it shines in TABLE space, and
-# how a view's 2D polygon becomes a 3D point on its plane.
-_DECAL_VIEWS = {
-    'front': ((0, 0, 1), lambda a, b: (a, b, 0.0)),
-    'back': ((0, 0, -1), lambda a, b: (a, b, 0.0)),
-    'left': ((-1, 0, 0), lambda a, b: (0.0, b, a)),
-    'right': ((1, 0, 0), lambda a, b: (0.0, b, a)),
-    'top': ((0, -1, 0), lambda a, b: (a, 0.0, b)),
-}
-
-
-def _clip_convex(subject, clipper):
-    """Sutherland-Hodgman: `subject` clipped to the convex, counter-clockwise `clipper`."""
-    out = list(subject)
-    for (ax, ay), (bx, by) in zip(clipper, clipper[1:] + clipper[:1]):
-        if not out:
-            break
-        source, out = out, []
-
-        def side(p):
-            return (bx - ax) * (p[1] - ay) - (by - ay) * (p[0] - ax)
-
-        for i, current in enumerate(source):
-            previous = source[i - 1]
-            sc, sp = side(current), side(previous)
-            if sc >= -1e-12:
-                if sp < -1e-12:
-                    t = sp / (sp - sc)
-                    out.append((previous[0] + (current[0] - previous[0]) * t,
-                                previous[1] + (current[1] - previous[1]) * t))
-                out.append(current)
-            elif sp >= -1e-12:
-                t = sp / (sp - sc)
-                out.append((previous[0] + (current[0] - previous[0]) * t,
-                            previous[1] + (current[1] - previous[1]) * t))
-    return out
-
-
-def _area2(points):
-    return sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(points, points[1:] + points[:1]))
-
-
-def _project_decal(facets, view, polygon, lift, layer):
-    """One decal polygon, projected onto a box's facets. Yields (normal, points) pieces.
-
-    `lift` turns an authored (table space) point into a file space one: the family remap
-    and the Z flip. The projector direction goes through the same flip.
-    """
-    direction, to_3d = _DECAL_VIEWS[view]
-    d = lift(direction, vector=True)
-    k = max(range(3), key=lambda i: abs(d[i]))
-    u, v = [i for i in range(3) if i != k]
-    shape = [lift(to_3d(a, b)) for a, b in polygon]
-    shape = [(p[u], p[v]) for p in shape]
-    if _area2(shape) < 0:
-        shape.reverse()
-
-    for normal, points in facets:
-        if _dot(normal, d) > -0.02:
-            continue
-        clipper = [(p[u], p[v]) for p in points]
-        if abs(_area2(clipper)) < 1e-12:
-            continue
-        if _area2(clipper) < 0:
-            clipper.reverse()
-        piece = _clip_convex(shape, clipper)
-        if len(piece) < 3 or abs(_area2(piece)) < 1e-10:
-            continue
-        # Lift each 2D point onto this facet's plane along the projector axis, then stand it
-        # `layer` steps of PANEL_PROUD off the skin along the facet normal.
-        plane = _dot(normal, points[0])
-        lifted = []
-        for a, b in piece:
-            p = [0.0, 0.0, 0.0]
-            p[u], p[v] = a, b
-            p[k] = (plane - normal[u] * a - normal[v] * b) / normal[k]
-            lifted.append(tuple(p[i] + normal[i] * PANEL_PROUD * layer for i in range(3)))
-        yield normal, lifted
-
-
-def build_mesh(boxes, panels=(), donor=None, decals=()):
-    """Boxes, decals, pixel panels and an optional donated mesh, to flat glTF arrays."""
+def build_mesh(boxes, panels=(), donor=None):
+    """Boxes, pixel panels and an optional donated mesh, to flat glTF arrays."""
     pos, nrm, uv, joints, weights, idx = [], [], [], [], [], []
 
     # Which vertices came from a pixel panel rather than from a box. See smooth_normals:
     # they are held out of the averaging in both directions.
     panel_indices = []
-    facets_by_box = {}
 
     for entry in boxes:
         name, bone, lo, hi, slot = entry[:5]
@@ -1717,14 +1212,50 @@ def build_mesh(boxes, panels=(), donor=None, decals=()):
         if FRONT_IS_MINUS_Z:
             lo, hi = (lo[0], lo[1], -hi[2]), (hi[0], hi[1], -lo[2])
 
+        for axis in range(3):
+            if hi[axis] <= lo[axis]:
+                raise SystemExit(f"box '{name}' is inside out on axis {axis}")
+
         j = BONE[bone]
         u, v = cell_uv(slot)
-        facets = _box_facets(name, lo, hi, skip)
-        facets_by_box[name] = (bone, facets)
 
-        for normal, points in facets:
+        # ⚠️ A BOX THAT DROPS A FACE STAYS SQUARE. See the chamfer block: the face panel
+        # is a full rectangle drawn into the plane of the wall this removes, and an
+        # octagonal hole leaves its corners outside the model.
+        bevel = 0.0 if skip >= 0 else bevel_for(lo, hi)
+
+        angle=math.radians(BOX_TILTS.get(name,0))
+        cosine,sine=math.cos(angle),math.sin(angle)
+        centre=tuple((lo[i]+hi[i])*.5 for i in range(3))
+
+        for normal, points in box_polygons(lo, hi, skip, bevel):
             first = len(pos)
+            taper=BOX_TAPERS.get(name)
+            if taper:
+                driving,narrowed,low_width,high_width=taper
+                shaped=[]
+                for point in points:
+                    p=list(point)
+                    t=(p[driving]-lo[driving])/(hi[driving]-lo[driving])
+                    p[narrowed]=centre[narrowed]+(p[narrowed]-centre[narrowed])*(low_width+(high_width-low_width)*t)
+                    shaped.append(tuple(p))
+                points=shaped
+                # Recompute the changed polygon normal before the existing
+                # chamfer/outline smoothing stages consume it.
+                n=[0.,0.,0.]
+                for a,b in zip(points,points[1:]+points[:1]):
+                    n[0]+=(a[1]-b[1])*(a[2]+b[2])
+                    n[1]+=(a[2]-b[2])*(a[0]+b[0])
+                    n[2]+=(a[0]-b[0])*(a[1]+b[1])
+                normal=_unit(tuple(n))
+            if angle:
+                normal=(normal[0]*cosine-normal[1]*sine,
+                        normal[0]*sine+normal[1]*cosine,normal[2])
+
             for p in points:
+                if angle:
+                    x,y=p[0]-centre[0],p[1]-centre[1]
+                    p=(centre[0]+x*cosine-y*sine,centre[1]+x*sine+y*cosine,p[2])
                 pos.append(p)
                 nrm.append(normal)
                 uv.append((u, v))
@@ -1732,50 +1263,10 @@ def build_mesh(boxes, panels=(), donor=None, decals=()):
                 weights.append((1.0, 0.0, 0.0, 0.0))
 
             # ⚠️ A FAN, BECAUSE THE FACES ARE NO LONGER ALL QUADS. Every polygon here is
-            # planar and convex (an octagon, a rectangle or a triangle) so a fan from
+            # planar and convex — an octagon, a rectangle or a triangle — so a fan from
             # its first vertex is exact rather than an approximation.
             for k in range(1, len(points) - 1):
                 idx += [first, first + k, first + k + 1]
-
-    # § THE DECALS. See the note above `_quad`. Body only: every decal is authored in table
-    # space, so it goes through the same remap as the box it lands on.
-    for box, view, slot, polygon, layer in decals:
-        if donor is not None:
-            raise SystemExit(f"decal on '{box}': decals are body-only")
-        if box not in facets_by_box:
-            raise SystemExit(f"decal targets '{box}', which is not a box in this mesh")
-        bone, facets = facets_by_box[box]
-
-        def lift(p, vector=False, bone=bone):
-            x, y, z = p
-            if not vector:
-                y = y + NOW_SHOULDER - WAS_SHOULDER if bone.startswith('arm-') else _remap_y(y)
-            return (x, y, -z) if FRONT_IS_MINUS_Z else (x, y, z)
-
-        drawn = 0
-        for normal, points in _project_decal(facets, view, polygon, lift, layer):
-            first = len(pos)
-            for p in points:
-                panel_indices.append(len(pos))
-                pos.append(p)
-                nrm.append(normal)
-                uv.append(cell_uv(slot))
-                joints.append((BONE[bone], 0, 0, 0))
-                weights.append((1.0, 0.0, 0.0, 0.0))
-            # Wind it to face out along the facet it sits on, whatever the flip did. Newell's
-            # sum rather than the first corner: clipping can leave the first three collinear.
-            newell = [0.0, 0.0, 0.0]
-            for a, b in zip(points, points[1:] + points[:1]):
-                newell[0] += (a[1] - b[1]) * (a[2] + b[2])
-                newell[1] += (a[2] - b[2]) * (a[0] + b[0])
-                newell[2] += (a[0] - b[0]) * (a[1] + b[1])
-            outward = _dot(newell, normal) >= 0
-            for k in range(1, len(points) - 1):
-                idx += ([first, first + k, first + k + 1] if outward
-                        else [first, first + k + 1, first + k])
-            drawn += 1
-        if not drawn:
-            raise SystemExit(f"decal on '{box}' ({view}) {polygon[:2]}... missed the box entirely")
 
     for bone,slot,faces in _rafi_forms(donor is not None):
         def remap(point):
@@ -2092,7 +1583,7 @@ def main():
     # § THE FAMILY PASS, applied to the authored tables on the way into the mesh. See
     # `_family`: the tables stay as measured and the REGIONS move onto the base rig's own
     # proportions, so this character stands in the line-up as one of the cast.
-    body = build_mesh(_family(BODY_BOXES, head=False), decals=BODY_DECALS)
+    body = build_mesh(_family(BODY_BOXES, head=False))
     head = build_mesh(_family(HEAD_BOXES, head=True, as_authored=DONOR_SPACE),
                       donor=_donor_head())
 
@@ -2208,37 +1699,6 @@ def main():
     verify(body, head)
     write_glb(OUT, gltf, blob)
     write_palette(PALETTE_OUT)
-    resolve_slide(OUT)
-
-
-# ⚠️⚠️ THE SLIDE IS RE-SOLVED FOR THIS MESH ON EVERY BUILD (2026-09-25). This builder starts from
-# the base rig's `.glb`, so the `slide` clip it carries was solved by
-# `tools/author_retrieval_slide.py` for the BASE mesh: pelvis height set from the base's own
-# lowest vertex. Rafi's mane and tail stand far behind his head, and leaning back through that
-# base solve put his hair 0.112 m through the street (`ClipMotionStrip`, v29 and v35), where
-# Sean and Dante, whose slides were solved on their own rigs, read -0.006 and 0.000. Re-solved
-# on his mesh: floor 0.000 at every sample, body drop 12.8 per cent of height (floor 12),
-# reach 4.75 per cent (ceiling 10), by the independent `verify_retrieval_slide.py`.
-BLENDER_CANDIDATES = (
-    r"C:\Program Files\Blender Foundation\Blender 5.2\blender.exe",
-    "/Applications/Blender.app/Contents/MacOS/Blender",
-)
-
-
-def resolve_slide(path):
-    import subprocess
-    blender = next((b for b in BLENDER_CANDIDATES if os.path.exists(b)), None)
-    if blender is None:
-        print("\n⚠️⚠️ BLENDER 5.2 NOT FOUND: the slide was NOT re-solved for this mesh. Run\n"
-              "  blender --background --python tools/author_retrieval_slide.py -- "
-              f"{path} --replace\nbefore shipping, or his hair goes through the street.\n")
-        return
-    result = subprocess.run([blender, "--background", "--python", "tools/author_retrieval_slide.py",
-                             "--", path, "--replace"], capture_output=True, text=True)
-    line = next((l for l in result.stdout.splitlines() if l.startswith("SLIDE_REPORT")), None)
-    if result.returncode != 0 or line is None:
-        raise SystemExit("slide re-solve failed:\n" + result.stdout[-2000:] + result.stderr[-2000:])
-    print("slide re-solved: " + line[len("SLIDE_REPORT "):][:160])
 
 
 # ---------------------------------------------------------------------------

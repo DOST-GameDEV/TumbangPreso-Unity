@@ -31,6 +31,11 @@
   model, pet, skill/VFX geometry, prop and map work. Animation realism is weight, timing and contact
   inside this style. Better animation includes skill VFX, casting and separate animations for
   different actions; do not repeat animations unless necessary (same document, section 0.1).
+- **Character models, new or reworked (owner, 2026-09-25):** first read
+  [docs/CHARACTER_MODEL_METHOD.md](docs/CHARACTER_MODEL_METHOD.md): research first, ask of
+  every render whether it belongs in the cast, is visually pleasing and is great, ink-only
+  faces, one quiet colour no other hero owns, markings hand-drawn for the skin that actually
+  shows (never stamped by repetitive code), versioned renders beside the cast.
 - **Home screen, menu background, season or hero-showcase animation (owner, 2026-09-23):** first read
   [docs/HOME_SCREEN_ANIMATION_METHOD.md](docs/HOME_SCREEN_ANIMATION_METHOD.md): research first, the
   real models never drawn, faces never altered, re-time so every moment breathes, the review loop.
@@ -248,7 +253,8 @@ count in this sentence.**
 ## 6 · Art, models and iteration
 
 - ⚠️ **The art is the team's own work**, built character by character (`tools/build_person_voxel.py`,
-  `docs/Voxel_Person_Guide.md`; replacement queue in `docs/Port_Plan.md` section 8). Ask which pieces
+  `docs/Voxel_Person_Guide.md`; replacement queue in `docs/Port_Plan.md` section 8). **The working method for
+  a character model is [docs/CHARACTER_MODEL_METHOD.md](docs/CHARACTER_MODEL_METHOD.md)** (section 0). Ask which pieces
   are final before treating any as disposable.
 - ⚠️ **When new animations land, revisit `ModelImportSetup`.** Rigs import as **Generic** because the
   clips ship with their own rig; clips from a library (Mixamo) would make Humanoid right.
