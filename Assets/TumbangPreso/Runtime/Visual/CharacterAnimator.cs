@@ -226,7 +226,14 @@ namespace TumbangPreso.Visual
             { "hero-rafi-cut", new[] { "hero-rafi-cut", "interact-left" } },
             { "hero-rafi-feint", new[] { "hero-rafi-feint", "attack-melee-right" } },
             { "hero-rafi-breakwater", new[] { "hero-rafi-breakwater", "holding-both-shoot" } },
+            { "hero-amihan-dash", new[] { "hero-amihan-dash", "attack-kick-right", Sprint } },
+            { "hero-amihan-updraft", new[] { "hero-amihan-updraft", Jump } },
+            { "hero-amihan-whirlwind", new[] { "hero-amihan-whirlwind", "attack-melee-left" } },
+            { "hero-amihan-storm", new[] { "hero-amihan-storm", "holding-both-shoot" } },
         };
+
+        /// <summary>Amihan's flight pose, held while `CharacterMotor.IsFlying` (Updraft).</summary>
+        public const string AmihanHover = "hero-amihan-hover";
 
         [SerializeField] private float _blend = 0.12f;
 
@@ -814,6 +821,11 @@ namespace TumbangPreso.Visual
             if (_chargePosing) return _motor.HoldingSlipper ? HoldingRight : Idle;
 
             if(_motor.IsSwimming)return SwimmingMotion.Clip(SwimmingMotion.ForwardStroke(_motor),_motor.HoldingSlipper);
+
+            // ⚠️ FLYING IS NOT FALLING. Updraft holds her 2.8 m up for ten seconds; the fall clip for
+            // that long reads as a body dropping that never lands. A kit whose rig has no flight
+            // pose (every other hero) never flies, so the old answer is untouched for them.
+            if (_motor.IsFlying && _clips.ContainsKey(AmihanHover)) return AmihanHover;
 
             if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
 

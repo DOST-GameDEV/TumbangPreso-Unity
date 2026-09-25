@@ -30,6 +30,18 @@ namespace TumbangPreso.UI
         private int _deckPlacement = -1;
         private const float OwnerDeckWidth = 316, OwnerDeckHeight = 124;
 
+        // ⚠️⚠️ THE ROLE ABILITY'S BADGE AND SWAP (ability overhaul, 2026-09-25). On a role kit the
+        // middle power is one ability attacking and another defending, and it changes at every
+        // round boundary. The badge says which role it belongs to in the game's own role
+        // vocabulary (the thrower's slipper on the attackers' orange, the taya's tag on the
+        // defenders' blue, `UiTheme.Offense`/`Defense`, the one blue the palette rule exempts),
+        // and the power pops when it changes so the swap is seen, not discovered. Keyboard, pad
+        // and touch all read this same tile; touch's thumb button reads `kit.Skill2` too.
+        private HudBadge _roleBadge;
+        private HeroAbility _shownRoleSkill;
+        private float _roleSwappedAt = -10;
+        public const float RoleSwapSeconds = 0.45f;
+
         public void Build(Transform root)
         {
             _deck = OwnerUiLayout.Rect(root, "PowerSeals");
@@ -80,6 +92,10 @@ namespace TumbangPreso.UI
                 _keyGlyphs[i].preserveAspect = true; _keyGlyphs[i].raycastTarget = false; OwnerUiLayout.Fill(_keyGlyphs[i].rectTransform);
                 _keyGlyphs[i].rectTransform.offsetMin = new Vector2(-3, -3); _keyGlyphs[i].rectTransform.offsetMax = new Vector2(3, 3);
             }
+            _roleBadge = OwnerUiLayout.Rect(_deck, "RoleBadge").gameObject.AddComponent<HudBadge>();
+            _roleBadge.raycastTarget = false; _roleBadge.RimWidth = 2;
+            OwnerUiLayout.Place(_roleBadge.rectTransform, 102 - 8, OwnerDeckHeight - 90 - 4 - 8, 38, 38);
+            _roleBadge.gameObject.SetActive(false);
             _hint = OwnerUiLayout.Text(_deck, "PowerInfoBinding", "", 28); _hint.color = CourtPresentationPalette.Paper;
             _hint.alignment = TextAnchor.MiddleCenter; OwnerUiLayout.Place(_hint.rectTransform, -90, -40, OwnerDeckWidth + 150, 36);
             var outline = _hint.gameObject.AddComponent<Outline>(); outline.effectColor = UiTheme.InGameOutline; outline.effectDistance = new Vector2(1, -1);
@@ -105,6 +121,7 @@ namespace TumbangPreso.UI
             if (!visible) { _detail.gameObject.SetActive(false); return; }
             PlaceDeck(Hud.OnTouch);
             _skills[0] = kit.Skill1; _skills[1] = kit.Skill2; _skills[2] = kit.Ultimate;
+            PaintRole(kit);
             for (int i = 0; i < 3; i++)
             {
                 var skill = _skills[i]; if (skill == null) continue;
@@ -148,6 +165,26 @@ namespace TumbangPreso.UI
             _hint.text = Hud.OnTouch ? "Hold info for skills" : "Hold " + Hud.KeyLabelFor("AbilityInfo") + " for skills";
             _hint.enabled = !held && !_referenceOpened && (match == null || match.RoundNumber <= 1);
             _detail.gameObject.SetActive(held); if (held) Describe(kit, _skills);
+        }
+
+        private void PaintRole(HeroKit kit)
+        {
+            bool role = kit.HasRoleAbilities;
+            if (_roleBadge.gameObject.activeSelf != role) _roleBadge.gameObject.SetActive(role);
+            if (!role) { _shownRoleSkill = null; return; }
+            if (_shownRoleSkill != null && _shownRoleSkill != kit.Skill2) _roleSwappedAt = Time.unscaledTime;
+            _shownRoleSkill = kit.Skill2;
+            bool defending = kit.IsDefending;
+            _roleBadge.Show(defending ? HudBadge.Glyph.Tag : HudBadge.Glyph.Slipper, CourtPresentationPalette.Paper,
+                            defending ? UiTheme.Defense : UiTheme.Offense);
+            float t = Mathf.Clamp01((Time.unscaledTime - _roleSwappedAt) / RoleSwapSeconds);
+            // A flip: the power squashes to its edge and turns over into the new one, then settles
+            // with a small overshoot. Reduced motion keeps only the badge.
+            float flip = Settings.SettingsStore.Current.ReducedUiMotion || t >= 1 ? 1
+                : t < .45f ? Mathf.Cos(t / .45f * Mathf.PI * .5f) : Mathf.Sin((t - .45f) / .55f * Mathf.PI * .5f) * (1 + .12f * Mathf.Sin((t - .45f) / .55f * Mathf.PI));
+            _ownerDials[1].rectTransform.localScale = new Vector3(Mathf.Max(.02f, flip), 1, 1);
+            float pulse = t >= 1 ? 1 : 1 + .35f * Mathf.Sin(t * Mathf.PI);
+            _roleBadge.rectTransform.localScale = Vector3.one * pulse;
         }
 
         /// <summary>The deck's drawn rectangle in its canvas's centred units, for anything that

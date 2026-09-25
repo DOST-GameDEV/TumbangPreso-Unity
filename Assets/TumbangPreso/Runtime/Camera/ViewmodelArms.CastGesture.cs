@@ -172,6 +172,29 @@ namespace TumbangPreso.CameraSystem
             { "breakwater-release", new CastPath(.55f, false,
                 Rest(0), K(.26f, .04f, -.12f, .02f, .34f, .14f, .02f), K(.40f, .03f, -.10f, .04f, .32f, .16f, .04f),
                 K(.55f, -.18f, .14f, .26f, .02f, .40f, .26f), K(.76f, -.17f, .13f, .25f, .02f, .39f, .25f), Rest(1.25f)) },
+
+            // ---------------------------------------------------------------- AMIHAN: the spiral
+            // QUICK DASH. Both hands snap back low, then the OFF hand swings out and forward across
+            // the frame from the left, leading her line; the slipper hand stays pulled back.
+            { "gust-dash", new CastPath(.13f, false,
+                Rest(0), K(.08f, .04f, -.08f, -.10f, .02f, .06f, -.10f),
+                K(.13f, .02f, .00f, -.06f, -.12f, .36f, .26f), K(.30f, .02f, .00f, -.05f, -.11f, .34f, .25f), Rest(.62f)) },
+            // UPDRAFT. Palms press down at the bottom of the frame, then both hands fly up out of it
+            // with the lift, and come back to hang either side as she settles into the air.
+            { "updraft-lift", new CastPath(.24f, false,
+                Rest(0), K(.16f, .02f, -.20f, .04f, -.02f, .10f, .04f),
+                K(.24f, .06f, .44f, .02f, -.06f, .62f, .02f), K(.46f, .08f, .32f, .02f, -.08f, .50f, .02f), Rest(.80f)) },
+            // WHIRLWIND. Both hands wound up to the right, then one sweep across the front to the
+            // left at shoulder height: the gale leaves them.
+            { "gale-sweep", new CastPath(.32f, false,
+                Rest(0), K(.20f, .18f, .02f, .02f, .26f, .22f, .02f),
+                K(.32f, -.24f, .06f, .18f, -.20f, .34f, .18f), K(.52f, -.26f, .05f, .17f, -.22f, .33f, .17f), Rest(.90f)) },
+            // STORM SURGE. Both palms forward and braced through the 2.5 s gather, pressing harder as
+            // it builds, then one shove forward on the release (the key at 2.5 s is the contact).
+            { "storm-call", new CastPath(2.5f, false,
+                Rest(0), K(.25f, -.02f, .06f, .16f, .10f, .32f, .16f), K(1.2f, -.02f, .07f, .19f, .10f, .33f, .19f),
+                K(2.36f, -.01f, .08f, .12f, .09f, .34f, .12f), K(2.5f, -.02f, .10f, .36f, .10f, .36f, .36f),
+                K(2.66f, -.02f, .10f, .35f, .10f, .36f, .35f), Rest(2.85f)) },
         };
 
         private bool _castApplied;

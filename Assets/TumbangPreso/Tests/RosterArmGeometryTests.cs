@@ -33,9 +33,8 @@ namespace TumbangPreso.Tests
         {
             foreach(string hero in Core.Roster.HeroPeople.Select(person=>person.Id))
             {
-                if(hero=="amihan")continue; // placeholder kit: her skills are not designed yet
                 var kit=HeroAbilitySystem.CreateKitFor(hero);
-                foreach(var ability in new[]{kit.Skill1,kit.Skill2,kit.Ultimate})
+                foreach(var ability in kit.AllAbilities)
                 {
                     var go=new GameObject("Hand action review");
                     try

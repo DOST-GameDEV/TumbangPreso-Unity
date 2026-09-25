@@ -672,7 +672,7 @@ namespace TumbangPreso.Tests
             {
                 var kit = HeroAbilitySystem.CreateKitFor(heroId);
 
-                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                foreach (var ability in kit.AllAbilities)
                 {
                     Assert.IsNotNull(ability, $"{heroId} is missing an ability");
                     Assert.IsNotEmpty(ability.Name, $"{heroId}: an ability has no name");

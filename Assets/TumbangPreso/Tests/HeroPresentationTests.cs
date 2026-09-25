@@ -177,7 +177,7 @@ namespace TumbangPreso.Tests
             {
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
 
-                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                foreach (var ability in kit.AllAbilities)
                 {
                     Assert.IsNotNull(ability, $"{hero} is missing an ability");
 
@@ -228,7 +228,7 @@ namespace TumbangPreso.Tests
             {
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
 
-                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                foreach (var ability in kit.AllAbilities)
                 {
                     Assert.IsNotEmpty(ability.Name, $"{hero}: an ability has no name");
                     Assert.LessOrEqual(ability.Name.Length, 18,
@@ -321,7 +321,7 @@ namespace TumbangPreso.Tests
             {
                 var kit = Abilities.HeroAbilitySystem.CreateKitFor(hero);
 
-                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                foreach (var ability in kit.AllAbilities)
                 {
                     if (ability == null || !ability.HasTelegraph) continue;
 
@@ -354,7 +354,7 @@ namespace TumbangPreso.Tests
             {
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
 
-                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                foreach (var ability in kit.AllAbilities)
                 {
                     if (ability.TelegraphRange <= 0.0f) continue;
 
@@ -508,10 +508,9 @@ namespace TumbangPreso.Tests
 
             foreach (string hero in Heroes)
             {
-                if (hero == "amihan") continue; // placeholder kit: her skills are not designed yet
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
 
-                foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                foreach (var ability in kit.AllAbilities)
                 {
                     Assert.IsNotNull(ability, $"{hero} is missing an ability");
                     Assert.IsFalse(string.IsNullOrEmpty(ability.CastAction),
@@ -627,7 +626,7 @@ namespace TumbangPreso.Tests
                 if (System.Array.IndexOf(Heroes, charId) >= 0)
                 {
                     var kit = HeroAbilitySystem.CreateKitFor(charId);
-                    foreach (var ability in new[] { kit.Skill1, kit.Skill2, kit.Ultimate })
+                    foreach (var ability in kit.AllAbilities)
                     {
                         Assert.IsTrue(vm.PlayAction(ability.ViewmodelAction),
                             $"{charId}: PlayAction failed for {ability.ViewmodelAction}");
@@ -669,9 +668,8 @@ namespace TumbangPreso.Tests
 
             foreach (string hero in Heroes)
             {
-                if (hero == "amihan") continue; // placeholder kit: her skills are not designed yet
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
-                var abilities = new[] { kit.Skill1, kit.Skill2, kit.Ultimate };
+                var abilities = kit.AllAbilities;
 
                 foreach (var ability in abilities)
                 {
@@ -693,8 +691,9 @@ namespace TumbangPreso.Tests
                 }
             }
 
-            Assert.AreEqual(21, totalAbilities, "Expected 21 total abilities across 7 heroes");
-            Assert.AreEqual(21, seenGlyphs.Count, "Expected 21 unique glyphs across 21 abilities");
+            // Seven legacy kits of three and Amihan's role kit of four (2026-09-25).
+            Assert.AreEqual(25, totalAbilities, "Expected 25 total abilities across 8 heroes");
+            Assert.AreEqual(25, seenGlyphs.Count, "Expected 25 unique glyphs across 25 abilities");
         }
 
         private static void AssertSameRgb(Color actual, Color expected, string name)

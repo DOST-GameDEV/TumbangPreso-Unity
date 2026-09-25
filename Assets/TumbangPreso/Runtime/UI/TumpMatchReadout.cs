@@ -298,6 +298,7 @@ namespace TumbangPreso.UI
             bool show = local != null && !spectating;
             _personalRoot.gameObject.SetActive(show);
             foreach (var text in _status) text.enabled = false;
+            PaintStatusChips(local, show);
             StaminaArc(show ? local : null);
             if (!show) return;
             _role.text = local.IsDefender ? "Defender" : "Attacker";

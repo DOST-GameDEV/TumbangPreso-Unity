@@ -332,6 +332,13 @@ namespace TumbangPreso.Visual
             dict["hero-rafi-cut"] = BuildRafiCut(paths);
             dict["hero-rafi-feint"] = BuildRafiFeint(paths);
             dict["hero-rafi-breakwater"] = BuildRafiBreakwater(paths);
+
+            // AMIHAN (2026-09-25). Her direction is the spiral; see `HeroAbilityClips.Amihan.cs`.
+            dict["hero-amihan-dash"] = BuildAmihanDash(paths);
+            dict["hero-amihan-updraft"] = BuildAmihanUpdraft(paths);
+            dict["hero-amihan-hover"] = BuildAmihanHover(paths);
+            dict["hero-amihan-whirlwind"] = BuildAmihanWhirlwind(paths);
+            dict["hero-amihan-storm"] = BuildAmihanStorm(paths);
             return dict;
         }
 

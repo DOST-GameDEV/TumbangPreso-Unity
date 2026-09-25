@@ -491,20 +491,23 @@ kit is designed, so record the round, tag, knockdown, lead and win lines first.
 | `hvo_amihan_reply_cheska` | "Vigan's windier. Admit that." | Round 1, answers (with Cheska) |
 | `hvo_amihan_round_1` | "Kalesa's gone. Court's open!" | Round start, as the taya (odd rounds) |
 | `hvo_amihan_round_2` | "Let's keep it moving!" | Round start, as the taya (odd rounds) |
-| `hvo_amihan_skill1_1` | "Here comes the breeze!" | Casts skill 1 (rests 14 s after) |
-| `hvo_amihan_skill1_2` | "Catch this wind." | Casts skill 1 (rests 14 s after) |
-| `hvo_amihan_skill1_3` | "Straight from the Ilocos coast!" | Casts skill 1 (rests 14 s after) |
-| `hvo_amihan_skill2_1` | "Too slow for the wind!" | Casts skill 2 (rests 14 s after) |
-| `hvo_amihan_skill2_2` | "Blink and I'm gone." | Casts skill 2 (rests 14 s after) |
-| `hvo_amihan_skill2_3` | "Feel that draft?" | Casts skill 2 (rests 14 s after) |
+| `hvo_amihan_skill1_1` | "Out of my way!" | Casts Quick Dash, her signature (rests 14 s after) |
+| `hvo_amihan_skill1_2` | "Catch me, if you can." | Casts Quick Dash, her signature (rests 14 s after) |
+| `hvo_amihan_skill1_3` | "No waiting. Go!" | Casts Quick Dash, her signature (rests 14 s after) |
+| `hvo_amihan_skill2_1` | "Up we go!" | Casts Updraft, attacking (rests 14 s after) |
+| `hvo_amihan_skill2_2` | "Better view from here." | Casts Updraft, attacking (rests 14 s after) |
+| `hvo_amihan_skill2_3` | "Watch the sky, taya." | Casts Updraft, attacking (rests 14 s after) |
+| `hvo_amihan_skill2d_1` | "Sweep the lane!" | Casts Whirlwind, defending (rests 14 s after) |
+| `hvo_amihan_skill2d_2` | "Drop it. Now." | Casts Whirlwind, defending (rests 14 s after) |
+| `hvo_amihan_skill2d_3` | "Hands off my court." | Casts Whirlwind, defending (rests 14 s after) |
 | `hvo_amihan_tag_1` | "Too slow, manong!" | Lands a tag |
 | `hvo_amihan_tag_2` | "Caught you thinking." | Lands a tag |
 | `hvo_amihan_tagged_1` | "Hala, I rushed it." | Gets tagged |
 | `hvo_amihan_tagged_2` | "Okay, okay. Your point." | Gets tagged |
-| `hvo_amihan_ultally_1` | "Wind's with us, go!" | Ultimate, heard by the caster's side |
-| `hvo_amihan_ultally_2` | "Ride it, everyone!" | Ultimate, heard by the caster's side |
-| `hvo_amihan_ultopp_1` | "Hold onto your slippers." | Ultimate, heard by the other side |
-| `hvo_amihan_ultopp_2` | "Amihan season came early." | Ultimate, heard by the other side |
+| `hvo_amihan_ultally_1` | "Storm's coming. Get behind me!" | Storm Surge, heard by the caster's side |
+| `hvo_amihan_ultally_2` | "Stay clear of the wind!" | Storm Surge, heard by the caster's side |
+| `hvo_amihan_ultopp_1` | "Hold onto your slippers." | Storm Surge, heard by the other side |
+| `hvo_amihan_ultopp_2` | "Amihan season came early." | Storm Surge, heard by the other side |
 | `hvo_amihan_win_1` | "Salamat! Come visit Vigan!" | Wins the match |
 | `hvo_amihan_win_2` | "Good game! Empanada's on me." | Wins the match |
 

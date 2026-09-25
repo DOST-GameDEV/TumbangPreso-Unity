@@ -179,3 +179,25 @@ message.
 and actions for all eight, role swap, legacy kits unchanged), `playmode_suite.py --gate`,
 `Checks.RunAll`, every `tools/audit_*.py`, `BotBehaviourProbe`, `AbilityShowcaseProbe`, and a
 Windows build into `Builds/`.
+
+## 8. Decisions taken where the owner's answers left a gap (for his review)
+
+| Point | Decision | Why |
+|---|---|---|
+| Updraft cooldown | 45 s | not given; sits beside her 35 and 40, and a move-your-own-body power gets a long cooldown (`HeroAbility`'s charge rule) |
+| Updraft and the taya | aloft = out of the tag's reach; cannot START holding a slipper inside the box | "flies high"; keeps the retrieval the moment you can be caught (`VISION.md` § 0) |
+| "Go down" | press Updraft again, or Grab, and she glides down at 3.5 m/s | "cant pick up unless they choose to go down" |
+| Storm Surge targets | every other player (allies too) and every loose slipper in the fan; never the can | the table says "all players and slippers"; the whole game's abilities hit everyone but the caster |
+| Storm Surge distance | 16 m carry (15 m/s held 0.82 s) with a small lift; on Sa Bubong they go over the rail, on Lagoon into the water | "very far ... fall off the map or pushed to the edge" |
+| Storm Surge delay | the 2.5 s is her wind-up: she is rooted while the fan telegraph shows | "After a 2.5 s delay"; the root is what she pays |
+| Quick Dash push | 1.2 m, sideways off her line and a little forward | "slightly pushes back" |
+| Chilled on Cheska's sheet | the old 0.55 speed zone is replaced by Chilled (50 %, runs 5 s from stepping off); the slip stays | "Cheska's ice sheet becomes Chilled"; the slip is the ice, not a status |
+| Frozen | still mashable, as every element hold has been | the table says 2.5 s and nothing about mashing |
+| Tagged | now ignores stun immunity (Carapace) | "Cannot be removed or be immune to" |
+| Whirled on the dash's own caster | never; nothing she does Whirls herself | |
+
+## 9. Known gaps (tracked in `docs/TODO.md` ABILITY-1 and HERO-8)
+
+- A rejoiner who arrives during Storm Surge's 2.5 s gather sees no telegraph (the host's push still lands); a rejoiner mid-flight sees her position but not the hover ring until her next cast.
+- Replays record the gale and the storm; the dash slipstream, the updraft column and the hover ring are not yet recorded fields.
+- The voice lines are text only until recorded (`docs/HUMAN.md`).

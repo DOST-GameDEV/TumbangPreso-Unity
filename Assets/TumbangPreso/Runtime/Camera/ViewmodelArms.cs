@@ -984,6 +984,28 @@ namespace TumbangPreso.CameraSystem
             new Key(.55f,-.24f,.25f,-.12f,-.55f,.60f,.62f,true),
             new Key(.76f,-.10f,.12f,-.05f,-.26f,.42f,.28f,true),new Key(1.05f,0,0,0,0,0,0,true) };
 
+        // AMIHAN (2026-09-25): the spiral in first person. Every gesture turns across the frame
+        // rather than punching down its middle: the dash leads with the off hand swinging out, the
+        // lift presses down and throws both hands up, the gale sweeps right to left, the storm
+        // braces both palms forward, trembles, and shoves (timed to the 2.5 s wind-up).
+        private static readonly Key[] GustDashClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.08f,.22f,.14f,.04f,.28f,-.12f,-.06f,true),
+            new Key(.13f,-.14f,-.12f,-.06f,-.62f,.38f,.30f,true), new Key(.30f,-.12f,-.10f,-.05f,-.56f,.34f,.28f,true),
+            new Key(.62f,0,0,0,0,0,0,true) };
+        private static readonly Key[] UpdraftLiftClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.16f,.30f,.06f,.04f,.34f,-.06f,-.04f,true),
+            new Key(.24f,-.70f,.10f,.10f,-.78f,-.10f,-.12f,true), new Key(.46f,-.56f,.16f,.12f,-.62f,-.16f,-.14f,true),
+            new Key(.80f,0,0,0,0,0,0,true) };
+        private static readonly Key[] GaleSweepClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.20f,-.18f,.40f,.08f,-.10f,.36f,.12f,true),
+            new Key(.32f,-.40f,-.46f,-.10f,-.46f,-.40f,-.08f,true), new Key(.52f,-.36f,-.52f,-.10f,-.40f,-.46f,-.10f,true),
+            new Key(.90f,0,0,0,0,0,0,true) };
+        private static readonly Key[] StormCallClip = {
+            new Key(0,-.46f,.02f,.06f,-.50f,-.02f,-.06f,true), new Key(.6f,-.48f,.04f,.07f,-.52f,-.04f,-.07f,true),
+            new Key(1.2f,-.47f,.00f,.06f,-.51f,.00f,-.06f,true), new Key(1.8f,-.50f,.04f,.08f,-.54f,-.04f,-.08f,true),
+            new Key(2.36f,-.30f,.02f,.04f,-.34f,-.02f,-.04f,true), new Key(2.5f,-.58f,.00f,.02f,-.62f,.00f,-.02f,true),
+            new Key(2.66f,-.56f,.00f,.02f,-.60f,.00f,-.02f,true), new Key(2.85f,0,0,0,0,0,0,true) };
+
         public bool PlayAction(string clip)
         {
             // While the can is being raised the hands hold the raise pose (`ViewmodelArms.RaiseCan`);
@@ -1046,6 +1068,10 @@ namespace TumbangPreso.CameraSystem
                   : clip == "current-cut" ? CurrentCutClip
                   : clip == "mirror-feint" ? MirrorFeintClip
                   : clip == "breakwater-release" ? BreakwaterReleaseClip
+                  : clip == "gust-dash" ? GustDashClip
+                  : clip == "updraft-lift" ? UpdraftLiftClip
+                  : clip == "gale-sweep" ? GaleSweepClip
+                  : clip == "storm-call" ? StormCallClip
                   : clip == "coven-eclipse" ? CovenEclipseClip
                   : null;
 

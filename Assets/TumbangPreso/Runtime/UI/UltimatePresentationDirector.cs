@@ -634,6 +634,14 @@ namespace TumbangPreso.UI
                     return Mathf.Max(Line(v, -0.42f, 0.10f), Arcs(u, v));
                 case "rafi": return Mathf.Max(Line(v,Mathf.Sin(u*7)*.22f,.12f),Line(v,-.44f,.065f));
 
+                // A gust: three thin swept streaks, curving up and thinning as they run right,
+                // the edges-not-fills rule of her wind (direction.md § 2).
+                case "amihan":
+                    return Mathf.Max(Mathf.Max(
+                        Line(v, 0.34f + u * u * 0.28f, 0.10f * (1.1f - u)),
+                        Line(v, 0.02f + u * u * 0.22f, 0.13f * (1.1f - u * 0.8f))),
+                        Line(v, -0.34f + u * u * 0.16f, 0.08f * (1.1f - u)));
+
                 default:
                     return Line(v, 0.0f, 0.10f);
             }

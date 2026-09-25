@@ -174,6 +174,14 @@ namespace TumbangPreso.UI
                     : skill.Cooldown > 0 ? skill.Cooldown.ToString("0.#") + "s cooldown" : "";
                 if (skill.Duration > 0) _timings[i].text += " · " + skill.Duration.ToString("0.#") + "s duration";
                 if (i == 2) _timings[i].text = kit.UltimateCost.ToString("0.#") + " charge needed";
+                // ⚠️ A ROLE KIT'S MIDDLE COLUMN NAMES ITS ROLE AND THE OTHER ROLE'S ABILITY, so the
+                // one reference screen answers "what do I get when I defend" without a fourth column.
+                if (i == 1 && kit.HasRoleAbilities && kit.IdleRoleSkill != null)
+                {
+                    _timings[i].text = (kit.IsDefending ? "Defending" : "Attacking") + " · " + _timings[i].text;
+                    _bodies[i].text = skill.EffectiveDescription + "\n\n" + (kit.IsDefending ? "Attacking: " : "Defending: ")
+                        + kit.IdleRoleSkill.EffectiveName + ". " + kit.IdleRoleSkill.EffectiveSummary;
+                }
             }
         }
         public void OpenForCapture(HeroKit kit)

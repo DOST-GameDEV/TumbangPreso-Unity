@@ -46,6 +46,7 @@ namespace TumbangPreso.UI.Hub
         private Text _abilityName, _abilityMeta, _abilitySummary;
         private HeroKit _shownKit;
         private HeroAbility[] _shownAbilities;
+        private HeroKit.ScreenSlot[] _shownSlots;
         private string _shownHero;
         private int _inspectedAbility;
 
@@ -204,9 +205,21 @@ namespace TumbangPreso.UI.Hub
             {
                 _shownHero = person.Id;
                 _shownKit = HeroAbilitySystem.CreateKitFor(person.Id);
-                _shownAbilities = new[] { _shownKit.Skill1, _shownKit.Skill2, _shownKit.Ultimate };
-                for (int i = 0; i < _shownAbilities.Length; i++) _abilitySymbols[i].Glyph = _shownAbilities[i].Glyph;
-                InspectAbility(_inspectedAbility);
+                // A role kit shows four powers (signature, attacking, defending, ultimate); the
+                // tiles narrow to fit the same 380-unit panel rather than the panel growing.
+                _shownSlots = _shownKit.ScreenSlots;
+                _shownAbilities = System.Array.ConvertAll(_shownSlots, slot => slot.Ability);
+                int count = _shownAbilities.Length;
+                float size = count == 4 ? 80 : 100, step = count == 4 ? 88 : 120;
+                for (int i = 0; i < _abilityButtons.Length; i++)
+                {
+                    bool on = i < count;
+                    _abilityButtons[i].gameObject.SetActive(on);
+                    if (!on) continue;
+                    HubKit.Place((RectTransform)_abilityButtons[i].transform, HubKit.TopLeft, new Vector2(20 + i * step, -22), new Vector2(size, size));
+                    _abilitySymbols[i].Glyph = _shownAbilities[i].Glyph;
+                }
+                InspectAbility(Mathf.Min(_inspectedAbility, count - 1));
             }
 
             for (int i = 0; i < _cells.Count && i < People.Count; i++)
@@ -233,9 +246,9 @@ namespace TumbangPreso.UI.Hub
             var panel = HubKit.Place(HubKit.Rect(Root, "SelectionAbilities"), HubKit.TopRight,
                 new Vector2(-(HubKit.Margin + 512 + 32), -(HubKit.Margin + 210)), new Vector2(380, 610));
             HubKit.Stretch(HubKit.Shape(panel, "Plate", HubStyle.Night, false, 745, 5, 24).rectTransform);
-            _abilityButtons = new HubButton[3];
-            _abilitySymbols = new TumpAbilitySymbol[3];
-            for (int i = 0; i < 3; i++)
+            _abilityButtons = new HubButton[4];
+            _abilitySymbols = new TumpAbilitySymbol[4];
+            for (int i = 0; i < 4; i++)
             {
                 int slot = i;
                 var button = HubKit.Button(panel, "SelectionAbility" + i, null, HubStyle.Honey,
@@ -261,25 +274,29 @@ namespace TumbangPreso.UI.Hub
         private void InspectAbility(int slot)
         {
             if (_shownAbilities == null) return;
-            _inspectedAbility = Mathf.Clamp(slot, 0, 2);
+            _inspectedAbility = Mathf.Clamp(slot, 0, _shownAbilities.Length - 1);
             var ability = _shownAbilities[_inspectedAbility];
+            var shown = _shownSlots[_inspectedAbility];
             AbilityVariant variant = null;
-            if (_inspectedAbility < 2)
+            if (shown.LoadoutSlot > 0)
             {
                 var settings = Settings.SettingsStore.Current;
                 var build = HeroBuildRules.RowFor(settings.HeroBuilds, _shownHero);
-                variant = HeroBuildRules.Equipped(build, _shownHero, _inspectedAbility + 1, settings.AbilityChallenges);
+                variant = HeroBuildRules.Equipped(build, _shownHero, shown.LoadoutSlot, settings.AbilityChallenges);
             }
             bool alternate = variant != null && !variant.IsDefault;
             _abilityName.text = (alternate ? variant.Name : ability.Name).ToUpperInvariant();
             _abilitySummary.text = alternate ? variant.Description : ability.Summary;
-            string resource = _inspectedAbility == 2 ? _shownKit.UltimateCost.ToString("0") + " CHARGE"
+            string resource = shown.IsUltimate ? _shownKit.UltimateCost.ToString("0") + " CHARGE"
                 : ability.UsesCharges ? ability.MaxCharges + (ability.MaxCharges == 1 ? " USE" : " USES")
                 : ability.Cooldown.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + " s cooldown";
-            _abilityMeta.text = AbilityIcons.LabelFor(ability.Glyph) + "\n" + resource;
+            // A role kit says which role the power belongs to before what kind of power it is.
+            string role = _shownKit.HasRoleAbilities && !shown.IsUltimate ? shown.Label + " · " : "";
+            _abilityMeta.text = role + AbilityIcons.LabelFor(ability.Glyph) + "\n" + resource;
             StackAbilityText();
             for (int i = 0; i < _abilityButtons.Length; i++)
-                HubKit.SetFill(_abilityButtons[i], i == _inspectedAbility ? HubStyle.Persimmon : i == 2 ? HubStyle.Golden : HubStyle.Honey);
+                HubKit.SetFill(_abilityButtons[i], i == _inspectedAbility ? HubStyle.Persimmon
+                    : i < _shownSlots.Length && _shownSlots[i].IsUltimate ? HubStyle.Golden : HubStyle.Honey);
         }
 
         /// <summary>Lay the name, the meta lines and the sentence one under another at their real

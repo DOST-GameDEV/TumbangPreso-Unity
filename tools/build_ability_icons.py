@@ -476,6 +476,134 @@ def rafi_breakwater(a):
     a.add(a.band([(140, 850), (300, 800), (460, 850), (620, 800)], 40), FOAM, shade=False)
 
 
+# AMIHAN (2026-09-25). Her wind is YELLOW-green (hue 100, UiTheme.HeroWind), drawn as swept
+# bands with a cream core (direction.md: bright thin edges around a darker middle), and her motif is
+# the cotton boll and the kasikus diamond. Red >= blue in every swatch (CLAUDE.md 6.4).
+WIND, WIND_LT, WIND_DK = hexc("88E35A"), hexc("C3F5AA"), hexc("4E9A3A")
+
+
+def _gust(a, pts, w, core=True):
+    a.add(a.band(pts, w), WIND)
+    if core:
+        a.add(a.band(pts[1:-1] if len(pts) > 3 else pts, w * 0.28), CREAM, shade=False)
+
+
+def _cotton(a, cx, cy, r):
+    boll = np.zeros((S, S), np.float32)
+    for k in range(5):
+        ang = math.radians(k * 72 - 90)
+        boll = np.maximum(boll, a.circle(cx + r * 0.55 * math.cos(ang), cy + r * 0.55 * math.sin(ang), r * 0.55))
+    a.add(boll, CREAM)
+
+
+def _swept(cx0, cy0, cx1, cy1, w0, w1, bend, steps=24):
+    """A solid swept band from (cx0,cy0) to (cx1,cy1), widening w0 to w1, bowed by `bend`:
+    a gust with a thin tail and a full head (v2: v1's thin lines fell apart at 44 px)."""
+    top, bot = [], []
+    for k in range(steps + 1):
+        t = k / steps
+        x = cx0 + (cx1 - cx0) * t
+        y = cy0 + (cy1 - cy0) * t - bend * math.sin(math.pi * t)
+        w = (w0 + (w1 - w0) * t ** 0.8) / 2
+        top.append((x, y - w)); bot.append((x, y + w))
+    return top + bot[::-1]
+
+
+def amihan_dash(a):
+    # One big swept gust racing right to a pointed head, two short slipstream dashes behind it.
+    a.add(a.poly(_swept(90, 640, 700, 470, 30, 250, 90) + []), WIND)
+    a.add(a.poly([(640, 300), (940, 470), (640, 640), (700, 470)]), WIND)
+    a.add(a.band([(200, 590), (420, 500), (640, 470)], 44), CREAM, shade=False)
+    a.add(a.band([(120, 250), (380, 250)], 70), WIND_LT)
+    a.add(a.band([(160, 820), (420, 800)], 70), WIND_LT)
+    _cotton(a, 520, 820, 64)
+
+
+def amihan_updraft(a):
+    # A slipper LIFTED on a swirl of rising air (v3: v2's funnel-and-chevron read as a gem). The
+    # slipper is the game's own noun, so "a slipper flying up" is the power in one picture.
+    for cy, rx, col in ((880, 120, WIND_DK), (760, 190, WIND), (620, 260, WIND_LT)):
+        a.add(np.clip(a.ellipse(512, cy, rx, rx * 0.36) - a.ellipse(530, cy - 18, rx - 64, rx * 0.36 - 40), 0, 1), col)
+    a.add(a.band([(512, 900), (470, 700), (560, 560), (512, 470)], 34), CREAM, shade=False)
+    slipper(a, 512, 280, 380, 70, PERSIMMON, CREAM)
+    for x in (230, 794):
+        a.add(a.poly([(x, 330), (x + 70, 430), (x - 70, 430)]), WIND_LT)
+
+
+def amihan_whirlwind(a):
+    # A thick gale front bowed forward (up), rolling: two trailing fronts behind it, dust below.
+    def bow(cy, half, thick, lift):
+        top = [(512 + half * (k / 20 * 2 - 1), cy - lift * (1 - (k / 20 * 2 - 1) ** 2)) for k in range(21)]
+        return top + [(x, y + thick * (1 - 0.55 * abs((x - 512) / half))) for x, y in top[::-1]]
+    a.add(a.poly(bow(820, 300, 60, 150)), WIND_DK)
+    a.add(a.poly(bow(700, 350, 80, 190)), WIND)
+    a.add(a.poly(bow(560, 400, 130, 250)), WIND_LT)
+    a.add(a.band([(160, 470), (340, 350), (512, 315), (684, 350), (864, 470)], 30), CREAM, shade=False)
+    for cx, cy, r in ((240, 900, 40), (780, 910, 34), (512, 950, 30)):
+        a.add(a.circle(cx, cy, r), STONE)
+
+
+def amihan_storm(a):
+    # A FAN of gusts spreading out from a kasikus diamond low-left toward the far upper-right (v3:
+    # v2's straight-topped wedge over a diamond read as a medal on a ribbon). Curved outer edge,
+    # swept bands, the diamond small and off-centre so nothing hangs like a pendant.
+    ox, oy = 180, 840
+    for ang, w, col in ((-78, 90, WIND_DK), (-58, 120, WIND), (-38, 140, WIND_LT), (-18, 110, WIND), (2, 80, WIND_DK)):
+        r0, r1 = 120, 760
+        a0 = math.radians(ang)
+        pts = [(ox + r * math.cos(a0 + 0.10 * math.sin(r / r1 * math.pi)), oy + r * math.sin(a0 + 0.10 * math.sin(r / r1 * math.pi)))
+               for r in (r0, r0 + (r1 - r0) * .35, r0 + (r1 - r0) * .7, r1)]
+        a.add(a.poly(_swept(pts[0][0], pts[0][1], pts[-1][0], pts[-1][1], w * .3, w, 20)), col)
+    for rr, col in ((130, GOLD), (80, WIND_DK), (38, CREAM)):
+        a.add(a.poly([(ox, oy - rr), (ox + rr, oy), (ox, oy + rr), (ox - rr, oy)]), col, shade=rr > 100)
+
+
+# STATUS ICONS (owner's status table, 2026-09-25). Written to Resources/UI/status-icons, drawn in
+# the same family so a status reads beside an ability icon without looking like one: each sits
+# on a round badge, because an ability is a thing you DO and a status is a thing done TO you.
+STATUS_BADGE = hexc("3A2A28")
+
+
+def _badge(a):
+    a.add(a.circle(512, 512, 440), STATUS_BADGE, shade=False)
+
+
+def status_whirled(a):
+    _badge(a)
+    a.add(a.arc_band(512, 520, 300, 200, 520, 70), WIND)
+    a.add(a.arc_band(512, 520, 170, 250, 560, 50), WIND_LT)
+    slipper(a, 520, 500, 330, 35, PERSIMMON, CREAM)
+
+
+def status_chilled(a):
+    # A slowed foot: a big frosted slipper print with ice crystals growing off its heel.
+    _badge(a)
+    slipper(a, 470, 540, 560, -20, hexc("A8D8B0"), ICE)
+    for cx, cy, r in ((720, 740, 120), (780, 520, 90), (300, 250, 80)):
+        a.add(a.poly(star_pts(cx, cy, r, r * 0.34, 6)), ICE)
+
+
+def status_frozen(a):
+    _badge(a)
+    a.add(a.poly([(512, 150), (812, 320), (812, 700), (512, 870), (212, 700), (212, 320)]), ICE_SH)
+    a.add(a.poly([(512, 240), (730, 365), (730, 655), (512, 780), (294, 655), (294, 365)]), ICE)
+    a.add(a.poly(star_pts(512, 512, 170, 55, 6)), ICE_SH, shade=False)
+    a.glint(380, 330, 26, 60)
+
+
+def status_tagged(a):
+    _badge(a)
+    # A blocky no-thumb hand (the cast's style) landing on a shoulder-shaped burst.
+    a.add(a.poly(star_pts(512, 560, 380, 250, 10)), PERSIMMON)
+    a.add(a.rect(360, 420, 664, 760), HONEY)
+    for x in (360, 440, 520, 600):
+        a.add(a.rect(x, 250, x + 64, 440), HONEY)
+
+
+STATUSES = {"StatusWhirled": status_whirled, "StatusChilled": status_chilled,
+            "StatusFrozen": status_frozen, "StatusTagged": status_tagged}
+
+
 # the nine job glyphs, for any power without a bespoke picture
 
 def zone(a):
@@ -544,6 +672,8 @@ GLYPHS = {
     "PhaisterEclipse": phaister_coven, "PhaisterWitchfire": phaister_witchfire,
     "RafiCrosscurrent": rafi_crosscurrent, "RafiMirrorwake": rafi_mirrorwake,
     "RafiBreakwater": rafi_breakwater,
+    "AmihanQuickDash": amihan_dash, "AmihanUpdraft": amihan_updraft,
+    "AmihanWhirlwind": amihan_whirlwind, "AmihanStormSurge": amihan_storm,
 }
 
 
@@ -576,12 +706,20 @@ def sheet(icons, path):
     img.save(path)
 
 
+STATUS_OUT = os.path.join(ROOT, "Assets", "TumbangPreso", "Resources", "UI", "status-icons")
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
-    only = [a for a in sys.argv[1:] if a in GLYPHS]
-    icons = {n: build(n) for n in (only or GLYPHS)}
+    os.makedirs(STATUS_OUT, exist_ok=True)
+    only = [a for a in sys.argv[1:] if a in GLYPHS or a in STATUSES]
+    icons = {}
+    for n in (only or list(GLYPHS) + list(STATUSES)):
+        a = Art()
+        (GLYPHS.get(n) or STATUSES[n])(a)
+        icons[n] = a.render()
     for n, im in icons.items():
-        im.save(os.path.join(OUT, n + ".png"))
+        im.save(os.path.join(STATUS_OUT if n in STATUSES else OUT, n + ".png"))
     if "--sheet" in sys.argv:
         sheet(icons, sys.argv[sys.argv.index("--sheet") + 1])
     print("wrote", len(icons), "icons to", OUT)

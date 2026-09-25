@@ -4341,6 +4341,29 @@ namespace TumbangPreso
         /// zone is actually worth. Outside the box is not the taya's problem and nobody has to
         /// walk into danger for it; a slipper in somebody's hand has already been retrieved.
         /// </summary>
+        /// <summary>How many other bodies stand inside Storm Surge's fan if she cast it now, along
+        /// the way she is facing. The same test the storm pushes with (`AmihanStorm.InsideFan`).</summary>
+        private int AmihanFanCount(RoundDirector round)
+        {
+            int count = 0;
+            foreach (var p in round.Players)
+                if (p != null && p != _motor && Abilities.AmihanStorm.InsideFan(transform.position, transform.forward, At(p)))
+                    count++;
+            return count;
+        }
+
+        /// <summary>An attacker carrying a slipper in front of her, within reach and the cone.</summary>
+        private CharacterMotor AmihanCarrierAhead(RoundDirector round, float reach, float halfAngle)
+        {
+            foreach (var p in round.Players)
+            {
+                if (p == null || p == _motor || p.IsDefender || !p.HoldingSlipper || p.IsWhirled) continue;
+                if (Flat(transform.position, At(p)) > reach || !Facing(p, halfAngle)) continue;
+                return p;
+            }
+            return null;
+        }
+
         private static bool AnyLooseSlipperInsideTheBox()
         {
             foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
@@ -4603,7 +4626,18 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.RafiHeroKit && target != null && targetDistance < 8 && Facing(target, 42))
                     Consider(intent, Verb.Ultimate, dt);
+                else if (kit is Abilities.AmihanHeroKit && AmihanFanCount(round) >= 2)
+                    Consider(intent, Verb.Ultimate, dt);
             }
+
+            // ⚠️ STORM SURGE HAS NO CIRCLE, SO THE SHARED VALUE GATE ABOVE CANNOT COUNT FOR IT: its
+            // telegraph radius is 0 and "victims under the footprint" is always nobody. The wind is
+            // a map-wide fan in front of her, so the count is the fan's: two bodies in it is worth
+            // the meter, and one is worth it once the ordinary hold runs out.
+            if (kit is Abilities.AmihanHeroKit && kit.IsUltimateReady && kit.Ultimate != null
+                && !ultimateWorthIt && AmihanFanCount(round) >= 1
+                && (_ultimateReadyFor >= AiTuning.UltimateHoldSeconds || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds))
+                Consider(intent, Verb.Ultimate, dt);
 
             if (SlotIsSpendable(kit.Skill1))
             {
@@ -4650,6 +4684,17 @@ namespace TumbangPreso
                     // a target said nothing about where it would land or whether one was already
                     // lying there. Two sigils on one another is the § 19 stacking exactly.
                     if (WorthDenying(kit.Skill1)) Consider(intent, Verb.Skill1, dt);
+                }
+                else if (kit is Abilities.AmihanHeroKit)
+                {
+                    // QUICK DASH. The taya's use is the sharpest: dash THROUGH an attacker who is
+                    // carrying a slipper inside the box and they drop it, Whirled, unable to pick it
+                    // back up for 2.5 s. An attacker uses it to travel, and to go through a taya
+                    // who is closing on her.
+                    bool strip = _motor.IsDefender && AmihanCarrierAhead(round, AiTuning.AmihanDashReach, 22.0f) != null;
+                    bool through = !_motor.IsDefender && target != null && targetDistance <= 3.5f && Facing(target, 25.0f);
+                    if (strip || through || (!_motor.IsDefender && WorthTravelling()))
+                        Consider(intent, Verb.Skill1, dt);
                 }
                 else if (kit is Abilities.RafiHeroKit)
                 {
@@ -4724,6 +4769,28 @@ namespace TumbangPreso
                 else if (kit is Abilities.RafiHeroKit && _driving && targetDistance < 5
                     && (Plan == AiPlan.Withdraw || Plan == AiPlan.Fetch || _motor.IsDefender))
                     Consider(intent,Verb.Skill2,dt);
+                else if (kit is Abilities.AmihanHeroKit amihan)
+                {
+                    if (amihan.IsDefending)
+                    {
+                        // WHIRLWIND. Roll the gale down the lane an attacker is carrying a slipper
+                        // along: they drop it and cannot pick it up.
+                        if (AmihanCarrierAhead(round, AiTuning.AmihanGaleReach, 18.0f) != null)
+                            Consider(intent, Verb.Skill2, dt);
+                    }
+                    else if (amihan.IsFlying)
+                    {
+                        // Down again once the slipper is thrown: she cannot pick up in the air.
+                        if (!_motor.HoldingSlipper) Consider(intent, Verb.Skill2, dt);
+                    }
+                    else if (_motor.HoldingSlipper && !_motor.IsInsideBox() && target != null
+                             && targetDistance <= AiTuning.AmihanUpdraftThreat)
+                    {
+                        // UPDRAFT. Holding a slipper with the taya closing: go up, out of reach,
+                        // and throw from the air.
+                        Consider(intent, Verb.Skill2, dt);
+                    }
+                }
             }
 
             // ⚠️ THE CLOCK RESTARTS ON A TOUCH, NOT ON A CONFIRMED CAST, because this side has

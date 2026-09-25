@@ -85,6 +85,47 @@ namespace TumbangPreso.Abilities
             RoleAbilityChanged?.Invoke(outgoing, Skill2);
         }
 
+        /// <summary>
+        /// Every ability the kit owns, once each: the signature, BOTH role abilities on a role kit
+        /// (the live one first) or skill two on a legacy kit, and the ultimate. For anything that
+        /// must cover the whole kit rather than what is live this round: tests, the screens, audits.
+        /// </summary>
+        public HeroAbility[] AllAbilities => HasRoleAbilities
+            ? new[] { Skill1, Skill2, IdleRoleSkill, Ultimate }
+            : new[] { Skill1, Skill2, Ultimate };
+
+        /// <summary>One power as a screen shows it: what it is, what the tile is labelled, which
+        /// binding casts it, and which loadout slot (1, 2, or 0 for none) its variants live in.</summary>
+        public readonly struct ScreenSlot
+        {
+            public readonly HeroAbility Ability; public readonly string Label, Action;
+            public readonly int LoadoutSlot; public readonly bool IsUltimate;
+            public ScreenSlot(HeroAbility ability, string label, string action, int loadoutSlot, bool ultimate)
+            { Ability = ability; Label = label; Action = action; LoadoutSlot = loadoutSlot; IsUltimate = ultimate; }
+        }
+
+        /// <summary>
+        /// ⚠️ THE ONE ANSWER TO "WHAT DOES A SCREEN SHOW FOR THIS KIT" (ability overhaul, 2026-09-25).
+        /// A role kit is FOUR powers out of a match (signature, attacking, defending, ultimate), and
+        /// the defending one is cast with the same key as the attacking one; a legacy kit is the
+        /// three it always was. Every screen that lists a kit reads this, so a new role kit cannot
+        /// ship with its defending ability missing from character select.
+        /// </summary>
+        public ScreenSlot[] ScreenSlots => HasRoleAbilities
+            ? new[]
+            {
+                new ScreenSlot(Skill1, "SIGNATURE", "Skill1", 1, false),
+                new ScreenSlot(AttackingSkill, "ATTACKING", "Skill2", 2, false),
+                new ScreenSlot(DefendingSkill, "DEFENDING", "Skill2", 0, false),
+                new ScreenSlot(Ultimate, "ULTIMATE", "Ultimate", 0, true),
+            }
+            : new[]
+            {
+                new ScreenSlot(Skill1, "SKILL 1", "Skill1", 1, false),
+                new ScreenSlot(Skill2, "SKILL 2", "Skill2", 2, false),
+                new ScreenSlot(Ultimate, "ULTIMATE", "Ultimate", 0, true),
+            };
+
         /// <summary>The role ability NOT in play this round, for the tray and the screens.</summary>
         public HeroAbility IdleRoleSkill => HasRoleAbilities ? (IsDefending ? AttackingSkill : DefendingSkill) : null;
 

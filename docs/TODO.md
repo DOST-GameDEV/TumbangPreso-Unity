@@ -126,8 +126,11 @@ method `docs/CHARACTER_MODEL_METHOD.md`.
   (`AmihanHeroKit`, `AmihanHazards`, `Core.AmihanRules`), wind VFX toolkit and every ability's
   effects (`WindVfx`, `AmihanVfx`, `Shaders/WindRibbon`), audio (`tools/build_amihan_audio.py`),
   lines, glyph ids, sky look, the introduction's body table (`tools/author_ultimate_intros.py`).
-  Open: cast clips and first-person actions, glyph drawings, the introduction's stage, HUD role
-  badge and status icons, screens, bots, in-engine review of every beat.
+  Also written: cast clips (`HeroAbilityClips.Amihan.cs`, baked by `Editor/AmihanMotionAuthor`),
+  first-person actions (`gust-dash`, `updraft-lift`, `gale-sweep`, `storm-call`), glyph and status
+  icon drawings (`tools/build_ability_icons.py`, reviewed v1 to v3), the introduction's stage
+  (`HeroIntroductionScene.Amihan.cs`), bots (`AIController`). Open: screens, in-engine review of
+  every beat (captures), PlayMode and bot probes.
 - [ ] Deploy the two cloud-code scripts that now list her (`ugs/cloud-code/match-record.js`,
   `wallet.js`) to the live UGS project; until then the server does not know her id.
 - [ ] Record her voice lines (human voices only; the rows are in `docs/HUMAN.md`).
@@ -148,12 +151,33 @@ rework of skills". Design, research and direction: `docs/reports/amihan-kit-2026
   (Whirled, Chilled timers; Tagged ignores stun immunity; flight; carry), pickup gate,
   Cheska's ice sheet applies Chilled, `SyncUnit` carries both new timers, `Carry` message,
   protocol 53.
-- [ ] HUD: role badge and swap on the slot-2 tile, status icons with tooltips over bodies and on
-  the local HUD, on mouse and keyboard, pad and touch.
+- [ ] HUD: role badge and swap on the slot-2 tile (`TumpPowerReadout.OwnerDeck`, a flip on
+  change, the role in the hold-to-read tray), status icons with the owner's tooltips over other
+  bodies (`Visual.StatusOverhead`) and as chips under the reticle (`TumpMatchReadout.Statuses`),
+  status body tells (`WhirledMark`, `ChilledMark`). Written; open until photographed on mouse and
+  keyboard, pad and touch.
 - [ ] Screens: character select, skill tree and loadout show signature, attacking, defending and
   ultimate for a role kit.
+- [x] Screens: hub character select and hero screen/popup show SIGNATURE, ATTACKING, DEFENDING,
+  ULTIMATE for a role kit (`HeroKit.ScreenSlots`). Not yet photographed; `ConvertedCharacterSelect`,
+  `TumpSkillView`, `AbilityInspectPanel`, `BrandAbilitySelection` and `HubSkillTree` labels still
+  read the three-slot shape (they show the attacking ability in slot 2).
+- [ ] **NEXT SESSION, in order** (state at the 2026-09-25 hand-off):
+  1. `AmihanReviewProbe` (`Editor/MapKit`) wrote dash, updraft, whirlwind, storm and hit strips
+     to `Logs/amihan-review/*_v1.png` and then threw a NullReferenceException in
+     `Introduction` (the cutscene strip): fix it, bump `Version`, render, LOOK at every strip,
+     critique hard (owner: "watch it all and berate it then improve it even more"), iterate.
+  2. Re-run EditMode (last run: 605/609 with only the three known pre-existing failures plus
+     the description-length one, which is now fixed but not re-run).
+  3. Capture HUD states (status chips, overhead badges, role badge flip) and the screens on
+     keyboard, pad and touch; fix what the pictures show.
+  4. PlayMode gate, `Checks.RunAll`, audits (last run: only the pre-existing cue_audio,
+     event_subscriptions and tournament_defaults findings), `BotBehaviourProbe` with Amihan,
+     `AbilityShowcaseProbe`, then a Windows build into `Builds/`.
+  5. Remaining screens above; replay recording of dash/updraft/hover; rejoin during the storm
+     gather (plan.md § 9).
 - [ ] Owner approval of the proposed mapping for the other seven heroes (`plan.md` § 6); until
-  then they are unchanged.
+  then they are unchanged. Owner review of the gap decisions in `plan.md` § 8.
 - [ ] Full verification (Core, EditMode, PlayMode gate, Checks.RunAll, audits, BotBehaviourProbe,
   AbilityShowcaseProbe, Windows build).
 

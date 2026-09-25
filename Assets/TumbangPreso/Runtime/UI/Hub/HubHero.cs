@@ -189,25 +189,30 @@ namespace TumbangPreso.UI.Hub
             for (int i = _abilities.childCount - 1; i >= 0; i--) Destroy(_abilities.GetChild(i).gameObject);
             var kit = HeroAbilitySystem.CreateKitFor(heroId);
             if (kit == null) return;
-            HeroAbility[] abilities = { kit.Skill1, kit.Skill2, kit.Ultimate };
-            string[] actions = { "Skill1", "Skill2", "Ultimate" };
-            string[] slots = { "SKILL 1", "SKILL 2", "ULTIMATE" };
-            for (int i = 0; i < abilities.Length; i++)
+            // A role kit is four powers (signature, attacking, defending, ultimate), so its tiles are
+            // narrower on the same row; a legacy kit keeps its three at 150.
+            var screenSlots = kit.ScreenSlots;
+            bool four = screenSlots.Length == 4;
+            float tileSize = four ? 128 : 150, tileStep = four ? 142 : 170;
+            for (int i = 0; i < screenSlots.Length; i++)
             {
-                var ability = abilities[i];
+                var ability = screenSlots[i].Ability;
                 if (ability == null) continue;
                 int slot = i;
-                var tile = HubKit.Button(_abilities, "Ability" + i, null, i == 2 ? HubStyle.Golden : HubStyle.Honey,
+                var tile = HubKit.Button(_abilities, "Ability" + i, null, screenSlots[i].IsUltimate ? HubStyle.Golden : HubStyle.Honey,
                                          () => Hub.Push<HubAbilityPopup>(p => { p.Hero = heroId; p.Slot = slot; }), 0, 330 + i);
-                HubKit.Place((RectTransform)tile.transform, HubKit.TopLeft, new Vector2(i * 170, 0), new Vector2(150, 150));
+                HubKit.Place((RectTransform)tile.transform, HubKit.TopLeft, new Vector2(i * tileStep, 0), new Vector2(tileSize, tileSize));
                 var symbol = HubKit.Rect(tile.Body, "Glyph").gameObject.AddComponent<TumpAbilitySymbol>();
                 symbol.Glyph = ability.Glyph;
                 symbol.color = HubStyle.Ink;
                 symbol.raycastTarget = false;
-                HubKit.Place(symbol.rectTransform, HubKit.Top, new Vector2(0, -14), new Vector2(92, 92));
-                var key = HubKit.Text(tile.Body, "Key", Hud.KeyLabelFor(actions[i]), HubStyle.Floor, true, HubStyle.Ink, TextAnchor.MiddleCenter);
-                HubKit.Place(key.rectTransform, HubKit.Bottom, new Vector2(0, 8), new Vector2(136, 36));
-                HubKit.Fit(key, 136);
+                float glyph = four ? 78 : 92;
+                HubKit.Place(symbol.rectTransform, HubKit.Top, new Vector2(0, -12), new Vector2(glyph, glyph));
+                // A role kit's middle tiles name their role; the key is the same for both.
+                string caption = four && !screenSlots[i].IsUltimate && i > 0 ? screenSlots[i].Label : Hud.KeyLabelFor(screenSlots[i].Action);
+                var key = HubKit.Text(tile.Body, "Key", caption, HubStyle.Floor, true, HubStyle.Ink, TextAnchor.MiddleCenter);
+                HubKit.Place(key.rectTransform, HubKit.Bottom, new Vector2(0, 8), new Vector2(tileSize - 14, 36));
+                HubKit.Fit(key, tileSize - 14);
                 HubSlap.On(tile.transform, 0.04f * i, 2 - i * 2);
             }
         }
@@ -284,13 +289,13 @@ namespace TumbangPreso.UI.Hub
         public override void Build()
         {
             var kit = HeroAbilitySystem.CreateKitFor(Hero);
-            var ability = Slot == 0 ? kit.Skill1 : Slot == 1 ? kit.Skill2 : kit.Ultimate;
-            string[] slots = { "SKILL 1", "SKILL 2", "ULTIMATE" };
-            string[] actions = { "Skill1", "Skill2", "Ultimate" };
+            var shownSlots = kit.ScreenSlots;
+            var shown = shownSlots[Mathf.Clamp(Slot, 0, shownSlots.Length - 1)];
+            var ability = shown.Ability;
             var panel = HubCards.Panel(Root, this, ability.Name.ToUpperInvariant(),
-                                       slots[Slot] + "   ·   " + Hud.KeyLabelFor(actions[Slot]), new Vector2(1180, 640));
+                                       shown.Label + "   ·   " + Hud.KeyLabelFor(shown.Action), new Vector2(1180, 640));
 
-            var tile = HubKit.Shape(panel, "GlyphTile", Slot == 2 ? HubStyle.Golden : HubStyle.Honey, false, 341, 6, 26);
+            var tile = HubKit.Shape(panel, "GlyphTile", shown.IsUltimate ? HubStyle.Golden : HubStyle.Honey, false, 341, 6, 26);
             HubKit.Place(tile.rectTransform, HubKit.TopLeft, new Vector2(48, -190), new Vector2(260, 260));
             var symbol = HubKit.Rect(tile.transform, "Glyph").gameObject.AddComponent<TumpAbilitySymbol>();
             symbol.Glyph = ability.Glyph;
@@ -302,7 +307,7 @@ namespace TumbangPreso.UI.Hub
                                     HubStyle.Body, false, HubStyle.Honey, TextAnchor.UpperLeft);
             HubKit.Place(words.rectTransform, HubKit.TopLeft, new Vector2(350, -190), new Vector2(780, 300));
 
-            if (Slot < 2 && HeroLoadoutRules.VariantsFor(Hero, Slot + 1).Count > 1)
+            if (shown.LoadoutSlot > 0 && HeroLoadoutRules.VariantsFor(Hero, shown.LoadoutSlot).Count > 1)
             {
                 var more = HubKit.Button(panel, "OpenSkillTree", "ALTERNATIVES IN THE SKILL TREE", HubStyle.Honey,
                                          () => { Close(); Hub.Push<HubSkillTree>(t => t.Hero = Hero); }, HubStyle.Body, 342, HubGlyph.Mark.Tree);

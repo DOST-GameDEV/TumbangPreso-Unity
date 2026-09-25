@@ -56,7 +56,7 @@ namespace TumbangPreso.Abilities
 
             public QuickDash()
                 : base("amihan_skill1", "QUICK DASH",
-                       "Propel yourself forward where you aim. Whoever you pass is Whirled, dropping the slipper in their hand and unable to pick one up for 2.5 s, and is pushed back.",
+                       "Throw yourself forward where you aim. Anyone you pass is shoved aside and Whirled: slipper dropped, no pickups for 2.5 s.",
                        AmihanRules.QuickDashCooldown, 0.0f, AbilityGlyph.AmihanQuickDash,
                        summary: "Dash where you aim. Whoever you pass is Whirled and shoved.",
                        castAction: "hero-amihan-dash", viewmodelAction: "gust-dash",
@@ -136,7 +136,7 @@ namespace TumbangPreso.Abilities
 
             public Updraft()
                 : base("amihan_skill2", "UPDRAFT",
-                       "Attacking. Ride a column of wind up and fly high for 10 s, out of the taya's reach. Throw from the air; press again or grab to glide down, because you can only pick up on the ground.",
+                       "Attacking. Fly high for 10 s, out of the taya's reach. Throw from the air; press again or grab to land and pick up.",
                        AmihanRules.UpdraftCooldown, AmihanRules.UpdraftSeconds, AbilityGlyph.AmihanUpdraft,
                        summary: "Fly high for 10 s. Throw from the air, land to grab.",
                        castAction: "hero-amihan-updraft", viewmodelAction: "updraft-lift",
@@ -201,7 +201,7 @@ namespace TumbangPreso.Abilities
 
             public Whirlwind()
                 : base("amihan_skill2d", "WHIRLWIND",
-                       "Defending. Sweep an arc of gale forward along the ground. It rolls across the court for 2.5 s and Whirls everyone it passes: slippers dropped, no pickups for 2.5 s.",
+                       "Defending. Roll an arc of gale down the court for 2.5 s. Everyone it passes is Whirled: slipper dropped, no pickups.",
                        AmihanRules.WhirlwindCooldown, 0.0f, AbilityGlyph.AmihanWhirlwind,
                        summary: "Roll a gale down a lane. Everyone it passes is Whirled.",
                        telegraphRadius: AmihanRules.WhirlwindWidth * 0.5f,
@@ -225,9 +225,9 @@ namespace TumbangPreso.Abilities
 
             public StormSurge()
                 : base("amihan_ultimate", "STORM SURGE",
-                       "Plant and call the amihan. For 2.5 s the wind gathers in a fan the whole court can see, then it blows the full length of the map, throwing every player and loose slipper in it to the edge, or off it.",
+                       "Plant and call the storm. After 2.5 s a map-wide fan of wind throws every player and loose slipper in it to the edge.",
                        0.0f, 0.0f, AbilityGlyph.AmihanStormSurge,
-                       summary: "After 2.5 s, a map-wide fan of wind blows everyone in it to the edge.",
+                       summary: "After 2.5 s, a map-wide wind blows everyone to the edge.",
                        castAction: "hero-amihan-storm", viewmodelAction: "storm-call",
                        castCue: "sfx_cast_amihan_storm")
             {
