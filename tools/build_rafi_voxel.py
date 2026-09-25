@@ -496,13 +496,16 @@ def _mirror_decals(decals):
 # ---------------------------------------------------------------------------
 
 CHEST_DECALS = [
-    # === COLLAR & CLAVICLE (Dubdub - Bold Solar Clavicle Arch) ===
+    # === COLLAR & CLAVICLE (Dubdub - Boxer Codex Solar Breastplate Arch) ===
     # Central Init solar diamond above necklace
     ('chest', 'front', TATTOO, [(0.000, 0.414), (0.016, 0.428), (0.000, 0.442), (-0.016, 0.428)], 2),
-    # Bold Left Clavicle Bar
-    ('chest', 'front', TATTOO, [(0.024, 0.410), (0.126, 0.428), (0.126, 0.418), (0.024, 0.400)], 2),
+    # Solar accent satellites
+    ('chest', 'front', TATTOO, [(0.030, 0.422), (0.038, 0.428), (0.030, 0.434), (0.022, 0.428)], 2),
+    ('chest', 'front', TATTOO, [(-0.030, 0.422), (-0.022, 0.428), (-0.030, 0.434), (-0.038, 0.428)], 2),
+    # Bold Left Clavicle Bar (Pakpak - eagle wing clavicle)
+    ('chest', 'front', TATTOO, [(0.046, 0.412), (0.126, 0.430), (0.126, 0.418), (0.046, 0.400)], 2),
     # Bold Right Clavicle Bar
-    ('chest', 'front', TATTOO, [(-0.024, 0.410), (-0.024, 0.400), (-0.126, 0.418), (-0.126, 0.428)], 2),
+    ('chest', 'front', TATTOO, [(-0.046, 0.412), (-0.046, 0.400), (-0.126, 0.418), (-0.126, 0.430)], 2),
 
     # === PECTORALS (Chaklag - Bold Muscular Warrior Crescents) ===
     # Left Pec Nipple Diamond
