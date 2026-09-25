@@ -1238,7 +1238,7 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
   door inspected. `avatar_rafi` rebuilt from the v7 portrait. Saved old ids still load.
 - [ ] Rafi model, ISLANDER REWORK 2026-09-25 (his own builder only). Owner: "looks so bad",
   "research first on islanders", references a painted Visayan datu and Maui, then a concept
-  sheet, then Harbor. v10 to v36 (`Logs/rafi-v*`, shared picks in `Logs/rafi-share/`): bare
+  sheet, then Harbor. v10 to v38 (`Logs/rafi-v*`, shared picks in `Logs/rafi-share/`): bare
   "a bit" muscular body, curly mane with a tied tail, muted sea-teal putong and bahag, silver
   cuffs and a shark-tooth necklace on a chain, ink-only fierce face (grit mouth, war slashes,
   chin stripe), and a batok tattoo planned from research as routes (chaklag, labid, dakag,
@@ -1246,7 +1246,7 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
   went 0.112 m through the street; now 0.000). Portrait, avatar, FPP arms, authored clips and
   the HERO STRIKE poster refreshed. Brief: `ArtSource/rafi/islander-rework-20260925/`;
   method: `docs/CHARACTER_MODEL_METHOD.md`. Earlier v7 to v9 history is in that brief's
-  table. **Owner approval of v36 still required.**
+  table. **Owner approval of v38 still required.**
 - [x] GAMEMODE posters: `Editor/ModeCardPoseAuthor.cs` renders the real models in their clips
   (1061 poses); `tools/build_mode_cards.py` composes PRACTICE, CUSTOM, CLASSIC, RANKED and the
   two choice cards; `HubCards.Art` shows a poster when one exists. Inspected at 1920x1080,
