@@ -112,8 +112,20 @@ namespace TumbangPreso.Visual
         [Range(0,1)] public float SilhouetteShade=.34f;
         // Sun-side convex edges brighten toward the key light.
         [Range(0,1)] public float EdgeHighlight=.42f;
-        // Inside corners take a coloured shade.
-        [Range(0,1)] public float CreaseShade=.30f;
+        // Inside corners take a coloured shade, in `CavityHue`.
+        // ⚠️ 0.45, UP FROM 0.30 (2026-09-25): "the current lighting looks flat". A blocky world
+        // gets its depth from where faces meet, and a violet inside corner is a painter's cavity.
+        [Range(0,1)] public float CreaseShade=.45f;
+        // ⚠️⚠️ THE CAVITY AND THE GROUND OCCLUSION ARE VIOLET, NOT GREY. The owner (2026-09-25):
+        // shade should lean "towards a slight purple instead of a plain dark shadow". Under a
+        // warm key, a painter shifts shade away from the light's hue, and against peach that is
+        // violet. Multiplied into the colour, so a corner deepens its own hue toward violet.
+        public Color CavityHue=new Color(.62f,.52f,.80f);
+        // Walls darken toward `CavityHue` as they near the ground, the soft occlusion that
+        // seats a building in the court instead of pasting it on. Strength, and the height in
+        // metres it fades out by. Drawn in `WorldOutline`'s pass from the depth it already reads.
+        [Range(0,.6f)] public float GroundOcclusion=.28f;
+        [Range(.5f,6)] public float GroundOcclusionHeight=2.8f;
         // 1 draws the cast's hull in a deeper shade of its own colour, 0 in black.
         [Range(0,1)] public float CastInkSelf=.88f;
         // The cast's hull width against its authored width.

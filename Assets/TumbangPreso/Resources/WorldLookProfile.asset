@@ -23,7 +23,10 @@ MonoBehaviour:
   MetalHighlight: 0
   SilhouetteShade: 0.34
   EdgeHighlight: 0.42
-  CreaseShade: 0.3
+  CreaseShade: 0.45
+  CavityHue: {r: 0.62, g: 0.52, b: 0.8, a: 1}
+  GroundOcclusion: 0.28
+  GroundOcclusionHeight: 2.8
   CastInkSelf: 0.88
   CastInkWidth: 0.72
   Vibrance: 0.14

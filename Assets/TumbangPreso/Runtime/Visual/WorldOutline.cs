@@ -918,17 +918,24 @@ namespace TumbangPreso.Visual
         private static readonly int PeakSunViewId = Shader.PropertyToID("_PeakSunView");
         private static readonly int PeakShadeId = Shader.PropertyToID("_PeakShade");
         private static readonly int PeakLightId = Shader.PropertyToID("_PeakLight");
+        private static readonly int PeakDepthId = Shader.PropertyToID("_PeakDepth");
         private void ApplyBrightLookEdges()
         {
             var look=WorldLookPresentation.Current;
             float weight=WorldLookPresentation.HandlesCamera(_camera)?look.Weight:0;
             var profile=WorldLookProfile.Current;
             _material.SetVector(PeakEdgeId,new Vector4(profile.SilhouetteShade,profile.EdgeHighlight,profile.CreaseShade,weight));
+            // The ground occlusion rides the contact term's gate: it needs the same rebuilt world
+            // position, so it is off wherever that is (the Low tier, a camera the look does not own).
+            _material.SetVector(PeakDepthId,new Vector4(profile.GroundOcclusion,Mathf.Max(.1f,profile.GroundOcclusionHeight),
+                look!=null?look.Floor:0,HasWorldContact?weight:0));
             if(weight<=0)return;
             var sun=look.KeyLight;
             Vector3 toLight=sun!=null?-sun.transform.forward:Vector3.up;
             _material.SetVector(PeakSunViewId,_camera.worldToCameraMatrix.MultiplyVector(toLight).normalized);
-            _material.SetColor(PeakShadeId,look.Look.ShadowTint);
+            // ⚠️ A VECTOR OF THE AUTHORED NUMBERS, NOT A COLOUR: it is a multiplier on the pixel
+            // (violet cavity, 2026-09-25), and `SetColor` would convert it from sRGB first.
+            var cavity=profile.CavityHue;_material.SetVector(PeakShadeId,new Vector4(cavity.r,cavity.g,cavity.b,1));
             _material.SetColor(PeakLightId,sun!=null?sun.color.linear:Color.white);
         }
 
