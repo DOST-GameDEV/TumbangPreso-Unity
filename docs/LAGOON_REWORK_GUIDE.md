@@ -226,6 +226,11 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      thins the band along each edge (0.12 to 0.55 m) and a fine noise frays its inner side;
      the line is ~5 cm and fainter along some stretches. Re-packing UVBake is idempotent
      (re-baking a saved file used to shrink every island into a sliver).
+   - ⚠️ **THE LINE IS ORGANIC AND ROCK-COLOURED** (owner on v19: *"same one flat width issue
+     for the white edge, also i think its a bit too white and in-organic"*, *"its okay if it
+     gets cut off along an edge too"*): its own varying width (1.5 to 8.5 cm), frayed by the
+     dry-brush noise, broken into stretches with gaps, and a lighter ROCK colour (the rock's
+     own ~1.5x plus a hint of cream), never a near-white stroke. `rock_edge_line_crop_v20.png`.
    - SUPERSEDED, **inner-shadow edges** (owner on v9: *"can you make them slightly more clear? think of
      like an inner shadow effect, the edges have the crispiest white and then it fades the
      closer it gets to the center"*). `ROCK_LOOK = "rock_a+inner"`, `inner_glow()` in

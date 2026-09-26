@@ -157,11 +157,24 @@ def brushed_edge(nt, colour, ch, up, geo):
     band = _range(nt, _math(nt, "SUBTRACT", edge, threshold(width)), -0.015, 0.04, smooth=True)
     band = _math(nt, "MULTIPLY", band, weight, clamp=True)
     colour = _scale_colour(nt, colour, _range(nt, band, 0.0, 1.0, 1.0, 1.38))
-    # The crisp LINE: ~5 cm in the world, fainter along some stretches of an edge.
-    line = _range(nt, _math(nt, "SUBTRACT", edge, threshold(0.05)), -0.01, 0.015, smooth=True)
-    line = _math(nt, "MULTIPLY", line, _range(nt, slow.outputs["Fac"], 0.3, 0.7, 0.45, 1.0))
+    # THE LINE (owner on v19: "same one flat width issue for the white edge, also i think its a
+    # bit too white and in-organic"). Its own varying width (1.5 to 8.5 cm, a quicker noise than
+    # the band's), frayed by the dry-brush noise, broken into stretches with gaps, and a
+    # LIGHTER ROCK colour (the rock's own ~1.5x, a hint of cream), not a near-white stroke.
+    quick = nt.nodes.new("ShaderNodeTexNoise")
+    quick.inputs["Scale"].default_value = 1.6
+    quick.inputs["Detail"].default_value = 2.0
+    nt.links.new(geo.outputs["Position"], quick.inputs["Vector"])
+    lw = _range(nt, quick.outputs["Fac"], 0.3, 0.7, 0.015, 0.085, smooth=True)
+    lw = _math(nt, "MULTIPLY", lw, _range(nt, fine.outputs["Fac"], 0.3, 0.7, 0.6, 1.3))
+    line = _range(nt, _math(nt, "SUBTRACT", edge, threshold(lw)), -0.006, 0.01, smooth=True)
+    gaps = nt.nodes.new("ShaderNodeTexNoise")
+    gaps.inputs["Scale"].default_value = 0.7
+    nt.links.new(geo.outputs["Position"], gaps.inputs["Vector"])
+    line = _math(nt, "MULTIPLY", line, _range(nt, gaps.outputs["Fac"], 0.38, 0.52, smooth=True))
     line = _math(nt, "MULTIPLY", line, weight, clamp=True)
-    return _lift(nt, colour, EDGE_WHITE, _math(nt, "MULTIPLY", line, 0.75))
+    colour = _scale_colour(nt, colour, _range(nt, line, 0.0, 1.0, 1.0, 1.5))
+    return _lift(nt, colour, EDGE_WHITE, _math(nt, "MULTIPLY", line, 0.18))
 
 
 def edge_wear(nt, colour, chips, inner=False, brush=False):
