@@ -60,8 +60,18 @@ with the owner's earlier rejection of cold blue-grey rock shade: show it, do not
   and a lean-to on the court's edge, driftwood along the sand. First full build: cove v52.
 - Owner: *"the last types of foliage and fauna added dont have much textures on them"*: grass
   blades and leaf stalks repainted (§ 8 step 5).
-- **Next:** review cove v52 against § 7a; lanterns and laundry on the water homes; pots by the
-  stair feet; then the owner's picks (timber/bamboo/tin, emblem, rock tint), and later the sky.
+- Cove v53: 121 props. Added the water homes' porches (pieces must sit OUTSIDE the walls, a level
+  ray from the room's middle meeting a wall first, and on level deck under the whole outline +5 %
+  so nothing overhangs a railing), a capiz lantern under most water-home eaves, pots either side
+  of each stair's foot, denser piles (spacing 0.15 m), and clearance rays over the full outline
+  (owner's screenshot: a barrel touching the stall's step).
+- Owner: *"theres this green untextured barrel too"*: `pg_plastic` (the water drums) was 3.5 %
+  patches; now sun-chalked +14 %, warm grime -16 % and a few soft 14 cm scuffs with a shallow
+  dent (`pg_drum_beforeafter_v1.png`; a 7 cm scuff pass read as a rash of specks and was cut).
+- **Next:** the props are true to scale and so small beside 3 to 6 m boulders from the reference
+  angle; the owner decides whether the reference's density is wanted (more pieces, or bigger
+  hero pieces such as boats on racks and net-drying frames). Then the owner's picks
+  (timber/bamboo/tin, emblem, rock tint), and later the sky.
 
 ---
 

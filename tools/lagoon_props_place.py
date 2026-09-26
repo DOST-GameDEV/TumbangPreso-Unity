@@ -70,7 +70,9 @@ GROUND_SEEDS = {
 }
 SARI_SARI_SIGN = 11          # the village kit's wall-bracket sari-sari sign (its notes: on a side wall)
 MAX_TILT = 0.35              # metres of ground difference allowed across a footprint
-SPACING = 0.35               # metres between two props' footprint circles
+# 0.15 (was 0.35): cove v52's piles read as scattered pieces with sand between them, where the
+# reference packs its gear against itself.
+SPACING = 0.15               # metres between two props' footprint circles
 # Low plants give way to a prop (clear_plants removes them afterwards); palms and stones do not.
 SOFT_PLANTS = ("tuft", "groundcover", "flower", "croton", "monstera", "broadleaf")
 CLEAR_RAY = 2.4              # a ray from this high over the ground must reach the ground first
@@ -178,11 +180,37 @@ class Placer:
             return refuse("tilt")
         if any(math.hypot(x - q[0], y - q[1]) < radius + q[3] + SPACING for q in PLACED):
             return refuse("spacing")
-        for (px, py), gz in zip(pts, zs):
+        # The clearance rays use the FULL outline plus 5 % (owner's screenshot of the stall: a barrel
+        # on its side touched the stall's front step, which stood just outside the 85 % outline).
+        full, _r = self._footprint(kind, seed, x, y, rz, shrink=1.05)
+        for px, py in full:
+            gz = C.height(px, py)
             hit, loc, _n, _i, obj, _m = self._ray_down(px, py, gz + CLEAR_RAY, CLEAR_RAY + 0.5)
             if hit and not obj.name.startswith("ground") and not obj.name.startswith(SOFT_PLANTS)                     and loc.z > gz + 0.03:
                 return refuse("blocked by " + obj.name.split(".")[0][:18])   # a stone, a house, a boat
         return min(zs)
+
+    def deck_z(self, kind, seed, x, y, rz, top):
+        """The z of a flat DECK under the whole footprint (a porch, a walk), casting down from
+        `top`; None unless every footprint point meets a level face within 6 cm of the others."""
+        # The FULL outline plus 5 % (a ground prop's test shrinks it 15 %): on a porch a railing's
+        # rail stands at the deck's edge, and a piece overhanging the deck clipped through it
+        # (props_water_home1_v6, a leaning bilao through the bamboo rail).
+        pts, radius = self._footprint(kind, seed, x, y, rz, shrink=1.05)
+        zs = []
+        for px, py in pts:
+            hit, loc, n, _i, obj, _m = self._ray_down(px, py, top, 2.0)
+            if not hit or n.z < 0.9 or obj.name.startswith(SOFT_PLANTS):
+                REFUSED["off deck"] = REFUSED.get("off deck", 0) + 1
+                return None
+            zs.append(loc.z)
+        if max(zs) - min(zs) > 0.06:
+            REFUSED["deck uneven"] = REFUSED.get("deck uneven", 0) + 1
+            return None
+        if any(math.hypot(x - q[0], y - q[1]) < radius + q[3] + SPACING for q in PLACED):
+            REFUSED["spacing"] = REFUSED.get("spacing", 0) + 1
+            return None
+        return max(zs)
 
     def put(self, kind, seed, x, y, z, rz):
         root = duplicate(self.c, kind, seed, x, y, z, rz)
@@ -336,10 +364,10 @@ def beach_drying(P, rng):
         if rack is None:
             continue
         rx, ry = rack.matrix_world.translation.xy
-        for kind in ("basket", "bubo", "woven_mat" if spots % 2 else "basket"):
-            P.try_ground(kind, rng.choice(GROUND_SEEDS[kind]), _ring(rx, ry, 2.0, 4.0, rng))
+        for kind in ("basket", "bubo", "woven_mat" if spots % 2 else "basket", "crate", "basket", "net_pile"):
+            cluster_piece(P, rng, kind, Vector((rx, ry, 0)), r0=1.2, r1=3.4)
         spots += 1
-        if spots >= 3:
+        if spots >= 4:
             break
 
 
@@ -385,6 +413,73 @@ def _yard_piece(P, rng, kind, at, fwd, side, s, facing):
     P.try_ground(kind, rng.choice(GROUND_SEEDS[kind]), cands)
 
 
+def water_homes(P, rng):
+    """The Bajau homes' porches (cove v52: the whole water village carried no gear at all; the
+    owner's photograph shows drums, basins, baskets and nets on every platform). The kit lifts a
+    floor about 1.9 m over the water; the porch is found by casting down from just under the eaves,
+    and each piece must sit flat on it."""
+    kinds = ("water_drum", "basket", "crate", "banga", "pot_cluster", "net_pile", "bubo", "barrel")
+    for root in _roots(["Village"], "house_kind", "water"):
+        m = root.matrix_world
+        at = m.translation
+        fwd = (m.to_3x3() @ Vector((0, 1, 0))).normalized()
+        side = Vector((-fwd.y, fwd.x, 0))
+        hit, loc, n, _i, _o, _m = P._ray_down(at.x, at.y, at.z + 3.0, 3.5)
+        if not hit:
+            continue
+        floor = loc.z
+        for kind in rng.sample(kinds, 3):
+            seed = rng.choice(GROUND_SEEDS[kind])
+            done = False
+            for f in (2.2, 2.8, 1.6, 3.4, 4.0):
+                for l in (1.1, -1.1, 0.5, -0.5, 1.6, -1.6):
+                    p = at + fwd * f + side * l
+                    if not _outside(P, at, p, floor):
+                        continue                     # inside the room (v6 put a crate and a drum there)
+                    rz = math.atan2(fwd.y, fwd.x) - math.pi / 2 + rng.uniform(-0.6, 0.6)
+                    z = P.deck_z(kind, seed, p.x, p.y, rz, floor + 1.2)
+                    if z is not None and abs(z - floor) < 0.3:
+                        P.put(kind, seed, p.x, p.y, z, rz)
+                        done = True
+                        break
+                if done:
+                    break
+        eave = _eave_point(P, root, fwd, side * rng.choice((-1.0, 1.0)), floor)
+        if eave is not None and rng.random() < 0.7:
+            p, z = eave
+            P.put("lantern_hang", 1 + 2 * rng.randrange(2), p.x, p.y, z, math.atan2(fwd.y, fwd.x) - math.pi / 2)
+
+
+def _outside(P, centre, p, floor):
+    """True when a level ray at waist height from the house's middle toward p meets a wall first."""
+    o = Vector((centre.x, centre.y, floor + 1.0))
+    d = Vector((p.x - centre.x, p.y - centre.y, 0))
+    if d.length < 1e-3:
+        return False
+    hit, loc, _n, _i, _o, _m = P.scene.ray_cast(P.depsgraph, o, d.normalized(), distance=d.length)
+    return hit
+
+
+def stair_feet(P, rng):
+    """Pots and a jar either side of each stair's foot (the reference dresses every flight's foot)."""
+    for ea, eb in list(getattr(P.cove, "_STAIR_SEGMENTS", [])):
+        if abs(ea.z - eb.z) < 1.5:
+            continue                                    # a walk segment, not a flight
+        foot, top = (ea, eb) if ea.z < eb.z else (eb, ea)
+        d = Vector((top.x - foot.x, top.y - foot.y, 0))
+        if d.length < 1e-3:
+            continue
+        d.normalize()
+        side = Vector((-d.y, d.x, 0))
+        for sgn in (1, -1):
+            if rng.random() < 0.3:
+                continue
+            kind = rng.choice(("potted_plant", "banga", "pot_cluster", "potted_plant"))
+            cands = [((foot - d * b + side * sgn * l).x, (foot - d * b + side * sgn * l).y, rng.uniform(0, math.tau))
+                     for b in (0.8, 1.4, 0.3, 2.0) for l in (1.3, 1.7, 2.2)]
+            P.try_ground(kind, rng.choice(GROUND_SEEDS[kind]), cands, allow_court=True, keep_off=0.2)
+
+
 def stall(P, rng):
     root = next(_roots(["Village"], "house_kind", "stall"), None)
     if root is None:
@@ -427,7 +522,7 @@ def court_edge(P, rng):
                 break
 
 
-def driftwood(P, rng, n=7):
+def driftwood(P, rng, n=10):
     C = P.cove
     m = len(C.COAST_LINE)
     done = 0
@@ -465,14 +560,21 @@ def clear_plants(plants):
     return gone
 
 
+STEPS = None
+
+
 def place_props(c, cove, plants=None):
     PLACED.clear()
     REFUSED.clear()
     rng = random.Random(41)
     P = Placer(c, cove)
-    for step in (pier_clusters, beached_boat_clusters, stall, court_edge, houses, beach_drying, driftwood):
+    for step in STEPS:
         step(P, rng)
     gone = clear_plants(plants)
     print("[lagoon-props] placed", sum(P.count.values()), dict(sorted(P.count.items())),
           "| plants cleared:", gone, "| refused:", dict(sorted(REFUSED.items(), key=lambda kv: -kv[1])[:12]))
     return P.count
+
+
+STEPS = (pier_clusters, beached_boat_clusters, stall, court_edge, houses, water_homes, stair_feet,
+         beach_drying, driftwood)
