@@ -107,7 +107,12 @@ line says so, so "fixed" below means written and reviewed, not played.
 - [ ] BUGS-0926.1 The title screen ("Click anywhere to continue.") also continues on any keyboard key.
 - [ ] BUGS-0926.2 Escape on HOME no longer returns to the title screen.
 - [ ] BUGS-0926.3 Pressing the IN QUEUE button cancels the queue.
-- [ ] BUGS-0926.4 The hamburger MENU popup no longer swaps HOME's background for the live court.
+- [x] BUGS-0926.4 The hamburger MENU popup no longer swaps HOME's background for the live court.
+  Cause: `HubSceneVideo` showed the HOME loop only while `TumpHub.AtHome` (HOME on top of the
+  stack), and the MENU is a popup pushed on top, so the loop hid and the live court showed
+  through the popup's scrim. It now reads `TumpHub.ShowingHome`, the top non-popup screen.
+  `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts the loop stays up under
+  the MENU.
 - [ ] BUGS-0926.5 Lighting styles: Bright is renamed Standard, stays the default and moves to slot 1;
   Classic is renamed Nostalgic and moves to slot 2.
 - [x] BUGS-0926.6 The stamina arc beside the reticle drains from the top. `HudRing.FillFromEnd`

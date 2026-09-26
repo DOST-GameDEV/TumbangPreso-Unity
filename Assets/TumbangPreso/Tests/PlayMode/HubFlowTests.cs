@@ -180,6 +180,11 @@ namespace TumbangPreso.PlayTests
 
                 yield return Press("MenuButton");
                 Assert.IsInstanceOf<HubMenu>(TumpHub.Current.Top);
+                yield return null;
+                // BUGS-0926.4: the MENU is a popup over HOME, so HOME's own background stays up under it.
+                var video = Object.FindFirstObjectByType<HubSceneVideo>();
+                Assert.IsTrue(video == null || video.GetComponent<RawImage>().enabled,
+                              "Opening the MENU hid HOME's background and showed the live court instead.");
                 yield return Shots("Menu");
                 yield return BackToHome();
 
