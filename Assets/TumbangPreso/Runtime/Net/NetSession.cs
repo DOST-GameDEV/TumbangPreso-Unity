@@ -396,7 +396,9 @@ namespace TumbangPreso.Net
         // status clocks, and the new `Carry` message holds a wind or dash hit on a client's body.
         // 54 is Paete, the ninth hero (2026-09-25): his roster index, `SyncUnit` carries the Rooted
         // clock, `ScoreEvent.SproutKnock` is appended, and `ReqBreakFree` and `ReqUproot` are new.
-        public const int ProtocolVersion = 54;
+        // 55 (2026-09-26): `SubmitMove` and `SyncUnit` append the struggle flag and the plant-pull
+        // progress, so every peer draws a body fighting Paete's roots or heaving at his seedling.
+        public const int ProtocolVersion = 55;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -339,6 +339,16 @@ namespace TumbangPreso.Visual
             dict["hero-amihan-hover"] = BuildAmihanHover(paths);
             dict["hero-amihan-whirlwind"] = BuildAmihanWhirlwind(paths);
             dict["hero-amihan-storm"] = BuildAmihanStorm(paths);
+
+            // PAETE (HERO-9). His direction is the bend and the snap-back; see `HeroAbilityClips.Paete.cs`.
+            dict["hero-paete-vine"] = BuildPaeteVine(paths);
+            dict["hero-paete-sprout"] = BuildPaeteSprout(paths);
+            dict["hero-paete-command"] = BuildPaeteCommand(paths);
+            dict["hero-paete-thorns"] = BuildPaeteThorns(paths);
+            dict["hero-paete-sentry"] = BuildPaeteSentry(paths);
+            // What any body does against his kit; a player loads the baked `RootedMotion` set instead.
+            dict[RootedMotion.Struggle] = BuildRootedStruggle(paths);
+            dict[RootedMotion.Heave] = BuildPlantHeave(paths);
             return dict;
         }
 

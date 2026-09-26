@@ -2279,6 +2279,11 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(yaw);
             writer.WriteValueSafe(velocity);
             writer.WriteValueSafe(grounded);
+            // ⚠️ PAETE'S KIT, PROTOCOL 55: the owner's struggle against the roots and pull on a
+            // seedling, so the host can relay the pose. Presentation only: the break-free and the
+            // uproot are still decided by `ReqBreakFree` and `ReqUproot`, never by these bytes.
+            writer.WriteValueSafe(owner.EffortFlags);
+            writer.WriteValueSafe(owner.PullWire);
             _nm.CustomMessagingManager.SendNamedMessage("SubmitMove", NetworkManager.ServerClientId,
                                                         writer, PoseDelivery);
         }
@@ -2293,8 +2298,11 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float yaw);
             reader.ReadValueSafe(out Vector3 velocity);
             reader.ReadValueSafe(out bool grounded);
+            reader.ReadValueSafe(out byte effort);
+            reader.ReadValueSafe(out byte pull);
 
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var unit)) return;
+            unit.ApplyNetworkEffort((effort & 1) != 0 && unit.IsRooted, pull / 255f);
             if (epoch!=_movementEpochs[slot] || !AcceptMove(slot, unit, pos, yaw, velocity))
             {
                 SyncUnitTransformClientRpc(slot, unit.transform.position,
@@ -2372,6 +2380,9 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.ChilledLeft);
             // ⚠️ PAETE'S ROOTS (protocol 54, 2026-09-25): appended after the two above.
             writer.WriteValueSafe(unit.RootedLeft);
+            // ⚠️ PROTOCOL 55: the struggle and the pull, for the poses (see `SubmitMove`).
+            writer.WriteValueSafe(unit.EffortFlags);
+            writer.WriteValueSafe(unit.PullWire);
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer,reliable?NetworkDelivery.ReliableSequenced:PoseDelivery);
         }
 
@@ -2413,6 +2424,8 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float whirledLeft);
             reader.ReadValueSafe(out float chilledLeft);
             reader.ReadValueSafe(out float rootedLeft);
+            reader.ReadValueSafe(out byte effort);
+            reader.ReadValueSafe(out byte pull);
             if(!Finite(whirledLeft) || !Finite(chilledLeft) || !Finite(rootedLeft))return;
             if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
             if(edgeKind>(byte)EdgeRecoveryKind.Lagoon||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
@@ -2451,6 +2464,7 @@ namespace TumbangPreso.Net
                                    staminaCurrent, staminaIdle, fatigueLeft,
                                    recoveryEpisode,recoveryAcknowledged);
             unit.ApplyNetworkStatuses(whirledLeft, chilledLeft, rootedLeft);
+            unit.ApplyNetworkEffort((effort & 1) != 0, pull / 255f);
         }
 
         // -------------------------------------------------------------------

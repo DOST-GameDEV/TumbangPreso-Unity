@@ -159,7 +159,7 @@ class Performance:
 # changes what it says. The amount is the hero's character: Cheska is the one who stops (her
 # holds barely drift), Phaister and Zack keep moving, Dante's holds already tremble as authored.
 HOLD_DRIFT = {"sean": .06, "zack": .09, "dante": .05, "cheska": .02, "nemu": .08, "phaister": .09, "rafi": .08,
-              "amihan": .10}
+              "amihan": .10, "paete": .04}
 HOLD_CAP = 3.0
 
 
@@ -737,6 +737,74 @@ def amihan():
     # D: RELEASE. Over her right shoulder, down the court the wind is about to cross.
     p.shot(2.46, 3.6, (1.05, 1.85, -2.3), (0, 1.1, 5.0), 54, eye_to=(.8, 1.65, -1.9), look_to=(0, 1.0, 7.0))
     p.locked((1.6, 1.1, 4.2), (0, 1.15, 0), 48)
+    return p
+
+@performance
+def paete():
+    """
+    YAKAP NG MAKILING, 3.6 s (docs/reports/paete-kit-2026-09-25/plan.md section 3, the staging in
+    `HeroIntroductionScene.Paete.cs`). The four beats, played by a tree: he is the calmest thing
+    in the cast (the owner's "nonchalant calm expression"), so nothing here is fast until the throw.
+
+    WHO (0 to 0.6): wide and low from the front. He simply stands at the forest's edge while the
+    trunks rise round him, heavy vine arms hanging, head a little down, one slow breath.
+    INTENT (0.6 to 1.5): the close-up. The seed lights in his right palm; he turns his head down to
+    it, then lifts it and looks at the lens, unhurried. No face change (CLAUDE.md, never change a
+    face): the intent is the head and the hand.
+    GATHER (1.5 to 2.5): low from his left. He sinks and spreads both arms low, palms to the ground,
+    drawing the roots up out of it (they break the ground at 1.2 to 1.6 s and climb); the arms rise
+    wide with them; then the seed goes up and back over his head, the left arm pointing at the spot.
+    RELEASE (2.5 to 3.6): over his right shoulder down the court. The overhand throw at 2.62 s, when
+    the seed leaves his palm in the scene, and he holds the thrown pose while the spiked vines erupt.
+    The live clip (`hero-paete-sentry`) STARTS from this pose: arms flung open as the real seed
+    lands, then the embrace as the vines catch.
+    """
+    p = Performance("paete", 3.6)
+    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
+    stand = Pose(torso=(3, 0, 0), head=(10, 0, 0), left=(4, 20, 0), right=(4, 20, 0),
+                 legs=((0, 8), (0, 8)))
+    breath = stand.but(torso=(1, 0, 0), head=(7, 0, 0))
+    # The seed in the right palm at chest height; he looks down at it.
+    palm = Pose(torso=(4, -4, 0), head=(16, -8, 0), left=(6, 20, 0), right=(70, 18, -10),
+                legs=((0, 8), (0, 8)))
+    # Then up, straight at the lens, calm.
+    look = palm.but(torso=(0, 0, 0), head=(-3, 0, 0))
+    # Drawing the roots: sunk, both arms low and wide, palms to the ground.
+    draw = Pose(torso=(16, 0, 0), head=(4, 0, 0), left=(30, 60, 0), right=(30, 60, 0),
+                legs=((0, 16), (0, 16)))
+    # The arms rise wide with the climbing roots.
+    climb = Pose(torso=(-4, 0, 0), head=(-10, 0, 0), left=(82, 70, 0), right=(82, 70, 0),
+                 legs=((0, 12), (0, 12)))
+    # The wind-up: the seed high behind his head, trunk bent back and twisted right, left arm aimed.
+    windup = Pose(torso=(-12, 24, 0), head=(-6, 10, 0), left=(84, 20, 0), right=(168, 24, 12),
+                  legs=((10, 8), (-10, 10)))
+    # Thrown: the trunk over the planted left foot, the throwing arm forward and down.
+    thrown = Pose(torso=(24, -18, 0), head=(6, -8, 0), left=(-10, 30, 0), right=(60, 12, -8),
+                  legs=((18, 8), (-14, 8)))
+
+    p.key(0, rest)
+    p.key(.24, stand)
+    p.hold(.24, .46, breath)
+    p.key(.78, palm, punch=True)
+    p.hold(.78, 1.02, palm)
+    p.key(1.24, look)
+    p.hold(1.24, 1.46, look)
+    p.key(1.66, draw, punch=True)
+    p.hold(1.66, 1.86, draw)
+    p.key(2.1, climb)
+    p.key(2.36, windup)
+    p.hold(2.36, 2.54, windup)
+    p.key(2.62, thrown, punch=True)
+    p.hold(2.62, 3.6, thrown)
+    # A: WHO. Wide, low, from the front, easing in.
+    p.shot(0, .6, (1.4, .5, 4.2), (0, 1.1, 0), 50, eye_to=(1.2, .55, 3.7))
+    # B: INTENT. The close-up on the face and the lit palm.
+    p.shot(.6, 1.5, (.5, 1.35, 1.2), (0, 1.35, 0), 36, eye_to=(.4, 1.4, 1.02), close=True)
+    # C: GATHER. Low from his left as the roots climb and the vine spirals.
+    p.shot(1.5, 2.5, (-3.2, .4, 2.4), (0, 1.3, 0), 54, eye_to=(-2.6, .5, 3.2))
+    # D: RELEASE. Over his right shoulder, down the court where the vines erupt.
+    p.shot(2.5, 3.6, (1.1, 1.9, -2.2), (0, .8, 3.0), 56, eye_to=(.9, 1.7, -1.8), look_to=(0, .6, 4.0))
+    p.locked((1.5, 1.1, 4.3), (0, 1.15, 0), 48)
     return p
 
 # ----------------------------------------------------------------------------- the 2.8 s baseline

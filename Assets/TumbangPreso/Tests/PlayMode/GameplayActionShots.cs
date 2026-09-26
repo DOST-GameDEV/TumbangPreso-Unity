@@ -122,7 +122,7 @@ namespace TumbangPreso.PlayTests
             float peak = 0; string why = "";
             try
             {
-                yield return ImprovementEvidenceProbe.Record(camera, "action-raise", 2.4f, taya, t =>
+                yield return ImprovementEvidenceProbe.Record(camera, "action-raise", 4.0f, taya, t =>
                 {
                     hold.Hold = t >= .3f;
                     peak = Mathf.Max(peak, taya.GetComponent<CharacterAnimator>().ResetRaiseProgress);

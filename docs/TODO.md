@@ -200,19 +200,61 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   rebuilt from the owner's idea board; vine arms, no fingers. Owner's verdict on v17 still owed.
 - [x] Core: `PaeteRules`, Rooted status, `ScoreEvent.SproutKnock`, roster row, lines, loadout rows;
   Core.Tests 646/646.
-- [ ] Runtime kit written, NOT yet played: `PaeteHeroKit`, `PaeteHazards`, `GrowthVfx`, `PaeteVfx`,
-  intro scene, `SkyEvent.Look.Canopy`, the INTERACT verb (G / R3 / touch), Rooted on the motor and
-  `SyncUnit`, `ReqBreakFree` / `ReqUproot` / `PlantPulled`, protocol 54. EditMode was 601/609 at the
-  last run; the fixes for 6 of the 8 are in but not re-run; `RosterArmGeometryTests` and
-  `ThrowEquipmentClearanceTests` need the roster book refreshed for him (`RosterBookBuilder.RefreshPerson("paete")`,
-  then `FppArmsSnapshotTool.CaptureAll`); the two `ToonLightFalloffTests` failures look unrelated (check on a clean tree).
-- [ ] Still to do: roster book, FPP arms, portrait and avatar, `character-stories.json`, motion bake
-  (`PaeteMotionAuthor`), `UltimateIntros/paete.txt`, audio (`tools/build_paete_audio.py`, cues named
-  in the kit), ability icons (`tools/build_ability_icons.py`), HUD prompt and ring for Interact,
-  FPP vines from the viewmodel hands, `WorldEffectSnapshot`/`RecordedSpecialFields` for plant, sentry
-  and thorns, bots (`AIController`: Interact while rooted, pull plants, use his kit), HUMAN.md rows,
-  CHARACTER_ORIGINS and LORE, then play it, PlayMode gate, Checks.RunAll, audits, a build.
+- [x] Roster book entry (`RosterBookBuilder.RefreshPersonFromCommandLine -person paete`, which now
+  inserts a hero new to the book without re-baking the others), FPP arms, baked dance. EditMode
+  606/609 on 2026-09-26: the three left are `ThrowEquipmentClearanceTests` (every person but Paete,
+  who clears all ten slippers at 0; the known synthetic-head red) and the two `ToonLightFalloffTests`.
+- [x] His own animations (owner, 2026-09-26: *"give paete his own animations taht make sense wiht his
+  shit"*, *"i want each of his skill to have their own animation"*): five body clips, each acting out
+  its skill (`HeroAbilityClips.Paete.cs`, baked by `PaeteMotionAuthor`): the vine drag, the planting
+  lob, the COMMAND point on the second press (its own action, FPP gesture and click), the stamp then
+  rope-yank, and the thrown-to-embrace that picks up from the introduction's last pose. Matching FPP
+  clips. Shared `rooted-struggle` and `plant-heave` on every rig (`RootedAnimationAuthor`), shown on
+  every peer through the struggle flag and pull progress on `SubmitMove`/`SyncUnit` (protocol 55).
+  Filmstrips `PaeteReviewProbe`.
+- [x] `UltimateIntros/paete.txt` (who, intent, gather, release; ends on the thrown pose).
+- [x] Audio, `tools/build_paete_audio.py`: 16 cues, every cue the kit plays plus the sentry burst,
+  catch and wilt, Rooted and the root break, the command click, the theme and the Canopy sky.
+- [x] Icons: the four glyphs and `StatusRooted`, critiqued to v2/v3 on the real grounds.
+- [ ] Runtime kit NOT yet played in a match: every ability, the Interact prompt and progress ring
+  (the ring is not drawn yet: `BreakFreeProgress` and `PullingPlantProgress` have no HUD reader),
+  whether a tag frees a rooted player.
+- [ ] Still to do: portrait and avatar, `character-stories.json`, FPP vines from the viewmodel hands,
+  `WorldEffectSnapshot`/`RecordedSpecialFields` for plant, sentry and thorns, bots (`AIController`:
+  Interact while rooted, pull plants, use his kit), HUMAN.md rows, CHARACTER_ORIGINS and LORE, then
+  PlayMode gate, Checks.RunAll, audits, a build.
 - [ ] Deploy the cloud-code hero lists once they name him; record his lines (human voices only).
+
+### PRACTICE-1 · A practice picker and a Valorant-style training range ⚠️ OPEN, 2026-09-26
+
+Owner, 2026-09-26: *"can u also make it so that when u click practice theres a screen that pops up
+that lets u pick between Tutorial and Training mode"*, and *"allow character change + cheats +
+summon/remove bots in practice just like valorant practice"*.
+
+- [ ] PRACTICE opens a two-card picker (TUTORIAL, the guided `GuidedTraining` walk-through; TRAINING,
+  the free range), built through `MenuKit`/`ConvertedScreen` so pad focus, thumb targets and one-press
+  back come by construction (CLAUDE.md 4a, 6.2).
+- [ ] Training range panel (pause-style, opened by one bound key, pad and touch answered): change hero
+  or person in place; cheats (infinite skills, no cooldowns, ultimate full, freeze the can, infinite
+  stamina); summon a bot (seat, role, idle or active) and remove bots. Offline only, never on the wire,
+  never reachable from a networked or ranked match.
+- [ ] Render every state over the real background at his window shape; record the journey (presses to
+  each action).
+
+### GAMEANIM-1 · The can raise crouches first ⚠️ IN PROGRESS, 2026-09-26
+
+Owner, 2026-09-26: *"i want u to improve animation of raising can too when its down"*, *"they should
+crouch first and put it up"*. `Visual.CanRaiseShape` is one crouch, grip, lift, set curve over the
+channel, shared by the body (`CharacterAnimator.ResetRaise`: legs splay with the root dropped by the
+height the splay costs, so the feet stay planted) and the first-person view (`CameraRig.ApplyFpp`:
+the eye drops 0.34 m and tips 16 degrees down; `ViewmodelArms.RaiseCan` reaches lower in the squat).
+The v1 capture found the body replaying the 0.33 s `pick-up` one-shot on every 0.4 s relayed `grab`
+(torso 87, 42, 83 degrees and back); a raise no longer replays it.
+
+- [x] Shared shape, body squat, FPP eye drop, one-shot suppression.
+- [x] Native before/after frames from `GameplayActionShots.RaisingTheCanInBothViews` (window now
+  4.0 s so it reaches the lift), inspected: `docs/reports/can-raise-crouch-2026-09-26/`.
+- [ ] The owner's eye on it in play.
 
 ### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23
 

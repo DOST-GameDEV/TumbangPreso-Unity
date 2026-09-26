@@ -1010,21 +1010,34 @@ namespace TumbangPreso.CameraSystem
         // together and held while he is reeled (owner: *"his arms in tpp/fpp view both extend in
         // sync"*); the seed is an underhand lob off the right hand; the thorns are both palms
         // driven down at the ground; the sentry seed is a big overhand throw off the right.
+        // ⚠️ PAETE'S FIRST-PERSON HANDS (HERO-9, 2026-09-26: *"i want each of his skill to have their
+        // own animation"*). Each clip is the same beat as his body cast (`HeroAbilityClips.Paete.cs`):
+        // the vine reach ends by DRAWING BOTH HANDS BACK as the vines reel into the forearms; the
+        // seed toss is an underhand lob with the left hand opening after it; the command is a snap
+        // point, not a second lob; the thorn stamp slams both palms down and then RIPS THEM BACK on
+        // the yank (0.25 s hold, 0.5 s yank); the sentry throw opens both arms wide and CLOSES THEM
+        // on the catch, the embrace in the ultimate's name.
         private static readonly Key[] VineReachClip = {
             new Key(0,0,0,0,0,0,0,true), new Key(.10f,.24f,.10f,.04f,.26f,-.10f,-.04f,true),
-            new Key(.16f,-.64f,.04f,.06f,-.68f,-.04f,-.06f,true), new Key(.55f,-.60f,.02f,.05f,-.64f,-.02f,-.05f,true),
-            new Key(.90f,0,0,0,0,0,0,true) };
+            new Key(.16f,-.64f,.04f,.06f,-.68f,-.04f,-.06f,true), new Key(.52f,-.60f,.02f,.05f,-.64f,-.02f,-.05f,true),
+            new Key(.68f,.18f,.08f,.02f,.18f,-.08f,-.02f,true), new Key(.95f,0,0,0,0,0,0,true) };
         private static readonly Key[] SeedTossClip = {
-            new Key(0,0,0,0,0,0,0,true), new Key(.14f,.34f,-.12f,.02f,.06f,.04f,0,true),
-            new Key(.28f,-.52f,.12f,.06f,-.04f,.02f,0,true), new Key(.62f,0,0,0,0,0,0,true) };
+            new Key(0,0,0,0,0,0,0,true), new Key(.14f,.34f,-.12f,.02f,.16f,.08f,-.03f,true),
+            new Key(.28f,-.52f,.12f,.06f,-.14f,-.05f,.02f,true), new Key(.62f,0,0,0,0,0,0,true) };
+        private static readonly Key[] SeedCommandClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.06f,.12f,.04f,0,.08f,-.04f,0,true),
+            new Key(.12f,-.58f,-.06f,.02f,.20f,-.06f,-.02f,true), new Key(.26f,-.54f,-.05f,.02f,.18f,-.05f,-.02f,true),
+            new Key(.48f,0,0,0,0,0,0,true) };
         private static readonly Key[] ThornStampClip = {
             new Key(0,0,0,0,0,0,0,true), new Key(.12f,.30f,.06f,.10f,.30f,-.06f,-.10f,true),
-            new Key(.22f,-.34f,.28f,.12f,-.34f,-.28f,-.12f,true), new Key(.40f,-.30f,.24f,.10f,-.30f,-.24f,-.10f,true),
-            new Key(.75f,0,0,0,0,0,0,true) };
+            new Key(.22f,-.34f,.28f,.12f,-.34f,-.28f,-.12f,true), new Key(.44f,-.40f,.10f,.06f,-.40f,-.10f,-.06f,true),
+            new Key(.56f,.30f,.04f,.08f,.30f,-.04f,-.08f,true), new Key(.80f,.24f,.03f,.06f,.24f,-.03f,-.06f,true),
+            new Key(1.05f,0,0,0,0,0,0,true) };
         private static readonly Key[] SentryThrowClip = {
             new Key(0,0,0,0,0,0,0,true), new Key(.20f,.56f,-.22f,-.08f,-.18f,.10f,0,true),
-            new Key(.36f,-.74f,.24f,.10f,-.08f,.04f,0,true), new Key(.52f,-.66f,.20f,.08f,-.04f,.02f,0,true),
-            new Key(.90f,0,0,0,0,0,0,true) };
+            new Key(.36f,-.74f,.24f,.10f,-.08f,.04f,0,true), new Key(.52f,-.46f,.40f,.06f,-.46f,-.40f,-.06f,true),
+            new Key(.78f,-.50f,-.22f,.04f,-.50f,.22f,-.04f,true), new Key(1.10f,-.44f,-.18f,.04f,-.44f,.18f,-.04f,true),
+            new Key(1.40f,0,0,0,0,0,0,true) };
 
         public bool PlayAction(string clip)
         {
@@ -1094,6 +1107,7 @@ namespace TumbangPreso.CameraSystem
                   : clip == "storm-call" ? StormCallClip
                   : clip == "vine-reach" ? VineReachClip
                   : clip == "seed-toss" ? SeedTossClip
+                  : clip == "seed-command" ? SeedCommandClip
                   : clip == "thorn-stamp" ? ThornStampClip
                   : clip == "sentry-throw" ? SentryThrowClip
                   : clip == "coven-eclipse" ? CovenEclipseClip

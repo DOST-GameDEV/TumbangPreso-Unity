@@ -126,6 +126,20 @@ namespace TumbangPreso.Abilities
             // The second press is the command to throw (owner: *"he can control when they shoot"*).
             public override bool CanReactivate => true;
 
+            // ⚠️⚠️ TWO PRESSES, TWO BODIES (owner, 2026-09-26: *"i want each of his skill to have their
+            // own animation"*). The first press is the planting lob; the second is a COMMAND, a
+            // sharp point at the target while the seedling does the throwing, so it gets its own
+            // body clip, first-person gesture and click rather than replaying the lob.
+            // `HeroAbilitySystem.PlayCastConfirm` reads these AFTER `Activate`/`Reactivate` return,
+            // on the owner and on every observer (`ApplyNetworkCast` takes the same path).
+            private const string PlantAction = "hero-paete-sprout", CommandAction = "hero-paete-command";
+
+            public override void Activate(AbilityContext ctx)
+            {
+                CastAction = PlantAction; ViewmodelAction = "seed-toss"; CastCue = "sfx_cast_paete_sprout";
+                base.Activate(ctx);
+            }
+
             protected override void OnActivate(AbilityContext ctx)
             {
                 if (ctx?.Motor == null) return;
@@ -138,6 +152,7 @@ namespace TumbangPreso.Abilities
                 // ⚠️ NOT `EndEarly`: a second press fires, it does not dig the plant up.
                 var plant = ctx?.Motor != null ? PaetePlant.OwnedBy(ctx.Motor.PlayerSlot) : null;
                 if (plant == null) { EndEarly(ctx); return; }
+                CastAction = CommandAction; ViewmodelAction = "seed-command"; CastCue = "sfx_cast_paete_command";
                 plant.Fire(ctx.AimPoint);
             }
 

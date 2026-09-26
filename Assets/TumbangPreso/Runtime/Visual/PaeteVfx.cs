@@ -21,7 +21,14 @@ namespace TumbangPreso.Visual
         private Transform _left, _right, _torso;
         private Vector3 _anchor;
         private float _age, _reach, _reel, _return;
-        private readonly Mesh[] _meshes = new Mesh[2];
+        // ⚠️ v2 (2026-09-26, owner: *"thoroughly improve the animation of vines"*): each arm's vine is
+        // THREE STRANDS BRAIDED round one centreline, the forearm's own braid (model v16/v17) paid
+        // out, rather than one smooth tube. The braid tightens as it goes taut on the reel, and the
+        // strands are bark, vine and moss so it reads as rope made of plant at a glance.
+        private const int Strands = 3;
+        private readonly Mesh[] _meshes = new Mesh[2 * Strands];
+        private readonly List<Vector3> _centre = new List<Vector3>(24);
+        private readonly List<Transform> _rosette = new List<Transform>();
         private readonly List<Vector3> _points = new List<Vector3>(24);
         private readonly List<float> _radii = new List<float>(24);
         private readonly List<Transform> _leaves = new List<Transform>();
@@ -41,11 +48,12 @@ namespace TumbangPreso.Visual
             fx._left = FindBone(caster.transform, "arm-left");
             fx._right = FindBone(caster.transform, "arm-right");
             fx._torso = FindBone(caster.transform, "torso") ?? caster.transform;
-            for (int i = 0; i < 2; i++)
+            Color[] strand = { GrowthVfx.Vine, GrowthVfx.Bark, GrowthVfx.Moss };
+            for (int i = 0; i < 2 * Strands; i++)
             {
-                fx._meshes[i] = new Mesh { name = "PaeteVine" };
+                fx._meshes[i] = new Mesh { name = "PaeteVineStrand" };
                 fx._meshes[i].MarkDynamic();
-                GrowthVfx.Part(go.transform, i == 0 ? "vine-left" : "vine-right", fx._meshes[i], i == 0 ? GrowthVfx.Vine : GrowthVfx.Bark);
+                GrowthVfx.Part(go.transform, (i < Strands ? "vine-left-" : "vine-right-") + (i % Strands), fx._meshes[i], strand[i % Strands]);
             }
             // Leaves riding each vine, typed at their own fractions along it.
             float[] at = { 0.22f, 0.41f, 0.63f, 0.80f, 0.34f, 0.57f, 0.74f };
@@ -58,6 +66,15 @@ namespace TumbangPreso.Visual
             }
             fx._knot = GrowthVfx.Block(go.transform, "anchor-knot", new Vector3(0.22f, 0.22f, 0.22f), GrowthVfx.Vine).transform;
             fx._knot.gameObject.SetActive(false);
+            // The anchor mark (Kinich's glyph, research.md § 2): six leaves opening round the knot
+            // in a rosette, so the catch point reads from across the court.
+            for (int i = 0; i < 6; i++)
+            {
+                var leaf = GrowthVfx.Part(fx._knot.parent, "anchor-leaf", GrowthVfx.Leaf(0.30f, 0.16f, 0.02f),
+                                          i % 2 == 0 ? GrowthVfx.LeafGreen : GrowthVfx.LeafDark).transform;
+                leaf.gameObject.SetActive(false);
+                fx._rosette.Add(leaf);
+            }
             fx.Step(0f);
             return fx;
         }
@@ -103,24 +120,40 @@ namespace TumbangPreso.Visual
                 // The two vines meet the anchor a hand apart, so it reads as two arms reaching.
                 Vector3 to = _anchor + (i == 0 ? Vector3.left : Vector3.right) * 0.08f;
                 Vector3 tip = Vector3.Lerp(from, to, extend);
-                GrowthVfx.Curve(_points, from, tip, 16, taut * Vector3.Distance(from, tip) * 0.25f, 0.06f * (1f - extend * 0.6f), i * 1.7f + _age * 6f);
-                _radii.Clear();
-                for (int k = 0; k < _points.Count; k++)
+                GrowthVfx.Curve(_centre, from, tip, 18, taut * Vector3.Distance(from, tip) * 0.25f, 0.06f * (1f - extend * 0.6f), i * 1.7f + _age * 6f);
+                // The braid: each strand winds round the centreline; loose while it reaches (wide,
+                // few turns), tight once it has caught (narrow, the rope pulled taut).
+                float loose = _age < _reach ? 1f : Mathf.Lerp(1f, 0.55f, Mathf.Clamp01((_age - _reach) / 0.12f));
+                Vector3 axis = (tip - from).sqrMagnitude > 1e-6f ? (tip - from).normalized : Vector3.forward;
+                Vector3 side = Vector3.Cross(axis, Vector3.up);
+                if (side.sqrMagnitude < 1e-6f) side = Vector3.right;
+                side.Normalize();
+                Vector3 up = Vector3.Cross(side, axis);
+                float turns = 2.2f + Vector3.Distance(from, tip) * 0.55f;
+                for (int s2 = 0; s2 < Strands; s2++)
                 {
-                    float t = k / (float)(_points.Count - 1);
-                    // As thick as a forearm strand where it leaves the arm (0.034 m x 2.38), thin at the tip.
-                    _radii.Add(Mathf.Lerp(0.08f, 0.018f, t));
+                    _points.Clear(); _radii.Clear();
+                    for (int k = 0; k < _centre.Count; k++)
+                    {
+                        float t = k / (float)(_centre.Count - 1);
+                        float a = t * turns * Mathf.PI * 2f + s2 * Mathf.PI * 2f / Strands + (i == 0 ? 0f : 0.9f);
+                        // Wide at the forearm where the braid unravels, closing to a point at the tip.
+                        float r = Mathf.Lerp(0.07f, 0.016f, t) * loose;
+                        _points.Add(_centre[k] + (side * Mathf.Cos(a) + up * Mathf.Sin(a)) * r);
+                        // As thick as a forearm strand where it leaves the arm (0.034 m), thin at the tip.
+                        _radii.Add(Mathf.Lerp(0.046f, 0.012f, t));
+                    }
+                    GrowthVfx.Tube(_meshes[i * Strands + s2], _points, _radii, 4);
                 }
-                GrowthVfx.Tube(_meshes[i], _points, _radii, 5);
-                // Leaves: the first vine carries four, the second three.
+                // Leaves ride the braid: the first vine carries four, the second three.
                 int first = i == 0 ? 0 : 4, count = i == 0 ? 4 : 3;
                 for (int k = 0; k < count; k++)
                 {
                     var leaf = _leaves[first + k];
                     float f = _leafAt[first + k];
-                    int index = Mathf.Clamp(Mathf.RoundToInt(f * (_points.Count - 1)), 1, _points.Count - 2);
-                    leaf.position = _points[index];
-                    Vector3 along = (_points[index + 1] - _points[index - 1]).normalized;
+                    int index = Mathf.Clamp(Mathf.RoundToInt(f * (_centre.Count - 1)), 1, _centre.Count - 2);
+                    leaf.position = _centre[index];
+                    Vector3 along = (_centre[index + 1] - _centre[index - 1]).normalized;
                     leaf.rotation = Quaternion.LookRotation(along, Vector3.up) * Quaternion.Euler(0f, (k % 2 == 0 ? 40f : -40f), (k % 2 == 0 ? 30f : -30f));
                     leaf.localScale = Vector3.one * Mathf.Clamp01(extend * 1.4f - f * 0.4f);
                 }
@@ -136,6 +169,20 @@ namespace TumbangPreso.Visual
                 _knot.localScale = Vector3.one * (0.10f + 0.14f * GrowthVfx.Pop(k));
                 _knot.rotation = Quaternion.Euler(0f, _age * 90f, 18f);
                 if (!_burst) { _burst = true; PaeteLeafBurst.Spawn(_anchor, 6, 1.4f); }
+            }
+            // The rosette opens with the catch and closes as the vines let go.
+            float bloom = arrived ? GrowthVfx.Pop(Mathf.Clamp01((_age - _reach) / 0.16f)) : 0f;
+            Vector3 face = (_torso != null ? _torso.position : transform.position) - _anchor;
+            if (face.sqrMagnitude < 1e-4f) face = Vector3.back;
+            var facing = Quaternion.LookRotation(face.normalized, Vector3.up);
+            for (int i = 0; i < _rosette.Count; i++)
+            {
+                var leaf = _rosette[i];
+                leaf.gameObject.SetActive(arrived);
+                if (!arrived) continue;
+                var petal = facing * Quaternion.Euler(0f, 0f, i * 60f) * Quaternion.Euler(-90f + 55f * bloom, 0f, 0f);
+                leaf.SetPositionAndRotation(_anchor + petal * new Vector3(0f, 0f, 0.14f), petal);
+                leaf.localScale = Vector3.one * bloom;
             }
         }
     }
@@ -298,7 +345,14 @@ namespace TumbangPreso.Visual
 
         private void Update()
         {
-            if (_body == null || !_body.IsRooted) { Destroy(gameObject); return; }
+            if (_body == null || !_body.IsRooted)
+            {
+                // The roots letting go: the hold finished, a tag landed or the sentry died. Local on
+                // every peer off the replicated clock, like the gain below.
+                if (_body != null) GameServices.Audio?.PlayAtVaried("sfx_paete_root_break", _body.transform.position, 0.95f, 1.05f, 0.8f);
+                Destroy(gameObject); return;
+            }
+            if (_age <= 0f) GameServices.Audio?.PlayAtVaried("sfx_status_rooted", _body.transform.position, 0.95f, 1.05f, 0.8f);
             _age += Time.deltaTime;
             float climb = Mathf.Clamp01(_age / 1.2f) * 0.95f + 0.15f;
             float shake = _body.IsStruggling ? Mathf.Sin(_age * 38f) * 0.035f : 0f;
@@ -515,40 +569,190 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
-    /// YAKAP NG MAKILING's sentry: a glowing core on a knot of roots, eight spiked vines laid out
-    /// round it, a vine lashed to each caught player while they are dragged, and the whole thing
-    /// withering when its life ends. The core is the only bright thing (research.md § 3).
+    /// ⚠️⚠️ YAKAP NG MAKILING'S SENTRY, v2 (owner, 2026-09-26: *"i want u to make a very nice plant
+    /// sentry"*, with Marvel Rivals' Groot named as the reference). v1 was a bark block, a glowing
+    /// cube and eight flat spokes: it said "something landed" and nothing about a tree.
+    ///
+    /// Groot's Strangling Prison (research.md § 2) gives the read: a bright core held up by the
+    /// plant, spiked vines erupting radially, bodies held upright round it. Here, typed part by part
+    /// (the owner's rule, *"do it one by one dont try to mass generate it"*), each with its own
+    /// numbers:
+    ///  * the GROUND breaks first: eight crack plates radiating from the seed and a ring of soil;
+    ///  * a squat STEPPED TRUNK erupts out of it (three tiers, each turned against the last, bark
+    ///    plates and moss rings, the same bark as his body) with a Pop overshoot;
+    ///  * six BUTTRESS ROOTS flare out and dive into the road round it, like a narra's;
+    ///  * five CROWN BRANCHES curl up and in, CRADLING the core like fingers holding a seed, two
+    ///    leaves each; they flex slowly while it lives;
+    ///  * the CORE is the only light: a glowing seed that breathes, with four spores orbiting it;
+    ///  * eight THORNED VINES race out ALONG THE GROUND (they grow, they do not scale), each its own
+    ///    length and wave, three thorns up its back and a tip that curls up at the end;
+    ///  * a braided TETHER to every body it caught, taut from the trunk to the waist for as long as
+    ///    they are rooted (the roots at the shins are `PaeteRootCoil`), swaying a little;
+    ///  * the WITHER, the last 0.9 s: the crown opens and droops, the core dims and shrinks, the vines
+    ///    pull back into the ground, the trunk sinks, and narra pods drop.
+    /// Every part is posed from `age` alone (no `_Time`), so pause, replay and a probe agree.
     /// </summary>
     public sealed class PaeteSentryBody : MonoBehaviour
     {
-        private Transform _core, _base;
-        private readonly List<Transform> _spokes = new List<Transform>();
+        private Transform _trunk, _core, _crownRoot;
+        private readonly List<Transform> _cracks = new List<Transform>();
+        private readonly List<Transform> _buttress = new List<Transform>();
+        private readonly List<Transform> _claws = new List<Transform>();
+        private readonly List<Transform> _spores = new List<Transform>();
+        private readonly List<Mesh> _vineMeshes = new List<Mesh>();
+        private readonly List<Transform> _vineTips = new List<Transform>();
+        private readonly List<Transform> _thorns = new List<Transform>();
         private readonly List<CharacterMotor> _targets = new List<CharacterMotor>();
-        private readonly List<Mesh> _lashes = new List<Mesh>();
+        private readonly List<Mesh> _tethers = new List<Mesh>();
         private readonly List<Vector3> _points = new List<Vector3>();
         private readonly List<float> _radii = new List<float>();
+        private bool _podsDropped;
+
+        // The eight ground vines: yaw, length, wave phase. Each typed, none the same.
+        private static readonly float[] VineYaw = { 8f, 52f, 93f, 141f, 183f, 226f, 268f, 317f };
+        private static readonly float[] VineLength = { 2.6f, 2.1f, 2.9f, 2.3f, 2.7f, 2.0f, 3.0f, 2.4f };
+        private static readonly float[] VinePhase = { 0.2f, 1.9f, 3.1f, 0.8f, 2.5f, 4.0f, 1.3f, 3.6f };
+        private const int VineSamples = 16;
+        private static readonly float[] ClawYaw = { 0f, 74f, 142f, 213f, 287f };
 
         public static PaeteSentryBody Build(Transform parent)
         {
             var go = new GameObject("PaeteSentryBody");
             go.transform.SetParent(parent, false);
             var b = go.AddComponent<PaeteSentryBody>();
-            b._base = GrowthVfx.Block(go.transform, "sentry-knot", new Vector3(0.9f, 0.5f, 0.9f), GrowthVfx.Bark).transform;
-            b._core = GrowthVfx.Block(go.transform, "sentry-core", new Vector3(0.42f, 0.42f, 0.42f), GrowthVfx.Glow, 1.4f).transform;
-            // Eight spiked vines, each its own length, laid out like spokes and curling up at the end.
-            float[] len = { 1.9f, 1.5f, 2.2f, 1.6f, 2.0f, 1.4f, 2.3f, 1.7f };
-            for (int i = 0; i < len.Length; i++)
+            var root = go.transform;
+
+            // The ground breaking: eight crack plates, and the soil ring.
+            float[] crackLen = { 0.9f, 0.7f, 1.05f, 0.75f, 0.95f, 0.65f, 1.1f, 0.8f };
+            for (int i = 0; i < crackLen.Length; i++)
             {
-                float a = i * 360f / len.Length + 11f * (i % 2);
-                var pivot = new GameObject("spoke-" + i).transform;
-                pivot.SetParent(go.transform, false);
-                pivot.localRotation = Quaternion.Euler(0f, a, 0f);
-                var mesh = new Mesh { name = "PaeteSentrySpoke" };
-                GrowthVfx.Tube(mesh, new List<Vector3> { new Vector3(0, 0.25f, 0.3f), new Vector3(0, 0.08f, len[i] * 0.5f),
-                                                         new Vector3(0, 0.10f, len[i] * 0.85f), new Vector3(0, 0.45f, len[i]) },
-                               new List<float> { 0.11f, 0.08f, 0.05f, 0.006f }, 4);
-                GrowthVfx.Part(pivot, "spoke", mesh, i % 2 == 0 ? GrowthVfx.Vine : GrowthVfx.BarkDark);
-                b._spokes.Add(pivot);
+                var pivot = new GameObject("crack-" + i).transform;
+                pivot.SetParent(root, false);
+                pivot.localRotation = Quaternion.Euler(0f, i * 45f + 20f, 0f);
+                var plate = GrowthVfx.Block(pivot, "plate", new Vector3(0.10f, 0.02f, crackLen[i]), GrowthVfx.BarkDark).transform;
+                plate.localPosition = new Vector3(0f, 0.01f, 0.4f + crackLen[i] * 0.5f);
+                b._cracks.Add(pivot);
+            }
+            GrowthVfx.Block(root, "soil-ring", new Vector3(1.5f, 0.04f, 1.5f), GrowthVfx.Seed).transform.localRotation = Quaternion.Euler(0f, 45f, 0f);
+
+            // ⚠️ v3 (2026-09-26): v2's three stacked tier blocks read as a CRATE and its lit bark plates
+            // as labels, and the whole thing stood no taller than the bodies it held. The trunk is a
+            // square tube now (four sides, like his horns), tapering and leaning, 2.1 m to the crown,
+            // so it towers over a caught player the way Groot's prison does, with two moss collars,
+            // three branch stubs each carrying its own leaf cluster, and bark knots on the faces.
+            b._trunk = new GameObject("trunk").transform;
+            b._trunk.SetParent(root, false);
+            var trunkMesh = new Mesh { name = "PaeteSentryTrunk" };
+            GrowthVfx.Tube(trunkMesh, new List<Vector3> { new Vector3(0f, -0.05f, 0f), new Vector3(0.04f, 0.55f, -0.02f),
+                                                          new Vector3(-0.03f, 1.15f, 0.03f), new Vector3(0.02f, 1.70f, -0.02f),
+                                                          new Vector3(0f, 2.10f, 0f) },
+                           new List<float> { 0.62f, 0.50f, 0.42f, 0.36f, 0.34f }, 4);
+            GrowthVfx.Part(b._trunk, "trunk", trunkMesh, GrowthVfx.Bark).transform.localRotation = Quaternion.Euler(0f, 45f, 0f);
+            // Moss tufts on the bark (v3's collars read as flat tables round the trunk): each its own
+            // place, size and lean, hugging the faces.
+            (Vector3 at, Vector3 size, float yaw)[] tufts = { (new Vector3(0.36f, 0.62f, 0.10f), new Vector3(0.14f, 0.22f, 0.30f), 20f),
+                (new Vector3(-0.22f, 1.45f, -0.26f), new Vector3(0.26f, 0.16f, 0.12f), -40f), (new Vector3(-0.30f, 0.30f, 0.34f), new Vector3(0.28f, 0.14f, 0.14f), 35f) };
+            foreach (var tf in tufts)
+            {
+                var tuft = GrowthVfx.Block(b._trunk, "moss-tuft", tf.size, GrowthVfx.Moss).transform;
+                tuft.localPosition = tf.at; tuft.localRotation = Quaternion.Euler(0f, tf.yaw, 0f);
+            }
+            // Bark knots: small dark blocks sunk in the faces, each its own place.
+            (Vector3 at, float yaw)[] knots = { (new Vector3(0.30f, 0.95f, 0.26f), 40f), (new Vector3(-0.28f, 1.30f, 0.22f), -35f), (new Vector3(0.05f, 0.35f, -0.44f), 180f) };
+            foreach (var k in knots)
+            {
+                var knot = GrowthVfx.Block(b._trunk, "bark-knot", new Vector3(0.16f, 0.12f, 0.06f), GrowthVfx.BarkDark).transform;
+                knot.localPosition = k.at; knot.localRotation = Quaternion.Euler(0f, k.yaw, 0f);
+            }
+            // Three branch stubs off the trunk, each with a cluster of three leaves.
+            (float y, float yaw, float len)[] stubs = { (1.05f, 60f, 0.45f), (1.35f, 200f, 0.38f), (0.80f, 300f, 0.34f) };
+            foreach (var st in stubs)
+            {
+                var pivot = new GameObject("stub").transform;
+                pivot.SetParent(b._trunk, false);
+                pivot.localPosition = new Vector3(0f, st.y, 0f);
+                pivot.localRotation = Quaternion.Euler(0f, st.yaw, 0f);
+                var mesh = new Mesh { name = "PaeteSentryStub" };
+                GrowthVfx.Tube(mesh, new List<Vector3> { new Vector3(0, 0, 0.25f), new Vector3(0, 0.14f, 0.25f + st.len * 0.6f), new Vector3(0, 0.30f, 0.25f + st.len) },
+                               new List<float> { 0.09f, 0.06f, 0.02f }, 4);
+                GrowthVfx.Part(pivot, "stub", mesh, GrowthVfx.BarkDark);
+                for (int k = 0; k < 3; k++)
+                {
+                    var leaf = GrowthVfx.Part(pivot, "stub-leaf", GrowthVfx.Leaf(0.30f - 0.05f * k, 0.17f, 0.02f),
+                                              k == 1 ? GrowthVfx.LeafDark : GrowthVfx.LeafGreen).transform;
+                    leaf.localPosition = new Vector3(0f, 0.32f, 0.25f + st.len);
+                    leaf.localRotation = Quaternion.Euler(-40f + 25f * k, -50f + 50f * k, 0f);
+                }
+            }
+
+            // Six buttress roots, hugging the road: out from the trunk low, bending straight down into it.
+            float[] rootYaw = { 15f, 75f, 130f, 200f, 250f, 315f };
+            float[] rootReach = { 1.10f, 0.90f, 1.25f, 0.95f, 1.15f, 0.85f };
+            for (int i = 0; i < rootYaw.Length; i++)
+            {
+                var pivot = new GameObject("buttress-" + i).transform;
+                pivot.SetParent(b._trunk, false);
+                pivot.localRotation = Quaternion.Euler(0f, rootYaw[i], 0f);
+                var mesh = new Mesh { name = "PaeteSentryButtress" };
+                float r = rootReach[i];
+                GrowthVfx.Tube(mesh, new List<Vector3> { new Vector3(0, 0.50f, 0.34f), new Vector3(0, 0.22f, 0.52f),
+                                                         new Vector3(0, 0.07f, 0.52f + r * 0.5f), new Vector3(0, -0.06f, 0.52f + r) },
+                               new List<float> { 0.20f, 0.15f, 0.08f, 0.02f }, 4);
+                GrowthVfx.Part(pivot, "root", mesh, i % 2 == 0 ? GrowthVfx.BarkDark : GrowthVfx.Bark);
+                b._buttress.Add(pivot);
+            }
+
+            // The crown: five thick branches curling up and in round the core, each with a leaf
+            // cluster at its tip, the fingers holding the seed.
+            b._crownRoot = new GameObject("crown").transform;
+            b._crownRoot.SetParent(b._trunk, false);
+            b._crownRoot.localPosition = new Vector3(0f, 2.05f, 0f);
+            for (int i = 0; i < ClawYaw.Length; i++)
+            {
+                var pivot = new GameObject("claw-" + i).transform;
+                pivot.SetParent(b._crownRoot, false);
+                pivot.localRotation = Quaternion.Euler(0f, ClawYaw[i], 0f);
+                var mesh = new Mesh { name = "PaeteSentryClaw" };
+                float lean = 0.06f * (i % 3);
+                GrowthVfx.Tube(mesh, new List<Vector3> { new Vector3(0, -0.05f, 0.22f), new Vector3(0, 0.25f, 0.55f + lean),
+                                                         new Vector3(0, 0.62f, 0.56f + lean), new Vector3(0, 0.90f, 0.26f) },
+                               new List<float> { 0.15f, 0.11f, 0.07f, 0.02f }, 4);
+                GrowthVfx.Part(pivot, "branch", mesh, i % 2 == 0 ? GrowthVfx.Bark : GrowthVfx.BarkDark);
+                for (int k = 0; k < 3; k++)
+                {
+                    var leaf = GrowthVfx.Part(pivot, "leaf", GrowthVfx.Leaf(0.32f - 0.05f * k, 0.18f, 0.02f),
+                                              k == 1 ? GrowthVfx.LeafDark : GrowthVfx.LeafGreen).transform;
+                    leaf.localPosition = new Vector3(0.05f * (k - 1), 0.84f - 0.12f * k, 0.30f + 0.08f * k);
+                    leaf.localRotation = Quaternion.Euler(-60f + 30f * k, 40f * (k - 1), 0f);
+                }
+                b._claws.Add(pivot);
+            }
+
+            // The core: a faceted seed, two nested glowing blocks turned against each other (the
+            // inner brighter), so it reads as a lit gem rather than v2's flat card; and four spores.
+            b._core = new GameObject("sentry-core").transform;
+            b._core.SetParent(b._crownRoot, false);
+            GrowthVfx.Block(b._core, "core-shell", Vector3.one, GrowthVfx.LeafGreen, 0.9f).transform.localRotation = Quaternion.Euler(45f, 0f, 45f);
+            GrowthVfx.Block(b._core, "core-heart", Vector3.one * 0.80f, GrowthVfx.Glow, 1.5f).transform.localRotation = Quaternion.Euler(0f, 45f, 0f);
+            for (int i = 0; i < 4; i++)
+                b._spores.Add(GrowthVfx.Block(b._crownRoot, "spore-" + i, Vector3.one * 0.07f, GrowthVfx.Glow, 1.2f).transform);
+
+            // The eight thorned ground vines: a mesh each, rebuilt while they grow, three thorns and a tip.
+            for (int i = 0; i < VineYaw.Length; i++)
+            {
+                var mesh = new Mesh { name = "PaeteSentryVine" };
+                mesh.MarkDynamic();
+                GrowthVfx.Part(root, "ground-vine-" + i, mesh, i % 2 == 0 ? GrowthVfx.Vine : GrowthVfx.Moss);
+                b._vineMeshes.Add(mesh);
+                for (int k = 0; k < 3; k++)
+                {
+                    var thornMesh = new Mesh { name = "PaeteSentryThorn" };
+                    GrowthVfx.Tube(thornMesh, new List<Vector3> { Vector3.zero, new Vector3(0, 0.12f, 0.03f), new Vector3(0, 0.24f, 0.08f) },
+                                   new List<float> { 0.05f, 0.028f, 0.003f }, 4);
+                    b._thorns.Add(GrowthVfx.Part(root, "thorn", thornMesh, GrowthVfx.BarkDark).transform);
+                }
+                var tip = GrowthVfx.Part(root, "vine-tip-leaf", GrowthVfx.Leaf(0.24f, 0.14f, 0.02f), GrowthVfx.LeafGreen).transform;
+                b._vineTips.Add(tip);
             }
             return b;
         }
@@ -557,46 +761,135 @@ namespace TumbangPreso.Visual
         {
             foreach (var t in targets)
             {
-                var mesh = new Mesh { name = "PaeteSentryLash" };
+                var mesh = new Mesh { name = "PaeteSentryTether" };
                 mesh.MarkDynamic();
-                GrowthVfx.Part(transform, "lash", mesh, GrowthVfx.Vine);
+                GrowthVfx.Part(transform, "tether", mesh, GrowthVfx.Vine);
                 _targets.Add(t);
-                _lashes.Add(mesh);
+                _tethers.Add(mesh);
+            }
+        }
+
+        /// <summary>A ground vine's centreline at growth <paramref name="grow"/> (0 to 1), in local space.</summary>
+        private void VinePath(int i, float grow, float age)
+        {
+            _points.Clear();
+            float yaw = VineYaw[i] * Mathf.Deg2Rad;
+            var dir = new Vector3(Mathf.Sin(yaw), 0f, Mathf.Cos(yaw));
+            var side = new Vector3(dir.z, 0f, -dir.x);
+            float len = VineLength[i] * grow;
+            for (int k = 0; k <= VineSamples; k++)
+            {
+                float u = k / (float)VineSamples;
+                float d = 0.45f + len * u;
+                // A wave along the ground that writhes a little while it lives; the tip curls up.
+                float wave = Mathf.Sin(u * 7.0f + VinePhase[i] + age * 1.6f) * 0.16f * u;
+                float lift = 0.05f + Mathf.Pow(u, 6f) * 0.55f * grow;
+                _points.Add(dir * d + side * wave + Vector3.up * lift);
             }
         }
 
         public void Pose(float age, Vector3 centre)
         {
             bool landed = age >= 0f;
-            _base.gameObject.SetActive(landed); _core.gameObject.SetActive(landed);
-            foreach (var s in _spokes) s.gameObject.SetActive(landed);
-            if (!landed) { foreach (var m in _lashes) m.Clear(); return; }
-            float life = PaeteRules.SentryLifeSeconds;
-            float burst = GrowthVfx.Pop(age / 0.25f);
-            float wither = Mathf.Clamp01((life + 0.5f - age) / 0.8f);
-            _base.localScale = new Vector3(0.9f, 0.5f, 0.9f) * burst * wither;
-            _base.localPosition = Vector3.up * 0.2f * burst;
-            float breathe = 1f + 0.08f * Mathf.Sin(age * 4.2f);
-            _core.localScale = Vector3.one * 0.42f * burst * breathe * wither;
-            _core.localPosition = Vector3.up * (0.62f * burst);
-            _core.localRotation = Quaternion.Euler(45f, age * 40f, 45f);
-            for (int i = 0; i < _spokes.Count; i++)
-                _spokes[i].localScale = Vector3.one * Mathf.Clamp01(GrowthVfx.Pop((age - 0.03f * i) / 0.3f)) * wither;
+            for (int c = 0; c < transform.childCount; c++) transform.GetChild(c).gameObject.SetActive(landed);
+            if (!landed) { foreach (var m in _tethers) m.Clear(); return; }
 
-            // The lash: out to each body while it is caught and dragged, then it lets go (the roots
-            // on the body take over the picture, `PaeteRootCoil`).
+            float life = PaeteRules.SentryLifeSeconds;
+            // The wither runs the last 0.9 s of its life and a little past it.
+            float wither = Mathf.Clamp01((age - (life - 0.4f)) / 0.9f);
+            float alive = 1f - wither;
+
+            // 0 to 0.12: the ground breaks.
+            for (int i = 0; i < _cracks.Count; i++)
+                _cracks[i].localScale = new Vector3(1f, 1f, Mathf.Clamp01((age - 0.01f * i) / 0.12f));
+
+            // 0.06 to 0.36: the trunk erupts, with overshoot; it sinks back into the road as it withers.
+            float erupt = GrowthVfx.Pop((age - 0.06f) / 0.30f);
+            _trunk.localScale = new Vector3(Mathf.Max(0.001f, erupt), Mathf.Max(0.001f, erupt), Mathf.Max(0.001f, erupt));
+            _trunk.localPosition = Vector3.down * (0.9f * wither * wither);
+
+            // 0.14 to 0.44: the buttress roots flare out, each a beat after the last.
+            for (int i = 0; i < _buttress.Count; i++)
+                _buttress[i].localScale = Vector3.one * Mathf.Max(0.001f, GrowthVfx.Pop((age - 0.14f - 0.03f * i) / 0.30f));
+
+            // 0.24 to 0.6: the crown unfurls; alive, it flexes slowly; withering, it opens and droops.
+            for (int i = 0; i < _claws.Count; i++)
+            {
+                float unfurl = GrowthVfx.Pop((age - 0.24f - 0.04f * i) / 0.36f);
+                float flex = Mathf.Sin(age * 1.7f + i * 1.3f) * 4f;
+                float open = -55f * (1f - Mathf.Clamp01(unfurl)) + flex + 70f * wither;
+                _claws[i].localRotation = Quaternion.Euler(0f, ClawYaw[i], 0f) * Quaternion.Euler(open, 0f, 0f);
+                _claws[i].localScale = Vector3.one * Mathf.Max(0.001f, Mathf.Clamp01(unfurl * 1.2f));
+            }
+
+            // The core: grows in with the crown, breathes, dims and shrinks as it withers.
+            float coreIn = GrowthVfx.Pop((age - 0.3f) / 0.3f);
+            float breathe = 1f + 0.09f * Mathf.Sin(age * 3.8f) + 0.04f * Mathf.Sin(age * 9.1f);
+            _core.localPosition = new Vector3(0f, 0.52f, 0f);
+            _core.localRotation = Quaternion.Euler(0f, age * 35f, 0f);
+            _core.localScale = Vector3.one * Mathf.Max(0.001f, 0.50f * coreIn * breathe * (1f - 0.8f * wither));
+            for (int i = 0; i < _spores.Count; i++)
+            {
+                float a = age * (1.4f + 0.2f * i) + i * Mathf.PI * 0.5f;
+                _spores[i].localPosition = new Vector3(Mathf.Cos(a) * 0.46f, 0.52f + Mathf.Sin(a * 1.7f) * 0.14f, Mathf.Sin(a) * 0.46f);
+                _spores[i].localScale = Vector3.one * 0.07f * Mathf.Clamp01(coreIn) * alive;
+            }
+
+            // 0.2 to 0.62: the ground vines race out, then writhe; they pull back into the ground as it withers.
+            for (int i = 0; i < _vineMeshes.Count; i++)
+            {
+                float grow = Mathf.Clamp01((age - 0.2f - 0.025f * i) / 0.42f);
+                grow = 1f - (1f - grow) * (1f - grow);
+                grow *= alive;
+                if (grow <= 0.01f)
+                {
+                    _vineMeshes[i].Clear();
+                    for (int k = 0; k < 3; k++) _thorns[i * 3 + k].localScale = Vector3.zero;
+                    _vineTips[i].localScale = Vector3.zero;
+                    continue;
+                }
+                VinePath(i, grow, age);
+                _radii.Clear();
+                for (int k = 0; k < _points.Count; k++) _radii.Add(Mathf.Lerp(0.13f, 0.03f, k / (float)VineSamples));
+                GrowthVfx.Tube(_vineMeshes[i], _points, _radii, 5);
+                // Three thorns up the vine's back, at their own fractions, each out when the vine reaches it.
+                for (int k = 0; k < 3; k++)
+                {
+                    int at = Mathf.Clamp(Mathf.RoundToInt((0.3f + 0.22f * k) * VineSamples), 1, VineSamples - 1);
+                    var thorn = _thorns[i * 3 + k];
+                    Vector3 along = (_points[at + 1] - _points[at - 1]).normalized;
+                    thorn.localPosition = _points[at] + Vector3.up * 0.05f;
+                    thorn.localRotation = Quaternion.LookRotation(along, Vector3.up) * Quaternion.Euler(-10f, 0f, 0f);
+                    thorn.localScale = Vector3.one * Mathf.Clamp01((grow - (0.3f + 0.22f * k)) * 5f);
+                }
+                var tip = _vineTips[i];
+                Vector3 last = _points[_points.Count - 1], before = _points[_points.Count - 2];
+                tip.localPosition = last;
+                tip.localRotation = Quaternion.LookRotation((last - before).normalized, Vector3.up);
+                tip.localScale = Vector3.one * grow;
+            }
+
+            // The tethers: a braid-thick vine to each held body, taut while they are rooted.
             float catchAt = PaeteRules.SentryCatchSeconds;
             for (int i = 0; i < _targets.Count; i++)
             {
                 var p = _targets[i];
-                _points.Clear(); _radii.Clear();
-                if (p == null || age > catchAt + 0.7f) { _lashes[i].Clear(); continue; }
-                Vector3 from = centre + Vector3.up * 0.6f;
-                Vector3 to = p.transform.position + Vector3.up * 0.9f;
+                bool held = p != null && (age <= catchAt + 0.7f || p.IsRooted) && wither < 0.5f;
+                if (!held) { _tethers[i].Clear(); continue; }
+                Vector3 from = new Vector3(0f, 0.9f * erupt, 0f);
+                Vector3 to = transform.InverseTransformPoint(p.transform.position + Vector3.up * 0.85f);
                 Vector3 tip = Vector3.Lerp(from, to, GrowthVfx.Pop(Mathf.Clamp01(age / catchAt)));
-                GrowthVfx.Curve(_points, from, tip, 14, 0.05f * Vector3.Distance(from, tip), 0.08f, i * 2.1f + age * 7f);
-                for (int k = 0; k < _points.Count; k++) _radii.Add(Mathf.Lerp(0.09f, 0.025f, k / (float)(_points.Count - 1)));
-                GrowthVfx.Tube(_lashes[i], _points, _radii, 5);
+                GrowthVfx.Curve(_points, from, tip, 14, 0.06f * Vector3.Distance(from, tip), 0.05f, i * 2.1f + age * 2.5f);
+                _radii.Clear();
+                for (int k = 0; k < _points.Count; k++) _radii.Add(Mathf.Lerp(0.10f, 0.04f, k / (float)(_points.Count - 1)));
+                GrowthVfx.Tube(_tethers[i], _points, _radii, 5);
+            }
+
+            // The pods: once, as the wither starts, the tree lets go of its seeds.
+            if (wither > 0.05f && !_podsDropped)
+            {
+                _podsDropped = true;
+                PaeteLeafBurst.Spawn(transform.position + Vector3.up * 1.6f, 9, 1.6f);
             }
         }
     }

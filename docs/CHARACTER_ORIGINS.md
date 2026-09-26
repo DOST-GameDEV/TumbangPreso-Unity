@@ -181,3 +181,30 @@ Cheska, the other northerner, about whose mountains are colder.
 Her impatience is the flaw inside the strength: she will commit to a play before it is ready
 rather than wait for it. The whirlwind on her capelet is the binakol weave's "kasikus", her
 family's craft and not a sacred emblem; the wind itself is her talent, not a deity.
+
+## Paete: Mount Makiling, Laguna
+
+Home court: **Paanan**, a fictional flat clearing where the forest reserve meets the town above
+Los Baños, where students play after class.
+
+Character-select line: **Never hurries. Always arrives.**
+
+Long introduction:
+
+Paete grew up as part of the forest on Mount Makiling, older than the trail markers and younger
+than the narra around him. Hikers there learn one rule: eat what the forest gives you, never carry
+it home. Paete learned the same rule from the other side. One wet season a woodcarver from Paete,
+across the lake, lost the trail in the mist, and Paete walked him down to the road. The carver had
+nothing to give but his chisel, so he cut the tree a face: two deep eyes and a mouth that never
+quite decided to smile. Paete has worn the town's name ever since. At the forest's edge he found
+students playing tumbang preso after class, and stood so still watching that they used him as the
+lata twice before he moved. Now he plays, unhurried and a little amused by everyone else's panic.
+He lets you take a run at anything. He just does not let you leave with it.
+
+His calm is the flaw inside the strength: so sure of his reach that he lets a moment pass. Amihan
+cannot stand him (she hates a stalled game and he is one). Dante, the other mountain in the cast,
+is the only one who waits as long as he does. Zack still thinks he is a prop.
+
+Mariang Makiling stays a legend he grew up among: never shown, never his mother, never a power
+source. He is not a diwata, an anito or a god; growth is his talent, not a deity. The fruit rule is
+a folk superstition used as his character theme, and the chisel-cut face is a carver's gift.

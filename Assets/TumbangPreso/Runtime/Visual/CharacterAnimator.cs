@@ -234,6 +234,7 @@ namespace TumbangPreso.Visual
             // nearest base clip so a cast is never a freeze.
             { "hero-paete-vine", new[] { "hero-paete-vine", "holding-both-shoot" } },
             { "hero-paete-sprout", new[] { "hero-paete-sprout", "attack-melee-right" } },
+            { "hero-paete-command", new[] { "hero-paete-command", "attack-melee-right" } },
             { "hero-paete-thorns", new[] { "hero-paete-thorns", "attack-kick-right" } },
             { "hero-paete-sentry", new[] { "hero-paete-sentry", "holding-both-shoot" } },
         };
@@ -461,6 +462,10 @@ namespace TumbangPreso.Visual
             var recovery=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(RecoveryMotion.Folder+"/"+rig);
             if(recovery!=null&&recovery.Clips!=null)
                 foreach(var clip in recovery.Clips)if(clip!=null)_clips[clip.name]=clip;
+            // Paete's kit (HERO-9): the struggle against his roots and the heave on his seedling, on every rig.
+            var rooted=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(RootedMotion.Folder+"/"+rig);
+            if(rooted!=null&&rooted.Clips!=null)
+                foreach(var clip in rooted.Clips)if(clip!=null)_clips[clip.name]=clip;
 
 #if UNITY_EDITOR
             if (!_clips.ContainsKey(DanceClip.ClipName))
@@ -552,6 +557,7 @@ namespace TumbangPreso.Visual
             // A player tripped mid-throw must be on the tarmac, not finishing the throw.
             if (StepEdgeRecoveryPose()) return;
             if (StepTripPose()) return;
+            if (StepRootedPose()) return;
 
             // Sample the retained cast against the actual leap/landing clock. This
             // cannot create a hit; the motor and ability remain the contact owners.
@@ -1146,7 +1152,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void PlayAction(string action, string viewmodelAction)
         {
-            if (action == "grab") NoteResetGesture();
+            bool raising = action == "grab" && NoteResetGesture();
             NoteTag(action);
             if (_introductionAbility != null && action != _introductionAbility.CastAction) ClearIntroductionPose();
             // ⚠️⚠️ THE FIRST-PERSON ARM IS DRIVEN FROM HERE, AND FROM NOWHERE ELSE.
@@ -1185,6 +1191,16 @@ namespace TumbangPreso.Visual
                 _throwReleaseFrom=ThrowGesture.Pose.Apply(_throwCarryBasis,releaseFrom);
                 _throwReleaseSpin=ThrowGesture.Spin(action);_throwReleaseTime=0;
                 _oneShotLeft=ThrowGesture.ReleaseSeconds;
+            }
+            else if (action == "grab" && raising)
+            {
+                // ⚠️⚠️ A RAISE DOES NOT REPLAY `pick-up` (2026-09-26). The channel relays a `grab`
+                // every 0.4 s, and each one restarted the 0.33 s one-shot UNDER the raise pose: the
+                // captured torso went 87, 42, 83 degrees and back, a bob on every relay, which is
+                // the very thing the owner asked to replace with a crouch and a lift
+                // (`CanRaiseShape`). The procedural raise owns the body for the whole channel.
+                _oneShotLeft = 0;
+                _throwReleaseTime = -1;
             }
             else
             {
@@ -1374,6 +1390,52 @@ namespace TumbangPreso.Visual
             Blend();
             HoldLastFrame();
             return true;
+        }
+
+        // ------------------------------------------------------------------ PAETE'S KIT, ON ANY BODY
+
+        private float _heaveProgress, _stumbleLeft;
+        private bool _rootedPose;
+
+        /// <summary>
+        /// ⚠️ TWO POSES ANY BODY TAKES AGAINST PAETE'S KIT (HERO-9), READ OFF THE MOTOR SO EVERY PEER
+        /// DRAWS THEM: `IsStruggling` (holding Interact while Rooted) loops `rooted-struggle`, and
+        /// `PullingPlantProgress` SCRUBS `plant-heave` so the body is exactly as far into the pull as
+        /// the ring says. When a pull completes the rest of the clip (the stumble back) plays at speed.
+        ///
+        /// ⚠️ A ONE-SHOT WINS. A rooted player can still throw and cast (owner: *"theyre js
+        /// rooted"*), and the throw must not be swallowed by the struggle loop.
+        /// </summary>
+        private bool StepRootedPose()
+        {
+            if (_motor == null) return false;
+            float pull = _motor.PullingPlantProgress;
+            if (pull <= 0f && _heaveProgress >= .95f && _clips.ContainsKey(RootedMotion.Heave))
+                _stumbleLeft = ClipLength(RootedMotion.Heave) - RootedMotion.HeaveScrubSeconds;
+            _heaveProgress = pull;
+            if (_oneShotLeft > 0f) { _rootedPose = false; return false; }
+            if (pull > 0f && _clips.ContainsKey(RootedMotion.Heave))
+            {
+                if (_current != RootedMotion.Heave) Play(RootedMotion.Heave, false, true);
+                var front = Front(); if (front.IsValid()) { front.SetSpeed(0); front.SetTime(RootedMotion.HeaveScrubSeconds * Mathf.Clamp01(pull)); }
+                _rootedPose = true; Blend(); HoldLastFrame(); return true;
+            }
+            if (_stumbleLeft > 0f && _current == RootedMotion.Heave)
+            {
+                _stumbleLeft -= Time.deltaTime;
+                var front = Front(); if (!front.IsValid()) { _stumbleLeft = 0f; return false; }
+                front.SetSpeed(1);
+                if (front.GetTime() < RootedMotion.HeaveScrubSeconds) front.SetTime(RootedMotion.HeaveScrubSeconds);
+                Blend(); HoldLastFrame(); return true;
+            }
+            _stumbleLeft = 0f;
+            if (_motor.IsRooted && _motor.IsStruggling && _clips.ContainsKey(RootedMotion.Struggle))
+            {
+                Play(RootedMotion.Struggle, true);
+                _rootedPose = true; Blend(); HoldLastFrame(); return true;
+            }
+            if (_rootedPose) { _rootedPose = false; _current = null; }
+            return false;
         }
 
         private float _recoveryEntered,_recoveryProgress;

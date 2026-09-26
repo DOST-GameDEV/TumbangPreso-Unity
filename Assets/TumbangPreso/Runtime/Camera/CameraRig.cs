@@ -851,13 +851,32 @@ namespace TumbangPreso.CameraSystem
             return Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
         }
 
+        private float _fppSquatBlend;
+
+        /// <summary>0 to 1: how deep the local taya is in the raise's crouch, eased in and out.</summary>
+        private float FppRaiseSquat()
+        {
+            var carrier = _character != null ? _character.GetComponent<Carrier>() : null;
+            var motor = _character != null ? _character.GetComponent<CharacterMotor>() : null;
+            var lata = GameServices.Round?.Lata;
+            float ratio = carrier != null && motor != null && motor.IsDefender && lata != null && !lata.IsUpright ? carrier.ChannelRatio : 0f;
+            _fppSquatBlend = Mathf.MoveTowards(_fppSquatBlend, ratio > 0 ? 1f : 0f, Time.deltaTime / (ratio > 0 ? .12f : .18f));
+            return _fppSquatBlend * Visual.CanRaiseShape.Crouch(ratio > 0 ? ratio : 1f);
+        }
+
         private void ApplyFpp()
         {
             float yaw = BodyYawDeg();
             Vector3 eye = _character.transform.position + Vector3.up * (PersonCapsuleHeight * 0.5f + FppEyeHeight);
 
+            // ⚠️ THE TAYA'S SQUAT OVER THE CAN, FELT FROM THE EYES (owner, 2026-09-26: *"they should
+            // crouch first and put it up"*). Same curve as the body (`Visual.CanRaiseShape`); it only
+            // offsets the view, never `_pitchDeg`, so the aim is untouched when the raise ends.
+            float squat = FppRaiseSquat();
+            eye -= Vector3.up * (Visual.CanRaiseShape.FppEyeDrop * squat);
+
             // Absolute, from yaw and pitch only. The body's roll cannot reach this.
-            transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg, yaw, 0.0f));
+            transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg + Visual.CanRaiseShape.FppLookDown * squat, yaw, 0.0f));
 
             if (_viewmodel != null && !_viewmodel.gameObject.activeSelf)
                 _viewmodel.gameObject.SetActive(true);

@@ -153,11 +153,34 @@ namespace TumbangPreso
         /// <summary>How much of the break-free hold is done, 0 to 1 (the ring on the HUD).</summary>
         public float BreakFreeProgress => Mathf.Clamp01(_breakFreeHeld / PaeteRules.BreakFreeHoldSeconds);
 
-        /// <summary>How far this body's pull on Paete's plant has got, 0 to 1 (the HUD ring and the heave pose).</summary>
-        public float PullingPlantProgress { get; set; }
+        private bool _struggling, _netStruggling;
+        private float _pullProgress, _netPullProgress;
 
-        /// <summary>True while this body's owner is holding Interact against the roots, for the struggle pose.</summary>
-        public bool IsStruggling { get; private set; }
+        /// <summary>
+        /// How far this body's pull on Paete's plant has got, 0 to 1 (the HUD ring and the heave pose).
+        /// ⚠️ THE PEER THAT SIMULATES THE BODY WRITES IT (`PaetePlant.StepPullers`); every other peer
+        /// reads the copy the wire carried (`SubmitMove` to the host, `SyncUnit` to everyone, protocol
+        /// 55), so the heave is seen on all four screens and not only in the puller's own shadow.
+        /// </summary>
+        public float PullingPlantProgress
+        {
+            get => IsLocallySimulated() ? _pullProgress : _netPullProgress;
+            set => _pullProgress = Mathf.Clamp01(value);
+        }
+
+        /// <summary>True while this body's owner is holding Interact against the roots, for the struggle pose. Carried like the pull.</summary>
+        public bool IsStruggling => IsLocallySimulated() ? _struggling : _netStruggling;
+
+        /// <summary>The struggle and the pull, off the wire, for a body this peer does not simulate.</summary>
+        public void ApplyNetworkEffort(bool struggling, float pullProgress)
+        {
+            _netStruggling = struggling;
+            _netPullProgress = float.IsNaN(pullProgress) ? 0f : Mathf.Clamp01(pullProgress);
+        }
+
+        /// <summary>The struggle and the pull packed for the wire: bit 0 struggling, then the pull in 255ths.</summary>
+        public byte EffortFlags => (byte)(IsStruggling ? 1 : 0);
+        public byte PullWire => (byte)Mathf.RoundToInt(PullingPlantProgress * 255f);
 
         /// <summary>
         /// ROOTED: pulled to Paete's sentry and held by the roots. No movement; throwing and skills
@@ -183,7 +206,7 @@ namespace TumbangPreso
             _rootedLeft = 0.0f;
             _breakFreeHeld = 0.0f;
             _breakFreeRequested = false;
-            IsStruggling = false;
+            _struggling = false;
         }
 
         /// <summary>
@@ -193,10 +216,10 @@ namespace TumbangPreso
         /// </summary>
         private void StepBreakFree(float dt)
         {
-            IsStruggling = false;
+            _struggling = false;
             if (!IsRooted || !IsLocallySimulated()) return;
             if (Intent == null || !Intent.Pressed(Verb.Interact)) return;
-            IsStruggling = true;
+            _struggling = true;
             _breakFreeHeld += dt;
             if (_breakFreeHeld < PaeteRules.BreakFreeHoldSeconds) return;
             if (NetAuthority.ShouldResolve()) { EndRooted(); return; }

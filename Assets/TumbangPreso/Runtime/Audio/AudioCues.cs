@@ -112,6 +112,17 @@ namespace TumbangPreso.Audio
                 // The two new statuses sound on the victim, mixed like `sfx_hex_afflict`: several
                 // can land inside a second.
                 { "sfx_status_whirled", -9.0f }, { "sfx_status_chilled", -11.0f },
+                // Paete (HERO-9, `tools/build_paete_audio.py`). The sentry burst is his biggest
+                // moment and is mixed as an ultimate payload; the command sits under the seedling's
+                // own fire; the roots on a victim are a status, three can land inside a second.
+                { "sfx_ult_theme_paete", -14.0f },
+                { "sfx_cast_paete_vine", -6.0f }, { "sfx_cast_paete_sprout", -8.0f },
+                { "sfx_cast_paete_command", -12.0f }, { "sfx_paete_sprout_land", -9.0f },
+                { "sfx_paete_sprout_fire", -7.0f }, { "sfx_paete_sprout_uproot", -6.0f },
+                { "sfx_cast_paete_thorns", -7.0f }, { "sfx_paete_thorn_burst", -6.0f },
+                { "sfx_cast_paete_sentry", -7.0f }, { "sfx_paete_sentry_burst", -3.0f },
+                { "sfx_paete_sentry_catch", -7.0f }, { "sfx_paete_sentry_wilt", -11.0f },
+                { "sfx_status_rooted", -9.0f }, { "sfx_paete_root_break", -8.0f },
                 { "sfx_hex_cast",     -4.0f },
 
                 // ⚠️ THE BREAK IS MIXED LIKE A STATUS, NOT AN EVENT, for the same reason
@@ -138,6 +149,7 @@ namespace TumbangPreso.Audio
                 { "sfx_sky_whiteout", -13.0f },
                 { "sfx_sky_seance",   -14.0f },
                 { "sfx_sky_monsoon",  -12.0f },
+                { "sfx_sky_canopy",   -13.0f },
 
                 { "sfx_stun_break",  -9.0f },
                 { "sfx_blink_arrive", -4.0f },
@@ -384,6 +396,13 @@ namespace TumbangPreso.Audio
             "sfx_cast_amihan_whirlwind", "sfx_cast_amihan_storm", "sfx_amihan_storm_gather",
             "sfx_amihan_storm_release", "sfx_ult_theme_amihan", "sfx_sky_monsoon",
             "sfx_status_whirled", "sfx_status_chilled",
+            // Paete, HERO-9: one recipe per ability, per status and per stage of the sentry
+            // (`tools/build_paete_audio.py`). Wood and leaf, never Amihan's filtered air.
+            "sfx_cast_paete_vine", "sfx_cast_paete_sprout", "sfx_cast_paete_command",
+            "sfx_paete_sprout_land", "sfx_paete_sprout_fire", "sfx_paete_sprout_uproot",
+            "sfx_cast_paete_thorns", "sfx_paete_thorn_burst", "sfx_cast_paete_sentry",
+            "sfx_paete_sentry_burst", "sfx_paete_sentry_catch", "sfx_paete_sentry_wilt",
+            "sfx_status_rooted", "sfx_paete_root_break", "sfx_ult_theme_paete", "sfx_sky_canopy",
 
             // ⚠️ THE TWELVE ALTERNATES. A sidegrade changes what the power does, so it changes
             // what the power sounds like doing it: Long Tremor sweeps feet instead of throwing

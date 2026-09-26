@@ -558,6 +558,79 @@ def amihan_storm(a):
         a.add(a.poly([(ox, oy - rr), (ox + rr, oy), (ox, oy + rr), (ox - rr, oy)]), col, shade=rr > 100)
 
 
+# PAETE (HERO-9, 2026-09-26). His colour is dark moss 4f6b1f (the amended accent law), drawn with a
+# lighter leaf green, narra bark and a pale green core; his motif is the single leaf and the
+# pointed vine. Every picture is the POWER'S NOUN, not a mood: a vine that has caught something,
+# a seedling with a slipper in its pod, a thorn hooking a slipper home, a sentry with radial
+# spikes. Red >= blue in every swatch (CLAUDE.md 6.4).
+MOSS, LEAF, LEAF_LT, BARK, SAP = hexc("4F6B1F"), hexc("6F9A2E"), hexc("A9CF5A"), hexc("8A5A32"), hexc("EAFFD0")
+
+
+def _leaf(a, cx, cy, length, angle, col=None):
+    pts = [(-length / 2, 0), (-length * .15, -length * .26), (length / 2, 0), (-length * .15, length * .26)]
+    c, s = math.cos(math.radians(angle)), math.sin(math.radians(angle))
+    a.add(a.poly([(cx + x * c - y * s, cy + x * s + y * c) for x, y in pts]), col or LEAF_LT)
+
+
+def _vine(a, pts, w, col=MOSS):
+    a.add(a.band(pts, w), col)
+    a.add(a.band(pts[1:], w * .3), LEAF, shade=False)
+
+
+def paete_vine(a):
+    # KAPIT-BAGING (v2: v1's two straight rods and a brown disc read as tongs holding a lollipop).
+    # Two vines whip up from the lower left, bowing, and WRAP a coil round the anchor high right:
+    # the coil is loops of the vine itself, so the picture is "the vine caught something".
+    _vine(a, [(90, 940), (180, 690), (380, 470), (620, 330)], 110)
+    _vine(a, [(330, 960), (380, 760), (520, 560), (660, 390)], 86, LEAF)
+    for r, w, col in ((150, 60, MOSS), (95, 46, LEAF), (45, 40, MOSS)):
+        a.add(a.arc_band(730, 280, r, 120, 470, w), col)
+    _leaf(a, 250, 600, 230, -50)
+    _leaf(a, 470, 700, 200, 20, LEAF_LT)
+    _leaf(a, 480, 400, 190, -70, LEAF)
+    for x, y in ((905, 120), (930, 380), (600, 110)):
+        a.add(a.circle(x, y, 30), SAP, shade=False)
+
+
+def paete_sprout(a):
+    # PUNLANG TSINELAS (v2: v1's grey slipper was too small to read and the pod looked like a bud).
+    # A stubby seedling on a mound whose open pod HOLDS UP a big wooden slipper, the power's noun.
+    a.add(a.ellipse(512, 910, 340, 80), BARK)
+    a.add(a.band([(512, 890), (505, 720), (512, 600)], 100), MOSS)
+    _leaf(a, 300, 760, 280, 25)
+    _leaf(a, 730, 720, 260, -30, LEAF)
+    a.add(a.poly([(270, 430), (370, 640), (654, 640), (754, 430), (640, 560), (384, 560)]), LEAF)
+    slipper(a, 512, 330, 520, 18, hexc("D9A15E"), BARK)
+
+
+def paete_thorn(a):
+    # BAWI: a thorned vine curling up out of the ground, its hooked tip dragging a slipper home
+    # (the chevrons point back toward the root).
+    a.add(a.ellipse(250, 900, 200, 60), BARK)
+    pts = [(230, 890), (220, 650), (330, 430), (560, 300), (790, 340)]
+    _vine(a, pts, 90)
+    for (x0, y0), (x1, y1) in zip(pts[1:], pts[2:]):
+        mx, my = (x0 + x1) / 2, (y0 + y1) / 2
+        dx, dy = x1 - x0, y1 - y0
+        n = math.hypot(dx, dy)
+        px, py = -dy / n, dx / n
+        a.add(a.poly([(mx - dx / n * 40, my - dy / n * 40), (mx + dx / n * 40, my + dy / n * 40),
+                      (mx + px * 110, my + py * 110)]), MOSS)
+    slipper(a, 780, 470, 320, 30, PERSIMMON, CREAM)
+    for k, (x, y) in enumerate(((650, 700), (520, 780))):
+        a.add(a.poly([(x + 60, y - 60), (x - 50, y), (x + 60, y + 60)]), LEAF_LT)
+
+
+def paete_sentry(a):
+    # YAKAP NG MAKILING: the sentry, a bright core ringed by radial spiked vines, on its stump.
+    a.add(a.poly([(360, 930), (410, 640), (614, 640), (664, 930)]), BARK)
+    a.add(a.poly(star_pts(512, 470, 430, 180, 9)), MOSS)
+    a.add(a.poly(star_pts(512, 470, 300, 150, 9, rot=-70)), LEAF)
+    a.add(a.circle(512, 470, 150), LEAF_LT)
+    a.add(a.circle(512, 470, 90), SAP, shade=False)
+    a.glint(470, 420, 22, 40)
+
+
 # STATUS ICONS (owner's status table, 2026-09-25). Written to Resources/UI/status-icons, drawn in
 # the same family so a status reads beside an ability icon without looking like one: each sits
 # on a round badge, because an ability is a thing you DO and a status is a thing done TO you.
@@ -600,8 +673,23 @@ def status_tagged(a):
         a.add(a.rect(x, 250, x + 64, 440), HONEY)
 
 
+def status_rooted(a):
+    # ROOTED (v3: v1's upright slipper read as a flame, v2's one leg with level bands as a ladder).
+    # Two blocky legs standing in a mound, BOUND: thick roots cross them diagonally in an X, the way
+    # a rope binds, so "held by the legs" reads at 44 px.
+    _badge(a)
+    for x0 in (322, 548):
+        a.add(a.rect(x0, 170, x0 + 154, 720), HONEY)
+    a.add(a.band([(250, 700), (512, 520), (780, 330)], 78), BARK)
+    a.add(a.band([(250, 380), (512, 560), (780, 720)], 78), MOSS)
+    a.add(a.band([(270, 250), (512, 330), (760, 230)], 60), BARK)
+    a.add(a.ellipse(512, 790, 340, 90), MOSS)
+    for x, d in ((250, 1), (780, -1)):
+        a.add(a.poly([(x, 700), (x - 60 * d, 640), (x - 20 * d, 760)]), BARK)
+
+
 STATUSES = {"StatusWhirled": status_whirled, "StatusChilled": status_chilled,
-            "StatusFrozen": status_frozen, "StatusTagged": status_tagged}
+            "StatusFrozen": status_frozen, "StatusTagged": status_tagged, "StatusRooted": status_rooted}
 
 
 # the nine job glyphs, for any power without a bespoke picture
@@ -674,6 +762,7 @@ GLYPHS = {
     "RafiBreakwater": rafi_breakwater,
     "AmihanQuickDash": amihan_dash, "AmihanUpdraft": amihan_updraft,
     "AmihanWhirlwind": amihan_whirlwind, "AmihanStormSurge": amihan_storm,
+    "PaeteVine": paete_vine, "PaeteSprout": paete_sprout, "PaeteThorn": paete_thorn, "PaeteSentry": paete_sentry,
 }
 
 

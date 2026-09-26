@@ -265,7 +265,8 @@ namespace TumbangPreso.Tests
             //52 derives the shared ultimate phase length from the accepted heroes' introductions.
             //53 carries the Whirled and Chilled status clocks and the Carry message (ability overhaul).
             //54 adds Paete: his roster index, the Rooted clock, SproutKnock, ReqBreakFree, ReqUproot.
-            Assert.AreEqual(54, NetSession.ProtocolVersion,
+            //55 appends the struggle flag and plant-pull progress to SubmitMove and SyncUnit.
+            Assert.AreEqual(55, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

@@ -163,19 +163,46 @@ namespace TumbangPreso.EditorTools
 
         public static void Build() => EditorApplication.Exit(Execute() ? 0 : 1);
 
+        // Command line: -executeMethod TumbangPreso.EditorTools.RosterBookBuilder.RefreshPersonFromCommandLine -person <id>
+        public static void RefreshPersonFromCommandLine()
+        {
+            var args = System.Environment.GetCommandLineArgs();
+            int at = System.Array.IndexOf(args, "-person");
+            bool ok = at >= 0 && at + 1 < args.Length && RefreshPerson(args[at + 1]);
+            EditorApplication.Exit(ok ? 0 : 1);
+        }
+
         // Art iteration on one existing hero must not rewrite the rest of the roster.
+        //
+        // ⚠️ A HERO NEW TO THE ROSTER IS INSERTED HERE TOO, at the place a full `Build` would put
+        // it (just after the roster row before it), rather than asking for a full rebuild. The full
+        // rebuild re-bakes every other person's first-person arms and clips, which is exactly the
+        // churn this method exists to avoid. Paete was the first hero added this way (HERO-9).
         public static bool RefreshPerson(string id)
         {
             var book = AssetDatabase.LoadAssetAtPath<RosterBook>(BookPath);
-            if (book == null || !PersonModels.ContainsKey(id) ||
-                book.People.Find(entry => entry != null && entry.Id == id) == null)
+            int truthIndex = -1;
+            for (int i = 0; i < Roster.People.Count; i++) if (Roster.People[i].Id == id) { truthIndex = i; break; }
+            bool present = book != null && book.People.Find(entry => entry != null && entry.Id == id) != null;
+            if (book == null || !PersonModels.ContainsKey(id) || (!present && truthIndex < 0))
             {
                 Debug.LogError("[RosterBook] Cannot refresh an unregistered person: " + id);
                 return false;
             }
             bool ok = true;
-            BuildSingleEntry(id, PersonModels, "person", ref ok);
+            var built = BuildSingleEntry(id, PersonModels, "person", ref ok);
             if (!ok) return false;
+            if (!present)
+            {
+                int at = book.People.Count;
+                for (int i = truthIndex - 1; i >= 0; i--)
+                {
+                    int previous = book.People.FindIndex(entry => entry != null && entry.Id == Roster.People[i].Id);
+                    if (previous >= 0) { at = previous + 1; break; }
+                }
+                book.People.Insert(at, built);
+                EditorUtility.SetDirty(book);
+            }
             ViewmodelArmAuthor.Bake(book, id);
             AssetDatabase.SaveAssets();
             return true;
@@ -359,6 +386,8 @@ namespace TumbangPreso.EditorTools
                         clips.AddRange(RafiMotionAuthor.Bake(asset.Model));
                     if(kind=="person"&&entry.Id=="amihan"&&asset.Model!=null)
                         clips.AddRange(AmihanMotionAuthor.Bake(asset.Model));
+                    if(kind=="person"&&entry.Id=="paete"&&asset.Model!=null)
+                        clips.AddRange(PaeteMotionAuthor.Bake(asset.Model));
                     asset.Clips = clips.ToArray();
 
                     if (clips.Count == 0 && kind == "person")
@@ -439,6 +468,8 @@ namespace TumbangPreso.EditorTools
                     clips.AddRange(RafiMotionAuthor.Bake(asset.Model));
                 if(kind=="person"&&id=="amihan"&&asset.Model!=null)
                     clips.AddRange(AmihanMotionAuthor.Bake(asset.Model));
+                if(kind=="person"&&id=="paete"&&asset.Model!=null)
+                    clips.AddRange(PaeteMotionAuthor.Bake(asset.Model));
                 asset.Clips = clips.ToArray();
 
                 if (clips.Count == 0 && kind == "person")

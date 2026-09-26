@@ -165,7 +165,12 @@ namespace TumbangPreso.Abilities
             puller?.GetComponentInChildren<CharacterSquashStretch>()?.Stretch(0.22f);
         }
 
-        private void OnDestroy() => Live.Remove(this);
+        private void OnDestroy()
+        {
+            Live.Remove(this);
+            // A plant that withers or is pulled mid-hold must not leave a puller frozen in the heave.
+            foreach (var p in _pulling.Keys) if (p != null) p.PullingPlantProgress = 0f;
+        }
 
         private void Update()
         {
@@ -412,7 +417,15 @@ namespace TumbangPreso.Abilities
 
         private void Update()
         {
+            float before = _age;
             _age += Time.deltaTime;
+            // ⚠️ LOCAL ON EVERY PEER, NOT `NetCue`: each peer runs this same clock from the accepted
+            // cast, so each plays each stage once (`audit_cue_relay.py`).
+            if (before < 0f && _age >= 0f) GameServices.Audio?.PlayAt("sfx_paete_sentry_burst", Centre);
+            if (before < PaeteRules.SentryCatchSeconds && _age >= PaeteRules.SentryCatchSeconds && _held.Count > 0)
+                GameServices.Audio?.PlayAt("sfx_paete_sentry_catch", Centre);
+            if (before < PaeteRules.SentryLifeSeconds && _age >= PaeteRules.SentryLifeSeconds)
+                GameServices.Audio?.PlayAt("sfx_paete_sentry_wilt", Centre);
             _body.Pose(_age, Centre);
             if (_age >= 0f)
                 foreach (var p in _held)

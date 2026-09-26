@@ -1,0 +1,118 @@
+{
+  "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",
+  "listening": "Not yet heard by the owner in the game mix. Peak and RMS are measurements, not approval.",
+  "cues": [
+    {
+      "cue": "sfx_cast_paete_vine",
+      "seconds": 1.05,
+      "peak": 0.7,
+      "rms": 0.07346621149647647,
+      "sha256": "7ae05c84db6b42ac5575f94fb686505381e004091a419d1cb8a79eeecc3b0882"
+    },
+    {
+      "cue": "sfx_cast_paete_sprout",
+      "seconds": 0.5,
+      "peak": 0.55,
+      "rms": 0.08858237258026008,
+      "sha256": "061c9fbbd8f2db2227f01c1cd3a040b28002b03e2a956d792448d7e89f0f9892"
+    },
+    {
+      "cue": "sfx_cast_paete_command",
+      "seconds": 0.25,
+      "peak": 0.45000000000000007,
+      "rms": 0.019091788214532075,
+      "sha256": "d34f12b3a59d4d9e8109e9bf9db0020d5b224e579d732807e416509b5b9d83e8"
+    },
+    {
+      "cue": "sfx_paete_sprout_land",
+      "seconds": 0.55,
+      "peak": 0.6,
+      "rms": 0.0627735998550542,
+      "sha256": "04ffcd423e839bcc09f0ee8a70ef67e7d2718cb357530feb8875476adced494f"
+    },
+    {
+      "cue": "sfx_paete_sprout_fire",
+      "seconds": 0.6,
+      "peak": 0.66,
+      "rms": 0.08183694483724763,
+      "sha256": "b4420b82614e613ae2b93701171b87e9a65c03a47b2d075f57887f1f0d60bceb"
+    },
+    {
+      "cue": "sfx_paete_sprout_uproot",
+      "seconds": 1.1,
+      "peak": 0.72,
+      "rms": 0.042945355018693517,
+      "sha256": "807787cd638b071d08b0d746fb2d2aad42db359ed7f24a1dd3a015a30191d2dc"
+    },
+    {
+      "cue": "sfx_cast_paete_thorns",
+      "seconds": 0.5,
+      "peak": 0.64,
+      "rms": 0.07995119243553554,
+      "sha256": "1ebd466cf563ec98050222f93bfa5009a86d27646c902d5119a44356d7da409c"
+    },
+    {
+      "cue": "sfx_paete_thorn_burst",
+      "seconds": 1.2,
+      "peak": 0.68,
+      "rms": 0.06821928529073872,
+      "sha256": "0ff9a2f02658ea7866a94c24cbd5a8a8dc537ca78adf5ee0191eebbd8f6c482e"
+    },
+    {
+      "cue": "sfx_cast_paete_sentry",
+      "seconds": 0.75,
+      "peak": 0.62,
+      "rms": 0.08532042546116059,
+      "sha256": "831c7cd030fd736f9dc41d8eb0739ada32a184b970830273d6226adc7179e466"
+    },
+    {
+      "cue": "sfx_paete_sentry_burst",
+      "seconds": 1.6,
+      "peak": 0.8000000000000002,
+      "rms": 0.08447147940563803,
+      "sha256": "210418302125acd9133595e2fd8d045720f8fe79141b7f8401982048819a205a"
+    },
+    {
+      "cue": "sfx_paete_sentry_catch",
+      "seconds": 1.0,
+      "peak": 0.7,
+      "rms": 0.1031213468812139,
+      "sha256": "784d0cf80c2d3f062bc660ec8cabedcd539f185efe5b9d9ed865254faa7a823c"
+    },
+    {
+      "cue": "sfx_status_rooted",
+      "seconds": 0.6,
+      "peak": 0.58,
+      "rms": 0.04058392157208925,
+      "sha256": "c9651cae2e5719c8402dc920c618db3af4339eb71e7ac9dc18c36b232e5453e3"
+    },
+    {
+      "cue": "sfx_paete_root_break",
+      "seconds": 0.5,
+      "peak": 0.6,
+      "rms": 0.06287805584530293,
+      "sha256": "34bebcd207af093d8efe1f7ea632ee0c41c4eb29fdb101a1b5e88c088f61da8a"
+    },
+    {
+      "cue": "sfx_paete_sentry_wilt",
+      "seconds": 1.2,
+      "peak": 0.55,
+      "rms": 0.027437291910988617,
+      "sha256": "b0d5fe86981b271f8b98f74863fcdb0570d196ec2f0846adeaf770d7d64ac2ac"
+    },
+    {
+      "cue": "sfx_ult_theme_paete",
+      "seconds": 3.6,
+      "peak": 0.66,
+      "rms": 0.07929072327264873,
+      "sha256": "18d370aeca3dbb7bd12a0223d315d2c971e397b849e1189660f1b795d06f2406"
+    },
+    {
+      "cue": "sfx_sky_canopy",
+      "seconds": 3.2,
+      "peak": 0.5,
+      "rms": 0.042523925572496145,
+      "sha256": "8464ccce3d470a183033dc1df7977518b08c5033e2eb16a5bfc940dfc2c8b88c"
+    }
+  ]
+}

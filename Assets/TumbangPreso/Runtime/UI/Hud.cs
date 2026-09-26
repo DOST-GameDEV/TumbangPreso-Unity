@@ -1441,6 +1441,7 @@ namespace TumbangPreso.UI
             UpdateFrost(dt);
             UpdateIndicators();
             UpdateGetUpPrompt();
+            UpdateInteractPrompt();
             UpdateStunBreakPrompt();
             UpdatePickupPrompt();
             UpdateReadyObjective(dt);
@@ -2842,6 +2843,7 @@ namespace TumbangPreso.UI
             BuildClock();
             BuildLataCard();
             BuildGetUpCard();
+            BuildInteractCard();
             BuildStunBreakCard();
             BuildStatusStacks();
             BuildHeroDeck();
