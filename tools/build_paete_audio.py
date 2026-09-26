@@ -407,44 +407,58 @@ def sprout_ready():
 def theme():
     """HIS THEME, under the introduction (4.6 s, beat for beat with it): wooden bars over the forest.
 
-    Paete is the carving town, so the lead is carved wood: an ORIGINAL descending-then-rising
-    pentatonic figure on the bar model (`knock`), the register of a bamboo or narra xylophone,
-    with no sample and no borrowed melody. Under it the mountain: a low bowed-wood drone that
-    thickens and a leaf bed that swells as the roots gather, landing on the release beat."""
-    # ⚠️⚠️ RE-TIMED 2026-09-26 TO THE GROUND-CALLED CUTSCENE (4.6 s, `UltimateIntros/paete.txt`). The 3.6 s
-    # version was cut for the old thrown seed: its release thump landed at 2.40 s, between the palms
-    # pressing (1.5 s) and him rising (2.62 s), so the biggest sound in it hit nothing on screen, and the
-    # last second of the cutscene (the tree screwing up, 3.05 to 4.6 s) played in silence. Every beat
-    # below is the cutscene's own time, read from `HeroIntroductionScene.Paete.cs`:
-    #   0.12 to 1.0  Makiling rises; 0.72 her light forms in his hands and swells to 1.45
-    #   1.5          palms into the court (punch), roots burst round him to 1.8
-    #   1.6 to 2.62  three veins race under the court to the spot
-    #   2.62         he rises arms high (punch)
-    #   2.95         the ground breaks at the spot and the tree screws up to 4.6
+    Paete is the carving town, so the lead is carved wood: an ORIGINAL pentatonic figure on the bar model
+    (`knock`), the register of a bamboo or narra xylophone, with no sample and no borrowed melody. Under it
+    the mountain: a low bowed-wood drone that thickens and a leaf bed that swells as the ground answers."""
+    # ⚠️⚠️ v4, RE-TIMED 2026-09-26 NIGHT TO THE THREE-SHOT CUTSCENE (CALL, CONNECT, RISE; direction.md 5.13,
+    # `HeroIntroductionScene.Paete.cs`). Every accent is a beat the eye is on:
+    #   0.05 to 0.60  Makiling rises behind him: the bars climb softly with her, the light glows up in her hands
+    #   0.72 to 0.86  the light FALLS from her hands into his: a quick falling run, a tap as it lands
+    #   0.95          it goes into him and HIS EYES IGNITE: a low bloom and a bright struck chord
+    #   1.20 to 1.50  he gathers himself up: a rising draw into
+    #   1.50          his palm into the court (punch): soil crunch, felt thump, the court like a struck log
+    #   1.52 to 1.80  roots burst round his hand and dive back in: bark cracking
+    #   1.55 to 2.55  three veins race under the court: a crackle running away, a swell that keeps building
+    #   2.55 to 3.00  the light pools at the landing: the swell tightens
+    #   2.62          he rises arms high (punch): the bars climb back up
+    #   3.00          the court breaks and the guardian screws up: the big crack and the sub
+    #   3.56          it tops out, leaves blown off its crown
+    #   3.98          the light opens in its hollows: one deep carved note, the last word
     s = 4.6
     t = times(s)
-    # Her figure on the carved bars, descending as she comes down, one note held into the light.
-    notes = [(0.20, 392.0), (0.44, 349.2), (0.68, 293.7), (0.95, 261.6)]
-    bars = sum(knock(t, at, p, 0.30, 0.8) for at, p in notes)
-    glow = np.sin(2 * np.pi * 523.3 * t) * window(t, 0.72, 1.5, 0.35) * 0.18 + np.sin(2 * np.pi * 784.0 * t) * window(t, 0.9, 1.5, 0.3) * 0.08
+    # Her rise, soft and climbing, and the light glowing up in her hands.
+    her = [(0.10, 261.6), (0.26, 293.7), (0.42, 349.2), (0.58, 392.0)]
+    bars = sum(knock(t, at, p, 0.28, 0.55) for at, p in her)
+    glow = np.sin(2 * np.pi * 523.3 * t) * window(t, 0.12, 0.74, 0.25) * 0.10
+    # The light falls: a quick run down the bars, a tap where it lands in his hand.
+    fall = [(0.72, 784.0), (0.76, 659.3), (0.80, 523.3), (0.84, 440.0)]
+    drop = sum(knock(t, at, p, 0.12, 0.5) for at, p in fall) + knock(t, 0.86, 392.0, 0.35, 0.8)
+    # IGNITION: a low bloom under a bright struck chord, ringing out over the gather.
+    ignite = thump(t, 0.95, 70, 0.45) * 0.9 + knock(t, 0.95, 523.3, 0.9, 0.9) + knock(t, 0.95, 784.0, 0.7, 0.55)         + np.sin(2 * np.pi * 1046.5 * t) * window(t, 0.95, 1.6, 0.4) * env_ar(t, 0.01, 0.6, 0.97) * 0.12
+    # The gather: a rising draw of air and leaf into the slam.
+    draw = rustle(t, 8410, 2200 * np.clip((t - 1.18) / 0.32, 0, 1) ** 2 * window(t, 1.18, 1.5, 0.02), 4200) * 0.5
     # The press: soil crunch, a felt thump, the court answering like a struck log.
     press = snap(t, 8403, 1.5, 40, 0.10, 900, 0.9) + thump(t, 1.5, 55, 0.35) * 1.3 + knock(t, 1.5, 98, 0.25, 0.9)
-    # Roots burst round him and writhe: bark cracking, then a wooden groan under everything to the rise.
+    # Roots burst round his hand and dive back in: bark cracking, then a wooden groan under everything to the rise.
     burst = snap(t, 8404, 1.52, 60, 0.30, 1900, 0.8)
     groan = creak(t, 8405, sweep(t, 30, 30, s) + 50 * np.clip((t - 1.5) / 1.1, 0, 1), 0.4,
                   [(140, 1.0), (330, 0.5)], 12.0, window(t, 1.5, 2.65, 0.08)) * 2.2
-    # The veins race: a crackle travelling away and rising, gone the instant he rises.
-    race = snap(t, 8406, 1.6, 260, 1.0, 1400, 1.3) * window(t, 1.6, 2.62, 0.05) * np.clip((t - 1.6) / 1.0, 0.3, 1)
-    swell = one_pole_low(one_pole_low(noise(len(t), 8407), 80), 80) * np.clip((t - 1.6) / 1.35, 0, 1) ** 2 * window(t, 1.6, 3.1, 0.15) * 16.0
-    # He rises: the bars climb back up the figure she came down on, landing an octave high with the tree.
-    rise = [(2.62, 293.7), (2.74, 349.2), (2.86, 392.0), (2.97, 523.3)]
-    climb = sum(knock(t, at, p, 0.30, 1.0) for at, p in rise) + knock(t, 2.97, 261.6, 0.8, 1.0)
-    # The tree breaks the court and screws up: a big crack, the sub, then leaves roaring and settling.
-    erupt = snap(t, 8408, 2.95, 90, 0.35, 700, 1.3) + thump(t, 2.95, 44, 0.8) * 1.6
-    trunk = creak(t, 8409, sweep(t, 18, 45, s), 0.5, [(90, 1.0), (210, 0.5)], 10.0, window(t, 3.0, 4.5, 0.3)) * 1.6
-    leaves = rustle(t, 8402, 2600 * window(t, 3.05, 4.55, 0.5) + 250 * window(t, 0.6, 1.5, 0.3), 3600) * 0.6
+    # The veins race: a crackle travelling away and rising; the swell builds on to the eruption.
+    race = snap(t, 8406, 1.55, 260, 1.0, 1400, 1.3) * window(t, 1.55, 2.58, 0.05) * np.clip((t - 1.55) / 1.0, 0.3, 1)
+    swell = one_pole_low(one_pole_low(noise(len(t), 8407), 80), 80) * np.clip((t - 1.55) / 1.45, 0, 1) ** 2 * window(t, 1.55, 3.12, 0.12) * 16.0
+    # He rises: the bars climb back up the figure, landing an octave high with the eruption.
+    rise = [(2.62, 293.7), (2.74, 349.2), (2.86, 392.0), (2.98, 523.3)]
+    climb = sum(knock(t, at, p, 0.30, 1.0) for at, p in rise) + knock(t, 3.0, 261.6, 0.8, 1.0)
+    # The guardian breaks the court and screws up: a big crack, the sub, then leaves roaring and settling.
+    erupt = snap(t, 8408, 3.0, 90, 0.35, 700, 1.3) + thump(t, 3.0, 44, 0.8) * 1.6
+    trunk = creak(t, 8409, sweep(t, 18, 45, s), 0.5, [(90, 1.0), (210, 0.5)], 10.0, window(t, 3.02, 4.5, 0.3)) * 1.6
+    topout = snap(t, 8411, 3.56, 30, 0.25, 2600, 0.6)
+    leaves = rustle(t, 8402, 2600 * window(t, 3.05, 4.55, 0.5) + 1400 * window(t, 3.52, 3.9, 0.12), 3600) * 0.6
+    # Its eyes light: one deep carved note with a soft chime over it.
+    wake = knock(t, 3.98, 130.8, 1.1, 1.1) + knock(t, 3.98, 392.0, 0.7, 0.35) + np.sin(2 * np.pi * 784.0 * t) * window(t, 3.98, 4.6, 0.2) * env_ar(t, 0.02, 0.5, 4.0) * 0.08
     drone = creak(t, 8401, 110 + 0 * t, 0.05, [(130.8, 1.0), (196.0, 0.6)], 30.0, np.clip(t / 2.6, 0, 1) ** 1.4 * window(t, 0, 4.5, 0.4)) * 1.0
-    return finish("sfx_ult_theme_paete", bars + glow + press + burst + groan + race + swell + climb + erupt + trunk + leaves + drone, s, 0.66)
+    return finish("sfx_ult_theme_paete", bars + glow + drop + ignite + draw + press + burst + groan + race + swell + climb + erupt + trunk
+                  + topout + leaves + wake + drone, s, 0.66)
 
 
 def sky():

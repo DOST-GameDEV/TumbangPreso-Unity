@@ -30,6 +30,7 @@ namespace TumbangPreso.Visual
             public Color Color;
             public readonly MaterialPropertyBlock Block = new MaterialPropertyBlock();
         }
+        private static readonly int GlowColourId = Shader.PropertyToID("_Color"), GlowFacingId = Shader.PropertyToID("_Facing");
         private readonly GameObject _root;
         private readonly string _hero;
         private readonly Vector3 _ground;
@@ -153,6 +154,58 @@ namespace TumbangPreso.Visual
             else VfxMaterial.Ghost(renderer, color, emission);
             _pieces.Add(new Piece { Transform = go.transform, Renderer = renderer, Color = color });
             return _pieces.Count - 1;
+        }
+
+        /// <summary>
+        /// ⚠️ A PIECE OF LIGHT (`Resources/Shaders/SpiritGlow.shader`, added for Paete's eyes, 2026-09-26): unlit,
+        /// additive, soft from its middle out. A quad unless a <paramref name="mesh"/> is given. `billboard` turns it
+        /// to the lens in the shader; `band` fades it across the mesh's v (a glowing stripe); `lift` pulls it toward
+        /// the lens so a glow ON a surface is not half inside it; `facing` lets <see cref="PlaceGlow"/> dim it when
+        /// seen from behind. Strength is set per frame by <see cref="PlaceGlow"/>, and may exceed 1.
+        /// </summary>
+        private int AddGlow(string name, Color colour, Mesh mesh = null, bool billboard = true, bool band = false,
+                            float falloff = 2f, float core = .6f, float lift = 0f, bool facing = false)
+        {
+            var go = VfxShapes.Stand(_root.transform, name, mesh ?? GlowQuad(), 1);
+            var renderer = go.GetComponent<Renderer>();
+            renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
+            var shader = Resources.Load<Shader>("Shaders/SpiritGlow");
+            if (shader != null)
+            {
+                var m = new Material(shader) { name = name };
+                m.SetFloat("_Billboard", billboard ? 1f : 0f); m.SetFloat("_Band", band ? 1f : 0f);
+                m.SetFloat("_Falloff", falloff); m.SetFloat("_Core", core); m.SetFloat("_Lift", lift);
+                renderer.sharedMaterial = m;
+                VfxRenderTag.Own(go, m);
+            }
+            else VfxMaterial.Ghost(renderer, colour, 1f);
+            _pieces.Add(new Piece { Transform = go.transform, Renderer = renderer, Color = colour });
+            return _pieces.Count - 1;
+        }
+
+        /// <summary>A unit quad in XY, uv 0 to 1: what a glow is drawn on.</summary>
+        private static Mesh GlowQuad()
+        {
+            var mesh = new Mesh { name = "IntroductionGlowQuad" };
+            mesh.vertices = new[] { new Vector3(-.5f, -.5f, 0), new Vector3(.5f, -.5f, 0), new Vector3(.5f, .5f, 0), new Vector3(-.5f, .5f, 0) };
+            mesh.uv = new[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
+            mesh.triangles = new[] { 0, 2, 1, 0, 3, 2 };
+            mesh.RecalculateNormals();
+            // A billboard is laid out in view space by the shader, so its object bounds must not cull it early.
+            mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 2f);
+            return mesh;
+        }
+
+        /// <summary>Place a glow and set its strength (0 hides it; above 1 is brighter); `facing` is its outward direction in the SCENE's space.</summary>
+        private void PlaceGlow(int index, Vector3 position, Vector3 scale, Quaternion rotation, float strength, Vector3? facing = null)
+        {
+            var p = _pieces[index]; p.Transform.localPosition = position;
+            p.Transform.localScale = scale; p.Transform.localRotation = rotation;
+            var color = p.Color; color.a = Mathf.Max(0f, strength);
+            p.Block.SetColor(GlowColourId, color);
+            p.Block.SetVector(GlowFacingId, facing.HasValue ? (Vector4)_root.transform.TransformDirection(facing.Value).normalized + new Vector4(0, 0, 0, 1) : Vector4.zero);
+            p.Renderer.SetPropertyBlock(p.Block);
+            p.Renderer.enabled = strength > .002f;
         }
 
         /// <summary>An opaque, lit piece: stone and ice that must read as objects, not light.</summary>
@@ -344,9 +397,13 @@ namespace TumbangPreso.Visual
                 position = _ground + _facing * new Vector3(2.2f, 1.1f, 4.5f); focus = _ground + _facing * (Vector3.up * 1.05f); fov = 46; return;
             }
             _performance.Shot(index, seconds, out var eye, out var look, out fov);
+            // A hero's own blows shake the lens (Paete's palm and eruption); reduced effects keep it still.
+            if (!_reducedEffects) { var shake = Shake(Local(seconds)); eye += shake; look += shake * .5f; }
             position = _ground + _facing * eye; focus = _ground + _facing * look;
             if (_performance.Shots[index].Fit) FitBodies(ref position, ref focus, fov, aspect, seconds);
         }
+
+        private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(t) : Vector3.zero;
 
         /// <summary>The single locked shot for reduced motion: no cut and no camera move.</summary>
         public void StillShot(out Vector3 position, out Vector3 focus, out float fov)

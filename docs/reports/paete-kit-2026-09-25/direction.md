@@ -440,3 +440,60 @@ leaf tufts at every branch so the crown has mass and life, the green gem in the 
 light), claw-root toes and ground branches that DIVE INTO the court with a heave of soil where they go in rather than
 curling off it, prisoners bound by thick woven bands from the shins to the hips and the limb round the waist, and a
 rooted body that STRAINS against it all the time (the struggle loop slowly when idle, hard when they fight).
+
+### 5.13 The cutscene v4 as built, and the owner's notes on it (2026-09-26 night)
+
+The owner, while it was being built: *"thoroughhly think abt hhow everythjingh should look and direct his cutscene and pls
+imporv ehow the girl in his cutscene looks too"*, *"its okay if makiling doesnt copy or follow norms of others as long as it
+still has her style"*, *"makiling needs to be see thru tho okay? like a spirit thats js watching over"*, and on her v3 renders
+*"she actually looks really nice i dont mind if u show hher briefly full form and she vanishes back (she sstarts translucent to
+full forma nd translucent again)"*; then *"when maria makiling starts coming into the pic flowers start sprouting and lushh
+greenery and plants and shit (pls dotn reuse existing models)"*, *"and they disappear slowly as she disappears"*, and *"i also
+dotn want the tree to jsut spawn in or teleport in i want there to be an animation of how it grows or smth like make it crawl
+out from the ground? u figure it out"*.
+
+**The idea: one light, one journey.** Everything on screen is one light travelling: it leaves her hands, falls into his open
+LEFT hand (the right may hold a slipper), ignites his eyes, goes down his arm into the court, races under it as three veins,
+pools where the guardian will stand, and comes up as the guardian's eyes. It always travels screen LEFT to RIGHT: she stands
+behind his RIGHT shoulder and every camera stays on that side of the line between them (storyboarded first with
+`tools/author_ultimate_intros.py --preview paete`, which now draws her, the light, the veins and the tree).
+
+| Shot | Time | Camera (hero space) | What happens |
+|---|---|---|---|
+| CALL | 0 to 1.4 | front right, low, push-in, her head held above his | she rises out of the mist; the light falls from her parted hands into his left hand (0.72 to 0.86); HIS EYES IGNITE (0.95) and stay lit |
+| CONNECT | 1.4 to 2.7 | close and high on his right, then a crane recoiling up and back and drifting with the veins | he drops to a knee and drives his left palm into the court (1.5): crack, heaved slabs, dust, chunks; roots burst round the hand and dive back in; three veins race to the landing (1.55 to 2.55) |
+| RISE | 2.7 to 4.6 | wide and low from his front right, one continuous move in three parts (hold, crane up and back with the tree, push toward its face) | the light pools at the landing; he rises, arms high, and heaves as the court breaks (3.0); the live guardian itself (`PaeteSentryBody`, `Staged`) comes up; its eyes light at 3.98, the last beat |
+
+**As built** (`HeroIntroductionScene.Paete.cs`, `PaeteTrees.cs` `MakilingSpirit`, `Resources/Shaders/SpiritGlow.shader` and
+`SpiritGhost.shader` v3, `tools/build_paete_props.py` `makiling`, `tools/build_paete_audio.py` `theme`): the forest trees, stage
+walls, sky, mountain and landing spikes are cut; `PaeteForestTree` is deleted; the cutscene tree is the live body in `Staged` mode
+(no world spawns, since the world is paused under the phase) with `WakeAt` holding its eyes for the end; his eyes are found on his
+own face (palette slot 10 on the head bone) and lit by additive glows; the camera shakes on the palm and the eruption; the theme is
+re-timed beat for beat. Makiling v3 is a baro't saya (sheer camisa with hanging angel sleeves, pañuelo, saya, tapis), a rounded head
+with closed eyes, soft brows and a smile, hair parted with two curtains and one back sheet, a sampaguita wreath; posed through
+`MakilingSpirit.Look` (presence, drift, lean, bow, turn, reach, open, wind, fade, light).
+
+**Films:** r12 (`Logs/paete-evidence-r12`) was the first of v4. Its faults, fixed before r13: the veins, palm crack and pool were
+under the court surface (flat pieces now sit on `Slipper.GroundY`); his eye light was one yellow blob (now two small green lights);
+she leaned over him into the crane shot's lens (now upright there, and stands further right); her head was cropped in the call; the
+crown clipped the top of the last frame.
+
+**Not built yet (the owner's notes above), with the design:**
+- **Her full form, briefly.** She rises see-through, FORMS into her own colours (the solid toon look of `paete_makiling_v3.png`'s
+  third row, ink outline included) while she holds the light over him, then turns back to spirit as the light passes into him.
+  Plan: `SpiritGhost.shader` gains `_SolidFrom`/`_SolidTo` (metres above her feet): below `_SolidTo` and above `_SolidFrom` she is
+  opaque, palette-coloured and two-band lit, with a glowing seam at each line, plus an inverted-hull ink pass clipped to the solid
+  part. Forming sweeps `_SolidTo` up her from the feet (0.40 to 0.64 s); returning sweeps `_SolidFrom` up (0.98 to 1.28 s), so she
+  rises into her form and rises out of it. `MakilingSpirit.Look` gets `Form` and `Unform`.
+- **Her meadow** (`tools/build_paete_props.py` `meadow`, built only when named; not yet loaded): moss cushions over the stone, grass
+  tufts, ferns whose fronds are three chained segments so the fiddleheads can unroll, sampaguita bushes whose blossoms open on their
+  own nodes, makahiya with feathery leaves and pink puffs, every plant typed, all new. Direction: it spreads as a wave out from where
+  she rises (about 3 m/s, from 0.1 s); it flinches away from his palm (1.5 s) and the makahiya FOLD SHUT at that touch, as the real
+  plant does, and slowly reopen; it leans from the eruption's gust (3.0 s); and as she vanishes (3.7 to 4.5 s) it wilts from the
+  outer edge in: makahiya close first, blossoms shut, fronds curl back, grass and moss sink into the court. Its own sixteen-slot
+  palette (the MD_* table). Keep the court between him and the landing clear for the veins.
+- **The guardian must not pop up.** Today it screws up to full height in 0.5 s (`PaeteSentryBody.Pose` ERUPT), which reads as a
+  teleport. Wanted: it CRAWLS out of the ground. Proposed: the claw roots break out first and grab the court like hands (0 to 0.4),
+  heave the trunk up in two or three hauls with pauses (0.4 to 1.2, the bark cracking round it, soil pouring off its shoulders),
+  the crown unfolding last as it tops out, then the eyes. Same beats in play (the live sentry) and in the cutscene (which then needs
+  the eruption earlier or the wake later; the RISE shot's crane follows the hauls).

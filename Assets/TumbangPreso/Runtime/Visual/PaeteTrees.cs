@@ -81,92 +81,88 @@ namespace TumbangPreso.Visual
         }
     }
 
-    /// <summary>
-    /// One of Makiling's trees in his ultimate's introduction (direction.md section 5): the sentry's own
-    /// model at a smaller size, standing up out of the ground behind him, its crown opening and the
-    /// light coming on in its hollows, as the forest wakes. Posed by hand from the scene's clock; no
-    /// property block is ever set on it (CLAUDE.md section 87: a block over `_Color` flattens a
-    /// palette model), which is why it is not one of the introduction's `Place`/`Tint` pieces.
-    /// </summary>
-    public sealed class PaeteForestTree
-    {
-        public readonly GameObject Model;
-        private readonly Transform _trunk, _eyes;
-        private readonly List<Transform> _claws = new List<Transform>();
-        private readonly List<Quaternion> _clawRest = new List<Quaternion>();
-        private readonly float _rise, _wake;
-
-        /// <param name="rise">when it starts to come up out of the ground</param>
-        /// <param name="wake">when the light opens in its hollows</param>
-        public PaeteForestTree(Transform parent, Vector3 at, float yaw, float scale, float rise, float wake)
-        {
-            Model = PaeteProp.Spawn("sentry", parent, PaeteSentryBody.Palette, ToonSkin.PersonOutlineWidth);
-            _rise = rise; _wake = wake;
-            if (Model == null) return;
-            Model.transform.localPosition = at;
-            Model.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
-            Model.transform.localScale = Vector3.one * scale;
-            _trunk = PaeteProp.Find(Model, "trunk");
-            _eyes = PaeteProp.Find(Model, "eyes");
-            for (int i = 0; i < 7; i++)
-            {
-                var c = PaeteProp.Find(Model, "claw-" + i);
-                if (c != null) { _claws.Add(c); _clawRest.Add(c.localRotation); }
-            }
-        }
-
-        /// <summary>Pose at scene time <paramref name="t"/>; <paramref name="lean"/> tips it toward the hero (degrees).</summary>
-        public void Pose(float t, float lean, float visible)
-        {
-            if (Model == null) return;
-            Model.SetActive(visible > 0.002f && t >= _rise);
-            if (_trunk == null) return;
-            float up = GrowthVfx.Pop((t - _rise) / 0.55f);
-            _trunk.localPosition = Vector3.down * 5.4f * (1f - Mathf.Clamp(up, 0f, 1.08f));
-            _trunk.localRotation = Quaternion.Euler(0f, -80f * (1f - Mathf.Clamp01(up)), 0f) * Quaternion.Euler(lean, 0f, 0f);
-            for (int i = 0; i < _claws.Count; i++)
-            {
-                float open = GrowthVfx.Pop((t - _rise - 0.25f - 0.03f * i) / 0.4f);
-                _claws[i].localRotation = _clawRest[i] * Quaternion.Euler(-45f * (1f - open) + Mathf.Sin(t * 1.3f + i) * 2.5f, 0f, 0f);
-            }
-            if (_eyes != null)
-                _eyes.localScale = new Vector3(1f, Mathf.Max(0.001f, GrowthVfx.Pop((t - _wake) / 0.3f)), 1f);
-        }
-    }
+    // ⚠️ `PaeteForestTree` IS DELETED (2026-09-26 night, direction.md 5.13). It stood the sentry's model up as the
+    // four small "forest" trees behind him in the introduction and as its payoff tree. The owner: *"i dont get what
+    // the 3 plants showing up and the big plant showing up means"*, *"i js really dont liek taht u fucking show 3 small
+    // plants that does not make snese"*. The forest is cut, and the payoff is now the live guardian itself
+    // (`PaeteSentryBody` with `Staged` set), so what rises in the cutscene is exactly what rises in play.
 
     /// <summary>
     /// ⚠️⚠️ MARIANG MAKILING, WATCHING OVER HIM (owner, 2026-09-26: *"i want the lore for this character
     /// to be that its the guardian of mount makiling"*, *"make it seem like the spirit of maria makiling or
     /// smth is watching over him"*, Aphelios and Alune as the model, *"one place i want this maria makiling
     /// or smht to shhow up is his ult cutscene"*, *"its fine if u dont make maria makiling like other
-    /// characters"*). direction.md section 5.10. `Resources/Models/PaeteProps/makiling.glb`
-    /// (`tools/build_paete_props.py` `makiling`), a tall calm figure with her deer, in HER palette.
+    /// characters"*). direction.md sections 5.10 and 5.13. `Resources/Models/PaeteProps/makiling.glb`
+    /// (`tools/build_paete_props.py` `makiling`), a tall calm woman in a baro't saya, in HER palette.
     ///
-    /// ⚠️⚠️ A GHOST, NOT A FIGURE (owner, same day, on the first render with her own colours and a lit
-    /// edge: *"this sucks pa"*, *"make her look see thru so that it seems like a ghost"*, and two Alune
-    /// pictures). So, as Alune is drawn: ONE luminous hue (his jade light), the forms kept only by value,
-    /// brighter and more solid at the edges, see-through in the middle, her lower body dissolving into
-    /// the mist, looming over his shoulder. `Resources/Shaders/SpiritGhost.shader` draws her (a depth
-    /// pass so only her front shows, then the blend); the only solid thing on her is the seed.
+    /// ⚠️⚠️ A GHOST, NOT A FIGURE (owner, same day: *"make her look see thru so that it seems like a ghost"*, and
+    /// on the v4 redirect *"makiling needs to be see thru tho okay? like a spirit thats js watching over"*). So,
+    /// as Alune is drawn: ONE luminous hue (his jade light), the forms kept only by value, brighter at the edges,
+    /// see-through in the middle, her hem dissolving into the mist, looming over his shoulder.
+    /// `Resources/Shaders/SpiritGhost.shader` draws her (a depth pass so only her front shows, then a premultiplied
+    /// blend so she veils and glows at once); the only solid thing on her is the light she carries.
+    ///
+    /// ⚠️ v3 (2026-09-26 night): she is posed through <see cref="Look"/>, one struct the cutscene fills per frame,
+    /// because she now does more than rise and bow: she leans over him, reaches her arms over his and parts her
+    /// hands to let the light fall, bends low with him at the connect, straightens to watch the guardian come up,
+    /// and lets the mist take her back from the feet up. Her arms are their own nodes (`arm-left`, `arm-right`).
+    /// The deer is gone (owner: *"why is there a deer even did i ask for that"*), and so is the v1 `hands` node.
     /// </summary>
     public sealed class MakilingSpirit
     {
+        /// <summary>
+        /// Her sixteen colours, the same slots as `tools/build_paete_props.py`'s MK_* table: 0 hair, 1 hair lit,
+        /// 2 skin, 3 skin shade, 4 camisa, 5 camisa shade, 6 petal, 7 flower heart, 8 ink, 9 leaf, 10 light,
+        /// 11 pañuelo, 12 saya, 13 saya fold, 14 tapis, 15 tapis trim. Through the ghost only their VALUE counts,
+        /// so they are also her light and shade: the camisa a step darker than the pañuelo so the kerchief's
+        /// shape reads over it, the tapis the one dark band that gives her a waist.
+        /// </summary>
         public static readonly Color[] Palette =
         {
-            Hex(0x231A17), Hex(0x3B2C26), Hex(0xC98E68), Hex(0xA8704F), Hex(0xF3EEE4), Hex(0xD8D0C0), Hex(0xFBF8EF), Hex(0xE8C24A),
-            Hex(0x1E140C), Hex(0x6A962E), Hex(0xD8FF6A), Hex(0xBFE0A6), Hex(0xA9713E), Hex(0xE2C9A0), Hex(0x5A3B22), Hex(0xC7AC84),
+            Hex(0x231A17), Hex(0x4A382E), Hex(0xC98E68), Hex(0xA8704F), Hex(0xE6DDCC), Hex(0xC9BEA9), Hex(0xFBF8EF), Hex(0xE8D8A0),
+            Hex(0x1E140C), Hex(0x6A962E), Hex(0xD8FF6A), Hex(0xFFFDF6), Hex(0xEDE6D8), Hex(0xCFC4AE), Hex(0x3F5F2C), Hex(0x8FB06A),
         };
 
+        /// <summary>One frame of her, filled by the cutscene. Every field has a neutral default of 0.</summary>
+        public struct Look
+        {
+            /// <summary>0 to 1: risen out of the mist (0 is under it, unseen).</summary>
+            public float Presence;
+            /// <summary>Scene-space metres added to where she stands.</summary>
+            public Vector3 Drift;
+            /// <summary>Degrees she bends forward from her feet.</summary>
+            public float Lean;
+            /// <summary>Degrees her head bows (negative lifts it).</summary>
+            public float Bow;
+            /// <summary>Degrees her head turns (positive toward her own right).</summary>
+            public float Turn;
+            /// <summary>0 to 1: her arms raised forward from her breast, out over him.</summary>
+            public float Reach;
+            /// <summary>0 to 1: her hands parted (the light falls between them).</summary>
+            public float Open;
+            /// <summary>How much her hair and sleeves stir.</summary>
+            public float Wind;
+            /// <summary>0 to 1: the mist taking her back, from the feet up.</summary>
+            public float Fade;
+            /// <summary>0 to 1: the light held in her hands (and lighting her from within).</summary>
+            public float Light;
+        }
+
         public readonly GameObject Model;
-        private readonly Transform _head, _hair, _hands, _seed, _shawl, _deerHead;
-        private readonly Quaternion _headRest, _hairRest, _shawlRest, _deerHeadRest;
-        private readonly Vector3 _handsAt, _seedAt, _seedScale, _at;
+        private readonly Transform _head, _hair, _armLeft, _armRight, _seed;
+        private readonly Quaternion _headRest, _hairRest, _armLeftRest, _armRightRest;
+        private readonly Vector3 _seedScale, _at;
+        private readonly Material _ghost;
+        private readonly float _scale, _yaw;
+        private static readonly int BaseYId = Shader.PropertyToID("_BaseY"), PresenceId = Shader.PropertyToID("_Presence"),
+            FadeLowId = Shader.PropertyToID("_FadeLow"), FadeHighId = Shader.PropertyToID("_FadeHigh"),
+            LightPosId = Shader.PropertyToID("_LightPos"), LightStrengthId = Shader.PropertyToID("_LightStrength"),
+            LightRadiusId = Shader.PropertyToID("_LightRadius");
 
         private static Color Hex(int rgb) => new Color(((rgb >> 16) & 255) / 255f, ((rgb >> 8) & 255) / 255f, (rgb & 255) / 255f, 1f);
 
-        private readonly Material _ghost;
-        private static readonly int BaseYId = Shader.PropertyToID("_BaseY"), PresenceId = Shader.PropertyToID("_Presence");
-        private readonly float _scale, _yaw;
+        /// <summary>World point between her hands: where the light is held, and where it falls from.</summary>
+        public Vector3 HandsWorld => _seed != null ? _seed.position : (Model != null ? Model.transform.position + Vector3.up * 2f * _scale : Vector3.zero);
 
         public MakilingSpirit(Transform parent, Vector3 at, float yaw, float scale)
         {
@@ -183,9 +179,7 @@ namespace TumbangPreso.Visual
                 var slots = new Vector4[16];
                 for (int i = 0; i < 16; i++) slots[i] = Palette[i].linear;
                 _ghost.SetVectorArray("_Palette", slots);
-                // The fade band scales with her: her hem is gone, her knees are mist, her waist is there.
-                _ghost.SetFloat("_FadeLow", 0.35f * scale);
-                _ghost.SetFloat("_FadeHigh", 1.55f * scale);
+                _ghost.SetFloat(LightRadiusId, 0.95f * scale);
                 VfxRenderTag.Own(Model, _ghost);
             }
             else Debug.LogWarning("[MakilingSpirit] Shaders/SpiritGhost is missing.");
@@ -202,66 +196,58 @@ namespace TumbangPreso.Visual
             }
             _head = PaeteProp.Find(Model, "head");
             _hair = PaeteProp.Find(Model, "hair");
-            _hands = PaeteProp.Find(Model, "hands");
+            _armLeft = PaeteProp.Find(Model, "arm-left");
+            _armRight = PaeteProp.Find(Model, "arm-right");
             _seed = PaeteProp.Find(Model, "seed");
-            _shawl = PaeteProp.Find(Model, "shawl");
-            _deerHead = PaeteProp.Find(Model, "deer-head");
             if (_head != null) _headRest = _head.localRotation;
             if (_hair != null) _hairRest = _hair.localRotation;
-            if (_shawl != null) _shawlRest = _shawl.localRotation;
-            if (_deerHead != null) _deerHeadRest = _deerHead.localRotation;
-            if (_hands != null) _handsAt = _hands.localPosition;
-            if (_seed != null) { _seedAt = _seed.localPosition; _seedScale = _seed.localScale; }
+            if (_armLeft != null) _armLeftRest = _armLeft.localRotation;
+            if (_armRight != null) _armRightRest = _armRight.localRotation;
+            if (_seed != null) _seedScale = _seed.localScale;
         }
 
-        /// <summary>
-        /// Pose at scene time <paramref name="t"/>. <paramref name="presence"/> 0 to 1 raises her out of the
-        /// mist and lowers her back; <paramref name="giveAt"/> is when the seed leaves her hands for his
-        /// palm at <paramref name="palmWorld"/>; <paramref name="gather"/> lifts her hands and stirs her hair.
-        /// </summary>
-        public void Pose(float t, float presence, float giveAt, Vector3 palmWorld, float gather, Vector3 drift = default, float lean = 0f)
+        /// <summary>Pose her at scene time <paramref name="t"/> (for her own sway) as <paramref name="look"/> says.</summary>
+        public void Pose(float t, Look look)
         {
             if (Model == null) return;
-            Model.SetActive(presence > 0.002f);
-            float rise = Mathf.SmoothStep(0f, 1f, presence);
-            // Up out of the mist, floating: her hem stays in it, and she fades in as she comes. `drift` and `lean`
-            // let the cutscene move her with him (she sinks and bends over him at the connect, direction.md 5.12).
-            Model.transform.localPosition = _at + drift + Vector3.up * (-1.4f * _scale * (1f - rise) + 0.05f * Mathf.Sin(t * 1.7f));
-            Model.transform.localRotation = Quaternion.Euler(0f, _yaw, 0f) * Quaternion.Euler(lean, 0f, 0f);
+            float rise = Mathf.SmoothStep(0f, 1f, look.Presence);
+            bool seen = rise > 0.002f && look.Fade < 0.999f;
+            if (Model.activeSelf != seen) Model.SetActive(seen);
+            if (!seen) return;
+            // Up out of the mist, floating: a slow bob, and she comes up from under the court as she arrives.
+            Model.transform.localPosition = _at + look.Drift + Vector3.up * (-1.3f * _scale * (1f - rise) + 0.045f * Mathf.Sin(t * 1.6f));
+            Model.transform.localRotation = Quaternion.Euler(0f, _yaw, 0f) * Quaternion.Euler(look.Lean, 0f, 0f);
+
+            // The head: bowed toward him, turned, and a slow tilt as she watches.
+            if (_head != null)
+                _head.localRotation = _headRest * Quaternion.Euler(look.Bow, look.Turn, 4f * Mathf.Sin(t * 0.8f));
+            // The arms: raised forward by Reach (negative x swings a hanging arm forward), parted by Open (her
+            // left, on -x after the import's mirror, turns out with negative yaw; her right with positive). The
+            // sleeves are on the arm nodes, so they swing with them; the wind lifts them a little.
+            float lift = -58f * look.Reach + 2.5f * look.Wind * Mathf.Sin(t * 1.4f);
+            float part = 30f * look.Open;
+            if (_armLeft != null) _armLeft.localRotation = _armLeftRest * Quaternion.Euler(lift, -part, -6f * look.Open);
+            if (_armRight != null) _armRight.localRotation = _armRightRest * Quaternion.Euler(lift + 1.5f * look.Wind * Mathf.Sin(t * 1.7f + 1f), part, 6f * look.Open);
+            // Her long hair stirs, more when the ground is being called.
+            float wind = 1f + 2.2f * look.Wind;
+            if (_hair != null) _hair.localRotation = _hairRest * Quaternion.Euler(3f * wind * Mathf.Sin(t * 1.3f) - 4f * look.Wind, 0f, 2f * wind * Mathf.Sin(t * 1.1f + 1f));
+            // The light she holds: it glows up in her cupped hands and is gone from them when she lets it fall.
+            if (_seed != null)
+            {
+                float glow = Mathf.Clamp01(look.Light);
+                _seed.gameObject.SetActive(glow > 0.01f);
+                _seed.localScale = _seedScale * Mathf.Max(0.001f, glow * (1f + 0.14f * Mathf.Sin(t * 9f)));
+            }
             if (_ghost != null)
             {
                 _ghost.SetFloat(BaseYId, Model.transform.position.y);
                 _ghost.SetFloat(PresenceId, rise);
-            }
-            if (_head != null)
-            {
-                // The head bows toward him as she rises, then a slow tilt as she watches.
-                float bow = 18f * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((t - 0.3f) / 0.6f));
-                _head.localRotation = _headRest * Quaternion.Euler(bow, 0f, 5f * Mathf.Sin(t * 0.9f));
-            }
-            float wind = 1f + 2.2f * gather;
-            if (_hair != null) _hair.localRotation = _hairRest * Quaternion.Euler(3f * wind * Mathf.Sin(t * 1.3f), 0f, 2f * wind * Mathf.Sin(t * 1.1f + 1f));
-            if (_shawl != null) _shawl.localRotation = _shawlRest * Quaternion.Euler(4f * wind * Mathf.Sin(t * 1.5f + 0.4f), 0f, 3f * wind * Mathf.Sin(t * 1.2f));
-            if (_hands != null) _hands.localPosition = _handsAt + new Vector3(0f, 0.12f * gather, 0.04f * gather);
-            if (_seed != null)
-            {
-                // The seed glows up in her hands, then arcs to his palm and is gone from hers.
-                float glow = Mathf.Clamp01((t - 0.15f) / 0.35f);
-                float fly = Mathf.Clamp01((t - giveAt) / 0.22f);
-                _seed.gameObject.SetActive(fly < 1f);
-                _seed.localPosition = _seedAt;
-                if (fly > 0f)
-                {
-                    Vector3 from = _seed.parent.TransformPoint(_seedAt);
-                    _seed.position = Vector3.Lerp(from, palmWorld, fly) + Vector3.up * 0.6f * Mathf.Sin(fly * Mathf.PI);
-                }
-                _seed.localScale = _seedScale * Mathf.Max(0.001f, glow * (1f + 0.15f * Mathf.Sin(t * 9f)) * (1f - 0.6f * fly));
-            }
-            if (_deerHead != null)
-            {
-                // Her deer lifts its head and turns it toward him.
-                float lift = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((t - 0.5f) / 0.5f));
-                _deerHead.localRotation = _deerHeadRest * Quaternion.Euler(-14f * lift + 2f * Mathf.Sin(t * 2.1f), -22f * lift, 0f);
+                // Her hem is always mist; the Fade raises the mist line up her until it has her whole.
+                float fade = Mathf.SmoothStep(0f, 1f, look.Fade);
+                _ghost.SetFloat(FadeLowId, Mathf.Lerp(0.12f, 3.2f, fade) * _scale);
+                _ghost.SetFloat(FadeHighId, Mathf.Lerp(1.0f, 3.45f, fade) * _scale);
+                _ghost.SetVector(LightPosId, HandsWorld);
+                _ghost.SetFloat(LightStrengthId, 1.1f * Mathf.Clamp01(look.Light));
             }
         }
     }

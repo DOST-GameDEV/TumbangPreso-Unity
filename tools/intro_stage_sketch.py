@@ -256,4 +256,84 @@ def rafi(t, S, hands, seconds, cam):
            centre=(0, 0, -.2 + pitch * .8), lean=.82)
 
 
-STAGES = dict(phaister=phaister, sean=sean, zack=zack, nemu=nemu, dante=dante, cheska=cheska, rafi=rafi)
+# PAETE v4 (direction.md section 5.13): no stage walls at all; the court is the stage. Constants mirror
+# `HeroIntroductionScene.Paete.cs` (her stand behind his RIGHT shoulder, the landing 5.5 m ahead).
+PAETE_HER = np.array([1.0, 0.0, -1.2])
+PAETE_HER_SCALE = 1.1
+PAETE_LANDING = np.array([0.0, 0.0, 5.5])
+PAETE_TREE_YAW = 105.0
+
+
+def _paete_her(t):
+    """Her offset, lean and presence at t (the same curves as MakilingSpirit's driver in C#)."""
+    rise = ease(.05, .55, t)
+    sink = ease(1.45, 1.65, t) * (1 - ease(2.45, 2.7, t))
+    pour = ease(2.72, 3.02, t)
+    off = np.array([0.0, -1.2 * PAETE_HER_SCALE * (1 - rise) - .45 * sink + .2 * ease(2.45, 2.7, t) - .4 * pour, .25 * sink + 1.6 * pour])
+    lean = 12 + 14 * sink + 33 * pour
+    return off, lean, rise * (1 - pour)
+
+
+def paete(t, S, hands, seconds, cam):
+    off, lean, alpha = _paete_her(t)
+    base = PAETE_HER + off
+    k = PAETE_HER_SCALE
+    green = (.55, .95, .65)
+    def lean_pt(p):
+        # lean forward (+z) about her base
+        y, z = p[1] - base[1], p[2] - base[2]
+        a = math.radians(lean)
+        return np.array([p[0], base[1] + y * math.cos(a) - z * math.sin(a) * 0, base[2] + z * math.cos(a) + y * math.sin(a)])
+    if alpha > .02:
+        for y0, y1, w in ((0, .6, 1.3), (.6, 1.2, .9), (1.2, 1.56, .52)):
+            c = lean_pt(base + np.array([0, (y0 + y1) / 2 * k, 0]))
+            S.box(c, (w * k, (y1 - y0) * k, w * .8 * k), green, .45 * alpha, tilt=(lean, 0, 0))
+        S.box(lean_pt(base + np.array([0, 1.86 * k, 0])), (.42 * k, .6 * k, .3 * k), green, .5 * alpha, tilt=(lean, 0, 0))
+        S.box(lean_pt(base + np.array([0, 2.5 * k, .02])), (.37 * k, .44 * k, .38 * k), (.8, 1, .8), .6 * alpha, tilt=(lean, 0, 0))
+        S.box(lean_pt(base + np.array([0, 1.6 * k, -.25 * k])), (.4 * k, 1.9 * k, .1 * k), (.2, .45, .3), .5 * alpha, tilt=(lean, 0, 0))
+        for side in (-1, 1):
+            S.box(lean_pt(base + np.array([side * .3 * k, 1.75 * k, .18 * k])), (.3 * k, .45 * k, .3 * k), green, .4 * alpha, tilt=(lean, 0, 0))
+    palms = (hands["left"] + hands["right"]) / 2
+    her_hands = lean_pt(base + np.array([0, 2.0 * k, .36 * k]))
+    # THE LIGHT: in her hands, then dropped into his (0.72 to 0.86), then into him at 0.95.
+    if .1 < t < .72:
+        S.box(her_hands, (.12, .12, .12), (1, 1, .7), 1)
+    elif .72 <= t < .98:
+        u = ease(.72, .86, t)
+        at = her_hands + (palms - her_hands) * u + np.array([0, .4 * math.sin(u * math.pi), 0])
+        S.box(at, (.12, .12, .12), (1, 1, .7), 1)
+    # THE VEINS: from under his palms to the landing, 1.55 to 2.55, sinking as the tree comes.
+    reach = ease(1.55, 2.55, t) * (1 - ease(3.0, 3.4, t))
+    start = np.array([palms[0], .02, max(.5, palms[2])])
+    for v, amp in ((0, .45), (1, -.35), (2, .1)):
+        prev = start
+        for i in range(1, int(24 * reach) + 1):
+            u = i / 24
+            side = amp * math.sin(u * math.pi) + .12 * math.sin(u * 9 + v * 2) * math.sin(u * math.pi)
+            p = start + (PAETE_LANDING - start) * u + np.array([side, 0, 0])
+            S.line(prev, p, .09, (.85, 1, .4), 1)
+            prev = p
+    # HER STREAM, 2.72 to 3.0: from her chest over him to the landing.
+    head = ease(2.72, 3.0, t)
+    if 2.72 < t < 3.1:
+        chest = PAETE_HER + np.array([0, 2.0 * k, 0])
+        for j in range(8):
+            u = max(0.0, head - j * .05)
+            p = chest + (PAETE_LANDING - chest) * u + np.array([0, 2.2 * math.sin(u * math.pi), 0])
+            S.box(p, (.18 - j * .015,) * 3, (.9, 1, .7), 1)
+    # THE GUARDIAN: screws up out of the court from 3.0, full 9 m by 3.56, eyes lit from 3.6.
+    up = ease(3.0, 3.56, t)
+    if up > 0:
+        sink = (1 - up) * 9.0
+        a = math.radians(PAETE_TREE_YAW)
+        fwd = np.array([math.sin(a), 0, math.cos(a)])
+        S.box(PAETE_LANDING + np.array([0, 2.4 - sink, 0]), (1.6, 4.8, 1.6), (.36, .25, .15), 1, yaw=PAETE_TREE_YAW)
+        S.box(PAETE_LANDING + np.array([0, 6.6 - sink, 0]), (4.2, 3.6, 4.2), (.3, .5, .2), 1, yaw=PAETE_TREE_YAW)
+        S.box(PAETE_LANDING + np.array([0, .25, 0]), (3.4, .5, 3.4), (.3, .22, .14), up)
+        if t > 3.6:
+            side = np.array([fwd[2], 0, -fwd[0]])
+            for s_ in (-1, 1):
+                S.box(PAETE_LANDING + fwd * .82 + side * s_ * .3 + np.array([0, 4.3 - sink, 0]), (.22, .12, .1), (.9, 1, .45), 1, yaw=PAETE_TREE_YAW)
+
+
+STAGES = dict(phaister=phaister, sean=sean, zack=zack, nemu=nemu, dante=dante, cheska=cheska, rafi=rafi, paete=paete)

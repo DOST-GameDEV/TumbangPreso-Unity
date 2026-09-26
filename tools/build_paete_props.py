@@ -318,6 +318,20 @@ def sprig(node, base, compass, pitch, length, width, slot, roll=0.0, thickness=0
     node.leaf(centre, length, width, compass - 90.0, pitch, roll, slot=slot, thickness=thickness)
 
 
+def clump(node, centre, radii, slot, tilt=0.0, turn=0.0, sides=9):
+    """One mass of leaves in the crown: a low round lump (the plaza trees' own canopy language, faceted then
+    smoothed and inked), `radii` (x, y, z) across, tipped by `tilt` and turned by `turn`. Typed per call: its
+    rows are a fixed profile, the size and placement are the caller's."""
+    rx, ry, rz = radii
+    profile = [(-1.00, 0.18), (-0.62, 0.78), (-0.10, 1.00), (0.42, 0.90), (0.80, 0.56), (1.00, 0.12)]
+    rows = [(ry * h, 0.0, 0.0, rx * w, rz * w) for h, w in profile]
+    local = Node("_clump")
+    loft(local, rows, slot, sides=sides)
+    for slot_, faces in local.parts:
+        moved = [[add(centre, pv._rotate(p, turn, 0.0, tilt)) for p in face] for face in faces]
+        node.parts.append((slot_, moved))
+
+
 # ---------------------------------------------------------------------------------------------
 # THE SENTRY. About 4.4 m to the leaf tips. direction.md section 5.2.
 # ---------------------------------------------------------------------------------------------
@@ -560,6 +574,33 @@ def sentry():
         "claw-5": [(3, 280, 20, 0.46, 0.25, LEAF), (4, 40, 45, 0.44, 0.24, LEAF_DARK), (5, 160, 55, 0.42, 0.23, LEAF)],
         "claw-6": [(3, 20, 30, 0.48, 0.26, LEAF_DARK), (4, 250, 40, 0.46, 0.25, LEAF), (5, 110, 55, 0.44, 0.24, LEAF), (4, 170, 5, 0.38, 0.21, MOSS_LIT)],
     }
+    # The leaf masses per branch, in the branch's own space (+Z along it): (centre, radii, slot, tilt, turn).
+    # The shaded mass sits under and inside, the lit one over and outside, each its own size and lean.
+    masses = {
+        "claw-0": [((-0.04, 1.02, 0.66), (0.44, 0.32, 0.40), LEAF_DARK, 8.0, 10.0), ((0.10, 1.24, 0.60), (0.34, 0.27, 0.32), LEAF, -6.0, 40.0),
+                   ((-0.26, 1.16, 0.48), (0.24, 0.20, 0.24), MOSS_LIT, 12.0, 70.0)],
+        "claw-1": [((0.04, 0.80, 0.86), (0.42, 0.30, 0.40), LEAF_DARK, 10.0, -20.0), ((-0.08, 1.00, 0.92), (0.32, 0.26, 0.30), LEAF, -8.0, 15.0)],
+        "claw-2": [((0.00, 1.26, 0.42), (0.46, 0.34, 0.40), LEAF_DARK, 6.0, 30.0), ((0.14, 1.46, 0.36), (0.33, 0.28, 0.31), LEAF, -4.0, 60.0),
+                   ((-0.30, 1.10, 0.36), (0.26, 0.22, 0.25), LEAF, 14.0, -30.0)],
+        "claw-3": [((-0.02, 0.64, 0.98), (0.40, 0.29, 0.38), LEAF_DARK, 12.0, 25.0), ((0.12, 0.82, 1.02), (0.30, 0.24, 0.28), MOSS_LIT, -6.0, 50.0)],
+        "claw-4": [((0.04, 1.20, 0.58), (0.45, 0.33, 0.41), LEAF_DARK, 8.0, -15.0), ((-0.12, 1.40, 0.52), (0.34, 0.28, 0.32), LEAF, -5.0, 20.0),
+                   ((0.28, 1.06, 0.46), (0.24, 0.20, 0.23), MOSS_LIT, 10.0, 80.0)],
+        "claw-5": [((-0.04, 0.88, 0.86), (0.42, 0.30, 0.39), LEAF_DARK, 9.0, 35.0), ((0.10, 1.04, 0.90), (0.31, 0.25, 0.29), LEAF, -7.0, -10.0)],
+        "claw-6": [((0.02, 1.08, 0.64), (0.44, 0.32, 0.40), LEAF_DARK, 7.0, -35.0), ((-0.10, 1.28, 0.62), (0.33, 0.27, 0.31), LEAF, -5.0, 5.0),
+                   ((0.26, 1.02, 0.44), (0.25, 0.21, 0.24), LEAF, 13.0, 55.0)],
+    }
+    # A strand or two of old moss hanging from under the masses: typed, each its own length and sway.
+    moss = {
+        "claw-0": [([(-0.10, 0.80, 0.62), (-0.12, 0.60, 0.66), (-0.10, 0.42, 0.64)], [0.030, 0.024, 0.010])],
+        "claw-1": [([(0.06, 0.58, 0.84), (0.08, 0.36, 0.88), (0.05, 0.20, 0.86)], [0.028, 0.022, 0.009])],
+        "claw-2": [([(0.08, 1.02, 0.40), (0.10, 0.78, 0.42), (0.07, 0.62, 0.40)], [0.030, 0.024, 0.010]),
+                   ([(-0.22, 0.96, 0.30), (-0.24, 0.80, 0.32)], [0.024, 0.010])],
+        "claw-3": [([(0.02, 0.44, 0.96), (0.03, 0.26, 0.98), (0.01, 0.14, 0.96)], [0.026, 0.020, 0.008])],
+        "claw-4": [([(-0.06, 0.96, 0.56), (-0.08, 0.72, 0.58), (-0.05, 0.56, 0.56)], [0.030, 0.024, 0.010])],
+        "claw-5": [([(0.04, 0.66, 0.84), (0.06, 0.46, 0.86), (0.03, 0.30, 0.84)], [0.028, 0.022, 0.009])],
+        "claw-6": [([(0.10, 0.86, 0.60), (0.12, 0.64, 0.62), (0.09, 0.48, 0.60)], [0.030, 0.024, 0.010]),
+                   ([(-0.18, 0.84, 0.54), (-0.20, 0.70, 0.56)], [0.022, 0.009])],
+    }
     for name, yaw, main, main_r, second, second_r, fork, fork_r, shade, tufts in branches:
         n = Node(name, origin=ring(0.30, yaw, 0.0), parent="crown", yaw=yaw); nodes.append(n)
         line(n, main, main_r, shade, twist=40.0, per=4)
@@ -570,6 +611,15 @@ def sentry():
             sprig(n, base, compass + 70, pitch - 25, length * 0.8, width * 0.8, LEAF_DARK if slot == LEAF else LEAF)
         for idx, compass, pitch, length, width, slot in canopy[name]:
             sprig(n, main[idx], compass, pitch, length, width, slot, thickness=0.022)
+        # ⚠️⚠️ v8 (2026-09-26 night): THE CROWN HAS MASS. The leaves alone were still flecks at 9 m (the owner's
+        # *"REFINE THIS TREE MORE"*; `review/ult_inmatch_tree_v4_before_reauthor.png`: a bare trunk with sprouts).
+        # Each branch now carries two or three round leaf masses round its upper third, the plaza trees' own
+        # canopy shapes, dark underneath and lit on top, so the guardian reads as a great tree in leaf, with the
+        # woven branches showing between the masses and the hooked tips poking out of them.
+        for centre, radii, slot, tilt, turn in masses[name]:
+            clump(n, centre, radii, slot, tilt, turn)
+        for points, radii in moss[name]:
+            line(n, points, radii, MOSS_DARK, sides=4, per=3)
 
     write(os.path.join(OUT, "sentry.glb"), nodes)
 
@@ -855,33 +905,218 @@ def thorns():
 # MARIANG MAKILING, THE SPIRIT IN HIS ULTIMATE (owner, 2026-09-26: *"make it seem like the spirit of
 # maria makiling or smth is watching over him"*, Aphelios and Alune as the model, *"one place i want
 # this maria makiling or smht to shhow up is his ult cutscene"*, two paintings of her as reference, and
-# *"its fine if u dont make maria makiling like other characters"*). direction.md section 5.10.
+# *"its fine if u dont make maria makiling like other characters"*). direction.md sections 5.10 and 5.13.
 #
-# Not the cast's chibi proportions, by the owner's leave: a tall, calm figure about 3.9 m, standing in
-# the mist behind him, head bowed toward him, eyes closed, her cupped hands holding the seed of light
-# (the painting's cupped hands); long black hair to the knees, a crown of white flowers, a white gown,
-# and a pale green shawl. Every part is typed. (A deer from the paintings stood beside her for one
-# film and was cut the same day, the owner: *"why is there a deer even did i ask for that"*.)
+# ⚠️⚠️ v3 (2026-09-26 night): SHE WAS A COLUMN. The owner on the in-match film: *"how she looks needs to be
+# refined"*, then *"pls imporv ehow the girl in his cutscene looks too"* and *"its okay if makiling doesnt
+# copy or follow norms of others as long as it still has her style"*. The v2 render (`Logs/paete-review/
+# paete_makiling_v2.png`, `PaeteSpiritReviewProbe`) showed why: a straight tube of gown from the chest to the
+# floor, a cube head with a nose block, six stick locks of hair, and through the ghost shader one flat green
+# plastic. A ghost reads by SILHOUETTE and by the light running round curved edges, and a box has neither.
 #
-# ⚠️ HER OWN PALETTE, NOT HIS. The slots below mean HER colours; the runtime dresses her with
-# `MakilingSpirit.Palette` (same sixteen cells, her values), then gives her a glowing pale outline in
-# place of the ink, which is what reads as a spirit.
-#   0 hair  1 hair lit  2 skin  3 skin shade  4 gown  5 gown shade  6 petal  7 flower heart
-#   8 ink   9 leaf      10 light  11 shawl    12 deer 13 deer light 14 deer dark 15 antler
+# So she is built from ROUND, FLOWING forms (lofts of typed ellipses and flat typed ribbons, smoothed), and she
+# wears what makes her Mariang Makiling to anyone from here: a BARO'T SAYA. A sheer camisa whose wide bell
+# sleeves hang open under her raised forearms (piña cloth is see-through, which is what a ghost is), a folded
+# PAÑUELO across her shoulders that makes the one crisp bright shape at the top of her, a long SAYA flaring into
+# the mountain's mist, a darker TAPIS wrapped over it at the hips and knotted at her left, long black hair
+# parted in the middle and falling in three broad locks to her knees with two curtains framing her face, and a
+# wreath of SAMPAGUITA (the national flower) round her head. Her face is closed eyes, soft brows and a small
+# smile, drawn on a rounded head: no nose. Through `SpiritGhost.shader` her colours become VALUE only, so the
+# costume is also her light and shade: dark hair, bright camisa and pañuelo, a mid-dark tapis band that gives
+# her a waist, the brightest points the flowers and the light in her hands.
+#
+# 3.0 m tall authored (a head is 0.45 m, about one sixth of her): tall, graceful, stylised, not the cast's
+# chibi proportions, by the owner's leave. The scene stands her at 1.1 times behind his right shoulder.
+#
+# ⚠️ HER OWN PALETTE, NOT HIS. The runtime dresses her with `MakilingSpirit.Palette`, the same sixteen hex
+# values as the table below, and the ghost shader reads only their value:
+#   0 hair  1 hair lit  2 skin  3 skin shade  4 camisa  5 camisa shade  6 petal  7 flower heart
+#   8 ink   9 leaf      10 light  11 pañuelo  12 saya  13 saya fold  14 tapis  15 tapis trim
+# Every part below is typed with its own numbers (the owner's standing rule for Paete's world).
+# Nodes the runtime moves: body, head, hair, flower-crown, arm-left, arm-right, seed.
 # ---------------------------------------------------------------------------------------------
-MK_HAIR, MK_HAIR_LIT, MK_SKIN, MK_SKIN_SH, MK_GOWN, MK_GOWN_SH, MK_PETAL, MK_HEART = 0, 1, 2, 3, 4, 5, 6, 7
-MK_INK, MK_LEAF, MK_LIGHT, MK_SHAWL, MK_DEER, MK_DEER_LT, MK_DEER_DK, MK_ANTLER = 8, 9, 10, 11, 12, 13, 14, 15
+MK_HAIR, MK_HAIR_LIT, MK_SKIN, MK_SKIN_SH, MK_CAMISA, MK_CAMISA_SH, MK_PETAL, MK_HEART = 0, 1, 2, 3, 4, 5, 6, 7
+MK_INK, MK_LEAF, MK_LIGHT, MK_PANUELO, MK_SAYA, MK_SAYA_FOLD, MK_TAPIS, MK_TRIM = 8, 9, 10, 11, 12, 13, 14, 15
 
 
-def blossom(node, centre, compass, tilt, size, petals):
-    """One flower of the crown: `petals` rounded petals round a gold heart, its face turned out along
-    `compass` and tipped up by `tilt`. Called once per flower with that flower's own numbers."""
+def loft(node, sections, slot, sides=14, cap_first=True, cap_last=True):
+    """A smooth closed body through typed horizontal ellipses: each section is (y, cx, cz, rx, rz).
+    ⚠️ Sections are typed per part; nothing here invents a shape, it only joins the rows it is given."""
+    rings = []
+    for y, cx, cz, rx, rz in sections:
+        rings.append([(cx + rx * math.sin(j * math.tau / sides), y, cz + rz * math.cos(j * math.tau / sides)) for j in range(sides)])
+    faces = []
+    for i in range(len(rings) - 1):
+        axis = (sections[i][1] * 0.5 + sections[i + 1][1] * 0.5, sections[i][0] * 0.5 + sections[i + 1][0] * 0.5,
+                sections[i][2] * 0.5 + sections[i + 1][2] * 0.5)
+        for j in range(sides):
+            k = (j + 1) % sides
+            quad = [rings[i][j], rings[i][k], rings[i + 1][k], rings[i + 1][j]]
+            faces.append(pv._rafi_orient(quad, sub(pv._rafi_mean(quad), axis)))
+    down = (0.0, -1.0, 0.0) if sections[0][0] < sections[-1][0] else (0.0, 1.0, 0.0)
+    if cap_first:
+        faces.append(pv._rafi_orient(rings[0], down))
+    if cap_last:
+        faces.append(pv._rafi_orient(rings[-1], mul(down, -1.0)))
+    node.parts.append((slot, faces))
+
+
+def ribbon(node, points, widths, thickness, slot, facing, per=4):
+    """A flat band along typed points (a lock of hair, a fold of cloth): at each sample a flattened hexagon
+    `widths` across and `thickness` deep, its broad side turned toward `facing` (a vector, or a function of
+    the sample's point). Capped. The spline is the only arithmetic between the typed points."""
+    path = spline(points, per)
+    ws = spread(widths, per)
+    rings = []
+    for i, p in enumerate(path):
+        t = unit(sub(path[min(len(path) - 1, i + 1)], path[max(0, i - 1)]))
+        f = facing(p) if callable(facing) else facing
+        n = unit(sub(f, mul(t, dot(f, t))))
+        s = unit(cross(t, n))
+        w, h = ws[i] * 0.5, thickness * 0.5
+        outline = [(w, 0.0), (0.62 * w, h), (-0.62 * w, h), (-w, 0.0), (-0.62 * w, -h), (0.62 * w, -h)]
+        rings.append([add(p, add(mul(s, a), mul(n, b))) for a, b in outline])
+    faces = []
+    for i in range(len(rings) - 1):
+        mid = pv._rafi_mean([path[i], path[i + 1]])
+        for j in range(6):
+            k = (j + 1) % 6
+            quad = [rings[i][j], rings[i][k], rings[i + 1][k], rings[i + 1][j]]
+            faces.append(pv._rafi_orient(quad, sub(pv._rafi_mean(quad), mid)))
+    t0 = unit(sub(path[1], path[0])); t1 = unit(sub(path[-1], path[-2]))
+    faces.append(pv._rafi_orient(rings[0], mul(t0, -1.0)))
+    faces.append(pv._rafi_orient(rings[-1], t1))
+    node.parts.append((slot, faces))
+
+
+def bell(node, points, radii, wall, slot, inside_slot, sides=12, per=3):
+    """A sleeve open at its mouth: an outer skin along typed points, an inner skin `wall` thinner, and the rim
+    between them, so the mouth reads as cloth hanging open rather than a capped tube."""
+    path = spline(points, per)
+    rs = spread(radii, per)
+    outer, inner = [], []
+    side = None
+    for i, p in enumerate(path):
+        t = unit(sub(path[min(len(path) - 1, i + 1)], path[max(0, i - 1)]))
+        if side is None:
+            helper = (0.0, 1.0, 0.0) if abs(t[1]) < 0.9 else (1.0, 0.0, 0.0)
+            side = unit(cross(t, helper))
+        else:
+            side = unit(sub(side, mul(t, dot(side, t))))
+        up = cross(t, side)
+        ro, ri = rs[i], max(0.004, rs[i] - wall)
+        outer.append([add(p, add(mul(side, ro * math.cos(j * math.tau / sides)), mul(up, ro * math.sin(j * math.tau / sides)))) for j in range(sides)])
+        inner.append([add(p, add(mul(side, ri * math.cos(j * math.tau / sides)), mul(up, ri * math.sin(j * math.tau / sides)))) for j in range(sides)])
+    out_faces, in_faces = [], []
+    for i in range(len(path) - 1):
+        mid = pv._rafi_mean([path[i], path[i + 1]])
+        for j in range(sides):
+            k = (j + 1) % sides
+            q = [outer[i][j], outer[i][k], outer[i + 1][k], outer[i + 1][j]]
+            out_faces.append(pv._rafi_orient(q, sub(pv._rafi_mean(q), mid)))
+            q = [inner[i][j], inner[i][k], inner[i + 1][k], inner[i + 1][j]]
+            in_faces.append(pv._rafi_orient(q, sub(mid, pv._rafi_mean(q))))
+    t0 = unit(sub(path[1], path[0])); t1 = unit(sub(path[-1], path[-2]))
+    out_faces.append(pv._rafi_orient(outer[0], mul(t0, -1.0)))
+    for j in range(sides):
+        k = (j + 1) % sides
+        q = [outer[-1][j], outer[-1][k], inner[-1][k], inner[-1][j]]
+        out_faces.append(pv._rafi_orient(q, t1))
+    node.parts.append((slot, out_faces))
+    node.parts.append((inside_slot, in_faces))
+
+
+def drape(node, top, bottom, thickness, slot, rows=5, belly=(0.0, 0.0, 0.0)):
+    """A hanging panel of cloth between a typed TOP edge (where it is attached) and a typed BOTTOM edge (its hem),
+    both the same number of points; `rows` rows between them, bellied out by `belly` at the middle, `thickness`
+    deep. For the camisa's hanging sleeves: cloth that falls rather than a tube that puffs."""
+    n = len(top)
+    grid = []
+    for r in range(rows + 1):
+        u = r / rows
+        bulge = math.sin(u * math.pi)
+        grid.append([add(add(mul(top[i], 1.0 - u), mul(bottom[i], u)), mul(belly, bulge)) for i in range(n)])
+    front, back = [], []
+    for r in range(rows + 1):
+        fr, bk = [], []
+        for i in range(n):
+            a = grid[r][max(0, i - 1)]; b = grid[r][min(n - 1, i + 1)]
+            c = grid[max(0, r - 1)][i]; d = grid[min(rows, r + 1)][i]
+            nrm = unit(cross(sub(b, a), sub(d, c)))
+            fr.append(add(grid[r][i], mul(nrm, thickness * 0.5)))
+            bk.append(add(grid[r][i], mul(nrm, -thickness * 0.5)))
+        front.append(fr); back.append(bk)
+    faces = []
+    for r in range(rows):
+        for i in range(n - 1):
+            faces.append([front[r][i], front[r][i + 1], front[r + 1][i + 1], front[r + 1][i]])
+            faces.append([back[r][i], back[r + 1][i], back[r + 1][i + 1], back[r][i + 1]])
+    for r in range(rows):
+        faces.append([front[r][0], front[r + 1][0], back[r + 1][0], back[r][0]])
+        faces.append([front[r][n - 1], back[r][n - 1], back[r + 1][n - 1], front[r + 1][n - 1]])
+    for i in range(n - 1):
+        faces.append([front[0][i], back[0][i], back[0][i + 1], front[0][i + 1]])
+        faces.append([front[rows][i], front[rows][i + 1], back[rows][i + 1], back[rows][i]])
+    # Each face turned away from the nearest point of the panel's own middle surface.
+    out = []
+    mids = [grid[r][i] for r in range(rows + 1) for i in range(n)]
+    for f in faces:
+        m = pv._rafi_mean(f)
+        best = min(mids, key=lambda g: sum((m[k] - g[k]) ** 2 for k in range(3)))
+        away = sub(m, best)
+        if dot(away, away) < 1e-12:
+            away = unit(cross(sub(f[1], f[0]), sub(f[2], f[0])))
+        out.append(pv._rafi_orient(f, away))
+    node.parts.append((slot, out))
+
+
+def on_rows(rows, a_deg, y, out=0.0):
+    """The point at compass `a_deg` (0 = +Z, 90 = +X) and height `y` on a typed loft's surface, `out` metres
+    proud of it: so a fold or a trim lies ON the skirt instead of at a guessed radius."""
+    a = math.radians(a_deg)
+    for (y0, cx0, cz0, rx0, rz0), (y1, cx1, cz1, rx1, rz1) in zip(rows, rows[1:]):
+        if min(y0, y1) <= y <= max(y0, y1):
+            u = (y - y0) / (y1 - y0)
+            cx, cz, rx, rz = lerp(cx0, cx1, u), lerp(cz0, cz1, u), lerp(rx0, rx1, u), lerp(rz0, rz1, u)
+            return (cx + (rx + out) * math.sin(a), y, cz + (rz + out) * math.cos(a))
+    y0, cx, cz, rx, rz = rows[-1] if y < rows[-1][0] else rows[0]
+    return (cx + (rx + out) * math.sin(a), y, cz + (rz + out) * math.cos(a))
+
+
+def face_stroke(node, head_rows, a, b, width, slot, lift=0.004):
+    """One ink stroke drawn ON her rounded face from (x, y) `a` to (x, y) `b`: the stroke is laid on the surface
+    of the head loft at that height (its depth read off the typed rows) and turned to its tangent."""
+    def front_z(x, y):
+        for (y0, _, cz0, rx0, rz0), (y1, _, cz1, rx1, rz1) in zip(head_rows, head_rows[1:]):
+            if y0 <= y <= y1:
+                u = (y - y0) / (y1 - y0)
+                rx, rz, cz = lerp(rx0, rx1, u), lerp(rz0, rz1, u), lerp(cz0, cz1, u)
+                return cz + rz * math.sqrt(max(0.0, 1.0 - (x / rx) ** 2)), rx
+        return head_rows[-1][2], head_rows[-1][3]
+    mx, my = (a[0] + b[0]) * 0.5, (a[1] + b[1]) * 0.5
+    z, rx = front_z(mx, my)
+    length = math.hypot(b[0] - a[0], b[1] - a[1])
+    pitch = math.degrees(math.atan2(b[1] - a[1], b[0] - a[0]))
+    yaw = math.degrees(math.asin(max(-0.95, min(0.95, mx / rx))))
+    node.obox((mx, my, z + lift), (length + width * 0.6, width, 0.010), slot, yaw=yaw, pitch=pitch, bevel=0)
+
+
+def sampaguita(node, centre, compass, tilt, size, petals, turn):
+    """One sampaguita of her wreath: `petals` round petals in a pinwheel round a small cream heart, turned out
+    along `compass` and tipped by `tilt`, the pinwheel rotated by `turn`. Its own numbers every call."""
     for k in range(petals):
-        spin = k * 360.0 / petals + (13.0 if petals == 6 else 0.0)
-        local = (size * 0.55 * math.cos(math.radians(spin)), size * 0.55 * math.sin(math.radians(spin)), 0.0)
-        node.leaf(add(centre, pv._rotate(local, compass, 0.0, tilt)), size * 0.95, size * 0.62, compass, spin, 90.0 + tilt,
-                  slot=MK_PETAL, thickness=0.010)
-    node.obox(add(centre, pv._rotate((0.0, 0.0, 0.012), compass, 0.0, 0.0)), (size * 0.5, size * 0.5, size * 0.35), MK_HEART, yaw=compass, bevel=0.006)
+        spin = turn + k * 360.0 / petals
+        local = (size * 0.48 * math.cos(math.radians(spin)), size * 0.48 * math.sin(math.radians(spin)), 0.0)
+        node.leaf(add(centre, pv._rotate(local, compass, 0.0, tilt)), size * 0.78, size * 0.58, compass, spin + 12.0, 90.0 + tilt,
+                  slot=MK_PETAL, thickness=0.012)
+    node.obox(add(centre, pv._rotate((0.0, 0.0, 0.012), compass, 0.0, 0.0)), (size * 0.24, size * 0.24, size * 0.22), MK_HEART, yaw=compass, bevel=0.004)
+
+
+# Her head, typed row by row from the chin to the crown: (height, centre x, centre z, half width, half depth).
+MK_HEAD_ROWS = [(-0.020, 0.0, 0.030, 0.046, 0.044), (0.010, 0.0, 0.026, 0.094, 0.092), (0.060, 0.0, 0.016, 0.144, 0.144),
+                (0.120, 0.0, 0.008, 0.170, 0.172), (0.185, 0.0, 0.002, 0.180, 0.184), (0.250, 0.0, -0.004, 0.178, 0.184),
+                (0.310, 0.0, -0.010, 0.166, 0.174), (0.365, 0.0, -0.018, 0.136, 0.146), (0.405, 0.0, -0.026, 0.084, 0.094),
+                (0.425, 0.0, -0.030, 0.022, 0.024)]
 
 
 def makiling():
@@ -889,122 +1124,386 @@ def makiling():
     body = Node("body", parent="makiling")
     nodes = [root, body]
 
-    # --- The gown: a long skirt flaring from the waist to a hem the mist will swallow, and its folds.
-    line(body, [(0, 1.62, 0.0), (0, 1.30, 0.01), (0, 0.95, 0.03), (0, 0.55, 0.05), (0, 0.22, 0.07), (0, 0.0, 0.08)],
-         [0.22, 0.30, 0.40, 0.52, 0.63, 0.70], MK_GOWN, sides=9, per=3)
-    body.obox(sring_free(0.46, 18, 0.62), (0.07, 1.05, 0.05), MK_GOWN_SH, yaw=18, roll=-14)
-    body.obox(sring_free(0.49, 70, 0.55), (0.06, 1.15, 0.05), MK_GOWN_SH, yaw=70, roll=-15)
-    body.obox(sring_free(0.44, 128, 0.66), (0.07, 0.95, 0.05), MK_GOWN_SH, yaw=128, roll=-13)
-    body.obox(sring_free(0.50, 196, 0.52), (0.06, 1.20, 0.05), MK_GOWN_SH, yaw=196, roll=-16)
-    body.obox(sring_free(0.47, 252, 0.60), (0.07, 1.00, 0.05), MK_GOWN_SH, yaw=252, roll=-14)
-    body.obox(sring_free(0.45, 318, 0.64), (0.06, 1.02, 0.05), MK_GOWN_SH, yaw=318, roll=-13)
-    # The bodice, and the off-shoulder wrap round it.
-    line(body, [(0, 1.60, 0.0), (0, 1.85, 0.01), (0, 2.08, 0.02), (0, 2.26, 0.01)], [0.20, 0.185, 0.225, 0.235], MK_GOWN, sides=8, per=3)
-    line(body, [ring(0.25, 0, 2.20), ring(0.26, 50, 2.25), ring(0.25, 100, 2.29), ring(0.23, 150, 2.24), ring(0.23, 210, 2.23),
-                ring(0.25, 260, 2.29), ring(0.26, 310, 2.25), ring(0.25, 360, 2.20)], [0.045] * 8, MK_GOWN_SH, sides=5, per=3)
-    # The shawl belt at the waist, knotted at her left hip, two tails hanging.
-    line(body, [ring(0.215, a, 1.63) for a in (0, 60, 120, 180, 240, 300, 360)], [0.035] * 7, MK_SHAWL, sides=5, per=3)
-    body.obox(ring(0.22, 40, 1.63), (0.08, 0.07, 0.06), MK_SHAWL, yaw=40)
-    line(body, [ring(0.23, 40, 1.60), ring(0.26, 46, 1.35), ring(0.29, 50, 1.08)], [0.03, 0.028, 0.02], MK_SHAWL, sides=4, per=3)
-    line(body, [ring(0.23, 34, 1.60), ring(0.28, 30, 1.40), ring(0.31, 26, 1.20)], [0.028, 0.026, 0.018], MK_SHAWL, sides=4, per=3)
-    # Shoulders, neck (skin).
-    body.box((0.17, 2.24, -0.07), (0.30, 2.33, 0.07), MK_SKIN, bevel=0.03)
-    body.box((-0.30, 2.24, -0.07), (-0.17, 2.33, 0.07), MK_SKIN, bevel=0.03)
-    line(body, [(0, 2.28, 0.0), (0, 2.42, 0.005), (0, 2.53, 0.01)], [0.075, 0.07, 0.068], MK_SKIN, sides=6, per=3)
-    # The arms, down and forward, forearms meeting in front of her chest.
-    line(body, [(0.27, 2.28, 0.0), (0.31, 2.10, 0.04), (0.30, 1.96, 0.12), (0.18, 1.99, 0.27), (0.07, 2.02, 0.35)],
-         [0.064, 0.058, 0.052, 0.046, 0.040], MK_SKIN, sides=6, per=3)
-    line(body, [(-0.27, 2.28, 0.0), (-0.31, 2.11, 0.03), (-0.30, 1.97, 0.12), (-0.18, 1.99, 0.28), (-0.07, 2.02, 0.35)],
-         [0.064, 0.058, 0.052, 0.046, 0.040], MK_SKIN, sides=6, per=3)
+    # --- THE SAYA: a long skirt from the waist, flaring into the mist and trailing a little behind her (she is
+    # floating toward him). Typed rows, waist to hem.
+    saya = [(1.560, 0.0, 0.000, 0.182, 0.150), (1.420, 0.0, -0.006, 0.232, 0.188), (1.200, 0.0, -0.016, 0.286, 0.236),
+            (0.950, 0.0, -0.032, 0.346, 0.290), (0.680, 0.0, -0.052, 0.420, 0.354), (0.400, 0.0, -0.082, 0.518, 0.438),
+            (0.140, 0.0, -0.110, 0.636, 0.536), (-0.040, 0.0, -0.132, 0.716, 0.606)]
+    loft(body, saya, MK_SAYA, sides=16)
+    # Six soft folds down the saya, each its own compass, start, drift round the skirt and width. ⚠️ Laid ON the
+    # skirt through `on_rows` (v3a guessed a radius and in profile the folds stood off the cloth like a cage).
+    for compass, drift, top, radii in [(18, -8, 1.16, [0.014, 0.020, 0.026, 0.030]), (66, 6, 1.02, [0.016, 0.022, 0.028, 0.032]),
+                                       (124, 5, 1.12, [0.014, 0.020, 0.026, 0.030]), (206, -4, 0.98, [0.016, 0.024, 0.030, 0.034]),
+                                       (262, -3, 1.08, [0.014, 0.022, 0.028, 0.032]), (318, 7, 1.06, [0.016, 0.020, 0.026, 0.030])]:
+        heights = [top, lerp(top, 0.0, 0.34), lerp(top, 0.0, 0.68), -0.02]
+        pts = [on_rows(saya, compass + drift * k / 3.0, h, -0.004) for k, h in enumerate(heights)]
+        line(body, pts, radii, MK_SAYA_FOLD, sides=5, per=3)
 
-    # --- Long bell sleeves hanging from her forearms (v2): a spirit's cloth, the one flowing shape the blocky
-    # body lacked. Each typed from the elbow down and out, wide at the cuff, its hem trailing.
-    line(body, [(0.30, 2.00, 0.10), (0.33, 1.84, 0.20), (0.36, 1.62, 0.26), (0.37, 1.40, 0.28), (0.35, 1.24, 0.26)],
-         [0.070, 0.095, 0.120, 0.135, 0.090], MK_GOWN_SH, sides=7, per=3)
-    line(body, [(-0.30, 2.00, 0.10), (-0.33, 1.83, 0.21), (-0.35, 1.60, 0.27), (-0.37, 1.37, 0.28), (-0.36, 1.20, 0.25)],
-         [0.070, 0.095, 0.120, 0.135, 0.090], MK_GOWN_SH, sides=7, per=3)
+    # --- THE TAPIS: the darker wrap over the saya from the waist to above the knee, its hem trimmed, its edge down
+    # her left front, knotted at her left hip with two short tails. (v3a ran it to the knee and it swallowed a third
+    # of her: the bright saya is her light, the tapis only a band that gives her a waist.)
+    tapis = [(1.590, 0.0, 0.000, 0.194, 0.160), (1.430, 0.0, -0.006, 0.246, 0.200), (1.210, 0.0, -0.016, 0.300, 0.250),
+             (1.040, 0.0, -0.026, 0.344, 0.290)]
+    loft(body, tapis, MK_TAPIS, sides=16)
+    line(body, [on_rows(tapis, a, 1.046, 0.004) for a in (0, 45, 90, 135, 180, 225, 270, 315, 360)], [0.015] * 9, MK_TRIM, sides=5, per=3)
+    line(body, [on_rows(tapis, 30, 1.585, 0.006), on_rows(tapis, 32, 1.40, 0.006), on_rows(tapis, 34, 1.20, 0.006), on_rows(tapis, 35, 1.05, 0.006)],
+         [0.013, 0.014, 0.015, 0.014], MK_TRIM, sides=5, per=3)
+    line(body, [on_rows(tapis, a, 1.572, 0.006) for a in (0, 50, 100, 150, 200, 250, 300, 360)], [0.020] * 8, MK_TRIM, sides=5, per=3)
+    knot = on_rows(tapis, 58, 1.52, 0.02)
+    body.obox(knot, (0.078, 0.066, 0.058), MK_TAPIS, yaw=58.0, roll=10.0, bevel=0.018)
+    ribbon(body, [add(knot, (0.004, -0.02, 0.006)), add(knot, (0.030, -0.140, 0.030)), add(knot, (0.048, -0.270, 0.040))], [0.048, 0.044, 0.028], 0.014, MK_TAPIS, (0.8, 0.0, 0.6))
+    ribbon(body, [add(knot, (-0.010, -0.02, 0.012)), add(knot, (-0.004, -0.120, 0.052)), add(knot, (-0.002, -0.220, 0.070))], [0.042, 0.038, 0.024], 0.014, MK_TRIM, (0.5, 0.0, 0.9))
 
-    # --- The hands: cupped together, the painting's gesture, holding the seed of light.
-    hands = Node("hands", origin=(0.0, 2.02, 0.37), parent="body"); nodes.append(hands)
-    hands.obox((0.055, -0.01, 0.0), (0.085, 0.035, 0.13), MK_SKIN, roll=0.0, pitch=-24.0, bevel=0.015)
-    hands.obox((-0.055, -0.01, 0.0), (0.085, 0.035, 0.13), MK_SKIN, roll=0.0, pitch=24.0, bevel=0.015)
-    hands.obox((0.085, 0.03, 0.01), (0.03, 0.06, 0.12), MK_SKIN_SH, bevel=0.01)
-    hands.obox((-0.085, 0.03, 0.01), (0.03, 0.06, 0.12), MK_SKIN_SH, bevel=0.01)
-    seed = Node("seed", origin=(0.0, 0.05, 0.0), parent="hands"); nodes.append(seed)
-    seed.obox((0.0, 0.0, 0.0), (0.075, 0.075, 0.075), MK_LIGHT, yaw=45, roll=35, bevel=0.012)
+    # --- THE CAMISA'S BODY: fitted from the waist, the bust, up to a narrow neckline under the pañuelo.
+    # ⚠️ The shoulders SLOPE UP INTO THE NECK and close there (v3a ended the bodice in a flat 0.1 m cap round the
+    # neck, and through the ghost it read as a plate, a robot's collar, with the neck standing in it as a tube).
+    loft(body, [(1.520, 0.0, 0.000, 0.170, 0.136), (1.640, 0.0, 0.006, 0.182, 0.142), (1.780, 0.0, 0.014, 0.200, 0.152),
+                (1.900, 0.0, 0.020, 0.212, 0.160), (2.000, 0.0, 0.014, 0.212, 0.152), (2.080, 0.0, 0.002, 0.204, 0.136),
+                (2.140, 0.0, -0.006, 0.176, 0.118), (2.180, 0.0, -0.006, 0.118, 0.094), (2.212, 0.0, -0.004, 0.064, 0.058)], MK_CAMISA, sides=14)
+    # The neck: short and tapering, its top well inside the head (v3a's stood proud under the chin like a plug).
+    line(body, [(0.0, 2.170, -0.004), (0.0, 2.225, 0.004), (0.0, 2.262, 0.010)], [0.058, 0.052, 0.044], MK_SKIN, sides=10, per=3)
 
-    # --- The head: bowed toward him on its own node, eyes closed, a calm small smile.
-    head = Node("head", origin=(0.0, 2.52, 0.01), parent="body"); nodes.append(head)
-    head.box((-0.150, 0.03, -0.155), (0.150, 0.42, 0.160), MK_SKIN, bevel=0.05)
-    head.box((-0.095, -0.01, -0.08), (0.095, 0.08, 0.135), MK_SKIN, bevel=0.035)           # the chin, narrower
-    head.obox((0.0, 0.17, 0.165), (0.035, 0.055, 0.03), MK_SKIN_SH, bevel=0.01)          # a small nose
-    # Closed eyes: two short strokes each, a gentle downward arc (the painting's lowered lids).
-    # ⚠️ v2 (2026-09-26, the owner: *"how she looks needs to be refined"*): the strokes were 4 cm and vanished at
-    # cutscene distance. Each closed eye is now a long lowered lid (three strokes, 12 cm across) with two short
-    # lashes hanging off its outer end, so the calm, bowed face reads from across the court.
-    head.obox((0.036, 0.236, 0.163), (0.046, 0.014, 0.008), MK_INK, pitch=-10.0, bevel=0)
-    head.obox((0.080, 0.230, 0.162), (0.046, 0.014, 0.008), MK_INK, pitch=6.0, bevel=0)
-    head.obox((0.112, 0.238, 0.160), (0.026, 0.012, 0.008), MK_INK, pitch=38.0, bevel=0)
-    head.obox((0.116, 0.220, 0.160), (0.020, 0.010, 0.008), MK_INK, pitch=-30.0, bevel=0)
-    head.obox((-0.036, 0.236, 0.163), (0.046, 0.014, 0.008), MK_INK, pitch=10.0, bevel=0)
-    head.obox((-0.080, 0.230, 0.162), (0.046, 0.014, 0.008), MK_INK, pitch=-6.0, bevel=0)
-    head.obox((-0.112, 0.238, 0.160), (0.026, 0.012, 0.008), MK_INK, pitch=-38.0, bevel=0)
-    head.obox((-0.116, 0.220, 0.160), (0.020, 0.010, 0.008), MK_INK, pitch=30.0, bevel=0)
-    # The smile: two strokes meeting low in the middle.
-    head.obox((0.018, 0.098, 0.150), (0.036, 0.010, 0.008), MK_INK, pitch=10.0, bevel=0)
-    head.obox((-0.018, 0.098, 0.150), (0.036, 0.010, 0.008), MK_INK, pitch=-10.0, bevel=0)
-    # Hair: the crown of the head, parted in the middle, falling past the face on both sides.
-    # ⚠️ v2: THE HAIR NO LONGER SWALLOWS THE HEAD. v1 put a 0.34 m hair box over the whole skull, its front edge in
-    # line with the face, plus two flat panels down the cheeks: through the ghost shader it read as a helmet
-    # with a face slot. Now a cap over the crown and back only, a fringe parted in the middle and swept to each
-    # side above the brow, and the locks below falling past the cheeks, so the face is the brightest, clearest
-    # thing on her.
-    head.box((-0.162, 0.34, -0.176), (0.162, 0.48, 0.070), MK_HAIR, bevel=0.05)
-    head.box((-0.168, 0.12, -0.182), (0.168, 0.36, -0.040), MK_HAIR, bevel=0.04)
-    head.obox((0.070, 0.405, 0.150), (0.140, 0.060, 0.040), MK_HAIR, roll=-16.0, bevel=0.015)
-    head.obox((-0.070, 0.405, 0.150), (0.140, 0.060, 0.040), MK_HAIR, roll=16.0, bevel=0.015)
-    head.obox((0.132, 0.360, 0.140), (0.050, 0.110, 0.040), MK_HAIR_LIT, roll=-8.0, bevel=0.012)
-    head.obox((-0.132, 0.360, 0.140), (0.050, 0.110, 0.040), MK_HAIR_LIT, roll=8.0, bevel=0.012)
-    line(head, [(0.155, 0.40, 0.10), (0.175, 0.15, 0.13), (0.185, -0.10, 0.15), (0.19, -0.36, 0.17)], [0.055, 0.050, 0.042, 0.028], MK_HAIR, sides=5, per=3)
-    line(head, [(-0.155, 0.40, 0.10), (-0.172, 0.14, 0.12), (-0.182, -0.12, 0.15), (-0.186, -0.40, 0.16)], [0.055, 0.050, 0.042, 0.026], MK_HAIR, sides=5, per=3)
-    line(head, [(0.14, 0.30, 0.05), (0.17, 0.05, 0.08), (0.20, -0.22, 0.10)], [0.040, 0.034, 0.020], MK_HAIR_LIT, sides=5, per=3)
+    # --- THE PAÑUELO: a folded kerchief over her shoulders, its two front ends crossing to a point on her
+    # chest, its third corner hanging down her back. The brightest, crispest shape on her.
+    outward = lambda p: unit((p[0], 0.9, p[2] + 0.02))
+    ribbon(body, [(0.000, 1.930, 0.198), (0.070, 1.995, 0.196), (0.150, 2.080, 0.160), (0.214, 2.160, 0.070), (0.222, 2.190, -0.030),
+                  (0.160, 2.215, -0.110), (0.000, 2.230, -0.140)], [0.024, 0.070, 0.118, 0.150, 0.146, 0.120, 0.100], 0.022, MK_PANUELO, outward)
+    ribbon(body, [(0.000, 1.930, 0.206), (-0.070, 1.992, 0.200), (-0.150, 2.078, 0.164), (-0.214, 2.158, 0.072), (-0.222, 2.188, -0.028),
+                  (-0.160, 2.213, -0.108), (0.000, 2.228, -0.138)], [0.024, 0.068, 0.116, 0.148, 0.144, 0.118, 0.098], 0.022, MK_PANUELO, outward)
+    ribbon(body, [(0.000, 2.200, -0.150), (0.000, 2.080, -0.176), (0.000, 1.960, -0.190), (0.000, 1.840, -0.196)],
+           [0.380, 0.300, 0.170, 0.030], 0.020, MK_PANUELO, (0.0, 0.2, -1.0))
+    # Its embroidered edge (the one line of pattern on her), and a sampaguita pinned where the ends cross.
+    line(body, [(0.000, 1.915, 0.214), (0.090, 2.005, 0.208), (0.176, 2.098, 0.168), (0.246, 2.170, 0.060)], [0.008, 0.008, 0.008, 0.008], MK_CAMISA_SH, sides=4, per=3)
+    line(body, [(0.000, 1.915, 0.220), (-0.090, 2.003, 0.212), (-0.176, 2.096, 0.172), (-0.246, 2.168, 0.062)], [0.008, 0.008, 0.008, 0.008], MK_CAMISA_SH, sides=4, per=3)
+    sampaguita(body, (0.0, 1.938, 0.226), 0.0, 10.0, 0.068, 7, 8.0)
 
-    # --- The long hair down her back, its own node so it sways: six locks, each typed.
-    hair = Node("hair", origin=(0.0, 0.34, -0.12), parent="head"); nodes.append(hair)
-    locks = [
-        ([(0.00, 0.10, 0.00), (0.02, -0.40, -0.08), (0.00, -0.95, -0.12), (0.03, -1.45, -0.10), (0.00, -1.78, -0.08)], [0.10, 0.10, 0.095, 0.08, 0.03], MK_HAIR),
-        ([(0.10, 0.08, 0.02), (0.14, -0.38, -0.06), (0.16, -0.90, -0.09), (0.15, -1.36, -0.06), (0.13, -1.62, -0.04)], [0.08, 0.08, 0.075, 0.06, 0.02], MK_HAIR_LIT),
-        ([(-0.10, 0.08, 0.02), (-0.13, -0.40, -0.07), (-0.15, -0.94, -0.10), (-0.16, -1.40, -0.07), (-0.14, -1.70, -0.05)], [0.08, 0.08, 0.075, 0.06, 0.02], MK_HAIR),
-        ([(0.16, 0.02, 0.06), (0.21, -0.32, 0.00), (0.24, -0.76, -0.03), (0.25, -1.12, -0.01), (0.23, -1.34, 0.01)], [0.06, 0.06, 0.055, 0.045, 0.015], MK_HAIR),
-        ([(-0.16, 0.02, 0.06), (-0.21, -0.34, 0.00), (-0.23, -0.80, -0.04), (-0.24, -1.18, -0.02), (-0.22, -1.42, 0.00)], [0.06, 0.06, 0.055, 0.045, 0.015], MK_HAIR_LIT),
-        ([(0.05, 0.06, -0.03), (0.07, -0.50, -0.14), (0.05, -1.10, -0.18), (0.08, -1.55, -0.15)], [0.07, 0.07, 0.06, 0.02], MK_HAIR),
-    ]
-    for pts, radii, slot in locks:
-        line(hair, pts, radii, slot, sides=5, per=3)
+    # --- THE ARMS, on their own nodes so she can reach and part her hands. Each: the camisa's sleeve fitted round
+    # the arm and forearm (a little puffed at the shoulder), a rounded hand (no fingers, the cast's rule), and the
+    # long ANGEL SLEEVE hanging open from the forearm to her hip. ⚠️ v3a hung a round bell on each arm and they
+    # read as two balloons; sheer cloth that FALLS is what gives a spirit her flowing silhouette.
+    for name, sx in (("arm-left", 1.0), ("arm-right", -1.0)):
+        arm = Node(name, origin=(0.215 * sx, 2.100, -0.010), parent="body"); nodes.append(arm)
+        line(arm, [(0.004 * sx, 0.010, 0.000), (0.040 * sx, -0.110, 0.024), (0.070 * sx, -0.260, 0.080)], [0.086, 0.074, 0.060], MK_CAMISA, sides=10, per=3)
+        line(arm, [(0.070 * sx, -0.260, 0.080), (-0.020 * sx, -0.200, 0.190), (-0.132 * sx, -0.128, 0.292)], [0.060, 0.058, 0.056], MK_CAMISA, sides=10, per=3)
+        line(arm, [(-0.126 * sx, -0.132, 0.286), (-0.160 * sx, -0.116, 0.312)], [0.036, 0.034], MK_SKIN, sides=7, per=2)
+        arm.obox((-0.190 * sx, -0.108, 0.334), (0.078, 0.034, 0.104), MK_SKIN, yaw=-38.0 * sx, roll=-10.0, pitch=16.0 * sx, bevel=0.016)
+        arm.obox((-0.168 * sx, -0.092, 0.322), (0.030, 0.058, 0.090), MK_SKIN_SH, yaw=-38.0 * sx, pitch=16.0 * sx, bevel=0.010)
+        # The cuff: the camisa's embroidered edge at the wrist.
+        line(arm, [(-0.126 * sx, -0.132 + 0.062 * math.sin(math.radians(a)), 0.286 + 0.062 * math.cos(math.radians(a)) * 0.6) for a in range(0, 361, 45)],
+             [0.010] * 9, MK_CAMISA_SH, sides=4, per=3)
+        # The hanging sleeve: attached under the forearm from the elbow to the wrist, falling to her hip, its hem
+        # wider and swinging back, bellied out a little. Typed edges.
+        top = [(0.074 * sx, -0.300, 0.070), (0.030 * sx, -0.262, 0.150), (-0.040 * sx, -0.214, 0.222), (-0.110 * sx, -0.170, 0.280)]
+        hem = [(0.130 * sx, -0.700, -0.020), (0.090 * sx, -0.760, 0.090), (0.020 * sx, -0.780, 0.190), (-0.060 * sx, -0.720, 0.270)]
+        drape(arm, top, hem, 0.018, MK_CAMISA, rows=5, belly=(0.070 * sx, 0.0, 0.020))
+        line(arm, [add(p, (0.0, -0.006, 0.0)) for p in hem], [0.010, 0.011, 0.011, 0.010], MK_CAMISA_SH, sides=4, per=3)
 
-    # --- The crown of white flowers, nine blossoms, each its own size, turn and petal count, with leaves.
-    crown = Node("flower-crown", origin=(0.0, 0.45, -0.01), parent="head"); nodes.append(crown)
-    for compass, size, petals, lift in [(0, 0.070, 6, 0.00), (38, 0.058, 5, 0.01), (76, 0.064, 5, -0.01), (118, 0.052, 5, 0.00),
-                                        (162, 0.060, 6, 0.01), (205, 0.054, 5, 0.00), (248, 0.066, 5, -0.01), (288, 0.057, 5, 0.01),
-                                        (325, 0.062, 6, 0.00)]:
-        blossom(crown, ring(0.185, compass, lift), compass, -20.0, size, petals)
-    sprig(crown, ring(0.19, 20, -0.01), 20, -10, 0.10, 0.05, MK_LEAF)
-    sprig(crown, ring(0.19, 140, 0.0), 140, -12, 0.09, 0.05, MK_LEAF)
-    sprig(crown, ring(0.19, 228, -0.01), 228, -8, 0.10, 0.05, MK_LEAF)
-    sprig(crown, ring(0.19, 305, 0.0), 305, -14, 0.09, 0.05, MK_LEAF)
+    # --- THE LIGHT she gives him, cupped in her hands.
+    seed = Node("seed", origin=(0.0, 2.020, 0.345), parent="body"); nodes.append(seed)
+    seed.obox((0.0, 0.0, 0.0), (0.085, 0.085, 0.085), MK_LIGHT, yaw=45.0, roll=35.0, bevel=0.018)
 
-    # --- The shawl: a pale green length of cloth over her right shoulder, down her back, trailing.
-    shawl = Node("shawl", origin=(-0.24, 2.30, 0.0), parent="body"); nodes.append(shawl)
-    line(shawl, [(0.0, 0.0, 0.06), (0.05, 0.02, -0.10), (0.25, -0.10, -0.22), (0.45, -0.45, -0.28), (0.62, -0.95, -0.34), (0.72, -1.45, -0.45)],
-         [0.05, 0.05, 0.048, 0.045, 0.040, 0.030], MK_SHAWL, sides=4, per=3)
-    line(shawl, [(0.0, 0.0, 0.06), (-0.04, -0.20, 0.10), (-0.06, -0.55, 0.14), (-0.02, -0.90, 0.16)], [0.045, 0.042, 0.036, 0.022], MK_SHAWL, sides=4, per=3)
+    # --- THE HEAD: rounded, on its own node so it bows. A calm face: closed eyes, soft brows, a small smile.
+    head = Node("head", origin=(0.0, 2.272, 0.010), parent="body"); nodes.append(head)
+    loft(head, MK_HEAD_ROWS, MK_SKIN, sides=16)
+    # Closed eyes, each a lowered lid curving down (three strokes) with two short lashes at its outer end.
+    for sx in (1.0, -1.0):
+        face_stroke(head, MK_HEAD_ROWS, (0.036 * sx, 0.190), (0.066 * sx, 0.178), 0.013, MK_INK)
+        face_stroke(head, MK_HEAD_ROWS, (0.066 * sx, 0.178), (0.094 * sx, 0.182), 0.013, MK_INK)
+        face_stroke(head, MK_HEAD_ROWS, (0.094 * sx, 0.182), (0.112 * sx, 0.194), 0.012, MK_INK)
+        face_stroke(head, MK_HEAD_ROWS, (0.104 * sx, 0.186), (0.118 * sx, 0.170), 0.008, MK_INK)
+        face_stroke(head, MK_HEAD_ROWS, (0.090 * sx, 0.180), (0.098 * sx, 0.164), 0.008, MK_INK)
+        # A soft brow, high and gently arched: calm, not stern.
+        face_stroke(head, MK_HEAD_ROWS, (0.040 * sx, 0.246), (0.074 * sx, 0.256), 0.009, MK_HAIR)
+        face_stroke(head, MK_HEAD_ROWS, (0.074 * sx, 0.256), (0.108 * sx, 0.250), 0.009, MK_HAIR)
+    # The smile: small, curving up at both corners.
+    face_stroke(head, MK_HEAD_ROWS, (-0.034, 0.090), (-0.012, 0.080), 0.010, MK_INK)
+    face_stroke(head, MK_HEAD_ROWS, (-0.012, 0.080), (0.012, 0.080), 0.010, MK_INK)
+    face_stroke(head, MK_HEAD_ROWS, (0.012, 0.080), (0.034, 0.090), 0.010, MK_INK)
+
+    # --- HER HAIR. The cap over the crown and back of the head, a little proud of it.
+    loft(head, [(0.270, 0.0, -0.030, 0.186, 0.182), (0.320, 0.0, -0.016, 0.182, 0.190), (0.370, 0.0, -0.020, 0.154, 0.166),
+                (0.415, 0.0, -0.028, 0.104, 0.114), (0.450, 0.0, -0.034, 0.036, 0.040)], MK_HAIR, sides=16)
+    # The fringe, parted in the middle and swept to each temple.
+    for sx in (1.0, -1.0):
+        ribbon(head, [(0.012 * sx, 0.440, 0.110), (0.080 * sx, 0.408, 0.158), (0.140 * sx, 0.340, 0.158), (0.182 * sx, 0.262, 0.112)],
+               [0.050, 0.094, 0.082, 0.040], 0.040, MK_HAIR, lambda p: unit((p[0], p[1] - 0.20, p[2] + 0.02)))
+    ribbon(head, [(0.100, 0.392, 0.164), (0.146, 0.330, 0.162), (0.176, 0.268, 0.124)], [0.030, 0.034, 0.018], 0.020, MK_HAIR_LIT,
+           lambda p: unit((p[0], p[1] - 0.20, p[2] + 0.04)))
+    # Two curtains falling past her cheeks, over her collarbones, to her breast: they frame the face. Each with its own
+    # soft wave, resting out on the shoulder and tucking in below it.
+    ribbon(head, [(0.176, 0.300, 0.070), (0.198, 0.160, 0.092), (0.212, 0.010, 0.116), (0.228, -0.150, 0.140), (0.214, -0.320, 0.150), (0.182, -0.480, 0.156), (0.160, -0.580, 0.150)],
+           [0.090, 0.112, 0.114, 0.104, 0.092, 0.060, 0.020], 0.040, MK_HAIR, lambda p: unit((1.0, 0.0, 0.40)))
+    ribbon(head, [(-0.176, 0.300, 0.072), (-0.196, 0.150, 0.096), (-0.214, -0.004, 0.118), (-0.226, -0.170, 0.138), (-0.210, -0.340, 0.148), (-0.186, -0.500, 0.150), (-0.168, -0.600, 0.144)],
+           [0.090, 0.110, 0.112, 0.102, 0.090, 0.058, 0.018], 0.040, MK_HAIR, lambda p: unit((-1.0, 0.0, 0.40)))
+    ribbon(head, [(0.216, 0.080, 0.130), (0.232, -0.090, 0.152), (0.222, -0.260, 0.164), (0.200, -0.380, 0.166)], [0.030, 0.032, 0.024, 0.008], 0.020, MK_HAIR_LIT, lambda p: unit((1.0, 0.0, 0.5)))
+
+    # --- THE LONG HAIR down her back, its own node so it sways: three broad locks side by side, each its own
+    # length and wave, and one lighter lock over them.
+    hair = Node("hair", origin=(0.0, 0.320, -0.140), parent="head"); nodes.append(hair)
+    back = (0.0, 0.0, -1.0)
+    # The middle lock: the broadest, an S down her back to below the knee.
+    ribbon(hair, [(0.000, 0.080, 0.000), (0.006, -0.160, -0.074), (-0.030, -0.520, -0.126), (0.024, -0.920, -0.164), (-0.020, -1.320, -0.180), (0.014, -1.640, -0.172), (-0.006, -1.860, -0.150)],
+           [0.160, 0.196, 0.210, 0.200, 0.176, 0.130, 0.036], 0.056, MK_HAIR, back)
+    # Her left and right locks, overlapping the middle one so the back reads as ONE sheet of hair with its grooves
+    # (v3b's three locks read as separate planks from behind), each its own length and wave.
+    ribbon(hair, [(0.100, 0.050, 0.014), (0.130, -0.170, -0.046), (0.150, -0.540, -0.098), (0.140, -0.940, -0.128), (0.162, -1.300, -0.138), (0.140, -1.560, -0.128), (0.124, -1.700, -0.114)],
+           [0.140, 0.170, 0.180, 0.170, 0.140, 0.090, 0.022], 0.050, MK_HAIR, lambda p: unit((0.5, 0.0, -1.0)))
+    ribbon(hair, [(-0.100, 0.050, 0.014), (-0.132, -0.180, -0.046), (-0.146, -0.580, -0.102), (-0.164, -1.000, -0.132), (-0.140, -1.380, -0.142), (-0.156, -1.640, -0.130), (-0.140, -1.780, -0.114)],
+           [0.140, 0.170, 0.180, 0.170, 0.136, 0.086, 0.020], 0.050, MK_HAIR, lambda p: unit((-0.5, 0.0, -1.0)))
+    # One lighter lock over the middle, where the light catches her hair.
+    ribbon(hair, [(0.060, 0.030, -0.030), (0.086, -0.300, -0.112), (0.048, -0.740, -0.168), (0.092, -1.160, -0.198), (0.070, -1.480, -0.196)],
+           [0.050, 0.062, 0.066, 0.052, 0.014], 0.028, MK_HAIR_LIT, back)
+
+    # --- THE WREATH of sampaguita round her head, lower at the brow and higher behind, on a thin green vine,
+    # seven flowers and two buds, each its own size, tilt and turn, and four leaves.
+    crown = Node("flower-crown", origin=(0.0, 0.0, 0.0), parent="head"); nodes.append(crown)
+    vine = [(0.000, 0.352, 0.212), (0.150, 0.366, 0.150), (0.212, 0.384, 0.000), (0.150, 0.404, -0.160), (0.000, 0.414, -0.218),
+            (-0.150, 0.404, -0.160), (-0.212, 0.384, 0.000), (-0.150, 0.366, 0.150), (0.000, 0.352, 0.212)]
+    line(crown, vine, [0.012] * len(vine), MK_LEAF, sides=4, per=3)
+    for compass, size, petals, turn, tilt in [(0, 0.082, 8, 6.0, -8.0), (40, 0.070, 7, 20.0, -14.0), (84, 0.076, 8, 2.0, -18.0),
+                                              (128, 0.064, 7, 31.0, -22.0), (-44, 0.072, 7, 14.0, -12.0), (-88, 0.078, 8, 25.0, -18.0),
+                                              (-134, 0.062, 7, 9.0, -22.0)]:
+        a = math.radians(compass)
+        r = 0.214
+        y = 0.352 + 0.062 * (1.0 - math.cos(a)) * 0.5
+        sampaguita(crown, (r * math.sin(a), y, r * math.cos(a)), float(compass), tilt, size, petals, turn)
+    for compass, length in [(22, 0.040), (-66, 0.036)]:
+        a = math.radians(compass)
+        crown.obox((0.216 * math.sin(a), 0.360 + 0.030 * (1.0 - math.cos(a)), 0.216 * math.cos(a)), (0.028, 0.024, length), MK_PETAL,
+                   yaw=float(compass), bevel=0.010)
+    # Four small leaves tucked along the vine (v3a's stood out from her temples like feelers).
+    sprig(crown, (0.190, 0.372, 0.092), 150, -30, 0.058, 0.032, MK_LEAF)
+    sprig(crown, (-0.186, 0.374, 0.098), -150, -28, 0.054, 0.030, MK_LEAF)
+    sprig(crown, (0.170, 0.396, -0.124), 40, -32, 0.052, 0.028, MK_LEAF)
+    sprig(crown, (-0.172, 0.394, -0.120), -44, -30, 0.056, 0.030, MK_LEAF)
 
     write(os.path.join(OUT, "makiling.glb"), nodes)
 
 
-def sring_free(r, a, y):
-    """A point on a ring (no silhouette), for the gown's folds."""
-    return ring(r, a, y)
+# ---------------------------------------------------------------------------------------------
+# ⚠️⚠️ HER MEADOW (owner, 2026-09-26 night): *"add in ult cutscene of paete that when maria makiling starts
+# coming into the pic flowers start sprouting and lushh greenery and plants and shit (pls dotn reuse existing
+# models)"*, *"and they disappear slowly as she disappears thoroughly direct it"*. direction.md section 5.13.
+#
+# Where the mountain's spirit stands, the mountain comes up through the plaza: a carpet of moss runs over the
+# stone, grass springs up, fern fiddleheads push up and UNROLL, sampaguita buds open white (her wreath's own
+# flower), and makahiya (Mimosa pudica, the "shy" plant every Filipino child has touched) spreads its feathery
+# leaves and pink puffs. All of it NEW, typed here plant by plant: nothing reuses the tree's, the pitcher's or
+# the rattan's parts. The cutscene grows it as a wave out from her, flinches it from his slam (the makahiya
+# fold shut at the touch, as the real plant does), and lets it wilt and sink from the outer edge in as she goes.
+#
+# One glb, `meadow.glb`, laid out in the caster's space round her stand (0.78, -1.30) and his (0, 0), clear of
+# the court between him and the landing where the veins run. Every plant is its own node at its own ground
+# point; the parts that move are their own nodes: fern fronds in three chained segments (the runtime curls
+# them), sampaguita blossoms, makahiya leaves and puffs.
+#
+# ⚠️ ITS OWN PALETTE (`PaeteMeadow.Palette` in C#, the same hex values):
+#   0 moss   1 moss dark  2 grass   3 grass dark  4 fern   5 fern light  6 petal  7 flower heart
+#   8 ink    9 stem       10 makahiya pink  11 makahiya tip  12 makahiya leaf  13 soil  14 bud  15 leaf dark
+# ---------------------------------------------------------------------------------------------
+MD_MOSS, MD_MOSS_DK, MD_GRASS, MD_GRASS_DK, MD_FERN, MD_FERN_LT, MD_PETAL, MD_HEART = 0, 1, 2, 3, 4, 5, 6, 7
+MD_INK, MD_STEM, MD_PINK, MD_PINK_TIP, MD_MIMOSA, MD_SOIL, MD_BUD, MD_LEAF_DK = 8, 9, 10, 11, 12, 13, 14, 15
+
+
+def moss_patch(node, outline, height, slot):
+    """A flat cushion of moss on the stone: a typed outline of (compass, radius) points, `height` thick,
+    its rim bevelled down to the court."""
+    top = [(r * 0.86 * math.sin(math.radians(a)), height, r * 0.86 * math.cos(math.radians(a))) for a, r in outline]
+    rim = [(r * math.sin(math.radians(a)), height * 0.35, r * math.cos(math.radians(a))) for a, r in outline]
+    foot = [(r * 1.04 * math.sin(math.radians(a)), 0.0, r * 1.04 * math.cos(math.radians(a))) for a, r in outline]
+    faces = [pv._rafi_orient(top, (0.0, 1.0, 0.0)), pv._rafi_orient(foot, (0.0, -1.0, 0.0))]
+    n = len(outline)
+    for i in range(n):
+        k = (i + 1) % n
+        for a_ring, b_ring in ((top, rim), (rim, foot)):
+            q = [a_ring[i], a_ring[k], b_ring[k], b_ring[i]]
+            faces.append(pv._rafi_orient(q, (q[0][0] + q[1][0], 0.0, q[0][2] + q[1][2])))
+    node.parts.append((slot, faces))
+
+
+def grass_tuft(node, blades):
+    """A tuft of grass: each blade (compass, pitch up from the court, length, width, slot) typed."""
+    for compass, pitch, length, width, slot in blades:
+        sprig(node, (0.0, 0.0, 0.0), compass, pitch, length, width, slot, thickness=0.010)
+
+
+def frond(nodes, fern, name, compass, segments):
+    """One fern frond in three chained segments (so it can unroll): `segments` is a typed list of three
+    (length, rise in degrees, pinnae lengths) rows. Each segment is a node whose origin is the end of the one
+    before, turned to `compass`; its stalk rises by its own angle and carries its pinnae left and right."""
+    parent, origin = fern.name, (0.0, 0.0, 0.0)
+    for s, (length, rise, pinnae) in enumerate(segments):
+        seg = Node(f"{name}-{'abc'[s]}", origin=origin, parent=parent, yaw=compass if s == 0 else 0.0)
+        nodes.append(seg)
+        end = (0.0, length * math.sin(math.radians(rise)), length * math.cos(math.radians(rise)))
+        seg.tube([(0.0, 0.0, 0.0), mul(end, 0.5), end], [0.012 - 0.003 * s, 0.010 - 0.003 * s, 0.008 - 0.003 * s], MD_STEM, sides=4)
+        for k, pl in enumerate(pinnae):
+            u = (k + 0.6) / (len(pinnae) + 0.4)
+            at = mul(end, u)
+            for side in (1.0, -1.0):
+                # Each pinna leans a little forward along the frond and droops, its own length.
+                seg.leaf(add(at, (side * pl * 0.48, -pl * 0.10, pl * 0.12)), pl, pl * 0.34, 90.0 * side - 12.0 * side, -8.0, 0.0,
+                         slot=MD_FERN if (k + s) % 2 == 0 else MD_FERN_LT, thickness=0.008)
+        parent, origin = seg.name, end
+
+
+def blossom_node(nodes, parent, name, at, size, petals, turn, tilt):
+    b = Node(name, origin=at, parent=parent); nodes.append(b)
+    sampaguita_bloom(b, (0.0, 0.0, 0.0), tilt, size, petals, turn)
+    return b
+
+
+def sampaguita_bloom(node, centre, tilt, size, petals, turn):
+    """A sampaguita facing up (tipped by `tilt`): petals in a pinwheel, a small pale heart."""
+    for k in range(petals):
+        spin = turn + k * 360.0 / petals
+        local = (size * 0.46 * math.cos(math.radians(spin)), 0.0, size * 0.46 * math.sin(math.radians(spin)))
+        node.leaf(add(centre, pv._rotate(local, 0.0, 0.0, tilt)), size * 0.74, size * 0.52, -spin, 8.0, tilt, slot=MD_PETAL, thickness=0.010)
+    node.obox(add(centre, (0.0, 0.010, 0.0)), (size * 0.22, size * 0.16, size * 0.22), MD_HEART, bevel=0.004)
+
+
+def puff(node, centre, size, stamens):
+    """A makahiya flower head: a pink ball with `stamens` typed (compass, elevation) rays tipped pale."""
+    node.obox(centre, (size * 0.5, size * 0.5, size * 0.5), MD_PINK, yaw=30.0, roll=20.0, bevel=size * 0.12)
+    for compass, elevation in stamens:
+        d = (math.cos(math.radians(elevation)) * math.sin(math.radians(compass)), math.sin(math.radians(elevation)),
+             math.cos(math.radians(elevation)) * math.cos(math.radians(compass)))
+        tip = add(centre, mul(d, size))
+        node.tube([add(centre, mul(d, size * 0.2)), tip], [0.004, 0.003], MD_PINK, sides=3)
+        node.obox(tip, (0.010, 0.010, 0.010), MD_PINK_TIP, bevel=0.002)
+
+
+def mimosa_leaf(node, length, rise, pairs):
+    """A makahiya leaf along its node's +Z: a stalk rising by `rise` and `pairs` typed leaflet sizes each side."""
+    end = (0.0, length * math.sin(math.radians(rise)), length * math.cos(math.radians(rise)))
+    node.tube([(0.0, 0.0, 0.0), end], [0.006, 0.004], MD_STEM, sides=4)
+    for k, size in enumerate(pairs):
+        at = mul(end, (k + 1.0) / (len(pairs) + 0.6))
+        for side in (1.0, -1.0):
+            node.leaf(add(at, (side * size * 0.5, 0.004, 0.0)), size, size * 0.42, 90.0 * side, 4.0, 0.0, slot=MD_MIMOSA, thickness=0.006)
+
+
+def meadow():
+    root = Node("meadow")
+    nodes = [root]
+
+    # --- MOSS, the first thing she brings: cushions spreading over the stone, one under her, one under him.
+    # Each: name, ground point, typed outline (compass, radius), thickness, shade.
+    for name, at, outline, height, slot in [
+        ("moss-0", (0.78, 0.0, -1.30), [(0, 1.30), (40, 1.12), (85, 1.42), (130, 1.05), (175, 1.36), (220, 1.18), (265, 1.46), (310, 1.10)], 0.050, MD_MOSS),
+        ("moss-1", (0.10, 0.0, 0.10), [(10, 0.82), (60, 0.66), (110, 0.90), (160, 0.72), (210, 0.86), (260, 0.64), (310, 0.80)], 0.042, MD_MOSS_DK),
+        ("moss-2", (1.62, 0.0, 0.92), [(0, 0.76), (55, 0.92), (105, 0.62), (150, 0.84), (205, 0.70), (255, 0.88), (305, 0.66)], 0.040, MD_MOSS),
+        ("moss-3", (-0.90, 0.0, -0.84), [(20, 0.70), (75, 0.58), (130, 0.78), (190, 0.64), (240, 0.74), (300, 0.56)], 0.038, MD_MOSS_DK),
+        ("moss-4", (1.92, 0.0, -2.20), [(0, 0.86), (50, 0.70), (100, 0.94), (150, 0.76), (200, 0.88), (250, 0.68), (300, 0.90)], 0.044, MD_MOSS),
+        ("moss-5", (0.34, 0.0, 1.62), [(15, 0.60), (70, 0.74), (125, 0.56), (180, 0.70), (235, 0.62), (290, 0.72)], 0.036, MD_MOSS_DK),
+    ]:
+        n = Node(name, origin=at, parent="meadow"); nodes.append(n)
+        moss_patch(n, outline, height, slot)
+
+    # --- GRASS: ten tufts, each blade typed (compass, pitch, length, width, shade).
+    for name, at, blades in [
+        ("grass-0", (1.30, 0.0, 0.40), [(0, 72, 0.34, 0.040, MD_GRASS), (70, 64, 0.28, 0.036, MD_GRASS_DK), (140, 76, 0.38, 0.042, MD_GRASS), (210, 60, 0.26, 0.034, MD_GRASS_DK), (285, 70, 0.32, 0.038, MD_GRASS)]),
+        ("grass-1", (1.92, 0.0, 1.62), [(20, 68, 0.30, 0.038, MD_GRASS_DK), (95, 74, 0.36, 0.040, MD_GRASS), (170, 62, 0.27, 0.035, MD_GRASS), (250, 70, 0.33, 0.039, MD_GRASS_DK), (320, 78, 0.40, 0.042, MD_GRASS)]),
+        ("grass-2", (0.88, 0.0, 2.24), [(40, 66, 0.26, 0.034, MD_GRASS), (120, 74, 0.33, 0.038, MD_GRASS_DK), (200, 70, 0.30, 0.036, MD_GRASS), (300, 62, 0.24, 0.032, MD_GRASS_DK)]),
+        ("grass-3", (2.62, 0.0, 0.18), [(10, 76, 0.38, 0.042, MD_GRASS), (80, 64, 0.30, 0.036, MD_GRASS_DK), (150, 70, 0.34, 0.040, MD_GRASS), (225, 60, 0.27, 0.034, MD_GRASS), (300, 72, 0.36, 0.040, MD_GRASS_DK), (350, 66, 0.29, 0.035, MD_GRASS)]),
+        ("grass-4", (-0.62, 0.0, -1.62), [(30, 70, 0.32, 0.038, MD_GRASS_DK), (110, 76, 0.38, 0.041, MD_GRASS), (190, 64, 0.28, 0.035, MD_GRASS), (270, 72, 0.34, 0.039, MD_GRASS_DK)]),
+        ("grass-5", (1.60, 0.0, -2.62), [(0, 64, 0.29, 0.036, MD_GRASS), (60, 74, 0.35, 0.040, MD_GRASS_DK), (130, 68, 0.31, 0.037, MD_GRASS), (200, 78, 0.40, 0.043, MD_GRASS), (275, 62, 0.27, 0.034, MD_GRASS_DK)]),
+        ("grass-6", (2.42, 0.0, -1.20), [(25, 72, 0.33, 0.039, MD_GRASS), (100, 66, 0.29, 0.036, MD_GRASS_DK), (175, 74, 0.36, 0.041, MD_GRASS), (255, 60, 0.26, 0.033, MD_GRASS_DK), (330, 70, 0.31, 0.037, MD_GRASS)]),
+        ("grass-7", (-1.28, 0.0, -0.18), [(45, 68, 0.30, 0.037, MD_GRASS_DK), (125, 74, 0.35, 0.040, MD_GRASS), (215, 62, 0.27, 0.034, MD_GRASS), (310, 72, 0.33, 0.038, MD_GRASS_DK)]),
+        ("grass-8", (0.40, 0.0, 1.10), [(5, 60, 0.24, 0.032, MD_GRASS), (90, 70, 0.29, 0.036, MD_GRASS_DK), (180, 66, 0.26, 0.034, MD_GRASS), (265, 74, 0.31, 0.037, MD_GRASS)]),
+        ("grass-9", (2.24, 0.0, 2.62), [(35, 70, 0.31, 0.037, MD_GRASS_DK), (115, 64, 0.27, 0.034, MD_GRASS), (195, 76, 0.36, 0.040, MD_GRASS), (280, 68, 0.30, 0.036, MD_GRASS_DK)]),
+    ]:
+        n = Node(name, origin=at, parent="meadow"); nodes.append(n)
+        grass_tuft(n, blades)
+
+    # --- FERNS round her hem and behind him, tallest nearest her: each frond typed as three segments of
+    # (length, rise, pinnae lengths), unrolled at rest; the cutscene curls them into fiddleheads and lets them go.
+    for name, at, fronds in [
+        ("fern-0", (0.10, 0.0, -2.30), [(20, [(0.30, 58, [0.10, 0.12, 0.13]), (0.26, 34, [0.12, 0.11, 0.10]), (0.20, 4, [0.08, 0.06, 0.04])]),
+                                         (95, [(0.28, 62, [0.09, 0.11, 0.12]), (0.24, 38, [0.11, 0.10, 0.09]), (0.18, 8, [0.07, 0.05, 0.03])]),
+                                         (170, [(0.32, 55, [0.10, 0.12, 0.14]), (0.27, 30, [0.13, 0.12, 0.10]), (0.21, 0, [0.08, 0.06, 0.04])]),
+                                         (245, [(0.27, 60, [0.09, 0.11, 0.12]), (0.23, 36, [0.11, 0.10, 0.08]), (0.17, 6, [0.07, 0.05, 0.03])]),
+                                         (320, [(0.30, 57, [0.10, 0.12, 0.13]), (0.25, 32, [0.12, 0.11, 0.09]), (0.19, 2, [0.08, 0.06, 0.04])])]),
+        ("fern-1", (1.72, 0.0, -1.88), [(0, [(0.34, 60, [0.11, 0.13, 0.15]), (0.29, 36, [0.14, 0.13, 0.11]), (0.23, 6, [0.09, 0.07, 0.04])]),
+                                         (72, [(0.31, 56, [0.10, 0.12, 0.14]), (0.27, 32, [0.13, 0.12, 0.10]), (0.21, 2, [0.08, 0.06, 0.04])]),
+                                         (140, [(0.36, 62, [0.11, 0.14, 0.15]), (0.30, 38, [0.14, 0.13, 0.11]), (0.24, 8, [0.09, 0.07, 0.04])]),
+                                         (215, [(0.30, 58, [0.10, 0.12, 0.13]), (0.26, 34, [0.12, 0.11, 0.09]), (0.20, 4, [0.08, 0.06, 0.03])]),
+                                         (290, [(0.33, 54, [0.11, 0.13, 0.14]), (0.28, 30, [0.13, 0.12, 0.10]), (0.22, 0, [0.09, 0.06, 0.04])])]),
+        ("fern-2", (-0.72, 0.0, -1.12), [(40, [(0.26, 60, [0.09, 0.10, 0.11]), (0.22, 36, [0.10, 0.09, 0.08]), (0.16, 6, [0.07, 0.05, 0.03])]),
+                                          (130, [(0.28, 56, [0.09, 0.11, 0.12]), (0.23, 32, [0.11, 0.10, 0.08]), (0.17, 2, [0.07, 0.05, 0.03])]),
+                                          (220, [(0.25, 62, [0.08, 0.10, 0.11]), (0.21, 38, [0.10, 0.09, 0.07]), (0.15, 8, [0.06, 0.05, 0.03])]),
+                                          (310, [(0.27, 58, [0.09, 0.11, 0.12]), (0.22, 34, [0.11, 0.10, 0.08]), (0.16, 4, [0.07, 0.05, 0.03])])]),
+        ("fern-3", (2.30, 0.0, -0.62), [(15, [(0.29, 58, [0.10, 0.11, 0.13]), (0.24, 34, [0.12, 0.11, 0.09]), (0.18, 4, [0.07, 0.06, 0.03])]),
+                                         (105, [(0.27, 62, [0.09, 0.11, 0.12]), (0.23, 38, [0.11, 0.10, 0.08]), (0.17, 8, [0.07, 0.05, 0.03])]),
+                                         (190, [(0.30, 55, [0.10, 0.12, 0.13]), (0.25, 30, [0.12, 0.11, 0.09]), (0.19, 0, [0.08, 0.06, 0.04])]),
+                                         (275, [(0.28, 60, [0.09, 0.11, 0.12]), (0.23, 36, [0.11, 0.10, 0.08]), (0.17, 6, [0.07, 0.05, 0.03])])]),
+        ("fern-4", (-1.20, 0.0, -2.02), [(30, [(0.31, 57, [0.10, 0.12, 0.13]), (0.26, 33, [0.12, 0.11, 0.09]), (0.20, 3, [0.08, 0.06, 0.04])]),
+                                          (115, [(0.29, 61, [0.09, 0.11, 0.13]), (0.24, 37, [0.12, 0.10, 0.09]), (0.18, 7, [0.07, 0.05, 0.03])]),
+                                          (205, [(0.32, 55, [0.10, 0.12, 0.14]), (0.27, 31, [0.13, 0.12, 0.10]), (0.21, 1, [0.08, 0.06, 0.04])]),
+                                          (295, [(0.28, 59, [0.09, 0.11, 0.12]), (0.24, 35, [0.11, 0.10, 0.08]), (0.18, 5, [0.07, 0.05, 0.03])])]),
+    ]:
+        n = Node(name, origin=at, parent="meadow"); nodes.append(n)
+        # a tight crown of old stalk bases where the fronds leave the ground
+        n.obox((0.0, 0.03, 0.0), (0.10, 0.06, 0.10), MD_MOSS_DK, yaw=20.0, bevel=0.02)
+        for i, (compass, segs) in enumerate(fronds):
+            frond(nodes, n, f"{name}-f{i}", float(compass), segs)
+
+    # --- SAMPAGUITA bushes: a mound of dark glossy leaves (each typed: compass, pitch, length), white blossoms
+    # that open on their own nodes (position, size, petals, turn, tilt), and a bud or two.
+    for name, at, leaves, blooms, buds in [
+        ("samp-0", (1.48, 0.0, 1.30), [(0, 38, 0.16, 0.08), (55, 30, 0.14, 0.07), (110, 42, 0.17, 0.08), (165, 26, 0.13, 0.07), (220, 36, 0.15, 0.08), (280, 44, 0.16, 0.08), (330, 28, 0.14, 0.07)],
+         [((0.04, 0.24, 0.02), 0.070, 8, 5.0, -6.0), ((-0.08, 0.20, 0.06), 0.060, 7, 22.0, 10.0), ((0.07, 0.19, -0.08), 0.064, 8, 13.0, -14.0)], [(-0.02, 0.22, -0.07)]),
+        ("samp-1", (0.62, 0.0, 1.94), [(20, 34, 0.15, 0.08), (85, 40, 0.16, 0.08), (150, 28, 0.13, 0.07), (215, 38, 0.15, 0.08), (290, 32, 0.14, 0.07)],
+         [((0.02, 0.21, 0.03), 0.066, 8, 9.0, 8.0), ((-0.07, 0.18, -0.05), 0.058, 7, 30.0, -10.0)], [(0.06, 0.20, 0.06)]),
+        ("samp-2", (2.52, 0.0, -1.92), [(10, 40, 0.17, 0.08), (70, 32, 0.15, 0.07), (135, 44, 0.18, 0.09), (200, 28, 0.14, 0.07), (260, 38, 0.16, 0.08), (320, 34, 0.15, 0.08)],
+         [((0.03, 0.25, 0.01), 0.072, 8, 17.0, -4.0), ((-0.09, 0.21, 0.05), 0.062, 7, 2.0, 12.0), ((0.08, 0.20, -0.07), 0.066, 8, 26.0, -12.0)], [(-0.04, 0.23, -0.06)]),
+        ("samp-3", (-0.92, 0.0, -2.42), [(30, 36, 0.15, 0.08), (100, 42, 0.16, 0.08), (170, 30, 0.14, 0.07), (240, 38, 0.15, 0.08), (310, 34, 0.14, 0.07)],
+         [((0.01, 0.22, 0.02), 0.068, 8, 11.0, 6.0), ((0.08, 0.19, -0.05), 0.060, 7, 24.0, -8.0)], [(-0.06, 0.20, 0.04)]),
+        ("samp-4", (1.20, 0.0, -0.32), [(15, 34, 0.14, 0.07), (80, 40, 0.15, 0.08), (145, 30, 0.13, 0.07), (215, 38, 0.15, 0.08), (285, 32, 0.14, 0.07)],
+         [((0.02, 0.20, 0.02), 0.062, 8, 7.0, -6.0), ((-0.06, 0.17, 0.06), 0.056, 7, 19.0, 10.0)], []),
+    ]:
+        n = Node(name, origin=at, parent="meadow"); nodes.append(n)
+        for i, (compass, pitch, length, width) in enumerate(leaves):
+            sprig(n, (0.0, 0.05 + 0.02 * (i % 2), 0.0), float(compass), float(pitch), length, width, MD_LEAF_DK if i % 3 else MD_GRASS_DK, thickness=0.012)
+        n.tube([(0.0, 0.0, 0.0), (0.01, 0.12, 0.0), (0.0, 0.19, 0.01)], [0.016, 0.012, 0.008], MD_STEM, sides=4)
+        for k, (pos, size, petals, turn, tilt) in enumerate(blooms):
+            blossom_node(nodes, name, f"{name}-b{k}", pos, size, petals, turn, tilt)
+        for pos in buds:
+            n.obox(pos, (0.026, 0.040, 0.026), MD_BUD, yaw=25.0, bevel=0.010)
+
+    # --- MAKAHIYA: low sprawling stems of feathery leaves (each leaf its own node: compass, length, rise, the
+    # leaflet sizes) and pink puffs on their own nodes (position, size, stamens as compass and elevation).
+    for name, at, leaves, puffs in [
+        ("maka-0", (2.10, 0.0, 1.00), [(10, 0.20, 18, [0.030, 0.034, 0.034, 0.030, 0.024]), (95, 0.18, 22, [0.028, 0.032, 0.030, 0.024]),
+                                        (180, 0.22, 16, [0.030, 0.035, 0.036, 0.032, 0.026, 0.020]), (265, 0.19, 20, [0.029, 0.033, 0.031, 0.025])],
+         [((0.05, 0.13, 0.04), 0.050, [(0, 20), (60, 50), (120, 15), (180, 45), (240, 25), (300, 60), (30, 80), (200, 75)]),
+          ((-0.06, 0.11, -0.03), 0.044, [(20, 30), (90, 55), (160, 20), (230, 50), (300, 35), (120, 80)])]),
+        ("maka-1", (1.02, 0.0, 2.70), [(40, 0.19, 20, [0.029, 0.033, 0.032, 0.026]), (130, 0.21, 16, [0.030, 0.034, 0.034, 0.030, 0.024]),
+                                        (220, 0.18, 22, [0.028, 0.032, 0.030, 0.023]), (310, 0.20, 18, [0.030, 0.034, 0.033, 0.028, 0.022])],
+         [((0.03, 0.12, 0.05), 0.048, [(10, 25), (75, 55), (140, 20), (205, 50), (270, 30), (335, 60), (100, 80)])]),
+        ("maka-2", (2.88, 0.0, -0.42), [(0, 0.21, 16, [0.030, 0.035, 0.035, 0.031, 0.025]), (90, 0.19, 20, [0.029, 0.033, 0.031, 0.025]),
+                                         (185, 0.20, 18, [0.030, 0.034, 0.033, 0.028, 0.022]), (270, 0.18, 22, [0.028, 0.032, 0.030, 0.024])],
+         [((-0.04, 0.12, 0.03), 0.052, [(0, 30), (70, 50), (140, 25), (210, 55), (280, 20), (340, 45), (180, 80), (40, 75)]),
+          ((0.06, 0.10, -0.05), 0.042, [(30, 25), (110, 50), (190, 30), (270, 55), (350, 20)])]),
+        ("maka-3", (-1.58, 0.0, -1.12), [(20, 0.20, 18, [0.030, 0.034, 0.033, 0.027, 0.021]), (110, 0.18, 22, [0.028, 0.032, 0.030, 0.024]),
+                                          (200, 0.21, 16, [0.030, 0.035, 0.035, 0.031, 0.025]), (290, 0.19, 20, [0.029, 0.033, 0.031, 0.025])],
+         [((0.04, 0.12, 0.02), 0.048, [(15, 30), (85, 55), (155, 25), (225, 50), (295, 35), (0, 80)])]),
+        ("maka-4", (0.42, 0.0, -2.92), [(35, 0.19, 20, [0.029, 0.033, 0.032, 0.026]), (125, 0.21, 16, [0.030, 0.034, 0.034, 0.029, 0.023]),
+                                         (215, 0.18, 22, [0.028, 0.032, 0.030, 0.024]), (305, 0.20, 18, [0.030, 0.034, 0.033, 0.028])],
+         [((0.02, 0.12, -0.04), 0.050, [(5, 25), (70, 50), (135, 20), (200, 55), (265, 30), (330, 50), (100, 80)])]),
+    ]:
+        n = Node(name, origin=at, parent="meadow"); nodes.append(n)
+        n.obox((0.0, 0.02, 0.0), (0.06, 0.04, 0.06), MD_STEM, yaw=15.0, bevel=0.012)
+        for i, (compass, length, rise, pairs) in enumerate(leaves):
+            leaf = Node(f"{name}-l{i}", origin=(0.0, 0.03, 0.0), parent=name, yaw=float(compass)); nodes.append(leaf)
+            mimosa_leaf(leaf, length, rise, pairs)
+        for k, (pos, size, stamens) in enumerate(puffs):
+            p = Node(f"{name}-p{k}", origin=pos, parent=name); nodes.append(p)
+            n.tube([(0.0, 0.03, 0.0), (pos[0] * 0.5, pos[1] * 0.7, pos[2] * 0.5), pos], [0.006, 0.005, 0.004], MD_STEM, sides=3)
+            puff(p, (0.0, 0.0, 0.0), size, stamens)
+
+    write(os.path.join(OUT, "meadow.glb"), nodes)
+
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
@@ -1013,3 +1512,6 @@ if __name__ == "__main__":
     if "seedling" in which: seedling()
     if "thorns" in which: thorns()
     if "makiling" in which: makiling()
+    # ⚠️ The meadow is built only when named (`python tools/build_paete_props.py meadow`) until the cutscene wires it
+    # (TODO HERO-9, "HER MEADOW"): nothing loads `meadow.glb` yet.
+    if "meadow" in sys.argv[1:]: meadow()

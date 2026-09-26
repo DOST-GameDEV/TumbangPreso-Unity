@@ -437,20 +437,29 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   kinds, PlayMode gate, Checks.RunAll, audits, a build. Done 2026-09-26: bots measured by `PaeteKitPlayProbe.PaeteBotsUseEveryAbility`
   (four Paete bots, two rounds: vine 3, bloom 4, thorns 3, ultimate 12 with the bar topped up every 20 s); the first-person
   vine film ran (`FilmTheVineFromHisOwnEyes`, frames not yet reviewed).
-- [ ] ⚠️⚠️ THE ULTIMATE, REDIRECTED (owner, 2026-09-26, after `paete_ultimate_v3.mp4`: *"ur direction of the entire cutscene
-  sucks"*, the three small trees make no sense, refine Makiling, *"make his eyes glow"*, the live tree *"sucks"*, roots must GO
-  INTO the ground, prisoners must look TIED and animated). The plan is `docs/reports/paete-kit-2026-09-25/direction.md` 5.12
-  (three shots: CALL, CONNECT, RISE; the forest trees, stage walls and landing spikes cut). Done in source this session and
-  compiled only if the ledger says so: the guardian's own old-wood palette (`PaeteSentryBody.Palette`), the crown gem removed,
-  leaf clusters typed on all seven claws, claw-root toes diving into the court with a heave of earth, ground branches weaving in
-  and out of the court with clods at each crossing, four thick tight bands shins to hips (`PaeteRootCoil` v2), a thicker limb
-  wrapping the waist twice and cinching, rooted bodies straining all the time (struggle loop 0.45x idle, 1.25x fighting),
-  Makiling v2 (no hair helmet, parted fringe, longer closed eyes, bell sleeves; `Pose` takes drift and lean), the ultimate camera
-  pushing in past a blocker instead of discarding the shot (`UltimatePhaseView`, `LastShotReport`), the forest stage leaving
-  before the payoff, the rise shot moved wide. NOT done: the three-shot re-author (`tools/author_ultimate_intros.py` shots and
-  `HeroIntroductionScene.Paete.cs`: remove `MakilingTrees`, the walls and `_paeteBurst`; her drift and lean through the connect;
-  her pour into the ground; HIS EYES IGNITING at 0.95 s), then refilm and send v4.
-  (The seedling and thorn-construct art pass is the modelled trees row above.)
+- [x] ⚠️⚠️ THE ULTIMATE, REDIRECTED (owner, 2026-09-26, after `paete_ultimate_v3.mp4`: *"ur direction of the entire cutscene
+  sucks"*, the three small trees make no sense, refine Makiling, *"make his eyes glow"*). BUILT 2026-09-26 night as three shots
+  (CALL, CONNECT, RISE; direction.md 5.13, one light travelling left to right): forest trees, stage walls and landing spikes cut,
+  `PaeteForestTree` deleted, the payoff is the live `PaeteSentryBody` in `Staged` mode, his eyes ignite at 0.95 s (glows found on
+  his own face, `SpiritGlow.shader`), the light falls from her hands into his LEFT hand, the palm slam cracks and heaves the court,
+  roots dive back in, three veins race to a pool at the landing, camera shake, theme re-timed. Makiling v3 (baro't saya, rounded
+  face, parted hair, sampaguita wreath; `SpiritGhost.shader` v3 premultiplied with an inner light). Films r12 and r13
+  (`Logs/paete-evidence-r12`, `-r13`); video `Logs/paete-share/paete_ultimate_v4.mp4`.
+- [ ] ⚠️⚠️ HER FULL FORM, BRIEFLY (owner, 2026-09-26 night, of her v3 renders: *"she actually looks really nice i dont mind if u show
+  hher briefly full form and she vanishes back (she sstarts translucent to full forma nd translucent again)"*). Design in direction.md
+  5.13: `_SolidFrom`/`_SolidTo` sweeps in `SpiritGhost.shader` plus a clipped ink hull; `Look.Form`/`Unform`; form 0.40 to 0.64 s
+  while she holds the light, back to spirit 0.98 to 1.28 s. Not built.
+- [ ] ⚠️⚠️ HER MEADOW (owner, same night: *"when maria makiling starts coming into the pic flowers start sprouting and lushh greenery
+  and plants and shit (pls dotn reuse existing models)"*, *"and they disappear slowly as she disappears thoroughly direct it"*). The
+  models are typed in `tools/build_paete_props.py` `meadow()` (moss, grass, unrolling ferns, sampaguita, makahiya; 137 nodes, built
+  only when named, not yet in Resources). Not wired: write `PaeteMeadow` (grow as a wave from her, flinch from the slam with the
+  makahiya folding shut, lean from the eruption, wilt from the outer edge in as she vanishes 3.7 to 4.5 s), render it, film it.
+- [ ] ⚠️⚠️ THE GUARDIAN CRAWLS OUT, IT DOES NOT POP UP (owner, same night: *"i also dotn want the tree to jsut spawn in or teleport in
+  i want there to be an animation of how it grows or smth like make it crawl out from the ground? u figure it out"*). Today
+  `PaeteSentryBody.Pose` ERUPT raises it in 0.5 s. Proposed in direction.md 5.13: roots break out and grab the court, the trunk hauls
+  itself up in two or three heaves, crown last, then the eyes; in play and in the cutscene alike.
+- [ ] The guardian's crown masses (v8): typed leaf masses and hanging moss per branch are in `tools/build_paete_props.py` `sentry()`
+  but `sentry.glb` is NOT rebuilt; rebuild (restore `thorns.glb` after), render with `PaeteReviewProbe.RunTrees`, judge at 9 m.
 - [ ] Surface texture: the owner asked to *"really refine and texture and make it all detailed"*. The
   modelled props give detail in geometry and his palette only; decide with him whether bark wants a
   painted texture (grain, rings) on the props and vines, and do it if so.

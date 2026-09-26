@@ -103,6 +103,23 @@ namespace TumbangPreso.Visual
         }
         private bool _podsDropped;
 
+        /// <summary>
+        /// ⚠️⚠️ THE CUTSCENE'S GUARDIAN IS THIS BODY, STAGED (direction.md 5.13, 2026-09-26 night). The introduction used
+        /// to raise a separate, simpler copy of the model (`PaeteForestTree`), so the tree that came up in the cutscene
+        /// was not the tree that came up in play. Now `HeroIntroductionScene.Paete` builds this very body under its own
+        /// root and poses it from the cutscene's clock. `Staged` turns off the only things here that reach outside the
+        /// body: `PaeteGroundBreak` and `PaeteLeafBurst` spawn into the WORLD and run on `Update`, and during the shared
+        /// phase the world is paused (`Time.timeScale` 0) and is not what the cutscene camera is showing; the cutscene
+        /// draws its own bursts on its own clock instead.
+        /// </summary>
+        public bool Staged { get; set; }
+
+        /// <summary>
+        /// When (seconds of its age) the light opens in its hollows. 0.55 in play, right as it tops out; the cutscene
+        /// holds it back so the guardian's eyes are the last beat, the one its camera ends on.
+        /// </summary>
+        public float WakeAt { get; set; } = 0.55f;
+
         // The eight ground branches racing out: yaw, length, wave phase. Each typed, none the same.
         private static readonly float[] VineYaw = { 8f, 52f, 93f, 141f, 183f, 226f, 268f, 317f };
         private static readonly float[] VineLength = { 3.0f, 2.5f, 3.3f, 2.7f, 3.1f, 2.3f, 3.4f, 2.8f };
@@ -322,7 +339,7 @@ namespace TumbangPreso.Visual
             _trunk.localScale = new Vector3(wide, tall, wide);
             _trunk.localPosition = Vector3.down * (5.4f * (1f - Mathf.Clamp(erupt, 0f, 1.08f)) + 1.8f * wither * wither);
             // The lean: at the wake it tips 6 degrees at whoever it looks at, settling to 3.
-            float lean = (age < 0.55f ? 0f : 6f * GrowthVfx.Pop((age - 0.55f) / 0.3f) - 3f * Mathf.Clamp01((age - 1.2f) / 1.0f)) * alive;
+            float lean = (age < WakeAt ? 0f : 6f * GrowthVfx.Pop((age - WakeAt) / 0.3f) - 3f * Mathf.Clamp01((age - WakeAt - 0.65f) / 1.0f)) * alive;
             float yaw = LookYaw(age) - 95f * (1f - Mathf.Clamp01(erupt)) + 50f * wither;
             _trunk.localRotation = Quaternion.Euler(0f, yaw, 0f) * Quaternion.Euler(lean, 0f, 0f);
 
@@ -335,7 +352,7 @@ namespace TumbangPreso.Visual
                 float raised = -38f * (1f - slam) - 25f * wither;
                 _roots[i].localRotation = _rootRest[i] * Quaternion.Euler(raised, 0f, 0f);
                 _roots[i].localScale = _rootScale[i] * Mathf.Max(0.001f, show * (1f - Mathf.SmoothStep(0f, 1f, wither * 1.4f)));
-                if (_lastAge < at && age >= at && age - _lastAge < 0.5f)
+                if (!Staged && _lastAge < at && age >= at && age - _lastAge < 0.5f)
                     PaeteGroundBreak.Spawn(_roots[i].TransformPoint(new Vector3(0f, 0f, 1.3f)), 0.32f);
             }
 
@@ -366,7 +383,7 @@ namespace TumbangPreso.Visual
             // WAKE, BLINK, SLEEP: the light in the hollows, opened and shut on its own node.
             if (_eyes != null)
             {
-                float open = age < 0.55f ? 0f : GrowthVfx.Pop((age - 0.55f) / 0.25f);
+                float open = age < WakeAt ? 0f : GrowthVfx.Pop((age - WakeAt) / 0.25f);
                 float shut = 0f;
                 foreach (float b in Blinks)
                 {
@@ -435,17 +452,17 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < _targets.Count; i++) PoseLimb(i, age, wither);
 
             // The crown tops out (0.56 s, the squash): leaves blown off it in a burst.
-            if (_lastAge < 0.56f && age >= 0.56f && age - _lastAge < 0.5f)
+            if (!Staged && _lastAge < 0.56f && age >= 0.56f && age - _lastAge < 0.5f)
                 PaeteLeafBurst.Spawn(transform.position + Vector3.up * 4.4f * _scale, 16, 2.6f);
             // A leaf falling from the crown every 0.8 s through the watch.
-            if (age > 1.2f && age < life - 0.5f && Mathf.FloorToInt(age / 0.8f) != Mathf.FloorToInt(_lastAge / 0.8f) && age - _lastAge < 0.5f)
+            if (!Staged && age > 1.2f && age < life - 0.5f && Mathf.FloorToInt(age / 0.8f) != Mathf.FloorToInt(_lastAge / 0.8f) && age - _lastAge < 0.5f)
             {
                 int k = Mathf.FloorToInt(age / 0.8f) % LeafFrom.Length;
                 PaeteLeafBurst.Spawn(transform.TransformPoint(LeafFrom[k] * _scale), 1, 0.35f);
             }
 
             // The pods: once, as it goes to sleep, the tree lets go of its seeds.
-            if (wither > 0.05f && !_podsDropped)
+            if (!Staged && wither > 0.05f && !_podsDropped)
             {
                 _podsDropped = true;
                 PaeteLeafBurst.Spawn(transform.position + Vector3.up * 3.6f * _scale, 12, 1.8f);
