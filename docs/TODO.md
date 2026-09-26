@@ -104,7 +104,11 @@ Owner, 2026-09-26, six non-gameplay bugs on `merge/astra-lighting-2026-09-25`. E
 commit. Source-level fixes; none of them has had a Unity run on this machine yet unless the
 line says so, so "fixed" below means written and reviewed, not played.
 
-- [ ] BUGS-0926.1 The title screen ("Click anywhere to continue.") also continues on any keyboard key.
+- [x] BUGS-0926.1 The title screen ("Click anywhere to continue.") also continues on any keyboard key.
+  `MenuNav.KeyboardAnyPressed` (any key except Escape, which still quits from the title, and
+  except Alt chords, so Alt+Enter still toggles fullscreen); `OwnerMenuPrompt` invokes the same
+  full-screen press with it, after a 0.25 s arrival guard so the key that finished the previous
+  screen cannot skip this one. Her wording is unchanged.
 - [x] BUGS-0926.2 Escape on HOME no longer returns to the title screen. `HubHome.Back` (Escape,
   pad B, Android BACK) left the room and loaded `MainMenu`; it now opens the hamburger MENU, and a
   second BACK closes it. BACK TO TITLE in that menu is the deliberate way out. Queued, BACK still

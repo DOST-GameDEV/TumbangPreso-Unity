@@ -156,6 +156,27 @@ namespace TumbangPreso.InputLayer
             }
         }
 
+        /// <summary>
+        /// True on the frame a keyboard player pressed any key that is not Escape.
+        ///
+        /// ⚠️ THE KEYBOARD HALF OF <see cref="PadAnyPressed"/>, FOR THE SAME ONE SCREEN. Owner,
+        /// 2026-09-26: the title screen "should also continue when pressing any key". Escape is
+        /// excluded for `PadAnyPressed`'s reason: it leaves the game from the title screen
+        /// (`ConvertedMainMenu.CancelTarget`), and one press must not both start and quit.
+        /// ⚠️ A key held with Alt is excluded too, so the window's Alt+Enter fullscreen chord
+        /// resizes the title screen rather than walking past it.
+        /// </summary>
+        public static bool KeyboardAnyPressed
+        {
+            get
+            {
+                var keys = Keyboard.current;
+                if (keys == null || !keys.anyKey.wasPressedThisFrame) return false;
+                if (keys.escapeKey.isPressed || keys.altKey.isPressed) return false;
+                return true;
+            }
+        }
+
         private static EventSystem _knownSystem;
         private static InputSystemUIInputModule _knownModule;
 
