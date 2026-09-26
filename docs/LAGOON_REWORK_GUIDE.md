@@ -44,3 +44,29 @@ below; stairs from the walkway loop up to the shelf at its south corners; a whit
 hill as the landmark. ⚠️ The shelf changes the water mechanic: slippers that leave the court now
 fall 4.5 m. Whether they return (as today) or the shelf edge gets a low wall is a gameplay
 decision still to take before the Unity build.
+
+## 4 · Layout analysis of the reference (owner, 2026-09-26: "i was thinking of a more natural platform. need you to analyze the layout from the references")
+
+The blockout's square rock shelf was rejected as not natural. What the fishing-village reference
+actually does with its ground:
+
+1. **A horseshoe cove, not an island with a platform.** Two rock arms wrap a tongue of lagoon;
+   the village faces inward across the water. Open sea shows only through the cove mouth.
+2. **Flat ground is made of pockets between boulders.** Every level space is a sand or grass
+   clearing CRADLED by clusters of huge rounded-faceted boulders (several stacked, each 3 to 8 m).
+   No cut edges, no retaining walls: the rocks are the edges.
+3. **Terraces climb in three or four tiers**: beach, a mid terrace, upper ledges and the peak,
+   each a clearing among boulders, joined by wooden stairs and plank walkways with rail fences.
+4. **The beach is a curved ribbon** following the water, with an organic edge, a pale foam band
+   and piers poking out from it into the lagoon.
+5. **The landmark sits at the waterline in the middle of the view** (the painted rock), so the
+   cove has a focal point from every tier.
+6. **Planting clusters where rock meets flat ground**: palms leaning out of rock seams, broad
+   leaves and red/orange accents at boulder feet, never spread evenly.
+7. **A tall rock spire behind everything** gives the silhouette.
+
+**Proposed for the court:** the court is the cove's BIGGEST CLEARING, a packed-sand terrace one
+step (about 1.2 m) above the beach, cradled on three sides by boulder clusters whose inner faces
+stand just outside the walls at +/-13, and open on the fourth side down to the beach, the lagoon
+tongue and the stilt houses along its edges. Upper terraces with more houses and stairs climb
+the rock behind; the capilla sits on the highest ledge under the spire.
