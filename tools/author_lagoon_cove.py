@@ -895,37 +895,39 @@ def sky(world):
     nt.links.new(mix.outputs["Shader"], out.inputs["Surface"])
 
 
-THATCHES = ("thatch_a", "thatch_b", "thatch_c")
+# OWNER-KEPT VARIANTS, mixed per house (2026-09-27): thatch ("honestly keep all for variety")
+# and sawali ("just use all 3").
+VARIETY = {"thatch": ("thatch_a", "thatch_b", "thatch_c"),
+           "sawali": ("sawali_a", "sawali_b", "sawali_c")}
 
 
-def thatch_variety(rng):
-    """ALL THREE THATCHES, FOR VARIETY (owner, 2026-09-27, shown thatch_a/b/c on the houses:
-    "honestly keep all for variety"). Each placed house or boat gets ONE of them for its whole
-    roof, chosen per house so neighbours differ. The houses are linked duplicates sharing one
-    mesh, so the choice is an OBJECT-level material slot (link = "OBJECT"), which leaves the
-    shared mesh and the kit sources untouched. Unity: one material per object, the same."""
+def surface_variety(slot, rng):
+    """Each placed house or boat gets ONE variant of `slot` for the whole surface, chosen per
+    house so neighbours differ. Houses are linked duplicates sharing one mesh, so the choice is
+    an OBJECT-level material slot (link = "OBJECT"); the shared mesh and the kit sources stay
+    untouched. Unity: one material per object, the same."""
     import render_lagoon_texture_preview as T
+    names = VARIETY[slot]
     mats = {}
-    for name in THATCHES:
+    for name in names:
         m = bpy.data.materials.get(name) or bpy.data.materials.new(name)
         T.uv_material(m, name)
         mats[name] = m
-    base = bpy.data.materials.get("thatch")
+    base = bpy.data.materials.get(slot)
     if base is not None:
-        T.uv_material(base, THATCHES[0])          # the kit sources (not placed) read as thatch_a
+        T.uv_material(base, names[0])             # the kit sources (not placed) read as variant a
     choice = {}
     for o in bpy.data.objects:
-        if o.type != "MESH" or o.parent is None or not any(m and m.name == "thatch" for m in o.data.materials):
+        if o.type != "MESH" or o.parent is None or not any(m and m.name == slot for m in o.data.materials):
             continue
         if any(c.name.endswith("(source, not placed)") for c in o.users_collection):
             continue
-        pick = choice.setdefault(o.parent.name, rng.choice(THATCHES))
-        for slot in o.material_slots:
-            if slot.material and slot.material.name == "thatch":
-                slot.link = "OBJECT"
-                slot.material = mats[pick]
-    counts = {t: sum(1 for v in choice.values() if v == t) for t in THATCHES}
-    print("[lagoon-cove] thatch variety:", counts)
+        pick = choice.setdefault(o.parent.name, rng.choice(names))
+        for ms in o.material_slots:
+            if ms.material and ms.material.name == slot:
+                ms.link = "OBJECT"
+                ms.material = mats[pick]
+    print(f"[lagoon-cove] {slot} variety:", {n: sum(1 for v in choice.values() if v == n) for n in names})
 
 
 def main():
@@ -955,7 +957,8 @@ def main():
             o["rock_scale"] = (o.scale.x + o.scale.y + o.scale.z) / 3
     E.bake("rock")
     T.rock_material(bpy.data.materials["rock"], ROCK_LOOK)
-    thatch_variety(random.Random(77))
+    surface_variety("thatch", random.Random(77))
+    surface_variety("sawali", random.Random(78))
     L.gameplay(root)
     B.lighting()
     scene = bpy.context.scene
