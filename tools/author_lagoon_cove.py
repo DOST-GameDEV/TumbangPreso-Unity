@@ -672,9 +672,43 @@ def village(c, rng):
 STAIR_W = 1.5
 
 
+STEP_RISE, STEP_GOING, FLIGHT_MAX = 0.2, 0.3, 8
+
+
+def stair_profile(length, rise):
+    """The flight's profile along its horizontal length: a list of (s0, s1, z0, z1, kind).
+    OWNER (2026-09-27, on long shallow flights whose treads stretched a metre deep: "some stair
+    steps are too long. if the slope is too low, just do smth like a set of stairs then a flat
+    walkway, then a set of stairs again"). Steps are always a real size (0.2 m rise, 0.3 m
+    going). If the slope is shallower than that, the rise is split into flights of at most 8
+    steps with FLAT landings between them, and the spare length is shared out as landings. Only
+    a slope steeper than the steps themselves compresses the going."""
+    n = max(1, round(abs(rise) / STEP_RISE))
+    going = STEP_GOING
+    if n * going > length:                      # steeper than a comfortable stair
+        going = length / n
+    flights = [FLIGHT_MAX] * (n // FLIGHT_MAX) + ([n % FLIGHT_MAX] if n % FLIGHT_MAX else [])
+    spare = length - n * going
+    landing = spare / (len(flights) + 1)
+    segs, s_, z = [], 0.0, 0.0
+    dz = rise / n
+    for i, k in enumerate(flights):
+        if landing > 0.05:
+            segs.append((s_, s_ + landing, z, z, "landing"))
+            s_ += landing
+        segs.append((s_, s_ + k * going, z, z + k * dz, "flight"))
+        s_ += k * going
+        z += k * dz
+    if landing > 0.05:
+        segs.append((s_, s_ + landing, z, z, "landing"))
+    return segs, going, dz
+
+
 def plank_stairs(c, ea, eb, label):
     run = eb - ea
     flat = Vector((run.x, run.y, 0))
+    length = flat.length
+    fwd = flat.normalized()
     heading = math.atan2(flat.y, flat.x) - math.pi / 2          # box +Y along the run
     side = Vector((-flat.y, flat.x, 0)).normalized()
     plank = bpy.data.materials.get("plank") or HK.material("plank")
@@ -688,21 +722,37 @@ def plank_stairs(c, ea, eb, label):
             o.matrix_world = Matrix.Translation(centre) @ rot.to_4x4()
         return o
 
-    n = max(3, int(abs(run.z) / 0.3))
-    for k in range(n):
-        p = ea + run * ((k + 0.5) / n)
-        top = ea.z + run.z * ((k + 1) / n if run.z > 0 else k / n)
-        piece("tread", Vector((p.x, p.y, top - 0.04)), (STAIR_W, flat.length / n + 0.12, 0.08), plank)
-    tilt = run.to_track_quat("Y", "Z").to_matrix()
-    for sgn in (-1, 1):
-        off = side * (STAIR_W / 2 + 0.05) * sgn
-        mid = (ea + eb) / 2 + off - Vector((0, 0, 0.12))
-        piece("stringer", mid, (0.08, run.length + 0.3, 0.26), timber, rot=tilt, across=False)
-        rail_mid = (ea + eb) / 2 + off + Vector((0, 0, 0.9))
-        piece("handrail", rail_mid, (0.07, run.length + 0.2, 0.07), timber, rot=tilt, across=False)
-        posts = max(2, int(run.length / 1.6) + 1)
-        for i in range(posts):
-            q = ea.lerp(eb, i / (posts - 1)) + off
+    def at(s_, z):
+        return Vector((ea.x, ea.y, ea.z)) + fwd * s_ + Vector((0, 0, z))
+
+    segs, going, dz = stair_profile(length, run.z)
+    post_at = set()
+    for s0, s1, z0, z1, kind in segs:
+        if kind == "landing":
+            mid = at((s0 + s1) / 2, z0)
+            piece("landing", mid - Vector((0, 0, 0.04)), (STAIR_W, s1 - s0 + 0.02, 0.08), plank)
+        else:
+            steps = max(1, round(abs(z1 - z0) / abs(dz))) if dz else 1
+            for k in range(steps):
+                sa = s0 + (k + 0.5) * going
+                top = z0 + dz * (k + 1) if dz > 0 else z0 + dz * k
+                piece("tread", at(sa, top) - Vector((0, 0, 0.04)), (STAIR_W, going + 0.05, 0.08), plank)
+        a0, a1 = at(s0, z0), at(s1, z1)
+        seg = a1 - a0
+        tilt = seg.to_track_quat("Y", "Z").to_matrix()
+        for sgn in (-1, 1):
+            off = side * (STAIR_W / 2 + 0.05) * sgn
+            mid = (a0 + a1) / 2 + off
+            piece("stringer", mid - Vector((0, 0, 0.12)), (0.08, seg.length + 0.1, 0.26), timber, rot=tilt,
+                  across=False)
+            piece("handrail", mid + Vector((0, 0, 0.9)), (0.07, seg.length + 0.1, 0.07), timber, rot=tilt,
+                  across=False)
+        n_posts = max(1, int((s1 - s0) / 1.6))
+        for i in range(n_posts + 1):
+            post_at.add((round(s0 + (s1 - s0) * i / n_posts, 2), round(z0 + (z1 - z0) * i / n_posts, 3)))
+    for s_, z in post_at:
+        for sgn in (-1, 1):
+            q = at(s_, z) + side * (STAIR_W / 2 + 0.05) * sgn
             ground = height(q.x, q.y)
             foot = min(q.z - 0.3, ground - 0.3)
             piece("post", Vector((q.x, q.y, (q.z + 0.95 + foot) / 2)), (0.1, 0.1, q.z + 0.95 - foot), timber,

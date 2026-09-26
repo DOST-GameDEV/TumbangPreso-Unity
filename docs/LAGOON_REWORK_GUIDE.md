@@ -374,6 +374,10 @@ modules, foliage and terrain). In rough order of impact:
      timber stringers, plank_c treads, posts and handrails both sides, legs to the ground;
      `clear_stair_paths()` removes small stones standing in a flight. The grey stone blocks are
      gone. **Re-read § 1 before building anything new.**
+     Steps are always real size (0.2 m rise, 0.3 m going); a shallow slope becomes flights of
+     at most 8 steps with FLAT landings between (owner: *"some stair steps are too long. if the
+     slope is too low, just do smth like a set of stairs then a flat walkway, then a set of
+     stairs again"*); `stair_profile()`.
    - ⚠️ **TERRAIN TEXTURED** (owner: *"the sand, grass and other terrain is still
      untextured"*): sand_a (soft ripples, tiny pebbles), grass_a (feathered clumps, drawn tuft
      marks), earth_a (the court: packed earth, small embedded stones), 4 m tiles projected
