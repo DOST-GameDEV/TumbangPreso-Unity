@@ -253,6 +253,298 @@ Big. Street-corner big. This is the first thing anyone hears.
 
 ---
 
+## 📋 TABLE E — HERO LINES · each hero's own voice (VOICE-1, 2026-09-24)
+
+**The heroes speak only in the team's own recorded voices** (owner, 2026-09-24, after hearing
+generated voices: *"remove voices u made with ai lets js do humans"*; the stylised babble and the
+synthetic speech were both deleted). Until a line is recorded the hero is silent for it: nothing
+plays, nothing is captioned, nothing holds the room. **A recording plays with no code change**:
+record the line, name it `hvo_<id with dots as underscores>.wav` (the File column), and drop it in
+`Assets/TumbangPreso/Resources/HeroVo/`. Same spec as above: mono, 48 kHz, 24-bit masters, -6 dBFS
+peak.
+
+⚠️ **If a line is wrong for the character, or the Filipino is off, change it** in
+`Packages/com.tumbangpreso.core/Runtime/HeroLines.cs` (the script the game reads) and here. Keep the
+id. Seven words at most; `HeroLinesTests` holds it.
+
+### SEAN
+
+| File | Line | When |
+|---|---|---|
+| `hvo_sean_reply_amihan` | "Then it can go without me." | Round 1, answers (with Amihan) |
+| `hvo_sean_banter_rafi` | "No tricks today, Rafi." | Round 1, opens an exchange (with Rafi) |
+| `hvo_sean_banter_zack` | "Finish one play first, Zack." | Round 1, opens an exchange (with Zack) |
+| `hvo_sean_can_1` | "Tumbang! Counted." | First or late knockdown |
+| `hvo_sean_can_2` | "That's the one." | First or late knockdown |
+| `hvo_sean_lead_1` | "I'm keeping score." | Takes the lead |
+| `hvo_sean_reply_rafi` | "I don't need to. I'll wait." | Round 1, answers (with Rafi) |
+| `hvo_sean_reply_zack` | "I'm counting. You're behind." | Round 1, answers (with Zack) |
+| `hvo_sean_round_1` | "One opening. That's all I need." | Round start, as the taya (odd rounds) |
+| `hvo_sean_round_2` | "Frame's set. Let's play." | Round start, as the taya (odd rounds) |
+| `hvo_sean_skill1_1` | "One clean line." | Casts skill 1 (rests 14 s after) |
+| `hvo_sean_skill1_2` | "That's my opening." | Casts skill 1 (rests 14 s after) |
+| `hvo_sean_skill1_3` | "Straight through!" | Casts skill 1 (rests 14 s after) |
+| `hvo_sean_skill2_1` | "This one counts." | Casts skill 2 (rests 14 s after) |
+| `hvo_sean_skill2_2` | "Lit. Now I wait." | Casts skill 2 (rests 14 s after) |
+| `hvo_sean_skill2_3` | "Hold still for me." | Casts skill 2 (rests 14 s after) |
+| `hvo_sean_tag_1` | "Got you." | Lands a tag |
+| `hvo_sean_tag_2` | "Saw that mistake coming." | Lands a tag |
+| `hvo_sean_tagged_1` | "Tsk. Rushed it." | Gets tagged |
+| `hvo_sean_tagged_2` | "Fine. Next one." | Gets tagged |
+| `hvo_sean_ultally_1` | "Clear the middle! It's coming down!" | Ultimate, heard by the caster's side |
+| `hvo_sean_ultally_2` | "Heads up. Supernova!" | Ultimate, heard by the caster's side |
+| `hvo_sean_ultopp_1` | "Look up." | Ultimate, heard by the other side |
+| `hvo_sean_ultopp_2` | "You waited too long." | Ultimate, heard by the other side |
+| `hvo_sean_win_1` | "Patience wins." | Wins the match |
+| `hvo_sean_win_2` | "Clean game. Good." | Wins the match |
+
+### ZACK
+
+| File | Line | When |
+|---|---|---|
+| `hvo_zack_banter_cheska` | "Didn't plan for this, did you?" | Round 1, opens an exchange (with Cheska) |
+| `hvo_zack_banter_sean` | "Sean, you're slow." | Round 1, opens an exchange (with Sean) |
+| `hvo_zack_can_1` | "Tumbang! Did you see that?" | First or late knockdown |
+| `hvo_zack_can_2` | "Off the angle. Easy." | First or late knockdown |
+| `hvo_zack_lead_1` | "Top of the board. Obviously." | Takes the lead |
+| `hvo_zack_reply_cheska` | "Where's the fun in one?" | Round 1, answers (with Cheska) |
+| `hvo_zack_reply_sean` | "Finishing is the boring part." | Round 1, answers (with Sean) |
+| `hvo_zack_round_1` | "Roof rules. Tara!" | Round start, as the taya (odd rounds) |
+| `hvo_zack_round_2` | "Easy one. Watch this." | Round start, as the taya (odd rounds) |
+| `hvo_zack_skill1_1` | "Try and keep up." | Casts skill 1 (rests 14 s after) |
+| `hvo_zack_skill1_2` | "Later!" | Casts skill 1 (rests 14 s after) |
+| `hvo_zack_skill1_3` | "Gone already." | Casts skill 1 (rests 14 s after) |
+| `hvo_zack_skill2_1` | "Come back here." | Casts skill 2 (rests 14 s after) |
+| `hvo_zack_skill2_2` | "Mine, thanks." | Casts skill 2 (rests 14 s after) |
+| `hvo_zack_skill2_3` | "Get over here, slipper." | Casts skill 2 (rests 14 s after) |
+| `hvo_zack_tag_1` | "Tag! Too easy." | Lands a tag |
+| `hvo_zack_tag_2` | "Should've zigged." | Lands a tag |
+| `hvo_zack_tagged_1` | "Okay, okay. Lucky." | Gets tagged |
+| `hvo_zack_tagged_2` | "That doesn't count." | Gets tagged |
+| `hvo_zack_ultally_1` | "Stay clear, I'm calling it down!" | Ultimate, heard by the caster's side |
+| `hvo_zack_ultally_2` | "Eyes up, it's gonna crackle!" | Ultimate, heard by the caster's side |
+| `hvo_zack_ultopp_1` | "Found your spot." | Ultimate, heard by the other side |
+| `hvo_zack_ultopp_2` | "Thunder's on you." | Ultimate, heard by the other side |
+| `hvo_zack_win_1` | "Tell the neighbours!" | Wins the match |
+| `hvo_zack_win_2` | "Title's coming home." | Wins the match |
+
+### DANTE
+
+| File | Line | When |
+|---|---|---|
+| `hvo_dante_banter_cheska` | "Checked the footing, Cheska?" | Round 1, opens an exchange (with Cheska) |
+| `hvo_dante_can_1` | "Tumbang. Set it up again." | First or late knockdown |
+| `hvo_dante_can_2` | "Right through the middle." | First or late knockdown |
+| `hvo_dante_lead_1` | "Steady now. Stay steady." | Takes the lead |
+| `hvo_dante_reply_cheska` | "It's only bad until it works." | Round 1, answers (with Cheska) |
+| `hvo_dante_reply_rafi` | "Stand still. Watch. That's the lesson." | Round 1, answers (with Rafi) |
+| `hvo_dante_round_1` | "Can's straight. Play fair." | Round start, as the taya (odd rounds) |
+| `hvo_dante_round_2` | "I'll hold this ground." | Round start, as the taya (odd rounds) |
+| `hvo_dante_skill1_1` | "The ground is mine." | Casts skill 1 (rests 14 s after) |
+| `hvo_dante_skill1_2` | "Down you go." | Casts skill 1 (rests 14 s after) |
+| `hvo_dante_skill1_3` | "Hold on to something." | Casts skill 1 (rests 14 s after) |
+| `hvo_dante_skill2_1` | "Move me. Try." | Casts skill 2 (rests 14 s after) |
+| `hvo_dante_skill2_2` | "Not moving." | Casts skill 2 (rests 14 s after) |
+| `hvo_dante_skill2_3` | "Stone holds." | Casts skill 2 (rests 14 s after) |
+| `hvo_dante_tag_1` | "Caught you. Fair and square." | Lands a tag |
+| `hvo_dante_tag_2` | "Slow down, friend." | Lands a tag |
+| `hvo_dante_tagged_1` | "Fair catch." | Gets tagged |
+| `hvo_dante_tagged_2` | "Hm. Good one." | Gets tagged |
+| `hvo_dante_ultally_1` | "Stand back. The ground opens." | Ultimate, heard by the caster's side |
+| `hvo_dante_ultally_2` | "Brace yourselves!" | Ultimate, heard by the caster's side |
+| `hvo_dante_ultopp_1` | "The mountain moves." | Ultimate, heard by the other side |
+| `hvo_dante_ultopp_2` | "You're standing on a fault." | Ultimate, heard by the other side |
+| `hvo_dante_win_1` | "Good game, everyone." | Wins the match |
+| `hvo_dante_win_2` | "Held the ground." | Wins the match |
+
+### CHESKA
+
+| File | Line | When |
+|---|---|---|
+| `hvo_cheska_banter_amihan` | "Benguet's colder. Admit it." | Round 1, opens an exchange (with Amihan) |
+| `hvo_cheska_banter_dante` | "Don't defend a bad spot all day." | Round 1, opens an exchange (with Dante) |
+| `hvo_cheska_banter_zack` | "Pick one route, Zack." | Round 1, opens an exchange (with Zack) |
+| `hvo_cheska_can_1` | "Tumbang. As planned." | First or late knockdown |
+| `hvo_cheska_can_2` | "Easier than it looked." | First or late knockdown |
+| `hvo_cheska_lead_1` | "Ahead. Don't get loud." | Takes the lead |
+| `hvo_cheska_reply_dante` | "Twice. You'll still pick the wrong spot." | Round 1, answers (with Dante) |
+| `hvo_cheska_reply_rafi` | "You won't. I've seen them all." | Round 1, answers (with Rafi) |
+| `hvo_cheska_reply_zack` | "I planned for you improvising." | Round 1, answers (with Zack) |
+| `hvo_cheska_round_1` | "I walked the edges already." | Round start, as the taya (odd rounds) |
+| `hvo_cheska_round_2` | "Sige. Quietly now." | Round start, as the taya (odd rounds) |
+| `hvo_cheska_skill1_1` | "Watch your footing." | Casts skill 1 (rests 14 s after) |
+| `hvo_cheska_skill1_2` | "That route's closed." | Casts skill 1 (rests 14 s after) |
+| `hvo_cheska_skill1_3` | "Careful. It's slippery." | Casts skill 1 (rests 14 s after) |
+| `hvo_cheska_skill2_1` | "Not that way." | Casts skill 2 (rests 14 s after) |
+| `hvo_cheska_skill2_2` | "Take the long way." | Casts skill 2 (rests 14 s after) |
+| `hvo_cheska_skill2_3` | "Wall's up." | Casts skill 2 (rests 14 s after) |
+| `hvo_cheska_tag_1` | "Knew you'd go left." | Lands a tag |
+| `hvo_cheska_tag_2` | "Predictable." | Lands a tag |
+| `hvo_cheska_tagged_1` | "Untidy. But it worked." | Gets tagged |
+| `hvo_cheska_tagged_2` | "Noted." | Gets tagged |
+| `hvo_cheska_ultally_1` | "Stay behind me." | Ultimate, heard by the caster's side |
+| `hvo_cheska_ultally_2` | "Cover your ears. It'll crack." | Ultimate, heard by the caster's side |
+| `hvo_cheska_ultopp_1` | "Every route. Closed." | Ultimate, heard by the other side |
+| `hvo_cheska_ultopp_2` | "Nowhere left to run." | Ultimate, heard by the other side |
+| `hvo_cheska_win_1` | "Who's got the water?" | Wins the match |
+| `hvo_cheska_win_2` | "That went to plan." | Wins the match |
+
+### NEMU
+
+| File | Line | When |
+|---|---|---|
+| `hvo_nemu_banter_phaister` | "Kuro likes your hat." | Round 1, opens an exchange (with Phaister) |
+| `hvo_nemu_can_1` | "Tumbang. Kuro, look." | First or late knockdown |
+| `hvo_nemu_can_2` | "Knew it'd fall." | First or late knockdown |
+| `hvo_nemu_lead_1` | "Oh, we're winning?" | Takes the lead |
+| `hvo_nemu_reply_phaister` | "Mm. Tell me on the walk home." | Round 1, answers (with Phaister) |
+| `hvo_nemu_round_1` | "Oh, are we starting?" | Round start, as the taya (odd rounds) |
+| `hvo_nemu_round_2` | "Kuro says hi." | Round start, as the taya (odd rounds) |
+| `hvo_nemu_skill1_1` | "Hm? I'm not here." | Casts skill 1 (rests 14 s after) |
+| `hvo_nemu_skill1_2` | "Somewhere else, for a bit." | Casts skill 1 (rests 14 s after) |
+| `hvo_nemu_skill1_3` | "Look again." | Casts skill 1 (rests 14 s after) |
+| `hvo_nemu_skill2_1` | "Kuro, your turn." | Casts skill 2 (rests 14 s after) |
+| `hvo_nemu_skill2_2` | "Show me, Kuro." | Casts skill 2 (rests 14 s after) |
+| `hvo_nemu_skill2_3` | "Borrowing your eyes." | Casts skill 2 (rests 14 s after) |
+| `hvo_nemu_tag_1` | "You were going there anyway." | Lands a tag |
+| `hvo_nemu_tag_2` | "Found you." | Lands a tag |
+| `hvo_nemu_tagged_1` | "Oh. I saw that." | Gets tagged |
+| `hvo_nemu_tagged_2` | "Kuro, why didn't you say?" | Gets tagged |
+| `hvo_nemu_ultally_1` | "Stay close to me. He's hungry." | Ultimate, heard by the caster's side |
+| `hvo_nemu_ultally_2` | "Don't wander off now." | Ultimate, heard by the caster's side |
+| `hvo_nemu_ultopp_1` | "Kuro's awake." | Ultimate, heard by the other side |
+| `hvo_nemu_ultopp_2` | "He saw you first." | Ultimate, heard by the other side |
+| `hvo_nemu_win_1` | "Long way home tonight." | Wins the match |
+| `hvo_nemu_win_2` | "Kuro, we won." | Wins the match |
+
+### PHAISTER
+
+| File | Line | When |
+|---|---|---|
+| `hvo_phaister_banter_nemu` | "Nemu! Bet this one surprises you." | Round 1, opens an exchange (with Nemu) |
+| `hvo_phaister_can_1` | "Tumbang! And the crowd goes wild." | First or late knockdown |
+| `hvo_phaister_can_2` | "Ta-da!" | First or late knockdown |
+| `hvo_phaister_lead_1` | "Applause, please." | Takes the lead |
+| `hvo_phaister_reply_nemu` | "Finally, an audience with taste." | Round 1, answers (with Nemu) |
+| `hvo_phaister_round_1` | "Places, please." | Round start, as the taya (odd rounds) |
+| `hvo_phaister_round_2` | "Tonight's trick? Watch closely." | Round start, as the taya (odd rounds) |
+| `hvo_phaister_skill1_1` | "Mark the spot." | Casts skill 1 (rests 14 s after) |
+| `hvo_phaister_skill1_2` | "Step right in." | Casts skill 1 (rests 14 s after) |
+| `hvo_phaister_skill1_3` | "A little trap. Just for you." | Casts skill 1 (rests 14 s after) |
+| `hvo_phaister_skill2_1` | "Now you see me." | Casts skill 2 (rests 14 s after) |
+| `hvo_phaister_skill2_2` | "Over here!" | Casts skill 2 (rests 14 s after) |
+| `hvo_phaister_skill2_3` | "Keep up!" | Casts skill 2 (rests 14 s after) |
+| `hvo_phaister_tag_1` | "Surprise!" | Lands a tag |
+| `hvo_phaister_tag_2` | "You fell for it!" | Lands a tag |
+| `hvo_phaister_tagged_1` | "Rude. I was mid-trick." | Gets tagged |
+| `hvo_phaister_tagged_2` | "Hala. Didn't see that." | Gets tagged |
+| `hvo_phaister_ultally_1` | "Stay out of the circle!" | Ultimate, heard by the caster's side |
+| `hvo_phaister_ultally_2` | "Places, everyone! Curtain's up!" | Ultimate, heard by the caster's side |
+| `hvo_phaister_ultopp_1` | "The moon goes dark." | Ultimate, heard by the other side |
+| `hvo_phaister_ultopp_2` | "You walked into my circle." | Ultimate, heard by the other side |
+| `hvo_phaister_win_1` | "And that's the show." | Wins the match |
+| `hvo_phaister_win_2` | "Encore? Maybe." | Wins the match |
+
+### RAFI
+
+| File | Line | When |
+|---|---|---|
+| `hvo_rafi_reply_amihan` | "Then blow harder." | Round 1, answers (with Amihan) |
+| `hvo_rafi_banter_cheska` | "Bet I get one past you." | Round 1, opens an exchange (with Cheska) |
+| `hvo_rafi_banter_dante` | "Dante, teach me how you stand." | Round 1, opens an exchange (with Dante) |
+| `hvo_rafi_banter_sean` | "Bet you can't read this throw." | Round 1, opens an exchange (with Sean) |
+| `hvo_rafi_can_1` | "Tumbang! Simple shot, see?" | First or late knockdown |
+| `hvo_rafi_can_2` | "Grabe, that bounced nice." | First or late knockdown |
+| `hvo_rafi_lead_1` | "Out in front. Don't copy me." | Takes the lead |
+| `hvo_rafi_reply_sean` | "Then watch really closely." | Round 1, answers (with Sean) |
+| `hvo_rafi_round_1` | "Strap fixed. Let's play." | Round start, as the taya (odd rounds) |
+| `hvo_rafi_round_2` | "I've got an idea." | Round start, as the taya (odd rounds) |
+| `hvo_rafi_skill1_1` | "Bet you didn't see that bend." | Casts skill 1 (rests 14 s after) |
+| `hvo_rafi_skill1_2` | "Ride the current." | Casts skill 1 (rests 14 s after) |
+| `hvo_rafi_skill1_3` | "Little curve for you." | Casts skill 1 (rests 14 s after) |
+| `hvo_rafi_skill2_1` | "Which one's me?" | Casts skill 2 (rests 14 s after) |
+| `hvo_rafi_skill2_2` | "Wrong Rafi!" | Casts skill 2 (rests 14 s after) |
+| `hvo_rafi_skill2_3` | "Follow the splash." | Casts skill 2 (rests 14 s after) |
+| `hvo_rafi_tag_1` | "Told you to watch the feet." | Lands a tag |
+| `hvo_rafi_tag_2` | "Gotcha! No hard feelings." | Lands a tag |
+| `hvo_rafi_tagged_1` | "Okay, fair. Good read." | Gets tagged |
+| `hvo_rafi_tagged_2` | "Overplayed it. Again." | Gets tagged |
+| `hvo_rafi_ultally_1` | "Wave coming! Grab something!" | Ultimate, heard by the caster's side |
+| `hvo_rafi_ultally_2` | "Get behind me, it's big!" | Ultimate, heard by the caster's side |
+| `hvo_rafi_ultopp_1` | "Tide's coming in." | Ultimate, heard by the other side |
+| `hvo_rafi_ultopp_2` | "Hope you can swim." | Ultimate, heard by the other side |
+| `hvo_rafi_win_1` | "Ayos! Good game, all." | Wins the match |
+| `hvo_rafi_win_2` | "Next time, bring a boat." | Wins the match |
+
+### AMIHAN
+
+Her skills are placeholders (2026-09-25): the skill and ultimate lines may change when her
+kit is designed, so record the round, tag, knockdown, lead and win lines first.
+
+| File | Line | When |
+|---|---|---|
+| `hvo_amihan_banter_rafi` | "Your current needs my wind." | Round 1, opens an exchange (with Rafi) |
+| `hvo_amihan_banter_sean` | "Sean, the wind won't wait!" | Round 1, opens an exchange (with Sean) |
+| `hvo_amihan_can_1` | "Tumbang! Straight from Vigan!" | First or late knockdown |
+| `hvo_amihan_can_2` | "That one flew!" | First or late knockdown |
+| `hvo_amihan_lead_1` | "Ahead of the wind now!" | Takes the lead |
+| `hvo_amihan_reply_cheska` | "Vigan's windier. Admit that." | Round 1, answers (with Cheska) |
+| `hvo_amihan_round_1` | "Kalesa's gone. Court's open!" | Round start, as the taya (odd rounds) |
+| `hvo_amihan_round_2` | "Let's keep it moving!" | Round start, as the taya (odd rounds) |
+| `hvo_amihan_skill1_1` | "Out of my way!" | Casts Quick Dash, her signature (rests 14 s after) |
+| `hvo_amihan_skill1_2` | "Catch me, if you can." | Casts Quick Dash, her signature (rests 14 s after) |
+| `hvo_amihan_skill1_3` | "No waiting. Go!" | Casts Quick Dash, her signature (rests 14 s after) |
+| `hvo_amihan_skill2_1` | "Up we go!" | Casts Updraft, attacking (rests 14 s after) |
+| `hvo_amihan_skill2_2` | "Better view from here." | Casts Updraft, attacking (rests 14 s after) |
+| `hvo_amihan_skill2_3` | "Watch the sky, taya." | Casts Updraft, attacking (rests 14 s after) |
+| `hvo_amihan_skill2d_1` | "Sweep the lane!" | Casts Whirlwind, defending (rests 14 s after) |
+| `hvo_amihan_skill2d_2` | "Drop it. Now." | Casts Whirlwind, defending (rests 14 s after) |
+| `hvo_amihan_skill2d_3` | "Hands off my court." | Casts Whirlwind, defending (rests 14 s after) |
+| `hvo_amihan_tag_1` | "Too slow, manong!" | Lands a tag |
+| `hvo_amihan_tag_2` | "Caught you thinking." | Lands a tag |
+| `hvo_amihan_tagged_1` | "Hala, I rushed it." | Gets tagged |
+| `hvo_amihan_tagged_2` | "Okay, okay. Your point." | Gets tagged |
+| `hvo_amihan_ultally_1` | "Storm's coming. Get behind me!" | Storm Surge, heard by the caster's side |
+| `hvo_amihan_ultally_2` | "Stay clear of the wind!" | Storm Surge, heard by the caster's side |
+| `hvo_amihan_ultopp_1` | "Hold onto your slippers." | Storm Surge, heard by the other side |
+| `hvo_amihan_ultopp_2` | "Amihan season came early." | Storm Surge, heard by the other side |
+| `hvo_amihan_win_1` | "Salamat! Come visit Vigan!" | Wins the match |
+| `hvo_amihan_win_2` | "Good game! Empanada's on me." | Wins the match |
+
+### PAETE
+
+The ninth hero (HERO-9). Calm, few words, a little amused by everyone else's panic: a low,
+unhurried voice, never shouted, even on the ultimate. Human voices only.
+
+| File | Line | When |
+|---|---|---|
+| `hvo_paete_can_1` | "Tumbang. Slowly, but tumbang." | First or late knockdown |
+| `hvo_paete_can_2` | "Timber." | First or late knockdown |
+| `hvo_paete_lead_1` | "Still growing." | Takes the lead |
+| `hvo_paete_round_1` | "No rush." | Round start, as the taya (odd rounds) |
+| `hvo_paete_round_2` | "The mountain waited longer than this." | Round start, as the taya (odd rounds) |
+| `hvo_paete_skill1_1` | "Kapit." | Casts Liana Leap, his signature (rests 14 s after) |
+| `hvo_paete_skill1_2` | "I'll be right there." | Casts Liana Leap, his signature (rests 14 s after) |
+| `hvo_paete_skill1_3` | "The vines know the way." | Casts Liana Leap, his signature (rests 14 s after) |
+| `hvo_paete_skill2_1` | "Grow." | Casts Bakya Bloom, attacking (rests 14 s after) |
+| `hvo_paete_skill2_2` | "Aim for the can, little one." | Casts Bakya Bloom, attacking (rests 14 s after) |
+| `hvo_paete_skill2_3` | "It throws better than you." | Casts Bakya Bloom, attacking (rests 14 s after) |
+| `hvo_paete_skill2d_1` | "That's mine now." | Casts Thorn Harvest, defending (rests 14 s after) |
+| `hvo_paete_skill2d_2` | "Eat the fruit. Leave it here." | Casts Thorn Harvest, defending (rests 14 s after) |
+| `hvo_paete_skill2d_3` | "Nothing leaves the mountain." | Casts Thorn Harvest, defending (rests 14 s after) |
+| `hvo_paete_tag_1` | "Found you." | Lands a tag |
+| `hvo_paete_tag_2` | "Too loud, little bird." | Lands a tag |
+| `hvo_paete_tagged_1` | "Hm. Fair." | Gets tagged |
+| `hvo_paete_tagged_2` | "I'll grow back." | Gets tagged |
+| `hvo_paete_ultally_1` | "Stay out of the roots!" | Makiling's Embrace, heard by the caster's side |
+| `hvo_paete_ultally_2` | "Step back. The forest is waking." | Makiling's Embrace, heard by the caster's side |
+| `hvo_paete_ultopp_1` | "Dito ka muna." | Makiling's Embrace, heard by the other side |
+| `hvo_paete_ultopp_2` | "The mountain keeps what it catches." | Makiling's Embrace, heard by the other side |
+| `hvo_paete_win_1` | "Good game. Come climb Makiling." | Wins the match |
+| `hvo_paete_win_2` | "Salamat. Now, rest." | Wins the match |
+
+---
+
 ## ✅ UNBLOCKED — these used to be on a "do not record" list
 
 ⚠️ **This section said to hold these back because 📋 `build rules` was about to turn single

@@ -30,5 +30,21 @@ namespace TumbangPreso.EditorTools
             var profile=AssetDatabase.LoadAssetAtPath<WorldLookProfile>("Assets/TumbangPreso/Resources/WorldLookProfile.asset");
             profile.ShadowLevel=.44f;EditorUtility.SetDirty(profile);AssetDatabase.SaveAssetIfDirty(profile);
         }
+
+        public static void ApplyRooftopHaze()
+        {
+            Ensure();
+            var profile=AssetDatabase.LoadAssetAtPath<WorldLookProfile>("Assets/TumbangPreso/Resources/WorldLookProfile.asset");
+            var roof=profile.Find("SaBubong");
+            if(roof==null)throw new System.InvalidOperationException("The authored profile has no SaBubong look.");
+            var defaults=ScriptableObject.CreateInstance<WorldLookProfile>();
+            var selected=defaults.Find("SaBubong");
+            // Update just this measured choice. Other authored map/style values
+            // must survive instead of being replaced with the fallback profile.
+            roof.FogStart=selected.FogStart;roof.FogEnd=selected.FogEnd;
+            Object.DestroyImmediate(defaults);EditorUtility.SetDirty(profile);AssetDatabase.SaveAssetIfDirty(profile);
+            Debug.Log($"Authored SaBubong haze {roof.FogStart}-{roof.FogEnd}m; other profile values retained.");
+            EditorApplication.Exit(0);
+        }
     }
 }

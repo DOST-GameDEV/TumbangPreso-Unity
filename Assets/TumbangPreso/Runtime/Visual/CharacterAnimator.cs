@@ -226,7 +226,21 @@ namespace TumbangPreso.Visual
             { "hero-rafi-cut", new[] { "hero-rafi-cut", "interact-left" } },
             { "hero-rafi-feint", new[] { "hero-rafi-feint", "attack-melee-right" } },
             { "hero-rafi-breakwater", new[] { "hero-rafi-breakwater", "holding-both-shoot" } },
+            { "hero-amihan-dash", new[] { "hero-amihan-dash", "attack-kick-right", Sprint } },
+            { "hero-amihan-updraft", new[] { "hero-amihan-updraft", Jump } },
+            { "hero-amihan-whirlwind", new[] { "hero-amihan-whirlwind", "attack-melee-left" } },
+            { "hero-amihan-storm", new[] { "hero-amihan-storm", "holding-both-shoot" } },
+            // PAETE (2026-09-25). His own clips first (baked by `PaeteMotionAuthor`), then the
+            // nearest base clip so a cast is never a freeze.
+            { "hero-paete-vine", new[] { "hero-paete-vine", "holding-both-shoot" } },
+            { "hero-paete-sprout", new[] { "hero-paete-sprout", "attack-melee-right" } },
+            { "hero-paete-command", new[] { "hero-paete-command", "attack-melee-right" } },
+            { "hero-paete-thorns", new[] { "hero-paete-thorns", "attack-kick-right" } },
+            { "hero-paete-sentry", new[] { "hero-paete-sentry", "holding-both-shoot" } },
         };
+
+        /// <summary>Amihan's flight pose, held while `CharacterMotor.IsFlying` (Updraft).</summary>
+        public const string AmihanHover = "hero-amihan-hover";
 
         [SerializeField] private float _blend = 0.12f;
 
@@ -323,6 +337,8 @@ namespace TumbangPreso.Visual
             UI.ModelPreview.EnsureAvatar(_animator);
 
             CacheClips(model, clips);
+            // Whose walk and run this body gets (`GaitStyles`), chosen before the gait layer calibrates its cadence.
+            ResolveGaitStyle(model);
 
             if (_clips.Count == 0)
             {
@@ -448,6 +464,10 @@ namespace TumbangPreso.Visual
             var recovery=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(RecoveryMotion.Folder+"/"+rig);
             if(recovery!=null&&recovery.Clips!=null)
                 foreach(var clip in recovery.Clips)if(clip!=null)_clips[clip.name]=clip;
+            // Paete's kit (HERO-9): the struggle against his roots and the heave on his seedling, on every rig.
+            var rooted=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(RootedMotion.Folder+"/"+rig);
+            if(rooted!=null&&rooted.Clips!=null)
+                foreach(var clip in rooted.Clips)if(clip!=null)_clips[clip.name]=clip;
 
 #if UNITY_EDITOR
             if (!_clips.ContainsKey(DanceClip.ClipName))
@@ -539,6 +559,7 @@ namespace TumbangPreso.Visual
             // A player tripped mid-throw must be on the tarmac, not finishing the throw.
             if (StepEdgeRecoveryPose()) return;
             if (StepTripPose()) return;
+            if (StepRootedPose()) return;
 
             // Sample the retained cast against the actual leap/landing clock. This
             // cannot create a hit; the motor and ability remain the contact owners.
@@ -644,9 +665,12 @@ namespace TumbangPreso.Visual
             _walkReference=2.8f; _runReference=5.4f;
             if(reach>.05f && reach<1.5f)
             {
-                // One stance crosses 2*reach*sin(swing); two stances form a cycle.
-                _walkReference=4f*reach*Mathf.Sin(WalkLegSwingDegrees*Mathf.Deg2Rad)/Mathf.Max(.05f,walk.length);
-                _runReference=4f*reach*Mathf.Sin(RunLegSwingDegrees*Mathf.Deg2Rad)/Mathf.Max(.05f,run.length);
+                // One stance crosses reach*(sin forward + sin back); two stances form a cycle. ⚠️ The swing is the BODY's own
+                // (`GaitStyles`, since 2026-09-27), because the legs are posed from it: a short-stepping Nemu at a shared
+                // cadence would slide her feet, a long-striding Paete would moonwalk.
+                var style=_gaitStyle??GaitStyles.Custom;
+                _walkReference=style.CycleMetres(reach,0f)/Mathf.Max(.05f,walk.length);
+                _runReference=style.CycleMetres(reach,1f)/Mathf.Max(.05f,run.length);
             }
             _walkCycleMetres=_walkReference*walk.length;
             _runCycleMetres=_runReference*run.length;
@@ -814,6 +838,11 @@ namespace TumbangPreso.Visual
             if (_chargePosing) return _motor.HoldingSlipper ? HoldingRight : Idle;
 
             if(_motor.IsSwimming)return SwimmingMotion.Clip(SwimmingMotion.ForwardStroke(_motor),_motor.HoldingSlipper);
+
+            // ⚠️ FLYING IS NOT FALLING. Updraft holds her 2.8 m up for ten seconds; the fall clip for
+            // that long reads as a body dropping that never lands. A kit whose rig has no flight
+            // pose (every other hero) never flies, so the old answer is untouched for them.
+            if (_motor.IsFlying && _clips.ContainsKey(AmihanHover)) return AmihanHover;
 
             if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
 
@@ -1128,7 +1157,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void PlayAction(string action, string viewmodelAction)
         {
-            if (action == "grab") NoteResetGesture();
+            bool raising = action == "grab" && NoteResetGesture();
             NoteTag(action);
             if (_introductionAbility != null && action != _introductionAbility.CastAction) ClearIntroductionPose();
             // ⚠️⚠️ THE FIRST-PERSON ARM IS DRIVEN FROM HERE, AND FROM NOWHERE ELSE.
@@ -1167,6 +1196,16 @@ namespace TumbangPreso.Visual
                 _throwReleaseFrom=ThrowGesture.Pose.Apply(_throwCarryBasis,releaseFrom);
                 _throwReleaseSpin=ThrowGesture.Spin(action);_throwReleaseTime=0;
                 _oneShotLeft=ThrowGesture.ReleaseSeconds;
+            }
+            else if (action == "grab" && raising)
+            {
+                // ⚠️⚠️ A RAISE DOES NOT REPLAY `pick-up` (2026-09-26). The channel relays a `grab`
+                // every 0.4 s, and each one restarted the 0.33 s one-shot UNDER the raise pose: the
+                // captured torso went 87, 42, 83 degrees and back, a bob on every relay, which is
+                // the very thing the owner asked to replace with a crouch and a lift
+                // (`CanRaiseShape`). The procedural raise owns the body for the whole channel.
+                _oneShotLeft = 0;
+                _throwReleaseTime = -1;
             }
             else
             {
@@ -1356,6 +1395,71 @@ namespace TumbangPreso.Visual
             Blend();
             HoldLastFrame();
             return true;
+        }
+
+        // ------------------------------------------------------------------ PAETE'S KIT, ON ANY BODY
+
+        private float _heaveProgress, _stumbleLeft;
+        private bool _wasRooted;
+        private bool _rootedPose;
+
+        /// <summary>
+        /// ⚠️ TWO POSES ANY BODY TAKES AGAINST PAETE'S KIT (HERO-9), READ OFF THE MOTOR SO EVERY PEER
+        /// DRAWS THEM: `IsStruggling` (holding Interact while Rooted) loops `rooted-struggle`, and
+        /// `PullingPlantProgress` SCRUBS `plant-heave` so the body is exactly as far into the pull as
+        /// the ring says. When a pull completes the rest of the clip (the stumble back) plays at speed.
+        ///
+        /// ⚠️ A ONE-SHOT WINS. A rooted player can still throw and cast (owner: *"theyre js
+        /// rooted"*), and the throw must not be swallowed by the struggle loop.
+        /// </summary>
+        private bool StepRootedPose()
+        {
+            if (_motor == null) return false;
+            // ⚠️ FEARED (ABILITY-2): the panicked run loops for as long as the status runs; a one-shot
+            // (the drop, a hit reaction) still wins.
+            if (_motor.IsFeared && _oneShotLeft <= 0f && _clips.ContainsKey(RootedMotion.Feared))
+            {
+                Play(RootedMotion.Feared, true);
+                _rootedPose = true; Blend(); HoldLastFrame(); return true;
+            }
+            // ⚠️ BREAKING OUT (direction.md section 5.6): the step the roots let go, the body plays its
+            // own break-out once, on every peer, off the replicated Rooted state. A tag keeps the tag's
+            // reaction, so it is not played over a tagged body.
+            bool rooted = _motor.IsRooted;
+            if (_wasRooted && !rooted && !_motor.IsTagged && _clips.ContainsKey(RootedMotion.Breakout))
+            { _wasRooted = false; _rootedPose = false; PlayOneShot(RootedMotion.Breakout); return false; }
+            _wasRooted = rooted;
+            float pull = _motor.PullingPlantProgress;
+            if (pull <= 0f && _heaveProgress >= .95f && _clips.ContainsKey(RootedMotion.Heave))
+                _stumbleLeft = ClipLength(RootedMotion.Heave) - RootedMotion.HeaveScrubSeconds;
+            _heaveProgress = pull;
+            if (_oneShotLeft > 0f) { _rootedPose = false; return false; }
+            if (pull > 0f && _clips.ContainsKey(RootedMotion.Heave))
+            {
+                if (_current != RootedMotion.Heave) Play(RootedMotion.Heave, false, true);
+                var front = Front(); if (front.IsValid()) { front.SetSpeed(0); front.SetTime(RootedMotion.HeaveScrubSeconds * Mathf.Clamp01(pull)); }
+                _rootedPose = true; Blend(); HoldLastFrame(); return true;
+            }
+            if (_stumbleLeft > 0f && _current == RootedMotion.Heave)
+            {
+                _stumbleLeft -= Time.deltaTime;
+                var front = Front(); if (!front.IsValid()) { _stumbleLeft = 0f; return false; }
+                front.SetSpeed(1);
+                if (front.GetTime() < RootedMotion.HeaveScrubSeconds) front.SetTime(RootedMotion.HeaveScrubSeconds);
+                Blend(); HoldLastFrame(); return true;
+            }
+            _stumbleLeft = 0f;
+            // ⚠️⚠️ A ROOTED BODY STRAINS ALL THE TIME, NOT ONLY WHILE ITS PLAYER HOLDS THE BUTTON (owner, 2026-09-26:
+            // *"they look like theyre js standing"*, *"animate taht shit"*). Idle, the struggle loop runs at 0.45 speed:
+            // a slow tug at the bands, the body testing the hold; fighting (Interact held), it runs at 1.25, hard.
+            if (_motor.IsRooted && _clips.ContainsKey(RootedMotion.Struggle))
+            {
+                Play(RootedMotion.Struggle, true);
+                var front = Front(); if (front.IsValid()) front.SetSpeed(_motor.IsStruggling ? 1.25f : 0.45f);
+                _rootedPose = true; Blend(); HoldLastFrame(); return true;
+            }
+            if (_rootedPose) { _rootedPose = false; _current = null; }
+            return false;
         }
 
         private float _recoveryEntered,_recoveryProgress;

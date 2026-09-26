@@ -1,50 +1,296 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: close bot fixes, then visible map/light findings
+## Room lifecycle and current hero UI, 2026-09-27 (ASTRAReworks)
 
-Overall goal ACTIVE, NOT done. DEV and QUAL baseline273e5e669, published and
-remote-verified. AGENTS cleanup dc10b68f2 and SaBubong bird placement57cf74a9c
-published. All21 ambient actors have local map/species placement coverage, with
-ordinary-camera/replay/combined qualification still open.
+Verified batch from `04886cc4`: cancelled host/join work cannot revive an older room or stop its
+successor; queued joins wait for an assigned seat and preserve failure reasons. Native HUD now
+shows rooted escape and plant-pull bindings/progress, with keyboard, pad and touch paths. Real
+abilities have distinct glyphs; placeholders show unavailable state. Reused UI symbols refresh
+their mesh/material; Amihan and Paete avatars import as sprites instead of falling back to Dante.
 
-Bot production fixes:5de3a78f3 reaction timing (red reproduction, then3/3 native),
-043cf804c chase patience (focused case plus Ilalim3/3). Current uncommitted change:
-per-seat pektus/lunge decisions consistently use EffectiveDifficulty, published
-in273e5e669. Existing rule checks/compile3/3 in0.121s. Known churn backed up
-and restored. Original
-DEV composition PNG metas remain untouched.
+Fresh evidence: Core 658/658; presentation 24/24; session lifecycle 11/11; native interaction
+3/3 after one fixture repair; pending-join 1/1; avatar/symbol 2/2; selector 1/1 across the roster
+and text sizes. Native prompt and selector frames inspected. The first rooted test failed because
+synthetic input devices were disabled; the single repaired retry passed actual held-input progress.
+Published-source candidate: local batch `45c2217`, shared-branch merge `577c1a95` (incoming
+`c3977bb4`). Post-merge graphics-enabled EditMode 37/37 and native three-device rooted case
+1/1 pass; previous receipts retain their original revision identity.
+[Exact receipts and limits](reports/stability-2026-09-27/validation.md),
+[implementation](reports/stability-2026-09-27/implementation.md),
+[icons](reports/stability-2026-09-27/skill-icons.md),
+[menu findings](reports/stability-2026-09-27/menu-qa.md).
 
-Initial ordinary1x samples now cover four bots in both modes on all five maps.
-No broad AFK or full-role/roster/tier completion claim. Exact evidence and limits:
-reports/map-by-map-refinement-2026-09-23/bot-map-coverage/report.md.
-Bot recovery fixture failed twice BEFORE handoff, last at(16.92,-2.01,16.38), not
-the intended outer bridge lip. Existing ExerciseEdge sets camera follow/movement
-aim too; the draft omitted that input-basis setup. Fixture allowance1/1 exhausted.
-Exact draft/failures retained in the report directory, original compiled
-LagoonRecoveryProbe restored. Do not reopen fixture polishing during feature work.
-Full role/roster/tier and actual bot recovery remain actionable final gates.
+This does not establish live Relay, real-peer reconnect, physical-device qualification or measured
+performance improvements. No new player build or Desktop replacement. Next: integrate incoming
+shared-branch changes as they arrive, reconcile the remaining current-kit regression contracts, then continue
+the remaining owner QA, general performance and assigned hero presentation. All animation/model
+work in this batch: none; the seven icon drawings and their rationale are in the icon report.
 
-Current integration: tracked lighting branch advanced to a28037622 (aba9b9d51
-adds optional CastInkFloor, default0, and native source comparison images).
-DEV merge is IN PROGRESS, not committed. One WorldLookPresentation conflict
-resolved: preserve our explicit-sun/preview API and cached restoration behavior,
-add the new per-camera InkFloor capture/set/restore. QUAL has only four changed
-source/test inputs copied. Guarded new floor-choice case is running; no .cs edits.
-Logs/light-hull-integration-v1.xml/.log and frames in the same named directory.
-Job3010 reaped: native floor-choice1/1 passed in19.144s. Source and actual Windows
-comparison sheets/grey inspected; default0 retained. Report at
-reports/lighting-integration-2026-09-24/hull-floor/report.md. Known churn backed
-up/restored, no active Unity job. Finish the merge commit and push, then inspect
-existing high-preview map evidence for a concrete remaining weakness. Fixture0/1.
+## Per-character walk and run, 2026-09-27 (worktree `TumbangPreso-Unity-ASTRAReworks`, branch ASTRAReworks)
 
-Then outstanding visible map/light findings in LIGHT-1.6 and individual map
-parents. Choose a concrete weak area and save its local plan. Preserve bright
-readable lighting and successful art;
-no gratuitous global darkening or completed HUD redesign. Final coherent native/
-peer/replay/performance/build checks remain2.10/P7, not intermediate builds.
-New character/ability/ultimate animation direction belongs to the owner-run cloud
-lane. Its branch is present on origin; do not merge unfinished work or contact a
-conversation. Preserve all older tasks. No phase checkpoint ends this goal.
+The owner rejected the cast-wide walk (*"walk is fucking ugly"*, *"everyones arms are floating and not even attached right"*,
+*"do it one by oen dont generate the same one for all"*) and made it a rule: never stamp one change across the whole cast
+(CLAUDE.md section 0, AGENTS.md). Built: `Runtime/Visual/GaitStyles.cs`, one hand-written walk and run per body from its lore,
+drawn from the bind pose by `CharacterAnimator.LocomotionArms.cs` (the shoulder never moves; the shared clips' lean no longer
+leaks under it); cadence per character with a capped slide (`Gait.Glide`, 1.1 to 1.63). Evidence: `Logs/gait-v7` (every body,
+walk and run, front, side, three-quarter), per-character clips `Logs/walk-share/gait_v7_<body>.mp4`, cadence table
+`Logs/gait-cadence.csv`. State and next steps: `docs/TODO.md` ASKS-0926, the NEWEST row.
+
+## Cloud session with a real Unity editor, 2026-09-26 (branch ASTRAReworks)
+
+Unity 6000.5.8f1 now runs in cloud sessions: `tools/cloud_unity_setup.sh` installs it to `/opt/tump/unity` and activates a
+Personal licence from `UNITY_EMAIL` / `UNITY_PASSWORD` (Unity's licensing client, `--activate-ulf --include-personal`);
+`tools/run_unity_guarded.py` adds the virtual display (xvfb, Mesa llvmpipe) and `-buildTarget Linux64` on Linux. Measured:
+first import about 6 min, a 13.5 s two-view 1280x720 film about 5 min. Done: the four ReworkProps metas, the COMING SOON
+placeholder in three gesture tests, the Paete film rig (a human was casting his skills; `paete_skills_v2.mp4` sent).
+In flight, in this order: THORN HARVEST placed where he looks, LIANA LEAP's first person as his own arms, then Amihan's
+second pass (`docs/reports/amihan-kit-2026-09-26/`: plan, research from the game's own preview clips, cutscene direction).
+**Every ask of this session, with its state, is `docs/TODO.md` ASKS-0926** (owner: *"pls log all todo i asked u for when i go
+to diff session"*): the QA relay fix (awaiting a tester), Paete's E (recast gate, outside the box), the tansan grant (needs a UGS
+deploy, and a revert before release), Paete's preview size, the interact prompt, the walk's arms, and Amihan's whole pass.
+
+**State at this session's hand-off (2026-09-26, cloud):** pushed `6dea8556` (QA relay guard, Paete E recast gate and
+outside-box plant, placed thorns, first-person vine bend, CODE colon, tansan grant, Amihan film probe), `76e0fb54` (per-body arm
+fit, `WalkArmsProbe`), then the gait second pass (arms hanging flush beside the torso, foot plant, lean and weight roll, walk
+clip tool). Evidence folders are cloud-only (`Logs/cloud5` to `Logs/cloud9`). Next, in the owner's order: ASKS-0926 row 1 (the
+Amihan and Rafi remodel), then the rest of ASKS-0926 newest first. Paete's size: the plan in its ASKS-0926 row (grow the body in
+play and frame the previews against a shared reference so a taller hero reads taller); nothing is built for it yet.
+
+## HERO-9 Paete, Unity pass on the cloud work, 2026-09-26 (worktree `TumbangPreso-Unity-paete`, pushes to ASTRAReworks)
+
+Owner: Paete first, and *"I WANT THIS TO BE THE BASELINE QUALITY OF EVERYTHING ELSE MOVING FORWARD"*. Every cloud
+piece is placeholder plus planning. Done and filmed: the plants in engine, the ult sound re-timed, the in-match ultimate
+film with sound (`paete_ultimate_v3.mp4`, sent), bots measured, the arm-audit red. The owner rejected the cutscene's
+direction, Makiling's look and the live tree after v3; the redirect is direction.md 5.12 and TODO HERO-9's REDIRECTED row
+(what is in source and what is not). Next: finish the three-shot re-author, refilm, send v4.
+
+## ABILITY-2 roster rework and Paete plants, 2026-09-26 (cloud session, no Unity)
+
+Plans: `docs/reports/ability-rework-2026-09-26/plan.md` (tables verbatim, owner answers, numbers set
+here in section 7, order in section 6) and `ultimates.md`; Paete plants `direction.md` 5.11. Cloud box
+runs Core.Tests (.NET 9) and the Python builders only; every Unity-side claim is owed to the testing
+chat. Done here: plans (`plan.md`, `ultimates.md`, `cast-preview.md`), Paete's pitcher and rattan (builder,
+glbs, bodies), Core statuses 6 to 9 and `RosterReworkRules`, skill tree off (`SidegradesOpen`), Core
+649/649. Next: motor statuses and immunity with `SyncUnit` fields, then kits in plan order, then CAST-1.
+
+## HERO-9 Paete lane, 2026-09-26 (worktree `TumbangPreso-Unity-paete`, branch `paete-hero`, pushes to ASTRAReworks)
+
+Owner-directed Paete work: modelled trees, the woven binding and break-out, Mariang Makiling's ghost
+in the ultimate's cutscene, the ground-called ultimate, renames and lore, bulky first-person arms. The
+open list, in order, is TODO HERO-9 (the "NEXT" row is the attacker and defender plants as their own
+species). Direction: `docs/reports/paete-kit-2026-09-25/direction.md` section 5. Commits and test
+results are in the HERO-9 rows; protected composition metas and ProjectSettings churn stay unstaged.
+
+## Current resume, 2026-09-25: local skill tree verified, continue gameplay work
+
+Owner asleep; autonomous work continues with NO USAGE RESETS, credit spend or
+paid services. DEV/remote/QUAL verified at a8291c76c after Ignition Cannon's
+small impact; report under cloud-integration-2026-09-24/skill-fx/.
+Supernova's staged dome remains translucent with the can readable, but an
+actual player overlap is still needed. Hex already has four standing marks,
+and Kuro's7.4scale was explicitly approved over5.6 by the owner; do not
+shrink Kuro from a close showcase frame. Both remain in their live gates.
+
+SkillTree's native HOME-door and BACK route passed1/1 before in42.053s and
+1/1 after in36.207s. Five actual viewports were captured each time; no
+layout collision observed. Open alternate tiles read UNLOCKED. The mastery
+line exposed "every branch open for testing" to players, so the scoped source
+edit removes that phrase in open mode only; locked mode retains its earning
+instruction. Report, XML, before/after images and 25percent greyscale live
+under reports/cloud-integration-2026-09-24/skill-tree/. Pad/touch hardware,
+real progression, LoadoutSurfaceProbe and TumpNativePickerTests remain open.
+Publish this unit, align QUAL, then resume actionable skill/cast and older
+gameplay/map gates one at a time. Protected DEV composition PNG metas remain
+dirty and must never be staged or restored.
+
+## Published unit, 2026-09-25: Supernova and remaining skill effects
+
+Owner asleep: continue autonomously and NEVER use a usage reset, credit or paid
+service. DEV/remote/QUAL last published at5b4f69489; Ignition Cannon work is
+currently dirty in DEV and QUAL and must be published without protected DEV
+composition PNG metas. No Unity run in flight.
+
+SKILL-FX-1 progress: Flame Rush v59 eye/corridor/grey inspected and geometry
+retained, report in cloud-integration-2026-09-24/skill-fx/flame-rush-read.md.
+Ignition Cannon was previously generic Slipper impact. A small separate style
+now preserves radius2.6, knockback13, stun1.4 and neutral element, leaves
+ordinary slipper/Supernova untouched. The v60 floor-only cue was too small at
+eye height; v61 short ember reads; v62/v63 tapered tongues were still thin.
+Final SOURCE selects v61's runtime shape and reserves image versionv64 to avoid
+overwriting evidence. Actual same-camera/grey comparisons and limits:
+cloud-integration-2026-09-24/skill-fx/ignition-impact.md. V60-v63 guarded
+Editor showcases exited0; raw images/failed candidates and churn backups stay
+in QUAL Logs. One accidental unchanged-source v59 run is documented and not
+counted as a new design check. No broad gameplay suite or new player build.
+
+Next: fetch, stage only scoped source/docs/evidence, commit/push with M4tyu633
+and verify remote; align QUAL by byte-normalized comparison, named stash and
+detach published SHA. Then inspect Supernova's large dome with player/lata
+visibility during real overlap before deciding an art change. Continue the
+remaining skills one by one, then older actionable maps/bots/UI/peers/P7. Keep
+all TODO parents open while their live/mix/network gates remain.
+
+## Published unit, 2026-09-24: Sean's parol read
+
+Owner requested autonomous quality work and NO USAGE RESETS while asleep.
+No credit redemption, paid service or cross-chat work. DEV/remote/QUAL at
+7727c1f45 after the FPP grip correction. The grip unit is published with native
+owner/body sequences and3/3 focused checks in reports/cloud-integration-2026-09-24/
+throw-clearance/report.md. No pending Unity process from it. Synthetic head test
+remains red but real-input Bayan spin.75 and1 with largest slipper stayed clear;
+do not change healthy body motion to make that fixture green.
+
+Sean's crafted-parol local unit is ready to publish: the cloud-intake baseline
+lost its orange frame against the shirt/horizon. Pale warm0.016m sticks,
+dark-ember inner flame and slightly larger/forward shape now read at the same
+native close camera and25percent grey. Face is clear. Existing guarded native
+intro study1/1 in32.88192s; one variant retained. Proof:
+reports/cloud-integration-2026-09-24/sean-parol/report.md.
+Publish/align QUAL, then continue cloud skill VFX/SFX first, one real weak skill
+at a time from the per-skill plan. Keep older queue open. Do not rerun this
+passing introduction case unchanged.
+
+## Published unit, 2026-09-24: real throw clearance defects
+
+Owner confirmed this turn runs GPT-6 Sol and asked for real product fixes over
+verification loops. The owner is sleeping; NEVER use a usage reset,
+credit redemption or paid service. Keep working autonomously without questions. The cloud branch plus local repairs were merged/pushed to
+ASTRAReworks at17f572be8; QUAL was byte-compared, stashed, detached at that SHA.
+Seven-hero introduction study1/1, shared-phase6/6, Nemu opening framing1/1, Core
+HeroLines7/7 and HeroLoadout14/14. Actual sequences/grey were inspected; this
+is not artistic or real-peer acceptance. See reports/cloud-integration-2026-09-24/
+findings.md. No more unchanged runs of that passing set.
+
+Current unit: reports/cloud-integration-2026-09-24/throw-clearance-plan.md.
+EditMode baseline4/4 failed: three FPP spin cases (straight grip depth.082m,
+curves .38/.40m vs.40 minimum) and head-volume case. Full CSV, not truncated
+failure text, has190/190 person/shoe pairs red,175atcharge.35/rightspin1.
+This is not proof that every live body throw clips. Existing real-input Bayan
+PlayMode case at spin.75 passed1/1: quick/left/right normal-speed sequences
+inspected, right-side and other charging sampled98/100 frames with0shoe vertices
+inside the head. One scoped worst-condition run is in flight, QUAL session96919,
+TUMP_THROW_REVIEW_PERSON=bayan, SLIPPER=alpombra, RIGHT_SPIN=1, output
+Logs/cloud-throw-native-spin1.xml and frames. It uses the existing review probe's
+optional legal spin; no gameplay code changed yet. Do not edit .cs while running.
+Exact native Bayan/alpombra case passed1/1 in19.5313924s at legal right spin1,
+0of41696vertices inside the head across92charged samples. Native source at.75
+also passed with0. Preserve healthy body pose. EditMode's190/190 failure is a
+fixture discrepancy to reconcile at final qualification, not authorization for
+a global body rewrite.
+
+FPP baseline .082m straight grip near eye. First offset pass fixed z but dropped
+all hands below the frame. Pivot-target pass still gave .22-.27m depth: the shoe
+follows the rotating Arm child, not its parent pivot. Current product fix tracks
+that actual fingertip near CarryAnchor with short separate straight/left/right
+travel and keeps the roll/tremor. Existing focused EditMode grip cases passed3/3
+in0.2114822s, with unchanged assertions. Normal-speed owner/body capture passed
+1/1 in20.3993265s; owner straight/left/right and court-side right views and
+25percent grey inspected. No active Unity job. Detailed findings and preserved
+failed/native proof: reports/cloud-integration-2026-09-24/throw-clearance/report.md.
+Publish scoped fix and align QUAL, then resume remaining cloud skills/VFX art and
+real gameplay issues. No reset, no broad unchanged verification loop.
+Keep checks bounded. Protected DEV PNG metas untouched.
+
+## Current priority, 2026-09-24: review the owner's cloud push
+
+Owner explicitly confirmed the push after asking us to wait. DEV fast-forwarded
+from7fcde1877 to4f62fcc5c, PR5 already merged. Review/fix this cloud work FIRST,
+then resume the older TODO path. No old item is deleted or marked complete.
+Plan: reports/cloud-integration-2026-09-24/plan.md. First check: existing native
+seven-hero introduction study with TUMP_INTRO_SCENE=1 plus SharedUltimatePhaseTests,
+guarded D3D11 in QUAL. Inspect actual frames, then fix observed problems one hero
+at a time; one fixture repair maximum. No new player build or new capture framework.
+Latest cloud voice decision is human recordings only; absent clips stay silent.
+No generated voices, paid tools or contacting another conversation.
+
+Current native defect: baseline7cases2passed/5failed on SetCurve key-index asserts
+in introduction grounding. Removing x/y/z bindings first did not fix it (v2failed,
+preserved). Current dirty fix builds final root curves on a fresh unsampled clip
+through ClipBuilder, retaining authored rotation/punch/lift. Fresh-clip construction removed the assertion. Native v3 reached Nemu, where
+held equipment intersected her head (65vertices); first4grounding clearances were
+within0.7mm. Actual frames also showed black stage walls: WallMesh still shared
+front/back normals. Current dirty repairs use the corrected TwoSided builder and
+a Nemu-held table: shoe by hip, free-hand send. Existing seven-hero study v4
+passed1/1 in33.3963163s: all seven clear their support within1.9mm and have zero
+held-shoe/head intersections. Actual twelve-sample native sheets inspected for
+each hero. Black-wall defect fixed; no blanket artistic approval implied.
+Existing SharedUltimatePhaseTests finished6/6 in73.5436033s; output
+Logs/cloud-shared-phase-after.xml/.log. No active Unity job. First full7run
+failed before these views. Actual sheets for all seven and three25percent grey
+pairs inspected; local findings in reports/cloud-integration-2026-09-24/findings.md.
+Do not repeat these passing cases unchanged. Fixture repairs0/1; these are real
+runtime repairs, no assertion suppression. Core HeroLines7/7
+and HeroLoadout14/14 passed in DEV, separate TRX under Logs/cloud-intake-core.
+Next: publish this repair batch, align QUAL, then investigate client cohort length
+being derived before local actors are ready (plan). After runtime correctness,
+Sean's faint parol/competing horizon is the first concrete visual refinement.
+Preserve the other incoming performances and inspect each before changing it.
+
+Previous local units ARE published: d98e592ae Windows D3D11 preference;7fcde1877
+ambient replay isolation/can-mesh cache repair. Their focused evidence is complete,
+their broader final gates remain. The historical resume notes below are retained.
+
+## Current resume, 2026-09-24: ambient replay isolation
+
+Overall goal ACTIVE, NOT done. DEV/QUAL and remote verified atd98e592ae. Rematch
+reconciliation published: actual Bayan entry observed after asynchronous loading;
+final bounded test source preserves map/ready checks but has no final green rerun.
+Invalid agent-added DontDestroyOnLoad scene assertion removed. Fixture allowance
+1/1 exhausted, leave final rerun to P7. Do not call it an ongoing runtime map bug.
+
+Current plan: native-shutdown-plan.md. Exact original accessibility-v57 build from
+older validation/Builds was copied into QUAL Builds/shutdown-diagnosis-v57-20260924,
+not rebuilt. Core exe/UnityPlayer/runtime hashes match; receipt in
+QUAL Logs/shutdown-diagnosis-20260924/binary.json. Original remains untouched.
+Existing native runner gained optional --graphics-api d3d11/d3d12, syntax checked.
+Native pair reaped: D3D12 process9508/exec5951 passed15stages then crashed with
+0xC0000005. Windows event1000: D3D12Core1.618.1.0, offset0xa1f5, RX6600 driver
+32.0.21043.19003. D3D11 process4792/exec26235 passed the same15stages and exited0.
+Both actual APIs confirmed in logs; same copied binary hashes, fresh profiles,
+input unchanged. Original untouched; no new build/current-binary claim.
+
+Current mitigation: GameBuilder.PreferCompatibleWindowsRenderer authored Windows
+explicit API order D3D11,D3D12, preserving other platforms/quality. Guarded author
+finished; scoped serialized diff copied to DEV. Current-source five-map D3D11
+case passed1/1 in43.5834526s; actual stage/eye/cast and25percent grey inspected.
+Proof: reports/map-by-map-refinement-2026-09-23/native-shutdown/report.md.
+No game/Unity/crash-handler processes remain. Native receipts/WER event preserved.
+Final current player/default-backend/exit/performance remains P7. Exact internal
+engine/driver cause unknown; no upgrade, intermediate build or indefinite soak.
+Renderer mitigation published ind98e592ae; QUAL aligned. Cleanup of the copied
+diagnostic build was rejected by automatic approval review (blocked by policy).
+No process remains; leave that copy in QUAL Builds, original v57 untouched.
+Do not repeat the old-binary pair or bypass the cleanup rejection.
+
+Ambient replay unit ready to publish: both leaks reproduced in native baseline.
+Existing per-render hide/restore now isolates unrecorded live animals in retained
+and catch cameras. First post-fix run exposed a real destroyed-can-mesh reference
+in Lata's existing raise/clunk cache during model replacement. Cache invalidation/
+Visual-subtree rebinding fixed; motion/authority unchanged. Final2/2 passed in
+13.0930289s, actual same-camera before/after and25percent grey inspected.
+Proof: reports/map-by-map-refinement-2026-09-23/ambient-replay/report.md.
+No fixture repair, no active Unity job, own generated churn restored. Publish and
+align QUAL, then reconcile remaining research/per-map acceptance against actual
+reports before selecting the next implementable gap. Do not repeat passing cases.
+
+Published roof units: court07a387779, haze/card4dde9837a, street contextc85614a42.
+Actual colour/grey inspected; street v2 passed1/1 in1.372s after one close-camera
+repair. Source models/physics/card importer preserved. No more variants/fixtures
+for that completed local unit. Lighting a28037622 merged in5e9b711c7; optional
+cast hull floor remains0, native1/1 and actual comparisons.
+
+Bot fixes5de3a78f3/043cf804c/273e5e669 published. Initial four-bot/two-mode samples
+cover all five maps; full role/roster/tier and bot water/roof recovery stay final
+gates. Recovery fixture failed twice BEFORE handoff at wrong lip position;
+omitted camera/input-basis setup is next diagnostic, allowance1/1 exhausted.
+Exact draft/failures in bot-map-coverage/, original compiled probe restored.
+
+AGENTS cleanup dc10b68f2 preserves important rules in39.7percent fewer words plus
+exact archive. All21 ambient actors have local placement coverage; ordinary-camera/
+replay/combined gates remain. New character/ability/ultimate work belongs to the
+owner-run cloud lane; do not merge unfinished work or contact a conversation.
+Preserve older requirements. Final current-source native/peer/replay/performance/
+build remains2.10/P7. No checkpoint stops goal; no intermediate build.
 
 ## Parallel lane, 2026-09-24: HOME loop and gameplay animation (separate from the map resume above)
 
@@ -55,6 +301,21 @@ reasoning: docs/reports/gameplay-animation-2026-09-24/. Probes: LocomotionArmsPr
 CastAndMotionReel. Shipping casts are the glb tables in tools/author_hero_action.py, NOT HeroAbilityClips
 (editor fallback only). Last checks: PlayMode 11/11, EditMode 44/44, 18 glb casts verified. Not yet
 seen: a live networked match, including an observer's estimate of the can raise.
+
+## Parallel lane, 2026-09-24: REFINE-2.11 ultimate performances (cloud Ubuntu session)
+
+**Lane resume file (all owner instructions and the plan):**
+docs/reports/ultimate-performances-2026-09-24/lane-ledger.md . Branch claude/animation-ultimates,
+PR https://github.com/DOST-GameDEV/TumbangPreso-Unity/pull/5 .
+
+Owner assigned all animation work to this lane, ultimates first, one hero at a time (*"dont js spam
+copy paste stuff"*). Research, plan, per-hero evidence and machine limits:
+docs/reports/ultimate-performances-2026-09-24/ (research.md, plan.md, progress.md). No Unity
+licence on this machine: native checks are owed to Windows (list in progress.md); C# is verified by
+a Roslyn check against Unity 6000.5.8 DLLs and the locked package versions, poses by skinned glb
+sheets from the authored shots. Per-hero intro lengths (2.8 to 4.2 s), protocol 52. Phaister DONE
+at source level; Sean, Zack, Nemu, Dante, Cheska, Rafi still on transcribed 2.8 s baselines, next
+in that order. Then VOICE-1 (hero voice lines, TODO) and the CLAUDE.md condensation request.
 
 ## Published progress, do not redo
 

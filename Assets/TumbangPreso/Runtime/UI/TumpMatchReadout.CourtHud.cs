@@ -14,6 +14,7 @@ namespace TumbangPreso.UI
             // `BuildCourtScores` and `BuildCourtClock` below are the previous layout, kept for
             // the record and no longer called.
             BuildMatchBar(); BuildCourtCan(); BuildCourtPersonal(); BuildStaminaArc(); BuildCourtPrompts();
+            BuildStatusChips();
             MatchEventFeed.Create(_root);
             MatchMomentBanner.Create(_root);
             _powers = gameObject.AddComponent<TumpPowerReadout>(); _powers.Build(_root);

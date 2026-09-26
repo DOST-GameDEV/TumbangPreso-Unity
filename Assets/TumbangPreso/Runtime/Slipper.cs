@@ -16,6 +16,7 @@ namespace TumbangPreso
         Normal,
         FireExplosive,  // Sean Skill 2 (Ignition Cannon)
         ElectricZap,    // Zack Skill 2 (Overcharge Throw)
+        Frost,          // Cheska attacking (Frostbite, ABILITY-2): the player it hits is Frozen
     }
 
     /// <summary>
@@ -674,6 +675,12 @@ namespace TumbangPreso
             if(who.HoldingSlipper) return false;
             if (!who.CanAct()) return false;
 
+            // ⚠️ THE STATUS GATES (owner's status table, 2026-09-25). WHIRLED: *"Prevents slipper
+            // retrieval for 2.5 seconds."* ALOFT (Updraft): *"cant pick up unless they choose to go
+            // down"*. Both live here, in the one gate every pickup path already asks (the local grab,
+            // `HostPickUp` and the networked request), so no path can skip them.
+            if (who.IsWhirled || who.IsFeared || who.IsAloft) return false;
+
             return true;
         }
 
@@ -841,7 +848,40 @@ namespace TumbangPreso
             return true;
         }
 
+        /// <summary>
+        /// Host: Paete's thorns take this slipper wherever it is (owner: *"i want it too be ALL, even
+        /// the ones on the hands"*). Out of a hand it is disarmed; out of the air its throw ends as a
+        /// miss and it drops where it is; on the ground it is already loose. True if it is loose now.
+        /// </summary>
+        public bool HostSnatch()
+        {
+            if (!NetAuthority.ShouldResolve() || !gameObject.activeInHierarchy) return false;
+            if (State == SlipperState.Held) return HostDisarm();
+            if (State == SlipperState.InFlight)
+            {
+                FinishChain(ThrowChainEnd.Miss);
+                Land(true);
+                return true;
+            }
+            return State == SlipperState.Loose;
+        }
+
         public float PektusSpin { get; private set; }
+
+        /// <summary>
+        /// Put a LOOSE slipper on the ground a short way from where it is: a slipper knocked out
+        /// of a hand (Whirled) lands beside the body rather than hanging where the hand was.
+        /// </summary>
+        public void HostScatter(Vector3 offset)
+        {
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.Loose) return;
+            offset.y = 0.0f;
+            var at = transform.position + offset;
+            at.x = Mathf.Clamp(at.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
+            at.z = Mathf.Clamp(at.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            transform.position = at;
+            Land(false, FindGroundY(at, Balance.SlipperRestHeight + 2.0f));
+        }
 
         public bool HostBeginMapRecovery()
         {
@@ -1157,7 +1197,7 @@ namespace TumbangPreso
                     ? caster.AbilitySystem.VariantCost("sean.2.flare")
                     : 1.0f);
                 Abilities.HeroHazards.CreateExplosion(transform.position, blastRadius, 13.0f, 1.4f, _throwerSlot, "BOOM!",
-                    style: Abilities.HeroHazards.ExplosionStyle.Slipper);
+                    style: Abilities.HeroHazards.ExplosionStyle.Ignition);
             }
             else if (Affinity == SlipperAffinity.ElectricZap)
             {
@@ -1311,6 +1351,7 @@ namespace TumbangPreso
                     if ((_bodyContacts & contactBit) != 0) return;
                     _bodyContacts |= contactBit;
                     TriggerAffinityImpact();
+                    HostFrostbite(p);
                     HostBlockedBy(p);
                     return;
                 }
@@ -1350,6 +1391,7 @@ namespace TumbangPreso
                     if ((_bodyContacts & contactBit) != 0) return;
                     _bodyContacts |= contactBit;
                     TriggerAffinityImpact();
+                    HostFrostbite(p);
                     HostBlockedBy(p);
                     return;
                 }
@@ -1581,6 +1623,11 @@ namespace TumbangPreso
             _bankCount++;
             NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
+            // GLACIAL WALL counts the slippers that strike it (ABILITY-2: three shatter it). Host only:
+            // the flight is host-simulated, and the shatter's flair breaks it on every other screen.
+            if (NetAuthority.ShouldResolve())
+                closest.collider.GetComponentInParent<Abilities.HeroHazards.IceBarricadeComponent>()?.HostSlipperHit();
+
             if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
             {
                 // ⚠️ RELAYED. `FixedUpdate` is host-gated, so the popup and the style award were
@@ -1705,6 +1752,19 @@ namespace TumbangPreso
         /// costs position, which is what a block is actually about, and cannot lock anybody
         /// out of the game.
         /// </summary>
+        /// <summary>
+        /// FROSTBITE (ABILITY-2, owner: *"Hitting another player with the slipper will inflict them with
+        /// Frozen"*): a frosted slipper Freezes the body it strikes, once, then flies on as a plain one.
+        /// </summary>
+        private void HostFrostbite(CharacterMotor victim)
+        {
+            if (Affinity != SlipperAffinity.Frost || victim == null) return;
+            victim.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);
+            Abilities.HeroHazards.SpawnIceCubePrison(victim.transform, StatusRules.FrozenSeconds);
+            NetCue.Play("sfx_cheska_frostbite_hit", transform.position);
+            Affinity = SlipperAffinity.Normal;
+        }
+
         private void HostBlockedBy(CharacterMotor blocker)
         {
             FinishChain(ThrowChainEnd.Block);

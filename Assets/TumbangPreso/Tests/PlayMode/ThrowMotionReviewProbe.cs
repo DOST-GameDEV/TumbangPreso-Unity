@@ -50,9 +50,13 @@ namespace TumbangPreso.PlayTests
             int equipmentIndex=string.IsNullOrEmpty(equipment)?-1:Roster.IndexIn(Roster.Slippers,equipment);
             Assert.True(string.IsNullOrEmpty(equipment)||equipmentIndex>=0,"Unknown equipment review ID.");
             var mode=Environment.GetEnvironmentVariable("TUMP_THROW_REVIEW_MODE")=="hero"?GameMode.HeroStrike:GameMode.Classic;
+            string requestedRightSpin=Environment.GetEnvironmentVariable("TUMP_THROW_REVIEW_RIGHT_SPIN");
+            float rightSpin=string.IsNullOrEmpty(requestedRightSpin)? .75f:
+                float.Parse(requestedRightSpin,System.Globalization.CultureInfo.InvariantCulture);
+            Assert.That(rightSpin,Is.InRange(0f,1f),"Right spin review must use a legal input value.");
             foreach(var shot in new[]{(Name:"quick",Hold:.20f,Spin:0f,Move:0f),
                 (Name:"held-left",Hold:2.8f,Spin:-.75f,Move:0f),
-                (Name:"moving-right",Hold:2.8f,Spin:.75f,Move:.6f)})
+                (Name:"moving-right",Hold:2.8f,Spin:rightSpin,Move:.6f)})
             {
                 if(equipmentIndex>=0)Settings.SettingsStore.Current.SlipperPick=equipmentIndex;
                 yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza,mode);

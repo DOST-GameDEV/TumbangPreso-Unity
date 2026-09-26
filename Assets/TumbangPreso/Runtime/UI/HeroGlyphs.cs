@@ -12,8 +12,9 @@ namespace TumbangPreso.UI
         private static readonly Dictionary<string, AbilityGlyph> AbilityToGlyphMap = new Dictionary<string, AbilityGlyph>
         {
             // Dante (Earth Juggernaut)
-            { "dante_skill1", AbilityGlyph.DanteStomp },
-            { "dante_skill2", AbilityGlyph.DanteShield },
+            { "dante_skill1", AbilityGlyph.DanteShield },
+            { "dante_skill2", AbilityGlyph.DanteBoulder },
+            { "dante_skill2d", AbilityGlyph.DanteBarrier },
             { "dante_ultimate", AbilityGlyph.DanteFissure },
 
             // Sean (Fire Brawler)
@@ -23,7 +24,8 @@ namespace TumbangPreso.UI
 
             // Cheska (Ice Guardian)
             { "cheska_skill1", AbilityGlyph.CheskaFrostSheet },
-            { "cheska_skill2", AbilityGlyph.CheskaBarricade },
+            { "cheska_skill2", AbilityGlyph.CheskaFrostbite },
+            { "cheska_skill2d", AbilityGlyph.CheskaBarricade },
             { "cheska_ultimate", AbilityGlyph.CheskaNova },
 
             // Zack (Lightning Skater)
@@ -32,17 +34,27 @@ namespace TumbangPreso.UI
             { "zack_ultimate", AbilityGlyph.ZackThunderstrike },
 
             // Nemu (Spirit Summoner)
-            { "nemu_skill1", AbilityGlyph.NemuPhase },
+            { "nemu_skill1", AbilityGlyph.NemuTerrify },
             { "nemu_skill2", AbilityGlyph.NemuAstralPet },
+            { "nemu_skill2d", AbilityGlyph.NemuKuroGuard },
             { "nemu_ultimate", AbilityGlyph.NemuSeanceVoid },
 
             // Phaister (Street Witch)
-            { "phaister_skill1", AbilityGlyph.PhaisterHexSigil },
-            { "phaister_skill2", AbilityGlyph.PhaisterShadowBlink },
+            { "phaister_skill1", AbilityGlyph.PhaisterShadowBlink },
+            { "phaister_skill2", AbilityGlyph.PhaisterCursedDoll },
+            { "phaister_skill2d", AbilityGlyph.PhaisterVulnerable },
             { "phaister_ultimate", AbilityGlyph.PhaisterEclipse },
             { "rafi_skill1", AbilityGlyph.RafiCrosscurrent },
             { "rafi_skill2", AbilityGlyph.RafiMirrorwake },
             { "rafi_ultimate", AbilityGlyph.RafiBreakwater },
+            { "amihan_skill1", AbilityGlyph.AmihanQuickDash },
+            { "amihan_skill2", AbilityGlyph.AmihanUpdraft },
+            { "amihan_skill2d", AbilityGlyph.AmihanWhirlwind },
+            { "amihan_ultimate", AbilityGlyph.AmihanStormSurge },
+            { "paete_skill1", AbilityGlyph.PaeteVine },
+            { "paete_skill2", AbilityGlyph.PaeteSprout },
+            { "paete_skill2d", AbilityGlyph.PaeteThorn },
+            { "paete_ultimate", AbilityGlyph.PaeteSentry },
         };
 
         /// <summary>

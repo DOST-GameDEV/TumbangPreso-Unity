@@ -18,6 +18,9 @@ namespace TumbangPreso.CameraSystem
         public const WorldEffectSnapshot.Kind Ward=(WorldEffectSnapshot.Kind)105;
         public const WorldEffectSnapshot.Kind Ignition=(WorldEffectSnapshot.Kind)106;
         public const WorldEffectSnapshot.Kind Charge=(WorldEffectSnapshot.Kind)107;
+        // Amihan's Storm Surge: the fan while it gathers and the wall it releases (replay only;
+        // a rejoiner mid-gather misses the telegraph, the host's push still lands).
+        public const WorldEffectSnapshot.Kind Storm=(WorldEffectSnapshot.Kind)108;
         public static List<WorldEffectSnapshot.Field> Capture()
         {
             var fields=WorldEffectSnapshot.Capture();
@@ -51,6 +54,14 @@ namespace TumbangPreso.CameraSystem
                 if(ember.isActiveAndEnabled&&ember.RecordedWorld)AddWeapon(fields,Ignition,ember.gameObject,ember.RecordedShoe,ember.RecordedTarget,ember.RecordedAge);
             foreach(var charge in Object.FindObjectsByType<ZackMagnetCharge>())
                 if(charge.isActiveAndEnabled&&charge.RecordedWorld)AddWeapon(fields,Charge,charge.gameObject,charge.RecordedShoe,charge.RecordedTarget,charge.RecordedAge);
+            foreach(var storm in Object.FindObjectsByType<Abilities.AmihanStorm>())
+            {
+                if(!storm.isActiveAndEnabled)continue;
+                float life=Core.AmihanRules.StormSurgeGatherSeconds+AmihanStormFan.WallSeconds+.4f;
+                if(storm.Age>=life)continue;
+                fields.Add(new WorldEffectSnapshot.Field{Type=Storm,Source=storm.gameObject,Position=storm.Origin,Forward=storm.Forward,
+                    Radius=1,Duration=life,Remaining=life-storm.Age,Owner=storm.OwnerSlot});
+            }
             return fields;
         }
         public static MeshFilter[] PropMeshes(GameObject root)=>MatchPoseHistory.StableTransforms(root).Select(t=>t.GetComponent<MeshFilter>()).Where(m=>m!=null).ToArray();
@@ -63,7 +74,7 @@ namespace TumbangPreso.CameraSystem
         public static bool Valid(WorldEffectSnapshot.Field f)
         {
             if(WorldEffectSnapshot.Valid(f))return true;
-            if(f.Type!=Coven&&f.Type!=Kuro&&f.Type!=Seismic&&f.Type!=Nova&&f.Type!=Ward&&f.Type!=Ignition&&f.Type!=Charge)return false;
+            if(f.Type!=Coven&&f.Type!=Kuro&&f.Type!=Seismic&&f.Type!=Nova&&f.Type!=Ward&&f.Type!=Ignition&&f.Type!=Charge&&f.Type!=Storm)return false;
             bool Finite(float n)=>!float.IsNaN(n)&&!float.IsInfinity(n);
             if(!Finite(f.Position.x)||!Finite(f.Position.y)||!Finite(f.Position.z)||f.Position.sqrMagnitude>10000*10000
                 ||!Finite(f.Forward.sqrMagnitude)||(f.Type==Kuro?f.Forward.sqrMagnitude>10000*10000:f.Forward.sqrMagnitude<.5f||f.Forward.sqrMagnitude>1.5f)

@@ -1,0 +1,83 @@
+{
+  "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",
+  "listening": "Not yet heard by the owner in the game mix. Peak and RMS are measurements, not approval.",
+  "cues": [
+    {
+      "cue": "sfx_cast_amihan_dash",
+      "seconds": 0.62,
+      "peak": 0.7,
+      "rms": 0.08209057266669667,
+      "sha256": "5fe22c233287bd45e73163ca313f2497657301927f5d2a80cb7c94506c982898"
+    },
+    {
+      "cue": "sfx_cast_amihan_updraft",
+      "seconds": 1.0,
+      "peak": 0.7,
+      "rms": 0.14005284427458994,
+      "sha256": "c43f0a834947dd9100f9476bb4353d797fbccac21e4cd5742cc5caa01052085d"
+    },
+    {
+      "cue": "sfx_amihan_updraft_settle",
+      "seconds": 0.5,
+      "peak": 0.6,
+      "rms": 0.0992804761017839,
+      "sha256": "9b54c8cd0db9931a27ab9a3ce54046924144558cae45804d4eb75fb24e76cfad"
+    },
+    {
+      "cue": "sfx_cast_amihan_whirlwind",
+      "seconds": 1.35,
+      "peak": 0.7,
+      "rms": 0.1352741583393149,
+      "sha256": "01180282ae6c7d9b01c8b0c7f8e6f9b7e835efdffcdeaccc9512d166118161bc"
+    },
+    {
+      "cue": "sfx_cast_amihan_storm",
+      "seconds": 0.7,
+      "peak": 0.7,
+      "rms": 0.08849201845502978,
+      "sha256": "f32e294134c337c698cf501c02125fc8f72018ea524b779fcda3c4a6700aff64"
+    },
+    {
+      "cue": "sfx_amihan_storm_gather",
+      "seconds": 2.6,
+      "peak": 0.62,
+      "rms": 0.07051566796365286,
+      "sha256": "3cede176327f6178ab63b2e14bf4c3cf0867b720e6d52e5f4701191b78bc9350"
+    },
+    {
+      "cue": "sfx_amihan_storm_release",
+      "seconds": 1.9,
+      "peak": 0.8,
+      "rms": 0.08760399021248949,
+      "sha256": "828b2be9a58a6d90fb597ce4637f62bdbcf9461a81562564a29f8970e571fd14"
+    },
+    {
+      "cue": "sfx_status_whirled",
+      "seconds": 0.55,
+      "peak": 0.6,
+      "rms": 0.11588800225959436,
+      "sha256": "ff60d8ef99def9bb9ebcef23ae8320d5a3361a0539c337032b1b5239e457740d"
+    },
+    {
+      "cue": "sfx_status_chilled",
+      "seconds": 0.4,
+      "peak": 0.55,
+      "rms": 0.033210708203516945,
+      "sha256": "568c6bb25f955f5963e529b4b3486afc3237127432142779ae1b55f594ac297f"
+    },
+    {
+      "cue": "sfx_ult_theme_amihan",
+      "seconds": 3.6,
+      "peak": 0.66,
+      "rms": 0.12358172365175611,
+      "sha256": "51ccae2c520a5e55c3980fcdb863fc94cd0bbe88639d1bc0a5de35a924487fed"
+    },
+    {
+      "cue": "sfx_sky_monsoon",
+      "seconds": 3.2,
+      "peak": 0.5,
+      "rms": 0.08642340150985174,
+      "sha256": "cfce5b2fd2809bc2fe1cf00d0f1135c3609d935643921cba9c07d00dd709d4d5"
+    }
+  ]
+}

@@ -19,6 +19,9 @@ namespace TumbangPreso.Diagnostics
             public string mode,gpu,cpu;public int width,height,samples,framesOver33Ms;
             public int resultPolls,gc0,gc1,gc2;public bool pollEveryFrame;
             public float duration,averageFps,medianMs,p95Ms,p99Ms,maxMs;
+            public long framesOver50Ms,framesOver100Ms;
+            public double histogramMaxMs;
+            public bool includesMenus;
         }
         private struct FrameContext
         { public float real,simulation,left;public int gc0,gc1,gc2; }
@@ -34,6 +37,8 @@ namespace TumbangPreso.Diagnostics
         private readonly List<FrameContext> _frameContexts=new List<FrameContext>(8192);
         private int _resultPolls,_gc0Start,_gc1Start,_gc2Start;
         private bool _pollEveryFrame;
+        private bool _measureMenus;
+        private readonly Core.FrameRateHistogram _frameHistogram=new Core.FrameRateHistogram();
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
@@ -42,6 +47,7 @@ namespace TumbangPreso.Diagnostics
             var go=new GameObject("~OwnerUiPlayerReview");DontDestroyOnLoad(go);
             var probe=go.AddComponent<OwnerUiPlayerReview>();probe._folder=Path.GetFullPath(args[at+1]);
             probe._pollEveryFrame=args.Contains("-tp-review-frame-poll");
+            probe._measureMenus=args.Contains("-tp-review-all-frames");
             Directory.CreateDirectory(probe._folder);probe._deadline=Time.realtimeSinceStartup+120;probe.StartCoroutine(probe.Guard(probe.Walk()));
         }
         private IEnumerator Guard(IEnumerator sequence)
@@ -61,11 +67,12 @@ namespace TumbangPreso.Diagnostics
         }
         private void Update()
         {
-            if(_frameMode!=null && GameServices.Round!=null && GameServices.Round.RoundActive)
+            if(_frameMode!=null && (_measureMenus || (GameServices.Round!=null && GameServices.Round.RoundActive)))
             {
+                _frameHistogram.Add(Time.unscaledDeltaTime);
                 _frameTimes.Add(Time.unscaledDeltaTime*1000f);
                 _frameContexts.Add(new FrameContext{real=Time.realtimeSinceStartup-_frameStarted,
-                    simulation=Time.time,left=GameServices.Round.TimeLeft,
+                    simulation=Time.time,left=GameServices.Round!=null?GameServices.Round.TimeLeft:0,
                     gc0=GC.CollectionCount(0),gc1=GC.CollectionCount(1),gc2=GC.CollectionCount(2)});
             }
             if(!_finished && Time.realtimeSinceStartup>_deadline)Finish(false,"UI review timed out after "+_report.stages.LastOrDefault());
@@ -73,6 +80,7 @@ namespace TumbangPreso.Diagnostics
         private void StartFrameWindow(string mode)
         {
             _frameTimes.Clear();_frameContexts.Clear();_resultPolls=0;
+            _frameHistogram.Clear();
             _gc0Start=GC.CollectionCount(0);_gc1Start=GC.CollectionCount(1);_gc2Start=GC.CollectionCount(2);
             _frameStarted=Time.realtimeSinceStartup;_frameMode=mode;
         }
@@ -83,7 +91,9 @@ namespace TumbangPreso.Diagnostics
             var window=new FrameWindow{mode=mode,width=Screen.width,height=Screen.height,samples=_frameTimes.Count,
                 duration=Time.realtimeSinceStartup-_frameStarted,gpu=SystemInfo.graphicsDeviceName,cpu=SystemInfo.processorType,
                 resultPolls=_resultPolls,pollEveryFrame=_pollEveryFrame,gc0=GC.CollectionCount(0)-_gc0Start,
-                gc1=GC.CollectionCount(1)-_gc1Start,gc2=GC.CollectionCount(2)-_gc2Start};
+                gc1=GC.CollectionCount(1)-_gc1Start,gc2=GC.CollectionCount(2)-_gc2Start,
+                includesMenus=_measureMenus,histogramMaxMs=_frameHistogram.MaxSeconds*1000,
+                framesOver50Ms=_frameHistogram.LongFrames(.05),framesOver100Ms=_frameHistogram.LongFrames(.1)};
             if(_frameTimes.Count>0)
             {
                 var sorted=_frameTimes.OrderBy(v=>v).ToArray();

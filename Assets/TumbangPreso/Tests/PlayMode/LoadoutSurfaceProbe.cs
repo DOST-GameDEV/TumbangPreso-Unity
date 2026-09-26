@@ -52,7 +52,14 @@ namespace TumbangPreso.PlayTests
         /// no test can inherit a world at all, which is the property the entry actually wants.
         /// </summary>
         [UnitySetUp]
-        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+        public IEnumerator ResetWorldBefore()
+        {
+            // ⚠️ THIS PROBE PRESSES LOCKED BRANCHES, so it locks the tree for its own run whatever
+            // `HeroLoadoutRules.LockSkillTree` ships as (open for testing since 2026-09-24), and the
+            // teardown puts the switch's value back.
+            HeroLoadoutRules.ChallengesEnforced = true;
+            return PlayModeWorld.Reset();
+        }
 
         private static readonly (int W, int H, string Name)[] Resolutions =
         {
@@ -112,6 +119,7 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown]
         public IEnumerator TearDown()
         {
+            HeroLoadoutRules.ChallengesEnforced = HeroLoadoutRules.LockSkillTree;
             foreach (var c in _canvases)
                 if (c != null) c.renderMode = RenderMode.ScreenSpaceOverlay;
             _canvases.Clear();

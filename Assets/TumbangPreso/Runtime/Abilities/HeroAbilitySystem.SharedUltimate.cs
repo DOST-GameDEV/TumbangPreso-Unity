@@ -14,7 +14,7 @@ namespace TumbangPreso.Abilities
             var familiar = _motor.GetComponent<Visual.CharacterVisual>()?.Companion;
             if (NetAuthority.ShouldResolve())
                 return AcceptSharedUltimate(new UltimateCommit(_motor.PlayerSlot, 0, _context.Position,
-                    _context.Forward, _context.AimPoint, Kit.Ultimate?.HeldSecondsOnCast ?? 0, familiar != null, familiar != null ? familiar.transform.position : Vector3.zero));
+                    _context.Forward, SharedUltimateAim(), Kit.Ultimate?.HeldSecondsOnCast ?? 0, familiar != null, familiar != null ? familiar.transform.position : Vector3.zero));
             var allowed = Kit.CheckUltimate(_context);
             if (allowed != HeroKit.CastOutcome.Cast) return allowed;
             if (_pendingUltimateRequest > 0) return HeroKit.CastOutcome.Cooling;
@@ -22,10 +22,17 @@ namespace TumbangPreso.Abilities
             if (rpc == null) return HeroKit.CastOutcome.CannotAct;
             _pendingUltimateUntil = Time.unscaledTime + 8;
             _pendingUltimateRequest = rpc.RequestSharedUltimate(_motor.PlayerSlot, _context.Position,
-                _context.Forward, _context.AimPoint, Kit.Ultimate.HeldSecondsOnCast);
+                _context.Forward, SharedUltimateAim(), Kit.Ultimate.HeldSecondsOnCast);
             // No prediction, cost, clip or world effect while host acceptance is pending.
             return _pendingUltimateRequest > 0 ? HeroKit.CastOutcome.Cast : HeroKit.CastOutcome.CannotAct;
         }
+        /// <summary>
+        /// The aim an ultimate is sent with. An ultimate placed where its caster looks (`HeroAbility.AimsWhereLooking`) sends the spot
+        /// itself, read off THIS machine's camera, because no other peer has that camera; every other ultimate sends the context's aim.
+        /// </summary>
+        private Vector3 SharedUltimateAim()
+            => Kit?.Ultimate != null && Kit.Ultimate.AimsWhereLooking ? AimDestination(Kit.Ultimate, _context) : _context.AimPoint;
+
         internal HeroKit.CastOutcome CheckSharedUltimate(UltimateCommit cast)
         {
             if (!NetAuthority.ShouldResolve() || Kit?.Ultimate == null || _motor == null) return HeroKit.CastOutcome.Missing;

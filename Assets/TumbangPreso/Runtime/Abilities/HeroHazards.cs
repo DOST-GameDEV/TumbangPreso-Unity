@@ -28,7 +28,8 @@ namespace TumbangPreso.Abilities
         public static GameObject SpawnIceBarricade(Vector3 position, Vector3 forward,
                                                    float duration = 6.0f,
                                                    float spanScale = 1.0f,
-                                                   float thicknessScale = 1.0f, bool split = false, bool silent = false)
+                                                   float thicknessScale = 1.0f, bool split = false, bool silent = false,
+                                                   float arcLength = 0.0f, float arcRadius = 3.0f)
         {
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("IceBarricade");
@@ -37,7 +38,8 @@ namespace TumbangPreso.Abilities
 
             // Authored fractured slabs replace the rotated cubes, disconnected
             // diamond toppers, rigidbody chips and persistent cyan point light.
-            CheskaIceVisuals.BuildWall(go.transform,spanScale,thicknessScale,split);
+            if (arcLength > 0.0f) CheskaIceVisuals.BuildArc(go.transform, arcLength, arcRadius);
+            else CheskaIceVisuals.BuildWall(go.transform,spanScale,thicknessScale,split);
 
             if (!silent) GameServices.Audio?.PlayAt("sfx_barricade_raise", position);
 
@@ -55,6 +57,22 @@ namespace TumbangPreso.Abilities
             public float Duration = 6.0f;
             public float SpanScale = 1, ThicknessScale = 1;
             public bool Split;
+
+            /// <summary>
+            /// Slipper hits it takes before it shatters, 0 for none (the old barricade). Glacial Wall
+            /// (ABILITY-2): *"The icicle wall takes 3 slipper hits to shatter."* Counted on the host by
+            /// `Slipper.BounceOffObstacles`; the shatter's flair breaks it on every peer (`MatchFlair`).
+            /// </summary>
+            public int HitsToShatter;
+            private int _hits;
+
+            public void HostSlipperHit()
+            {
+                if (HitsToShatter <= 0 || _shattered) return;
+                _hits++;
+                NetCue.Play("sfx_cheska_wall_crack", transform.position);
+                if (_hits >= HitsToShatter) Shatter();
+            }
             private float _left;
             private bool _shattered;
             private bool _started;
@@ -183,10 +201,7 @@ namespace TumbangPreso.Abilities
                     // Same rule as the entry: see the note in `Update`. ⚠️ BRACED, because
                     // `tools/audit_ability_authority.py` tracks the gate by brace depth and reads
                     // a braceless one-liner as ungated.
-                    if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)
-                    {
-                        p.ExitSpeedZone(ChillMultiplier);
-                    }
+                    // The speed half is the Chilled status now and runs out on its own clock.
                 }
 
                 _chilled.Clear();
@@ -278,15 +293,19 @@ namespace TumbangPreso.Abilities
                         {
                             p.SetIceSurface(this,SlipScale);
                             _tractionTargets.Add(p);
+                            // ⚠️⚠️ CHILLED, NOT A SPEED ZONE (owner's status table, 2026-09-25:
+                            // *"Decreases movement speed by 50% for 5 seconds"*, and the answer that
+                            // Cheska's sheet applies it). Refreshed every frame on the ice by `Max`,
+                            // so it runs its full five seconds from the moment you step OFF. The old
+                            // 0.55 speed zone ended at the edge; the slip below is unchanged.
+                            p.ApplyChilled();
                         }
                         if (inside && !chilled)
                         {
-                            p.EnterSpeedZone(ChillMultiplier);
                             _chilled.Add(p.PlayerSlot);
                         }
                         else if (!inside && chilled)
                         {
-                            p.ExitSpeedZone(ChillMultiplier);
                             p.SetIceSurface(this,0);
                             _tractionTargets.Remove(p);
                             _chilled.Remove(p.PlayerSlot);
@@ -1073,6 +1092,13 @@ namespace TumbangPreso.Abilities
             /// <summary>How fast a loose tsinelas slides in, in metres per second.</summary>
             public float SlipperPull = 5.5f;
 
+            /// <summary>HIGOP (ABILITY-2): slippers owned by this seat are spared (owner: *"pulls players
+            /// ands slipeprs except for her shit"*). -1 spares none.</summary>
+            public int SparedSlipperOwner = -1;
+
+            /// <summary>Seconds between the small drowse stumbles; 0 turns them off (HIGOP: no mashing).</summary>
+            public float DrowseEvery = 1.25f;
+
             private float _left;
             private readonly Dictionary<int, float> _nextDrowseBySlot = new Dictionary<int, float>();
 
@@ -1231,8 +1257,8 @@ namespace TumbangPreso.Abilities
                     // your own body would flinch you on a frame the host never agreed to, and
                     // `StunElement`/`ApplyStagger` is exactly the class of state `CLAUDE.md` § 4
                     // keeps on one machine.
-                    if (NetAuthority.ShouldResolve() &&
-                        CanPulse(_nextDrowseBySlot, p.PlayerSlot, 1.25f))
+                    if (NetAuthority.ShouldResolve() && DrowseEvery > 0.0f &&
+                        CanPulse(_nextDrowseBySlot, p.PlayerSlot, DrowseEvery))
                     {
                         p.ApplyStagger(0.35f);
                     }
@@ -1252,7 +1278,7 @@ namespace TumbangPreso.Abilities
                 // the carry would be a disarm, which is a verb this game does not have.
                 foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                 {
-                    if (s != null && s.State != SlipperState.Held)
+                    if (s != null && s.State != SlipperState.Held && (SparedSlipperOwner < 0 || s.OwnerSlot != SparedSlipperOwner))
                     {
                         Vector3 sDiff = transform.position - s.transform.position;
                         sDiff.y = 0.0f;
@@ -2752,8 +2778,167 @@ namespace TumbangPreso.Abilities
                 AddFigure("Fig_Core", VfxShapes.Sigil(3, 1, 0.030f, 0.84f, 0, 36, 907),
                           0.212f, 63.0f, pale, 0.64f);
 
-                AddFloatingGlyphs(6);
+                AddFloatingGlyphs(20);
+                AddPresence();
             }
+
+            // -------------------------------------------------------------------
+            // § PRESENCE: WHY THE CIRCLE STOPPED READING AS "A PURPLE EMPTY CIRCLE"
+            //
+            // ⚠️⚠️ 🧑 2026-09-24: *"circle doesnt look that amazing its js a purple empty circle"*.
+            // The line work above is correct and stays; what it lacked was VALUE and HEIGHT (plan:
+            // `docs/reports/skill-performances-2026-09-24/plan.md` § 2, from Riot's VFX style guide:
+            // one readable primary shape, a real value range, illumination). Every rule was a thin
+            // mid purple on mid grey road, so from eye height perspective squeezed it into a faint
+            // ellipse with nothing darker or brighter than anything else. So, still line art and
+            // still no painted floor:
+            //  * a SHADOW POOL: the road inside darkens a little, so the lines glow against a dark
+            //    ground (the lata and players stay bright on it; darkness is not paint);
+            //  * a bright CORE on the three primary rules, with a wide soft underlay;
+            //  * a CURTAIN, a low luminous wall rising from the rim, so the boundary a cursed player
+            //    must escape reads edge-on from anywhere (VALORANT's hard edge, a Jujutsu domain);
+            //  * the sigils COUNTER-ROTATE and twenty distinct glyphs orbit and rise (he asked for
+            //    "like 20 or so" all different);
+            //  * each curse sends a WAVE from the centre to the rim and flares the curtain;
+            //  * the circle CLOSES with one snap of light (none under reduced effects).
+            // -------------------------------------------------------------------
+            private Renderer _pool, _curtainLow, _curtainMid, _curtainHigh, _wave;
+            private readonly List<Renderer> _cores = new List<Renderer>(3);
+            private readonly List<Transform> _spinners = new List<Transform>(3);
+            private readonly List<float> _spinRate = new List<float>(3);
+            private Transform _curtain, _waveRing;
+            private static readonly Color CovenCore = new Color(.96f, .36f, .86f);
+
+            private void AddPresence()
+            {
+                var pool = VfxShapes.Lay(transform, "ShadowPool", VfxShapes.Splat(48, 0.0f, 3), Radius * .985f, 0.012f);
+                _pool = pool.GetComponent<Renderer>();
+                VfxMaterial.Ghost(_pool, new Color(.10f, .03f, .16f, .0f), 0.0f);
+                VfxMaterial.StripCollider(pool); VfxShapes.DrapeToGround(pool);
+
+                foreach (var (name, scale) in new[] { ("Core_Outer", 1.0f), ("Core_Mid", .742f), ("Core_Inner", .238f) })
+                {
+                    var under = VfxShapes.Lay(transform, name + "_Glow", VfxShapes.Collar(72, 0.05f, 0.955f), Radius * scale * 1.012f, 0.0205f);
+                    VfxMaterial.Ghost(under.GetComponent<Renderer>(), new Color(CovenCore.r, CovenCore.g, CovenCore.b, 0), .9f);
+                    VfxMaterial.StripCollider(under); VfxShapes.DrapeToGround(under);
+                    _cores.Add(under.GetComponent<Renderer>());
+                    var core = VfxShapes.Lay(transform, name, VfxShapes.Collar(72, 0.05f, 0.985f), Radius * scale, 0.021f);
+                    VfxMaterial.Ghost(core.GetComponent<Renderer>(), new Color(1, .82f, .98f, 0), 1.1f);
+                    VfxMaterial.StripCollider(core); VfxShapes.DrapeToGround(core);
+                    _cores.Add(core.GetComponent<Renderer>());
+                }
+
+                _curtain = new GameObject("Curtain").transform;
+                _curtain.SetParent(transform, false);
+                _curtainLow = CurtainBand("CurtainLow", 0.00f, .30f, .34f);
+                _curtainMid = CurtainBand("CurtainMid", .30f, .62f, .18f);
+                _curtainHigh = CurtainBand("CurtainHigh", .62f, .95f, .07f);
+
+                var wave = VfxShapes.Lay(transform, "CurseWave", VfxShapes.Collar(64, 0.05f, 0.93f), Radius, 0.022f);
+                _wave = wave.GetComponent<Renderer>(); _waveRing = wave.transform;
+                VfxMaterial.Ghost(_wave, new Color(1, .7f, .97f, 0), 1.0f);
+                VfxMaterial.StripCollider(wave);
+
+                foreach (Transform layer in transform)
+                {
+                    if (layer.name == "Fig_Outer") { _spinners.Add(layer); _spinRate.Add(6); }
+                    if (layer.name == "Fig_Mid") { _spinners.Add(layer); _spinRate.Add(-9); }
+                    if (layer.name == "Fig_Core") { _spinners.Add(layer); _spinRate.Add(15); }
+                }
+            }
+
+            private Renderer CurtainBand(string name, float from, float to, float alpha)
+            {
+                var go = new GameObject(name);
+                go.transform.SetParent(_curtain, false);
+                go.transform.localPosition = new Vector3(0, from, 0);
+                go.transform.localScale = new Vector3(Radius, to - from, Radius);
+                go.AddComponent<MeshFilter>().sharedMesh = CurtainMesh();
+                var r = go.AddComponent<MeshRenderer>();
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; r.receiveShadows = false;
+                VfxMaterial.Ghost(r, new Color(CovenCore.r, CovenCore.g, CovenCore.b, 0), .8f);
+                _curtainAlpha[r] = alpha;
+                return r;
+            }
+
+            private readonly Dictionary<Renderer, float> _curtainAlpha = new Dictionary<Renderer, float>(3);
+            private static Mesh _curtainMesh;
+            private static Mesh CurtainMesh()
+            {
+                if (_curtainMesh != null) return _curtainMesh;
+                // ⚠️⚠️ TWO SHEETS, NOT ONE SHEET WOUND BOTH WAYS. The first version shared each
+                // vertex between the outward and the inward triangle, so `RecalculateNormals`
+                // averaged opposite faces to a ZERO normal and the whole wall lit pure black: the
+                // first native still (`ability_coven_eclipse_eye_v56.png`, 2026-09-24) showed an
+                // opaque black ring standing round the circle instead of a luminous curtain. Each
+                // side now owns its vertices and its normal (out on the outer sheet, in on the inner).
+                const int sides = 64, ring = (sides + 1) * 2;
+                var vertices = new Vector3[ring * 2]; var normals = new Vector3[ring * 2];
+                var triangles = new int[sides * 12];
+                for (int i = 0; i <= sides; i++)
+                {
+                    float a = i * Mathf.PI * 2 / sides;
+                    var rim = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
+                    for (int side = 0; side < 2; side++)
+                    {
+                        int v = side * ring + i * 2;
+                        vertices[v] = rim; vertices[v + 1] = rim + Vector3.up;
+                        normals[v] = normals[v + 1] = side == 0 ? rim : -rim;
+                    }
+                    if (i == sides) continue;
+                    int n = i * 2, m = ring + i * 2, t = i * 12;
+                    int[] faces = { n, n + 1, n + 2, n + 2, n + 1, n + 3, m, m + 2, m + 1, m + 2, m + 3, m + 1 };
+                    for (int k = 0; k < 12; k++) triangles[t + k] = faces[k];
+                }
+                _curtainMesh = new Mesh { name = "Coven curtain", vertices = vertices, normals = normals, triangles = triangles };
+                _curtainMesh.RecalculateBounds();
+                return _curtainMesh;
+            }
+
+            private static void SetAlpha(Renderer r, float alpha)
+            {
+                if (r == null || r.sharedMaterial == null) return;
+                var c = r.sharedMaterial.color; c.a = Mathf.Clamp01(alpha); r.sharedMaterial.color = c;
+                r.enabled = alpha > .003f;
+            }
+
+            private void StepPresence(float seconds, float fade)
+            {
+                bool reduced = Settings.SettingsStore.Current.ReducedEffects;
+                float built = BuildSeconds <= .001f ? 1 : Mathf.Clamp01(seconds / BuildSeconds);
+                float closed = seconds >= BuildSeconds ? 1 : 0;
+                // The pool darkens as the circle is written, and lifts with the fade.
+                SetAlpha(_pool, .30f * Mathf.SmoothStep(0, 1, built) * fade);
+                // The primary cores light as the circle closes.
+                float snap = reduced ? 0 : Mathf.Exp(-Mathf.Max(0, seconds - BuildSeconds) * 7) * closed;
+                float sincePulse = Mathf.Max(0, seconds - _lastPulse);
+                float pulse = seconds >= BuildSeconds && _lastPulse > 0 ? Mathf.Exp(-sincePulse * 5) : 0;
+                for (int i = 0; i < _cores.Count; i++)
+                {
+                    bool glow = i % 2 == 0;
+                    float on = Mathf.SmoothStep(0, 1, Mathf.Clamp01((seconds - BuildSeconds * (.55f + .15f * (i / 2))) / .3f));
+                    SetAlpha(_cores[i], (glow ? .30f + .25f * snap + .15f * pulse : .92f) * on * fade);
+                }
+                // The curtain rises in the last part of the build, breathes, flares on each curse.
+                float rise = Mathf.SmoothStep(0, 1, Mathf.Clamp01((seconds - BuildSeconds * .6f) / (BuildSeconds * .4f + .01f)));
+                float sink = Mathf.Clamp01((Duration - seconds) / .6f);
+                if (_curtain != null)
+                    _curtain.localScale = new Vector3(1, Mathf.Max(.01f, rise * sink * (1 + .25f * pulse + .35f * snap)), 1);
+                float breathe = reduced ? 1 : .9f + .1f * Mathf.Sin(seconds * 2.4f);
+                foreach (var kv in _curtainAlpha)
+                    SetAlpha(kv.Key, kv.Value * rise * sink * breathe * (1 + .8f * pulse + 1.2f * snap));
+                // Each curse: a wave from the centre out to the rim.
+                if (_waveRing != null)
+                {
+                    float u = Mathf.Clamp01(sincePulse / .5f);
+                    _waveRing.localScale = new Vector3(Radius * Mathf.Lerp(.15f, 1, u), Radius, Radius * Mathf.Lerp(.15f, 1, u));
+                    SetAlpha(_wave, pulse > 0 ? .85f * (1 - u) * fade : 0);
+                }
+                // Counter-rotating sigils: a spell being held, not a decal.
+                for (int i = 0; i < _spinners.Count; i++)
+                    if (_spinners[i] != null) _spinners[i].localRotation = Quaternion.Euler(0, _spinRate[i] * seconds, 0) * _spinnerRest[i];
+            }
+            private readonly List<Quaternion> _spinnerRest = new List<Quaternion>(3);
 
             /// <summary>One medallion: a small ring with its own figure in it, or empty.</summary>
             private void AddMedallion(float angleDeg, float at, float size,
@@ -3067,9 +3252,13 @@ namespace TumbangPreso.Abilities
                 {
                     if(_floaters[i]==null)continue;
                     float settle=BuildSeconds<=.001f?1:Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/BuildSeconds));
-                    _floaters[i].localPosition=_floatPosition[i]+Vector3.up*(settle*.20f+Mathf.Sin(seconds*1.4f+_floatPhase[i])*.045f);
-                    _floaters[i].localRotation=_floatRest[i]*Quaternion.Euler(0,(1-settle)*(i%2==0?25:-25),0);
+                    // SKILL-FX-1: the glyphs ORBIT (inner and outer rings opposite ways) and climb.
+                    var orbit=Quaternion.Euler(0,seconds*(i%2==0?7f:-10f),0);
+                    _floaters[i].localPosition=orbit*_floatPosition[i]+Vector3.up*(settle*(.20f+.18f*(i%3))+Mathf.Sin(seconds*1.4f+_floatPhase[i])*.045f);
+                    _floaters[i].localRotation=orbit*_floatRest[i]*Quaternion.Euler(0,(1-settle)*(i%2==0?25:-25),0);
                 }
+                if(_spinnerRest.Count!=_spinners.Count){_spinnerRest.Clear();foreach(var spinner in _spinners)_spinnerRest.Add(spinner!=null?spinner.localRotation:Quaternion.identity);}
+                StepPresence(seconds,fade);
             }
 
         }
@@ -3470,6 +3659,7 @@ namespace TumbangPreso.Abilities
                 // ultimate" in this enum's own words, and a thrown tsinelas that encased
                 // somebody would be the single least readable thing in the game.
                 case ExplosionStyle.Slipper: return StunElement.None;
+                case ExplosionStyle.Ignition: return StunElement.None;
 
                 default: return StunElement.Fire;
             }
@@ -3488,6 +3678,9 @@ namespace TumbangPreso.Abilities
 
             /// <summary>A thrown tsinelas. Small, light, and the joke rather than an ultimate.</summary>
             Slipper,
+
+            /// <summary>Sean's charged slipper impact, distinct from his ultimate and ordinary throws.</summary>
+            Ignition,
         }
 
         /// <summary>The per-style numbers. See `ExplosionStyle` for why this is not one look.</summary>
@@ -3544,6 +3737,11 @@ namespace TumbangPreso.Abilities
                     case ExplosionStyle.Frost:
                         return VfxShapes.NovaShell(5, 9, 0.0f, seed);
 
+                    // A charged slipper needs a short point of ignition from
+                    // eye height, without borrowing Supernova's broad shell.
+                    case ExplosionStyle.Ignition:
+                        return VfxShapes.Spire(5, .08f, .08f, seed);
+
                     // Fire is the same form roughened. A blast is radial but it is not TIDY.
                     default:
                         return VfxShapes.NovaShell(6, 10, 0.16f, seed);
@@ -3551,7 +3749,8 @@ namespace TumbangPreso.Abilities
             }
 
             /// <summary>How high off the ground the core sits. A ground wave sits ON the road.</summary>
-            public float CoreLift => _style == ExplosionStyle.Quake ? 0.04f : 0.6f;
+            public float CoreLift => _style == ExplosionStyle.Quake ? .04f :
+                _style == ExplosionStyle.Ignition ? .10f : .6f;
 
             /// <summary>
             /// The vertical scale ceiling. ⚠️ ONLY THE GROUND WAVE HAS ONE: a shell is meant to
@@ -3560,7 +3759,8 @@ namespace TumbangPreso.Abilities
             /// rather than a wall standing in a 14 m box.
             /// </summary>
             public float CoreVerticalCap =>
-                _style == ExplosionStyle.Quake ? 0.9f : float.PositiveInfinity;
+                _style == ExplosionStyle.Quake ? .9f :
+                _style == ExplosionStyle.Ignition ? .85f : float.PositiveInfinity;
 
             /// <summary>
             /// ⚠️ ONLY THE FRONT CARES WHICH WAY IT POINTS. A shell is radial, so yawing it
@@ -3593,6 +3793,7 @@ namespace TumbangPreso.Abilities
 
                     // A sandal makes a comic pop, not a crater. Few points, short ones.
                     case ExplosionStyle.Slipper: return VfxShapes.Star(6, 0.62f, seed);
+                    case ExplosionStyle.Ignition: return VfxShapes.StarOutline(5, 0.58f, seed);
 
                     // Burnt ground: ragged, but rounder than a fracture.
                     default: return VfxShapes.Splat(11, 0.22f, seed);
@@ -3618,6 +3819,9 @@ namespace TumbangPreso.Abilities
                             ? new Color(0.24f, 0.45f, 0.72f)
                             : new Color(0.92f, 0.88f, 0.74f);
 
+                    case ExplosionStyle.Ignition:
+                        return new Color(1f, Random.Range(.65f, .9f), .25f);
+
                     default:
                         return new Color(1.0f, Random.Range(0.4f, 0.9f), 0.1f);
                 }
@@ -3636,6 +3840,7 @@ namespace TumbangPreso.Abilities
                     case ExplosionStyle.Quake: Visual.AbilityVfx.SpawnMagmaEruption(at, radius); break;
                     case ExplosionStyle.Frost: Visual.AbilityVfx.SpawnIceBurst(at, radius); break;
                     case ExplosionStyle.Slipper: break;   // deliberately bare. It is a slipper.
+                    case ExplosionStyle.Ignition: break;  // the small BoltHead and embers are its payload.
 
                     // ⚠️ SEAN'S OWN BURST, not `SpawnCastFlash`. That flash is what every
                     // ability in the game plays at cast, so routing the ultimate's PAYLOAD to it
@@ -3675,6 +3880,14 @@ namespace TumbangPreso.Abilities
                         debrisLift: 1.8f, debrisLife: 0.7f,
                         flashIntensity: 1.6f, flashSeconds: 0.14f,
                         shakeAmount: 0.22f, shakeSeconds: 0.16f);
+
+                case ExplosionStyle.Ignition:
+                    return new ExplosionLook(style, new Color(1f, .68f, .2f), new Color(1f, .92f, .5f),
+                        "sfx_slipper_burst", hasCore: true, debrisCount: 6,
+                        debrisSize: new Vector2(.12f, .22f), debrisSpeed: new Vector2(5f, 9f),
+                        debrisLift: 1.3f, debrisLife: .45f,
+                        flashIntensity: 1.5f, flashSeconds: .12f,
+                        shakeAmount: .22f, shakeSeconds: .16f);
 
                 default:
                     return new ExplosionLook(style, AbilityVfx.FireHotColour, AbilityVfx.FireColour,
@@ -3836,6 +4049,11 @@ namespace TumbangPreso.Abilities
                     VfxFlipbook.Play(VfxSheets.Smoke, center + Vector3.up * 0.10f, radius * 1.2f);
                     break;
 
+                case ExplosionStyle.Ignition:
+                    VfxFlipbook.Play(VfxSheets.BoltHead, center + Vector3.up * .22f,
+                        radius * .68f, tint: new Color(1f, .86f, .4f));
+                    break;
+
                 default:
                     // ⚠️ TWO SHEETS FOR SEAN AND ONLY FOR SEAN. `warm-explosion` is the bloom and
                     // `solar-shrapnel` is what it throws, which is the composition
@@ -3877,10 +4095,9 @@ namespace TumbangPreso.Abilities
                 VfxMaterial.Ghost(vfx.GetComponent<Renderer>(), look.CoreColour, 0.9f);
 
                 var anim = vfx.AddComponent<ExplosionVfxAnim>();
-                anim.TargetRadius = radius * 1.1f;
+                anim.TargetRadius = radius * (style == ExplosionStyle.Ignition ? .42f : 1.1f);
 
-                // Every `VfxShapes` mesh is unit RADIUS. See `ExplosionVfxAnim.MeshRadius`.
-                anim.MeshRadius = 1.0f;
+                anim.MeshRadius = 1f;
 
                 // Only the ground wave is capped, and only vertically. 0.9 keeps Dante's rim
                 // around 0.30 m: a lip of broken road you can see over and step across.
@@ -3906,7 +4123,7 @@ namespace TumbangPreso.Abilities
             VfxMaterial.Ghost(shockRing.GetComponent<Renderer>(), look.Edge, 0.8f);
 
             var ringAnim = shockRing.AddComponent<ShockwaveRingAnim>();
-            ringAnim.TargetRadius = radius * 1.4f;
+            ringAnim.TargetRadius = radius * (style == ExplosionStyle.Ignition ? 1f : 1.4f);
             Object.Destroy(shockRing, 0.4f);
 
             // 3. Debris. ⚠️ THE COUNT AND THE SIZE SCALE WITH THE BLAST. Ten cubes at a fixed
@@ -3915,14 +4132,14 @@ namespace TumbangPreso.Abilities
             int shards = Mathf.Clamp(Mathf.RoundToInt(look.DebrisCount * (radius / 3.0f)), 4, 22);
             for (int i = 0; i < shards; i++)
             {
-                var spark = style == ExplosionStyle.Fire
+                var spark = style == ExplosionStyle.Fire || style == ExplosionStyle.Ignition
                     ? SeanBurstEmber.Create() : GameObject.CreatePrimitive(PrimitiveType.Cube);
                 spark.name = "ExplosionSpark";
                 spark.transform.position = center + Vector3.up * 0.5f;
                 spark.transform.localScale = Vector3.one
                     * Random.Range(look.DebrisSize.x, look.DebrisSize.y)
                     * Mathf.Clamp(radius / 3.0f, 0.7f, 1.6f);
-                if (style == ExplosionStyle.Fire) spark.transform.localScale *= .55f;
+                if (style == ExplosionStyle.Fire || style == ExplosionStyle.Ignition) spark.transform.localScale *= .55f;
                 spark.transform.rotation = Random.rotation;
 
                 VfxMaterial.Ghost(spark.GetComponent<Renderer>(), look.DebrisColour(), 0.9f);
@@ -4172,7 +4389,7 @@ namespace TumbangPreso.Abilities
             /// ⚠️⚠️ UNIT RADIUS, NOT UNIT DIAMETER, AND GETTING THIS WRONG DOUBLES EVERY BLAST.
             /// This used to read `TargetRadius * 2.0f` and that was CORRECT for what it animated:
             /// `PrimitiveType.Sphere` is one unit ACROSS, so radius 0.5, so a scale of 2R gives a
-            /// radius of R. Every shape `VfxShapes` generates is built at one unit of RADIUS
+            /// radius of R. Explosion core shapes are built at one unit of RADIUS
             /// instead, so the same line would have drawn a 4.8 m Supernova at 9.9 m and swallowed
             /// most of a 14 m arena. `VISION.md` § 2 exists because of exactly that failure.
             /// </summary>

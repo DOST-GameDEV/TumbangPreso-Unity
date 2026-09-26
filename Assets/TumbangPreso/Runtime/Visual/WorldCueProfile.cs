@@ -29,6 +29,17 @@ namespace TumbangPreso.Visual
         [Range(0,.2f)] public float DangerAudio = .06f;
         public Color Chalk = new Color(.96f,.92f,.81f,1);
         public Color Ink = new Color(.14f,.11f,.075f,1);
+        /// <summary>
+        /// ⚠️⚠️ THE WEIGHT THE WORLD LOOK IS ACTUALLY DRAWN AT. READ THIS, NEVER
+        /// <see cref="WorldLighting"/> ALONE, in anything that draws. `WorldLighting` is the
+        /// profile's authoring and diagnostic switch (the graphics probe and the stage tests set it
+        /// to 0 to photograph a map's own lighting); the player's Graphics tab choice is
+        /// <see cref="Settings.LightingStyles.LookWeight"/>. Either one at 0 is each map's authored
+        /// lighting, the lighting on `main`, so the product is the only honest answer to "how much
+        /// of the look is on". A consumer that read the field alone would keep the bright contact
+        /// shadows under a player who picked Classic.
+        /// </summary>
+        public static float LightingWeight => Mathf.Clamp01(Current.WorldLighting) * Settings.LightingStyles.LookWeight;
         private static WorldCueProfile _current;
         public static WorldCueProfile Current
         {

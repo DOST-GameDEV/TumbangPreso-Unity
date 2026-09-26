@@ -13,6 +13,10 @@ namespace TumbangPreso.Abilities
     public sealed partial class HeroAbilitySystem : MonoBehaviour
     {
         public HeroKit Kit { get; private set; }
+
+        /// <summary>⚠️ FALSE FOR A CUSTOM CHARACTER, which borrows a hero's kit but is not that
+        /// hero, so `Audio.HeroVoice` never gives it Sean's voice (`MatchInstaller` sets it).</summary>
+        public bool SpeaksAsHero { get; set; } = true;
         public string HeroId { get; private set; } = "dante";
         private AbilityVariant _skill1Variant;
         private AbilityVariant _skill2Variant;
@@ -28,6 +32,14 @@ namespace TumbangPreso.Abilities
             && nemu.IsPhantomPhaseActive
             && (_motor == null || !_motor.HoldingSlipper);
         public bool IsImmuneToStuns => Kit is DanteHeroKit dante && dante.IsDemonicCarapaceActive;
+
+        /// <summary>Status immunity (Geo's SHIELD, ABILITY-2): every status but Tagged is refused.
+        /// Today the same flag as stun immunity, named for what the rework's statuses ask.</summary>
+        public bool IsImmuneToStatuses => IsImmuneToStuns;
+
+        /// <summary>A taya whose kit carries CURSE: VULNERABLE may leave the box to tag a Vulnerable
+        /// opponent (owner, 2026-09-26: *"phaister can go out of box and tag them"*).</summary>
+        public bool GrantsOutOfBoxTag => Kit is PhaisterHeroKit;
 
         private GroundReticle _reticle;
 
@@ -120,6 +132,8 @@ namespace TumbangPreso.Abilities
         public bool UpdateLoadout(HeroBuild build)
         {
             if (Kit == null) return false;
+            // ⚠️ THE SKILL TREE IS OFF (`HeroLoadoutRules.SidegradesOpen`): a build change changes nothing.
+            if (!HeroLoadoutRules.SidegradesOpen) return false;
             var first = HeroBuildRules.Equipped(build, HeroId, 1, null) ?? HeroLoadoutRules.DefaultFor(HeroId, 1);
             var second = HeroBuildRules.Equipped(build, HeroId, 2, null) ?? HeroLoadoutRules.DefaultFor(HeroId, 2);
             if (_skill1Variant?.Id == first?.Id && _skill2Variant?.Id == second?.Id) return false;
@@ -128,13 +142,17 @@ namespace TumbangPreso.Abilities
             // prevents alternate -> default -> alternate from stacking gains.
             var authored = CreateKitFor(HeroId);
             Kit.Skill1?.RestoreLoadoutTuning(authored?.Skill1);
-            Kit.Skill2?.RestoreLoadoutTuning(authored?.Skill2);
+            LoadoutSlot2(Kit)?.RestoreLoadoutTuning(LoadoutSlot2(authored));
             ConfigureLoadout(build);
             return true;
         }
 
         private void ConfigureLoadout(HeroBuild build)
         {
+            // ⚠️⚠️ HARDCODED SKILLS (owner, 2026-09-26: *"JS REMOVE ITS UI FOR NOW AND HARDCODE THE SKILLS"*).
+            // With the tree off every peer builds the default variant whatever the save or the wire
+            // carries, so all four players read the same kit.
+            if (!HeroLoadoutRules.SidegradesOpen) build = null;
             _skill1Variant = HeroBuildRules.Equipped(build, HeroId, 1, null)
                              ?? HeroLoadoutRules.DefaultFor(HeroId, 1);
             _skill2Variant = HeroBuildRules.Equipped(build, HeroId, 2, null)
@@ -154,9 +172,38 @@ namespace TumbangPreso.Abilities
         /// so the telegraph would draw a lie. `docs/Design.md`'s opening rule as code: a number
         /// in one place or it is two numbers.
         /// </summary>
+        /// <summary>
+        /// The ability a slot-two loadout variant is a reading OF.
+        ///
+        /// ⚠️⚠️ ON A ROLE KIT IT IS THE ATTACKING ABILITY, NEVER `Kit.Skill2`. `Skill2` is the LIVE
+        /// role ability, so on a defending round it is a different power from the one the variant
+        /// names (`HeroLoadout`'s Amihan rows are readings of UPDRAFT). Writing a variant's name,
+        /// cue or tuning through `Skill2` would rename and retune whichever ability the role
+        /// happened to give at the moment the loadout was applied. Owner, 2026-09-25, on how the
+        /// sidegrades fit the new shape: *"we will figure out the variants soon, keep them all as
+        /// extra skills for now"*.
+        /// </summary>
+        private static HeroAbility LoadoutSlot2(HeroKit kit)
+            => kit == null ? null : kit.HasRoleAbilities ? kit.AttackingSkill : kit.Skill2;
+
         private void ApplyLoadoutToPresentation()
         {
             if (Kit == null) return;
+            var slot2 = LoadoutSlot2(Kit);
+
+            // ⚠️⚠️ WITH THE SKILL TREE OFF THE KIT SPEAKS FOR ITSELF (ABILITY-2). The variant table still
+            // names the OLD skills ("SEISMIC STOMP" is Dante's slot-one default), and a default variant's
+            // name is written over the ability's own below, so Dante's SHIELD would read SEISMIC STOMP on
+            // every screen. No variant name, sentence, cue or tuning is applied while the tree is off.
+            if (!HeroLoadoutRules.SidegradesOpen)
+            {
+                foreach (var ability in Kit.AllAbilities)
+                {
+                    if (ability == null) continue;
+                    ability.VariantCastCue = null; ability.VariantName = null; ability.VariantSummary = null;
+                }
+                return;
+            }
 
             // ⚠️⚠️ THE ALTERNATE'S SOUND IS ASSIGNED HERE AND CLEARED HERE, IN THAT ORDER, SO A
             // LOADOUT CHANGE CANNOT LEAVE A STALE ONE ON THE KIT. A sidegrade changes what the
@@ -168,7 +215,7 @@ namespace TumbangPreso.Abilities
             // null for it, so `HeroAbility.EffectiveCastCue` falls through to the slot's own cue
             // — which is the whole point of "as tuned".
             if (Kit.Skill1 != null) Kit.Skill1.VariantCastCue = VariantCue(_skill1Variant?.Id);
-            if (Kit.Skill2 != null) Kit.Skill2.VariantCastCue = VariantCue(_skill2Variant?.Id);
+            if (slot2 != null) slot2.VariantCastCue = VariantCue(_skill2Variant?.Id);
 
             // ⚠️⚠️ AND THE ALTERNATE'S NAME AND SENTENCE, FOR THE SAME REASON ONE LAYER UP.
             // `HeroAbility.VariantName` has the whole argument: `AbilityInspectPanel` and
@@ -189,10 +236,10 @@ namespace TumbangPreso.Abilities
                 Kit.Skill1.VariantSummary = _skill1Variant?.Description;
             }
 
-            if (Kit.Skill2 != null)
+            if (slot2 != null)
             {
-                Kit.Skill2.VariantName = _skill2Variant?.Name;
-                Kit.Skill2.VariantSummary = _skill2Variant?.Description;
+                slot2.VariantName = _skill2Variant?.Name;
+                slot2.VariantSummary = _skill2Variant?.Description;
             }
 
             switch (_skill1Variant?.Id)
@@ -218,23 +265,23 @@ namespace TumbangPreso.Abilities
             switch (_skill2Variant?.Id)
             {
                 case "dante.2.plating":
-                    Kit.Skill2?.ScaleLoadout(duration: Gain("dante.2.plating")); break;
+                    slot2?.ScaleLoadout(duration: Gain("dante.2.plating")); break;
 
                 case "cheska.2.spires":
-                    Kit.Skill2?.ScaleLoadout(telegraphRadius: Gain("cheska.2.spires")); break;
+                    slot2?.ScaleLoadout(telegraphRadius: Gain("cheska.2.spires")); break;
 
                 // ⚠️ THE ARMED WINDOW IS THE COST ON BOTH OF THESE. Flare Shot and Snap Discharge
                 // both buy speed with how long the shoe stays armed after the cast, and that
                 // window IS `HeroAbility.Duration`: the deck bar draining faster is the whole
                 // warning a player gets that they have to throw now.
                 case "sean.2.flare":
-                    Kit.Skill2?.ScaleLoadout(duration: Cost("sean.2.flare")); break;
+                    slot2?.ScaleLoadout(duration: Cost("sean.2.flare")); break;
 
                 case "zack.2.discharge":
-                    Kit.Skill2?.ScaleLoadout(duration: Cost("zack.2.discharge")); break;
+                    slot2?.ScaleLoadout(duration: Cost("zack.2.discharge")); break;
 
                 case "nemu.2.leash":
-                    Kit.Skill2?.ScaleLoadout(duration: Cost("nemu.2.leash")); break;
+                    slot2?.ScaleLoadout(duration: Cost("nemu.2.leash")); break;
 
                 // ⚠️ LONG STRIDE IS THE ONE ROW WHOSE COST IS A DIVISION. It goes further (the
                 // gain scales the reach) and takes proportionally LONGER to ramp to the far mark,
@@ -242,7 +289,7 @@ namespace TumbangPreso.Abilities
                 // sees both in the live aim beacon before releasing, which is what makes it a
                 // read for the taya rather than a free upgrade.
                 case "phaister.2.stride":
-                    Kit.Skill2?.ScaleLoadout(telegraphRange: Gain("phaister.2.stride"),
+                    slot2?.ScaleLoadout(telegraphRange: Gain("phaister.2.stride"),
                                              aimMax: Gain("phaister.2.stride"),
                                              aimRamp: 1.0f / Cost("phaister.2.stride"));
                     break;
@@ -353,6 +400,14 @@ namespace TumbangPreso.Abilities
                 case "rafi":
                     return new RafiHeroKit();
 
+                // The first ROLE kit: a signature, an attacking and a defending ability (2026-09-25).
+                case "amihan":
+                    return new AmihanHeroKit();
+
+                // The ninth hero, a plant: signature, attacking, defending, ultimate (2026-09-25).
+                case "paete":
+                    return new PaeteHeroKit();
+
                 default:
                     return new DanteHeroKit();
             }
@@ -388,6 +443,12 @@ namespace TumbangPreso.Abilities
             // would be the same frame's work undone, and a duration cleared from out here would
             // strand a grant switched on with no timer left to switch it off. Only the two
             // numbers that gate a NEW cast are touched.
+            // ⚠️⚠️ THE ROLE IS READ BEFORE THE TICK AND BEFORE ANY PRESS, EVERY FRAME, FROM THE BODY.
+            // `IsDefender` is the derived taya (`CLAUDE.md` § 4), already on every peer, so the role
+            // ability every peer draws and casts is the same one with nothing on the wire. It
+            // changes at a round boundary, where `ResetKit` has just cleared every cooldown.
+            Kit.SetRole(_motor.IsDefender, _context);
+
             if (PracticeSandbox.Active) RefillForSandbox();
 
             if (NetAuthority.IsNetworked)
@@ -412,6 +473,16 @@ namespace TumbangPreso.Abilities
             // DISAPPEAR one.
             Aim(intent, Verb.Skill1, Slot.Skill1, ref _skill1BufferedAt);
             Aim(intent, Verb.Skill2, Slot.Skill2, ref _skill2BufferedAt);
+
+            // ⚠️ GRAB WHILE ALOFT IS "GO DOWN" (owner, 2026-09-25: *"cant pick up unless they choose
+            // to go down"*). A player who flies over their slipper and presses grab means to get it,
+            // so the press ends the flight exactly as pressing Updraft again does: through the same
+            // role-ability cast, so it is buffered, answered and replicated like any other press.
+            // Its own render-frame edge, for the reason `_keyWasDown` gives.
+            bool grabDown = intent.Pressed(Verb.Grab);
+            if (grabDown && !_grabWasDown && Kit is AmihanHeroKit amihan && amihan.IsFlying && !Kit.IsDefending)
+                _skill2BufferedAt = Time.time;
+            _grabWasDown = grabDown;
             Aim(intent, Verb.Ultimate, Slot.Ultimate, ref _ultimateBufferedAt);
 
             UpdateReticle(intent);
@@ -490,6 +561,7 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Was this slot's key down on the previous Update? One entry per slot.</summary>
         private readonly bool[] _keyWasDown = { false, false, false };
+        private bool _grabWasDown;
 
         /// <summary>
         /// The offline test bench's per-frame refill: no cooldowns, no charge cost, a full
@@ -508,6 +580,7 @@ namespace TumbangPreso.Abilities
         {
             Kit.Skill1?.RefillForSandbox();
             Kit.Skill2?.RefillForSandbox();
+            Kit.IdleRoleSkill?.RefillForSandbox();
             Kit.Ultimate?.RefillForSandbox();
             Kit.AddUltimateCharge(Kit.UltimateCost);
         }
@@ -738,6 +811,10 @@ namespace TumbangPreso.Abilities
                     NetCue.Play(ability.EffectiveCastCue, transform.position);
             }
 
+            // VOICE-1: the hero calls the power, on this peer, from the same per-peer presentation
+            // path as the cue above. `HeroVoice` rests a skill's voice between casts; the cue does not.
+            GameServices.HeroVoice?.OnCast(_motor, slot == Slot.Skill1 ? 1 : slot == Slot.Skill2 ? 2 : 0);
+
             // ⚠️⚠️ COUNT THE CAST ONLY ON THE OWNER. `ApplyNetworkCast` also calls this method on
             // observers, so counting every presentation would award one step per connected peer.
             // Practice has no transport and uses `GameLaunch.SoloSeat`; a bot never earns a
@@ -776,7 +853,9 @@ namespace TumbangPreso.Abilities
                         ability.TelegraphRadius, slot == Slot.Ultimate);
                 return;
             }
-            if (Kit != null && (Kit.HeroId == "phaister" || Kit.HeroId == "sean")) return;
+            // Amihan's casts carry their own tell (the heel kick, the lift ring, the gale's unroll;
+            // `AmihanVfx`), so the generic flash would be a second picture of one beat.
+            if (Kit != null && (Kit.HeroId == "phaister" || Kit.HeroId == "sean" || Kit.HeroId == "amihan" || Kit.HeroId == "paete")) return;
             if (Kit == null || Kit.HeroId != "zack")
                 Visual.AbilityVfx.SpawnCastFlash(transform.position, AccentColour(), .55f);
 
@@ -935,6 +1014,8 @@ namespace TumbangPreso.Abilities
                 case "dante": return "sfx_ult_theme_dante";
                 case "nemu": return "sfx_ult_theme_nemu";
                 case "rafi": return "sfx_ult_theme_rafi";
+                case "amihan": return "sfx_ult_theme_amihan";
+                case "paete": return "sfx_ult_theme_paete";
                 default: return null;
             }
         }
@@ -949,6 +1030,8 @@ namespace TumbangPreso.Abilities
                 case "sean": return Visual.SkyEvent.Look.Emberfall;
                 case "dante": return Visual.SkyEvent.Look.Dustveil;
                 case "nemu": return Visual.SkyEvent.Look.Seance;
+                case "amihan": return Visual.SkyEvent.Look.Monsoon;
+                case "paete": return Visual.SkyEvent.Look.Canopy;
                 default: return null;
             }
         }
@@ -1029,7 +1112,7 @@ namespace TumbangPreso.Abilities
             // bleached the court for 2.2 seconds after a 0.4-second preparation.
             if (Kit != null && Kit.HeroId == "cheska")
                 Visual.CheskaColdGather.Begin(_motor.transform,Kit.Ultimate.Windup);
-            else if (Kit == null || (Kit.HeroId != "nemu" && Kit.HeroId != "dante" && Kit.HeroId != "phaister" && Kit.HeroId != "sean" && Kit.HeroId != "zack" && Kit.HeroId != "rafi"))
+            else if (Kit == null || (Kit.HeroId != "nemu" && Kit.HeroId != "dante" && Kit.HeroId != "phaister" && Kit.HeroId != "sean" && Kit.HeroId != "zack" && Kit.HeroId != "rafi" && Kit.HeroId != "amihan" && Kit.HeroId != "paete"))
                 Visual.UltimateColumn.Raise(_context.Position, AccentColour());
 
             // ⚠️⚠️ THE WEATHER IS THE SECOND THING THAT IS NOT LOCAL, AND IT IS HERE RATHER THAN
@@ -1083,7 +1166,9 @@ namespace TumbangPreso.Abilities
 
             // Dante's pressure cue precedes the hit. The camera kick belongs to
             // the actual ground contact, not a long chromatic blast on keypress.
-            if (afterIntroduction || (Kit != null && (Kit.HeroId == "dante" || Kit.HeroId == "phaister" || Kit.HeroId == "sean" || Kit.HeroId == "zack"))) return;
+            // Amihan's weight lands at the RELEASE, 2.5 s after the press (`AmihanStorm.Release`
+            // punches the camera); a punch here would spend the impact on the gather.
+            if (afterIntroduction || (Kit != null && (Kit.HeroId == "dante" || Kit.HeroId == "phaister" || Kit.HeroId == "sean" || Kit.HeroId == "zack" || Kit.HeroId == "amihan" || Kit.HeroId == "paete"))) return;
 
             var camera = UnityEngine.Camera.main;
             if (camera == null) return;
@@ -1238,6 +1323,16 @@ namespace TumbangPreso.Abilities
         {
             if (context == null) return Vector3.zero;
             Vector3 at = context.Position + context.Forward * range;
+            if (ability.AimsWhereLooking)
+            {
+                // Where the sight line meets the court (the cast's own aim once it has been sent), kept between the ranges.
+                Vector3 look = at;
+                if (context.HasAimPoint) look = context.AimPoint;
+                else if (CameraSystem.CameraRig.TryLookGround(context.Motor, out var ground)) look = ground;
+                Vector3 flat = look - context.Position; flat.y = 0.0f;
+                Vector3 along = flat.sqrMagnitude > 1e-4f ? flat.normalized : context.Forward;
+                at = context.Position + along * Mathf.Clamp(flat.magnitude, ability.AimMinRange, ability.AimMaxRange);
+            }
 
             if (!ability.HoldToAim) return at;
 

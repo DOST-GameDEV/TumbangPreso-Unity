@@ -254,6 +254,40 @@ namespace TumbangPreso.CameraSystem
         public CharacterMotor Following => _character;
 
         /// <summary>
+        /// Where the main camera's sight line meets the court, for the body it follows (false for any other body: only the player
+        /// looking through this camera can aim with it). Looking at or above the horizon, a point far along the view, which the
+        /// aimed ability then clamps to its reach. Used by casts placed where the player looks (`HeroAbility.AimsWhereLooking`).
+        /// </summary>
+        /// <summary>If the main camera follows <paramref name="who"/> in a held (third-person) view, reopen it behind the body's facing.</summary>
+        public static void FaceHeldView(CharacterMotor who)
+        {
+            var cam = Camera.main;
+            var rig = cam != null ? cam.GetComponent<CameraRig>() : null;
+            if (who == null || rig == null || rig._character != who) return;
+            if (rig._emoteView) rig._emoteYawDeg = rig.BodyYawDeg();
+        }
+
+        public static bool TryLookGround(CharacterMotor who, out Vector3 point)
+        {
+            point = Vector3.zero;
+            var cam = Camera.main;
+            var rig = cam != null ? cam.GetComponent<CameraRig>() : null;
+            if (who == null || rig == null || rig._character != who) return false;
+            Vector3 origin = cam.transform.position, forward = cam.transform.forward;
+            float ground = Slipper.GroundY(who.transform.position + Vector3.up * 0.3f);
+            if (forward.y < -0.02f && origin.y > ground)
+            {
+                point = origin + forward * ((origin.y - ground) / -forward.y);
+                return true;
+            }
+            var flat = new Vector3(forward.x, 0.0f, forward.z);
+            if (flat.sqrMagnitude < 1e-4f) flat = who.transform.forward;
+            point = who.transform.position + flat.normalized * 100.0f;
+            point.y = ground;
+            return true;
+        }
+
+        /// <summary>
         /// § THE VERB, IN THE PLAYER'S OWN HANDS. `camera_rig.gd::play_viewmodel_action`.
         ///
         /// ⚠️⚠️ A CLIP IF THE ARMS HAVE ONE, A PROCEDURAL KICK IF THEY DO NOT, AND THE SECOND
@@ -288,6 +322,58 @@ namespace TumbangPreso.CameraSystem
             if (rig._arms.PlayAction(kind)) return;
 
             rig.ViewmodelKick(Vector3.forward);
+        }
+
+        /// <summary>
+        /// The first-person hand tip of <paramref name="who"/>, when this screen is looking through
+        /// their eyes; false in third person, for anybody else, or with no viewmodel. Effects that
+        /// leave the hands (Paete's vines) start here so the owner sees them come out of their own arms.
+        /// </summary>
+        public static bool TryViewmodelHand(CharacterMotor who, bool left, out Vector3 world)
+        {
+            world = default;
+            if (who == null) return false;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return false;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return false;
+            return rig._arms.TryHandTip(left, out world);
+        }
+
+        /// <summary>
+        /// Where <paramref name="who"/>'s first-person arm is DRAWN (hand, back end, half-width), when this camera is in their eyes
+        /// (HERO-9: LIANA LEAP's vines leave the drawn forearm, `ViewmodelArms.TryDrawnArm`).
+        /// </summary>
+        public static bool TryDrawnViewmodelArm(CharacterMotor who, bool left, out Vector3 hand, out Vector3 back, out float halfWidth)
+        {
+            hand = back = default; halfWidth = 0f;
+            if (who == null) return false;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return false;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return false;
+            return rig._arms.TryDrawnArm(left, out hand, out back, out halfWidth);
+        }
+
+        /// <summary>Paete's first-person forearms lengthening with his vines (`ViewmodelArms.SetReachStretch`); 0 puts them back.</summary>
+        public static void SetViewmodelReachStretch(CharacterMotor who, float stretch)
+        {
+            if (who == null) return;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._arms == null) return;
+            rig._arms.SetReachStretch(stretch);
+        }
+
+        /// <summary>
+        /// The two first-person arm renderers of <paramref name="who"/>, when this camera is in their eyes (HERO-9: Paete's channel
+        /// lights his own hands on his screen, `Visual.PaeteChannelGlow`).
+        /// </summary>
+        public static bool TryViewmodelArmRenderers(CharacterMotor who, out MeshRenderer left, out MeshRenderer right)
+        {
+            left = right = null;
+            if (who == null) return false;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return false;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return false;
+            return rig._arms.TryArmRenderers(out left, out right);
         }
 
         public static void SeekViewmodelAction(CharacterMotor who,string expected,float elapsed)
@@ -851,13 +937,40 @@ namespace TumbangPreso.CameraSystem
             return Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
         }
 
+        private float _fppSquatBlend;
+
+        /// <summary>0 to 1: how deep the local taya is in the raise's crouch, eased in and out.</summary>
+        private float FppRaiseSquat()
+        {
+            var carrier = _character != null ? _character.GetComponent<Carrier>() : null;
+            var motor = _character != null ? _character.GetComponent<CharacterMotor>() : null;
+            var lata = GameServices.Round?.Lata;
+            float ratio = carrier != null && motor != null && motor.IsDefender && lata != null && !lata.IsUpright ? carrier.ChannelRatio : 0f;
+            _fppSquatBlend = Mathf.MoveTowards(_fppSquatBlend, ratio > 0 ? 1f : 0f, Time.deltaTime / (ratio > 0 ? .12f : .18f));
+            return _fppSquatBlend * Visual.CanRaiseShape.Crouch(ratio > 0 ? ratio : 1f);
+        }
+
         private void ApplyFpp()
         {
             float yaw = BodyYawDeg();
             Vector3 eye = _character.transform.position + Vector3.up * (PersonCapsuleHeight * 0.5f + FppEyeHeight);
 
+            // ⚠️ THE TAYA'S SQUAT OVER THE CAN, FELT FROM THE EYES (owner, 2026-09-26: *"they should
+            // crouch first and put it up"*). Same curve as the body (`Visual.CanRaiseShape`); it only
+            // offsets the view, never `_pitchDeg`, so the aim is untouched when the raise ends.
+            float squat = FppRaiseSquat();
+            eye -= Vector3.up * (Visual.CanRaiseShape.FppEyeDrop * squat);
+
+            // ⚠️ PAETE DOWN ON HIS KNEE, FROM HIS OWN EYES (HERO-9 v5, direction.md 5.14: *"HE GOES TO THE GHHROUND AND HIS ROOTS
+            // CONNECT TO IT"*). While MAKILING'S EMBRACE holds him down after its cutscene his view is at kneel height and tipped a
+            // little toward his hands in the court, and it lifts on each of the tree's hauls. The squat's rule exactly: an offset
+            // of the view, never `_pitchDeg`, so the aim is where it was when he stands (and walking ends it at once).
+            float kneel = Visual.PaeteGroundCall.KneelWeight(_character);
+            eye -= Vector3.up * (Visual.PaeteGroundCall.FppEyeDrop * kneel - 0.06f * kneel * Visual.PaeteGroundCall.HeaveJolt(_character));
+
             // Absolute, from yaw and pitch only. The body's roll cannot reach this.
-            transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg, yaw, 0.0f));
+            transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg + Visual.CanRaiseShape.FppLookDown * squat
+                                                                   + Visual.PaeteGroundCall.FppLookDown * kneel, yaw, 0.0f));
 
             if (_viewmodel != null && !_viewmodel.gameObject.activeSelf)
                 _viewmodel.gameObject.SetActive(true);
@@ -1368,7 +1481,13 @@ namespace TumbangPreso.CameraSystem
             // every tag in a 90 s round would take the camera off the player four or five times
             // a match for no decision. Hero skills are refused by the same rule.
             bool held = _character != null && _character.StunElement != StunElement.None;
-            bool down = _character != null && (_character.IsTripped || held);
+            // ⚠️ ROOTED SWINGS OUT TOO (HERO-9, the owner's table for Paete's ultimate: *"they get stuck on it
+            // (switches to tpp view)"*; planned in docs/reports/paete-kit-2026-09-25/plan.md and never wired
+            // until the sentry film of 2026-09-26 showed a caught player still in first person). Unlike a tag
+            // there IS something to do: hold Interact to struggle free, and they can still throw and cast, so
+            // they see their own body held by the tree. It keeps the standing pitch, as a held body does.
+            bool rooted = _character != null && _character.IsRooted;
+            bool down = _character != null && (_character.IsTripped || held || rooted);
             if (down == _fallView) return;
 
             // ⚠️ AN EMOTE ALREADY OWNS THE SWING, SO DO NOT TAKE IT FROM ONE. `EmotePlayer.Stop`
@@ -1391,7 +1510,7 @@ namespace TumbangPreso.CameraSystem
                 // `FallPitchDeg` looks DOWN at a body on the tarmac; using it for a stun would
                 // aim the camera at the road in front of a character who is upright, and the
                 // one thing the player needs to see is the element on their own body.
-                if (!held) _emotePitchDeg = FallPitchDeg;
+                if (!held && !rooted) _emotePitchDeg = FallPitchDeg;
             }
             else EndEmoteView();
         }

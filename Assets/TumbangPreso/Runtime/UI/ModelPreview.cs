@@ -279,6 +279,20 @@ namespace TumbangPreso.UI
         /// <summary>Set by <see cref="SetTileFraming"/>. See that function.</summary>
         private bool _centreSubject;
         private bool _uniformExtent;
+        private bool _isPerson;
+
+        /// <summary>
+        /// ⚠️ A CHARACTER IS FRAMED ON ITS STANDING HEIGHT, NEVER ON ITS T-POSE (2026-09-27). Each character used to be framed
+        /// from its own rest bounds, which are a T-pose, so WIDTH decided the distance: Paete's long branch arms (3.57 m across
+        /// at his size) pushed the camera back until he was drawn at a fraction of Cheska's height (owner: *"why is paete so
+        /// small here"*). Now the camera fits the posed (idle) height, and never comes closer than it would for the shared
+        /// hero body's standing height (0.79 mesh units, head included, measured off the preview at 2.38: 1.88), so a small
+        /// character (Nemu, 1.42) is still drawn small and a tall one (Paete, Phaister's hat) is never cropped. Measured
+        /// (`HeroPreviewSizeProbe`, 960x1015 panel): every standard hero at 0.64 to 0.66 of the panel, Paete 0.65, Nemu 0.49.
+        /// </summary>
+        private const float ReferenceStandingHeight = 0.79f;
+        /// <summary>This subject's own size over the cast's (`CharacterVisual.BodyScaleFor`), so the reference is not scaled with it.</summary>
+        private float _bodyScale = 1f;
 
         /// <summary>Set by <see cref="EnableTileInteraction"/>. See that function.</summary>
         private bool _wheelZooms = true;
@@ -717,6 +731,10 @@ namespace TumbangPreso.UI
             // for slippers doesnt lessen everyone's"*. A 16-colour subject still takes the 19 mm
             // this method's note derives.
             bool isPerson = palette != null && palette.Length == 16;
+            _isPerson = isPerson;
+            // The size this character plays at (`CharacterVisual.BodyScaleFor`), so the screens and the match agree.
+            _bodyScale = isPerson ? Visual.CharacterVisual.BodyScaleFor(prefab.name) : 1f;
+            _model.transform.localScale = Vector3.one * (PreviewScale * _bodyScale);
 
             // ⚠️ A TSINELAS TAKES THE FLAT SKIN HERE TOO, AND IT HAS TO BE THE SAME ONE THE MATCH
             // USES. This screen exists so that what you pick and what walks out cannot look like
@@ -960,6 +978,15 @@ namespace TumbangPreso.UI
             //
             // ⚠️ OPT-IN, AND THE CHARACTER SCREEN MUST NOT GET IT. There the subject is alone at
             // full size and should use the whole frame.
+            if (_isPerson && !_uniformExtent)
+            {
+                // The standing height, never closer than the reference body's. ⚠️ The reference is in mesh units and converted
+                // with the model's OWN world scale less its body scale (the preview stage is scaled; a metre value framed nothing).
+                float unit = _model.transform.lossyScale.y / Mathf.Max(.01f, _bodyScale);
+                float posedHeight = anyPosed ? Mathf.Max(posed.size.y, 0.001f) : height;
+                _frameDistance = (Mathf.Max(ReferenceStandingHeight * unit, posedHeight) * FrameMargin * 0.5f) / halfFov;
+            }
+
             if (_uniformExtent)
             {
                 float extent = Mathf.Max(height, width);

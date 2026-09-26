@@ -31,10 +31,11 @@ namespace TumbangPreso.Core
         /// sidegrade changes which numbers rather than how many.** `docs/FUTURE.md` PHASE 10 is
         /// explicit that this is the trade being made and that a test has to hold it.
         ///
-        /// ⚠️⚠️ NOTHING GRANTS ONE YET. Phase 10's challenge counters are not built, so
-        /// `HeroLoadoutRules.ChallengesEnforced` is false and every variant is available to every
-        /// account. This member exists so that the day they are built, they grant through the one
-        /// ledger every other unlock already uses rather than through a second one.
+        /// ⚠️⚠️ NOTHING GRANTS ONE. The challenge counters were built as a LOCAL ledger instead
+        /// (`AbilityChallengeProgress`, Practice-safe; see `HeroBuildRules.IsUnlocked`), and since
+        /// 2026-09-24 `HeroLoadoutRules.LockSkillTree` is false for testing, so every variant is
+        /// open to every account. This member is kept so a future career grant goes through the
+        /// one reward ledger every other unlock uses rather than through a second one.
         /// `docs/TODO.md` § 108.3.
         /// </summary>
         AbilityVariant,

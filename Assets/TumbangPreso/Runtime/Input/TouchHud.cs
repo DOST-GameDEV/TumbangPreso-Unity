@@ -591,8 +591,11 @@ namespace TumbangPreso.InputLayer
             rt.anchoredPosition += new Vector2(clampedX - local.x, clampedY - local.y);
         }
 
+        // ⚠️ INTERACT IS HERO STRIKE ONLY, LIKE THE SKILL RAIL: everything it does today (pull out a
+        // plant, break out of roots) is a hero power, and Classic has none (VISION § 1.1).
         private bool VisibleInMode(VerbInput entry)
-            => TouchButton.Customising || entry.Zone != TouchZone.SkillRail
+            => TouchButton.Customising
+               || (entry.Zone != TouchZone.SkillRail && entry.Verb != Verb.Interact)
                || SceneFlow.SelectedMode == Core.GameMode.HeroStrike;
 
         private int _layoutRevision = -1;

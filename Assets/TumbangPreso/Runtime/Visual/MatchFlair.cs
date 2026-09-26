@@ -208,6 +208,10 @@ namespace TumbangPreso.Visual
 
                 case Kind.IceShatter:
                     ComicPopup.Freeze(at);
+                    // ⚠️ GLACIAL WALL BREAKS ON EVERY SCREEN (ABILITY-2). The host counts the three hits
+                    // and shatters its copy; this flair reaches every peer, so each breaks its own.
+                    foreach (var wall in Object.FindObjectsByType<Abilities.HeroHazards.IceBarricadeComponent>(FindObjectsSortMode.None))
+                        if (wall != null && (wall.transform.position - at).sqrMagnitude < 1.5f * 1.5f) wall.Shatter();
                     break;
 
                 case Kind.Thunder:
@@ -405,6 +409,7 @@ namespace TumbangPreso.Visual
             // for a commentary track: each machine says its own line off the event it has just
             // been told about, and nobody hears somebody else's announcer.
             GameServices.Voice?.OnAttackerTagged();
+            GameServices.HeroVoice?.OnTagged(taya, victim);
         }
 
         private static void PlayBlock(CharacterMotor blocker, Vector3 at, float alongSpeed)

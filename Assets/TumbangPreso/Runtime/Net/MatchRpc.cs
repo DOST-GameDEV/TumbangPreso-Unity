@@ -358,6 +358,11 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SyncUnit", OnSyncUnitMsg);
             cm.RegisterNamedMessageHandler("Teleport", OnTeleportMsg);
             cm.RegisterNamedMessageHandler("Impact", OnImpactMsg);
+            cm.RegisterNamedMessageHandler("Carry", OnCarryMsg);
+            // Paete (protocol 54): a rooted player breaking free, a player pulling out his plant.
+            cm.RegisterNamedMessageHandler("ReqBreakFree", OnReqBreakFreeMsg);
+            cm.RegisterNamedMessageHandler("ReqUproot", OnReqUprootMsg);
+            cm.RegisterNamedMessageHandler("PlantPulled", OnPlantPulledMsg);
             cm.RegisterNamedMessageHandler("ReqPunch", OnReqPunchMsg);
             cm.RegisterNamedMessageHandler("ReqLunge", OnReqLungeMsg);
             cm.RegisterNamedMessageHandler("ReqSlide", OnReqSlideMsg);
@@ -1875,7 +1880,7 @@ namespace TumbangPreso.Net
                 ultimateRemaining = zack.IsThunderstrikeActive ? kit.Ultimate.DurationRemaining : 0;
             }
             else if (kit is Abilities.DanteHeroKit dante)
-                chargeRemaining = dante.IsDemonicCarapaceActive ? kit.Skill2.DurationRemaining : 0;
+                chargeRemaining = dante.IsDemonicCarapaceActive ? kit.Skill1.DurationRemaining : 0;  // SHIELD is the signature now (ABILITY-2)
             else if (kit is Abilities.NemuHeroKit nemu)
                 chargeRemaining = nemu.IsPhantomPhaseActive ? kit.Skill1.DurationRemaining : 0;
             else return;
@@ -2126,6 +2131,103 @@ namespace TumbangPreso.Net
             unit.ApplyImpulse(impulse);
         }
 
+        /// <summary>
+        /// ⚠️ A CARRY IS AN IMPACT THAT LASTS (ability overhaul, 2026-09-25): the host resolved a
+        /// wind or a dash hit on a body another peer simulates, and only that peer can move it.
+        /// Same shape and same epoch guard as `Impact`, one float longer: how long the velocity is
+        /// held before `Friction` takes it (`Core.CarryRules`).
+        /// </summary>
+        public void BroadcastCarry(int slot,Vector3 velocity,float seconds)
+        {
+            if(!NetAuthority.ShouldResolve() || !ValidSlot(slot) || !Finite(velocity) || !Finite(seconds) || _nm?.CustomMessagingManager==null)return;
+            using var writer=new FastBufferWriter(40,Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(_movementEpochs[slot]);
+            writer.WriteValueSafe(velocity);
+            writer.WriteValueSafe(seconds);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("Carry",writer);
+        }
+
+        private void OnCarryMsg(ulong senderClientId,FastBufferReader reader)
+        {
+            if(NetAuthority.IsHost || !FromHost(senderClientId))return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out int epoch);
+            reader.ReadValueSafe(out Vector3 velocity);
+            reader.ReadValueSafe(out float seconds);
+            if(!ValidSlot(slot) || slot!=NetAuthority.LocalSlot || !Finite(velocity) || !Finite(seconds)
+               || seconds<0 || seconds>3 || velocity.sqrMagnitude>40*40)return;
+            var unit=Unit(slot);
+            if(unit==null || epoch!=unit.MovementEpoch)return;
+            unit.BeginCarry(velocity,seconds);
+        }
+
+        /// <summary>
+        /// ⚠️ A ROOTED CLIENT HAS HELD INTERACT FOR THE WHOLE `PaeteRules.BreakFreeHoldSeconds`
+        /// (2026-09-25). The hold is read where the input is, on the owner; the host decides. It
+        /// only accepts from the seat's own peer and only while that body is rooted, so a forged
+        /// request can at worst end a root the owner could have ended by holding a key.
+        /// </summary>
+        public void RequestBreakFree(int slot)
+        {
+            if (NetAuthority.IsHost) { Unit(slot)?.HostBreakFree(); return; }
+            if (_nm?.CustomMessagingManager == null || !ValidSlot(slot)) return;
+            using var writer = new FastBufferWriter(8, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqBreakFree", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqBreakFreeMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int slot);
+            if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who) || who == null) return;
+            who.HostBreakFree();
+        }
+
+        /// <summary>
+        /// A client holding Interact at Paete's plant for `PaeteRules.PlantPullSeconds`. The host
+        /// finds the plant itself and checks reach and age (`PaetePlant.HostTryUproot`).
+        /// </summary>
+        public void RequestUproot(int slot, Vector3 from)
+        {
+            if (NetAuthority.IsHost) { Abilities.PaetePlant.HostTryUproot(Unit(slot)); return; }
+            if (_nm?.CustomMessagingManager == null || !ValidSlot(slot) || !Finite(from)) return;
+            using var writer = new FastBufferWriter(24, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(from);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqUproot", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqUprootMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out Vector3 from);
+            if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who) || who == null) return;
+            if (!PlausibleIntentPose(who, from)) return;
+            Abilities.PaetePlant.HostTryUproot(who);
+        }
+
+        /// <summary>Host: someone pulled out Paete's plant. Every peer plays the pull and removes it.</summary>
+        public void BroadcastPlantPulled(int ownerSlot, int pullerSlot)
+        {
+            if (!NetAuthority.ShouldResolve() || _nm?.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(ownerSlot);
+            writer.WriteValueSafe(pullerSlot);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("PlantPulled", writer);
+        }
+
+        private void OnPlantPulledMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!FromHost(senderClientId)) return;
+            reader.ReadValueSafe(out int ownerSlot);
+            reader.ReadValueSafe(out int pullerSlot);
+            if (!ValidSlot(ownerSlot)) return;
+            Abilities.PaetePlant.ApplyPulled(ownerSlot, pullerSlot);
+        }
+
         public void BroadcastTeleport(int slot,Vector3 position,float yaw)
         {
             if(!NetAuthority.ShouldResolve() || !ValidSlot(slot) || _nm?.CustomMessagingManager==null)return;
@@ -2177,6 +2279,11 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(yaw);
             writer.WriteValueSafe(velocity);
             writer.WriteValueSafe(grounded);
+            // ⚠️ PAETE'S KIT, PROTOCOL 55: the owner's struggle against the roots and pull on a
+            // seedling, so the host can relay the pose. Presentation only: the break-free and the
+            // uproot are still decided by `ReqBreakFree` and `ReqUproot`, never by these bytes.
+            writer.WriteValueSafe(owner.EffortFlags);
+            writer.WriteValueSafe(owner.PullWire);
             _nm.CustomMessagingManager.SendNamedMessage("SubmitMove", NetworkManager.ServerClientId,
                                                         writer, PoseDelivery);
         }
@@ -2191,8 +2298,11 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float yaw);
             reader.ReadValueSafe(out Vector3 velocity);
             reader.ReadValueSafe(out bool grounded);
+            reader.ReadValueSafe(out byte effort);
+            reader.ReadValueSafe(out byte pull);
 
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var unit)) return;
+            unit.ApplyNetworkEffort((effort & 1) != 0 && unit.IsRooted, pull / 255f);
             if (epoch!=_movementEpochs[slot] || !AcceptMove(slot, unit, pos, yaw, velocity))
             {
                 SyncUnitTransformClientRpc(slot, unit.transform.position,
@@ -2264,6 +2374,22 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.EdgeOutward);
             writer.WriteValueSafe(unit.EdgePhase);
             writer.WriteValueSafe(unit.EdgePhaseRatio);
+            // ⚠️ THE TWO STATUSES THAT ARE NOT STUNS (protocol 53, 2026-09-25). Frozen and Tagged
+            // already ride the stun fields above; Whirled and Chilled have their own clocks.
+            writer.WriteValueSafe(unit.WhirledLeft);
+            writer.WriteValueSafe(unit.ChilledLeft);
+            // ⚠️ PAETE'S ROOTS (protocol 54, 2026-09-25): appended after the two above.
+            writer.WriteValueSafe(unit.RootedLeft);
+            // ⚠️ PROTOCOL 55: the struggle and the pull, for the poses (see `SubmitMove`).
+            writer.WriteValueSafe(unit.EffortFlags);
+            writer.WriteValueSafe(unit.PullWire);
+            // ⚠️ PROTOCOL 56 (ABILITY-2, 2026-09-26): the rework's four statuses and the fear's source,
+            // appended. The body's own peer needs the source to run the right way.
+            writer.WriteValueSafe(unit.ConcussedLeft);
+            writer.WriteValueSafe(unit.FearedLeft);
+            writer.WriteValueSafe(unit.DisorientedLeft);
+            writer.WriteValueSafe(unit.VulnerableLeft);
+            writer.WriteValueSafe(unit.FearSource);
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer,reliable?NetworkDelivery.ReliableSequenced:PoseDelivery);
         }
 
@@ -2302,6 +2428,18 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 edgeOutward);
             reader.ReadValueSafe(out byte edgePhase);
             reader.ReadValueSafe(out float edgeRatio);
+            reader.ReadValueSafe(out float whirledLeft);
+            reader.ReadValueSafe(out float chilledLeft);
+            reader.ReadValueSafe(out float rootedLeft);
+            reader.ReadValueSafe(out byte effort);
+            reader.ReadValueSafe(out byte pull);
+            reader.ReadValueSafe(out float concussedLeft);
+            reader.ReadValueSafe(out float fearedLeft);
+            reader.ReadValueSafe(out float disorientedLeft);
+            reader.ReadValueSafe(out float vulnerableLeft);
+            reader.ReadValueSafe(out Vector3 fearFrom);
+            if(!Finite(whirledLeft) || !Finite(chilledLeft) || !Finite(rootedLeft))return;
+            if(!Finite(concussedLeft) || !Finite(fearedLeft) || !Finite(disorientedLeft) || !Finite(vulnerableLeft) || !Finite(fearFrom))return;
             if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
             if(edgeKind>(byte)EdgeRecoveryKind.Lagoon||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
             if(edgeKind!=0&&(edgeOutward.sqrMagnitude<.9f||edgeOutward.sqrMagnitude>1.1f||edgeRatio<0||edgeRatio>1))return;
@@ -2338,6 +2476,9 @@ namespace TumbangPreso.Net
                                    tripLeft, tripTotal, tripMashPresses, tripMashRemoved,
                                    staminaCurrent, staminaIdle, fatigueLeft,
                                    recoveryEpisode,recoveryAcknowledged);
+            unit.ApplyNetworkStatuses(whirledLeft, chilledLeft, rootedLeft);
+            unit.ApplyNetworkEffort((effort & 1) != 0, pull / 255f);
+            unit.ApplyNetworkReworkStatuses(concussedLeft, fearedLeft, disorientedLeft, vulnerableLeft, fearFrom);
         }
 
         // -------------------------------------------------------------------
@@ -4993,7 +5134,10 @@ namespace TumbangPreso.Net
             // ⚠️ AND IT IS ABOVE THE CARD'S NULL GUARD ON PURPOSE. The announcer is not the card
             // and must not stop working on a screen that has no card on it.
             if (!wasRoundActive && roundActive)
+            {
                 GameServices.Voice?.OnRoundStarted(roundNumber);
+                GameServices.HeroVoice?.OnRoundStarted(roundNumber);
+            }
 
             var card = FindFirstObjectByType<UI.RoleSwapCard>();
             if (card == null) return;

@@ -22,7 +22,7 @@ namespace TumbangPreso.Abilities
         {
             // Initial hydration cannot overwrite a newer cast or resurrect a
             // charge already consumed while the joining snapshot was in flight.
-            if (motor == null || _joinChargeStateSettled || IsIgnitionCannonActive || Skill2.IsActive) return false;
+            if (motor == null || _joinChargeStateSettled || IsIgnitionCannonActive || AttackingSkill.IsActive) return false;
             _joinChargeStateSettled = true;
             RestoreIgnition(motor, remaining);
             return true;
@@ -38,7 +38,7 @@ namespace TumbangPreso.Abilities
         {
             if (motor == null) return;
             var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
-            ((IgnitionCannonAbility)Skill2).RestoreCharge(context, remaining);
+            ((IgnitionCannonAbility)AttackingSkill).RestoreCharge(context, remaining);
         }
         private float _supernovaPoseTime = -1;
         public float SupernovaPoseTime => Ultimate.IsWindingUp
@@ -48,7 +48,9 @@ namespace TumbangPreso.Abilities
         public SeanHeroKit() : base("sean", "SEAN")
         {
             Skill1 = new RocketBurnDashAbility();
-            Skill2 = new IgnitionCannonAbility(this);
+            // ABILITY-2: the four-slot shape; the defending slot waits for the owner's Pyro design.
+            AttackingSkill = new IgnitionCannonAbility(this);
+            DefendingSkill = new PlaceholderRoleAbility("sean_skill2d", "Sean", AbilityGlyph.SeanIgnite);
             Ultimate = new SupernovaSmashdownAbility(this);
         }
 

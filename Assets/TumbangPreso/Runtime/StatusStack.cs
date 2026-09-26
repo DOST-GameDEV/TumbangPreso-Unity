@@ -83,11 +83,23 @@ namespace TumbangPreso
             if (m.StunLeft > 0 && m.StunElement == StunElement.None)
                 into.Add(new StatusRow
                 {
-                    Label = "STUNNED",
+                    // The owner's status table names the tag's hold TAGGED (2026-09-25).
+                    Label = m.IsTagged ? "TAGGED" : "STUNNED",
                     Remaining = m.StunLeft,
                     Total = m.StunTotal,
                     Timed = true,
                 });
+
+            // The two statuses that are not stuns (owner's status table, 2026-09-25). The HUD also
+            // draws them as icon chips with the owner's tooltip (`TumpMatchReadout.Statuses`).
+            if (m.IsWhirled)
+                into.Add(new StatusRow { Label = "WHIRLED", Remaining = m.WhirledLeft, Total = StatusRules.WhirledSeconds, Timed = true });
+            if (m.IsChilled)
+                into.Add(new StatusRow { Label = "CHILLED", Remaining = m.ChilledLeft, Total = StatusRules.ChilledSeconds, Timed = true });
+            // Paete's roots: the row counts the sentry's time down; the break-free ring is drawn
+            // by the readout from `BreakFreeProgress`.
+            if (m.IsRooted)
+                into.Add(new StatusRow { Label = "ROOTED", Remaining = m.RootedLeft, Total = StatusRules.RootedSeconds, Timed = true });
 
             if (m.Stamina.IsFatigued)
                 into.Add(new StatusRow

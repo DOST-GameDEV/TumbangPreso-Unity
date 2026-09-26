@@ -5,15 +5,129 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// Holds the three abilities for a hero (Skill 1, Skill 2, Ultimate) and manages the ultimate meter.
+    /// Holds a hero's abilities and manages the ultimate meter. A legacy kit holds Skill 1, Skill 2
+    /// and the Ultimate; a ROLE kit (ability overhaul, 2026-09-25) holds a signature (Skill 1), an
+    /// attacking and a defending role ability (one of which is `Skill2` at any moment), and the
+    /// Ultimate. `docs/reports/amihan-kit-2026-09-25/plan.md` § 1.
     /// </summary>
     public class HeroKit
     {
         public string HeroId { get; }
         public string HeroName { get; }
+        /// <summary>
+        /// The SIGNATURE ability: the same whatever the hero's role (ability overhaul, owner
+        /// 2026-09-25). `Verb.Skill1`. On a legacy kit it is simply skill one.
+        /// </summary>
         public HeroAbility Skill1 { get; protected set; }
-        public HeroAbility Skill2 { get; protected set; }
+
+        /// <summary>
+        /// ⚠️⚠️ THE LIVE ROLE ABILITY, AND THE SLOT EVERY OTHER SYSTEM ALREADY READS.
+        ///
+        /// Owner, 2026-09-25: *"there will be 2 abilities, one signature ability that doesnt change
+        /// and stays no matter what role and one that changes."* A role kit declares
+        /// <see cref="AttackingSkill"/> and <see cref="DefendingSkill"/>, and this returns whichever
+        /// the current role gives. The deck, the touch button, the bots, the wire and the inspect
+        /// panel all read `Kit.Skill2` today; answering the role HERE is what lets every one of them
+        /// keep working with no change and no second place to forget.
+        ///
+        /// ⚠️ A LEGACY KIT SETS THIS DIRECTLY AND IS UNTOUCHED: its setter writes the one ability
+        /// it has, both role fields stay null, and the getter returns exactly what it did before.
+        /// </summary>
+        public HeroAbility Skill2
+        {
+            get => HasRoleAbilities ? (IsDefending ? DefendingSkill : AttackingSkill) : _skill2;
+            protected set => _skill2 = value;
+        }
+        private HeroAbility _skill2;
+
         public HeroAbility Ultimate { get; protected set; }
+
+        /// <summary>The role ability while ATTACKING (a thrower). Null on a legacy kit.</summary>
+        public HeroAbility AttackingSkill { get; protected set; }
+
+        /// <summary>The role ability while DEFENDING (the taya). Null on a legacy kit.</summary>
+        public HeroAbility DefendingSkill { get; protected set; }
+
+        /// <summary>True for a kit built in the new shape: a signature plus two role abilities.</summary>
+        public bool HasRoleAbilities => AttackingSkill != null && DefendingSkill != null;
+
+        /// <summary>
+        /// Which role the kit is playing. ⚠️ WRITTEN ONLY BY <see cref="SetRole"/>, which
+        /// `HeroAbilitySystem` calls from the body's own `IsDefender`: the taya is DERIVED,
+        /// `(round - 1) % 4` (`CLAUDE.md` § 4), and a kit keeping its own opinion of it would be a
+        /// second clock that could disagree with the rules.
+        /// </summary>
+        public bool IsDefending { get; private set; }
+
+        /// <summary>
+        /// Raised when the live role ability changes, for the deck's swap animation. Never on a
+        /// legacy kit, whose slot two does not change.
+        /// </summary>
+        public event Action<HeroAbility, HeroAbility> RoleAbilityChanged;
+
+        /// <summary>
+        /// Puts the kit in a role.
+        ///
+        /// ⚠️⚠️ THE OUTGOING ROLE ABILITY IS ENDED THROUGH `ResetForRound`, NOT DROPPED. A role
+        /// ability can hold a grant (Updraft's flight) and `HeroAbility.ResetForRound`'s note is
+        /// the whole argument: a duration zeroed behind an ability's back leaves its grant switched
+        /// on with nothing left to switch it off. The role changes at the round boundary, which is
+        /// also where every cooldown is cleared, so this is the same reset the round does anyway,
+        /// applied to the one ability leaving play.
+        /// </summary>
+        public void SetRole(bool defending, AbilityContext ctx)
+        {
+            if (!HasRoleAbilities) { IsDefending = defending; return; }
+            if (IsDefending == defending) return;
+            var outgoing = Skill2;
+            IsDefending = defending;
+            outgoing?.ResetForRound(ctx);
+            RoleAbilityChanged?.Invoke(outgoing, Skill2);
+        }
+
+        /// <summary>
+        /// Every ability the kit owns, once each: the signature, BOTH role abilities on a role kit
+        /// (the live one first) or skill two on a legacy kit, and the ultimate. For anything that
+        /// must cover the whole kit rather than what is live this round: tests, the screens, audits.
+        /// </summary>
+        public HeroAbility[] AllAbilities => HasRoleAbilities
+            ? new[] { Skill1, Skill2, IdleRoleSkill, Ultimate }
+            : new[] { Skill1, Skill2, Ultimate };
+
+        /// <summary>One power as a screen shows it: what it is, what the tile is labelled, which
+        /// binding casts it, and which loadout slot (1, 2, or 0 for none) its variants live in.</summary>
+        public readonly struct ScreenSlot
+        {
+            public readonly HeroAbility Ability; public readonly string Label, Action;
+            public readonly int LoadoutSlot; public readonly bool IsUltimate;
+            public ScreenSlot(HeroAbility ability, string label, string action, int loadoutSlot, bool ultimate)
+            { Ability = ability; Label = label; Action = action; LoadoutSlot = loadoutSlot; IsUltimate = ultimate; }
+        }
+
+        /// <summary>
+        /// ⚠️ THE ONE ANSWER TO "WHAT DOES A SCREEN SHOW FOR THIS KIT" (ability overhaul, 2026-09-25).
+        /// A role kit is FOUR powers out of a match (signature, attacking, defending, ultimate), and
+        /// the defending one is cast with the same key as the attacking one; a legacy kit is the
+        /// three it always was. Every screen that lists a kit reads this, so a new role kit cannot
+        /// ship with its defending ability missing from character select.
+        /// </summary>
+        public ScreenSlot[] ScreenSlots => HasRoleAbilities
+            ? new[]
+            {
+                new ScreenSlot(Skill1, "SIGNATURE", "Skill1", 1, false),
+                new ScreenSlot(AttackingSkill, "ATTACKING", "Skill2", 2, false),
+                new ScreenSlot(DefendingSkill, "DEFENDING", "Skill2", 0, false),
+                new ScreenSlot(Ultimate, "ULTIMATE", "Ultimate", 0, true),
+            }
+            : new[]
+            {
+                new ScreenSlot(Skill1, "SKILL 1", "Skill1", 1, false),
+                new ScreenSlot(Skill2, "SKILL 2", "Skill2", 2, false),
+                new ScreenSlot(Ultimate, "ULTIMATE", "Ultimate", 0, true),
+            };
+
+        /// <summary>The role ability NOT in play this round, for the tray and the screens.</summary>
+        public HeroAbility IdleRoleSkill => HasRoleAbilities ? (IsDefending ? AttackingSkill : DefendingSkill) : null;
 
         public float UltimateCharge { get; protected set; }
 
@@ -198,6 +312,10 @@ namespace TumbangPreso.Abilities
             // one. Only the ultimate ECONOMY is suspended.
             Skill1?.Tick(ctx, dt);
             Skill2?.Tick(ctx, dt);
+            // ⚠️ THE IDLE ROLE ABILITY STILL TICKS, so an effect it left in the world at the
+            // moment of a role change (it cannot, because the change resets it, but a future one
+            // might) runs out on its own clock rather than freezing half-finished.
+            IdleRoleSkill?.Tick(ctx, dt);
             Ultimate?.Tick(ctx, dt);
         }
 
@@ -302,7 +420,7 @@ namespace TumbangPreso.Abilities
         private CastOutcome CheckFire(HeroAbility ability,AbilityContext ctx)
         {
             if(ability==null)return CastOutcome.Missing;
-            if(ability.IsActive&&ability.CanReactivate)return CastOutcome.Cast;
+            if(ability.IsActive&&ability.CanReactivate)return ability.ReactivateReady?CastOutcome.Cast:CastOutcome.NotYet;
             if(PracticeMode)return CastOutcome.NotYet;
             if(!ability.IsReady)return CastOutcome.Cooling;
             if(ctx?.Motor!=null&&!ctx.Motor.CanAct())return CastOutcome.CannotAct;
@@ -348,6 +466,7 @@ namespace TumbangPreso.Abilities
             UltimateCharge = 0.0f;
             Skill1?.Reset();
             Skill2?.Reset();
+            IdleRoleSkill?.Reset();
             Ultimate?.Reset();
         }
 
@@ -393,6 +512,7 @@ namespace TumbangPreso.Abilities
             // cooling from a skill they cast in the practice period.
             Skill1?.ResetForRound(ctx);
             Skill2?.ResetForRound(ctx);
+            IdleRoleSkill?.ResetForRound(ctx);
             Ultimate?.ResetForRound(ctx);
         }
 

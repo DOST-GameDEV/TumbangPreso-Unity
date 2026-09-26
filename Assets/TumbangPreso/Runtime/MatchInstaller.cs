@@ -167,6 +167,7 @@ namespace TumbangPreso
         /// </summary>
         private System.Action<int, int> _roundVoice;
         private System.Action<int> _wonVoice;
+        private System.Action<MatchMoment> _momentVoice;
 
         private void OnDestroy()
         {
@@ -174,10 +175,12 @@ namespace TumbangPreso
             {
                 if (_roundVoice != null) GameServices.Match.RoundStarted -= _roundVoice;
                 if (_wonVoice != null) GameServices.Match.MatchEnded -= _wonVoice;
+                if (_momentVoice != null) GameServices.Match.MomentPresented -= _momentVoice;
             }
 
             _roundVoice = null;
             _wonVoice = null;
+            _momentVoice = null;
         }
 
         /// <summary>
@@ -853,6 +856,7 @@ namespace TumbangPreso
                 // `CustomCharacterRules.Normalise` before publishing it, so this is resolving a
                 // decision rather than trusting a claim.
                 if (custom != null) heroId = CustomCharacterRules.KitFor(custom.HeroKitId);
+                abilities.SpeaksAsHero = custom == null;
 
                 HeroBuild heroBuild = isLocalHuman
                     ? Settings.SettingsStore.CheckedHeroBuildFor(heroId)
@@ -1529,8 +1533,10 @@ namespace TumbangPreso
             // A spectator flies with the mouse too, so this covers both.
             UI.CursorMode.Capture();
 
-            _roundVoice = (round, _) => GameServices.Voice?.OnRoundStarted(round);
-                _wonVoice = slot => GameServices.Voice?.OnMatchWon(slot);
+            _roundVoice = (round, _) => { GameServices.Voice?.OnRoundStarted(round); GameServices.HeroVoice?.OnRoundStarted(round); };
+                _wonVoice = slot => { GameServices.Voice?.OnMatchWon(slot); GameServices.HeroVoice?.OnMatchWon(slot); };
+                _momentVoice = moment => GameServices.HeroVoice?.OnMoment(moment);
+                GameServices.Match.MomentPresented += _momentVoice;
 
                 GameServices.Match.RoundStarted += _roundVoice;
                 GameServices.Match.MatchEnded += _wonVoice;

@@ -235,6 +235,8 @@ namespace TumbangPreso.CameraSystem
                 if (held != null) HideTree(held.transform);
             }
             HideTree(_rig.transform);
+            // The catch records the players, not the current animal visits.
+            foreach (var life in Object.FindObjectsByType<AmbientLife>()) HideTree(life.transform);
             _actorCopy.ShowOnlyForCapture(true); _victimCopy.ShowOnlyForCapture(true);
             if (_copiedItems != null) foreach (var r in _copiedItems) if (r != null) r.forceRenderingOff = false;
             try { _camera.Render(); }

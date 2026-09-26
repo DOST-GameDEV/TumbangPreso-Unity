@@ -271,6 +271,10 @@ namespace TumbangPreso
             ability?.OnThrowReleased();
 
             Vector3 velocity = Held.LaunchVelocityTo(origin, aimPoint, Mathf.Clamp01(charge));
+            // ⚠️ CONCUSSED AND DISORIENTED KNOCK THE THROW OFF AIM (ABILITY-2): turned about the vertical by
+            // the body's own wobble, on the host, which is where the throw is decided.
+            float wobble = _motor.AimWobbleDegrees;
+            if (Mathf.Abs(wobble) > 0.01f) velocity = Quaternion.AngleAxis(wobble, Vector3.up) * velocity;
             SlipperAffinity affinity = SlipperAffinity.Normal;
 
             if (ability != null && ability.Kit is ZackHeroKit zack &&
@@ -289,6 +293,12 @@ namespace TumbangPreso
                 velocity *= 1.3f * ability.VariantGain("sean.2.flare");
                 affinity = SlipperAffinity.FireExplosive;
                 sean.ConsumeIgnition();
+            }
+            else if (ability != null && ability.Kit is CheskaHeroKit cheska && cheska.IsFrostbiteLoaded)
+            {
+                // FROSTBITE (ABILITY-2): the throw carries the frost; the first body it hits is Frozen.
+                affinity = SlipperAffinity.Frost;
+                cheska.ConsumeFrostbite();
             }
             else if (ability != null && ability.Kit is PhaisterHeroKit phaister &&
                      (phaister.IsWitchfireInfused || phaister.IsEclipseActive))

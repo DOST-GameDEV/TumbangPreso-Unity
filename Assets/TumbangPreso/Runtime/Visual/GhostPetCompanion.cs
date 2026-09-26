@@ -1183,6 +1183,14 @@ namespace TumbangPreso.Visual
                 return;
             }
 
+            // ⚠️ AN ERRAND (ABILITY-2, Nemu's Necro kit): Kuro flies on his own to a point his kit names
+            // (the haunt, her slipper, the guard spot), at his own size, and holds there until released.
+            if (_errand != null)
+            {
+                StepErrand(Mathf.Max(0, Time.deltaTime), time);
+                return;
+            }
+
             if (IsPossessed)
             {
                 UpdatePossession(Mathf.Max(0,Time.deltaTime), time);
@@ -1300,6 +1308,45 @@ namespace TumbangPreso.Visual
         /// transition happens a handful of times a match, so the search costs nothing, and a
         /// cached array is how a renderer added later stays visible through a hide.
         /// </summary>
+        // ------------------------------------------------------------------ ERRANDS (ABILITY-2)
+
+        private System.Func<Vector3> _errand;
+        private float _errandSpeed = 7.0f, _errandScale = 1.0f, _errandScaleNow = 1.0f;
+
+        /// <summary>True while Kuro is away on an errand of his kit's.</summary>
+        public bool OnErrand => _errand != null;
+
+        /// <summary>True once Kuro is within half a metre of the errand's point.</summary>
+        public bool ErrandArrived => _errand != null && (transform.position - (_errand() + Vector3.up * 0.9f)).sqrMagnitude < 0.25f;
+
+        /// <summary>Send Kuro to wherever <paramref name="target"/> answers each frame, at <paramref name="speed"/>
+        /// m/s, grown to <paramref name="scale"/> of his size. Presentation on every peer; the kit decides.</summary>
+        public void BeginErrand(System.Func<Vector3> target, float speed, float scale = 1.0f)
+        {
+            if (target == null) return;
+            if (IsPossessed) EndPossession(teleportNemu: false);
+            _errand = target; _errandSpeed = Mathf.Max(0.5f, speed); _errandScale = Mathf.Max(0.2f, scale);
+        }
+
+        /// <summary>Release him: he eases back to his owner's shoulder.</summary>
+        public void EndErrand() { _errand = null; _currentVelocity = Vector3.zero; }
+
+        private void StepErrand(float dt, float time)
+        {
+            Vector3 goal = _errand() + Vector3.up * (0.9f + Mathf.Sin(time * 2.2f) * 0.08f);
+            if (!IsFinite(goal)) { EndErrand(); return; }
+            Vector3 to = goal - transform.position;
+            float step = _errandSpeed * dt;
+            transform.position = to.magnitude <= step ? goal : transform.position + to.normalized * step;
+            Vector3 flat = new Vector3(to.x, 0f, to.z);
+            if (flat.sqrMagnitude > 0.01f)
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(flat.normalized, Vector3.up), 1 - Mathf.Exp(-10 * dt));
+            _errandScaleNow = Mathf.MoveTowards(_errandScaleNow, _errandScale, dt * 2.5f);
+            float pulse = 1.0f + Mathf.Sin(time * _pulseSpeed) * _pulseAmount;
+            transform.localScale = _baseScale * _errandScaleNow * pulse;
+            _lastTargetPos = _target != null ? _target.position : _lastTargetPos;
+        }
+
         private void MirrorOwnerVisibility(bool visible)
         {
             if (_ownerVisible == visible && _mirrored) return;

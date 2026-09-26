@@ -262,7 +262,16 @@ namespace TumbangPreso.Tests
             //49 adds the seventh Hero roster index and bounded Rafi water snapshots.
             //50 distinguishes an explicit peer leave from an unclassified disconnection.
             //51 carries explicit edge-climb state and requests; mixed builds cannot decode it.
-            Assert.AreEqual(51, NetSession.ProtocolVersion,
+            //52 derives the shared ultimate phase length from the accepted heroes' introductions.
+            //53 carries the Whirled and Chilled status clocks and the Carry message (ability overhaul).
+            //54 adds Paete: his roster index, the Rooted clock, SproutKnock, ReqBreakFree, ReqUproot.
+            //55 appends the struggle flag and plant-pull progress to SubmitMove and SyncUnit.
+            //56 appends Concussed, Feared, Disoriented, Vulnerable and the fear source to SyncUnit (ABILITY-2).
+            //57 lengthens Paete's introduction to 5.0 s, and with it the shared phase a cohort containing him derives.
+            //58 keeps Paete's guardian off the can and holds its prisoners 1.4 m out; every peer computes both.
+            //59 makes Paete's introduction 6.5 s, places his ultimate where he looks, and hands the grown guardian back at the catch.
+            //60 places THORN HARVEST where he looks (a trail runs to the spot, it bursts and catches there) and keeps BAKYA BLOOM out of the box.
+            Assert.AreEqual(60, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

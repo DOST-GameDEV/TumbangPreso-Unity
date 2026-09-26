@@ -26,6 +26,55 @@ namespace TumbangPreso.PlayTests
             JsonUtility.FromJsonOverwrite(_settings, Settings.SettingsStore.Current);
             yield return PlayModeWorld.Reset();
         }
+
+        [Test]
+        public void EveryOfferedAvatarLoadsAsItsOwnSprite()
+        {
+            Assert.AreEqual(Avatars.Ids.Length, Avatars.Ids.Distinct().Count());
+            foreach (string id in Avatars.Ids)
+            {
+                var sprite = Resources.Load<Sprite>("UI/avatars/" + id);
+                Assert.IsNotNull(sprite, id + " cannot rely on Dante's fallback picture");
+                Assert.AreSame(sprite, Avatars.Get(id), id + " resolved to another avatar");
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator ChangingAnAbilityGlyphRebuildsItsRenderedMeshAndTexture()
+        {
+            var root = new GameObject("GlyphProbeCanvas", typeof(RectTransform), typeof(Canvas));
+            root.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+            var go = new GameObject("GlyphProbe", typeof(RectTransform), typeof(CanvasRenderer));
+            go.transform.SetParent(root.transform, false);
+            ((RectTransform)go.transform).sizeDelta = new Vector2(96, 96);
+            var symbol = go.AddComponent<TumpAbilitySymbol>();
+            try
+            {
+                symbol.Glyph = AbilityGlyph.DanteShield;
+                Canvas.ForceUpdateCanvases();
+                yield return null;
+                var dante = AbilityIcons.Illustration(AbilityGlyph.DanteShield);
+                Assert.IsNotNull(dante);
+                Assert.AreSame(dante.texture, symbol.mainTexture);
+                Assert.AreEqual(4, symbol.canvasRenderer.GetMesh().vertexCount);
+
+                symbol.Glyph = AbilityGlyph.ComingSoon;
+                Canvas.ForceUpdateCanvases();
+                yield return null;
+                Assert.AreNotSame(dante.texture, symbol.mainTexture);
+                Assert.Greater(symbol.canvasRenderer.GetMesh().vertexCount, 4,
+                    "The neutral unavailable symbol must replace the old rendered quad");
+
+                symbol.Glyph = AbilityGlyph.SeanRush;
+                Canvas.ForceUpdateCanvases();
+                yield return null;
+                var sean = AbilityIcons.Illustration(AbilityGlyph.SeanRush);
+                Assert.IsNotNull(sean);
+                Assert.AreSame(sean.texture, symbol.mainTexture);
+                Assert.AreEqual(4, symbol.canvasRenderer.GetMesh().vertexCount);
+            }
+            finally { Object.Destroy(root); }
+        }
         [UnityTest]
         public IEnumerator RealPortraitsDriveSelectionAndPreviewDoesNotSave()
         {

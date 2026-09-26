@@ -153,6 +153,16 @@ namespace TumbangPreso.Core
     public static class HeroLoadoutRules
     {
         /// <summary>
+        /// ⚠️⚠️ THE SKILL TREE IS SWITCHED OFF, NOT DELETED (owner, 2026-09-26: *"WE MIGHT DUMP THE SKILL
+        /// TREE IDEA FOR NOW AND WILL COME BACK TO IT LATER (DEPENDS ON WHTEHTER WE STILL HAVE TIME)"*,
+        /// *"JS REMOVE ITS UI FOR NOW AND HARDCODE THE SKILLS AND SHIT"*). While false every kit is built
+        /// on its DEFAULT variant whatever a saved build or the wire says, and the screens hide every
+        /// door to the tree and the loadout. Every variant, unlock, challenge and saved build is kept;
+        /// turning the tree back on is this one line. `docs/reports/ability-rework-2026-09-26/plan.md` § 4.
+        /// </summary>
+        public static readonly bool SidegradesOpen = false;
+
+        /// <summary>
         /// ⚠️ DERIVED FROM `Roster.HeroPeople` RATHER THAN TYPED OUT AGAIN. The list it replaces
         /// was a hand-written array that disagreed with the roster in two places at once.
         /// </summary>
@@ -365,7 +375,56 @@ namespace TumbangPreso.Core
                 "LONG WAKE", "The echo lasts longer, but reveals its watery ribbons sooner.",
                 .35f, -.35f, "Lingers in view", "Easier to read",
                 "Use Mirrorwake six times", true, 6),
+
+            // ⚠️⚠️ AMIHAN'S REAL KIT (2026-09-25), WITH NO SIDEGRADE TUNING YET. Owner, asked how the
+            // loadout variants fit the new signature plus role abilities: *"we will figure out the
+            // variants soon, keep them all as extra skills for now"*. So every hero's existing
+            // variants are untouched, and hers are named for her real abilities with the second
+            // reading of each slot marked as still being designed: it plays exactly as the default
+            // (nothing in `AmihanHeroKit` reads the alternates), and the +/-0.30 is only there to
+            // keep the sidegrade rule true (`EveryVariantIsBudgetNeutral`). Slot 2 is her ROLE
+            // ability, named for the attacking one her kit reports before a role is known; the
+            // screens show both role abilities beside it (`HeroKit.AttackingSkill`, `DefendingSkill`).
+            new AbilityVariant("amihan.1.quickdash", "amihan", 1, "QUICK DASH", "AmihanQuickDash",
+                "QUICK DASH", "Dash where you aim. Whoever you pass is Whirled and shoved.",
+                0, 0, "Dash through a crowd", "40 s to come back"),
+            new AbilityVariant("amihan.1.quickdash_next", "amihan", 1, "QUICK DASH", "AmihanQuickDash",
+                "QUICK DASH II", "A second reading, still being designed. Plays as Quick Dash.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Quick Dash eight times", true, 8),
+            new AbilityVariant("amihan.2.updraft", "amihan", 2, "UPDRAFT", "AmihanUpdraft",
+                "UPDRAFT", "Attacking: fly high for 10 s. Throw from the air, land to grab.",
+                0, 0, "Throw from above", "Land to pick up"),
+            new AbilityVariant("amihan.2.updraft_next", "amihan", 2, "UPDRAFT", "AmihanUpdraft",
+                "UPDRAFT II", "A second reading, still being designed. Plays as Updraft.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Updraft six times", true, 6),
+
+            // ⚠️ PAETE (2026-09-25), SAME RULE AS AMIHAN'S ROWS ABOVE: named for his real abilities,
+            // the second reading of each slot plays as the default until the owner designs the
+            // variants (*"keep them all as extra skills for now"*). Slot 2 is named for the
+            // attacking role ability.
+            new AbilityVariant("paete.1.vine", "paete", 1, "LIANA LEAP", "PaeteVine",
+                "LIANA LEAP", "Vines from both arms haul you to where you aim.",
+                0, 0, "Escape with a slipper", "30 s to come back"),
+            new AbilityVariant("paete.1.vine_next", "paete", 1, "LIANA LEAP", "PaeteVine",
+                "LIANA LEAP II", "A second reading, still being designed. Plays as Liana Leap.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Liana Leap eight times", true, 8),
+            new AbilityVariant("paete.2.sprout", "paete", 2, "BAKYA BLOOM", "PaeteSprout",
+                "BAKYA BLOOM", "Attacking: a sapling grows wooden slippers and throws them for you.",
+                0, 0, "A second thrower", "Pulled out after 15 s"),
+            new AbilityVariant("paete.2.sprout_next", "paete", 2, "BAKYA BLOOM", "PaeteSprout",
+                "BAKYA BLOOM II", "A second reading, still being designed. Plays as Bakya Bloom.",
+                .30f, -.30f, "Being designed", "Same as the default",
+                "Use Bakya Bloom six times", true, 6),
         };
+
+        /// <summary>⚠️⚠️ THE ONE SWITCH. `false` while the owner tests (every skill open); `true`
+        /// locks each alternate behind its cast challenge again. See <see cref="ChallengesEnforced"/>.
+        /// ⚠️ DECLARED ABOVE `ChallengesEnforced` ON PURPOSE: static initialisers run in text order,
+        /// so a switch declared below the field it seeds would be read as `false` whatever it says.</summary>
+        public static readonly bool LockSkillTree = false;
 
         /// <summary>
         /// Whether a variant's challenge has to be finished before it can be equipped.
@@ -391,8 +450,22 @@ namespace TumbangPreso.Core
         /// lets the compiler fold the branch and report the ledger lookup below it as unreachable,
         /// which this project builds as an error. The point of the flag is that the path stays
         /// compiled and reachable; a `const` would delete it.
+        ///
+        /// ⚠️⚠️ TESTING BUILD, OWNER 2026-09-24: *"ur supposed to unlock the other skills as u play the
+        /// character more but for now keep it all unlocked and make it easy to lock again"*. So the
+        /// live value comes from <see cref="LockSkillTree"/>, which is `false`: every branch of every
+        /// hero's tree is open, while the cast counters keep counting underneath so nothing earned is
+        /// lost. **To lock the tree again, set `LockSkillTree` to `true`. That is the whole change.**
+        /// `HubSkillTree` says on screen when the tree is open for testing, so a tester never reads an
+        /// open branch as a broken unlock.
+        ///
+        /// ⚠️ A FIELD RATHER THAN A PROPERTY SO THE LOCKED PATH STAYS TESTABLE IN THIS BUILD. The
+        /// PlayMode probes that press a locked branch set it for their own run and put it back; the
+        /// engine-free tests use the <see cref="HeroBuildRules.IsUnlocked(List{AbilityChallengeProgress},
+        /// AbilityVariant, bool)"/> overload instead, because xunit runs classes in parallel and a
+        /// shared static would race.
         /// </summary>
-        public static readonly bool ChallengesEnforced = true;
+        public static bool ChallengesEnforced = LockSkillTree;
 
         public static IReadOnlyList<AbilityVariant> AllVariants => Variants;
 
@@ -591,10 +664,16 @@ namespace TumbangPreso.Core
         /// </summary>
         public static bool IsUnlocked(List<AbilityChallengeProgress> counters,
                                       AbilityVariant variant)
+            => IsUnlocked(counters, variant, HeroLoadoutRules.ChallengesEnforced);
+
+        /// <summary>The same answer with the switch passed in, so a test can ask about the locked
+        /// tree whatever this build ships with (<see cref="HeroLoadoutRules.LockSkillTree"/>).</summary>
+        public static bool IsUnlocked(List<AbilityChallengeProgress> counters,
+                                      AbilityVariant variant, bool enforced)
         {
             if (variant == null) return false;
             if (variant.IsDefault) return true;
-            if (!HeroLoadoutRules.ChallengesEnforced) return true;
+            if (!enforced) return true;
             return ChallengeCount(counters, variant.Id) >= variant.ChallengeTarget;
         }
 

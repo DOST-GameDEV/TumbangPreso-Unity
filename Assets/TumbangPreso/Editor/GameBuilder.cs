@@ -45,6 +45,24 @@ namespace TumbangPreso.EditorTools
             EditorApplication.Exit(ok ? 0 : 1);
         }
 
+        public static void PreferCompatibleWindowsRenderer()
+        {
+            // The same v57 accessibility route crashed in D3D12Core at shutdown
+            // on RX6600 and exited cleanly with D3D11. Prefer the compatible
+            // backend; retain D3D12 for explicit diagnostics/fallback. Other
+            // platforms and all shader/quality settings keep their own choices.
+            const BuildTarget target=BuildTarget.StandaloneWindows64;
+            var apis=new[]{UnityEngine.Rendering.GraphicsDeviceType.Direct3D11,UnityEngine.Rendering.GraphicsDeviceType.Direct3D12};
+            PlayerSettings.SetUseDefaultGraphicsAPIs(target,false);
+            PlayerSettings.SetGraphicsAPIs(target,apis);AssetDatabase.SaveAssets();
+            var saved=PlayerSettings.GetGraphicsAPIs(target);
+            if(PlayerSettings.GetUseDefaultGraphicsAPIs(target)||!saved.SequenceEqual(apis))
+                throw new InvalidOperationException("Windows renderer preference was not saved.");
+            Directory.CreateDirectory("Logs/native-shutdown");
+            File.WriteAllText("Logs/native-shutdown/renderer-preference.txt","Windows automatic=False; preferred="+string.Join(",",saved)+"; authoring editor="+SystemInfo.graphicsDeviceType+"\n");
+            EditorApplication.Exit(0);
+        }
+
         public static void BuildMac()
         {
             bool ok = Execute(CommandLineOutput() ?? DefaultMacOutput(), BuildTarget.StandaloneOSX);
@@ -878,6 +896,11 @@ namespace TumbangPreso.EditorTools
                 // instead of a model. The editor would be fixed and the .exe would show the
                 // original complaint, with one warning in a log nobody reads during a playtest.
                 "TumbangPreso/SlipperBeam",
+
+                // ⚠️ § THE BLOCKY CLOUDS (LIGHT-3). `BlockyClouds` reaches it through
+                // `Shader.Find` and no scene references it. Stripped, the look's sky simply has
+                // no near clouds, with one warning in the log.
+                "TumbangPreso/BlockyCloud",
             };
 
             var settings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset");
@@ -1145,10 +1168,13 @@ namespace TumbangPreso.EditorTools
                 scenes = scenes,
                 locationPathName = outputPath,
                 target = target,
-                options = BuildOptions.None,
+                options = Environment.GetCommandLineArgs().Any(arg =>
+                    string.Equals(arg, "-developmentBuild", StringComparison.OrdinalIgnoreCase))
+                    ? BuildOptions.Development | BuildOptions.ConnectWithProfiler
+                    : BuildOptions.None,
             };
 
-            Debug.Log($"[Build] building {scenes.Length} scenes to {outputPath}");
+            Debug.Log($"[Build] building {scenes.Length} scenes to {outputPath} ({options.options})");
             foreach (var s in scenes) Debug.Log($"[Build]   {s}");
 
             BuildReport report = BuildPipeline.BuildPlayer(options);

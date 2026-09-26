@@ -76,6 +76,21 @@ namespace TumbangPreso.Visual
 
             /// <summary>Nemu. The light does not change much; the COLOUR goes wrong.</summary>
             Seance,
+
+            /// <summary>
+            /// Amihan (appended 2026-09-25). The amihan itself: the cool, dry northeast wind of the
+            /// Ilocos coast arriving all at once. A bright, high, fast-moving sky, the sun thinned
+            /// by torn cloud, the air clear rather than thick. The only look that gets BRIGHTER AND
+            /// CLEARER instead of closing in, because wind clears the air.
+            /// </summary>
+            Monsoon,
+
+            /// <summary>
+            /// Paete (appended 2026-09-25). Makiling's forest closing over the court: a low white
+            /// mist rolling in, the sky gone to leaf, the sun coming through in warm shafts as if
+            /// through a canopy. The one look that closes in GREEN and near: the forest is here.
+            /// </summary>
+            Canopy,
         }
 
         /// <summary>How long the world takes to turn. Fast: this is an announcement.</summary>
@@ -228,6 +243,8 @@ namespace TumbangPreso.Visual
                 case Look.Whiteout: return "sfx_sky_whiteout";
                 case Look.Emberfall: return "sfx_sky_emberfall";
                 case Look.Dustveil: return "sfx_sky_dustveil";
+                case Look.Monsoon: return "sfx_sky_monsoon";
+                case Look.Canopy: return "sfx_sky_canopy";
                 default: return "sfx_sky_seance";
             }
         }
@@ -767,6 +784,36 @@ namespace TumbangPreso.Visual
                         skyExposure: 0.70f, skyTint: new Color(0.82f, 0.66f, 0.40f),
                         fill: new Color(1.00f, 0.86f, 0.60f), fillIntensity: 1.00f,
                         brightness: 1.00f, saturation: 0.88f);
+
+                // Amihan. Clear, cool and fast: the fog pushed FAR back (the wind has cleared the air,
+                // the one look where you see further, not less), a pale green-white sky with the
+                // sun veiled but not hidden, and saturation barely touched, so the court stays the
+                // brightest of any ultimate. Brightness stays at the clamp (see Whiteout's note).
+                case Look.Monsoon:
+                    return new Profile(
+                        sky: new Color(0.80f, 0.90f, 0.84f),
+                        equator: new Color(0.74f, 0.86f, 0.76f),
+                        ground: new Color(0.46f, 0.56f, 0.44f),
+                        sunColour: new Color(1.00f, 0.98f, 0.90f), sunScale: 0.86f,
+                        fog: new Color(0.84f, 0.92f, 0.86f), fogFar: 0.92f,
+                        skyExposure: 0.92f, skyTint: new Color(0.82f, 0.92f, 0.84f),
+                        fill: new Color(0.92f, 1.00f, 0.90f), fillIntensity: 1.05f,
+                        brightness: 1.00f, saturation: 0.92f);
+
+                // Paete. The forest over the court: a close, pale mist (fog pulled in, the opposite of
+                // Amihan's cleared air), a leaf-green sky, warm low sun as canopy light, a green fill.
+                // It must not read as Nemu's green ambient under violet, so the sky is green too and
+                // the light is warm, not sickly.
+                case Look.Canopy:
+                    return new Profile(
+                        sky: new Color(0.36f, 0.48f, 0.30f),
+                        equator: new Color(0.52f, 0.60f, 0.44f),
+                        ground: new Color(0.20f, 0.26f, 0.14f),
+                        sunColour: new Color(1.00f, 0.88f, 0.60f), sunScale: 0.74f,
+                        fog: new Color(0.80f, 0.86f, 0.78f), fogFar: 0.42f,
+                        skyExposure: 0.62f, skyTint: new Color(0.52f, 0.66f, 0.44f),
+                        fill: new Color(0.80f, 0.96f, 0.66f), fillIntensity: 0.96f,
+                        brightness: 0.96f, saturation: 0.94f);
 
                 // Nemu. The quietest of the six on purpose. Her whole character is that things
                 // stop being right rather than that something arrives, so the sun barely moves

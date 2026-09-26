@@ -40,7 +40,8 @@ namespace TumbangPreso.UI.Hub
     ///   - ⚠️ IT IS HOME'S AND ONLY HOME'S. Under every other hub screen it is HIDDEN and paused, so
     ///     the live court (the room's map, which the lobby is meant to show) is behind them.
     ///     Paused-but-visible froze whatever frame was up (a whip pan's blur, an impact frame)
-    ///     behind the lobby. It resumes where it left off on returning HOME.
+    ///     behind the lobby. It resumes where it left off on returning HOME. ⚠️ A POPUP OVER HOME
+    ///     (the hamburger MENU) is still HOME: it keeps playing under the popup's scrim.
     ///   - NO AUDIO TRACK. The loop is silent by design; `docs/reports/home-scene/README.md` § 4 lists
     ///     the cue times if the hub ever wants to play its own sounds against it.
     /// </summary>
@@ -160,7 +161,7 @@ namespace TumbangPreso.UI.Hub
             _image.enabled = _poster != null;
         }
 
-        private static bool AtHome => TumpHub.Current == null || TumpHub.Current.AtHome;
+        private static bool AtHome => TumpHub.Current == null || TumpHub.Current.ShowingHome;
 
         private void Update()
         {

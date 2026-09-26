@@ -342,6 +342,9 @@ namespace TumbangPreso
             _cc = GetComponent<CharacterController>();
             Stamina = new Stamina();
             if (GetComponent<Visual.MotionFoley>() == null) gameObject.AddComponent<Visual.MotionFoley>();
+            // The Whirled and Chilled body tells, on every peer (`Visual.StatusBodyMarks`).
+            if (GetComponent<Visual.StatusBodyMarks>() == null) gameObject.AddComponent<Visual.StatusBodyMarks>();
+            if (GetComponent<Visual.StatusOverhead>() == null) gameObject.AddComponent<Visual.StatusOverhead>();
         }
 
         /// ⚠️ THE SPECTATABLE REGISTRY IS POPULATED HERE, NOT AT THE SPAWN SITE. Godot's
@@ -378,6 +381,10 @@ namespace TumbangPreso
             _spawnSettleAt = transform.position;
             _velocity = Vector3.zero;
             _externalVelocity = Vector3.zero;
+            // ⚠️ A SPAWN IS A FRESH START FOR EVERY STATUS THAT IS NOT A STUN (the stun stack has
+            // its own resets). A Whirl or a Chill must not follow a body across a round boundary,
+            // and a flight must not survive a teleport to the mark.
+            ClearStatuses();
         }
 
         /// <summary>
@@ -845,12 +852,13 @@ namespace TumbangPreso
             // when that was found and is 5 now (§ 83.13); the fault would be the same at either.
             bool canSteer = CanMove();
 
-            Vector2 axis = canSteer ? Intent.MoveAxis : Vector2.zero;
+            // ⚠️ A FEARED BODY RUNS ON ITS OWN (the owner's flee), so it counts as moving whatever the stick says.
+            Vector2 axis = canSteer ? (IsFeared ? Vector2.up : Intent.MoveAxis) : Vector2.zero;
             bool moving = axis.sqrMagnitude > 0.0001f;
 
             // The sprint multiplier. Fatigue is NOT in this value: it rides the speed-zone
             // stack so it composes with a hazard zone rather than one silently winning.
-            float sprint = Stamina.Step(dt, moving, canSteer && Intent.Pressed(Verb.Sprint));
+            float sprint = Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && Intent.Pressed(Verb.Sprint));
 
             // ⚠️⚠️ THE FATIGUE CUE, WHICH SHIPPED REGISTERED AND WAS NEVER FIRED ONCE.
             // `character_base.gd::_enter_fatigue` plays it on the frame the bar bottoms out, and
@@ -890,11 +898,12 @@ namespace TumbangPreso
                           * Stamina.SpeedZones.Value
                           * (AbilitySystem?.Kit?.MovementSpeedScale ?? 1.0f)
                           * (CommitLeft > 0.0f ? Balance.SlideSteerScale : 1.0f)
+                          * StatusSpeedScale
                           * RooftopPool.MovementScale(transform.position);
 
             if (canSteer)
             {
-                Vector3 wish = Steer(axis, dt);
+                Vector3 wish = IsFeared ? FleeWish() : Steer(axis, dt);
 
                 var target=new Vector2(wish.x*speed,wish.z*speed);
                 if (IsOnIce && _grounded)
@@ -912,6 +921,10 @@ namespace TumbangPreso
             // Every published knockback distance in the game is that solve, so this
             // deceleration is not a feel parameter: changing it invalidates SHOVE_SPEED,
             // LUNGE_SPEED and BLOCK_KNOCKBACK_SPEED all at once.
+            // ⚠️ THE CARRY IS HELD FIRST, THEN RELEASED INTO THE SAME `Friction` DECAY BELOW, which
+            // is what makes its tail the old v^2/(2 x Friction) exactly (`Core.CarryRules`).
+            StepCarry(dt);
+
             if (_externalVelocity.sqrMagnitude > 0.0001f)
             {
                 float mag = _externalVelocity.magnitude;
@@ -1287,6 +1300,8 @@ namespace TumbangPreso
 
         private void ApplyGravity(float dt)
         {
+            // Flight owns the vertical while it lasts (`CharacterMotor.Status.cs`).
+            if (StepFlightVertical(dt)) return;
             if(_swimLeap&&(_grounded||_velocity.y<=0))_swimLeap=false;
             if(IsSwimming&&!_swimLeap)
             {
@@ -1389,7 +1404,7 @@ namespace TumbangPreso
             Vector3 p = transform.position;
             float x = p.x, z = p.z;
 
-            if (Confinement.IsConfined(RoundActive, _isDefender))
+            if (Confinement.IsConfined(RoundActive, _isDefender) && !MayLeaveBoxToTag)
                 Confinement.ClampToBox(ref x, ref z);
 
             // ⚠️⚠️ AND NOBODY LEAVES THE ARENA AT ALL, ROLE OR NO ROLE. The chalk box above is a
@@ -1441,7 +1456,8 @@ namespace TumbangPreso
         // the HUD and the rule that acts must never be able to disagree.
         // -------------------------------------------------------------------
 
-        public bool CanAct() => RoundActive && !IsStunned && !PresentationClock.BlocksInput;
+        // ⚠️ FEARED ACTS ON NOTHING (owner, 2026-09-26: *"Flee from kuro and drop slipper"*): no throw, pickup or skill.
+        public bool CanAct() => RoundActive && !IsStunned && !IsFeared && !PresentationClock.BlocksInput;
 
         // -------------------------------------------------------------------
         // § COMMITMENT
@@ -1508,7 +1524,9 @@ namespace TumbangPreso
         /// for a stop meant to be permanent. See `SliceRunner.OnMatchEnded`, which had been
         /// leaning on `RoundActive` for it and now calls the freeze outright.
         /// </summary>
-        public bool CanMove() => !IsStunned;
+        // ⚠️ ROOTED IS NOT A STUN AND DOES NOT STOP ANYTHING BUT THE LEGS (Paete's sentry, 2026-09-25):
+        // no steering, no jump, and throwing and skills still work (`CanAct` does not read it).
+        public bool CanMove() => !IsStunned && !IsRooted;
 
         public bool IsStunned => _stunLeft > 0.0f || _tripLeft > 0.0f;
         public bool HoldingSlipper { get; set; }
@@ -1556,6 +1574,14 @@ namespace TumbangPreso
         {
             if (_isDefender || !RoundActive) return false;
             if (AbilitySystem != null && AbilitySystem.IsImmuneToTags) return false;
+            // ⚠️ A BODY HELD ALOFT (Updraft, 2.8 m up) IS OUT OF THE TAYA'S REACH. The reach is a
+            // flat distance, so without this a taya would tag somebody over their head. It is safe
+            // because Updraft cannot START with a slipper inside the box (`AmihanHeroKit`), and a
+            // body aloft cannot pick one up: the retrieval is still made on the ground, in reach.
+            if (IsAloft) return false;
+            // ⚠️ VULNERABLE IS TAGGABLE ANYWHERE, WITH OR WITHOUT A SLIPPER (owner, 2026-09-26: *"easier
+            // to tag and phaister can go out of box and tag them"*).
+            if (IsVulnerable) return true;
             if (!HoldingSlipper) return false;
             return IsInsideBox();
         }
@@ -1784,6 +1810,8 @@ namespace TumbangPreso
             // whether their number is big enough, which is a judgement that would drift the
             // moment somebody retuned a duration.
             if (duration <= Balance.MinStunDown) element = StunElement.None;
+            // ⚠️ VULNERABLE: stuns on them last longer (ABILITY-2 plan section 2).
+            if (IsVulnerable) duration *= StatusRules.VulnerableStunScale;
 
             bool wins = duration >= _stunLeft;
 
@@ -2017,6 +2045,10 @@ namespace TumbangPreso
 
         private void Update()
         {
+            // ⚠️ ON EVERY PEER, like the stun clock below: the icons and the pickup gate read these
+            // timers, and a replica never runs the physics step.
+            if (!PresentationClock.Held) StepStatuses(Time.deltaTime);
+
             if (_tripLeft > 0.0f && !IsEdgeRecovering)
             {
                 // ⚠️⚠️ ABOVE THE FLOOR NOTHING RUNS DOWN ON ITS OWN. THAT IS THE WHOLE RULE.

@@ -10,6 +10,9 @@ import sys
 ROOT=Path(__file__).resolve().parents[1]
 RUNTIME=ROOT/"Assets/TumbangPreso/Runtime"
 RULES={
+ ("Abilities/AmihanHazards.cs","Spawn"):("EVERY-PEER","The replicated ultimate's wind-up spawns the storm on each peer; its gather cue is local, never relayed."),
+ ("Abilities/AmihanHazards.cs","Release"):("EVERY-PEER","Each peer's storm releases on its own copy of the ultimate's clock; the release cue is local."),
+ ("Visual/AmihanVfx.cs","LateUpdate"):("EVERY-PEER","Status marks attach on each peer from the replicated status timer; the status cue plays once per peer."),
  ("Map/MooredBoatMotion.cs","LateUpdate"):("EVERY-PEER","Each active map copy samples its moored boats with a local cooldown; ambient lap sound is not relayed."),
  ("Carrier.cs","NotifyHolding"):("EVERY-PEER","Possession snapshots and local equips use the same idempotent notification."),
  ("Abilities/HeroAbilitySystem.cs","PlayUltimatePresentation"):("EVERY-PEER","Accepted cast presentation runs locally and through ApplyNetworkCast."),

@@ -46,6 +46,9 @@ namespace TumbangPreso.Abilities
         private readonly bool _hasAimPoint;
         private readonly Vector3 _aimPoint;
 
+        /// <summary>True when the aim is a real point (sent with a cast, or set by a bot or a probe), not the fallback ahead.</summary>
+        public bool HasAimPoint => _hasAimPoint || (Motor != null && Motor.Intent != null && Motor.Intent.HasAimPoint);
+
         public Vector3 AimPoint
         {
             get

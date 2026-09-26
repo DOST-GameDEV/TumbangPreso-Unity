@@ -194,7 +194,13 @@ namespace TumbangPreso
         }
 
         /// <summary>Host-side. Knock it over and pay the thrower.</summary>
-        public void HostKnockDown(int throwerSlot)
+        public void HostKnockDown(int throwerSlot) => HostKnockDown(throwerSlot, ScoreEvent.LataKnocked);
+
+        /// <summary>
+        /// Host-side, with the award named. Paete's wooden slippers knock the can for
+        /// `ScoreEvent.SproutKnock` (owner: *"maybe lessened plus"*); everything else is a knockdown.
+        /// </summary>
+        public void HostKnockDown(int throwerSlot, ScoreEvent award)
         {
             if (!NetAuthority.ShouldResolve()) return;
             if (!_isUpright) return;
@@ -257,7 +263,7 @@ namespace TumbangPreso
             if (GameServices.Round == null || !GameServices.Round.RoundActive) return;
             if (GameServices.Match != null && throwerSlot == GameServices.Match.DefenderSlot) return;
 
-            GameServices.Match.AddScore(throwerSlot, ScoreEvent.LataKnocked);
+            GameServices.Match.AddScore(throwerSlot, award);
             // ⚠️⚠️ RELAYED, BECAUSE THE ENCLOSING VERB IS HOST-RESOLVED AND WHAT IT DRAWS IS
             // FOR EVERYBODY. 🧑 2026-08-29: *"make sure that all host sided shit is seen by
             // everyone and not js host"*. See `Visual.MatchFlair` and
@@ -296,6 +302,9 @@ namespace TumbangPreso
             // ⚠️ AND THE CAN HAS NO BUSINESS KNOWING WHAT A BOT IS. Everything else on this path
             // is scoring and physics; a `GetComponent<AIController>` here is the kind of reach
             // that makes a rules object depend on the AI layer.
+            // ⚠️ A SPROUT KNOCK DOES NOT CHARGE THE ULTIMATE. A plant firing on its own clock would
+            // otherwise fill his meter for him; the lessened award is the whole payment.
+            if (award != ScoreEvent.LataKnocked) return;
             var throwerMotor = GameServices.Round.PlayerAt(throwerSlot);
             throwerMotor?.AbilitySystem?.OnLataKnocked();
         }
@@ -784,6 +793,9 @@ namespace TumbangPreso
 
         private void RestoreRaisePresentation()
         {
+            // Replicated skin changes replace the Visual child. Forget its old
+            // pose before resolving the replacement; never restore into a dead mesh.
+            if (_raiseMesh == null) { _raiseApplied = false; _raiseMeshResolved = false; return; }
             if (!_raiseApplied) return;
             _raiseMesh.localPosition = _raiseMeshPos; _raiseMesh.localRotation = _raiseMeshRot; _raiseMesh.localScale = _raiseMeshScale;
             _raiseApplied = false;
@@ -835,7 +847,8 @@ namespace TumbangPreso
         {
             if (!_raiseMeshResolved)
             {
-                var filter = GetComponentInChildren<MeshFilter>();
+                var visual = transform.Find("Visual");
+                var filter = visual != null ? visual.GetComponentInChildren<MeshFilter>() : GetComponentInChildren<MeshFilter>();
                 _raiseMesh = filter != null && filter.transform != transform ? filter.transform : null;
                 _raiseMeshResolved = true;
             }

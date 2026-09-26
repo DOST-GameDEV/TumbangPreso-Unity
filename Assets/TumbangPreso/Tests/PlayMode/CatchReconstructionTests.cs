@@ -38,6 +38,41 @@ namespace TumbangPreso.PlayTests
             for (int i = 2; i < 4; i++) round.PlayerAt(i).Teleport(can + new Vector3(-5, 0, i * 2));
         }
         [UnityTest]
+        public IEnumerator CatchCameraHidesUnrecordedAnimalsAndRestoresTheirVisibility()
+        {
+            yield return Open();Stage();yield return new WaitForSeconds(.4f);
+            var life=Object.FindFirstObjectByType<AmbientLife>();Assert.IsNotNull(life);
+            var ambient=life.GetComponentsInChildren<Renderer>(true);Assert.IsNotEmpty(ambient);
+            ambient[ambient.Length-1].forceRenderingOff=true;
+            var flags=ambient.Select(r=>r.forceRenderingOff).ToArray();
+            bool observed=false,hidden=true;
+            void BeforeRender(Camera camera)
+            {
+                if(camera.name!="~CatchPlaybackCamera")return;
+                observed=true;hidden&=ambient.All(r=>r.forceRenderingOff);
+            }
+            var view=Object.FindAnyObjectByType<CatchReconstruction>();
+            bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
+            Settings.SettingsStore.Current.ReducedUiMotion=false;
+            Camera.onPreRender+=BeforeRender;
+            try
+            {
+                var taya=GameServices.Round.PlayerAt(0);
+                Assert.IsTrue(taya.GetComponent<CombatVerbs>().HostResolvePunch(taya.transform.position,taya.transform.forward));
+                yield return new WaitForSecondsRealtime(.2f);
+                Assert.IsTrue(view.Playing);Assert.IsTrue(observed,"Catch camera never rendered");
+                CollectionAssert.AreEqual(flags,ambient.Select(r=>r.forceRenderingOff).ToArray(),"Catch camera changed live ambient visibility");
+                Assert.IsTrue(life.enabled,"Reconstruction must not disable the live animal simulation");
+                Assert.IsTrue(hidden,"Present-time animals leaked into the catch reconstruction");
+            }
+            finally
+            {
+                Camera.onPreRender-=BeforeRender;view.End();
+                Settings.SettingsStore.Current.ReducedUiMotion=reduced;
+                for(int i=0;i<ambient.Length;i++)if(ambient[i]!=null)ambient[i].forceRenderingOff=false;
+            }
+        }
+        [UnityTest]
         public IEnumerator CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup()
         {
             yield return Open(); Stage(); yield return new WaitForSeconds(.4f);

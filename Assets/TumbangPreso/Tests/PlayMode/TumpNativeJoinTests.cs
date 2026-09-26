@@ -74,6 +74,40 @@ namespace TumbangPreso.PlayTests
             finally { Object.DestroyImmediate(owner); }
         }
         [UnityTest]
+        public IEnumerator LeavingTheHubCancelsItsJoinBeforeANewerRequestStarts()
+        {
+            var owner = new GameObject("HubJoinCancellationOwner");
+            try
+            {
+                var host = owner.AddComponent<ConvertedMatchSetup>(); host.enabled = false;
+                var panel = LobbyJoinPanel.Build(owner.transform, null);
+                typeof(ConvertedMatchSetup).GetField("_joinPanel", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(host, panel);
+                var older = new TaskCompletionSource<bool>(); var newer = new TaskCompletionSource<bool>();
+                int joined = 0; panel.Joined += () => joined++;
+                panel.Connection = (_, token) => older.Task;
+                var first = host.Join("ABCD");
+                yield return null;
+                host.LeaveRoom();
+                Assert.IsFalse(SceneFlow.Networked);
+                panel.Connection = (_, token) => newer.Task;
+                var second = host.Join("EFGH");
+                Assert.IsFalse(second.IsCompleted, "The old panel busy state blocked the new request.");
+                older.SetResult(true); yield return null;
+                Assert.IsTrue(first.IsCompleted);
+                Assert.AreEqual("Room request cancelled.", first.Result);
+                Assert.AreEqual(0, joined, "The cancelled join fired the lobby arrival callback.");
+                Assert.IsTrue(SceneFlow.Networked, "The old completion reset the newer request's network flag.");
+                typeof(LobbyJoinPanel).GetMethod("Report", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .Invoke(panel, new object[] { "The new room is full." });
+                newer.SetResult(false); yield return null;
+                Assert.IsTrue(second.IsCompleted);
+                Assert.AreEqual("The new room is full.", second.Result, "Old cleanup unsubscribed the new request's status handler.");
+                Assert.IsFalse(SceneFlow.Networked);
+            }
+            finally { Object.DestroyImmediate(owner); }
+        }
+
+        [UnityTest]
         public IEnumerator QueueRemainsNonmodalAndItsCancelReturnsTheStartAction()
         {
             var owner = new GameObject("QueueReviewOwner");

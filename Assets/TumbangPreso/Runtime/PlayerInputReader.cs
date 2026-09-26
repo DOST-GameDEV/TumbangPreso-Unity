@@ -79,7 +79,7 @@ namespace TumbangPreso
         [SerializeField] private CharacterMotor _motor;
         [SerializeField] private Camera _aimCamera;
 
-        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate;
+        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate, _interact;
 
         /// <summary>
         /// The pektus curve, left and right.
@@ -173,6 +173,7 @@ namespace TumbangPreso
             _skill1 = map.FindAction("Skill1", false);
             _skill2 = map.FindAction("Skill2", false);
             _ultimate = map.FindAction("Ultimate", false);
+            _interact = map.FindAction("Interact", false);
             _curveLeft = map.FindAction("CurveLeft", false);
             _curveRight = map.FindAction("CurveRight", false);
 
@@ -239,6 +240,7 @@ namespace TumbangPreso
             if (_skill1 != null) intent.Set(Verb.Skill1, ReadButton(_skill1,Verb.Skill1));
             if (_skill2 != null) intent.Set(Verb.Skill2, ReadButton(_skill2,Verb.Skill2));
             if (_ultimate != null) intent.Set(Verb.Ultimate, ReadButton(_ultimate,Verb.Ultimate));
+            if (_interact != null) intent.Set(Verb.Interact, ReadButton(_interact,Verb.Interact));
 
             var visual = _motor.GetComponent<Visual.CharacterVisual>();
             if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)

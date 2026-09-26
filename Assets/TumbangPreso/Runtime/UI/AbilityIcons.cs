@@ -108,6 +108,38 @@ namespace TumbangPreso.UI
         RafiCrosscurrent,
         RafiMirrorwake,
         RafiBreakwater,
+
+        // ⚠️ AMIHAN (2026-09-25), the first kit with a signature and two ROLE abilities, so four
+        // glyphs: her signature, the attacking and the defending role ability, and the ultimate.
+        /// <summary>Amihan signature: Quick Dash (a figure's slipstream: three swept lines past a chevron).</summary>
+        AmihanQuickDash,
+        /// <summary>Amihan attacking: Updraft (a rising spiral column under a lifted figure).</summary>
+        AmihanUpdraft,
+        /// <summary>Amihan defending: Whirlwind (a curved gale front rolling forward).</summary>
+        AmihanWhirlwind,
+        /// <summary>Amihan ultimate: Storm Surge (a fan of wind lines from a kasikus diamond).</summary>
+        AmihanStormSurge,
+
+        // ⚠️ PAETE (2026-09-25): signature, attacking, defending, ultimate.
+        /// <summary>Paete signature: Liana Leap (two vines converging on a hooked anchor).</summary>
+        PaeteVine,
+        /// <summary>Paete attacking: Bakya Bloom (a seedling with a slipper in its pod).</summary>
+        PaeteSprout,
+        /// <summary>Paete defending: Bawi (thorns drawing slippers inward).</summary>
+        PaeteThorn,
+        /// <summary>Paete ultimate: Makiling's Embrace (a core with roots pulling in from all sides).</summary>
+        PaeteSentry,
+
+        // Current role powers, appended to preserve serialized enum values.
+        DanteBoulder,
+        DanteBarrier,
+        CheskaFrostbite,
+        NemuTerrify,
+        NemuKuroGuard,
+        PhaisterCursedDoll,
+        PhaisterVulnerable,
+        /// <summary>A role slot whose ability has not been designed yet.</summary>
+        ComingSoon,
     }
 
     /// <summary>
@@ -240,6 +272,7 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.Phase: return "EVASION";
                 case AbilityGlyph.Slam: return "FROM ABOVE";
                 case AbilityGlyph.Empower: return "SLIPPER BUFF";
+                case AbilityGlyph.ComingSoon: return "COMING SOON";
                 // ⚠️⚠️ EVERY BESPOKE GLYPH REPORTS ITS JOB, AND FOR A YEAR IT REPORTED ITS OWN
                 // NAME. `Logs/shots-hero/hero_inspect_dante_v1.png` is what that looked like on
                 // the one screen this string is drawn on: **SEISMIC STOMP in green, then
@@ -264,6 +297,8 @@ namespace TumbangPreso.UI
                 // bespoke; the WORD is the family.** Two abilities sharing a word is the point,
                 // not a collision.
                 case AbilityGlyph.DanteStomp: return "AREA BURST";
+                case AbilityGlyph.DanteBoulder: return "PROJECTILE";
+                case AbilityGlyph.DanteBarrier: return "REFLECTOR";
                 case AbilityGlyph.DanteShield: return "PROTECTION";
                 case AbilityGlyph.DanteFissure: return "AREA BURST";
                 case AbilityGlyph.SeanRush: return "MOBILITY";
@@ -277,19 +312,32 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.CheskaFrostSheet: return "GROUND ZONE";
                 case AbilityGlyph.CheskaBarricade: return "BLOCKER";
                 case AbilityGlyph.CheskaNova: return "AREA BURST";
+                case AbilityGlyph.CheskaFrostbite: return "SLIPPER BUFF";
                 case AbilityGlyph.ZackSprint: return "MOBILITY";
                 case AbilityGlyph.ZackOvercharge: return "SLIPPER BUFF";
                 case AbilityGlyph.ZackThunderstrike: return "FROM ABOVE";
                 case AbilityGlyph.NemuPhase: return "EVASION";
                 case AbilityGlyph.NemuAstralPet: return "MOBILITY";
                 case AbilityGlyph.NemuSeanceVoid: return "GROUND ZONE";
+                case AbilityGlyph.NemuTerrify: return "FEAR ZONE";
+                case AbilityGlyph.NemuKuroGuard: return "CAN GUARD";
                 case AbilityGlyph.PhaisterHexSigil: return "GROUND ZONE";
                 case AbilityGlyph.PhaisterShadowBlink: return "MOBILITY";
                 case AbilityGlyph.PhaisterEclipse: return "GROUND ZONE";
+                case AbilityGlyph.PhaisterCursedDoll: return "PROJECTILE";
+                case AbilityGlyph.PhaisterVulnerable: return "STATUS CURSE";
                 case AbilityGlyph.PhaisterWitchfire: return "SLIPPER BUFF";
                 case AbilityGlyph.RafiCrosscurrent: return "REDIRECTION";
                 case AbilityGlyph.RafiMirrorwake: return "DECOY";
                 case AbilityGlyph.RafiBreakwater: return "MOVING WAVE";
+                case AbilityGlyph.AmihanQuickDash: return "MOBILITY";
+                case AbilityGlyph.AmihanUpdraft: return "FLIGHT";
+                case AbilityGlyph.AmihanWhirlwind: return "MOVING GALE";
+                case AbilityGlyph.AmihanStormSurge: return "MAP-WIDE PUSH";
+                case AbilityGlyph.PaeteVine: return "GRAPPLE";
+                case AbilityGlyph.PaeteSprout: return "THROWING PLANT";
+                case AbilityGlyph.PaeteThorn: return "SLIPPER PULL";
+                case AbilityGlyph.PaeteSentry: return "PULL AND ROOT";
                 default:
                     return "POWER";
             }
@@ -339,6 +387,33 @@ namespace TumbangPreso.UI
         {
             switch (glyph)
             {
+                case AbilityGlyph.ComingSoon:
+                    return Mathf.Max(EllipseRing(u, v, 0.72f, 0.72f, Stroke), Box(u, v, 0.38f, Stroke * 0.5f));
+                // Amihan's fallbacks, drawn only until `tools/build_ability_icons.py`'s drawings load.
+                case AbilityGlyph.AmihanQuickDash:
+                    return Mathf.Max(Mathf.Max(Chevron(u - 0.34f, v, 0.6f, Stroke),
+                        Box(u + 0.3f, v - 0.3f, 0.42f, 0.055f)),
+                        Mathf.Max(Box(u + 0.4f, v, 0.5f, 0.055f), Box(u + 0.3f, v + 0.3f, 0.42f, 0.055f)));
+                case AbilityGlyph.AmihanUpdraft:
+                    return Mathf.Max(Mathf.Max(EllipseRing(u, v + 0.55f, 0.62f, 0.18f, 0.07f),
+                        EllipseRing(u, v + 0.18f, 0.46f, 0.14f, 0.07f)),
+                        Mathf.Max(EllipseRing(u, v - 0.14f, 0.3f, 0.1f, 0.06f), Disc(u, v - 0.6f, 0.18f)));
+                case AbilityGlyph.AmihanWhirlwind:
+                    return Mathf.Max(Sub(Disc(u, v + 0.15f, 0.86f), Disc(u, v + 0.42f, 0.8f)),
+                        Sub(Disc(u, v + 0.55f, 0.6f), Disc(u, v + 0.78f, 0.56f)));
+                case AbilityGlyph.AmihanStormSurge:
+                    return Mathf.Max(Disc(u, v + 0.62f, 0.2f), Spokes(u, v + 0.62f, 9, 0.34f, 1.35f, Stroke * 0.7f));
+                // Paete's fallbacks, drawn only until `tools/build_ability_icons.py`'s drawings load.
+                case AbilityGlyph.PaeteVine:
+                    return Mathf.Max(Mathf.Max(Box(u + 0.25f, v - 0.28f, 0.52f, 0.06f), Box(u + 0.25f, v + 0.28f, 0.52f, 0.06f)),
+                        Disc(u - 0.52f, v, 0.2f));
+                case AbilityGlyph.PaeteSprout:
+                    return Mathf.Max(Mathf.Max(Box(u, v - 0.35f, 0.08f, 0.45f), Disc(u, v + 0.25f, 0.34f)),
+                        Box(u, v + 0.62f, 0.5f, 0.07f));
+                case AbilityGlyph.PaeteThorn:
+                    return Mathf.Max(Disc(u, v, 0.2f), Spokes(u, v, 7, 0.3f, 0.9f, Stroke * 0.8f));
+                case AbilityGlyph.PaeteSentry:
+                    return Mathf.Max(Disc(u, v, 0.3f), Spokes(u, v, 8, 0.4f, 1.0f, Stroke));
                 case AbilityGlyph.RafiCrosscurrent:
                     return Mathf.Max(Sub(EllipseRing(u + .12f, v, .67f, .60f, .16f), Box(u - .5f, v + .4f, .6f, .65f)),
                         RightTriangle(u - .38f, v - .44f, .24f, .28f));
@@ -397,6 +472,16 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.DanteShield:
                     return HornedCarapace(u, v);
 
+                case AbilityGlyph.DanteBoulder:
+                    return Mathf.Max(Disc(u + 0.28f, v - 0.16f, 0.47f),
+                        Mathf.Max(Box(u - 0.46f, v + 0.2f, 0.3f, 0.06f),
+                            Box(u - 0.54f, v - 0.2f, 0.24f, 0.06f)));
+
+                case AbilityGlyph.DanteBarrier:
+                    return Mathf.Max(Box(u - 0.15f, v, 0.14f, 0.82f),
+                        Mathf.Max(Disc(u + 0.5f, v - 0.14f, 0.2f),
+                            Chevron(u + 0.48f, v + 0.38f, 0.26f, Stroke)));
+
                 case AbilityGlyph.DanteFissure:
                     // Jagged vertical split crack with branching fissures
                     return FissureCrack(u, v);
@@ -428,6 +513,10 @@ namespace TumbangPreso.UI
                     // 6-point snowflake
                     return Snowflake(u, v);
 
+                case AbilityGlyph.CheskaFrostbite:
+                    return Mathf.Max(EllipseRing(u - 0.15f, v, 0.36f, 0.65f, 0.13f),
+                        Spokes(u + 0.39f, v - 0.3f, 5, 0.13f, 0.44f, Stroke));
+
                 case AbilityGlyph.ZackSprint:
                     // Lightning stroke with a pair of speed trails
                     return SprintBolt(u, v);
@@ -452,6 +541,16 @@ namespace TumbangPreso.UI
                     // Swirling spiral seance vortex
                     return SpiralVoid(u, v);
 
+                case AbilityGlyph.NemuTerrify:
+                    return Mathf.Max(Disc(u, v - 0.15f, 0.5f),
+                        Mathf.Max(DownTriangle(u - 0.48f, v + 0.36f, 0.24f, 0.4f),
+                            DownTriangle(u + 0.48f, v + 0.36f, 0.24f, 0.4f)));
+
+                case AbilityGlyph.NemuKuroGuard:
+                    return Mathf.Max(Crest(u, v, 1.2f, 1.5f),
+                        Mathf.Max(DownTriangle(u - 0.38f, v - 0.47f, 0.24f, 0.3f),
+                            DownTriangle(u + 0.38f, v - 0.47f, 0.24f, 0.3f)));
+
                 case AbilityGlyph.PhaisterHexSigil:
                     // Occult hexagonal magic rune sigil
                     return HexWardSigil(u, v);
@@ -463,6 +562,15 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.PhaisterEclipse:
                     // Solar eclipse with dark moon core and corona rays
                     return SolarEclipseNova(u, v);
+
+                case AbilityGlyph.PhaisterCursedDoll:
+                    return Mathf.Max(Disc(u, v - 0.35f, 0.28f),
+                        Mathf.Max(Box(u, v + 0.28f, 0.28f, 0.44f),
+                            RightTriangle(u + 0.6f, v, 0.23f, 0.32f)));
+
+                case AbilityGlyph.PhaisterVulnerable:
+                    return Mathf.Max(Disc(u, v + 0.1f, 0.43f),
+                        Box(u + 0.22f, v - 0.28f, 0.07f, 0.68f));
 
                 case AbilityGlyph.PhaisterWitchfire:
                     // Empowered witchfire flame wisp

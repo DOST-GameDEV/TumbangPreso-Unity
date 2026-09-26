@@ -846,15 +846,20 @@ namespace TumbangPreso.CameraSystem
         /// from0.82 to1.22seconds, before the1.55second ritual release, which is what makes the
         /// throw land.
         /// </summary>
+        // ⚠️ RETIMED 2026-09-24 (SKILL-FX-1) to the rebuilt body cast (`author_hero_action.py`
+        // `hero-phaister-eclipse`): point at 0.36, the drawing sweep to 1.04, both hands up at
+        // 1.26, the clench on the ritual's close at 1.55. `CastGesture` carries the hand PATH
+        // (`CovenPath`); these keys only turn the forearms with it.
         private static readonly Key[] CovenEclipseClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
-            new Key(0.200f, 0.350f, 0.200f, 0.120f, 0.250f, -0.200f, -0.120f),
-            new Key(0.500f, 0.380f, 0.220f, -0.160f, 0.700f, -0.100f, 0.100f),
-            new Key(0.820f, 0.420f, 0.160f, -0.160f, 0.680f, -0.050f, 0.080f),
-            new Key(1.220f, 0.460f, 0.020f, -0.120f, 0.730f, 0.100f, 0.050f),
+            new Key(0.360f, -0.250f, 0.120f, 0.100f, 0.300f, -0.150f, -0.100f),
+            new Key(0.560f, -0.220f, 0.300f, 0.120f, 0.300f, -0.120f, -0.080f),
+            new Key(0.800f, -0.200f, 0.000f, 0.100f, 0.280f, -0.100f, -0.060f),
+            new Key(1.040f, -0.220f, -0.300f, 0.080f, 0.300f, -0.120f, -0.080f),
+            new Key(1.260f, 0.460f, 0.020f, -0.120f, 0.730f, 0.100f, 0.050f),
             new Key(1.550f, -0.750f, -0.300f, 0.350f, -0.600f, 0.380f, -0.300f, true),
-            new Key(1.740f, -0.200f, -0.120f, 0.150f, -0.160f, 0.150f, -0.120f),
+            new Key(1.760f, -0.200f, -0.120f, 0.150f, -0.160f, 0.150f, -0.120f),
             new Key(2.120f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
@@ -979,6 +984,72 @@ namespace TumbangPreso.CameraSystem
             new Key(.55f,-.24f,.25f,-.12f,-.55f,.60f,.62f,true),
             new Key(.76f,-.10f,.12f,-.05f,-.26f,.42f,.28f,true),new Key(1.05f,0,0,0,0,0,0,true) };
 
+        // AMIHAN (2026-09-25): the spiral in first person. Every gesture turns across the frame
+        // rather than punching down its middle: the dash leads with the off hand swinging out, the
+        // lift presses down and throws both hands up, the gale sweeps right to left, the storm
+        // braces both palms forward, trembles, and shoves (timed to the 2.5 s wind-up).
+        private static readonly Key[] GustDashClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.08f,.22f,.14f,.04f,.28f,-.12f,-.06f,true),
+            new Key(.13f,-.14f,-.12f,-.06f,-.62f,.38f,.30f,true), new Key(.30f,-.12f,-.10f,-.05f,-.56f,.34f,.28f,true),
+            new Key(.62f,0,0,0,0,0,0,true) };
+        private static readonly Key[] UpdraftLiftClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.16f,.30f,.06f,.04f,.34f,-.06f,-.04f,true),
+            new Key(.24f,-.70f,.10f,.10f,-.78f,-.10f,-.12f,true), new Key(.46f,-.56f,.16f,.12f,-.62f,-.16f,-.14f,true),
+            new Key(.80f,0,0,0,0,0,0,true) };
+        private static readonly Key[] GaleSweepClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.20f,-.18f,.40f,.08f,-.10f,.36f,.12f,true),
+            new Key(.32f,-.40f,-.46f,-.10f,-.46f,-.40f,-.08f,true), new Key(.52f,-.36f,-.52f,-.10f,-.40f,-.46f,-.10f,true),
+            new Key(.90f,0,0,0,0,0,0,true) };
+        private static readonly Key[] StormCallClip = {
+            new Key(0,-.46f,.02f,.06f,-.50f,-.02f,-.06f,true), new Key(.6f,-.48f,.04f,.07f,-.52f,-.04f,-.07f,true),
+            new Key(1.2f,-.47f,.00f,.06f,-.51f,.00f,-.06f,true), new Key(1.8f,-.50f,.04f,.08f,-.54f,-.04f,-.08f,true),
+            new Key(2.36f,-.30f,.02f,.04f,-.34f,-.02f,-.04f,true), new Key(2.5f,-.58f,.00f,.02f,-.62f,.00f,-.02f,true),
+            new Key(2.66f,-.56f,.00f,.02f,-.60f,.00f,-.02f,true), new Key(2.85f,0,0,0,0,0,0,true) };
+
+        // PAETE (2026-09-25): the growth in first person. The vine reach is both hands thrown out
+        // together and held while he is reeled (owner: *"his arms in tpp/fpp view both extend in
+        // sync"*); the seed is an underhand lob off the right hand; the thorns are both palms
+        // driven down at the ground; the ultimate is his hands on the court (`GroundCallClip`).
+        // ⚠️ PAETE'S FIRST-PERSON HANDS (HERO-9, 2026-09-26: *"i want each of his skill to have their
+        // own animation"*). Each clip is the same beat as his body cast (`HeroAbilityClips.Paete.cs`):
+        // the vine reach ends by DRAWING BOTH HANDS BACK as the vines reel into the forearms; the
+        // seed toss is an underhand lob with the left hand opening after it; the command is a snap
+        // point, not a second lob; the thorn stamp slams both palms down and then RIPS THEM BACK on
+        // the yank (0.25 s hold, 0.5 s yank); the ultimate keeps both hands on the court and ends
+        // crossing them, the embrace in the ultimate's name (`GroundCallClip` below says why).
+        private static readonly Key[] VineReachClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.10f,.24f,.10f,.04f,.26f,-.10f,-.04f,true),
+            new Key(.16f,-.64f,.04f,.06f,-.68f,-.04f,-.06f,true), new Key(.52f,-.60f,.02f,.05f,-.64f,-.02f,-.05f,true),
+            new Key(.68f,.18f,.08f,.02f,.18f,-.08f,-.02f,true), new Key(.95f,0,0,0,0,0,0,true) };
+        private static readonly Key[] SeedTossClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.14f,.34f,-.12f,.02f,.16f,.08f,-.03f,true),
+            new Key(.28f,-.52f,.12f,.06f,-.14f,-.05f,.02f,true), new Key(.62f,0,0,0,0,0,0,true) };
+        private static readonly Key[] SeedCommandClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.06f,.12f,.04f,0,.08f,-.04f,0,true),
+            new Key(.12f,-.58f,-.06f,.02f,.20f,-.06f,-.02f,true), new Key(.26f,-.54f,-.05f,.02f,.18f,-.05f,-.02f,true),
+            new Key(.48f,0,0,0,0,0,0,true) };
+        private static readonly Key[] ThornStampClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.12f,.30f,.06f,.10f,.30f,-.06f,-.10f,true),
+            new Key(.22f,-.34f,.28f,.12f,-.34f,-.28f,-.12f,true), new Key(.44f,-.40f,.10f,.06f,-.40f,-.10f,-.06f,true),
+            new Key(.56f,.30f,.04f,.08f,.30f,-.04f,-.08f,true), new Key(.80f,.24f,.03f,.06f,.24f,-.03f,-.06f,true),
+            new Key(1.05f,0,0,0,0,0,0,true) };
+        // ⚠️⚠️ MAKILING'S EMBRACE, v5: NOTHING IS THROWN (owner, 2026-09-26 night: *"i also dont like that paete just throws seeds in
+        // his ult"*). The v4 `sentry-throw` wound the right hand back and threw it forward with the palm light on it, and that was
+        // the seed he saw (film r13, his own screen). His screen comes back from the cutscene with him still DOWN ON HIS KNEE and his
+        // hands ON THE COURT (the view is lowered by `CameraRig.ApplyFpp` from `PaeteGroundCall`), so the hands start pressed down
+        // in front of him: a push as his roots leave for the spot, the channel held, the grip as the tree's claws take them (0.75),
+        // a pull up on each of the tree's three hauls (0.85, 1.25, 1.65), the hands torn up out of the court as he stands (2.1),
+        // and the arms crossed as the tree closes on its captives (the embrace in the ultimate's name). direction.md 5.14.
+        private static readonly Key[] GroundCallClip = {
+            new Key(0, -.52f, .20f, .10f, -.52f, -.20f, -.10f, true), new Key(.05f, -.60f, .22f, .12f, -.60f, -.22f, -.12f, true),
+            new Key(.20f, -.54f, .20f, .10f, -.54f, -.20f, -.10f, true), new Key(.70f, -.54f, .20f, .10f, -.54f, -.20f, -.10f, true),
+            new Key(.76f, -.62f, .16f, .14f, -.62f, -.16f, -.14f, true), new Key(.85f, -.44f, .18f, .08f, -.44f, -.18f, -.08f, true),
+            new Key(1.05f, -.54f, .20f, .10f, -.54f, -.20f, -.10f, true), new Key(1.25f, -.42f, .18f, .08f, -.42f, -.18f, -.08f, true),
+            new Key(1.45f, -.54f, .20f, .10f, -.54f, -.20f, -.10f, true), new Key(1.65f, -.40f, .18f, .08f, -.40f, -.18f, -.08f, true),
+            new Key(1.90f, -.52f, .20f, .10f, -.52f, -.20f, -.10f, true), new Key(2.10f, .10f, .10f, .04f, .10f, -.10f, -.04f, true),
+            new Key(2.30f, -.50f, -.26f, .04f, -.50f, .26f, -.04f, true), new Key(2.60f, -.46f, -.22f, .04f, -.46f, .22f, -.04f, true),
+            new Key(3.00f, 0, 0, 0, 0, 0, 0, true) };
+
         public bool PlayAction(string clip)
         {
             // While the can is being raised the hands hold the raise pose (`ViewmodelArms.RaiseCan`);
@@ -1041,6 +1112,15 @@ namespace TumbangPreso.CameraSystem
                   : clip == "current-cut" ? CurrentCutClip
                   : clip == "mirror-feint" ? MirrorFeintClip
                   : clip == "breakwater-release" ? BreakwaterReleaseClip
+                  : clip == "gust-dash" ? GustDashClip
+                  : clip == "updraft-lift" ? UpdraftLiftClip
+                  : clip == "gale-sweep" ? GaleSweepClip
+                  : clip == "storm-call" ? StormCallClip
+                  : clip == "vine-reach" ? VineReachClip
+                  : clip == "seed-toss" ? SeedTossClip
+                  : clip == "seed-command" ? SeedCommandClip
+                  : clip == "thorn-stamp" ? ThornStampClip
+                  : clip == "ground-call" ? GroundCallClip
                   : clip == "coven-eclipse" ? CovenEclipseClip
                   : null;
 
@@ -1280,7 +1360,10 @@ namespace TumbangPreso.CameraSystem
                 case "cheska": return SkinCheska;
                 case "nemu": return SkinNemu;
                 case "phaister": return SkinPhaister;
-                case "rafi": return new Color32(184,129,81,255);
+                case "rafi": return new Color32(178,118,74,255);
+                case "amihan": return new Color32(213,154,110,255);
+                // Paete is bark: the model's slot 13.
+                case "paete": return new Color32(140,100,64,255);
 
                 // Classic Characters
                 case "bayan": return SkinBayan;
@@ -1326,6 +1409,10 @@ namespace TumbangPreso.CameraSystem
                     return "phaister";
                 case "rafi":
                     return "rafi";
+                case "amihan":
+                    return "amihan";
+                case "paete":
+                    return "paete";
 
                 case "bayan":
                 case "berto":
@@ -1426,14 +1513,39 @@ namespace TumbangPreso.CameraSystem
             ApplyCharacterStyle(characterId);
         }
 
+        /// <summary>
+        /// ⚠️ Paete's first-person arms are widened on purpose (owner, 2026-09-26, *"make his fpp arms loook
+        /// BULKIER"*). `RosterArmAuditTests` caps every other hero at the clean reference hand's 0.36 m
+        /// cross-section and gives him exactly this factor over it, so the allowance cannot drift apart from
+        /// the scale that is actually applied.
+        /// </summary>
+        public const float PaeteArmBulk = 1.45f;
+
         private void ApplyCharacterStyle(string characterId)
         {
             ClearAccessories(_rightArm);
             ClearAccessories(_leftArm);
+            // Every character starts from the rig's own scale; the early returns below (Inday, Rafi, Amihan)
+            // would otherwise keep the last hero's, and Paete's are 1.45 across.
+            if(_rightArm!=null)_rightArm.localScale=Vector3.one;
+            if(_leftArm!=null)_leftArm.localScale=Vector3.one;
             if(characterId=="inday" && UseIndaySourceArms())return;
             // Rafi has simple source hands/sleeves. Keep their exact palette and
             // geometry instead of giving this new hero the generic wrist kit.
             if(characterId=="rafi" && UseRosterArms(characterId))return;
+            // Amihan's wide cream sleeves and banded cuffs are her own; show them, not the kit.
+            if(characterId=="amihan" && UseRosterArms(characterId))return;
+            // Paete's arms are bark and tangled vines ending in points; the generic wrist kit would hide them.
+            // ⚠️ AND THEY ARE BULKY (owner, 2026-09-26: *"make his fpp arms loook BULKIER bcz he is QUITE bulky as
+            // a character"*). This early return skipped the thickness below, so his arms were never widened
+            // (and could keep whatever scale the previous hero left on the rig): 1.45 across, length unchanged.
+            if(characterId=="paete" && UseRosterArms(characterId))
+            {
+                var bulk=new Vector3(PaeteArmBulk,1.0f,PaeteArmBulk);
+                if(_rightArm!=null)_rightArm.localScale=bulk;
+                if(_leftArm!=null)_leftArm.localScale=bulk;
+                return;
+            }
             // Use the retained solid block-hand frame with character-specific
             // sleeves and skin. Extracting every body gauntlet/prop into this
             // close view created the rejected fragmented hands. All action

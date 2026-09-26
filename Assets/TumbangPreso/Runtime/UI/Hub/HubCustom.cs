@@ -114,12 +114,18 @@ namespace TumbangPreso.UI.Hub
             string refusal = await Hub.Host.HostRoom(title, SceneFlow.MapRegistry[_map.Value].Id,
                                                      _mode.Value == 0 ? GameMode.Classic : GameMode.HeroStrike,
                                                      (RoomVisibility)_visibility.Value, _onlineChosen);
-            if (this == null) return;
+            if (this == null || !_busy) return;
             _busy = false;
             _create.interactable = true;
             HubKit.SetLabel(_create, "CREATE LOBBY");
             if (!string.IsNullOrEmpty(refusal)) { _status.text = refusal; MenuSfx.Error(); return; }
             Hub.ShowLobby();
+        }
+
+        public override bool Back()
+        {
+            if (_busy) { _busy = false; Hub.Host.LeaveRoom(); }
+            return false;
         }
     }
 
@@ -294,10 +300,16 @@ namespace TumbangPreso.UI.Hub
             _busy = true;
             _status.text = "Joining " + key.Trim().ToUpperInvariant() + "...";
             string refusal = await Hub.Host.Join(key.Trim());
-            if (this == null) return;
+            if (this == null || !_busy) return;
             _busy = false;
             if (!string.IsNullOrEmpty(refusal)) { _status.text = refusal; MenuSfx.Error(); return; }
             Hub.ShowLobby();
+        }
+
+        public override bool Back()
+        {
+            if (_busy) { _busy = false; Hub.Host.LeaveRoom(); }
+            return false;
         }
     }
 
@@ -431,7 +443,7 @@ namespace TumbangPreso.UI.Hub
             _title.text = string.IsNullOrWhiteSpace(host.RoomTitle) ? "LOBBY" : host.RoomTitle.ToUpperInvariant();
             _title.fontSize = HubStyle.Size(HubStyle.Display);
             HubKit.Fit(_title, 900);
-            _code.text = "CODE  " + (host.RoomCode ?? "");
+            _code.text = "CODE: " + (host.RoomCode ?? "");
             string address = host.RoomAddress;
             _address.text = string.IsNullOrEmpty(address) ? "" : "or join by address  " + address;
             HubKit.SetLabel(_watch, host.Spectating ? "TAKE A SEAT" : "WATCH INSTEAD");

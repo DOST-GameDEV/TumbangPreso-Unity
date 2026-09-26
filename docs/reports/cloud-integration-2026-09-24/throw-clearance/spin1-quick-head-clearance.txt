@@ -1,0 +1,1 @@
+Maximum shoe vertices inside actual rigid head surfaces: 0 / 41696; samples 6

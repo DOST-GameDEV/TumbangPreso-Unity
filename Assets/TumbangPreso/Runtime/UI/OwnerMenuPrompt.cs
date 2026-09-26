@@ -54,12 +54,21 @@ namespace TumbangPreso.UI
             // read here through `MenuNav`, the one place allowed to read a pad.
             // The mouse and the thumb are served by the full-screen press target
             // itself, which is why neither has a branch in this method.
-            if (Press != null && Press.isActiveAndEnabled && Press.interactable
-                && LastInputDevice.Current == InputDeviceKind.Gamepad && MenuNav.PadAnyPressed)
+            //
+            // ⚠️ AND ANY KEYBOARD KEY BUT ESCAPE, owner 2026-09-26: "should also continue when
+            // pressing any key". The words stay hers ("Click anywhere to continue."); a key is a
+            // shortcut to the same press, not a new instruction.
+            // ⚠️ NOT IN THE FIRST QUARTER SECOND. The Enter or Space that finished the screen before
+            // this one (a sign-in form, the splash) can still read as pressed on this screen's first
+            // frame, and would skip a title the player never saw. The caption itself only starts
+            // arriving at 0.45 s, so the guard is invisible.
+            float age = Time.unscaledTime - _born;
+            if (Press != null && Press.isActiveAndEnabled && Press.interactable && age > .25f
+                && ((LastInputDevice.Current == InputDeviceKind.Gamepad && MenuNav.PadAnyPressed)
+                    || MenuNav.KeyboardAnyPressed))
                 Press.onClick.Invoke();
 
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
-            float age = Time.unscaledTime - _born;
             // The caption arrives a beat after the street, so the first thing seen
             // is her painting and the instruction settles onto it.
             float entry = reduced ? 1 : Mathf.SmoothStep(0, 1, Mathf.Clamp01((age - .45f) / .7f));

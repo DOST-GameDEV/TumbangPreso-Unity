@@ -34,14 +34,21 @@ namespace TumbangPreso.Tests
             foreach(string hero in Core.Roster.HeroPeople.Select(person=>person.Id))
             {
                 var kit=HeroAbilitySystem.CreateKitFor(hero);
-                foreach(var ability in new[]{kit.Skill1,kit.Skill2,kit.Ultimate})
+                foreach(var ability in kit.AllAbilities)
                 {
+                    // ⚠️ THE COMING SOON SLOT HAS NO HANDS BY DESIGN (ABILITY-2, 2026-09-26). Sean, Zack and Rafi's
+                    // defending slot is `PlaceholderRoleAbility`, which casts and does nothing; a gesture would tell
+                    // the player something happened. It gets its hands when its hero's real defending skill is
+                    // designed, and then this skip no longer matches it.
+                    if(ability is PlaceholderRoleAbility) continue;
                     var go=new GameObject("Hand action review");
                     try
                     {
                         var arms=go.AddComponent<ViewmodelArms>();arms.EnsureBuilt();arms.SetCharacter(hero);
                         var right=go.transform.Find("RightPivot/Arm");var left=go.transform.Find("LeftPivot/Arm");
-                        Assert.IsTrue(arms.PlayAction(ability.ViewmodelAction));
+                        // Named in the message: it failed as a bare "Expected: True" that did not say whose hand it was.
+                        Assert.IsTrue(arms.PlayAction(ability.ViewmodelAction),
+                                      hero+"/"+ability.Id+": the first-person action '"+ability.ViewmodelAction+"' did not play");
                         float rightTravel=0,leftTravel=0;
                         // Phaister's retained ritual ends at 2.12s; allow its complete recovery.
                         for(int frame=0;frame<180;frame++)

@@ -14,6 +14,11 @@ namespace TumbangPreso.Visual
         // Read-only diagnostics describe the drawn body, never input or hitbox state.
         public Vector2 LocomotionLean => _locomotionLean;
 
+        // ⚠️ THE GAIT'S OWN LEAN AND WEIGHT ROLL MOVED OUT OF THIS FILE (2026-09-27). They were one lean (4 degrees walking,
+        // 9 running) and one roll (3 and 1.5) for every body; each character's chest now leans, rolls and twists as that
+        // character does (`GaitStyles`, posed in `CharacterAnimator.LocomotionArms.cs`). What stays here is the body's answer
+        // to acceleration and turning, which is physics rather than personality.
+
         private void RestoreLocomotionWeight()
         {
             if (!_weightApplied) return;

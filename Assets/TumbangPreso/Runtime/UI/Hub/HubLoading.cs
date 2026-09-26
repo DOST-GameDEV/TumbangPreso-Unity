@@ -8,7 +8,13 @@ namespace TumbangPreso.UI.Hub
     /// <summary>
     /// Loading stays on one surface: rotating game-world illustrations, the destination map,
     /// progress and an inline tip. The artwork is illustrative, not a live map preview.
-    /// Actual loading/install readiness still gates dismissal; the brief minimum is presentation.
+    ///
+    /// ⚠️⚠️ IT LIFTS WHEN THE WORK IS DONE, NOT ON A CLOCK. The stages are the scene load (0 to
+    /// 60 per cent), the match installing (60 to 75) and `Visual.ArenaPrewarm` drawing the
+    /// arena offscreen from twenty viewpoints so its shaders, meshes and textures are on the GPU
+    /// before the first visible frame (75 to 100). There used to be a two-second hold on top
+    /// "to read the map name"; owner, 2026-09-27, wants no fixed wait on a loading screen, and
+    /// the prewarm is where that time now goes.
     /// </summary>
     public sealed class HubLoading : MonoBehaviour
     {
@@ -16,7 +22,7 @@ namespace TumbangPreso.UI.Hub
         private Text _percent, _tip;
         private Canvas _canvas;
         private string _scene;
-        private float _shown;
+        private float _began;
         public static bool Visible => _current != null;
 
         /// <summary>True when <paramref name="scene"/> is an arena, the only kind of load this covers.</summary>
@@ -36,8 +42,8 @@ namespace TumbangPreso.UI.Hub
             var loading = root.AddComponent<HubLoading>();
             _current = loading;
             loading._scene = scene;
+            loading._began = Time.realtimeSinceStartup;
             loading.Build();
-            loading._shown = Time.unscaledTime;
 
             if (networked) { loading.StartCoroutine(loading.Follow(null)); return false; }
             var load = SceneManager.LoadSceneAsync(scene);
@@ -120,16 +126,23 @@ namespace TumbangPreso.UI.Hub
             while (Time.unscaledTime < until && Object.FindAnyObjectByType<ReadyGate>() == null
                    && (GameServices.Round == null || !GameServices.Round.RoundActive))
             {
-                shown = Mathf.MoveTowards(shown, 89f, Time.unscaledDeltaTime * 30f);
+                shown = Mathf.MoveTowards(shown, 74f, Time.unscaledDeltaTime * 30f);
                 _percent.text = Mathf.RoundToInt(shown) + "%";
                 yield return null;
             }
-            _percent.text = "90%";
-            for (int i = 0; i < 3; i++) yield return null;
-            _percent.text = "100%";
+            shown = Mathf.Max(shown, 75f);
+            _percent.text = "75%";
 
-            // Hold long enough to read the map name, then lift.
-            while (Time.unscaledTime - _shown < 2f) yield return null;
+            // Draw the arena behind the curtain so the first visible frames do not compile.
+            yield return Visual.ArenaPrewarm.Run(done =>
+            {
+                shown = Mathf.Max(shown, Mathf.Lerp(75f, 99f, done));
+                _percent.text = Mathf.RoundToInt(shown) + "%";
+            });
+            _percent.text = "100%";
+            Debug.Log($"[HubLoading] {_scene} ready after {Time.realtimeSinceStartup - _began:F2} s.");
+            yield return null;
+
             // OwnerUiLayout creates a scene-root canvas bound by CanvasLifetime, not a child.
             // Keep the actual canvas so a real arena load can dismiss the curtain.
             var group = _canvas.gameObject.AddComponent<CanvasGroup>();

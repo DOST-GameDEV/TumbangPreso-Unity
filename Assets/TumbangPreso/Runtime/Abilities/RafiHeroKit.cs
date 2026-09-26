@@ -14,7 +14,9 @@ namespace TumbangPreso.Abilities
         public RafiHeroKit() : base("rafi", "RAFI")
         {
             Skill1 = new Crosscurrent();
-            Skill2 = new Mirrorwake(this);
+            // ABILITY-2: the four-slot shape; the defending slot waits for the owner's Hydro design.
+            AttackingSkill = new Mirrorwake(this);
+            DefendingSkill = new PlaceholderRoleAbility("rafi_skill2d", "Rafi", AbilityGlyph.RafiMirrorwake);
             Ultimate = new Breakwater();
         }
 

@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3]
+
+[ext_resource type="Shader" path="res://assets/characters/persons/materials/person_palette.gdshader" id="1"]
+[ext_resource type="Texture2D" path="res://assets/characters/persons/Textures/colormap.png" id="2"]
+[ext_resource type="Material" path="res://assets/characters/persons/materials/person_outline.tres" id="3"]
+
+[resource]
+resource_name = "person_team-paete"
+shader = ExtResource("1")
+shader_parameter/source_map = ExtResource("2")
+shader_parameter/albedo_color = Color(1, 1, 1, 0)
+shader_parameter/palette = PackedColorArray(0.368627, 0.498039, 0.141176, 1, 0.247059, 0.352941, 0.101961, 1, 0.611765, 0.760784, 0.247059, 1, 0.415686, 0.588235, 0.180392, 1, 0.333333, 0.478431, 0.149020, 1, 0.760784, 0.584314, 0.388235, 1, 0.419608, 0.290196, 0.180392, 1, 0.498039, 0.627451, 0.203922, 1, 0.117647, 0.078431, 0.047059, 1, 0.109804, 0.066667, 0.035294, 1, 0.847059, 1.000000, 0.415686, 1, 0.525490, 0.784314, 0.227451, 1, 0.909804, 0.760784, 0.290196, 1, 0.549020, 0.392157, 0.250980, 1, 0.333333, 0.227451, 0.133333, 1, 0.690196, 0.517647, 0.313725, 1)
+next_pass = ExtResource("3")

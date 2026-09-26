@@ -43,14 +43,16 @@ namespace TumbangPreso.CameraSystem
             _raiseBlend = Mathf.MoveTowards(_raiseBlend, ratio > 0 ? 1 : 0, Mathf.Max(0, dt) / (ratio > 0 ? .12f : .15f));
             if (_raiseBlend <= .001f) return;
             float p = ratio > 0 ? ratio : 1;
-            float rise = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.12f, .85f, p));
-            float press = p > .85f ? Mathf.Sin(Mathf.InverseLerp(.85f, 1f, p) * Mathf.PI) : 0;
+            // The body's shape (`Visual.CanRaiseShape`, 2026-09-26): crouch, grip, lift, set.
+            float rise = Visual.CanRaiseShape.Rise(p), crouch = Visual.CanRaiseShape.Crouch(p);
+            float press = Visual.CanRaiseShape.Press(p);
             float k = _raiseBlend;
             _raiseRightPos = _rightPivot.localPosition; _raiseLeftPos = _leftPivot.localPosition;
             _raiseRightRot = _rightPivot.localRotation; _raiseLeftRot = _leftPivot.localRotation;
             _raiseApplied = true;
             // In toward the middle, low, closing on the can; up with it; down again in the press.
-            float lift = .10f * rise - .05f * press;
+            // In the squat the hands reach forward and down to the can on the road.
+            float lift = .10f * rise - .05f * press - .03f * crouch;
             _rightPivot.localPosition += new Vector3(-.17f, -.02f + lift, .06f) * k;
             _leftPivot.localPosition += new Vector3(.17f, .30f + lift, .06f) * k;
             _rightPivot.localRotation = Quaternion.AngleAxis(-18f * k, Vector3.forward) * _rightPivot.localRotation;

@@ -1,0 +1,22 @@
+{
+    "passed": true,
+    "error": "",
+    "stages": [
+        "accessibility settings through real preparation route",
+        "native accessibility save and discard",
+        "large owner HUD and muted announcer caption in native Hero play",
+        "larger native training card after local match-chat display check",
+        "spectator startup through Watch instead",
+        "spectator autopilot and manual flight takeover",
+        "real spectator POV of seat 2",
+        "spectator held-item release and replacement visibility",
+        "spectator bookmark and tactical pause controls",
+        "native replay buffer filling from actual camera renders",
+        "manual replay overlay contains real captured frames",
+        "replay after changing the actual window to 960x720",
+        "replay after changing the actual window to 1680x720",
+        "spectator flight POV restoration and manual replay verified",
+        "native accessibility options, save-discard and enlarged owner-training-spectator views verified"
+    ],
+    "frameWindows": []
+}

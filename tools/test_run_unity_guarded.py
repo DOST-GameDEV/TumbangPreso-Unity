@@ -78,4 +78,35 @@ class ProfileIsolationTests(unittest.TestCase):
                 self.assertEqual(save.read_bytes(),b"original")
 
 
+
+class MachineResolutionTests(unittest.TestCase):
+    """The guard on each machine: the Windows PC, the Mac, and the Linux cloud container."""
+
+    def test_explicit_editor_path_wins_on_every_platform(self):
+        for platform in ("win32","darwin","linux"):
+            with self.subTest(platform=platform):
+                self.assertEqual(guard.unity_executable({"UNITY_EDITOR_PATH":"/x/Unity"},platform),Path("/x/Unity"))
+        self.assertEqual(guard.unity_executable({},"linux"),Path("/opt/tump/unity/Editor/Unity"))
+        self.assertTrue(str(guard.unity_executable({},"win32")).endswith("Unity.exe"))
+
+    def test_linux_profile_follows_xdg_config_home(self):
+        self.assertEqual(guard.player_profile({"XDG_CONFIG_HOME":"/c"},"linux"),
+                         Path("/c/unity3d/BH Studios/Tumbang Preso"))
+        self.assertEqual(guard.player_profile({"USERPROFILE":"/u"},"win32"),
+                         Path("/u/AppData/LocalLow/BH Studios/Tumbang Preso"))
+
+    def test_headless_linux_gets_a_virtual_display_and_a_linux_target(self):
+        command=guard.launch_command("/u/Unity",["-batchmode","-runTests"],{},"linux",has_xvfb=True)
+        self.assertEqual(command[:4],["xvfb-run","-a","-s","-screen 0 1920x1080x24"])
+        self.assertEqual(command[-2:],["-buildTarget","Linux64"])
+
+    def test_nographics_a_display_or_an_explicit_target_are_left_alone(self):
+        self.assertEqual(guard.launch_command("/u/Unity",["-nographics"],{},"linux",has_xvfb=True)[0],"/u/Unity")
+        self.assertEqual(guard.launch_command("/u/Unity",[],{"DISPLAY":":1"},"linux",has_xvfb=True)[0],"/u/Unity")
+        command=guard.launch_command("/u/Unity",["-buildTarget","Win64"],{"DISPLAY":":1"},"linux",has_xvfb=True)
+        self.assertEqual(command.count("-buildTarget"),1)
+        self.assertEqual(guard.launch_command("/u/Unity.exe",["-batchmode"],{},"win32"),
+                         ["/u/Unity.exe","-projectPath",str(guard.ROOT),"-batchmode"])
+
+
 if __name__=="__main__":unittest.main()

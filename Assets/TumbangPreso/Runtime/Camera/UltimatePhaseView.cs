@@ -36,11 +36,20 @@ namespace TumbangPreso.CameraSystem
         private Slipper[] _slippers;
         private bool _handedOff;
         private readonly RaycastHit[] _shotHits = new RaycastHit[32];
-        private bool _mirrorShot, _safeShot = true;
+        // Per authored shot: mirror it, replace it with another clear shot, or give up (card).
+        private bool[] _mirror;
+        // How far along target-to-eye each shot's camera sits: 1 is the authored eye, less is pushed in.
+        private float[] _pull;
+        private int[] _useShot;
+        private bool _safeShot = true, _stillMirror, _stillSafe;
+        private float _duration = UltimatePerformance.DefaultSeconds;
         public bool SoundPlayed { get; private set; }
+        /// <summary>Seats whose own voice line already played inside this introduction.</summary>
+        public IEnumerable<int> VoicedSeats { get { foreach (var entry in _actors) if (entry.Scene != null && entry.Scene.VoicePlayed) yield return entry.Actor.PlayerSlot; } }
 
-        public UltimatePhaseView(Transform owner, IReadOnlyList<UltimateCommit> commits)
+        public UltimatePhaseView(Transform owner, IReadOnlyList<UltimateCommit> commits, double duration = UltimatePerformance.DefaultSeconds)
         {
+            _duration = (float)duration;
             try
             {
                 var liveCamera = Camera.main;
@@ -76,7 +85,7 @@ namespace TumbangPreso.CameraSystem
                             actorStage.transform.position+=Vector3.up*(Slipper.GroundY(actor.transform.position)-surfaces.Min(r=>r.bounds.min.y));
                     }
                     foreach (var surface in body.Renderers) surface.shadowCastingMode = ShadowCastingMode.On;
-                    entry.Scene = new HeroIntroductionScene(actorStage.transform, actor.AbilitySystem.HeroId, actor, body);
+                    entry.Scene = new HeroIntroductionScene(actorStage.transform, actor.AbilitySystem.HeroId, actor, body, commit.Aim) { Boundary = _duration };
                     if (_primary == null || commit.Seat == watching) _primary = entry;
                 }
                 _stage.SetActive(true);
@@ -142,7 +151,9 @@ namespace TumbangPreso.CameraSystem
                 if (entry.Clip == null || entry.Body.Root == null) continue;
                 entry.Clip.SampleAnimation(entry.Body.Root,age); entry.Scene?.Sample(age);
             }
-            if (!_handedOff && age >= 2.4f)
+            // Each body starts blending back into live play 0.4 s before the SHARED boundary, which
+            // is the longest caster's length: a shorter hero holds its last authored pose until then.
+            if (!_handedOff && age >= Mathf.Max(0, _duration - UltimatePerformance.HandoffLead))
             {
                 _handedOff = true;
                 foreach (var entry in _actors)
@@ -150,14 +161,29 @@ namespace TumbangPreso.CameraSystem
             }
             // Keep one readable 3D view until the last beat. A full .4s dissolve
             // stacked two different court perspectives and washed out the handoff.
-            // Pose staging still starts at2.4; shared time and live warning do not change.
-            float returnBlend=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(2.68f,2.8f,age));
-            _fade.alpha=returnBlend;
+            // Pose staging starts HandoffLead before the boundary; shared time and live warning do not change.
+            float returnBlend=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(_duration-UltimatePerformance.ReturnSeconds,_duration,age));
+            // ⚠️ REDUCED MOTION OR EFFECTS STILL GET THE PERFORMANCE (REFINE-2.11). Until now they
+            // got no picture at all. They get the same acting from ONE locked shot with no cut and
+            // no camera move, faded in rather than cut in; the scene itself drops its flashes.
             bool moving=Settings.SettingsStore.Current.CinematicCameraMotion && !Settings.SettingsStore.Current.ReducedUiMotion && !Settings.SettingsStore.Current.ReducedEffects;
-            _picture.enabled=moving && _safeShot && _camera!=null && _primary?.Scene!=null;
+            _fade.alpha=returnBlend*(moving?1:Mathf.SmoothStep(0,1,Mathf.Clamp01(age/.3f)));
+            _picture.enabled=(moving?_safeShot:_stillSafe) && _camera!=null && _primary?.Scene!=null;
             if (!_picture.enabled) return;
-            _primary.Scene.Shot(age,out var eye,out var target,out var fov,_camera.aspect);
-            if(_mirrorShot)eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
+            Vector3 eye, target; float fov;
+            if(moving)
+            {
+                int shot=_primary.Scene.ShotIndexAt(age);
+                int use=_useShot!=null&&shot>=0?_useShot[shot]:shot;
+                _primary.Scene.ShotAt(use,age,out eye,out target,out fov,_camera.aspect);
+                if(_mirror!=null&&use>=0&&_mirror[use])eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
+                if(_pull!=null&&use>=0)eye=target+(eye-target)*_pull[use];
+            }
+            else
+            {
+                _primary.Scene.StillShot(out eye,out target,out fov);
+                if(_stillMirror)eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
+            }
             _camera.transform.position=eye; _camera.transform.LookAt(target); _camera.fieldOfView=fov;
             _hidden.Clear();_wasHidden.Clear();_seen.Clear();
             foreach(var actor in GameServices.Round.Players)
@@ -171,8 +197,11 @@ namespace TumbangPreso.CameraSystem
             if(WorldContactPresentation.Current!=null)Hide(WorldContactPresentation.Current.transform);
             _primary.Body.ShowOnlyForCapture(true);_primary.Scene.SetVisibleForCapture(true);
             float foot=WorldContactPresentation.ModelBottom(_primary.Body.Renderers,_primary.Body.Root.transform.position.y);
-            _primary.Contact.Place(_primary.Body.Root.transform.position,foot,new Vector2(.45f,.45f),WorldCueProfile.Current.WorldLighting*.20f);
+            _primary.Contact.Place(_primary.Body.Root.transform.position,foot,new Vector2(.45f,.45f),WorldCueProfile.LightingWeight*.20f);
             _primary.Contact.Visible(true);
+            // The hero's own grade for this moment (1, 1 unless their stage asks; Paete's world steps back while the power is on screen).
+            var grade=_camera.GetComponent<ColourGrade>();
+            if(grade!=null){_primary.Scene.GradeAt(age,out float gradeB,out float gradeS);grade.SetEventGrade(gradeB,gradeS);}
             try{_camera.Render();}
             finally
             {
@@ -183,28 +212,91 @@ namespace TumbangPreso.CameraSystem
         }
         private void ChooseShot()
         {
-            // Judge both sides at the largest/revealed composition once. A tight
-            // alley gets the same-duration low-motion card, not a camera inside a wall.
-            _primary.Clip.SampleAnimation(_primary.Body.Root,2.35f);_primary.Scene.Sample(2.35f);
-            _primary.Scene.Shot(2.35f,out var eye,out var target,out var fov,_camera.aspect);
-            Vector3 alternate=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
-            bool first=ClearShot(target,eye),second=ClearShot(target,alternate);
-            _mirrorShot=!first&&second;_safeShot=first||second;
-            _primary.Clip.SampleAnimation(_primary.Body.Root,0);_primary.Scene.Sample(0);
+            // Judge every authored shot on both sides at its own most revealed moment (its end,
+            // where the moves settle). A blocked shot is mirrored; one blocked on both sides
+            // borrows the nearest clear shot; a tight alley with none clear gets the same-duration
+            // card, never a camera inside a wall. The reduced-motion still is judged the same way.
+            var scene=_primary.Scene;int count=scene.ShotCount;
+            var report=new System.Text.StringBuilder();
+            _mirror=new bool[Mathf.Max(0,count)];_useShot=new int[Mathf.Max(0,count)];
+            _pull=new float[Mathf.Max(0,count)];
+            var clear=new bool[Mathf.Max(0,count)];bool any=false;
+            for(int i=0;i<count;i++)
+            {
+                float at=Mathf.Max(scene.ShotStart(i),scene.ShotEnd(i)-.05f);
+                _primary.Clip.SampleAnimation(_primary.Body.Root,at);scene.Sample(at,false);
+                scene.ShotAt(i,at,out var eye,out var target,out _,_camera.aspect);
+                Vector3 alternate=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
+                _pull[i]=1;
+                bool first=ClearShot(target,eye);float firstRoom=_lastRoom;
+                if(!first)report.Append($"shot {i} blocked by {_lastBlocker}");
+                bool second=ClearShot(target,alternate);float secondRoom=_lastRoom;
+                if(!second)report.Append($"; mirror by {_lastBlocker}");
+                // ⚠️⚠️ PUSH IN BEFORE GIVING A SHOT UP (2026-09-26). Paete's rise and his tree payoff were both
+                // thrown away on Bayan Plaza because a gate stood 0.8 m in front of the authored eye, and the view
+                // froze on the end of the previous shot for 2.1 s: the cutscene lost its ending. A third-person
+                // game camera answers a wall behind it by sliding in along its line to just short of the wall;
+                // so does this, when at least `MinPull` of the authored distance is left (the framing still
+                // reads). Only past that is a shot mirrored-and-pushed, or borrowed.
+                if(!first&&!second)
+                {
+                    float length=Vector3.Distance(eye,target);
+                    float pullFirst=length>.1f?firstRoom/length:0,pullSecond=length>.1f?secondRoom/length:0;
+                    if(pullFirst>=MinPull&&pullFirst>=pullSecond){first=true;_pull[i]=pullFirst;}
+                    else if(pullSecond>=MinPull){second=true;_pull[i]=pullSecond;}
+                    if(first||second)report.Append($" -> pushed in to {_pull[i]:0.00}");
+                }
+                if(!first||!second)report.AppendLine();
+                _mirror[i]=!first&&second;clear[i]=first||second;any|=clear[i];_useShot[i]=i;
+            }
+            for(int i=0;i<count;i++)
+            {
+                if(clear[i])continue;
+                for(int d=1;d<count;d++)
+                {
+                    if(i+d<count&&clear[i+d]){_useShot[i]=i+d;break;}
+                    if(i-d>=0&&clear[i-d]){_useShot[i]=i-d;break;}
+                }
+            }
+            _safeShot=any;
+            {
+                float at=_duration*.6f;
+                _primary.Clip.SampleAnimation(_primary.Body.Root,at);scene.Sample(at,false);
+                scene.StillShot(out var eye,out var target,out _);
+                Vector3 alternate=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
+                bool first=ClearShot(target,eye),second=ClearShot(target,alternate);
+                _stillMirror=!first&&second;_stillSafe=first||second;
+            }
+            _primary.Clip.SampleAnimation(_primary.Body.Root,0);scene.Sample(0,false);
+            LastShotReport=report.ToString();
         }
+        /// <summary>
+        /// Which authored shots the last cast judged blocked, and by what (empty when every shot was clear).
+        /// ⚠️ Added 2026-09-26 when Paete's in-match film showed shots 2 to 4 all replaced by the end of shot 1:
+        /// a borrowed shot is invisible in a green test and costs the cutscene its payoff.
+        /// </summary>
+        public static string LastShotReport{get;private set;}=string.Empty;
+        private string _lastBlocker="";
+        // The clear distance from the focus toward the eye on the last blocked test, less a margin for the lens.
+        private float _lastRoom;
+        private const float MinPull=.6f, LensMargin=.35f;
         private bool ClearShot(Vector3 focus,Vector3 eye)
         {
-            Vector3 line=eye-focus;float length=line.magnitude;if(length<.1f)return false;
+            Vector3 line=eye-focus;float length=line.magnitude;_lastRoom=0;if(length<.1f)return false;
             int count=Physics.RaycastNonAlloc(focus,line/length,_shotHits,length,~0,QueryTriggerInteraction.Ignore);
             if(count==_shotHits.Length)return false;
+            // The NEAREST blocker decides (the hits come back unordered), so the push-in stops in front of it.
+            float nearest=float.MaxValue;
             for(int i=0;i<count;i++)
             {
                 var collider=_shotHits[i].collider;if(collider==null)continue;
                 if(collider.GetComponentInParent<CharacterMotor>()!=null||collider.GetComponentInParent<Slipper>()!=null
                     ||collider.GetComponentInParent<Lata>()!=null)continue;
-                return false;
+                if(_shotHits[i].distance<nearest){nearest=_shotHits[i].distance;_lastBlocker=collider.name+" at "+nearest.ToString("0.00")+" m";}
             }
-            return true;
+            if(nearest==float.MaxValue)return true;
+            _lastRoom=Mathf.Max(0,nearest-LensMargin);
+            return false;
         }
         private void Hide(Transform root)
         {

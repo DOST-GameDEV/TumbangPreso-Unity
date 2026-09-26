@@ -1262,7 +1262,11 @@ namespace TumbangPreso.UI
             // `LobbyChrome.BuildLoadoutButton`: 🧑 could not find the loadout twice, and the answer
             // is the row under the character it belongs to rather than a fifth place to look.
             if (_chrome?.LoadoutButton != null)
+            {
                 _chrome.LoadoutButton.onClick.AddListener(OpenLoadout);
+                // ⚠️ HIDDEN WHILE THE SKILL TREE IS OFF (owner, 2026-09-26: *"JS REMOVE ITS UI FOR NOW"*).
+                _chrome.LoadoutButton.gameObject.SetActive(HeroLoadoutRules.SidegradesOpen);
+            }
 
             // ⚠️ SETTINGS, ON REQUEST. 🧑 2026-09-02: **"cann u also add a settings button in
             // lobby?"**. `LobbyChrome.BuildSettingsButton` is the control and

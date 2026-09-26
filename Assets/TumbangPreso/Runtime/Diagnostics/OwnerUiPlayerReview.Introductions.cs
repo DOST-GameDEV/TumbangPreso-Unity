@@ -56,7 +56,8 @@ namespace TumbangPreso.Diagnostics
                     var stage = new GameObject("NativeIntroductionRenderCopy"); stage.SetActive(false);
                     var copy = track.Clone(stage.transform); track.Apply(copy, track.Newest);
                     var clip = HeroAbilityClips.BuildUltimateIntroduction(copy.Root.transform, hero, actor.GetComponent<Carrier>().Held != null);
-                    if (clip == null || !clip.legacy || clip.length < 2.79f) throw new InvalidOperationException(hero + " native clip was empty or unsupported");
+                    float seconds = UltimatePerformance.For(hero, actor.GetComponent<Carrier>().Held != null)?.Seconds ?? 2.8f;
+                    if (clip == null || !clip.legacy || clip.length < seconds - .01f) throw new InvalidOperationException(hero + " native clip was empty or unsupported");
                     var arm = copy.Bones.First(b => b.name == "arm-right");
                     clip.SampleAnimation(copy.Root, 0); var rest = arm.localRotation;
                     clip.SampleAnimation(copy.Root, 1.2f);
@@ -97,9 +98,9 @@ namespace TumbangPreso.Diagnostics
                             audio = listener.gameObject.AddComponent<ReviewAudioCapture>(); audio.Begin();
                             if (!scene.StartSound()) throw new InvalidOperationException(hero + " has no retained theme source");
                         }
-                        var movie = StartCoroutine(RecordCatchMotion(motionName, 2.8f));
+                        var movie = StartCoroutine(RecordCatchMotion(motionName, seconds));
                         float began = Time.realtimeSinceStartup;
-                        while (Time.realtimeSinceStartup - began < 2.8f)
+                        while (Time.realtimeSinceStartup - began < seconds)
                         {
                             float age = Time.realtimeSinceStartup - began;
                             clip.SampleAnimation(copy.Root, age);

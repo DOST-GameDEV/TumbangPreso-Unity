@@ -27959,6 +27959,7 @@ MonoBehaviour:
     BirdBeatRate: 1
     PeckChance: 0.6
     FanWatch: 0
+    VisitAxis: {x: 0, y: 0, z: 0}
   - Id: pusakal-ginger
     Model: {fileID: 8771091787928289351, guid: 7f8a83d85268ba04ea42094914a5d240, type: 3}
     Clips:
@@ -28255,6 +28256,7 @@ MonoBehaviour:
     BirdBeatRate: 1
     PeckChance: 0.6
     FanWatch: 0
+    VisitAxis: {x: 0, y: 0, z: 0}
   - Id: maya
     Model: {fileID: 8771091787928289351, guid: bd71817a37a91f54bb702ae7393bdcaf, type: 3}
     Clips:
@@ -28288,6 +28290,7 @@ MonoBehaviour:
     BirdBeatRate: 1.35
     PeckChance: 0.65
     FanWatch: 0
+    VisitAxis: {x: 0, y: 0, z: 0}
   - Id: kalapati
     Model: {fileID: 8771091787928289351, guid: 89871430be2577c4a9c9009c86adb490, type: 3}
     Clips:
@@ -28321,6 +28324,7 @@ MonoBehaviour:
     BirdBeatRate: 0.9
     PeckChance: 0.8
     FanWatch: 0
+    VisitAxis: {x: 0, y: 0, z: 0}
   - Id: fantail
     Model: {fileID: 8771091787928289351, guid: 6f569a317f91a7b41a49ac9702a5c8a7, type: 3}
     Clips:
@@ -28354,6 +28358,7 @@ MonoBehaviour:
     BirdBeatRate: 1.15
     PeckChance: 0
     FanWatch: 1
+    VisitAxis: {x: 0, y: 0, z: 0}
 --- !u!1001 &734096729
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -77493,6 +77498,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2133723657}
+  - component: {fileID: 2133723658}
   m_Layer: 0
   m_Name: BayanHouseFinishes
   m_TagString: Untagged
@@ -77531,6 +77537,21 @@ Transform:
   - {fileID: 600062011}
   m_Father: {fileID: 324446260}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2133723658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133723656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Timber, jalousie and terrace details mounted on the walls of the Bayan
+    house bodies they were fitted to (BayanHouseFinishAuthor refuses any part that
+    leaves its body's bounds); they hang on the house, not on the road.
 --- !u!1001 &2135213261
 PrefabInstance:
   m_ObjectHideFlags: 0

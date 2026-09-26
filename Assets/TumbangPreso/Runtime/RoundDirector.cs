@@ -633,7 +633,10 @@ namespace TumbangPreso
         /// </summary>
         private void ApplyTagPenalty(CharacterMotor taya, CharacterMotor victim)
         {
-            victim.ApplyStagger(Balance.TagStunTime);
+            // ⚠️⚠️ `ApplyTagged`, NOT `ApplyStagger`: the owner's status table says Tagged *"Cannot
+            // be removed or be immune to"* (2026-09-25), and `ApplyStagger` returns early under
+            // stun immunity. Same five seconds, same unmashable `None` element.
+            victim.ApplyTagged();
 
             // ⚠️⚠️ EVERY PIECE OF THE TAG'S PRESENTATION USED TO BE WRITTEN HERE, INSIDE A
             // HOST-ONLY METHOD, AND SO HAPPENED ON ONE SCREEN. 🧑 2026-08-29: *"make sure that

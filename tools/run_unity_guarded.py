@@ -1,4 +1,4 @@
-"""Run this checkout's Unity while preserving the Windows player's persistent files.
+"""Run this checkout's Unity while preserving the player's persistent files (Windows, macOS, Linux).
 
 Editor tests use the real product/company persistentDataPath. UI tests can save
 preferences even when their in-memory teardown succeeds. Copy bytes before a run,
@@ -17,8 +17,64 @@ import uuid
 import playerprefs_guard
 
 ROOT=Path(__file__).resolve().parents[1]
-UNITY=Path(r"C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe")
-PROFILE=Path(os.environ["USERPROFILE"])/"AppData/LocalLow/BH Studios/Tumbang Preso"
+
+
+def unity_executable(environment=None,platform=None):
+    """This checkout's editor on each machine the project is worked on.
+
+    ⚠️ The Linux row is the cloud container (2026-09-26): the editor is unpacked to
+    /opt/tump/unity by `tools/cloud_unity_setup.sh`, which also exports UNITY_EDITOR_PATH.
+    An explicit UNITY_EDITOR_PATH wins everywhere, so a machine with the editor elsewhere
+    needs no edit here.
+    """
+    environment=os.environ if environment is None else environment
+    platform=sys.platform if platform is None else platform
+    if environment.get("UNITY_EDITOR_PATH"):return Path(environment["UNITY_EDITOR_PATH"])
+    if platform.startswith("win"):return Path(r"C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe")
+    if platform=="darwin":return Path("/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity")
+    return Path("/opt/tump/unity/Editor/Unity")
+
+
+def player_profile(environment=None,platform=None):
+    """Unity's persistentDataPath for company BH Studios, product Tumbang Preso, per OS.
+
+    Windows `%USERPROFILE%/AppData/LocalLow`, macOS `~/Library/Application Support`,
+    Linux `$XDG_CONFIG_HOME/unity3d` (default `~/.config/unity3d`), as Unity documents
+    `Application.persistentDataPath`. `tools/cold_start.py` resolves the same folders.
+    """
+    environment=os.environ if environment is None else environment
+    platform=sys.platform if platform is None else platform
+    if platform.startswith("win"):return Path(environment["USERPROFILE"])/"AppData/LocalLow/BH Studios/Tumbang Preso"
+    if platform=="darwin":return Path.home()/"Library/Application Support/BH Studios/Tumbang Preso"
+    config=environment.get("XDG_CONFIG_HOME") or str(Path.home()/".config")
+    return Path(config)/"unity3d/BH Studios/Tumbang Preso"
+
+
+def launch_command(unity,args,environment=None,platform=None,has_xvfb=None):
+    """The command line, wrapped for a headless Linux box.
+
+    ⚠️⚠️ A cloud container has no display, and PlayMode, films and renders need a real
+    graphics device (PlayMode never takes -nographics, CLAUDE.md section 7). Without a
+    DISPLAY the editor runs under xvfb-run on Mesa's software OpenGL (llvmpipe); a run
+    that passes -nographics needs no display and is left alone. The project's active
+    target is Windows and a Linux editor has no Windows module, so a Linux launch that
+    names no -buildTarget gets Linux64 (the same standalone code paths, bar the few
+    `UNITY_STANDALONE_WIN` blocks).
+    """
+    environment=os.environ if environment is None else environment
+    platform=sys.platform if platform is None else platform
+    command=[str(unity),"-projectPath",str(ROOT),*args]
+    if not platform.startswith("linux"):return command
+    lowered=[a.lower() for a in args]
+    if "-buildtarget" not in lowered:command+=["-buildTarget","Linux64"]
+    if has_xvfb is None:has_xvfb=shutil.which("xvfb-run") is not None
+    if not environment.get("DISPLAY") and "-nographics" not in lowered and has_xvfb:
+        command=["xvfb-run","-a","-s","-screen 0 1920x1080x24",*command]
+    return command
+
+
+UNITY=unity_executable()
+PROFILE=player_profile()
 
 
 def digest(path): return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -72,7 +128,7 @@ def run(args):
     (backup/"editor-input-prefs.json").write_text(json.dumps(editor_prefs,indent=2))
     result=1
     try:
-        result=subprocess.run([str(UNITY),"-projectPath",str(ROOT),*args],cwd=ROOT,
+        result=subprocess.run(launch_command(UNITY,args),cwd=ROOT,
                               env=unity_environment()).returncode
     finally:
         restored=0

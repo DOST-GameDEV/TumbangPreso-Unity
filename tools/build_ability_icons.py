@@ -275,6 +275,27 @@ def dante_fissure(a):
     a.add(a.poly([(480, 520), (525, 470), (560, 520), (535, 860), (500, 860)]), LEMON, shade=False)
 
 
+def dante_boulder(a):
+    a.add(a.band([(90, 445), (280, 445)], 70), GOLD, shade=False)
+    a.add(a.band([(145, 610), (300, 590)], 52), HONEY, shade=False)
+    a.add(a.poly([(335, 355), (550, 175), (790, 260), (900, 495), (760, 750), (490, 715), (320, 565)]), STONE_DK)
+    a.add(a.poly([(335, 355), (550, 175), (790, 260), (690, 450), (470, 480)]), STONE)
+    a.add(a.poly([(470, 480), (690, 450), (900, 495), (760, 750), (490, 715)]), LEATHER)
+    a.ink([(550, 295), (590, 380), (520, 460)], 22)
+    a.ink([(745, 540), (680, 620)], 18)
+    a.glint(590, 270, 25, 46)
+
+
+def dante_barrier(a):
+    a.add(a.poly([(265, 195), (565, 150), (610, 830), (280, 885)]), STONE_DK)
+    a.add(a.poly([(290, 215), (510, 185), (550, 815), (315, 845)]), STONE)
+    a.add(a.poly([(510, 185), (565, 150), (610, 830), (550, 815)]), GOLD)
+    a.add(a.band([(385, 355), (455, 480), (390, 650)], 34), LEATHER, shade=False)
+    slipper(a, 755, 565, 300, 75, PERSIMMON, CREAM)
+    a.add(a.band([(740, 390), (840, 275), (765, 235)], 58), GOLD, shade=False)
+    a.glint(345, 260, 20, 65)
+
+
 def sean_rush(a):
     for y, x0, x1 in ((330, 100, 330), (512, 80, 290), (694, 100, 330)):
         a.add(a.band([(x0, y), (x1, y)], 60), PERSIMMON, shade=False)
@@ -349,6 +370,15 @@ def cheska_nova(a):
     a.glint(440, 300, 20)
 
 
+def cheska_frostbite(a):
+    slipper(a, 480, 565, 660, -30, ICE_SH, CREAM)
+    a.add(a.poly([(640, 310), (740, 130), (780, 350), (850, 420), (680, 470)]), ICE)
+    a.add(a.poly([(165, 630), (260, 470), (295, 675), (390, 740), (210, 785)]), ICE)
+    a.add(a.poly([(630, 730), (740, 640), (760, 825), (685, 900)]), ICE_SH)
+    a.ink([(480, 350), (510, 485), (610, 550)], 20)
+    a.glint(710, 250, 20, 53)
+
+
 def zack_sprint(a):
     for y, x0 in ((360, 90), (520, 70), (680, 100)):
         a.add(a.band([(x0, y), (x0 + 170, y)], 58), GOLD, shade=False)
@@ -412,6 +442,34 @@ def nemu_seance(a):
     a.ink_mask(a.ellipse(512, 512, 16, 40))
 
 
+def nemu_terrify(a):
+    a.add(a.ellipse(520, 810, 360, 90), PLUM, shade=False)
+    a.add(a.poly([(210, 710), (235, 320), (370, 160), (495, 280), (620, 150), (780, 320), (815, 710),
+                  (700, 630), (595, 755), (480, 645), (350, 765)]), KURO)
+    a.add(a.ellipse(420, 400, 62, 75), GOLD, shade=False)
+    a.add(a.ellipse(625, 400, 62, 75), GOLD, shade=False)
+    a.ink_mask(a.ellipse(420, 400, 20, 58))
+    a.ink_mask(a.ellipse(625, 400, 20, 58))
+    a.add(a.poly([(490, 510), (555, 510), (525, 580)]), LILAC, shade=False)
+    slipper(a, 745, 810, 260, 62, STONE, HONEY)
+    a.glint(335, 270, 22, 44)
+
+
+def nemu_guard(a):
+    a.add(a.poly([(240, 410), (305, 175), (415, 310), (635, 300), (735, 160), (810, 430),
+                  (775, 745), (600, 830), (375, 800), (235, 650)]), KURO)
+    a.add(a.ellipse(435, 465, 58, 45), GOLD, shade=False)
+    a.add(a.ellipse(620, 465, 58, 45), GOLD, shade=False)
+    a.ink_mask(a.ellipse(435, 465, 16, 37))
+    a.ink_mask(a.ellipse(620, 465, 16, 37))
+    a.add(a.circle(520, 605, 80), STONE)
+    a.add(a.rect(455, 585, 585, 735), STONE_DK)
+    a.add(a.poly([(640, 675), (730, 605), (825, 720), (710, 820)]), PLUM)
+    slipper(a, 835, 530, 220, 75, PERSIMMON, HONEY)
+    a.add(a.poly(star_pts(710, 530, 95, 38, 4)), LEMON, shade=False)
+    a.glint(350, 320, 20, 48)
+
+
 def phaister_hex(a):
     a.add(a.circle(512, 512, 400), MAGENTA)
     a.add(a.circle(512, 512, 320), WITCH)
@@ -447,6 +505,34 @@ def phaister_witchfire(a):
     a.add(a.poly(flame_pts(512, 860, 150, 270, 1)), LILAC, shade=False)
 
 
+def phaister_cursed_doll(a):
+    a.add(a.band([(125, 710), (295, 660)], 52), MAGENTA, shade=False)
+    a.add(a.band([(110, 520), (255, 505)], 38), LILAC, shade=False)
+    a.add(a.circle(560, 310, 170), WITCH)
+    a.add(a.poly([(400, 420), (720, 430), (800, 770), (320, 780)]), MAGENTA)
+    a.add(a.band([(380, 540), (210, 640)], 75), WITCH)
+    a.add(a.band([(715, 535), (845, 620)], 75), WITCH)
+    a.add(a.band([(435, 745), (395, 880)], 80), WITCH)
+    a.add(a.band([(630, 745), (675, 880)], 80), WITCH)
+    a.add(a.circle(500, 295, 23), GOLD, shade=False)
+    a.add(a.circle(625, 295, 23), GOLD, shade=False)
+    a.ink([(495, 535), (590, 615)], 20)
+    a.ink([(585, 535), (490, 615)], 20)
+    a.glint(480, 210, 17, 39)
+
+
+def phaister_vulnerable(a):
+    a.add(a.poly([(195, 260), (535, 375), (535, 650), (195, 780)]), MAGENTA, shade=False)
+    a.add(a.poly([(330, 400), (585, 470), (585, 580), (330, 650)]), LILAC, shade=False)
+    a.add(a.circle(670, 550, 205), WITCH)
+    a.add(a.circle(620, 490, 30), GOLD, shade=False)
+    a.add(a.circle(730, 490, 30), GOLD, shade=False)
+    a.add(a.band([(740, 180), (620, 700)], 60), STONE)
+    a.add(a.circle(750, 155, 68), GOLD)
+    a.add(a.poly([(565, 640), (670, 780), (750, 635)]), RIMRED, shade=False)
+    a.glint(745, 125, 17, 29)
+
+
 def rafi_crosscurrent(a):
     current = np.maximum(a.band([(120, 800), (420, 700)], 120), a.arc_band(430, 380, 320, 90, -8, 120))
     a.add(np.maximum(current, a.poly([(690, 230), (920, 400), (650, 480)])), SEA)
@@ -474,6 +560,264 @@ def rafi_breakwater(a):
     for cx, cy, r in ((950, 250, 30), (900, 150, 24), (980, 360, 20)):
         a.add(a.circle(cx, cy, r), FOAM, shade=False)
     a.add(a.band([(140, 850), (300, 800), (460, 850), (620, 800)], 40), FOAM, shade=False)
+
+
+# AMIHAN (2026-09-25). Her wind is YELLOW-green (hue 100, UiTheme.HeroWind), drawn as swept
+# bands with a cream core (direction.md: bright thin edges around a darker middle), and her motif is
+# the cotton boll and the kasikus diamond. Red >= blue in every swatch (CLAUDE.md 6.4).
+WIND, WIND_LT, WIND_DK = hexc("88E35A"), hexc("C3F5AA"), hexc("4E9A3A")
+
+
+def _gust(a, pts, w, core=True):
+    a.add(a.band(pts, w), WIND)
+    if core:
+        a.add(a.band(pts[1:-1] if len(pts) > 3 else pts, w * 0.28), CREAM, shade=False)
+
+
+def _cotton(a, cx, cy, r):
+    boll = np.zeros((S, S), np.float32)
+    for k in range(5):
+        ang = math.radians(k * 72 - 90)
+        boll = np.maximum(boll, a.circle(cx + r * 0.55 * math.cos(ang), cy + r * 0.55 * math.sin(ang), r * 0.55))
+    a.add(boll, CREAM)
+
+
+def _swept(cx0, cy0, cx1, cy1, w0, w1, bend, steps=24):
+    """A solid swept band from (cx0,cy0) to (cx1,cy1), widening w0 to w1, bowed by `bend`:
+    a gust with a thin tail and a full head (v2: v1's thin lines fell apart at 44 px)."""
+    top, bot = [], []
+    for k in range(steps + 1):
+        t = k / steps
+        x = cx0 + (cx1 - cx0) * t
+        y = cy0 + (cy1 - cy0) * t - bend * math.sin(math.pi * t)
+        w = (w0 + (w1 - w0) * t ** 0.8) / 2
+        top.append((x, y - w)); bot.append((x, y + w))
+    return top + bot[::-1]
+
+
+def amihan_dash(a):
+    # One big swept gust racing right to a pointed head, two short slipstream dashes behind it.
+    a.add(a.poly(_swept(90, 640, 700, 470, 30, 250, 90) + []), WIND)
+    a.add(a.poly([(640, 300), (940, 470), (640, 640), (700, 470)]), WIND)
+    a.add(a.band([(200, 590), (420, 500), (640, 470)], 44), CREAM, shade=False)
+    a.add(a.band([(120, 250), (380, 250)], 70), WIND_LT)
+    a.add(a.band([(160, 820), (420, 800)], 70), WIND_LT)
+    _cotton(a, 520, 820, 64)
+
+
+def amihan_updraft(a):
+    # A slipper LIFTED on a swirl of rising air (v3: v2's funnel-and-chevron read as a gem). The
+    # slipper is the game's own noun, so "a slipper flying up" is the power in one picture.
+    for cy, rx, col in ((880, 120, WIND_DK), (760, 190, WIND), (620, 260, WIND_LT)):
+        a.add(np.clip(a.ellipse(512, cy, rx, rx * 0.36) - a.ellipse(530, cy - 18, rx - 64, rx * 0.36 - 40), 0, 1), col)
+    a.add(a.band([(512, 900), (470, 700), (560, 560), (512, 470)], 34), CREAM, shade=False)
+    slipper(a, 512, 280, 380, 70, PERSIMMON, CREAM)
+    for x in (230, 794):
+        a.add(a.poly([(x, 330), (x + 70, 430), (x - 70, 430)]), WIND_LT)
+
+
+def amihan_whirlwind(a):
+    # A thick gale front bowed forward (up), rolling: two trailing fronts behind it, dust below.
+    def bow(cy, half, thick, lift):
+        top = [(512 + half * (k / 20 * 2 - 1), cy - lift * (1 - (k / 20 * 2 - 1) ** 2)) for k in range(21)]
+        return top + [(x, y + thick * (1 - 0.55 * abs((x - 512) / half))) for x, y in top[::-1]]
+    a.add(a.poly(bow(820, 300, 60, 150)), WIND_DK)
+    a.add(a.poly(bow(700, 350, 80, 190)), WIND)
+    a.add(a.poly(bow(560, 400, 130, 250)), WIND_LT)
+    a.add(a.band([(160, 470), (340, 350), (512, 315), (684, 350), (864, 470)], 30), CREAM, shade=False)
+    for cx, cy, r in ((240, 900, 40), (780, 910, 34), (512, 950, 30)):
+        a.add(a.circle(cx, cy, r), STONE)
+
+
+def amihan_storm(a):
+    # A FAN of gusts spreading out from a kasikus diamond low-left toward the far upper-right (v3:
+    # v2's straight-topped wedge over a diamond read as a medal on a ribbon). Curved outer edge,
+    # swept bands, the diamond small and off-centre so nothing hangs like a pendant.
+    ox, oy = 180, 840
+    for ang, w, col in ((-78, 90, WIND_DK), (-58, 120, WIND), (-38, 140, WIND_LT), (-18, 110, WIND), (2, 80, WIND_DK)):
+        r0, r1 = 120, 760
+        a0 = math.radians(ang)
+        pts = [(ox + r * math.cos(a0 + 0.10 * math.sin(r / r1 * math.pi)), oy + r * math.sin(a0 + 0.10 * math.sin(r / r1 * math.pi)))
+               for r in (r0, r0 + (r1 - r0) * .35, r0 + (r1 - r0) * .7, r1)]
+        a.add(a.poly(_swept(pts[0][0], pts[0][1], pts[-1][0], pts[-1][1], w * .3, w, 20)), col)
+    for rr, col in ((130, GOLD), (80, WIND_DK), (38, CREAM)):
+        a.add(a.poly([(ox, oy - rr), (ox + rr, oy), (ox, oy + rr), (ox - rr, oy)]), col, shade=rr > 100)
+
+
+# PAETE (HERO-9, 2026-09-26). His colour is dark moss 4f6b1f (the amended accent law), drawn with a
+# lighter leaf green, narra bark and a pale green core; his motif is the single leaf and the
+# pointed vine. Every picture is the POWER'S NOUN, not a mood: a vine that has caught something,
+# a seedling with a slipper in its pod, a thorn hooking a slipper home, a sentry with radial
+# spikes. Red >= blue in every swatch (CLAUDE.md 6.4).
+MOSS, LEAF, LEAF_LT, BARK, SAP = hexc("4F6B1F"), hexc("6F9A2E"), hexc("A9CF5A"), hexc("8A5A32"), hexc("EAFFD0")
+
+
+def _leaf(a, cx, cy, length, angle, col=None):
+    pts = [(-length / 2, 0), (-length * .15, -length * .26), (length / 2, 0), (-length * .15, length * .26)]
+    c, s = math.cos(math.radians(angle)), math.sin(math.radians(angle))
+    a.add(a.poly([(cx + x * c - y * s, cy + x * s + y * c) for x, y in pts]), col or LEAF_LT)
+
+
+def _vine(a, pts, w, col=MOSS):
+    a.add(a.band(pts, w), col)
+    a.add(a.band(pts[1:], w * .3), LEAF, shade=False)
+
+
+def paete_vine(a):
+    # KAPIT-BAGING (v2: v1's two straight rods and a brown disc read as tongs holding a lollipop).
+    # Two vines whip up from the lower left, bowing, and WRAP a coil round the anchor high right:
+    # the coil is loops of the vine itself, so the picture is "the vine caught something".
+    _vine(a, [(90, 940), (180, 690), (380, 470), (620, 330)], 110)
+    _vine(a, [(330, 960), (380, 760), (520, 560), (660, 390)], 86, LEAF)
+    for r, w, col in ((150, 60, MOSS), (95, 46, LEAF), (45, 40, MOSS)):
+        a.add(a.arc_band(730, 280, r, 120, 470, w), col)
+    _leaf(a, 250, 600, 230, -50)
+    _leaf(a, 470, 700, 200, 20, LEAF_LT)
+    _leaf(a, 480, 400, 190, -70, LEAF)
+    for x, y in ((905, 120), (930, 380), (600, 110)):
+        a.add(a.circle(x, y, 30), SAP, shade=False)
+
+
+def paete_sprout(a):
+    # PUNLANG TSINELAS (v2: v1's grey slipper was too small to read and the pod looked like a bud).
+    # A stubby seedling on a mound whose open pod HOLDS UP a big wooden slipper, the power's noun.
+    a.add(a.ellipse(512, 910, 340, 80), BARK)
+    a.add(a.band([(512, 890), (505, 720), (512, 600)], 100), MOSS)
+    _leaf(a, 300, 760, 280, 25)
+    _leaf(a, 730, 720, 260, -30, LEAF)
+    a.add(a.poly([(270, 430), (370, 640), (654, 640), (754, 430), (640, 560), (384, 560)]), LEAF)
+    slipper(a, 512, 330, 520, 18, hexc("D9A15E"), BARK)
+
+
+def paete_thorn(a):
+    # BAWI: a thorned vine curling up out of the ground, its hooked tip dragging a slipper home
+    # (the chevrons point back toward the root).
+    a.add(a.ellipse(250, 900, 200, 60), BARK)
+    pts = [(230, 890), (220, 650), (330, 430), (560, 300), (790, 340)]
+    _vine(a, pts, 90)
+    for (x0, y0), (x1, y1) in zip(pts[1:], pts[2:]):
+        mx, my = (x0 + x1) / 2, (y0 + y1) / 2
+        dx, dy = x1 - x0, y1 - y0
+        n = math.hypot(dx, dy)
+        px, py = -dy / n, dx / n
+        a.add(a.poly([(mx - dx / n * 40, my - dy / n * 40), (mx + dx / n * 40, my + dy / n * 40),
+                      (mx + px * 110, my + py * 110)]), MOSS)
+    slipper(a, 780, 470, 320, 30, PERSIMMON, CREAM)
+    for k, (x, y) in enumerate(((650, 700), (520, 780))):
+        a.add(a.poly([(x + 60, y - 60), (x - 50, y), (x + 60, y + 60)]), LEAF_LT)
+
+
+def paete_sentry(a):
+    # YAKAP NG MAKILING: the sentry, a bright core ringed by radial spiked vines, on its stump.
+    a.add(a.poly([(360, 930), (410, 640), (614, 640), (664, 930)]), BARK)
+    a.add(a.poly(star_pts(512, 470, 430, 180, 9)), MOSS)
+    a.add(a.poly(star_pts(512, 470, 300, 150, 9, rot=-70)), LEAF)
+    a.add(a.circle(512, 470, 150), LEAF_LT)
+    a.add(a.circle(512, 470, 90), SAP, shade=False)
+    a.glint(470, 420, 22, 40)
+
+
+# STATUS ICONS (owner's status table, 2026-09-25). Written to Resources/UI/status-icons, drawn in
+# the same family so a status reads beside an ability icon without looking like one: each sits
+# on a round badge, because an ability is a thing you DO and a status is a thing done TO you.
+STATUS_BADGE = hexc("3A2A28")
+
+
+def _badge(a):
+    a.add(a.circle(512, 512, 440), STATUS_BADGE, shade=False)
+
+
+def status_whirled(a):
+    _badge(a)
+    a.add(a.arc_band(512, 520, 300, 200, 520, 70), WIND)
+    a.add(a.arc_band(512, 520, 170, 250, 560, 50), WIND_LT)
+    slipper(a, 520, 500, 330, 35, PERSIMMON, CREAM)
+
+
+def status_chilled(a):
+    # A slowed foot: a big frosted slipper print with ice crystals growing off its heel.
+    _badge(a)
+    slipper(a, 470, 540, 560, -20, hexc("A8D8B0"), ICE)
+    for cx, cy, r in ((720, 740, 120), (780, 520, 90), (300, 250, 80)):
+        a.add(a.poly(star_pts(cx, cy, r, r * 0.34, 6)), ICE)
+
+
+def status_frozen(a):
+    _badge(a)
+    a.add(a.poly([(512, 150), (812, 320), (812, 700), (512, 870), (212, 700), (212, 320)]), ICE_SH)
+    a.add(a.poly([(512, 240), (730, 365), (730, 655), (512, 780), (294, 655), (294, 365)]), ICE)
+    a.add(a.poly(star_pts(512, 512, 170, 55, 6)), ICE_SH, shade=False)
+    a.glint(380, 330, 26, 60)
+
+
+def status_tagged(a):
+    _badge(a)
+    # A blocky no-thumb hand (the cast's style) landing on a shoulder-shaped burst.
+    a.add(a.poly(star_pts(512, 560, 380, 250, 10)), PERSIMMON)
+    a.add(a.rect(360, 420, 664, 760), HONEY)
+    for x in (360, 440, 520, 600):
+        a.add(a.rect(x, 250, x + 64, 440), HONEY)
+
+
+def status_rooted(a):
+    # ROOTED (v3: v1's upright slipper read as a flame, v2's one leg with level bands as a ladder).
+    # Two blocky legs standing in a mound, BOUND: thick roots cross them diagonally in an X, the way
+    # a rope binds, so "held by the legs" reads at 44 px.
+    _badge(a)
+    for x0 in (322, 548):
+        a.add(a.rect(x0, 170, x0 + 154, 720), HONEY)
+    a.add(a.band([(250, 700), (512, 520), (780, 330)], 78), BARK)
+    a.add(a.band([(250, 380), (512, 560), (780, 720)], 78), MOSS)
+    a.add(a.band([(270, 250), (512, 330), (760, 230)], 60), BARK)
+    a.add(a.ellipse(512, 790, 340, 90), MOSS)
+    for x, d in ((250, 1), (780, -1)):
+        a.add(a.poly([(x, 700), (x - 60 * d, 640), (x - 20 * d, 760)]), BARK)
+
+
+# ABILITY-2 (2026-09-26): the rework's four statuses, each its own picture on the same badge.
+KURO_INK, CURSE, STONE = hexc("7C4FB0"), hexc("C2398F"), hexc("9A8468")
+
+
+def status_concussed(a):
+    # A blocky head knocked askew with three stars circling it: dizzy, not hurt.
+    _badge(a)
+    a.add(a.poly([(330, 420), (660, 360), (700, 720), (370, 780)]), HONEY)
+    a.add(a.arc_band(512, 330, 300, 190, 350, 40), STONE)
+    for cx, cy, r in ((260, 300, 95), (512, 190, 80), (770, 290, 90)):
+        a.add(a.poly(star_pts(cx, cy, r, r * 0.42, 5)), LEMON)
+
+
+def status_feared(a):
+    # Kuro's teardrop ghost looming, and a slipper knocked out of reach below it.
+    _badge(a)
+    a.add(a.poly([(512, 140), (720, 420), (740, 640), (640, 700), (590, 640), (512, 710), (430, 640), (380, 700), (290, 640), (300, 420)]), KURO_INK)
+    for cx in (440, 590):
+        a.add(a.circle(cx, 470, 42), STATUS_BADGE, shade=False)
+    slipper(a, 540, 820, 300, 70, PERSIMMON, CREAM)
+
+
+def status_disoriented(a):
+    # Double vision: a real slipper and its false twin beside it, the twin paler and shifted.
+    _badge(a)
+    slipper(a, 600, 470, 420, 25, hexc("E8C9D8"), CREAM)
+    slipper(a, 440, 560, 420, 25, PERSIMMON, CREAM)
+    a.add(a.arc_band(512, 512, 380, 200, 320, 34), CURSE)
+
+
+def status_vulnerable(a):
+    # A doll's heart with a pin through it: the voodoo mark that says "easy to tag".
+    _badge(a)
+    a.add(a.circle(512, 540, 250), CURSE)
+    a.add(a.circle(512, 540, 150), CREAM)
+    a.add(a.circle(512, 540, 60), CURSE, shade=False)
+    a.add(a.band([(230, 250), (512, 540), (650, 680)], 34), HONEY)
+    a.add(a.circle(230, 250, 60), LEMON)
+
+
+STATUSES = {"StatusWhirled": status_whirled, "StatusChilled": status_chilled,
+            "StatusFrozen": status_frozen, "StatusTagged": status_tagged, "StatusRooted": status_rooted,
+            "StatusConcussed": status_concussed, "StatusFeared": status_feared,
+            "StatusDisoriented": status_disoriented, "StatusVulnerable": status_vulnerable}
 
 
 # the nine job glyphs, for any power without a bespoke picture
@@ -536,14 +880,21 @@ GLYPHS = {
     "Zone": zone, "Wall": wall, "Dash": dash, "Shield": shield, "Burst": burst,
     "Projectile": projectile, "Phase": phase, "Slam": slam, "Empower": empower,
     "DanteStomp": dante_stomp, "DanteShield": dante_shield, "DanteFissure": dante_fissure,
+    "DanteBoulder": dante_boulder, "DanteBarrier": dante_barrier,
     "SeanRush": sean_rush, "SeanIgnite": sean_ignite, "SeanSupernova": sean_supernova,
     "CheskaFrostSheet": cheska_frost, "CheskaBarricade": cheska_barricade, "CheskaNova": cheska_nova,
+    "CheskaFrostbite": cheska_frostbite,
     "ZackSprint": zack_sprint, "ZackOvercharge": zack_magnet, "ZackThunderstrike": zack_thunder,
     "NemuPhase": nemu_phase, "NemuAstralPet": nemu_pet, "NemuSeanceVoid": nemu_seance,
+    "NemuTerrify": nemu_terrify, "NemuKuroGuard": nemu_guard,
     "PhaisterHexSigil": phaister_hex, "PhaisterShadowBlink": phaister_blink,
     "PhaisterEclipse": phaister_coven, "PhaisterWitchfire": phaister_witchfire,
+    "PhaisterCursedDoll": phaister_cursed_doll, "PhaisterVulnerable": phaister_vulnerable,
     "RafiCrosscurrent": rafi_crosscurrent, "RafiMirrorwake": rafi_mirrorwake,
     "RafiBreakwater": rafi_breakwater,
+    "AmihanQuickDash": amihan_dash, "AmihanUpdraft": amihan_updraft,
+    "AmihanWhirlwind": amihan_whirlwind, "AmihanStormSurge": amihan_storm,
+    "PaeteVine": paete_vine, "PaeteSprout": paete_sprout, "PaeteThorn": paete_thorn, "PaeteSentry": paete_sentry,
 }
 
 
@@ -576,12 +927,20 @@ def sheet(icons, path):
     img.save(path)
 
 
+STATUS_OUT = os.path.join(ROOT, "Assets", "TumbangPreso", "Resources", "UI", "status-icons")
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
-    only = [a for a in sys.argv[1:] if a in GLYPHS]
-    icons = {n: build(n) for n in (only or GLYPHS)}
+    os.makedirs(STATUS_OUT, exist_ok=True)
+    only = [a for a in sys.argv[1:] if a in GLYPHS or a in STATUSES]
+    icons = {}
+    for n in (only or list(GLYPHS) + list(STATUSES)):
+        a = Art()
+        (GLYPHS.get(n) or STATUSES[n])(a)
+        icons[n] = a.render()
     for n, im in icons.items():
-        im.save(os.path.join(OUT, n + ".png"))
+        im.save(os.path.join(STATUS_OUT if n in STATUSES else OUT, n + ".png"))
     if "--sheet" in sys.argv:
         sheet(icons, sys.argv[sys.argv.index("--sheet") + 1])
     print("wrote", len(icons), "icons to", OUT)

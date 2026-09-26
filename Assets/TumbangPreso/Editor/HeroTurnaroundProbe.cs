@@ -25,6 +25,8 @@ namespace TumbangPreso.EditorTools
             ("sean",     "Sean",     "Assets/TumbangPreso/Art/characters/persons/team-sean.glb"),
             ("zack",     "Zack",     "Assets/TumbangPreso/Art/characters/persons/team-zack.glb"),
             ("rafi",     "Rafi",     "Assets/TumbangPreso/Art/characters/persons/team-rafi.glb"),
+            ("amihan",   "Amihan",   "Assets/TumbangPreso/Art/characters/persons/team-amihan.glb"),
+            ("paete",    "Paete",    "Assets/TumbangPreso/Art/characters/persons/team-paete.glb"),
         };
 
         private static readonly (string Label, float Yaw)[] Angles =
@@ -73,12 +75,12 @@ namespace TumbangPreso.EditorTools
             if (File.Exists(output)) throw new IOException("Use a new review filename: " + output);
             Directory.CreateDirectory(Path.GetDirectoryName(output));
             var people = Core.Roster.HeroPeople.Concat(Core.Roster.ClassicPeople).ToArray();
-            if (people.Length != 18 || people.Select(p => p.Id).Distinct().Count() != 18)
+            if (people.Length != 21 || people.Select(p => p.Id).Distinct().Count() != 21)
                 throw new InvalidOperationException("Review the changed playable roster before rendering this sheet.");
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             BuildLight();
             var book = RosterBook.Load();
-            var report = new StringBuilder("Current playable cast: six heroes, twelve Classic characters.\n");
+            var report = new StringBuilder("Current playable cast: eight heroes, twelve Classic characters.\n");
             for (int i = 0; i < people.Length; i++)
             {
                 var person = people[i];
@@ -89,9 +91,11 @@ namespace TumbangPreso.EditorTools
                     i % 6, i / 6, 1.16f, 1.16f);
                 report.AppendLine(person.Id + " | " + person.Name + " | " + model);
             }
-            var camera = BuildCamera(6, 3, 1.16f, 1.16f);
-            camera.orthographicSize = 3.25f * 1.16f * .5f;
-            bool ok = CaptureTo(camera, 2400, 1300, output);
+            // Sized to the roster: rows of six, as many as it takes.
+            int castRows = (people.Length + 5) / 6;
+            var camera = BuildCamera(6, castRows, 1.16f, 1.16f);
+            camera.orthographicSize = (castRows + .25f) * 1.16f * .5f;
+            bool ok = CaptureTo(camera, 2400, Mathf.RoundToInt(1300f * (castRows + .25f) / 3.25f), output);
             File.WriteAllText(Path.ChangeExtension(output, ".txt"), report.ToString());
             EditorSceneManager.CloseScene(scene, true);
             EditorApplication.Exit(ok ? 0 : 1);
@@ -101,7 +105,7 @@ namespace TumbangPreso.EditorTools
         {
             var report = new StringBuilder();
             report.AppendLine("==================================================");
-            report.AppendLine("HERO TURNAROUND PROBE - ALL 6 HEROES (4 ANGLES)");
+            report.AppendLine($"HERO TURNAROUND PROBE - ALL {Heroes.Length} HEROES (4 ANGLES)");
             report.AppendLine("==================================================");
 
             Directory.CreateDirectory("Logs");
@@ -129,7 +133,7 @@ namespace TumbangPreso.EditorTools
             string combinedPath = "Logs/all_heroes_4angles.png";
             bool compOk = ShootAllHeroesGrid(combinedPath, report);
             ok &= compOk;
-            report.AppendLine($"All Heroes 6x4 Grid: {(compOk ? "SUCCESS -> " + combinedPath : "FAIL")}");
+            report.AppendLine($"All Heroes {Heroes.Length}x4 Grid: {(compOk ? "SUCCESS -> " + combinedPath : "FAIL")}");
 
             // 4. Render 6-hero lineup (Front view side-by-side)
             string lineupPath = "Logs/all_heroes_lineup.png";
@@ -189,9 +193,14 @@ namespace TumbangPreso.EditorTools
                 }
             }
 
+            // ⚠️ THE SHEET IS SIZED FROM THE ROSTER, NOT WRITTEN FOR SIX. It was a fixed 3600 px
+            // at an orthographic size of 3.65, which is six rows of 1.15; Rafi made seven and his
+            // row fell off the bottom of every sheet with nothing reporting it. The pixel density
+            // (about 493 px per unit, the old 3600 over 7.3) is kept so the cells are the same size.
+            float gridView = Heroes.Length * spacingY;
             var camera = BuildCamera(Angles.Length, Heroes.Length, spacingX, spacingY);
-            camera.orthographicSize = 3.65f;
-            bool success = CaptureTo(camera, 2400, 3600, outPath);
+            camera.orthographicSize = gridView * 0.5f;
+            bool success = CaptureTo(camera, 2400, Mathf.RoundToInt(gridView * 3600.0f / 7.3f), outPath);
 
             EditorSceneManager.CloseScene(scene, true);
             return success;
@@ -253,9 +262,12 @@ namespace TumbangPreso.EditorTools
                 Caption(pivot.transform, hero.Name.ToUpper(), -0.48f);
             }
 
+            // ⚠️ SAME FAULT AS THE GRID: 2400 px at a size of 0.70 is 5.6 units across, room for six
+            // heroes at 0.92, so the seventh pushed the first and last half off the image. The
+            // width now follows the roster at the original density (600 px over 1.4 units).
             var camera = BuildCamera(Heroes.Length, 1, spacingX, 1.0f);
             camera.orthographicSize = 0.70f;
-            bool success = CaptureTo(camera, 2400, 600, outPath);
+            bool success = CaptureTo(camera, Mathf.RoundToInt((Heroes.Length * spacingX + 0.2f) * 600.0f / 1.4f), 600, outPath);
 
             EditorSceneManager.CloseScene(scene, true);
             return success;

@@ -17,6 +17,11 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+**2026-09-27 verified stability batch:** room cancellation/seating, native interaction
+prompts, distinct current-kit glyphs, live symbol refresh and avatar sprite imports.
+Exact checks and remaining limits: [validation](reports/stability-2026-09-27/validation.md).
+Remaining owner QA, current-kit regressions and final qualification stay open.
+
 **Standing mandate (owner, 2026-09-21):** "finish everything note yet done", then "i want
 every single thing in todo to be done pls mark that in todo and shit". Every unfinished
 item in this file, including the backlog index, is in scope. Each item ends with
@@ -53,6 +58,18 @@ concrete visual, usability or functional weakness; keep successful parts. Apply 
 to UX-1 and each REFINE-2 map/character/aspect, without dropping unfinished tasks.
 
 ### Priority order, rethought 2026-09-23
+
+**Owner override, 2026-09-26: ASKS-0926 below comes FIRST, newest ask first, and inside it the
+Amihan and Rafi remodel (matching Dante and Phaister) is PRIORITY 1** (*"in the todo section
+prioritize most recent assks and ask handoff ltr to prioritize it as well"*). Every handoff from here
+on points the next session at ASKS-0926 before anything else in this file. The order underneath
+stands for everything else.
+
+**Owner override,2026-09-24:** the cloud work pushed in4f62fcc5c is the immediate
+priority: native review, actual visual critique and bug fixes before resuming the
+older queue. Follow [the local intake plan](reports/cloud-integration-2026-09-24/plan.md).
+Preserve every older item. Cloud compile/pose sheets do not establish Unity quality;
+VOICE-1 uses human recordings only, and the20remaining world-skill VFX/SFX remain open.
 
 1. **P0, finish what is in flight. ✅ DONE 2026-09-23.** The 134.10 reduced-effects link
    (Hitstop, SkyEvent, CanContactAccent, TumpHudEffects, UltimatePresentationDirector and
@@ -91,6 +108,854 @@ to UX-1 and each REFINE-2 map/character/aspect, without dropping unfinished task
 reads better even with today's lighting, and because it removes HUD and text that P2's
 captures would otherwise have to be retaken around. Paperwork (P6) moved behind visible
 work because the owner's standing complaint is loops that do not change the game.
+
+### ASKS-0926 · Every owner ask of the 2026-09-26 cloud session, in one list ⚠️ OPEN, 2026-09-26
+
+Owner, 2026-09-26: *"pls log all todo i asked u for when i go to diff session ty"*. This is the whole
+list from the cloud session (Unity 6000.5.8f1 on Linux, `tools/cloud_unity_setup.sh`), each with where
+the work lives and what done looks like. ⚠️⚠️ **NEWEST ASK FIRST, and this list comes before everything
+else in the queue** (owner, same day: *"in the todo section prioritize most recent assks"*): the open rows
+are ordered most recent first, the finished ones follow. A row that belongs to a bigger entry
+points at it rather than copying it. Nothing here is ticked without evidence.
+
+- [ ] ⚠️⚠️ **NEWEST (2026-09-27): every character's own walk and run, from their personality, arms attached** (owner, on
+  the walk clip `walk_v3_HeroStrike.mp4`: *"walk is fucking ugly hahaha do it one by oen dont generate the same one for
+  all"*, *"really lock in with animating the walk and run of each character man / i want u to tink of their personalities
+  and shti and how it will show up in walking"*, with a still of the cast: *"look dude everyones arms are floating and not
+  even attached right"*, *"manually do it for each character ty"*, *"make it a rule in repo to never copy paste game wide
+  changes"*, *"thoroughly think abt how to mane walk and run look natural for ALL characters"*). CAUSE of the floating:
+  the second walk pass slid every SHOULDER outward (24 to 54 world cm, up to 0.8 of an arm's length) so the fist cleared
+  the hips; the arm's top left the torso. RULE written: CLAUDE.md section 0 and AGENTS.md, never stamp one change across
+  the cast. BUILT: `FitArm`, the shoulder shift and every cast-wide gait constant deleted; the shoulder never leaves its
+  pivot. `Runtime/Visual/GaitStyles.cs` holds one hand-written walk and run per body (9 heroes, the custom hero, 12
+  neighbourhood players and Iggy), each with its reason from the lore, and some with a quirk only they do (Cheska scans
+  the court, Nemu's head wanders on its own clock and her run sweeps the sleeves back, Rafi glances over his shoulder,
+  Paete's crown sways late, Sean's shoulders drive). Legs are posed from the style too, with the cadence solved from each
+  stride so no foot slides (`GaitStyle.CycleMetres`). `WalkArmsProbe` films each body walking and then running from the
+  front, the side and three-quarter (`TUMP_WALK_BODIES=<ids>` for one body), and `tools/stitch_walk_video.py --per-body`
+  makes one clip per character. MEASURED on the first per-character film (`Logs/gait-v5`): a stride that never slides
+  cost 3.9 to 7.8 steps a second on these sub-metre bodies at 2.3 to 4.2 m/s (Nemu 7.8, a blur of legs), so each gait
+  trades a capped slide (`Gait.Glide`, 1.1 Sean to 1.63 Jun-jun and Nemu 1.6, capped at 1.7 by
+  `MotionContinuityTests.GaitCadenceMatchesTheActualFootTravelOnEveryRosterRig`, which caught two runs at 1.72 and 1.75):
+  walking cadence now 2.9 (Paete) to 4.5 (Amihan) steps a second, running 3.4 to 5.2. Also found and fixed: the shared
+  clips' own chest and root lean (`tools/author_grounded_gaits.py`) leaked under the new pose and tipped every chest back,
+  so the gait is now drawn from the bind pose; arm lag is in cycles (seconds put Nemu's arms with the same-side leg).
+  Tests: EditMode `MotionContinuityTests` 11/11, `AnimationReviewTests` passing; PlayMode `LocomotionArmsProbe` (swing
+  floor now each style's own) and `ExchangePresenceTests` 3/3; Core 658/658. The full EditMode run is 590/609: none of the
+  18 other failures touches the gait (hero-kit names, glyphs, cooldowns and charges, Nemu reactivation, toon light falloff
+  under `-nographics`, and `ThrowEquipmentClearanceTests`, which poses a standing body where the gait layer does nothing).
+  OPEN: the owner's eye on each character's clip (`Logs/walk-share/gait_v7_<body>.mp4`), refined one at a time; the
+  idle pose (still the shared clip, arms pressed into the torso) per character; the fists still pass inside the hips
+  front-on at the moment they pass them (`gaps_v7.csv`: -1 to -19 cm on the heroes, -27 on Phaister's robe), accepted rather than sliding the shoulder
+  off the torso. Supersedes the walk row below.
+  SECOND ROUND, same day, the owner watching each clip: *"walk of these 2 characters suck"* (Rafi, Amihan), *"nemu walks so
+  awkward"*, then the real cause, *"the arms are too long for cheska sean and majority of cast / tahts why tey look so fucked
+  up walking"*, *"can u lowk js edit thheir models"*, *"no need to edit some of the characters that SHOULD have long arms like
+  paete"*, *"make sean look more muscular by moving his arms out"*, *"do it one at a time"*. MEASURED: the shared hero body hangs
+  a 0.284 arm from a shoulder 0.288 above the floor (the hand alone 0.15), so a hanging arm reaches the ground. BUILT:
+  `tools/reshape_hero_arms.py`, one hand-picked row per hero, surgery inside the shipped glb (only arm vertices, their bounds,
+  and for Sean the shoulder nodes, binds and the one arm translation key; refuses a second run): Sean 0.293 to 0.225 with the
+  shoulders 5.5 cm out onto his chest, Cheska 0.18, Dante 0.19, Zack, Phaister and Rafi 0.185, Amihan 0.175, the custom hero
+  0.182; Paete and Nemu untouched. Re-authored one at a time from film: Amihan (arms out of her same-coloured coat, a skip),
+  Rafi (arms clear of his tattooed chest; the in-across-the-belly swing removed), Nemu (the 7 degree head tilt read as a
+  broken neck: now level, hands behind her back), Zack (24 degrees, yellow sleeves on a yellow jacket). Clips sent per
+  character (`Logs/walk-share/gait_v10` to `v13`). OPEN: the owner's word per character; the neighbourhood players' arms
+  are sourced CC0 art (CLAUDE.md 6.0), not reshaped without his say; first-person arms of Amihan, Rafi and Paete are baked
+  (`ViewmodelArmAuthor`) and still the old length.
+- [ ] ⚠️⚠️ **PRIORITY 1 FOR THE NEXT SESSION: remodel Amihan and Rafi so they belong in the same art style as the
+  rest of the cast, Dante and Phaister in particular** (owner, 2026-09-26: *"add to todo priority for ltr, this will be
+  no.1 priority"*, *"remodel amihan and rafi a bit so that they look more like other characters in terms of art style
+  coz they look so diff"*, *"specifically dante or phaister"*). "A bit": a restyle of the two existing builders
+  (`tools/build_amihan_voxel.py`, Rafi's builder), not new characters. Method: `docs/CHARACTER_MODEL_METHOD.md`
+  (research first: put both beside Dante and Phaister in the cast lineup and write down, measured, what differs:
+  head-to-body ratio, voxel size, how many colours and how flat, face construction, outline weight, costume detail
+  density; then change only those). Keep each one's identity and quiet colour. Done looks like: versioned turnarounds
+  and a cast lineup (`_v1`, `_v2`...) where neither reads as from another game, the owner's yes, FPP arms re-derived
+  from the new models, and the in-match walk and casts re-checked on the new bodies.
+- [ ] **The walk looks wrong: the hands stay close to the body** (*"the walkingh animation looks so
+  weird, hands close to body"*). Same complaint as REFINE-2.9b (Sean's arms stick to his body).
+  MEASURED (`WalkArmsProbe`, new: every roster body walked at the lens and past it at a fixed 30 steps a
+  game second, the gap between each hand and the hip at the same height measured every frame): with the
+  old fixed spread (14 degrees walking, every body) every hanging fist sat INSIDE the body's front-on
+  outline, -9 to -17 cm at the hip on the heroes (`Logs/cloud6/walk-arms/gaps_v1.csv`). Cause, read off
+  the glbs: every shoulder pivot sits inside the torso (0.100 against a 0.158 half-width on the shared
+  body, 0.125 against 0.188 on Sean's) and the arm is a thick block whose lower face turns inward when
+  it hangs. BUILT: `CharacterAnimator.LocomotionArms.cs` `FitArm` solves each arm per body from its own
+  bind-pose vertices: the spread opens from 16 degrees (walk) and 20 (run) up to 30, and the rest is a
+  sideways shoulder shift of at most 22 per cent of the arm's length, so the hanging fist clears the hip
+  by 5 per cent of it; walk swing 30 to 32 degrees. After (`Logs/cloud7/walk-arms/gaps_v2.csv`): the
+  hand beside the hip clears it by +0.5 to +12.8 cm on every body but Phaister (-0.7 cm against her
+  robe, spread and shift both at their caps), spreads 19 to 30 degrees, shifts 5 to 15 cm; the front-on
+  frames show the fists outside the hips. `LocomotionArmsProbe` now runs at a fixed 60 steps a game
+  second (it sampled 5 frames on the cloud's software renderer and failed on the count, not the arms).
+  SECOND PASS, same day (owner on those frames: *"thihs walk still sucks pls imrpove still on all"*): the
+  first fit bought its clearance with spread, so every body walked with its arms held out in an A like
+  a penguin, and nothing else moved. Now: the arms hang nearly straight (5 degrees walking, 8 running,
+  opening to at most 14 only where a fist would land inside the hips) and FLUSH beside the torso, the
+  shoulder moved out until the arm's inner face touches the torso's side (measured on the glbs: 9 to 12
+  mesh cm on the shared bodies, 17 on Sean and Iggy, 22 on Phaister's robe); swing 36 degrees walking,
+  58 running; `ApplyFootPlant` drops the root so the lower foot stays on the court (knee-less legs at 38
+  degrees lifted both soles 21 per cent of a leg, about 9 cm, off the ground at every contact, so the
+  body hovered; the drop is also the bob, twice a cycle); `LocomotionWeight` adds a gait lean (4 degrees
+  walking, 9 running) and a weight roll over the stance leg (3 and 1.5 degrees), the head giving back
+  half. `WalkArmsProbe` writes a two-second clip of every body (`TUMP_WALK_VIDEO=1`,
+  `tools/stitch_walk_video.py`). Cloud film `Logs/cloud9` (stopped after 12 bodies to hand off): hand
+  beside the hip now clears it by +2.2 (Rafi) to +27 cm (Phaister), spreads 5 to 8 degrees, shifts 24 to
+  54 world cm; `LocomotionArmsProbe` walked at 5 degrees and would fail its old 6 degree floor, now 3
+  with the reason (NOT re-run after that edit: run `LocomotionArmsProbe` and `WalkArmsProbe` first).
+  Open: idle still uses the clip's arms pressed into the torso (a hand-over
+  pop when a walk starts or stops is possible; decide whether idle hangs the same way), and the owner's
+  eye on the clip.
+- [ ] **Every recast of Paete's attacking E throws a wooden slipper** (*"paete attacking e is supposed to
+  throw a wooden slipper whenever u recast it"*). With the fix above every ACCEPTED recast throws a clog;
+  a press before the next clog has grown is refused with its countdown. Open: the owner's eye on it in
+  play; if he wants a throw on literally every press, the 15 s growth becomes the throw cooldown and
+  that number is his to give.
+- [ ] **Paete looks small and scuffed on the hero screen and on character select** (*"why is paete so
+  small here"*, *"can u make the size paete bigger he looks so small and scuffed"*, then *"have u made paete bigger?
+  supposed to be larger than sean"*). Measured on the glbs: Paete stands 0.792 rig units against Sean's 0.848, so his
+  BODY must grow (in the match too, not only on the screens), and the previews must stop fitting every hero to the
+  same frame height or a taller hero never reads as taller. Cause of the small preview found:
+  `ModelPreview.Frame()` sets the camera distance from the REST-pose bounds, and Paete's long T-posed
+  arms make his width, not his height, decide the distance, so the body is drawn at a fraction of
+  Cheska's height. Done looks like: frame on the standing height (or the idle pose's bounds), Paete's
+  body height on screen within 10 per cent of Cheska's on both screens, photographed at the owner's
+  window shape and a phone shape, and no other hero's framing moved by more than a few per cent.
+  BUILT 2026-09-27: `CharacterVisual.BodyScaleFor` (Paete 1.3, visual only; capsule, reach and rules unchanged; 1.84 m to
+  Sean's 1.23), applied in the match and in `ModelPreview`; `ModelPreview.Frame` fits a character's standing height, never
+  closer than the shared body's 0.79 (not its T-pose). `HeroPreviewSizeProbe` (960x1015 and 620x700): standard heroes 0.64 to
+  0.69 of the panel, Paete 0.65, Nemu 0.50, nobody cropped. Film beside Sean: `Logs/walk-share/paete_big_vs_sean_v2.mp4`.
+  OPEN: the owner's eye; the lobby and hub podium previews were not photographed.
+- [ ] **A prompt showing which button to press whenever something can be interacted with** (*"make it so
+  that theres ui showing what button to click when theres smth to interact with"*). Inventory first:
+  every Interact use (Paete's plant uproot and the 7 s rooted break-out, the can raise, pickups, doors
+  in the hub if any), then one prompt component near the reticle reading the live binding through
+  `Rebinding.DisplayNameFor(asset, action, device)` for mouse and keyboard, pad and touch (on touch it
+  points at the thumb target). Photograph each prompt on all three devices (CLAUDE.md 4a).
+- [ ] **Everyone gets 999999 tansan so the testers can unlock everything** (*"unlock all"* was asked and
+  withdrawn in the next message). Built: `ugs/cloud-code/wallet.js` `PLAYTEST_TOPUP = 999999` tops every
+  loaded wallet up (`tools/test_wallet_script.js` passes). OPEN: the OWNER must deploy `wallet.js` to the
+  UGS project (`dcf0831e-...`), nothing changes in game until then. ⚠️⚠️ TEMPORARY: before any public
+  build set `PLAYTEST_TOPUP = 0` and redeploy (balances already topped up stay topped up; resetting them
+  is a separate decision for the owner).
+- [ ] **LIANA LEAP from his own eyes looks like his arms extending**, then *"it doesnt bend with arms
+  tho"*. HERO-9 row "LIANA LEAP from his own eyes". The bend (`PaeteVineReach.BendAlongArm`: the vine
+  leaves along the drawn forearm and curves to the anchor) is built and looked at in the owner-view
+  frames; open until the owner has seen it.
+- [ ] **Online rooms fail for QA:** *"Could not open an online room. (relay allocation failed: There is
+  no NetworkManager assigned to this instance!)"*. Found: Netcode 2.13.1's `StartHost` sets the role and
+  then `Initialize` returns early (a nested NetworkManager, or a lost transport) before
+  `ConnectionManager.Initialize`; the failed start's shutdown then throws exactly that message from
+  `GetServerTransportId`. Built: `NetSession.PrepareManagerForStart` (unparents a nested session, restores
+  a lost transport) and `StartNetcode`, which rebuilds the manager once and retries, around all four
+  starts (LAN host, LAN join, relay host, relay join); the status line names the real problem. Evidence
+  so far: `SessionRestartTests` 3/3 in the cloud (`Logs/cloud5/playmode.xml`), including the new
+  `HostingWorksEvenWhenTheSessionWasNestedUnderSomething`.
+  OPEN until a QA tester opens a relay room on the new build (UGS sign-in is refused in cloud
+  batchmode, so the relay path cannot be run here). The two `OwnerPreparationTests` 90 s timeouts in
+  the cloud look environmental; re-run them on Windows.
+- [ ] **THORN HARVEST placed where he looks, not on his body.** HERO-9 row of that name.
+- [ ] **Amihan, thoroughly** (*"thoroughly make sure amihan's animations look great"*, *"thorouighly think
+  and create each detail of the skills, all vfx, sfx, animation each part / dont js mass prooduce witha
+  script"*). Each piece hand-made and looked at:
+  - [ ] The owner's updated table (ABILITY-2 row "Owner's UPDATED tables"): DRIFT two charges, each back
+    15 s after it is spent (a timed refill, the one owner-written exception to event-only charges);
+    FEATHERFALL 5 s of flight on a 40 s cooldown, moving and throwing in the air; WHIRLWIND 35 s;
+    AIRBURST. Names in the kit, descriptions within the card limits.
+  - [ ] *"her yellow circle looked weird as fuck when she was floating"*: no ground ring under a flying
+    body (SKILLUI-1's first row covers the rest of the rings).
+  - [ ] *"she didnt have a flaot animation too and any VFX"*: a hand-keyed hover loop with launch and
+    landing, a flight lean into the direction of travel, and VFX that show the wind holding her up
+    (curls round her shins, streaks rising past her, the court's dust turning under her).
+  - [ ] *"visually show the win actually assisting her or working in her skills"*: DRIFT a gust at her
+    back and visible shoves on the bodies she passes; WHIRLWIND lifting and turning what it catches;
+    AIRBURST per its direction. Drift is barely visible today.
+  - [ ] *"thoroughly think abt the hold indicators as well for the casting"*: her four on CAST-1.
+  - [ ] The ultimate cutscene (*"use genshin impact and other game ULT cutscene animations as
+    reference"*): direction written in `docs/reports/amihan-kit-2026-09-26/direction.md` (BREATH, WHIRL,
+    THE TAKE, 6.2 s); build it, film it, iterate.
+  - [ ] The Whirled overhead badge reads as a big disc; redraw it.
+  - [ ] `AmihanKitPlayProbe.FilmHerSkillsInAMatch`: start her OUTSIDE the box (FEATHERFALL is refused
+    inside it, which the first film showed), then film all four and send.
+
+- [x] **Paete's E is placeable only outside the taya's box** (*"make paete's E only placeable outside
+  box"*). `PaeteRules.PlantSpotOutsideBox` pushes an aimed spot inside the box (half-size 7 m) across its
+  nearest edge by 0.6 m plus the plant's radius (ties go to X); `PaeteVine.PlantTarget` applies it, so
+  bots and every peer agree. Core `APlantAimedIntoTheBoxLandsJustOutsideIt`. Protocol 60.
+- [x] **Paete's E (BAKYA BLOOM) could be recast without limit** (*"unli cast for e / supposed to have
+  cooldown"*). The recast only throws once a clog has grown (3 s after planting, then every 15 s); the
+  presses in between played the gesture and the sound and threw nothing. Now `HeroAbility.ReactivateReady`
+  and `ReactivateReadyIn` let a kit refuse a recast: `HeroKit.CheckFire` answers NotYet, and the tile
+  shows the countdown instead of "Again" (`TumpPowerReadout`, both decks). Cloud PlayMode:
+  `PaeteKitPlayProbe.TheSeedlingGrowsFiresAndComesOutOnlyWhenLoose` passes (`Logs/cloud5/playmode.xml`).
+- [x] **"CODE: 3CHS"**: the colon added in both places the room code is drawn
+  (`ConvertedMatchSetup.OwnerPainted.cs`, `Hub/HubCustom.cs`).
+- [x] **The Paete skills film showed a human casting his plant skills.** Fixed in the film rig (the
+  HERO-9 row "The skills film showed a HUMAN"). Film v2 sent; v3 (placed thorns and first-person arms)
+  stitched locally, v4 comes from the run that checks the bend below.
+- [x] **Unity in the cloud.** `tools/cloud_unity_setup.sh` (install plus Personal activation from
+  `UNITY_EMAIL` and `UNITY_PASSWORD`), `tools/run_unity_guarded.py` resolves Unity, the player profile
+  and `xvfb-run` per OS (`tools/test_run_unity_guarded.py` 10/10). PlayMode films render at about
+  1.3 frames per wall second on llvmpipe. The account used was the owner's throwaway; never commit it.
+
+### HERO-8 · Amihan, the eighth hero (Vigan, wind) ⚠️ OPEN, 2026-09-25
+
+Owner, 2026-09-25: "start working on a new character u figure out her lore and everything
+else needed but dont make skills yet js put placeholders", "she comes from vigan city and is
+a wind character", with a concept sheet ("use this as reference u can change facial
+expression"), then of v1: "that dont look like reference at all haha pls make it look very
+similar or better". Brief, research and lore: `ArtSource/amihan/concept-20260925/design-brief.md`;
+method `docs/CHARACTER_MODEL_METHOD.md`.
+
+- [x] Research (Vigan, Abel Iloko, the binakol "kasikus" whirlwind, the amihan wind) and lore
+  (`docs/CHARACTER_ORIGINS.md`, `LORE.md`), stats 5/2/3 (fastest hero).
+- [x] Model: her own builder `tools/build_amihan_voxel.py` (female-a base, native skull), v4
+  matched to the concept (swept fringe, three pixel flowers and a tassel, teal mantle and gold
+  brooch, open cream coat over a teal inner, banded sleeves, rust belt, abel sash, teal shorts,
+  cream sandals, the kasikus on her back). Slide re-solved on her mesh at every build.
+- [x] Playable with PLACEHOLDER skills: roster row (appended), `AmihanHeroKit` (three slots that
+  cast and do nothing), two placeholder options per slot, UI accent (hue 100, the one legal
+  window), select blurb, FPP arms from her model, portrait, avatar, lines (text) with the
+  HUMAN.md recording rows, cloud-code hero lists in the repo.
+- [ ] **Owner pick: her colour.** Concept teal (default) or abel indigo (`AMIHAN_CLOTH=abel`),
+  compared beside the cast in `Logs/rafi-share/amihan-v4-colour-compare.png`; the teal sits in
+  Rafi's family.
+- [ ] **Her skills and ultimate.** Owner designed them 2026-09-25 (QUICK DASH signature,
+  UPDRAFT attacking, WHIRLWIND defending, STORM SURGE ultimate) and answered the open questions;
+  see ABILITY-1 below and `docs/reports/amihan-kit-2026-09-25/`. Done so far: gameplay
+  (`AmihanHeroKit`, `AmihanHazards`, `Core.AmihanRules`), wind VFX toolkit and every ability's
+  effects (`WindVfx`, `AmihanVfx`, `Shaders/WindRibbon`), audio (`tools/build_amihan_audio.py`),
+  lines, glyph ids, sky look, the introduction's body table (`tools/author_ultimate_intros.py`).
+  Also written: cast clips (`HeroAbilityClips.Amihan.cs`, baked by `Editor/AmihanMotionAuthor`),
+  first-person actions (`gust-dash`, `updraft-lift`, `gale-sweep`, `storm-call`), glyph and status
+  icon drawings (`tools/build_ability_icons.py`, reviewed v1 to v3), the introduction's stage
+  (`HeroIntroductionScene.Amihan.cs`), bots (`AIController`). Open: screens, in-engine review of
+  every beat (captures), PlayMode and bot probes.
+- [ ] Deploy the two cloud-code scripts that now list her (`ugs/cloud-code/match-record.js`,
+  `wallet.js`) to the live UGS project; until then the server does not know her id.
+- [ ] Record her voice lines (human voices only; the rows are in `docs/HUMAN.md`).
+- [ ] A home court (brief section 3 names one) when maps are next opened.
+
+### ABILITY-1 · Signature + role abilities, the status table, and the ability direction ⚠️ IN PROGRESS, 2026-09-25
+
+Owner, 2026-09-25: "we are overhauling how abilities work ... there will be 2 abilities, one
+signature ability that doesnt change and stays no matter what role and one that changes", then
+the status table (Whirled, Chilled, Frozen, Tagged), "thoroughly try to direct all vfx and sfx of
+the skills so that it will look cohesive, good and satisfying", "it will be the baseline for all
+rework of skills". Design, research and direction: `docs/reports/amihan-kit-2026-09-25/`
+(`plan.md`, `research.md`, `direction.md`). Amihan (HERO-8) is the first kit in the new shape.
+
+- [x] Role kit data shape: `HeroKit.AttackingSkill`/`DefendingSkill`, `Skill2` is the live one,
+  `SetRole` from the derived taya each frame; legacy kits unchanged.
+- [x] Status system: `Core.StatusRules` (the owner's four rows), `CharacterMotor.Status.cs`
+  (Whirled, Chilled timers; Tagged ignores stun immunity; flight; carry), pickup gate,
+  Cheska's ice sheet applies Chilled, `SyncUnit` carries both new timers, `Carry` message,
+  protocol 53.
+- [ ] HUD: role badge and swap on the slot-2 tile (`TumpPowerReadout.OwnerDeck`, a flip on
+  change, the role in the hold-to-read tray), status icons with the owner's tooltips over other
+  bodies (`Visual.StatusOverhead`) and as chips under the reticle (`TumpMatchReadout.Statuses`),
+  status body tells (`WhirledMark`, `ChilledMark`). Written; open until photographed on mouse and
+  keyboard, pad and touch.
+- [ ] Screens: character select, skill tree and loadout show signature, attacking, defending and
+  ultimate for a role kit.
+- [x] Screens: hub character select and hero screen/popup show SIGNATURE, ATTACKING, DEFENDING,
+  ULTIMATE for a role kit (`HeroKit.ScreenSlots`). Not yet photographed; `ConvertedCharacterSelect`,
+  `TumpSkillView`, `AbilityInspectPanel`, `BrandAbilitySelection` and `HubSkillTree` labels still
+  read the three-slot shape (they show the attacking ability in slot 2).
+- [ ] **NEXT SESSION, in order** (state at the 2026-09-25 hand-off):
+  1. `AmihanReviewProbe` (`Editor/MapKit`) wrote dash, updraft, whirlwind, storm and hit strips
+     to `Logs/amihan-review/*_v1.png` and then threw a NullReferenceException in
+     `Introduction` (the cutscene strip): fix it, bump `Version`, render, LOOK at every strip,
+     critique hard (owner: "watch it all and berate it then improve it even more"), iterate.
+  2. Re-run EditMode (last run: 605/609 with only the three known pre-existing failures plus
+     the description-length one, which is now fixed but not re-run).
+  3. Capture HUD states (status chips, overhead badges, role badge flip) and the screens on
+     keyboard, pad and touch; fix what the pictures show.
+  4. PlayMode gate, `Checks.RunAll`, audits (last run: only the pre-existing cue_audio,
+     event_subscriptions and tournament_defaults findings), `BotBehaviourProbe` with Amihan,
+     `AbilityShowcaseProbe`, then a Windows build into `Builds/`.
+  5. Remaining screens above; replay recording of dash/updraft/hover; rejoin during the storm
+     gather (plan.md § 9).
+- [ ] Owner approval of the proposed mapping for the other seven heroes (`plan.md` § 6); until
+  then they are unchanged. Owner review of the gap decisions in `plan.md` § 8.
+- [ ] Full verification (Core, EditMode, PlayMode gate, Checks.RunAll, audits, BotBehaviourProbe,
+  AbilityShowcaseProbe, Windows build).
+
+### ABILITY-2 · The roster ability rework (Cryo, Geo, Necro, Voodoo; skill tree UI off) ⚠️ OPEN, 2026-09-26
+
+Owner, 2026-09-26, with the power tables: *"will create completley new VFX SFX AND SKILLS FOR ALL
+CHARACTERS AND WE MIGHT DUMP THE SKILL TREE IDEA FOR NOW"*, *"JS REMOVE ITS UI FOR NOW AND HARDCODE
+THE SKILLS AND SHIT"*, *"U thoroughly plan them first"*, then *"also i want u to think abt all ult
+animations and direction and cutscene as well"*. Mapping: Anemo Amihan, Cryo Cheska, Geo Dante,
+Necro Nemu, Voodoo Phaister; Pyro (Sean), Electro (Zack) and Hydro (Rafi) have no design yet
+(placeholders). Plan with the tables verbatim, the owner's answers and every number:
+`docs/reports/ability-rework-2026-09-26/plan.md`; ultimates and cutscenes: `ultimates.md` beside it.
+
+- [x] Plan and ultimate direction written; owner questions answered (Feared, Disoriented, Vulnerable,
+  Concussed, Kuro fetch, Kuro guard, Kuro plays, Higop, Teleport, placeholders).
+- [x] Core: statuses Concussed 6, Feared 7, Disoriented 8, Vulnerable 9 appended with the owner's
+  answers; `RosterReworkRules.cs` (Cryo, Geo, Necro, Voodoo numbers); `HeroLoadoutRules.SidegradesOpen`
+  (false); Core.Tests 649/649 (2026-09-26, cloud). Status IMMUNITY is still to do (motor row).
+- [x] Skill tree UI hidden and kits built on the default variant: `HeroAbilitySystem.ConfigureLoadout`
+  and `UpdateLoadout`, the HubHome SKILL TREE door, HubHero's ALTERNATIVES button, the picker's
+  LOADOUT door, the lobby loadout button. Syntax-checked only; owed to the testing chat: compile, and
+  the PlayMode tests that look for those doors (`HubFlowTests`, `HomeFlowTests`, `FrontEndControlWalk`,
+  `LoadoutSurfaceProbe`, `BrandPickerTests`, `TumpNativePickerTests`, `UiRuntimeShots`,
+  `BrandPreparationTests`): a test that opens a hidden door is updated to expect it hidden, never
+  the switch flipped to make it pass.
+- [x] Motor statuses (`CharacterMotor.Rework.cs`): Concussed x0.7 speed, no sprint, throw wobble;
+  Feared drops the slipper (host), flees from the source on its own, no act; Disoriented aim sway;
+  Vulnerable taggable anywhere, tag reach and stuns x1.5, out-of-box tag for Phaister's kit; status
+  immunity (`IsImmuneToStatuses`); `SyncUnit` fields and protocol 56. Compiled (tools/cloud_compile.py),
+  not run. OWED: the Feared flee clip, the Disoriented hallucinations (presentation), status icons.
+- [x] Cheska (COLD FEET, FROSTBITE with `SlipperAffinity.Frost`, GLACIAL WALL with 3 hits and a
+  shatter on every peer, ABSOLUTE ZERO) and Dante (SHIELD, BOULDER `DanteBoulder`, BARRIER reflecting
+  slippers, EARTHQUAKE) rewritten as role kits. Compiled, not run. The Glacial Wall is still the straight
+  barricade and the boulder and barrier are placeholder slabs (`GeoVfx.cs`) until the presentation pass.
+- [x] Phaister (SHADOW BLINK kept as the signature, CURSE: DISORIENTED doll `VoodooDoll`, CURSE: VULNERABLE
+  cone, HIGOP black hole `VoodooBlackHole` on the seance pull with her slippers spared and no drowse) and
+  Nemu (TERRIFY haunt, KURO FETCH with the taya's intercept, KURO GUARD with the fallible 0.35 s + 0.25 s
+  AI; Kuro errands `GhostPetCompanion.BeginErrand`). Compiled, not run. Nemu's ULTIMATE is still DEVOURING
+  SEANCE: KURO PLAYS (a fifth, seatless bot unit) needs its own design pass and a Unity session.
+- [x] Sean, Zack, Rafi on the four-slot shape: their old second skill is the ATTACKING slot, DEFENDING is
+  `PlaceholderRoleAbility` (COMING SOON, does nothing). With the tree off, no variant name or cue is
+  written over a kit (the old defaults would have renamed Dante's SHIELD "SEISMIC STOMP").
+- [x] First presentation pieces (cloud, compiled, not run or seen): the shared `feared-flee` clip (a
+  panicked looping run, arms over the head, glancing back; `HeroAbilityClips.Status.cs`, baked by
+  `RootedAnimationAuthor`, played by `CharacterAnimator.StepRootedPose`); Disoriented hallucinations on the
+  victim's own screen (`DisorientedHallucinations`: baked copies of the other players and the slippers,
+  wandering among the real ones); status icons for Concussed, Feared, Disoriented, Vulnerable
+  (`tools/build_ability_icons.py`) and the HUD's live-status list.
+- [x] Second presentation pass (cloud, compiled, not run or seen): 28 new sounds
+  (`tools/build_rework_audio.py`, registered in `AudioCues`, wired in the kits; Paete's ultimate called from the
+  ground); four typed models (`tools/build_rework_props.py`: Dante's boulder and barrier, Phaister's doll and the
+  Higop ring, in `Resources/Models/ReworkProps/`, loaded by `ReworkProp.Spawn` with the old blocks as the
+  fallback; the barrier rises out of the court through `BarrierRise`); the Glacial Wall is now an ARC of five
+  ice pieces (`CheskaIceVisuals.BuildArc`, `SpawnIceBarricade` arc length and radius). Owed in Unity: the glb
+  import, a look at every one of them in play, and the owner hearing every sound (`CLAUDE.md` 6).
+- [ ] Presentation per ability, one character at a time: own cast clips (the new kits still borrow their
+  old cast actions), FPP gestures, VFX and SFX made far better than the first
+  passes above (any of it may be overhauled),
+  the ability glyphs (several reuse an old one), the Concussed stumble, bots for every new ability.
+- [ ] KURO PLAYS (its own design pass first), bots, snapshots, replays, screens, HUD.
+- [x] ⚠️ FOUND 2026-09-26 night, FIXED 2026-09-26 (cloud): all four `Resources/Models/ReworkProps/*.glb.meta` (barrier, boulder, doll,
+  higop) could not be parsed ("Expected closing '}'" on every launch): line 10 had lost the importer reference (a guid rewrite had put
+  each file's OWN guid there and cut the line). Restored to the glTFast importer (`guid: 715df9372183c47e389bb6e19fbc3b52, type: 3`),
+  each file's own `guid:` kept, and the texture dependency pointed at `ReworkProps/Textures` (it named `PaeteProps`). Evidence: all
+  6,744 `.meta` files in Assets and Packages parse as YAML; the first cloud Unity import logged no YAML error and kept the fix.
+- [ ] **Owner's UPDATED tables, 2026-09-26 (cloud), *"updated skill names and status effects"*.** They replace the Anemo and Cryo rows
+  and the status table in `plan.md` section 0 (both recorded verbatim in `docs/reports/amihan-kit-2026-09-26/plan.md` section 0):
+  Anemo **Drift** (2 charges, 15 s in between), **Featherfall** (*"Propel upward and fly for 5 seconds. You may move or throw slippers
+  while in the air."*, 40 s), **Whirlwind** (35 s), **Airburst** (15 points), built in HERO-8. Cryo **Cold Feet** now *"2 Charges, 20
+  Seconds Cooldown In-Between Use"* and the field lasts **7.5 s** (was 35 s, 5 s): open for Cheska's pass. Statuses: **Rooted** *"Prevents
+  movement for 2.5 seconds"* (Paete's Rooted is 7 s with a break-out: ask the owner which wins before changing it), **Concussed**
+  *"Prevents movement or interaction for 1.25 seconds"* with a *"HUD Concussed Visual Effect"* (the built Concussed is the older answer,
+  a 30 % slow and throw wobble), **Frozen** gains a *"HUD Frozen Visual Effect"*, and two new rows, **Drained** (*"Depletes stamina to 0.
+  Prevents stamina recovery for 2.5 seconds"*, tooltip *"Disabled Stamina Recovery"*) and **Hexed** (*"Removes"*, tooltip *"Disabled
+  Protection"*). Open: each built into `StatusRules` (appended, never renumbered), motor, icons and HUD when its hero's pass uses it.
+- [ ] Ultimate cutscenes rebuilt per `ultimates.md`.
+- [ ] Owner review of the numbers set in plan section 7.
+- [ ] Unity verification (the separate testing chat): compile, EditMode, PlayMode gate, captures.
+  First Unity run of the cloud kits, 2026-09-26 (`Logs/paete-r1-editmode.xml`): it COMPILES; EditMode 587/609. Reds that
+  belong to this rework, each to be fixed in its hero's pass (update the test to the new design, never flip the design):
+  `BroadcastPassTests.AllSixHeroesHaveTheirOwnNamedUltimate` (Dante's card still expects TITAN FISSURE),
+  `HeroLoadoutRefreshTests.SameHeroVariantRefresh...` x6 (variants are off with `SidegradesOpen = false`),
+  `HeroPresentationTests.EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph` (BARRIER reuses DanteShield),
+  `...EveryHeroAbilityHasBespokeCastAndViewModelActions` and `ViewmodelArms_PreservesHeldSlipper...` and
+  `RosterArmGeometryTests.EveryHeroUsesBothHandsAndReturnsCleanly` (the COMING SOON placeholder has no cast or FPP action),
+  `...EverySummaryFitsTheCardItIsDrawnIn` (CURSE: DISORIENTED 134 > 125 characters), `...TelegraphsMatchWhatTheAbilityPlaces`
+  (FROSTBITE draws 0 m, places 1.6 m), `InputMapAndAbilityTests` x3 (charges, Dante skill2 30 s under the 45 s floor, Glacial
+  Nova vs Supernova cost), `RuntimeLayerTests.Nemu_AstralProjection_SupportsReactivation`. Known, not the rework:
+  `ThrowEquipmentClearanceTests` and the two `ToonLightFalloffTests` (need graphics). PlayMode `SharedUltimatePhaseTests`:
+  `TwoAcceptedCastsShareOnePhase...` and `FourCastersShareOneDeadline...` fail because Phaister's HIGOP is not accepted into a
+  shared phase (commits 1 of 2, `Logs/paete-r8-play.xml`).
+
+### CAST-1 · Hold to preview, release to cast, cancel on every device ⚠️ OPEN, 2026-09-26
+
+Owner, 2026-09-26: *"Make it easier for ppl to understand and visualize HOW and where their skills
+will be cast if they HOLD"*, *"check out marvel rivals for skill cast indicator"*, *"all characters
+have shityt preview and cancel cast rn thoroughly think abt implementation of it later too"*, *"and
+ui for the cancel shit idk"*, *"U figure it ALL out"*. Design and research:
+`docs/reports/ability-rework-2026-09-26/cast-preview.md` (crosshair aim instead of the time ramp,
+seven preview shapes with a real-size ghost for constructs, red invalid that refuses, cancel and
+rotate on mouse, pad and touch, the prompts, the touch cancel target). Supersedes the ring half of
+SKILLUI-1.
+
+- [x] Research and design.
+- [ ] `HeroAbility` aim shape, anchor from the camera ray, `CanPlaceAt`, rotation; system Aiming
+  state with cast, cancel (free) and rotate; aimed pose on the wire.
+- [ ] Input verbs `AbilityCancel`, `AbilityRotate` (pad, thumb), `InputAssetSync.Regenerate`,
+  touch drag-to-aim and the cancel target, the prompts.
+- [ ] `CastPreview` shapes; every ability on every hero moved onto it and photographed.
+
+### HERO-9 · Paete, the ninth hero (Mount Makiling, plant) ⚠️ OPEN, 2026-09-25
+
+Owner, 2026-09-25: a PLANT hero on the signature plus role ability system; from Mount Makiling,
+Laguna; named Paete; concepts (GUARDY sheet, a blocky treant with three face states and an
+arm-extension panel, a carved-plank face close-up) with *"engraved sunked green eyes and a
+nonchalant calm expresison"*; the kit table (Vine Pull, Throwing Slipper Plant, Thorn Pull,
+Nature's Wrath); *"thoroughly plan how to do it first and research"*; *"do it one by one dont
+try to mass generate it"*. Brief and lore: `ArtSource/paete/concept-20260925/design-brief.md`.
+Research and plan: `docs/reports/paete-kit-2026-09-25/`.
+
+- [x] Research: Makiling, the Mariang Makiling stories, Paete's carvers, narra; animation
+  references from footage (Groot, Kinich, Zyra, Scorpion, Dead by Daylight) and wikis.
+- [x] Lore, colour decision (dark moss `4f6b1f` under an amended accent law), stats 3/3/5, names
+  proposed, the six beats per ability, the part-by-part plan.
+- [x] Owner answers (plan.md section 7).
+- [x] Model v17 (`tools/build_paete_voxel.py`, evidence in `ArtSource/paete/concept-20260925/evidence/`),
+  rebuilt from the owner's idea board; vine arms, no fingers. Owner's verdict on v17 still owed.
+- [x] Core: `PaeteRules`, Rooted status, `ScoreEvent.SproutKnock`, roster row, lines, loadout rows;
+  Core.Tests 646/646.
+- [x] Roster book entry (`RosterBookBuilder.RefreshPersonFromCommandLine -person paete`, which now
+  inserts a hero new to the book without re-baking the others), FPP arms, baked dance. EditMode
+  606/609 on 2026-09-26: the three left are `ThrowEquipmentClearanceTests` (every person but Paete,
+  who clears all ten slippers at 0; the known synthetic-head red) and the two `ToonLightFalloffTests`,
+  which pass 2/2 with graphics on (`-nographics` renders no light, so they cannot pass there).
+- [x] His own animations (owner, 2026-09-26: *"give paete his own animations taht make sense wiht his
+  shit"*, *"i want each of his skill to have their own animation"*): five body clips, each acting out
+  its skill (`HeroAbilityClips.Paete.cs`, baked by `PaeteMotionAuthor`): the vine drag, the planting
+  lob, the COMMAND point on the second press (its own action, FPP gesture and click), the stamp then
+  rope-yank, and the thrown-to-embrace that picks up from the introduction's last pose. Matching FPP
+  clips. Shared `rooted-struggle` and `plant-heave` on every rig (`RootedAnimationAuthor`), shown on
+  every peer through the struggle flag and pull progress on `SubmitMove`/`SyncUnit` (protocol 55).
+  Filmstrips `PaeteReviewProbe`.
+- [x] `UltimateIntros/paete.txt` (who, intent, gather, release; ends on the thrown pose).
+- [x] Audio, `tools/build_paete_audio.py`: 16 cues, every cue the kit plays plus the sentry burst,
+  catch and wilt, Rooted and the root break, the command click, the theme and the Canopy sky.
+- [x] Icons: the four glyphs and `StatusRooted`, critiqued to v2/v3 on the real grounds.
+- [x] Played (`PaeteKitPlayProbe`, Bayan Plaza, Hero Strike, real input, 4/4): the vine reels him
+  6.9 m; the seedling plants, fires on the second press, survives a pull inside its 15 s and comes out
+  to a full Interact hold once loose; BAWI takes a slipper out of a hand and hauls it to 1 m; the
+  sentry drags both bodies in and roots them (0 m walked), a tag frees one, 7 s of Interact frees the
+  other with the struggle showing. The first play found the sentry rooting bodies where they stood
+  (Rooted killed the pull); roots now land on arrival and the pull speed is solved per distance
+  (`PaeteRules.SentryPullSpeedFor`). Interact card on the HUD (`Hud.Paete.cs`).
+- [x] Bots (`AIController`): the vine as an escape out of the box with a slipper, away from the taya,
+  else travel; the seedling planted 4 to 10 m from an upright can and commanded at it; BAWI for two
+  slippers or one being carried; the sentry for two bodies in 9 m; Interact held while rooted and at an
+  opponent's loose seedling. Not yet measured in `BotBehaviourProbe`.
+- [x] First-person vines leave the viewmodel hands (`CameraRig.TryViewmodelHand`); not yet captured in FPP.
+- [x] Owner's Groot references (2026-09-26): vines are entangled bark limbs with dark vines, lit strands
+  and forked twigs (`GrowthTwigs`), easing out of the forearm; the sentry is a 4 m braided-trunk tree
+  (research.md, "Groot's whole arsenal"; direction.md; frames in the report's review/).
+- [x] Everything rises out of the ground (owner, 2026-09-26: *"coming out of the ground each time and
+  forming on the spot not just spawning in"*): `PaeteGroundBreak` cracks the road and throws soil
+  chunks; the seedling pushes up through it, the thorns punch up one by one, the sentry screws up out
+  of the road twisting (review v12). The ultimate now throws a vine cluster, not a small seed.
+- [x] Seedling body v2: stem, base leaves, a five-petal pod that opens round a real wooden slipper.
+  Fixed a real fault: the growing slipper's pose overwrote its block size and a grown shot rendered as
+  a 1 m tan cube.
+- [x] World snapshot and replay: `WorldEffectSnapshot.Kind.Plant/Thorns/Sentry` (12 to 14, appended
+  inside protocol 55), captured, validated, restored for a rejoiner, retired with the round, and drawn
+  in replay (`RecordedFieldView`). Compiled in the v13 probe run; NOT yet exercised by a rejoin test.
+- [x] The trees, modelled and wired (owner, 2026-09-26: *"the current models of all his skills look ugly
+  still its js blocks"*, *"thoroughly work on the detail of each part manually"*, *"really caerfullly and
+  delicately work on the animations + model of his trees"*, *"think of vfx that should accompany it as
+  well as sfx"*, *"thoroughly direct it"*). Direction written first: `docs/reports/paete-kit-2026-09-25/direction.md`
+  section 5 (what was wrong, the idea, beat tables per tree with body, VFX and SFX, how prisoners are held,
+  the break-out). `tools/build_paete_props.py` v7 types every part by hand (no looped shapes, the owner's
+  rule): the sentry is a woven trunk of eleven hand-keyed cords crossing over and under (his Groot crop),
+  on the silhouette of the cartoon tree he sent (flared claw roots with curled toes, pinched waist,
+  swollen top, seven gnarled woven branches with hooked tips), woven vines threading the cords, and two
+  engraved hollows with a slanted light (he rejected a carved face, brows and knots on the way: *"Js make 2
+  fucking holles"*). The seedling has a three-cord stem, arm leaves and a petal-bud head; the thorn
+  construct is a fist of roots and seven barbed square thorns. Wired in `PaeteTreeBodies.cs` (loaded and
+  dressed with his palette and ink by `PaeteProp`): the sentry screws up, squashes, slams its roots down one
+  by one, unfurls, WAKES (the light opens in the hollows, `sfx_paete_sentry_wake`), clenches its crown on
+  the catch, looks from prisoner to prisoner, blinks, breathes, drops leaves, then sleeps and unscrews into
+  the road; the seedling sways with follow-through, parts its petals as the slipper ripens (`sfx_paete_sprout_ready`),
+  coils and snaps on the shot and dries to straw in four palette steps; the thorns ripple up, quiver in the
+  hold, whip on the yank and clench. Prisoners are HELD: a woven limb reaches out of the trunk, drags them
+  in and wraps their waist, woven root-branches climb their shins (arms and head free, they can still
+  throw), no vines in the binding. Break-out (owner: *"make sure to create the animation for getting out
+  of his ult too"*): a new shared clip `root-breakout` on all 23 rigs (`RootedAnimationAuthor`), the shins
+  crack into bark chunks (`PaeteBarkShatter`), the limb whips back into the trunk, `sfx_paete_root_break`
+  rebuilt with a second snap and the chunks pattering. Films: `PaeteReviewProbe.RunTrees` v14 (found every
+  runtime branch drawn as solid ink: `GrowthVfx.Tube` and `GrowthVfx.Leaf` wind inside out, fixed in `PaeteInk`), v15, and
+  v16 at 1.75 times the authored size, about 9 m (owner: *"make tree bigger"*, *"REALLY big and imposing and really feel
+  like an ult"*; 1.75 is the most the 1.9 m hold allows before the flared foot swallows a prisoner).
+- [x] Skills renamed and rewritten (owner, 2026-09-26: *"u can change name and description of all his skills to
+  make it all sound better"*): LIANA LEAP, BAKYA BLOOM (bakya, the carved wooden clogs Paete's carvers make),
+  THORN HARVEST, MAKILING'S EMBRACE; kit, loadout rows (Core 646/646), HUMAN.md notes. Ids unchanged.
+- [x] Lore: the guardian of Mount Makiling (owner: *"i want the lore for this character to be that its the guardian
+  of mount makiling"*). Mariang Makiling woke the carved tree and made it the keeper of her mountain; when one
+  tree is not enough she puts a seed in his hand. `CHARACTER_ORIGINS.md`, the design brief and
+  `character-stories.json`; the old "never shown" boundary is recorded as reversed.
+- [x] Mariang Makiling in the ultimate's cutscene (owner: *"make it seem like the spirit of maria makiling or smth
+  is watching over him"*, Aphelios and Alune; *"make her look see thru so that it seems like a ghost"*):
+  `makiling.glb` (typed: long hair, flower crown, closed eyes, gown, shawl, cupped hands, her deer),
+  `Resources/Shaders/SpiritGhost.shader` (one jade hue, value-only forms, fresnel edge, depth pre-pass so only
+  her front shows, hem dissolving into mist), `MakilingSpirit`. She rises behind his left shoulder, bows to him,
+  and the seed arcs from her cupped hands into his palm (the gift shot is the Alune composition). direction.md 5.10.
+- [x] The cutscene pays off (owner: *"i also dont see the tree sprouting to its full size"*): 3.6 s to 4.6 s; the
+  seed arcs down the court and the full 9 m tree screws up in a last shot tilting up past his shoulder, its eyes
+  lighting. Nothing climbs Paete in the gather any more (owner: *"it shouldnt root the caster"*: the v2 leg
+  branches read as the caster rooted; in play the caster was never caught). Sentry fits under a roof
+  (`PaeteSentryBody.FitUnder`, Ilalim ng Tulay's deck).
+- [x] Rooted swings the camera to third person (the owner's table: *"they get stuck on it (switches to tpp
+  view)"*, planned and never wired): `CameraRig.StepFallView`, standing pitch.
+- [x] Films (owner: *"record as well people getting pulled and rooted"*): `PaeteKitPlayProbe.FilmTheSentryPullingAndRootingThem`
+  (TUMP_PAETE_FILM=1), three players dragged in and rooted, wide view plus a caught player's view; the
+  cutscene by `UltimateIntroductionProbe.PaeteThrowsHisSeedFromTheForest` (TUMP_INTRO_SCENE=1). Sent to the owner
+  as mp4 v1. Open on it: the film's own-screen view is a victim's, not Paete's (the local seat), so the
+  cutscene on his screen is not yet filmed in a match.
+- [x] The ultimate is CALLED UP THROUGH THE GROUND, not thrown (owner, 2026-09-26: *"i also dont want him to be
+  throwing an orb I want him to be CALLING IT FROM THE GROUND"*, *"he connects with the ground for a bit (his roots all
+  move and shit and it connects to the ground and then he summons his powers ... and then the tree sprouts"*). Cutscene
+  (`tools/author_ultimate_intros.py` `paete`, `HeroIntroductionScene.Paete.cs`): Makiling's light comes down into his
+  cupped hands; he kneels and presses both palms into the court (1.5 s), roots burst round him and writhe, three root
+  veins with a light at their front race under the court to the spot; he rises arms high (2.62 s) and the tree erupts.
+  Live: `PaeteRootVein` replaces the seed arc on the same 0.45 s (timing and warning unchanged); the live clip
+  `hero-paete-sentry` starts from the raised pose. Verified by the verification run named in the commit.
+- [x] First-person arms BULKIER (owner: *"make his fpp arms loook BULKIER bcz he is QUITE bulky"*): 1.45 across in
+  `ViewmodelArms.ApplyCharacterStyle` (the roster-arm early return had skipped the thickness entirely); every hero now
+  starts from scale one there. NOT yet seen in a first-person capture after the change.
+- [x] The deer beside Makiling is cut (owner: *"why is there a deer even did i ask for that"*).
+- [x] Portrait and avatar (`UI/portraits/paete.png` via `TumpPortraitAuthor.CaptureOnly -tp-portrait-id paete` with a
+  closer framing for him, `UI/avatars/avatar_paete.png` via `tools/build_avatars.py`). NOT yet checked after the
+  closer framing re-bake (the (height, zoom) argument order was wrong once; fixed to `LookAt(.84f, .42f)`).
+- [x] (compiled, filmed and refined in Unity 2026-09-26: `PaeteReviewProbe` v19 to v22, pitcher deepened `93B540`/`5B7F2C`, fatter jug, thick two-tone rolled lip, five typed belly stripes, a rounded lid bigger than the mouth that opens to 84 degrees, the bakya rising clear of the lip at READY, a round heaved soil mound instead of the square tile; `PaeteKitPlayProbe` 8/8) DESIGN APPROVED 2026-09-26 (*"thats pretty fucking good"*; THORN HARVEST re-armed after *"it looks like  a flimsy plant and not a dangerous cool plant"*): BAKYA BLOOM a Makiling pitcher plant, THORN HARVEST an armed rattan (direction.md 5.11, concept sheets in the report's review/). BUILT 2026-09-26 (cloud, no Unity): `tools/build_paete_props.py` `seedling()` (pitcher) and `thorns()` (armed rattan), glbs rebuilt (2673 and 6534 triangles), `PaetePlantBody`/`PaeteThornBody` re-posed with their own palettes (lid, rising bakya, spit; stem ripple, talon fronds, rattan whips from the facing frond). Syntax-checked only: compile, `PaeteReviewProbe.RunTrees` film and `PaeteKitPlayProbe` owed to the testing chat. Earlier text: THE ATTACKER AND DEFENDER PLANTS MUST BE THEIR OWN SPECIES (owner, 2026-09-26: *"do all his sentries look
+  the same? i wanted all his sentries (ult and attacker skill and defender skill TO ALL look diff and distinct and have
+  their own style)"*, *"attacker and defender sentry should look like distinct plants or trees"*). Today the seedling and
+  the thorn fist share the woven brown bark of the ultimate's tree. Proposed to the owner (not yet built): BAKYA BLOOM a
+  squat bulbous green plant, smooth bottle stem, big broad paddle leaves (young banana plant), a gold-hearted bud that
+  opens like a mouth to spit the wooden slippers, no bark; THORN HARVEST a low dark spiky rosette like rattan palm (uway),
+  stiff barbed fronds that fan out and whip, no bark trunk. Typed by hand in `tools/build_paete_props.py` (seedling(),
+  thorns()), node names kept for `PaeteTreeBodies.cs`, filmed with `PaeteReviewProbe.RunTrees`.
+- [x] (2026-09-26: `sfx_cast_paete_sentry` cut to 0.8 s, the heave that launches the 0.45 s live vein race, because it
+  plays AFTER the cutscene and the 2.2 s cloud cut swelled 1.5 s past the tree; the ground call itself moved into his theme,
+  `sfx_ult_theme_paete`, re-timed from 3.6 s to the 4.6 s cutscene beat for beat: her figure, the light, the press 1.5 s,
+  the veins 1.6 to 2.62 s, the rising bars, the eruption 2.95 s. Not yet heard by the owner in the game mix; the video
+  `paete_ultimate_v3.mp4` carries it.) The ultimate's cast sound still describes a seed and an overhand swish (`tools/build_paete_audio.py`
+  `sentry_cast`): rewrite it as the ground call (a root groan swelling, soil crunch at the press, a rising rumble), and
+  add a sound for the veins racing under the court. Not heard by the owner.
+- [x] (2026-09-26: `PaeteKitPlayProbe.FilmTheUltimateOnHisScreen`, TUMP_PAETE_FILM=1: his screen with the cutscene
+  RawImage copied, the court, a caught player's side view; `Time.captureFramerate` 30 plus `SharedUltimatePhase.FilmClock`
+  so the cutscene lasts its real 4.6 s; every world cue logged with its film time and mixed into the mp4. Sent as
+  `Logs/paete-share/paete_ultimate_v3.mp4`.) Film the cutscene ON HIS SCREEN in a match: `UltimatePhaseView` draws it through its own camera onto an overlay,
+  which `ImprovementEvidenceProbe.Record` (Camera.main) cannot see. Capture the phase's RenderTexture in
+  `PaeteKitPlayProbe.FilmTheSentryPullingAndRootingThem`. The victim's-eye film (dragged in, held, camera swung to third
+  person) was made once and overwritten; add it as its own capture.
+- [x] (2026-09-26: the red was the owner's own 1.45 bulk against the 0.36 m cap. `ViewmodelArms.PaeteArmBulk` names
+  the factor and `RosterArmAuditTests` gives Paete exactly that allowance over his measured 0.364 m bake; see the EditMode
+  row in the ledger for the run.) ⚠️ NEW RED, 2026-09-26: EditMode 605/609 (`Logs/paete-editmode12.xml`): the three known reds plus
+  `RosterArmAuditTests.EveryArmHasARealForearmAxisAndCurrentCharacterGeometry`, first seen after
+  `RosterBookBuilder.RefreshPersonFromCommandLine -person paete` re-baked his clips and after the 1.45 first-person
+  arm bulk in `ViewmodelArms`. Read its message and fix the cause (not the assertion). It passed at 606/609 before.
+- [ ] Look notes from the films, not yet acted on: Paete reads orange rather than brown under the cutscene's lighting;
+  the cutscene's stage walls read as flat boards; the editor capture runs at 7 to 17 fps (a real-time player capture
+  would read better for the owner).
+- [x] Rerun `PaeteKitPlayProbe` and EditMode after the rise and snapshot changes: 4/4 (`Logs/paete-play4.xml`) and
+  606/609 with the three known reds (`Logs/paete-editmode5.xml`), 2026-09-26; rerun after every batch since.
+- [ ] Still to do: PlayMode gate, Checks.RunAll, audits, a build. Done 2026-09-27: the rejoin test (`PaeteWorldSnapshotProbe`); the
+  portrait checked against all 37 (every other hero's top at y 71 to 76 of 320, his at 118: re-aimed to `LookAt(.65, ZoomMin)` (the old zoom was clamped by
+  `ModelPreview.ZoomMin` and never did anything), re-baked with
+  the avatar). Done 2026-09-26: bots measured by `PaeteKitPlayProbe.PaeteBotsUseEveryAbility`
+  (four Paete bots, two rounds: vine 3, bloom 4, thorns 3, ultimate 12 with the bar topped up every 20 s); the first-person
+  vine film ran and is reviewed (row below).
+- [x] ⚠️⚠️ THE ULTIMATE, REDIRECTED (owner, 2026-09-26, after `paete_ultimate_v3.mp4`: *"ur direction of the entire cutscene
+  sucks"*, the three small trees make no sense, refine Makiling, *"make his eyes glow"*). BUILT 2026-09-26 night as three shots
+  (CALL, CONNECT, RISE; direction.md 5.13, one light travelling left to right): forest trees, stage walls and landing spikes cut,
+  `PaeteForestTree` deleted, the payoff is the live `PaeteSentryBody` in `Staged` mode, his eyes ignite at 0.95 s (glows found on
+  his own face, `SpiritGlow.shader`), the light falls from her hands into his LEFT hand, the palm slam cracks and heaves the court,
+  roots dive back in, three veins race to a pool at the landing, camera shake, theme re-timed. Makiling v3 (baro't saya, rounded
+  face, parted hair, sampaguita wreath; `SpiritGhost.shader` v3 premultiplied with an inner light). Films r12 and r13
+  (`Logs/paete-evidence-r12`, `-r13`); video `Logs/paete-share/paete_ultimate_v4.mp4`.
+- [x] ⚠️⚠️ v5, CALLED FROM THE GROUND, NOTHING THROWN (owner, 2026-09-26 night: *"i also dont like that paete just throws seeds in his
+  ult"*, *"REDIRECT IT I WANNT IT TO LOOK LIKE HE GOES TO THE GHHROUND AND HIS ROOTS CONNECT TO IT AND HE IS CHANNELLING HIS POWER AND HE
+  GLOWS AND SHIT AND THEN HIS ROOTS TRAVEL TO THE GROUND AND THEN THE tree slowly show up"*, *"dont go past 5 seconds for cutscene"*,
+  *"match time should pause during cutscenes"*). Design: direction.md 5.14. The seed was the LIVE cast after the cutscene (first-person
+  `sentry-throw`, the arms-high body clip, `PaeteRootVein`'s lit head), all replaced: cutscene 5.0 s (was 4.6; protocol 57) in three shots,
+  CALL (her full form, the light, his eyes), ROOT (kneel, both palms on the court, `PaeteGroundRoots` out of his forearms and knee, the
+  channel glow `SpiritVeins.shader` on his own vines plus three quickening pulses), RISE (`PaeteRootRidge`: the court heaves and splits
+  with the light inside, no lit head; the tree CRAWLS); in play `PaeteGroundCall` keeps him kneeling and joined to the ground (his view
+  lowered like the taya's squat, first-person `GroundCallClip`, walking cancels it), the live clip `hero-paete-sentry` is a kneel with
+  its own lift (solved so the palms sit 0 to 5 cm on the court). Catch timing unchanged (0.45 s roots, 0.75 s catch). Film r14
+  (`Logs/paete-evidence-r14`, `PaeteKitPlayProbe.FilmTheUltimateOnHisScreen` 1/1), video `Logs/paete-share/paete_ultimate_v5.mp4`.
+  MATCH CLOCK MEASURED in that film: 89.860 s as the cutscene came up, 89.860 on its last frame, 88.860 one second after (the probe now
+  asserts it). Owner's verdict on v5 owed.
+- [x] HER FULL FORM, BRIEFLY (owner: *"she sstarts translucent to full forma nd translucent again"*): `SpiritGhost.shader` v4
+  `_SolidFrom`/`_SolidTo` (opaque, her palette, the cast's two bands, a glowing seam) plus an INK pass clipped to the solid band;
+  `MakilingSpirit.Look.Form`/`Unform`; forms 0.30 to 0.50 s, back to spirit 0.82 to 1.08 s. Reviewed in `PaeteSpiritReviewProbe` v4/v5
+  (`Logs/paete-review/paete_makiling_v5.png`: ghost, forming, full form, turning back, and the ROOT shot).
+- [x] HER PLACE IN THE SHOT: the overhead crane is cut (v5 shots); for the ROOT shot she stands directly behind him and bends over him
+  (`MakilingClose`), framing him from above rather than filling the left.
+- [x] (2026-09-27: moss v3, each cushion a typed group of two to four taller lumps, ry 0.07 to 0.11, dark and light mixed.) ⚠️ HER MEADOW, built and wired, one fault left (owner: *"when maria makiling starts coming into the pic flowers start sprouting and
+  lushh greenery"*, *"and they disappear slowly as she disappears"*). `tools/build_paete_props.py meadow` v2 (18 moss cushions, 14 grass
+  tufts, 6 ferns whose fronds unroll, 6 sampaguita, 3 gumamela, 6 makahiya), `PaeteMeadow` (grows as a wave from her, flinches from the
+  palm slam with the makahiya folding shut and reopening, leans from each haul, wilts from the outer edge in 3.6 to 4.5 s). ⚠️ glTFast
+  negates X: the layout is written mirrored (`mx`) so it lands round her; v1 came in on the wrong side. OPEN: from above the moss cushions
+  still read as outlined green discs ("lily pads"): make each cushion a group of 2 to 4 taller overlapping lumps (ry 0.07 to 0.11), typed.
+- [x] THE GUARDIAN CRAWLS OUT (owner: *"i also dotn want the tree to jsut spawn in or teleport in"*): `PaeteSentryBody` v6, the same in
+  play and in the cutscene: bulge, claws out and gripping (`ClawOut`), three hauls with a strain and a pause (`Heaves`, `Risen`), crown
+  opens 1.35 to 1.72, eyes at `WakeAt` 1.75; limbs leave the ground while the trunk is under it; `sfx_paete_sentry_heave` (new) per haul.
+  Filmstrip `PaeteReviewProbe.RunTrees` v23.
+- [x] The guardian's crown masses (v8): `sentry.glb` rebuilt (`thorns.glb` untouched), seen in RunTrees v23 and at 9 m in film r14.
+- [x] (2026-09-27, all six: (1) `PaeteSentry.Spawn` keeps a restored age, (2) `RecordedFieldView`'s body is `Staged`, (3) `PaeteWorldSnapshotProbe`
+  written and green (it measured the 0.45 s fault before the fix), placed in the gate's match group, (4) the first-person rings at 0.45 size and
+  0.35 strength on his own screen (`PaeteGroundRoots.RingSize`), (5) moss v3, (6) `RosterArms/paete_*` restored from HEAD.) ⚠️ NEXT (found this
+  session, not fixed): (1) a rejoiner's sentry runs 0.45 s behind: `WorldEffectSnapshot.Apply` restores with
+  `PaeteSentry.Spawn(..., age)` and `Spawn` subtracts `Flight` again; make it `_age = age > 0 ? age : -Flight`. (2) `RecordedFieldView`'s
+  sentry body is not `Staged`, so a replay can spawn ground breaks into the live world; set `Staged = true` there. (3) Write the rejoin
+  test (`PaeteWorldSnapshotProbe`, template `IceWorldSnapshotProbe`): plant, thorns and a mid-crawl sentry captured, applied, same
+  owner/place/age, no second `PaeteRootRidge`. (4) In his first-person view after the cutscene the pulse ring round his hands is large
+  and bright; smaller and fainter. (5) The meadow moss above. (6) The roster refresh re-baked `RosterArms/paete_*.asset` WITHOUT the tangent
+  channel the ink reads; this session restored them from HEAD: do the same after any `RefreshPersonFromCommandLine -person paete`.
+- [x] ⚠️⚠️ THE OWNER'S VERDICT ON v5, ACTED ON (2026-09-27; direction.md 5.15; the method for every hero is now `docs/HERO_KIT_METHOD.md`).
+  *"Make the tre a bit smaller and a lot more sleek so that it isnt too distracting"*: v9 then v10 (`tools/build_paete_props.py` `sentry`), a
+  rope of five cords twisting one way round a dark core, one vine, slimmer claw roots (2.14 m reach), at 1.3 (was 1.75), four ground branches
+  (was eight), fewer falling leaves, muted crown greens (measured: v8/v9's crown rendered (158, 228, 44) against the plaza trees' (97, 124, 71)).
+  Then, of v9's leaf clouds, *"it makes it look goofy"*, *"js pointy on the top with a glow coming from within"*, *"a few leaves at the edge of the
+  top but dont put like a green blob"* (an Ent as the picture): v10's crown is a pointed spire of forked branches, a few leaves at the tips only,
+  and a light INSIDE it that shows between the branches (`PaeteSentryBody` crown light); 7.0 m. *"dont let it be placed in a place it STANDS on
+  can"*: `PaeteRules.SentrySpotClearOfCan` (core, 2.4 m, tested), `PaeteVine.SentryTarget` on every peer, the ground branches turned to part
+  round the can, the cutscene's staged tree pushed by the same rule; `PaeteKitPlayProbe.AimedAtTheCanTheGuardianComesUpBesideIt` aims straight
+  at the can. Prisoners held at 1.4 m (was 1.9) so their backs are against the roots, bindings in dark bark. *"add more special effects and
+  vfx on his ult cutscene ... open it with leaves"*, then five Genshin burst frames and *"focus on direction and vfx and sfx"*: research from
+  footage (`docs/reports/ultimate-performances-2026-09-24/research.md` section 4, for every hero) and the v6 effects pass
+  (`HeroIntroductionScene.PaeteVfx.cs`): the opening gust and the wind round her, the petal ribbon, the mark of the mountain four times, the
+  streaks, the brush stroke (a translucent lime body with its light down the middle), the spears of light, the haul spirals, a near layer at the lens, the phase camera's grade
+  (`HeroIntroductionScene.GradeAt`), and the theme's matching layers (`glide`, `whoosh`, the mark's `bell` motif). The RISE re-framed for
+  7.0 m; the ROOT shot's drifted table restored (the source was right, the committed `paete.txt` was stale). It holds still in play (owner:
+  *"tree doesnt need to look left and right"*; `PaeteSentryBody.WatchPrisoners` off). Protocol 58 (the spot and the hold are computed on
+  every peer). Its vines crawl (owner: *"make its vines like move or crawl"*): three living vines wind up the trunk, a ripple running up
+  each (`PaeteSentryBody.TrunkVineRows`); the baked vine is gone from the model. Films r16 to r19.
+- [x] ⚠️⚠️ THE OWNER'S VERDICT ON v6, ACTED ON (2026-09-27; direction.md 5.16). *"its almost perfect"*, *"A LOT MORE VFX AND SHIT LIKE THE
+  GENSHIN REFERENCES"*: the burst layer (`HeroIntroductionScene.PaeteBurst.cs`, every row typed): 59 glints, 15 court shockwave rings and 4
+  flashes, her rays and the crown's, the channel vortex, 32 rising motes, the arrival pillar, 26 curtain streaks, the trunk tornado, and the
+  veil (`SpiritVeil.shader`, clip space). *"this felt liek a weak ending"*, *"show everyone getting pulled"*, *"shocked or trying to get out"*,
+  *"follwo vines going to ppl with camera"*: THE TAKE, 3.8 to 5.0 (`HeroIntroductionScene.PaeteTake.cs`): render copies of exactly the
+  players `PaeteSentry` will catch (same rule, same accepted cast; `HeroIntroductionScene` now takes the commit's aim), shocked (their rig's
+  break-out frame), wrapped, yanked on his haul, spun, bound and struggling (their own `RootedMotion` clips); the camera rides the longest
+  limb out, holds beside them, swings wide and settles on the guardian's face with every prisoner fanned round it. The time came from the
+  setup: channel 0.2 s shorter, roots race 0.40 s, the staged tree at 1.45 times its play speed; still 5.0 s, clock frozen (film r20:
+  89.860 / 89.860 / 88.860). Theme v7 re-timed with new quiet layers; the thud at 4.5 is its loudest moment. *"eye itself is ugly its weird
+  that it floats and isnt embedded anywhere"*: measured, the v10 face was a flat plane 25 to 30 cm in front of the bark at the eyes; v11 grows
+  a burl out of the rope and seats the sockets on it, framed above and below, the light inside (`tools/build_paete_props.py` `sentry`); the
+  live vines dive under the burl (`PaeteSentryBody.FaceBurl`) and the cutscene's eye streak is gone. *"not all branches have a leaf only
+  some"*: six leaves on three of five branches (was fourteen on every tip). Reach and shin radius re-measured unchanged (2.14 m, 1.17 m).
+  Films r20 to r23; video `Logs/paete-share/paete_ultimate_v7.mp4` sent, verdict owed. Also: `RosterArmGeometryTests.EveryHeroUsesBothHandsAndReturnsCleanly` now names the hero and action it fails on;
+  Bayan Plaza's 16 house finishes are marked fitted trim (`BayanHouseFinishAuthor.MarkFitted`, `AirborneByDesign`), which is what failed
+  `Checks.RunAll`'s map geometry on the v6 handoff.
+- [x] ⚠️⚠️ v8 (2026-09-27; direction.md 5.17). *"slow down ult a bit"*: 6.5 s (his choice), every beat 1.3 times as long
+  (`PaeteStretch`, `_stretch`, the theme's `T`; `UltimatePerformance.MaxSeconds` 6.5). *"he is supposed to be watching cutscene too"*: the
+  film's first-person part is play resuming; it no longer grows and catches a second time (his choice, *"Yes, no repeat"*): the live
+  guardian is handed back grown (`PaeteSentry.BodyLead`) and catches at once. *"make it so that paete can choose ... where his ult will be
+  cast"*: hold-to-aim placed where he looks (`HeroAbility.AimsWhereLooking`, `CameraRig.TryLookGround`, 3 to 8 m), the Groot-wall answer.
+  *"they should face against the tree"*: turned to face out when held (`PaeteRootCoil.Attach(body, tree)`, `CameraRig.FaceHeldView`). The
+  escape filmed (18 s film, the filmed player holds Interact until free). Protocol 59.
+- [x] (FIXED 2026-09-27: the shell was the seedling's own INK. `ToonSkin.Apply` sizes an outline as width / the part's current scale,
+  and `PaeteProp.Redress` re-dressed the pitcher on its first pose while it was still popping up at nearly zero scale, so its
+  inverted hulls came out up to ten thousand times too wide and grew with the plant. `PaeteProp.Spawn` now records each part's spawn
+  scale and width (`PaeteOutlineRest`) and `Redress` keeps them; the seedling, thorn and sentry play tests pass.) Found by the skills film (2026-09-27, `PaeteKitPlayProbe.FilmHisSkillsInAMatch`, frames `Logs/paete-evidence-s2`, video
+  `Logs/paete-share/paete_skills_v1.mp4`): from about 0.1 s after BAKYA BLOOM is planted (film frame 78 on), a building-sized dark jagged
+  shell covers the background in every camera that sees the court near the taya (brown when lit, black from the shade side), and stays
+  for the rest of the film; the taya bot's name tag floats inside it. All four skill checks still pass. Find the renderer (log every
+  renderer whose bounds exceed 6 m after the plant lands) and fix its scale or source; suspects: the plant's `PaeteGroundBreak`, the
+  bot Paete's model or first-person arms rendered in a world camera.
+- [x] ABILITY-2 lane, found here, FIXED 2026-09-26 (cloud): `RosterArmGeometryTests.EveryHeroUsesBothHandsAndReturnsCleanly` failed on
+  `sean/sean_skill2d`, the COMING SOON defending slot (`PlaceholderRoleAbility`), which casts and does nothing and so has no hands on
+  purpose. The gesture tests (`RosterArmGeometryTests`, `HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions` and
+  `ViewmodelArms_PreservesHeldSlipperAndActions_AcrossCharacterSwaps`) now skip a placeholder, which stops matching the day its hero's real
+  skill replaces it. Cloud EditMode: `RosterArmGeometryTests` 3/3 (`Logs/paete-cloud2/editmode.xml`).
+- [ ] **THORN HARVEST placed where he looks, not on his body (owner, 2026-09-26: *"I WANT IT to be castable and not cast on body make
+  it possible for him to place it somewhere else like his ult and other skill (do they do that already?)"*; answer: BAKYA BLOOM and
+  MAKILING'S EMBRACE already were, LIANA LEAP aims at a spot, THORN HARVEST alone was on his feet).** Built: the same hold-to-aim as his
+  ultimate (`AimByHolding(..., whereLooking: true)`, from his feet out to `PaeteRules.ThornAimRange`, 6 m, PROPOSED: BAKYA BLOOM's reach);
+  he still stamps, and a line of the rattan's own thorn shoots races through the court to the spot (`Visual.PaeteThornTrail`, ten shoots
+  typed by hand, 24 m/s, at most 0.25 s, one hold beat) where the rattan bursts and catches every slipper within 7 m of THAT spot, which
+  land 1 m from it. The catch set is decided at the burst. Bots place it where it takes most (`AIController.PaeteThornAim`). Protocol
+  60 (every peer computes the spot and the trail). Core 653/653 (`TheThornsArePlacedWithinHisPlantsReachAndArriveInOneHoldBeat`).
+  Cloud PlayMode 2026-09-26 (`Logs/cloud5/playmode.xml`, 6/6): `ThornsTakeASlipperOutOfAHand` (aims 5 m away, asserts the burst
+  spot and that the slipper went to the thorns, not to him) passes; filmed in `FilmHisSkillsInAMatch`. Open: the owner's verdict on
+  the 6 m reach in play.
+- [ ] **LIANA LEAP from his own eyes: his arms extending (owner, 2026-09-26, on a first-person frame: *"refine this too for his point of
+  view make it look like its actually his arms extending bcz it doesnt look like taht"*).** Found: the braid started at the RESTING hand
+  while the drawn arm is lensed per render (pulled toward a 95 degree look, lowered 8 cm), so the two thick bark limbs sat beside the
+  hands as planks. Built: `ViewmodelArms.TryDrawnArm` reads where the arm is DRAWN; his first-person forearms lengthen a third with the
+  reach (`SetReachStretch`); each braid starts inside the drawn forearm, 30 % back from the hand, no wider than the arm. Then *"it
+  doesnt bend with arms tho"*: `PaeteVineReach.BendAlongArm` re-lays the centreline as a curve that leaves along the drawn forearm's
+  own direction (a control point a third of the way out, at least 35 cm) and bends to the anchor, the sag and wave riding on top.
+  Looked at in the skills film's owner view (`Logs/cloud5/paete-skills-film/owner/`, frames 24 to 56): both vines now run on from
+  the forearms and curve out to the anchor. Open: the owner's eye on it.
+- [x] **The skills film showed a HUMAN casting Paete's skills (owner, 2026-09-26: *"idk why a fkn CHARACTER was the one doing the shit
+  instead of the plants"*). FIXED in the film rig, not the game:** `PaeteKitPlayProbe.Paete()` re-bound the kit on a seat the match had
+  already dressed as someone else, so the taya casting THORN HARVEST was a curly-haired human, and the one seat that did wear Paete was the
+  local one, hidden from the court camera by the first-person self-hide. Every converted seat now wears his model (and the local seat's
+  first-person arms are re-matched), and the film cameras show every body the way a spectator sees them (`RenderFilmView`). Real matches
+  dress each seat from its pick at install, so players never saw this. Film `Logs/paete-cloud2/paete-skills-film` (first Unity film shot
+  in a cloud session, software OpenGL), stitched as `Logs/paete-share/paete_skills_v2.mp4` and sent. Owner's verdict on v2 owed.
+- [x] Prisoners "actually TIED" (owner) reviewed close up in film r16's `victim/`: backs pressed to the trunk, straining, bands at the shins;
+  the lit bark in the limb and bands blended into warm skin, so both are dark and mid bark now.
+- [x] First-person vine film reviewed (film r11 `owner/`): both hands punch forward, the braids leave the viewmodel hands and converge on
+  the anchor, the landing rosette flashes at the hands. Reads.
+- [ ] Surface texture: the owner asked to *"really refine and texture and make it all detailed"*. The
+  modelled props give detail in geometry and his palette only; decide with him whether bark wants a
+  painted texture (grain, rings) on the props and vines, and do it if so.
+- [ ] Deploy the cloud-code hero lists once they name him (needs the owner's UGS deploy); record his
+  lines (human voices only, `docs/HUMAN.md` PAETE rows).
+
+### PRACTICE-1 · A practice picker and a Valorant-style training range ⚠️ OPEN, 2026-09-26
+
+Owner, 2026-09-26: *"can u also make it so that when u click practice theres a screen that pops up
+that lets u pick between Tutorial and Training mode"*, and *"allow character change + cheats +
+summon/remove bots in practice just like valorant practice"*.
+
+- [ ] PRACTICE opens a two-card picker (TUTORIAL, the guided `GuidedTraining` walk-through; TRAINING,
+  the free range), built through `MenuKit`/`ConvertedScreen` so pad focus, thumb targets and one-press
+  back come by construction (CLAUDE.md 4a, 6.2).
+- [ ] Training range panel (pause-style, opened by one bound key, pad and touch answered): change hero
+  or person in place; cheats (infinite skills, no cooldowns, ultimate full, freeze the can, infinite
+  stamina); summon a bot (seat, role, idle or active) and remove bots. Offline only, never on the wire,
+  never reachable from a networked or ranked match.
+- [ ] Render every state over the real background at his window shape; record the journey (presses to
+  each action).
+
+### SKILLUI-1 · The yellow skill ring, and cooldowns against charges ⚠️ OPEN, 2026-09-26
+
+Owner, 2026-09-26: *"the yellow circle looks bad af with a lot of skills, one of which is updraft"*,
+and *"make the distinction between a skill that has a cooldown and a skill with charges clearer"*.
+
+- [ ] The yellow ground ring (`GroundReticle` and each kit's `telegraphRadius`): inventory every skill
+  that draws it (Updraft first), photograph each over a real court, and replace the flat yellow ring
+  with a telegraph in that ability's own element and shape, or none where the effect already shows
+  its footprint. Keep the readability rule (the can, slippers and players stay readable on Low).
+- [ ] HUD ability tiles: a cooldown skill and a charges skill must read differently at a glance
+  (e.g. a smooth sweep for a cooldown against notched pips with a count for charges, the meter
+  language VISUAL-1 already uses: `HudRing.Notches`). Render both states of both kinds on the owner's
+  window shape and on a pad and a phone.
+
+### GAMEANIM-1 · The can raise crouches first ⚠️ IN PROGRESS, 2026-09-26
+
+Owner, 2026-09-26: *"i want u to improve animation of raising can too when its down"*, *"they should
+crouch first and put it up"*. `Visual.CanRaiseShape` is one crouch, grip, lift, set curve over the
+channel, shared by the body (`CharacterAnimator.ResetRaise`: legs splay with the root dropped by the
+height the splay costs, so the feet stay planted) and the first-person view (`CameraRig.ApplyFpp`:
+the eye drops 0.34 m and tips 16 degrees down; `ViewmodelArms.RaiseCan` reaches lower in the squat).
+The v1 capture found the body replaying the 0.33 s `pick-up` one-shot on every 0.4 s relayed `grab`
+(torso 87, 42, 83 degrees and back); a raise no longer replays it.
+
+- [x] Shared shape, body squat, FPP eye drop, one-shot suppression.
+- [x] Native before/after frames from `GameplayActionShots.RaisingTheCanInBothViews` (window now
+  4.0 s so it reaches the lift), inspected: `docs/reports/can-raise-crouch-2026-09-26/`.
+- [ ] The owner's eye on it in play.
+
+### BUGS-0926 · Owner bug list on the lighting branch ⚠️ IN PROGRESS, 2026-09-26 (all six fixed; .1 and .6 await a look in play)
+
+Owner, 2026-09-26, six non-gameplay bugs on `merge/astra-lighting-2026-09-25`. Each fix is one
+commit.
+
+Evidence (`484562c9`, Mac, one PlayMode launch, total 5 failed 0):
+`HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` (.2, .4),
+`HubFlowTests.QueuePlateMatchFoundCharacterSelectLobbyAndLoadingAreDrawn` (.3),
+`WorldCourtCueTests.LightingStyleThumbnails` and
+`TumpNativeSettingsTests.LightingStyleCardsSwitchTheLookAndJoinSaveAndDiscard` (.5, photograph in
+[reports/bugs-0926/](reports/bugs-0926/lighting-style-cards-1920x1080.png)), and
+`HomeFlowTests.TitleIsOnePressAndKeepsHerStreetMoving` (the title still builds with one press
+target). Not covered by a test: an actual keyboard key on the title (.1) and the stamina arc in a
+live match (.6); both want a look in the owner's editor.
+
+- [x] BUGS-0926.1 The title screen ("Click anywhere to continue.") also continues on any keyboard key.
+  `MenuNav.KeyboardAnyPressed` (any key except Escape, which still quits from the title, and
+  except Alt chords, so Alt+Enter still toggles fullscreen); `OwnerMenuPrompt` invokes the same
+  full-screen press with it, after a 0.25 s arrival guard so the key that finished the previous
+  screen cannot skip this one. Her wording is unchanged.
+- [x] BUGS-0926.2 Escape on HOME no longer returns to the title screen. `HubHome.Back` (Escape,
+  pad B, Android BACK) left the room and loaded `MainMenu`; it now opens the hamburger MENU, and a
+  second BACK closes it. BACK TO TITLE in that menu is the deliberate way out. Queued, BACK still
+  cancels the queue first. `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts it.
+- [x] BUGS-0926.3 Pressing the IN QUEUE button cancels the queue. `HubHome.Tick` used to make
+  the button non-interactable while queued; it now stays pressable and `HubHome.Play` calls
+  `CancelQueue` (the same call as the plate's X and BACK) unless a match was already found.
+  `HubFlowTests.QueuePlateMatchFoundCharacterSelectLobbyAndLoadingAreDrawn` queues again and
+  leaves through the button.
+- [x] BUGS-0926.4 The hamburger MENU popup no longer swaps HOME's background for the live court.
+  Cause: `HubSceneVideo` showed the HOME loop only while `TumpHub.AtHome` (HOME on top of the
+  stack), and the MENU is a popup pushed on top, so the loop hid and the live court showed
+  through the popup's scrim. It now reads `TumpHub.ShowingHome`, the top non-popup screen.
+  `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts the loop stays up under
+  the MENU.
+- [x] BUGS-0926.5 Lighting styles: Bright is renamed Standard, stays the default and moves to slot 1;
+  Classic is renamed Nostalgic and moves to slot 2 (the owner chose this reading of "make the
+  classic lighting style the default, rename it to Standard" when asked). The swap moves both
+  stored indices, so the stored field is now `GameSettings.LightingLook`; the old
+  `LightingStyle` field is read once by `Validate` through `LightingStyles.FromLegacy` (old 0
+  Classic to Nostalgic, old 1 Bright to Standard) and cleared to -1. Thumbnails renamed to
+  `standard.png` / `nostalgic.png` with their GUIDs kept. `WorldCourtCueTests.LightingStyleThumbnails`
+  asserts the migration both ways.
+- [x] BUGS-0926.6 The stamina arc beside the reticle drains from the top. `HudRing.FillFromEnd`
+  anchors the fill at the arc's lower end; only the stamina arc sets it, so cooldown sweeps and
+  the notched ultimate are unchanged. Not yet seen in a native match.
+
+### LOAD-1 · Loading screens end when the work ends, and warm everything first ⚠️ IN PROGRESS, 2026-09-27
+
+Owner, 2026-09-27: "make optimized loading so every shader and every shit will render and load
+in the loading screen, the loading screen is hardcoded to be 5 seconds. fix that, make it also
+it downloads or renders in the background in the loading screen".
+
+- [x] LOAD-1.1 The boot screen's random 5 to 15 s reading window is gone
+  (`LoadingPresentation.CanLeave` takes no clock). It leaves when the preload, the held menu load
+  and sign-in are done; an opened story card still holds it, because that is the player's press.
+- [x] LOAD-1.2 Boot warms every map's assets (`SceneFlow.Maps`), not only Eskinita and Bayan
+  Plaza, so Ilalim ng Tulay, Sa Bubong and the Lagoon no longer load cold on PLAY.
+- [x] LOAD-1.3 `Visual.ArenaPrewarm`: behind the arena curtain the match camera draws the loaded
+  arena offscreen from 20 viewpoints, one per frame, into a target of the screen's HDR/MSAA
+  format, so pipeline states, meshes and textures are on the GPU before the first visible frame.
+  `HubLoading` lifts when that finishes; its 2 s hold is gone.
+- Evidence (Mac player built from this work): boot loading finished after 2.53 s (it waited at
+  least 5 s before); a bot match's Eskinita curtain lifted after 1.60 s with the prewarm taking
+  0.84 s; Ilalim through HOME lifted after 1.47 s (prewarm 0.87 s). Not measured: the Windows
+  tournament machine, a phone (five warmed maps are held in memory by `WarmAssetCache`, which is
+  a memory question on Android), and whether a first-turn hitch is actually gone in play.
+  Tests (Mac PlayMode, total 2 failed 0): `HomeFlowTests.LoadingTipsStayInlineAndReadinessStillGatesTheTitle`
+  and `HubFlowTests.QueuePlateMatchFoundCharacterSelectLobbyAndLoadingAreDrawn`.
+
+### MERGE-0927 · Lighting branch merged into ASTRAReworks ✅ DONE, 2026-09-27
+
+Owner, 2026-09-27: "merge now to astrareworks". `merge/astra-lighting-2026-09-25` merged into
+ASTRAReworks at `a6133ccb` (59 commits ahead of where the branch was cut). One conflict, this
+file, where both sides added queue sections at the same place; both sets are kept whole.
+`HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` was already failing on ASTRAReworks:
+`fd63367e` hides HOME's skill tree door (`HeroLoadoutRules.SidegradesOpen` false) and the test still
+pressed it; the test now walks that door only while the tree is on. Evidence (Mac PlayMode on the
+merge): the hub door, queue/loading, map preview, lighting style card, thumbnail and boot loading
+tests, total 6, all passing after the test fix.
+
+### LIGHT-4 · Ilalim ng Tulay lighting changes with view angle and distance ⚠️ OPEN, 2026-09-27
+
+Owner report with four frames: the street loses its sun shadows and goes flat and bluish from
+some positions, and gets them back closer to the shops. Investigation and numbers are in
+[reports/ilalim-lighting-2026-09-27/](reports/ilalim-lighting-2026-09-27/README.md): across
+offscreen PlayMode renders and two real Mac player sweeps of the back buffer (392 poses each,
+one entering through HOME and the loading curtain), the sun's shadows were drawn at every pose.
+Eliminated: the match-end portrait's preview key light, fog, occlusion culling, graphics tier,
+lighting style and MSAA. Not reproduced. Next: the owner's frames are from editor Play mode, so
+check whether it happens in a built player; if editor-only, suspect the Scene view camera
+interleaving with `WorldLookPresentation`'s per-camera globals. The in-player probe is
+`-tp-shadowsweep DIR [-tp-shadowsweep-hub] [-tp-map ID]` (`Diagnostics.WorldShadowSweepProbe`).
+
+### LIGHT-5 · Map select washed out and brighter than the match ✅ FIXED, 2026-09-27
+
+Owner report with a HOST GAME frame: the map preview is far too bright and should match the
+game's actual lighting. Cause, measured on the real HOST GAME screen: the hub runs two
+`MapPreviewSurface`s and both load the selected map on their first frame. Each claimed its load
+with `GetSceneByName`, which returns the FIRST scene of that name, and one surface is also
+deactivated mid-load, which stops its coroutine. Either way one copy of the map was nobody's:
+never confined to the preview layer, never parked, its sun left on with every layer in its mask.
+That orphaned Eskinita sun lit every map previewed afterwards on top of the map's own sun, and a
+new orphan could appear each time the hub was rebuilt. Fix: the surface claims the exact scene its
+own load created, in the load's `completed` callback (so a stopped coroutine cannot orphan it),
+confines and parks it at once, and unloads it if the surface was destroyed.
+
+Evidence in [reports/map-preview-2026-09-27/](reports/map-preview-2026-09-27/): before/after for
+all five maps (preview mean luminance Eskinita 0.559 to 0.494, Bayan 0.644 to 0.594, Ilalim 0.693
+to 0.612, Sa Bubong 0.671 to 0.599, Lagoon 0.751 to 0.686), and the fixed preview beside the
+match camera rendered from the same pose (0.494/0.492, 0.594/0.579, 0.611/0.627, 0.599/0.600,
+0.686/0.692). The haze that remains in the distance is each map's own fog at that height.
+Tests (Mac PlayMode, total 3 failed 0): new `HubFlowTests.HostGameMapPreviewIsLitByTheShownMapsSunAlone`,
+`WorldCourtCueTests.MapPreviewShowsTheBrightLookAndHandsEachMapItsLightingBack`,
+`HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns`.
 
 ### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23
 
@@ -152,6 +1017,18 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
   Windows focused floor-choice case1/1 passed; actual current-map comparisons and
   grey inspected. Default0 retained, alternatives available without blocking maps.
   [Local integration evidence](reports/lighting-integration-2026-09-24/hull-floor/report.md).
+  SaBubong's preview court marks now use separate dark warm paint on only six
+  lines, following a fixed-camera three-colour study. Study/final native1/1 each,
+  actual colour/grey inspected. [Court-paint evidence](reports/map-by-map-refinement-2026-09-23/rooftop-court-contrast/report.md).
+  High-preview haze then compared60-300/90-380/120-480m;90-380selected for middle
+  facade identity and a softer far skyline. Saved roof profile and static card
+  updated, importer/GUID preserved. Actual final v2 colour/grey inspected,1/1.
+  [Haze/card evidence and corrected persistence mistake](reports/map-by-map-refinement-2026-09-23/rooftop-haze/report.md).
+  Lower-ground material/context assessment and integrated map gates remain open.
+  Lower roof streets now have restrained markings and two supported parked native
+  tricycles. Original asphalt/buildings/physics retained; native v2 1/1, actual
+  matched preview/street witness/grey inspected, card refreshed. One camera repair
+  used; visibility limits retained. [Street-context evidence](reports/map-by-map-refinement-2026-09-23/rooftop-street-context/report.md).
 - [x] LIGHT-1.7 The two Stage tests assert the bright look's own claims (`20c977e5`): applied rig,
   bright shade colour, haze past the court, court ground found; toon ramp measured 1.70:1 under the
   look against 1.95:1 authored, asserted inside 1.35 to 2. WorldCourtCueTests 3/3 on the Mac.
@@ -253,6 +1130,174 @@ Brainchild's cartoon towns. **Not registered**: it is not in `SceneFlow.Maps`, `
 rock rules, current layout, files, gameplay constraints, and the ordered plan in its § 8).
 Status: layout complete at cove v16 (`tools/author_lagoon_cove.py`), awaiting sign-off to texture;
 nothing modelled or in Unity yet. Supersedes REFINE-2.6 for this map.
+
+### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
+
+**Renamed 2026-09-26 (BUGS-0926.5):** Bright is now **Standard** (slot 1, the default) and Classic is
+now **Nostalgic** (slot 2). The entries below keep the names they were written with.
+
+Owner request (2026-09-25), with a PUBG Mobile Style row as the reference: a style setting in
+the graphics settings with three slots. Slot 1 is the lighting on `main`, slot 2 is this
+branch's bright look, slot 3 is a placeholder. Picking a style changes the game's lighting.
+
+**What slot 1 is, measured.** `main` has no world look at all. Every map's authored
+RenderSettings (fog, ambient trilight, skybox) and directional sun (colour, intensity) are
+identical on `main` (`85504a52`) and this branch, checked scene by scene for Bayan, Eskinita,
+Ilalim and SaBubong (the Lagoon is not on `main`). So slot 1 is the look at weight 0, which
+every consumer already treats as the scene's own lighting. It keeps this branch's newer map,
+material and court work; only the lighting is `main`'s.
+
+- [x] LIGHT-2.1 `Settings.LightingStyles` (Classic weight 0, Bright weight 1, a placeholder that
+  is not selectable), `GameSettings.LightingStyle` (default Bright, the look this branch already
+  draws for everybody, so an upgraded `settings.json` changes nothing; a stored placeholder
+  normalises to the default), and `WorldCueProfile.LightingWeight`, the product of the profile's
+  `WorldLighting` and the style. Every runtime read of `WorldLighting` goes through it (look,
+  contact shadows, world outline, recorded and ultimate views). Local only, never on the wire.
+- [x] LIGHT-2.2 The card row (`SettingsStyleCards`), second on the Graphics tab, three 376x211.5
+  cards with a caption and an accent ring on the pick. It applies live and joins save and
+  discard. Thumbnails in `Resources/UI/lighting-styles/`, rendered by
+  `WorldCourtCueTests.LightingStyleThumbnails` from one Eskinita camera, which also asserts that
+  Classic hands the authored ambient and fog back exactly.
+  Evidence (`daf427e2`, Mac, one PlayMode launch, total 3 failed 0):
+  `TumpNativeSettingsTests.LightingStyleCardsSwitchTheLookAndJoinSaveAndDiscard` presses a card
+  through a real raycast (live weight, ring, dirty session, discard restores);
+  `WorldCourtCueTests.LightingStyleThumbnails`; and the older
+  `FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting`, rerun because every look
+  consumer now reads the weight through the style. Frames in
+  [reports/light-2-2026-09-25/](reports/light-2-2026-09-25/): the row at 1920x1080 and the owner's
+  1600x680, a Classic pick, and both thumbnails. The first photograph put the third card 3 units
+  past the row rule; cards went from 384 to 376 (`daf427e2`). Not done: a native player build,
+  a pad walk of the row, and a look inside a live match's pause menu. That menu opens the same
+  `TumpSettingsView` through `ConvertedSettingsPanel`, so the row is there by construction.
+- [ ] LIGHT-2.3 Slot 3 content. The owner's call: the card shows an empty slot until then.
+
+### LIGHT-3 · Tone down the Bright style: colour-theory light, depth, blocky clouds ⚠️ IN PROGRESS, 2026-09-25
+
+Owner request (2026-09-25), with a PEAK frame of three climbers on sand as the reference: "tone
+down the brightness on the bright lighting style. it currently is too bright and the character
+glows", "overhaul the lighting if needed, remove the bright finish on all characters", "do not
+make the cloud realistic. do not go towards the route of realism". Classic is not touched.
+
+**Reference, measured from the owner's frame:**
+- The lit green body is (48,160,77), luma 130, and the khaki shirt is (239,194,97). Nothing on a
+  character is near white.
+- The darkest 1 per cent sits at luma 64.
+- Shadow on sand is a deeper, more saturated sand, (165,92,51).
+- The sky is a pale mint, (210,230,222), with low-contrast brushed clouds, and the far mountain
+  dissolves into teal air.
+
+Public write-ups of PEAK's lighting internals were not found (searched 2026-09-25), so the frame
+is the evidence.
+
+**Before, measured at `d27c9712`:**
+- The Eskinita cast shot had the yellow jacket at (255,225,5) and orange skin at (244,121,5), so
+  red was clipped, blue had collapsed and the colours read neon.
+- The Bright sky was a saturated poster blue, (131,184,241) on Bayan.
+- The current renders of both styles on all five maps (sky, wide, eye, stage, cast) are in
+  [reports/light-3-2026-09-25/before/](reports/light-3-2026-09-25/before/).
+
+**Causes found:**
+- The cast was lit at albedo x (1.34 sun + ~0.65 ambient), about 1.9 before the curve.
+- Vibrance 0.24 drove already saturated colours to their floor.
+- The bloom soft knee was a hard-coded 0.6 of the 1.7 threshold, so the chain collected every
+  value above 0.68, which is every sunlit body.
+- Three finishes sat on the cast: the cream upper rim, the metal glint, and the
+  distance-readability lift with its cream rim past 5 m.
+- The warm terminator band pushed red by 1.25.
+
+**Second owner direction, same day, after the first tone-down render:** the lighting looked flat,
+for three reasons in the owner's words. (1) "the textures are flat with no depth/normal map
+added". (2) "the lighting itself leans towards adjusting the shadows and brightness instead of
+adjusting the ambient hues", while PEAK uses "artistic color theory for shadow and light colors
+(leaning more towards a slight purple instead of a plain dark shadow for cooler areas, and a more
+fuzzy orange for warmer settings)"; look at illustrated environment concept art and stylised 3D
+environments. (3) "skybox should be either 2d hand painted designs, or maybe try a more blocky
+style of clouds where they are real 3d assets". On the first blocky clouds: "too small", "less
+volume-y", "too sharp", look at blocky cloud references. Then: "aren't they being rendered inside
+out?" They were (winding, below). The owner put character shading (cel against normal) off for
+now; the study is in the scratchpad and not part of this entry.
+
+**Research used:** the colour-theory sources agree that lit areas shift toward the light's hue
+and shadows away from it, and that warm light against cool shade makes depth. So the shade leans
+violet under a peach key. The blocky-cloud references (Minecraft Better Clouds, Photon's blocky
+mode, voxel cloud renders) read as volume through four things: a domed mass of many blocks,
+light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
+
+- [x] LIGHT-3.1 The tone-down (`8e7b9707`, black floor `a234bc4b`):
+  - the sun goes to about 1.08 and the ambient to about 0.8 of its old strength;
+  - vibrance drops to 0.14, and bloom to 0.05 at threshold 2.2 with a 0.2 knee (`BloomKnee`);
+  - `UpperRim` and `MetalHighlight` go to 0;
+  - the distance-readability lift fades out under the look (`Toon.shader`), while Classic keeps it.
+  Measured on the Eskinita cast shot, the share of neon-clipped cast pixels went from 7.2 to 2.8
+  per cent; on Bayan and the Lagoon it went from 4.8 to 0.
+- [x] LIGHT-3.2 Colour-theory light, per map:
+  - a warm key: peach, orange on the alley and rooftop, cream under the bridge and on the lagoon;
+  - the ambient sky term, which is every shadow's colour here, goes violet, the equator mauve and
+    the ground term a warm orange bounce;
+  - the cast's `ShadowTint` leans violet;
+  - the terminator is a fuzzy orange at constant luminance (0.22, adds no light);
+  - a split tone in the grade (`SplitTone` 0.18, `ShadowHue` violet, `HighlightHue` warm).
+  - `Lift` was being sent through `SetColor`, which converts it from sRGB, so the linear black
+    floor reached the shader at about a thirteenth of its authored value. It is a vector now, set
+    at 0.03 to 0.06 linear, a violet-tinted floor near PEAK's luma 64.
+- [x] LIGHT-3.3 Depth without a texture sweep (`WorldOutline`): inside corners take a violet
+  cavity (`CavityHue`, `CreaseShade` 0.45), and walls take ground occlusion toward it within 2.8 m
+  of the court (`GroundOcclusion` 0.28), from the depth the pass already reads. The cast is excluded
+  through the mask, and the Low tier skips it.
+  Not done, and why: real normal maps are per-asset art, and AGENTS.md forbids one texture or
+  noise sweep across every building (REFINE-2 does maps one at a time). If the owner still wants
+  normal detail after this, it belongs in each map's REFINE-2 pass.
+- [x] LIGHT-3.4 Blocky clouds (`BlockyClouds`, `BlockyCloud.shader`): 10 voxel cumulus per map,
+  50 to 85 m across in 5.5 m blocks, 100 to 150 m out and 40 to 64 m up, inside the 240 m far
+  plane. Each is filled from two or three dome lobes with a flat belly, and only outer faces are
+  drawn. The normals roll over the blocks, the crevices darken, the colour runs from a cream crown
+  to a lavender belly, and the edges melt into the sky's own colour at their elevation. The ring
+  drifts on the shared sky clock, and the build is seeded from the map name. The photo panorama
+  stays behind as a faint far layer (`PaintedCloudOpacity` 0.18, painted mip, `CloudPaint`).
+  Classic's sky is untouched. The shader is on `GameBuilder`'s always-included list.
+  ⚠️ The first two cuts had their triangle winding reversed (left-handed Unity read as
+  right-handed), so every cloud drew inside out. The owner caught it; the winding is fixed.
+- [ ] LIGHT-3.6 Ambient occlusion (owner 2026-09-25: "can we try adding ambient occlusion").
+  Screen-space, in `WorldOutline` passes 2 and 3 because the built-in pipeline has none and no
+  post-processing package is installed. The pass first ran at half resolution with twelve
+  cosine-weighted hemisphere samples round the depth-normals normal, 0.9 m radius, per-pixel
+  noise rotation, a range check and a fade out by 60 m. A 3x3 depth-aware blur follows, and the
+  composite leans the occluded part toward the violet `CavityHue`. `AmbientOcclusion` 0.8 on a steepened curve (the first cut at 0.6 moved the deepest corner 14 levels in 255). On the
+  Bright style's own gate (not Classic, not the Low tier, perspective cameras only). Rendered
+  with it off and on from the same cameras on all five maps, Mac, 1/1 each run, with the owner's
+  profile untouched (`-tp-profile`). The first cut darkened the right places, per the heat map
+  `Eskinita-stage-aomap.png`: feet, fences, house joins and props. It was too faint, so v2
+  steepened it. Sheets are in
+  [reports/light-3-2026-09-25/ambient-occlusion/](reports/light-3-2026-09-25/ambient-occlusion/).
+  v3, after the owner's playtest ("im not noticing any ao in the concave intersections of faces
+  like what minecraft does"): the kernel skims the surface at 8 to 40 degrees in four rings to 1 m,
+  nearer hits weigh more, and a 90 degree inside corner maps to full occlusion (about a third
+  darker on screen, toward violet). The cosine hemisphere had sent most samples straight out,
+  where they never reached the neighbouring face. v4 and v5, after the owner saw a noise
+  pattern in play. The rotation is now a 4x4 tile of sixteen angles, the blur averages exactly a 4x4
+  window with a Gaussian depth weight (the old 1/(0.001 + difference) weight hardly blurred sloped
+  surfaces), and the pass runs at full resolution.
+  v6, after the owner's playtest: "the lighting suddenly changes when i look in different
+  directions" (it went darker).
+  - Measured on Ilalim: the lighting state never changed with view direction, but from 90 to 225
+    degrees the AO darkened the whole frame (mean 107 against 131 with AO off at 180 degrees).
+  - Cause: a bridge pillar beside the camera. It is dissolved by NearFade in the colour pass, but
+    Unity's depth-normals prepass draws it solid with its internal shader, so it filled the texture
+    as a wall at the lens (depth about 0, one flat normal, about 80 per cent of the frame).
+    Isolated by switching renderer groups off one at a time; the LRT pillars alone.
+  - Fix: the AO and the ground occlusion ignore any depth-normals pixel nearer than
+    `NearFade.FadeStartMetres` (1.8 m).
+  - The ink edges and ground contact read the same texture and may still show this near a
+    dissolved prop. That is older than LIGHT-3 and not fixed here.
+  Open for the owner's playtest.
+- [ ] LIGHT-3.5 The owner's look at the final comparison. The rendering is done: `e26eeb04`,
+  Mac, one PlayMode launch, total 3 failed 0 (`FiveMapStageCapturesPreserveGeometryAndRestore
+  OriginalLighting`, `LightingStyleThumbnails` and a scratch same-camera review that was not
+  committed). Sheets in [reports/light-3-2026-09-25/after/](reports/light-3-2026-09-25/after/):
+  per map Classic, Bright before and Bright after for sky, wide, eye, stage and cast, plus
+  all-map sky and cast sheets. The Bright card thumbnail is re-rendered from the same launch.
+  Taste calls left to the owner: SaBubong's clouds run pink under its golden-hour palette, and
+  character shading (cel against normal) is deferred at the owner's word.
 
 ### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)
 
@@ -597,6 +1642,12 @@ scattered across all maps. Execute inside each map's existing refinement row.
   [Roof bird evidence](reports/map-by-map-refinement-2026-09-23/sabubong-bird-visits/report.md).
   All21 current ambient actors have map/species placement coverage. Ordinary-camera,
   replay and combined qualification remain open; Lagoon flight retained.
+  Replay integration follow-up: present-time animals no longer leak into retained
+  or victim-catch cameras; existing render flags restore after each draw. Native
+  baseline reproduced both leaks, final2/2 passed with actual paired/grey frames.
+  A can-model replacement stale-reference error exposed by the retained test is
+  also fixed, without changing its authored motion or authority.
+  [Replay isolation evidence](reports/map-by-map-refinement-2026-09-23/ambient-replay/report.md).
 - [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
   trace idle decisions and fix actual stalls; distinguish deliberate tactical waits.
   Initial Eskinita samples cover four bots in both modes. A reaction-clock defect
@@ -684,6 +1735,99 @@ this handoff. Preserve the newest merged animation work and remaining per-body c
   Explicit sequencing: finish current recovery work FIRST; log this for LATER.
   No ultimate research/implementation detour during the current feature. Preserve accepted costs/warnings/cohorts and reduced-setting fairness.
   No older task deleted; this pass must precede final integrated qualification.
+  - **Progress 2026-09-24 (cloud session):** research, per-hero plan and durations saved in
+    [ultimate-performances-2026-09-24](reports/ultimate-performances-2026-09-24/plan.md). Per-hero
+    lengths (2.8 to 4.2 s, cohort takes the longest, protocol 52), authored shots, stage walls,
+    lift and voice timing built for all seven heroes. Owner-pushed4f62fcc5c is under
+    local review. Runtime grounding assertions, black stage-wall normals and Nemu's
+    held-slipper/head intersection are fixed. Native seven-hero study1/1 and shared
+    phase6/6 passed; actual sequence sheets and grey comparisons inspected.
+    [Local findings and remaining critique](reports/cloud-integration-2026-09-24/findings.md).
+    Per-hero artistic refinement, real-peer timing and final acceptance remain open.
+    Sean's existing parol frame was weak against his orange chest in the actual
+    close shot. Its local material value, size and depth were refined without
+    changing his gesture or stage timing; same-camera color/grey inspected,
+    native introduction study1/1. [Sean evidence](reports/cloud-integration-2026-09-24/sean-parol/report.md).
+- [ ] **VOICE-1 Hero voice lines, owner 2026-09-24. OPEN: HUMAN RECORDINGS ONLY, NONE RECORDED YET.**
+  **Owner decision, 2026-09-24 (after hearing a Kokoro/Chatterbox synthetic audition):** *"remove
+  voices u made with ai lets js do humans"*. Every generated clip (the stylised babble and the
+  synthetic speech) and both generators were deleted; `HeroVoice.Play` now skips a line that has no
+  recording (no sound, no caption, no held room). Done looks like: the team records `docs/HUMAN.md`
+  Table E into `Resources/HeroVo/hvo_<id>.wav`, then the listening pass below. The history below is
+  kept as written.
+  Owner: *"can u give them all their own voice lines too or with actual audio and connect it to
+  their story and personality"*, *"voicelines wherein they interact with each other and voicelines
+  related to skills ... use valorant as reference"*. Research and decisions:
+  `docs/reports/voice-lines-2026-09-24/research.md`. Built: the script (`Core/HeroLines.cs`, 171
+  lines: two skills, the ultimate's ally and opponent readings, round start, tag, tagged, knockdown,
+  lead, win, and twelve biography-grounded exchanges), `HeroLinesTests` (7 cases, 637/637 green), a
+  per-hero stylised babble voice (`tools/generate_hero_voice.py`; a recording replaces a clip by file
+  name, and the generator never overwrites one), `Audio/HeroVoice` (per peer, no wire change,
+  announcer first, one line at a time, skill voice rests 14 s, customs do not speak as heroes) and an
+  optional `HeroLineCaptions` setting (off by default: VISION section 3). `docs/HUMAN.md` Table E is
+  the recording list. **Owner decision owed:** whether to record the lines (Table E) or accept a
+  synthetic speaking voice; a Piper TTS voice was available and deliberately not used, because
+  HUMAN.md treats voice casting as scored team work. **Owed on Windows:** a four-hero Hero Strike
+  match listened to from a thrower and from the taya (the two ultimate readings), the round-one
+  exchange, the announcer hand-off, and the caption row at 4:3 and on a phone.
+- [ ] **NATIVE-CHECK-1 Animation lane native pass, 2026-09-24. IN PROGRESS.** First Windows run of the
+  cloud animation branch. Found and fixed: `VfxShapes.TwoSided` and the Grand Coven curtain lit BLACK
+  (zero normals; every upright effect and most ultimate introductions); the introduction grounding
+  asserted "Key index out of range" on every match warm-up and left roots NaN (25 PlayMode fixtures);
+  Sean's and Zack's skill-1 wakes were invisible from eye height; Nemu's introduction filmed 0.35 s of
+  solid black (camera outside an 8 m ink wall, now 16 m) and cropped at 4:3 by 0.003. Gate before
+  the fixes: 520 cases, 451 passed, 60 failed (`tools/playmode_suite.py --gate`). **Still open:**
+  (1) The original Nemu held-slipper/head intersection stopped the seven-hero study before
+  Dante and Rafi. A dedicated held table now keeps the shoe at her hip; the local native
+  seven-hero study passed1/1 with zero intersections, and all seven sequences were inspected.
+  The later Nemu reveal and widened opening shot passed the focused 4:3 framing case.
+  [Local repair evidence](reports/cloud-integration-2026-09-24/findings.md).
+  (2) Re-run the gate on the final candidate, then run the remaining red
+  fixtures on clean `origin/ASTRAReworks` to split pre-existing from new (CarryTests, MatchRunTests,
+  TumpNativeResultTests rematch, StunFrostTests, ThrowAimIntegrationProbe, TutorialDefenderProbe,
+  HubSceneVideoTests, QueueCardLayoutProbe, TumpNativeFrontEndTests, NemuKitContractProbe possession).
+  (3) EditMode, pre-existing on ASTRAReworks (baseline run 2026-09-24):
+  `ThrowMotionTests` first-person grip at0.08m from lens is corrected at the actual
+  fingertip; three focused EditMode cases3/3 and native owner/body throw views1/1
+  passed. `ThrowEquipmentClearanceTests` still fails for190/190 synthetic pairs,
+  mostly35% right pektus. Real-input Bayan runs at75% and100% right spin, including
+  the largest alpombra, passed with0vertices in the head across charged samples.
+  Preserve the healthy body motion; reconcile the fixture representation at P7.
+  [Evidence](reports/cloud-integration-2026-09-24/throw-clearance/report.md).
+  (4) The `CastAndMotionReel` review of all casts and first-person
+  paths, `Checks.RunAll`, SKILL-TREE-1's pad and touch look, and the Windows and Android builds
+  (protocol 52) were not reached.
+- [ ] **SKILL-FX-1 Every skill's VFX, SFX and cast animation, owner 2026-09-24. IN PROGRESS.** Done 2026-09-24 (evidence in `docs/reports/skill-performances-2026-09-24/progress.md`): research and the per-skill plan; Grand Coven's cast, first-person path and circle; the cast-sheet audit and eleven body clips re-authored under an enforced head-pitch bound; one first-person hand path per cast (21); code-driven verbs checked. Still open: the other twenty skills' world VFX and cast SFX, which need `AbilityShowcaseProbe` stills on a Unity machine, one skill at a time against plan section 3.
+  Local2026-09-25: Flame Rush's pushed trail was retained after actual eye/corridor/
+  grey review. Ignition Cannon's generic slipper impact now has its own small
+  five-point fire read; v61 selected from staged native comparisons with ordinary
+  Slipper and Supernova. [Impact evidence](reports/cloud-integration-2026-09-24/skill-fx/ignition-impact.md).
+  Both skills still need live cast/audio/peer qualification; the other skills
+  remain open. Do not infer completion from staged geometry captures.
+  Owner: *"refine all their skills VFX SFX and animation and everything too. THOROUGHLY research how
+  other games that are good in roblox and or actual games like valorant or overwatch make skill
+  effects and try to author one that works in our world"*, and *"REFINE ANY OTHER ANIMATION THAT CAN
+  BE REFINED/STILL SUCKS"*. Research first (extend `reports/visual-research-2026-09-23/findings.md`
+  with Valorant, Overwatch and Roblox skill-effect practice), then audit all 21 skills one at a time:
+  cast body (`tools/author_hero_action.py` glb tables, Rafi's `HeroAbilityClips.Rafi.cs`), first
+  person (`ViewmodelArms.CastGesture.cs`), world VFX (`HeroHazards`, `AbilityVfx`) and cast/payload
+  SFX (`tools/generate_ability_audio.py`, `build_ability_audio.py`; sourced SFX rules in CLAUDE.md
+  section 6). Fix weak ones individually; no shared template.
+- [ ] **SKILL-TREE-1 Per-hero skill tree, owner 2026-09-24. IMPLEMENTED, LOCAL NATIVE ROUTE PASSED.** *"create
+  the ui and code for skill tree, ur supposed to unlock the other skills as u play the character more
+  but for now keep it all unlocked and make it easy to lock again (keeping it all unlocked for
+  testing)"*. The tree screen already existed on ASTRAReworks (`UI/Hub/HubSkillTree.cs`, from HOME
+  and the hero screen: branches per slot, cast-challenge progress, EQUIP), so it was not rebuilt.
+  Added: **`HeroLoadoutRules.LockSkillTree = false`, the one switch** (set `true` to lock again);
+  `ChallengesEnforced` follows it; `IsUnlocked(counters, variant, enforced)` overload so the locked
+  path stays asserted (HeroLoadoutTests 14/14); the tree shows UNLOCKED on available alternates
+  and still shows each challenge and count. Its mastery header now omits the internal "open for
+  testing" explanation; the locked path retains its earning instruction. The actual HOME-to-tree
+  and BACK PlayMode route passed 1/1 both before and after the copy fix at five viewport shapes,
+  with inspected screenshots and 25 percent greyscale thumbnails.
+  [Native report](reports/cloud-integration-2026-09-24/skill-tree/report.md).
+  Still owed: `LoadoutSurfaceProbe`, `TumpNativePickerTests`, physical pad and touch review,
+  real progression/account integration. These gates do not reopen the passed local screen route.
 - [ ] **REFINE-2.10 Integrated qualification.** One coherent candidate with specific
   evidence/limits; no blanket completion from screenshots or object-spawn tests.
   Include protocol51edge-climb real peers, dropped/late pose packets, reconnect/seat
@@ -1076,7 +2220,11 @@ Implementation order within UX-1:
   face; the XP track is a chunky inked bar; fiesta bunting drops in over the winner's banner
   (`HubScenery.Bunting`, still under reduced motion). Routes, names and focus paths unchanged.
   `TumpNativeResultTests`, `MatchFinishPresentationTests`, `PhaseSurfaceLayoutProbe`: 9 of 10,
-  the one red being the known `RematchActuallyLoadsTheChosenArena` gameplay-lane defect.
+  the one red being `RematchActuallyLoadsTheChosenArena`'s one-frame scene check.
+  Reconciled2026-09-24: offline loading is asynchronous; a bounded wait reached
+  BayanPlaza. Final fixture source retains the actual-map/ready checks; its final
+  green rerun stays P7 after the one repair exposed an invalid extra service-scene
+  assumption. [Exact evidence](reports/map-by-map-refinement-2026-09-23/rematch-reconciliation/report.md).
   Open: YOUR MATCH is still one line of text in a large card, and PLAYERS a sparse list.
 
 ### UI-REVIEW · Research-first UI and HUD refinement ⚠️ IN PROGRESS, 2026-09-23
@@ -1137,12 +2285,17 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
 - [x] Profile pictures: 20 composed from the real roster portraits (`tools/build_avatars.py`),
   `Avatars.Ids` and a self-sizing picker grid. `ui-batch3` HubFlowTests 4/4; picker and HOME
   door inspected. `avatar_rafi` rebuilt from the v7 portrait. Saved old ids still load.
-- [ ] Rafi model (his own builder only): saturated palette, voxel-stepped crest, nape hair,
-  slanted eyes without brows, small hip coil and float, decluttered waist. v7 lineup, turnaround
-  and head study inspected (evidence/rafi-v7-*). Owner of v7: "rafi looks weird". v8: hair frames
-  the face (locks over the wrap to just above the eyes, sideburns), one clean waist (no coil,
-  straight cream wrap, orange float), chunky cream soles; evidence/rafi-v8-*. His motion clips
-  re-baked from the new feet (RafiMotionAuthor). Owner approval of v8 still required.
+- [ ] Rafi model, ISLANDER REWORK 2026-09-25 (his own builder only). Owner: "looks so bad",
+  "research first on islanders", references a painted Visayan datu and Maui, then a concept
+  sheet, then Harbor. v10 to v40 (`Logs/rafi-v*`, shared picks in `Logs/rafi-share/`): bare
+  "a bit" muscular body, curly mane with a tied tail, muted sea-teal putong and bahag, silver
+  cuffs and a shark-tooth necklace on a chain, ink-only nonchalant face (relaxed gaze, chill mouth),
+  and a continuous batok tattoo from collar to bahag (chaklag, labid, dakag, inagdan, tud-tud;
+  brief section 7). His slide re-solved on his own mesh on every build (hair went 0.112 m through
+  the street; now 0.000). Portrait, avatar, FPP arms, authored clips and the HERO STRIKE poster
+  refreshed. Brief: `ArtSource/rafi/islander-rework-20260925/`;
+  method: `docs/CHARACTER_MODEL_METHOD.md`. Earlier v7 to v9 history is in that brief's
+  table. **Owner approval of v40 still required.**
 - [x] GAMEMODE posters: `Editor/ModeCardPoseAuthor.cs` renders the real models in their clips
   (1061 poses); `tools/build_mode_cards.py` composes PRACTICE, CUSTOM, CLASSIC, RANKED and the
   two choice cards; `HubCards.Art` shows a poster when one exists. Inspected at 1920x1080,
@@ -1156,7 +2309,8 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
   changed screens, 4:3 and 1600x680 checks, and the owner's look approval.
 - Known pre-existing failures, not caused here: `OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms`
   (retired "PLAY FAIR" copy), `TitlePlayCreditsAndSettingsReturnThroughNativeViews` (retired
-  title route), `RematchActuallyLoadsTheChosenArena` (rematch stays on Eskinita; gameplay lane).
+  title route), `RematchActuallyLoadsTheChosenArena` (stale synchronous wait;
+  actual Bayan load observed, final corrected-fixture rerun remains P7).
 
 ### P6 supersession decisions
 
@@ -1189,8 +2343,13 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
   integrated acceptance remain separately in P7.
 - [ ] **Native player shutdown crash.** v57 (and one earlier recorded runner result)
   exited with 0xC0000005 after the review had passed and `CodeReloadManager destroyed`
-  was logged. The verdict stands; the cause is unknown. Reproduce on the next build,
-  read the crash dump if one is written, fix or name the engine-side cause.
+  was logged. On2026-09-24 the exact v57 binary passed15stages on both backends:
+  D3D12 then crashed in D3D12Core1.618.1.0 at0xa1f5; D3D11 exited0 on RX6600.
+  Windows now explicitly prefers D3D11, retaining D3D12 second. Current-source
+  five-map D3D11 rendering passed1/1 and actual views/grey were inspected. This is
+  a machine-supported compatibility mitigation; internal engine/driver cause is
+  unproven. P7 still owes current-player default-backend, exit and performance.
+  [Native comparison and evidence](reports/map-by-map-refinement-2026-09-23/native-shutdown/report.md).
 - [ ] **Rafi B / lagoon C expansion, final integration.** Model, kit, map, v47 to v52
   evidence and the three-peer water checks are done (see the done list). Final coherent
   qualification remains in P7. Local deck sampling refinement is DONE:47deck

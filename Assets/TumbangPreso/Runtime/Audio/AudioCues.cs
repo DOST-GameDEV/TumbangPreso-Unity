@@ -101,6 +101,33 @@ namespace TumbangPreso.Audio
                 { "sfx_cast_rafi_current", -6.0f }, { "sfx_cast_rafi_mirror", -7.0f },
                 { "sfx_cast_rafi_breakwater", -7.0f }, { "sfx_rafi_intercept", -8.0f },
                 { "sfx_var_rafi_tightcut", -6.0f }, { "sfx_var_rafi_longwake", -7.0f },
+                // Amihan (2026-09-25, `tools/build_amihan_audio.py`). The gather is a sustained
+                // pressure rise under 2.5 s of telegraph and is mixed as a bed; the release is the
+                // loudest moment of her kit and is mixed as an ultimate payload.
+                { "sfx_ult_theme_amihan", -14.0f },
+                { "sfx_cast_amihan_dash", -6.0f }, { "sfx_cast_amihan_updraft", -7.0f },
+                { "sfx_amihan_updraft_settle", -10.0f }, { "sfx_cast_amihan_whirlwind", -6.0f },
+                { "sfx_cast_amihan_storm", -6.0f }, { "sfx_amihan_storm_gather", -9.0f },
+                { "sfx_amihan_storm_release", -3.0f },
+                // The two new statuses sound on the victim, mixed like `sfx_hex_afflict`: several
+                // can land inside a second.
+                { "sfx_status_whirled", -9.0f }, { "sfx_status_chilled", -11.0f },
+                // Paete (HERO-9, `tools/build_paete_audio.py`). The sentry burst is his biggest
+                // moment and is mixed as an ultimate payload; the command sits under the seedling's
+                // own fire; the roots on a victim are a status, three can land inside a second.
+                { "sfx_ult_theme_paete", -14.0f },
+                { "sfx_cast_paete_vine", -6.0f }, { "sfx_cast_paete_sprout", -8.0f },
+                { "sfx_cast_paete_command", -12.0f }, { "sfx_paete_sprout_land", -9.0f },
+                { "sfx_paete_sprout_fire", -7.0f }, { "sfx_paete_sprout_uproot", -6.0f },
+                { "sfx_cast_paete_thorns", -7.0f }, { "sfx_paete_thorn_burst", -6.0f },
+                { "sfx_cast_paete_sentry", -7.0f }, { "sfx_paete_sentry_burst", -3.0f },
+                { "sfx_paete_sentry_catch", -7.0f }, { "sfx_paete_sentry_wilt", -11.0f },
+                { "sfx_status_rooted", -9.0f }, { "sfx_paete_root_break", -8.0f },
+                { "sfx_paete_sentry_wake", -8.0f }, { "sfx_paete_sprout_ready", -14.0f },
+                // v5 (direction.md 5.14): each haul of the guardian crawling out of the court, three per cast, under the burst.
+                { "sfx_paete_sentry_heave", -6.0f },
+                // The roster rework (ABILITY-2, `tools/build_rework_audio.py`): one recipe per ability and status.
+                { "sfx_cast_cheska_coldfeet", -7.0f }, { "sfx_cast_cheska_frostbite", -7.0f }, { "sfx_cheska_frostbite_hit", -7.0f }, { "sfx_cast_cheska_glacialwall", -7.0f }, { "sfx_cheska_wall_crack", -7.0f }, { "sfx_cast_cheska_absolutezero", -4.0f }, { "sfx_cast_dante_shield", -7.0f }, { "sfx_cast_dante_boulder", -7.0f }, { "sfx_dante_boulder_hit", -7.0f }, { "sfx_cast_dante_barrier", -7.0f }, { "sfx_dante_barrier_reflect", -7.0f }, { "sfx_cast_dante_earthquake", -4.0f }, { "sfx_cast_nemu_terrify", -7.0f }, { "sfx_cast_nemu_fetch", -7.0f }, { "sfx_nemu_fetch_drop", -7.0f }, { "sfx_cast_nemu_guard", -7.0f }, { "sfx_nemu_guard_block", -7.0f }, { "sfx_cast_phaister_doll", -7.0f }, { "sfx_cast_phaister_pin", -7.0f }, { "sfx_cast_phaister_higop", -8.0f }, { "sfx_phaister_higop_open", -4.0f }, { "sfx_phaister_higop_close", -7.0f }, { "sfx_status_concussed", -9.0f }, { "sfx_status_feared", -9.0f }, { "sfx_status_disoriented", -9.0f }, { "sfx_status_vulnerable", -9.0f }, { "sfx_paete_root_vein", -7.0f },
                 { "sfx_hex_cast",     -4.0f },
 
                 // ⚠️ THE BREAK IS MIXED LIKE A STATUS, NOT AN EVENT, for the same reason
@@ -126,6 +153,8 @@ namespace TumbangPreso.Audio
                 { "sfx_sky_emberfall", -12.0f },
                 { "sfx_sky_whiteout", -13.0f },
                 { "sfx_sky_seance",   -14.0f },
+                { "sfx_sky_monsoon",  -12.0f },
+                { "sfx_sky_canopy",   -13.0f },
 
                 { "sfx_stun_break",  -9.0f },
                 { "sfx_blink_arrive", -4.0f },
@@ -367,6 +396,21 @@ namespace TumbangPreso.Audio
             "sfx_cast_rafi_current", "sfx_cast_rafi_mirror", "sfx_cast_rafi_breakwater", "sfx_rafi_intercept",
             "sfx_ult_theme_rafi", "sfx_var_rafi_tightcut", "sfx_var_rafi_longwake",
             "sfx_step_deck", "sfx_swim_stroke", "sfx_lagoon_lap",
+            // Amihan, 2026-09-25: one recipe per ability and per status (`tools/build_amihan_audio.py`).
+            "sfx_cast_amihan_dash", "sfx_cast_amihan_updraft", "sfx_amihan_updraft_settle",
+            "sfx_cast_amihan_whirlwind", "sfx_cast_amihan_storm", "sfx_amihan_storm_gather",
+            "sfx_amihan_storm_release", "sfx_ult_theme_amihan", "sfx_sky_monsoon",
+            "sfx_status_whirled", "sfx_status_chilled",
+            // Paete, HERO-9: one recipe per ability, per status and per stage of the sentry
+            // (`tools/build_paete_audio.py`). Wood and leaf, never Amihan's filtered air.
+            "sfx_cast_paete_vine", "sfx_cast_paete_sprout", "sfx_cast_paete_command",
+            "sfx_paete_sprout_land", "sfx_paete_sprout_fire", "sfx_paete_sprout_uproot",
+            "sfx_cast_paete_thorns", "sfx_paete_thorn_burst", "sfx_cast_paete_sentry",
+            "sfx_paete_sentry_burst", "sfx_paete_sentry_catch", "sfx_paete_sentry_wilt",
+            "sfx_status_rooted", "sfx_paete_root_break", "sfx_ult_theme_paete", "sfx_sky_canopy",
+            "sfx_paete_sentry_wake", "sfx_paete_sprout_ready", "sfx_paete_sentry_heave",
+            // The roster rework (ABILITY-2): `tools/build_rework_audio.py`.
+            "sfx_cast_cheska_coldfeet", "sfx_cast_cheska_frostbite", "sfx_cheska_frostbite_hit", "sfx_cast_cheska_glacialwall", "sfx_cheska_wall_crack", "sfx_cast_cheska_absolutezero", "sfx_cast_dante_shield", "sfx_cast_dante_boulder", "sfx_dante_boulder_hit", "sfx_cast_dante_barrier", "sfx_dante_barrier_reflect", "sfx_cast_dante_earthquake", "sfx_cast_nemu_terrify", "sfx_cast_nemu_fetch", "sfx_nemu_fetch_drop", "sfx_cast_nemu_guard", "sfx_nemu_guard_block", "sfx_cast_phaister_doll", "sfx_cast_phaister_pin", "sfx_cast_phaister_higop", "sfx_phaister_higop_open", "sfx_phaister_higop_close", "sfx_status_concussed", "sfx_status_feared", "sfx_status_disoriented", "sfx_status_vulnerable", "sfx_paete_root_vein",
 
             // ⚠️ THE TWELVE ALTERNATES. A sidegrade changes what the power does, so it changes
             // what the power sounds like doing it: Long Tremor sweeps feet instead of throwing

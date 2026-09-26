@@ -256,7 +256,7 @@ namespace TumbangPreso.Visual
                 return Mathf.Abs(dt) < 0.0001f ? 0.0f : (keys[i + 1].y - keys[i - 1].y) / dt;
             }
 
-            public AnimationClip Build(bool legacy = false)
+            public AnimationClip Build(bool legacy = false, AnimationCurve[] rootPosition = null)
             {
                 var clip = new AnimationClip
                 {
@@ -265,9 +265,9 @@ namespace TumbangPreso.Visual
                     wrapMode = WrapMode.Once,
                 };
 
-                clip.SetCurve(_paths["root"], typeof(Transform), "localPosition.x", Curve(_rootX));
-                clip.SetCurve(_paths["root"], typeof(Transform), "localPosition.y", Curve(_rootY));
-                clip.SetCurve(_paths["root"], typeof(Transform), "localPosition.z", Curve(_rootZ));
+                clip.SetCurve(_paths["root"], typeof(Transform), "localPosition.x", rootPosition != null ? rootPosition[0] : Curve(_rootX));
+                clip.SetCurve(_paths["root"], typeof(Transform), "localPosition.y", rootPosition != null ? rootPosition[1] : Curve(_rootY));
+                clip.SetCurve(_paths["root"], typeof(Transform), "localPosition.z", rootPosition != null ? rootPosition[2] : Curve(_rootZ));
 
                 foreach (string bone in Bones)
                 {
@@ -332,6 +332,25 @@ namespace TumbangPreso.Visual
             dict["hero-rafi-cut"] = BuildRafiCut(paths);
             dict["hero-rafi-feint"] = BuildRafiFeint(paths);
             dict["hero-rafi-breakwater"] = BuildRafiBreakwater(paths);
+
+            // AMIHAN (2026-09-25). Her direction is the spiral; see `HeroAbilityClips.Amihan.cs`.
+            dict["hero-amihan-dash"] = BuildAmihanDash(paths);
+            dict["hero-amihan-updraft"] = BuildAmihanUpdraft(paths);
+            dict["hero-amihan-hover"] = BuildAmihanHover(paths);
+            dict["hero-amihan-whirlwind"] = BuildAmihanWhirlwind(paths);
+            dict["hero-amihan-storm"] = BuildAmihanStorm(paths);
+
+            // PAETE (HERO-9). His direction is the bend and the snap-back; see `HeroAbilityClips.Paete.cs`.
+            dict["hero-paete-vine"] = BuildPaeteVine(paths);
+            dict["hero-paete-sprout"] = BuildPaeteSprout(paths);
+            dict["hero-paete-command"] = BuildPaeteCommand(paths);
+            dict["hero-paete-thorns"] = BuildPaeteThorns(paths);
+            dict["hero-paete-sentry"] = BuildPaeteSentry(paths);
+            // What any body does against his kit; a player loads the baked `RootedMotion` set instead.
+            dict[RootedMotion.Struggle] = BuildRootedStruggle(paths);
+            dict[RootedMotion.Heave] = BuildPlantHeave(paths);
+            dict[RootedMotion.Breakout] = BuildRootBreakout(paths);
+            dict[RootedMotion.Feared] = BuildFearedFlee(paths);
             return dict;
         }
 

@@ -141,6 +141,8 @@ namespace TumbangPreso.UI
             // player in Breath of the Wild: close enough to read without looking away,
             // clear of the aim line, and gone the moment it is full.
             _staminaArc.StartDegrees = 38; _staminaArc.SpanDegrees = 76; _staminaArc.Thickness = 5;
+            // ⚠️ Drains from the top: the fill is anchored at the arc's lower end (see `FillFromEnd`).
+            _staminaArc.FillFromEnd = true;
             _staminaArc.Track = new Color(0, 0, 0, .42f); _staminaArc.color = CourtPresentationPalette.Gold;
             _staminaArc.raycastTarget = false;
         }

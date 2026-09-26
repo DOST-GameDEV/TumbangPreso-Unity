@@ -192,12 +192,19 @@ namespace TumbangPreso.Abilities
         private bool _reservedForIntroduction;
         public bool ReservedForIntroduction => _reservedForIntroduction;
         protected bool HadSharedIntroduction { get; private set; }
+        /// <summary>
+        /// ⚠️ THE HERO'S OWN LINE ALREADY PLAYED INSIDE THE INTRODUCTION (REFINE-2.11: Phaister laughs
+        /// while she laughs). The live activation must not say it a second time. Set per peer by
+        /// `SharedUltimatePhase.Complete` from what that peer's view actually played, so a peer whose
+        /// view failed still hears the line from the live cast.
+        /// </summary>
+        internal bool IntroductionVoiced { get; set; }
         public bool IsReady => !_reservedForIntroduction && (UsesCharges ? ChargesRemaining > 0 : CooldownRemaining <= 0.0f);
         internal void ReserveForIntroduction()
         {
             if (_reservedForIntroduction) return;
             _reservedForIntroduction = true;
-            HadSharedIntroduction = false;
+            HadSharedIntroduction = false; IntroductionVoiced = false;
             if (UsesCharges) ChargesRemaining = Mathf.Max(0, ChargesRemaining - 1);
             else CooldownRemaining = Cooldown;
         }
@@ -308,6 +315,16 @@ namespace TumbangPreso.Abilities
         public bool HoldToAim { get; protected set; }
 
         /// <summary>
+        /// ⚠️ A HOLD-TO-AIM CAST PLACED WHERE THE PLAYER LOOKS, NOT BY HOW LONG THEY HOLD (Paete's MAKILING'S EMBRACE, owner,
+        /// 2026-09-27: *"make it so that paete can choose as well where his ult will be cast"*, then *"does the hhold to aim resemble
+        /// the groot reference"*). Groot's walls in Marvel Rivals are placed where the crosshair meets the ground, with the preview
+        /// on it before you commit; the shared hold slides the ring out along the facing by hold time instead. With this set the ring
+        /// sits where the camera's sight line meets the court (`CameraRig.TryLookGround`), kept between `AimMinRange` and
+        /// `AimMaxRange` from the caster, and the release sends that spot as the cast's aim, so every peer lands it in the same place.
+        /// </summary>
+        public bool AimsWhereLooking { get; protected set; }
+
+        /// <summary>
         /// How long a hold may last before the ability fires on its own. Seconds.
         /// <b>Zero means it never fires on its own: only the release casts it.</b>
         ///
@@ -409,9 +426,10 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Turns this ability into a hold-to-aim cast. Call from a kit's constructor.</summary>
         protected void AimByHolding(float minRange, float maxRange,
-                                    float rampSeconds = 0.55f, float maxHoldSeconds = 1.10f)
+                                    float rampSeconds = 0.55f, float maxHoldSeconds = 1.10f, bool whereLooking = false)
         {
             HoldToAim = true;
+            AimsWhereLooking = whereLooking;
             AimMinRange = minRange;
             AimMaxRange = maxRange;
             AimRampSeconds = rampSeconds;
@@ -818,6 +836,17 @@ namespace TumbangPreso.Abilities
             => context.Position + context.Forward * TelegraphRange;
 
         public virtual bool CanReactivate => false;
+
+        /// <summary>
+        /// ⚠️ WHETHER A SECOND PRESS WOULD DO ANYTHING RIGHT NOW (owner, 2026-09-26, of Paete's BAKYA BLOOM: *"bug found unli
+        /// cast for e, supposed to have cooldown"*). A reactivating ability whose second press has nothing to act on (a pod with
+        /// no clog grown yet) answers false: the press is refused as NOT YET, so it plays no gesture and no sound and sends no
+        /// request, instead of looking like an endless cast. True by default, so every other ability is unchanged.
+        /// </summary>
+        public virtual bool ReactivateReady => true;
+
+        /// <summary>Seconds until <see cref="ReactivateReady"/> turns true, for the deck's label (0 when it is ready).</summary>
+        public virtual float ReactivateReadyIn => 0.0f;
 
         public virtual void Reactivate(AbilityContext ctx)
         {

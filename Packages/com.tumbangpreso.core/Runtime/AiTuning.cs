@@ -157,6 +157,14 @@ namespace TumbangPreso.Core
     /// </summary>
     public static class AiTuning
     {
+        // Amihan (2026-09-25). Reaches derived from her kit rather than picked: the dash covers
+        // `AmihanRules.QuickDashDistance` and hits within `QuickDashHitRadius` of its line; the gale
+        // rolls `WhirlwindTravel` but a carrier more than 8 m out has time to see it and step off.
+        public const float AmihanDashReach = AmihanRules.QuickDashDistance - 0.5f;
+        public const float AmihanGaleReach = 8.0f;
+        /// <summary>How close the taya has to be before Updraft is worth its 45 s.</summary>
+        public const float AmihanUpdraftThreat = 5.0f;
+
         public static readonly IReadOnlyDictionary<Difficulty, AiPersonality> Tiers =
             new Dictionary<Difficulty, AiPersonality>
             {

@@ -23,13 +23,46 @@ namespace TumbangPreso.Visual
     /// can snaps to its real state the moment that arrives. A protocol change was not worth it (`CLAUDE.md`
     /// § 4a, crossplay: both builds would have to ship together).
     /// </summary>
+    /// <summary>
+    /// ⚠️⚠️ THE ONE SHAPE OF THE RAISE, SHARED BY THE BODY AND THE FIRST-PERSON VIEW SO THEY AGREE.
+    ///
+    /// 🧑 2026-09-26: *"i want u to improve animation of raising can too when its down"*, *"they should
+    /// crouch first and put it up"*. The 2026-09-24 raise bowed at the waist and rose with the channel,
+    /// so the body reached for a can on the road from standing height. Now it is three acts across the
+    /// channel's progress:
+    ///  * CROUCH (0 to 0.18): the body drops into a squat over the can. These rigs have no knees, so
+    ///    the squat is the legs splaying out (`CrouchSpreadDegrees`) with the root lowered by exactly
+    ///    what that splay costs in hip height, which keeps the feet on the road;
+    ///  * GRIP (to 0.30): held low, both hands on the can;
+    ///  * LIFT (0.30 to 0.85): standing back up WITH it, the hands rising as the can tilts upright;
+    ///  * SET (0.85 to 1): the short press that plants it.
+    /// The first-person camera takes the same crouch as a drop of the eye and a look down at the can
+    /// (`CameraRig.ApplyFpp`), so the player feels the squat as well as seeing hands.
+    /// </summary>
+    public static class CanRaiseShape
+    {
+        public const float CrouchSpreadDegrees = 24f;
+        /// <summary>How far the first-person eye drops at the bottom of the squat, metres.</summary>
+        public const float FppEyeDrop = .34f;
+        /// <summary>How far the first-person view tips down toward the can at the bottom, degrees.</summary>
+        public const float FppLookDown = 16f;
+
+        public static float Crouch(float p) =>
+            Mathf.SmoothStep(0, 1, Mathf.InverseLerp(0f, .18f, p)) * (1f - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.30f, .85f, p)));
+        public static float Rise(float p) => Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.30f, .85f, p));
+        public static float Press(float p) => p > .85f ? Mathf.Sin(Mathf.InverseLerp(.85f, 1f, p) * Mathf.PI) : 0;
+    }
+
     public sealed partial class CharacterAnimator
     {
         /// <summary>A relayed reach older than this means the channel has stopped.</summary>
         public const float ResetRelayGap = .6f;
 
         private float _raiseStart = -100, _raiseSeen = -100, _raiseWeight;
-        private Transform _rrTorso, _rrHead, _rrArmR, _rrArmL;
+        private Transform _rrTorso, _rrHead, _rrArmR, _rrArmL, _rrRoot, _rrLegR, _rrLegL;
+        private Vector3 _rrRootRestPos;
+        private Quaternion _rrLegRRest, _rrLegLRest;
+        private float _rrLegLength = -1;
         private Vector3 _rrAlongR = Vector3.right, _rrAlongL = Vector3.left;
         private bool _rrResolved, _rrApplied;
         private Quaternion _rrTorsoRest, _rrHeadRest, _rrArmRRest, _rrArmLRest;
@@ -38,15 +71,16 @@ namespace TumbangPreso.Visual
         public float ResetRaiseProgress { get; private set; }
 
         /// <summary>Called from `PlayAction("grab")`: on a taya beside a downed can, a reach is a raise.</summary>
-        private void NoteResetGesture()
+        private bool NoteResetGesture()
         {
-            if (_motor == null || !_motor.IsDefender) return;
+            if (_motor == null || !_motor.IsDefender) return false;
             var lata = GameServices.Round?.Lata;
-            if (lata == null || lata.IsUpright) return;
+            if (lata == null || lata.IsUpright) return false;
             Vector3 a = _motor.transform.position, b = lata.transform.position; a.y = b.y = 0;
-            if (Vector3.Distance(a, b) > Core.Balance.InteractionRadius + .5f) return;
+            if (Vector3.Distance(a, b) > Core.Balance.InteractionRadius + .5f) return false;
             if (Time.time - _raiseSeen > ResetRelayGap) _raiseStart = Time.time;
             _raiseSeen = Time.time;
+            return true;
         }
 
         private float ResetProgressNow()
@@ -64,10 +98,13 @@ namespace TumbangPreso.Visual
             if (!_rrApplied) return;
             _rrTorso.localRotation = _rrTorsoRest; _rrArmR.localRotation = _rrArmRRest; _rrArmL.localRotation = _rrArmLRest;
             if (_rrHead != null) _rrHead.localRotation = _rrHeadRest;
+            if (_rrRoot != null) _rrRoot.localPosition = _rrRootRestPos;
+            if (_rrLegR != null) _rrLegR.localRotation = _rrLegRRest;
+            if (_rrLegL != null) _rrLegL.localRotation = _rrLegLRest;
             _rrApplied = false;
         }
 
-        private void ClearResetRaise() { RestoreResetRaise(); _rrTorso = _rrHead = _rrArmR = _rrArmL = null; _rrResolved = false; _raiseWeight = 0; ResetRaiseProgress = 0; }
+        private void ClearResetRaise() { RestoreResetRaise(); _rrTorso = _rrHead = _rrArmR = _rrArmL = _rrRoot = _rrLegR = _rrLegL = null; _rrLegLength = -1; _rrResolved = false; _raiseWeight = 0; ResetRaiseProgress = 0; }
 
         private void ApplyResetRaise()
         {
@@ -90,25 +127,46 @@ namespace TumbangPreso.Visual
                         else if (b.name == "head" && _rrHead == null) _rrHead = b;
                         else if (b.name == "arm-right" && _rrArmR == null) { _rrArmR = b; _rrAlongR = AlongArm(binds, i, _rrAlongR); }
                         else if (b.name == "arm-left" && _rrArmL == null) { _rrArmL = b; _rrAlongL = AlongArm(binds, i, _rrAlongL); }
+                        else if (b.name == "root" && _rrRoot == null) _rrRoot = b;
+                        else if (b.name == "leg-right" && _rrLegR == null) _rrLegR = b;
+                        else if (b.name == "leg-left" && _rrLegL == null) _rrLegL = b;
                     }
                 }
                 _rrResolved = true;
             }
             if (_rrTorso == null || _rrArmR == null || _rrArmL == null) return;
 
-            // The shape of the raise against progress: bow in, rise with the can, then the press.
+            // The shape of the raise against progress (`CanRaiseShape`): crouch, grip, lift, set.
             float p = progress > 0 ? progress : 1;
-            float rise = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.12f, .85f, p));
-            float press = p > .85f ? Mathf.Sin(Mathf.InverseLerp(.85f, 1f, p) * Mathf.PI) : 0;
-            float bow = Mathf.Lerp(50, 28, rise) + 10 * press;
-            // Hands on the can: low and forward, lifting as it comes up, pushed back down in the press.
-            float handY = Mathf.Lerp(-.78f, -.38f, rise) - .25f * press;
-            var hand = new Vector3(.12f, handY, Mathf.Lerp(.62f, .9f, rise));
+            float crouch = CanRaiseShape.Crouch(p), rise = CanRaiseShape.Rise(p), press = CanRaiseShape.Press(p);
+            // Squatting does most of the reaching now, so the waist bends less than the old 50.
+            float bow = Mathf.Lerp(30, 12, rise) + 12 * crouch + 10 * press;
+            // Hands on the can: down at the road in the squat, lifting with it, pushed down in the press.
+            float handY = Mathf.Lerp(-.62f, -.30f, rise) - .25f * press;
+            var hand = new Vector3(.12f, handY, Mathf.Lerp(.58f, .86f, rise));
 
             float w = _raiseWeight;
             _rrTorsoRest = _rrTorso.localRotation; _rrArmRRest = _rrArmR.localRotation; _rrArmLRest = _rrArmL.localRotation;
             if (_rrHead != null) _rrHeadRest = _rrHead.localRotation;
+            if (_rrRoot != null) _rrRootRestPos = _rrRoot.localPosition;
+            if (_rrLegR != null) _rrLegRRest = _rrLegR.localRotation;
+            if (_rrLegL != null) _rrLegLRest = _rrLegL.localRotation;
             _rrApplied = true;
+
+            // THE SQUAT. Each leg splays out from the hip; a straight leg of length L tipped by a
+            // loses L(1 - cos a) of height, and the root drops exactly that so the feet stay planted
+            // on the road rather than sinking or floating. L is measured once from this rig's own
+            // standing pose (hip height above the body's feet).
+            if (_rrRoot != null && _rrLegR != null && _rrLegL != null)
+            {
+                if (_rrLegLength < 0) _rrLegLength = Mathf.Max(.2f, _rrLegR.position.y - transform.position.y);
+                float spread = CanRaiseShape.CrouchSpreadDegrees * crouch * w;
+                float legSide = transform.InverseTransformPoint(_rrLegR.position).x >= 0 ? 1f : -1f;
+                _rrLegR.rotation = Quaternion.AngleAxis(spread * legSide, transform.forward) * Quaternion.AngleAxis(-8f * crouch * w, transform.right) * _rrLegR.rotation;
+                _rrLegL.rotation = Quaternion.AngleAxis(-spread * legSide, transform.forward) * Quaternion.AngleAxis(-8f * crouch * w, transform.right) * _rrLegL.rotation;
+                float drop = _rrLegLength * (1f - Mathf.Cos(spread * Mathf.Deg2Rad)) + _rrLegLength * (1f - Mathf.Cos(8f * crouch * w * Mathf.Deg2Rad));
+                _rrRoot.position -= Vector3.up * drop;
+            }
             _rrTorso.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.AngleAxis(bow, transform.right), w) * _rrTorso.rotation;
             // The head looks at the can rather than following the chest all the way down.
             if (_rrHead != null) _rrHead.rotation = Quaternion.Slerp(Quaternion.identity, Quaternion.AngleAxis(-bow * .35f, transform.right), w) * _rrHead.rotation;

@@ -190,7 +190,7 @@ namespace TumbangPreso.CameraSystem
                     {
                         float bottom=WorldContactPresentation.ModelBottom(item.Copy.Renderers,item.Bones[0].position.y);
                         item.Contact.Place(item.Bones[0].position,bottom,player?new Vector2(.45f,.45f):shoe?new Vector2(.24f,.15f):new Vector2(.25f,.22f),
-                            WorldCueProfile.Current.WorldLighting*(shoe?.16f:.20f));
+                            WorldCueProfile.LightingWeight*(shoe?.16f:.20f));
                     }
                 }
                 if(item.Track.Kind==RecordedObjectKind.Can)
@@ -265,6 +265,9 @@ namespace TumbangPreso.CameraSystem
             foreach(var field in RecordedSpecialFields.Capture())if(field.Source!=null)Hide(field.Source);
             foreach(var effect in Object.FindObjectsByType<VfxRenderTag>())if(!effect.transform.IsChildOf(_stage.transform))Hide(effect.gameObject);
             foreach(var callout in Object.FindObjectsByType<ComicPopup>())Hide(callout.gameObject);
+            // Animals use live private schedules, not recorded pose tracks.
+            // Keep present-time visits out of past events; restore after render.
+            foreach(var life in Object.FindObjectsByType<AmbientLife>())Hide(life.gameObject);
             foreach(var field in _fields.Values)field.Visible(true);
             foreach(var trail in _trails.Values)trail.Visible(true);
             foreach(var actor in GameServices.Round.Players)if(actor!=null){Hide(actor.gameObject);var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet!=null)Hide(pet.gameObject);}
