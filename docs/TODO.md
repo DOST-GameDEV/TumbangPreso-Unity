@@ -145,6 +145,29 @@ live match (.6); both want a look in the owner's editor.
   anchors the fill at the arc's lower end; only the stamina arc sets it, so cooldown sweeps and
   the notched ultimate are unchanged. Not yet seen in a native match.
 
+### LOAD-1 · Loading screens end when the work ends, and warm everything first ⚠️ IN PROGRESS, 2026-09-27
+
+Owner, 2026-09-27: "make optimized loading so every shader and every shit will render and load
+in the loading screen, the loading screen is hardcoded to be 5 seconds. fix that, make it also
+it downloads or renders in the background in the loading screen".
+
+- [x] LOAD-1.1 The boot screen's random 5 to 15 s reading window is gone
+  (`LoadingPresentation.CanLeave` takes no clock). It leaves when the preload, the held menu load
+  and sign-in are done; an opened story card still holds it, because that is the player's press.
+- [x] LOAD-1.2 Boot warms every map's assets (`SceneFlow.Maps`), not only Eskinita and Bayan
+  Plaza, so Ilalim ng Tulay, Sa Bubong and the Lagoon no longer load cold on PLAY.
+- [x] LOAD-1.3 `Visual.ArenaPrewarm`: behind the arena curtain the match camera draws the loaded
+  arena offscreen from 20 viewpoints, one per frame, into a target of the screen's HDR/MSAA
+  format, so pipeline states, meshes and textures are on the GPU before the first visible frame.
+  `HubLoading` lifts when that finishes; its 2 s hold is gone.
+- Evidence (Mac player built from this work): boot loading finished after 2.53 s (it waited at
+  least 5 s before); a bot match's Eskinita curtain lifted after 1.60 s with the prewarm taking
+  0.84 s; Ilalim through HOME lifted after 1.47 s (prewarm 0.87 s). Not measured: the Windows
+  tournament machine, a phone (five warmed maps are held in memory by `WarmAssetCache`, which is
+  a memory question on Android), and whether a first-turn hitch is actually gone in play.
+  Tests (Mac PlayMode, total 2 failed 0): `HomeFlowTests.LoadingTipsStayInlineAndReadinessStillGatesTheTitle`
+  and `HubFlowTests.QueuePlateMatchFoundCharacterSelectLobbyAndLoadingAreDrawn`.
+
 ### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23
 
 Integrated into ASTRAReworks on2026-09-24at owner request, through lighting branch
