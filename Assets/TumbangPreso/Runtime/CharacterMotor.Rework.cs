@@ -148,6 +148,10 @@ namespace TumbangPreso
         private void RaiseStatus(StatusKind kind)
         {
             StatusGained?.Invoke(this, kind);
+            // Each status sounds on the victim, on every peer (this runs off the replicated timers too).
+            string cue = kind == StatusKind.Concussed ? "sfx_status_concussed" : kind == StatusKind.Feared ? "sfx_status_feared"
+                       : kind == StatusKind.Disoriented ? "sfx_status_disoriented" : kind == StatusKind.Vulnerable ? "sfx_status_vulnerable" : null;
+            if (cue != null) GameServices.Audio?.PlayAtVaried(cue, transform.position, 0.95f, 1.05f, 0.85f);
             // The hallucinations live on the victim's own screen only (owner: *"some of the shit they see
             // are real"*): the local human's peer draws them, nobody else does.
             if (kind == StatusKind.Disoriented && IsLocalHuman) Visual.DisorientedHallucinations.Begin(this);

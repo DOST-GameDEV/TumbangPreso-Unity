@@ -124,6 +124,8 @@ namespace TumbangPreso.Audio
                 { "sfx_paete_sentry_catch", -7.0f }, { "sfx_paete_sentry_wilt", -11.0f },
                 { "sfx_status_rooted", -9.0f }, { "sfx_paete_root_break", -8.0f },
                 { "sfx_paete_sentry_wake", -8.0f }, { "sfx_paete_sprout_ready", -14.0f },
+                // The roster rework (ABILITY-2, `tools/build_rework_audio.py`): one recipe per ability and status.
+                { "sfx_cast_cheska_coldfeet", -7.0f }, { "sfx_cast_cheska_frostbite", -7.0f }, { "sfx_cheska_frostbite_hit", -7.0f }, { "sfx_cast_cheska_glacialwall", -7.0f }, { "sfx_cheska_wall_crack", -7.0f }, { "sfx_cast_cheska_absolutezero", -4.0f }, { "sfx_cast_dante_shield", -7.0f }, { "sfx_cast_dante_boulder", -7.0f }, { "sfx_dante_boulder_hit", -7.0f }, { "sfx_cast_dante_barrier", -7.0f }, { "sfx_dante_barrier_reflect", -7.0f }, { "sfx_cast_dante_earthquake", -4.0f }, { "sfx_cast_nemu_terrify", -7.0f }, { "sfx_cast_nemu_fetch", -7.0f }, { "sfx_nemu_fetch_drop", -7.0f }, { "sfx_cast_nemu_guard", -7.0f }, { "sfx_nemu_guard_block", -7.0f }, { "sfx_cast_phaister_doll", -7.0f }, { "sfx_cast_phaister_pin", -7.0f }, { "sfx_cast_phaister_higop", -8.0f }, { "sfx_phaister_higop_open", -4.0f }, { "sfx_phaister_higop_close", -7.0f }, { "sfx_status_concussed", -9.0f }, { "sfx_status_feared", -9.0f }, { "sfx_status_disoriented", -9.0f }, { "sfx_status_vulnerable", -9.0f }, { "sfx_paete_root_vein", -7.0f },
                 { "sfx_hex_cast",     -4.0f },
 
                 // ⚠️ THE BREAK IS MIXED LIKE A STATUS, NOT AN EVENT, for the same reason
@@ -405,6 +407,8 @@ namespace TumbangPreso.Audio
             "sfx_paete_sentry_burst", "sfx_paete_sentry_catch", "sfx_paete_sentry_wilt",
             "sfx_status_rooted", "sfx_paete_root_break", "sfx_ult_theme_paete", "sfx_sky_canopy",
             "sfx_paete_sentry_wake", "sfx_paete_sprout_ready",
+            // The roster rework (ABILITY-2): `tools/build_rework_audio.py`.
+            "sfx_cast_cheska_coldfeet", "sfx_cast_cheska_frostbite", "sfx_cheska_frostbite_hit", "sfx_cast_cheska_glacialwall", "sfx_cheska_wall_crack", "sfx_cast_cheska_absolutezero", "sfx_cast_dante_shield", "sfx_cast_dante_boulder", "sfx_dante_boulder_hit", "sfx_cast_dante_barrier", "sfx_dante_barrier_reflect", "sfx_cast_dante_earthquake", "sfx_cast_nemu_terrify", "sfx_cast_nemu_fetch", "sfx_nemu_fetch_drop", "sfx_cast_nemu_guard", "sfx_nemu_guard_block", "sfx_cast_phaister_doll", "sfx_cast_phaister_pin", "sfx_cast_phaister_higop", "sfx_phaister_higop_open", "sfx_phaister_higop_close", "sfx_status_concussed", "sfx_status_feared", "sfx_status_disoriented", "sfx_status_vulnerable", "sfx_paete_root_vein",
 
             // ⚠️ THE TWELVE ALTERNATES. A sidegrade changes what the power does, so it changes
             // what the power sounds like doing it: Long Tremor sweeps feet instead of throwing

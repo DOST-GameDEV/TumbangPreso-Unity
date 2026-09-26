@@ -76,7 +76,7 @@ namespace TumbangPreso.Abilities
                        summary: "Kuro haunts a spot. Whoever comes near is Feared.",
                        telegraphRadius: NecroRules.TerrifyRadius, telegraphRange: NecroRules.TerrifyMaxRange,
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
-                       castCue: "sfx_cast_nemu_hijack")
+                       castCue: "sfx_cast_nemu_terrify")
             {
                 AimByHolding(2.0f, NecroRules.TerrifyMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Maw;
@@ -127,7 +127,7 @@ namespace TumbangPreso.Abilities
                        NecroRules.FetchCooldown, 8.0f, AbilityGlyph.NemuAstralPet,
                        summary: "Kuro fetches your slipper. The taya can make him drop it.",
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
-                       castCue: "sfx_cast_nemu_hijack") { }
+                       castCue: "sfx_cast_nemu_fetch") { }
 
             public override bool CanActivate(AbilityContext ctx)
             {
@@ -179,6 +179,7 @@ namespace TumbangPreso.Abilities
                             _shoe.transform.position = new Vector3(at.x, Slipper.GroundY(at) + 0.05f, at.z);
                             Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe);
                             MatchFlair.Announce(MatchFlair.Kind.Block, ctx.Motor.PlayerSlot, p.PlayerSlot, at, 4f);
+                            NetCue.Play("sfx_nemu_fetch_drop", at);
                             DurationRemaining = 0.0f;
                             return;
                         }
@@ -209,7 +210,7 @@ namespace TumbangPreso.Abilities
                        NecroRules.GuardCooldown, NecroRules.GuardSeconds, AbilityGlyph.NemuPhase,
                        summary: "Kuro grows and blocks throws at the can.",
                        castAction: "hero-nemu-seance", viewmodelAction: "seance-channel",
-                       castCue: "sfx_cast_nemu_seance") { }
+                       castCue: "sfx_cast_nemu_guard") { }
 
             protected override void OnActivate(AbilityContext ctx)
             {
@@ -256,7 +257,7 @@ namespace TumbangPreso.Abilities
                     _blocked.Add(s);
                     Vector3 away = s.transform.position - _kuro.transform.position; away.y = 0.0f;
                     s.Deflect((away.sqrMagnitude > 0.01f ? away.normalized : -s.Velocity.normalized) * Balance.LaunchSpeed * Balance.DeflectSpeedScale, 1.0f);
-                    NetCue.PlayImpact("hit_body", "guard_block", s.transform.position, 0.8f);
+                    NetCue.Play("sfx_nemu_guard_block", s.transform.position);
                 }
             }
 

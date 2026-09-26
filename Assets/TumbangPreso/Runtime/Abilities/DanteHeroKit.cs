@@ -63,7 +63,7 @@ namespace TumbangPreso.Abilities
                        GeoRules.ShieldCooldown, GeoRules.ShieldSeconds, AbilityGlyph.DanteShield,
                        summary: "20 s of stone armour: no statuses land on you.",
                        castAction: "hero-dante-roar", viewmodelAction: "carapace-guard",
-                       castCue: "sfx_cast_dante_carapace") { _kit = kit; }
+                       castCue: "sfx_cast_dante_shield") { _kit = kit; }
 
             public void RestoreWard(AbilityContext ctx, float remaining)
             {
@@ -110,7 +110,7 @@ namespace TumbangPreso.Abilities
                        summary: "Hurl a boulder. Whoever it hits is Concussed.",
                        telegraphRadius: GeoRules.BoulderHitRadius, telegraphRange: 9.0f,
                        castAction: "hero-dante-stomp", viewmodelAction: "stomp-heavy",
-                       castCue: "sfx_cast_dante_stomp")
+                       castCue: "sfx_cast_dante_boulder")
             {
                 AimByHolding(3.0f, 9.0f, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Fissure;
@@ -140,7 +140,7 @@ namespace TumbangPreso.Abilities
                        GeoRules.BarrierCooldown, GeoRules.BarrierSeconds, AbilityGlyph.DanteShield,
                        summary: "A force field in front of you reflects slippers.",
                        castAction: "hero-dante-roar", viewmodelAction: "carapace-guard",
-                       castCue: "sfx_cast_dante_carapace") { }
+                       castCue: "sfx_cast_dante_barrier") { }
 
             protected override void OnActivate(AbilityContext ctx)
             {
@@ -164,7 +164,7 @@ namespace TumbangPreso.Abilities
                     Vector3 v = s.Velocity; v.y = 0.0f;
                     if (Vector3.Dot(v, fwd) >= 0.0f) continue;          // only slippers coming AT him
                     s.Deflect(Vector3.Reflect(v, fwd), 1.0f);
-                    NetCue.PlayImpact("hit_body", "guard_block", s.transform.position, 0.8f);
+                    NetCue.Play("sfx_dante_barrier_reflect", s.transform.position);
                 }
             }
 
@@ -182,7 +182,7 @@ namespace TumbangPreso.Abilities
                        0.0f, 0.0f, AbilityGlyph.DanteFissure,
                        summary: "The whole court heaves. Everyone is Concussed.",
                        castAction: "hero-dante-fissure", viewmodelAction: "fissure-slam",
-                       castCue: "sfx_cast_dante_fissure")
+                       castCue: "sfx_cast_dante_earthquake")
             {
                 TelegraphStyle = GroundReticle.Style.Fissure;
                 Windup = UltimateWindup;
@@ -247,7 +247,7 @@ namespace TumbangPreso.Abilities
                     _landed = true;
                     transform.position = new Vector3(transform.position.x, ground + 0.3f, transform.position.z);
                     _velocity.y = 0.0f;
-                    NetCue.Play("sfx_cast_dante_stomp", transform.position);
+                    NetCue.Play("sfx_dante_boulder_hit", transform.position);
                 }
             }
             else
@@ -272,6 +272,7 @@ namespace TumbangPreso.Abilities
                 Vector3 d = p.transform.position + Vector3.up * 0.8f - transform.position;
                 if (d.magnitude > GeoRules.BoulderHitRadius + 0.4f) continue;
                 _hit.Add(p.PlayerSlot);
+                NetCue.Play("sfx_dante_boulder_hit", p.transform.position);
                 p.ApplyConcussed();
                 Vector3 push = new Vector3(_velocity.x, 0f, _velocity.z);
                 push = (push.sqrMagnitude > 0.01f ? push.normalized : Vector3.forward) * GeoRules.BoulderShoveSpeed;

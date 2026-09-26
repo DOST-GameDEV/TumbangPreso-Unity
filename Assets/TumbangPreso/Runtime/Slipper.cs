@@ -1761,7 +1761,7 @@ namespace TumbangPreso
             if (Affinity != SlipperAffinity.Frost || victim == null) return;
             victim.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);
             Abilities.HeroHazards.SpawnIceCubePrison(victim.transform, StatusRules.FrozenSeconds);
-            NetCue.Play("sfx_ice_freeze", transform.position);
+            NetCue.Play("sfx_cheska_frostbite_hit", transform.position);
             Affinity = SlipperAffinity.Normal;
         }
 

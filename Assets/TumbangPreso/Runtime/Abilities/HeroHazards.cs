@@ -68,7 +68,7 @@ namespace TumbangPreso.Abilities
             {
                 if (HitsToShatter <= 0 || _shattered) return;
                 _hits++;
-                NetCue.Play("sfx_ice_thaw", transform.position);
+                NetCue.Play("sfx_cheska_wall_crack", transform.position);
                 if (_hits >= HitsToShatter) Shatter();
             }
             private float _left;

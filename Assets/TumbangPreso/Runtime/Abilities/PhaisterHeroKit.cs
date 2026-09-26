@@ -274,7 +274,7 @@ namespace TumbangPreso.Abilities
                        summary: "Throw a cursed doll. The one it hits hallucinates.",
                        telegraphRadius: VoodooRules.DollHitRadius, telegraphRange: VoodooRules.DollMaxRange,
                        castAction: "hero-phaister-hex", viewmodelAction: "cast-hex",
-                       castCue: "sfx_cast_phaister_hex")
+                       castCue: "sfx_cast_phaister_doll")
             {
                 AimByHolding(3.0f, VoodooRules.DollMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Ward;
@@ -301,7 +301,7 @@ namespace TumbangPreso.Abilities
                        summary: "Curse the attackers in front of you. Tag them anywhere.",
                        telegraphRadius: VoodooRules.VulnerableConeRange * 0.5f, telegraphRange: VoodooRules.VulnerableConeRange * 0.5f,
                        castAction: "hero-phaister-hex", viewmodelAction: "cast-hex",
-                       castCue: "sfx_cast_phaister_hex") { }
+                       castCue: "sfx_cast_phaister_pin") { }
 
             protected override void OnActivate(AbilityContext ctx)
             {
@@ -336,7 +336,7 @@ namespace TumbangPreso.Abilities
                        summary: "A black hole drags every player and slipper to it.",
                        telegraphRadius: VoodooRules.HigopRadius, telegraphRange: VoodooRules.HigopMaxRange,
                        castAction: "hero-phaister-eclipse", viewmodelAction: "coven-eclipse",
-                       castCue: "sfx_cast_phaister_coven")
+                       castCue: "sfx_cast_phaister_higop")
             {
                 TelegraphStyle = GroundReticle.Style.Ward;
                 // ⚠️ THE SLOW CAST IS THE WIND-UP (owner: *"i want her to really slowly cast the black
@@ -376,7 +376,7 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 if (!IntroductionVoiced) NetCue.Play("hero_phaister_ult", ctx.Position);
-                NetCue.Play("sfx_eclipse_toll", _centre);
+                NetCue.Play("sfx_phaister_higop_open", _centre);
                 if (_hole == null && ctx?.Motor != null)
                 {
                     _centre = AimedDestination(ctx);

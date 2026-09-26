@@ -428,6 +428,8 @@ namespace TumbangPreso.Visual
             var go = new GameObject("PaeteRootVein");
             var vein = go.AddComponent<PaeteRootVein>();
             vein._from = from; vein._to = to; vein._seconds = Mathf.Max(0.1f, seconds);
+            // The veins racing under the court have a sound of their own (TODO HERO-9, `tools/build_rework_audio.py`).
+            GameServices.Audio?.PlayAt("sfx_paete_root_vein", Vector3.Lerp(from, to, 0.5f));
             vein._rope = new PaeteRope(go.transform, "root-vein", new[] { GrowthVfx.BarkDark, GrowthVfx.Bark, GrowthVfx.BarkLit },
                                        new[] { 0.070f, 0.060f, 0.052f }, 0.075f, 5.5f, 0.4f);
             vein._tip = GrowthVfx.Block(go.transform, "vein-light", Vector3.one * 0.22f, GrowthVfx.Glow, 1.6f).transform;

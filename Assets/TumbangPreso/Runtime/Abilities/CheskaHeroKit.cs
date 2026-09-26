@@ -53,7 +53,7 @@ namespace TumbangPreso.Abilities
                        summary: "Freeze a patch of street. Anyone in it is Chilled.",
                        telegraphRadius: CryoRules.ColdFeetRadius, telegraphRange: CryoRules.ColdFeetMaxRange,
                        castAction: "hero-cheska-frostwave", viewmodelAction: "frost-sweep",
-                       castCue: "sfx_cast_cheska_sheet")
+                       castCue: "sfx_cast_cheska_coldfeet")
             {
                 AimByHolding(CryoRules.ColdFeetMinRange, CryoRules.ColdFeetMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Frost;
@@ -83,7 +83,7 @@ namespace TumbangPreso.Abilities
                        CryoRules.FrostbiteCooldown, CryoRules.FrostbiteLoadSeconds, AbilityGlyph.CheskaNova,
                        summary: "Frost your slipper. Whoever it hits is Frozen.",
                        castAction: "hero-cheska-frostwave", viewmodelAction: "frost-sweep",
-                       castCue: "sfx_cast_cheska_sheet")
+                       castCue: "sfx_cast_cheska_frostbite")
             {
                 _kit = kit;
             }
@@ -93,7 +93,6 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 _kit.IsFrostbiteLoaded = true;
-                NetCue.Play("sfx_ice_form", ctx.Position);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
@@ -118,7 +117,7 @@ namespace TumbangPreso.Abilities
                        summary: "Raise an icicle wall. Three slipper hits break it.",
                        telegraphRadius: CryoRules.GlacialWallArcLength * 0.5f, telegraphRange: CryoRules.GlacialWallMaxRange,
                        castAction: "hero-cheska-raise", viewmodelAction: "raise-barricade",
-                       castCue: "sfx_cast_cheska_barricade")
+                       castCue: "sfx_cast_cheska_glacialwall")
             {
                 AimByHolding(CryoRules.GlacialWallMinRange, CryoRules.GlacialWallMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Frost;
@@ -146,7 +145,7 @@ namespace TumbangPreso.Abilities
                        0.0f, 0.0f, AbilityGlyph.CheskaNova,
                        summary: "Freeze every player on the map, then chill them.",
                        castAction: "hero-cheska-nova", viewmodelAction: "nova-burst",
-                       castCue: "sfx_cast_cheska_nova")
+                       castCue: "sfx_cast_cheska_absolutezero")
             {
                 TelegraphStyle = GroundReticle.Style.Frost;
                 Windup = UltimateWindup;
@@ -156,7 +155,6 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 NetCue.Play("hero_cheska_ult", ctx.Position);
-                NetCue.Play("sfx_frost_nova", ctx.Position);
                 ctx.Motor.GetComponent<CharacterSquashStretch>()?.Stretch(0.065f);
                 if (UnityEngine.Camera.main != null)
                     UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()?.Shake(0.5f, 0.25f);

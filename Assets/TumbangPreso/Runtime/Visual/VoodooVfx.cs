@@ -152,7 +152,7 @@ namespace TumbangPreso.Abilities
                 float open = Mathf.Clamp01((_age) / 0.35f);
                 float close = Mathf.Clamp01(_life / 0.3f);
                 transform.localScale = Vector3.one * Mathf.Min(open, close);
-                if (_life <= 0.0f) { NetCue.Play("sfx_void_close", transform.position); Destroy(gameObject); return; }
+                if (_life <= 0.0f) { GameServices.Audio?.PlayAt("sfx_phaister_higop_close", transform.position); Destroy(gameObject); return; }
             }
             if (_rim != null) _rim.Rotate(0f, 220f * Time.deltaTime, 0f, Space.Self);
             if (_pins != null) _pins.Rotate(0f, -90f * Time.deltaTime, 0f, Space.Self);
@@ -161,7 +161,7 @@ namespace TumbangPreso.Abilities
         private void BeginPull()
         {
             _pulling = true; _age = 0.0f;
-            NetCue.Play("sfx_kuro_unbound", transform.position);
+            GameServices.Audio?.PlayAt("sfx_phaister_higop_open", transform.position);
             var pull = gameObject.AddComponent<HeroHazards.SeanceVoidComponent>();
             pull.Radius = VoodooRules.HigopRadius; pull.Duration = _life; pull.OwnerSlot = _owner;
             pull.PullStrength = 50.0f; pull.LiftHeight = 0.0f; pull.SlipperPull = 10.0f;

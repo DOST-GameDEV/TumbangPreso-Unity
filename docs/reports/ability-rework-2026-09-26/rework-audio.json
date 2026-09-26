@@ -1,0 +1,202 @@
+{
+  "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",
+  "listening": "Not yet heard by the owner in the game mix. Peak and RMS are measurements, not approval.",
+  "cues": [
+    {
+      "cue": "sfx_cast_cheska_coldfeet",
+      "seconds": 1.1,
+      "peak": 0.7,
+      "rms": 0.0859182837756364,
+      "sha256": "0bf9d917d286878fd0ea00f58a72b8c8a144b4d928d3198f8283fb881e0da5a6"
+    },
+    {
+      "cue": "sfx_cast_cheska_frostbite",
+      "seconds": 0.7,
+      "peak": 0.7,
+      "rms": 0.08699813297381796,
+      "sha256": "7cc4d3067676e1af7bd8f39bfd2e7c9555013390093772644546efe619764b7f"
+    },
+    {
+      "cue": "sfx_cheska_frostbite_hit",
+      "seconds": 0.8,
+      "peak": 0.7,
+      "rms": 0.05451005869808522,
+      "sha256": "08fe632344847f463e1addc691a582a3838cb0881d6317721eda6cfb539939ca"
+    },
+    {
+      "cue": "sfx_cast_cheska_glacialwall",
+      "seconds": 1.2,
+      "peak": 0.7,
+      "rms": 0.1363507797060143,
+      "sha256": "4129ee1ed79da97a56db76d50dda07654805835ba791120cc5c3c63dddf2755a"
+    },
+    {
+      "cue": "sfx_cheska_wall_crack",
+      "seconds": 0.6,
+      "peak": 0.7000000000000001,
+      "rms": 0.05872617589111796,
+      "sha256": "4ce939be9d04c16e9c0074fa0568b0e232c1b74c9bfbdf91ca1cc01d2d9f4f3b"
+    },
+    {
+      "cue": "sfx_cast_cheska_absolutezero",
+      "seconds": 2.4,
+      "peak": 0.72,
+      "rms": 0.07002781955966954,
+      "sha256": "2b714a3c3b5fad1300b25c997f5f404fd4a1cd39a87119049c41d05c0a1280ce"
+    },
+    {
+      "cue": "sfx_cast_dante_shield",
+      "seconds": 1.0,
+      "peak": 0.7,
+      "rms": 0.1190017547272472,
+      "sha256": "fbb18b0198a66877c54111e6582b5d05253318356886ecdca6810c8bc604019e"
+    },
+    {
+      "cue": "sfx_cast_dante_boulder",
+      "seconds": 0.8,
+      "peak": 0.7,
+      "rms": 0.11798072270763253,
+      "sha256": "b8f4a381cbeb6197170f5a5a0e425e61c050a6a7803c47a6056a0b10230ccd73"
+    },
+    {
+      "cue": "sfx_dante_boulder_hit",
+      "seconds": 1.0,
+      "peak": 0.7,
+      "rms": 0.0651390518108389,
+      "sha256": "91f8fe3e588ea7d7c70677bd43f53ce5de869a5a6b6d3d86fd43fdd2e4408742"
+    },
+    {
+      "cue": "sfx_cast_dante_barrier",
+      "seconds": 1.1,
+      "peak": 0.7,
+      "rms": 0.10257671004473878,
+      "sha256": "0863b207adbf5a4fa5741ad3022d3a02e33b9e82c08ffd464b3e6ac42b1f6d9f"
+    },
+    {
+      "cue": "sfx_dante_barrier_reflect",
+      "seconds": 0.45,
+      "peak": 0.7,
+      "rms": 0.09524751525899357,
+      "sha256": "391621ea111dc2cdeffa94d0cddb83a65e79e2a82ed790b3c485d508fdf1695c"
+    },
+    {
+      "cue": "sfx_cast_dante_earthquake",
+      "seconds": 2.6,
+      "peak": 0.74,
+      "rms": 0.09132607450393473,
+      "sha256": "3b2d6236a6d9d5a6fc642c2e5d407ca60e9dd5c2b305030879dd02c775c92c98"
+    },
+    {
+      "cue": "sfx_cast_nemu_terrify",
+      "seconds": 1.5,
+      "peak": 0.7,
+      "rms": 0.1347681824921716,
+      "sha256": "d82d17813b800badcb12bd281a71f1b0c65eceea2fd588e4eb2d31185ebd335e"
+    },
+    {
+      "cue": "sfx_cast_nemu_fetch",
+      "seconds": 0.6,
+      "peak": 0.6999999999999998,
+      "rms": 0.11148917898427112,
+      "sha256": "2aaaa37bc4a5e3bfbf5366d861cd7b8d6a55daded2f703300aea58f4346b5c57"
+    },
+    {
+      "cue": "sfx_nemu_fetch_drop",
+      "seconds": 0.6,
+      "peak": 0.7,
+      "rms": 0.10138863032820772,
+      "sha256": "0e6757a6731f54362685f2e57f8abdc61effedcf0ccda71d5f860b537507ea6b"
+    },
+    {
+      "cue": "sfx_cast_nemu_guard",
+      "seconds": 1.0,
+      "peak": 0.7,
+      "rms": 0.10144729970155969,
+      "sha256": "0a570a90f47a928d09cda91f996364a94a7320dd95f491d1622e7974e84f7492"
+    },
+    {
+      "cue": "sfx_nemu_guard_block",
+      "seconds": 0.4,
+      "peak": 0.7,
+      "rms": 0.12197012563447049,
+      "sha256": "f30ac02002069614a517949c1dc84d9e1cac05461e3ab5a477e48f1ada159e2b"
+    },
+    {
+      "cue": "sfx_cast_phaister_doll",
+      "seconds": 0.6,
+      "peak": 0.7,
+      "rms": 0.06515854479926421,
+      "sha256": "618af0e2fee4da66399856fabc2370acf8cb50c4db71609cdefcc1770cb33587"
+    },
+    {
+      "cue": "sfx_cast_phaister_pin",
+      "seconds": 1.0,
+      "peak": 0.7,
+      "rms": 0.11484687809496215,
+      "sha256": "c2ce77aba9646607eb62d87d104343494bffc515b4b5cb84576b1efbf2ef9491"
+    },
+    {
+      "cue": "sfx_cast_phaister_higop",
+      "seconds": 2.3,
+      "peak": 0.7,
+      "rms": 0.12353461351586738,
+      "sha256": "555b317ebbdcfb1b4760560525937282398fd0da4533665f2e5ba0e5ecc52020"
+    },
+    {
+      "cue": "sfx_phaister_higop_open",
+      "seconds": 2.8,
+      "peak": 0.72,
+      "rms": 0.15723102211080026,
+      "sha256": "b6065fccda80452ba62e131f6e2a8fc89a72ec12e5d292f2bf549fb266541f59"
+    },
+    {
+      "cue": "sfx_phaister_higop_close",
+      "seconds": 1.0,
+      "peak": 0.7,
+      "rms": 0.20980338088228218,
+      "sha256": "fc772e9473effa11ab2975105e9d043c129f009fa3a8f17bdae423d8306bf54e"
+    },
+    {
+      "cue": "sfx_status_concussed",
+      "seconds": 1.0,
+      "peak": 0.7,
+      "rms": 0.11460069948761104,
+      "sha256": "f9634168fd5669e2fbf25f479e7ee88de12ea10ac557013360ae353f30e58265"
+    },
+    {
+      "cue": "sfx_status_feared",
+      "seconds": 0.8,
+      "peak": 0.7,
+      "rms": 0.10998308092856192,
+      "sha256": "c281724eb0fca7783f48c38e65acb72acaff815ee8849f82f28634aa4ead7b9e"
+    },
+    {
+      "cue": "sfx_status_disoriented",
+      "seconds": 1.2,
+      "peak": 0.7,
+      "rms": 0.24165147594659347,
+      "sha256": "fe7ad7343cdb48db88d6a0dab08f44cfdac024195edc0428fe49485c791a78a5"
+    },
+    {
+      "cue": "sfx_status_vulnerable",
+      "seconds": 0.9,
+      "peak": 0.7,
+      "rms": 0.10200109404273765,
+      "sha256": "ab13bb56d89f77a8ba6b430abb6cd8046f31e8741f170b5721211e418702322e"
+    },
+    {
+      "cue": "sfx_cast_paete_sentry",
+      "seconds": 2.2,
+      "peak": 0.7,
+      "rms": 0.08238115168898635,
+      "sha256": "a7176021ad29a6d4fafc7ef04e618d9a03d086386d716d9082bad9fff41cbdf1"
+    },
+    {
+      "cue": "sfx_paete_root_vein",
+      "seconds": 0.7,
+      "peak": 0.7,
+      "rms": 0.08994623015313574,
+      "sha256": "4b9c8bf0554544e6a4972262fba14411cb2ca7cd7ab55d211c526761f5d732aa"
+    }
+  ]
+}
