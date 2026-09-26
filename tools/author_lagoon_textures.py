@@ -134,7 +134,84 @@ def normal_from_height(h, strength):
     return n * 0.5 + 0.5
 
 
-STRENGTH = {"rock_a": 0.0, "rock_b": 1.2, "rock_c": 1.2}
+STRENGTH = {"rock_a": 0.0, "rock_b": 1.2, "rock_c": 1.2, "thatch_a": 1.6, "thatch_b": 1.6, "thatch_c": 1.6}
+TILE = {"rock_a": 4.0, "rock_b": 4.0, "rock_c": 4.0, "thatch_a": 2.0, "thatch_b": 2.0, "thatch_c": 2.0}
+
+
+# ---------------------------------------------------------------- thatch
+# NIPA / COGON THATCH (docs/LAGOON_REWORK_GUIDE.md § 8 step 3), its OWN drawing: no generator
+# here or in author_kanto_textures.py is reused. Research (stylized thatch materials on
+# 3dtextures.me and ArtStation, polycount's hand-painted thatch advice): thatch reads from
+# horizontal COURSES of vertical BUNDLES with ragged pointed TIPS hanging over the course below;
+# the bulk of each bundle is bright, darker only where it tucks under the course above and at
+# its tip; a soft shadow sits under each row of tips; bundles, not single strands, are the unit.
+# Layout: 1 UV unit = 2 m, V UP THE ROOF (image up = up the slope), U along the eave, so the
+# house kit's roofs lay the courses horizontal. Courses are drawn from the bottom of the image
+# up, each over the one below, exactly as a roof is laid; tips wrap vertically so it tiles.
+THATCH_COURSE_M = 0.4
+
+
+def thatch(base, light, dark, seed, bundle_m=(0.05, 0.12), tip_m=(0.05, 0.16)):
+    """Sheet v1 review: dark triangular gaps read as HOLES and the whole was too contrasty for
+    the house style (the gaps are now the course's own shaded tone, and the tip shadow is
+    softer); and the tile showed a straight SEAM where it repeats vertically, because the
+    bottom course's tips belong ON TOP of the next tile's top course (they are drawn last)."""
+    px = SIZE / 2.0                                     # 2 m a tile
+    rng = np.random.default_rng(seed)
+    yy, xx = np.mgrid[0:SIZE, 0:SIZE].astype(np.float32) / px
+    img = np.zeros((SIZE, SIZE, 3), np.float32)
+    img[:] = base * 0.72 + dark * 0.28                  # depth between bundles: shaded, not a hole
+    height = np.zeros((SIZE, SIZE), np.float32)
+    shade = np.zeros((SIZE, SIZE), np.float32)          # shadow cast under the tips above
+    rows = int(round(2.0 / THATCH_COURSE_M))
+    warp = 0.012 * field(0.3, seed + 9)                 # nothing ruled
+    courses = []
+    for r in range(rows):
+        bundles, x = [], rng.uniform(0, 0.1)
+        while x < 2.0 + 0.1:
+            w = rng.uniform(*bundle_m)
+            bundles.append((x, w, rng.uniform(*tip_m), rng.uniform(-0.25, 0.25), rng.uniform(0.92, 1.08)))
+            x += w * rng.uniform(0.7, 0.9)              # bundles overlap a little sideways
+        courses.append(bundles)
+
+    def draw(r, oy):
+        y0 = r * THATCH_COURSE_M
+        y1 = y0 + THATCH_COURSE_M
+        cy = yy + warp - oy
+        for x, w, tip, lean, value in courses[r]:
+            cx = (xx - x - lean * (cy - y0) + 1.0) % 2.0 - 1.0          # wrap in x
+            u = cx / w
+            inside_x = (u >= 0) & (u <= 1)
+            point = 1 - np.abs(2 * u - 1) ** 1.4                        # 1 mid, 0 at the sides
+            bottom = y1 + tip * point
+            top = max(y0 - 0.06, 0.0) if oy == 0 else y0 - 0.06
+            m = inside_x & (cy >= top) & (cy <= bottom)
+            if not m.any():
+                continue
+            t = np.clip((cy - (y0 - 0.06)) / (bottom - (y0 - 0.06) + 1e-6), 0, 1)
+            lum = np.interp(t, [0.0, 0.18, 0.35, 0.8, 1.0], [0.72, 0.93, 1.0, 0.98, 0.86])
+            col = base * (1 - 0.3 * (1 - lum))[..., None] * value
+            col = col + (light - base) * np.clip((lum - 0.96) * 10, 0, 1)[..., None] * 0.5
+            img[m] = col[m]
+            height[m] = (0.4 + 0.6 * np.sin(np.pi * np.clip(u, 0, 1)) * lum)[m]
+            shade[m] = 0.0
+            sh = inside_x & (cy > bottom) & (cy < bottom + 0.045)
+            shade[sh] = np.maximum(shade[sh], (1 - (cy[sh] - bottom[sh]) / 0.045) * 0.28)
+
+    for r in reversed(range(rows)):                     # bottom course first, each over the one below
+        draw(r, 0.0)
+    draw(rows - 1, -2.0)                                # the bottom course's tips, over the next tile's top
+    img = img * (1 - shade[..., None])
+    img = coat(img, np.array([1.04, 1.03, 1.0]), 0.7, 0.3, seed + 3)   # a few soft sun patches
+    return img, height
+
+
+THATCH_PAINTERS = {
+    "thatch_a": lambda: thatch(hexcol("c9a35e"), hexcol("e3c888"), hexcol("5e4526"), seed=51),
+    "thatch_b": lambda: thatch(hexcol("a98f6a"), hexcol("c9b491"), hexcol("4f4130"), seed=51),
+    "thatch_c": lambda: thatch(hexcol("c9a35e"), hexcol("e3c888"), hexcol("5e4526"), seed=51,
+                               bundle_m=(0.10, 0.20), tip_m=(0.08, 0.2)),
+}
 
 
 def save(name, albedo, height):
@@ -152,15 +229,16 @@ PAINTERS = {
     "rock_a": lambda: rock_face(planes=False),
     "rock_b": lambda: rock_face(),
     "rock_c": lambda: rock_face(temperature=True),
+    **THATCH_PAINTERS,
 }
 
 
-def sheet(version, names):
+def sheet(version, names, prefix="rock"):
     """The review sheet: approved Kanto swatches first, then each new one, at one tile (4 m for
     rock, 2 m for the Kanto pair) and as a 3 x 3 repeat so any tiling shows."""
-    cols = [("stone_blocks (approved, 2 m)", KANTO / "stone_blocks_albedo.png"),
-            ("brick (approved, 2 m)", KANTO / "brick_albedo.png")]
-    cols += [(f"{n} (4 m)", OUT / f"{n}_albedo.png") for n in names]
+    cols = [("brick (approved, 2 m)", KANTO / "brick_albedo.png"),
+            ("rock_a (approved, 4 m)", OUT / "rock_a_albedo.png")]
+    cols += [(f"{n} ({TILE.get(n, 2.0):g} m)", OUT / f"{n}_albedo.png") for n in names]
     cell, gap, head = 360, 16, 40
     W = gap + len(cols) * (cell + gap)
     H = 2 * (head + cell) + gap * 2
@@ -182,7 +260,7 @@ def sheet(version, names):
                 rep.paste(tile, (a * tile.width, b * tile.height))
         page.paste(rep.resize((cell, cell), Image.LANCZOS), (x, 2 * head + cell + gap))
     SHEETS.mkdir(parents=True, exist_ok=True)
-    out = SHEETS / f"rock_swatches_v{version}.png"
+    out = SHEETS / f"{prefix}_swatches_v{version}.png"
     page.save(out)
     print("[lagoon-tex] sheet", out)
 
@@ -191,7 +269,8 @@ def main():
     args = sys.argv[1:]
     if "--sheet" in args:
         names = [a for a in args if a in PAINTERS] or list(PAINTERS)
-        sheet(int(args[args.index("--sheet") + 1]), names)
+        prefix = args[args.index("--prefix") + 1] if "--prefix" in args else "rock"
+        sheet(int(args[args.index("--sheet") + 1]), names, prefix)
         return
     names = args[0].split(",") if args else list(PAINTERS)
     for n in names:

@@ -276,7 +276,37 @@ def rock_material(m, texture):
         nt.links.new(nmap.outputs["Normal"], bsdf.inputs["Normal"])
 
 
-BUILDERS = {"rock": rock_material}
+def uv_material(m, texture):
+    """A surface with a DIRECTION (thatch courses lie along the eave, sawali weave, planks along
+    their length) reads its texture through the model's own world-scale "UVMap", not a box
+    projection: the house kit lays V up every roof slope (tools/author_lagoon_houses.py)."""
+    m.use_nodes = True
+    nt = m.node_tree
+    nt.nodes.clear()
+    out = nt.nodes.new("ShaderNodeOutputMaterial")
+    bsdf = nt.nodes.new("ShaderNodeBsdfPrincipled")
+    bsdf.inputs["Roughness"].default_value = 0.92
+    nt.links.new(bsdf.outputs["BSDF"], out.inputs["Surface"])
+    uv = nt.nodes.new("ShaderNodeUVMap")
+    uv.uv_map = "UVMap"
+    img = nt.nodes.new("ShaderNodeTexImage")
+    img.image = bpy.data.images.load(str(TEX / f"{texture}_albedo.png"), check_existing=True)
+    nt.links.new(uv.outputs["UV"], img.inputs["Vector"])
+    nt.links.new(img.outputs["Color"], bsdf.inputs["Base Color"])
+    normal_path = TEX / f"{texture}_normal.png"
+    if normal_path.exists():
+        nimg = nt.nodes.new("ShaderNodeTexImage")
+        nimg.image = bpy.data.images.load(str(normal_path), check_existing=True)
+        nimg.image.colorspace_settings.name = "Non-Color"
+        nt.links.new(uv.outputs["UV"], nimg.inputs["Vector"])
+        nmap = nt.nodes.new("ShaderNodeNormalMap")
+        nmap.inputs["Strength"].default_value = 0.7
+        nt.links.new(nimg.outputs["Color"], nmap.inputs["Color"])
+        nt.links.new(nmap.outputs["Normal"], bsdf.inputs["Normal"])
+
+
+BUILDERS = {"rock": rock_material, "thatch": uv_material, "sawali": uv_material,
+            "plank": uv_material, "timber": uv_material, "bamboo": uv_material}
 
 
 def main():
