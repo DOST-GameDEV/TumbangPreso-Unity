@@ -202,7 +202,17 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      0.72x), and adds a few crisper chips on TOP edges only, broken into pieces by noise. It
      only ever scales the rock's own texture: never a separate colour
      (`rock_on_models_v9.png`).
-   - ✅ **INNER-SHADOW EDGES** (owner on v9: *"can you make them slightly more clear? think of
+   - ✅ **BRUSHED EDGES, FROM THE OWNER'S PAINT-OVER** (current, `ROCK_LOOK = "rock_a+brush"`,
+     `brushed_edge()`). The owner rejected the inner-shadow version below (*"nope. its
+     worse"*) and painted over two rocks in Photoshop
+     (`Logs/lagoon-blender/owner_rock_edges_paintover.webp`, *"see the center 2 rocks"*): each
+     face stays the PLAIN rock colour; a thin crisp pale LINE sits exactly on the edge; a
+     NARROW light BAND runs just inside it, its inner side broken up like dry brush; strongest
+     round the top faces, sides darker. Built from the narrow mask only (the broad mask
+     lifted whole faces, which was the fault): band = mask above a fine-noise threshold
+     (0.04 to 0.30) lifting the rock's own colour to 1.40x, line = mask 0.70 to 0.86 toward
+     warm near-white at 0.75; both weighted to up-facing surfaces. `rock_on_models_v15.png`.
+   - SUPERSEDED, **inner-shadow edges** (owner on v9: *"can you make them slightly more clear? think of
      like an inner shadow effect, the edges have the crispiest white and then it fades the
      closer it gets to the center"*). `ROCK_LOOK = "rock_a+inner"`, `inner_glow()` in
      `tools/render_lagoon_texture_preview.py`: a CRISP warm near-white core on the break

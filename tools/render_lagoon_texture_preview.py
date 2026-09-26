@@ -36,7 +36,8 @@ EYE_LENS = 18 / math.tan(math.radians(95 / 2))
 SHOTS = {
     "rock": [("game's eye, from the court", (0, -9, E), (0, 45, 8), EYE_LENS),
              ("close-up, the east cliff stones", (46, 6, 3.5), (62, 30, 4), 28),
-             ("close-up, the stones behind the court", (-4, 4, 3.0), (-14, 20, 3.5), 30)],
+             ("close-up, the stones behind the court", (-4, 4, 3.0), (-14, 20, 3.5), 30),
+             ("from above, the massif (the owner's paint-over view)", (-26, 6, 24), (-34, 26, 8), 30)],
 }
 
 
@@ -112,7 +113,35 @@ def inner_glow(nt, colour, ch, up):
     return _lift(nt, colour, EDGE_WHITE, _math(nt, "MULTIPLY", crisp, 0.85))
 
 
-def edge_wear(nt, colour, chips, inner=False):
+def brushed_edge(nt, colour, ch, up, geo):
+    """THE OWNER'S PAINT-OVER (2026-09-26, Logs/lagoon-blender/owner_rock_edges_paintover.webp,
+    "see the center 2 rocks", "i just drew over it in photoshop"), after rejecting inner_glow
+    ("nope. its worse"): inner_glow lifted WHOLE faces. The paint-over keeps each face the plain
+    rock colour and paints only:
+      * a thin crisp pale LINE exactly on the edge, and
+      * a NARROW soft light BAND just inside it, its inner side feathered with a dry-brush
+        breakup (speckled, not a smooth gradient),
+    strongest round the perimeter of the TOP faces; the side faces stay darker. Both come from
+    the narrow mask (R) only; the broad mask is not used."""
+    weight = _range(nt, up.outputs["Z"], -0.1, 0.7, 0.2, 1.0)
+    # Dry brush: a fine noise sets where the band's inner edge breaks up.
+    fine = nt.nodes.new("ShaderNodeTexNoise")
+    fine.inputs["Scale"].default_value = 7.0
+    fine.inputs["Detail"].default_value = 8.0
+    fine.inputs["Roughness"].default_value = 0.7
+    nt.links.new(geo.outputs["Position"], fine.inputs["Vector"])
+    threshold = _range(nt, fine.outputs["Fac"], 0.3, 0.7, 0.04, 0.30)   # v14 0.10..0.45: too narrow
+    edge = ch.outputs["Red"]
+    diff = _math(nt, "SUBTRACT", edge, threshold)
+    band = _range(nt, diff, -0.02, 0.10, smooth=True)                 # speckled inner boundary
+    band = _math(nt, "MULTIPLY", band, weight, clamp=True)
+    colour = _scale_colour(nt, colour, _range(nt, band, 0.0, 1.0, 1.0, 1.40))   # v14 1.28: too faint
+    line = _range(nt, edge, 0.70, 0.86, smooth=True)                   # the crisp line on the break
+    line = _math(nt, "MULTIPLY", line, weight, clamp=True)
+    return _lift(nt, colour, EDGE_WHITE, _math(nt, "MULTIPLY", line, 0.75))
+
+
+def edge_wear(nt, colour, chips, inner=False, brush=False):
     """THE WEATHERED EDGES, from the three baked masks (tools/bake_lagoon_rock_edges.py).
     Owner on v7: "the weathered edges look really unnatural": one even light line along EVERY
     break (sides, bottoms, silhouette) reads as piping. On the reference the light is on the
@@ -132,9 +161,9 @@ def edge_wear(nt, colour, chips, inner=False):
     up = nt.nodes.new("ShaderNodeSeparateXYZ")
     nt.links.new(geo.outputs["Normal"], up.inputs[0])
     upward = _range(nt, up.outputs["Z"], -0.2, 0.8, 0.25, 1.0)
-    if inner:
+    if inner or brush:
         colour = _scale_colour(nt, colour, _range(nt, ch.outputs["Blue"], 0.35, 0.95, 0.72, 1.0, smooth=True))
-        return inner_glow(nt, colour, ch, up)
+        return brushed_edge(nt, colour, ch, up, geo) if brush else inner_glow(nt, colour, ch, up)
     # Shoulders: up to 20 % lighter, soft.
     shoulder = _math(nt, "MULTIPLY", _range(nt, ch.outputs["Green"], 0.0, 0.9, smooth=True), upward)
     # ⚠️ NEVER A SEPARATE COLOUR (owner on v7: "even how the color of the weathered edges are
@@ -196,7 +225,7 @@ def rock_material(m, texture):
     nt.links.new(grey.outputs["Color"], mul.inputs["B"])
     colour = mul.outputs["Result"]
     if wear:
-        colour = edge_wear(nt, colour, chips=(wear == "chips"), inner=(wear == "inner"))
+        colour = edge_wear(nt, colour, chips=(wear == "chips"), inner=(wear == "inner"), brush=(wear == "brush"))
     nt.links.new(colour, bsdf.inputs["Base Color"])
     normal_path = TEX / f"{texture}_normal.png"
     if normal_path.exists():
