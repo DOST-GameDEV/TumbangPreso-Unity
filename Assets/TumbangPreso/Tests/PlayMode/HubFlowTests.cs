@@ -302,6 +302,16 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(HubQueueWatch.QueueRoom, "X did not leave the queue.");
                 Assert.IsFalse(Net.NetSession.Instance != null && Net.NetSession.Instance.IsNetworked, "Cancelling must close the queue's room.");
 
+                // BUGS-0926.3: the PLAY button reads IN QUEUE while queued, and pressing it leaves.
+                yield return Press("PlayButton");
+                until = Time.realtimeSinceStartup + 3;
+                while (Time.realtimeSinceStartup < until && !HubQueueWatch.QueueRoom) yield return null;
+                Assert.IsTrue(HubQueueWatch.QueueRoom, "PLAY did not start the queue a second time.");
+                yield return new WaitForSecondsRealtime(0.5f);
+                yield return Press("PlayButton");
+                Assert.IsFalse(HubQueueWatch.QueueRoom, "Pressing IN QUEUE did not leave the queue.");
+                Assert.IsFalse(Net.NetSession.Instance != null && Net.NetSession.Instance.IsNetworked, "Leaving through IN QUEUE must close the queue's room.");
+
                 TumpHub.Current.Push<HubMatchFound>();
                 yield return new WaitForSecondsRealtime(0.4f);
                 yield return Shots("MatchFound");

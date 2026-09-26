@@ -106,7 +106,11 @@ line says so, so "fixed" below means written and reviewed, not played.
 
 - [ ] BUGS-0926.1 The title screen ("Click anywhere to continue.") also continues on any keyboard key.
 - [ ] BUGS-0926.2 Escape on HOME no longer returns to the title screen.
-- [ ] BUGS-0926.3 Pressing the IN QUEUE button cancels the queue.
+- [x] BUGS-0926.3 Pressing the IN QUEUE button cancels the queue. `HubHome.Tick` used to make
+  the button non-interactable while queued; it now stays pressable and `HubHome.Play` calls
+  `CancelQueue` (the same call as the plate's X and BACK) unless a match was already found.
+  `HubFlowTests.QueuePlateMatchFoundCharacterSelectLobbyAndLoadingAreDrawn` queues again and
+  leaves through the button.
 - [x] BUGS-0926.4 The hamburger MENU popup no longer swaps HOME's background for the live court.
   Cause: `HubSceneVideo` showed the HOME loop only while `TumpHub.AtHome` (HOME on top of the
   stack), and the MENU is a popup pushed on top, so the loop hid and the live court showed

@@ -283,13 +283,18 @@ namespace TumbangPreso.UI.Hub
         public override Selectable FirstFocus => _play;
 
         private float _nextRefresh;
+        private bool _playShowsQueue;
 
         public override void Tick()
         {
             bool queueing = HubQueueWatch.QueueRoom;
-            if (_play.interactable == queueing)
+            // ⚠️ THE BUTTON STAYS PRESSABLE WHILE IT READS IN QUEUE, AND A PRESS LEAVES THE QUEUE.
+            // It used to go non-interactable, so the one control the player's hand was already on
+            // did nothing and the way out was a small X on the queue plate (owner, 2026-09-26:
+            // "should be able to cancel queue when pressing in queue button"). See `Play`.
+            if (_playShowsQueue != queueing)
             {
-                _play.interactable = !queueing;
+                _playShowsQueue = queueing;
                 HubKit.SetLabel(_play, queueing ? "IN QUEUE" : "PLAY");
                 HubKit.LabelOf(_play).fontSize = HubStyle.Size(queueing ? HubStyle.Display : HubStyle.Hero);
             }
@@ -397,6 +402,15 @@ namespace TumbangPreso.UI.Hub
 
         private void Play()
         {
+            // IN QUEUE: the same press cancels. Once a match is found the queue is no longer the
+            // player's to leave from here; MATCH FOUND owns that moment.
+            if (HubQueueWatch.QueueRoom)
+            {
+                if (HubQueueWatch.Found) return;
+                Hub.Host.CancelQueue();
+                MenuSfx.Back();
+                return;
+            }
             string refusal = Hub.Host.StartQueue(ChoiceMode, ChoiceStake);
             if (!string.IsNullOrEmpty(refusal)) { Hub.Toast(refusal); MenuSfx.Error(); return; }
             HubQueueWatch.Begin(ChoiceMode, ChoiceStake);
