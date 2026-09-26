@@ -91,9 +91,13 @@ namespace TumbangPreso.PlayTests
                 Assert.Greater(late.SMax - late.SMin, 1f, $"{name}: the stride read off the legs never swung.");
                 float need = sprint ? 60f : 30f;
                 Assert.Greater(late.LMax - late.LMin, need, $"{name}: the left arm barely swung.");
-                Assert.Greater(late.LSpread, 6f, $"{name}: the left arm hugged the body.");
+                // ⚠️ 3 DEGREES, NOT 6, SINCE THE GAIT'S SECOND PASS (2026-09-26): the arms now hang nearly straight (5 degrees
+                // walking) and clear the body by moving the SHOULDER out, so the angle alone no longer says whether an arm hugs
+                // the body; `WalkArmsProbe` measures the hand against the hip in centimetres. This floor only catches an arm
+                // pulled inward past vertical.
+                Assert.Greater(late.LSpread, 3f, $"{name}: the left arm hugged the body.");
                 if (holding) { Assert.Less(late.RMax, 50f, $"{name}: the slipper is still held out in front."); Assert.Less(late.RMax - late.RMin, 35f, $"{name}: the carrying hand swung the slipper about."); }
-                else { Assert.Greater(late.RMax - late.RMin, need, $"{name}: the right arm barely swung."); Assert.Greater(late.RSpread, 6f, $"{name}: the right arm hugged the body."); }
+                else { Assert.Greater(late.RMax - late.RMin, need, $"{name}: the right arm barely swung."); Assert.Greater(late.RSpread, 3f, $"{name}: the right arm hugged the body."); }
                 who.Teleport(from + Vector3.right * 30);
                 yield return null;
             }

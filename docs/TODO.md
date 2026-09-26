@@ -139,7 +139,24 @@ points at it rather than copying it. Nothing here is ticked without evidence.
   robe, spread and shift both at their caps), spreads 19 to 30 degrees, shifts 5 to 15 cm; the front-on
   frames show the fists outside the hips. `LocomotionArmsProbe` now runs at a fixed 60 steps a game
   second (it sampled 5 frames on the cloud's software renderer and failed on the count, not the arms).
-  Open: the owner's eye on it in play.
+  SECOND PASS, same day (owner on those frames: *"thihs walk still sucks pls imrpove still on all"*): the
+  first fit bought its clearance with spread, so every body walked with its arms held out in an A like
+  a penguin, and nothing else moved. Now: the arms hang nearly straight (5 degrees walking, 8 running,
+  opening to at most 14 only where a fist would land inside the hips) and FLUSH beside the torso, the
+  shoulder moved out until the arm's inner face touches the torso's side (measured on the glbs: 9 to 12
+  mesh cm on the shared bodies, 17 on Sean and Iggy, 22 on Phaister's robe); swing 36 degrees walking,
+  58 running; `ApplyFootPlant` drops the root so the lower foot stays on the court (knee-less legs at 38
+  degrees lifted both soles 21 per cent of a leg, about 9 cm, off the ground at every contact, so the
+  body hovered; the drop is also the bob, twice a cycle); `LocomotionWeight` adds a gait lean (4 degrees
+  walking, 9 running) and a weight roll over the stance leg (3 and 1.5 degrees), the head giving back
+  half. `WalkArmsProbe` writes a two-second clip of every body (`TUMP_WALK_VIDEO=1`,
+  `tools/stitch_walk_video.py`). Cloud film `Logs/cloud9` (stopped after 12 bodies to hand off): hand
+  beside the hip now clears it by +2.2 (Rafi) to +27 cm (Phaister), spreads 5 to 8 degrees, shifts 24 to
+  54 world cm; `LocomotionArmsProbe` walked at 5 degrees and would fail its old 6 degree floor, now 3
+  with the reason (NOT re-run after that edit: run `LocomotionArmsProbe` and `WalkArmsProbe` first).
+  Open: idle still uses the clip's arms pressed into the torso (a hand-over
+  pop when a walk starts or stops is possible; decide whether idle hangs the same way), and the owner's
+  eye on the clip.
 - [ ] **Every recast of Paete's attacking E throws a wooden slipper** (*"paete attacking e is supposed to
   throw a wooden slipper whenever u recast it"*). With the fix above every ACCEPTED recast throws a clog;
   a press before the next clog has grown is refused with its countdown. Open: the owner's eye on it in

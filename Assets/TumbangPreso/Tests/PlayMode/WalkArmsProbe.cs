@@ -31,7 +31,9 @@ namespace TumbangPreso.PlayTests
     /// Geometry is read off the visible skin the way `CharacterVisual.PalmCentre` reads it: each vertex follows its
     /// dominant bone, `bone.localToWorld * bindpose * v`, which is exact for these rigidly skinned voxel bodies.
     /// Runs only with TUMP_WALK_FILM=1; pictures and `gaps.csv` under `$TUMP_EVIDENCE/walk-arms` (default Logs).
-    /// `$TUMP_WALK_TAG` versions the filenames (chat clients cache by name).
+    /// `$TUMP_WALK_TAG` versions the filenames (chat clients cache by name). `TUMP_WALK_VIDEO=1` also writes two seconds of
+    /// every frame, front and side together, under `walk-video/<mode>-<body>/`, because a gait is a rhythm and a still
+    /// cannot show one (`tools/stitch_walk_video.py` turns them into one clip).
     /// </summary>
     public sealed class WalkArmsProbe
     {
@@ -40,7 +42,7 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp] public IEnumerator Before() { _seat = GameLaunch.SoloSeat; _spectator = GameLaunch.Spectator; _bots = GameLaunch.AllBots; yield return PlayModeWorld.Reset(); }
         [UnityTearDown] public IEnumerator After() { yield return PlayModeWorld.Reset(); GameLaunch.SoloSeat = _seat; GameLaunch.Spectator = _spectator; GameLaunch.AllBots = _bots; }
 
-        private const int Tile = 400, Settle = 24, Shots = 4, ShotEvery = 5;
+        private const int Tile = 400, Settle = 24, Shots = 4, ShotEvery = 5, VideoFrames = 60;
 
         [UnityTest, Timeout(1800000)]
         public IEnumerator EveryBodyWalksWithItsHandsClearOfItsHips()
@@ -49,6 +51,7 @@ namespace TumbangPreso.PlayTests
             string root = Environment.GetEnvironmentVariable("TUMP_EVIDENCE");
             string output = Path.Combine(string.IsNullOrEmpty(root) ? "Logs" : root, "walk-arms");
             string tag = Environment.GetEnvironmentVariable("TUMP_WALK_TAG") ?? "v1";
+            bool video = Environment.GetEnvironmentVariable("TUMP_WALK_VIDEO") == "1";
             Directory.CreateDirectory(output);
 
             SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
@@ -72,6 +75,7 @@ namespace TumbangPreso.PlayTests
             witness.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
             var rt = new RenderTexture(Tile, Tile, 24);
             var sheet = new Texture2D(Tile * Shots, Tile * 2, TextureFormat.RGB24, false);
+            var still = new Texture2D(Tile * 2, Tile, TextureFormat.RGB24, false);
             var animator = who.GetComponent<CharacterAnimator>();
             var late = who.gameObject.AddComponent<LateHook>();
             var book = RosterBook.Load();
@@ -108,9 +112,20 @@ namespace TumbangPreso.PlayTests
                             body.Measure(who.transform, out float gl, out float gr, out float hl, out float hr);
                             lMin = Mathf.Min(lMin, gl); rMin = Mathf.Min(rMin, gr); lHip = Mathf.Min(lHip, hl); rHip = Mathf.Min(rHip, hr);
                             int k = f - Settle;
+                            if (video && k < VideoFrames)
+                            {
+                                Shoot(true, still, 0, 0); Shoot(false, still, Tile, 0); still.Apply();
+                                string dir = Path.Combine(output, "walk-video", $"{mode}-{id}");
+                                Directory.CreateDirectory(dir);
+                                File.WriteAllBytes(Path.Combine(dir, $"{k:000}.jpg"), still.EncodeToJPG(88));
+                            }
                             if (k % ShotEvery != 0 || k / ShotEvery >= Shots * 2) return;
                             int shot = k / ShotEvery;
                             bool front = shot < Shots;
+                            Shoot(front, sheet, (shot % Shots) * Tile, front ? Tile : 0);
+                        };
+                        void Shoot(bool front, Texture2D into, int x, int y)
+                        {
                             var at = who.transform.position;
                             var eye = front
                                 ? at + who.transform.forward * 4.2f + Vector3.up * 1.15f + who.transform.right * .15f
@@ -118,10 +133,11 @@ namespace TumbangPreso.PlayTests
                             witness.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(at + Vector3.up * .85f - eye));
                             PaeteKitPlayProbe.RenderFilmView(witness, rt);
                             var was = RenderTexture.active; RenderTexture.active = rt;
-                            sheet.ReadPixels(new Rect(0, 0, Tile, Tile), (shot % Shots) * Tile, front ? Tile : 0);
+                            into.ReadPixels(new Rect(0, 0, Tile, Tile), x, y);
                             RenderTexture.active = was;
-                        };
-                        for (f = 0; f < Settle + Shots * ShotEvery * 2 + 1; f++)
+                        }
+                        int length = Settle + Mathf.Max(Shots * ShotEvery * 2 + 1, video ? VideoFrames : 0);
+                        for (f = 0; f < length; f++)
                         {
                             who.Intent.Parked = false; who.Stamina.RefillAndClearFatigue();
                             who.Intent.Move = Vector2.up; who.Intent.Set(Verb.Sprint, false);
@@ -144,7 +160,7 @@ namespace TumbangPreso.PlayTests
             {
                 Time.captureFramerate = previousRate;
                 File.WriteAllText(Path.Combine(output, $"gaps_{tag}.csv"), report.ToString());
-                Object.Destroy(witness.gameObject); rt.Release(); Object.Destroy(rt); Object.Destroy(sheet);
+                Object.Destroy(witness.gameObject); rt.Release(); Object.Destroy(rt); Object.Destroy(sheet); Object.Destroy(still);
             }
             Assert.Greater(filmed, 0, "Nothing was filmed.");
         }

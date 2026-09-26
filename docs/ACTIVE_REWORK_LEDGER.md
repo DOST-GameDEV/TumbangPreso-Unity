@@ -13,6 +13,13 @@ second pass (`docs/reports/amihan-kit-2026-09-26/`: plan, research from the game
 to diff session"*): the QA relay fix (awaiting a tester), Paete's E (recast gate, outside the box), the tansan grant (needs a UGS
 deploy, and a revert before release), Paete's preview size, the interact prompt, the walk's arms, and Amihan's whole pass.
 
+**State at this session's hand-off (2026-09-26, cloud):** pushed `6dea8556` (QA relay guard, Paete E recast gate and
+outside-box plant, placed thorns, first-person vine bend, CODE colon, tansan grant, Amihan film probe), `76e0fb54` (per-body arm
+fit, `WalkArmsProbe`), then the gait second pass (arms hanging flush beside the torso, foot plant, lean and weight roll, walk
+clip tool). Evidence folders are cloud-only (`Logs/cloud5` to `Logs/cloud9`). Next, in the owner's order: ASKS-0926 row 1 (the
+Amihan and Rafi remodel), then the rest of ASKS-0926 newest first. Paete's size: the plan in its ASKS-0926 row (grow the body in
+play and frame the previews against a shared reference so a taller hero reads taller); nothing is built for it yet.
+
 ## HERO-9 Paete, Unity pass on the cloud work, 2026-09-26 (worktree `TumbangPreso-Unity-paete`, pushes to ASTRAReworks)
 
 Owner: Paete first, and *"I WANT THIS TO BE THE BASELINE QUALITY OF EVERYTHING ELSE MOVING FORWARD"*. Every cloud

@@ -41,6 +41,18 @@ namespace TumbangPreso.Visual
     /// gap opens at the shoulder). The shift rides `_armSwingAmount`, so a hand-over to anything authored takes it away as
     /// smoothly as the swing.
     ///
+    /// ⚠️⚠️ SECOND PASS, SAME DAY: THE ARMS HANG STRAIGHT DOWN BESIDE THE TORSO, AND THE BODY TAKES ITS WEIGHT. The owner on
+    /// the first fit's frames: *"thihs walk still sucks pls imrpove still on all"*. The fit had bought its clearance mostly
+    /// with SPREAD (19 to 30 degrees), so every body walked with its arms held out in an A like a penguin, and nothing else
+    /// moved: no bob, no weight shift. A blocky figure's arm reads as an arm when it hangs nearly vertical and FLUSH against
+    /// the side of the torso block and swings in a big arc fore and aft, so the fit now starts from 5 degrees (8 running), puts
+    /// the arm's inner face flush with the torso at the shoulder by moving the shoulder out (`TopClearance`), and opens the
+    /// spread only if the fist would still land inside the hips (a robe). And `ApplyFootPlant` keeps the LOWER foot on the
+    /// ground: these legs have no knee, so with the root fixed both feet lifted 21 per cent of the leg's length off the court
+    /// at every contact (1 - cos 38 degrees) and the body floated through the walk. Dropping the root by exactly that puts the
+    /// weight down on each step, which is also the bob. The lean and the side-to-side weight shift are in
+    /// `CharacterAnimator.LocomotionWeight.cs`.
+    ///
     /// Handing over to anything authored (charge, throw, casts, emotes, recovery) eases out over
     /// `HandOverSeconds` rather than snapping: the charge pose is built on the clip's carry pose, so an
     /// instant hand-over would pop the lowered arm back up by 40 degrees on the first frame of a wind-up.
@@ -48,22 +60,25 @@ namespace TumbangPreso.Visual
     public sealed partial class CharacterAnimator
     {
         /// <summary>Peak forward swing of a free arm, degrees from hanging. Back swing is 0.7 of it.</summary>
-        public const float WalkArmSwingDegrees = 32f;
-        public const float RunArmSwingDegrees = 55f;
+        public const float WalkArmSwingDegrees = 36f;
+        public const float RunArmSwingDegrees = 58f;
         /// <summary>
         /// The spread a hanging arm STARTS from, degrees from vertical, before `FitArm` opens it for the body it is on (and the
-        /// spread used as it is when a body's mesh cannot be read). Was 14 and 18 for every body.
+        /// spread used as it is when a body's mesh cannot be read). Was 14 and 18 for every body, then 16 and 20 opening to 30
+        /// (the penguin; see the second-pass note above).
         /// </summary>
-        public const float WalkArmSpreadDegrees = 16f;
-        public const float RunArmSpreadDegrees = 20f;
-        /// <summary>The widest `FitArm` opens the spread before it stops and leaves the rest to the shoulder shift.</summary>
-        public const float MaxArmSpreadDegrees = 30f;
-        /// <summary>How far the hanging fist's inner face clears the hips, as a fraction of the arm's length (about 3.4 cm on the shared body).</summary>
-        public const float ArmClearance = .05f;
-        /// <summary>A shoulder shift up to this fraction of the arm's length is taken before opening the spread any further.</summary>
-        public const float PreferredShoulderShift = .12f;
-        /// <summary>The most the shoulder is ever moved out sideways, as a fraction of the arm's length (about 15 cm on the shared body).</summary>
-        public const float MaxShoulderShift = .22f;
+        public const float WalkArmSpreadDegrees = 5f;
+        public const float RunArmSpreadDegrees = 8f;
+        /// <summary>The widest `FitArm` opens the spread, and only for a fist that would otherwise land inside the hips.</summary>
+        public const float MaxArmSpreadDegrees = 14f;
+        /// <summary>The arm's inner face at the shoulder against the torso's side: 0 is flush, touching, never a gap.</summary>
+        public const float TopClearance = 0f;
+        /// <summary>How far the hanging fist's inner face clears the hips, as a fraction of the arm's length.</summary>
+        public const float ArmClearance = .03f;
+        /// <summary>The most the shoulder is ever moved out sideways, as a fraction of the arm's length (Phaister's robe needs 0.79).</summary>
+        public const float MaxShoulderShift = .8f;
+        /// <summary>How much of the knee-less legs' contact lift the root gives back (1 keeps the lower foot exactly on the court).</summary>
+        public const float FootPlantShare = 1f;
         /// <summary>A runner carries the arms a little forward of hanging.</summary>
         public const float RunArmForwardDegrees = 10f;
         /// <summary>Shoulders counter-rotate against the hips.</summary>
@@ -83,7 +98,15 @@ namespace TumbangPreso.Visual
         public Transform SwingArmLeft => _swingArmL;
         public Transform SwingArmRight => _swingArmR;
         private Quaternion _swingArmLRest, _swingArmRRest, _swingTorsoRest;
-        private Vector3 _swingArmLPosRest, _swingArmRPosRest;
+        private Vector3 _swingArmLPosRest, _swingArmRPosRest, _swingRootPosRest;
+        private Transform _swingRoot;
+        /// <summary>Hip pivot to sole, in world metres, for the foot plant.</summary>
+        private float _legReachWorld;
+        private float _lastStride, _strideRate, _lastGaitPhase, _gaitCycleRate;
+        /// <summary>-1 to 1: +1 while the body's LEFT leg bears the weight (mid-stance), -1 for the right. Read by the weight shift.</summary>
+        public float StanceSide { get; private set; }
+        /// <summary>World metres the foot plant lowered the body this frame (diagnostics).</summary>
+        public float FootPlantDrop { get; private set; }
 
         /// <summary>
         /// One arm's clearance, solved once per model in the mesh's own units: the spread (degrees from vertical) and the
@@ -114,6 +137,7 @@ namespace TumbangPreso.Visual
             if (!_swingApplied) return;
             if (_swingArmL != null) { _swingArmL.localRotation = _swingArmLRest; _swingArmL.localPosition = _swingArmLPosRest; }
             if (_swingArmR != null) { _swingArmR.localRotation = _swingArmRRest; _swingArmR.localPosition = _swingArmRPosRest; }
+            if (_swingRoot != null) _swingRoot.localPosition = _swingRootPosRest;
             if (_swingTorso != null) _swingTorso.localRotation = _swingTorsoRest;
             _swingApplied = false;
         }
@@ -121,7 +145,8 @@ namespace TumbangPreso.Visual
         private void ClearLocomotionArms()
         {
             RestoreLocomotionArms();
-            _swingArmL = _swingArmR = _swingLegL = _swingLegR = _swingTorso = null;
+            _swingArmL = _swingArmR = _swingLegL = _swingLegR = _swingTorso = _swingRoot = null;
+            _legReachWorld = 0; StanceSide = 0; FootPlantDrop = 0;
             _swingBonesResolved = false;
             _fitL = _fitR = default;
             _armWorldScale = 0;
@@ -155,6 +180,7 @@ namespace TumbangPreso.Visual
                             case "leg-left": if (_swingLegL == null) _swingLegL = bone; break;
                             case "leg-right": if (_swingLegR == null) _swingLegR = bone; break;
                             case "torso": if (_swingTorso == null) _swingTorso = bone; break;
+                            case "root": if (_swingRoot == null && skin == armSkin) _swingRoot = bone; break;
                         }
                     }
                 }
@@ -176,7 +202,7 @@ namespace TumbangPreso.Visual
             float target = ordinary ? Mathf.Clamp01((FlatSpeed - WalkSpeedThreshold) / .8f) : 0f;
             // Handing over to an authored action is quick; easing back in takes a moment.
             _armSwingAmount = Mathf.MoveTowards(_armSwingAmount, target, dt / (ordinary ? .15f : HandOverSeconds));
-            if (_armSwingAmount <= .001f) { StrideSwing = 0; return; }
+            if (_armSwingAmount <= .001f) { StrideSwing = 0; StanceSide = 0; FootPlantDrop = 0; return; }
 
             float maxLeg = Mathf.Lerp(WalkLegSwingDegrees, RunLegSwingDegrees, _runWeight) * 2f;
             // Sides by POSITION, not by bone name: the importer mirrors X, so a name says nothing about
@@ -184,8 +210,21 @@ namespace TumbangPreso.Visual
             bool swapped = SideOf(_swingLegL, -1f) > 0;
             var leftLeg = swapped ? _swingLegR : _swingLegL;
             var rightLeg = swapped ? _swingLegL : _swingLegR;
-            float stride = Mathf.Clamp((LegForwardDegrees(leftLeg) - LegForwardDegrees(rightLeg)) / maxLeg, -1f, 1f);
+            float legLeft = LegForwardDegrees(leftLeg), legRight = LegForwardDegrees(rightLeg);
+            float stride = Mathf.Clamp((legLeft - legRight) / maxLeg, -1f, 1f);
             StrideSwing = stride;
+            // Which leg bears the weight: the stance leg is the one travelling BACK under the body, so the left leg is in
+            // stance while the stride (+1 left forward) is falling. Normalised by the cycle's own angular rate, a sine's
+            // derivative over its frequency, so it reads -1 to 1 at any cadence and peaks at mid-stance.
+            if (dt > 0f)
+            {
+                float cycles = Mathf.Abs(Mathf.Repeat(_gaitPhase - _lastGaitPhase + .5f, 1f) - .5f) / dt;
+                _gaitCycleRate = Mathf.Lerp(_gaitCycleRate, cycles, 1 - Mathf.Exp(-10f * dt));
+                _strideRate = Mathf.Lerp(_strideRate, (stride - _lastStride) / dt, 1 - Mathf.Exp(-20f * dt));
+            }
+            _lastStride = stride; _lastGaitPhase = _gaitPhase;
+            float omega = 2f * Mathf.PI * Mathf.Max(.2f, _gaitCycleRate);
+            StanceSide = Mathf.Clamp(-_strideRate / omega, -1f, 1f) * _armSwingAmount;
             // The arms trail the legs by a few hundredths of a second, as loose arms do; locked to the stride
             // they read as a wind-up toy. Secondary motion, the cheapest "alive" there is.
             // ⚠️ A FAST filter with its loss given back. At 16/s it trailed nicely but also cut the sprint's swing
@@ -224,9 +263,10 @@ namespace TumbangPreso.Visual
             else PoseArm(_swingArmR, _alongR, sideR,
                 Mathf.Lerp(WalkCarryForwardDegrees, RunCarryForwardDegrees, _runWeight)
                 + sideR * stride * Mathf.Lerp(WalkCarrySwingDegrees, RunCarrySwingDegrees, _runWeight), spreadR);
-            // The shoulder moves out AFTER the rotation, in the character's frame, so the fist it carries clears the hip.
+            // The shoulder moves out AFTER the rotation, in the character's frame, so the arm hangs flush beside the torso.
             _swingArmL.position += transform.right * (sideL * shiftL * _armSwingAmount);
             _swingArmR.position += transform.right * (sideR * shiftR * _armSwingAmount);
+            ApplyFootPlant(legLeft, legRight);
             _swingApplied = true;
         }
 
@@ -245,6 +285,23 @@ namespace TumbangPreso.Visual
             float axis = boneToModel.MultiplyVector(Vector3.right).x;
             if (Mathf.Abs(side) < 1e-4f || Mathf.Abs(axis) < 1e-4f) return fallback;
             return Mathf.Sign(side) == Mathf.Sign(axis) ? Vector3.right : Vector3.left;
+        }
+
+        /// <summary>
+        /// ⚠️ THE LOWER FOOT STAYS ON THE COURT. With no knee, a leg swung `a` degrees off vertical lifts its sole by
+        /// reach * (1 - cos a) with the hip where it is, and the walk clip swings both legs to 38 degrees at contact, so both
+        /// soles hung 21 per cent of a leg's length (about 9 cm on the shared body) above the ground at every step and the body
+        /// hovered. The root drops by the lift of the MORE vertical leg, so that sole touches down; the result is also the gait's
+        /// bob, lowest at contact and highest at passing, twice a cycle, which is where a walker's weight actually goes.
+        /// </summary>
+        private void ApplyFootPlant(float legLeft, float legRight)
+        {
+            FootPlantDrop = 0f;
+            if (_swingRoot == null || _legReachWorld <= 0f) return;
+            _swingRootPosRest = _swingRoot.localPosition;
+            float lower = Mathf.Min(Mathf.Abs(legLeft), Mathf.Abs(legRight)) * Mathf.Deg2Rad;
+            FootPlantDrop = _legReachWorld * (1f - Mathf.Cos(lower)) * FootPlantShare * _armSwingAmount;
+            _swingRoot.position -= transform.up * FootPlantDrop;
         }
 
         /// <summary>
@@ -268,17 +325,33 @@ namespace TumbangPreso.Visual
             float meshSpan = Mathf.Abs(pivotL.x - pivotR.x);
             if (meshSpan < 1e-4f) return;
             _armWorldScale = Vector3.Distance(_swingArmL.position, _swingArmR.position) / meshSpan;
-            _fitL = FitArm(vertices, dominant, pivotL, armL, armR);
-            _fitR = FitArm(vertices, dominant, pivotR, armR, armL);
+            int head = -1, leg = -1;
+            for (int i = 0; i < skin.bones.Length; i++)
+            {
+                if (skin.bones[i] == null) continue;
+                if (skin.bones[i].name == "head") head = i;
+                else if (skin.bones[i].name == "leg-left" && leg < 0) leg = i;
+            }
+            _fitL = FitArm(vertices, dominant, pivotL, armL, armR, head);
+            _fitR = FitArm(vertices, dominant, pivotR, armR, armL, head);
+            // The leg's reach, hip pivot to sole, off the same bind pose (`ApplyFootPlant`).
+            if (leg >= 0 && leg < binds.Length)
+            {
+                float hip = binds[leg].inverse.MultiplyPoint3x4(Vector3.zero).y, sole = float.MaxValue;
+                for (int i = 0; i < vertices.Length; i++) if (dominant[i] == leg) sole = Mathf.Min(sole, vertices[i].y);
+                if (sole < hip) _legReachWorld = (hip - sole) * _armWorldScale;
+            }
         }
 
         /// <summary>
-        /// One arm: the smallest spread from the base value at which a shoulder shift of at most `PreferredShoulderShift` clears
-        /// the hips by `ArmClearance`; past `MaxArmSpreadDegrees` the shift is whatever is needed, capped at `MaxShoulderShift`.
-        /// The hips are every vertex that is neither arm, in the band from just below the hanging fist to 40 per cent of an
-        /// arm's length above it, on the fist's side.
+        /// One arm. First the shoulder: moved out until the hanging arm's inner face is flush with the torso's side
+        /// (`TopClearance`), the torso being every vertex that is neither arm nor head from 60 per cent of an arm's length
+        /// below the pivot to just above it. Then the fist: the spread opens a degree at a time from the base value, up to
+        /// `MaxArmSpreadDegrees`, only while the fist's inner face would still sit inside the hips (the band from just below the
+        /// hanging fist to 40 per cent of an arm above it) by less than `ArmClearance`; past the cap the shoulder moves out the
+        /// rest of the way, at most `MaxShoulderShift` of the arm's length.
         /// </summary>
-        private static ArmFit FitArm(Vector3[] vertices, int[] dominant, Vector3 pivot, int arm, int otherArm)
+        private static ArmFit FitArm(Vector3[] vertices, int[] dominant, Vector3 pivot, int arm, int otherArm, int head)
         {
             var fit = new ArmFit();
             float side = pivot.x >= 0f ? 1f : -1f;
@@ -292,33 +365,43 @@ namespace TumbangPreso.Visual
             if (far == float.MinValue) return fit;
             float length = far - pivot.x * side, inner = pivot.y - low;
             if (length <= 1e-4f) return fit;
+            float torso = Widest(pivot.y - .6f * length, pivot.y + .05f * length);
             Solve(WalkArmSpreadDegrees, out fit.WalkSpread, out fit.WalkShift);
             Solve(RunArmSpreadDegrees, out fit.RunSpread, out fit.RunShift);
             fit.Valid = true;
             return fit;
 
+            float Widest(float from, float to)
+            {
+                float widest = float.MinValue;
+                for (int i = 0; i < vertices.Length; i++)
+                {
+                    int b = dominant[i];
+                    if (b == arm || b == otherArm || b == head) continue;
+                    float y = vertices[i].y;
+                    if (y < from || y > to) continue;
+                    widest = Mathf.Max(widest, vertices[i].x * side);
+                }
+                return widest;
+            }
+
             void Solve(float from, out float spread, out float shift)
             {
                 spread = from; shift = 0f;
+                float need = 0f;
                 for (float degrees = from; degrees <= MaxArmSpreadDegrees + .01f; degrees += 1f)
                 {
-                    float radians = degrees * Mathf.Deg2Rad;
-                    float fistY = pivot.y - length * Mathf.Cos(radians);
-                    float hips = float.MinValue;
-                    for (int i = 0; i < vertices.Length; i++)
-                    {
-                        if (dominant[i] == arm || dominant[i] == otherArm) continue;
-                        float y = vertices[i].y;
-                        if (y < fistY - .1f * length || y > fistY + .4f * length) continue;
-                        hips = Mathf.Max(hips, vertices[i].x * side);
-                    }
+                    float radians = degrees * Mathf.Deg2Rad, cos = Mathf.Cos(radians);
                     spread = degrees;
-                    if (hips == float.MinValue) { shift = 0f; return; }
-                    float fistInner = pivot.x * side + length * Mathf.Sin(radians) - inner * Mathf.Cos(radians);
-                    shift = Mathf.Max(0f, hips + ArmClearance * length - fistInner);
-                    if (shift <= PreferredShoulderShift * length) return;
+                    shift = torso == float.MinValue ? 0f : Mathf.Max(0f, torso + TopClearance * length - (pivot.x * side - inner * cos));
+                    float fistY = pivot.y - length * cos;
+                    float hips = Widest(fistY - .1f * length, fistY + .4f * length);
+                    if (hips == float.MinValue) return;
+                    float fistInner = pivot.x * side + shift + length * Mathf.Sin(radians) - inner * cos;
+                    need = hips + ArmClearance * length - fistInner;
+                    if (need <= 0f) return;
                 }
-                shift = Mathf.Min(shift, MaxShoulderShift * length);
+                shift = Mathf.Min(shift + need, MaxShoulderShift * length);
             }
         }
 
