@@ -1,5 +1,40 @@
 # Active TUMP rework ledger
 
+## Menu QA, room titles and offline rewards, 2026-09-27 (ASTRAReworks)
+
+QA2 follows published `026fed74`. Consent now shows a check; password faults visibly
+render and replace busy status. Mode posters stay inside their shaped cards. Current
+hero roles, unavailable portraits and the preparation guide agree with live kits.
+Lobby chat no longer covers seats; score chips fit ordinary and extreme values.
+Paete's preview-only framing now reads larger than Sean without cropping, and the
+shop's full role captions fit. No model, roster or gait asset changed in this batch.
+
+Practice no longer enters local career/upload or C#/JS reward settlement, and its
+summary cannot inherit an older queued match's upload promise. Existing balances,
+history and the separate temporary top-up are preserved; Cloud Code is not deployed.
+LAN titles retain 24 characters. Known directory titles are session-owned, code-bound
+and attempt-owned through controller recreation, cancellation and transport restart.
+
+Evidence: Core 659/659 and stubbed Node wallet checks; current-kit EditMode contracts
+74/74 plus title/career 3/3; 17 distinct QA PlayMode methods have passing targeted
+receipts across recorded amendments. The HIGOP input-contract correction separately
+passed both local shared-cohort cases without runtime phase changes. The final QA
+snapshot contains 55 authored files; all 48 source files selected for this batch match
+its hashes. Original failures and before images remain preserved.
+[QA2 results and limits](reports/stability-2026-09-27/qa2-validation.md),
+[QA comments](reports/stability-2026-09-27/qa-comments.md),
+[Paete framing](reports/stability-2026-09-27/paete-framing.md),
+[reward eligibility](reports/stability-2026-09-27/practice-rewards.md),
+[current-kit contracts](reports/stability-2026-09-27/regression-contracts.md).
+
+This is not a green full gate, a player build, physical input qualification or real-peer
+proof. The name-field case uses actual raycasts and explicit Unity key events, not OS
+typing. Live services, the complete Practice range, Sean/Cheska peer reproduction,
+performance measurement, remaining hero presentation and final qualification stay open.
+The in-progress Amihan flight/protocol and performance instrumentation are separate,
+not included or claimed verified here. UI motion adjustment: fitted score numbers no
+longer use the 7-percent scale pulse; the chip glow remains, as logged in menu-qa.md.
+
 ## Room lifecycle and current hero UI, 2026-09-27 (ASTRAReworks)
 
 Verified batch from `04886cc4`: cancelled host/join work cannot revive an older room or stop its

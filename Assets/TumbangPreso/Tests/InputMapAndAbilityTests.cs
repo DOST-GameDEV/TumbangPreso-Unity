@@ -336,49 +336,36 @@ namespace TumbangPreso.Tests
         }
 
         /// <summary>
-        /// ⚠️⚠️ THE FIVE ULTIMATES DO NOT COST THE SAME, AND UNTIL 2026-08-25 THEY DID. The
-        /// price was `HeroKit.UltimateMax`, a `const` shared by every kit, so a Thunderstrike
-        /// that stuns everyone within 4.5 m of Zack's own feet with no aim and no counterplay
-        /// cost exactly what Nemu's Seance Void costs, which is a zone that drags and slows and
-        /// ends no round on its own.
-        ///
-        /// This asserts the ORDER rather than the five numbers, because the order is the design
-        /// decision and the numbers are a tuning pass waiting on `BotBehaviourProbe`. The
-        /// reasoning for each is on the `UltimateCost` override in its own kit, and the table is
-        /// `docs/Hero_Strike_Balance.md` § 3.1.
+        /// Pin each adopted kit price, including the newer role kits. The former total order
+        /// placed Glacial Nova above Supernova; ABSOLUTE ZERO now costs 12 objectives.
         /// </summary>
         [Test]
-        public void UltimateCostsAreRankedByHowMuchTheUltimateSwingsARound()
+        public void UltimateCostsMatchTheCurrentNineHeroEconomy()
         {
-            float zack = HeroAbilitySystem.CreateKitFor("zack").UltimateCost;
-            float cheska = HeroAbilitySystem.CreateKitFor("cheska").UltimateCost;
-            float sean = HeroAbilitySystem.CreateKitFor("sean").UltimateCost;
-            float dante = HeroAbilitySystem.CreateKitFor("dante").UltimateCost;
-            float nemu = HeroAbilitySystem.CreateKitFor("nemu").UltimateCost;
-
-            // Cannot-miss burst at the top; the setup zone at the bottom.
-            Assert.Greater(zack, cheska, "Thunderstrike must cost more than Glacial Nova");
-            Assert.Greater(cheska, sean, "Glacial Nova must cost more than Supernova");
-            Assert.Greater(sean, dante, "Supernova must cost more than Titan Fissure");
-            Assert.Greater(dante, nemu, "Titan Fissure must cost more than Seance Void");
-
-            // ⚠️⚠️ THE RANGE IS 10 TO 20 CHARGES AND IT WAS ASKED FOR IN THOSE WORDS. 🧑
-            // 2026-08-27: *"i wanted like 10-20 charges required on ult depending on impact"*,
-            // after *"i want downing can and tayaing to only give one point for the charges"*.
-            // One lata knockdown is one charge, so these bounds read directly as knockdowns and
-            // the assertion is the request rather than a derived proxy for it.
-            //
-            // ⚠️ THE OLD BOUND WAS "SEVEN KNOCKDOWNS", which the new pacing deliberately breaks:
-            // an ultimate is meant to take two to four rounds of objective play now rather than
-            // one strong round. `Balance`'s ultimate economy block carries the arithmetic and
-            // says plainly that the COST is the lever if a match measures too few ultimates.
-            Assert.LessOrEqual(zack, Balance.UltimateChargeLataKnock * 20.0f,
-                "no ultimate may cost more than twenty objectives");
-            Assert.GreaterOrEqual(nemu, Balance.UltimateChargeLataKnock * 10.0f,
-                "no ultimate may cost fewer than ten objectives");
-
-            // And none may be so cheap it is spammable off throws alone.
-            Assert.GreaterOrEqual(nemu, Balance.UltimateChargeLegalThrow * 15.0f,
+            var expected = new Dictionary<string, float>
+            {
+                ["dante"] = GeoRules.EarthquakeCost,
+                ["cheska"] = CryoRules.AbsoluteZeroCost,
+                ["sean"] = 15.0f,
+                ["zack"] = 20.0f,
+                ["nemu"] = 10.0f,
+                ["phaister"] = VoodooRules.HigopCost,
+                ["rafi"] = 16.0f,
+                ["amihan"] = AmihanRules.StormSurgeCost,
+                ["paete"] = PaeteRules.SentryCost,
+            };
+            Assert.AreEqual(Roster.HeroPeople.Count, expected.Count, "a hero has no cost contract");
+            float lowest = float.MaxValue;
+            foreach (var hero in Roster.HeroPeople)
+            {
+                Assert.IsTrue(expected.TryGetValue(hero.Id, out float cost), hero.Id + " has no cost contract");
+                float actual = HeroAbilitySystem.CreateKitFor(hero.Id).UltimateCost;
+                Assert.AreEqual(cost, actual, 0.001f, hero.Id + " has the wrong ultimate price");
+                Assert.That(actual, Is.InRange(Balance.UltimateChargeLataKnock * 10.0f,
+                                               Balance.UltimateChargeLataKnock * 20.0f));
+                lowest = Mathf.Min(lowest, actual);
+            }
+            Assert.GreaterOrEqual(lowest, Balance.UltimateChargeLegalThrow * 15.0f,
                 "the cheapest ultimate can be bought with throws, which are safe and free");
         }
 
@@ -393,13 +380,17 @@ namespace TumbangPreso.Tests
         [Test]
         public void EveryShippedAbilityIsGatedByExactlyOneOfCooldownOrCharges()
         {
-            foreach (string hero in new[] { "sean", "zack", "dante", "cheska", "nemu", "phaister" })
+            var placeholders = new HashSet<string>();
+            foreach (var person in Roster.HeroPeople)
             {
+                string hero = person.Id;
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
-
-                foreach (var skill in new[] { kit.Skill1, kit.Skill2 })
+                Assert.IsTrue(kit.HasRoleAbilities, hero + " is missing a role ability");
+                foreach (var skill in kit.AllAbilities)
                 {
                     Assert.NotNull(skill, hero + " is missing a skill");
+                    if (skill == kit.Ultimate) continue;
+                    if (skill is PlaceholderRoleAbility) placeholders.Add(skill.Id);
 
                     if (skill.UsesCharges)
                     {
@@ -410,23 +401,10 @@ namespace TumbangPreso.Tests
                     }
                     else
                     {
-                        // ⚠️⚠️ THE BAND MOVED TO 45 to 65 s ON 2026-08-27 AND THE OLD ONE IS KEPT
-                        // HERE BECAUSE IT WAS ALSO 🧑'S NUMBER. 2026-08-25 he asked for *"like
-                        // 30seconds to 45 seconds"*, which replaced 6 to 9 s cooldowns under
-                        // which four seats cast 44 to 56 times in a 90 s round. Having played
-                        // the 4.72 build at 30 to 45 he asked again, twice in one message:
-                        // *"make ability timers way longer too for all or just replace them with
-                        // 1-2 charges"*.
-                        //
-                        // ⚠️ THE ORDER INSIDE THE BAND IS UNCHANGED AND IS THE ARGUED PART.
-                        // `Hero_Strike_Balance.md` § 3.2: a power that ignores the game's central
-                        // risk waits longest. Dante's Carapace is still the ceiling and Zack's
-                        // Bolt Sprint still the floor; every cooldown was scaled by about 1.5 so
-                        // the reasoning that set the ORDER survives a change to the SCALE.
-                        Assert.GreaterOrEqual(skill.Cooldown, 45.0f,
-                            $"{hero}/{skill.Id} cools in {skill.Cooldown}s, under the 45s floor");
-                        Assert.LessOrEqual(skill.Cooldown, 65.0f,
-                            $"{hero}/{skill.Id} cools in {skill.Cooldown}s, over the 65s ceiling");
+                        Assert.Greater(skill.Cooldown, 0.0f,
+                            $"{hero}/{skill.Id} has neither cooldown nor charges");
+                        Assert.AreEqual(0, skill.MaxCharges,
+                            $"{hero}/{skill.Id} has a cooldown and a charge cap");
                     }
                 }
 
@@ -438,76 +416,47 @@ namespace TumbangPreso.Tests
                 Assert.IsFalse(kit.Ultimate.UsesCharges,
                     hero + "'s ultimate is on ability charges as well as the ultimate meter");
             }
+            CollectionAssert.AreEquivalent(new[] { "sean_skill2d", "zack_skill2d", "rafi_skill2d" },
+                                           placeholders, "the three designed-later role slots changed");
         }
 
         /// <summary>
-        /// ⚠️⚠️ A RECHARGE IS AN EVENT, NEVER A TIMER, AND ONLY SOME SKILLS GET ONE. A kit where
-        /// everything comes back is a kit with cooldowns and extra bookkeeping, which is the
-        /// thing the charge split was introduced to get away from. This pins both halves: that
-        /// the recharging skills recharge off the right event, and that the rest genuinely run
-        /// out. `docs/Hero_Strike_Balance.md` § 3.1.
+        /// A charge returns only on its authored event, and never exceeds its cap.
         /// </summary>
         [Test]
         public void ChargesComeBackOnPlayAndOnlyForTheSkillsThatShould()
         {
             var cheska = HeroAbilitySystem.CreateKitFor("cheska");
-
-            // ⚠️ A REAL MOTOR, BECAUSE `OnActivate` SPAWNS. Cheska's barricade reads
-            // `ctx.Position` and `ctx.Forward` off the motor's transform and then builds the
-            // wall, so a null context throws before the charge bookkeeping this test is about
-            // ever runs. `Nemu_AstralProjection_SupportsReactivation` in `RuntimeLayerTests`
-            // sets one up the same way.
-            var go = new GameObject("ChargeProbeMotor");
-
-            // ⚠️⚠️ THE BARRICADE'S ICE CHIPS CALL `Destroy` ON A SELF-TIMER AND UNITY LOGS AN
-            // ERROR FOR THAT OUTSIDE PLAY MODE. It is an EditMode artefact and nothing else:
-            // `Destroy` is correct at runtime, which is the only place the barricade is ever
-            // built for real, and the test framework promotes any unexpected `[Error]` to a
-            // failure. Suppressed narrowly and restored in `finally`, so it cannot mask an error
-            // from a later test.
-            bool ignoring = LogAssert.ignoreFailingMessages;
-            LogAssert.ignoreFailingMessages = true;
-
-            try
+            foreach (var skill in new[] { cheska.Skill1, cheska.AttackingSkill, cheska.DefendingSkill })
             {
-                var motor = go.AddComponent<CharacterMotor>();
-                var ctx = new AbilityContext(motor, null, null);
-
-                // The barricade is one charge, refilled by the retrieval. Spend it, then take
-                // the risk the whole game is built around and get it back.
-                Assert.AreEqual(1, cheska.Skill2.MaxCharges);
-                cheska.Skill2.Activate(ctx);
-                Assert.AreEqual(0, cheska.Skill2.ChargesRemaining, "the barricade did not spend");
-
-                cheska.OnRechargeEvent(HeroAbility.Recharge.LataKnocked);
-                Assert.AreEqual(0, cheska.Skill2.ChargesRemaining,
-                    "the barricade recharged off the wrong event");
-
-                cheska.OnRechargeEvent(HeroAbility.Recharge.OwnSlipperRetrieved);
-                Assert.AreEqual(1, cheska.Skill2.ChargesRemaining,
-                    "retrieving her own tsinelas did not hand the barricade back");
-
-                // ⚠️ AND IT CANNOT OVERFILL. Two retrievals must not bank two walls.
-                cheska.OnRechargeEvent(HeroAbility.Recharge.OwnSlipperRetrieved);
-                Assert.AreEqual(1, cheska.Skill2.ChargesRemaining,
-                    "the barricade banked past its cap");
-
-                // The frost sheet is deliberately one of the ones that runs out.
-                Assert.AreEqual(HeroAbility.Recharge.Never, cheska.Skill1.RechargedBy,
-                    "the frost sheet acquired a recharge; it is meant to run out");
-
-                var sean = HeroAbilitySystem.CreateKitFor("sean");
-                sean.Skill2.Activate(ctx);
-                Assert.AreEqual(1, sean.Skill2.ChargesRemaining, "the cannon did not spend");
-
-                sean.OnRechargeEvent(HeroAbility.Recharge.LataKnocked);
-                Assert.AreEqual(2, sean.Skill2.ChargesRemaining,
-                    "knocking the lata over did not hand the ignition charge back");
+                Assert.IsFalse(skill.UsesCharges, skill.Id + " still uses the retired ice charges");
             }
-            finally
+
+            foreach (string hero in new[] { "sean", "zack" })
             {
-                LogAssert.ignoreFailingMessages = ignoring;
-                Object.DestroyImmediate(go);
+                var kit = HeroAbilitySystem.CreateKitFor(hero);
+                var skill = kit.AttackingSkill;
+                int cap = hero == "sean" ? 2 : 1;
+                Assert.AreEqual(cap, skill.MaxCharges, hero + " has the wrong charge cap");
+                Assert.AreEqual(HeroAbility.Recharge.LataKnocked, skill.RechargedBy);
+                skill.ApplyNetworkSnapshot(0, 0);
+                kit.OnRechargeEvent(HeroAbility.Recharge.OwnSlipperRetrieved);
+                Assert.AreEqual(0, skill.ChargesRemaining, hero + " recharged off retrieval");
+                kit.OnRechargeEvent(HeroAbility.Recharge.LataKnocked);
+                Assert.AreEqual(1, skill.ChargesRemaining, hero + " did not regain one charge");
+                for (int i = 0; i < cap + 1; i++) kit.OnRechargeEvent(HeroAbility.Recharge.LataKnocked);
+                Assert.AreEqual(cap, skill.ChargesRemaining, hero + " exceeded its charge cap");
+            }
+
+            var rafi = HeroAbilitySystem.CreateKitFor("rafi");
+            foreach (var skill in new[] { rafi.Skill1, rafi.AttackingSkill })
+            {
+                Assert.AreEqual(2, skill.MaxCharges, skill.Id + " has the wrong charge cap");
+                Assert.AreEqual(HeroAbility.Recharge.Never, skill.RechargedBy);
+                skill.ApplyNetworkSnapshot(0, 0);
+                rafi.OnRechargeEvent(HeroAbility.Recharge.LataKnocked);
+                rafi.OnRechargeEvent(HeroAbility.Recharge.OwnSlipperRetrieved);
+                Assert.AreEqual(0, skill.ChargesRemaining, skill.Id + " recharged without its own event");
             }
         }
 

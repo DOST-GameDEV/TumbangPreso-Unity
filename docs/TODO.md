@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+**2026-09-27 QA2 verified slices:** consent/password feedback, current-role
+selector/guide, mode-card clipping, Practice picker, lobby chat, score fitting,
+Paete preview framing and local offline-reward exclusion. See
+[QA2 receipts](reports/stability-2026-09-27/qa2-validation.md) and
+[QA comments](reports/stability-2026-09-27/qa-comments.md).
+LAN title parsing has passed; full title/input/peer coverage remains open.
+PRACTICE-1's range controls, live service deployment and final qualification
+remain open. These focused checks do not close their parent requirements.
+
 **2026-09-27 verified stability batch:** room cancellation/seating, native interaction
 prompts, distinct current-kit glyphs, live symbol refresh and avatar sprite imports.
 Exact checks and remaining limits: [validation](reports/stability-2026-09-27/validation.md).

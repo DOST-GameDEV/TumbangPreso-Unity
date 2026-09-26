@@ -101,7 +101,9 @@ namespace TumbangPreso.PlayTests
                 var terms = canvas.GetComponentsInChildren<Toggle>().First(t => t.name == "TermsAcceptance");
                 Assert.IsFalse(terms.isOn);
                 Assert.Less(terms.graphic.canvasRenderer.GetAlpha(), .05f, "Unaccepted consent must look empty.");
-                Assert.IsInstanceOf<Image>(terms.graphic, "Acceptance must be a filled rectangle, not a check glyph.");
+                var consentMark = terms.graphic as OwnerUiGlyph;
+                Assert.IsNotNull(consentMark, "Accepted consent must use the check mark.");
+                Assert.AreEqual(OwnerUiGlyph.Mark.Check, consentMark.Shape);
                 bool larger = Settings.SettingsStore.Current.LargerText;
                 try
                 {
@@ -127,13 +129,18 @@ namespace TumbangPreso.PlayTests
                 finally { Settings.SettingsStore.Current.LargerText = larger; }
                 Find("TermsLink").onClick.Invoke(); yield return null;
                 Find("AcceptGuidelines").onClick.Invoke(); yield return new WaitForSecondsRealtime(.2f);
-                Assert.True(terms.isOn, "I AGREE fills the signup consent square.");
-                Assert.Greater(terms.graphic.canvasRenderer.GetAlpha(), .95f, "The accepted fill must be visible.");
-                yield return TumpUiCapture.Capture("Login-consent-filled", canvas, 960, 540, false, checkActionBounds: true);
+                Assert.True(terms.isOn, "I AGREE marks the signup consent square.");
+                Assert.Greater(terms.graphic.canvasRenderer.GetAlpha(), .95f, "The accepted check must be visible.");
+                yield return TumpUiCapture.Capture("Login-consent-checked", canvas, 960, 540, false, checkActionBounds: true);
                 var fields=canvas.GetComponentsInChildren<InputField>();
                 Assert.IsFalse(fields.Any(f=>f.name=="Email"));
                 var confirmation=fields.First(f=>f.name=="ConfirmPassword");
                 fields.First(f=>f.name=="Username").text="local.validation";
+                fields.First(f=>f.name=="Password").text="short";
+                confirmation.text="short";Find("SubmitAccount").onClick.Invoke();yield return null;
+                Assert.AreEqual("Use at least 8 characters.",
+                    canvas.GetComponentsInChildren<Text>().First(t=>t.name=="PasswordFault").text);
+                Assert.IsEmpty(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="AccountStatus").text);
                 // ⚠️ A PASSWORD THAT PASSES THE REAL RULES, so this case still reaches the
                 // confirmation check. `OwnerFieldFault` enforces UGS's own 8-to-30 with an
                 // upper, a lower, a digit and a symbol, and the old fixture's "test-only"
@@ -167,6 +174,26 @@ namespace TumbangPreso.PlayTests
                 Assert.That(Mathf.Abs((left.anchoredPosition.y-left.sizeDelta.y*.5f)
                                      -(right.anchoredPosition.y-right.sizeDelta.y*.5f)),Is.LessThanOrEqualTo(1f),
                     "The two strokes must share an optical centre line either side of OR");
+                var status = canvas.GetComponentsInChildren<Text>().First(t=>t.name=="AccountStatus");
+                var passwordFault = canvas.GetComponentsInChildren<Text>().First(t=>t.name=="PasswordFault");
+                status.text = "Creating your account...";
+                var fail = typeof(SignInScreen).GetMethod("Fail",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                Assert.IsNotNull(fail);
+                fail.Invoke(login, new object[] { "Password provider: internal check failed." });
+                Assert.AreEqual("Password not accepted. Try a different one.", passwordFault.text);
+                Assert.IsEmpty(status.text, "A failed password must not leave the account appearing busy");
+                yield return new WaitForSecondsRealtime(.25f);
+                Canvas.ForceUpdateCanvases();
+                Assert.Greater(passwordFault.color.a, .95f,"The password fault did not finish fading in.");
+                Assert.Greater(passwordFault.canvasRenderer.GetInheritedAlpha(), .95f);
+                Assert.GreaterOrEqual(passwordFault.cachedTextGenerator.characterCountVisible,
+                    passwordFault.text.Length,"The password fault lost visible characters.");
+                Assert.Greater(passwordFault.canvasRenderer.GetMesh()?.vertexCount ?? 0, 0,
+                    "The password fault has no rendered glyphs.");
+                Assert.LessOrEqual(passwordFault.preferredWidth,passwordFault.rectTransform.rect.width + 1,
+                    "The password fault leaves its available line width.");
+                yield return TumpUiCapture.Capture("OwnerLogin-password-fault", canvas, 960, 540, false);
                 fields.First(f=>f.name=="Username").text="";fields.First(f=>f.name=="Password").text="";
                 confirmation.text="";
                 Find("SignInTab").onClick.Invoke();yield return null;

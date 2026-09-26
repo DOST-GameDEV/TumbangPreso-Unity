@@ -16,13 +16,14 @@ namespace TumbangPreso.PlayTests
         private bool _cameraMotion, _reduced;
         private float _ritualStart = -1;
         private double _ritualStartedAt;
+        private int _ultimateStarts;
         private void Started(CharacterMotor actor, HeroKit kit, HeroAbility ability)
-        { if (kit.HeroId == "phaister") { _ritualStart = ability.WindupRemaining; _ritualStartedAt = Time.timeAsDouble; } }
+        { _ultimateStarts++; if (kit.HeroId == "phaister") { _ritualStart = ability.WindupRemaining; _ritualStartedAt = Time.timeAsDouble; } }
         [UnitySetUp] public IEnumerator Before()
         {
             _cameraMotion=Settings.SettingsStore.Current.CinematicCameraMotion; _reduced=Settings.SettingsStore.Current.ReducedUiMotion;
             yield return PlayModeWorld.Reset();
-            _ritualStart = -1; HeroAbilitySystem.UltimateStarted += Started;
+            _ritualStart = -1; _ultimateStarts = 0; HeroAbilitySystem.UltimateStarted += Started;
         }
         [UnityTearDown] public IEnumerator After()
         {
@@ -116,8 +117,13 @@ namespace TumbangPreso.PlayTests
             while((!PhaisterRitualWarmup.Ready||UltimateIntroductionCache.Find(sean,sean.GetComponent<Carrier>().Held!=null)==null||
                 UltimateIntroductionCache.Find(phaister,phaister.GetComponent<Carrier>().Held!=null)==null)&&Time.realtimeSinceStartup<readyUntil)yield return null;
             Assert.IsTrue(PhaisterRitualWarmup.Ready);
+            // HIGOP joins on release; arm its aim before the instant cast's receipt frame.
+            Press(phaister,Verb.Ultimate);yield return null;yield return null;
+            Assert.IsTrue(phaister.AbilitySystem.IsAiming(HeroAbilitySystem.Slot.Ultimate));
+            Assert.IsFalse(SharedUltimatePhase.BlocksActions);
+            Assert.AreEqual(phaister.AbilitySystem.Kit.UltimateCost,phaister.AbilitySystem.Kit.UltimateCharge);
             float started=Time.realtimeSinceStartup;
-            Press(sean,Verb.Ultimate);Press(phaister,Verb.Ultimate);
+            Press(sean,Verb.Ultimate);phaister.Intent.Set(Verb.Ultimate,false);
             float limit=Time.realtimeSinceStartup+1;
             while(!SharedUltimatePhase.BlocksActions&&Time.realtimeSinceStartup<limit)yield return null;
             var phase=SharedUltimatePhase.Instance;
@@ -150,8 +156,9 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(phase.Active);Assert.AreEqual(.5f,Time.timeScale);
             Debug.Log($"[SharedClock] input-to-accept={phase.Began-started:F4} hold={phase.ReleasedAt-phase.Began:F4} activation-ms={phase.ActivationMilliseconds:F3} observed={Time.realtimeSinceStartup-started:F4}");
             Assert.That(Time.realtimeSinceStartup-started,Is.InRange((float)length-.15f,(float)length+.3f));
-            Assert.AreEqual(1.55f,_ritualStart,.001f,"Measure the actual execution boundary, before the next frame legitimately advances its warning.");
-            Assert.AreEqual(Mathf.Max(0,1.55f-(float)(Time.timeAsDouble-_ritualStartedAt)),phaister.AbilitySystem.Kit.Ultimate.WindupRemaining,.02f);
+            Assert.AreEqual(2,_ultimateStarts,"Each accepted member must execute exactly once after the shared phase.");
+            Assert.AreEqual(VoodooRules.HigopCastSeconds,_ritualStart,.001f,"Measure the actual execution boundary, before the next frame legitimately advances its warning.");
+            Assert.AreEqual(Mathf.Max(0,VoodooRules.HigopCastSeconds-(float)(Time.timeAsDouble-_ritualStartedAt)),phaister.AbilitySystem.Kit.Ultimate.WindupRemaining,.02f);
             Assert.IsFalse(phaister.AbilitySystem.Kit.Ultimate.ReservedForIntroduction);
             Assert.Greater(sean.AbilitySystem.Kit.Ultimate.WindupRemaining,.2f);
             yield return new WaitForSecondsRealtime(.35f);
@@ -204,7 +211,13 @@ namespace TumbangPreso.PlayTests
                         foreach(var actor in actors){actor.ClearStun();actor.ClearTrip();actor.AbilitySystem.Kit.AddUltimateCharge(100);actor.Intent.Set(Verb.Ultimate,false);actor.Intent.CommitFrame();}
                         yield return null;
                     }
-                    foreach(var actor in actors)Press(actor,Verb.Ultimate);
+                    var phaister=actors[3];
+                    Press(phaister,Verb.Ultimate);yield return null;yield return null;
+                    Assert.IsTrue(phaister.AbilitySystem.IsAiming(HeroAbilitySystem.Slot.Ultimate));
+                    Assert.IsFalse(SharedUltimatePhase.BlocksActions);
+                    Assert.AreEqual(phaister.AbilitySystem.Kit.UltimateCost,phaister.AbilitySystem.Kit.UltimateCharge);
+                    foreach(var actor in actors)if(actor!=phaister)Press(actor,Verb.Ultimate);
+                    phaister.Intent.Set(Verb.Ultimate,false);
                     float until=Time.realtimeSinceStartup+1;while(!SharedUltimatePhase.BlocksActions&&Time.realtimeSinceStartup<until)yield return null;
                     var phase=SharedUltimatePhase.Instance;Assert.IsTrue(phase.Active);Assert.AreEqual(4,phase.Commits.Count);Assert.Greater(phase.PhaseId,previous);
                     yield return null;

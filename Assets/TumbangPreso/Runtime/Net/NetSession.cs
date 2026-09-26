@@ -41,7 +41,12 @@ namespace TumbangPreso.Net
         /// `ProtocolVersion` does not move. Empty and 0 are exactly today's behaviour: the host's
         /// handle as the name, listed publicly.
         /// </summary>
-        public static string RoomTitle = "";
+        private static string _roomTitle = "";
+        public static string RoomTitle
+        {
+            get => _roomTitle;
+            set => _roomTitle = Settings.GameSettings.SanitiseRoomTitle(value);
+        }
         public static string RoomMap = "";
         public static int RoomVisibility;
 
@@ -72,6 +77,59 @@ namespace TumbangPreso.Net
 
         /// <summary>The local network beacon for LAN game discovery.</summary>
         public LanBeacon Beacon => _beacon;
+
+        // A joined client's directory title is display data for this transport operation,
+        // not the host's static RoomTitle and not part of the match wire.
+        private JoinAttemptGate.Attempt? _clientTitleOperation, _pendingTitleOwner, _joinedTitleOwner;
+        private string _pendingClientTitle = "", _pendingClientCode = "";
+        private string _joinedClientTitle = "", _joinedClientCode = "";
+        public JoinAttemptGate.Attempt? ClientTitleOperation => _clientTitleOperation;
+        public string JoinedClientRoomTitle => _joinedTitleOwner?.CanContinue == true &&
+            NetAuthority.IsNetworked && !NetAuthority.IsHost &&
+            !string.IsNullOrEmpty(Lobby.JoinCode) &&
+            string.Equals(Lobby.JoinCode, _joinedClientCode, StringComparison.OrdinalIgnoreCase)
+                ? _joinedClientTitle : "";
+
+        public void RememberJoinedClientRoomTitle(string title, string code, JoinAttemptGate.Attempt? operation)
+        {
+            if (operation?.CanContinue != true || !_clientTitleOperation.HasValue ||
+                !operation.Value.Equals(_clientTitleOperation.Value) ||
+                !NetAuthority.IsNetworked || NetAuthority.IsHost) return;
+            string clean = Settings.GameSettings.SanitiseRoomTitle(title);
+            if (string.IsNullOrEmpty(clean) || string.IsNullOrEmpty(code)) return;
+            _pendingClientTitle = clean;
+            _pendingClientCode = code;
+            _pendingTitleOwner = operation;
+            if (!string.IsNullOrEmpty(Lobby.JoinCode)) OnClientTitleCodeChanged(Lobby.JoinCode);
+        }
+
+        private void OnClientTitleCodeChanged(string code)
+        {
+            if (!string.IsNullOrEmpty(code) && !string.IsNullOrEmpty(_joinedClientCode) &&
+                !string.Equals(code, _joinedClientCode, StringComparison.OrdinalIgnoreCase))
+            {
+                _joinedClientTitle = _joinedClientCode = "";
+                _joinedTitleOwner = null;
+            }
+            if (string.IsNullOrEmpty(_pendingClientTitle) || string.IsNullOrEmpty(code)) return;
+            if (_pendingTitleOwner?.CanContinue == true && _clientTitleOperation.HasValue &&
+                _pendingTitleOwner.Value.Equals(_clientTitleOperation.Value) &&
+                string.Equals(code, _pendingClientCode, StringComparison.OrdinalIgnoreCase))
+            {
+                _joinedClientTitle = _pendingClientTitle;
+                _joinedClientCode = _pendingClientCode;
+                _joinedTitleOwner = _pendingTitleOwner;
+            }
+            _pendingClientTitle = _pendingClientCode = "";
+            _pendingTitleOwner = null;
+        }
+
+        private void ClearJoinedClientRoomTitle()
+        {
+            _pendingClientTitle = _pendingClientCode = "";
+            _joinedClientTitle = _joinedClientCode = "";
+            _pendingTitleOwner = _joinedTitleOwner = null;
+        }
 
         public event Action<string> StatusChanged;
 
@@ -481,6 +539,7 @@ namespace TumbangPreso.Net
 
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            Lobby.JoinCodeChanged += OnClientTitleCodeChanged;
 
             _nm = GetComponent<NetworkManager>();
             if (_nm == null) _nm = gameObject.AddComponent<NetworkManager>();
@@ -557,6 +616,7 @@ namespace TumbangPreso.Net
 
         private void OnDestroy()
         {
+            Lobby.JoinCodeChanged -= OnClientTitleCodeChanged;
             if (_nm != null)
             {
                 _nm.OnClientConnectedCallback -= OnClientConnected;
@@ -730,6 +790,8 @@ namespace TumbangPreso.Net
         public async Task<bool> StartHostAsync(int port = DefaultPort, bool dedicated = false)
         {
             var attempt = _joinAttempts.Begin();
+            _clientTitleOperation = attempt;
+            ClearJoinedClientRoomTitle();
             await EnsureStoppedAsync(attempt);
             if (!CanContinueJoin(attempt)) return false;
 
@@ -1035,6 +1097,8 @@ namespace TumbangPreso.Net
         {
             var attempt = _joinAttempts.Begin(cancellationToken);
             if (!CanContinueJoin(attempt)) return false;
+            _clientTitleOperation = attempt;
+            ClearJoinedClientRoomTitle();
             await EnsureStoppedAsync(attempt);
             if (!CanContinueJoin(attempt)) return false;
 
@@ -1104,6 +1168,8 @@ namespace TumbangPreso.Net
         {
             var attempt = _joinAttempts.Begin(cancellationToken);
             if (!CanContinueJoin(attempt)) return false;
+            _clientTitleOperation = attempt;
+            ClearJoinedClientRoomTitle();
             await EnsureStoppedAsync(attempt);
             if (!CanContinueJoin(attempt)) return false;
 
@@ -1207,6 +1273,8 @@ namespace TumbangPreso.Net
         {
             var attempt = _joinAttempts.Begin(cancellationToken);
             if (!CanContinueJoin(attempt)) return false;
+            _clientTitleOperation = attempt;
+            ClearJoinedClientRoomTitle();
             await EnsureStoppedAsync(attempt);
             if (!CanContinueJoin(attempt)) return false;
 
@@ -1307,6 +1375,8 @@ namespace TumbangPreso.Net
             bool stopClient = _connectingAttempt.HasValue && _connectingAttempt.Value.OwnsSession &&
                               _nm != null && _nm.IsListening && !_nm.IsServer;
             _joinAttempts.Invalidate();
+            _clientTitleOperation = null;
+            ClearJoinedClientRoomTitle();
             _connectingAttempt = null;
             if (stopClient) StopCurrentTransport();
             return stopClient;
@@ -1330,6 +1400,7 @@ namespace TumbangPreso.Net
 
         private void StopCurrentTransport()
         {
+            ClearJoinedClientRoomTitle();
             _connectingAttempt = null;
             if (!_localShutdown) MatchRpc.Instance?.NotifyLocalPeerLeaving();
             _localShutdown = true;
@@ -2072,6 +2143,9 @@ namespace TumbangPreso.Net
                 SetStatus($"{Lobby.PeerCount} connected");
                 return;
             }
+
+            ClearJoinedClientRoomTitle();
+            if (!_localShutdown) _clientTitleOperation = null;
 
             // ⚠️⚠️ THE REASON IS THE WHOLE POINT OF THIS BRANCH NOW. A refused approval arrives
             // here as an ordinary disconnect, so a build-version mismatch, a full lobby and a

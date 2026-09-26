@@ -16,7 +16,7 @@ namespace TumbangPreso.UI.Hub
     ///   out             BACK or Escape to HOME
     ///
     /// ⚠️⚠️ WHAT EACH CARD DOES IS THE OWNER'S FLOW AND IS NOT A DESIGN CHOICE:
-    ///   PRACTICE  straight into a practice match
+    ///   PRACTICE  a popup asking TUTORIAL or TRAINING
     ///   CUSTOM    the HOST / JOIN popup, "POPUP, not its own screen"
     ///   CLASSIC   a popup asking CLASSIC or HERO STRIKE (casual), then back to HOME
     ///   RANKED    always Hero Strike, straight back to HOME with the card reading RANKED
@@ -45,8 +45,8 @@ namespace TumbangPreso.UI.Hub
             float small = 400, tall = 460, gap = 40, h = 740, half = (h - gap) / 2;
 
             var practice = HubCards.Art(row, "PracticeCard", "PRACTICE", HubStyle.Golden, 201,
-                "Straight onto the court against bots. Nothing is recorded, and every power works.",
-                new[] { "phaister" }, HubGlyph.Mark.Bots, () => Hub.Host.StartPractice());
+                "Offline. No match rewards or recorded results.",
+                new[] { "phaister" }, HubGlyph.Mark.Bots, () => Hub.Push<HubPracticePopup>());
             HubKit.Place((RectTransform)practice.transform, HubKit.TopLeft, new Vector2(0, 0), new Vector2(small, half));
 
             var custom = HubCards.Art(row, "CustomCard", "CUSTOM", HubStyle.Persimmon, 202,
@@ -77,6 +77,32 @@ namespace TumbangPreso.UI.Hub
             HubSlap.On(custom.transform, 0.08f, 2);
             HubSlap.On(classic.transform, 0.12f, -2);
             HubSlap.On(ranked.transform, 0.16f, 3);
+        }
+    }
+
+    /// <summary>PRACTICE's two existing local routes, without a room or queue.</summary>
+    public sealed class HubPracticePopup : HubScreen
+    {
+        private HubButton _tutorial;
+        public override bool IsPopup => true;
+        public override Selectable FirstFocus => _tutorial;
+
+        public override void Build()
+        {
+            var panel = HubCards.Panel(Root, this, "PRACTICE", "", new Vector2(1180, 700));
+            _tutorial = HubCards.Art(panel, "TutorialChoice", "TUTORIAL", HubStyle.Persimmon, 205,
+                "Offline. No match rewards.", new[] { "totoy", "maring" }, HubGlyph.Mark.Book, () =>
+                {
+                    Hub.Host.LeaveRoom();
+                    SceneFlow.StartTraining();
+                });
+            HubKit.Place((RectTransform)_tutorial.transform, HubKit.BottomLeft, new Vector2(48, 48), new Vector2(520, 460));
+            var training = HubCards.Art(panel, "TrainingChoice", "TRAINING", HubStyle.Golden, 206,
+                "Offline with active bots. No match rewards.", new[] { "cheska", "phaister" }, HubGlyph.Mark.Bots,
+                () => Hub.Host.StartPractice());
+            HubKit.Place((RectTransform)training.transform, HubKit.BottomRight, new Vector2(-48, 48), new Vector2(520, 460));
+            HubSlap.On(_tutorial.transform, 0.02f, -2);
+            HubSlap.On(training.transform, 0.08f, 2);
         }
     }
 
@@ -141,8 +167,20 @@ namespace TumbangPreso.UI.Hub
             card.Shape.OutlineWidth = 6;
             card.Shape.Corner = 26;
 
-            var art = HubKit.Stretch(HubKit.Rect(card.Body, "Art"), 7);
-            art.gameObject.AddComponent<RectMask2D>();
+            // The sticker has cut corners, while RectMask2D leaves square poster corners exposed.
+            // Twelve units clears its thickest high-contrast hover outline without moving the frame.
+            var art = HubKit.Stretch(HubKit.Rect(card.Body, "Art"), 12);
+            var artStencil = art.gameObject.AddComponent<HubShape>();
+            artStencil.Fill = Color.white;
+            artStencil.Pressable = true;
+            artStencil.Seed = card.Shape.Seed;
+            artStencil.Corner = card.Shape.Corner;
+            artStencil.OutlineWidth = 0;
+            artStencil.RimWidth = 0;
+            artStencil.RingWidth = 0;
+            artStencil.ShadowOffset = Vector2.zero;
+            artStencil.raycastTarget = false;
+            art.gameObject.AddComponent<Mask>().showMaskGraphic = false;
 
             // ⚠️⚠️ A CARD WITH A POSTER SHOWS THE POSTER (2026-09-23). The owner asked for each mode
             // to have its own picture, then called the built cards (a flat fill, a faint mark and

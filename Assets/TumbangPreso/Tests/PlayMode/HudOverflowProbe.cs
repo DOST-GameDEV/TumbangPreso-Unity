@@ -113,6 +113,35 @@ namespace TumbangPreso.PlayTests
             "State", "Key", "HypeTitle", "HypeEvent",
         };
 
+        [Test]
+        public void ScoreChipKeepsOrdinaryTotalsExactAndCompactsOnlyTheExtremes()
+        {
+            Assert.AreEqual("1000", TumpMatchReadout.ScoreTextForChip(1000));
+            Assert.AreEqual("10000", TumpMatchReadout.ScoreTextForChip(10000));
+            Assert.AreEqual("-100000", TumpMatchReadout.ScoreTextForChip(-100000));
+            Assert.AreEqual("888888", TumpMatchReadout.ScoreTextForChip(888888));
+            Assert.AreEqual("-888888", TumpMatchReadout.ScoreTextForChip(-888888));
+            Assert.AreEqual("999999", TumpMatchReadout.ScoreTextForChip(999999));
+            Assert.AreEqual("-999999", TumpMatchReadout.ScoreTextForChip(-999999));
+            Assert.AreEqual("1M", TumpMatchReadout.ScoreTextForChip(1000000));
+            Assert.AreEqual("1.23M", TumpMatchReadout.ScoreTextForChip(1234567));
+            Assert.AreEqual("9.99M", TumpMatchReadout.ScoreTextForChip(9999999));
+            Assert.AreEqual("-9.99M", TumpMatchReadout.ScoreTextForChip(-9999999));
+            Assert.AreEqual("10M", TumpMatchReadout.ScoreTextForChip(10000000));
+            Assert.AreEqual("10M", TumpMatchReadout.ScoreTextForChip(10000001));
+            Assert.AreEqual("-10M", TumpMatchReadout.ScoreTextForChip(-10000000));
+            Assert.AreEqual("99.9M", TumpMatchReadout.ScoreTextForChip(99999999));
+            Assert.AreEqual("100M", TumpMatchReadout.ScoreTextForChip(100000000));
+            Assert.AreEqual("100M", TumpMatchReadout.ScoreTextForChip(100000001));
+            Assert.AreEqual("-100M", TumpMatchReadout.ScoreTextForChip(-100000000));
+            Assert.AreEqual("999M", TumpMatchReadout.ScoreTextForChip(999999999));
+            Assert.AreEqual("1B", TumpMatchReadout.ScoreTextForChip(1000000000));
+            Assert.AreEqual("1B", TumpMatchReadout.ScoreTextForChip(1000000001));
+            Assert.AreEqual("-1B", TumpMatchReadout.ScoreTextForChip(-1000000000));
+            Assert.AreEqual("2.14B", TumpMatchReadout.ScoreTextForChip(int.MaxValue));
+            Assert.AreEqual("-2.14B", TumpMatchReadout.ScoreTextForChip(int.MinValue));
+        }
+
         [UnityTest]
         public IEnumerator EveryHudStringFitsTheBoxItIsDrawnIn()
         {
@@ -256,13 +285,20 @@ namespace TumbangPreso.PlayTests
                     ? Hud.RecastFontSize
                     : keepSize;
 
-                label.text = candidate;
+                if (label.name == "Score" && int.TryParse(candidate,
+                        System.Globalization.NumberStyles.Integer,
+                        System.Globalization.CultureInfo.InvariantCulture, out int score))
+                {
+                    label.text = ""; // Each candidate runs the production formatter and fit independently.
+                    TumpMatchReadout.PaintScoreValue(label, score);
+                }
+                else label.text = candidate;
                 float width = label.preferredWidth;
 
                 if (width > worstWidth)
                 {
                     worstWidth = width;
-                    worstString = candidate;
+                    worstString = label.text;
                 }
             }
 
@@ -468,7 +504,10 @@ namespace TumbangPreso.PlayTests
                     break;
 
                 case "Score":
-                    yield return "-999";
+                    foreach (int value in new[] { -999, 1000, 9999, -1000, 10000,
+                                                  888888, -888888, 999999, -100000,
+                                                  int.MaxValue, int.MinValue })
+                        yield return value.ToString(System.Globalization.CultureInfo.InvariantCulture);
                     break;
 
                 case "Role":

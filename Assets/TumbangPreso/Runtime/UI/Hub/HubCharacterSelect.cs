@@ -38,6 +38,8 @@ namespace TumbangPreso.UI.Hub
         private Text _name, _role, _clock, _hint;
         private HubButton _select;
         private readonly List<HubButton> _cells = new List<HubButton>();
+        private readonly List<Image> _portraitFaces = new List<Image>();
+        private readonly List<Color> _portraitColors = new List<Color>();
         private RectTransform _seats;
         private int _pick;
         private string _shownSeats = "";
@@ -113,11 +115,15 @@ namespace TumbangPreso.UI.Hub
                 {
                     var face = HubKit.Picture(cell.Body, "Face", HubKit.Portrait(People[i].Id));
                     HubKit.Stretch(face.rectTransform, 10);
+                    _portraitFaces.Add(face);
+                    _portraitColors.Add(face.color);
                 }
                 else
                 {
                     cell.interactable = false;
                     HubKit.SetFill(cell, HubStyle.Night);
+                    _portraitFaces.Add(null);
+                    _portraitColors.Add(Color.clear);
                 }
                 _cells.Add(cell);
             }
@@ -200,7 +206,7 @@ namespace TumbangPreso.UI.Hub
 
             var art = RosterBook.Load().PersonArt(_pick, Mode);
             if (art != null) _preview.Show(art.Model, art.Clips, art.Palette, art.PetModel);
-            _preview.SetTileFraming(0.95f);
+            _preview.SetTileFraming(person.Id == "paete" ? 0.89f : 0.95f);
             if (_abilityButtons != null)
             {
                 _shownHero = person.Id;
@@ -227,6 +233,13 @@ namespace TumbangPreso.UI.Hub
                 bool usable = Usable(i);
                 HubKit.SetFill(_cells[i], i == _pick ? HubStyle.Persimmon : HubStyle.Honey);
                 _cells[i].Hatched = !usable;
+                if (_portraitFaces[i] != null)
+                {
+                    var original = _portraitColors[i];
+                    _portraitFaces[i].color = usable ? original
+                        : new Color(original.r * 0.62f, original.g * 0.62f,
+                            original.b * 0.62f, original.a);
+                }
                 _cells[i].interactable = !_locked;
             }
 
@@ -278,7 +291,7 @@ namespace TumbangPreso.UI.Hub
             var ability = _shownAbilities[_inspectedAbility];
             var shown = _shownSlots[_inspectedAbility];
             AbilityVariant variant = null;
-            if (shown.LoadoutSlot > 0)
+            if (HeroLoadoutRules.SidegradesOpen && shown.LoadoutSlot > 0)
             {
                 var settings = Settings.SettingsStore.Current;
                 var build = HeroBuildRules.RowFor(settings.HeroBuilds, _shownHero);

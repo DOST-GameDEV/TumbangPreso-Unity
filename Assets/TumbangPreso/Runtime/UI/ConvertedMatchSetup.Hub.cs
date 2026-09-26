@@ -44,6 +44,27 @@ namespace TumbangPreso.UI
         private TumpHub _hubView;
         private int _roomRequest;
 
+        private static void ListedLanTitleFor(string typed, out string title, out string code)
+        {
+            title = code = "";
+            var net = NetSession.Instance;
+            var beacon = net?.Beacon;
+            if (beacon == null || string.IsNullOrWhiteSpace(typed)) return;
+            typed = typed.Trim();
+            bool address = typed.Contains(".") || typed.Contains(":") ||
+                           string.Equals(typed, "localhost", System.StringComparison.OrdinalIgnoreCase);
+            if (!address) return;
+            int port = NetSession.DefaultPort;
+            string host = NetSession.SplitHostPort(typed, ref port);
+            foreach (var entry in beacon.SortedEntries)
+                if (entry.Port == port && string.Equals(entry.Address, host, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    title = entry.HostName;
+                    code = entry.JoinCode;
+                    return;
+                }
+        }
+
         private void InstallHubView()
         {
             if (!HubEnabled || _ownerPreparation == null) return;
@@ -163,6 +184,7 @@ namespace TumbangPreso.UI
         public async Task<string> Join(string codeOrAddress)
         {
             if (_joinPanel == null) return "The join path is not ready yet.";
+            ListedLanTitleFor(codeOrAddress, out string listedTitle, out string listedCode);
             LeaveRoom();
             int request = _roomRequest;
             SceneFlow.Networked = true;
@@ -172,10 +194,18 @@ namespace TumbangPreso.UI
             void NoteStatus(string line) { if (request == _roomRequest) status = line; }
             panel.Status += NoteStatus;
             bool ok;
-            try { ok = await panel.AutomationJoin(codeOrAddress); }
+            var joining = panel.AutomationJoin(codeOrAddress);
+            var titleOperation = NetSession.Instance?.ClientTitleOperation;
+            try { ok = await joining; }
             finally { if (panel != null) panel.Status -= NoteStatus; }
             if (this == null || request != _roomRequest) return "Room request cancelled.";
-            if (ok) return "";
+            if (ok)
+            {
+                var net = NetSession.Instance;
+                if (net != null)
+                    net.RememberJoinedClientRoomTitle(listedTitle, listedCode, titleOperation);
+                return "";
+            }
             SceneFlow.Networked = false;
             return string.IsNullOrWhiteSpace(status) ? "Could not join that room." : status;
         }
@@ -208,9 +238,12 @@ namespace TumbangPreso.UI
             {
                 if (!string.IsNullOrWhiteSpace(NetSession.RoomTitle)) return NetSession.RoomTitle;
 
-                // A joiner has no title of its own: read the room's name off the listing it came from.
+                // The client keeps a code-bound title for this live session across menu reloads.
+                // Other joins still read the current directory when no matching title was captured.
                 var net = NetSession.Instance;
                 string code = RoomCode;
+                string joinedTitle = SceneFlow.Networked ? net?.JoinedClientRoomTitle : "";
+                if (!string.IsNullOrEmpty(joinedTitle)) return joinedTitle;
                 if (net?.Query != null && !string.IsNullOrEmpty(code))
                     foreach (var entry in net.Query.Servers)
                         if (string.Equals(entry.JoinCode, code, System.StringComparison.OrdinalIgnoreCase)) return entry.Name;
@@ -367,6 +400,11 @@ namespace TumbangPreso.UI
         public void ToggleChat()
         {
             if (_chat != null) _chat.SetPresented(!_chat.IsPresented && IsLive);
+        }
+
+        private void OnRoomChatPresented(bool shown)
+        {
+            _hubView?.Find<HubLobby>()?.SetChatPresented(shown);
         }
 
         // ------------------------------------------------------------------ routing

@@ -137,7 +137,7 @@ function wasAfk(record, line) {
 
 /** Mirrors EconomyRules.TryRead. */
 function earnedFrom(record, playerId) {
-    if (!record || !record.MatchId) return null;
+    if (!record || record.Online !== true || !record.MatchId) return null;
     const line = (Array.isArray(record.Players) ? record.Players : [])
         .find(p => p && !p.IsBot && p.PlayerId === playerId);
     if (!line) return null;

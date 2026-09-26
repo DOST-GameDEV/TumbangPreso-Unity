@@ -1074,6 +1074,10 @@ module.exports = async ({ params, context, logger }) => {
         if (!line) throw new Error("this player has no line in that match record");
 
         const profile = (await readJson(api, projectId, playerId, PROFILE_KEY, null)) || emptyProfile(playerId);
+        // Older clients may have queued offline Practice results. Accept and discard them so
+        // they cannot grant career rewards or block later eligible uploads.
+        if (!record.Online)
+            return { profile: JSON.stringify(profile), applied: false, verdict: "offline", rated: false };
         profile.Modes = Array.isArray(profile.Modes) ? profile.Modes : [];
         profile.Characters = Array.isArray(profile.Characters) ? profile.Characters : [];
         profile.Slippers = Array.isArray(profile.Slippers) ? profile.Slippers : [];

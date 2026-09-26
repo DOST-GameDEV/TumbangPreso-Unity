@@ -140,7 +140,7 @@ GROUPS = [
         "PhaseSurfaceLayoutProbe", "PlayerHubLayoutProbe", "PreviewDragProbe",
         "QueueCardLayoutProbe", "SettingsScrollProbe", "SettingsWheelProbe",
         "UiClickProbe", "UiRuntimeShots", "WardrobeSheetProbe", "ModelPreviewProbe",
-        "ModelPreviewTests", "MatchRecordIdentityProbe",
+        "ModelPreviewTests", "HeroPreviewSizeProbe", "MatchRecordIdentityProbe",
 
         # ⚠⚠ THE FIFTY-TWO BELOW AND IN THE OTHER GROUPS WERE IN NO GROUP AT ALL ON
         # 2026-09-19, WHICH MEANT THE GATE COULD NOT RUN AT ALL. `--plan` refuses a partition

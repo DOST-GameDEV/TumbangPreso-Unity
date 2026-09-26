@@ -4006,6 +4006,7 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            if(_chat!=null)_chat.PresentedChanged-=OnRoomChatPresented;
             if(_ownerCustomRules!=null)_ownerCustomRules.RulesChanged-=OwnerRulesChanged;
             if(_ownerPreparation!=null && _queueCard!=null)
             {

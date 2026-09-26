@@ -1985,7 +1985,12 @@ namespace TumbangPreso.UI
             // password belongs there and not in the screen's one shared line. `RouteOwnerFault`
             // answers whether it found a home for it; everything left over is about the attempt
             // rather than about a field, and that is what the shared line is for.
-            if (RouteOwnerFault(message)) return;
+            if (RouteOwnerFault(message))
+            {
+                // A field verdict replaces the in-flight "Creating"/"Signing in" status.
+                _error.text = "";
+                return;
+            }
 
             // ⚠️ `MenuRed`, NOT `Danger`. `f80000` MEANS downed or out of bounds in the match,
             // and the sibling of `CLAUDE.md` § 6.4 is that a colour with a meaning is not a paint.

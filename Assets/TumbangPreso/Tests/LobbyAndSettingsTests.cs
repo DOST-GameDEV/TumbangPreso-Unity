@@ -605,6 +605,58 @@ namespace TumbangPreso.Tests
         }
 
         [Test]
+        public void RoomTitleKeepsAll24CharactersAndDistinctSuffixesInLanDiscovery()
+        {
+            const string title = "ROOM|1234567890123456789";
+            string changed = title.Substring(0, title.Length - 1) + "X";
+            string previous = NetSession.RoomTitle;
+            try
+            {
+                Assert.AreEqual(Settings.GameSettings.RoomTitleMax, title.Length);
+                Assert.AreEqual(title.Substring(0, 14), changed.Substring(0, 14));
+                NetSession.RoomTitle = title;
+                Assert.AreEqual(title, NetSession.RoomTitle);
+                string payload = LanBeacon.BuildPayload(8910, 1, 4, false, "K7X9", NetSession.RoomTitle);
+                Assert.IsTrue(LanBeacon.TryParsePayload(payload, "10.0.0.9", out var entry));
+                Assert.AreEqual(title, entry.HostName);
+
+                NetSession.RoomTitle = changed;
+                payload = LanBeacon.BuildPayload(8910, 1, 4, false, "K7X9", NetSession.RoomTitle);
+                Assert.IsTrue(LanBeacon.TryParsePayload(payload, "10.0.0.9", out entry));
+                Assert.AreEqual(changed, entry.HostName,
+                    "A changed suffix after the player-name limit disappeared from LAN discovery.");
+            }
+            finally { NetSession.RoomTitle = previous; }
+        }
+
+        [Test]
+        public void RoomTitleRemainsSingleLineBoundedAndLiteralWithoutChangingNicknameRules()
+        {
+            const string prefix = "<b>ROOM</b>|OPEN";
+            string raw = " \r\n" + prefix + "\u2028" + new string('Q', 30) + "\0";
+            string expected = prefix + new string('Q', 8);
+            string previous = NetSession.RoomTitle;
+            try
+            {
+                Assert.AreEqual(Settings.GameSettings.RoomTitleMax, expected.Length);
+                Assert.AreEqual("", Settings.GameSettings.SanitiseRoomTitle(null));
+                Assert.AreEqual("", Settings.GameSettings.SanitiseRoomTitle(" \t\r\n "));
+                NetSession.RoomTitle = raw;
+                Assert.AreEqual(expected, NetSession.RoomTitle,
+                    "Control/newline input must not escape the one-line 24-character room title.");
+                string payload = LanBeacon.BuildPayload(8910, 1, 4, false, "K7X9", raw);
+                Assert.IsTrue(LanBeacon.TryParsePayload(payload, "10.0.0.9", out var entry));
+                Assert.AreEqual(expected, entry.HostName,
+                    "The parser must keep markup literal and apply the same title rule to an untrusted beacon.");
+                NetSession.RoomTitle = null;
+                Assert.AreEqual("", NetSession.RoomTitle);
+                Assert.AreEqual(new string('N', Balance.PlayerNameMax),
+                    Settings.GameSettings.SanitiseName(new string('N', Settings.GameSettings.RoomTitleMax)));
+            }
+            finally { NetSession.RoomTitle = previous; }
+        }
+
+        [Test]
         public void LanBeaconRejectsMalformedPayloads()
         {
             Assert.IsFalse(LanBeacon.TryParsePayload(null, "127.0.0.1", out _));
@@ -796,9 +848,9 @@ namespace TumbangPreso.Tests
 
         /// <summary>
         /// ⚠️ THE VERSION IS FIELD 0, NOT THE FIELD COUNT, and this is the case that decides it.
-        /// A v1 host whose player typed one separator into their name produces eleven fields,
+        /// A v1 host whose room title contains one separator produces eleven fields,
         /// which is exactly the length of a v2 payload. Discriminating on the count would read
-        /// that player's name as a beacon id and shift the whole name one field left.
+        /// that room title as a beacon id and shift the whole title one field left.
         /// </summary>
         [Test]
         public void AV1NameWithASeparatorIsNotMistakenForAV2BeaconId()
@@ -808,12 +860,12 @@ namespace TumbangPreso.Tests
 
             Assert.IsTrue(LanBeacon.TryParsePayload(old, "192.168.1.50", out var entry));
             Assert.AreEqual("", entry.BeaconId);
-            Assert.AreEqual(Settings.GameSettings.SanitiseName("Ma|te"), entry.HostName);
+            Assert.AreEqual(Settings.GameSettings.SanitiseRoomTitle("Ma|te"), entry.HostName);
         }
 
         /// <summary>
-        /// ⚠️ A PLAYER NAME IS THE ONLY VALUE ON THIS WIRE A PERSON TYPES, so the parser takes it
-        /// as everything from its index onwards. A name containing the separator truncates rather
+        /// ⚠️ A ROOM TITLE IS THE ONLY FREE-FORM VALUE ON THIS WIRE, so the parser takes it
+        /// as everything from its index onwards. A title containing the separator truncates rather
         /// than corrupting the fields after it, which is what reading one field would have done.
         /// </summary>
         [Test]
@@ -825,7 +877,7 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(2, entry.Players);
             Assert.AreEqual(5, entry.Connections);
             Assert.AreEqual(12, entry.MaxConnections);
-            Assert.AreEqual(Settings.GameSettings.SanitiseName("Ma|te"), entry.HostName);
+            Assert.AreEqual(Settings.GameSettings.SanitiseRoomTitle("Ma|te"), entry.HostName);
         }
 
         // -------------------------------------------------------------------

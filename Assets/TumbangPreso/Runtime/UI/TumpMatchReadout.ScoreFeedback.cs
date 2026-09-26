@@ -70,6 +70,9 @@ namespace TumbangPreso.UI
                 {
                     float bump = !settings.ReducedUiMotion && remaining > 0
                         ? .07f * Mathf.Sin(Mathf.Clamp01(u / .45f) * Mathf.PI) : 0;
+                    // A score fitted to the 28-unit floor uses the chip's spare space;
+                    // its card still glows, but the number stays inside its bounds.
+                    if (_scores[i].fontSize < 36) bump = 0;
                     _scores[i].rectTransform.localScale = Vector3.one * (1 + bump);
                 }
                 if (_scoreAccents[i] != null)

@@ -22,6 +22,23 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator HeroResultsKeepStandingsPlayersMapChoiceAndRealRematch()
             => ReviewResults(GameMode.HeroStrike);
+        [Test]
+        public void PracticeSummaryDoesNotClaimAnOlderQueuedMatchWillUpload()
+        {
+            var priorOnlineQueue = new List<MatchRecord>
+            {
+                new MatchRecord { MatchId = "older-online-pending", Online = true }
+            };
+            var current = new MatchRecord { MatchId = "practice-result-copy", Online = false };
+            Assert.AreEqual("", MatchResult.UploadCopyFor(current, priorOnlineQueue.Count),
+                "Practice must not claim that its own result will upload because another match is queued.");
+
+            current.Online = true;
+            StringAssert.Contains("WILL UPLOAD", MatchResult.UploadCopyFor(current, priorOnlineQueue.Count));
+            Assert.AreEqual("", MatchResult.UploadCopyFor(current, 0));
+            Assert.AreEqual("", MatchResult.UploadCopyFor(null, priorOnlineQueue.Count));
+        }
+
         private static IEnumerator ReviewResults(GameMode mode)
         {
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));

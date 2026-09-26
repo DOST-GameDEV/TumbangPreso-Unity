@@ -178,7 +178,7 @@ namespace TumbangPreso.UI.Hub
 
             var art = RosterBook.Load().FindPersonArt(hero.Id);
             if (art != null) _preview.Show(art.Model, art.Clips, art.Palette, art.PetModel);
-            _preview.SetTileFraming(0.92f);
+            _preview.SetTileFraming(hero.Id == "paete" ? 0.86f : 0.92f);
 
             BuildAbilities(hero.Id);
             RefreshAction(hero.Id);
@@ -189,11 +189,11 @@ namespace TumbangPreso.UI.Hub
             for (int i = _abilities.childCount - 1; i >= 0; i--) Destroy(_abilities.GetChild(i).gameObject);
             var kit = HeroAbilitySystem.CreateKitFor(heroId);
             if (kit == null) return;
-            // A role kit is four powers (signature, attacking, defending, ultimate), so its tiles are
-            // narrower on the same row; a legacy kit keeps its three at 150.
+            // Four role captions need the available row width; legacy three-slot tiles keep their layout.
             var screenSlots = kit.ScreenSlots;
             bool four = screenSlots.Length == 4;
-            float tileSize = four ? 128 : 150, tileStep = four ? 142 : 170;
+            float tileWidth = four ? 190 : 150, tileHeight = four ? 136 : 150;
+            float tileStep = four ? 206 : 170, left = four ? 4 : 0;
             for (int i = 0; i < screenSlots.Length; i++)
             {
                 var ability = screenSlots[i].Ability;
@@ -201,18 +201,21 @@ namespace TumbangPreso.UI.Hub
                 int slot = i;
                 var tile = HubKit.Button(_abilities, "Ability" + i, null, screenSlots[i].IsUltimate ? HubStyle.Golden : HubStyle.Honey,
                                          () => Hub.Push<HubAbilityPopup>(p => { p.Hero = heroId; p.Slot = slot; }), 0, 330 + i);
-                HubKit.Place((RectTransform)tile.transform, HubKit.TopLeft, new Vector2(i * tileStep, 0), new Vector2(tileSize, tileSize));
+                HubKit.Place((RectTransform)tile.transform, HubKit.TopLeft, new Vector2(left + i * tileStep, 0),
+                             new Vector2(tileWidth, tileHeight));
                 var symbol = HubKit.Rect(tile.Body, "Glyph").gameObject.AddComponent<TumpAbilitySymbol>();
                 symbol.Glyph = ability.Glyph;
                 symbol.color = HubStyle.Ink;
                 symbol.raycastTarget = false;
                 float glyph = four ? 78 : 92;
-                HubKit.Place(symbol.rectTransform, HubKit.Top, new Vector2(0, -12), new Vector2(glyph, glyph));
+                HubKit.Place(symbol.rectTransform, HubKit.Top, new Vector2(0, four ? -8 : -12), new Vector2(glyph, glyph));
                 // A role kit's middle tiles name their role; the key is the same for both.
                 string caption = four && !screenSlots[i].IsUltimate && i > 0 ? screenSlots[i].Label : Hud.KeyLabelFor(screenSlots[i].Action);
                 var key = HubKit.Text(tile.Body, "Key", caption, HubStyle.Floor, true, HubStyle.Ink, TextAnchor.MiddleCenter);
-                HubKit.Place(key.rectTransform, HubKit.Bottom, new Vector2(0, 8), new Vector2(tileSize - 14, 36));
-                HubKit.Fit(key, tileSize - 14);
+                float keyWidth = tileWidth - (four ? 16 : 14);
+                HubKit.Place(key.rectTransform, HubKit.Bottom, new Vector2(0, four ? 4 : 8),
+                             new Vector2(keyWidth, four ? 40 : 36));
+                HubKit.Fit(key, keyWidth);
                 HubSlap.On(tile.transform, 0.04f * i, 2 - i * 2);
             }
         }

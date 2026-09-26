@@ -167,12 +167,11 @@ namespace TumbangPreso.UI
             _ownerTerms.toggleTransition = Toggle.ToggleTransition.None;
             var box = OwnerMenuArt.Image(hit, "OriginalCheckbox", "login3-checkbox");
             OwnerUiLayout.Place(box.rectTransform, 2, 2, 38, 38);
-            var fill = OwnerUiLayout.Rect(hit, "AcceptedFill").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(fill.rectTransform, 7, 7, 28, 28);
-            fill.color = theme.ActionInk; fill.raycastTarget = false;
-            _ownerTerms.graphic = fill;
+            var check = OwnerUiGlyph.Create(hit, "AcceptedCheck", OwnerUiGlyph.Mark.Check, theme.ActionInk);
+            OwnerUiLayout.Place(check.rectTransform, 7, 7, 28, 28);
+            _ownerTerms.graphic = check;
             _ownerTerms.isOn = false;
-            fill.canvasRenderer.SetAlpha(0);
+            check.canvasRenderer.SetAlpha(0);
             _ownerTerms.onValueChanged.AddListener(_ => MenuSfx.Tick());
             _ownerTermsLink = OwnerTextButton(_ownerTermsRow.transform, "TermsLink", "TERMS & CONDITIONS",
                 ShowOwnerTerms, LinkSize, OwnerUiLayout.TypeRole.Accent);
@@ -281,6 +280,7 @@ namespace TumbangPreso.UI
             var text = OwnerUiLayout.Text(_ownerForm, name, "", FaultSize, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(text.rectTransform, 682, y, 540, 30);
             text.alignment = TextAnchor.MiddleLeft;
+            text.verticalOverflow = VerticalWrapMode.Overflow;
             text.color = OwnerUiTheme.Current.HintInk;
             text.raycastTarget = false;
             text.gameObject.AddComponent<OwnerFieldFade>();

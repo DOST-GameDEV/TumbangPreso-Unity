@@ -223,8 +223,10 @@ namespace TumbangPreso.UI
             if (lower.Contains("password"))
             {
                 _serverPassValue = _password.text ?? "";
-                _serverPassFault = message;
-                _faultPass.text = message;
+                _serverPassFault = _creating
+                    ? AccountRules.PasswordFault(_password.text) ?? "Password not accepted. Try a different one."
+                    : "TUMP ID or password invalid.";
+                _faultPass.text = _serverPassFault;
                 MenuSfx.Error();
                 return true;
             }
