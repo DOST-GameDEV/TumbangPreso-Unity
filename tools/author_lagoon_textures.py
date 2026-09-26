@@ -137,11 +137,13 @@ def normal_from_height(h, strength):
 STRENGTH = {"rock_a": 0.0, "rock_b": 1.2, "rock_c": 1.2, "thatch_a": 1.6, "thatch_b": 1.6, "thatch_c": 1.6,
             "sawali_a": 1.4, "sawali_b": 1.4, "sawali_c": 1.4,
             "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0,
-            "plank_a": 1.2, "plank_b": 1.2, "plank_c": 1.2}
+            "plank_a": 1.2, "plank_b": 1.2, "plank_c": 1.2,
+            "tin_a": 1.5, "tin_b": 1.5, "tin_c": 1.5}
 TILE = {"rock_a": 4.0, "rock_b": 4.0, "rock_c": 4.0, "thatch_a": 2.0, "thatch_b": 2.0, "thatch_c": 2.0,
         "sawali_a": 2.0, "sawali_b": 2.0, "sawali_c": 2.0,
         "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0,
-        "plank_a": 2.0, "plank_b": 2.0, "plank_c": 2.0}
+        "plank_a": 2.0, "plank_b": 2.0, "plank_c": 2.0,
+        "tin_a": 2.0, "tin_b": 2.0, "tin_c": 2.0}
 
 
 # ---------------------------------------------------------------- thatch
@@ -375,6 +377,42 @@ PLANK_PAINTERS = {
 }
 
 
+# ---------------------------------------------------------------- tin
+# CORRUGATED TIN roofs (§ 8 step 3), their OWN drawing: ridges running DOWN the slope (V up the
+# roof, as for thatch), each ridge a soft cel band (light crest, darker trough), sheets that
+# overlap every ~0.9 m across and every ~2 m down with a thin lap line, a few soft rust or
+# weathering patches. Colour rule (§ 2): teal-GREEN or red, never near defence blue #0080e8.
+TIN_PITCH_M = 0.076                                     # one corrugation, crest to crest
+
+
+def tin(paint, rust, seed, rust_amount=0.07):
+    px = SIZE / 2.0
+    yy, xx = np.mgrid[0:SIZE, 0:SIZE].astype(np.float32) / px
+    n = int(round(2.0 / TIN_PITCH_M))
+    phase = xx / (2.0 / n) * 2 * np.pi
+    wave = np.sin(phase)                                # +1 crest facing the light, -1 trough
+    band = np.clip(wave * 1.6, -1, 1)                   # flattened into cel bands, not a gradient
+    img = paint[None, None, :] * (1 + 0.10 * band)[..., None]
+    height = (wave * 0.5 + 0.5).astype(np.float32)
+    # Sheet laps: across every ~0.9 m (2.0/2 sheets) and one down the slope per tile.
+    lap_x = np.abs(((xx + 0.02) % 1.0) - 0.5) > 0.495
+    lap_y = np.abs(((yy - 0.3) % 2.0) - 1.0) > 0.994
+    img[lap_x | lap_y] *= 0.8
+    rng = np.random.default_rng(seed)
+    # Rust: small, soft, HALF-strength patches (sheet v1: full-strength rust over a fifth of the
+    # sheet read as camouflage blotches; the paint must dominate).
+    img = coat(img, 1 - 0.5 * (1 - rust / np.maximum(paint, 1e-3)), 0.25, rust_amount, seed + 1, feather=0.8)
+    img = coat(img, np.array([1.05, 1.05, 1.03]), 0.6, 0.15, seed + 2)   # sun-faded patches
+    return img, height
+
+
+TIN_PAINTERS = {
+    "tin_a": lambda: tin(hexcol("4f8a70"), hexcol("8a5a3a"), 91),                    # teal-green
+    "tin_b": lambda: tin(hexcol("a64a36"), hexcol("7a4028"), 91),                    # red oxide
+    "tin_c": lambda: tin(hexcol("9aa09c"), hexcol("8a6a4a"), 91, rust_amount=0.14),  # bare, weathered
+}
+
+
 THATCH_PAINTERS = {
     "thatch_a": lambda: thatch(hexcol("c9a35e"), hexcol("e3c888"), hexcol("5e4526"), seed=51),
     "thatch_b": lambda: thatch(hexcol("a98f6a"), hexcol("c9b491"), hexcol("4f4130"), seed=51),
@@ -402,6 +440,7 @@ PAINTERS = {
     **SAWALI_PAINTERS,
     **BAMBOO_PAINTERS,
     **PLANK_PAINTERS,
+    **TIN_PAINTERS,
 }
 
 
