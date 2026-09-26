@@ -212,6 +212,20 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      lifted whole faces, which was the fault): band = mask above a fine-noise threshold
      (0.04 to 0.30) lifting the rock's own colour to 1.40x, line = mask 0.70 to 0.86 toward
      warm near-white at 0.75; both weighted to up-facing surfaces. `rock_on_models_v15.png`.
+   - ⚠️ **WORLD-SIZE, ORGANIC WIDTHS** (owner on v15: *"it doesnt scale properly with the rock
+     size, some larger rocks have it too thick and bulky"*, *"the inner ones are also always the
+     same stroke width. theres no organicness aside from the edges"*). The mask was baked in the
+     KIT's units, so a stone placed 8x larger had a band 8x wider; and the Cycles bevel detector
+     peaked differently on every break, so it could not be read as a distance. Now: the R
+     channel is the TRUE distance to the nearest plane break, computed from the mesh in numpy
+     (`distance_to_breaks`, linear, 0 at `DIST_MAX` 0.25 stone units; atlas 4096). Only breaks
+     over 20 degrees with at least one UP-facing face count (12 degrees lined every small facet
+     and brought back the paving look). Every placed stone stores `rock_scale`; the material
+     turns a width in METRES into a mask threshold, 1 - W / (scale x 0.25), so every rock gets
+     the same world-size band (Unity: the scale from the transform). A slow noise swells and
+     thins the band along each edge (0.12 to 0.55 m) and a fine noise frays its inner side;
+     the line is ~5 cm and fainter along some stretches. Re-packing UVBake is idempotent
+     (re-baking a saved file used to shrink every island into a sliver).
    - SUPERSEDED, **inner-shadow edges** (owner on v9: *"can you make them slightly more clear? think of
      like an inner shadow effect, the edges have the crispiest white and then it fades the
      closer it gets to the center"*). `ROCK_LOOK = "rock_a+inner"`, `inner_glow()` in

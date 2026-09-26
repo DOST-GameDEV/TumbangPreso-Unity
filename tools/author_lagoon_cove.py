@@ -865,6 +865,11 @@ def main():
     # and edge wear baked from each kit stone's own geometry into one atlas.
     import bake_lagoon_rock_edges as E
     import render_lagoon_texture_preview as T
+    # Every placed stone records its scale, so the edge band is a WORLD width (owner on v15:
+    # bands on big rocks were "too thick and bulky").
+    for o in bpy.data.objects:
+        if o.type == "MESH" and o.data.get("rock_family") is not None:
+            o["rock_scale"] = (o.scale.x + o.scale.y + o.scale.z) / 3
     E.bake("rock")
     T.rock_material(bpy.data.materials["rock"], ROCK_LOOK)
     L.gameplay(root)

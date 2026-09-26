@@ -89,6 +89,7 @@ def _lift(nt, colour, target, fac):
     return mix.outputs["Result"]
 
 
+EDGE_BAKE_R = 0.25     # must match DIST_MAX in tools/bake_lagoon_rock_edges.py (R is a linear distance)
 EDGE_WHITE = (0.99, 0.88, 0.68, 1.0)   # warm near-white (v10 0.98/0.93/0.82 went blue-grey in shade)
 
 
@@ -124,19 +125,41 @@ def brushed_edge(nt, colour, ch, up, geo):
     strongest round the perimeter of the TOP faces; the side faces stay darker. Both come from
     the narrow mask (R) only; the broad mask is not used."""
     weight = _range(nt, up.outputs["Z"], -0.1, 0.7, 0.2, 1.0)
-    # Dry brush: a fine noise sets where the band's inner edge breaks up.
+    # ⚠️ WORLD-SIZE WIDTHS (owner on v15: "it doesnt scale properly with the rock size, some
+    # larger rocks have it too thick and bulky"). The mask is baked in the KIT's units, so a
+    # stone placed 8x larger had a band 8x wider. Each placed stone carries its scale
+    # ("rock_scale", set by author_lagoon_cove.py; Unity reads it off the transform), and a
+    # world width W becomes a mask threshold t = 1 - W / (scale * EDGE_BAKE_R), R being an exact
+    # linear distance to the nearest plane break (tools/bake_lagoon_rock_edges.py).
+    scale = nt.nodes.new("ShaderNodeAttribute")
+    scale.attribute_type = "OBJECT"
+    scale.attribute_name = "rock_scale"
+    reach = _math(nt, "MULTIPLY", _math(nt, "MAXIMUM", scale.outputs["Fac"], 0.3), EDGE_BAKE_R)
+
+    def threshold(width):
+        return _math(nt, "SUBTRACT", 1.0, _math(nt, "DIVIDE", width, reach))
+
+    # ORGANIC WIDTH (owner: "the inner ones are also always the same stroke width. theres no
+    # organicness aside from the edges"): a slow noise along the edges swells and thins the
+    # band between 0.10 and 0.45 m, and a fine dry-brush noise frays its inner side.
+    slow = nt.nodes.new("ShaderNodeTexNoise")
+    slow.inputs["Scale"].default_value = 0.45
+    slow.inputs["Detail"].default_value = 1.0
+    nt.links.new(geo.outputs["Position"], slow.inputs["Vector"])
     fine = nt.nodes.new("ShaderNodeTexNoise")
     fine.inputs["Scale"].default_value = 7.0
     fine.inputs["Detail"].default_value = 8.0
     fine.inputs["Roughness"].default_value = 0.7
     nt.links.new(geo.outputs["Position"], fine.inputs["Vector"])
-    threshold = _range(nt, fine.outputs["Fac"], 0.3, 0.7, 0.04, 0.30)   # v14 0.10..0.45: too narrow
+    width = _range(nt, slow.outputs["Fac"], 0.32, 0.68, 0.12, 0.55, smooth=True)   # v18 0.10..0.45: fainter than the paint-over
+    width = _math(nt, "MULTIPLY", width, _range(nt, fine.outputs["Fac"], 0.3, 0.7, 0.7, 1.2))
     edge = ch.outputs["Red"]
-    diff = _math(nt, "SUBTRACT", edge, threshold)
-    band = _range(nt, diff, -0.02, 0.10, smooth=True)                 # speckled inner boundary
+    band = _range(nt, _math(nt, "SUBTRACT", edge, threshold(width)), -0.015, 0.04, smooth=True)
     band = _math(nt, "MULTIPLY", band, weight, clamp=True)
-    colour = _scale_colour(nt, colour, _range(nt, band, 0.0, 1.0, 1.0, 1.40))   # v14 1.28: too faint
-    line = _range(nt, edge, 0.70, 0.86, smooth=True)                   # the crisp line on the break
+    colour = _scale_colour(nt, colour, _range(nt, band, 0.0, 1.0, 1.0, 1.38))
+    # The crisp LINE: ~5 cm in the world, fainter along some stretches of an edge.
+    line = _range(nt, _math(nt, "SUBTRACT", edge, threshold(0.05)), -0.01, 0.015, smooth=True)
+    line = _math(nt, "MULTIPLY", line, _range(nt, slow.outputs["Fac"], 0.3, 0.7, 0.45, 1.0))
     line = _math(nt, "MULTIPLY", line, weight, clamp=True)
     return _lift(nt, colour, EDGE_WHITE, _math(nt, "MULTIPLY", line, 0.75))
 
