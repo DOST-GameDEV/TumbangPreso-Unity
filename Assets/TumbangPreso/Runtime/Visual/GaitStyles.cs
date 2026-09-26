@@ -182,32 +182,43 @@ namespace TumbangPreso.Visual
 
         /// <summary>
         /// NEMU. *"Looks distracted. Already knows your next move."* Takes the long way home, seems to miss half the conversation,
-        /// Kuro a shadow at her shoulder. ⚠️ SECOND PASS, 2026-09-27 (owner: *"nemu walks so awkward wtf"*). The first pass tried
-        /// "dreamy" with a head cocked 7 degrees and wandering on its own clock, short shuffling steps and sleeves trailing: on a
-        /// head that is half her height the tilt read as a broken neck, and her dark sleeves vanished into her dark coat. Now she
-        /// walks like someone who has already read the play: hands held behind her back (the arms swept back and still, which
-        /// also puts them where the silhouette shows them), level and unhurried, even steps with no bounce, a small slow look to
-        /// one side now and then. The run keeps the same idea at speed: low, arms straight back, head up, gone.
+        /// Kuro a shadow at her shoulder. ⚠️ THIRD PASS, 2026-09-27 (owner: *"nahh keep nemu js improve her animations"*; before
+        /// that, *"nemu walks so awkward wtf"*). Pass one cocked her head 7 degrees and read as a broken neck; pass two clasped
+        /// her hands behind her back, which hid the one thing her model moves best, the big bell sleeves. Now the sleeves ARE
+        /// the walk: small light steps with a little hop in them, the sleeves swinging loose and late like cloth and flaring out
+        /// as they swing (a quirk below), a soft sway, the smallest tilt of the head. Cute, unbothered, a little floaty. The run
+        /// is the ghost at speed: low, the sleeves streaming straight back and fluttering in the wind she makes.
         /// </summary>
         public static readonly GaitStyle Nemu = new GaitStyle
         {
             Name = "nemu",
             Walk = new Gait
             {
-                LegForward = 38, LegBack = 34, LegSnap = 1, Stance = -1,
-                ArmSpread = 12, ArmForward = 3, ArmBack = 3, ArmCarry = -24, ArmSnap = 1, ArmLag = .1f,
-                Lean = 4, Roll = 2, Twist = 3,
-                HeadPitch = -1, HeadTilt = 2, HeadSteady = .9f, Sway = .02f, Glide = 1.4f,
+                LegForward = 34, LegBack = 30, LegSnap = 1.2f, Stance = -1,
+                ArmSpread = 14, ArmForward = 24, ArmBack = 18, ArmCarry = 0, ArmSnap = .8f, ArmLag = .12f,
+                Lean = 2, Roll = 3.5f, RollDelay = .08f, Twist = 3,
+                HeadPitch = 1, HeadTilt = 2, HeadNod = 1.5f, HeadSteady = .6f,
+                Bounce = .035f, BounceDelay = .06f, Sway = .04f, Glide = 1.45f,
             },
             Run = new Gait
             {
                 LegForward = 52, LegBack = 50, LegSnap = 1.2f, Stance = 0,
-                ArmSpread = 12, ArmForward = 5, ArmBack = 5, ArmCarry = -58, ArmSnap = 1, ArmLag = .08f,
+                ArmSpread = 14, ArmForward = 5, ArmBack = 5, ArmCarry = -58, ArmSnap = 1, ArmLag = .08f,
                 Lean = 20, Roll = 1, Twist = 2,
-                HeadPitch = -12, HeadSteady = .3f, Bounce = .02f, Sway = .01f, Glide = 1.45f,
+                HeadPitch = -12, HeadSteady = .3f, Bounce = .03f, BounceDelay = .05f, Sway = .01f, Glide = 1.45f,
             },
-            // Watching the court without turning to it: a slow small look to one side and back, walking only.
-            Quirk = (ref GaitPose p, in GaitMoment m) => p.HeadYaw += 6f * Wave(m.Time, .17f) * (1f - m.Run),
+            Quirk = (ref GaitPose p, in GaitMoment m) =>
+            {
+                float walk = 1f - m.Run;
+                // The bell sleeves billow: each opens out as it swings, forward or back, like cloth catching air.
+                p.SpreadLeft += walk * 8f * Mathf.Abs(p.ArmLeft) / Mathf.Max(1f, m.Gait.ArmForward);
+                p.SpreadRight += walk * 8f * Mathf.Abs(p.ArmRight) / Mathf.Max(1f, m.Gait.ArmForward);
+                // Running, the trailing sleeves flutter in the wind she makes (two sleeves, slightly out of step).
+                p.ArmLeft += m.Run * 4f * Wave(m.Time, 7f);
+                p.ArmRight += m.Run * 4f * Wave(m.Time + .05f, 7f);
+                // Her attention drifts: a small slow look to one side and back while she walks.
+                p.HeadYaw += walk * 5f * Wave(m.Time, .17f);
+            },
         };
 
         /// <summary>
