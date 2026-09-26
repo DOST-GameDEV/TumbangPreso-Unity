@@ -220,7 +220,16 @@ Necro Nemu, Voodoo Phaister; Pyro (Sean), Electro (Zack) and Hydro (Rafi) have n
 - [x] Sean, Zack, Rafi on the four-slot shape: their old second skill is the ATTACKING slot, DEFENDING is
   `PlaceholderRoleAbility` (COMING SOON, does nothing). With the tree off, no variant name or cue is
   written over a kit (the old defaults would have renamed Dante's SHIELD "SEISMIC STOMP").
-- [ ] Presentation per ability (clips, FPP, VFX, audio, icons), Feared and Concussed shared clips.
+- [x] First presentation pieces (cloud, compiled, not run or seen): the shared `feared-flee` clip (a
+  panicked looping run, arms over the head, glancing back; `HeroAbilityClips.Status.cs`, baked by
+  `RootedAnimationAuthor`, played by `CharacterAnimator.StepRootedPose`); Disoriented hallucinations on the
+  victim's own screen (`DisorientedHallucinations`: baked copies of the other players and the slippers,
+  wandering among the real ones); status icons for Concussed, Feared, Disoriented, Vulnerable
+  (`tools/build_ability_icons.py`) and the HUD's live-status list.
+- [ ] Presentation per ability, one character at a time: own cast clips (the new kits still borrow their
+  old cast actions), FPP gestures, real VFX in place of the first-pass slabs and primitives
+  (`GeoVfx`, `VoodooVfx`, the straight Glacial Wall), SFX recipes (the new abilities reuse old cues),
+  the ability glyphs (several reuse an old one), the Concussed stumble, bots for every new ability.
 - [ ] KURO PLAYS (its own design pass first), bots, snapshots, replays, screens, HUD.
 - [ ] Ultimate cutscenes rebuilt per `ultimates.md`.
 - [ ] Owner review of the numbers set in plan section 7.

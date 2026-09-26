@@ -350,6 +350,7 @@ namespace TumbangPreso.Visual
             dict[RootedMotion.Struggle] = BuildRootedStruggle(paths);
             dict[RootedMotion.Heave] = BuildPlantHeave(paths);
             dict[RootedMotion.Breakout] = BuildRootBreakout(paths);
+            dict[RootedMotion.Feared] = BuildFearedFlee(paths);
             return dict;
         }
 

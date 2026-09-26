@@ -35,6 +35,11 @@ namespace TumbangPreso.UI
             if (body.IsFrozen) into.Add(StatusKind.Frozen);
             if (body.IsWhirled) into.Add(StatusKind.Whirled);
             if (body.IsChilled) into.Add(StatusKind.Chilled);
+            // ABILITY-2 (2026-09-26).
+            if (body.IsFeared) into.Add(StatusKind.Feared);
+            if (body.IsConcussed) into.Add(StatusKind.Concussed);
+            if (body.IsDisoriented) into.Add(StatusKind.Disoriented);
+            if (body.IsVulnerable) into.Add(StatusKind.Vulnerable);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

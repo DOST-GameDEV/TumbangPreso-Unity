@@ -44,7 +44,7 @@ namespace TumbangPreso.EditorTools
                     {
                         if(AnimationUtility.GetCurveBindings(clip).Length<21){Debug.LogError("[Rooted] empty "+clip.name+" on "+entry.Id);return false;}
                         var settings=AnimationUtility.GetAnimationClipSettings(clip);
-                        settings.loopTime=clip.name==RootedMotion.Struggle;
+                        settings.loopTime=clip.name==RootedMotion.Struggle||clip.name==RootedMotion.Feared;
                         AnimationUtility.SetAnimationClipSettings(clip,settings);
                     }
                     Save(id,clips);

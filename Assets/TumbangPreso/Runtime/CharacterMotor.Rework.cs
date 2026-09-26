@@ -145,7 +145,13 @@ namespace TumbangPreso
             }
         }
 
-        private void RaiseStatus(StatusKind kind) => StatusGained?.Invoke(this, kind);
+        private void RaiseStatus(StatusKind kind)
+        {
+            StatusGained?.Invoke(this, kind);
+            // The hallucinations live on the victim's own screen only (owner: *"some of the shit they see
+            // are real"*): the local human's peer draws them, nobody else does.
+            if (kind == StatusKind.Disoriented && IsLocalHuman) Visual.DisorientedHallucinations.Begin(this);
+        }
 
         private void StepReworkStatuses(float dt)
         {

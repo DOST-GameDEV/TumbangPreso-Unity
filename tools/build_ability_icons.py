@@ -688,8 +688,50 @@ def status_rooted(a):
         a.add(a.poly([(x, 700), (x - 60 * d, 640), (x - 20 * d, 760)]), BARK)
 
 
+# ABILITY-2 (2026-09-26): the rework's four statuses, each its own picture on the same badge.
+KURO_INK, CURSE, STONE = hexc("7C4FB0"), hexc("C2398F"), hexc("9A8468")
+
+
+def status_concussed(a):
+    # A blocky head knocked askew with three stars circling it: dizzy, not hurt.
+    _badge(a)
+    a.add(a.poly([(330, 420), (660, 360), (700, 720), (370, 780)]), HONEY)
+    a.add(a.arc_band(512, 330, 300, 190, 350, 40), STONE)
+    for cx, cy, r in ((260, 300, 95), (512, 190, 80), (770, 290, 90)):
+        a.add(a.poly(star_pts(cx, cy, r, r * 0.42, 5)), LEMON)
+
+
+def status_feared(a):
+    # Kuro's teardrop ghost looming, and a slipper knocked out of reach below it.
+    _badge(a)
+    a.add(a.poly([(512, 140), (720, 420), (740, 640), (640, 700), (590, 640), (512, 710), (430, 640), (380, 700), (290, 640), (300, 420)]), KURO_INK)
+    for cx in (440, 590):
+        a.add(a.circle(cx, 470, 42), STATUS_BADGE, shade=False)
+    slipper(a, 540, 820, 300, 70, PERSIMMON, CREAM)
+
+
+def status_disoriented(a):
+    # Double vision: a real slipper and its false twin beside it, the twin paler and shifted.
+    _badge(a)
+    slipper(a, 600, 470, 420, 25, hexc("E8C9D8"), CREAM)
+    slipper(a, 440, 560, 420, 25, PERSIMMON, CREAM)
+    a.add(a.arc_band(512, 512, 380, 200, 320, 34), CURSE)
+
+
+def status_vulnerable(a):
+    # A doll's heart with a pin through it: the voodoo mark that says "easy to tag".
+    _badge(a)
+    a.add(a.circle(512, 540, 250), CURSE)
+    a.add(a.circle(512, 540, 150), CREAM)
+    a.add(a.circle(512, 540, 60), CURSE, shade=False)
+    a.add(a.band([(230, 250), (512, 540), (650, 680)], 34), HONEY)
+    a.add(a.circle(230, 250, 60), LEMON)
+
+
 STATUSES = {"StatusWhirled": status_whirled, "StatusChilled": status_chilled,
-            "StatusFrozen": status_frozen, "StatusTagged": status_tagged, "StatusRooted": status_rooted}
+            "StatusFrozen": status_frozen, "StatusTagged": status_tagged, "StatusRooted": status_rooted,
+            "StatusConcussed": status_concussed, "StatusFeared": status_feared,
+            "StatusDisoriented": status_disoriented, "StatusVulnerable": status_vulnerable}
 
 
 # the nine job glyphs, for any power without a bespoke picture

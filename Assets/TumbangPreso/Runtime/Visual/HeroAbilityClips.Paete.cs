@@ -55,7 +55,7 @@ namespace TumbangPreso.Visual
         {
             var paths = ResolvePaths(root);
             if (paths == null) return null;
-            var clips = new[] { BuildRootedStruggle(paths), BuildPlantHeave(paths), BuildRootBreakout(paths) };
+            var clips = new[] { BuildRootedStruggle(paths), BuildPlantHeave(paths), BuildRootBreakout(paths), BuildFearedFlee(paths) };
             foreach (var clip in clips) GroundIntroduction(clip, root, paths["root"], anchorToRest: true);
             return clips;
         }

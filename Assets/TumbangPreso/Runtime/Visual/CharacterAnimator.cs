@@ -1410,6 +1410,13 @@ namespace TumbangPreso.Visual
         private bool StepRootedPose()
         {
             if (_motor == null) return false;
+            // ⚠️ FEARED (ABILITY-2): the panicked run loops for as long as the status runs; a one-shot
+            // (the drop, a hit reaction) still wins.
+            if (_motor.IsFeared && _oneShotLeft <= 0f && _clips.ContainsKey(RootedMotion.Feared))
+            {
+                Play(RootedMotion.Feared, true);
+                _rootedPose = true; Blend(); HoldLastFrame(); return true;
+            }
             // ⚠️ BREAKING OUT (direction.md section 5.6): the step the roots let go, the body plays its
             // own break-out once, on every peer, off the replicated Rooted state. A tag keeps the tag's
             // reaction, so it is not played over a tagged body.

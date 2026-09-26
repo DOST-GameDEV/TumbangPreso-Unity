@@ -12,6 +12,8 @@ namespace TumbangPreso.Visual
         public const string Struggle = "rooted-struggle", Heave = "plant-heave";
         /// <summary>Breaking out of the sentry's hold (direction.md section 5.6), played once when the roots let go.</summary>
         public const string Breakout = "root-breakout";
+        /// <summary>FEARED (ABILITY-2): the panicked run, looping while the status runs.</summary>
+        public const string Feared = "feared-flee";
         /// <summary>How much of `Heave` the pull's hold scrubs; the rest is the stumble, played at speed.</summary>
         public const float HeaveScrubSeconds = 1.15f;
     }
