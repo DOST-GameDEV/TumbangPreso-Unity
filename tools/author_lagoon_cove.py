@@ -924,6 +924,22 @@ VARIETY = {"thatch": ("thatch_a", "thatch_b", "thatch_c"),
            "sawali": ("sawali_a", "sawali_b", "sawali_c")}
 
 
+# OWNER-CHOSEN SINGLE TEXTURES: plank_c (2026-09-27, "plank c looks better": the wide rough
+# boards) on every deck, step, walk and boat plank.
+CHOSEN = {"plank": "plank_c"}
+# PROVISIONAL, until the owner picks (owner, 2026-09-27: "some parts of the houses are still
+# untextured"): every remaining textured slot wears its first swatch rather than a flat colour.
+CHOSEN.update({"timber": "timber_a", "bamboo": "bamboo_a", "tin": "tin_b"})
+
+
+def chosen_textures():
+    import render_lagoon_texture_preview as T
+    for slot, tex in CHOSEN.items():
+        m = bpy.data.materials.get(slot)
+        if m is not None:
+            T.uv_material(m, tex)
+
+
 def surface_variety(slot, rng):
     """Each placed house or boat gets ONE variant of `slot` for the whole surface, chosen per
     house so neighbours differ. Houses are linked duplicates sharing one mesh, so the choice is
@@ -980,6 +996,7 @@ def main():
             o["rock_scale"] = (o.scale.x + o.scale.y + o.scale.z) / 3
     E.bake("rock")
     T.rock_material(bpy.data.materials["rock"], ROCK_LOOK)
+    chosen_textures()
     surface_variety("thatch", random.Random(77))
     surface_variety("sawali", random.Random(78))
     L.gameplay(root)
