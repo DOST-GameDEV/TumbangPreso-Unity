@@ -43,6 +43,11 @@ photograph): `docs/reports/map-by-map-refinement-2026-09-23/lagoon-reference-not
 - ⚠️ **Swatches first, one change per round**: a flat swatch sheet beside approved swatches
   (brick, stone_blocks) and a 3 x 3 repeat, approved by the owner, before it touches a model;
   then one game-distance render (1.25 m eye, 95°) and one close-up; version every filename.
+- ⚠️ **EVERY TEXTURE REVIEW SHOWS IT ON THE MODELS** (owner, 2026-09-26: *"when you texture i
+  need a render of how it's gonna look on the models"*). A swatch sheet alone is not a review.
+  `tools/render_lagoon_texture_preview.py` rebuilds a material around each candidate texture and
+  renders the same game's-eye and close-up shots for each, composed into one labelled sheet
+  (`Logs/lagoon-blender/<material>_on_models_vN.png`). Send it WITH the swatch sheet.
 - **Role hues** (`Art_Direction.md` § 1): nothing near offence orange `#f87020` or defence blue
   `#0080e8`. The fishing village's bright turquoise ROOFS are too close to defence blue: roofs are
   thatch, with the odd tin roof in teal-GREEN or red. The water's turquoise is fine.
@@ -172,7 +177,14 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
    (§ 2). Blockout-grade on purpose, replaced by the kits in the later steps: every roof is one
    pyramid (step 3), stairs are plain stone blocks, the court floor is flat, the water is still.
 2. **Rock kit**: final pillow-boulder models and a painted rock texture (swatch first: warm tan,
-   lighter tops, soft darker seams); rebuild the massif from them.
+   lighter tops, soft darker seams); rebuild the massif from them. IN PROGRESS 2026-09-26:
+   `tools/author_lagoon_textures.py` paints rock_a (flat tan, two coats), rock_b (plus broad
+   angular planes with light on their upper edges; the lead's pick) and rock_c (rock_b with
+   warm/cool coats), 4 m a tile; swatch sheet `rock_swatches_v2.png` (v1's bent, outlined planes
+   read as crazy paving) and on the models `rock_on_models_v3.png`. The rock MATERIAL maps the
+   texture by world-space box projection (Unity: triplanar) and adds the light-top, dark-base
+   tone by face normal, which a tiling texture cannot know. Awaiting the owner's pick. The
+   final boulder models are being built in `tools/author_lagoon_rocks.py`.
 3. **Stilt house kit**: nipa/cogon thatch (its own texture, swatch first), sawali wall panel
    (swatch first), plank deck, bamboo piles with X bracing, ladders, railings; variants: land
    house on a pocket, small Bajau water home, sari-sari stall, capilla.
