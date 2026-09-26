@@ -1123,7 +1123,9 @@ def planting(c, rng, spots):
     # 0.9 x, so the ring lands the plants just outside the stone rather than inside it.
     # scale 1.6 and more flowers: at 1x the low plants vanished beside 3 to 6 m stones and the
     # red accents barely showed (review of the first cove render with the kit).
-    mix = (("tuft", 0.30), ("broadleaf", 0.34), ("flower_bush", 0.31), ("palm", 0.05))
+    # Gap review item 7: croton, monstera and ground cover at rock feet, as in the reference.
+    mix = (("tuft", 0.24), ("groundcover", 0.16), ("broadleaf", 0.24), ("flower_bush", 0.22),
+           ("croton", 0.06), ("monstera", 0.04), ("palm", 0.04))
     placed = P.plant_gaps(c, rng, spots, height, avoid, ring=1.35, scale=1.6, mix=mix)
     print("[lagoon-cove] gap plants:", placed)
 

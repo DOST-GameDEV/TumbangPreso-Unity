@@ -1,11 +1,23 @@
-"""Lagoon Court planting: coconut palms, grass tufts, banana and taro, flowering bushes.
+"""Lagoon Court planting: coconut palms, grass tufts, banana and taro, flowering bushes, and the
+reference's accents: croton, monstera and ground cover.
 
   import lagoon_cove_planting as P
   P.palm(c, rng, x, y, z, height=None, lean=None)
   P.tuft(c, rng, x, y, z, scale=1.0)
   P.broadleaf(c, rng, x, y, z, scale=1.0)
   P.flower_bush(c, rng, x, y, z, scale=1.0)
-  n = P.plant_gaps(c, rng, spots, height_fn, avoid_fn=None)
+  P.croton(c, rng, x, y, z, scale=1.0)
+  P.monstera(c, rng, x, y, z, scale=1.0)
+  P.groundcover(c, rng, x, y, z, scale=1.0)
+  n = P.plant_gaps(c, rng, spots, height_fn, avoid_fn=None, mix=P.GAP_MIX)
+
+2026-09-27, THE PALMS AND THE VARIETY (docs/LAGOON_REWORK_GUIDE.md section 7a items 6 and 7). The
+reference's palms have CURVED trunks (S bends, gentle arcs, a few nearly straight) in warm banded
+bark, and BROAD, CHUNKY, heavily drooping fronds with a yellow-green gradient; ours were straight,
+grey and thin-leafed. The palm kit now sweeps its trunk along a per-variant curve with a slight
+root flare, wears the repainted warm banded palm_trunk, and crowns it with frond_broad cards that
+droop hard, over two narrow splayed young spears (the old three wide ones met as a flat "tent").
+Its rock feet add croton, monstera and ground cover, all Kanto leaf cards.
 
 It has to read as the right plants from 20 to 150 m: the reference (Papaioanou, "Stylized Fishing
 Village") has coconut palms leaning out of rock seams, broad leaves, grass tufts and red flowering
@@ -44,8 +56,11 @@ THE REST OF THE PLANT IS PAINTED TOO. OWNER, 2026-09-27, reviewing the plants in
 rings, 2 m a tile), the coconuts (smooth UV spheres wearing a painted husk), the banana pseudo-stem
 and every leaf stalk wear their own drawings from author_lagoon_leaves.py, UV'd round and along,
 and the bushes flower in FLOWER CARDS (gumamela, bougainvillea) in place of the pink blobs.
-Materials: lagoon_palm_trunk, lagoon_coconut, lagoon_banana_stem, lagoon_stalk_<banana|taro>,
-lagoon_flower_<gumamela|bougainvillea>_<red|yellow>, and the lagoon_leaf_* cards.
+Materials: lagoon_palm_trunk, lagoon_coconut, lagoon_banana_stem,
+lagoon_stalk_<banana|taro|croton|monstera>, lagoon_flower_<gumamela|bougainvillea>_<red|yellow>,
+and the lagoon_leaf_* cards (new: lagoon_leaf_frond_broad_palm_<light|dark>,
+lagoon_leaf_croton_croton_<light|dark>, lagoon_leaf_monstera_monstera_<light|dark>,
+lagoon_leaf_round_groundcover_<light|dark>).
 
 Colours: nothing near offence orange #f87020 or defence blue #0080e8 (Art_Direction.md section 1).
 """
@@ -83,6 +98,7 @@ STALK_TINTS = _from_leaves("STALK_TINTS")
 FLOWER_TINTS = _from_leaves("FLOWER_TINTS")
 FLOWER_KEY = _from_leaves("FLOWER_KEY")
 FLOWER_PALE = _from_leaves("FLOWER_PALE")
+COLOUR_TINTS = _from_leaves("COLOUR_TINTS")
 
 # ---------------------------------------------------------------- materials
 
@@ -93,7 +109,15 @@ FLOWERS = ("plant_flower_red", "plant_flower_yellow")
 # Texture file per card type, and its width over its length. A card is built at the drawing's own
 # aspect (times a small per-type squeeze) so the painted leaf is never stretched.
 LEAF_TEX = {"frond": ("frond_albedo.png", 0.5), "paddle": ("paddle_albedo.png", 0.5),
-            "blade": ("blade_albedo.png", 0.25), "round": ("leaf_round_albedo.png", 1.0)}
+            "blade": ("blade_albedo.png", 0.25), "round": ("leaf_round_albedo.png", 1.0),
+            "frond_broad": ("frond_broad_albedo.png", 0.5), "croton": ("croton_leaf_albedo.png", 0.5),
+            "monstera": ("monstera_leaf_albedo.png", 1.0)}
+
+# The two drawings painted in COLOUR (author_lagoon_leaves: a frond's green-to-warm-tip gradient
+# and a croton's crimson with yellow veins are several hues in one leaf, which one tint cannot
+# give). Their card material multiplies by a COLOUR_TINTS pair at gain 1.0 instead of a TINTS
+# pair at 1.25; everything else about the card is Kanto's.
+COLOUR_LEAVES = {"frond_broad": "palm_broad", "croton": "croton"}
 
 # One tile of the trunk drawing is this many metres of trunk, so its leaf-scar rings sit at their
 # real 5 to 15 cm spacing on every palm whatever its height.
@@ -165,9 +189,13 @@ def stalk_material(plant):
 
 
 def leaf_material(tex, plant, which):
-    """lagoon_leaf_<tex>_<plant>_<light|dark>: Kanto's leaf_material with a tropical drawing."""
-    return _card_material(f"lagoon_leaf_{tex}_{plant}_{which}", LEAF_TEX[tex][0],
-                          TINTS[plant][0 if which == "light" else 1])
+    """lagoon_leaf_<tex>_<plant>_<light|dark>: Kanto's leaf_material with a tropical drawing.
+    A colour drawing (COLOUR_LEAVES) takes its pair from COLOUR_TINTS at gain 1.0."""
+    k = 0 if which == "light" else 1
+    if tex in COLOUR_LEAVES:
+        return _card_material(f"lagoon_leaf_{tex}_{plant}_{which}", LEAF_TEX[tex][0],
+                              COLOUR_TINTS[COLOUR_LEAVES[tex]][k], gain=1.0)
+    return _card_material(f"lagoon_leaf_{tex}_{plant}_{which}", LEAF_TEX[tex][0], TINTS[plant][k])
 
 
 def flower_material(kind, colour):
@@ -180,7 +208,7 @@ def flower_material(kind, colour):
     return _card_material(f"lagoon_flower_{kind}_{colour}", f"{kind}_albedo.png", FLOWER_TINTS[colour], key=True)
 
 
-def _card_material(name, tex, rgb, key=False):
+def _card_material(name, tex, rgb, key=False, gain=1.25):
     """Kanto's leaf_material. The greyscale drawing is MULTIPLIED by the tint x 1.25 (the painted
     value sits around 0.8, so this lands the leaf on the tint), cut out by the drawing's alpha,
     DITHERED rather than blended so hundreds of overlapping cards need no sorting, backface
@@ -201,7 +229,7 @@ def _card_material(name, tex, rgb, key=False):
     mix.data_type, mix.blend_type = "RGBA", "MULTIPLY"
     mix.inputs["Factor"].default_value = 1.0
     links.new(img.outputs["Color"], mix.inputs[6])
-    mix.inputs[7].default_value = (*(min(1.0, c * 1.25) for c in rgb), 1)
+    mix.inputs[7].default_value = (*(min(1.0, c * gain) for c in rgb), 1)
     if key:
         # The image node hands out LINEAR values, so the key thresholds (painted as sRGB) are
         # converted; a grey drawing's colour reads as its value when plugged into a float input.
@@ -485,61 +513,85 @@ def _kit(kind, count, builder):
     return meshes
 
 
-# Palm variants: (height, lean in degrees). The whole plant is authored leaning toward +X and
-# turned to its heading at placement; the height is matched by a uniform scale of at most about
-# 12 per cent, so a frond never grows past 4.5 m or shrinks under 3.
-PALM_VARIANTS = [(6.5, 12), (7.5, 24), (8.5, 16), (9.5, 28), (10.5, 20), (11.0, 11)]
+# Palm variants: (height, lean in degrees, trunk shape). The whole plant is authored leaning toward
+# +X and turned to its heading at placement; the height is matched by a uniform scale of at most
+# about 12 per cent, so a frond never grows past 4.5 m or shrinks under 3.
+# THE SHAPE IS NEW (docs/LAGOON_REWORK_GUIDE.md section 7a item 6: the reference's trunks "curve
+# (S bends, leaning)", ours were "straight, grey"). Three kinds, as the reference's foliage sheet
+# has them: "arc" leans out from the seam and curves back up toward the light, "s" swings out, back
+# and out again (with a little sideways sway so it is an S from most angles, not only from one),
+# "straight" is nearly straight with a slight bow. Still six variants, so `palm()` draws exactly
+# the same random numbers as before and the cove's layout stream is unchanged.
+PALM_VARIANTS = [(6.5, 10, "straight"), (7.5, 24, "arc"), (8.5, 16, "s"), (9.5, 26, "arc"),
+                 (10.5, 18, "s"), (11.0, 7, "straight")]
+
+
+def _trunk_path(height, lean_deg, shape, steps=22):
+    """The trunk's centre line, base to crown, and its radii. The chord from base to crown makes
+    lean_deg with the vertical; `shape` decides how the line wanders about that chord."""
+    offset = height * math.tan(math.radians(lean_deg))
+    path, radii = [], []
+    for k in range(steps + 1):
+        t = k / steps
+        if shape == "arc":
+            f, side = 0.8 * (2 * t - t * t) + 0.2 * t, 0.0
+        elif shape == "s":
+            # f' = 1 + 1.26 cos(2 pi t): out fast at the foot, BACK toward upright at mid height,
+            # out again under the crown. A plain arc cannot give that swing.
+            f, side = t + 0.2 * math.sin(math.tau * t), 0.12 * math.sin(math.pi * t)
+        else:
+            f, side = 0.3 * (2 * t - t * t) + 0.7 * t, 0.0
+        z = height * t
+        path.append(Vector((offset * f, offset * side, z)))
+        # A slight ROOT FLARE over the lowest 0.9 m (a soft bell, not a cone), then a gentle taper.
+        flare = 0.13 * max(0.0, 1 - z / 0.9) ** 2
+        radii.append(0.29 - 0.12 * t + flare)
+    path[0].z -= 0.35                                       # sunk into the ground
+    return path, radii
 
 
 def _palm_mesh(i, name):
     rng = random.Random(4100 + i)
-    height, lean_deg = PALM_VARIANTS[i]
+    height, lean_deg, shape = PALM_VARIANTS[i]
     m = _Mesh()
-    # TRUNK. Leans out at the base and curves back toward upright near the crown, the way a
-    # coconut palm grows out of a seam toward the light. The chord from base to crown makes
-    # lean_deg with the vertical; the base tangent is steeper, the top tangent gentler.
-    offset = height * math.tan(math.radians(lean_deg))
-    steps = 14
-    path, radii = [], []
-    for k in range(steps + 1):
-        t = k / steps
-        x = offset * (0.65 * (2 * t - t * t) + 0.35 * t)
-        path.append(Vector((x, 0, height * t)))
-        flare = 0.16 * max(0.0, 1 - t * 6)                  # root flare in the lowest metre
-        radii.append(0.27 - 0.11 * t + flare)
-    path[0].z -= 0.35                                       # sunk into the ground
-    # Twelve sides (was seven): the painted rings run round the trunk, and a seven-sided trunk
-    # showed them as a polygon (ten still read as chevrons from below, test v1). The rings are in the drawing, 2 m a tile along the trunk.
+    path, radii = _trunk_path(height, lean_deg, shape)
+    # Twelve sides: the painted bands run round the trunk, and fewer sides show them as a polygon.
+    # The bands are in the drawing, 2 m a tile along the trunk, so they stay real size on a curve.
     _tube(m, 0, path, radii, sides=12, v_len=TRUNK_TILE_M)
     top = path[-1]
     tangent = (path[-1] - path[-2]).normalized()
     # The crown's shading centre sits a little below the top, so the rising half of every frond
     # faces away from it (lit) and the hanging tips face down and out (shaded).
     centre = top - Vector((0, 0, 0.8))
-    # CROWN. Fronds leave the top arching up, then droop past horizontal: the silhouette that
-    # separates a coconut palm from a lollipop (a ball) or a star (straight spikes). Two tiers:
-    # every other frond leaves lower and hangs further, so the crown is a shaggy umbrella and not
-    # a flat star. The upper tier wears the light tint and the hanging tier the dark one, which is
-    # the Kanto rule (light on top, dark underneath) applied frond by frond.
+    # CROWN. BROAD fronds (frond_broad: eleven wide leaflets a side with a yellow-green to warm-tip
+    # gradient) that leave the top arching up and then DROOP HEAVILY, which is the reference's
+    # palm: its fronds hang like a mop, where ours stood out like a star (section 7a item 6). Two
+    # tiers: every other frond leaves lower and hangs almost straight down at its tip. The upper
+    # tier wears the light tint and the hanging tier the dark one (Kanto: light on top, dark
+    # underneath). The fold is deeper than the thin frond's (0.55 against 0.38): the leaflets hang
+    # off both sides of the rib, which is also what keeps a frond visible edge-on.
     n = rng.randint(7, 9)
     phase = rng.uniform(0, math.tau)
     for k in range(n):
         az = phase + math.tau * k / n + rng.uniform(-0.2, 0.2)
         lower = k % 2 == 1
         length = rng.uniform(3.6, 4.2) if lower else rng.uniform(3.3, 3.9)
-        up0 = math.radians(rng.uniform(12, 24) if lower else rng.uniform(34, 46))
-        up1 = math.radians(rng.uniform(-86, -68) if lower else rng.uniform(-62, -42))
+        up0 = math.radians(rng.uniform(6, 18) if lower else rng.uniform(26, 38))
+        up1 = math.radians(rng.uniform(-92, -78) if lower else rng.uniform(-74, -56))
         # Fronds on the lean side droop a little more, so the crown hangs over the lean.
         if math.cos(az) > 0.3:
             up1 -= math.radians(8)
-        spine = _arc(top + tangent * 0.1, az, up0, up1, length, 7, bend=1.25)
-        _card(m, 2 if lower else 1, spine, length * LEAF_TEX["frond"][1] * 1.05, 0.38, centre)
-    # Young fronds nearly upright in the middle, so the crown has a top and not a hole.
-    for k in range(3):
-        az = phase + math.tau * k / 3 + 0.5
-        length = rng.uniform(1.8, 2.3)
-        spine = _arc(top + tangent * 0.15, az, math.radians(76), math.radians(48), length, 4)
-        _card(m, 1, spine, length * LEAF_TEX["frond"][1] * 0.8, 0.5, centre)
+        spine = _arc(top + tangent * 0.1, az, up0, up1, length, 9, bend=1.05)
+        _card(m, 2 if lower else 1, spine, length * LEAF_TEX["frond_broad"][1] * 1.1, 0.55, centre)
+    # YOUNG FRONDS. Cove v48's three wide young fronds met in the middle as a flat pale "tent". Now
+    # two narrow spears in the THIN frond drawing (a young frond is still folded shut), splayed
+    # to opposite sides, one leaning more than the other, so the crown has a top and no tent.
+    for k in range(2):
+        az = phase + 0.5 + math.pi * k + rng.uniform(-0.3, 0.3)
+        length = rng.uniform(1.6, 2.1)
+        p0 = math.radians(rng.uniform(74, 80) if k == 0 else rng.uniform(64, 70))
+        spine = _arc(top + tangent * 0.15, az, p0, p0 - math.radians(rng.uniform(16, 24)), length, 5)
+        _card(m, 4, spine, length * LEAF_TEX["frond"][1] * 0.45, 0.25, centre)
     # COCONUTS: one or two BUNCHES hanging under the crown, three or four nuts a bunch packed
     # against each other and the trunk top, each nut's highlight turned out of the crown. A bunch
     # reads as coconuts from the court; nuts spread evenly round the trunk read as a collar.
@@ -552,8 +604,9 @@ def _palm_mesh(i, name):
             r = rng.uniform(0.14, 0.17)
             c = hub + across * (s * 0.24) + out * (0.04 * abs(s)) + Vector((0, 0, h))
             _nut(m, 3, c, r, (c - top).normalized() + out)
-    return m.build(name, [trunk_material(), leaf_material("frond", "palm", "light"),
-                          leaf_material("frond", "palm", "dark"), coconut_material()])
+    return m.build(name, [trunk_material(), leaf_material("frond_broad", "palm", "light"),
+                          leaf_material("frond_broad", "palm", "dark"), coconut_material(),
+                          leaf_material("frond", "palm", "light")])
 
 
 def _tuft_mesh(i, name):
@@ -739,6 +792,122 @@ def _bush_mesh(i, name):
     return me
 
 
+# ---------------------------------------------------------------- the reference's accent plants
+#
+# docs/LAGOON_REWORK_GUIDE.md section 7a item 7: the reference's rock feet carry "red and orange
+# ferny accents (croton), monstera-like round leaves, dense low ground cover"; ours had banana,
+# taro, tufts and flower bushes only. Three more kinds, every leaf a Kanto card as the owner asked
+# ("i really like what was used for leaves in kanto. just need to ensure it matches this
+# environment"). The reference's ORANGE accent is crimson, coral-pink and yellow here: offence
+# orange #f87020 is a gameplay colour and a plant may not wear it.
+
+def _croton_mesh(i, name):
+    """A croton: four to six short woody stems, each topped with a whorl of STIFF crimson-and-yellow
+    leaves and more down its side, so the plant is a dense rounded clump about 0.8 m tall and a
+    metre across. Stiff means little droop: a croton's leaves are leathery and hold their angle,
+    which is what tells it from the soft banana and taro at a glance. Upper leaves light, lower
+    ones dark. Test v1 had two to four tall stems with a few leaves each and read as a sparse
+    seedling with its stems showing; the reference's red accents are full, leafy mounds."""
+    rng = random.Random(4500 + i)
+    m = _Mesh()
+    centre = Vector((0, 0, 0.3))
+    stems = rng.randint(4, 6)
+    phase = rng.uniform(0, math.tau)
+    for s_i in range(stems):
+        az = phase + math.tau * s_i / stems + rng.uniform(-0.4, 0.4)
+        base = Vector((math.cos(az) * 0.06, math.sin(az) * 0.06, -0.08))
+        stem = _arc(base, az, math.radians(rng.uniform(62, 80)), math.radians(rng.uniform(55, 72)),
+                    rng.uniform(0.12, 0.3), 3)
+        _tube(m, 0, stem, [0.026, 0.023, 0.02, 0.017], sides=6)
+        top = stem[-1]
+        # The whorl at the top, rising and fanning out all round.
+        w = rng.randint(8, 10)
+        a0 = rng.uniform(0, math.tau)
+        for k in range(w):
+            a = a0 + math.tau * k / w + rng.uniform(-0.25, 0.25)
+            length = rng.uniform(0.38, 0.52)
+            p0 = math.radians(rng.uniform(25, 68))
+            spine = _arc(top, a, p0, p0 - math.radians(rng.uniform(25, 40)), length, 4, bend=1.3)
+            _card(m, 1, spine, length * LEAF_TEX["croton"][1] * 0.95, 0.22, centre)
+        # Older leaves lower down the stem and at the foot, held flatter, in the dark tint: they
+        # skirt the clump so no bare stem shows under it.
+        for k in range(rng.randint(3, 4)):
+            at = stem[rng.randint(0, 1)]
+            a = rng.uniform(0, math.tau)
+            length = rng.uniform(0.38, 0.5)
+            p0 = math.radians(rng.uniform(0, 22))
+            spine = _arc(at, a, p0, p0 - math.radians(rng.uniform(25, 40)), length, 4, bend=1.3)
+            _card(m, 2, spine, length * LEAF_TEX["croton"][1] * 0.95, 0.22, centre)
+    return m.build(name, [stalk_material("croton"), leaf_material("croton", "croton", "light"),
+                          leaf_material("croton", "croton", "dark")])
+
+
+def _monstera_mesh(i, name):
+    """A monstera: three to six big split leaves, each held out on its own long stalk from the
+    ground, the blade tilted to face up and out and drooping a little at its tip. The card is
+    pulled back along the stalk so the stalk meets the blade in the drawing's notch, as a real
+    monstera's does. The two oldest (lowest, flattest) leaves are dark."""
+    rng = random.Random(4600 + i)
+    m = _Mesh()
+    # Test v1 held small leaves high on long thin stalks and read as lily pads on sticks. A
+    # monstera is a MOUND of big leaves: shorter stalks, bigger blades, more of them, the blades
+    # rising at the base and then arching over.
+    n = rng.randint(4, 6)
+    phase = rng.uniform(0, math.tau)
+    centre = Vector((0, 0, 0.3))
+    for k in range(n):
+        az = phase + math.tau * k / n + rng.uniform(-0.3, 0.3)
+        low = k >= n - 2
+        base = Vector((math.cos(az) * 0.06, math.sin(az) * 0.06, -0.08))
+        stalk_len = rng.uniform(0.3, 0.45) if low else rng.uniform(0.45, 0.7)
+        stalk = _arc(base, az, math.radians(rng.uniform(68, 80)),
+                     math.radians(rng.uniform(30, 45) if low else rng.uniform(45, 60)), stalk_len, 4)
+        _tube(m, 0, stalk, [0.04, 0.036, 0.032, 0.028, 0.025], sides=6)
+        length = rng.uniform(0.8, 1.05)
+        # Tilted up and out rather than held flat (test v2's flat blades on stalks read as tables).
+        p0 = math.radians(rng.uniform(20, 32) if low else rng.uniform(42, 56))
+        spine = _arc(stalk[-1], az, p0, p0 - math.radians(rng.uniform(55, 70)), length, 6, bend=1.2)
+        # The drawing's notch sits about 17 per cent up the card.
+        back = (spine[1] - spine[0]).normalized() * (0.17 * length)
+        spine = [p - back for p in spine]
+        _card(m, 2 if low else 1, spine, length * LEAF_TEX["monstera"][1], 0.14, centre)
+    return m.build(name, [stalk_material("monstera"), leaf_material("monstera", "monstera", "light"),
+                          leaf_material("monstera", "monstera", "dark")])
+
+
+def _groundcover_mesh(i, name):
+    """Ground cover: a LOW, SPREADING mat of small round leaf cards (Kanto's own leaf drawing, in
+    the groundcover green), a flattened main dome with two to four lobes crawling out from it,
+    shingled by `_foliage` exactly as a Kanto clump is. A few small SPROUTS (grass blade cards)
+    poke out of it, the reference's little upright shoots, so the mat is not a smooth pillow.
+    Section 7a item 7 also calls our grass pockets "flat discs"; this is the plant that fills
+    those spots with something that has a surface."""
+    rng = random.Random(4700 + i)
+    m = _Mesh()
+    # Test v1's mat was 0.2 m high and read as moss; the reference's cover is a knee-high leafy
+    # mound, so the dome is taller and the lobes rounder.
+    lobes = [(Vector((0, 0, 0.08)), (0.5, 0.5, 0.3))]
+    for k in range(rng.randint(2, 4)):
+        a = rng.uniform(0, math.tau)
+        d = rng.uniform(0.45, 0.7)
+        r = rng.uniform(0.3, 0.4)
+        lobes.append((Vector((math.cos(a) * d, math.sin(a) * d, 0.05)), (r, r, r * 0.65)))
+    for c, radii in lobes:
+        # spread 0.6 (Kanto's is 0.35): at this small leaf size the neater shingling read as
+        # the scales of an artichoke; a looser turn per leaf reads as a leafy tangle.
+        _foliage(m, c, radii, 0.14, rng, lobes, floor_z=0.0, lift=0.4, spread=0.6, cover=2.6)
+    for k in range(rng.randint(3, 6)):
+        c, radii = lobes[rng.randrange(len(lobes))]
+        a = rng.uniform(0, math.tau)
+        at = c + Vector((math.cos(a) * radii[0] * 0.6, math.sin(a) * radii[1] * 0.6, radii[2] * 0.5))
+        length = rng.uniform(0.22, 0.36)
+        spine = _arc(at, a, math.radians(rng.uniform(70, 84)), math.radians(rng.uniform(40, 60)), length, 4)
+        _card(m, 2, spine, length * LEAF_TEX["blade"][1] * 1.1, -0.3, at - Vector((0, 0, 0.3)), up_bias=0.6)
+    return m.build(name, [leaf_material("round", "groundcover", "light"),
+                          leaf_material("round", "groundcover", "dark"),
+                          leaf_material("blade", "grass", "light")])
+
+
 # ---------------------------------------------------------------- placement
 
 def _place(c, kind, mesh, x, y, z, scale, heading, slots):
@@ -765,7 +934,8 @@ def _layout_draw(rng):
 
 def palm(c, rng, x, y, z, height=None, lean=None):
     """A coconut palm, 6 to 11 m, trunk curving out toward heading `lean` (radians; None =
-    random), a drooping crown of 7 to 9 frond cards over 3 young ones, and a nut cluster."""
+    random) in an arc, an S or nearly straight by variant, a heavily drooping crown of 7 to 9 broad
+    frond cards over 2 young spears, and a nut cluster."""
     kit = _kit("palm", len(PALM_VARIANTS), _palm_mesh)
     if height is None:
         height = rng.uniform(6.0, 11.0)
@@ -811,9 +981,49 @@ def flower_bush(c, rng, x, y, z, scale=1.0, flower=None):
                   {2: flower_material(mesh.get("flower_kind", "gumamela"), colour)})
 
 
-# The gap mix, as cumulative weights: mostly tufts and broad leaves, some flowering bushes, the
-# occasional palm leaning out of the seam.
-GAP_MIX = (("tuft", 0.42), ("broadleaf", 0.30), ("flower_bush", 0.18), ("palm", 0.10))
+def croton(c, rng, x, y, z, scale=1.0):
+    """A croton: a stiff clump of crimson-and-yellow leaves on short woody stems, 0.7 to 1 m."""
+    kit = _kit("croton", 4, _croton_mesh)
+    return _place(c, "croton", kit[rng.randrange(len(kit))], x, y, z, scale * rng.uniform(0.85, 1.2),
+                  rng.uniform(0, math.tau), {})
+
+
+def monstera(c, rng, x, y, z, scale=1.0):
+    """A monstera: 3 to 6 big round split leaves on long stalks, about 1 to 1.4 m."""
+    kit = _kit("monstera", 4, _monstera_mesh)
+    return _place(c, "monstera", kit[rng.randrange(len(kit))], x, y, z, scale * rng.uniform(0.9, 1.25),
+                  rng.uniform(0, math.tau), {})
+
+
+def groundcover(c, rng, x, y, z, scale=1.0):
+    """Ground cover: a low spreading mat of small round leaves with a few sprouts, about 2 m across
+    and 0.3 m high."""
+    kit = _kit("groundcover", 4, _groundcover_mesh)
+    return _place(c, "groundcover", kit[rng.randrange(len(kit))], x, y, z, scale * rng.uniform(0.8, 1.3),
+                  rng.uniform(0, math.tau), {})
+
+
+# The gap mix, as weights (they need not sum to 1): tufts and ground cover the most, then broad
+# leaves, some flowering bushes, the croton and monstera ACCENTS a few per cent each (the
+# reference uses them as punctuation at boulder feet, not as a hedge), and the occasional palm
+# leaning out of the seam.
+# ⚠️ CHANGING THIS MIX CHANGES THE LAYOUT STREAM for any caller that uses the default: a different
+# kind drawn at a spot draws a different number of random numbers, so every later plant moves.
+# tools/author_lagoon_cove.py passes its OWN mix, so the cove's layout is unchanged until the lead
+# adds the new kinds to it (which will, by the same argument, move the cove's later plants once).
+GAP_MIX = (("tuft", 0.28), ("groundcover", 0.20), ("broadleaf", 0.22), ("flower_bush", 0.13),
+           ("croton", 0.06), ("monstera", 0.05), ("palm", 0.06))
+
+# How a gap plant of each kind is placed: its function, whether `scale` sizes it (palms are sized
+# by height, not by the stones), and the footprint over which its base finds the lowest ground.
+_GAP_KINDS = {
+    "tuft": (lambda c, rng, x, y, z, s: tuft(c, rng, x, y, z, scale=s * rng.uniform(0.8, 1.2)), 0.5),
+    "broadleaf": (lambda c, rng, x, y, z, s: broadleaf(c, rng, x, y, z, scale=s), 0.5),
+    "flower_bush": (lambda c, rng, x, y, z, s: flower_bush(c, rng, x, y, z, scale=s), 0.5),
+    "croton": (lambda c, rng, x, y, z, s: croton(c, rng, x, y, z, scale=s), 0.4),
+    "monstera": (lambda c, rng, x, y, z, s: monstera(c, rng, x, y, z, scale=s), 0.5),
+    "groundcover": (lambda c, rng, x, y, z, s: groundcover(c, rng, x, y, z, scale=s), 0.7),
+}
 
 
 def plant_gaps(c, rng, spots, height_fn, avoid_fn=None, density=0.55, per_spot=(1, 3), mix=GAP_MIX, ring=0.9,
@@ -822,9 +1032,14 @@ def plant_gaps(c, rng, spots, height_fn, avoid_fn=None, density=0.55, per_spot=(
     of spots gets per_spot[0] to per_spot[1] plants on a ring at about ring * radius; each point is
     rejected when avoid_fn(x, y) is True. Palms lean OUTWARD, away from the spot centre. Every
     base is set at the LOWEST ground within its footprint, so no plant floats on a slope.
-    `scale` sizes the low plants (not palms) to the stones they sit among. Returns how many
-    plants were placed."""
+    `scale` sizes the low plants (not palms) to the stones they sit among. `mix` may name any of
+    tuft, groundcover, broadleaf, flower_bush, croton, monstera and palm. Returns how many plants
+    were placed. The random draws for the old kinds are exactly as before, so a mix of only the
+    old kinds lays out the same cove it always did."""
     total = sum(w for _k, w in mix)
+    for k, _w in mix:
+        if k != "palm" and k not in _GAP_KINDS:
+            raise ValueError(f"plant_gaps: unknown plant kind {k!r}")
     placed = 0
     for sx, sy, r in spots:
         if rng.random() > density:
@@ -841,15 +1056,11 @@ def plant_gaps(c, rng, spots, height_fn, avoid_fn=None, density=0.55, per_spot=(
                     kind = k
                     break
                 roll -= w
-            foot = 0.9 if kind == "palm" else 0.5
+            foot = 0.9 if kind == "palm" else _GAP_KINDS[kind][1]
             z = min(height_fn(x + dx * foot, y + dy * foot) for dx, dy in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)))
             if kind == "palm":
                 palm(c, rng, x, y, z, lean=a + rng.uniform(-0.35, 0.35))
-            elif kind == "tuft":
-                tuft(c, rng, x, y, z, scale=scale * rng.uniform(0.8, 1.2))
-            elif kind == "broadleaf":
-                broadleaf(c, rng, x, y, z, scale=scale)
             else:
-                flower_bush(c, rng, x, y, z, scale=scale)
+                _GAP_KINDS[kind][0](c, rng, x, y, z, scale)
             placed += 1
     return placed

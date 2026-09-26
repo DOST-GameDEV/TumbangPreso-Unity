@@ -20,14 +20,20 @@ not a street of round-leaved shade trees:
   paddle       a banana/taro leaf: a broad oval, a pale soft midrib, soft parallel vein bands,
                and two tears from the edge (the banana look)
   blade        a grass/pandan blade: long, narrow, tapered, a soft centre fold
-Greyscale RGBA PNGs to ArtSource/lagoon/textures/<name>_albedo.png.
+  frond_broad  the reference's CHUNKY frond: eleven wide, pointed, drooping leaflets a side, COLOUR
+               (green at the stalk to yellow-green, warm straw leaflet tips); the palms' crown
+  croton_leaf  a croton leaf, COLOUR: crimson to coral-pink with a yellow midrib, veins, splashes
+  monstera_leaf  a monstera leaf: a broad heart, a notch at the stalk, edge splits and inner holes
+Greyscale RGBA PNGs to ArtSource/lagoon/textures/<name>_albedo.png, except the two COLOUR ones
+(tinted by COLOUR_TINTS at gain 1.0; see "the reference's chunkier plants" below).
 
 The rest of each plant is painted here too, in the same hand (see "the rest of the plant" below):
-  palm_trunk     coconut trunk, grey-brown with soft leaf-scar rings; tiles, 2 m a tile; colour,
-                 with _height and _normal
+  palm_trunk     coconut trunk, warm banded tan and soft orange-brown with soft leaf-scar seams;
+                 tiles, 2 m a tile; colour, with _height and _normal
   coconut        the nut's husk, wrapped round a UV sphere; colour
   banana_stem    the banana pseudo-stem, lengthwise sheath bands, dry brown sheaths at the base
-  stalk          a leaf stalk, greyscale, tinted per plant (STALK_TINTS)
+  stalk          a leaf stalk, greyscale, tinted per plant (STALK_TINTS: banana, taro, croton,
+                 monstera)
   gumamela       a hibiscus flower card, greyscale + alpha, tinted (FLOWER_TINTS), pale stamen
   bougainvillea  a three-bract cluster card, greyscale + alpha, tinted, pale centre
 """
@@ -158,11 +164,192 @@ def blade(w=256, h=1024):
     _save("blade", tone, d * w / 3.0)
 
 
+# ---------------------------------------------------------------- the reference's chunkier plants
+#
+# docs/LAGOON_REWORK_GUIDE.md section 7a, items 6 and 7, comparing our cove with the reference's
+# foliage sheet (ArtStation GvJv5a): its palm fronds are "broad and chunky with a yellow-green
+# gradient" where ours were "thin-leafed", and its rock feet carry "red and orange ferny accents
+# (croton), monstera-like round leaves, dense low ground cover". Three new drawings follow, still
+# in the owner's approved Kanto hand ("i really like what was used for leaves in kanto. just need
+# to ensure it matches this environment"): soft value from stem to tip, one sunlit patch, no
+# outline, a crisp alpha silhouette.
+#
+# TWO OF THEM ARE PAINTED IN COLOUR, AND THAT IS A DELIBERATE EXCEPTION. A frond that runs from
+# green at the stalk to yellow-green to a warm tip, and a croton leaf that is crimson with yellow
+# veins, each carry two or three hues inside ONE leaf, which a single multiplied tint cannot give.
+# They keep the rest of the rule: the material still multiplies them by a per-plant pair from
+# COLOUR_TINTS (light on top, dark underneath, gain 1.0 because the drawing already carries its
+# own colour), and the shader's per-object random still nudges each plant. Per plant, never per
+# leaf. The monstera is one green, so it stays greyscale plus TINTS like every Kanto leaf.
+
+def _save_colour(name, rgb, alpha):
+    OUT.mkdir(parents=True, exist_ok=True)
+    rgba = np.dstack([np.clip(rgb, 0, 1), np.clip(alpha, 0, 1)])
+    Image.fromarray((rgba * 255).astype(np.uint8), "RGBA").save(OUT / f"{name}_albedo.png")
+    print("[lagoon-leaf]", name)
+
+
+def _lerp(a, b, f):
+    f = np.clip(f, 0, 1)[..., None]
+    a = np.asarray(a, np.float32)
+    b = np.asarray(b, np.float32)
+    return a * (1 - f) + b * f
+
+
+def frond_broad(w=512, h=1024, seed=7):
+    """The reference's CHUNKY coconut frond: eleven leaflets a side (the thin frond has 24), each
+    about three times as wide, bowed so it droops toward the stalk, pointed at its end, and
+    overlapping its neighbour a little so the frond reads as a few bold shapes and not a comb.
+    Colour runs green at the stalk to a sunny yellow-green up the frond, and every leaflet warms
+    to a soft straw at its own tip (hue about 45 degrees, far from offence orange's 21). Drawn
+    base at the bottom, inside the card with a margin (the owner's "leaves of palmtrees are also
+    cut off" rule from the thin frond still holds)."""
+    rng = np.random.default_rng(seed)
+    u, v = _grid(w, h)
+    x = (u - 0.5) * 2
+    vy = v * 2.0
+    mid = 0.05 * np.sin(np.pi * v)
+    xr = x - mid
+    alpha = np.zeros_like(x)
+    val = np.zeros_like(x)
+    warm = np.zeros_like(x)
+    n = 11
+    for side in (-1, 1):
+        for k in range(n):
+            # The two sides are staggered by half a leaflet, as on a real frond.
+            t = 0.07 + 0.88 * k / n + rng.uniform(-0.01, 0.01) + (0.04 if side > 0 else 0.0)
+            # Sheet v7's leaflets stopped halfway to the card edge and the frond read as a fern or
+            # an oak leaf. They are LONG now, reaching the card edge, at a shallower comb angle, so
+            # the frond is a few wide straps hanging off a rib, the reference's silhouette.
+            length = 1.3 * min(1.0, t / 0.18) ** 0.5 * np.clip((0.99 - t) / 0.7, 0, 1) ** 0.7
+            length *= np.clip((0.99 - t) / 0.12, 0, 1) ** 0.6
+            ang = np.radians(rng.uniform(30, 38))
+            dx, dy = side * np.cos(ang), np.sin(ang)
+            ox = 0.05 * np.sin(np.pi * t)
+            fit_top = (1.9 - t * 2.0) / dy
+            fit_side = (0.86 - side * ox) / abs(dx)
+            length = min(length, fit_top, fit_side)
+            if length < 0.04:
+                continue
+            px, py = xr, vy - t * 2.0
+            along = px * dx + py * dy
+            s = np.clip(along / (length + 1e-6), 0, 1)
+            # The droop: the leaflet's centre line bows toward the stalk end of the card, more
+            # toward its tip, so each leaflet hangs like the reference's rather than sticking out.
+            bow = side * 0.2 * length * s ** 2
+            across = np.abs(px * dy - py * dx - bow)
+            # Pointed ends (v8's rounded ends read as petals), and a little narrower so a sliver of
+            # light shows between neighbours.
+            width = (0.088 * np.sin(np.pi * s ** 0.8) ** 0.6 * np.clip((1 - s) / 0.4, 0, 1) ** 0.8
+                     * min(1.0, length / 0.3 + 0.35) + 0.008 * (1 - s))
+            a = np.clip((width - across) * w / 3.0, 0, 1) * ((along > 0) & (along < length))
+            # Value: darker where the leaflet leaves the rib, lighter out along it.
+            lt = 0.74 + 0.2 * s ** 0.8 + 0.05 * np.exp(-((s - 0.55) / 0.22) ** 2)
+            new = a > alpha
+            val = np.where(new, lt, val)
+            warm = np.where(new, _feather(s, 0.55, 1.0), warm)
+            alpha = np.maximum(alpha, a)
+    rib_half = 0.03 * np.clip((0.97 - v) / 0.97, 0, 1) ** 0.7 + 0.002 * (v < 0.97)
+    rib = np.clip((rib_half - np.abs(xr)) * w / 3.0, 0, 1) * (v < 0.97)
+    on_rib = rib > alpha * 0.5
+    val = np.where(on_rib, 0.84 + 0.08 * v, val)
+    warm = np.where(on_rib, 0.35, warm)
+    alpha = np.maximum(alpha, rib)
+    # The frond-long gradient, then each leaflet's warm tip, then Kanto's one soft sunlit patch.
+    col = _lerp((0.34, 0.58, 0.12), (0.72, 0.84, 0.24), _feather(v, 0.0, 0.8) ** 0.8)
+    col = _lerp(col, (0.92, 0.82, 0.36), 0.7 * warm)
+    val = val + 0.08 * np.exp(-(((x + 0.3) / 0.4) ** 2 + ((v - 0.6) / 0.25) ** 2))
+    _save_colour("frond_broad", col * val[..., None], alpha)
+
+
+def croton_leaf(w=512, h=1024, seed=29):
+    """A croton leaf, the red-and-yellow variegated shrub at every Filipino house front: a long
+    pointed oval, deep crimson at the stalk warming to a crimson-rose and a coral-pink tip, with a
+    YELLOW midrib and soft yellow side veins combing up toward the tip, and a few soft yellow
+    splashes between them the way a real croton is marked. Hues stay crimson (about 350 degrees)
+    to coral-pink (about 355) and yellow (about 48): offence orange #f87020 sits at 21 and nothing
+    here goes near it."""
+    rng = np.random.default_rng(seed)
+    u, v = _grid(w, h)
+    x = (u - 0.5) * 2
+    half = 0.80 * np.clip(np.sin(np.pi * np.clip(v, 0, 1) ** 0.85), 0, 1) ** 0.75 * (1 - 0.22 * v)
+    d = half - np.abs(x)
+    rel = np.clip(np.abs(x) / np.maximum(half, 1e-3), 0, 1)       # 0 at the midrib, 1 at the edge
+    # Brighter than test v2's (0.40 / 0.72 crimson), which went maroon at game distance; the
+    # reference's accents are the brightest thing at a rock foot.
+    col = _lerp((0.54, 0.08, 0.12), (0.80, 0.13, 0.19), _feather(v, 0.0, 0.4))
+    col = _lerp(col, (0.88, 0.34, 0.40), _feather(v, 0.55, 1.0) * 0.8)
+    yellow = (0.95, 0.80, 0.24)
+    # Side veins: soft lines leaving the midrib and running up toward the edge, fading out there.
+    ph = (v - np.abs(x) * 0.45) * 8.0
+    fr = ph - np.floor(ph)
+    vein = np.exp(-((fr - 0.5) / 0.07) ** 2) * (1 - rel) ** 0.6 * (v > 0.06) * (v < 0.92)
+    col = _lerp(col, yellow, 0.8 * vein)
+    # Splashes: a few soft round patches of yellow, feathered, only on the leaf's inner half.
+    for _ in range(7):
+        cx, cv = rng.uniform(-0.45, 0.45), rng.uniform(0.2, 0.8)
+        r = rng.uniform(0.07, 0.13)
+        sp = _feather(1 - np.hypot(x - cx, (v - cv) * 2.0) / r, 0.0, 0.5) * (1 - rel)
+        col = _lerp(col, yellow, 0.55 * sp)
+    rib = np.exp(-(x / 0.035) ** 2) * (v > 0.02) * (v < 0.95)
+    col = _lerp(col, yellow, 0.9 * rib)
+    tone = _soft_tone(x, v, d, hl_at=(-0.3, 0.6))
+    _save_colour("croton_leaf", col * tone[..., None], d * w / 2.5)
+
+
+def monstera_leaf(size=1024, seed=31):
+    """A monstera leaf seen flat: a broad heart, the stalk meeting it in a notch at the bottom, a
+    soft pale midrib to a gently pointed tip, and the SPLITS it is known by, running in from the
+    edge along the side veins, wider at the edge and closing toward the rib, with a few rounded
+    holes in an inner row between them. Greyscale for the plant's tint (one green)."""
+    rng = np.random.default_rng(seed)
+    u, v = _grid(size, size)
+    X, Y = u - 0.5, v - 0.48
+    r, th = np.hypot(X, Y), np.arctan2(Y, X)
+    R = (0.44 - 0.13 * np.exp(-((th + np.pi / 2) / 0.16) ** 2)        # the notch at the stalk
+         + 0.03 * np.exp(-((th - np.pi / 2) / 0.28) ** 2))             # the pointed tip
+    d = R - r
+    alpha = d * size / 2.0
+    rib_x = 0.012 * np.sin(np.pi * v)
+    tone = _soft_tone((X - rib_x) * 2, v, d * 2, hl_at=(-0.3, 0.6))
+    tone = tone + 0.05 * np.exp(-((X - rib_x) / 0.012) ** 2) * (v > 0.14) * (v < 0.95)
+    for side in (-1, 1):
+        ks = 5
+        for k in range(ks):
+            y0 = -0.26 + 0.5 * k / (ks - 1) + rng.uniform(-0.02, 0.02) + (0.03 if side > 0 else 0)
+            ang = np.radians(rng.uniform(22, 34) + 14 * (1 - k / ks))
+            dx, dy = side * np.cos(ang), np.sin(ang)
+            px, py = X - rib_x, Y - y0
+            along = px * dx + py * dy
+            across = px * dy - py * dx
+            tone = tone + 0.03 * np.exp(-(across / 0.006) ** 2) * (along > 0)     # the side vein
+            # The split: begins part of the way out and widens to the edge.
+            start = 0.17 + rng.uniform(-0.02, 0.03)
+            gap = 0.004 + 0.022 * np.clip((along - start) / 0.25, 0, 1)
+            split = (np.abs(across) < gap) & (along > start)
+            alpha = np.where(split, np.minimum(alpha, (np.abs(across) - gap) * size / 2.0), alpha)
+            # A rounded hole in the inner row, between this vein and the next.
+            if k < ks - 1 and rng.random() < 0.75:
+                hx, hy = side * rng.uniform(0.08, 0.11), y0 + 0.07
+                hr = rng.uniform(0.016, 0.026)
+                hole = np.hypot(X - hx, (Y - hy) / 1.6) - hr
+                alpha = np.minimum(alpha, hole * size / 2.0)
+    _save("monstera_leaf", tone, alpha)
+
+
 # Tints: (light, dark) per plant. Sunnier and more saturated than Kanto's street greens
 # (0.30, 0.64, 0.05 / 0.10, 0.33, 0.04), leaning yellow-green in the light and deeper green in
 # the shade, to sit against the turquoise water and tan rock. Nothing near defence blue.
+# "palm" is now the YOUNG fronds' pair (the thin frond drawing); it moved warmer and yellower
+# (was (0.46, 0.70, 0.14) / (0.10, 0.36, 0.12)) to sit with the broad fronds' sunny colour, per the
+# reference's yellow-green palms (LAGOON_REWORK_GUIDE section 7a item 6).
+# "monstera" is a deep glossy green, darker than the taro's, so a monstera at a rock foot is not
+# read as another taro. "groundcover" is a fresher, slightly yellower green than the bushes, since
+# it lies in the sun on sand and rock feet; it wears Kanto's own round leaf.
 TINTS = {
-    "palm":   ((0.46, 0.70, 0.14), (0.10, 0.36, 0.12)),
+    "palm":   ((0.56, 0.72, 0.14), (0.20, 0.42, 0.10)),
+    "monstera": ((0.30, 0.56, 0.11), (0.09, 0.29, 0.08)),
+    "groundcover": ((0.40, 0.64, 0.09), (0.12, 0.36, 0.06)),
     "banana": ((0.56, 0.76, 0.18), (0.18, 0.44, 0.10)),
     "taro":   ((0.30, 0.60, 0.16), (0.08, 0.30, 0.12)),
     "bush":   ((0.34, 0.62, 0.10), (0.10, 0.32, 0.08)),
@@ -172,7 +359,17 @@ TINTS = {
 
 # A leaf stalk wears its plant's own green, a little deeper than the leaf's light tint so the stalk
 # reads as the stalk and not as more leaf.
-STALK_TINTS = {"banana": (0.42, 0.62, 0.16), "taro": (0.30, 0.56, 0.18)}
+STALK_TINTS = {"banana": (0.42, 0.62, 0.16), "taro": (0.30, 0.56, 0.18),
+               # A croton's short stems are woody, a dull red-brown; a monstera stalk is its green.
+               "croton": (0.50, 0.34, 0.26), "monstera": (0.28, 0.52, 0.16)}
+
+# Multipliers for the two COLOUR drawings (frond_broad, croton_leaf), applied at gain 1.0 (the
+# drawing already carries its colour; the greyscale leaves' x 1.25 would blow it out). Light on
+# top, dark underneath, per plant: the hanging lower tier of a palm is the dark one, as before.
+COLOUR_TINTS = {
+    "palm_broad": ((1.0, 1.0, 0.96), (0.58, 0.66, 0.50)),
+    "croton":     ((1.0, 0.98, 0.98), (0.62, 0.52, 0.54)),
+}
 
 # Flowers. The reference's orange accents are CRIMSON and YELLOW here (LAGOON_REWORK_GUIDE section
 # 8 step 1): orange sits too close to offence orange #f87020, and nothing may approach defence
@@ -242,31 +439,52 @@ def _save_rgb(name, rgb, height=None, strength=3.0):
 
 def palm_trunk(w=512, h=1024, seed=11):
     """A coconut trunk, one tile = 2 m of trunk (V) by once round it (U); tiles both ways.
-    Grey-brown, with the leaf-scar RINGS a coconut trunk is known by: irregularly spaced, gently
-    wavy, each a soft dark groove with a paler lip just above it (where the old frond base sat),
-    some rings fading out part of the way round. Under them, a few broad feathered patches of a
-    lighter and a darker grey-brown. No bark grain, no vertical streaks."""
+    REPAINTED 2026-09-27 against the reference's foliage sheet (docs/LAGOON_REWORK_GUIDE.md section
+    7a item 6: "warm banded orange-brown bark"; the grey-brown v1 read as concrete beside warm
+    sand). It is now a stack of soft horizontal BANDS, one per old frond base: each band is warm
+    tan at its top edge (the fresh lip where the frond sat) settling into a soft orange-brown
+    toward its foot, the bands jittered in height and hue so they never read as a ruled scale.
+    The leaf-scar RING between two bands is kept but softer and narrower than before (a gentle
+    darker seam, not a groove), wavy and fading part of the way round. A few broad feathered
+    patches sit on top so a tall trunk is not one repeated stripe. No grain, no vertical streaks.
+    The browns stay low in saturation (hue about 28 to 34 degrees, saturation under 0.5), well
+    clear of offence orange #f87020, which is a saturated 21 degrees."""
     rng = np.random.default_rng(seed)
     u, v = _grid(w, h)
-    img = np.ones((h, w, 3), np.float32) * np.array((0.56, 0.50, 0.43), np.float32)
-    img = _mix(img, (0.64, 0.59, 0.51), _feather(_broad_field(u, v, seed, 4), 0.62, 0.78) * 0.8)
-    img = _mix(img, (0.46, 0.40, 0.33), _feather(_broad_field(u, v, seed + 1, 4), 0.66, 0.82) * 0.7)
+    tan = np.array((0.80, 0.66, 0.47), np.float32)
+    brown = np.array((0.63, 0.45, 0.30), np.float32)
+    img = np.ones((h, w, 3), np.float32) * brown
     height = np.full((h, w), 0.5, np.float32)
-    # Real rings sit 5 to 15 cm apart; 15 in 2 m, jittered so they never read as a ruled scale.
-    n = 15
-    pos = (np.arange(n) + rng.uniform(-0.3, 0.3, n)) / n
+    # Eleven bands in 2 m (about 18 cm each): the reference's bands are bold enough to read from
+    # across the cove, where the old 15 thin rings merged into a grey smear.
+    n = 11
+    pos = np.sort((np.arange(n) + rng.uniform(-0.22, 0.22, n)) / n)
+    waves = []
     for p0 in pos:
-        wav = (0.004 * np.sin(2 * np.pi * u + rng.uniform(0, 6.3))
-               + 0.0025 * np.sin(4 * np.pi * u + rng.uniform(0, 6.3)))
-        d = (v - p0 - wav + 0.5) % 1.0 - 0.5                 # V distance to this ring, wrapped
-        fade = np.clip(0.55 + 0.6 * np.cos(2 * np.pi * u + rng.uniform(0, 6.3)), 0.15, 1.0)
-        amp = rng.uniform(0.7, 1.0) * fade
-        groove = np.exp(-(d / 0.0055) ** 2) * amp            # ~1 cm soft dark groove
-        lip = np.exp(-((d - 0.013) / 0.007) ** 2) * amp      # the paler lip just above it
-        img = _mix(img, (0.34, 0.29, 0.24), groove * 0.75)
-        img = _mix(img, (0.70, 0.65, 0.57), lip * 0.45)
-        height += 0.35 * lip - 0.45 * groove
-    _save_rgb("palm_trunk", img, height * 0.8 + 0.1, strength=4.0)
+        wav = (0.005 * np.sin(2 * np.pi * u + rng.uniform(0, 6.3))
+               + 0.003 * np.sin(4 * np.pi * u + rng.uniform(0, 6.3)))
+        waves.append(wav)
+    for k, p0 in enumerate(pos):
+        p1 = pos[(k + 1) % n] + (1.0 if k == n - 1 else 0.0)
+        span = p1 - p0
+        # s: 0 just above this band's lower ring, 1 at the next ring up (wrapped, so it tiles).
+        s = ((v - p0 - waves[k]) % 1.0) / span
+        inside = s < 1.0
+        # Brown at the foot of the band rising to tan under the ring above (the lip).
+        f = _feather(s, 0.15, 0.95)
+        shade = rng.uniform(-0.03, 0.03)
+        col = brown[None, None, :] * (1 - f[..., None]) + tan[None, None, :] * f[..., None] + shade
+        img = np.where(inside[..., None], col, img)
+        height = np.where(inside, 0.45 + 0.25 * f, height)
+    for k, p0 in enumerate(pos):
+        d = (v - p0 - waves[k] + 0.5) % 1.0 - 0.5
+        fade = np.clip(0.6 + 0.55 * np.cos(2 * np.pi * u + rng.uniform(0, 6.3)), 0.25, 1.0)
+        seam = np.exp(-(d / 0.0045) ** 2) * fade             # a soft, narrow seam, not a groove
+        img = _mix(img, (0.46, 0.32, 0.21), seam * 0.55)
+        height -= 0.3 * seam
+    img = _mix(img, (0.84, 0.72, 0.54), _feather(_broad_field(u, v, seed, 4), 0.66, 0.82) * 0.35)
+    img = _mix(img, (0.55, 0.39, 0.27), _feather(_broad_field(u, v, seed + 1, 4), 0.68, 0.84) * 0.35)
+    _save_rgb("palm_trunk", img, np.clip(height, 0, 1) * 0.8 + 0.1, strength=3.0)
 
 
 def coconut(size=256):
@@ -406,10 +624,10 @@ def bougainvillea(size=512, seed=23):
     _save_flower("bougainvillea", g, np.maximum(alpha, pale))
 
 
-def _tinted(g, tint, key=False):
-    """What the material does to a greyscale drawing: multiply by tint x 1.25 (the leaf rule), and
-    for a flower, give way to FLOWER_PALE above FLOWER_KEY."""
-    rgb = g[..., :3] * np.array([min(1.0, c * 1.25) for c in tint])
+def _tinted(g, tint, key=False, gain=1.25):
+    """What the material does to a drawing: multiply by tint x gain (1.25 for a greyscale leaf, the
+    leaf rule; 1.0 for a colour one), and for a flower, give way to FLOWER_PALE above FLOWER_KEY."""
+    rgb = g[..., :3] * np.array([min(1.0, c * gain) for c in tint])
     if key:
         k = _feather(g[..., 0], *FLOWER_KEY)[..., None]
         rgb = rgb * (1 - k) + np.array(FLOWER_PALE) * k
@@ -428,33 +646,42 @@ def sheet(version):
         for which, tint in zip(("light", "dark"), TINTS[plant]):
             cells.append((0, f"{leaf} / {plant} {which}", np.dstack([_tinted(g, tint), g[..., 3]])))
 
+    for leaf, plant, gain, tints in [("frond_broad", "palm", 1.0, COLOUR_TINTS["palm_broad"]),
+                                     ("croton_leaf", "croton", 1.0, COLOUR_TINTS["croton"]),
+                                     ("monstera_leaf", "monstera", 1.25, TINTS["monstera"]),
+                                     ("leaf_round", "groundcover", 1.25, TINTS["groundcover"])]:
+        g = np.asarray(Image.open(OUT / f"{leaf}_albedo.png").convert("RGBA")).astype(np.float32) / 255
+        for which, tint in zip(("light", "dark"), tints):
+            cells.append((1, f"{leaf} / {plant} {which}", np.dstack([_tinted(g, tint, gain=gain), g[..., 3]])))
+
     def rgb_of(name):
         a = np.asarray(Image.open(OUT / f"{name}_albedo.png").convert("RGBA")).astype(np.float32) / 255
         return a
     trunk = rgb_of("palm_trunk")
-    cells.append((1, "palm_trunk (2 tiles = 4 m)", np.concatenate([trunk, trunk], axis=0)))
-    cells.append((1, "coconut (unwrapped)", rgb_of("coconut")))
-    cells.append((1, "banana_stem (base at bottom)", rgb_of("banana_stem")))
+    cells.append((2, "palm_trunk (2 tiles = 4 m)", np.concatenate([trunk, trunk], axis=0)))
+    cells.append((2, "coconut (unwrapped)", rgb_of("coconut")))
+    cells.append((2, "banana_stem (base at bottom)", rgb_of("banana_stem")))
     st = rgb_of("stalk")
-    for plant in ("banana", "taro"):
-        cells.append((1, f"stalk / {plant}", np.dstack([_tinted(st, STALK_TINTS[plant]), st[..., 3]])))
+    for plant in ("banana", "taro", "croton", "monstera"):
+        cells.append((2, f"stalk / {plant}", np.dstack([_tinted(st, STALK_TINTS[plant]), st[..., 3]])))
     for fl in ("gumamela", "bougainvillea"):
         g = rgb_of(fl)
         for col, tint in FLOWER_TINTS.items():
-            cells.append((1, f"{fl} / {col}", np.dstack([_tinted(g, tint, key=True), g[..., 3]])))
+            cells.append((2, f"{fl} / {col}", np.dstack([_tinted(g, tint, key=True), g[..., 3]])))
     fr = rgb_of("frond")
     tip = fr[: fr.shape[0] // 4]
-    cells.append((1, "frond tip x2 (top quarter)", np.dstack([_tinted(tip, TINTS["palm"][0]), tip[..., 3]])))
+    cells.append((2, "frond tip x2 (top quarter)", np.dstack([_tinted(tip, TINTS["palm"][0]), tip[..., 3]])))
 
     cw, ch, pad, head = 260, 420, 14, 34
-    per_row = max(sum(1 for r, *_ in cells if r == 0), sum(1 for r, *_ in cells if r == 1))
-    page = Image.new("RGB", (pad + per_row * (cw + pad), 2 * (ch + head + pad) + pad), (232, 214, 170))
+    rows = 1 + max(r for r, *_ in cells)
+    per_row = max(sum(1 for r, *_ in cells if r == k) for k in range(rows))
+    page = Image.new("RGB", (pad + per_row * (cw + pad), rows * (ch + head + pad) + pad), (232, 214, 170))
     d = ImageDraw.Draw(page)
     try:
         font = ImageFont.truetype("arial.ttf", 15)
     except OSError:
         font = ImageFont.load_default()
-    col_of = {0: 0, 1: 0}
+    col_of = {k: 0 for k in range(rows)}
     for row, label, arr in cells:
         img = Image.fromarray((np.clip(arr, 0, 1) * 255).astype(np.uint8), "RGBA")
         scale = min(cw / img.width, ch / img.height)
@@ -477,6 +704,9 @@ def main():
     frond()
     paddle()
     blade()
+    frond_broad()
+    croton_leaf()
+    monstera_leaf()
     palm_trunk()
     coconut()
     banana_stem()
