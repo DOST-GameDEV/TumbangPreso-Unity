@@ -133,3 +133,26 @@ fetch found shared branch `c3977bb4` with 40 incoming commits. Those source chan
 integrated and checked separately; the pre-integration results are not relabelled as a run
 of the later revision. No Windows performance, full gate, live Relay or physical-device
 claim is made by this batch.
+
+## Shared-branch integration
+
+Verified local batch committed as `45c2217`, then incoming `c3977bb4` merged cleanly into
+`577c1a95`. No gameplay/test source conflict; GameBuilder retained both the incoming shader
+registration and the opt-in Development-build flag.
+
+Question for the post-merge frozen check: does the combined assembly compile, preserve current
+hero presentation contracts, and pass the incoming motion/light contracts affected by the
+shared presentation changes? Guarded graphics-enabled EditMode, expected 37 cases across
+HeroPresentationTests, MotionContinuityTests and ToonLightFalloffTests; isolated profile.
+Fresh XML required; tooling retry0. Artifacts `Logs/stability-0927-merged-edit.xml` and `.log`.
+Result: 37/37 passed, 0 failed/skipped, 2.4754656 seconds; process exit0, no retry.
+Earlier results retain their earlier source identity.
+
+One native interaction integration check follows because the incoming shared batch changed
+the input reader used by menus, global settings/presentation and character motion. The rooted
+keyboard/pad/touch method runs once on `577c1a95`; this is a changed-source integration check,
+not another repair attempt. Fresh XML required; artifacts `Logs/stability-0927-merged-rooted.xml`
+and `.log`. No production source edits during the run. Result: 1/1 passed,
+0 failed/skipped, 14.3505603 seconds; process exit0. The current merged candidate therefore
+has a fresh compile/presentation/motion/light pass and a native three-device interaction pass.
+It still has no full-suite, fresh player-build, live Relay or physical-device qualification.

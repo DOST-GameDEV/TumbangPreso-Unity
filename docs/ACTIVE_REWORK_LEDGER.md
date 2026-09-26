@@ -12,6 +12,9 @@ Fresh evidence: Core 658/658; presentation 24/24; session lifecycle 11/11; nativ
 3/3 after one fixture repair; pending-join 1/1; avatar/symbol 2/2; selector 1/1 across the roster
 and text sizes. Native prompt and selector frames inspected. The first rooted test failed because
 synthetic input devices were disabled; the single repaired retry passed actual held-input progress.
+Published-source candidate: local batch `45c2217`, shared-branch merge `577c1a95` (incoming
+`c3977bb4`). Post-merge graphics-enabled EditMode 37/37 and native three-device rooted case
+1/1 pass; previous receipts retain their original revision identity.
 [Exact receipts and limits](reports/stability-2026-09-27/validation.md),
 [implementation](reports/stability-2026-09-27/implementation.md),
 [icons](reports/stability-2026-09-27/skill-icons.md),
@@ -19,7 +22,7 @@ synthetic input devices were disabled; the single repaired retry passed actual h
 
 This does not establish live Relay, real-peer reconnect, physical-device qualification or measured
 performance improvements. No new player build or Desktop replacement. Next: integrate incoming
-shared-branch changes, reconcile the remaining current-kit regression contracts, then continue
+shared-branch changes as they arrive, reconcile the remaining current-kit regression contracts, then continue
 the remaining owner QA, general performance and assigned hero presentation. All animation/model
 work in this batch: none; the seven icon drawings and their rationale are in the icon report.
 
