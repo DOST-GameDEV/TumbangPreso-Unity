@@ -402,6 +402,26 @@ namespace TumbangPreso.Settings
         public int RenderStyle = RenderStyles.Default;
 
         /// <summary>
+        /// Which lighting the world is drawn in, as an index into <see cref="LightingStyles.All"/>:
+        /// Standard (LIGHT-1, the default), Nostalgic (each map's authored lighting, as on `main`),
+        /// or the placeholder slot, which <see cref="Validate"/> refuses. Stored as an int with a
+        /// clamp, like every mode index here.
+        ///
+        /// ⚠️ A NEW NAME BECAUSE THE ORDER CHANGED ON 2026-09-26. See <see cref="LightingStyle"/>.
+        /// </summary>
+        public int LightingLook = LightingStyles.Default;
+
+        /// <summary>
+        /// ⚠️ LEGACY, READ ONCE AND CLEARED. The lighting pick in the order the row had until
+        /// 2026-09-26 (0 Classic, 1 Bright). The owner then renamed Bright to Standard and put it
+        /// first, which moved both indices; reading an old file's 1 as the new order would have
+        /// turned every Bright player's picture into Nostalgic. <see cref="Validate"/> carries the
+        /// pick into <see cref="LightingLook"/> through `LightingStyles.FromLegacy` and writes -1
+        /// here, so a file only migrates once. -1 is "nothing stored".
+        /// </summary>
+        public int LightingStyle = -1;
+
+        /// <summary>
         /// Which colour § THE LANDED HIGHLIGHT lights a rested tsinelas in, as an index into
         /// <see cref="SlipperHighlights.All"/>. 0 is Off.
         ///
@@ -568,6 +588,7 @@ namespace TumbangPreso.Settings
             VSyncModes.Apply(VSyncMode);
             FrameRateOptions.Apply(FrameRateLimit);
             RenderStyles.Apply(RenderStyle);
+            LightingStyles.Apply(LightingLook);
             AIController.ApplyDifficulty(AiDifficulty);
 
             // ⚠️ PUSHED RATHER THAN POLLED, exactly as `AntiAliasModes.FxaaActive` is. The rumble
@@ -637,6 +658,10 @@ namespace TumbangPreso.Settings
             GraphicsQuality = Mathf.Clamp(GraphicsQuality, 0, GraphicsProfiles.All.Length - 1);
             VSyncMode = Mathf.Clamp(VSyncMode, 0, VSyncModes.All.Length - 1);
             RenderStyle = Mathf.Clamp(RenderStyle, 0, RenderStyles.All.Length - 1);
+            int migrated = LightingStyles.FromLegacy(LightingStyle);
+            if (migrated >= 0) LightingLook = migrated;
+            LightingStyle = -1;
+            LightingLook = LightingStyles.Normalize(LightingLook);
 
             // ⚠️ A NULL WIRE STRING IS A FILE WRITTEN BEFORE THIS FIELD EXISTED, which is every
             // `settings.json` on every machine today. `CustomGameRules.Parse` answers `Defaults`

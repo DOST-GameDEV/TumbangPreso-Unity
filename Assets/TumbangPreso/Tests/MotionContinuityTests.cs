@@ -209,8 +209,9 @@ namespace TumbangPreso.Tests
                     rows.Add($"{entry.Id},{style.Name},{gait},{stride:F4},{calibrated:F4},{g.Glide:F2}");
                     if (stride < .1f || Mathf.Abs(calibrated - stride * Mathf.Max(1f, g.Glide)) > stride * .02f)
                         failures.Add($"{entry.Id}/{gait}: stride {stride:F3} m x glide {g.Glide:F2}, calibration moves the body {calibrated:F3} m");
-                    if (g.Glide < 1f || g.Glide > 1.7f)
-                        failures.Add($"{entry.Id}/{gait}: glide {g.Glide:F2} is outside 1 to 1.7 (feet skate, or the cadence is a blur)");
+                    float cap = style.Floats ? 3f : 1.7f;
+                    if (g.Glide < 1f || g.Glide > cap)
+                        failures.Add($"{entry.Id}/{gait}: glide {g.Glide:F2} is outside 1 to {cap} (feet skate, or the cadence is a blur)");
                 }
             }
             System.IO.Directory.CreateDirectory("Logs");

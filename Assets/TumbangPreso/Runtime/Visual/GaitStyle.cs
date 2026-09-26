@@ -134,6 +134,11 @@ namespace TumbangPreso.Visual
         public Gait Walk, Run;
         /// <summary>What this character does that no curve above can say (a scan of the court, a drifting head). May be null.</summary>
         public GaitQuirk Quirk;
+        /// <summary>
+        /// ⚠️ A body that DRIFTS rather than walks may glide past the cast's 1.7 cap (up to 3): its steps are small and hidden
+        /// under its clothes, and the hover is the look (Nemu, 2026-09-27). Checked by `MotionContinuityTests`.
+        /// </summary>
+        public bool Floats;
 
         /// <summary>The metres one full cycle (two steps) covers, for a leg of `reach` metres: the no-slide stride times `Glide`.</summary>
         public float CycleMetres(float reach, float run)

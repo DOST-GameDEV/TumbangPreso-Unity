@@ -190,7 +190,7 @@ namespace TumbangPreso.CameraSystem
                     {
                         float bottom=WorldContactPresentation.ModelBottom(item.Copy.Renderers,item.Bones[0].position.y);
                         item.Contact.Place(item.Bones[0].position,bottom,player?new Vector2(.45f,.45f):shoe?new Vector2(.24f,.15f):new Vector2(.25f,.22f),
-                            WorldCueProfile.Current.WorldLighting*(shoe?.16f:.20f));
+                            WorldCueProfile.LightingWeight*(shoe?.16f:.20f));
                     }
                 }
                 if(item.Track.Kind==RecordedObjectKind.Can)

@@ -271,6 +271,23 @@ namespace TumbangPreso.UI.Hub
 
         public bool AtHome => Top is HubHome;
 
+        /// <summary>
+        /// HOME is the screen being drawn, even with a popup (the MENU, a toast card) over it.
+        /// ⚠️ NOT <see cref="AtHome"/>: a popup keeps the screen under it drawn and dimmed, so
+        /// anything that belongs to HOME's picture has to stay up under one. `HubSceneVideo` read
+        /// `AtHome` and hid the owner's HOME loop the moment the hamburger MENU opened, which swapped
+        /// the background behind the menu for the live court (owner, 2026-09-26).
+        /// </summary>
+        public bool ShowingHome
+        {
+            get
+            {
+                for (int i = _stack.Count - 1; i >= 0; i--)
+                    if (!_stack[i].IsPopup) return _stack[i] is HubHome;
+                return false;
+            }
+        }
+
         private void RefreshChrome()
         {
             float shade = 0;

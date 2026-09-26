@@ -12,7 +12,7 @@ namespace TumbangPreso.UI
     /// The studio video remains a fallback when the illustration is unavailable.
     ///
     /// ⚠️ EVERY TIME IS LITERAL. There is no "seen it already" flag and no skip-on-second-launch.
-    /// The requested random reading window runs on each launch.
+    /// It stays exactly as long as the preload takes (`LoadingPresentation.CanLeave`).
     ///
     /// ⚠️⚠️ THIS IS ALSO THE BOOT LOADING SCREEN, SO INPUT NEVER SKIPS IT. Earlier builds let a
     /// buffered click jump straight to the menu while shaders, audio and both rosters were still
@@ -35,7 +35,6 @@ namespace TumbangPreso.UI
         /// <summary>When crossed, log that loading is slow but keep the barrier intact.</summary>
         public const float MaxWait = 6.0f;
         private IllustratedBackdrop _illustration;
-        private float _displaySeconds;
         private GameObject _storyRoot;
         private Text _storyText;
         private Button _artButton;
@@ -145,7 +144,6 @@ namespace TumbangPreso.UI
 
         private IEnumerator Run()
         {
-            _displaySeconds = LoadingPresentation.ChooseDuration(new System.Random());
             BuildSurface();
             // The logo may have its short studio cue. The illustrated loading
             // screen stays quiet; the menu bed begins only on the visible home.
@@ -218,7 +216,7 @@ namespace TumbangPreso.UI
                 // the studio-only choice in 114.3. Neither route bypasses readiness;
                 // the fallback video still holds its final frame while loading finishes.
                 if (presentationComplete && LoadingPresentation.CanLeave(PreloadComplete, accountReady,
-                        _storyRoot != null && _storyRoot.activeSelf, _elapsed, _displaySeconds)) break;
+                        _storyRoot != null && _storyRoot.activeSelf)) break;
 
                 if (!_slowLoadReported && !PreloadComplete && _elapsed >= MaxWait)
                 {
@@ -231,6 +229,7 @@ namespace TumbangPreso.UI
 
             // ⚠️ FULL ONLY ON THE WAY OUT. Everything above is bounded under 1.0 so that a full
             // bar is never a thing the player can sit and look at.
+            Debug.Log($"[Splash] boot loading finished after {_elapsed:F2} s (work-driven, no reading window).");
             SetLoadingStage("ready", 1.0f);
             _shownProgress = 1.0f;
             if (_loadingFill != null) _loadingFill.fillAmount = 1.0f;
@@ -526,8 +525,11 @@ namespace TumbangPreso.UI
             // ASSETS instead: everything the scene references is what costs the time, not the
             // scene graph.
             //
-            // ⚠️ BOTH MAPS, NOT THE SELECTED ONE. Nothing has been selected yet at boot, and the
-            // player can change the map on the setup screen without ever returning here.
+            // ⚠️ EVERY MAP, NOT THE SELECTED ONE. Nothing has been selected yet at boot, and the
+            // player can change the map on the setup screen without ever returning here. This read
+            // "both maps" and warmed Eskinita and Bayan Plaza only, which was every map when it was
+            // written; Ilalim ng Tulay, Sa Bubong and the Lagoon then loaded cold on PLAY. Owner,
+            // 2026-09-27: every shader and every asset loads behind the loading screen.
             yield return WarmMapAssets();
 
             // 9. The hero ability layer.
@@ -576,7 +578,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private IEnumerator WarmMapAssets()
         {
-            string[] maps = { SceneFlow.Eskinita, SceneFlow.BayanPlaza };
+            string[] maps = SceneFlow.Maps;
 
             // MatchInstaller's setup happens in Start(). Mark these loads as previews before they
             // are requested so no seats, HUD, services or match state are created behind the sting.
@@ -585,14 +587,14 @@ namespace TumbangPreso.UI
 
             try
             {
-                foreach (string map in maps)
+                for (int m = 0; m < maps.Length; m++)
                 {
+                    string map = maps[m];
                     if (!Application.CanStreamedLevelBeLoaded(map)) continue;
 
-                    SetLoadingStage(map == SceneFlow.Eskinita
-                        ? "loading eskinita"
-                        : "loading bayan plaza",
-                        map == SceneFlow.Eskinita ? 0.68f : 0.76f);
+                    // The map stage owns 0.66 to 0.82 of the bar, split evenly across the maps.
+                    SetLoadingStage("loading " + SceneFlow.PreviewFor(map).Name.ToLowerInvariant(),
+                                    Mathf.Lerp(0.66f, 0.82f, m / (float)maps.Length));
 
                     AsyncOperation load = null;
                     try

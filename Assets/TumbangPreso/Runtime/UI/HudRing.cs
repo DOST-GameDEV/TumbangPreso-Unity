@@ -22,6 +22,16 @@ namespace TumbangPreso.UI
         public Color Track = new Color(0, 0, 0, .38f);
         public int Notches;
 
+        /// <summary>
+        /// Anchor the fill at the END of the span instead of its start, so a draining meter empties
+        /// from the start side. ⚠️ THE STAMINA ARC NEEDS THIS AND NOTHING ELSE DOES. Its span runs
+        /// clockwise from the top of the reticle's right side to the bottom, so a fill anchored at
+        /// the start emptied from the BOTTOM up. Owner, 2026-09-26: the stamina bar should go down
+        /// from the top, the way a tank empties. Cooldown sweeps and the notched ultimate keep the
+        /// start anchor they were designed with.
+        /// </summary>
+        public bool FillFromEnd;
+
         public void Set(float fill)
         {
             fill = Mathf.Clamp01(float.IsNaN(fill) ? 0 : fill);
@@ -43,7 +53,8 @@ namespace TumbangPreso.UI
             if (Notches <= 1)
             {
                 HudDraw.Arc(vh, r.center, outer, inner, StartDegrees, SpanDegrees, Track);
-                HudDraw.Arc(vh, r.center, outer, inner, StartDegrees, SpanDegrees * Fill, color);
+                float lead = FillFromEnd ? SpanDegrees * (1 - Fill) : 0;
+                HudDraw.Arc(vh, r.center, outer, inner, StartDegrees - lead, SpanDegrees * Fill, color);
                 return;
             }
             float gap = Mathf.Min(6f, SpanDegrees / Notches * .25f), each = SpanDegrees / Notches;

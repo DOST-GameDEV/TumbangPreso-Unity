@@ -286,13 +286,18 @@ namespace TumbangPreso.UI.Hub
         public override Selectable FirstFocus => _play;
 
         private float _nextRefresh;
+        private bool _playShowsQueue;
 
         public override void Tick()
         {
             bool queueing = HubQueueWatch.QueueRoom;
-            if (_play.interactable == queueing)
+            // ⚠️ THE BUTTON STAYS PRESSABLE WHILE IT READS IN QUEUE, AND A PRESS LEAVES THE QUEUE.
+            // It used to go non-interactable, so the one control the player's hand was already on
+            // did nothing and the way out was a small X on the queue plate (owner, 2026-09-26:
+            // "should be able to cancel queue when pressing in queue button"). See `Play`.
+            if (_playShowsQueue != queueing)
             {
-                _play.interactable = !queueing;
+                _playShowsQueue = queueing;
                 HubKit.SetLabel(_play, queueing ? "IN QUEUE" : "PLAY");
                 HubKit.LabelOf(_play).fontSize = HubStyle.Size(queueing ? HubStyle.Display : HubStyle.Hero);
             }
@@ -400,17 +405,33 @@ namespace TumbangPreso.UI.Hub
 
         private void Play()
         {
+            // IN QUEUE: the same press cancels. Once a match is found the queue is no longer the
+            // player's to leave from here; MATCH FOUND owns that moment.
+            if (HubQueueWatch.QueueRoom)
+            {
+                if (HubQueueWatch.Found) return;
+                Hub.Host.CancelQueue();
+                MenuSfx.Back();
+                return;
+            }
             string refusal = Hub.Host.StartQueue(ChoiceMode, ChoiceStake);
             if (!string.IsNullOrEmpty(refusal)) { Hub.Toast(refusal); MenuSfx.Error(); return; }
             HubQueueWatch.Begin(ChoiceMode, ChoiceStake);
             MenuSfx.Start();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ BACK ON HOME OPENS THE MENU, IT DOES NOT LEAVE FOR THE TITLE SCREEN. Owner,
+        /// 2026-09-26: "should not be able to return to the click anywhere to continue page when
+        /// pressing esc from the menu". The title screen is a door INTO the game, not a place a
+        /// player backs out to, and one Escape too many dropped them on it. BACK now opens the
+        /// hamburger MENU (a second BACK closes it), which is where BACK TO TITLE and every other
+        /// way out already live, so leaving is still one deliberate press and never a dead key.
+        /// </summary>
         public override bool Back()
         {
             if (HubQueueWatch.QueueRoom) { Hub.Host.CancelQueue(); return true; }
-            Hub.Host.LeaveRoom();
-            SceneFlow.Go(SceneFlow.MainMenu);
+            Hub.Push<HubMenu>();
             return true;
         }
     }

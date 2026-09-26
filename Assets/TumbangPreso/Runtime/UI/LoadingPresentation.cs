@@ -1,17 +1,20 @@
 namespace TumbangPreso.UI
 {
-    /// <summary>The requested reading window is independent of actual loading readiness.</summary>
+    /// <summary>
+    /// When a loading screen may leave: when the work behind it is done, and not before.
+    ///
+    /// ⚠️⚠️ THERE IS NO READING WINDOW ANY MORE, ON THE OWNER'S INSTRUCTION. This used to hold
+    /// every boot for a random 5 to 15 seconds (`MinimumSeconds` / `MaximumSeconds`) after the
+    /// preload had already finished, so a fast machine sat and watched a finished bar. Owner,
+    /// 2026-09-27: "the loading screen is hardcoded to be 5 seconds. fix that", and make the
+    /// screen do real work instead: every shader and map loaded behind it. The screen now ends
+    /// when the preload, the menu load and sign-in are done. A player who opened the story card
+    /// still gets to finish reading it; that is their press, not a timer.
+    /// </summary>
     public static class LoadingPresentation
     {
-        public const float MinimumSeconds = 5f;
-        public const float MaximumSeconds = 15f;
-
-        public static float ChooseDuration(System.Random random)
-            => MinimumSeconds + (float)random.NextDouble() * (MaximumSeconds - MinimumSeconds);
-
-        public static bool CanLeave(bool assetsReady, bool accountReady, bool reading,
-                                    float elapsed, float displaySeconds)
-            => assetsReady && accountReady && !reading && elapsed >= displaySeconds;
+        public static bool CanLeave(bool assetsReady, bool accountReady, bool reading)
+            => assetsReady && accountReady && !reading;
 
         public static readonly string[] Tips =
         {

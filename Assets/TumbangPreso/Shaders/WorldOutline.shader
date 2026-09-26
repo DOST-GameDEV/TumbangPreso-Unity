@@ -138,6 +138,13 @@ Shader "TumbangPreso/WorldOutline"
             float4 _PeakSunView;  // key light direction in view space
             float4 _PeakShade;    // map shade tint
             float4 _PeakLight;    // key light colour
+            // x ground occlusion strength, y the height it fades out by (m), z the court floor,
+            // w weight. See the ground occlusion note in the composite.
+            float4 _PeakDepth;
+            // The blurred full-resolution ambient occlusion (passes 2 and 3), 1 open, 0 closed,
+            // and its strength in x. See § AMBIENT OCCLUSION below.
+            sampler2D _WorldAO;
+            float4 _WorldAOParams;
 
             // ⚠️ NOT NAMED `Sample`, AND `offset` BELOW IS NOT NAMED `step`. Both of those are
             // HLSL intrinsics or reserved in one of the compilers this project targets, and a
@@ -528,6 +535,49 @@ Shader "TumbangPreso/WorldOutline"
                         source.rgb*=1-contact;
                     }
                 }
+                // ⚠️⚠️ § GROUND OCCLUSION, THE BRIGHT LOOK ONLY (2026-09-25, "the current lighting
+                // looks flat"). A wall darkens toward the violet cavity hue as it nears the court,
+                // the soft occlusion a painter puts where a building meets the ground, so a
+                // blocky street sits IN its light instead of being pasted on it. It is a lighting
+                // term drawn from the depth this pass already reads, not a texture: nothing is
+                // added to any material, and the cast is left out through the exclusion mask.
+                // Side-facing surfaces only; the ground's own shade is the sun's business.
+                // ⚠️ § AMBIENT OCCLUSION, THE BRIGHT LOOK ONLY (owner 2026-09-25: "can we try
+                // adding ambient occlusion"). Passes 2 and 3 work out how enclosed each pixel is;
+                // here the enclosed part leans toward the violet cavity hue, the same colour the
+                // crease and the ground occlusion use, so a doorway, the gap under a bench or
+                // the foot of a wall deepens in hue and never goes grey.
+                if(_WorldAOParams.x>0)
+                {
+                    // ⚠️ The first cut (cosine hemisphere, 0.6 toward the cavity hue) moved the
+                    // deepest corner 14 levels in 255; the second steepened it, and the owner
+                    // still saw no AO in face-to-face creases. See the kernel note in pass 2.
+                    // The pass already maps a full inside corner to 1, so no steepening here; 0.7
+                    // of the way to the violet is about a third darker on screen at the crease.
+                    float occlusion=(1-tex2D(_WorldAO,duv).r)*_WorldAOParams.x;
+                    source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb*.7,saturate(occlusion));
+                }
+                if(_PeakDepth.w>0)
+                {
+                    float occDepth;float3 occNormal;
+                    DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture,duv),occDepth,occNormal);
+                    // Same near-fade guard as the AO pass: a dissolved pillar at the lens is not a
+                    // wall standing on the court.
+                    if(occDepth<.99999 && occDepth*_WorldContactProjection.x>_WorldAOParams.w)
+                    {
+                        float eye=occDepth*_WorldContactProjection.x;
+                        float3 viewPoint=float3((duv*2-1)*_ViewRay.xy*eye,-eye);
+                        if(_WorldContactProjection.y>.5)
+                            viewPoint.xy=(duv*2-1)*float2(_WorldContactProjection.z*_WorldContactProjection.w,_WorldContactProjection.z);
+                        float3 world=mul(_WorldContactToWorld,float4(viewPoint,1)).xyz;
+                        float3 normal=normalize(mul((float3x3)_WorldContactToWorld,occNormal));
+                        float h=world.y-_PeakDepth.z;
+                        float fall=1-saturate(h/_PeakDepth.y);
+                        float occ=fall*fall*step(-.05,h)*(1-smoothstep(.45,.75,abs(normal.y)))
+                                 *_PeakDepth.x*_PeakDepth.w*(1-saturate(mask*_WorldContactMask));
+                        source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb,occ);
+                    }
+                }
                 if (coverage <= 0.0) return source;
 
                 half3 inked = lerp(source.rgb, _OutlineColor.rgb, coverage * _Opacity);
@@ -665,6 +715,147 @@ Shader "TumbangPreso/WorldOutline"
                     clip(coverage-.001);
                 }
                 return fixed4(coverage,coverage,coverage,coverage);
+            }
+            ENDCG
+        }
+
+        // -------------------------------------------------------------------
+        // PASS 2. AMBIENT OCCLUSION, full resolution, blitted by `WorldOutline` under the look.
+        // -------------------------------------------------------------------
+        // ⚠️⚠️ § AMBIENT OCCLUSION. The built-in pipeline has none and this project carries no
+        // post-processing package, so it is written here, where the depth and normals already
+        // are. Per pixel: rebuild the view-space point and normal from the depth-normals
+        // texture, take sixteen samples that skim the surface (see the kernel note below),
+        // rotate the set per pixel by interleaved gradient noise, and count how many land behind
+        // the scene's own depth. The range check
+        // stops a wall far behind a railing from darkening the railing. Radius in metres,
+        // fading out by 60 m where the samples would be sub-pixel noise. Pass 3 blurs it.
+        Pass
+        {
+            Name "AMBIENT_OCCLUSION"
+            Cull Off ZWrite Off ZTest Always
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment frag
+            #pragma target 3.0
+            #include "UnityCG.cginc"
+            sampler2D _CameraDepthNormalsTexture;
+            float4 _ViewRay,_WorldContactProjection,_WorldAOParams;
+            float3 ViewPoint(float2 uv,out float3 normal)
+            {
+                float depth;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
+                float eye=depth*_WorldContactProjection.x;
+                return float3((uv*2-1)*_ViewRay.xy*eye,-eye);
+            }
+            float EyeDepth(float2 uv)
+            {
+                float depth;float3 normal;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
+                return depth*_WorldContactProjection.x;
+            }
+            half4 frag(v2f_img i):SV_Target
+            {
+                float3 n;float3 p=ViewPoint(i.uv,n);
+                if(-p.z>_WorldContactProjection.x*.999)return 1;
+                // ⚠️⚠️ NOTHING NEARER THAN THE NEAR-FADE START IS TRUSTED (`_WorldAOParams.w`,
+                // `NearFade.FadeStartMetres`, 1.8 m). A NearFade prop close to the camera (a bridge
+                // pillar you stand beside) dissolves in the colour pass so you can see past it, but
+                // Unity's depth-normals prepass draws every Opaque object with its own internal
+                // shader, which knows nothing of the fade: the pillar lands in the texture as a
+                // solid wall at the lens, depth about 0 and one flat normal, over most of the
+                // frame. The owner saw the result as "the lighting suddenly changes when i look in
+                // different directions" (2026-09-25): facing the pillar, this pass read nearly
+                // every pixel as occluded. Found by a yaw sweep on Ilalim and switching renderer
+                // groups off one at a time: the LRT pillars alone. So a pixel that near gets no
+                // occlusion, and a probe that lands on one is not an occluder.
+                if(-p.z<_WorldAOParams.w)return 1;
+                float radius=_WorldAOParams.y,bias=_WorldAOParams.z;
+                // ⚠️⚠️ A 4x4 TILE OF SIXTEEN ROTATIONS, NOT FREE NOISE, BECAUSE THE OWNER SAW THE
+                // NOISE (2026-09-25: "theres some noising artifacts"). Interleaved gradient noise
+                // never repeats inside a small tile, so the 3x3 blur averaged it only partly and a
+                // diagonal hatch survived on the tree canopies, walls and windows. Here every 4x4
+                // block holds each of sixteen evenly spaced rotations exactly once (the x5 walks
+                // all sixteen, since 5 and 16 share no factor), and pass 3 averages exactly that
+                // block, so the pattern cancels instead of leaving a residue.
+                float2 cell=fmod(floor(i.pos.xy),4);
+                float noise=(fmod((cell.x*4+cell.y)*5,16)+.5)/16;
+                float angle=noise*6.2831853;
+                float3 r=float3(cos(angle),sin(angle),0);
+                float3 t=normalize(r-n*dot(r,n)),b=cross(n,t);
+                // ⚠️⚠️ THE KERNEL SKIMS THE SURFACE, LIKE MINECRAFT'S NEIGHBOUR TEST, NOT THE
+                // CLASSIC UPWARD HEMISPHERE (owner 2026-09-25: "im not noticing any ao in the
+                // concave intersections of faces like what minecraft does"). A cosine-weighted
+                // kernel sends most samples straight out along the normal, where they almost
+                // never reach the face meeting this one, so a wall's foot or a roof's inner
+                // corner stayed nearly clean. Minecraft darkens a face by the blocks BESIDE it.
+                // So the sixteen samples here leave the surface at 8 to 40 degrees, in four
+                // rings out to the radius, and a hit counts more the nearer it is. A 90 degree
+                // inside corner blocks about half the directions, and that half is mapped to full
+                // occlusion, ramping to clean by about one radius from the edge.
+                float occluded=0,total=0;
+                [unroll] for(int k=0;k<16;k++)
+                {
+                    float phi=k*2.3999632+angle;
+                    float elevation=lerp(.14,.7,frac(k*.618034+noise));
+                    float ring=(fmod(k,4)+.5)/4;
+                    float reach=radius*lerp(.12,1.0,ring);
+                    float3 dir=(t*cos(phi)+b*sin(phi))*cos(elevation)+n*sin(elevation);
+                    float3 probe=p+dir*reach;
+                    float2 uv=(probe.xy/-probe.z)/_ViewRay.xy*.5+.5;
+                    float sceneEye=EyeDepth(uv);float sceneZ=-sceneEye;
+                    float range=smoothstep(0,1,radius/max(abs(p.z-sceneZ),1e-4))*step(_WorldAOParams.w,sceneEye);
+                    float weight=1-ring*.6;
+                    occluded+=step(probe.z+bias,sceneZ)*range*weight;total+=weight;
+                }
+                float ao=1-saturate(occluded/max(total,1e-4)*2.0);
+                // Fade out with distance, where the samples fall inside a pixel.
+                ao=lerp(ao,1,smoothstep(40,60,-p.z));
+                return half4(ao,ao,ao,1);
+            }
+            ENDCG
+        }
+
+        // -------------------------------------------------------------------
+        // PASS 3. AO BLUR: 4x4, depth-aware, matched to pass 2's rotation tile.
+        // -------------------------------------------------------------------
+        Pass
+        {
+            Name "AMBIENT_OCCLUSION_BLUR"
+            Cull Off ZWrite Off ZTest Always
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment frag
+            #pragma target 3.0
+            #include "UnityCG.cginc"
+            sampler2D _MainTex,_CameraDepthNormalsTexture;
+            float4 _MainTex_TexelSize,_WorldContactProjection;
+            float EyeDepth(float2 uv)
+            {
+                float depth;float3 normal;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
+                return depth*_WorldContactProjection.x;
+            }
+            half4 frag(v2f_img i):SV_Target
+            {
+                // The 4x4 block that holds all sixteen rotations of pass 2, so the rotation
+                // pattern averages out exactly; depth-aware, so an edge does not smear.
+                float centre=EyeDepth(i.uv);float sum=0,weight=0;
+                [unroll] for(int y=-2;y<=1;y++)
+                [unroll] for(int x=-2;x<=1;x++)
+                {
+                    // Whole texels: any 4x4 window of a 4-periodic tile holds each rotation once.
+                    // A half-texel offset would let bilinear filtering widen it to 5x5.
+                    float2 uv=i.uv+float2(x,y)*_MainTex_TexelSize.xy;
+                    // ⚠️ A GAUSSIAN ON RELATIVE DEPTH, 2 PER CENT WIDE. The first weight was
+                    // 1/(0.001 + difference), which made the centre tap worth about 1000 and a
+                    // tap on the SAME sloped wall 0.5 per cent deeper worth about 10, so on any
+                    // surface not facing the camera squarely the blur barely blurred and the
+                    // rotation tile showed through as a grid. Here a tap on the same surface
+                    // counts almost fully and only a real depth break drops out.
+                    float rel=abs(EyeDepth(uv)-centre)/max(centre,1e-3);
+                    float w=exp(-(rel/.02)*(rel/.02));
+                    sum+=tex2Dlod(_MainTex,float4(uv,0,0)).r*w;weight+=w;
+                }
+                float ao=sum/max(weight,1e-4);
+                return half4(ao,ao,ao,1);
             }
             ENDCG
         }
