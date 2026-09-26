@@ -26,9 +26,14 @@ PARENT = {"leg-left": "root", "leg-right": "root", "torso": "root",
 # PETITE MOE / CHIBI PROPORTIONS SKELETON (0.5980m AUTHORED HEIGHT)
 # ---------------------------------------------------------------------------
 WAS_HIPS, WAS_SHOULDER, WAS_NECK, WAS_TOP = 0.170, 0.250, 0.280, 0.5980
-NOW_HIPS, NOW_SHOULDER, NOW_NECK, NOW_TOP = 0.170, 0.250, 0.280, 0.5980
+# ⚠️ 2026-09-27, THE HEAD GROWS 1.25 ABOUT THE NECK, THE BODY STAYS (owner: *"she doesnt look like she belongs in the cast /
+# i want hher to stay small and cute"*). Measured: the cast's heads are 56 to 81 per cent of their height (Dante 59, Zack
+# 57, Phaister 72) and hers read small, so she looked like another game's character. Cute in this cast is a big head on a
+# small body: 0.318 of head becomes 0.3975, her height 0.598 becomes 0.6775 (inside the cast's 0.59 to 0.79), the legs,
+# torso and arms untouched.
+NOW_HIPS, NOW_SHOULDER, NOW_NECK, NOW_TOP = 0.170, 0.250, 0.280, 0.6775
 
-HEAD_GROWTH = 1.0
+HEAD_GROWTH = 1.25
 CAST_MIN_HEIGHT, CAST_MAX_HEIGHT = 0.5900, 0.7928
 
 SKELETON = {
@@ -139,17 +144,27 @@ TORSO = [
     ("hoodie-core-crease",     "torso", (-0.108, 0.130, -0.090), (0.108, 0.155, 0.090), HOODIE_SHADOW),
 
     # 2. Flared Lower Hem / Sweater-Dress Drape (Overlaps leg top at y=0.125-0.160)
-    ("hoodie-skirt-hem",       "torso", (-0.135, 0.122, -0.102), (0.135, 0.165, 0.102), HOODIE_DARK),
+    # Looser: the hem flares wider than before (0.148 against 0.135), with SILVER piping under the lavender band, geometry.
+    ("hoodie-skirt-hem",       "torso", (-0.148, 0.122, -0.110), (0.148, 0.165, 0.110), HOODIE_DARK),
+    ("hoodie-hem-silver",      "torso", (-0.152, 0.114, -0.114), (0.152, 0.124, 0.114), SILVER),
     ("hoodie-skirt-shadow",    "torso", (-0.130, 0.118, -0.098), (0.130, 0.130, 0.098), HOODIE_SHADOW),
-    ("hoodie-skirt-stripe",    "torso", (-0.138, 0.126, -0.105), (0.138, 0.146, 0.105), LAVENDER_GLOW),
+    ("hoodie-skirt-stripe",    "torso", (-0.151, 0.126, -0.113), (0.151, 0.146, 0.113), LAVENDER_GLOW),
 
     # 3. Puffy Rounded Cowl Collar Wrap (Wrapped in front of face/mouth in Z)
-    ("hoodie-collar-main",     "torso", (-0.118, 0.260, -0.128), (0.118, 0.298, 0.105), HOODIE_DARK),
-    ("hoodie-collar-front",    "torso", (-0.095, 0.265, -0.134), (0.095, 0.298, -0.080), HOODIE_DARK),
-    ("hoodie-collar-rim",      "torso", (-0.085, 0.280, -0.136), (0.085, 0.298, -0.110), HOODIE_SHADOW),
+    # 2026-09-27: the cowl sits 10 mm lower in front so more of her face shows.
+    ("hoodie-collar-main",     "torso", (-0.118, 0.260, -0.128), (0.118, 0.292, 0.105), HOODIE_DARK),
+    ("hoodie-collar-front",    "torso", (-0.095, 0.262, -0.134), (0.095, 0.288, -0.080), HOODIE_DARK),
+    ("hoodie-collar-rim",      "torso", (-0.085, 0.276, -0.136), (0.085, 0.288, -0.110), HOODIE_SHADOW),
     ("hoodie-collar-shadow",   "torso", (-0.065, 0.268, -0.132), (0.065, 0.288, -0.095), HOODIE_SHADOW),
-    ("hoodie-collar-pearl",    "torso", (-0.015, 0.265, -0.148), (0.015, 0.295, -0.126), LAVENDER_GLOW),
-    ("hoodie-collar-glint",    "torso", (-0.007, 0.275, -0.152), (0.007, 0.288, -0.136), LAVENDER_PALE),
+    # ⚠️ 2026-09-27, THE CAST'S CLOTHING LANGUAGE (docs/CAST_CLOTHING_STYLE.md; owner: *"lowk nemu needs a rework too / she
+    # doesnt look like she belongs in the cast / i want hher to stay small and cute with loose clothhes"*). One big fastening
+    # as the focal point (Dante's medallion, Phaister's buckle): a silver moon clasp at the collar, 60 by 44 mm, where a
+    # 30 mm pearl was. Silver is her one metal (the pins already were).
+    # ⚠️ ON THE HEM, NOT THE COLLAR: her cowl wraps the chin, so a clasp at the collar sat at mouth height and read as a
+    # gag (render v1). It is her belt buckle instead, the way Phaister's is.
+    ("hem-clasp",              "torso", (-0.032, 0.116, -0.124), (0.032, 0.170, -0.110), SILVER),
+    ("hem-clasp-moon",         "torso", (-0.018, 0.126, -0.130), (0.018, 0.160, -0.120), LAVENDER_GLOW),
+    ("hem-clasp-glint",        "torso", (-0.006, 0.137, -0.134), (0.006, 0.149, -0.126), LAVENDER_PALE),
 ]
 
 # ---------------------------------------------------------------------------
@@ -169,6 +184,7 @@ ARM_LEFT = [
 
     # 4. Lavender Cuff Border Band (Clean solid frame matching reference)
     ("sleeve-cuff-stripe-l",   "arm-left", (0.220, 0.105, -0.106), (0.245, 0.265, 0.106), LAVENDER_GLOW),
+    ("sleeve-cuff-silver-l",  "arm-left", (0.244, 0.100, -0.110), (0.252, 0.270, 0.110), SILVER),
 
     # 5. Dark Hollow Cuff Interior (Single clean recess plate, zero z-fighting)
     ("sleeve-cuff-interior-l", "arm-left", (0.238, 0.118, -0.092), (0.246, 0.252, 0.092), HOODIE_SHADOW),
@@ -191,6 +207,7 @@ ARM_RIGHT = [
 
     # 4. Lavender Cuff Border Band (Clean solid frame matching reference)
     ("sleeve-cuff-stripe-r",   "arm-right", (-0.245, 0.105, -0.106), (-0.220, 0.265, 0.106), LAVENDER_GLOW),
+    ("sleeve-cuff-silver-r",  "arm-right", (-0.252, 0.100, -0.110), (-0.244, 0.270, 0.110), SILVER),
 
     # 5. Dark Hollow Cuff Interior (Single clean recess plate, zero z-fighting)
     ("sleeve-cuff-interior-r", "arm-right", (-0.246, 0.118, -0.092), (-0.238, 0.252, 0.092), HOODIE_SHADOW),
@@ -208,8 +225,10 @@ HEAD = [
     ("face-chin-taper",        "head", (-0.100, 0.275, -0.1000), (0.100, 0.295, 0.0750), SKIN),
 
     # 0.1 ICONIC CLEAN SLEEPY SPIRIT EYES (-   -) (Single crisp flat solid bar, NO double lines)
-    ("eye-sleepy-left",        "head", (0.024, 0.320, -0.1142), (0.092, 0.355, -0.1130), INK),
-    ("eye-sleepy-right",       "head", (-0.092, 0.320, -0.1142), (-0.024, 0.355, -0.1130), INK),
+    # 2026-09-27: thinner sleepy lines (18 mm, was 35): with the fringe lifted clear of them, v1's full bars read as
+    # sunglasses on a face that narrow.
+    ("eye-sleepy-left",        "head", (0.030, 0.328, -0.1142), (0.086, 0.346, -0.1130), INK),
+    ("eye-sleepy-right",       "head", (-0.086, 0.328, -0.1142), (-0.030, 0.346, -0.1130), INK),
 
     # 1. COMPACT HAIR CROWN DOME & SMOOTH SILHOUETTE
     ("hair-crown-core",        "head", (-0.142, 0.400, -0.1160), (0.142, 0.585, 0.1280), HAIR_DARK),
@@ -219,19 +238,19 @@ HEAD = [
     ("hair-crown-side-r",      "head", (-0.145, 0.380, -0.0920), (-0.124, 0.575, 0.1120), HAIR_DARK),
 
     # 2. STRAIGHT HIME-CUT BLUNT BANGS (4 Chunky Strands, Bevel Sheen & Gap Dividers)
-    ("hair-bangs-brow-base",   "head", (-0.136, 0.365, -0.1280), (0.136, 0.575, -0.0950), HAIR_DARK),
-    ("hair-bangs-brow-bevel",  "head", (-0.130, 0.390, -0.1360), (0.130, 0.555, -0.1220), HAIR_HIGHLIGHT),
-    ("hair-strand-outer-l",    "head", (0.066, 0.348, -0.1360), (0.130, 0.450, -0.1180), HAIR_DARK),
-    ("hair-strand-outer-l-top","head", (0.070, 0.354, -0.1400), (0.124, 0.445, -0.1280), HAIR_HIGHLIGHT),
-    ("hair-strand-mid-l",      "head", (0.004, 0.358, -0.1380), (0.062, 0.450, -0.1200), HAIR_DARK),
-    ("hair-strand-mid-l-top",  "head", (0.008, 0.364, -0.1420), (0.058, 0.445, -0.1300), HAIR_HIGHLIGHT),
-    ("hair-strand-mid-r",      "head", (-0.062, 0.358, -0.1380), (-0.004, 0.450, -0.1200), HAIR_DARK),
-    ("hair-strand-mid-r-top",  "head", (-0.058, 0.364, -0.1420), (-0.008, 0.445, -0.1300), HAIR_HIGHLIGHT),
-    ("hair-strand-outer-r",    "head", (-0.130, 0.348, -0.1360), (-0.066, 0.450, -0.1180), HAIR_DARK),
-    ("hair-strand-outer-r-top","head", (-0.124, 0.354, -0.1400), (-0.070, 0.445, -0.1280), HAIR_HIGHLIGHT),
-    ("hair-bangs-gap-l",       "head", (0.062, 0.350, -0.1360), (0.066, 0.445, -0.1160), HOODIE_SHADOW),
-    ("hair-bangs-gap-mid",     "head", (-0.004, 0.360, -0.1360), (0.004, 0.445, -0.1160), HOODIE_SHADOW),
-    ("hair-bangs-gap-r",       "head", (-0.066, 0.350, -0.1360), (-0.062, 0.445, -0.1160), HOODIE_SHADOW),
+    ("hair-bangs-brow-base", "head", (-0.1360, 0.3830, -0.1280), (0.1360, 0.5750, -0.0950), HAIR_DARK),
+    ("hair-bangs-brow-bevel", "head", (-0.1300, 0.4080, -0.1360), (0.1300, 0.5550, -0.1220), HAIR_HIGHLIGHT),
+    ("hair-strand-outer-l", "head", (0.0660, 0.3720, -0.1360), (0.1300, 0.4500, -0.1180), HAIR_DARK),
+    ("hair-strand-outer-l-top", "head", (0.0700, 0.3720, -0.1400), (0.1240, 0.4450, -0.1280), HAIR_HIGHLIGHT),
+    ("hair-strand-mid-l", "head", (0.0040, 0.3720, -0.1380), (0.0620, 0.4500, -0.1200), HAIR_DARK),
+    ("hair-strand-mid-l-top", "head", (0.0080, 0.3720, -0.1420), (0.0580, 0.4450, -0.1300), HAIR_HIGHLIGHT),
+    ("hair-strand-mid-r", "head", (-0.0620, 0.3720, -0.1380), (-0.0040, 0.4500, -0.1200), HAIR_DARK),
+    ("hair-strand-mid-r-top", "head", (-0.0580, 0.3720, -0.1420), (-0.0080, 0.4450, -0.1300), HAIR_HIGHLIGHT),
+    ("hair-strand-outer-r", "head", (-0.1300, 0.3720, -0.1360), (-0.0660, 0.4500, -0.1180), HAIR_DARK),
+    ("hair-strand-outer-r-top", "head", (-0.1240, 0.3720, -0.1400), (-0.0700, 0.4450, -0.1280), HAIR_HIGHLIGHT),
+    ("hair-bangs-gap-l", "head", (0.0620, 0.3720, -0.1360), (0.0660, 0.4450, -0.1160), HOODIE_SHADOW),
+    ("hair-bangs-gap-mid", "head", (-0.0040, 0.3720, -0.1360), (0.0040, 0.4450, -0.1160), HOODIE_SHADOW),
+    ("hair-bangs-gap-r", "head", (-0.0660, 0.3720, -0.1360), (-0.0620, 0.4450, -0.1160), HOODIE_SHADOW),
 
     # 3. LONG STRAIGHT SIDE LOCKS (Framing Cheeks & Shoulders)
     ("hair-sidelock-main-l",   "head", (0.118, 0.200, -0.1220), (0.146, 0.455, 0.0100), HAIR_DARK),
@@ -253,17 +272,17 @@ HEAD = [
     ("hair-back-seam-mid",     "head", (-0.005, 0.315, 0.0920), (0.005, 0.475, 0.1400), HOODIE_SHADOW),
 
     # 5. HEAD OFUDA PAPER TALISMAN CLIP
-    ("ofuda-clip-main",        "head", (-0.124, 0.490, -0.1440), (-0.072, 0.535, -0.1300), OFUDA_PURPLE),
-    ("ofuda-clip-top-bevel",   "head", (-0.120, 0.530, -0.1420), (-0.076, 0.542, -0.1320), OFUDA_PURPLE),
-    ("ofuda-clip-pin",         "head", (-0.108, 0.518, -0.1460), (-0.088, 0.528, -0.1360), SILVER),
-    ("ofuda-clip-eye-pupil",   "head", (-0.106, 0.498, -0.1460), (-0.090, 0.510, -0.1400), INK),
-    ("ofuda-paper-body",       "head", (-0.126, 0.350, -0.1420), (-0.070, 0.495, -0.1320), OFUDA_WHITE),
-    ("ofuda-paper-backing",    "head", (-0.130, 0.345, -0.1360), (-0.066, 0.498, -0.1280), HOODIE_SHADOW),
-    ("ofuda-kanji-eye-dot",    "head", (-0.104, 0.468, -0.1440), (-0.092, 0.482, -0.1400), OFUDA_PURPLE),
-    ("ofuda-kanji-stroke-top", "head", (-0.118, 0.438, -0.1440), (-0.078, 0.452, -0.1400), OFUDA_PURPLE),
-    ("ofuda-kanji-stroke-eye", "head", (-0.118, 0.395, -0.1440), (-0.102, 0.432, -0.1400), OFUDA_PURPLE),
-    ("ofuda-kanji-stroke-min", "head", (-0.098, 0.390, -0.1440), (-0.078, 0.432, -0.1400), OFUDA_PURPLE),
-    ("ofuda-kanji-stroke-bot", "head", (-0.118, 0.365, -0.1440), (-0.078, 0.388, -0.1400), OFUDA_PURPLE),
+    ("ofuda-clip-main", "head", (-0.1420, 0.5200, -0.1440), (-0.0900, 0.5650, -0.1300), OFUDA_PURPLE),
+    ("ofuda-clip-top-bevel", "head", (-0.1380, 0.5600, -0.1420), (-0.0940, 0.5720, -0.1320), OFUDA_PURPLE),
+    ("ofuda-clip-pin", "head", (-0.1260, 0.5480, -0.1460), (-0.1060, 0.5580, -0.1360), SILVER),
+    ("ofuda-clip-eye-pupil", "head", (-0.1240, 0.5280, -0.1460), (-0.1080, 0.5400, -0.1400), INK),
+    ("ofuda-paper-body", "head", (-0.1440, 0.3800, -0.1420), (-0.0880, 0.5250, -0.1320), OFUDA_WHITE),
+    ("ofuda-paper-backing", "head", (-0.1480, 0.3750, -0.1360), (-0.0840, 0.5280, -0.1280), HOODIE_SHADOW),
+    ("ofuda-kanji-eye-dot", "head", (-0.1220, 0.4980, -0.1440), (-0.1100, 0.5120, -0.1400), OFUDA_PURPLE),
+    ("ofuda-kanji-stroke-top", "head", (-0.1360, 0.4680, -0.1440), (-0.0960, 0.4820, -0.1400), OFUDA_PURPLE),
+    ("ofuda-kanji-stroke-eye", "head", (-0.1360, 0.4250, -0.1440), (-0.1200, 0.4620, -0.1400), OFUDA_PURPLE),
+    ("ofuda-kanji-stroke-min", "head", (-0.1160, 0.4200, -0.1440), (-0.0960, 0.4620, -0.1400), OFUDA_PURPLE),
+    ("ofuda-kanji-stroke-bot", "head", (-0.1360, 0.3950, -0.1440), (-0.0960, 0.4180, -0.1400), OFUDA_PURPLE),
 
     # 6. SQUARE TOON EARS
     ("ear-left",               "head", (0.118, 0.315, -0.0250), (0.140, 0.365, 0.0100), SKIN),
