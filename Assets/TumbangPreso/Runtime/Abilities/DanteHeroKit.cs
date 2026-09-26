@@ -106,7 +106,7 @@ namespace TumbangPreso.Abilities
             public Boulder()
                 : base("dante_skill2", "BOULDER",
                        "Attacking. Hold to aim, release to hurl a boulder. Whoever it hits or rolls into is Concussed: slower, no sprint, wobbly aim.",
-                       GeoRules.BoulderCooldown, 0.0f, AbilityGlyph.DanteStomp,
+                       GeoRules.BoulderCooldown, 0.0f, AbilityGlyph.DanteBoulder,
                        summary: "Hurl a boulder. Whoever it hits is Concussed.",
                        telegraphRadius: GeoRules.BoulderHitRadius, telegraphRange: 9.0f,
                        castAction: "hero-dante-stomp", viewmodelAction: "stomp-heavy",
@@ -137,7 +137,7 @@ namespace TumbangPreso.Abilities
             public Barrier()
                 : base("dante_skill2d", "BARRIER",
                        "Defending. A wide stone force field in front of you for 7.5 s. It follows you, and every slipper that hits it flies back.",
-                       GeoRules.BarrierCooldown, GeoRules.BarrierSeconds, AbilityGlyph.DanteShield,
+                       GeoRules.BarrierCooldown, GeoRules.BarrierSeconds, AbilityGlyph.DanteBarrier,
                        summary: "A force field in front of you reflects slippers.",
                        castAction: "hero-dante-roar", viewmodelAction: "carapace-guard",
                        castCue: "sfx_cast_dante_barrier") { }

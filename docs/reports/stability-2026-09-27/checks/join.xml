@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 19:07:22Z" end-time="2026-09-26 19:07:22Z" duration="0.2102692">
+  <test-suite type="TestSuite" id="1859" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="673" result="Passed" start-time="2026-09-26 19:07:22Z" end-time="2026-09-26 19:07:22Z" duration="0.210269" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1853" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="673" result="Passed" start-time="2026-09-26 19:07:22Z" end-time="2026-09-26 19:07:22Z" duration="0.197158" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36352" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1854" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="673" result="Passed" start-time="2026-09-26 19:07:22Z" end-time="2026-09-26 19:07:22Z" duration="0.190232" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1855" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="673" result="Passed" start-time="2026-09-26 19:07:22Z" end-time="2026-09-26 19:07:22Z" duration="0.183495" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1746" name="TumpNativeJoinTests" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-26 19:07:22Z" end-time="2026-09-26 19:07:22Z" duration="0.170397" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1749" name="LeavingTheHubCancelsItsJoinBeforeANewerRequestStarts" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.LeavingTheHubCancelsItsJoinBeforeANewerRequestStarts" methodname="LeavingTheHubCancelsItsJoinBeforeANewerRequestStarts" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="1140000244" result="Passed" start-time="2026-09-26 19:07:22Z" end-time="2026-09-26 19:07:22Z" duration="0.159203" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

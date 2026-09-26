@@ -17,6 +17,11 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+**2026-09-27 verified stability batch:** room cancellation/seating, native interaction
+prompts, distinct current-kit glyphs, live symbol refresh and avatar sprite imports.
+Exact checks and remaining limits: [validation](reports/stability-2026-09-27/validation.md).
+Remaining owner QA, current-kit regressions and final qualification stay open.
+
 **Standing mandate (owner, 2026-09-21):** "finish everything note yet done", then "i want
 every single thing in todo to be done pls mark that in todo and shit". Every unfinished
 item in this file, including the backlog index, is in scope. Each item ends with

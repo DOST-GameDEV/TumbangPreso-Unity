@@ -275,6 +275,27 @@ def dante_fissure(a):
     a.add(a.poly([(480, 520), (525, 470), (560, 520), (535, 860), (500, 860)]), LEMON, shade=False)
 
 
+def dante_boulder(a):
+    a.add(a.band([(90, 445), (280, 445)], 70), GOLD, shade=False)
+    a.add(a.band([(145, 610), (300, 590)], 52), HONEY, shade=False)
+    a.add(a.poly([(335, 355), (550, 175), (790, 260), (900, 495), (760, 750), (490, 715), (320, 565)]), STONE_DK)
+    a.add(a.poly([(335, 355), (550, 175), (790, 260), (690, 450), (470, 480)]), STONE)
+    a.add(a.poly([(470, 480), (690, 450), (900, 495), (760, 750), (490, 715)]), LEATHER)
+    a.ink([(550, 295), (590, 380), (520, 460)], 22)
+    a.ink([(745, 540), (680, 620)], 18)
+    a.glint(590, 270, 25, 46)
+
+
+def dante_barrier(a):
+    a.add(a.poly([(265, 195), (565, 150), (610, 830), (280, 885)]), STONE_DK)
+    a.add(a.poly([(290, 215), (510, 185), (550, 815), (315, 845)]), STONE)
+    a.add(a.poly([(510, 185), (565, 150), (610, 830), (550, 815)]), GOLD)
+    a.add(a.band([(385, 355), (455, 480), (390, 650)], 34), LEATHER, shade=False)
+    slipper(a, 755, 565, 300, 75, PERSIMMON, CREAM)
+    a.add(a.band([(740, 390), (840, 275), (765, 235)], 58), GOLD, shade=False)
+    a.glint(345, 260, 20, 65)
+
+
 def sean_rush(a):
     for y, x0, x1 in ((330, 100, 330), (512, 80, 290), (694, 100, 330)):
         a.add(a.band([(x0, y), (x1, y)], 60), PERSIMMON, shade=False)
@@ -349,6 +370,15 @@ def cheska_nova(a):
     a.glint(440, 300, 20)
 
 
+def cheska_frostbite(a):
+    slipper(a, 480, 565, 660, -30, ICE_SH, CREAM)
+    a.add(a.poly([(640, 310), (740, 130), (780, 350), (850, 420), (680, 470)]), ICE)
+    a.add(a.poly([(165, 630), (260, 470), (295, 675), (390, 740), (210, 785)]), ICE)
+    a.add(a.poly([(630, 730), (740, 640), (760, 825), (685, 900)]), ICE_SH)
+    a.ink([(480, 350), (510, 485), (610, 550)], 20)
+    a.glint(710, 250, 20, 53)
+
+
 def zack_sprint(a):
     for y, x0 in ((360, 90), (520, 70), (680, 100)):
         a.add(a.band([(x0, y), (x0 + 170, y)], 58), GOLD, shade=False)
@@ -412,6 +442,34 @@ def nemu_seance(a):
     a.ink_mask(a.ellipse(512, 512, 16, 40))
 
 
+def nemu_terrify(a):
+    a.add(a.ellipse(520, 810, 360, 90), PLUM, shade=False)
+    a.add(a.poly([(210, 710), (235, 320), (370, 160), (495, 280), (620, 150), (780, 320), (815, 710),
+                  (700, 630), (595, 755), (480, 645), (350, 765)]), KURO)
+    a.add(a.ellipse(420, 400, 62, 75), GOLD, shade=False)
+    a.add(a.ellipse(625, 400, 62, 75), GOLD, shade=False)
+    a.ink_mask(a.ellipse(420, 400, 20, 58))
+    a.ink_mask(a.ellipse(625, 400, 20, 58))
+    a.add(a.poly([(490, 510), (555, 510), (525, 580)]), LILAC, shade=False)
+    slipper(a, 745, 810, 260, 62, STONE, HONEY)
+    a.glint(335, 270, 22, 44)
+
+
+def nemu_guard(a):
+    a.add(a.poly([(240, 410), (305, 175), (415, 310), (635, 300), (735, 160), (810, 430),
+                  (775, 745), (600, 830), (375, 800), (235, 650)]), KURO)
+    a.add(a.ellipse(435, 465, 58, 45), GOLD, shade=False)
+    a.add(a.ellipse(620, 465, 58, 45), GOLD, shade=False)
+    a.ink_mask(a.ellipse(435, 465, 16, 37))
+    a.ink_mask(a.ellipse(620, 465, 16, 37))
+    a.add(a.circle(520, 605, 80), STONE)
+    a.add(a.rect(455, 585, 585, 735), STONE_DK)
+    a.add(a.poly([(640, 675), (730, 605), (825, 720), (710, 820)]), PLUM)
+    slipper(a, 835, 530, 220, 75, PERSIMMON, HONEY)
+    a.add(a.poly(star_pts(710, 530, 95, 38, 4)), LEMON, shade=False)
+    a.glint(350, 320, 20, 48)
+
+
 def phaister_hex(a):
     a.add(a.circle(512, 512, 400), MAGENTA)
     a.add(a.circle(512, 512, 320), WITCH)
@@ -445,6 +503,34 @@ def phaister_witchfire(a):
     a.add(a.poly(flame_pts(512, 900, 520, 820, 3)), MAGENTA)
     a.add(a.poly(flame_pts(512, 880, 320, 540, 2)), PLUM)
     a.add(a.poly(flame_pts(512, 860, 150, 270, 1)), LILAC, shade=False)
+
+
+def phaister_cursed_doll(a):
+    a.add(a.band([(125, 710), (295, 660)], 52), MAGENTA, shade=False)
+    a.add(a.band([(110, 520), (255, 505)], 38), LILAC, shade=False)
+    a.add(a.circle(560, 310, 170), WITCH)
+    a.add(a.poly([(400, 420), (720, 430), (800, 770), (320, 780)]), MAGENTA)
+    a.add(a.band([(380, 540), (210, 640)], 75), WITCH)
+    a.add(a.band([(715, 535), (845, 620)], 75), WITCH)
+    a.add(a.band([(435, 745), (395, 880)], 80), WITCH)
+    a.add(a.band([(630, 745), (675, 880)], 80), WITCH)
+    a.add(a.circle(500, 295, 23), GOLD, shade=False)
+    a.add(a.circle(625, 295, 23), GOLD, shade=False)
+    a.ink([(495, 535), (590, 615)], 20)
+    a.ink([(585, 535), (490, 615)], 20)
+    a.glint(480, 210, 17, 39)
+
+
+def phaister_vulnerable(a):
+    a.add(a.poly([(195, 260), (535, 375), (535, 650), (195, 780)]), MAGENTA, shade=False)
+    a.add(a.poly([(330, 400), (585, 470), (585, 580), (330, 650)]), LILAC, shade=False)
+    a.add(a.circle(670, 550, 205), WITCH)
+    a.add(a.circle(620, 490, 30), GOLD, shade=False)
+    a.add(a.circle(730, 490, 30), GOLD, shade=False)
+    a.add(a.band([(740, 180), (620, 700)], 60), STONE)
+    a.add(a.circle(750, 155, 68), GOLD)
+    a.add(a.poly([(565, 640), (670, 780), (750, 635)]), RIMRED, shade=False)
+    a.glint(745, 125, 17, 29)
 
 
 def rafi_crosscurrent(a):
@@ -794,12 +880,16 @@ GLYPHS = {
     "Zone": zone, "Wall": wall, "Dash": dash, "Shield": shield, "Burst": burst,
     "Projectile": projectile, "Phase": phase, "Slam": slam, "Empower": empower,
     "DanteStomp": dante_stomp, "DanteShield": dante_shield, "DanteFissure": dante_fissure,
+    "DanteBoulder": dante_boulder, "DanteBarrier": dante_barrier,
     "SeanRush": sean_rush, "SeanIgnite": sean_ignite, "SeanSupernova": sean_supernova,
     "CheskaFrostSheet": cheska_frost, "CheskaBarricade": cheska_barricade, "CheskaNova": cheska_nova,
+    "CheskaFrostbite": cheska_frostbite,
     "ZackSprint": zack_sprint, "ZackOvercharge": zack_magnet, "ZackThunderstrike": zack_thunder,
     "NemuPhase": nemu_phase, "NemuAstralPet": nemu_pet, "NemuSeanceVoid": nemu_seance,
+    "NemuTerrify": nemu_terrify, "NemuKuroGuard": nemu_guard,
     "PhaisterHexSigil": phaister_hex, "PhaisterShadowBlink": phaister_blink,
     "PhaisterEclipse": phaister_coven, "PhaisterWitchfire": phaister_witchfire,
+    "PhaisterCursedDoll": phaister_cursed_doll, "PhaisterVulnerable": phaister_vulnerable,
     "RafiCrosscurrent": rafi_crosscurrent, "RafiMirrorwake": rafi_mirrorwake,
     "RafiBreakwater": rafi_breakwater,
     "AmihanQuickDash": amihan_dash, "AmihanUpdraft": amihan_updraft,

@@ -72,7 +72,7 @@ namespace TumbangPreso.Abilities
             public Terrify()
                 : base("nemu_skill1", "TERRIFY",
                        "Hold to aim, release to leave Kuro haunting a spot for 4 s. Anyone who comes near him drops their slipper and runs in terror.",
-                       NecroRules.TerrifyCooldown, NecroRules.TerrifyHauntSeconds, AbilityGlyph.NemuSeanceVoid,
+                       NecroRules.TerrifyCooldown, NecroRules.TerrifyHauntSeconds, AbilityGlyph.NemuTerrify,
                        summary: "Kuro haunts a spot. Whoever comes near is Feared.",
                        telegraphRadius: NecroRules.TerrifyRadius, telegraphRange: NecroRules.TerrifyMaxRange,
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
@@ -207,7 +207,7 @@ namespace TumbangPreso.Abilities
             public KuroGuard()
                 : base("nemu_skill2d", "KURO GUARD",
                        "Defending. Kuro grows and guards the can for 6 s, moving to block the throws he sees coming. He is quick, not perfect.",
-                       NecroRules.GuardCooldown, NecroRules.GuardSeconds, AbilityGlyph.NemuPhase,
+                       NecroRules.GuardCooldown, NecroRules.GuardSeconds, AbilityGlyph.NemuKuroGuard,
                        summary: "Kuro grows and blocks throws at the can.",
                        castAction: "hero-nemu-seance", viewmodelAction: "seance-channel",
                        castCue: "sfx_cast_nemu_guard") { }

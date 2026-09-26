@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using TumbangPreso.Core;
 using TumbangPreso.Settings;
 using UnityEngine;
@@ -70,6 +72,8 @@ namespace TumbangPreso.Net
         private NetSession _net;
         private bool _subscribed;
         private bool _busy;
+        private readonly JoinAttemptGate _queueAttempts = new JoinAttemptGate();
+        private CancellationTokenSource _queueCancellation = new CancellationTokenSource();
 
         /// <summary>
         /// How many seats the ticket needs, which is the party size.
@@ -189,6 +193,11 @@ namespace TumbangPreso.Net
         /// </summary>
         public bool StartQueue(GameMode mode, QueueStake stake, int partySize = 1)
         {
+            _queueCancellation.Cancel();
+            _queueCancellation.Dispose();
+            _queueCancellation = new CancellationTokenSource();
+            _queueAttempts.Invalidate();
+            _busy = false;
             Mode = mode;
             Stake = stake;
             PartySize = Mathf.Clamp(partySize, 1, PartyRules.MaxSize);
@@ -262,6 +271,9 @@ namespace TumbangPreso.Net
         {
             if (!IsQueueing && State != QueueState.Refused) return;
 
+            _queueAttempts.Invalidate();
+            _queueCancellation.Cancel();
+            _busy = false;
             State = QueueState.Cancelled;
             Elapsed = 0.0f;
             Unsubscribe();
@@ -320,7 +332,14 @@ namespace TumbangPreso.Net
             _subscribed = false;
         }
 
-        private void OnDestroy() => Unsubscribe();
+        private void OnDestroy()
+        {
+            _queueAttempts.Invalidate();
+            _queueCancellation.Cancel();
+            _queueCancellation.Dispose();
+            if (IsQueueing) ClearAdvert();
+            Unsubscribe();
+        }
 
         // -------------------------------------------------------------------
 
@@ -351,7 +370,13 @@ namespace TumbangPreso.Net
 
             if (best >= 0)
             {
-                await JoinAsync(entries[best]);
+                var entry = entries[best];
+                var cancellation = _queueCancellation.Token;
+                await JoinAsync(entry, async () =>
+                {
+                    bool started = await _net.StartRelayClient(entry.RelayCode, cancellation);
+                    return started && await _net.WaitForConnectionAsync(cancellation);
+                });
                 return;
             }
 
@@ -360,7 +385,8 @@ namespace TumbangPreso.Net
             // searching an empty list, each waiting for the other to give up first. Hosting is
             // cheap here because the lobby is already hosted: `ConvertedMatchSetup.AutoHost` has
             // a LAN room up before this class is ever reached, and going online is one call.
-            await HostAsync();
+            var hostCancellation = _queueCancellation.Token;
+            await HostAsync(() => _net.StartRelayHost(cancellationToken: hostCancellation));
         }
 
         private void RecordPass(List<LobbyAdvert> adverts)
@@ -378,8 +404,9 @@ namespace TumbangPreso.Net
             }
         }
 
-        private async System.Threading.Tasks.Task JoinAsync(ServerQuery.Entry entry)
+        private async Task JoinAsync(ServerQuery.Entry entry, Func<Task<bool>> startJoin)
         {
+            var attempt = _queueAttempts.Begin();
             _busy = true;
             State = QueueState.Joining;
             Raise();
@@ -391,8 +418,8 @@ namespace TumbangPreso.Net
                 // to a third player, and the lobby draws it from `LobbySession.JoinCode`.
                 if (!string.IsNullOrEmpty(entry.JoinCode)) _net.Lobby.SetJoinCode(entry.JoinCode);
 
-                bool ok = await _net.StartRelayClient(entry.RelayCode);
-                if (this == null) return;
+                bool ok = await startJoin();
+                if (this == null || !attempt.CanContinue) return;
 
                 if (ok)
                 {
@@ -415,12 +442,13 @@ namespace TumbangPreso.Net
             }
             finally
             {
-                _busy = false;
+                if (attempt.OwnsSession) _busy = false;
             }
         }
 
-        private async System.Threading.Tasks.Task HostAsync()
+        private async Task HostAsync(Func<Task<bool>> startHost)
         {
+            var attempt = _queueAttempts.Begin();
             _busy = true;
 
             try
@@ -430,8 +458,8 @@ namespace TumbangPreso.Net
                     State = QueueState.Hosting;
                     Raise();
 
-                    bool ok = await _net.StartRelayHost();
-                    if (this == null) return;
+                    bool ok = await startHost();
+                    if (this == null || !attempt.CanContinue) return;
 
                     if (!ok)
                     {
@@ -450,7 +478,7 @@ namespace TumbangPreso.Net
             }
             finally
             {
-                _busy = false;
+                if (attempt.OwnsSession) _busy = false;
             }
         }
 

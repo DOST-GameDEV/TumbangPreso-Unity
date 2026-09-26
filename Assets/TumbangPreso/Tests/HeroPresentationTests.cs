@@ -281,17 +281,22 @@ namespace TumbangPreso.Tests
         [Test]
         public void TelegraphsMatchWhatTheAbilityPlaces()
         {
-            AssertTelegraph("cheska", 1, 2.3f, 5.0f);   // SpawnIceSheet(aimed, max 5.0, radius 2.3)
-            AssertTelegraph("cheska", 2, 1.6f, 4.0f);   // barricade HazardVolume 1.6, aimed to 4.0
-            AssertTelegraph("cheska", 3, 4.6f, 0.0f);   // nova freeze check <= 4.6 at self
+            AssertTelegraph("cheska", 1, 2.3f, 5.0f);   // Cold Feet places an aimed 2.3 m ice sheet.
+            AssertTelegraph("cheska", 2, 0.0f, 0.0f);   // Frostbite loads her own slipper; no ground target.
+            AssertTelegraph("cheska", 3, 0.0f, 0.0f);   // Absolute Zero affects every other player, map-wide.
+            AssertRoleTelegraph("cheska", 2.1f, 4.0f); // Glacial Wall's 4.2 m arc, aimed up to 4 m.
+            Assert.IsFalse(HeroAbilitySystem.CreateKitFor("cheska").AttackingSkill.HasTelegraph,
+                "Frostbite must not draw the retired Ice Barricade ring over a self-buffed slipper");
 
-            AssertTelegraph("dante", 1, 2.2f, 0.0f);    // CreateExplosion(pos, 2.2)
-            AssertTelegraph("dante", 2, 0.0f, 0.0f);    // self-buff, nothing on the ground
-            AssertTelegraph("dante", 3, 4.5f, 2.2f);    // CreateExplosion(pos + fwd*2.2, 4.5)
+            AssertTelegraph("dante", 1, 0.0f, 0.0f);    // Shield is self armour.
+            AssertTelegraph("dante", 2, 0.7f, 9.0f);    // Boulder aims a 0.7 m hit body up to 9 m.
+            AssertTelegraph("dante", 3, 0.0f, 0.0f);    // Earthquake is map-wide.
+            AssertRoleTelegraph("dante", 0.0f, 0.0f);  // Barrier follows Dante; it is not ground-placed.
 
-            AssertTelegraph("nemu", 1, 0.0f, 0.0f);     // mobility
-            AssertTelegraph("nemu", 2, 0.0f, 0.0f);     // projectile decoy
+            AssertTelegraph("nemu", 1, 2.2f, 7.0f);     // Terrify leaves Kuro at an aimed haunt spot.
+            AssertTelegraph("nemu", 2, 0.0f, 0.0f);     // Kuro Fetch tracks a loose slipper.
             AssertTelegraph("nemu", 3, 4.0f, 3.5f);     // Live KuroUnbound radius; range is the petless fallback.
+            AssertRoleTelegraph("nemu", 0.0f, 0.0f);   // Kuro Guard moves with the can.
 
             AssertTelegraph("sean", 1, 0.0f, 0.0f);     // dash
             AssertTelegraph("sean", 2, 0.0f, 0.0f);     // throw empower
@@ -301,20 +306,11 @@ namespace TumbangPreso.Tests
             AssertTelegraph("zack", 2, 0.0f, 0.0f);     // throw empower
             AssertTelegraph("zack", 3, 4.5f, 7.0f);     // CreateThunderstrike(aimed, max 7.0, 4.5)
 
-            AssertTelegraph("phaister", 1, 2.4f, 5.5f); // Hex ward, aimed to 5.5
+            AssertTelegraph("phaister", 1, 1.15f, 5.5f); // Shadow Blink's arrival mark and max reach.
 
-            // ⚠️ THE BLINK HAS A TELEGRAPH NOW BECAUSE IT IS AIMED. It was 0/0 while it was an
-            // impulse fired on the press edge, which the reticle could never have drawn in time.
-            // 5.5 is its maximum reach at a full hold and 1.15 is the arrival mark it stamps
-            // there, so the ring a player holds E to move is the size and the place of the thing
-            // that actually happens. `HeroAbility`'s hold-to-aim section has the rest.
-            AssertTelegraph("phaister", 2, 1.15f, 5.5f); // SpawnShadowArrival at fwd*5.5 max
-
-            // ⚠️ AND THE ECLIPSE DECLARES ITS REACH, WHICH IT DID NOT WHEN IT HIT EVERYBODY. The
-            // old ultimate staggered `round.Players` with no distance test at all, so there was
-            // no radius to draw and nothing to position against. 5.0 is what `Curse` now tests
-            // and what `SpawnGrandCovenEclipse` draws on the ground. `docs/TODO.md` § 24.
-            AssertTelegraph("phaister", 3, 10.5f, 0.0f); // curse reach, centred on the caster
+            AssertTelegraph("phaister", 2, 1.2f, 10.0f); // Cursed doll's hit radius and aimed throw.
+            AssertTelegraph("phaister", 3, 7.5f, 8.0f); // Higop's aimed black hole and pull radius.
+            AssertRoleTelegraph("phaister", 3.5f, 3.5f); // Vulnerable's 7 m forward cone.
         }
 
         /// <summary>
@@ -688,20 +684,40 @@ namespace TumbangPreso.Tests
                 $"places the effect {range} m ahead");
         }
 
+        private static void AssertRoleTelegraph(string hero, float radius, float range)
+        {
+            var ability = HeroAbilitySystem.CreateKitFor(hero).DefendingSkill;
+            Assert.IsNotNull(ability, $"{hero} has no defending role power");
+            Assert.AreEqual(radius, ability.TelegraphRadius, 0.001f, $"{hero}: defending radius differs from its effect");
+            Assert.AreEqual(range, ability.TelegraphRange, 0.001f, $"{hero}: defending reach differs from its effect");
+        }
+
         [Test]
         public void EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph()
         {
             var seenGlyphs = new HashSet<AbilityGlyph>();
             int totalAbilities = 0;
+            var placeholderHeroes = new List<string>();
 
             foreach (string hero in Heroes)
             {
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
-                var abilities = kit.AllAbilities;
-
-                foreach (var ability in abilities)
+                foreach (var slot in kit.ScreenSlots)
                 {
+                    var ability = slot.Ability;
+                    if (ability is PlaceholderRoleAbility)
+                    {
+                        placeholderHeroes.Add(hero);
+                        Assert.AreEqual("DEFENDING", slot.Label, hero);
+                        Assert.AreEqual("COMING SOON", ability.EffectiveName, hero);
+                        Assert.That(ability.Summary, Does.Contain("Does nothing yet"), hero);
+                        Assert.AreEqual(AbilityGlyph.ComingSoon, ability.Glyph, hero);
+                        Assert.AreEqual("COMING SOON", AbilityIcons.LabelFor(ability.Glyph), hero);
+                        Assert.IsNotNull(AbilityIcons.For(ability.Glyph), hero);
+                        continue;
+                    }
                     totalAbilities++;
+                    Assert.AreNotEqual(AbilityGlyph.ComingSoon, ability.Glyph, hero + " has an implemented power with a placeholder icon");
                     Assert.IsTrue(System.Enum.IsDefined(typeof(AbilityGlyph), ability.Glyph),
                         $"{hero} {ability.Name} has an undefined glyph value: {ability.Glyph}");
 
@@ -719,9 +735,10 @@ namespace TumbangPreso.Tests
                 }
             }
 
-            // Seven legacy kits of three and Amihan's role kit of four (2026-09-25).
-            Assert.AreEqual(29, totalAbilities, "Expected 29 total abilities across 9 heroes");
-            Assert.AreEqual(29, seenGlyphs.Count, "Expected 29 unique glyphs across 29 abilities");
+            CollectionAssert.AreEquivalent(new[] { "sean", "zack", "rafi" }, placeholderHeroes,
+                "Only the three explicitly unfinished defending powers share an unavailable symbol.");
+            Assert.AreEqual(33, totalAbilities, "Expected 33 implemented powers among the 36 displayed slots");
+            Assert.AreEqual(33, seenGlyphs.Count, "Every implemented power needs its own glyph");
         }
 
         private static void AssertSameRgb(Color actual, Color expected, string name)

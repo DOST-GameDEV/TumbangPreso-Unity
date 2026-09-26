@@ -37,23 +37,34 @@ namespace TumbangPreso.PlayTests
                 {
                     yield return HubFlowTests.Press("Portrait" + hero);
                     var kit = HeroAbilitySystem.CreateKitFor(people[hero].Id);
-                    HeroAbility[] abilities = { kit.Skill1, kit.Skill2, kit.Ultimate };
-                    for (int slot = 0; slot < abilities.Length; slot++)
+                    var slots = kit.ScreenSlots;
+                    for (int slot = 0; slot < slots.Length; slot++)
                     {
+                        var ability = slots[slot].Ability;
                         yield return HubFlowTests.Press("SelectionAbility" + slot);
                         Assert.AreSame(selector, TumpHub.Current.Top, "Skill inspection must stay inline.");
                         var settings = Settings.SettingsStore.Current;
-                        var variant = slot < 2 ? HeroBuildRules.Equipped(HeroBuildRules.RowFor(settings.HeroBuilds,
-                            people[hero].Id), people[hero].Id, slot + 1, settings.AbilityChallenges) : null;
+                        var variant = slots[slot].LoadoutSlot > 0 ? HeroBuildRules.Equipped(HeroBuildRules.RowFor(settings.HeroBuilds,
+                            people[hero].Id), people[hero].Id, slots[slot].LoadoutSlot, settings.AbilityChallenges) : null;
                         bool alternate = variant != null && !variant.IsDefault;
                         var labels = selector.GetComponentsInChildren<Text>();
-                        Assert.AreEqual(alternate ? variant.Description : abilities[slot].Summary,
+                        Assert.AreEqual(alternate ? variant.Description : ability.Summary,
                             labels.Single(t => t.name == "AbilitySummary").text);
-                        Assert.AreEqual((alternate ? variant.Name : abilities[slot].Name).ToUpperInvariant(),
+                        Assert.AreEqual((alternate ? variant.Name : ability.Name).ToUpperInvariant(),
                             labels.Single(t => t.name == "AbilityName").text);
-                        StringAssert.Contains(AbilityIcons.LabelFor(abilities[slot].Glyph),
+                        StringAssert.Contains(AbilityIcons.LabelFor(ability.Glyph),
                             labels.Single(t => t.name == "AbilityMeta").text);
                         Canvas.ForceUpdateCanvases();
+                        var button = selector.GetComponentsInChildren<HubButton>(true)
+                            .Single(b => b.name == "SelectionAbility" + slot);
+                        var symbol = button.GetComponentInChildren<TumpAbilitySymbol>();
+                        Assert.AreEqual(ability.Glyph, symbol.Glyph);
+                        Assert.Greater(symbol.canvasRenderer.GetMesh().vertexCount, 0,
+                            people[hero].Id + "/" + slot + " rendered no skill symbol");
+                        var illustration = AbilityIcons.Illustration(ability.Glyph);
+                        if (illustration != null)
+                            Assert.AreSame(illustration.texture, symbol.mainTexture,
+                                people[hero].Id + "/" + slot + " retained another hero's skill texture");
                         foreach (var label in labels.Where(t => t.name.StartsWith("Ability")))
                         {
                             Assert.GreaterOrEqual(label.fontSize, HubStyle.Floor);

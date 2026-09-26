@@ -1,5 +1,28 @@
 # Active TUMP rework ledger
 
+## Room lifecycle and current hero UI, 2026-09-27 (ASTRAReworks)
+
+Verified batch from `04886cc4`: cancelled host/join work cannot revive an older room or stop its
+successor; queued joins wait for an assigned seat and preserve failure reasons. Native HUD now
+shows rooted escape and plant-pull bindings/progress, with keyboard, pad and touch paths. Real
+abilities have distinct glyphs; placeholders show unavailable state. Reused UI symbols refresh
+their mesh/material; Amihan and Paete avatars import as sprites instead of falling back to Dante.
+
+Fresh evidence: Core 658/658; presentation 24/24; session lifecycle 11/11; native interaction
+3/3 after one fixture repair; pending-join 1/1; avatar/symbol 2/2; selector 1/1 across the roster
+and text sizes. Native prompt and selector frames inspected. The first rooted test failed because
+synthetic input devices were disabled; the single repaired retry passed actual held-input progress.
+[Exact receipts and limits](reports/stability-2026-09-27/validation.md),
+[implementation](reports/stability-2026-09-27/implementation.md),
+[icons](reports/stability-2026-09-27/skill-icons.md),
+[menu findings](reports/stability-2026-09-27/menu-qa.md).
+
+This does not establish live Relay, real-peer reconnect, physical-device qualification or measured
+performance improvements. No new player build or Desktop replacement. Next: integrate incoming
+shared-branch changes, reconcile the remaining current-kit regression contracts, then continue
+the remaining owner QA, general performance and assigned hero presentation. All animation/model
+work in this batch: none; the seven icon drawings and their rationale are in the icon report.
+
 ## Per-character walk and run, 2026-09-27 (worktree `TumbangPreso-Unity-ASTRAReworks`, branch ASTRAReworks)
 
 The owner rejected the cast-wide walk (*"walk is fucking ugly"*, *"everyones arms are floating and not even attached right"*,

@@ -235,9 +235,9 @@ namespace TumbangPreso.Abilities
         {
             public YakapNgMakiling()
                 : base("paete_ultimate", "MAKILING'S EMBRACE",
-                       "Hold to choose where, release: a giant guardian tree comes up there and drags everyone in 9 m into its roots. They can still throw. Hold Interact 7 s to escape.",
+                       "Place a guardian tree. It pulls everyone within 9 m into roots; they can still throw. Hold Interact for 7 s to escape.",
                        0.0f, 0.0f, AbilityGlyph.PaeteSentry,
-                       summary: "Hold to place it: a guardian tree drags everyone in 9 m into its roots.",
+                       summary: "Place a tree that pulls and roots everyone within 9 m.",
                        telegraphRadius: PaeteRules.SentryRadius, telegraphRange: PaeteRules.SentryThrowRange,
                        castAction: "hero-paete-sentry", viewmodelAction: "ground-call",
                        castCue: "sfx_cast_paete_sentry")

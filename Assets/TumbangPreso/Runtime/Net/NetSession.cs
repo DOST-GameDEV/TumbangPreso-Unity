@@ -729,8 +729,9 @@ namespace TumbangPreso.Net
 
         public async Task<bool> StartHostAsync(int port = DefaultPort, bool dedicated = false)
         {
-            _joinAttempts.Invalidate();
-            await EnsureStoppedAsync();
+            var attempt = _joinAttempts.Begin();
+            await EnsureStoppedAsync(attempt);
+            if (!CanContinueJoin(attempt)) return false;
 
             Configure("0.0.0.0", port);
             ConfigureClientHello();
@@ -890,6 +891,17 @@ namespace TumbangPreso.Net
 
         private void Update()
         {
+            if (_connectingAttempt.HasValue && !_connectingAttempt.Value.CanContinue)
+            {
+                var cancelled = _connectingAttempt.Value;
+                _connectingAttempt = null;
+                if (cancelled.OwnsSession && _nm != null && _nm.IsListening &&
+                    !_nm.IsServer)
+                    StopCurrentTransport();
+            }
+            else if (_connectingAttempt.HasValue && _everConnected && _seatApplied)
+                _connectingAttempt = null;
+
             // ⚠️ BEFORE THE SERVER-ONLY RETURN BELOW, AND THAT IS THE WHOLE POINT. A client is
             // the peer that suffers a bad link and the one whose player needs telling, so
             // sampling only on the host would measure the machine least likely to be the problem.
@@ -1034,9 +1046,47 @@ namespace TumbangPreso.Net
             RelayJoinCode = null;
 
             bool ok = StartNetcode(() => _nm.StartClient(), "joining");
+            if (ok) _connectingAttempt = attempt;
             if (ok) RegisterSeatHandler();
             SetStatus(ok ? $"connecting to {address}:{port}" : _startProblem ?? "failed to connect");
             return ok;
+        }
+
+        public async Task<bool> WaitForConnectionAsync(CancellationToken cancellationToken = default,
+                                                        float timeoutSeconds = -1)
+        {
+            if (!_connectingAttempt.HasValue)
+                return !cancellationToken.IsCancellationRequested && !_localShutdown &&
+                       _nm != null && _nm.IsListening && !_nm.IsServer && _everConnected && _seatApplied;
+            var attempt = _connectingAttempt.Value;
+            float duration = timeoutSeconds > 0 ? timeoutSeconds :
+                (_utp.ConnectTimeoutMS * _utp.MaxConnectAttempts) / 1000f + 2f;
+            float deadline = Time.realtimeSinceStartup + duration;
+            while (this != null && attempt.CanContinue && !cancellationToken.IsCancellationRequested &&
+                   _nm != null && _nm.IsListening && Time.realtimeSinceStartup < deadline)
+            {
+                if (_everConnected && _seatApplied)
+                {
+                    _connectingAttempt = null;
+                    return true;
+                }
+                try { await Awaitable.NextFrameAsync(destroyCancellationToken); }
+                catch (OperationCanceledException) { return false; }
+            }
+            if (this != null && attempt.OwnsSession)
+            {
+                string reason = !attempt.CanContinue || cancellationToken.IsCancellationRequested
+                    ? "Join cancelled."
+                    : Time.realtimeSinceStartup >= deadline
+                        ? "Connection timed out before a seat was assigned."
+                        : Status;
+                if (!_localShutdown && _nm != null && _nm.IsListening && !_nm.IsServer)
+                    StopCurrentTransport();
+                // Transport cleanup resets the general state to offline; the failed
+                // attempt still needs its timeout or refusal for callers and diagnostics.
+                if (!string.IsNullOrWhiteSpace(reason)) SetStatus(reason);
+            }
+            return false;
         }
 
         /// <summary>
@@ -1049,10 +1099,13 @@ namespace TumbangPreso.Net
         /// generated in LobbySession as usual; the UGS Relay join code is an internal transport
         /// handle mapped behind this session.
         /// </summary>
-        public async Task<bool> StartRelayHost(int maxConnections = LobbySession.MaxConnections)
+        public async Task<bool> StartRelayHost(int maxConnections = LobbySession.MaxConnections,
+                                               CancellationToken cancellationToken = default)
         {
-            _joinAttempts.Invalidate();
-            await EnsureStoppedAsync();
+            var attempt = _joinAttempts.Begin(cancellationToken);
+            if (!CanContinueJoin(attempt)) return false;
+            await EnsureStoppedAsync(attempt);
+            if (!CanContinueJoin(attempt)) return false;
 
             SetStatus("signing in to online services...");
 
@@ -1061,6 +1114,7 @@ namespace TumbangPreso.Net
             // relay. The status now carries which of the three situations stopped it rather
             // than the single "authentication failed" that covered all of them.
             bool authOk = await NetIdentity.EnsureSignedInAsync();
+            if (!CanContinueJoin(attempt)) return false;
             if (!authOk)
             {
                 SetStatus($"cannot go online: {NetIdentity.StateReason}");
@@ -1071,7 +1125,9 @@ namespace TumbangPreso.Net
             try
             {
                 Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxConnections);
+                if (!CanContinueJoin(attempt)) return false;
                 string relayCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+                if (!CanContinueJoin(attempt)) return false;
                 RelayJoinCode = relayCode;
                 IsRelay = true;
 
@@ -1088,6 +1144,7 @@ namespace TumbangPreso.Net
                 // ⚠️ THE RELAY PATHS ARE THE ONLY ONES ALLOWED TO SPEND A SERVICE CALL ON THE WAY
                 // TO A MATCH. See PrimeHandleProofAsync: LAN and direct-address joins may never.
                 await PrimeHandleProofAsync();
+                if (!CanContinueJoin(attempt)) return false;
                 ConfigureClientHello();
 
                 bool ok = StartNetcode(() => _nm.StartHost(), "relay hosting");
@@ -1134,6 +1191,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (!CanContinueJoin(attempt)) return false;
                 IsRelay = false;
                 RelayJoinCode = null;
                 SetStatus($"relay allocation failed: {e.Message}");
@@ -1190,6 +1248,7 @@ namespace TumbangPreso.Net
                 if (!CanContinueJoin(attempt)) return false;
                 ConfigureClientHello();
                 bool ok = StartNetcode(() => _nm.StartClient(), "relay joining");
+                if (ok) _connectingAttempt = attempt;
                 if (ok) RegisterSeatHandler();
                 else
                 {
@@ -1240,11 +1299,21 @@ namespace TumbangPreso.Net
 
         public void Stop()
         {
+            if (!CancelPendingOperation()) StopCurrentTransport();
+        }
+
+        public bool CancelPendingOperation()
+        {
+            bool stopClient = _connectingAttempt.HasValue && _connectingAttempt.Value.OwnsSession &&
+                              _nm != null && _nm.IsListening && !_nm.IsServer;
             _joinAttempts.Invalidate();
-            StopCurrentTransport();
+            _connectingAttempt = null;
+            if (stopClient) StopCurrentTransport();
+            return stopClient;
         }
 
         private readonly JoinAttemptGate _joinAttempts = new JoinAttemptGate();
+        private JoinAttemptGate.Attempt? _connectingAttempt;
         private bool CanContinueJoin(JoinAttemptGate.Attempt attempt)
         {
             if (this == null) return false;
@@ -1261,6 +1330,7 @@ namespace TumbangPreso.Net
 
         private void StopCurrentTransport()
         {
+            _connectingAttempt = null;
             if (!_localShutdown) MatchRpc.Instance?.NotifyLocalPeerLeaving();
             _localShutdown = true;
             _everConnected = false;
@@ -1879,6 +1949,12 @@ namespace TumbangPreso.Net
             {
                 if (clientId == _nm.LocalClientId)
                 {
+                    if (_connectingAttempt.HasValue && !_connectingAttempt.Value.CanContinue &&
+                        _connectingAttempt.Value.OwnsSession)
+                    {
+                        StopCurrentTransport();
+                        return;
+                    }
                     _everConnected = true;
                     MatchRpc.Instance?.Initialize(_nm);
                     SetStatus("connected");
@@ -2001,8 +2077,10 @@ namespace TumbangPreso.Net
             // here as an ordinary disconnect, so a build-version mismatch, a full lobby and a
             // host that vanished were all one word: "disconnected". The player then has nothing
             // to act on, and a version mismatch in particular is a thing they CAN fix.
+            _connectingAttempt = null;
             string reason = _nm != null ? _nm.DisconnectReason : null;
-            SetStatus(string.IsNullOrWhiteSpace(reason) ? "disconnected" : $"disconnected: {reason}");
+            if (!_localShutdown)
+                SetStatus(string.IsNullOrWhiteSpace(reason) ? "disconnected" : $"disconnected: {reason}");
 
             // ⚠️⚠️ THE REASON IS REDUCED TO A CLASS BEFORE IT IS COUNTED, AND THE SENTENCE IS
             // NEVER SENT. `FUTURE.md` § 3 asks for a disconnect rate, which needs four or five

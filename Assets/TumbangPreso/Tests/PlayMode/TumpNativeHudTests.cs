@@ -1,9 +1,15 @@
 using System.Collections;
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
+using TumbangPreso.Abilities;
 using TumbangPreso.Core;
+using TumbangPreso.InputLayer;
+using TumbangPreso.Settings;
 using TumbangPreso.UI;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -163,6 +169,207 @@ namespace TumbangPreso.PlayTests
             hud.ExitSpectatorMode(); yield return null;
             Assert.IsTrue(canvas.transform.Find("LocalState").gameObject.activeSelf);
         }
+        [UnityTest]
+        public IEnumerator RootedPromptTracksLiveBindingsDevicesAndHeldProgress()
+        {
+            var actions = Resources.Load<InputActionAsset>("TumbangPreso");
+            string overrides = actions.SaveBindingOverridesAsJson();
+            var oldDevice = LastInputDevice.Current;
+            bool touchVisible = TouchHud.ForceVisible, touchActive = TouchInput.Active;
+            bool reducedMotion = SettingsStore.Current.ReducedUiMotion;
+            var oldMove = TouchInput.Move;
+            var inputSettings = InputSystem.settings;
+            var background = inputSettings.backgroundBehavior;
+            var editorInput = inputSettings.editorInputBehaviorInPlayMode;
+            inputSettings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            inputSettings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keyboard = InputSystem.AddDevice<Keyboard>();
+            var pad = InputSystem.AddDevice<Gamepad>();
+            InputSystem.EnableDevice(keyboard); InputSystem.EnableDevice(pad);
+            TouchHud.ForceVisible = true;
+            SettingsStore.Current.ReducedUiMotion = false;
+            try
+            {
+                yield return Open(GameMode.HeroStrike);
+                var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+                var reader = local.GetComponent<PlayerInputReader>();
+                Assert.IsNotNull(reader);
+                Assert.IsTrue(reader.isActiveAndEnabled, "The local seat needs an active hardware reader.");
+                Assert.AreSame(actions, typeof(PlayerInputReader).GetField("_actions", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .GetValue(reader), "The live binding and the reader must use the same input asset.");
+                var interactAction = actions.FindActionMap("Player", true).FindAction("Interact", true);
+                var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
+                var prompt = canvas.GetComponentsInChildren<Text>().First(t => t.name == "ActionPrompt");
+                var progress = canvas.GetComponentsInChildren<Image>(true).First(i => i.name == "ProgressFill");
+                var touch = Object.FindFirstObjectByType<TouchHud>();
+                var interact = touch.Buttons.First(b => b.Entry.Verb == Verb.Interact);
+                local.ApplyRooted(45);
+                TouchInput.ReleaseAll(); TouchInput.Active = false; TouchInput.Move = Vector2.zero;
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F9));
+                InputSystem.Update(); keyboard.MakeCurrent(); LastInputDevice.Sample();
+                yield return null;
+                Assert.That(prompt.text, Does.Contain(Hud.PressCue("Interact")).And.Contain("break free"));
+                Assert.IsTrue(progress.transform.parent.gameObject.activeSelf);
+
+                Assert.IsNull(Rebinding.TryRebind(actions, "Interact", keyboard.f10Key));
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F10));
+                yield return new WaitForSeconds(.4f);
+                Assert.AreEqual(InputDeviceKind.KeyboardMouse, LastInputDevice.Current);
+                Assert.AreEqual("Hold [F10]  to break free", prompt.text, "The existing prompt must refresh after a live rebind.");
+                Debug.Log($"[RootedInput] device={keyboard.enabled} key={keyboard.f10Key.isPressed} action={interactAction.enabled}/{interactAction.IsPressed()} reader={reader.isActiveAndEnabled} intent={local.Intent.Pressed(Verb.Interact)} parked={local.Intent.Parked} locked={local.Intent.Locked(Verb.Interact)} held={PresentationClock.Held} local={local.IsLocallySimulated()} rooted={local.IsRooted} progress={local.BreakFreeProgress:F3}");
+                Assert.IsTrue(keyboard.enabled && keyboard.f10Key.isPressed, "The synthetic F10 hold did not reach an enabled keyboard.");
+                Assert.IsTrue(interactAction.enabled && interactAction.IsPressed(), "The configured Interact action did not read the F10 hold.");
+                Assert.IsTrue(local.Intent.Pressed(Verb.Interact), "The reader did not publish an effective Interact hold; see RootedInput diagnostics.");
+                Assert.Greater(local.BreakFreeProgress, 0);
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+                yield return null; yield return new WaitForFixedUpdate(); yield return null;
+                float released = local.BreakFreeProgress;
+                yield return TumpUiCapture.Capture("CourtHud-rooted-keyboard", canvas, 1280, 720, false, true, checkActionBounds: true);
+                Assert.AreEqual(released, local.BreakFreeProgress, .001f, "Root escape keeps earned progress when released.");
+                Assert.AreEqual(local.BreakFreeProgress, progress.rectTransform.anchorMax.x, .01f);
+
+                Assert.IsNull(Rebinding.TryRebind(actions, "Interact", pad.rightStickButton));
+                InputSystem.QueueStateEvent(pad, new GamepadState().WithButton(GamepadButton.RightStick));
+                yield return new WaitForSeconds(.4f);
+                Assert.AreEqual(InputDeviceKind.Gamepad, LastInputDevice.Current);
+                Assert.Greater(local.BreakFreeProgress, released, "The prompted pad control must perform the hold.");
+                Assert.AreEqual("Hold " + Hud.PressCue("Interact") + "to break free", prompt.text);
+                InputSystem.QueueStateEvent(pad, new GamepadState());
+                yield return null;
+                yield return TumpUiCapture.Capture("CourtHud-rooted-pad", canvas, 960, 540, false, true, checkActionBounds: true);
+
+                TouchInput.Active = true; TouchInput.Move = Vector2.right; LastInputDevice.Sample();
+                TouchInput.Move = Vector2.zero;
+                yield return new WaitForSeconds(.15f);
+                Assert.AreEqual(InputDeviceKind.Touch, LastInputDevice.Current);
+                Assert.AreEqual("Hold to break free", prompt.text);
+                Assert.Greater(interact.transform.localScale.x, 1, "The touch Interact button must be visibly emphasised.");
+                float beforeTouch = local.BreakFreeProgress;
+                interact.SetHeld(true);
+                yield return new WaitForSeconds(.4f);
+                interact.SetHeld(false);
+                Assert.Greater(local.BreakFreeProgress, beforeTouch, "The prompted touch button must perform the hold.");
+                yield return TumpUiCapture.Capture("CourtHud-rooted-touch", canvas, 1280, 720, false, true,
+                    underlays: new[] { touch.Canvas }, checkActionBounds: true);
+
+                Hud.Instance.EnterSpectatorMode(); yield return null;
+                Assert.IsFalse(prompt.gameObject.activeInHierarchy, "Spectators must never see their former body's interaction prompt.");
+                Hud.Instance.ExitSpectatorMode(); yield return null;
+                Assert.IsTrue(prompt.gameObject.activeInHierarchy);
+                interact.SetHeld(true);
+                float deadline = Time.time + PaeteRules.BreakFreeHoldSeconds + .5f;
+                while (local.IsRooted && Time.time < deadline) yield return null;
+                interact.SetHeld(false); yield return null;
+                Assert.IsFalse(local.IsRooted, "Holding the prompted control must finish the escape.");
+                Assert.That(prompt.text, Does.Not.Contain("break free"));
+                Assert.IsFalse(progress.transform.parent.gameObject.activeSelf);
+            }
+            finally
+            {
+                actions.LoadBindingOverridesFromJson(overrides); Rebinding.Invalidate(); Rebinding.Save(actions);
+                TouchInput.ReleaseAll(); TouchInput.Active = touchActive; TouchInput.Move = oldMove;
+                TouchHud.ForceVisible = touchVisible; SettingsStore.Current.ReducedUiMotion = reducedMotion;
+                InputSystem.RemoveDevice(pad); InputSystem.RemoveDevice(keyboard);
+                inputSettings.backgroundBehavior = background; inputSettings.editorInputBehaviorInPlayMode = editorInput;
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { oldDevice });
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator CanResetTouchCueUsesTheActualReachAndRestoreSetting()
+        {
+            bool visible = TouchHud.ForceVisible, active = TouchInput.Active;
+            bool toggle = SettingsStore.Current.ToggleRestore, reduced = SettingsStore.Current.ReducedUiMotion;
+            var device = LastInputDevice.Current; var move = TouchInput.Move;
+            TouchHud.ForceVisible = true; SettingsStore.Current.ReducedUiMotion = false;
+            try
+            {
+                yield return Open(GameMode.HeroStrike);
+                var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+                local.GetComponent<PlayerInputReader>().enabled = false; local.Intent.Clear(); local.IsDefender = true;
+                var can = GameServices.Round.Lata;
+                float protectionDeadline = Time.time + 3;
+                while (can.IsProtected && Time.time < protectionDeadline) yield return null;
+                can.HostKnockDown((local.PlayerSlot + 1) % 4);
+                Assert.IsFalse(can.IsUpright);
+                var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
+                var prompt = canvas.GetComponentsInChildren<Text>().First(t => t.name == "ActionPrompt");
+                var touch = Object.FindFirstObjectByType<TouchHud>();
+                var grab = touch.Buttons.First(b => b.Entry.Verb == Verb.Grab);
+                TouchInput.Active = true; TouchInput.Move = Vector2.right; LastInputDevice.Sample(); TouchInput.Move = Vector2.zero;
+                local.Teleport(can.transform.position + Vector3.back * (Balance.InteractionRadius + 1));
+                yield return new WaitForSeconds(.35f);
+                Assert.AreEqual("Get close to the can to reset", prompt.text);
+                Assert.AreEqual(1, grab.transform.localScale.x, .001f, "An unreachable can must not pulse a dead action.");
+                local.Teleport(can.transform.position + Vector3.back * (Balance.InteractionRadius * .8f));
+                SettingsStore.Current.ToggleRestore = false;
+                yield return new WaitForSeconds(.2f);
+                Assert.AreEqual("Hold to reset the can", prompt.text);
+                Assert.Greater(grab.transform.localScale.x, 1);
+                SettingsStore.Current.ToggleRestore = true; yield return null;
+                Assert.AreEqual("Tap to reset the can", prompt.text);
+                local.Intent.Set(Verb.Grab, true); yield return new WaitForSeconds(.2f);
+                Assert.Greater(local.GetComponent<Carrier>().ChannelRatio, 0);
+                Assert.AreEqual("Resetting can · tap to cancel", prompt.text);
+                yield return TumpUiCapture.Capture("CourtHud-can-reset-touch", canvas, 1280, 720, false, true,
+                    underlays: new[] { touch.Canvas }, checkActionBounds: true);
+                local.Intent.Set(Verb.Grab, false); yield return null; yield return new WaitForFixedUpdate(); yield return null;
+                Assert.AreEqual(0, local.GetComponent<Carrier>().ChannelRatio);
+                Assert.AreEqual("Tap to reset the can", prompt.text);
+            }
+            finally
+            {
+                TouchInput.ReleaseAll(); TouchInput.Active = active; TouchInput.Move = move; TouchHud.ForceVisible = visible;
+                SettingsStore.Current.ToggleRestore = toggle; SettingsStore.Current.ReducedUiMotion = reduced;
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { device });
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator PlantPromptRequiresAnEligibleOpponentPlantAndTracksThePull()
+        {
+            yield return Open(GameMode.HeroStrike);
+            var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+            local.GetComponent<PlayerInputReader>().enabled = false;
+            local.Intent.Clear(); local.Intent.Parked = false;
+            var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
+            var prompt = canvas.GetComponentsInChildren<Text>().First(t => t.name == "ActionPrompt");
+            var progress = canvas.GetComponentsInChildren<Image>(true).First(i => i.name == "ProgressFill");
+            Vector3 near = local.transform.position + Vector3.forward;
+            int enemy = (local.PlayerSlot + 1) % 4;
+            var plant = PaetePlant.Restore(near, local.PlayerSlot, PaeteRules.PlantRootedSeconds + 1, 3);
+            yield return null;
+            Assert.That(prompt.text, Does.Not.Contain("pull it out"), "The owner cannot uproot their own plant.");
+            Object.Destroy(plant.gameObject); yield return null;
+            plant = PaetePlant.Restore(near, enemy, 1, 3);
+            yield return null;
+            Assert.That(prompt.text, Does.Not.Contain("pull it out"), "The initial protected period has no available pull action.");
+            Object.Destroy(plant.gameObject); yield return null;
+            plant = PaetePlant.Restore(local.transform.position + Vector3.forward * (PaeteRules.PlantPullReach + .1f),
+                enemy, PaeteRules.PlantRootedSeconds + 1, 3);
+            yield return null;
+            Assert.That(prompt.text, Does.Not.Contain("pull it out"), "The host's network tolerance is not local interaction reach.");
+            plant.transform.position = near;
+            yield return null;
+            Assert.That(prompt.text, Does.Contain("pull it out"));
+            local.Intent.Set(Verb.Interact, true);
+            yield return new WaitForSeconds(.35f);
+            Assert.Greater(local.PullingPlantProgress, 0);
+            Assert.AreEqual(local.PullingPlantProgress, progress.rectTransform.anchorMax.x, .05f);
+            local.Intent.Set(Verb.Interact, false);
+            yield return null; yield return null;
+            Assert.AreEqual(0, local.PullingPlantProgress, .001f, "Unlike root escape, releasing an uproot resets its progress.");
+            Assert.IsFalse(progress.enabled);
+            yield return TumpUiCapture.Capture("CourtHud-pull-available", canvas, 1280, 720, false, true, checkActionBounds: true);
+            local.Intent.Set(Verb.Interact, true);
+            float deadline = Time.time + PaeteRules.PlantPullSeconds + .5f;
+            while (plant != null && !plant.IsPulled && Time.time < deadline) yield return null;
+            local.Intent.Set(Verb.Interact, false); yield return null;
+            Assert.IsTrue(plant == null || plant.IsPulled);
+            Assert.That(prompt.text, Does.Not.Contain("pull it out"));
+            Assert.IsFalse(progress.transform.parent.gameObject.activeSelf);
+        }
+
         private static IEnumerator Open(GameMode mode)
         {
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));

@@ -1163,10 +1163,13 @@ namespace TumbangPreso.EditorTools
                 scenes = scenes,
                 locationPathName = outputPath,
                 target = target,
-                options = BuildOptions.None,
+                options = Environment.GetCommandLineArgs().Any(arg =>
+                    string.Equals(arg, "-developmentBuild", StringComparison.OrdinalIgnoreCase))
+                    ? BuildOptions.Development | BuildOptions.ConnectWithProfiler
+                    : BuildOptions.None,
             };
 
-            Debug.Log($"[Build] building {scenes.Length} scenes to {outputPath}");
+            Debug.Log($"[Build] building {scenes.Length} scenes to {outputPath} ({options.options})");
             foreach (var s in scenes) Debug.Log($"[Build]   {s}");
 
             BuildReport report = BuildPipeline.BuildPlayer(options);

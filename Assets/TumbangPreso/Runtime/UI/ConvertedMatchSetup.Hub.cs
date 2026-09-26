@@ -42,7 +42,7 @@ namespace TumbangPreso.UI
         }
 
         private TumpHub _hubView;
-        private string _lastJoinStatus = "";
+        private int _roomRequest;
 
         private void InstallHubView()
         {
@@ -132,6 +132,7 @@ namespace TumbangPreso.UI
         public async Task<string> HostRoom(string title, string map, GameMode mode, RoomVisibility visibility, bool online)
         {
             LeaveRoom();
+            int request = _roomRequest;
             NetSession.RoomTitle = title ?? "";
             NetSession.RoomMap = map ?? "";
             NetSession.RoomVisibility = (int)visibility;
@@ -143,7 +144,7 @@ namespace TumbangPreso.UI
             var net = NetSession.Ensure();
             int port = NetBootstrap.LobbyPort > 0 ? NetBootstrap.LobbyPort : LobbySession.DefaultPort;
             bool ok = online ? await net.StartRelayHost() : await net.StartHostAsync(port);
-            if (this == null) return "";
+            if (this == null || request != _roomRequest) return "Room request cancelled.";
             if (!ok)
             {
                 string reason = ReasonFor(net, online ? "Could not open an online room." : "Could not open a room on your network.");
@@ -163,26 +164,31 @@ namespace TumbangPreso.UI
         {
             if (_joinPanel == null) return "The join path is not ready yet.";
             LeaveRoom();
+            int request = _roomRequest;
             SceneFlow.Networked = true;
             _ownerRoute = LobbyMode.Custom;
-            _lastJoinStatus = "";
-            _joinPanel.Status += NoteJoinStatus;
+            string status = "";
+            var panel = _joinPanel;
+            void NoteStatus(string line) { if (request == _roomRequest) status = line; }
+            panel.Status += NoteStatus;
             bool ok;
-            try { ok = await _joinPanel.AutomationJoin(codeOrAddress); }
-            finally { if (_joinPanel != null) _joinPanel.Status -= NoteJoinStatus; }
-            if (this == null) return "";
+            try { ok = await panel.AutomationJoin(codeOrAddress); }
+            finally { if (panel != null) panel.Status -= NoteStatus; }
+            if (this == null || request != _roomRequest) return "Room request cancelled.";
             if (ok) return "";
             SceneFlow.Networked = false;
-            return string.IsNullOrWhiteSpace(_lastJoinStatus) ? "Could not join that room." : _lastJoinStatus;
+            return string.IsNullOrWhiteSpace(status) ? "Could not join that room." : status;
         }
-
-        private void NoteJoinStatus(string line) => _lastJoinStatus = line;
 
         public void LeaveRoom()
         {
+            _roomRequest++;
+            if (_joinPanel != null) _joinPanel.Close();
             if (HubQueueWatch.QueueRoom || (Matchmaker.Current != null && Matchmaker.Current.IsQueueing)) CancelQueue();
             var net = NetSession.Instance;
-            if (net != null && net.IsNetworked) net.Stop();
+            // A pending Relay allocation is not networked yet, but still owns a
+            // continuation that must be cancelled when the player leaves.
+            if (net != null) net.Stop();
             SceneFlow.Networked = false;
             NetSession.ClearRoomSettings();
             _localReady = false;

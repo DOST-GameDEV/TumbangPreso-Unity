@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace TumbangPreso.UI
@@ -19,7 +20,20 @@ namespace TumbangPreso.UI
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class TumpAbilitySymbol : MaskableGraphic
     {
-        public AbilityGlyph Glyph;
+        [SerializeField, FormerlySerializedAs("Glyph")]
+        private AbilityGlyph _glyph;
+
+        public AbilityGlyph Glyph
+        {
+            get => _glyph;
+            set
+            {
+                if (_glyph == value) return;
+                _glyph = value;
+                SetVerticesDirty();
+                SetMaterialDirty();
+            }
+        }
         public bool HudStyle;
 
         /// <summary>
@@ -92,6 +106,10 @@ namespace TumbangPreso.UI
         {
             switch (Glyph)
             {
+                case AbilityGlyph.ComingSoon:
+                    Ring(vh, 0, 0, .32f);
+                    P(vh, -.16f, 0, .16f, 0);
+                    break;
                 case AbilityGlyph.DanteStomp: case AbilityGlyph.Slam:
                     P(vh,-.18f,.38f,-.18f,-.02f,.25f,-.02f,.32f,-.16f,-.30f,-.16f);
                     P(vh,-.38f,-.34f,-.12f,-.27f,.05f,-.39f,.36f,-.25f); break;

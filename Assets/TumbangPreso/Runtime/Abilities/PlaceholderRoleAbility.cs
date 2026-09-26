@@ -15,7 +15,7 @@ namespace TumbangPreso.Abilities
         public PlaceholderRoleAbility(string id, string heroName, AbilityGlyph glyph)
             : base(id, "COMING SOON",
                    "Defending. " + heroName + "'s defending skill is still being designed. For now it does nothing.",
-                   10.0f, 0.0f, glyph,
+                   10.0f, 0.0f, AbilityGlyph.ComingSoon,
                    summary: "Being designed. Does nothing yet.") { }
     }
 }

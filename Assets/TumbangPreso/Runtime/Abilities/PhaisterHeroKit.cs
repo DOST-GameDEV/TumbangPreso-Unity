@@ -269,8 +269,8 @@ namespace TumbangPreso.Abilities
 
             public CurseDisoriented()
                 : base("phaister_skill2", "CURSE: DISORIENTED",
-                       "Attacking. Hold to aim, release to throw a cursed doll. Whoever it strikes sees things that are not there, mixed with things that are.",
-                       VoodooRules.DisorientCooldown, 0.0f, AbilityGlyph.PhaisterHexSigil,
+                       "Attacking. Aim and throw a cursed doll. Its target sees real threats mixed with hallucinations.",
+                       VoodooRules.DisorientCooldown, 0.0f, AbilityGlyph.PhaisterCursedDoll,
                        summary: "Throw a cursed doll. The one it hits hallucinates.",
                        telegraphRadius: VoodooRules.DollHitRadius, telegraphRange: VoodooRules.DollMaxRange,
                        castAction: "hero-phaister-hex", viewmodelAction: "cast-hex",
@@ -296,8 +296,8 @@ namespace TumbangPreso.Abilities
         {
             public CurseVulnerable()
                 : base("phaister_skill2d", "CURSE: VULNERABLE",
-                       "Defending. Drive a pin through the doll: every attacker in front of you is Vulnerable for 5 s. Taggable from further, and you may leave the box to tag them.",
-                       VoodooRules.VulnerableCooldown, 0.0f, AbilityGlyph.PhaisterEclipse,
+                       "Defending. Pin the doll: attackers in front are Vulnerable for 5 s. Tag them from farther away or outside the box.",
+                       VoodooRules.VulnerableCooldown, 0.0f, AbilityGlyph.PhaisterVulnerable,
                        summary: "Curse the attackers in front of you. Tag them anywhere.",
                        telegraphRadius: VoodooRules.VulnerableConeRange * 0.5f, telegraphRange: VoodooRules.VulnerableConeRange * 0.5f,
                        castAction: "hero-phaister-hex", viewmodelAction: "cast-hex",
@@ -331,7 +331,7 @@ namespace TumbangPreso.Abilities
 
             public Higop()
                 : base("phaister_ultimate", "HIGOP",
-                       "Slowly call a black hole where you aim. For 5 s it swallows every other player and every slipper but yours toward its heart. Run, and it drags you back.",
+                       "Aim a black hole. For 5 s it pulls other players and their slippers toward its heart, even as they run away.",
                        0.0f, VoodooRules.HigopSeconds, AbilityGlyph.PhaisterEclipse,
                        summary: "A black hole drags every player and slipper to it.",
                        telegraphRadius: VoodooRules.HigopRadius, telegraphRange: VoodooRules.HigopMaxRange,

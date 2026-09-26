@@ -373,6 +373,13 @@ namespace TumbangPreso.UI
                 _context.text = local.StunMashPresses + " / " + local.StunBreakPresses + " presses";
                 if (local.CanMashOutOfStun && Hud.OnTouch) TouchHud.Emphasise(Verb.Jump); return;
             }
+            // The native HUD bypasses Hud.UpdateInteractPrompt, so recovery from
+            // Paete's roots must be represented on this live action surface too.
+            if (local.IsRooted)
+            {
+                InteractPrompt("break free", local.BreakFreeProgress);
+                return;
+            }
             if (BufferSkipVote.Showing)
             {
                 _prompt.text = Hud.PressCue("ReadyUp") + "Skip warmup";
@@ -390,14 +397,23 @@ namespace TumbangPreso.UI
                 if(Hud.OnTouch)TouchHud.Emphasise(Verb.Skill2);
                 return;
             }
+            if (PlantPrompt(local)) return;
             if (local.IsDefender && round.Lata != null && !round.Lata.IsUpright)
             {
+                if (!local.CanAct()) return;
+                if (carrier == null || !carrier.HasResetTarget)
+                {
+                    _prompt.text = "Get close to the can to reset";
+                    return;
+                }
                 bool toggle = Settings.SettingsStore.Current.ToggleRestore;
-                string key = Hud.KeyLabelFor("Grab");
-                _prompt.text = carrier != null && carrier.ChannelRatio > 0
-                    ? toggle ? "Resetting can · press " + key + " to cancel" : "Resetting can"
-                    : (toggle ? "Press " : "Hold ") + key + " at the can to reset";
-                if (carrier != null && carrier.ChannelRatio > 0) Progress(carrier.ChannelRatio); return;
+                string cue = Hud.PressCue("Grab");
+                _prompt.text = carrier.ChannelRatio > 0
+                    ? toggle ? "Resetting can · " + (Hud.OnTouch ? "tap" : "press " + cue.TrimEnd()) + " to cancel" : "Resetting can"
+                    : (toggle ? Hud.OnTouch ? "Tap to reset the can" : "Press " + cue + "to reset the can"
+                              : Hud.OnTouch ? "Hold to reset the can" : "Hold " + cue + "to reset the can");
+                if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
+                if (carrier.ChannelRatio > 0) Progress(carrier.ChannelRatio); return;
             }
             // ⚠️ VISUAL-1.6: CHARGING SAYS NOTHING HERE. The charge ring, the pektus tick and
             // the grey refused state are on the reticle (`HudReticle`), where the eye already
@@ -451,6 +467,36 @@ namespace TumbangPreso.UI
         {
             var visual=local!=null?local.GetComponent<Visual.CharacterVisual>():null;
             return visual!=null&&visual.Companion!=null&&visual.Companion.IsPossessed;
+        }
+        private string _interactAction, _interactBinding, _interactText;
+
+        private void InteractPrompt(string action, float progress)
+        {
+            string binding = Hud.PressCue("Interact");
+            if (_interactAction != action || _interactBinding != binding)
+            {
+                _interactAction = action; _interactBinding = binding;
+                _interactText = "Hold " + binding + "to " + action;
+            }
+            _prompt.text = _interactText;
+            Progress(progress);
+            if (Hud.OnTouch) TouchHud.Emphasise(Verb.Interact);
+        }
+
+        private bool PlantPrompt(CharacterMotor local)
+        {
+            if (!local.CanAct()) return false;
+            float reachSquared = PaeteRules.PlantPullReach * PaeteRules.PlantPullReach;
+            foreach (var plant in Abilities.PaetePlant.Live)
+            {
+                if (plant == null || plant.OwnerSlot == local.PlayerSlot || !plant.Landed || !plant.Pullable) continue;
+                Vector3 offset = plant.transform.position - local.transform.position;
+                offset.y = 0;
+                if (offset.sqrMagnitude > reachSquared) continue;
+                InteractPrompt("pull it out", local.PullingPlantProgress);
+                return true;
+            }
+            return false;
         }
         private void Progress(float ratio)
         { _progress.transform.parent.gameObject.SetActive(true); _progress.enabled = ratio > .001f; _progress.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(ratio), 1); }
