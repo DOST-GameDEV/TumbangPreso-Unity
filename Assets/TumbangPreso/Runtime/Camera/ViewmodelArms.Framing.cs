@@ -77,6 +77,13 @@ namespace TumbangPreso.CameraSystem
             return true;
         }
 
+        /// <summary>The two drawn arms (HERO-9 v5: Paete's channel lights his own hands in first person, `Visual.PaeteChannelGlow`).</summary>
+        public bool TryArmRenderers(out MeshRenderer left, out MeshRenderer right)
+        {
+            left = _leftArmRenderer; right = _rightArmRenderer;
+            return left != null && right != null && left.gameObject.activeInHierarchy && right.gameObject.activeInHierarchy;
+        }
+
         private void OnEnable(){Camera.onPreCull+=BeginViewFrame;Camera.onPostRender+=EndViewFrame;}
         private void OnDisable()
         {

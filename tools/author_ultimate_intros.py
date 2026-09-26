@@ -742,91 +742,106 @@ def amihan():
 @performance
 def paete():
     """
-    MAKILING'S EMBRACE, 4.6 s. ⚠️⚠️ v4, THREE SHOTS (owner, 2026-09-26, after the first in-match film,
-    `paete_ultimate_v3.mp4`: *"ur direction of the entire cutscene sucks"*, *"i dont get what the 3 plants
-    showing up and the big plant showing up means"*, *"make his eyes glow or smth"*; then *"thoroughly think abt
-    how everything should look and direct his cutscene"*). direction.md section 5.13 is the shot list.
+    MAKILING'S EMBRACE, 5.0 s. ⚠️⚠️ v5, CALLED FROM THE GROUND (owner, 2026-09-26 night, on the v4 film: *"i also dont like
+    that paete just throws seeds in his ult"*, *"REDIRECT IT I WANNT IT TO LOOK LIKE HE GOES TO THE GHHROUND AND HIS ROOTS CONNECT
+    TO IT AND HE IS CHANNELLING HIS POWER AND HE GLOWS AND SHIT AND THEN HIS ROOTS TRAVEL TO THE GROUND AND THEN THE tree slowly show
+    up"*, then *"dont go past 5 seconds for cutscene and u can make some parts of it faster thoroughly think abt which parts should be
+    faster"*). direction.md section 5.14 is the design; this is its body and its three shots.
 
-    ONE LIGHT, ONE JOURNEY. The eye follows a single light: it leaves Mariang Makiling's hands, enters his,
-    lights his eyes, goes down his arms into the court, races under it as three veins, and comes up as the
-    guardian's eyes. Each shot carries one leg of that journey and nothing that does not; the camera moves
-    the way the light moves, and the light always travels screen LEFT to RIGHT (she stands behind his RIGHT
-    shoulder and every camera stays on that side of the line between them).
+    His sentence is five beats and each is in the body here: he GOES TO THE GROUND (down on the right knee, both palms flat on the
+    court, a slam at 1.22); his ROOTS CONNECT (1.25 to 1.6: pressed down while they dig in); he CHANNELS (1.6 to 2.3: bowed over his
+    hands, three quickening pulses, each a punch that drives his shoulders down and lets them rise); his ROOTS TRAVEL (2.32: one
+    push down into the court as they leave, his head lifting after them); the TREE SLOWLY SHOWS UP (2.75 to 4.5: he stays down,
+    joined to the ground, and heaves with each of its three hauls, his head rising to it; the last beat is its eyes).
 
-    1 CALL (0 to 1.4): she gives him her light. Front, low three-quarter, one slow push-in. He stands, calm,
-       head bowed, and lifts his cupped hands; she rises out of the mist behind him and bends over him; the
-       light drops from her hands into his (0.72 to 0.86) and at 0.95 HIS EYES IGNITE and stay lit. The jolt
-       lifts his chest and head; then he gathers himself up (1.32), the anticipation of the slam.
-    2 CONNECT (1.4 to 2.7): he gives it to the ground. A high crane on his right, looking down, drifting
-       along the court with the light. He drops to one knee and slams both palms into the court (1.5, the
-       punch); roots burst round his hands and dive back into the court; three veins of light race under the
-       road to where the tree will stand, and from above you see them go.
-    3 RISE (2.7 to 4.6): the ground answers. Wide and low from his front right, him small on the left, the
-       landing on the right, craning up with the tree. He rises, arms high; she pours herself into the ground
-       ahead as a stream of light (2.72 to 3.0); the court breaks and the guardian screws up to its full 9 m,
-       him heaving it up with both arms (3.05); it ends on its eyes lighting.
+    WHAT GOT FASTER AND WHY. Her arrival and gift, 1.4 s to 1.1 s: the owner asked for her full form to be brief, and she is the
+    setup, not the power. The drop to the ground, a 0.12 s fall: a tree deciding to act commits at once (direction.md section 0).
+    The roots' race, 0.45 s: speed reads as force, and play uses the same 0.45 s. HELD: the channel, the part he asked to see.
+    SLOWER: the tree, which he asked to come up slowly (0.5 s to its eyes became 1.75 s).
 
-    The live clip (`hero-paete-sentry`) STARTS from the raised pose this ends in and closes it into the embrace.
+    ⚠️ HE ENDS DOWN ON HIS KNEE, HANDS IN THE COURT. The live clip (`hero-paete-sentry`) starts from exactly this pose, so the hand-back
+    from the cutscene to play does not jump: in play the roots leave his hands, the tree crawls out, and only then does he stand.
     """
-    p = Performance("paete", 4.6)
+    p = Performance("paete", 5.0)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     # CALL. He stands calm (the owner's "nonchalant calm"), head a little bowed, arms loose.
     stand = Pose(torso=(3, 0, 0), head=(12, 0, 0), left=(6, 20, 0), right=(6, 20, 0), legs=((0, 8), (0, 8)))
     breath = stand.but(torso=(1, 0, 0), head=(9, 0, 0))
-    # ⚠️ HE RECEIVES IT IN ONE OPEN HAND, HIS LEFT (his story: "when one tree is not enough, he opens his hand,
-    # and she puts a seed in it"). Both hands cupped at the chest cannot be drawn on his long single-bone vine
-    # arms: the storyboard showed two arms sticking straight out at shoulder width. The LEFT because the right
-    # may be holding a slipper (`CopyHeldItem`), which the introduction keeps in his hand.
+    # ⚠️ HE RECEIVES IT IN ONE OPEN HAND, HIS LEFT (v4's finding: two cupped hands cannot be drawn on his long single-bone vine arms,
+    # and the right may be holding a slipper, which the introduction keeps in his hand).
     offer = Pose(torso=(4, -6, 0), head=(20, -14, 0), left=(96, 18, 14), right=(4, 22, 0), legs=((0, 8), (0, 8)))
-    # The light lands in it: its weight dips the hand and the shoulder a touch.
     receive = offer.but(torso=(7, -6, 0), head=(24, -14, 0), left=(88, 18, 14))
-    # IGNITION (0.97): the light goes into him; the chest opens, the head comes up, the hand lifts with it.
+    # IGNITION (0.78): the light goes into him; the chest opens, the head comes up, the hand lifts with it.
     ignite = Pose(torso=(-8, -2, 0), head=(-6, -4, 0), left=(104, 20, 10), right=(10, 28, 0), legs=((0, 9), (0, 9)))
-    # The anticipation of the slam: up and back, the charged hand raised high, the other arm swung back.
-    gather = Pose(torso=(-12, -8, 0), head=(-14, -6, 0), left=(152, 22, 0), right=(-24, 34, 0), legs=((10, 10), (-6, 10)))
-    # CONNECT: down on the right knee, trunk pitched over, the LEFT palm slammed flat on the court, the right arm
-    # thrown back and out for balance (a hero landing; nothing in the right hand touches the ground).
-    kneel = Pose(torso=(36, -10, 0), head=(18, -6, 0), left=(40, 14, 8), right=(-40, 46, 0), legs=((52, 6), (-28, 6)))
-    press = kneel.but(torso=(41, -12, 2), head=(24, -8, 0), left=(44, 16, 8), right=(-34, 50, 0))
-    # RISE: coming up, arms sweeping up past his face, hauling something heavy out of the ground.
-    haul = Pose(torso=(8, 0, 0), head=(-6, 0, 0), left=(110, 28, 0), right=(110, 28, 0), legs=((24, 8), (-12, 8)))
-    # Arms high in a V, chest open, head back, as the tree comes up.
-    raised = Pose(torso=(-14, 0, 0), head=(-24, 0, 0), left=(162, 42, 0), right=(162, 42, 0), legs=((10, 10), (-6, 10)))
-    # The heave: as the court breaks (3.0) he drives both arms higher, lifting the guardian out of the ground.
-    heave = raised.but(torso=(-19, 0, 0), head=(-31, 0, 0), left=(172, 36, 0), right=(172, 36, 0))
+    # The breath before the drop: up onto the toes, both hands lifting a little, the head coming down to the court.
+    gather = Pose(torso=(-6, 0, 0), head=(10, 0, 0), left=(64, 24, 6), right=(64, 24, 6), legs=((6, 10), (-4, 10)))
+    # GROUND (1.22, the slam): down on the right knee, the trunk pitched over, BOTH palms flat on the court about a metre in
+    # front of him and shoulder-width apart, so the roots can spread round them. ⚠️ SOLVED, NOT GUESSED: these rigs have no
+    # knees and the engine grounds every frame on the lowest vertex before adding the lift (`GroundIntroduction`), so the kneel
+    # is the legs swung apart and sunk 0.34 m into the court, and each arm angle below was solved against the real glb so the
+    # palms land 0 to 5 cm above the court after that sink (a first guess put them 0.3 m UNDER it).
+    legs = ((54, 7), (-30, 7))
+    plant = Pose(torso=(28, 0, 0), head=(26, 0, 0), left=(69, 5, 14), right=(69, 5, 14), legs=legs)
+    # CONNECT: pressing down into the court while the roots dig in, the shoulders dropped, the head down to the hands.
+    press = plant.but(torso=(32, 0, 0), head=(32, 0, 0), left=(74, 5, 14), right=(74, 5, 14))
+    # CHANNEL: bowed over his hands. Each pulse drives the shoulders down (the punch) and lets them rise again.
+    bow = plant.but(torso=(30, 0, 0), head=(36, 0, 0), left=(72, 5, 14), right=(72, 5, 14))
+    pulse = plant.but(torso=(35, 0, 0), head=(30, 0, 0), left=(78, 5, 14), right=(78, 5, 14))
+    # SEND (2.32): one push down into the court as the roots leave; then the head lifts after them toward the spot.
+    send = plant.but(torso=(38, 0, 0), head=(18, 0, 0), left=(82, 5, 14), right=(82, 5, 14))
+    watch = plant.but(torso=(24, 0, 0), head=(-10, 0, 0), left=(64, 5, 14), right=(64, 5, 14))
+    # THE HEAVES: with each haul of the tree his shoulders drive UP and back and his hands lift 12 cm, pulling on the roots
+    # that are still in the court: he is lifting it up through the ground. Between hauls he sinks back onto his hands.
+    heave = plant.but(torso=(15, 0, 0), head=(-22, 0, 0), left=(59, 5, 14), right=(59, 5, 14))
+    settle = plant.but(torso=(22, 0, 0), head=(-16, 0, 0), left=(62, 5, 14), right=(62, 5, 14))
+    # THE EYES: the head up to it, the chest lifted, still kneeling, hands still in the court.
+    awe = plant.but(torso=(20, 0, 0), head=(-36, 0, 0), left=(60, 5, 14), right=(60, 5, 14))
 
     p.key(0, rest)
-    p.key(.22, stand)
-    p.hold(.22, .40, breath)
-    p.key(.60, offer)
-    p.hold(.60, .84, offer)
-    p.key(.90, receive)
-    p.key(.97, ignite, punch=True)
-    p.hold(.97, 1.16, ignite)
-    p.key(1.34, gather)
-    p.key(1.5, kneel, punch=True)
-    p.hold(1.5, 1.9, kneel)
-    p.hold(1.9, 2.32, press)
-    p.key(2.45, haul)
-    p.key(2.62, raised, punch=True)
-    p.hold(2.62, 2.92, raised)
-    p.key(3.05, heave, punch=True)
-    p.hold(3.05, 3.5, heave)
-    p.key(3.85, raised)
-    p.hold(3.85, 4.6, raised)
-    # The body rises onto its toes in the gather, sinks to the knee, and comes back up with the summon.
-    p.rise(0, 0.0).rise(1.18, 0.0).rise(1.34, 0.04).rise(1.5, -0.34).rise(2.3, -0.36).rise(2.62, 0.05).rise(3.0, 0.0)
+    p.key(.18, stand)
+    p.hold(.18, .32, breath)
+    p.key(.46, offer)
+    p.hold(.46, .64, offer)
+    p.key(.70, receive)
+    p.key(.78, ignite, punch=True)
+    p.hold(.78, .94, ignite)
+    p.key(1.08, gather)
+    p.key(1.22, plant, punch=True)
+    p.key(1.34, press)
+    p.hold(1.34, 1.6, press)
+    p.key(1.66, bow)
+    p.key(1.72, pulse, punch=True)
+    p.key(1.86, bow)
+    p.key(1.96, pulse, punch=True)
+    p.key(2.06, bow)
+    p.key(2.14, pulse, punch=True)
+    p.key(2.22, bow)
+    p.key(2.32, send, punch=True)
+    p.key(2.5, send)
+    p.key(2.72, watch)
+    p.key(3.0, settle)
+    p.key(3.15, heave, punch=True)
+    p.key(3.4, settle)
+    p.key(3.55, heave, punch=True)
+    p.key(3.8, settle)
+    p.key(3.95, heave, punch=True)
+    p.key(4.25, awe)
+    p.hold(4.25, 5.0, awe)
+    # The body goes down onto the knee with the slam and stays down to the end (and into play).
+    p.rise(0, 0.0).rise(1.08, 0.03).rise(1.22, -0.34).rise(5.0, -0.34)
     # 1 CALL. Front, low three-quarter from his right, one slow push-in, her head held above his.
-    p.shot(0, 1.4, (2.1, .72, 4.8), (.45, 2.05, -.5), 44, eye_to=(1.75, .85, 4.1), look_to=(.45, 2.15, -.5), fov_to=42)
-    # 2 CONNECT. Close and high on his right as the palm lands, then the crane recoils up and back with the impact
-    # and drifts along the court with the veins, ending with him at the left edge and the landing right of centre.
-    p.shot(1.4, 2.7, (3.0, 3.5, -.3), (-.25, .35, .6), 50, eye_to=(5.0, 4.8, 2.3), look_to=(0, .15, 3.6))
-    # 3 RISE, one continuous shot in three moves (no cut between them): held wide and low while she pours into the
-    # court; craning up and back as the guardian erupts (3.0) so all 9 m of it is in frame by the time it tops out;
-    # then a slow push toward its face as its eyes light (4.0).
-    p.shot(2.7, 3.0, (7.9, .55, 5.0), (.2, 1.3, 2.6), 56)
-    p.shot(3.0, 3.9, (7.9, .55, 5.0), (.2, 1.3, 2.6), 56, eye_to=(9.4, 2.4, 6.2), look_to=(.1, 4.0, 2.8), fov_to=64)
-    p.shot(3.9, 4.6, (9.4, 2.4, 6.2), (.1, 4.0, 2.8), 64, eye_to=(9.8, 3.3, 6.6), look_to=(.15, 4.6, 3.2), fov_to=64)
+    p.shot(0, 1.1, (2.1, .72, 4.8), (.45, 2.05, -.5), 44, eye_to=(1.8, .84, 4.2), look_to=(.45, 2.15, -.5), fov_to=42)
+    # 2 ROOT. Close and low on his front right at kneel height, a slow push-in toward his hands and face: the drop, the roots
+    # digging in, the channel. Her reaching hands are the top of the frame; she is the light, he is the subject.
+    # ⚠️ Wider than first cut (`PaeteSpiritReviewProbe` v4): she is directly behind him, bent over him, and her hands and face are
+    # the top of this frame; he, his hands on the court and his roots are the bottom. It pushes in toward his hands as he channels.
+    p.shot(1.1, 2.3, (2.5, 1.3, 3.6), (.05, 1.35, .2), 50, eye_to=(1.9, 1.05, 2.8), look_to=(0, 1.15, .4), fov_to=46)
+    # 3 RISE, one continuous shot in three moves (no cut): held wide and low while the roots cross the frame from him (left) to
+    # the spot (right); craning up and back through the three heaves so the whole 9 m is in by the time it tops out; then a slow
+    # push toward its face as its eyes light (4.5).
+    p.shot(2.3, 2.75, (8.6, 1.35, 5.6), (.2, 1.0, 3.1), 56, eye_to=(8.7, 1.4, 5.7), look_to=(.2, 1.05, 3.2))
+    p.shot(2.75, 4.3, (8.7, 1.4, 5.7), (.2, 1.05, 3.2), 56, eye_to=(9.6, 2.6, 6.8), look_to=(.1, 3.9, 3.4), fov_to=64)
+    p.shot(4.3, 5.0, (9.6, 2.6, 6.8), (.1, 3.9, 3.4), 64, eye_to=(9.9, 3.3, 7.1), look_to=(.15, 4.5, 3.6), fov_to=64)
     # Reduced motion: one wide locked shot that holds him, her and the landing.
     p.locked((9.2, 2.2, 6.0), (.2, 3.1, 2.8), 64)
     return p

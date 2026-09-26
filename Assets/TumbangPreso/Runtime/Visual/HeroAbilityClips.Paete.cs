@@ -46,7 +46,11 @@ namespace TumbangPreso.Visual
                 BuildPaeteVine(paths), BuildPaeteSprout(paths), BuildPaeteCommand(paths), BuildPaeteThorns(paths),
                 BuildPaeteSentry(paths),
             };
-            foreach (var clip in clips) GroundIntroduction(clip, root, paths["root"], anchorToRest: true);
+            // ⚠️ THE ULTIMATE KNEELS, SO IT CARRIES ITS OWN LIFT. Every clip here is grounded frame by frame on its lowest vertex,
+            // which would stand a kneel back up; the introduction solves the same thing with its `lift` table, and this clip takes
+            // the same 0.34 m sink until he stands (`PaeteSentryLift`).
+            foreach (var clip in clips)
+                GroundIntroduction(clip, root, paths["root"], anchorToRest: true, lift: clip.name == "hero-paete-sentry" ? (System.Func<float, float>)PaeteSentryLift : null);
             return clips;
         }
 
@@ -164,27 +168,53 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// MAKILING'S EMBRACE, 1.3 s. ⚠️ IT STARTS WHERE THE INTRODUCTION ENDS, ON THE RAISED POSE
-        /// (`tools/author_ultimate_intros.py` `paete`: since 2026-09-26 he calls the tree up through the ground,
-        /// kneeling, then rising with both arms high; he no longer throws). Then:
-        ///  * raised (0 to 0.34): arms high in a V, head back, lifting a little further as the tree bursts;
-        ///  * the embrace (0.72, punch): the branches take them and he CLOSES HIS ARMS, crossing them over the
-        ///    chest, the trunk curling forward, hauling everyone in; held while they are dragged;
-        ///  * release, straightening.
+        /// MAKILING'S EMBRACE IN PLAY, 3.0 s. ⚠️⚠️ v5 (owner, 2026-09-26 night: *"i also dont like that paete just throws seeds in his
+        /// ult"*, *"REDIRECT IT ... HE GOES TO THE GHHROUND AND HIS ROOTS CONNECT TO IT AND HE IS CHANNELLING HIS POWER ... AND THEN HIS
+        /// ROOTS TRAVEL TO THE GROUND AND THEN THE tree slowly show up"*; direction.md 5.14). It STARTS WHERE THE INTRODUCTION ENDS: down
+        /// on his right knee, both palms on the court, head up (`tools/author_ultimate_intros.py` `paete`, the `awe` key), so the hand-back
+        /// from the cutscene does not jump. Then, in step with the live tree (`PaeteSentryBody`'s CRAWL, whose roots arrive 0.45 s in):
+        ///  * the push (0.05, punch): shoulders driven down as his roots leave for the spot, then bowed over his hands, looking after them;
+        ///  * the grip (0.75, punch): his hands clench in the court as the tree's claws take them;
+        ///  * the heaves (0.85, 1.25, 1.65, punches): shoulders up and back, hands lifting against the roots, with each haul of the tree;
+        ///  * the rise (2.05, punch): up off the knee, hands torn out of the court, arms high as the crown tops out;
+        ///  * the embrace (2.3, punch): arms crossed over the chest as the tree closes on its captives; then the settle.
+        /// The kneel is the introduction's solved pose (palms 0 to 5 cm over the court after the 0.34 m sink); walking cancels it
+        /// (`PaeteGroundCall`), because an animation never roots anyone.
         /// </summary>
         private static AnimationClip BuildPaeteSentry(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-paete-sentry", paths);
-            PoseKey(b, 0, .02f, V(-14, 0, 0), V(-24, 0, 0), V(-162, 0, 42), V(-162, 0, -42), V(-10, 0, 10), V(6, 0, -10));
-            PoseKey(b, .16f, .03f, V(-17, 0, 0), V(-27, 0, 0), V(-168, 0, 46), V(-168, 0, -46), V(-10, 0, 10), V(6, 0, -10));
-            PoseKey(b, .34f, .02f, V(-16, 0, 0), V(-22, 0, 0), V(-150, 0, 56), V(-150, 0, -56), V(-12, 0, 9), V(8, 0, -9));
-            b.PunchAt(.72f);
-            b.HoldAt(.72f, .20f);
-            PoseKey(b, .72f, -.06f, V(22, 0, 0), V(10, 0, 0), V(-84, 20, -22), V(-84, -20, 22), V(-16, 0, 9), V(12, 0, -9));
-            PoseKey(b, 1.02f, -.05f, V(18, 0, 0), V(8, 0, 0), V(-80, 18, -18), V(-80, -18, 18), V(-14, 0, 9), V(10, 0, -9));
-            PoseKey(b, 1.30f, 0, V(0, 0, 0), V(0, 0, 0), PaeteRestLeft, PaeteRestRight);
+            var legL = V(-54, 0, 7); var legR = V(30, 0, -7);
+            Vector3 L(float raise) => V(-raise, 14, 5);
+            Vector3 R(float raise) => V(-raise, -14, -5);
+            PoseKey(b, 0, 0, V(20, 0, 0), V(-36, 0, 0), L(60), R(60), legL, legR);
+            b.PunchAt(.05f);
+            PoseKey(b, .05f, 0, V(38, 0, 0), V(18, 0, 0), L(82), R(82), legL, legR);
+            PoseKey(b, .30f, 0, V(30, 0, 0), V(12, 0, 0), L(72), R(72), legL, legR);
+            PoseKey(b, .70f, 0, V(31, 0, 0), V(10, 0, 0), L(73), R(73), legL, legR);
+            b.PunchAt(.75f);
+            PoseKey(b, .75f, 0, V(36, 0, 0), V(14, 0, 0), L(78), R(78), legL, legR);
+            b.PunchAt(.85f);
+            PoseKey(b, .85f, 0, V(15, 0, 0), V(-22, 0, 0), L(59), R(59), legL, legR);
+            PoseKey(b, 1.05f, 0, V(24, 0, 0), V(-12, 0, 0), L(64), R(64), legL, legR);
+            b.PunchAt(1.25f);
+            PoseKey(b, 1.25f, 0, V(14, 0, 0), V(-24, 0, 0), L(58), R(58), legL, legR);
+            PoseKey(b, 1.45f, 0, V(24, 0, 0), V(-14, 0, 0), L(64), R(64), legL, legR);
+            b.PunchAt(1.65f);
+            PoseKey(b, 1.65f, 0, V(13, 0, 0), V(-26, 0, 0), L(57), R(57), legL, legR);
+            PoseKey(b, 1.90f, 0, V(22, 0, 0), V(-18, 0, 0), L(62), R(62), legL, legR);
+            b.PunchAt(2.05f);
+            PoseKey(b, 2.05f, 0, V(-10, 0, 0), V(-20, 0, 0), V(-160, 0, 40), V(-160, 0, -40), V(-6, 0, 8), V(6, 0, -8));
+            b.PunchAt(2.3f);
+            b.HoldAt(2.3f, .15f);
+            PoseKey(b, 2.3f, 0, V(22, 0, 0), V(10, 0, 0), V(-84, 20, -22), V(-84, -20, 22), V(-16, 0, 9), V(12, 0, -9));
+            PoseKey(b, 2.6f, 0, V(18, 0, 0), V(8, 0, 0), V(-80, 18, -18), V(-80, -18, 18), V(-14, 0, 9), V(10, 0, -9));
+            PoseKey(b, 3.0f, 0, V(0, 0, 0), V(0, 0, 0), PaeteRestLeft, PaeteRestRight);
             return b.Build();
         }
+
+        /// <summary>The sink that keeps the kneel down (the introduction's 0.34 m), let go as he stands at 2.05 s.</summary>
+        private static float PaeteSentryLift(float time) => -0.34f * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(1.92f, 2.08f, time)));
 
         // ------------------------------------------------------------------ SHARED BY EVERY RIG
 

@@ -14,19 +14,24 @@ namespace TumbangPreso.Visual
     /// should look tied to the tree"* with *"woven tree branches"*. The tree is
     /// `Resources/Models/PaeteProps/sentry.glb` (`tools/build_paete_props.py`); this poses its nodes.
     ///
-    /// Beats, all from age (so pause, replay and a probe agree):
-    ///  * CRACK 0 to 0.12: crack plates radiate from the seed (and `PaeteGroundBreak`, from the hazard).
-    ///  * ERUPT 0.06 to 0.56: the woven trunk screws up out of the road a quarter turn, overshoots, and
-    ///    SQUASHES on the stop before springing back.
-    ///  * GRIP 0.40 to 0.70: the six claw roots slam down one after another, soil kicked at each.
-    ///  * UNFURL 0.24 to 0.62: the crown opens like a hand; the core swells in among it.
-    ///  * WAKE 0.55 to 0.85: the light in the two hollows opens; the tree leans at its first prisoner.
-    ///  * EMBRACE from the catch: the crown clenches, and a woven limb reaches out of the trunk to each
-    ///    prisoner, drags them in and wraps their waist (arms and head free: they can still throw).
-    ///  * WATCH to 9.5 s: it breathes, sways, blinks at its own times and looks from one prisoner to the
-    ///    next; a leaf falls now and then.
-    ///  * SLEEP from 9.6 s: the light shuts, the crown droops, the limbs let go and pull back, the trunk
-    ///    unscrews back into the road, narra pods drop.
+    /// Beats, all from age (so pause, replay and a probe agree). ⚠️⚠️ v6, IT CRAWLS OUT (owner, 2026-09-26 night: *"i also dotn want
+    /// the tree to jsut spawn in or teleport in i want there to be an animation of how it grows or smth like make it crawl out from the
+    /// ground? u figure it out"*, then *"and then the tree slowly show up"*; direction.md 5.14). Age 0 is the roots arriving under the
+    /// spot. It used to screw up to full height in 0.5 s; it takes 1.75 s to its eyes now, the same in play and in the cutscene:
+    ///  * BULGE 0 to 0.15: the court heaves up in a mound and cracks radiate from it.
+    ///  * CLAWS 0.02 to 0.45: the six claw roots punch up out of the court one by one, in their own order, and slam down GRIPPING
+    ///    it, like hands taking hold of a ledge (they belong to the model's root, not the trunk, so they come out first).
+    ///  * HAUL 0.40 to 1.50: the trunk hauls itself out in three heaves (`Heaves`), a strain before each (it sinks a hair and
+    ///    trembles) and a pause after; the last overshoots and SQUASHES on the stop. The quarter turn unwinds with the hauls.
+    ///  * CROWN 1.35 to 1.72: the crown, folded tight while it was under the court, opens as it tops out.
+    ///  * WAKE 1.75 (`WakeAt`): the light opens in the two hollows; the tree leans at its first prisoner.
+    ///  * EMBRACE: from the catch (0.3, the rule's clock, unchanged) a woven limb reaches to each prisoner, drags them in and wraps
+    ///    their waist; while the trunk is still under the court the limb leaves the GROUND beside it and is carried up with it.
+    ///    The crown clenches just after the wake.
+    ///  * WATCH to 9.5 s: it breathes, sways, blinks at its own times and looks from one prisoner to the next; a leaf falls now and
+    ///    then.
+    ///  * SLEEP from 9.6 s: the light shuts, the crown droops, the limbs let go and pull back, the trunk unscrews back into the road,
+    ///    narra pods drop.
     /// </summary>
     public sealed class PaeteSentryBody : MonoBehaviour
     {
@@ -118,7 +123,39 @@ namespace TumbangPreso.Visual
         /// When (seconds of its age) the light opens in its hollows. 0.55 in play, right as it tops out; the cutscene
         /// holds it back so the guardian's eyes are the last beat, the one its camera ends on.
         /// </summary>
-        public float WakeAt { get; set; } = 0.55f;
+        public float WakeAt { get; set; } = 1.75f;
+
+        /// <summary>
+        /// ⚠️ THE THREE HAULS (v6): (start, end, the share of its height out of the court when it ends). Typed, each its own reach; the
+        /// pauses between them are where it strains. `PaeteSentry` plays a groan and shakes the cameras at each start.
+        /// </summary>
+        public static readonly Vector3[] Heaves = { new Vector3(0.40f, 0.70f, 0.36f), new Vector3(0.80f, 1.10f, 0.70f), new Vector3(1.20f, 1.50f, 1.00f) };
+        /// <summary>The crown opens between these ages, as the trunk tops out.</summary>
+        public const float CrownFrom = 1.35f, CrownTo = 1.72f;
+        // When each claw root punches up out of the court (its own order round the tree, never a sweep).
+        private static readonly float[] ClawOut = { 0.02f, 0.14f, 0.07f, 0.20f, 0.10f, 0.26f };
+        private Transform _soil;
+
+        /// <summary>
+        /// How much of the tree is out of the court at <paramref name="age"/>: 0 under it, 1 fully out (a touch over on the last haul's
+        /// overshoot). Between hauls it holds, and in the 0.12 s before each it sinks a hair: the strain before the pull.
+        /// </summary>
+        public static float Risen(float age)
+        {
+            float reached = 0f;
+            foreach (var h in Heaves)
+            {
+                if (age < h.x) return reached - 0.02f * Mathf.Clamp01((age - (h.x - 0.12f)) / 0.12f);
+                if (age < h.y)
+                {
+                    float u = (age - h.x) / (h.y - h.x);
+                    float e = h.z >= 0.999f ? GrowthVfx.Pop(u) : 1f - (1f - u) * (1f - u) * (1f - u);
+                    return Mathf.LerpUnclamped(reached - 0.02f, h.z, e);
+                }
+                reached = h.z;
+            }
+            return reached;
+        }
 
         // The eight ground branches racing out: yaw, length, wave phase. Each typed, none the same.
         private static readonly float[] VineYaw = { 8f, 52f, 93f, 141f, 183f, 226f, 268f, 317f };
@@ -169,6 +206,7 @@ namespace TumbangPreso.Visual
             // roots pushed the road up, so it reads as ground that broke rather than a tile.
             var soil = new GameObject("soil-ring").transform;
             soil.SetParent(root, false);
+            b._soil = soil;
             var turned = Color.Lerp(GrowthVfx.Seed, Color.black, 0.3f);
             foreach (float yaw in new[] { 0f, 30f, 60f })
                 GrowthVfx.Block(soil, "patch", new Vector3(2.5f, 0.04f, 2.5f), turned).transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
@@ -297,7 +335,8 @@ namespace TumbangPreso.Visual
         {
             // Before it wakes it faces along the throw; awake, it looks at one prisoner, then the next,
             // every 2.6 s, easing across in 0.7 s.
-            if (_targets.Count == 0 || age < 0.7f) return _facing;
+            float watchFrom = WakeAt + 0.15f;
+            if (_targets.Count == 0 || age < watchFrom) return _facing;
             float TargetYaw(int k)
             {
                 var p = _targets[((k % _targets.Count) + _targets.Count) % _targets.Count];
@@ -305,7 +344,7 @@ namespace TumbangPreso.Visual
                 var d = transform.InverseTransformPoint(p.transform.position); d.y = 0f;
                 return d.sqrMagnitude > 1e-4f ? Mathf.Atan2(d.x, d.z) * Mathf.Rad2Deg : _facing;
             }
-            float since = age - 0.7f;
+            float since = age - watchFrom;
             int seg = Mathf.FloorToInt(since / LookEvery);
             float into = since - seg * LookEvery;
             float from = seg == 0 ? _facing : TargetYaw(seg - 1);
@@ -324,55 +363,68 @@ namespace TumbangPreso.Visual
             float wither = Mathf.Clamp01((age - (life - 0.4f)) / 0.9f);
             float alive = 1f - wither;
 
-            // CRACK.
+            // BULGE: the court heaves up in a mound over it and the cracks run out from it.
             for (int i = 0; i < _cracks.Count; i++)
                 _cracks[i].localScale = new Vector3(1f, 1f, Mathf.Max(0.001f, Mathf.Clamp01((age - 0.01f * i) / 0.12f)));
+            if (_soil != null)
+            {
+                float mound = GrowthVfx.Envelope(age, 0f, 0.12f, 0.75f, 0.35f);
+                _soil.localPosition = Vector3.up * 0.10f * mound;
+                _soil.localScale = new Vector3(1f + 0.06f * mound, 1f + 3.5f * mound, 1f + 0.06f * mound);
+            }
 
-            // ERUPT: up out of the road a quarter turn with overshoot; SQUASH on the stop; breathe; SLEEP
-            // unscrews it back into the road.
-            float erupt = GrowthVfx.Pop((age - 0.06f) / 0.50f);
-            float land = age - 0.56f;
+            // HAUL: out of the court in three heaves, trembling in the pauses; the quarter turn unwinds as it comes; SQUASH on the
+            // last stop; breathe; SLEEP unscrews it back into the road.
+            float risen = Risen(age);
+            float topOut = Heaves[Heaves.Length - 1].y;
+            bool hauling = false;
+            foreach (var h in Heaves) if (age >= h.x && age < h.y) hauling = true;
+            float tremble = age < topOut && !hauling ? 0.012f * Mathf.Sin(age * 47f) : 0f;
+            float land = age - topOut;
             float squash = land > 0f && land < 0.32f ? Mathf.Sin(land / 0.32f * Mathf.PI) : 0f;
-            float breathe = age > 1f ? Mathf.Sin((age - 1f) * 2.2f) : 0f;
+            float breathe = age > WakeAt ? Mathf.Sin((age - WakeAt) * 2.2f) : 0f;
             float tall = 1f - 0.08f * squash + 0.015f * breathe * alive;
             float wide = 1f + 0.05f * squash + 0.008f * breathe * alive;
             _trunk.localScale = new Vector3(wide, tall, wide);
-            _trunk.localPosition = Vector3.down * (5.4f * (1f - Mathf.Clamp(erupt, 0f, 1.08f)) + 1.8f * wither * wither);
-            // The lean: at the wake it tips 6 degrees at whoever it looks at, settling to 3.
-            float lean = (age < WakeAt ? 0f : 6f * GrowthVfx.Pop((age - WakeAt) / 0.3f) - 3f * Mathf.Clamp01((age - WakeAt - 0.65f) / 1.0f)) * alive;
-            float yaw = LookYaw(age) - 95f * (1f - Mathf.Clamp01(erupt)) + 50f * wither;
+            _trunk.localPosition = Vector3.down * (5.4f * (1f - Mathf.Clamp(risen, -0.05f, 1.06f)) + 1.8f * wither * wither) + new Vector3(tremble, 0f, 0f);
+            // The lean: at the wake it tips 6 degrees at whoever it looks at, settling to 3. Hauling, it pitches into each pull.
+            float haulPitch = 0f;
+            foreach (var h in Heaves) haulPitch = Mathf.Max(haulPitch, GrowthVfx.Envelope(age, h.x, 0.08f, h.y + 0.1f, 0.2f));
+            float lean = (age < WakeAt ? 3f * haulPitch : 6f * GrowthVfx.Pop((age - WakeAt) / 0.3f) - 3f * Mathf.Clamp01((age - WakeAt - 0.65f) / 1.0f)) * alive;
+            float yaw = LookYaw(age) - 95f * (1f - Mathf.Clamp01(risen)) + 50f * wither;
             _trunk.localRotation = Quaternion.Euler(0f, yaw, 0f) * Quaternion.Euler(lean, 0f, 0f);
 
-            // GRIP: each claw root raised as it comes up, then slammed down past level and back.
+            // CLAWS: each claw root punches up out of the court (raised high) and slams down gripping it, before the trunk comes;
+            // on each haul they bear down a little harder (the pull).
             for (int i = 0; i < _roots.Count; i++)
             {
-                float at = RootSlam[i % RootSlam.Length];
-                float show = Mathf.Clamp01((age - (at - 0.18f)) / 0.14f);
-                float slam = GrowthVfx.Pop((age - at) / 0.16f);
-                float raised = -38f * (1f - slam) - 25f * wither;
+                float outAt = ClawOut[i % ClawOut.Length];
+                float show = Mathf.Clamp01((age - outAt) / 0.08f);
+                float slam = GrowthVfx.Pop((age - outAt - 0.10f) / 0.16f);
+                float raised = -62f * (1f - slam) + 5f * haulPitch - 25f * wither;
                 _roots[i].localRotation = _rootRest[i] * Quaternion.Euler(raised, 0f, 0f);
                 _roots[i].localScale = _rootScale[i] * Mathf.Max(0.001f, show * (1f - Mathf.SmoothStep(0f, 1f, wither * 1.4f)));
-                if (!Staged && _lastAge < at && age >= at && age - _lastAge < 0.5f)
+                float gripAt = outAt + 0.19f;
+                if (!Staged && _lastAge < gripAt && age >= gripAt && age - _lastAge < 0.5f)
                     PaeteGroundBreak.Spawn(_roots[i].TransformPoint(new Vector3(0f, 0f, 1.3f)), 0.32f);
             }
 
-            // UNFURL, then the EMBRACE clench at the catch, a slow sway, and the droop as it sleeps.
-            float catchAt = PaeteRules.SentryCatchSeconds;
-            float clench = GrowthVfx.Envelope(age, catchAt, 0.12f, 1.2f, 0.45f);
+            // CROWN: folded tight while it was under the court, it opens as the trunk tops out; the EMBRACE clench just after the
+            // wake; a slow sway; the droop as it sleeps.
+            float clench = GrowthVfx.Envelope(age, WakeAt + 0.1f, 0.12f, WakeAt + 1.3f, 0.45f);
             for (int i = 0; i < _claws.Count; i++)
             {
-                float unfurl = GrowthVfx.Pop((age - 0.24f - ClawDelay[i % ClawDelay.Length]) / 0.36f);
-                float sway = Mathf.Sin(age * 1.35f + i * 1.1f) * ClawSway[i % ClawSway.Length] * alive;
-                float pitch = -48f * (1f - unfurl) - 14f * clench + sway + 38f * wither;
+                float unfurl = GrowthVfx.Pop((age - CrownFrom - ClawDelay[i % ClawDelay.Length]) / (CrownTo - CrownFrom));
+                float sway = Mathf.Sin(age * 1.35f + i * 1.1f) * ClawSway[i % ClawSway.Length] * alive * Mathf.Clamp01(unfurl);
+                float pitch = -62f * (1f - unfurl) - 14f * clench + sway + 38f * wither;
                 _claws[i].localRotation = _clawRest[i] * Quaternion.Euler(pitch, 0f, sway * 0.5f);
             }
 
-            // The core: swells in with the crown, flares at the catch, breathes, dims as it sleeps.
-            float coreIn = GrowthVfx.Pop((age - 0.3f) / 0.3f);
-            float coreBreath = 1f + 0.09f * Mathf.Sin(age * 3.8f) + 0.04f * Mathf.Sin(age * 9.1f) + 0.25f * GrowthVfx.Envelope(age, catchAt, 0.06f, catchAt + 0.4f, 0.3f);
+            // The core node stays (the gem is gone, direction.md 5.12); the spores drift once it is awake.
+            float coreIn = GrowthVfx.Pop((age - WakeAt) / 0.3f);
             _core.localPosition = new Vector3(0f, 0.72f, 0f);
             _core.localRotation = Quaternion.Euler(0f, age * 35f, 0f);
-            _core.localScale = Vector3.one * Mathf.Max(0.001f, 0.62f * coreIn * coreBreath * (1f - 0.8f * wither));
+            _core.localScale = Vector3.one * 0.001f;
             for (int i = 0; i < _spores.Count; i++)
             {
                 float a = age * (1.4f + 0.2f * i) + i * Mathf.PI * 0.5f;
@@ -380,14 +432,14 @@ namespace TumbangPreso.Visual
                 _spores[i].localScale = Vector3.one * 0.07f * Mathf.Clamp01(coreIn) * alive;
             }
 
-            // WAKE, BLINK, SLEEP: the light in the hollows, opened and shut on its own node.
+            // WAKE, BLINK, SLEEP: the light in the hollows, opened and shut on its own node. The blinks keep their spacing from the wake.
             if (_eyes != null)
             {
                 float open = age < WakeAt ? 0f : GrowthVfx.Pop((age - WakeAt) / 0.25f);
                 float shut = 0f;
-                foreach (float b in Blinks)
+                foreach (float bl in Blinks)
                 {
-                    float x = (age - b) / 0.09f;
+                    float x = (age - (bl + WakeAt - 0.55f)) / 0.09f;
                     if (x > 0f && x < 2f) shut = Mathf.Max(shut, 1f - Mathf.Abs(x - 1f));
                 }
                 float sleep = 1f - Mathf.Clamp01((age - (life - 0.45f)) / 0.4f);
@@ -398,7 +450,7 @@ namespace TumbangPreso.Visual
             // The ground branches race out, then writhe; they pull back into the road as it sleeps.
             for (int i = 0; i < _vineMeshes.Count; i++)
             {
-                float grow = Mathf.Clamp01((age - 0.2f - 0.025f * i) / 0.42f);
+                float grow = Mathf.Clamp01((age - 0.06f - 0.025f * i) / 0.42f);
                 grow = (1f - (1f - grow) * (1f - grow)) * alive;
                 if (grow <= 0.01f)
                 {
@@ -451,11 +503,11 @@ namespace TumbangPreso.Visual
             // THE EMBRACE: a woven limb to each prisoner (direction.md section 5.8).
             for (int i = 0; i < _targets.Count; i++) PoseLimb(i, age, wither);
 
-            // The crown tops out (0.56 s, the squash): leaves blown off it in a burst.
-            if (!Staged && _lastAge < 0.56f && age >= 0.56f && age - _lastAge < 0.5f)
+            // The crown tops out (the last haul's stop, the squash): leaves blown off it in a burst.
+            if (!Staged && _lastAge < topOut && age >= topOut && age - _lastAge < 0.5f)
                 PaeteLeafBurst.Spawn(transform.position + Vector3.up * 4.4f * _scale, 16, 2.6f);
             // A leaf falling from the crown every 0.8 s through the watch.
-            if (!Staged && age > 1.2f && age < life - 0.5f && Mathf.FloorToInt(age / 0.8f) != Mathf.FloorToInt(_lastAge / 0.8f) && age - _lastAge < 0.5f)
+            if (!Staged && age > WakeAt + 0.6f && age < life - 0.5f && Mathf.FloorToInt(age / 0.8f) != Mathf.FloorToInt(_lastAge / 0.8f) && age - _lastAge < 0.5f)
             {
                 int k = Mathf.FloorToInt(age / 0.8f) % LeafFrom.Length;
                 PaeteLeafBurst.Spawn(transform.TransformPoint(LeafFrom[k] * _scale), 1, 0.35f);
@@ -502,6 +554,15 @@ namespace TumbangPreso.Visual
             Vector3 dir = flat.sqrMagnitude > 1e-4f ? flat.normalized : Vector3.forward;
             // The trunk's own space is inside the scaled model: where the limb leaves the weave, in this body's space.
             Vector3 anchor = transform.InverseTransformPoint(_trunk.TransformPoint(Quaternion.Inverse(_trunk.localRotation) * (dir * 0.50f) + Vector3.up * 1.70f));
+            // ⚠️ v6: WHILE THE TRUNK IS STILL UNDER THE COURT (it crawls out now, and the catch keeps its old clock), the limb comes
+            // out of the GROUND beside where it will stand, and the trunk carries it up as it hauls itself out.
+            const float GroundOut = 0.12f;
+            if (anchor.y < GroundOut)
+            {
+                var flatAnchor = new Vector3(anchor.x, 0f, anchor.z);
+                if (flatAnchor.sqrMagnitude < 0.64f) flatAnchor = dir * 0.8f;
+                anchor = new Vector3(flatAnchor.x, GroundOut, flatAnchor.z);
+            }
             Vector3 waist = body + Vector3.up * 0.92f;
             if (p.IsStruggling) waist += new Vector3(Mathf.Sin(age * 36f) * 0.03f, 0f, Mathf.Cos(age * 29f) * 0.02f);
             Vector3 toTree = anchor - waist; toTree.y = 0f;

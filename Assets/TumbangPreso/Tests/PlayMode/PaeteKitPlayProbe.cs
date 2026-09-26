@@ -296,9 +296,12 @@ namespace TumbangPreso.PlayTests
                 Save(hdr, view, index);
             }
             bool rootedAll = false, sawScene = false;
+            // ⚠️ THE MATCH CLOCK MUST NOT RUN UNDER A CUTSCENE (owner, 2026-09-26 night: *"ALSO match time should pause during
+            // cutscenes"*). Read the round clock when the cutscene comes up, on its last frame, and a second after it hands back.
+            float clockAtScene = -1f, clockAtSceneEnd = -1f, clockAfter = -1f; int lastSceneFrame = -1;
             int previousRate = Time.captureFramerate;
             Time.captureFramerate = 30;
-            // The cutscene runs on the phase's wall clock; give it the film's frame clock so it lasts its real 4.6 s.
+            // The cutscene runs on the phase's wall clock; give it the film's frame clock so it lasts its real 5.0 s.
             int frame = 0; double clockBase = Time.realtimeSinceStartupAsDouble;
             SharedUltimatePhase.FilmClock = () => clockBase + frame / 30.0;
             // Every world cue with its film time, so the video gets the game's own sound mixed in afterwards.
@@ -323,8 +326,9 @@ namespace TumbangPreso.PlayTests
                     if (scene != null)
                     {
                         // His theme plays from the introduction's own AudioSource, not as a world cue: log it once.
-                        if (!sawScene) cues.AppendLine(FormattableString.Invariant($"{f / 30.0:F3},sfx_ult_theme_paete,1,0.2"));
+                        if (!sawScene) { cues.AppendLine(FormattableString.Invariant($"{f / 30.0:F3},sfx_ult_theme_paete,1,0.2")); clockAtScene = round.TimeLeft; }
                         sawScene = true; Save(scene.texture, "owner", f);
+                        clockAtSceneEnd = round.TimeLeft; lastSceneFrame = f;
                     }
                     else if (Camera.main != null) Shoot(Camera.main, "owner", f);
                     // Wide: far and high enough that the whole 9 m tree and all three stands fit.
@@ -339,6 +343,7 @@ namespace TumbangPreso.PlayTests
                     victimCam.transform.LookAt(victim.transform.position + toTree * 0.8f + Vector3.up * 1.0f);
                     Shoot(wide, "wide", f);
                     Shoot(victimCam, "victim", f);
+                    if (lastSceneFrame >= 0 && f == lastSceneFrame + 30) clockAfter = round.TimeLeft;
                 }
             }
             finally
@@ -352,10 +357,16 @@ namespace TumbangPreso.PlayTests
             }
             Debug.Log("[PaeteKitPlayProbe] shot report: " + UltimatePhaseView.LastShotReport);
             File.WriteAllText(Path.Combine(root, "shots.txt"), UltimatePhaseView.LastShotReport);
+            string clock = FormattableString.Invariant($"round clock: {clockAtScene:F3} s left as the cutscene came up, {clockAtSceneEnd:F3} on its last frame, {clockAfter:F3} one second after it handed back");
+            File.WriteAllText(Path.Combine(root, "clock.txt"), clock + System.Environment.NewLine);
+            Debug.Log("[PaeteKitPlayProbe] " + clock);
+            Note("ult_film_clock_during_cutscene_moved_s", clockAtScene - clockAtSceneEnd);
             Note("ult_film_saw_cutscene", sawScene);
             Note("ult_film_all_rooted", rootedAll);
             Assert.IsTrue(sawScene, "The cutscene picture never came up on his screen.");
             Assert.IsTrue(rootedAll, "The film never showed all three rooted.");
+            Assert.Less(Mathf.Abs(clockAtScene - clockAtSceneEnd), 0.05f, "The match clock ran during the cutscene: " + clock);
+            Assert.Greater(clockAtSceneEnd - clockAfter, 0.5f, "The match clock did not run again after the cutscene: " + clock);
         }
 
         /// <summary>

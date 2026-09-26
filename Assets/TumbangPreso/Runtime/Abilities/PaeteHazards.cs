@@ -427,10 +427,11 @@ namespace TumbangPreso.Abilities
     /// have to hold a button ... for like 7 seconds while stuck here"*, *"THEY CAN STILL THROW AND USE
     /// SKILLS WHILE STUCK BTW theyre js rooted"*; *"WITHIN 9 meters"*; a tag frees them.
     ///
-    /// Called up through the ground after the introduction (a root vein races from his feet to the spot,
-    /// `PaeteRootVein`; it was a thrown seed until 2026-09-26); it bursts into the sentry, a beat later the vines catch every other player within 9 m and drag
-    /// them in (a carry per body, `CharacterMotor.ApplyResolvedCarry`), and they are Rooted for the
-    /// rest of its life. Host resolves; every peer draws it.
+    /// Called up through the ground after the introduction: his roots race under the court from between his hands to the spot
+    /// (`PaeteRootRidge`, v5; it was a thrown seed until 2026-09-26 and a lit vein after that), the court bulges and the tree
+    /// CRAWLS out (`PaeteSentryBody`: claws first, three heaves, the crown, then the eyes); a beat after the court breaks its
+    /// roots catch every other player within 9 m and drag them in (a carry per body, `CharacterMotor.ApplyResolvedCarry`), and
+    /// they are Rooted for the rest of its life. Host resolves; every peer draws it.
     /// </summary>
     public sealed class PaeteSentry : MonoBehaviour
     {
@@ -463,9 +464,11 @@ namespace TumbangPreso.Abilities
             }
             s._body.FitUnder(clearance);
             // ⚠️ CALLED UP THROUGH THE GROUND, NOT THROWN (owner, 2026-09-26: *"i dont want him to be throwing an
-            // orb I want him to be CALLING IT FROM THE GROUND"*): roots race under the court from his feet to the
-            // spot on the same 0.45 s the seed flew, so the warning and the catch timing are unchanged.
-            if (age <= 0f) PaeteRootVein.Race(new Vector3(from.x, at.y, from.z), at, Flight);
+            // orb I want him to be CALLING IT FROM THE GROUND"*, then *"i also dont like that paete just throws seeds in his
+            // ult"*): his roots race under the court from between his hands to the spot on the same 0.45 s the seed flew,
+            // so the warning and the catch timing are unchanged. v5 (direction.md 5.14): `PaeteRootRidge`, the court heaving
+            // and splitting over them with the light inside the split; `PaeteRootVein`'s lit block at the front read as a seed.
+            if (age <= 0f) PaeteRootRidge.Race(null, new Vector3(from.x, Slipper.GroundY(from), from.z), at, Flight, staged: false);
             // Who the vines reach for is drawn on every peer from the same rule the host uses.
             var round = GameServices.Round;
             if (round != null)
@@ -499,24 +502,31 @@ namespace TumbangPreso.Abilities
             _age += Time.deltaTime;
             // ⚠️ LOCAL ON EVERY PEER, NOT `NetCue`: each peer runs this same clock from the accepted
             // cast, so each plays each stage once (`audit_cue_relay.py`).
+            // ⚠️⚠️ v5, IT CRAWLS OUT (owner, 2026-09-26 night: *"i also dotn want the tree to jsut spawn in or teleport in"*, *"and
+            // then the tree slowly show up"*; direction.md 5.14). The court BULGES as the roots arrive (age 0), the claws break out,
+            // and the trunk hauls itself up in three heaves (`PaeteSentryBody.Heaves`), each its own groan and crack and a shake that
+            // grows with the tree; its eyes open last (`WakeAt`). The catch below keeps its old clock: nothing here moves a rule.
             if (before < 0f && _age >= 0f)
             {
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_burst", Centre);
-                // ⚠️ SIZED TO THE 9 M TREE (owner: *"REALLY big and imposing and really feel like an ult"*):
-                // the road breaks wider than the claw roots reach, and every nearby camera takes the
-                // ground coming up, harder the closer it is (the style of `HeroHazards`' blasts: the
-                // shake scales with the thing, it is never one flat number).
-                Visual.PaeteGroundBreak.Spawn(Centre, 3.4f);
-                var main = UnityEngine.Camera.main;
-                var rig = main != null ? main.GetComponent<CameraSystem.CameraRig>() : null;
-                if (rig != null)
+                Visual.PaeteGroundBreak.Spawn(Centre, 2.2f);
+                ShakeNearby(0.25f, 0.5f);
+            }
+            for (int k = 0; k < PaeteSentryBody.Heaves.Length; k++)
+            {
+                float at = PaeteSentryBody.Heaves[k].x;
+                if (before < at && _age >= at)
                 {
-                    float near = Mathf.Clamp01(1f - Vector3.Distance(main.transform.position, Centre) / 18f);
-                    rig.Shake(Mathf.Lerp(0.35f, 0.8f, near), 0.5f);
+                    // ⚠️ SIZED TO THE 9 M TREE (owner: *"REALLY big and imposing and really feel like an ult"*): each haul breaks
+                    // the road wider and shakes every nearby camera harder, the last hardest (the style of `HeroHazards`' blasts:
+                    // the shake scales with the thing, it is never one flat number).
+                    GameServices.Audio?.PlayAtVaried("sfx_paete_sentry_heave", Centre, 1.06f - 0.06f * k, 1.08f - 0.06f * k, 1f);
+                    Visual.PaeteGroundBreak.Spawn(Centre, 2.6f + 0.4f * k);
+                    ShakeNearby(0.28f + 0.14f * k, 0.55f + 0.1f * k);
                 }
             }
-            // The tree waking: the light opens in its hollows (`PaeteSentryBody`'s WAKE beat, 0.55 s).
-            if (before < 0.55f && _age >= 0.55f)
+            // The tree waking: the light opens in its hollows (`PaeteSentryBody`'s WAKE beat, last).
+            if (before < _body.WakeAt && _age >= _body.WakeAt)
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_wake", Centre);
             if (before < PaeteRules.SentryCatchSeconds && _age >= PaeteRules.SentryCatchSeconds && _held.Count > 0)
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_catch", Centre);
@@ -527,6 +537,16 @@ namespace TumbangPreso.Abilities
                 foreach (var p in _held)
                     if (p != null && p.IsRooted) PaeteRootCoil.Attach(p);
             if (_age >= PaeteRules.SentryLifeSeconds + 0.6f) Destroy(gameObject);
+        }
+
+        /// <summary>Every nearby camera takes the ground moving, harder the closer it is (0.35 to 0.8 of <paramref name="scale"/> by distance).</summary>
+        private void ShakeNearby(float scale, float seconds)
+        {
+            var main = UnityEngine.Camera.main;
+            var rig = main != null ? main.GetComponent<CameraSystem.CameraRig>() : null;
+            if (rig == null) return;
+            float near = Mathf.Clamp01(1f - Vector3.Distance(main.transform.position, Centre) / 18f);
+            rig.Shake(Mathf.Lerp(0.45f, 1f, near) * scale * 2f, seconds);
         }
 
         // When each caught body's drag arrives, and it is rooted (host only).

@@ -238,6 +238,10 @@ Necro Nemu, Voodoo Phaister; Pyro (Sean), Electro (Zack) and Hydro (Rafi) have n
   passes above (any of it may be overhauled),
   the ability glyphs (several reuse an old one), the Concussed stumble, bots for every new ability.
 - [ ] KURO PLAYS (its own design pass first), bots, snapshots, replays, screens, HUD.
+- [ ] ⚠️ FOUND 2026-09-26 night: all four `Resources/Models/ReworkProps/*.glb.meta` (barrier, boulder, doll, higop) cannot be parsed
+  ("Expected closing '}'" on every launch): line 10 lost the importer reference, a guid rewrite replaced the rest of the line. Restore
+  it to `script: {fileID: 11500000, guid: 715df9372183c47e389bb6e19fbc3b52, type: 3}` (the glTFast importer every PaeteProps meta uses),
+  keep each file's own `guid:` line, then check the models import (until then `ReworkProp.Spawn` falls back to the old blocks).
 - [ ] Ultimate cutscenes rebuilt per `ultimates.md`.
 - [ ] Owner review of the numbers set in plan section 7.
 - [ ] Unity verification (the separate testing chat): compile, EditMode, PlayMode gate, captures.
@@ -436,7 +440,7 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
 - [ ] Still to do: portrait and avatar check, a rejoin test that exercises the plant, thorn and sentry snapshot
   kinds, PlayMode gate, Checks.RunAll, audits, a build. Done 2026-09-26: bots measured by `PaeteKitPlayProbe.PaeteBotsUseEveryAbility`
   (four Paete bots, two rounds: vine 3, bloom 4, thorns 3, ultimate 12 with the bar topped up every 20 s); the first-person
-  vine film ran (`FilmTheVineFromHisOwnEyes`, frames not yet reviewed).
+  vine film ran and is reviewed (row below).
 - [x] ⚠️⚠️ THE ULTIMATE, REDIRECTED (owner, 2026-09-26, after `paete_ultimate_v3.mp4`: *"ur direction of the entire cutscene
   sucks"*, the three small trees make no sense, refine Makiling, *"make his eyes glow"*). BUILT 2026-09-26 night as three shots
   (CALL, CONNECT, RISE; direction.md 5.13, one light travelling left to right): forest trees, stage walls and landing spikes cut,
@@ -445,21 +449,45 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   roots dive back in, three veins race to a pool at the landing, camera shake, theme re-timed. Makiling v3 (baro't saya, rounded
   face, parted hair, sampaguita wreath; `SpiritGhost.shader` v3 premultiplied with an inner light). Films r12 and r13
   (`Logs/paete-evidence-r12`, `-r13`); video `Logs/paete-share/paete_ultimate_v4.mp4`.
-- [ ] ⚠️⚠️ HER FULL FORM, BRIEFLY (owner, 2026-09-26 night, of her v3 renders: *"she actually looks really nice i dont mind if u show
-  hher briefly full form and she vanishes back (she sstarts translucent to full forma nd translucent again)"*). Design in direction.md
-  5.13: `_SolidFrom`/`_SolidTo` sweeps in `SpiritGhost.shader` plus a clipped ink hull; `Look.Form`/`Unform`; form 0.40 to 0.64 s
-  while she holds the light, back to spirit 0.98 to 1.28 s. Not built.
-- [ ] ⚠️⚠️ HER MEADOW (owner, same night: *"when maria makiling starts coming into the pic flowers start sprouting and lushh greenery
-  and plants and shit (pls dotn reuse existing models)"*, *"and they disappear slowly as she disappears thoroughly direct it"*). The
-  models are typed in `tools/build_paete_props.py` `meadow()` (moss, grass, unrolling ferns, sampaguita, makahiya; 137 nodes, built
-  only when named, not yet in Resources). Not wired: write `PaeteMeadow` (grow as a wave from her, flinch from the slam with the
-  makahiya folding shut, lean from the eruption, wilt from the outer edge in as she vanishes 3.7 to 4.5 s), render it, film it.
-- [ ] ⚠️⚠️ THE GUARDIAN CRAWLS OUT, IT DOES NOT POP UP (owner, same night: *"i also dotn want the tree to jsut spawn in or teleport in
-  i want there to be an animation of how it grows or smth like make it crawl out from the ground? u figure it out"*). Today
-  `PaeteSentryBody.Pose` ERUPT raises it in 0.5 s. Proposed in direction.md 5.13: roots break out and grab the court, the trunk hauls
-  itself up in two or three heaves, crown last, then the eyes; in play and in the cutscene alike.
-- [ ] The guardian's crown masses (v8): typed leaf masses and hanging moss per branch are in `tools/build_paete_props.py` `sentry()`
-  but `sentry.glb` is NOT rebuilt; rebuild (restore `thorns.glb` after), render with `PaeteReviewProbe.RunTrees`, judge at 9 m.
+- [x] ⚠️⚠️ v5, CALLED FROM THE GROUND, NOTHING THROWN (owner, 2026-09-26 night: *"i also dont like that paete just throws seeds in his
+  ult"*, *"REDIRECT IT I WANNT IT TO LOOK LIKE HE GOES TO THE GHHROUND AND HIS ROOTS CONNECT TO IT AND HE IS CHANNELLING HIS POWER AND HE
+  GLOWS AND SHIT AND THEN HIS ROOTS TRAVEL TO THE GROUND AND THEN THE tree slowly show up"*, *"dont go past 5 seconds for cutscene"*,
+  *"match time should pause during cutscenes"*). Design: direction.md 5.14. The seed was the LIVE cast after the cutscene (first-person
+  `sentry-throw`, the arms-high body clip, `PaeteRootVein`'s lit head), all replaced: cutscene 5.0 s (was 4.6; protocol 57) in three shots,
+  CALL (her full form, the light, his eyes), ROOT (kneel, both palms on the court, `PaeteGroundRoots` out of his forearms and knee, the
+  channel glow `SpiritVeins.shader` on his own vines plus three quickening pulses), RISE (`PaeteRootRidge`: the court heaves and splits
+  with the light inside, no lit head; the tree CRAWLS); in play `PaeteGroundCall` keeps him kneeling and joined to the ground (his view
+  lowered like the taya's squat, first-person `GroundCallClip`, walking cancels it), the live clip `hero-paete-sentry` is a kneel with
+  its own lift (solved so the palms sit 0 to 5 cm on the court). Catch timing unchanged (0.45 s roots, 0.75 s catch). Film r14
+  (`Logs/paete-evidence-r14`, `PaeteKitPlayProbe.FilmTheUltimateOnHisScreen` 1/1), video `Logs/paete-share/paete_ultimate_v5.mp4`.
+  MATCH CLOCK MEASURED in that film: 89.860 s as the cutscene came up, 89.860 on its last frame, 88.860 one second after (the probe now
+  asserts it). Owner's verdict on v5 owed.
+- [x] HER FULL FORM, BRIEFLY (owner: *"she sstarts translucent to full forma nd translucent again"*): `SpiritGhost.shader` v4
+  `_SolidFrom`/`_SolidTo` (opaque, her palette, the cast's two bands, a glowing seam) plus an INK pass clipped to the solid band;
+  `MakilingSpirit.Look.Form`/`Unform`; forms 0.30 to 0.50 s, back to spirit 0.82 to 1.08 s. Reviewed in `PaeteSpiritReviewProbe` v4/v5
+  (`Logs/paete-review/paete_makiling_v5.png`: ghost, forming, full form, turning back, and the ROOT shot).
+- [x] HER PLACE IN THE SHOT: the overhead crane is cut (v5 shots); for the ROOT shot she stands directly behind him and bends over him
+  (`MakilingClose`), framing him from above rather than filling the left.
+- [ ] ⚠️ HER MEADOW, built and wired, one fault left (owner: *"when maria makiling starts coming into the pic flowers start sprouting and
+  lushh greenery"*, *"and they disappear slowly as she disappears"*). `tools/build_paete_props.py meadow` v2 (18 moss cushions, 14 grass
+  tufts, 6 ferns whose fronds unroll, 6 sampaguita, 3 gumamela, 6 makahiya), `PaeteMeadow` (grows as a wave from her, flinches from the
+  palm slam with the makahiya folding shut and reopening, leans from each haul, wilts from the outer edge in 3.6 to 4.5 s). ⚠️ glTFast
+  negates X: the layout is written mirrored (`mx`) so it lands round her; v1 came in on the wrong side. OPEN: from above the moss cushions
+  still read as outlined green discs ("lily pads"): make each cushion a group of 2 to 4 taller overlapping lumps (ry 0.07 to 0.11), typed.
+- [x] THE GUARDIAN CRAWLS OUT (owner: *"i also dotn want the tree to jsut spawn in or teleport in"*): `PaeteSentryBody` v6, the same in
+  play and in the cutscene: bulge, claws out and gripping (`ClawOut`), three hauls with a strain and a pause (`Heaves`, `Risen`), crown
+  opens 1.35 to 1.72, eyes at `WakeAt` 1.75; limbs leave the ground while the trunk is under it; `sfx_paete_sentry_heave` (new) per haul.
+  Filmstrip `PaeteReviewProbe.RunTrees` v23.
+- [x] The guardian's crown masses (v8): `sentry.glb` rebuilt (`thorns.glb` untouched), seen in RunTrees v23 and at 9 m in film r14.
+- [ ] ⚠️ NEXT (found this session, not fixed): (1) a rejoiner's sentry runs 0.45 s behind: `WorldEffectSnapshot.Apply` restores with
+  `PaeteSentry.Spawn(..., age)` and `Spawn` subtracts `Flight` again; make it `_age = age > 0 ? age : -Flight`. (2) `RecordedFieldView`'s
+  sentry body is not `Staged`, so a replay can spawn ground breaks into the live world; set `Staged = true` there. (3) Write the rejoin
+  test (`PaeteWorldSnapshotProbe`, template `IceWorldSnapshotProbe`): plant, thorns and a mid-crawl sentry captured, applied, same
+  owner/place/age, no second `PaeteRootRidge`. (4) In his first-person view after the cutscene the pulse ring round his hands is large
+  and bright; smaller and fainter. (5) The meadow moss above. (6) The roster refresh re-baked `RosterArms/paete_*.asset` WITHOUT the tangent
+  channel the ink reads; this session restored them from HEAD: do the same after any `RefreshPersonFromCommandLine -person paete`.
+- [x] First-person vine film reviewed (film r11 `owner/`): both hands punch forward, the braids leave the viewmodel hands and converge on
+  the anchor, the landing rosette flashes at the hands. Reads.
 - [ ] Surface texture: the owner asked to *"really refine and texture and make it all detailed"*. The
   modelled props give detail in geometry and his palette only; decide with him whether bark wants a
   painted texture (grain, rings) on the props and vines, and do it if so.

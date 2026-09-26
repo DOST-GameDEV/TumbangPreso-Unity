@@ -21,6 +21,14 @@
 // `_Light*` is the light she carries: while it sits in her hands, her hands, face and breast glow from it,
 // and the glow leaves her with it. `_FadeLow/_FadeHigh` are driven by `MakilingSpirit`: the mist takes her
 // back from the feet up when she goes.
+//
+// ⚠️⚠️ v4 (2026-09-26 night), HER FULL FORM, BRIEFLY (owner, of her v3 renders: *"she actually looks really nice i dont mind if u
+// show hher briefly full form and she vanishes back (she sstarts translucent to full forma nd translucent again)"*; direction.md
+// 5.13 and 5.14). Between `_SolidFrom` and `_SolidTo` (metres above her feet) she is OPAQUE in her own palette, lit with the cast's
+// two bands (`TumbangPreso/Toon`'s `_ShadowBand` 0.45 and `_BandEdge` 0.03, plus the scene's ambient), with a glowing seam at each
+// line and her ink outline (the INK pass, clipped to the same band). `MakilingSpirit` sweeps `_SolidTo` up her from the feet as
+// she forms and then `_SolidFrom` up after it as she turns back to spirit, so she rises into her form and rises out of it. With
+// both at their defaults (below her feet) nothing here changes: the ghost is exactly v3.
 Shader "TumbangPreso/SpiritGhost"
 {
     Properties
@@ -37,6 +45,13 @@ Shader "TumbangPreso/SpiritGhost"
         _LightPos ("The light she carries (world)", Vector) = (0, -1000, 0, 0)
         _LightStrength ("Its strength", Float) = 0
         _LightRadius ("Its reach (m)", Float) = 1
+        _SolidFrom ("Solid from (m above feet)", Float) = -10
+        _SolidTo ("Solid to (m above feet)", Float) = -10
+        _SeamGlow ("Seam glow at the solid band's edges", Float) = 1.2
+        _ShadowBand ("Shadow band (solid)", Range(0, 1)) = 0.45
+        _BandEdge ("Band edge (solid)", Range(0.001, 0.5)) = 0.03
+        _InkColor ("Ink (solid)", Color) = (0.02, 0.02, 0.03, 1)
+        _InkWidth ("Ink width (m)", Float) = 0.012
     }
     SubShader
     {
@@ -68,6 +83,39 @@ Shader "TumbangPreso/SpiritGhost"
             ENDCG
         }
 
+        // ⚠️ THE INK, ON HER FULL FORM ONLY: the cast's inverted hull (`TumbangPreso/Toon`'s OUTLINE pass), pushed out along the
+        // world normal by `_InkWidth` and clipped to the solid band, so the ghost keeps no outline and the formed figure has one.
+        Pass
+        {
+            Cull Front
+            ZWrite On
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            float _Presence, _BaseY, _FadeLow, _FadeHigh, _SolidFrom, _SolidTo, _InkWidth;
+            fixed4 _InkColor;
+            struct appdata { float4 vertex : POSITION; float3 normal : NORMAL; };
+            struct v2f { float4 pos : SV_POSITION; float y : TEXCOORD0; };
+            v2f vert(appdata v)
+            {
+                v2f o;
+                float3 world = mul(unity_ObjectToWorld, v.vertex).xyz;
+                float3 n = UnityObjectToWorldNormal(v.normal);
+                o.y = world.y;
+                o.pos = UnityWorldToClipPos(world + n * _InkWidth);
+                return o;
+            }
+            fixed4 frag(v2f i) : SV_Target
+            {
+                float up = i.y - _BaseY;
+                clip(min(up - _SolidFrom, _SolidTo - up));
+                clip(smoothstep(_FadeLow, _FadeHigh, up) * _Presence - 0.5);
+                return _InkColor;
+            }
+            ENDCG
+        }
+
         Pass
         {
             Tags { "LightMode" = "ForwardBase" }
@@ -80,9 +128,11 @@ Shader "TumbangPreso/SpiritGhost"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+            #include "Lighting.cginc"
 
             fixed4 _Tint, _RimColor;
             float _Alpha, _RimAlpha, _Glow, _Presence, _BaseY, _FadeLow, _FadeHigh, _LightStrength, _LightRadius;
+            float _SolidFrom, _SolidTo, _SeamGlow, _ShadowBand, _BandEdge;
             float4 _LightPos;
             float4 _Palette[16];
 
@@ -127,7 +177,21 @@ Shader "TumbangPreso/SpiritGhost"
                 float up = i.world.y - _BaseY;
                 float there = smoothstep(_FadeLow, _FadeHigh, up) * (0.9 + 0.1 * sin(_Time.y * 2.6 + up * 5.0)) * _Presence;
                 alpha = saturate(alpha) * there;
-                return fixed4(body * alpha + added * there, alpha);
+                fixed4 ghost = fixed4(body * alpha + added * there, alpha);
+
+                // HER FULL FORM (v4): opaque, her own colours, the cast's two bands, a glowing seam at each moving edge.
+                float solid = smoothstep(_SolidFrom - 0.03, _SolidFrom + 0.03, up) * (1.0 - smoothstep(_SolidTo - 0.03, _SolidTo + 0.03, up));
+                float seamTo = (up - _SolidTo) / 0.06, seamFrom = (up - _SolidFrom) / 0.06;
+                float seam = _SeamGlow * (exp(-seamTo * seamTo) + exp(-seamFrom * seamFrom)) * step(0.05, there);
+                float ndl = dot(n, l);
+                float level = lerp(_ShadowBand, 1.0, smoothstep(0.0, _BandEdge, ndl));
+                float3 formed = swatch * (_LightColor0.rgb * level + ShadeSH9(float4(n, 1.0)));
+                if (slot == 10) formed = float3(1.0, 1.0, 0.74) * 1.4;
+                float formedAlpha = smoothstep(_FadeLow, _FadeHigh, up) * _Presence;
+                fixed4 full = fixed4(formed * formedAlpha, formedAlpha);
+                fixed4 result = lerp(ghost, full, solid);
+                result.rgb += float3(0.80, 1.0, 0.62) * seam;
+                return result;
             }
             ENDCG
         }

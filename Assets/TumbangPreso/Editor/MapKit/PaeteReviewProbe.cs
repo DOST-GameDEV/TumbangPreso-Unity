@@ -28,7 +28,7 @@ namespace TumbangPreso.EditorTools.MapKit
     /// </summary>
     public static class PaeteReviewProbe
     {
-        public const string Version = "v22";
+        public const string Version = "v23";
         private const string OutDir = "Logs/paete-review";
         private const int W = 480, H = 360;
 
@@ -62,6 +62,8 @@ namespace TumbangPreso.EditorTools.MapKit
 
                 if (treesOnly)
                 {
+                    // v23 (direction.md 5.14): the live ultimate is a kneel now, held down while the tree crawls out.
+                    Strip("sentry", paete, "hero-paete-sentry", false, 3.0f, 16, null);
                     SentryFx(sean ?? paete);
                     PlantFx();
                     ThornFx();
@@ -76,7 +78,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 Strip("sprout", paete, "hero-paete-sprout", false, .7f, 10, null);
                 Strip("command", paete, "hero-paete-command", false, .5f, 8, null);
                 Strip("thorns", paete, "hero-paete-thorns", false, 1.05f, 12, null);
-                Strip("sentry", paete, "hero-paete-sentry", false, 1.3f, 12, null);
+                Strip("sentry", paete, "hero-paete-sentry", false, 3.0f, 16, null);
                 Strip("struggle-paete", paete, RootedMotion.Struggle, true, 1.2f, 8, null);
                 Strip("heave-paete", paete, RootedMotion.Heave, true, 1.4f, 10, null);
                 Strip("breakout-paete", paete, RootedMotion.Breakout, true, 0.9f, 10, null);
@@ -245,7 +247,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 victims.Add(motor);
             }
             sentry.SetTargets(victims);
-            float[] ages = { 0f, .1f, .2f, .3f, .4f, .5f, .62f, .75f, .9f, 1.3f, 3f, 6.2f, 9.8f, 10.3f };
+            // v23: THE CRAWL (direction.md 5.14): the bulge, the claws, three hauls with their pauses, the crown, the wake at 1.75 s.
+            float[] ages = { 0f, .1f, .2f, .3f, .45f, .6f, .75f, .9f, 1.05f, 1.2f, 1.4f, 1.6f, 1.85f, 2.4f, 6.2f, 10.0f };
             var shots = new List<Texture2D>();
             var ground = PaeteGroundBreak.Spawn(Vector3.zero, 2.2f);
             float lastAge = 0f;

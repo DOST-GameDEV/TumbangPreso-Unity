@@ -305,6 +305,20 @@ namespace TumbangPreso.CameraSystem
             return rig._arms.TryHandTip(left, out world);
         }
 
+        /// <summary>
+        /// The two first-person arm renderers of <paramref name="who"/>, when this camera is in their eyes (HERO-9: Paete's channel
+        /// lights his own hands on his screen, `Visual.PaeteChannelGlow`).
+        /// </summary>
+        public static bool TryViewmodelArmRenderers(CharacterMotor who, out MeshRenderer left, out MeshRenderer right)
+        {
+            left = right = null;
+            if (who == null) return false;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return false;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return false;
+            return rig._arms.TryArmRenderers(out left, out right);
+        }
+
         public static void SeekViewmodelAction(CharacterMotor who,string expected,float elapsed)
         {
             var rig=FindFirstObjectByType<CameraRig>();
@@ -890,8 +904,16 @@ namespace TumbangPreso.CameraSystem
             float squat = FppRaiseSquat();
             eye -= Vector3.up * (Visual.CanRaiseShape.FppEyeDrop * squat);
 
+            // ⚠️ PAETE DOWN ON HIS KNEE, FROM HIS OWN EYES (HERO-9 v5, direction.md 5.14: *"HE GOES TO THE GHHROUND AND HIS ROOTS
+            // CONNECT TO IT"*). While MAKILING'S EMBRACE holds him down after its cutscene his view is at kneel height and tipped a
+            // little toward his hands in the court, and it lifts on each of the tree's hauls. The squat's rule exactly: an offset
+            // of the view, never `_pitchDeg`, so the aim is where it was when he stands (and walking ends it at once).
+            float kneel = Visual.PaeteGroundCall.KneelWeight(_character);
+            eye -= Vector3.up * (Visual.PaeteGroundCall.FppEyeDrop * kneel - 0.06f * kneel * Visual.PaeteGroundCall.HeaveJolt(_character));
+
             // Absolute, from yaw and pitch only. The body's roll cannot reach this.
-            transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg + Visual.CanRaiseShape.FppLookDown * squat, yaw, 0.0f));
+            transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg + Visual.CanRaiseShape.FppLookDown * squat
+                                                                   + Visual.PaeteGroundCall.FppLookDown * kneel, yaw, 0.0f));
 
             if (_viewmodel != null && !_viewmodel.gameObject.activeSelf)
                 _viewmodel.gameObject.SetActive(true);

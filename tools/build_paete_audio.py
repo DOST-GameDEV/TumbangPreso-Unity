@@ -317,17 +317,33 @@ def sentry_cast():
 
 
 def sentry_burst():
-    """The sentry bursts out of the ground: the biggest sound in his kit. A sub hit and a wall
-    of cracking wood, a leaf explosion, then the radial vines lashing out (plucks, not whooshes,
-    so it cannot be mistaken for Amihan's gale)."""
-    s = 1.6
+    """⚠️ v5 (2026-09-26 night, direction.md 5.14): THE COURT BULGES AND THE CLAWS BREAK OUT. The tree no longer erupts to full
+    height in half a second (owner: *"i also dotn want the tree to jsut spawn in or teleport in"*, *"and then the tree slowly show
+    up"*); this is the first beat of its crawl, when the roots arrive under the spot: a deep swelling crack as the court heaves up,
+    six bark claws punching out one after another in their own order (`PaeteSentryBody` `ClawOut`), each gripping with a knock,
+    and a groan starting under it all. The hauls that follow have their own cue (`sentry_heave`)."""
+    s = 1.3
     t = times(s)
-    sub = thump(t, 0.0, 42, 0.3) * 1.3
-    crack = snap(t, 7901, 0.0, 70, 0.28, 1300, 2.6) + snap(t, 7902, 0.02, 40, 0.2, 3200, 1.4)
-    leaves = rustle(t, 7903, 5200 * env_ar(t, 0.02, 0.35, 0.06), 3600) * 1.4
-    lashes = sum(pluck(t, 0.18 + 0.05 * i, p, 0.6, 7910 + i, 0.993, 0.25) for i, p in enumerate([131, 165, 147, 175, 123])) * 0.55
-    groan = creak(t, 7920, sweep(t, 55, 30, s), 0.4, [(240, 1.0), (560, 0.5)], 7.0, env_ar(t, 0.3, 0.5, 0.5)) * 2.2
-    return finish("sfx_paete_sentry_burst", sub + crack + leaves + lashes + groan, s, 0.8)
+    swell = one_pole_low(one_pole_low(noise(len(t), 7931), 90), 90) * env_ar(t, 0.12, 0.35, 0.14) * 14.0
+    crack = snap(t, 7901, 0.0, 55, 0.22, 1100, 2.2) + snap(t, 7902, 0.03, 30, 0.18, 2900, 1.1)
+    claws = sum(snap(t, 7940 + k, at, 14, 0.04, 1500 + 180 * k, 1.1) + knock(t, at + 0.1, 110 + 9 * k, 0.07, 0.8)
+                for k, at in enumerate([0.02, 0.07, 0.10, 0.14, 0.20, 0.26]))
+    sub = thump(t, 0.0, 46, 0.22) * 0.9
+    groan = creak(t, 7920, sweep(t, 32, 48, s), 0.4, [(200, 1.0), (470, 0.5)], 7.0, env_ar(t, 0.3, 0.5, 0.6)) * 2.0
+    return finish("sfx_paete_sentry_burst", swell + crack + claws + sub + groan, s, 0.8)
+
+
+def sentry_heave():
+    """⚠️ NEW in v5: ONE HAUL of the tree crawling out of the court, played three times (`PaeteSentry`, each a step lower in pitch
+    and harder in the shake). A strain first (a creak whose slips speed up, the trunk loading), then the pull: a deep wooden groan,
+    the court breaking round it with a felt thump, and soil pouring off its shoulders (grains, not hiss)."""
+    s = 1.0
+    t = times(s)
+    strain = creak(t, 7951, sweep(t, 40, 110, 0.28), 0.5, [(260, 1.0), (620, 0.4)], 8.0, window(t, 0.0, 0.32, 0.06)) * 1.6
+    pull = creak(t, 7952, sweep(t - 0.25, 28, 60, 0.5), 0.35, [(95, 1.0), (230, 0.6)], 11.0, window(t, 0.25, 0.85, 0.12)) * 2.6
+    court = snap(t, 7953, 0.27, 45, 0.25, 900, 1.6) + thump(t, 0.27, 42, 0.3) * 1.2
+    soil = rustle(t, 7954, 2600 * window(t, 0.32, 0.95, 0.25), 1800, q=1.1) * 0.9
+    return finish("sfx_paete_sentry_heave", strain + pull + court + soil, s, 0.74)
 
 
 def sentry_catch():
@@ -405,60 +421,70 @@ def sprout_ready():
 
 
 def theme():
-    """HIS THEME, under the introduction (4.6 s, beat for beat with it): wooden bars over the forest.
+    """HIS THEME, under the introduction (5.0 s, beat for beat with it): wooden bars over the mountain.
 
     Paete is the carving town, so the lead is carved wood: an ORIGINAL pentatonic figure on the bar model
     (`knock`), the register of a bamboo or narra xylophone, with no sample and no borrowed melody. Under it
     the mountain: a low bowed-wood drone that thickens and a leaf bed that swells as the ground answers."""
-    # ⚠️⚠️ v4, RE-TIMED 2026-09-26 NIGHT TO THE THREE-SHOT CUTSCENE (CALL, CONNECT, RISE; direction.md 5.13,
+    # ⚠️⚠️ v5, RE-TIMED 2026-09-26 NIGHT TO THE CALLED-FROM-THE-GROUND CUTSCENE (direction.md 5.14,
     # `HeroIntroductionScene.Paete.cs`). Every accent is a beat the eye is on:
-    #   0.05 to 0.60  Makiling rises behind him: the bars climb softly with her, the light glows up in her hands
-    #   0.72 to 0.86  the light FALLS from her hands into his: a quick falling run, a tap as it lands
-    #   0.95          it goes into him and HIS EYES IGNITE: a low bloom and a bright struck chord
-    #   1.20 to 1.50  he gathers himself up: a rising draw into
-    #   1.50          his palm into the court (punch): soil crunch, felt thump, the court like a struck log
-    #   1.52 to 1.80  roots burst round his hand and dive back in: bark cracking
-    #   1.55 to 2.55  three veins race under the court: a crackle running away, a swell that keeps building
-    #   2.55 to 3.00  the light pools at the landing: the swell tightens
-    #   2.62          he rises arms high (punch): the bars climb back up
-    #   3.00          the court breaks and the guardian screws up: the big crack and the sub
-    #   3.56          it tops out, leaves blown off its crown
-    #   3.98          the light opens in its hollows: one deep carved note, the last word
-    s = 4.6
+    #   0.03 to 0.45  Makiling rises behind him: the bars climb softly with her
+    #   0.30 to 0.50  she FORMS in her own colours: a warm held chord swells under the bars
+    #   0.58 to 0.70  the light FALLS from her hands into his: a quick falling run, a tap as it lands
+    #   0.78          it goes into him and HIS EYES IGNITE: a low bloom and a bright struck chord
+    #   0.82 to 1.08  she turns back to spirit: the held chord thins away
+    #   1.08 to 1.22  he drops: a rising draw into
+    #   1.22          both palms into the court (punch): soil crunch, felt thump, the court like a struck log
+    #   1.25 to 1.60  his roots dig in: wood creaking down into soil
+    #   1.60 to 2.30  he CHANNELS: a hum that rises and three heartbeat pulses, quickening (1.72, 1.96, 2.14)
+    #   2.30 to 2.75  the SEND and his roots racing away under the court: a crackle running off, a grind rising
+    #   2.75          the court bulges: a deep swelling crack
+    #   3.15 3.55 3.95 the three hauls: a groan, the court breaking and a thump each, bigger each time
+    #   4.25          it tops out, leaves blown off its crown
+    #   4.50          the light opens in its hollows: one deep carved note, the last word
+    s = 5.0
     t = times(s)
-    # Her rise, soft and climbing, and the light glowing up in her hands.
-    her = [(0.10, 261.6), (0.26, 293.7), (0.42, 349.2), (0.58, 392.0)]
+    # Her rise, soft and climbing.
+    her = [(0.08, 261.6), (0.20, 293.7), (0.32, 349.2), (0.44, 392.0)]
     bars = sum(knock(t, at, p, 0.28, 0.55) for at, p in her)
-    glow = np.sin(2 * np.pi * 523.3 * t) * window(t, 0.12, 0.74, 0.25) * 0.10
+    # Her full form: a warm held chord swelling in and thinning away as she turns back to spirit.
+    form = (np.sin(2 * np.pi * 261.6 * t) + 0.7 * np.sin(2 * np.pi * 329.6 * t) + 0.5 * np.sin(2 * np.pi * 392.0 * t)) \
+        * window(t, 0.30, 1.05, 0.2) * np.clip((t - 0.3) / 0.2, 0, 1) * np.clip((1.08 - t) / 0.3, 0, 1) * 0.07
     # The light falls: a quick run down the bars, a tap where it lands in his hand.
-    fall = [(0.72, 784.0), (0.76, 659.3), (0.80, 523.3), (0.84, 440.0)]
-    drop = sum(knock(t, at, p, 0.12, 0.5) for at, p in fall) + knock(t, 0.86, 392.0, 0.35, 0.8)
-    # IGNITION: a low bloom under a bright struck chord, ringing out over the gather.
-    ignite = thump(t, 0.95, 70, 0.45) * 0.9 + knock(t, 0.95, 523.3, 0.9, 0.9) + knock(t, 0.95, 784.0, 0.7, 0.55)         + np.sin(2 * np.pi * 1046.5 * t) * window(t, 0.95, 1.6, 0.4) * env_ar(t, 0.01, 0.6, 0.97) * 0.12
-    # The gather: a rising draw of air and leaf into the slam.
-    draw = rustle(t, 8410, 2200 * np.clip((t - 1.18) / 0.32, 0, 1) ** 2 * window(t, 1.18, 1.5, 0.02), 4200) * 0.5
-    # The press: soil crunch, a felt thump, the court answering like a struck log.
-    press = snap(t, 8403, 1.5, 40, 0.10, 900, 0.9) + thump(t, 1.5, 55, 0.35) * 1.3 + knock(t, 1.5, 98, 0.25, 0.9)
-    # Roots burst round his hand and dive back in: bark cracking, then a wooden groan under everything to the rise.
-    burst = snap(t, 8404, 1.52, 60, 0.30, 1900, 0.8)
-    groan = creak(t, 8405, sweep(t, 30, 30, s) + 50 * np.clip((t - 1.5) / 1.1, 0, 1), 0.4,
-                  [(140, 1.0), (330, 0.5)], 12.0, window(t, 1.5, 2.65, 0.08)) * 2.2
-    # The veins race: a crackle travelling away and rising; the swell builds on to the eruption.
-    race = snap(t, 8406, 1.55, 260, 1.0, 1400, 1.3) * window(t, 1.55, 2.58, 0.05) * np.clip((t - 1.55) / 1.0, 0.3, 1)
-    swell = one_pole_low(one_pole_low(noise(len(t), 8407), 80), 80) * np.clip((t - 1.55) / 1.45, 0, 1) ** 2 * window(t, 1.55, 3.12, 0.12) * 16.0
-    # He rises: the bars climb back up the figure, landing an octave high with the eruption.
-    rise = [(2.62, 293.7), (2.74, 349.2), (2.86, 392.0), (2.98, 523.3)]
-    climb = sum(knock(t, at, p, 0.30, 1.0) for at, p in rise) + knock(t, 3.0, 261.6, 0.8, 1.0)
-    # The guardian breaks the court and screws up: a big crack, the sub, then leaves roaring and settling.
-    erupt = snap(t, 8408, 3.0, 90, 0.35, 700, 1.3) + thump(t, 3.0, 44, 0.8) * 1.6
-    trunk = creak(t, 8409, sweep(t, 18, 45, s), 0.5, [(90, 1.0), (210, 0.5)], 10.0, window(t, 3.02, 4.5, 0.3)) * 1.6
-    topout = snap(t, 8411, 3.56, 30, 0.25, 2600, 0.6)
-    leaves = rustle(t, 8402, 2600 * window(t, 3.05, 4.55, 0.5) + 1400 * window(t, 3.52, 3.9, 0.12), 3600) * 0.6
+    fall = [(0.58, 784.0), (0.61, 659.3), (0.64, 523.3), (0.67, 440.0)]
+    drop = sum(knock(t, at, p, 0.12, 0.5) for at, p in fall) + knock(t, 0.70, 392.0, 0.35, 0.8)
+    # IGNITION: a low bloom under a bright struck chord.
+    ignite = thump(t, 0.78, 70, 0.45) * 0.9 + knock(t, 0.78, 523.3, 0.9, 0.9) + knock(t, 0.78, 784.0, 0.7, 0.55) \
+        + np.sin(2 * np.pi * 1046.5 * t) * window(t, 0.78, 1.3, 0.3) * env_ar(t, 0.01, 0.5, 0.80) * 0.12
+    # The drop: a rising draw of air and leaf into the slam.
+    draw = rustle(t, 8410, 2200 * np.clip((t - 1.06) / 0.16, 0, 1) ** 2 * window(t, 1.06, 1.22, 0.02), 4200) * 0.5
+    # The slam: soil crunch, a felt thump, the court answering like a struck log.
+    press = snap(t, 8403, 1.22, 40, 0.10, 900, 0.9) + thump(t, 1.22, 55, 0.35) * 1.3 + knock(t, 1.22, 98, 0.25, 0.9)
+    # His roots dig in: wood creaking DOWN into soil (the slips slow as they go deeper).
+    dig = creak(t, 8404, sweep(t - 1.25, 120, 45, 0.35), 0.5, [(300, 1.0), (700, 0.4)], 8.0, window(t, 1.25, 1.62, 0.05)) * 1.6 \
+        + rustle(t, 8412, 1600 * window(t, 1.25, 1.6, 0.08), 1500, q=1.1) * 0.6
+    # The channel: a hum rising under three quickening heartbeats.
+    hum = creak(t, 8405, 60 + 90 * np.clip((t - 1.6) / 0.7, 0, 1), 0.2, [(130.8, 1.0), (196.0, 0.6), (261.6, 0.3)], 18.0,
+                window(t, 1.58, 2.36, 0.08) * np.clip((t - 1.58) / 0.7, 0.25, 1)) * 1.8
+    beats = sum(thump(t, at, 58, 0.16) * 1.2 + knock(t, at, 196.0, 0.14, 0.45) for at in (1.72, 1.96, 2.14))
+    # The send: one big pulse, then the roots race off: a crackle running away and rising, a grind under it, a pop as the court bulges.
+    send = thump(t, 2.30, 50, 0.25) * 1.3 + knock(t, 2.30, 261.6, 0.5, 0.8)
+    race = snap(t, 8406, 2.32, 140, 0.42, 1400, 1.2) * window(t, 2.3, 2.76, 0.04)
+    grind = creak(t, 8413, sweep(t - 2.3, 60, 170, 0.45), 0.5, [(220, 1.0), (520, 0.4)], 8.0, window(t, 2.3, 2.78, 0.05)) * 1.8
+    bulge = one_pole_low(one_pole_low(noise(len(t), 8407), 80), 80) * env_ar(np.maximum(0, t - 2.75), 0.1, 0.35, 0.12) * (t >= 2.75) * 14.0 \
+        + snap(t, 8414, 2.75, 50, 0.2, 1100, 1.0)
+    # The three hauls, each bigger: a groan, the court breaking, a thump.
+    hauls = sum((creak(t, 8420 + k, sweep(t - at, 26, 50, 0.5), 0.35, [(90 - 6 * k, 1.0), (215, 0.5)], 11.0, window(t, at - 0.08, at + 0.45, 0.08)) * 1.8
+                 + snap(t, 8430 + k, at, 40 + 15 * k, 0.25, 800, 1.1) + thump(t, at, 44 - 3 * k, 0.35) * (1.0 + 0.25 * k))
+                for k, at in enumerate((3.15, 3.55, 3.95)))
+    topout = snap(t, 8411, 4.25, 30, 0.25, 2600, 0.6)
+    leaves = rustle(t, 8402, 1800 * window(t, 3.2, 4.9, 0.5) + 1600 * window(t, 4.22, 4.6, 0.12), 3600) * 0.6
     # Its eyes light: one deep carved note with a soft chime over it.
-    wake = knock(t, 3.98, 130.8, 1.1, 1.1) + knock(t, 3.98, 392.0, 0.7, 0.35) + np.sin(2 * np.pi * 784.0 * t) * window(t, 3.98, 4.6, 0.2) * env_ar(t, 0.02, 0.5, 4.0) * 0.08
-    drone = creak(t, 8401, 110 + 0 * t, 0.05, [(130.8, 1.0), (196.0, 0.6)], 30.0, np.clip(t / 2.6, 0, 1) ** 1.4 * window(t, 0, 4.5, 0.4)) * 1.0
-    return finish("sfx_ult_theme_paete", bars + glow + drop + ignite + draw + press + burst + groan + race + swell + climb + erupt + trunk
-                  + topout + leaves + wake + drone, s, 0.66)
+    wake = knock(t, 4.50, 130.8, 1.1, 1.1) + knock(t, 4.50, 392.0, 0.7, 0.35) \
+        + np.sin(2 * np.pi * 784.0 * t) * window(t, 4.50, 5.0, 0.15) * env_ar(np.maximum(0, t - 4.5), 0.02, 0.4) * (t >= 4.5) * 0.08
+    drone = creak(t, 8401, 110 + 0 * t, 0.05, [(130.8, 1.0), (196.0, 0.6)], 30.0, np.clip(t / 2.6, 0, 1) ** 1.4 * window(t, 0, 4.9, 0.4)) * 1.0
+    return finish("sfx_ult_theme_paete", bars + form + drop + ignite + draw + press + dig + hum + beats + send + race + grind + bulge
+                  + hauls + topout + leaves + wake + drone, s, 0.66)
 
 
 def sky():
@@ -477,7 +503,7 @@ if __name__ == "__main__":
     # ⚠️ `sentry_cast` IS NO LONGER WRITTEN HERE: the ultimate is called up through the ground now, and
     # `tools/build_rework_audio.py` (`paete_ground_call`) owns `sfx_cast_paete_sentry`. Left defined for history.
     rows = [vine(), sprout_cast(), command(), sprout_land(), sprout_fire(), sprout_uproot(), thorns_cast(),
-            thorn_burst(), sentry_burst(), sentry_catch(), rooted(), root_break(),
+            thorn_burst(), sentry_burst(), sentry_heave(), sentry_catch(), rooted(), root_break(),
             sentry_wilt(), sentry_wake(), sprout_ready(), theme(), sky()]
     report = {
         "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",

@@ -60,10 +60,17 @@
     },
     {
       "cue": "sfx_paete_sentry_burst",
-      "seconds": 1.6,
-      "peak": 0.8000000000000002,
-      "rms": 0.08447147940563803,
-      "sha256": "210418302125acd9133595e2fd8d045720f8fe79141b7f8401982048819a205a"
+      "seconds": 1.3,
+      "peak": 0.8,
+      "rms": 0.12762204915932948,
+      "sha256": "b60c4f56f48dee173d15d41fc4abd6d3a20254b14536a55605ecf05bfedf6e98"
+    },
+    {
+      "cue": "sfx_paete_sentry_heave",
+      "seconds": 1.0,
+      "peak": 0.74,
+      "rms": 0.12128561275140658,
+      "sha256": "156cce09b025f4e7272134e0a5c3f454be8c3009930ef0ba0a5435221cb8c6bf"
     },
     {
       "cue": "sfx_paete_sentry_catch",
@@ -109,10 +116,10 @@
     },
     {
       "cue": "sfx_ult_theme_paete",
-      "seconds": 4.6,
+      "seconds": 5.0,
       "peak": 0.66,
-      "rms": 0.11281666220270528,
-      "sha256": "c13d780ca7a530e87b30c2eb8f5108e7f9dbfa24411f0ba93c035c6d6a5ca367"
+      "rms": 0.116625680953378,
+      "sha256": "6e51f89e5fdc3fbe7ad603699ef47d7e608ea453a8c5515a1f551478d5842770"
     },
     {
       "cue": "sfx_sky_canopy",

@@ -496,4 +496,70 @@ crown clipped the top of the last frame.
   teleport. Wanted: it CRAWLS out of the ground. Proposed: the claw roots break out first and grab the court like hands (0 to 0.4),
   heave the trunk up in two or three hauls with pauses (0.4 to 1.2, the bark cracking round it, soil pouring off its shoulders),
   the crown unfolding last as it tops out, then the eyes. Same beats in play (the live sentry) and in the cutscene (which then needs
-  the eruption earlier or the wake later; the RISE shot's crane follows the hauls).
+  the eruption earlier or the wake later; the RISE shot's crane follows the hauls). Superseded by 5.14, which builds it.
+
+### 5.14 Called from the ground, v5: he kneels, his roots join the court, he channels, they travel, the tree crawls out (2026-09-26 night)
+
+The owner, on the v4 film: *"i also dont like that paete just throws seeds in his ult"*, then *"REDIRECT IT I WANNT IT TO LOOK LIKE HE
+GOES TO THE GHHROUND AND HIS ROOTS CONNECT TO IT AND HE IS CHANNELLING HIS POWER AND HE GLOWS AND SHIT AND THEN HIS ROOTS TRAVEL TO THE
+GROUND AND THEN THE tree slowly show up"*, and on the length: *"dont go past 5 seconds for cutscene and u can make some parts of it
+faster thoroughly think abt which parts should be faster ALSO match time should pause during cutscenes"*.
+
+**Where the seed was.** Not in the cutscene: v4 had already stopped throwing there. It was in the LIVE cast that plays the moment the
+cutscene hands the world back (film r13, frames 130 to 154 of both views): on his own screen the first-person clip `sentry-throw` wound
+the right arm back and threw it forward, with the palm light on the hand; the body clip `hero-paete-sentry` started from arms high; and
+`PaeteRootVein` carried a bright lime block at the head of its roots, which from the court is exactly a seed rolling along the ground.
+All three are replaced, and nothing in the ultimate is thrown any more.
+
+**His sentence, as five beats, in the cutscene AND in play:**
+1. **He goes to the ground.** Down on his right knee, both palms flat on the court. A slam, fast.
+2. **His roots connect to it.** The braids of his forearms (his arms ARE braided vines) unravel into roots that spread from each hand
+   like fingers and dig into the court; two more leave his knee and his planted foot. They stay in: he is joined to the ground, and
+   they are his own bark, not something that comes up out of the court.
+3. **He channels and glows.** The light she gave him runs down through him. It is not a sticker: `SpiritVeins.shader` is drawn over
+   his own body and lights HIS vines (palette slot 4, the green strands round his arms and trunk) and his lit moss (slot 7), with a jade
+   edge light on the rest, and a band of light sweeps down him from the eyes to the hands. His eyes blaze. It pulses three times,
+   quickening like a heartbeat, and each pulse runs down his arms, down the roots, and out into the court as a ring. Motes rise off
+   him; the ground round his hands glows up through hairline cracks.
+4. **His roots travel.** Three roots race from his hands through the court to the spot. The court heaves up over them in a ridge,
+   splits along it with the light INSIDE the cracks, and their woven backs break the surface and dive again. There is no light at the
+   front: the front is the court bulging and soil kicked up. (`PaeteRootRidge` replaces `PaeteRootVein`.)
+5. **The tree slowly shows up.** The court bulges and cracks in a ring round the spot, light leaking out; the claw roots break out
+   first and GRAB the court like hands; the trunk hauls itself out in three heaves with a strain and a pause between them, soil and
+   slabs pouring off it; the crown pushes out and opens last; then the eyes. 1.75 s from the roots arriving to the eyes, where it was
+   0.5 s (`PaeteSentryBody` CRAWL, the same clock in the cutscene and in play).
+
+**What is faster and what is slower, to fit 5.0 s (the owner's ceiling, and `UltimatePerformance.MaxSeconds`).** Faster: her arrival
+and her gift, 1.4 s to 1.1 s, because the owner asked for her full form to be BRIEF and she is the setup, not the power; the drop to
+the ground, a 0.15 s slam, because a tree deciding to act commits at once (section 0); and the roots' race, 0.45 s, because a race
+reads as force, and it is the same 0.45 s the live roots take, so the two agree. Held: the channel, 0.7 s, because it is the heart of
+his power and the part he asked to SEE (the three pulses quicken inside it, so it never sits still). Slower: the tree, which he asked
+to show up slowly. The length goes from 4.6 s to 5.0 s; the shared phase is the longest caster's length, so both machines must run
+the same build (protocol 57, as 52 recorded for the first variable length).
+
+**The cutscene, v5, three shots (one idea each):**
+
+| Shot | Time | Camera (hero space) | What happens |
+|---|---|---|---|
+| CALL | 0 to 1.1 | front right, low, one push-in, her head held above his | her meadow grows out from her (0.1 s on); she rises out of the mist (0.03 to 0.45) and FORMS in her own colours (0.30 to 0.50) holding the light over him; the light falls into his hands (0.58 to 0.70); his eyes ignite (0.78); she turns back to spirit as it passes into him (0.82 to 1.08) |
+| ROOT | 1.1 to 2.3 | close and low on his front right at kneel height, a slow push-in, her hands in the top of frame | he drops (1.1) and plants both palms (1.22, the slam; the makahiya fold shut); roots pour out of his forearms, knee and foot and dig in (1.25 to 1.6); the channel (1.6 to 2.3): the light sweeps down him into the ground, pulses at 1.72, 1.96 and 2.14; she bends over him, her hands over his shoulders |
+| RISE | 2.3 to 5.0 | wide and low from his front right, him on the left and the spot on the right; holds while the roots cross the frame, cranes up with the heaves, pushes toward the tree's face | the roots race left to right (2.3 to 2.75); the court bulges (2.75); the claws break out and grab (2.8 to 3.2); three heaves (3.15, 3.55, 3.95); the crown opens (4.1 to 4.45); the eyes (4.5), the last beat. The gust leans the meadow; she lets go and the mist takes her (3.6 to 4.4) as the meadow wilts from its edge in (3.6 to 4.5). He stays down, joined to the ground, and lifts his head to it |
+
+**In play, after the cutscene hands back (gameplay unchanged: the roots arrive at 0.45 s, the catch is at 0.75 s, the same bodies are
+caught, the same 9 m, the same 7 s):**
+
+| Beat | Time | His body (everyone) | His screen | The world | Sound |
+|---|---|---|---|---|---|
+| Channel | 0 to 0.45 | still down on the knee, palms in the court (the cutscene's last pose, so the hand-back does not jump) | the view is lowered to kneel height and tipped down a little (an offset like the taya's squat, never the aim); both hands on the court, roots from the forearms in the ground, lit | three roots race from his hands to the spot | `sfx_cast_paete_sentry` (the press, a root groan); `sfx_paete_root_vein` (soil tearing, racing) |
+| Grip | 0.75 | the fists clench in the court as the claws grab | hands clench | the court bulges, the claws break out; woven roots lash from the ground to every body in 9 m and drag them in | `sfx_paete_sentry_burst` (0.45), `sfx_paete_sentry_catch` (0.75) |
+| Heave | 0.85 to 1.95 | three heaves with the tree, shoulders driving up | the view jolts up on each | the trunk hauls itself out; the limbs rise with it to the captives' waists | `sfx_paete_sentry_heave`, three times |
+| Rise | 2.0 | he stands, tearing his hands out of the court, arms high; the roots snap back into his forearms | the view rises; the hands come up | the crown opens | |
+| Embrace | 2.25 | arms cross over his chest | hands cross | the eyes open and the crown clenches round its captives | `sfx_paete_sentry_wake` |
+| Settle | to 3.0 | back to stance | rest | the watch | |
+
+Walking cancels the kneel at any point (`CharacterAnimator.CancelHeroAction`): the roots snap out of the court and the view comes back up.
+AGENTS.md: an animation never adds rooting. The world's half (the roots, the tree, the catch) runs on regardless.
+
+**Match time.** The round clock does not run during a cutscene: `SharedUltimatePhase` holds `PresentationClock` on the first accepted
+cast, `RoundDirector.FixedUpdate` returns while it is held, and the world runs at a time scale of 0. The v5 film measures it (the clock
+when the cutscene comes up, while it plays, and when it hands back) and fails if it moved.

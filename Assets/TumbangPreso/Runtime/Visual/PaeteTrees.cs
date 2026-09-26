@@ -146,6 +146,13 @@ namespace TumbangPreso.Visual
             public float Fade;
             /// <summary>0 to 1: the light held in her hands (and lighting her from within).</summary>
             public float Light;
+            /// <summary>
+            /// ⚠️ v4 (owner: *"i dont mind if u show hher briefly full form and she vanishes back (she sstarts translucent to full forma
+            /// nd translucent again)"*): 0 to 1, how far her FULL FORM has swept up her from the feet (her own colours, lit, inked).
+            /// </summary>
+            public float Form;
+            /// <summary>0 to 1: how far the spirit has come back up her after it, from the feet (1 is all ghost again).</summary>
+            public float Unform;
         }
 
         public readonly GameObject Model;
@@ -157,7 +164,10 @@ namespace TumbangPreso.Visual
         private static readonly int BaseYId = Shader.PropertyToID("_BaseY"), PresenceId = Shader.PropertyToID("_Presence"),
             FadeLowId = Shader.PropertyToID("_FadeLow"), FadeHighId = Shader.PropertyToID("_FadeHigh"),
             LightPosId = Shader.PropertyToID("_LightPos"), LightStrengthId = Shader.PropertyToID("_LightStrength"),
-            LightRadiusId = Shader.PropertyToID("_LightRadius");
+            LightRadiusId = Shader.PropertyToID("_LightRadius"), SolidFromId = Shader.PropertyToID("_SolidFrom"),
+            SolidToId = Shader.PropertyToID("_SolidTo"), InkWidthId = Shader.PropertyToID("_InkWidth");
+        /// <summary>Her height above her feet, crown included (the glb stands 3.0 m; the lines sweep a little past it).</summary>
+        private const float FormHeight = 3.25f;
 
         private static Color Hex(int rgb) => new Color(((rgb >> 16) & 255) / 255f, ((rgb >> 8) & 255) / 255f, (rgb & 255) / 255f, 1f);
 
@@ -248,6 +258,12 @@ namespace TumbangPreso.Visual
                 _ghost.SetFloat(FadeHighId, Mathf.Lerp(1.0f, 3.45f, fade) * _scale);
                 _ghost.SetVector(LightPosId, HandsWorld);
                 _ghost.SetFloat(LightStrengthId, 1.1f * Mathf.Clamp01(look.Light));
+                // HER FULL FORM (v4): the solid band runs from `_SolidFrom` to `_SolidTo`, metres above her feet. Forming sweeps the top
+                // line up her from below her feet; turning back sweeps the bottom line up after it, so she rises into her form and out.
+                float top = FormHeight * _scale;
+                _ghost.SetFloat(SolidToId, Mathf.Lerp(-0.2f, top, Mathf.SmoothStep(0f, 1f, look.Form)));
+                _ghost.SetFloat(SolidFromId, Mathf.Lerp(-0.2f, top, Mathf.SmoothStep(0f, 1f, look.Unform)));
+                _ghost.SetFloat(InkWidthId, 0.013f * _scale);
             }
         }
     }
@@ -392,71 +408,11 @@ namespace TumbangPreso.Visual
         }
     }
 
-    /// <summary>
-    /// ⚠️⚠️ THE ULTIMATE IS CALLED UP THROUGH THE GROUND, NOT THROWN (owner, 2026-09-26: *"i also dont want him
-    /// to be throwing an orb I want him to be CALLING IT FROM THE GROUND"*). In play, in place of the seed's arc:
-    /// three bark roots braided round a line of his jade light race along the court from his feet to where the
-    /// tree will stand, cracking the road as they go, arriving on the same clock the seed did (so the warning a
-    /// player gets is unchanged), then sinking back into the court as the tree bursts. Every peer draws it
-    /// from the accepted cast, like the seed it replaces.
-    /// </summary>
-    public sealed class PaeteRootVein : MonoBehaviour
-    {
-        private Vector3 _from, _to;
-        private float _seconds, _age;
-        private PaeteRope _rope;
-        private Transform _tip;
-        private readonly List<Vector3> _path = new List<Vector3>(48);
-        private readonly List<Vector3> _shown = new List<Vector3>(48);
-        private int _cracks;
-        private const int Samples = 36;
-
-        public static PaeteRootVein Race(Vector3 from, Vector3 to, float seconds)
-        {
-            var go = new GameObject("PaeteRootVein");
-            var vein = go.AddComponent<PaeteRootVein>();
-            vein._from = from; vein._to = to; vein._seconds = Mathf.Max(0.1f, seconds);
-            // The veins racing under the court have a sound of their own (TODO HERO-9, `tools/build_rework_audio.py`).
-            GameServices.Audio?.PlayAt("sfx_paete_root_vein", Vector3.Lerp(from, to, 0.5f));
-            vein._rope = new PaeteRope(go.transform, "root-vein", new[] { GrowthVfx.BarkDark, GrowthVfx.Bark, GrowthVfx.BarkLit },
-                                       new[] { 0.070f, 0.060f, 0.052f }, 0.075f, 5.5f, 0.4f);
-            vein._tip = GrowthVfx.Block(go.transform, "vein-light", Vector3.one * 0.22f, GrowthVfx.Glow, 1.6f).transform;
-            // The line under the road: out of his feet, wandering a little (two slow waves), hugging the court.
-            Vector3 d = to - from; d.y = 0f;
-            Vector3 side = d.sqrMagnitude > 1e-4f ? Vector3.Cross(Vector3.up, d.normalized) : Vector3.right;
-            for (int k = 0; k <= Samples; k++)
-            {
-                float u = k / (float)Samples;
-                Vector3 p = Vector3.Lerp(from, to, u) + side * (0.35f * Mathf.Sin(u * Mathf.PI * 2.2f) * Mathf.Sin(u * Mathf.PI));
-                p.y = Slipper.GroundY(p) + 0.05f;
-                vein._path.Add(p);
-            }
-            PaeteGroundBreak.Spawn(from, 0.6f);
-            vein.Step(0f);
-            return vein;
-        }
-
-        private void Update() => Step(Time.deltaTime);
-
-        public void Step(float dt)
-        {
-            _age += dt;
-            float reach = Mathf.Clamp01(_age / _seconds);
-            float sink = Mathf.Clamp01((_age - _seconds - 0.1f) / 0.7f);
-            if (sink >= 1f) { PaeteProp.Kill(gameObject); return; }
-            int shown = Mathf.Clamp(Mathf.CeilToInt(reach * Samples), 1, Samples);
-            _shown.Clear();
-            for (int k = 0; k <= shown; k++) _shown.Add(_path[k] + Vector3.down * 0.25f * sink);
-            _rope.Draw(_shown, 0.55f);
-            // The light runs at the front of the roots, then drops into the ground where the tree will stand.
-            _tip.position = _shown[_shown.Count - 1] + Vector3.up * 0.12f;
-            _tip.localScale = Vector3.one * 0.22f * (1f + 0.25f * Mathf.Sin(_age * 30f)) * (1f - sink);
-            _tip.Rotate(0f, 400f * dt, 0f, Space.World);
-            // The road cracks behind the tip, every quarter of the way.
-            int crack = Mathf.FloorToInt(reach * 4f);
-            while (_cracks < crack && _cracks < 4) { _cracks++; PaeteGroundBreak.Spawn(_path[Mathf.Min(Samples, _cracks * Samples / 4)], 0.35f); }
-        }
-    }
+    // ⚠️ `PaeteRootVein` IS DELETED (2026-09-26 night, direction.md 5.14). It raced three bark cords along the court with a
+    // bright lime block at their head, and from the court and from his own screen that block was a seed rolling to the spot:
+    // the owner, *"i also dont like that paete just throws seeds in his ult"*. `PaeteRootRidge` (`PaeteGroundCall.cs`) replaces
+    // it: the roots go UNDER the court, which heaves and splits over them with the light inside the split, and nothing lit
+    // leads them.
 
     /// <summary>
     /// Bark breaking: chunks thrown out from a point that fall, bounce once and shrink away. The

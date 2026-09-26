@@ -400,7 +400,10 @@ namespace TumbangPreso.Net
         // progress, so every peer draws a body fighting Paete's roots or heaving at his seedling.
         // 56 is the roster rework (ABILITY-2, 2026-09-26): `SyncUnit` carries Concussed, Feared,
         // Disoriented, Vulnerable and the fear's source.
-        public const int ProtocolVersion = 56;
+        // 57 (2026-09-26 night): Paete's introduction is 5.0 s (was 4.6; direction.md 5.14). No bytes changed, but as 52
+        // recorded, the shared phase's length is derived on every peer from the heroes' tables, so a 56 peer would
+        // release its presentation clock 0.4 s before the host.
+        public const int ProtocolVersion = 57;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

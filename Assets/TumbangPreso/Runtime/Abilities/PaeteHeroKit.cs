@@ -210,14 +210,22 @@ namespace TumbangPreso.Abilities
                        0.0f, 0.0f, AbilityGlyph.PaeteSentry,
                        summary: "A guardian tree drags everyone in 9 m into its roots.",
                        telegraphRadius: PaeteRules.SentryRadius, telegraphRange: PaeteRules.SentryThrowRange,
-                       castAction: "hero-paete-sentry", viewmodelAction: "sentry-throw",
+                       castAction: "hero-paete-sentry", viewmodelAction: "ground-call",
                        castCue: "sfx_cast_paete_sentry") { }
 
+            /// <summary>
+            /// ⚠️⚠️ v5, CALLED FROM THE GROUND IN PLAY TOO (owner, 2026-09-26 night: *"i also dont like that paete just throws seeds in
+            /// his ult"*; direction.md 5.14). Nothing leaves his hand: he is down on his knee with his hands in the court (the cutscene's
+            /// last pose, and the live clip's first), his roots race from between his hands to the spot, and the tree crawls out
+            /// there. `PaeteGroundCall` keeps his body joined to the ground meanwhile; the timing, the reach and the catch are
+            /// `PaeteSentry`'s, unchanged.
+            /// </summary>
             protected override void OnActivate(AbilityContext ctx)
             {
                 if (ctx?.Motor == null) return;
                 Vector3 at = PaeteVine.GroundTarget(ctx.Position, ctx.Forward, ctx.AimPoint, PaeteRules.SentryThrowRange);
-                PaeteSentry.Spawn(ctx.Position + Vector3.up * 1.4f, at, ctx.Motor.PlayerSlot);
+                Vector3 hands = PaeteGroundCall.Begin(ctx.Motor, at);
+                PaeteSentry.Spawn(hands, at, ctx.Motor.PlayerSlot);
             }
 
             public override void Reset()

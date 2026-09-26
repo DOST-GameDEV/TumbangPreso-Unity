@@ -20,13 +20,18 @@ namespace TumbangPreso.EditorTools.MapKit
     /// solid one shows it. Paete stands in front of her in his cupped-hands pose from the introduction's own
     /// table, so her size and her place over his shoulder are judged against him, from the CALL shot's angle.
     ///
+    /// ⚠️ v4 (2026-09-26 night, direction.md 5.14): her FULL FORM as the shader now draws it (forming, formed, turning back: the
+    /// owner's *"she sstarts translucent to full forma nd translucent again"*), and HER MEADOW (`PaeteMeadow`, `meadow.glb`): grown,
+    /// at the instant of his palms' touch (the makahiya folded), and wilting from its edge in, so the models are judged whole
+    /// before the cutscene hides them in motion.
+    ///
     /// Nothing casts an ability or touches a rule; the scene is never saved. Output:
-    /// `Logs/paete-review/paete_makiling_<Version>.png`, versioned (`CLAUDE.md` § 6.1).
+    /// `Logs/paete-review/paete_makiling_<Version>.png` and `paete_meadow_<Version>.png`, versioned (`CLAUDE.md` § 6.1).
     ///   python tools/run_unity_guarded.py -batchmode -tp-profile presentation-validation-20260921 -executeMethod TumbangPreso.EditorTools.MapKit.PaeteSpiritReviewProbe.Run -logFile Logs/paete-spirit.log
     /// </summary>
     public static class PaeteSpiritReviewProbe
     {
-        public const string Version = "v3";
+        public const string Version = "v5";
         private const string OutDir = "Logs/paete-review";
         private const string Plaza = "Assets/TumbangPreso/Scenes/Maps/BayanPlaza.unity";
         private const int W = 640, H = 480;
@@ -60,24 +65,17 @@ namespace TumbangPreso.EditorTools.MapKit
                 if (clip == null) throw new InvalidOperationException("No Paete introduction clip.");
 
                 var shots = new List<Texture2D>();
-                // Three rows: the ghost as she gives him the light (the CALL), the ghost as she watches the guardian
-                // rise, and her SOLID in her own palette under the toon shader (the form check a ghost hides).
+                // Four rows of her: the ghost as she gives him the light (the CALL), FORMING (the solid line half way up her),
+                // her FULL FORM (her own colours, the cast's two bands, her ink), and TURNING BACK to spirit from the feet.
                 var calling = new MakilingSpirit.Look { Presence = 1f, Lean = 18f, Bow = 20f, Turn = -12f, Reach = 0.5f, Light = 1f, Wind = 0.3f };
-                var watching = new MakilingSpirit.Look { Presence = 1f, Lean = 6f, Bow = -8f, Turn = -6f, Reach = 0.36f, Open = 1f, Wind = 0.6f, Drift = new Vector3(0f, 0.25f, 0f) };
-                foreach (int row in new[] { 0, 1, 2 })
+                (string who, float form, float unform)[] rows = { ("ghost calling", 0f, 0f), ("forming", 0.55f, 0f), ("full form", 1f, 0f), ("turning back", 1f, 0.5f) };
+                foreach (var row in rows)
                 {
-                    GameObject solid = null; MakilingSpirit spirit = null;
-                    if (row < 2) spirit = new MakilingSpirit(host.transform, SpiritAt, SpiritYaw, SpiritScale);
-                    else
-                    {
-                        solid = PaeteProp.Spawn("makiling", host.transform, MakilingSpirit.Palette, ToonSkin.PersonOutlineWidth);
-                        solid.transform.localPosition = SpiritAt; solid.transform.localRotation = Quaternion.Euler(0, SpiritYaw, 0);
-                        solid.transform.localScale = Vector3.one * SpiritScale;
-                    }
-                    float t = row == 1 ? 3.3f : 1.1f;
-                    Pose(body.transform, clip, row == 1 ? 3.3f : 0.8f);
-                    spirit?.Pose(t, row == 1 ? watching : calling);
-                    var who = row == 0 ? "ghost calling" : row == 1 ? "ghost watching" : "solid";
+                    var spirit = new MakilingSpirit(host.transform, SpiritAt, SpiritYaw, SpiritScale);
+                    Pose(body.transform, clip, 0.66f);
+                    var look = calling; look.Form = row.form; look.Unform = row.unform;
+                    spirit.Pose(0.66f, look);
+                    string who = row.who;
                     var her = host.transform.TransformPoint(SpiritAt);
                     float headY = her.y + 2.5f * SpiritScale;
                     // 1 THE CALL, as the redirect frames it: front, low three-quarter from his right, her head over his.
@@ -88,13 +86,37 @@ namespace TumbangPreso.EditorTools.MapKit
                     shots.Add(Shoot(her + host.transform.rotation * new Vector3(.2f, 2.9f, 1.9f), new Vector3(her.x, headY, her.z), 36, $"{who} face"));
                     // 4 From her left, whole.
                     shots.Add(Shoot(her + host.transform.rotation * new Vector3(-6.8f, 2.1f, 1.6f), her + Vector3.up * 1.75f, 40, $"{who} side"));
-                    // 5 The rise shot's angle: from his front right, wide and low.
-                    shots.Add(Shoot(host.transform.TransformPoint(new Vector3(7.9f, .8f, 5.0f)), host.transform.TransformPoint(new Vector3(.2f, 1.6f, 1.0f)), 50, $"{who} rise angle"));
-                    if (solid != null) Object.DestroyImmediate(solid);
-                    if (spirit?.Model != null) Object.DestroyImmediate(spirit.Model);
+                    // 5 The ROOT shot's angle (v5): close and low on his front right, her in close behind him.
+                    var close = new Vector3(0.05f, 0f, -1.15f);
+                    spirit.Model.transform.localPosition = close;
+                    Pose(body.transform, clip, 1.9f);
+                    var bent = look; bent.Lean = 24f; bent.Bow = 30f; bent.Reach = 0.34f; bent.Open = 0.15f; bent.Light = 0f;
+                    spirit.Pose(1.9f, bent);
+                    shots.Add(Shoot(host.transform.TransformPoint(new Vector3(2.2f, 1.2f, 3.2f)), host.transform.TransformPoint(new Vector3(.02f, 1.25f, .3f)), 48, $"{who} root shot"));
+                    if (spirit.Model != null) Object.DestroyImmediate(spirit.Model);
                 }
-                Object.DestroyImmediate(clip);
                 Save("makiling", shots, 5);
+
+                // HER MEADOW: grown (the wave done), at his palms' touch (the makahiya folded shut), and wilting from its edge in.
+                var meadowShots = new List<Texture2D>();
+                var hands = new Vector3(0f, 0f, 1.0f);
+                (string who, float t)[] stages = { ("grown", 2.0f), ("the touch", 99.12f), ("wilting", 4.2f) };
+                foreach (var stage in stages)
+                {
+                    var meadow = new PaeteMeadow(host.transform, SpiritAt, hands, 0f);
+                    // The touch is posed as its own instant (slam at 99), fully grown.
+                    if (stage.t > 90f) meadow.Pose(stage.t, 99f, null, 200f, 201f, new Vector3(0f, 0f, 5.5f));
+                    else meadow.Pose(stage.t, 1.22f, new[] { 3.15f, 3.55f, 3.95f }, 3.6f, 4.5f, new Vector3(0f, 0f, 5.5f));
+                    Pose(body.transform, clip, stage.t > 90f ? 1.3f : 0.3f);
+                    meadowShots.Add(Shoot(host.transform.TransformPoint(new Vector3(2.1f, .9f, 4.6f)), host.transform.TransformPoint(new Vector3(.6f, .5f, -.5f)), 46, $"meadow {stage.who} call angle"));
+                    meadowShots.Add(Shoot(host.transform.TransformPoint(new Vector3(.8f, 6.5f, .6f)), host.transform.TransformPoint(new Vector3(.8f, 0f, -.4f)), 50, $"meadow {stage.who} from above"));
+                    meadowShots.Add(Shoot(host.transform.TransformPoint(new Vector3(1.0f, .55f, -.9f)), host.transform.TransformPoint(new Vector3(1.72f, .15f, -1.88f)), 40, $"meadow {stage.who} fern and bush"));
+                    meadowShots.Add(Shoot(host.transform.TransformPoint(new Vector3(2.75f, .55f, 1.75f)), host.transform.TransformPoint(new Vector3(2.1f, .12f, 1.0f)), 40, $"meadow {stage.who} makahiya"));
+                    meadowShots.Add(Shoot(host.transform.TransformPoint(new Vector3(2.9f, .75f, -3.3f)), host.transform.TransformPoint(new Vector3(2.2f, .2f, -2.2f)), 44, $"meadow {stage.who} gumamela, sampaguita"));
+                    meadow.Dispose();
+                }
+                Save("meadow", meadowShots, 5);
+                Object.DestroyImmediate(clip);
                 Debug.Log("[PaeteSpiritReviewProbe] wrote " + Version);
                 return true;
             }
