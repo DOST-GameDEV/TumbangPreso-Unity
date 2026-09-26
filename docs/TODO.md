@@ -836,6 +836,111 @@ The v1 capture found the body replaying the 0.33 s `pick-up` one-shot on every 0
   4.0 s so it reaches the lift), inspected: `docs/reports/can-raise-crouch-2026-09-26/`.
 - [ ] The owner's eye on it in play.
 
+### BUGS-0926 · Owner bug list on the lighting branch ⚠️ IN PROGRESS, 2026-09-26 (all six fixed; .1 and .6 await a look in play)
+
+Owner, 2026-09-26, six non-gameplay bugs on `merge/astra-lighting-2026-09-25`. Each fix is one
+commit.
+
+Evidence (`484562c9`, Mac, one PlayMode launch, total 5 failed 0):
+`HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` (.2, .4),
+`HubFlowTests.QueuePlateMatchFoundCharacterSelectLobbyAndLoadingAreDrawn` (.3),
+`WorldCourtCueTests.LightingStyleThumbnails` and
+`TumpNativeSettingsTests.LightingStyleCardsSwitchTheLookAndJoinSaveAndDiscard` (.5, photograph in
+[reports/bugs-0926/](reports/bugs-0926/lighting-style-cards-1920x1080.png)), and
+`HomeFlowTests.TitleIsOnePressAndKeepsHerStreetMoving` (the title still builds with one press
+target). Not covered by a test: an actual keyboard key on the title (.1) and the stamina arc in a
+live match (.6); both want a look in the owner's editor.
+
+- [x] BUGS-0926.1 The title screen ("Click anywhere to continue.") also continues on any keyboard key.
+  `MenuNav.KeyboardAnyPressed` (any key except Escape, which still quits from the title, and
+  except Alt chords, so Alt+Enter still toggles fullscreen); `OwnerMenuPrompt` invokes the same
+  full-screen press with it, after a 0.25 s arrival guard so the key that finished the previous
+  screen cannot skip this one. Her wording is unchanged.
+- [x] BUGS-0926.2 Escape on HOME no longer returns to the title screen. `HubHome.Back` (Escape,
+  pad B, Android BACK) left the room and loaded `MainMenu`; it now opens the hamburger MENU, and a
+  second BACK closes it. BACK TO TITLE in that menu is the deliberate way out. Queued, BACK still
+  cancels the queue first. `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts it.
+- [x] BUGS-0926.3 Pressing the IN QUEUE button cancels the queue. `HubHome.Tick` used to make
+  the button non-interactable while queued; it now stays pressable and `HubHome.Play` calls
+  `CancelQueue` (the same call as the plate's X and BACK) unless a match was already found.
+  `HubFlowTests.QueuePlateMatchFoundCharacterSelectLobbyAndLoadingAreDrawn` queues again and
+  leaves through the button.
+- [x] BUGS-0926.4 The hamburger MENU popup no longer swaps HOME's background for the live court.
+  Cause: `HubSceneVideo` showed the HOME loop only while `TumpHub.AtHome` (HOME on top of the
+  stack), and the MENU is a popup pushed on top, so the loop hid and the live court showed
+  through the popup's scrim. It now reads `TumpHub.ShowingHome`, the top non-popup screen.
+  `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts the loop stays up under
+  the MENU.
+- [x] BUGS-0926.5 Lighting styles: Bright is renamed Standard, stays the default and moves to slot 1;
+  Classic is renamed Nostalgic and moves to slot 2 (the owner chose this reading of "make the
+  classic lighting style the default, rename it to Standard" when asked). The swap moves both
+  stored indices, so the stored field is now `GameSettings.LightingLook`; the old
+  `LightingStyle` field is read once by `Validate` through `LightingStyles.FromLegacy` (old 0
+  Classic to Nostalgic, old 1 Bright to Standard) and cleared to -1. Thumbnails renamed to
+  `standard.png` / `nostalgic.png` with their GUIDs kept. `WorldCourtCueTests.LightingStyleThumbnails`
+  asserts the migration both ways.
+- [x] BUGS-0926.6 The stamina arc beside the reticle drains from the top. `HudRing.FillFromEnd`
+  anchors the fill at the arc's lower end; only the stamina arc sets it, so cooldown sweeps and
+  the notched ultimate are unchanged. Not yet seen in a native match.
+
+### LOAD-1 · Loading screens end when the work ends, and warm everything first ⚠️ IN PROGRESS, 2026-09-27
+
+Owner, 2026-09-27: "make optimized loading so every shader and every shit will render and load
+in the loading screen, the loading screen is hardcoded to be 5 seconds. fix that, make it also
+it downloads or renders in the background in the loading screen".
+
+- [x] LOAD-1.1 The boot screen's random 5 to 15 s reading window is gone
+  (`LoadingPresentation.CanLeave` takes no clock). It leaves when the preload, the held menu load
+  and sign-in are done; an opened story card still holds it, because that is the player's press.
+- [x] LOAD-1.2 Boot warms every map's assets (`SceneFlow.Maps`), not only Eskinita and Bayan
+  Plaza, so Ilalim ng Tulay, Sa Bubong and the Lagoon no longer load cold on PLAY.
+- [x] LOAD-1.3 `Visual.ArenaPrewarm`: behind the arena curtain the match camera draws the loaded
+  arena offscreen from 20 viewpoints, one per frame, into a target of the screen's HDR/MSAA
+  format, so pipeline states, meshes and textures are on the GPU before the first visible frame.
+  `HubLoading` lifts when that finishes; its 2 s hold is gone.
+- Evidence (Mac player built from this work): boot loading finished after 2.53 s (it waited at
+  least 5 s before); a bot match's Eskinita curtain lifted after 1.60 s with the prewarm taking
+  0.84 s; Ilalim through HOME lifted after 1.47 s (prewarm 0.87 s). Not measured: the Windows
+  tournament machine, a phone (five warmed maps are held in memory by `WarmAssetCache`, which is
+  a memory question on Android), and whether a first-turn hitch is actually gone in play.
+  Tests (Mac PlayMode, total 2 failed 0): `HomeFlowTests.LoadingTipsStayInlineAndReadinessStillGatesTheTitle`
+  and `HubFlowTests.QueuePlateMatchFoundCharacterSelectLobbyAndLoadingAreDrawn`.
+
+### LIGHT-4 · Ilalim ng Tulay lighting changes with view angle and distance ⚠️ OPEN, 2026-09-27
+
+Owner report with four frames: the street loses its sun shadows and goes flat and bluish from
+some positions, and gets them back closer to the shops. Investigation and numbers are in
+[reports/ilalim-lighting-2026-09-27/](reports/ilalim-lighting-2026-09-27/README.md): across
+offscreen PlayMode renders and two real Mac player sweeps of the back buffer (392 poses each,
+one entering through HOME and the loading curtain), the sun's shadows were drawn at every pose.
+Eliminated: the match-end portrait's preview key light, fog, occlusion culling, graphics tier,
+lighting style and MSAA. Not reproduced. Next: the owner's frames are from editor Play mode, so
+check whether it happens in a built player; if editor-only, suspect the Scene view camera
+interleaving with `WorldLookPresentation`'s per-camera globals. The in-player probe is
+`-tp-shadowsweep DIR [-tp-shadowsweep-hub] [-tp-map ID]` (`Diagnostics.WorldShadowSweepProbe`).
+
+### LIGHT-5 · Map select washed out and brighter than the match ✅ FIXED, 2026-09-27
+
+Owner report with a HOST GAME frame: the map preview is far too bright and should match the
+game's actual lighting. Cause, measured on the real HOST GAME screen: the hub runs two
+`MapPreviewSurface`s and both load the selected map on their first frame. Each claimed its load
+with `GetSceneByName`, which returns the FIRST scene of that name, and one surface is also
+deactivated mid-load, which stops its coroutine. Either way one copy of the map was nobody's:
+never confined to the preview layer, never parked, its sun left on with every layer in its mask.
+That orphaned Eskinita sun lit every map previewed afterwards on top of the map's own sun, and a
+new orphan could appear each time the hub was rebuilt. Fix: the surface claims the exact scene its
+own load created, in the load's `completed` callback (so a stopped coroutine cannot orphan it),
+confines and parks it at once, and unloads it if the surface was destroyed.
+
+Evidence in [reports/map-preview-2026-09-27/](reports/map-preview-2026-09-27/): before/after for
+all five maps (preview mean luminance Eskinita 0.559 to 0.494, Bayan 0.644 to 0.594, Ilalim 0.693
+to 0.612, Sa Bubong 0.671 to 0.599, Lagoon 0.751 to 0.686), and the fixed preview beside the
+match camera rendered from the same pose (0.494/0.492, 0.594/0.579, 0.611/0.627, 0.599/0.600,
+0.686/0.692). The haze that remains in the distance is each map's own fog at that height.
+Tests (Mac PlayMode, total 3 failed 0): new `HubFlowTests.HostGameMapPreviewIsLitByTheShownMapsSunAlone`,
+`WorldCourtCueTests.MapPreviewShowsTheBrightLookAndHandsEachMapItsLightingBack`,
+`HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns`.
+
 ### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23
 
 Integrated into ASTRAReworks on2026-09-24at owner request, through lighting branch
@@ -957,6 +1062,174 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
 
 Capture: `WorldCourtCueTests.BrightLookSameCameraCapturesOnAllFiveMaps` writes stage, eye and
 cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 passed on the Mac.
+
+### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
+
+**Renamed 2026-09-26 (BUGS-0926.5):** Bright is now **Standard** (slot 1, the default) and Classic is
+now **Nostalgic** (slot 2). The entries below keep the names they were written with.
+
+Owner request (2026-09-25), with a PUBG Mobile Style row as the reference: a style setting in
+the graphics settings with three slots. Slot 1 is the lighting on `main`, slot 2 is this
+branch's bright look, slot 3 is a placeholder. Picking a style changes the game's lighting.
+
+**What slot 1 is, measured.** `main` has no world look at all. Every map's authored
+RenderSettings (fog, ambient trilight, skybox) and directional sun (colour, intensity) are
+identical on `main` (`85504a52`) and this branch, checked scene by scene for Bayan, Eskinita,
+Ilalim and SaBubong (the Lagoon is not on `main`). So slot 1 is the look at weight 0, which
+every consumer already treats as the scene's own lighting. It keeps this branch's newer map,
+material and court work; only the lighting is `main`'s.
+
+- [x] LIGHT-2.1 `Settings.LightingStyles` (Classic weight 0, Bright weight 1, a placeholder that
+  is not selectable), `GameSettings.LightingStyle` (default Bright, the look this branch already
+  draws for everybody, so an upgraded `settings.json` changes nothing; a stored placeholder
+  normalises to the default), and `WorldCueProfile.LightingWeight`, the product of the profile's
+  `WorldLighting` and the style. Every runtime read of `WorldLighting` goes through it (look,
+  contact shadows, world outline, recorded and ultimate views). Local only, never on the wire.
+- [x] LIGHT-2.2 The card row (`SettingsStyleCards`), second on the Graphics tab, three 376x211.5
+  cards with a caption and an accent ring on the pick. It applies live and joins save and
+  discard. Thumbnails in `Resources/UI/lighting-styles/`, rendered by
+  `WorldCourtCueTests.LightingStyleThumbnails` from one Eskinita camera, which also asserts that
+  Classic hands the authored ambient and fog back exactly.
+  Evidence (`daf427e2`, Mac, one PlayMode launch, total 3 failed 0):
+  `TumpNativeSettingsTests.LightingStyleCardsSwitchTheLookAndJoinSaveAndDiscard` presses a card
+  through a real raycast (live weight, ring, dirty session, discard restores);
+  `WorldCourtCueTests.LightingStyleThumbnails`; and the older
+  `FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting`, rerun because every look
+  consumer now reads the weight through the style. Frames in
+  [reports/light-2-2026-09-25/](reports/light-2-2026-09-25/): the row at 1920x1080 and the owner's
+  1600x680, a Classic pick, and both thumbnails. The first photograph put the third card 3 units
+  past the row rule; cards went from 384 to 376 (`daf427e2`). Not done: a native player build,
+  a pad walk of the row, and a look inside a live match's pause menu. That menu opens the same
+  `TumpSettingsView` through `ConvertedSettingsPanel`, so the row is there by construction.
+- [ ] LIGHT-2.3 Slot 3 content. The owner's call: the card shows an empty slot until then.
+
+### LIGHT-3 · Tone down the Bright style: colour-theory light, depth, blocky clouds ⚠️ IN PROGRESS, 2026-09-25
+
+Owner request (2026-09-25), with a PEAK frame of three climbers on sand as the reference: "tone
+down the brightness on the bright lighting style. it currently is too bright and the character
+glows", "overhaul the lighting if needed, remove the bright finish on all characters", "do not
+make the cloud realistic. do not go towards the route of realism". Classic is not touched.
+
+**Reference, measured from the owner's frame:**
+- The lit green body is (48,160,77), luma 130, and the khaki shirt is (239,194,97). Nothing on a
+  character is near white.
+- The darkest 1 per cent sits at luma 64.
+- Shadow on sand is a deeper, more saturated sand, (165,92,51).
+- The sky is a pale mint, (210,230,222), with low-contrast brushed clouds, and the far mountain
+  dissolves into teal air.
+
+Public write-ups of PEAK's lighting internals were not found (searched 2026-09-25), so the frame
+is the evidence.
+
+**Before, measured at `d27c9712`:**
+- The Eskinita cast shot had the yellow jacket at (255,225,5) and orange skin at (244,121,5), so
+  red was clipped, blue had collapsed and the colours read neon.
+- The Bright sky was a saturated poster blue, (131,184,241) on Bayan.
+- The current renders of both styles on all five maps (sky, wide, eye, stage, cast) are in
+  [reports/light-3-2026-09-25/before/](reports/light-3-2026-09-25/before/).
+
+**Causes found:**
+- The cast was lit at albedo x (1.34 sun + ~0.65 ambient), about 1.9 before the curve.
+- Vibrance 0.24 drove already saturated colours to their floor.
+- The bloom soft knee was a hard-coded 0.6 of the 1.7 threshold, so the chain collected every
+  value above 0.68, which is every sunlit body.
+- Three finishes sat on the cast: the cream upper rim, the metal glint, and the
+  distance-readability lift with its cream rim past 5 m.
+- The warm terminator band pushed red by 1.25.
+
+**Second owner direction, same day, after the first tone-down render:** the lighting looked flat,
+for three reasons in the owner's words. (1) "the textures are flat with no depth/normal map
+added". (2) "the lighting itself leans towards adjusting the shadows and brightness instead of
+adjusting the ambient hues", while PEAK uses "artistic color theory for shadow and light colors
+(leaning more towards a slight purple instead of a plain dark shadow for cooler areas, and a more
+fuzzy orange for warmer settings)"; look at illustrated environment concept art and stylised 3D
+environments. (3) "skybox should be either 2d hand painted designs, or maybe try a more blocky
+style of clouds where they are real 3d assets". On the first blocky clouds: "too small", "less
+volume-y", "too sharp", look at blocky cloud references. Then: "aren't they being rendered inside
+out?" They were (winding, below). The owner put character shading (cel against normal) off for
+now; the study is in the scratchpad and not part of this entry.
+
+**Research used:** the colour-theory sources agree that lit areas shift toward the light's hue
+and shadows away from it, and that warm light against cool shade makes depth. So the shade leans
+violet under a peach key. The blocky-cloud references (Minecraft Better Clouds, Photon's blocky
+mode, voxel cloud renders) read as volume through four things: a domed mass of many blocks,
+light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
+
+- [x] LIGHT-3.1 The tone-down (`8e7b9707`, black floor `a234bc4b`):
+  - the sun goes to about 1.08 and the ambient to about 0.8 of its old strength;
+  - vibrance drops to 0.14, and bloom to 0.05 at threshold 2.2 with a 0.2 knee (`BloomKnee`);
+  - `UpperRim` and `MetalHighlight` go to 0;
+  - the distance-readability lift fades out under the look (`Toon.shader`), while Classic keeps it.
+  Measured on the Eskinita cast shot, the share of neon-clipped cast pixels went from 7.2 to 2.8
+  per cent; on Bayan and the Lagoon it went from 4.8 to 0.
+- [x] LIGHT-3.2 Colour-theory light, per map:
+  - a warm key: peach, orange on the alley and rooftop, cream under the bridge and on the lagoon;
+  - the ambient sky term, which is every shadow's colour here, goes violet, the equator mauve and
+    the ground term a warm orange bounce;
+  - the cast's `ShadowTint` leans violet;
+  - the terminator is a fuzzy orange at constant luminance (0.22, adds no light);
+  - a split tone in the grade (`SplitTone` 0.18, `ShadowHue` violet, `HighlightHue` warm).
+  - `Lift` was being sent through `SetColor`, which converts it from sRGB, so the linear black
+    floor reached the shader at about a thirteenth of its authored value. It is a vector now, set
+    at 0.03 to 0.06 linear, a violet-tinted floor near PEAK's luma 64.
+- [x] LIGHT-3.3 Depth without a texture sweep (`WorldOutline`): inside corners take a violet
+  cavity (`CavityHue`, `CreaseShade` 0.45), and walls take ground occlusion toward it within 2.8 m
+  of the court (`GroundOcclusion` 0.28), from the depth the pass already reads. The cast is excluded
+  through the mask, and the Low tier skips it.
+  Not done, and why: real normal maps are per-asset art, and AGENTS.md forbids one texture or
+  noise sweep across every building (REFINE-2 does maps one at a time). If the owner still wants
+  normal detail after this, it belongs in each map's REFINE-2 pass.
+- [x] LIGHT-3.4 Blocky clouds (`BlockyClouds`, `BlockyCloud.shader`): 10 voxel cumulus per map,
+  50 to 85 m across in 5.5 m blocks, 100 to 150 m out and 40 to 64 m up, inside the 240 m far
+  plane. Each is filled from two or three dome lobes with a flat belly, and only outer faces are
+  drawn. The normals roll over the blocks, the crevices darken, the colour runs from a cream crown
+  to a lavender belly, and the edges melt into the sky's own colour at their elevation. The ring
+  drifts on the shared sky clock, and the build is seeded from the map name. The photo panorama
+  stays behind as a faint far layer (`PaintedCloudOpacity` 0.18, painted mip, `CloudPaint`).
+  Classic's sky is untouched. The shader is on `GameBuilder`'s always-included list.
+  ⚠️ The first two cuts had their triangle winding reversed (left-handed Unity read as
+  right-handed), so every cloud drew inside out. The owner caught it; the winding is fixed.
+- [ ] LIGHT-3.6 Ambient occlusion (owner 2026-09-25: "can we try adding ambient occlusion").
+  Screen-space, in `WorldOutline` passes 2 and 3 because the built-in pipeline has none and no
+  post-processing package is installed. The pass first ran at half resolution with twelve
+  cosine-weighted hemisphere samples round the depth-normals normal, 0.9 m radius, per-pixel
+  noise rotation, a range check and a fade out by 60 m. A 3x3 depth-aware blur follows, and the
+  composite leans the occluded part toward the violet `CavityHue`. `AmbientOcclusion` 0.8 on a steepened curve (the first cut at 0.6 moved the deepest corner 14 levels in 255). On the
+  Bright style's own gate (not Classic, not the Low tier, perspective cameras only). Rendered
+  with it off and on from the same cameras on all five maps, Mac, 1/1 each run, with the owner's
+  profile untouched (`-tp-profile`). The first cut darkened the right places, per the heat map
+  `Eskinita-stage-aomap.png`: feet, fences, house joins and props. It was too faint, so v2
+  steepened it. Sheets are in
+  [reports/light-3-2026-09-25/ambient-occlusion/](reports/light-3-2026-09-25/ambient-occlusion/).
+  v3, after the owner's playtest ("im not noticing any ao in the concave intersections of faces
+  like what minecraft does"): the kernel skims the surface at 8 to 40 degrees in four rings to 1 m,
+  nearer hits weigh more, and a 90 degree inside corner maps to full occlusion (about a third
+  darker on screen, toward violet). The cosine hemisphere had sent most samples straight out,
+  where they never reached the neighbouring face. v4 and v5, after the owner saw a noise
+  pattern in play. The rotation is now a 4x4 tile of sixteen angles, the blur averages exactly a 4x4
+  window with a Gaussian depth weight (the old 1/(0.001 + difference) weight hardly blurred sloped
+  surfaces), and the pass runs at full resolution.
+  v6, after the owner's playtest: "the lighting suddenly changes when i look in different
+  directions" (it went darker).
+  - Measured on Ilalim: the lighting state never changed with view direction, but from 90 to 225
+    degrees the AO darkened the whole frame (mean 107 against 131 with AO off at 180 degrees).
+  - Cause: a bridge pillar beside the camera. It is dissolved by NearFade in the colour pass, but
+    Unity's depth-normals prepass draws it solid with its internal shader, so it filled the texture
+    as a wall at the lens (depth about 0, one flat normal, about 80 per cent of the frame).
+    Isolated by switching renderer groups off one at a time; the LRT pillars alone.
+  - Fix: the AO and the ground occlusion ignore any depth-normals pixel nearer than
+    `NearFade.FadeStartMetres` (1.8 m).
+  - The ink edges and ground contact read the same texture and may still show this near a
+    dissolved prop. That is older than LIGHT-3 and not fixed here.
+  Open for the owner's playtest.
+- [ ] LIGHT-3.5 The owner's look at the final comparison. The rendering is done: `e26eeb04`,
+  Mac, one PlayMode launch, total 3 failed 0 (`FiveMapStageCapturesPreserveGeometryAndRestore
+  OriginalLighting`, `LightingStyleThumbnails` and a scratch same-camera review that was not
+  committed). Sheets in [reports/light-3-2026-09-25/after/](reports/light-3-2026-09-25/after/):
+  per map Classic, Bright before and Bright after for sky, wide, eye, stage and cast, plus
+  all-map sky and cast sheets. The Bright card thumbnail is re-rendered from the same launch.
+  Taste calls left to the owner: SaBubong's clouds run pink under its golden-hour palette, and
+  character shading (cel against normal) is deferred at the owner's word.
 
 ### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)
 

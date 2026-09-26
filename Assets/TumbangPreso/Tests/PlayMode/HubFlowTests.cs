@@ -180,8 +180,20 @@ namespace TumbangPreso.PlayTests
 
                 yield return Press("MenuButton");
                 Assert.IsInstanceOf<HubMenu>(TumpHub.Current.Top);
+                yield return null;
+                // BUGS-0926.4: the MENU is a popup over HOME, so HOME's own background stays up under it.
+                var video = Object.FindFirstObjectByType<HubSceneVideo>();
+                Assert.IsTrue(video == null || video.GetComponent<RawImage>().enabled,
+                              "Opening the MENU hid HOME's background and showed the live court instead.");
                 yield return Shots("Menu");
                 yield return BackToHome();
+
+                // BUGS-0926.2: BACK on HOME opens the MENU and never drops the player on the title.
+                Back(); yield return new WaitForSecondsRealtime(0.2f);
+                Assert.IsInstanceOf<HubMenu>(TumpHub.Current.Top, "BACK on HOME must open the MENU.");
+                Assert.AreEqual(SceneFlow.MatchSetup, SceneManager.GetActiveScene().name, "BACK on HOME left the hub.");
+                Back(); yield return new WaitForSecondsRealtime(0.2f);
+                Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top, "A second BACK closes the MENU.");
 
                 yield return Press("NamePlate");
                 Assert.IsTrue(Object.FindFirstObjectByType<PlayerHub>().IsOpen, "The name plate is the door to profile settings.");
@@ -207,6 +219,37 @@ namespace TumbangPreso.PlayTests
             }
             Assert.IsNotNull(button, "No " + name + " on screen.");
             button.onClick.Invoke();
+        }
+
+        /// <summary>
+        /// ⚠️ LIGHT-5 (2026-09-27): the map select was washed out because the hub's two preview
+        /// surfaces both loaded the selected map and one copy was never claimed, so its sun lit
+        /// every map previewed afterwards. Exactly one directional light may reach the preview
+        /// layer, and it must be the shown map's own.
+        /// </summary>
+        [UnityTest, Timeout(300000)]
+        public IEnumerator HostGameMapPreviewIsLitByTheShownMapsSunAlone()
+        {
+            yield return OpenHome();
+            TumpHub.Current.Push<HubHost>();
+            var preview = TumpHub.Current.Host.Preview;
+            Assert.IsNotNull(preview);
+            foreach (string map in new[] { SceneFlow.IlalimNgTulay, SceneFlow.Lagoon })
+            {
+                TumpHub.Current.Host.SelectMap(map);
+                float until = Time.realtimeSinceStartup + 40;
+                while (preview.Showing != map && Time.realtimeSinceStartup < until) yield return null;
+                Assert.AreEqual(map, preview.Showing);
+                yield return new WaitForSecondsRealtime(0.5f);
+                var suns = Object.FindObjectsByType<Light>(FindObjectsSortMode.None)
+                    .Where(l => l.isActiveAndEnabled && l.type == LightType.Directional
+                                && (l.cullingMask & (1 << MapPreviewSurface.PreviewLayer)) != 0).ToArray();
+                Assert.AreEqual(1, suns.Length, map + " preview is lit by: " +
+                    string.Join(", ", suns.Select(l => l.name + "@" + l.gameObject.scene.name + " layer " + l.gameObject.layer)));
+                Assert.AreEqual(map, suns[0].gameObject.scene.name);
+                Assert.AreEqual(MapPreviewSurface.PreviewLayer, suns[0].gameObject.layer, "The lighting scene was never confined.");
+            }
+            TumpHub.Current.Home();
         }
 
         [UnityTest, Timeout(600000)]
@@ -296,6 +339,16 @@ namespace TumbangPreso.PlayTests
                 yield return Press("CancelQueue");
                 Assert.IsFalse(HubQueueWatch.QueueRoom, "X did not leave the queue.");
                 Assert.IsFalse(Net.NetSession.Instance != null && Net.NetSession.Instance.IsNetworked, "Cancelling must close the queue's room.");
+
+                // BUGS-0926.3: the PLAY button reads IN QUEUE while queued, and pressing it leaves.
+                yield return Press("PlayButton");
+                until = Time.realtimeSinceStartup + 3;
+                while (Time.realtimeSinceStartup < until && !HubQueueWatch.QueueRoom) yield return null;
+                Assert.IsTrue(HubQueueWatch.QueueRoom, "PLAY did not start the queue a second time.");
+                yield return new WaitForSecondsRealtime(0.5f);
+                yield return Press("PlayButton");
+                Assert.IsFalse(HubQueueWatch.QueueRoom, "Pressing IN QUEUE did not leave the queue.");
+                Assert.IsFalse(Net.NetSession.Instance != null && Net.NetSession.Instance.IsNetworked, "Leaving through IN QUEUE must close the queue's room.");
 
                 TumpHub.Current.Push<HubMatchFound>();
                 yield return new WaitForSecondsRealtime(0.4f);

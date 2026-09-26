@@ -316,6 +316,16 @@ namespace TumbangPreso.UI
         private readonly System.Collections.Generic.Dictionary<string, Scene> _cache =
             new System.Collections.Generic.Dictionary<string, Scene>();
 
+        private void OnDisable()
+        {
+            // ⚠️ Unity stops this object's coroutines on deactivation without running their
+            // `finally`, so a Swap cut off here would leave `_busy` set for ever and every later
+            // Show refused. Its scene is still claimed and parked by `Claim`.
+            // The preview gate stays up: the load still in flight must not build a live match, and
+            // `Claim` lowers it once that scene's match objects are stripped.
+            if (_busy) _busy = false;
+        }
+
         private void OnEnable()
         {
             _surface = GetComponent<RawImage>();
@@ -371,21 +381,36 @@ namespace TumbangPreso.UI
                     // anything.
                     BeginPreviewLoad();
 
+                    // ⚠️⚠️ THE SCENE THIS LOAD MADE, NOT THE FIRST SCENE WITH THIS NAME. The hub
+                    // runs two surfaces, and both ask for the selected map on their first frame.
+                    // `GetSceneByName` returns the FIRST loaded scene of that name, so both
+                    // surfaces claimed the same copy and the second copy was nobody's: never
+                    // confined to the preview layer, never parked, its sun left on at full
+                    // strength with every layer in its mask. That orphaned Eskinita sun lit every
+                    // map shown afterwards on top of the map's own sun, which is the washed-out,
+                    // overexposed map select the owner photographed (2026-09-27). Remember which
+                    // scenes of this name already existed and take the one that is new.
+                    var existing = new System.Collections.Generic.HashSet<Scene>();
+                    for (int i = 0; i < SceneManager.sceneCount; i++)
+                    {
+                        var open = SceneManager.GetSceneAt(i);
+                        if (open.name == map) existing.Add(open);
+                    }
+
+                    // ⚠️⚠️ AND THE SCENE IS CLAIMED IN THE LOAD'S OWN CALLBACK, NOT AFTER THE YIELD.
+                    // The hub deactivates one of its two surfaces while that surface's first load
+                    // is still in flight, and Unity stops a coroutine whose object deactivates, so
+                    // everything below the yield never ran for that copy: the fix above alone still
+                    // left one Eskinita on layer 0 with its sun on. `completed` fires whether or not
+                    // this coroutine is still alive, so the new scene is confined and PARKED (lights
+                    // off, roots inactive) the frame it arrives; the coroutine unparks it only if it
+                    // is still here to show it. A surface that was destroyed meanwhile unloads it.
                     var load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
+                    if (load != null) load.completed += _ => Claim(map, existing);
                     while (load != null && !load.isDone) yield return null;
 
                     EndPreviewLoad();
-
-                    var loaded = SceneManager.GetSceneByName(map);
-                    _cache[map] = loaded;
-
-                    StripMatchObjects(loaded);
-                    Silence(loaded);
-
-                    // ⚠️ AFTER the strip, never before. `StripMatchObjects` destroys whole
-                    // GameObjects, and re-layering a subtree that is about to be deleted is wasted
-                    // work on the one screen that must not stall.
-                    Confine(loaded);
+                    Unpark(map);
                 }
 
                 _showing = map;
@@ -638,6 +663,50 @@ namespace TumbangPreso.UI
         /// world and keeps fighting the other map's environment for it, which reads as the sky
         /// and fog changing while the geometry does not".
         /// </summary>
+        /// <summary>
+        /// Takes the scene a load of <paramref name="map"/> just made, strips and confines it to
+        /// the preview layer, and parks it. See the note at the call site in <see cref="Swap"/>.
+        /// </summary>
+        private void Claim(string map, System.Collections.Generic.HashSet<Scene> existing)
+        {
+            var loaded = default(Scene);
+            for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
+            {
+                var open = SceneManager.GetSceneAt(i);
+                if (open.name == map && open.isLoaded && !existing.Contains(open) && !Claimed(open))
+                {
+                    loaded = open;
+                    break;
+                }
+            }
+            if (!loaded.IsValid()) return;
+            if (this == null)
+            {
+                // The surface that asked for it is gone; nobody will ever show or park it.
+                StripMatchObjects(loaded);
+                foreach (var root in loaded.GetRootGameObjects()) if (root != null) root.SetActive(false);
+                SceneManager.UnloadSceneAsync(loaded);
+                return;
+            }
+            _cache[map] = loaded;
+            StripMatchObjects(loaded);
+            Silence(loaded);
+            // ⚠️ AFTER the strip, never before. `StripMatchObjects` destroys whole GameObjects,
+            // and re-layering a subtree that is about to be deleted is wasted work.
+            Confine(loaded);
+            Park(map);
+            EndPreviewLoad();
+        }
+
+        /// <summary>True when any live surface already owns <paramref name="scene"/>.</summary>
+        private static bool Claimed(Scene scene)
+        {
+            foreach (var surface in FindObjectsByType<MapPreviewSurface>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                foreach (var owned in surface._cache.Values)
+                    if (owned == scene) return true;
+            return false;
+        }
+
         private void Park(string map)
         {
             if (map == null || !_cache.TryGetValue(map, out var scene)) return;

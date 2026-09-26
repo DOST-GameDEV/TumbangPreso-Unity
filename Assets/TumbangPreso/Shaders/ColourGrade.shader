@@ -76,6 +76,7 @@ Shader "TumbangPreso/ColourGrade"
             half _BloomIntensity;
             float4 _BloomThreshold;
             half4 _Lift;
+            half4 _ShadowHue,_HighlightHue;
             half _Vibrance;
 
             // ⚠️⚠️ THE TONEMAP BELONGS TO THE FRAME, NOT TO A MATERIAL, AND HAVING IT ON THE
@@ -285,13 +286,27 @@ Shader "TumbangPreso/ColourGrade"
                 c = lerp(half3(grey, grey, grey), c, _Saturation);
 
                 // § THE BRIGHT LOOK'S GRADE. Vibrance first so the lift does not count as colour.
-                if (_Vibrance > 0.0h || _Lift.a > 0.0h)
+                if (_Vibrance > 0.0h || _Lift.a > 0.0h || _ShadowHue.a > 0.0h)
                 {
                     half high = max(c.r, max(c.g, c.b));
                     half low = min(c.r, min(c.g, c.b));
                     half chroma = (high - low) / max(high, 0.0001h);
                     half value = dot(c, half3(0.2126h, 0.7152h, 0.0722h));
                     c = max(lerp(value.xxx, c, 1.0h + _Vibrance * (1.0h - chroma)), 0.0h);
+                    // § SPLIT TONE (2026-09-25): dark values lean toward the shade hue, light
+                    // ones toward the key's, each divided by its own luminance so the lean
+                    // changes hue and never value. The windows are in linear light: the shade
+                    // half fades out by 0.25 (about sRGB 137), the light half starts at 0.30.
+                    // Before the lift, so the floor is tinted by `_Lift` alone.
+                    if (_ShadowHue.a > 0.0h)
+                    {
+                        half3 w = half3(0.2126h, 0.7152h, 0.0722h);
+                        half v = dot(c, w);
+                        half3 toShade = c * _ShadowHue.rgb / max(dot(_ShadowHue.rgb, w), 0.0001h);
+                        half3 toLight = c * _HighlightHue.rgb / max(dot(_HighlightHue.rgb, w), 0.0001h);
+                        c = lerp(c, toShade, (1.0h - smoothstep(0.02h, 0.25h, v)) * _ShadowHue.a);
+                        c = lerp(c, toLight, smoothstep(0.30h, 0.85h, v) * _ShadowHue.a * 0.7h);
+                    }
                     c = c + _Lift.rgb * (1.0h - saturate(c));
                 }
 

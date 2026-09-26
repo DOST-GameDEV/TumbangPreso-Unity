@@ -122,6 +122,43 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(before, SettingsStore.Current.FrameRateLimit);
             Assert.IsFalse(canvas.gameObject.activeSelf);
         }
+        // ⚠️ THE LIGHTING STYLE CARDS, PRESSED THROUGH A REAL RAYCAST. Three cards, pictures on the
+        // two real styles, the placeholder unreachable, a press that changes the live look weight
+        // and joins the save/discard transaction like every other row. Photographed at the Graphics
+        // tab's reference shape and at the owner's own short wide window.
+        [UnityTest]
+        public IEnumerator LightingStyleCardsSwitchTheLookAndJoinSaveAndDiscard()
+        {
+            yield return Open();
+            var view = Object.FindFirstObjectByType<TumpSettingsView>();
+            var canvas = PaintedScreens.Settings();
+            int saved = SettingsStore.Current.LightingLook;
+            try
+            {
+                view.ShowSection(2); yield return null;
+                var cards = Enumerable.Range(0, LightingStyles.All.Length).Select(i => Find("LightingStyle" + i)).ToArray();
+                Assert.AreEqual(3, cards.Length);
+                Assert.IsFalse(cards[LightingStyles.Placeholder].interactable, "The placeholder slot must not be pickable.");
+                for (int i = 0; i < cards.Length; i++)
+                    Assert.AreEqual(LightingStyles.All[i].Available, cards[i].GetComponentInChildren<RawImage>() != null,
+                        cards[i].name + ": a real style shows its thumbnail and only the placeholder is empty.");
+                foreach (var size in new[] { new Vector2Int(1920, 1080), TumpUiCapture.OwnerWindow })
+                    yield return TumpUiCapture.Capture("LightingStyleCards-" + size.x + "x" + size.y, canvas, size.x, size.y, false, checkActionBounds: true);
+                int other = saved == LightingStyles.Nostalgic ? LightingStyles.Standard : LightingStyles.Nostalgic;
+                Press(cards[other]); yield return null;
+                Assert.AreEqual(other, SettingsStore.Current.LightingLook);
+                Assert.AreEqual(LightingStyles.All[other].LookWeight, LightingStyles.LookWeight, "A card must change the live look.");
+                Assert.IsTrue(cards[other].transform.Find("Selected").GetComponent<Image>().enabled);
+                Assert.IsFalse(cards[saved].transform.Find("Selected").GetComponent<Image>().enabled);
+                Assert.IsTrue(view.Session.Dirty, "A style pick must join the settings transaction.");
+                yield return TumpUiCapture.Capture("LightingStyleCards-picked-" + LightingStyles.All[other].Label, canvas, 1920, 1080, false, checkActionBounds: true);
+                view.Session.Discard(); yield return null;
+                Assert.AreEqual(saved, SettingsStore.Current.LightingLook);
+                Assert.AreEqual(LightingStyles.All[saved].LookWeight, LightingStyles.LookWeight, "Discard must put the saved look back.");
+            }
+            finally { SettingsStore.Current.LightingLook = saved; LightingStyles.Apply(saved); }
+        }
+
         [UnityTest]
         public IEnumerator ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths()
         {

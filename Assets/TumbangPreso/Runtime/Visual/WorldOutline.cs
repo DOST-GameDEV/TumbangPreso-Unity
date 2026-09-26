@@ -284,6 +284,14 @@ namespace TumbangPreso.Visual
 
         private const int MaskPass = 1;
 
+        // ⚠️ PASSES 2 AND 3 ARE THE AMBIENT OCCLUSION AND ITS BLUR (LIGHT-3.6). Appended rather
+        // than inserted, so the composite and the mask keep the indices every other line here
+        // and in the shader already names.
+        private const int AmbientOcclusionPass = 2;
+        private const int AmbientOcclusionBlurPass = 3;
+        private static readonly int WorldAOId = Shader.PropertyToID("_WorldAO");
+        private static readonly int WorldAOParamsId = Shader.PropertyToID("_WorldAOParams");
+
         private const string ToonShaderName = "TumbangPreso/Toon";
 
         private Camera _camera;
@@ -357,8 +365,15 @@ namespace TumbangPreso.Visual
         /// mask rebuild rather than only for the composite.
         /// </summary>
         private bool HasWorldContact => WorldLookPresentation.HandlesCamera(_camera)
-            && WorldCueProfile.Current.WorldLighting>0 && WorldLookProfile.Current.EnvironmentContact>0
+            && WorldCueProfile.LightingWeight>0 && WorldLookProfile.Current.EnvironmentContact>0
             && Settings.SettingsStore.Current.GraphicsQuality>0;
+        /// <summary>
+        /// Whether this frame draws ambient occlusion: the contact term's gate (the look owns the
+        /// camera, the weight is up, not the Low tier), a perspective camera, since the pass
+        /// rebuilds points from a perspective view ray, and a non-zero strength.
+        /// </summary>
+        private bool AmbientOcclusionLive => HasWorldContact && !_camera.orthographic
+            && WorldLookPresentation.Current!=null && WorldLookProfile.Current.AmbientOcclusion>0;
         private bool InkLive => _prototypeEnabled && Settings.RenderStyles.InkOutlinesActive && _opacity>0;
         private bool Live => !_missing && (InkLive || HasWorldContact);
 
@@ -883,7 +898,7 @@ namespace TumbangPreso.Visual
             bool masked=_exclusion!=Exclusion.Overlap && maskReady;
             _material.SetTexture(MaskId,maskReady?(Texture)_mask:Texture2D.blackTexture);
             _material.SetFloat(MaskStrengthId,masked?_maskStrength:0);
-            float contact=HasWorldContact?WorldLookProfile.Current.EnvironmentContact*WorldCueProfile.Current.WorldLighting:0;
+            float contact=HasWorldContact?WorldLookProfile.Current.EnvironmentContact*WorldCueProfile.LightingWeight:0;
             _material.SetVector("_WorldGroundContact",new Vector4(WorldLookPresentation.Current!=null?WorldLookPresentation.Current.Floor:0,0,contact,.5f));
             _material.SetFloat("_WorldContactMask",maskReady?1:0);
             _material.SetMatrix("_WorldContactToWorld",_camera.cameraToWorldMatrix);
@@ -891,12 +906,38 @@ namespace TumbangPreso.Visual
             ApplyBrightLookEdges();
             bool lagoonDeck=WorldLookPresentation.HandlesCamera(_camera) && WorldLookPresentation.Current.Look.Map==UI.SceneFlow.Lagoon;
             _material.SetFloat("_LagoonDeckDetail",lagoonDeck?WorldCueProfile.Current.LagoonDeckDetail:0);
+            RenderTexture occlusion=null,occlusionBlur=null;
+            float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
+            if(aoStrength>0)
+            {
+                // ⚠️ FULL RESOLUTION. It was half, on the reasoning that occlusion is soft; the
+                // owner then saw its noise, and at half resolution the 4x4 rotation tile the blur
+                // cancels spans 8x8 screen pixels, big enough to read as a grid wherever the
+                // cancellation is imperfect. Full resolution also keeps the crease ramps crisp,
+                // which is what Minecraft's corners look like.
+                int w=Mathf.Max(1,source.width),h=Mathf.Max(1,source.height);
+                var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8)?RenderTextureFormat.R8:RenderTextureFormat.ARGB32;
+                occlusion=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
+                occlusionBlur=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
+                _material.SetVector(WorldAOParamsId,new Vector4(aoStrength,WorldLookProfile.Current.AmbientOcclusionRadius,.03f,NearFade.FadeStartMetres));
+                Graphics.Blit(source,occlusion,_material,AmbientOcclusionPass);
+                Graphics.Blit(occlusion,occlusionBlur,_material,AmbientOcclusionBlurPass);
+                _material.SetTexture(WorldAOId,occlusionBlur);
+            }
+            else
+            {
+                // w still carries the near-fade guard: the ground occlusion reads it with AO off.
+                _material.SetVector(WorldAOParamsId,new Vector4(0,0,0,NearFade.FadeStartMetres));
+                _material.SetTexture(WorldAOId,Texture2D.whiteTexture);
+            }
             _material.SetTexture(MainTexId, source);
 
             // ⚠️ THE PASS INDEX IS NOT OPTIONAL. `Graphics.Blit` without one runs EVERY pass in
             // the SubShader, and pass 1 is the exclusion mask: blitted full-screen it writes
             // white over the entire frame. See the note at the top of the shader.
             Graphics.Blit(source, destination, _material, CompositePass);
+            if(occlusion!=null)RenderTexture.ReleaseTemporary(occlusion);
+            if(occlusionBlur!=null)RenderTexture.ReleaseTemporary(occlusionBlur);
         }
 
         /// <summary>
@@ -923,12 +964,17 @@ namespace TumbangPreso.Visual
 #endif
         private static readonly int PeakShadeId = Shader.PropertyToID("_PeakShade");
         private static readonly int PeakLightId = Shader.PropertyToID("_PeakLight");
+        private static readonly int PeakDepthId = Shader.PropertyToID("_PeakDepth");
         private void ApplyBrightLookEdges()
         {
             var look=WorldLookPresentation.Current;
             float weight=WorldLookPresentation.HandlesCamera(_camera)?look.Weight:0;
             var profile=WorldLookProfile.Current;
             _material.SetVector(PeakEdgeId,new Vector4(profile.SilhouetteShade,profile.EdgeHighlight,profile.CreaseShade,weight));
+            // The ground occlusion rides the contact term's gate: it needs the same rebuilt world
+            // position, so it is off wherever that is (the Low tier, a camera the look does not own).
+            _material.SetVector(PeakDepthId,new Vector4(profile.GroundOcclusion,Mathf.Max(.1f,profile.GroundOcclusionHeight),
+                look!=null?look.Floor:0,HasWorldContact?weight:0));
             if(weight<=0)return;
             var sun=look.KeyLight;
 #if UNITY_EDITOR
@@ -936,7 +982,9 @@ namespace TumbangPreso.Visual
 #endif
             Vector3 toLight=sun!=null?-sun.transform.forward:Vector3.up;
             _material.SetVector(PeakSunViewId,_camera.worldToCameraMatrix.MultiplyVector(toLight).normalized);
-            _material.SetColor(PeakShadeId,look.Look.ShadowTint);
+            // ⚠️ A VECTOR OF THE AUTHORED NUMBERS, NOT A COLOUR: it is a multiplier on the pixel
+            // (violet cavity, 2026-09-25), and `SetColor` would convert it from sRGB first.
+            var cavity=profile.CavityHue;_material.SetVector(PeakShadeId,new Vector4(cavity.r,cavity.g,cavity.b,1));
             _material.SetColor(PeakLightId,sun!=null?sun.color.linear:Color.white);
         }
 
