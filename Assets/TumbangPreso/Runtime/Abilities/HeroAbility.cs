@@ -315,6 +315,16 @@ namespace TumbangPreso.Abilities
         public bool HoldToAim { get; protected set; }
 
         /// <summary>
+        /// ⚠️ A HOLD-TO-AIM CAST PLACED WHERE THE PLAYER LOOKS, NOT BY HOW LONG THEY HOLD (Paete's MAKILING'S EMBRACE, owner,
+        /// 2026-09-27: *"make it so that paete can choose as well where his ult will be cast"*, then *"does the hhold to aim resemble
+        /// the groot reference"*). Groot's walls in Marvel Rivals are placed where the crosshair meets the ground, with the preview
+        /// on it before you commit; the shared hold slides the ring out along the facing by hold time instead. With this set the ring
+        /// sits where the camera's sight line meets the court (`CameraRig.TryLookGround`), kept between `AimMinRange` and
+        /// `AimMaxRange` from the caster, and the release sends that spot as the cast's aim, so every peer lands it in the same place.
+        /// </summary>
+        public bool AimsWhereLooking { get; protected set; }
+
+        /// <summary>
         /// How long a hold may last before the ability fires on its own. Seconds.
         /// <b>Zero means it never fires on its own: only the release casts it.</b>
         ///
@@ -416,9 +426,10 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Turns this ability into a hold-to-aim cast. Call from a kit's constructor.</summary>
         protected void AimByHolding(float minRange, float maxRange,
-                                    float rampSeconds = 0.55f, float maxHoldSeconds = 1.10f)
+                                    float rampSeconds = 0.55f, float maxHoldSeconds = 1.10f, bool whereLooking = false)
         {
             HoldToAim = true;
+            AimsWhereLooking = whereLooking;
             AimMinRange = minRange;
             AimMaxRange = maxRange;
             AimRampSeconds = rampSeconds;

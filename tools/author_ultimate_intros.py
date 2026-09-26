@@ -807,26 +807,40 @@ def paete():
     p.hold(.78, .94, ignite)
     p.key(1.08, gather)
     p.key(1.22, plant, punch=True)
+    # ⚠️⚠️ v7 (2026-09-27, direction.md 5.16): THE ENDING IS NEW AND IT TOOK ITS 1.2 S FROM THE SETUP. The owner on v6: *"this felt
+    # liek a weak ending to his ult haha maybe change angle or smth and show everyone getting pulled? and animate too that theyre
+    # all shocked or trying to get out"*, *"try to follwo vines going to ppl with camera"*, and still *"dont go past 5 seconds"*.
+    # So the channel is 0.2 s shorter (its three heartbeats come 0.18 and 0.15 s apart, quickening harder), the roots race in
+    # 0.40 s, and the tree hauls itself out at 1.45 times its play speed; the TAKE (3.8 to 5.0) is where the time went.
+    # THE TAKE, in his body: as its limbs wrap the caught players he sinks onto his hands (gathering), and as they are yanked he
+    # HAULS: shoulders driven up and back, hands lifting off the court, pulling them in through the ground with the tree. Then the
+    # awe again, held into play (the live clip still starts from it).
+    haul = plant.but(torso=(8, 0, 0), head=(-30, 0, 0), left=(52, 5, 14), right=(52, 5, 14))
     p.key(1.34, press)
-    p.hold(1.34, 1.6, press)
-    p.key(1.66, bow)
-    p.key(1.72, pulse, punch=True)
-    p.key(1.86, bow)
-    p.key(1.96, pulse, punch=True)
-    p.key(2.06, bow)
-    p.key(2.14, pulse, punch=True)
-    p.key(2.22, bow)
-    p.key(2.32, send, punch=True)
-    p.key(2.5, send)
-    p.key(2.72, watch)
-    p.key(3.0, settle)
-    p.key(3.15, heave, punch=True)
-    p.key(3.4, settle)
-    p.key(3.55, heave, punch=True)
-    p.key(3.8, settle)
-    p.key(3.95, heave, punch=True)
-    p.key(4.25, awe)
-    p.hold(4.25, 5.0, awe)
+    p.hold(1.34, 1.5, press)
+    p.key(1.56, bow)
+    p.key(1.62, pulse, punch=True)
+    p.key(1.72, bow)
+    p.key(1.80, pulse, punch=True)
+    p.key(1.88, bow)
+    p.key(1.95, pulse, punch=True)
+    p.key(2.03, bow)
+    p.key(2.12, send, punch=True)
+    p.key(2.28, send)
+    p.key(2.48, watch)
+    p.key(2.66, settle)
+    p.key(2.78, heave, punch=True)
+    p.key(2.95, settle)
+    p.key(3.05, heave, punch=True)
+    p.key(3.22, settle)
+    p.key(3.33, heave, punch=True)
+    p.key(3.6, awe)
+    p.key(3.9, awe.but(head=(-32, 0, 0)))
+    p.key(4.12, settle)
+    p.key(4.2, haul, punch=True)
+    p.key(4.46, haul.but(torso=(10, 0, 0)))
+    p.key(4.64, awe)
+    p.hold(4.64, 5.0, awe)
     # The body goes down onto the knee with the slam and stays down to the end (and into play).
     p.rise(0, 0.0).rise(1.08, 0.03).rise(1.22, -0.34).rise(5.0, -0.34)
     # 1 CALL. Front, low three-quarter from his right, one slow push-in, her head held above his.
@@ -835,18 +849,42 @@ def paete():
     # digging in, the channel. Her reaching hands are the top of the frame; she is the light, he is the subject.
     # ⚠️ Wider than first cut (`PaeteSpiritReviewProbe` v4): she is directly behind him, bent over him, and her hands and face are
     # the top of this frame; he, his hands on the court and his roots are the bottom. It pushes in toward his hands as he channels.
-    p.shot(1.1, 2.3, (2.5, 1.3, 3.6), (.05, 1.35, .2), 50, eye_to=(1.9, 1.05, 2.8), look_to=(0, 1.15, .4), fov_to=46)
+    # v7: it ends at the send (2.1), 0.2 s earlier, so the push-in is a little shorter.
+    p.shot(1.1, 2.1, (2.5, 1.3, 3.6), (.05, 1.35, .2), 50, eye_to=(2.0, 1.09, 2.93), look_to=(.01, 1.18, .37), fov_to=46.7)
     # 3 RISE, one continuous shot in three moves (no cut): held wide and low while the roots cross the frame from him (left) to
     # the spot (right) under the brush-stroke of light; craning up through the three heaves so the whole tree is in by the time
     # it tops out; then a push IN toward its face as its eyes light (4.5).
     # ⚠️ v6 (2026-09-27): re-framed for the v9 tree, 6.6 m with its eyes at 3.1 m (was 9 m with eyes over 4 m; owner: *"Make
     # the tre a bit smaller and a lot more sleek so that it isnt too distracting"*). A shorter crane, a tighter lens at the end,
     # and it closes in on the eyes rather than backing off to fit a crown that is no longer there.
-    p.shot(2.3, 2.75, (8.2, 1.25, 5.0), (.2, .9, 3.0), 54, eye_to=(8.3, 1.3, 5.1), look_to=(.2, .95, 3.1))
-    p.shot(2.75, 4.3, (8.3, 1.3, 5.1), (.2, .95, 3.1), 54, eye_to=(8.9, 2.0, 6.2), look_to=(.1, 2.9, 3.9), fov_to=58)
-    p.shot(4.3, 5.0, (8.9, 2.0, 6.2), (.1, 2.9, 3.9), 58, eye_to=(8.3, 2.4, 6.4), look_to=(.1, 3.2, 4.3), fov_to=52)
+    # v7: the same three moves on the faster clock (the race 2.1 to 2.5, the crane through the hauls to 3.45, the push in on the
+    # eyes, which open at 3.71).
+    p.shot(2.1, 2.5, (8.2, 1.25, 5.0), (.2, .9, 3.0), 54, eye_to=(8.3, 1.3, 5.1), look_to=(.2, .95, 3.1))
+    p.shot(2.5, 3.45, (8.3, 1.3, 5.1), (.2, .95, 3.1), 54, eye_to=(8.9, 2.0, 6.2), look_to=(.1, 2.9, 3.9), fov_to=58)
+    p.shot(3.45, 3.8, (8.9, 2.0, 6.2), (.1, 2.9, 3.9), 58, eye_to=(8.3, 2.4, 6.4), look_to=(.1, 3.2, 4.3), fov_to=52)
+    # 4 THE TAKE (v7), ONE CONTINUOUS MOVE, 3.8 to 5.0: the camera rides the first limb out from the trunk to the player it
+    # catches, holds on them as it wraps them, then rises and swings wide as everyone is yanked in, and settles on the tree with
+    # all of them bound round it. ⚠️ In a match the move is COMPUTED from where the caught players really stand
+    # (`HeroIntroductionScene.PaeteTake.cs`, `PaeteTakeFrame`); this row is the settle it ends on, used as written only when
+    # nobody is in reach (the limbs then whip into the court) and by the storyboard.
+    p.shot(3.8, 5.0, (6.4, 1.3, 9.2), (.3, 2.0, 5.6), 54, eye_to=(7.6, 2.3, 10.6), look_to=(.2, 2.4, 5.5), fov_to=58)
     # Reduced motion: one wide locked shot that holds him, her and the landing.
     p.locked((8.6, 1.9, 5.8), (.2, 2.5, 3.2), 60)
+    # ⚠️⚠️ v8 (2026-09-27): 6.5 S, EVERY BEAT 1.3 TIMES AS LONG. The owner on v7: *"lowk slow down ult a bit i cant comprehend wtf is
+    # happening"*; asked, he chose 6.5 s over his earlier 5.0 cap. The table above is still typed on the 5.0 s clock the direction
+    # was written on (direction.md 5.14 to 5.16), and stretched here once, evenly, so no beat is squeezed to buy another; the scene
+    # (`HeroIntroductionScene.Paete.cs`, `PaeteStretch`) and the theme (`tools/build_paete_audio.py`) run the same factor.
+    return _stretch(p, 6.5)
+
+
+def _stretch(p, seconds):
+    k = seconds / p.seconds
+    p.seconds = seconds
+    p.keys = [(round(t * k, 3), pose) for t, pose in p.keys]
+    p.punches = [round(t * k, 3) for t in p.punches]
+    p.holds = [(round(a * k, 3), round(b * k, 3)) for a, b in p.holds]
+    p.lift = [(round(t * k, 3), m) for t, m in p.lift]
+    p.shots = [(round(s[0] * k, 3), round(s[1] * k, 3)) + tuple(s[2:]) for s in p.shots]
     return p
 
 # ----------------------------------------------------------------------------- the 2.8 s baseline

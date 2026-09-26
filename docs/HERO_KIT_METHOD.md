@@ -23,7 +23,7 @@ Where Paete's own records live, for the detail behind every line below:
 | Brief, lore, model plan | `ArtSource/paete/concept-20260925/design-brief.md` |
 | Research (Groot, Kinich, Zyra, Scorpion, Dead by Daylight, Zarya) | `docs/reports/paete-kit-2026-09-25/research.md` |
 | Plan, the owner's twelve answers | `docs/reports/paete-kit-2026-09-25/plan.md` sections 6 and 7 |
-| Direction, every version, every owner note | `docs/reports/paete-kit-2026-09-25/direction.md` sections 0 to 5.15 |
+| Direction, every version, every owner note | `docs/reports/paete-kit-2026-09-25/direction.md` sections 0 to 5.16 |
 | The shared cutscene VFX and SFX vocabulary | `docs/reports/ultimate-performances-2026-09-24/research.md` section 4 |
 | Status and what is still open | `docs/TODO.md` HERO-9 |
 | Model method (research, cast fit, markings, review) | `docs/CHARACTER_MODEL_METHOD.md` |
@@ -50,8 +50,8 @@ Where Paete's own records live, for the detail behind every line below:
    distracting"* and *"dont let it be placed in a place it STANDS on can"*.
 7. **Film it in a match and send the video.** The owner judges from mp4s in chat, from HIS screen, the court, and a caught player.
    A green test is not a verdict.
-8. **The ultimate's cutscene never passes 5.0 s, and match time is frozen under it.** *"dont go past 5 seconds for cutscene"*,
-   *"match time should pause during cutscenes"*.
+8. **The ultimate's cutscene never passes 6.5 s, and match time is frozen under it.** *"dont go past 5 seconds for cutscene"*,
+   *"match time should pause during cutscenes"*; raised to 6.5 s on Paete v7, his choice, after *"slow down ult a bit i cant comprehend"*.
 9. **The repo's hard rules, every time** (`CLAUDE.md` sections 3, 4, 4a, 6.4): the host resolves contact by distance; stuns overlap
    with `Max()`; every impulse comes from `Friction` (write the distance, solve the speed); every action has a pad and a thumb
    control; no blue in any UI; no em dashes; no co-author trailer; no AI mentions; sourced voices are human recordings only.
@@ -239,6 +239,50 @@ direction of the entire cutscene sucks"*. What fixed it (`direction.md` 5.12 to 
 **Its sound is one theme file timed beat for beat** (`sfx_ult_theme_paete`), with a cut-in accent on frame 0, a swell drawn in before
 each impact and cut dead on it, the impact in his own material, the emblem's motif (`bell`) every time the mark is drawn, and a tail.
 
+**Then a density pass** (v7; the owner on v6: *"A LOT MORE VFX AND SHIT LIKE THE GENSHIN REFERENCES"*). Having the vocabulary is not
+enough: in every Genshin burst the AIR ITSELF is full. Put a layer on every beat, anchored on whoever the beat is on, each a typed table
+(`HeroIntroductionScene.PaeteBurst.cs` is the worked example; take the kinds, never the rows):
+
+| Kind | What it is | How many on Paete |
+|---|---|---|
+| Glints | a four-pointed star (a long cross plus a short diagonal one), popping and twinkling out | 59, on every beat |
+| Shockwave rings | a thick ring racing out over the ground, with a flat flash under the biggest blows | 15 rings, 4 flashes |
+| Rays | a sunburst behind the caster as they arrive, and out of the payoff as it wakes, turning slowly | 9 and 12 |
+| Ribbons | ribbons of light spiralling up round whoever is channelling or rising | 3 round him, 2 up the tree |
+| Rising motes | small lights rising off the ground round the power | 32 |
+| A pillar | one broad column of light where the power lands | 1 |
+| A curtain | thin streaks rising in a ring round the payoff | 26 |
+| A veil | the frame's edges sink into the hero's own dark while the power is on screen | 1 (`SpiritVeil.shader`) |
+
+Rules that held: the hero's colours only, never white (check the pillar's core against the sky); reduced effects keeps every shape and
+halves the light; give each new picture a quiet sound in the same pass, then compare a 0.1 s loudness table with the previous version so
+the loudest moment is the payoff, not the setup.
+
+**The ending must show what the ultimate DOES** (v7; the owner on v6's last shot, the guardian waking alone: *"this felt liek a weak
+ending"*, *"show everyone getting pulled"*, *"animate too that theyre all shocked or trying to get out"*, *"follwo vines going to ppl with
+camera"*). A cutscene that ends on the caster's power arriving puts the payoff off screen, after the hand-back. End on the effect landing on
+the people it lands on:
+1. **Stage the REAL targets.** The phase hides every live body while it draws (`UltimatePhaseView.Draw`), so copy exactly the players the
+   ability will hit, by the ability's own rule on the accepted cast (`HeroIntroductionScene` receives the commit's aim), with
+   `MatchPoseHistory.Track.Clone` (render data only: their rig, skin and outfit). Nobody in reach means nobody on screen; never invent one.
+2. **Animate them with clips their rigs already have** (sample them onto the copy with `AnimationClip.SampleAnimation` and blend by weight,
+   `PtBlend`): a shock (a flung-open frame), the drag, the hold. Paete's are the `RootedMotion` clips every rig carries for his kit.
+3. **One continuous camera move with one idea** ("the tree takes them"): ride the effect out to one target, hold beside them as it lands,
+   swing wide as everyone is taken, settle on the caster's payoff with every target in frame. Compute it from where they really are
+   (`PtCamera`), in polar coordinates round the payoff so it never passes through it.
+4. **The camera never meets a body.** End the ride BESIDE the target (2.4 m off, 50 degrees round from the line the effect travels),
+   on the side the swing will go, so the effect and the flying body pass beside the lens and the swing never crosses their path.
+5. **Stage where they end so the last frame shows them all.** Held where the rule puts them, some will be behind the payoff; fan them
+   across the camera's side and move them round to it as they are taken. Who is hit is the rule; where they hang in the cutscene is staging.
+6. Buy the time from the setup, and say in the doc what got faster and why. The cap is 6.5 s (`UltimatePerformance.MaxSeconds`, the
+   owner's choice on Paete v7: 5.0 s with an ending was too fast to read). Type the beats on one clock and stretch evenly if you must.
+7. **Never show it twice.** If the cutscene shows the effect landing, play must pick up from that end state (Paete: `PaeteSentry.Spawn`'s
+   hand-back and `BodyLead`), or the player watches the same catch again after the hand-back.
+8. **Let the caster choose where**, for anything placed: hold to show the preview where they look, release to cast
+   (`HeroAbility.AimsWhereLooking`), and send the spot in the commit so every peer and the cutscene agree. Nothing sets a human's aim
+   point otherwise: an unaimed placement lands straight ahead at full range.
+9. **Held players face out, toward the play**, if they can still act while held (Paete's prisoners can throw).
+
 **Film it on the caster's screen in a match** (`PaeteKitPlayProbe.FilmTheUltimateOnHisScreen`): his screen with the cutscene overlay
 copied in, the court, a caught player; `Time.captureFramerate` 30 plus `SharedUltimatePhase.FilmClock` so the cutscene lasts its
 real length; every world cue logged with its film time and mixed into the mp4; the round clock read before, during and after and
@@ -273,6 +317,11 @@ aimed at.
 | v5 verdict | *"Make the tre a bit smaller and a lot more sleek"*, *"dont let it be placed in a place it STANDS on can"*, *"add more special effects and vfx ... open it with leaves"* | a loud 9 m tree anywhere, a plain cutscene | v9 (five cords one way, muted greens), the can clearance, the v6 effects pass with its sound |
 | v9 crown | *"remove the leaves ... it makes it look goofy"*, *"js pointy on the top with a glow coming from within"*, *"a few leaves at the edge of the top but dont put like a green blob"* (an Ent as the picture) | round leaf clouds on a spire read as a green blob | v10: a pointed spire of forked branches, a few leaves only at the tips, a light inside shining between the branches; 7.0 m |
 | Looking round | *"also tree doesnt need to look left and right"*, *"lokks very weird"* | a 7 m tree swivelling its trunk from prisoner to prisoner every 2.6 s read as a turret | it holds still, facing along its roots' travel; its life is its breath, its blinks and its light |
+| v6 verdict | *"its almost perfect"*, *"A LOT MORE VFX AND SHIT LIKE THE GENSHIN REFERENCES"* | the vocabulary was there, the density was not: the air round each beat was empty | the density pass (section 6): glints, rings, rays, ribbons, motes, a pillar, a curtain, a veil, every row typed |
+| The ending | *"this felt liek a weak ending"*, *"show everyone getting pulled"*, *"shocked or trying to get out"*, *"follwo vines going to ppl with camera"* | the cutscene ended on the tree waking on an empty court; the catch happened after the hand-back, off screen | THE TAKE (section 6): the real targets staged, shocked, taken and struggling, one continuous camera move riding a limb out to them |
+| Eyes | *"eyes look really weird"*, *"eye itself is ugly its weird that it floats and isnt embedded anywhere"* | the face was a FLAT plane 25 to 30 cm in front of a ROUND trunk at the eyes (measured by ray-casting the built mesh), plus a 1.8 m light streak across both eyes | a burl of bark grown out of the rope, the sockets seated on its curve and framed above and below, the light inside; the streak cut |
+| v7 verdict | *"slow down ult a bit i cant comprehend"*, *"he is supposed to be watching cutscene too no?"*, *"choose ... where his ult will be cast"*, *"they should face against the tree"* | five ideas in 5.0 s; play then repeated the catch the cutscene had just shown; a human could not aim it; caught players faced the bark | 6.5 s stretched evenly; play handed back at the cutscene's end state (one catch); hold-to-aim placed where he looks; turned to face out when held |
+| Crown leaves | *"leaves on top"* look weird, *"not all branches have a leaf only some, asymmetry makes shit look natural"* | two or three round leaves on the end of EVERY twig, all one size: a ring of lollipops | six leaves on three of five branches, clusters of three, two and one, each its own size and droop, narrower |
 
 The general lessons under those rows:
 - **Ask of every render: does it belong in the cast, is it pleasing, is it great** (CHARACTER_MODEL_METHOD section 0).
@@ -284,6 +333,13 @@ The general lessons under those rows:
   blinks, light), the same finding as the title screen's weather (nothing large travels; small correlated motions).
 - **A blob of foliage reads as goofy on a blocky character.** Silhouette by line (branches, twigs, a point), with a few small
   details at the edges, and light for the magic, reads as a creature; a mass reads as a prop.
+- **A face goes ON the surface it belongs to.** Anything placed on a flat plane in front of a curved body floats at the sides. Measure
+  the body's real surface where the feature goes (ray-cast the built mesh), then seat the feature on it: turned to its normal, framed on
+  both sides, flush. If the surface is too rough to seat on (a rope of cords), grow a smooth patch of the same material out of it first.
+- **Even is unnatural.** Leaves on every tip, all one size, all pointing out, read as a pattern. Put detail on some branches only, in
+  uneven clusters, each its own size and angle, and leave some bare.
+- **End on the effect landing, not on the power arriving.** The payoff of an ability is what it does to people; if the cutscene cuts away
+  before that, the ending reads weak however good the arrival is.
 - **The live cast must tell the same story as the cutscene.** v4's cutscene stopped throwing but the live cast still threw a seed;
   the owner saw the live one.
 
@@ -318,6 +374,14 @@ The general lessons under those rows:
 - **Measure a portrait against the cast, and know what the knob does.** Paete's sat 45 px lower than all 36 others (measured off the
   PNG alpha), and his "closer" zoom had never done anything: `ModelPreview.ZoomMin` (0.55) clamps it. Aim height is the lever.
 - **`-executeMethod` without `-quit` never exits** unless the method calls `EditorApplication.Exit`; a chain behind it waits for ever.
+- **Hiding a staged body with `forceRenderingOff` does not work in a cutscene**: the scene switches every renderer under its root ON for each
+  capture (`SetVisibleForCapture`). Switch the body's holder GameObject off instead, and on at the cut where it enters.
+- **A camera computed from a moving target can fly into it.** Before filming, ask where each moving body is at every moment of the move
+  and keep the lens at least 1.8 m to the side of every path (Paete's films r20 and r21 put a flying prisoner's head through the lens twice).
+- **A shot whose eye is computed at runtime still goes through `UltimatePhaseView.ChooseShot`**: it is judged at its end time, and a blocked
+  end mirrors or pushes in the whole shot. Keep the computed settle clear, or accept the mirror.
+- **Only the committed aim knows who will be hit.** Pass `UltimateCommit.Aim` into the scene (`HeroIntroductionScene`'s `aim` parameter) and
+  run the ability's own targeting rule on it; the caster's intent may be stale.
 
 ---
 
@@ -333,7 +397,12 @@ The general lessons under those rows:
 - [ ] The effect family's rules written; every effect grows from something and withers into something; props modelled and typed
 - [ ] One sound recipe per cue, transient / body / tail, timed to frames, loudness checked against the previous version
 - [ ] Cutscene: one sentence, three shots, one travelling thing, a beat table, the effects vocabulary, the grade, the theme; storyboard
-      with `--preview`; at most 5.0 s; nothing on `Update`
+      with `--preview`; at most 6.5 s; nothing on `Update`; play picks up from its end state (never shown twice)
+- [ ] The density pass: glints, rings, rays, ribbons, motes, a pillar, a curtain, a veil, typed, on every beat; a sound for each, the
+      loudness table checked
+- [ ] The ending shows the ability landing on the real targets (staged copies, their own clips, one continuous camera move that never
+      meets a body, every target in the last frame)
+- [ ] Faces and details seated on the real surface (measured), and detail placed unevenly
 - [ ] Bots use every ability; measured in a match
 - [ ] Films in a match (his screen, the court, a caught player); mp4 versioned and sent; verdict recorded and acted on
 - [ ] Core, EditMode, `python tools/playmode_suite.py --gate`, `Checks.RunAll`, the audits, a build in `Builds/<name>/`

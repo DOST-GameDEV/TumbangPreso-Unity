@@ -1323,6 +1323,16 @@ namespace TumbangPreso.Abilities
         {
             if (context == null) return Vector3.zero;
             Vector3 at = context.Position + context.Forward * range;
+            if (ability.AimsWhereLooking)
+            {
+                // Where the sight line meets the court (the cast's own aim once it has been sent), kept between the ranges.
+                Vector3 look = at;
+                if (context.HasAimPoint) look = context.AimPoint;
+                else if (CameraSystem.CameraRig.TryLookGround(context.Motor, out var ground)) look = ground;
+                Vector3 flat = look - context.Position; flat.y = 0.0f;
+                Vector3 along = flat.sqrMagnitude > 1e-4f ? flat.normalized : context.Forward;
+                at = context.Position + along * Mathf.Clamp(flat.magnitude, ability.AimMinRange, ability.AimMaxRange);
+            }
 
             if (!ability.HoldToAim) return at;
 

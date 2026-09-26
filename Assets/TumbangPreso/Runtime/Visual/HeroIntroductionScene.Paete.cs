@@ -44,10 +44,28 @@ namespace TumbangPreso.Visual
         private const float MakilingYaw = -14f, MakilingScale = 1.1f;
         // The guardian faces out toward the rise shot's camera, a little more than a quarter turn from him, so its hollows are seen lighting.
         private const float PaeteTreeYaw = 105f;
-        // The beats (direction.md 5.14).
-        private const float PaeteSlamAt = 1.22f, PaeteSendAt = 2.3f, PaeteArriveAt = 2.75f;
-        private static readonly float[] PaetePulses = { 1.72f, 1.96f, 2.14f };
-        private static readonly float[] PaeteHauls = { 3.15f, 3.55f, 3.95f };
+        // The beats (direction.md 5.14, re-timed for v7 in 5.16).
+        // ⚠️⚠️ v7 (2026-09-27): THE ENDING TOOK 1.2 S FROM THE SETUP. The owner on v6: *"this felt liek a weak ending to his ult haha
+        // maybe change angle or smth and show everyone getting pulled? and animate too that theyre all shocked or trying to get out"*,
+        // *"try to follwo vines going to ppl with camera"*, under his standing *"dont go past 5 seconds"*. The channel is 0.2 s
+        // shorter (heartbeats 0.18 and 0.15 s apart, was 0.24 and 0.18), the roots race in 0.40 s (0.45), and the staged tree hauls
+        // itself out at `PaeteTreePace` times its play speed, so its eyes open at 3.71 and THE TAKE (3.8 to 5.0,
+        // `HeroIntroductionScene.PaeteTake.cs`) has the rest.
+        private const float PaeteSlamAt = 1.22f, PaeteSendAt = 2.1f, PaeteArriveAt = 2.5f;
+        private static readonly float[] PaetePulses = { 1.62f, 1.80f, 1.95f };
+        // The staged tree's clock runs 1.45 times its play clock: its hauls (ages 0.4, 0.8, 1.2) land at 2.78, 3.05 and 3.33, it tops
+        // out (1.5) at 3.53 and its eyes open (`WakeAt`, 1.75) at 3.71. Still three hauls a quarter second apart, not a pop.
+        private const float PaeteTreePace = 1.45f;
+        // ⚠️⚠️ v8 (2026-09-27): THE WHOLE CUTSCENE RUNS 1.3 TIMES SLOWER, 6.5 S (owner: *"lowk slow down ult a bit i cant comprehend wtf
+        // is happening"*; asked, he chose 6.5 s). Every beat in these files is still typed on the 5.0 s clock the direction was written
+        // on; the shared clock is divided by this where it comes in (`Sample`, `Shake`, `GradeAt`, `PaeteFrame`) and shots are looked
+        // up at it times this (`PaeteShotAt`). The authored table (`tools/author_ultimate_intros.py`) and the theme run the same factor.
+        private const float PaeteStretch = 1.3f;
+        /// <summary>The end of the performance on the 5.0 s clock these files are typed on.</summary>
+        private float PaeteEnd => Seconds / PaeteStretch;
+        private int PaeteShotAt(float t) => ShotIndexAt(t * PaeteStretch);
+        private static readonly float[] PaeteHauls = { 2.78f, 3.05f, 3.33f };
+        private const float PaeteTopOutAt = 3.53f, PaeteWakeAt = 3.71f;
 
         // The light's colours: his lime (the eye light, `D8FF6A`), a hotter near-white core, her jade.
         private static readonly Color PaeteLight = new Color(0.85f, 1.0f, 0.42f, 1f);
@@ -207,6 +225,9 @@ namespace TumbangPreso.Visual
 
             // v6: the leaves, the petals, the mark, the streaks, the brush stroke (direction.md 5.15).
             BuildPaeteVfx();
+            // v7: the burst layer (sparkles, rings, rays, pillars, rising light, the veil) and THE TAKE (direction.md 5.16).
+            BuildPaeteBurst();
+            BuildPaeteTake();
         }
 
         /// <summary>The camera's shake for Paete's blows: the slam, each pulse, the send, the court bulging, each haul (harder each time), the top-out.</summary>
@@ -214,8 +235,10 @@ namespace TumbangPreso.Visual
         {
             float amp = 0.07f * Decay(t - PaeteSlamAt, 0.35f) + 0.03f * Decay(t - PaeteSendAt - 0.02f, 0.25f) + 0.05f * Decay(t - PaeteArriveAt, 0.4f);
             foreach (float p in PaetePulses) amp += 0.018f * Decay(t - p, 0.18f);
-            for (int k = 0; k < PaeteHauls.Length; k++) amp += (0.07f + 0.025f * k) * Decay(t - PaeteHauls[k], 0.5f);
-            amp += 0.05f * Decay(t - (PaeteArriveAt + PaeteSentryBody.Heaves[PaeteSentryBody.Heaves.Length - 1].y), 0.3f);
+            for (int k = 0; k < PaeteHauls.Length; k++) amp += (0.07f + 0.025f * k) * Decay(t - PaeteHauls[k], 0.4f);
+            amp += 0.05f * Decay(t - PaeteTopOutAt, 0.3f) + 0.04f * Decay(t - PaeteWakeAt, 0.25f);
+            // v7, THE TAKE: the yank, and the thud as they all hit the trunk.
+            amp += 0.05f * Decay(t - PtYankAt, 0.2f) + 0.09f * Decay(t - PtArriveAt, 0.35f);
             return amp * new Vector3(Mathf.Sin(t * 53f), 0.8f * Mathf.Sin(t * 67f + 1f), 0.5f * Mathf.Sin(t * 41f + 2f));
         }
 
@@ -223,13 +246,15 @@ namespace TumbangPreso.Visual
 
         private void SamplePaete(float t)
         {
-            float leave = 1 - Ease(Seconds - .45f, Seconds - .05f, t);
+            // ⚠️ v7: the effects hold to the very end now (was a 0.4 s dissolve from 4.55): the last frame is THE TAKE's payoff, everyone
+            // bound round the tree, and it should still be burning when the picture hands back (`UltimatePerformance.ReturnSeconds`).
+            float leave = 1 - Ease(PaeteEnd - .16f, PaeteEnd, t);
 
             // ---------------------------------------------------------------- MAKILING, watching over him.
             float rise = Ease(.03f, .45f, t);
             // For the ROOT shot she comes in close behind him and bends over him; for the RISE she stands back to watch the tree.
-            float close = Ease(1.0f, 1.3f, t) * (1f - Ease(2.3f, 2.7f, t));
-            float watchTree = Ease(2.7f, 3.2f, t);
+            float close = Ease(1.0f, 1.3f, t) * (1f - Ease(PaeteSendAt, PaeteArriveAt, t));
+            float watchTree = Ease(PaeteArriveAt, 2.95f, t);
             var look = new MakilingSpirit.Look
             {
                 Presence = rise,
@@ -240,8 +265,9 @@ namespace TumbangPreso.Visual
                 // Her arms: raised over him with the light (0.3 to 0.6), lowering after she lets it fall, then over his shoulders.
                 Reach = Mathf.Lerp(Mathf.Lerp(0.5f * Ease(.30f, .52f, t), 0.30f, Ease(.72f, 1.05f, t)), 0.34f, close) * (1f - watchTree) + 0.30f * watchTree,
                 Open = Mathf.Lerp(Ease(.54f, .62f, t) * (1f - 0.5f * Ease(.78f, 1.05f, t)), 0.15f, close) * (1f - watchTree) + watchTree,
-                Wind = 0.3f + 0.9f * Decay(t - PaeteSlamAt, 0.6f) + 0.5f * Ease(1.6f, 2.3f, t) * (1f - Ease(2.3f, 2.7f, t)) + 0.8f * Decay(t - PaeteHauls[2], 0.9f),
-                Fade = Ease(3.60f, 4.40f, t),
+                Wind = 0.3f + 0.9f * Decay(t - PaeteSlamAt, 0.6f) + 0.5f * Ease(1.5f, PaeteSendAt, t) * (1f - Ease(PaeteSendAt, PaeteArriveAt, t)) + 0.8f * Decay(t - PaeteHauls[2], 0.9f),
+                // v7: she lets go as its eyes open; the TAKE is the tree's, and her mist has taken her by then.
+                Fade = Ease(3.30f, 3.95f, t),
                 Light = Ease(.12f, .35f, t) * (1f - Ease(.56f, .60f, t)),
                 // HER FULL FORM, BRIEFLY: she forms while she holds the light over him and turns back to spirit as it passes into him.
                 Form = Ease(.30f, .50f, t),
@@ -273,7 +299,7 @@ namespace TumbangPreso.Visual
             }
 
             // ---------------------------------------------------------------- HER MEADOW: up with her, down with her.
-            _paeteMeadow?.Pose(t, PaeteSlamAt, PaeteHauls, 3.6f, 4.5f, _pvLanding);
+            _paeteMeadow?.Pose(t, PaeteSlamAt, PaeteHauls, 3.3f, 4.1f, _pvLanding);
 
             // ---------------------------------------------------------------- THE LIGHT, from her hands into his.
             var hands = _makilingSpirit != null ? _root.transform.InverseTransformPoint(_makilingSpirit.HandsWorld) : her + new Vector3(0f, 2.2f, 0.4f);
@@ -311,7 +337,7 @@ namespace TumbangPreso.Visual
             var ground = PaeteHandsMid;
             float crack = Ease(PaeteSlamAt, PaeteSlamAt + 0.08f, t);
             Place(_slamCrack, ground + Vector3.up * 0.015f, new Vector3(1.4f, 1f, 1.4f) * Mathf.Max(.001f, crack), Quaternion.Euler(0f, 30f, 0f), crack > .001f ? leave : 0f);
-            float heave = GrowthVfx.Pop((t - PaeteSlamAt) / 0.10f) * (1f - Ease(2.4f, 2.8f, t));
+            float heave = GrowthVfx.Pop((t - PaeteSlamAt) / 0.10f) * (1f - Ease(2.2f, 2.6f, t));
             Place(_slamHeave, ground, new Vector3(0.75f, Mathf.Max(.001f, heave), 0.75f), Quaternion.Euler(0f, 12f, 0f), heave > .001f ? leave : 0f);
             float dust = Ease(PaeteSlamAt, PaeteSlamAt + 0.35f, t);
             Place(_slamDust, ground + Vector3.up * (0.02f + 0.15f * dust), new Vector3(0.3f + 1.8f * dust, 0.8f - 0.4f * dust, 0.3f + 1.8f * dust),
@@ -320,16 +346,16 @@ namespace TumbangPreso.Visual
                 PlaceChunk(_slamChunks[i], ground, SlamChunkRows[i], t - PaeteSlamAt, 0.75f, leave);
 
             // ---------------------------------------------------------------- HIS ROOTS INTO THE COURT, and the channel.
-            float dig = Ease(PaeteSlamAt + 0.03f, 1.6f, t);
+            float dig = Ease(PaeteSlamAt + 0.03f, 1.5f, t);
             float haulTaut = 0f;
             foreach (float h in PaeteHauls) haulTaut = Mathf.Max(haulTaut, GrowthVfx.Envelope(t, h - 0.04f, 0.08f, h + 0.3f, 0.18f));
-            float channel = Ease(1.5f, 1.7f, t) * leave;
+            float channel = Ease(1.42f, 1.58f, t) * leave;
             var knee = PaeteKnee + Vector3.up * (_paeteCourt + 0.04f);
             // ⚠️ The roots stay in the court to the very end: play picks up from this pose with his roots still in (`PaeteGroundCall`).
             _paeteRoots?.Pose(t, _paeteLeftPalm, _paeteRightPalm, knee, 0f, _paeteCourt, dig, haulTaut, 0f, channel, _paetePulseList);
             SamplePaeteGlow(t, leave);
 
-            // ---------------------------------------------------------------- HIS ROOTS TRAVEL, 2.3 to 2.75.
+            // ---------------------------------------------------------------- HIS ROOTS TRAVEL, 2.1 to 2.5 (v7).
             if (_paeteRidge != null) _paeteRidge.Pose(t - PaeteSendAt);
 
             // ---------------------------------------------------------------- THE LANDING: the court bulges and leaks light, then cracks.
@@ -350,13 +376,14 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < _eruptChunks.Count; i++)
                 PlaceChunk(_eruptChunks[i], _pvLanding + Vector3.up * _paeteCourt, Vector4.Scale(EruptChunkRows[i], new Vector4(1f, 0.6f, 0.75f, 0.85f)), t - PaeteHauls[i % PaeteHauls.Length], 1.2f, leave);
             // Leaves blown off the crown as it tops out, drifting down.
-            float topOut = PaeteArriveAt + PaeteSentryBody.Heaves[PaeteSentryBody.Heaves.Length - 1].y;
+            float topOut = PaeteTopOutAt;
             for (int i = 0; i < _crownLeaves.Count; i++)
             {
                 var row = CrownLeafRows[i];
                 float s = t - topOut;
                 // v10: its crown carries only a few leaves at the tips now, so only five of the table are shaken off.
-                if (i >= 5 || s < 0f || s > 1.6f) { Place(_crownLeaves[i], Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f); continue; }
+                // v11: three, the crown carries six leaves now and only on three of its branches.
+                if (i >= 3 || s < 0f || s > 1.6f) { Place(_crownLeaves[i], Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f); continue; }
                 float a = (row.x + PaeteTreeYaw) * Mathf.Deg2Rad;
                 var dir = new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a));
                 // Out fast, slowed by the air, falling at a leaf's pace, swinging as it falls.
@@ -369,10 +396,14 @@ namespace TumbangPreso.Visual
             }
 
             // ---------------------------------------------------------------- THE GUARDIAN crawls out of the court.
-            if (_paeteTree != null) _paeteTree.Pose(t - PaeteArriveAt, _paeteTree.transform.position);
+            // v7: on its own faster clock (`PaeteTreePace`), so its eyes open at 3.71 and the TAKE has the rest.
+            if (_paeteTree != null) _paeteTree.Pose((t - PaeteArriveAt) * PaeteTreePace, _paeteTree.transform.position);
 
             // ---------------------------------------------------------------- v6: the leaves, petals, mark, streaks and the brush stroke.
             SamplePaeteVfx(t, leave);
+            // ---------------------------------------------------------------- v7: the burst layer, and THE TAKE.
+            SamplePaeteBurst(t, leave);
+            SamplePaeteTake(t, leave);
         }
 
         /// <summary>
@@ -384,11 +415,13 @@ namespace TumbangPreso.Visual
         {
             float rootY = _root.transform.position.y;
             float headY = HeadPoint.y + 0.25f, courtY = _paeteCourt;
-            float strength = Ease(1.5f, 1.75f, t);
+            float strength = Ease(1.4f, 1.62f, t);
             float flare = 0f;
-            foreach (float h in PaeteHauls) flare = Mathf.Max(flare, GrowthVfx.Envelope(t, h, 0.05f, h + 0.35f, 0.25f));
+            foreach (float h in PaeteHauls) flare = Mathf.Max(flare, GrowthVfx.Envelope(t, h, 0.05f, h + 0.3f, 0.2f));
+            // v7: he flares again as he hauls them in (the TAKE's yank).
+            flare = Mathf.Max(flare, GrowthVfx.Envelope(t, PtYankAt, 0.04f, PtArriveAt, 0.3f));
             strength *= (0.95f + 0.45f * flare + 0.3f * Decay(t - PaeteSendAt, 0.3f)) * leave;
-            float sweep = Mathf.Lerp(headY, courtY - 0.3f, Ease(1.55f, 1.95f, t));
+            float sweep = Mathf.Lerp(headY, courtY - 0.3f, Ease(1.44f, 1.78f, t));
             float pulseY = rootY - 100f, pulseStrength = 0f;
             foreach (float p in PaetePulses)
             {
@@ -403,7 +436,7 @@ namespace TumbangPreso.Visual
             }
             _paeteGlow?.Set(strength, rootY + sweep, pulseY, pulseStrength);
             // The motes: the light leaving him upward off his shoulders and back while it pours down into the ground.
-            float motes = Ease(1.6f, 1.8f, t) * (1f - Ease(2.6f, 3.2f, t)) * leave;
+            float motes = Ease(1.5f, 1.68f, t) * (1f - Ease(2.4f, 3.0f, t)) * leave;
             for (int i = 0; i < _motes.Count; i++)
             {
                 var row = MoteRows[i];
@@ -422,6 +455,7 @@ namespace TumbangPreso.Visual
                         + 0.40f * Decay(t - PaeteSendAt, 0.35f);
             foreach (float p in PaetePulses) pulse += 0.2f * Decay(t - p, 0.2f);
             foreach (float h in PaeteHauls) pulse += 0.25f * Decay(t - h, 0.4f);
+            pulse += 0.35f * Decay(t - PtYankAt, 0.4f);
             float flicker = 1f + 0.05f * Mathf.Sin(t * 23f) + 0.03f * Mathf.Sin(t * 37f + 1f);
             float streak = Mathf.Clamp01(1f - Mathf.Abs(t - .81f) / .18f) + 0.6f * Mathf.Clamp01(1f - Mathf.Abs(t - (PaeteSendAt + .04f)) / .16f);
             for (int e = 0; e < 2; e++)

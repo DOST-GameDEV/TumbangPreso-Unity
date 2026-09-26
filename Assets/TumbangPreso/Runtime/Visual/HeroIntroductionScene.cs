@@ -46,14 +46,21 @@ namespace TumbangPreso.Visual
         private AudioSource _sound, _voice;
         private readonly UltimatePerformance _performance;
         private readonly bool _reducedEffects;
+        // The caster and where the cast was aimed, for stages that answer the world (Paete's TAKE).
+        private readonly CharacterMotor _source;
+        private readonly Vector3 _aim;
         public GameObject Root => _root;
         public UltimatePerformance Performance => _performance;
         public float Seconds => _performance?.Seconds ?? UltimatePerformance.DefaultSeconds;
         /// <summary>True once this introduction has spoken the hero's own line inside the gesture.</summary>
         public bool VoicePlayed { get; private set; }
 
-        public HeroIntroductionScene(Transform parent, string hero, CharacterMotor source, MatchPoseHistory.Copy body)
+        /// <param name="aim">The accepted cast's aim (`UltimateCommit.Aim`), for a stage that must know where the power will land
+        /// (Paete's TAKE stages the players his tree will catch). Null falls back to the caster's own intent.</param>
+        public HeroIntroductionScene(Transform parent, string hero, CharacterMotor source, MatchPoseHistory.Copy body, Vector3? aim = null)
         {
+            _source = source;
+            _aim = aim ?? (source != null && source.Intent != null ? source.Intent.AimPoint : Vector3.zero);
             _bodyRenderers = body.Root.GetComponentsInChildren<Renderer>(true);
             foreach (var bone in body.Bones)
             {
@@ -374,7 +381,7 @@ namespace TumbangPreso.Visual
                 case "cheska": SampleCheska(t); break;
                 case "rafi": SampleRafi(t); break;
                 case "amihan": SampleAmihan(t); break;
-                case "paete": SamplePaete(t); break;
+                case "paete": SamplePaete(t / PaeteStretch); break;
             }
         }
 
@@ -398,14 +405,14 @@ namespace TumbangPreso.Visual
             }
             _performance.Shot(index, seconds, out var eye, out var look, out fov);
             // Paete's RISE follows his guardian when it had to be pushed off the can (`HeroIntroductionScene.PaeteVfx.cs`).
-            if (_hero == "paete") PaeteFrame(index, ref eye, ref look);
+            if (_hero == "paete") PaeteFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // A hero's own blows shake the lens (Paete's palm and eruption); reduced effects keep it still.
             if (!_reducedEffects) { var shake = Shake(Local(seconds)); eye += shake; look += shake * .5f; }
             position = _ground + _facing * eye; focus = _ground + _facing * look;
             if (_performance.Shots[index].Fit) FitBodies(ref position, ref focus, fov, aspect, seconds);
         }
 
-        private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(t) : Vector3.zero;
+        private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(t / PaeteStretch) : Vector3.zero;
 
         /// <summary>
         /// ⚠️ THE STAGE'S OWN GRADE ON THE PHASE CAMERA (v6, 2026-09-27): a whole-frame brightness and saturation multiplier for this
@@ -416,7 +423,7 @@ namespace TumbangPreso.Visual
         public void GradeAt(float seconds, out float brightness, out float saturation)
         {
             brightness = 1f; saturation = 1f;
-            if (_hero == "paete") PaeteGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "paete") PaeteGrade(Local(seconds) / PaeteStretch, out brightness, out saturation);
         }
 
         /// <summary>The single locked shot for reduced motion: no cut and no camera move.</summary>

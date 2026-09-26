@@ -116,10 +116,10 @@
     },
     {
       "cue": "sfx_ult_theme_paete",
-      "seconds": 5.0,
-      "peak": 0.66,
-      "rms": 0.12096351091380168,
-      "sha256": "1c3bf03d389d433fda7f9528d292bb3f262f7cd7f479e8307825828f905842a4"
+      "seconds": 6.5,
+      "peak": 0.6599999999999999,
+      "rms": 0.11587226981533526,
+      "sha256": "ef9092c37fb81314d6854b94167eadb1c187a57cc9bc6fe4805c4d9105ae6135"
     },
     {
       "cue": "sfx_sky_canopy",

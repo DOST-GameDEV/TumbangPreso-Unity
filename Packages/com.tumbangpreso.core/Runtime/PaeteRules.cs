@@ -113,8 +113,15 @@ namespace TumbangPreso.Core
         /// <summary>Owner: *"yes"* to 16 objective points.</summary>
         public const float SentryCost = 16.0f;
 
-        /// <summary>The seed's throw range.</summary>
+        /// <summary>The seed's throw range: the furthest he can place the guardian (the hold-to-aim ring's far end).</summary>
         public const float SentryThrowRange = 8.0f;
+
+        /// <summary>
+        /// The nearest he can place it (owner, 2026-09-27: *"make it so that paete can choose as well where his ult will be cast"*;
+        /// PROPOSED, NOT OBJECTED TO). 3 m: the guardian's roots reach 2.14 m at its scale (`SentryCanClearance`'s measurement), so
+        /// nearer than 3 m it would come up with its roots under his own knees.
+        /// </summary>
+        public const float SentryAimMinRange = 3.0f;
 
         /// <summary>Owner: *"WITHIN 9 meters"*.</summary>
         public const float SentryRadius = 9.0f;

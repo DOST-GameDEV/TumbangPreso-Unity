@@ -206,12 +206,20 @@ namespace TumbangPreso.Abilities
         {
             public YakapNgMakiling()
                 : base("paete_ultimate", "MAKILING'S EMBRACE",
-                       "A giant guardian tree bursts up and drags everyone in 9 m into its roots. They can still throw. Hold Interact 7 s to escape.",
+                       "Hold to choose where, release: a giant guardian tree comes up there and drags everyone in 9 m into its roots. They can still throw. Hold Interact 7 s to escape.",
                        0.0f, 0.0f, AbilityGlyph.PaeteSentry,
-                       summary: "A guardian tree drags everyone in 9 m into its roots.",
+                       summary: "Hold to place it: a guardian tree drags everyone in 9 m into its roots.",
                        telegraphRadius: PaeteRules.SentryRadius, telegraphRange: PaeteRules.SentryThrowRange,
                        castAction: "hero-paete-sentry", viewmodelAction: "ground-call",
-                       castCue: "sfx_cast_paete_sentry") { }
+                       castCue: "sfx_cast_paete_sentry")
+            {
+                // ⚠️ HE CHOOSES WHERE IT COMES UP (owner, 2026-09-27: *"make it so that paete can choose as well where his ult will be
+                // cast"*, then *"does the hhold to aim resemble the groot reference"*). Groot's walls are placed where he looks, with the
+                // preview on the ground first; so this is the shared hold-to-aim (the 9 m ring shows while held, release casts) placed
+                // WHERE HE LOOKS, between 3 m and the 8 m throw range (`HeroAbility.AimsWhereLooking`), not slid out by hold time. The
+                // accepted commit carries the spot, so every peer and the cutscene compute the same place.
+                AimByHolding(PaeteRules.SentryAimMinRange, PaeteRules.SentryThrowRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f, whereLooking: true);
+            }
 
             /// <summary>
             /// ⚠️⚠️ v5, CALLED FROM THE GROUND IN PLAY TOO (owner, 2026-09-26 night: *"i also dont like that paete just throws seeds in
@@ -224,9 +232,13 @@ namespace TumbangPreso.Abilities
             {
                 if (ctx?.Motor == null) return;
                 // ⚠️ Never on the can (owner, 2026-09-27: *"dont let it be placed in a place it STANDS on can"*).
-                Vector3 at = PaeteVine.SentryTarget(ctx.Position, ctx.Forward, ctx.AimPoint, ctx.Round?.Lata ?? GameServices.Round?.Lata);
+                // Where he chose (the ring he held), still never on the can.
+                Vector3 at = PaeteVine.SentryTarget(ctx.Position, ctx.Forward, AimedDestination(ctx), ctx.Round?.Lata ?? GameServices.Round?.Lata);
                 Vector3 hands = PaeteGroundCall.Begin(ctx.Motor, at);
-                PaeteSentry.Spawn(hands, at, ctx.Motor.PlayerSlot);
+                // ⚠️ PLAY PICKS UP WHERE THE CUTSCENE ENDS (owner, 2026-09-27: after the cutscene started showing the catch, the tree grew
+                // and caught everyone a second time in play; asked, he chose *"Yes, no repeat"*). It comes up already standing and awake
+                // and catches at once (`PaeteSentry.Spawn`'s hand-back).
+                PaeteSentry.Spawn(hands, at, ctx.Motor.PlayerSlot, handBack: true);
             }
 
             public override void Reset()

@@ -13,6 +13,24 @@ namespace TumbangPreso.EditorTools.MapKit
     public static class BayanHouseFinishAuthor
     {
         private const string Folder="Assets/TumbangPreso/Art/BayanHouseFinishes/",RootName="BayanHouseFinishes";
+        // ⚠️ THE FINISHES HANG ON THE HOUSES, NOT ON THE ROAD, AND `MapGeometryCheck` HAS TO BE TOLD SO (2026-09-27). Checks.RunAll
+        // failed Bayan Plaza with 16 findings, one per finish: "floats 0.281 m above BayanPlaza/TownGround" (underside 0.383, the
+        // road's top 0.102). The check samples what lies under a prop's footprint, and under these it finds only the road: the house
+        // body they are fitted to contains them, so it is not "under" them. They are wall trim, placed at their body's own pose and
+        // refused below if any part leaves that body's bounds (+0.7 m), the same case as `NeighborhoodFinishAuthor`'s mounted trim,
+        // which carries `AirborneByDesign` with its reason. One mark on the root covers every finish (the check reads it with
+        // `GetComponentInParent`). `MarkFitted` puts it on the saved scene without re-authoring anything else.
+        private const string FittedReason="Timber, jalousie and terrace details mounted on the walls of the Bayan house bodies they were fitted to (BayanHouseFinishAuthor refuses any part that leaves its body's bounds); they hang on the house, not on the road.";
+        public static void MarkFitted()
+        {
+            var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/BayanPlaza.unity");
+            var root=GameObject.Find("BayanPlaza/Dressing/"+RootName);
+            if(root==null){Debug.LogError("BayanHouseFinishAuthor.MarkFitted: no "+RootName+" in Bayan Plaza.");EditorApplication.Exit(1);return;}
+            AirborneByDesign.Attach(root,FittedReason);
+            EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
+            Debug.Log("BayanHouseFinishAuthor.MarkFitted: marked "+root.transform.childCount+" fitted finishes.");
+            EditorApplication.Exit(0);
+        }
         public static void ClearPrevious(string map)
         {
             if(map!="BayanPlaza")return;
@@ -31,6 +49,7 @@ namespace TumbangPreso.EditorTools.MapKit
             ClearPrevious("BayanPlaza");var map=GameObject.Find("BayanPlaza");
             var solids=map.GetComponentsInChildren<Collider>(true).ToDictionary(c=>c,c=>c.bounds);
             var root=new GameObject(RootName).transform;root.SetParent(map.transform.Find("Dressing"),false);
+            AirborneByDesign.Attach(root.gameObject,FittedReason);
             var finishes=new List<(Transform root,char kind)>();
             foreach(var filter in map.transform.Find("Dressing/Bahay").GetComponentsInChildren<MeshFilter>())
             {

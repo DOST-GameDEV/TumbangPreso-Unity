@@ -254,6 +254,40 @@ namespace TumbangPreso.CameraSystem
         public CharacterMotor Following => _character;
 
         /// <summary>
+        /// Where the main camera's sight line meets the court, for the body it follows (false for any other body: only the player
+        /// looking through this camera can aim with it). Looking at or above the horizon, a point far along the view, which the
+        /// aimed ability then clamps to its reach. Used by casts placed where the player looks (`HeroAbility.AimsWhereLooking`).
+        /// </summary>
+        /// <summary>If the main camera follows <paramref name="who"/> in a held (third-person) view, reopen it behind the body's facing.</summary>
+        public static void FaceHeldView(CharacterMotor who)
+        {
+            var cam = Camera.main;
+            var rig = cam != null ? cam.GetComponent<CameraRig>() : null;
+            if (who == null || rig == null || rig._character != who) return;
+            if (rig._emoteView) rig._emoteYawDeg = rig.BodyYawDeg();
+        }
+
+        public static bool TryLookGround(CharacterMotor who, out Vector3 point)
+        {
+            point = Vector3.zero;
+            var cam = Camera.main;
+            var rig = cam != null ? cam.GetComponent<CameraRig>() : null;
+            if (who == null || rig == null || rig._character != who) return false;
+            Vector3 origin = cam.transform.position, forward = cam.transform.forward;
+            float ground = Slipper.GroundY(who.transform.position + Vector3.up * 0.3f);
+            if (forward.y < -0.02f && origin.y > ground)
+            {
+                point = origin + forward * ((origin.y - ground) / -forward.y);
+                return true;
+            }
+            var flat = new Vector3(forward.x, 0.0f, forward.z);
+            if (flat.sqrMagnitude < 1e-4f) flat = who.transform.forward;
+            point = who.transform.position + flat.normalized * 100.0f;
+            point.y = ground;
+            return true;
+        }
+
+        /// <summary>
         /// § THE VERB, IN THE PLAYER'S OWN HANDS. `camera_rig.gd::play_viewmodel_action`.
         ///
         /// ⚠️⚠️ A CLIP IF THE ARMS HAVE ONE, A PROCEDURAL KICK IF THEY DO NOT, AND THE SECOND

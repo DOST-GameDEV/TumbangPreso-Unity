@@ -68,6 +68,18 @@ namespace TumbangPreso.Visual
         private readonly List<Vector3> _vinePoints = new List<Vector3>();
         private readonly List<float> _vineRadii = new List<float>();
 
+        /// <summary>
+        /// How far into the face's burl a point on the rope is (1 inside it, 0 clear): within about 38 degrees of the front and
+        /// between 2.12 and 2.68 up, fading over 17 degrees and 0.1 m. The burl is typed in `tools/build_paete_props.py` `sentry`.
+        /// </summary>
+        private static float FaceBurl(float angleRadians, float y)
+        {
+            float off = Mathf.Abs(Mathf.DeltaAngle(angleRadians * Mathf.Rad2Deg, 0f));
+            float across = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(38f, 55f, off));
+            float up = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(2.02f, 2.14f, y)) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(2.66f, 2.78f, y)));
+            return across * up;
+        }
+
         private static float RopeRadius(float y)
         {
             for (int i = 0; i + 1 < Silhouette.Length; i++)
@@ -168,11 +180,20 @@ namespace TumbangPreso.Visual
         /// <summary>The node that holds the light in its hollows (null before the model loads): the cutscene lights its eyes from here.</summary>
         public Transform EyesNode => _eyes;
 
+        /// <summary>The crown node its inner light hangs from (v7: the cutscene's TAKE bursts light out of it as its eyes open).</summary>
+        public Transform CrownNode => _crown;
+
         /// <summary>
         /// When (seconds of its age) the light opens in its hollows. 0.55 in play, right as it tops out; the cutscene
         /// holds it back so the guardian's eyes are the last beat, the one its camera ends on.
         /// </summary>
         public float WakeAt { get; set; } = 1.75f;
+
+        /// <summary>How long it lives on the age it is posed at (the live one is posed `PaeteSentry.BodyLead` ahead of the rules).</summary>
+        public float LifeSeconds { get; set; } = PaeteRules.SentryLifeSeconds;
+
+        /// <summary>How far the posed age runs ahead of the rules' clock, so the embrace limbs reach on the rules' catch.</summary>
+        public float CatchLead { get; set; }
 
         /// <summary>
         /// ⚠️ THE THREE HAULS (v6): (start, end, the share of its height out of the court when it ends). Typed, each its own reach; the
@@ -457,7 +478,7 @@ namespace TumbangPreso.Visual
             for (int c = 0; c < transform.childCount; c++) transform.GetChild(c).gameObject.SetActive(landed);
             if (!landed) { foreach (var l in _limbs) l.Clear(); _lastAge = age; return; }
 
-            float life = PaeteRules.SentryLifeSeconds;
+            float life = LifeSeconds;
             float wither = Mathf.Clamp01((age - (life - 0.4f)) / 0.9f);
             float alive = 1f - wither;
 
@@ -662,7 +683,9 @@ namespace TumbangPreso.Visual
                     // The crawl: a ripple running UP the vine (its phase falls with time), and the tip lifting off the bark.
                     float ripple = 0.018f * Mathf.Sin(u * 16f - since * 2.6f + phase);
                     float feel = 0.09f * Mathf.SmoothStep(0.82f, 1f, u) * (0.55f + 0.45f * Mathf.Sin(since * 1.4f + phase));
-                    float r = RopeRadius(y) + 0.026f + ripple + feel;
+                    // ⚠️ v11: the face is a burl grown out of the rope (`tools/build_paete_props.py` `sentry`); a vine that winds
+                    // across it dives UNDER it, so nothing crawls over the eyes (the owner on film r20: *"eyes look really weird"*).
+                    float r = RopeRadius(y) + 0.026f + ripple + feel - 0.08f * FaceBurl(a, y);
                     _vinePoints.Add(new Vector3(Mathf.Sin(a) * r, y + 0.04f * feel, Mathf.Cos(a) * r));
                     _vineRadii.Add(thick * Mathf.Lerp(1f, 0.35f, u));
                 }
@@ -672,13 +695,15 @@ namespace TumbangPreso.Visual
                     var leaf = _trunkVineLeaves[v * 2 + k];
                     int at = Mathf.Clamp(Mathf.RoundToInt(TrunkVineRows[v, 6 + k] * TrunkVineSamples), 1, TrunkVineSamples - 1);
                     var p = _vinePoints[at];
+                    // A leaf never rides across the face: under the burl it is folded away.
+                    bool onFace = FaceBurl(Mathf.Atan2(p.x, p.z), p.y) > 0.3f;
                     var along = (_vinePoints[at + 1] - _vinePoints[at - 1]).normalized;
                     var outward = new Vector3(p.x, 0f, p.z).normalized;
                     leaf.localPosition = p + outward * 0.03f;
                     // Each leaf rides the vine and flutters a little as the ripple passes it.
                     leaf.localRotation = Quaternion.LookRotation(Vector3.Lerp(along, outward, 0.55f), Vector3.up)
                                          * Quaternion.Euler(-20f + 10f * Mathf.Sin(since * 3.1f + v + k), 0f, 12f * k);
-                    leaf.localScale = Vector3.one * Mathf.Clamp01(climb * 1.4f);
+                    leaf.localScale = Vector3.one * (onFace ? 0f : Mathf.Clamp01(climb * 1.4f));
                 }
             }
         }
@@ -693,7 +718,7 @@ namespace TumbangPreso.Visual
         {
             var p = _targets[i];
             var rope = _limbs[i];
-            float catchAt = PaeteRules.SentryCatchSeconds;
+            float catchAt = PaeteRules.SentryCatchSeconds + CatchLead;
             if (p == null || age < catchAt) { rope.Clear(); return; }
 
             Vector3 body = transform.InverseTransformPoint(p.transform.position);

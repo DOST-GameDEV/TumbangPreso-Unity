@@ -462,12 +462,20 @@ namespace TumbangPreso.Abilities
         public float Age => _age;
 
         private float _age;
+        // ⚠️⚠️ THE BODY IS SHOWN THIS FAR AHEAD OF THE RULES' CLOCK (v7, 2026-09-27). The owner, asked whether play should pick up where
+        // the cutscene ends instead of the tree growing and catching everyone a second time: *"Yes, no repeat"*. The cutscene's staged
+        // tree ends at age (5.0 - 2.5) x 1.45 = 3.625 on its own clock (`HeroIntroductionScene.Paete.cs`: it arrives at 2.5 and runs
+        // at `PaeteTreePace` to the 5.0 end), awake since 1.75; the live one starts on the rules' clock at the catch
+        // (`PaeteRules.SentryCatchSeconds`, 0.3), so its body is posed 3.625 - 0.3 = 3.325 ahead: standing, awake, the same tree.
+        // The catch, the 10 s life and the 7 s break-out all keep the rules' clock; only the body and its growth cues use the lead.
+        public const float BodyLead = 3.325f;
+        private float _lead;
         private bool _caught;
         private readonly List<CharacterMotor> _held = new List<CharacterMotor>();
         private PaeteSentryBody _body;
         private const float Flight = 0.45f;
 
-        public static PaeteSentry Spawn(Vector3 from, Vector3 at, int ownerSlot, float age = 0f)
+        public static PaeteSentry Spawn(Vector3 from, Vector3 at, int ownerSlot, float age = 0f, bool handBack = false)
         {
             var go = new GameObject("PaeteSentry");
             go.transform.position = at;
@@ -476,8 +484,12 @@ namespace TumbangPreso.Abilities
             // ⚠️ A RESTORED AGE IS ALREADY PAST THE FLIGHT. `WorldEffectSnapshot` restores with the age since the roots arrived
             // (`Capture`'s `Remaining` counts from 0, not from -Flight), and subtracting the flight again put a rejoiner's tree
             // 0.45 s behind everybody else's for its whole life (TODO HERO-9, found 2026-09-26). A fresh cast (age 0) still flies.
-            s._age = age > 0f ? age : -Flight;
+            s._age = age > 0f ? age : handBack ? PaeteRules.SentryCatchSeconds - 0.02f : -Flight;
+            // Every live cast comes up through the cutscene now, so a restored one (a rejoiner, age > 0) is posed with the lead too.
+            s._lead = handBack || age > 0f ? BodyLead : 0f;
             s._body = PaeteSentryBody.Build(go.transform);
+            s._body.LifeSeconds = PaeteRules.SentryLifeSeconds + s._lead;
+            s._body.CatchLead = s._lead;
             // Before it has anyone to look at, the tree faces along the seed's flight (direction.md 5.2).
             s._body.SetFacing(at - from);
             // Under a roof (Ilalim ng Tulay's deck) it stands only as tall as fits; the open sky gets it all.
@@ -496,7 +508,8 @@ namespace TumbangPreso.Abilities
             // ult"*): his roots race under the court from between his hands to the spot on the same 0.45 s the seed flew,
             // so the warning and the catch timing are unchanged. v5 (direction.md 5.14): `PaeteRootRidge`, the court heaving
             // and splitting over them with the light inside the split; `PaeteRootVein`'s lit block at the front read as a seed.
-            if (age <= 0f) PaeteRootRidge.Race(null, new Vector3(from.x, Slipper.GroundY(from), from.z), at, Flight, staged: false);
+            // The cutscene already showed the roots racing there and the tree crawling out; a hand-back sends no second race.
+            if (age <= 0f && !handBack) PaeteRootRidge.Race(null, new Vector3(from.x, Slipper.GroundY(from), from.z), at, Flight, staged: false);
             // Who the vines reach for is drawn on every peer from the same rule the host uses.
             var round = GameServices.Round;
             if (round != null)
@@ -528,13 +541,15 @@ namespace TumbangPreso.Abilities
         {
             float before = _age;
             _age += Time.deltaTime;
+            // The growth cues run on the BODY's clock (so a hand-back, already grown, plays none of them); the rules on `_age`.
+            float grownBefore = before + _lead, grown = _age + _lead;
             // ⚠️ LOCAL ON EVERY PEER, NOT `NetCue`: each peer runs this same clock from the accepted
             // cast, so each plays each stage once (`audit_cue_relay.py`).
             // ⚠️⚠️ v5, IT CRAWLS OUT (owner, 2026-09-26 night: *"i also dotn want the tree to jsut spawn in or teleport in"*, *"and
             // then the tree slowly show up"*; direction.md 5.14). The court BULGES as the roots arrive (age 0), the claws break out,
             // and the trunk hauls itself up in three heaves (`PaeteSentryBody.Heaves`), each its own groan and crack and a shake that
             // grows with the tree; its eyes open last (`WakeAt`). The catch below keeps its old clock: nothing here moves a rule.
-            if (before < 0f && _age >= 0f)
+            if (grownBefore < 0f && grown >= 0f)
             {
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_burst", Centre);
                 // ⚠️ v9: sized to the 6.6 m tree and its 2.1 m roots (was 2.2 and hauls to 3.4 m for the 9 m one): the court breaks
@@ -545,7 +560,7 @@ namespace TumbangPreso.Abilities
             for (int k = 0; k < PaeteSentryBody.Heaves.Length; k++)
             {
                 float at = PaeteSentryBody.Heaves[k].x;
-                if (before < at && _age >= at)
+                if (grownBefore < at && grown >= at)
                 {
                     // ⚠️ SIZED TO THE 9 M TREE (owner: *"REALLY big and imposing and really feel like an ult"*): each haul breaks
                     // the road wider and shakes every nearby camera harder, the last hardest (the style of `HeroHazards`' blasts:
@@ -556,16 +571,16 @@ namespace TumbangPreso.Abilities
                 }
             }
             // The tree waking: the light opens in its hollows (`PaeteSentryBody`'s WAKE beat, last).
-            if (before < _body.WakeAt && _age >= _body.WakeAt)
+            if (grownBefore < _body.WakeAt && grown >= _body.WakeAt)
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_wake", Centre);
             if (before < PaeteRules.SentryCatchSeconds && _age >= PaeteRules.SentryCatchSeconds && _held.Count > 0)
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_catch", Centre);
             if (before < PaeteRules.SentryLifeSeconds && _age >= PaeteRules.SentryLifeSeconds)
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_wilt", Centre);
-            _body.Pose(_age, Centre);
+            _body.Pose(grown, Centre);
             if (_age >= 0f)
                 foreach (var p in _held)
-                    if (p != null && p.IsRooted) PaeteRootCoil.Attach(p);
+                    if (p != null && p.IsRooted) PaeteRootCoil.Attach(p, Centre);
             if (_age >= PaeteRules.SentryLifeSeconds + 0.6f) Destroy(gameObject);
         }
 

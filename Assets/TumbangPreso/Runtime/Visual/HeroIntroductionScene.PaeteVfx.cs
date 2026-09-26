@@ -100,13 +100,14 @@ namespace TumbangPreso.Visual
 
         // The light streaks of the channel and the send: when each fires, where round him (angle, distance), how tall, how wide, and
         // whose light (0 his lime, 1 her jade). Two on the first heartbeat, three on the second, four on the third, three on the send.
+        // v7: on the re-timed heartbeats (1.62, 1.80, 1.95) and send (2.10).
         private static readonly float[,] PvStreakRows =
         {
-            { 1.72f, 40f, 1.05f, 1.9f, .070f, 0 }, { 1.74f, 215f, 1.25f, 1.6f, .060f, 1 },
-            { 1.96f, 120f, 1.15f, 2.1f, .075f, 0 }, { 1.98f, 300f, 0.95f, 1.7f, .060f, 0 }, { 2.00f, 175f, 1.40f, 1.5f, .050f, 1 },
-            { 2.14f, 70f, 1.30f, 2.3f, .080f, 0 }, { 2.15f, 250f, 1.10f, 1.9f, .065f, 1 }, { 2.17f, 10f, 1.45f, 1.6f, .055f, 0 },
-            { 2.18f, 150f, 0.90f, 2.0f, .070f, 0 },
-            { 2.30f, 90f, 0.80f, 2.6f, .090f, 0 }, { 2.31f, 270f, 0.85f, 2.4f, .080f, 0 }, { 2.33f, 0f, 1.00f, 2.2f, .070f, 1 },
+            { 1.62f, 40f, 1.05f, 1.9f, .070f, 0 }, { 1.64f, 215f, 1.25f, 1.6f, .060f, 1 },
+            { 1.80f, 120f, 1.15f, 2.1f, .075f, 0 }, { 1.82f, 300f, 0.95f, 1.7f, .060f, 0 }, { 1.84f, 175f, 1.40f, 1.5f, .050f, 1 },
+            { 1.95f, 70f, 1.30f, 2.3f, .080f, 0 }, { 1.96f, 250f, 1.10f, 1.9f, .065f, 1 }, { 1.98f, 10f, 1.45f, 1.6f, .055f, 0 },
+            { 1.99f, 150f, 0.90f, 2.0f, .070f, 0 },
+            { 2.10f, 90f, 0.80f, 2.6f, .090f, 0 }, { 2.11f, 270f, 0.85f, 2.4f, .080f, 0 }, { 2.13f, 0f, 1.00f, 2.2f, .070f, 1 },
         };
 
         // The leaves the slam blows flat out along the court from his palms: direction, speed, spin, size, kind.
@@ -148,16 +149,17 @@ namespace TumbangPreso.Visual
 
         // Near-lens drifters, one small set per shot: from, to (times), screen from (x, y), screen to, how far along the lens line
         // (a share of eye to focus, so a push-in never puts one behind the lens), size, kind.
+        // v7: re-timed to the new shots (ROOT ends 2.1, the race 2.1 to 2.5, the eyes 3.45 to 3.8); the TAKE has its own layer.
         private static readonly float[,] PvLensRows =
         {
             { 0.00f, 0.50f, -1.25f, 0.55f, 0.95f, 0.10f, .30f, .10f, 0 },
             { 0.06f, 0.62f, -1.20f, -0.35f, 0.70f, -0.75f, .38f, .050f, 3 },
             { 0.30f, 1.08f, 0.30f, 1.15f, 0.62f, -1.15f, .34f, .040f, 3 },
-            { 1.25f, 2.28f, 0.85f, -1.10f, 1.20f, 0.80f, .35f, .10f, 1 },
-            { 1.60f, 2.28f, -0.70f, -1.10f, -0.90f, 1.10f, .40f, .035f, 3 },
-            { 2.30f, 2.80f, -1.20f, -0.20f, 1.20f, 0.10f, .28f, .12f, 0 },
-            { 4.25f, 5.00f, -0.20f, 1.15f, 0.25f, -1.10f, .35f, .045f, 3 },
-            { 4.40f, 5.00f, 0.95f, 1.15f, 0.55f, -1.15f, .42f, .12f, 2 },
+            { 1.25f, 2.08f, 0.85f, -1.10f, 1.20f, 0.80f, .35f, .10f, 1 },
+            { 1.50f, 2.08f, -0.70f, -1.10f, -0.90f, 1.10f, .40f, .035f, 3 },
+            { 2.10f, 2.48f, -1.20f, -0.20f, 1.20f, 0.10f, .28f, .12f, 0 },
+            { 3.45f, 3.80f, -0.20f, 1.15f, 0.25f, -1.10f, .35f, .045f, 3 },
+            { 3.50f, 3.80f, 0.95f, 1.15f, 0.55f, -1.15f, .42f, .12f, 2 },
         };
 
         private readonly List<int> _pvGust = new List<int>(24), _pvRibbon = new List<int>(6), _pvStreaks = new List<int>(12);
@@ -168,7 +170,7 @@ namespace TumbangPreso.Visual
         private readonly List<Vector3> _pvLine = new List<Vector3>(32);
         private readonly List<float> _pvWidths = new List<float>(32);
         private int _pvMarkAir, _pvMarkAirRing, _pvMarkCourt, _pvMarkLanding, _pvMarkTree;
-        private readonly int[] _pvTreeEye = new int[2], _pvTreeStreak = new int[2];
+        private readonly int[] _pvTreeEye = new int[2];
 
         private Color PvKind(int kind) => kind == 1 ? PvLeafDark : kind == 2 ? PvLeafLit : kind == 3 ? PvPetal : PvLeaf;
         private Mesh PvMesh(int kind) => kind == 3 ? PvPetalMesh : PvLeafMesh;
@@ -213,11 +215,10 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < PvShaftRows.GetLength(0); i++) _pvShafts.Add(PvTips(AddGlow("PaeteShaft", PaeteLight, PvStreak, billboard: true, band: true, falloff: 1.4f, core: .7f), 1.3f));
             for (int i = 0; i < PvSpiralRows.GetLength(0); i++) { int k = (int)PvSpiralRows[i, 6]; _pvSpiral.Add(AddSolid("PaeteSpiralLeaf", PvMesh(k), PvKind(k))); }
             for (int i = 0; i < PvLensRows.GetLength(0); i++) { int k = (int)PvLensRows[i, 8]; _pvLens.Add(AddSolid("PaeteLensLeaf", PvMesh(k), PvKind(k))); }
+            // ⚠️ v7/v11: a soft light IN each socket and nothing else. The 1.8 m anamorphic streak each eye used to throw read as one
+            // lime line drawn straight across its face (the owner on film r20: *"eyes look really weird"*); it is gone.
             for (int e = 0; e < 2; e++)
-            {
-                _pvTreeEye[e] = AddGlow("PaeteTreeEye" + e, new Color(0.80f, 1.0f, 0.55f, 1f), falloff: 2.0f, core: 1.3f, lift: .15f);
-                _pvTreeStreak[e] = AddGlow("PaeteTreeEyeStreak" + e, PaeteLight, falloff: 1.3f, core: .5f, lift: .2f);
-            }
+                _pvTreeEye[e] = AddGlow("PaeteTreeEye" + e, new Color(0.80f, 1.0f, 0.55f, 1f), falloff: 2.2f, core: 1.1f, lift: .08f);
         }
 
         /// <summary>`SpiritGlow`'s `_Tips`: fades a band glow out toward both ends of its length (u), so a streak has no hard end.</summary>
@@ -242,10 +243,16 @@ namespace TumbangPreso.Visual
             _pvLanding = PaeteLanding + shift;
         }
 
-        /// <summary>The RISE shots follow a pushed landing: the focus by all of it, the lens by half, so he stays in the frame too.</summary>
-        private void PaeteFrame(int index, ref Vector3 eye, ref Vector3 look)
+        /// <summary>
+        /// The RISE shots follow a pushed landing: the focus by all of it, the lens by half, so he stays in the frame too. v7: THE TAKE
+        /// is computed whole from where the caught players stand (`PtCamera`, `HeroIntroductionScene.PaeteTake.cs`).
+        /// </summary>
+        private void PaeteFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
         {
-            if (_performance == null || index < 0 || _performance.Shots[index].Start < PaeteSendAt - .01f) return;
+            // `t` and the table's shot times are on the shared (stretched) clock; the TAKE's camera is typed on the 5.0 s one.
+            if (_performance == null || index < 0 || _performance.Shots[index].Start < PaeteSendAt * PaeteStretch - .01f) return;
+            if (_performance.Shots[index].Start >= PtLashAt * PaeteStretch - .01f && PtCamera(t / PaeteStretch, out var takeEye, out var takeLook, out var takeFov))
+            { eye = takeEye; look = takeLook; fov = takeFov; return; }
             var shift = _pvLanding - PaeteLanding;
             look += shift; eye += shift * .5f;
         }
@@ -260,7 +267,8 @@ namespace TumbangPreso.Visual
             // ⚠️ Film r16 measured the first version (0.76) as a 12 per cent darker sky: too little to read as the world stepping back.
             // It is deeper now and HOLDS through the roots and the hauls (the power is still on screen), giving the daylight back only
             // for the payoff at the eyes.
-            float away = Ease(0f, .3f, t) * (1f - .3f * Ease(2.3f, 2.8f, t)) * (1f - Ease(4.4f, 4.9f, t));
+            // v7: it stays stepped back through THE TAKE (the lit bindings and the eyes carry it) and only lets go at the hand-back.
+            float away = Ease(0f, .3f, t) * (1f - .3f * Ease(2.1f, 2.6f, t)) * (1f - .25f * Ease(3.7f, 3.95f, t)) * (1f - Ease(4.84f, 5.0f, t));
             brightness = 1f - .32f * away;
             saturation = 1f - .22f * away;
         }
@@ -270,8 +278,8 @@ namespace TumbangPreso.Visual
         {
             eye = look = Vector3.zero; fov = 50f;
             if (_performance == null || shot < 0) return false;
-            _performance.Shot(shot, t, out eye, out look, out fov);
-            PaeteFrame(shot, ref eye, ref look);
+            _performance.Shot(shot, t * PaeteStretch, out eye, out look, out fov);
+            PaeteFrame(shot, t * PaeteStretch, ref eye, ref look, ref fov);
             return true;
         }
 
@@ -384,7 +392,7 @@ namespace TumbangPreso.Visual
             // ---------------------------------------------------------------- THE MARK, 1: in the air behind his head as the light goes in.
             {
                 float s = t - .78f;
-                int shot = ShotIndexAt(t);
+                int shot = PaeteShotAt(t);
                 if (s < 0f || s > .40f || !PvLens(t, shot, out var eye, out _, out _)) { PvHide(_pvMarkAir); PvHide(_pvMarkAirRing); }
                 else
                 {
@@ -405,7 +413,7 @@ namespace TumbangPreso.Visual
             // ---------------------------------------------------------------- THE MARK, 2: stamped on the court under his palms.
             {
                 float s = t - PaeteSlamAt;
-                if (s < 0f || t > 2.75f) PvHide(_pvMarkCourt);
+                if (s < 0f || t > PaeteArriveAt) PvHide(_pvMarkCourt);
                 else
                 {
                     float beat = 0f;
@@ -414,7 +422,7 @@ namespace TumbangPreso.Visual
                     float radius = 1.15f * GrowthVfx.Pop(s / .14f) + .14f * beat + .2f * send;
                     float drain = 1f - Ease(PaeteSendAt + .05f, PaeteSendAt + .45f, t);
                     float strength = (.9f + .9f * beat + 1.2f * send + .8f * Decay(s, .18f)) * drain * leave * (_reducedEffects ? .6f : 1f);
-                    float spin = 20f * s + 90f * Mathf.Max(0f, t - 1.6f) + 160f * Mathf.Max(0f, t - PaeteSendAt);
+                    float spin = 20f * s + 90f * Mathf.Max(0f, t - 1.5f) + 160f * Mathf.Max(0f, t - PaeteSendAt);
                     var at = PaeteHandsMid; at.y = court + .025f;
                     PlaceGlow(_pvMarkCourt, at, new Vector3(radius, radius, 1f), Quaternion.Euler(0f, spin, 0f) * Quaternion.Euler(90f, 0f, 0f), strength);
                 }
@@ -451,7 +459,7 @@ namespace TumbangPreso.Visual
             // ---------------------------------------------------------------- THE ORBIT round him while he channels, then out with the roots.
             for (int i = 0; i < _pvOrbit.Count; i++)
             {
-                float t0 = 1.45f, send = PaeteSendAt + .02f * i;
+                float t0 = 1.38f, send = PaeteSendAt + .02f * i;
                 if (t < t0 || t > PaeteArriveAt + .55f) { PvHide(_pvOrbit[i]); continue; }
                 Vector3 Orbit(float at)
                 {
@@ -459,7 +467,7 @@ namespace TumbangPreso.Visual
                     // Faster with every heartbeat (the three pulses), tighter as the channel builds.
                     float quick = 0f; foreach (float pl in PaetePulses) quick += Ease(pl, pl + .1f, at);
                     float angle = (PvOrbitRows[i, 0] + PvOrbitRows[i, 3] * s * (1f + .45f * quick)) * Mathf.Deg2Rad;
-                    float r = PvOrbitRows[i, 1] * (1f - .22f * Ease(1.7f, 2.3f, at));
+                    float r = PvOrbitRows[i, 1] * (1f - .22f * Ease(1.6f, PaeteSendAt, at));
                     float y = PvOrbitRows[i, 2] * Ease(t0, t0 + .3f, at) + .06f * Mathf.Sin(at * 6f + i);
                     return body + new Vector3(Mathf.Sin(angle) * r, court + y, Mathf.Cos(angle) * r);
                 }
@@ -491,8 +499,8 @@ namespace TumbangPreso.Visual
             {
                 float delay = PvSlashRows[k, 4];
                 float head = Ease(PaeteSendAt + delay, PaeteSendAt + .20f + delay, t) * PvSlashRows[k, 3];
-                float tail = Ease(2.68f + delay, 3.05f, t) * PvSlashRows[k, 3];
-                float fade = (1f - Ease(2.9f, 3.08f, t)) * leave;
+                float tail = Ease(2.43f + delay, 2.8f, t) * PvSlashRows[k, 3];
+                float fade = (1f - Ease(2.65f, 2.83f, t)) * leave;
                 float strength = (_reducedEffects ? .5f : 1.9f - .6f * k) * fade;
                 if (head - tail < .02f || strength <= .002f) { _pvSlashMeshes[k].Clear(); PvHide(_pvSlash[k]); PvHide(_pvSlashInk[k]); continue; }
                 _pvLine.Clear(); _pvWidths.Clear();
@@ -554,11 +562,11 @@ namespace TumbangPreso.Visual
             // ---------------------------------------------------------------- THE MARK, 4, and the guardian's eyes: the last beat.
             {
                 var eyes = _paeteTree != null ? _paeteTree.EyesNode : null;
-                float s = t - 4.50f;
+                float s = t - PaeteWakeAt;
                 if (eyes == null || s < -.02f)
                 {
                     PvHide(_pvMarkTree);
-                    for (int e = 0; e < 2; e++) { PvHide(_pvTreeEye[e]); PvHide(_pvTreeStreak[e]); }
+                    for (int e = 0; e < 2; e++) PvHide(_pvTreeEye[e]);
                 }
                 else
                 {
@@ -571,11 +579,10 @@ namespace TumbangPreso.Visual
                     PlaceGlow(_pvMarkTree, foot, new Vector3(radius, radius, 1f), Quaternion.Euler(0f, 25f * pop + 30f * s, 0f) * Quaternion.Euler(90f, 0f, 0f), strength);
                     for (int e = 0; e < 2; e++)
                     {
-                        var at = _root.transform.InverseTransformPoint(eyes.TransformPoint(new Vector3(e == 0 ? -.19f : .19f, 0f, .04f)));
-                        float flash = Flash(t, 4.52f, .12f);
-                        PlaceGlow(_pvTreeEye[e], at, new Vector3(.24f, .09f, 1f) * (1f + .6f * flash), Quaternion.identity, (1.1f + flash) * pop * leave);
-                        PlaceGlow(_pvTreeStreak[e], at, new Vector3(1.8f, .05f, 1f) * (.5f + .5f * flash + .2f * pop), Quaternion.identity,
-                                  _reducedEffects ? 0f : (.4f + 1.2f * flash) * pop * leave);
+                        // v11: the sockets are seated on the face burl now, 0.40 out and 0.2 to each side (`tools/build_paete_props.py`).
+                        var at = _root.transform.InverseTransformPoint(eyes.TransformPoint(new Vector3(e == 0 ? -.198f : .198f, .008f, .40f)));
+                        float flash = Flash(t, PaeteWakeAt + .02f, .12f);
+                        PlaceGlow(_pvTreeEye[e], at, new Vector3(.20f, .07f, 1f) * (1f + .4f * flash), Quaternion.identity, (.9f + .8f * flash) * pop * leave);
                     }
                 }
             }
@@ -584,8 +591,8 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < _pvLens.Count; i++)
             {
                 float t0 = PvLensRows[i, 0], t1 = PvLensRows[i, 1];
-                int shot = ShotIndexAt(Mathf.Max(t0, .001f));
-                if (t < t0 || t > t1 || ShotIndexAt(t) != shot || !PvLens(t, shot, out var eye, out var look, out var fov)) { PvHide(_pvLens[i]); continue; }
+                int shot = PaeteShotAt(Mathf.Max(t0, .001f));
+                if (t < t0 || t > t1 || PaeteShotAt(t) != shot || !PvLens(t, shot, out var eye, out var look, out var fov)) { PvHide(_pvLens[i]); continue; }
                 float u = Ease(t0, t1, t) * .7f + .3f * Mathf.InverseLerp(t0, t1, t);
                 float sx = Mathf.Lerp(PvLensRows[i, 2], PvLensRows[i, 4], u), sy = Mathf.Lerp(PvLensRows[i, 3], PvLensRows[i, 5], u);
                 var fwd = (look - eye).normalized;

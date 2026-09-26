@@ -680,3 +680,125 @@ own silhouette (`TrunkVineRows`, typed): they climb further as it tops out and k
 trunk (6 to 8 degrees a second), carry a ripple running UP each one the way a creeper inches along, and lift their tips off the bark
 to feel the air; two leaves ride each and flutter as the ripple passes; as it sleeps they slide back down. The tree stays still and
 its vines move: small motions on a big thing.
+
+### 5.16 v7: the owner's verdict on v6, a lot more effects, an ending that shows the catch, and eyes set into the wood (2026-09-27)
+
+The owner on `paete_ultimate_v6.mp4`: *"its almost perfect problem i have is that i think it oculd use a lot more"* effects: *"a lot
+more VFX I MEAN"*, *"A LOT MORE VFX AND SHIT LIKE THE GENSHIN REFERENCES"*. Then, of its last shot (the guardian waking alone on an
+empty court): *"this felt liek a weak ending to his ult haha maybe change angle or smth and show everyone getting pulled? and animate
+too that theyre all shocked or trying to get out"*, *"try to follwo vines going to ppl with camera as well idk ahah figure it out"*,
+*"weak ending to his ult cutscene is what i meant"*. And of a frame of the waking tree: *"eyes look really weird as well as leaves on
+top"*, *"make it so taht not all branches have a leaf only some, asymmetry makes shit look natural"*, *"eye itself is ugly its weird
+that it floats and isnt embedded anywhere"*.
+
+**What was weak about the ending, said plainly.** The cutscene ended on the guardian's eyes. What the ultimate DOES (it takes
+everyone within 9 m) happened only after the hand-back, in play, from wherever each player's own camera happened to be. The payoff
+was off screen. The sentence gets its last clause: her light comes down into him, he gives it to the ground, the ground answers with
+the guardian, **and the guardian takes them.**
+
+**The time came out of the setup** (the owner's *"dont go past 5 seconds"* stands): the channel is 0.2 s shorter (its heartbeats at
+1.62, 1.80 and 1.95, now 0.18 and 0.15 s apart), the roots race in 0.40 s (0.45), and the staged tree hauls itself out at 1.45 times
+its play speed (hauls 2.78, 3.05, 3.33; top-out 3.53; eyes 3.71). Still three hauls a quarter second apart, not a pop.
+
+| Time | Picture | Sound | Why |
+|---|---|---|---|
+| 3.71 | its eyes open, rays burst out of its crown, a ring races out over the court | a low boom of air, the mark's bell | the wake, the last beat of the RISE |
+| 3.80 | CUT. Its limbs lash out of the trunk at everyone it will catch, at once, a few hundredths apart. The camera starts beside the bark at the root of the longest limb and RIDES IT out across the court | air torn open, rising | the owner's *"follow vines going to ppl with camera"* |
+| 3.80 to ~4.06 | every one of them flinches, hops and turns to the tree, arms flung up (their own rig's break-out clip, its flung-open frame, trembling) | | *"shocked"* |
+| ~4.06 | the limb reaches them and wraps their waist twice; a ring of light snaps round the waist and leaves are torn off it; the camera arrives BESIDE them (2.4 m off, 50 degrees round from the limb's line) and holds on their face | a whip crack as each limb catches (four, typed), wood cinched tight | the hold before the pull (the family's rule 4) |
+| 4.18 | THE YANK, everyone together, on his own haul (he drives his shoulders up and back, hands lifting off the court, pulling with the tree). They are dragged in feet first, leaning back against it (their heave clip), and SPUN by the wrap so they land facing out; dust scraped up at their feet; speed lines past the lens | a thump, a deep groan of wood reeling in, air rushing past | the pull, and his part in it |
+| 4.18 to 4.62 | the camera rises and swings wide round the tree as they fly in (in polar coordinates round the spot, so it never passes through the trunk; they fly past beside it, not into it) | | *"change angle"* |
+| 4.50 | THE THUD: all of them hit the trunk. Bands whip up their shins, light runs down every limb to every waist, a ring and a flash on the court, the crown bursts again, a second curtain of streaks | the thud (bark knocked, a felt thump), the mark's bell a fifth time, a chime | the catch, landed |
+| 4.62 to 5.0 | the settle: a low wide on the guardian's face with every prisoner bound round it, all of them STRUGGLING (their struggle loop at its hard speed, as a player holding Interact), knots glowing, rising light round it; the world still stepped back, the daylight only at the hand-back | the bindings creaking against them in pulses | *"trying to get out"* |
+
+**They are the real players.** The phase hides every live body while it draws (`UltimatePhaseView.Draw`), so the TAKE stages copies of
+exactly the players `PaeteSentry` will catch: the same rule on the same accepted cast (`PaeteVine.SentryTarget`, `PaeteSentry.InReach`),
+their own rigs, skins and outfits (`MatchPoseHistory.Track.Clone`, render data only), animated with the clips their rigs already carry for
+his kit (`RootedMotion`). They start where they stand relative to the spot (brought inside 2.6 to 8.8 m so the pull reads) and are
+held at `PaeteRules.SentryHoldDistance`, 1.4 m, as in play. Nobody in reach: the limbs whip into the court at three typed spots and the
+camera rides the first; nobody is invented. Nothing here changes a rule or the wire.
+
+**Where they end is staged so the shot shows them all** (`PtStage`). Held on their own sides of the trunk, as in play, the settle could
+not: in film r20 one of the three hung behind the trunk and two overlapped in front of it, and a settle chosen from eleven scored angles
+(r21) still could not see round a trunk. So the holds are FANNED across the settle's side of the trunk, in the order they stand round
+it, at most 52 degrees apart (150 across for seven), and each is reeled ROUND the trunk to theirs as they are dragged (polar, so nobody
+passes through it). The settle is the guardian's face turned half-way toward the lead, at most 45 degrees, so its eyes stay in. Who is
+caught, and that they are held at 1.4 m, is the rule; which side of the trunk, in the cutscene, is staging.
+
+**The camera never meets them.** Film r20's ride ended 1.75 m in front of the lead ON the limb's line: the limb crossed the lens and their
+face, and on the yank they flew straight into the camera. r21 ended the ride beside them (2.4 m off, 50 degrees round), but on the wrong
+side, so the swing to the settle crossed their line while they flew down it. The ride now ends on the settle's side of the lead's limb,
+and the swing pulls out fast (ease-out radius) and 1.5 m up. Film r22 still had the lead, reeled round the trunk toward the settle's
+side, pass about a metre from the lens for a fifth of a second, so every staged body now pushes the lens straight away from its chest to
+2.3 m (the move is unchanged wherever nobody is near it).
+
+**A lot more effects: density.** v6 took the burst vocabulary; set beside a Genshin burst, what it lacked was density. Every one of his
+reference frames has the air itself full. `HeroIntroductionScene.PaeteBurst.cs`, every row typed:
+
+| Layer | Where | Reference |
+|---|---|---|
+| Glints (a long cross and a short one, popping and twinkling out), 59 of them | on every beat, round whoever the beat is on | the dust in every burst |
+| Shockwave rings on the court, 15, and a flat flash under the four biggest | slam, heartbeats, send, the court bulging, each haul, the wake, the thud | Neuvillette's floor ring |
+| Rays: her nine (jade) behind her as she forms; the crown's twelve (lime) as it wakes, and again as they hit it | turning slowly, pushed behind the body so it cuts them | the cut-in glory behind a caster |
+| The channel vortex: three ribbons of his light winding up round him, tightening and quickening at each heartbeat, flung out at the send | ROOT | Baizhu's ribbons |
+| Rising light: 14 motes round him as he channels, 18 round the tree from the court breaking to the end | ROOT, RISE, TAKE | Neuvillette's rising orbs |
+| The pillar: one broad column of his light out of the spot as the roots arrive | 2.5 | Neuvillette's pillars |
+| The curtain: 16 streaks rising round the tree through the hauls, 10 more on the thud | RISE, TAKE | the owner's rising-streak frame |
+| The tornado: two jade ribbons spiralling up the trunk through the hauls | RISE | Kazuha's vortex |
+| The veil: the frame's edges sink into the forest's dark while the power is on screen, deepest through the channel and the take | the whole cutscene (`SpiritVeil.shader`, drawn in clip space so a mirrored or pushed-in shot never leaves it hanging in the plaza) | Kazuha's ink sky, Kinich's green wall |
+
+His lime and her jade only (the pillar's core was near-white against the sky in film r20 and is lime now). Reduced effects keeps every
+shape, halves the light, and drops the veil, the flashes and the speed lines. The theme (`tools/build_paete_audio.py` `theme` v7) moved
+with the picture and took quiet layers for the new pictures (a tinkle on the glint flurries, a swirl under the vortex, the pillar's air,
+the wake's boom, the lash, the cinch, the yank, the thud, the strain); measured on a 0.1 s RMS table against v6, its loudest moment is now
+the thud at 4.5 (0.200), then the slam (0.176), the wake (0.172) and the ignition (0.167).
+
+**The eyes, embedded (v11).** Measured by ray-casting the built trunk: at eye height the rope's front is one cord crest 0.40 out at the
+middle and only 0.13 to 0.21 out where the eyes sat, 0.23 to each side. v10's face was a FLAT plane 0.455 out (scale 1.2), so each socket,
+its lip and its light hung 25 to 30 cm in front of the bark with daylight round them: two goggles floating off a rope, and the cutscene
+drew a 1.8 m streak of light straight across both. Now the face is a BURL, a smooth swelling of bark grown out of the rope (nine typed
+ellipses, its first and last rows inside the cords, so it swells out of them rather than starting at an edge), 0.44 out at the middle;
+each socket is SEATED on it, flush with its curve and turned to its surface (25 degrees out), framed by a lip of bark over the top and a
+thinner cheek under it that follow the same curve, the light small inside (a slit 60 per cent of the socket, a hot core in that). 22 cm
+across (was 29), slanted 11 and 12 degrees (was 15 and 16). The live vines dive under the burl as they wind across the front and their
+leaves fold away there (`PaeteSentryBody.FaceBurl`), so nothing crawls over the eyes; the cutscene's eye streak is gone and its glow sits
+in the socket. Measured after: the same 2.14 m court reach and 1.17 m shin radius, so `SentryCanClearance` and `SentryHoldDistance` hold.
+
+**The crown, asymmetric (v11).** v10 put two or three round leaves on the END of every twig, fourteen with the leader's, all one size and
+all pointing out: a ring of green lollipops, the evenness a real crown never has. Now the point is bare and only three of the five
+branches carry any: a cluster of three hanging off one outer fork, a pair near another tip, one leaf partway along a third fork; two
+branches are bare wood. Six leaves, each its own size, droop and roll, narrower (0.41 to 0.46 of their length, was 0.55 to 0.6),
+hanging off the twig rather than standing on its end. The cutscene shakes three off at the top-out (was five).
+
+**Films:** r20 (the first v7: all effects, the TAKE with the three players of `PaeteKitPlayProbe`'s film, the clock 89.860 as it came
+up, 89.860 on its last frame, 88.860 a second after), r21 (the embedded eyes, the asymmetric crown, the ride beside them), r22 (the
+fanned holds and the swing on the settle's side; stitched and sent as `paete_ultimate_v7.mp4`), r23 (the 2.3 m clearance).
+
+### 5.17 v8: slower, aimed, one catch, facing out, the escape on film (2026-09-27)
+
+The owner on `paete_ultimate_v7.mp4`: *"lowk slow down ult a bit i cant comprehend wtf is happening"*; of the film's first-person
+stretch after the cutscene, *"wtf is that vid 005-010? ... he is supposed to be watching cutscene too no?"* (it is the match resuming
+on his screen, and in v7 it showed the tree growing and catching everyone AGAIN after the cutscene had just shown it); *"make it so
+that paete can choose as well where his ult will be cast"*, *"does the hhold to aim resemble the groot reference"*; *"make everyone get
+caught in opposite direction (they should face against the tree not towards) this is bcz i want them to be able to throw shit still"*;
+*"did u also animate already hhow theyre supposed to get out of the tree by holding a button ?"*, *"can u show that in vid too?"*.
+Asked, he chose **6.5 s** (over his earlier 5.0 cap) and **no repeat** (play picks up where the cutscene ends).
+
+- **6.5 s, every beat 1.3 times as long.** The direction stays typed on the 5.0 s clock of sections 5.14 to 5.16 and is stretched once,
+  evenly (`tools/author_ultimate_intros.py` `_stretch`, `HeroIntroductionScene.Paete.cs` `PaeteStretch`, the theme's `T`), so no beat is
+  squeezed to buy another. `UltimatePerformance.MaxSeconds` is 6.5.
+- **One catch.** The live guardian comes up already standing and awake, its body posed `PaeteSentry.BodyLead` (3.325 s) ahead of the
+  rules' clock so it is the tree the cutscene ended on, and it catches at the hand-back; the roots' race and the growth cues are not
+  replayed. The catch, the 10 s life and the 7 s break-out keep the rules' clock.
+- **He chooses where** (the Groot answer: Groot's ultimate is fired, which the owner rejected for Paete in v5; his WALLS are placed where
+  he looks with a preview first). The shared hold-to-aim with the ring placed WHERE HE LOOKS (`HeroAbility.AimsWhereLooking`,
+  `CameraRig.TryLookGround`): hold, the 9 m ring sits where his sight line meets the court between 3 m (`PaeteRules.SentryAimMinRange`)
+  and 8 m, release calls the tree there; the commit carries the spot, so every peer and the cutscene's staging agree. Before this, a
+  human's cast always landed 8 m straight ahead: nothing set a human's aim point.
+- **Caught facing out.** The first frame a peer sees a body held, it is turned to face straight away from the trunk and its held
+  third-person view reopens behind it, looking out at the court (`PaeteRootCoil.Attach`, `CameraRig.FaceHeldView`); they may turn after.
+  The cutscene's prisoners already landed facing out.
+- **The escape on film.** Already built (hold Interact 7 s: the struggle loop at its hard speed, `root-breakout` on every rig, the shins'
+  bark shattering, `sfx_paete_root_break`); the film now runs 18 s and the filmed player holds Interact from the catch until they are free
+  (`PaeteKitPlayProbe.FilmTheUltimateOnHisScreen` asserts it).
+- Protocol 59 (the phase length, the aimed spot and the hand-back are computed on every peer).

@@ -406,7 +406,11 @@ namespace TumbangPreso.Net
         // 58 (2026-09-27): Paete's guardian is kept 2.4 m off the can (`PaeteRules.SentrySpotClearOfCan`, run on every peer from
         // the accepted cast) and holds its prisoners 1.4 m out (was 1.9). No bytes changed, but a 57 peer would draw the tree ON
         // the can where the host catches beside it, and would see the bodies dragged to a different ring.
-        public const int ProtocolVersion = 58;
+        // 59 (2026-09-27): Paete's introduction is 6.5 s (the owner: *"slow down ult a bit"*), his ultimate is placed where he
+        // looks and the commit carries that spot (`HeroAbility.AimsWhereLooking`), and the live guardian comes up already grown
+        // and catches at the hand-back (`PaeteSentry.Spawn`'s `handBack`). No bytes changed, but a 58 peer would release the
+        // phase 1.5 s early, land the tree 8 m straight ahead, and grow it and catch 0.75 s after everyone else.
+        public const int ProtocolVersion = 59;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

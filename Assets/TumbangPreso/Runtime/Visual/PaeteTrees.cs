@@ -509,6 +509,26 @@ namespace TumbangPreso.Visual
         private readonly List<float> _radii = new List<float>();
         private float _age;
 
+        /// <summary>
+        /// ⚠️ CAUGHT FACING OUT, BACK TO THE TRUNK (owner, 2026-09-27: *"make everyone get caught in opposite direction (they should
+        /// face against the tree not towards) this is bcz i want them to be able to throw shit still"*). A Rooted player can still
+        /// throw and cast, and a throw leaves along the body's facing; dragged in, a body was left facing the trunk, so its first view
+        /// in third person was bark. On the first frame this peer sees them held, the body is turned to face straight away from
+        /// <paramref name="treeCentre"/> and the held view reopens behind it, looking out at the court. Once: they may turn freely
+        /// after. On each peer, like the coil; the player's own peer is the one whose turn sticks (their yaw is theirs).
+        /// </summary>
+        public static void Attach(CharacterMotor body, Vector3 treeCentre)
+        {
+            if (body == null || body.GetComponentInChildren<PaeteRootCoil>() != null) return;
+            var away = body.transform.position - treeCentre; away.y = 0f;
+            if (away.sqrMagnitude > 1e-4f)
+            {
+                body.transform.rotation = Quaternion.LookRotation(away.normalized, Vector3.up);
+                CameraSystem.CameraRig.FaceHeldView(body);
+            }
+            Attach(body);
+        }
+
         public static void Attach(CharacterMotor body)
         {
             if (body == null || body.GetComponentInChildren<PaeteRootCoil>() != null) return;

@@ -326,7 +326,7 @@ namespace TumbangPreso.PlayTests
                 var before = c.targetTexture; c.targetTexture = hdr; ComicPopup.PrepareView(c); c.Render(); c.targetTexture = before;
                 Save(hdr, view, index);
             }
-            bool rootedAll = false, sawScene = false;
+            bool rootedAll = false, sawScene = false, struggled = false, brokeOut = false, wasRooted = false;
             // ⚠️ THE MATCH CLOCK MUST NOT RUN UNDER A CUTSCENE (owner, 2026-09-26 night: *"ALSO match time should pause during
             // cutscenes"*). Read the round clock when the cutscene comes up, on its last frame, and a second after it hands back.
             float clockAtScene = -1f, clockAtSceneEnd = -1f, clockAfter = -1f; int lastSceneFrame = -1;
@@ -342,13 +342,22 @@ namespace TumbangPreso.PlayTests
             AudioDirector.WorldCuePlayed += heard;
             try
             {
-                const int frames = 30 * 15;
+                // ⚠️ 18 s (was 15): the 6.5 s cutscene, the hand-back catch, and then the caught player in `victim/` holds Interact
+                // for the full break-out and gets out, on camera (owner, 2026-09-27: *"did u also animate already hhow theyre supposed
+                // to get out of the tree by holding a button ?"*, *"can u show that in vid too?"*).
+                const int frames = 30 * 18;
                 var victim = others[1];
                 for (int f = 0; f < frames; f++)
                 {
                     frame = f;
                     float t = f / 30f;
                     paete.Intent.Set(Verb.Ultimate, t < .25f);
+                    // The filmed player fights free: Interact held from the moment they are held until the roots let go.
+                    bool fighting = victim.IsRooted;
+                    victim.Intent.Set(Verb.Interact, fighting);
+                    struggled |= victim.IsStruggling;
+                    if (wasRooted && !victim.IsRooted && !victim.IsTagged) brokeOut = true;
+                    wasRooted = victim.IsRooted;
                     yield return null;
                     rootedAll |= others[0].IsRooted && others[1].IsRooted && others[2].IsRooted;
                     RawImage scene = null;
@@ -394,8 +403,11 @@ namespace TumbangPreso.PlayTests
             Note("ult_film_clock_during_cutscene_moved_s", clockAtScene - clockAtSceneEnd);
             Note("ult_film_saw_cutscene", sawScene);
             Note("ult_film_all_rooted", rootedAll);
+            Note("ult_film_victim_struggled", struggled);
+            Note("ult_film_victim_broke_out", brokeOut);
             Assert.IsTrue(sawScene, "The cutscene picture never came up on his screen.");
             Assert.IsTrue(rootedAll, "The film never showed all three rooted.");
+            Assert.IsTrue(struggled && brokeOut, "The filmed player never struggled free of the roots by holding Interact.");
             Assert.Less(Mathf.Abs(clockAtScene - clockAtSceneEnd), 0.05f, "The match clock ran during the cutscene: " + clock);
             Assert.Greater(clockAtSceneEnd - clockAfter, 0.5f, "The match clock did not run again after the cutscene: " + clock);
         }

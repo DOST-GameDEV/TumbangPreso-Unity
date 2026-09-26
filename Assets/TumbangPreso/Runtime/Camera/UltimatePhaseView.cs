@@ -85,7 +85,7 @@ namespace TumbangPreso.CameraSystem
                             actorStage.transform.position+=Vector3.up*(Slipper.GroundY(actor.transform.position)-surfaces.Min(r=>r.bounds.min.y));
                     }
                     foreach (var surface in body.Renderers) surface.shadowCastingMode = ShadowCastingMode.On;
-                    entry.Scene = new HeroIntroductionScene(actorStage.transform, actor.AbilitySystem.HeroId, actor, body) { Boundary = _duration };
+                    entry.Scene = new HeroIntroductionScene(actorStage.transform, actor.AbilitySystem.HeroId, actor, body, commit.Aim) { Boundary = _duration };
                     if (_primary == null || commit.Seat == watching) _primary = entry;
                 }
                 _stage.SetActive(true);

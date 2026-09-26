@@ -27,7 +27,9 @@ namespace TumbangPreso.Visual
         public const float HandoffLead = .4f;
         /// <summary>The overlay dissolves back to the court over the last this-many seconds.</summary>
         public const float ReturnSeconds = .12f;
-        public const float MinSeconds = 2.4f, MaxSeconds = 5f;
+        // ⚠️ 6.5 s (was 5, 2026-09-27): the owner on Paete's v7, *"lowk slow down ult a bit i cant comprehend wtf is happening"*, chose
+        // 6.5 s over his own earlier *"dont go past 5 seconds"*. The cap is the longest any introduction may run; a longer table is clamped.
+        public const float MinSeconds = 2.4f, MaxSeconds = 6.5f;
 
         public readonly struct Key
         {

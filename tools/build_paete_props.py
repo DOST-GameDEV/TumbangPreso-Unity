@@ -381,25 +381,62 @@ def sentry():
                  (2.50, 80, 0.36, 0.028), (3.00, 48, 0.36, 0.025)], BARK_DARK, sides=4)
 
     # --- THE EYES: TWO HOLLOWS IN THE WOOD WITH A SLANTED LIGHT IN EACH (owner, 2026-09-26: *"subtle eyes only"*, *"engraved"*,
-    # *"Js make 2 fucking holles"*). Unchanged in shape from v7; the face sits on the slimmer trunk (0.46 out at 2.4 m, where
-    # the v8 swell put it at 0.585) and a touch smaller (1.2, was 1.4), so the hollows sit IN the bark rather than across it.
-    face = Node("face", origin=(0.0, 2.40, 0.455), parent="trunk", scale=1.2); nodes.append(face)
+    # *"Js make 2 fucking holles"*).
+    # ⚠️⚠️ v11 (2026-09-27): EMBEDDED IN THE TRUNK, ON A BURL OF ITS OWN BARK. The owner on film r20 (v7): *"eyes look really
+    # weird"*, then *"eye itself is ugly its weird that it floats and isnt embedded anywhere"*. Measured off the built trunk
+    # (ray-cast along -z, `tools/build_paete_props.py`'s own geometry): at eye height the rope's front is one cord crest 0.40 out
+    # at the middle and only 0.13 to 0.21 out where the eyes were, 0.23 to each side; the old face was a FLAT plane 0.455 out
+    # (scale 1.2), so each socket, its lip and its light hung 25 to 30 cm in front of the bark with daylight round them: two goggles
+    # floating off a rope. Now the face is a BURL: a smooth swelling of bark grown out of the rope (typed ellipses, below; it is
+    # buried in the cords at its back and edges and only its front comes out), 0.44 out at the middle, and each socket is SEATED on
+    # it: set flush into its curve and turned to its surface (25 degrees out), framed by a lip of bark over the top and a thinner
+    # cheek under it that follow the same curve, the light small and deep inside. Smaller than v10 (22 cm, was 29), a little less
+    # slanted (11 and 12 degrees, was 15 and 16). The runtime vines dip under the burl (`PaeteSentryBody.TrunkVineRows`), and the
+    # cutscene's long eye streak is gone (`HeroIntroductionScene.PaeteVfx.cs`).
+    # Its first and last rows sit inside the rope, so it swells out of the cords rather than starting at an edge.
+    burl = [(2.00, 0.0, 0.02, 0.22, 0.20), (2.12, 0.0, 0.06, 0.30, 0.26), (2.20, 0.0, 0.09, 0.37, 0.31), (2.30, 0.0, 0.10, 0.40, 0.335),
+            (2.40, 0.0, 0.10, 0.41, 0.34), (2.50, 0.0, 0.10, 0.40, 0.335), (2.60, 0.0, 0.09, 0.37, 0.31), (2.68, 0.0, 0.06, 0.30, 0.26),
+            (2.80, 0.0, 0.02, 0.22, 0.20)]
+    loft(trunk, burl, BARK, sides=16)
 
-    def pit(node, centre, length, width, depth, slant, slot):
-        node.parts.append((slot, pv._leaf(centre, length, width, depth, 0.0, slant, 90.0)))
+    def burl_at(x, y, out=0.0):
+        """The burl's surface in trunk space at (x, y), pushed `out` along its normal, and the normal's yaw (degrees)."""
+        for (y0, _, c0, a0, b0), (y1, _, c1, a1, b1) in zip(burl, burl[1:]):
+            if y <= y1:
+                k = (y - y0) / (y1 - y0)
+                break
+        cz, a, b = lerp(c0, c1, k), lerp(a0, a1, k), lerp(b0, b1, k)
+        u = max(-0.98, min(0.98, x / a))
+        z = cz + b * math.sqrt(1.0 - u * u)
+        nx, nz = x / (a * a), (z - cz) / (b * b)
+        n = math.sqrt(nx * nx + nz * nz)
+        return (x + out * nx / n, y, z + out * nz / n), math.degrees(math.atan2(nx, nz))
 
-    pit(face, (-0.19, 0.010, -0.020), 0.250, 0.135, 0.090, -15.0, SOCKET)
-    pit(face, (0.195, 0.000, -0.020), 0.245, 0.138, 0.090, 16.0, SOCKET)
-    # The overhang: a lip of bark over each hollow, thick on top, typed point by point.
-    line(face, [(-0.330, 0.040, 0.020), (-0.262, 0.104, 0.052), (-0.176, 0.098, 0.060), (-0.092, 0.040, 0.050), (-0.060, -0.016, 0.030)],
-         [0.016, 0.040, 0.048, 0.034, 0.012], BARK_DARK, per=4)
-    line(face, [(0.335, 0.028, 0.020), (0.268, 0.094, 0.052), (0.182, 0.090, 0.060), (0.098, 0.030, 0.050), (0.066, -0.026, 0.030)],
-         [0.016, 0.041, 0.048, 0.033, 0.012], BARK_DARK, per=4)
+    # The face node sits on the trunk's own axis now (scale 1), so everything below is typed in trunk space less its height.
+    face = Node("face", origin=(0.0, 2.40, 0.0), parent="trunk"); nodes.append(face)
     eyes = Node("eyes", origin=(0.0, 0.004, 0.0), parent="face"); nodes.append(eyes)
-    pit(eyes, (-0.188, 0.000, 0.022), 0.170, 0.070, 0.008, -15.0, EYE_GLOW)
-    pit(eyes, (0.193, -0.010, 0.022), 0.166, 0.072, 0.008, 16.0, EYE_GLOW)
-    pit(eyes, (-0.186, -0.004, 0.029), 0.124, 0.040, 0.010, -15.0, EYE)
-    pit(eyes, (0.191, -0.014, 0.029), 0.120, 0.041, 0.010, 16.0, EYE)
+
+    def seat(node, lift, x, y, out, length, width, depth, slant, slot):
+        """A socket or a light set into the burl at (x, y): its middle `out` from the surface, turned to face along it."""
+        centre, yaw = burl_at(x, y, out)
+        node.parts.append((slot, pv._leaf((centre[0], centre[1] - lift, centre[2]), length, width, depth, yaw, slant, 90.0)))
+
+    def ridge(x_y_r, lift, slot):
+        """A roll of bark along the burl, each point half sunk into it (its centre 40 per cent of its radius out)."""
+        points = [burl_at(x, y, 0.4 * r)[0] for x, y, r in x_y_r]
+        line(face, [(p[0], p[1] - lift, p[2]) for p in points], [r for _, _, r in x_y_r], BARK_DARK if slot is None else slot, per=4)
+
+    for side, slant in ((-1.0, -11.0), (1.0, 12.0)):
+        # The socket: dark, near flat (3 cm), its front 3 mm proud of the burl and the rest sunk into it.
+        seat(face, 2.40, side * 0.200, 2.412, -0.012, 0.220, 0.100, 0.030, slant, SOCKET)
+        # The lip over the top, thick in the middle, and the thinner cheek under it: the socket is framed, so it reads as cut in.
+        ridge([(side * 0.330, 2.418, 0.010), (side * 0.290, 2.466, 0.024), (side * 0.205, 2.480, 0.030), (side * 0.128, 2.452, 0.022),
+               (side * 0.092, 2.408, 0.008)], 2.40, BARK_DARK)
+        ridge([(side * 0.312, 2.380, 0.008), (side * 0.262, 2.352, 0.015), (side * 0.192, 2.343, 0.017), (side * 0.128, 2.360, 0.008)],
+              2.40, BARK)
+        # The light inside: a slit 60 per cent of the socket, and a hot core in that, on the eyes node (it blinks and wakes).
+        seat(eyes, 2.404, side * 0.198, 2.412, 0.004, 0.130, 0.040, 0.006, slant, EYE_GLOW)
+        seat(eyes, 2.404, side * 0.196, 2.411, 0.008, 0.078, 0.020, 0.006, slant, EYE)
 
     # --- NO VINE IN THE MODEL (v10, 2026-09-27). The owner: *"maybe if ur gonan add movement to it make its vines like move or
     # crawl"*. A vine baked into the trunk cannot move, so the trunk carries none; `PaeteSentryBody` grows three living vines at
@@ -463,8 +500,13 @@ def sentry():
     line(crown, [(0.00, -0.06, 0.00), (0.02, 0.40, -0.01), (0.03, 0.85, 0.01), (0.01, 1.28, 0.03), (-0.01, 1.60, 0.02), (0.00, 1.80, 0.01)],
          [0.130, 0.105, 0.080, 0.052, 0.024, 0.006], BARK, twist=30.0, per=4)
     line(crown, [(0.06, -0.04, 0.03), (0.07, 0.44, 0.04), (0.05, 0.88, 0.06), (0.03, 1.22, 0.05)], [0.052, 0.042, 0.028, 0.008], BARK_DARK, per=4)
-    sprig(crown, (0.00, 1.80, 0.01), 30, 72, 0.16, 0.09, LEAF)
-    sprig(crown, (0.00, 1.78, 0.01), 210, 66, 0.13, 0.08, LEAF_DARK)
+    # ⚠️⚠️ v11 (2026-09-27): FEW LEAVES, AND NOT EVERYWHERE. The owner on film r20: *"leaves on top"* look *"really weird"*, and
+    # *"make it so taht not all branches have a leaf only some, asymmetry makes shit look natural"*. v10 put two or three round
+    # leaves on the END of every twig (fourteen, the leader included), all the same size and all pointing out: a ring of green
+    # lollipops, which is exactly the evenness a real crown never has. Now the point stays bare, and only three of the five
+    # branches carry any: one a cluster of three hanging off its outer fork, one a pair near a tip, one a single leaf partway along
+    # a fork; the other two are bare wood. Six leaves, each its own size, droop and roll, narrower and pointed (width 0.41 to 0.46
+    # of the length, was 0.55 to 0.6), hanging off the twig rather than standing on its end.
     branches = [
         # name, yaw, main cord, radii, second cord, radii, shade, forks [(points, radii)], leaves at the tips [(base, compass, pitch, length, width, slot)]
         ("claw-0", 14,
@@ -473,33 +515,34 @@ def sentry():
          [(0.05, -0.02, -0.04), (0.06, 0.36, 0.08), (0.05, 0.72, 0.18), (0.03, 0.98, 0.22)], [0.050, 0.040, 0.028, 0.008], BARK_LIT,
          [([(0.04, 0.75, 0.16), (0.10, 0.98, 0.36), (0.14, 1.14, 0.50), (0.15, 1.24, 0.56)], [0.044, 0.030, 0.018, 0.006]),
           ([(0.03, 1.10, 0.22), (-0.12, 1.30, 0.34), (-0.20, 1.42, 0.40)], [0.032, 0.020, 0.006])],
-         [((0.15, 1.24, 0.56), 20, 35, 0.20, 0.12, LEAF), ((-0.20, 1.42, 0.40), 320, 45, 0.17, 0.10, LEAF_DARK), ((-0.02, 1.62, 0.14), 0, 62, 0.15, 0.09, LEAF)]),
+         [((0.14, 1.21, 0.53), 25, -18, 0.22, 0.090, LEAF, 14.0), ((0.11, 1.15, 0.47), 100, -38, 0.16, 0.070, LEAF_DARK, -22.0),
+          ((0.15, 1.24, 0.56), 0, 20, 0.12, 0.055, LEAF, 30.0)]),
         ("claw-1", 86,
          [(0, -0.04, -0.06), (-0.02, 0.32, 0.08), (-0.03, 0.68, 0.20), (-0.01, 1.00, 0.28), (0.02, 1.28, 0.28), (0.03, 1.46, 0.22)],
          [0.094, 0.080, 0.064, 0.047, 0.028, 0.009],
          [(-0.05, -0.02, -0.04), (-0.06, 0.34, 0.10), (-0.05, 0.66, 0.22), (-0.02, 0.92, 0.28)], [0.047, 0.038, 0.026, 0.008], BARK,
          [([(-0.03, 0.68, 0.20), (-0.14, 0.86, 0.42), (-0.20, 0.98, 0.58), (-0.22, 1.06, 0.64)], [0.040, 0.028, 0.016, 0.006])],
-         [((-0.22, 1.06, 0.64), 330, 30, 0.19, 0.11, LEAF_DARK), ((0.03, 1.46, 0.22), 60, 55, 0.16, 0.09, LEAF)]),
+         []),
         ("claw-2", 152,
          [(0, -0.04, -0.06), (0.01, 0.38, 0.05), (0.03, 0.80, 0.13), (0.02, 1.18, 0.18), (-0.01, 1.50, 0.16), (-0.03, 1.70, 0.10)],
          [0.098, 0.084, 0.066, 0.048, 0.029, 0.009],
          [(0.05, -0.02, -0.04), (0.06, 0.40, 0.07), (0.05, 0.78, 0.15), (0.03, 1.06, 0.18)], [0.049, 0.039, 0.027, 0.008], BARK_DARK,
          [([(0.03, 0.80, 0.13), (0.16, 1.02, 0.30), (0.24, 1.16, 0.40), (0.27, 1.24, 0.44)], [0.042, 0.029, 0.017, 0.006]),
           ([(0.02, 1.18, 0.18), (-0.10, 1.36, 0.32), (-0.16, 1.46, 0.40)], [0.030, 0.019, 0.006])],
-         [((0.27, 1.24, 0.44), 40, 40, 0.18, 0.11, LEAF), ((-0.16, 1.46, 0.40), 300, 50, 0.16, 0.10, LEAF), ((-0.03, 1.70, 0.10), 180, 65, 0.14, 0.08, LEAF_DARK)]),
+         [((0.21, 1.14, 0.37), 55, -30, 0.18, 0.075, LEAF_DARK, -12.0)]),
         ("claw-3", 221,
          [(0, -0.04, -0.06), (-0.01, 0.33, 0.07), (-0.02, 0.70, 0.19), (0.01, 1.04, 0.26), (0.03, 1.32, 0.25), (0.02, 1.52, 0.19)],
          [0.096, 0.082, 0.065, 0.048, 0.029, 0.009],
          [(-0.05, -0.02, -0.04), (-0.05, 0.35, 0.09), (-0.04, 0.68, 0.21), (-0.01, 0.96, 0.27)], [0.048, 0.038, 0.027, 0.008], BARK,
          [([(-0.02, 0.70, 0.19), (0.12, 0.90, 0.40), (0.18, 1.04, 0.54), (0.19, 1.12, 0.60)], [0.041, 0.028, 0.017, 0.006])],
-         [((0.19, 1.12, 0.60), 80, 32, 0.19, 0.11, LEAF), ((0.02, 1.52, 0.19), 250, 58, 0.15, 0.09, LEAF_DARK)]),
+         []),
         ("claw-4", 290,
          [(0, -0.04, -0.06), (0.02, 0.36, 0.06), (0.03, 0.77, 0.15), (0.01, 1.14, 0.21), (-0.02, 1.44, 0.19), (-0.03, 1.60, 0.13)],
          [0.099, 0.084, 0.067, 0.049, 0.029, 0.009],
          [(0.05, -0.02, -0.04), (0.06, 0.38, 0.08), (0.05, 0.74, 0.17), (0.02, 1.02, 0.21)], [0.049, 0.039, 0.027, 0.008], BARK_LIT,
          [([(0.03, 0.77, 0.15), (-0.10, 1.00, 0.34), (-0.16, 1.16, 0.46), (-0.17, 1.26, 0.51)], [0.043, 0.029, 0.017, 0.006]),
           ([(0.01, 1.14, 0.21), (0.14, 1.32, 0.33), (0.20, 1.42, 0.38)], [0.031, 0.019, 0.006])],
-         [((-0.17, 1.26, 0.51), 290, 38, 0.19, 0.11, LEAF_DARK), ((0.20, 1.42, 0.38), 60, 46, 0.17, 0.10, LEAF), ((-0.03, 1.60, 0.13), 20, 60, 0.14, 0.08, LEAF)]),
+         [((0.19, 1.40, 0.37), 70, -22, 0.20, 0.085, LEAF, -8.0), ((0.16, 1.36, 0.34), 155, -48, 0.13, 0.060, LEAF_DARK, 26.0)]),
     ]
     for name, yaw, main, main_r, second, second_r, shade, forks, leaves in branches:
         n = Node(name, origin=ring(0.22, yaw, 0.0), parent="crown", yaw=yaw); nodes.append(n)
@@ -507,8 +550,8 @@ def sentry():
         line(n, second, second_r, BARK if shade != BARK else BARK_DARK, twist=-24.0, per=4)
         for points, radii in forks:
             line(n, points, radii, shade, per=3)
-        for base, compass, pitch, length, width, slot in leaves:
-            sprig(n, base, compass, pitch, length, width, slot, thickness=0.018)
+        for base, compass, pitch, length, width, slot, roll in leaves:
+            sprig(n, base, compass, pitch, length, width, slot, roll=roll, thickness=0.018)
 
     write(os.path.join(OUT, "sentry.glb"), nodes)
 

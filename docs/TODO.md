@@ -510,6 +510,32 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   *"tree doesnt need to look left and right"*; `PaeteSentryBody.WatchPrisoners` off). Protocol 58 (the spot and the hold are computed on
   every peer). Its vines crawl (owner: *"make its vines like move or crawl"*): three living vines wind up the trunk, a ripple running up
   each (`PaeteSentryBody.TrunkVineRows`); the baked vine is gone from the model. Films r16 to r19.
+- [x] ⚠️⚠️ THE OWNER'S VERDICT ON v6, ACTED ON (2026-09-27; direction.md 5.16). *"its almost perfect"*, *"A LOT MORE VFX AND SHIT LIKE THE
+  GENSHIN REFERENCES"*: the burst layer (`HeroIntroductionScene.PaeteBurst.cs`, every row typed): 59 glints, 15 court shockwave rings and 4
+  flashes, her rays and the crown's, the channel vortex, 32 rising motes, the arrival pillar, 26 curtain streaks, the trunk tornado, and the
+  veil (`SpiritVeil.shader`, clip space). *"this felt liek a weak ending"*, *"show everyone getting pulled"*, *"shocked or trying to get out"*,
+  *"follwo vines going to ppl with camera"*: THE TAKE, 3.8 to 5.0 (`HeroIntroductionScene.PaeteTake.cs`): render copies of exactly the
+  players `PaeteSentry` will catch (same rule, same accepted cast; `HeroIntroductionScene` now takes the commit's aim), shocked (their rig's
+  break-out frame), wrapped, yanked on his haul, spun, bound and struggling (their own `RootedMotion` clips); the camera rides the longest
+  limb out, holds beside them, swings wide and settles on the guardian's face with every prisoner fanned round it. The time came from the
+  setup: channel 0.2 s shorter, roots race 0.40 s, the staged tree at 1.45 times its play speed; still 5.0 s, clock frozen (film r20:
+  89.860 / 89.860 / 88.860). Theme v7 re-timed with new quiet layers; the thud at 4.5 is its loudest moment. *"eye itself is ugly its weird
+  that it floats and isnt embedded anywhere"*: measured, the v10 face was a flat plane 25 to 30 cm in front of the bark at the eyes; v11 grows
+  a burl out of the rope and seats the sockets on it, framed above and below, the light inside (`tools/build_paete_props.py` `sentry`); the
+  live vines dive under the burl (`PaeteSentryBody.FaceBurl`) and the cutscene's eye streak is gone. *"not all branches have a leaf only
+  some"*: six leaves on three of five branches (was fourteen on every tip). Reach and shin radius re-measured unchanged (2.14 m, 1.17 m).
+  Films r20 to r23; video `Logs/paete-share/paete_ultimate_v7.mp4` sent, verdict owed. Also: `RosterArmGeometryTests.EveryHeroUsesBothHandsAndReturnsCleanly` now names the hero and action it fails on;
+  Bayan Plaza's 16 house finishes are marked fitted trim (`BayanHouseFinishAuthor.MarkFitted`, `AirborneByDesign`), which is what failed
+  `Checks.RunAll`'s map geometry on the v6 handoff.
+- [x] ⚠️⚠️ v8 (2026-09-27; direction.md 5.17). *"slow down ult a bit"*: 6.5 s (his choice), every beat 1.3 times as long
+  (`PaeteStretch`, `_stretch`, the theme's `T`; `UltimatePerformance.MaxSeconds` 6.5). *"he is supposed to be watching cutscene too"*: the
+  film's first-person part is play resuming; it no longer grows and catches a second time (his choice, *"Yes, no repeat"*): the live
+  guardian is handed back grown (`PaeteSentry.BodyLead`) and catches at once. *"make it so that paete can choose ... where his ult will be
+  cast"*: hold-to-aim placed where he looks (`HeroAbility.AimsWhereLooking`, `CameraRig.TryLookGround`, 3 to 8 m), the Groot-wall answer.
+  *"they should face against the tree"*: turned to face out when held (`PaeteRootCoil.Attach(body, tree)`, `CameraRig.FaceHeldView`). The
+  escape filmed (18 s film, the filmed player holds Interact until free). Protocol 59.
+- [ ] ABILITY-2 lane, found here: `RosterArmGeometryTests.EveryHeroUsesBothHandsAndReturnsCleanly` fails on `sean/sean_skill2d`, whose
+  first-person action is empty (the test now names the hero and action). Not Paete; closes HERO-9's EditMode question.
 - [x] Prisoners "actually TIED" (owner) reviewed close up in film r16's `victim/`: backs pressed to the trunk, straining, bands at the shins;
   the lit bark in the limb and bands blended into warm skin, so both are dark and mid bark now.
 - [x] First-person vine film reviewed (film r11 `owner/`): both hands punch forward, the braids leave the viewmodel hands and converge on

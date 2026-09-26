@@ -41,7 +41,9 @@ namespace TumbangPreso.Tests
                     {
                         var arms=go.AddComponent<ViewmodelArms>();arms.EnsureBuilt();arms.SetCharacter(hero);
                         var right=go.transform.Find("RightPivot/Arm");var left=go.transform.Find("LeftPivot/Arm");
-                        Assert.IsTrue(arms.PlayAction(ability.ViewmodelAction));
+                        // Named in the message: it failed as a bare "Expected: True" that did not say whose hand it was.
+                        Assert.IsTrue(arms.PlayAction(ability.ViewmodelAction),
+                                      hero+"/"+ability.Id+": the first-person action '"+ability.ViewmodelAction+"' did not play");
                         float rightTravel=0,leftTravel=0;
                         // Phaister's retained ritual ends at 2.12s; allow its complete recovery.
                         for(int frame=0;frame<180;frame++)

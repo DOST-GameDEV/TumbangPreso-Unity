@@ -452,121 +452,125 @@ def sprout_ready():
 
 
 def theme():
-    """HIS THEME, under the introduction (5.0 s, beat for beat with it): wooden bars over the mountain.
+    """HIS THEME, under the introduction (6.5 s, beat for beat with it): wooden bars over the mountain.
 
     Paete is the carving town, so the lead is carved wood: an ORIGINAL pentatonic figure on the bar model
     (`knock`), the register of a bamboo or narra xylophone, with no sample and no borrowed melody. Under it
     the mountain: a low bowed-wood drone that thickens and a leaf bed that swells as the ground answers."""
-    # ⚠️⚠️ v5, RE-TIMED 2026-09-26 NIGHT TO THE CALLED-FROM-THE-GROUND CUTSCENE (direction.md 5.14,
-    # `HeroIntroductionScene.Paete.cs`). Every accent is a beat the eye is on:
-    #   0.03 to 0.45  Makiling rises behind him: the bars climb softly with her
-    #   0.30 to 0.50  she FORMS in her own colours: a warm held chord swells under the bars
-    #   0.58 to 0.70  the light FALLS from her hands into his: a quick falling run, a tap as it lands
-    #   0.78          it goes into him and HIS EYES IGNITE: a low bloom and a bright struck chord
-    #   0.82 to 1.08  she turns back to spirit: the held chord thins away
-    #   1.08 to 1.22  he drops: a rising draw into
-    #   1.22          both palms into the court (punch): soil crunch, felt thump, the court like a struck log
-    #   1.25 to 1.60  his roots dig in: wood creaking down into soil
-    #   1.60 to 2.30  he CHANNELS: a hum that rises and three heartbeat pulses, quickening (1.72, 1.96, 2.14)
-    #   2.30 to 2.75  the SEND and his roots racing away under the court: a crackle running off, a grind rising
-    #   2.75          the court bulges: a deep swelling crack
-    #   3.15 3.55 3.95 the three hauls: a groan, the court breaking and a thump each, bigger each time
-    #   4.25          it tops out, leaves blown off its crown
-    #   4.50          the light opens in its hollows: one deep carved note, the last word
-    # ⚠️⚠️ v6 (2026-09-27, direction.md 5.15), THE EFFECTS PASS GOT ITS SOUND IN THE SAME COMMIT. The owner: *"focus on direction and
-    # vfx and sfx"*. Each new picture has its own layer, on its own frame, and nothing new is loud: the wood and the leaves still
-    # carry it, and the light is the only pure tone.
-    #   0.00 to 0.46  THE GUST: air rushing in from behind her, the leaves thickening, then WHIRLING (the rustle pulsing faster and
-    #                 faster as the column spins round her)
-    #   0.46          the column BURSTS as she forms: a breath of air out and bamboo wind-chimes, the petals
-    #   0.60 to 0.78  a swell drawn in, cut dead on the ignition (the anticipation every burst has before its impact)
-    #   0.78          THE MARK in the air: `bell`, the motif
-    #   1.22          THE MARK stamped on the court: `bell` an octave down under the slam, a three-note seal, the leaves blown flat out
-    #   1.45 to 2.30  the leaves orbiting him: the whirl again, quickening with each heartbeat
-    #   1.72 to 2.33  each streak of light: `glide`, twelve of them on the frames they fire
-    #   2.30          THE BRUSH STROKE: one fast bright swish, left to right
-    #   2.75          the light spearing up at the spot: three rising glides, and the mark under the court (`bell`, soft)
-    #   3.15 3.55 3.95 each haul's spiral of leaves: a whirl gust over the groan
-    #   4.50          THE MARK behind its head: `bell` with the carved note, and a last shimmer to the hand-back
-    s = 5.0
+    # ⚠️⚠️ v8 (2026-09-27): 6.5 S. The owner on v7: *"lowk slow down ult a bit i cant comprehend wtf is happening"*; he chose 6.5 s.
+    # The cutscene is stretched evenly by 1.3 (`HeroIntroductionScene.Paete.cs` `PaeteStretch`, `tools/author_ultimate_intros.py`
+    # `_stretch`), so every EVENT below is typed on the 5.0 s clock the direction was written on and placed through `T` (x 1.3).
+    # WHEN a sound happens stretches; what it IS does not (a bar's ring, a pitch, a decay are its own), so the motif keeps its notes.
+    # The beats, on the 5.0 s clock (x 1.3 for the film): her rise 0.03 to 0.45, her full form 0.30 to 0.50, the light falling 0.58
+    # to 0.70, his eyes 0.78, the drop 1.08 to 1.22, the slam 1.22, the roots digging 1.25 to 1.50, the channel 1.45 to 2.10 with
+    # heartbeats at 1.62, 1.80 and 1.95, the send 2.10, the race to 2.50, the court bulging 2.50, the hauls 2.78, 3.05 and 3.33, the
+    # top-out 3.53, its eyes 3.71, THE TAKE: the lash 3.80 to 4.10, the cinch, the yank 4.18, the thud 4.50, the struggle to the end.
+    K = 1.3
+    s = 5.0 * K
+
+    def T(x):
+        return x * K
+
     t = times(s)
+    pulses = tuple(T(x) for x in (1.62, 1.80, 1.95))
+    hauls_at = tuple(T(x) for x in (2.78, 3.05, 3.33))
+    send_at, arrive_at, topout_at, wake_at = T(2.10), T(2.50), T(3.53), T(3.71)
+    yank_at, thud_at = T(4.18), T(4.50)
+    slam = T(1.22)
     # Her rise, soft and climbing.
-    her = [(0.08, 261.6), (0.20, 293.7), (0.32, 349.2), (0.44, 392.0)]
-    bars = sum(knock(t, at, p, 0.28, 0.55) for at, p in her)
+    bars = sum(knock(t, T(at), p, 0.28, 0.55) for at, p in [(0.08, 261.6), (0.20, 293.7), (0.32, 349.2), (0.44, 392.0)])
     # Her full form: a warm held chord swelling in and thinning away as she turns back to spirit.
     form = (np.sin(2 * np.pi * 261.6 * t) + 0.7 * np.sin(2 * np.pi * 329.6 * t) + 0.5 * np.sin(2 * np.pi * 392.0 * t)) \
-        * window(t, 0.30, 1.05, 0.2) * np.clip((t - 0.3) / 0.2, 0, 1) * np.clip((1.08 - t) / 0.3, 0, 1) * 0.07
+        * window(t, T(0.30), T(1.05), 0.2) * np.clip((t - T(0.3)) / 0.26, 0, 1) * np.clip((T(1.08) - t) / 0.39, 0, 1) * 0.07
     # The light falls: a quick run down the bars, a tap where it lands in his hand.
-    fall = [(0.58, 784.0), (0.61, 659.3), (0.64, 523.3), (0.67, 440.0)]
-    drop = sum(knock(t, at, p, 0.12, 0.5) for at, p in fall) + knock(t, 0.70, 392.0, 0.35, 0.8)
+    drop = sum(knock(t, T(at), p, 0.12, 0.5) for at, p in [(0.58, 784.0), (0.61, 659.3), (0.64, 523.3), (0.67, 440.0)]) \
+        + knock(t, T(0.70), 392.0, 0.35, 0.8)
     # IGNITION: a low bloom under a bright struck chord.
-    ignite = thump(t, 0.78, 70, 0.45) * 0.9 + knock(t, 0.78, 523.3, 0.9, 0.9) + knock(t, 0.78, 784.0, 0.7, 0.55) \
-        + np.sin(2 * np.pi * 1046.5 * t) * window(t, 0.78, 1.3, 0.3) * env_ar(t, 0.01, 0.5, 0.80) * 0.12
+    ignite = thump(t, T(0.78), 70, 0.45) * 0.9 + knock(t, T(0.78), 523.3, 0.9, 0.9) + knock(t, T(0.78), 784.0, 0.7, 0.55) \
+        + np.sin(2 * np.pi * 1046.5 * t) * window(t, T(0.78), T(1.3), 0.3) * env_ar(t, 0.01, 0.5, T(0.80)) * 0.12
     # The drop: a rising draw of air and leaf into the slam.
-    draw = rustle(t, 8410, 2200 * np.clip((t - 1.06) / 0.16, 0, 1) ** 2 * window(t, 1.06, 1.22, 0.02), 4200) * 0.5
+    draw = rustle(t, 8410, 2200 * np.clip((t - T(1.06)) / (T(1.22) - T(1.06)), 0, 1) ** 2 * window(t, T(1.06), slam, 0.02), 4200) * 0.5
     # The slam: soil crunch, a felt thump, the court answering like a struck log.
-    press = snap(t, 8403, 1.22, 40, 0.10, 900, 0.9) + thump(t, 1.22, 55, 0.35) * 1.3 + knock(t, 1.22, 98, 0.25, 0.9)
+    press = snap(t, 8403, slam, 40, 0.10, 900, 0.9) + thump(t, slam, 55, 0.35) * 1.3 + knock(t, slam, 98, 0.25, 0.9)
     # His roots dig in: wood creaking DOWN into soil (the slips slow as they go deeper).
-    dig = creak(t, 8404, sweep(t - 1.25, 120, 45, 0.35), 0.5, [(300, 1.0), (700, 0.4)], 8.0, window(t, 1.25, 1.62, 0.05)) * 1.6 \
-        + rustle(t, 8412, 1600 * window(t, 1.25, 1.6, 0.08), 1500, q=1.1) * 0.6
+    dig = creak(t, 8404, sweep(t - T(1.25), 120, 45, T(0.25)), 0.5, [(300, 1.0), (700, 0.4)], 8.0, window(t, T(1.25), T(1.5), 0.05)) * 1.6 \
+        + rustle(t, 8412, 1600 * window(t, T(1.25), T(1.5), 0.08), 1500, q=1.1) * 0.6
     # The channel: a hum rising under three quickening heartbeats.
-    hum = creak(t, 8405, 60 + 90 * np.clip((t - 1.6) / 0.7, 0, 1), 0.2, [(130.8, 1.0), (196.0, 0.6), (261.6, 0.3)], 18.0,
-                window(t, 1.58, 2.36, 0.08) * np.clip((t - 1.58) / 0.7, 0.25, 1)) * 1.8
-    beats = sum(thump(t, at, 58, 0.16) * 1.2 + knock(t, at, 196.0, 0.14, 0.45) for at in (1.72, 1.96, 2.14))
+    hum = creak(t, 8405, 60 + 90 * np.clip((t - T(1.45)) / T(0.6), 0, 1), 0.2, [(130.8, 1.0), (196.0, 0.6), (261.6, 0.3)], 18.0,
+                window(t, T(1.45), T(2.16), 0.08) * np.clip((t - T(1.45)) / T(0.6), 0.25, 1)) * 1.8
+    beats = sum(thump(t, at, 58, 0.16) * 1.2 + knock(t, at, 196.0, 0.14, 0.45) for at in pulses)
     # The send: one big pulse, then the roots race off: a crackle running away and rising, a grind under it, a pop as the court bulges.
-    send = thump(t, 2.30, 50, 0.25) * 1.3 + knock(t, 2.30, 261.6, 0.5, 0.8)
-    race = snap(t, 8406, 2.32, 140, 0.42, 1400, 1.2) * window(t, 2.3, 2.76, 0.04)
-    grind = creak(t, 8413, sweep(t - 2.3, 60, 170, 0.45), 0.5, [(220, 1.0), (520, 0.4)], 8.0, window(t, 2.3, 2.78, 0.05)) * 1.8
-    bulge = one_pole_low(one_pole_low(noise(len(t), 8407), 80), 80) * env_ar(np.maximum(0, t - 2.75), 0.1, 0.35, 0.12) * (t >= 2.75) * 14.0 \
-        + snap(t, 8414, 2.75, 50, 0.2, 1100, 1.0)
+    send = thump(t, send_at, 50, 0.25) * 1.3 + knock(t, send_at, 261.6, 0.5, 0.8)
+    race = snap(t, 8406, send_at + 0.02, 150, arrive_at - send_at - 0.02, 1400, 1.2) * window(t, send_at, arrive_at + 0.01, 0.04)
+    grind = creak(t, 8413, sweep(t - send_at, 60, 170, arrive_at - send_at), 0.5, [(220, 1.0), (520, 0.4)], 8.0,
+                  window(t, send_at, arrive_at + 0.03, 0.05)) * 1.8
+    bulge = one_pole_low(one_pole_low(noise(len(t), 8407), 80), 80) * env_ar(np.maximum(0, t - arrive_at), 0.1, 0.35, 0.12) * (t >= arrive_at) * 14.0 \
+        + snap(t, 8414, arrive_at, 50, 0.2, 1100, 1.0)
     # The three hauls, each bigger: a groan, the court breaking, a thump.
-    hauls = sum((creak(t, 8420 + k, sweep(t - at, 26, 50, 0.5), 0.35, [(90 - 6 * k, 1.0), (215, 0.5)], 11.0, window(t, at - 0.08, at + 0.45, 0.08)) * 1.8
-                 + snap(t, 8430 + k, at, 40 + 15 * k, 0.25, 800, 1.1) + thump(t, at, 44 - 3 * k, 0.35) * (1.0 + 0.25 * k))
-                for k, at in enumerate((3.15, 3.55, 3.95)))
-    topout = snap(t, 8411, 4.25, 30, 0.25, 2600, 0.6)
-    leaves = rustle(t, 8402, 1800 * window(t, 3.2, 4.9, 0.5) + 1600 * window(t, 4.22, 4.6, 0.12), 3600) * 0.6
+    hauls = sum((creak(t, 8420 + k, sweep(t - at, 26, 50, 0.45), 0.35, [(90 - 6 * k, 1.0), (215, 0.5)], 11.0, window(t, at - 0.08, at + 0.39, 0.07)) * 1.8
+                 + snap(t, 8430 + k, at, 40 + 15 * k, 0.25, 800, 1.1) + thump(t, at, 44 - 3 * k, 0.33) * (1.0 + 0.25 * k))
+                for k, at in enumerate(hauls_at))
+    topout = snap(t, 8411, topout_at, 30, 0.25, 2600, 0.6)
+    leaves = rustle(t, 8402, 1800 * window(t, T(2.8), T(4.9), 0.5) + 1600 * window(t, topout_at - 0.03, topout_at + 0.4, 0.1), 3600) * 0.6
     # Its eyes light: one deep carved note with a soft chime over it.
-    wake = knock(t, 4.50, 130.8, 1.1, 1.1) + knock(t, 4.50, 392.0, 0.7, 0.35) \
-        + np.sin(2 * np.pi * 784.0 * t) * window(t, 4.50, 5.0, 0.15) * env_ar(np.maximum(0, t - 4.5), 0.02, 0.4) * (t >= 4.5) * 0.08
-    drone = creak(t, 8401, 110 + 0 * t, 0.05, [(130.8, 1.0), (196.0, 0.6)], 30.0, np.clip(t / 2.6, 0, 1) ** 1.4 * window(t, 0, 4.9, 0.4)) * 1.0
+    wake = knock(t, wake_at, 130.8, 1.1, 1.1) + knock(t, wake_at, 392.0, 0.7, 0.35) \
+        + np.sin(2 * np.pi * 784.0 * t) * window(t, wake_at, wake_at + 0.6, 0.15) * env_ar(np.maximum(0, t - wake_at), 0.02, 0.45) * (t >= wake_at) * 0.08
+    drone = creak(t, 8401, 110 + 0 * t, 0.05, [(130.8, 1.0), (196.0, 0.6)], 30.0, np.clip(t / T(2.6), 0, 1) ** 1.4 * window(t, 0, s - 0.05, 0.3)) * 1.0
 
-    # ---- v6 layers (direction.md 5.15), each on the frame of its picture.
-    # THE GUST: air in from behind her, the leaves thickening, then whirling round her as the column spins up (4 to 9 turns a second).
-    gust = whoosh(t, 8440, 0.0, 0.52, 480, 2400, 0.9, attack=0.6) \
-        + rustle(t, 8441, 2600 * np.clip(t / 0.4, 0, 1) * window(t, 0, 0.5, 0.06), 3800) * 0.55 \
+    # ---- v6 layers, each on the frame of its picture.
+    gust = whoosh(t, 8440, 0.0, T(0.52), 480, 2400, 0.9, attack=0.6) \
+        + rustle(t, 8441, 2600 * np.clip(t / T(0.4), 0, 1) * window(t, 0, T(0.5), 0.06), 3800) * 0.55 \
         + rustle(t, 8449, 3200 * np.exp(-t / 0.08) * window(t, 0, 0.3, 0.002), 4400) * 0.5  # the cut-in: leaves already flying on frame 0
-    spin_rate = 4.0 + 5.0 * np.clip((t - 0.12) / 0.34, 0, 1)
-    whirl = rustle(t, 8442, 2400 * (0.5 + 0.5 * np.sin(2 * np.pi * np.cumsum(spin_rate) / RATE)) * window(t, 0.12, 0.47, 0.05), 3000) * 0.45
-    # THE BURST as she forms: a breath of air out, and bamboo wind-chimes for the petals (typed: time, pitch).
-    chimes = sum(knock(t, at, p, 0.35, 0.28) for at, p in ((0.460, 1568.0), (0.474, 1975.5), (0.489, 1318.5), (0.508, 2349.3),
-                                                           (0.529, 1760.0), (0.556, 2093.0), (0.590, 1568.0)))
-    burst = whoosh(t, 8443, 0.44, 0.36, 2800, 900, 0.7, attack=0.12) + chimes
-    # The swell drawn in before the ignition, cut dead on it.
-    riser = svf(noise(len(t), 8444), 900 + 2100 * np.clip((t - 0.6) / 0.18, 0, 1), 1.4) * np.clip((t - 0.6) / 0.18, 0, 1) ** 3 * window(t, 0.6, 0.78, 0.004) * 0.5
-    # THE MARK, three times, and its seal on the court.
-    marks = bell(t, 0.78, 146.8, 0.55) + bell(t, 1.22, 73.4, 0.6) + bell(t, 2.75, 110.0, 0.25) + bell(t, 4.50, 146.8, 0.5)
-    seal = knock(t, 1.24, 392.0, 0.9, 0.22) + knock(t, 1.27, 587.3, 0.8, 0.18) + knock(t, 1.30, 784.0, 0.7, 0.14)
-    shock = rustle(t, 8445, 3000 * np.exp(-np.maximum(0, t - 1.22) / 0.12) * (t >= 1.22) * window(t, 1.22, 1.7, 0.02), 3400) * 0.6
-    # The leaves orbiting him, quickening with each heartbeat (2 to 4.5 turns a second).
-    orbit_rate = 2.0 + 0.85 * sum(np.clip((t - p) / 0.1, 0, 1) for p in (1.72, 1.96, 2.14))
-    orbit = rustle(t, 8446, 1500 * (0.5 + 0.5 * np.sin(2 * np.pi * np.cumsum(orbit_rate) / RATE)) * window(t, 1.45, 2.32, 0.15), 3200) * 0.35
-    # Each streak of light: typed (time, start pitch, end pitch).
-    streaks = sum(glide(t, at, f0, f1, 0.26, 0.05) for at, f0, f1 in (
-        (1.72, 700, 1500), (1.74, 760, 1620), (1.96, 680, 1480), (1.98, 820, 1700), (2.00, 740, 1560), (2.14, 720, 1600),
-        (2.15, 800, 1760), (2.17, 660, 1440), (2.18, 780, 1680), (2.30, 600, 1500), (2.31, 700, 1650), (2.33, 640, 1560)))
-    # THE BRUSH STROKE: one fast bright swish, falling as it lands.
-    slash = whoosh(t, 8447, 2.28, 0.24, 3400, 800, 1.2, attack=0.2)
-    # The light spearing up at the spot.
-    shafts = glide(t, 2.72, 380, 1150, 0.45, 0.07) + glide(t, 2.76, 460, 1300, 0.42, 0.05) + glide(t, 2.80, 540, 1480, 0.40, 0.04)
-    # Each haul's spiral of leaves.
-    spirals = sum(rustle(t, 8448 + k, 2800 * np.exp(-np.maximum(0, t - at) / 0.35) * (t >= at) * window(t, at, at + 0.9, 0.03), 3600) * 0.45
-                  for k, at in enumerate((3.15, 3.55, 3.95)))
-    # A last shimmer from the eyes to the hand-back.
-    shimmer = np.sin(2 * np.pi * 1568.0 * t) * window(t, 4.5, 5.0, 0.2) * env_ar(np.maximum(0, t - 4.5), 0.03, 0.45) * (t >= 4.5) * 0.05
+    spin_rate = 4.0 + 5.0 * np.clip((t - T(0.12)) / T(0.34), 0, 1)
+    whirl = rustle(t, 8442, 2400 * (0.5 + 0.5 * np.sin(2 * np.pi * np.cumsum(spin_rate) / RATE)) * window(t, T(0.12), T(0.47), 0.05), 3000) * 0.45
+    chimes = sum(knock(t, T(at), p, 0.35, 0.28) for at, p in ((0.460, 1568.0), (0.474, 1975.5), (0.489, 1318.5), (0.508, 2349.3),
+                                                              (0.529, 1760.0), (0.556, 2093.0), (0.590, 1568.0)))
+    burst = whoosh(t, 8443, T(0.44), T(0.36), 2800, 900, 0.7, attack=0.12) + chimes
+    rise0, rise1 = T(0.6), T(0.78)
+    riser = svf(noise(len(t), 8444), 900 + 2100 * np.clip((t - rise0) / (rise1 - rise0), 0, 1), 1.4) \
+        * np.clip((t - rise0) / (rise1 - rise0), 0, 1) ** 3 * window(t, rise0, rise1, 0.004) * 0.5
+    # THE MARK, its seal on the court, and its fifth return as they all hit the trunk.
+    marks = bell(t, T(0.78), 146.8, 0.55) + bell(t, slam, 73.4, 0.6) + bell(t, arrive_at, 110.0, 0.25) + bell(t, wake_at, 146.8, 0.5) \
+        + bell(t, thud_at, 110.0, 0.45)
+    seal = knock(t, T(1.24), 392.0, 0.9, 0.22) + knock(t, T(1.27), 587.3, 0.8, 0.18) + knock(t, T(1.30), 784.0, 0.7, 0.14)
+    shock = rustle(t, 8445, 3000 * np.exp(-np.maximum(0, t - slam) / 0.14) * (t >= slam) * window(t, slam, T(1.7), 0.02), 3400) * 0.6
+    orbit_rate = 2.0 + 0.85 * sum(np.clip((t - p) / 0.1, 0, 1) for p in pulses)
+    orbit = rustle(t, 8446, 1500 * (0.5 + 0.5 * np.sin(2 * np.pi * np.cumsum(orbit_rate) / RATE)) * window(t, T(1.38), T(2.12), 0.15), 3200) * 0.35
+    streaks = sum(glide(t, T(at), f0, f1, 0.3, 0.05) for at, f0, f1 in (
+        (1.62, 700, 1500), (1.64, 760, 1620), (1.80, 680, 1480), (1.82, 820, 1700), (1.84, 740, 1560), (1.95, 720, 1600),
+        (1.96, 800, 1760), (1.98, 660, 1440), (1.99, 780, 1680), (2.10, 600, 1500), (2.11, 700, 1650), (2.13, 640, 1560)))
+    slash = whoosh(t, 8447, send_at - 0.02, 0.3, 3400, 800, 1.2, attack=0.2)
+    shafts = glide(t, arrive_at - 0.04, 380, 1150, 0.55, 0.07) + glide(t, arrive_at + 0.01, 460, 1300, 0.5, 0.05) + glide(t, arrive_at + 0.06, 540, 1480, 0.48, 0.04)
+    spirals = sum(rustle(t, 8448 + k, 2800 * np.exp(-np.maximum(0, t - at) / 0.35) * (t >= at) * window(t, at, at + 0.75, 0.03), 3600) * 0.45
+                  for k, at in enumerate(hauls_at))
+    shimmer = np.sin(2 * np.pi * 1568.0 * t) * window(t, wake_at, wake_at + 0.55, 0.15) * env_ar(np.maximum(0, t - wake_at), 0.03, 0.45) * (t >= wake_at) * 0.05
+
+    # ---- v7 layers: the burst layer and THE TAKE.
+    tinkle = sum(np.sin(2 * np.pi * p * t) * env_ar(np.maximum(0, t - T(at)), 0.002, 0.18) * (t >= T(at)) * 0.035 for at, p in (
+        (0.44, 3136.0), (0.47, 3729.3), (0.50, 2793.8), (0.79, 3520.0), (0.82, 4186.0), (0.86, 3136.0),
+        (3.72, 3520.0), (3.75, 4698.6), (3.78, 3951.1), (4.51, 3136.0), (4.54, 4186.0), (4.58, 3520.0), (4.64, 4698.6)))
+    swirl_rate = 5.0 + 4.0 * sum(np.clip((t - p) / 0.08, 0, 1) for p in pulses)
+    swirl = np.sin(2 * np.pi * np.cumsum(660.0 + 40.0 * np.sin(2 * np.pi * np.cumsum(swirl_rate) / RATE)) / RATE) \
+        * window(t, T(1.45), T(2.14), 0.12) * np.clip((t - T(1.45)) / 0.6, 0, 1) * 0.035
+    pillar = whoosh(t, 8460, arrive_at - 0.02, 0.6, 300, 1800, 0.55, attack=0.18)
+    boom = thump(t, wake_at, 46, 0.45) * 0.9 + whoosh(t, 8461, wake_at, 0.55, 1400, 400, 0.4, attack=0.1)
+    lash = whoosh(t, 8462, T(3.79), 0.34, 900, 3200, 0.8, attack=0.7) \
+        + sum(snap(t, 8463 + k, T(at), 22, 0.03, 2400, 0.9) + knock(t, T(at), 220.0 + 30 * k, 0.12, 0.3)
+              for k, at in enumerate((4.00, 4.03, 4.06, 4.10)))
+    cinch = creak(t, 8467, sweep(t - T(4.02), 50, 140, 0.2), 0.4, [(320, 1.0), (760, 0.4)], 9.0, window(t, T(4.02), T(4.2), 0.03)) * 1.2
+    yank = thump(t, yank_at, 52, 0.25) * 1.2 + knock(t, yank_at, 146.8, 0.3, 0.5) \
+        + creak(t, 8468, sweep(t - yank_at, 30, 90, thud_at - yank_at), 0.35, [(85, 1.0), (190, 0.6)], 11.0, window(t, yank_at, thud_at + 0.02, 0.04)) * 2.0 \
+        + whoosh(t, 8469, yank_at - 0.02, thud_at - yank_at + 0.04, 600, 2600, 0.9, attack=0.75)
+    thud = thump(t, thud_at, 42, 0.45) * 1.6 + knock(t, thud_at, 98.0, 0.35, 1.0) + snap(t, 8470, thud_at, 60, 0.14, 900, 1.2) \
+        + knock(t, thud_at + 0.01, 392.0, 0.6, 0.3) + knock(t, thud_at + 0.03, 587.3, 0.5, 0.22)
+    strain = creak(t, 8471, 70 + 50 * (0.5 + 0.5 * np.sin(2 * np.pi * 3.2 * t)), 0.45, [(260, 1.0), (620, 0.35)], 9.0,
+                   window(t, thud_at + 0.05, s, 0.08) * (0.55 + 0.45 * np.sin(2 * np.pi * 3.2 * t) ** 2)) * 1.1 \
+        + rustle(t, 8472, 900 * window(t, thud_at + 0.05, s, 0.1), 3000) * 0.35
 
     return finish("sfx_ult_theme_paete", bars + form + drop + ignite + draw + press + dig + hum + beats + send + race + grind + bulge
                   + hauls + topout + leaves + wake + drone
-                  + gust + whirl + burst + riser + marks + seal + shock + orbit + streaks + slash + shafts + spirals + shimmer, s, 0.66)
+                  + gust + whirl + burst + riser + marks + seal + shock + orbit + streaks + slash + shafts + spirals + shimmer
+                  + tinkle + swirl + pillar + boom + lash + cinch + yank + thud + strain, s, 0.66)
 
 
 def sky():
