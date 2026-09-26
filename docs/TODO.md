@@ -259,7 +259,11 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   before them: 4/4 and 606/609).
 - [ ] Still to do: portrait and avatar, `WorldEffectSnapshot`/`RecordedSpecialFields` for plant, sentry
   and thorns, seedling and thorn-construct art pass, PlayMode gate, Checks.RunAll, audits, a build.
-- [ ] Deploy the cloud-code hero lists once they name him; record his lines (human voices only).
+- [ ] Surface texture: the owner asked to *"really refine and texture and make it all detailed"*. The
+  modelled props give detail in geometry and his palette only; decide with him whether bark wants a
+  painted texture (grain, rings) on the props and vines, and do it if so.
+- [ ] Deploy the cloud-code hero lists once they name him (needs the owner's UGS deploy); record his
+  lines (human voices only, `docs/HUMAN.md` PAETE rows).
 
 ### PRACTICE-1 · A practice picker and a Valorant-style training range ⚠️ OPEN, 2026-09-26
 

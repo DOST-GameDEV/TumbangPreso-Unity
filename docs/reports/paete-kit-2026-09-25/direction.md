@@ -129,10 +129,10 @@ matched; v5's baked copies came out at the wrong scale. v6 on keeps the real ren
 | Body: thorns | reads, refined once | the yank was a shrug; now the trunk is thrown back and both arms ripped behind it, a rope haul |
 | Body: sentry | reads, refined once | the open was a flat T; now arms flung high and wide before the embrace crosses them |
 | Shared struggle, heave | keyed | read on Sean in the strips; not yet seen in a live match |
-| Vine effect | braid v2, thickened once | two three-strand braids from the forearms to a rosette anchor, he is hauled along them; at 6 m v1 read thin and pale, strands are thicker now |
-| Sentry | v3.1 | v2 read as a crate with labels, stakes for roots and a paper card for a core, no taller than the bodies it held. v3: a 2.1 m square-tube trunk with bark knots, moss tufts and three leafy branch stubs, buttress roots that hug the road, a five-branch crown cradling a two-tone green faceted core with spores, eight thorned ground vines that race out and curl up. The collars read as tables in v3 and became moss tufts in v3.1 |
-| Seedling, thorns construct | v1 | not yet art-passed |
-| FPP vines | NOT started | the braids still start from the hidden body's arms in first person |
+| Vine effect | v3, entangled | five strands per arm (two thick tan bark limbs, two thin dark vines coiled round them, one green lit strand), forked twigs (`GrowthTwigs`), eased out of the forearm; review v11 |
+| Sentry | v4, braided | 4.3 m, five braided trunks with bark plates, vines, green seams, moss and fungus, buttress roots, a crown holding the core, thorned bark branches racing out, rising out of the road twisting; review v12. The owner still calls the props "just blocks": `tools/build_paete_props.py` models them as .glb, not yet wired in (TODO HERO-9) |
+| Seedling, thorns construct | seedling v2, thorns v1 | both rise out of the ground; both are replaced by the modelled .glb props once wired |
+| FPP vines | done, not captured | the braids leave the viewmodel hands (`CameraRig.TryViewmodelHand`); no first-person capture yet |
 | Sound | 16 cues | not heard in the game mix |
 
 ## 4. Order of the next passes
