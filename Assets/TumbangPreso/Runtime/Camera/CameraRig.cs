@@ -340,6 +340,29 @@ namespace TumbangPreso.CameraSystem
         }
 
         /// <summary>
+        /// Where <paramref name="who"/>'s first-person arm is DRAWN (hand, back end, half-width), when this camera is in their eyes
+        /// (HERO-9: LIANA LEAP's vines leave the drawn forearm, `ViewmodelArms.TryDrawnArm`).
+        /// </summary>
+        public static bool TryDrawnViewmodelArm(CharacterMotor who, bool left, out Vector3 hand, out Vector3 back, out float halfWidth)
+        {
+            hand = back = default; halfWidth = 0f;
+            if (who == null) return false;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return false;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return false;
+            return rig._arms.TryDrawnArm(left, out hand, out back, out halfWidth);
+        }
+
+        /// <summary>Paete's first-person forearms lengthening with his vines (`ViewmodelArms.SetReachStretch`); 0 puts them back.</summary>
+        public static void SetViewmodelReachStretch(CharacterMotor who, float stretch)
+        {
+            if (who == null) return;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._arms == null) return;
+            rig._arms.SetReachStretch(stretch);
+        }
+
+        /// <summary>
         /// The two first-person arm renderers of <paramref name="who"/>, when this camera is in their eyes (HERO-9: Paete's channel
         /// lights his own hands on his screen, `Visual.PaeteChannelGlow`).
         /// </summary>

@@ -32,6 +32,13 @@ const DAILY_TASK_COUNT = 3;
 const WEEKLY_TASK_COUNT = 3;
 const CLAIM_MEMORY = 64;
 
+// ⚠️⚠️ TEMPORARY PLAYTEST GRANT (owner, 2026-09-26: *"give us all 999999 tansan so we can unlock all"*). While this is above
+// zero, every wallet this script loads is topped up to it before anything else happens, so the playtesters can unlock every
+// hero and item. It breaks the rule in this file's header (currency only from play) ON PURPOSE AND FOR NOW: set it back to 0
+// and deploy before any public build. Tracked in `docs/TODO.md` (the TEMPORARY PLAYTEST GRANT row). Not in `EconomyRules`,
+// because it is not an economy rule.
+const PLAYTEST_TOPUP = 999999;
+
 // Mirrors EconomyRules.StarterHeroes / StarterSlippers / StarterCans.
 const STARTER_HEROES = ["dante", "cheska", "sean"];
 const STARTER_SLIPPERS = ["tsinelas", "crocs", "pantulog", "sike"];
@@ -272,6 +279,7 @@ module.exports = async ({ params, context, logger }) => {
     // ⚠️ EVERY ACTION SETTLES FIRST, so a balance is never shown or spent without the matches the
     // server already recorded. Settling is idempotent: paid ids are remembered.
     const paid = settle(wallet, matches, today);
+    if (PLAYTEST_TOPUP > 0 && wallet.Balance < PLAYTEST_TOPUP) wallet.Balance = PLAYTEST_TOPUP;
 
     let result = "ok";
     if (action === "buy") {
@@ -322,4 +330,4 @@ module.exports.params = {
 };
 
 // Exposed for `tools/test_wallet_script.js`, which runs the rules under node with a stub store.
-module.exports.rules = { createWallet, settle, tasksFor, progress, priceOf, fnv, weekOf, dayOf, earnedFrom };
+module.exports.rules = { createWallet, settle, tasksFor, progress, priceOf, fnv, weekOf, dayOf, earnedFrom, PLAYTEST_TOPUP };

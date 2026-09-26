@@ -86,6 +86,24 @@ namespace TumbangPreso.Core
         /// </summary>
         public const int SproutKnockPoints = 50;
 
+        /// <summary>
+        /// ⚠️⚠️ BAKYA BLOOM IS PLANTED OUTSIDE THE TAYA'S BOX ONLY (owner, 2026-09-26: *"also make paete's E only placeable
+        /// outside box"*). A spot aimed inside the box is moved straight out across its NEAREST edge, to this far past the
+        /// line, so the pot never overlaps the chalk; a spot already outside is untouched. Moved rather than refused: until the
+        /// cast preview can show a red spot (CAST-1) a refused plant is a press that silently did nothing.
+        /// </summary>
+        public const float PlantBoxMargin = 0.6f;
+
+        /// <summary>Where a plant aimed at (x, z) is allowed to land: outside the box (see <see cref="PlantBoxMargin"/>).</summary>
+        public static void PlantSpotOutsideBox(ref float x, ref float z, float radius = Balance.ConfinementRadius)
+        {
+            if (!Confinement.IsInsideBox(x, z, radius)) return;
+            float edge = radius + PlantBoxMargin;
+            // The nearest edge: whichever axis is already closest to the line.
+            if (System.Math.Abs(x) >= System.Math.Abs(z)) x = x >= 0f ? edge : -edge;
+            else z = z >= 0f ? edge : -edge;
+        }
+
         /// <summary>How long a wooden slipper lies where it lands before it withers.</summary>
         public const float WoodenSlipperWitherSeconds = 2.0f;
 
@@ -107,6 +125,29 @@ namespace TumbangPreso.Core
 
         /// <summary>The construct's whole life, from the stamp to the last thorn dropping.</summary>
         public const float ThornConstructSeconds = 3.0f;
+
+        /// <summary>
+        /// ⚠️⚠️ PLACED WHERE HE LOOKS, NOT ON HIS BODY (owner, 2026-09-26: *"I WANT IT to be castable and not cast on body make
+        /// it possible for him to place it somewhere else like his ult and other skill"*). Held, the spot follows his sight line
+        /// between these two; released, the rattan bursts there, and the 7 m reach and the 1 m landing are measured from THAT
+        /// spot. PROPOSED, NOT OBJECTED TO: the far end is BAKYA BLOOM's 6 m (`PlantThrowRange`), so his two placed plants reach
+        /// the same distance; the near end is his own feet, so the old stamp-on-the-spot cast is still one aim away.
+        /// </summary>
+        public const float ThornAimMinRange = 0.0f;
+        public const float ThornAimRange = PlantThrowRange;
+
+        /// <summary>
+        /// ⚠️ NOTHING APPEARS FROM EMPTY AIR (`HERO_KIT_METHOD.md` section 0, rule 4): a line of thorn shoots races through the
+        /// court from his stamp to the spot, and the rattan bursts when it arrives. 24 m/s puts the far end (6 m) 0.25 s out,
+        /// one hold beat, so a thrown slipper is not given a quarter of a second more than it had. Closer than
+        /// `ThornTrailMinDistance` there is no trail: the rattan comes up under his stamp as it always did.
+        /// </summary>
+        public const float ThornTrailSpeed = 24.0f;
+        public const float ThornTrailMinDistance = 0.6f;
+
+        /// <summary>How long the thorns take to reach a spot this far from his stamp. Every peer computes it from the accepted cast.</summary>
+        public static float ThornTrailSeconds(float distance)
+            => distance <= ThornTrailMinDistance ? 0.0f : distance / ThornTrailSpeed;
 
         // ------------------------------------------------------------------ MAKILING'S EMBRACE (ultimate)
 

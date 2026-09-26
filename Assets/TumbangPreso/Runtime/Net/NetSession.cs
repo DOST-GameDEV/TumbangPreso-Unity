@@ -410,7 +410,12 @@ namespace TumbangPreso.Net
         // looks and the commit carries that spot (`HeroAbility.AimsWhereLooking`), and the live guardian comes up already grown
         // and catches at the hand-back (`PaeteSentry.Spawn`'s `handBack`). No bytes changed, but a 58 peer would release the
         // phase 1.5 s early, land the tree 8 m straight ahead, and grow it and catch 0.75 s after everyone else.
-        public const int ProtocolVersion = 59;
+        // 60 (2026-09-26): THORN HARVEST is placed where Paete looks (the owner: *"castable and not cast on body"*); the commit
+        // carries the spot, a thorn trail runs from his stamp to it (`PaeteRules.ThornTrailSeconds`, up to 0.25 s) and the
+        // rattan bursts and catches THERE; and BAKYA BLOOM lands outside the taya's box (`PaeteRules.PlantSpotOutsideBox`). No
+        // bytes changed, but a 59 peer would burst the thorns under his feet at once, catching a different set of slippers a
+        // quarter of a second early, and plant the pot inside the box where everyone else sees it outside.
+        public const int ProtocolVersion = 60;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -487,15 +492,7 @@ namespace TumbangPreso.Net
             _utp = GetComponent<UnityTransport>();
             if (_utp == null) _utp = gameObject.AddComponent<UnityTransport>();
 
-            _nm.NetworkConfig ??= new NetworkConfig();
-            _nm.NetworkConfig.NetworkTransport = _utp;
-            _nm.NetworkConfig.ConnectionApproval = true;
-
-            // ⚠️ SCENE MANAGEMENT OFF. The game loads its own scenes through SceneFlow, and
-            // letting the netcode also drive scene loads means two systems racing to decide
-            // which scene a client is in. The symptom is a client stuck on a black screen while
-            // the host plays on.
-            _nm.NetworkConfig.EnableSceneManagement = false;
+            ConfigureManager();
 
             _beacon = GetComponent<LanBeacon>();
             if (_beacon == null) _beacon = gameObject.AddComponent<LanBeacon>();
@@ -508,9 +505,54 @@ namespace TumbangPreso.Net
 
             NetAuthority.Provider = this;
 
+            HookManager();
+        }
+
+        /// <summary>The NetworkManager's settings, applied at Awake and again to a rebuilt manager (`RebuildManager`).</summary>
+        private void ConfigureManager()
+        {
+            _nm.NetworkConfig ??= new NetworkConfig();
+            _nm.NetworkConfig.NetworkTransport = _utp;
+            _nm.NetworkConfig.ConnectionApproval = true;
+
+            // ⚠️ SCENE MANAGEMENT OFF. The game loads its own scenes through SceneFlow, and
+            // letting the netcode also drive scene loads means two systems racing to decide
+            // which scene a client is in. The symptom is a client stuck on a black screen while
+            // the host plays on.
+            _nm.NetworkConfig.EnableSceneManagement = false;
+        }
+
+        private void HookManager()
+        {
             _nm.OnClientConnectedCallback += OnClientConnected;
             _nm.OnClientDisconnectCallback += OnClientDisconnected;
             _nm.ConnectionApprovalCallback += ApproveConnection;
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE LAST RESORT FOR A WEDGED NETWORKMANAGER (QA, 2026-09-26; `PrepareManagerForStart` has the whole story). When a
+        /// start still throws after the object is un-nested and the transport re-selected, netcode's own state is broken in a way
+        /// only its internals can see (its connection manager holding the host role with no manager). A NEW NetworkManager has
+        /// none of that state: this one is destroyed, a fresh one takes its place with the same settings and callbacks, the
+        /// message router re-registers on it, and the start is tried once more. The transport (and any relay data already on it)
+        /// is kept.
+        /// </summary>
+        private void RebuildManager()
+        {
+            Debug.LogWarning("[Net] rebuilding the NetworkManager after a failed start.");
+            if (_nm != null)
+            {
+                _nm.OnClientConnectedCallback -= OnClientConnected;
+                _nm.OnClientDisconnectCallback -= OnClientDisconnected;
+                _nm.ConnectionApprovalCallback -= ApproveConnection;
+                DestroyImmediate(_nm);
+            }
+            _seatHandlerOn = null;
+            _nm = gameObject.AddComponent<NetworkManager>();
+            ConfigureManager();
+            HookManager();
+            GetComponent<MatchRpc>()?.Initialize(_nm);
+            ConfigureClientHello();
         }
 
         private void OnDestroy()
@@ -535,6 +577,71 @@ namespace TumbangPreso.Net
                 NetAuthority.Provider = new SoloProvider();
             }
         }
+
+        /// <summary>
+        /// ⚠️⚠️ NETCODE REFUSES A NESTED OR TRANSPORTLESS NetworkManager SILENTLY, THEN HIDES WHY (QA, 2026-09-26: *"Could not
+        /// open an online room. (relay allocation failed: There is no NetworkManager assigned to this instance!)"*).
+        ///
+        /// `NetworkManager.StartHost` gives the connection the host role FIRST, and `Initialize` then RETURNS WITHOUT AN
+        /// EXCEPTION when the NetworkManager's GameObject has a parent (`NetworkManagerCheckForParent`) or no transport is
+        /// selected. The transport is started anyway, fails, and the clean-up (`ShutdownInternal`) runs the host branch of a
+        /// connection manager that was never given its NetworkManager, which throws "There is no NetworkManager assigned to
+        /// this instance!": the message the player sees, with the real cause only in the log. Read from netcode 2.13.1
+        /// (`NetworkManager.StartHost`, `NetworkConnectionManager.Shutdown`); LAN hosting passes in the cloud PlayMode run
+        /// (`SessionRestartTests` 2/2), so the manager itself is sound and something put it in one of those two states.
+        ///
+        /// So before EVERY start: this object is put back at the root (and kept across scenes), and our transport is selected
+        /// again. Anything else that makes a start throw is reported by name instead of the clean-up's message.
+        /// </summary>
+        private bool PrepareManagerForStart(out string problem)
+        {
+            problem = null;
+            if (transform.parent != null)
+            {
+                Debug.LogWarning($"[Net] {name} was nested under {transform.root.name}; moved back to the root so netcode can start.");
+                transform.SetParent(null, true);
+                DontDestroyOnLoad(gameObject);
+            }
+            if (_utp == null) _utp = GetComponent<UnityTransport>();
+            if (_utp == null) _utp = gameObject.AddComponent<UnityTransport>();
+            if (_nm == null) { problem = "the network manager is missing"; return false; }
+            _nm.NetworkConfig ??= new NetworkConfig();
+            if (_nm.NetworkConfig.NetworkTransport != _utp)
+            {
+                Debug.LogWarning("[Net] the network transport was not selected; selecting ours again before starting.");
+                _nm.NetworkConfig.NetworkTransport = _utp;
+            }
+            if (!_nm.enabled || !_nm.gameObject.activeInHierarchy) { problem = "the network manager is switched off"; return false; }
+            return true;
+        }
+
+        /// <summary>A netcode start that cannot hide its cause behind the clean-up's message (see `PrepareManagerForStart`).</summary>
+        private bool StartNetcode(Func<bool> start, string what)
+        {
+            _startProblem = null;
+            if (!PrepareManagerForStart(out var problem)) { _startProblem = $"{what} failed: {problem}"; return false; }
+            try { return start(); }
+            catch (Exception first)
+            {
+                Debug.LogException(first);
+                // Once, with a fresh NetworkManager (`RebuildManager`), before the player is told anything.
+                try
+                {
+                    RebuildManager();
+                    if (!PrepareManagerForStart(out problem)) { _startProblem = $"{what} failed: {problem}"; return false; }
+                    return start();
+                }
+                catch (Exception second)
+                {
+                    Debug.LogException(second);
+                    _startProblem = $"{what} failed: netcode could not start ({second.Message}). The log lines above it name the cause.";
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>Why the last start failed, when it was not an ordinary refusal; the callers' status reads it.</summary>
+        private string _startProblem;
 
         /// <summary>
         /// ⚠️ CREATED ON DEMAND SO SINGLE PLAYER PAYS NOTHING FOR IT. A NetworkManager that
@@ -639,7 +746,7 @@ namespace TumbangPreso.Net
                 QualitySettings.vSyncCount = 0;
             }
 
-            bool ok = dedicated ? _nm.StartServer() : _nm.StartHost();
+            bool ok = StartNetcode(() => dedicated ? _nm.StartServer() : _nm.StartHost(), "hosting");
 
             // ⚠️ ALL FOUR START PATHS REGISTER THE SEAT HANDLER, and this one was the last that
             // did not. A listen host is its own client, so `SendSeatAssignment` applies its seat
@@ -649,7 +756,7 @@ namespace TumbangPreso.Net
             if (ok) RegisterSeatHandler();
             SetStatus(ok
                 ? $"hosting on {port}, join code {Lobby.JoinCode}"
-                : "failed to start hosting");
+                : _startProblem ?? "failed to start hosting");
 
             if (ok)
             {
@@ -926,9 +1033,9 @@ namespace TumbangPreso.Net
             IsRelay = false;
             RelayJoinCode = null;
 
-            bool ok = _nm.StartClient();
+            bool ok = StartNetcode(() => _nm.StartClient(), "joining");
             if (ok) RegisterSeatHandler();
-            SetStatus(ok ? $"connecting to {address}:{port}" : "failed to connect");
+            SetStatus(ok ? $"connecting to {address}:{port}" : _startProblem ?? "failed to connect");
             return ok;
         }
 
@@ -983,7 +1090,7 @@ namespace TumbangPreso.Net
                 await PrimeHandleProofAsync();
                 ConfigureClientHello();
 
-                bool ok = _nm.StartHost();
+                bool ok = StartNetcode(() => _nm.StartHost(), "relay hosting");
 
                 // ⚠️ THE RELAY HOST REGISTERS THE SEAT HANDLER TOO, exactly as `StartHost` does.
                 // A listen host is also its own client, so the message can reach it, and the two
@@ -993,7 +1100,7 @@ namespace TumbangPreso.Net
                 if (ok) RegisterSeatHandler();
                 SetStatus(ok
                     ? $"relay hosting active, code {Lobby.JoinCode} (relay {relayCode})"
-                    : "failed to start relay host");
+                    : _startProblem ?? "failed to start relay host");
 
                 if (ok)
                 {
@@ -1082,14 +1189,14 @@ namespace TumbangPreso.Net
                 await PrimeHandleProofAsync();
                 if (!CanContinueJoin(attempt)) return false;
                 ConfigureClientHello();
-                bool ok = _nm.StartClient();
+                bool ok = StartNetcode(() => _nm.StartClient(), "relay joining");
                 if (ok) RegisterSeatHandler();
                 else
                 {
                     IsRelay = false;
                     RelayJoinCode = null;
                 }
-                SetStatus(ok ? "connecting to relay host..." : "failed to start relay client");
+                SetStatus(ok ? "connecting to relay host..." : _startProblem ?? "failed to start relay client");
                 return ok;
             }
             catch (Exception e)

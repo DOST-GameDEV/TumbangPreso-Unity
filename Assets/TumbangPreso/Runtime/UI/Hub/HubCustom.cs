@@ -431,7 +431,7 @@ namespace TumbangPreso.UI.Hub
             _title.text = string.IsNullOrWhiteSpace(host.RoomTitle) ? "LOBBY" : host.RoomTitle.ToUpperInvariant();
             _title.fontSize = HubStyle.Size(HubStyle.Display);
             HubKit.Fit(_title, 900);
-            _code.text = "CODE  " + (host.RoomCode ?? "");
+            _code.text = "CODE: " + (host.RoomCode ?? "");
             string address = host.RoomAddress;
             _address.text = string.IsNullOrEmpty(address) ? "" : "or join by address  " + address;
             HubKit.SetLabel(_watch, host.Spectating ? "TAKE A SEAT" : "WATCH INSTEAD");

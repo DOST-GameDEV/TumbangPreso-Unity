@@ -9,6 +9,9 @@ first import about 6 min, a 13.5 s two-view 1280x720 film about 5 min. Done: the
 placeholder in three gesture tests, the Paete film rig (a human was casting his skills; `paete_skills_v2.mp4` sent).
 In flight, in this order: THORN HARVEST placed where he looks, LIANA LEAP's first person as his own arms, then Amihan's
 second pass (`docs/reports/amihan-kit-2026-09-26/`: plan, research from the game's own preview clips, cutscene direction).
+**Every ask of this session, with its state, is `docs/TODO.md` ASKS-0926** (owner: *"pls log all todo i asked u for when i go
+to diff session"*): the QA relay fix (awaiting a tester), Paete's E (recast gate, outside the box), the tansan grant (needs a UGS
+deploy, and a revert before release), Paete's preview size, the interact prompt, the walk's arms, and Amihan's whole pass.
 
 ## HERO-9 Paete, Unity pass on the cloud work, 2026-09-26 (worktree `TumbangPreso-Unity-paete`, pushes to ASTRAReworks)
 

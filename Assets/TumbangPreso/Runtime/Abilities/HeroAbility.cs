@@ -837,6 +837,17 @@ namespace TumbangPreso.Abilities
 
         public virtual bool CanReactivate => false;
 
+        /// <summary>
+        /// ⚠️ WHETHER A SECOND PRESS WOULD DO ANYTHING RIGHT NOW (owner, 2026-09-26, of Paete's BAKYA BLOOM: *"bug found unli
+        /// cast for e, supposed to have cooldown"*). A reactivating ability whose second press has nothing to act on (a pod with
+        /// no clog grown yet) answers false: the press is refused as NOT YET, so it plays no gesture and no sound and sends no
+        /// request, instead of looking like an endless cast. True by default, so every other ability is unchanged.
+        /// </summary>
+        public virtual bool ReactivateReady => true;
+
+        /// <summary>Seconds until <see cref="ReactivateReady"/> turns true, for the deck's label (0 when it is ready).</summary>
+        public virtual float ReactivateReadyIn => 0.0f;
+
         public virtual void Reactivate(AbilityContext ctx)
         {
             EndEarly(ctx);

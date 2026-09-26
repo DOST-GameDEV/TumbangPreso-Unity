@@ -135,7 +135,7 @@ namespace TumbangPreso.UI
             view.LoadoutName.text=person+" · "+can+" · "+shoe;
             view.ProfileName.text=GameServices.Account?.DisplayName??"YOUR PROFILE";
             view.ShowRoom(IsLobby && live && !ranked);
-            view.RoomCode.text="CODE  "+(net?.Lobby?.JoinCode??"");view.RoomAddress.text=live?HostAddress():"";
+            view.RoomCode.text="CODE: "+(net?.Lobby?.JoinCode??"");view.RoomAddress.text=live?HostAddress():"";
             view.JoinRoom.gameObject.SetActive(IsLobby && !ranked);
             view.Chat.gameObject.SetActive(IsLobby && live);
             view.Online.gameObject.SetActive(IsLobby && live && NetAuthority.IsHost && !ranked);

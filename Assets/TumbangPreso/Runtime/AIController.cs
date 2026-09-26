@@ -4310,6 +4310,27 @@ namespace TumbangPreso
             return most;
         }
 
+        /// <summary>
+        /// ⚠️ WHERE TO PLACE THORN HARVEST (it is placed where he looks since 2026-09-26, owner: *"castable and not cast on
+        /// body"*): his own feet, or over any opponent's slipper within `PaeteRules.ThornAimRange`, whichever takes the most,
+        /// preferring a spot that takes one being carried. The bot aims it the way a player does, by the aim point it sends.
+        /// </summary>
+        private int PaeteThornAim(Vector3 from, out Vector3 best, out bool carriedOut)
+        {
+            best = from;
+            int most = PaeteThornCount(from, out carriedOut);
+            foreach (var shoe in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            {
+                if (shoe == null || shoe.OwnerSlot == _motor.PlayerSlot) continue;
+                Vector3 at = shoe.transform.position; at.y = from.y;
+                Vector3 d = at - from; d.y = 0f;
+                if (d.magnitude > Core.PaeteRules.ThornAimRange) at = from + d.normalized * Core.PaeteRules.ThornAimRange;
+                int n = PaeteThornCount(at, out bool held);
+                if (n > most || (n == most && held && !carriedOut)) { most = n; best = at; carriedOut = held; }
+            }
+            return most;
+        }
+
         /// <summary>Slippers THORN HARVEST would take right now, and whether one of them is being carried out of the box.</summary>
         private int PaeteThornCount(Vector3 from, out bool carriedOut)
         {
@@ -4854,10 +4875,10 @@ namespace TumbangPreso
                 {
                     if (paete.IsDefending)
                     {
-                        // THORN HARVEST takes every slipper in 7 m, even out of hands: worth it for two, or for
-                        // one that is being carried out of the box right now.
-                        int reach = PaeteThornCount(myPos, out bool carriedOut);
-                        if (reach >= 2 || carriedOut) Consider(intent, Verb.Skill2, dt);
+                        // THORN HARVEST takes every slipper in 7 m of where it bursts, even out of hands: worth it for
+                        // two, or for one that is being carried out of the box right now. Placed where it takes most.
+                        int reach = PaeteThornAim(myPos, out var thornAt, out bool carriedOut);
+                        if (reach >= 2 || carriedOut) { intent.AimPoint = thornAt; Consider(intent, Verb.Skill2, dt); }
                     }
                     else
                     {

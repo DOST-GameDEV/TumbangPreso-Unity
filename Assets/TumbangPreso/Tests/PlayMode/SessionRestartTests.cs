@@ -56,6 +56,38 @@ namespace TumbangPreso.PlayTests
             onDone(task.Result);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ A NESTED SESSION STILL HOSTS (QA, 2026-09-26: *"Could not open an online room. (relay allocation failed: There
+        /// is no NetworkManager assigned to this instance!)"*). Netcode's `Initialize` returns silently for a NetworkManager
+        /// whose GameObject has a parent, and its clean-up then throws that message. Before the fix this host start failed
+        /// with it; `NetSession.PrepareManagerForStart` puts the object back at the root first.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator HostingWorksEvenWhenTheSessionWasNestedUnderSomething()
+        {
+            var net = NetSession.Ensure();
+            yield return null;
+            var holder = new GameObject("~TestHolder");
+            // Netcode reports the nesting itself, the moment it happens; that report is the fault being set up, not a failure.
+            LogAssert.Expect(LogType.Error, new System.Text.RegularExpressions.Regex("cannot be nested"));
+            net.transform.SetParent(holder.transform, true);
+            try
+            {
+                bool hosted = false;
+                yield return Await(net.StartHostAsync(), r => hosted = r);
+                Assert.IsTrue(hosted, "a nested session must still host. Status: " + net.Status);
+                Assert.IsNull(net.transform.parent, "the session object must be back at the root");
+                yield return new WaitForSecondsRealtime(0.3f);
+                Assert.IsTrue(net.IsNetworked, "the host should be listening");
+            }
+            finally
+            {
+                net.Stop();
+                if (net.transform.parent == holder.transform) net.transform.SetParent(null, true);
+                UnityEngine.Object.Destroy(holder);
+            }
+        }
+
         [UnityTest]
         public IEnumerator HostingAgainWhileAlreadyHostingSucceeds()
         {

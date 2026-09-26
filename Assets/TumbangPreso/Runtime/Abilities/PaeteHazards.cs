@@ -54,6 +54,22 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>
+        /// ⚠️⚠️ BAKYA BLOOM'S SPOT: <see cref="GroundTarget"/>, then moved out of the taya's box (owner, 2026-09-26: *"also make
+        /// paete's E only placeable outside box"*, `PaeteRules.PlantSpotOutsideBox`). Every peer runs it from the same accepted
+        /// cast, so the pot lands in one place everywhere.
+        /// </summary>
+        public static Vector3 PlantTarget(Vector3 feet, Vector3 forward, Vector3 aimPoint)
+        {
+            Vector3 p = GroundTarget(feet, forward, aimPoint, PaeteRules.PlantThrowRange);
+            float x = p.x, z = p.z;
+            PaeteRules.PlantSpotOutsideBox(ref x, ref z);
+            p.x = Mathf.Clamp(x, -AIController.PlayableHalfX + 0.5f, AIController.PlayableHalfX - 0.5f);
+            p.z = Mathf.Clamp(z, -AIController.PlayableHalfZ + 0.5f, AIController.PlayableHalfZ - 0.5f);
+            p.y = Slipper.GroundY(p);
+            return p;
+        }
+
+        /// <summary>
         /// ⚠️⚠️ THE GUARDIAN'S SPOT, KEPT OFF THE CAN (owner, 2026-09-27: *"make it so that it cant block the can too (dont let
         /// it be placed in a place it STANDS on can)"*). <see cref="GroundTarget"/>, then `PaeteRules.SentrySpotClearOfCan`
         /// against wherever the lata is now, upright or knocked down. Every peer runs this from the same accepted cast and
@@ -96,6 +112,9 @@ namespace TumbangPreso.Abilities
         public bool Landed => _age >= 0f;
         public bool Pullable => _age >= PaeteRules.PlantRootedSeconds && !_pulled;
         public bool ShotReady => Landed && !_pulled && _age >= _nextShot;
+
+        /// <summary>Seconds until the next clog has grown (the deck's countdown for the command, `PunlangTsinelas`).</summary>
+        public float ShotIn => Mathf.Max(0f, _nextShot - _age);
         /// <summary>How far the next wooden slipper has grown, 0 to 1, for the pod.</summary>
         public float ShotGrowth => Mathf.Clamp01(1f - (_nextShot - _age) / PaeteRules.PlantReloadSeconds);
 
@@ -347,11 +366,14 @@ namespace TumbangPreso.Abilities
     /// towards all players and PULL their slippers towards it"*, and: *"i want it too be ALL, even
     /// the ones on the hands"*.
     ///
-    /// Every slipper within `PaeteRules.ThornRange` of his feet that is not his own is caught: out
-    /// of a hand, out of the air, off the ground. Caught, held a beat (Scorpion's hold, research.md
-    /// § 2), then yanked to land `ThornLandDistance` from the construct. Never the lata: moving the
-    /// objective would be scoring outside `MatchDirector.AddScore`. Every peer draws it; only the
-    /// host moves slippers, and their positions already stream to everyone.
+    /// ⚠️⚠️ PLACED WHERE HE LOOKS (owner, 2026-09-26: *"I WANT IT to be castable and not cast on body"*). It used to burst
+    /// under his own feet. Now he stamps, a line of thorn shoots races through the court from his foot to the spot he chose
+    /// (`Visual.PaeteThornTrail`, `PaeteRules.ThornTrailSeconds`: up to 0.25 s), and the rattan BURSTS THERE: every slipper
+    /// within `PaeteRules.ThornRange` of the spot that is not his own is caught at that moment (out of a hand, out of the air,
+    /// off the ground), held a beat (Scorpion's hold, research.md § 2), then yanked to land `ThornLandDistance` from the
+    /// construct. Never the lata: moving the objective would be scoring outside `MatchDirector.AddScore`. Every peer draws
+    /// it from the accepted cast; only the host moves slippers, and their positions already stream to everyone. The clock
+    /// starts NEGATIVE by the trail's time, so age 0 is the burst on every peer and everything after it is unchanged.
     /// </summary>
     public sealed class PaeteThorns : MonoBehaviour
     {
@@ -361,30 +383,42 @@ namespace TumbangPreso.Abilities
         private float _age;
         private readonly List<Slipper> _caught = new List<Slipper>();
         private readonly List<Vector3> _landAt = new List<Vector3>();
-        private bool _resolved;
+        private bool _burst, _resolved;
         private PaeteThornBody _body;
 
-        public static PaeteThorns Spawn(Vector3 origin, int ownerSlot)
+        public static PaeteThorns Spawn(Vector3 origin, Vector3 from, int ownerSlot)
         {
             var go = new GameObject("PaeteThorns");
             go.transform.position = origin;
             var t = go.AddComponent<PaeteThorns>();
             t.OwnerSlot = ownerSlot; t.Origin = origin;
-            // Which slippers the thorns reach for: the same test on every peer, so the vines every
-            // player sees go to the slippers the host is moving.
+            Vector3 run = origin - from; run.y = 0f;
+            float travel = PaeteRules.ThornTrailSeconds(run.magnitude);
+            t._age = -travel;
+            if (travel > 0f) Visual.PaeteThornTrail.Build(from, origin, travel);
+            else t.Burst();
+            return t;
+        }
+
+        /// <summary>
+        /// The rattan comes up: which slippers the thorns reach for is decided HERE, when it bursts, with the same test on
+        /// every peer, so the lashes every player sees go to the slippers the host is moving.
+        /// </summary>
+        private void Burst()
+        {
+            _burst = true;
             foreach (var shoe in Object.FindObjectsByType<Slipper>())
             {
-                if (shoe == null || !shoe.gameObject.activeInHierarchy || shoe.OwnerSlot == ownerSlot) continue;
-                Vector3 d = shoe.transform.position - origin; d.y = 0f;
+                if (shoe == null || !shoe.gameObject.activeInHierarchy || shoe.OwnerSlot == OwnerSlot) continue;
+                Vector3 d = shoe.transform.position - Origin; d.y = 0f;
                 if (d.magnitude > PaeteRules.ThornRange) continue;
-                t._caught.Add(shoe);
+                _caught.Add(shoe);
                 Vector3 dir = d.sqrMagnitude > 0.01f ? d.normalized : Vector3.forward;
-                t._landAt.Add(origin + dir * PaeteRules.ThornLandDistance);
+                _landAt.Add(Origin + dir * PaeteRules.ThornLandDistance);
             }
-            t._body = PaeteThornBody.Build(go.transform, t._caught);
-            GameServices.Audio?.PlayAt("sfx_paete_thorn_burst", origin);
-            Visual.PaeteGroundBreak.Spawn(origin, 1.0f);
-            return t;
+            _body = PaeteThornBody.Build(transform, _caught);
+            GameServices.Audio?.PlayAt("sfx_paete_thorn_burst", Origin);
+            Visual.PaeteGroundBreak.Spawn(Origin, 1.0f);
         }
 
         public float Age => _age;
@@ -393,7 +427,7 @@ namespace TumbangPreso.Abilities
         public Net.WorldEffectSnapshot.Field Capture() => new Net.WorldEffectSnapshot.Field
         {
             Type = Net.WorldEffectSnapshot.Kind.Thorns, Source = gameObject, Position = Origin, Forward = Vector3.forward,
-            Duration = PaeteRules.ThornConstructSeconds, Remaining = Mathf.Max(0f, PaeteRules.ThornConstructSeconds - _age),
+            Duration = PaeteRules.ThornConstructSeconds, Remaining = Mathf.Max(0f, PaeteRules.ThornConstructSeconds - Mathf.Max(0f, _age)),
             Radius = PaeteRules.ThornRange, Owner = OwnerSlot,
         };
 
@@ -405,7 +439,7 @@ namespace TumbangPreso.Abilities
             var t = go.AddComponent<PaeteThorns>();
             t.OwnerSlot = ownerSlot; t.Origin = origin;
             t._age = Mathf.Max(0f, age);
-            t._resolved = true;
+            t._burst = true; t._resolved = true;
             t._body = PaeteThornBody.Build(go.transform, t._caught);
             return t;
         }
@@ -413,13 +447,14 @@ namespace TumbangPreso.Abilities
         private void Update()
         {
             _age += Time.deltaTime;
-            _body.Pose(_age, Origin);
+            if (!_burst && _age >= 0f) Burst();
+            if (_body != null) _body.Pose(Mathf.Max(0f, _age), Origin);
             if (_age >= PaeteRules.ThornConstructSeconds) Destroy(gameObject);
         }
 
         private void FixedUpdate()
         {
-            if (!NetAuthority.ShouldResolve()) return;
+            if (!NetAuthority.ShouldResolve() || !_burst) return;
             if (!_resolved)
             {
                 _resolved = true;

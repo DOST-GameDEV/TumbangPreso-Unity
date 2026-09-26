@@ -139,16 +139,35 @@ namespace TumbangPreso.Abilities
             // on the owner and on every observer (`ApplyNetworkCast` takes the same path).
             private const string PlantAction = "hero-paete-sprout", CommandAction = "hero-paete-command";
 
+            private int _ownerSlot = -1;
+
             public override void Activate(AbilityContext ctx)
             {
                 CastAction = PlantAction; ViewmodelAction = "seed-toss"; CastCue = "sfx_cast_paete_sprout";
+                if (ctx?.Motor != null) _ownerSlot = ctx.Motor.PlayerSlot;
                 base.Activate(ctx);
+            }
+
+            // ⚠️⚠️ THE COMMAND WAITS FOR A CLOG (owner, 2026-09-26: *"bug found unli cast for e, supposed to have cooldown"*). The
+            // pod only ever threw a grown clog (`PaetePlant.Fire` checks `ShotReady`, 15 s between clogs), but every press while it
+            // lived played the command gesture and its sound, so spamming E looked and sounded like casting without a cooldown.
+            // Now a press with no clog is refused as NOT YET (`HeroAbility.ReactivateReady`), and the deck counts down to the next
+            // clog instead of saying "Again". With no plant left the press still ends the ability, as before.
+            public override bool ReactivateReady
+            {
+                get { var plant = PaetePlant.OwnedBy(_ownerSlot); return plant == null || plant.ShotReady; }
+            }
+
+            public override float ReactivateReadyIn
+            {
+                get { var plant = PaetePlant.OwnedBy(_ownerSlot); return plant == null ? 0f : plant.ShotIn; }
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 if (ctx?.Motor == null) return;
-                Vector3 at = PaeteVine.GroundTarget(ctx.Position, ctx.Forward, ctx.AimPoint, PaeteRules.PlantThrowRange);
+                // Outside the taya's box only (owner, 2026-09-26: *"also make paete's E only placeable outside box"*).
+                Vector3 at = PaeteVine.PlantTarget(ctx.Position, ctx.Forward, ctx.AimPoint);
                 PaetePlant.Spawn(ctx.Position + Vector3.up * 1.2f, at, ctx.Motor.PlayerSlot);
             }
 
@@ -183,19 +202,29 @@ namespace TumbangPreso.Abilities
 
             public Bawi()
                 : base("paete_skill2d", "THORN HARVEST",
-                       "Defending. Thorns burst from your feet, snatch every slipper within 7 m, even out of hands, and drag them home to you.",
+                       "Defending. Hold to place it: thorns race there, snatch every slipper within 7 m, even out of hands, and drag them in.",
                        PaeteRules.ThornCooldown, 0.0f, AbilityGlyph.PaeteThorn,
-                       summary: "Thorns snatch every slipper nearby, even from hands.",
+                       summary: "Placed thorns snatch every slipper near, even from hands.",
                        // The ring is the construct itself, not its 7 m reach: the reach is caught in one frame and
                        // leaves nothing on the ground for a bot to path round (`AiTuning.HazardAvoidMaxRadius`).
                        telegraphRadius: 0.8f, telegraphRange: 0.0f,
                        castAction: "hero-paete-thorns", viewmodelAction: "thorn-stamp",
-                       castCue: "sfx_cast_paete_thorns") { }
+                       castCue: "sfx_cast_paete_thorns")
+            {
+                // ⚠️⚠️ PLACED, NOT ON HIS BODY (owner, 2026-09-26: *"I WANT IT to be castable and not cast on body make it possible
+                // for him to place it somewhere else like his ult and other skill"*). The same hold-to-aim as his ultimate: the ring
+                // shows where he looks while held, release casts, the commit carries the spot (`HeroAbility.AimsWhereLooking`),
+                // from his own feet out to `PaeteRules.ThornAimRange`.
+                AimByHolding(PaeteRules.ThornAimMinRange, PaeteRules.ThornAimRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f, whereLooking: true);
+            }
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 if (ctx?.Motor == null) return;
-                PaeteThorns.Spawn(ctx.Position, ctx.Motor.PlayerSlot);
+                // He still stamps: the thorns leave from his foot and race through the court to the spot (`PaeteThorns`).
+                Vector3 at = AimedDestination(ctx);
+                at.y = ctx.Position.y;
+                PaeteThorns.Spawn(at, ctx.Position, ctx.Motor.PlayerSlot);
                 ctx.Motor.GetComponentInChildren<CharacterSquashStretch>()?.Squash(0.12f);
             }
         }

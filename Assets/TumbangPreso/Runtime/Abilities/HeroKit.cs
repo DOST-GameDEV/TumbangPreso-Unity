@@ -420,7 +420,7 @@ namespace TumbangPreso.Abilities
         private CastOutcome CheckFire(HeroAbility ability,AbilityContext ctx)
         {
             if(ability==null)return CastOutcome.Missing;
-            if(ability.IsActive&&ability.CanReactivate)return CastOutcome.Cast;
+            if(ability.IsActive&&ability.CanReactivate)return ability.ReactivateReady?CastOutcome.Cast:CastOutcome.NotYet;
             if(PracticeMode)return CastOutcome.NotYet;
             if(!ability.IsReady)return CastOutcome.Cooling;
             if(ctx?.Motor!=null&&!ctx.Motor.CanAct())return CastOutcome.CannotAct;

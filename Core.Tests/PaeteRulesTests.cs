@@ -22,6 +22,34 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void TheThornsArePlacedWithinHisPlantsReachAndArriveInOneHoldBeat()
+        {
+            // "make it possible for him to place it somewhere else like his ult and other skill"
+            Assert.Equal(PaeteRules.PlantThrowRange, PaeteRules.ThornAimRange);
+            Assert.Equal(0.0f, PaeteRules.ThornAimMinRange);
+            Assert.Equal(0.25f, PaeteRules.ThornTrailSeconds(PaeteRules.ThornAimRange), 3);
+            Assert.True(PaeteRules.ThornTrailSeconds(PaeteRules.ThornAimRange) <= PaeteRules.ThornHoldSeconds);
+            Assert.Equal(0.0f, PaeteRules.ThornTrailSeconds(0.3f));
+            Assert.Equal(0.0f, PaeteRules.ThornTrailSeconds(PaeteRules.ThornTrailMinDistance));
+            Assert.True(PaeteRules.ThornTrailSeconds(3.0f) > 0.0f);
+        }
+
+        [Theory]
+        [InlineData(2f, -3f, 2f, -7.6f)]    // inside, nearest the south edge: out across it
+        [InlineData(-5f, 1f, -7.6f, 1f)]    // nearest the west edge
+        [InlineData(0f, 0f, 7.6f, 0f)]      // dead centre: ties go to X, the same answer on every peer
+        [InlineData(9f, 2f, 9f, 2f)]        // already outside: untouched
+        [InlineData(6.9f, 6.95f, 6.9f, 7.6f)]
+        public void APlantAimedIntoTheBoxLandsJustOutsideIt(float x, float z, float wantX, float wantZ)
+        {
+            // "only placeable outside box"
+            PaeteRules.PlantSpotOutsideBox(ref x, ref z);
+            Assert.Equal(wantX, x, 3);
+            Assert.Equal(wantZ, z, 3);
+            Assert.False(Confinement.IsInsideBox(x, z));
+        }
+
+        [Fact]
         public void AWoodenSlipperKnockdownIsWorthLessThanARealOne()
         {
             // "maybe lessened plus": more than nothing, less than a knockdown.

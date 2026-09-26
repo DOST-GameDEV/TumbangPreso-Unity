@@ -77,6 +77,56 @@ namespace TumbangPreso.CameraSystem
             return true;
         }
 
+        /// <summary>
+        /// ⚠️⚠️ WHERE A FIRST-PERSON ARM IS DRAWN, NOT WHERE IT RESTS (HERO-9, owner 2026-09-26, of LIANA LEAP from his own
+        /// eyes: *"make it look like its actually his arms extending bcz it doesnt look like taht"*). The drawn arm is lensed
+        /// per render (`BeginViewFrame`: pulled toward a fixed 95 degree look, lowered 8 cm, scaled), so a world object started
+        /// at the RESTING hand (`TryHandTip`) sat beside the hand on screen, and Paete's braid read as planks next to his arms.
+        /// This applies the own camera's framing for a moment, reads the arm's front face (the hand), its back end (where it
+        /// comes into view) and its half-width across the view, and puts everything back. Never called inside a render.
+        /// </summary>
+        public bool TryDrawnArm(bool left, out Vector3 hand, out Vector3 back, out float halfWidth)
+        {
+            hand = back = default; halfWidth = 0f;
+            var arm = left ? _leftArmRenderer : _rightArmRenderer;
+            if (arm == null || !arm.enabled || !arm.gameObject.activeInHierarchy || _viewFrames.Count > 0) return false;
+            if (!EnsureViewLens() || _viewCamera == null) return false;
+            var camera = _viewCamera;
+            Vector3 position = transform.localPosition, scale = transform.localScale, lens = _viewLens.localScale;
+            float weight = Mathf.Clamp01(WorldCueProfile.Current.ViewmodelFraming);
+            float compensate = Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad * .5f) / Mathf.Tan(FixedViewmodelFov * Mathf.Deg2Rad * .5f);
+            float lensScale = Mathf.Lerp(1, compensate, weight);
+            try
+            {
+                _viewLens.localScale = Vector3.Scale(lens, new Vector3(lensScale, lensScale, 1));
+                transform.localPosition = position + Vector3.down * (.08f * weight);
+                transform.localScale = scale * Mathf.Lerp(1, .64f / CameraRig.ViewmodelScale, weight);
+                Vector3 f = camera.transform.forward, r = camera.transform.right, c = arm.bounds.center, e = arm.bounds.extents;
+                float reach = Mathf.Abs(f.x) * e.x + Mathf.Abs(f.y) * e.y + Mathf.Abs(f.z) * e.z;
+                hand = c + f * reach * 0.85f;
+                back = c - f * reach * 0.85f;
+                halfWidth = Mathf.Abs(r.x) * e.x + Mathf.Abs(r.y) * e.y + Mathf.Abs(r.z) * e.z;
+            }
+            finally
+            {
+                _viewLens.localScale = lens; transform.localPosition = position; transform.localScale = scale;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// ⚠️ PAETE'S FOREARMS LENGTHEN AS HIS VINES LEAVE THEM (the same owner note as `TryDrawnArm`): 0 is his rest, 0.35 is a
+        /// third again as long. His arms are bark with the vines already in them (v16), so in his own eyes the arm itself
+        /// reaches, then the strands pour out of its end. Only Paete's arms; any other hero's call is ignored.
+        /// </summary>
+        public void SetReachStretch(float stretch)
+        {
+            if (_currentHeroId != "paete") return;
+            var length = new Vector3(PaeteArmBulk, 1.0f + Mathf.Clamp(stretch, 0f, 0.6f), PaeteArmBulk);
+            if (_rightArm != null) _rightArm.localScale = length;
+            if (_leftArm != null) _leftArm.localScale = length;
+        }
+
         /// <summary>The two drawn arms (HERO-9 v5: Paete's channel lights his own hands in first person, `Visual.PaeteChannelGlow`).</summary>
         public bool TryArmRenderers(out MeshRenderer left, out MeshRenderer right)
         {

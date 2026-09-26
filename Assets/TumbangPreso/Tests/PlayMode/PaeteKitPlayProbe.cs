@@ -162,12 +162,23 @@ namespace TumbangPreso.PlayTests
             var shoe = holder.GetComponent<Carrier>().Held;
             holder.Teleport(new Vector3(4.5f, .12f, -4));
             yield return new WaitForSeconds(.2f);
+            // ⚠️ PLACED WHERE HE LOOKS (owner, 2026-09-26: *"castable and not cast on body"*): aimed 5 m away, past the holder,
+            // so the rattan must travel there, burst THERE and haul the slipper into itself, not to his feet.
+            var spot = new Vector3(5f, 0f, -4f);
+            paete.Intent.AimPoint = spot;
             yield return Press(paete, Verb.Skill2);
+            var thorns = Object.FindFirstObjectByType<PaeteThorns>();
+            Assert.IsNotNull(thorns, "THORN HARVEST put no thorns down.");
+            float placedOff = Vector3.Distance(Flat(thorns.Origin), Flat(spot));
             yield return new WaitForSeconds(1.4f);
-            float home = Vector3.Distance(Flat(shoe.transform.position), Flat(paete.transform.position));
+            float home = Vector3.Distance(Flat(shoe.transform.position), Flat(spot));
+            float fromHim = Vector3.Distance(Flat(shoe.transform.position), Flat(paete.transform.position));
             Note("thorn_took_from_hand", holder.GetComponent<Carrier>().Held != shoe); Note("thorn_slipper_distance_m", home);
+            Note("thorn_placed_off_aim_m", placedOff); Note("thorn_slipper_from_paete_m", fromHim);
+            Assert.Less(placedOff, 0.3f, "THORN HARVEST did not burst where he aimed it.");
             Assert.AreNotSame(shoe, holder.GetComponent<Carrier>().Held, "THORN HARVEST left the slipper in the holder's hand.");
-            Assert.Less(home, 2.2f, "The slipper was not hauled home.");
+            Assert.Less(home, 2.2f, "The slipper was not hauled into the thorns where he placed them.");
+            Assert.Greater(fromHim, 3f, "The slipper went to his feet, not to the thorns he placed.");
         }
 
         [UnityTest, Timeout(90000)]
@@ -640,7 +651,8 @@ namespace TumbangPreso.PlayTests
                     if (fireAt > 0f && t >= fireAt - .2f) attacker.Intent.AimPoint = lata.transform.position;
                     bool pressPlant = t > 2.6f && t < 2.8f, pressFire = fireAt > 0f && t > fireAt && t < fireAt + .2f;
                     attacker.Intent.Set(Verb.Skill2, pressPlant || pressFire);
-                    // THORN HARVEST.
+                    // THORN HARVEST, placed beside the holder (owner, 2026-09-26: *"castable and not cast on body"*), off the can.
+                    if (t > 9.6f) defender.Intent.AimPoint = can + new Vector3(0.4f, 0f, -2.8f);
                     defender.Intent.Set(Verb.Skill2, t > 9.9f && t < 10.1f);
                     yield return null;
                     reeled |= Vector3.Distance(Flat(attacker.transform.position), Flat(start)) > 3f;

@@ -54,6 +54,11 @@ to UX-1 and each REFINE-2 map/character/aspect, without dropping unfinished task
 
 ### Priority order, rethought 2026-09-23
 
+**Owner override, 2026-09-26: ASKS-0926 below comes FIRST, newest ask first** (*"in the todo section
+prioritize most recent assks and ask handoff ltr to prioritize it as well"*). Every handoff from here
+on points the next session at ASKS-0926 before anything else in this file. The order underneath
+stands for everything else.
+
 **Owner override,2026-09-24:** the cloud work pushed in4f62fcc5c is the immediate
 priority: native review, actual visual critique and bug fixes before resuming the
 older queue. Follow [the local intake plan](reports/cloud-integration-2026-09-24/plan.md).
@@ -97,6 +102,108 @@ VOICE-1 uses human recordings only, and the20remaining world-skill VFX/SFX remai
 reads better even with today's lighting, and because it removes HUD and text that P2's
 captures would otherwise have to be retaken around. Paperwork (P6) moved behind visible
 work because the owner's standing complaint is loops that do not change the game.
+
+### ASKS-0926 · Every owner ask of the 2026-09-26 cloud session, in one list ⚠️ OPEN, 2026-09-26
+
+Owner, 2026-09-26: *"pls log all todo i asked u for when i go to diff session ty"*. This is the whole
+list from the cloud session (Unity 6000.5.8f1 on Linux, `tools/cloud_unity_setup.sh`), each with where
+the work lives and what done looks like. ⚠️⚠️ **NEWEST ASK FIRST, and this list comes before everything
+else in the queue** (owner, same day: *"in the todo section prioritize most recent assks"*): the open rows
+are ordered most recent first, the finished ones follow. A row that belongs to a bigger entry
+points at it rather than copying it. Nothing here is ticked without evidence.
+
+- [ ] **The walk looks wrong: the hands stay close to the body** (*"the walkingh animation looks so
+  weird, hands close to body"*). Same complaint as REFINE-2.9b (Sean's arms stick to his body), which
+  `CharacterAnimator.LocomotionArms.cs` answered with a FIXED spread (walk 14 degrees, run 18) for every
+  body. Plan: solve the spread per body from its own geometry (torso half-width against the shoulder
+  pivot and arm length, measured off the visible skin) so the fist clears the hip by a set gap, widen
+  the walk swing, and check the slow-walk blend (`_armSwingAmount` ramps over 0.8 m/s above
+  `WalkSpeedThreshold` 0.4, so a slow walk shows the clip's pressed arms). Done looks like: every roster
+  body filmed walking front-on and side-on with the closest hand-to-hip gap measured and stated, and
+  the owner's eye on it.
+- [ ] **Every recast of Paete's attacking E throws a wooden slipper** (*"paete attacking e is supposed to
+  throw a wooden slipper whenever u recast it"*). With the fix above every ACCEPTED recast throws a clog;
+  a press before the next clog has grown is refused with its countdown. Open: the owner's eye on it in
+  play; if he wants a throw on literally every press, the 15 s growth becomes the throw cooldown and
+  that number is his to give.
+- [ ] **Paete looks small and scuffed on the hero screen and on character select** (*"why is paete so
+  small here"*, *"can u make the size paete bigger he looks so small and scuffed"*). Cause found:
+  `ModelPreview.Frame()` sets the camera distance from the REST-pose bounds, and Paete's long T-posed
+  arms make his width, not his height, decide the distance, so the body is drawn at a fraction of
+  Cheska's height. Done looks like: frame on the standing height (or the idle pose's bounds), Paete's
+  body height on screen within 10 per cent of Cheska's on both screens, photographed at the owner's
+  window shape and a phone shape, and no other hero's framing moved by more than a few per cent.
+- [ ] **A prompt showing which button to press whenever something can be interacted with** (*"make it so
+  that theres ui showing what button to click when theres smth to interact with"*). Inventory first:
+  every Interact use (Paete's plant uproot and the 7 s rooted break-out, the can raise, pickups, doors
+  in the hub if any), then one prompt component near the reticle reading the live binding through
+  `Rebinding.DisplayNameFor(asset, action, device)` for mouse and keyboard, pad and touch (on touch it
+  points at the thumb target). Photograph each prompt on all three devices (CLAUDE.md 4a).
+- [ ] **Everyone gets 999999 tansan so the testers can unlock everything** (*"unlock all"* was asked and
+  withdrawn in the next message). Built: `ugs/cloud-code/wallet.js` `PLAYTEST_TOPUP = 999999` tops every
+  loaded wallet up (`tools/test_wallet_script.js` passes). OPEN: the OWNER must deploy `wallet.js` to the
+  UGS project (`dcf0831e-...`), nothing changes in game until then. ⚠️⚠️ TEMPORARY: before any public
+  build set `PLAYTEST_TOPUP = 0` and redeploy (balances already topped up stay topped up; resetting them
+  is a separate decision for the owner).
+- [ ] **LIANA LEAP from his own eyes looks like his arms extending**, then *"it doesnt bend with arms
+  tho"*. HERO-9 row "LIANA LEAP from his own eyes". The bend (`PaeteVineReach.BendAlongArm`: the vine
+  leaves along the drawn forearm and curves to the anchor) is built and looked at in the owner-view
+  frames; open until the owner has seen it.
+- [ ] **Online rooms fail for QA:** *"Could not open an online room. (relay allocation failed: There is
+  no NetworkManager assigned to this instance!)"*. Found: Netcode 2.13.1's `StartHost` sets the role and
+  then `Initialize` returns early (a nested NetworkManager, or a lost transport) before
+  `ConnectionManager.Initialize`; the failed start's shutdown then throws exactly that message from
+  `GetServerTransportId`. Built: `NetSession.PrepareManagerForStart` (unparents a nested session, restores
+  a lost transport) and `StartNetcode`, which rebuilds the manager once and retries, around all four
+  starts (LAN host, LAN join, relay host, relay join); the status line names the real problem. Evidence
+  so far: `SessionRestartTests` 3/3 in the cloud (`Logs/cloud5/playmode.xml`), including the new
+  `HostingWorksEvenWhenTheSessionWasNestedUnderSomething`.
+  OPEN until a QA tester opens a relay room on the new build (UGS sign-in is refused in cloud
+  batchmode, so the relay path cannot be run here). The two `OwnerPreparationTests` 90 s timeouts in
+  the cloud look environmental; re-run them on Windows.
+- [ ] **THORN HARVEST placed where he looks, not on his body.** HERO-9 row of that name.
+- [ ] **Amihan, thoroughly** (*"thoroughly make sure amihan's animations look great"*, *"thorouighly think
+  and create each detail of the skills, all vfx, sfx, animation each part / dont js mass prooduce witha
+  script"*). Each piece hand-made and looked at:
+  - [ ] The owner's updated table (ABILITY-2 row "Owner's UPDATED tables"): DRIFT two charges, each back
+    15 s after it is spent (a timed refill, the one owner-written exception to event-only charges);
+    FEATHERFALL 5 s of flight on a 40 s cooldown, moving and throwing in the air; WHIRLWIND 35 s;
+    AIRBURST. Names in the kit, descriptions within the card limits.
+  - [ ] *"her yellow circle looked weird as fuck when she was floating"*: no ground ring under a flying
+    body (SKILLUI-1's first row covers the rest of the rings).
+  - [ ] *"she didnt have a flaot animation too and any VFX"*: a hand-keyed hover loop with launch and
+    landing, a flight lean into the direction of travel, and VFX that show the wind holding her up
+    (curls round her shins, streaks rising past her, the court's dust turning under her).
+  - [ ] *"visually show the win actually assisting her or working in her skills"*: DRIFT a gust at her
+    back and visible shoves on the bodies she passes; WHIRLWIND lifting and turning what it catches;
+    AIRBURST per its direction. Drift is barely visible today.
+  - [ ] *"thoroughly think abt the hold indicators as well for the casting"*: her four on CAST-1.
+  - [ ] The ultimate cutscene (*"use genshin impact and other game ULT cutscene animations as
+    reference"*): direction written in `docs/reports/amihan-kit-2026-09-26/direction.md` (BREATH, WHIRL,
+    THE TAKE, 6.2 s); build it, film it, iterate.
+  - [ ] The Whirled overhead badge reads as a big disc; redraw it.
+  - [ ] `AmihanKitPlayProbe.FilmHerSkillsInAMatch`: start her OUTSIDE the box (FEATHERFALL is refused
+    inside it, which the first film showed), then film all four and send.
+
+- [x] **Paete's E is placeable only outside the taya's box** (*"make paete's E only placeable outside
+  box"*). `PaeteRules.PlantSpotOutsideBox` pushes an aimed spot inside the box (half-size 7 m) across its
+  nearest edge by 0.6 m plus the plant's radius (ties go to X); `PaeteVine.PlantTarget` applies it, so
+  bots and every peer agree. Core `APlantAimedIntoTheBoxLandsJustOutsideIt`. Protocol 60.
+- [x] **Paete's E (BAKYA BLOOM) could be recast without limit** (*"unli cast for e / supposed to have
+  cooldown"*). The recast only throws once a clog has grown (3 s after planting, then every 15 s); the
+  presses in between played the gesture and the sound and threw nothing. Now `HeroAbility.ReactivateReady`
+  and `ReactivateReadyIn` let a kit refuse a recast: `HeroKit.CheckFire` answers NotYet, and the tile
+  shows the countdown instead of "Again" (`TumpPowerReadout`, both decks). Cloud PlayMode:
+  `PaeteKitPlayProbe.TheSeedlingGrowsFiresAndComesOutOnlyWhenLoose` passes (`Logs/cloud5/playmode.xml`).
+- [x] **"CODE: 3CHS"**: the colon added in both places the room code is drawn
+  (`ConvertedMatchSetup.OwnerPainted.cs`, `Hub/HubCustom.cs`).
+- [x] **The Paete skills film showed a human casting his plant skills.** Fixed in the film rig (the
+  HERO-9 row "The skills film showed a HUMAN"). Film v2 sent; v3 (placed thorns and first-person arms)
+  stitched locally, v4 comes from the run that checks the bend below.
+- [x] **Unity in the cloud.** `tools/cloud_unity_setup.sh` (install plus Personal activation from
+  `UNITY_EMAIL` and `UNITY_PASSWORD`), `tools/run_unity_guarded.py` resolves Unity, the player profile
+  and `xvfb-run` per OS (`tools/test_run_unity_guarded.py` 10/10). PlayMode films render at about
+  1.3 frames per wall second on llvmpipe. The account used was the owner's throwaway; never commit it.
 
 ### HERO-8 · Amihan, the eighth hero (Vigan, wind) ⚠️ OPEN, 2026-09-25
 
@@ -559,6 +666,26 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   purpose. The gesture tests (`RosterArmGeometryTests`, `HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions` and
   `ViewmodelArms_PreservesHeldSlipperAndActions_AcrossCharacterSwaps`) now skip a placeholder, which stops matching the day its hero's real
   skill replaces it. Cloud EditMode: `RosterArmGeometryTests` 3/3 (`Logs/paete-cloud2/editmode.xml`).
+- [ ] **THORN HARVEST placed where he looks, not on his body (owner, 2026-09-26: *"I WANT IT to be castable and not cast on body make
+  it possible for him to place it somewhere else like his ult and other skill (do they do that already?)"*; answer: BAKYA BLOOM and
+  MAKILING'S EMBRACE already were, LIANA LEAP aims at a spot, THORN HARVEST alone was on his feet).** Built: the same hold-to-aim as his
+  ultimate (`AimByHolding(..., whereLooking: true)`, from his feet out to `PaeteRules.ThornAimRange`, 6 m, PROPOSED: BAKYA BLOOM's reach);
+  he still stamps, and a line of the rattan's own thorn shoots races through the court to the spot (`Visual.PaeteThornTrail`, ten shoots
+  typed by hand, 24 m/s, at most 0.25 s, one hold beat) where the rattan bursts and catches every slipper within 7 m of THAT spot, which
+  land 1 m from it. The catch set is decided at the burst. Bots place it where it takes most (`AIController.PaeteThornAim`). Protocol
+  60 (every peer computes the spot and the trail). Core 653/653 (`TheThornsArePlacedWithinHisPlantsReachAndArriveInOneHoldBeat`).
+  Cloud PlayMode 2026-09-26 (`Logs/cloud5/playmode.xml`, 6/6): `ThornsTakeASlipperOutOfAHand` (aims 5 m away, asserts the burst
+  spot and that the slipper went to the thorns, not to him) passes; filmed in `FilmHisSkillsInAMatch`. Open: the owner's verdict on
+  the 6 m reach in play.
+- [ ] **LIANA LEAP from his own eyes: his arms extending (owner, 2026-09-26, on a first-person frame: *"refine this too for his point of
+  view make it look like its actually his arms extending bcz it doesnt look like taht"*).** Found: the braid started at the RESTING hand
+  while the drawn arm is lensed per render (pulled toward a 95 degree look, lowered 8 cm), so the two thick bark limbs sat beside the
+  hands as planks. Built: `ViewmodelArms.TryDrawnArm` reads where the arm is DRAWN; his first-person forearms lengthen a third with the
+  reach (`SetReachStretch`); each braid starts inside the drawn forearm, 30 % back from the hand, no wider than the arm. Then *"it
+  doesnt bend with arms tho"*: `PaeteVineReach.BendAlongArm` re-lays the centreline as a curve that leaves along the drawn forearm's
+  own direction (a control point a third of the way out, at least 35 cm) and bends to the anchor, the sag and wave riding on top.
+  Looked at in the skills film's owner view (`Logs/cloud5/paete-skills-film/owner/`, frames 24 to 56): both vines now run on from
+  the forearms and curve out to the anchor. Open: the owner's eye on it.
 - [x] **The skills film showed a HUMAN casting Paete's skills (owner, 2026-09-26: *"idk why a fkn CHARACTER was the one doing the shit
   instead of the plants"*). FIXED in the film rig, not the game:** `PaeteKitPlayProbe.Paete()` re-bound the kit on a seat the match had
   already dressed as someone else, so the taya casting THORN HARVEST was a curly-haired human, and the one seat that did wear Paete was the

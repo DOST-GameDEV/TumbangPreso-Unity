@@ -44,7 +44,9 @@ const GOLDEN = {
     assert.ok(w.Owned.includes("hero:zack") && w.Owned.includes("slipper:heels"), "migration keeps played picks");
     assert.ok(!w.Owned.includes("hero:maring"), "classic people are not sold");
     assert.strictEqual(out.paid, 2 * (25 + 40), "two first places pay");
-    assert.strictEqual(w.Balance, 300 + 130);
+    // The TEMPORARY PLAYTEST GRANT (wallet.js `PLAYTEST_TOPUP`) tops every loaded wallet up; 0 restores the real numbers.
+    const topup = wallet.rules.PLAYTEST_TOPUP || 0;
+    assert.strictEqual(w.Balance, Math.max(300 + 130, topup));
 
     out = await wallet({ params: { action: "load" }, context: ctx });
     assert.strictEqual(out.paid, 0, "settling twice pays once");
@@ -53,9 +55,9 @@ const GOLDEN = {
     assert.strictEqual(out.result, "owned");
     out = await wallet({ params: { action: "buy", item: "slipper:loafers" }, context: ctx });
     assert.strictEqual(out.result, "bought");
-    assert.strictEqual(JSON.parse(out.wallet).Balance, 430 - 300);
+    assert.strictEqual(JSON.parse(out.wallet).Balance, Math.max(430, topup) - 300);
     out = await wallet({ params: { action: "buy", item: "hero:nemu" }, context: ctx });
-    assert.strictEqual(out.result, "poor");
+    assert.strictEqual(out.result, topup > 0 ? "bought" : "poor");
     out = await wallet({ params: { action: "buy", item: "hero:maring" }, context: ctx });
     assert.strictEqual(out.result, "unknown");
 
