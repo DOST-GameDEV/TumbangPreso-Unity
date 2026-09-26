@@ -98,11 +98,20 @@ reads better even with today's lighting, and because it removes HUD and text tha
 captures would otherwise have to be retaken around. Paperwork (P6) moved behind visible
 work because the owner's standing complaint is loops that do not change the game.
 
-### BUGS-0926 · Owner bug list on the lighting branch ⚠️ IN PROGRESS, 2026-09-26
+### BUGS-0926 · Owner bug list on the lighting branch ⚠️ IN PROGRESS, 2026-09-26 (all six fixed; .1 and .6 await a look in play)
 
 Owner, 2026-09-26, six non-gameplay bugs on `merge/astra-lighting-2026-09-25`. Each fix is one
-commit. Source-level fixes; none of them has had a Unity run on this machine yet unless the
-line says so, so "fixed" below means written and reviewed, not played.
+commit.
+
+Evidence (`484562c9`, Mac, one PlayMode launch, total 5 failed 0):
+`HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` (.2, .4),
+`HubFlowTests.QueuePlateMatchFoundCharacterSelectLobbyAndLoadingAreDrawn` (.3),
+`WorldCourtCueTests.LightingStyleThumbnails` and
+`TumpNativeSettingsTests.LightingStyleCardsSwitchTheLookAndJoinSaveAndDiscard` (.5, photograph in
+[reports/bugs-0926/](reports/bugs-0926/lighting-style-cards-1920x1080.png)), and
+`HomeFlowTests.TitleIsOnePressAndKeepsHerStreetMoving` (the title still builds with one press
+target). Not covered by a test: an actual keyboard key on the title (.1) and the stamina arc in a
+live match (.6); both want a look in the owner's editor.
 
 - [x] BUGS-0926.1 The title screen ("Click anywhere to continue.") also continues on any keyboard key.
   `MenuNav.KeyboardAnyPressed` (any key except Escape, which still quits from the title, and
