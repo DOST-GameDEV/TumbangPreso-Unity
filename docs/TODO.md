@@ -251,7 +251,7 @@ Brainchild's cartoon towns. **Not registered**: it is not in `SceneFlow.Maps`, `
 
 **Read [LAGOON_REWORK_GUIDE.md](LAGOON_REWORK_GUIDE.md) first** (references, art-style rules,
 rock rules, current layout, files, gameplay constraints, and the ordered plan in its § 8).
-Status: layout complete at cove v15 (`tools/author_lagoon_cove.py`), awaiting sign-off to texture;
+Status: layout complete at cove v16 (`tools/author_lagoon_cove.py`), awaiting sign-off to texture;
 nothing modelled or in Unity yet. Supersedes REFINE-2.6 for this map.
 
 ### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)

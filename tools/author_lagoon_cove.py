@@ -363,50 +363,113 @@ def shore_rocks(c, kit, rng):
 
 # ---------------------------------------------------------------- ground
 
-def vertex_colour_material(name):
-    """One material whose colour comes from the mesh's "Col" attribute. SELF-REVIEW v6: the
-    ground was coloured per FACE, so every sand, grass and court edge was a staircase of 1.35 m
-    cells, plainly visible from the aerial and along the beach. Per-VERTEX colour blends across
-    one cell instead, so the edges read as soft painted boundaries."""
-    m = bpy.data.materials.get(name)
+# ⚠️ HOW THE GROUND IS PAINTED, AND WHY NOT PER-VERTEX COLOURS.
+# v7 to v15 gave each grid vertex a finished colour (court, grass, sand, rock). Neighbouring
+# vertices then blended across a 1.15 m cell, so every boundary was a soft STAIRCASE following
+# the grid (owner on v15, pointing at the court edge: "you'll need to retopologize the edges i
+# think. unless you can figure out how to fix this jagged texture/color stuff").
+# The fix is not topology. Each vertex now stores CONTINUOUS signed fields in metres (how far
+# inside the court, a grass pocket, the sand, the steep ground...), and the material cuts each
+# field at zero with a narrow smoothstep. A linearly interpolated continuous field crosses zero
+# along a straight line inside every triangle, so the boundary is a smooth curve at any grid
+# size, crisp like a painted edge. A little noise added to the fields wobbles the edges by hand.
+# The same fields become the splat masks when the ground is textured (guide § 8).
+GROUND_FIELDS = ("court_in", "grass_in", "sand_in", "wet_depth", "steep", "ring")
+SEABED_SHALLOW, SEABED_DEEP = (0.52, 0.70, 0.52), (0.14, 0.38, 0.32)
+
+
+def ground_fields(x, y, z, slope_z):
+    """Signed fields in metres, positive INSIDE the region they name."""
+    court_in, grass_in = -99.0, -99.0
+    for name, px, py, pz, rx, ry, surface in POCKETS:
+        f = (1.0 - math.hypot((x - px) / rx, (y - py) / ry)) * min(rx, ry)
+        if surface == "court":
+            court_in = max(court_in, f)
+        else:
+            grass_in = max(grass_in, f)
+    return {
+        "court_in": court_in,
+        "grass_in": grass_in,
+        "sand_in": (BEACH + 0.5 - z) * 4.0,            # the beach, by height (4x: metres of run)
+        "wet_depth": WATER - z,                        # under the water: the seabed
+        "steep": (0.75 - slope_z) * 12.0,             # steep ground is rock, never grass (v3)
+        "ring": (BEACH + 4.0 - peak_height(x, y)),     # the outer ring is grass, not fill (v2)
+    }
+
+
+def ground_material():
+    """Layers, lowest first: rock fill, ring grass, steep rock, sand, seabed, pocket grass,
+    court. Each is a Mix whose factor is smoothstep(-w, w, field + wobble)."""
+    m = bpy.data.materials.get("ground_painted")
     if m:
         return m
-    m = bpy.data.materials.new(name)
+    m = bpy.data.materials.new("ground_painted")
     if m.node_tree is None:
         m.use_nodes = True
     nt = m.node_tree
     bsdf = nt.nodes["Principled BSDF"]
     bsdf.inputs["Roughness"].default_value = 0.9
-    attr = nt.nodes.new("ShaderNodeVertexColor")
-    attr.layer_name = "Col"
-    nt.links.new(attr.outputs["Color"], bsdf.inputs["Base Color"])
-    return m
-
-
-def ground_colour(x, y, z, slope_z):
-    """The ground's colour at one vertex: pocket surface, beach sand, steep rock or ring grass."""
     C = B.COLOURS
-    pocket, _d = pocket_at(x, y)
-    if pocket is not None:
-        return C[pocket[6]]
-    if z < WATER - 0.05:
-        # THE SEABED shows through the clear shallows (the owner's stylized water reference):
-        # wet sand already tinted teal at the waterline (v12: dry-sand colour under the clear
-        # water washed it to milky mint), darker and greener as it deepens.
-        k = _smoothstep(WATER, SEABED, z)
-        return tuple(a + (b - a) * k for a, b in zip((0.52, 0.70, 0.52), (0.14, 0.38, 0.32)))
-    if z <= BEACH + 0.5:
-        return C["sand"]
-    if slope_z < 0.75:
-        return C["rock_fill"]   # steep ground is rock, never grass (review v3: green cliffs)
-    if peak_height(x, y) < BEACH + 4:
-        return C["grass"]       # the outer ring: grass, not bare fill (review v2)
-    return C["rock_fill"]
+    coords = nt.nodes.new("ShaderNodeTexCoord")
+    wob = nt.nodes.new("ShaderNodeTexNoise")
+    wob.inputs["Scale"].default_value = 0.35
+    nt.links.new(coords.outputs["Object"], wob.inputs["Vector"])
+    wob_m = nt.nodes.new("ShaderNodeMapRange")           # noise 0..1 to -0.6..0.6 m
+    wob_m.inputs["To Min"].default_value, wob_m.inputs["To Max"].default_value = -0.6, 0.6
+    nt.links.new(wob.outputs["Fac"], wob_m.inputs["Value"])
+
+    def mask(field, width=0.12, wobble=True):
+        a = nt.nodes.new("ShaderNodeAttribute")
+        a.attribute_name = field
+        src = a.outputs["Fac"]
+        if wobble:
+            add = nt.nodes.new("ShaderNodeMath")
+            add.operation = "ADD"
+            nt.links.new(src, add.inputs[0])
+            nt.links.new(wob_m.outputs["Result"], add.inputs[1])
+            src = add.outputs["Value"]
+        mr = nt.nodes.new("ShaderNodeMapRange")
+        mr.interpolation_type = "SMOOTHSTEP"
+        mr.inputs["From Min"].default_value, mr.inputs["From Max"].default_value = -width, width
+        nt.links.new(src, mr.inputs["Value"])
+        return mr.outputs["Result"], a
+
+    def layer(under, colour, fac):
+        mix = nt.nodes.new("ShaderNodeMix")
+        mix.data_type = "RGBA"
+        mix.inputs["B"].default_value = (*colour, 1.0)
+        if isinstance(under, tuple):
+            mix.inputs["A"].default_value = (*under, 1.0)
+        else:
+            nt.links.new(under, mix.inputs["A"])
+        nt.links.new(fac, mix.inputs["Factor"])
+        return mix.outputs["Result"]
+
+    out = layer(C["rock_fill"], C["grass"], mask("ring")[0])
+    out = layer(out, C["rock_fill"], mask("steep", 0.3, False)[0])
+    out = layer(out, C["sand"], mask("sand_in")[0])
+    # The seabed: wet sand tinted teal at the waterline, darker and greener with depth.
+    wet, wet_attr = mask("wet_depth", 0.05, False)
+    deep = nt.nodes.new("ShaderNodeMapRange")
+    deep.interpolation_type = "SMOOTHSTEP"
+    deep.inputs["From Min"].default_value, deep.inputs["From Max"].default_value = 0.0, 1.7
+    nt.links.new(wet_attr.outputs["Fac"], deep.inputs["Value"])
+    seabed = layer(SEABED_SHALLOW, SEABED_DEEP, deep.outputs["Result"])
+    mix = nt.nodes.new("ShaderNodeMix")
+    mix.data_type = "RGBA"
+    nt.links.new(out, mix.inputs["A"])
+    nt.links.new(seabed, mix.inputs["B"])
+    nt.links.new(wet, mix.inputs["Factor"])
+    out = mix.outputs["Result"]
+    out = layer(out, C["grass"], mask("grass_in")[0])
+    out = layer(out, C["court"], mask("court_in", 0.08)[0])
+    nt.links.new(out, bsdf.inputs["Base Color"])
+    return m
 
 
 def ground(c):
     """The height field as one grid mesh (the fill that shows between boulders), with the
-    pockets flat, coloured per vertex."""
+    pockets flat, painted from per-vertex fields (see GROUND_FIELDS above)."""
     n, span = 240, 276.0   # 1.15 m cells; wide enough that the shelf reaches the seabed inside it
     cell = span / n
     hs = [[height(-span / 2 + i * cell, -span / 2 + j * cell) for i in range(n + 1)] for j in range(n + 1)]
@@ -419,18 +482,19 @@ def ground(c):
     me = bpy.data.meshes.new("ground")
     bm.to_mesh(me)
     bm.free()
-    colours = []
+    values = {f: [] for f in GROUND_FIELDS}
     for j in range(n + 1):
         for i in range(n + 1):
             gx = hs[j][min(n, i + 1)] - hs[j][max(0, i - 1)]
             gy = hs[min(n, j + 1)][i] - hs[max(0, j - 1)][i]
             slope_z = 1.0 / math.sqrt(1 + (gx / (2 * cell)) ** 2 + (gy / (2 * cell)) ** 2)
             x, y = -span / 2 + i * cell, -span / 2 + j * cell
-            colours.append(ground_colour(x, y, hs[j][i], slope_z))
-    attr = me.color_attributes.new("Col", "FLOAT_COLOR", "POINT")
-    for k, col_ in enumerate(colours):
-        attr.data[k].color = (*col_, 1.0)
-    me.materials.append(vertex_colour_material("ground_painted"))
+            for f, v in ground_fields(x, y, hs[j][i], slope_z).items():
+                values[f].append(v)
+    for f in GROUND_FIELDS:
+        a = me.attributes.new(f, "FLOAT", "POINT")
+        a.data.foreach_set("value", values[f])
+    me.materials.append(ground_material())
     for poly in me.polygons:
         poly.use_smooth = True   # soft slopes, not faceted terraces (owner: "less jagged")
     o = bpy.data.objects.new("ground", me)

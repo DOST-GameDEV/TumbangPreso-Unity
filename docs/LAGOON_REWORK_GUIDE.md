@@ -7,7 +7,7 @@ whose model, texture, foliage and working rules ALL apply here too (Kanto is the
 house style). Every rule below came from the owner reacting to a render; the quote is there so
 nobody re-litigates it. Status row: `docs/TODO.md` **LAGOON-1**.
 
-⚠️⚠️ **CURRENT STATE (2026-09-26): LAYOUT COMPLETE (cove v15), awaiting the owner's sign-off to start texturing (§ 8 step 2).**
+⚠️⚠️ **CURRENT STATE (2026-09-26): LAYOUT COMPLETE (cove v16), awaiting the owner's sign-off to start texturing (§ 8 step 2).**
 Nothing is modelled, textured or in Unity yet; the shipped Lagoon scene is untouched. Next steps
 are § 8. This rework supersedes the REFINE-2.6 per-family refinement for this map. The map as
 found: `Logs/map-lineup-v1/sheet_lagoon.png` (a flat brown deck ring over flat teal water).
@@ -69,7 +69,7 @@ photograph): `docs/reports/map-by-map-refinement-2026-09-23/lagoon-reference-not
   grass (green cliffs).
 - Warm tan rock; lighter tops and darker bases come in the texture pass; AgX Punchy look.
 
-## 4 · Layout (current: cove v15)
+## 4 · Layout (current: cove v16)
 
 - **One asymmetric island weighted north-west**, drawn from a hand-placed coast curve (`COAST`,
   Catmull-Rom smoothed): a long sand SPIT curling south on the west (its own house and a tidal
@@ -110,6 +110,15 @@ photograph): `docs/reports/map-by-map-refinement-2026-09-23/lagoon-reference-not
   which the grid drew as staircases. Every transition is continuous now (smoothstep blends), the
   waterline sits exactly on the coast curve, and the ground is smooth shaded. Keep it that way:
   never return a height that jumps between neighbouring points.
+- ⚠️ **Painted ground edges** (v16; owner on v15, at the court's staircase colour edge: *"you'll
+  need to retopologize the edges i think. unless you can figure out how to fix this jagged
+  texture/color stuff"*). Not a topology fault: v7 to v15 stored a finished COLOUR per vertex,
+  and colours blend across a 1.15 m cell as a staircase. Each vertex now stores continuous
+  signed FIELDS in metres (`court_in`, `grass_in`, `sand_in`, `wet_depth`, `steep`, `ring`),
+  and the `ground_painted` material cuts each at zero with a narrow smoothstep plus a ±0.6 m
+  noise wobble, so every boundary is a smooth hand-painted curve at any grid size. These fields
+  are the splat masks for the ground textures in step 2 onward; never go back to per-vertex
+  colours.
 - **Planting** (v7, blockout kit `tools/lagoon_cove_planting.py`): coconut palms with curved
   trunks and drooping fronds at the pockets' rims (leaning out over the drop) and along the sand,
   thickest on the spit (leaning to the sea); grass tufts, banana/taro broad leaves and crimson or
@@ -152,12 +161,13 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
 
 ## 8 · Plan (in order; each step rendered in Blender and approved before the next)
 
-1. **Finish the layout.** ✅ LAYOUT COMPLETE at cove v15 (2026-09-26), awaiting the owner's
+1. **Finish the layout.** ✅ LAYOUT COMPLETE at cove v16 (2026-09-26), awaiting the owner's
    sign-off to start texturing. v9 closed every gap listed after v6 (shallows, a planted spit
    with beached bangkas, the water village on a walkway spine seen from the court, feature
    boulders and a wider stone size range, gap planting, rim stones on every ledge front, stone
    steps, a gradient sky). v15 answered the owner's v9 review: smooth terrain edges, clear
-   stylized water over a visible seabed, no modelled foam (§ 4). ⚠️ The reference's orange
+   stylized water over a visible seabed, no modelled foam; v16 painted the ground edges from
+   continuous fields (§ 4). ⚠️ The reference's orange
    flower accents are CRIMSON and YELLOW here: orange sits too close to offence orange `#f87020`
    (§ 2). Blockout-grade on purpose, replaced by the kits in the later steps: every roof is one
    pyramid (step 3), stairs are plain stone blocks, the court floor is flat, the water is still.
