@@ -606,6 +606,20 @@ namespace TumbangPreso.PlayTests
                     defender.Intent.Set(Verb.Skill2, t > 9.9f && t < 10.1f);
                     yield return null;
                     reeled |= Vector3.Distance(Flat(attacker.transform.position), Flat(start)) > 3f;
+                    // Film s2 found a building-sized dark shell from the plant's landing on: name every big renderer that is not the map.
+                    if (f == 120)
+                    {
+                        var big = new StringBuilder();
+                        foreach (var r in Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+                        {
+                            if (r == null || !r.enabled || !r.gameObject.activeInHierarchy || r.bounds.size.magnitude < 6f) continue;
+                            var top = r.transform.root.name;
+                            if (top == "BayanPlaza" || top.StartsWith("Map")) continue;
+                            string path = r.name; for (var q = r.transform.parent; q != null; q = q.parent) path = q.name + "/" + path;
+                            big.AppendLine(FormattableString.Invariant($"{path}  size {r.bounds.size}  centre {r.bounds.center}  {r.GetType().Name}"));
+                        }
+                        File.WriteAllText(Path.Combine(root, "big-renderers.txt"), big.ToString());
+                    }
                     fired |= Object.FindFirstObjectByType<PaeteWoodenSlipper>() != null;
 
                     // The cameras, per skill.

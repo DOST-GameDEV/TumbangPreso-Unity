@@ -49,8 +49,17 @@ namespace TumbangPreso.Visual
             foreach (var c in go.GetComponentsInChildren<Collider>(true)) { c.enabled = false; Kill(c); }
             foreach (var r in go.GetComponentsInChildren<Renderer>(true)) VfxRenderTag.Attach(r.gameObject);
             ToonSkin.Apply(go, width, palette ?? Palette);
+            // Remember the scale each part's ink was sized at, so a later re-dress keeps it (`Redress`).
+            foreach (var r in go.GetComponentsInChildren<Renderer>(true))
+            {
+                if (r is SkinnedMeshRenderer) continue;
+                var rest = r.gameObject.AddComponent<PaeteOutlineRest>();
+                rest.Scale = MaxAxis(r.transform.lossyScale); rest.Width = width;
+            }
             return go;
         }
+
+        private static float MaxAxis(Vector3 v) => Mathf.Max(Mathf.Abs(v.x), Mathf.Max(Mathf.Abs(v.y), Mathf.Abs(v.z)));
 
         /// <summary>The prop undressed: for a surface that brings its own material (Makiling's spirit).</summary>
         public static GameObject SpawnRaw(string name, Transform parent)
@@ -64,8 +73,26 @@ namespace TumbangPreso.Visual
             return go;
         }
 
-        /// <summary>Re-dress with a different palette (the seedling drying), cached per palette by `ToonSkin`.</summary>
-        public static void Redress(GameObject model, Color[] palette) => ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, palette);
+        /// <summary>
+        /// Re-dress with a different palette (the seedling drying), cached per palette by `ToonSkin`.
+        /// ⚠️⚠️ FIXED 2026-09-27: THE INK WAS RE-SIZED AT WHATEVER SCALE EACH PART HAD AT THAT MOMENT. `ToonSkin.Apply` sizes a part's
+        /// outline as `worldWidth / its current scale`, and BAKYA BLOOM re-dresses on its first pose, while the pitcher is still
+        /// popping up out of the court at nearly zero scale (and later while its clog regrows from nothing): the outline came out up to
+        /// ten thousand times too wide, and when the part grew to size its inverted hull was a building-sized dark shell over the court
+        /// (the skills film, `Logs/paete-evidence-s2` and `-s3`, from the plant's landing on). A re-dress now keeps each part's outline
+        /// at the width it was given at spawn, when every part stood at its rest scale (`PaeteOutlineRest`).
+        /// </summary>
+        public static void Redress(GameObject model, Color[] palette)
+        {
+            if (model == null) return;
+            foreach (var r in model.GetComponentsInChildren<Renderer>(true))
+            {
+                var rest = r.GetComponent<PaeteOutlineRest>();
+                if (rest == null || rest.Scale <= 0.0001f) { ToonSkin.Apply(r, ToonSkin.PersonOutlineWidth, palette); continue; }
+                // Scaled by now / rest, so `Apply`'s `width / now` lands on the spawn's `width / rest`.
+                ToonSkin.Apply(r, rest.Width * Mathf.Max(0.0001f, MaxAxis(r.transform.lossyScale)) / rest.Scale, palette);
+            }
+        }
 
         public static Transform Find(GameObject model, string name)
         {
@@ -355,6 +382,12 @@ namespace TumbangPreso.Visual
     /// miniature (owner: *"dont use vines use woven tree branches"*). The cords twist round each other
     /// at a fixed rate per metre, so a limb that grows keeps its weave still and only gets longer.
     /// </summary>
+    /// <summary>The scale and ink width a prop part was dressed at when it spawned, read by `PaeteProp.Redress`.</summary>
+    public sealed class PaeteOutlineRest : MonoBehaviour
+    {
+        public float Scale, Width;
+    }
+
     public sealed class PaeteRope
     {
         private readonly Mesh[] _strands;
