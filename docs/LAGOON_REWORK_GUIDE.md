@@ -35,3 +35,12 @@ Lookan Banaran photograph): `docs/reports/map-by-map-refinement-2026-09-23/lagoo
 1. Where the court sits: a raised deck over the water (as now), a sand platform, or a rock shelf.
 2. Island shape: one tall island behind the court, or a cove with rock walls around it.
 3. Pipeline: Blender first like Kanto (default).
+
+**Decided 2026-09-26:** the court sits on a **rock shelf** partway up the island (the village
+below and around it); **one green hill behind** (north) with open water south. Blockout:
+`tools/author_lagoon_blockout.py` -> `ArtSource/lagoon/lagoon_blockout.blend`, renders in
+`Logs/lagoon-blender/blockout_*_vN.png`. Court floor z = 0, walkways 2.7 m below, water 4.5 m
+below; stairs from the walkway loop up to the shelf at its south corners; a white capilla on the
+hill as the landmark. ⚠️ The shelf changes the water mechanic: slippers that leave the court now
+fall 4.5 m. Whether they return (as today) or the shelf edge gets a low wall is a gameplay
+decision still to take before the Unity build.
