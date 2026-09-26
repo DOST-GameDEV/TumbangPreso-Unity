@@ -138,12 +138,14 @@ STRENGTH = {"rock_a": 0.0, "rock_b": 1.2, "rock_c": 1.2, "thatch_a": 1.6, "thatc
             "sawali_a": 1.4, "sawali_b": 1.4, "sawali_c": 1.4,
             "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0,
             "plank_a": 1.2, "plank_b": 1.2, "plank_c": 1.2,
-            "tin_a": 1.5, "tin_b": 1.5, "tin_c": 1.5}
+            "tin_a": 1.5, "tin_b": 1.5, "tin_c": 1.5,
+            "timber_a": 1.0, "timber_b": 1.0, "timber_c": 1.0}
 TILE = {"rock_a": 4.0, "rock_b": 4.0, "rock_c": 4.0, "thatch_a": 2.0, "thatch_b": 2.0, "thatch_c": 2.0,
         "sawali_a": 2.0, "sawali_b": 2.0, "sawali_c": 2.0,
         "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0,
         "plank_a": 2.0, "plank_b": 2.0, "plank_c": 2.0,
-        "tin_a": 2.0, "tin_b": 2.0, "tin_c": 2.0}
+        "tin_a": 2.0, "tin_b": 2.0, "tin_c": 2.0,
+        "timber_a": 2.0, "timber_b": 2.0, "timber_c": 2.0}
 
 
 # ---------------------------------------------------------------- thatch
@@ -413,6 +415,39 @@ TIN_PAINTERS = {
 }
 
 
+# ---------------------------------------------------------------- timber
+# HEWN TIMBER for posts, sills, plates and frames (§ 8 step 3), its OWN drawing: a hand-hewn
+# beam face, long soft ADZE FACETS along V (elongated flat patches a shade apart, their ends
+# rounded), no seams, no grain; darker and warmer than the planks so frames read against them.
+
+
+def timber(base, seed, facets=26):
+    px = SIZE / 2.0
+    rng = np.random.default_rng(seed)
+    yy, xx = np.mgrid[0:SIZE, 0:SIZE].astype(np.float32) / px
+    img = flat_rgb(base)
+    height = np.zeros((SIZE, SIZE), np.float32)
+    for _ in range(facets):
+        cx, cy = rng.uniform(0, 2), rng.uniform(0, 2)
+        w, l = rng.uniform(0.05, 0.12), rng.uniform(0.25, 0.6)
+        v = rng.choice([0.94, 1.05])
+        for ox in (-2, 0, 2):
+            for oy in (-2, 0, 2):
+                d = ((xx - cx - ox) / w) ** 2 + ((yy - cy - oy) / l) ** 4
+                a = np.clip((1.0 - d) / 0.25, 0, 1)
+                img = img * (1 + (v - 1) * a)[..., None]
+                height = height + a * (v - 1)
+    img = coat(img, np.array([0.95, 0.94, 0.93]), 0.5, 0.12, seed + 3)
+    return img, height
+
+
+TIMBER_PAINTERS = {
+    "timber_a": lambda: timber(hexcol("7c5536"), 101),     # warm dark
+    "timber_b": lambda: timber(hexcol("857868"), 101),     # sun-greyed
+    "timber_c": lambda: timber(hexcol("6a3f2a"), 101),     # red-brown, oiled
+}
+
+
 THATCH_PAINTERS = {
     "thatch_a": lambda: thatch(hexcol("c9a35e"), hexcol("e3c888"), hexcol("5e4526"), seed=51),
     "thatch_b": lambda: thatch(hexcol("a98f6a"), hexcol("c9b491"), hexcol("4f4130"), seed=51),
@@ -441,6 +476,7 @@ PAINTERS = {
     **BAMBOO_PAINTERS,
     **PLANK_PAINTERS,
     **TIN_PAINTERS,
+    **TIMBER_PAINTERS,
 }
 
 

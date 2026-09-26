@@ -290,6 +290,11 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      irregular spacing, broad tone bands (fine streaks read as wood grain).
    - plank a/b/c (`plank_swatches_v2.png`): warm brown, sun-greyed, wide rough boards; seams,
      staggered butt joints, a cel-lit edge band, no grain.
+   - tin a/b/c (`tin_swatches_v2.png`): teal-green, red oxide, bare weathered; corrugations
+     down the slope as cel bands, sheet laps, small soft half-strength rust (full-strength rust
+     read as camouflage).
+   - timber a/b/c (`timber_swatches_v1.png`): warm dark, sun-greyed, oiled red-brown; a
+     hand-hewn face of long soft adze facets, no seams, no grain.
 4. **Boats**: bangka outrigger and lepa houseboat.
 5. **Props**: drying nets, laundry lines, crates, barrels, baskets, lanterns, fish racks.
 6. **Foliage**: coconut palms (curved leaning trunks), broad leaves, flowering accents, grass
