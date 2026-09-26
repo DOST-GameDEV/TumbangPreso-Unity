@@ -54,7 +54,8 @@ to UX-1 and each REFINE-2 map/character/aspect, without dropping unfinished task
 
 ### Priority order, rethought 2026-09-23
 
-**Owner override, 2026-09-26: ASKS-0926 below comes FIRST, newest ask first** (*"in the todo section
+**Owner override, 2026-09-26: ASKS-0926 below comes FIRST, newest ask first, and inside it the
+Amihan and Rafi remodel (matching Dante and Phaister) is PRIORITY 1** (*"in the todo section
 prioritize most recent assks and ask handoff ltr to prioritize it as well"*). Every handoff from here
 on points the next session at ASKS-0926 before anything else in this file. The order underneath
 stands for everything else.
@@ -112,6 +113,16 @@ else in the queue** (owner, same day: *"in the todo section prioritize most rece
 are ordered most recent first, the finished ones follow. A row that belongs to a bigger entry
 points at it rather than copying it. Nothing here is ticked without evidence.
 
+- [ ] ⚠️⚠️ **PRIORITY 1 FOR THE NEXT SESSION: remodel Amihan and Rafi so they belong in the same art style as the
+  rest of the cast, Dante and Phaister in particular** (owner, 2026-09-26: *"add to todo priority for ltr, this will be
+  no.1 priority"*, *"remodel amihan and rafi a bit so that they look more like other characters in terms of art style
+  coz they look so diff"*, *"specifically dante or phaister"*). "A bit": a restyle of the two existing builders
+  (`tools/build_amihan_voxel.py`, Rafi's builder), not new characters. Method: `docs/CHARACTER_MODEL_METHOD.md`
+  (research first: put both beside Dante and Phaister in the cast lineup and write down, measured, what differs:
+  head-to-body ratio, voxel size, how many colours and how flat, face construction, outline weight, costume detail
+  density; then change only those). Keep each one's identity and quiet colour. Done looks like: versioned turnarounds
+  and a cast lineup (`_v1`, `_v2`...) where neither reads as from another game, the owner's yes, FPP arms re-derived
+  from the new models, and the in-match walk and casts re-checked on the new bodies.
 - [ ] **The walk looks wrong: the hands stay close to the body** (*"the walkingh animation looks so
   weird, hands close to body"*). Same complaint as REFINE-2.9b (Sean's arms stick to his body), which
   `CharacterAnimator.LocomotionArms.cs` answered with a FIXED spread (walk 14 degrees, run 18) for every
@@ -127,7 +138,10 @@ points at it rather than copying it. Nothing here is ticked without evidence.
   play; if he wants a throw on literally every press, the 15 s growth becomes the throw cooldown and
   that number is his to give.
 - [ ] **Paete looks small and scuffed on the hero screen and on character select** (*"why is paete so
-  small here"*, *"can u make the size paete bigger he looks so small and scuffed"*). Cause found:
+  small here"*, *"can u make the size paete bigger he looks so small and scuffed"*, then *"have u made paete bigger?
+  supposed to be larger than sean"*). Measured on the glbs: Paete stands 0.792 rig units against Sean's 0.848, so his
+  BODY must grow (in the match too, not only on the screens), and the previews must stop fitting every hero to the
+  same frame height or a taller hero never reads as taller. Cause of the small preview found:
   `ModelPreview.Frame()` sets the camera distance from the REST-pose bounds, and Paete's long T-posed
   arms make his width, not his height, decide the distance, so the body is drawn at a fraction of
   Cheska's height. Done looks like: frame on the standing height (or the idle pose's bounds), Paete's
