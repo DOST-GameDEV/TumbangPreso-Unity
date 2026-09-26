@@ -1506,6 +1506,10 @@ namespace TumbangPreso.CameraSystem
         {
             ClearAccessories(_rightArm);
             ClearAccessories(_leftArm);
+            // Every character starts from the rig's own scale; the early returns below (Inday, Rafi, Amihan)
+            // would otherwise keep the last hero's, and Paete's are 1.45 across.
+            if(_rightArm!=null)_rightArm.localScale=Vector3.one;
+            if(_leftArm!=null)_leftArm.localScale=Vector3.one;
             if(characterId=="inday" && UseIndaySourceArms())return;
             // Rafi has simple source hands/sleeves. Keep their exact palette and
             // geometry instead of giving this new hero the generic wrist kit.
@@ -1513,7 +1517,16 @@ namespace TumbangPreso.CameraSystem
             // Amihan's wide cream sleeves and banded cuffs are her own; show them, not the kit.
             if(characterId=="amihan" && UseRosterArms(characterId))return;
             // Paete's arms are bark and tangled vines ending in points; the generic wrist kit would hide them.
-            if(characterId=="paete" && UseRosterArms(characterId))return;
+            // ⚠️ AND THEY ARE BULKY (owner, 2026-09-26: *"make his fpp arms loook BULKIER bcz he is QUITE bulky as
+            // a character"*). This early return skipped the thickness below, so his arms were never widened
+            // (and could keep whatever scale the previous hero left on the rig): 1.45 across, length unchanged.
+            if(characterId=="paete" && UseRosterArms(characterId))
+            {
+                var bulk=new Vector3(1.45f,1.0f,1.45f);
+                if(_rightArm!=null)_rightArm.localScale=bulk;
+                if(_leftArm!=null)_leftArm.localScale=bulk;
+                return;
+            }
             // Use the retained solid block-hand frame with character-specific
             // sleeves and skin. Extracting every body gauntlet/prop into this
             // close view created the rejected fragmented hands. All action

@@ -6,7 +6,7 @@ namespace TumbangPreso.Visual
     // =============================================================================================
     // PAETE'S BODY CASTS (HERO-9, 2026-09-26). Owner: *"i want u to really lock in and give paete his
     // own animations taht make sense wiht his shit"*, *"i want each of his skill to have their own
-    // animation"*. Five clips for four skills, because PUNLANG TSINELAS is two different acts (the
+    // animation"*. Five clips for four skills, because BAKYA BLOOM is two different acts (the
     // planting and the command to fire), and each one ACTS OUT what its skill does to the world:
     // the vines drag him, the seed is lobbed like a gardener's, the command is an order not a throw,
     // the thorns are stamped out and then HAULED BACK like a rope, the sentry is thrown and then
@@ -64,7 +64,7 @@ namespace TumbangPreso.Visual
         private static readonly Vector3 PaeteRestLeft = new Vector3(0, 0, 15), PaeteRestRight = new Vector3(0, 0, -15);
 
         /// <summary>
-        /// KAPIT-BAGING, 1.0 s, over the 0.12 s tell, the 0.14 s reach and the reel (about 0.28 s at
+        /// LIANA LEAP, 1.0 s, over the 0.12 s tell, the 0.14 s reach and the reel (about 0.28 s at
         /// full range). A tree being DRAGGED, not a hero flying:
         ///  * tell (0 to 0.12): the root sinks, the trunk coils back, both fists pulled in low at the
         ///    hips, the palms glowing (`PaetePalmGlow`);
@@ -95,7 +95,7 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// PUNLANG TSINELAS, the planting, 0.7 s: the gardener's lob.
+        /// BAKYA BLOOM, the planting, 0.7 s: the gardener's lob.
         ///  * tell (0 to 0.16): both hands cupped together at the chest around the glowing seed, head
         ///    bowed to it, the weight rocking back onto the right foot;
         ///  * wind (0.24): the hands part, the right swings back low past the hip;
@@ -118,7 +118,7 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// PUNLANG TSINELAS, the command (the second press), 0.5 s. The seedling throws, so HE only
+        /// BAKYA BLOOM, the command (the second press), 0.5 s. The seedling throws, so HE only
         /// orders it: a sharp point of the right arm at the target, the left fist pulled back to the
         /// hip, the trunk turning into the point and the head nodding it home. Short and dry, so it
         /// never reads as a second planting.
@@ -137,7 +137,7 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// BAWI, 1.05 s: the stamp, then the take. The thorns catch (hold 0.25 s) and yank (0.5 s),
+        /// THORN HARVEST, 1.05 s: the stamp, then the take. The thorns catch (hold 0.25 s) and yank (0.5 s),
         /// and his body does the yank WITH them:
         ///  * tell (0.14): the right knee high, both arms raised wide, the trunk rearing back;
         ///  * stamp (0.22, punch): the foot drives down, the root drops, both palms slammed at the
@@ -164,23 +164,20 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// YAKAP NG MAKILING, 1.3 s. ⚠️ IT STARTS WHERE THE INTRODUCTION ENDS, ON THE THROWN POSE
-        /// (`tools/author_ultimate_intros.py` `paete`, the throw at 2.62 s): the cutscene owns the
-        /// wind-up and the throw, so the live clip must not throw a second time. The live seed then
-        /// flies 0.45 s from the hand that has just thrown it and the vines catch 0.3 s after it bursts:
-        ///  * thrown (0): the trunk over the planted left foot, the throwing arm forward and down;
-        ///  * open (0.34): as the seed lands and the sentry bursts, both arms flung wide, chest open,
-        ///    head up;
-        ///  * the embrace (0.72, punch): the vines take them and he CLOSES HIS ARMS, crossing them over
-        ///    the chest, the trunk curling forward, hauling everyone in; held while they are dragged;
+        /// MAKILING'S EMBRACE, 1.3 s. ⚠️ IT STARTS WHERE THE INTRODUCTION ENDS, ON THE RAISED POSE
+        /// (`tools/author_ultimate_intros.py` `paete`: since 2026-09-26 he calls the tree up through the ground,
+        /// kneeling, then rising with both arms high; he no longer throws). Then:
+        ///  * raised (0 to 0.34): arms high in a V, head back, lifting a little further as the tree bursts;
+        ///  * the embrace (0.72, punch): the branches take them and he CLOSES HIS ARMS, crossing them over the
+        ///    chest, the trunk curling forward, hauling everyone in; held while they are dragged;
         ///  * release, straightening.
         /// </summary>
         private static AnimationClip BuildPaeteSentry(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-paete-sentry", paths);
-            PoseKey(b, 0, -.04f, V(24, -18, 0), V(6, -8, 0), V(10, 0, 30), V(-60, 8, -12), V(-18, 0, 8), V(14, 0, -8));
-            PoseKey(b, .12f, -.03f, V(20, -12, 0), V(4, -6, 0), V(6, 0, 28), V(-52, 6, -12), V(-16, 0, 8), V(12, 0, -8));
-            PoseKey(b, .34f, .01f, V(-14, 0, 0), V(-20, 0, 0), V(-128, 0, 64), V(-128, 0, -64), V(-14, 0, 8), V(10, 0, -8));
+            PoseKey(b, 0, .02f, V(-14, 0, 0), V(-24, 0, 0), V(-162, 0, 42), V(-162, 0, -42), V(-10, 0, 10), V(6, 0, -10));
+            PoseKey(b, .16f, .03f, V(-17, 0, 0), V(-27, 0, 0), V(-168, 0, 46), V(-168, 0, -46), V(-10, 0, 10), V(6, 0, -10));
+            PoseKey(b, .34f, .02f, V(-16, 0, 0), V(-22, 0, 0), V(-150, 0, 56), V(-150, 0, -56), V(-12, 0, 9), V(8, 0, -9));
             b.PunchAt(.72f);
             b.HoldAt(.72f, .20f);
             PoseKey(b, .72f, -.06f, V(22, 0, 0), V(10, 0, 0), V(-84, 20, -22), V(-84, -20, 22), V(-16, 0, 9), V(12, 0, -9));

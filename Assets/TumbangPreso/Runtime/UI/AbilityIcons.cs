@@ -121,13 +121,13 @@ namespace TumbangPreso.UI
         AmihanStormSurge,
 
         // ⚠️ PAETE (2026-09-25): signature, attacking, defending, ultimate.
-        /// <summary>Paete signature: Kapit-Baging (two vines converging on a hooked anchor).</summary>
+        /// <summary>Paete signature: Liana Leap (two vines converging on a hooked anchor).</summary>
         PaeteVine,
-        /// <summary>Paete attacking: Punlang Tsinelas (a seedling with a slipper in its pod).</summary>
+        /// <summary>Paete attacking: Bakya Bloom (a seedling with a slipper in its pod).</summary>
         PaeteSprout,
         /// <summary>Paete defending: Bawi (thorns drawing slippers inward).</summary>
         PaeteThorn,
-        /// <summary>Paete ultimate: Yakap ng Makiling (a core with roots pulling in from all sides).</summary>
+        /// <summary>Paete ultimate: Makiling's Embrace (a core with roots pulling in from all sides).</summary>
         PaeteSentry,
     }
 

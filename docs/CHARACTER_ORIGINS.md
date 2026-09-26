@@ -191,20 +191,29 @@ Character-select line: **Never hurries. Always arrives.**
 
 Long introduction:
 
-Paete grew up as part of the forest on Mount Makiling, older than the trail markers and younger
-than the narra around him. Hikers there learn one rule: eat what the forest gives you, never carry
-it home. Paete learned the same rule from the other side. One wet season a woodcarver from Paete,
-across the lake, lost the trail in the mist, and Paete walked him down to the road. The carver had
-nothing to give but his chisel, so he cut the tree a face: two deep eyes and a mouth that never
-quite decided to smile. Paete has worn the town's name ever since. At the forest's edge he found
-students playing tumbang preso after class, and stood so still watching that they used him as the
-lata twice before he moved. Now he plays, unhurried and a little amused by everyone else's panic.
-He lets you take a run at anything. He just does not let you leave with it.
+Paete grew up as part of the forest on Mount Makiling, older than the trail markers and younger than
+the narra around him. The mountain has a keeper, Mariang Makiling, and hikers still keep her rule:
+eat what the forest gives you, never carry it home. One wet season a woodcarver from Paete, across
+the lake, lost the trail in her mist, and the tree walked him down to the road. The carver had
+nothing to give but his chisel, so he cut it a face: two deep eyes and a mouth that never quite
+decided to smile. Makiling liked the gift. She woke the tree, let it keep the carver's town for a
+name, and made it the guardian of her mountain: keeper of the trails, and the one who brings back
+what is taken. At the forest's edge he found students playing tumbang preso after class, and stood
+so still watching that they used him as the lata twice before he moved. Now he plays, unhurried and
+a little amused by everyone else's panic. He lets you take a run at anything. He just does not let
+you leave with it. And when one tree is not enough, he opens his hand, and she puts a seed in it.
 
 His calm is the flaw inside the strength: so sure of his reach that he lets a moment pass. Amihan
 cannot stand him (she hates a stalled game and he is one). Dante, the other mountain in the cast,
 is the only one who waits as long as he does. Zack still thinks he is a prop.
 
-Mariang Makiling stays a legend he grew up among: never shown, never his mother, never a power
-source. He is not a diwata, an anito or a god; growth is his talent, not a deity. The fruit rule is
-a folk superstition used as his character theme, and the chisel-cut face is a carver's gift.
+⚠️ REVERSED BY THE OWNER, 2026-09-26: *"i want the lore for this character to be that its the guardian
+of mount makiling"*, and her spirit watching over him in his ultimate (*"make it seem like the spirit of
+maria makiling or smth is watching over him"*, with Aphelios and Alune named as the model, and *"one
+place i want this maria makiling or smht to shhow up is his ult cutscene"*). This file used to say she
+is never shown and never a power source. Now: she woke him and made him the mountain's guardian, and
+she appears as a spirit behind him in the ultimate's cutscene, where she gives him the seed. She is his
+patron, not his mother, and shown with respect, as the kind keeper of the mountain the stories tell of
+(the mist, the ginger turned to gold, the fruit rule), never romantic and never frightening. He is still
+not a diwata, an anito or a god himself. The fruit rule is a folk superstition used as his character
+theme, and the chisel-cut face is a carver's gift.

@@ -12,7 +12,7 @@ namespace TumbangPreso.Core
     /// </summary>
     public static class PaeteRules
     {
-        // ------------------------------------------------------------------ KAPIT-BAGING (signature)
+        // ------------------------------------------------------------------ LIANA LEAP (signature)
 
         /// <summary>Proposed 30 s, accepted with the other defaults (plan § 7).</summary>
         public const float VineCooldown = 30.0f;
@@ -42,7 +42,7 @@ namespace TumbangPreso.Core
         public static float VineHoldSeconds(float distance)
             => CarryRules.SecondsFor(System.Math.Max(0.0f, distance - VineStopShort), VineReelSpeed);
 
-        // ------------------------------------------------------------------ PUNLANG TSINELAS (attacking)
+        // ------------------------------------------------------------------ BAKYA BLOOM (attacking)
 
         /// <summary>The seed's throw range, from his feet.</summary>
         public const float PlantThrowRange = 6.0f;
@@ -89,7 +89,7 @@ namespace TumbangPreso.Core
         /// <summary>How long a wooden slipper lies where it lands before it withers.</summary>
         public const float WoodenSlipperWitherSeconds = 2.0f;
 
-        // ------------------------------------------------------------------ BAWI (defending)
+        // ------------------------------------------------------------------ THORN HARVEST (defending)
 
         public const float ThornCooldown = 30.0f;
 
@@ -108,7 +108,7 @@ namespace TumbangPreso.Core
         /// <summary>The construct's whole life, from the stamp to the last thorn dropping.</summary>
         public const float ThornConstructSeconds = 3.0f;
 
-        // ------------------------------------------------------------------ YAKAP NG MAKILING (ultimate)
+        // ------------------------------------------------------------------ MAKILING'S EMBRACE (ultimate)
 
         /// <summary>Owner: *"yes"* to 16 objective points.</summary>
         public const float SentryCost = 16.0f;

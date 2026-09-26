@@ -118,6 +118,10 @@ namespace TumbangPreso.EditorTools
                 // ModelPreview's zoom is a distance multiplier: smaller comes closer.
                 // Portraits favour the face/outfit; equipment uses its full silhouette.
                 preview.LookAt(category == 0 ? .72f : .50f, category == 0 ? .68f : .86f);
+                // ⚠️ PAETE IS A TALL TREANT, NOT THE CAST'S BIG HEAD ON A SMALL BODY: the shared framing put his
+                // whole body small in the square (first bake, 2026-09-26). Closer, and centred on the carved
+                // face and the antlers, so his thumbnail and avatar read as a face like everyone else's.
+                if (category == 0 && art.Id == "paete") preview.LookAt(.84f, .42f);   // (height ratio, zoom)
                 // This imported slide's identifying upper/decal faces the opposite
                 // direction. Camera-only correction, selected from four saved studies.
                 if (!orbit.HasValue && art.Id == "sike") orbit = new Vector2(450, 0);

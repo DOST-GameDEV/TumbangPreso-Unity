@@ -7,7 +7,7 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// Where KAPIT-BAGING's vines catch: the first wall or prop along his aim within
+    /// Where LIANA LEAP's vines catch: the first wall or prop along his aim within
     /// `PaeteRules.VineRange`, else the ground at full range. It always finds somewhere (research.md
     /// § 2, Kinich: the grapple never visibly fails). Bodies, slippers and the can are not scenery.
     /// </summary>
@@ -55,7 +55,7 @@ namespace TumbangPreso.Abilities
     }
 
     /// <summary>
-    /// ⚠️⚠️ PUNLANG TSINELAS'S SEEDLING. Owner's table: *"He summons a plant/tree that creates wooden
+    /// ⚠️⚠️ BAKYA BLOOM'S SEEDLING. Owner's table: *"He summons a plant/tree that creates wooden
     /// slippers taht shoot slippers on command"*; on pulling it out: *"invincible for the first 15
     /// seconds but after that make a visual indicator showing that it can be pulled out? maybe make
     /// the model gradually change too"*, *"i want the animation for pull out to be good"*.
@@ -321,7 +321,7 @@ namespace TumbangPreso.Abilities
     }
 
     /// <summary>
-    /// ⚠️⚠️ BAWI'S THORN CONSTRUCT. Owner's table: *"He creates a plant /tree construct that extends
+    /// ⚠️⚠️ THORN HARVEST'S THORN CONSTRUCT. Owner's table: *"He creates a plant /tree construct that extends
     /// towards all players and PULL their slippers towards it"*, and: *"i want it too be ALL, even
     /// the ones on the hands"*.
     ///
@@ -422,13 +422,13 @@ namespace TumbangPreso.Abilities
     }
 
     /// <summary>
-    /// ⚠️⚠️ YAKAP NG MAKILING'S SENTRY. Owner's table: *"He puts down a plant/tree sentry in a
+    /// ⚠️⚠️ MAKILING'S EMBRACE'S SENTRY. Owner's table: *"He puts down a plant/tree sentry in a
     /// location and he PULLS all players here, they get stuck on it (switchhes to tpp view) and they
     /// have to hold a button ... for like 7 seconds while stuck here"*, *"THEY CAN STILL THROW AND USE
     /// SKILLS WHILE STUCK BTW theyre js rooted"*; *"WITHIN 9 meters"*; a tag frees them.
     ///
-    /// Thrown as a glowing seed after the introduction (Groot's Strangling Prison, research.md § 2);
-    /// it bursts into the sentry, a beat later the vines catch every other player within 9 m and drag
+    /// Called up through the ground after the introduction (a root vein races from his feet to the spot,
+    /// `PaeteRootVein`; it was a thrown seed until 2026-09-26); it bursts into the sentry, a beat later the vines catch every other player within 9 m and drag
     /// them in (a carry per body, `CharacterMotor.ApplyResolvedCarry`), and they are Rooted for the
     /// rest of its life. Host resolves; every peer draws it.
     /// </summary>
@@ -454,7 +454,18 @@ namespace TumbangPreso.Abilities
             s._body = PaeteSentryBody.Build(go.transform);
             // Before it has anyone to look at, the tree faces along the seed's flight (direction.md 5.2).
             s._body.SetFacing(at - from);
-            if (age <= 0f) PaeteSeedArc.Throw(from, at, Flight, 0.26f, true);
+            // Under a roof (Ilalim ng Tulay's deck) it stands only as tall as fits; the open sky gets it all.
+            float clearance = 30f;
+            foreach (var hit in Physics.RaycastAll(at + Vector3.up * 0.5f, Vector3.up, 14f, ~0, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider == null || hit.collider.GetComponentInParent<CharacterMotor>() != null) continue;
+                clearance = Mathf.Min(clearance, hit.distance + 0.5f);
+            }
+            s._body.FitUnder(clearance);
+            // ⚠️ CALLED UP THROUGH THE GROUND, NOT THROWN (owner, 2026-09-26: *"i dont want him to be throwing an
+            // orb I want him to be CALLING IT FROM THE GROUND"*): roots race under the court from his feet to the
+            // spot on the same 0.45 s the seed flew, so the warning and the catch timing are unchanged.
+            if (age <= 0f) PaeteRootVein.Race(new Vector3(from.x, at.y, from.z), at, Flight);
             // Who the vines reach for is drawn on every peer from the same rule the host uses.
             var round = GameServices.Round;
             if (round != null)

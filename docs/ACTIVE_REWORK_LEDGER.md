@@ -1,5 +1,13 @@
 # Active TUMP rework ledger
 
+## HERO-9 Paete lane, 2026-09-26 (worktree `TumbangPreso-Unity-paete`, branch `paete-hero`, pushes to ASTRAReworks)
+
+Owner-directed Paete work: modelled trees, the woven binding and break-out, Mariang Makiling's ghost
+in the ultimate's cutscene, the ground-called ultimate, renames and lore, bulky first-person arms. The
+open list, in order, is TODO HERO-9 (the "NEXT" row is the attacker and defender plants as their own
+species). Direction: `docs/reports/paete-kit-2026-09-25/direction.md` section 5. Commits and test
+results are in the HERO-9 rows; protected composition metas and ProjectSettings churn stay unstaged.
+
 ## Current resume, 2026-09-25: local skill tree verified, continue gameplay work
 
 Owner asleep; autonomous work continues with NO USAGE RESETS, credit spend or

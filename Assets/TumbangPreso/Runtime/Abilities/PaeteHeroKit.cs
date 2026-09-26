@@ -17,6 +17,11 @@ namespace TumbangPreso.Abilities
     /// | Defending | BAWI (Thorn Pull) | A construct that reaches every player and pulls their slippers to it, *"even the ones on the hands"*. |
     /// | Ultimate | YAKAP NG MAKILING (Nature's Wrath) | A sentry that pulls everyone within 9 m to it, Rooted, hold Interact 7 s to break free; they can still throw and cast. |
     ///
+    /// ⚠️ RENAMED 2026-09-26 (owner: *"u can change name and description of all his skills to make it all sound
+    /// better"*): LIANA LEAP, BAKYA BLOOM (bakya are the carved wooden clogs Paete's carvers are known for,
+    /// which is what the sapling grows), THORN HARVEST and MAKILING'S EMBRACE (the translation of the old
+    /// YAKAP NG MAKILING; the spirit of Mariang Makiling now watches over the cast). Ids are unchanged.
+    ///
     /// Numbers: `Core.PaeteRules`. Design and the owner's answers:
     /// `docs/reports/paete-kit-2026-09-25/plan.md`; research: `research.md` beside it; the six-beat
     /// look, sound and motion follow `docs/reports/amihan-kit-2026-09-25/direction.md`.
@@ -37,7 +42,7 @@ namespace TumbangPreso.Abilities
             Ultimate = new YakapNgMakiling();
         }
 
-        // ================================================================== KAPIT-BAGING (signature)
+        // ================================================================== LIANA LEAP (signature)
 
         private sealed class KapitBaging : HeroAbility
         {
@@ -47,10 +52,10 @@ namespace TumbangPreso.Abilities
             private bool _reeled;
 
             public KapitBaging()
-                : base("paete_skill1", "KAPIT-BAGING",
-                       "Both arms shoot vines where you aim and reel you to what they catch. Works with a slipper in hand.",
+                : base("paete_skill1", "LIANA LEAP",
+                       "Vines lash from both arms to where you aim and haul you after them. An escape that works with a slipper in hand.",
                        PaeteRules.VineCooldown, 0.0f, AbilityGlyph.PaeteVine,
-                       summary: "Vines from both arms reel you where you aim.",
+                       summary: "Swing to where you aim on vines from both arms.",
                        castAction: "hero-paete-vine", viewmodelAction: "vine-reach",
                        castCue: "sfx_cast_paete_vine")
             {
@@ -106,7 +111,7 @@ namespace TumbangPreso.Abilities
             private static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0.0f, v.z);
         }
 
-        // ================================================================== PUNLANG TSINELAS (attacking)
+        // ================================================================== BAKYA BLOOM (attacking)
 
         private sealed class PunlangTsinelas : HeroAbility
         {
@@ -115,10 +120,10 @@ namespace TumbangPreso.Abilities
             public override bool DefersPredictedEffect => true;
 
             public PunlangTsinelas()
-                : base("paete_skill2", "PUNLANG TSINELAS",
-                       "Attacking. Plant a seedling that grows wooden slippers. Press again to throw one where you aim. Pullable after 15 s.",
+                : base("paete_skill2", "BAKYA BLOOM",
+                       "Attacking. Plant a sapling that grows bakya, wooden slippers. Press again: it hurls one where you aim. Uprootable after 15 s.",
                        PaeteRules.PlantCooldown, PaeteRules.PlantLifeSeconds, AbilityGlyph.PaeteSprout,
-                       summary: "A seedling grows wooden slippers you throw at will.",
+                       summary: "A sapling grows wooden slippers and throws them for you.",
                        telegraphRadius: 0.6f, telegraphRange: PaeteRules.PlantThrowRange,
                        castAction: "hero-paete-sprout", viewmodelAction: "seed-toss",
                        castCue: "sfx_cast_paete_sprout") { }
@@ -170,17 +175,17 @@ namespace TumbangPreso.Abilities
             }
         }
 
-        // ================================================================== BAWI (defending)
+        // ================================================================== THORN HARVEST (defending)
 
         private sealed class Bawi : HeroAbility
         {
             public override bool DefersPredictedEffect => true;
 
             public Bawi()
-                : base("paete_skill2d", "BAWI",
-                       "Defending. Thorns burst from your feet and take every slipper within 7 m, even from hands, and drag them to you.",
+                : base("paete_skill2d", "THORN HARVEST",
+                       "Defending. Thorns burst from your feet, snatch every slipper within 7 m, even out of hands, and drag them home to you.",
                        PaeteRules.ThornCooldown, 0.0f, AbilityGlyph.PaeteThorn,
-                       summary: "Thorns take every slipper nearby, even from hands.",
+                       summary: "Thorns snatch every slipper nearby, even from hands.",
                        // The ring is the construct itself, not its 7 m reach: the reach is caught in one frame and
                        // leaves nothing on the ground for a bot to path round (`AiTuning.HazardAvoidMaxRadius`).
                        telegraphRadius: 0.8f, telegraphRange: 0.0f,
@@ -195,15 +200,15 @@ namespace TumbangPreso.Abilities
             }
         }
 
-        // ================================================================== YAKAP NG MAKILING (ultimate)
+        // ================================================================== MAKILING'S EMBRACE (ultimate)
 
         private sealed class YakapNgMakiling : HeroAbility
         {
             public YakapNgMakiling()
-                : base("paete_ultimate", "YAKAP NG MAKILING",
-                       "A seed bursts into a sentry that drags everyone within 9 m in and roots them. Throws still work. Hold Interact 7 s to escape.",
+                : base("paete_ultimate", "MAKILING'S EMBRACE",
+                       "A giant guardian tree bursts up and drags everyone in 9 m into its roots. They can still throw. Hold Interact 7 s to escape.",
                        0.0f, 0.0f, AbilityGlyph.PaeteSentry,
-                       summary: "A sentry drags everyone in 9 m to it and roots them.",
+                       summary: "A guardian tree drags everyone in 9 m into its roots.",
                        telegraphRadius: PaeteRules.SentryRadius, telegraphRange: PaeteRules.SentryThrowRange,
                        castAction: "hero-paete-sentry", viewmodelAction: "sentry-throw",
                        castCue: "sfx_cast_paete_sentry") { }

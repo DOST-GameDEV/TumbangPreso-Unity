@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// ⚠️⚠️ KAPIT-BAGING'S VINES COME OUT OF HIS ARMS. Owner, 2026-09-25: *"i want u to make it look
+    /// ⚠️⚠️ LIANA LEAP'S VINES COME OUT OF HIS ARMS. Owner, 2026-09-25: *"i want u to make it look
     /// like his vines actually come from his arm when he swings"*. The model's forearms ARE a braid
     /// of pointed vines (v16), so each vine here starts at the tip of a forearm, on the bone, every
     /// frame: it grows to the anchor (the reach), stays taut while he is reeled (shortening as he
@@ -229,7 +229,7 @@ namespace TumbangPreso.Visual
     /// it so that his skills loook like theyre coming out of the ground each time and forming on the
     /// spot not just spawning in"*). Crack plates open out from the point and soil chunks are thrown
     /// clear and fall back, each chunk on its own typed throw; then the cracks close and the chunks
-    /// shrink into the road. The seedling, BAWI's thorns and the sentry all break the road with this
+    /// shrink into the road. The seedling, THORN HARVEST's thorns and the sentry all break the road with this
     /// before they rise, so none of them appears at size.
     /// </summary>
     public sealed class PaeteGroundBreak : MonoBehaviour

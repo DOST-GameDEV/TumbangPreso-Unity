@@ -268,8 +268,70 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   runtime branch drawn as solid ink: `GrowthVfx.Tube` and `GrowthVfx.Leaf` wind inside out, fixed in `PaeteInk`), v15, and
   v16 at 1.75 times the authored size, about 9 m (owner: *"make tree bigger"*, *"REALLY big and imposing and really feel
   like an ult"*; 1.75 is the most the 1.9 m hold allows before the flared foot swallows a prisoner).
-- [ ] Rerun `PaeteKitPlayProbe` and EditMode after the rise and snapshot changes (both last passed
-  before them: 4/4 and 606/609).
+- [x] Skills renamed and rewritten (owner, 2026-09-26: *"u can change name and description of all his skills to
+  make it all sound better"*): LIANA LEAP, BAKYA BLOOM (bakya, the carved wooden clogs Paete's carvers make),
+  THORN HARVEST, MAKILING'S EMBRACE; kit, loadout rows (Core 646/646), HUMAN.md notes. Ids unchanged.
+- [x] Lore: the guardian of Mount Makiling (owner: *"i want the lore for this character to be that its the guardian
+  of mount makiling"*). Mariang Makiling woke the carved tree and made it the keeper of her mountain; when one
+  tree is not enough she puts a seed in his hand. `CHARACTER_ORIGINS.md`, the design brief and
+  `character-stories.json`; the old "never shown" boundary is recorded as reversed.
+- [x] Mariang Makiling in the ultimate's cutscene (owner: *"make it seem like the spirit of maria makiling or smth
+  is watching over him"*, Aphelios and Alune; *"make her look see thru so that it seems like a ghost"*):
+  `makiling.glb` (typed: long hair, flower crown, closed eyes, gown, shawl, cupped hands, her deer),
+  `Resources/Shaders/SpiritGhost.shader` (one jade hue, value-only forms, fresnel edge, depth pre-pass so only
+  her front shows, hem dissolving into mist), `MakilingSpirit`. She rises behind his left shoulder, bows to him,
+  and the seed arcs from her cupped hands into his palm (the gift shot is the Alune composition). direction.md 5.10.
+- [x] The cutscene pays off (owner: *"i also dont see the tree sprouting to its full size"*): 3.6 s to 4.6 s; the
+  seed arcs down the court and the full 9 m tree screws up in a last shot tilting up past his shoulder, its eyes
+  lighting. Nothing climbs Paete in the gather any more (owner: *"it shouldnt root the caster"*: the v2 leg
+  branches read as the caster rooted; in play the caster was never caught). Sentry fits under a roof
+  (`PaeteSentryBody.FitUnder`, Ilalim ng Tulay's deck).
+- [x] Rooted swings the camera to third person (the owner's table: *"they get stuck on it (switches to tpp
+  view)"*, planned and never wired): `CameraRig.StepFallView`, standing pitch.
+- [x] Films (owner: *"record as well people getting pulled and rooted"*): `PaeteKitPlayProbe.FilmTheSentryPullingAndRootingThem`
+  (TUMP_PAETE_FILM=1), three players dragged in and rooted, wide view plus a caught player's view; the
+  cutscene by `UltimateIntroductionProbe.PaeteThrowsHisSeedFromTheForest` (TUMP_INTRO_SCENE=1). Sent to the owner
+  as mp4 v1. Open on it: the film's own-screen view is a victim's, not Paete's (the local seat), so the
+  cutscene on his screen is not yet filmed in a match.
+- [x] The ultimate is CALLED UP THROUGH THE GROUND, not thrown (owner, 2026-09-26: *"i also dont want him to be
+  throwing an orb I want him to be CALLING IT FROM THE GROUND"*, *"he connects with the ground for a bit (his roots all
+  move and shit and it connects to the ground and then he summons his powers ... and then the tree sprouts"*). Cutscene
+  (`tools/author_ultimate_intros.py` `paete`, `HeroIntroductionScene.Paete.cs`): Makiling's light comes down into his
+  cupped hands; he kneels and presses both palms into the court (1.5 s), roots burst round him and writhe, three root
+  veins with a light at their front race under the court to the spot; he rises arms high (2.62 s) and the tree erupts.
+  Live: `PaeteRootVein` replaces the seed arc on the same 0.45 s (timing and warning unchanged); the live clip
+  `hero-paete-sentry` starts from the raised pose. Verified by the verification run named in the commit.
+- [x] First-person arms BULKIER (owner: *"make his fpp arms loook BULKIER bcz he is QUITE bulky"*): 1.45 across in
+  `ViewmodelArms.ApplyCharacterStyle` (the roster-arm early return had skipped the thickness entirely); every hero now
+  starts from scale one there. NOT yet seen in a first-person capture after the change.
+- [x] The deer beside Makiling is cut (owner: *"why is there a deer even did i ask for that"*).
+- [x] Portrait and avatar (`UI/portraits/paete.png` via `TumpPortraitAuthor.CaptureOnly -tp-portrait-id paete` with a
+  closer framing for him, `UI/avatars/avatar_paete.png` via `tools/build_avatars.py`). NOT yet checked after the
+  closer framing re-bake (the (height, zoom) argument order was wrong once; fixed to `LookAt(.84f, .42f)`).
+- [ ] ⚠️ NEXT: THE ATTACKER AND DEFENDER PLANTS MUST BE THEIR OWN SPECIES (owner, 2026-09-26: *"do all his sentries look
+  the same? i wanted all his sentries (ult and attacker skill and defender skill TO ALL look diff and distinct and have
+  their own style)"*, *"attacker and defender sentry should look like distinct plants or trees"*). Today the seedling and
+  the thorn fist share the woven brown bark of the ultimate's tree. Proposed to the owner (not yet built): BAKYA BLOOM a
+  squat bulbous green plant, smooth bottle stem, big broad paddle leaves (young banana plant), a gold-hearted bud that
+  opens like a mouth to spit the wooden slippers, no bark; THORN HARVEST a low dark spiky rosette like rattan palm (uway),
+  stiff barbed fronds that fan out and whip, no bark trunk. Typed by hand in `tools/build_paete_props.py` (seedling(),
+  thorns()), node names kept for `PaeteTreeBodies.cs`, filmed with `PaeteReviewProbe.RunTrees`.
+- [ ] The ultimate's cast sound still describes a seed and an overhand swish (`tools/build_paete_audio.py`
+  `sentry_cast`): rewrite it as the ground call (a root groan swelling, soil crunch at the press, a rising rumble), and
+  add a sound for the veins racing under the court. Not heard by the owner.
+- [ ] Film the cutscene ON HIS SCREEN in a match: `UltimatePhaseView` draws it through its own camera onto an overlay,
+  which `ImprovementEvidenceProbe.Record` (Camera.main) cannot see. Capture the phase's RenderTexture in
+  `PaeteKitPlayProbe.FilmTheSentryPullingAndRootingThem`. The victim's-eye film (dragged in, held, camera swung to third
+  person) was made once and overwritten; add it as its own capture.
+- [ ] ⚠️ NEW RED, 2026-09-26: EditMode 605/609 (`Logs/paete-editmode12.xml`): the three known reds plus
+  `RosterArmAuditTests.EveryArmHasARealForearmAxisAndCurrentCharacterGeometry`, first seen after
+  `RosterBookBuilder.RefreshPersonFromCommandLine -person paete` re-baked his clips and after the 1.45 first-person
+  arm bulk in `ViewmodelArms`. Read its message and fix the cause (not the assertion). It passed at 606/609 before.
+- [ ] Look notes from the films, not yet acted on: Paete reads orange rather than brown under the cutscene's lighting;
+  the cutscene's stage walls read as flat boards; the editor capture runs at 7 to 17 fps (a real-time player capture
+  would read better for the owner).
+- [x] Rerun `PaeteKitPlayProbe` and EditMode after the rise and snapshot changes: 4/4 (`Logs/paete-play4.xml`) and
+  606/609 with the three known reds (`Logs/paete-editmode5.xml`), 2026-09-26; rerun after every batch since.
 - [ ] Still to do: portrait and avatar, a rejoin test that exercises the plant, thorn and sentry snapshot
   kinds, `BotBehaviourProbe`, a first-person vine capture, PlayMode gate, Checks.RunAll, audits, a build.
   (The seedling and thorn-construct art pass is the modelled trees row above.)

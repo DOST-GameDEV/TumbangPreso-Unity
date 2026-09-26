@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// ⚠️⚠️ YAKAP NG MAKILING'S SENTRY, v5: THE MODELLED TREE (direction.md section 5.2 and 5.8).
+    /// ⚠️⚠️ MAKILING'S EMBRACE'S SENTRY, v5: THE MODELLED TREE (direction.md section 5.2 and 5.8).
     ///
     /// The owner's notes that shaped it, in order: *"i want u to make a very nice plant sentry"* (Groot's
     /// Strangling Prison), *"it doesnt look that imposing"*, *"its js blocks"*, *"make it look likle this"*
@@ -62,6 +62,22 @@ namespace TumbangPreso.Visual
         /// (`PaeteRules.SentryHoldDistance`), end up among its roots, pressed to the tree.
         /// </summary>
         public const float Scale = 1.75f;
+
+        /// <summary>The authored model's height to its highest branch tip, measured off the glb (metres).</summary>
+        public const float ModelHeight = 5.2f;
+        private float _scale = Scale;
+
+        /// <summary>
+        /// ⚠️ FIT UNDER A ROOF. Ilalim ng Tulay is played under an elevated road, and at full size the crown
+        /// went into the deck's underside (`PaeteReviewProbe` v17). The hazard measures the clearance above
+        /// where the seed lands and the tree stands as tall as fits, never taller than `Scale`, never under
+        /// 1.2 (it still has to tower over the prisoners).
+        /// </summary>
+        public void FitUnder(float clearance)
+        {
+            _scale = Mathf.Clamp((clearance - 0.3f) / ModelHeight, 1.2f, Scale);
+            if (_model != null) _model.transform.localScale = Vector3.one * _scale;
+        }
         private bool _podsDropped;
 
         // The eight ground branches racing out: yaw, length, wave phase. Each typed, none the same.
@@ -334,19 +350,19 @@ namespace TumbangPreso.Visual
 
             // The crown tops out (0.56 s, the squash): leaves blown off it in a burst.
             if (_lastAge < 0.56f && age >= 0.56f && age - _lastAge < 0.5f)
-                PaeteLeafBurst.Spawn(transform.position + Vector3.up * 4.4f * Scale, 16, 2.6f);
+                PaeteLeafBurst.Spawn(transform.position + Vector3.up * 4.4f * _scale, 16, 2.6f);
             // A leaf falling from the crown every 0.8 s through the watch.
             if (age > 1.2f && age < life - 0.5f && Mathf.FloorToInt(age / 0.8f) != Mathf.FloorToInt(_lastAge / 0.8f) && age - _lastAge < 0.5f)
             {
                 int k = Mathf.FloorToInt(age / 0.8f) % LeafFrom.Length;
-                PaeteLeafBurst.Spawn(transform.TransformPoint(LeafFrom[k] * Scale), 1, 0.35f);
+                PaeteLeafBurst.Spawn(transform.TransformPoint(LeafFrom[k] * _scale), 1, 0.35f);
             }
 
             // The pods: once, as it goes to sleep, the tree lets go of its seeds.
             if (wither > 0.05f && !_podsDropped)
             {
                 _podsDropped = true;
-                PaeteLeafBurst.Spawn(transform.position + Vector3.up * 3.6f * Scale, 12, 1.8f);
+                PaeteLeafBurst.Spawn(transform.position + Vector3.up * 3.6f * _scale, 12, 1.8f);
             }
             _lastAge = age;
         }
@@ -417,7 +433,7 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
-    /// ⚠️⚠️ PUNLANG TSINELAS'S SEEDLING, v3: THE MODELLED SPROUT (direction.md section 5.3). A three-cord
+    /// ⚠️⚠️ BAKYA BLOOM'S SEEDLING, v3: THE MODELLED SPROUT (direction.md section 5.3). A three-cord
     /// stem, two big ARM leaves, four roots, and a POD for a head: a bud of five petals round the wooden
     /// slipper that grows in it. Posed from its age by `PaetePlant`:
     ///  * pop (0 to 0.45 s): pushes up out of the soil, overshoot, squash; the arm leaves flick open last;
@@ -567,7 +583,7 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
-    /// ⚠️⚠️ BAWI'S THORN CONSTRUCT, v2: THE MODELLED FIST (direction.md section 5.4). A knot of three
+    /// ⚠️⚠️ THORN HARVEST'S THORN CONSTRUCT, v2: THE MODELLED FIST (direction.md section 5.4). A knot of three
     /// roots and seven square thorns; a woven lash out to each caught slipper that goes taut, holds a
     /// beat and hauls it home. Thorns punch up in a ripple round the ring, QUIVER through the hold, WHIP
     /// back on the yank, then CLENCH inward like a fist closing on what it took, and sink one by one.

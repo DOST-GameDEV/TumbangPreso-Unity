@@ -29,7 +29,10 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>The prop named <paramref name="name"/> under <paramref name="parent"/>, dressed; null if it is missing.</summary>
-        public static GameObject Spawn(string name, Transform parent)
+        public static GameObject Spawn(string name, Transform parent) => Spawn(name, parent, null, ToonSkin.PersonOutlineWidth);
+
+        /// <summary>As above, in <paramref name="palette"/> (his when null) with an outline <paramref name="width"/> wide.</summary>
+        public static GameObject Spawn(string name, Transform parent, Color[] palette, float width)
         {
             var source = Resources.Load<GameObject>("Models/PaeteProps/" + name);
             if (source == null)
@@ -45,7 +48,19 @@ namespace TumbangPreso.Visual
             // Disabled first: `Destroy` in play is deferred to the frame's end, and a caller may check now.
             foreach (var c in go.GetComponentsInChildren<Collider>(true)) { c.enabled = false; Kill(c); }
             foreach (var r in go.GetComponentsInChildren<Renderer>(true)) VfxRenderTag.Attach(r.gameObject);
-            ToonSkin.Apply(go, ToonSkin.PersonOutlineWidth, Palette);
+            ToonSkin.Apply(go, width, palette ?? Palette);
+            return go;
+        }
+
+        /// <summary>The prop undressed: for a surface that brings its own material (Makiling's spirit).</summary>
+        public static GameObject SpawnRaw(string name, Transform parent)
+        {
+            var source = Resources.Load<GameObject>("Models/PaeteProps/" + name);
+            if (source == null) { Debug.LogWarning("[PaeteProp] Models/PaeteProps/" + name + " is missing."); return null; }
+            var go = Object.Instantiate(source, parent, false);
+            go.name = "PaeteProp-" + name;
+            foreach (var c in go.GetComponentsInChildren<Collider>(true)) { c.enabled = false; Kill(c); }
+            foreach (var r in go.GetComponentsInChildren<Renderer>(true)) VfxRenderTag.Attach(r.gameObject);
             return go;
         }
 
@@ -116,6 +131,136 @@ namespace TumbangPreso.Visual
             }
             if (_eyes != null)
                 _eyes.localScale = new Vector3(1f, Mathf.Max(0.001f, GrowthVfx.Pop((t - _wake) / 0.3f)), 1f);
+        }
+    }
+
+    /// <summary>
+    /// ⚠️⚠️ MARIANG MAKILING, WATCHING OVER HIM (owner, 2026-09-26: *"i want the lore for this character
+    /// to be that its the guardian of mount makiling"*, *"make it seem like the spirit of maria makiling or
+    /// smth is watching over him"*, Aphelios and Alune as the model, *"one place i want this maria makiling
+    /// or smht to shhow up is his ult cutscene"*, *"its fine if u dont make maria makiling like other
+    /// characters"*). direction.md section 5.10. `Resources/Models/PaeteProps/makiling.glb`
+    /// (`tools/build_paete_props.py` `makiling`), a tall calm figure with her deer, in HER palette.
+    ///
+    /// ⚠️⚠️ A GHOST, NOT A FIGURE (owner, same day, on the first render with her own colours and a lit
+    /// edge: *"this sucks pa"*, *"make her look see thru so that it seems like a ghost"*, and two Alune
+    /// pictures). So, as Alune is drawn: ONE luminous hue (his jade light), the forms kept only by value,
+    /// brighter and more solid at the edges, see-through in the middle, her lower body dissolving into
+    /// the mist, looming over his shoulder. `Resources/Shaders/SpiritGhost.shader` draws her (a depth
+    /// pass so only her front shows, then the blend); the only solid thing on her is the seed.
+    /// </summary>
+    public sealed class MakilingSpirit
+    {
+        public static readonly Color[] Palette =
+        {
+            Hex(0x231A17), Hex(0x3B2C26), Hex(0xC98E68), Hex(0xA8704F), Hex(0xF3EEE4), Hex(0xD8D0C0), Hex(0xFBF8EF), Hex(0xE8C24A),
+            Hex(0x1E140C), Hex(0x6A962E), Hex(0xD8FF6A), Hex(0xBFE0A6), Hex(0xA9713E), Hex(0xE2C9A0), Hex(0x5A3B22), Hex(0xC7AC84),
+        };
+
+        public readonly GameObject Model;
+        private readonly Transform _head, _hair, _hands, _seed, _shawl, _deerHead;
+        private readonly Quaternion _headRest, _hairRest, _shawlRest, _deerHeadRest;
+        private readonly Vector3 _handsAt, _seedAt, _seedScale, _at;
+
+        private static Color Hex(int rgb) => new Color(((rgb >> 16) & 255) / 255f, ((rgb >> 8) & 255) / 255f, (rgb & 255) / 255f, 1f);
+
+        private readonly Material _ghost;
+        private static readonly int BaseYId = Shader.PropertyToID("_BaseY"), PresenceId = Shader.PropertyToID("_Presence");
+        private readonly float _scale;
+
+        public MakilingSpirit(Transform parent, Vector3 at, float yaw, float scale)
+        {
+            _at = at; _scale = scale;
+            Model = PaeteProp.SpawnRaw("makiling", parent);
+            if (Model == null) return;
+            Model.transform.localPosition = at;
+            Model.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
+            Model.transform.localScale = Vector3.one * scale;
+            var shader = Resources.Load<Shader>("Shaders/SpiritGhost");
+            if (shader != null)
+            {
+                _ghost = new Material(shader) { name = "MakilingSpirit" };
+                var slots = new Vector4[16];
+                for (int i = 0; i < 16; i++) slots[i] = Palette[i].linear;
+                _ghost.SetVectorArray("_Palette", slots);
+                // The fade band scales with her: her hem is gone, her knees are mist, her waist is there.
+                _ghost.SetFloat("_FadeLow", 0.35f * scale);
+                _ghost.SetFloat("_FadeHigh", 1.55f * scale);
+                VfxRenderTag.Own(Model, _ghost);
+            }
+            else Debug.LogWarning("[MakilingSpirit] Shaders/SpiritGhost is missing.");
+            foreach (var r in Model.GetComponentsInChildren<Renderer>(true))
+            {
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                r.receiveShadows = false;
+                if (_ghost != null)
+                {
+                    var mats = new Material[r.sharedMaterials.Length];
+                    for (int k = 0; k < mats.Length; k++) mats[k] = _ghost;
+                    r.sharedMaterials = mats;
+                }
+            }
+            _head = PaeteProp.Find(Model, "head");
+            _hair = PaeteProp.Find(Model, "hair");
+            _hands = PaeteProp.Find(Model, "hands");
+            _seed = PaeteProp.Find(Model, "seed");
+            _shawl = PaeteProp.Find(Model, "shawl");
+            _deerHead = PaeteProp.Find(Model, "deer-head");
+            if (_head != null) _headRest = _head.localRotation;
+            if (_hair != null) _hairRest = _hair.localRotation;
+            if (_shawl != null) _shawlRest = _shawl.localRotation;
+            if (_deerHead != null) _deerHeadRest = _deerHead.localRotation;
+            if (_hands != null) _handsAt = _hands.localPosition;
+            if (_seed != null) { _seedAt = _seed.localPosition; _seedScale = _seed.localScale; }
+        }
+
+        /// <summary>
+        /// Pose at scene time <paramref name="t"/>. <paramref name="presence"/> 0 to 1 raises her out of the
+        /// mist and lowers her back; <paramref name="giveAt"/> is when the seed leaves her hands for his
+        /// palm at <paramref name="palmWorld"/>; <paramref name="gather"/> lifts her hands and stirs her hair.
+        /// </summary>
+        public void Pose(float t, float presence, float giveAt, Vector3 palmWorld, float gather)
+        {
+            if (Model == null) return;
+            Model.SetActive(presence > 0.002f);
+            float rise = Mathf.SmoothStep(0f, 1f, presence);
+            // Up out of the mist, floating: her hem stays in it, and she fades in as she comes.
+            Model.transform.localPosition = _at + Vector3.up * (-1.4f * _scale * (1f - rise) + 0.05f * Mathf.Sin(t * 1.7f));
+            if (_ghost != null)
+            {
+                _ghost.SetFloat(BaseYId, Model.transform.position.y);
+                _ghost.SetFloat(PresenceId, rise);
+            }
+            if (_head != null)
+            {
+                // The head bows toward him as she rises, then a slow tilt as she watches.
+                float bow = 18f * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((t - 0.3f) / 0.6f));
+                _head.localRotation = _headRest * Quaternion.Euler(bow, 0f, 5f * Mathf.Sin(t * 0.9f));
+            }
+            float wind = 1f + 2.2f * gather;
+            if (_hair != null) _hair.localRotation = _hairRest * Quaternion.Euler(3f * wind * Mathf.Sin(t * 1.3f), 0f, 2f * wind * Mathf.Sin(t * 1.1f + 1f));
+            if (_shawl != null) _shawl.localRotation = _shawlRest * Quaternion.Euler(4f * wind * Mathf.Sin(t * 1.5f + 0.4f), 0f, 3f * wind * Mathf.Sin(t * 1.2f));
+            if (_hands != null) _hands.localPosition = _handsAt + new Vector3(0f, 0.12f * gather, 0.04f * gather);
+            if (_seed != null)
+            {
+                // The seed glows up in her hands, then arcs to his palm and is gone from hers.
+                float glow = Mathf.Clamp01((t - 0.15f) / 0.35f);
+                float fly = Mathf.Clamp01((t - giveAt) / 0.22f);
+                _seed.gameObject.SetActive(fly < 1f);
+                _seed.localPosition = _seedAt;
+                if (fly > 0f)
+                {
+                    Vector3 from = _seed.parent.TransformPoint(_seedAt);
+                    _seed.position = Vector3.Lerp(from, palmWorld, fly) + Vector3.up * 0.6f * Mathf.Sin(fly * Mathf.PI);
+                }
+                _seed.localScale = _seedScale * Mathf.Max(0.001f, glow * (1f + 0.15f * Mathf.Sin(t * 9f)) * (1f - 0.6f * fly));
+            }
+            if (_deerHead != null)
+            {
+                // Her deer lifts its head and turns it toward him.
+                float lift = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((t - 0.5f) / 0.5f));
+                _deerHead.localRotation = _deerHeadRest * Quaternion.Euler(-14f * lift + 2f * Mathf.Sin(t * 2.1f), -22f * lift, 0f);
+            }
         }
     }
 
@@ -256,6 +401,70 @@ namespace TumbangPreso.Visual
                 }
                 PaeteInk.Tube(_strands[s], _pts, _radii, 5);
             }
+        }
+    }
+
+    /// <summary>
+    /// ⚠️⚠️ THE ULTIMATE IS CALLED UP THROUGH THE GROUND, NOT THROWN (owner, 2026-09-26: *"i also dont want him
+    /// to be throwing an orb I want him to be CALLING IT FROM THE GROUND"*). In play, in place of the seed's arc:
+    /// three bark roots braided round a line of his jade light race along the court from his feet to where the
+    /// tree will stand, cracking the road as they go, arriving on the same clock the seed did (so the warning a
+    /// player gets is unchanged), then sinking back into the court as the tree bursts. Every peer draws it
+    /// from the accepted cast, like the seed it replaces.
+    /// </summary>
+    public sealed class PaeteRootVein : MonoBehaviour
+    {
+        private Vector3 _from, _to;
+        private float _seconds, _age;
+        private PaeteRope _rope;
+        private Transform _tip;
+        private readonly List<Vector3> _path = new List<Vector3>(48);
+        private readonly List<Vector3> _shown = new List<Vector3>(48);
+        private int _cracks;
+        private const int Samples = 36;
+
+        public static PaeteRootVein Race(Vector3 from, Vector3 to, float seconds)
+        {
+            var go = new GameObject("PaeteRootVein");
+            var vein = go.AddComponent<PaeteRootVein>();
+            vein._from = from; vein._to = to; vein._seconds = Mathf.Max(0.1f, seconds);
+            vein._rope = new PaeteRope(go.transform, "root-vein", new[] { GrowthVfx.BarkDark, GrowthVfx.Bark, GrowthVfx.BarkLit },
+                                       new[] { 0.070f, 0.060f, 0.052f }, 0.075f, 5.5f, 0.4f);
+            vein._tip = GrowthVfx.Block(go.transform, "vein-light", Vector3.one * 0.22f, GrowthVfx.Glow, 1.6f).transform;
+            // The line under the road: out of his feet, wandering a little (two slow waves), hugging the court.
+            Vector3 d = to - from; d.y = 0f;
+            Vector3 side = d.sqrMagnitude > 1e-4f ? Vector3.Cross(Vector3.up, d.normalized) : Vector3.right;
+            for (int k = 0; k <= Samples; k++)
+            {
+                float u = k / (float)Samples;
+                Vector3 p = Vector3.Lerp(from, to, u) + side * (0.35f * Mathf.Sin(u * Mathf.PI * 2.2f) * Mathf.Sin(u * Mathf.PI));
+                p.y = Slipper.GroundY(p) + 0.05f;
+                vein._path.Add(p);
+            }
+            PaeteGroundBreak.Spawn(from, 0.6f);
+            vein.Step(0f);
+            return vein;
+        }
+
+        private void Update() => Step(Time.deltaTime);
+
+        public void Step(float dt)
+        {
+            _age += dt;
+            float reach = Mathf.Clamp01(_age / _seconds);
+            float sink = Mathf.Clamp01((_age - _seconds - 0.1f) / 0.7f);
+            if (sink >= 1f) { PaeteProp.Kill(gameObject); return; }
+            int shown = Mathf.Clamp(Mathf.CeilToInt(reach * Samples), 1, Samples);
+            _shown.Clear();
+            for (int k = 0; k <= shown; k++) _shown.Add(_path[k] + Vector3.down * 0.25f * sink);
+            _rope.Draw(_shown, 0.55f);
+            // The light runs at the front of the roots, then drops into the ground where the tree will stand.
+            _tip.position = _shown[_shown.Count - 1] + Vector3.up * 0.12f;
+            _tip.localScale = Vector3.one * 0.22f * (1f + 0.25f * Mathf.Sin(_age * 30f)) * (1f - sink);
+            _tip.Rotate(0f, 400f * dt, 0f, Space.World);
+            // The road cracks behind the tip, every quarter of the way.
+            int crack = Mathf.FloorToInt(reach * 4f);
+            while (_cracks < crack && _cracks < 4) { _cracks++; PaeteGroundBreak.Spawn(_path[Mathf.Min(Samples, _cracks * Samples / 4)], 0.35f); }
         }
     }
 

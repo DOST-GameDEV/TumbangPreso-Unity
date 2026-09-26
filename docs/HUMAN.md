@@ -523,23 +523,23 @@ unhurried voice, never shouted, even on the ultimate. Human voices only.
 | `hvo_paete_lead_1` | "Still growing." | Takes the lead |
 | `hvo_paete_round_1` | "No rush." | Round start, as the taya (odd rounds) |
 | `hvo_paete_round_2` | "The mountain waited longer than this." | Round start, as the taya (odd rounds) |
-| `hvo_paete_skill1_1` | "Kapit." | Casts Kapit-Baging, his signature (rests 14 s after) |
-| `hvo_paete_skill1_2` | "I'll be right there." | Casts Kapit-Baging, his signature (rests 14 s after) |
-| `hvo_paete_skill1_3` | "The vines know the way." | Casts Kapit-Baging, his signature (rests 14 s after) |
-| `hvo_paete_skill2_1` | "Grow." | Casts Punlang Tsinelas, attacking (rests 14 s after) |
-| `hvo_paete_skill2_2` | "Aim for the can, little one." | Casts Punlang Tsinelas, attacking (rests 14 s after) |
-| `hvo_paete_skill2_3` | "It throws better than you." | Casts Punlang Tsinelas, attacking (rests 14 s after) |
-| `hvo_paete_skill2d_1` | "That's mine now." | Casts Bawi, defending (rests 14 s after) |
-| `hvo_paete_skill2d_2` | "Eat the fruit. Leave it here." | Casts Bawi, defending (rests 14 s after) |
-| `hvo_paete_skill2d_3` | "Nothing leaves the mountain." | Casts Bawi, defending (rests 14 s after) |
+| `hvo_paete_skill1_1` | "Kapit." | Casts Liana Leap, his signature (rests 14 s after) |
+| `hvo_paete_skill1_2` | "I'll be right there." | Casts Liana Leap, his signature (rests 14 s after) |
+| `hvo_paete_skill1_3` | "The vines know the way." | Casts Liana Leap, his signature (rests 14 s after) |
+| `hvo_paete_skill2_1` | "Grow." | Casts Bakya Bloom, attacking (rests 14 s after) |
+| `hvo_paete_skill2_2` | "Aim for the can, little one." | Casts Bakya Bloom, attacking (rests 14 s after) |
+| `hvo_paete_skill2_3` | "It throws better than you." | Casts Bakya Bloom, attacking (rests 14 s after) |
+| `hvo_paete_skill2d_1` | "That's mine now." | Casts Thorn Harvest, defending (rests 14 s after) |
+| `hvo_paete_skill2d_2` | "Eat the fruit. Leave it here." | Casts Thorn Harvest, defending (rests 14 s after) |
+| `hvo_paete_skill2d_3` | "Nothing leaves the mountain." | Casts Thorn Harvest, defending (rests 14 s after) |
 | `hvo_paete_tag_1` | "Found you." | Lands a tag |
 | `hvo_paete_tag_2` | "Too loud, little bird." | Lands a tag |
 | `hvo_paete_tagged_1` | "Hm. Fair." | Gets tagged |
 | `hvo_paete_tagged_2` | "I'll grow back." | Gets tagged |
-| `hvo_paete_ultally_1` | "Stay out of the roots!" | Yakap ng Makiling, heard by the caster's side |
-| `hvo_paete_ultally_2` | "Step back. The forest is waking." | Yakap ng Makiling, heard by the caster's side |
-| `hvo_paete_ultopp_1` | "Dito ka muna." | Yakap ng Makiling, heard by the other side |
-| `hvo_paete_ultopp_2` | "The mountain keeps what it catches." | Yakap ng Makiling, heard by the other side |
+| `hvo_paete_ultally_1` | "Stay out of the roots!" | Makiling's Embrace, heard by the caster's side |
+| `hvo_paete_ultally_2` | "Step back. The forest is waking." | Makiling's Embrace, heard by the caster's side |
+| `hvo_paete_ultopp_1` | "Dito ka muna." | Makiling's Embrace, heard by the other side |
+| `hvo_paete_ultopp_2` | "The mountain keeps what it catches." | Makiling's Embrace, heard by the other side |
 | `hvo_paete_win_1` | "Good game. Come climb Makiling." | Wins the match |
 | `hvo_paete_win_2` | "Salamat. Now, rest." | Wins the match |
 

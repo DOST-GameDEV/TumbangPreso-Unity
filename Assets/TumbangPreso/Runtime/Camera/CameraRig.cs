@@ -1402,7 +1402,13 @@ namespace TumbangPreso.CameraSystem
             // every tag in a 90 s round would take the camera off the player four or five times
             // a match for no decision. Hero skills are refused by the same rule.
             bool held = _character != null && _character.StunElement != StunElement.None;
-            bool down = _character != null && (_character.IsTripped || held);
+            // ⚠️ ROOTED SWINGS OUT TOO (HERO-9, the owner's table for Paete's ultimate: *"they get stuck on it
+            // (switches to tpp view)"*; planned in docs/reports/paete-kit-2026-09-25/plan.md and never wired
+            // until the sentry film of 2026-09-26 showed a caught player still in first person). Unlike a tag
+            // there IS something to do: hold Interact to struggle free, and they can still throw and cast, so
+            // they see their own body held by the tree. It keeps the standing pitch, as a held body does.
+            bool rooted = _character != null && _character.IsRooted;
+            bool down = _character != null && (_character.IsTripped || held || rooted);
             if (down == _fallView) return;
 
             // ⚠️ AN EMOTE ALREADY OWNS THE SWING, SO DO NOT TAKE IT FROM ONE. `EmotePlayer.Stop`
@@ -1425,7 +1431,7 @@ namespace TumbangPreso.CameraSystem
                 // `FallPitchDeg` looks DOWN at a body on the tarmac; using it for a stun would
                 // aim the camera at the road in front of a character who is upright, and the
                 // one thing the player needs to see is the element on their own body.
-                if (!held) _emotePitchDeg = FallPitchDeg;
+                if (!held && !rooted) _emotePitchDeg = FallPitchDeg;
             }
             else EndEmoteView();
         }

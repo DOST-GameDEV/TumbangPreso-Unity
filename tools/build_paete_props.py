@@ -639,9 +639,144 @@ def thorns():
     write(os.path.join(OUT, "thorns.glb"), nodes)
 
 
+
+# ---------------------------------------------------------------------------------------------
+# MARIANG MAKILING, THE SPIRIT IN HIS ULTIMATE (owner, 2026-09-26: *"make it seem like the spirit of
+# maria makiling or smth is watching over him"*, Aphelios and Alune as the model, *"one place i want
+# this maria makiling or smht to shhow up is his ult cutscene"*, two paintings of her as reference, and
+# *"its fine if u dont make maria makiling like other characters"*). direction.md section 5.10.
+#
+# Not the cast's chibi proportions, by the owner's leave: a tall, calm figure about 3.9 m, standing in
+# the mist behind him, head bowed toward him, eyes closed, her cupped hands holding the seed of light
+# (the painting's cupped hands); long black hair to the knees, a crown of white flowers, a white gown,
+# and a pale green shawl. Every part is typed. (A deer from the paintings stood beside her for one
+# film and was cut the same day, the owner: *"why is there a deer even did i ask for that"*.)
+#
+# ⚠️ HER OWN PALETTE, NOT HIS. The slots below mean HER colours; the runtime dresses her with
+# `MakilingSpirit.Palette` (same sixteen cells, her values), then gives her a glowing pale outline in
+# place of the ink, which is what reads as a spirit.
+#   0 hair  1 hair lit  2 skin  3 skin shade  4 gown  5 gown shade  6 petal  7 flower heart
+#   8 ink   9 leaf      10 light  11 shawl    12 deer 13 deer light 14 deer dark 15 antler
+# ---------------------------------------------------------------------------------------------
+MK_HAIR, MK_HAIR_LIT, MK_SKIN, MK_SKIN_SH, MK_GOWN, MK_GOWN_SH, MK_PETAL, MK_HEART = 0, 1, 2, 3, 4, 5, 6, 7
+MK_INK, MK_LEAF, MK_LIGHT, MK_SHAWL, MK_DEER, MK_DEER_LT, MK_DEER_DK, MK_ANTLER = 8, 9, 10, 11, 12, 13, 14, 15
+
+
+def blossom(node, centre, compass, tilt, size, petals):
+    """One flower of the crown: `petals` rounded petals round a gold heart, its face turned out along
+    `compass` and tipped up by `tilt`. Called once per flower with that flower's own numbers."""
+    for k in range(petals):
+        spin = k * 360.0 / petals + (13.0 if petals == 6 else 0.0)
+        local = (size * 0.55 * math.cos(math.radians(spin)), size * 0.55 * math.sin(math.radians(spin)), 0.0)
+        node.leaf(add(centre, pv._rotate(local, compass, 0.0, tilt)), size * 0.95, size * 0.62, compass, spin, 90.0 + tilt,
+                  slot=MK_PETAL, thickness=0.010)
+    node.obox(add(centre, pv._rotate((0.0, 0.0, 0.012), compass, 0.0, 0.0)), (size * 0.5, size * 0.5, size * 0.35), MK_HEART, yaw=compass, bevel=0.006)
+
+
+def makiling():
+    root = Node("makiling")
+    body = Node("body", parent="makiling")
+    nodes = [root, body]
+
+    # --- The gown: a long skirt flaring from the waist to a hem the mist will swallow, and its folds.
+    line(body, [(0, 1.62, 0.0), (0, 1.30, 0.01), (0, 0.95, 0.03), (0, 0.55, 0.05), (0, 0.22, 0.07), (0, 0.0, 0.08)],
+         [0.22, 0.30, 0.40, 0.52, 0.63, 0.70], MK_GOWN, sides=9, per=3)
+    body.obox(sring_free(0.46, 18, 0.62), (0.07, 1.05, 0.05), MK_GOWN_SH, yaw=18, roll=-14)
+    body.obox(sring_free(0.49, 70, 0.55), (0.06, 1.15, 0.05), MK_GOWN_SH, yaw=70, roll=-15)
+    body.obox(sring_free(0.44, 128, 0.66), (0.07, 0.95, 0.05), MK_GOWN_SH, yaw=128, roll=-13)
+    body.obox(sring_free(0.50, 196, 0.52), (0.06, 1.20, 0.05), MK_GOWN_SH, yaw=196, roll=-16)
+    body.obox(sring_free(0.47, 252, 0.60), (0.07, 1.00, 0.05), MK_GOWN_SH, yaw=252, roll=-14)
+    body.obox(sring_free(0.45, 318, 0.64), (0.06, 1.02, 0.05), MK_GOWN_SH, yaw=318, roll=-13)
+    # The bodice, and the off-shoulder wrap round it.
+    line(body, [(0, 1.60, 0.0), (0, 1.85, 0.01), (0, 2.08, 0.02), (0, 2.26, 0.01)], [0.20, 0.185, 0.225, 0.235], MK_GOWN, sides=8, per=3)
+    line(body, [ring(0.25, 0, 2.20), ring(0.26, 50, 2.25), ring(0.25, 100, 2.29), ring(0.23, 150, 2.24), ring(0.23, 210, 2.23),
+                ring(0.25, 260, 2.29), ring(0.26, 310, 2.25), ring(0.25, 360, 2.20)], [0.045] * 8, MK_GOWN_SH, sides=5, per=3)
+    # The shawl belt at the waist, knotted at her left hip, two tails hanging.
+    line(body, [ring(0.215, a, 1.63) for a in (0, 60, 120, 180, 240, 300, 360)], [0.035] * 7, MK_SHAWL, sides=5, per=3)
+    body.obox(ring(0.22, 40, 1.63), (0.08, 0.07, 0.06), MK_SHAWL, yaw=40)
+    line(body, [ring(0.23, 40, 1.60), ring(0.26, 46, 1.35), ring(0.29, 50, 1.08)], [0.03, 0.028, 0.02], MK_SHAWL, sides=4, per=3)
+    line(body, [ring(0.23, 34, 1.60), ring(0.28, 30, 1.40), ring(0.31, 26, 1.20)], [0.028, 0.026, 0.018], MK_SHAWL, sides=4, per=3)
+    # Shoulders, neck (skin).
+    body.box((0.17, 2.24, -0.07), (0.30, 2.33, 0.07), MK_SKIN, bevel=0.03)
+    body.box((-0.30, 2.24, -0.07), (-0.17, 2.33, 0.07), MK_SKIN, bevel=0.03)
+    line(body, [(0, 2.28, 0.0), (0, 2.42, 0.005), (0, 2.53, 0.01)], [0.075, 0.07, 0.068], MK_SKIN, sides=6, per=3)
+    # The arms, down and forward, forearms meeting in front of her chest.
+    line(body, [(0.27, 2.28, 0.0), (0.31, 2.10, 0.04), (0.30, 1.96, 0.12), (0.18, 1.99, 0.27), (0.07, 2.02, 0.35)],
+         [0.064, 0.058, 0.052, 0.046, 0.040], MK_SKIN, sides=6, per=3)
+    line(body, [(-0.27, 2.28, 0.0), (-0.31, 2.11, 0.03), (-0.30, 1.97, 0.12), (-0.18, 1.99, 0.28), (-0.07, 2.02, 0.35)],
+         [0.064, 0.058, 0.052, 0.046, 0.040], MK_SKIN, sides=6, per=3)
+
+    # --- The hands: cupped together, the painting's gesture, holding the seed of light.
+    hands = Node("hands", origin=(0.0, 2.02, 0.37), parent="body"); nodes.append(hands)
+    hands.obox((0.055, -0.01, 0.0), (0.085, 0.035, 0.13), MK_SKIN, roll=0.0, pitch=-24.0, bevel=0.015)
+    hands.obox((-0.055, -0.01, 0.0), (0.085, 0.035, 0.13), MK_SKIN, roll=0.0, pitch=24.0, bevel=0.015)
+    hands.obox((0.085, 0.03, 0.01), (0.03, 0.06, 0.12), MK_SKIN_SH, bevel=0.01)
+    hands.obox((-0.085, 0.03, 0.01), (0.03, 0.06, 0.12), MK_SKIN_SH, bevel=0.01)
+    seed = Node("seed", origin=(0.0, 0.05, 0.0), parent="hands"); nodes.append(seed)
+    seed.obox((0.0, 0.0, 0.0), (0.075, 0.075, 0.075), MK_LIGHT, yaw=45, roll=35, bevel=0.012)
+
+    # --- The head: bowed toward him on its own node, eyes closed, a calm small smile.
+    head = Node("head", origin=(0.0, 2.52, 0.01), parent="body"); nodes.append(head)
+    head.box((-0.150, 0.03, -0.155), (0.150, 0.42, 0.160), MK_SKIN, bevel=0.05)
+    head.box((-0.095, -0.01, -0.08), (0.095, 0.08, 0.135), MK_SKIN, bevel=0.035)           # the chin, narrower
+    head.obox((0.0, 0.17, 0.165), (0.035, 0.055, 0.03), MK_SKIN_SH, bevel=0.01)          # a small nose
+    # Closed eyes: two short strokes each, a gentle downward arc (the painting's lowered lids).
+    head.obox((0.042, 0.232, 0.163), (0.040, 0.011, 0.008), MK_INK, pitch=-12.0, bevel=0)
+    head.obox((0.080, 0.228, 0.162), (0.036, 0.011, 0.008), MK_INK, pitch=14.0, bevel=0)
+    head.obox((-0.042, 0.232, 0.163), (0.040, 0.011, 0.008), MK_INK, pitch=12.0, bevel=0)
+    head.obox((-0.080, 0.228, 0.162), (0.036, 0.011, 0.008), MK_INK, pitch=-14.0, bevel=0)
+    # The smile: two strokes meeting low in the middle.
+    head.obox((0.018, 0.098, 0.150), (0.036, 0.010, 0.008), MK_INK, pitch=10.0, bevel=0)
+    head.obox((-0.018, 0.098, 0.150), (0.036, 0.010, 0.008), MK_INK, pitch=-10.0, bevel=0)
+    # Hair: the crown of the head, parted in the middle, falling past the face on both sides.
+    head.box((-0.170, 0.25, -0.180), (0.170, 0.49, 0.145), MK_HAIR, bevel=0.05)
+    head.obox((0.085, 0.37, 0.158), (0.155, 0.16, 0.05), MK_HAIR, pitch=-10.0, bevel=0.02)
+    head.obox((-0.085, 0.37, 0.158), (0.155, 0.16, 0.05), MK_HAIR, pitch=10.0, bevel=0.02)
+    line(head, [(0.155, 0.40, 0.10), (0.175, 0.15, 0.13), (0.185, -0.10, 0.15), (0.19, -0.36, 0.17)], [0.055, 0.050, 0.042, 0.028], MK_HAIR, sides=5, per=3)
+    line(head, [(-0.155, 0.40, 0.10), (-0.172, 0.14, 0.12), (-0.182, -0.12, 0.15), (-0.186, -0.40, 0.16)], [0.055, 0.050, 0.042, 0.026], MK_HAIR, sides=5, per=3)
+    line(head, [(0.14, 0.30, 0.05), (0.17, 0.05, 0.08), (0.20, -0.22, 0.10)], [0.040, 0.034, 0.020], MK_HAIR_LIT, sides=5, per=3)
+
+    # --- The long hair down her back, its own node so it sways: six locks, each typed.
+    hair = Node("hair", origin=(0.0, 0.34, -0.12), parent="head"); nodes.append(hair)
+    locks = [
+        ([(0.00, 0.10, 0.00), (0.02, -0.40, -0.08), (0.00, -0.95, -0.12), (0.03, -1.45, -0.10), (0.00, -1.78, -0.08)], [0.10, 0.10, 0.095, 0.08, 0.03], MK_HAIR),
+        ([(0.10, 0.08, 0.02), (0.14, -0.38, -0.06), (0.16, -0.90, -0.09), (0.15, -1.36, -0.06), (0.13, -1.62, -0.04)], [0.08, 0.08, 0.075, 0.06, 0.02], MK_HAIR_LIT),
+        ([(-0.10, 0.08, 0.02), (-0.13, -0.40, -0.07), (-0.15, -0.94, -0.10), (-0.16, -1.40, -0.07), (-0.14, -1.70, -0.05)], [0.08, 0.08, 0.075, 0.06, 0.02], MK_HAIR),
+        ([(0.16, 0.02, 0.06), (0.21, -0.32, 0.00), (0.24, -0.76, -0.03), (0.25, -1.12, -0.01), (0.23, -1.34, 0.01)], [0.06, 0.06, 0.055, 0.045, 0.015], MK_HAIR),
+        ([(-0.16, 0.02, 0.06), (-0.21, -0.34, 0.00), (-0.23, -0.80, -0.04), (-0.24, -1.18, -0.02), (-0.22, -1.42, 0.00)], [0.06, 0.06, 0.055, 0.045, 0.015], MK_HAIR_LIT),
+        ([(0.05, 0.06, -0.03), (0.07, -0.50, -0.14), (0.05, -1.10, -0.18), (0.08, -1.55, -0.15)], [0.07, 0.07, 0.06, 0.02], MK_HAIR),
+    ]
+    for pts, radii, slot in locks:
+        line(hair, pts, radii, slot, sides=5, per=3)
+
+    # --- The crown of white flowers, nine blossoms, each its own size, turn and petal count, with leaves.
+    crown = Node("flower-crown", origin=(0.0, 0.45, -0.01), parent="head"); nodes.append(crown)
+    for compass, size, petals, lift in [(0, 0.070, 6, 0.00), (38, 0.058, 5, 0.01), (76, 0.064, 5, -0.01), (118, 0.052, 5, 0.00),
+                                        (162, 0.060, 6, 0.01), (205, 0.054, 5, 0.00), (248, 0.066, 5, -0.01), (288, 0.057, 5, 0.01),
+                                        (325, 0.062, 6, 0.00)]:
+        blossom(crown, ring(0.185, compass, lift), compass, -20.0, size, petals)
+    sprig(crown, ring(0.19, 20, -0.01), 20, -10, 0.10, 0.05, MK_LEAF)
+    sprig(crown, ring(0.19, 140, 0.0), 140, -12, 0.09, 0.05, MK_LEAF)
+    sprig(crown, ring(0.19, 228, -0.01), 228, -8, 0.10, 0.05, MK_LEAF)
+    sprig(crown, ring(0.19, 305, 0.0), 305, -14, 0.09, 0.05, MK_LEAF)
+
+    # --- The shawl: a pale green length of cloth over her right shoulder, down her back, trailing.
+    shawl = Node("shawl", origin=(-0.24, 2.30, 0.0), parent="body"); nodes.append(shawl)
+    line(shawl, [(0.0, 0.0, 0.06), (0.05, 0.02, -0.10), (0.25, -0.10, -0.22), (0.45, -0.45, -0.28), (0.62, -0.95, -0.34), (0.72, -1.45, -0.45)],
+         [0.05, 0.05, 0.048, 0.045, 0.040, 0.030], MK_SHAWL, sides=4, per=3)
+    line(shawl, [(0.0, 0.0, 0.06), (-0.04, -0.20, 0.10), (-0.06, -0.55, 0.14), (-0.02, -0.90, 0.16)], [0.045, 0.042, 0.036, 0.022], MK_SHAWL, sides=4, per=3)
+
+    write(os.path.join(OUT, "makiling.glb"), nodes)
+
+
+def sring_free(r, a, y):
+    """A point on a ring (no silhouette), for the gown's folds."""
+    return ring(r, a, y)
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    which = set(sys.argv[1:]) or {"sentry", "seedling", "thorns"}
+    which = set(sys.argv[1:]) or {"sentry", "seedling", "thorns", "makiling"}
     if "sentry" in which: sentry()
     if "seedling" in which: seedling()
     if "thorns" in which: thorns()
+    if "makiling" in which: makiling()

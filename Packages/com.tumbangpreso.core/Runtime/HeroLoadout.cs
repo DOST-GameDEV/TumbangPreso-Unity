@@ -394,20 +394,20 @@ namespace TumbangPreso.Core
             // the second reading of each slot plays as the default until the owner designs the
             // variants (*"keep them all as extra skills for now"*). Slot 2 is named for the
             // attacking role ability.
-            new AbilityVariant("paete.1.vine", "paete", 1, "KAPIT-BAGING", "PaeteVine",
-                "KAPIT-BAGING", "Both arms shoot vines where you aim and reel you to the anchor.",
+            new AbilityVariant("paete.1.vine", "paete", 1, "LIANA LEAP", "PaeteVine",
+                "LIANA LEAP", "Vines from both arms haul you to where you aim.",
                 0, 0, "Escape with a slipper", "30 s to come back"),
-            new AbilityVariant("paete.1.vine_next", "paete", 1, "KAPIT-BAGING", "PaeteVine",
-                "KAPIT-BAGING II", "A second reading, still being designed. Plays as Kapit-Baging.",
+            new AbilityVariant("paete.1.vine_next", "paete", 1, "LIANA LEAP", "PaeteVine",
+                "LIANA LEAP II", "A second reading, still being designed. Plays as Liana Leap.",
                 .30f, -.30f, "Being designed", "Same as the default",
-                "Use Kapit-Baging eight times", true, 8),
-            new AbilityVariant("paete.2.sprout", "paete", 2, "PUNLANG TSINELAS", "PaeteSprout",
-                "PUNLANG TSINELAS", "Attacking: a seedling grows wooden slippers you fire at will.",
+                "Use Liana Leap eight times", true, 8),
+            new AbilityVariant("paete.2.sprout", "paete", 2, "BAKYA BLOOM", "PaeteSprout",
+                "BAKYA BLOOM", "Attacking: a sapling grows wooden slippers and throws them for you.",
                 0, 0, "A second thrower", "Pulled out after 15 s"),
-            new AbilityVariant("paete.2.sprout_next", "paete", 2, "PUNLANG TSINELAS", "PaeteSprout",
-                "PUNLANG TSINELAS II", "A second reading, still being designed. Plays as Punlang Tsinelas.",
+            new AbilityVariant("paete.2.sprout_next", "paete", 2, "BAKYA BLOOM", "PaeteSprout",
+                "BAKYA BLOOM II", "A second reading, still being designed. Plays as Bakya Bloom.",
                 .30f, -.30f, "Being designed", "Same as the default",
-                "Use Punlang Tsinelas six times", true, 6),
+                "Use Bakya Bloom six times", true, 6),
         };
 
         /// <summary>⚠️⚠️ THE ONE SWITCH. `false` while the owner tests (every skill open); `true`

@@ -23,7 +23,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(90000)]
         public IEnumerator SixDistinctRenderOnlyIntroductionPerformances()
             => Study(new[] { "sean", "phaister", "zack", "nemu", "dante", "cheska", "rafi" }, false);
-        // HERO-9: Paete's YAKAP NG MAKILING introduction (tools/author_ultimate_intros.py `paete`), which had
+        // HERO-9: Paete's MAKILING'S EMBRACE introduction (tools/author_ultimate_intros.py `paete`), which had
         // never been filmed. Run with TUMP_INTRO_SCENE=1 for the staged forest and the four shots.
         [UnityTest, Timeout(90000)]
         public IEnumerator PaeteThrowsHisSeedFromTheForest()

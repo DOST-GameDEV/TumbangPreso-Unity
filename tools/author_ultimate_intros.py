@@ -742,69 +742,68 @@ def amihan():
 @performance
 def paete():
     """
-    YAKAP NG MAKILING, 3.6 s (docs/reports/paete-kit-2026-09-25/plan.md section 3, the staging in
-    `HeroIntroductionScene.Paete.cs`). The four beats, played by a tree: he is the calmest thing
-    in the cast (the owner's "nonchalant calm expression"), so nothing here is fast until the throw.
+    MAKILING'S EMBRACE, 4.6 s. ⚠️ v3 (owner, 2026-09-26): *"i also dont want him to be throwing an orb I want him
+    to be CALLING IT FROM THE GROUND"*, *"he connects with the ground for a bit (his roots all move and shit and
+    it connects to the ground and then he summons his powers ... and then the tree sprouts"*. The throw is gone.
+    He is the calmest thing in the cast (the owner's "nonchalant calm expression"), so nothing is fast until
+    the summon.
 
-    WHO (0 to 0.6): wide and low from the front. He simply stands at the forest's edge while the
-    trunks rise round him, heavy vine arms hanging, head a little down, one slow breath.
-    INTENT (0.6 to 1.5): the close-up. The seed lights in his right palm; he turns his head down to
-    it, then lifts it and looks at the lens, unhurried. No face change (CLAUDE.md, never change a
-    face): the intent is the head and the hand.
-    GATHER (1.5 to 2.5): low from his left. He sinks and spreads both arms low, palms to the ground,
-    drawing the roots up out of it (they break the ground at 1.2 to 1.6 s and climb); the arms rise
-    wide with them; then the seed goes up and back over his head, the left arm pointing at the spot.
-    RELEASE (2.5 to 3.6): over his right shoulder down the court. The overhand throw at 2.62 s, when
-    the seed leaves his palm in the scene, and he holds the thrown pose while the spiked vines erupt.
-    The live clip (`hero-paete-sentry`) STARTS from this pose: arms flung open as the real seed
-    lands, then the embrace as the vines catch.
+    WHO (0 to 0.6): wide and low from the front. He stands at the forest's edge as the trees rise round him.
+    THE GIFT (0.6 to 1.5): Mariang Makiling's spirit rises behind him; he cups both hands at his chest, looks
+    down into them as her light comes down into them, then lifts his head to her.
+    CONNECT (1.5 to 2.45): he sinks to one knee and presses both palms into the court (the punch at 1.5), head
+    bowed; his roots writhe and burrow out of him into the ground, and the light runs down his arms into it.
+    SUMMON (2.45 to 2.62): he rises, both arms sweeping up, hauling; the light races through the roots under
+    the court.
+    RISE (2.62 on): arms high in a V, head back, as the tree screws up out of the court where the roots arrive.
+    The live clip (`hero-paete-sentry`) STARTS from this raised pose and closes it into the embrace.
     """
-    p = Performance("paete", 3.6)
+    p = Performance("paete", 4.6)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     stand = Pose(torso=(3, 0, 0), head=(10, 0, 0), left=(4, 20, 0), right=(4, 20, 0),
                  legs=((0, 8), (0, 8)))
     breath = stand.but(torso=(1, 0, 0), head=(7, 0, 0))
-    # The seed in the right palm at chest height; he looks down at it.
-    palm = Pose(torso=(4, -4, 0), head=(16, -8, 0), left=(6, 20, 0), right=(70, 18, -10),
-                legs=((0, 8), (0, 8)))
-    # Then up, straight at the lens, calm.
-    look = palm.but(torso=(0, 0, 0), head=(-3, 0, 0))
-    # Drawing the roots: sunk, both arms low and wide, palms to the ground.
-    draw = Pose(torso=(16, 0, 0), head=(4, 0, 0), left=(30, 60, 0), right=(30, 60, 0),
-                legs=((0, 16), (0, 16)))
-    # The arms rise wide with the climbing roots.
-    climb = Pose(torso=(-4, 0, 0), head=(-10, 0, 0), left=(82, 70, 0), right=(82, 70, 0),
-                 legs=((0, 12), (0, 12)))
-    # The wind-up: the seed high behind his head, trunk bent back and twisted right, left arm aimed.
-    windup = Pose(torso=(-12, 24, 0), head=(-6, 10, 0), left=(84, 20, 0), right=(168, 24, 12),
-                  legs=((10, 8), (-10, 10)))
-    # Thrown: the trunk over the planted left foot, the throwing arm forward and down.
-    thrown = Pose(torso=(24, -18, 0), head=(6, -8, 0), left=(-10, 30, 0), right=(60, 12, -8),
-                  legs=((18, 8), (-14, 8)))
+    # Both hands cupped at his chest, the painting's gesture answered; head bowed into them.
+    cup = Pose(torso=(5, 0, 0), head=(20, 0, 0), left=(64, 10, 0), right=(64, 10, 0), legs=((0, 8), (0, 8)))
+    # Then his head lifts to her, over his shoulder and up, hands still cupped.
+    toher = cup.but(torso=(-4, 0, 0), head=(-24, -14, 0))
+    # CONNECT: down on one knee, trunk pitched over, both palms flat on the court in front of him.
+    kneel = Pose(torso=(38, 0, 0), head=(20, 0, 0), left=(46, 20, 0), right=(46, 20, 0), legs=((52, 6), (-28, 6)))
+    press = kneel.but(torso=(41, 0, 2), head=(24, 0, 0), left=(48, 22, 0), right=(48, 22, 0))
+    # SUMMON: rising, arms sweeping up past his face, hauling something heavy up out of the ground.
+    haul = Pose(torso=(8, 0, 0), head=(-6, 0, 0), left=(110, 28, 0), right=(110, 28, 0), legs=((24, 8), (-12, 8)))
+    # RISE: arms high in a V, chest open, head back, as the tree comes up.
+    raised = Pose(torso=(-14, 0, 0), head=(-24, 0, 0), left=(162, 42, 0), right=(162, 42, 0), legs=((10, 10), (-6, 10)))
 
     p.key(0, rest)
     p.key(.24, stand)
     p.hold(.24, .46, breath)
-    p.key(.78, palm, punch=True)
-    p.hold(.78, 1.02, palm)
-    p.key(1.24, look)
-    p.hold(1.24, 1.46, look)
-    p.key(1.66, draw, punch=True)
-    p.hold(1.66, 1.86, draw)
-    p.key(2.1, climb)
-    p.key(2.36, windup)
-    p.hold(2.36, 2.54, windup)
-    p.key(2.62, thrown, punch=True)
-    p.hold(2.62, 3.6, thrown)
+    p.key(.78, cup, punch=True)
+    p.hold(.78, 1.04, cup)
+    p.key(1.24, toher)
+    p.hold(1.24, 1.34, toher)
+    p.key(1.5, kneel, punch=True)
+    p.hold(1.5, 1.9, kneel)
+    p.hold(1.9, 2.3, press)
+    p.key(2.45, haul)
+    p.key(2.62, raised, punch=True)
+    p.hold(2.62, 4.6, raised)
+    # The body sinks to the knee and comes back up with the summon.
+    p.rise(0, 0.0).rise(1.3, 0.0).rise(1.5, -0.34).rise(2.3, -0.36).rise(2.62, 0.05).rise(3.0, 0.0)
     # A: WHO. Wide, low, from the front, easing in.
     p.shot(0, .6, (1.4, .5, 4.2), (0, 1.1, 0), 50, eye_to=(1.2, .55, 3.7))
-    # B: INTENT. The close-up on the face and the lit palm.
-    # (2026-09-26: the first film cropped the top of his head; framed up and a touch wider.)
-    p.shot(.6, 1.5, (.55, 1.5, 1.35), (0, 1.5, 0), 42, eye_to=(.45, 1.55, 1.2), close=True)
-    # C: GATHER. Low from his left as the roots climb and the vine spirals.
-    p.shot(1.5, 2.5, (-3.2, .4, 2.4), (0, 1.3, 0), 54, eye_to=(-2.6, .5, 3.2))
-    # D: RELEASE. Over his right shoulder, down the court where the vines erupt.
-    p.shot(2.5, 3.6, (1.1, 1.9, -2.2), (0, .8, 3.0), 56, eye_to=(.9, 1.7, -1.8), look_to=(0, .6, 4.0))
+    # B: THE GIFT. Low in front of him, looking up past his head to her bowed face over his left shoulder
+    # (the Alune composition the owner sent): her light comes down into his cupped hands.
+    p.shot(.6, 1.5, (.55, 1.0, 2.4), (-.2, 2.35, -.5), 56, eye_to=(.45, .95, 2.1), look_to=(-.2, 2.25, -.5))
+    # C: CONNECT. Low from his left at the height of his hands, so the palms on the court, the roots
+    # burrowing out of him and the light going into the ground fill the frame.
+    p.shot(1.5, 2.5, (-2.6, .35, 2.1), (0, .45, .5), 58, eye_to=(-2.2, .3, 2.6), look_to=(.2, .4, 1.4))
+    # D: SUMMON. Over his right shoulder down the court as he rises: the light racing through the roots
+    # under the court toward where the tree will come up.
+    p.shot(2.5, 3.05, (1.1, 1.9, -2.2), (0, .3, 3.5), 56, eye_to=(.9, 1.8, -1.9), look_to=(0, .4, 4.5))
+    # E: THE PAYOFF (owner: *"i also dont see the tree sprouting to its full size"*). Low behind his right
+    # shoulder, tilting UP as the full 9 m tree screws up out of the court where the roots arrived.
+    p.shot(3.05, 4.6, (2.4, .7, -1.8), (0, 3.2, 5.5), 62, eye_to=(3.0, 1.0, -2.6), look_to=(0, 4.6, 5.5))
     p.locked((1.5, 1.1, 4.3), (0, 1.15, 0), 48)
     return p
 

@@ -310,3 +310,38 @@ The ultimate is YAKAP, the embrace, so the tree HUGS them:
   and bark spikes, no vine green. The close-up is framed higher and a touch wider (it cropped the top
   of his head). Filmed by `UltimateIntroductionProbe.PaeteThrowsHisSeedFromTheForest` with
   `TUMP_INTRO_SCENE=1`.
+
+### 5.10 Mariang Makiling watches over him (owner, 2026-09-26)
+
+The owner: *"i want the lore for this character to be that its the guardian of mount makiling"*, *"in
+his ult make it seem like the spirit of maria makiling or smth is watching over him"* (League of
+Legends' Aphelios and his sister Alune, and other spirit guardians, as the reference), *"one place i want
+this maria makiling or smht to shhow up is his ult cutscene"*, two paintings of her (a woman in white in a
+misty forest with a deer; a kneeling woman with a white flower crown and cupped hands, deer and a dove
+round her), *"its fine if u dont make maria makiling like other characters"*, and on the first render in
+her own colours: *"this sucks pa"*, *"make her look see thru so that it seems like a ghost"*, with two
+Alune pictures.
+
+- **Lore** (`docs/CHARACTER_ORIGINS.md`, the design brief, `character-stories.json`): Makiling woke the
+  tree the carver had given a face, let it keep the carver's town for a name, and made it the guardian of
+  her mountain, keeper of the trails and the one who brings back what is taken; when one tree is not
+  enough, she puts a seed in his hand. She is his patron, not his mother; he is not a god. The old
+  boundary ("never shown, never a power source") is recorded as reversed by the owner.
+- **Skill names** (same day, *"u can change name and description of all his skills"*): LIANA LEAP, BAKYA
+  BLOOM (bakya, the carved wooden clogs Paete's carvers make, which is what the sapling grows), THORN
+  HARVEST, MAKILING'S EMBRACE. Ids unchanged.
+- **Her model** (`tools/build_paete_props.py` `makiling`, `makiling.glb`): not the cast's proportions, by
+  the owner's leave. A tall calm figure, 3 m authored and 1.35 times in the scene: long black hair to the
+  knees in six locks, a crown of nine white blossoms, closed eyes and a small smile, a long gown with its
+  folds, a shawl, her cupped hands holding the seed of light (the painting's gesture), and her deer at her
+  side with square-cut antlers like his.
+- **Her look: a ghost, as Alune is drawn** (`Resources/Shaders/SpiritGhost.shader`, `MakilingSpirit`):
+  ONE luminous hue, his jade light; the forms read only by value (hair darker, gown and petals brightest);
+  brighter and more solid at the edges (fresnel), about a third opaque in the middle; her lower body
+  dissolving into the mist; a slow shimmer running up her. A depth pass first, so only her front is drawn
+  and nothing inside her shows through. The only solid thing on her is the seed.
+- **Her beats in the cutscene:** she rises out of the mist close behind him and over his shoulder (0.12 to
+  1.0 s), bows her head to him, and her deer lifts its head toward him; the seed glows up in her hands and
+  at 0.58 s arcs down into his palm, arriving as his own seed lights (the INTENT beat is now her gift);
+  through the gather she lifts her hands and her hair and shawl stir; she stays watching through the
+  throw and sinks back into the mist as the stage leaves.

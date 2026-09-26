@@ -4310,7 +4310,7 @@ namespace TumbangPreso
             return most;
         }
 
-        /// <summary>Slippers BAWI would take right now, and whether one of them is being carried out of the box.</summary>
+        /// <summary>Slippers THORN HARVEST would take right now, and whether one of them is being carried out of the box.</summary>
         private int PaeteThornCount(Vector3 from, out bool carriedOut)
         {
             carriedOut = false;
@@ -4688,7 +4688,7 @@ namespace TumbangPreso
                     Consider(intent, Verb.Ultimate, dt);
                 else if (kit is Abilities.PaeteHeroKit && PaeteSentryAim(round, out var sentryAt) >= 2)
                 {
-                    // YAKAP NG MAKILING wants two bodies inside 9 m of where the seed lands; one is a
+                    // MAKILING'S EMBRACE wants two bodies inside 9 m of where the seed lands; one is a
                     // waste of a 16 point meter the round clock does not force.
                     intent.AimPoint = sentryAt;
                     Consider(intent, Verb.Ultimate, dt);
@@ -4763,7 +4763,7 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.PaeteHeroKit)
                 {
-                    // KAPIT-BAGING is his ESCAPE (owner: *"i want it to be an escape"*): an attacker
+                    // LIANA LEAP is his ESCAPE (owner: *"i want it to be an escape"*): an attacker
                     // carrying a retrieved slipper inside the box with the taya closing swings OUT,
                     // away from the taya. Otherwise it is travel, like every signature dash.
                     bool escape = !_motor.IsDefender && _motor.HoldingSlipper && _motor.IsInsideBox()
@@ -4854,7 +4854,7 @@ namespace TumbangPreso
                 {
                     if (paete.IsDefending)
                     {
-                        // BAWI takes every slipper in 7 m, even out of hands: worth it for two, or for
+                        // THORN HARVEST takes every slipper in 7 m, even out of hands: worth it for two, or for
                         // one that is being carried out of the box right now.
                         int reach = PaeteThornCount(myPos, out bool carriedOut);
                         if (reach >= 2 || carriedOut) Consider(intent, Verb.Skill2, dt);
@@ -4864,7 +4864,7 @@ namespace TumbangPreso
                         var plant = Abilities.PaetePlant.OwnedBy(_motor.PlayerSlot);
                         if (plant == null)
                         {
-                            // PUNLANG TSINELAS: plant it with a line to an upright can, 4 to 10 m from it.
+                            // BAKYA BLOOM: plant it with a line to an upright can, 4 to 10 m from it.
                             if (lata != null && lata.IsUpright && lataDistance >= 4.0f && lataDistance <= 10.0f)
                             {
                                 Vector3 toward = lata.transform.position - myPos; toward.y = 0;

@@ -6,6 +6,7 @@ using NUnit.Framework;
 using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
+using TumbangPreso.Visual;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
@@ -17,7 +18,7 @@ namespace TumbangPreso.PlayTests
     /// through `InputIntent` exactly as a player or a bot presses it, host-resolved as in a match. It
     /// answers the questions the kit had never been asked in play: does the vine reel him, does the
     /// seedling grow, fire on the second press and come out of the ground to an opponent's Interact
-    /// hold only after its 15 s, does BAWI take slippers even out of a hand, does the sentry root the
+    /// hold only after its 15 s, does THORN HARVEST take slippers even out of a hand, does the sentry root the
     /// bodies in 9 m, does 7 s of Interact break a player free, and does a tag free a rooted player.
     /// Each case writes what it saw to `Logs/paete-play.csv`, one row per claim.
     /// </summary>
@@ -93,7 +94,7 @@ namespace TumbangPreso.PlayTests
             float travelled = Vector3.Distance(Flat(start), Flat(paete.transform.position));
             Note("vine_drew", drew); Note("vine_travel_m", travelled);
             Assert.IsTrue(drew, "No vine was drawn.");
-            Assert.Greater(travelled, 3.0f, "Kapit-Baging did not carry him toward the anchor.");
+            Assert.Greater(travelled, 3.0f, "Liana Leap did not carry him toward the anchor.");
         }
 
         [UnityTest, Timeout(90000)]
@@ -105,7 +106,7 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForSeconds(.8f);
             var plant = PaetePlant.OwnedBy(paete.PlayerSlot);
             Note("plant_spawned", plant != null);
-            Assert.IsNotNull(plant, "Punlang Tsinelas planted nothing.");
+            Assert.IsNotNull(plant, "Bakya Bloom planted nothing.");
 
             yield return new WaitForSeconds(PaeteRules.PlantFirstShotSeconds);
             Assert.IsTrue(plant.ShotReady, "The seedling never grew its first wooden slipper.");
@@ -153,7 +154,7 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForSeconds(1.4f);
             float home = Vector3.Distance(Flat(shoe.transform.position), Flat(paete.transform.position));
             Note("thorn_took_from_hand", holder.GetComponent<Carrier>().Held != shoe); Note("thorn_slipper_distance_m", home);
-            Assert.AreNotSame(shoe, holder.GetComponent<Carrier>().Held, "BAWI left the slipper in the holder's hand.");
+            Assert.AreNotSame(shoe, holder.GetComponent<Carrier>().Held, "THORN HARVEST left the slipper in the holder's hand.");
             Assert.Less(home, 2.2f, "The slipper was not hauled home.");
         }
 
@@ -194,6 +195,79 @@ namespace TumbangPreso.PlayTests
             Note("struggle_seen", struggled); Note("break_free", !a.IsRooted);
             Assert.IsTrue(struggled, "Holding Interact while rooted did not struggle.");
             Assert.IsFalse(a.IsRooted, "Seven seconds of Interact did not break free.");
+        }
+
+        /// <summary>
+        /// ⚠️ A FILM, NOT A CLAIM (owner, 2026-09-26: *"in the video can u try to record as well people getting
+        /// pulled and rooted towards it"*). Three players stand 5 to 6 m from where the seed will land; he casts
+        /// MAKILING'S EMBRACE through real input and the whole of it is recorded: the introduction on his own
+        /// screen (`owner/`), and the tree rising, the drag, the embrace and the sleep from a wide camera.
+        /// Frames: `Logs/improvement-baseline-v1/paete-sentry-film/`. Runs only with TUMP_PAETE_FILM=1.
+        /// </summary>
+        [UnityTest, Timeout(120000)]
+        public IEnumerator FilmTheSentryPullingAndRootingThem()
+        {
+            if (Environment.GetEnvironmentVariable("TUMP_PAETE_FILM") != "1") Assert.Ignore("Film only: set TUMP_PAETE_FILM=1.");
+            var round = GameServices.Round;
+            // Paete is the local player (seat 1, `GameLaunch.SoloSeat`), a human with his own model, so
+            // `owner/` is HIS screen, the introduction and all. (The first film left him a bot in the default
+            // body: no introduction plays for a bot, and his arms were someone else's.)
+            var paete = HumanPaete(new Vector3(0, .12f, -11));
+            paete.AbilitySystem.Kit.AddUltimateCharge(100);
+            var others = new[] { round.PlayerAt(0), round.PlayerAt(2), round.PlayerAt(3) };
+            var stands = new[] { new Vector3(5.6f, .12f, -2.2f), new Vector3(-5.2f, .12f, -1.6f), new Vector3(1.8f, .12f, 2.2f) };
+            for (int i = 0; i < others.Length; i++)
+            {
+                others[i].Teleport(stands[i]); others[i].Intent.Parked = false;
+                others[i].transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, -3) - stands[i]);
+            }
+            paete.Intent.AimPoint = new Vector3(0, 0, -3);
+            var camera = new GameObject("PaeteSentryFilm").AddComponent<Camera>();
+            camera.CopyFrom(Camera.main); camera.enabled = false; camera.tag = "Untagged";
+            camera.fieldOfView = 58; camera.cullingMask &= ~(1 << 5);
+            camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            bool rootedAll = false;
+            yield return ImprovementEvidenceProbe.Record(camera, "paete-sentry-film", 16f, paete,
+                drive: t =>
+                {
+                    paete.Intent.Set(Verb.Ultimate, t < .25f);
+                    rootedAll |= others[0].IsRooted && others[1].IsRooted && others[2].IsRooted;
+                },
+                witnessOffset: new Vector3(6f, 7f, 16f), witnessLookHeight: 2.6f);
+            Object.Destroy(camera.gameObject);
+            Note("film_all_rooted", rootedAll);
+            Assert.IsTrue(rootedAll, "The film never showed all three rooted.");
+        }
+
+        /// <summary>The local seat as Paete, human, in his own model (arms and all), for the films.</summary>
+        private static CharacterMotor HumanPaete(Vector3 at)
+        {
+            var paete = Paete(GameLaunch.SoloSeat, at);
+            paete.IsBot = false;
+            var art = RosterBook.Load().FindPersonArt("paete");
+            paete.GetComponent<CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+            return paete;
+        }
+
+        /// <summary>
+        /// ⚠️ A FILM (HERO-9: *"a first-person vine capture"*): LIANA LEAP from his own eyes, the vines leaving
+        /// the viewmodel hands, and the same leap from beside him. Runs only with TUMP_PAETE_FILM=1.
+        /// </summary>
+        [UnityTest, Timeout(60000)]
+        public IEnumerator FilmTheVineFromHisOwnEyes()
+        {
+            if (Environment.GetEnvironmentVariable("TUMP_PAETE_FILM") != "1") Assert.Ignore("Film only: set TUMP_PAETE_FILM=1.");
+            var paete = HumanPaete(new Vector3(0, .12f, -9));
+            paete.Intent.AimPoint = paete.transform.position + new Vector3(0, 1.2f, 8f);
+            var camera = new GameObject("PaeteVineFilm").AddComponent<Camera>();
+            camera.CopyFrom(Camera.main); camera.enabled = false; camera.tag = "Untagged";
+            camera.fieldOfView = 55; camera.cullingMask &= ~(1 << 5);
+            camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            yield return ImprovementEvidenceProbe.Record(camera, "paete-vine-film", 3.2f, paete,
+                drive: t => paete.Intent.Set(Verb.Skill1, t > .5f && t < .7f),
+                witnessOffset: new Vector3(4.2f, 1.6f, 1.2f), witnessLookHeight: 1.1f);
+            Object.Destroy(camera.gameObject);
+            Note("film_vine", true);
         }
 
         private static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0, v.z);

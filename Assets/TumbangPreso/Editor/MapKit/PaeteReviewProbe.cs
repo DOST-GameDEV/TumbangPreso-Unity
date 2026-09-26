@@ -28,7 +28,7 @@ namespace TumbangPreso.EditorTools.MapKit
     /// </summary>
     public static class PaeteReviewProbe
     {
-        public const string Version = "v17";
+        public const string Version = "v18";
         private const string OutDir = "Logs/paete-review";
         private const int W = 480, H = 360;
 
@@ -192,7 +192,7 @@ namespace TumbangPreso.EditorTools.MapKit
 
         // ------------------------------------------------------------------ THE EFFECTS, ON THEIR OWN CLOCKS
 
-        /// <summary>KAPIT-BAGING on the real body: the braid leaves his forearms at the tell, catches a
+        /// <summary>LIANA LEAP on the real body: the braid leaves his forearms at the tell, catches a
         /// wall 5.5 m ahead, and reels him in, the body travelling as the motor would move it.</summary>
         private static void VineFx(RosterEntryAsset art)
         {
@@ -290,7 +290,7 @@ namespace TumbangPreso.EditorTools.MapKit
             Object.DestroyImmediate(host);
         }
 
-        /// <summary>BAWI's construct bursting and withering (no slippers: the vines to them are drawn in play).</summary>
+        /// <summary>THORN HARVEST's construct bursting and withering (no slippers: the vines to them are drawn in play).</summary>
         private static void ThornFx()
         {
             var host = new GameObject("ThornHost");
