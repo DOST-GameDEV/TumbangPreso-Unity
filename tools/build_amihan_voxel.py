@@ -196,13 +196,14 @@ def cell_uv(slot):
 # Slot key:
 #   0 capelet          1 capelet shadow   2 gold             3 rust (belt, straps, sash)
 #   4 weave dark       5 cream robe       6 hair             7 capelet light
-#   8 face ink         9 sandal sole      10 robe shadow     11 shorts
+#   8 face ink         9 hair lit (v5)    10 robe shadow, soles 11 dark base (shorts, inner)
 #   12 cotton white    13/14/15 skin, shadow, skin (15 is what the donor skull wears)
 # ---------------------------------------------------------------------------
 
 CAPE, CAPE_DARK, GOLD, RUST = 0, 1, 2, 3
 WEAVE_DARK, CREAM, HAIR, CAPE_LIT = 4, 5, 6, 7
-INK, SOLE, CREAM_SHADE, SHORTS = 8, 9, 10, 11
+INK, HAIR_LIT, CREAM_SHADE, SHORTS = 8, 9, 10, 11
+SOLE = CREAM_SHADE  # v5: slot 9 went to the hair's lit tone; the sole takes the robe's shade
 COTTON, SKIN, SKIN_DARK, SKIN_LIT = 12, 13, 14, 15
 
 PALETTE = {0: '2E8C86',
@@ -214,7 +215,7 @@ PALETTE = {0: '2E8C86',
  6: '3A241C',
  7: '5FC2B5',
  8: '181418',
- 9: 'F3E6CA',
+ 9: '6A4330',
  10: 'D8C6A2',
  11: '2A7470',
  12: 'FBF8F0',
@@ -222,7 +223,7 @@ PALETTE = {0: '2E8C86',
  14: 'B57A52',
  15: 'D59A6E'}
 
-CLOTH_VARIANTS = {'teal': {0: '2E8C86', 1: '1F625E', 7: '5FC2B5', 11: '2A7470'},
+CLOTH_VARIANTS = {'teal': {0: '2E8C86', 1: '1F625E', 7: '5FC2B5', 11: '17403D'},
                   'abel': {0: '3C4C7E', 1: '27335A', 7: '8A9CCB', 11: '2F3B66'}}
 PALETTE.update(CLOTH_VARIANTS[os.environ.get('AMIHAN_CLOTH', 'teal')])
 
@@ -249,7 +250,14 @@ LEG_LEFT = [('sandal-sole-left', 'leg-left', (0.008, 0.000, -0.134), (0.158, 0.0
 LEG_RIGHT = mirrored(LEG_LEFT, "leg-left", "leg-right")
 
 # Torso owns 0.232 to 0.445.
-TORSO = [('robe-body', 'torso', (-0.116, 0.232, -0.084), (0.116, 0.440, 0.088), CREAM),
+TORSO = [
+ # v6: the torso's mass is the DARK base (Dante's leather brown, Phaister's black coat); the cream abel is the coat's
+ # lapels and tails over it, piped gold on both edges. v5 kept a cream torso and still read pale beside them.
+ ('robe-body', 'torso', (-0.116, 0.232, -0.084), (0.116, 0.440, 0.088), SHORTS),
+ ('lapel-left', 'torso', (0.056, 0.300, -0.096), (0.120, 0.374, -0.086), CREAM),
+ ('lapel-right', 'torso', (-0.120, 0.300, -0.096), (-0.056, 0.374, -0.086), CREAM),
+ ('lapel-trim-outer-left', 'torso', (0.110, 0.300, -0.100), (0.124, 0.374, -0.084), GOLD),
+ ('lapel-trim-outer-right', 'torso', (-0.124, 0.300, -0.100), (-0.110, 0.374, -0.084), GOLD),
  ('neck', 'torso', (-0.052, 0.400, -0.048), (0.052, 0.452, 0.052), SKIN),
  # The capelet: a mantle over the shoulders, two collar points falling in front, a drop
  # behind that carries the kasikus.
@@ -267,20 +275,46 @@ TORSO = [('robe-body', 'torso', (-0.116, 0.232, -0.084), (0.116, 0.440, 0.088), 
  # ⚠️ v2: THE ROBE IS AN OPEN COAT (owner, of v1: "that dont look like reference at all").
  # The concept's cream robe parts down the front over a teal inner, and hangs to the knee,
  # open at the centre over teal shorts. v1 closed it and stopped it at mid thigh.
- ('robe-inner', 'torso', (-0.052, 0.262, -0.094), (0.052, 0.380, -0.082), CAPE),
- ('belt', 'torso', (-0.122, 0.262, -0.098), (0.122, 0.292, 0.100), RUST),
- ('belt-buckle', 'torso', (-0.015, 0.259, -0.106), (0.015, 0.295, -0.096), GOLD),
- # The patterned sash hangs just off centre on her left, a small knot sits on her right hip.
- ('sash', 'torso', (0.018, 0.132, -0.114), (0.060, 0.268, -0.100), CREAM),
- ('sash-knot', 'torso', (0.010, 0.252, -0.118), (0.066, 0.296, -0.100), CREAM),
+ # ⚠️⚠️ v5, THE CAST'S CLOTHING LANGUAGE (owner, 2026-09-27: *"the clothes of amihan dont look like dante's style"*,
+ # *"make the clothes of everyone have a uniform look with dante and phaister as anchor"*). Measured off their builders:
+ # a DARK base garment carries the body, the signature colour is on the layers over it, every layer's edge is GOLD
+ # PIPING built as geometry 14 to 20 mm wide (never a 7 to 9 mm painted line), and one big fastening is the focal point
+ # (Dante's jade medallion 96 by 66 mm on a two-tier belt). Hers: dark teal under the open cream coat, gold piping down
+ # both coat edges and round the hem, a two-tier rust belt with a gold kasikus medallion, a gold-edged capelet, and
+ # geometry cuffs. `docs/CAST_CLOTHING_STYLE.md`.
+ ('robe-inner', 'torso', (-0.056, 0.262, -0.094), (0.056, 0.380, -0.082), SHORTS),
+ ('coat-piping-left', 'torso', (0.052, 0.300, -0.100), (0.068, 0.380, -0.086), GOLD),
+ ('coat-piping-right', 'torso', (-0.068, 0.300, -0.100), (-0.052, 0.380, -0.086), GOLD),
+ ('skirt-piping-left', 'torso', (0.036, 0.120, -0.108), (0.052, 0.262, -0.096), GOLD),
+ ('skirt-piping-right', 'torso', (-0.052, 0.120, -0.108), (-0.036, 0.262, -0.096), GOLD),
+ ('belt-lower', 'torso', (-0.124, 0.262, -0.100), (0.124, 0.280, 0.102), RUST),
+ ('belt-upper', 'torso', (-0.124, 0.283, -0.100), (0.124, 0.301, 0.102), RUST),
+ ('belt-seam', 'torso', (-0.126, 0.279, -0.102), (0.126, 0.284, 0.104), WEAVE_DARK),
+ ('belt-medallion', 'torso', (-0.036, 0.252, -0.114), (0.036, 0.310, -0.098), GOLD),
+ ('belt-medallion-gem', 'torso', (-0.014, 0.269, -0.121), (0.014, 0.293, -0.110), CAPE_LIT),
+ ('capelet-edge', 'torso', (-0.156, 0.372, -0.110), (0.156, 0.384, 0.112), GOLD),
+ # The patterned sash hangs off centre on her left (moved clear of the medallion), a small knot sits on her right hip.
+ ('sash', 'torso', (0.064, 0.132, -0.114), (0.106, 0.268, -0.100), CREAM),
+ ('sash-knot', 'torso', (0.058, 0.252, -0.118), (0.112, 0.296, -0.100), CREAM),
  ('hip-knot', 'torso', (-0.108, 0.254, -0.112), (-0.070, 0.294, -0.098), CREAM),
- ('robe-skirt-left', 'torso', (0.040, 0.118, -0.100), (0.134, 0.266, 0.090), CREAM),
- ('robe-skirt-right', 'torso', (-0.134, 0.118, -0.100), (-0.040, 0.266, 0.090), CREAM),
- ('robe-skirt-back', 'torso', (-0.126, 0.118, 0.084), (0.126, 0.266, 0.102), CREAM)]
+ ('robe-skirt-left', 'torso', (0.040, 0.118, -0.100), (0.134, 0.266, 0.090), SHORTS),
+ ('robe-skirt-right', 'torso', (-0.134, 0.118, -0.100), (-0.040, 0.266, 0.090), SHORTS),
+ ('robe-skirt-back', 'torso', (-0.126, 0.118, 0.084), (0.126, 0.266, 0.102), SHORTS),
+ # v7: the coat-tails are the dark base too (v6's cream tails still read pale below the belt, where Dante shows dark
+ # legs under short tails); cream stays on the lapels, cuffs and sash as the accent.
+ # The hem: gold piping round the flared coat (v5, geometry; was a 9 mm teal decal).
+ ('hem-left', 'torso', (0.026, 0.108, -0.110), (0.150, 0.126, 0.096), GOLD),
+ ('hem-right', 'torso', (-0.150, 0.108, -0.110), (-0.026, 0.126, 0.096), GOLD),
+ ('hem-back', 'torso', (-0.140, 0.108, 0.080), (0.140, 0.126, 0.106), GOLD)]
 
 # Wide cream sleeves to the forearm, bare forearms and hands. The hand keeps the exact
 # 0.3383 to 0.4617 span (shoulder +/- `HandTopLift`).
-ARM_LEFT = [('sleeve-left', 'arm-left', (0.0999, 0.330, -0.068), (0.244, 0.470, 0.068), CREAM),
+ARM_LEFT = [
+ # v6: the sleeves wear her signature teal, so an arm reads apart from the dark body; the cuff is the cream abel.
+ ('sleeve-left', 'arm-left', (0.0999, 0.330, -0.068), (0.244, 0.470, 0.068), CAPE),
+ # v5: the cuff is geometry, a teal band behind a gold edge, proud of the sleeve like Phaister's white cuffs.
+ ('cuff-gold-left', 'arm-left', (0.214, 0.324, -0.074), (0.224, 0.476, 0.074), GOLD),
+ ('cuff-left', 'arm-left', (0.224, 0.324, -0.074), (0.246, 0.476, 0.074), CREAM),
  ('forearm-left', 'arm-left', (0.238, 0.352, -0.044), (0.290, 0.448, 0.044), SKIN),
  ('hand-left', 'arm-left', (0.284, 0.3383, -0.050), (0.3836, 0.4617, 0.056), SKIN)]
 
@@ -297,13 +331,13 @@ HEAD = [
  # locks sweeping across the brow from her left, longest on her right, and the back stops at
  # the nape in three uneven tips (the concept's length), so the capelet shows.
  ('hair-crown', 'head', (-.212, .604, -.212), (.212, .712, .146), HAIR),
- ('hair-top', 'head', (-.176, .706, -.186), (.170, .742, .110), HAIR),
- ('hair-wave-1', 'head', (-.168, .736, -.100), (-.078, .772, .060), HAIR),
- ('hair-wave-2', 'head', (-.070, .742, -.150), (.050, .786, .044), HAIR),
- ('hair-wave-3', 'head', (.044, .736, -.130), (.150, .770, .050), HAIR),
+ ('hair-top', 'head', (-.176, .706, -.186), (.170, .742, .110), HAIR_LIT),
+ ('hair-wave-1', 'head', (-.168, .736, -.100), (-.078, .772, .060), HAIR_LIT),
+ ('hair-wave-2', 'head', (-.070, .742, -.150), (.050, .786, .044), HAIR_LIT),
+ ('hair-wave-3', 'head', (.044, .736, -.130), (.150, .770, .050), HAIR_LIT),
  ('hair-wave-4', 'head', (-.120, .716, -.206), (.110, .752, -.120), HAIR),
- ('fringe-lock-1', 'head', (.040, .604, .124), (.132, .666, .178), HAIR),
- ('fringe-lock-2', 'head', (-.040, .586, .128), (.060, .660, .184), HAIR),
+ ('fringe-lock-1', 'head', (.040, .604, .124), (.132, .666, .178), HAIR_LIT),
+ ('fringe-lock-2', 'head', (-.040, .586, .128), (.060, .660, .184), HAIR_LIT),
  ('fringe-lock-3', 'head', (-.116, .556, .126), (-.030, .650, .186), HAIR),
  ('fringe-lock-4', 'head', (-.178, .486, .098), (-.112, .640, .168), HAIR),
  ('hair-side-left', 'head', (.200, .470, -.190), (.236, .650, .040), HAIR),
@@ -421,14 +455,15 @@ HEM = [
 SASH = [
     # The sash's binakol: a column of small diamonds in the dark weave, each typed on its own,
     # and a rust border at its foot (the concept's patterned sash).
-    ('sash', 'front', WEAVE_DARK, [(0.039, 0.252), (0.050, 0.241), (0.039, 0.230), (0.028, 0.241)], 2),
-    ('sash', 'front', WEAVE_DARK, [(0.039, 0.224), (0.050, 0.213), (0.039, 0.202), (0.028, 0.213)], 2),
-    ('sash', 'front', WEAVE_DARK, [(0.039, 0.196), (0.050, 0.185), (0.039, 0.174), (0.028, 0.185)], 2),
-    ('sash', 'front', RUST, [(0.018, 0.140), (0.060, 0.140), (0.060, 0.150), (0.018, 0.150)], 2),
-    ('sash', 'front', RUST, [(0.018, 0.156), (0.060, 0.156), (0.060, 0.160), (0.018, 0.160)], 2),
+    ('sash', 'front', WEAVE_DARK, [(0.085, 0.252), (0.096, 0.241), (0.085, 0.230), (0.074, 0.241)], 2),
+    ('sash', 'front', WEAVE_DARK, [(0.085, 0.224), (0.096, 0.213), (0.085, 0.202), (0.074, 0.213)], 2),
+    ('sash', 'front', WEAVE_DARK, [(0.085, 0.196), (0.096, 0.185), (0.085, 0.174), (0.074, 0.185)], 2),
+    ('sash', 'front', RUST, [(0.064, 0.140), (0.106, 0.140), (0.106, 0.150), (0.064, 0.150)], 2),
+    ('sash', 'front', RUST, [(0.064, 0.156), (0.106, 0.156), (0.106, 0.160), (0.064, 0.160)], 2),
 ]
 
-BODY_DECALS = KASIKUS + CUFFS + HEM + SASH
+# v5: the cuffs and hem are geometry now (see ARM_LEFT and TORSO); their painted versions stay above for the record.
+BODY_DECALS = KASIKUS + SASH
 
 DONOR_SPACE = tuple(entry[0] for entry in HEAD)
 
