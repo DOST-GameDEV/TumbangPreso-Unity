@@ -247,6 +247,13 @@ Brainchild's cartoon towns. **Not registered**: it is not in `SceneFlow.Maps`, `
   everything placed on a surface sinks 1 to 2 cm into it); glTFast negates X, so a Blender
   point (x, y, z) lands at Unity (-x, z, -y); painted shop bases avoid the role hues.
 
+### LAGOON-1 · Lagoon Court full rework ⚠️ OPEN, 2026-09-26
+
+**Read [LAGOON_REWORK_GUIDE.md](LAGOON_REWORK_GUIDE.md) first** (references, art-style rules,
+rock rules, current layout, files, gameplay constraints, and the ordered plan in its § 7).
+Status: layout blockout cove v6 (`tools/author_lagoon_cove.py`) awaiting the owner's verdict;
+nothing modelled or in Unity yet. Supersedes REFINE-2.6 for this map.
+
 ### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)
 
 LATEST owner WIP rule: finish the currently active implementation and its actual

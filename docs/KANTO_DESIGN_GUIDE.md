@@ -214,3 +214,40 @@ Brainchild set:
 
 ⚠️ **Role hues still apply** (§ 4): the reference's orange shopfronts and orange brick sit near
 offence orange `#f87020`, so warm brick stays red-brown and shops stay ochre or red.
+
+## 11 · Decisions from the 2026-09-24/25 iteration (read before touching Kanto again)
+
+Blender map: `ArtSource/kanto/kanto_city.blend`, built by `blender -b --python
+tools/author_kanto_city.py -- --assemble [--review N] [--cams a,b]`; placements are LINKED
+DUPLICATES under an empty per placement (🧑: *"fix this whole map so im actually able to edit
+meshes"*): click any piece, Tab, edit, every copy follows. ⚠️ `--assemble` rebuilds the file from
+the scripts and overwrites hand edits; `--review N` alone renders the file as saved. Exported to
+Unity on 2026-09-25 (`2b69e4f20`, 438 placements, 81 models, textures copied by the export into
+`Art/Kanto/Textures`), and `Kanto.unity` rebuilt with **Tumbang Preso > Sample Map > Build Kanto**.
+
+- **Downtown towers** (`skyscraper()`, `TOWERS`): ten curtain-wall towers, each placed twice,
+  outside the street blocks and off the sun line through the court. Glass = the street windows'
+  teal, matte, one gradient per storey (🧑: *"less reflective ... match the rest of the
+  windows"*). Panes at least 2.6 m wide, frames ~0.3 m (🧑: *"less dense ... thicken the
+  frames"*). Frames and spandrel bands per tower in **bronze, charcoal or deep teal** (🧑 on five
+  options: *"just have CDE"*), never white.
+- **Buildings**: 24 generated far buildings (no more 12 copies of 8), coloured panels (no white),
+  pitched roofs with dormers, corner turrets, rooftop clutter. **Clay tiles never on a brick
+  building** (🧑: *"otherwise it'll all look the same"*); brick gets slate or teal. Roof tile
+  textures: `tiles_clay`, `tiles_slate`, `tiles_teal` (glazed barrels), each its own drawing,
+  owner-approved on swatch sheets.
+- **Trees**: drawn from the owner's stylized references: slender curved trunk splitting into 2 to
+  4 thin rising branches under a lifted canopy. SEGMENTED limbs (🧑: *"continue with a segmented
+  version"*), POLYGONAL (7-sided trunk, 5-sided branches, flat shaded; 🧑: *"more polygonal tree
+  trunk design"*), each limb with its own square-texel cylindrical UVs, a limb running through
+  its forks as one tube. Pines (`tools/author_kanto_pine.py`) replace the tall trees.
+- **Bark is J** (§ 3). **Metal** for poles/signals/bins is a flat coat with faint light chips.
+- **Street life**: vehicles `tools/author_kanto_vehicles.py` (sedans, taxi, van, pickup, bus,
+  jeepney, tricycle), shop signs/blade signs/billboards `tools/author_kanto_signage.py` (Filipino
+  shop names), traffic both lanes right-hand, a jeepney stop and tricycle rank, street ends closed
+  by long buildings, wires across the streets.
+- **Traffic signal** rebuilt (heads in front of the pole, curved brace, clamped name blade).
+- **Dormers**: glass, frame and face at separate depths (the z-fight the owner found).
+- Open: vehicle chrome reads grey; Unity lacks the Blender mist, anti-tiling and hills; the
+  vehicle/sign material names need Unity palette entries (watch the build log's unmatched-name
+  warning).
