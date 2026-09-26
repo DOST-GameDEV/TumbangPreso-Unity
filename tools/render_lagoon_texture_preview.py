@@ -35,70 +35,95 @@ E = 1.3
 EYE_LENS = 18 / math.tan(math.radians(95 / 2))
 SHOTS = {
     "rock": [("game's eye, from the court", (0, -9, E), (0, 45, 8), EYE_LENS),
-             ("close-up, the east cliff stones", (46, 6, 3.5), (62, 30, 4), 28)],
+             ("close-up, the east cliff stones", (46, 6, 3.5), (62, 30, 4), 28),
+             ("close-up, the stones behind the court", (-4, 4, 3.0), (-14, 20, 3.5), 30)],
 }
 
 
 EDGE_ATLAS = TEX / "rock_edges_atlas.png"
-EDGE_TINT = (0.80, 0.66, 0.46, 1.0)   # warm light tan (v4 cream-white read as an outline)
 
 
-def edge_wear(nt, colour):
-    """THE LIGHT EDGES (owner: "the edges are lined with a brighter color compared to the inside
-    plane of the rock faces", and they must follow the MODEL's edges, not a tiled texture). The
-    per-stone mask baked by tools/bake_lagoon_rock_edges.py is read through the "UVBake" map and
-    cut into a crisp band, broken up a little by noise so it reads painted, not ruled."""
-    uv = nt.nodes.new("ShaderNodeUVMap")
-    uv.uv_map = "UVBake"
-    mask = nt.nodes.new("ShaderNodeTexImage")
-    mask.image = bpy.data.images.load(str(EDGE_ATLAS), check_existing=True)
-    mask.image.colorspace_settings.name = "Non-Color"
-    nt.links.new(uv.outputs["UV"], mask.inputs["Vector"])
-    noise = nt.nodes.new("ShaderNodeTexNoise")
-    noise.inputs["Scale"].default_value = 1.4
-    geo = nt.nodes.new("ShaderNodeNewGeometry")
-    nt.links.new(geo.outputs["Position"], noise.inputs["Vector"])
-    # Noise VARIES the band (0.65 to 1.25 of the mask) rather than halving it: multiplying by the
-    # raw noise left the edges on the final kit barely visible (sheet v6).
-    vary = nt.nodes.new("ShaderNodeMapRange")
-    vary.inputs["From Min"].default_value, vary.inputs["From Max"].default_value = 0.3, 0.7
-    vary.inputs["To Min"].default_value, vary.inputs["To Max"].default_value = 0.65, 1.25
-    nt.links.new(noise.outputs["Fac"], vary.inputs["Value"])
-    broken = nt.nodes.new("ShaderNodeMath")
-    broken.operation = "MULTIPLY"
-    nt.links.new(mask.outputs["Color"], broken.inputs[0])
-    nt.links.new(vary.outputs["Result"], broken.inputs[1])
-    cut = nt.nodes.new("ShaderNodeMapRange")
-    cut.interpolation_type = "SMOOTHSTEP"
-    # Review v4: a crisp 0.16..0.26 cut drew an even hairline round every plane, an OUTLINE.
-    # Now a soft ramp: brightest at the break, fading into the plane over the mask's width.
-    cut.inputs["From Min"].default_value, cut.inputs["From Max"].default_value = 0.05, 0.45
-    nt.links.new(broken.outputs["Value"], cut.inputs["Value"])
-    # Strongest where the edge faces UP, where the reference's light catches; faint below.
-    up = nt.nodes.new("ShaderNodeSeparateXYZ")
-    nt.links.new(geo.outputs["Normal"], up.inputs[0])
-    upw = nt.nodes.new("ShaderNodeMapRange")
-    upw.inputs["From Min"].default_value, upw.inputs["From Max"].default_value = -0.3, 0.7
-    upw.inputs["To Min"].default_value, upw.inputs["To Max"].default_value = 0.3, 1.0
-    nt.links.new(up.outputs["Z"], upw.inputs["Value"])
-    weight = nt.nodes.new("ShaderNodeMath")
-    weight.operation = "MULTIPLY"
-    nt.links.new(cut.outputs["Result"], weight.inputs[0])
-    nt.links.new(upw.outputs["Result"], weight.inputs[1])
-    cut = weight
+def _math(nt, op, a, b, clamp=False):
+    n = nt.nodes.new("ShaderNodeMath")
+    n.operation = op
+    n.use_clamp = clamp
+    for i, v in enumerate((a, b)):
+        if isinstance(v, (int, float)):
+            n.inputs[i].default_value = v
+        else:
+            nt.links.new(v, n.inputs[i])
+    return n.outputs["Value"]
+
+
+def _range(nt, v, a, b, c=0.0, d=1.0, smooth=False):
+    n = nt.nodes.new("ShaderNodeMapRange")
+    if smooth:
+        n.interpolation_type = "SMOOTHSTEP"
+    n.inputs["From Min"].default_value, n.inputs["From Max"].default_value = a, b
+    n.inputs["To Min"].default_value, n.inputs["To Max"].default_value = c, d
+    nt.links.new(v, n.inputs["Value"])
+    return n.outputs["Result"]
+
+
+def _scale_colour(nt, colour, factor):
     mix = nt.nodes.new("ShaderNodeMix")
     mix.data_type = "RGBA"
-    mix.inputs["B"].default_value = EDGE_TINT
-    nt.links.new(cut.outputs["Value"], mix.inputs["Factor"])
+    mix.blend_type = "MULTIPLY"
+    mix.inputs["Factor"].default_value = 1.0
     nt.links.new(colour, mix.inputs["A"])
+    grey = nt.nodes.new("ShaderNodeCombineColor")
+    for ch in ("Red", "Green", "Blue"):
+        nt.links.new(factor, grey.inputs[ch])
+    nt.links.new(grey.outputs["Color"], mix.inputs["B"])
     return mix.outputs["Result"]
+
+
+def edge_wear(nt, colour, chips):
+    """THE WEATHERED EDGES, from the three baked masks (tools/bake_lagoon_rock_edges.py).
+    Owner on v7: "the weathered edges look really unnatural": one even light line along EVERY
+    break (sides, bottoms, silhouette) reads as piping. On the reference the light is on the
+    rounded SHOULDERS, broad and soft and mostly on top, and the crevices between planes are
+    darker. So: shoulders lighten softly by the broad mask, weighted to up-facing surfaces;
+    crevices darken by the stone's own occlusion (a value change only, never a new colour); with `chips`, the narrow mask adds a few
+    crisper worn chips on TOP edges only, broken into pieces by noise."""
+    uv = nt.nodes.new("ShaderNodeUVMap")
+    uv.uv_map = "UVBake"
+    atlas = nt.nodes.new("ShaderNodeTexImage")
+    atlas.image = bpy.data.images.load(str(EDGE_ATLAS), check_existing=True)
+    atlas.image.colorspace_settings.name = "Non-Color"
+    nt.links.new(uv.outputs["UV"], atlas.inputs["Vector"])
+    ch = nt.nodes.new("ShaderNodeSeparateColor")
+    nt.links.new(atlas.outputs["Color"], ch.inputs["Color"])
+    geo = nt.nodes.new("ShaderNodeNewGeometry")
+    up = nt.nodes.new("ShaderNodeSeparateXYZ")
+    nt.links.new(geo.outputs["Normal"], up.inputs[0])
+    upward = _range(nt, up.outputs["Z"], -0.2, 0.8, 0.25, 1.0)
+    # Shoulders: up to 20 % lighter, soft.
+    shoulder = _math(nt, "MULTIPLY", _range(nt, ch.outputs["Green"], 0.0, 0.9, smooth=True), upward)
+    # ⚠️ NEVER A SEPARATE COLOUR (owner on v7: "even how the color of the weathered edges are
+    # unnatural": v7 mixed a flat tan over the rock). Wear only LIGHTENS or DARKENS the rock's
+    # own texture, so an edge keeps its hue and its painted patches.
+    colour = _scale_colour(nt, colour, _range(nt, shoulder, 0.0, 1.0, 1.0, 1.30))   # v8 at 1.20 read too faint
+    # Crevices: down to 72 % where the stone occludes itself.
+    colour = _scale_colour(nt, colour, _range(nt, ch.outputs["Blue"], 0.35, 0.95, 0.72, 1.0, smooth=True))
+    if chips:
+        noise = nt.nodes.new("ShaderNodeTexNoise")
+        noise.inputs["Scale"].default_value = 0.9
+        noise.inputs["Detail"].default_value = 3.0
+        nt.links.new(geo.outputs["Position"], noise.inputs["Vector"])
+        pieces = _range(nt, noise.outputs["Fac"], 0.5, 0.58, smooth=True)     # ~40 % of the length
+        top_only = _range(nt, up.outputs["Z"], 0.25, 0.6, smooth=True)
+        chip = _math(nt, "MULTIPLY", _range(nt, ch.outputs["Red"], 0.25, 0.6, smooth=True), pieces)
+        chip = _math(nt, "MULTIPLY", chip, top_only)
+        colour = _scale_colour(nt, colour, _range(nt, chip, 0.0, 1.0, 1.0, 1.20))
+    return colour
 
 
 def rock_material(m, texture):
     """Rebuild `m` in place (every stone links it) around one candidate texture. A name ending
-    "+edges" also paints the baked edge wear (see edge_wear)."""
-    edges = texture.endswith("+edges")
-    texture = texture.removesuffix("+edges")
+    "+soft" adds the baked shoulders and crevices, "+chips" those plus top-edge chips."""
+    wear = texture.split("+")[1] if "+" in texture else None
+    texture = texture.split("+")[0]
     m.use_nodes = True
     nt = m.node_tree
     nt.nodes.clear()
@@ -133,8 +158,8 @@ def rock_material(m, texture):
         nt.links.new(tone.outputs["Result"], grey.inputs[ch])
     nt.links.new(grey.outputs["Color"], mul.inputs["B"])
     colour = mul.outputs["Result"]
-    if edges:
-        colour = edge_wear(nt, colour)
+    if wear:
+        colour = edge_wear(nt, colour, chips=(wear == "chips"))
     nt.links.new(colour, bsdf.inputs["Base Color"])
     normal_path = TEX / f"{texture}_normal.png"
     if normal_path.exists():

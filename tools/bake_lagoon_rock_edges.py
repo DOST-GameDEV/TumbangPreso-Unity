@@ -29,6 +29,7 @@ import bpy
 ROOT = Path(__file__).resolve().parents[1]
 ATLAS = ROOT / "ArtSource" / "lagoon" / "textures" / "rock_edges_atlas.png"
 ATLAS_PX = 2048
+BROAD_R = 0.8           # the broad shoulder gradient (G channel)
 BEVEL_R = 0.24          # object units, stones ~2.5 across. 0.07 baked a hairline (an outline); 0.14 was
                         # too faint on the final kit, whose own 4 cm bevels soften every break
 
@@ -76,34 +77,56 @@ def _pack(me, index, grid):
         d.uv = ((cx + pad + u * (1 - 2 * pad)) / grid, (cy + pad + v * (1 - 2 * pad)) / grid)
 
 
-def bake_material(image):
-    m = bpy.data.materials.new("_edge_bake")
-    m.use_nodes = True
-    nt = m.node_tree
-    nt.nodes.clear()
-    out = nt.nodes.new("ShaderNodeOutputMaterial")
-    emit = nt.nodes.new("ShaderNodeEmission")
-    nt.links.new(emit.outputs["Emission"], out.inputs["Surface"])
-    geo = nt.nodes.new("ShaderNodeNewGeometry")
+def _edge_mask(nt, geo, radius, flat, edge):
+    """1 - dot(bevel normal, true normal) remapped so `flat` reads 0 and `edge` reads 1, kept
+    only where the surface is convex (pointiness)."""
     bevel = nt.nodes.new("ShaderNodeBevel")
     bevel.samples = 16
-    bevel.inputs["Radius"].default_value = BEVEL_R
+    bevel.inputs["Radius"].default_value = radius
     dot = nt.nodes.new("ShaderNodeVectorMath")
     dot.operation = "DOT_PRODUCT"
     nt.links.new(bevel.outputs["Normal"], dot.inputs[0])
     nt.links.new(geo.outputs["Normal"], dot.inputs[1])
-    band = nt.nodes.new("ShaderNodeMapRange")        # dot 1 = flat plane, lower = an edge
-    band.inputs["From Min"].default_value, band.inputs["From Max"].default_value = 0.995, 0.93   # a soft ramp in, not a line
+    band = nt.nodes.new("ShaderNodeMapRange")
+    band.inputs["From Min"].default_value, band.inputs["From Max"].default_value = flat, edge
     nt.links.new(dot.outputs["Value"], band.inputs["Value"])
-    convex = nt.nodes.new("ShaderNodeMapRange")      # pointiness > 0.5 is convex
+    convex = nt.nodes.new("ShaderNodeMapRange")
     convex.inputs["From Min"].default_value, convex.inputs["From Max"].default_value = 0.49, 0.53
     nt.links.new(geo.outputs["Pointiness"], convex.inputs["Value"])
     mul = nt.nodes.new("ShaderNodeMath")
     mul.operation = "MULTIPLY"
     nt.links.new(band.outputs["Result"], mul.inputs[0])
     nt.links.new(convex.outputs["Result"], mul.inputs[1])
-    nt.links.new(mul.outputs["Value"], emit.inputs["Strength"])
-    emit.inputs["Color"].default_value = (1, 1, 1, 1)
+    return mul.outputs["Value"]
+
+
+def bake_material(image):
+    """THREE MASKS in one atlas (owner on v7: "the weathered edges look really unnatural"; v7
+    baked one line along every break, which read as pale piping round each plane):
+      R  narrow edge:   the plane breaks themselves (for sparse chips on TOP edges only)
+      G  broad shoulder: a wide soft convexity gradient, where a rounded shoulder catches light
+      B  occlusion:     the stone's own ambient occlusion, dark in the crevices between planes
+    The material combines them; the atlas is linear (Non-Color)."""
+    m = bpy.data.materials.new("_edge_bake")
+    m.use_nodes = True
+    nt = m.node_tree
+    nt.nodes.clear()
+    out = nt.nodes.new("ShaderNodeOutputMaterial")
+    emit = nt.nodes.new("ShaderNodeEmission")
+    emit.inputs["Strength"].default_value = 1.0
+    nt.links.new(emit.outputs["Emission"], out.inputs["Surface"])
+    geo = nt.nodes.new("ShaderNodeNewGeometry")
+    narrow = _edge_mask(nt, geo, BEVEL_R, 0.995, 0.93)
+    broad = _edge_mask(nt, geo, BROAD_R, 0.998, 0.80)
+    ao = nt.nodes.new("ShaderNodeAmbientOcclusion")
+    ao.only_local = True
+    ao.samples = 16
+    ao.inputs["Distance"].default_value = 0.8
+    rgb = nt.nodes.new("ShaderNodeCombineColor")
+    nt.links.new(narrow, rgb.inputs["Red"])
+    nt.links.new(broad, rgb.inputs["Green"])
+    nt.links.new(ao.outputs["AO"], rgb.inputs["Blue"])
+    nt.links.new(rgb.outputs["Color"], emit.inputs["Color"])
     tex = nt.nodes.new("ShaderNodeTexImage")
     tex.image = image
     uvn = nt.nodes.new("ShaderNodeUVMap")
@@ -129,7 +152,8 @@ def bake(material="rock"):
     for i, me in enumerate(meshes):
         unwrap_into_cell(me, i, grid)
     image = bpy.data.images.new("rock_edges_atlas", ATLAS_PX, ATLAS_PX, alpha=False)
-    image.generated_color = (0, 0, 0, 1)
+    image.generated_color = (0, 0, 1, 1)          # no edge, no shoulder, no occlusion
+    image.colorspace_settings.name = "Non-Color"  # masks, stored linear
     scene = bpy.context.scene
     engine = scene.render.engine
     scene.render.engine = "CYCLES"

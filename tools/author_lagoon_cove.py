@@ -201,6 +201,7 @@ def ground_under(x, y, r):
     return min(height(x + dx * r, y + dy * r) for dx, dy in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)))
 
 
+ROCK_LOOK = "rock_a+chips"   # texture + wear variant (see render_lagoon_texture_preview.edge_wear)
 MASSIF_MIX = {"boulder": 7, "stack": 0.6, "split": 1.5, "cobble": 1}
 RIM_MIX = {"boulder": 3, "cobble": 2, "slab": 1}
 SHORE_MIX = {"cobble": 3, "slab": 2, "boulder": 1}
@@ -865,7 +866,7 @@ def main():
     import bake_lagoon_rock_edges as E
     import render_lagoon_texture_preview as T
     E.bake("rock")
-    T.rock_material(bpy.data.materials["rock"], "rock_a+edges")
+    T.rock_material(bpy.data.materials["rock"], ROCK_LOOK)
     L.gameplay(root)
     B.lighting()
     scene = bpy.context.scene

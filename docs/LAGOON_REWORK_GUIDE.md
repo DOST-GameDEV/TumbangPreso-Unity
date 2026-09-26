@@ -192,6 +192,16 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      along it with a SOFT ramp into the plane, broken by noise, strongest on upward-facing edges.
      v4's crisp hairline read as an outline and was replaced (`rock_on_models_rock_a+edges_*`).
      Unity reads the mask through UV2 with the same single material.
+   - ⚠️ **REJECTED: a light line along every edge, in its own colour** (owner on v7: *"the
+     weathered edges look really unnatural"*, *"even how the color of the weathered edges are
+     unnatural"*). One even band round every break, sides and bottoms included, read as piping,
+     and a flat tan mixed over the rock read as paint. **The wear now (v9, `ROCK_LOOK =
+     "rock_a+chips"`)**: the bake stores THREE masks (R narrow plane breaks, G a broad soft
+     shoulder gradient, B the stone's own occlusion); the material LIGHTENS the rounded
+     shoulders softly (up to 1.3x, weighted to up-facing surfaces), DARKENS the crevices (to
+     0.72x), and adds a few crisper chips on TOP edges only, broken into pieces by noise. It
+     only ever scales the rock's own texture: never a separate colour
+     (`rock_on_models_v9.png`).
    - The rock MATERIAL maps rock_a by world-space box projection (Unity: triplanar) and adds
      light tops and dark undersides by face normal.
    - **Models** (`tools/author_lagoon_rocks.py`, `ArtSource/lagoon/lagoon_rocks.blend`): 16
