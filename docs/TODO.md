@@ -168,6 +168,19 @@ it downloads or renders in the background in the loading screen".
   Tests (Mac PlayMode, total 2 failed 0): `HomeFlowTests.LoadingTipsStayInlineAndReadinessStillGatesTheTitle`
   and `HubFlowTests.QueuePlateMatchFoundCharacterSelectLobbyAndLoadingAreDrawn`.
 
+### LIGHT-4 · Ilalim ng Tulay lighting changes with view angle and distance ⚠️ OPEN, 2026-09-27
+
+Owner report with four frames: the street loses its sun shadows and goes flat and bluish from
+some positions, and gets them back closer to the shops. Investigation and numbers are in
+[reports/ilalim-lighting-2026-09-27/](reports/ilalim-lighting-2026-09-27/README.md): across
+offscreen PlayMode renders and two real Mac player sweeps of the back buffer (392 poses each,
+one entering through HOME and the loading curtain), the sun's shadows were drawn at every pose.
+Eliminated: the match-end portrait's preview key light, fog, occlusion culling, graphics tier,
+lighting style and MSAA. Not reproduced. Next: the owner's frames are from editor Play mode, so
+check whether it happens in a built player; if editor-only, suspect the Scene view camera
+interleaving with `WorldLookPresentation`'s per-camera globals. The in-player probe is
+`-tp-shadowsweep DIR [-tp-shadowsweep-hub] [-tp-map ID]` (`Diagnostics.WorldShadowSweepProbe`).
+
 ### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23
 
 Integrated into ASTRAReworks on2026-09-24at owner request, through lighting branch
