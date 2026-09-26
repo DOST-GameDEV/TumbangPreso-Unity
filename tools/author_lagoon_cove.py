@@ -39,6 +39,7 @@ import author_lagoon_blockout as L     # noqa: E402  colours, gameplay markers, 
 import author_lagoon_rocks as R        # noqa: E402  the rock kit
 import author_lagoon_houses as HK      # noqa: E402  the stilt house kit
 import author_lagoon_boats as BK       # noqa: E402  the boat kit
+import author_lagoon_structures as S   # noqa: E402  railings, cliff walks, piers
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "ArtSource" / "lagoon"
@@ -632,19 +633,25 @@ def house(c, rng, name, x, y, z, face_to, small=False):
 
 
 def village(c, rng):
+    # The stub fence posts are gone: every raised ledge gets a continuous railing below (gap
+    # review item 2; tools/author_lagoon_structures.py).
+    homes_by_pocket = {}
     for name, px, py, pz, rx, ry, _s in POCKETS:
         if name == "court" or name.startswith("summit"):
             continue
-        house(c, rng, f"house {name}", px, py + ry * 0.15, pz, (30, -70))
-        for k in range(7):
-            a = math.pi + 0.35 + k * (math.pi - 0.7) / 6
-            fx, fy = px + math.cos(a) * rx * 0.95, py + math.sin(a) * ry * 0.95
-            # Owner: "the fence posts are untextured and some are floating". Near a ledge's rim the
-            # ground mesh already slopes down between grid points, so a post standing on the floor
-            # height floated; posts now run 0.6 m into the ground and wear the timber texture.
-            post = B.box(c, "fence post", (fx, fy, pz + 0.2), (0.12, 0.12, 1.6), "deck")
-            post.data.materials[0] = bpy.data.materials.get("timber") or HK.material("timber")
-            box_uvs(post.data, across=False)
+        homes_by_pocket[name] = house(c, rng, f"house {name}", px, py + ry * 0.15, pz, (30, -70))
+    # Cliff boardwalks linking houses along the rock face, a beach pier and an old broken pier
+    # (gap review items 3 and 4). Built before the boats so the boats can keep clear. The broken
+    # pier takes its OWN rng: consuming the main one would shift every later placement and break
+    # the owner's recorded hand edits.
+    for w in S.suggest_cliff_walks():
+        S.cliff_walk(c, w["pts"], w["z"], height, start_z=w["start_z"], end_z=w["end_z"],
+                     label=f"cliff walk {w['from']} to {w['to']}")
+    sug = S.suggest_pier()
+    pp, bp = sug["pier"], sug["broken"]
+    S.pier(c, pp["start_xy"], pp["heading"], pp["length"], pp["width"], pp["deck_z"], pp["seabed_z"],
+           ground_fn=height)
+    S.broken_pier(c, bp["start_xy"], bp["heading"], bp["length"], height, random.Random(31))
     water_village(c, rng)
     beached_boats(c, rng)
     lookup = {p[0]: p for p in POCKETS}
@@ -656,7 +663,11 @@ def village(c, rng):
         eb = vb - Vector((flat.x * Bp[4] * 0.85, flat.y * Bp[5] * 0.85, 0))
         plank_stairs(c, ea, eb, f"{a} to {b}")
     _n, sx, sy, sz, _rx, _ry, _s = lookup["summit ledge (capilla)"]
-    place_house(c, "capilla", 0, sx, sy, sz, (0, 1))            # the landmark, facing the court
+    capilla = place_house(c, "capilla", 0, sx, sy, sz, (0, 1))  # the landmark, facing the court
+    for name, root in homes_by_pocket.items():
+        if lookup[name][3] >= 1.5:                  # raised ledges only (the spit landing is not)
+            S.ledge_railing(c, name, height, houses=[root])
+    S.ledge_railing(c, "summit ledge (capilla)", height, houses=[capilla])
     place_house(c, "stall", 0, 17.5, 7.0, 0.0, (0, 1))          # a sari-sari stall at the court's east edge
     o = bpy.data.objects.new("landmark rock", KIT[R.ROCK_FAMILIES["boulder"][0]])
     # 1.4x (landmark review: at 3.4 the painted emblem covered ~70 px of a 1600 px court view;
@@ -858,6 +869,8 @@ def boat(c, rng, x, y, z, rz, lepa=None, beached=False):
     # a hull passing beneath a deck). 3.0 m from a walk's centreline clears its 1.4 m deck and
     # the boat's half-beam.
     if not beached and any(_seg_dist(x, y, a, b) < 3.0 for a, b in _WALK_SEGMENTS):
+        return None
+    if beached and S.near_structure(x, y, 3.0):
         return None
     _PLACED_BOATS.append((x, y))
     kind = "bangka_beached" if beached else ("lepa" if lepa else "bangka")
@@ -1111,13 +1124,15 @@ def planting(c, rng, spots):
         nx, ny = nx / ln, ny / ln
         inset = rng.uniform(4.5, 9.0)
         x, y = ax + nx * inset, ay + ny * inset
-        if pocket_at(x, y)[0] is not None or math.hypot(x, y + 12) < 22:
+        if pocket_at(x, y)[0] is not None or math.hypot(x, y + 12) < 22 or S.near_structure(x, y, 1.5):
             continue   # not on a pocket, and the court's beach front stays open
         P.palm(c, rng, x, y, height(x, y), lean=math.atan2(-ny, -nx) + rng.uniform(-0.5, 0.5))
         if rng.random() < 0.5:
             P.tuft(c, rng, x + rng.uniform(-2, 2), y + rng.uniform(-2, 2), height(x, y))
 
     def avoid(x, y):
+        if S.near_structure(x, y, 1.5):
+            return True
         if pocket_at(x, y)[0] is not None or coast_distance(x, y) < BEACH_BAND - 1:
             return True
         return abs(x) < 16 and abs(y) < 15    # never inside the court's play walls
@@ -1266,10 +1281,13 @@ OWNER_DELETE = [(39.286, 30.183, -1.755), (-22.767, 35.991, 7.865), (-21.766, 38
                 (-24.257, 42.825, 13.226), (-18.852, 42.476, 16.018), (-9.732, 63.916, 12.168),
                 (2.181, 25.391, 2.326), (-5.063, 67.151, 20.03)]
 # (built position) -> (location, rotation_euler)
-OWNER_MOVE = [((33.611, 30.927, -0.262), (37.311, 30.927, -0.262), (-0.052, 0.13, 2.311)),
-              ((25.143, 27.885, 9.831), (29.963, 33.662, 10.237), (0.0, 0.0, 4.815)),
-              ((27.055, 30.264, 10.655), (28.699, 32.125, 10.569), (0.0, 0.0, 5.752)),
-              ((24.546, 28.667, 9.637), (30.474, 33.626, 10.778), (0.0, 0.0, 2.453))]
+OWNER_MOVE = [((33.611, 30.927, -0.262), (37.311, 30.927, -0.262), (-0.052, 0.13, 2.311))]
+# PLANTS the owner moved are ADDED at his positions instead (kind, location, turn, scale): the
+# plant mix changed after his edit (croton, monstera and ground cover joined it), so the plants
+# no longer grow at the spots he moved them from and a position match finds nothing.
+OWNER_ADD_PLANTS = [("broadleaf", (29.963, 33.662, 10.237), 4.815, 1.55),
+                    ("tuft", (28.699, 32.125, 10.569), 5.752, 1.537),
+                    ("tuft", (30.474, 33.626, 10.778), 2.453, 1.106)]
 
 
 def apply_owner_edits():
@@ -1288,6 +1306,13 @@ def apply_owner_edits():
                 o.location, o.rotation_euler = loc, rot
                 found["move"] += 1
                 break
+    import lagoon_cove_planting as P
+    plants = bpy.data.collections.get("Planting")
+    for kind, loc, turn, scale in OWNER_ADD_PLANTS:
+        before = set(plants.objects)
+        getattr(P, kind)(plants, random.Random(7), loc[0], loc[1], loc[2], scale=scale)
+        for o in set(plants.objects) - before:
+            o.rotation_euler.z = turn
     print(f"[lagoon-cove] owner edits applied: {found['delete']}/{len(OWNER_DELETE)} deletions, "
           f"{found['move']}/{len(OWNER_MOVE)} moves")
 
@@ -1364,6 +1389,7 @@ def main():
     # shaders in unity"). W.build_foam stays in the module only as a reference for the band's width.
     spots = place_boulders(L.col("Boulders", root), rng)
     village(L.col("Village", root), rng)
+    _STAIR_SEGMENTS.extend(S.path_segments())     # clear small stones off the walks and pier too
     clear_stair_paths()
     plant_col = L.col("Planting", root)
     planting(plant_col, rng, spots)
