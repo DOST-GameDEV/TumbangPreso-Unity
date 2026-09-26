@@ -124,13 +124,13 @@ def brushed_edge(nt, colour, ch, up, geo):
         breakup (speckled, not a smooth gradient),
     strongest round the perimeter of the TOP faces; the side faces stay darker. Both come from
     the narrow mask (R) only; the broad mask is not used."""
-    weight = _range(nt, up.outputs["Z"], -0.1, 0.7, 0.2, 1.0)
+    # ALL EDGES (owner on v20: "i want this to be applied to all edges of the rock, not just the
+    # top-facing ones"): no up-facing weight any more; side and bottom edges are lined too.
     # ⚠️ WORLD-SIZE WIDTHS (owner on v15: "it doesnt scale properly with the rock size, some
-    # larger rocks have it too thick and bulky"). The mask is baked in the KIT's units, so a
-    # stone placed 8x larger had a band 8x wider. Each placed stone carries its scale
-    # ("rock_scale", set by author_lagoon_cove.py; Unity reads it off the transform), and a
-    # world width W becomes a mask threshold t = 1 - W / (scale * EDGE_BAKE_R), R being an exact
-    # linear distance to the nearest plane break (tools/bake_lagoon_rock_edges.py).
+    # larger rocks have it too thick and bulky"). R is the true distance to the nearest plane
+    # break in stone units (tools/bake_lagoon_rock_edges.py); each placed stone stores
+    # "rock_scale" (Unity: from the transform), so a width W in metres is the threshold
+    # t = 1 - W / (scale * EDGE_BAKE_R).
     scale = nt.nodes.new("ShaderNodeAttribute")
     scale.attribute_type = "OBJECT"
     scale.attribute_name = "rock_scale"
@@ -139,40 +139,37 @@ def brushed_edge(nt, colour, ch, up, geo):
     def threshold(width):
         return _math(nt, "SUBTRACT", 1.0, _math(nt, "DIVIDE", width, reach))
 
-    # ORGANIC WIDTH (owner: "the inner ones are also always the same stroke width. theres no
-    # organicness aside from the edges"): a slow noise along the edges swells and thins the
-    # band between 0.10 and 0.45 m, and a fine dry-brush noise frays its inner side.
-    slow = nt.nodes.new("ShaderNodeTexNoise")
-    slow.inputs["Scale"].default_value = 0.45
-    slow.inputs["Detail"].default_value = 1.0
-    nt.links.new(geo.outputs["Position"], slow.inputs["Vector"])
-    fine = nt.nodes.new("ShaderNodeTexNoise")
-    fine.inputs["Scale"].default_value = 7.0
-    fine.inputs["Detail"].default_value = 8.0
-    fine.inputs["Roughness"].default_value = 0.7
-    nt.links.new(geo.outputs["Position"], fine.inputs["Vector"])
-    width = _range(nt, slow.outputs["Fac"], 0.32, 0.68, 0.12, 0.55, smooth=True)   # v18 0.10..0.45: fainter than the paint-over
-    width = _math(nt, "MULTIPLY", width, _range(nt, fine.outputs["Fac"], 0.3, 0.7, 0.7, 1.2))
+    def noise(scale_, detail=2.0, rough=0.5):
+        n = nt.nodes.new("ShaderNodeTexNoise")
+        n.inputs["Scale"].default_value = scale_
+        n.inputs["Detail"].default_value = detail
+        n.inputs["Roughness"].default_value = rough
+        nt.links.new(geo.outputs["Position"], n.inputs["Vector"])
+        return n.outputs["Fac"]
+
+    slow = noise(0.45, 1.0)            # swells and thins the band along an edge
+    fine = noise(7.0, 8.0, 0.7)        # dry-brush fraying
+    # GRUNGE AND GRAIN (owner: "its a rock its supposed to be grungey and graining"): a very
+    # fine speckle eats into both the band and the line.
+    grain = noise(28.0, 10.0, 0.85)
     edge = ch.outputs["Red"]
+    # THE BAND: independent of the line, on every break.
+    width = _range(nt, slow, 0.32, 0.68, 0.12, 0.55, smooth=True)
+    width = _math(nt, "MULTIPLY", width, _range(nt, fine, 0.3, 0.7, 0.55, 1.35))
     band = _range(nt, _math(nt, "SUBTRACT", edge, threshold(width)), -0.015, 0.04, smooth=True)
-    band = _math(nt, "MULTIPLY", band, weight, clamp=True)
+    band = _math(nt, "MULTIPLY", band, _range(nt, grain, 0.25, 0.5, 0.55, 1.0))
     colour = _scale_colour(nt, colour, _range(nt, band, 0.0, 1.0, 1.0, 1.38))
     # THE LINE (owner on v19: "same one flat width issue for the white edge, also i think its a
-    # bit too white and in-organic"). Its own varying width (1.5 to 8.5 cm, a quicker noise than
-    # the band's), frayed by the dry-brush noise, broken into stretches with gaps, and a
-    # LIGHTER ROCK colour (the rock's own ~1.5x, a hint of cream), not a near-white stroke.
-    quick = nt.nodes.new("ShaderNodeTexNoise")
-    quick.inputs["Scale"].default_value = 1.6
-    quick.inputs["Detail"].default_value = 2.0
-    nt.links.new(geo.outputs["Position"], quick.inputs["Vector"])
-    lw = _range(nt, quick.outputs["Fac"], 0.3, 0.7, 0.015, 0.085, smooth=True)
-    lw = _math(nt, "MULTIPLY", lw, _range(nt, fine.outputs["Fac"], 0.3, 0.7, 0.6, 1.3))
+    # bit too white and in-organic"; on v20: it must be "cut ALONG an edge like somewhere in the
+    # middle, not limited to just 1 cut"). Its own varying width, cut several times along every
+    # edge (a quick noise, features ~0.3 m), frayed and grained, a lighter ROCK colour.
+    quick = noise(1.6, 2.0)
+    lw = _range(nt, quick, 0.3, 0.7, 0.015, 0.085, smooth=True)
+    lw = _math(nt, "MULTIPLY", lw, _range(nt, fine, 0.3, 0.7, 0.6, 1.3))
     line = _range(nt, _math(nt, "SUBTRACT", edge, threshold(lw)), -0.006, 0.01, smooth=True)
-    gaps = nt.nodes.new("ShaderNodeTexNoise")
-    gaps.inputs["Scale"].default_value = 0.7
-    nt.links.new(geo.outputs["Position"], gaps.inputs["Vector"])
-    line = _math(nt, "MULTIPLY", line, _range(nt, gaps.outputs["Fac"], 0.38, 0.52, smooth=True))
-    line = _math(nt, "MULTIPLY", line, weight, clamp=True)
+    cuts = noise(3.2, 3.0, 0.6)
+    line = _math(nt, "MULTIPLY", line, _range(nt, cuts, 0.42, 0.5, smooth=True))
+    line = _math(nt, "MULTIPLY", line, _range(nt, grain, 0.3, 0.5), clamp=True)
     colour = _scale_colour(nt, colour, _range(nt, line, 0.0, 1.0, 1.0, 1.5))
     return _lift(nt, colour, EDGE_WHITE, _math(nt, "MULTIPLY", line, 0.18))
 

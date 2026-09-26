@@ -231,6 +231,18 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      gets cut off along an edge too"*): its own varying width (1.5 to 8.5 cm), frayed by the
      dry-brush noise, broken into stretches with gaps, and a lighter ROCK colour (the rock's
      own ~1.5x plus a hint of cream), never a near-white stroke. `rock_edge_line_crop_v20.png`.
+   - ⚠️ **EVERY EDGE, TWO INDEPENDENT STROKES, GRUNGE** (owner on v20: *"you essentially binded
+     the inner stroke to the white stroke, so where the white stroke doesnt appear, the inner one
+     doesnt either"*, *"i want this to be applied to all edges of the rock, not just the
+     top-facing ones"*, the line must be *"cut ALONG an edge like somewhere in the middle, not
+     limited to just 1 cut"*, *"its a rock its supposed to be grungey and graining"*). Edges are
+     found as the eye sees them (`plane_breaks`): faces grown into broad planes (13 degrees);
+     two planes more than 24 degrees apart meet at a break; a small region is a bevel STRIP
+     (part of the break) only if it lies between two big planes that really differ (counting
+     every small patch lined the rounded bodies in a grid, v21). No up-facing filter or weight:
+     side and bottom edges are lined too. The band is on every break regardless of the line;
+     the line is cut several times along each edge (a noise at ~0.3 m), and a very fine grain
+     eats into both. `rock_on_models_rock_a+brush_2_v22.png`, `_3_v22.png`.
    - SUPERSEDED, **inner-shadow edges** (owner on v9: *"can you make them slightly more clear? think of
      like an inner shadow effect, the edges have the crispiest white and then it fades the
      closer it gets to the center"*). `ROCK_LOOK = "rock_a+inner"`, `inner_glow()` in

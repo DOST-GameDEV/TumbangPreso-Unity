@@ -194,10 +194,71 @@ def bake(material="rock"):
 
 
 DIST_MAX = 0.25        # stone units: R falls LINEARLY from 1 on a break to 0 at this distance
-BREAK_DEG = 20.0       # a convex edge sharper than this is a plane break. 12 caught every
-                       # small facet and brought back the rejected paving look (v17)
-TOP_NZ = 0.3           # and at least one of its faces must point UP: the owner's paint-over
-                       # lines the perimeter of the TOP faces, not side-to-side breaks
+PLANE_DEG = 13.0       # faces within this of a plane's seed normal belong to that plane
+BREAK_DEG = 24.0       # two planes whose mean normals differ by more than this meet at a BREAK
+STRIP_AREA = 0.035     # a "plane" smaller than this share of the stone is a bevel strip: part
+                       # of the break it sits in, never a face of its own
+
+
+def plane_breaks(bm):
+    """THE STONE'S REAL EDGES, as the eye sees them (owner on v20: the band vanished wherever
+    the line did, because both came from one edge set, and the kit's 4 cm bevels spread each
+    break across strips that fell under any single-edge angle cutoff; and "i want this to be
+    applied to all edges of the rock, not just the top-facing ones"). Faces are grown into
+    broad PLANES (region growing on the normal); tiny planes are bevel strips. An edge is a
+    break when it separates two planes more than BREAK_DEG apart, or borders a strip. Convex
+    only; every direction counts."""
+    import collections
+    faces = bm.faces
+    region = {}
+    normals, areas = [], []
+    for f in faces:
+        if f in region:
+            continue
+        rid, seed = len(normals), f.normal.copy()
+        region[f] = rid
+        q = collections.deque([f])
+        acc, area = seed * 0, 0.0
+        while q:
+            g = q.popleft()
+            acc += g.normal * g.calc_area()
+            area += g.calc_area()
+            for e in g.edges:
+                for h in e.link_faces:
+                    if h not in region and h.normal.angle(seed, 0) < math.radians(PLANE_DEG):
+                        region[h] = rid
+                        q.append(h)
+        normals.append(acc.normalized() if acc.length else seed)
+        areas.append(area)
+    total = sum(areas) or 1.0
+    small = [a / total < STRIP_AREA for a in areas]
+    # A small region is a BEVEL STRIP only if it lies between two BIG planes that really differ
+    # (review v21: the kit's rounded bodies split into many small patches, and counting every
+    # one as a strip lined the curves in a grid, the paving look again).
+    touches = collections.defaultdict(set)
+    for e in bm.edges:
+        if len(e.link_faces) == 2:
+            ra, rb = region[e.link_faces[0]], region[e.link_faces[1]]
+            if ra != rb:
+                touches[ra].add(rb)
+                touches[rb].add(ra)
+    strip = [False] * len(areas)
+    for r in range(len(areas)):
+        if not small[r]:
+            continue
+        big = [n for n in touches[r] if not small[n]]
+        strip[r] = any(normals[i].angle(normals[j], 0) > math.radians(BREAK_DEG)
+                       for i in big for j in big if i < j)
+    segs = []
+    for e in bm.edges:
+        if len(e.link_faces) != 2 or not e.is_convex:
+            continue
+        ra, rb = region[e.link_faces[0]], region[e.link_faces[1]]
+        if ra == rb:
+            continue
+        if strip[ra] or strip[rb] or normals[ra].angle(normals[rb], 0) > math.radians(BREAK_DEG):
+            segs.append((tuple(e.verts[0].co), tuple(e.verts[1].co)))
+    return segs
 
 
 def distance_to_breaks(image, meshes):
@@ -220,11 +281,8 @@ def distance_to_breaks(image, meshes):
         bm = bmesh.new()
         bm.from_mesh(me)
         bm.faces.ensure_lookup_table()
-        segs = []
-        for e in bm.edges:
-            if (len(e.link_faces) == 2 and e.is_convex and math.degrees(e.calc_face_angle(0)) > BREAK_DEG
-                    and max(f.normal.z for f in e.link_faces) > TOP_NZ):
-                segs.append((tuple(e.verts[0].co), tuple(e.verts[1].co)))
+        bm.normal_update()
+        segs = plane_breaks(bm)
         if not segs:
             bm.free()
             continue
