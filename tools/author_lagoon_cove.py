@@ -747,13 +747,36 @@ def beached_boats(c, rng):
     print("[lagoon-cove] beached boats:", placed)
 
 
+def box_uvs(me, across=True):
+    """World-scale UVs (1 unit = 2 m) on a box mesh, picked per face by its dominant normal.
+    With `across`, the top face's V runs along local X, so plank boards (drawn along V) lie
+    ACROSS a walk's run (local Y), as the boards of a real footbridge do."""
+    uv = me.uv_layers.new(name="UVMap")
+    for poly in me.polygons:
+        n = poly.normal
+        ax = max(range(3), key=lambda k: abs(n[k]))
+        for li in poly.loop_indices:
+            co = me.vertices[me.loops[li].vertex_index].co
+            if ax == 2:
+                u, v = (co.y, co.x) if across else (co.x, co.y)
+            elif ax == 0:
+                u, v = co.y, co.z
+            else:
+                u, v = co.x, co.z
+            uv.data[li].uv = (u / 2.0, v / 2.0)
+
+
 def walk(c, a, b, z, za=None):
     """A narrow plank walk on thin piles between two points; `za` lets the first end start lower
     (a jetty climbing off the sand)."""
     za = z if za is None else za
     va, vb = Vector((a[0], a[1], za)), Vector((b[0], b[1], z))
     run = vb - va
+    # The walks take the PLANK texture (review of plank_on_models_v1: on the old blockout
+    # "deck" colour the biggest plank surface on the map showed no boards at all).
     o = B.box(c, "plank walk", (0, 0, 0), (1.4, run.length, 0.15), "deck")
+    o.data.materials[0] = bpy.data.materials.get("plank") or HK.material("plank")
+    box_uvs(o.data)
     o.matrix_world = Matrix.Translation((va + vb) / 2) @ run.to_track_quat("Y", "Z").to_matrix().to_4x4()
     steps = max(1, int(run.length / 3.5))
     for k in range(steps + 1):

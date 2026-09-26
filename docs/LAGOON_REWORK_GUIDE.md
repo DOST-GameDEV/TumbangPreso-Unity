@@ -314,6 +314,9 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      models: walls under the deep eaves went cold blue-grey. The cove's LIGHTING fill is now a
      warmer grey (0.55, 0.60, 0.66) instead of saturated blue (the camera still sees the blue
      sky gradient), and the skin and inner strips are closer in value.
+   - Planks on the models (`plank_on_models_v2.png`, awaiting the owner's pick). v1: the
+     water-village walks still wore the blockout "deck" colour; they now take the plank
+     material with `box_uvs()`, boards laid ACROSS the walk like a real footbridge.
 4. **Boats**: bangka outrigger and lepa houseboat. MODELS DONE 2026-09-27:
    `tools/author_lagoon_boats.py` (bangka, lepa, bangka_beached; slots plank, paint_hull,
    paint_trim with a per-boat `trim_tint` vertex colour, bamboo, thatch, timber; origin the
