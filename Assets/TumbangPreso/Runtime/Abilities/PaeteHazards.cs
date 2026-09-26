@@ -165,6 +165,30 @@ namespace TumbangPreso.Abilities
             puller?.GetComponentInChildren<CharacterSquashStretch>()?.Stretch(0.22f);
         }
 
+        /// <summary>
+        /// The seedling for a rejoining peer and the replay (`WorldEffectSnapshot.Kind.Plant`): where,
+        /// whose, how old, and how long until its next wooden slipper (FirstScale), so the rejoiner's
+        /// plant fires on the same clock as everyone else's. A pulled plant is not captured.
+        /// </summary>
+        public Net.WorldEffectSnapshot.Field Capture() => new Net.WorldEffectSnapshot.Field
+        {
+            Type = Net.WorldEffectSnapshot.Kind.Plant, Source = gameObject, Position = transform.position,
+            Forward = Vector3.forward, Duration = PaeteRules.PlantLifeSeconds,
+            Remaining = Mathf.Clamp(PaeteRules.PlantLifeSeconds - Mathf.Max(0f, _age), 0f, PaeteRules.PlantLifeSeconds),
+            Radius = 1f, Owner = OwnerSlot, FirstScale = Mathf.Max(0f, _nextShot - _age),
+        };
+
+        public bool IsPulled => _pulled;
+
+        /// <summary>A seedling put back at <paramref name="age"/> seconds old with its shot clock; no seed flight, no second ground break.</summary>
+        public static PaetePlant Restore(Vector3 at, int ownerSlot, float age, float untilShot)
+        {
+            var plant = Spawn(at, at, ownerSlot, 0f);
+            plant._age = Mathf.Max(0.5f, age);
+            plant._nextShot = plant._age + Mathf.Clamp(untilShot, 0f, PaeteRules.PlantReloadSeconds);
+            return plant;
+        }
+
         private void OnDestroy()
         {
             Live.Remove(this);
@@ -175,6 +199,7 @@ namespace TumbangPreso.Abilities
         private void Update()
         {
             float dt = Time.deltaTime;
+            if (_age < 0f && _age + dt >= 0f) Visual.PaeteGroundBreak.Spawn(transform.position, 0.7f);
             _age += dt;
             _recoil += dt;
             if (_pulled)
@@ -332,6 +357,30 @@ namespace TumbangPreso.Abilities
             }
             t._body = PaeteThornBody.Build(go.transform, t._caught);
             GameServices.Audio?.PlayAt("sfx_paete_thorn_burst", origin);
+            Visual.PaeteGroundBreak.Spawn(origin, 1.0f);
+            return t;
+        }
+
+        public float Age => _age;
+
+        /// <summary>The construct for a rejoiner and the replay (`Kind.Thorns`): it only draws; the slippers it took already moved on the host.</summary>
+        public Net.WorldEffectSnapshot.Field Capture() => new Net.WorldEffectSnapshot.Field
+        {
+            Type = Net.WorldEffectSnapshot.Kind.Thorns, Source = gameObject, Position = Origin, Forward = Vector3.forward,
+            Duration = PaeteRules.ThornConstructSeconds, Remaining = Mathf.Max(0f, PaeteRules.ThornConstructSeconds - _age),
+            Radius = PaeteRules.ThornRange, Owner = OwnerSlot,
+        };
+
+        /// <summary>The construct put back at <paramref name="age"/>, silent, reaching for nothing.</summary>
+        public static PaeteThorns Restore(Vector3 origin, int ownerSlot, float age)
+        {
+            var go = new GameObject("PaeteThorns");
+            go.transform.position = origin;
+            var t = go.AddComponent<PaeteThorns>();
+            t.OwnerSlot = ownerSlot; t.Origin = origin;
+            t._age = Mathf.Max(0f, age);
+            t._resolved = true;
+            t._body = PaeteThornBody.Build(go.transform, t._caught);
             return t;
         }
 
@@ -409,6 +458,18 @@ namespace TumbangPreso.Abilities
             return s;
         }
 
+        /// <summary>
+        /// The sentry for a rejoiner and the replay (`Kind.Sentry`). Who it holds is not in the field:
+        /// Rooted rides `SyncUnit`, and a rejoiner's copy only draws (the host alone catches).
+        /// </summary>
+        public Net.WorldEffectSnapshot.Field Capture() => new Net.WorldEffectSnapshot.Field
+        {
+            Type = Net.WorldEffectSnapshot.Kind.Sentry, Source = gameObject, Position = Centre, Forward = Vector3.forward,
+            Duration = PaeteRules.SentryLifeSeconds + 0.6f,
+            Remaining = Mathf.Clamp(PaeteRules.SentryLifeSeconds + 0.6f - Mathf.Max(0f, _age), 0f, PaeteRules.SentryLifeSeconds + 0.6f),
+            Radius = PaeteRules.SentryRadius, Owner = OwnerSlot,
+        };
+
         public static bool InReach(Vector3 centre, CharacterMotor p)
         {
             Vector3 d = p.transform.position - centre; d.y = 0f;
@@ -421,7 +482,11 @@ namespace TumbangPreso.Abilities
             _age += Time.deltaTime;
             // ⚠️ LOCAL ON EVERY PEER, NOT `NetCue`: each peer runs this same clock from the accepted
             // cast, so each plays each stage once (`audit_cue_relay.py`).
-            if (before < 0f && _age >= 0f) GameServices.Audio?.PlayAt("sfx_paete_sentry_burst", Centre);
+            if (before < 0f && _age >= 0f)
+            {
+                GameServices.Audio?.PlayAt("sfx_paete_sentry_burst", Centre);
+                Visual.PaeteGroundBreak.Spawn(Centre, 2.2f);
+            }
             if (before < PaeteRules.SentryCatchSeconds && _age >= PaeteRules.SentryCatchSeconds && _held.Count > 0)
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_catch", Centre);
             if (before < PaeteRules.SentryLifeSeconds && _age >= PaeteRules.SentryLifeSeconds)

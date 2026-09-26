@@ -28,7 +28,7 @@ namespace TumbangPreso.EditorTools.MapKit
     /// </summary>
     public static class PaeteReviewProbe
     {
-        public const string Version = "v11";
+        public const string Version = "v13";
         private const string OutDir = "Logs/paete-review";
         private const int W = 480, H = 360;
 
@@ -220,17 +220,20 @@ namespace TumbangPreso.EditorTools.MapKit
                 victims.Add(v.AddComponent<CharacterMotor>());
             }
             sentry.SetTargets(victims);
-            float[] ages = { 0f, .06f, .14f, .24f, .34f, .46f, .62f, .9f, 3f, 6.2f, 9.8f, 10.3f };
+            float[] ages = { 0f, .1f, .2f, .3f, .4f, .5f, .62f, .9f, 3f, 6.2f, 9.8f, 10.3f };
             var shots = new List<Texture2D>();
+            var ground = PaeteGroundBreak.Spawn(Vector3.zero, 2.2f);
             foreach (float a in ages)
             {
                 sentry.Pose(a, Vector3.zero);
+                ground.StepTo(Mathf.Min(a, 1.29f));
                 var baked = victims.SelectMany(v => Bake(v.gameObject)).ToList();
                 shots.Add(Shoot(new Vector3(7.4f, 4.2f, -7.0f), new Vector3(0, 1.9f, 0.4f), 50, $"sentry t={a:0.00}s"));
                 shots.Add(Shoot(new Vector3(-2.2f, 1.1f, -6.2f), new Vector3(0, 2.2f, 0f), 54, $"sentry low t={a:0.00}s"));
                 foreach (var v in victims) Unbake(v.gameObject, baked.Where(g => g != null).ToList());
             }
             Save("sentryfx", Reorder(shots, ages.Length), ages.Length);
+            Object.DestroyImmediate(ground.gameObject);
             Object.DestroyImmediate(host);
             foreach (var v in victims) Object.DestroyImmediate(v.gameObject);
         }
@@ -263,13 +266,16 @@ namespace TumbangPreso.EditorTools.MapKit
             var host = new GameObject("ThornHost");
             var thorns = PaeteThornBody.Build(host.transform, new List<Slipper>());
             var shots = new List<Texture2D>();
-            float[] ages = { 0f, .05f, .1f, .2f, .5f, 1.5f, 2.5f, 2.9f };
+            float[] ages = { 0f, .04f, .08f, .14f, .22f, .5f, 2.5f, 2.9f };
+            var ground = PaeteGroundBreak.Spawn(Vector3.zero, 1.0f);
             foreach (float a in ages)
             {
                 thorns.Pose(a, Vector3.zero);
+                ground.StepTo(Mathf.Min(a, 1.29f));
                 shots.Add(Shoot(new Vector3(2.0f, 1.6f, -2.2f), new Vector3(0, .4f, 0), 46, $"thorns t={a:0.00}s"));
             }
             Save("thornfx", shots, ages.Length);
+            Object.DestroyImmediate(ground.gameObject);
             Object.DestroyImmediate(host);
         }
 

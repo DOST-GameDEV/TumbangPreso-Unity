@@ -232,8 +232,31 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
 - [x] Owner's Groot references (2026-09-26): vines are entangled bark limbs with dark vines, lit strands
   and forked twigs (`GrowthTwigs`), easing out of the forearm; the sentry is a 4 m braided-trunk tree
   (research.md, "Groot's whole arsenal"; direction.md; frames in the report's review/).
-- [ ] Owner's eye on the sentry v4 and the vines; the thrown seed is still a small glowing seed, where
-  Groot throws a "massive vine cluster".
+- [x] Everything rises out of the ground (owner, 2026-09-26: *"coming out of the ground each time and
+  forming on the spot not just spawning in"*): `PaeteGroundBreak` cracks the road and throws soil
+  chunks; the seedling pushes up through it, the thorns punch up one by one, the sentry screws up out
+  of the road twisting (review v12). The ultimate now throws a vine cluster, not a small seed.
+- [x] Seedling body v2: stem, base leaves, a five-petal pod that opens round a real wooden slipper.
+  Fixed a real fault: the growing slipper's pose overwrote its block size and a grown shot rendered as
+  a 1 m tan cube.
+- [x] World snapshot and replay: `WorldEffectSnapshot.Kind.Plant/Thorns/Sentry` (12 to 14, appended
+  inside protocol 55), captured, validated, restored for a rejoiner, retired with the round, and drawn
+  in replay (`RecordedFieldView`). Compiled in the v13 probe run; NOT yet exercised by a rejoin test.
+- [ ] ⚠️ NEXT, THE OWNER'S LATEST NOTE (2026-09-26): *"the current models of all his skills look ugly
+  still its js blocks"*, *"thoroughly work on the detail of each part manually"*. `tools/build_paete_props.py`
+  now models the sentry, the seedling and the thorn construct part by part with his own builder's
+  helpers and palette (chamfered bark plates, knots, glow seams, wound vines, moss, fungus, forked
+  crown branches, petals, a strapped slipper, barbed thorns), written to
+  `Resources/Models/PaeteProps/*.glb` with named nodes for every moving part. NOT YET WIRED OR SEEN:
+  let Unity import them, make `PaeteSentryBody`, `PaetePlantBody` and `PaeteThornBody` instantiate the
+  glb (`Resources.Load<GameObject>("Models/PaeteProps/sentry")`), dress it with `ToonSkin.Apply(model,
+  ToonSkin.PersonOutlineWidth, <Paete's palette from RosterBook.FindPersonArt("paete").Palette>)`,
+  find the nodes (`trunk`, `crown`, `claw-0..4`, `buttress-0..5`; `stem`, `pod`, `petal-0..4`,
+  `slipper`, `root-0..3`; `knot`, `thorn-0..6`) and pose them with the existing age curves, keeping
+  the procedural core, spores, ground branches, tethers and ground break. Then film with
+  `PaeteReviewProbe` (bump its Version) and refine each part by eye, versioned.
+- [ ] Rerun `PaeteKitPlayProbe` and EditMode after the rise and snapshot changes (both last passed
+  before them: 4/4 and 606/609).
 - [ ] Still to do: portrait and avatar, `WorldEffectSnapshot`/`RecordedSpecialFields` for plant, sentry
   and thorns, seedling and thorn-construct art pass, PlayMode gate, Checks.RunAll, audits, a build.
 - [ ] Deploy the cloud-code hero lists once they name him; record his lines (human voices only).

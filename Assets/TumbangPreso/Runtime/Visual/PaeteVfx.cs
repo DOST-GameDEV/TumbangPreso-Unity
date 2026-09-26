@@ -225,6 +225,79 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
+    /// ⚠️⚠️ THE GROUND BREAKING, BEFORE ANYTHING OF HIS COMES UP THROUGH IT (owner, 2026-09-26: *"i want
+    /// it so that his skills loook like theyre coming out of the ground each time and forming on the
+    /// spot not just spawning in"*). Crack plates open out from the point and soil chunks are thrown
+    /// clear and fall back, each chunk on its own typed throw; then the cracks close and the chunks
+    /// shrink into the road. The seedling, BAWI's thorns and the sentry all break the road with this
+    /// before they rise, so none of them appears at size.
+    /// </summary>
+    public sealed class PaeteGroundBreak : MonoBehaviour
+    {
+        private float _age, _size;
+        private readonly List<Transform> _cracks = new List<Transform>();
+        private readonly List<Transform> _chunks = new List<Transform>();
+        private readonly List<Vector3> _throw = new List<Vector3>();
+        private const float Life = 1.3f;
+
+        // Per chunk: yaw of the throw, outward speed, upward speed, size. Typed, none the same.
+        private static readonly float[] ChunkYaw = { 10f, 55f, 102f, 150f, 196f, 240f, 288f, 331f };
+        private static readonly float[] ChunkOut = { 1.6f, 2.3f, 1.2f, 2.0f, 1.5f, 2.6f, 1.8f, 1.3f };
+        private static readonly float[] ChunkUp = { 3.4f, 2.6f, 4.0f, 3.0f, 3.6f, 2.4f, 3.2f, 3.8f };
+        private static readonly float[] ChunkSize = { 0.11f, 0.08f, 0.13f, 0.07f, 0.10f, 0.09f, 0.12f, 0.08f };
+
+        public static PaeteGroundBreak Spawn(Vector3 at, float size)
+        {
+            var go = new GameObject("PaeteGroundBreak");
+            go.transform.position = at;
+            var fx = go.AddComponent<PaeteGroundBreak>();
+            fx._size = size;
+            float[] crackYaw = { 15f, 85f, 160f, 230f, 300f };
+            float[] crackLen = { 0.8f, 0.6f, 0.9f, 0.55f, 0.75f };
+            for (int i = 0; i < crackYaw.Length; i++)
+            {
+                var pivot = new GameObject("crack").transform;
+                pivot.SetParent(go.transform, false);
+                pivot.localRotation = Quaternion.Euler(0f, crackYaw[i], 0f);
+                var plate = GrowthVfx.Block(pivot, "plate", new Vector3(0.08f, 0.02f, crackLen[i]), GrowthVfx.BarkDark).transform;
+                plate.localPosition = new Vector3(0f, 0.012f, crackLen[i] * 0.5f);
+                fx._cracks.Add(pivot);
+            }
+            for (int i = 0; i < ChunkYaw.Length; i++)
+            {
+                var chunk = GrowthVfx.Block(go.transform, "soil-chunk", Vector3.one * ChunkSize[i], i % 3 == 0 ? GrowthVfx.BarkDark : GrowthVfx.Seed).transform;
+                float yaw = ChunkYaw[i] * Mathf.Deg2Rad;
+                fx._chunks.Add(chunk);
+                fx._throw.Add(new Vector3(Mathf.Sin(yaw) * ChunkOut[i], ChunkUp[i], Mathf.Cos(yaw) * ChunkOut[i]));
+            }
+            fx.transform.localScale = Vector3.one * size;
+            fx.StepTo(0f);
+            return fx;
+        }
+
+        private void Update()
+        {
+            _age += Time.deltaTime;
+            if (_age >= Life) { Destroy(gameObject); return; }
+            StepTo(_age);
+        }
+
+        public void StepTo(float t)
+        {
+            float open = Mathf.Clamp01(t / 0.12f), close = Mathf.Clamp01((t - 0.8f) / 0.5f);
+            for (int i = 0; i < _cracks.Count; i++) _cracks[i].localScale = new Vector3(1f, 1f, Mathf.Max(0.001f, open * (1f - close)));
+            for (int i = 0; i < _chunks.Count; i++)
+            {
+                var v = _throw[i];
+                float y = Mathf.Max(0f, v.y * t - 0.5f * 12f * t * t);
+                _chunks[i].localPosition = new Vector3(v.x * t, 0.05f + y, v.z * t) * 0.5f;
+                _chunks[i].localRotation = Quaternion.Euler(t * 400f + i * 40f, t * 250f, 0f);
+                _chunks[i].localScale = Vector3.one * ChunkSize[i] * (1f - Mathf.Clamp01((t - 0.7f) / 0.5f));
+            }
+        }
+    }
+
+    /// <summary>
     /// A handful of leaves thrown out from a point and fluttering down: the motif particle of every
     /// growth effect (direction.md § 2), with narra's disc-shaped seed pods among them. Each leaf's
     /// throw is set from its own index, so two bursts never repeat one pattern.
@@ -336,8 +409,50 @@ namespace TumbangPreso.Visual
             var fx = go.AddComponent<PaeteSeedArc>();
             fx._from = from; fx._to = to; fx._flight = Mathf.Max(0.1f, flightSeconds);
             fx._height = 0.6f + 0.12f * Vector3.Distance(from, to);
-            fx._seed = GrowthVfx.Part(go.transform, "seed", GrowthVfx.Leaf(size, size * 0.7f, size * 0.55f),
-                glowing ? GrowthVfx.Glow : GrowthVfx.Seed, glowing ? 1.2f : 0f).transform;
+            if (!glowing)
+            {
+                fx._seed = GrowthVfx.Part(go.transform, "seed", GrowthVfx.Leaf(size, size * 0.7f, size * 0.55f), GrowthVfx.Seed).transform;
+            }
+            else
+            {
+                // ⚠️ THE ULTIMATE THROWS A CLUSTER, NOT A SEED (Groot's Strangling Prison is *"a massive
+                // vine cluster"*, research.md): a glowing heart inside six bark limbs curled round it
+                // in their own directions, dark vines and leaves caught in them, 0.9 m across, so
+                // what lands looks big enough to become the 4 m tree it bursts into.
+                fx._seed = new GameObject("vine-cluster").transform;
+                fx._seed.SetParent(go.transform, false);
+                GrowthVfx.Block(fx._seed, "cluster-heart", Vector3.one * 0.30f, GrowthVfx.Glow, 1.4f).transform.localRotation = Quaternion.Euler(45f, 0f, 45f);
+                (Vector3 axis, float r, Color c)[] limbs =
+                {
+                    (new Vector3(1f, 0.2f, 0f), 0.34f, GrowthVfx.BarkLit), (new Vector3(0f, 1f, 0.3f), 0.38f, GrowthVfx.Bark),
+                    (new Vector3(0.3f, 0f, 1f), 0.32f, GrowthVfx.BarkDark), (new Vector3(0.7f, 0.7f, -0.2f), 0.36f, GrowthVfx.Bark),
+                    (new Vector3(-0.5f, 0.3f, 0.8f), 0.30f, GrowthVfx.Vine), (new Vector3(0.2f, -0.8f, 0.6f), 0.33f, GrowthVfx.Moss),
+                };
+                foreach (var l in limbs)
+                {
+                    var n = l.axis.normalized;
+                    var side = Vector3.Cross(n, Mathf.Abs(n.y) < 0.9f ? Vector3.up : Vector3.right).normalized;
+                    var up = Vector3.Cross(n, side);
+                    var pts = new List<Vector3>(); var rad = new List<float>();
+                    for (int k = 0; k <= 10; k++)
+                    {
+                        float a = k / 10f * Mathf.PI * 1.7f;
+                        pts.Add((side * Mathf.Cos(a) + up * Mathf.Sin(a)) * l.r + n * (k / 10f - 0.5f) * 0.18f);
+                        rad.Add(Mathf.Lerp(0.07f, 0.02f, k / 10f));
+                    }
+                    var mesh = new Mesh { name = "PaeteClusterLimb" };
+                    GrowthVfx.Tube(mesh, pts, rad, 5);
+                    GrowthVfx.Part(fx._seed, "limb", mesh, l.c);
+                }
+                float[] leafYaw = { 20f, 140f, 260f };
+                for (int i = 0; i < leafYaw.Length; i++)
+                {
+                    var leaf = GrowthVfx.Part(fx._seed, "cluster-leaf", GrowthVfx.Leaf(0.26f, 0.15f, 0.02f), i == 1 ? GrowthVfx.LeafDark : GrowthVfx.LeafGreen).transform;
+                    leaf.localRotation = Quaternion.Euler(-30f, leafYaw[i], 0f);
+                    leaf.localPosition = leaf.localRotation * new Vector3(0f, 0.1f, 0.38f);
+                }
+                fx._seed.localScale = Vector3.one * (size / 0.26f);
+            }
             fx.Update();
             return fx;
         }
@@ -347,7 +462,8 @@ namespace TumbangPreso.Visual
             _age += Time.deltaTime;
             float t = Mathf.Clamp01(_age / _flight);
             transform.position = Vector3.Lerp(_from, _to, t) + Vector3.up * _height * 4f * t * (1f - t);
-            _seed.localRotation = Quaternion.Euler(_age * 720f, _age * 300f, 0f);
+            // A seed spins fast; the heavy cluster tumbles.
+            _seed.localRotation = _seed.childCount > 1 ? Quaternion.Euler(_age * 240f, _age * 120f, 0f) : Quaternion.Euler(_age * 720f, _age * 300f, 0f);
             if (_age >= _flight) Destroy(gameObject);
         }
     }
@@ -425,9 +541,18 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed class PaetePlantBody : MonoBehaviour
     {
+        // ⚠️⚠️ v2 (2026-09-26). v1's pod was a green cube and its growing slipper a block whose pose
+        // wrote `localScale = growth` over the block's own size, so a grown shot rendered as a 1 m tan
+        // cube over the plant (found filming the rise). Now, part by part: a curved stem of bark into
+        // moss; four leaves fanned at its foot and two up it; a POD of five petal-leaves that opens
+        // round a real wooden slipper (sole and thong strap, like the ones it throws) as the slipper
+        // grows, and closes after the shot; the slipper grows from its own size, never from 1.
         private Transform _root, _stem, _pod, _shoe, _soil;
         private readonly Transform[] _roots = new Transform[4];
-        private readonly Renderer[] _leafRenderers = new Renderer[3];
+        private readonly List<Renderer> _leafRenderers = new List<Renderer>();
+        private readonly List<Color> _leafFresh = new List<Color>();
+        private readonly List<Transform> _petals = new List<Transform>();
+        private static readonly float[] PetalYaw = { 0f, 74f, 146f, 214f, 288f };
 
         public static PaetePlantBody Build(Transform parent)
         {
@@ -451,29 +576,59 @@ namespace TumbangPreso.Visual
             }
             b._soil = GrowthVfx.Block(b._root, "loose-soil", new Vector3(0.9f, 0.03f, 0.9f), GrowthVfx.Seed).transform;
             b._soil.gameObject.SetActive(false);
+
             b._stem = new GameObject("stem").transform;
             b._stem.SetParent(b._root, false);
-            var trunk = GrowthVfx.Block(b._stem, "trunk", new Vector3(0.20f, 0.60f, 0.20f), GrowthVfx.Bark).transform;
-            trunk.localPosition = new Vector3(0f, 0.30f, 0f);
-            var ring = GrowthVfx.Block(b._stem, "moss-ring", new Vector3(0.24f, 0.06f, 0.24f), GrowthVfx.Moss).transform;
-            ring.localPosition = new Vector3(0f, 0.10f, 0f);
+            // The stem: bark at the foot, moss toward the pod, with a gentle lean and a curve back.
+            var stemMesh = new Mesh { name = "PaetePlantStem" };
+            GrowthVfx.Tube(stemMesh, new List<Vector3> { new Vector3(0f, 0f, 0f), new Vector3(0.03f, 0.25f, 0.01f), new Vector3(0.01f, 0.50f, -0.02f), new Vector3(-0.01f, 0.66f, 0f) },
+                           new List<float> { 0.10f, 0.08f, 0.065f, 0.06f }, 5);
+            GrowthVfx.Part(b._stem, "stem", stemMesh, GrowthVfx.Bark);
+            var collar = GrowthVfx.Block(b._stem, "moss-collar", new Vector3(0.16f, 0.07f, 0.16f), GrowthVfx.Moss).transform;
+            collar.localPosition = new Vector3(0f, 0.58f, 0f); collar.localRotation = Quaternion.Euler(0f, 20f, 0f);
+            // Four leaves fanned at its foot and two up the stem, each its own size and turn.
+            (Vector3 at, float yaw, float pitch, float size)[] leaves =
+            {
+                (new Vector3(0f, 0.06f, 0f), 30f, -12f, 0.34f), (new Vector3(0f, 0.05f, 0f), 125f, -8f, 0.30f),
+                (new Vector3(0f, 0.07f, 0f), 210f, -15f, 0.36f), (new Vector3(0f, 0.05f, 0f), 300f, -10f, 0.28f),
+                (new Vector3(0.02f, 0.32f, 0f), 80f, -35f, 0.24f), (new Vector3(-0.01f, 0.44f, 0f), 250f, -40f, 0.22f),
+            };
+            for (int i = 0; i < leaves.Length; i++)
+            {
+                var l = leaves[i];
+                Color fresh = i % 2 == 0 ? GrowthVfx.LeafGreen : GrowthVfx.LeafDark;
+                var leaf = GrowthVfx.Part(b._stem, "leaf", GrowthVfx.Leaf(l.size, l.size * 0.55f, 0.02f), fresh).transform;
+                leaf.localRotation = Quaternion.Euler(l.pitch, l.yaw, 0f);
+                leaf.localPosition = l.at + leaf.localRotation * new Vector3(0f, 0f, l.size * 0.45f);
+                b._leafRenderers.Add(leaf.GetComponent<Renderer>()); b._leafFresh.Add(fresh);
+            }
+
+            // The pod: a cup of five petal-leaves round the growing slipper.
             b._pod = new GameObject("pod").transform;
             b._pod.SetParent(b._stem, false);
-            b._pod.localPosition = new Vector3(0f, 0.62f, 0f);
-            var head = GrowthVfx.Block(b._pod, "pod-head", new Vector3(0.44f, 0.34f, 0.40f), GrowthVfx.LeafDark).transform;
-            head.localPosition = new Vector3(0f, 0.17f, 0f);
-            var lip = GrowthVfx.Block(b._pod, "pod-lip", new Vector3(0.30f, 0.10f, 0.08f), GrowthVfx.Vine).transform;
-            lip.localPosition = new Vector3(0f, 0.20f, 0.20f);
-            b._shoe = GrowthVfx.Block(b._pod, "growing-slipper", new Vector3(0.10f, 0.03f, 0.24f), GrowthVfx.BarkLit).transform;
-            b._shoe.localPosition = new Vector3(0f, 0.36f, 0.06f);
-            float[] leafYaw = { -40f, 60f, 170f };
-            for (int i = 0; i < 3; i++)
+            b._pod.localPosition = new Vector3(0f, 0.64f, 0f);
+            GrowthVfx.Block(b._pod, "pod-base", new Vector3(0.20f, 0.10f, 0.20f), GrowthVfx.Moss).transform.localRotation = Quaternion.Euler(0f, 45f, 0f);
+            for (int i = 0; i < PetalYaw.Length; i++)
             {
-                var leaf = GrowthVfx.Part(b._pod, "leaf-" + i, GrowthVfx.Leaf(0.34f - 0.04f * i, 0.18f, 0.02f), i == 1 ? GrowthVfx.LeafDark : GrowthVfx.LeafGreen).transform;
-                leaf.localRotation = Quaternion.Euler(-30f, leafYaw[i], 0f);
-                leaf.localPosition = new Vector3(0f, 0.34f, 0f) + leaf.localRotation * new Vector3(0f, 0f, 0.14f);
-                b._leafRenderers[i] = leaf.GetComponent<Renderer>();
+                var hinge = new GameObject("petal").transform;
+                hinge.SetParent(b._pod, false);
+                hinge.localRotation = Quaternion.Euler(0f, PetalYaw[i], 0f);
+                Color fresh = i % 2 == 0 ? GrowthVfx.LeafDark : GrowthVfx.Vine;
+                var petal = GrowthVfx.Part(hinge, "petal-leaf", GrowthVfx.Leaf(0.30f - 0.02f * (i % 3), 0.17f, 0.025f), fresh).transform;
+                petal.localPosition = new Vector3(0f, 0.02f, 0.14f);
+                b._petals.Add(hinge);
+                b._leafRenderers.Add(petal.GetComponent<Renderer>()); b._leafFresh.Add(fresh);
             }
+            // The wooden slipper growing in it: a sole and a thong strap, the shape it throws.
+            b._shoe = new GameObject("growing-slipper").transform;
+            b._shoe.SetParent(b._pod, false);
+            b._shoe.localPosition = new Vector3(0f, 0.16f, 0f);
+            b._shoe.localRotation = Quaternion.Euler(-60f, 0f, 0f);
+            GrowthVfx.Block(b._shoe, "sole", new Vector3(0.13f, 0.035f, 0.28f), GrowthVfx.BarkLit);
+            var strapA = GrowthVfx.Block(b._shoe, "strap-a", new Vector3(0.02f, 0.05f, 0.10f), GrowthVfx.Vine).transform;
+            strapA.localPosition = new Vector3(0.03f, 0.03f, 0.04f); strapA.localRotation = Quaternion.Euler(0f, 30f, 0f);
+            var strapB = GrowthVfx.Block(b._shoe, "strap-b", new Vector3(0.02f, 0.05f, 0.10f), GrowthVfx.Vine).transform;
+            strapB.localPosition = new Vector3(-0.03f, 0.03f, 0.04f); strapB.localRotation = Quaternion.Euler(0f, -30f, 0f);
             return b;
         }
 
@@ -482,9 +637,14 @@ namespace TumbangPreso.Visual
             bool landed = age >= 0f;
             _root.gameObject.SetActive(landed);
             if (!landed) return;
-            float pop = GrowthVfx.Pop(age / 0.35f);
-            float squash = age < 0.35f ? 1f + 0.25f * Mathf.Sin(age / 0.35f * Mathf.PI) : 1f;
-            _stem.localScale = new Vector3(pop * squash, pop / squash, pop * squash);
+            // ⚠️ IT RISES OUT OF THE SOIL, IT DOES NOT SCALE IN (owner, 2026-09-26). The stem pushes up
+            // from under the road over 0.45 s with a small overshoot, then squashes as it settles; the
+            // roots creep out after it.
+            float rise = GrowthVfx.Pop(age / 0.45f);
+            float squash = age > 0.35f && age < 0.6f ? 1f + 0.18f * Mathf.Sin((age - 0.35f) / 0.25f * Mathf.PI) : 1f;
+            _stem.localScale = new Vector3(squash, 1f / squash, squash);
+            _stem.localPosition = Vector3.down * (0.95f * (1f - rise));
+            float pop = Mathf.Clamp01((age - 0.15f) / 0.4f);
 
             // Loosening: roots lift out, the soil ring shows, the pod droops, the leaves dry.
             for (int i = 0; i < 4; i++)
@@ -505,13 +665,19 @@ namespace TumbangPreso.Visual
                         : sinceShot < 0.22f ? Mathf.Lerp(-28f, 22f, (sinceShot - 0.12f) / 0.10f)
                         : sinceShot < 0.5f ? Mathf.Lerp(22f, 0f, (sinceShot - 0.22f) / 0.28f) : 0f;
             _pod.localRotation = Quaternion.Euler(pitch + 30f * loosen, 0f, 12f * loosen);
-            _shoe.localScale = Vector3.one * Mathf.Clamp01(shotGrowth);
-            for (int i = 0; i < 3; i++)
+            // The pod opens as the slipper ripens: closed bud at 0, petals splayed at 1.
+            float grown = Mathf.Clamp01(shotGrowth);
+            for (int i = 0; i < _petals.Count; i++)
+            {
+                float open = Mathf.Lerp(-72f, -22f, grown) + 4f * Mathf.Sin(age * 1.8f + i);
+                _petals[i].localRotation = Quaternion.Euler(0f, PetalYaw[i], 0f) * Quaternion.Euler(open, 0f, 0f);
+            }
+            _shoe.localScale = Vector3.one * Mathf.Max(0.001f, grown);
+            for (int i = 0; i < _leafRenderers.Count; i++)
             {
                 var r = _leafRenderers[i];
                 if (r == null || r.sharedMaterial == null) continue;
-                Color fresh = i == 1 ? GrowthVfx.LeafDark : GrowthVfx.LeafGreen;
-                Color c = Color.Lerp(fresh, GrowthVfx.Dry, loosen);
+                Color c = Color.Lerp(_leafFresh[i], GrowthVfx.Dry, loosen);
                 r.sharedMaterial.color = c;
                 if (r.sharedMaterial.HasProperty("_BaseColor")) r.sharedMaterial.SetColor("_BaseColor", c);
             }
@@ -539,6 +705,7 @@ namespace TumbangPreso.Visual
     public sealed class PaeteThornBody : MonoBehaviour
     {
         private readonly List<Transform> _spikes = new List<Transform>();
+        private readonly List<Vector3> _spikeRest = new List<Vector3>();
         private readonly List<Slipper> _targets = new List<Slipper>();
         private readonly List<Mesh> _vines = new List<Mesh>();
         private readonly List<Vector3> _points = new List<Vector3>();
@@ -566,6 +733,7 @@ namespace TumbangPreso.Visual
                                new List<float> { 0.07f, 0.04f, 0.004f }, 4);
                 GrowthVfx.Part(pivot, "thorn", mesh, i % 3 == 0 ? GrowthVfx.Vine : GrowthVfx.Bark);
                 b._spikes.Add(pivot);
+                b._spikeRest.Add(pivot.localPosition);
             }
             foreach (var shoe in targets)
             {
@@ -584,7 +752,12 @@ namespace TumbangPreso.Visual
             float grow = GrowthVfx.Pop(age / 0.2f);
             float wither = Mathf.Clamp01((life - age) / 0.6f);
             for (int i = 0; i < _spikes.Count; i++)
-                _spikes[i].localScale = Vector3.one * Mathf.Clamp01(GrowthVfx.Pop((age - 0.02f * i) / 0.2f)) * wither;
+            {
+                // Up out of the road, not scaled in: each thorn punches up from below on its own beat.
+                float up = GrowthVfx.Pop((age - 0.03f * i) / 0.22f);
+                _spikes[i].localPosition = _spikeRest[i] + Vector3.down * (0.9f * (1f - up) + 0.6f * (1f - wither));
+                _spikes[i].localScale = Vector3.one * (up > 0.001f ? 1f : 0f);
+            }
             _knot.localScale = new Vector3(0.36f, 0.26f, 0.36f) * grow * wither;
             _knot.localPosition = Vector3.up * 0.13f * grow;
 
@@ -879,13 +1052,17 @@ namespace TumbangPreso.Visual
                 _cracks[i].localScale = new Vector3(1f, 1f, Mathf.Clamp01((age - 0.01f * i) / 0.12f));
 
             // 0.06 to 0.36: the trunk erupts, with overshoot; it sinks back into the road as it withers.
-            float erupt = GrowthVfx.Pop((age - 0.06f) / 0.30f);
-            _trunk.localScale = new Vector3(Mathf.Max(0.001f, erupt), Mathf.Max(0.001f, erupt), Mathf.Max(0.001f, erupt));
-            _trunk.localPosition = Vector3.down * (0.9f * wither * wither);
+            // ⚠️ IT COMES UP OUT OF THE ROAD, TWISTING (owner, 2026-09-26: *"coming out of the ground each
+            // time and forming on the spot"*). The braided trunks screw up from 4.3 m below over 0.5 s,
+            // turning a quarter turn as they rise, overshoot a little and settle; withering, they sink back.
+            float erupt = GrowthVfx.Pop((age - 0.06f) / 0.50f);
+            _trunk.localScale = Vector3.one;
+            _trunk.localPosition = Vector3.down * (4.4f * (1f - Mathf.Clamp(erupt, 0f, 1.08f)) + 0.9f * wither * wither);
+            _trunk.localRotation = Quaternion.Euler(0f, -95f * (1f - Mathf.Clamp01(erupt)), 0f);
 
             // 0.14 to 0.44: the buttress roots flare out, each a beat after the last.
             for (int i = 0; i < _buttress.Count; i++)
-                _buttress[i].localScale = Vector3.one * Mathf.Max(0.001f, GrowthVfx.Pop((age - 0.14f - 0.03f * i) / 0.30f));
+                _buttress[i].localScale = Vector3.one * Mathf.Max(0.001f, Mathf.Clamp01((age - 0.40f - 0.04f * i) / 0.30f));
 
             // 0.24 to 0.6: the crown unfurls; alive, it flexes slowly; withering, it opens and droops.
             for (int i = 0; i < _claws.Count; i++)

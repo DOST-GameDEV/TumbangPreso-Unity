@@ -12,7 +12,9 @@ namespace TumbangPreso.Net
         public const int MaxFields = 256;
         public enum Kind { Sheet = 1, Barricade = 2, Fire = 3, Shock = 4, Crater = 5, Hex = 6, Fissure = 7, Current = 8, Mirrorwake = 9, Breakwater = 10,
             // ⚠️ APPEND ONLY (protocol 53): Amihan's Whirlwind gale, a travelling front.
-            Gale = 11 }
+            Gale = 11,
+            // ⚠️ APPEND ONLY (protocol 55, HERO-9): Paete's seedling, his thorn construct and his sentry.
+            Plant = 12, Thorns = 13, Sentry = 14 }
         public struct Field
         {
             public Kind Type;
@@ -90,6 +92,12 @@ namespace TumbangPreso.Net
                     Duration = pillar.LifeSeconds, Remaining = pillar.Remaining, Owner = -1, FirstScale = pillar.Side });
             foreach (var gale in Object.FindObjectsByType<AmihanGale>())
                 if (gale.isActiveAndEnabled && gale.Remaining > .02f) fields.Add(gale.Capture());
+            foreach (var plant in PaetePlant.Live)
+                if (plant != null && plant.isActiveAndEnabled && plant.Landed && !plant.IsPulled) fields.Add(plant.Capture());
+            foreach (var thorns in Object.FindObjectsByType<PaeteThorns>())
+                if (thorns.isActiveAndEnabled && thorns.Age < Core.PaeteRules.ThornConstructSeconds - .05f) fields.Add(thorns.Capture());
+            foreach (var sentry in Object.FindObjectsByType<PaeteSentry>())
+                if (sentry.isActiveAndEnabled && sentry.Age >= 0f && sentry.Age < Core.PaeteRules.SentryLifeSeconds + .5f) fields.Add(sentry.Capture());
             foreach (var water in RafiWaterField.Active)
                 if (water != null && water.isActiveAndEnabled && water.Remaining > .02f) fields.Add(water.Capture());
             return fields;
@@ -124,6 +132,13 @@ namespace TumbangPreso.Net
             if (field.Type == Kind.Gale)
                 return field.Forward.sqrMagnitude > .5f && field.Forward.sqrMagnitude < 1.5f
                     && field.Duration <= Core.AmihanRules.WhirlwindSeconds + .05f;
+            if (field.Type == Kind.Plant)
+                return field.Owner >= 0 && field.Duration <= Core.PaeteRules.PlantLifeSeconds + .05f
+                    && field.FirstScale >= 0 && field.FirstScale <= Core.PaeteRules.PlantReloadSeconds + .05f;
+            if (field.Type == Kind.Thorns)
+                return field.Owner >= 0 && field.Duration <= Core.PaeteRules.ThornConstructSeconds + .05f;
+            if (field.Type == Kind.Sentry)
+                return field.Owner >= 0 && field.Duration <= Core.PaeteRules.SentryLifeSeconds + .65f;
             return false;
         }
 
@@ -175,6 +190,13 @@ namespace TumbangPreso.Net
                     go.GetComponent<HeroHazards.HexSigilComponent>().RestoreRemaining(remaining);
                     go.GetComponent<HeroHazards.WardInscribe>().StepTo(field.Duration - remaining);
                 }
+                else if (field.Type == Kind.Plant)
+                    PaetePlant.Restore(field.Position, field.Owner, field.Duration - remaining, Mathf.Max(0f, field.FirstScale - elapsed));
+                else if (field.Type == Kind.Thorns)
+                    PaeteThorns.Restore(field.Position, field.Owner, field.Duration - remaining);
+                else if (field.Type == Kind.Sentry)
+                    // A rejoiner's sentry is the same tree at the same age; the host alone catches.
+                    PaeteSentry.Spawn(field.Position, field.Position, field.Owner, field.Duration - remaining);
                 else if (field.Type == Kind.Gale)
                 {
                     // A rejoiner's gale is the same front at the same age; the host alone hits.
@@ -211,6 +233,9 @@ namespace TumbangPreso.Net
             Retire<HeroHazards.HexSigilComponent>();
             Retire<AmihanGale>();
             Retire<AmihanStorm>();
+            Retire<PaetePlant>();
+            Retire<PaeteThorns>();
+            Retire<PaeteSentry>();
             // Render-only fissures have no gameplay lifetime component.
             Retire<HeroHazards.EarthPillarComponent>();
             Physics.SyncTransforms();

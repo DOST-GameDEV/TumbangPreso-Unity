@@ -39,6 +39,15 @@ namespace TumbangPreso.CameraSystem
             {var visual=HeroHazards.SpawnHexSigil(field.Position,field.Radius,field.Duration,field.Owner,field.FirstScale,silent:true,renderOnly:true);visual.transform.SetParent(Root.transform,true);var fx=visual.GetComponent<HeroHazards.WardInscribe>();fx.enabled=false;_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Gale)
             {var fx=AmihanGaleFront.Build(Root.transform,field.Position,field.Forward,field.Duration,Core.AmihanRules.WhirlwindSpeed,Core.AmihanRules.WhirlwindStart,Core.AmihanRules.WhirlwindWidth);fx.enabled=false;_step=fx.StepTo;}
+            // Paete (HERO-9): the render-only bodies, posed from age alone like every other field here.
+            else if(field.Type==WorldEffectSnapshot.Kind.Plant)
+            {var body=PaetePlantBody.Build(Root.transform);float until=field.FirstScale,born=field.Duration-field.Remaining;
+             _step=age=>{float a=age;float loosen=Mathf.Clamp01((a-Core.PaeteRules.PlantRootedSeconds)/(Core.PaeteRules.PlantLifeSeconds-Core.PaeteRules.PlantRootedSeconds));
+                 body.Pose(a,loosen,a>=Core.PaeteRules.PlantRootedSeconds,Mathf.Clamp01(1f-(born+until-a)/Core.PaeteRules.PlantReloadSeconds),99f);};}
+            else if(field.Type==WorldEffectSnapshot.Kind.Thorns)
+            {var body=PaeteThornBody.Build(Root.transform,new System.Collections.Generic.List<Slipper>());var at=field.Position;_step=age=>body.Pose(age,at);}
+            else if(field.Type==WorldEffectSnapshot.Kind.Sentry)
+            {var body=PaeteSentryBody.Build(Root.transform);var at=field.Position;_step=age=>body.Pose(age,at);}
             else if(field.Type==RecordedSpecialFields.Storm)
             {var fx=AmihanStormFan.Build(Root.transform,field.Position,field.Forward,Core.AmihanRules.StormSurgeGatherSeconds);fx.enabled=false;_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Fissure)
