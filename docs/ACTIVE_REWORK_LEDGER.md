@@ -1,5 +1,12 @@
 # Active TUMP rework ledger
 
+## ABILITY-2 roster rework and Paete plants, 2026-09-26 (cloud session, no Unity)
+
+Plans: `docs/reports/ability-rework-2026-09-26/plan.md` (tables verbatim, owner answers, numbers set
+here in section 7, order in section 6) and `ultimates.md`; Paete plants `direction.md` 5.11. Cloud box
+runs Core.Tests (.NET 9) and the Python builders only; every Unity-side claim is owed to the testing
+chat. Next: Core statuses and rules, then the skill tree switch, then kits in plan order.
+
 ## HERO-9 Paete lane, 2026-09-26 (worktree `TumbangPreso-Unity-paete`, branch `paete-hero`, pushes to ASTRAReworks)
 
 Owner-directed Paete work: modelled trees, the woven binding and break-out, Mariang Makiling's ghost

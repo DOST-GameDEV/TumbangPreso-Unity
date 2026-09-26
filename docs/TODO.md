@@ -181,6 +181,29 @@ rework of skills". Design, research and direction: `docs/reports/amihan-kit-2026
 - [ ] Full verification (Core, EditMode, PlayMode gate, Checks.RunAll, audits, BotBehaviourProbe,
   AbilityShowcaseProbe, Windows build).
 
+### ABILITY-2 · The roster ability rework (Cryo, Geo, Necro, Voodoo; skill tree UI off) ⚠️ OPEN, 2026-09-26
+
+Owner, 2026-09-26, with the power tables: *"will create completley new VFX SFX AND SKILLS FOR ALL
+CHARACTERS AND WE MIGHT DUMP THE SKILL TREE IDEA FOR NOW"*, *"JS REMOVE ITS UI FOR NOW AND HARDCODE
+THE SKILLS AND SHIT"*, *"U thoroughly plan them first"*, then *"also i want u to think abt all ult
+animations and direction and cutscene as well"*. Mapping: Anemo Amihan, Cryo Cheska, Geo Dante,
+Necro Nemu, Voodoo Phaister; Pyro (Sean), Electro (Zack) and Hydro (Rafi) have no design yet
+(placeholders). Plan with the tables verbatim, the owner's answers and every number:
+`docs/reports/ability-rework-2026-09-26/plan.md`; ultimates and cutscenes: `ultimates.md` beside it.
+
+- [x] Plan and ultimate direction written; owner questions answered (Feared, Disoriented, Vulnerable,
+  Concussed, Kuro fetch, Kuro guard, Kuro plays, Higop, Teleport, placeholders).
+- [ ] Core: statuses Concussed, Feared, Disoriented, Vulnerable appended; status immunity; rules
+  classes for the four kits; `SidegradesOpen` switch; Core.Tests.
+- [ ] Skill tree UI hidden and kits built on the default variant (plan section 4).
+- [ ] Motor statuses and `SyncUnit` fields (protocol bump).
+- [ ] Kits: Cheska, Dante, Phaister, Nemu (signature, fetch, guard); placeholders for Sean, Zack, Rafi.
+- [ ] Presentation per ability (clips, FPP, VFX, audio, icons), Feared and Concussed shared clips.
+- [ ] KURO PLAYS (its own design pass first), bots, snapshots, replays, screens, HUD.
+- [ ] Ultimate cutscenes rebuilt per `ultimates.md`.
+- [ ] Owner review of the numbers set in plan section 7.
+- [ ] Unity verification (the separate testing chat): compile, EditMode, PlayMode gate, captures.
+
 ### HERO-9 · Paete, the ninth hero (Mount Makiling, plant) ⚠️ OPEN, 2026-09-25
 
 Owner, 2026-09-25: a PLANT hero on the signature plus role ability system; from Mount Makiling,
@@ -308,7 +331,7 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
 - [x] Portrait and avatar (`UI/portraits/paete.png` via `TumpPortraitAuthor.CaptureOnly -tp-portrait-id paete` with a
   closer framing for him, `UI/avatars/avatar_paete.png` via `tools/build_avatars.py`). NOT yet checked after the
   closer framing re-bake (the (height, zoom) argument order was wrong once; fixed to `LookAt(.84f, .42f)`).
-- [ ] ⚠️ NEXT: THE ATTACKER AND DEFENDER PLANTS MUST BE THEIR OWN SPECIES (owner, 2026-09-26: *"do all his sentries look
+- [ ] ⚠️ NEXT, DESIGN APPROVED 2026-09-26 (*"thats pretty fucking good"*; THORN HARVEST re-armed after *"it looks like  a flimsy plant and not a dangerous cool plant"*): BAKYA BLOOM a Makiling pitcher plant, THORN HARVEST an armed rattan (direction.md 5.11, concept sheets in the report's review/). Build it. Earlier text: THE ATTACKER AND DEFENDER PLANTS MUST BE THEIR OWN SPECIES (owner, 2026-09-26: *"do all his sentries look
   the same? i wanted all his sentries (ult and attacker skill and defender skill TO ALL look diff and distinct and have
   their own style)"*, *"attacker and defender sentry should look like distinct plants or trees"*). Today the seedling and
   the thorn fist share the woven brown bark of the ultimate's tree. Proposed to the owner (not yet built): BAKYA BLOOM a

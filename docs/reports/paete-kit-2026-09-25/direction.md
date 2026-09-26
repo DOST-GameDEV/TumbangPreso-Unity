@@ -345,3 +345,56 @@ Alune pictures.
   at 0.58 s arcs down into his palm, arriving as his own seed lights (the INTENT beat is now her gift);
   through the gather she lifts her hands and her hair and shawl stir; she stays watching through the
   throw and sinks back into the mist as the stage leaves.
+
+### 5.11 The attacker and defender plants are their own species (owner, 2026-09-26)
+
+Owner: *"do all his sentries look the same? i wanted all his sentries (ult and attacker skill and
+defender skill TO ALL look diff and distinct and have their own style)"*, *"attacker and defender
+sentry should look like distinct plants or trees"*, *"thoroughly think abt whhat the constructs or
+plants will look like for the adttack and defned skill and show me in this chat"*. On the concept
+sheets: *"thats pretty fucking good"*, and of THORN HARVEST v1 *"it looks like a flimsy plant and not
+a dangerous cool plant"*, then v2 was sent.
+
+Three silhouettes, three materials, three motion languages:
+
+| | MAKILING'S EMBRACE | BAKYA BLOOM | THORN HARVEST |
+|---|---|---|---|
+| Species | the guardian tree | a pitcher plant (Nepenthes; *N. graciliflora* is recorded from Mt Makiling) | rattan, uway (*Calamus*; *C. ornatus* near Makiling), the arnis stick's cane |
+| Silhouette | tall column and crown, 9 m | a round jug on an S-neck over a leaf rosette, 1.0 m | a low spiked ring with talon canes, hip high, 1.2 m reach |
+| Surface | woven brown bark | smooth fleshy lime, a wine-red rolled lip, no bark | black spine collars, dark sword blades, straw cane whips |
+| Motion | slow, huge, breathing | bouncy squash and stretch, eager | tense, snapping, quivering |
+| Sound | wood groans | wet bloop, lid pok, a bakya clack | frond rattle, whip crack, an arnis-stick tok per catch, a ratchet rasp on the yank |
+
+**BAKYA BLOOM, the pitcher.** Parts: a moss collar and pale fleshy roots; five lance leaves (two are
+the arms that flare); one leaf ends in a tendril with a baby pitcher (the species tell); a thick
+S-neck; the pitcher (a bulb, a waist, a flared mouth leaning forward, two ridges down the front) with
+a rolled wine lip and a lid hinged at the back; the bakya (a carved sole on two blocks, a moss strap)
+grows inside. No speckle stickers (the "yellow shit" lesson). Beats: POP (up out of the soil, leaves
+flick open last); GROWING (lid ajar, the clog hidden); READY (the lid pops open about 58 degrees, the
+clog's toe over the lip, a proud bob, `sprout_ready`); WIND-UP (the mouth rears back 0.12 s); SPIT
+(snap forward past rest, the clog tumbles out on its arc, the lid slaps shut); LOOSE (15 s on: the
+neck sags, the jug droops, the palette dries toward straw, roots lift); PULLED (ripped up, flung).
+The muzzle stays at 0.95 m (`PaetePlant.Muzzle`). Its own sixteen-slot palette (pitcher lime
+`A9C44E`, shade `7E9E3A`, leaves `4F8B2F`/`3A6B24`, tendril `6F9B35`, bakya `C29563`/`8A6240`, root
+`A8946A`, his moss, ink, interior `2B1512`, lip `8E2435`, lid underside `B04A55`, strap `3F5A1A`),
+passed through `PaeteProp.Spawn(name, parent, palette, width)`.
+
+**THORN HARVEST, the armed rattan.** Parts: a shared clump ring (so it reads as ONE plant) round a
+clear centre for his feet; a ruff of long black spines with pale bone tips off the ring; five thick
+sheath stems, each with its own collars of long black spines; on each stem a thick cane frond that
+rears up, arches and hooks down at the tip into a black talon, with sword blades swept toward the
+tip and hooked barbs down its back; under each arch a straw cane whip (the cirrus) coiled like a
+sprung trap with barb pairs. Palette: fronds `2F4219`/`1F2D10`, rachis `6E6A34`, sheath
+`34301A`/`221F10`, cane `D8B86E`, node bands `7E5E2E`, spines `130E09`, bone tips `C9BC98`. Beats:
+BURST (stems punch up out of the cracked road in a ripple, fronds folded); REAR UP (talons rear and
+open, spines bristle, a rattle); REACH and HOLD (each whip facing a slipper uncoils along the ground,
+a three-claw grapnel bites it, the whip goes taut and quivers through `ThornHoldSeconds`); YANK (the
+whips reel back like tape, slippers tumble home to 1 m); CLENCH (the talons close in over the centre
+like a fist); SINK (blades brown, canes sink one by one). The lash leaves the tip of the frond
+facing its slipper (today it leaves the centre).
+
+Concept mocks (out-of-engine renders, labelled): `review/concept_bloom_v1.png`,
+`review/concept_rattan_v2.png`. Builder: typed rows in `tools/build_paete_props.py` `seedling()` and
+`thorns()` (file names kept so `PaeteProp.Spawn("seedling"|"thorns")` still load); node names
+`stem`, `pod`, `lid`, `slipper`, `arm-0/1`, `leaf-*`, `root-0..3` and `clump`, `sheath-0..4`,
+`frond-0..4`, `whip-0..4`; `PaetePlantBody` and `PaeteThornBody` re-posed for the new nodes.
