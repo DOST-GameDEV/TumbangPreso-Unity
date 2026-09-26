@@ -136,10 +136,12 @@ def normal_from_height(h, strength):
 
 STRENGTH = {"rock_a": 0.0, "rock_b": 1.2, "rock_c": 1.2, "thatch_a": 1.6, "thatch_b": 1.6, "thatch_c": 1.6,
             "sawali_a": 1.4, "sawali_b": 1.4, "sawali_c": 1.4,
-            "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0}
+            "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0,
+            "plank_a": 1.2, "plank_b": 1.2, "plank_c": 1.2}
 TILE = {"rock_a": 4.0, "rock_b": 4.0, "rock_c": 4.0, "thatch_a": 2.0, "thatch_b": 2.0, "thatch_c": 2.0,
         "sawali_a": 2.0, "sawali_b": 2.0, "sawali_c": 2.0,
-        "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0}
+        "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0,
+        "plank_a": 2.0, "plank_b": 2.0, "plank_c": 2.0}
 
 
 # ---------------------------------------------------------------- thatch
@@ -318,6 +320,61 @@ BAMBOO_PAINTERS = {
 }
 
 
+# ---------------------------------------------------------------- planks
+# PLANKS for floors, decks, steps, walks and doors (§ 8 step 3), their OWN drawing (the Kanto
+# timber is a neutral pole grey for tinting, not boards). Boards run along V, narrow dark seams,
+# BUTT JOINTS at staggered lengths, each board its own value, one flat light band along an edge
+# (cel light, not a gradient), soft weathering; NO grain (Kanto's detailed wood was rejected as
+# "too detailed"). 2 m a tile.
+
+
+def planks(base, light, seam, seed, board_m=0.18, jitter=0.02):
+    px = SIZE / 2.0
+    rng = np.random.default_rng(seed)
+    yy, xx = np.mgrid[0:SIZE, 0:SIZE].astype(np.float32) / px
+    wob = 0.003 * field(0.8, seed + 1)                  # v1 0.006: boards read as melting
+    n = int(round(2.0 / board_m))
+    bw = 2.0 / n
+    fx = (xx + wob) / bw
+    col = np.floor(fx).astype(int) % n
+    u = fx - np.floor(fx)                                # 0..1 across the board
+    img = np.zeros((SIZE, SIZE, 3), np.float32)
+    height = np.ones((SIZE, SIZE), np.float32)
+    for c in range(n):
+        m = col == c
+        # Butt joints: 1 to 2 per board per tile, staggered.
+        cuts = sorted(rng.uniform(0, 2.0, rng.integers(1, 3)))
+        seg = np.searchsorted(np.array(cuts), yy[m])
+        values = rng.uniform(0.9, 1.08, len(cuts) + 1)
+        values[-1] = values[0]      # the stretch past the last joint IS the first one, wrapped (v1 seam)
+        v = values[seg % len(values)]
+        img[m] = base * v[:, None]
+        for cut in cuts:
+            d = np.abs(((yy[m] - cut + 1.0) % 2.0) - 1.0)
+            j = d < 0.008
+            img[m][j] = seam
+            sub = img[m]
+            sub[j] = seam
+            img[m] = sub
+            h = height[m]
+            h[j] = 0.2
+            height[m] = h
+    lightband = (u > 0.08) & (u < 0.18)                  # the cel-lit edge of every board
+    img[lightband] = img[lightband] * 0.8 + light * 0.2
+    gap = (u < 0.045) | (u > 1 - 0.03)
+    img[gap] = img[gap] * 0.35 + seam * 0.65
+    height[gap] = 0.0
+    img = coat(img, np.array([0.95, 0.94, 0.92]), 0.5, 0.14, seed + 3)
+    return img, height
+
+
+PLANK_PAINTERS = {
+    "plank_a": lambda: planks(hexcol("9a6d45"), hexcol("c29a6c"), hexcol("4a3320"), 81),
+    "plank_b": lambda: planks(hexcol("998d7a"), hexcol("c2b8a4"), hexcol("4d463c"), 81),
+    "plank_c": lambda: planks(hexcol("9a6d45"), hexcol("c29a6c"), hexcol("4a3320"), 81, board_m=0.28),
+}
+
+
 THATCH_PAINTERS = {
     "thatch_a": lambda: thatch(hexcol("c9a35e"), hexcol("e3c888"), hexcol("5e4526"), seed=51),
     "thatch_b": lambda: thatch(hexcol("a98f6a"), hexcol("c9b491"), hexcol("4f4130"), seed=51),
@@ -344,6 +401,7 @@ PAINTERS = {
     **THATCH_PAINTERS,
     **SAWALI_PAINTERS,
     **BAMBOO_PAINTERS,
+    **PLANK_PAINTERS,
 }
 
 

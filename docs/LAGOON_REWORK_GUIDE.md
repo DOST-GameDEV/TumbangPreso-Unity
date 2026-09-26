@@ -276,6 +276,20 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
 3. **Stilt house kit**: nipa/cogon thatch (its own texture, swatch first), sawali wall panel
    (swatch first), plank deck, bamboo piles with X bracing, ladders, railings; variants: land
    house on a pocket, small Bajau water home, sari-sari stall, capilla.
+   IN PROGRESS 2026-09-26. ✅ Rocks approved first (owner: *"looks good. lets proceed to the
+   next thing to texture"*). Models: `tools/author_lagoon_houses.py` (land, water, stall,
+   capilla; material slots thatch, sawali, timber, plank, bamboo, tin, paint_white, capiz; UVs
+   world-scale, thatch V UP the slope). Swatches in `tools/author_lagoon_textures.py`, each its
+   own drawing, 2 m a tile, awaiting on-model renders and the owner's pick:
+   - thatch a/b/c (`thatch_swatches_v3.png`): courses of vertical bundles with ragged pointed
+     tips over the course below; golden cogon, weathered nipa, chunkier golden. v1: dark gaps
+     read as holes, too contrasty; v2: a seam, the bottom course's tips drawn the wrong way.
+   - sawali a/b/c (`sawali_swatches_v2.png`): twill, herringbone, checker; 10 cm strips (6 cm
+     read as tweed from a distance), each run shaded as one 2-cell run.
+   - bamboo a/b/c (`bamboo_swatches_v2.png`): straw, weathered, young green; node ridges at
+     irregular spacing, broad tone bands (fine streaks read as wood grain).
+   - plank a/b/c (`plank_swatches_v2.png`): warm brown, sun-greyed, wide rough boards; seams,
+     staggered butt joints, a cel-lit edge band, no grain.
 4. **Boats**: bangka outrigger and lepa houseboat.
 5. **Props**: drying nets, laundry lines, crates, barrels, baskets, lanterns, fish racks.
 6. **Foliage**: coconut palms (curved leaning trunks), broad leaves, flowering accents, grass
