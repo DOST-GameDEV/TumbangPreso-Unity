@@ -26,6 +26,9 @@ Shader "TumbangPreso/SpiritGlow"
         _Band ("Band across v", Float) = 0
         _Lift ("Toward the camera (m)", Float) = 0
         _Facing ("Facing (world xyz, w > 0 enables)", Vector) = (0, 0, 0, 0)
+        // v6 (2026-09-27): > 0 fades the glow out toward both ends of u as sin(pi u) to this power, so a streak, a shaft of light or
+        // a brush stroke has no hard end. 0 (every use before v6) leaves it exactly as it was.
+        _Tips ("Fade toward both ends of u", Float) = 0
     }
     SubShader
     {
@@ -43,7 +46,7 @@ Shader "TumbangPreso/SpiritGlow"
             #include "UnityCG.cginc"
 
             fixed4 _Color;
-            float _Intensity, _Falloff, _Core, _Billboard, _Band, _Lift;
+            float _Intensity, _Falloff, _Core, _Billboard, _Band, _Lift, _Tips;
             float4 _Facing;
 
             struct appdata { float4 vertex : POSITION; float2 uv : TEXCOORD0; };
@@ -83,7 +86,8 @@ Shader "TumbangPreso/SpiritGlow"
                 float d = _Band > 0.5 ? abs(i.uv.y - 0.5) * 2.0 : length(i.uv - 0.5) * 2.0;
                 float body = pow(saturate(1.0 - d), _Falloff);
                 float core = pow(saturate(1.0 - d), _Falloff * 4.0) * _Core;
-                float3 c = _Color.rgb * (body + core) * _Intensity * _Color.a * i.fade;
+                float tips = _Tips > 0.0 ? pow(saturate(sin(i.uv.x * 3.14159265)), _Tips) : 1.0;
+                float3 c = _Color.rgb * (body + core) * tips * _Intensity * _Color.a * i.fade;
                 return fixed4(c, 0.0);
             }
             ENDCG

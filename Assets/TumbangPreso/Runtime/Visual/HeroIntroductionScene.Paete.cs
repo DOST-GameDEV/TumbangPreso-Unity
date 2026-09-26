@@ -138,6 +138,8 @@ namespace TumbangPreso.Visual
         private void BuildPaete()
         {
             _paeteCourt = Mathf.Clamp(Slipper.GroundY(_root.transform.position + Vector3.up * .3f) - _root.transform.position.y, -.2f, .3f);
+            // ⚠️ v6: the guardian never comes up on the can (owner, 2026-09-27), here as in play (`HeroIntroductionScene.PaeteVfx.cs`).
+            PaeteLandingOffTheCan();
             _paeteLeftPalm.y = _paeteRightPalm.y = _paeteCourt + .03f;
             // HER MEADOW first, so she rises out of it (direction.md 5.13).
             _paeteMeadow = new PaeteMeadow(_root.transform, MakilingStand, PaeteHandsMid, _paeteCourt);
@@ -182,7 +184,7 @@ namespace TumbangPreso.Visual
 
             // HIS ROOTS RACING TO THE SPOT, staged: posed from this clock only.
             _paeteRidge = PaeteRootRidge.Race(_root.transform, new Vector3(PaeteHandsMid.x, _paeteCourt, PaeteHandsMid.z + 0.15f),
-                                              PaeteLanding + Vector3.up * _paeteCourt, PaeteArriveAt - PaeteSendAt, staged: true, court: _paeteCourt);
+                                              _pvLanding + Vector3.up * _paeteCourt, PaeteArriveAt - PaeteSendAt, staged: true, court: _paeteCourt);
 
             // THE LANDING: light leaking up through the court as it bulges, and the court cracking round it; the dust of each haul.
             _poolGlow = AddGlow("PaetePool", PaeteLight, billboard: false, falloff: 1.4f, core: 0.9f);
@@ -197,9 +199,14 @@ namespace TumbangPreso.Visual
             // THE GUARDIAN: the live tree itself, staged (no world effects), facing out toward the rise camera. Its own clock: it crawls
             // out from the roots' arrival, its eyes last (`PaeteSentryBody.WakeAt`, 1.75 s later: 4.5 here).
             _paeteTree = PaeteSentryBody.Build(_root.transform);
-            _paeteTree.transform.localPosition = PaeteLanding + Vector3.up * _paeteCourt;
+            _paeteTree.transform.localPosition = _pvLanding + Vector3.up * _paeteCourt;
             _paeteTree.Staged = true;
             _paeteTree.SetFacing(_root.transform.TransformDirection(Quaternion.Euler(0f, PaeteTreeYaw, 0f) * Vector3.forward));
+            var lata = GameServices.Round?.Lata;
+            if (lata != null) _paeteTree.AvoidPoint(lata.transform.position);
+
+            // v6: the leaves, the petals, the mark, the streaks, the brush stroke (direction.md 5.15).
+            BuildPaeteVfx();
         }
 
         /// <summary>The camera's shake for Paete's blows: the slam, each pulse, the send, the court bulging, each haul (harder each time), the top-out.</summary>
@@ -266,7 +273,7 @@ namespace TumbangPreso.Visual
             }
 
             // ---------------------------------------------------------------- HER MEADOW: up with her, down with her.
-            _paeteMeadow?.Pose(t, PaeteSlamAt, PaeteHauls, 3.6f, 4.5f, PaeteLanding);
+            _paeteMeadow?.Pose(t, PaeteSlamAt, PaeteHauls, 3.6f, 4.5f, _pvLanding);
 
             // ---------------------------------------------------------------- THE LIGHT, from her hands into his.
             var hands = _makilingSpirit != null ? _root.transform.InverseTransformPoint(_makilingSpirit.HandsWorld) : her + new Vector3(0f, 2.2f, 0.4f);
@@ -328,39 +335,44 @@ namespace TumbangPreso.Visual
             // ---------------------------------------------------------------- THE LANDING: the court bulges and leaks light, then cracks.
             float leak = Ease(PaeteArriveAt - 0.1f, PaeteArriveAt + 0.1f, t) * (1f - Ease(PaeteArriveAt + 0.5f, PaeteArriveAt + 1.0f, t));
             float beat = 1f + 0.2f * Mathf.Sin(t * 30f);
-            PlaceGlow(_poolGlow, PaeteLanding + Vector3.up * (_paeteCourt + 0.07f), new Vector3(2.4f, 2.4f, 1f) * beat,
+            PlaceGlow(_poolGlow, _pvLanding + Vector3.up * (_paeteCourt + 0.07f), new Vector3(2.4f, 2.4f, 1f) * beat,
                       Quaternion.Euler(90f, 0f, 0f), leak * 0.7f * leave);
             float landCrack = Ease(PaeteArriveAt, PaeteArriveAt + 0.3f, t);
-            Place(_poolCrack, PaeteLanding + Vector3.up * (_paeteCourt + 0.045f), new Vector3(2.1f, 1f, 2.1f) * Mathf.Max(.001f, landCrack), Quaternion.Euler(0f, -20f, 0f),
+            Place(_poolCrack, _pvLanding + Vector3.up * (_paeteCourt + 0.045f), new Vector3(1.7f, 1f, 1.7f) * Mathf.Max(.001f, landCrack), Quaternion.Euler(0f, -20f, 0f),
                   landCrack > .001f ? leave : 0f);
             // Each haul throws dust out round it and a third of the chunks.
             for (int k = 0; k < _haulDust.Count; k++)
             {
                 float d = Ease(PaeteHauls[k], PaeteHauls[k] + 0.7f, t);
-                Place(_haulDust[k], PaeteLanding + Vector3.up * (_paeteCourt + 0.05f + 0.3f * d), new Vector3(1.4f + (3.6f + 0.8f * k) * d, 1.2f - 0.5f * d, 1.4f + (3.6f + 0.8f * k) * d),
+                Place(_haulDust[k], _pvLanding + Vector3.up * (_paeteCourt + 0.05f + 0.3f * d), new Vector3(1.2f + (2.8f + 0.6f * k) * d, 1.1f - 0.5f * d, 1.2f + (2.8f + 0.6f * k) * d),
                       Quaternion.identity, t >= PaeteHauls[k] ? (1f - d) * 0.8f * leave : 0f);
             }
             for (int i = 0; i < _eruptChunks.Count; i++)
-                PlaceChunk(_eruptChunks[i], PaeteLanding + Vector3.up * _paeteCourt, Vector4.Scale(EruptChunkRows[i], new Vector4(1f, 0.7f, 0.8f, 1f)), t - PaeteHauls[i % PaeteHauls.Length], 1.2f, leave);
+                PlaceChunk(_eruptChunks[i], _pvLanding + Vector3.up * _paeteCourt, Vector4.Scale(EruptChunkRows[i], new Vector4(1f, 0.6f, 0.75f, 0.85f)), t - PaeteHauls[i % PaeteHauls.Length], 1.2f, leave);
             // Leaves blown off the crown as it tops out, drifting down.
             float topOut = PaeteArriveAt + PaeteSentryBody.Heaves[PaeteSentryBody.Heaves.Length - 1].y;
             for (int i = 0; i < _crownLeaves.Count; i++)
             {
                 var row = CrownLeafRows[i];
                 float s = t - topOut;
-                if (s < 0f || s > 1.6f) { Place(_crownLeaves[i], Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f); continue; }
+                // v10: its crown carries only a few leaves at the tips now, so only five of the table are shaken off.
+                if (i >= 5 || s < 0f || s > 1.6f) { Place(_crownLeaves[i], Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f); continue; }
                 float a = (row.x + PaeteTreeYaw) * Mathf.Deg2Rad;
                 var dir = new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a));
                 // Out fast, slowed by the air, falling at a leaf's pace, swinging as it falls.
                 float outDist = row.y * (1f - Mathf.Exp(-2.2f * s)) / 2.2f;
-                float y = 8.0f + row.z * s - 1.6f * s * s;
-                var at = PaeteLanding + dir * (1.2f + outDist) + Vector3.up * y + new Vector3(dir.z, 0f, -dir.x) * 0.3f * Mathf.Sin(s * 5f + i);
+                // v10's twig tips sit 5.5 to 7.0 m up (was about 8 m on the 9 m tree).
+                float y = 6.1f + row.z * s - 1.6f * s * s;
+                var at = _pvLanding + dir * (0.9f + outDist) + Vector3.up * y + new Vector3(dir.z, 0f, -dir.x) * 0.3f * Mathf.Sin(s * 5f + i);
                 Place(_crownLeaves[i], at, Vector3.one * row.w, Quaternion.Euler(40f * Mathf.Sin(s * 6f + i), row.x + s * 200f, 30f * Mathf.Sin(s * 4f + i * 2f)),
                       (1f - Mathf.Clamp01((s - 1.2f) / 0.4f)) * leave);
             }
 
             // ---------------------------------------------------------------- THE GUARDIAN crawls out of the court.
             if (_paeteTree != null) _paeteTree.Pose(t - PaeteArriveAt, _paeteTree.transform.position);
+
+            // ---------------------------------------------------------------- v6: the leaves, petals, mark, streaks and the brush stroke.
+            SamplePaeteVfx(t, leave);
         }
 
         /// <summary>

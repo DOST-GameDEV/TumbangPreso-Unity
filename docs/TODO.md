@@ -437,8 +437,10 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   would read better for the owner).
 - [x] Rerun `PaeteKitPlayProbe` and EditMode after the rise and snapshot changes: 4/4 (`Logs/paete-play4.xml`) and
   606/609 with the three known reds (`Logs/paete-editmode5.xml`), 2026-09-26; rerun after every batch since.
-- [ ] Still to do: portrait and avatar check, a rejoin test that exercises the plant, thorn and sentry snapshot
-  kinds, PlayMode gate, Checks.RunAll, audits, a build. Done 2026-09-26: bots measured by `PaeteKitPlayProbe.PaeteBotsUseEveryAbility`
+- [ ] Still to do: PlayMode gate, Checks.RunAll, audits, a build. Done 2026-09-27: the rejoin test (`PaeteWorldSnapshotProbe`); the
+  portrait checked against all 37 (every other hero's top at y 71 to 76 of 320, his at 118: re-aimed to `LookAt(.65, ZoomMin)` (the old zoom was clamped by
+  `ModelPreview.ZoomMin` and never did anything), re-baked with
+  the avatar). Done 2026-09-26: bots measured by `PaeteKitPlayProbe.PaeteBotsUseEveryAbility`
   (four Paete bots, two rounds: vine 3, bloom 4, thorns 3, ultimate 12 with the bar topped up every 20 s); the first-person
   vine film ran and is reviewed (row below).
 - [x] ⚠️⚠️ THE ULTIMATE, REDIRECTED (owner, 2026-09-26, after `paete_ultimate_v3.mp4`: *"ur direction of the entire cutscene
@@ -468,7 +470,7 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   (`Logs/paete-review/paete_makiling_v5.png`: ghost, forming, full form, turning back, and the ROOT shot).
 - [x] HER PLACE IN THE SHOT: the overhead crane is cut (v5 shots); for the ROOT shot she stands directly behind him and bends over him
   (`MakilingClose`), framing him from above rather than filling the left.
-- [ ] ⚠️ HER MEADOW, built and wired, one fault left (owner: *"when maria makiling starts coming into the pic flowers start sprouting and
+- [x] (2026-09-27: moss v3, each cushion a typed group of two to four taller lumps, ry 0.07 to 0.11, dark and light mixed.) ⚠️ HER MEADOW, built and wired, one fault left (owner: *"when maria makiling starts coming into the pic flowers start sprouting and
   lushh greenery"*, *"and they disappear slowly as she disappears"*). `tools/build_paete_props.py meadow` v2 (18 moss cushions, 14 grass
   tufts, 6 ferns whose fronds unroll, 6 sampaguita, 3 gumamela, 6 makahiya), `PaeteMeadow` (grows as a wave from her, flinches from the
   palm slam with the makahiya folding shut and reopening, leans from each haul, wilts from the outer edge in 3.6 to 4.5 s). ⚠️ glTFast
@@ -479,13 +481,37 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   opens 1.35 to 1.72, eyes at `WakeAt` 1.75; limbs leave the ground while the trunk is under it; `sfx_paete_sentry_heave` (new) per haul.
   Filmstrip `PaeteReviewProbe.RunTrees` v23.
 - [x] The guardian's crown masses (v8): `sentry.glb` rebuilt (`thorns.glb` untouched), seen in RunTrees v23 and at 9 m in film r14.
-- [ ] ⚠️ NEXT (found this session, not fixed): (1) a rejoiner's sentry runs 0.45 s behind: `WorldEffectSnapshot.Apply` restores with
+- [x] (2026-09-27, all six: (1) `PaeteSentry.Spawn` keeps a restored age, (2) `RecordedFieldView`'s body is `Staged`, (3) `PaeteWorldSnapshotProbe`
+  written and green (it measured the 0.45 s fault before the fix), placed in the gate's match group, (4) the first-person rings at 0.45 size and
+  0.35 strength on his own screen (`PaeteGroundRoots.RingSize`), (5) moss v3, (6) `RosterArms/paete_*` restored from HEAD.) ⚠️ NEXT (found this
+  session, not fixed): (1) a rejoiner's sentry runs 0.45 s behind: `WorldEffectSnapshot.Apply` restores with
   `PaeteSentry.Spawn(..., age)` and `Spawn` subtracts `Flight` again; make it `_age = age > 0 ? age : -Flight`. (2) `RecordedFieldView`'s
   sentry body is not `Staged`, so a replay can spawn ground breaks into the live world; set `Staged = true` there. (3) Write the rejoin
   test (`PaeteWorldSnapshotProbe`, template `IceWorldSnapshotProbe`): plant, thorns and a mid-crawl sentry captured, applied, same
   owner/place/age, no second `PaeteRootRidge`. (4) In his first-person view after the cutscene the pulse ring round his hands is large
   and bright; smaller and fainter. (5) The meadow moss above. (6) The roster refresh re-baked `RosterArms/paete_*.asset` WITHOUT the tangent
   channel the ink reads; this session restored them from HEAD: do the same after any `RefreshPersonFromCommandLine -person paete`.
+- [x] ⚠️⚠️ THE OWNER'S VERDICT ON v5, ACTED ON (2026-09-27; direction.md 5.15; the method for every hero is now `docs/HERO_KIT_METHOD.md`).
+  *"Make the tre a bit smaller and a lot more sleek so that it isnt too distracting"*: v9 then v10 (`tools/build_paete_props.py` `sentry`), a
+  rope of five cords twisting one way round a dark core, one vine, slimmer claw roots (2.14 m reach), at 1.3 (was 1.75), four ground branches
+  (was eight), fewer falling leaves, muted crown greens (measured: v8/v9's crown rendered (158, 228, 44) against the plaza trees' (97, 124, 71)).
+  Then, of v9's leaf clouds, *"it makes it look goofy"*, *"js pointy on the top with a glow coming from within"*, *"a few leaves at the edge of the
+  top but dont put like a green blob"* (an Ent as the picture): v10's crown is a pointed spire of forked branches, a few leaves at the tips only,
+  and a light INSIDE it that shows between the branches (`PaeteSentryBody` crown light); 7.0 m. *"dont let it be placed in a place it STANDS on
+  can"*: `PaeteRules.SentrySpotClearOfCan` (core, 2.4 m, tested), `PaeteVine.SentryTarget` on every peer, the ground branches turned to part
+  round the can, the cutscene's staged tree pushed by the same rule; `PaeteKitPlayProbe.AimedAtTheCanTheGuardianComesUpBesideIt` aims straight
+  at the can. Prisoners held at 1.4 m (was 1.9) so their backs are against the roots, bindings in dark bark. *"add more special effects and
+  vfx on his ult cutscene ... open it with leaves"*, then five Genshin burst frames and *"focus on direction and vfx and sfx"*: research from
+  footage (`docs/reports/ultimate-performances-2026-09-24/research.md` section 4, for every hero) and the v6 effects pass
+  (`HeroIntroductionScene.PaeteVfx.cs`): the opening gust and the wind round her, the petal ribbon, the mark of the mountain four times, the
+  streaks, the brush stroke (a translucent lime body with its light down the middle), the spears of light, the haul spirals, a near layer at the lens, the phase camera's grade
+  (`HeroIntroductionScene.GradeAt`), and the theme's matching layers (`glide`, `whoosh`, the mark's `bell` motif). The RISE re-framed for
+  7.0 m; the ROOT shot's drifted table restored (the source was right, the committed `paete.txt` was stale). It holds still in play (owner:
+  *"tree doesnt need to look left and right"*; `PaeteSentryBody.WatchPrisoners` off). Protocol 58 (the spot and the hold are computed on
+  every peer). Its vines crawl (owner: *"make its vines like move or crawl"*): three living vines wind up the trunk, a ripple running up
+  each (`PaeteSentryBody.TrunkVineRows`); the baked vine is gone from the model. Films r16 to r19.
+- [x] Prisoners "actually TIED" (owner) reviewed close up in film r16's `victim/`: backs pressed to the trunk, straining, bands at the shins;
+  the lit bark in the limb and bands blended into warm skin, so both are dark and mid bark now.
 - [x] First-person vine film reviewed (film r11 `owner/`): both hands punch forward, the braids leave the viewmodel hands and converge on
   the anchor, the landing rosette flashes at the hands. Reads.
 - [ ] Surface texture: the owner asked to *"really refine and texture and make it all detailed"*. The

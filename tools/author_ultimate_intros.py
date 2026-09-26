@@ -837,13 +837,16 @@ def paete():
     # the top of this frame; he, his hands on the court and his roots are the bottom. It pushes in toward his hands as he channels.
     p.shot(1.1, 2.3, (2.5, 1.3, 3.6), (.05, 1.35, .2), 50, eye_to=(1.9, 1.05, 2.8), look_to=(0, 1.15, .4), fov_to=46)
     # 3 RISE, one continuous shot in three moves (no cut): held wide and low while the roots cross the frame from him (left) to
-    # the spot (right); craning up and back through the three heaves so the whole 9 m is in by the time it tops out; then a slow
-    # push toward its face as its eyes light (4.5).
-    p.shot(2.3, 2.75, (8.6, 1.35, 5.6), (.2, 1.0, 3.1), 56, eye_to=(8.7, 1.4, 5.7), look_to=(.2, 1.05, 3.2))
-    p.shot(2.75, 4.3, (8.7, 1.4, 5.7), (.2, 1.05, 3.2), 56, eye_to=(9.6, 2.6, 6.8), look_to=(.1, 3.9, 3.4), fov_to=64)
-    p.shot(4.3, 5.0, (9.6, 2.6, 6.8), (.1, 3.9, 3.4), 64, eye_to=(9.9, 3.3, 7.1), look_to=(.15, 4.5, 3.6), fov_to=64)
+    # the spot (right) under the brush-stroke of light; craning up through the three heaves so the whole tree is in by the time
+    # it tops out; then a push IN toward its face as its eyes light (4.5).
+    # ⚠️ v6 (2026-09-27): re-framed for the v9 tree, 6.6 m with its eyes at 3.1 m (was 9 m with eyes over 4 m; owner: *"Make
+    # the tre a bit smaller and a lot more sleek so that it isnt too distracting"*). A shorter crane, a tighter lens at the end,
+    # and it closes in on the eyes rather than backing off to fit a crown that is no longer there.
+    p.shot(2.3, 2.75, (8.2, 1.25, 5.0), (.2, .9, 3.0), 54, eye_to=(8.3, 1.3, 5.1), look_to=(.2, .95, 3.1))
+    p.shot(2.75, 4.3, (8.3, 1.3, 5.1), (.2, .95, 3.1), 54, eye_to=(8.9, 2.0, 6.2), look_to=(.1, 2.9, 3.9), fov_to=58)
+    p.shot(4.3, 5.0, (8.9, 2.0, 6.2), (.1, 2.9, 3.9), 58, eye_to=(8.3, 2.4, 6.4), look_to=(.1, 3.2, 4.3), fov_to=52)
     # Reduced motion: one wide locked shot that holds him, her and the landing.
-    p.locked((9.2, 2.2, 6.0), (.2, 3.1, 2.8), 64)
+    p.locked((8.6, 1.9, 5.8), (.2, 2.5, 3.2), 60)
     return p
 
 # ----------------------------------------------------------------------------- the 2.8 s baseline

@@ -397,6 +397,8 @@ namespace TumbangPreso.Visual
                 position = _ground + _facing * new Vector3(2.2f, 1.1f, 4.5f); focus = _ground + _facing * (Vector3.up * 1.05f); fov = 46; return;
             }
             _performance.Shot(index, seconds, out var eye, out var look, out fov);
+            // Paete's RISE follows his guardian when it had to be pushed off the can (`HeroIntroductionScene.PaeteVfx.cs`).
+            if (_hero == "paete") PaeteFrame(index, ref eye, ref look);
             // A hero's own blows shake the lens (Paete's palm and eruption); reduced effects keep it still.
             if (!_reducedEffects) { var shake = Shake(Local(seconds)); eye += shake; look += shake * .5f; }
             position = _ground + _facing * eye; focus = _ground + _facing * look;
@@ -404,6 +406,18 @@ namespace TumbangPreso.Visual
         }
 
         private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(t) : Vector3.zero;
+
+        /// <summary>
+        /// ⚠️ THE STAGE'S OWN GRADE ON THE PHASE CAMERA (v6, 2026-09-27): a whole-frame brightness and saturation multiplier for this
+        /// moment, applied by `UltimatePhaseView` through `ColourGrade.SetEventGrade` (which multiplies the map's grade, so it returns
+        /// to exactly the map at 1, 1). The burst references all step the world back while the power is on screen; Paete's is the
+        /// first hero to use it. Every other hero returns 1, 1, which is what the phase camera rendered before.
+        /// </summary>
+        public void GradeAt(float seconds, out float brightness, out float saturation)
+        {
+            brightness = 1f; saturation = 1f;
+            if (_hero == "paete") PaeteGrade(Local(seconds), out brightness, out saturation);
+        }
 
         /// <summary>The single locked shot for reduced motion: no cut and no camera move.</summary>
         public void StillShot(out Vector3 position, out Vector3 focus, out float fov)

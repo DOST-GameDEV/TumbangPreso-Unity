@@ -47,7 +47,8 @@ namespace TumbangPreso.CameraSystem
             else if(field.Type==WorldEffectSnapshot.Kind.Thorns)
             {var body=PaeteThornBody.Build(Root.transform,new System.Collections.Generic.List<Slipper>());var at=field.Position;_step=age=>body.Pose(age,at);}
             else if(field.Type==WorldEffectSnapshot.Kind.Sentry)
-            {var body=PaeteSentryBody.Build(Root.transform);var at=field.Position;_step=age=>body.Pose(age,at);}
+            // ⚠️ `Staged`: the replay poses a copy, and an unstaged body spawns ground breaks and leaf bursts into the LIVE world.
+            {var body=PaeteSentryBody.Build(Root.transform);body.Staged=true;var at=field.Position;_step=age=>body.Pose(age,at);}
             else if(field.Type==RecordedSpecialFields.Storm)
             {var fx=AmihanStormFan.Build(Root.transform,field.Position,field.Forward,Core.AmihanRules.StormSurgeGatherSeconds);fx.enabled=false;_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Fissure)

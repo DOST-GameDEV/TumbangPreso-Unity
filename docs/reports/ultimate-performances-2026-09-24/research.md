@@ -64,3 +64,35 @@ a claim is a reading of a text rather than an observation, it says so.
 A cohort of simultaneous casts uses the LONGEST member's duration, derived identically on every peer
 from the accepted commits (seat to hero), so the shared boundary stays one number. Range 2.8 to 4.2 s
 keeps the worst case within 1.5 s of the old value.
+
+## 4 · The owner's burst references: a VFX and SFX vocabulary for every hero's cutscene (2026-09-27)
+
+The owner, on Paete's v5 film, sent five frames from Genshin Impact bursts (Ayaka, Neuvillette, Raiden twice, and a curtain of
+rising light streaks) with *"a lot of ults in genshin have really good vfx and particles"*, *"theres liek a lot of ways u could go
+abt the vfx u figure it out"*, *"we can use these vfx as inspiration for ult cutscenes later"*, *"can u do more reserach on genshin
+ult cutscenes and otehr games before actually starting"* and *"focus on direction and vfx and sfx"*. So this section is for EVERY
+hero's rebuild, not only Paete's; Paete v6 (`docs/reports/paete-kit-2026-09-25/direction.md` section 5.15) is the first user.
+
+**What was looked at, this time on footage.** Frames stepped through a recorded compilation of all 56 five-star Genshin bursts
+(chapters per character), for Nahida, Baizhu, Emilie, Kinich, Ayaka, Kazuha and Zhongli, plus the owner's own five frames. Honkai
+Star Rail's ultimate compilation was opened but its frames could not be captured (the capture pane stopped drawing), so nothing
+below is claimed from it.
+
+| Seen | What it does | The rule it gives us |
+|---|---|---|
+| Nahida, Baizhu, Emilie, Zhongli, Ayaka: the first frame after the cut | A CLOSE-UP of face or hands with the element ALREADY in the air: leaves and a big blurred leaf right at the lens (Nahida), a glowing orb in the palm inside a swirl of leaves and ribbons (Baizhu), fireflies round a lantern (Emilie), a gold spiral behind (Zhongli), petals and sparkles over the shoulder (Ayaka) | **Never open on an empty frame.** The cut lands mid-motion, element first, with something near the lens. |
+| Kazuha, Kinich, Nahida, Raiden (owner) | The backdrop drops away: a black ink sky (Kazuha), a green pixel wall (Kinich), light-architecture forming (Nahida), the sky turned violet (Raiden) | **The world steps back while the power is on screen**: dimmer, cooler, or replaced, so the element is the brightest thing. Return the daylight for the payoff. |
+| Ayaka (owner), Baizhu, Kazuha | Petals ride the blade's arc; leaves ride ribbon arcs round the caster; a vortex of ribbons and maple leaves round the arena | **Particles follow the motion; nothing hangs in the air at random.** They trace the gesture that caused them. |
+| Raiden (owner, twice) | Her emblem hangs huge in the air; brush-stroke slashes of light across the frame; shards flying | **One emblem per hero, and a stroke for the strike.** A drawn symbol says whose moment it is; a painted slash says "now". |
+| Neuvillette (owner), the rising streaks (owner) | Tall pillars of light, orbs drifting up, a glowing ring on the floor, the whole frame in one colour; thin vertical streaks rising through the shot | **Vertical light is power; rising motes are scale.** A floor ring says "this ground is mine". |
+| Every one | The body always acts first; the effects are on its beats; the frame is one colour family | Section 2's rule 1 holds: acting before effects. |
+
+**The sound grammar that goes with it** (from those beats and from Overwatch's *Play by Sound* talk, GDC 2016, whose rule is that an
+ultimate is recognisable by ear alone): a cut-in accent on frame 0, a swell drawn in before each impact and cut dead on it, the
+impact itself in the hero's own material, ONE motif that returns every time the emblem is drawn, and a tail that says it is over.
+Light gets a pure tone; matter (wood, stone, water) gets noise and struck bodies, so the ear can tell them apart.
+
+**Limits for TUMP.** The cutscene is not a gameplay frame, but `AbilityShowcaseProbe`'s white-blowout rule (12 per cent) is kept in
+spirit: saturated hero colours, never white, because white is where those frames lose their subject. `Art_Direction.md` section 0
+still governs every shape: blocky, readable, hand-typed, the hero's own palette. The world is paused under the cutscene, so every
+effect is posed from the scene clock, never on `Update`.

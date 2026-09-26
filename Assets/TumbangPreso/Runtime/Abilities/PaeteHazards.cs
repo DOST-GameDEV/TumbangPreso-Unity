@@ -52,6 +52,28 @@ namespace TumbangPreso.Abilities
             p.y = Slipper.GroundY(p);
             return p;
         }
+
+        /// <summary>
+        /// ⚠️⚠️ THE GUARDIAN'S SPOT, KEPT OFF THE CAN (owner, 2026-09-27: *"make it so that it cant block the can too (dont let
+        /// it be placed in a place it STANDS on can)"*). <see cref="GroundTarget"/>, then `PaeteRules.SentrySpotClearOfCan`
+        /// against wherever the lata is now, upright or knocked down. Every peer runs this from the same accepted cast and
+        /// the same synced can, and the host catches from the same spot; the cutscene pushes its staged tree by the same rule.
+        /// </summary>
+        public static Vector3 SentryTarget(Vector3 feet, Vector3 forward, Vector3 aimPoint, Lata lata)
+        {
+            Vector3 p = GroundTarget(feet, forward, aimPoint, PaeteRules.SentryThrowRange);
+            return lata != null ? ClearOfCan(p, lata.transform.position, feet) : p;
+        }
+
+        /// <summary>`PaeteRules.SentrySpotClearOfCan` on world points, inside the same court margin <see cref="GroundTarget"/> keeps.</summary>
+        public static Vector3 ClearOfCan(Vector3 spot, Vector3 can, Vector3 from)
+        {
+            PaeteRules.SentrySpotClearOfCan(spot.x, spot.z, can.x, can.z, from.x, from.z,
+                                            AIController.PlayableHalfX - 0.5f, AIController.PlayableHalfZ - 0.5f, out float x, out float z);
+            var p = new Vector3(x, spot.y, z);
+            p.y = Slipper.GroundY(p);
+            return p;
+        }
     }
 
     /// <summary>
@@ -451,7 +473,10 @@ namespace TumbangPreso.Abilities
             go.transform.position = at;
             var s = go.AddComponent<PaeteSentry>();
             s.OwnerSlot = ownerSlot; s.Centre = at;
-            s._age = age - Flight;
+            // ⚠️ A RESTORED AGE IS ALREADY PAST THE FLIGHT. `WorldEffectSnapshot` restores with the age since the roots arrived
+            // (`Capture`'s `Remaining` counts from 0, not from -Flight), and subtracting the flight again put a rejoiner's tree
+            // 0.45 s behind everybody else's for its whole life (TODO HERO-9, found 2026-09-26). A fresh cast (age 0) still flies.
+            s._age = age > 0f ? age : -Flight;
             s._body = PaeteSentryBody.Build(go.transform);
             // Before it has anyone to look at, the tree faces along the seed's flight (direction.md 5.2).
             s._body.SetFacing(at - from);
@@ -463,6 +488,9 @@ namespace TumbangPreso.Abilities
                 clearance = Mathf.Min(clearance, hit.distance + 0.5f);
             }
             s._body.FitUnder(clearance);
+            // Its ground branches part round the can (the tree itself is already kept off it: `PaeteVine.SentryTarget`).
+            var lata = GameServices.Round?.Lata;
+            if (lata != null) s._body.AvoidPoint(lata.transform.position);
             // ⚠️ CALLED UP THROUGH THE GROUND, NOT THROWN (owner, 2026-09-26: *"i dont want him to be throwing an
             // orb I want him to be CALLING IT FROM THE GROUND"*, then *"i also dont like that paete just throws seeds in his
             // ult"*): his roots race under the court from between his hands to the spot on the same 0.45 s the seed flew,
@@ -509,8 +537,10 @@ namespace TumbangPreso.Abilities
             if (before < 0f && _age >= 0f)
             {
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_burst", Centre);
-                Visual.PaeteGroundBreak.Spawn(Centre, 2.2f);
-                ShakeNearby(0.25f, 0.5f);
+                // ⚠️ v9: sized to the 6.6 m tree and its 2.1 m roots (was 2.2 and hauls to 3.4 m for the 9 m one): the court breaks
+                // where it comes up and stops short of the can's clearance (2.4 m).
+                Visual.PaeteGroundBreak.Spawn(Centre, 1.6f);
+                ShakeNearby(0.22f, 0.5f);
             }
             for (int k = 0; k < PaeteSentryBody.Heaves.Length; k++)
             {
@@ -521,8 +551,8 @@ namespace TumbangPreso.Abilities
                     // the road wider and shakes every nearby camera harder, the last hardest (the style of `HeroHazards`' blasts:
                     // the shake scales with the thing, it is never one flat number).
                     GameServices.Audio?.PlayAtVaried("sfx_paete_sentry_heave", Centre, 1.06f - 0.06f * k, 1.08f - 0.06f * k, 1f);
-                    Visual.PaeteGroundBreak.Spawn(Centre, 2.6f + 0.4f * k);
-                    ShakeNearby(0.28f + 0.14f * k, 0.55f + 0.1f * k);
+                    Visual.PaeteGroundBreak.Spawn(Centre, 1.8f + 0.2f * k);
+                    ShakeNearby(0.24f + 0.11f * k, 0.55f + 0.1f * k);
                 }
             }
             // The tree waking: the light opens in its hollows (`PaeteSentryBody`'s WAKE beat, last).

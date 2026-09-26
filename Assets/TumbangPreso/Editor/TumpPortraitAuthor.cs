@@ -121,7 +121,11 @@ namespace TumbangPreso.EditorTools
                 // ⚠️ PAETE IS A TALL TREANT, NOT THE CAST'S BIG HEAD ON A SMALL BODY: the shared framing put his
                 // whole body small in the square (first bake, 2026-09-26). Closer, and centred on the carved
                 // face and the antlers, so his thumbnail and avatar read as a face like everyone else's.
-                if (category == 0 && art.Id == "paete") preview.LookAt(.84f, .42f);   // (height ratio, zoom)
+                // ⚠️ v2 (2026-09-27): .84/.42 left his antler tips at y 118 of the 320 square, where every other hero's portrait
+                // starts at y 71 to 76 (measured off the alpha of all 37), so his thumbnail sat low. ⚠️ AND THE ZOOM NEVER DID ANYTHING:
+                // `ModelPreview.ZoomMin` is 0.55, so .42 (and a first try at .30) clamped to the same distance. The lever is the aim:
+                // his body measures about 250 px tall at that distance, and aiming at .65 of his height puts his antlers at y 72.
+                if (category == 0 && art.Id == "paete") preview.LookAt(.65f, ModelPreview.ZoomMin);   // (height ratio, zoom)
                 // This imported slide's identifying upper/decal faces the opposite
                 // direction. Camera-only correction, selected from four saved studies.
                 if (!orbit.HasValue && art.Id == "sike") orbit = new Vector2(450, 0);

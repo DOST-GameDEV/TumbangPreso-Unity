@@ -281,10 +281,19 @@ def cord(node, keys, slot, sides=5, twist=0.0, per=5):
 
 
 
-# The sentry's silhouette (v7, after the owner's cartoon tree): how far out the weave sits at each
-# height, as a multiplier on each cord's typed distance. A root flare at the foot, a pinched waist, a
-# swollen upper trunk where the eyes are, easing into the crown. Hand-set keys.
-SILHOUETTE = [(-0.10, 1.95), (0.35, 1.28), (0.80, 1.00), (1.30, 0.90), (1.80, 1.04), (2.30, 1.24), (2.80, 1.30), (3.28, 1.18), (3.45, 1.10)]
+# ⚠️⚠️ v9 (2026-09-27): SMALLER AND SLEEK. The owner on the v5 film: *"Make the tre a bit smaller and a lot more sleek so that
+# it isnt too distracting"*. What made v8 loud, named off film r14 (`Logs/paete-evidence-r14`, the wide and the victim's view):
+# eight fat cords CROSSING in big diagonal X's, each a different shade, so the trunk strobed brown and tan; a swollen upper
+# trunk; three vines and a sash wrapped round it; six moss slabs; seven gnarled crown claws each with leaf sprigs, two or three
+# leaf masses and hanging moss; roots flaring 1.7 m at shin height; all of it at 9 m. v9 keeps what the owner asked for on the
+# way (the woven Groot rope, two engraved hollows with a light, claw roots that dive INTO the court, a crown in leaf) and says
+# each ONCE: five cords twisting one way round a dark heartwood core, like a wrung rope, one shade step apart; one vine; a
+# slim flare; five slender branches rising like a vase, each ending in one soft leaf cloud. The runtime stands it at 1.3,
+# about 6.6 m (`PaeteSentryBody.Scale`).
+#
+# The sentry's silhouette: how far out the weave sits at each height, as a multiplier on each cord's typed distance. A modest
+# flare at the foot, a slim waist, the faintest swell where the eyes are, a taper into the crown. Hand-set keys.
+SILHOUETTE = [(-0.10, 1.50), (0.30, 1.16), (0.80, 0.97), (1.40, 0.91), (2.00, 0.97), (2.45, 1.04), (2.95, 1.00), (3.35, 0.94), (3.52, 0.90)]
 
 
 def sil(y):
@@ -333,58 +342,48 @@ def clump(node, centre, radii, slot, tilt=0.0, turn=0.0, sides=9):
 
 
 # ---------------------------------------------------------------------------------------------
-# THE SENTRY. About 4.4 m to the leaf tips. direction.md section 5.2.
+# THE SENTRY, v10. About 5.24 m to the tip of its spire, authored; 6.8 m as it stands. direction.md sections 5.2 and 5.15.
 # ---------------------------------------------------------------------------------------------
 def sentry():
     root = Node("sentry")
     trunk = Node("trunk", parent="sentry")
     nodes = [root, trunk]
 
-    # --- THE WEAVE (the owner's Groot crop): eight big cords and three thin ones, each typed key by key.
-    # Four climb clockwise and four counter-clockwise, so they cross; at each crossing one is OUT (further
-    # from the axis) and one is IN, placed by hand, which is what makes it read as woven. The foot flares
-    # (the cords parting into the roots) and the shoulder flares (parting into the crown).
-    # Keys: (height, compass angle, distance out, girth).
-    scord(trunk, [(-0.10, 5, 0.62, 0.148), (0.35, 46, 0.46, 0.141), (0.80, 88, 0.41, 0.135), (1.30, 127, 0.32, 0.131),
-                 (1.80, 170, 0.39, 0.133), (2.30, 214, 0.31, 0.130), (2.80, 251, 0.41, 0.128), (3.28, 292, 0.47, 0.114),
-                 (3.42, 305, 0.53, 0.080)], BARK_LIT, twist=40)
-    scord(trunk, [(-0.10, 97, 0.60, 0.144), (0.35, 138, 0.50, 0.137), (0.80, 177, 0.34, 0.138), (1.30, 221, 0.40, 0.132),
-                 (1.80, 262, 0.31, 0.129), (2.30, 300, 0.40, 0.135), (2.80, 343, 0.34, 0.125), (3.28, 381, 0.50, 0.112),
-                 (3.40, 392, 0.55, 0.075)], BARK, twist=-30)
-    scord(trunk, [(-0.10, 176, 0.63, 0.150), (0.35, 219, 0.43, 0.144), (0.80, 263, 0.42, 0.137), (1.30, 301, 0.33, 0.135),
-                 (1.80, 344, 0.37, 0.136), (2.30, 388, 0.31, 0.128), (2.80, 427, 0.43, 0.130), (3.28, 466, 0.46, 0.115),
-                 (3.43, 478, 0.52, 0.078)], HEARTWOOD, twist=55)
-    scord(trunk, [(-0.10, 268, 0.59, 0.141), (0.35, 311, 0.50, 0.135), (0.80, 350, 0.35, 0.133), (1.30, 395, 0.41, 0.136),
-                 (1.80, 436, 0.30, 0.127), (2.30, 474, 0.40, 0.132), (2.80, 513, 0.35, 0.124), (3.28, 556, 0.50, 0.111),
-                 (3.41, 566, 0.56, 0.073)], BARK_LIT, twist=-45)
-    scord(trunk, [(-0.10, 48, 0.61, 0.146), (0.35, 12, 0.44, 0.140), (0.80, -27, 0.41, 0.136), (1.30, -61, 0.31, 0.130),
-                 (1.80, -98, 0.38, 0.135), (2.30, -133, 0.33, 0.129), (2.80, -170, 0.41, 0.127), (3.28, -204, 0.47, 0.113),
-                 (3.42, -214, 0.54, 0.076)], BARK, twist=35)
-    scord(trunk, [(-0.10, 141, 0.60, 0.148), (0.35, 104, 0.49, 0.138), (0.80, 69, 0.34, 0.135), (1.30, 31, 0.40, 0.137),
-                 (1.80, -5, 0.31, 0.128), (2.30, -44, 0.38, 0.131), (2.80, -79, 0.36, 0.125), (3.28, -116, 0.48, 0.114),
-                 (3.40, -127, 0.55, 0.079)], BARK_DARK, twist=-50)
-    scord(trunk, [(-0.10, 222, 0.62, 0.145), (0.35, 188, 0.43, 0.142), (0.80, 151, 0.42, 0.133), (1.30, 114, 0.32, 0.132),
-                 (1.80, 80, 0.39, 0.136), (2.30, 43, 0.32, 0.127), (2.80, 7, 0.42, 0.129), (3.28, -30, 0.46, 0.112),
-                 (3.43, -41, 0.53, 0.075)], BARK_LIT, twist=28)
-    scord(trunk, [(-0.10, 318, 0.59, 0.142), (0.35, 281, 0.50, 0.136), (0.80, 246, 0.35, 0.137), (1.30, 209, 0.39, 0.133),
-                 (1.80, 172, 0.30, 0.129), (2.30, 136, 0.40, 0.133), (2.80, 101, 0.35, 0.123), (3.28, 63, 0.49, 0.113),
-                 (3.41, 52, 0.55, 0.074)], BARK, twist=-38)
-    # Three thin strands tucked into the gaps: they are what makes it read as MANY cords, like the crop.
-    scord(trunk, [(0.05, 70, 0.50, 0.060), (0.60, 96, 0.40, 0.056), (1.20, 150, 0.37, 0.054), (1.75, 205, 0.40, 0.052),
-                 (2.20, 238, 0.37, 0.050), (2.75, 280, 0.40, 0.046), (3.25, 330, 0.44, 0.040)], BARK_DARK, sides=4)
-    scord(trunk, [(0.10, 250, 0.52, 0.058), (0.65, 222, 0.39, 0.055), (1.15, 175, 0.38, 0.053), (1.70, 128, 0.40, 0.050),
-                 (2.25, 86, 0.36, 0.048), (2.70, 40, 0.41, 0.045), (3.20, -8, 0.45, 0.040)], HEARTWOOD, sides=4)
-    scord(trunk, [(0.40, 330, 0.44, 0.050), (0.95, 300, 0.40, 0.048), (1.45, 262, 0.39, 0.046), (1.95, 228, 0.40, 0.044),
-                 (2.45, 190, 0.38, 0.042), (2.95, 150, 0.42, 0.038)], BARK_LIT, sides=4)
+    # --- THE HEARTWOOD CORE: one dark smooth post up the middle, so the gaps between the cords read as shadow in a solid trunk
+    # rather than daylight through a bundle. A hair of lean, typed, so it is not a lathe-turned pole.
+    line(trunk, [(0.00, -0.10, 0.00), (0.01, 0.50, 0.00), (0.02, 1.20, -0.01), (0.00, 1.90, -0.02), (-0.02, 2.60, -0.01),
+                 (-0.01, 3.20, 0.01), (0.00, 3.52, 0.02)],
+         [0.31, 0.25, 0.225, 0.225, 0.24, 0.225, 0.20], BARK_DARK, sides=7, per=4)
 
-    # --- THE EYES: TWO HOLLOWS IN THE WOOD WITH A SLANTED LIGHT IN EACH (owner, 2026-09-26: *"subtle eyes
-    # only"*, *"engraved"*, *"Js make 2 fucking holles"*, then *"look the eyes of these"* and the cartoon
-    # tree, *"use this for inspiration"*). What the references share: the eye is a HOLLOW the bark caves
-    # into, and the light sits in it as a narrow slit slanting down toward the middle, a dark overhang of
-    # wood above it. No brows as parts, no mask: v3 to v5 were laughed off. The swollen upper trunk (v7's
-    # silhouette) is where they sit, 2.3 m up, and the light is its own node: the runtime opens it (wake),
-    # narrows it (blink) and shuts it (sleep).
-    face = Node("face", origin=(0.0, 2.48, 0.585), parent="trunk", scale=1.4); nodes.append(face)
+    # --- THE WRUNG ROPE (the owner's Groot crop, said once): five cords climbing the SAME way, each turning a little under
+    # two-thirds of a circle from the foot to the shoulder, laid side by side on the core. One shade step apart (bark, bark lit,
+    # bark, heartwood, bark dark) so the twist reads as grooves in one trunk, not as five colours. Keys: (height, compass angle,
+    # distance out, girth), every cord its own row.
+    scord(trunk, [(-0.10, 4, 0.33, 0.122), (0.40, 27, 0.30, 0.117), (0.95, 59, 0.29, 0.112), (1.50, 90, 0.29, 0.110),
+                 (2.05, 119, 0.30, 0.108), (2.55, 146, 0.31, 0.106), (3.05, 170, 0.31, 0.100), (3.40, 182, 0.33, 0.086),
+                 (3.52, 187, 0.35, 0.060)], BARK, twist=20)
+    scord(trunk, [(-0.10, 76, 0.34, 0.118), (0.40, 101, 0.30, 0.114), (0.95, 131, 0.29, 0.111), (1.50, 163, 0.30, 0.108),
+                 (2.05, 191, 0.29, 0.107), (2.55, 219, 0.31, 0.104), (3.05, 242, 0.32, 0.098), (3.40, 255, 0.33, 0.084),
+                 (3.52, 259, 0.36, 0.058)], BARK_LIT, twist=24)
+    scord(trunk, [(-0.10, 147, 0.33, 0.124), (0.40, 170, 0.31, 0.118), (0.95, 203, 0.29, 0.113), (1.50, 233, 0.29, 0.109),
+                 (2.05, 263, 0.30, 0.108), (2.55, 290, 0.30, 0.105), (3.05, 314, 0.31, 0.099), (3.40, 326, 0.34, 0.085),
+                 (3.52, 331, 0.35, 0.061)], BARK, twist=18)
+    scord(trunk, [(-0.10, 219, 0.34, 0.119), (0.40, 243, 0.30, 0.115), (0.95, 274, 0.30, 0.110), (1.50, 306, 0.29, 0.108),
+                 (2.05, 335, 0.30, 0.106), (2.55, 362, 0.31, 0.103), (3.05, 386, 0.31, 0.097), (3.40, 398, 0.33, 0.083),
+                 (3.52, 403, 0.35, 0.057)], HEARTWOOD, twist=22)
+    scord(trunk, [(-0.10, 291, 0.33, 0.121), (0.40, 314, 0.31, 0.116), (0.95, 346, 0.29, 0.112), (1.50, 377, 0.30, 0.109),
+                 (2.05, 406, 0.29, 0.107), (2.55, 434, 0.31, 0.104), (3.05, 458, 0.32, 0.099), (3.40, 470, 0.33, 0.085),
+                 (3.52, 475, 0.36, 0.059)], BARK_DARK, twist=26)
+    # Two thin binding strands the other way, low relief, so it still reads as woven up close and not from across the court.
+    scord(trunk, [(0.15, 40, 0.37, 0.036), (0.70, 8, 0.35, 0.034), (1.25, -28, 0.35, 0.033), (1.80, -60, 0.35, 0.032),
+                 (2.35, -96, 0.36, 0.030), (2.90, -128, 0.36, 0.027)], BARK_LIT, sides=4)
+    scord(trunk, [(0.30, 212, 0.36, 0.034), (0.85, 178, 0.35, 0.033), (1.40, 146, 0.35, 0.032), (1.95, 111, 0.35, 0.030),
+                 (2.50, 80, 0.36, 0.028), (3.00, 48, 0.36, 0.025)], BARK_DARK, sides=4)
+
+    # --- THE EYES: TWO HOLLOWS IN THE WOOD WITH A SLANTED LIGHT IN EACH (owner, 2026-09-26: *"subtle eyes only"*, *"engraved"*,
+    # *"Js make 2 fucking holles"*). Unchanged in shape from v7; the face sits on the slimmer trunk (0.46 out at 2.4 m, where
+    # the v8 swell put it at 0.585) and a touch smaller (1.2, was 1.4), so the hollows sit IN the bark rather than across it.
+    face = Node("face", origin=(0.0, 2.40, 0.455), parent="trunk", scale=1.2); nodes.append(face)
 
     def pit(node, centre, length, width, depth, slant, slot):
         node.parts.append((slot, pv._leaf(centre, length, width, depth, 0.0, slant, 90.0)))
@@ -402,224 +401,114 @@ def sentry():
     pit(eyes, (-0.186, -0.004, 0.029), 0.124, 0.040, 0.010, -15.0, EYE)
     pit(eyes, (0.191, -0.014, 0.029), 0.120, 0.041, 0.010, 16.0, EYE)
 
-    # --- THIN WOVEN BRANCHES, NOT VINES (owner: *"dont use vines use woven tree branches"*), typed point
-    # by point, none an even spiral. Each is two twigs laid round each other, in bark, with leaves.
-    # (1) out of the road by the front-left root, up the left flank to the shoulder.
-    b1a = [sring(1.02, 318, 0.02), sring(0.80, 322, 0.10), sring(0.63, 317, 0.36), sring(0.53, 313, 0.74), sring(0.51, 303, 1.12),
-           sring(0.50, 298, 1.58), sring(0.50, 290, 2.06), sring(0.51, 288, 2.52), sring(0.54, 291, 2.96), sring(0.59, 301, 3.30)]
-    b1b = [sring(1.00, 314, 0.03), sring(0.79, 316, 0.14), sring(0.61, 322, 0.40), sring(0.54, 308, 0.80), sring(0.50, 309, 1.18),
-           sring(0.51, 293, 1.62), sring(0.49, 295, 2.10), sring(0.52, 284, 2.55), sring(0.53, 296, 2.98), sring(0.57, 296, 3.26)]
-    line(trunk, b1a, [0.046, 0.046, 0.043, 0.040, 0.038, 0.036, 0.034, 0.031, 0.028, 0.022], BARK_LIT)
-    line(trunk, b1b, [0.036, 0.036, 0.034, 0.032, 0.030, 0.028, 0.027, 0.025, 0.022, 0.018], BARK_DARK)
-    sprig(trunk, b1a[3], 250, -15, 0.26, 0.15, LEAF_DARK)
-    sprig(trunk, b1a[6], 330, 10, 0.22, 0.13, LEAF)
-    sprig(trunk, b1a[9], 300, 30, 0.30, 0.17, LEAF)
-    sprig(trunk, b1b[9], 250, 5, 0.24, 0.14, LEAF_DARK)
-    # (2) the sash, like his own torso band: from the back right, across the chest under the eyes, round
-    # to the back left; two branches laid together.
-    s_a = [sring(0.49, 125, 1.20), sring(0.52, 78, 1.37), sring(0.54, 32, 1.52), sring(0.56, -6, 1.63), sring(0.55, -44, 1.67),
-           sring(0.53, -84, 1.61), sring(0.50, -122, 1.47)]
-    s_b = [sring(0.50, 120, 1.26), sring(0.53, 74, 1.33), sring(0.55, 28, 1.58), sring(0.55, -10, 1.59), sring(0.56, -48, 1.72),
-           sring(0.52, -88, 1.57), sring(0.49, -118, 1.52)]
-    line(trunk, s_a, [0.050, 0.056, 0.058, 0.056, 0.053, 0.046, 0.034], BARK)
-    line(trunk, s_b, [0.034, 0.040, 0.042, 0.040, 0.038, 0.032, 0.024], BARK_LIT)
-    sprig(trunk, s_a[2], 40, -35, 0.24, 0.14, LEAF)
-    sprig(trunk, s_b[4], 320, -40, 0.20, 0.12, LEAF_DARK)
-    sprig(trunk, s_a[6], 230, -20, 0.28, 0.16, LEAF_DARK)
-    # (3) a short one, round a single cord low on the back, ending in a forked tip.
-    b3 = [sring(0.60, 170, 0.05), sring(0.53, 182, 0.30), sring(0.51, 200, 0.52), sring(0.53, 190, 0.70), sring(0.56, 172, 0.78)]
-    line(trunk, b3, [0.044, 0.041, 0.037, 0.031, 0.022], BARK_DARK)
-    line(trunk, [b3[3], sring(0.60, 196, 0.86), sring(0.63, 205, 0.95)], [0.024, 0.018, 0.010], BARK_DARK, per=3)
-    sprig(trunk, b3[4], 150, 15, 0.22, 0.13, LEAF)
+    # --- NO VINE IN THE MODEL (v10, 2026-09-27). The owner: *"maybe if ur gonan add movement to it make its vines like move or
+    # crawl"*. A vine baked into the trunk cannot move, so the trunk carries none; `PaeteSentryBody` grows three living vines at
+    # runtime that wind up it and crawl (its `TrunkVineRows`), on this same silhouette (`SILHOUETTE`, copied there as `Silhouette`).
 
-    # --- WOVEN VINES (owner: *"add woven vines and branches to it and shit"*). A vine here THREADS the
-    # weave: every typed point alternates OVER a cord (further out) and UNDER the next (tucked in), so it
-    # is woven through the tree rather than wound round it (v1's corkscrews, *"why do they just twirl
-    # there"*). Each climbs from somewhere to somewhere, in his vine greens, leaves at a few joints.
-    # (A) from the road by the front-left root, across the front under the eyes, up the right shoulder.
-    va = [sring(0.62, 300, 0.05), sring(0.47, 292, 0.40), sring(0.39, 305, 0.70), sring(0.49, 322, 0.98), sring(0.39, 340, 1.22),
-          sring(0.48, 0, 1.44), sring(0.39, 22, 1.66), sring(0.49, 44, 1.90), sring(0.40, 64, 2.16), sring(0.50, 78, 2.46),
-          sring(0.41, 80, 2.80), sring(0.50, 72, 3.10), sring(0.46, 64, 3.36)]
-    line(trunk, va, [0.050, 0.048, 0.046, 0.046, 0.044, 0.044, 0.042, 0.042, 0.040, 0.038, 0.036, 0.033, 0.026], VINE, per=4)
-    sprig(trunk, va[3], 320, -20, 0.24, 0.14, LEAF)
-    sprig(trunk, va[7], 40, 10, 0.22, 0.13, LEAF_DARK)
-    sprig(trunk, va[9], 90, -30, 0.26, 0.15, LEAF)
-    sprig(trunk, va[12], 50, 35, 0.28, 0.16, LEAF)
-    # (B) up the back the other way, from the back-right root to the back-left shoulder.
-    vb = [sring(0.60, 150, 0.08), sring(0.46, 162, 0.42), sring(0.39, 150, 0.78), sring(0.48, 132, 1.10), sring(0.39, 118, 1.40),
-          sring(0.49, 104, 1.72), sring(0.40, 98, 2.00), sring(0.49, 110, 2.30), sring(0.40, 128, 2.62), sring(0.49, 144, 2.95),
-          sring(0.45, 158, 3.30)]
-    line(trunk, vb, [0.046, 0.045, 0.043, 0.043, 0.041, 0.040, 0.039, 0.037, 0.035, 0.031, 0.024], MOSS_DARK, per=4)
-    sprig(trunk, vb[2], 160, -15, 0.22, 0.13, LEAF_DARK)
-    sprig(trunk, vb[5], 100, 5, 0.24, 0.14, LEAF)
-    sprig(trunk, vb[10], 160, 40, 0.26, 0.15, LEAF_DARK)
-    # (C) a short one hanging out of the crown on the back, swinging free, a leaf cluster at its end.
-    vc = [sring(0.50, 168, 3.40), sring(0.60, 172, 3.18), sring(0.64, 177, 2.96), sring(0.62, 181, 2.78), sring(0.58, 178, 2.66)]
-    line(trunk, vc, [0.036, 0.034, 0.032, 0.028, 0.020], VINE, per=4)
-    sprig(trunk, vc[4], 180, -70, 0.24, 0.14, LEAF)
-    sprig(trunk, vc[4], 240, -55, 0.20, 0.12, LEAF_DARK)
+    # --- MOSS, only where the rope parts into the crown: two small caps, nothing on the trunk itself.
+    trunk.obox(sring(0.33, 32, 3.46), (0.24, 0.06, 0.17), MOSS, yaw=32)
+    trunk.obox(sring(0.34, 214, 3.44), (0.21, 0.05, 0.15), MOSS_DARK, yaw=214)
 
-    # --- MOSS, only on the tops of things: where cords part at the shoulder and on a few cord crossings.
-    trunk.obox(sring(0.42, 38, 3.24), (0.32, 0.07, 0.22), MOSS, yaw=38)
-    trunk.obox(sring(0.44, 158, 3.27), (0.28, 0.06, 0.19), MOSS_DARK, yaw=158)
-    trunk.obox(sring(0.40, 272, 3.22), (0.34, 0.07, 0.24), MOSS, yaw=272)
-    trunk.obox(sring(0.45, 212, 1.05), (0.20, 0.05, 0.13), MOSS_DARK, yaw=212)
-    trunk.obox(sring(0.44, 96, 2.64), (0.17, 0.05, 0.11), MOSS_LIT, yaw=96)
-    trunk.obox(sring(0.50, 18, 0.42), (0.22, 0.05, 0.14), MOSS, yaw=18)
-
-    # --- SIX CLAW ROOTS (v7, the owner's cartoon tree: *"lowk why not use this for inspiration"*): the
-    # weave flares wide at the foot and parts into roots that grip the road like fingers, each ending in a
-    # toe that curls up off the ground. Their own nodes on the ROOT, not the trunk, so the trunk turns to
-    # look while they grip. Each typed along its +Z from the weave's foot: two cords laid together (a woven
-    # root), a moss cap on the knuckle.
+    # --- SIX CLAW ROOTS, SLIMMER AND SHORTER (v7's cartoon tree, v8's dive, v9's reach). The rope's foot parts into roots that grip
+    # the road like fingers and run their last span DOWN into it (owner: *"make it look like the roots GO INT he ground not float off
+    # of it"*), a heave of earth where each goes in. v8 reached 1.9 authored (3.3 m at 1.75); these reach 1.65 at most, measured
+    # off the built glb with the toe and its heave (2.14 m at 1.3), which is what `PaeteRules.SentryCanClearance` is sized against. Each: its points along +Z from the foot, radii, shade,
+    # a thin rider cord laid along it, and the moss on its knuckle.
     roots = [
-        (22, [(0, 0.70, -0.14), (0.03, 0.44, 0.20), (0.06, 0.14, 0.70), (0.02, 0.02, 1.18), (-0.02, 0.00, 1.52), (-0.03, 0.10, 1.70), (-0.02, 0.20, 1.66)],
-         [0.30, 0.24, 0.16, 0.10, 0.065, 0.040, 0.018], BARK,
-         [(-0.09, 0.62, -0.08), (-0.12, 0.38, 0.24), (-0.12, 0.12, 0.72), (-0.08, 0.02, 1.06)], [0.14, 0.11, 0.07, 0.02], BARK_LIT, MOSS),
-        (80, [(0, 0.62, -0.12), (-0.02, 0.38, 0.16), (-0.06, 0.12, 0.56), (-0.03, 0.01, 0.98), (0.02, 0.00, 1.26), (0.04, 0.09, 1.42), (0.03, 0.18, 1.38)],
-         [0.25, 0.20, 0.14, 0.085, 0.055, 0.034, 0.016], BARK_DARK,
-         [(0.08, 0.54, -0.06), (0.10, 0.34, 0.20), (0.07, 0.10, 0.58), (0.04, 0.01, 0.86)], [0.12, 0.10, 0.06, 0.02], BARK, MOSS_DARK),
-        (139, [(0, 0.72, -0.14), (0.02, 0.46, 0.22), (0.07, 0.16, 0.78), (0.09, 0.03, 1.30), (0.06, 0.00, 1.72), (0.02, 0.11, 1.92), (0.00, 0.22, 1.86)],
-         [0.31, 0.25, 0.17, 0.11, 0.070, 0.042, 0.018], BARK,
-         [(-0.10, 0.62, -0.08), (-0.09, 0.40, 0.26), (-0.05, 0.14, 0.80), (0.00, 0.03, 1.16)], [0.15, 0.12, 0.07, 0.02], HEARTWOOD, MOSS),
-        (199, [(0, 0.60, -0.12), (-0.03, 0.36, 0.18), (-0.05, 0.12, 0.62), (0.00, 0.01, 1.04), (0.04, 0.00, 1.36), (0.05, 0.08, 1.52), (0.03, 0.17, 1.50)],
-         [0.25, 0.20, 0.14, 0.085, 0.055, 0.034, 0.016], BARK_LIT,
-         [(0.09, 0.52, -0.06), (0.11, 0.32, 0.22), (0.09, 0.10, 0.62), (0.05, 0.01, 0.92)], [0.12, 0.10, 0.06, 0.02], BARK, MOSS_DARK),
-        (252, [(0, 0.68, -0.14), (0.02, 0.42, 0.18), (0.02, 0.14, 0.70), (-0.03, 0.02, 1.20), (-0.07, 0.00, 1.62), (-0.08, 0.10, 1.82), (-0.06, 0.20, 1.78)],
-         [0.30, 0.24, 0.16, 0.10, 0.065, 0.040, 0.018], BARK_DARK,
-         [(-0.09, 0.58, -0.07), (-0.11, 0.37, 0.22), (-0.10, 0.12, 0.70), (-0.06, 0.02, 1.08)], [0.14, 0.11, 0.07, 0.02], BARK_LIT, MOSS),
-        (318, [(0, 0.58, -0.12), (-0.02, 0.34, 0.16), (0.03, 0.11, 0.52), (0.05, 0.01, 0.90), (0.03, 0.00, 1.18), (0.00, 0.08, 1.32), (-0.02, 0.16, 1.28)],
-         [0.23, 0.19, 0.13, 0.075, 0.050, 0.030, 0.014], BARK,
-         [(0.08, 0.50, -0.05), (0.09, 0.31, 0.18), (0.10, 0.09, 0.50), (0.07, 0.01, 0.76)], [0.11, 0.09, 0.055, 0.02], HEARTWOOD, MOSS_LIT),
+        (22, [(0, 0.50, -0.10), (0.02, 0.32, 0.11), (0.04, 0.10, 0.42), (0.02, 0.02, 0.74), (-0.01, 0.00, 0.96)],
+         [0.200, 0.160, 0.108, 0.070, 0.046], BARK,
+         [(-0.07, 0.45, -0.06), (-0.09, 0.28, 0.14), (-0.09, 0.09, 0.42), (-0.06, 0.02, 0.64)], [0.090, 0.072, 0.046, 0.014], BARK_LIT, MOSS),
+        (84, [(0, 0.44, -0.09), (-0.02, 0.28, 0.10), (-0.04, 0.09, 0.34), (-0.02, 0.01, 0.61), (0.01, 0.00, 0.78)],
+         [0.170, 0.136, 0.094, 0.058, 0.038], BARK_DARK,
+         [(0.06, 0.39, -0.05), (0.07, 0.25, 0.12), (0.05, 0.07, 0.35), (0.03, 0.01, 0.53)], [0.080, 0.066, 0.040, 0.013], BARK, MOSS_DARK),
+        (141, [(0, 0.52, -0.10), (0.02, 0.33, 0.13), (0.05, 0.11, 0.46), (0.06, 0.02, 0.82), (0.04, 0.00, 1.07)],
+         [0.206, 0.166, 0.112, 0.072, 0.047], BARK,
+         [(-0.08, 0.45, -0.06), (-0.07, 0.29, 0.15), (-0.04, 0.10, 0.48), (0.00, 0.02, 0.72)], [0.096, 0.078, 0.047, 0.014], HEARTWOOD, MOSS),
+        (201, [(0, 0.43, -0.09), (-0.02, 0.26, 0.10), (-0.04, 0.09, 0.37), (0.00, 0.01, 0.64), (0.03, 0.00, 0.84)],
+         [0.168, 0.134, 0.094, 0.058, 0.038], BARK_LIT,
+         [(0.07, 0.38, -0.05), (0.08, 0.23, 0.13), (0.07, 0.07, 0.37), (0.04, 0.01, 0.56)], [0.080, 0.066, 0.040, 0.013], BARK, MOSS_DARK),
+        (256, [(0, 0.49, -0.10), (0.02, 0.30, 0.10), (0.02, 0.10, 0.42), (-0.02, 0.02, 0.74), (-0.05, 0.00, 1.01)],
+         [0.198, 0.160, 0.107, 0.068, 0.045], BARK_DARK,
+         [(-0.07, 0.42, -0.05), (-0.08, 0.27, 0.13), (-0.08, 0.09, 0.42), (-0.05, 0.02, 0.66)], [0.090, 0.072, 0.046, 0.014], BARK_LIT, MOSS),
+        (318, [(0, 0.42, -0.09), (-0.02, 0.25, 0.10), (0.02, 0.08, 0.32), (0.04, 0.01, 0.56), (0.02, 0.00, 0.74)],
+         [0.158, 0.128, 0.088, 0.052, 0.035], BARK,
+         [(0.06, 0.36, -0.04), (0.07, 0.22, 0.10), (0.07, 0.07, 0.30), (0.05, 0.01, 0.46)], [0.074, 0.060, 0.037, 0.013], HEARTWOOD, MOSS_LIT),
     ]
-    # ⚠️⚠️ THE TOES GO INTO THE COURT (owner, 2026-09-26: *"make it look like the roots GO INT he ground not
-    # float off of it"*). v7's toes curled 0.2 m UP off the road at the tip, so from his screen every claw read
-    # as lying on the court; now each root runs its last span DOWN through the surface (hidden below it) and a
-    # heave of earth sits where it goes in. Toe depth and reach per root, typed.
-    dives = [(0.16, 0.24), (0.13, 0.20), (0.18, 0.27), (0.14, 0.21), (0.17, 0.25), (0.12, 0.19)]
-    heaves = [((0.30, 0.10, 0.22), 12), ((0.26, 0.09, 0.20), -20), ((0.34, 0.11, 0.24), 30),
-              ((0.27, 0.09, 0.19), -8), ((0.32, 0.10, 0.23), 18), ((0.24, 0.08, 0.18), -26)]
+    # Toe depth and reach per root, and the heave of earth where it goes in: typed.
+    dives = [(0.13, 0.20), (0.11, 0.17), (0.14, 0.22), (0.11, 0.17), (0.13, 0.20), (0.10, 0.16)]
+    heaves = [((0.22, 0.07, 0.16), 12), ((0.19, 0.06, 0.15), -20), ((0.24, 0.08, 0.18), 30),
+              ((0.19, 0.06, 0.14), -8), ((0.23, 0.07, 0.17), 18), ((0.17, 0.06, 0.13), -26)]
     for i, (yaw, pts, radii, slot, rider, rider_r, rider_slot, moss) in enumerate(roots):
-        n = Node(f"buttress-{i}", origin=ring(0.46, yaw, 0.0), parent="sentry", yaw=yaw); nodes.append(n)
+        n = Node(f"buttress-{i}", origin=ring(0.34, yaw, 0.0), parent="sentry", yaw=yaw); nodes.append(n)
         knee = pts[4]
-        pts = pts[:5] + [(knee[0], -0.10, knee[2] + dives[i][0]), (knee[0], -0.26, knee[2] + dives[i][1])]
-        line(n, pts, radii, slot, twist=30.0)
+        pts = pts + [(knee[0], -0.09, knee[2] + dives[i][0]), (knee[0], -0.22, knee[2] + dives[i][1])]
+        line(n, pts, radii + [radii[-1] * 0.72, radii[-1] * 0.40], slot, twist=24.0)
         size, turn = heaves[i]
-        n.obox((knee[0], 0.02, knee[2] + 0.10), size, ROOTC, yaw=turn, pitch=-9.0)
-        n.obox((knee[0] + 0.10, 0.015, knee[2] - 0.04), (size[0] * 0.55, size[1] * 0.8, size[2] * 0.6), MOSS_DARK, yaw=turn + 40)
+        n.obox((knee[0], 0.015, knee[2] + 0.08), size, ROOTC, yaw=turn, pitch=-9.0)
         line(n, rider, rider_r, rider_slot)
         k = pts[2]
-        n.obox((k[0], k[1] + radii[2] * 0.85, k[2]), (radii[2] * 1.7, 0.055, radii[2] * 1.3), moss)
+        n.obox((k[0], k[1] + radii[2] * 0.8, k[2]), (radii[2] * 1.5, 0.045, radii[2] * 1.1), moss)
 
-    # --- THE CROWN (v7, the cartoon tree): the swollen top of the weave splits into SEVEN gnarled woven
-    # branches reaching up and out, each with a fork or two, every tip curling over into a hook. v3's five
-    # square antlers read as a hat. Each branch is two cords laid together, typed along its node's +Z;
-    # leaves only in a few small tufts (he is a living forest, not a dead tree), the core held among them.
-    crown = Node("crown", origin=(0.0, 3.22, 0.0), parent="trunk"); nodes.append(crown)
+    # --- THE CROWN, v10 (2026-09-27): A POINTED SPIRE OF BRANCHES WITH A LIGHT INSIDE, AND ONLY A FEW LEAVES AT THE EDGE. The owner
+    # on v9's leaf clouds: *"remove the leaves or wtv this is called at the top bczimma be fr it makes it look goofy"*, *"I think if its
+    # js pointy on the top with a glow coming from within it will look better"*, *"u can put like a few leaves at the edge of the top
+    # but dont put like a green blob coz it looks goofy"*, and an Ent from the films as the picture (a slender woven trunk whose top
+    # is a spray of fine branches, small leaves only at the very tips). So: a central leader rising straight to the point, five
+    # slender branches rising steeply round it, each forking into thinner twigs, the whole outline a flame; two or three small
+    # leaves at the ends of the twigs and nowhere else; and the runtime hangs a light INSIDE it (`PaeteSentryBody`'s crown light)
+    # that shows between the branches. No masses, no clouds. Branch nodes keep the names `claw-0` to `claw-4` (the runtime folds
+    # them tighter under the court and droops them open as it sleeps); each is typed along its node's +Z.
+    crown = Node("crown", origin=(0.0, 3.44, 0.0), parent="trunk"); nodes.append(crown)
+    # The leader: the point itself, a gentle S, tapering to nothing 1.8 up (6.9 m as it stands).
+    line(crown, [(0.00, -0.06, 0.00), (0.02, 0.40, -0.01), (0.03, 0.85, 0.01), (0.01, 1.28, 0.03), (-0.01, 1.60, 0.02), (0.00, 1.80, 0.01)],
+         [0.130, 0.105, 0.080, 0.052, 0.024, 0.006], BARK, twist=30.0, per=4)
+    line(crown, [(0.06, -0.04, 0.03), (0.07, 0.44, 0.04), (0.05, 0.88, 0.06), (0.03, 1.22, 0.05)], [0.052, 0.042, 0.028, 0.008], BARK_DARK, per=4)
+    sprig(crown, (0.00, 1.80, 0.01), 30, 72, 0.16, 0.09, LEAF)
+    sprig(crown, (0.00, 1.78, 0.01), 210, 66, 0.13, 0.08, LEAF_DARK)
     branches = [
-        # name, yaw, main cord, radii, second cord, radii, fork, fork radii, shade, leaf tufts
-        ("claw-0", 8,
-         [(0, -0.06, -0.10), (0.02, 0.30, 0.16), (0.00, 0.72, 0.40), (-0.04, 1.06, 0.70), (-0.02, 1.30, 0.94), (0.02, 1.42, 0.86), (0.03, 1.38, 0.74), (0.01, 1.28, 0.76)],
-         [0.19, 0.16, 0.12, 0.085, 0.058, 0.040, 0.028, 0.014],
-         [(0.06, -0.02, -0.06), (0.07, 0.34, 0.20), (0.03, 0.70, 0.46), (-0.01, 0.98, 0.72)], [0.10, 0.085, 0.060, 0.022],
-         [(-0.03, 0.82, 0.50), (-0.20, 1.02, 0.60), (-0.30, 1.14, 0.54), (-0.27, 1.08, 0.46)], [0.060, 0.040, 0.024, 0.010],
-         BARK_LIT, [((-0.02, 1.36, 0.86), 20, 30, 0.24, 0.14, LEAF)]),
-        ("claw-1", 58,
-         [(0, -0.05, -0.10), (-0.02, 0.24, 0.20), (0.02, 0.56, 0.52), (0.05, 0.84, 0.84), (0.04, 1.00, 1.08), (0.00, 1.06, 1.18), (-0.04, 1.00, 1.14), (-0.03, 0.94, 1.06)],
-         [0.17, 0.145, 0.11, 0.080, 0.055, 0.038, 0.026, 0.013],
-         [(-0.06, -0.02, -0.06), (-0.07, 0.28, 0.24), (-0.03, 0.56, 0.56), (0.01, 0.80, 0.84)], [0.09, 0.075, 0.055, 0.020],
-         [(0.03, 0.62, 0.60), (0.20, 0.86, 0.66), (0.26, 1.02, 0.60), (0.22, 0.98, 0.52)], [0.055, 0.036, 0.022, 0.010],
-         BARK, [((0.22, 1.00, 0.56), 60, 40, 0.20, 0.12, LEAF_DARK)]),
-        ("claw-2", 110,
-         [(0, -0.06, -0.10), (0.02, 0.32, 0.14), (-0.01, 0.78, 0.30), (-0.05, 1.18, 0.50), (-0.03, 1.48, 0.62), (0.02, 1.60, 0.52), (0.04, 1.54, 0.42), (0.02, 1.44, 0.44)],
-         [0.18, 0.155, 0.12, 0.085, 0.058, 0.040, 0.028, 0.014],
-         [(0.05, -0.02, -0.06), (0.07, 0.36, 0.18), (0.04, 0.78, 0.36), (0.00, 1.10, 0.52)], [0.095, 0.080, 0.058, 0.021],
-         [(-0.04, 0.96, 0.40), (-0.24, 1.10, 0.52), (-0.36, 1.18, 0.46), (-0.33, 1.12, 0.38)], [0.058, 0.038, 0.023, 0.010],
-         BARK_DARK, [((0.02, 1.56, 0.50), -30, 50, 0.26, 0.15, LEAF), ((-0.34, 1.16, 0.44), -80, 30, 0.20, 0.12, LEAF_DARK)]),
-        ("claw-3", 163,
-         [(0, -0.05, -0.10), (0.01, 0.22, 0.22), (0.03, 0.50, 0.58), (0.00, 0.74, 0.92), (-0.04, 0.88, 1.16), (-0.06, 0.92, 1.28), (-0.03, 0.86, 1.26), (-0.01, 0.80, 1.18)],
-         [0.17, 0.14, 0.105, 0.078, 0.052, 0.036, 0.025, 0.012],
-         [(-0.05, -0.02, -0.06), (-0.06, 0.26, 0.26), (-0.02, 0.50, 0.62), (0.01, 0.70, 0.92)], [0.09, 0.075, 0.052, 0.019],
-         [(0.02, 0.58, 0.72), (0.18, 0.80, 0.80), (0.24, 0.96, 0.74), (0.20, 0.92, 0.66)], [0.050, 0.034, 0.021, 0.009],
-         BARK_LIT, []),
-        ("claw-4", 214,
-         [(0, -0.06, -0.10), (-0.02, 0.34, 0.16), (0.00, 0.80, 0.36), (0.05, 1.16, 0.60), (0.04, 1.40, 0.78), (0.00, 1.50, 0.70), (-0.03, 1.45, 0.60), (-0.02, 1.36, 0.62)],
-         [0.185, 0.16, 0.12, 0.085, 0.058, 0.040, 0.028, 0.014],
-         [(0.06, -0.02, -0.06), (0.06, 0.36, 0.20), (0.02, 0.78, 0.42), (-0.02, 1.06, 0.62)], [0.10, 0.082, 0.058, 0.021],
-         [(0.03, 0.90, 0.46), (0.22, 1.06, 0.58), (0.32, 1.14, 0.50), (0.28, 1.08, 0.42)], [0.058, 0.038, 0.023, 0.010],
-         BARK, [((0.00, 1.48, 0.70), 10, 45, 0.24, 0.14, LEAF_DARK)]),
-        ("claw-5", 266,
-         [(0, -0.05, -0.10), (0.02, 0.26, 0.20), (0.00, 0.60, 0.50), (-0.03, 0.88, 0.80), (-0.02, 1.04, 1.02), (0.02, 1.10, 1.12), (0.05, 1.04, 1.10), (0.04, 0.98, 1.02)],
-         [0.17, 0.145, 0.11, 0.080, 0.055, 0.038, 0.026, 0.013],
-         [(-0.06, -0.02, -0.06), (-0.06, 0.30, 0.24), (-0.03, 0.60, 0.54), (0.00, 0.84, 0.80)], [0.09, 0.075, 0.055, 0.020],
-         [(-0.02, 0.70, 0.62), (-0.20, 0.92, 0.70), (-0.28, 1.06, 0.62), (-0.24, 1.02, 0.54)], [0.055, 0.036, 0.022, 0.010],
-         BARK_DARK, [((-0.26, 1.04, 0.60), -60, 35, 0.22, 0.13, LEAF)]),
-        ("claw-6", 318,
-         [(0, -0.06, -0.10), (-0.01, 0.30, 0.16), (0.02, 0.70, 0.40), (0.04, 1.04, 0.68), (0.02, 1.28, 0.90), (-0.02, 1.38, 0.84), (-0.04, 1.32, 0.74), (-0.02, 1.24, 0.74)],
-         [0.18, 0.155, 0.115, 0.082, 0.056, 0.039, 0.027, 0.013],
-         [(0.05, -0.02, -0.06), (0.06, 0.34, 0.20), (0.03, 0.70, 0.46), (0.00, 0.96, 0.70)], [0.095, 0.080, 0.056, 0.020],
-         [(0.02, 0.80, 0.48), (0.20, 0.98, 0.56), (0.30, 1.10, 0.50), (0.27, 1.05, 0.42)], [0.056, 0.037, 0.022, 0.010],
-         BARK_LIT, [((0.28, 1.08, 0.48), 70, 30, 0.22, 0.13, LEAF), ((-0.02, 1.34, 0.84), -20, 55, 0.20, 0.12, LEAF_DARK)]),
+        # name, yaw, main cord, radii, second cord, radii, shade, forks [(points, radii)], leaves at the tips [(base, compass, pitch, length, width, slot)]
+        ("claw-0", 14,
+         [(0, -0.04, -0.06), (0.02, 0.35, 0.06), (0.04, 0.75, 0.16), (0.03, 1.10, 0.22), (0.00, 1.42, 0.20), (-0.02, 1.62, 0.14)],
+         [0.100, 0.085, 0.068, 0.050, 0.030, 0.010],
+         [(0.05, -0.02, -0.04), (0.06, 0.36, 0.08), (0.05, 0.72, 0.18), (0.03, 0.98, 0.22)], [0.050, 0.040, 0.028, 0.008], BARK_LIT,
+         [([(0.04, 0.75, 0.16), (0.10, 0.98, 0.36), (0.14, 1.14, 0.50), (0.15, 1.24, 0.56)], [0.044, 0.030, 0.018, 0.006]),
+          ([(0.03, 1.10, 0.22), (-0.12, 1.30, 0.34), (-0.20, 1.42, 0.40)], [0.032, 0.020, 0.006])],
+         [((0.15, 1.24, 0.56), 20, 35, 0.20, 0.12, LEAF), ((-0.20, 1.42, 0.40), 320, 45, 0.17, 0.10, LEAF_DARK), ((-0.02, 1.62, 0.14), 0, 62, 0.15, 0.09, LEAF)]),
+        ("claw-1", 86,
+         [(0, -0.04, -0.06), (-0.02, 0.32, 0.08), (-0.03, 0.68, 0.20), (-0.01, 1.00, 0.28), (0.02, 1.28, 0.28), (0.03, 1.46, 0.22)],
+         [0.094, 0.080, 0.064, 0.047, 0.028, 0.009],
+         [(-0.05, -0.02, -0.04), (-0.06, 0.34, 0.10), (-0.05, 0.66, 0.22), (-0.02, 0.92, 0.28)], [0.047, 0.038, 0.026, 0.008], BARK,
+         [([(-0.03, 0.68, 0.20), (-0.14, 0.86, 0.42), (-0.20, 0.98, 0.58), (-0.22, 1.06, 0.64)], [0.040, 0.028, 0.016, 0.006])],
+         [((-0.22, 1.06, 0.64), 330, 30, 0.19, 0.11, LEAF_DARK), ((0.03, 1.46, 0.22), 60, 55, 0.16, 0.09, LEAF)]),
+        ("claw-2", 152,
+         [(0, -0.04, -0.06), (0.01, 0.38, 0.05), (0.03, 0.80, 0.13), (0.02, 1.18, 0.18), (-0.01, 1.50, 0.16), (-0.03, 1.70, 0.10)],
+         [0.098, 0.084, 0.066, 0.048, 0.029, 0.009],
+         [(0.05, -0.02, -0.04), (0.06, 0.40, 0.07), (0.05, 0.78, 0.15), (0.03, 1.06, 0.18)], [0.049, 0.039, 0.027, 0.008], BARK_DARK,
+         [([(0.03, 0.80, 0.13), (0.16, 1.02, 0.30), (0.24, 1.16, 0.40), (0.27, 1.24, 0.44)], [0.042, 0.029, 0.017, 0.006]),
+          ([(0.02, 1.18, 0.18), (-0.10, 1.36, 0.32), (-0.16, 1.46, 0.40)], [0.030, 0.019, 0.006])],
+         [((0.27, 1.24, 0.44), 40, 40, 0.18, 0.11, LEAF), ((-0.16, 1.46, 0.40), 300, 50, 0.16, 0.10, LEAF), ((-0.03, 1.70, 0.10), 180, 65, 0.14, 0.08, LEAF_DARK)]),
+        ("claw-3", 221,
+         [(0, -0.04, -0.06), (-0.01, 0.33, 0.07), (-0.02, 0.70, 0.19), (0.01, 1.04, 0.26), (0.03, 1.32, 0.25), (0.02, 1.52, 0.19)],
+         [0.096, 0.082, 0.065, 0.048, 0.029, 0.009],
+         [(-0.05, -0.02, -0.04), (-0.05, 0.35, 0.09), (-0.04, 0.68, 0.21), (-0.01, 0.96, 0.27)], [0.048, 0.038, 0.027, 0.008], BARK,
+         [([(-0.02, 0.70, 0.19), (0.12, 0.90, 0.40), (0.18, 1.04, 0.54), (0.19, 1.12, 0.60)], [0.041, 0.028, 0.017, 0.006])],
+         [((0.19, 1.12, 0.60), 80, 32, 0.19, 0.11, LEAF), ((0.02, 1.52, 0.19), 250, 58, 0.15, 0.09, LEAF_DARK)]),
+        ("claw-4", 290,
+         [(0, -0.04, -0.06), (0.02, 0.36, 0.06), (0.03, 0.77, 0.15), (0.01, 1.14, 0.21), (-0.02, 1.44, 0.19), (-0.03, 1.60, 0.13)],
+         [0.099, 0.084, 0.067, 0.049, 0.029, 0.009],
+         [(0.05, -0.02, -0.04), (0.06, 0.38, 0.08), (0.05, 0.74, 0.17), (0.02, 1.02, 0.21)], [0.049, 0.039, 0.027, 0.008], BARK_LIT,
+         [([(0.03, 0.77, 0.15), (-0.10, 1.00, 0.34), (-0.16, 1.16, 0.46), (-0.17, 1.26, 0.51)], [0.043, 0.029, 0.017, 0.006]),
+          ([(0.01, 1.14, 0.21), (0.14, 1.32, 0.33), (0.20, 1.42, 0.38)], [0.031, 0.019, 0.006])],
+         [((-0.17, 1.26, 0.51), 290, 38, 0.19, 0.11, LEAF_DARK), ((0.20, 1.42, 0.38), 60, 46, 0.17, 0.10, LEAF), ((-0.03, 1.60, 0.13), 20, 60, 0.14, 0.08, LEAF)]),
     ]
-    # ⚠️⚠️ THE CROWN HAS LEAVES (owner, 2026-09-26, of the tree from his screen: *"it sucks"*, *"REFINE THIS TREE
-    # MORE"*): v7 kept the seven claws almost bare, and at 9 m against the sky they read as a dead bundle of
-    # sticks. He is a living forest. Each branch now carries clusters of broad leaves along its upper third and
-    # round its fork, typed per branch: (point index on the main cord, compass, pitch, length, width, slot).
-    canopy = {
-        "claw-0": [(3, 300, 20, 0.48, 0.26, LEAF), (3, 60, 35, 0.42, 0.24, LEAF_DARK), (4, 170, 45, 0.50, 0.27, LEAF), (5, 20, 60, 0.40, 0.22, MOSS_LIT), (4, 250, -10, 0.38, 0.21, LEAF_DARK)],
-        "claw-1": [(3, 320, 25, 0.46, 0.25, LEAF_DARK), (4, 80, 40, 0.50, 0.27, LEAF), (4, 200, 15, 0.40, 0.22, MOSS_LIT), (5, 10, 55, 0.42, 0.23, LEAF)],
-        "claw-2": [(3, 30, 30, 0.50, 0.27, LEAF), (4, 280, 45, 0.46, 0.25, LEAF_DARK), (5, 140, 60, 0.44, 0.24, LEAF), (4, 90, -5, 0.38, 0.21, MOSS_LIT), (3, 200, 20, 0.40, 0.22, LEAF_DARK)],
-        "claw-3": [(3, 340, 20, 0.44, 0.24, LEAF), (4, 60, 45, 0.48, 0.26, LEAF_DARK), (5, 200, 50, 0.40, 0.22, LEAF)],
-        "claw-4": [(3, 100, 25, 0.48, 0.26, LEAF_DARK), (4, 320, 40, 0.50, 0.27, LEAF), (5, 210, 60, 0.42, 0.23, MOSS_LIT), (4, 30, 0, 0.38, 0.21, LEAF)],
-        "claw-5": [(3, 280, 20, 0.46, 0.25, LEAF), (4, 40, 45, 0.44, 0.24, LEAF_DARK), (5, 160, 55, 0.42, 0.23, LEAF)],
-        "claw-6": [(3, 20, 30, 0.48, 0.26, LEAF_DARK), (4, 250, 40, 0.46, 0.25, LEAF), (5, 110, 55, 0.44, 0.24, LEAF), (4, 170, 5, 0.38, 0.21, MOSS_LIT)],
-    }
-    # The leaf masses per branch, in the branch's own space (+Z along it): (centre, radii, slot, tilt, turn).
-    # The shaded mass sits under and inside, the lit one over and outside, each its own size and lean.
-    masses = {
-        "claw-0": [((-0.04, 1.02, 0.66), (0.44, 0.32, 0.40), LEAF_DARK, 8.0, 10.0), ((0.10, 1.24, 0.60), (0.34, 0.27, 0.32), LEAF, -6.0, 40.0),
-                   ((-0.26, 1.16, 0.48), (0.24, 0.20, 0.24), MOSS_LIT, 12.0, 70.0)],
-        "claw-1": [((0.04, 0.80, 0.86), (0.42, 0.30, 0.40), LEAF_DARK, 10.0, -20.0), ((-0.08, 1.00, 0.92), (0.32, 0.26, 0.30), LEAF, -8.0, 15.0)],
-        "claw-2": [((0.00, 1.26, 0.42), (0.46, 0.34, 0.40), LEAF_DARK, 6.0, 30.0), ((0.14, 1.46, 0.36), (0.33, 0.28, 0.31), LEAF, -4.0, 60.0),
-                   ((-0.30, 1.10, 0.36), (0.26, 0.22, 0.25), LEAF, 14.0, -30.0)],
-        "claw-3": [((-0.02, 0.64, 0.98), (0.40, 0.29, 0.38), LEAF_DARK, 12.0, 25.0), ((0.12, 0.82, 1.02), (0.30, 0.24, 0.28), MOSS_LIT, -6.0, 50.0)],
-        "claw-4": [((0.04, 1.20, 0.58), (0.45, 0.33, 0.41), LEAF_DARK, 8.0, -15.0), ((-0.12, 1.40, 0.52), (0.34, 0.28, 0.32), LEAF, -5.0, 20.0),
-                   ((0.28, 1.06, 0.46), (0.24, 0.20, 0.23), MOSS_LIT, 10.0, 80.0)],
-        "claw-5": [((-0.04, 0.88, 0.86), (0.42, 0.30, 0.39), LEAF_DARK, 9.0, 35.0), ((0.10, 1.04, 0.90), (0.31, 0.25, 0.29), LEAF, -7.0, -10.0)],
-        "claw-6": [((0.02, 1.08, 0.64), (0.44, 0.32, 0.40), LEAF_DARK, 7.0, -35.0), ((-0.10, 1.28, 0.62), (0.33, 0.27, 0.31), LEAF, -5.0, 5.0),
-                   ((0.26, 1.02, 0.44), (0.25, 0.21, 0.24), LEAF, 13.0, 55.0)],
-    }
-    # A strand or two of old moss hanging from under the masses: typed, each its own length and sway.
-    moss = {
-        "claw-0": [([(-0.10, 0.80, 0.62), (-0.12, 0.60, 0.66), (-0.10, 0.42, 0.64)], [0.030, 0.024, 0.010])],
-        "claw-1": [([(0.06, 0.58, 0.84), (0.08, 0.36, 0.88), (0.05, 0.20, 0.86)], [0.028, 0.022, 0.009])],
-        "claw-2": [([(0.08, 1.02, 0.40), (0.10, 0.78, 0.42), (0.07, 0.62, 0.40)], [0.030, 0.024, 0.010]),
-                   ([(-0.22, 0.96, 0.30), (-0.24, 0.80, 0.32)], [0.024, 0.010])],
-        "claw-3": [([(0.02, 0.44, 0.96), (0.03, 0.26, 0.98), (0.01, 0.14, 0.96)], [0.026, 0.020, 0.008])],
-        "claw-4": [([(-0.06, 0.96, 0.56), (-0.08, 0.72, 0.58), (-0.05, 0.56, 0.56)], [0.030, 0.024, 0.010])],
-        "claw-5": [([(0.04, 0.66, 0.84), (0.06, 0.46, 0.86), (0.03, 0.30, 0.84)], [0.028, 0.022, 0.009])],
-        "claw-6": [([(0.10, 0.86, 0.60), (0.12, 0.64, 0.62), (0.09, 0.48, 0.60)], [0.030, 0.024, 0.010]),
-                   ([(-0.18, 0.84, 0.54), (-0.20, 0.70, 0.56)], [0.022, 0.009])],
-    }
-    for name, yaw, main, main_r, second, second_r, fork, fork_r, shade, tufts in branches:
-        n = Node(name, origin=ring(0.30, yaw, 0.0), parent="crown", yaw=yaw); nodes.append(n)
-        line(n, main, main_r, shade, twist=40.0, per=4)
-        line(n, second, second_r, BARK if shade != BARK else BARK_DARK, twist=-30.0, per=4)
-        line(n, fork, fork_r, shade, per=4)
-        for base, compass, pitch, length, width, slot in tufts:
-            sprig(n, base, compass, pitch, length, width, slot)
-            sprig(n, base, compass + 70, pitch - 25, length * 0.8, width * 0.8, LEAF_DARK if slot == LEAF else LEAF)
-        for idx, compass, pitch, length, width, slot in canopy[name]:
-            sprig(n, main[idx], compass, pitch, length, width, slot, thickness=0.022)
-        # ⚠️⚠️ v8 (2026-09-26 night): THE CROWN HAS MASS. The leaves alone were still flecks at 9 m (the owner's
-        # *"REFINE THIS TREE MORE"*; `review/ult_inmatch_tree_v4_before_reauthor.png`: a bare trunk with sprouts).
-        # Each branch now carries two or three round leaf masses round its upper third, the plaza trees' own
-        # canopy shapes, dark underneath and lit on top, so the guardian reads as a great tree in leaf, with the
-        # woven branches showing between the masses and the hooked tips poking out of them.
-        for centre, radii, slot, tilt, turn in masses[name]:
-            clump(n, centre, radii, slot, tilt, turn)
-        for points, radii in moss[name]:
-            line(n, points, radii, MOSS_DARK, sides=4, per=3)
+    for name, yaw, main, main_r, second, second_r, shade, forks, leaves in branches:
+        n = Node(name, origin=ring(0.22, yaw, 0.0), parent="crown", yaw=yaw); nodes.append(n)
+        line(n, main, main_r, shade, twist=30.0, per=4)
+        line(n, second, second_r, BARK if shade != BARK else BARK_DARK, twist=-24.0, per=4)
+        for points, radii in forks:
+            line(n, points, radii, shade, per=3)
+        for base, compass, pitch, length, width, slot in leaves:
+            sprig(n, base, compass, pitch, length, width, slot, thickness=0.018)
 
     write(os.path.join(OUT, "sentry.glb"), nodes)
 
@@ -1415,26 +1304,49 @@ def meadow():
     def mx(x, z):
         return (-x, 0.0, z)
 
-    # --- MOSS CUSHIONS: low lumps half-sunk in the stone, clustered where she rises and toward him. Each: (x, z) ground
-    # point, (rx, ry, rz) size, turn, shade. Typed one by one; groups by where they sit.
+    # --- MOSS CUSHIONS, v3 (TODO HERO-9, "NEXT" row (5)): v2's cushions were one low lump each (ry 0.05 to 0.07), and from the
+    # cutscene's crane every one read as an outlined green disc, a lily pad on the plaza. Moss grows in MOUNDS: each cushion is now a
+    # group of two to four taller lumps (ry 0.07 to 0.11) that overlap and step in height, dark and light greens mixed, so from above
+    # the outline breaks up and from the side it has a skyline. Each group: its (x, z) ground point, then its lumps as (dx, dz)
+    # inside the group, (rx, ry, rz), turn, shade. Typed lump by lump; groups by where they sit.
     cushions = [
         # round her hem
-        ((0.78, -1.02), (0.36, 0.07, 0.30), 10.0, MD_MOSS), ((1.28, -1.42), (0.30, 0.06, 0.26), 55.0, MD_MOSS_DK),
-        ((0.52, -1.58), (0.28, 0.06, 0.34), 120.0, MD_MOSS), ((1.10, -0.70), (0.24, 0.05, 0.20), 200.0, MD_MOSS_DK),
-        ((1.52, -0.98), (0.26, 0.06, 0.22), 250.0, MD_MOSS), ((0.94, -1.86), (0.32, 0.07, 0.24), 300.0, MD_MOSS_DK),
+        ((0.78, -1.02), [((0.00, 0.00), (0.20, 0.10, 0.17), 10.0, MD_MOSS), ((0.17, 0.09), (0.14, 0.08, 0.12), 60.0, MD_MOSS_DK),
+                         ((-0.12, 0.13), (0.12, 0.07, 0.11), 130.0, MD_MOSS)]),
+        ((1.28, -1.42), [((0.00, 0.00), (0.17, 0.09, 0.15), 55.0, MD_MOSS_DK), ((-0.15, -0.06), (0.13, 0.08, 0.12), 20.0, MD_MOSS)]),
+        ((0.52, -1.58), [((0.00, 0.00), (0.18, 0.11, 0.16), 120.0, MD_MOSS), ((0.13, -0.12), (0.12, 0.08, 0.13), 200.0, MD_MOSS_DK),
+                         ((-0.14, -0.08), (0.11, 0.07, 0.10), 300.0, MD_MOSS), ((0.03, 0.16), (0.10, 0.07, 0.09), 40.0, MD_MOSS_DK)]),
+        ((1.10, -0.70), [((0.00, 0.00), (0.14, 0.08, 0.12), 200.0, MD_MOSS_DK), ((0.12, 0.07), (0.11, 0.07, 0.10), 270.0, MD_MOSS)]),
+        ((1.52, -0.98), [((0.00, 0.00), (0.16, 0.09, 0.14), 250.0, MD_MOSS), ((-0.13, 0.10), (0.12, 0.08, 0.11), 330.0, MD_MOSS_DK),
+                         ((0.12, 0.08), (0.10, 0.07, 0.09), 10.0, MD_MOSS)]),
+        ((0.94, -1.86), [((0.00, 0.00), (0.19, 0.10, 0.15), 300.0, MD_MOSS_DK), ((0.16, 0.05), (0.13, 0.08, 0.12), 20.0, MD_MOSS),
+                         ((-0.08, -0.14), (0.11, 0.07, 0.10), 160.0, MD_MOSS)]),
         # between her and him
-        ((0.46, -0.44), (0.22, 0.05, 0.26), 30.0, MD_MOSS), ((0.18, -0.86), (0.26, 0.06, 0.20), 150.0, MD_MOSS_DK),
-        ((0.70, 0.12), (0.20, 0.05, 0.18), 80.0, MD_MOSS), ((-0.30, -0.52), (0.24, 0.05, 0.22), 220.0, MD_MOSS),
+        ((0.46, -0.44), [((0.00, 0.00), (0.13, 0.08, 0.14), 30.0, MD_MOSS), ((-0.11, 0.09), (0.10, 0.07, 0.10), 110.0, MD_MOSS_DK)]),
+        ((0.18, -0.86), [((0.00, 0.00), (0.15, 0.09, 0.12), 150.0, MD_MOSS_DK), ((0.13, -0.07), (0.11, 0.07, 0.10), 230.0, MD_MOSS),
+                         ((-0.10, -0.10), (0.09, 0.07, 0.09), 60.0, MD_MOSS)]),
+        ((0.70, 0.12), [((0.00, 0.00), (0.12, 0.08, 0.11), 80.0, MD_MOSS), ((0.10, 0.08), (0.09, 0.07, 0.08), 170.0, MD_MOSS_DK)]),
+        ((-0.30, -0.52), [((0.00, 0.00), (0.14, 0.08, 0.13), 220.0, MD_MOSS), ((0.12, 0.08), (0.10, 0.07, 0.10), 300.0, MD_MOSS_DK)]),
         # behind him to his left
-        ((-0.82, -0.92), (0.30, 0.06, 0.24), 70.0, MD_MOSS_DK), ((-1.24, -0.38), (0.24, 0.05, 0.28), 170.0, MD_MOSS),
-        ((-0.62, -1.46), (0.26, 0.06, 0.22), 280.0, MD_MOSS), ((-1.40, -1.20), (0.22, 0.05, 0.20), 20.0, MD_MOSS_DK),
+        ((-0.82, -0.92), [((0.00, 0.00), (0.18, 0.10, 0.14), 70.0, MD_MOSS_DK), ((0.15, -0.08), (0.12, 0.08, 0.11), 150.0, MD_MOSS),
+                          ((-0.13, 0.10), (0.11, 0.07, 0.10), 240.0, MD_MOSS)]),
+        ((-1.24, -0.38), [((0.00, 0.00), (0.14, 0.08, 0.16), 170.0, MD_MOSS), ((-0.11, -0.10), (0.11, 0.07, 0.11), 260.0, MD_MOSS_DK)]),
+        ((-0.62, -1.46), [((0.00, 0.00), (0.15, 0.09, 0.13), 280.0, MD_MOSS), ((0.12, 0.10), (0.11, 0.08, 0.10), 10.0, MD_MOSS_DK),
+                          ((-0.10, 0.12), (0.09, 0.07, 0.09), 100.0, MD_MOSS)]),
+        ((-1.40, -1.20), [((0.00, 0.00), (0.13, 0.08, 0.12), 20.0, MD_MOSS_DK), ((0.11, -0.07), (0.10, 0.07, 0.09), 90.0, MD_MOSS)]),
         # out to her right
-        ((1.98, -0.42), (0.28, 0.06, 0.24), 110.0, MD_MOSS_DK), ((2.26, -1.30), (0.24, 0.05, 0.28), 190.0, MD_MOSS),
-        ((1.70, 0.48), (0.22, 0.05, 0.20), 260.0, MD_MOSS), ((2.10, 1.10), (0.26, 0.06, 0.22), 330.0, MD_MOSS_DK),
+        ((1.98, -0.42), [((0.00, 0.00), (0.17, 0.09, 0.14), 110.0, MD_MOSS_DK), ((-0.14, 0.07), (0.12, 0.08, 0.11), 190.0, MD_MOSS),
+                         ((0.10, 0.12), (0.10, 0.07, 0.09), 280.0, MD_MOSS)]),
+        ((2.26, -1.30), [((0.00, 0.00), (0.14, 0.08, 0.16), 190.0, MD_MOSS), ((0.12, -0.10), (0.11, 0.07, 0.10), 270.0, MD_MOSS_DK)]),
+        ((1.70, 0.48), [((0.00, 0.00), (0.13, 0.08, 0.12), 260.0, MD_MOSS), ((-0.10, 0.09), (0.10, 0.07, 0.09), 340.0, MD_MOSS_DK)]),
+        ((2.10, 1.10), [((0.00, 0.00), (0.16, 0.09, 0.13), 330.0, MD_MOSS_DK), ((0.13, 0.08), (0.12, 0.08, 0.11), 50.0, MD_MOSS),
+                        ((-0.12, 0.10), (0.10, 0.07, 0.09), 140.0, MD_MOSS), ((0.02, -0.14), (0.09, 0.07, 0.08), 220.0, MD_MOSS_DK)]),
     ]
-    for i, ((x, z), size, turn, slot) in enumerate(cushions):
+    for i, ((x, z), lumps) in enumerate(cushions):
         n = Node(f"moss-{i}", origin=mx(x, z), parent="meadow"); nodes.append(n)
-        clump(n, (0.0, size[1] * 0.35, 0.0), size, slot, tilt=0.0, turn=turn, sides=10)
+        for (dx, dz), size, turn, slot in lumps:
+            # A third sunk in the stone, so it sits IN the court like moss, not on it like a cap.
+            clump(n, (dx, size[1] * 0.30, dz), size, slot, tilt=0.0, turn=turn, sides=10)
 
     # --- GRASS: fourteen tufts, taller and fuller than v1, each blade typed (compass, pitch, length, width, shade).
     tufts = [
@@ -1574,7 +1486,51 @@ def meadow():
     write(os.path.join(OUT, "meadow.glb"), nodes)
 
 
+def measure(build, scale):
+    """⚠️ MEASURE A PROP, DON'T GUESS IT (2026-09-27). Rebuilds it in memory (nothing written) and prints, in authored metres and at
+    the runtime `scale`: its top, how far out anything reaches at the court (y under 0.05), its radius at shin height (0.15 to 0.45)
+    and its crown's radius (above 3.3). The v9/v10 sentry's `PaeteRules.SentryCanClearance` and `SentryHoldDistance` were sized
+    from these numbers; a gameplay number that depends on a prop's shape is measured here, then written with its arithmetic.
+
+        python tools/build_paete_props.py --measure sentry 1.3"""
+    global write
+    kept, captured = write, {}
+    write = lambda path, nodes: captured.setdefault("nodes", nodes)
+    try:
+        build()
+    finally:
+        write = kept
+    nodes = {n.name: n for n in captured["nodes"]}
+
+    def to_world(n, p):
+        while n is not None:
+            s, a = n.scale, math.radians(n.yaw)
+            x, y, z = p[0] * s, p[1] * s, p[2] * s
+            x, z = x * math.cos(a) + z * math.sin(a), -x * math.sin(a) + z * math.cos(a)
+            p = (x + n.origin[0], y + n.origin[1], z + n.origin[2])
+            n = nodes.get(n.parent) if n.parent else None
+        return p
+
+    top, reach, shin, crown = -9.0, 0.0, 0.0, 0.0
+    for n in nodes.values():
+        for _, faces in n.parts:
+            for face in faces:
+                for q in face:
+                    w = to_world(n, q)
+                    r = math.hypot(w[0], w[2])
+                    top = max(top, w[1])
+                    if w[1] < 0.05: reach = max(reach, r)
+                    if 0.15 < w[1] < 0.45: shin = max(shin, r)
+                    if w[1] > 3.3: crown = max(crown, r)
+    print(f"authored: top {top:.2f}  court reach {reach:.2f}  shin radius {shin:.2f}  crown radius {crown:.2f}")
+    print(f"at {scale}: top {top * scale:.2f} m  court reach {reach * scale:.2f} m  shin {shin * scale:.2f} m  crown {crown * scale:.2f} m")
+
+
 if __name__ == "__main__":
+    if "--measure" in sys.argv:
+        i = sys.argv.index("--measure")
+        measure(globals()[sys.argv[i + 1]], float(sys.argv[i + 2]) if len(sys.argv) > i + 2 else 1.0)
+        sys.exit(0)
     os.makedirs(OUT, exist_ok=True)
     which = set(sys.argv[1:]) or {"sentry", "seedling", "thorns", "makiling"}
     if "sentry" in which: sentry()

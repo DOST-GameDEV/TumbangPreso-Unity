@@ -118,8 +118,8 @@
       "cue": "sfx_ult_theme_paete",
       "seconds": 5.0,
       "peak": 0.66,
-      "rms": 0.116625680953378,
-      "sha256": "6e51f89e5fdc3fbe7ad603699ef47d7e608ea453a8c5515a1f551478d5842770"
+      "rms": 0.12096351091380168,
+      "sha256": "1c3bf03d389d433fda7f9528d292bb3f262f7cd7f479e8307825828f905842a4"
     },
     {
       "cue": "sfx_sky_canopy",

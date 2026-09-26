@@ -499,7 +499,8 @@ namespace TumbangPreso.Visual
                     new Vector4(150f, 0.46f, 0.25f, 0.078f), new Vector4(75f, 0.62f, 0.26f, 0.070f), new Vector4(0f, 0.78f, 0.27f, 0.060f),
                     new Vector4(-70f, 0.92f, 0.28f, 0.048f), new Vector4(-110f, 0.98f, 0.29f, 0.030f) },
         };
-        private static readonly Color[] Shade = { PaeteSentryBody.BarkDark, PaeteSentryBody.Bark, PaeteSentryBody.BarkLit, PaeteSentryBody.Bark };
+        // v9: no lit bark in the shin bands (they blended into warm skin in film r16); dark and mid alternate so each band reads.
+        private static readonly Color[] Shade = { PaeteSentryBody.BarkDark, PaeteSentryBody.Bark, PaeteSentryBody.BarkDark, PaeteSentryBody.Bark };
 
         private CharacterMotor _body;
         private readonly Mesh[] _meshes = new Mesh[4];

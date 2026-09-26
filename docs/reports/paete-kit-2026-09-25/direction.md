@@ -563,3 +563,120 @@ AGENTS.md: an animation never adds rooting. The world's half (the roots, the tre
 **Match time.** The round clock does not run during a cutscene: `SharedUltimatePhase` holds `PresentationClock` on the first accepted
 cast, `RoundDirector.FixedUpdate` returns while it is held, and the world runs at a time scale of 0. The v5 film measures it (the clock
 when the cutscene comes up, while it plays, and when it hands back) and fails if it moved.
+
+### 5.15 v6: the owner's verdict on v5, a smaller sleek tree that never stands on the can, and the effects pass (2026-09-27)
+
+The owner on `paete_ultimate_v5.mp4`: *"Make the tre a bit smaller and a lot more sleek so that it isnt too distracting"*, *"make it
+so that it cant block the can too (dont let it be placed in a place it STANDS on can)"*, *"also add more special effects and vfx on
+his ult cutscene IDK maybe open it with leaves or smth u figure it out u direct it make it better"*; then five Genshin burst frames
+(Ayaka, Neuvillette, Raiden twice, rising light streaks), *"theres liek a lot of ways u could go abt the vfx u figure it out"*, *"can
+u do more reserach on genshin ult cutscenes and otehr games before actually starting"* and *"focus on direction and vfx and sfx"*.
+The research, footage this time, is `docs/reports/ultimate-performances-2026-09-24/research.md` section 4, written for every hero.
+
+**What made the v8 tree distracting, named off film r14** (`Logs/paete-evidence-r14`, the wide view and a caught player's view):
+eight fat cords crossing in big diagonal X's, each a different shade, so the trunk strobed; a swollen upper trunk; three vines and a
+sash wrapped round it; six moss slabs; seven gnarled crown claws each with sprigs, two or three leaf masses and hanging moss; roots
+flaring 1.7 m at shin height; eight thorned ground branches racing up to 5.6 m out; all at 9 m, standing wherever it was aimed,
+the can included.
+
+**The v9 tree** (`tools/build_paete_props.py` `sentry`, measured off the built glb): the Groot rope said once, five cords twisting the
+same way round a dark heartwood core like a wrung rope, one shade step apart, two thin binding strands the other way for the weave up
+close; one vine; two moss caps at the shoulder; the same two engraved hollows; six claw roots, slimmer, that still dive into the court
+(2.14 m reach at 1.3); five slender branches rising like a vase, each ending in one soft leaf cloud, round a cloud at the heart, the
+plaza trees' own canopy language. 10,334 triangles. It stands at 1.3 (was 1.75): **6.6 m to the top of its clouds, eyes 3.1 m up**,
+still the tallest thing in the box. Four ground branches from 1.5 m to at most 3.6 m (was eight to 5.6 m), turned together so the can
+sits in a gap between two (`PaeteSentryBody.AvoidPoint`); a smaller soil ring, shorter cracks, lighter hauls and fewer falling leaves.
+The prisoners are held at **1.4 m** (`PaeteRules.SentryHoldDistance`, was 1.9): the v9 root knuckles are 1.17 m out at shin height,
+so a body's back is against them, which is the owner's older *"make it seem more apparent that the people tied to the tree are
+actually TIED"*; the embrace limb leaves the rope at 2.0 m, 0.52 m out.
+
+**Never on the can.** `PaeteRules.SentrySpotClearOfCan` (core, `dotnet test`): a spot within **2.4 m** of the lata
+(`SentryCanClearance`: the 2.14 m root reach, the can's 0.12 m base, and room for the court breaking round the toes) is pushed straight
+out from the can to 2.4 m; aimed right on it, pushed back toward the caster; against a wall, the other three quarter turns are tried
+in a fixed order. `PaeteVine.SentryTarget` runs it on every peer from the same accepted cast and the same synced can. The cutscene's
+staged tree is pushed by the same rule against the real can and the RISE shots follow it (`HeroIntroductionScene.PaeteFrame`).
+
+**The direction of the effects pass.** The owner's sentence is unchanged (her light comes down into him, he gives it to the ground,
+the ground answers with the guardian) and so are its three shots and its 5.0 s; what v6 adds is that the whole frame now tells it,
+not only his body. Every piece rides a beat that was already there (research section 4: acting before effects).
+
+| Time | Picture (new in v6) | Sound (new in v6) | Reference it answers |
+|---|---|---|---|
+| 0 | THE CUT LANDS ON LEAVES: 22 leaves and sampaguita petals already streaming in from behind her, five of them right at the lens | a flurry of leaves on frame 0, air rushing in | Nahida's leaf at the lens; the owner's *"open it with leaves"* |
+| 0.12 to 0.46 | they wind into a spinning column round her spot and she rises INSIDE it | the rustle whirls, 4 to 9 turns a second | Kazuha's vortex |
+| 0.46 | the column BURSTS outward as she forms; petals float down past the lens | a breath out, bamboo wind-chimes | Ayaka's petals |
+| 0.02 to 0.3 | the court dims and cools (the phase camera's grade, 0.76 brightness, 0.84 saturation) so her light and his eyes carry the frame | | the backdrop dropping away (Kazuha, Zhongli, Raiden's sky) |
+| 0.3 to 0.78 | six petals circle her hands, spiral round the light as it falls, and scatter off his hand | a swell drawn in, cut dead on 0.78 | Ayaka: particles ride the motion |
+| 0.78 | THE MARK OF THE MOUNTAIN flashes in the air behind his head (three leaves in a whorl inside two rings) with a jade shockwave ring | THE MARK'S VOICE: a carved-wood bell (`bell`) | Raiden's emblem |
+| 1.22 | the mark STAMPS on the court under his palms and stays, turning; ten leaves blown flat out along the court | the bell an octave down under the slam, a three-note seal, the leaves skating | Neuvillette's floor ring |
+| 1.45 to 2.3 | ten leaves and petals orbit him, faster at every heartbeat; the mark pulses with each | the whirl again, quickening | Baizhu's leaves on ribbons |
+| 1.72, 1.96, 2.14 | streaks of his light shoot up out of the court round him: two, three, four | a rising glide per streak | the rising streaks; Neuvillette's pillars |
+| 2.3 | THE SEND: three more streaks, and a BRUSH STROKE of light is painted along the court from his hands to the spot, left to right, ahead of the roots; the orbiting leaves ride out with them; the mark drains | one fast bright swish | Raiden's slashes, Kinich's horizontal flash |
+| 2.75 | light spears up out of the court at the spot and the mark shows under it as the court bulges | three rising glides, the bell soft | Neuvillette's pillars |
+| 3.15, 3.55, 3.95 | each haul throws a spiral of six leaves up round the trunk | a whirl gust over each groan | Kazuha's vortex |
+| 4.5 | THE MARK behind the guardian's head as its eyes open, with an anamorphic streak on each eye; the daylight comes back for the payoff | the bell with the carved note, a last shimmer | the emblem, a third time |
+| throughout | near-lens drifters in every shot, so each frame has a near layer, him, and the light behind | | depth, in every burst |
+
+The mark is drawn three times on purpose: it is the shape of the one light as it travels (in the air as it goes into him, on the
+court as he gives it to the ground, behind the guardian's head as it wakes), and its bell is the motif the ear learns. His lime and
+her jade only, never white. Nothing runs on `Update`. Reduced effects keeps every shape and drops the flashes, the shockwave ring
+and the eye streaks, and runs the glows at half strength.
+
+**A table that had drifted, found on the way.** `Resources/UltimateIntros/paete.txt` at `7b0d09bb9` held a ROOT shot that
+`tools/author_ultimate_intros.py` no longer described: the source had been widened after `PaeteSpiritReviewProbe` v4 (her hands and
+face at the top of the frame, him and his hands at the bottom) and the file was never regenerated, so v5 shipped the tight shot the
+review had rejected. Regenerating for v6's RISE restored it; the wider frame is also where the streaks and the court mark live.
+
+**The RISE, re-framed for 6.6 m**: a shorter crane (to 2.0 m up at 8.9 m out, was 2.6 at 9.6), a tighter lens at the end (52, was 64),
+and it pushes IN on the eyes at 3.1 m rather than backing off to fit a crown that is no longer 9 m up. Storyboarded with `--preview
+paete` (the sketch draws the v9 tree's measured size).
+
+**As built:** `HeroIntroductionScene.PaeteVfx.cs` (every table typed row by row), `SpiritGlow.shader` `_Tips`,
+`UltimatePhaseView` applying `HeroIntroductionScene.GradeAt` (1, 1 for every other hero), `tools/build_paete_audio.py` `theme` v6
+(`glide`, `whoosh`, `bell`). Film r15.
+
+**Film r16, reviewed, and round two.** All nine play tests passed on r16 (the kit, the bots, the rejoin probe; the round clock read
+89.880 as the cutscene came up, 89.880 on its last frame, 88.880 a second after). Judged frame by frame, five things did not land:
+the opening gust was six specks at five metres and read as nothing; the mark in the air was centred at his neck, so his body hid
+its three leaves and only its rings showed; the brush stroke, additive lime alone on the sunlit beige court, clipped toward white
+and was a thread at eight metres; the fourth mark hung behind the guardian's head read as a bullseye on its face; and the dim
+measured only 12 per cent on the sky. Round two: the gust's leaves 1.7 times and petals 1.6 times their typed size, plus three
+spiralling ribbons of her jade light drawing the column they ride (Baizhu's ribbons, Kazuha's vortex); the air mark behind the top
+of his head at 1.65 m so its leaves reach past his shoulders; the stroke 0.62 m tall with a translucent body under the light (r17 tried dark ink and
+it rendered as a white slab: the ribbon's two sides shared vertices and their normals cancelled; r18 gives each side its own, and the
+body is translucent lime), so it has a colour of its own on any ground; the fourth mark stamped wide (2.1 m) on the court at the guardian's foot as it wakes,
+the ground having answered; the grade to 0.68 brightness and 0.78 saturation, held through the roots and hauls and given back only
+for the payoff. The prisoners' limb and shin bands lost their lit bark (it blended into warm skin): dark and mid bark alternate.
+
+**v10, the crown (owner, same day, on a frame of v9 in play):** *"remove the leaves or wtv this is called at the top bczimma be fr it
+makes it look goofy"*, *"I think if its js pointy on the top with a glow coming from within it will look better"*, *"u can put like a
+few leaves at the edge of the top but dont put like a green blob coz it looks goofy"*, with an Ent from the films (a slender woven
+trunk whose top is a spray of fine branches, leaves only at the tips). The crown is now a central leader rising straight to a point
+and five slender branches rising steeply round it, each forking into thinner twigs, the whole outline a flame; two or three small
+leaves at the tips and nowhere else; and a LIGHT INSIDE it (`PaeteSentryBody`'s crown light: a soft glow and a hot heart in its own
+eye light, additive, so the branches in front cut it into shafts and it shows between them). It glows faintly while it hauls itself
+out (the light its roots carried is inside it), fully when its eyes open, breathes through the watch, and goes out as it sleeps.
+Not the gem direction.md 5.12 cut (two green cubes that read as a crystal): no object, only light. 7.0 m to the tip at 1.3, the crown
+1.36 m across (v9's clouds were 1.83 m). The branches fold only 20 degrees under the court (62 crossed them through the leader) and
+droop open as it sleeps; five leaves are shaken off at the top-out, one falls every 2.4 s through the watch. The crown's greens were
+muted as well (slot 2 `557A2E`, 3 `3A5E26`, 7 `5C7A2E`): v9's rendered (158, 228, 44) against the plaza trees' (97, 124, 71).
+
+**It holds still (owner, same day):** *"also tree doesnt need to look left and right"*, *"lokks very weird"*. In play the awake tree
+turned its whole trunk from one prisoner to the next every 2.6 s; a 7 m tree swivelling on its roots read as a turret, not a
+guardian. It now holds the way it came up, facing along its roots' travel (`PaeteSentryBody.WatchPrisoners` off), and its life is in
+its breath, its blinks and the light inside its crown. The wake lean tips it 6 degrees forward instead of at a prisoner.
+
+**Protocol 58.** No bytes changed, but the tree's spot (kept off the can) and the hold (1.4 m) are computed on every peer, so a 57
+peer would draw the tree on the can where the host catches beside it. `NetSession.ProtocolVersion` and `ChatAndLobbyChromeTests`
+moved together; both machines rebuild from the same commit.
+
+**Films:** r15 (stalled: the mark's `Pow(Sin(PI))` was NaN), r16 (first v6, all nine tests), r17 (round two and v10, ten tests
+including `AimedAtTheCanTheGuardianComesUpBesideIt`: 2.4 m off the can and still catching), r18 (the stroke's two-sided mesh and the
+tree holding still). The round clock read 89.880 as each cutscene came up, 89.880 on its last frame and 88.880 one second after.
+
+**Its vines crawl (owner, same day):** *"maybe if ur gonan add movement to it make its vines like move or crawl"*. The one vine was
+baked into the trunk and could not move, so the model carries none now and `PaeteSentryBody` grows three living vines on the rope's
+own silhouette (`TrunkVineRows`, typed): they climb further as it tops out and keep climbing through the watch, wind slowly round the
+trunk (6 to 8 degrees a second), carry a ripple running UP each one the way a creeper inches along, and lift their tips off the bark
+to feel the air; two leaves ride each and flutter as the ripple passes; as it sleeps they slide back down. The tree stays still and
+its vines move: small motions on a big thing.

@@ -302,6 +302,12 @@ namespace TumbangPreso.Visual
         private readonly Mesh[] _crackMeshes = new Mesh[CrackRows.Length * 2];
         private readonly PaeteLight[] _crackGlow = new PaeteLight[CrackRows.Length * 2];
         private readonly PaeteLight[] _rings = new PaeteLight[3];
+        /// <summary>
+        /// ⚠️ THE PULSE RINGS' SIZE AND STRENGTH, 1 FOR EVERYBODY ELSE AND LESS ON HIS OWN SCREEN (TODO HERO-9, "NEXT" row (4)). In
+        /// first person his hands are a metre under his lens, so a ring that swells to 2.2 m at 0.9 filled the bottom half of his
+        /// view three times in a row, where from across the court it is a small bright pulse. `PaeteGroundCall` sets 0.45 and 0.35.
+        /// </summary>
+        public float RingSize = 1f, RingStrength = 1f;
         private readonly List<Vector3> _points = new List<Vector3>(20);
         private readonly List<float> _radii = new List<float>(20);
         private readonly List<Vector3> _line = new List<Vector3>(4);
@@ -417,8 +423,8 @@ namespace TumbangPreso.Visual
                 float p = pulses != null && r < pulses.Count ? pulses[r] : -99f;
                 float s = (t - p - 0.18f) / 0.45f;
                 if (s < 0f || s > 1f || channel <= 0.01f) { _rings[r].Hide(); continue; }
-                float radius = 0.4f + 1.8f * s;
-                _rings[r].Set(mid, new Vector3(radius, 1f, radius), Quaternion.identity, 0.9f * (1f - s) * channel);
+                float radius = (0.4f + 1.8f * s) * RingSize;
+                _rings[r].Set(mid, new Vector3(radius, 1f, radius), Quaternion.identity, 0.9f * (1f - s) * channel * RingStrength);
             }
         }
 
@@ -877,6 +883,10 @@ namespace TumbangPreso.Visual
             foreach (float h in Heaves) taut = Mathf.Max(taut, GrowthVfx.Envelope(_age, h - 0.05f, 0.08f, h + 0.3f, 0.18f));
             taut = Mathf.Max(taut, GrowthVfx.Envelope(_age, 0.72f, 0.05f, 0.95f, 0.15f));
             float channel = (1f - Mathf.Clamp01((_age - RiseAt) / 0.6f)) * (1f - cancel);
+            // In his own first-person view the pulse rings stay a small faint pulse round his hands (see `RingSize`).
+            bool ownView = _headRenderer != null && _headRenderer.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+            _roots.RingSize = ownView ? 0.45f : 1f;
+            _roots.RingStrength = ownView ? 0.35f : 1f;
             _roots.Pose(_age, left, right, knee, _yaw, court, grow, taut, retract, channel, Pulses);
             // The light in him: all of him lit, flaring on each haul; a pulse down his arms as the roots leave and at the grip.
             float flare = 0f;
@@ -905,7 +915,6 @@ namespace TumbangPreso.Visual
                 _armGlow.Sync(strength * 0.8f);
             }
             // His eyes, lit (not on his own screen: in first person they are inside his view).
-            bool ownView = _headRenderer != null && _headRenderer.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
             float eyes = (1f - Mathf.Clamp01((_age - 2.6f) / 0.5f)) * (1f - cancel * 0.6f) * (1f + 0.4f * flare);
             for (int e = 0; e < 2; e++)
             {

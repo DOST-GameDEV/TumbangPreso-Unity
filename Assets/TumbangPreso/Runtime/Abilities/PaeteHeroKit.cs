@@ -223,7 +223,8 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 if (ctx?.Motor == null) return;
-                Vector3 at = PaeteVine.GroundTarget(ctx.Position, ctx.Forward, ctx.AimPoint, PaeteRules.SentryThrowRange);
+                // ⚠️ Never on the can (owner, 2026-09-27: *"dont let it be placed in a place it STANDS on can"*).
+                Vector3 at = PaeteVine.SentryTarget(ctx.Position, ctx.Forward, ctx.AimPoint, ctx.Round?.Lata ?? GameServices.Round?.Lata);
                 Vector3 hands = PaeteGroundCall.Begin(ctx.Motor, at);
                 PaeteSentry.Spawn(hands, at, ctx.Motor.PlayerSlot);
             }

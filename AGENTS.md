@@ -200,6 +200,12 @@ Engineering invariants:
   `ArtSource/rafi/rejected-box-recipe-20260922`.
 - Inday: plain brown arms in every model and first person; remove pogo/coral arm
   attachments. Preserve the rest of her body, simple hands, rig, animation and palette.
+- **Any hero kit, new or reworked (abilities, their animation, effects and sound, the ultimate's
+  cutscene), starts with [HERO_KIT_METHOD](docs/HERO_KIT_METHOD.md)** (owner, 2026-09-27: Paete is
+  *"THE BASELINE QUALITY OF EVERYTHING ELSE MOVING FORWARD"*, and the record of how he was built is
+  for every other hero). Research from footage first, the six-beat table per ability, props typed
+  by hand, one sound recipe per verb, a directed cutscene of at most 5.0 s, films in a match sent
+  to the owner. Take the method, never Paete's look.
 - Home/menu/season/showcase animation starts with [HOME_SCREEN_ANIMATION_METHOD](docs/HOME_SCREEN_ANIMATION_METHOD.md):
   research, real posed models, unaltered faces, retimed beats and frame-by-frame review.
   Give beats breathing room, expressive personality and a story about TUMP. Reuse

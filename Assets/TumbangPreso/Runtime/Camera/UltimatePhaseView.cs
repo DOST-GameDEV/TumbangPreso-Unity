@@ -199,6 +199,9 @@ namespace TumbangPreso.CameraSystem
             float foot=WorldContactPresentation.ModelBottom(_primary.Body.Renderers,_primary.Body.Root.transform.position.y);
             _primary.Contact.Place(_primary.Body.Root.transform.position,foot,new Vector2(.45f,.45f),WorldCueProfile.Current.WorldLighting*.20f);
             _primary.Contact.Visible(true);
+            // The hero's own grade for this moment (1, 1 unless their stage asks; Paete's world steps back while the power is on screen).
+            var grade=_camera.GetComponent<ColourGrade>();
+            if(grade!=null){_primary.Scene.GradeAt(age,out float gradeB,out float gradeS);grade.SetEventGrade(gradeB,gradeS);}
             try{_camera.Render();}
             finally
             {

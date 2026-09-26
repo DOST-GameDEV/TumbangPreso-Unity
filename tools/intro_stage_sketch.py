@@ -352,28 +352,35 @@ def paete(t, S, hands, seconds, cam):
                 S.box(p + np.array([0, .06, 0]), (.22, .1, .18), (.45, .36, .26), 1, yaw=30 * i)
             prev = p
     # THE GUARDIAN CRAWLS OUT (from 2.75): the court bulges, six claws break out and grab, three hauls, crown, eyes at 4.5.
+    # ⚠️ v9 (2026-09-27, owner: *"Make the tre a bit smaller and a lot more sleek"*): the measured v9 tree at 1.3, 6.6 m to the top
+    # of its leaf clouds, a slim trunk to 4.5 m, its eyes 3.1 m up, claws to 2.14 m (was a 9 m block with a 4.2 m crown). v10: the
+    # crown is a pointed spire to 7.0 m with a light inside, no leaf mass.
     s = t - 2.75
     if s > 0:
         bulge = ease(0, .15, s)
-        S.box(PAETE_LANDING + np.array([0, .12 * bulge, 0]), (3.4, .3 * bulge + .01, 3.4), (.3, .22, .14), 1)
+        S.box(PAETE_LANDING + np.array([0, .12 * bulge, 0]), (2.6, .3 * bulge + .01, 2.6), (.3, .22, .14), 1)
         for j in range(6):
             a = math.radians(j * 60 + 20)
             claw = ease(.05 + .06 * j, .25 + .06 * j, s)
             if claw > 0:
                 d = np.array([math.sin(a), 0, math.cos(a)])
-                S.line(PAETE_LANDING + d * .9 + np.array([0, .9 * claw, 0]), PAETE_LANDING + d * (.9 + 1.4 * claw), .28, (.3, .21, .13), 1)
+                S.line(PAETE_LANDING + d * .6 + np.array([0, .65 * claw, 0]), PAETE_LANDING + d * (.6 + 1.2 * claw), .2, (.3, .21, .13), 1)
         up = _tree_up(t)
         if up > 0:
-            sink = (1 - up) * 9.0
+            sink = (1 - up) * 7.0
             a = math.radians(PAETE_TREE_YAW)
             fwd = np.array([math.sin(a), 0, math.cos(a)])
-            S.box(PAETE_LANDING + np.array([0, 2.4 - sink, 0]), (1.6, 4.8, 1.6), (.36, .25, .15), 1, yaw=PAETE_TREE_YAW)
+            S.box(PAETE_LANDING + np.array([0, 2.25 - sink, 0]), (1.05, 4.5, 1.05), (.36, .25, .15), 1, yaw=PAETE_TREE_YAW)
+            # v10: no leaf mass; a pointed spire of branches to 7.0 m with a light inside it (two stacked boxes narrowing to the point).
             crown = ease(1.35, 1.7, s)
-            S.box(PAETE_LANDING + np.array([0, 6.6 - sink, 0]), (1.6 + 2.6 * crown, 3.6, 1.6 + 2.6 * crown), (.3, .5, .2), 1, yaw=PAETE_TREE_YAW)
+            S.box(PAETE_LANDING + np.array([0, 5.2 - sink, 0]), (.9 + .6 * crown, 1.4, .9 + .6 * crown), (.36, .25, .15), 1, yaw=PAETE_TREE_YAW)
+            S.box(PAETE_LANDING + np.array([0, 6.4 - sink, 0]), (.35 + .2 * crown, 1.1, .35 + .2 * crown), (.36, .25, .15), 1, yaw=PAETE_TREE_YAW)
+            if s > 1.75:
+                S.box(PAETE_LANDING + np.array([0, 5.1 - sink, 0]), (.5, .5, .5), (.9, 1, .45), 1, yaw=PAETE_TREE_YAW)
             if s > 1.75:
                 side = np.array([fwd[2], 0, -fwd[0]])
                 for s_ in (-1, 1):
-                    S.box(PAETE_LANDING + fwd * .82 + side * s_ * .3 + np.array([0, 4.3 - sink, 0]), (.22, .12, .1), (.9, 1, .45), 1, yaw=PAETE_TREE_YAW)
+                    S.box(PAETE_LANDING + fwd * .6 + side * s_ * .26 + np.array([0, 3.1 - sink, 0]), (.2, .1, .1), (.9, 1, .45), 1, yaw=PAETE_TREE_YAW)
 
 
 STAGES = dict(phaister=phaister, sean=sean, zack=zack, nemu=nemu, dante=dante, cheska=cheska, rafi=rafi, paete=paete)

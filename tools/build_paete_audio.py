@@ -185,6 +185,37 @@ def rasp(t, seed, rate, centre, shape):
     return svf(noise(n, seed), centre, 2.2) * teeth * shape
 
 
+def glide(t, at, f0, f1, seconds, gain):
+    """A streak of light going up: a soft sine gliding from f0 to f1 over `seconds` from `at`, in and out on a sine window.
+    Its own instrument (v6): the streaks, the shafts and the glints are LIGHT, and every wood and leaf voice here is noise or a
+    struck bar, so the one pure tone in his world is always his light."""
+    s = t - at
+    inside = (s >= 0) & (s <= seconds)
+    u = np.clip(s / seconds, 0, 1)
+    f = f0 * (f1 / f0) ** u
+    phase = 2 * np.pi * np.cumsum(np.where(inside, f, 0.0)) / RATE
+    return np.sin(phase) * np.sin(np.pi * u) ** 2 * inside * gain
+
+
+def whoosh(t, seed, at, seconds, f0, f1, gain, attack=0.3):
+    """Air moved fast: noise through a band sweeping f0 to f1 over `seconds`, swelling to `attack` of the way and dying after.
+    The gust that opens the cutscene, the burst as she forms and the brush stroke at the send."""
+    s = t - at
+    inside = (s >= 0) & (s <= seconds)
+    u = np.clip(s / seconds, 0, 1)
+    centre = f0 * (f1 / f0) ** u
+    env = np.where(u < attack, (u / max(1e-4, attack)) ** 2, np.clip(1 - (u - attack) / max(1e-4, 1 - attack), 0, 1) ** 1.5) * inside
+    return svf(noise(len(t), seed), centre, 1.6) * env * gain
+
+
+def bell(t, at, pitch, gain):
+    """THE MARK'S VOICE (v6): a carved-wood bell, a long low bar tone with its octave a hair sharp (so it beats slowly, like a
+    struck temple block ringing) and one bright glint over it. Heard every time the mark is drawn: in the air as the light goes
+    into him, on the court as he gives it to the ground, behind the guardian's head as its eyes open. A motif the ear learns."""
+    glint = np.sin(2 * np.pi * pitch * 8.0 * t) * env_ar(np.maximum(0, t - at), 0.004, 0.35) * (t >= at) * 0.06
+    return (knock(t, at, pitch, 1.4, 1.0) + knock(t, at, pitch * 2.006, 1.0, 0.45) + glint) * gain
+
+
 def edges(signal, seconds, fade_in=0.003, fade_out=0.05):
     t = times(seconds)
     return signal * np.minimum(1, t / fade_in) * np.minimum(1, (seconds - t) / fade_out)
@@ -442,6 +473,21 @@ def theme():
     #   3.15 3.55 3.95 the three hauls: a groan, the court breaking and a thump each, bigger each time
     #   4.25          it tops out, leaves blown off its crown
     #   4.50          the light opens in its hollows: one deep carved note, the last word
+    # ⚠️⚠️ v6 (2026-09-27, direction.md 5.15), THE EFFECTS PASS GOT ITS SOUND IN THE SAME COMMIT. The owner: *"focus on direction and
+    # vfx and sfx"*. Each new picture has its own layer, on its own frame, and nothing new is loud: the wood and the leaves still
+    # carry it, and the light is the only pure tone.
+    #   0.00 to 0.46  THE GUST: air rushing in from behind her, the leaves thickening, then WHIRLING (the rustle pulsing faster and
+    #                 faster as the column spins round her)
+    #   0.46          the column BURSTS as she forms: a breath of air out and bamboo wind-chimes, the petals
+    #   0.60 to 0.78  a swell drawn in, cut dead on the ignition (the anticipation every burst has before its impact)
+    #   0.78          THE MARK in the air: `bell`, the motif
+    #   1.22          THE MARK stamped on the court: `bell` an octave down under the slam, a three-note seal, the leaves blown flat out
+    #   1.45 to 2.30  the leaves orbiting him: the whirl again, quickening with each heartbeat
+    #   1.72 to 2.33  each streak of light: `glide`, twelve of them on the frames they fire
+    #   2.30          THE BRUSH STROKE: one fast bright swish, left to right
+    #   2.75          the light spearing up at the spot: three rising glides, and the mark under the court (`bell`, soft)
+    #   3.15 3.55 3.95 each haul's spiral of leaves: a whirl gust over the groan
+    #   4.50          THE MARK behind its head: `bell` with the carved note, and a last shimmer to the hand-back
     s = 5.0
     t = times(s)
     # Her rise, soft and climbing.
@@ -483,8 +529,44 @@ def theme():
     wake = knock(t, 4.50, 130.8, 1.1, 1.1) + knock(t, 4.50, 392.0, 0.7, 0.35) \
         + np.sin(2 * np.pi * 784.0 * t) * window(t, 4.50, 5.0, 0.15) * env_ar(np.maximum(0, t - 4.5), 0.02, 0.4) * (t >= 4.5) * 0.08
     drone = creak(t, 8401, 110 + 0 * t, 0.05, [(130.8, 1.0), (196.0, 0.6)], 30.0, np.clip(t / 2.6, 0, 1) ** 1.4 * window(t, 0, 4.9, 0.4)) * 1.0
+
+    # ---- v6 layers (direction.md 5.15), each on the frame of its picture.
+    # THE GUST: air in from behind her, the leaves thickening, then whirling round her as the column spins up (4 to 9 turns a second).
+    gust = whoosh(t, 8440, 0.0, 0.52, 480, 2400, 0.9, attack=0.6) \
+        + rustle(t, 8441, 2600 * np.clip(t / 0.4, 0, 1) * window(t, 0, 0.5, 0.06), 3800) * 0.55 \
+        + rustle(t, 8449, 3200 * np.exp(-t / 0.08) * window(t, 0, 0.3, 0.002), 4400) * 0.5  # the cut-in: leaves already flying on frame 0
+    spin_rate = 4.0 + 5.0 * np.clip((t - 0.12) / 0.34, 0, 1)
+    whirl = rustle(t, 8442, 2400 * (0.5 + 0.5 * np.sin(2 * np.pi * np.cumsum(spin_rate) / RATE)) * window(t, 0.12, 0.47, 0.05), 3000) * 0.45
+    # THE BURST as she forms: a breath of air out, and bamboo wind-chimes for the petals (typed: time, pitch).
+    chimes = sum(knock(t, at, p, 0.35, 0.28) for at, p in ((0.460, 1568.0), (0.474, 1975.5), (0.489, 1318.5), (0.508, 2349.3),
+                                                           (0.529, 1760.0), (0.556, 2093.0), (0.590, 1568.0)))
+    burst = whoosh(t, 8443, 0.44, 0.36, 2800, 900, 0.7, attack=0.12) + chimes
+    # The swell drawn in before the ignition, cut dead on it.
+    riser = svf(noise(len(t), 8444), 900 + 2100 * np.clip((t - 0.6) / 0.18, 0, 1), 1.4) * np.clip((t - 0.6) / 0.18, 0, 1) ** 3 * window(t, 0.6, 0.78, 0.004) * 0.5
+    # THE MARK, three times, and its seal on the court.
+    marks = bell(t, 0.78, 146.8, 0.55) + bell(t, 1.22, 73.4, 0.6) + bell(t, 2.75, 110.0, 0.25) + bell(t, 4.50, 146.8, 0.5)
+    seal = knock(t, 1.24, 392.0, 0.9, 0.22) + knock(t, 1.27, 587.3, 0.8, 0.18) + knock(t, 1.30, 784.0, 0.7, 0.14)
+    shock = rustle(t, 8445, 3000 * np.exp(-np.maximum(0, t - 1.22) / 0.12) * (t >= 1.22) * window(t, 1.22, 1.7, 0.02), 3400) * 0.6
+    # The leaves orbiting him, quickening with each heartbeat (2 to 4.5 turns a second).
+    orbit_rate = 2.0 + 0.85 * sum(np.clip((t - p) / 0.1, 0, 1) for p in (1.72, 1.96, 2.14))
+    orbit = rustle(t, 8446, 1500 * (0.5 + 0.5 * np.sin(2 * np.pi * np.cumsum(orbit_rate) / RATE)) * window(t, 1.45, 2.32, 0.15), 3200) * 0.35
+    # Each streak of light: typed (time, start pitch, end pitch).
+    streaks = sum(glide(t, at, f0, f1, 0.26, 0.05) for at, f0, f1 in (
+        (1.72, 700, 1500), (1.74, 760, 1620), (1.96, 680, 1480), (1.98, 820, 1700), (2.00, 740, 1560), (2.14, 720, 1600),
+        (2.15, 800, 1760), (2.17, 660, 1440), (2.18, 780, 1680), (2.30, 600, 1500), (2.31, 700, 1650), (2.33, 640, 1560)))
+    # THE BRUSH STROKE: one fast bright swish, falling as it lands.
+    slash = whoosh(t, 8447, 2.28, 0.24, 3400, 800, 1.2, attack=0.2)
+    # The light spearing up at the spot.
+    shafts = glide(t, 2.72, 380, 1150, 0.45, 0.07) + glide(t, 2.76, 460, 1300, 0.42, 0.05) + glide(t, 2.80, 540, 1480, 0.40, 0.04)
+    # Each haul's spiral of leaves.
+    spirals = sum(rustle(t, 8448 + k, 2800 * np.exp(-np.maximum(0, t - at) / 0.35) * (t >= at) * window(t, at, at + 0.9, 0.03), 3600) * 0.45
+                  for k, at in enumerate((3.15, 3.55, 3.95)))
+    # A last shimmer from the eyes to the hand-back.
+    shimmer = np.sin(2 * np.pi * 1568.0 * t) * window(t, 4.5, 5.0, 0.2) * env_ar(np.maximum(0, t - 4.5), 0.03, 0.45) * (t >= 4.5) * 0.05
+
     return finish("sfx_ult_theme_paete", bars + form + drop + ignite + draw + press + dig + hum + beats + send + race + grind + bulge
-                  + hauls + topout + leaves + wake + drone, s, 0.66)
+                  + hauls + topout + leaves + wake + drone
+                  + gust + whirl + burst + riser + marks + seal + shock + orbit + streaks + slash + shafts + spirals + shimmer, s, 0.66)
 
 
 def sky():

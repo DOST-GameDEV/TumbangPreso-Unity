@@ -403,7 +403,10 @@ namespace TumbangPreso.Net
         // 57 (2026-09-26 night): Paete's introduction is 5.0 s (was 4.6; direction.md 5.14). No bytes changed, but as 52
         // recorded, the shared phase's length is derived on every peer from the heroes' tables, so a 56 peer would
         // release its presentation clock 0.4 s before the host.
-        public const int ProtocolVersion = 57;
+        // 58 (2026-09-27): Paete's guardian is kept 2.4 m off the can (`PaeteRules.SentrySpotClearOfCan`, run on every peer from
+        // the accepted cast) and holds its prisoners 1.4 m out (was 1.9). No bytes changed, but a 57 peer would draw the tree ON
+        // the can where the host catches beside it, and would see the bodies dragged to a different ring.
+        public const int ProtocolVersion = 58;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

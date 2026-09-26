@@ -200,6 +200,37 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
+        /// ⚠️⚠️ THE GUARDIAN NEVER STANDS ON THE CAN (owner, 2026-09-27: *"make it so that it cant block the can too (dont let it be
+        /// placed in a place it STANDS on can)"*). Aimed straight at the lata through real input, the tree comes up at least
+        /// `PaeteRules.SentryCanClearance` from it, toward him, and still catches the body standing beside the can.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator AimedAtTheCanTheGuardianComesUpBesideIt()
+        {
+            var round = GameServices.Round;
+            var lata = round.Lata;
+            Assert.IsNotNull(lata, "No lata on the court.");
+            var can = Flat(lata.transform.position);
+            var paete = Paete(1, can + new Vector3(0, .12f, -6));
+            paete.AbilitySystem.Kit.AddUltimateCharge(100);
+            var a = round.PlayerAt(2);
+            a.Teleport(can + new Vector3(2.8f, .12f, 1f)); a.Intent.Parked = false;
+            paete.Intent.AimPoint = lata.transform.position;
+            yield return Press(paete, Verb.Ultimate, .2f);
+            float t0 = Time.time;
+            PaeteSentry sentry = null;
+            while (Time.time - t0 < 8f && (sentry = Object.FindFirstObjectByType<PaeteSentry>()) == null) yield return null;
+            Assert.IsNotNull(sentry, "The ultimate never raised its guardian.");
+            float gap = Vector3.Distance(Flat(sentry.Centre), Flat(lata.transform.position));
+            Note("sentry_can_gap_m", gap);
+            Assert.GreaterOrEqual(gap, PaeteRules.SentryCanClearance - .05f, "The guardian came up on the can.");
+            Assert.Less(Flat(sentry.Centre).z, can.z, "Aimed at the can, the guardian was not pushed back toward him.");
+            while (Time.time - t0 < 9f && !a.IsRooted) yield return null;
+            Note("sentry_can_still_catches", a.IsRooted);
+            Assert.IsTrue(a.IsRooted, "Pushed off the can, it no longer caught the body standing beside it.");
+        }
+
+        /// <summary>
         /// ⚠️ A FILM, NOT A CLAIM (owner, 2026-09-26: *"in the video can u try to record as well people getting
         /// pulled and rooted towards it"*). Three players stand 5 to 6 m from where the seed will land; he casts
         /// MAKILING'S EMBRACE through real input and the whole of it is recorded: the introduction on his own

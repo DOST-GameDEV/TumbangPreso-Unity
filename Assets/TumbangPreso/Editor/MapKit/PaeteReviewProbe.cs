@@ -28,7 +28,7 @@ namespace TumbangPreso.EditorTools.MapKit
     /// </summary>
     public static class PaeteReviewProbe
     {
-        public const string Version = "v23";
+        public const string Version = "v24";
         private const string OutDir = "Logs/paete-review";
         private const int W = 480, H = 360;
 

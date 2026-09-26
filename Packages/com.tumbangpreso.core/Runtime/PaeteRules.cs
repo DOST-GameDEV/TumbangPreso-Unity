@@ -124,8 +124,69 @@ namespace TumbangPreso.Core
         /// ⚠️ 1.1 until 2026-09-26; the sentry grew to an imposing 4 m tree with a 1.3 m trunk base
         /// (owner: *"it doesnt make sense too that the characters get pulled to smth that small"*),
         /// so 1.1 would have stood the caught bodies inside the bark.
+        /// ⚠️⚠️ 1.9 until 2026-09-27, when the tree was made smaller and sleek (owner, on the v5 film:
+        /// *"Make the tre a bit smaller and a lot more sleek so that it isnt too distracting"*). The v9
+        /// tree's root knuckles are 1.17 m out at shin height (was 1.7 m), measured off the built glb at
+        /// its 1.3 scale, so at 1.9 the prisoners stood clear of the wood and read as standing NEAR the
+        /// tree, which is the owner's older complaint (*"make it seem more apparent that the people tied
+        /// to the tree are actually TIED"*). At 1.4 a body's back (0.3 m of it) is against the roots.
         /// </summary>
-        public const float SentryHoldDistance = 1.9f;
+        public const float SentryHoldDistance = 1.4f;
+
+        /// <summary>
+        /// ⚠️⚠️ THE GUARDIAN NEVER STANDS ON THE CAN (owner, 2026-09-27: *"make it so that it cant block the
+        /// can too (dont let it be placed in a place it STANDS on can)"*). The tree's centre is kept this far
+        /// from the lata. The sum, measured off the built v9 `sentry.glb` at its 1.3 scale: the claw roots and
+        /// the heave of soil at each toe reach 2.14 m out at most, the can is 0.12 m across its base, and the
+        /// last 0.2 m keeps the court breaking round the toes off it; a prisoner held on the can's side (1.4 m
+        /// hold plus 0.35 m of them) also ends up clear of it.
+        /// </summary>
+        public const float SentryCanClearance = 2.4f;
+
+        /// <summary>
+        /// ⚠️⚠️ WHERE THE GUARDIAN STANDS, KEPT OFF THE CAN. A spot inside <see cref="SentryCanClearance"/> of the
+        /// can is pushed straight out from it to that distance, so it lands as near where it was aimed as it can;
+        /// aimed exactly at the can, it is pushed back toward the caster (<paramref name="fromX"/>, <paramref name="fromZ"/>).
+        /// If the box (half sizes <paramref name="halfX"/>, <paramref name="halfZ"/>) cuts that spot off, as when the
+        /// can lies against a wall, the other three quarter turns round the can are tried in a fixed order and the
+        /// first that is both clear and inside wins, so every peer computing it from the same inputs agrees.
+        ///
+        /// ⚠️ IN CORE, NOT IN THE HAZARD: the host, every peer and every bot run it on the same numbers, and
+        /// `dotnet test` proves it in a second. The push is continuous in the can's position everywhere except
+        /// exactly on the can, so a peer whose knocked-down can sits a few centimetres from the host's puts the
+        /// tree a few centimetres from the host's, never on the other side of it.
+        /// </summary>
+        public static void SentrySpotClearOfCan(float spotX, float spotZ, float canX, float canZ, float fromX, float fromZ,
+                                                float halfX, float halfZ, out float x, out float z)
+        {
+            x = spotX; z = spotZ;
+            float dx = spotX - canX, dz = spotZ - canZ;
+            float d = (float)System.Math.Sqrt(dx * dx + dz * dz);
+            if (d >= SentryCanClearance) return;
+            float ux, uz;
+            if (d > 1e-3f) { ux = dx / d; uz = dz / d; }
+            else
+            {
+                float bx = fromX - canX, bz = fromZ - canZ;
+                float b = (float)System.Math.Sqrt(bx * bx + bz * bz);
+                if (b > 1e-3f) { ux = bx / b; uz = bz / b; } else { ux = 0f; uz = 1f; }
+            }
+            // Straight out, then a quarter turn each way, then straight back: the first that is clear and inside wins.
+            float[] tryX = { ux, -uz, uz, -ux }, tryZ = { uz, ux, -ux, -uz };
+            float bestX = spotX, bestZ = spotZ, bestGap = -1f;
+            for (int i = 0; i < 4; i++)
+            {
+                float cx = Clamp(canX + tryX[i] * SentryCanClearance, -halfX, halfX);
+                float cz = Clamp(canZ + tryZ[i] * SentryCanClearance, -halfZ, halfZ);
+                float gx = cx - canX, gz = cz - canZ;
+                float gap = (float)System.Math.Sqrt(gx * gx + gz * gz);
+                if (gap >= SentryCanClearance - 1e-3f) { x = cx; z = cz; return; }
+                if (gap > bestGap) { bestGap = gap; bestX = cx; bestZ = cz; }
+            }
+            x = bestX; z = bestZ;
+        }
+
+        private static float Clamp(float v, float lo, float hi) => v < lo ? lo : v > hi ? hi : v;
 
         /// <summary>The pull's speed; the carry time is solved per body from its own distance.</summary>
         public const float SentryPullSpeed = 15.0f;

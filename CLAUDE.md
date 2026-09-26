@@ -36,6 +36,10 @@
   every render whether it belongs in the cast, is visually pleasing and is great, ink-only
   faces, one quiet colour no other hero owns, markings hand-drawn for the skin that actually
   shows (never stamped by repetitive code), versioned renders beside the cast.
+- **Hero kits, new or reworked (owner, 2026-09-27):** first read [docs/HERO_KIT_METHOD.md](docs/HERO_KIT_METHOD.md),
+  Paete's whole build as a method: requirements, research from footage, the six beats per ability, props typed by hand, one
+  sound recipe per verb, the directed cutscene (one sentence, three shots, the effects vocabulary), the film and review loop,
+  every refinement round and the traps. Take the method, never Paete's look.
 - **Home screen, menu background, season or hero-showcase animation (owner, 2026-09-23):** first read
   [docs/HOME_SCREEN_ANIMATION_METHOD.md](docs/HOME_SCREEN_ANIMATION_METHOD.md): research first, the
   real models never drawn, faces never altered, re-time so every moment breathes, the review loop.
