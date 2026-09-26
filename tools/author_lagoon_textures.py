@@ -134,8 +134,10 @@ def normal_from_height(h, strength):
     return n * 0.5 + 0.5
 
 
-STRENGTH = {"rock_a": 0.0, "rock_b": 1.2, "rock_c": 1.2, "thatch_a": 1.6, "thatch_b": 1.6, "thatch_c": 1.6}
-TILE = {"rock_a": 4.0, "rock_b": 4.0, "rock_c": 4.0, "thatch_a": 2.0, "thatch_b": 2.0, "thatch_c": 2.0}
+STRENGTH = {"rock_a": 0.0, "rock_b": 1.2, "rock_c": 1.2, "thatch_a": 1.6, "thatch_b": 1.6, "thatch_c": 1.6,
+            "sawali_a": 1.4, "sawali_b": 1.4, "sawali_c": 1.4}
+TILE = {"rock_a": 4.0, "rock_b": 4.0, "rock_c": 4.0, "thatch_a": 2.0, "thatch_b": 2.0, "thatch_c": 2.0,
+        "sawali_a": 2.0, "sawali_b": 2.0, "sawali_c": 2.0}
 
 
 # ---------------------------------------------------------------- thatch
@@ -206,6 +208,65 @@ def thatch(base, light, dark, seed, bundle_m=(0.05, 0.12), tip_m=(0.05, 0.16)):
     return img, height
 
 
+# ---------------------------------------------------------------- sawali
+# SAWALI, woven split-bamboo wall panels (docs/LAGOON_REWORK_GUIDE.md § 8 step 3), its OWN
+# drawing. Real sawali is split bamboo woven 2-over-2 (twill), often in a herringbone, sometimes
+# a plain checker; neighbouring strips show the darker outer SKIN or the paler inner face.
+# Stylized: strips ~6 cm (wider than real, so the weave reads from the court), each visible run
+# a soft lozenge, brightest mid-run and darker where it dives under the crossing strip; low
+# contrast, a hand wobble, per-strip value. 2 m a tile, U horizontal, V vertical.
+SAWALI_N = 20                                           # strips per 2 m tile each way: 10 cm.
+# Sheet v1 at 6 cm read as fine tweed from a distance (the house style bans fine noise).
+
+
+def sawali(pattern, skin, inner, gap, seed):
+    px = SIZE / 2.0
+    rng = np.random.default_rng(seed)
+    yy, xx = np.mgrid[0:SIZE, 0:SIZE].astype(np.float32) / px
+    wob = 0.004 * field(0.5, seed + 1)                  # v1 0.008 at 0.25 m: a melting grid
+    s_m = 2.0 / SAWALI_N
+    fx, fy = (xx + wob) / s_m, (yy - wob) / s_m
+    i, j = np.floor(fx).astype(int) % SAWALI_N, np.floor(fy).astype(int) % SAWALI_N
+    ux, uy = fx - np.floor(fx), fy - np.floor(fy)       # 0..1 within the cell
+    # A twill run covers TWO cells (v1 shaded every cell as its own run): the position along
+    # the run is ((i + j) % 2 + u) / 2 for the 2-over-2 weave.
+    if pattern == "twill":
+        horiz = ((i + j) // 2) % 2 == 0
+        k = (i + j) % 2
+    elif pattern == "herringbone":
+        flip = (i // 6) % 2 == 0                        # the twill turns every 6 strips
+        horiz = np.where(flip, ((i + j) // 2) % 2 == 0, ((i - j) // 2) % 2 == 0)
+        k = np.where(flip, (i + j) % 2, (i - j) % 2)
+    else:                                               # checker: plain over-under, 1-cell runs
+        horiz = (i + j) % 2 == 0
+        k = None
+    if k is None:
+        along = np.where(horiz, ux, uy)
+    else:
+        along = np.where(horiz, (k + ux) / 2, (k + uy) / 2)
+    across = np.where(horiz, uy, ux)
+    tone_h = rng.uniform(0.95, 1.04, SAWALI_N)[j]      # each horizontal strip its own value
+    tone_v = rng.uniform(0.95, 1.04, SAWALI_N)[i]
+    colour = np.where(horiz[..., None], inner * tone_h[..., None], skin * tone_v[..., None])
+    ends = np.minimum(along, 1 - along)                 # 0 at the cell edge
+    run = 0.86 + 0.14 * np.clip(ends / 0.2, 0, 1)       # darker where it dives under
+    side = np.clip(np.minimum(across, 1 - across) / 0.12, 0, 1)   # rounded strip edges
+    lum = run * (0.78 + 0.22 * side)
+    img = colour * lum[..., None]
+    edge = np.minimum(across, 1 - across) < 0.05        # the thin gap between strips
+    img[edge] = (img[edge] * 0.7 + gap * 0.3)
+    height = (side * run).astype(np.float32)
+    img = coat(img, np.array([0.95, 0.94, 0.92]), 0.6, 0.25, seed + 3)  # weathering patches
+    return img, height
+
+
+SAWALI_PAINTERS = {
+    "sawali_a": lambda: sawali("twill", hexcol("c2a06a"), hexcol("d8be8a"), hexcol("7a6040"), 61),
+    "sawali_b": lambda: sawali("herringbone", hexcol("c2a06a"), hexcol("d8be8a"), hexcol("7a6040"), 61),
+    "sawali_c": lambda: sawali("checker", hexcol("c2a06a"), hexcol("d8be8a"), hexcol("7a6040"), 61),
+}
+
+
 THATCH_PAINTERS = {
     "thatch_a": lambda: thatch(hexcol("c9a35e"), hexcol("e3c888"), hexcol("5e4526"), seed=51),
     "thatch_b": lambda: thatch(hexcol("a98f6a"), hexcol("c9b491"), hexcol("4f4130"), seed=51),
@@ -230,6 +291,7 @@ PAINTERS = {
     "rock_b": lambda: rock_face(),
     "rock_c": lambda: rock_face(temperature=True),
     **THATCH_PAINTERS,
+    **SAWALI_PAINTERS,
 }
 
 
