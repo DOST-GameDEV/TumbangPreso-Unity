@@ -204,6 +204,24 @@ Necro Nemu, Voodoo Phaister; Pyro (Sean), Electro (Zack) and Hydro (Rafi) have n
 - [ ] Owner review of the numbers set in plan section 7.
 - [ ] Unity verification (the separate testing chat): compile, EditMode, PlayMode gate, captures.
 
+### CAST-1 · Hold to preview, release to cast, cancel on every device ⚠️ OPEN, 2026-09-26
+
+Owner, 2026-09-26: *"Make it easier for ppl to understand and visualize HOW and where their skills
+will be cast if they HOLD"*, *"check out marvel rivals for skill cast indicator"*, *"all characters
+have shityt preview and cancel cast rn thoroughly think abt implementation of it later too"*, *"and
+ui for the cancel shit idk"*, *"U figure it ALL out"*. Design and research:
+`docs/reports/ability-rework-2026-09-26/cast-preview.md` (crosshair aim instead of the time ramp,
+seven preview shapes with a real-size ghost for constructs, red invalid that refuses, cancel and
+rotate on mouse, pad and touch, the prompts, the touch cancel target). Supersedes the ring half of
+SKILLUI-1.
+
+- [x] Research and design.
+- [ ] `HeroAbility` aim shape, anchor from the camera ray, `CanPlaceAt`, rotation; system Aiming
+  state with cast, cancel (free) and rotate; aimed pose on the wire.
+- [ ] Input verbs `AbilityCancel`, `AbilityRotate` (pad, thumb), `InputAssetSync.Regenerate`,
+  touch drag-to-aim and the cancel target, the prompts.
+- [ ] `CastPreview` shapes; every ability on every hero moved onto it and photographed.
+
 ### HERO-9 · Paete, the ninth hero (Mount Makiling, plant) ⚠️ OPEN, 2026-09-25
 
 Owner, 2026-09-25: a PLANT hero on the signature plus role ability system; from Mount Makiling,
