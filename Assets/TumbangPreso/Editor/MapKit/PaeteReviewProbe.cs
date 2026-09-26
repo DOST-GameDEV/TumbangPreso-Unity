@@ -28,7 +28,7 @@ namespace TumbangPreso.EditorTools.MapKit
     /// </summary>
     public static class PaeteReviewProbe
     {
-        public const string Version = "v8";
+        public const string Version = "v11";
         private const string OutDir = "Logs/paete-review";
         private const int W = 480, H = 360;
 
@@ -40,6 +40,10 @@ namespace TumbangPreso.EditorTools.MapKit
             EditorSceneManager.OpenScene(IlalimNgTulayBuilder.ScenePath, OpenSceneMode.Single);
             foreach (var pass in Object.FindObjectsByType<EnvColourPass>(FindObjectsInactive.Exclude)) pass.Apply();
             var baseline = new HashSet<GameObject>(UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects());
+            // ⚠️ REVIEW ONLY: the map slides 10 m along its road so he performs on plain asphalt. At the
+            // court origin the chalk can ring sat under every frame and the owner read it as part of
+            // the effect (2026-09-26, "whats that yellow shit"). The scene is never saved.
+            foreach (var root in baseline) root.transform.position += new Vector3(0f, 0f, -12f);
             try
             {
                 var book = RosterBook.Load();
@@ -209,7 +213,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var host = new GameObject("SentryHost");
             var sentry = PaeteSentryBody.Build(host.transform);
             var victims = new List<CharacterMotor>();
-            foreach (var at in new[] { new Vector3(1.1f, 0, 0.3f), new Vector3(-0.6f, 0, 0.95f) })
+            foreach (var at in new[] { new Vector3(1.8f, 0, 0.5f), new Vector3(-1.0f, 0, 1.6f) })
             {
                 var v = Body(victimArt); v.transform.position = at;
                 v.transform.rotation = Quaternion.LookRotation(-at.normalized) * Quaternion.Euler(0, CharacterVisual.PersonModelYaw, 0);
@@ -222,8 +226,8 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 sentry.Pose(a, Vector3.zero);
                 var baked = victims.SelectMany(v => Bake(v.gameObject)).ToList();
-                shots.Add(Shoot(new Vector3(5.6f, 3.4f, -5.2f), new Vector3(0, 1.2f, 0.4f), 50, $"sentry t={a:0.00}s"));
-                shots.Add(Shoot(new Vector3(-1.4f, 1.0f, -4.6f), new Vector3(0, 1.5f, 0f), 50, $"sentry low t={a:0.00}s"));
+                shots.Add(Shoot(new Vector3(7.4f, 4.2f, -7.0f), new Vector3(0, 1.9f, 0.4f), 50, $"sentry t={a:0.00}s"));
+                shots.Add(Shoot(new Vector3(-2.2f, 1.1f, -6.2f), new Vector3(0, 2.2f, 0f), 54, $"sentry low t={a:0.00}s"));
                 foreach (var v in victims) Unbake(v.gameObject, baked.Where(g => g != null).ToList());
             }
             Save("sentryfx", Reorder(shots, ages.Length), ages.Length);

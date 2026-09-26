@@ -226,6 +226,8 @@ GROUPS = [
         # Placed 2026-09-24: both load an arena (Eskinita for the bot's chase clock, the Lagoon
         # for its swim-and-climb recovery) and run bodies inside it.
         "AiReactionTimingTests", "LagoonRecoveryProbe",
+        # Placed 2026-09-26: plays Paete's whole kit through real input on Bayan Plaza (HERO-9).
+        "PaeteKitPlayProbe",
     ]),
 
     ("capture", """

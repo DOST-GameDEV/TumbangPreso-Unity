@@ -58,6 +58,25 @@ namespace TumbangPreso.CameraSystem
                 return age>=0 && age<.12f?Mathf.Sin(age/.12f*Mathf.PI)*WorldCueProfile.Current.ViewmodelFraming:0;
             }
         }
+        /// <summary>
+        /// Where a first-person hand ends, in world space: the forward face of that arm's drawn mesh
+        /// (HERO-9: Paete's vines leave from here in first person, owner: *"his vines actually come
+        /// from his arm"*). ⚠️ Read outside a render, so it is the lens at rest; the per-render
+        /// framing scale moves it by a few centimetres, which the braid's width at the forearm covers.
+        /// </summary>
+        public bool TryHandTip(bool left, out Vector3 world)
+        {
+            world = default;
+            var arm = left ? _leftArmRenderer : _rightArmRenderer;
+            if (arm == null || !arm.enabled || !arm.gameObject.activeInHierarchy) return false;
+            var eye = _viewCamera != null ? _viewCamera : GetComponentInParent<Camera>();
+            if (eye == null) return false;
+            Vector3 f = eye.transform.forward, c = arm.bounds.center, e = arm.bounds.extents;
+            float reach = Mathf.Abs(f.x) * e.x + Mathf.Abs(f.y) * e.y + Mathf.Abs(f.z) * e.z;
+            world = c + f * reach * 0.85f;
+            return true;
+        }
+
         private void OnEnable(){Camera.onPreCull+=BeginViewFrame;Camera.onPostRender+=EndViewFrame;}
         private void OnDisable()
         {

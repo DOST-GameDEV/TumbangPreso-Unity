@@ -105,6 +105,29 @@ Rule for the ult: **a side-to-side wiggle loop plus a filling bar, third-person 
   core with bright rims. Our version keeps them standing (Groot), which reads better at kid scale
   and keeps feet on the court.
 
+### Groot's whole arsenal, second pass (2026-09-26)
+
+Owner: *"like thoroughly research everything in groot's arsenal"*, with four frames he sent: the
+vine strike seen from behind, the hero-profile art, a Strangling Prison screen and a wall. Kit
+wording from the [Marvel Rivals Wiki](https://marvelrivals.fandom.com/wiki/Groot):
+
+| Groot ability | Wiki | What the frames show | What Paete takes |
+|---|---|---|---|
+| Vine Strike (primary) | "Launch vines to attack enemies"; the arms EXTEND; a projectile with delayed impact | the forearm itself stretches forward into a TANGLE of tendrils, several strands over and under each other, forked, lit lime-yellow, easing out smoothly and snapping back | KAPIT-BAGING: five entangled strands per arm, forked twigs, a smooth ease-out |
+| Strangling Prison (ultimate) | "Fire a MASSIVE VINE CLUSTER that pulls nearby enemies to its center and Imprisons them"; the imprisoned cannot move but can still attack; thrown at a wall, they are pinned onto it | the thing thrown is big, a ball of vines, not a small seed; the prison stands over the bodies it holds | YAKAP NG MAKILING: the seed is thrown as a cluster; the sentry is a mass of braided trunks that towers over the rooted |
+| Ironwood Wall, Thornlash Wall | target a location and GROW a wall; awakened near Groot, Thornlash strikes enemies | a wall of THICK TWISTED INTERTWINED TRUNKS, columns braided round each other, dark vines wound through them, leaves on top | the sentry's trunk is several trunks braided, not one post; BAWI's construct is a small Thornlash knot that lashes |
+| Spore Bomb | arced projectile that splits into six small spores | | narra pods and spores as the motif particles |
+| Furious Flora (melee) | arm combo, third hit launches | heavy swings | his casts stay heavy |
+| Flora Colossus (passive) | walls near Groot awaken | | |
+
+His material, from the hero-profile art: **smooth tan bark in thick limbs**, lighter on top and darker
+underneath, **thin dark vines coiled round the limbs**, single leaves along them, **green light in the
+cracks** and eyes, fireflies of leaf light round him. The lime glow belongs to the energised strike,
+not to the wood.
+
+Rules added: **a vine is a branch** (bark limb, dark vine coiled round it, twigs, leaves); **big
+things are braided trunks**; **the ultimate is thrown as a cluster and stands over its prisoners**.
+
 ## 3. Rules this gives Paete (feeds plan.md)
 
 1. **His element is growth**: dark wavy vines, bark, leaves, seed pods, roots. Not glowing lines.

@@ -44,8 +44,17 @@ namespace TumbangPreso.Core.Tests
 
             // A body pulled from the sentry's rim ends against the sentry.
             float pull = PaeteRules.SentryPullHoldSeconds(PaeteRules.SentryRadius);
-            float dragged = CarryRules.DistanceFor(PaeteRules.SentryPullSpeed, pull);
+            float dragged = CarryRules.DistanceFor(PaeteRules.SentryPullSpeedFor(PaeteRules.SentryRadius), pull);
             Assert.True(Math.Abs(dragged - (PaeteRules.SentryRadius - PaeteRules.SentryHoldDistance)) < 1e-3f);
+            // Every caught distance stops at the trunk, near or far: none is flung past it.
+            foreach (float at in new[] { 2.0f, 2.5f, 3.0f, 4.5f, 6.0f, 9.0f })
+            {
+                float v = PaeteRules.SentryPullSpeedFor(at);
+                float travelled = CarryRules.DistanceFor(v, PaeteRules.SentryPullHoldSeconds(at));
+                Assert.True(Math.Abs(travelled - (at - PaeteRules.SentryHoldDistance)) < 1e-2f, $"{at} m travelled {travelled}");
+                Assert.True(v <= PaeteRules.SentryPullSpeed + 1e-4f);
+                Assert.True(PaeteRules.SentryPullArriveSeconds(at) < 1.5f, $"{at} m arrives too late");
+            }
         }
 
         [Fact]

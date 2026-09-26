@@ -433,21 +433,43 @@ namespace TumbangPreso.Abilities
             if (_age >= PaeteRules.SentryLifeSeconds + 0.6f) Destroy(gameObject);
         }
 
+        // When each caught body's drag arrives, and it is rooted (host only).
+        private readonly Dictionary<CharacterMotor, float> _rootAt = new Dictionary<CharacterMotor, float>();
+
         private void FixedUpdate()
         {
-            if (_caught || _age < PaeteRules.SentryCatchSeconds || !NetAuthority.ShouldResolve()) return;
-            _caught = true;
-            float left = PaeteRules.SentryLifeSeconds - _age;
-            foreach (var p in _held)
+            if (_age < PaeteRules.SentryCatchSeconds || !NetAuthority.ShouldResolve()) return;
+            if (!_caught)
             {
-                if (p == null || p.IsTagged) continue;
-                Vector3 d = Centre - p.transform.position; d.y = 0f;
-                float distance = d.magnitude;
-                if (distance > PaeteRules.SentryHoldDistance + 0.05f)
-                    p.ApplyResolvedCarry(d.normalized * PaeteRules.SentryPullSpeed + Vector3.up * 1.2f,
-                                         PaeteRules.SentryPullHoldSeconds(distance));
-                // Rooted from the moment the vines take them, so nobody walks out of the drag.
-                p.ApplyRooted(left);
+                _caught = true;
+                foreach (var p in _held)
+                {
+                    if (p == null || p.IsTagged) continue;
+                    Vector3 d = Centre - p.transform.position; d.y = 0f;
+                    float distance = d.magnitude;
+                    float arrive = 0f;
+                    if (distance > PaeteRules.SentryHoldDistance + 0.05f)
+                    {
+                        arrive = PaeteRules.SentryPullArriveSeconds(distance);
+                        p.ApplyResolvedCarry(d.normalized * PaeteRules.SentryPullSpeedFor(distance) + Vector3.up * 1.2f,
+                                             PaeteRules.SentryPullHoldSeconds(distance));
+                    }
+                    // ⚠️⚠️ ROOTED WHEN THE DRAG ARRIVES, NOT ON THE SAME STEP. The first play of this kit
+                    // (`PaeteKitPlayProbe`, 2026-09-26) found both bodies rooted where they stood, 2.5 m
+                    // out: Rooted zeroes external velocity (`StatusSpeedScale`) and releases the carry's
+                    // commitment, so rooting at the catch killed the pull it was meant to finish. The carry
+                    // itself holds the body for the drag, so nobody walks out of it.
+                    _rootAt[p] = _age + arrive;
+                }
+            }
+            if (_rootAt.Count == 0) return;
+            float left = PaeteRules.SentryLifeSeconds - _age;
+            foreach (var p in new List<CharacterMotor>(_rootAt.Keys))
+            {
+                if (p == null || p.IsTagged) { _rootAt.Remove(p); continue; }
+                if (_age < _rootAt[p]) continue;
+                _rootAt.Remove(p);
+                if (left > 0f) p.ApplyRooted(left);
             }
         }
     }

@@ -290,6 +290,21 @@ namespace TumbangPreso.CameraSystem
             rig.ViewmodelKick(Vector3.forward);
         }
 
+        /// <summary>
+        /// The first-person hand tip of <paramref name="who"/>, when this screen is looking through
+        /// their eyes; false in third person, for anybody else, or with no viewmodel. Effects that
+        /// leave the hands (Paete's vines) start here so the owner sees them come out of their own arms.
+        /// </summary>
+        public static bool TryViewmodelHand(CharacterMotor who, bool left, out Vector3 world)
+        {
+            world = default;
+            if (who == null) return false;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return false;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return false;
+            return rig._arms.TryHandTip(left, out world);
+        }
+
         public static void SeekViewmodelAction(CharacterMotor who,string expected,float elapsed)
         {
             var rig=FindFirstObjectByType<CameraRig>();

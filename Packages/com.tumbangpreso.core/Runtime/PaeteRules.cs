@@ -119,8 +119,13 @@ namespace TumbangPreso.Core
         /// <summary>Owner: *"WITHIN 9 meters"*.</summary>
         public const float SentryRadius = 9.0f;
 
-        /// <summary>A pulled body stops this far from the sentry's core, standing against it.</summary>
-        public const float SentryHoldDistance = 1.1f;
+        /// <summary>
+        /// A pulled body stops this far from the sentry's centre, standing against its trunk.
+        /// ⚠️ 1.1 until 2026-09-26; the sentry grew to an imposing 4 m tree with a 1.3 m trunk base
+        /// (owner: *"it doesnt make sense too that the characters get pulled to smth that small"*),
+        /// so 1.1 would have stood the caught bodies inside the bark.
+        /// </summary>
+        public const float SentryHoldDistance = 1.9f;
 
         /// <summary>The pull's speed; the carry time is solved per body from its own distance.</summary>
         public const float SentryPullSpeed = 15.0f;
@@ -140,8 +145,28 @@ namespace TumbangPreso.Core
         /// </summary>
         public const float SentryLifeSeconds = 10.0f;
 
-        /// <summary>Hold time for a pull from <paramref name="distance"/> away.</summary>
+        /// <summary>
+        /// ⚠️⚠️ THE PULL'S SPEED FOR A BODY <paramref name="distance"/> AWAY, SOLVED SO IT STOPS AT THE
+        /// TRUNK. A fixed 15 m/s slides 15^2/(2 x 30) = 3.75 m after the hold alone, so anybody caught
+        /// closer than that was flung past the sentry; the first played match (`PaeteKitPlayProbe`,
+        /// 2026-09-26) also found the hold solving to a negative time for them. Near bodies get the
+        /// speed whose slide is exactly their distance; far ones the full 15 m/s and a hold.
+        /// </summary>
+        public static float SentryPullSpeedFor(float distance)
+        {
+            float d = System.Math.Max(0.0f, distance - SentryHoldDistance);
+            return System.Math.Min(SentryPullSpeed, (float)System.Math.Sqrt(2.0 * Balance.Friction * d));
+        }
+
+        /// <summary>Hold time for a pull from <paramref name="distance"/> away, at <see cref="SentryPullSpeedFor"/>.</summary>
         public static float SentryPullHoldSeconds(float distance)
-            => CarryRules.SecondsFor(System.Math.Max(0.0f, distance - SentryHoldDistance), SentryPullSpeed);
+        {
+            float v = SentryPullSpeedFor(distance);
+            return v <= 0.0f ? 0.0f : CarryRules.SecondsFor(System.Math.Max(0.0f, distance - SentryHoldDistance), v);
+        }
+
+        /// <summary>When the pulled body arrives: the hold, then the slide out against `Friction`.</summary>
+        public static float SentryPullArriveSeconds(float distance)
+            => SentryPullHoldSeconds(distance) + SentryPullSpeedFor(distance) / Balance.Friction;
     }
 }

@@ -203,7 +203,8 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
 - [x] Roster book entry (`RosterBookBuilder.RefreshPersonFromCommandLine -person paete`, which now
   inserts a hero new to the book without re-baking the others), FPP arms, baked dance. EditMode
   606/609 on 2026-09-26: the three left are `ThrowEquipmentClearanceTests` (every person but Paete,
-  who clears all ten slippers at 0; the known synthetic-head red) and the two `ToonLightFalloffTests`.
+  who clears all ten slippers at 0; the known synthetic-head red) and the two `ToonLightFalloffTests`,
+  which pass 2/2 with graphics on (`-nographics` renders no light, so they cannot pass there).
 - [x] His own animations (owner, 2026-09-26: *"give paete his own animations taht make sense wiht his
   shit"*, *"i want each of his skill to have their own animation"*): five body clips, each acting out
   its skill (`HeroAbilityClips.Paete.cs`, baked by `PaeteMotionAuthor`): the vine drag, the planting
@@ -216,13 +217,25 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
 - [x] Audio, `tools/build_paete_audio.py`: 16 cues, every cue the kit plays plus the sentry burst,
   catch and wilt, Rooted and the root break, the command click, the theme and the Canopy sky.
 - [x] Icons: the four glyphs and `StatusRooted`, critiqued to v2/v3 on the real grounds.
-- [ ] Runtime kit NOT yet played in a match: every ability, the Interact prompt and progress ring
-  (the ring is not drawn yet: `BreakFreeProgress` and `PullingPlantProgress` have no HUD reader),
-  whether a tag frees a rooted player.
-- [ ] Still to do: portrait and avatar, `character-stories.json`, FPP vines from the viewmodel hands,
-  `WorldEffectSnapshot`/`RecordedSpecialFields` for plant, sentry and thorns, bots (`AIController`:
-  Interact while rooted, pull plants, use his kit), HUMAN.md rows, CHARACTER_ORIGINS and LORE, then
-  PlayMode gate, Checks.RunAll, audits, a build.
+- [x] Played (`PaeteKitPlayProbe`, Bayan Plaza, Hero Strike, real input, 4/4): the vine reels him
+  6.9 m; the seedling plants, fires on the second press, survives a pull inside its 15 s and comes out
+  to a full Interact hold once loose; BAWI takes a slipper out of a hand and hauls it to 1 m; the
+  sentry drags both bodies in and roots them (0 m walked), a tag frees one, 7 s of Interact frees the
+  other with the struggle showing. The first play found the sentry rooting bodies where they stood
+  (Rooted killed the pull); roots now land on arrival and the pull speed is solved per distance
+  (`PaeteRules.SentryPullSpeedFor`). Interact card on the HUD (`Hud.Paete.cs`).
+- [x] Bots (`AIController`): the vine as an escape out of the box with a slipper, away from the taya,
+  else travel; the seedling planted 4 to 10 m from an upright can and commanded at it; BAWI for two
+  slippers or one being carried; the sentry for two bodies in 9 m; Interact held while rooted and at an
+  opponent's loose seedling. Not yet measured in `BotBehaviourProbe`.
+- [x] First-person vines leave the viewmodel hands (`CameraRig.TryViewmodelHand`); not yet captured in FPP.
+- [x] Owner's Groot references (2026-09-26): vines are entangled bark limbs with dark vines, lit strands
+  and forked twigs (`GrowthTwigs`), easing out of the forearm; the sentry is a 4 m braided-trunk tree
+  (research.md, "Groot's whole arsenal"; direction.md; frames in the report's review/).
+- [ ] Owner's eye on the sentry v4 and the vines; the thrown seed is still a small glowing seed, where
+  Groot throws a "massive vine cluster".
+- [ ] Still to do: portrait and avatar, `WorldEffectSnapshot`/`RecordedSpecialFields` for plant, sentry
+  and thorns, seedling and thorn-construct art pass, PlayMode gate, Checks.RunAll, audits, a build.
 - [ ] Deploy the cloud-code hero lists once they name him; record his lines (human voices only).
 
 ### PRACTICE-1 · A practice picker and a Valorant-style training range ⚠️ OPEN, 2026-09-26
@@ -240,6 +253,20 @@ summon/remove bots in practice just like valorant practice"*.
   never reachable from a networked or ranked match.
 - [ ] Render every state over the real background at his window shape; record the journey (presses to
   each action).
+
+### SKILLUI-1 · The yellow skill ring, and cooldowns against charges ⚠️ OPEN, 2026-09-26
+
+Owner, 2026-09-26: *"the yellow circle looks bad af with a lot of skills, one of which is updraft"*,
+and *"make the distinction between a skill that has a cooldown and a skill with charges clearer"*.
+
+- [ ] The yellow ground ring (`GroundReticle` and each kit's `telegraphRadius`): inventory every skill
+  that draws it (Updraft first), photograph each over a real court, and replace the flat yellow ring
+  with a telegraph in that ability's own element and shape, or none where the effect already shows
+  its footprint. Keep the readability rule (the can, slippers and players stay readable on Low).
+- [ ] HUD ability tiles: a cooldown skill and a charges skill must read differently at a glance
+  (e.g. a smooth sweep for a cooldown against notched pips with a count for charges, the meter
+  language VISUAL-1 already uses: `HudRing.Notches`). Render both states of both kinds on the owner's
+  window shape and on a pad and a phone.
 
 ### GAMEANIM-1 · The can raise crouches first ⚠️ IN PROGRESS, 2026-09-26
 

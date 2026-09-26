@@ -179,6 +179,74 @@ namespace TumbangPreso.Visual
         }
     }
 
+    /// <summary>
+    /// ⚠️⚠️ TWIGS ON A LIVING PATH, SO A VINE READS AS A BRANCH (owner, 2026-09-26: *"make the vines
+    /// especially look like tree vines/branches and not just green vines"*, with a Marvel Rivals Groot
+    /// vine strike as the picture: a gnarled branch with forked offshoots). Each twig is a small forked
+    /// bark tube with a leaf at its tip, placed at its own fraction along a path the caller rebuilds
+    /// every frame, rolled round the path by its own angle and angled forward and out, and grown in
+    /// only once the path has reached it. The fractions, rolls and lengths are TYPED per use (never a
+    /// loop stamping one twig), so every branch has its own rhythm.
+    /// </summary>
+    public sealed class GrowthTwigs
+    {
+        private readonly Transform[] _twigs;
+        private readonly float[] _at, _roll, _size;
+
+        public GrowthTwigs(Transform parent, float[] at, float[] roll, float[] size, Color bark)
+        {
+            _at = at; _roll = roll; _size = size;
+            _twigs = new Transform[at.Length];
+            for (int i = 0; i < at.Length; i++)
+            {
+                var twig = new GameObject("twig").transform;
+                twig.SetParent(parent, false);
+                var main = new Mesh { name = "GrowthTwig" };
+                GrowthVfx.Tube(main, new List<Vector3> { Vector3.zero, new Vector3(0f, 0.05f, 0.16f), new Vector3(0f, 0.13f, 0.30f) },
+                               new List<float> { 0.028f, 0.016f, 0.004f }, 4);
+                GrowthVfx.Part(twig, "twig", main, bark);
+                // The fork: a shorter offshoot from the middle, to one side, which is what makes it a branch.
+                var fork = new Mesh { name = "GrowthTwigFork" };
+                float side = i % 2 == 0 ? 1f : -1f;
+                GrowthVfx.Tube(fork, new List<Vector3> { new Vector3(0f, 0.04f, 0.13f), new Vector3(0.06f * side, 0.10f, 0.20f), new Vector3(0.10f * side, 0.16f, 0.24f) },
+                               new List<float> { 0.014f, 0.009f, 0.003f }, 4);
+                GrowthVfx.Part(twig, "fork", fork, bark);
+                var leaf = GrowthVfx.Part(twig, "twig-leaf", GrowthVfx.Leaf(0.13f, 0.08f, 0.012f),
+                                          i % 3 == 0 ? GrowthVfx.LeafDark : GrowthVfx.LeafGreen).transform;
+                leaf.localPosition = new Vector3(0f, 0.15f, 0.32f);
+                leaf.localRotation = Quaternion.Euler(-25f, 20f * side, 0f);
+                _twigs[i] = twig;
+            }
+        }
+
+        /// <summary>Place every twig on <paramref name="path"/> (world or the parent's space, as the path is),
+        /// grown to <paramref name="reach"/> (0 to 1 of the path drawn so far) and scaled by <paramref name="scale"/>.</summary>
+        public void Place(IList<Vector3> path, float reach, float scale, bool world)
+        {
+            int n = path.Count;
+            for (int i = 0; i < _twigs.Length; i++)
+            {
+                var twig = _twigs[i];
+                float grown = n < 3 ? 0f : Mathf.Clamp01((reach - _at[i]) * 6f);
+                if (grown <= 0.001f) { twig.localScale = Vector3.zero; continue; }
+                int k = Mathf.Clamp(Mathf.RoundToInt(_at[i] * (n - 1)), 1, n - 2);
+                Vector3 along = (path[k + 1] - path[k - 1]);
+                if (along.sqrMagnitude < 1e-8f) along = Vector3.forward;
+                along.Normalize();
+                Vector3 side = Vector3.Cross(along, Vector3.up);
+                if (side.sqrMagnitude < 1e-6f) side = Vector3.right;
+                side.Normalize();
+                Vector3 up = Vector3.Cross(side, along);
+                Vector3 outward = Quaternion.AngleAxis(_roll[i], along) * up;
+                // Forward along the branch and out from it, like a twig growing toward the tip.
+                var rot = Quaternion.LookRotation((along * 0.8f + outward * 0.6f).normalized, outward);
+                if (world) twig.SetPositionAndRotation(path[k], rot);
+                else { twig.localPosition = path[k]; twig.localRotation = rot; }
+                twig.localScale = Vector3.one * (_size[i] * scale * grown);
+            }
+        }
+    }
+
     /// <summary>A mesh built for one effect part dies with it (materials go through `VfxRenderTag.Own`).</summary>
     public sealed class GrowthMeshOwner : MonoBehaviour
     {

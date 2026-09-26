@@ -821,6 +821,7 @@ namespace TumbangPreso
             StepHop(intent, dt);
 
             StepHeroAbilities(intent, dt);
+            StepPaeteInteract(intent);
 
             // ⚠️⚠️ NO COMMIT HERE ANY MORE, AND IT USED TO BE ON THIS LINE. The snapshot is taken
             // by the consumer at the end of `CharacterMotor.FixedUpdate`, not by each producer at
@@ -4267,6 +4268,63 @@ namespace TumbangPreso
         /// such rule: moving a stunned body is one of the better things you can do with one, so
         /// those count everybody.
         /// </summary>
+        // ------------------------------------------------------------------ PAETE (HERO-9)
+
+        /// <summary>
+        /// ⚠️ THE GENERAL INTERACT VERB, PRESSED LIKE A PLAYER PRESSES IT. Rooted: hold it (7 s of
+        /// holding breaks free; the struggle shows while it is held). Beside an OPPONENT'S seedling that
+        /// is past its rooted 15 s: hold it to pull the seedling out, standing still, which is the
+        /// counterplay the owner asked for (*"a general keybind for interact and remove"*). A bot never
+        /// tries a plant it cannot yet pull; that would teach nothing and waste the round.
+        /// </summary>
+        private void StepPaeteInteract(InputIntent intent)
+        {
+            if (_motor.IsRooted) { intent.Set(Verb.Interact, true); return; }
+            foreach (var plant in Abilities.PaetePlant.Live)
+            {
+                if (plant == null || plant.OwnerSlot == _motor.PlayerSlot || !plant.Pullable) continue;
+                if (Flat(At(_motor), plant.transform.position) > Core.PaeteRules.PlantPullReach - .1f) continue;
+                intent.Set(Verb.Interact, true);
+                intent.Move = Vector2.zero;
+                return;
+            }
+        }
+
+        /// <summary>How many opponents a sentry thrown to the best point within range would catch, and that point.</summary>
+        private int PaeteSentryAim(RoundDirector round, out Vector3 best)
+        {
+            best = At(_motor);
+            int most = 0;
+            if (round == null) return 0;
+            foreach (var centre in round.Players)
+            {
+                if (centre == null || centre == _motor || !centre.RoundActive) continue;
+                Vector3 at = At(centre);
+                if (Flat(At(_motor), at) > Core.PaeteRules.SentryThrowRange) continue;
+                int caught = 0;
+                foreach (var who in round.Players)
+                    if (who != null && who != _motor && who.RoundActive && !who.IsAloft
+                        && Flat(at, At(who)) <= Core.PaeteRules.SentryRadius - AiTuning.AbilityVictimMargin) caught++;
+                if (caught > most) { most = caught; best = at; }
+            }
+            return most;
+        }
+
+        /// <summary>Slippers BAWI would take right now, and whether one of them is being carried out of the box.</summary>
+        private int PaeteThornCount(Vector3 from, out bool carriedOut)
+        {
+            carriedOut = false;
+            int count = 0;
+            foreach (var shoe in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            {
+                if (shoe == null || shoe.OwnerSlot == _motor.PlayerSlot) continue;
+                if (Flat(from, shoe.transform.position) > Core.PaeteRules.ThornRange - .3f) continue;
+                count++;
+                if (shoe.State == SlipperState.Held) carriedOut = true;
+            }
+            return count;
+        }
+
         private int VictimsUnder(Vector3 centre, float radius, bool stunPayload)
         {
             var round = GameServices.Round;
@@ -4628,6 +4686,13 @@ namespace TumbangPreso
                     Consider(intent, Verb.Ultimate, dt);
                 else if (kit is Abilities.AmihanHeroKit && AmihanFanCount(round) >= 2)
                     Consider(intent, Verb.Ultimate, dt);
+                else if (kit is Abilities.PaeteHeroKit && PaeteSentryAim(round, out var sentryAt) >= 2)
+                {
+                    // YAKAP NG MAKILING wants two bodies inside 9 m of where the seed lands; one is a
+                    // waste of a 16 point meter the round clock does not force.
+                    intent.AimPoint = sentryAt;
+                    Consider(intent, Verb.Ultimate, dt);
+                }
             }
 
             // ⚠️ STORM SURGE HAS NO CIRCLE, SO THE SHARED VALUE GATE ABOVE CANNOT COUNT FOR IT: its
@@ -4695,6 +4760,22 @@ namespace TumbangPreso
                     bool through = !_motor.IsDefender && target != null && targetDistance <= 3.5f && Facing(target, 25.0f);
                     if (strip || through || (!_motor.IsDefender && WorthTravelling()))
                         Consider(intent, Verb.Skill1, dt);
+                }
+                else if (kit is Abilities.PaeteHeroKit)
+                {
+                    // KAPIT-BAGING is his ESCAPE (owner: *"i want it to be an escape"*): an attacker
+                    // carrying a retrieved slipper inside the box with the taya closing swings OUT,
+                    // away from the taya. Otherwise it is travel, like every signature dash.
+                    bool escape = !_motor.IsDefender && _motor.HoldingSlipper && _motor.IsInsideBox()
+                                  && target != null && targetDistance <= 4.5f;
+                    if (escape)
+                    {
+                        Vector3 away = myPos - At(target); away.y = 0;
+                        if (away.sqrMagnitude < .01f) away = -transform.forward;
+                        intent.AimPoint = myPos + away.normalized * Core.PaeteRules.VineRange + Vector3.up * 1.2f;
+                        Consider(intent, Verb.Skill1, dt);
+                    }
+                    else if (WorthTravelling()) Consider(intent, Verb.Skill1, dt);
                 }
                 else if (kit is Abilities.RafiHeroKit)
                 {
@@ -4769,6 +4850,36 @@ namespace TumbangPreso
                 else if (kit is Abilities.RafiHeroKit && _driving && targetDistance < 5
                     && (Plan == AiPlan.Withdraw || Plan == AiPlan.Fetch || _motor.IsDefender))
                     Consider(intent,Verb.Skill2,dt);
+                else if (kit is Abilities.PaeteHeroKit paete)
+                {
+                    if (paete.IsDefending)
+                    {
+                        // BAWI takes every slipper in 7 m, even out of hands: worth it for two, or for
+                        // one that is being carried out of the box right now.
+                        int reach = PaeteThornCount(myPos, out bool carriedOut);
+                        if (reach >= 2 || carriedOut) Consider(intent, Verb.Skill2, dt);
+                    }
+                    else
+                    {
+                        var plant = Abilities.PaetePlant.OwnedBy(_motor.PlayerSlot);
+                        if (plant == null)
+                        {
+                            // PUNLANG TSINELAS: plant it with a line to an upright can, 4 to 10 m from it.
+                            if (lata != null && lata.IsUpright && lataDistance >= 4.0f && lataDistance <= 10.0f)
+                            {
+                                Vector3 toward = lata.transform.position - myPos; toward.y = 0;
+                                intent.AimPoint = myPos + toward.normalized * Mathf.Min(Core.PaeteRules.PlantThrowRange, toward.magnitude * .5f);
+                                Consider(intent, Verb.Skill2, dt);
+                            }
+                        }
+                        else if (plant.ShotReady && lata != null && lata.IsUpright)
+                        {
+                            // The command: the second press throws the grown wooden slipper at the can.
+                            intent.AimPoint = lata.transform.position;
+                            Consider(intent, Verb.Skill2, dt);
+                        }
+                    }
+                }
                 else if (kit is Abilities.AmihanHeroKit amihan)
                 {
                     if (amihan.IsDefending)
