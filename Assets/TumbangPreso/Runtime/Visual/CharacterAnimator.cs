@@ -337,6 +337,8 @@ namespace TumbangPreso.Visual
             UI.ModelPreview.EnsureAvatar(_animator);
 
             CacheClips(model, clips);
+            // Whose walk and run this body gets (`GaitStyles`), chosen before the gait layer calibrates its cadence.
+            ResolveGaitStyle(model);
 
             if (_clips.Count == 0)
             {
@@ -663,9 +665,12 @@ namespace TumbangPreso.Visual
             _walkReference=2.8f; _runReference=5.4f;
             if(reach>.05f && reach<1.5f)
             {
-                // One stance crosses 2*reach*sin(swing); two stances form a cycle.
-                _walkReference=4f*reach*Mathf.Sin(WalkLegSwingDegrees*Mathf.Deg2Rad)/Mathf.Max(.05f,walk.length);
-                _runReference=4f*reach*Mathf.Sin(RunLegSwingDegrees*Mathf.Deg2Rad)/Mathf.Max(.05f,run.length);
+                // One stance crosses reach*(sin forward + sin back); two stances form a cycle. ⚠️ The swing is the BODY's own
+                // (`GaitStyles`, since 2026-09-27), because the legs are posed from it: a short-stepping Nemu at a shared
+                // cadence would slide her feet, a long-striding Paete would moonwalk.
+                var style=_gaitStyle??GaitStyles.Custom;
+                _walkReference=style.CycleMetres(reach,0f)/Mathf.Max(.05f,walk.length);
+                _runReference=style.CycleMetres(reach,1f)/Mathf.Max(.05f,run.length);
             }
             _walkCycleMetres=_walkReference*walk.length;
             _runCycleMetres=_runReference*run.length;

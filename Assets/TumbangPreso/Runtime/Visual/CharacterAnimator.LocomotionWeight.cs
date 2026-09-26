@@ -14,16 +14,10 @@ namespace TumbangPreso.Visual
         // Read-only diagnostics describe the drawn body, never input or hitbox state.
         public Vector2 LocomotionLean => _locomotionLean;
 
-        /// <summary>
-        /// ⚠️ THE GAIT'S OWN LEAN AND WEIGHT SHIFT (owner, 2026-09-26: *"thihs walk still sucks pls imrpove still on all"*).
-        /// The lean above answers acceleration and turning only, so a body walking at a steady pace stood bolt upright with its
-        /// chest square over its hips all the way through the stride. A walker leans into the travel a little and a runner a lot,
-        /// and the chest rolls over whichever leg is bearing the weight (`CharacterAnimator.StanceSide`, peaking at mid-stance),
-        /// less at a run where the feet land closer to the line. The head gives back part of both so the face stays level and
-        /// readable. Degrees; both ride the arm layer's swing amount, so they arrive and leave with the walk.
-        /// </summary>
-        public const float WalkGaitLeanDegrees = 4f, RunGaitLeanDegrees = 9f;
-        public const float WalkWeightRollDegrees = 3f, RunWeightRollDegrees = 1.5f;
+        // ⚠️ THE GAIT'S OWN LEAN AND WEIGHT ROLL MOVED OUT OF THIS FILE (2026-09-27). They were one lean (4 degrees walking,
+        // 9 running) and one roll (3 and 1.5) for every body; each character's chest now leans, rolls and twists as that
+        // character does (`GaitStyles`, posed in `CharacterAnimator.LocomotionArms.cs`). What stays here is the body's answer
+        // to acceleration and turning, which is physics rather than personality.
 
         private void RestoreLocomotionWeight()
         {
@@ -88,23 +82,14 @@ namespace TumbangPreso.Visual
                 _locomotionLean = Vector2.Lerp(_locomotionLean, target, 1 - Mathf.Exp(-13 * Mathf.Min(dt, .1f)));
             }
             _weightPosition = position; _weightYaw = yaw; _weightSampled = true;
-            // The gait lean and weight roll (see `WalkGaitLeanDegrees`), last frame's arm-layer amount and stance.
-            float gait = ordinary ? _armSwingAmount : 0f;
-            float gaitLean = Mathf.Lerp(WalkGaitLeanDegrees, RunGaitLeanDegrees, _runWeight) * gait * _gaitTravelDirection;
-            float roll = Mathf.Lerp(WalkWeightRollDegrees, RunWeightRollDegrees, _runWeight) * StanceSide;
-            bool gaitPose = Mathf.Abs(gaitLean) > .01f || Mathf.Abs(roll) > .01f;
-            if (!ordinary || (_locomotionLean.sqrMagnitude < .00001f && !gaitPose)) return;
+            if (!ordinary || _locomotionLean.sqrMagnitude < .00001f) return;
             _weightTorsoRest = _weightTorso.localRotation;
             _weightTorso.localRotation = _weightTorsoRest * Quaternion.Euler(_locomotionLean.x, 0, _locomotionLean.y);
-            // In the character's frame: pitch into the travel about its right axis; roll the chest's top toward the stance leg
-            // (+StanceSide is the LEFT leg, the character's -x; a positive turn about +forward tips +up toward -x).
-            _weightTorso.rotation = Quaternion.AngleAxis(gaitLean, transform.right) * Quaternion.AngleAxis(roll, transform.forward) * _weightTorso.rotation;
             if (_weightHead != null)
             {
                 _weightHeadRest = _weightHead.localRotation;
                 // Keep the face looking toward play as the chest loads into a turn.
                 _weightHead.localRotation = _weightHeadRest * Quaternion.Euler(-_locomotionLean.x * .45f, 0, -_locomotionLean.y * .35f);
-                _weightHead.rotation = Quaternion.AngleAxis(-gaitLean * .5f, transform.right) * Quaternion.AngleAxis(-roll * .7f, transform.forward) * _weightHead.rotation;
             }
             _weightApplied = true;
         }

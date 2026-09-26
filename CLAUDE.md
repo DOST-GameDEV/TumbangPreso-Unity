@@ -36,6 +36,14 @@
   every render whether it belongs in the cast, is visually pleasing and is great, ink-only
   faces, one quiet colour no other hero owns, markings hand-drawn for the skin that actually
   shows (never stamped by repetitive code), versioned renders beside the cast.
+- ⚠️⚠️ **NEVER STAMP ONE CHANGE ACROSS THE WHOLE CAST (owner, 2026-09-27):** *"make it a rule in repo to never copy
+  paste game wide changes ahaha coz it fucsk shit up"*, after one generated walk fix (a shoulder shift and spread solved
+  by the same code for every body) left every hero's arms floating off the torso and every hero walking alike. Anything a
+  player reads as a character (walk, run, idle, poses, casts, faces, proportions) is authored ONE CHARACTER AT A TIME:
+  write down who they are and how it shows, set that character's own numbers or code by hand, film THAT character and
+  look at it before moving to the next. Shared plumbing (the evaluator, the probe) is fine; a shared LOOK is not. A
+  change that must reach everyone is still applied and checked per character, never as one sweep verified on one body.
+  The walk and run live in `Runtime/Visual/GaitStyles.cs`, one hand-written entry per body.
 - **Hero kits, new or reworked (owner, 2026-09-27):** first read [docs/HERO_KIT_METHOD.md](docs/HERO_KIT_METHOD.md),
   Paete's whole build as a method: requirements, research from footage, the six beats per ability, props typed by hand, one
   sound recipe per verb, the directed cutscene (one sentence, three shots, the effects vocabulary), the film and review loop,

@@ -17,6 +17,9 @@ historical schedules, archived instructions and superseded proposals.
 - Inspect before improving. Name the actual visual, usability or functional weakness;
   preserve successful work. An old test pass is not final art/motion approval, and
   a completed HUD must not regain retired layouts, extra timers or explanatory clutter.
+- Never stamp one change across the whole cast (owner 2026-09-27): walk, run, idle, poses,
+  casts, faces and proportions are authored and filmed one character at a time from that
+  character's personality. Shared plumbing is fine; a shared look is not. CLAUDE.md section 0.
 - The full remaining actionable TODO is assigned, including formerly deferred maps,
   Rafi, Lagoon, Inday, UI and qualification. "Later" means order, not exclusion.
   Current ownership and sequencing belong in TODO/ledger, not a duplicated plan here.

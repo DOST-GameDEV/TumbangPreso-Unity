@@ -310,6 +310,7 @@ namespace TumbangPreso.Visual
             // character simply stands still and no error is ever logged.
             var anim = GetComponent<CharacterAnimator>();
             if (anim == null) anim = gameObject.AddComponent<CharacterAnimator>();
+            anim.GaitSource = prefab != null ? prefab.name : null;
             if (_instance != null) anim.Bind(_instance, clips);
             AlignToCapsuleFloor();
 

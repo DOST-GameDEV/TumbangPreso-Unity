@@ -113,6 +113,36 @@ else in the queue** (owner, same day: *"in the todo section prioritize most rece
 are ordered most recent first, the finished ones follow. A row that belongs to a bigger entry
 points at it rather than copying it. Nothing here is ticked without evidence.
 
+- [ ] ⚠️⚠️ **NEWEST (2026-09-27): every character's own walk and run, from their personality, arms attached** (owner, on
+  the walk clip `walk_v3_HeroStrike.mp4`: *"walk is fucking ugly hahaha do it one by oen dont generate the same one for
+  all"*, *"really lock in with animating the walk and run of each character man / i want u to tink of their personalities
+  and shti and how it will show up in walking"*, with a still of the cast: *"look dude everyones arms are floating and not
+  even attached right"*, *"manually do it for each character ty"*, *"make it a rule in repo to never copy paste game wide
+  changes"*, *"thoroughly think abt how to mane walk and run look natural for ALL characters"*). CAUSE of the floating:
+  the second walk pass slid every SHOULDER outward (24 to 54 world cm, up to 0.8 of an arm's length) so the fist cleared
+  the hips; the arm's top left the torso. RULE written: CLAUDE.md section 0 and AGENTS.md, never stamp one change across
+  the cast. BUILT: `FitArm`, the shoulder shift and every cast-wide gait constant deleted; the shoulder never leaves its
+  pivot. `Runtime/Visual/GaitStyles.cs` holds one hand-written walk and run per body (9 heroes, the custom hero, 12
+  neighbourhood players and Iggy), each with its reason from the lore, and some with a quirk only they do (Cheska scans
+  the court, Nemu's head wanders on its own clock and her run sweeps the sleeves back, Rafi glances over his shoulder,
+  Paete's crown sways late, Sean's shoulders drive). Legs are posed from the style too, with the cadence solved from each
+  stride so no foot slides (`GaitStyle.CycleMetres`). `WalkArmsProbe` films each body walking and then running from the
+  front, the side and three-quarter (`TUMP_WALK_BODIES=<ids>` for one body), and `tools/stitch_walk_video.py --per-body`
+  makes one clip per character. MEASURED on the first per-character film (`Logs/gait-v5`): a stride that never slides
+  cost 3.9 to 7.8 steps a second on these sub-metre bodies at 2.3 to 4.2 m/s (Nemu 7.8, a blur of legs), so each gait
+  trades a capped slide (`Gait.Glide`, 1.1 Sean to 1.63 Jun-jun and Nemu 1.6, capped at 1.7 by
+  `MotionContinuityTests.GaitCadenceMatchesTheActualFootTravelOnEveryRosterRig`, which caught two runs at 1.72 and 1.75):
+  walking cadence now 2.9 (Paete) to 4.5 (Amihan) steps a second, running 3.4 to 5.2. Also found and fixed: the shared
+  clips' own chest and root lean (`tools/author_grounded_gaits.py`) leaked under the new pose and tipped every chest back,
+  so the gait is now drawn from the bind pose; arm lag is in cycles (seconds put Nemu's arms with the same-side leg).
+  Tests: EditMode `MotionContinuityTests` 11/11, `AnimationReviewTests` passing; PlayMode `LocomotionArmsProbe` (swing
+  floor now each style's own) and `ExchangePresenceTests` 3/3; Core 658/658. The full EditMode run is 590/609: none of the
+  18 other failures touches the gait (hero-kit names, glyphs, cooldowns and charges, Nemu reactivation, toon light falloff
+  under `-nographics`, and `ThrowEquipmentClearanceTests`, which poses a standing body where the gait layer does nothing).
+  OPEN: the owner's eye on each character's clip (`Logs/walk-share/gait_v7_<body>.mp4`), refined one at a time; the
+  idle pose (still the shared clip, arms pressed into the torso) per character; the fists still pass inside the hips
+  front-on at the moment they pass them (`gaps_v7.csv`: -1 to -19 cm on the heroes, -27 on Phaister's robe), accepted rather than sliding the shoulder
+  off the torso. Supersedes the walk row below.
 - [ ] ⚠️⚠️ **PRIORITY 1 FOR THE NEXT SESSION: remodel Amihan and Rafi so they belong in the same art style as the
   rest of the cast, Dante and Phaister in particular** (owner, 2026-09-26: *"add to todo priority for ltr, this will be
   no.1 priority"*, *"remodel amihan and rafi a bit so that they look more like other characters in terms of art style

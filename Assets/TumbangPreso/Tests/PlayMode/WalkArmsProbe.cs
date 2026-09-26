@@ -71,15 +71,18 @@ namespace TumbangPreso.PlayTests
 
             var witness = new GameObject("Walk witness").AddComponent<Camera>();
             witness.CopyFrom(Camera.main); witness.enabled = false; witness.tag = "Untagged";
-            witness.cullingMask &= ~(1 << 5); witness.fieldOfView = 34;
+            witness.cullingMask &= ~(1 << 5); witness.fieldOfView = 26;
             witness.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
             var rt = new RenderTexture(Tile, Tile, 24);
             var sheet = new Texture2D(Tile * Shots, Tile * 2, TextureFormat.RGB24, false);
-            var still = new Texture2D(Tile * 2, Tile, TextureFormat.RGB24, false);
+            var still = new Texture2D(Tile * 3, Tile, TextureFormat.RGB24, false);
             var animator = who.GetComponent<CharacterAnimator>();
             var late = who.gameObject.AddComponent<LateHook>();
             var book = RosterBook.Load();
-            var report = new StringBuilder("mode,body,frames,speed,leftGapMinCm,rightGapMinCm,leftGapAtHipCm,rightGapAtHipCm,armSwingAmountMin,leftSpread,leftShiftCm,rightSpread,rightShiftCm\n");
+            var scenery = Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None);
+            var report = new StringBuilder("mode,body,gait,style,frames,speed,leftGapMinCm,rightGapMinCm,leftGapAtHipCm,rightGapAtHipCm,armSwingAmountMin,footPlantDropMaxCm\n");
+            var only = (Environment.GetEnvironmentVariable("TUMP_WALK_BODIES") ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(b => b.Trim()).ToArray();
             int previousRate = Time.captureFramerate;
             Time.captureFramerate = 30;
             int filmed = 0;
@@ -91,67 +94,91 @@ namespace TumbangPreso.PlayTests
                     for (int index = 0; index < people.Count; index++)
                     {
                         var id = people[index].Id;
+                        if (only.Length > 0 && Array.IndexOf(only, id) < 0) continue;
                         var entry = book.People.FirstOrDefault(p => p.Id == id);
                         if (entry == null) continue;
                         who.CharacterIndex = index;
                         who.GetComponent<CharacterVisual>().ApplyModel(entry.Model, entry.Tint, entry.Clips, entry.Palette, entry.PetModel);
                         yield return null; yield return null;
 
-                        who.Teleport(new Vector3(-6, .2f, -14)); who.transform.rotation = Quaternion.identity;
-                        var body = new BodyGeometry();
-                        float lMin = 99, rMin = 99, lHip = 99, rHip = 99, amount = 1, speed = 0; int frames = 0, f = 0;
-                        // ⚠️ MEASURED AND PHOTOGRAPHED IN LateUpdate, LAST (order 10000). A coroutine resumes before the arm
-                        // layer poses the bones, so `LocomotionArmsProbe`'s first three runs measured the clip underneath.
-                        late.Tick = () =>
+                        foreach (bool running in new[] { false, true })
                         {
-                            if (f < Settle) return;
-                            if (!body.Ready && !body.Resolve(animator)) return;
-                            frames++;
-                            amount = Mathf.Min(amount, animator.LocomotionArmAmount);
-                            speed = Mathf.Max(speed, new Vector3(who.Velocity.x, 0, who.Velocity.z).magnitude);
-                            body.Measure(who.transform, out float gl, out float gr, out float hl, out float hr);
-                            lMin = Mathf.Min(lMin, gl); rMin = Mathf.Min(rMin, gr); lHip = Mathf.Min(lHip, hl); rHip = Mathf.Min(rHip, hr);
-                            int k = f - Settle;
-                            if (video && k < VideoFrames)
+                            string gait = running ? "run" : "walk";
+                            who.Teleport(new Vector3(-6, .2f, -18)); who.transform.rotation = Quaternion.identity;
+                            var body = new BodyGeometry();
+                            float lMin = 99, rMin = 99, lHip = 99, rHip = 99, amount = 1, speed = 0, drop = 0; int frames = 0, f = 0;
+                            // ⚠️ MEASURED AND PHOTOGRAPHED IN LateUpdate, LAST (order 10000). A coroutine resumes before the gait
+                            // layer poses the bones, so `LocomotionArmsProbe`'s first three runs measured the clip underneath.
+                            late.Tick = () =>
                             {
-                                Shoot(true, still, 0, 0); Shoot(false, still, Tile, 0); still.Apply();
-                                string dir = Path.Combine(output, "walk-video", $"{mode}-{id}");
-                                Directory.CreateDirectory(dir);
-                                File.WriteAllBytes(Path.Combine(dir, $"{k:000}.jpg"), still.EncodeToJPG(88));
+                                if (f < Settle) return;
+                                if (!body.Ready && !body.Resolve(animator)) return;
+                                frames++;
+                                amount = Mathf.Min(amount, animator.LocomotionArmAmount);
+                                drop = Mathf.Max(drop, animator.FootPlantDrop);
+                                speed = Mathf.Max(speed, new Vector3(who.Velocity.x, 0, who.Velocity.z).magnitude);
+                                body.Measure(who.transform, out float gl, out float gr, out float hl, out float hr);
+                                lMin = Mathf.Min(lMin, gl); rMin = Mathf.Min(rMin, gr); lHip = Mathf.Min(lHip, hl); rHip = Mathf.Min(rHip, hr);
+                                int k = f - Settle;
+                                if (video && k < VideoFrames)
+                                {
+                                    Shoot(0, still, 0, 0); Shoot(1, still, Tile, 0); Shoot(2, still, Tile * 2, 0); still.Apply();
+                                    string dir = Path.Combine(output, "walk-video", $"{mode}-{id}-{gait}");
+                                    Directory.CreateDirectory(dir);
+                                    File.WriteAllBytes(Path.Combine(dir, $"{k:000}.jpg"), still.EncodeToJPG(88));
+                                }
+                                if (k % ShotEvery != 0 || k / ShotEvery >= Shots * 2) return;
+                                int shot = k / ShotEvery;
+                                bool front = shot < Shots;
+                                Shoot(front ? 0 : 1, sheet, (shot % Shots) * Tile, front ? Tile : 0);
+                            };
+                            // 0 front, 1 side, 2 three-quarter from ahead (the angle a player chasing or facing them sees). Whole
+                            // body in frame, and anything standing between the lens and the body (a tree, a stall) is hidden for
+                            // the shot: the first per-character film lost half its frames behind Eskinita's trees.
+                            void Shoot(int view, Texture2D into, int x, int y)
+                            {
+                                var at = who.transform.position;
+                                var eye = view == 0 ? at + who.transform.forward * 5.2f + Vector3.up * 1.0f
+                                    : view == 1 ? at + who.transform.right * 5.2f + Vector3.up * 1.0f
+                                    : at + (who.transform.forward * .8f - who.transform.right * .6f).normalized * 5.2f + Vector3.up * 1.3f;
+                                var look = at + Vector3.up * .72f;
+                                witness.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(look - eye));
+                                var hidden = new List<Renderer>();
+                                // Anything within 0.9 m of the sight line between the lens and the body (fence posts come in rows,
+                                // so one ray through the middle is not enough), and not under the body's feet.
+                                float reach = Vector3.Distance(eye, look) - .9f;
+                                var dir = (look - eye).normalized;
+                                foreach (var r in scenery)
+                                {
+                                    if (r == null || !r.enabled || r.transform.IsChildOf(who.transform)) continue;
+                                    var b = r.bounds;
+                                    if (b.min.y > 3f || b.max.y < .35f || b.size.x > 30f || b.size.z > 30f) continue;
+                                    for (float d = .3f; d < reach; d += .25f)
+                                        if (b.SqrDistance(eye + dir * d) < .81f) { r.enabled = false; hidden.Add(r); break; }
+                                }
+                                PaeteKitPlayProbe.RenderFilmView(witness, rt);
+                                foreach (var r in hidden) r.enabled = true;
+                                var was = RenderTexture.active; RenderTexture.active = rt;
+                                into.ReadPixels(new Rect(0, 0, Tile, Tile), x, y);
+                                RenderTexture.active = was;
                             }
-                            if (k % ShotEvery != 0 || k / ShotEvery >= Shots * 2) return;
-                            int shot = k / ShotEvery;
-                            bool front = shot < Shots;
-                            Shoot(front, sheet, (shot % Shots) * Tile, front ? Tile : 0);
-                        };
-                        void Shoot(bool front, Texture2D into, int x, int y)
-                        {
-                            var at = who.transform.position;
-                            var eye = front
-                                ? at + who.transform.forward * 4.2f + Vector3.up * 1.15f + who.transform.right * .15f
-                                : at + who.transform.right * 4.2f + Vector3.up * 1.15f + who.transform.forward * .3f;
-                            witness.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(at + Vector3.up * .85f - eye));
-                            PaeteKitPlayProbe.RenderFilmView(witness, rt);
-                            var was = RenderTexture.active; RenderTexture.active = rt;
-                            into.ReadPixels(new Rect(0, 0, Tile, Tile), x, y);
-                            RenderTexture.active = was;
+                            int length = Settle + Mathf.Max(Shots * ShotEvery * 2 + 1, video ? VideoFrames : 0);
+                            for (f = 0; f < length; f++)
+                            {
+                                who.Intent.Parked = false; who.Stamina.RefillAndClearFatigue();
+                                who.Intent.Move = Vector2.up; who.Intent.Set(Verb.Sprint, running);
+                                who.Intent.FaceAimPoint = true; who.Intent.AimPoint = who.transform.position + Vector3.forward * 20;
+                                yield return null;
+                            }
+                            late.Tick = null;
+                            sheet.Apply();
+                            File.WriteAllBytes(Path.Combine(output, $"{mode}-{id}-{gait}_{tag}.png"), sheet.EncodeToPNG());
+                            report.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3},{4},{5:F2},{6:F1},{7:F1},{8:F1},{9:F1},{10:F2},{11:F1}",
+                                mode, id, gait, animator.GaitStyleName, frames, speed, lMin * 100, rMin * 100, lHip * 100, rHip * 100, amount, drop * 100));
+                            File.WriteAllText(Path.Combine(output, $"gaps_{tag}.csv"), report.ToString());
+                            who.Intent.Move = Vector2.zero; who.Intent.Set(Verb.Sprint, false);
+                            for (int rest = 0; rest < 10; rest++) yield return null;
                         }
-                        int length = Settle + Mathf.Max(Shots * ShotEvery * 2 + 1, video ? VideoFrames : 0);
-                        for (f = 0; f < length; f++)
-                        {
-                            who.Intent.Parked = false; who.Stamina.RefillAndClearFatigue();
-                            who.Intent.Move = Vector2.up; who.Intent.Set(Verb.Sprint, false);
-                            who.Intent.FaceAimPoint = true; who.Intent.AimPoint = who.transform.position + Vector3.forward * 20;
-                            yield return null;
-                        }
-                        late.Tick = null;
-                        sheet.Apply();
-                        File.WriteAllBytes(Path.Combine(output, $"{mode}-{id}_{tag}.png"), sheet.EncodeToPNG());
-                        var fit = animator.ArmFitDiagnostics;
-                        report.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3:F2},{4:F1},{5:F1},{6:F1},{7:F1},{8:F2},{9:F0},{10:F1},{11:F0},{12:F1}",
-                            mode, id, frames, speed, lMin * 100, rMin * 100, lHip * 100, rHip * 100, amount, fit.x, fit.y * 100, fit.z, fit.w * 100));
-                        File.WriteAllText(Path.Combine(output, $"gaps_{tag}.csv"), report.ToString());
-                        who.Intent.Move = Vector2.zero;
                         filmed++;
                     }
                 }

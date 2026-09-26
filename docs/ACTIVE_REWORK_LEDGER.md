@@ -1,5 +1,15 @@
 # Active TUMP rework ledger
 
+## Per-character walk and run, 2026-09-27 (worktree `TumbangPreso-Unity-ASTRAReworks`, branch ASTRAReworks)
+
+The owner rejected the cast-wide walk (*"walk is fucking ugly"*, *"everyones arms are floating and not even attached right"*,
+*"do it one by oen dont generate the same one for all"*) and made it a rule: never stamp one change across the whole cast
+(CLAUDE.md section 0, AGENTS.md). Built: `Runtime/Visual/GaitStyles.cs`, one hand-written walk and run per body from its lore,
+drawn from the bind pose by `CharacterAnimator.LocomotionArms.cs` (the shoulder never moves; the shared clips' lean no longer
+leaks under it); cadence per character with a capped slide (`Gait.Glide`, 1.1 to 1.63). Evidence: `Logs/gait-v7` (every body,
+walk and run, front, side, three-quarter), per-character clips `Logs/walk-share/gait_v7_<body>.mp4`, cadence table
+`Logs/gait-cadence.csv`. State and next steps: `docs/TODO.md` ASKS-0926, the NEWEST row.
+
 ## Cloud session with a real Unity editor, 2026-09-26 (branch ASTRAReworks)
 
 Unity 6000.5.8f1 now runs in cloud sessions: `tools/cloud_unity_setup.sh` installs it to `/opt/tump/unity` and activates a

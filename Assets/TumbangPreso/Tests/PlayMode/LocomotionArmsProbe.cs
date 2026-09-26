@@ -89,12 +89,14 @@ namespace TumbangPreso.PlayTests
                 Assert.Greater(late.Frames, 10, $"{name}: nothing was sampled.");
                 Assert.Greater(late.Amount, .6f, $"{name}: the arm swing was not drawn while moving.");
                 Assert.Greater(late.SMax - late.SMin, 1f, $"{name}: the stride read off the legs never swung.");
-                float need = sprint ? 60f : 30f;
+                // ⚠️ AGAINST THE BODY'S OWN AUTHORED SWING (2026-09-27), NOT ONE FLOOR FOR THE CAST. Each character's arms swing
+                // as `GaitStyles` says (Nemu's sleeves barely move walking and her run sweeps them back; Zack's run pumps 108
+                // degrees), so "swung enough" means most of what that character's gait asks for.
+                var authored = sprint ? anim.Style.Run : anim.Style.Walk;
+                float need = .6f * (authored.ArmForward + authored.ArmBack);
                 Assert.Greater(late.LMax - late.LMin, need, $"{name}: the left arm barely swung.");
-                // ⚠️ 3 DEGREES, NOT 6, SINCE THE GAIT'S SECOND PASS (2026-09-26): the arms now hang nearly straight (5 degrees
-                // walking) and clear the body by moving the SHOULDER out, so the angle alone no longer says whether an arm hugs
-                // the body; `WalkArmsProbe` measures the hand against the hip in centimetres. This floor only catches an arm
-                // pulled inward past vertical.
+                // ⚠️ 3 DEGREES: only catches an arm pulled inward past vertical. Every authored spread is 10 degrees or more
+                // (`GaitStyles`), and the shoulder is never moved off its pivot any more (the shift made arms float, 2026-09-27).
                 Assert.Greater(late.LSpread, 3f, $"{name}: the left arm hugged the body.");
                 if (holding) { Assert.Less(late.RMax, 50f, $"{name}: the slipper is still held out in front."); Assert.Less(late.RMax - late.RMin, 35f, $"{name}: the carrying hand swung the slipper about."); }
                 else { Assert.Greater(late.RMax - late.RMin, need, $"{name}: the right arm barely swung."); Assert.Greater(late.RSpread, 3f, $"{name}: the right arm hugged the body."); }
