@@ -636,6 +636,7 @@ def water_home(c, rng, x, y, face_to):
 # bow +Y (the beached one: the sand under midships).
 BOAT_VARIANTS = {"bangka": 4, "lepa": 3, "bangka_beached": 3}
 _BOAT_CACHE = {}
+_PLACED_BOATS = []
 
 
 def _boat_source(kind, variant):
@@ -657,6 +658,16 @@ def boat(c, rng, x, y, z, rz, lepa=None, beached=False):
     its local X, so the kit's +Y bow turns by rz - 90 degrees)."""
     if lepa is None:
         lepa = rng.random() < 0.35
+    # Spacing (review walk_jetty_v1: two moored bangkas overlapped, outriggers crossing). A boat
+    # is ~5.5 m long and ~4.5 m across its floats, so none sits within 6 m of another.
+    if any(math.hypot(x - bx, y - by) < 6.0 for bx, by in _PLACED_BOATS):
+        return None
+    # ...and clear of every walk (review walk_bend_top_v3: moored boats sat UNDER the spur walks,
+    # a hull passing beneath a deck). 3.0 m from a walk's centreline clears its 1.4 m deck and
+    # the boat's half-beam.
+    if not beached and any(_seg_dist(x, y, a, b) < 3.0 for a, b in _WALK_SEGMENTS):
+        return None
+    _PLACED_BOATS.append((x, y))
     kind = "bangka_beached" if beached else ("lepa" if lepa else "bangka")
     col, root = _boat_source(kind, rng.randrange(BOAT_VARIANTS[kind]))
     new_root = root.copy()
@@ -678,11 +689,9 @@ def water_village(c, rng):
     of a Bajau village: free-standing stilt houses over clear shallow water, narrow plank walks
     and ladders, laundry lines, and boats everywhere, both moored and paddled)."""
     # The spine climbs from the sand to walk height over its first segment, like a jetty.
-    walk(c, SPINE[0], SPINE[1], SPINE_Z, za=BEACH + 0.3)
-    for a, b in zip(SPINE[1:], SPINE[2:]):
-        walk(c, a, b, SPINE_Z)
-    for a, b in zip(EAST_WALK, EAST_WALK[1:]):
-        walk(c, a, b, SPINE_Z)
+    # ONE continuous deck per walk (owner, 2026-09-27: "z fighting and disconnected planks").
+    walk_path(c, SPINE, [BEACH + 0.3] + [SPINE_Z] * (len(SPINE) - 1))
+    walk_path(c, EAST_WALK, [SPINE_Z - BRANCH_DROP] * len(EAST_WALK))
     homes = []
     # Homes branch off both walks on short spurs, alternating sides with some irregularity.
     side = 1
@@ -698,7 +707,7 @@ def water_village(c, rng):
             if crowded or coast_distance(hx, hy) > -4 or math.hypot(hx - LANDMARK[0], hy - LANDMARK[1]) < 9:
                 side = -side
                 continue
-            walk(c, (x, y), (x + nx * spur, y + ny * spur), SPINE_Z)
+            walk(c, (x, y), (x + nx * spur, y + ny * spur), SPINE_Z - BRANCH_DROP)
             water_home(c, rng, hx, hy, (x, y))
             homes.append((hx, hy, head))
             side = -side
@@ -766,24 +775,107 @@ def box_uvs(me, across=True):
             uv.data[li].uv = (u / 2.0, v / 2.0)
 
 
+# ⚠️ WALKS ARE CONTINUOUS DECKS (owner on the plank review, 2026-09-27, circling the joints: "z
+# fighting and disconnected planks"). Each straight run used to be its own box: at a bend two
+# boxes left a wedge GAP outside the corner and overlapped inside it, and a spur starting on the
+# spine's centreline overlapped the spine at the SAME height (z-fighting). Now a whole walk is
+# one strip with MITRED corners, and every branch (a spur, the east walk) sits BRANCH_DROP under
+# the walk it joins, so the deck it tucks under is always on top: a 3 cm step nobody sees.
+BRANCH_DROP = 0.03
+_WALK_SEGMENTS = []
+
+
+def _seg_dist(x, y, a, b):
+    ax, ay = a
+    bx, by = b
+    dx, dy = bx - ax, by - ay
+    t = max(0.0, min(1.0, ((x - ax) * dx + (y - ay) * dy) / max(dx * dx + dy * dy, 1e-9)))
+    return math.hypot(x - ax - t * dx, y - ay - t * dy)
+WALK_W, WALK_T = 1.4, 0.15
+
+
+def walk_material():
+    """plank_c without mid-board joints (tools/author_lagoon_textures.py "plank_c_walk")."""
+    m = bpy.data.materials.get("plank_walk")
+    if m is None:
+        import render_lagoon_texture_preview as T
+        m = bpy.data.materials.new("plank_walk")
+        T.uv_material(m, "plank_c_walk")
+    return m
+
+
+def walk_path(c, pts, zs):
+    """A plank walk along a polyline as ONE mesh: mitred joins, top/bottom/sides/end caps, UVs
+    with V ACROSS the walk (boards lie across it), piles every ~3.5 m."""
+    P = [Vector((x, y, z)) for (x, y), z in zip(pts, zs)]
+    n = len(P)
+    _WALK_SEGMENTS.extend(((P[i].x, P[i].y), (P[i + 1].x, P[i + 1].y)) for i in range(n - 1))
+    sides = []
+    for i in range(n):
+        d_in = (P[i] - P[i - 1]) if i > 0 else (P[1] - P[0])
+        d_out = (P[i + 1] - P[i]) if i < n - 1 else (P[i] - P[i - 1])
+        a = Vector((d_in.x, d_in.y, 0)).normalized()
+        b = Vector((d_out.x, d_out.y, 0)).normalized()
+        na, nb = Vector((-a.y, a.x, 0)), Vector((-b.y, b.x, 0))
+        m = (na + nb).normalized() if (na + nb).length > 1e-6 else na
+        scale = 1.0 / max(0.35, m.dot(na))              # the mitre: keep the width across a bend
+        sides.append(m * (WALK_W / 2) * scale)
+    bm = bmesh.new()
+    rows = []
+    for i in range(n):
+        top = [bm.verts.new(P[i] + sides[i] * k) for k in (-1, 1)]
+        bot = [bm.verts.new(P[i] + sides[i] * k - Vector((0, 0, WALK_T))) for k in (-1, 1)]
+        rows.append((top, bot))
+    uv = bm.loops.layers.uv.new("UVMap")
+    dist = [0.0]
+    for i in range(1, n):
+        dist.append(dist[-1] + (P[i] - P[i - 1]).length)
+    faces = []
+    for i in range(n - 1):
+        (t0, b0), (t1, b1) = rows[i], rows[i + 1]
+        faces.append((bm.faces.new((t0[0], t1[0], t1[1], t0[1])), i, "top"))
+        faces.append((bm.faces.new((b0[1], b1[1], b1[0], b0[0])), i, "bottom"))
+        faces.append((bm.faces.new((b0[0], b1[0], t1[0], t0[0])), i, "side"))
+        faces.append((bm.faces.new((t0[1], t1[1], b1[1], b0[1])), i, "side"))
+    bm.faces.new((rows[0][0][1], rows[0][0][0], rows[0][1][0], rows[0][1][1]))
+    bm.faces.new((rows[-1][0][0], rows[-1][0][1], rows[-1][1][1], rows[-1][1][0]))
+    # UVs PER STRAIGHT RUN (owner, 2026-09-27: "fix the textures"). Spreading U along the
+    # CENTRELINE sheared the boards into chevrons at every bend, because the outer edge of a
+    # bend is longer than the inner. Each run now maps square to itself (U along the run from
+    # its start, V across it), so the boards meet at a clean mitre line at the bend. V stays
+    # inside 0.05..0.75 of the tile, clear of the walk texture's single tile-edge joint.
+    for f, i, kind in faces:
+        d = Vector(((P[i + 1] - P[i]).x, (P[i + 1] - P[i]).y, 0)).normalized()
+        nrm = Vector((-d.y, d.x, 0))
+        for loop in f.loops:
+            rel = loop.vert.co - P[i]
+            along = dist[i] + rel.dot(d)
+            across = rel.dot(nrm) + WALK_W / 2
+            if kind == "side":
+                across = loop.vert.co.z - (P[i].z - WALK_T)
+            loop[uv].uv = (along / 2.0, 0.05 + across / 2.0)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    me = bpy.data.meshes.new("plank walk")
+    bm.to_mesh(me)
+    bm.free()
+    me.materials.append(walk_material())
+    o = bpy.data.objects.new("plank walk", me)
+    c.objects.link(o)
+    for i in range(n - 1):
+        va, vb = P[i], P[i + 1]
+        steps = max(1, int((vb - va).length / 3.5))
+        for k in range(steps + (1 if i == n - 2 else 0)):
+            p = va.lerp(vb, k / steps)
+            foot = max(SEABED, height(p.x, p.y)) if coast_distance(p.x, p.y) > 0 else SEABED
+            if p.z - WALK_T - foot > 0.3:
+                B.cylinder(c, "walk pile", (p.x, p.y, (p.z - WALK_T + foot) / 2), 0.09, p.z - WALK_T - foot, "bamboo", sides=5)
+    return o
+
+
 def walk(c, a, b, z, za=None):
-    """A narrow plank walk on thin piles between two points; `za` lets the first end start lower
-    (a jetty climbing off the sand)."""
-    za = z if za is None else za
-    va, vb = Vector((a[0], a[1], za)), Vector((b[0], b[1], z))
-    run = vb - va
-    # The walks take the PLANK texture (review of plank_on_models_v1: on the old blockout
-    # "deck" colour the biggest plank surface on the map showed no boards at all).
-    o = B.box(c, "plank walk", (0, 0, 0), (1.4, run.length, 0.15), "deck")
-    o.data.materials[0] = bpy.data.materials.get("plank") or HK.material("plank")
-    box_uvs(o.data)
-    o.matrix_world = Matrix.Translation((va + vb) / 2) @ run.to_track_quat("Y", "Z").to_matrix().to_4x4()
-    steps = max(1, int(run.length / 3.5))
-    for k in range(steps + 1):
-        p = va.lerp(vb, k / steps)
-        foot = max(SEABED, height(p.x, p.y)) if coast_distance(p.x, p.y) > 0 else SEABED
-        if p.z - foot > 0.3:
-            B.cylinder(c, "walk pile", (p.x, p.y, (p.z + foot) / 2), 0.09, p.z - foot, "bamboo", sides=5)
+    """A single straight run (spurs to homes): the same continuous deck, two points."""
+    return walk_path(c, [a, b], [z if za is None else za, z])
+
 
 WALK_Z = -0.6
 
@@ -969,6 +1061,63 @@ def surface_variety(slot, rng):
     print(f"[lagoon-cove] {slot} variety:", {n: sum(1 for v in choice.values() if v == n) for n in names})
 
 
+def cull_buried(plant_col):
+    """REMOVE PLANTS HIDDEN INSIDE ROCK (owner, 2026-09-27: "theres a bunch of assets inside this
+    big rock and other rocks that are completely not visible or clipping"). Plants are placed by
+    the GROUND height, but the boulders stand on that ground, so a plant whose spot fell under
+    a stone grew inside it. Every rock's world surface goes into one BVH; a plant is removed
+    when rock lies ABOVE its base (the base is buried) or above the top of its bounds (the
+    whole plant is under an overhang). A ray cast down from high above hits the topmost
+    surface first, so "rock above point p" is: the first hit is a rock and is higher than p."""
+    from mathutils.bvhtree import BVHTree
+    # ⚠️ Refresh world matrices first: objects created by script keep an identity matrix_world
+    # until the depsgraph updates, and the first run of this pass saw every rock and plant at the
+    # origin and removed all 656 plants.
+    bpy.context.view_layer.update()
+    verts, polys = [], []
+    for o in bpy.data.objects:
+        if o.type != "MESH" or o.data.get("rock_family") is None:
+            continue
+        if any(c.name.endswith("(source, not placed)") for c in o.users_collection):
+            continue
+        mw = o.matrix_world
+        base = len(verts)
+        verts.extend(mw @ v.co for v in o.data.vertices)
+        polys.extend([base + i for i in p.vertices] for p in o.data.polygons)
+    if not polys:
+        return
+    tree = BVHTree.FromPolygons(verts, polys)
+
+    def first_hit(p):
+        return tree.ray_cast(Vector((p.x, p.y, p.z + 200)), Vector((0, 0, -1)))
+
+    # LIFT, THEN REMOVE (first run of this pass removed 462 of ~650 plants and would have bared
+    # the massif). A plant whose base is buried is lifted onto the rock surface above it when
+    # that surface is fairly flat (normal z > 0.75): a plant growing from a ledge or seam, as in
+    # the reference. Only plants under a steep face or an overhang are removed.
+    removed = lifted = 0
+    for o in list(plant_col.objects):
+        base = o.matrix_world.translation.copy()
+        hit, nrm, _i, _d = first_hit(base)
+        if hit is not None and hit.z > base.z + 0.25:
+            if nrm.z > 0.75:
+                o.location.z += hit.z - base.z - 0.05
+                lifted += 1
+                bpy.context.view_layer.update()
+            else:
+                bpy.data.objects.remove(o)
+                removed += 1
+                continue
+        corners = [o.matrix_world @ Vector(c) for c in o.bound_box]
+        top = Vector((sum(c.x for c in corners) / 8, sum(c.y for c in corners) / 8, max(c.z for c in corners)))
+        hit, _n, _i, _d = first_hit(top)
+        if hit is not None and hit.z > top.z:
+            bpy.data.objects.remove(o)
+            removed += 1
+    print("[lagoon-cove] plants lifted onto rock:", lifted)
+    print("[lagoon-cove] plants buried in rock, removed:", removed)
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     version = int(argv[argv.index("--preview") + 1]) if "--preview" in argv else 0
@@ -984,7 +1133,9 @@ def main():
     # shaders in unity"). W.build_foam stays in the module only as a reference for the band's width.
     spots = place_boulders(L.col("Boulders", root), rng)
     village(L.col("Village", root), rng)
-    planting(L.col("Planting", root), rng, spots)
+    plant_col = L.col("Planting", root)
+    planting(plant_col, rng, spots)
+    cull_buried(plant_col)
     # THE ROCK MATERIAL (§ 8 step 2, owner-chosen): rock_a by world box projection, light tops,
     # and edge wear baked from each kit stone's own geometry into one atlas.
     import bake_lagoon_rock_edges as E

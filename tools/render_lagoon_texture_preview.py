@@ -250,6 +250,33 @@ def rock_material(m, texture):
     img.projection = "BOX"
     img.projection_blend = 0.45   # 0.25 smeared streaks where the box sides meet on slanted faces
     nt.links.new(scale.outputs["Vector"], img.inputs["Vector"])
+    # ANTI-TILING (owner, 2026-09-27: "isnt there a way to add some feathering and rotation
+    # offsets to the tiles in this rock texture? i remember we used some form of that in the
+    # kanto map"). Kanto's method (author_kanto_models.paint): a second sample of the SAME
+    # texture, rotated, scaled 0.61 and shifted, blended in through a big soft noise mask with
+    # a FEATHERED edge. Here the rotation is 3D (the position is turned before the box
+    # projection), so every face of every stone gets its own offset, not only the tops.
+    turn = nt.nodes.new("ShaderNodeMapping")
+    turn.inputs["Rotation"].default_value = (math.radians(23), math.radians(-31), math.radians(37))
+    turn.inputs["Scale"].default_value = (0.61 / TILE_M,) * 3
+    turn.inputs["Location"].default_value = (0.37, 0.71, 0.13)
+    nt.links.new(geo.outputs["Position"], turn.inputs["Vector"])
+    second = nt.nodes.new("ShaderNodeTexImage")
+    second.image = img.image
+    second.projection = "BOX"
+    second.projection_blend = 0.45
+    nt.links.new(turn.outputs["Vector"], second.inputs["Vector"])
+    mask = nt.nodes.new("ShaderNodeTexNoise")
+    mask.inputs["Scale"].default_value = 0.09          # patches several metres across
+    mask.inputs["Detail"].default_value = 1.5
+    nt.links.new(geo.outputs["Position"], mask.inputs["Vector"])
+    feather = _range(nt, mask.outputs["Fac"], 0.42, 0.58, smooth=True)
+    blend = nt.nodes.new("ShaderNodeMix")
+    blend.data_type = "RGBA"
+    nt.links.new(feather, blend.inputs["Factor"])
+    nt.links.new(img.outputs["Color"], blend.inputs["A"])
+    nt.links.new(second.outputs["Color"], blend.inputs["B"])
+    rock_colour = blend.outputs["Result"]
     # Light tops, dark undersides, by the face's world normal.
     sep = nt.nodes.new("ShaderNodeSeparateXYZ")
     nt.links.new(geo.outputs["Normal"], sep.inputs[0])
@@ -261,7 +288,7 @@ def rock_material(m, texture):
     mul.data_type = "RGBA"
     mul.blend_type = "MULTIPLY"
     mul.inputs["Factor"].default_value = 1.0
-    nt.links.new(img.outputs["Color"], mul.inputs["A"])
+    nt.links.new(rock_colour, mul.inputs["A"])
     grey = nt.nodes.new("ShaderNodeCombineColor")
     for ch in ("Red", "Green", "Blue"):
         nt.links.new(tone.outputs["Result"], grey.inputs[ch])

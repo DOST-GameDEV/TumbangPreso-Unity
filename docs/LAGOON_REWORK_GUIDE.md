@@ -314,9 +314,36 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      models: walls under the deep eaves went cold blue-grey. The cove's LIGHTING fill is now a
      warmer grey (0.55, 0.60, 0.66) instead of saturated blue (the camera still sees the blue
      sky gradient), and the skin and inner strips are closer in value.
-   - Planks on the models (`plank_on_models_v2.png`, awaiting the owner's pick). v1: the
+   - ✅ **PLANK: plank_c** (owner: *"plank c looks better"*, the wide rough boards; `CHOSEN` in
+     the cove script) on decks, steps, walks and boats (`plank_on_models_v2.png`). v1: the
      water-village walks still wore the blockout "deck" colour; they now take the plank
      material with `box_uvs()`, boards laid ACROSS the walk like a real footbridge.
+   - ⚠️ **WALKS ARE CONTINUOUS DECKS** (owner: *"z fighting and disconnected planks"*, then *"fix
+     the textures"*). `walk_path()` builds a whole walk as ONE mitred strip; branches sit 3 cm
+     under the walk they join; UVs are laid per straight run (spreading them along the
+     centreline sheared the boards into chevrons at bends); the walks wear `plank_c_walk`, plank_c
+     without mid-board joints (boards across a 1.4 m walk are one piece). Boats keep 6 m apart
+     and 3 m clear of every walk (they overlapped, and sat under spur walks).
+   - ⚠️ **ROCK ANTI-TILING** (owner: *"add some feathering and rotation offsets to the tiles in
+     this rock texture? i remember we used some form of that in the kanto map"*): Kanto's method,
+     a second sample of rock_a rotated in 3D, scaled 0.61, blended through a big feathered noise
+     mask.
+   - ⚠️ **NO PLANTS INSIDE ROCK** (owner: *"a bunch of assets inside this big rock and other rocks
+     that are completely not visible or clipping"*). `cull_buried()` ray-tests every plant against
+     the rocks: a buried plant is LIFTED onto the rock surface above when it is fairly flat
+     (normal z > 0.75), otherwise removed (277 lifted, 186 removed; deleting all buried plants
+     bared the massif). Refresh world matrices first: the first run saw everything at the origin.
+5. **Plants (done early, 2026-09-27)**: owner: *"start texturing the plants"*, *"i really like
+   what was used for leaves in kanto. just need to ensure it matches this environment"*.
+   Kanto's leaf method kept exactly (one soft-painted greyscale card, alpha silhouette, two tints
+   a plant, per plant never per leaf, shingled clumps), with tropical SHAPES in
+   `tools/author_lagoon_leaves.py`: round leaf, coconut frond, banana paddle, grass blade;
+   sunnier tints. `tools/lagoon_cove_planting.py` builds every plant from cards. Then the owner's
+   close-ups (*"stem part of this leafy plant is untextured"*, *"is the pink stuff supposed to
+   look like this or did u forget to texture"*, *"coconut and trunks of palm tree are
+   untextured"*, *"leaves of palmtrees are also cut off"*): painted palm trunk with leaf-scar
+   rings, coconuts, banana pseudo-stem and stalks, gumamela and bougainvillea flower cards, and
+   fronds tapering to a point inside the card.
 4. **Boats**: bangka outrigger and lepa houseboat. MODELS DONE 2026-09-27:
    `tools/author_lagoon_boats.py` (bangka, lepa, bangka_beached; slots plank, paint_hull,
    paint_trim with a per-boat `trim_tint` vertex colour, bamboo, thatch, timber; origin the

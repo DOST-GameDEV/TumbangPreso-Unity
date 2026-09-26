@@ -137,7 +137,7 @@ def normal_from_height(h, strength):
 STRENGTH = {"rock_a": 0.0, "rock_b": 1.2, "rock_c": 1.2, "thatch_a": 1.6, "thatch_b": 1.6, "thatch_c": 1.6,
             "sawali_a": 1.4, "sawali_b": 1.4, "sawali_c": 1.4,
             "bamboo_a": 4.0, "bamboo_b": 4.0, "bamboo_c": 4.0,
-            "plank_a": 1.2, "plank_b": 1.2, "plank_c": 1.2,
+            "plank_a": 1.2, "plank_b": 1.2, "plank_c": 1.2, "plank_c_walk": 1.2,
             "tin_a": 1.5, "tin_b": 1.5, "tin_c": 1.5,
             "timber_a": 6.0, "timber_b": 6.0, "timber_c": 6.0}   # owner: normal maps must read; 1.0 was near flat
 TILE = {"rock_a": 4.0, "rock_b": 4.0, "rock_c": 4.0, "thatch_a": 2.0, "thatch_b": 2.0, "thatch_c": 2.0,
@@ -332,7 +332,7 @@ BAMBOO_PAINTERS = {
 # "too detailed"). 2 m a tile.
 
 
-def planks(base, light, seam, seed, board_m=0.18, jitter=0.02):
+def planks(base, light, seam, seed, board_m=0.18, jitter=0.02, joints=True):
     px = SIZE / 2.0
     rng = np.random.default_rng(seed)
     yy, xx = np.mgrid[0:SIZE, 0:SIZE].astype(np.float32) / px
@@ -348,6 +348,9 @@ def planks(base, light, seam, seed, board_m=0.18, jitter=0.02):
         m = col == c
         # Butt joints: 1 to 2 per board per tile, staggered.
         cuts = sorted(rng.uniform(0, 2.0, rng.integers(1, 3)))
+        if not joints:
+            cuts = cuts[:1]         # one joint kept for the tiling seam, moved to the tile edge below
+            cuts[0] = 0.0
         seg = np.searchsorted(np.array(cuts), yy[m])
         values = rng.uniform(0.9, 1.08, len(cuts) + 1)
         values[-1] = values[0]      # the stretch past the last joint IS the first one, wrapped (v1 seam)
@@ -376,6 +379,11 @@ PLANK_PAINTERS = {
     "plank_a": lambda: planks(hexcol("9a6d45"), hexcol("c29a6c"), hexcol("4a3320"), 81),
     "plank_b": lambda: planks(hexcol("998d7a"), hexcol("c2b8a4"), hexcol("4d463c"), 81),
     "plank_c": lambda: planks(hexcol("9a6d45"), hexcol("c29a6c"), hexcol("4a3320"), 81, board_m=0.28),
+    # plank_c for WALKWAYS: boards laid across a 1.4 m walk span it in one piece, so no butt
+    # joint may land mid-walk (owner, 2026-09-27, marking broken boards: "fix the textures").
+    # The only joint sits on the tile edge, which the walk UVs keep outside the walk's width.
+    "plank_c_walk": lambda: planks(hexcol("9a6d45"), hexcol("c29a6c"), hexcol("4a3320"), 81, board_m=0.28,
+                                   joints=False),
 }
 
 
