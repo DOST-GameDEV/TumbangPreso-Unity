@@ -63,6 +63,16 @@ namespace TumbangPreso.PlayTests
             var who = GameServices.Round.PlayerAt(slot);
             who.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "paete");
             who.AbilitySystem.BindHero("paete");
+            // ⚠️⚠️ THE BODY AS WELL AS THE KIT (owner, 2026-09-26, of the skills film: *"idk why a fkn CHARACTER was the one
+            // doing the shit instead of the plants"*). The match dresses every seat once, at install, from the pick it had
+            // then (`MatchInstaller`), so re-binding the kit here left a curly-haired human casting Paete's vines and
+            // thorns in every film, and the one seat that did get his body was the local one, hidden in first person.
+            // Every converted seat now wears his model, and the local seat's first-person arms are matched to it,
+            // because `ViewmodelArms` only re-reads the body when it is bound (a late swap kept human hands).
+            var art = RosterBook.Load().FindPersonArt("paete");
+            who.GetComponent<CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+            if (slot == GameLaunch.SoloSeat)
+                foreach (var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None)) arms.MatchCharacter(who);
             who.Teleport(at); who.transform.rotation = Quaternion.identity;
             who.Intent.Parked = false; who.IsBot = true;
             return who;
@@ -323,7 +333,7 @@ namespace TumbangPreso.PlayTests
             }
             void Shoot(Camera c, string view, int index)
             {
-                var before = c.targetTexture; c.targetTexture = hdr; ComicPopup.PrepareView(c); c.Render(); c.targetTexture = before;
+                RenderFilmView(c, hdr);
                 Save(hdr, view, index);
             }
             bool rootedAll = false, sawScene = false, struggled = false, brokeOut = false, wasRooted = false;
@@ -482,9 +492,37 @@ namespace TumbangPreso.PlayTests
         {
             var paete = Paete(GameLaunch.SoloSeat, at);
             paete.IsBot = false;
-            var art = RosterBook.Load().FindPersonArt("paete");
-            paete.GetComponent<CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
             return paete;
+        }
+
+        /// <summary>
+        /// ⚠️ A FILM CAMERA SEES THE BODIES AS A SPECTATOR WOULD. The local seat's body is `ShadowsOnly` for its own
+        /// first-person view (`CameraRig.ApplyFppSelfHide`), so the court camera drew Paete's vines coming out of nobody.
+        /// Every camera but his own eyes shows every body, and never the private first-person arms.
+        /// </summary>
+        private static void RenderFilmView(Camera c, RenderTexture target)
+        {
+            bool witness = c != Camera.main;
+            var bodies = new System.Collections.Generic.List<Renderer>();
+            var arms = new System.Collections.Generic.List<Renderer>();
+            if (witness)
+            {
+                foreach (var p in GameServices.Round.Players)
+                    foreach (var r in p.GetComponentsInChildren<Renderer>())
+                        if (r.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly)
+                        { r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On; bodies.Add(r); }
+                foreach (var a in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))
+                    foreach (var r in a.GetComponentsInChildren<Renderer>()) if (r.enabled) { r.enabled = false; arms.Add(r); }
+            }
+            try
+            {
+                var before = c.targetTexture; c.targetTexture = target; ComicPopup.PrepareView(c); c.Render(); c.targetTexture = before;
+            }
+            finally
+            {
+                foreach (var r in bodies) if (r != null) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+                foreach (var r in arms) if (r != null) r.enabled = true;
+            }
         }
 
         /// <summary>
@@ -566,7 +604,7 @@ namespace TumbangPreso.PlayTests
             var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
             void Shoot(Camera c, string view, int index)
             {
-                var before = c.targetTexture; c.targetTexture = hdr; ComicPopup.PrepareView(c); c.Render(); c.targetTexture = before;
+                RenderFilmView(c, hdr);
                 Graphics.Blit(hdr, ldr);
                 var active = RenderTexture.active; RenderTexture.active = ldr;
                 pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply(); RenderTexture.active = active;

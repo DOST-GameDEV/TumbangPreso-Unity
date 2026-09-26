@@ -238,10 +238,21 @@ Necro Nemu, Voodoo Phaister; Pyro (Sean), Electro (Zack) and Hydro (Rafi) have n
   passes above (any of it may be overhauled),
   the ability glyphs (several reuse an old one), the Concussed stumble, bots for every new ability.
 - [ ] KURO PLAYS (its own design pass first), bots, snapshots, replays, screens, HUD.
-- [ ] ⚠️ FOUND 2026-09-26 night: all four `Resources/Models/ReworkProps/*.glb.meta` (barrier, boulder, doll, higop) cannot be parsed
-  ("Expected closing '}'" on every launch): line 10 lost the importer reference, a guid rewrite replaced the rest of the line. Restore
-  it to `script: {fileID: 11500000, guid: 715df9372183c47e389bb6e19fbc3b52, type: 3}` (the glTFast importer every PaeteProps meta uses),
-  keep each file's own `guid:` line, then check the models import (until then `ReworkProp.Spawn` falls back to the old blocks).
+- [x] ⚠️ FOUND 2026-09-26 night, FIXED 2026-09-26 (cloud): all four `Resources/Models/ReworkProps/*.glb.meta` (barrier, boulder, doll,
+  higop) could not be parsed ("Expected closing '}'" on every launch): line 10 had lost the importer reference (a guid rewrite had put
+  each file's OWN guid there and cut the line). Restored to the glTFast importer (`guid: 715df9372183c47e389bb6e19fbc3b52, type: 3`),
+  each file's own `guid:` kept, and the texture dependency pointed at `ReworkProps/Textures` (it named `PaeteProps`). Evidence: all
+  6,744 `.meta` files in Assets and Packages parse as YAML; the first cloud Unity import logged no YAML error and kept the fix.
+- [ ] **Owner's UPDATED tables, 2026-09-26 (cloud), *"updated skill names and status effects"*.** They replace the Anemo and Cryo rows
+  and the status table in `plan.md` section 0 (both recorded verbatim in `docs/reports/amihan-kit-2026-09-26/plan.md` section 0):
+  Anemo **Drift** (2 charges, 15 s in between), **Featherfall** (*"Propel upward and fly for 5 seconds. You may move or throw slippers
+  while in the air."*, 40 s), **Whirlwind** (35 s), **Airburst** (15 points), built in HERO-8. Cryo **Cold Feet** now *"2 Charges, 20
+  Seconds Cooldown In-Between Use"* and the field lasts **7.5 s** (was 35 s, 5 s): open for Cheska's pass. Statuses: **Rooted** *"Prevents
+  movement for 2.5 seconds"* (Paete's Rooted is 7 s with a break-out: ask the owner which wins before changing it), **Concussed**
+  *"Prevents movement or interaction for 1.25 seconds"* with a *"HUD Concussed Visual Effect"* (the built Concussed is the older answer,
+  a 30 % slow and throw wobble), **Frozen** gains a *"HUD Frozen Visual Effect"*, and two new rows, **Drained** (*"Depletes stamina to 0.
+  Prevents stamina recovery for 2.5 seconds"*, tooltip *"Disabled Stamina Recovery"*) and **Hexed** (*"Removes"*, tooltip *"Disabled
+  Protection"*). Open: each built into `StatusRules` (appended, never renumbered), motor, icons and HUD when its hero's pass uses it.
 - [ ] Ultimate cutscenes rebuilt per `ultimates.md`.
 - [ ] Owner review of the numbers set in plan section 7.
 - [ ] Unity verification (the separate testing chat): compile, EditMode, PlayMode gate, captures.
@@ -543,8 +554,18 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   for the rest of the film; the taya bot's name tag floats inside it. All four skill checks still pass. Find the renderer (log every
   renderer whose bounds exceed 6 m after the plant lands) and fix its scale or source; suspects: the plant's `PaeteGroundBreak`, the
   bot Paete's model or first-person arms rendered in a world camera.
-- [ ] ABILITY-2 lane, found here: `RosterArmGeometryTests.EveryHeroUsesBothHandsAndReturnsCleanly` fails on `sean/sean_skill2d`, whose
-  first-person action is empty (the test now names the hero and action). Not Paete; closes HERO-9's EditMode question.
+- [x] ABILITY-2 lane, found here, FIXED 2026-09-26 (cloud): `RosterArmGeometryTests.EveryHeroUsesBothHandsAndReturnsCleanly` failed on
+  `sean/sean_skill2d`, the COMING SOON defending slot (`PlaceholderRoleAbility`), which casts and does nothing and so has no hands on
+  purpose. The gesture tests (`RosterArmGeometryTests`, `HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions` and
+  `ViewmodelArms_PreservesHeldSlipperAndActions_AcrossCharacterSwaps`) now skip a placeholder, which stops matching the day its hero's real
+  skill replaces it. Cloud EditMode: `RosterArmGeometryTests` 3/3 (`Logs/paete-cloud2/editmode.xml`).
+- [x] **The skills film showed a HUMAN casting Paete's skills (owner, 2026-09-26: *"idk why a fkn CHARACTER was the one doing the shit
+  instead of the plants"*). FIXED in the film rig, not the game:** `PaeteKitPlayProbe.Paete()` re-bound the kit on a seat the match had
+  already dressed as someone else, so the taya casting THORN HARVEST was a curly-haired human, and the one seat that did wear Paete was the
+  local one, hidden from the court camera by the first-person self-hide. Every converted seat now wears his model (and the local seat's
+  first-person arms are re-matched), and the film cameras show every body the way a spectator sees them (`RenderFilmView`). Real matches
+  dress each seat from its pick at install, so players never saw this. Film `Logs/paete-cloud2/paete-skills-film` (first Unity film shot
+  in a cloud session, software OpenGL), stitched as `Logs/paete-share/paete_skills_v2.mp4` and sent. Owner's verdict on v2 owed.
 - [x] Prisoners "actually TIED" (owner) reviewed close up in film r16's `victim/`: backs pressed to the trunk, straining, bands at the shins;
   the lit bark in the limb and bands blended into warm skin, so both are dark and mid bark now.
 - [x] First-person vine film reviewed (film r11 `owner/`): both hands punch forward, the braids leave the viewmodel hands and converge on

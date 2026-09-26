@@ -536,6 +536,9 @@ namespace TumbangPreso.Tests
                 foreach (var ability in kit.AllAbilities)
                 {
                     Assert.IsNotNull(ability, $"{hero} is missing an ability");
+                    // ⚠️ The COMING SOON defending slot (`PlaceholderRoleAbility`, ABILITY-2) casts and does nothing,
+                    // so it has no cast or first-person action on purpose; see `RosterArmGeometryTests`.
+                    if (ability is PlaceholderRoleAbility) continue;
                     Assert.IsFalse(string.IsNullOrEmpty(ability.CastAction),
                         $"{hero}: {ability.Name} is missing a CastAction");
                     Assert.IsFalse(string.IsNullOrEmpty(ability.ViewmodelAction),
@@ -651,6 +654,8 @@ namespace TumbangPreso.Tests
                     var kit = HeroAbilitySystem.CreateKitFor(charId);
                     foreach (var ability in kit.AllAbilities)
                     {
+                        // The COMING SOON defending slot has no hands on purpose (`PlaceholderRoleAbility`).
+                        if (ability is PlaceholderRoleAbility) continue;
                         Assert.IsTrue(vm.PlayAction(ability.ViewmodelAction),
                             $"{charId}: PlayAction failed for {ability.ViewmodelAction}");
                     }

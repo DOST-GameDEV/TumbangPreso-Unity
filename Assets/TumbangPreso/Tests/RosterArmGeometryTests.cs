@@ -36,6 +36,11 @@ namespace TumbangPreso.Tests
                 var kit=HeroAbilitySystem.CreateKitFor(hero);
                 foreach(var ability in kit.AllAbilities)
                 {
+                    // ⚠️ THE COMING SOON SLOT HAS NO HANDS BY DESIGN (ABILITY-2, 2026-09-26). Sean, Zack and Rafi's
+                    // defending slot is `PlaceholderRoleAbility`, which casts and does nothing; a gesture would tell
+                    // the player something happened. It gets its hands when its hero's real defending skill is
+                    // designed, and then this skip no longer matches it.
+                    if(ability is PlaceholderRoleAbility) continue;
                     var go=new GameObject("Hand action review");
                     try
                     {

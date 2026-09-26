@@ -1,5 +1,15 @@
 # Active TUMP rework ledger
 
+## Cloud session with a real Unity editor, 2026-09-26 (branch ASTRAReworks)
+
+Unity 6000.5.8f1 now runs in cloud sessions: `tools/cloud_unity_setup.sh` installs it to `/opt/tump/unity` and activates a
+Personal licence from `UNITY_EMAIL` / `UNITY_PASSWORD` (Unity's licensing client, `--activate-ulf --include-personal`);
+`tools/run_unity_guarded.py` adds the virtual display (xvfb, Mesa llvmpipe) and `-buildTarget Linux64` on Linux. Measured:
+first import about 6 min, a 13.5 s two-view 1280x720 film about 5 min. Done: the four ReworkProps metas, the COMING SOON
+placeholder in three gesture tests, the Paete film rig (a human was casting his skills; `paete_skills_v2.mp4` sent).
+In flight, in this order: THORN HARVEST placed where he looks, LIANA LEAP's first person as his own arms, then Amihan's
+second pass (`docs/reports/amihan-kit-2026-09-26/`: plan, research from the game's own preview clips, cutscene direction).
+
 ## HERO-9 Paete, Unity pass on the cloud work, 2026-09-26 (worktree `TumbangPreso-Unity-paete`, pushes to ASTRAReworks)
 
 Owner: Paete first, and *"I WANT THIS TO BE THE BASELINE QUALITY OF EVERYTHING ELSE MOVING FORWARD"*. Every cloud
