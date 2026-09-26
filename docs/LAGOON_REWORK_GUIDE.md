@@ -7,7 +7,7 @@ whose model, texture, foliage and working rules ALL apply here too (Kanto is the
 house style). Every rule below came from the owner reacting to a render; the quote is there so
 nobody re-litigates it. Status row: `docs/TODO.md` **LAGOON-1**.
 
-⚠️⚠️ **CURRENT STATE (2026-09-26): LAYOUT BLOCKOUT, cove v6, awaiting the owner's verdict.**
+⚠️⚠️ **CURRENT STATE (2026-09-26): LAYOUT BLOCKOUT, cove v9, awaiting the owner's verdict.**
 Nothing is modelled, textured or in Unity yet; the shipped Lagoon scene is untouched. Next steps
 are § 8. This rework supersedes the REFINE-2.6 per-family refinement for this map. The map as
 found: `Logs/map-lineup-v1/sheet_lagoon.png` (a flat brown deck ring over flat teal water).
@@ -68,7 +68,7 @@ photograph): `docs/reports/map-by-map-refinement-2026-09-23/lagoon-reference-not
   grass (green cliffs).
 - Warm tan rock; lighter tops and darker bases come in the texture pass; AgX Punchy look.
 
-## 4 · Layout (current: cove v6)
+## 4 · Layout (current: cove v9)
 
 - **One asymmetric island weighted north-west**, drawn from a hand-placed coast curve (`COAST`,
   Catmull-Rom smoothed): a long sand SPIT curling south on the west (its own house and a tidal
@@ -81,11 +81,30 @@ photograph): `docs/reports/map-by-map-refinement-2026-09-23/lagoon-reference-not
   heights from the spit up to the summit; a fence on the drop side; stairs between pockets. 🧑:
   *"notice how the houses are not just on a single level"*. The **capilla** (white, bell tower,
   red tin roof) on the summit ledge is the landmark seen from the court.
-- **The Sama-Bajau water village** fills the open south and south-east: about 20 SMALL one-room
-  stilt homes (decks ~1.9 m over the water) strung in loose clusters along narrow plank walks,
-  11 to 14 m house to house, some alone; laundry lines; ~20 boats (lepa houseboats with a
-  shelter, bangka outriggers); one long walk to the beach by the court.
-- **Landmark rock** in the water in front of the court, to carry a painted emblem or banner.
+- **The Sama-Bajau water village** (cove v7) grows along ONE MAIN WALKWAY (`SPINE`): a jetty
+  climbing off the sand just east of the court's beach front, then a plank walk ~1.9 m over the
+  water wandering south-east. SMALL one-room stilt homes branch off it on 5.5 to 8.5 m spurs,
+  alternating sides with the odd gap; a second walk (`EAST_WALK`) runs east under the sea cliff.
+  Seven homes stand alone out in the sea (`FREE_HOMES`), reached only by boat. The first spine
+  homes stand 12 to 20 m off the court's south edge, so the village shows from the court. Boats:
+  moored along the spine and by homes, a few paddled out in open water, and bangkas pulled up on
+  the spit's sand. (v6 was ten loose clusters on random headings and read as a scattered blob.)
+- **Landmark rock** in the water south-west of the court's front (`LANDMARK`), left of the spine
+  as seen from the court, to carry a painted emblem or banner.
+- **Feature boulders** (`FEATURES`, v7): seven hand-placed giants give the massif its silhouette
+  and the coast its landmarks (a stone in the surf under the east cliff, one behind the court's
+  north-west corner, a pair at the spit's root, two on the northern skyline, a sea stack off the
+  spit). The massif's stones now vary: about one in six is small (tucked in the seams), the odd
+  one low down is half again as big; small shore rocks are half buried along the sand.
+- **Water** (v7): a painted gradient, pale turquoise shallows hugging the whole coast, turquoise,
+  then deeper teal offshore, with a broken off-white foam line at the sand
+  (`tools/lagoon_cove_water.py`). **Sky**: a vertical gradient seen by the camera only.
+- **Planting** (v7, blockout kit `tools/lagoon_cove_planting.py`): coconut palms with curved
+  trunks and drooping fronds at the pockets' rims (leaning out over the drop) and along the sand,
+  thickest on the spit (leaning to the sea); grass tufts, banana/taro broad leaves and crimson or
+  yellow flowering bushes in the gaps at boulder feet.
+- The ground is coloured per VERTEX (v7), so sand, grass, rock and court edges are soft painted
+  boundaries rather than 1.35 m staircases.
 
 ## 5 · Layout history (rejected, do not return to)
 
@@ -100,6 +119,8 @@ photograph): `docs/reports/map-by-map-refinement-2026-09-23/lagoon-reference-not
 | What | Command | Output |
 |---|---|---|
 | Organic cove blockout (CURRENT) | `blender -b --python tools/author_lagoon_cove.py -- --preview N` | `ArtSource/lagoon/lagoon_cove.blend`, `Logs/lagoon-blender/cove_<shot>_vN.png` (plan, ref_angle, village, aerial, eye_north/east/south/west) |
+| Sea gradient and foam line (called by the cove script) | `tools/lagoon_cove_water.py`: `build_sea`, `build_foam` | the "sea" and "foam" objects |
+| Blockout planting kit (called by the cove script) | `tools/lagoon_cove_planting.py`: `palm`, `tuft`, `broadleaf`, `flower_bush`, `plant_gaps` | shared-mesh plants |
 | Old shelf blockout (rejected; kept for its helpers) | `tools/author_lagoon_blockout.py` | `lagoon_blockout.blend` |
 | Every shipped map photographed the same way (headless) | Unity `-batchmode -executeMethod TumbangPreso.EditorTools.MapKit.MapLineupCapture.Run` (menu Tumbang Preso > Maps > Render Map Lineup) | `Logs/map-lineup-vN/` |
 
@@ -120,12 +141,15 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
 
 ## 8 · Plan (in order; each step rendered in Blender and approved before the next)
 
-1. **Finish the layout** (owner verdict on cove v6 pending). Known gaps: flat single-colour
-   water (turquoise shallows along the beach and spit, a pale foam band); bare spit (palms,
-   beached boats); the water village reads as a scattered blob (a main walkway spine with homes
-   branching off, and a few homes near the court so it shows from the court); a few HUGE feature
-   boulders and more size variety; planting in rock gaps (grass tufts, broad leaves, red and
-   orange accents).
+1. **Finish the layout.** Cove v9 (2026-09-26) closed every gap listed after v6, awaiting the
+   owner's verdict: turquoise shallows and a foam line (`lagoon_cove_water.py`), palms and beached
+   bangkas on the spit, the water village on a walkway spine with homes seen from the court,
+   seven feature boulders and a wider stone size range, planting in the rock gaps
+   (`lagoon_cove_planting.py`), rim stones on every ledge front, stone steps, a gradient sky.
+   ⚠️ The reference's orange flower accents are CRIMSON and YELLOW here: orange sits too close
+   to offence orange `#f87020` (§ 2). Still blockout-grade and left for later steps: every roof
+   is one pyramid (step 3), the court floor is a flat placeholder, a few ledge backs still show
+   bare fill, the horizon is hazy (step 7).
 2. **Rock kit**: final pillow-boulder models and a painted rock texture (swatch first: warm tan,
    lighter tops, soft darker seams); rebuild the massif from them.
 3. **Stilt house kit**: nipa/cogon thatch (its own texture, swatch first), sawali wall panel

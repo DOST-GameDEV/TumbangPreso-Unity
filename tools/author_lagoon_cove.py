@@ -204,7 +204,7 @@ def boulder_mesh(i):
 
 def place_boulders(c, rng):
     kit = [boulder_mesh(i) for i in range(12)]
-    placed = 0
+    placed, spots = 0, []
     step = 4.8
     y = -100.0
     while y < 100:
@@ -236,6 +236,13 @@ def place_boulders(c, rng):
             # stones rather than a wall; the massif's body is bigger stones.
             near = min(math.hypot((px - p[1]) / p[4], (py - p[2]) / p[5]) for p in POCKETS)
             s = rng.uniform(2.2, 3.4) if near < 1.9 else rng.uniform(3.2, 6.0) * (1.15 - min(0.4, h / 80))
+            # SELF-REVIEW v6: every stone was 3 to 6 m, so the pile read as one even gravel. The
+            # reference mixes a few giants, a body of mid stones and small ones tucked between.
+            roll = rng.random()
+            if roll < 0.18:
+                s *= 0.45                      # small stones in the seams
+            elif roll > 0.93 and near > 1.9 and h < 18:
+                s *= 1.6                       # the odd big one low on the massif
             z = h - s * rng.uniform(0.35, 0.7)
             if front is not None:
                 # THE LEDGE FACE IS STILL STONE (review v2: clearing it showed smooth dirt cliffs).
@@ -247,52 +254,171 @@ def place_boulders(c, rng):
             o.scale = (s * rng.uniform(0.85, 1.15), s * rng.uniform(0.85, 1.15), s * rng.uniform(0.8, 1.1))
             o.rotation_euler = (rng.uniform(-0.18, 0.18), rng.uniform(-0.18, 0.18), rng.uniform(0, math.tau))
             c.objects.link(o)
+            spots.append((px, py, s * 0.9))
             placed += 1
         y += step
-    print("[lagoon-cove] boulders placed:", placed)
+    spots += rim_stones(c, kit, rng)
+    spots += feature_boulders(c, kit)
+    spots += shore_rocks(c, kit, rng)
+    print("[lagoon-cove] boulders placed:", placed, "footprints:", len(spots))
+    return spots
+
+
+# SELF-REVIEW v6 (and the reference): a few HUGE feature stones give the massif its silhouette and
+# the coast its landmarks; without them the pile reads as even gravel. Hand placed: (x, y, size,
+# kit shape, turn, how far it is sunk as a fraction of its size).
+FEATURES = [
+    (65, 29, 8.0, 5, 0.4, 0.35),      # the east sea cliff: a giant stone standing in the surf
+    (-16, 22, 6.0, 2, 1.9, 0.4),      # behind the court's north-west corner, seen from the court
+    (-80, -40, 9.0, 7, 2.6, 0.4),     # the spit's root, the west's one tall stone
+    (-86, -8, 7.5, 9, 0.2, 0.4),      # its partner a little north, a pair not a twin
+    (18, 96, 12.0, 1, 1.1, 0.4),      # on the northern skyline beside the summit
+    (-60, 80, 10.0, 11, 2.2, 0.4),    # north-west skyline
+    (-50, -104, 5.0, 8, 0.9, 0.3),    # a sea stack off the spit's tip
+]
+
+
+def rim_stones(c, kit, rng):
+    """SELF-REVIEW v7 (game's-eye north): the grid's stones missed most ledge fronts, so from the
+    court every house pocket stood on a flat brown dirt wall, the fault the owner rejected on
+    cove v2 ("smooth dirt cliffs"). Each raised pocket now gets its downhill arc built as a
+    retaining face of stones in two rows, the top row's crowns just under the ledge floor, the
+    way the reference's houses sit on stacked boulders."""
+    spots = []
+    for name, px, py, pz, rx, ry, _s in POCKETS:
+        if name == "court" or pz < 1.5:
+            continue
+        to_mouth = Vector((30 - px, -70 - py, 0)).normalized()
+        steps = int(math.tau * (rx + ry) / 2 / 3.0)
+        for k in range(steps):
+            a = k / steps * math.tau + rng.uniform(-0.08, 0.08)
+            if Vector((math.cos(a), math.sin(a), 0)).dot(to_mouth) < 0.1:
+                continue
+            for row, (reach, drop) in enumerate(((1.06, 0.15), (1.32, 1.9))):
+                x, y = px + math.cos(a) * rx * reach, py + math.sin(a) * ry * reach
+                if pocket_at(x, y)[0] is not None:
+                    continue
+                s = rng.uniform(1.5, 2.3) * (1.0 + row * 0.25)
+                o = bpy.data.objects.new("rim stone", kit[rng.randrange(len(kit))])
+                o.location = (x, y, pz - drop - 1.3 * s)
+                o.scale = (s * rng.uniform(0.9, 1.15), s * rng.uniform(0.9, 1.15), s)
+                o.rotation_euler = (rng.uniform(-0.1, 0.1), rng.uniform(-0.1, 0.1), rng.uniform(0, math.tau))
+                c.objects.link(o)
+                spots.append((x, y, s * 0.9))
+    return spots
+
+
+def feature_boulders(c, kit):
+    spots = []
+    for x, y, s, k, rz, sink in FEATURES:
+        o = bpy.data.objects.new("feature boulder", kit[k])
+        # A stone standing in the sea is measured from the WATER, not the seabed, and stands
+        # taller (review: sunk from the seabed they showed as flat slabs awash).
+        wet = coast_distance(x, y) < 0
+        base = WATER if wet else height(x, y)
+        tall = 1.6 if wet else 1.05
+        o.location = (x, y, base - s * sink * (0.6 if wet else 1.0))
+        slim = 0.75 if wet else 1.0   # a sea stack stands, it does not sprawl (v8 aerial)
+        o.scale = (s * slim, s * 0.85 * slim, s * tall)
+        o.rotation_euler = (0.08, -0.05, rz)
+        c.objects.link(o)
+        spots.append((x, y, s * 0.9))
+    return spots
+
+
+def shore_rocks(c, kit, rng):
+    """Small stones half buried along the sand and in the shallows, in twos and threes, so the
+    beach is not a clean ribbon (the reference scatters them at the waterline)."""
+    spots = []
+    n = len(COAST_LINE)
+    for i in range(0, n, 3):
+        if rng.random() > 0.4:
+            continue
+        (ax, ay), (bx, by) = COAST_LINE[i], COAST_LINE[(i + 1) % n]
+        for k in range(rng.randint(1, 3)):
+            x, y = ax + rng.uniform(-3, 3), ay + rng.uniform(-3, 3)
+            if pocket_at(x, y)[0] is not None or math.hypot(x, y + 12) < 20:
+                continue   # never on a pocket, and keep the court's beach front open
+            s = rng.uniform(0.9, 2.2)
+            o = bpy.data.objects.new("shore rock", kit[rng.randrange(len(kit))])
+            o.location = (x, y, max(height(x, y), SEABED) - s * 0.45)
+            o.scale = (s, s * rng.uniform(0.8, 1.1), s * rng.uniform(0.6, 0.9))
+            o.rotation_euler = (0, 0, rng.uniform(0, math.tau))
+            c.objects.link(o)
+    return spots
 
 
 # ---------------------------------------------------------------- ground
 
+def vertex_colour_material(name):
+    """One material whose colour comes from the mesh's "Col" attribute. SELF-REVIEW v6: the
+    ground was coloured per FACE, so every sand, grass and court edge was a staircase of 1.35 m
+    cells, plainly visible from the aerial and along the beach. Per-VERTEX colour blends across
+    one cell instead, so the edges read as soft painted boundaries."""
+    m = bpy.data.materials.get(name)
+    if m:
+        return m
+    m = bpy.data.materials.new(name)
+    if m.node_tree is None:
+        m.use_nodes = True
+    nt = m.node_tree
+    bsdf = nt.nodes["Principled BSDF"]
+    bsdf.inputs["Roughness"].default_value = 0.9
+    attr = nt.nodes.new("ShaderNodeVertexColor")
+    attr.layer_name = "Col"
+    nt.links.new(attr.outputs["Color"], bsdf.inputs["Base Color"])
+    return m
+
+
+def ground_colour(x, y, z, slope_z):
+    """The ground's colour at one vertex: pocket surface, beach sand, steep rock or ring grass."""
+    C = B.COLOURS
+    pocket, _d = pocket_at(x, y)
+    if pocket is not None:
+        return C[pocket[6]]
+    if z <= BEACH + 0.5:
+        return C["sand"]
+    if slope_z < 0.75:
+        return C["rock_fill"]   # steep ground is rock, never grass (review v3: green cliffs)
+    if peak_height(x, y) < BEACH + 4:
+        return C["grass"]       # the outer ring: grass, not bare fill (review v2)
+    return C["rock_fill"]
+
+
 def ground(c):
     """The height field as one grid mesh (the fill that shows between boulders), with the
-    pockets flat. Faces take the pocket's surface colour, else rock fill."""
-    n, span = 170, 230.0
+    pockets flat, coloured per vertex."""
+    n, span = 200, 230.0
+    cell = span / n
+    hs = [[height(-span / 2 + i * cell, -span / 2 + j * cell) for i in range(n + 1)] for j in range(n + 1)]
     bm = bmesh.new()
-    verts = [[bm.verts.new((-span / 2 + i * span / n, -span / 2 + j * span / n, 0)) for i in range(n + 1)] for j in range(n + 1)]
-    for row in verts:
-        for v in row:
-            v.co.z = height(v.co.x, v.co.y)
-    mats = ["rock_fill", "court", "grass", "sand"]
-    me = bpy.data.meshes.new("ground")
+    verts = [[bm.verts.new((-span / 2 + i * cell, -span / 2 + j * cell, hs[j][i])) for i in range(n + 1)]
+             for j in range(n + 1)]
     for j in range(n):
         for i in range(n):
-            f = bm.faces.new((verts[j][i], verts[j][i + 1], verts[j + 1][i + 1], verts[j + 1][i]))
-            f.normal_update()
-            cx, cy = f.calc_center_median().x, f.calc_center_median().y
-            pocket, _d = pocket_at(cx, cy)
-            if pocket is not None:
-                f.material_index = mats.index(pocket[6])
-            elif f.calc_center_median().z <= BEACH + 0.5:
-                f.material_index = 3
-            elif f.normal.z < 0.75:
-                f.material_index = 0   # steep ground is rock, never grass (review v3: green cliffs)
-            elif peak_height(cx, cy) < BEACH + 4:
-                f.material_index = 2   # the outer ring: grass, not bare fill (review v2)
-            else:
-                f.material_index = 0
+            bm.faces.new((verts[j][i], verts[j][i + 1], verts[j + 1][i + 1], verts[j + 1][i]))
+    me = bpy.data.meshes.new("ground")
     bm.to_mesh(me)
     bm.free()
-    for m in mats:
-        me.materials.append(B.mat(m))
+    colours = []
+    for j in range(n + 1):
+        for i in range(n + 1):
+            gx = hs[j][min(n, i + 1)] - hs[j][max(0, i - 1)]
+            gy = hs[min(n, j + 1)][i] - hs[max(0, j - 1)][i]
+            slope_z = 1.0 / math.sqrt(1 + (gx / (2 * cell)) ** 2 + (gy / (2 * cell)) ** 2)
+            x, y = -span / 2 + i * cell, -span / 2 + j * cell
+            colours.append(ground_colour(x, y, hs[j][i], slope_z))
+    attr = me.color_attributes.new("Col", "FLOAT_COLOR", "POINT")
+    for k, col_ in enumerate(colours):
+        attr.data[k].color = (*col_, 1.0)
+    me.materials.append(vertex_colour_material("ground_painted"))
     o = bpy.data.objects.new("ground", me)
     c.objects.link(o)
-    B.box(c, "sea", (0, 0, WATER - 0.05), (500, 500, 0.1), "water")
 
 
 # ---------------------------------------------------------------- village
 
-def house(c, rng, name, x, y, z, face_to, small=False):
+def house(c, rng, name, x, y, z, face_to, small=False, pile_foot=None):
     """A blockout Filipino stilt house on its pocket: raised floor on short piles, sawali or
     painted walls, a steep thatch or tin roof, a front deck toward `face_to`."""
     w, d, h = rng.uniform(7, 9.5), rng.uniform(5.5, 7), rng.uniform(3.0, 3.6)
@@ -310,7 +436,8 @@ def house(c, rng, name, x, y, z, face_to, small=False):
     for lx in (-w / 2, w / 2):
         for ly in (-d / 2, d / 2 + 2.1):
             q = at(lx, ly)
-            B.cylinder(c, "pile", (q.x, q.y, z + lift / 2 - 0.3), 0.13, lift + 0.6, "bamboo", sides=6)
+            foot = z - 0.6 if pile_foot is None else pile_foot   # water homes stand on the seabed
+            B.cylinder(c, "pile", (q.x, q.y, (z + lift + foot) / 2), 0.13, z + lift - foot, "bamboo", sides=6)
     roof = "thatch" if rng.random() < 0.72 else rng.choice(("tin", "tin_red"))
     m = bpy.data.meshes.new("roof")
     bm = bmesh.new()
@@ -334,6 +461,7 @@ def village(c, rng):
             fx, fy = px + math.cos(a) * rx * 0.95, py + math.sin(a) * ry * 0.95
             B.box(c, "fence post", (fx, fy, pz + 0.5), (0.12, 0.12, 1.0), "deck")
     water_village(c, rng)
+    beached_boats(c, rng)
     lookup = {p[0]: p for p in POCKETS}
     for a, b in STAIRS:
         A, Bp = lookup[a], lookup[b]
@@ -341,113 +469,224 @@ def village(c, rng):
         flat = Vector(((vb - va).x, (vb - va).y, 0)).normalized()
         ea = va + Vector((flat.x * A[4] * 0.85, flat.y * A[5] * 0.85, 0))
         eb = vb - Vector((flat.x * Bp[4] * 0.85, flat.y * Bp[5] * 0.85, 0))
-        mid, run = (ea + eb) / 2, eb - ea
-        o = B.box(c, f"stairs {a} to {b}", (0, 0, 0), (1.8, run.length, 0.25), "deck")
-        o.matrix_world = Matrix.Translation(mid + Vector((0, 0, 0.2))) @ run.to_track_quat("Y", "Z").to_matrix().to_4x4()
+        # STONE STEPS, not a plank (self-review v7: a tilted board read as a fallen plank). One
+        # block per ~0.35 m of rise, each sitting on the ground under it so none floats.
+        run = eb - ea
+        flat_run = Vector((run.x, run.y, 0))
+        n = max(3, int(abs(run.z) / 0.35))
+        heading = math.atan2(flat_run.y, flat_run.x) - math.pi / 2   # box +Y along the run
+        for k in range(n):
+            p = ea + run * ((k + 0.5) / n)
+            top = ea.z + run.z * ((k + 1) / n if run.z > 0 else k / n)
+            bottom = min(top - 0.3, height(p.x, p.y) - 0.3)
+            B.box(c, f"step {a} to {b}", (p.x, p.y, (top + bottom) / 2),
+                  (2.0, flat_run.length / n + 0.15, top - bottom), "rock_light", rot_z=heading)
     _n, sx, sy, sz, _rx, _ry, _s = lookup["summit ledge (capilla)"]
     B.box(c, "capilla", (sx, sy, sz + 2.5), (5.5, 7.5, 5), "chapel")
     B.box(c, "capilla roof", (sx, sy, sz + 5.3), (6.5, 8.5, 0.4), "tin_red")
     B.box(c, "bell tower", (sx, sy - 4.6, sz + 4.5), (2.4, 2.4, 9), "chapel")
     o = bpy.data.objects.new("landmark rock", bpy.data.meshes.get("boulder_03"))
-    o.location, o.scale = (9, -40, SEABED + 1), (4.2, 3.4, 5.5)
+    o.location, o.scale = (LANDMARK[0], LANDMARK[1], WATER - 2.2), (4.6, 4.0, 4.4)   # rounder: at 5.5 tall it read as a pyramid
     o.rotation_euler = (0, 0, 0.3)
     c.objects.link(o)
+
+
+# SELF-REVIEW v6: the water village read as a scattered blob (ten loose clusters on random
+# headings), and from the court you saw none of it. A real Bajau village grows along a MAIN
+# WALKWAY out from the shore, homes branching off it on short spurs, with a few houses standing
+# alone further out that only a boat reaches. So: one spine from the beach beside the court out to
+# the south-east, a secondary walk to the east under the sea cliff, and free-standing homes.
+SPINE = [(15, -22), (17, -34), (24, -47), (36, -57), (52, -63), (68, -72), (80, -88), (86, -106)]
+EAST_WALK = [(52, -63), (66, -50), (82, -44), (98, -46)]
+FREE_HOMES = [(-16, -62), (2, -86), (50, -114), (108, -64), (112, -92), (70, -120), (-30, -84)]
+SPINE_Z = WATER + 1.9          # plank walks stand about 1.9 m over the water
+LANDMARK = (-9, -44)           # the painted rock: left of the spine as seen from the court
+
+
+def _polyline_points(pts, every):
+    """Points every `every` metres along a polyline, with the local heading."""
+    out, carry = [], every * 0.6
+    for (ax, ay), (bx, by) in zip(pts, pts[1:]):
+        seg = math.hypot(bx - ax, by - ay)
+        head = math.atan2(by - ay, bx - ax)
+        t = carry
+        while t < seg:
+            out.append((ax + math.cos(head) * t, ay + math.sin(head) * t, head))
+            t += every
+        carry = t - seg
+    return out
+
+
+def water_home(c, rng, x, y, face_to):
+    """A small one-room Bajau home on stilts reaching the seabed."""
+    floor = WATER + 1.0 + rng.uniform(0.0, 0.4)
+    house(c, rng, "bajau house", x, y, floor, face_to, small=True, pile_foot=SEABED)
+    if rng.random() < 0.6:   # a laundry line off the deck
+        B.box(c, "laundry", (x + 3.6, y, floor + 2.4), (0.05, 4.0, 1.0), "net")
+
+
+def boat(c, rng, x, y, z, rz, lepa=None):
+    """A lepa houseboat (long hull, small shelter amidships) or a slim bangka with outriggers."""
+    if lepa is None:
+        lepa = rng.random() < 0.35
+    if lepa:
+        B.box(c, "lepa hull", (x, y, z + 0.3), (8.0, 1.4, 0.7), "boat", rot_z=rz)
+        B.box(c, "lepa shelter", (x, y, z + 1.2), (3.0, 1.5, 1.1), "thatch", rot_z=rz)
+    else:
+        B.box(c, "bangka hull", (x, y, z + 0.25), (5.5, 0.9, 0.5), "boat", rot_z=rz)
+        B.box(c, "bangka trim", (x, y, z + 0.52), (5.6, 0.95, 0.08), "boat_trim", rot_z=rz)
+        for side in (-1, 1):
+            B.box(c, "outrigger", (x - math.sin(rz) * side * 2.2, y + math.cos(rz) * side * 2.2, z + 0.12),
+                  (4.2, 0.18, 0.18), "bamboo", rot_z=rz)
 
 
 def water_village(c, rng):
     """THE SAMA-BAJAU WATER VILLAGE (owner: "badjao tribe isnt particularly land based"; photograph
     of a Bajau village: free-standing stilt houses over clear shallow water, narrow plank walks
-    and ladders, laundry lines, and boats everywhere, both moored and paddled).
-    Houses stand free in the open sea in loose clusters; some clusters are joined by a narrow
-    walk, some houses stand alone. One long walk reaches the beach. Many boats in between:
-    lepa houseboats (a long hull with a small shelter) and slim bangka outriggers."""
-    clusters = [(26, -44, 3), (52, -52, 2), (40, -76, 3), (78, -42, 2), (70, -84, 3), (14, -86, 1),
-                (100, -66, 2), (-10, -64, 1), (92, -100, 1), (46, -110, 2)]
+    and ladders, laundry lines, and boats everywhere, both moored and paddled)."""
+    # The spine climbs from the sand to walk height over its first segment, like a jetty.
+    walk(c, SPINE[0], SPINE[1], SPINE_Z, za=BEACH + 0.3)
+    for a, b in zip(SPINE[1:], SPINE[2:]):
+        walk(c, a, b, SPINE_Z)
+    for a, b in zip(EAST_WALK, EAST_WALK[1:]):
+        walk(c, a, b, SPINE_Z)
     homes = []
-    for cx, cy, n in clusters:
-        prev = None
-        # A cluster strings out along a wandering line, 11 to 14 m house to house, so houses
-        # never overlap (review v5) and the plank walk between them shows.
-        heading = rng.uniform(0, math.tau)
-        x, y = cx, cy
-        for k in range(n):
-            if k:
-                heading += rng.uniform(-0.8, 0.8)
-                step = rng.uniform(11, 14)
-                x, y = x + math.cos(heading) * step, y + math.sin(heading) * step
-            floor = WATER + 1.0 + rng.uniform(0.0, 0.4)   # decks about 1.9 m over the water
-            house(c, rng, "bajau house", x, y, floor, (x + rng.uniform(-20, 20), y + rng.uniform(-20, 20)), small=True)
-            for lx in (-2.4, 0.0, 2.4):
-                for ly in (-2.2, 2.2):
-                    B.cylinder(c, "stilt", (x + lx, y + ly, (floor + 0.9 + SEABED) / 2), 0.12,
-                               floor + 0.9 - SEABED, "bamboo", sides=6)
-            if rng.random() < 0.6:   # a laundry line on two poles off the deck
-                B.box(c, "laundry", (x + 3.6, y, floor + 2.4), (0.05, 4.0, 1.0), "net")
-            if prev is not None:
-                walk(c, prev, (x, y), floor + 0.95)
-            prev = (x, y)
-            homes.append((x, y))
-    # The one long walk to the shore, from the nearest cluster to the beach by the court.
-    walk(c, homes[0], (16, -21), WALK_Z)
-    # Boats: lepa houseboats and bangka outriggers, moored by houses and out on open water.
-    for i in range(22):
-        if i < len(homes):
-            hx, hy = homes[i]
-            x, y = hx + rng.choice((-6, 6)), hy + rng.uniform(-3, 3)
-        else:
-            x, y = rng.uniform(-30, 115), rng.uniform(-35, -120)
-            if coast_distance(x, y) > -4:
+    # Homes branch off both walks on short spurs, alternating sides with some irregularity.
+    side = 1
+    for walk_pts, every in ((SPINE[1:], 12.5), (EAST_WALK, 12.0)):
+        for x, y, head in _polyline_points(walk_pts, every):
+            if rng.random() < 0.12:
+                side = -side
+                continue           # a gap now and then, so the rhythm is not a comb
+            spur = rng.uniform(5.5, 8.5)
+            nx, ny = math.cos(head + side * math.pi / 2), math.sin(head + side * math.pi / 2)
+            hx, hy = x + nx * (spur + 3.2), y + ny * (spur + 3.2)
+            crowded = any(math.hypot(hx - h[0], hy - h[1]) < 10 for h in homes)   # v8: two spurs met
+            if crowded or coast_distance(hx, hy) > -4 or math.hypot(hx - LANDMARK[0], hy - LANDMARK[1]) < 9:
+                side = -side
                 continue
-        rz = rng.uniform(0, math.pi)
-        if rng.random() < 0.35:   # a lepa: longer hull, a small arched shelter amidships
-            B.box(c, "lepa hull", (x, y, WATER + 0.3), (8.0, 1.4, 0.7), "boat", rot_z=rz)
-            B.box(c, "lepa shelter", (x, y, WATER + 1.2), (3.0, 1.5, 1.1), "thatch", rot_z=rz)
-        else:
-            B.box(c, "bangka hull", (x, y, WATER + 0.25), (5.5, 0.9, 0.5), "boat", rot_z=rz)
-            for side in (-1, 1):
-                B.box(c, "outrigger", (x - math.sin(rz) * side * 2.2, y + math.cos(rz) * side * 2.2, WATER + 0.12),
-                      (4.2, 0.18, 0.18), "bamboo", rot_z=rz)
+            walk(c, (x, y), (x + nx * spur, y + ny * spur), SPINE_Z)
+            water_home(c, rng, hx, hy, (x, y))
+            homes.append((hx, hy, head))
+            side = -side
+    for x, y in FREE_HOMES:     # the boat-only homes, facing wherever the family chose
+        water_home(c, rng, x, y, (x + rng.uniform(-20, 20), y + rng.uniform(-20, 20)))
+        homes.append((x, y, rng.uniform(0, math.tau)))
+    # Boats: moored along the spine and by homes, and out on open water being paddled.
+    for x, y, head in _polyline_points(SPINE[1:] + [], 9.0):
+        if rng.random() < 0.55:
+            s = rng.choice((-1, 1))
+            boat(c, rng, x + math.cos(head + s * math.pi / 2) * 2.4, y + math.sin(head + s * math.pi / 2) * 2.4,
+                 WATER, head)
+    for hx, hy, head in homes:
+        if rng.random() < 0.5:
+            boat(c, rng, hx + rng.choice((-5.5, 5.5)), hy + rng.uniform(-3, 3), WATER, head + rng.uniform(-0.4, 0.4))
+    placed = 0
+    while placed < 9:
+        x, y = rng.uniform(-40, 120), rng.uniform(-35, -125)
+        if coast_distance(x, y) > -8 or any(math.hypot(x - h[0], y - h[1]) < 9 for h in homes):
+            continue
+        boat(c, rng, x, y, WATER, rng.uniform(0, math.tau))
+        placed += 1
 
 
-def walk(c, a, b, z):
-    """A narrow plank walk on thin piles between two points."""
-    va, vb = Vector((a[0], a[1], z)), Vector((b[0], b[1], z))
+def beached_boats(c, rng):
+    """Bangkas pulled up on the spit's sand, bows to the sea (the owner's stilt-village photo)."""
+    n, placed = len(COAST_LINE), 0
+    for i in range(0, n, 5):
+        (ax, ay), (bx, by) = COAST_LINE[i], COAST_LINE[(i + 1) % n]
+        if not (ax < -36 and ay < -30) or rng.random() < 0.35:
+            continue
+        tx, ty = (bx - ax), (by - ay)
+        ln = math.hypot(tx, ty)
+        tx, ty = tx / ln, ty / ln
+        # Inward normal: test which side is land.
+        nx, ny = -ty, tx
+        if coast_distance(ax + nx * 3, ay + ny * 3) < 0:
+            nx, ny = -nx, -ny
+        x, y = ax + nx * rng.uniform(2.5, 4.5), ay + ny * rng.uniform(2.5, 4.5)
+        if pocket_at(x, y)[0] is not None:
+            continue
+        boat(c, rng, x, y, height(x, y) - 0.15, math.atan2(ny, nx) + rng.uniform(-0.3, 0.3), lepa=False)
+        placed += 1
+    print("[lagoon-cove] beached boats:", placed)
+
+
+def walk(c, a, b, z, za=None):
+    """A narrow plank walk on thin piles between two points; `za` lets the first end start lower
+    (a jetty climbing off the sand)."""
+    za = z if za is None else za
+    va, vb = Vector((a[0], a[1], za)), Vector((b[0], b[1], z))
     run = vb - va
-    o = B.box(c, "plank walk", (0, 0, 0), (1.3, run.length, 0.15), "deck")
+    o = B.box(c, "plank walk", (0, 0, 0), (1.4, run.length, 0.15), "deck")
     o.matrix_world = Matrix.Translation((va + vb) / 2) @ run.to_track_quat("Y", "Z").to_matrix().to_4x4()
-    for k in range(int(run.length / 3.5) + 1):
-        p = va.lerp(vb, k / max(1, int(run.length / 3.5)))
-        B.cylinder(c, "walk pile", (p.x, p.y, (z + SEABED) / 2), 0.09, z - SEABED, "bamboo", sides=5)
-
+    steps = max(1, int(run.length / 3.5))
+    for k in range(steps + 1):
+        p = va.lerp(vb, k / steps)
+        foot = max(SEABED, height(p.x, p.y)) if coast_distance(p.x, p.y) > 0 else SEABED
+        if p.z - foot > 0.3:
+            B.cylinder(c, "walk pile", (p.x, p.y, (p.z + foot) / 2), 0.09, p.z - foot, "bamboo", sides=5)
 
 WALK_Z = -0.6
 
 
-def planting(c, rng):
-    """Palms and bushes where rock meets a pocket or the beach, and in the massif's gaps."""
+def planting(c, rng, spots):
+    """Palms at the pockets' rims and along the sand, and plants in the GAPS at boulder feet
+    (SELF-REVIEW v6: the massif was bare stone with a few lollipops; the reference is full of
+    grass tufts, broad leaves and red flowers wherever a stone meets another stone or the ground).
+    The plant shapes are the blockout kit in lagoon_cove_planting.py."""
+    import lagoon_cove_planting as P
     for p in POCKETS:
         name, px, py, pz, rx, ry, _s = p
         n = 3 if name == "court" else 2
         for k in range(n + rng.randint(0, 2)):
             a = rng.uniform(0, math.tau)
-            if name == "court" and math.sin(a) < -0.3:
-                continue   # keep the court's open south side clear
+            # Self-review v7: rim palms in FRONT of a ledge walled its house off from the court, and
+            # the court's north rim hid the stairs. Court palms stand on its east and west sides
+            # only; a house pocket's palms stand beside and behind the house, never in front.
+            if name == "court" and abs(math.cos(a)) < 0.55:
+                continue
+            front = Vector((30 - px, -70 - py, 0)).normalized()
+            if name != "court" and Vector((math.cos(a), math.sin(a), 0)).dot(front) > 0.2:
+                continue
             x, y = px + math.cos(a) * rx * 1.02, py + math.sin(a) * ry * 1.02
-            h = rng.uniform(5, 8)
-            lean = rng.uniform(-0.25, 0.25)
-            t = B.cylinder(c, "palm trunk", (x, y, pz + h / 2), 0.2, h, "bamboo", sides=5)
-            t.rotation_euler = (lean, rng.uniform(-0.25, 0.25), 0)
-            B.blob(c, "palm crown", (x + math.sin(lean) * -h / 2, y, pz + h), 1.9, "palm")
-            B.blob(c, "rock-foot bush", (x + rng.uniform(-1.5, 1.5), y + rng.uniform(-1.5, 1.5), pz + 0.4),
-                   rng.uniform(0.8, 1.3), "palm")
-    for i in range(90):
-        x, y = rng.uniform(-95, 70), rng.uniform(-95, 110)
-        if pocket_at(x, y)[0] is not None or coast_distance(x, y) < BEACH_BAND:
+            P.palm(c, rng, x, y, height(x, y), lean=a)          # leaning out, over the drop
+            P.tuft(c, rng, x + rng.uniform(-1.5, 1.5), y + rng.uniform(-1.5, 1.5), pz)
+    # THE SPIT AND THE SAND: palms along the beach leaning to the sea (the owner's stilt-village
+    # photograph has a palm line behind every beach), thickest on the western spit.
+    n = len(COAST_LINE)
+    for i in range(0, n, 2):
+        ax, ay = COAST_LINE[i]
+        spit = ax < -30 and ay < -20
+        if rng.random() > (0.75 if spit else 0.22):
             continue
-        h = height(x, y)
-        if h < BEACH:
-            continue
-        B.blob(c, "crevice bush", (x, y, h + 0.8), rng.uniform(0.9, 1.6), "palm")
+        bx, by = COAST_LINE[(i + 1) % n]
+        tx, ty = bx - ax, by - ay
+        nx, ny = -ty, tx
+        if coast_distance(ax + nx * 0.2, ay + ny * 0.2) < 0:
+            nx, ny = -nx, -ny
+        ln = math.hypot(nx, ny)
+        nx, ny = nx / ln, ny / ln
+        inset = rng.uniform(4.5, 9.0)
+        x, y = ax + nx * inset, ay + ny * inset
+        if pocket_at(x, y)[0] is not None or math.hypot(x, y + 12) < 22:
+            continue   # not on a pocket, and the court's beach front stays open
+        P.palm(c, rng, x, y, height(x, y), lean=math.atan2(-ny, -nx) + rng.uniform(-0.5, 0.5))
+        if rng.random() < 0.5:
+            P.tuft(c, rng, x + rng.uniform(-2, 2), y + rng.uniform(-2, 2), height(x, y))
+
+    def avoid(x, y):
+        if pocket_at(x, y)[0] is not None or coast_distance(x, y) < BEACH_BAND - 1:
+            return True
+        return abs(x) < 16 and abs(y) < 15    # never inside the court's play walls
+
+    # ring 1.35: a sunk pillow stone meets the ground at about 1.2 x its size, and `spots` carry
+    # 0.9 x, so the ring lands the plants just outside the stone rather than inside it.
+    # scale 1.6 and more flowers: at 1x the low plants vanished beside 3 to 6 m stones and the
+    # red accents barely showed (review of the first cove render with the kit).
+    mix = (("tuft", 0.30), ("broadleaf", 0.34), ("flower_bush", 0.31), ("palm", 0.05))
+    placed = P.plant_gaps(c, rng, spots, height, avoid, ring=1.35, scale=1.6, mix=mix)
+    print("[lagoon-cove] gap plants:", placed)
 
 
 def preview(version):
@@ -485,6 +724,35 @@ def preview(version):
         print("[lagoon-cove] preview", scene.render.filepath)
 
 
+def sky(world):
+    """SELF-REVIEW v6: one flat grey-blue behind everything, nothing like the reference's bright
+    tropical sky. The CAMERA now sees a vertical gradient (pale warm haze at the horizon, clear
+    blue overhead) while the LIGHTING keeps the old flat fill, so the scene's exposure does not
+    move. Painted clouds come with the light pass (docs/LAGOON_REWORK_GUIDE.md § 8 step 7)."""
+    nt = world.node_tree
+    bg = nt.nodes["Background"]
+    bg.inputs["Color"].default_value = (0.36, 0.6, 0.92, 1)
+    out = nt.nodes["World Output"]
+    coords = nt.nodes.new("ShaderNodeTexCoord")
+    split = nt.nodes.new("ShaderNodeSeparateXYZ")
+    ramp = nt.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.elements[0].position, ramp.color_ramp.elements[0].color = 0.0, (0.86, 0.90, 0.84, 1)
+    ramp.color_ramp.elements[1].position, ramp.color_ramp.elements[1].color = 0.45, (0.16, 0.46, 0.92, 1)
+    mid = ramp.color_ramp.elements.new(0.12)
+    mid.color = (0.52, 0.76, 0.96, 1)
+    seen = nt.nodes.new("ShaderNodeBackground")
+    seen.inputs["Strength"].default_value = 1.0
+    path = nt.nodes.new("ShaderNodeLightPath")
+    mix = nt.nodes.new("ShaderNodeMixShader")
+    nt.links.new(coords.outputs["Generated"], split.inputs[0])
+    nt.links.new(split.outputs["Z"], ramp.inputs["Fac"])
+    nt.links.new(ramp.outputs["Color"], seen.inputs["Color"])
+    nt.links.new(path.outputs["Is Camera Ray"], mix.inputs["Fac"])
+    nt.links.new(bg.outputs["Background"], mix.inputs[1])
+    nt.links.new(seen.outputs["Background"], mix.inputs[2])
+    nt.links.new(mix.outputs["Shader"], out.inputs["Surface"])
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     version = int(argv[argv.index("--preview") + 1]) if "--preview" in argv else 0
@@ -492,10 +760,14 @@ def main():
     rng = random.Random(2026)
     root = bpy.data.collections.new("lagoon_cove")
     bpy.context.scene.collection.children.link(root)
-    ground(L.col("Ground", root))
-    place_boulders(L.col("Boulders", root), rng)
+    ground_col = L.col("Ground", root)
+    ground(ground_col)
+    import lagoon_cove_water as W
+    W.build_sea(ground_col, coast_distance, WATER, SEABED, span=2400.0)   # to the horizon: at 520 its edge showed
+    W.build_foam(ground_col, COAST_LINE, WATER)
+    spots = place_boulders(L.col("Boulders", root), rng)
     village(L.col("Village", root), rng)
-    planting(L.col("Planting", root), rng)
+    planting(L.col("Planting", root), rng, spots)
     L.gameplay(root)
     B.lighting()
     scene = bpy.context.scene
@@ -505,7 +777,7 @@ def main():
         pass
     sun = next(o for o in scene.objects if o.type == "LIGHT")
     sun.data.color, sun.data.energy = (1.0, 0.92, 0.8), 4.5
-    scene.world.node_tree.nodes["Background"].inputs["Color"].default_value = (0.36, 0.6, 0.92, 1)
+    sky(scene.world)
     SOURCE.mkdir(parents=True, exist_ok=True)
     out = SOURCE / "lagoon_cove.blend"
     bpy.ops.wm.save_as_mainfile(filepath=str(out), compress=True)

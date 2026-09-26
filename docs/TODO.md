@@ -250,8 +250,8 @@ Brainchild's cartoon towns. **Not registered**: it is not in `SceneFlow.Maps`, `
 ### LAGOON-1 · Lagoon Court full rework ⚠️ OPEN, 2026-09-26
 
 **Read [LAGOON_REWORK_GUIDE.md](LAGOON_REWORK_GUIDE.md) first** (references, art-style rules,
-rock rules, current layout, files, gameplay constraints, and the ordered plan in its § 7).
-Status: layout blockout cove v6 (`tools/author_lagoon_cove.py`) awaiting the owner's verdict;
+rock rules, current layout, files, gameplay constraints, and the ordered plan in its § 8).
+Status: layout blockout cove v9 (`tools/author_lagoon_cove.py`) awaiting the owner's verdict;
 nothing modelled or in Unity yet. Supersedes REFINE-2.6 for this map.
 
 ### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)
