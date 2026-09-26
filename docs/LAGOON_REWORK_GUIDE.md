@@ -177,7 +177,7 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
    (§ 2). Blockout-grade on purpose, replaced by the kits in the later steps: every roof is one
    pyramid (step 3), stairs are plain stone blocks, the court floor is flat, the water is still.
 2. **Rock kit**: final pillow-boulder models and a painted rock texture (swatch first: warm tan,
-   lighter tops, soft darker seams);    rebuild the massif from them. IN PROGRESS 2026-09-26.
+   lighter tops, soft darker seams); rebuild the massif from them. IN PROGRESS 2026-09-26.
    - ✅ **Texture: rock_a** (owner: *"rocka looks nice"*): flat warm tan, two feathered coats,
      4 m a tile, `tools/author_lagoon_textures.py`. ⚠️ **REJECTED: light lines painted INTO a
      tiling texture** (rock_b, rock_c): *"the issue with the other textures is the white cell
