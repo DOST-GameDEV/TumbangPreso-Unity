@@ -48,7 +48,7 @@ with the owner's earlier rejection of cold blue-grey rock shade: show it, do not
   `author_lagoon_props_village.py` (sign_hanging, lantern_post, lantern_hang; second simplify
   pass), `lagoon_prop_seating.py` (table_round, bench, lean_to; done, v8),
   `lagoon_prop_fishing.py` (fish_rack, bubo, basket), `lagoon_prop_clay.py` (banga,
-  pot_cluster, potted_plant), `lagoon_prop_cargo.py` (crate, barrel, water_drum),
+  pot_cluster, potted_plant; done, v5, committed), `lagoon_prop_cargo.py` (crate, barrel, water_drum),
   `lagoon_prop_shore.py` (oar_pair, driftwood, anchor_stone, firewood), `lagoon_prop_textile.py`
   (woven_mat, hanging_net, laundry_line). Each renders `Logs/lagoon-blender/<prefix>_lineup_vN.png`.
 - **Next for the lead:** verify each kit's renders, then write the PLACEMENT (a new
