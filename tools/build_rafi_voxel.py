@@ -215,7 +215,8 @@ def cell_uv(slot):
 
 CLOTH, CLOTH_DARK, GOLD, SILVER = 0, 1, 2, 3
 TATTOO, WEAVE, HAIR, CLOTH_LIT = 4, 5, 6, 7
-INK, SOLE, SOLE_BED, PUTONG = 8, 9, 10, 11
+INK, HAIR_LIT, SOLE_BED, PUTONG = 8, 9, 10, 11
+SOLE = WEAVE  # 2026-09-27: slot 9 went to the hair's lit tone; the sole was already the weave's cream
 SILVER_DARK, SKIN, SKIN_DARK, SKIN_LIT = 12, 13, 14, 15
 
 # ⚠️ THE TATTOO INK IS ITS OWN SLOT, NOT THE FACE'S. Slot 8 is held under 0.30 luminance for
@@ -234,7 +235,7 @@ PALETTE = {0: '12918A',
  6: '1D191C',
  7: '47CDBB',
  8: '181418',
- 9: 'F1E2C2',
+ 9: '4A3A3E',
  10: '9A6538',
  11: '2A7BDB',
  12: '7E868E',
@@ -299,7 +300,20 @@ TORSO = [('chest', 'torso', (-0.132, 0.232, -0.088), (0.132, 0.442, 0.090), SKIN
  ('tooth-bail', 'torso', (-0.008, 0.350, -0.132), (0.008, 0.365, -0.114), SILVER),
  ('shark-tooth-l', 'torso', (0.024, 0.346, -0.130), (0.042, 0.374, -0.116), WEAVE),
  ('shark-tooth-r', 'torso', (-0.042, 0.350, -0.130), (-0.024, 0.375, -0.116), WEAVE),
- ('bahag-waist', 'torso', (-0.128, 0.236, -0.100), (0.128, 0.296, 0.102), CLOTH),
+ # ⚠️⚠️ 2026-09-27, THE CAST'S CLOTHING LANGUAGE (docs/CAST_CLOTHING_STYLE.md; owner: *"make the clothes of everyone have a
+ # uniform look with dante and phaister as anchor"*). His tattooed skin is his dark base (the labid runs down both legs
+ # and the chaklag over the chest, so nothing covers them); the anchor's construction goes on his cloth: the bahag's
+ # waist becomes a two-tier belt with a dark seam and a big SILVER medallion (his one metal) as the focal point, and the
+ # flaps take silver piping built as geometry, as Dante's coat-tails take gold.
+ ('bahag-waist', 'torso', (-0.128, 0.236, -0.100), (0.128, 0.264, 0.102), CLOTH),
+ ('bahag-waist-upper', 'torso', (-0.128, 0.268, -0.100), (0.128, 0.296, 0.102), CLOTH_DARK),
+ ('bahag-seam', 'torso', (-0.130, 0.263, -0.102), (0.130, 0.269, 0.104), SILVER_DARK),
+ ('belt-medallion', 'torso', (-0.034, 0.240, -0.116), (0.034, 0.300, -0.100), SILVER),
+ ('belt-medallion-inset', 'torso', (-0.016, 0.256, -0.122), (0.016, 0.284, -0.112), CLOTH),
+ ('flap-front-hem', 'torso', (-0.052, 0.094, -0.120), (0.052, 0.110, -0.096), SILVER),
+ ('flap-front-edge-l', 'torso', (0.040, 0.110, -0.120), (0.052, 0.236, -0.098), SILVER),
+ ('flap-front-edge-r', 'torso', (-0.052, 0.110, -0.120), (-0.040, 0.236, -0.098), SILVER),
+ ('flap-back-hem', 'torso', (-0.066, 0.124, 0.096), (0.066, 0.140, 0.120), SILVER),
  ('bahag-flap-front', 'torso', (-0.048, 0.100, -0.116), (0.048, 0.274, -0.098), CLOTH),
  ('bahag-flap-back', 'torso', (-0.062, 0.130, 0.098), (0.062, 0.274, 0.116), CLOTH),
  ('bahag-knot', 'torso', (-0.144, 0.244, -0.072), (-0.110, 0.290, -0.022), CLOTH_DARK),
@@ -365,6 +379,8 @@ HEAD += [(f'hair-lock-{i}', 'head', (x - w, y - w, z - w), (x + w, y + w, z + w)
              (0.000, .712, -.168, .052),
              (-.130, .690, -.150, .048),
          ])]
+# 2026-09-27: two-tone hair like the cast's; the front crest and crown take the lit tone, the back stays dark.
+HEAD = [(n, b, a, c, HAIR_LIT if n in {f'hair-lock-{i}' for i in range(7)} else col) for n, b, a, c, col in HEAD]
 HEAD += [
  ('hair-part', 'head', (-.170, .612, .120), (.170, .700, .172), HAIR),
  ('hair-temple-left', 'head', (.186, .500, .030), (.226, .640, .110), HAIR),
@@ -660,12 +676,10 @@ CHEST_DECALS = [
 
 # The bahag's woven border: a light teal band over a cream thread
 _WAIST = [_quad(-0.140, 0.266, 0.140, 0.276)]
+# 2026-09-27: the painted light-teal border (0.266 to 0.276) is retired; the two-tier belt's seam and upper tier are
+# that border now, built as geometry (docs/CAST_CLOTHING_STYLE.md). The cream thread stays on the lower tier.
 BAHAG_DECALS = (
-    _decals('bahag-waist', 'front', CLOTH_LIT, _WAIST)
-    + _decals('bahag-waist', 'back', CLOTH_LIT, _WAIST)
-    + _decals('bahag-waist', 'left', CLOTH_LIT, [_quad(-0.110, 0.266, 0.110, 0.276)])
-    + _decals('bahag-waist', 'right', CLOTH_LIT, [_quad(-0.110, 0.266, 0.110, 0.276)])
-    + _decals('bahag-waist', 'front', WEAVE, [_quad(-0.140, 0.256, 0.140, 0.261)])
+    _decals('bahag-waist', 'front', WEAVE, [_quad(-0.140, 0.256, 0.140, 0.261)])
     + _decals('bahag-waist', 'back', WEAVE, [_quad(-0.140, 0.256, 0.140, 0.261)])
     + _decals('bahag-flap-front', 'front', CLOTH_LIT, [_quad(-0.070, 0.112, 0.070, 0.126)])
     + _decals('bahag-flap-front', 'front', WEAVE, [_quad(-0.070, 0.132, 0.070, 0.138)])
