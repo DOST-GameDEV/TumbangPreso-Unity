@@ -135,9 +135,11 @@ def normal_from_height(h, strength):
 
 
 STRENGTH = {"rock_a": 0.0, "rock_b": 1.2, "rock_c": 1.2, "thatch_a": 1.6, "thatch_b": 1.6, "thatch_c": 1.6,
-            "sawali_a": 1.4, "sawali_b": 1.4, "sawali_c": 1.4}
+            "sawali_a": 1.4, "sawali_b": 1.4, "sawali_c": 1.4,
+            "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0}
 TILE = {"rock_a": 4.0, "rock_b": 4.0, "rock_c": 4.0, "thatch_a": 2.0, "thatch_b": 2.0, "thatch_c": 2.0,
-        "sawali_a": 2.0, "sawali_b": 2.0, "sawali_c": 2.0}
+        "sawali_a": 2.0, "sawali_b": 2.0, "sawali_c": 2.0,
+        "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0}
 
 
 # ---------------------------------------------------------------- thatch
@@ -267,6 +269,55 @@ SAWALI_PAINTERS = {
 }
 
 
+# ---------------------------------------------------------------- bamboo
+# BAMBOO for piles, bracing, railings and ladders (§ 8 step 3), its OWN drawing: a culm with
+# raised NODES at irregular spacing (0.3 to 0.5 m) and a few broad soft lengthwise streaks, not
+# grain. V runs along the member (the kit's convention), U around it; a pile's whole
+# circumference (~0.4 m) fits in one 2 m tile width, so the nodes run straight across the tile.
+
+
+def bamboo(base, light, dark, seed):
+    px = SIZE / 2.0
+    rng = np.random.default_rng(seed)
+    yy, xx = np.mgrid[0:SIZE, 0:SIZE].astype(np.float32) / px
+    img = flat_rgb(base)
+    # Broad soft lengthwise TONE BANDS (sheet v1's fine streaks read as wood grain, which the
+    # house style bans): a wide field across U, smeared along V.
+    streak = field(0.25, seed + 1)
+    streak = np.real(np.fft.ifft2(np.fft.fft2(streak) * np.exp(-(np.fft.fftfreq(SIZE)[:, None] ** 2)
+                                                                 * (0.6 * px) ** 2 * 2)))
+    streak = (streak - streak.mean()) / (streak.std() + 1e-9)
+    img = img * (1 + 0.05 * np.clip(streak, -1.5, 1.5))[..., None]
+    height = np.zeros((SIZE, SIZE), np.float32)
+    y = rng.uniform(0, 0.2)
+    nodes = []
+    while y < 2.0:
+        nodes.append(y)
+        y += rng.uniform(0.3, 0.5)
+    for n in nodes:
+        d = (yy - n + 1.0) % 2.0 - 1.0                       # signed distance to the node, wrapped
+        ring = np.exp(-(d / 0.02) ** 2)                      # the raised ridge (v1 0.012: a pinstripe)
+        below = np.exp(-((d - 0.04) / 0.03) ** 2)            # a soft darker band under it
+        above = np.exp(-((d + 0.05) / 0.05) ** 2)            # the swelling just above: lighter
+        img = img * (1 - 0.18 * below)[..., None] + (light - img) * (0.35 * ring + 0.12 * above)[..., None]
+        img = img * (1 - 0.25 * np.exp(-((d - 0.006) / 0.004) ** 2))[..., None]   # the joint line
+        height = height + ring + 0.3 * above
+    # Weathering: faint and sparse (v1's full-strength coat made dark camouflage blobs).
+    img = coat(img, 1 - 0.35 * (1 - dark / np.maximum(base, 1e-3)), 0.35, 0.12, seed + 3, feather=0.6)
+    return img, height
+
+
+def flat_rgb(col):
+    return np.broadcast_to(col, (SIZE, SIZE, 3)).astype(np.float32).copy()
+
+
+BAMBOO_PAINTERS = {
+    "bamboo_a": lambda: bamboo(hexcol("cbb06c"), hexcol("e6d49a"), hexcol("a88c52"), 71),
+    "bamboo_b": lambda: bamboo(hexcol("b09d7c"), hexcol("d2c3a4"), hexcol("8a7a60"), 71),
+    "bamboo_c": lambda: bamboo(hexcol("a9ad62"), hexcol("cfd08c"), hexcol("868a48"), 71),
+}
+
+
 THATCH_PAINTERS = {
     "thatch_a": lambda: thatch(hexcol("c9a35e"), hexcol("e3c888"), hexcol("5e4526"), seed=51),
     "thatch_b": lambda: thatch(hexcol("a98f6a"), hexcol("c9b491"), hexcol("4f4130"), seed=51),
@@ -292,6 +343,7 @@ PAINTERS = {
     "rock_c": lambda: rock_face(temperature=True),
     **THATCH_PAINTERS,
     **SAWALI_PAINTERS,
+    **BAMBOO_PAINTERS,
 }
 
 
