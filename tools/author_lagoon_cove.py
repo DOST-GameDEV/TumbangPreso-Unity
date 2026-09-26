@@ -37,6 +37,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import author_kanto_blockout as B      # noqa: E402  box, cylinder, blob, label, _obj, lighting
 import author_lagoon_blockout as L     # noqa: E402  colours, gameplay markers, horizon, col
 import author_lagoon_rocks as R        # noqa: E402  the rock kit
+import author_lagoon_houses as HK      # noqa: E402  the stilt house kit
+import author_lagoon_boats as BK       # noqa: E402  the boat kit
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "ArtSource" / "lagoon"
@@ -507,37 +509,54 @@ def ground(c):
 
 # ---------------------------------------------------------------- village
 
-def house(c, rng, name, x, y, z, face_to, small=False, pile_foot=None):
-    """A blockout Filipino stilt house on its pocket: raised floor on short piles, sawali or
-    painted walls, a steep thatch or tin roof, a front deck toward `face_to`."""
-    w, d, h = rng.uniform(7, 9.5), rng.uniform(5.5, 7), rng.uniform(3.0, 3.6)
-    if small:   # Bajau homes are small one-room houses (review v5: water houses too big)
-        w, d, h = rng.uniform(4.5, 6), rng.uniform(4, 5), rng.uniform(2.5, 2.9)
-    lift = 0.9
-    rot = math.atan2(face_to[1] - y, face_to[0] - x) - math.pi / 2
-    rm = Matrix.Rotation(rot, 3, "Z")
-    at = lambda lx, ly: Vector((x, y, 0)) + rm @ Vector((lx, ly, 0))  # noqa: E731
-    wall = rng.choice(("sawali", "sawali", "wall_paint", "deck"))
-    B.box(c, f"{name} floor", (x, y, z + lift), (w + 0.4, d + 0.4, 0.2), "deck", rot_z=rot)
-    B.box(c, f"{name} walls", (x, y, z + lift + h / 2), (w, d, h), wall, rot_z=rot)
-    p = at(0, d / 2 + 1.1)
-    B.box(c, f"{name} front deck", (p.x, p.y, z + lift), (w + 0.4, 2.2, 0.2), "deck", rot_z=rot)
-    for lx in (-w / 2, w / 2):
-        for ly in (-d / 2, d / 2 + 2.1):
-            q = at(lx, ly)
-            foot = z - 0.6 if pile_foot is None else pile_foot   # water homes stand on the seabed
-            B.cylinder(c, "pile", (q.x, q.y, (z + lift + foot) / 2), 0.13, z + lift - foot, "bamboo", sides=6)
-    roof = "thatch" if rng.random() < 0.72 else rng.choice(("tin", "tin_red"))
-    m = bpy.data.meshes.new("roof")
-    bm = bmesh.new()
-    bmesh.ops.create_cone(bm, cap_ends=True, segments=4, radius1=1.0, radius2=0.02, depth=1.0,
-                          matrix=Matrix.Rotation(math.pi / 4, 4, "Z"))
-    bm.to_mesh(m)
-    bm.free()
-    o = B._obj(c, f"{name} roof", m, roof)
-    o.location = (x, y, z + lift + h + 1.25)
-    o.scale = ((w + 2.8) * 0.72, (d + 2.8) * 0.72, 3.6)
-    o.rotation_euler = (0, 0, rot)
+# THE HOUSE KIT (docs/LAGOON_REWORK_GUIDE.md § 8 step 3) replaced the blockout boxes:
+# tools/author_lagoon_houses.py builds land homes, Bajau water homes, a sari-sari stall and the
+# capilla. A few seeds per kind are built ONCE into a hidden source collection, and every placed
+# house is a set of LINKED DUPLICATES of one of them (objects share mesh data but are ordinary
+# editable objects; the owner asked for a map whose meshes can be edited, which collection
+# instances cannot). Origin: the room's footprint centre at z = 0 (ground, or the WATER surface
+# for water homes), door facing +Y.
+HOUSE_VARIANTS = {"land": 5, "water": 5, "stall": 2, "capilla": 1}
+_HOUSE_CACHE = {}
+
+
+def _house_source(kind, variant):
+    key = (kind, variant)
+    if key not in _HOUSE_CACHE:
+        holder = bpy.data.collections.get("House kit (source, not placed)")
+        if holder is None:
+            holder = bpy.data.collections.new("House kit (source, not placed)")
+            bpy.context.scene.collection.children.link(holder)
+            lc = bpy.context.view_layer.layer_collection.children[holder.name]
+            lc.exclude = True
+        col = HK.build_house(kind, 1000 + variant * 7919)
+        holder.children.link(col)
+        root = next(o for o in col.objects if o.parent is None)
+        _HOUSE_CACHE[key] = (col, root)
+    return _HOUSE_CACHE[key]
+
+
+def place_house(c, kind, variant, x, y, z, face_to):
+    """A linked duplicate of a kit house, turned so its door faces `face_to`."""
+    col, root = _house_source(kind, variant)
+    new_root = root.copy()
+    c.objects.link(new_root)
+    for o in col.objects:
+        if o is root:
+            continue
+        d = o.copy()                     # shares o.data: a linked duplicate
+        c.objects.link(d)
+        d.parent = new_root
+        d.matrix_parent_inverse = o.matrix_parent_inverse.copy()
+    new_root.location = (x, y, z)
+    new_root.rotation_euler = (0, 0, math.atan2(face_to[1] - y, face_to[0] - x) - math.pi / 2)
+    return new_root
+
+
+def house(c, rng, name, x, y, z, face_to, small=False):
+    """A land home on its pocket, or (small) a Bajau water home standing in the sea at z."""
+    kind = "water" if small else "land"
+    return place_house(c, kind, rng.randrange(HOUSE_VARIANTS[kind]), x, y, z, face_to)
 
 
 def village(c, rng):
@@ -571,9 +590,8 @@ def village(c, rng):
             B.box(c, f"step {a} to {b}", (p.x, p.y, (top + bottom) / 2),
                   (2.0, flat_run.length / n + 0.15, top - bottom), "rock_light", rot_z=heading)
     _n, sx, sy, sz, _rx, _ry, _s = lookup["summit ledge (capilla)"]
-    B.box(c, "capilla", (sx, sy, sz + 2.5), (5.5, 7.5, 5), "chapel")
-    B.box(c, "capilla roof", (sx, sy, sz + 5.3), (6.5, 8.5, 0.4), "tin_red")
-    B.box(c, "bell tower", (sx, sy - 4.6, sz + 4.5), (2.4, 2.4, 9), "chapel")
+    place_house(c, "capilla", 0, sx, sy, sz, (0, 1))            # the landmark, facing the court
+    place_house(c, "stall", 0, 17.5, 7.0, 0.0, (0, 1))          # a sari-sari stall at the court's east edge
     o = bpy.data.objects.new("landmark rock", KIT[R.ROCK_FAMILIES["boulder"][0]])
     o.location, o.scale = (LANDMARK[0], LANDMARK[1], WATER - 1.0), (3.4, 3.0, 3.0)
     o.rotation_euler = (0, 0, 0.3)
@@ -607,26 +625,52 @@ def _polyline_points(pts, every):
 
 
 def water_home(c, rng, x, y, face_to):
-    """A small one-room Bajau home on stilts reaching the seabed."""
-    floor = WATER + 1.0 + rng.uniform(0.0, 0.4)
-    house(c, rng, "bajau house", x, y, floor, face_to, small=True, pile_foot=SEABED)
-    if rng.random() < 0.6:   # a laundry line off the deck
-        B.box(c, "laundry", (x + 3.6, y, floor + 2.4), (0.05, 4.0, 1.0), "net")
+    """A small one-room Bajau home: the kit lifts its floor ~1.9 m and runs its piles 2 m under
+    the water surface, and brings its own laundry line."""
+    house(c, rng, "bajau house", x, y, WATER, face_to, small=True)
 
 
-def boat(c, rng, x, y, z, rz, lepa=None):
-    """A lepa houseboat (long hull, small shelter amidships) or a slim bangka with outriggers."""
+# THE BOAT KIT (§ 8 step 4) replaced the blockout hulls: tools/author_lagoon_boats.py builds the
+# bangka outrigger, the Sama lepa houseboat and a beached bangka. As with the houses, a few seeds
+# are built once and placed as editable LINKED DUPLICATES. Origin: the waterline at midships,
+# bow +Y (the beached one: the sand under midships).
+BOAT_VARIANTS = {"bangka": 4, "lepa": 3, "bangka_beached": 3}
+_BOAT_CACHE = {}
+
+
+def _boat_source(kind, variant):
+    key = (kind, variant)
+    if key not in _BOAT_CACHE:
+        holder = bpy.data.collections.get("Boat kit (source, not placed)")
+        if holder is None:
+            holder = bpy.data.collections.new("Boat kit (source, not placed)")
+            bpy.context.scene.collection.children.link(holder)
+            bpy.context.view_layer.layer_collection.children[holder.name].exclude = True
+        col = BK.build_boat(kind, 2000 + variant * 7919)
+        holder.children.link(col)
+        _BOAT_CACHE[key] = (col, next(o for o in col.objects if o.parent is None))
+    return _BOAT_CACHE[key]
+
+
+def boat(c, rng, x, y, z, rz, lepa=None, beached=False):
+    """A lepa houseboat or a bangka outrigger, heading `rz` (the old blockout's hull ran along
+    its local X, so the kit's +Y bow turns by rz - 90 degrees)."""
     if lepa is None:
         lepa = rng.random() < 0.35
-    if lepa:
-        B.box(c, "lepa hull", (x, y, z + 0.3), (8.0, 1.4, 0.7), "boat", rot_z=rz)
-        B.box(c, "lepa shelter", (x, y, z + 1.2), (3.0, 1.5, 1.1), "thatch", rot_z=rz)
-    else:
-        B.box(c, "bangka hull", (x, y, z + 0.25), (5.5, 0.9, 0.5), "boat", rot_z=rz)
-        B.box(c, "bangka trim", (x, y, z + 0.52), (5.6, 0.95, 0.08), "boat_trim", rot_z=rz)
-        for side in (-1, 1):
-            B.box(c, "outrigger", (x - math.sin(rz) * side * 2.2, y + math.cos(rz) * side * 2.2, z + 0.12),
-                  (4.2, 0.18, 0.18), "bamboo", rot_z=rz)
+    kind = "bangka_beached" if beached else ("lepa" if lepa else "bangka")
+    col, root = _boat_source(kind, rng.randrange(BOAT_VARIANTS[kind]))
+    new_root = root.copy()
+    c.objects.link(new_root)
+    for o in col.objects:
+        if o is root:
+            continue
+        d = o.copy()
+        c.objects.link(d)
+        d.parent = new_root
+        d.matrix_parent_inverse = o.matrix_parent_inverse.copy()
+    new_root.location = (x, y, z)
+    new_root.rotation_euler = (0, 0, rz - math.pi / 2)
+    return new_root
 
 
 def water_village(c, rng):
@@ -665,11 +709,13 @@ def water_village(c, rng):
     for x, y, head in _polyline_points(SPINE[1:] + [], 9.0):
         if rng.random() < 0.55:
             s = rng.choice((-1, 1))
-            boat(c, rng, x + math.cos(head + s * math.pi / 2) * 2.4, y + math.sin(head + s * math.pi / 2) * 2.4,
+            # 3.2 m off the walk: the kit's bangka is ~4.5 m across its floats (2.4 m put the
+            # floats through the walkway's piles).
+            boat(c, rng, x + math.cos(head + s * math.pi / 2) * 3.2, y + math.sin(head + s * math.pi / 2) * 3.2,
                  WATER, head)
     for hx, hy, head in homes:
         if rng.random() < 0.5:
-            boat(c, rng, hx + rng.choice((-5.5, 5.5)), hy + rng.uniform(-3, 3), WATER, head + rng.uniform(-0.4, 0.4))
+            boat(c, rng, hx + rng.choice((-6.5, 6.5)), hy + rng.uniform(-3, 3), WATER, head + rng.uniform(-0.4, 0.4))
     placed = 0
     while placed < 9:
         x, y = rng.uniform(-40, 120), rng.uniform(-35, -125)
@@ -696,7 +742,7 @@ def beached_boats(c, rng):
         x, y = ax + nx * rng.uniform(2.5, 4.5), ay + ny * rng.uniform(2.5, 4.5)
         if pocket_at(x, y)[0] is not None:
             continue
-        boat(c, rng, x, y, height(x, y) - 0.15, math.atan2(ny, nx) + rng.uniform(-0.3, 0.3), lepa=False)
+        boat(c, rng, x, y, height(x, y), math.atan2(ny, nx) + rng.uniform(-0.3, 0.3), beached=True)
         placed += 1
     print("[lagoon-cove] beached boats:", placed)
 

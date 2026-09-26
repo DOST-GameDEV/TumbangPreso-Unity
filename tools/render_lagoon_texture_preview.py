@@ -39,6 +39,14 @@ SHOTS = {
              ("close-up, the stones behind the court", (-4, 4, 3.0), (-14, 20, 3.5), 30),
              ("from above, the massif (the owner's paint-over view)", (-26, 6, 24), (-34, 26, 8), 30)],
 }
+# The house surfaces share one set of shots (docs/LAGOON_REWORK_GUIDE.md § 8 step 3).
+# v1: the close-up camera sat inside the sari-sari stall's roof (17.5, 7) and the game's eye
+# looked past the homes; both reframed.
+HOUSE_SHOTS = [("game's eye, from the court toward the north homes", (0, -9, E), (10, 30, 6), EYE_LENS),
+               ("close-up, the low north-east house", (23, 7.5, 6.0), (27, 19, 5.5), 30),
+               ("the first Bajau homes on the walkway", (4, -24, 5), (22, -46, 1), 26)]
+for _m in ("thatch", "sawali", "plank", "timber", "bamboo", "tin"):
+    SHOTS[_m] = HOUSE_SHOTS
 
 
 EDGE_ATLAS = TEX / "rock_edges_atlas.png"

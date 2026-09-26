@@ -295,7 +295,17 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      read as camouflage).
    - timber a/b/c (`timber_swatches_v1.png`): warm dark, sun-greyed, oiled red-brown; a
      hand-hewn face of long soft adze facets, no seams, no grain.
-4. **Boats**: bangka outrigger and lepa houseboat.
+   In the cove since v28: `place_house()` builds a few seeds per kind once into a hidden
+   "House kit (source, not placed)" collection and places LINKED DUPLICATES (editable, shared
+   meshes); water homes stand at z = WATER (the kit lifts the floor and sinks the piles); the
+   capilla on the summit ledge and a sari-sari stall at the court's east edge. On-model review
+   sheet for the thatch: `thatch_on_models_v2.png` (v1's close-up camera sat inside the stall
+   roof).
+4. **Boats**: bangka outrigger and lepa houseboat. MODELS DONE 2026-09-27:
+   `tools/author_lagoon_boats.py` (bangka, lepa, bangka_beached; slots plank, paint_hull,
+   paint_trim with a per-boat `trim_tint` vertex colour, bamboo, thatch, timber; origin the
+   waterline at midships, bow +Y). In the cove since v29 as linked duplicates; moored boats sit
+   3.2 m off the walk (the bangka is ~4.5 m across its floats).
 5. **Props**: drying nets, laundry lines, crates, barrels, baskets, lanterns, fish racks.
 6. **Foliage**: coconut palms (curved leaning trunks), broad leaves, flowering accents, grass
    tufts.
