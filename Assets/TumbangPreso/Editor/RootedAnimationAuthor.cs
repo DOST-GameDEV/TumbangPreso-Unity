@@ -9,8 +9,8 @@ using Object=UnityEngine.Object;
 namespace TumbangPreso.EditorTools
 {
     /// <summary>
-    /// Bakes the two clips every rig needs for Paete's kit (HERO-9): the struggle against his roots
-    /// and the heave that pulls his seedling out, keyed in `HeroAbilityClips.Paete.cs`, one set per
+    /// Bakes the three clips every rig needs for Paete's kit (HERO-9): the struggle against his roots,
+    /// the heave that pulls his seedling out and the break-out when the roots let go, keyed in `HeroAbilityClips.Paete.cs`, one set per
     /// rig hierarchy into `Resources/RootedAnimations` (the `RecoveryAnimationAuthor` pattern).
     ///
     /// ⚠️ A PLAYER CANNOT BUILD THESE ITSELF: `AnimationClip.SetCurve` is editor-only for these clips
@@ -52,7 +52,7 @@ namespace TumbangPreso.EditorTools
                 finally{Object.DestroyImmediate(instance);}
             }
             AssetDatabase.SaveAssets();
-            Debug.Log("[Rooted] baked struggle and heave for "+authored.Count+" rig hierarchies");
+            Debug.Log("[Rooted] baked struggle, heave and break-out for "+authored.Count+" rig hierarchies");
             return true;
         }
 

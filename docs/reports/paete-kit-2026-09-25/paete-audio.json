@@ -88,10 +88,10 @@
     },
     {
       "cue": "sfx_paete_root_break",
-      "seconds": 0.5,
+      "seconds": 0.7,
       "peak": 0.6,
-      "rms": 0.06287805584530293,
-      "sha256": "34bebcd207af093d8efe1f7ea632ee0c41c4eb29fdb101a1b5e88c088f61da8a"
+      "rms": 0.05835800611957823,
+      "sha256": "35511b2fed2be76a1e5c8ca6db0677fa54ebd5c5b44bfc1a522076f7309c109a"
     },
     {
       "cue": "sfx_paete_sentry_wilt",
@@ -99,6 +99,20 @@
       "peak": 0.55,
       "rms": 0.027437291910988617,
       "sha256": "b0d5fe86981b271f8b98f74863fcdb0570d196ec2f0846adeaf770d7d64ac2ac"
+    },
+    {
+      "cue": "sfx_paete_sentry_wake",
+      "seconds": 1.0,
+      "peak": 0.6,
+      "rms": 0.06724025153306334,
+      "sha256": "5431ef674bab9e3f066c1dc52108a2feb5913784a2a6a390da00e38ab559bd00"
+    },
+    {
+      "cue": "sfx_paete_sprout_ready",
+      "seconds": 0.35,
+      "peak": 0.4000000000000001,
+      "rms": 0.05768927625319432,
+      "sha256": "8f3fe9c294d694a702bce511ce53b0c4add329c25b2f9434db877b6e50ae8f84"
     },
     {
       "cue": "sfx_ult_theme_paete",

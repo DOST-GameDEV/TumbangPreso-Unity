@@ -1,0 +1,416 @@
+using System.Collections.Generic;
+using TumbangPreso.Core;
+using UnityEngine;
+
+namespace TumbangPreso.Visual
+{
+    /// <summary>
+    /// ⚠️⚠️ PAETE'S TREES ARE MODELS NOW, NOT UNITY CUBES (owner, 2026-09-26: *"the current models of all
+    /// his skills look ugly still its js blocks"*, *"thoroughly work on the detail of each part
+    /// manually"*, then *"really caerfullly and delicately work on the animations + model of his
+    /// trees"*). `tools/build_paete_props.py` types the sentry, the seedling and the thorn construct
+    /// part by part in his own palette cells and writes them to `Resources/Models/PaeteProps`; this
+    /// loads one, dresses it exactly as he is dressed (`ToonSkin.Apply` with his roster palette: the
+    /// two-band toon and the ink outline), and hands back its named nodes for the bodies to pose.
+    /// Direction: `docs/reports/paete-kit-2026-09-25/direction.md` section 5.
+    /// </summary>
+    public static class PaeteProp
+    {
+        private static Color[] _palette;
+
+        /// <summary>His palette, from the roster (the same sixteen slots his body wears).</summary>
+        public static Color[] Palette
+        {
+            get
+            {
+                if (_palette == null || _palette.Length != 16) _palette = RosterBook.Load()?.FindPersonArt("paete")?.Palette;
+                return _palette;
+            }
+        }
+
+        /// <summary>The prop named <paramref name="name"/> under <paramref name="parent"/>, dressed; null if it is missing.</summary>
+        public static GameObject Spawn(string name, Transform parent)
+        {
+            var source = Resources.Load<GameObject>("Models/PaeteProps/" + name);
+            if (source == null)
+            {
+                Debug.LogWarning("[PaeteProp] Models/PaeteProps/" + name + " is missing; run tools/build_paete_props.py.");
+                return null;
+            }
+            var go = Object.Instantiate(source, parent, false);
+            go.name = "PaeteProp-" + name;
+            go.transform.localPosition = Vector3.zero;
+            go.transform.localRotation = Quaternion.identity;
+            go.transform.localScale = Vector3.one;
+            // Disabled first: `Destroy` in play is deferred to the frame's end, and a caller may check now.
+            foreach (var c in go.GetComponentsInChildren<Collider>(true)) { c.enabled = false; Kill(c); }
+            foreach (var r in go.GetComponentsInChildren<Renderer>(true)) VfxRenderTag.Attach(r.gameObject);
+            ToonSkin.Apply(go, ToonSkin.PersonOutlineWidth, Palette);
+            return go;
+        }
+
+        /// <summary>Re-dress with a different palette (the seedling drying), cached per palette by `ToonSkin`.</summary>
+        public static void Redress(GameObject model, Color[] palette) => ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, palette);
+
+        public static Transform Find(GameObject model, string name)
+        {
+            if (model == null) return null;
+            foreach (var t in model.GetComponentsInChildren<Transform>(true)) if (t.name == name) return t;
+            return null;
+        }
+
+        public static void Kill(Object o)
+        {
+            if (o == null) return;
+            if (Application.isPlaying) Object.Destroy(o); else Object.DestroyImmediate(o);
+        }
+    }
+
+    /// <summary>
+    /// One of Makiling's trees in his ultimate's introduction (direction.md section 5): the sentry's own
+    /// model at a smaller size, standing up out of the ground behind him, its crown opening and the
+    /// light coming on in its hollows, as the forest wakes. Posed by hand from the scene's clock; no
+    /// property block is ever set on it (CLAUDE.md section 87: a block over `_Color` flattens a
+    /// palette model), which is why it is not one of the introduction's `Place`/`Tint` pieces.
+    /// </summary>
+    public sealed class PaeteForestTree
+    {
+        public readonly GameObject Model;
+        private readonly Transform _trunk, _eyes;
+        private readonly List<Transform> _claws = new List<Transform>();
+        private readonly List<Quaternion> _clawRest = new List<Quaternion>();
+        private readonly float _rise, _wake;
+
+        /// <param name="rise">when it starts to come up out of the ground</param>
+        /// <param name="wake">when the light opens in its hollows</param>
+        public PaeteForestTree(Transform parent, Vector3 at, float yaw, float scale, float rise, float wake)
+        {
+            Model = PaeteProp.Spawn("sentry", parent);
+            _rise = rise; _wake = wake;
+            if (Model == null) return;
+            Model.transform.localPosition = at;
+            Model.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
+            Model.transform.localScale = Vector3.one * scale;
+            _trunk = PaeteProp.Find(Model, "trunk");
+            _eyes = PaeteProp.Find(Model, "eyes");
+            for (int i = 0; i < 7; i++)
+            {
+                var c = PaeteProp.Find(Model, "claw-" + i);
+                if (c != null) { _claws.Add(c); _clawRest.Add(c.localRotation); }
+            }
+        }
+
+        /// <summary>Pose at scene time <paramref name="t"/>; <paramref name="lean"/> tips it toward the hero (degrees).</summary>
+        public void Pose(float t, float lean, float visible)
+        {
+            if (Model == null) return;
+            Model.SetActive(visible > 0.002f && t >= _rise);
+            if (_trunk == null) return;
+            float up = GrowthVfx.Pop((t - _rise) / 0.55f);
+            _trunk.localPosition = Vector3.down * 5.4f * (1f - Mathf.Clamp(up, 0f, 1.08f));
+            _trunk.localRotation = Quaternion.Euler(0f, -80f * (1f - Mathf.Clamp01(up)), 0f) * Quaternion.Euler(lean, 0f, 0f);
+            for (int i = 0; i < _claws.Count; i++)
+            {
+                float open = GrowthVfx.Pop((t - _rise - 0.25f - 0.03f * i) / 0.4f);
+                _claws[i].localRotation = _clawRest[i] * Quaternion.Euler(-45f * (1f - open) + Mathf.Sin(t * 1.3f + i) * 2.5f, 0f, 0f);
+            }
+            if (_eyes != null)
+                _eyes.localScale = new Vector3(1f, Mathf.Max(0.001f, GrowthVfx.Pop((t - _wake) / 0.3f)), 1f);
+        }
+    }
+
+    /// <summary>
+    /// Inked parts for the pieces that are built every frame (the embrace limbs, the shin branches, the
+    /// thorn lashes, the ground branches). They wear the same toon shader and ink as the modelled props
+    /// so a limb growing out of the tree does not change material where it leaves the wood.
+    ///
+    /// ⚠️ ONE SOURCE MATERIAL PER COLOUR, SHARED. `ToonSkin` caches a variant per source material for
+    /// the life of the process, so a fresh material per part (`VfxMaterial.Solid`'s way) would leak a
+    /// cached variant on every cast. ⚠️ THE OUTLINE NEEDS ITS NORMAL IN THE TANGENT CHANNEL
+    /// (`OutlineNormals`), and a mesh rebuilt every frame loses it, so `Finish` writes it after each build.
+    /// </summary>
+    public static class PaeteInk
+    {
+        private static readonly Dictionary<Color, Material> Sources = new Dictionary<Color, Material>();
+        private static readonly List<Vector3> Normals = new List<Vector3>();
+        private static readonly List<Vector4> Tangents = new List<Vector4>();
+        private static readonly List<int> Tris = new List<int>();
+
+        public static MeshFilter Part(Transform parent, string name, Mesh mesh, Color colour)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            var filter = go.AddComponent<MeshFilter>();
+            filter.sharedMesh = mesh;
+            var renderer = go.AddComponent<MeshRenderer>();
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            if (!Sources.TryGetValue(colour, out var source) || source == null)
+            {
+                var template = MaterialKit.Lit;
+                var shader = template != null ? template.shader : Shader.Find("Standard");
+                source = new Material(shader) { name = "PaeteInkSource", hideFlags = HideFlags.DontSave };
+                source.color = colour;
+                if (source.HasProperty("_BaseColor")) source.SetColor("_BaseColor", colour);
+                Sources[colour] = source;
+            }
+            renderer.sharedMaterial = source;
+            VfxRenderTag.Attach(go);
+            go.AddComponent<GrowthMeshOwner>().Mesh = mesh;
+            ToonSkin.Apply(renderer, ToonSkin.PersonOutlineWidth, null);
+            return filter;
+        }
+
+        /// <summary>After a rebuild: the smooth normal into the tangent channel, which is what the ink pushes along.</summary>
+        public static void Finish(Mesh mesh)
+        {
+            mesh.GetNormals(Normals);
+            Tangents.Clear();
+            foreach (var n in Normals) Tangents.Add(new Vector4(n.x, n.y, n.z, 1f));
+            mesh.SetTangents(Tangents);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ `GrowthVfx.Tube` WINDS ITS TRIANGLES INSIDE OUT for Unity (its faces look inward), which
+        /// never showed because `VfxMaterial.Solid` draws both sides. The toon shader culls back faces
+        /// and its ink hull culls front faces, so on the first native film (PaeteReviewProbe v14) every
+        /// limb, shin branch and ground branch drew as solid ink with a thin brown rim. The winding is
+        /// flipped here, for these inked parts only, and the normals recomputed from it.
+        /// </summary>
+        public static void Tube(Mesh mesh, IList<Vector3> points, IList<float> radii, int sides)
+        {
+            if (points.Count < 2) { mesh.Clear(); return; }
+            GrowthVfx.Tube(mesh, points, radii, sides);
+            Flip(mesh);
+        }
+
+        /// <summary>`GrowthVfx.Leaf`, turned the right way out for the inked parts (v15 drew its leaves as ink).</summary>
+        public static Mesh Leaf(float length, float width, float thickness)
+        {
+            var mesh = GrowthVfx.Leaf(length, width, thickness);
+            Flip(mesh);
+            return mesh;
+        }
+
+        private static void Flip(Mesh mesh)
+        {
+            mesh.GetTriangles(Tris, 0);
+            for (int i = 0; i + 2 < Tris.Count; i += 3) { int k = Tris[i + 1]; Tris[i + 1] = Tris[i + 2]; Tris[i + 2] = k; }
+            mesh.SetTriangles(Tris, 0);
+            mesh.RecalculateNormals();
+            Finish(mesh);
+        }
+    }
+
+    /// <summary>
+    /// A WOVEN BRANCH: two or three bark cords laid round a centreline, the sentry's own weave in
+    /// miniature (owner: *"dont use vines use woven tree branches"*). The cords twist round each other
+    /// at a fixed rate per metre, so a limb that grows keeps its weave still and only gets longer.
+    /// </summary>
+    public sealed class PaeteRope
+    {
+        private readonly Mesh[] _strands;
+        private readonly float[] _girth;
+        private readonly float _spread, _twist, _phase;
+        private readonly List<Vector3> _pts = new List<Vector3>();
+        private readonly List<float> _radii = new List<float>();
+
+        public PaeteRope(Transform parent, string name, Color[] colours, float[] girth, float spread, float twistPerMetre, float phase)
+        {
+            _strands = new Mesh[colours.Length];
+            _girth = girth; _spread = spread; _twist = twistPerMetre; _phase = phase;
+            for (int i = 0; i < colours.Length; i++)
+            {
+                _strands[i] = new Mesh { name = name };
+                _strands[i].MarkDynamic();
+                PaeteInk.Part(parent, name + "-" + i, _strands[i], colours[i]);
+            }
+        }
+
+        public void Clear() { foreach (var m in _strands) m.Clear(); }
+
+        /// <summary>Draw along <paramref name="centre"/> (local space); thick at the root, <paramref name="tipScale"/> of it at the tip.</summary>
+        public void Draw(List<Vector3> centre, float tipScale)
+        {
+            int n = centre.Count;
+            if (n < 2) { Clear(); return; }
+            for (int s = 0; s < _strands.Length; s++)
+            {
+                _pts.Clear(); _radii.Clear();
+                Vector3 side = Vector3.zero;
+                float along = 0f;
+                for (int i = 0; i < n; i++)
+                {
+                    Vector3 t = (centre[Mathf.Min(n - 1, i + 1)] - centre[Mathf.Max(0, i - 1)]);
+                    if (t.sqrMagnitude < 1e-8f) t = Vector3.up;
+                    t.Normalize();
+                    side = i == 0 ? Vector3.Cross(t, Mathf.Abs(t.y) < 0.9f ? Vector3.up : Vector3.right) : side - Vector3.Dot(side, t) * t;
+                    if (side.sqrMagnitude < 1e-8f) side = Vector3.Cross(t, Vector3.right);
+                    side.Normalize();
+                    Vector3 up = Vector3.Cross(t, side);
+                    if (i > 0) along += Vector3.Distance(centre[i], centre[i - 1]);
+                    float u = i / (float)(n - 1);
+                    float a = _phase + s * Mathf.PI * 2f / _strands.Length + along * _twist;
+                    float taper = Mathf.Lerp(1f, tipScale, u);
+                    _pts.Add(centre[i] + (side * Mathf.Cos(a) + up * Mathf.Sin(a)) * _spread * taper);
+                    _radii.Add(_girth[s] * taper);
+                }
+                PaeteInk.Tube(_strands[s], _pts, _radii, 5);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Bark breaking: chunks thrown out from a point that fall, bounce once and shrink away. The
+    /// break-out (direction.md section 5.6): the shin branches and the waist band cracking apart. Each
+    /// chunk's throw is typed.
+    /// </summary>
+    public sealed class PaeteBarkShatter : MonoBehaviour
+    {
+        private static readonly float[] Yaw = { 12f, 64f, 118f, 161f, 205f, 250f, 296f, 338f };
+        private static readonly float[] Out = { 2.1f, 1.6f, 2.5f, 1.8f, 2.3f, 1.5f, 2.0f, 2.6f };
+        private static readonly float[] Up = { 2.6f, 3.2f, 2.2f, 3.0f, 2.4f, 3.4f, 2.8f, 2.0f };
+        private static readonly float[] Size = { 0.09f, 0.07f, 0.11f, 0.06f, 0.10f, 0.08f, 0.07f, 0.09f };
+        private readonly List<Transform> _bits = new List<Transform>();
+        private readonly List<Vector3> _v = new List<Vector3>();
+        private float _age;
+        private const float Life = 0.9f;
+
+        public static void Spawn(Vector3 at, int count)
+        {
+            if (GrowthVfx.Reduced) count = Mathf.Max(3, count / 2);
+            var go = new GameObject("PaeteBarkShatter");
+            go.transform.position = at;
+            var fx = go.AddComponent<PaeteBarkShatter>();
+            for (int i = 0; i < Mathf.Min(count, Yaw.Length); i++)
+            {
+                Color c = i % 3 == 0 ? GrowthVfx.BarkDark : i % 3 == 1 ? GrowthVfx.Bark : GrowthVfx.BarkLit;
+                var bit = GrowthVfx.Block(go.transform, "bark-chunk", new Vector3(Size[i], Size[i] * 0.55f, Size[i] * 1.6f), c).transform;
+                bit.localRotation = Quaternion.Euler(20f * i, Yaw[i], 0f);
+                float y = Yaw[i] * Mathf.Deg2Rad;
+                fx._bits.Add(bit);
+                fx._v.Add(new Vector3(Mathf.Sin(y) * Out[i], Up[i], Mathf.Cos(y) * Out[i]));
+            }
+        }
+
+        private void Update()
+        {
+            float dt = Time.deltaTime;
+            _age += dt;
+            if (_age >= Life) { Destroy(gameObject); return; }
+            for (int i = 0; i < _bits.Count; i++)
+            {
+                var v = _v[i];
+                v.y -= 14f * dt;
+                var p = _bits[i].localPosition + v * dt;
+                // One bounce off the road, then it skids.
+                if (p.y < -transform.position.y + Slipper.GroundY(transform.position) + 0.02f && v.y < 0f) { v.y *= -0.3f; v.x *= 0.5f; v.z *= 0.5f; }
+                _v[i] = v;
+                _bits[i].localPosition = p;
+                _bits[i].Rotate(new Vector3(500f + 40f * i, 200f - 30f * i, 0f) * dt, Space.Self);
+                _bits[i].localScale = new Vector3(Size[i], Size[i] * 0.55f, Size[i] * 1.6f) * Mathf.Clamp01((Life - _age) / 0.35f);
+            }
+        }
+    }
+
+    /// <summary>
+    /// ⚠️⚠️ ROOTED'S BODY TELL, AS WOVEN ROOT-BRANCHES (direction.md section 5.8). Owner: *"characters
+    /// should look tied to the tree"*, *"dont use vines use woven tree branches"*. Three bark branches
+    /// climb the shins out of the road, each on its own typed path round the legs (not one shape turned
+    /// three times), a knot where they meet at the knee and a leaf at one tip. They grow up over 0.6 s,
+    /// creak and shake when the player struggles, and on release they CRACK: bark chunks, a few leaves
+    /// and `sfx_paete_root_break`. Attached to any body that gains Rooted, on every peer.
+    /// </summary>
+    public sealed class PaeteRootCoil : MonoBehaviour
+    {
+        // Each branch: keys of (angle round the legs in degrees, height, distance out, girth).
+        private static readonly Vector4[][] Branches =
+        {
+            new[] { new Vector4(-20f, -0.04f, 0.44f, 0.070f), new Vector4(40f, 0.10f, 0.36f, 0.062f), new Vector4(115f, 0.22f, 0.33f, 0.054f),
+                    new Vector4(190f, 0.33f, 0.31f, 0.046f), new Vector4(262f, 0.44f, 0.30f, 0.036f), new Vector4(318f, 0.54f, 0.31f, 0.022f) },
+            new[] { new Vector4(110f, -0.04f, 0.46f, 0.066f), new Vector4(172f, 0.08f, 0.37f, 0.058f), new Vector4(236f, 0.19f, 0.33f, 0.050f),
+                    new Vector4(300f, 0.30f, 0.31f, 0.042f), new Vector4(372f, 0.40f, 0.30f, 0.032f), new Vector4(420f, 0.48f, 0.32f, 0.018f) },
+            new[] { new Vector4(232f, -0.04f, 0.45f, 0.064f), new Vector4(290f, 0.12f, 0.35f, 0.056f), new Vector4(350f, 0.25f, 0.32f, 0.048f),
+                    new Vector4(420f, 0.36f, 0.31f, 0.040f), new Vector4(476f, 0.47f, 0.31f, 0.030f), new Vector4(520f, 0.58f, 0.33f, 0.016f) },
+        };
+        private static readonly Color[] Shade = { GrowthVfx.BarkDark, GrowthVfx.Bark, GrowthVfx.BarkLit };
+
+        private CharacterMotor _body;
+        private readonly Mesh[] _meshes = new Mesh[3];
+        private Transform _knot, _leaf;
+        private readonly List<Vector3> _points = new List<Vector3>();
+        private readonly List<float> _radii = new List<float>();
+        private float _age;
+
+        public static void Attach(CharacterMotor body)
+        {
+            if (body == null || body.GetComponentInChildren<PaeteRootCoil>() != null) return;
+            var go = new GameObject("PaeteRootCoil");
+            go.transform.SetParent(body.transform, false);
+            var fx = go.AddComponent<PaeteRootCoil>();
+            fx._body = body;
+            for (int i = 0; i < 3; i++)
+            {
+                fx._meshes[i] = new Mesh { name = "PaeteShinBranch" };
+                fx._meshes[i].MarkDynamic();
+                PaeteInk.Part(go.transform, "shin-branch-" + i, fx._meshes[i], Shade[i]);
+            }
+            var knotMesh = new Mesh { name = "PaeteShinKnot" };
+            PaeteInk.Tube(knotMesh, new List<Vector3> { new Vector3(-0.05f, 0f, 0f), new Vector3(0.05f, 0.01f, 0f) }, new List<float> { 0.07f, 0.06f }, 5);
+            fx._knot = PaeteInk.Part(go.transform, "shin-knot", knotMesh, GrowthVfx.BarkDark).transform;
+            fx._leaf = PaeteInk.Part(go.transform, "shin-leaf", PaeteInk.Leaf(0.16f, 0.09f, 0.014f), GrowthVfx.LeafGreen).transform;
+        }
+
+        /// <summary>The break-out (direction.md section 5.6): chunks, leaves and the snap, on every peer.</summary>
+        public static void Break(Vector3 feet)
+        {
+            PaeteBarkShatter.Spawn(feet + Vector3.up * 0.35f, 8);
+            PaeteLeafBurst.Spawn(feet + Vector3.up * 0.45f, 4, 1.3f);
+            GameServices.Audio?.PlayAtVaried("sfx_paete_root_break", feet, 0.95f, 1.05f, 0.8f);
+        }
+
+        private void Update() => Step(Time.deltaTime);
+
+        /// <summary>One step of the growth (the review probe drives this in edit mode).</summary>
+        public void Step(float dt)
+        {
+            if (_body == null || !_body.IsRooted)
+            {
+                // The roots letting go: the hold finished, a tag landed or the sentry slept. Local on
+                // every peer off the replicated state, like the gain below.
+                if (_body != null) Break(_body.transform.position);
+                PaeteProp.Kill(gameObject); return;
+            }
+            if (_age <= 0f) GameServices.Audio?.PlayAtVaried("sfx_status_rooted", _body.transform.position, 0.95f, 1.05f, 0.8f);
+            _age += dt;
+            float grow = GrowthVfx.Pop(_age / 0.6f);
+            bool fighting = _body.IsStruggling;
+            for (int b = 0; b < 3; b++)
+            {
+                var keys = Branches[b];
+                _points.Clear(); _radii.Clear();
+                // The typed keys, eased between: four samples a span.
+                int shown = Mathf.Clamp(Mathf.CeilToInt(grow * (keys.Length - 1) * 4f), 1, (keys.Length - 1) * 4);
+                for (int s = 0; s <= shown; s++)
+                {
+                    float f = s / 4f;
+                    int k = Mathf.Min(keys.Length - 2, Mathf.FloorToInt(f));
+                    float t = f - k;
+                    Vector4 a = Vector4.Lerp(keys[k], keys[k + 1], t);
+                    float ang = a.x * Mathf.Deg2Rad;
+                    float shake = fighting ? Mathf.Sin(_age * 34f + b * 2f) * 0.03f * a.y : 0f;
+                    _points.Add(new Vector3(Mathf.Sin(ang) * a.z + shake, a.y, Mathf.Cos(ang) * a.z));
+                    _radii.Add(a.w);
+                }
+                PaeteInk.Tube(_meshes[b], _points, _radii, 5);
+            }
+            // The knot at the knee where two meet, and a leaf on the tallest tip.
+            _knot.localPosition = new Vector3(0.02f, 0.47f, 0.30f);
+            _knot.localScale = Vector3.one * Mathf.Clamp01((grow - 0.7f) * 3.3f);
+            var tip = Branches[2][5];
+            float ta = tip.x * Mathf.Deg2Rad;
+            _leaf.localPosition = new Vector3(Mathf.Sin(ta) * tip.z, tip.y + 0.04f, Mathf.Cos(ta) * tip.z);
+            _leaf.localRotation = Quaternion.Euler(-35f, tip.x, 0f);
+            _leaf.localScale = Vector3.one * Mathf.Clamp01((grow - 0.85f) * 6f);
+        }
+    }
+}

@@ -123,6 +123,7 @@ namespace TumbangPreso.Audio
                 { "sfx_cast_paete_sentry", -7.0f }, { "sfx_paete_sentry_burst", -3.0f },
                 { "sfx_paete_sentry_catch", -7.0f }, { "sfx_paete_sentry_wilt", -11.0f },
                 { "sfx_status_rooted", -9.0f }, { "sfx_paete_root_break", -8.0f },
+                { "sfx_paete_sentry_wake", -8.0f }, { "sfx_paete_sprout_ready", -14.0f },
                 { "sfx_hex_cast",     -4.0f },
 
                 // ⚠️ THE BREAK IS MIXED LIKE A STATUS, NOT AN EVENT, for the same reason
@@ -403,6 +404,7 @@ namespace TumbangPreso.Audio
             "sfx_cast_paete_thorns", "sfx_paete_thorn_burst", "sfx_cast_paete_sentry",
             "sfx_paete_sentry_burst", "sfx_paete_sentry_catch", "sfx_paete_sentry_wilt",
             "sfx_status_rooted", "sfx_paete_root_break", "sfx_ult_theme_paete", "sfx_sky_canopy",
+            "sfx_paete_sentry_wake", "sfx_paete_sprout_ready",
 
             // ⚠️ THE TWELVE ALTERNATES. A sidegrade changes what the power does, so it changes
             // what the power sounds like doing it: Long Tremor sweeps feet instead of throwing

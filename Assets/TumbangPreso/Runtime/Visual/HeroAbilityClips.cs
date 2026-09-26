@@ -349,6 +349,7 @@ namespace TumbangPreso.Visual
             // What any body does against his kit; a player loads the baked `RootedMotion` set instead.
             dict[RootedMotion.Struggle] = BuildRootedStruggle(paths);
             dict[RootedMotion.Heave] = BuildPlantHeave(paths);
+            dict[RootedMotion.Breakout] = BuildRootBreakout(paths);
             return dict;
         }
 

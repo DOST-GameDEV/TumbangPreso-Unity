@@ -210,6 +210,10 @@ namespace TumbangPreso.Abilities
                 return;
             }
             if (_age >= PaeteRules.PlantLifeSeconds) { Destroy(gameObject); return; }
+            // The shot has grown: a soft pod pop, so its owner hears it is loaded (direction.md section 5.3).
+            // Local on every peer off the same clock, like the fire.
+            if (_age >= _nextShot && _age - dt < _nextShot && _age > 0.5f)
+                GameServices.Audio?.PlayAt("sfx_paete_sprout_ready", transform.position);
             float loosen = Mathf.Clamp01((_age - PaeteRules.PlantRootedSeconds) / (PaeteRules.PlantLifeSeconds - PaeteRules.PlantRootedSeconds));
             _body.Pose(_age, loosen, Pullable, ShotReady ? 1f : ShotGrowth, _recoil);
             StepPullers(dt);
@@ -448,6 +452,8 @@ namespace TumbangPreso.Abilities
             s.OwnerSlot = ownerSlot; s.Centre = at;
             s._age = age - Flight;
             s._body = PaeteSentryBody.Build(go.transform);
+            // Before it has anyone to look at, the tree faces along the seed's flight (direction.md 5.2).
+            s._body.SetFacing(at - from);
             if (age <= 0f) PaeteSeedArc.Throw(from, at, Flight, 0.26f, true);
             // Who the vines reach for is drawn on every peer from the same rule the host uses.
             var round = GameServices.Round;
@@ -485,8 +491,22 @@ namespace TumbangPreso.Abilities
             if (before < 0f && _age >= 0f)
             {
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_burst", Centre);
-                Visual.PaeteGroundBreak.Spawn(Centre, 2.2f);
+                // ⚠️ SIZED TO THE 9 M TREE (owner: *"REALLY big and imposing and really feel like an ult"*):
+                // the road breaks wider than the claw roots reach, and every nearby camera takes the
+                // ground coming up, harder the closer it is (the style of `HeroHazards`' blasts: the
+                // shake scales with the thing, it is never one flat number).
+                Visual.PaeteGroundBreak.Spawn(Centre, 3.4f);
+                var main = UnityEngine.Camera.main;
+                var rig = main != null ? main.GetComponent<CameraSystem.CameraRig>() : null;
+                if (rig != null)
+                {
+                    float near = Mathf.Clamp01(1f - Vector3.Distance(main.transform.position, Centre) / 18f);
+                    rig.Shake(Mathf.Lerp(0.35f, 0.8f, near), 0.5f);
+                }
             }
+            // The tree waking: the light opens in its hollows (`PaeteSentryBody`'s WAKE beat, 0.55 s).
+            if (before < 0.55f && _age >= 0.55f)
+                GameServices.Audio?.PlayAt("sfx_paete_sentry_wake", Centre);
             if (before < PaeteRules.SentryCatchSeconds && _age >= PaeteRules.SentryCatchSeconds && _held.Count > 0)
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_catch", Centre);
             if (before < PaeteRules.SentryLifeSeconds && _age >= PaeteRules.SentryLifeSeconds)

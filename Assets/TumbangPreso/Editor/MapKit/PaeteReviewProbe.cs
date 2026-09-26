@@ -28,13 +28,22 @@ namespace TumbangPreso.EditorTools.MapKit
     /// </summary>
     public static class PaeteReviewProbe
     {
-        public const string Version = "v13";
+        public const string Version = "v17";
         private const string OutDir = "Logs/paete-review";
         private const int W = 480, H = 360;
 
         public static void Run() => EditorApplication.Exit(Execute() ? 0 : 1);
 
-        public static bool Execute()
+        /// <summary>
+        /// Only the trees (the sentry, the seedling, the thorn construct) and the break-out: the pass the
+        /// modelled props are refined in (direction.md section 5), without re-filming every body clip.
+        ///   python tools/run_unity_guarded.py -batchmode -executeMethod TumbangPreso.EditorTools.MapKit.PaeteReviewProbe.RunTrees -logFile Logs/paete-trees.log
+        /// </summary>
+        public static void RunTrees() => EditorApplication.Exit(Execute(treesOnly: true) ? 0 : 1);
+
+        public static bool Execute() => Execute(false);
+
+        public static bool Execute(bool treesOnly)
         {
             Directory.CreateDirectory(OutDir);
             EditorSceneManager.OpenScene(IlalimNgTulayBuilder.ScenePath, OpenSceneMode.Single);
@@ -51,6 +60,15 @@ namespace TumbangPreso.EditorTools.MapKit
                 var sean = book.FindPersonArt("sean");
                 if (paete == null || paete.Model == null) throw new InvalidOperationException("Paete's roster art is missing.");
 
+                if (treesOnly)
+                {
+                    SentryFx(sean ?? paete);
+                    PlantFx();
+                    ThornFx();
+                    Strip("breakout-sean", sean ?? paete, RootedMotion.Breakout, true, 0.9f, 10, null);
+                    Debug.Log("[PaeteReviewProbe] wrote trees " + Version + " to " + OutDir);
+                    return true;
+                }
                 float reach = PaeteRules.VineReachSeconds + PaeteRules.VineTellSeconds;
                 float hold = PaeteRules.VineHoldSeconds(PaeteRules.VineRange);
                 Strip("vine", paete, "hero-paete-vine", false, 1.0f, 12, t =>
@@ -61,6 +79,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 Strip("sentry", paete, "hero-paete-sentry", false, 1.3f, 12, null);
                 Strip("struggle-paete", paete, RootedMotion.Struggle, true, 1.2f, 8, null);
                 Strip("heave-paete", paete, RootedMotion.Heave, true, 1.4f, 10, null);
+                Strip("breakout-paete", paete, RootedMotion.Breakout, true, 0.9f, 10, null);
                 if (sean != null && sean.Model != null)
                 {
                     Strip("struggle-sean", sean, RootedMotion.Struggle, true, 1.2f, 8, null);
@@ -212,24 +231,35 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var host = new GameObject("SentryHost");
             var sentry = PaeteSentryBody.Build(host.transform);
+            // v14: the prisoners stand on the camera's side, so the tree wakes and looks toward the lens,
+            // and they are HELD (Rooted) so the embrace limbs and the shin branches stay on them.
+            sentry.SetFacing(Vector3.back);
             var victims = new List<CharacterMotor>();
-            foreach (var at in new[] { new Vector3(1.8f, 0, 0.5f), new Vector3(-1.0f, 0, 1.6f) })
+            var coils = new List<PaeteRootCoil>();
+            foreach (var at in new[] { new Vector3(1.55f, 0, -1.05f), new Vector3(-1.35f, 0, -1.35f) })
             {
                 var v = Body(victimArt); v.transform.position = at;
                 v.transform.rotation = Quaternion.LookRotation(-at.normalized) * Quaternion.Euler(0, CharacterVisual.PersonModelYaw, 0);
-                victims.Add(v.AddComponent<CharacterMotor>());
+                var motor = v.AddComponent<CharacterMotor>();
+                try { motor.ApplyRooted(PaeteRules.SentryLifeSeconds - 0.4f); } catch (Exception e) { Debug.LogWarning("[PaeteReviewProbe] rooted: " + e.Message); }
+                victims.Add(motor);
             }
             sentry.SetTargets(victims);
-            float[] ages = { 0f, .1f, .2f, .3f, .4f, .5f, .62f, .9f, 3f, 6.2f, 9.8f, 10.3f };
+            float[] ages = { 0f, .1f, .2f, .3f, .4f, .5f, .62f, .75f, .9f, 1.3f, 3f, 6.2f, 9.8f, 10.3f };
             var shots = new List<Texture2D>();
             var ground = PaeteGroundBreak.Spawn(Vector3.zero, 2.2f);
+            float lastAge = 0f;
             foreach (float a in ages)
             {
                 sentry.Pose(a, Vector3.zero);
                 ground.StepTo(Mathf.Min(a, 1.29f));
+                if (a >= PaeteRules.SentryCatchSeconds + 0.3f && coils.Count == 0)
+                    foreach (var v in victims) { PaeteRootCoil.Attach(v); var c = v.GetComponentInChildren<PaeteRootCoil>(); if (c != null) coils.Add(c); }
+                foreach (var c in coils) if (c != null) c.Step(Mathf.Min(1f, a - lastAge));
+                lastAge = a;
                 var baked = victims.SelectMany(v => Bake(v.gameObject)).ToList();
-                shots.Add(Shoot(new Vector3(7.4f, 4.2f, -7.0f), new Vector3(0, 1.9f, 0.4f), 50, $"sentry t={a:0.00}s"));
-                shots.Add(Shoot(new Vector3(-2.2f, 1.1f, -6.2f), new Vector3(0, 2.2f, 0f), 54, $"sentry low t={a:0.00}s"));
+                shots.Add(Shoot(new Vector3(8.5f, 4.6f, -12.5f), new Vector3(0, 4.0f, 0f), 52, $"sentry t={a:0.00}s"));
+                shots.Add(Shoot(new Vector3(-2.2f, 1.2f, -8.6f), new Vector3(0, 3.6f, 0f), 62, $"sentry low t={a:0.00}s"));
                 foreach (var v in victims) Unbake(v.gameObject, baked.Where(g => g != null).ToList());
             }
             Save("sentryfx", Reorder(shots, ages.Length), ages.Length);

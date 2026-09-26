@@ -1395,6 +1395,7 @@ namespace TumbangPreso.Visual
         // ------------------------------------------------------------------ PAETE'S KIT, ON ANY BODY
 
         private float _heaveProgress, _stumbleLeft;
+        private bool _wasRooted;
         private bool _rootedPose;
 
         /// <summary>
@@ -1409,6 +1410,13 @@ namespace TumbangPreso.Visual
         private bool StepRootedPose()
         {
             if (_motor == null) return false;
+            // ⚠️ BREAKING OUT (direction.md section 5.6): the step the roots let go, the body plays its
+            // own break-out once, on every peer, off the replicated Rooted state. A tag keeps the tag's
+            // reaction, so it is not played over a tagged body.
+            bool rooted = _motor.IsRooted;
+            if (_wasRooted && !rooted && !_motor.IsTagged && _clips.ContainsKey(RootedMotion.Breakout))
+            { _wasRooted = false; _rootedPose = false; PlayOneShot(RootedMotion.Breakout); return false; }
+            _wasRooted = rooted;
             float pull = _motor.PullingPlantProgress;
             if (pull <= 0f && _heaveProgress >= .95f && _clips.ContainsKey(RootedMotion.Heave))
                 _stumbleLeft = ClipLength(RootedMotion.Heave) - RootedMotion.HeaveScrubSeconds;

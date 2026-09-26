@@ -353,13 +353,17 @@ def rooted():
 
 
 def root_break():
-    """Breaking free (7 s of Interact, or the sentry dying): one bright bark SNAP and a little
-    flurry of leaves. It has to read as relief, so it is short and high."""
-    s = 0.5
+    """Breaking free (7 s of Interact, or the sentry going back to sleep): the shin branches and the
+    waist band CRACK apart (direction.md section 5.6). A bright bark snap, a second smaller one as the
+    other leg rips out, the chunks pattering onto the road and a flurry of leaves. It has to read as
+    RELIEF, so it stays bright and short and ends on the patter, not on a groan."""
+    s = 0.7
     t = times(s)
-    crack = snap(t, 8201, 0.0, 14, 0.04, 3000, 2.2) + knock(t, 0.0, 520, 0.03, 0.6)
-    flurry = rustle(t, 8202, 2400 * env_ar(t, 0.02, 0.12, 0.04), 5000) * 0.8
-    return finish("sfx_paete_root_break", crack + flurry, s, 0.6)
+    crack = snap(t, 8201, 0.0, 16, 0.04, 3000, 2.2) + knock(t, 0.0, 520, 0.03, 0.6)
+    second = snap(t, 8203, 0.2, 9, 0.03, 3400, 1.3)
+    chunks = knock(t, 0.30, 760, 0.02, 0.35) + knock(t, 0.37, 640, 0.02, 0.3) + knock(t, 0.45, 880, 0.02, 0.25) + knock(t, 0.52, 700, 0.018, 0.2)
+    flurry = rustle(t, 8202, 2400 * env_ar(t, 0.02, 0.16, 0.05), 5000) * 0.8
+    return finish("sfx_paete_root_break", crack + second + chunks + flurry, s, 0.6)
 
 
 def sentry_wilt():
@@ -371,6 +375,33 @@ def sentry_wilt():
     sag = creak(t, 8302, sweep(t, 70, 25, 0.8), 0.5, [(200, 1.0)], 6.0, env_ar(t, 0.1, 0.4, 0.2)) * 1.6
     pods = knock(t, 0.55, 700, 0.03, 0.5) + knock(t, 0.72, 820, 0.03, 0.4) + knock(t, 0.86, 640, 0.03, 0.35)
     return finish("sfx_paete_sentry_wilt", crackle + sag + pods, s, 0.55)
+
+
+def sentry_wake():
+    """THE TREE WAKES (direction.md section 5.2): the light opens in the two hollows and it leans at
+    its first prisoner. A deep wooden groan whose slips RISE (the tree drawing itself up), a low
+    breath of air through the wood, a leaf shiver in the crown, and two soft carved-bar notes as the
+    eyes open, a fourth apart and quiet: it is waking, not roaring."""
+    s = 1.0
+    t = times(s)
+    groan = creak(t, 8601, sweep(t, 26, 64, 0.7), 0.35, [(170, 1.0), (410, 0.5)], 7.5, env_ar(t, 0.18, 0.35, 0.45)) * 2.6
+    breath = one_pole_low(noise(len(t), 8602), 220) * env_ar(t, 0.3, 0.25, 0.4) * 1.4
+    shiver = rustle(t, 8603, 1600 * window(t, 0.2, 0.75, 0.15), 3800) * 0.5
+    eyes = knock(t, 0.42, 294, 0.16, 0.45) + knock(t, 0.58, 392, 0.18, 0.4)
+    return finish("sfx_paete_sentry_wake", groan + breath + shiver + eyes, s, 0.6)
+
+
+def sprout_ready():
+    """The seedling's wooden slipper has grown (direction.md section 5.3): the petals part and the
+    pod gives a proud little bob. A soft pod POP (a short rising bloop), a tiny leaf tick and one
+    small high wood note, so the player who owns it hears a shot is ready without looking. Quiet:
+    it plays every 15 s of a 40 s plant."""
+    s = 0.35
+    t = times(s)
+    pop = np.sin(2 * np.pi * np.cumsum(sweep(t, 340, 620, 0.07)) / RATE) * env_ar(t, 0.006, 0.04, 0.012) * 0.8
+    tick = rustle(t, 8701, 900 * window(t, 0.02, 0.18, 0.05), 5200) * 0.4
+    note = knock(t, 0.05, 1046, 0.05, 0.35)
+    return finish("sfx_paete_sprout_ready", pop + tick + note, s, 0.4)
 
 
 def theme():
@@ -406,7 +437,7 @@ def sky():
 if __name__ == "__main__":
     rows = [vine(), sprout_cast(), command(), sprout_land(), sprout_fire(), sprout_uproot(), thorns_cast(),
             thorn_burst(), sentry_cast(), sentry_burst(), sentry_catch(), rooted(), root_break(),
-            sentry_wilt(), theme(), sky()]
+            sentry_wilt(), sentry_wake(), sprout_ready(), theme(), sky()]
     report = {
         "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",
         "listening": "Not yet heard by the owner in the game mix. Peak and RMS are measurements, not approval.",

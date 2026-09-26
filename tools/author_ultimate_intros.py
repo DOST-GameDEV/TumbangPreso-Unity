@@ -799,7 +799,8 @@ def paete():
     # A: WHO. Wide, low, from the front, easing in.
     p.shot(0, .6, (1.4, .5, 4.2), (0, 1.1, 0), 50, eye_to=(1.2, .55, 3.7))
     # B: INTENT. The close-up on the face and the lit palm.
-    p.shot(.6, 1.5, (.5, 1.35, 1.2), (0, 1.35, 0), 36, eye_to=(.4, 1.4, 1.02), close=True)
+    # (2026-09-26: the first film cropped the top of his head; framed up and a touch wider.)
+    p.shot(.6, 1.5, (.55, 1.5, 1.35), (0, 1.5, 0), 42, eye_to=(.45, 1.55, 1.2), close=True)
     # C: GATHER. Low from his left as the roots climb and the vine spirals.
     p.shot(1.5, 2.5, (-3.2, .4, 2.4), (0, 1.3, 0), 54, eye_to=(-2.6, .5, 3.2))
     # D: RELEASE. Over his right shoulder, down the court where the vines erupt.

@@ -55,7 +55,7 @@ namespace TumbangPreso.Visual
         {
             var paths = ResolvePaths(root);
             if (paths == null) return null;
-            var clips = new[] { BuildRootedStruggle(paths), BuildPlantHeave(paths) };
+            var clips = new[] { BuildRootedStruggle(paths), BuildPlantHeave(paths), BuildRootBreakout(paths) };
             foreach (var clip in clips) GroundIntroduction(clip, root, paths["root"], anchorToRest: true);
             return clips;
         }
@@ -209,6 +209,32 @@ namespace TumbangPreso.Visual
             b.PunchAt(.86f);
             PoseKey(b, .86f, .01f, V(-8, 0, 0), V(-10, 0, 0), V(14, 0, 34), V(14, 0, -34), legL, V(-26, 0, -7));
             PoseKey(b, 1.2f, -.02f, V(8, 0, 0), V(4, 0, 0), V(-24, 0, 30), V(-24, 0, -30), legL, legR);
+            return b.Build();
+        }
+
+        /// <summary>
+        /// ⚠️ BREAKING OUT OF THE SENTRY'S HOLD (owner, 2026-09-26: *"make sure to create the animation for
+        /// getting out of his ult too"*; direction.md section 5.6): 0.9 s, played once when the roots let
+        /// go (7 s of Interact, or the tree going back to sleep; a tag keeps its own reaction).
+        ///  * rip (0 to 0.12): the root drops a hair (the last pull), then the body HEAVES UP, chest thrown
+        ///    open, arms flung up and out, as the shin branches crack apart (`PaeteRootCoil.Break`);
+        ///  * step (0.12 to 0.40): one knee yanked high out of the roots, then the other, a stumble forward;
+        ///  * shake (0.40 to 0.76): a shake-off, one side then the other, arms flicking down;
+        ///  * settle (to 0.9): back to stance.
+        /// </summary>
+        private static AnimationClip BuildRootBreakout(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder(RootedMotion.Breakout, paths);
+            PoseKey(b, 0, -.04f, V(10, 0, 0), V(6, 0, 0), V(-20, 0, 26), V(-20, 0, -26), V(0, 0, 7), V(0, 0, -7));
+            b.PunchAt(.12f);
+            PoseKey(b, .12f, .06f, V(-16, 0, 0), V(-14, 0, 0), V(-140, 0, 48), V(-140, 0, -48), V(0, 0, 9), V(0, 0, -9));
+            PoseKey(b, .24f, .08f, V(-6, 6, 0), V(-6, 4, 0), V(-110, 0, 40), V(-120, 0, -38), V(-58, 0, 7), V(8, 0, -7));
+            b.PunchAt(.38f);
+            PoseKey(b, .38f, .05f, V(4, -6, 0), V(2, -4, 0), V(-60, 0, 30), V(-70, 0, -30), V(-10, 0, 7), V(-52, 0, -7));
+            PoseKey(b, .52f, 0, V(6, 0, 10), V(4, 0, -8), V(-10, 0, 34), V(-10, 0, -20), V(0, 0, 7), V(0, 0, -7));
+            PoseKey(b, .64f, 0, V(6, 0, -10), V(4, 0, 8), V(-10, 0, 20), V(-10, 0, -34), V(0, 0, 7), V(0, 0, -7));
+            PoseKey(b, .76f, 0, V(2, 0, 0), V(0, 0, 0), V(-6, 0, 22), V(-6, 0, -22), V(0, 0, 6), V(0, 0, -6));
+            PoseKey(b, .9f, 0, V(0, 0, 0), V(0, 0, 0), PaeteRestLeft, PaeteRestRight);
             return b.Build();
         }
 

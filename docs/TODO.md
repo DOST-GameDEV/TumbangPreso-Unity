@@ -242,23 +242,37 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
 - [x] World snapshot and replay: `WorldEffectSnapshot.Kind.Plant/Thorns/Sentry` (12 to 14, appended
   inside protocol 55), captured, validated, restored for a rejoiner, retired with the round, and drawn
   in replay (`RecordedFieldView`). Compiled in the v13 probe run; NOT yet exercised by a rejoin test.
-- [ ] ⚠️ NEXT, THE OWNER'S LATEST NOTE (2026-09-26): *"the current models of all his skills look ugly
-  still its js blocks"*, *"thoroughly work on the detail of each part manually"*. `tools/build_paete_props.py`
-  now models the sentry, the seedling and the thorn construct part by part with his own builder's
-  helpers and palette (chamfered bark plates, knots, glow seams, wound vines, moss, fungus, forked
-  crown branches, petals, a strapped slipper, barbed thorns), written to
-  `Resources/Models/PaeteProps/*.glb` with named nodes for every moving part. NOT YET WIRED OR SEEN:
-  let Unity import them, make `PaeteSentryBody`, `PaetePlantBody` and `PaeteThornBody` instantiate the
-  glb (`Resources.Load<GameObject>("Models/PaeteProps/sentry")`), dress it with `ToonSkin.Apply(model,
-  ToonSkin.PersonOutlineWidth, <Paete's palette from RosterBook.FindPersonArt("paete").Palette>)`,
-  find the nodes (`trunk`, `crown`, `claw-0..4`, `buttress-0..5`; `stem`, `pod`, `petal-0..4`,
-  `slipper`, `root-0..3`; `knot`, `thorn-0..6`) and pose them with the existing age curves, keeping
-  the procedural core, spores, ground branches, tethers and ground break. Then film with
-  `PaeteReviewProbe` (bump its Version) and refine each part by eye, versioned.
+- [x] The trees, modelled and wired (owner, 2026-09-26: *"the current models of all his skills look ugly
+  still its js blocks"*, *"thoroughly work on the detail of each part manually"*, *"really caerfullly and
+  delicately work on the animations + model of his trees"*, *"think of vfx that should accompany it as
+  well as sfx"*, *"thoroughly direct it"*). Direction written first: `docs/reports/paete-kit-2026-09-25/direction.md`
+  section 5 (what was wrong, the idea, beat tables per tree with body, VFX and SFX, how prisoners are held,
+  the break-out). `tools/build_paete_props.py` v7 types every part by hand (no looped shapes, the owner's
+  rule): the sentry is a woven trunk of eleven hand-keyed cords crossing over and under (his Groot crop),
+  on the silhouette of the cartoon tree he sent (flared claw roots with curled toes, pinched waist,
+  swollen top, seven gnarled woven branches with hooked tips), woven vines threading the cords, and two
+  engraved hollows with a slanted light (he rejected a carved face, brows and knots on the way: *"Js make 2
+  fucking holles"*). The seedling has a three-cord stem, arm leaves and a petal-bud head; the thorn
+  construct is a fist of roots and seven barbed square thorns. Wired in `PaeteTreeBodies.cs` (loaded and
+  dressed with his palette and ink by `PaeteProp`): the sentry screws up, squashes, slams its roots down one
+  by one, unfurls, WAKES (the light opens in the hollows, `sfx_paete_sentry_wake`), clenches its crown on
+  the catch, looks from prisoner to prisoner, blinks, breathes, drops leaves, then sleeps and unscrews into
+  the road; the seedling sways with follow-through, parts its petals as the slipper ripens (`sfx_paete_sprout_ready`),
+  coils and snaps on the shot and dries to straw in four palette steps; the thorns ripple up, quiver in the
+  hold, whip on the yank and clench. Prisoners are HELD: a woven limb reaches out of the trunk, drags them
+  in and wraps their waist, woven root-branches climb their shins (arms and head free, they can still
+  throw), no vines in the binding. Break-out (owner: *"make sure to create the animation for getting out
+  of his ult too"*): a new shared clip `root-breakout` on all 23 rigs (`RootedAnimationAuthor`), the shins
+  crack into bark chunks (`PaeteBarkShatter`), the limb whips back into the trunk, `sfx_paete_root_break`
+  rebuilt with a second snap and the chunks pattering. Films: `PaeteReviewProbe.RunTrees` v14 (found every
+  runtime branch drawn as solid ink: `GrowthVfx.Tube` and `GrowthVfx.Leaf` wind inside out, fixed in `PaeteInk`), v15, and
+  v16 at 1.75 times the authored size, about 9 m (owner: *"make tree bigger"*, *"REALLY big and imposing and really feel
+  like an ult"*; 1.75 is the most the 1.9 m hold allows before the flared foot swallows a prisoner).
 - [ ] Rerun `PaeteKitPlayProbe` and EditMode after the rise and snapshot changes (both last passed
   before them: 4/4 and 606/609).
-- [ ] Still to do: portrait and avatar, `WorldEffectSnapshot`/`RecordedSpecialFields` for plant, sentry
-  and thorns, seedling and thorn-construct art pass, PlayMode gate, Checks.RunAll, audits, a build.
+- [ ] Still to do: portrait and avatar, a rejoin test that exercises the plant, thorn and sentry snapshot
+  kinds, `BotBehaviourProbe`, a first-person vine capture, PlayMode gate, Checks.RunAll, audits, a build.
+  (The seedling and thorn-construct art pass is the modelled trees row above.)
 - [ ] Surface texture: the owner asked to *"really refine and texture and make it all detailed"*. The
   modelled props give detail in geometry and his palette only; decide with him whether bark wants a
   painted texture (grain, rings) on the props and vines, and do it if so.
