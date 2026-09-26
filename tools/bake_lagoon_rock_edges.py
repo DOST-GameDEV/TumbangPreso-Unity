@@ -29,7 +29,8 @@ import bpy
 ROOT = Path(__file__).resolve().parents[1]
 ATLAS = ROOT / "ArtSource" / "lagoon" / "textures" / "rock_edges_atlas.png"
 ATLAS_PX = 2048
-BEVEL_R = 0.14          # object units, stones ~2.5 across; v1 at 0.07 baked a hairline that read as an outline
+BEVEL_R = 0.24          # object units, stones ~2.5 across. 0.07 baked a hairline (an outline); 0.14 was
+                        # too faint on the final kit, whose own 4 cm bevels soften every break
 
 
 def rock_meshes(material):
@@ -41,7 +42,12 @@ def rock_meshes(material):
 
 
 def unwrap_into_cell(me, index, grid):
-    """Give `me` a unique "UVBake" unwrap, scaled into cell `index` of a grid x grid atlas."""
+    """Give `me` a unique "UVBake" unwrap, scaled into cell `index` of a grid x grid atlas. A
+    mesh from the rock kit (tools/author_lagoon_rocks.py) already has a checked, overlap-free
+    "UVBake" in 0..1; it is kept and only packed into its cell. Others are smart-projected."""
+    if "UVBake" in me.uv_layers and me.get("rock_uvbake_angle") is not None:
+        _pack(me, index, grid)
+        return
     if "UVBake" not in me.uv_layers:
         me.uv_layers.new(name="UVBake")
     tmp = bpy.data.objects.new("_unwrap", me)
@@ -58,6 +64,10 @@ def unwrap_into_cell(me, index, grid):
     bpy.ops.object.mode_set(mode="OBJECT")
     me.uv_layers.active_index = keep
     bpy.data.objects.remove(tmp)
+    _pack(me, index, grid)
+
+
+def _pack(me, index, grid):
     pad = 0.04
     cx, cy = index % grid, index // grid
     uv = me.uv_layers["UVBake"].data
@@ -83,7 +93,7 @@ def bake_material(image):
     nt.links.new(bevel.outputs["Normal"], dot.inputs[0])
     nt.links.new(geo.outputs["Normal"], dot.inputs[1])
     band = nt.nodes.new("ShaderNodeMapRange")        # dot 1 = flat plane, lower = an edge
-    band.inputs["From Min"].default_value, band.inputs["From Max"].default_value = 0.995, 0.86   # a soft ramp in, not a line
+    band.inputs["From Min"].default_value, band.inputs["From Max"].default_value = 0.995, 0.93   # a soft ramp in, not a line
     nt.links.new(dot.outputs["Value"], band.inputs["Value"])
     convex = nt.nodes.new("ShaderNodeMapRange")      # pointiness > 0.5 is convex
     convex.inputs["From Min"].default_value, convex.inputs["From Max"].default_value = 0.49, 0.53
@@ -105,7 +115,14 @@ def bake_material(image):
 
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
-    material = argv[argv.index("--material") + 1] if "--material" in argv else "rock"
+    bake(argv[argv.index("--material") + 1] if "--material" in argv else "rock")
+    if "--save" in argv:
+        bpy.ops.wm.save_mainfile(compress=True)
+
+
+def bake(material="rock"):
+    """Unwrap, pack and bake every mesh using `material`; writes ATLAS. Called by
+    tools/author_lagoon_cove.py on every build, and by main() on any saved file."""
     meshes = rock_meshes(material)
     grid = max(1, math.ceil(math.sqrt(len(meshes))))
     print(f"[rock-edges] {len(meshes)} rock meshes, {grid} x {grid} atlas")
@@ -140,8 +157,6 @@ def main():
     image.file_format = "PNG"
     image.save()
     print("[rock-edges] atlas", ATLAS)
-    if "--save" in argv:
-        bpy.ops.wm.save_mainfile(compress=True)
 
 
 if __name__ == "__main__":

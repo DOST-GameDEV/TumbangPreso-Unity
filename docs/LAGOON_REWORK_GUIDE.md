@@ -194,10 +194,22 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      Unity reads the mask through UV2 with the same single material.
    - The rock MATERIAL maps rock_a by world-space box projection (Unity: triplanar) and adds
      light tops and dark undersides by face normal.
-   - **Models** (`tools/author_lagoon_rocks.py`, 16 stones in 5 families: boulder, stack, slab,
-     split pair, cobble). The first kit was too soft (soap bars); being reworked after the
-     owner's rock-pack reference: tall chunky ANGULAR stones of broad flat planes and chipped
-     facets, soft shading inside a plane.
+   - **Models** (`tools/author_lagoon_rocks.py`, `ArtSource/lagoon/lagoon_rocks.blend`): 16
+     stones in 5 families (`ROCK_FAMILIES`: boulder 0-4, stack 5-7, slab 8-10, split 11-12,
+     cobble 13-15). The first kit was too soft (soap bars); after the owner's rock-pack
+     reference every stone is cut by 5 to 8 broad planes (near-flat top, near-vertical sides)
+     with 2 or 3 chips off the top edges, narrow 4 cm bevels at the breaks, soft shading inside
+     a plane; two stacks are 2 to 3 lump spires. Origin at the GROUND CONTACT (base centre, 20 %
+     below z = 0). Each mesh: "UVMap" (world box projection, 1 unit = 4 m), "UVBake" (checked:
+     0 overlapping pixels), `rock_top` attribute, `rock_top_z` and `rock_family` properties.
+   - **In the cove since v17/v18**: `place_boulders` picks by family mix (`MASSIF_MIX`,
+     `RIM_MIX`, `SHORE_MIX`), seats each stone halfway between the ground at its centre and the
+     lowest ground under it (v17 seated on the lowest point: stones sank downhill and bared the
+     fill as smooth brown cones), shrinks stacks in the pile to short spires (at full scale they
+     were 20 to 30 m chimneys), and uses the lumpy spires, not the plain monolith (a chimney),
+     as the surf, skyline and sea-stack features. Every build bakes the edge atlas and sets the
+     rock material (rock_a + edges). Bake radius 0.24: 0.14 was too faint on the final kit,
+     whose own bevels soften every break (`rock_on_models_v7.png`).
 3. **Stilt house kit**: nipa/cogon thatch (its own texture, swatch first), sawali wall panel
    (swatch first), plank deck, bamboo piles with X bracing, ladders, railings; variants: land
    house on a pocket, small Bajau water home, sari-sari stall, capilla.

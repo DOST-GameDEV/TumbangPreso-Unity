@@ -58,10 +58,16 @@ def edge_wear(nt, colour):
     noise.inputs["Scale"].default_value = 1.4
     geo = nt.nodes.new("ShaderNodeNewGeometry")
     nt.links.new(geo.outputs["Position"], noise.inputs["Vector"])
+    # Noise VARIES the band (0.65 to 1.25 of the mask) rather than halving it: multiplying by the
+    # raw noise left the edges on the final kit barely visible (sheet v6).
+    vary = nt.nodes.new("ShaderNodeMapRange")
+    vary.inputs["From Min"].default_value, vary.inputs["From Max"].default_value = 0.3, 0.7
+    vary.inputs["To Min"].default_value, vary.inputs["To Max"].default_value = 0.65, 1.25
+    nt.links.new(noise.outputs["Fac"], vary.inputs["Value"])
     broken = nt.nodes.new("ShaderNodeMath")
     broken.operation = "MULTIPLY"
     nt.links.new(mask.outputs["Color"], broken.inputs[0])
-    nt.links.new(noise.outputs["Fac"], broken.inputs[1])
+    nt.links.new(vary.outputs["Result"], broken.inputs[1])
     cut = nt.nodes.new("ShaderNodeMapRange")
     cut.interpolation_type = "SMOOTHSTEP"
     # Review v4: a crisp 0.16..0.26 cut drew an even hairline round every plane, an OUTLINE.

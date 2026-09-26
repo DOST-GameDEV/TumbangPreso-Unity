@@ -36,6 +36,7 @@ from mathutils import Matrix, Vector, noise
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import author_kanto_blockout as B      # noqa: E402  box, cylinder, blob, label, _obj, lighting
 import author_lagoon_blockout as L     # noqa: E402  colours, gameplay markers, horizon, col
+import author_lagoon_rocks as R        # noqa: E402  the rock kit
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "ArtSource" / "lagoon"
@@ -177,46 +178,37 @@ def height(x, y):
 
 # ---------------------------------------------------------------- boulders
 
-def boulder_mesh(i):
-    """One unique pillow stone. A subdivided cube, 70 per cent of the way to a sphere, stretched,
-    chopped by three to five random planes into broad flat faces, then jittered."""
-    rng = random.Random(900 + i)
-    bm = bmesh.new()
-    bmesh.ops.create_cube(bm, size=2.0)
-    bmesh.ops.subdivide_edges(bm, edges=bm.edges[:], cuts=2, use_grid_fill=True)
-    for v in bm.verts:
-        s = v.co.normalized()
-        v.co = v.co.lerp(s * 1.25, 0.7)
-    sx, sy, sz = rng.uniform(0.8, 1.2), rng.uniform(0.7, 1.0), rng.uniform(1.0, 1.6)
-    bmesh.ops.scale(bm, vec=(sx, sy, sz), verts=bm.verts[:])
-    for k in range(rng.randint(3, 5)):
-        n = Vector((rng.uniform(-1, 1), rng.uniform(-1, 1), rng.uniform(-0.2, 1))).normalized()
-        cut = rng.uniform(0.55, 0.85) * max(sx, sy, sz)
-        res = bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=n * cut, plane_no=n,
-                                     clear_outer=True)
-        edges = [e for e in res["geom_cut"] if isinstance(e, bmesh.types.BMEdge)]
-        if edges:
-            bmesh.ops.holes_fill(bm, edges=edges)
-    for v in bm.verts:
-        v.co += Vector((rng.uniform(-1, 1), rng.uniform(-1, 1), rng.uniform(-1, 1))) * 0.04
-    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
-    # SOFT PLANES (review v1: flat shading made every stone a crystal). Faces are smooth; only
-    # an edge between two faces more than 38 degrees apart stays sharp, so a stone reads as a
-    # few broad planes with soft rounded shoulders, like the reference's.
-    for f in bm.faces:
-        f.smooth = True
-    for e in bm.edges:
-        if len(e.link_faces) == 2 and e.link_faces[0].normal.angle(e.link_faces[1].normal, 0) > math.radians(38):
-            e.smooth = False
-    me = bpy.data.meshes.new(f"boulder_{i:02d}")
-    bm.to_mesh(me)
-    bm.free()
-    me.materials.append(B.mat("rock"))
-    return me
+# THE ROCK KIT (docs/LAGOON_REWORK_GUIDE.md § 8 step 2) replaced the blockout pillow stones:
+# 16 chiselled stones in five families from tools/author_lagoon_rocks.py, each with its origin
+# at the GROUND CONTACT (base centre, ~20 % of its height already below z = 0), a world-scale
+# "UVMap" for the tiling rock texture and a unique "UVBake" for the baked edge wear.
+KIT = []
+
+
+def pick(rng, weights):
+    """A kit mesh from a weighted family mix, e.g. {"boulder": 6, "stack": 1}."""
+    total = sum(weights.values())
+    roll = rng.uniform(0, total)
+    for family, w in weights.items():
+        if roll < w:
+            return KIT[rng.choice(R.ROCK_FAMILIES[family])]
+        roll -= w
+    return KIT[rng.choice(R.ROCK_FAMILIES[family])]
+
+
+def ground_under(x, y, r):
+    """The LOWEST ground under a stone's footprint, so its downhill side never floats."""
+    return min(height(x + dx * r, y + dy * r) for dx, dy in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)))
+
+
+MASSIF_MIX = {"boulder": 7, "stack": 0.6, "split": 1.5, "cobble": 1}
+RIM_MIX = {"boulder": 3, "cobble": 2, "slab": 1}
+SHORE_MIX = {"cobble": 3, "slab": 2, "boulder": 1}
 
 
 def place_boulders(c, rng):
-    kit = [boulder_mesh(i) for i in range(12)]
+    KIT[:] = R.build_rock_kit(B.mat("rock"))
+    kit = KIT
     placed, spots = 0, []
     step = 4.8
     y = -100.0
@@ -256,16 +248,26 @@ def place_boulders(c, rng):
                 s *= 0.45                      # small stones in the seams
             elif roll > 0.93 and near > 1.9 and h < 18:
                 s *= 1.6                       # the odd big one low on the massif
-            z = h - s * rng.uniform(0.35, 0.7)
+            me = pick(rng, MASSIF_MIX)
+            sz = s * rng.uniform(0.8, 1.1)
+            if me["rock_family"] == "stack":
+                # A stack is ~5 m tall at scale 1: at massif scale it became a 20 to 30 m chimney
+                # (review v17). In the pile it is a short spire.
+                s, sz = s * 0.6, sz * 0.45
+            # SEATED BETWEEN the centre and the lowest ground under the footprint (review v17:
+            # seating on the lowest point sank every stone downhill on the steep massif and bared
+            # the fill uphill as smooth brown cones; the centre alone floats the downhill side).
+            z = 0.5 * (height(px, py) + ground_under(px, py, 1.25 * s)) - s * rng.uniform(0.05, 0.3)
             if front is not None:
                 # THE LEDGE FACE IS STILL STONE (review v2: clearing it showed smooth dirt cliffs).
                 # Stones in front of a pocket stay, but their tops stop 0.3 m under the pocket
                 # floor, so the house still looks out over them.
-                z = min(z, front - 0.3 - s * 1.35)
-            o = bpy.data.objects.new("boulder", kit[rng.randrange(len(kit))])
+                z = min(z, front - 0.3 - me["rock_top_z"] * sz)
+            o = bpy.data.objects.new("boulder", me)
             o.location = (px, py, z)
-            o.scale = (s * rng.uniform(0.85, 1.15), s * rng.uniform(0.85, 1.15), s * rng.uniform(0.8, 1.1))
-            o.rotation_euler = (rng.uniform(-0.18, 0.18), rng.uniform(-0.18, 0.18), rng.uniform(0, math.tau))
+            o.scale = (s * rng.uniform(0.85, 1.15), s * rng.uniform(0.85, 1.15), sz)
+            tilt = 0.06 if me["rock_family"] == "slab" else 0.18   # a slab shows its lifted edge
+            o.rotation_euler = (rng.uniform(-tilt, tilt), rng.uniform(-tilt, tilt), rng.uniform(0, math.tau))
             c.objects.link(o)
             spots.append((px, py, s * 0.9))
             placed += 1
@@ -281,13 +283,16 @@ def place_boulders(c, rng):
 # the coast its landmarks; without them the pile reads as even gravel. Hand placed: (x, y, size,
 # kit shape, turn, how far it is sunk as a fraction of its size).
 FEATURES = [
-    (65, 29, 8.0, 5, 0.4, 0.35),      # the east sea cliff: a giant stone standing in the surf
-    (-16, 22, 6.0, 2, 1.9, 0.4),      # behind the court's north-west corner, seen from the court
-    (-80, -40, 9.0, 7, 2.6, 0.4),     # the spit's root, the west's one tall stone
-    (-86, -8, 7.5, 9, 0.2, 0.4),      # its partner a little north, a pair not a twin
-    (18, 96, 12.0, 1, 1.1, 0.4),      # on the northern skyline beside the summit
-    (-60, 80, 10.0, 11, 2.2, 0.4),    # north-west skyline
-    (-50, -104, 5.0, 8, 0.9, 0.3),    # a sea stack off the spit's tip
+    # (x, y, scale, family, index in family, turn). Stacks are ~5 m tall at scale 1, boulders ~2.
+    # The plain monolith (stack 0) read as a chimney as a feature (review v17): the lumpy spires
+    # (stack 1 and 2, the owner's rock-pack reference) stand in the surf and on the skyline.
+    (65, 29, 2.6, "stack", 1, 0.4),       # the east sea cliff: a spire standing in the surf
+    (-16, 22, 4.2, "boulder", 0, 1.9),    # behind the court's north-west corner, seen from the court
+    (-80, -40, 2.6, "stack", 2, 2.6),     # the spit's root, the west's one tall stone
+    (-86, -8, 5.0, "boulder", 3, 0.2),    # its partner a little north, a pair not a twin
+    (18, 96, 8.0, "boulder", 4, 1.1),     # on the northern skyline beside the summit
+    (-60, 80, 3.2, "stack", 1, 2.2),      # a spire on the north-west skyline
+    (-50, -104, 2.0, "stack", 2, 0.9),    # a sea stack off the spit's tip
 ]
 
 
@@ -311,9 +316,10 @@ def rim_stones(c, kit, rng):
                 x, y = px + math.cos(a) * rx * reach, py + math.sin(a) * ry * reach
                 if pocket_at(x, y)[0] is not None:
                     continue
-                s = rng.uniform(1.5, 2.3) * (1.0 + row * 0.25)
-                o = bpy.data.objects.new("rim stone", kit[rng.randrange(len(kit))])
-                o.location = (x, y, pz - drop - 1.3 * s)
+                s = rng.uniform(1.3, 1.9) * (1.0 + row * 0.25)
+                me = pick(rng, RIM_MIX)
+                o = bpy.data.objects.new("rim stone", me)
+                o.location = (x, y, pz - drop - me["rock_top_z"] * s)
                 o.scale = (s * rng.uniform(0.9, 1.15), s * rng.uniform(0.9, 1.15), s)
                 o.rotation_euler = (rng.uniform(-0.1, 0.1), rng.uniform(-0.1, 0.1), rng.uniform(0, math.tau))
                 c.objects.link(o)
@@ -323,16 +329,13 @@ def rim_stones(c, kit, rng):
 
 def feature_boulders(c, kit):
     spots = []
-    for x, y, s, k, rz, sink in FEATURES:
-        o = bpy.data.objects.new("feature boulder", kit[k])
-        # A stone standing in the sea is measured from the WATER, not the seabed, and stands
-        # taller (review: sunk from the seabed they showed as flat slabs awash).
+    for x, y, s, family, k, rz in FEATURES:
+        o = bpy.data.objects.new("feature boulder", kit[R.ROCK_FAMILIES[family][k]])
+        # A stone standing in the sea is measured from the WATER (review: sunk from the seabed
+        # the old ones showed as flat slabs awash); the kit's stacks are tall on their own.
         wet = coast_distance(x, y) < 0
-        base = WATER if wet else height(x, y)
-        tall = 1.6 if wet else 1.05
-        o.location = (x, y, base - s * sink * (0.6 if wet else 1.0))
-        slim = 0.75 if wet else 1.0   # a sea stack stands, it does not sprawl (v8 aerial)
-        o.scale = (s * slim, s * 0.85 * slim, s * tall)
+        o.location = (x, y, WATER - 0.3 * s if wet else ground_under(x, y, 1.25 * s) - 0.1 * s)
+        o.scale = (s, s * 0.9, s)
         o.rotation_euler = (0.08, -0.05, rz)
         c.objects.link(o)
         spots.append((x, y, s * 0.9))
@@ -352,10 +355,10 @@ def shore_rocks(c, kit, rng):
             x, y = ax + rng.uniform(-3, 3), ay + rng.uniform(-3, 3)
             if pocket_at(x, y)[0] is not None or math.hypot(x, y + 12) < 20:
                 continue   # never on a pocket, and keep the court's beach front open
-            s = rng.uniform(0.9, 2.2)
-            o = bpy.data.objects.new("shore rock", kit[rng.randrange(len(kit))])
-            o.location = (x, y, max(height(x, y), SEABED) - s * 0.45)
-            o.scale = (s, s * rng.uniform(0.8, 1.1), s * rng.uniform(0.6, 0.9))
+            s = rng.uniform(0.35, 0.9)
+            o = bpy.data.objects.new("shore rock", pick(rng, SHORE_MIX))
+            o.location = (x, y, max(height(x, y), SEABED) - s * 0.1)
+            o.scale = (s, s * rng.uniform(0.8, 1.1), s * rng.uniform(0.7, 1.0))
             o.rotation_euler = (0, 0, rng.uniform(0, math.tau))
             c.objects.link(o)
     return spots
@@ -570,8 +573,8 @@ def village(c, rng):
     B.box(c, "capilla", (sx, sy, sz + 2.5), (5.5, 7.5, 5), "chapel")
     B.box(c, "capilla roof", (sx, sy, sz + 5.3), (6.5, 8.5, 0.4), "tin_red")
     B.box(c, "bell tower", (sx, sy - 4.6, sz + 4.5), (2.4, 2.4, 9), "chapel")
-    o = bpy.data.objects.new("landmark rock", bpy.data.meshes.get("boulder_03"))
-    o.location, o.scale = (LANDMARK[0], LANDMARK[1], WATER - 2.2), (4.6, 4.0, 4.4)   # rounder: at 5.5 tall it read as a pyramid
+    o = bpy.data.objects.new("landmark rock", KIT[R.ROCK_FAMILIES["boulder"][0]])
+    o.location, o.scale = (LANDMARK[0], LANDMARK[1], WATER - 1.0), (3.4, 3.0, 3.0)
     o.rotation_euler = (0, 0, 0.3)
     c.objects.link(o)
 
@@ -857,6 +860,12 @@ def main():
     spots = place_boulders(L.col("Boulders", root), rng)
     village(L.col("Village", root), rng)
     planting(L.col("Planting", root), rng, spots)
+    # THE ROCK MATERIAL (§ 8 step 2, owner-chosen): rock_a by world box projection, light tops,
+    # and edge wear baked from each kit stone's own geometry into one atlas.
+    import bake_lagoon_rock_edges as E
+    import render_lagoon_texture_preview as T
+    E.bake("rock")
+    T.rock_material(bpy.data.materials["rock"], "rock_a+edges")
     L.gameplay(root)
     B.lighting()
     scene = bpy.context.scene
