@@ -164,6 +164,41 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
 - `MapGeometryCheck`, `ArenaCheck`, the Hero Strike footprint and bot routing must pass on the
   rebuilt scene. The old builder is `Editor/MapKit/LagoonBuilder*.cs`.
 
+## 7a · Gap review against the reference (2026-09-27, cove v48)
+
+Owner: *"take a look at the references and identify what else is missing from our current
+map"*. Compared against the ArtStation GvJv5a shots (the village overview, the beach with the
+octopus rock, the boathouse close-up) and its kit sheets (buildings and props, stairs and wall
+modules, foliage and terrain). In rough order of impact:
+
+1. **Props: almost none.** The reference is dense with them: nets drying on the sand and piled
+   on piers, barrels, crates, pots and jars, lanterns on posts, shovels and oars, rope coils,
+   hanging shop signs, a round table with benches, overturned and broken rowboats. We have
+   boats and laundry only. (Filipino versions: drying fish racks, bubo fish traps, banga jars,
+   bamboo baskets, capiz lanterns, a sari-sari sign.) This is § 8 step 5.
+2. **Railings along every ledge and walk.** The reference runs continuous wooden rails along
+   each ledge edge, boardwalk and pier; ours has loose fence stubs and bare walks.
+3. **Boardwalks along the cliff, not only stairs.** Its houses are joined by plank walks
+   running ALONG the rock face at several levels, with stairs between; ours are stairs only.
+4. **A proper beach pier.** A plank pier into the water with posts rising above the deck,
+   barrels, a net pile and a moored rowboat, plus a broken old pier on the sand.
+5. **The landmark's emblem.** Its signature is the painted octopus rock (and a small painted
+   motif on the cliff). Our landmark rock is blank.
+6. **Palms.** Its trunks curve (S bends, leaning) with warm banded orange-brown bark; its fronds
+   are broad and chunky with a yellow-green gradient. Ours are straight, grey and thin-leafed.
+7. **Foliage variety at rock feet.** Red and orange ferny accents (croton), monstera-like round
+   leaves, dense low ground cover and grass tufts spilling over ledge edges. Ours: banana, taro,
+   tufts and flower bushes, and grass pockets that are flat discs.
+8. **House dressing.** Hanging signs, dormers, lean-to shades on posts, open shutters,
+   lanterns, pots at the door, nets on the walls.
+9. **Sky and light.** Big painted clouds, a warm golden key light and cool shadows. Ours is a
+   plain gradient in flat grey haze (§ 8 step 7).
+10. **Water.** Shader waves, a foam line and a depth colour (§ 8 step 7, Unity).
+11. **Backdrop.** Tall rock spires and distant islands behind the village; our horizon is empty.
+12. **Rock versus sand.** Its rocks are a cool grey-khaki against warm yellow sand, so the
+    two separate; ours are both warm tan and blend. (rock_a is approved; this would be a tint
+    decision for the owner, not a new texture.)
+
 ## 8 · Plan (in order; each step rendered in Blender and approved before the next)
 
 1. **Finish the layout.** ✅ LAYOUT COMPLETE at cove v16 (2026-09-26), awaiting the owner's
