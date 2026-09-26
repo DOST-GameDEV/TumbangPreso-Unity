@@ -309,30 +309,41 @@ namespace TumbangPreso.Visual
         };
 
         /// <summary>
-        /// PAETE. *"Never hurries. Always arrives."* The guardian tree of Makiling, a little amused by everyone else's panic. He
-        /// lumbers: long slow steps that settle, a trunk that hardly twists but sways from side to side like a tree in wind, the
-        /// crown (his head) swaying late on its own, long heavy arms hanging and swinging like branches, well behind the
-        /// stride. Even his run is unhurried: a long trot that still sways.
+        /// PAETE. *"Never hurries. Always arrives."* The guardian tree of Makiling, a little amused by everyone else's panic.
+        /// ⚠️ SECOND PASS, 2026-09-27 (owner: *"paete weird walking animation make his sit hage more weight"*). The first pass
+        /// let his feet slide 20 per cent a step (`Glide` 1.2), which on a 1.84 m tree reads as floating, and his footfall
+        /// was a 3 cm dip. Weight is built from three things here: the feet never slide (glide 1.02, so the cadence falls to
+        /// about 2.7 steps a second at his size), every footfall SINKS him (a 7 per cent of leg drop, the chest pitching into
+        /// it and the head nodding a beat later), and the impact runs up the body (the long arms jolt forward on each landing,
+        /// a quirk below). Between steps he rocks well over the planted foot, the trunk barely twisting, the crown swaying
+        /// late on its own. The run is the same weight at a trot: still planted, still sinking, longer strides.
         /// </summary>
         public static readonly GaitStyle Paete = new GaitStyle
         {
             Name = "paete",
             Walk = new Gait
             {
-                LegForward = 38, LegBack = 34, LegSnap = .7f, Stance = 4,
-                ArmSpread = 15, ArmForward = 20, ArmBack = 17, ArmCarry = 2, ArmSnap = .9f, ArmLag = 0.12f,
-                Lean = 3, LeanPulse = .8f, Roll = 4.5f, RollDelay = .12f, Twist = 2,
-                HeadPitch = 2, HeadSteady = .4f, Sway = .06f, Stomp = .03f, Glide = 1.2f,
+                LegForward = 38, LegBack = 34, LegSnap = .6f, Stance = 5,
+                ArmSpread = 15, ArmForward = 18, ArmBack = 16, ArmCarry = 3, ArmSnap = .8f, ArmLag = .1f,
+                Lean = 4, LeanPulse = 2.5f, Roll = 5.5f, RollDelay = .1f, Twist = 2,
+                HeadPitch = 2, HeadNod = 3, HeadSteady = .4f, Sway = .075f, Stomp = .07f, Glide = 1.02f,
             },
             Run = new Gait
             {
-                LegForward = 48, LegBack = 44, LegSnap = .8f, Stance = 4,
-                ArmSpread = 16, ArmForward = 34, ArmBack = 30, ArmCarry = 4, ArmSnap = .9f, ArmLag = 0.12f,
-                Lean = 8, LeanPulse = 1, Roll = 3, RollDelay = .1f, Twist = 3,
-                HeadPitch = 1, HeadSteady = .5f, Bounce = .02f, Sway = .04f, Stomp = .03f, Glide = 1.25f,
+                LegForward = 48, LegBack = 44, LegSnap = .7f, Stance = 5,
+                ArmSpread = 16, ArmForward = 30, ArmBack = 28, ArmCarry = 4, ArmSnap = .85f, ArmLag = .09f,
+                Lean = 9, LeanPulse = 3, Roll = 4, RollDelay = .08f, Twist = 3,
+                HeadPitch = 1, HeadNod = 3, HeadSteady = .5f, Bounce = .02f, Sway = .05f, Stomp = .07f, Glide = 1.05f,
             },
-            // The canopy: the head sways slowly on its own, the way a crown moves after the trunk.
-            Quirk = (ref GaitPose p, in GaitMoment m) => p.HeadRoll += 2.5f * Wave(m.Time, .45f),
+            Quirk = (ref GaitPose p, in GaitMoment m) =>
+            {
+                // The impact running up the body: a sharp pulse just after each footfall (twice a cycle), felt in the arms.
+                float after = Mathf.Repeat(2f * (m.Phase - .25f) - .06f, 1f); // 0 just after each contact (phase .25 and .75)
+                float impact = Mathf.Exp(-after * 9f);
+                p.ArmLeft += 7f * impact; p.ArmRight += 7f * impact;
+                // The canopy: the head sways slowly on its own, the way a crown moves after the trunk.
+                p.HeadRoll += 2.5f * Wave(m.Time, .45f);
+            },
         };
 
         /// <summary>
