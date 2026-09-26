@@ -1128,8 +1128,9 @@ Brainchild's cartoon towns. **Not registered**: it is not in `SceneFlow.Maps`, `
 
 **Read [LAGOON_REWORK_GUIDE.md](LAGOON_REWORK_GUIDE.md) first** (references, art-style rules,
 rock rules, current layout, files, gameplay constraints, and the ordered plan in its § 8).
-Status: layout complete at cove v16 (`tools/author_lagoon_cove.py`), awaiting sign-off to texture;
-nothing modelled or in Unity yet. Supersedes REFINE-2.6 for this map.
+Status (2026-09-27): textured and being dressed in Blender (props, organic wood structures in
+flight; sky deferred); see the guide's CURRENT STATE block. Nothing in Unity yet. Supersedes
+REFINE-2.6 for this map.
 
 ### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
 

@@ -7,10 +7,58 @@ whose model, texture, foliage and working rules ALL apply here too (Kanto is the
 house style). Every rule below came from the owner reacting to a render; the quote is there so
 nobody re-litigates it. Status row: `docs/TODO.md` **LAGOON-1**.
 
-⚠️⚠️ **CURRENT STATE (2026-09-26): LAYOUT COMPLETE (cove v16), awaiting the owner's sign-off to start texturing (§ 8 step 2).**
-Nothing is modelled, textured or in Unity yet; the shipped Lagoon scene is untouched. Next steps
-are § 8. This rework supersedes the REFINE-2.6 per-family refinement for this map. The map as
-found: `Logs/map-lineup-v1/sheet_lagoon.png` (a flat brown deck ring over flat teal water).
+⚠️⚠️ **CURRENT STATE (2026-09-27, late): TEXTURING AND DRESSING, all in Blender; nothing in
+Unity yet** (the shipped Lagoon scene is untouched). Build: `blender -b --python
+tools/author_lagoon_cove.py -- --preview N` writes `ArtSource/lagoon/lagoon_cove.blend` and
+`Logs/lagoon-blender/cove_<shot>_vN.png` (latest v51). The full step list is § 8; this block is
+the snapshot to resume from.
+
+**Approved by the owner:** layout (cove v16); rock kit with rock_a + brushed organic edge wear
+(§ 8 step 2); thatch a/b/c and sawali a/b/c mixed per house; plank_c; smooth painted terrain
+(sand_a, grass_a, earth_a); Kanto-style leaf cards. **Provisional, awaiting a pick:** timber_a,
+bamboo_a, tin_b (first swatch of each, see § 8 step 3); the landmark emblem (pawikan in the
+build; pagi and bangka are the alternatives, `landmark_court_v4.png`); cooler rock tint (asked,
+no answer: rocks stay rock_a).
+
+**In the build now:** rock kit + edge atlas, house kit (land, water, stall, capilla) and boat kit
+as linked duplicates, walks, plank stairs with landings, the house paint materials
+(`lagoon_paint_materials.py`: hull, trim, plaster, capiz, cloth), the plant kit with curved
+banded palms, croton, monstera, ground cover, the landmark emblem decal on a 1.4x landmark rock,
+a hazed backdrop of islands and spires, the structures kit (ledge railings replacing the fence
+stubs, three cliff walks, a beach pier, a broken pier; `author_lagoon_structures.py`), the
+owner's hand edits (`OWNER_DELETE`, `OWNER_MOVE`, `OWNER_ADD_PLANTS`), `cull_buried`.
+
+**⚠️ Sky is DEFERRED by the owner** (*"we can do the sky stuff later, just focus on the other
+stuff"*). The game's new sky lives in the repo (branch ASTRAReworks, now merged into this branch
+at `e662f361`): `Runtime/Visual/WorldLookProfile.cs` (per-map MapLook, Lagoon entry), 
+`BlockyClouds.cs` + `Shaders/BlockyCloud.shader` (voxel cumulus), `Shaders/NeighbourhoodSky.shader`.
+When resumed, port THAT into the Blender renders (`tools/author_lagoon_sky.py` currently holds an
+earlier painted-panorama sky, committed, still called by the build). Its violet shade may clash
+with the owner's earlier rejection of cold blue-grey rock shade: show it, do not silently warm it.
+
+**In flight when the session compacted (each agent owns ONE file; the lead integrates):**
+- `tools/author_lagoon_structures.py`: being reworked into MODELLED, CHUNKY, ORGANIC wood:
+  `modelled_walk()` (individual planks, replaces the textured `walk_path` strip in
+  author_lagoon_cove.py), `organic_stairs()` (sawtooth stringers, thick treads; replaces
+  `plank_stairs`), organic railing/cliff_walk/pier; nothing coplanar with the terrain (the
+  owner found z-fighting at stair feet). Integration = swap those calls in the cove script.
+- Prop kits, API `build_prop(kind, seed) -> Collection` (one root empty, origin at ground
+  contact, +Y front), all being simplified to the chunky organic rule (§ 2):
+  `author_lagoon_props_beach.py` (net_pile, net_spread, net_rack, rope_coil; done, v10),
+  `author_lagoon_props_village.py` (sign_hanging, lantern_post, lantern_hang; second simplify
+  pass), `lagoon_prop_seating.py` (table_round, bench, lean_to; done, v8),
+  `lagoon_prop_fishing.py` (fish_rack, bubo, basket), `lagoon_prop_clay.py` (banga,
+  pot_cluster, potted_plant), `lagoon_prop_cargo.py` (crate, barrel, water_drum),
+  `lagoon_prop_shore.py` (oar_pair, driftwood, anchor_stone, firewood), `lagoon_prop_textile.py`
+  (woven_mat, hanging_net, laundry_line). Each renders `Logs/lagoon-blender/<prefix>_lineup_vN.png`.
+- **Next for the lead:** verify each kit's renders, then write the PLACEMENT (a new
+  `tools/lagoon_props_place.py` or a section in the cove script): source seeds built once into a
+  hidden "(source, not placed)" collection, linked duplicates placed in clusters (nets and racks
+  by the beached bangkas on the spit, net pile + rope at the jetty foot, fish racks and baskets on
+  the beach, lanterns and signs on houses (ray-cast mounts, see the village kit's notes), pots by
+  steps, a table and lean-to at the court's edge, crates and barrels on the pier), grounded on the
+  lowest sand under the footprint, clear of the court, walks, stairs and water; kept off the
+  owner's recorded edits; then a full review render against § 7a.
 
 ---
 
