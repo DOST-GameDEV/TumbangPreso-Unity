@@ -70,3 +70,13 @@ step (about 1.2 m) above the beach, cradled on three sides by boulder clusters w
 stand just outside the walls at +/-13, and open on the fourth side down to the beach, the lagoon
 tongue and the stilt houses along its edges. Upper terraces with more houses and stairs climb
 the rock behind; the capilla sits on the highest ledge under the spire.
+
+**2026-09-26, owner on cove v4:** *"could the main beach area be more organic?"*, *"how absurdly
+symmetrical the map is"*, *"we need space for boats and free-standing stilt houses because badjao
+tribe isnt particularly land based"* (with a photograph of a Bajau water village). Cove v6
+(`tools/author_lagoon_cove.py`): one asymmetric island weighted north-west, drawn from a
+hand-placed coast curve (a long sand spit curling south on the west, rock dropping straight into
+the sea on the east), a beach band with an irregular landward edge, and the whole south and
+south-east left as open water for a Sama-Bajau village: small free-standing stilt homes strung
+in loose clusters along plank walks, some alone, laundry lines, lepa houseboats and bangkas, and
+one long walk to the beach by the court.

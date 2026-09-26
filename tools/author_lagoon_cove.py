@@ -47,36 +47,77 @@ B.COLOURS.update({
     "grass": (0.38, 0.62, 0.18), "sand": (0.95, 0.80, 0.52), "deck": (0.62, 0.38, 0.20),
 })
 
+# OWNER, review of cove v4: "could the main beach area be more organic?", "how absurdly
+# symmetrical the map is", "i'd like to free up some more space. we need space for boats and
+# free-standing stilt houses because badjao tribe isnt particularly land based". So the land is
+# now ONE asymmetric island weighted north-west, with a long sand spit curling south on the west,
+# rock falling straight into the sea on the east, and the whole south and south-east left as open
+# water for the Sama-Bajau style village (docs/LAGOON_REWORK_GUIDE.md).
+
+# The coast, clockwise from the north, as control points of a closed smooth curve. Asymmetric on
+# purpose: nothing here mirrors across x = 0.
+COAST = [(-24, 112), (26, 108), (58, 86), (66, 52), (54, 30), (44, 12), (33, -6), (20, -19), (6, -25),
+         (-8, -23), (-19, -19), (-28, -27), (-36, -45), (-42, -66), (-52, -86), (-63, -95), (-73, -86),
+         (-79, -58), (-88, -24), (-96, 12), (-90, 52), (-66, 88)]
+BEACH_BAND = 8.0   # land within this distance of the coast is beach sand
+
 # POCKETS: (name, x, y, floor z, radius x, radius y, surface). Each is a flat ledge the height
-# field is cut down (or built up) to. The court is the biggest; houses get the rest.
+# field is cut down (or built up) to. The court is the biggest; houses get the rest, at many
+# heights and never in mirrored pairs.
 POCKETS = [
     ("court", 0, 1, 0.0, 19, 17, "court"),
-    ("beach landing west", -22, -24, BEACH, 8, 6, "sand"),
-    ("beach landing east", 22, -24, BEACH, 8, 6, "sand"),
-    ("low west", -34, -8, 2.5, 7, 6, "grass"),
-    ("low east", 35, -12, 3.5, 7, 6, "grass"),
-    ("mid north-west", -26, 26, 6.5, 8, 6, "grass"),
-    ("mid north", 4, 30, 5.0, 9, 5.5, "grass"),
-    ("mid east", 36, 18, 8.5, 7, 6, "grass"),
-    ("high west", -40, 38, 12.5, 6.5, 5.5, "grass"),
-    ("high north", -8, 48, 13.0, 7, 5, "grass"),
-    ("high east", 26, 44, 16.5, 6.5, 5, "grass"),
-    ("summit ledge (capilla)", 6, 64, 22.0, 7, 5.5, "grass"),
+    ("low west", -40, -6, 2.5, 7, 6, "grass"),
+    ("low north-east", 27, 18, 3.0, 7.5, 6, "grass"),
+    ("mid north-west", -30, 30, 7.0, 8, 6, "grass"),
+    ("mid north", 3, 33, 5.0, 9, 5.5, "grass"),
+    ("mid east", 46, 42, 9.5, 6.5, 5.5, "grass"),
+    ("west shoulder", -70, 6, 6.0, 7, 6, "grass"),
+    ("high west", -52, 42, 13.5, 6.5, 5.5, "grass"),
+    ("high north", -12, 54, 14.5, 7, 5, "grass"),
+    ("high east", 28, 62, 18.5, 6.5, 5, "grass"),
+    ("summit ledge (capilla)", -2, 74, 25.0, 7, 5.5, "grass"),
+    ("spit landing", -56, -70, 0.2, 7, 6, "grass"),
 ]
-# Stairs: pairs of pockets joined by a straight flight, drawn edge to edge.
-STAIRS = [("court", "mid north"), ("court", "low west"), ("court", "low east"), ("low west", "mid north-west"),
-          ("mid north", "high north"), ("mid north-west", "high west"), ("low east", "mid east"),
-          ("mid east", "high east"), ("high north", "summit ledge (capilla)"), ("court", "beach landing west"),
-          ("court", "beach landing east")]
-# Peaks of the massif: (x, y, height, radius). Several humps and ridges, a saddle between them.
-PEAKS = [(-30, 58, 38, 22), (8, 74, 46, 20), (38, 60, 34, 18), (-58, 26, 24, 18), (58, 20, 26, 18),
-         (-4, 44, 22, 22), (-48, -30, 12, 14), (48, -36, 11, 14), (22, 86, 30, 16), (-12, 90, 34, 18)]
+STAIRS = [("court", "mid north"), ("court", "low west"), ("court", "low north-east"), ("low west", "mid north-west"),
+          ("low west", "west shoulder"), ("mid north", "high north"), ("mid north-west", "high west"),
+          ("low north-east", "mid east"), ("mid east", "high east"), ("high north", "summit ledge (capilla)")]
+# Peaks of the massif, weighted north-west: (x, y, height, radius).
+PEAKS = [(-42, 64, 42, 24), (-2, 86, 50, 20), (32, 78, 30, 16), (-72, 32, 26, 18), (52, 48, 16, 13),
+         (-14, 50, 22, 20), (-64, -44, 9, 14), (-24, 104, 34, 18), (-84, 60, 22, 16)]
+
+
+def _coast_curve(steps=12):
+    """The coast as a dense closed polyline (Catmull-Rom through COAST)."""
+    pts, n = [], len(COAST)
+    for i in range(n):
+        p0, p1, p2, p3 = (Vector(COAST[(i + k) % n] + (0,)) for k in (-1, 0, 1, 2))
+        for k in range(steps):
+            t = k / steps
+            pts.append(0.5 * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t
+                              + (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t))
+    return [(v.x, v.y) for v in pts]
+
+
+COAST_LINE = _coast_curve()
+
+
+def coast_distance(x, y):
+    """Signed distance to the coast: positive on land, negative in the sea."""
+    inside, best = False, 1e9
+    n = len(COAST_LINE)
+    for i in range(n):
+        (ax, ay), (bx, by) = COAST_LINE[i], COAST_LINE[(i + 1) % n]
+        if (ay > y) != (by > y) and x < (bx - ax) * (y - ay) / (by - ay) + ax:
+            inside = not inside
+        dx, dy = bx - ax, by - ay
+        t = max(0.0, min(1.0, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy)))
+        best = min(best, math.hypot(x - ax - t * dx, y - ay - t * dy))
+    return best if inside else -best
 
 
 def in_lagoon(x, y):
-    """The lagoon tongue: open south of the court, between the rock arms."""
-    half = 22 + max(0.0, -y - 30) * 0.12
-    return y < -20 and abs(x) < half
+    """Open water: anything off the coast."""
+    return coast_distance(x, y) < 0
 
 
 def peak_height(x, y):
@@ -87,20 +128,16 @@ def peak_height(x, y):
 
 
 def massif(x, y):
-    h = SEABED
-    for px, py, ph, pr in PEAKS:
-        d2 = ((x - px) ** 2 + (y - py) ** 2) / (pr * pr)
-        h = max(h, ph * math.exp(-d2 * 0.9) + BEACH)
-    # A ring of land round the whole cove that falls to the sea at its outer edge.
-    r = math.hypot(x, y * 0.9)
-    h = max(h, BEACH + 6 * max(0.0, 1 - abs(r - 60) / 26))
+    d = coast_distance(x, y)
+    if d < 0:
+        return max(SEABED, BEACH - 0.6 + d * 0.35)          # the shallows shelve into the sea
+    h = max(peak_height(x, y), BEACH + 3.0 * min(1.0, (d - BEACH_BAND) / 14))
     h += 1.6 * noise.noise(Vector((x * 0.06, y * 0.06, 0.3)))
-    if r > 95:
-        h = min(h, SEABED + (100 - r) * 0.6)
-    if in_lagoon(x, y):
-        h = SEABED
-    elif y < -14 and abs(x) < 42:
-        h = min(h, BEACH)   # a broad curved beach round the lagoon's head (review v1: too thin)
+    if d < BEACH_BAND:
+        # The beach: flat sand rising gently from the waterline, with an irregular landward edge.
+        wob = 2.5 * noise.noise(Vector((x * 0.08, y * 0.08, 7.1)))
+        if d < BEACH_BAND + wob:
+            return min(h, BEACH + 0.08 * d)
     return h
 
 
@@ -179,7 +216,7 @@ def place_boulders(c, rng):
             if pocket is not None:
                 continue
             h = height(px, py)
-            if h < BEACH + 0.6 or in_lagoon(px, py):
+            if h < BEACH + 0.6 or coast_distance(px, py) < BEACH_BAND - 1:
                 continue
             # 1: rock belongs to the massif. Where the peaks contribute little (the outer ring),
             # only one spot in four gets a stone, so the ring reads as sand and grass.
@@ -192,7 +229,7 @@ def place_boulders(c, rng):
                 dx, dy = (px - p[1]) / p[4], (py - p[2]) / p[5]
                 dd = math.hypot(dx, dy)
                 if 0.9 < dd < 2.1 and p[0] != "court":
-                    to_mouth = Vector((0 - p[1], -70 - p[2], 0)).normalized()
+                    to_mouth = Vector((30 - p[1], -70 - p[2], 0)).normalized()
                     if Vector((dx, dy, 0)).normalized().dot(to_mouth) > 0.35:
                         front = p[3] if front is None else min(front, p[3])
             # Rims: the boulders just outside a pocket are smaller, so a ledge edge is a row of
@@ -220,7 +257,7 @@ def place_boulders(c, rng):
 def ground(c):
     """The height field as one grid mesh (the fill that shows between boulders), with the
     pockets flat. Faces take the pocket's surface colour, else rock fill."""
-    n, span = 150, 210.0
+    n, span = 170, 230.0
     bm = bmesh.new()
     verts = [[bm.verts.new((-span / 2 + i * span / n, -span / 2 + j * span / n, 0)) for i in range(n + 1)] for j in range(n + 1)]
     for row in verts:
@@ -236,7 +273,7 @@ def ground(c):
             pocket, _d = pocket_at(cx, cy)
             if pocket is not None:
                 f.material_index = mats.index(pocket[6])
-            elif f.calc_center_median().z <= BEACH + 0.3:
+            elif f.calc_center_median().z <= BEACH + 0.5:
                 f.material_index = 3
             elif f.normal.z < 0.75:
                 f.material_index = 0   # steep ground is rock, never grass (review v3: green cliffs)
@@ -251,15 +288,16 @@ def ground(c):
     o = bpy.data.objects.new("ground", me)
     c.objects.link(o)
     B.box(c, "sea", (0, 0, WATER - 0.05), (500, 500, 0.1), "water")
-    B.box(c, "lagoon shallows", (0, -60, WATER - 0.02), (60, 90, 0.1), "shallows")
 
 
 # ---------------------------------------------------------------- village
 
-def house(c, rng, name, x, y, z, face_to):
+def house(c, rng, name, x, y, z, face_to, small=False):
     """A blockout Filipino stilt house on its pocket: raised floor on short piles, sawali or
     painted walls, a steep thatch or tin roof, a front deck toward `face_to`."""
     w, d, h = rng.uniform(7, 9.5), rng.uniform(5.5, 7), rng.uniform(3.0, 3.6)
+    if small:   # Bajau homes are small one-room houses (review v5: water houses too big)
+        w, d, h = rng.uniform(4.5, 6), rng.uniform(4, 5), rng.uniform(2.5, 2.9)
     lift = 0.9
     rot = math.atan2(face_to[1] - y, face_to[0] - x) - math.pi / 2
     rm = Matrix.Rotation(rot, 3, "Z")
@@ -288,53 +326,98 @@ def house(c, rng, name, x, y, z, face_to):
 
 def village(c, rng):
     for name, px, py, pz, rx, ry, _s in POCKETS:
-        if name == "court" or name.startswith("summit") or name.startswith("beach"):
+        if name == "court" or name.startswith("summit"):
             continue
-        # Toward the lagoon mouth, a little randomised, so houses look out over the cove.
-        house(c, rng, f"house {name}", px, py + ry * 0.15, pz, (px * 0.3, -60))
-        # A fence along the pocket's downhill (south) rim.
+        house(c, rng, f"house {name}", px, py + ry * 0.15, pz, (30, -70))
         for k in range(7):
             a = math.pi + 0.35 + k * (math.pi - 0.7) / 6
             fx, fy = px + math.cos(a) * rx * 0.95, py + math.sin(a) * ry * 0.95
             B.box(c, "fence post", (fx, fy, pz + 0.5), (0.12, 0.12, 1.0), "deck")
-    # Stilt houses over the lagoon's edges, at water level, with walkways.
-    for i, (x, y) in enumerate([(-19, -38), (-20, -54), (-21, -70), (19, -40), (20, -56), (21, -72)]):
-        house(c, rng, f"stilt house {i}", x, y, WALK_Z - 0.9, (0, y))
-        for lx in (-2.8, 2.8):
-            for ly in (-2.5, 2.5):
-                B.cylinder(c, "stilt", (x + lx, y + ly, (WALK_Z + SEABED) / 2), 0.13, WALK_Z - SEABED, "bamboo", sides=6)
-    for sx in (-1, 1):
-        B.box(c, "lagoon walkway", (sx * 14.5, -52, WALK_Z), (2.2, 42, 0.2), "deck")
-    for i in range(7):
-        x, y = rng.uniform(-8, 8), rng.uniform(-32, -84)
-        rz = math.pi / 2 + rng.uniform(-0.3, 0.3)
-        B.box(c, "bangka hull", (x, y, WATER + 0.25), (5.5, 0.9, 0.5), "boat", rot_z=rz)
-        for side in (-1, 1):
-            B.box(c, "outrigger", (x - math.sin(rz) * side * 2.2, y + math.cos(rz) * side * 2.2, WATER + 0.12),
-                  (4.2, 0.18, 0.18), "bamboo", rot_z=rz)
-    # Stairs: a straight flight from the rim of one pocket to the rim of the next.
+    water_village(c, rng)
     lookup = {p[0]: p for p in POCKETS}
     for a, b in STAIRS:
         A, Bp = lookup[a], lookup[b]
         va, vb = Vector((A[1], A[2], A[3])), Vector((Bp[1], Bp[2], Bp[3]))
-        d = (vb - va)
-        flat = Vector((d.x, d.y, 0)).normalized()
+        flat = Vector(((vb - va).x, (vb - va).y, 0)).normalized()
         ea = va + Vector((flat.x * A[4] * 0.85, flat.y * A[5] * 0.85, 0))
         eb = vb - Vector((flat.x * Bp[4] * 0.85, flat.y * Bp[5] * 0.85, 0))
         mid, run = (ea + eb) / 2, eb - ea
-        m = Matrix.Translation(mid + Vector((0, 0, 0.2))) @ run.to_track_quat("Y", "Z").to_matrix().to_4x4()
         o = B.box(c, f"stairs {a} to {b}", (0, 0, 0), (1.8, run.length, 0.25), "deck")
-        o.matrix_world = m
-    # The capilla on the summit ledge.
+        o.matrix_world = Matrix.Translation(mid + Vector((0, 0, 0.2))) @ run.to_track_quat("Y", "Z").to_matrix().to_4x4()
     _n, sx, sy, sz, _rx, _ry, _s = lookup["summit ledge (capilla)"]
     B.box(c, "capilla", (sx, sy, sz + 2.5), (5.5, 7.5, 5), "chapel")
     B.box(c, "capilla roof", (sx, sy, sz + 5.3), (6.5, 8.5, 0.4), "tin_red")
     B.box(c, "bell tower", (sx, sy - 4.6, sz + 4.5), (2.4, 2.4, 9), "chapel")
-    # The landmark rock in the lagoon, facing the court.
     o = bpy.data.objects.new("landmark rock", bpy.data.meshes.get("boulder_03"))
-    o.location, o.scale = (1.5, -42, SEABED + 1), (4.2, 3.4, 5.5)
+    o.location, o.scale = (9, -40, SEABED + 1), (4.2, 3.4, 5.5)
     o.rotation_euler = (0, 0, 0.3)
     c.objects.link(o)
+
+
+def water_village(c, rng):
+    """THE SAMA-BAJAU WATER VILLAGE (owner: "badjao tribe isnt particularly land based"; photograph
+    of a Bajau village: free-standing stilt houses over clear shallow water, narrow plank walks
+    and ladders, laundry lines, and boats everywhere, both moored and paddled).
+    Houses stand free in the open sea in loose clusters; some clusters are joined by a narrow
+    walk, some houses stand alone. One long walk reaches the beach. Many boats in between:
+    lepa houseboats (a long hull with a small shelter) and slim bangka outriggers."""
+    clusters = [(26, -44, 3), (52, -52, 2), (40, -76, 3), (78, -42, 2), (70, -84, 3), (14, -86, 1),
+                (100, -66, 2), (-10, -64, 1), (92, -100, 1), (46, -110, 2)]
+    homes = []
+    for cx, cy, n in clusters:
+        prev = None
+        # A cluster strings out along a wandering line, 11 to 14 m house to house, so houses
+        # never overlap (review v5) and the plank walk between them shows.
+        heading = rng.uniform(0, math.tau)
+        x, y = cx, cy
+        for k in range(n):
+            if k:
+                heading += rng.uniform(-0.8, 0.8)
+                step = rng.uniform(11, 14)
+                x, y = x + math.cos(heading) * step, y + math.sin(heading) * step
+            floor = WATER + 1.0 + rng.uniform(0.0, 0.4)   # decks about 1.9 m over the water
+            house(c, rng, "bajau house", x, y, floor, (x + rng.uniform(-20, 20), y + rng.uniform(-20, 20)), small=True)
+            for lx in (-2.4, 0.0, 2.4):
+                for ly in (-2.2, 2.2):
+                    B.cylinder(c, "stilt", (x + lx, y + ly, (floor + 0.9 + SEABED) / 2), 0.12,
+                               floor + 0.9 - SEABED, "bamboo", sides=6)
+            if rng.random() < 0.6:   # a laundry line on two poles off the deck
+                B.box(c, "laundry", (x + 3.6, y, floor + 2.4), (0.05, 4.0, 1.0), "net")
+            if prev is not None:
+                walk(c, prev, (x, y), floor + 0.95)
+            prev = (x, y)
+            homes.append((x, y))
+    # The one long walk to the shore, from the nearest cluster to the beach by the court.
+    walk(c, homes[0], (16, -21), WALK_Z)
+    # Boats: lepa houseboats and bangka outriggers, moored by houses and out on open water.
+    for i in range(22):
+        if i < len(homes):
+            hx, hy = homes[i]
+            x, y = hx + rng.choice((-6, 6)), hy + rng.uniform(-3, 3)
+        else:
+            x, y = rng.uniform(-30, 115), rng.uniform(-35, -120)
+            if coast_distance(x, y) > -4:
+                continue
+        rz = rng.uniform(0, math.pi)
+        if rng.random() < 0.35:   # a lepa: longer hull, a small arched shelter amidships
+            B.box(c, "lepa hull", (x, y, WATER + 0.3), (8.0, 1.4, 0.7), "boat", rot_z=rz)
+            B.box(c, "lepa shelter", (x, y, WATER + 1.2), (3.0, 1.5, 1.1), "thatch", rot_z=rz)
+        else:
+            B.box(c, "bangka hull", (x, y, WATER + 0.25), (5.5, 0.9, 0.5), "boat", rot_z=rz)
+            for side in (-1, 1):
+                B.box(c, "outrigger", (x - math.sin(rz) * side * 2.2, y + math.cos(rz) * side * 2.2, WATER + 0.12),
+                      (4.2, 0.18, 0.18), "bamboo", rot_z=rz)
+
+
+def walk(c, a, b, z):
+    """A narrow plank walk on thin piles between two points."""
+    va, vb = Vector((a[0], a[1], z)), Vector((b[0], b[1], z))
+    run = vb - va
+    o = B.box(c, "plank walk", (0, 0, 0), (1.3, run.length, 0.15), "deck")
+    o.matrix_world = Matrix.Translation((va + vb) / 2) @ run.to_track_quat("Y", "Z").to_matrix().to_4x4()
+    for k in range(int(run.length / 3.5) + 1):
+        p = va.lerp(vb, k / max(1, int(run.length / 3.5)))
+        B.cylinder(c, "walk pile", (p.x, p.y, (z + SEABED) / 2), 0.09, z - SEABED, "bamboo", sides=5)
 
 
 WALK_Z = -0.6
@@ -357,9 +440,9 @@ def planting(c, rng):
             B.blob(c, "palm crown", (x + math.sin(lean) * -h / 2, y, pz + h), 1.9, "palm")
             B.blob(c, "rock-foot bush", (x + rng.uniform(-1.5, 1.5), y + rng.uniform(-1.5, 1.5), pz + 0.4),
                    rng.uniform(0.8, 1.3), "palm")
-    for i in range(60):
-        x, y = rng.uniform(-80, 80), rng.uniform(-60, 90)
-        if pocket_at(x, y)[0] is not None or in_lagoon(x, y):
+    for i in range(90):
+        x, y = rng.uniform(-95, 70), rng.uniform(-95, 110)
+        if pocket_at(x, y)[0] is not None or coast_distance(x, y) < BEACH_BAND:
             continue
         h = height(x, y)
         if h < BEACH:
@@ -381,8 +464,9 @@ def preview(version):
     E = 1.3
     shots = [
         ("plan", "ORTHO", (0, 0, 250), (0, 0, 0), 190),
-        ("ref_angle", "PERSP", (22, -88, 20), (-4, 12, 8), 24),     # the reference's framing
-        ("aerial", "PERSP", (-70, -120, 80), (0, 10, 5), 26),
+        ("ref_angle", "PERSP", (40, -100, 20), (-6, 14, 8), 24),    # the reference's framing
+        ("village", "PERSP", (95, -20, 14), (40, -75, 0), 28),      # over the water village
+        ("aerial", "PERSP", (60, -170, 110), (0, -10, 0), 26),
         ("eye_north", "PERSP", (0, -9, E), (0, 45, 8), eye),
         ("eye_east", "PERSP", (-9, 0, E), (45, 0, 4), eye),
         ("eye_south", "PERSP", (0, 9, E), (0, -45, -1), eye),
