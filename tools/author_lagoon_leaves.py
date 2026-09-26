@@ -156,11 +156,29 @@ def paddle(w=512, h=1024, seed=5):
 
 
 def blade(w=256, h=1024):
+    """A grass / pandan blade.
+    ⚠️ OWNER, 2026-09-27, on the tufts in the cove: "the last types of foliage and fauna added dont
+    have much textures on them". v1 was a plain 0.72 to 1.0 ramp with a 5 % step at the fold, which
+    the tint flattened to one green. Now, in the same hand as the paddle: a clear fold (a dark crease
+    with a pale ridge on its lit side), the lit half a step lighter than the shaded half, two soft
+    pale vein bands per half that follow the taper, a darker rim toward the base and a sunlit patch.
+    Still no grain or noise: every mark is a broad feathered band."""
     u, v = _grid(w, h)
     x = (u - 0.5) * 2
     half = 0.9 * (1 - v) ** 0.7 * np.clip(v * 8, 0, 1) ** 0.3
     d = half - np.abs(x)
-    tone = 0.72 + 0.28 * v ** 0.9 - 0.05 * (x > 0)                          # a soft centre fold
+    xn = x / np.maximum(half, 1e-3)                                          # -1..1 across, at any width
+    # Round 2 (plants_tuftclose_after_v1): at 5 to 14 % the marks vanished on a 3 cm wide card.
+    # Every mark is now about twice as strong and twice as wide; still broad and feathered.
+    tone = 0.52 + 0.34 * np.clip(v, 0, 1) ** 0.8                             # stem dark to tip light
+    tone = tone + 0.18 * _feather(-xn, -0.1, 0.3)                             # the lit half
+    tone = tone - 0.22 * np.exp(-(xn / 0.1) ** 2)                             # the crease
+    tone = tone + 0.14 * np.exp(-((xn + 0.22) / 0.1) ** 2)                    # its pale ridge
+    for c in (0.58, -0.62):
+        tone = tone + 0.10 * np.exp(-((xn - c) / 0.1) ** 2)                   # soft vein bands
+    tone = tone - 0.16 * _feather(np.abs(xn), 0.72, 1.0)                      # a darker margin
+    tone = tone - 0.12 * (1 - _feather(v, 0.05, 0.3))                         # a darker foot
+    tone = tone + 0.12 * np.exp(-(((xn + 0.4) / 0.4) ** 2 + ((v - 0.55) / 0.2) ** 2))   # sunlit patch
     _save("blade", tone, d * w / 3.0)
 
 
@@ -536,11 +554,30 @@ def stalk(w=128, h=512):
     """A leaf stalk (banana petiole, taro stalk), greyscale for the plant's tint: a plain soft
     gradient, darker at the foot and lighter toward the leaf, with one soft pale stripe down the
     side the channel runs along. U once round, V foot 0 to leaf 1."""
+    # ⚠️ OWNER, 2026-09-27: "the last types of foliage and fauna added dont have much textures on
+    # them", circling the banana and taro stalks. v1 was a 0.70 to 0.92 ramp with 6 % stripes: one
+    # flat green once tinted. Now the stalk has a real CHANNEL (a broad pale groove edged by two
+    # soft dark lines, and a dip in the height map), a shaded back, a darker clasping foot, and a
+    # few broad feathered patches. Same hand as the leaves: no grain, no noise, no streaks.
     u, v = _grid(w, h)
-    g = 0.70 + 0.22 * v ** 0.8
-    g = g + 0.06 * np.exp(-(((u - 0.25 + 0.5) % 1.0 - 0.5) / 0.08) ** 2)
-    g = g - 0.05 * np.exp(-(((u - 0.75 + 0.5) % 1.0 - 0.5) / 0.1) ** 2)
-    _save_rgb("stalk", np.dstack([g, g, g]) * 0.92)
+
+    def ring(c, s):
+        return np.exp(-(((u - c + 0.5) % 1.0 - 0.5) / s) ** 2)
+    # Round 2 (plants_stalkclose_after_v1): a 6-sided tube 3 to 4.5 cm across shows only one
+    # or two faces, so the marks must be broad and strong to read at all.
+    g = 0.50 + 0.36 * v ** 0.8
+    g = g + 0.24 * ring(0.25, 0.12)                                      # the channel's pale floor
+    g = g - 0.18 * (ring(0.10, 0.04) + ring(0.40, 0.04))                 # its two dark edges
+    g = g - 0.20 * ring(0.75, 0.18)                                      # the shaded back
+    g = g + 0.16 * np.exp(-((v - 0.97) / 0.03) ** 2)                     # a pale collar at the leaf
+    g = g - 0.22 * (1 - _feather(v, 0.04, 0.2))                          # the darker clasping foot
+    g = g + 0.14 * (_broad_field(u, v, 41, terms=3, fu=(1, 2), fv=(2, 4)) - 0.5)
+    # Round 3 (plants_stalkclose_after_v2): the taro stalks still read plain, so four soft
+    # lengthwise stripes run round the stalk, fading out toward the leaf, the way a taro petiole
+    # is lined. Four across the whole circumference, so each is a band a face wide, not a hairline.
+    g = g - 0.12 * np.clip(np.cos(2 * np.pi * 4 * (u + 0.06)), 0, 1) ** 2 * (1 - 0.6 * v)
+    height = 0.6 - 0.35 * ring(0.25, 0.08) + 0.1 * ring(0.75, 0.2)
+    _save_rgb("stalk", np.dstack([g, g, g]) * 0.92, height=height, strength=2.0)
 
 
 # A flower drawing is greyscale for the plant's tint, and its pale parts (the gumamela's stamen,

@@ -185,7 +185,8 @@ def banana_stem_material():
 
 
 def stalk_material(plant):
-    return painted_material(f"lagoon_stalk_{plant}", "stalk_albedo.png", tint=STALK_TINTS[plant], roughness=0.6)
+    return painted_material(f"lagoon_stalk_{plant}", "stalk_albedo.png", tint=STALK_TINTS[plant],
+                             normal="stalk_normal.png", roughness=0.6)
 
 
 def leaf_material(tex, plant, which):
@@ -675,8 +676,9 @@ def _broadleaf_mesh(i, name):
             p1 = rng.uniform(-70, -50) if low else rng.uniform(-50, -30)
             spine = _arc(stem[-1], az, math.radians(p0), math.radians(p1), length, 6, bend=1.1)
             width = length * 0.58
-        # Six sides (was four): a painted stalk on a square section showed its corners.
-        _tube(m, stalk_slot, stem, [0.045, 0.04, 0.035, 0.03, 0.028][:len(stem)], sides=6)
+        # Eight sides (was six, was four): a painted stalk on a square section showed its corners,
+        # and on six the channel and stripes of the stalk drawing fell on one or two faces.
+        _tube(m, stalk_slot, stem, [0.045, 0.04, 0.035, 0.03, 0.028][:len(stem)], sides=8)
         # Pull the card's base a hand's width back along the stalk, so the stalk runs up the
         # midrib and the paddle never floats off the end of it.
         spine[0] = spine[0] - (spine[1] - spine[0]).normalized() * 0.08
