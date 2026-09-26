@@ -55,6 +55,19 @@ photograph): `docs/reports/map-by-map-refinement-2026-09-23/lagoon-reference-not
   bangka and lepa boats, capiz windows, a capilla, a sari-sari stall, drying nets, laundry.
   Culturally specific motifs (lepa prow carvings, festival flags) are not copied onto every boat.
 - Be critical of every render before sending it; the owner expects the lead to spot the flaws.
+- ⚠️⚠️ **CHUNKY AND ORGANIC, NEVER FIDDLY** (owner, 2026-09-27: *"i dont like how details some
+  of the props are. again we're going for a stylized semi-cartoony environment style"*, and
+  *"you should really experiment more with being organic in how you shape things. the railings
+  for example are just thin and plain shapes, where as the reference isnt just a straight
+  rectangular prism"*). Every model: few, thick, rounded, slightly irregular members (taper,
+  softened edges and ends, a small bend, lean and size jitter per piece); detail belongs in the
+  painted texture, not in geometry (no strands, knots, thin slats, fine lattices, tiny
+  hardware); textures use few, big, soft shapes at low contrast.
+- ⚠️ **Walkways are MODELLED planks, not a textured strip** (owner: *"this deck is actually
+  modeled but the main houses walkway is just a texture, fix that"*). Stairs follow the
+  reference kit: sawtooth-sided stringers, thick treads, chunky railings.
+- ⚠️ **Nothing coplanar with the terrain** (owner: *"z-fighting on some of the stair
+  entrances"*): any deck, landing or tread meeting the ground sits clearly above it.
 
 ## 3 · Rocks (owner rejected cones and crystals)
 
