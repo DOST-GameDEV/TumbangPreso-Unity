@@ -869,7 +869,11 @@ def sky(world):
     move. Painted clouds come with the light pass (docs/LAGOON_REWORK_GUIDE.md § 8 step 7)."""
     nt = world.node_tree
     bg = nt.nodes["Background"]
-    bg.inputs["Color"].default_value = (0.36, 0.6, 0.92, 1)
+    # The LIGHTING fill (what shaded surfaces see). Review of the sawali on the houses: at a
+    # saturated blue (0.36, 0.6, 0.92) every wall under the deep eaves went cold blue-grey, the
+    # same fault the owner rejected on the rocks' shaded sides. A warmer, greyer sky light keeps
+    # shade warm; the camera still sees the blue gradient.
+    bg.inputs["Color"].default_value = (0.55, 0.6, 0.66, 1)
     out = nt.nodes["World Output"]
     coords = nt.nodes.new("ShaderNodeTexCoord")
     split = nt.nodes.new("ShaderNodeSeparateXYZ")

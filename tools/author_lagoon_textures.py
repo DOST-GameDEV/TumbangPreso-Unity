@@ -269,9 +269,9 @@ def sawali(pattern, skin, inner, gap, seed):
 
 
 SAWALI_PAINTERS = {
-    "sawali_a": lambda: sawali("twill", hexcol("c2a06a"), hexcol("d8be8a"), hexcol("7a6040"), 61),
-    "sawali_b": lambda: sawali("herringbone", hexcol("c2a06a"), hexcol("d8be8a"), hexcol("7a6040"), 61),
-    "sawali_c": lambda: sawali("checker", hexcol("c2a06a"), hexcol("d8be8a"), hexcol("7a6040"), 61),
+    "sawali_a": lambda: sawali("twill", hexcol("c9a872"), hexcol("d6bd8c"), hexcol("8a7050"), 61),
+    "sawali_b": lambda: sawali("herringbone", hexcol("c9a872"), hexcol("d6bd8c"), hexcol("8a7050"), 61),
+    "sawali_c": lambda: sawali("checker", hexcol("c9a872"), hexcol("d6bd8c"), hexcol("8a7050"), 61),
 }
 
 

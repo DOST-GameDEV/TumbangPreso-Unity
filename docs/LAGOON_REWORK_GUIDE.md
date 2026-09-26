@@ -309,6 +309,10 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      Displacement output (bump mode) from the height map on top of the normal map (Unity: the
      height as the height/parallax map). Timber and bamboo normals were near flat and were
      strengthened (normal strength 6 and 4).
+   - Sawali on the houses (`sawali_on_models_v2.png`, awaiting the owner's pick). v1 on the
+     models: walls under the deep eaves went cold blue-grey. The cove's LIGHTING fill is now a
+     warmer grey (0.55, 0.60, 0.66) instead of saturated blue (the camera still sees the blue
+     sky gradient), and the skin and inner strips are closer in value.
 4. **Boats**: bangka outrigger and lepa houseboat. MODELS DONE 2026-09-27:
    `tools/author_lagoon_boats.py` (bangka, lepa, bangka_beached; slots plank, paint_hull,
    paint_trim with a per-boat `trim_tint` vertex colour, bamboo, thatch, timber; origin the
