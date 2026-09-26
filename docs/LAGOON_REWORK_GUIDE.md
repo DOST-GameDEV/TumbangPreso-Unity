@@ -243,6 +243,8 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      side and bottom edges are lined too. The band is on every break regardless of the line;
      the line is cut several times along each edge (a noise at ~0.3 m), and a very fine grain
      eats into both. `rock_on_models_rock_a+brush_2_v22.png`, `_3_v22.png`.
+     Then (owner: *"can you make the white color more subtle"*) the line lifts the rock's own
+     colour 1.3x with a 0.05 hint of cream (was 1.5x and 0.18).
    - SUPERSEDED, **inner-shadow edges** (owner on v9: *"can you make them slightly more clear? think of
      like an inner shadow effect, the edges have the crispiest white and then it fades the
      closer it gets to the center"*). `ROCK_LOOK = "rock_a+inner"`, `inner_glow()` in

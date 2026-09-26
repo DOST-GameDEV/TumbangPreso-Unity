@@ -170,8 +170,10 @@ def brushed_edge(nt, colour, ch, up, geo):
     cuts = noise(3.2, 3.0, 0.6)
     line = _math(nt, "MULTIPLY", line, _range(nt, cuts, 0.42, 0.5, smooth=True))
     line = _math(nt, "MULTIPLY", line, _range(nt, grain, 0.3, 0.5), clamp=True)
-    colour = _scale_colour(nt, colour, _range(nt, line, 0.0, 1.0, 1.0, 1.5))
-    return _lift(nt, colour, EDGE_WHITE, _math(nt, "MULTIPLY", line, 0.18))
+    # Owner on v22: "can you make the white color more subtle": 1.5x plus 0.18 cream became
+    # 1.3x plus 0.05.
+    colour = _scale_colour(nt, colour, _range(nt, line, 0.0, 1.0, 1.0, 1.3))
+    return _lift(nt, colour, EDGE_WHITE, _math(nt, "MULTIPLY", line, 0.05))
 
 
 def edge_wear(nt, colour, chips, inner=False, brush=False):
