@@ -1388,8 +1388,10 @@ def main():
     except TypeError:
         pass
     sun = next(o for o in scene.objects if o.type == "LIGHT")
-    sun.data.color, sun.data.energy = (1.0, 0.92, 0.8), 4.5
-    sky(scene.world)
+    # Painted clouds, a golden sun, warm shade and horizon haze (tools/author_lagoon_sky.py;
+    # gap review item 9). The lighting fill stays the warm grey.
+    import author_lagoon_sky as SKY
+    SKY.apply_sky_and_light(scene, sun)
     SOURCE.mkdir(parents=True, exist_ok=True)
     out = SOURCE / "lagoon_cove.blend"
     bpy.ops.wm.save_as_mainfile(filepath=str(out), compress=True)
