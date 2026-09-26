@@ -98,6 +98,22 @@ reads better even with today's lighting, and because it removes HUD and text tha
 captures would otherwise have to be retaken around. Paperwork (P6) moved behind visible
 work because the owner's standing complaint is loops that do not change the game.
 
+### BUGS-0926 · Owner bug list on the lighting branch ⚠️ IN PROGRESS, 2026-09-26
+
+Owner, 2026-09-26, six non-gameplay bugs on `merge/astra-lighting-2026-09-25`. Each fix is one
+commit. Source-level fixes; none of them has had a Unity run on this machine yet unless the
+line says so, so "fixed" below means written and reviewed, not played.
+
+- [ ] BUGS-0926.1 The title screen ("Click anywhere to continue.") also continues on any keyboard key.
+- [ ] BUGS-0926.2 Escape on HOME no longer returns to the title screen.
+- [ ] BUGS-0926.3 Pressing the IN QUEUE button cancels the queue.
+- [ ] BUGS-0926.4 The hamburger MENU popup no longer swaps HOME's background for the live court.
+- [ ] BUGS-0926.5 Lighting styles: Bright is renamed Standard, stays the default and moves to slot 1;
+  Classic is renamed Nostalgic and moves to slot 2.
+- [x] BUGS-0926.6 The stamina arc beside the reticle drains from the top. `HudRing.FillFromEnd`
+  anchors the fill at the arc's lower end; only the stamina arc sets it, so cooldown sweeps and
+  the notched ultimate are unchanged. Not yet seen in a native match.
+
 ### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23
 
 Integrated into ASTRAReworks on2026-09-24at owner request, through lighting branch
