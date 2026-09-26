@@ -181,43 +181,53 @@ namespace TumbangPreso.Visual
         };
 
         /// <summary>
-        /// NEMU. *"Looks distracted. Already knows your next move."* Takes the long way home, seems to miss half the conversation,
-        /// Kuro a shadow at her shoulder. ⚠️ THIRD PASS, 2026-09-27 (owner: *"nahh keep nemu js improve her animations"*; before
-        /// that, *"nemu walks so awkward wtf"*). Pass one cocked her head 7 degrees and read as a broken neck; pass two clasped
-        /// her hands behind her back, which hid the one thing her model moves best, the big bell sleeves. Now the sleeves ARE
-        /// the walk: small light steps with a little hop in them, the sleeves swinging loose and late like cloth and flaring out
-        /// as they swing (a quirk below), a soft sway, the smallest tilt of the head. Cute, unbothered, a little floaty. The run
-        /// is the ghost at speed: low, the sleeves streaming straight back and fluttering in the wind she makes.
+        /// NEMU. *"Looks distracted. Already knows your next move."* The ghost girl with Kuro at her shoulder, sleepy eyes, her
+        /// mouth under the cowl, hands lost in huge bell sleeves, tiny legs under a long hoodie.
+        /// ⚠️ FOURTH PASS, 2026-09-27 (owner, of the third: *"refine nemu animation wtf is taht u think abt how it should look
+        /// bruhh its sso awkward"*). What the frames showed: a normal stride on legs that tiny shot her feet out in front of and
+        /// behind the hoodie like stumps kicking, and her sleeves swung forward ACROSS her belly, the lavender cuffs slashing
+        /// over the body every step. So she does not walk, she DRIFTS: tiny quick steps that stay under the hem (16 degrees),
+        /// the body floating on a slow smooth hover of its own that is not tied to the feet, the sleeves hanging a little back
+        /// and swaying together as if she moves through air, never across her front, the chest barely rolling and the head
+        /// level with a slow sleepy tilt. `Floats` lets her glide further per step than the cast. ⚠️ Her sleeves are nearly as
+        /// long as she is tall: hung down, the lavender cuffs landed at her feet as bars across the hem (film v19), so they are
+        /// carried out at 38 degrees, the way her own model pose holds them. The run stays the ghost at
+        /// speed: low, sleeves streaming straight back and fluttering.
         /// </summary>
         public static readonly GaitStyle Nemu = new GaitStyle
         {
             Name = "nemu",
+            Floats = true,
             Walk = new Gait
             {
-                LegForward = 34, LegBack = 30, LegSnap = 1.2f, Stance = -1,
-                ArmSpread = 14, ArmForward = 24, ArmBack = 18, ArmCarry = 0, ArmSnap = .8f, ArmLag = .12f,
-                Lean = 2, Roll = 3.5f, RollDelay = .08f, Twist = 3,
-                HeadPitch = 1, HeadTilt = 2, HeadNod = 1.5f, HeadSteady = .6f,
-                Bounce = .035f, BounceDelay = .06f, Sway = .04f, Glide = 1.45f,
+                LegForward = 16, LegBack = 14, LegSnap = 1, Stance = 0,
+                ArmSpread = 38, ArmForward = 4, ArmBack = 4, ArmCarry = -6, ArmSnap = 1, ArmLag = .1f,
+                Lean = 3, Roll = 1, Twist = 1,
+                HeadPitch = 2, HeadSteady = .9f, Sway = .01f, Glide = 2.6f,
             },
             Run = new Gait
             {
                 LegForward = 52, LegBack = 50, LegSnap = 1.2f, Stance = 0,
-                ArmSpread = 14, ArmForward = 5, ArmBack = 5, ArmCarry = -58, ArmSnap = 1, ArmLag = .08f,
+                ArmSpread = 12, ArmForward = 5, ArmBack = 5, ArmCarry = -58, ArmSnap = 1, ArmLag = .08f,
                 Lean = 20, Roll = 1, Twist = 2,
                 HeadPitch = -12, HeadSteady = .3f, Bounce = .03f, BounceDelay = .05f, Sway = .01f, Glide = 1.45f,
             },
             Quirk = (ref GaitPose p, in GaitMoment m) =>
             {
                 float walk = 1f - m.Run;
-                // The bell sleeves billow: each opens out as it swings, forward or back, like cloth catching air.
-                p.SpreadLeft += walk * 8f * Mathf.Abs(p.ArmLeft) / Mathf.Max(1f, m.Gait.ArmForward);
-                p.SpreadRight += walk * 8f * Mathf.Abs(p.ArmRight) / Mathf.Max(1f, m.Gait.ArmForward);
+                // The hover: a slow rise and fall of her own (0.8 a second), 5 per cent of a leg, not the feet's rhythm.
+                float hover = Wave(m.Time, .8f);
+                p.RootUp += walk * .05f * (.5f + .5f * hover);
+                // The sleeves drift together with the hover, trailing a beat behind it, and breathe out and in a little.
+                float drift = Wave(m.Time - .25f, .8f);
+                p.ArmLeft += walk * 6f * drift; p.ArmRight += walk * 6f * drift;
+                p.SpreadLeft += walk * 3f * (.5f + .5f * drift); p.SpreadRight += walk * 3f * (.5f + .5f * drift);
+                p.TorsoPitch += walk * 1.5f * hover;
+                // Sleepy: the head tips slowly to one side and back, very little.
+                p.HeadRoll += walk * 3f * Wave(m.Time, .21f);
                 // Running, the trailing sleeves flutter in the wind she makes (two sleeves, slightly out of step).
                 p.ArmLeft += m.Run * 4f * Wave(m.Time, 7f);
                 p.ArmRight += m.Run * 4f * Wave(m.Time + .05f, 7f);
-                // Her attention drifts: a small slow look to one side and back while she walks.
-                p.HeadYaw += walk * 5f * Wave(m.Time, .17f);
             },
         };
 
