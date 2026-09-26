@@ -464,7 +464,15 @@ modules, foliage and terrain). In rough order of impact:
    look like this or did u forget to texture"*, *"coconut and trunks of palm tree are
    untextured"*, *"leaves of palmtrees are also cut off"*): painted palm trunk with leaf-scar
    rings, coconuts, banana pseudo-stem and stalks, gumamela and bougainvillea flower cards, and
-   fronds tapering to a point inside the card.
+   fronds tapering to a point inside the card. Then (*"the last types of foliage and fauna added
+   dont have much textures on them"*, circling a grass tuft and the taro stalks): the blade and
+   stalk drawings were near-flat ramps (value std 17 of 255). Repainted in the same hand with
+   marks strong enough to survive the tint (std about 46): the blade has a crease with a pale
+   ridge, a lighter lit half, two vein bands, a darker margin and foot; the stalk has a pale
+   channel edged by two dark lines, a shaded back, four soft lengthwise stripes, a pale collar at
+   the leaf and a darker foot, plus a height and normal map, on 8-sided tubes (was 6).
+   `plants_blade_stalk_beforeafter_v1.png`. Rule learnt: a leaf drawing's marks need about
+   twice the contrast of a wall texture's, because the x 1.25 tint and bright sun flatten them.
 4. **Boats**: bangka outrigger and lepa houseboat. MODELS DONE 2026-09-27:
    `tools/author_lagoon_boats.py` (bangka, lepa, bangka_beached; slots plank, paint_hull,
    paint_trim with a per-boat `trim_tint` vertex colour, bamboo, thatch, timber; origin the
