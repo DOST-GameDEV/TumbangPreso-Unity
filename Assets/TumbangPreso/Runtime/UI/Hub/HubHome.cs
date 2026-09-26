@@ -417,11 +417,18 @@ namespace TumbangPreso.UI.Hub
             MenuSfx.Start();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ BACK ON HOME OPENS THE MENU, IT DOES NOT LEAVE FOR THE TITLE SCREEN. Owner,
+        /// 2026-09-26: "should not be able to return to the click anywhere to continue page when
+        /// pressing esc from the menu". The title screen is a door INTO the game, not a place a
+        /// player backs out to, and one Escape too many dropped them on it. BACK now opens the
+        /// hamburger MENU (a second BACK closes it), which is where BACK TO TITLE and every other
+        /// way out already live, so leaving is still one deliberate press and never a dead key.
+        /// </summary>
         public override bool Back()
         {
             if (HubQueueWatch.QueueRoom) { Hub.Host.CancelQueue(); return true; }
-            Hub.Host.LeaveRoom();
-            SceneFlow.Go(SceneFlow.MainMenu);
+            Hub.Push<HubMenu>();
             return true;
         }
     }

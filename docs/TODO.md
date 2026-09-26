@@ -105,7 +105,10 @@ commit. Source-level fixes; none of them has had a Unity run on this machine yet
 line says so, so "fixed" below means written and reviewed, not played.
 
 - [ ] BUGS-0926.1 The title screen ("Click anywhere to continue.") also continues on any keyboard key.
-- [ ] BUGS-0926.2 Escape on HOME no longer returns to the title screen.
+- [x] BUGS-0926.2 Escape on HOME no longer returns to the title screen. `HubHome.Back` (Escape,
+  pad B, Android BACK) left the room and loaded `MainMenu`; it now opens the hamburger MENU, and a
+  second BACK closes it. BACK TO TITLE in that menu is the deliberate way out. Queued, BACK still
+  cancels the queue first. `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts it.
 - [x] BUGS-0926.3 Pressing the IN QUEUE button cancels the queue. `HubHome.Tick` used to make
   the button non-interactable while queued; it now stays pressable and `HubHome.Play` calls
   `CancelQueue` (the same call as the plate's X and BACK) unless a match was already found.

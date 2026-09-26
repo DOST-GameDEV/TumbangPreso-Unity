@@ -188,6 +188,13 @@ namespace TumbangPreso.PlayTests
                 yield return Shots("Menu");
                 yield return BackToHome();
 
+                // BUGS-0926.2: BACK on HOME opens the MENU and never drops the player on the title.
+                Back(); yield return new WaitForSecondsRealtime(0.2f);
+                Assert.IsInstanceOf<HubMenu>(TumpHub.Current.Top, "BACK on HOME must open the MENU.");
+                Assert.AreEqual(SceneFlow.MatchSetup, SceneManager.GetActiveScene().name, "BACK on HOME left the hub.");
+                Back(); yield return new WaitForSecondsRealtime(0.2f);
+                Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top, "A second BACK closes the MENU.");
+
                 yield return Press("NamePlate");
                 Assert.IsTrue(Object.FindFirstObjectByType<PlayerHub>().IsOpen, "The name plate is the door to profile settings.");
                 Assert.IsFalse(TumpHub.Current.Canvas.enabled, "The hub steps aside for the profile screen.");
