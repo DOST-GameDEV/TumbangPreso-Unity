@@ -124,8 +124,14 @@ line says so, so "fixed" below means written and reviewed, not played.
   through the popup's scrim. It now reads `TumpHub.ShowingHome`, the top non-popup screen.
   `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts the loop stays up under
   the MENU.
-- [ ] BUGS-0926.5 Lighting styles: Bright is renamed Standard, stays the default and moves to slot 1;
-  Classic is renamed Nostalgic and moves to slot 2.
+- [x] BUGS-0926.5 Lighting styles: Bright is renamed Standard, stays the default and moves to slot 1;
+  Classic is renamed Nostalgic and moves to slot 2 (the owner chose this reading of "make the
+  classic lighting style the default, rename it to Standard" when asked). The swap moves both
+  stored indices, so the stored field is now `GameSettings.LightingLook`; the old
+  `LightingStyle` field is read once by `Validate` through `LightingStyles.FromLegacy` (old 0
+  Classic to Nostalgic, old 1 Bright to Standard) and cleared to -1. Thumbnails renamed to
+  `standard.png` / `nostalgic.png` with their GUIDs kept. `WorldCourtCueTests.LightingStyleThumbnails`
+  asserts the migration both ways.
 - [x] BUGS-0926.6 The stamina arc beside the reticle drains from the top. `HudRing.FillFromEnd`
   anchors the fill at the arc's lower end; only the stamina arc sets it, so cooldown sweeps and
   the notched ultimate are unchanged. Not yet seen in a native match.
@@ -253,6 +259,9 @@ Capture: `WorldCourtCueTests.BrightLookSameCameraCapturesOnAllFiveMaps` writes s
 cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 passed on the Mac.
 
 ### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
+
+**Renamed 2026-09-26 (BUGS-0926.5):** Bright is now **Standard** (slot 1, the default) and Classic is
+now **Nostalgic** (slot 2). The entries below keep the names they were written with.
 
 Owner request (2026-09-25), with a PUBG Mobile Style row as the reference: a style setting in
 the graphics settings with three slots. Slot 1 is the lighting on `main`, slot 2 is this

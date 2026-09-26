@@ -10,8 +10,8 @@ namespace TumbangPreso.UI
     /// slot, the picked one ringed in the accent. The owner's reference is PUBG Mobile's Style
     /// row (2026-09-25), a strip of same-camera thumbnails with a caption under each.
     ///
-    /// ⚠️⚠️ A PICTURE, BECAUSE A LIGHTING STYLE CANNOT BE NAMED INTO SOMEBODY'S HEAD. "Classic"
-    /// and "Bright" are words; the difference between them is a frame. Every card is rendered
+    /// ⚠️⚠️ A PICTURE, BECAUSE A LIGHTING STYLE CANNOT BE NAMED INTO SOMEBODY'S HEAD. "Standard"
+    /// and "Nostalgic" are words; the difference between them is a frame. Every card is rendered
     /// from ONE camera on ONE map (`WorldCourtCueTests.LightingStyleThumbnails`), so what differs
     /// between two cards is the lighting and nothing else.
     ///

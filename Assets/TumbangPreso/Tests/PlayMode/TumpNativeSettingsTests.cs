@@ -132,7 +132,7 @@ namespace TumbangPreso.PlayTests
             yield return Open();
             var view = Object.FindFirstObjectByType<TumpSettingsView>();
             var canvas = PaintedScreens.Settings();
-            int saved = SettingsStore.Current.LightingStyle;
+            int saved = SettingsStore.Current.LightingLook;
             try
             {
                 view.ShowSection(2); yield return null;
@@ -144,19 +144,19 @@ namespace TumbangPreso.PlayTests
                         cards[i].name + ": a real style shows its thumbnail and only the placeholder is empty.");
                 foreach (var size in new[] { new Vector2Int(1920, 1080), TumpUiCapture.OwnerWindow })
                     yield return TumpUiCapture.Capture("LightingStyleCards-" + size.x + "x" + size.y, canvas, size.x, size.y, false, checkActionBounds: true);
-                int other = saved == LightingStyles.Classic ? LightingStyles.Bright : LightingStyles.Classic;
+                int other = saved == LightingStyles.Nostalgic ? LightingStyles.Standard : LightingStyles.Nostalgic;
                 Press(cards[other]); yield return null;
-                Assert.AreEqual(other, SettingsStore.Current.LightingStyle);
+                Assert.AreEqual(other, SettingsStore.Current.LightingLook);
                 Assert.AreEqual(LightingStyles.All[other].LookWeight, LightingStyles.LookWeight, "A card must change the live look.");
                 Assert.IsTrue(cards[other].transform.Find("Selected").GetComponent<Image>().enabled);
                 Assert.IsFalse(cards[saved].transform.Find("Selected").GetComponent<Image>().enabled);
                 Assert.IsTrue(view.Session.Dirty, "A style pick must join the settings transaction.");
                 yield return TumpUiCapture.Capture("LightingStyleCards-picked-" + LightingStyles.All[other].Label, canvas, 1920, 1080, false, checkActionBounds: true);
                 view.Session.Discard(); yield return null;
-                Assert.AreEqual(saved, SettingsStore.Current.LightingStyle);
+                Assert.AreEqual(saved, SettingsStore.Current.LightingLook);
                 Assert.AreEqual(LightingStyles.All[saved].LookWeight, LightingStyles.LookWeight, "Discard must put the saved look back.");
             }
-            finally { SettingsStore.Current.LightingStyle = saved; LightingStyles.Apply(saved); }
+            finally { SettingsStore.Current.LightingLook = saved; LightingStyles.Apply(saved); }
         }
 
         [UnityTest]
