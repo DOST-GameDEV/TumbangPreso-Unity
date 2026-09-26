@@ -77,7 +77,17 @@ namespace TumbangPreso
         }
         private void Awake() => Instance = this;
         public static double Now => NetAuthority.IsNetworked && Unity.Netcode.NetworkManager.Singleton != null
-            && Unity.Netcode.NetworkManager.Singleton.IsListening ? Unity.Netcode.NetworkManager.Singleton.ServerTime.Time : Time.realtimeSinceStartupAsDouble;
+            && Unity.Netcode.NetworkManager.Singleton.IsListening ? Unity.Netcode.NetworkManager.Singleton.ServerTime.Time
+            : FilmClock != null ? FilmClock() : Time.realtimeSinceStartupAsDouble;
+
+        /// <summary>
+        /// ⚠️ FOR FILMS ONLY, AND ONLY OFFLINE (the networked branch above never reads it). The phase runs on the
+        /// wall clock because the world is paused under it (`Time.timeScale = 0`); a film that steps game time
+        /// with `Time.captureFramerate` renders slower than real time, so the 4.6 s cutscene was squashed into
+        /// 1.2 s of video (HERO-9, 2026-09-26). A film sets this to its own frame clock and clears it after.
+        /// Null in the game, always.
+        /// </summary>
+        public static System.Func<double> FilmClock;
         public bool CanAccept(int seat)
         {
             if (!isActiveAndEnabled || !NetAuthority.ShouldResolve() || GameServices.Match == null || GameServices.Round == null

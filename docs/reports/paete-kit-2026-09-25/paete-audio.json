@@ -59,13 +59,6 @@
       "sha256": "0ff9a2f02658ea7866a94c24cbd5a8a8dc537ca78adf5ee0191eebbd8f6c482e"
     },
     {
-      "cue": "sfx_cast_paete_sentry",
-      "seconds": 0.75,
-      "peak": 0.62,
-      "rms": 0.08532042546116059,
-      "sha256": "831c7cd030fd736f9dc41d8eb0739ada32a184b970830273d6226adc7179e466"
-    },
-    {
       "cue": "sfx_paete_sentry_burst",
       "seconds": 1.6,
       "peak": 0.8000000000000002,
@@ -116,10 +109,10 @@
     },
     {
       "cue": "sfx_ult_theme_paete",
-      "seconds": 3.6,
+      "seconds": 4.6,
       "peak": 0.66,
-      "rms": 0.07929072327264873,
-      "sha256": "18d370aeca3dbb7bd12a0223d315d2c971e397b849e1189660f1b795d06f2406"
+      "rms": 0.09147621812257414,
+      "sha256": "8cdb5fa1a837eb39911496bd8f0639120f5fcb188a4d8159e2f9909681a4b01c"
     },
     {
       "cue": "sfx_sky_canopy",

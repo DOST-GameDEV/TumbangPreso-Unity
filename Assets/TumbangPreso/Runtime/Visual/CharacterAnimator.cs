@@ -1444,9 +1444,13 @@ namespace TumbangPreso.Visual
                 Blend(); HoldLastFrame(); return true;
             }
             _stumbleLeft = 0f;
-            if (_motor.IsRooted && _motor.IsStruggling && _clips.ContainsKey(RootedMotion.Struggle))
+            // ⚠️⚠️ A ROOTED BODY STRAINS ALL THE TIME, NOT ONLY WHILE ITS PLAYER HOLDS THE BUTTON (owner, 2026-09-26:
+            // *"they look like theyre js standing"*, *"animate taht shit"*). Idle, the struggle loop runs at 0.45 speed:
+            // a slow tug at the bands, the body testing the hold; fighting (Interact held), it runs at 1.25, hard.
+            if (_motor.IsRooted && _clips.ContainsKey(RootedMotion.Struggle))
             {
                 Play(RootedMotion.Struggle, true);
+                var front = Front(); if (front.IsValid()) front.SetSpeed(_motor.IsStruggling ? 1.25f : 0.45f);
                 _rootedPose = true; Blend(); HoldLastFrame(); return true;
             }
             if (_rootedPose) { _rootedPose = false; _current = null; }

@@ -28,7 +28,7 @@ namespace TumbangPreso.EditorTools.MapKit
     /// </summary>
     public static class PaeteReviewProbe
     {
-        public const string Version = "v18";
+        public const string Version = "v22";
         private const string OutDir = "Logs/paete-review";
         private const int W = 480, H = 360;
 
@@ -284,9 +284,17 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 if (st.pulled >= 0) plant.PosePulled(st.pulled, new Vector3(0, 0, -1.4f));
                 else plant.Pose(st.age, st.loosen, st.pullable, st.growth, st.since);
-                shots.Add(Shoot(new Vector3(1.7f, 1.2f, -1.9f), new Vector3(0, .5f, 0), 44, $"plant {st.age:0.0}s"));
+                // v19 drew a room-sized black shape round the plant from 0.25 s to 14 s: name any renderer
+                // under the host whose bounds are bigger than the plant could ever be.
+                foreach (var r in host.GetComponentsInChildren<Renderer>(false))
+                    if (r.enabled && r.bounds.size.magnitude > 3f)
+                        Debug.Log($"[PaeteReviewProbe] plant {st.age:0.00}s oversized {r.name} {r.GetType().Name} bounds {r.bounds.size} scale {r.transform.lossyScale}");
+                // ⚠️ From the FRONT three-quarter (v19 to v21 shot its back, so the wings, the lip and the rising bakya
+                // never showed), with a close second row of the jug itself.
+                shots.Add(Shoot(new Vector3(1.5f, 1.15f, 2.0f), new Vector3(0, .5f, 0), 44, $"plant {st.age:0.0}s"));
+                shots.Add(Shoot(new Vector3(.75f, 1.05f, 1.0f), new Vector3(0, .8f, 0), 40, $"plant close {st.age:0.0}s"));
             }
-            Save("plantfx", shots, states.Length);
+            Save("plantfx", Reorder(shots, states.Length), states.Length);
             Object.DestroyImmediate(host);
         }
 

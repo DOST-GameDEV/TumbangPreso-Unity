@@ -405,21 +405,46 @@ def sprout_ready():
 
 
 def theme():
-    """HIS THEME, under the introduction (3.6 s): wooden bars over the forest.
+    """HIS THEME, under the introduction (4.6 s, beat for beat with it): wooden bars over the forest.
 
     Paete is the carving town, so the lead is carved wood: an ORIGINAL descending-then-rising
     pentatonic figure on the bar model (`knock`), the register of a bamboo or narra xylophone,
     with no sample and no borrowed melody. Under it the mountain: a low bowed-wood drone that
     thickens and a leaf bed that swells as the roots gather, landing on the release beat."""
-    s = 3.6
+    # ⚠️⚠️ RE-TIMED 2026-09-26 TO THE GROUND-CALLED CUTSCENE (4.6 s, `UltimateIntros/paete.txt`). The 3.6 s
+    # version was cut for the old thrown seed: its release thump landed at 2.40 s, between the palms
+    # pressing (1.5 s) and him rising (2.62 s), so the biggest sound in it hit nothing on screen, and the
+    # last second of the cutscene (the tree screwing up, 3.05 to 4.6 s) played in silence. Every beat
+    # below is the cutscene's own time, read from `HeroIntroductionScene.Paete.cs`:
+    #   0.12 to 1.0  Makiling rises; 0.72 her light forms in his hands and swells to 1.45
+    #   1.5          palms into the court (punch), roots burst round him to 1.8
+    #   1.6 to 2.62  three veins race under the court to the spot
+    #   2.62         he rises arms high (punch)
+    #   2.95         the ground breaks at the spot and the tree screws up to 4.6
+    s = 4.6
     t = times(s)
-    notes = [(0.20, 392.0), (0.46, 349.2), (0.72, 293.7), (1.10, 261.6),
-             (1.55, 293.7), (1.80, 349.2), (2.05, 392.0), (2.40, 523.3), (2.42, 392.0)]
-    bars = sum(knock(t, at, p, 0.28, 0.9 if i < 7 else 1.3) for i, (at, p) in enumerate(notes))
-    drone = creak(t, 8401, 110 + 0 * t, 0.05, [(130.8, 1.0), (196.0, 0.6)], 30.0, np.clip(t / 2.4, 0, 1) ** 1.4) * 1.4
-    leaves = rustle(t, 8402, 300 + 2200 * np.clip((t - 0.8) / 1.6, 0, 1) ** 2 * (t < 2.9), 3600) * 0.5
-    sub = thump(t, 2.40, 49, 0.5) * 0.9
-    return finish("sfx_ult_theme_paete", bars + drone + leaves + sub, s, 0.66)
+    # Her figure on the carved bars, descending as she comes down, one note held into the light.
+    notes = [(0.20, 392.0), (0.44, 349.2), (0.68, 293.7), (0.95, 261.6)]
+    bars = sum(knock(t, at, p, 0.30, 0.8) for at, p in notes)
+    glow = np.sin(2 * np.pi * 523.3 * t) * window(t, 0.72, 1.5, 0.35) * 0.18 + np.sin(2 * np.pi * 784.0 * t) * window(t, 0.9, 1.5, 0.3) * 0.08
+    # The press: soil crunch, a felt thump, the court answering like a struck log.
+    press = snap(t, 8403, 1.5, 40, 0.10, 900, 0.9) + thump(t, 1.5, 55, 0.35) * 1.3 + knock(t, 1.5, 98, 0.25, 0.9)
+    # Roots burst round him and writhe: bark cracking, then a wooden groan under everything to the rise.
+    burst = snap(t, 8404, 1.52, 60, 0.30, 1900, 0.8)
+    groan = creak(t, 8405, sweep(t, 30, 30, s) + 50 * np.clip((t - 1.5) / 1.1, 0, 1), 0.4,
+                  [(140, 1.0), (330, 0.5)], 12.0, window(t, 1.5, 2.65, 0.08)) * 2.2
+    # The veins race: a crackle travelling away and rising, gone the instant he rises.
+    race = snap(t, 8406, 1.6, 260, 1.0, 1400, 1.3) * window(t, 1.6, 2.62, 0.05) * np.clip((t - 1.6) / 1.0, 0.3, 1)
+    swell = one_pole_low(one_pole_low(noise(len(t), 8407), 80), 80) * np.clip((t - 1.6) / 1.35, 0, 1) ** 2 * window(t, 1.6, 3.1, 0.15) * 16.0
+    # He rises: the bars climb back up the figure she came down on, landing an octave high with the tree.
+    rise = [(2.62, 293.7), (2.74, 349.2), (2.86, 392.0), (2.97, 523.3)]
+    climb = sum(knock(t, at, p, 0.30, 1.0) for at, p in rise) + knock(t, 2.97, 261.6, 0.8, 1.0)
+    # The tree breaks the court and screws up: a big crack, the sub, then leaves roaring and settling.
+    erupt = snap(t, 8408, 2.95, 90, 0.35, 700, 1.3) + thump(t, 2.95, 44, 0.8) * 1.6
+    trunk = creak(t, 8409, sweep(t, 18, 45, s), 0.5, [(90, 1.0), (210, 0.5)], 10.0, window(t, 3.0, 4.5, 0.3)) * 1.6
+    leaves = rustle(t, 8402, 2600 * window(t, 3.05, 4.55, 0.5) + 250 * window(t, 0.6, 1.5, 0.3), 3600) * 0.6
+    drone = creak(t, 8401, 110 + 0 * t, 0.05, [(130.8, 1.0), (196.0, 0.6)], 30.0, np.clip(t / 2.6, 0, 1) ** 1.4 * window(t, 0, 4.5, 0.4)) * 1.0
+    return finish("sfx_ult_theme_paete", bars + glow + press + burst + groan + race + swell + climb + erupt + trunk + leaves + drone, s, 0.66)
 
 
 def sky():

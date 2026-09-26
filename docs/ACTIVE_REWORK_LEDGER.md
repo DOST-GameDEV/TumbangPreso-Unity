@@ -1,5 +1,13 @@
 # Active TUMP rework ledger
 
+## HERO-9 Paete, Unity pass on the cloud work, 2026-09-26 (worktree `TumbangPreso-Unity-paete`, pushes to ASTRAReworks)
+
+Owner: Paete first, and *"I WANT THIS TO BE THE BASELINE QUALITY OF EVERYTHING ELSE MOVING FORWARD"*. Every cloud
+piece is placeholder plus planning. Done and filmed: the plants in engine, the ult sound re-timed, the in-match ultimate
+film with sound (`paete_ultimate_v3.mp4`, sent), bots measured, the arm-audit red. The owner rejected the cutscene's
+direction, Makiling's look and the live tree after v3; the redirect is direction.md 5.12 and TODO HERO-9's REDIRECTED row
+(what is in source and what is not). Next: finish the three-shot re-author, refilm, send v4.
+
 ## ABILITY-2 roster rework and Paete plants, 2026-09-26 (cloud session, no Unity)
 
 Plans: `docs/reports/ability-rework-2026-09-26/plan.md` (tables verbatim, owner answers, numbers set

@@ -478,9 +478,21 @@ def sentry():
          [0.23, 0.19, 0.13, 0.075, 0.050, 0.030, 0.014], BARK,
          [(0.08, 0.50, -0.05), (0.09, 0.31, 0.18), (0.10, 0.09, 0.50), (0.07, 0.01, 0.76)], [0.11, 0.09, 0.055, 0.02], HEARTWOOD, MOSS_LIT),
     ]
+    # ⚠️⚠️ THE TOES GO INTO THE COURT (owner, 2026-09-26: *"make it look like the roots GO INT he ground not
+    # float off of it"*). v7's toes curled 0.2 m UP off the road at the tip, so from his screen every claw read
+    # as lying on the court; now each root runs its last span DOWN through the surface (hidden below it) and a
+    # heave of earth sits where it goes in. Toe depth and reach per root, typed.
+    dives = [(0.16, 0.24), (0.13, 0.20), (0.18, 0.27), (0.14, 0.21), (0.17, 0.25), (0.12, 0.19)]
+    heaves = [((0.30, 0.10, 0.22), 12), ((0.26, 0.09, 0.20), -20), ((0.34, 0.11, 0.24), 30),
+              ((0.27, 0.09, 0.19), -8), ((0.32, 0.10, 0.23), 18), ((0.24, 0.08, 0.18), -26)]
     for i, (yaw, pts, radii, slot, rider, rider_r, rider_slot, moss) in enumerate(roots):
         n = Node(f"buttress-{i}", origin=ring(0.46, yaw, 0.0), parent="sentry", yaw=yaw); nodes.append(n)
+        knee = pts[4]
+        pts = pts[:5] + [(knee[0], -0.10, knee[2] + dives[i][0]), (knee[0], -0.26, knee[2] + dives[i][1])]
         line(n, pts, radii, slot, twist=30.0)
+        size, turn = heaves[i]
+        n.obox((knee[0], 0.02, knee[2] + 0.10), size, ROOTC, yaw=turn, pitch=-9.0)
+        n.obox((knee[0] + 0.10, 0.015, knee[2] - 0.04), (size[0] * 0.55, size[1] * 0.8, size[2] * 0.6), MOSS_DARK, yaw=turn + 40)
         line(n, rider, rider_r, rider_slot)
         k = pts[2]
         n.obox((k[0], k[1] + radii[2] * 0.85, k[2]), (radii[2] * 1.7, 0.055, radii[2] * 1.3), moss)
@@ -535,6 +547,19 @@ def sentry():
          [(0.02, 0.80, 0.48), (0.20, 0.98, 0.56), (0.30, 1.10, 0.50), (0.27, 1.05, 0.42)], [0.056, 0.037, 0.022, 0.010],
          BARK_LIT, [((0.28, 1.08, 0.48), 70, 30, 0.22, 0.13, LEAF), ((-0.02, 1.34, 0.84), -20, 55, 0.20, 0.12, LEAF_DARK)]),
     ]
+    # ⚠️⚠️ THE CROWN HAS LEAVES (owner, 2026-09-26, of the tree from his screen: *"it sucks"*, *"REFINE THIS TREE
+    # MORE"*): v7 kept the seven claws almost bare, and at 9 m against the sky they read as a dead bundle of
+    # sticks. He is a living forest. Each branch now carries clusters of broad leaves along its upper third and
+    # round its fork, typed per branch: (point index on the main cord, compass, pitch, length, width, slot).
+    canopy = {
+        "claw-0": [(3, 300, 20, 0.48, 0.26, LEAF), (3, 60, 35, 0.42, 0.24, LEAF_DARK), (4, 170, 45, 0.50, 0.27, LEAF), (5, 20, 60, 0.40, 0.22, MOSS_LIT), (4, 250, -10, 0.38, 0.21, LEAF_DARK)],
+        "claw-1": [(3, 320, 25, 0.46, 0.25, LEAF_DARK), (4, 80, 40, 0.50, 0.27, LEAF), (4, 200, 15, 0.40, 0.22, MOSS_LIT), (5, 10, 55, 0.42, 0.23, LEAF)],
+        "claw-2": [(3, 30, 30, 0.50, 0.27, LEAF), (4, 280, 45, 0.46, 0.25, LEAF_DARK), (5, 140, 60, 0.44, 0.24, LEAF), (4, 90, -5, 0.38, 0.21, MOSS_LIT), (3, 200, 20, 0.40, 0.22, LEAF_DARK)],
+        "claw-3": [(3, 340, 20, 0.44, 0.24, LEAF), (4, 60, 45, 0.48, 0.26, LEAF_DARK), (5, 200, 50, 0.40, 0.22, LEAF)],
+        "claw-4": [(3, 100, 25, 0.48, 0.26, LEAF_DARK), (4, 320, 40, 0.50, 0.27, LEAF), (5, 210, 60, 0.42, 0.23, MOSS_LIT), (4, 30, 0, 0.38, 0.21, LEAF)],
+        "claw-5": [(3, 280, 20, 0.46, 0.25, LEAF), (4, 40, 45, 0.44, 0.24, LEAF_DARK), (5, 160, 55, 0.42, 0.23, LEAF)],
+        "claw-6": [(3, 20, 30, 0.48, 0.26, LEAF_DARK), (4, 250, 40, 0.46, 0.25, LEAF), (5, 110, 55, 0.44, 0.24, LEAF), (4, 170, 5, 0.38, 0.21, MOSS_LIT)],
+    }
     for name, yaw, main, main_r, second, second_r, fork, fork_r, shade, tufts in branches:
         n = Node(name, origin=ring(0.30, yaw, 0.0), parent="crown", yaw=yaw); nodes.append(n)
         line(n, main, main_r, shade, twist=40.0, per=4)
@@ -543,6 +568,8 @@ def sentry():
         for base, compass, pitch, length, width, slot in tufts:
             sprig(n, base, compass, pitch, length, width, slot)
             sprig(n, base, compass + 70, pitch - 25, length * 0.8, width * 0.8, LEAF_DARK if slot == LEAF else LEAF)
+        for idx, compass, pitch, length, width, slot in canopy[name]:
+            sprig(n, main[idx], compass, pitch, length, width, slot, thickness=0.022)
 
     write(os.path.join(OUT, "sentry.glb"), nodes)
 
@@ -565,13 +592,15 @@ def sentry():
 P_BODY, P_SHADE, P_LEAF, P_LEAF_DK, P_TENDRIL, P_WOOD, P_ROOT, P_MOSS = 0, 1, 2, 3, 4, 5, 6, 7
 P_INK, P_INSIDE, P_RIM, P_SPECK, P_LID_UNDER, P_WOOD_DK, P_STRAP, P_MOSS_DK = 8, 9, 10, 11, 12, 13, 14, 15
 # Pitcher slots: see the P_* names above (P_SPECK is unused since speckles read as stickers).
-PITCHER_PALETTE = {0: "A9C44E", 1: "7E9E3A", 2: "4F8B2F", 3: "3A6B24", 4: "6F9B35", 5: "C29563",
+PITCHER_PALETTE = {0: "93B540", 1: "5B7F2C", 2: "4F8B2F", 3: "3A6B24", 4: "6F9B35", 5: "C29563",
                  6: "A8946A", 7: "5E7F24", 8: "1E140C", 9: "2B1512", 10: "8E2435", 11: "9A3243",
                  12: "B04A55", 13: "8A6240", 14: "3F5A1A", 15: "3F5A1A"}
 
 # The pitcher's body, typed: height up the pod, radius, forward lean. A fat belly, a waist, a flared mouth.
-BODY = [(-0.02, 0.060, 0.000), (0.07, 0.150, 0.010), (0.15, 0.166, 0.020), (0.23, 0.140, 0.035),
-        (0.29, 0.110, 0.050), (0.34, 0.104, 0.065), (0.38, 0.124, 0.085)]
+BODY = [(-0.02, 0.066, 0.000), (0.07, 0.170, 0.010), (0.15, 0.188, 0.020), (0.23, 0.156, 0.035),
+        (0.29, 0.118, 0.050), (0.34, 0.110, 0.065), (0.38, 0.132, 0.085)]
+# ⚠️ Refined 2026-09-26 after the first in-engine film (v19 to v21): the belly fattened (0.166 to 0.188) and
+# the mouth opened (0.124 to 0.132) toward the concept's round jug, which read as a thin lightbulb in play.
 
 
 def pitcher_body(pod, rows, slot, inside_slot, sides=7):
@@ -618,11 +647,13 @@ def seedling():
     baby = Node("baby", parent="leaf-2"); nodes.append(baby)
     tip = (math.sin(math.radians(186)) * 0.58, 0.07 + 0.14, math.cos(math.radians(186)) * 0.58)
     line(baby, [tip, add(tip, (-0.02, 0.02, -0.06)), add(tip, (-0.03, -0.05, -0.10)), add(tip, (-0.02, -0.11, -0.09))],
-         [0.008, 0.007, 0.006, 0.006], P_TENDRIL, sides=4, per=3)
+         [0.013, 0.011, 0.010, 0.009], P_TENDRIL, sides=4, per=3)
     bb = add(tip, (-0.02, -0.19, -0.09))
     baby.tube([add(bb, (0, 0.0, 0)), add(bb, (0, 0.035, 0.003)), add(bb, (0, 0.07, 0.008)), add(bb, (0, 0.09, 0.012))],
               [0.022, 0.042, 0.030, 0.034], P_BODY, sides=6)
-    baby.obox(add(bb, (0, 0.10, 0.004)), (0.07, 0.012, 0.07), P_SHADE, roll=-14.0)
+    baby.tube([add(bb, (-0.036, 0.092, 0.012)), add(bb, (0, 0.094, 0.046)), add(bb, (0.036, 0.092, 0.012)), add(bb, (0, 0.090, -0.022)), add(bb, (-0.036, 0.092, 0.012))],
+              [0.010] * 5, P_RIM, sides=4)
+    baby.obox(add(bb, (0, 0.118, -0.010)), (0.075, 0.014, 0.07), P_SHADE, roll=-24.0)
 
     # The tendril-neck: thick, rising in an S, so the pitcher can nod and aim.
     stem = Node("stem", parent="seedling"); nodes.append(stem)
@@ -637,25 +668,46 @@ def seedling():
     c = (0.0, 0.38, 0.085)
     t = unit((0.0, 0.04, 0.02)); side = (1.0, 0.0, 0.0); up = unit(cross(t, side))
     rim = []
-    for ang, r in [(0, 0.118), (52, 0.122), (101, 0.116), (153, 0.121), (205, 0.117), (257, 0.123), (309, 0.119), (360, 0.118), (412, 0.122)]:
+    for ang, r in [(0, 0.128), (52, 0.132), (101, 0.126), (153, 0.131), (205, 0.127), (257, 0.133), (309, 0.129), (360, 0.128), (412, 0.132)]:
         a = math.radians(ang)
         rim.append(add(c, add(mul(side, r * math.cos(a)), mul(up, r * math.sin(a)))))
-    pod.tube(spline(rim, 4), [0.031] * len(spline(rim, 4)), P_RIM, sides=5)
+    pod.tube(spline(rim, 4), [0.042] * len(spline(rim, 4)), P_RIM, sides=6)
+    # The lip's rolled inner edge, a lighter wine a step inside and above, so the peristome reads as a
+    # thick rolled collar (the concept's) rather than a thin red band.
+    lip = []
+    for ang, r in [(0, 0.100), (60, 0.103), (118, 0.099), (177, 0.102), (236, 0.100), (295, 0.104), (360, 0.100), (420, 0.103)]:
+        a = math.radians(ang)
+        lip.append(add(add(c, mul(t, 0.022)), add(mul(side, r * math.cos(a)), mul(up, r * math.sin(a)))))
+    pod.tube(spline(lip, 4), [0.020] * len(spline(lip, 4)), P_SPECK, sides=5)
+    # Dark stripes down the belly, the concept's ink lines (a Nepenthes pitcher's veins). Each typed on the
+    # surface by hand: its angle round the jug (0 = front), and the rows it runs between. The front two are
+    # the wings below, so these sit on the flanks and the back.
+    for pts in [[(0.105, 0.30, 0.018), (0.150, 0.22, 0.042), (0.158, 0.13, 0.060), (0.110, 0.04, 0.050)],
+                [(-0.104, 0.30, 0.020), (-0.149, 0.22, 0.044), (-0.160, 0.14, 0.058), (-0.112, 0.05, 0.047)],
+                [(0.074, 0.29, -0.052), (0.108, 0.20, -0.090), (0.118, 0.12, -0.106), (0.074, 0.04, -0.078)],
+                [(-0.078, 0.29, -0.050), (-0.110, 0.21, -0.088), (-0.121, 0.12, -0.104), (-0.070, 0.03, -0.080)],
+                [(0.0, 0.28, -0.085), (0.0, 0.20, -0.128), (0.0, 0.11, -0.150), (0.0, 0.03, -0.100)]]:
+        line(pod, pts, [0.009, 0.011, 0.010, 0.005], P_LEAF_DK, sides=4, per=3)
     # Two wings down the front (a pitcher's ridges), each typed.
-    line(pod, [(0.047, 0.33, 0.162), (0.052, 0.23, 0.180), (0.046, 0.12, 0.172), (0.030, 0.03, 0.090)], [0.013, 0.014, 0.012, 0.006], P_SHADE, sides=4, per=3)
-    line(pod, [(-0.044, 0.33, 0.160), (-0.050, 0.22, 0.179), (-0.047, 0.11, 0.170), (-0.028, 0.03, 0.088)], [0.012, 0.014, 0.012, 0.006], P_SHADE, sides=4, per=3)
+    line(pod, [(0.050, 0.33, 0.168), (0.055, 0.23, 0.194), (0.049, 0.12, 0.192), (0.032, 0.03, 0.096)], [0.020, 0.022, 0.018, 0.008], P_SHADE, sides=4, per=3)
+    line(pod, [(-0.047, 0.33, 0.166), (-0.053, 0.22, 0.193), (-0.050, 0.11, 0.190), (-0.030, 0.03, 0.094)], [0.020, 0.022, 0.018, 0.008], P_SHADE, sides=4, per=3)
 
     # The lid, hinged at the back of the rim; its rest lies over the mouth.
     hinge = add(c, mul((0.0, 0.447, -0.894), 0.13))
     lid = Node("lid", origin=hinge, parent="pod"); nodes.append(lid)
     fwd = (0.0, -0.447, 0.894)
-    lid.obox(add(mul(fwd, 0.128), mul(t, 0.030)), (0.25, 0.030, 0.24), P_BODY, roll=26.6)
-    lid.obox(add(mul(fwd, 0.128), mul(t, 0.030)), (0.18, 0.031, 0.29), P_BODY, roll=26.6)
-    lid.obox(add(mul(fwd, 0.125), mul(t, 0.012)), (0.20, 0.012, 0.20), P_LID_UNDER, roll=26.6)
-    line(lid, [mul(t, 0.02), add(mul(t, 0.06), (0, 0.0, -0.035)), add(mul(t, 0.08), (0, 0.0, -0.075))], [0.018, 0.012, 0.004], P_SHADE, sides=4, per=2)
+    # ⚠️ A ROUNDED LID BIGGER THAN THE MOUTH (v19 to v21 read as a thin tilted plate): a broad oval of three
+    # crossed slabs, a thicker crown, the wine underside, and a hinge neck so it visibly grows from the rim.
+    lid.obox(add(mul(fwd, 0.140), mul(t, 0.034)), (0.30, 0.050, 0.25), P_BODY, roll=26.6)
+    lid.obox(add(mul(fwd, 0.146), mul(t, 0.034)), (0.21, 0.051, 0.33), P_BODY, roll=26.6)
+    lid.obox(add(mul(fwd, 0.140), mul(t, 0.034)), (0.26, 0.052, 0.29), P_BODY, yaw=45.0, roll=26.6)
+    lid.obox(add(mul(fwd, 0.132), mul(t, 0.058)), (0.16, 0.030, 0.17), P_SHADE, roll=26.6)
+    lid.obox(add(mul(fwd, 0.140), mul(t, 0.008)), (0.24, 0.012, 0.24), P_LID_UNDER, roll=26.6)
+    line(lid, [(0.0, -0.02, 0.0), add(mul(fwd, 0.03), mul(t, 0.03))], [0.034, 0.030], P_SHADE, sides=5, per=2)
+    line(lid, [mul(t, 0.02), add(mul(t, 0.06), (0, 0.0, -0.035)), add(mul(t, 0.08), (0, 0.0, -0.075))], [0.022, 0.014, 0.004], P_SHADE, sides=4, per=2)
 
     # The bakya, the carved clog growing in the mouth: sole on two blocks, a strap across the toe.
-    shoe = Node("slipper", origin=(0.0, 0.30, 0.07), parent="pod"); nodes.append(shoe)
+    shoe = Node("slipper", origin=(0.0, 0.31, 0.075), parent="pod"); nodes.append(shoe)
     shoe.box((-0.060, 0.020, -0.130), (0.060, 0.045, 0.130), P_WOOD)
     shoe.box((-0.055, -0.030, -0.120), (0.055, 0.020, -0.050), P_WOOD_DK)
     shoe.box((-0.055, -0.030, 0.030), (0.055, 0.020, 0.100), P_WOOD_DK)
@@ -865,6 +917,13 @@ def makiling():
     line(body, [(-0.27, 2.28, 0.0), (-0.31, 2.11, 0.03), (-0.30, 1.97, 0.12), (-0.18, 1.99, 0.28), (-0.07, 2.02, 0.35)],
          [0.064, 0.058, 0.052, 0.046, 0.040], MK_SKIN, sides=6, per=3)
 
+    # --- Long bell sleeves hanging from her forearms (v2): a spirit's cloth, the one flowing shape the blocky
+    # body lacked. Each typed from the elbow down and out, wide at the cuff, its hem trailing.
+    line(body, [(0.30, 2.00, 0.10), (0.33, 1.84, 0.20), (0.36, 1.62, 0.26), (0.37, 1.40, 0.28), (0.35, 1.24, 0.26)],
+         [0.070, 0.095, 0.120, 0.135, 0.090], MK_GOWN_SH, sides=7, per=3)
+    line(body, [(-0.30, 2.00, 0.10), (-0.33, 1.83, 0.21), (-0.35, 1.60, 0.27), (-0.37, 1.37, 0.28), (-0.36, 1.20, 0.25)],
+         [0.070, 0.095, 0.120, 0.135, 0.090], MK_GOWN_SH, sides=7, per=3)
+
     # --- The hands: cupped together, the painting's gesture, holding the seed of light.
     hands = Node("hands", origin=(0.0, 2.02, 0.37), parent="body"); nodes.append(hands)
     hands.obox((0.055, -0.01, 0.0), (0.085, 0.035, 0.13), MK_SKIN, roll=0.0, pitch=-24.0, bevel=0.015)
@@ -880,17 +939,32 @@ def makiling():
     head.box((-0.095, -0.01, -0.08), (0.095, 0.08, 0.135), MK_SKIN, bevel=0.035)           # the chin, narrower
     head.obox((0.0, 0.17, 0.165), (0.035, 0.055, 0.03), MK_SKIN_SH, bevel=0.01)          # a small nose
     # Closed eyes: two short strokes each, a gentle downward arc (the painting's lowered lids).
-    head.obox((0.042, 0.232, 0.163), (0.040, 0.011, 0.008), MK_INK, pitch=-12.0, bevel=0)
-    head.obox((0.080, 0.228, 0.162), (0.036, 0.011, 0.008), MK_INK, pitch=14.0, bevel=0)
-    head.obox((-0.042, 0.232, 0.163), (0.040, 0.011, 0.008), MK_INK, pitch=12.0, bevel=0)
-    head.obox((-0.080, 0.228, 0.162), (0.036, 0.011, 0.008), MK_INK, pitch=-14.0, bevel=0)
+    # ⚠️ v2 (2026-09-26, the owner: *"how she looks needs to be refined"*): the strokes were 4 cm and vanished at
+    # cutscene distance. Each closed eye is now a long lowered lid (three strokes, 12 cm across) with two short
+    # lashes hanging off its outer end, so the calm, bowed face reads from across the court.
+    head.obox((0.036, 0.236, 0.163), (0.046, 0.014, 0.008), MK_INK, pitch=-10.0, bevel=0)
+    head.obox((0.080, 0.230, 0.162), (0.046, 0.014, 0.008), MK_INK, pitch=6.0, bevel=0)
+    head.obox((0.112, 0.238, 0.160), (0.026, 0.012, 0.008), MK_INK, pitch=38.0, bevel=0)
+    head.obox((0.116, 0.220, 0.160), (0.020, 0.010, 0.008), MK_INK, pitch=-30.0, bevel=0)
+    head.obox((-0.036, 0.236, 0.163), (0.046, 0.014, 0.008), MK_INK, pitch=10.0, bevel=0)
+    head.obox((-0.080, 0.230, 0.162), (0.046, 0.014, 0.008), MK_INK, pitch=-6.0, bevel=0)
+    head.obox((-0.112, 0.238, 0.160), (0.026, 0.012, 0.008), MK_INK, pitch=-38.0, bevel=0)
+    head.obox((-0.116, 0.220, 0.160), (0.020, 0.010, 0.008), MK_INK, pitch=30.0, bevel=0)
     # The smile: two strokes meeting low in the middle.
     head.obox((0.018, 0.098, 0.150), (0.036, 0.010, 0.008), MK_INK, pitch=10.0, bevel=0)
     head.obox((-0.018, 0.098, 0.150), (0.036, 0.010, 0.008), MK_INK, pitch=-10.0, bevel=0)
     # Hair: the crown of the head, parted in the middle, falling past the face on both sides.
-    head.box((-0.170, 0.25, -0.180), (0.170, 0.49, 0.145), MK_HAIR, bevel=0.05)
-    head.obox((0.085, 0.37, 0.158), (0.155, 0.16, 0.05), MK_HAIR, pitch=-10.0, bevel=0.02)
-    head.obox((-0.085, 0.37, 0.158), (0.155, 0.16, 0.05), MK_HAIR, pitch=10.0, bevel=0.02)
+    # ⚠️ v2: THE HAIR NO LONGER SWALLOWS THE HEAD. v1 put a 0.34 m hair box over the whole skull, its front edge in
+    # line with the face, plus two flat panels down the cheeks: through the ghost shader it read as a helmet
+    # with a face slot. Now a cap over the crown and back only, a fringe parted in the middle and swept to each
+    # side above the brow, and the locks below falling past the cheeks, so the face is the brightest, clearest
+    # thing on her.
+    head.box((-0.162, 0.34, -0.176), (0.162, 0.48, 0.070), MK_HAIR, bevel=0.05)
+    head.box((-0.168, 0.12, -0.182), (0.168, 0.36, -0.040), MK_HAIR, bevel=0.04)
+    head.obox((0.070, 0.405, 0.150), (0.140, 0.060, 0.040), MK_HAIR, roll=-16.0, bevel=0.015)
+    head.obox((-0.070, 0.405, 0.150), (0.140, 0.060, 0.040), MK_HAIR, roll=16.0, bevel=0.015)
+    head.obox((0.132, 0.360, 0.140), (0.050, 0.110, 0.040), MK_HAIR_LIT, roll=-8.0, bevel=0.012)
+    head.obox((-0.132, 0.360, 0.140), (0.050, 0.110, 0.040), MK_HAIR_LIT, roll=8.0, bevel=0.012)
     line(head, [(0.155, 0.40, 0.10), (0.175, 0.15, 0.13), (0.185, -0.10, 0.15), (0.19, -0.36, 0.17)], [0.055, 0.050, 0.042, 0.028], MK_HAIR, sides=5, per=3)
     line(head, [(-0.155, 0.40, 0.10), (-0.172, 0.14, 0.12), (-0.182, -0.12, 0.15), (-0.186, -0.40, 0.16)], [0.055, 0.050, 0.042, 0.026], MK_HAIR, sides=5, per=3)
     line(head, [(0.14, 0.30, 0.05), (0.17, 0.05, 0.08), (0.20, -0.22, 0.10)], [0.040, 0.034, 0.020], MK_HAIR_LIT, sides=5, per=3)

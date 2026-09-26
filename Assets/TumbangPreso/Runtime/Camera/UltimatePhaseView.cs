@@ -38,6 +38,8 @@ namespace TumbangPreso.CameraSystem
         private readonly RaycastHit[] _shotHits = new RaycastHit[32];
         // Per authored shot: mirror it, replace it with another clear shot, or give up (card).
         private bool[] _mirror;
+        // How far along target-to-eye each shot's camera sits: 1 is the authored eye, less is pushed in.
+        private float[] _pull;
         private int[] _useShot;
         private bool _safeShot = true, _stillMirror, _stillSafe;
         private float _duration = UltimatePerformance.DefaultSeconds;
@@ -175,6 +177,7 @@ namespace TumbangPreso.CameraSystem
                 int use=_useShot!=null&&shot>=0?_useShot[shot]:shot;
                 _primary.Scene.ShotAt(use,age,out eye,out target,out fov,_camera.aspect);
                 if(_mirror!=null&&use>=0&&_mirror[use])eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
+                if(_pull!=null&&use>=0)eye=target+(eye-target)*_pull[use];
             }
             else
             {
@@ -211,7 +214,9 @@ namespace TumbangPreso.CameraSystem
             // borrows the nearest clear shot; a tight alley with none clear gets the same-duration
             // card, never a camera inside a wall. The reduced-motion still is judged the same way.
             var scene=_primary.Scene;int count=scene.ShotCount;
+            var report=new System.Text.StringBuilder();
             _mirror=new bool[Mathf.Max(0,count)];_useShot=new int[Mathf.Max(0,count)];
+            _pull=new float[Mathf.Max(0,count)];
             var clear=new bool[Mathf.Max(0,count)];bool any=false;
             for(int i=0;i<count;i++)
             {
@@ -219,7 +224,26 @@ namespace TumbangPreso.CameraSystem
                 _primary.Clip.SampleAnimation(_primary.Body.Root,at);scene.Sample(at,false);
                 scene.ShotAt(i,at,out var eye,out var target,out _,_camera.aspect);
                 Vector3 alternate=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
-                bool first=ClearShot(target,eye),second=ClearShot(target,alternate);
+                _pull[i]=1;
+                bool first=ClearShot(target,eye);float firstRoom=_lastRoom;
+                if(!first)report.Append($"shot {i} blocked by {_lastBlocker}");
+                bool second=ClearShot(target,alternate);float secondRoom=_lastRoom;
+                if(!second)report.Append($"; mirror by {_lastBlocker}");
+                // ⚠️⚠️ PUSH IN BEFORE GIVING A SHOT UP (2026-09-26). Paete's rise and his tree payoff were both
+                // thrown away on Bayan Plaza because a gate stood 0.8 m in front of the authored eye, and the view
+                // froze on the end of the previous shot for 2.1 s: the cutscene lost its ending. A third-person
+                // game camera answers a wall behind it by sliding in along its line to just short of the wall;
+                // so does this, when at least `MinPull` of the authored distance is left (the framing still
+                // reads). Only past that is a shot mirrored-and-pushed, or borrowed.
+                if(!first&&!second)
+                {
+                    float length=Vector3.Distance(eye,target);
+                    float pullFirst=length>.1f?firstRoom/length:0,pullSecond=length>.1f?secondRoom/length:0;
+                    if(pullFirst>=MinPull&&pullFirst>=pullSecond){first=true;_pull[i]=pullFirst;}
+                    else if(pullSecond>=MinPull){second=true;_pull[i]=pullSecond;}
+                    if(first||second)report.Append($" -> pushed in to {_pull[i]:0.00}");
+                }
+                if(!first||!second)report.AppendLine();
                 _mirror[i]=!first&&second;clear[i]=first||second;any|=clear[i];_useShot[i]=i;
             }
             for(int i=0;i<count;i++)
@@ -241,20 +265,35 @@ namespace TumbangPreso.CameraSystem
                 _stillMirror=!first&&second;_stillSafe=first||second;
             }
             _primary.Clip.SampleAnimation(_primary.Body.Root,0);scene.Sample(0,false);
+            LastShotReport=report.ToString();
         }
+        /// <summary>
+        /// Which authored shots the last cast judged blocked, and by what (empty when every shot was clear).
+        /// ⚠️ Added 2026-09-26 when Paete's in-match film showed shots 2 to 4 all replaced by the end of shot 1:
+        /// a borrowed shot is invisible in a green test and costs the cutscene its payoff.
+        /// </summary>
+        public static string LastShotReport{get;private set;}=string.Empty;
+        private string _lastBlocker="";
+        // The clear distance from the focus toward the eye on the last blocked test, less a margin for the lens.
+        private float _lastRoom;
+        private const float MinPull=.6f, LensMargin=.35f;
         private bool ClearShot(Vector3 focus,Vector3 eye)
         {
-            Vector3 line=eye-focus;float length=line.magnitude;if(length<.1f)return false;
+            Vector3 line=eye-focus;float length=line.magnitude;_lastRoom=0;if(length<.1f)return false;
             int count=Physics.RaycastNonAlloc(focus,line/length,_shotHits,length,~0,QueryTriggerInteraction.Ignore);
             if(count==_shotHits.Length)return false;
+            // The NEAREST blocker decides (the hits come back unordered), so the push-in stops in front of it.
+            float nearest=float.MaxValue;
             for(int i=0;i<count;i++)
             {
                 var collider=_shotHits[i].collider;if(collider==null)continue;
                 if(collider.GetComponentInParent<CharacterMotor>()!=null||collider.GetComponentInParent<Slipper>()!=null
                     ||collider.GetComponentInParent<Lata>()!=null)continue;
-                return false;
+                if(_shotHits[i].distance<nearest){nearest=_shotHits[i].distance;_lastBlocker=collider.name+" at "+nearest.ToString("0.00")+" m";}
             }
-            return true;
+            if(nearest==float.MaxValue)return true;
+            _lastRoom=Mathf.Max(0,nearest-LensMargin);
+            return false;
         }
         private void Hide(Transform root)
         {

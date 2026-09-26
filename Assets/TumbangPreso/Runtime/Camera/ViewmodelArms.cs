@@ -1502,6 +1502,14 @@ namespace TumbangPreso.CameraSystem
             ApplyCharacterStyle(characterId);
         }
 
+        /// <summary>
+        /// ⚠️ Paete's first-person arms are widened on purpose (owner, 2026-09-26, *"make his fpp arms loook
+        /// BULKIER"*). `RosterArmAuditTests` caps every other hero at the clean reference hand's 0.36 m
+        /// cross-section and gives him exactly this factor over it, so the allowance cannot drift apart from
+        /// the scale that is actually applied.
+        /// </summary>
+        public const float PaeteArmBulk = 1.45f;
+
         private void ApplyCharacterStyle(string characterId)
         {
             ClearAccessories(_rightArm);
@@ -1522,7 +1530,7 @@ namespace TumbangPreso.CameraSystem
             // (and could keep whatever scale the previous hero left on the rig): 1.45 across, length unchanged.
             if(characterId=="paete" && UseRosterArms(characterId))
             {
-                var bulk=new Vector3(1.45f,1.0f,1.45f);
+                var bulk=new Vector3(PaeteArmBulk,1.0f,PaeteArmBulk);
                 if(_rightArm!=null)_rightArm.localScale=bulk;
                 if(_leftArm!=null)_leftArm.localScale=bulk;
                 return;

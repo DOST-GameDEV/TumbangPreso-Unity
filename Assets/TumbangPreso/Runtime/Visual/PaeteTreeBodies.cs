@@ -63,6 +63,29 @@ namespace TumbangPreso.Visual
         /// </summary>
         public const float Scale = 1.75f;
 
+        /// <summary>
+        /// ⚠️⚠️ THE GUARDIAN'S OWN PALETTE: OLD WOOD, NOT HIS BODY'S (owner, 2026-09-26, of the tree seen from his screen
+        /// in a match: *"it sucks"*, *"REFINE THIS TREE MORE"*). It wore Paete's roster palette, whose bark (8C6440,
+        /// B08450, heartwood C29563) the plaza's sun lit to saturated orange: it read as plastic noodles. This is an
+        /// ancient tree, older and darker than the carved guardian who calls it: deep browns a step apart so the weave
+        /// still reads, darker mosses and leaves, and the same eye light as his (slot 10 and 11), so the two are
+        /// visibly kin. Same sixteen slots as `tools/build_paete_voxel.py` (13 bark, 14 bark dark, 15 bark lit,
+        /// 5 heartwood, 0/1/7 moss, 2/3 leaf, 4 vine, 6 root, 8 ink, 9 socket, 10/11 eye), direction.md 5.12.
+        /// </summary>
+        public static readonly Color[] Palette =
+        {
+            Hex(0x4E6E1E), Hex(0x34501A), Hex(0x6FA532), Hex(0x3F7424), Hex(0x4C6E20), Hex(0x6E4A2C), Hex(0x4A3320), Hex(0x6A8C2A),
+            Hex(0x1E140C), Hex(0x140C06), Hex(0xD8FF6A), Hex(0x86C83A), Hex(0xE8C24A), Hex(0x5F4128), Hex(0x3A2616), Hex(0x7C5836),
+        };
+
+        private static Color Hex(int rgb) => new Color(((rgb >> 16) & 255) / 255f, ((rgb >> 8) & 255) / 255f, (rgb & 255) / 255f, 1f);
+        /// <summary>The guardian's bark, for every part built at runtime (ground branches, limbs, the prisoners' bands).</summary>
+        public static Color Bark => Palette[13];
+        public static Color BarkDark => Palette[14];
+        public static Color BarkLit => Palette[15];
+        public static Color Moss => Palette[0];
+        public static Color Leaf => Palette[2];
+
         /// <summary>The authored model's height to its highest branch tip, measured off the glb (metres).</summary>
         public const float ModelHeight = 5.2f;
         private float _scale = Scale;
@@ -84,7 +107,15 @@ namespace TumbangPreso.Visual
         private static readonly float[] VineYaw = { 8f, 52f, 93f, 141f, 183f, 226f, 268f, 317f };
         private static readonly float[] VineLength = { 3.0f, 2.5f, 3.3f, 2.7f, 3.1f, 2.3f, 3.4f, 2.8f };
         private static readonly float[] VinePhase = { 0.2f, 1.9f, 3.1f, 0.8f, 2.5f, 4.0f, 1.3f, 3.6f };
-        private const int VineSamples = 16;
+        private const int VineSamples = 24;
+        // Where the thorns sit along a ground branch (hump tops) and where it crosses the court's surface.
+        private static readonly float[] HumpThorn = { 0.20f, 0.60f, 0.92f };
+        private static readonly float[] EntryAt = { 0.02f, 0.40f, 0.80f };
+        private static readonly Vector3[] EntrySize = { new Vector3(0.22f, 0.10f, 0.16f), new Vector3(0.16f, 0.08f, 0.20f), new Vector3(0.19f, 0.09f, 0.14f),
+                                                        new Vector3(0.14f, 0.07f, 0.17f), new Vector3(0.20f, 0.09f, 0.15f), new Vector3(0.15f, 0.08f, 0.13f) };
+        private readonly List<Transform> _entries = new List<Transform>();
+        private static Vector3 dir(int i) { float y = VineYaw[i] * Mathf.Deg2Rad; return new Vector3(Mathf.Sin(y), 0f, Mathf.Cos(y)); }
+        private static Vector3 SideOf(int i) { var d = dir(i); return new Vector3(d.z, 0f, -d.x); }
         // When each claw root slams down, in its own order round the tree (not a sweep).
         private static readonly float[] RootSlam = { 0.42f, 0.55f, 0.47f, 0.62f, 0.50f, 0.66f };
         // When each crown branch finishes unfurling, and how far it sways.
@@ -111,13 +142,42 @@ namespace TumbangPreso.Visual
                 var pivot = new GameObject("crack-" + i).transform;
                 pivot.SetParent(root, false);
                 pivot.localRotation = Quaternion.Euler(0f, i * 45f + 20f, 0f);
-                var plate = GrowthVfx.Block(pivot, "plate", new Vector3(0.10f, 0.02f, crackLen[i]), GrowthVfx.BarkDark).transform;
+                var plate = GrowthVfx.Block(pivot, "plate", new Vector3(0.10f, 0.02f, crackLen[i]), BarkDark).transform;
                 plate.localPosition = new Vector3(0f, 0.01f, 0.9f + crackLen[i] * 0.5f);
                 b._cracks.Add(pivot);
             }
-            GrowthVfx.Block(root, "soil-ring", new Vector3(2.8f, 0.04f, 2.8f), GrowthVfx.Seed).transform.localRotation = Quaternion.Euler(0f, 45f, 0f);
+            // ⚠️ THE HEAVED SOIL IS ROUND (the 2026-09-26 ultimate film: a 2.8 m square of flat brown under the tree
+            // read as a rug laid on the plaza). Three thin squares crossed at 0, 30 and 60 degrees make a
+            // twelve-sided patch of dark turned earth, and a rim of clods, each placed by hand, sits where the
+            // roots pushed the road up, so it reads as ground that broke rather than a tile.
+            var soil = new GameObject("soil-ring").transform;
+            soil.SetParent(root, false);
+            var turned = Color.Lerp(GrowthVfx.Seed, Color.black, 0.3f);
+            foreach (float yaw in new[] { 0f, 30f, 60f })
+                GrowthVfx.Block(soil, "patch", new Vector3(2.5f, 0.04f, 2.5f), turned).transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
+            (Vector3 at, Vector3 size, float yaw, float tilt)[] clods =
+            {
+                (new Vector3(1.28f, 0.07f, 0.22f), new Vector3(0.42f, 0.16f, 0.30f), 12f, 14f),
+                (new Vector3(0.78f, 0.06f, 1.02f), new Vector3(0.30f, 0.13f, 0.26f), -34f, 10f),
+                (new Vector3(-0.18f, 0.08f, 1.30f), new Vector3(0.44f, 0.18f, 0.28f), 71f, 16f),
+                (new Vector3(-1.02f, 0.06f, 0.78f), new Vector3(0.28f, 0.12f, 0.30f), 25f, 9f),
+                (new Vector3(-1.34f, 0.07f, -0.12f), new Vector3(0.38f, 0.15f, 0.34f), -58f, 13f),
+                (new Vector3(-0.82f, 0.05f, -1.06f), new Vector3(0.26f, 0.11f, 0.24f), 40f, 8f),
+                (new Vector3(0.10f, 0.08f, -1.33f), new Vector3(0.46f, 0.17f, 0.30f), -15f, 15f),
+                (new Vector3(0.96f, 0.06f, -0.92f), new Vector3(0.32f, 0.13f, 0.28f), 63f, 11f),
+                (new Vector3(1.10f, 0.04f, -0.34f), new Vector3(0.18f, 0.08f, 0.16f), -80f, 6f),
+                (new Vector3(-0.52f, 0.04f, 1.20f), new Vector3(0.17f, 0.08f, 0.15f), 5f, 7f),
+            };
+            foreach (var clod in clods)
+            {
+                var piece = GrowthVfx.Block(soil, "clod", clod.size, GrowthVfx.Seed).transform;
+                piece.localPosition = clod.at;
+                // Tilted outward, the way a slab of road lifts when something shoulders up under it.
+                var outward = new Vector3(clod.at.x, 0f, clod.at.z).normalized;
+                piece.localRotation = Quaternion.AngleAxis(clod.tilt, Vector3.Cross(Vector3.up, outward)) * Quaternion.Euler(0f, clod.yaw, 0f);
+            }
 
-            b._model = PaeteProp.Spawn("sentry", root);
+            b._model = PaeteProp.Spawn("sentry", root, Palette, ToonSkin.PersonOutlineWidth);
             if (b._model != null)
             {
                 b._model.transform.localScale = Vector3.one * Scale;
@@ -141,32 +201,32 @@ namespace TumbangPreso.Visual
             if (b._trunk.parent == null) b._trunk.SetParent(root, false);
             if (b._crown == null) { b._crown = new GameObject("crown").transform; b._crown.SetParent(b._trunk, false); b._crown.localPosition = Vector3.up * 3.22f; }
 
-            // The core: the seed of light held in the crown, the only light besides the eyes. Two nested
-            // glowing blocks turned against each other, and four spores circling it.
+            // ⚠️ THE CROWN'S GLOWING GEM IS GONE (direction.md 5.12): two nested green cubes turned against each
+            // other sat in the branches and read, from his screen, as a crystal stuck in a bare tree. The eyes in the
+            // hollows are its only light. The empty node stays so the pose code keeps one shape.
             b._core = new GameObject("sentry-core").transform;
             b._core.SetParent(b._crown, false);
-            GrowthVfx.Block(b._core, "core-shell", Vector3.one, GrowthVfx.LeafGreen, 0.9f).transform.localRotation = Quaternion.Euler(45f, 0f, 45f);
-            GrowthVfx.Block(b._core, "core-heart", Vector3.one * 0.80f, GrowthVfx.Glow, 1.5f).transform.localRotation = Quaternion.Euler(0f, 45f, 0f);
-            for (int i = 0; i < 4; i++)
-                b._spores.Add(GrowthVfx.Block(b._crown, "spore-" + i, Vector3.one * 0.09f, GrowthVfx.Glow, 1.2f).transform);
 
+            // The soil heaved where each ground branch crosses the court: two clods per crossing, three crossings.
+            for (int i = 0; i < VineYaw.Length * 3 * 2; i++)
+                b._entries.Add(GrowthVfx.Block(root, "entry-clod", Vector3.one, i % 3 == 0 ? Palette[6] : GrowthVfx.Seed).transform);
             // The eight ground branches: a mesh each, rebuilt while they grow, three thorns and a tip leaf.
             for (int i = 0; i < VineYaw.Length; i++)
             {
                 var mesh = new Mesh { name = "PaeteSentryGroundBranch" };
                 mesh.MarkDynamic();
-                PaeteInk.Part(root, "ground-branch-" + i, mesh, i % 3 == 1 ? GrowthVfx.BarkDark : i % 3 == 2 ? GrowthVfx.BarkLit : GrowthVfx.Bark);
+                PaeteInk.Part(root, "ground-branch-" + i, mesh, i % 3 == 1 ? BarkDark : i % 3 == 2 ? BarkLit : Bark);
                 b._vineMeshes.Add(mesh);
                 b._branchTwigs.Add(new GrowthTwigs(root, new[] { 0.28f + 0.03f * (i % 3), 0.52f, 0.74f - 0.04f * (i % 2) },
-                                                   new[] { 40f + 25f * i, 200f - 15f * i, 310f + 10f * i }, new[] { 1.4f, 1.2f, 1.0f }, GrowthVfx.BarkLit));
+                                                   new[] { 40f + 25f * i, 200f - 15f * i, 310f + 10f * i }, new[] { 1.4f, 1.2f, 1.0f }, BarkLit));
                 for (int k = 0; k < 3; k++)
                 {
                     var thornMesh = new Mesh { name = "PaeteSentryThorn" };
                     PaeteInk.Tube(thornMesh, new List<Vector3> { Vector3.zero, new Vector3(0, 0.12f, 0.03f), new Vector3(0, 0.24f, 0.08f) },
                                   new List<float> { 0.05f, 0.028f, 0.003f }, 4);
-                    b._thorns.Add(PaeteInk.Part(root, "thorn", thornMesh, GrowthVfx.BarkDark).transform);
+                    b._thorns.Add(PaeteInk.Part(root, "thorn", thornMesh, BarkDark).transform);
                 }
-                b._vineTips.Add(PaeteInk.Part(root, "ground-branch-leaf", PaeteInk.Leaf(0.24f, 0.14f, 0.02f), GrowthVfx.LeafGreen).transform);
+                b._vineTips.Add(PaeteInk.Part(root, "ground-branch-leaf", PaeteInk.Leaf(0.24f, 0.14f, 0.02f), Leaf).transform);
             }
             return b;
         }
@@ -181,11 +241,12 @@ namespace TumbangPreso.Visual
 
         public void SetTargets(List<CharacterMotor> targets)
         {
-            var bark = new[] { GrowthVfx.BarkLit, GrowthVfx.Bark, GrowthVfx.BarkDark };
+            var bark = new[] { BarkLit, Bark, BarkDark };
             foreach (var t in targets)
             {
                 _targets.Add(t);
-                _limbs.Add(new PaeteRope(transform, "embrace-limb", bark, new[] { 0.042f, 0.038f, 0.034f }, 0.040f, 7.5f, _targets.Count * 1.7f));
+                // ⚠️ Thicker than v1 (4 cm cords read as string at 10 m): a limb of three 6 to 7 cm cords.
+                _limbs.Add(new PaeteRope(transform, "embrace-limb", bark, new[] { 0.072f, 0.064f, 0.056f }, 0.062f, 7.5f, _targets.Count * 1.7f));
                 _arrive.Add(-1f);
                 _released.Add(-1f);
             }
@@ -204,8 +265,14 @@ namespace TumbangPreso.Visual
                 float u = k / (float)VineSamples;
                 float d = 2.2f + len * u;
                 float wave = Mathf.Sin(u * 7.0f + VinePhase[i] + age * 1.6f) * 0.16f * u;
-                float lift = 0.05f + Mathf.Pow(u, 6f) * 0.55f * grow;
-                _points.Add(dir * d + side * wave + Vector3.up * lift);
+                // ⚠️⚠️ IT GOES INTO THE GROUND, NOT OFF IT (owner, 2026-09-26: *"make it look like the roots GO INT
+                // he ground not float off of it"*). It used to lie along the court and curl its tip 0.55 m up into
+                // the air. Now it WEAVES: two humps up out of the road and back under it (the parts below the court
+                // are hidden by the court itself), then it dives in for good. It crosses the surface at u = 0, 0.4
+                // and 0.8, which is where the soil heaves (`_entries`), and it strains a little as the prisoners fight.
+                float hump = Mathf.Sin(u * Mathf.PI * 2.5f) * (0.26f - 0.06f * u) * grow;
+                float dive = -0.45f * Mathf.SmoothStep(0.80f, 1.0f, u);
+                _points.Add(dir * d + side * wave + Vector3.up * (hump + dive));
             }
         }
 
@@ -321,6 +388,7 @@ namespace TumbangPreso.Visual
                     _vineMeshes[i].Clear();
                     for (int k = 0; k < 3; k++) _thorns[i * 3 + k].localScale = Vector3.zero;
                     _vineTips[i].localScale = Vector3.zero;
+                    for (int c = 0; c < 6; c++) _entries[i * 6 + c].localScale = Vector3.zero;
                     _branchTwigs[i].Place(_points, 0f, 1f, false);
                     continue;
                 }
@@ -331,18 +399,36 @@ namespace TumbangPreso.Visual
                 _branchTwigs[i].Place(_points, grow, 1f, false);
                 for (int k = 0; k < 3; k++)
                 {
-                    int at = Mathf.Clamp(Mathf.RoundToInt((0.3f + 0.22f * k) * VineSamples), 1, VineSamples - 1);
+                    // On the tops of the humps (u 0.2 and 0.6) and one on the rise of the last, where they show.
+                    int at = Mathf.Clamp(Mathf.RoundToInt(HumpThorn[k] * VineSamples), 1, VineSamples - 1);
                     var thorn = _thorns[i * 3 + k];
                     Vector3 along = (_points[at + 1] - _points[at - 1]).normalized;
                     thorn.localPosition = _points[at] + Vector3.up * 0.13f;
                     thorn.localRotation = Quaternion.LookRotation(along, Vector3.up) * Quaternion.Euler(-10f, 0f, 0f);
-                    thorn.localScale = Vector3.one * 1.5f * Mathf.Clamp01((grow - (0.3f + 0.22f * k)) * 5f);
+                    thorn.localScale = Vector3.one * 1.5f * Mathf.Clamp01((grow - HumpThorn[k]) * 5f);
                 }
+                // The leaf rides the top of the second hump; the tip itself is under the road.
                 var tip = _vineTips[i];
-                Vector3 last = _points[_points.Count - 1], before = _points[_points.Count - 2];
-                tip.localPosition = last;
-                tip.localRotation = Quaternion.LookRotation((last - before).normalized, Vector3.up);
-                tip.localScale = Vector3.one * 1.6f * grow;
+                int crest = Mathf.RoundToInt(0.6f * VineSamples);
+                tip.localPosition = _points[Mathf.Min(crest, _points.Count - 1)] + Vector3.up * 0.16f;
+                tip.localRotation = Quaternion.LookRotation(dir(i), Vector3.up) * Quaternion.Euler(-30f, 25f, 0f);
+                tip.localScale = Vector3.one * 1.6f * Mathf.Clamp01((grow - 0.6f) * 3f);
+                // The soil heaved up where it goes in and out: a clod either side of each crossing.
+                for (int e = 0; e < 3; e++)
+                {
+                    float at = EntryAt[e];
+                    float show = Mathf.Clamp01((grow - at) * 6f) * alive;
+                    int idx = Mathf.Clamp(Mathf.RoundToInt(at * VineSamples), 0, _points.Count - 1);
+                    var p0 = _points[idx]; p0.y = 0f;
+                    for (int c = 0; c < 2; c++)
+                    {
+                        var clod = _entries[(i * 3 + e) * 2 + c];
+                        float sideOff = (c == 0 ? 1f : -1f) * (0.22f + 0.04f * e);
+                        clod.localPosition = p0 + SideOf(i) * sideOff + Vector3.up * 0.03f;
+                        clod.localRotation = Quaternion.Euler(10f * (c == 0 ? 1f : -1f), VineYaw[i] + 30f * e, 14f);
+                        clod.localScale = EntrySize[(e * 2 + c) % EntrySize.Length] * show;
+                    }
+                }
             }
 
             // THE EMBRACE: a woven limb to each prisoner (direction.md section 5.8).
@@ -403,7 +489,8 @@ namespace TumbangPreso.Visual
             if (p.IsStruggling) waist += new Vector3(Mathf.Sin(age * 36f) * 0.03f, 0f, Mathf.Cos(age * 29f) * 0.02f);
             Vector3 toTree = anchor - waist; toTree.y = 0f;
             float a0 = Mathf.Atan2(toTree.x, toTree.z);
-            const float Loop = 0.33f;
+            // Tight on the body (v1 hung a 0.33 m hoop round a 0.25 m waist): it grips.
+            const float Loop = 0.28f;
             Vector3 wrapStart = waist + new Vector3(Mathf.Sin(a0), 0f, Mathf.Cos(a0)) * Loop + Vector3.up * 0.12f;
 
             _limb.Clear();
@@ -419,13 +506,15 @@ namespace TumbangPreso.Visual
             // The wrap: one and a half turns round the waist, spiralling down a little.
             if (reach >= 1f)
             {
-                int wrapSamples = Mathf.RoundToInt(14 * wrap);
+                // Two full turns, cinching: the loop draws in 3 cm after it closes and breathes with the tree.
+                int wrapSamples = Mathf.RoundToInt(20 * wrap);
+                float cinch = 1f - 0.10f * Mathf.Clamp01((age - catchAt - 0.55f) / 0.25f) - 0.03f * Mathf.Sin(age * 2.4f);
                 for (int k = 1; k <= wrapSamples; k++)
                 {
-                    float f = k / 14f;
-                    float ang = a0 + f * Mathf.PI * 3f;
-                    float r = Loop + 0.02f * Mathf.Sin(k * 1.7f);
-                    _limb.Add(waist + new Vector3(Mathf.Sin(ang) * r, 0.12f - 0.22f * f, Mathf.Cos(ang) * r));
+                    float f = k / 20f;
+                    float ang = a0 + f * Mathf.PI * 4f;
+                    float r = (Loop + 0.015f * Mathf.Sin(k * 1.7f)) * cinch;
+                    _limb.Add(waist + new Vector3(Mathf.Sin(ang) * r, 0.16f - 0.30f * f, Mathf.Cos(ang) * r));
                 }
             }
             rope.Draw(_limb, 0.45f);
@@ -455,7 +544,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         public static readonly Color[] Palette =
         {
-            Hex(0xA9C44E), Hex(0x7E9E3A), Hex(0x4F8B2F), Hex(0x3A6B24), Hex(0x6F9B35), Hex(0xC29563), Hex(0xA8946A), Hex(0x5E7F24),
+            Hex(0x93B540), Hex(0x5B7F2C), Hex(0x4F8B2F), Hex(0x3A6B24), Hex(0x6F9B35), Hex(0xC29563), Hex(0xA8946A), Hex(0x5E7F24),
             Hex(0x1E140C), Hex(0x2B1512), Hex(0x8E2435), Hex(0x9A3243), Hex(0xB04A55), Hex(0x8A6240), Hex(0x3F5A1A), Hex(0x3F5A1A),
         };
 
@@ -476,7 +565,28 @@ namespace TumbangPreso.Visual
             go.transform.SetParent(parent, false);
             var b = go.AddComponent<PaetePlantBody>();
             b._root = go.transform;
-            b._soil = GrowthVfx.Block(b._root, "loose-soil", new Vector3(0.9f, 0.03f, 0.9f), GrowthVfx.Seed).transform;
+            // ⚠️ A ROUND HEAVED MOUND, NOT A SQUARE (the v19 film: a flat brown 0.9 m tile under a loosened
+            // plant read as a doormat). Three thin squares crossed at 0, 30 and 60 degrees make a twelve-sided
+            // patch, and six clods sit on its rim where the roots have pushed the soil up, each placed by hand.
+            b._soil = new GameObject("loose-soil").transform;
+            b._soil.SetParent(b._root, false);
+            var dark = Color.Lerp(GrowthVfx.Seed, Color.black, 0.25f);
+            foreach (float yaw in new[] { 0f, 30f, 60f })
+                GrowthVfx.Block(b._soil, "patch", new Vector3(0.78f, 0.03f, 0.78f), dark).transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
+            (Vector3 at, Vector3 size, float yaw)[] clods =
+            {
+                (new Vector3(0.34f, 0.04f, 0.10f), new Vector3(0.16f, 0.08f, 0.12f), 18f),
+                (new Vector3(0.12f, 0.035f, 0.35f), new Vector3(0.13f, 0.07f, 0.11f), -30f),
+                (new Vector3(-0.24f, 0.045f, 0.27f), new Vector3(0.15f, 0.09f, 0.13f), 41f),
+                (new Vector3(-0.36f, 0.035f, -0.05f), new Vector3(0.12f, 0.07f, 0.12f), 7f),
+                (new Vector3(-0.14f, 0.04f, -0.33f), new Vector3(0.16f, 0.08f, 0.11f), -52f),
+                (new Vector3(0.25f, 0.03f, -0.26f), new Vector3(0.11f, 0.06f, 0.10f), 63f),
+            };
+            foreach (var clod in clods)
+            {
+                var piece = GrowthVfx.Block(b._soil, "clod", clod.size, GrowthVfx.Seed).transform;
+                piece.localPosition = clod.at; piece.localRotation = Quaternion.Euler(8f, clod.yaw, -6f);
+            }
             b._soil.gameObject.SetActive(false);
             b._model = PaeteProp.Spawn("seedling", b._root, Palette, ToonSkin.PersonOutlineWidth);
             b._stem = PaeteProp.Find(b._model, "stem") ?? new GameObject("stem").transform;
@@ -537,7 +647,7 @@ namespace TumbangPreso.Visual
             if (pullable)
             {
                 float pulse = 1f + 0.06f * Mathf.Sin(age * 5.0f);
-                _soil.localScale = new Vector3(0.9f * pulse, 0.03f, 0.9f * pulse);
+                _soil.localScale = new Vector3(pulse, 1f + 0.5f * loosen, pulse);
             }
 
             // The pitcher: a beat behind the neck (follow-through); the spit (rear back, snap past rest,
@@ -557,7 +667,8 @@ namespace TumbangPreso.Visual
             // lies over the mouth, and a NEGATIVE pitch lifts it (its +Z runs forward from the hinge).
             if (_lid != null)
             {
-                float open = -12f - 46f * grown * grown;
+                // ⚠️ Opens to 84 degrees at READY, not 58: the v22 film had the rising bakya cutting through the lid.
+                float open = -12f - 72f * grown * grown;
                 float slap = GrowthVfx.Envelope(sinceShot, 0.12f, 0.04f, 0.5f, 0.4f);
                 open = Mathf.Lerp(open, -4f, slap);
                 open = Mathf.Lerp(open, -30f, loosen);
@@ -569,7 +680,8 @@ namespace TumbangPreso.Visual
             {
                 float up = GrowthVfx.Pop(Mathf.Clamp01((grown - 0.35f) / 0.65f));
                 _shoe.localScale = _shoeScale * Mathf.Max(0.001f, Mathf.Clamp01(grown * 1.4f));
-                _shoe.localPosition = _shoeAt + new Vector3(0f, 0.075f, 0.075f) * up;
+                // ⚠️ Rises further than the first pass (0.075 m): at READY its toe must clear the thicker lip.
+                _shoe.localPosition = _shoeAt + new Vector3(0f, 0.11f, 0.10f) * up;
                 _shoe.localRotation = _shoeRest * Quaternion.Euler(-28f * up, 0f, 0f);
                 _shoe.gameObject.SetActive(grown > 0.02f && sinceShot > 0.13f);
             }

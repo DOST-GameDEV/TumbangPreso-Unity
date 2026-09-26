@@ -798,9 +798,11 @@ def paete():
     # C: CONNECT. Low from his left at the height of his hands, so the palms on the court, the roots
     # burrowing out of him and the light going into the ground fill the frame.
     p.shot(1.5, 2.5, (-2.6, .35, 2.1), (0, .45, .5), 58, eye_to=(-2.2, .3, 2.6), look_to=(.2, .4, 1.4))
-    # D: SUMMON. Over his right shoulder down the court as he rises: the light racing through the roots
-    # under the court toward where the tree will come up.
-    p.shot(2.5, 3.05, (1.1, 1.9, -2.2), (0, .3, 3.5), 56, eye_to=(.9, 1.8, -1.9), look_to=(0, .4, 4.5))
+    # D: SUMMON. Off his right shoulder and wide of it, down the court as he rises: his raised arms on the
+    # left of the frame and the light racing through the roots toward where the tree will come up.
+    # ⚠️ Moved out 1.2 m to the side (2026-09-26): straight over the shoulder, his raised forearm filled the
+    # whole lens in the first in-match film and the rise read as a wall of bark.
+    p.shot(2.5, 3.05, (2.3, 1.6, -1.3), (-.2, .6, 3.5), 58, eye_to=(2.1, 1.5, -1.7), look_to=(-.1, .7, 4.5))
     # E: THE PAYOFF (owner: *"i also dont see the tree sprouting to its full size"*). Low behind his right
     # shoulder, tilting UP as the full 9 m tree screws up out of the court where the roots arrived.
     p.shot(3.05, 4.6, (2.4, .7, -1.8), (0, 3.2, 5.5), 62, eye_to=(3.0, 1.0, -2.6), look_to=(0, 4.6, 5.5))

@@ -6,7 +6,7 @@
       "cue": "sfx_cast_cheska_coldfeet",
       "seconds": 1.1,
       "peak": 0.7,
-      "rms": 0.0859182837756364,
+      "rms": 0.08591828377563639,
       "sha256": "0bf9d917d286878fd0ea00f58a72b8c8a144b4d928d3198f8283fb881e0da5a6"
     },
     {
@@ -41,7 +41,7 @@
       "cue": "sfx_cast_cheska_absolutezero",
       "seconds": 2.4,
       "peak": 0.72,
-      "rms": 0.07002781955966954,
+      "rms": 0.07002781955966957,
       "sha256": "2b714a3c3b5fad1300b25c997f5f404fd4a1cd39a87119049c41d05c0a1280ce"
     },
     {
@@ -90,14 +90,14 @@
       "cue": "sfx_cast_nemu_terrify",
       "seconds": 1.5,
       "peak": 0.7,
-      "rms": 0.1347681824921716,
+      "rms": 0.13476818249217162,
       "sha256": "d82d17813b800badcb12bd281a71f1b0c65eceea2fd588e4eb2d31185ebd335e"
     },
     {
       "cue": "sfx_cast_nemu_fetch",
       "seconds": 0.6,
-      "peak": 0.6999999999999998,
-      "rms": 0.11148917898427112,
+      "peak": 0.7,
+      "rms": 0.11148917898427117,
       "sha256": "2aaaa37bc4a5e3bfbf5366d861cd7b8d6a55daded2f703300aea58f4346b5c57"
     },
     {
@@ -132,7 +132,7 @@
       "cue": "sfx_cast_phaister_pin",
       "seconds": 1.0,
       "peak": 0.7,
-      "rms": 0.11484687809496215,
+      "rms": 0.11484687809496213,
       "sha256": "c2ce77aba9646607eb62d87d104343494bffc515b4b5cb84576b1efbf2ef9491"
     },
     {
@@ -186,10 +186,10 @@
     },
     {
       "cue": "sfx_cast_paete_sentry",
-      "seconds": 2.2,
+      "seconds": 0.8,
       "peak": 0.7,
-      "rms": 0.08238115168898635,
-      "sha256": "a7176021ad29a6d4fafc7ef04e618d9a03d086386d716d9082bad9fff41cbdf1"
+      "rms": 0.1402435785038266,
+      "sha256": "66d1f035446043a5a64f43e536620b2d0cacf4f4698bf4bef642c8ef1a64022e"
     },
     {
       "cue": "sfx_paete_root_vein",

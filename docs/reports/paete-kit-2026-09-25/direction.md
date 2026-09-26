@@ -375,7 +375,7 @@ clog's toe over the lip, a proud bob, `sprout_ready`); WIND-UP (the mouth rears 
 (snap forward past rest, the clog tumbles out on its arc, the lid slaps shut); LOOSE (15 s on: the
 neck sags, the jug droops, the palette dries toward straw, roots lift); PULLED (ripped up, flung).
 The muzzle stays at 0.95 m (`PaetePlant.Muzzle`). Its own sixteen-slot palette (pitcher lime
-`A9C44E`, shade `7E9E3A`, leaves `4F8B2F`/`3A6B24`, tendril `6F9B35`, bakya `C29563`/`8A6240`, root
+`93B540`, shade `5B7F2C` (deepened from `A9C44E`/`7E9E3A` after the first in-engine film, v19, where the jug read as a pale lightbulb and its ridges vanished), leaves `4F8B2F`/`3A6B24`, tendril `6F9B35`, bakya `C29563`/`8A6240`, root
 `A8946A`, his moss, ink, interior `2B1512`, lip `8E2435`, lid underside `B04A55`, strap `3F5A1A`),
 passed through `PaeteProp.Spawn(name, parent, palette, width)`.
 
@@ -398,3 +398,45 @@ Concept mocks (out-of-engine renders, labelled): `review/concept_bloom_v1.png`,
 `thorns()` (file names kept so `PaeteProp.Spawn("seedling"|"thorns")` still load); node names
 `stem`, `pod`, `lid`, `slipper`, `arm-0/1`, `leaf-*`, `root-0..3` and `clump`, `sheath-0..4`,
 `frond-0..4`, `whip-0..4`; `PaetePlantBody` and `PaeteThornBody` re-posed for the new nodes.
+
+### 5.12 The ultimate, redirected after the first in-match film (owner, 2026-09-26)
+
+The first film of MAKILING'S EMBRACE on his own screen in a match (`PaeteKitPlayProbe.FilmTheUltimateOnHisScreen`,
+`paete_ultimate_v3.mp4`) was sent to the owner. His verdicts: *"ur direction of the entire cutscene sucks"*, *"i dont
+get what the 3 plants showing up and the big plant showing up means"*, *"i js really dont liek taht u fucking show 3
+small plants that does not make snese"*, of Makiling *"how she looks needs to be refined"*, *"make his eyes glow or
+smth"*; of the live tree *"it sucks"*, *"make it look like the roots GO INT he ground not float off of it"*, *"make it
+seem more apparent that the people tied to the tree are actually TIED bcz they look like theyre js standing"*,
+*"animate taht shit"*, *"REFINE THIS TREE MORE"*.
+
+**What was wrong, named.** Five cuts in 4.6 s, each carrying a different idea, so nothing landed. Four
+small woven trees rose round him in the first shot and read as copies of HIM (the sentry's model has his
+two hollows). The forest stage was a translucent cylinder whose rim showed as a band across the real sky.
+The CONNECT beat, the heart of his power (he calls it from the ground), was filmed at floor height past a
+rope in the lens. The rise was filmed over his shoulder into his forearm, and the payoff from behind his back.
+Makiling read as a translucent box: a boxy head under a helmet of hair, a tiny face, no silhouette.
+
+**The meaning, in one line:** her power comes down into him, he gives it to the ground, and the ground
+answers with the guardian. Every shot carries exactly one step of that, and nothing appears that does not.
+
+**Three shots (still 4.6 s, so the shared phase, the warning and the network timing are unchanged):**
+
+| | Time | Idea | Camera | What happens |
+|---|---|---|---|---|
+| 1 CALL | 0 to 1.4 s | She gives him her light | Front, low three-quarter, one slow push-in, framed to hold her head above his | He stands, head bowed, hands cupped. She rises behind him out of the ground mist, a head and more taller than him, bent over him, her cupped hands above his. Her light drops from her hands into his (0.75 s); HIS EYES IGNITE with it (0.95 s) and stay lit to the end. |
+| 2 CONNECT | 1.4 to 2.7 s | He gives it to the ground | A high crane in front and to his right, looking down, drifting along the court toward the landing | He drops to a knee and slams both palms into the court (1.5 s, punch). She sinks with him, her hands over his. Roots burst round his palms and curl into the court; three veins of light race away under the road toward where the tree will stand, and from above you SEE them travel. |
+| 3 RISE | 2.7 to 4.6 s | The ground answers | Wide from his side, low, both him and the landing in frame; craning up as the tree grows | He rises, arms high, eyes blazing. She rises with him and pours into the ground ahead as a stream of light (2.7 to 3.0 s). The court breaks and the guardian screws up out of it to its full height; the camera climbs with it and ends on its eyes lighting, him small and lit in the foreground. |
+
+**Cut:** the four forest trees (confusing, and never asked for), the stage walls, sky, ground and mountain (their rim
+showed; the payoff happens in the REAL court, so the whole scene does), the bark spikes at the landing (the tree's own
+ground break says it). **Kept:** the gift, the kneel, the veins, the payoff tree, the timing.
+
+**Makiling, refined:** the boxy hair helmet goes; hair parted and falling past her face in locks that frame it, down
+her back to the hem; a bigger face with longer closed-eye strokes; long flowing sleeves hanging from her forearms;
+her hem dissolving. The ghost shader stays (one jade hue, fresnel edge, depth pre-pass).
+
+**The live tree, refined:** its own palette of old wood (the roster's orange bark read as plastic in the plaza light),
+leaf tufts at every branch so the crown has mass and life, the green gem in the crown removed (the eyes are its only
+light), claw-root toes and ground branches that DIVE INTO the court with a heave of soil where they go in rather than
+curling off it, prisoners bound by thick woven bands from the shins to the hips and the limb round the waist, and a
+rooted body that STRAINS against it all the time (the struggle loop slowly when idle, hard when they fight).

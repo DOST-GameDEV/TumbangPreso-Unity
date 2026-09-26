@@ -100,7 +100,7 @@ namespace TumbangPreso.Visual
         /// <param name="wake">when the light opens in its hollows</param>
         public PaeteForestTree(Transform parent, Vector3 at, float yaw, float scale, float rise, float wake)
         {
-            Model = PaeteProp.Spawn("sentry", parent);
+            Model = PaeteProp.Spawn("sentry", parent, PaeteSentryBody.Palette, ToonSkin.PersonOutlineWidth);
             _rise = rise; _wake = wake;
             if (Model == null) return;
             Model.transform.localPosition = at;
@@ -166,11 +166,11 @@ namespace TumbangPreso.Visual
 
         private readonly Material _ghost;
         private static readonly int BaseYId = Shader.PropertyToID("_BaseY"), PresenceId = Shader.PropertyToID("_Presence");
-        private readonly float _scale;
+        private readonly float _scale, _yaw;
 
         public MakilingSpirit(Transform parent, Vector3 at, float yaw, float scale)
         {
-            _at = at; _scale = scale;
+            _at = at; _scale = scale; _yaw = yaw;
             Model = PaeteProp.SpawnRaw("makiling", parent);
             if (Model == null) return;
             Model.transform.localPosition = at;
@@ -219,13 +219,15 @@ namespace TumbangPreso.Visual
         /// mist and lowers her back; <paramref name="giveAt"/> is when the seed leaves her hands for his
         /// palm at <paramref name="palmWorld"/>; <paramref name="gather"/> lifts her hands and stirs her hair.
         /// </summary>
-        public void Pose(float t, float presence, float giveAt, Vector3 palmWorld, float gather)
+        public void Pose(float t, float presence, float giveAt, Vector3 palmWorld, float gather, Vector3 drift = default, float lean = 0f)
         {
             if (Model == null) return;
             Model.SetActive(presence > 0.002f);
             float rise = Mathf.SmoothStep(0f, 1f, presence);
-            // Up out of the mist, floating: her hem stays in it, and she fades in as she comes.
-            Model.transform.localPosition = _at + Vector3.up * (-1.4f * _scale * (1f - rise) + 0.05f * Mathf.Sin(t * 1.7f));
+            // Up out of the mist, floating: her hem stays in it, and she fades in as she comes. `drift` and `lean`
+            // let the cutscene move her with him (she sinks and bends over him at the connect, direction.md 5.12).
+            Model.transform.localPosition = _at + drift + Vector3.up * (-1.4f * _scale * (1f - rise) + 0.05f * Mathf.Sin(t * 1.7f));
+            Model.transform.localRotation = Quaternion.Euler(0f, _yaw, 0f) * Quaternion.Euler(lean, 0f, 0f);
             if (_ghost != null)
             {
                 _ghost.SetFloat(BaseYId, Model.transform.position.y);
@@ -534,19 +536,31 @@ namespace TumbangPreso.Visual
     public sealed class PaeteRootCoil : MonoBehaviour
     {
         // Each branch: keys of (angle round the legs in degrees, height, distance out, girth).
+        // ⚠️⚠️ v2, TIED, NOT DECORATED (owner, 2026-09-26: *"make it seem more apparent that the people tied to the
+        // tree are actually TIED bcz they look like theyre js standing"*). v1 was three branches 2 to 7 cm thick
+        // spiralling loosely 30 to 46 cm out round the shins only, up to 0.58 m: from any distance they vanished.
+        // Now four thick bands (6 to 11 cm) come up out of the road and wind TIGHT round the legs (24 to 29 cm out,
+        // on the trousers) all the way to the hips (0.98 m), crossing each other, so the legs read as lashed
+        // together; the embrace limb from the trunk wraps the waist above them. Each band typed on its own path.
         private static readonly Vector4[][] Branches =
         {
-            new[] { new Vector4(-20f, -0.04f, 0.44f, 0.070f), new Vector4(40f, 0.10f, 0.36f, 0.062f), new Vector4(115f, 0.22f, 0.33f, 0.054f),
-                    new Vector4(190f, 0.33f, 0.31f, 0.046f), new Vector4(262f, 0.44f, 0.30f, 0.036f), new Vector4(318f, 0.54f, 0.31f, 0.022f) },
-            new[] { new Vector4(110f, -0.04f, 0.46f, 0.066f), new Vector4(172f, 0.08f, 0.37f, 0.058f), new Vector4(236f, 0.19f, 0.33f, 0.050f),
-                    new Vector4(300f, 0.30f, 0.31f, 0.042f), new Vector4(372f, 0.40f, 0.30f, 0.032f), new Vector4(420f, 0.48f, 0.32f, 0.018f) },
-            new[] { new Vector4(232f, -0.04f, 0.45f, 0.064f), new Vector4(290f, 0.12f, 0.35f, 0.056f), new Vector4(350f, 0.25f, 0.32f, 0.048f),
-                    new Vector4(420f, 0.36f, 0.31f, 0.040f), new Vector4(476f, 0.47f, 0.31f, 0.030f), new Vector4(520f, 0.58f, 0.33f, 0.016f) },
+            new[] { new Vector4(-20f, -0.06f, 0.40f, 0.110f), new Vector4(30f, 0.08f, 0.29f, 0.100f), new Vector4(110f, 0.20f, 0.26f, 0.094f),
+                    new Vector4(200f, 0.33f, 0.25f, 0.088f), new Vector4(290f, 0.48f, 0.26f, 0.080f), new Vector4(372f, 0.62f, 0.27f, 0.072f),
+                    new Vector4(450f, 0.78f, 0.28f, 0.062f), new Vector4(505f, 0.90f, 0.29f, 0.040f) },
+            new[] { new Vector4(110f, -0.06f, 0.42f, 0.104f), new Vector4(160f, 0.06f, 0.30f, 0.096f), new Vector4(230f, 0.16f, 0.26f, 0.090f),
+                    new Vector4(310f, 0.28f, 0.25f, 0.084f), new Vector4(395f, 0.42f, 0.26f, 0.078f), new Vector4(470f, 0.56f, 0.27f, 0.070f),
+                    new Vector4(540f, 0.72f, 0.28f, 0.058f), new Vector4(590f, 0.84f, 0.29f, 0.036f) },
+            new[] { new Vector4(232f, -0.06f, 0.41f, 0.106f), new Vector4(275f, 0.10f, 0.29f, 0.098f), new Vector4(200f, 0.24f, 0.26f, 0.090f),
+                    new Vector4(120f, 0.38f, 0.25f, 0.084f), new Vector4(40f, 0.52f, 0.26f, 0.076f), new Vector4(-40f, 0.68f, 0.27f, 0.066f),
+                    new Vector4(-115f, 0.84f, 0.28f, 0.054f), new Vector4(-160f, 0.96f, 0.29f, 0.034f) },
+            new[] { new Vector4(350f, -0.06f, 0.43f, 0.096f), new Vector4(300f, 0.12f, 0.29f, 0.090f), new Vector4(225f, 0.30f, 0.25f, 0.084f),
+                    new Vector4(150f, 0.46f, 0.25f, 0.078f), new Vector4(75f, 0.62f, 0.26f, 0.070f), new Vector4(0f, 0.78f, 0.27f, 0.060f),
+                    new Vector4(-70f, 0.92f, 0.28f, 0.048f), new Vector4(-110f, 0.98f, 0.29f, 0.030f) },
         };
-        private static readonly Color[] Shade = { GrowthVfx.BarkDark, GrowthVfx.Bark, GrowthVfx.BarkLit };
+        private static readonly Color[] Shade = { PaeteSentryBody.BarkDark, PaeteSentryBody.Bark, PaeteSentryBody.BarkLit, PaeteSentryBody.Bark };
 
         private CharacterMotor _body;
-        private readonly Mesh[] _meshes = new Mesh[3];
+        private readonly Mesh[] _meshes = new Mesh[4];
         private Transform _knot, _leaf;
         private readonly List<Vector3> _points = new List<Vector3>();
         private readonly List<float> _radii = new List<float>();
@@ -559,16 +573,16 @@ namespace TumbangPreso.Visual
             go.transform.SetParent(body.transform, false);
             var fx = go.AddComponent<PaeteRootCoil>();
             fx._body = body;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < fx._meshes.Length; i++)
             {
                 fx._meshes[i] = new Mesh { name = "PaeteShinBranch" };
                 fx._meshes[i].MarkDynamic();
                 PaeteInk.Part(go.transform, "shin-branch-" + i, fx._meshes[i], Shade[i]);
             }
             var knotMesh = new Mesh { name = "PaeteShinKnot" };
-            PaeteInk.Tube(knotMesh, new List<Vector3> { new Vector3(-0.05f, 0f, 0f), new Vector3(0.05f, 0.01f, 0f) }, new List<float> { 0.07f, 0.06f }, 5);
-            fx._knot = PaeteInk.Part(go.transform, "shin-knot", knotMesh, GrowthVfx.BarkDark).transform;
-            fx._leaf = PaeteInk.Part(go.transform, "shin-leaf", PaeteInk.Leaf(0.16f, 0.09f, 0.014f), GrowthVfx.LeafGreen).transform;
+            PaeteInk.Tube(knotMesh, new List<Vector3> { new Vector3(-0.05f, 0f, 0f), new Vector3(0.05f, 0.01f, 0f) }, new List<float> { 0.10f, 0.09f }, 5);
+            fx._knot = PaeteInk.Part(go.transform, "shin-knot", knotMesh, PaeteSentryBody.BarkDark).transform;
+            fx._leaf = PaeteInk.Part(go.transform, "shin-leaf", PaeteInk.Leaf(0.20f, 0.11f, 0.016f), PaeteSentryBody.Leaf).transform;
         }
 
         /// <summary>The break-out (direction.md section 5.6): chunks, leaves and the snap, on every peer.</summary>
@@ -595,11 +609,14 @@ namespace TumbangPreso.Visual
             _age += dt;
             float grow = GrowthVfx.Pop(_age / 0.6f);
             bool fighting = _body.IsStruggling;
-            for (int b = 0; b < 3; b++)
+            // ⚠️ ALIVE ALL THE TIME (owner: *"animate taht shit"*): the bands SQUEEZE in a slow breath, tightening
+            // a few centimetres on the legs, and when the player fights they judder and strain against them.
+            float squeeze = 1f - 0.05f * (0.5f + 0.5f * Mathf.Sin(_age * 2.4f));
+            for (int b = 0; b < Branches.Length; b++)
             {
                 var keys = Branches[b];
                 _points.Clear(); _radii.Clear();
-                // The typed keys, eased between: four samples a span.
+                // The typed keys, eased between: four samples a span, growing up from the road.
                 int shown = Mathf.Clamp(Mathf.CeilToInt(grow * (keys.Length - 1) * 4f), 1, (keys.Length - 1) * 4);
                 for (int s = 0; s <= shown; s++)
                 {
@@ -608,16 +625,17 @@ namespace TumbangPreso.Visual
                     float t = f - k;
                     Vector4 a = Vector4.Lerp(keys[k], keys[k + 1], t);
                     float ang = a.x * Mathf.Deg2Rad;
-                    float shake = fighting ? Mathf.Sin(_age * 34f + b * 2f) * 0.03f * a.y : 0f;
-                    _points.Add(new Vector3(Mathf.Sin(ang) * a.z + shake, a.y, Mathf.Cos(ang) * a.z));
-                    _radii.Add(a.w);
+                    float r = a.y > 0.05f ? a.z * squeeze : a.z;
+                    float shake = fighting ? Mathf.Sin(_age * 34f + b * 2f + s) * 0.035f * Mathf.Clamp01(a.y + 0.2f) : 0f;
+                    _points.Add(new Vector3(Mathf.Sin(ang) * r + shake, a.y + (fighting ? Mathf.Sin(_age * 27f + b) * 0.01f : 0f), Mathf.Cos(ang) * r));
+                    _radii.Add(a.w * (fighting ? 1.08f : 1f));
                 }
-                PaeteInk.Tube(_meshes[b], _points, _radii, 5);
+                PaeteInk.Tube(_meshes[b], _points, _radii, 6);
             }
             // The knot at the knee where two meet, and a leaf on the tallest tip.
-            _knot.localPosition = new Vector3(0.02f, 0.47f, 0.30f);
+            _knot.localPosition = new Vector3(0.02f, 0.62f, 0.27f * squeeze);
             _knot.localScale = Vector3.one * Mathf.Clamp01((grow - 0.7f) * 3.3f);
-            var tip = Branches[2][5];
+            var tip = Branches[2][7];
             float ta = tip.x * Mathf.Deg2Rad;
             _leaf.localPosition = new Vector3(Mathf.Sin(ta) * tip.z, tip.y + 0.04f, Mathf.Cos(ta) * tip.z);
             _leaf.localRotation = Quaternion.Euler(-35f, tip.x, 0f);

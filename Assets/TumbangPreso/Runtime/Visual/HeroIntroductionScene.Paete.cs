@@ -145,8 +145,13 @@ namespace TumbangPreso.Visual
             float stage = StagePresence(t, .3f);
 
             // WHO: ground, mist and sky arrive; the forest stands up out of the ground behind him.
-            Tint(_paeteGround, stage); Tint(_paeteMist, stage * (0.8f + 0.2f * Mathf.Sin(t * 2f))); Tint(_paeteSky, stage);
-            Place(_paeteMountain, new Vector3(-2.5f, 1.2f, 7.1f), new Vector3(9f, 3.2f * stage, 1f), Quaternion.Euler(0, 180, 8), stage);
+            // ⚠️ THE FOREST STAGE LEAVES BEFORE THE TREE COMES UP (2026-09-26, the first in-match film): the payoff
+            // looks down the court at the landing, and there the far wall of the stage cylinder stood behind the
+            // tree as a flat dark-green board. The tree erupts in the REAL court the players are standing in, so
+            // the ground, mist, sky and mountain clear out from 2.7 s and are gone as it breaks the road (2.95 s).
+            float court = 1f - Ease(2.7f, 2.95f, t);
+            Tint(_paeteGround, stage * court); Tint(_paeteMist, stage * court * (0.8f + 0.2f * Mathf.Sin(t * 2f))); Tint(_paeteSky, stage * court);
+            Place(_paeteMountain, new Vector3(-2.5f, 1.2f, 7.1f), new Vector3(9f, 3.2f * stage * court, 1f), Quaternion.Euler(0, 180, 8), stage * court);
             // The trees lean in toward him while he is connected, and straighten as he rises.
             float lean = 8f * Ease(1.5f, 2.2f, t) * (1f - Ease(2.62f, 3.0f, t));
             foreach (var tree in _makiling) tree.Pose(t, lean, stage);

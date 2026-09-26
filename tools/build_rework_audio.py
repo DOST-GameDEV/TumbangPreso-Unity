@@ -351,14 +351,19 @@ def paete_ground_call():
     """MAKILING'S EMBRACE, cast (owner: *"I want him to be CALLING IT FROM THE GROUND"*): the old recipe
     described a seed and an overhand swish. Now: palms pressed to the court (a soil crunch), a root groan
     swelling underfoot, a rising rumble as the power gathers, and the knock of the ground answering."""
-    s = 2.2
+    # ⚠️⚠️ SHORTENED 2026-09-26 (Unity pass). This cue plays AFTER the introduction
+    # (`ExecuteSharedUltimate` -> `PlayCastConfirm(afterIntroduction: true)`), at the instant the live root
+    # vein starts its 0.45 s race and the tree bursts (`PaeteSentry.Flight`, `sfx_paete_sentry_burst`).
+    # The 2.2 s cloud version swelled to 2.0 s and knocked at 1.95 s: 1.5 s after the tree was already up,
+    # so its climax answered nothing. The kneel, press and gather are the cutscene's, and live in his theme
+    # (`build_paete_audio.theme`, re-timed to the 4.6 s cutscene). What is left here is the heave that
+    # launches the race: a soil crunch at the press and a groan pulling up to the burst, then out of the way.
+    s = 0.8
     t = times(s)
-    press = pa.snap(t, 9601, 0.05, 30, 0.12, 900, 0.8) + pa.knock(t, 0.05, 150, 0.08, 0.6)
-    groan = pa.creak(t, 9602, sweep(t, 25, 70, s), 0.4, [(140, 1.0), (330, 0.5)], 12.0, window(t, 0.1, 2.1, 0.5)) * 3.0
-    swell = rumble(t, 9603, np.clip(t / 2.0, 0, 1) ** 2, 80)
-    answer = pa.knock(t, 1.95, 110, 0.2, 1.0)
-    leaves = pa.rustle(t, 9604, 1500 * window(t, 1.2, 2.15, 0.3), 3000) * 0.6
-    return finish("sfx_cast_paete_sentry", press + groan + swell + answer + leaves, s)
+    press = pa.snap(t, 9601, 0.0, 30, 0.08, 900, 0.8) + pa.knock(t, 0.0, 120, 0.10, 0.7) + thump(t, 0.0, 52, 0.25)
+    groan = pa.creak(t, 9602, sweep(t, 30, 80, 0.45), 0.4, [(140, 1.0), (330, 0.5)], 12.0, window(t, 0.02, 0.5, 0.12)) * 3.0
+    swell = rumble(t, 9603, np.clip(t / 0.45, 0, 1) ** 2 * window(t, 0.0, 0.6, 0.2), 80)
+    return finish("sfx_cast_paete_sentry", press + groan + swell, s)
 
 
 def paete_veins():

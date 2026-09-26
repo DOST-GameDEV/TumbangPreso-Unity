@@ -241,6 +241,19 @@ Necro Nemu, Voodoo Phaister; Pyro (Sean), Electro (Zack) and Hydro (Rafi) have n
 - [ ] Ultimate cutscenes rebuilt per `ultimates.md`.
 - [ ] Owner review of the numbers set in plan section 7.
 - [ ] Unity verification (the separate testing chat): compile, EditMode, PlayMode gate, captures.
+  First Unity run of the cloud kits, 2026-09-26 (`Logs/paete-r1-editmode.xml`): it COMPILES; EditMode 587/609. Reds that
+  belong to this rework, each to be fixed in its hero's pass (update the test to the new design, never flip the design):
+  `BroadcastPassTests.AllSixHeroesHaveTheirOwnNamedUltimate` (Dante's card still expects TITAN FISSURE),
+  `HeroLoadoutRefreshTests.SameHeroVariantRefresh...` x6 (variants are off with `SidegradesOpen = false`),
+  `HeroPresentationTests.EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph` (BARRIER reuses DanteShield),
+  `...EveryHeroAbilityHasBespokeCastAndViewModelActions` and `ViewmodelArms_PreservesHeldSlipper...` and
+  `RosterArmGeometryTests.EveryHeroUsesBothHandsAndReturnsCleanly` (the COMING SOON placeholder has no cast or FPP action),
+  `...EverySummaryFitsTheCardItIsDrawnIn` (CURSE: DISORIENTED 134 > 125 characters), `...TelegraphsMatchWhatTheAbilityPlaces`
+  (FROSTBITE draws 0 m, places 1.6 m), `InputMapAndAbilityTests` x3 (charges, Dante skill2 30 s under the 45 s floor, Glacial
+  Nova vs Supernova cost), `RuntimeLayerTests.Nemu_AstralProjection_SupportsReactivation`. Known, not the rework:
+  `ThrowEquipmentClearanceTests` and the two `ToonLightFalloffTests` (need graphics). PlayMode `SharedUltimatePhaseTests`:
+  `TwoAcceptedCastsShareOnePhase...` and `FourCastersShareOneDeadline...` fail because Phaister's HIGOP is not accepted into a
+  shared phase (commits 1 of 2, `Logs/paete-r8-play.xml`).
 
 ### CAST-1 · Hold to preview, release to cast, cancel on every device ⚠️ OPEN, 2026-09-26
 
@@ -387,7 +400,7 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
 - [x] Portrait and avatar (`UI/portraits/paete.png` via `TumpPortraitAuthor.CaptureOnly -tp-portrait-id paete` with a
   closer framing for him, `UI/avatars/avatar_paete.png` via `tools/build_avatars.py`). NOT yet checked after the
   closer framing re-bake (the (height, zoom) argument order was wrong once; fixed to `LookAt(.84f, .42f)`).
-- [ ] ⚠️ NEXT, DESIGN APPROVED 2026-09-26 (*"thats pretty fucking good"*; THORN HARVEST re-armed after *"it looks like  a flimsy plant and not a dangerous cool plant"*): BAKYA BLOOM a Makiling pitcher plant, THORN HARVEST an armed rattan (direction.md 5.11, concept sheets in the report's review/). BUILT 2026-09-26 (cloud, no Unity): `tools/build_paete_props.py` `seedling()` (pitcher) and `thorns()` (armed rattan), glbs rebuilt (2673 and 6534 triangles), `PaetePlantBody`/`PaeteThornBody` re-posed with their own palettes (lid, rising bakya, spit; stem ripple, talon fronds, rattan whips from the facing frond). Syntax-checked only: compile, `PaeteReviewProbe.RunTrees` film and `PaeteKitPlayProbe` owed to the testing chat. Earlier text: THE ATTACKER AND DEFENDER PLANTS MUST BE THEIR OWN SPECIES (owner, 2026-09-26: *"do all his sentries look
+- [x] (compiled, filmed and refined in Unity 2026-09-26: `PaeteReviewProbe` v19 to v22, pitcher deepened `93B540`/`5B7F2C`, fatter jug, thick two-tone rolled lip, five typed belly stripes, a rounded lid bigger than the mouth that opens to 84 degrees, the bakya rising clear of the lip at READY, a round heaved soil mound instead of the square tile; `PaeteKitPlayProbe` 8/8) DESIGN APPROVED 2026-09-26 (*"thats pretty fucking good"*; THORN HARVEST re-armed after *"it looks like  a flimsy plant and not a dangerous cool plant"*): BAKYA BLOOM a Makiling pitcher plant, THORN HARVEST an armed rattan (direction.md 5.11, concept sheets in the report's review/). BUILT 2026-09-26 (cloud, no Unity): `tools/build_paete_props.py` `seedling()` (pitcher) and `thorns()` (armed rattan), glbs rebuilt (2673 and 6534 triangles), `PaetePlantBody`/`PaeteThornBody` re-posed with their own palettes (lid, rising bakya, spit; stem ripple, talon fronds, rattan whips from the facing frond). Syntax-checked only: compile, `PaeteReviewProbe.RunTrees` film and `PaeteKitPlayProbe` owed to the testing chat. Earlier text: THE ATTACKER AND DEFENDER PLANTS MUST BE THEIR OWN SPECIES (owner, 2026-09-26: *"do all his sentries look
   the same? i wanted all his sentries (ult and attacker skill and defender skill TO ALL look diff and distinct and have
   their own style)"*, *"attacker and defender sentry should look like distinct plants or trees"*). Today the seedling and
   the thorn fist share the woven brown bark of the ultimate's tree. Proposed to the owner (not yet built): BAKYA BLOOM a
@@ -395,14 +408,23 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   opens like a mouth to spit the wooden slippers, no bark; THORN HARVEST a low dark spiky rosette like rattan palm (uway),
   stiff barbed fronds that fan out and whip, no bark trunk. Typed by hand in `tools/build_paete_props.py` (seedling(),
   thorns()), node names kept for `PaeteTreeBodies.cs`, filmed with `PaeteReviewProbe.RunTrees`.
-- [ ] The ultimate's cast sound still describes a seed and an overhand swish (`tools/build_paete_audio.py`
+- [x] (2026-09-26: `sfx_cast_paete_sentry` cut to 0.8 s, the heave that launches the 0.45 s live vein race, because it
+  plays AFTER the cutscene and the 2.2 s cloud cut swelled 1.5 s past the tree; the ground call itself moved into his theme,
+  `sfx_ult_theme_paete`, re-timed from 3.6 s to the 4.6 s cutscene beat for beat: her figure, the light, the press 1.5 s,
+  the veins 1.6 to 2.62 s, the rising bars, the eruption 2.95 s. Not yet heard by the owner in the game mix; the video
+  `paete_ultimate_v3.mp4` carries it.) The ultimate's cast sound still describes a seed and an overhand swish (`tools/build_paete_audio.py`
   `sentry_cast`): rewrite it as the ground call (a root groan swelling, soil crunch at the press, a rising rumble), and
   add a sound for the veins racing under the court. Not heard by the owner.
-- [ ] Film the cutscene ON HIS SCREEN in a match: `UltimatePhaseView` draws it through its own camera onto an overlay,
+- [x] (2026-09-26: `PaeteKitPlayProbe.FilmTheUltimateOnHisScreen`, TUMP_PAETE_FILM=1: his screen with the cutscene
+  RawImage copied, the court, a caught player's side view; `Time.captureFramerate` 30 plus `SharedUltimatePhase.FilmClock`
+  so the cutscene lasts its real 4.6 s; every world cue logged with its film time and mixed into the mp4. Sent as
+  `Logs/paete-share/paete_ultimate_v3.mp4`.) Film the cutscene ON HIS SCREEN in a match: `UltimatePhaseView` draws it through its own camera onto an overlay,
   which `ImprovementEvidenceProbe.Record` (Camera.main) cannot see. Capture the phase's RenderTexture in
   `PaeteKitPlayProbe.FilmTheSentryPullingAndRootingThem`. The victim's-eye film (dragged in, held, camera swung to third
   person) was made once and overwritten; add it as its own capture.
-- [ ] ⚠️ NEW RED, 2026-09-26: EditMode 605/609 (`Logs/paete-editmode12.xml`): the three known reds plus
+- [x] (2026-09-26: the red was the owner's own 1.45 bulk against the 0.36 m cap. `ViewmodelArms.PaeteArmBulk` names
+  the factor and `RosterArmAuditTests` gives Paete exactly that allowance over his measured 0.364 m bake; see the EditMode
+  row in the ledger for the run.) ⚠️ NEW RED, 2026-09-26: EditMode 605/609 (`Logs/paete-editmode12.xml`): the three known reds plus
   `RosterArmAuditTests.EveryArmHasARealForearmAxisAndCurrentCharacterGeometry`, first seen after
   `RosterBookBuilder.RefreshPersonFromCommandLine -person paete` re-baked his clips and after the 1.45 first-person
   arm bulk in `ViewmodelArms`. Read its message and fix the cause (not the assertion). It passed at 606/609 before.
@@ -411,8 +433,23 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   would read better for the owner).
 - [x] Rerun `PaeteKitPlayProbe` and EditMode after the rise and snapshot changes: 4/4 (`Logs/paete-play4.xml`) and
   606/609 with the three known reds (`Logs/paete-editmode5.xml`), 2026-09-26; rerun after every batch since.
-- [ ] Still to do: portrait and avatar, a rejoin test that exercises the plant, thorn and sentry snapshot
-  kinds, `BotBehaviourProbe`, a first-person vine capture, PlayMode gate, Checks.RunAll, audits, a build.
+- [ ] Still to do: portrait and avatar check, a rejoin test that exercises the plant, thorn and sentry snapshot
+  kinds, PlayMode gate, Checks.RunAll, audits, a build. Done 2026-09-26: bots measured by `PaeteKitPlayProbe.PaeteBotsUseEveryAbility`
+  (four Paete bots, two rounds: vine 3, bloom 4, thorns 3, ultimate 12 with the bar topped up every 20 s); the first-person
+  vine film ran (`FilmTheVineFromHisOwnEyes`, frames not yet reviewed).
+- [ ] ⚠️⚠️ THE ULTIMATE, REDIRECTED (owner, 2026-09-26, after `paete_ultimate_v3.mp4`: *"ur direction of the entire cutscene
+  sucks"*, the three small trees make no sense, refine Makiling, *"make his eyes glow"*, the live tree *"sucks"*, roots must GO
+  INTO the ground, prisoners must look TIED and animated). The plan is `docs/reports/paete-kit-2026-09-25/direction.md` 5.12
+  (three shots: CALL, CONNECT, RISE; the forest trees, stage walls and landing spikes cut). Done in source this session and
+  compiled only if the ledger says so: the guardian's own old-wood palette (`PaeteSentryBody.Palette`), the crown gem removed,
+  leaf clusters typed on all seven claws, claw-root toes diving into the court with a heave of earth, ground branches weaving in
+  and out of the court with clods at each crossing, four thick tight bands shins to hips (`PaeteRootCoil` v2), a thicker limb
+  wrapping the waist twice and cinching, rooted bodies straining all the time (struggle loop 0.45x idle, 1.25x fighting),
+  Makiling v2 (no hair helmet, parted fringe, longer closed eyes, bell sleeves; `Pose` takes drift and lean), the ultimate camera
+  pushing in past a blocker instead of discarding the shot (`UltimatePhaseView`, `LastShotReport`), the forest stage leaving
+  before the payoff, the rise shot moved wide. NOT done: the three-shot re-author (`tools/author_ultimate_intros.py` shots and
+  `HeroIntroductionScene.Paete.cs`: remove `MakilingTrees`, the walls and `_paeteBurst`; her drift and lean through the connect;
+  her pour into the ground; HIS EYES IGNITING at 0.95 s), then refilm and send v4.
   (The seedling and thorn-construct art pass is the modelled trees row above.)
 - [ ] Surface texture: the owner asked to *"really refine and texture and make it all detailed"*. The
   modelled props give detail in geometry and his palette only; decide with him whether bark wants a

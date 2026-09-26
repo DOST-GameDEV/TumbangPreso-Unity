@@ -4,11 +4,13 @@ using System.IO;
 using System.Text;
 using NUnit.Framework;
 using TumbangPreso.Abilities;
+using TumbangPreso.CameraSystem;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace TumbangPreso.PlayTests
@@ -237,6 +239,188 @@ namespace TumbangPreso.PlayTests
             Object.Destroy(camera.gameObject);
             Note("film_all_rooted", rootedAll);
             Assert.IsTrue(rootedAll, "The film never showed all three rooted.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE ULTIMATE AS A VIDEO (HERO-9 "Film the cutscene ON HIS SCREEN in a match", and the owner,
+        /// 2026-09-26: *"give me A video of his finished ULT animation + ppl getting pulled in too"*). Three
+        /// views of ONE cast, each frame written as a JPG for `ffmpeg`:
+        ///   owner/   HIS screen: `UltimatePhaseView` draws the cutscene through its own camera into a RawImage
+        ///            named "UltimateScene", which `Camera.main` (all `Record` ever rendered) cannot see, so while
+        ///            that picture is up its texture is copied; otherwise the live camera is rendered.
+        ///   wide/    a fixed high shot of the court: the tree erupting and all three dragged in.
+        ///   victim/  over the shoulder of one of the players it catches.
+        /// ⚠️ `Time.captureFramerate` = 30 fixes game time per frame, so the film plays at true game speed even
+        /// though the editor renders three views at a few frames a second (the old films ran 7 to 17 fps real
+        /// time and read as slow motion). Runs only with TUMP_PAETE_FILM=1; frames under TUMP_EVIDENCE or Logs.
+        /// </summary>
+        [UnityTest, Timeout(600000)]
+        public IEnumerator FilmTheUltimateOnHisScreen()
+        {
+            if (Environment.GetEnvironmentVariable("TUMP_PAETE_FILM") != "1") Assert.Ignore("Film only: set TUMP_PAETE_FILM=1.");
+            string root = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs", "paete-ult-film");
+            foreach (string view in new[] { "owner", "wide", "victim" }) Directory.CreateDirectory(Path.Combine(root, view));
+            var round = GameServices.Round;
+            var paete = HumanPaete(new Vector3(0, .12f, -11));
+            paete.AbilitySystem.Kit.AddUltimateCharge(100);
+            var others = new[] { round.PlayerAt(0), round.PlayerAt(2), round.PlayerAt(3) };
+            var stands = new[] { new Vector3(5.6f, .12f, -2.2f), new Vector3(-5.2f, .12f, -1.6f), new Vector3(1.8f, .12f, 2.2f) };
+            for (int i = 0; i < others.Length; i++)
+            {
+                others[i].Teleport(stands[i]); others[i].Intent.Parked = false;
+                others[i].transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, -3) - stands[i]);
+            }
+            paete.Intent.AimPoint = new Vector3(0, 0, -3);
+            Camera Make(string name, float fov)
+            {
+                var c = new GameObject(name).AddComponent<Camera>();
+                c.CopyFrom(Camera.main); c.enabled = false; c.tag = "Untagged"; c.fieldOfView = fov; c.cullingMask &= ~(1 << 5);
+                c.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+                return c;
+            }
+            var wide = Make("PaeteUltWide", 52);
+            var victimCam = Make("PaeteUltVictim", 62);
+            var hdr = new RenderTexture(1280, 720, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
+            var ldr = new RenderTexture(1280, 720, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
+            void Save(Texture source, string view, int index)
+            {
+                Graphics.Blit(source, ldr);
+                var active = RenderTexture.active; RenderTexture.active = ldr;
+                pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply(); RenderTexture.active = active;
+                File.WriteAllBytes(Path.Combine(root, view, $"{index:D5}.jpg"), pixels.EncodeToJPG(92));
+            }
+            void Shoot(Camera c, string view, int index)
+            {
+                var before = c.targetTexture; c.targetTexture = hdr; ComicPopup.PrepareView(c); c.Render(); c.targetTexture = before;
+                Save(hdr, view, index);
+            }
+            bool rootedAll = false, sawScene = false;
+            int previousRate = Time.captureFramerate;
+            Time.captureFramerate = 30;
+            // The cutscene runs on the phase's wall clock; give it the film's frame clock so it lasts its real 4.6 s.
+            int frame = 0; double clockBase = Time.realtimeSinceStartupAsDouble;
+            SharedUltimatePhase.FilmClock = () => clockBase + frame / 30.0;
+            // Every world cue with its film time, so the video gets the game's own sound mixed in afterwards.
+            var cues = new StringBuilder().AppendLine("seconds,cue,pitch,gain");
+            Action<string, Vector3, float, float> heard = (id, at, pitch, gain) =>
+                cues.AppendLine(FormattableString.Invariant($"{frame / 30.0:F3},{Audio.AudioCues.FileStemFor(id)},{pitch:F3},{gain:F3}"));
+            AudioDirector.WorldCuePlayed += heard;
+            try
+            {
+                const int frames = 30 * 15;
+                var victim = others[1];
+                for (int f = 0; f < frames; f++)
+                {
+                    frame = f;
+                    float t = f / 30f;
+                    paete.Intent.Set(Verb.Ultimate, t < .25f);
+                    yield return null;
+                    rootedAll |= others[0].IsRooted && others[1].IsRooted && others[2].IsRooted;
+                    RawImage scene = null;
+                    foreach (var image in Object.FindObjectsByType<RawImage>(FindObjectsSortMode.None))
+                        if (image.name == "UltimateScene" && image.enabled && image.isActiveAndEnabled && image.texture != null) scene = image;
+                    if (scene != null)
+                    {
+                        // His theme plays from the introduction's own AudioSource, not as a world cue: log it once.
+                        if (!sawScene) cues.AppendLine(FormattableString.Invariant($"{f / 30.0:F3},sfx_ult_theme_paete,1,0.2"));
+                        sawScene = true; Save(scene.texture, "owner", f);
+                    }
+                    else if (Camera.main != null) Shoot(Camera.main, "owner", f);
+                    // Wide: far and high enough that the whole 9 m tree and all three stands fit.
+                    wide.transform.position = new Vector3(11f, 7.5f, 9.5f);
+                    wide.transform.LookAt(new Vector3(0, 3.0f, -3));
+                    // Victim: from their side at knee-to-chest height, so the drag and the roots on their shins
+                    // read (behind the head, the first cut, showed only the back of a head).
+                    var toTree = new Vector3(0, 0, -3) - victim.transform.position; toTree.y = 0;
+                    toTree = toTree.sqrMagnitude > .01f ? toTree.normalized : Vector3.back;
+                    var side = Vector3.Cross(Vector3.up, toTree);
+                    victimCam.transform.position = victim.transform.position + side * 3.4f - toTree * 1.2f + Vector3.up * 1.5f;
+                    victimCam.transform.LookAt(victim.transform.position + toTree * 0.8f + Vector3.up * 1.0f);
+                    Shoot(wide, "wide", f);
+                    Shoot(victimCam, "victim", f);
+                }
+            }
+            finally
+            {
+                SharedUltimatePhase.FilmClock = null;
+                AudioDirector.WorldCuePlayed -= heard;
+                File.WriteAllText(Path.Combine(root, "cues.csv"), cues.ToString());
+                Time.captureFramerate = previousRate;
+                Object.Destroy(wide.gameObject); Object.Destroy(victimCam.gameObject);
+                hdr.Release(); ldr.Release();
+            }
+            Debug.Log("[PaeteKitPlayProbe] shot report: " + UltimatePhaseView.LastShotReport);
+            File.WriteAllText(Path.Combine(root, "shots.txt"), UltimatePhaseView.LastShotReport);
+            Note("ult_film_saw_cutscene", sawScene);
+            Note("ult_film_all_rooted", rootedAll);
+            Assert.IsTrue(sawScene, "The cutscene picture never came up on his screen.");
+            Assert.IsTrue(rootedAll, "The film never showed all three rooted.");
+        }
+
+        /// <summary>
+        /// ⚠️ PAETE'S BOTS, MEASURED (HERO-9 "Bots ... Not yet measured in `BotBehaviourProbe`"). The seeded
+        /// whole-match probe picks its cast during the load, so Paete may never sit in it; this seats him in all
+        /// four chairs with the real `AIController` pressing the real buttons, for two rounds so the taya turns
+        /// over and both role abilities come up, and counts every ability each seat used (a cooldown or charge
+        /// spent, the ultimate by its bar emptying, `BotBehaviourProbe.Count`'s rule). The bar is topped up every
+        /// 20 s so the sentry's own decision (two bodies in 9 m) is what is tested, not the meter. Game time is
+        /// stepped at `BotBehaviourProbe`'s 1/60 s, the only rate its bots are measured at.
+        /// </summary>
+        [UnityTest, Timeout(600000)]
+        public IEnumerator PaeteBotsUseEveryAbility()
+        {
+            var seats = new CharacterMotor[4];
+            for (int i = 0; i < 4; i++)
+            {
+                seats[i] = Paete(i, new Vector3(-4.5f + 3f * i, .12f, -6f + (i % 2) * 3f));
+                seats[i].Intent.Clear();
+            }
+            foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = true;
+            var used = new System.Collections.Generic.Dictionary<string, int>();
+            var lastCooldown = new System.Collections.Generic.Dictionary<HeroAbility, float>();
+            var lastCharges = new System.Collections.Generic.Dictionary<HeroAbility, int>();
+            var lastBar = new float[4];
+            void Bump(string id) { used.TryGetValue(id, out int n); used[id] = n + 1; }
+            float previousStep = Time.captureDeltaTime;
+            Time.captureDeltaTime = 1f / 60f;
+            try
+            {
+                const int frames = 60 * 190;
+                for (int f = 0; f < frames; f++)
+                {
+                    if (f % (60 * 20) == 0) foreach (var who in seats) who.AbilitySystem.Kit.AddUltimateCharge(100);
+                    yield return null;
+                    for (int s = 0; s < 4; s++)
+                    {
+                        var kit = seats[s].AbilitySystem.Kit;
+                        foreach (var ability in kit.AllAbilities)
+                        {
+                            if (ability == null || ability == kit.Ultimate) continue;
+                            if (ability.UsesCharges)
+                            {
+                                if (lastCharges.TryGetValue(ability, out int before) && ability.ChargesRemaining < before) Bump(ability.Id);
+                                lastCharges[ability] = ability.ChargesRemaining;
+                            }
+                            else
+                            {
+                                lastCooldown.TryGetValue(ability, out float before);
+                                if (ability.CooldownRemaining > before + .01f) Bump(ability.Id);
+                                lastCooldown[ability] = ability.CooldownRemaining;
+                            }
+                        }
+                        if (lastBar[s] > kit.UltimateCost * .5f && kit.UltimateCharge <= .01f) Bump(kit.Ultimate.Id);
+                        lastBar[s] = kit.UltimateCharge;
+                    }
+                }
+            }
+            finally { Time.captureDeltaTime = previousStep; }
+            var kitIds = seats[0].AbilitySystem.Kit.AllAbilities;
+            foreach (var ability in kitIds) { used.TryGetValue(ability.Id, out int n); Note("bot_uses_" + ability.Id, n); }
+            string tally = string.Join(", ", System.Linq.Enumerable.Select(used, kv => kv.Key + "=" + kv.Value));
+            Debug.Log("[PaeteKitPlayProbe] bot uses: " + tally);
+            foreach (var ability in kitIds)
+                Assert.IsTrue(used.ContainsKey(ability.Id), $"Paete's bots never used {ability.Id} in two rounds ({tally}).");
         }
 
         /// <summary>The local seat as Paete, human, in his own model (arms and all), for the films.</summary>
