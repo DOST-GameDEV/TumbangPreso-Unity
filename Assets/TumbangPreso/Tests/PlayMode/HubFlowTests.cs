@@ -221,6 +221,37 @@ namespace TumbangPreso.PlayTests
             button.onClick.Invoke();
         }
 
+        /// <summary>
+        /// ⚠️ LIGHT-5 (2026-09-27): the map select was washed out because the hub's two preview
+        /// surfaces both loaded the selected map and one copy was never claimed, so its sun lit
+        /// every map previewed afterwards. Exactly one directional light may reach the preview
+        /// layer, and it must be the shown map's own.
+        /// </summary>
+        [UnityTest, Timeout(300000)]
+        public IEnumerator HostGameMapPreviewIsLitByTheShownMapsSunAlone()
+        {
+            yield return OpenHome();
+            TumpHub.Current.Push<HubHost>();
+            var preview = TumpHub.Current.Host.Preview;
+            Assert.IsNotNull(preview);
+            foreach (string map in new[] { SceneFlow.IlalimNgTulay, SceneFlow.Lagoon })
+            {
+                TumpHub.Current.Host.SelectMap(map);
+                float until = Time.realtimeSinceStartup + 40;
+                while (preview.Showing != map && Time.realtimeSinceStartup < until) yield return null;
+                Assert.AreEqual(map, preview.Showing);
+                yield return new WaitForSecondsRealtime(0.5f);
+                var suns = Object.FindObjectsByType<Light>(FindObjectsSortMode.None)
+                    .Where(l => l.isActiveAndEnabled && l.type == LightType.Directional
+                                && (l.cullingMask & (1 << MapPreviewSurface.PreviewLayer)) != 0).ToArray();
+                Assert.AreEqual(1, suns.Length, map + " preview is lit by: " +
+                    string.Join(", ", suns.Select(l => l.name + "@" + l.gameObject.scene.name + " layer " + l.gameObject.layer)));
+                Assert.AreEqual(map, suns[0].gameObject.scene.name);
+                Assert.AreEqual(MapPreviewSurface.PreviewLayer, suns[0].gameObject.layer, "The lighting scene was never confined.");
+            }
+            TumpHub.Current.Home();
+        }
+
         [UnityTest, Timeout(600000)]
         public IEnumerator GamemodeSelectSetsTheModeCardAndOpensTheCustomFlow()
         {

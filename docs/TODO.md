@@ -181,6 +181,28 @@ check whether it happens in a built player; if editor-only, suspect the Scene vi
 interleaving with `WorldLookPresentation`'s per-camera globals. The in-player probe is
 `-tp-shadowsweep DIR [-tp-shadowsweep-hub] [-tp-map ID]` (`Diagnostics.WorldShadowSweepProbe`).
 
+### LIGHT-5 · Map select washed out and brighter than the match ✅ FIXED, 2026-09-27
+
+Owner report with a HOST GAME frame: the map preview is far too bright and should match the
+game's actual lighting. Cause, measured on the real HOST GAME screen: the hub runs two
+`MapPreviewSurface`s and both load the selected map on their first frame. Each claimed its load
+with `GetSceneByName`, which returns the FIRST scene of that name, and one surface is also
+deactivated mid-load, which stops its coroutine. Either way one copy of the map was nobody's:
+never confined to the preview layer, never parked, its sun left on with every layer in its mask.
+That orphaned Eskinita sun lit every map previewed afterwards on top of the map's own sun, and a
+new orphan could appear each time the hub was rebuilt. Fix: the surface claims the exact scene its
+own load created, in the load's `completed` callback (so a stopped coroutine cannot orphan it),
+confines and parks it at once, and unloads it if the surface was destroyed.
+
+Evidence in [reports/map-preview-2026-09-27/](reports/map-preview-2026-09-27/): before/after for
+all five maps (preview mean luminance Eskinita 0.559 to 0.494, Bayan 0.644 to 0.594, Ilalim 0.693
+to 0.612, Sa Bubong 0.671 to 0.599, Lagoon 0.751 to 0.686), and the fixed preview beside the
+match camera rendered from the same pose (0.494/0.492, 0.594/0.579, 0.611/0.627, 0.599/0.600,
+0.686/0.692). The haze that remains in the distance is each map's own fog at that height.
+Tests (Mac PlayMode, total 3 failed 0): new `HubFlowTests.HostGameMapPreviewIsLitByTheShownMapsSunAlone`,
+`WorldCourtCueTests.MapPreviewShowsTheBrightLookAndHandsEachMapItsLightingBack`,
+`HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns`.
+
 ### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23
 
 Integrated into ASTRAReworks on2026-09-24at owner request, through lighting branch
