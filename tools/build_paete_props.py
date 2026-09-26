@@ -548,94 +548,253 @@ def sentry():
 
 
 # ---------------------------------------------------------------------------------------------
-# THE SEEDLING. 0.9 m. A three-cord stem (the sentry's weave as a child), arm leaves, a pod head.
+# ⚠️⚠️ BAKYA BLOOM IS A PITCHER PLANT AND THORN HARVEST IS AN ARMED RATTAN, NOT BROWN BARK
+# (owner, 2026-09-26): *"do all his sentries look the same? i wanted all his sentries (ult and attacker
+# skill and defender skill TO ALL look diff and distinct and have their own style)"*, then of the
+# concept sheets *"thats pretty fucking good"*, and of the first rattan *"it looks like  a flimsy plant
+# and not a dangerous cool plant"*. The v7 seedling (a three-cord bark stem with a petal bud) and the
+# v1 thorn fist (bark roots and square thorns) wore the ultimate's woven bark and read as three of
+# one tree. `docs/reports/paete-kit-2026-09-25/direction.md` section 5.11 has the design: three
+# silhouettes, three materials, three motion languages.
+#
+# ⚠️ EACH HAS ITS OWN SIXTEEN-SLOT PALETTE. The slots below mean the SPECIES' colours, the way
+# Makiling's do; the runtime dresses them with `PaetePitcher.Palette` and `PaeteRattan.Palette`
+# (`PaeteTrees.cs`), which carry the same hex values as the tables here. File names are kept
+# (seedling.glb, thorns.glb) so `PaeteProp.Spawn` still finds them.
 # ---------------------------------------------------------------------------------------------
+P_BODY, P_SHADE, P_LEAF, P_LEAF_DK, P_TENDRIL, P_WOOD, P_ROOT, P_MOSS = 0, 1, 2, 3, 4, 5, 6, 7
+P_INK, P_INSIDE, P_RIM, P_SPECK, P_LID_UNDER, P_WOOD_DK, P_STRAP, P_MOSS_DK = 8, 9, 10, 11, 12, 13, 14, 15
+# Pitcher slots: see the P_* names above (P_SPECK is unused since speckles read as stickers).
+PITCHER_PALETTE = {0: "A9C44E", 1: "7E9E3A", 2: "4F8B2F", 3: "3A6B24", 4: "6F9B35", 5: "C29563",
+                 6: "A8946A", 7: "5E7F24", 8: "1E140C", 9: "2B1512", 10: "8E2435", 11: "9A3243",
+                 12: "B04A55", 13: "8A6240", 14: "3F5A1A", 15: "3F5A1A"}
+
+# The pitcher's body, typed: height up the pod, radius, forward lean. A fat belly, a waist, a flared mouth.
+BODY = [(-0.02, 0.060, 0.000), (0.07, 0.150, 0.010), (0.15, 0.166, 0.020), (0.23, 0.140, 0.035),
+        (0.29, 0.110, 0.050), (0.34, 0.104, 0.065), (0.38, 0.124, 0.085)]
+
+
+def pitcher_body(pod, rows, slot, inside_slot, sides=7):
+    path = [(0.0, y, lean) for y, _, lean in rows]
+    radii = [r for _, r, _ in rows]
+    faces = tube(spline(path, 4), spread(radii, 4), sides)
+    top = faces[-1]
+    t = unit(sub(path[-1], path[-2]))
+    sunk = [sub(p, mul(t, 0.03)) for p in top]
+    pod.parts.append((slot, faces[:-1]))
+    pod.parts.append((inside_slot, [sunk, list(reversed(sunk))]))
+
+
 def seedling():
-    root = Node("seedling")
-    stem = Node("stem", parent="seedling")
-    nodes = [root, stem]
-    # Three cords twisting up a gentle S, each typed: (height, angle, distance out, girth).
-    cord(stem, [(0.00, 10, 0.075, 0.058), (0.14, -58, 0.048, 0.054), (0.29, -140, 0.044, 0.050), (0.44, -222, 0.042, 0.046), (0.60, -296, 0.036, 0.040)], BARK_LIT, twist=30)
-    cord(stem, [(0.00, 130, 0.072, 0.054), (0.14, 64, 0.046, 0.050), (0.29, -18, 0.045, 0.047), (0.44, -101, 0.040, 0.044), (0.60, -176, 0.037, 0.038)], BARK, twist=-25)
-    cord(stem, [(0.00, 250, 0.078, 0.060), (0.14, 184, 0.050, 0.055), (0.29, 101, 0.043, 0.051), (0.44, 18, 0.043, 0.046), (0.60, -58, 0.035, 0.041)], HEARTWOOD, twist=45)
-    stem.obox((0.0, 0.575, -0.01), (0.15, 0.06, 0.15), MOSS, yaw=18.0)                      # moss collar
-    stem.obox((0.01, 0.24, 0.0), (0.13, 0.03, 0.13), BARK_DARK, yaw=-12.0, bevel=0.008)     # a carved band
-    # Four small leaves fanned at the foot, each its own.
-    sprig(stem, (0.02, 0.05, 0.02), 30, -10, 0.30, 0.17, LEAF)
-    sprig(stem, (0.02, 0.04, -0.02), 125, -6, 0.26, 0.14, LEAF_DARK)
-    sprig(stem, (-0.02, 0.06, -0.02), 210, -14, 0.32, 0.18, LEAF)
-    sprig(stem, (-0.02, 0.04, 0.02), 300, -8, 0.25, 0.14, LEAF_DARK)
-    # The two ARM leaves: big, low on the stem, their own nodes so they flick open, breathe and flare.
-    arm0 = Node("arm-0", origin=(0.03, 0.30, 0.0), parent="stem", yaw=95.0); nodes.append(arm0)
-    line(arm0, [(0.0, 0.0, 0.02), (0.0, 0.03, 0.10)], [0.018, 0.012], MOSS, sides=4, per=2)
-    sprig(arm0, (0.0, 0.04, 0.09), 0, -16, 0.34, 0.19, LEAF, thickness=0.018)
-    arm1 = Node("arm-1", origin=(-0.03, 0.36, 0.0), parent="stem", yaw=268.0); nodes.append(arm1)
-    line(arm1, [(0.0, 0.0, 0.02), (0.0, 0.035, 0.09)], [0.017, 0.011], MOSS, sides=4, per=2)
-    sprig(arm1, (0.0, 0.045, 0.08), 0, -20, 0.31, 0.17, LEAF_DARK, thickness=0.018)
-    # The pod: the head, so it can nod and aim.
-    pod = Node("pod", origin=(0.0, 0.62, 0.0), parent="stem"); nodes.append(pod)
-    pod.obox((0.0, 0.0, 0.0), (0.20, 0.10, 0.20), MOSS_DARK, yaw=45.0)
-    pod.obox((0.0, 0.06, 0.0), (0.15, 0.05, 0.15), MOSS_LIT, yaw=20.0)
-    # Five petals hinged at the pod's rim, each its own size and shade, lying along their +Z.
-    for name, yaw, length, width, slot in [("petal-0", 0, 0.30, 0.18, LEAF_DARK), ("petal-1", 74, 0.28, 0.16, VINE),
-                                            ("petal-2", 146, 0.31, 0.19, LEAF_DARK), ("petal-3", 214, 0.27, 0.16, VINE),
-                                            ("petal-4", 288, 0.29, 0.17, LEAF_DARK)]:
-        n = Node(name, origin=ring(0.08, yaw, 0.03), parent="pod", yaw=yaw); nodes.append(n)
-        sprig(n, (0.0, 0.0, 0.0), 0, 58, length, width, slot, thickness=0.022)
-        line(n, [(0.0, 0.03, 0.02), (0.0, length * 0.47, length * 0.29)], [0.011, 0.005], MOSS_LIT, sides=4, per=2)
-    shoe = Node("slipper", origin=(0.0, 0.16, 0.0), parent="pod"); nodes.append(shoe)
-    shoe.box((-0.065, -0.018, -0.14), (0.065, 0.018, 0.14), BARK_LIT)
-    shoe.box((-0.060, 0.016, -0.13), (0.060, 0.022, 0.13), HEARTWOOD, bevel=0)
-    line(shoe, [(0.0, 0.03, 0.08), (0.045, 0.05, 0.05), (0.048, 0.03, -0.01)], [0.012, 0.012, 0.010], VINE, sides=4, per=3)
-    line(shoe, [(0.0, 0.03, 0.08), (-0.045, 0.05, 0.05), (-0.048, 0.03, -0.01)], [0.012, 0.012, 0.010], VINE, sides=4, per=3)
-    shoe.box((-0.012, 0.02, 0.07), (0.012, 0.05, 0.095), VINE)
-    # Four roots gripping, each typed along its own +Z.
-    for name, yaw, pts, radii in [("root-0", 20, [(0, 0.10, 0.02), (0.01, 0.05, 0.19), (0.0, -0.01, 0.33), (-0.01, -0.05, 0.42)], [0.050, 0.038, 0.022, 0.008]),
-                                  ("root-1", 110, [(0, 0.09, 0.02), (-0.01, 0.04, 0.16), (0.01, -0.01, 0.28), (0.02, -0.05, 0.36)], [0.046, 0.035, 0.020, 0.008]),
-                                  ("root-2", 205, [(0, 0.10, 0.02), (0.02, 0.05, 0.21), (0.01, 0.0, 0.36), (-0.01, -0.05, 0.46)], [0.052, 0.040, 0.023, 0.008]),
-                                  ("root-3", 290, [(0, 0.08, 0.02), (-0.01, 0.04, 0.15), (0.0, -0.01, 0.26), (0.01, -0.05, 0.33)], [0.044, 0.033, 0.019, 0.007])]:
+    nodes = []
+    root = Node("seedling"); nodes.append(root)
+    moss = Node("moss", parent="seedling"); nodes.append(moss)
+    moss.obox((0.10, 0.03, 0.06), (0.17, 0.07, 0.15), P_MOSS, yaw=14.0)
+    moss.obox((-0.11, 0.025, -0.03), (0.14, 0.06, 0.16), P_MOSS_DK, yaw=-22.0)
+    moss.obox((0.02, 0.02, -0.13), (0.12, 0.05, 0.11), P_MOSS, yaw=41.0)
+    moss.obox((0.0, 0.01, 0.0), (0.34, 0.03, 0.30), P_ROOT, yaw=8.0)
+
+    # Four fleshy roots gripping the court, each its own reach.
+    for name, yaw, pts, radii in [("root-0", 40, [(0, 0.05, 0.10), (0.01, 0.02, 0.24), (0.0, -0.03, 0.33)], [0.038, 0.026, 0.008]),
+                                  ("root-1", 128, [(0, 0.05, 0.10), (-0.02, 0.01, 0.21), (-0.01, -0.03, 0.27)], [0.034, 0.024, 0.008]),
+                                  ("root-2", 214, [(0, 0.05, 0.10), (0.02, 0.02, 0.26), (0.01, -0.03, 0.36)], [0.040, 0.027, 0.008]),
+                                  ("root-3", 301, [(0, 0.05, 0.10), (-0.01, 0.01, 0.20), (0.0, -0.03, 0.25)], [0.032, 0.022, 0.007])]:
         n = Node(name, parent="seedling", yaw=yaw); nodes.append(n)
-        line(n, pts, radii, BARK_DARK, per=3)
+        line(n, pts, radii, P_ROOT, per=3)
+
+    # Five lance leaves in a rosette: glossy, stiff, each typed. Two are the ARMS that flare on the shot.
+    d = 0.0
+    for name, compass, pitch, length, width, slot in [("arm-0", 42, 18, 0.56, 0.15, P_LEAF), ("leaf-1", 118, 9, 0.50, 0.13, P_LEAF_DK),
+                                                      ("leaf-2", 186, 14, 0.60, 0.14, P_LEAF), ("leaf-3", 250, 7, 0.46, 0.12, P_LEAF_DK),
+                                                      ("arm-1", 318, 21, 0.54, 0.15, P_LEAF)]:
+        n = Node(name, origin=(0.0, 0.07, 0.0), parent="seedling"); nodes.append(n)
+        sprig(n, (0.0, 0.0, 0.0), compass, pitch - 26 * d, length, width, slot, thickness=0.02)
+        # the midrib, a darker line down the leaf
+        a = math.radians(compass); p = math.radians(pitch - 26 * d)
+        dirv = (math.sin(a) * math.cos(p), math.sin(p) + 0.012, math.cos(a) * math.cos(p))
+        line(n, [mul(dirv, 0.05), mul(dirv, length * 0.55), mul(dirv, length * 0.85)], [0.009, 0.007, 0.004], P_TENDRIL, sides=4, per=2)
+
+    # One leaf carries a tendril and a baby pitcher: the species tell (a Nepenthes leaf ends in a pitcher).
+    baby = Node("baby", parent="leaf-2"); nodes.append(baby)
+    tip = (math.sin(math.radians(186)) * 0.58, 0.07 + 0.14, math.cos(math.radians(186)) * 0.58)
+    line(baby, [tip, add(tip, (-0.02, 0.02, -0.06)), add(tip, (-0.03, -0.05, -0.10)), add(tip, (-0.02, -0.11, -0.09))],
+         [0.008, 0.007, 0.006, 0.006], P_TENDRIL, sides=4, per=3)
+    bb = add(tip, (-0.02, -0.19, -0.09))
+    baby.tube([add(bb, (0, 0.0, 0)), add(bb, (0, 0.035, 0.003)), add(bb, (0, 0.07, 0.008)), add(bb, (0, 0.09, 0.012))],
+              [0.022, 0.042, 0.030, 0.034], P_BODY, sides=6)
+    baby.obox(add(bb, (0, 0.10, 0.004)), (0.07, 0.012, 0.07), P_SHADE, roll=-14.0)
+
+    # The tendril-neck: thick, rising in an S, so the pitcher can nod and aim.
+    stem = Node("stem", parent="seedling"); nodes.append(stem)
+    line(stem, [(0.0, 0.04, -0.02), (0.03, 0.20, -0.07), (0.01, 0.36, -0.08), (-0.02, 0.47, -0.03), (0.0, 0.53, 0.03)],
+         [0.056, 0.048, 0.043, 0.040, 0.040], P_TENDRIL, sides=6)
+    # a leaf-scar collar where the neck leaves the rosette
+    stem.obox((0.0, 0.10, -0.04), (0.14, 0.03, 0.14), P_LEAF_DK, yaw=20.0)
+
+    pod = Node("pod", origin=(0.0, 0.53, 0.03), parent="stem"); nodes.append(pod)
+    pitcher_body(pod, BODY, P_BODY, P_INSIDE)
+    # The peristome: a rolled maroon lip, typed round the mouth (the mouth leans 26 degrees forward).
+    c = (0.0, 0.38, 0.085)
+    t = unit((0.0, 0.04, 0.02)); side = (1.0, 0.0, 0.0); up = unit(cross(t, side))
+    rim = []
+    for ang, r in [(0, 0.118), (52, 0.122), (101, 0.116), (153, 0.121), (205, 0.117), (257, 0.123), (309, 0.119), (360, 0.118), (412, 0.122)]:
+        a = math.radians(ang)
+        rim.append(add(c, add(mul(side, r * math.cos(a)), mul(up, r * math.sin(a)))))
+    pod.tube(spline(rim, 4), [0.031] * len(spline(rim, 4)), P_RIM, sides=5)
+    # Two wings down the front (a pitcher's ridges), each typed.
+    line(pod, [(0.047, 0.33, 0.162), (0.052, 0.23, 0.180), (0.046, 0.12, 0.172), (0.030, 0.03, 0.090)], [0.013, 0.014, 0.012, 0.006], P_SHADE, sides=4, per=3)
+    line(pod, [(-0.044, 0.33, 0.160), (-0.050, 0.22, 0.179), (-0.047, 0.11, 0.170), (-0.028, 0.03, 0.088)], [0.012, 0.014, 0.012, 0.006], P_SHADE, sides=4, per=3)
+
+    # The lid, hinged at the back of the rim; its rest lies over the mouth.
+    hinge = add(c, mul((0.0, 0.447, -0.894), 0.13))
+    lid = Node("lid", origin=hinge, parent="pod"); nodes.append(lid)
+    fwd = (0.0, -0.447, 0.894)
+    lid.obox(add(mul(fwd, 0.128), mul(t, 0.030)), (0.25, 0.030, 0.24), P_BODY, roll=26.6)
+    lid.obox(add(mul(fwd, 0.128), mul(t, 0.030)), (0.18, 0.031, 0.29), P_BODY, roll=26.6)
+    lid.obox(add(mul(fwd, 0.125), mul(t, 0.012)), (0.20, 0.012, 0.20), P_LID_UNDER, roll=26.6)
+    line(lid, [mul(t, 0.02), add(mul(t, 0.06), (0, 0.0, -0.035)), add(mul(t, 0.08), (0, 0.0, -0.075))], [0.018, 0.012, 0.004], P_SHADE, sides=4, per=2)
+
+    # The bakya, the carved clog growing in the mouth: sole on two blocks, a strap across the toe.
+    shoe = Node("slipper", origin=(0.0, 0.30, 0.07), parent="pod"); nodes.append(shoe)
+    shoe.box((-0.060, 0.020, -0.130), (0.060, 0.045, 0.130), P_WOOD)
+    shoe.box((-0.055, -0.030, -0.120), (0.055, 0.020, -0.050), P_WOOD_DK)
+    shoe.box((-0.055, -0.030, 0.030), (0.055, 0.020, 0.100), P_WOOD_DK)
+    shoe.box((-0.066, 0.045, 0.020), (0.066, 0.078, 0.075), P_STRAP)
+    shoe.box((-0.020, 0.046, -0.090), (0.020, 0.050, -0.010), P_WOOD_DK, bevel=0)
     write(os.path.join(OUT, "seedling.glb"), nodes)
 
 
-# ---------------------------------------------------------------------------------------------
-# THE THORN CONSTRUCT. A fist of three roots and seven square thorns, each its own typed node.
-# ---------------------------------------------------------------------------------------------
+
+def _yaw(p, comp):
+    a = math.radians(comp)
+    x, y, z = p
+    return (x * math.cos(a) + z * math.sin(a), y, -x * math.sin(a) + z * math.cos(a))
+
+
+# Rattan slots: 0 blade  1 blade dark  2 blade lit  3 cane frond (rachis)  4 sheath  5 sheath dark
+#   6 straw cane (the whip, the arnis stick)  7 cane node band  8 ink  9 spine  10 spine bone tip
+#   11 soil  12 cane lit  13 to 15 his bark (unused, kept so a bark chunk can borrow them)
+RATTAN_PALETTE = {0: "2F4219", 1: "1F2D10", 2: "4A5F26", 3: "6E6A34", 4: "34301A", 5: "221F10", 6: "D8B86E",
+                   7: "7E5E2E", 8: "1E140C", 9: "130E09", 10: "C9BC98", 11: "6B4A2E", 12: "EAD49C",
+                   13: "8C6440", 14: "553A22", 15: "B08450"}
+
+# Sheaths: compass, distance out, height, girth, lean.
+SHEATHS = [(14, 0.43, 0.44, 0.120, 12), (84, 0.41, 0.34, 0.108, 9), (150, 0.45, 0.50, 0.128, 14),
+            (222, 0.42, 0.31, 0.104, 10), (293, 0.44, 0.40, 0.116, 13)]
+
+# Spine collars per sheath: (angle round, height fraction, length, lean out from vertical).
+SPINES = {
+    0: [(0, .22, .20, 62), (60, .20, .16, 58), (118, .25, .22, 66), (185, .21, .17, 60), (245, .24, .21, 64), (305, .19, .15, 57),
+        (30, .55, .18, 52), (100, .58, .21, 56), (170, .53, .16, 50), (235, .57, .19, 54), (330, .55, .17, 51),
+        (70, .86, .14, 40), (200, .88, .16, 44), (290, .85, .13, 38)],
+    1: [(20, .24, .18, 60), (85, .22, .21, 64), (150, .26, .16, 58), (220, .23, .19, 62), (290, .25, .17, 59),
+        (50, .60, .17, 52), (130, .62, .20, 55), (210, .58, .15, 50), (320, .61, .18, 53),
+        (0, .90, .12, 38), (170, .88, .14, 42)],
+    2: [(8, .18, .23, 64), (68, .21, .18, 60), (132, .17, .24, 66), (195, .20, .19, 61), (258, .19, .22, 63), (322, .22, .17, 59),
+        (38, .48, .20, 55), (106, .51, .17, 52), (176, .47, .22, 57), (240, .50, .18, 53), (300, .49, .21, 56),
+        (70, .78, .16, 46), (150, .80, .14, 42), (230, .77, .17, 47), (330, .79, .13, 40)],
+    3: [(34, .26, .17, 60), (104, .23, .20, 63), (172, .27, .16, 58), (248, .24, .19, 62), (318, .22, .15, 57),
+        (68, .64, .16, 51), (205, .62, .18, 54), (290, .66, .14, 49), (140, .90, .12, 40)],
+    4: [(12, .20, .21, 63), (80, .23, .17, 59), (146, .19, .22, 65), (214, .22, .18, 60), (282, .20, .20, 62), (345, .24, .16, 58),
+        (48, .56, .19, 54), (128, .59, .16, 51), (202, .55, .20, 55), (300, .58, .17, 52),
+        (95, .87, .14, 42), (250, .86, .15, 44)],
+}
+
+# The ruff: long black spines rising off the shared clump between the stems. (compass, radius, length, lean out, tilt)
+RUFF = [(0, 0.56, 0.405, 30, 0), (33, .38, .22, 38, 8), (50, .41, .26, 26, -6), (118, .40, .28, 34, 5), (133, .37, .20, 40, -4),
+        (172, .42, .32, 28, 3), (190, .39, .21, 42, -8), (248, .41, .27, 32, 6), (262, .38, .19, 44, -2), (318, .40, .29, 30, -5),
+        (338, .37, .22, 38, 7), (100, .43, .18, 46, 0)]
+
+# Fronds: rachis points (rearing up, arching over, the tip hooking down like a talon), radii, then blade pairs:
+# (rachis point index, length, width, sweep off the rachis, lift). Positive sweep = right side.
+FRONDS = [
+    ([(0, 0, 0), (0, .26, .09), (0, .50, .24), (0, .64, .46), (0, .60, .68), (0, .44, .84), (0, .26, .88), (0, .17, .80)],
+     [.056, .050, .042, .034, .026, .018, .012, .007],
+     [(1, 0.48, 0.086, 36, 44), (1, 0.45, 0.081, -38, 42), (2, 0.53, 0.092, 33, 30), (2, 0.50, 0.089, -35, 28), (3, 0.48, 0.081, 30, 8),
+      (3, 0.46, 0.078, -31, 6), (4, 0.36, 0.068, 28, -22), (4, 0.35, 0.065, -29, -24)]),
+    ([(0, 0, 0), (0, .22, .10), (0, .42, .25), (0, .52, .45), (0, .48, .63), (0, .34, .76), (0, .19, .79), (0, .11, .72)],
+     [.050, .045, .038, .030, .023, .016, .011, .007],
+     [(1, 0.43, 0.078, 37, 40), (1, 0.42, 0.076, -36, 42), (2, 0.49, 0.086, 34, 26), (2, 0.48, 0.084, -33, 27), (3, 0.43, 0.076, 30, 4),
+      (3, 0.42, 0.074, -30, 5), (4, 0.32, 0.062, 27, -20), (4, 0.31, 0.061, -28, -21)]),
+    ([(0, 0, 0), (0, .30, .08), (0, .58, .22), (0, .76, .44), (0, .74, .68), (0, .58, .88), (0, .36, .96), (0, .22, .90), (0, .16, .80)],
+     [.060, .054, .046, .037, .029, .021, .014, .009, .006],
+     [(1, 0.50, 0.092, 35, 48), (1, 0.49, 0.089, -37, 46), (2, 0.57, 0.097, 32, 34), (2, 0.56, 0.095, -34, 33), (3, 0.53, 0.089, 29, 12),
+      (3, 0.52, 0.086, -30, 11), (4, 0.42, 0.076, 27, -14), (4, 0.41, 0.073, -28, -15), (5, 0.28, 0.057, 25, -38), (5, 0.27, 0.054, -26, -40)]),
+    ([(0, 0, 0), (0, .21, .11), (0, .38, .27), (0, .46, .46), (0, .41, .62), (0, .28, .73), (0, .15, .74), (0, .08, .67)],
+     [.048, .043, .036, .029, .022, .015, .010, .006],
+     [(1, 0.42, 0.076, 38, 38), (1, 0.41, 0.073, -37, 40), (2, 0.46, 0.081, 34, 24), (2, 0.45, 0.078, -35, 25), (3, 0.41, 0.072, 30, 2),
+      (3, 0.39, 0.070, -31, 3), (4, 0.31, 0.059, 27, -22), (4, 0.29, 0.058, -28, -23)]),
+    ([(0, 0, 0), (0, .25, .09), (0, .47, .24), (0, .60, .45), (0, .57, .66), (0, .42, .81), (0, .24, .86), (0, .14, .79)],
+     [.054, .048, .041, .033, .025, .017, .011, .007],
+     [(1, 0.46, 0.084, 36, 43), (1, 0.45, 0.081, -37, 41), (2, 0.52, 0.089, 33, 29), (2, 0.50, 0.086, -34, 30), (3, 0.46, 0.080, 30, 7),
+      (3, 0.45, 0.077, -30, 8), (4, 0.35, 0.066, 28, -21), (4, 0.34, 0.063, -29, -20)]),
+]
+
+
+def blade(node, base, compass, pitch, length, width, slot):
+    """A stiff sword leaflet: the six-sided prism, long and narrow, thick enough to look hard."""
+    sprig(node, base, compass, pitch, length, width, slot, thickness=0.024)
+
+
 def thorns():
-    root = Node("thorns")
-    knot = Node("knot", parent="thorns")
-    nodes = [root, knot]
-    # Three roots twisting up out of the road into a knot, typed.
-    line(knot, [ring(0.30, 0, -0.04), ring(0.22, 50, 0.14), ring(0.12, 105, 0.30), ring(0.05, 150, 0.40)], [0.11, 0.09, 0.065, 0.03], BARK_DARK, twist=35)
-    line(knot, [ring(0.27, 125, -0.04), ring(0.19, 172, 0.12), ring(0.11, 228, 0.26), ring(0.05, 272, 0.34)], [0.10, 0.085, 0.06, 0.028], BARK, twist=-30)
-    line(knot, [ring(0.29, 238, -0.04), ring(0.21, 292, 0.15), ring(0.12, 340, 0.33), ring(0.05, 25, 0.44)], [0.11, 0.09, 0.065, 0.03], BARK_LIT, twist=40)
-    knot.obox((0.0, 0.16, 0.0), (0.22, 0.14, 0.22), BARK, yaw=25.0)
-    knot.obox((0.0, 0.25, 0.0), (0.16, 0.05, 0.16), MOSS_DARK, yaw=50.0)
-    # Seven thorns, each typed along its own +Z (tilted up and out), with two barbs.
-    spikes = [
-        ("thorn-0", 0, [(0, -0.05, 0.0), (-0.02, 0.31, 0.18), (-0.04, 0.60, 0.38), (-0.02, 0.76, 0.55)], [0.085, 0.060, 0.030, 0.004], BARK_DARK,
-         [((-0.01, 0.26, 0.15), (0.07, 0.33, 0.18)), ((-0.03, 0.48, 0.30), (-0.11, 0.55, 0.32))], True),
-        ("thorn-1", 52, [(0, -0.05, 0.0), (0.03, 0.24, 0.18), (0.05, 0.46, 0.38), (0.03, 0.58, 0.54)], [0.080, 0.056, 0.028, 0.004], BARK,
-         [((0.02, 0.20, 0.15), (0.10, 0.26, 0.17)), ((0.04, 0.38, 0.30), (-0.04, 0.45, 0.33))], False),
-        ("thorn-2", 103, [(0, -0.05, 0.0), (-0.02, 0.36, 0.16), (-0.04, 0.70, 0.32), (-0.02, 0.88, 0.47)], [0.090, 0.062, 0.031, 0.004], BARK_DARK,
-         [((-0.01, 0.30, 0.13), (0.07, 0.37, 0.15)), ((-0.03, 0.56, 0.26), (-0.11, 0.63, 0.28))], True),
-        ("thorn-3", 155, [(0, -0.05, 0.0), (0.02, 0.21, 0.16), (0.04, 0.42, 0.33), (0.02, 0.53, 0.47)], [0.078, 0.054, 0.027, 0.004], BARK,
-         [((0.01, 0.18, 0.13), (0.09, 0.24, 0.15)), ((0.03, 0.34, 0.27), (-0.05, 0.40, 0.29))], True),
-        ("thorn-4", 206, [(0, -0.05, 0.0), (-0.03, 0.34, 0.17), (-0.05, 0.66, 0.35), (-0.03, 0.82, 0.51)], [0.088, 0.061, 0.030, 0.004], BARK_DARK,
-         [((-0.02, 0.28, 0.14), (0.06, 0.35, 0.16)), ((-0.04, 0.53, 0.28), (-0.12, 0.60, 0.30))], False),
-        ("thorn-5", 258, [(0, -0.05, 0.0), (0.02, 0.26, 0.17), (0.04, 0.51, 0.36), (0.02, 0.64, 0.52)], [0.082, 0.058, 0.029, 0.004], BARK,
-         [((0.01, 0.22, 0.14), (0.09, 0.28, 0.16)), ((0.03, 0.41, 0.29), (-0.05, 0.48, 0.31))], True),
-        ("thorn-6", 309, [(0, -0.05, 0.0), (-0.01, 0.27, 0.19), (-0.03, 0.54, 0.40), (-0.01, 0.68, 0.58)], [0.084, 0.058, 0.029, 0.004], BARK_LIT,
-         [((0.00, 0.23, 0.16), (0.08, 0.30, 0.18)), ((-0.02, 0.43, 0.32), (-0.10, 0.50, 0.34))], False),
-    ]
-    for name, yaw, pts, radii, slot, barbs, leafy in spikes:
-        n = Node(name, origin=ring(0.30, yaw, 0.0), parent="thorns", yaw=yaw); nodes.append(n)
-        line(n, pts, radii, slot, sides=4, twist=45, per=3)
-        for a, b in barbs:
-            n.tube([a, b], [0.028, 0.003], BARK_LIT, sides=4)
-        if leafy:
-            sprig(n, (0.0, 0.08, 0.06), 0, 25, 0.15, 0.09, LEAF if yaw % 2 else LEAF_DARK)
+    nodes = []
+    root = Node("thorns"); nodes.append(root)
+    rise = 1.0
+    clump = Node("clump", parent="thorns"); nodes.append(clump)
+    loop = [ring(r, a, y) for a, r, y in [(0, .41, .03), (47, .38, .05), (95, .40, .025), (140, .43, .055), (188, .39, .03),
+                                           (236, .41, .045), (282, .42, .025), (328, .39, .05), (360, .41, .03), (407, .38, .05)]]
+    clump.tube(spline(loop, 4), spread([.11, .10, .105, .115, .10, .108, .112, .10, .11, .10], 4), 5, sides=6)
+    for a, r, w, d, yw in [(30, .56, .18, .11, 12), (120, .54, .14, .10, -20), (205, .59, .17, .12, 33), (300, .53, .15, .11, -8),
+                           (75, .60, .10, .08, 40), (255, .57, .12, .09, 5)]:
+        clump.obox(ring(r, a, 0.012), (w, 0.035, d), 11, yaw=yw)
+    for comp, r, length, out, tilt in RUFF:
+        p0 = ring(r, comp, 0.08)
+        a = math.radians(comp + tilt); o = math.radians(out)
+        dirv = (math.sin(a) * math.sin(o), math.cos(o), math.cos(a) * math.sin(o))
+        tip = add(p0, mul(dirv, length))
+        clump.tube([p0, add(p0, mul(dirv, length * 0.7)), tip], [0.030, 0.016, 0.002], 9, sides=4)
+        clump.tube([add(p0, mul(dirv, length * 0.78)), tip], [0.0165, 0.002], 10, sides=4)    # a pale bone tip
+    for i, (comp, dist, h, girth, lean) in enumerate(SHEATHS):
+        base = ring(dist, comp, -0.06 - (1 - rise) * 0.6)
+        s = Node(f"sheath-{i}", origin=base, parent="thorns", yaw=comp); nodes.append(s)
+        L = math.radians(lean)
+        top = (0.0, h * math.cos(L), h * math.sin(L))
+        s.tube([(0, 0, 0), (0, h * 0.5 * math.cos(L), h * 0.5 * math.sin(L) - 0.01), top],
+               [girth, girth * 0.93, girth * 0.78], 4 if i % 2 == 0 else 5, sides=6)
+        s.obox(add(top, (0, 0.014, 0)), (girth * 1.35, 0.034, girth * 1.35), 5, yaw=17 * (i + 1))
+        for ang, frac, length, out in SPINES[i]:
+            a = math.radians(ang)
+            p0 = (girth * 0.92 * math.sin(a), h * frac * math.cos(L), h * frac * math.sin(L) + girth * 0.92 * math.cos(a))
+            o = math.radians(out)
+            dirv = (math.sin(a) * math.sin(o), math.cos(o), math.cos(a) * math.sin(o))
+            s.tube([p0, add(p0, mul(dirv, length))], [0.022, 0.0018], 9, sides=4)
+
+        rach, radii, blades = FRONDS[i]
+        f = Node(f"frond-{i}", origin=add(base, _yaw(top, comp)), parent="thorns", yaw=comp); nodes.append(f)
+        line(f, rach, radii, 3, sides=5, per=4)
+        for k, (j, length, width, sweep, lift) in enumerate(blades):
+            slot = 0 if (k // 2) % 2 == 0 else 1
+            blade(f, rach[j], sweep, lift, length, width, slot if sweep > 0 else 1 - slot)
+        # hooked barbs down the rachis back, each typed: (point index, fraction to next, length)
+        for j, fr, ln in [(1, .5, .08), (2, .3, .09), (3, .1, .085), (3, .7, .07), (4, .4, .06)]:
+            if j + 1 >= len(rach):
+                continue
+            p = tuple(rach[j][q] + (rach[j + 1][q] - rach[j][q]) * fr for q in range(3))
+            f.tube([add(p, (0, 0.03, -0.01)), add(p, (0, 0.03 + ln * 0.8, -ln * 0.6))], [0.018, 0.002], 9, sides=4)
+        # the talon: the rachis tip hardens into a black hooked point
+        tip = rach[-1]
+        prev = rach[-2]
+        tdir = unit(sub(tip, prev))
+        f.tube([tip, add(tip, mul(tdir, 0.07)), add(add(tip, mul(tdir, 0.10)), (0, 0.0, -0.035))], [0.012, 0.008, 0.001], 9, sides=4)
+        if True:
+            whip = Node(f"whip-{i}", origin=rach[3], parent=f"frond-{i}"); nodes.append(whip)
+            # the cirrus at rest: coiled under the arch like a sprung trap
+            wpts = [(0, 0, 0), (0.02, -0.08, 0.08), (0.03, -0.20, 0.10), (0.02, -0.28, 0.04), (0.0, -0.25, -0.03), (-0.01, -0.18, -0.01)]
+            line(whip, wpts, [0.018, 0.016, 0.014, 0.012, 0.010, 0.008], 6, sides=5, per=3)
+            whip.obox((0.03, -0.20, 0.10), (0.04, 0.02, 0.04), 7)
+            for hp, hd in [((0.03, -0.14, 0.10), (0.05, 0.03, 0.02)), ((0.03, -0.14, 0.10), (-0.05, 0.03, 0.02)),
+                           ((0.01, -0.27, 0.02), (0.045, 0.02, 0.04)), ((0.01, -0.27, 0.02), (-0.045, 0.02, 0.04))]:
+                whip.tube([hp, add(hp, hd)], [0.013, 0.0015], 9, sides=4)
     write(os.path.join(OUT, "thorns.glb"), nodes)
 
 

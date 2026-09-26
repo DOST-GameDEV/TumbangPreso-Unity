@@ -433,29 +433,42 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
-    /// ⚠️⚠️ BAKYA BLOOM'S SEEDLING, v3: THE MODELLED SPROUT (direction.md section 5.3). A three-cord
-    /// stem, two big ARM leaves, four roots, and a POD for a head: a bud of five petals round the wooden
-    /// slipper that grows in it. Posed from its age by `PaetePlant`:
+    /// ⚠️⚠️ BAKYA BLOOM IS A MAKILING PITCHER PLANT (owner, 2026-09-26: *"i wanted all his sentries (ult and
+    /// attacker skill and defender skill TO ALL look diff and distinct and have their own style)"*, and of
+    /// the concept sheet *"thats pretty fucking good"*). direction.md section 5.11. The v3 sprout wore the
+    /// ultimate's woven bark and read as a small copy of the same tree; this is its own species: a leaf
+    /// rosette, a thick S-neck, and a lime pitcher with a wine lip and a lid, in which the bakya grows.
+    /// Posed from its age by `PaetePlant`:
     ///  * pop (0 to 0.45 s): pushes up out of the soil, overshoot, squash; the arm leaves flick open last;
-    ///  * alive: a slow sway, the pod bobbing a beat behind the stem, the arm leaves breathing;
-    ///  * ripening: the petals part as the slipper grows; ready, the pod gives a proud little bob;
-    ///  * fire: the arm leaves flare, the pod pulls back 0.12 s and SNAPS forward past rest, the petals
-    ///    flare, then a wobble to rest;
-    ///  * loosening (15 s on): the stem sags, the pod droops, the leaves dry toward straw (his palette
-    ///    re-dressed in four steps), the roots lift, loose soil breathes round it;
+    ///  * growing: the lid sits ajar and lifts as the clog grows; the clog rises out of the mouth;
+    ///  * ready: the lid is open, the clog's toe over the lip, a proud bob;
+    ///  * spit: the mouth rears back 0.12 s and SNAPS forward past rest, the lid slaps shut, a wobble;
+    ///  * loosening (15 s on): the neck sags, the jug droops, the palette dries toward straw, roots lift;
     ///  * pulled: up, roots tearing free, flung toward the puller, gone.
     /// </summary>
     public sealed class PaetePlantBody : MonoBehaviour
     {
+        /// <summary>
+        /// The pitcher's own sixteen slots (`tools/build_paete_props.py` `PITCHER_PALETTE`, same hex): 0 body,
+        /// 1 shade, 2 leaf, 3 leaf dark, 4 tendril, 5 bakya, 6 root, 7 moss, 8 ink, 9 inside, 10 lip,
+        /// 11 unused, 12 lid underside, 13 bakya dark, 14 strap, 15 moss dark.
+        /// </summary>
+        public static readonly Color[] Palette =
+        {
+            Hex(0xA9C44E), Hex(0x7E9E3A), Hex(0x4F8B2F), Hex(0x3A6B24), Hex(0x6F9B35), Hex(0xC29563), Hex(0xA8946A), Hex(0x5E7F24),
+            Hex(0x1E140C), Hex(0x2B1512), Hex(0x8E2435), Hex(0x9A3243), Hex(0xB04A55), Hex(0x8A6240), Hex(0x3F5A1A), Hex(0x3F5A1A),
+        };
+
+        private static Color Hex(int rgb) => new Color(((rgb >> 16) & 255) / 255f, ((rgb >> 8) & 255) / 255f, (rgb & 255) / 255f, 1f);
+
         private GameObject _model;
-        private Transform _root, _stem, _pod, _shoe, _soil;
-        private readonly List<Transform> _petals = new List<Transform>(), _roots = new List<Transform>(), _arms = new List<Transform>();
-        private readonly List<Quaternion> _petalRest = new List<Quaternion>(), _rootRest = new List<Quaternion>(), _armRest = new List<Quaternion>();
-        private Quaternion _podRest;
-        private Vector3 _podAt, _shoeScale;
+        private Transform _root, _stem, _pod, _lid, _shoe, _soil;
+        private readonly List<Transform> _roots = new List<Transform>(), _arms = new List<Transform>();
+        private readonly List<Quaternion> _rootRest = new List<Quaternion>(), _armRest = new List<Quaternion>();
+        private Quaternion _podRest, _lidRest, _shoeRest, _stemRest;
+        private Vector3 _podAt, _shoeAt, _shoeScale;
         private int _dryStep = -1;
         private static Color[][] _dryPalettes;
-        private static readonly float[] PetalPhase = { 0.0f, 1.3f, 2.9f, 4.1f, 5.4f };
 
         public static PaetePlantBody Build(Transform parent)
         {
@@ -465,33 +478,32 @@ namespace TumbangPreso.Visual
             b._root = go.transform;
             b._soil = GrowthVfx.Block(b._root, "loose-soil", new Vector3(0.9f, 0.03f, 0.9f), GrowthVfx.Seed).transform;
             b._soil.gameObject.SetActive(false);
-            b._model = PaeteProp.Spawn("seedling", b._root);
+            b._model = PaeteProp.Spawn("seedling", b._root, Palette, ToonSkin.PersonOutlineWidth);
             b._stem = PaeteProp.Find(b._model, "stem") ?? new GameObject("stem").transform;
             if (b._stem.parent == null) b._stem.SetParent(b._root, false);
+            b._stemRest = b._stem.localRotation;
             b._pod = PaeteProp.Find(b._model, "pod") ?? b._stem;
             b._podRest = b._pod.localRotation; b._podAt = b._pod.localPosition;
+            b._lid = PaeteProp.Find(b._model, "lid");
+            if (b._lid != null) b._lidRest = b._lid.localRotation;
             b._shoe = PaeteProp.Find(b._model, "slipper");
-            if (b._shoe != null) b._shoeScale = b._shoe.localScale;
-            for (int i = 0; i < 5; i++) { var t = PaeteProp.Find(b._model, "petal-" + i); if (t != null) { b._petals.Add(t); b._petalRest.Add(t.localRotation); } }
+            if (b._shoe != null) { b._shoeScale = b._shoe.localScale; b._shoeAt = b._shoe.localPosition; b._shoeRest = b._shoe.localRotation; }
             for (int i = 0; i < 4; i++) { var t = PaeteProp.Find(b._model, "root-" + i); if (t != null) { b._roots.Add(t); b._rootRest.Add(t.localRotation); } }
             for (int i = 0; i < 2; i++) { var t = PaeteProp.Find(b._model, "arm-" + i); if (t != null) { b._arms.Add(t); b._armRest.Add(t.localRotation); } }
             return b;
         }
 
-        /// <summary>His palette with the leaf, moss and vine slots dried toward straw, in four steps (cached).</summary>
+        /// <summary>The pitcher's palette with the living greens dried toward straw, in four steps (cached).</summary>
         private static Color[] DryPalette(int step)
         {
-            var baseline = PaeteProp.Palette;
-            if (baseline == null) return null;
             if (_dryPalettes == null) _dryPalettes = new Color[4][];
             if (_dryPalettes[step] == null)
             {
-                var p = (Color[])baseline.Clone();
-                // ⚠️ STRAW-BROWN, NOT `GrowthVfx.Dry`'S YELLOW: at full strength the loosened plant filmed
-                // (v14) as a bright yellow flower rather than a drying one.
+                var p = (Color[])Palette.Clone();
+                // ⚠️ STRAW-BROWN, NOT `GrowthVfx.Dry`'S YELLOW (the v14 film: a bright yellow flower, not a dying one).
                 float k = step / 3f * 0.75f;
                 var straw = new Color(0.55f, 0.47f, 0.27f);
-                foreach (int slot in new[] { 0, 1, 2, 3, 4, 7 }) p[slot] = Color.Lerp(baseline[slot], straw, k);
+                foreach (int slot in new[] { 0, 1, 2, 3, 4, 7 }) p[slot] = Color.Lerp(Palette[slot], straw, k);
                 _dryPalettes[step] = p;
             }
             return _dryPalettes[step];
@@ -505,20 +517,20 @@ namespace TumbangPreso.Visual
             // ⚠️ IT RISES OUT OF THE SOIL, IT DOES NOT SCALE IN (owner, 2026-09-26).
             float rise = GrowthVfx.Pop(age / 0.45f);
             float squash = age > 0.35f && age < 0.6f ? 1f + 0.18f * Mathf.Sin((age - 0.35f) / 0.25f * Mathf.PI) : 1f;
-            // The fire's anticipation: the stem compresses before the snap.
+            // The spit's anticipation: the neck compresses before the snap.
             float coil = sinceShot < 0.12f ? sinceShot / 0.12f : sinceShot < 0.3f ? 1f - (sinceShot - 0.12f) / 0.18f : 0f;
             squash *= 1f + 0.10f * coil;
             _stem.localScale = new Vector3(squash, 1f / squash, squash);
-            _stem.localPosition = Vector3.down * (0.95f * (1f - rise));
+            _stem.localPosition = Vector3.down * (1.0f * (1f - rise));
             float sway = Mathf.Sin(age * 1.2f) * 2.5f, swayZ = Mathf.Sin(age * 0.85f + 1f) * 2.5f;
-            _stem.localRotation = Quaternion.Euler(sway + 14f * loosen, 0f, swayZ + 6f * loosen);
+            _stem.localRotation = _stemRest * Quaternion.Euler(sway + 16f * loosen, 0f, swayZ + 6f * loosen);
             float pop = Mathf.Clamp01((age - 0.15f) / 0.4f);
 
             // Loosening: roots lift out, the soil ring shows and breathes.
             for (int i = 0; i < _roots.Count; i++)
             {
-                _roots[i].localRotation = _rootRest[i] * Quaternion.Euler(-28f * loosen, 0f, 0f);
-                _roots[i].localPosition = new Vector3(0f, 0.12f * loosen, 0f);
+                _roots[i].localRotation = _rootRest[i] * Quaternion.Euler(-25f * loosen, 0f, 0f);
+                _roots[i].localPosition = new Vector3(0f, 0.08f * loosen, 0f);
                 _roots[i].localScale = Vector3.one * Mathf.Max(0.001f, pop);
             }
             _soil.gameObject.SetActive(pullable);
@@ -528,24 +540,39 @@ namespace TumbangPreso.Visual
                 _soil.localScale = new Vector3(0.9f * pulse, 0.03f, 0.9f * pulse);
             }
 
-            // The pod: a beat behind the stem (follow-through), the recoil, the proud bob when ready, the droop.
-            float recoil = sinceShot < 0.12f ? -28f * (sinceShot / 0.12f)
-                         : sinceShot < 0.22f ? Mathf.Lerp(-28f, 22f, (sinceShot - 0.12f) / 0.10f)
-                         : sinceShot < 0.5f ? Mathf.Lerp(22f, 0f, (sinceShot - 0.22f) / 0.28f) * Mathf.Cos((sinceShot - 0.22f) * 30f) : 0f;
+            // The pitcher: a beat behind the neck (follow-through); the spit (rear back, snap past rest,
+            // wobble); the proud bob when ready; the droop as it loosens. Negative pitch rears the mouth back.
+            float spit = sinceShot < 0.12f ? -34f * (sinceShot / 0.12f)
+                       : sinceShot < 0.22f ? Mathf.Lerp(-34f, 28f, (sinceShot - 0.12f) / 0.10f)
+                       : sinceShot < 0.55f ? Mathf.Lerp(28f, 0f, (sinceShot - 0.22f) / 0.33f) * Mathf.Cos((sinceShot - 0.22f) * 28f) : 0f;
             float grown = Mathf.Clamp01(shotGrowth);
-            float proud = grown >= 1f && sinceShot > 0.6f ? Mathf.Abs(Mathf.Sin(age * 3.2f)) * 5f : 0f;
+            bool ready = grown >= 1f && sinceShot > 0.6f;
+            float proud = ready ? Mathf.Abs(Mathf.Sin(age * 3.2f)) * 5f : 0f;
             float follow = Mathf.Sin(age * 1.2f - 0.7f) * 4f;
-            _pod.localRotation = _podRest * Quaternion.Euler(recoil + 30f * loosen + follow - proud, 0f, 12f * loosen);
+            _pod.localRotation = _podRest * Quaternion.Euler(spit + 38f * loosen + follow - proud, 0f, 12f * loosen);
             _pod.localPosition = _podAt + Vector3.up * (0.03f * proud / 5f);
 
-            // The petals part as the slipper ripens; they flare on the shot; they droop as it loosens.
-            float flare = GrowthVfx.Envelope(sinceShot, 0.10f, 0.05f, 0.5f, 0.3f);
-            for (int i = 0; i < _petals.Count; i++)
+            // The lid: ajar while the clog grows, lifting with it, open when it is ready; it SLAPS shut on the
+            // spit and then lifts again as the next one grows; limp half-shut when the plant loosens. Its rest
+            // lies over the mouth, and a NEGATIVE pitch lifts it (its +Z runs forward from the hinge).
+            if (_lid != null)
             {
-                float open = 40f * grown + 22f * flare + 25f * loosen + 3f * Mathf.Sin(age * 1.8f + PetalPhase[i]);
-                _petals[i].localRotation = _petalRest[i] * Quaternion.Euler(open, 0f, 0f);
+                float open = -12f - 46f * grown * grown;
+                float slap = GrowthVfx.Envelope(sinceShot, 0.12f, 0.04f, 0.5f, 0.4f);
+                open = Mathf.Lerp(open, -4f, slap);
+                open = Mathf.Lerp(open, -30f, loosen);
+                _lid.localRotation = _lidRest * Quaternion.Euler(open, 0f, 0f);
             }
-            if (_shoe != null) _shoe.localScale = _shoeScale * Mathf.Max(0.001f, grown);
+
+            // The bakya grows inside and rises until its toe hangs over the lip.
+            if (_shoe != null)
+            {
+                float up = GrowthVfx.Pop(Mathf.Clamp01((grown - 0.35f) / 0.65f));
+                _shoe.localScale = _shoeScale * Mathf.Max(0.001f, Mathf.Clamp01(grown * 1.4f));
+                _shoe.localPosition = _shoeAt + new Vector3(0f, 0.075f, 0.075f) * up;
+                _shoe.localRotation = _shoeRest * Quaternion.Euler(-28f * up, 0f, 0f);
+                _shoe.gameObject.SetActive(grown > 0.02f && sinceShot > 0.13f);
+            }
 
             // The arm leaves: flick open after the pop, breathe, flare back at the command, droop dry.
             for (int i = 0; i < _arms.Count; i++)
@@ -553,17 +580,16 @@ namespace TumbangPreso.Visual
                 float flick = GrowthVfx.Pop((age - 0.30f - 0.06f * i) / 0.30f);
                 float breathe = Mathf.Sin(age * 1.6f + i * 1.9f) * 4f;
                 float armFlare = GrowthVfx.Envelope(sinceShot, 0f, 0.08f, 0.45f, 0.3f);
-                float pitch = -70f * (1f - flick) + breathe - 30f * armFlare + 30f * loosen;
+                float pitch = -60f * (1f - flick) + breathe - 24f * armFlare + 26f * loosen;
                 _arms[i].localRotation = _armRest[i] * Quaternion.Euler(pitch, 0f, 0f);
             }
 
-            // The leaves dry in four steps (a palette re-dress, cached per step by `ToonSkin`).
+            // The greens dry in four steps (a palette re-dress, cached per step by `ToonSkin`).
             int step = Mathf.Clamp(Mathf.FloorToInt(loosen * 4f), 0, 3);
             if (step != _dryStep && _model != null)
             {
                 _dryStep = step;
-                var palette = DryPalette(step);
-                if (palette != null) PaeteProp.Redress(_model, palette);
+                PaeteProp.Redress(_model, DryPalette(step));
             }
         }
 
@@ -583,83 +609,151 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
-    /// ⚠️⚠️ THORN HARVEST'S THORN CONSTRUCT, v2: THE MODELLED FIST (direction.md section 5.4). A knot of three
-    /// roots and seven square thorns; a woven lash out to each caught slipper that goes taut, holds a
-    /// beat and hauls it home. Thorns punch up in a ripple round the ring, QUIVER through the hold, WHIP
-    /// back on the yank, then CLENCH inward like a fist closing on what it took, and sink one by one.
+    /// ⚠️⚠️ THORN HARVEST IS AN ARMED RATTAN (owner, 2026-09-26: the attacker and defender plants must be
+    /// their own species; of the first rattan, *"it looks like  a flimsy plant and not a dangerous cool
+    /// plant"*). direction.md section 5.11. A clump of uway round the spot he stamped, the centre clear for
+    /// his feet: a ring of black spines, five sheath stems with spine collars, and on each a cane frond that
+    /// rears and hooks over like a talon, with a barbed straw whip (the cirrus, the arnis stick's cane)
+    /// coiled under its arch. Beats: BURST (stems punch up in a ripple, fronds folded), REAR UP (talons
+    /// open, spines bristle), REACH and HOLD (the whip facing each slipper uncoils along the ground and its
+    /// grapnel bites, taut and quivering through the hold), YANK (reeled home), CLENCH (the talons close
+    /// over the centre like a fist), SINK (blades brown, stems sink one by one).
     /// </summary>
     public sealed class PaeteThornBody : MonoBehaviour
     {
+        /// <summary>
+        /// The rattan's own sixteen slots (`tools/build_paete_props.py` `RATTAN_PALETTE`, same hex): 0 blade,
+        /// 1 blade dark, 2 blade lit, 3 frond cane, 4 sheath, 5 sheath dark, 6 straw cane, 7 node band, 8 ink,
+        /// 9 spine, 10 bone tip, 11 soil, 12 cane lit, 13 to 15 his bark.
+        /// </summary>
+        public static readonly Color[] Palette =
+        {
+            Hex(0x2F4219), Hex(0x1F2D10), Hex(0x4A5F26), Hex(0x6E6A34), Hex(0x34301A), Hex(0x221F10), Hex(0xD8B86E), Hex(0x7E5E2E),
+            Hex(0x1E140C), Hex(0x130E09), Hex(0xC9BC98), Hex(0x6B4A2E), Hex(0xEAD49C), Hex(0x8C6440), Hex(0x553A22), Hex(0xB08450),
+        };
+
+        private static Color Hex(int rgb) => new Color(((rgb >> 16) & 255) / 255f, ((rgb >> 8) & 255) / 255f, (rgb & 255) / 255f, 1f);
+
+        private const int Stems = 5;
         private GameObject _model;
-        private Transform _knot;
-        private Vector3 _knotAt;
-        private readonly List<Transform> _spikes = new List<Transform>();
-        private readonly List<Vector3> _spikeRest = new List<Vector3>();
-        private readonly List<Quaternion> _spikeTurn = new List<Quaternion>();
+        private Transform _clump;
+        private readonly Transform[] _sheath = new Transform[Stems], _frond = new Transform[Stems], _whip = new Transform[Stems];
+        private readonly Vector3[] _sheathAt = new Vector3[Stems], _frondAt = new Vector3[Stems];
+        private readonly Quaternion[] _frondRest = new Quaternion[Stems];
         private readonly List<Slipper> _targets = new List<Slipper>();
+        private readonly List<int> _stemFor = new List<int>();
         private readonly List<PaeteRope> _lashes = new List<PaeteRope>();
         private readonly List<Vector3> _points = new List<Vector3>();
-        // Each thorn's own beats: when it punches up, and when it sinks at the end.
-        private static readonly float[] RiseAt = { 0.00f, 0.035f, 0.07f, 0.02f, 0.10f, 0.055f, 0.085f };
-        private static readonly float[] SinkAt = { 2.45f, 2.62f, 2.52f, 2.70f, 2.40f, 2.58f, 2.66f };
-        private static readonly float[] Quiver = { 5f, 4f, 6f, 3.5f, 5.5f, 4.5f, 3f };
+        private Color[] _dry;
+        private bool _dressedDry;
+        // Each stem's own beats: when it punches up, and when it sinks at the end.
+        private static readonly float[] RiseAt = { 0.00f, 0.05f, 0.02f, 0.09f, 0.035f };
+        private static readonly float[] SinkAt = { 2.45f, 2.62f, 2.52f, 2.70f, 2.40f };
+        private static readonly float[] Quiver = { 4f, 5.5f, 3.5f, 5f, 4.5f };
 
         public static PaeteThornBody Build(Transform parent, List<Slipper> targets)
         {
             var go = new GameObject("PaeteThornBody");
             go.transform.SetParent(parent, false);
             var b = go.AddComponent<PaeteThornBody>();
-            b._model = PaeteProp.Spawn("thorns", go.transform);
-            b._knot = PaeteProp.Find(b._model, "knot") ?? new GameObject("knot").transform;
-            if (b._knot.parent == null) b._knot.SetParent(go.transform, false);
-            b._knotAt = b._knot.localPosition;
-            for (int i = 0; i < 7; i++)
+            b._model = PaeteProp.Spawn("thorns", go.transform, Palette, ToonSkin.PersonOutlineWidth);
+            b._clump = PaeteProp.Find(b._model, "clump");
+            for (int i = 0; i < Stems; i++)
             {
-                var t = PaeteProp.Find(b._model, "thorn-" + i);
-                if (t == null) continue;
-                b._spikes.Add(t); b._spikeRest.Add(t.localPosition); b._spikeTurn.Add(t.localRotation);
+                b._sheath[i] = PaeteProp.Find(b._model, "sheath-" + i);
+                b._frond[i] = PaeteProp.Find(b._model, "frond-" + i);
+                b._whip[i] = PaeteProp.Find(b._model, "whip-" + i);
+                if (b._sheath[i] != null) b._sheathAt[i] = b._sheath[i].localPosition;
+                if (b._frond[i] != null) { b._frondRest[i] = b._frond[i].localRotation; b._frondAt[i] = b._frond[i].localPosition; }
             }
-            var bark = new[] { GrowthVfx.BarkDark, GrowthVfx.Bark };
+            // ⚠️ STRAW CANE WITH DARK NODE BANDS: the rattan's own whip, not the ultimate's woven bark rope.
+            var cane = new[] { Palette[6], Palette[7] };
             foreach (var shoe in targets)
             {
                 b._targets.Add(shoe);
-                b._lashes.Add(new PaeteRope(go.transform, "thorn-lash", bark, new[] { 0.042f, 0.036f }, 0.034f, 9f, b._targets.Count * 1.3f));
+                b._stemFor.Add(b.StemFacing(shoe != null ? shoe.transform.position : go.transform.position + go.transform.forward));
+                b._lashes.Add(new PaeteRope(go.transform, "rattan-whip", cane, new[] { 0.026f, 0.012f }, 0.012f, 3f, b._targets.Count * 1.3f));
             }
             return b;
+        }
+
+        /// <summary>The stem whose frond faces <paramref name="world"/> best: the lash leaves THAT frond.</summary>
+        private int StemFacing(Vector3 world)
+        {
+            Vector3 d = world - transform.position; d.y = 0f;
+            int best = 0; float bestDot = -2f;
+            for (int i = 0; i < Stems; i++)
+            {
+                if (_frond[i] == null) continue;
+                Vector3 f = _frond[i].position - transform.position; f.y = 0f;
+                float dot = Vector3.Dot(f.normalized, d.sqrMagnitude > 1e-4f ? d.normalized : Vector3.forward);
+                if (dot > bestDot) { bestDot = dot; best = i; }
+            }
+            return best;
         }
 
         public void Pose(float age, Vector3 origin)
         {
             float hold = PaeteRules.ThornHoldSeconds, yank = PaeteRules.ThornYankSeconds;
             float quiver = GrowthVfx.Envelope(age, 0.18f, 0.04f, hold + 0.05f, 0.06f);
-            float whip = GrowthVfx.Envelope(age, hold, 0.08f, hold + yank, 0.2f);
-            float clench = GrowthVfx.Envelope(age, hold + yank - 0.05f, 0.25f, 2.4f, 0.3f);
-            for (int i = 0; i < _spikes.Count; i++)
+            float whipBack = GrowthVfx.Envelope(age, hold, 0.08f, hold + yank, 0.2f);
+            float clench = GrowthVfx.Envelope(age, hold + yank - 0.05f, 0.25f, 2.35f, 0.3f);
+            if (_clump != null)
             {
-                float up = GrowthVfx.Pop((age - RiseAt[i]) / 0.2f);
-                float sink = Mathf.Clamp01((age - SinkAt[i]) / 0.35f);
-                _spikes[i].localPosition = _spikeRest[i] + Vector3.down * (0.9f * (1f - up) + 0.9f * sink * sink);
-                _spikes[i].localScale = Vector3.one * (up > 0.001f && sink < 1f ? 1f : 0.001f);
-                float shiver = Mathf.Sin(age * 70f + i * 2.1f) * Quiver[i] * quiver;
-                float pitch = shiver - 20f * whip - 32f * clench;
-                _spikes[i].localRotation = _spikeTurn[i] * Quaternion.Euler(pitch, 0f, 0f);
+                float c = GrowthVfx.Pop(age / 0.18f), gone = Mathf.Clamp01((age - 2.55f) / 0.4f);
+                _clump.localPosition = Vector3.down * (0.3f * (1f - Mathf.Clamp01(c)) + 0.4f * gone);
             }
-            float grow = GrowthVfx.Pop(age / 0.2f);
-            float gone = Mathf.Clamp01((age - 2.55f) / 0.4f);
-            _knot.localPosition = _knotAt + Vector3.down * (0.45f * (1f - Mathf.Clamp01(grow)) + 0.5f * gone);
-            _knot.localScale = Vector3.one * Mathf.Max(0.001f, Mathf.Clamp01(grow) * (1f - gone * 0.6f));
-
-            // The lashes: out to each slipper, taut through the hold, hauling it home through the yank.
-            for (int i = 0; i < _targets.Count; i++)
+            for (int i = 0; i < Stems; i++)
             {
-                var shoe = _targets[i];
-                if (shoe == null || age > hold + yank + 0.25f) { _lashes[i].Clear(); continue; }
-                Vector3 from = transform.InverseTransformPoint(origin) + Vector3.up * 0.3f;
+                float up = GrowthVfx.Pop((age - RiseAt[i]) / 0.22f);
+                float sink = Mathf.Clamp01((age - SinkAt[i]) / 0.35f);
+                float drop = 0.6f * (1f - up) + 0.7f * sink * sink;
+                if (_sheath[i] != null)
+                {
+                    _sheath[i].localPosition = _sheathAt[i] + Vector3.down * drop;
+                    _sheath[i].localScale = Vector3.one * (up > 0.001f && sink < 1f ? 1f : 0.001f);
+                }
+                if (_frond[i] == null) continue;
+                // Negative pitch rears the frond up and in; positive flops it out. Folded on the burst,
+                // opening with an overshoot, quivering through the hold, jolting up on the yank, closing
+                // over the centre on the clench, flopping out as it sinks.
+                float open = Mathf.Clamp01((age - RiseAt[i] - 0.08f) / 0.22f);
+                float fold = -38f * (1f - GrowthVfx.Pop(open));
+                float shiver = Mathf.Sin(age * 60f + i * 2.3f) * Quiver[i] * quiver;
+                float pitch = fold + shiver - 18f * whipBack - 58f * clench + 48f * sink;
+                // The frond is the sheath's sibling in the file (both under the root), so it drops with it.
+                _frond[i].localPosition = _frondAt[i] + Vector3.down * drop;
+                _frond[i].localRotation = _frondRest[i] * Quaternion.Euler(pitch, 0f, 0f);
+                _frond[i].localScale = Vector3.one * (up > 0.001f && sink < 1f ? 1f : 0.001f);
+            }
+            // The whips: the coiled one under a reaching frond hides while its lash is out.
+            for (int i = 0; i < Stems; i++) if (_whip[i] != null) _whip[i].gameObject.SetActive(true);
+            for (int k = 0; k < _targets.Count; k++)
+            {
+                var shoe = _targets[k];
+                int stem = _stemFor[k];
+                if (shoe == null || age > hold + yank + 0.25f || _whip[stem] == null) { _lashes[k].Clear(); continue; }
+                _whip[stem].gameObject.SetActive(false);
+                Vector3 from = transform.InverseTransformPoint(_whip[stem].position);
                 Vector3 to = transform.InverseTransformPoint(shoe.transform.position);
                 Vector3 tip = Vector3.Lerp(from, to, GrowthVfx.Pop(Mathf.Clamp01(age / 0.18f)));
-                float slack = age < hold ? 0.02f : 0f;
-                GrowthVfx.Curve(_points, from, tip, 12, slack * Vector3.Distance(from, tip), 0.04f, i * 1.3f + age * 8f);
-                _lashes[i].Draw(_points, 0.4f);
+                float slack = age < hold ? 0.03f : 0f;
+                GrowthVfx.Curve(_points, from, tip, 12, slack * Vector3.Distance(from, tip), 0.05f, k * 1.3f + age * 6f);
+                _lashes[k].Draw(_points, 0.55f);
+            }
+
+            // The blades brown as it sinks (one re-dress, cached by `ToonSkin`).
+            bool dry = age > 2.35f;
+            if (dry != _dressedDry && _model != null)
+            {
+                _dressedDry = dry;
+                if (_dry == null)
+                {
+                    _dry = (Color[])Palette.Clone();
+                    var straw = new Color(0.45f, 0.38f, 0.20f);
+                    foreach (int slot in new[] { 0, 1, 2, 3 }) _dry[slot] = Color.Lerp(Palette[slot], straw, 0.6f);
+                }
+                PaeteProp.Redress(_model, dry ? _dry : Palette);
             }
         }
     }
