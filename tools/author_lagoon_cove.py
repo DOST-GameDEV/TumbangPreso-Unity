@@ -203,6 +203,7 @@ def ground_under(x, y, r):
     return min(height(x + dx * r, y + dy * r) for dx, dy in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)))
 
 
+EMBLEM = "pawikan"   # the landmark's painted emblem: pawikan, pagi or bangka (awaiting the owner's pick)
 ROCK_LOOK = "rock_a+brush"   # texture + wear variant (see render_lagoon_texture_preview.edge_wear)
 MASSIF_MIX = {"boulder": 7, "stack": 0.6, "split": 1.5, "cobble": 1}
 RIM_MIX = {"boulder": 3, "cobble": 2, "slab": 1}
@@ -658,7 +659,9 @@ def village(c, rng):
     place_house(c, "capilla", 0, sx, sy, sz, (0, 1))            # the landmark, facing the court
     place_house(c, "stall", 0, 17.5, 7.0, 0.0, (0, 1))          # a sari-sari stall at the court's east edge
     o = bpy.data.objects.new("landmark rock", KIT[R.ROCK_FAMILIES["boulder"][0]])
-    o.location, o.scale = (LANDMARK[0], LANDMARK[1], WATER - 1.0), (3.4, 3.0, 3.0)
+    # 1.4x (landmark review: at 3.4 the painted emblem covered ~70 px of a 1600 px court view;
+    # the reference's octopus rock is the map's signature and reads from anywhere).
+    o.location, o.scale = (LANDMARK[0], LANDMARK[1], WATER - 1.4), (4.8, 4.2, 4.2)
     o.rotation_euler = (0, 0, 0.3)
     c.objects.link(o)
 
@@ -1380,6 +1383,12 @@ def main():
     apply_owner_edits()
     import lagoon_paint_materials as PM          # hull, trim, lime plaster, capiz, cloth
     PM.apply_paint_materials()
+    # The landmark's painted emblem and the backdrop of distant islands and spires (gap review
+    # items 5 and 11; tools/author_lagoon_landmark.py). The emblem is the owner's pick
+    # (EMBLEM); the backdrop comes after the bake and the burying pass, which it must not join.
+    import author_lagoon_landmark as LM
+    LM.apply_emblem(bpy.data.objects["landmark rock"], EMBLEM, 6.4)
+    LM.build_backdrop(L.col("Backdrop", root), KIT)
     surface_variety("thatch", random.Random(77))
     surface_variety("sawali", random.Random(78))
     L.gameplay(root)
