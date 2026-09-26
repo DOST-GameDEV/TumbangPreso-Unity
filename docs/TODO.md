@@ -906,6 +906,17 @@ it downloads or renders in the background in the loading screen".
   Tests (Mac PlayMode, total 2 failed 0): `HomeFlowTests.LoadingTipsStayInlineAndReadinessStillGatesTheTitle`
   and `HubFlowTests.QueuePlateMatchFoundCharacterSelectLobbyAndLoadingAreDrawn`.
 
+### MERGE-0927 · Lighting branch merged into ASTRAReworks ✅ DONE, 2026-09-27
+
+Owner, 2026-09-27: "merge now to astrareworks". `merge/astra-lighting-2026-09-25` merged into
+ASTRAReworks at `a6133ccb` (59 commits ahead of where the branch was cut). One conflict, this
+file, where both sides added queue sections at the same place; both sets are kept whole.
+`HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` was already failing on ASTRAReworks:
+`fd63367e` hides HOME's skill tree door (`HeroLoadoutRules.SidegradesOpen` false) and the test still
+pressed it; the test now walks that door only while the tree is on. Evidence (Mac PlayMode on the
+merge): the hub door, queue/loading, map preview, lighting style card, thumbnail and boot loading
+tests, total 6, all passing after the test fix.
+
 ### LIGHT-4 · Ilalim ng Tulay lighting changes with view angle and distance ⚠️ OPEN, 2026-09-27
 
 Owner report with four frames: the street loses its sun shadows and goes flat and bluish from

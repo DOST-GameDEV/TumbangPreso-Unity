@@ -128,10 +128,18 @@ namespace TumbangPreso.PlayTests
                 yield return Shots("Avatar");
                 yield return BackToHome();
 
-                yield return Press("SkillTreeButton");
-                Assert.IsInstanceOf<HubSkillTree>(TumpHub.Current.Top);
-                yield return Shots("SkillTree");
-                yield return BackToHome();
+                // The skill tree is switched off (owner, 2026-09-26, `HeroLoadoutRules.SidegradesOpen`),
+                // and its HOME door is built but hidden, so the door is only walked while it is on.
+                if (HeroLoadoutRules.SidegradesOpen)
+                {
+                    yield return Press("SkillTreeButton");
+                    Assert.IsInstanceOf<HubSkillTree>(TumpHub.Current.Top);
+                    yield return Shots("SkillTree");
+                    yield return BackToHome();
+                }
+                else
+                    Assert.IsFalse(TumpHub.Current.Canvas.GetComponentsInChildren<Button>().Any(b => b.name == "SkillTreeButton"),
+                                   "The skill tree is off, so HOME must not show its door.");
 
                 yield return Press("HeroButton");
                 Assert.IsInstanceOf<HubHero>(TumpHub.Current.Top);
