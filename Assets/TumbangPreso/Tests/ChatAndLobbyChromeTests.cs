@@ -266,7 +266,8 @@ namespace TumbangPreso.Tests
             //53 carries the Whirled and Chilled status clocks and the Carry message (ability overhaul).
             //54 adds Paete: his roster index, the Rooted clock, SproutKnock, ReqBreakFree, ReqUproot.
             //55 appends the struggle flag and plant-pull progress to SubmitMove and SyncUnit.
-            Assert.AreEqual(55, NetSession.ProtocolVersion,
+            //56 appends Concussed, Feared, Disoriented, Vulnerable and the fear source to SyncUnit (ABILITY-2).
+            Assert.AreEqual(56, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

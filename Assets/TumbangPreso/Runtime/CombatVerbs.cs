@@ -398,7 +398,7 @@ namespace TumbangPreso
                 Vector3 b = Flat(transform.position);
                 Vector3 t = Flat(p.transform.position);
 
-                if (DistanceToSegment(t, a, b) > Balance.LungeTagRadius) continue;
+                if (DistanceToSegment(t, a, b) > Balance.LungeTagRadius * p.TagReachScale) continue;
 
                 // ⚠️ COUNTED BEFORE THE TAG RATHER THAN AFTER IT. `ResolveTag` re-checks the
                 // whole world and can still refuse, but a refusal there means the sweep found

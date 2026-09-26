@@ -6,291 +6,176 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
+    /// <summary>
+    /// ⚠️⚠️ CHESKA, CRYO, IN THE NEW SHAPE (ABILITY-2, owner 2026-09-26: *"cheska to cryo"*, with the
+    /// table below). `docs/reports/ability-rework-2026-09-26/plan.md` § 3.2; numbers in `Core.CryoRules`.
+    ///
+    /// | Slot | Name | Owner's table |
+    /// |---|---|---|
+    /// | Signature | COLD FEET | a chilling field on the floor that inflicts Chilled indefinitely to players caught inside it; lasts 5 s; 35 s |
+    /// | Attacking | FROSTBITE | imbue the slipper with Frozen; hitting another player with it inflicts Frozen; 35 s |
+    /// | Defending | GLACIAL WALL | an arc-shaped icicle wall that blocks slippers and players; takes 3 slipper hits to shatter; 35 s |
+    /// | Ultimate | ABSOLUTE ZERO | inflict Frozen on every player, followed by Chilled after thawing; 12 objective points |
+    ///
+    /// ⚠️ THE OLD KIT (Permafrost Sheet with two charges, Ice Barricade with one charge refilled by a
+    /// retrieval, Glacial Nova round her feet) is replaced, not kept beside it; its reasoning survives in
+    /// git history (`CheskaHeroKit.cs` before this commit) and the effects it built are reused: the sheet
+    /// is Cold Feet's field, the barricade is the wall's body, the nova's prison is the freeze.
+    /// </summary>
     public sealed class CheskaHeroKit : HeroKit
     {
         public CheskaHeroKit() : base("cheska", "CHESKA")
         {
-            Skill1 = new PermafrostSheetAbility();
-            Skill2 = new IceBarricadeAbility();
-            Ultimate = new GlacialShatterBurstAbility();
+            Skill1 = new ColdFeet();
+            AttackingSkill = new Frostbite(this);
+            DefendingSkill = new GlacialWall();
+            Ultimate = new AbsoluteZero();
         }
 
-        /// <summary>
-        /// ⚠️ SECOND MOST EXPENSIVE, BECAUSE IT IS TWO ULTIMATES IN ONE PRESS. Glacial Nova
-        /// freezes everyone within 4.6 m AND clears every loose tsinelas out to 4.8 m, so it is
-        /// simultaneously an escape for a surrounded taya and a reset of the ammunition on the
-        /// court. It goes off around the caster, so like Thunderstrike it cannot miss.
-        ///
-        /// It sits under Zack's 20 only because the freeze is a stagger rather than a full
-        /// stun.
-        ///
-        /// ⚠️ 17 CHARGES, WHICH IS 17 LATA KNOCKDOWNS. Was 140 against a knockdown worth 25,
-        /// which is 5.6. The meter counts events now and an ultimate costs 10 to 20 of them:
-        /// `Balance`'s ultimate economy block has the request and the pacing arithmetic.
-        /// </summary>
-        public override float UltimateCost => 17.0f;
+        public override float UltimateCost => CryoRules.AbsoluteZeroCost;
 
-        private sealed class PermafrostSheetAbility : HeroAbility
+        /// <summary>True while her slipper carries the frost (Frostbite loaded, not yet thrown).</summary>
+        public bool IsFrostbiteLoaded { get; set; }
+
+        /// <summary>The throw took the frost: the load is spent.</summary>
+        public void ConsumeFrostbite() => IsFrostbiteLoaded = false;
+
+        // ================================================================== COLD FEET (signature)
+
+        private sealed class ColdFeet : HeroAbility
         {
             public override bool DefersPredictedEffect => true;
-            /// <summary>Nearest she may freeze. Closer and she is standing on it.</summary>
-            private const float MinRange = 1.8f;
 
-            /// <summary>Furthest, at a full hold. See the constructor for why it is 5.0.</summary>
-            private const float MaxRange = 5.0f;
-
-            // ⚠️ THE TELEGRAPH NUMBERS ARE THE SPAWN NUMBERS. 2.3 m is the radius handed to
-            // `SpawnIceSheet` below, and the range is now `MaxRange` because the sheet is aimed:
-            // `TelegraphRange` means "the furthest this can be placed" for a hold-to-aim power,
-            // which is what `HeroAbilitySystem.AimPoint` and `AIController.FootprintOf` both
-            // read. They are the same measurement written twice, so
-            // `TelegraphsMatchWhatTheAbilityPlaces` asserts the pair rather than trusting either.
-            public PermafrostSheetAbility()
-                // ⚠️⚠️ TWO CHARGES A ROUND AND NO RECHARGE, DOWN FROM 12.8 CASTS OFF A 7 s
-                // COOLDOWN. It places a zone, so it is on the charge half of the split, and it
-                // is one of the abilities meant to run out: Cheska has to decide WHICH two
-                // approaches to the lata she is closing this round.
-                //
-                // ⚠️ THE RADIUS IS UNCHANGED AT 2.3 AND THAT IS DELIBERATE. It already sits
-                // inside the 1.8 to 2.5 m budget. What was wrong with this power was never its
-                // size but its RENDER: five overlapping translucent primitives, which is
-                // `docs/VISION.md` § 2 rule 4 broken by one ability against itself. That is
-                // fixed in `HeroHazards.SpawnIceSheet` rather than here.
-                : base("cheska_skill1", "PERMAFROST SHEET",
-                       "Hold to draw cold across a patch of street, then release. Rivals crossing the ice slow down and struggle to stop or turn.",
-                       0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaFrostSheet,
-                       summary: "Freeze a patch of street. Rivals lose speed and traction.",
-                       telegraphRadius: 2.3f, telegraphRange: MaxRange,
-                       castAction: "hero-cheska-frostwave",
-                       viewmodelAction: "frost-sweep",
-                       castCue: "sfx_cast_cheska_sheet",
-                       charges: 2)
+            public ColdFeet()
+                : base("cheska_skill1", "COLD FEET",
+                       "Hold to aim, release to freeze a patch of street for 5 s. Anyone standing in it is Chilled: half speed, and it lingers.",
+                       CryoRules.ColdFeetCooldown, 0.0f, AbilityGlyph.CheskaFrostSheet,
+                       summary: "Freeze a patch of street. Anyone in it is Chilled.",
+                       telegraphRadius: CryoRules.ColdFeetRadius, telegraphRange: CryoRules.ColdFeetMaxRange,
+                       castAction: "hero-cheska-frostwave", viewmodelAction: "frost-sweep",
+                       castCue: "sfx_cast_cheska_sheet")
             {
-                // ⚠️⚠️ HOLD TO PLACE IT, RELEASE TO FREEZE. 🧑 2026-09-02: *"maybe cheska's wall
-                // and slow should have this too"*, and then the general form: *"figure out
-                // whichh skills in aall should have holdable shit so that u can figure out where
-                // skill will land and not js guess"*. A fixed 2.8 m offset makes the aim a
-                // function of where her FEET are, so the only way to place a slick was to walk
-                // to a spot 2.8 m short of it, and the ability's whole job is cutting a lane she
-                // is not standing in.
-                //
-                // ⚠️ 1.8 TO 5.0 m, WHICH IS SHORTER THAN PHAISTER'S 5.5. Her sheet is 2.3 m
-                // across against the hex's 2.4 and it lasts 5 s, but it costs no cooldown at all
-                // and she has two of them: reach is the lever that keeps two free zone placements
-                // from covering the same ground a single hex has to be spent on.
-                AimByHolding(MinRange, MaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
-                TelegraphStyle = Visual.GroundReticle.Style.Frost;
+                AimByHolding(CryoRules.ColdFeetMinRange, CryoRules.ColdFeetMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                TelegraphStyle = GroundReticle.Style.Frost;
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                // ⚠️⚠️ `NetCue`, NOT `GameServices.Audio`, ACROSS ALL FIVE REMAINING KITS. Every
-                // hero cast cue in the game is a WORLD event: a grunt, an element, an impact at a
-                // point on the court that the other three players are meant to hear and locate.
-                // `tools/audit_audio_reach.py` and `docs/TODO.md` § 25 have the audit; `NetCue`
-                // is a no-op with no transport running, so nothing about the offline game, the
-                // bot probes or the editor checks changes by this.
-                //
-                // ⚠️ THE ABILITY LAYER ITSELF IS STILL NOT REPLICATED (§ 25.1), so today this
-                // buys nothing on its own: the cast does not reach another peer to make a sound
-                // on. It is done now because the alternative is doing it later, from memory,
-                // across five files, on the day the ability RPC lands.
                 NetCue.Play("hero_cheska_grunt", ctx.Position);
-
-                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.Squash(0.035f);
-
-                float areaScale = ctx.CostScale("cheska.1.blackice");
-                float effectScale = ctx.GainScale("cheska.1.blackice");
-                Vector3 target = AimedDestination(ctx);
-                // ⚠️⚠️ ONE CALLOUT PER EVENT. This fired "SLIP ZONE!" and `SpawnIceSheet`
-                // fired "SLIP & SLIDE!" at the same point on the same frame, saying the same
-                // thing twice in two different phrasings. The hazard keeps its line because the
-                // hazard is the thing that persists.
-                HeroHazards.SpawnIceSheet(target, 2.3f * areaScale, 5.0f,
-                                          ctx.Motor.PlayerSlot, effectScale);
+                ctx.Motor.GetComponent<CharacterSquashStretch>()?.Squash(0.035f);
+                // The field IS the old sheet: `IceSheetComponent` already refreshes Chilled on every
+                // body inside it each step, which is the owner's "indefinitely while inside", and the
+                // 5 s Chilled runs out after they step off.
+                HeroHazards.SpawnIceSheet(AimedDestination(ctx), CryoRules.ColdFeetRadius, CryoRules.ColdFeetSeconds,
+                                          ctx.Motor.PlayerSlot, 1.0f);
             }
         }
 
-        private sealed class IceBarricadeAbility : HeroAbility
+        // ================================================================== FROSTBITE (attacking)
+
+        private sealed class Frostbite : HeroAbility
+        {
+            private readonly CheskaHeroKit _kit;
+
+            public Frostbite(CheskaHeroKit kit)
+                : base("cheska_skill2", "FROSTBITE",
+                       "Attacking. Frost your slipper for 10 s. The next player it hits is Frozen: no moving, no grabbing, for 2.5 s.",
+                       CryoRules.FrostbiteCooldown, CryoRules.FrostbiteLoadSeconds, AbilityGlyph.CheskaNova,
+                       summary: "Frost your slipper. Whoever it hits is Frozen.",
+                       castAction: "hero-cheska-frostwave", viewmodelAction: "frost-sweep",
+                       castCue: "sfx_cast_cheska_sheet")
+            {
+                _kit = kit;
+            }
+
+            public override bool CanActivate(AbilityContext ctx) => base.CanActivate(ctx) && !ctx.Motor.IsDefender;
+
+            protected override void OnActivate(AbilityContext ctx)
+            {
+                _kit.IsFrostbiteLoaded = true;
+                NetCue.Play("sfx_ice_form", ctx.Position);
+            }
+
+            protected override void OnTick(AbilityContext ctx, float dt)
+            {
+                if (!_kit.IsFrostbiteLoaded) DurationRemaining = 0.0f;
+            }
+
+            protected override void OnEnd(AbilityContext ctx) => _kit.IsFrostbiteLoaded = false;
+            protected override void OnCancelled(AbilityContext ctx) => _kit.IsFrostbiteLoaded = false;
+        }
+
+        // ================================================================== GLACIAL WALL (defending)
+
+        private sealed class GlacialWall : HeroAbility
         {
             public override bool DefersPredictedEffect => true;
-            /// <summary>Nearest she may raise it. Closer than this and it is her own wall.</summary>
-            private const float WallMinRange = 1.8f;
 
-            /// <summary>
-            /// Furthest, at a full hold.
-            ///
-            /// ⚠️ 4.0 m, THE SHORTEST AIM BAND IN THE GAME, AND IT IS SHORT ON PURPOSE. A
-            /// barricade closes a lane outright and she gets ONE a round; letting her drop it
-            /// across the far side of the court would make it a zoning tool she never has to
-            /// stand near. Her ask of the player is still *which* approach to close, and now
-            /// also how far up it, but she has to be in the fight to answer either.
-            /// </summary>
-            private const float WallMaxRange = 4.0f;
-
-            // 1.6 m is the `HazardVolume` radius the barricade registers, which is the circle
-            // bots steer around and therefore the honest footprint. The three pillars measure
-            // 2.35 m across the face, so the ring reads as slightly tighter than the wall looks:
-            // that is the right way round, because the ends of the wall are the gaps.
-            public IceBarricadeAbility()
-                // ⚠️⚠️ ONE CHARGE A ROUND, BACK ONE WHEN SHE RETRIEVES HER OWN TSINELAS. The
-                // scarcest ability in the game, and it is the one that most deserves to be: a
-                // wall in front of the lata closes a lane outright, and one per round makes
-                // WHERE it goes the whole decision.
-                //
-                // ⚠️ THE RECHARGE PAYS THE ACT THE GAME IS BUILT AROUND. `docs/VISION.md` § 0:
-                // *"The tension is the retrieval, not the throw."* Cheska gets her wall back by
-                // going in and getting her slipper, which is the one moment she can be caught,
-                // so the strongest defensive tool in the mode is refilled by taking the game's
-                // central risk rather than by a timer. It is also the only recharge in the game
-                // keyed to this event, which keeps it hers.
-                : base("cheska_skill2", "ICE BARRICADE",
-                       "Hold to pick the line, then let go to raise three ice pillars. Bodies and thrown slippers both stop at them.",
-                       0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaBarricade,
-                       summary: "Hold to aim, release to raise. Bodies and slippers stop at it.",
-                       telegraphRadius: 1.6f, telegraphRange: WallMaxRange,
-                       castAction: "hero-cheska-raise",
-                       viewmodelAction: "raise-barricade",
-                       castCue: "sfx_cast_cheska_barricade",
-                       charges: 1,
-                       rechargedBy: Recharge.OwnSlipperRetrieved)
+            public GlacialWall()
+                : base("cheska_skill2d", "GLACIAL WALL",
+                       "Defending. Hold to aim, release to raise an arc of icicles. Bodies and slippers stop at it; three slipper hits shatter it.",
+                       CryoRules.GlacialWallCooldown, 0.0f, AbilityGlyph.CheskaBarricade,
+                       summary: "Raise an icicle wall. Three slipper hits break it.",
+                       telegraphRadius: CryoRules.GlacialWallArcLength * 0.5f, telegraphRange: CryoRules.GlacialWallMaxRange,
+                       castAction: "hero-cheska-raise", viewmodelAction: "raise-barricade",
+                       castCue: "sfx_cast_cheska_barricade")
             {
-                AimByHolding(WallMinRange, WallMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
-                TelegraphStyle = Visual.GroundReticle.Style.Frost;
+                AimByHolding(CryoRules.GlacialWallMinRange, CryoRules.GlacialWallMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                TelegraphStyle = GroundReticle.Style.Frost;
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
-
-                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.Squash(0.045f);
-
-                Vector3 wallPos = AimedDestination(ctx);
-
-                // ⚠️⚠️ THE 3.2 IS A DURATION IN SECONDS AND IT USED TO BE PASSED AS IF IT WERE A
-                // RADIUS. `SpawnIceBarricade(position, forward, duration = 6.0f)` has no radius
-                // parameter at all, so a calibration pass that meant "make the footprint 3.2 m"
-                // silently halved how long the wall stands and left the footprint at its
-                // default. Named now so the next reader cannot make the same mistake.
-                //
-                // ✅ AND THE 3.2 IS NOW 6.0, WHICH CLOSES `docs/TODO.md` § 2 AS A CONSEQUENCE
-                // RATHER THAN AS A MEASUREMENT. The whole argument for keeping 3.2 was that the
-                // skill cooled in 9 s, so a 6 s wall stood for two thirds of every cycle in
-                // front of a lata that only has to survive 90 s. **That premise is gone.** The
-                // barricade is one charge per round now, refilled only by retrieving her own
-                // tsinelas, so it is up for 6 s out of 90 rather than for 60 s out of 90.
-                //
-                // A wall you get ONCE has to be worth walking around, and 3.2 s is barely long
-                // enough to cross the box. 6.0 s is what the signature always defaulted to and
-                // what the ability was written against before the parameter mix-up on
-                // 2026-08-23. `docs/Hero_Strike_Balance.md` § 3.2.
-                HeroHazards.SpawnIceBarricade(wallPos, ctx.Forward, duration: 6.0f,
-                    spanScale: ctx.GainScale("cheska.2.spires"),
-                    thicknessScale: ctx.CostScale("cheska.2.spires"),
-                    split: ctx.HasVariant("cheska.2.spires"));
+                ctx.Motor.GetComponent<CharacterSquashStretch>()?.Squash(0.045f);
+                // ⚠️ The barricade's body, spread to the arc's length (its three pillars measure 2.35 m
+                // across at span 1). The curved arc itself is presentation work (plan § 5, TODO ABILITY-2).
+                var wall = HeroHazards.SpawnIceBarricade(AimedDestination(ctx), ctx.Forward, CryoRules.GlacialWallSeconds,
+                                                         spanScale: CryoRules.GlacialWallArcLength / 2.35f);
+                var comp = wall != null ? wall.GetComponent<HeroHazards.IceBarricadeComponent>() : null;
+                if (comp != null) comp.HitsToShatter = CryoRules.GlacialWallHits;
             }
         }
 
-        private sealed class GlacialShatterBurstAbility : HeroAbility
+        // ================================================================== ABSOLUTE ZERO (ultimate)
+
+        private sealed class AbsoluteZero : HeroAbility
         {
-            public GlacialShatterBurstAbility()
-                : base("cheska_ultimate", "GLACIAL NOVA",
-                       "Freezes everyone standing near you and blows the loose slippers away. Your way out when the whole court is on you.",
-                       0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaNova,
-                       summary: "Freezes everyone near you and clears loose slippers away.",
-                       telegraphRadius: 4.6f, telegraphRange: 0.0f,
-                       castAction: "hero-cheska-nova",
-                       viewmodelAction: "nova-burst",
+            public AbsoluteZero()
+                : base("cheska_ultimate", "ABSOLUTE ZERO",
+                       "The whole street freezes. Every other player is Frozen for 2.5 s, then Chilled for 5 s as they thaw.",
+                       0.0f, 0.0f, AbilityGlyph.CheskaNova,
+                       summary: "Freeze every player on the map, then chill them.",
+                       castAction: "hero-cheska-nova", viewmodelAction: "nova-burst",
                        castCue: "sfx_cast_cheska_nova")
             {
-                TelegraphStyle = Visual.GroundReticle.Style.Frost;
+                TelegraphStyle = GroundReticle.Style.Frost;
                 Windup = UltimateWindup;
-                SupportsPendingSnapshot=true;
+                SupportsPendingSnapshot = true;
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 NetCue.Play("hero_cheska_ult", ctx.Position);
-
-                // ⚠️ NOVA, NOT FREEZE, AND THE DIFFERENCE IS THE DIRECTION. `sfx_ice_freeze` is
-                // ice FORMING, a rising chime, and it stays on Permafrost Sheet and the
-                // Barricade where something is being built. This is ice BREAKING outward, so
-                // `sfx_frost_nova` descends and leads with shards. Cheska's three abilities
-                // fired one sound between them and the ultimate sounded like the skill.
                 NetCue.Play("sfx_frost_nova", ctx.Position);
-
-                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.Stretch(0.065f);
-
-                // Screen shake on main camera
+                ctx.Motor.GetComponent<CharacterSquashStretch>()?.Stretch(0.065f);
                 if (UnityEngine.Camera.main != null)
-                {
-                    var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
-                    if (rig != null) rig.Shake(0.5f, 0.25f);
-                }
+                    UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()?.Shake(0.5f, 0.25f);
 
                 var round = ctx.Round;
                 if (round != null && NetAuthority.ShouldResolve())
                 {
-                    // Freeze all nearby opponents (balanced ultimate radius)
                     foreach (var p in round.Players)
                     {
                         if (p == null || p.PlayerSlot == ctx.Motor.PlayerSlot) continue;
-
-                        Vector3 diff = p.transform.position - ctx.Position;
-                        diff.y = 0.0f;
-                        if (diff.magnitude <= 4.6f)
-                        {
-                            // ⚠️ 9 PRESSES, THE MOST IN THE GAME. Per-skill mash cost was
-                            // asked for as "dependent on how hard the skill is supposed to hit",
-                            // and this is an ULTIMATE that freezes everyone it catches. It is
-                            // also the one ability whose fiction and whose element are the same
-                            // word, so if any stun should read as being encased, it is this.
-                            p.ApplyStagger(2.5f, StunElement.Ice, 9);
-                            p.ApplyResolvedImpact(diff.normalized * 8.5f + Vector3.up * 2.5f);
-                            // ⚠️⚠️ NO PER-VICTIM CALLOUT. Three frozen players used to mean
-                            // three FREEZE callouts stacked on top of the nova's own, which is
-                            // four lines of text in one frame saying one thing. The ice prison
-                            // and the dizzy stars are already on each victim and they are
-                            // readable from any angle; the words are not.
-                            DizzyStars.Attach(p.transform, 2.5f, UiTheme.HeroIceBright);
-                            HeroHazards.SpawnIceCubePrison(p.transform, 2.5f);
-                            Visual.HitFeel.Land(p, Visual.HitFeel.Weight.Ultimate,
-                                                UiTheme.HeroIceBright, ctx.Position);
-                        }
-                    }
-
-                    // Deflect slippers away within ultimate blast
-                    foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
-                    {
-                        if (s != null)
-                        {
-                            Vector3 away = s.transform.position - ctx.Position;
-                            away.y = 0.0f;
-                            if (away.magnitude <= 4.8f)
-                            {
-                                if (away.sqrMagnitude < .001f)
-                                {
-                                    away = ctx.Forward; away.y = 0;
-                                    if (away.sqrMagnitude < .001f) away = Vector3.forward;
-                                }
-                                var outward = away.normalized * 19.0f;
-                                // Deflection changes an existing flight's velocity;
-                                // a loose slipper needs the normal flight transition.
-                                // Neither path may detach somebody's held equipment.
-                                if (s.State == SlipperState.Loose)
-                                    s.HostThrow(null, s.transform.position,
-                                        outward + Vector3.up * (Balance.DeflectLift * 1.1f));
-                                else if (s.State == SlipperState.InFlight)
-                                    s.Deflect(outward, 1.1f);
-                            }
-                        }
+                        // Frozen now; Chilled for the 5 s after the thaw (the timer runs through the
+                        // freeze, where a slow changes nothing, so it is the thaw's 5 s exactly).
+                        p.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);
+                        p.ApplyChilled(StatusRules.FrozenSeconds + StatusRules.ChilledSeconds);
+                        HeroHazards.SpawnIceCubePrison(p.transform, StatusRules.FrozenSeconds);
+                        HitFeel.Land(p, HitFeel.Weight.Ultimate, UiTheme.HeroIceBright, ctx.Position);
                     }
                 }
-
-                // Burst particles via AbilityVfx
-                Visual.FrostSurfacePresentation.Nova(ctx.Position, 4.6f);
+                FrostSurfacePresentation.Nova(ctx.Position, 4.6f);
             }
         }
     }

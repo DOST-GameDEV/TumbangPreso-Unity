@@ -852,12 +852,13 @@ namespace TumbangPreso
             // when that was found and is 5 now (§ 83.13); the fault would be the same at either.
             bool canSteer = CanMove();
 
-            Vector2 axis = canSteer ? Intent.MoveAxis : Vector2.zero;
+            // ⚠️ A FEARED BODY RUNS ON ITS OWN (the owner's flee), so it counts as moving whatever the stick says.
+            Vector2 axis = canSteer ? (IsFeared ? Vector2.up : Intent.MoveAxis) : Vector2.zero;
             bool moving = axis.sqrMagnitude > 0.0001f;
 
             // The sprint multiplier. Fatigue is NOT in this value: it rides the speed-zone
             // stack so it composes with a hazard zone rather than one silently winning.
-            float sprint = Stamina.Step(dt, moving, canSteer && Intent.Pressed(Verb.Sprint));
+            float sprint = Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && Intent.Pressed(Verb.Sprint));
 
             // ⚠️⚠️ THE FATIGUE CUE, WHICH SHIPPED REGISTERED AND WAS NEVER FIRED ONCE.
             // `character_base.gd::_enter_fatigue` plays it on the frame the bar bottoms out, and
@@ -902,7 +903,7 @@ namespace TumbangPreso
 
             if (canSteer)
             {
-                Vector3 wish = Steer(axis, dt);
+                Vector3 wish = IsFeared ? FleeWish() : Steer(axis, dt);
 
                 var target=new Vector2(wish.x*speed,wish.z*speed);
                 if (IsOnIce && _grounded)
@@ -1403,7 +1404,7 @@ namespace TumbangPreso
             Vector3 p = transform.position;
             float x = p.x, z = p.z;
 
-            if (Confinement.IsConfined(RoundActive, _isDefender))
+            if (Confinement.IsConfined(RoundActive, _isDefender) && !MayLeaveBoxToTag)
                 Confinement.ClampToBox(ref x, ref z);
 
             // ⚠️⚠️ AND NOBODY LEAVES THE ARENA AT ALL, ROLE OR NO ROLE. The chalk box above is a
@@ -1455,7 +1456,8 @@ namespace TumbangPreso
         // the HUD and the rule that acts must never be able to disagree.
         // -------------------------------------------------------------------
 
-        public bool CanAct() => RoundActive && !IsStunned && !PresentationClock.BlocksInput;
+        // ⚠️ FEARED ACTS ON NOTHING (owner, 2026-09-26: *"Flee from kuro and drop slipper"*): no throw, pickup or skill.
+        public bool CanAct() => RoundActive && !IsStunned && !IsFeared && !PresentationClock.BlocksInput;
 
         // -------------------------------------------------------------------
         // § COMMITMENT
@@ -1577,6 +1579,9 @@ namespace TumbangPreso
             // because Updraft cannot START with a slipper inside the box (`AmihanHeroKit`), and a
             // body aloft cannot pick one up: the retrieval is still made on the ground, in reach.
             if (IsAloft) return false;
+            // ⚠️ VULNERABLE IS TAGGABLE ANYWHERE, WITH OR WITHOUT A SLIPPER (owner, 2026-09-26: *"easier
+            // to tag and phaister can go out of box and tag them"*).
+            if (IsVulnerable) return true;
             if (!HoldingSlipper) return false;
             return IsInsideBox();
         }
@@ -1805,6 +1810,8 @@ namespace TumbangPreso
             // whether their number is big enough, which is a judgement that would drift the
             // moment somebody retuned a duration.
             if (duration <= Balance.MinStunDown) element = StunElement.None;
+            // ⚠️ VULNERABLE: stuns on them last longer (ABILITY-2 plan section 2).
+            if (IsVulnerable) duration *= StatusRules.VulnerableStunScale;
 
             bool wins = duration >= _stunLeft;
 

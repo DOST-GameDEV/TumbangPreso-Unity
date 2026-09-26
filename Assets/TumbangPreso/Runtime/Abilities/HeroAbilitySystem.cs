@@ -33,6 +33,14 @@ namespace TumbangPreso.Abilities
             && (_motor == null || !_motor.HoldingSlipper);
         public bool IsImmuneToStuns => Kit is DanteHeroKit dante && dante.IsDemonicCarapaceActive;
 
+        /// <summary>Status immunity (Geo's SHIELD, ABILITY-2): every status but Tagged is refused.
+        /// Today the same flag as stun immunity, named for what the rework's statuses ask.</summary>
+        public bool IsImmuneToStatuses => IsImmuneToStuns;
+
+        /// <summary>A taya whose kit carries CURSE: VULNERABLE may leave the box to tag a Vulnerable
+        /// opponent (owner, 2026-09-26: *"phaister can go out of box and tag them"*).</summary>
+        public bool GrantsOutOfBoxTag => Kit is PhaisterHeroKit;
+
         private GroundReticle _reticle;
 
         // -------------------------------------------------------------------

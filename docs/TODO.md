@@ -203,8 +203,16 @@ Necro Nemu, Voodoo Phaister; Pyro (Sean), Electro (Zack) and Hydro (Rafi) have n
   `LoadoutSurfaceProbe`, `BrandPickerTests`, `TumpNativePickerTests`, `UiRuntimeShots`,
   `BrandPreparationTests`): a test that opens a hidden door is updated to expect it hidden, never
   the switch flipped to make it pass.
-- [ ] Motor statuses and `SyncUnit` fields (protocol bump).
-- [ ] Kits: Cheska, Dante, Phaister, Nemu (signature, fetch, guard); placeholders for Sean, Zack, Rafi.
+- [x] Motor statuses (`CharacterMotor.Rework.cs`): Concussed x0.7 speed, no sprint, throw wobble;
+  Feared drops the slipper (host), flees from the source on its own, no act; Disoriented aim sway;
+  Vulnerable taggable anywhere, tag reach and stuns x1.5, out-of-box tag for Phaister's kit; status
+  immunity (`IsImmuneToStatuses`); `SyncUnit` fields and protocol 56. Compiled (tools/cloud_compile.py),
+  not run. OWED: the Feared flee clip, the Disoriented hallucinations (presentation), status icons.
+- [x] Cheska (COLD FEET, FROSTBITE with `SlipperAffinity.Frost`, GLACIAL WALL with 3 hits and a
+  shatter on every peer, ABSOLUTE ZERO) and Dante (SHIELD, BOULDER `DanteBoulder`, BARRIER reflecting
+  slippers, EARTHQUAKE) rewritten as role kits. Compiled, not run. The Glacial Wall is still the straight
+  barricade and the boulder and barrier are placeholder slabs (`GeoVfx.cs`) until the presentation pass.
+- [ ] Kits: Phaister, Nemu (signature, fetch, guard); placeholders for Sean, Zack, Rafi.
 - [ ] Presentation per ability (clips, FPP, VFX, audio, icons), Feared and Concussed shared clips.
 - [ ] KURO PLAYS (its own design pass first), bots, snapshots, replays, screens, HUD.
 - [ ] Ultimate cutscenes rebuilt per `ultimates.md`.

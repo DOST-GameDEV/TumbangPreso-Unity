@@ -16,6 +16,7 @@ namespace TumbangPreso
         Normal,
         FireExplosive,  // Sean Skill 2 (Ignition Cannon)
         ElectricZap,    // Zack Skill 2 (Overcharge Throw)
+        Frost,          // Cheska attacking (Frostbite, ABILITY-2): the player it hits is Frozen
     }
 
     /// <summary>
@@ -678,7 +679,7 @@ namespace TumbangPreso
             // retrieval for 2.5 seconds."* ALOFT (Updraft): *"cant pick up unless they choose to go
             // down"*. Both live here, in the one gate every pickup path already asks (the local grab,
             // `HostPickUp` and the networked request), so no path can skip them.
-            if (who.IsWhirled || who.IsAloft) return false;
+            if (who.IsWhirled || who.IsFeared || who.IsAloft) return false;
 
             return true;
         }
@@ -1350,6 +1351,7 @@ namespace TumbangPreso
                     if ((_bodyContacts & contactBit) != 0) return;
                     _bodyContacts |= contactBit;
                     TriggerAffinityImpact();
+                    HostFrostbite(p);
                     HostBlockedBy(p);
                     return;
                 }
@@ -1389,6 +1391,7 @@ namespace TumbangPreso
                     if ((_bodyContacts & contactBit) != 0) return;
                     _bodyContacts |= contactBit;
                     TriggerAffinityImpact();
+                    HostFrostbite(p);
                     HostBlockedBy(p);
                     return;
                 }
@@ -1620,6 +1623,11 @@ namespace TumbangPreso
             _bankCount++;
             NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
+            // GLACIAL WALL counts the slippers that strike it (ABILITY-2: three shatter it). Host only:
+            // the flight is host-simulated, and the shatter's flair breaks it on every other screen.
+            if (NetAuthority.ShouldResolve())
+                closest.collider.GetComponentInParent<Abilities.HeroHazards.IceBarricadeComponent>()?.HostSlipperHit();
+
             if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
             {
                 // ⚠️ RELAYED. `FixedUpdate` is host-gated, so the popup and the style award were
@@ -1744,6 +1752,19 @@ namespace TumbangPreso
         /// costs position, which is what a block is actually about, and cannot lock anybody
         /// out of the game.
         /// </summary>
+        /// <summary>
+        /// FROSTBITE (ABILITY-2, owner: *"Hitting another player with the slipper will inflict them with
+        /// Frozen"*): a frosted slipper Freezes the body it strikes, once, then flies on as a plain one.
+        /// </summary>
+        private void HostFrostbite(CharacterMotor victim)
+        {
+            if (Affinity != SlipperAffinity.Frost || victim == null) return;
+            victim.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);
+            Abilities.HeroHazards.SpawnIceCubePrison(victim.transform, StatusRules.FrozenSeconds);
+            NetCue.Play("sfx_ice_freeze", transform.position);
+            Affinity = SlipperAffinity.Normal;
+        }
+
         private void HostBlockedBy(CharacterMotor blocker)
         {
             FinishChain(ThrowChainEnd.Block);

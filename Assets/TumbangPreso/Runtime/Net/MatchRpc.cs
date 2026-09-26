@@ -1880,7 +1880,7 @@ namespace TumbangPreso.Net
                 ultimateRemaining = zack.IsThunderstrikeActive ? kit.Ultimate.DurationRemaining : 0;
             }
             else if (kit is Abilities.DanteHeroKit dante)
-                chargeRemaining = dante.IsDemonicCarapaceActive ? kit.Skill2.DurationRemaining : 0;
+                chargeRemaining = dante.IsDemonicCarapaceActive ? kit.Skill1.DurationRemaining : 0;  // SHIELD is the signature now (ABILITY-2)
             else if (kit is Abilities.NemuHeroKit nemu)
                 chargeRemaining = nemu.IsPhantomPhaseActive ? kit.Skill1.DurationRemaining : 0;
             else return;
@@ -2383,6 +2383,13 @@ namespace TumbangPreso.Net
             // ⚠️ PROTOCOL 55: the struggle and the pull, for the poses (see `SubmitMove`).
             writer.WriteValueSafe(unit.EffortFlags);
             writer.WriteValueSafe(unit.PullWire);
+            // ⚠️ PROTOCOL 56 (ABILITY-2, 2026-09-26): the rework's four statuses and the fear's source,
+            // appended. The body's own peer needs the source to run the right way.
+            writer.WriteValueSafe(unit.ConcussedLeft);
+            writer.WriteValueSafe(unit.FearedLeft);
+            writer.WriteValueSafe(unit.DisorientedLeft);
+            writer.WriteValueSafe(unit.VulnerableLeft);
+            writer.WriteValueSafe(unit.FearSource);
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer,reliable?NetworkDelivery.ReliableSequenced:PoseDelivery);
         }
 
@@ -2426,7 +2433,13 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float rootedLeft);
             reader.ReadValueSafe(out byte effort);
             reader.ReadValueSafe(out byte pull);
+            reader.ReadValueSafe(out float concussedLeft);
+            reader.ReadValueSafe(out float fearedLeft);
+            reader.ReadValueSafe(out float disorientedLeft);
+            reader.ReadValueSafe(out float vulnerableLeft);
+            reader.ReadValueSafe(out Vector3 fearFrom);
             if(!Finite(whirledLeft) || !Finite(chilledLeft) || !Finite(rootedLeft))return;
+            if(!Finite(concussedLeft) || !Finite(fearedLeft) || !Finite(disorientedLeft) || !Finite(vulnerableLeft) || !Finite(fearFrom))return;
             if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
             if(edgeKind>(byte)EdgeRecoveryKind.Lagoon||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
             if(edgeKind!=0&&(edgeOutward.sqrMagnitude<.9f||edgeOutward.sqrMagnitude>1.1f||edgeRatio<0||edgeRatio>1))return;
@@ -2465,6 +2478,7 @@ namespace TumbangPreso.Net
                                    recoveryEpisode,recoveryAcknowledged);
             unit.ApplyNetworkStatuses(whirledLeft, chilledLeft, rootedLeft);
             unit.ApplyNetworkEffort((effort & 1) != 0, pull / 255f);
+            unit.ApplyNetworkReworkStatuses(concussedLeft, fearedLeft, disorientedLeft, vulnerableLeft, fearFrom);
         }
 
         // -------------------------------------------------------------------

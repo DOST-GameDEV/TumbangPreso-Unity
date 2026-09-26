@@ -398,7 +398,9 @@ namespace TumbangPreso.Net
         // clock, `ScoreEvent.SproutKnock` is appended, and `ReqBreakFree` and `ReqUproot` are new.
         // 55 (2026-09-26): `SubmitMove` and `SyncUnit` append the struggle flag and the plant-pull
         // progress, so every peer draws a body fighting Paete's roots or heaving at his seedling.
-        public const int ProtocolVersion = 55;
+        // 56 is the roster rework (ABILITY-2, 2026-09-26): `SyncUnit` carries Concussed, Feared,
+        // Disoriented, Vulnerable and the fear's source.
+        public const int ProtocolVersion = 56;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

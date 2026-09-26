@@ -54,6 +54,10 @@ namespace TumbangPreso
                 case StatusKind.Frozen: return IsFrozen ? _stunLeft : 0.0f;
                 case StatusKind.Tagged: return IsTagged ? _stunLeft : 0.0f;
                 case StatusKind.Rooted: return _rootedLeft;
+                case StatusKind.Concussed: return _concussedLeft;
+                case StatusKind.Feared: return _fearedLeft;
+                case StatusKind.Disoriented: return _disorientedLeft;
+                case StatusKind.Vulnerable: return _vulnerableLeft;
                 default: return 0.0f;
             }
         }
@@ -70,7 +74,8 @@ namespace TumbangPreso
         }
 
         /// <summary>The movement multiplier every live status puts on this body. 1 = none.</summary>
-        public float StatusSpeedScale => IsRooted ? 0.0f : IsChilled ? StatusRules.ChilledSpeedScale : 1.0f;
+        public float StatusSpeedScale => IsRooted ? 0.0f
+            : (IsChilled ? StatusRules.ChilledSpeedScale : 1.0f) * (IsConcussed ? StatusRules.ConcussedSpeedScale : 1.0f);
 
         /// <summary>
         /// WHIRLED: *"Drops slipper if currently in hand. Prevents slipper retrieval for 2.5
@@ -241,6 +246,7 @@ namespace TumbangPreso
             _whirledLeft = 0.0f;
             _chilledLeft = 0.0f;
             _carryLeft = 0.0f;
+            ClearReworkStatuses();
             EndRooted();
             EndFlightImmediately();
         }
@@ -259,7 +265,8 @@ namespace TumbangPreso
             bool whirled = _whirledLeft <= 0.0f && whirledLeft > 0.0f;
             bool chilled = _chilledLeft <= 0.0f && chilledLeft > 0.0f;
             _whirledLeft = Mathf.Clamp(whirledLeft, 0.0f, StatusRules.WhirledSeconds + 0.01f);
-            _chilledLeft = Mathf.Clamp(chilledLeft, 0.0f, StatusRules.ChilledSeconds + 0.01f);
+            // ⚠️ Absolute Zero chills for the freeze plus the thaw (ABILITY-2), so the bound is the sum.
+            _chilledLeft = Mathf.Clamp(chilledLeft, 0.0f, StatusRules.ChilledSeconds + StatusRules.FrozenSeconds + 0.01f);
             if (whirled) StatusGained?.Invoke(this, StatusKind.Whirled);
             if (chilled) StatusGained?.Invoke(this, StatusKind.Chilled);
         }
@@ -273,6 +280,7 @@ namespace TumbangPreso
                 _rootedLeft = Mathf.Max(0.0f, _rootedLeft - dt);
                 if (_rootedLeft <= 0.0f) EndRooted();
             }
+            StepReworkStatuses(dt);
             StepBreakFree(dt);
         }
 

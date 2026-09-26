@@ -55,6 +55,22 @@ namespace TumbangPreso.Abilities
             public float Duration = 6.0f;
             public float SpanScale = 1, ThicknessScale = 1;
             public bool Split;
+
+            /// <summary>
+            /// Slipper hits it takes before it shatters, 0 for none (the old barricade). Glacial Wall
+            /// (ABILITY-2): *"The icicle wall takes 3 slipper hits to shatter."* Counted on the host by
+            /// `Slipper.BounceOffObstacles`; the shatter's flair breaks it on every peer (`MatchFlair`).
+            /// </summary>
+            public int HitsToShatter;
+            private int _hits;
+
+            public void HostSlipperHit()
+            {
+                if (HitsToShatter <= 0 || _shattered) return;
+                _hits++;
+                NetCue.Play("sfx_ice_thaw", transform.position);
+                if (_hits >= HitsToShatter) Shatter();
+            }
             private float _left;
             private bool _shattered;
             private bool _started;
