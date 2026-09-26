@@ -78,7 +78,41 @@ def _scale_colour(nt, colour, factor):
     return mix.outputs["Result"]
 
 
-def edge_wear(nt, colour, chips):
+def _lift(nt, colour, target, fac):
+    """Move `colour` toward `target` by `fac` (0..1)."""
+    mix = nt.nodes.new("ShaderNodeMix")
+    mix.data_type = "RGBA"
+    mix.inputs["B"].default_value = target
+    nt.links.new(colour, mix.inputs["A"])
+    nt.links.new(fac, mix.inputs["Factor"])
+    return mix.outputs["Result"]
+
+
+EDGE_WHITE = (0.99, 0.88, 0.68, 1.0)   # warm near-white (v10 0.98/0.93/0.82 went blue-grey in shade)
+
+
+def inner_glow(nt, colour, ch, up):
+    """THE INNER-SHADOW EDGE (owner, 2026-09-26, on v9: "make them slightly more clear? think of
+    like an inner shadow effect, the edges have the crispiest white and then it fades the closer
+    it gets to the center"). Profile across a face, from its edge inward:
+      * a CRISP near-white line on the break itself (the narrow mask, cut hard), then
+      * a soft falloff toward the face's centre (the broad mask, eased), lifting the rock's own
+        colour less and less.
+    Full strength on top edges, weaker on the sides, faint underneath, so it stays natural."""
+    weight = _range(nt, up.outputs["Z"], -0.2, 0.7, 0.15, 1.0)   # v10: side edges were as bright as tops
+    crisp = _range(nt, ch.outputs["Red"], 0.45, 0.62, smooth=True)
+    fade = _math(nt, "POWER", _range(nt, ch.outputs["Green"], 0.0, 1.0), 1.15)   # v10 1.6: too short
+    fade = _math(nt, "MULTIPLY", fade, 0.7)
+    # The FADE lightens toward a brighter version of the rock's OWN colour, weighted twice to
+    # top faces; only the crisp CORE goes to warm near-white. (v11 lifted whole shaded side
+    # faces toward white and the sky light turned them cold blue-grey.)
+    fade = _math(nt, "MULTIPLY", _math(nt, "MULTIPLY", fade, weight), weight, clamp=True)
+    colour = _scale_colour(nt, colour, _range(nt, fade, 0.0, 1.0, 1.0, 1.45))
+    crisp = _math(nt, "MULTIPLY", _math(nt, "MULTIPLY", crisp, weight), weight, clamp=True)   # v12: grey lines on shaded sides
+    return _lift(nt, colour, EDGE_WHITE, _math(nt, "MULTIPLY", crisp, 0.85))
+
+
+def edge_wear(nt, colour, chips, inner=False):
     """THE WEATHERED EDGES, from the three baked masks (tools/bake_lagoon_rock_edges.py).
     Owner on v7: "the weathered edges look really unnatural": one even light line along EVERY
     break (sides, bottoms, silhouette) reads as piping. On the reference the light is on the
@@ -98,6 +132,9 @@ def edge_wear(nt, colour, chips):
     up = nt.nodes.new("ShaderNodeSeparateXYZ")
     nt.links.new(geo.outputs["Normal"], up.inputs[0])
     upward = _range(nt, up.outputs["Z"], -0.2, 0.8, 0.25, 1.0)
+    if inner:
+        colour = _scale_colour(nt, colour, _range(nt, ch.outputs["Blue"], 0.35, 0.95, 0.72, 1.0, smooth=True))
+        return inner_glow(nt, colour, ch, up)
     # Shoulders: up to 20 % lighter, soft.
     shoulder = _math(nt, "MULTIPLY", _range(nt, ch.outputs["Green"], 0.0, 0.9, smooth=True), upward)
     # ⚠️ NEVER A SEPARATE COLOUR (owner on v7: "even how the color of the weathered edges are
@@ -159,7 +196,7 @@ def rock_material(m, texture):
     nt.links.new(grey.outputs["Color"], mul.inputs["B"])
     colour = mul.outputs["Result"]
     if wear:
-        colour = edge_wear(nt, colour, chips=(wear == "chips"))
+        colour = edge_wear(nt, colour, chips=(wear == "chips"), inner=(wear == "inner"))
     nt.links.new(colour, bsdf.inputs["Base Color"])
     normal_path = TEX / f"{texture}_normal.png"
     if normal_path.exists():

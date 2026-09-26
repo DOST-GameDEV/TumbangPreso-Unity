@@ -202,6 +202,16 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      0.72x), and adds a few crisper chips on TOP edges only, broken into pieces by noise. It
      only ever scales the rock's own texture: never a separate colour
      (`rock_on_models_v9.png`).
+   - ✅ **INNER-SHADOW EDGES** (owner on v9: *"can you make them slightly more clear? think of
+     like an inner shadow effect, the edges have the crispiest white and then it fades the
+     closer it gets to the center"*). `ROCK_LOOK = "rock_a+inner"`, `inner_glow()` in
+     `tools/render_lagoon_texture_preview.py`: a CRISP warm near-white core on the break
+     (narrow mask R, `EDGE_WHITE` 0.99/0.88/0.68), then a FADE toward the face's centre that
+     lightens the rock's OWN colour up to 1.45x (broad mask G), crevices darkened by the
+     occlusion (B). Weighted to top faces: the core by the square of the up-weight, the fade
+     too. Rejected on the way: a cooler white and an equal weight on the sides (v10/v11 turned
+     shaded side faces blue-grey), a fade toward white (same fault), a short fade (did not
+     read). `rock_on_models_v13.png`.
    - The rock MATERIAL maps rock_a by world-space box projection (Unity: triplanar) and adds
      light tops and dark undersides by face normal.
    - **Models** (`tools/author_lagoon_rocks.py`, `ArtSource/lagoon/lagoon_rocks.blend`): 16
