@@ -511,7 +511,7 @@ namespace TumbangPreso.PlayTests
         /// first-person view (`CameraRig.ApplyFppSelfHide`), so the court camera drew Paete's vines coming out of nobody.
         /// Every camera but his own eyes shows every body, and never the private first-person arms.
         /// </summary>
-        private static void RenderFilmView(Camera c, RenderTexture target)
+        internal static void RenderFilmView(Camera c, RenderTexture target)
         {
             bool witness = c != Camera.main;
             var bodies = new System.Collections.Generic.List<Renderer>();

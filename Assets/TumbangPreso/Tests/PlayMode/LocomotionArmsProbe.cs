@@ -51,13 +51,19 @@ namespace TumbangPreso.PlayTests
 
             var report = new StringBuilder("case,frames,amount,strideMin,strideMax,leftFwdMin,leftFwdMax,rightFwdMin,rightFwdMax,leftSpreadMin,rightSpreadMin\n");
             var witness = new GameObject("Arm swing witness").AddComponent<Camera>(); witness.enabled = false;
+            // ⚠️ A FIXED 60 STEPS PER GAME SECOND (2026-09-26). The sampling windows are game seconds, so on a slow renderer
+            // they held too few frames: the cloud's software renderer draws about 5 a second and the probe read "empty-sprint:
+            // nothing was sampled" (5 frames, floor 10) with the arms fine. `Time.captureFramerate` makes every frame one
+            // sixtieth of a second of game time, so the gait sampled is the same on any machine.
+            int previousRate = Time.captureFramerate;
+            Time.captureFramerate = 60;
             try
             {
                 yield return Run(empty, "empty-sprint", true, new Vector3(-3, .2f, -9));
                 yield return Run(empty, "empty-walk", false, new Vector3(-3, .2f, -9));
                 yield return Run(carrying, "carry-sprint", true, new Vector3(3, .2f, -9));
             }
-            finally { File.WriteAllText(Path.Combine(Output, "arms.csv"), report.ToString()); Object.Destroy(witness.gameObject); }
+            finally { Time.captureFramerate = previousRate; File.WriteAllText(Path.Combine(Output, "arms.csv"), report.ToString()); Object.Destroy(witness.gameObject); }
 
             IEnumerator Run(CharacterMotor who, string name, bool sprint, Vector3 from)
             {

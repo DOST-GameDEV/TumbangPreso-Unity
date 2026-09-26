@@ -232,6 +232,8 @@ GROUPS = [
         "PaeteWorldSnapshotProbe",
         # Placed 2026-09-26: films Amihan's whole kit through real input on Bayan Plaza (HERO-8's second pass).
         "AmihanKitPlayProbe",
+        # Placed 2026-09-26: walks every roster body on Eskinita and measures each hand against the hip (ASKS-0926).
+        "WalkArmsProbe",
     ]),
 
     ("capture", """

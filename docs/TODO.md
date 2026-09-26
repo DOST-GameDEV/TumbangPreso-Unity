@@ -124,14 +124,22 @@ points at it rather than copying it. Nothing here is ticked without evidence.
   and a cast lineup (`_v1`, `_v2`...) where neither reads as from another game, the owner's yes, FPP arms re-derived
   from the new models, and the in-match walk and casts re-checked on the new bodies.
 - [ ] **The walk looks wrong: the hands stay close to the body** (*"the walkingh animation looks so
-  weird, hands close to body"*). Same complaint as REFINE-2.9b (Sean's arms stick to his body), which
-  `CharacterAnimator.LocomotionArms.cs` answered with a FIXED spread (walk 14 degrees, run 18) for every
-  body. Plan: solve the spread per body from its own geometry (torso half-width against the shoulder
-  pivot and arm length, measured off the visible skin) so the fist clears the hip by a set gap, widen
-  the walk swing, and check the slow-walk blend (`_armSwingAmount` ramps over 0.8 m/s above
-  `WalkSpeedThreshold` 0.4, so a slow walk shows the clip's pressed arms). Done looks like: every roster
-  body filmed walking front-on and side-on with the closest hand-to-hip gap measured and stated, and
-  the owner's eye on it.
+  weird, hands close to body"*). Same complaint as REFINE-2.9b (Sean's arms stick to his body).
+  MEASURED (`WalkArmsProbe`, new: every roster body walked at the lens and past it at a fixed 30 steps a
+  game second, the gap between each hand and the hip at the same height measured every frame): with the
+  old fixed spread (14 degrees walking, every body) every hanging fist sat INSIDE the body's front-on
+  outline, -9 to -17 cm at the hip on the heroes (`Logs/cloud6/walk-arms/gaps_v1.csv`). Cause, read off
+  the glbs: every shoulder pivot sits inside the torso (0.100 against a 0.158 half-width on the shared
+  body, 0.125 against 0.188 on Sean's) and the arm is a thick block whose lower face turns inward when
+  it hangs. BUILT: `CharacterAnimator.LocomotionArms.cs` `FitArm` solves each arm per body from its own
+  bind-pose vertices: the spread opens from 16 degrees (walk) and 20 (run) up to 30, and the rest is a
+  sideways shoulder shift of at most 22 per cent of the arm's length, so the hanging fist clears the hip
+  by 5 per cent of it; walk swing 30 to 32 degrees. After (`Logs/cloud7/walk-arms/gaps_v2.csv`): the
+  hand beside the hip clears it by +0.5 to +12.8 cm on every body but Phaister (-0.7 cm against her
+  robe, spread and shift both at their caps), spreads 19 to 30 degrees, shifts 5 to 15 cm; the front-on
+  frames show the fists outside the hips. `LocomotionArmsProbe` now runs at a fixed 60 steps a game
+  second (it sampled 5 frames on the cloud's software renderer and failed on the count, not the arms).
+  Open: the owner's eye on it in play.
 - [ ] **Every recast of Paete's attacking E throws a wooden slipper** (*"paete attacking e is supposed to
   throw a wooden slipper whenever u recast it"*). With the fix above every ACCEPTED recast throws a clog;
   a press before the next clog has grown is refused with its countdown. Open: the owner's eye on it in
