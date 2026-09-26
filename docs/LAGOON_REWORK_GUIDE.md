@@ -301,6 +301,14 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
    capilla on the summit ledge and a sari-sari stall at the court's east edge. On-model review
    sheet for the thatch: `thatch_on_models_v2.png` (v1's close-up camera sat inside the stall
    roof).
+   - ✅ **THATCH: ALL THREE, FOR VARIETY** (owner: *"honestly keep all for variety"*).
+     `thatch_variety()` gives each placed house and boat ONE of thatch_a/b/c for its whole roof,
+     per house (object-level material slot, so the shared kit meshes stay untouched).
+   - ⚠️ **EVERY SURFACE HAS DEPTH AND NORMAL MAPS** (owner: *"make sure it has depth/normal
+     maps"*). Each texture ships `_albedo`, `_height` and `_normal`; the UV material drives its
+     Displacement output (bump mode) from the height map on top of the normal map (Unity: the
+     height as the height/parallax map). Timber and bamboo normals were near flat and were
+     strengthened (normal strength 6 and 4).
 4. **Boats**: bangka outrigger and lepa houseboat. MODELS DONE 2026-09-27:
    `tools/author_lagoon_boats.py` (bangka, lepa, bangka_beached; slots plank, paint_hull,
    paint_trim with a per-boat `trim_tint` vertex colour, bamboo, thatch, timber; origin the

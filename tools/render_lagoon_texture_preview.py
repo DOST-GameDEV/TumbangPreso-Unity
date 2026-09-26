@@ -308,9 +308,25 @@ def uv_material(m, texture):
         nimg.image.colorspace_settings.name = "Non-Color"
         nt.links.new(uv.outputs["UV"], nimg.inputs["Vector"])
         nmap = nt.nodes.new("ShaderNodeNormalMap")
-        nmap.inputs["Strength"].default_value = 0.7
+        nmap.inputs["Strength"].default_value = 1.0
         nt.links.new(nimg.outputs["Color"], nmap.inputs["Color"])
         nt.links.new(nmap.outputs["Normal"], bsdf.inputs["Normal"])
+    # DEPTH (owner: "make sure it has depth/normal maps"): the painted HEIGHT map drives the
+    # material's Displacement output in bump mode, on top of the normal map, so courses, weave
+    # and joints read as recessed. Unity: the same _height.png is the height/parallax map.
+    height_path = TEX / f"{texture}_height.png"
+    if height_path.exists():
+        himg = nt.nodes.new("ShaderNodeTexImage")
+        himg.image = bpy.data.images.load(str(height_path), check_existing=True)
+        himg.image.colorspace_settings.name = "Non-Color"
+        nt.links.new(uv.outputs["UV"], himg.inputs["Vector"])
+        disp = nt.nodes.new("ShaderNodeDisplacement")
+        disp.inputs["Midlevel"].default_value = 0.5
+        disp.inputs["Scale"].default_value = 0.03
+        nt.links.new(himg.outputs["Color"], disp.inputs["Height"])
+        nt.links.new(disp.outputs["Displacement"], out.inputs["Displacement"])
+        if hasattr(m, "displacement_method"):
+            m.displacement_method = "BUMP"
 
 
 BUILDERS = {"rock": rock_material, "thatch": uv_material, "sawali": uv_material,

@@ -136,10 +136,10 @@ def normal_from_height(h, strength):
 
 STRENGTH = {"rock_a": 0.0, "rock_b": 1.2, "rock_c": 1.2, "thatch_a": 1.6, "thatch_b": 1.6, "thatch_c": 1.6,
             "sawali_a": 1.4, "sawali_b": 1.4, "sawali_c": 1.4,
-            "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0,
+            "bamboo_a": 4.0, "bamboo_b": 4.0, "bamboo_c": 4.0,
             "plank_a": 1.2, "plank_b": 1.2, "plank_c": 1.2,
             "tin_a": 1.5, "tin_b": 1.5, "tin_c": 1.5,
-            "timber_a": 1.0, "timber_b": 1.0, "timber_c": 1.0}
+            "timber_a": 6.0, "timber_b": 6.0, "timber_c": 6.0}   # owner: normal maps must read; 1.0 was near flat
 TILE = {"rock_a": 4.0, "rock_b": 4.0, "rock_c": 4.0, "thatch_a": 2.0, "thatch_b": 2.0, "thatch_c": 2.0,
         "sawali_a": 2.0, "sawali_b": 2.0, "sawali_c": 2.0,
         "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0,

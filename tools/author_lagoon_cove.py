@@ -891,6 +891,39 @@ def sky(world):
     nt.links.new(mix.outputs["Shader"], out.inputs["Surface"])
 
 
+THATCHES = ("thatch_a", "thatch_b", "thatch_c")
+
+
+def thatch_variety(rng):
+    """ALL THREE THATCHES, FOR VARIETY (owner, 2026-09-27, shown thatch_a/b/c on the houses:
+    "honestly keep all for variety"). Each placed house or boat gets ONE of them for its whole
+    roof, chosen per house so neighbours differ. The houses are linked duplicates sharing one
+    mesh, so the choice is an OBJECT-level material slot (link = "OBJECT"), which leaves the
+    shared mesh and the kit sources untouched. Unity: one material per object, the same."""
+    import render_lagoon_texture_preview as T
+    mats = {}
+    for name in THATCHES:
+        m = bpy.data.materials.get(name) or bpy.data.materials.new(name)
+        T.uv_material(m, name)
+        mats[name] = m
+    base = bpy.data.materials.get("thatch")
+    if base is not None:
+        T.uv_material(base, THATCHES[0])          # the kit sources (not placed) read as thatch_a
+    choice = {}
+    for o in bpy.data.objects:
+        if o.type != "MESH" or o.parent is None or not any(m and m.name == "thatch" for m in o.data.materials):
+            continue
+        if any(c.name.endswith("(source, not placed)") for c in o.users_collection):
+            continue
+        pick = choice.setdefault(o.parent.name, rng.choice(THATCHES))
+        for slot in o.material_slots:
+            if slot.material and slot.material.name == "thatch":
+                slot.link = "OBJECT"
+                slot.material = mats[pick]
+    counts = {t: sum(1 for v in choice.values() if v == t) for t in THATCHES}
+    print("[lagoon-cove] thatch variety:", counts)
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     version = int(argv[argv.index("--preview") + 1]) if "--preview" in argv else 0
@@ -918,6 +951,7 @@ def main():
             o["rock_scale"] = (o.scale.x + o.scale.y + o.scale.z) / 3
     E.bake("rock")
     T.rock_material(bpy.data.materials["rock"], ROCK_LOOK)
+    thatch_variety(random.Random(77))
     L.gameplay(root)
     B.lighting()
     scene = bpy.context.scene
