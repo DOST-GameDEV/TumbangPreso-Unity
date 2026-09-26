@@ -508,6 +508,138 @@ namespace TumbangPreso.PlayTests
             Note("film_vine", true);
         }
 
+        /// <summary>
+        /// ⚠️ A FILM OF HIS OTHER THREE SKILLS IN ONE MATCH (owner, 2026-09-27: *"ok can u show me hhow his other skills look like? and
+        /// them working ty"*). Real input, game time fixed at 30 fps, every world cue logged for the mp4:
+        ///   0.5   LIANA LEAP: the vines out to 8 m ahead, reeling him in.
+        ///   2.6   BAKYA BLOOM: the pitcher planted between him and the can; it grows its wooden clog (3 s); the second press fires it
+        ///         at the can.
+        ///   9.9   THORN HARVEST: a second Paete, the taya, stamps; the slipper in a player's hand 4.5 m away is caught, held, hauled home.
+        /// Views: `owner/` is his own screen when the acting Paete is the local seat, else a camera over the acting Paete's shoulder;
+        /// `wide/` is a court camera placed for each skill. Runs only with TUMP_PAETE_FILM=1; frames under TUMP_EVIDENCE or Logs.
+        /// </summary>
+        [UnityTest, Timeout(600000)]
+        public IEnumerator FilmHisSkillsInAMatch()
+        {
+            if (Environment.GetEnvironmentVariable("TUMP_PAETE_FILM") != "1") Assert.Ignore("Film only: set TUMP_PAETE_FILM=1.");
+            string root = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs", "paete-skills-film");
+            foreach (string view in new[] { "owner", "wide" }) Directory.CreateDirectory(Path.Combine(root, view));
+            var round = GameServices.Round;
+            var lata = round.Lata;
+            Assert.IsNotNull(lata, "No lata on the court.");
+            var can = Flat(lata.transform.position);
+            int taya = -1;
+            foreach (var p in round.Players) if (p.IsDefender) taya = p.PlayerSlot;
+            Assert.GreaterOrEqual(taya, 0);
+            // The attacking Paete is the local seat when it can be (his own screen), else another attacker seat.
+            int attackSeat = GameLaunch.SoloSeat != taya ? GameLaunch.SoloSeat : (taya + 1) % 4;
+            // ⚠️ Film s1 started him behind the plaza's monument and never turned him to his plant: each skill has its own clear
+            // spot now, facing what it acts on (the ultimate film's lane for the vine, a spot facing the plant and the can for the
+            // bloom, the taya in the box facing the slipper's holder for the thorns), with a cut between.
+            Vector3 start = can + new Vector3(0f, .12f, -12f);
+            Vector3 bloomAt = can + new Vector3(-2.5f, .12f, -8.5f);
+            var attacker = attackSeat == GameLaunch.SoloSeat ? HumanPaete(start) : Paete(attackSeat, start);
+            var defender = Paete(taya, can + new Vector3(-3f, .12f, -1.5f));
+            CharacterMotor holder = null;
+            foreach (var p in round.Players)
+                if (p != attacker && p != defender && p.GetComponent<Carrier>().Held != null) { holder = p; break; }
+            if (holder != null) { holder.Teleport(can + new Vector3(1.5f, .12f, -1.5f)); holder.Intent.Parked = true; }
+            var local = round.PlayerAt(GameLaunch.SoloSeat);
+            Vector3 plantSpot = can + new Vector3(-1.5f, 0f, -4.8f);
+            void Face(CharacterMotor who, Vector3 toward)
+            {
+                var d = toward - who.transform.position; d.y = 0f;
+                if (d.sqrMagnitude > .01f) who.transform.rotation = Quaternion.LookRotation(d.normalized);
+            }
+
+            Camera Make(string name, float fov)
+            {
+                var c = new GameObject(name).AddComponent<Camera>();
+                c.CopyFrom(Camera.main); c.enabled = false; c.tag = "Untagged"; c.fieldOfView = fov; c.cullingMask &= ~(1 << 5);
+                c.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+                return c;
+            }
+            var wide = Make("PaeteSkillsWide", 50);
+            var shoulder = Make("PaeteSkillsShoulder", 60);
+            var hdr = new RenderTexture(1280, 720, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
+            var ldr = new RenderTexture(1280, 720, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
+            void Shoot(Camera c, string view, int index)
+            {
+                var before = c.targetTexture; c.targetTexture = hdr; ComicPopup.PrepareView(c); c.Render(); c.targetTexture = before;
+                Graphics.Blit(hdr, ldr);
+                var active = RenderTexture.active; RenderTexture.active = ldr;
+                pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply(); RenderTexture.active = active;
+                File.WriteAllBytes(Path.Combine(root, view, $"{index:D5}.jpg"), pixels.EncodeToJPG(92));
+            }
+            int previousRate = Time.captureFramerate;
+            Time.captureFramerate = 30;
+            int frame = 0;
+            var cues = new StringBuilder().AppendLine("seconds,cue,pitch,gain");
+            Action<string, Vector3, float, float> heard = (id, at, pitch, gain) =>
+                cues.AppendLine(FormattableString.Invariant($"{frame / 30.0:F3},{Audio.AudioCues.FileStemFor(id)},{pitch:F3},{gain:F3}"));
+            AudioDirector.WorldCuePlayed += heard;
+            bool planted = false, fired = false, reeled = false;
+            float fireAt = -1f;
+            Slipper shoe = holder != null ? holder.GetComponent<Carrier>().Held : null;
+            try
+            {
+                const int frames = (int)(30 * 13.5f);
+                for (int f = 0; f < frames; f++)
+                {
+                    frame = f;
+                    float t = f / 30f;
+                    // LIANA LEAP.
+                    attacker.Intent.AimPoint = start + new Vector3(0f, 1.2f, 8f);
+                    if (f == 72) attacker.Teleport(bloomAt);
+                    if (t >= 2.4f) { attacker.Intent.AimPoint = plantSpot; Face(attacker, fireAt > 0f && t >= fireAt - .3f ? lata.transform.position : (plantSpot + can) * .5f); }
+                    Face(defender, holder != null ? holder.transform.position : can);
+                    attacker.Intent.Set(Verb.Skill1, t > .5f && t < .7f);
+                    // BAKYA BLOOM: plant, wait for the clog, fire it at the can.
+                    var plant = PaetePlant.OwnedBy(attacker.PlayerSlot);
+                    planted |= plant != null;
+                    if (plant != null && plant.ShotReady && fireAt < 0f && t > 6.0f) fireAt = t + .3f;
+                    if (fireAt > 0f && t >= fireAt - .2f) attacker.Intent.AimPoint = lata.transform.position;
+                    bool pressPlant = t > 2.6f && t < 2.8f, pressFire = fireAt > 0f && t > fireAt && t < fireAt + .2f;
+                    attacker.Intent.Set(Verb.Skill2, pressPlant || pressFire);
+                    // THORN HARVEST.
+                    defender.Intent.Set(Verb.Skill2, t > 9.9f && t < 10.1f);
+                    yield return null;
+                    reeled |= Vector3.Distance(Flat(attacker.transform.position), Flat(start)) > 3f;
+                    fired |= Object.FindFirstObjectByType<PaeteWoodenSlipper>() != null;
+
+                    // The cameras, per skill.
+                    CharacterMotor acting = t < 9.6f ? attacker : defender;
+                    if (t < 2.4f) { wide.transform.position = start + new Vector3(6.5f, 2.6f, 4.5f); wide.transform.LookAt(start + new Vector3(0f, 1f, 4.5f)); }
+                    else if (t < 9.6f) { wide.transform.position = can + new Vector3(5.5f, 4.2f, -11f); wide.transform.LookAt(can + new Vector3(-1.2f, .8f, -4.5f)); }
+                    else { wide.transform.position = can + new Vector3(-.75f, 3.6f, -9f); wide.transform.LookAt(can + new Vector3(-.75f, .8f, -1.5f)); }
+                    if (acting == local && Camera.main != null) Shoot(Camera.main, "owner", f);
+                    else
+                    {
+                        var fwd = acting.transform.forward; fwd.y = 0f; fwd = fwd.sqrMagnitude > .01f ? fwd.normalized : Vector3.forward;
+                        shoulder.transform.position = acting.transform.position - fwd * 3.2f + Vector3.up * 2.1f + Vector3.Cross(Vector3.up, fwd) * .9f;
+                        shoulder.transform.LookAt(acting.transform.position + fwd * 4f + Vector3.up * 1f);
+                        Shoot(shoulder, "owner", f);
+                    }
+                    Shoot(wide, "wide", f);
+                }
+            }
+            finally
+            {
+                AudioDirector.WorldCuePlayed -= heard;
+                File.WriteAllText(Path.Combine(root, "cues.csv"), cues.ToString());
+                Time.captureFramerate = previousRate;
+                Object.Destroy(wide.gameObject); Object.Destroy(shoulder.gameObject);
+                hdr.Release(); ldr.Release();
+            }
+            bool snatched = shoe != null && holder.GetComponent<Carrier>().Held != shoe;
+            Note("skills_film_reeled", reeled); Note("skills_film_planted", planted); Note("skills_film_fired", fired); Note("skills_film_snatched", snatched);
+            Assert.IsTrue(reeled, "LIANA LEAP did not carry him.");
+            Assert.IsTrue(planted, "BAKYA BLOOM planted nothing.");
+            Assert.IsTrue(fired, "BAKYA BLOOM never fired its wooden slipper.");
+            Assert.IsTrue(snatched, "THORN HARVEST left the slipper in the holder's hand.");
+        }
+
         private static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0, v.z);
     }
 }

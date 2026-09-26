@@ -534,6 +534,12 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
   cast"*: hold-to-aim placed where he looks (`HeroAbility.AimsWhereLooking`, `CameraRig.TryLookGround`, 3 to 8 m), the Groot-wall answer.
   *"they should face against the tree"*: turned to face out when held (`PaeteRootCoil.Attach(body, tree)`, `CameraRig.FaceHeldView`). The
   escape filmed (18 s film, the filmed player holds Interact until free). Protocol 59.
+- [ ] ⚠️ OPEN, found by the skills film (2026-09-27, `PaeteKitPlayProbe.FilmHisSkillsInAMatch`, frames `Logs/paete-evidence-s2`, video
+  `Logs/paete-share/paete_skills_v1.mp4`): from about 0.1 s after BAKYA BLOOM is planted (film frame 78 on), a building-sized dark jagged
+  shell covers the background in every camera that sees the court near the taya (brown when lit, black from the shade side), and stays
+  for the rest of the film; the taya bot's name tag floats inside it. All four skill checks still pass. Find the renderer (log every
+  renderer whose bounds exceed 6 m after the plant lands) and fix its scale or source; suspects: the plant's `PaeteGroundBreak`, the
+  bot Paete's model or first-person arms rendered in a world camera.
 - [ ] ABILITY-2 lane, found here: `RosterArmGeometryTests.EveryHeroUsesBothHandsAndReturnsCleanly` fails on `sean/sean_skill2d`, whose
   first-person action is empty (the test now names the hero and action). Not Paete; closes HERO-9's EditMode question.
 - [x] Prisoners "actually TIED" (owner) reviewed close up in film r16's `victim/`: backs pressed to the trunk, straining, bands at the shins;
