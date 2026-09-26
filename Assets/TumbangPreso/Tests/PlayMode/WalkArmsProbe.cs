@@ -80,6 +80,9 @@ namespace TumbangPreso.PlayTests
             var late = who.gameObject.AddComponent<LateHook>();
             var book = RosterBook.Load();
             var scenery = Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None);
+            // One lens for every body in a film, so sizes compare; `TUMP_WALK_LENS` widens it for a tall body (Paete at 1.3).
+            float lens = float.TryParse(Environment.GetEnvironmentVariable("TUMP_WALK_LENS"), NumberStyles.Float, CultureInfo.InvariantCulture, out var l) ? l : 5.2f;
+            float aim = .72f * lens / 5.2f;
             var report = new StringBuilder("mode,body,gait,style,frames,speed,leftGapMinCm,rightGapMinCm,leftGapAtHipCm,rightGapAtHipCm,armSwingAmountMin,footPlantDropMaxCm\n");
             var only = (Environment.GetEnvironmentVariable("TUMP_WALK_BODIES") ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(b => b.Trim()).ToArray();
@@ -138,10 +141,10 @@ namespace TumbangPreso.PlayTests
                             void Shoot(int view, Texture2D into, int x, int y)
                             {
                                 var at = who.transform.position;
-                                var eye = view == 0 ? at + who.transform.forward * 5.2f + Vector3.up * 1.0f
-                                    : view == 1 ? at + who.transform.right * 5.2f + Vector3.up * 1.0f
-                                    : at + (who.transform.forward * .8f - who.transform.right * .6f).normalized * 5.2f + Vector3.up * 1.3f;
-                                var look = at + Vector3.up * .72f;
+                                var eye = view == 0 ? at + who.transform.forward * lens + Vector3.up * 1.0f
+                                    : view == 1 ? at + who.transform.right * lens + Vector3.up * 1.0f
+                                    : at + (who.transform.forward * .8f - who.transform.right * .6f).normalized * lens + Vector3.up * 1.3f;
+                                var look = at + Vector3.up * aim;
                                 witness.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(look - eye));
                                 var hidden = new List<Renderer>();
                                 // Anything within 0.9 m of the sight line between the lens and the body (fence posts come in rows,

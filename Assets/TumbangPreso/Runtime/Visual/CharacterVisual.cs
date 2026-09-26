@@ -103,6 +103,25 @@ namespace TumbangPreso.Visual
         public const float PersonScale = 2.38f;
 
         /// <summary>
+        /// ⚠️⚠️ ONE CHARACTER'S OWN SIZE ON TOP OF `PersonScale`, SET BY HAND PER BODY, NEVER A SWEEP (CLAUDE.md section 0).
+        /// Owner, 2026-09-26 and 27: *"can u make the size paete bigger he looks so small and scuffed"*, *"supposed to be larger
+        /// than sean"*, *"can u make Paete like bigger already"*. Measured on the bind poses: Paete stands 0.594 mesh units to
+        /// Sean's 0.518 (1.41 m to 1.23 m in play), under 15 per cent taller, and the antlers are most of that, so beside Sean he
+        /// read as the same size. 1.3 puts him at 1.84 m, half a head over Sean: the guardian of a mountain. It is VISUAL: the
+        /// capsule, the reach and every rule stay the cast's, so a bigger tree is not a bigger target or a longer arm in the
+        /// rules (`Core` never sees this). Used by the match body and by `ModelPreview`, so the screens show the size he plays at.
+        /// </summary>
+        public static float BodyScaleFor(string modelName)
+        {
+            string name = string.IsNullOrEmpty(modelName) ? "" : modelName.Replace("(Clone)", "").Trim();
+            switch (name)
+            {
+                case "team-paete": return 1.3f;
+                default: return 1f;
+            }
+        }
+
+        /// <summary>
         /// ⚠️⚠️ RE-MEASURED 2026-08-18 AND IT IS 0, NOT 180. `character_visual.gd:54` carries
         /// `PERSON_MODEL_YAW_DEG = 180.0`, and this constant was transcribed from it on the
         /// assumption that the same number holds across engines. It does not: Godot's glTF
@@ -264,7 +283,7 @@ namespace TumbangPreso.Visual
 
                 // See PersonScale. A Prop is authored at its own size and keeps it, exactly as
                 // `character_visual.gd` only scales the branch it took for a Person.
-                _instance.transform.localScale = person ? Vector3.one * PersonScale : Vector3.one;
+                _instance.transform.localScale = person ? Vector3.one * (PersonScale * BodyScaleFor(prefab.name)) : Vector3.one;
             }
 
             CacheRenderers();

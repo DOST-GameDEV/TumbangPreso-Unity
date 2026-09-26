@@ -143,6 +143,20 @@ points at it rather than copying it. Nothing here is ticked without evidence.
   idle pose (still the shared clip, arms pressed into the torso) per character; the fists still pass inside the hips
   front-on at the moment they pass them (`gaps_v7.csv`: -1 to -19 cm on the heroes, -27 on Phaister's robe), accepted rather than sliding the shoulder
   off the torso. Supersedes the walk row below.
+  SECOND ROUND, same day, the owner watching each clip: *"walk of these 2 characters suck"* (Rafi, Amihan), *"nemu walks so
+  awkward"*, then the real cause, *"the arms are too long for cheska sean and majority of cast / tahts why tey look so fucked
+  up walking"*, *"can u lowk js edit thheir models"*, *"no need to edit some of the characters that SHOULD have long arms like
+  paete"*, *"make sean look more muscular by moving his arms out"*, *"do it one at a time"*. MEASURED: the shared hero body hangs
+  a 0.284 arm from a shoulder 0.288 above the floor (the hand alone 0.15), so a hanging arm reaches the ground. BUILT:
+  `tools/reshape_hero_arms.py`, one hand-picked row per hero, surgery inside the shipped glb (only arm vertices, their bounds,
+  and for Sean the shoulder nodes, binds and the one arm translation key; refuses a second run): Sean 0.293 to 0.225 with the
+  shoulders 5.5 cm out onto his chest, Cheska 0.18, Dante 0.19, Zack, Phaister and Rafi 0.185, Amihan 0.175, the custom hero
+  0.182; Paete and Nemu untouched. Re-authored one at a time from film: Amihan (arms out of her same-coloured coat, a skip),
+  Rafi (arms clear of his tattooed chest; the in-across-the-belly swing removed), Nemu (the 7 degree head tilt read as a
+  broken neck: now level, hands behind her back), Zack (24 degrees, yellow sleeves on a yellow jacket). Clips sent per
+  character (`Logs/walk-share/gait_v10` to `v13`). OPEN: the owner's word per character; the neighbourhood players' arms
+  are sourced CC0 art (CLAUDE.md 6.0), not reshaped without his say; first-person arms of Amihan, Rafi and Paete are baked
+  (`ViewmodelArmAuthor`) and still the old length.
 - [ ] ⚠️⚠️ **PRIORITY 1 FOR THE NEXT SESSION: remodel Amihan and Rafi so they belong in the same art style as the
   rest of the cast, Dante and Phaister in particular** (owner, 2026-09-26: *"add to todo priority for ltr, this will be
   no.1 priority"*, *"remodel amihan and rafi a bit so that they look more like other characters in terms of art style
@@ -202,6 +216,11 @@ points at it rather than copying it. Nothing here is ticked without evidence.
   Cheska's height. Done looks like: frame on the standing height (or the idle pose's bounds), Paete's
   body height on screen within 10 per cent of Cheska's on both screens, photographed at the owner's
   window shape and a phone shape, and no other hero's framing moved by more than a few per cent.
+  BUILT 2026-09-27: `CharacterVisual.BodyScaleFor` (Paete 1.3, visual only; capsule, reach and rules unchanged; 1.84 m to
+  Sean's 1.23), applied in the match and in `ModelPreview`; `ModelPreview.Frame` fits a character's standing height, never
+  closer than the shared body's 0.79 (not its T-pose). `HeroPreviewSizeProbe` (960x1015 and 620x700): standard heroes 0.64 to
+  0.69 of the panel, Paete 0.65, Nemu 0.50, nobody cropped. Film beside Sean: `Logs/walk-share/paete_big_vs_sean_v2.mp4`.
+  OPEN: the owner's eye; the lobby and hub podium previews were not photographed.
 - [ ] **A prompt showing which button to press whenever something can be interacted with** (*"make it so
   that theres ui showing what button to click when theres smth to interact with"*). Inventory first:
   every Interact use (Paete's plant uproot and the 7 s rooted break-out, the can raise, pickups, doors

@@ -67,6 +67,10 @@ namespace TumbangPreso.Visual
         /// weight and no hurry, the big arms held off his lats because a torso that wide will not let them hang close, and the
         /// shoulders doing the driving. The head does not move; he is watching. The run is a fighter closing distance: fists
         /// carried up in front, shoulders punching, heavy on the ground.
+        /// ⚠️ 2026-09-27, owner: *"make sean look more muscular by moving his arms out"*. His shoulders now sit 5.5 cm further
+        /// out in the model (`tools/reshape_hero_arms.py`), on the sides of the chest, and his arms are 0.225 long instead of
+        /// 0.293, so the lats carry the arms off the body at 22 degrees with the chest up (leaning back 1.5), not a long arm
+        /// splayed to clear a wide torso.
         /// </summary>
         public static readonly GaitStyle Sean = new GaitStyle
         {
@@ -74,14 +78,14 @@ namespace TumbangPreso.Visual
             Walk = new Gait
             {
                 LegForward = 36, LegBack = 32, LegSnap = .8f, Stance = 3,
-                ArmSpread = 26, ArmForward = 24, ArmBack = 16, ArmCarry = 3, ArmSnap = 1, ArmLag = 0.095f,
-                Lean = 0, LeanPulse = 1.2f, Roll = 2.5f, Twist = 9,
+                ArmSpread = 22, ArmForward = 24, ArmBack = 16, ArmCarry = 3, ArmSnap = 1, ArmLag = 0.095f,
+                Lean = -1.5f, LeanPulse = 1.2f, Roll = 2.5f, Twist = 9,
                 HeadPitch = -2, HeadSteady = .95f, Sway = .03f, Stomp = .02f, Glide = 1.1f,
             },
             Run = new Gait
             {
                 LegForward = 46, LegBack = 42, LegSnap = .9f, Stance = 3,
-                ArmSpread = 22, ArmForward = 38, ArmBack = 30, ArmCarry = 26, ArmSnap = .8f, ArmLag = 0.057f,
+                ArmSpread = 18, ArmForward = 38, ArmBack = 30, ArmCarry = 26, ArmSnap = .8f, ArmLag = 0.057f,
                 Lean = 11, LeanPulse = 1.5f, Roll = 1, Twist = 13,
                 HeadPitch = -4, HeadSteady = .75f, Bounce = .04f, BounceDelay = .06f, Sway = .01f, Stomp = .03f, Glide = 1.1f,
             },
@@ -99,6 +103,8 @@ namespace TumbangPreso.Visual
         /// difficult. The walk is a swagger: leaning back a touch, head cocked and bobbing on every step like there is music,
         /// hips swinging, one arm doing most of the swinging while the other barely bothers, loose and a little late. Then the
         /// run flips it: electric, quick feet, snapping arms, the fastest-looking run in the cast even when it is not.
+        /// ⚠️ 2026-09-27: arms 0.185 long (`tools/reshape_hero_arms.py`) and carried at 24 degrees, because his sleeves are the
+        /// same yellow as his jacket and at 18 an arm sank into the body in the film.
         /// </summary>
         public static readonly GaitStyle Zack = new GaitStyle
         {
@@ -106,7 +112,7 @@ namespace TumbangPreso.Visual
             Walk = new Gait
             {
                 LegForward = 42, LegBack = 36, LegSnap = 1.15f, Stance = 2,
-                ArmSpread = 18, ArmForward = 30, ArmBack = 24, ArmCarry = -2, ArmSnap = 1, ArmLag = 0.12f, ArmFavour = .45f,
+                ArmSpread = 24, ArmForward = 30, ArmBack = 24, ArmCarry = -2, ArmSnap = 1, ArmLag = 0.12f, ArmFavour = .45f,
                 Lean = -2.5f, Roll = 4.5f, Twist = 6,
                 HeadPitch = -1, HeadTilt = 5, HeadNod = 3.5f, HeadSteady = .3f,
                 Bounce = .045f, BounceDelay = .04f, Sway = .05f, Glide = 1.3f,
@@ -114,7 +120,7 @@ namespace TumbangPreso.Visual
             Run = new Gait
             {
                 LegForward = 54, LegBack = 50, LegSnap = 1.3f, Stance = 1,
-                ArmSpread = 16, ArmForward = 62, ArmBack = 46, ArmCarry = 12, ArmSnap = 1.3f, ArmLag = 0.038f,
+                ArmSpread = 20, ArmForward = 62, ArmBack = 46, ArmCarry = 12, ArmSnap = 1.3f, ArmLag = 0.038f,
                 Lean = 13, Roll = 1, Twist = 8,
                 HeadPitch = -3, HeadTilt = 2, HeadNod = 1, HeadSteady = .7f,
                 Bounce = .06f, BounceDelay = .05f, Sway = .01f, Glide = 1.3f,
@@ -176,34 +182,32 @@ namespace TumbangPreso.Visual
 
         /// <summary>
         /// NEMU. *"Looks distracted. Already knows your next move."* Takes the long way home, seems to miss half the conversation,
-        /// Kuro a shadow at her shoulder. She drifts: short soft steps with no weight in them, head cocked and wandering on its
-        /// own clock, the big sleeves hanging and trailing well behind the stride instead of swinging. When she runs she stops
-        /// pretending: low, arms swept straight back, head up, gone.
+        /// Kuro a shadow at her shoulder. ⚠️ SECOND PASS, 2026-09-27 (owner: *"nemu walks so awkward wtf"*). The first pass tried
+        /// "dreamy" with a head cocked 7 degrees and wandering on its own clock, short shuffling steps and sleeves trailing: on a
+        /// head that is half her height the tilt read as a broken neck, and her dark sleeves vanished into her dark coat. Now she
+        /// walks like someone who has already read the play: hands held behind her back (the arms swept back and still, which
+        /// also puts them where the silhouette shows them), level and unhurried, even steps with no bounce, a small slow look to
+        /// one side now and then. The run keeps the same idea at speed: low, arms straight back, head up, gone.
         /// </summary>
         public static readonly GaitStyle Nemu = new GaitStyle
         {
             Name = "nemu",
             Walk = new Gait
             {
-                LegForward = 38, LegBack = 34, LegSnap = 1.1f, Stance = 0,
-                ArmSpread = 12, ArmForward = 12, ArmBack = 10, ArmCarry = 0, ArmSnap = 1, ArmLag = 0.12f,
-                Lean = 2, Roll = 3, RollDelay = .08f, Twist = 2,
-                HeadPitch = 5, HeadTilt = 7, HeadSteady = .2f, Sway = .03f, Glide = 1.6f,
+                LegForward = 38, LegBack = 34, LegSnap = 1, Stance = -1,
+                ArmSpread = 12, ArmForward = 3, ArmBack = 3, ArmCarry = -24, ArmSnap = 1, ArmLag = .1f,
+                Lean = 4, Roll = 2, Twist = 3,
+                HeadPitch = -1, HeadTilt = 2, HeadSteady = .9f, Sway = .02f, Glide = 1.4f,
             },
             Run = new Gait
             {
                 LegForward = 52, LegBack = 50, LegSnap = 1.2f, Stance = 0,
-                ArmSpread = 10, ArmForward = 6, ArmBack = 6, ArmCarry = -58, ArmSnap = 1, ArmLag = 0.12f,
-                Lean = 22, Roll = 1, Twist = 2,
-                HeadPitch = -12, HeadTilt = 0, HeadSteady = .2f, Bounce = .02f, Sway = .01f, Glide = 1.45f,
+                ArmSpread = 12, ArmForward = 5, ArmBack = 5, ArmCarry = -58, ArmSnap = 1, ArmLag = .08f,
+                Lean = 20, Roll = 1, Twist = 2,
+                HeadPitch = -12, HeadSteady = .3f, Bounce = .02f, Sway = .01f, Glide = 1.45f,
             },
-            // Her head is somewhere else: it wanders on its own slow clock, not the stride's.
-            Quirk = (ref GaitPose p, in GaitMoment m) =>
-            {
-                float walk = 1f - m.Run;
-                p.HeadYaw += 7f * Wave(m.Time, .31f) * walk;
-                p.HeadRoll += 3f * Wave(m.Time + .7f, .19f) * walk;
-            },
+            // Watching the court without turning to it: a slow small look to one side and back, walking only.
+            Quirk = (ref GaitPose p, in GaitMoment m) => p.HeadYaw += 6f * Wave(m.Time, .17f) * (1f - m.Run),
         };
 
         /// <summary>
@@ -236,30 +240,37 @@ namespace TumbangPreso.Visual
 
         /// <summary>
         /// RAFI. *"Draws you into the wrong current. Leaves with his slipper."* Grew up on a Sama Dilaut boat deck, relaxed, teasing,
-        /// likes making a rival commit early. He walks with sea legs: a wide stance, the body rolling side to side a little late
-        /// like a deck under him, loose arms that trail and flow, leaning back easy, and every few seconds a glance over his
-        /// shoulder at whoever is chasing. The run is water: long, low, smooth, arms loose.
+        /// likes making a rival commit early. He walks with sea legs: a wide stance, the body rolling side to side a beat late
+        /// like a deck under him, leaning back easy, and every few seconds a glance over his shoulder at whoever is chasing.
+        /// ⚠️ SECOND PASS, 2026-09-27 (owner on the first film: *"walk of these 2 characters suck"*). His arms are the same
+        /// tattooed skin as his chest, so hung 18 degrees off his sides they vanished into it and only the fists showed, bobbing
+        /// at his hips like stubs. His arms are shorter now (0.185, `tools/reshape_hero_arms.py`) and hang well clear (28 degrees)
+        /// so the silhouette carries them, loose and late, opening further out on the back swing (a quirk below).
+        /// The run is water: long and low, arms loose and wide.
         /// </summary>
         public static readonly GaitStyle Rafi = new GaitStyle
         {
             Name = "rafi",
             Walk = new Gait
             {
-                LegForward = 42, LegBack = 38, LegSnap = .9f, Stance = 5,
-                ArmSpread = 18, ArmForward = 28, ArmBack = 22, ArmCarry = 0, ArmSnap = .9f, ArmLag = 0.12f,
-                Lean = -1, Roll = 6, RollDelay = .1f, Twist = 5,
-                HeadPitch = 0, HeadTilt = -2, HeadSteady = .7f, Bounce = .01f, Sway = .09f, Glide = 1.35f,
+                LegForward = 42, LegBack = 38, LegSnap = .9f, Stance = 6,
+                ArmSpread = 28, ArmForward = 30, ArmBack = 26, ArmCarry = 2, ArmSnap = .85f, ArmLag = .11f,
+                Lean = -2, Roll = 7, RollDelay = .12f, Twist = 6,
+                HeadPitch = -1, HeadTilt = -3, HeadSteady = .75f, Bounce = .012f, Sway = .1f, Glide = 1.35f,
             },
             Run = new Gait
             {
-                LegForward = 56, LegBack = 50, LegSnap = .9f, Stance = 3,
-                ArmSpread = 16, ArmForward = 44, ArmBack = 36, ArmCarry = 4, ArmSnap = .9f, ArmLag = 0.12f,
-                Lean = 12, Roll = 3, RollDelay = .06f, Twist = 9,
-                HeadPitch = -2, HeadSteady = .8f, Bounce = .02f, Sway = .04f, Glide = 1.4f,
+                LegForward = 56, LegBack = 50, LegSnap = .9f, Stance = 4,
+                ArmSpread = 26, ArmForward = 46, ArmBack = 40, ArmCarry = 2, ArmSnap = .9f, ArmLag = .1f,
+                Lean = 13, Roll = 3.5f, RollDelay = .08f, Twist = 10,
+                HeadPitch = -3, HeadSteady = .8f, Bounce = .025f, Sway = .045f, Glide = 1.4f,
             },
-            // The tease: a look back over the shoulder about every five seconds, walking only.
             Quirk = (ref GaitPose p, in GaitMoment m) =>
             {
+                // Loose arms: they open out past the hip on the back swing. ⚠️ Not in across the belly on the forward swing, which
+                // the first version did: against his tattooed chest the arm vanished again (film v11).
+                p.SpreadLeft += .25f * Mathf.Max(0f, -p.ArmLeft); p.SpreadRight += .25f * Mathf.Max(0f, -p.ArmRight);
+                // The tease: a look back over the shoulder about every five seconds, walking only.
                 float t = Mathf.Repeat(m.Time, 5f);
                 float look = t < .9f ? Mathf.Sin(Mathf.PI * t / .9f) : 0f;
                 p.HeadYaw += 32f * look * look * (1f - m.Run);
@@ -268,9 +279,12 @@ namespace TumbangPreso.Visual
 
         /// <summary>
         /// AMIHAN. *"Reads the wind. Gets there first."* Bright, proud, cannot stand a stalled game, always the one moving; the
-        /// fastest hero. Her walk is impatient: quick springy steps up on her toes, leaning into where she is going, arms
-        /// swinging high, chin up. Her run is the wind carrying her: long floating strides with real air under them, arms
-        /// swept back a little as if the wind is pushing from behind.
+        /// fastest hero. ⚠️ SECOND PASS, 2026-09-27 (owner: *"walk of these 2 characters suck"*). Her sleeves are the same cream as
+        /// her open coat, so arms hung 17 degrees off her sides disappeared into the coat and only her fists showed, down by her
+        /// knees, like a toddler dragging her hands. Now her arms are carried out clear of the coat (30 degrees) and swing high in
+        /// front, and the walk SKIPS: every other step lifts higher than the one before, the uneven bounce of someone too
+        /// impatient to just walk (a quirk below), head up and bobbing with it. Her run is the wind at her back: arms swept back
+        /// and out like she is being pushed, a long floating stride with real air under it.
         /// </summary>
         public static readonly GaitStyle Amihan = new GaitStyle
         {
@@ -278,17 +292,20 @@ namespace TumbangPreso.Visual
             Walk = new Gait
             {
                 LegForward = 40, LegBack = 36, LegSnap = 1.2f, Stance = 0,
-                ArmSpread = 17, ArmForward = 38, ArmBack = 26, ArmCarry = 4, ArmSnap = 1.1f, ArmLag = 0.076f,
-                Lean = 5, Roll = 2, Twist = 6,
-                HeadPitch = -4, HeadSteady = .6f, Bounce = .06f, BounceDelay = .05f, Sway = .02f, Glide = 1.2f,
+                ArmSpread = 30, ArmForward = 44, ArmBack = 26, ArmCarry = 6, ArmSnap = 1.1f, ArmLag = .06f,
+                Lean = 6, Roll = 2.5f, Twist = 7,
+                HeadPitch = -5, HeadNod = 2, HeadSteady = .6f, Bounce = .07f, BounceDelay = .05f, Sway = .02f, Glide = 1.2f,
             },
             Run = new Gait
             {
                 LegForward = 60, LegBack = 58, LegSnap = 1.1f, Stance = 0,
-                ArmSpread = 15, ArmForward = 38, ArmBack = 50, ArmCarry = -10, ArmSnap = 1, ArmLag = 0.095f,
-                Lean = 16, Roll = 1, Twist = 7,
-                HeadPitch = -7, HeadSteady = .7f, Bounce = .09f, BounceDelay = .08f, Sway = .01f, Glide = 1.35f,
+                ArmSpread = 34, ArmForward = 14, ArmBack = 18, ArmCarry = -42, ArmSnap = 1, ArmLag = .08f,
+                Lean = 18, Roll = 1, Twist = 5,
+                HeadPitch = -9, HeadSteady = .7f, Bounce = .1f, BounceDelay = .08f, Sway = .01f, Glide = 1.35f,
             },
+            // The skip: the rise after one foot lands higher than after the other, walking only.
+            Quirk = (ref GaitPose p, in GaitMoment m) =>
+                p.RootUp *= 1f + .7f * (1f - m.Run) * Mathf.Sin(2f * Mathf.PI * m.Phase),
         };
 
         /// <summary>
