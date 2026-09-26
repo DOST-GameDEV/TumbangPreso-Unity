@@ -283,17 +283,27 @@ def _fish_shape(d, cx, cy, a, L, col, back):
 # chalks it in large pale patches. Painted near-white so "prop_tint" sets each drum's colour.
 
 def pg_plastic():
+    """⚠️ OWNER, 2026-09-27, on a green drum by the stall: "theres this green untextured barrel too".
+    v1's two patches were 3.5 % either way, which the tint and the sun flattened to one flat green.
+    Now, still big soft shapes and no grain (the house style), strong enough to read: sun-chalked
+    patches 14 % paler, a damp grimy set 16 % darker with a warm cast, and a scatter of fist-sized
+    scuffs (lighter, with a shallow dent in the height so the normal map catches the light)."""
     np = _np()
     img = np.broadcast_to(hexcol("ebe7df"), (SIZE, SIZE, 3)).astype(np.float32).copy()
-    img = coat(img, np.array([1.035, 1.035, 1.035]), patch(0.7, 0.26, 601))
-    img = coat(img, np.array([0.965, 0.96, 0.955]), patch(0.5, 0.14, 603))
-    return img, np.zeros((SIZE, SIZE), np.float32)
+    img = coat(img, np.array([1.14, 1.14, 1.13]), patch(0.55, 0.30, 601))          # sun-chalked
+    img = coat(img, np.array([0.84, 0.82, 0.78]), patch(0.35, 0.22, 603, sy_m=0.6))  # grime, warm
+    # Round 2 (pg_drum_v7): 7 cm scuffs at 7 % coverage read as a rash of white specks. Fewer,
+    # bigger and softer now: a handful of 14 cm rubbed patches a tile, and a shallower dent.
+    scuffs = patch(0.14, 0.035, 607, feather=0.6)
+    img = coat(img, np.array([1.07, 1.07, 1.06]), scuffs)
+    height = 0.5 - 0.15 * scuffs + 0.06 * field(0.5, 609)
+    return img, height.astype(np.float32)
 
 
 # ---------------------------------------------------------------- saving and the sheet
 
 PAINTERS = {"pg_slat": pg_slat, "pg_stave": pg_stave, "pg_catch": pg_catch, "pg_plastic": pg_plastic}
-STRENGTH = {"pg_slat": 1.0, "pg_stave": 2.0, "pg_catch": 1.5, "pg_plastic": 1.0}
+STRENGTH = {"pg_slat": 1.0, "pg_stave": 2.0, "pg_catch": 1.5, "pg_plastic": 1.5}
 
 
 def normal_from_height(h, strength):
