@@ -124,6 +124,8 @@ namespace TumbangPreso.Abilities
         public bool UpdateLoadout(HeroBuild build)
         {
             if (Kit == null) return false;
+            // ⚠️ THE SKILL TREE IS OFF (`HeroLoadoutRules.SidegradesOpen`): a build change changes nothing.
+            if (!HeroLoadoutRules.SidegradesOpen) return false;
             var first = HeroBuildRules.Equipped(build, HeroId, 1, null) ?? HeroLoadoutRules.DefaultFor(HeroId, 1);
             var second = HeroBuildRules.Equipped(build, HeroId, 2, null) ?? HeroLoadoutRules.DefaultFor(HeroId, 2);
             if (_skill1Variant?.Id == first?.Id && _skill2Variant?.Id == second?.Id) return false;
@@ -139,6 +141,10 @@ namespace TumbangPreso.Abilities
 
         private void ConfigureLoadout(HeroBuild build)
         {
+            // ⚠️⚠️ HARDCODED SKILLS (owner, 2026-09-26: *"JS REMOVE ITS UI FOR NOW AND HARDCODE THE SKILLS"*).
+            // With the tree off every peer builds the default variant whatever the save or the wire
+            // carries, so all four players read the same kit.
+            if (!HeroLoadoutRules.SidegradesOpen) build = null;
             _skill1Variant = HeroBuildRules.Equipped(build, HeroId, 1, null)
                              ?? HeroLoadoutRules.DefaultFor(HeroId, 1);
             _skill2Variant = HeroBuildRules.Equipped(build, HeroId, 2, null)

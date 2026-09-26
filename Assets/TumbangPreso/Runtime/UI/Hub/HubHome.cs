@@ -103,6 +103,9 @@ namespace TumbangPreso.UI.Hub
             HubKit.Letterpress(treeWords, Door);
             _skillNotice = HubKit.Notice(tree.Body);
             HubSlap.On(tree.transform, 0.08f);
+            // ⚠️ THE SKILL TREE IS OFF (owner, 2026-09-26: *"JS REMOVE ITS UI FOR NOW"*); the door is
+            // built and hidden so turning `HeroLoadoutRules.SidegradesOpen` back on restores it whole.
+            tree.gameObject.SetActive(HeroLoadoutRules.SidegradesOpen);
         }
 
         // ------------------------------------------------------------------ the door family

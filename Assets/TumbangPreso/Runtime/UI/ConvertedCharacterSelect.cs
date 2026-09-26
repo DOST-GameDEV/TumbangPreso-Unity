@@ -927,7 +927,7 @@ namespace TumbangPreso.UI
             // board; a bare `!open` would switch the chip straight back on over a picture of a
             // tin can. **Two writers of one visibility flag, and this one runs second.**
             if (_customDoor != null) _customDoor.gameObject.SetActive(!open);
-            if (_loadoutDoor != null) _loadoutDoor.gameObject.SetActive(!open && OnHeroTab);
+            if (_loadoutDoor != null) _loadoutDoor.gameObject.SetActive(!open && OnHeroTab && HeroLoadoutRules.SidegradesOpen);
 
             if (!open)
             {
@@ -1667,7 +1667,8 @@ namespace TumbangPreso.UI
             // ⚠️ AND THE BOARD CLOSES WITH IT. Switching tabs while the board is open would leave
             // a hero's build panel standing over a picture of a tin can, which is § 121.2's stuck
             // state on a whole screen instead of on one plate.
-            bool heroTab = OnHeroTab;
+            // ⚠️ THE LOADOUT IS OFF WITH THE SKILL TREE (`HeroLoadoutRules.SidegradesOpen`, owner 2026-09-26).
+            bool heroTab = OnHeroTab && HeroLoadoutRules.SidegradesOpen;
 
             if (_loadoutDoor != null && _loadoutDoor.gameObject.activeSelf != heroTab)
             {

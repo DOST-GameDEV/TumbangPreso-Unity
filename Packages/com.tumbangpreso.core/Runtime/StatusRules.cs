@@ -37,6 +37,26 @@ namespace TumbangPreso.Core
         /// tagged, or when the sentry withers.
         /// </summary>
         Rooted = 5,
+
+        // ⚠️⚠️ APPENDED 2026-09-26 FOR THE ROSTER REWORK (ABILITY-2,
+        // `docs/reports/ability-rework-2026-09-26/plan.md` section 2). The owner's answers are quoted
+        // on each; the numbers not given by him are marked in the plan's section 7 for his review.
+
+        /// <summary>Geo (Dante's Boulder and Earthquake). Owner picked the dizzy stumble: 30 % slower, no
+        /// sprint, throws wobble off aim.</summary>
+        Concussed = 6,
+
+        /// <summary>Necro (Nemu's Terrify). Owner: *"Flee from kuro and drop slipper"*, *"make an animation
+        /// for feared too dont js make them walk back"*. The body runs from the source on its own.</summary>
+        Feared = 7,
+
+        /// <summary>Voodoo (Phaister's attacking curse). Owner: *"hallucinations but make it so that some
+        /// of the shit they see are real"*. Local presentation on the victim's screen only.</summary>
+        Disoriented = 8,
+
+        /// <summary>Voodoo (Phaister's defending curse). Owner: *"easier to tag and phaister can go out of
+        /// box and tag them"*.</summary>
+        Vulnerable = 9,
     }
 
     /// <summary>One row of the owner's status table.</summary>
@@ -97,6 +117,27 @@ namespace TumbangPreso.Core
         /// <summary>*"Prevents movement or interaction for 5 seconds."* The tag's own number.</summary>
         public const float TaggedSeconds = Balance.TagStunTime;
 
+        /// <summary>Concussed: 3 s (set in the plan), speed x0.7, no sprint, aim wobble up to 9 degrees.</summary>
+        public const float ConcussedSeconds = 3.0f;
+        public const float ConcussedSpeedScale = 0.7f;
+        public const float ConcussedAimWobbleDegrees = 9.0f;
+
+        /// <summary>Feared: 1.5 s of fleeing from the source at run speed; the held slipper drops at once.</summary>
+        public const float FearedSeconds = 1.5f;
+
+        /// <summary>Disoriented: 4 s of hallucinations (two to three phantom players and slippers drawn
+        /// among the real ones on the victim's own screen) and a swaying aim of up to 6 degrees.</summary>
+        public const float DisorientedSeconds = 4.0f;
+        public const int DisorientedPhantomPlayers = 3;
+        public const int DisorientedPhantomSlippers = 3;
+        public const float DisorientedAimSwayDegrees = 6.0f;
+
+        /// <summary>Vulnerable: 5 s; the taya's tag reach x1.5 against them, stuns on them last x1.5, and
+        /// a taya who cast it may leave the box to tag them.</summary>
+        public const float VulnerableSeconds = 5.0f;
+        public const float VulnerableTagReachScale = 1.5f;
+        public const float VulnerableStunScale = 1.5f;
+
         private static readonly StatusRule[] Table =
         {
             new StatusRule(StatusKind.Whirled, "WHIRLED",
@@ -125,6 +166,27 @@ namespace TumbangPreso.Core
                 "Pulled to the sentry and held by the roots. Throwing and skills still work. Hold Interact for 7 seconds to break free; a tag also frees you.",
                 "Rooted: Hold Interact to Break Free",
                 RootedSeconds, 0.0f, blocksMovement: true, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            // ⚠️ APPENDED (the enum's note). ABILITY-2.
+            new StatusRule(StatusKind.Concussed, "CONCUSSED",
+                "Dizzy for 3 seconds: 30% slower, no sprint, and throws wobble off aim.",
+                "Dizzy: Slower, No Sprint, Wobbly Aim",
+                ConcussedSeconds, ConcussedSpeedScale, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Feared, "FEARED",
+                "Drops the slipper in hand and runs away in terror for 1.5 seconds. No throwing, picking up or skills.",
+                "Feared: Fleeing",
+                FearedSeconds, 1.0f, blocksMovement: true, blocksInteraction: true,
+                blocksSlipperRetrieval: true, dropsHeldSlipper: true, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Disoriented, "DISORIENTED",
+                "For 4 seconds you see things that are not there, mixed in with things that are, and your aim sways.",
+                "Disoriented: Not Everything Is Real",
+                DisorientedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Vulnerable, "VULNERABLE",
+                "For 5 seconds the taya can tag you from further away, even from outside the box, and stuns on you last longer.",
+                "Vulnerable: Easy to Tag",
+                VulnerableSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
         };
 

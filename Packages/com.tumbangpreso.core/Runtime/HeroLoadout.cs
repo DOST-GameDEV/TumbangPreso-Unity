@@ -153,6 +153,16 @@ namespace TumbangPreso.Core
     public static class HeroLoadoutRules
     {
         /// <summary>
+        /// ⚠️⚠️ THE SKILL TREE IS SWITCHED OFF, NOT DELETED (owner, 2026-09-26: *"WE MIGHT DUMP THE SKILL
+        /// TREE IDEA FOR NOW AND WILL COME BACK TO IT LATER (DEPENDS ON WHTEHTER WE STILL HAVE TIME)"*,
+        /// *"JS REMOVE ITS UI FOR NOW AND HARDCODE THE SKILLS AND SHIT"*). While false every kit is built
+        /// on its DEFAULT variant whatever a saved build or the wire says, and the screens hide every
+        /// door to the tree and the loadout. Every variant, unlock, challenge and saved build is kept;
+        /// turning the tree back on is this one line. `docs/reports/ability-rework-2026-09-26/plan.md` § 4.
+        /// </summary>
+        public static readonly bool SidegradesOpen = false;
+
+        /// <summary>
         /// ⚠️ DERIVED FROM `Roster.HeroPeople` RATHER THAN TYPED OUT AGAIN. The list it replaces
         /// was a hand-written array that disagreed with the roster in two places at once.
         /// </summary>

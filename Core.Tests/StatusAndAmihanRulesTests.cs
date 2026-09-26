@@ -40,7 +40,60 @@ namespace TumbangPreso.Core.Tests
             Assert.False(rooted.BlocksInteraction, "Rooted players can still throw and use skills (owner).");
             Assert.True(rooted.Removable, "A hold or a tag ends Rooted.");
             Assert.Equal(PaeteRules.SentryLifeSeconds, rooted.Seconds);
-            Assert.Equal(5, StatusRules.All.Count);
+            Assert.Equal(9, StatusRules.All.Count);
+        }
+
+        [Fact]
+        public void TheReworkStatusesAreTheOwnersAnswers()
+        {
+            // ABILITY-2 (owner, 2026-09-26). Appended, never renumbered: the byte crosses the wire.
+            Assert.Equal(6, (int)StatusKind.Concussed);
+            Assert.Equal(7, (int)StatusKind.Feared);
+            Assert.Equal(8, (int)StatusKind.Disoriented);
+            Assert.Equal(9, (int)StatusKind.Vulnerable);
+
+            var concussed = StatusRules.For(StatusKind.Concussed);
+            Assert.Equal(0.7f, concussed.SpeedScale);
+            Assert.False(concussed.BlocksMovement || concussed.BlocksInteraction);
+
+            // "Flee from kuro and drop slipper".
+            var feared = StatusRules.For(StatusKind.Feared);
+            Assert.True(feared.DropsHeldSlipper);
+            Assert.True(feared.BlocksMovement && feared.BlocksInteraction && feared.BlocksSlipperRetrieval);
+
+            // Hallucinations live on the victim's own screen: nothing about the body is blocked.
+            var disoriented = StatusRules.For(StatusKind.Disoriented);
+            Assert.False(disoriented.BlocksMovement || disoriented.BlocksInteraction || disoriented.DropsHeldSlipper);
+
+            // "easier to tag".
+            Assert.True(StatusRules.VulnerableTagReachScale > 1.0f);
+            Assert.True(StatusRules.For(StatusKind.Vulnerable).ImmunityApplies);
+        }
+
+        [Fact]
+        public void TheReworkKitsCarryTheOwnersNumbers()
+        {
+            Assert.Equal(5.0f, CryoRules.ColdFeetSeconds);
+            Assert.Equal(35.0f, CryoRules.ColdFeetCooldown);
+            Assert.Equal(35.0f, CryoRules.FrostbiteCooldown);
+            Assert.Equal(3, CryoRules.GlacialWallHits);
+            Assert.Equal(35.0f, CryoRules.GlacialWallCooldown);
+            Assert.Equal(12.0f, CryoRules.AbsoluteZeroCost);
+            Assert.Equal(20.0f, GeoRules.ShieldSeconds);
+            Assert.Equal(7.5f, GeoRules.BarrierSeconds);
+            Assert.Equal(25.0f, GeoRules.BarrierCooldown);
+            // Higop's "no escape": the pull beats a run, so pushing away only buys a moment.
+            Assert.True(VoodooRules.HigopPullOverRun > 0.0f);
+            // A normal skill's footprint stays inside VISION section 2's 1.6 to 2.3 m band.
+            Assert.InRange(CryoRules.ColdFeetRadius, 1.6f, 2.3f);
+            Assert.InRange(NecroRules.TerrifyRadius, 1.6f, 2.3f);
+        }
+
+        [Fact]
+        public void TheSkillTreeIsSwitchedOff()
+        {
+            // Owner, 2026-09-26: "JS REMOVE ITS UI FOR NOW AND HARDCODE THE SKILLS".
+            Assert.False(HeroLoadoutRules.SidegradesOpen);
         }
 
         [Fact]

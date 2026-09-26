@@ -193,9 +193,16 @@ Necro Nemu, Voodoo Phaister; Pyro (Sean), Electro (Zack) and Hydro (Rafi) have n
 
 - [x] Plan and ultimate direction written; owner questions answered (Feared, Disoriented, Vulnerable,
   Concussed, Kuro fetch, Kuro guard, Kuro plays, Higop, Teleport, placeholders).
-- [ ] Core: statuses Concussed, Feared, Disoriented, Vulnerable appended; status immunity; rules
-  classes for the four kits; `SidegradesOpen` switch; Core.Tests.
-- [ ] Skill tree UI hidden and kits built on the default variant (plan section 4).
+- [x] Core: statuses Concussed 6, Feared 7, Disoriented 8, Vulnerable 9 appended with the owner's
+  answers; `RosterReworkRules.cs` (Cryo, Geo, Necro, Voodoo numbers); `HeroLoadoutRules.SidegradesOpen`
+  (false); Core.Tests 649/649 (2026-09-26, cloud). Status IMMUNITY is still to do (motor row).
+- [x] Skill tree UI hidden and kits built on the default variant: `HeroAbilitySystem.ConfigureLoadout`
+  and `UpdateLoadout`, the HubHome SKILL TREE door, HubHero's ALTERNATIVES button, the picker's
+  LOADOUT door, the lobby loadout button. Syntax-checked only; owed to the testing chat: compile, and
+  the PlayMode tests that look for those doors (`HubFlowTests`, `HomeFlowTests`, `FrontEndControlWalk`,
+  `LoadoutSurfaceProbe`, `BrandPickerTests`, `TumpNativePickerTests`, `UiRuntimeShots`,
+  `BrandPreparationTests`): a test that opens a hidden door is updated to expect it hidden, never
+  the switch flipped to make it pass.
 - [ ] Motor statuses and `SyncUnit` fields (protocol bump).
 - [ ] Kits: Cheska, Dante, Phaister, Nemu (signature, fetch, guard); placeholders for Sean, Zack, Rafi.
 - [ ] Presentation per ability (clips, FPP, VFX, audio, icons), Feared and Concussed shared clips.

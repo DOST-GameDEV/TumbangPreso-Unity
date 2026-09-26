@@ -307,7 +307,7 @@ namespace TumbangPreso.UI.Hub
                                     HubStyle.Body, false, HubStyle.Honey, TextAnchor.UpperLeft);
             HubKit.Place(words.rectTransform, HubKit.TopLeft, new Vector2(350, -190), new Vector2(780, 300));
 
-            if (shown.LoadoutSlot > 0 && HeroLoadoutRules.VariantsFor(Hero, shown.LoadoutSlot).Count > 1)
+            if (HeroLoadoutRules.SidegradesOpen && shown.LoadoutSlot > 0 && HeroLoadoutRules.VariantsFor(Hero, shown.LoadoutSlot).Count > 1)
             {
                 var more = HubKit.Button(panel, "OpenSkillTree", "ALTERNATIVES IN THE SKILL TREE", HubStyle.Honey,
                                          () => { Close(); Hub.Push<HubSkillTree>(t => t.Hero = Hero); }, HubStyle.Body, 342, HubGlyph.Mark.Tree);
