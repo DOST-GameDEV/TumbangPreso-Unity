@@ -48,6 +48,36 @@ namespace TumbangPreso.Visual
             }
         }
 
+        /// <summary>
+        /// GLACIAL WALL (ABILITY-2, owner: *"an arc-shaped icicle wall"*): the barricade's own ice pieces
+        /// stood along an arc facing her, five of them at their own heights, each with its collider, so
+        /// slippers and bodies stop at the curve. `arcLength` along the arc, bowed on `radius`.
+        /// </summary>
+        public static void BuildArc(Transform parent, float arcLength, float radius, bool renderOnly = false)
+        {
+            string[] meshes = { "wall_left", "wall_center", "wall_center", "wall_center", "wall_right" };
+            float[] heights = { 0.86f, 1.0f, 1.12f, 0.96f, 0.84f };
+            float sweepDeg = arcLength / radius * Mathf.Rad2Deg;
+            for (int i = 0; i < 5; i++)
+            {
+                float a = (-0.5f + i / 4f) * sweepDeg;
+                var slab = Piece(parent, "IceArc_" + i, meshes[i], Ice);
+                // The arc bows AWAY from her: its centre is behind the aimed point by the radius.
+                Vector3 at = Quaternion.Euler(0f, a, 0f) * new Vector3(0f, 0f, radius) - new Vector3(0f, 0f, radius);
+                slab.transform.localPosition = at;
+                slab.transform.localRotation = Quaternion.Euler(0f, a, 0f);
+                slab.transform.localScale = new Vector3(arcLength / 5f / 0.85f, heights[i], 1f);
+                var position = slab.transform.position; position.y = VfxShapes.GroundPoint(position).y; slab.transform.position = position;
+                if (!renderOnly)
+                {
+                    var collider = slab.AddComponent<MeshCollider>();
+                    collider.sharedMesh = slab.GetComponent<MeshFilter>().sharedMesh;
+                    collider.convex = true;
+                }
+                Cracks(slab.transform, i == 0 ? 0 : i == 4 ? 2 : 1);
+            }
+        }
+
         private static void Cracks(Transform slab, int index)
         {
             // Narrow seams on both broad faces. The large forms carry the wall;

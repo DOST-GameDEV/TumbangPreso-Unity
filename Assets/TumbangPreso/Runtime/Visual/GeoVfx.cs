@@ -16,6 +16,8 @@ namespace TumbangPreso.Visual
 
         public static void Build(Transform parent)
         {
+            // The modelled boulder (`tools/build_rework_props.py`); the blocks below are the fallback only.
+            if (ReworkProp.Spawn("boulder", parent, ReworkProp.GeoPalette) != null) return;
             var core = GrowthVfx.Block(parent, "boulder-core", new Vector3(0.52f, 0.46f, 0.50f), Stone).transform;
             core.localRotation = Quaternion.Euler(12f, 25f, 8f);
             var cap = GrowthVfx.Block(parent, "boulder-cap", new Vector3(0.36f, 0.22f, 0.40f), StoneDark).transform;
@@ -37,6 +39,9 @@ namespace TumbangPreso.Visual
             var root = new GameObject("DanteBarrier");
             root.transform.SetParent(owner, false);
             root.transform.localPosition = new Vector3(0f, 0f, Core.GeoRules.BarrierForward);
+            // The modelled barrier grinds up slab by slab; the blocks below are the fallback only.
+            var model = ReworkProp.Spawn("barrier", root.transform, ReworkProp.GeoPalette);
+            if (model != null) { root.AddComponent<BarrierRise>().Bind(model); return root; }
             float w = Core.GeoRules.BarrierWidth;
             var left = GrowthVfx.Block(root.transform, "slab-left", new Vector3(w * 0.34f, 1.7f, 0.14f), Stone).transform;
             left.localPosition = new Vector3(-w * 0.33f, 0.85f, 0.06f); left.localRotation = Quaternion.Euler(0f, -12f, 0f);

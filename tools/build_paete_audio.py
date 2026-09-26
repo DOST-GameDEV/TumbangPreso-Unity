@@ -435,8 +435,10 @@ def sky():
 
 
 if __name__ == "__main__":
+    # ⚠️ `sentry_cast` IS NO LONGER WRITTEN HERE: the ultimate is called up through the ground now, and
+    # `tools/build_rework_audio.py` (`paete_ground_call`) owns `sfx_cast_paete_sentry`. Left defined for history.
     rows = [vine(), sprout_cast(), command(), sprout_land(), sprout_fire(), sprout_uproot(), thorns_cast(),
-            thorn_burst(), sentry_cast(), sentry_burst(), sentry_catch(), rooted(), root_break(),
+            thorn_burst(), sentry_burst(), sentry_catch(), rooted(), root_break(),
             sentry_wilt(), sentry_wake(), sprout_ready(), theme(), sky()]
     report = {
         "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",

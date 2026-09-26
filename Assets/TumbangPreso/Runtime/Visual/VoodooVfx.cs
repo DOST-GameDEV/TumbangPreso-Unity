@@ -24,6 +24,8 @@ namespace TumbangPreso.Abilities
             var d = go.AddComponent<VoodooDoll>();
             d._owner = ownerSlot;
             d._velocity = Slipper.SolveArc(origin, target, VoodooRules.DollSpeed);
+            // The modelled doll (`tools/build_rework_props.py`); the blocks below are the fallback only.
+            if (Visual.ReworkProp.Spawn("doll", go.transform, Visual.ReworkProp.VoodooPalette) != null) return d;
             var body = Visual.GrowthVfx.Block(go.transform, "doll-body", new Vector3(0.16f, 0.22f, 0.10f), Cloth).transform;
             var head = Visual.GrowthVfx.Block(go.transform, "doll-head", new Vector3(0.14f, 0.13f, 0.12f), Cloth).transform;
             head.localPosition = new Vector3(0f, 0.18f, 0f);
@@ -117,6 +119,13 @@ namespace TumbangPreso.Abilities
             h._core.SetParent(go.transform, false); h._core.localPosition = Vector3.up * 1.4f;
             Visual.VfxMaterial.Solid(h._core.GetComponent<MeshRenderer>(), Core, 0.0f);
             h._rim = new GameObject("rim").transform; h._rim.SetParent(go.transform, false); h._rim.localPosition = Vector3.up * 1.4f;
+            // The modelled accretion ring of stitched thread and pins; the segments below are the fallback only.
+            if (Visual.ReworkProp.Spawn("higop", h._rim, Visual.ReworkProp.VoodooPalette) != null)
+            {
+                h._rim.localRotation = Quaternion.Euler(18f, 0f, 8f);
+                go.transform.localScale = Vector3.one * 0.01f;
+                return go;
+            }
             for (int i = 0; i < 10; i++)
             {
                 float a = i * 36f + (i % 2) * 7f;

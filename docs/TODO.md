@@ -226,9 +226,16 @@ Necro Nemu, Voodoo Phaister; Pyro (Sean), Electro (Zack) and Hydro (Rafi) have n
   victim's own screen (`DisorientedHallucinations`: baked copies of the other players and the slippers,
   wandering among the real ones); status icons for Concussed, Feared, Disoriented, Vulnerable
   (`tools/build_ability_icons.py`) and the HUD's live-status list.
+- [x] Second presentation pass (cloud, compiled, not run or seen): 28 new sounds
+  (`tools/build_rework_audio.py`, registered in `AudioCues`, wired in the kits; Paete's ultimate called from the
+  ground); four typed models (`tools/build_rework_props.py`: Dante's boulder and barrier, Phaister's doll and the
+  Higop ring, in `Resources/Models/ReworkProps/`, loaded by `ReworkProp.Spawn` with the old blocks as the
+  fallback; the barrier rises out of the court through `BarrierRise`); the Glacial Wall is now an ARC of five
+  ice pieces (`CheskaIceVisuals.BuildArc`, `SpawnIceBarricade` arc length and radius). Owed in Unity: the glb
+  import, a look at every one of them in play, and the owner hearing every sound (`CLAUDE.md` 6).
 - [ ] Presentation per ability, one character at a time: own cast clips (the new kits still borrow their
-  old cast actions), FPP gestures, real VFX in place of the first-pass slabs and primitives
-  (`GeoVfx`, `VoodooVfx`, the straight Glacial Wall), SFX recipes (the new abilities reuse old cues),
+  old cast actions), FPP gestures, VFX and SFX made far better than the first
+  passes above (any of it may be overhauled),
   the ability glyphs (several reuse an old one), the Concussed stumble, bots for every new ability.
 - [ ] KURO PLAYS (its own design pass first), bots, snapshots, replays, screens, HUD.
 - [ ] Ultimate cutscenes rebuilt per `ultimates.md`.

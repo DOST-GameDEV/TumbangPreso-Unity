@@ -129,7 +129,7 @@ namespace TumbangPreso.Abilities
                 // ⚠️ The barricade's body, spread to the arc's length (its three pillars measure 2.35 m
                 // across at span 1). The curved arc itself is presentation work (plan § 5, TODO ABILITY-2).
                 var wall = HeroHazards.SpawnIceBarricade(AimedDestination(ctx), ctx.Forward, CryoRules.GlacialWallSeconds,
-                                                         spanScale: CryoRules.GlacialWallArcLength / 2.35f);
+                                                         arcLength: CryoRules.GlacialWallArcLength, arcRadius: CryoRules.GlacialWallArcRadius);
                 var comp = wall != null ? wall.GetComponent<HeroHazards.IceBarricadeComponent>() : null;
                 if (comp != null) comp.HitsToShatter = CryoRules.GlacialWallHits;
             }
