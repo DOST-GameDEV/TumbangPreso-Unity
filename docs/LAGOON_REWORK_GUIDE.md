@@ -177,14 +177,27 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
    (§ 2). Blockout-grade on purpose, replaced by the kits in the later steps: every roof is one
    pyramid (step 3), stairs are plain stone blocks, the court floor is flat, the water is still.
 2. **Rock kit**: final pillow-boulder models and a painted rock texture (swatch first: warm tan,
-   lighter tops, soft darker seams); rebuild the massif from them. IN PROGRESS 2026-09-26:
-   `tools/author_lagoon_textures.py` paints rock_a (flat tan, two coats), rock_b (plus broad
-   angular planes with light on their upper edges; the lead's pick) and rock_c (rock_b with
-   warm/cool coats), 4 m a tile; swatch sheet `rock_swatches_v2.png` (v1's bent, outlined planes
-   read as crazy paving) and on the models `rock_on_models_v3.png`. The rock MATERIAL maps the
-   texture by world-space box projection (Unity: triplanar) and adds the light-top, dark-base
-   tone by face normal, which a tiling texture cannot know. Awaiting the owner's pick. The
-   final boulder models are being built in `tools/author_lagoon_rocks.py`.
+   lighter tops, soft darker seams);    rebuild the massif from them. IN PROGRESS 2026-09-26.
+   - ✅ **Texture: rock_a** (owner: *"rocka looks nice"*): flat warm tan, two feathered coats,
+     4 m a tile, `tools/author_lagoon_textures.py`. ⚠️ **REJECTED: light lines painted INTO a
+     tiling texture** (rock_b, rock_c): *"the issue with the other textures is the white cell
+     lines you added ... it doesnt work that way on a tileing texture. you genuinely need to
+     weather only the edges of the rock instead of imitating it on the tiled texture"*.
+   - ✅ **Edge wear follows the MODEL's edges** (owner, of the reference: *"the edges are lined
+     with a brighter color compared to the inside plane of the rock faces"*).
+     `tools/bake_lagoon_rock_edges.py` gives every rock mesh a unique second UV map "UVBake" in
+     its own cell of ONE shared atlas (`ArtSource/lagoon/textures/rock_edges_atlas.png`) and
+     Cycles-bakes a convex-edge mask from its geometry (bevel-normal edge detector, convex only,
+     bevel radius 0.14 of a ~2.5-unit stone). The material mixes a warm light tan (not white)
+     along it with a SOFT ramp into the plane, broken by noise, strongest on upward-facing edges.
+     v4's crisp hairline read as an outline and was replaced (`rock_on_models_rock_a+edges_*`).
+     Unity reads the mask through UV2 with the same single material.
+   - The rock MATERIAL maps rock_a by world-space box projection (Unity: triplanar) and adds
+     light tops and dark undersides by face normal.
+   - **Models** (`tools/author_lagoon_rocks.py`, 16 stones in 5 families: boulder, stack, slab,
+     split pair, cobble). The first kit was too soft (soap bars); being reworked after the
+     owner's rock-pack reference: tall chunky ANGULAR stones of broad flat planes and chipped
+     facets, soft shading inside a plane.
 3. **Stilt house kit**: nipa/cogon thatch (its own texture, swatch first), sawali wall panel
    (swatch first), plank deck, bamboo piles with X bracing, ladders, railings; variants: land
    house on a pocket, small Bajau water home, sari-sari stall, capilla.
