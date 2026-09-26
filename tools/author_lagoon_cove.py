@@ -661,7 +661,9 @@ def village(c, rng):
         flat = Vector(((vb - va).x, (vb - va).y, 0)).normalized()
         ea = va + Vector((flat.x * A[4] * 0.85, flat.y * A[5] * 0.85, 0))
         eb = vb - Vector((flat.x * Bp[4] * 0.85, flat.y * Bp[5] * 0.85, 0))
-        plank_stairs(c, ea, eb, f"{a} to {b}")
+        # Organic sawtooth flights (owner: "z-fighting on some of the stair entrances"; every tread
+        # stands at least 4 cm clear of the ground), same 0.2 m rise, 0.3 m going and landings.
+        S.organic_stairs(c, ea, eb, f"{a} to {b}")
     _n, sx, sy, sz, _rx, _ry, _s = lookup["summit ledge (capilla)"]
     capilla = place_house(c, "capilla", 0, sx, sy, sz, (0, 1))  # the landmark, facing the court
     for name, root in homes_by_pocket.items():
@@ -895,8 +897,11 @@ def water_village(c, rng):
     and ladders, laundry lines, and boats everywhere, both moored and paddled)."""
     # The spine climbs from the sand to walk height over its first segment, like a jetty.
     # ONE continuous deck per walk (owner, 2026-09-27: "z fighting and disconnected planks").
-    walk_path(c, SPINE, [BEACH + 0.3] + [SPINE_Z] * (len(SPINE) - 1))
-    walk_path(c, EAST_WALK, [SPINE_Z - BRANCH_DROP] * len(EAST_WALK))
+    # MODELLED planks now (owner, 2026-09-27: "this deck is actually modeled but the main houses
+    # walkway is just a texture, fix that"): tools/author_lagoon_structures.py modelled_walk. The
+    # spine is built before any branch, because a branch stops only at walks already built.
+    S.modelled_walk(c, SPINE, [BEACH + 0.3] + [SPINE_Z] * (len(SPINE) - 1), label="spine")
+    S.modelled_walk(c, EAST_WALK, [SPINE_Z - BRANCH_DROP] * len(EAST_WALK), label="east walk")
     homes = []
     # Homes branch off both walks on short spurs, alternating sides with some irregularity.
     side = 1
@@ -912,7 +917,7 @@ def water_village(c, rng):
             if crowded or coast_distance(hx, hy) > -4 or math.hypot(hx - LANDMARK[0], hy - LANDMARK[1]) < 9:
                 side = -side
                 continue
-            walk(c, (x, y), (x + nx * spur, y + ny * spur), SPINE_Z - BRANCH_DROP)
+            S.modelled_walk(c, [(x, y), (x + nx * spur, y + ny * spur)], SPINE_Z - BRANCH_DROP, label="spur")
             water_home(c, rng, hx, hy, (x, y))
             homes.append((hx, hy, head))
             side = -side
@@ -1168,6 +1173,9 @@ def preview(version):
         ("village", "PERSP", (95, -20, 14), (40, -75, 0), 28),      # over the water village
         ("aerial", "PERSP", (60, -170, 110), (0, -10, 0), 26),
         ("shore_close", "PERSP", (46, -34, 14), (22, -6, -1), 26),   # owner: "less jagged" edges
+        ("court_high", "PERSP", (0, -46, 26), (0, 6, 2), 24),        # the court and its edge props
+        ("pier", "PERSP", (-14, -46, 13), (-26, -22, -1), 26),       # the pier and its piles of props
+        ("spit", "PERSP", (-30, -104, 24), (-60, -70, 0), 26),       # beached bangkas and their gear
         ("eye_north", "PERSP", (0, -9, E), (0, 45, 8), eye),
         ("eye_east", "PERSP", (-9, 0, E), (45, 0, 4), eye),
         ("eye_south", "PERSP", (0, 9, E), (0, -45, -1), eye),
@@ -1394,6 +1402,11 @@ def main():
     plant_col = L.col("Planting", root)
     planting(plant_col, rng, spots)
     cull_buried(plant_col)
+    # THE PROPS (gap review item 1; tools/lagoon_props_place.py): clusters of the eight prop kits
+    # on the spit, the pier, the beach, the houses, the stall and the court's edge. After the
+    # planting so the planting's random stream is untouched; low plants inside a prop are removed.
+    import lagoon_props_place as PP
+    PP.place_props(L.col("Props", root), cove=sys.modules[__name__], plants=plant_col)
     # THE ROCK MATERIAL (§ 8 step 2, owner-chosen): rock_a by world box projection, light tops,
     # and edge wear baked from each kit stone's own geometry into one atlas.
     import bake_lagoon_rock_edges as E

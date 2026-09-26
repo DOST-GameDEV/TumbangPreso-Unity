@@ -36,29 +36,32 @@ When resumed, port THAT into the Blender renders (`tools/author_lagoon_sky.py` c
 earlier painted-panorama sky, committed, still called by the build). Its violet shade may clash
 with the owner's earlier rejection of cold blue-grey rock shade: show it, do not silently warm it.
 
-**In flight when the session compacted (each agent owns ONE file; the lead integrates):**
-- `tools/author_lagoon_structures.py`: being reworked into MODELLED, CHUNKY, ORGANIC wood:
-  `modelled_walk()` (individual planks, replaces the textured `walk_path` strip in
-  author_lagoon_cove.py), `organic_stairs()` (sawtooth stringers, thick treads; replaces
-  `plank_stairs`), organic railing/cliff_walk/pier; nothing coplanar with the terrain (the
-  owner found z-fighting at stair feet). Integration = swap those calls in the cove script.
-- Prop kits, API `build_prop(kind, seed) -> Collection` (one root empty, origin at ground
-  contact, +Y front), all being simplified to the chunky organic rule (§ 2):
-  `author_lagoon_props_beach.py` (net_pile, net_spread, net_rack, rope_coil; done, v10),
-  `author_lagoon_props_village.py` (sign_hanging, lantern_post, lantern_hang; second simplify
-  pass), `lagoon_prop_seating.py` (table_round, bench, lean_to; done, v8),
-  `lagoon_prop_fishing.py` (fish_rack, bubo, basket), `lagoon_prop_clay.py` (banga,
-  pot_cluster, potted_plant; done, v5, committed), `lagoon_prop_cargo.py` (crate, barrel, water_drum),
-  `lagoon_prop_shore.py` (oar_pair, driftwood, anchor_stone, firewood), `lagoon_prop_textile.py`
-  (woven_mat, hanging_net, laundry_line). Each renders `Logs/lagoon-blender/<prefix>_lineup_vN.png`.
-- **Next for the lead:** verify each kit's renders, then write the PLACEMENT (a new
-  `tools/lagoon_props_place.py` or a section in the cove script): source seeds built once into a
-  hidden "(source, not placed)" collection, linked duplicates placed in clusters (nets and racks
-  by the beached bangkas on the spit, net pile + rope at the jetty foot, fish racks and baskets on
-  the beach, lanterns and signs on houses (ray-cast mounts, see the village kit's notes), pots by
-  steps, a table and lean-to at the court's edge, crates and barrels on the pier), grounded on the
-  lowest sand under the footprint, clear of the court, walks, stairs and water; kept off the
-  owner's recorded edits; then a full review render against § 7a.
+**Landed 2026-09-27 (after the compaction; all committed locally, not pushed):**
+- The organic timber kit, `tools/author_lagoon_structures.py`: `modelled_walk` (individual planks
+  on stringers, planks fanning round bends, bents with round piles), `organic_stairs` (solid
+  sawtooth side boards, blocky treads, landings, chunky rails), organic railing, ledge railing,
+  cliff walk, pier and broken pier. Every plank and tread reads the terrain under its four corners
+  and stands at least 4 cm clear (0 of 3992 corners within 1 cm). SWAPPED INTO the cove script:
+  `walk_path`/`walk` and `plank_stairs` are no longer called (kept in the file for reference).
+- All eight prop kits, simplified to the chunky organic rule: beach (nets, rope), village (signs,
+  capiz lanterns), seating, clay, fishing (fish rack, bubo, bilao and bayong; own `pf_rattan` and
+  `pf_fish` since the beach kit's were withdrawn), cargo (crate, barrel, water drum; the cargo kit
+  owns the drum), shore (oars, driftwood, anchor stone, split firewood), textile (banig, hanging
+  net, laundry line). Owner-facing sheet: `props_all_v1.png`. Open points for the owner: pastel
+  washing faint at 20 m; crate boards plain in bright sun; catch heap abstract up close.
+- PROP PLACEMENT, `tools/lagoon_props_place.py`, called by the cove after the planting: linked
+  duplicates from a hidden "Props kit (source, not placed)" collection, its own Random(41),
+  grounded on the lowest ground under the footprint, refused on water, the play walls (+-13 m),
+  tilt over 0.35 m, spacing, or a downward ray hitting a stone, house, boat or railing (low
+  plants yield and are removed afterwards; palms do not). Clusters: two piles at the pier's foot
+  and cargo on its deck, gear round each beached bangka, fish racks with baskets and traps on
+  the beach west of the court, per land house a lantern post, pots by the steps, two yard pieces
+  and a capiz lantern under the eave (ray cast), the stall's sari-sari wall sign and cargo, tables
+  and a lean-to on the court's edge, driftwood along the sand. First full build: cove v52.
+- Owner: *"the last types of foliage and fauna added dont have much textures on them"*: grass
+  blades and leaf stalks repainted (§ 8 step 5).
+- **Next:** review cove v52 against § 7a; lanterns and laundry on the water homes; pots by the
+  stair feet; then the owner's picks (timber/bamboo/tin, emblem, rock tint), and later the sky.
 
 ---
 
