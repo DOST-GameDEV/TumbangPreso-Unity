@@ -128,17 +128,29 @@ def peak_height(x, y):
 
 
 def massif(x, y):
+    # ⚠️ OWNER on cove v9, pointing at the stepped shoreline and ledge walls: "are we able to make
+    # these edges less jagged?". Every jag was a JUMP in this function (0.6 m at the waterline,
+    # up to several metres at the beach's landward edge and at pocket rims), which the grid can
+    # only draw as a staircase of cells. Every transition below is now continuous, so the grid
+    # interpolates a smooth slope and the waterline falls wherever that slope crosses the water.
     d = coast_distance(x, y)
     if d < 0:
-        return max(SEABED, BEACH - 0.6 + d * 0.35)          # the shallows shelve into the sea
-    h = max(peak_height(x, y), BEACH + 3.0 * min(1.0, (d - BEACH_BAND) / 14))
+        # The shelf slopes gently (0.12 m per m) so a wide band of clear shallows shows the sand
+        # (the owner's stylized water reference), then drops to the seabed.
+        return max(SEABED, WATER + d * 0.12 - max(0.0, -d - 12) * 0.2)
+    h = max(peak_height(x, y), BEACH + 3.0 * max(0.0, min(1.0, (d - BEACH_BAND) / 14)))
     h += 1.6 * noise.noise(Vector((x * 0.06, y * 0.06, 0.3)))
-    if d < BEACH_BAND:
-        # The beach: flat sand rising gently from the waterline, with an irregular landward edge.
-        wob = 2.5 * noise.noise(Vector((x * 0.08, y * 0.08, 7.1)))
-        if d < BEACH_BAND + wob:
-            return min(h, BEACH + 0.08 * d)
-    return h
+    # The beach: flat sand rising gently from the waterline, with an irregular landward edge that
+    # BLENDS into the land over 4 m instead of stepping up.
+    wob = 2.5 * noise.noise(Vector((x * 0.08, y * 0.08, 7.1)))
+    sand = WATER + 0.085 * d   # meets the water exactly ON the coast curve, where the foam line is
+    t = _smoothstep(BEACH_BAND + wob - 3.0, BEACH_BAND + wob + 1.0, d)
+    return sand + (max(h, sand) - sand) * t
+
+
+def _smoothstep(e0, e1, x):
+    t = max(0.0, min(1.0, (x - e0) / (e1 - e0)))
+    return t * t * (3 - 2 * t)
 
 
 def pocket_at(x, y):
@@ -156,9 +168,10 @@ def height(x, y):
         d = math.hypot((x - px) / rx, (y - py) / ry)
         if d < 1.0:
             return pz
-        if d < 1.6:   # a short rim blend so pockets sit INTO the slope
-            t = (d - 1.0) / 0.6
-            h = pz + (h - pz) * t if h > pz else max(h, pz - 0.2 - (1 - t) * 0.5)
+        if d < 1.6:   # a rim blend so pockets sit INTO the slope, continuous at both ends
+            # (the old lower-side blend ended in a vertical step at d = 1.6: the jagged wall)
+            t = _smoothstep(1.0, 1.6, d)
+            h = pz + (h - pz) * t
     return h
 
 
@@ -376,6 +389,12 @@ def ground_colour(x, y, z, slope_z):
     pocket, _d = pocket_at(x, y)
     if pocket is not None:
         return C[pocket[6]]
+    if z < WATER - 0.05:
+        # THE SEABED shows through the clear shallows (the owner's stylized water reference):
+        # wet sand already tinted teal at the waterline (v12: dry-sand colour under the clear
+        # water washed it to milky mint), darker and greener as it deepens.
+        k = _smoothstep(WATER, SEABED, z)
+        return tuple(a + (b - a) * k for a, b in zip((0.52, 0.70, 0.52), (0.14, 0.38, 0.32)))
     if z <= BEACH + 0.5:
         return C["sand"]
     if slope_z < 0.75:
@@ -388,7 +407,7 @@ def ground_colour(x, y, z, slope_z):
 def ground(c):
     """The height field as one grid mesh (the fill that shows between boulders), with the
     pockets flat, coloured per vertex."""
-    n, span = 200, 230.0
+    n, span = 240, 276.0   # 1.15 m cells; wide enough that the shelf reaches the seabed inside it
     cell = span / n
     hs = [[height(-span / 2 + i * cell, -span / 2 + j * cell) for i in range(n + 1)] for j in range(n + 1)]
     bm = bmesh.new()
@@ -412,6 +431,8 @@ def ground(c):
     for k, col_ in enumerate(colours):
         attr.data[k].color = (*col_, 1.0)
     me.materials.append(vertex_colour_material("ground_painted"))
+    for poly in me.polygons:
+        poly.use_smooth = True   # soft slopes, not faceted terraces (owner: "less jagged")
     o = bpy.data.objects.new("ground", me)
     c.objects.link(o)
 
@@ -694,6 +715,8 @@ def preview(version):
     scene = bpy.context.scene
     scene.render.engine = "BLENDER_EEVEE"
     scene.render.resolution_x, scene.render.resolution_y = 1600, 900
+    if hasattr(scene.eevee, "shadow_pool_size"):
+        scene.eevee.shadow_pool_size = "1024"   # the default pool overflowed (missing shadows)
     cam = bpy.data.objects.new("cam", bpy.data.cameras.new("cam"))
     cam.data.clip_end = 2000
     cam.data.sensor_fit = "HORIZONTAL"
@@ -706,6 +729,7 @@ def preview(version):
         ("ref_angle", "PERSP", (40, -100, 20), (-6, 14, 8), 24),    # the reference's framing
         ("village", "PERSP", (95, -20, 14), (40, -75, 0), 28),      # over the water village
         ("aerial", "PERSP", (60, -170, 110), (0, -10, 0), 26),
+        ("shore_close", "PERSP", (46, -34, 14), (22, -6, -1), 26),   # owner: "less jagged" edges
         ("eye_north", "PERSP", (0, -9, E), (0, 45, 8), eye),
         ("eye_east", "PERSP", (-9, 0, E), (45, 0, 4), eye),
         ("eye_south", "PERSP", (0, 9, E), (0, -45, -1), eye),
@@ -764,7 +788,8 @@ def main():
     ground(ground_col)
     import lagoon_cove_water as W
     W.build_sea(ground_col, coast_distance, WATER, SEABED, span=2400.0)   # to the horizon: at 520 its edge showed
-    W.build_foam(ground_col, COAST_LINE, WATER)
+    # NO MODELLED FOAM (owner, 2026-09-26: "we'll be implementing moving shore white foam using
+    # shaders in unity"). W.build_foam stays in the module only as a reference for the band's width.
     spots = place_boulders(L.col("Boulders", root), rng)
     village(L.col("Village", root), rng)
     planting(L.col("Planting", root), rng, spots)

@@ -34,7 +34,7 @@ import bpy
 from mathutils import Vector, noise
 
 # Ramp stops, linear RGB, as signed distance into the sea in metres (positive = further out).
-SHALLOW = (0.16, 0.90, 0.70)     # 0 to 6 m: the pale band at the sand
+SHALLOW = (0.02, 0.80, 0.70)     # 0 to 6 m: clear cyan over the sand (v11: paler read as milk)
 TURQUOISE = (0.04, 0.72, 0.64)   # 6 to 25 m
 DEEP = (0.012, 0.42, 0.40)       # beyond about 45 m
 FOAM = (0.95, 0.97, 0.92)
@@ -65,7 +65,11 @@ def _sea_colour(x, y, d):
     col = _mix(col, TURQUOISE, _smooth(4.0, 11.0, out))
     col = _mix(col, DEEP, _smooth(24.0, 50.0, out))
     k = 1.0 + 0.04 * n1 + 0.03 * n2
-    return (col[0] * k, col[1] * k, col[2] * k, 1.0)
+    # ALPHA (owner, 2026-09-26: the water should be stylized like ANGRY MESH's "Stylized Water",
+    # which is CLEAR over a visible sandy bottom in the shallows): see-through at the sand,
+    # opaque by about 30 m out.
+    alpha = 0.5 + 0.5 * _smooth(1.0, 30.0, out)   # v11: 0.28 let the pale sand wash it out
+    return (col[0] * k, col[1] * k, col[2] * k, alpha)
 
 
 def _sea_material():
@@ -81,9 +85,94 @@ def _sea_material():
     attr = nt.nodes.new("ShaderNodeVertexColor")
     attr.layer_name = "Col"
     attr.location = (-320, 260)
-    nt.links.new(attr.outputs["Color"], bsdf.inputs["Base Color"])
+    # CAUSTIC LINES: the reference water's signature is a net of bright cellular lines drifting
+    # over the shallows. Two Voronoi "distance to edge" layers at different scales, thresholded
+    # into thin lines, strongest where the water is clear and faint offshore. They lighten the
+    # colour toward white and raise the alpha so the lines stay bright over the sand. In Unity
+    # the same pattern animates in LagoonWater.shader (guide § 8 step 7); here it is still.
+    coords = nt.nodes.new("ShaderNodeTexCoord")
+    # Review v10: undistorted cells read as a cracked tile floor. A low-frequency noise bends the
+    # coordinates so each cell wobbles like light through a moving surface.
+    warp = nt.nodes.new("ShaderNodeTexNoise")
+    warp.inputs["Scale"].default_value = 0.4    # bends WITHIN a cell (0.09 only drifted whole cells)
+    nt.links.new(coords.outputs["Object"], warp.inputs["Vector"])
+    bend = nt.nodes.new("ShaderNodeVectorMath")
+    bend.operation = "MULTIPLY_ADD"
+    bend.inputs[1].default_value = (1.3, 1.3, 0.0)
+    nt.links.new(warp.outputs["Color"], bend.inputs[0])
+    nt.links.new(coords.outputs["Object"], bend.inputs[2])
+    lines = None
+    for scale, offset in ((0.34, (0, 0, 0)), (0.55, (13.1, 7.3, 0))):
+        shift = nt.nodes.new("ShaderNodeVectorMath")
+        shift.operation = "ADD"
+        shift.inputs[1].default_value = offset
+        nt.links.new(bend.outputs["Vector"], shift.inputs[0])
+        vor = nt.nodes.new("ShaderNodeTexVoronoi")
+        vor.feature = "DISTANCE_TO_EDGE"
+        vor.inputs["Scale"].default_value = scale
+        nt.links.new(shift.outputs["Vector"], vor.inputs["Vector"])
+        edge = nt.nodes.new("ShaderNodeMapRange")
+        edge.inputs["From Min"].default_value = 0.0
+        edge.inputs["From Max"].default_value = 0.035
+        edge.inputs["To Min"].default_value = 1.0
+        edge.inputs["To Max"].default_value = 0.0
+        nt.links.new(vor.outputs["Distance"], edge.inputs["Value"])
+        if lines is None:
+            lines = edge.outputs["Result"]
+        else:
+            both = nt.nodes.new("ShaderNodeMath")
+            both.operation = "MAXIMUM"
+            nt.links.new(lines, both.inputs[0])
+            nt.links.new(edge.outputs["Result"], both.inputs[1])
+            lines = both.outputs["Value"]
+    clear = nt.nodes.new("ShaderNodeMath")          # 1 in the clear shallows, 0 offshore
+    clear.operation = "SUBTRACT"
+    clear.inputs[0].default_value = 1.0
+    nt.links.new(attr.outputs["Alpha"], clear.inputs[1])
+    # Review v10: the net ran evenly to the horizon. Now it is squared toward the shallows
+    # (clear^2, gone by about 25 m out) and broken into drifting PATCHES by a large noise mask.
+    clear2 = nt.nodes.new("ShaderNodeMath")
+    clear2.operation = "POWER"
+    clear2.inputs[1].default_value = 2.0
+    nt.links.new(clear.outputs["Value"], clear2.inputs[0])
+    patch_noise = nt.nodes.new("ShaderNodeTexNoise")
+    patch_noise.inputs["Scale"].default_value = 0.035
+    nt.links.new(coords.outputs["Object"], patch_noise.inputs["Vector"])
+    patch = nt.nodes.new("ShaderNodeMapRange")
+    patch.inputs["From Min"].default_value = 0.42
+    patch.inputs["From Max"].default_value = 0.62
+    nt.links.new(patch_noise.outputs["Fac"], patch.inputs["Value"])
+    mask = nt.nodes.new("ShaderNodeMath")
+    mask.operation = "MULTIPLY"
+    nt.links.new(clear2.outputs["Value"], mask.inputs[0])
+    nt.links.new(patch.outputs["Result"], mask.inputs[1])
+    strength = nt.nodes.new("ShaderNodeMath")
+    strength.operation = "MULTIPLY"
+    strength.use_clamp = True
+    nt.links.new(lines, strength.inputs[0])
+    nt.links.new(mask.outputs["Value"], strength.inputs[1])
+    gain = nt.nodes.new("ShaderNodeMath")
+    gain.operation = "MULTIPLY"
+    gain.use_clamp = True
+    gain.inputs[1].default_value = 1.6
+    nt.links.new(strength.outputs["Value"], gain.inputs[0])
+    strength = gain
+    tint = nt.nodes.new("ShaderNodeMix")
+    tint.data_type = "RGBA"
+    tint.inputs["B"].default_value = (0.85, 1.0, 0.93, 1.0)
+    nt.links.new(strength.outputs["Value"], tint.inputs["Factor"])
+    nt.links.new(attr.outputs["Color"], tint.inputs["A"])
+    nt.links.new(tint.outputs["Result"], bsdf.inputs["Base Color"])
+    alpha = nt.nodes.new("ShaderNodeMath")
+    alpha.operation = "MAXIMUM"
+    nt.links.new(attr.outputs["Alpha"], alpha.inputs[0])
+    nt.links.new(strength.outputs["Value"], alpha.inputs[1])
+    nt.links.new(alpha.outputs["Value"], bsdf.inputs["Alpha"])
+    if hasattr(m, "surface_render_method"):
+        m.surface_render_method = "BLENDED"
     bsdf.inputs["Roughness"].default_value = 0.25
-    for name, value in (("Specular IOR Level", 0.2), ("Specular", 0.2)):
+    # A little specular only (v12 tried 0.04: no visible change, the mint came from the seabed).
+    for name, value in (("Specular IOR Level", 0.1), ("Specular", 0.1)):
         if name in bsdf.inputs:
             bsdf.inputs[name].default_value = value
             break
@@ -178,6 +267,7 @@ def build_sea(c, coast_distance, water_z, seabed_z, span=520.0, fine_box=(-150.0
     me.materials.append(_sea_material())
     me.update()
     o = bpy.data.objects.new("sea", me)
+    o.visible_shadow = False   # clear water must not shade the seabed it shows
     c.objects.link(o)
     o["coast_distance_calls"] = calls
     print(f"[lagoon-water] sea: {len(verts)} verts, {len(faces)} faces, {calls} coast_distance calls")

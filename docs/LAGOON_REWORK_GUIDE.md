@@ -7,7 +7,7 @@ whose model, texture, foliage and working rules ALL apply here too (Kanto is the
 house style). Every rule below came from the owner reacting to a render; the quote is there so
 nobody re-litigates it. Status row: `docs/TODO.md` **LAGOON-1**.
 
-⚠️⚠️ **CURRENT STATE (2026-09-26): LAYOUT BLOCKOUT, cove v9, awaiting the owner's verdict.**
+⚠️⚠️ **CURRENT STATE (2026-09-26): LAYOUT COMPLETE (cove v15), awaiting the owner's sign-off to start texturing (§ 8 step 2).**
 Nothing is modelled, textured or in Unity yet; the shipped Lagoon scene is untouched. Next steps
 are § 8. This rework supersedes the REFINE-2.6 per-family refinement for this map. The map as
 found: `Logs/map-lineup-v1/sheet_lagoon.png` (a flat brown deck ring over flat teal water).
@@ -20,6 +20,7 @@ found: `Logs/map-lineup-v1/sheet_lagoon.png` (a flat brown deck ring over flat t
 |---|---|
 | [Anastasia Papaioanou, Stylized Fishing Village](https://www.artstation.com/artwork/GvJv5a) (Unreal, sold on FAB; owner: *"seems like a good ref"*) | **The art style and the ground layout.** A rock massif built as a PILE of big rounded boulders the village climbs; saturated turquoise water with a pale band at the sand; stocky plank houses with oversized deep-eaved roofs; dense tropical planting (palms leaning out of rock seams, broad leaves, red and orange accents at boulder feet); piers, stairs and plank walkways at several heights; boats, crates, barrels, nets, lanterns; one landmark at the waterline (the painted octopus rock); warm sun under big painted clouds. Built from a modular kit (plank wall modules, stacked roof modules, stair pieces, a small prop kit). |
 | Owner photograph: a Filipino stilt-house village at sunset | **The Filipino subject.** *"we should make it more filipino like too btw, like these stilt houses but following the stylized artstyle"*. Steep nipa/cogon thatch roofs, woven sawali (split bamboo) and plank walls, slender irregular bamboo piles with X bracing, bamboo railings and ladders, fishing nets drying, small painted bangka outriggers, a green palm hill and a beach behind. |
+| [ANGRY MESH, Stylized Water](https://www.fab.com/listings/1bb6ee1a-250b-4fe7-95eb-1f6c16275f9d) (Unreal, a Single Layer Water shader; owner 2026-09-26: *"the water should be stylized like this"*) | **The water.** CLEAR over a visible sandy, stony bottom in the shallows; colour by depth, vivid cyan-turquoise shallow to deep blue-green; a net of bright wobbly cellular CAUSTIC lines drifting over the shallows; soft contact foam and ripples. It is a SHADER, so in this project it is `LagoonWater.shader` (URP) in step 7, not geometry. |
 | Owner photograph: a Sama-Bajau water village | **The village is ON THE WATER.** *"we need space for boats and free-standing stilt houses because badjao tribe isnt particularly land based"*. Small free-standing stilt homes over clear shallow turquoise water, narrow plank walks and ladders, tin and thatch roofs, laundry lines, boats both moored and paddled (long lepa hulls, bangkas). |
 
 Earlier primary-source notes (Sama Dilaut stilt homes, lepa houseboats, the Lookan Banaran
@@ -68,7 +69,7 @@ photograph): `docs/reports/map-by-map-refinement-2026-09-23/lagoon-reference-not
   grass (green cliffs).
 - Warm tan rock; lighter tops and darker bases come in the texture pass; AgX Punchy look.
 
-## 4 · Layout (current: cove v9)
+## 4 · Layout (current: cove v15)
 
 - **One asymmetric island weighted north-west**, drawn from a hand-placed coast curve (`COAST`,
   Catmull-Rom smoothed): a long sand SPIT curling south on the west (its own house and a tidal
@@ -96,9 +97,19 @@ photograph): `docs/reports/map-by-map-refinement-2026-09-23/lagoon-reference-not
   north-west corner, a pair at the spit's root, two on the northern skyline, a sea stack off the
   spit). The massif's stones now vary: about one in six is small (tucked in the seams), the odd
   one low down is half again as big; small shore rocks are half buried along the sand.
-- **Water** (v7): a painted gradient, pale turquoise shallows hugging the whole coast, turquoise,
-  then deeper teal offshore, with a broken off-white foam line at the sand
-  (`tools/lagoon_cove_water.py`). **Sky**: a vertical gradient seen by the camera only.
+- **Water** (v15, `tools/lagoon_cove_water.py`): a Blender STAND-IN for the Unity water shader,
+  close enough to judge the layout. Clear shallows (alpha 0.5) over a teal-tinted sandy seabed
+  that shelves gently (0.12 m per m) so a wide band of shallows shows, vivid turquoise, then deep
+  teal and opaque by ~30 m; still Voronoi caustic lines, bent by noise, strongest in the
+  shallows and broken into patches. ⚠️ **NO MODELLED FOAM** (owner, 2026-09-26: *"we'll be
+  implementing moving shore white foam using shaders in unity"*): v7 to v9 had a foam ribbon
+  mesh; it is gone, and `build_foam` is kept only as a reference for the band's width.
+  **Sky**: a vertical gradient seen by the camera only.
+- ⚠️ **Smooth terrain** (v15; owner on v9: *"are we able to make these edges less jagged?"*):
+  the height field had JUMPS at the waterline, the beach's landward edge and every pocket rim,
+  which the grid drew as staircases. Every transition is continuous now (smoothstep blends), the
+  waterline sits exactly on the coast curve, and the ground is smooth shaded. Keep it that way:
+  never return a height that jumps between neighbouring points.
 - **Planting** (v7, blockout kit `tools/lagoon_cove_planting.py`): coconut palms with curved
   trunks and drooping fronds at the pockets' rims (leaning out over the drop) and along the sand,
   thickest on the spit (leaning to the sea); grass tufts, banana/taro broad leaves and crimson or
@@ -141,15 +152,15 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
 
 ## 8 · Plan (in order; each step rendered in Blender and approved before the next)
 
-1. **Finish the layout.** Cove v9 (2026-09-26) closed every gap listed after v6, awaiting the
-   owner's verdict: turquoise shallows and a foam line (`lagoon_cove_water.py`), palms and beached
-   bangkas on the spit, the water village on a walkway spine with homes seen from the court,
-   seven feature boulders and a wider stone size range, planting in the rock gaps
-   (`lagoon_cove_planting.py`), rim stones on every ledge front, stone steps, a gradient sky.
-   ⚠️ The reference's orange flower accents are CRIMSON and YELLOW here: orange sits too close
-   to offence orange `#f87020` (§ 2). Still blockout-grade and left for later steps: every roof
-   is one pyramid (step 3), the court floor is a flat placeholder, a few ledge backs still show
-   bare fill, the horizon is hazy (step 7).
+1. **Finish the layout.** ✅ LAYOUT COMPLETE at cove v15 (2026-09-26), awaiting the owner's
+   sign-off to start texturing. v9 closed every gap listed after v6 (shallows, a planted spit
+   with beached bangkas, the water village on a walkway spine seen from the court, feature
+   boulders and a wider stone size range, gap planting, rim stones on every ledge front, stone
+   steps, a gradient sky). v15 answered the owner's v9 review: smooth terrain edges, clear
+   stylized water over a visible seabed, no modelled foam (§ 4). ⚠️ The reference's orange
+   flower accents are CRIMSON and YELLOW here: orange sits too close to offence orange `#f87020`
+   (§ 2). Blockout-grade on purpose, replaced by the kits in the later steps: every roof is one
+   pyramid (step 3), stairs are plain stone blocks, the court floor is flat, the water is still.
 2. **Rock kit**: final pillow-boulder models and a painted rock texture (swatch first: warm tan,
    lighter tops, soft darker seams); rebuild the massif from them.
 3. **Stilt house kit**: nipa/cogon thatch (its own texture, swatch first), sawali wall panel
@@ -159,7 +170,10 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
 5. **Props**: drying nets, laundry lines, crates, barrels, baskets, lanterns, fish racks.
 6. **Foliage**: coconut palms (curved leaning trunks), broad leaves, flowering accents, grass
    tufts.
-7. **Water and light**: turquoise water with a shallow-to-deep gradient and a foam band, warm sun,
+7. **Water and light**: rewrite `Resources/Shaders/LagoonWater.shader` (URP) after the ANGRY MESH
+   reference (§ 1): depth-based colour and transparency from the camera depth texture, the
+   seabed visible through the shallows, ANIMATED caustic lines, MOVING shore foam where the
+   water meets sand, rock, stilts and hulls (depth intersection), gentle waves. Then warm sun,
    big painted clouds.
 8. **Assemble** `ArtSource/lagoon/lagoon_city.blend` with linked duplicates (editable, as Kanto),
    full review, owner approval, THEN export to Unity and rebuild `Lagoon.unity` (§ 7, checks, a
