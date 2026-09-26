@@ -440,10 +440,66 @@ def ground_material():
         nt.links.new(src, mr.inputs["Value"])
         return mr.outputs["Result"], a
 
+    # THE GROUND TEXTURES (owner, 2026-09-27: "the sand, grass and other terrain is still
+    # untextured"): sand_a, grass_a, earth_a from tools/author_lagoon_textures.py, projected
+    # TOP-DOWN (world XY, 4 m a tile) with Kanto's anti-tiling: a second sample rotated 37
+    # degrees and scaled 0.61, blended through a big feathered noise mask. The rock fill between
+    # boulders is rock_a darkened. The layer masks and their soft painted edges are unchanged.
+    tex_dir = Path(__file__).resolve().parents[1] / "ArtSource" / "lagoon" / "textures"
+    xy = nt.nodes.new("ShaderNodeSeparateXYZ")
+    nt.links.new(coords.outputs["Object"], xy.inputs[0])
+    flat_xy = nt.nodes.new("ShaderNodeCombineXYZ")
+    nt.links.new(xy.outputs["X"], flat_xy.inputs["X"])
+    nt.links.new(xy.outputs["Y"], flat_xy.inputs["Y"])
+    at_mask = nt.nodes.new("ShaderNodeTexNoise")
+    at_mask.inputs["Scale"].default_value = 0.06
+    at_mask.inputs["Detail"].default_value = 1.0
+    nt.links.new(flat_xy.outputs["Vector"], at_mask.inputs["Vector"])
+    at_feather = nt.nodes.new("ShaderNodeMapRange")
+    at_feather.interpolation_type = "SMOOTHSTEP"
+    at_feather.inputs["From Min"].default_value, at_feather.inputs["From Max"].default_value = 0.42, 0.58
+    nt.links.new(at_mask.outputs["Fac"], at_feather.inputs["Value"])
+
+    def tex(name, tint=(1.0, 1.0, 1.0)):
+        img = bpy.data.images.load(str(tex_dir / f"{name}_albedo.png"), check_existing=True)
+        out_ = None
+        samples = []
+        for rot, sc, loc in ((0.0, 1.0, (0, 0, 0)), (math.radians(37), 0.61, (0.37, 0.71, 0))):
+            mp = nt.nodes.new("ShaderNodeMapping")
+            mp.inputs["Rotation"].default_value = (0, 0, rot)
+            mp.inputs["Scale"].default_value = (sc / 4.0, sc / 4.0, 1)
+            mp.inputs["Location"].default_value = loc
+            nt.links.new(flat_xy.outputs["Vector"], mp.inputs["Vector"])
+            t = nt.nodes.new("ShaderNodeTexImage")
+            t.image = img
+            nt.links.new(mp.outputs["Vector"], t.inputs["Vector"])
+            samples.append(t.outputs["Color"])
+        blend = nt.nodes.new("ShaderNodeMix")
+        blend.data_type = "RGBA"
+        nt.links.new(at_feather.outputs["Result"], blend.inputs["Factor"])
+        nt.links.new(samples[0], blend.inputs["A"])
+        nt.links.new(samples[1], blend.inputs["B"])
+        out_ = blend.outputs["Result"]
+        if tint != (1.0, 1.0, 1.0):
+            mul = nt.nodes.new("ShaderNodeMix")
+            mul.data_type = "RGBA"
+            mul.blend_type = "MULTIPLY"
+            mul.inputs["Factor"].default_value = 1.0
+            mul.inputs["B"].default_value = (*tint, 1.0)
+            nt.links.new(out_, mul.inputs["A"])
+            out_ = mul.outputs["Result"]
+        return out_
+
+    SAND, GRASS, EARTH = tex("sand_a"), tex("grass_a"), tex("earth_a")
+    ROCKFILL = tex("rock_a", (0.62, 0.6, 0.58))
+
     def layer(under, colour, fac):
         mix = nt.nodes.new("ShaderNodeMix")
         mix.data_type = "RGBA"
-        mix.inputs["B"].default_value = (*colour, 1.0)
+        if isinstance(colour, tuple):
+            mix.inputs["B"].default_value = (*colour, 1.0)
+        else:
+            nt.links.new(colour, mix.inputs["B"])
         if isinstance(under, tuple):
             mix.inputs["A"].default_value = (*under, 1.0)
         else:
@@ -451,24 +507,39 @@ def ground_material():
         nt.links.new(fac, mix.inputs["Factor"])
         return mix.outputs["Result"]
 
-    out = layer(C["rock_fill"], C["grass"], mask("ring")[0])
-    out = layer(out, C["rock_fill"], mask("steep", 0.3, False)[0])
-    out = layer(out, C["sand"], mask("sand_in")[0])
+    out = layer(ROCKFILL, GRASS, mask("ring")[0])
+    out = layer(out, ROCKFILL, mask("steep", 0.3, False)[0])
+    out = layer(out, SAND, mask("sand_in")[0])
     # The seabed: wet sand tinted teal at the waterline, darker and greener with depth.
     wet, wet_attr = mask("wet_depth", 0.05, False)
     deep = nt.nodes.new("ShaderNodeMapRange")
     deep.interpolation_type = "SMOOTHSTEP"
     deep.inputs["From Min"].default_value, deep.inputs["From Max"].default_value = 0.0, 1.7
     nt.links.new(wet_attr.outputs["Fac"], deep.inputs["Value"])
-    seabed = layer(SEABED_SHALLOW, SEABED_DEEP, deep.outputs["Result"])
+    seabed_tint = layer(SEABED_SHALLOW, SEABED_DEEP, deep.outputs["Result"])
+    # The seabed is the same sand, tinted wet and teal by depth (sand_a is near-white-ish, so it
+    # is multiplied by the old tint lifted to keep the value where it was).
+    sb = nt.nodes.new("ShaderNodeMix")
+    sb.data_type = "RGBA"
+    sb.blend_type = "MULTIPLY"
+    sb.inputs["Factor"].default_value = 1.0
+    nt.links.new(SAND, sb.inputs["A"])
+    lift = nt.nodes.new("ShaderNodeMix")
+    lift.data_type = "RGBA"
+    lift.blend_type = "MULTIPLY"
+    lift.inputs["Factor"].default_value = 1.0
+    lift.inputs["B"].default_value = (1.2, 1.2, 1.3, 1.0)
+    nt.links.new(seabed_tint, lift.inputs["A"])
+    nt.links.new(lift.outputs["Result"], sb.inputs["B"])
+    seabed = sb.outputs["Result"]
     mix = nt.nodes.new("ShaderNodeMix")
     mix.data_type = "RGBA"
     nt.links.new(out, mix.inputs["A"])
     nt.links.new(seabed, mix.inputs["B"])
     nt.links.new(wet, mix.inputs["Factor"])
     out = mix.outputs["Result"]
-    out = layer(out, C["grass"], mask("grass_in")[0])
-    out = layer(out, C["court"], mask("court_in", 0.08)[0])
+    out = layer(out, GRASS, mask("grass_in")[0])
+    out = layer(out, EARTH, mask("court_in", 0.08)[0])
     nt.links.new(out, bsdf.inputs["Base Color"])
     return m
 
@@ -567,7 +638,12 @@ def village(c, rng):
         for k in range(7):
             a = math.pi + 0.35 + k * (math.pi - 0.7) / 6
             fx, fy = px + math.cos(a) * rx * 0.95, py + math.sin(a) * ry * 0.95
-            B.box(c, "fence post", (fx, fy, pz + 0.5), (0.12, 0.12, 1.0), "deck")
+            # Owner: "the fence posts are untextured and some are floating". Near a ledge's rim the
+            # ground mesh already slopes down between grid points, so a post standing on the floor
+            # height floated; posts now run 0.6 m into the ground and wear the timber texture.
+            post = B.box(c, "fence post", (fx, fy, pz + 0.2), (0.12, 0.12, 1.6), "deck")
+            post.data.materials[0] = bpy.data.materials.get("timber") or HK.material("timber")
+            box_uvs(post.data, across=False)
     water_village(c, rng)
     beached_boats(c, rng)
     lookup = {p[0]: p for p in POCKETS}
@@ -577,18 +653,7 @@ def village(c, rng):
         flat = Vector(((vb - va).x, (vb - va).y, 0)).normalized()
         ea = va + Vector((flat.x * A[4] * 0.85, flat.y * A[5] * 0.85, 0))
         eb = vb - Vector((flat.x * Bp[4] * 0.85, flat.y * Bp[5] * 0.85, 0))
-        # STONE STEPS, not a plank (self-review v7: a tilted board read as a fallen plank). One
-        # block per ~0.35 m of rise, each sitting on the ground under it so none floats.
-        run = eb - ea
-        flat_run = Vector((run.x, run.y, 0))
-        n = max(3, int(abs(run.z) / 0.35))
-        heading = math.atan2(flat_run.y, flat_run.x) - math.pi / 2   # box +Y along the run
-        for k in range(n):
-            p = ea + run * ((k + 0.5) / n)
-            top = ea.z + run.z * ((k + 1) / n if run.z > 0 else k / n)
-            bottom = min(top - 0.3, height(p.x, p.y) - 0.3)
-            B.box(c, f"step {a} to {b}", (p.x, p.y, (top + bottom) / 2),
-                  (2.0, flat_run.length / n + 0.15, top - bottom), "rock_light", rot_z=heading)
+        plank_stairs(c, ea, eb, f"{a} to {b}")
     _n, sx, sy, sz, _rx, _ry, _s = lookup["summit ledge (capilla)"]
     place_house(c, "capilla", 0, sx, sy, sz, (0, 1))            # the landmark, facing the court
     place_house(c, "stall", 0, 17.5, 7.0, 0.0, (0, 1))          # a sari-sari stall at the court's east edge
@@ -596,6 +661,80 @@ def village(c, rng):
     o.location, o.scale = (LANDMARK[0], LANDMARK[1], WATER - 1.0), (3.4, 3.0, 3.0)
     o.rotation_euler = (0, 0, 0.3)
     c.objects.link(o)
+
+
+# ⚠️ WOODEN PLANK STAIRS, as in the reference (owner, 2026-09-27: "you said the stairs will
+# actually be planks", pointing back at ArtStation GvJv5a, whose ledges are joined by plank
+# flights with railings). The grey stone blocks were a placeholder. A flight: two timber
+# stringers along the run, a plank_c tread per ~0.3 m of rise, timber posts and a handrail on
+# both sides, and legs down to the ground wherever the flight stands clear of it. Small stones
+# standing in a flight's path are cleared so the flight is not hidden inside the massif.
+STAIR_W = 1.5
+
+
+def plank_stairs(c, ea, eb, label):
+    run = eb - ea
+    flat = Vector((run.x, run.y, 0))
+    heading = math.atan2(flat.y, flat.x) - math.pi / 2          # box +Y along the run
+    side = Vector((-flat.y, flat.x, 0)).normalized()
+    plank = bpy.data.materials.get("plank") or HK.material("plank")
+    timber = bpy.data.materials.get("timber") or HK.material("timber")
+
+    def piece(name, centre, size, mat, rot=None, across=True):
+        o = B.box(c, f"{name} {label}", centre, size, "deck", rot_z=heading)
+        o.data.materials[0] = mat
+        box_uvs(o.data, across=across)
+        if rot is not None:
+            o.matrix_world = Matrix.Translation(centre) @ rot.to_4x4()
+        return o
+
+    n = max(3, int(abs(run.z) / 0.3))
+    for k in range(n):
+        p = ea + run * ((k + 0.5) / n)
+        top = ea.z + run.z * ((k + 1) / n if run.z > 0 else k / n)
+        piece("tread", Vector((p.x, p.y, top - 0.04)), (STAIR_W, flat.length / n + 0.12, 0.08), plank)
+    tilt = run.to_track_quat("Y", "Z").to_matrix()
+    for sgn in (-1, 1):
+        off = side * (STAIR_W / 2 + 0.05) * sgn
+        mid = (ea + eb) / 2 + off - Vector((0, 0, 0.12))
+        piece("stringer", mid, (0.08, run.length + 0.3, 0.26), timber, rot=tilt, across=False)
+        rail_mid = (ea + eb) / 2 + off + Vector((0, 0, 0.9))
+        piece("handrail", rail_mid, (0.07, run.length + 0.2, 0.07), timber, rot=tilt, across=False)
+        posts = max(2, int(run.length / 1.6) + 1)
+        for i in range(posts):
+            q = ea.lerp(eb, i / (posts - 1)) + off
+            ground = height(q.x, q.y)
+            foot = min(q.z - 0.3, ground - 0.3)
+            piece("post", Vector((q.x, q.y, (q.z + 0.95 + foot) / 2)), (0.1, 0.1, q.z + 0.95 - foot), timber,
+                  across=False)
+    _STAIR_SEGMENTS.append((ea.copy(), eb.copy()))
+
+
+_STAIR_SEGMENTS = []
+
+
+def clear_stair_paths():
+    """Remove small stones standing in a flight's path (their centre within 1.6 m of the flight
+    and their top above the treads), so a flight is not buried in the massif. Big feature stones
+    are kept (scale over 3)."""
+    bpy.context.view_layer.update()
+    removed = 0
+    for o in list(bpy.data.objects):
+        if o.type != "MESH" or o.data.get("rock_family") is None or max(o.scale) > 3.0:
+            continue
+        if any(c.name.endswith("(source, not placed)") for c in o.users_collection):
+            continue
+        p = o.matrix_world.translation
+        top = p.z + o.data.get("rock_top_z", 1.5) * o.scale.z
+        for ea, eb in _STAIR_SEGMENTS:
+            d = eb - ea
+            t = max(0.0, min(1.0, (p - ea).dot(d) / max(d.length_squared, 1e-9)))
+            q = ea + d * t
+            if math.hypot(p.x - q.x, p.y - q.y) < 1.6 and top > q.z + 0.1:
+                bpy.data.objects.remove(o)
+                removed += 1
+                break
+    print("[lagoon-cove] stones cleared from stair paths:", removed)
 
 
 # SELF-REVIEW v6: the water village read as a scattered blob (ten loose clusters on random
@@ -1061,6 +1200,43 @@ def surface_variety(slot, rng):
     print(f"[lagoon-cove] {slot} variety:", {n: sum(1 for v in choice.values() if v == n) for n in names})
 
 
+# ⚠️ THE OWNER'S HAND EDITS in lagoon_cove.blend (2026-09-27: "made a few deletions myself",
+# "made some more tweaks again"). The build REGENERATES the .blend, so an edit made in Blender
+# survives only if it is written down here. Each edit was read by diffing his saved file against
+# the committed build: the object is found by its FINAL built position (0.3 m), since names shift
+# when anything earlier changes, and the edits are applied at the very END of the build so no
+# earlier step (plant placement, burying) is disturbed. To record new hand edits: diff his saved
+# file against the last committed build the same way and add rows.
+OWNER_DELETE = [(39.286, 30.183, -1.755), (-22.767, 35.991, 7.865), (-21.766, 38.164, 9.988),
+                (-24.257, 42.825, 13.226), (-18.852, 42.476, 16.018), (-9.732, 63.916, 12.168),
+                (2.181, 25.391, 2.326), (-5.063, 67.151, 20.03)]
+# (built position) -> (location, rotation_euler)
+OWNER_MOVE = [((33.611, 30.927, -0.262), (37.311, 30.927, -0.262), (-0.052, 0.13, 2.311)),
+              ((25.143, 27.885, 9.831), (29.963, 33.662, 10.237), (0.0, 0.0, 4.815)),
+              ((27.055, 30.264, 10.655), (28.699, 32.125, 10.569), (0.0, 0.0, 5.752)),
+              ((24.546, 28.667, 9.637), (30.474, 33.626, 10.778), (0.0, 0.0, 2.453))]
+
+
+def apply_owner_edits():
+    bpy.context.view_layer.update()
+    found = {"delete": 0, "move": 0}
+    for o in list(bpy.data.objects):
+        if any(c.name.endswith("(source, not placed)") for c in o.users_collection):
+            continue
+        p = o.matrix_world.translation
+        if any((p - Vector(q)).length < 0.3 for q in OWNER_DELETE):
+            bpy.data.objects.remove(o)
+            found["delete"] += 1
+            continue
+        for q, loc, rot in OWNER_MOVE:
+            if (p - Vector(q)).length < 0.3:
+                o.location, o.rotation_euler = loc, rot
+                found["move"] += 1
+                break
+    print(f"[lagoon-cove] owner edits applied: {found['delete']}/{len(OWNER_DELETE)} deletions, "
+          f"{found['move']}/{len(OWNER_MOVE)} moves")
+
+
 def cull_buried(plant_col):
     """REMOVE PLANTS HIDDEN INSIDE ROCK (owner, 2026-09-27: "theres a bunch of assets inside this
     big rock and other rocks that are completely not visible or clipping"). Plants are placed by
@@ -1133,6 +1309,7 @@ def main():
     # shaders in unity"). W.build_foam stays in the module only as a reference for the band's width.
     spots = place_boulders(L.col("Boulders", root), rng)
     village(L.col("Village", root), rng)
+    clear_stair_paths()
     plant_col = L.col("Planting", root)
     planting(plant_col, rng, spots)
     cull_buried(plant_col)
@@ -1148,6 +1325,9 @@ def main():
     E.bake("rock")
     T.rock_material(bpy.data.materials["rock"], ROCK_LOOK)
     chosen_textures()
+    apply_owner_edits()
+    import lagoon_paint_materials as PM          # hull, trim, lime plaster, capiz, cloth
+    PM.apply_paint_materials()
     surface_variety("thatch", random.Random(77))
     surface_variety("sawali", random.Random(78))
     L.gameplay(root)

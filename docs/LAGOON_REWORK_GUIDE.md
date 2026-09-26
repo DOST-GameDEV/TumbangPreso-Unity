@@ -333,6 +333,27 @@ Opening a file for the owner: `Start-Process` blender.exe on the `.blend` (never
      the rocks: a buried plant is LIFTED onto the rock surface above when it is fairly flat
      (normal z > 0.75), otherwise removed (277 lifted, 186 removed; deleting all buried plants
      bared the massif). Refresh world matrices first: the first run saw everything at the origin.
+   - ⚠️ **STAIRS ARE WOODEN PLANK FLIGHTS** (owner: *"you said the stairs will actually be
+     planks"*, and *"need you to refer back to the references incase you forgot the style"*: the
+     ArtStation GvJv5a ledges are joined by plank flights with railings). `plank_stairs()`:
+     timber stringers, plank_c treads, posts and handrails both sides, legs to the ground;
+     `clear_stair_paths()` removes small stones standing in a flight. The grey stone blocks are
+     gone. **Re-read § 1 before building anything new.**
+   - ⚠️ **TERRAIN TEXTURED** (owner: *"the sand, grass and other terrain is still
+     untextured"*): sand_a (soft ripples, tiny pebbles), grass_a (feathered clumps, drawn tuft
+     marks), earth_a (the court: packed earth, small embedded stones), 4 m tiles projected
+     top-down with Kanto's anti-tiling; rock fill is rock_a darkened; the seabed is sand_a tinted
+     wet and teal. The field masks and soft painted edges are unchanged.
+   - Fence posts (*"untextured and some are floating"*): timber, run 0.6 m into the ground.
+   - Boats and other flat surfaces (*"boat bodies are untextured"*): `tools/lagoon_paint_materials.py`
+     paints hull_paint (strakes, worn patches), trim_paint (neutral, multiplied by each boat's
+     `trim_tint` vertex colour), lime_plaster (capilla), capiz (pearly shell panes in a lattice,
+     a faint self-glow for translucency) and cloth (laundry, per-piece pastel `cloth_tint`).
+   - ⚠️ **THE OWNER'S HAND EDITS ARE RECORDED IN THE SCRIPT** (*"made a few deletions myself"*,
+     *"made some more tweaks again"*): the build regenerates the .blend, so `OWNER_DELETE` and
+     `OWNER_MOVE` in author_lagoon_cove.py hold his edits by built position (diffed from his
+     saved file) and `apply_owner_edits()` replays them at the end of every build. When he edits
+     the .blend again, diff it against the last committed build and add rows BEFORE rebuilding.
 5. **Plants (done early, 2026-09-27)**: owner: *"start texturing the plants"*, *"i really like
    what was used for leaves in kanto. just need to ensure it matches this environment"*.
    Kanto's leaf method kept exactly (one soft-painted greyscale card, alpha silhouette, two tints

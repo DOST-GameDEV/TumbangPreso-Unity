@@ -139,13 +139,15 @@ STRENGTH = {"rock_a": 0.0, "rock_b": 1.2, "rock_c": 1.2, "thatch_a": 1.6, "thatc
             "bamboo_a": 4.0, "bamboo_b": 4.0, "bamboo_c": 4.0,
             "plank_a": 1.2, "plank_b": 1.2, "plank_c": 1.2, "plank_c_walk": 1.2,
             "tin_a": 1.5, "tin_b": 1.5, "tin_c": 1.5,
-            "timber_a": 6.0, "timber_b": 6.0, "timber_c": 6.0}   # owner: normal maps must read; 1.0 was near flat
+            "timber_a": 6.0, "timber_b": 6.0, "timber_c": 6.0,
+            "sand_a": 1.0, "grass_a": 1.0, "earth_a": 1.0}   # owner: normal maps must read; 1.0 was near flat
 TILE = {"rock_a": 4.0, "rock_b": 4.0, "rock_c": 4.0, "thatch_a": 2.0, "thatch_b": 2.0, "thatch_c": 2.0,
         "sawali_a": 2.0, "sawali_b": 2.0, "sawali_c": 2.0,
         "bamboo_a": 2.0, "bamboo_b": 2.0, "bamboo_c": 2.0,
         "plank_a": 2.0, "plank_b": 2.0, "plank_c": 2.0,
         "tin_a": 2.0, "tin_b": 2.0, "tin_c": 2.0,
-        "timber_a": 2.0, "timber_b": 2.0, "timber_c": 2.0}
+        "timber_a": 2.0, "timber_b": 2.0, "timber_c": 2.0,
+        "sand_a": 4.0, "grass_a": 4.0, "earth_a": 4.0}
 
 
 # ---------------------------------------------------------------- thatch
@@ -456,6 +458,83 @@ TIMBER_PAINTERS = {
 }
 
 
+# ---------------------------------------------------------------- terrain
+# THE GROUND (owner, 2026-09-27: "the sand, grass and other terrain is still untextured"). Each
+# its own drawing, 4 m a tile (terrain is seen over tens of metres), flat fills with a few large
+# feathered coats and one drawn motif, projected top-down by the ground material.
+#   sand   warm pale sand, soft wind-ripple bands (broad, wavy, low contrast), a few tiny pebbles
+#   grass  tropical turf: feathered clumps a shade lighter and darker, a few drawn tuft marks
+#   earth  the court's packed earth: warm tan, soft worn patches, a few small embedded stones
+
+
+def _dots(img, height, n, r_m, col, seed, px):
+    rng = np.random.default_rng(seed)
+    size = img.shape[0]
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float32) / px
+    tile = size / px
+    for _ in range(n):
+        cx, cy, r = rng.uniform(0, tile), rng.uniform(0, tile), r_m * rng.uniform(0.6, 1.3)
+        dx = (xx - cx + tile / 2) % tile - tile / 2
+        dy = (yy - cy + tile / 2) % tile - tile / 2
+        d = np.hypot(dx * rng.uniform(0.8, 1.2), dy)
+        a = np.clip((r - d) / (r * 0.35), 0, 1)
+        img = img * (1 - a[..., None]) + col * rng.uniform(0.9, 1.08) * a[..., None]
+        height = np.maximum(height, a)
+    return img, height
+
+
+def sand(base, seed=111):
+    px = SIZE / 4.0
+    yy, xx = np.mgrid[0:SIZE, 0:SIZE].astype(np.float32) / px
+    img = flat_rgb(base)
+    img = coat(img, np.array([0.95, 0.94, 0.92]), 1.2, 0.35, seed)             # damp/dry patches
+    img = coat(img, np.array([1.03, 1.02, 1.0]), 0.8, 0.2, seed + 1)
+    # Ripples: broad wavy bands, one light crest each, drawn soft (period ~0.5 m).
+    warp = 0.12 * field(0.6, seed + 2)
+    ph = (yy + warp) / 0.5 * 2 * np.pi * 1.0
+    crest = np.clip(np.sin(ph) * 3 - 2.2, 0, 1)                                # thin crests
+    img = img * (1 + 0.05 * crest)[..., None]
+    height = crest.astype(np.float32)
+    img, height = _dots(img, height, 60, 0.018, base * 0.72, seed + 3, px)      # tiny pebbles
+    return img, height
+
+
+def grass(base, seed=121):
+    px = SIZE / 4.0
+    img = flat_rgb(base)
+    img = coat(img, np.array([0.88, 0.92, 0.86]), 0.5, 0.35, seed)             # darker clumps
+    img = coat(img, np.array([1.08, 1.06, 1.0]), 0.35, 0.25, seed + 1)         # lighter clumps
+    height = np.zeros((SIZE, SIZE), np.float32)
+    # Drawn tuft marks: small soft chevrons, a shade darker (a hint of blades, not grain).
+    rng = np.random.default_rng(seed + 2)
+    yy, xx = np.mgrid[0:SIZE, 0:SIZE].astype(np.float32) / px
+    for _ in range(140):
+        cx, cy = rng.uniform(0, 4), rng.uniform(0, 4)
+        dx = (xx - cx + 2) % 4 - 2
+        dy = (yy - cy + 2) % 4 - 2
+        m = (np.abs(dx) < 0.06) & (dy > -0.07) & (dy < 0.02) & (np.abs(np.abs(dx) - (0.02 - dy) * 0.9) < 0.012)
+        img[m] *= 0.86
+        height[m] = 1.0
+    return img, height
+
+
+def earth(base, seed=131):
+    px = SIZE / 4.0
+    img = flat_rgb(base)
+    img = coat(img, np.array([0.93, 0.92, 0.9]), 0.9, 0.35, seed)              # worn darker
+    img = coat(img, np.array([1.05, 1.04, 1.02]), 0.6, 0.25, seed + 1)
+    height = np.zeros((SIZE, SIZE), np.float32)
+    img, height = _dots(img, height, 45, 0.03, base * 0.8, seed + 2, px)        # embedded stones
+    return img, height
+
+
+TERRAIN_PAINTERS = {
+    "sand_a": lambda: sand(hexcol("ecd3a0")),
+    "grass_a": lambda: grass(hexcol("6f9f32")),
+    "earth_a": lambda: earth(hexcol("c9ac80")),
+}
+
+
 THATCH_PAINTERS = {
     "thatch_a": lambda: thatch(hexcol("c9a35e"), hexcol("e3c888"), hexcol("5e4526"), seed=51),
     "thatch_b": lambda: thatch(hexcol("a98f6a"), hexcol("c9b491"), hexcol("4f4130"), seed=51),
@@ -485,6 +564,7 @@ PAINTERS = {
     **PLANK_PAINTERS,
     **TIN_PAINTERS,
     **TIMBER_PAINTERS,
+    **TERRAIN_PAINTERS,
 }
 
 
