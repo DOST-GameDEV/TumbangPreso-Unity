@@ -191,6 +191,20 @@ namespace TumbangPreso.Abilities
             if (Kit == null) return;
             var slot2 = LoadoutSlot2(Kit);
 
+            // ⚠️⚠️ WITH THE SKILL TREE OFF THE KIT SPEAKS FOR ITSELF (ABILITY-2). The variant table still
+            // names the OLD skills ("SEISMIC STOMP" is Dante's slot-one default), and a default variant's
+            // name is written over the ability's own below, so Dante's SHIELD would read SEISMIC STOMP on
+            // every screen. No variant name, sentence, cue or tuning is applied while the tree is off.
+            if (!HeroLoadoutRules.SidegradesOpen)
+            {
+                foreach (var ability in Kit.AllAbilities)
+                {
+                    if (ability == null) continue;
+                    ability.VariantCastCue = null; ability.VariantName = null; ability.VariantSummary = null;
+                }
+                return;
+            }
+
             // ⚠️⚠️ THE ALTERNATE'S SOUND IS ASSIGNED HERE AND CLEARED HERE, IN THAT ORDER, SO A
             // LOADOUT CHANGE CANNOT LEAVE A STALE ONE ON THE KIT. A sidegrade changes what the
             // power does, so it changes what the power sounds like doing it: Long Tremor sweeps

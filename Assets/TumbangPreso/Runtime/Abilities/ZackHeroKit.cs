@@ -24,10 +24,10 @@ namespace TumbangPreso.Abilities
             if (motor == null) return false;
             var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
             bool restored = false;
-            if (!_joinMagnetSettled && !IsOverchargeThrowActive && !Skill2.IsActive)
+            if (!_joinMagnetSettled && !IsOverchargeThrowActive && !AttackingSkill.IsActive)
             {
                 _joinMagnetSettled = true;
-                ((MagnetRecallAbility)Skill2).RestoreCharge(context, magnetRemaining);
+                ((MagnetRecallAbility)AttackingSkill).RestoreCharge(context, magnetRemaining);
                 restored = true;
             }
             // A pre-impact snapshot has no active tail yet. Keep that state open
@@ -53,7 +53,9 @@ namespace TumbangPreso.Abilities
         public ZackHeroKit() : base("zack", "ZACK")
         {
             Skill1 = new StaticRailGrindAbility(this);
-            Skill2 = new MagnetRecallAbility(this);
+            // ABILITY-2: the four-slot shape; the defending slot waits for the owner's Electro design.
+            AttackingSkill = new MagnetRecallAbility(this);
+            DefendingSkill = new PlaceholderRoleAbility("zack_skill2d", "Zack", AbilityGlyph.ZackOvercharge);
             Ultimate = new ThunderstrikeOverdriveAbility(this);
         }
 

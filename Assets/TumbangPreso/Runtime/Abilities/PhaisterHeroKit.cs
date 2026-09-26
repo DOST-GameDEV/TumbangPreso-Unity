@@ -7,14 +7,34 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
+    /// <summary>
+    /// ⚠️⚠️ PHAISTER, VOODOO, IN THE NEW SHAPE (ABILITY-2, owner 2026-09-26: *"Voodoo To phaister"*, with
+    /// the table and his answers). `docs/reports/ability-rework-2026-09-26/plan.md` § 3.5; numbers in
+    /// `Core.VoodooRules`.
+    ///
+    /// | Slot | Name | Owner |
+    /// |---|---|---|
+    /// | Signature | SHADOW BLINK | *"Teleport"*, *"refine everything about shadow blink"* (the mechanic is kept; its presentation is the plan's § 5 pass) |
+    /// | Attacking | CURSE: DISORIENTED | *"Fake screen/ fake slipper Aim. Make them hallucinate"*, *"hallucinations but make it so that some of the shit they see are real"* |
+    /// | Defending | CURSE: VULNERABLE | *"easier to tag and phaister can go out of box and tag them"* |
+    /// | Ultimate | HIGOP | *"casts a blackhole ... pulls everyone towards it. No button mashhing"*, *"really slowly cast"*, *"pulls players ands slipeprs except for her shit and no escape for entire duration but they can try to"* |
+    ///
+    /// ⚠️ HEX AND GRAND COVEN ARE REPLACED. `RitualBuildSeconds` stays because the introduction's warm-up
+    /// (`PhaisterRitualWarmup`) still times itself by it; `CaptureCoven`/`RestoreCoven` keep their names
+    /// because the rejoin snapshot (`MatchRpc`) calls them, and now carry the black hole.
+    /// </summary>
     public sealed class PhaisterHeroKit : HeroKit
     {
         public const float RitualBuildSeconds = 1.55f;
-        public bool IsWitchfireInfused { get; set; } = true;
-        public bool IsEclipseActive => Ultimate != null && Ultimate.IsActive;
+
+        /// <summary>Kept for the throw path; nothing in the new kit infuses a throw.</summary>
+        public bool IsWitchfireInfused { get; set; }
+
+        /// <summary>Kept for the throw path; HIGOP does not charge her throws.</summary>
+        public bool IsEclipseActive => false;
 
         public bool CaptureCoven(out Vector3 centre, out float preparation, out float remaining)
-            => ((GrandCovenEclipseAbility)Ultimate).Capture(out centre, out preparation, out remaining);
+            => ((Higop)Ultimate).Capture(out centre, out preparation, out remaining);
 
         public void RestoreCoven(CharacterMotor motor, Vector3 centre, float preparation, float remaining)
         {
@@ -24,147 +44,19 @@ namespace TumbangPreso.Abilities
             var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>(),
                 centre, motor.transform.forward, centre);
             using (NetCue.SuppressRelay())
-                ((GrandCovenEclipseAbility)Ultimate).Restore(context, centre, preparation, remaining);
+                ((Higop)Ultimate).Restore(context, centre, preparation, remaining);
         }
 
         public PhaisterHeroKit() : base("phaister", "PHAISTER")
         {
-            Skill1 = new HexSigilAbility();
-            Skill2 = new ShadowPhaseBlinkAbility();
-            Ultimate = new GrandCovenEclipseAbility();
+            Skill1 = new ShadowPhaseBlinkAbility();
+            AttackingSkill = new CurseDisoriented();
+            DefendingSkill = new CurseVulnerable();
+            Ultimate = new Higop();
         }
 
-        /// <summary>
-        /// ⚠️ 13 CHARGES, BETWEEN DANTE'S 12 AND SEAN'S 15. Grand Coven paints the street, slows
-        /// and afflicts inside it, and changes the sky, but like Titan Fissure it converts into
-        /// score only through a follow-up. Was 115 against a knockdown worth 25, which is 4.6.
-        /// `Balance`'s ultimate economy block has the request and the pacing arithmetic.
-        /// </summary>
-        public override float UltimateCost => 13.0f;
+        public override float UltimateCost => VoodooRules.HigopCost;
 
-        // ⚠️⚠️ `ResolveBlinkShove` IS DELETED AND SO IS THE `ReqBlink` MESSAGE BEHIND IT. This
-        // was the host's half of a bespoke request for ONE power, written while the ability
-        // layer had no cast replication at all. `MatchRpc`'s `ReqAbility` now carries every
-        // cast, the host runs the same kit code the solo game runs, and the knockback resolves
-        // inside `ShadowPhaseBlinkAbility.ResolveShove` on the host as a consequence of that.
-        // A verb wired twice is a verb wired once and maintained never.
-
-        /// <summary>
-        /// Skill 1: HEX (2 charges per round). HOLD to place, release to chalk it.
-        ///
-        /// ⚠️⚠️ IT WAS A FIXED 4.5 m IN FRONT OF HER NOSE AND THAT IS THE WHOLE ABILITY BEING
-        /// GUESSED AT. 🧑 2026-09-02: *"Her q should be holdable and person using her and only
-        /// that person should be able to see where the held skill will go"*, *"if person
-        /// releases it will be cast"*. A ward is a trap: its value is entirely in WHERE it is,
-        /// which means the one thing the power was not letting her decide was the only decision
-        /// in it. Aiming by walking backwards and forwards to change a fixed offset is not
-        /// aiming, it is arithmetic performed with your feet.
-        ///
-        /// ⚠️ THE RANGE BAND IS 2.2 TO 5.5 m, WHICH IS DELIBERATELY THE BLINK'S. Her two placed
-        /// powers now reach the same distance and ramp over the same 0.55 s, so learning one
-        /// teaches the other; the maximum came off `ShadowPhaseBlinkAbility.MaxRange` for that
-        /// reason rather than from the old 4.5. The minimum is a body length clear of her, so a
-        /// panicked release still lands a ward she can back away over rather than one she is
-        /// standing in.
-        ///
-        /// ⚠️⚠️ `maxHoldSeconds: 0`, SO ONLY THE RELEASE CASTS IT, AND THAT IS ALSO WHAT HE
-        /// ASKED FOR ON THE BLINK: *"i want it to cast only when i let go"* (2026-08-27). The
-        /// hold buys nothing after the 0.55 s ramp, so `docs/VISION.md` § 4's *"nothing may
-        /// reward waiting"* is answered the same way it is there: she keeps full movement, the
-        /// anti-camp clock keeps running, and a longer hold pays out exactly zero.
-        ///
-        /// ⚠️⚠️ AND THE TELEGRAPH IS A WARD RATHER THAN A RING, WHICH IS THE OTHER HALF OF THE
-        /// SAME REPORT: *"can u make a magic circle for her q as well? its ugly bcz its js a
-        /// shadow"*. `HeroHazards.SpawnHexSigil` already draws `VfxShapes.WardCircle` when the
-        /// hex lands; the aim mark is now the same inscription, so the promise and the thing
-        /// promised are one object. See `GroundReticle.Style`.
-        ///
-        /// ⚠️ ONLY SHE SEES IT. `GroundReticle.Show` refuses to draw for anybody the camera is
-        /// not looking through, which is his *"and only that personn should be able to see"* and
-        /// was already true for the blink. A held aim is a decision that has not been made yet;
-        /// painting it on the road for the other three hands away the one thing hold-to-aim
-        /// buys, which is that you may change your mind.
-        /// </summary>
-        private sealed class HexSigilAbility : HeroAbility
-        {
-            private const float HexRadius = 2.4f;
-            private const float SigilLifetime = 6.0f;
-
-            /// <summary>Nearest she may chalk one. A ward under her own feet is not a trap.</summary>
-            private const float MinRange = 2.2f;
-
-            /// <summary>Furthest, at a full hold. The blink's reach, deliberately.</summary>
-            private const float MaxRange = 5.5f;
-
-            public HexSigilAbility()
-                : base("phaister_skill1", "HEX",
-                       "Hold to place a binding on the road, then release. Opponents who stay inside suffer repeated stumbles.",
-                       0.0f, SigilLifetime, AbilityGlyph.PhaisterHexSigil,
-                       summary: "Hold to place a binding. Stay inside and stumble again.",
-                       telegraphRadius: HexRadius,
-                       telegraphRange: MaxRange,
-                       castAction: "hero-phaister-hex",
-                       viewmodelAction: "cast-hex",
-                       castCue: "sfx_cast_phaister_hex",
-                       charges: 2,
-                       rechargedBy: Recharge.Never)
-            {
-                AimByHolding(MinRange, MaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
-                TelegraphStyle = Visual.GroundReticle.Style.Ward;
-            }
-
-            protected override void OnActivate(AbilityContext ctx)
-            {
-                // ⚠️ HER OWN CAST VOICE. This ability had none at all, so the only thing marking
-                // the cast was the ward's own `sfx_hex_cast`; every other hero in the game
-                // grunts when they spend a skill. See `tools/generate_hero_audio.py` for why she
-                // had no voice to play until now.
-                NetCue.Play("hero_phaister_grunt", ctx.Position);
-
-                // ⚠️⚠️ THE WARD GOES WHERE THE RING WAS, NOT WHERE SHE IS POINTING NOW. This is
-                // the same read `ShadowPhaseBlinkAbility` makes and for the same reason: the
-                // player has been looking at that circle for up to half a second, and a cast
-                // that recomputes the destination from `ctx.Forward` would place it wherever the
-                // mouse happened to be on the frame the finger came up. The fallback is the
-                // aimed reach along the current facing, which is what a kit with no system
-                // attached (a probe, a headless match) gets.
-                Vector3 targetPos = AimedDestination(ctx);
-
-                int slot = ctx.Motor != null ? ctx.Motor.PlayerSlot : -1;
-
-                HeroHazards.SpawnHexSigil(targetPos,
-                    HexRadius * ctx.CostScale("phaister.1.brand"), SigilLifetime, slot,
-                    ctx.GainScale("phaister.1.brand"));
-
-            }
-        }
-
-        /// <summary>
-        /// Skill 2: SHADOW BLINK (52.0 s cooldown). HOLD to aim, release to go.
-        ///
-        /// ⚠️⚠️ IT WAS NEVER A TELEPORT AND THE EFFECT SAID IT WAS. The old `OnActivate`
-        /// computed `endPos = startPos + forward * 4.2` **only to feed the visual**, and then
-        /// moved the body with `ctx.Motor.ApplyImpulse(pushDir * 12.0f)`: she was shoved four
-        /// metres through whatever happened to be in the way while two glyphs claimed she had
-        /// vanished and reappeared. 🧑, having played it: *"let her HOLD e to control where she
-        /// will go and make it a teleport abilitiy and make it prettier"*. Feel starts here and
-        /// not in the particles, so this is the half of that request that is not art.
-        ///
-        /// ⚠️⚠️ `CharacterMotor.Teleport`, NEVER AN IMPULSE. That method clamps X and Z
-        /// INDEPENDENTLY to the playable rectangle, which is `CLAUDE.md` § 4's *"the box is a
-        /// SQUARE, not a circle"*: a radial clamp and a square one disagree by 2.9 m on the
-        /// diagonal, which is exactly where somebody blinks when they are cutting a corner. Its
-        /// own note records that it is the path that once broke confinement outright, *"a seat
-        /// 45.8 m out on X against a half width of 8.6"*, and therefore the one that has been
-        /// fixed. An impulse toward a corner would have to be caught by `Confine` on the way,
-        /// which is what she was relying on.
-        ///
-        /// ⚠️ AND HOLDING MUST NOT BE WORTH ANYTHING BY ITSELF. `docs/VISION.md` § 4:
-        /// *"Nothing may reward waiting."* The reach stops growing at 0.55 s and the hold fires
-        /// itself at 1.10 s; she keeps full movement throughout and nothing about aiming touches
-        /// the anti-camp or anti-stall clocks. `HeroAbility`'s hold-to-aim section has the
-        /// reasoning for each of the three.
-        /// </summary>
         private sealed class ShadowPhaseBlinkAbility : HeroAbility
         {
             /// <summary>Nearest she can put herself. Under a body length is not an escape.</summary>
@@ -188,9 +80,9 @@ namespace TumbangPreso.Abilities
             private const float ShoveRadius = 2.5f;
 
             public ShadowPhaseBlinkAbility()
-                : base("phaister_skill2", "SHADOW BLINK",
+                : base("phaister_skill1", "SHADOW BLINK",
                        "Hold to pick a spot, let go and you are simply there. Whoever you left standing gets shoved back.",
-                       52.0f, 0.4f, AbilityGlyph.PhaisterShadowBlink,
+                       VoodooRules.BlinkCooldown, 0.4f, AbilityGlyph.PhaisterShadowBlink,
                        summary: "Hold to aim, release to teleport. Shoves whoever you left.",
                        telegraphRadius: ArrivalMark,
                        telegraphRange: MaxRange,
@@ -368,272 +260,134 @@ namespace TumbangPreso.Abilities
         /// `Visual.SkyEvent.Look.Eclipse` runs for the whole duration, so the three people she
         /// caught mash their way out of a hold in a street that has gone dark around them.
         /// </summary>
-        private sealed class GrandCovenEclipseAbility : HeroAbility
+
+        // ================================================================== CURSE: DISORIENTED (attacking)
+
+        private sealed class CurseDisoriented : HeroAbility
         {
-            // -------------------------------------------------------------------
-            // § WHY THIS ULTIMATE FELT LIKE NOTHING, AND WHAT IT IS NOW
-            //
-            // ⚠️⚠️ 🧑 2026-08-27, HAVING PLAYED IT: *"her ult doesnt last that long and it feels
-            // like it does nothing. i want the eclipse to last for a few seconds even when it is
-            // done and to do something more impactful as its an ult"*.
-            //
-            // ⚠️⚠️ THE DIAGNOSIS IS THAT IT WAS A ONE-FRAME POWER WEARING A FIVE-SECOND COAT.
-            // `Curse` ran ONCE, inside `OnActivate`, against whoever happened to be within 5.0 m
-            // on that single frame. Everything else the ultimate owned (the falling eclipse, the
-            // ground ring, the aura, the weather) then played for five seconds over an arena in
-            // which the power had already completely finished happening. A player who walked into
-            // the ring one frame after the cast walked through a light show. That is why the most
-            // expensive ability in the game (`UltimateCost` 115, the highest of the six) read as
-            // a screensaver: the ring was drawing a boundary that meant nothing.
-            //
-            // ⚠️⚠️ SO IT IS A ZONE NOW, WHICH IS THE CHANGE THAT MAKES THE DRAWING TRUE. For the
-            // whole duration, anyone inside the reach is cursed, and re-cursed as the hold
-            // expires. The ring on the road now means what a ring on the road means everywhere
-            // else in this game: do not stand there.
-            //
-            // ⚠️⚠️ AND IT IS DELIBERATELY USEFUL IN BOTH ROLES, WHICH 🧑 ASKED FOR BY NAME:
-            // *"give everyone more creative ults that have an impact that effects or is usable
-            // either in attacker/defender roles or both roles"*. A one-shot stun is an attacker's
-            // tool only. An area the taya cannot stand in is a hole opened in the defence; the
-            // same area centred on the lata by a DEFENDING Phaister is the retrieval run made
-            // impossible for its duration. One power, opposite uses, chosen by where she stands,
-            // which is the counterplay `docs/VISION.md` § 1.1 asks Hero Strike for.
-            // -------------------------------------------------------------------
+            public override bool DefersPredictedEffect => true;
 
-            /// <summary>
-            /// How far the curse reaches. The same number the ground ring draws.
-            ///
-            /// ⚠️⚠️ 5.0 m BECAME 9.0 m ON INSTRUCTION, AND IT IS THE ONE FOOTPRINT IN THIS GAME
-            /// THAT IS DELIBERATELY ALMOST THE WHOLE ARENA. 🧑 2026-08-27, watching it: *"i want
-            /// the circle there to be a bit bigger too, that is so easy to dodge bro"*, then
-            /// *"make it like very very big"*, then the design in his own words: *"that its
-            /// undodgable or hard to run away from bcz i want ppl to try to run from it"* and
-            /// *"make it liek really really big that they have to run the whole time its being
-            /// casted in order to dodge"*.
-            ///
-            /// ⚠️⚠️ IT IS NOT ACTUALLY UNDODGEABLE AND MUST NOT BECOME SO. `docs/VISION.md` § 4
-            /// forbids anything with no counterplay, and the counterplay here is the one he asked
-            /// for by name: **running**. The arena is a 14 by 14 square, so its corners are 9.9 m
-            /// from the centre. A 9.0 m circle centred on a caster standing in the middle leaves
-            /// only the corners safe, and `CovenCircleBuild` takes **1.55 s** to draw itself on
-            /// top of the 0.4 s wind-up. At `Balance.Speed` 4.6 m/s that is about 9 m of running,
-            /// which is exactly enough to reach a corner from the middle if you start moving the
-            /// moment the first ring lands and not if you hesitate. That is the whole power.
-            ///
-            /// ⚠️ WHICH IS WHY THE STAGED BUILD IS A BALANCE FEATURE AND NOT DECORATION. The
-            /// build time IS the dodge window. Shortening it, or drawing the circle instantly,
-            /// makes this the only genuinely unavoidable effect in the game.
-            ///
-            /// ⚠️ AND `docs/VISION.md` § 2 IS PAID BY IT BEING LINE ART. Rule 3 allows a big
-            /// footprint spent on DETAIL rather than AREA; almost all of the road inside this
-            /// circle is still road. Rule 2 allows one big ultimate at a time. It is the largest
-            /// thing in the game and it paints nearly none of the floor it covers.
-            /// </summary>
-            /// ⚠️⚠️ AND THEN 9.0 BECAME 10.5 ON A SECOND PASS: *"make it even bigger after
-            /// okay"*. At 10.5 m the circle covers the entire 14 by 14 box **including its
-            /// corners**, which are 9.9 m from the middle. It is therefore genuinely
-            /// undodgeable-by-standing-still, which is what he asked for.
-            ///
-            /// ⚠️⚠️ IT IS STILL ESCAPABLE, AND THE THING THAT MAKES IT SO IS THAT IT IS CENTRED
-            /// ON HER RATHER THAN ON THE ARENA. A Phaister standing at (3, 3) leaves the far
-            /// corner at (-7, -7) fourteen metres away, comfortably outside. So the counterplay
-            /// `docs/VISION.md` § 4 requires is intact and is exactly the one he described:
-            /// *"i want ppl to try to run from it"*. You run AWAY FROM HER, and where she chose
-            /// to stand decides how far you have to go. A witch who walks to the middle before
-            /// casting covers everything and has spent her positioning to do it.
-            private const float Reach = 10.5f;
+            public CurseDisoriented()
+                : base("phaister_skill2", "CURSE: DISORIENTED",
+                       "Attacking. Hold to aim, release to throw a cursed doll. Whoever it strikes sees things that are not there, mixed with things that are.",
+                       VoodooRules.DisorientCooldown, 0.0f, AbilityGlyph.PhaisterHexSigil,
+                       summary: "Throw a cursed doll. The one it hits hallucinates.",
+                       telegraphRadius: VoodooRules.DollHitRadius, telegraphRange: VoodooRules.DollMaxRange,
+                       castAction: "hero-phaister-hex", viewmodelAction: "cast-hex",
+                       castCue: "sfx_cast_phaister_hex")
+            {
+                AimByHolding(3.0f, VoodooRules.DollMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                TelegraphStyle = GroundReticle.Style.Ward;
+            }
 
-            /// <summary>
-            /// See the class note. Must stay above `Balance.MinStunDown`.
-            ///
-            /// ⚠️ 1.60 s IS UNCHANGED PER APPLICATION, AND THAT IS THE POINT OF MAKING IT A ZONE
-            /// RATHER THAN A LONGER STUN. A single 5 s hold in a 1-vs-3 game is the stun chain
-            /// `CLAUDE.md` § 4 caps with `Max()`; what makes this an ultimate is that the hold
-            /// COMES BACK while you are still standing in it. Leaving is always available and is
-            /// always the right answer, which is what keeps it from being a hold nobody can play
-            /// against.
-            /// </summary>
-            private const float CurseHold = 1.60f;
+            public override bool CanActivate(AbilityContext ctx) => base.CanActivate(ctx) && !ctx.Motor.IsDefender;
 
-            /// <summary>Presses to break it. Fewer than every single-target hold in the game.</summary>
-            private const int CurseBreakPresses = 5;
+            protected override void OnActivate(AbilityContext ctx)
+            {
+                NetCue.Play("hero_phaister_grunt", ctx.Position);
+                Vector3 from = ctx.Position + Vector3.up * 1.5f + ctx.Forward * 0.4f;
+                VoodooDoll.Spawn(from, AimedDestination(ctx), ctx.Motor.PlayerSlot);
+            }
+        }
 
-            /// <summary>
-            /// How often the zone re-checks who is standing in it, in seconds.
-            ///
-            /// ⚠️⚠️ IT IS SLOWER THAN THE HOLD IS LONG, DELIBERATELY, AND THE GAP IS THE
-            /// COUNTERPLAY. At 1.85 s against a 1.60 s hold there is a quarter-second window
-            /// after every break in which a player who has just mashed free can run, and a player
-            /// who stays gets caught again. A re-check faster than the hold would be an
-            /// inescapable lock, which is the one thing a 1-vs-3 game cannot have: three people
-            /// held forever by one press is a round that ends without being played.
-            ///
-            /// ⚠️ AND IT IS NOT A DAMAGE TICK. Re-applying a stagger through
-            /// `CharacterMotor.ApplyStagger` overlaps via `Max()` rather than adding, so a player
-            /// standing in the zone is held, not held for progressively longer.
-            /// </summary>
-            private const float RecurseEvery = 1.85f;
+        // ================================================================== CURSE: VULNERABLE (defending)
 
-            private float _sinceCurse;
-            private GameObject _ritual;
+        private sealed class CurseVulnerable : HeroAbility
+        {
+            public CurseVulnerable()
+                : base("phaister_skill2d", "CURSE: VULNERABLE",
+                       "Defending. Drive a pin through the doll: every attacker in front of you is Vulnerable for 5 s. Taggable from further, and you may leave the box to tag them.",
+                       VoodooRules.VulnerableCooldown, 0.0f, AbilityGlyph.PhaisterEclipse,
+                       summary: "Curse the attackers in front of you. Tag them anywhere.",
+                       telegraphRadius: VoodooRules.VulnerableConeRange * 0.5f, telegraphRange: VoodooRules.VulnerableConeRange * 0.5f,
+                       castAction: "hero-phaister-hex", viewmodelAction: "cast-hex",
+                       castCue: "sfx_cast_phaister_hex") { }
 
-            public GrandCovenEclipseAbility()
-                // ⚠️⚠️ THE DURATION WENT FROM 5.0 s TO 7.0 s, AND IT IS THE ONE NUMBER HERE THAT
-                // BUYS THE "LASTS LONGER" HALF OF THE REQUEST DIRECTLY. With `SkyEvent.SecondsFor`
-                // adding the 3.20 s fall on top, the street is under her weather for 10.2 s and
-                // the zone is live for 7.0 of them, against 5.0 s of sky and one frame of effect
-                // before. 7.0 also lines it up with Zack's Thunderstrike, which was already the
-                // longest, so the two most "lasting" ultimates in the game now read as the same
-                // KIND of power.
-                : base("phaister_ultimate", "GRAND COVEN",
-                       "Draws a grand ritual, then calls an eclipse. Anyone caught inside is cursed repeatedly until they escape the circle.",
-                       0.0f, 7.0f, AbilityGlyph.PhaisterEclipse,
-                       summary: "A visible ritual, then repeated curses inside its circle.",
-                       telegraphRadius: Reach,
-                       telegraphRange: 0.0f,
-                       castAction: "hero-phaister-eclipse",
-                       viewmodelAction: "coven-eclipse",
+            protected override void OnActivate(AbilityContext ctx)
+            {
+                NetCue.Play("hero_phaister_grunt", ctx.Position);
+                Vector3 fwd = ctx.Forward; fwd.y = 0.0f; fwd = fwd.sqrMagnitude > 0.001f ? fwd.normalized : Vector3.forward;
+                VoodooConeFlash.Spawn(ctx.Position, fwd);
+                var round = ctx.Round;
+                if (round == null || !NetAuthority.ShouldResolve()) return;
+                float half = VoodooRules.VulnerableConeDegrees * 0.5f;
+                foreach (var p in round.Players)
+                {
+                    if (p == null || p == ctx.Motor || p.IsDefender) continue;
+                    Vector3 d = p.transform.position - ctx.Position; d.y = 0.0f;
+                    if (d.magnitude > VoodooRules.VulnerableConeRange || Vector3.Angle(fwd, d) > half) continue;
+                    p.ApplyVulnerable();
+                    MatchFlair.Announce(MatchFlair.Kind.HeroCursed, ctx.Motor.PlayerSlot, p.PlayerSlot, p.transform.position, StatusRules.VulnerableSeconds);
+                }
+            }
+        }
+
+        // ================================================================== HIGOP (ultimate)
+
+        private sealed class Higop : HeroAbility
+        {
+            private GameObject _hole;
+            private Vector3 _centre;
+
+            public Higop()
+                : base("phaister_ultimate", "HIGOP",
+                       "Slowly call a black hole where you aim. For 5 s it swallows every other player and every slipper but yours toward its heart. Run, and it drags you back.",
+                       0.0f, VoodooRules.HigopSeconds, AbilityGlyph.PhaisterEclipse,
+                       summary: "A black hole drags every player and slipper to it.",
+                       telegraphRadius: VoodooRules.HigopRadius, telegraphRange: VoodooRules.HigopMaxRange,
+                       castAction: "hero-phaister-eclipse", viewmodelAction: "coven-eclipse",
                        castCue: "sfx_cast_phaister_coven")
             {
-                TelegraphStyle = Visual.GroundReticle.Style.Ward;
-                Windup = RitualBuildSeconds;
+                TelegraphStyle = GroundReticle.Style.Ward;
+                // ⚠️ THE SLOW CAST IS THE WIND-UP (owner: *"i want her to really slowly cast the black
+                // whole"*): she is rooted while the power surges through her (her cast clip), and the
+                // spot is marked for everyone to read.
+                Windup = VoodooRules.HigopCastSeconds;
+                AimByHolding(3.0f, VoodooRules.HigopMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
             }
 
             public override void Activate(AbilityContext ctx)
             {
                 base.Activate(ctx);
-                if(!IsWindingUp||ctx?.Motor==null)return;
-                _centre = ctx.Position;
-                if(_ritual!=null)UnityEngine.Object.Destroy(_ritual);
-                _ritual=HeroHazards.SpawnGrandCovenEclipse(ctx.Position,Reach,Duration,Windup);
-                var circle=_ritual.GetComponentInChildren<HeroHazards.CovenCircleBuild>();
-                circle.Owner=ctx.Motor;circle.OwnerCast=this;
+                if (!IsWindingUp || ctx?.Motor == null) return;
+                _centre = AimedDestination(ctx);
+                if (_hole != null) UnityEngine.Object.Destroy(_hole);
+                _hole = VoodooBlackHole.Spawn(_centre, ctx.Motor.PlayerSlot, Windup, Duration);
             }
 
             public bool Capture(out Vector3 centre, out float preparation, out float remaining)
             {
-                centre = _centre;
-                preparation = WindupRemaining;
-                remaining = DurationRemaining;
+                centre = _centre; preparation = WindupRemaining; remaining = DurationRemaining;
                 return IsWindingUp || IsActive;
             }
 
             public void Restore(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
             {
-                // The reliable snapshot targets the returning peer. A duplicate
-                // must not restart an already running cast or replay its hits.
                 if (IsWindingUp || IsActive || (preparation <= 0 && remaining <= 0)) return;
                 _centre = centre;
                 preparation = Mathf.Clamp(preparation, 0, Windup);
                 remaining = Mathf.Clamp(remaining, 0, Duration);
                 if (preparation > 0) RestoreWindupClock(ctx, preparation);
                 else RestoreLiveClock(remaining);
-                _sinceCurse = preparation > 0 ? 0 : (Duration - remaining) % RecurseEvery;
-
-                _ritual = HeroHazards.SpawnGrandCovenEclipse(centre, Reach, Duration, Windup);
-                var circle = _ritual.GetComponentInChildren<HeroHazards.CovenCircleBuild>();
-                circle.Owner = ctx.Motor; circle.OwnerCast = this;
-                float age = preparation > 0 ? Windup - preparation : Windup + Duration - remaining;
-                circle.StepTo(age);
-                _ritual.GetComponent<HeroHazards.EclipseFall>().StepTo(age);
-            }
-
-            public override void Reset()
-            {
-                if(_ritual!=null)UnityEngine.Object.Destroy(_ritual);
-                _ritual=null;base.Reset();
-            }
-
-            protected override void OnEnd(AbilityContext ctx)
-            {
-                if(_ritual!=null)UnityEngine.Object.Destroy(_ritual);
-                _ritual=null;
+                if (_hole != null) UnityEngine.Object.Destroy(_hole);
+                _hole = VoodooBlackHole.Spawn(centre, ctx.Motor != null ? ctx.Motor.PlayerSlot : -1, preparation, preparation > 0 ? Duration : remaining);
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                // ⚠️⚠️ THIS LINE CALLED `sfx_ghost_appear` UNTIL 2026-08-26, AND
-                // `docs/TODO.md` § 21.4 RECORDED IT AS ALREADY FIXED. The cue was made
-                // (`sfx_eclipse_toll`), given a mix level and registered, and the CALL SITE was
-                // never changed, so the biggest moment in the newest kit went on logging
-                // `no cue registered` and playing nothing.
-                // REFINE-2.11: her laugh now plays inside the introduction, while her body laughs.
                 if (!IntroductionVoiced) NetCue.Play("hero_phaister_ult", ctx.Position);
-                NetCue.Play("sfx_eclipse_toll", ctx.Position);
-
-                if(_ritual==null)_ritual=HeroHazards.SpawnGrandCovenEclipse(ctx.Position,Reach,Duration);
-                var circle=_ritual.GetComponentInChildren<HeroHazards.CovenCircleBuild>();
-                circle.Owner=ctx.Motor;circle.OwnerCast=this;
-
-                var kit = ctx.Motor.AbilitySystem?.Kit as PhaisterHeroKit;
-                if (kit != null) kit.IsWitchfireInfused = true;
-
-                // ⚠️⚠️ THE CENTRE IS REMEMBERED, BECAUSE THE ZONE MUST NOT FOLLOW HER. The
-                // eclipse is hung over the point she cast it from and the ground ring is drawn
-                // there; a zone that tracked her would be a 5.0 m aura she carries, which is a
-                // completely different and far stronger power, and it would leave the ring on the
-                // road pointing at nothing. `SpawnGrandCovenEclipse` parents its visuals to a
-                // world position for the same reason.
-                _centre = ctx.Position;
-                _sinceCurse = 0.0f;
-
-                Curse(_centre, ctx.Motor != null ? ctx.Motor.PlayerSlot : -1);
-            }
-
-            private Vector3 _centre;
-
-            /// <summary>
-            /// The zone, which is what makes this an ultimate rather than a flash.
-            ///
-            /// ⚠️ THE FIRST CURSE IS IN `OnActivate` AND NOT HERE, so casting it on somebody
-            /// standing next to you still holds them on the frame it lands. This only answers the
-            /// question "who is still standing in it", which is a different question and is asked
-            /// on a slower clock. See <see cref="RecurseEvery"/> for why the two rates differ and
-            /// why that gap is the counterplay rather than an oversight.
-            /// </summary>
-            protected override void OnTick(AbilityContext ctx, float dt)
-            {
-                _sinceCurse += dt;
-                if (_sinceCurse < RecurseEvery) return;
-
-                _sinceCurse = 0.0f;
-                Curse(_centre, ctx != null && ctx.Motor != null ? ctx.Motor.PlayerSlot : -1);
-            }
-
-            /// <summary>
-            /// ⚠️ HOST-SIDE, LIKE EVERY OTHER THING IN THIS GAME THAT MOVES A BODY THAT IS NOT
-            /// YOURS. The old version staggered `round.Players` from whichever peer cast it. It
-            /// took no request path because there is nothing for a client to ask for: the host
-            /// is already running the same ultimate's `OnActivate` for that seat in a solo match,
-            /// and in a networked one the ability layer is not replicated at all yet
-            /// (`docs/TODO.md` § 25). What matters here is that a client cannot hold three
-            /// bodies it does not own.
-            /// </summary>
-            private void Curse(Vector3 at, int mySlot)
-            {
-                if(_ritual!=null)_ritual.GetComponentInChildren<HeroHazards.CovenCircleBuild>()?.Pulse();
-                if (!NetAuthority.ShouldResolve()) return;
-
-                var round = GameServices.Round;
-                if (round == null) return;
-
-                foreach (var p in round.Players)
+                NetCue.Play("sfx_eclipse_toll", _centre);
+                if (_hole == null && ctx?.Motor != null)
                 {
-                    if (p == null || p.PlayerSlot == mySlot) continue;
-
-                    Vector3 diff = p.transform.position - at;
-                    diff.y = 0.0f;
-                    if (diff.magnitude > Reach) continue;
-
-                    p.ApplyStagger(CurseHold, StunElement.Hex, CurseBreakPresses);
-
-                    // ⚠️ RELAYED. The stagger is a RULE and stays here behind the host gate;
-                    // the aura and the CURSED! plate are what three other people could not see.
-                    // See `Visual.MatchFlair`.
-                    if(p.IsStunned&&p.StunElement==StunElement.Hex)Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroCursed,
-                                               mySlot, p.PlayerSlot,
-                                               p.transform.position, CurseHold);
+                    _centre = AimedDestination(ctx);
+                    _hole = VoodooBlackHole.Spawn(_centre, ctx.Motor.PlayerSlot, 0.0f, Duration);
                 }
+            }
+
+            public override void Reset()
+            {
+                if (_hole != null) UnityEngine.Object.Destroy(_hole);
+                _hole = null; base.Reset();
             }
         }
     }

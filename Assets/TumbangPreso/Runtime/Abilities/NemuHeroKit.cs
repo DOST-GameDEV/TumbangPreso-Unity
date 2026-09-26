@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
@@ -6,243 +7,261 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
+    /// <summary>
+    /// ⚠️⚠️ NEMU, NECRO, IN THE NEW SHAPE (ABILITY-2, owner 2026-09-26: *"NECRO maps to nemu"*, the table and
+    /// his answers). `docs/reports/ability-rework-2026-09-26/plan.md` § 3.4; numbers in `Core.NecroRules`.
+    /// KURO IS THE KIT: every ability sends her ghost pet somewhere (`GhostPetCompanion.BeginErrand`).
+    ///
+    /// | Slot | Name | Owner |
+    /// |---|---|---|
+    /// | Signature | TERRIFY | *"Leave Kuro somewhere and everyone there gets feared"*; Feared = *"Flee from kuro and drop slipper"* |
+    /// | Attacking | KURO FETCH | *"Kuro Slipper retrieve"*; the taya can intercept |
+    /// | Defending | KURO GUARD | *"kuro aids withh blocking and becomes a bit bigger"*, *"give her like an AI to think abt where to stand but dont make it infallible"* |
+    /// | Ultimate | KURO PLAYS (NOT YET) | *"HARD BOT and fulfills whatever role u have and ghets separate copy of ur skills"* |
+    ///
+    /// ⚠️⚠️ THE ULTIMATE IS STILL DEVOURING SEANCE. KURO PLAYS is a fifth unit in a four-seat match (a
+    /// seatless motor, a bot brain, scoring routed to her seat, a second taya body, a snapshot for a
+    /// rejoiner) and the plan gives it its own design pass; building it blind would put a broken seat in
+    /// every match. It is the next Necro item in TODO ABILITY-2.
+    /// </summary>
     public sealed class NemuHeroKit : HeroKit
     {
-        public bool IsPhantomPhaseActive => Skill1 != null && Skill1.IsActive;
-        private bool _joiningVeilSettled;
+        /// <summary>Kept for the wire and the tag rule: Phantom Veil is gone, so it is never active.</summary>
+        public bool IsPhantomPhaseActive => false;
 
-        public bool RestoreJoiningVeil(CharacterMotor motor, float remaining)
+        /// <summary>Phantom Veil is gone; a rejoiner has no veil to restore.</summary>
+        public bool RestoreJoiningVeil(CharacterMotor motor, float remaining) => false;
+
+        public override float MovementSpeedScale => 1f;
+
+        public void RestoreFamiliar(CharacterMotor motor, int mode, Vector3 position, float remaining, float? yaw = null)
         {
-            if (motor == null || _joiningVeilSettled || Skill1.IsActive) return false;
-            _joiningVeilSettled = true;
+            // Mode 1 was Astral Hijack's projection, which the new kit does not have; mode 2 is the seance.
+            if (motor == null || remaining <= 0 || mode != 2) return;
             var ctx = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
-            ((PhantomPhaseAbility)Skill1).RestoreVeil(ctx, remaining);
-            return true;
-        }
-        public override float MovementSpeedScale => IsPhantomPhaseActive ? Balance.NemuPhaseSpeedScale : 1f;
-
-        public void RestoreFamiliar(CharacterMotor motor,int mode,Vector3 position,float remaining,float? yaw=null)
-        {
-            if(motor==null || remaining<=0)return;
-            var ctx=new AbilityContext(motor,motor.GetComponent<Carrier>(),motor.GetComponent<CombatVerbs>());
-            using(NetCue.SuppressRelay())
+            using (NetCue.SuppressRelay())
+                ((NightmareSeanceVoidAbility)Ultimate).RestoreSeance(ctx, position, remaining);
+            if (yaw.HasValue && !float.IsNaN(yaw.Value) && !float.IsInfinity(yaw.Value))
             {
-                if(mode==1)
-                {
-                    if(Ultimate.IsActive || Ultimate.IsWindingUp)return;
-                    ((GhostlyPoltergeistAbility)Skill2).RestoreProjection(ctx,position,remaining);
-                }
-                else if(mode==2)
-                    ((NightmareSeanceVoidAbility)Ultimate).RestoreSeance(ctx,position,remaining);
-                else return;
-                if(yaw.HasValue && !float.IsNaN(yaw.Value) && !float.IsInfinity(yaw.Value))
-                {
-                    var pet=motor.GetComponent<CharacterVisual>()?.Companion;
-                    if(pet!=null)pet.transform.rotation=Quaternion.Euler(0,yaw.Value,0);
-                }
+                var pet = motor.GetComponent<CharacterVisual>()?.Companion;
+                if (pet != null) pet.transform.rotation = Quaternion.Euler(0, yaw.Value, 0);
             }
         }
 
         public NemuHeroKit() : base("nemu", "NEMU")
         {
-            Skill1 = new PhantomPhaseAbility(this);
-            Skill2 = new GhostlyPoltergeistAbility();
+            Skill1 = new Terrify();
+            AttackingSkill = new KuroFetch();
+            DefendingSkill = new KuroGuard();
             Ultimate = new NightmareSeanceVoidAbility();
         }
 
-        /// <summary>
-        /// ⚠️⚠️ THE CHEAPEST ULTIMATE IN THE GAME, AND THAT IS THE POINT OF PRICING THEM
-        /// SEPARATELY AT ALL. Seance Void is a zone that drags and slows. It knocks nobody
-        /// down, stuns nobody, scores nothing on its own and ends no round: it is the one
-        /// ultimate that sets up a play rather than being one.
-        ///
-        /// Under a single shared cost it was worth exactly what Thunderstrike was worth, so
-        /// Nemu paid a round-ending price for a round-shaping power. At 90 she casts it most
-        /// rounds, which is what a setup tool should do.
-        ///
-        /// ⚠️ 10 CHARGES, THE FLOOR OF THE RANGE, WHICH IS 10 LATA KNOCKDOWNS. Was 90 against a
-        /// knockdown worth 25, which is 3.6. `docs/Hero_Strike_Balance.md` § 3.1.
-        /// </summary>
+        /// <summary>The seance's price (unchanged until KURO PLAYS replaces it).</summary>
         public override float UltimateCost => 10.0f;
 
-        private sealed class PhantomPhaseAbility : HeroAbility
+        private static GhostPetCompanion Kuro(AbilityContext ctx) => ctx?.Motor?.GetComponent<CharacterVisual>()?.Companion;
+
+        // ================================================================== TERRIFY (signature)
+
+        private sealed class Terrify : HeroAbility
         {
-            private readonly NemuHeroKit _kit;
-            private NemuVeilPresentation _veil;
-            private bool _wasHolding;
-            private bool _longFadeSlow;
+            private Vector3 _spot;
+            private readonly HashSet<int> _feared = new HashSet<int>();
+            private GhostPetCompanion _kuro;
 
-            public PhantomPhaseAbility(NemuHeroKit kit)
-                // ⚠️⚠️ 52 s, UP FROM 8.0, AND IT SITS BETWEEN SEAN'S 50 AND DANTE'S 62. Tag
-                // immunity is the strongest defensive verb in the game: for 2.5 s the taya
-                // simply cannot do their job. It is priced under Carapace only because picking
-                // up a tsinelas cancels it, so it cannot be used to complete the retrieval it
-                // makes possible. 1.7 casts a round.
-                //
-                // ⚠️ A COOLDOWN AND NOT CHARGES: it moves and protects her own body and puts
-                // nothing on the floor. `HeroAbility.MaxCharges` carries the rule.
-                // ⚠️ NEMU IS THE SUBJECT OF HER OWN KIT. Kuro still carries the projection and
-                // the ultimate's landing point, but repeating his name in every title made the
-                // hero read like an accessory to her pet. This tile teaches the actual verb:
-                // Nemu phases, surges and denies a tag.
-                : base("nemu_skill1", "PHANTOM VEIL",
-                       "Surge into a ghostly veil. Move faster and ignore tags briefly; picking up a new slipper ends the veil.",
-                       52.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.NemuPhase,
-                       summary: "Move faster and ignore tags. A new pickup ends the veil.",
-                       castAction: "hero-nemu-ghoststep",
-                       viewmodelAction: "ghost-step",
-                       castCue: "sfx_cast_nemu_veil")
+            public Terrify()
+                : base("nemu_skill1", "TERRIFY",
+                       "Hold to aim, release to leave Kuro haunting a spot for 4 s. Anyone who comes near him drops their slipper and runs in terror.",
+                       NecroRules.TerrifyCooldown, NecroRules.TerrifyHauntSeconds, AbilityGlyph.NemuSeanceVoid,
+                       summary: "Kuro haunts a spot. Whoever comes near is Feared.",
+                       telegraphRadius: NecroRules.TerrifyRadius, telegraphRange: NecroRules.TerrifyMaxRange,
+                       castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
+                       castCue: "sfx_cast_nemu_hijack")
             {
-                _kit = kit;
-            }
-
-            public void RestoreVeil(AbilityContext ctx, float remaining)
-            {
-                if (remaining <= 0) return;
-                RestoreLiveClock(remaining);
-                _longFadeSlow = ctx.HasVariant("nemu.1.fade");
-                if (_longFadeSlow) ctx.Motor.EnterSpeedZone(.65f);
-                _wasHolding = ctx.Motor.HoldingSlipper;
-                _veil = NemuVeilPresentation.Attach(ctx.Motor, Duration);
-                _veil.StepTo(Duration - DurationRemaining);
+                AimByHolding(2.0f, NecroRules.TerrifyMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                TelegraphStyle = GroundReticle.Style.Maw;
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                _kit._joiningVeilSettled = true;
-                _longFadeSlow=ctx.HasVariant("nemu.1.fade");
-                if (_longFadeSlow) ctx.Motor.EnterSpeedZone(.65f);
-                _wasHolding=ctx.Motor.HoldingSlipper;
-                NetCue.Play("hero_nemu_grunt",ctx.Position);
-                ctx.Motor.GetComponent<CharacterSquashStretch>()?.Stretch(.04f);
-                ctx.Motor.ApplyImpulse(ctx.Forward*5.5f);
-                if (_veil!=null) _veil.Release();
-                _veil=NemuVeilPresentation.Attach(ctx.Motor,Duration);
+                _spot = AimedDestination(ctx);
+                _feared.Clear();
+                _kuro = Kuro(ctx);
+                Vector3 spot = _spot;
+                _kuro?.BeginErrand(() => spot, 11.0f, 1.25f);
+                NetCue.Play("sfx_ghost_teleport", _spot);
             }
 
-            protected override void OnTick(AbilityContext ctx,float dt)
+            protected override void OnTick(AbilityContext ctx, float dt)
             {
-                bool holding=ctx.Motor.HoldingSlipper;
-                // Reclaiming ends the veil. A shoe held BEFORE the cast is not a
-                // new acquisition and must not waste the full cooldown next frame.
-                if (holding && !_wasHolding) DurationRemaining=0;
-                _wasHolding=holding;
+                if (!NetAuthority.ShouldResolve()) return;
+                var round = ctx?.Round;
+                if (round == null) return;
+                foreach (var p in round.Players)
+                {
+                    if (p == null || p == ctx.Motor || _feared.Contains(p.PlayerSlot)) continue;
+                    Vector3 d = p.transform.position - _spot; d.y = 0.0f;
+                    if (d.magnitude > NecroRules.TerrifyRadius) continue;
+                    _feared.Add(p.PlayerSlot);
+                    p.ApplyFeared(_spot);
+                    MatchFlair.Announce(MatchFlair.Kind.HeroHit, ctx.Motor.PlayerSlot, p.PlayerSlot, p.transform.position, 1.5f);
+                }
             }
 
-            protected override void OnEnd(AbilityContext ctx)
-            {
-                if (_longFadeSlow) {ctx.Motor.ExitSpeedZone(.65f);_longFadeSlow=false;}
-                if (_veil!=null) {_veil.Release();_veil=null;}
-            }
+            protected override void OnEnd(AbilityContext ctx) { _kuro?.EndErrand(); _kuro = null; }
+            protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 
-        private sealed class GhostlyPoltergeistAbility : HeroAbility
+        // ================================================================== KURO FETCH (attacking)
+
+        private sealed class KuroFetch : HeroAbility
         {
-            private GameObject _projectedGhost;
+            private Slipper _shoe;
+            private GhostPetCompanion _kuro;
+            private bool _carrying;
+            private float _nextBroadcast;
 
-            public GhostlyPoltergeistAbility()
-                // ⚠️⚠️ ONE CHARGE A ROUND AND NO RECHARGE. It puts a body on the court that
-                // everyone else has to react to, which is the charge half of the split even
-                // though what it leaves is a pet rather than a zone: the test is whether the
-                // ability creates a thing the other three play around, and Kuro is exactly that.
-                //
-                // ⚠️⚠️ IT WAS TWO, AND THE SECOND PIP WAS TELLING THE PLAYER SOMETHING UNTRUE
-                // ABOUT WHAT THE KEY DOES. 🧑 2026-08-27: *"why does nemu have 2 charges if its
-                // just recast? should just show 1"*. This is the only power in the game where the
-                // SECOND press of the same key is part of the SAME cast, so a deck tile showing
-                // two pips reads as "you get two presses" when what you actually get is one trip
-                // out and one trip home. One pip and one trip is the honest version of the tile,
-                // and it is also the version the ability's own sentence already describes.
-                //
-                // ⚠️ THE REACTIVATION IS FREE AND MUST STAY FREE. `CanReactivate` returns the
-                // trip home, and `HeroKit.Fire` deliberately does not gate a reactivation on
-                // readiness. A charge is spent on the way OUT only, so a player can never be
-                // stranded in a possession with no charge left to come back with. At one charge
-                // that is no longer a nicety, it is the only thing standing between the player
-                // and a permanent possession.
-                : base("nemu_skill2", "ASTRAL HIJACK",
-                       "Scout as your familiar; recast to bring Nemu to it. Possession waits until it finishes feeding or returning.",
-                       0.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.NemuAstralPet,
-                       summary: "Possess your familiar; recast to teleport to it.",
-                       castAction: "hero-nemu-project",
-                       viewmodelAction: "project-spirit",
-                       castCue: "sfx_cast_nemu_hijack",
-                       charges: 1)
-            {
-            }
-
-            public void RestoreProjection(AbilityContext ctx,Vector3 position,float remaining)
-            {
-                var pet=ctx.Motor.GetComponent<CharacterVisual>()?.Companion;
-                if(pet==null)return;
-                if(!pet.IsPossessed)pet.BeginPossession(ctx.Motor,ctx.GainScale("nemu.2.leash"));
-                pet.ApplyCastAnchor(position);RestoreLiveClock(remaining);
-            }
-
-            public override bool CanReactivate => true;
+            public KuroFetch()
+                : base("nemu_skill2", "KURO FETCH",
+                       "Attacking. Kuro flies to your slipper and brings it back to your hand. If the taya tags him on the way, he drops it.",
+                       NecroRules.FetchCooldown, 8.0f, AbilityGlyph.NemuAstralPet,
+                       summary: "Kuro fetches your slipper. The taya can make him drop it.",
+                       castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
+                       castCue: "sfx_cast_nemu_hijack") { }
 
             public override bool CanActivate(AbilityContext ctx)
             {
-                if (!base.CanActivate(ctx)) return false;
-                var pet=ctx.Motor.GetComponent<CharacterVisual>()?.Companion;
-                return pet==null || (!pet.IsDevouring && !pet.IsReturning);
+                if (!base.CanActivate(ctx) || ctx.Motor.IsDefender || ctx.Motor.HoldingSlipper) return false;
+                return OwnLooseSlipper(ctx.Motor) != null;
             }
 
-            /// <summary>
-            /// ⚠️ HOW MUCH LONGER KURO'S PROJECTED BODY LIVES THAN THE ABILITY THAT SPAWNED IT.
-            /// Half a second, and the only thing it has to be is greater than zero: it makes
-            /// `OnEnd` the thing that removes the ghost in every run, rather than a race between
-            /// two independent clocks that nothing was keeping in step. The old arrangement was
-            /// a 4.0 s ghost under a 6.0 s ability, which lost that race by two seconds.
-            /// </summary>
-            private const float ProjectionOutlivesAbilityBy = 0.5f;
+            private static Slipper OwnLooseSlipper(CharacterMotor who)
+            {
+                foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
+                    if (s != null && s.OwnerSlot == who.PlayerSlot && s.State == SlipperState.Loose) return s;
+                return null;
+            }
 
             protected override void OnActivate(AbilityContext ctx)
             {
-
-                var visual = ctx.Motor.GetComponent<Visual.CharacterVisual>();
-                if (visual != null && visual.Companion != null)
-                {
-                    visual.Companion.BeginPossession(ctx.Motor,
-                        ctx.GainScale("nemu.2.leash"));
-                }
-                else
-                {
-                    // ⚠️ ITS LIFETIME IS THIS ABILITY'S, NOT A NUMBER OF ITS OWN. The margin
-                    // exists so `OnEnd` below always reaches the ghost before the ghost reaches
-                    // its own expiry: whichever of the two runs first decides whether Nemu gets
-                    // a trip home, and it has to be this one every time.
-                    _projectedGhost = HeroHazards.SpawnGhostPoltergeist(
-                        ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot,
-                        Duration + ProjectionOutlivesAbilityBy);
-                }
+                _shoe = OwnLooseSlipper(ctx.Motor);
+                _kuro = Kuro(ctx);
+                _carrying = false;
+                var shoe = _shoe;
+                var owner = ctx.Motor;
+                _kuro?.BeginErrand(() => shoe == null ? owner.transform.position
+                                         : (_carrying ? owner.transform.position + Vector3.up * 0.4f : shoe.transform.position),
+                                   NecroRules.FetchSpeed, 1.0f);
+                NetCue.Play("sfx_ghost_teleport", ctx.Position);
             }
 
-            protected override void OnEnd(AbilityContext ctx) => FinishProjection(ctx,true);
-            protected override void OnCancelled(AbilityContext ctx) => FinishProjection(ctx,false);
-
-            private void FinishProjection(AbilityContext ctx,bool relocate)
+            protected override void OnTick(AbilityContext ctx, float dt)
             {
-                var caster=ctx?.Motor;
-                var visual=caster!=null?caster.GetComponent<CharacterVisual>():null;
-                if(visual!=null && visual.Companion!=null && visual.Companion.IsPossessed)
+                if (_shoe == null || _kuro == null) { DurationRemaining = 0.0f; return; }
+                if (!_carrying)
                 {
-                    if(relocate) NetCue.Play("sfx_ghost_teleport",visual.Companion.transform.position);
-                    visual.Companion.EndPossession(teleportNemu:relocate);
+                    if (_shoe.State != SlipperState.Loose) { DurationRemaining = 0.0f; return; }
+                    if (_kuro.ErrandArrived) { _carrying = true; NetCue.Play("sfx_possess_enter", _kuro.transform.position); }
+                    return;
                 }
-                if(_projectedGhost!=null)
+                if (!NetAuthority.ShouldResolve()) return;
+                // Carried: the host walks the (loose) slipper under Kuro and tells everyone where it is.
+                Vector3 at = _kuro.transform.position + Vector3.down * 0.35f;
+                _shoe.transform.position = at;
+                if (Time.time >= _nextBroadcast) { _nextBroadcast = Time.time + 0.1f; Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe); }
+                // THE INTERCEPT (owner: the taya can stop him): a taya who can act and is on him makes him drop it.
+                var round = ctx?.Round;
+                if (round != null)
+                    foreach (var p in round.Players)
+                        if (p != null && p.IsDefender && p.CanAct() &&
+                            (p.transform.position - at).sqrMagnitude < NecroRules.FetchInterceptRadius * NecroRules.FetchInterceptRadius)
+                        {
+                            _shoe.transform.position = new Vector3(at.x, Slipper.GroundY(at) + 0.05f, at.z);
+                            Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe);
+                            MatchFlair.Announce(MatchFlair.Kind.Block, ctx.Motor.PlayerSlot, p.PlayerSlot, at, 4f);
+                            DurationRemaining = 0.0f;
+                            return;
+                        }
+                if ((ctx.Motor.transform.position - at).sqrMagnitude < 1.2f * 1.2f)
                 {
-                    if(relocate && caster!=null)
-                    {
-                        Vector3 destination=_projectedGhost.transform.position;
-                        NetCue.Play("sfx_ghost_teleport",destination);
-                        if(Application.isPlaying)caster.Teleport(destination);else caster.transform.position=destination;
-                    }
-                    if(Application.isPlaying)UnityEngine.Object.Destroy(_projectedGhost);
-                    else UnityEngine.Object.DestroyImmediate(_projectedGhost);
-                    _projectedGhost=null;
+                    _shoe.HostForceEquip(ctx.Motor);
+                    Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe);
+                    DurationRemaining = 0.0f;
                 }
             }
+
+            protected override void OnEnd(AbilityContext ctx) { _kuro?.EndErrand(); _kuro = null; _shoe = null; _carrying = false; }
+            protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
+        }
+
+        // ================================================================== KURO GUARD (defending)
+
+        private sealed class KuroGuard : HeroAbility
+        {
+            private GhostPetCompanion _kuro;
+            private Vector3 _spot, _pending;
+            private float _think, _react;
+            private readonly HashSet<Slipper> _blocked = new HashSet<Slipper>();
+
+            public KuroGuard()
+                : base("nemu_skill2d", "KURO GUARD",
+                       "Defending. Kuro grows and guards the can for 6 s, moving to block the throws he sees coming. He is quick, not perfect.",
+                       NecroRules.GuardCooldown, NecroRules.GuardSeconds, AbilityGlyph.NemuPhase,
+                       summary: "Kuro grows and blocks throws at the can.",
+                       castAction: "hero-nemu-seance", viewmodelAction: "seance-channel",
+                       castCue: "sfx_cast_nemu_seance") { }
+
+            protected override void OnActivate(AbilityContext ctx)
+            {
+                _kuro = Kuro(ctx);
+                _blocked.Clear();
+                var lata = ctx.Round?.Lata;
+                _spot = _pending = lata != null ? lata.transform.position + Vector3.forward * 1.2f : ctx.Position;
+                _think = 0.0f; _react = 0.0f;
+                _kuro?.BeginErrand(() => _spot, NecroRules.GuardMoveSpeed, NecroRules.GuardScale);
+            }
+
+            protected override void OnTick(AbilityContext ctx, float dt)
+            {
+                var round = ctx?.Round;
+                var lata = round?.Lata;
+                if (lata == null || _kuro == null) return;
+                // ⚠️ THE FALLIBLE AI (owner: *"dont make it infallible"*): he re-decides every 0.35 s and acts
+                // on it 0.25 s later, standing between the can and whichever attacker holding a slipper is
+                // closest to it. He never predicts a curve and never sees a throw before it leaves the hand.
+                _think -= dt;
+                if (_think <= 0.0f)
+                {
+                    _think = NecroRules.GuardThinkSeconds;
+                    CharacterMotor threat = null; float best = float.MaxValue;
+                    foreach (var p in round.Players)
+                    {
+                        if (p == null || p.IsDefender || !p.HoldingSlipper) continue;
+                        float dd = (p.transform.position - lata.transform.position).sqrMagnitude;
+                        if (dd < best) { best = dd; threat = p; }
+                    }
+                    Vector3 toward = threat != null ? threat.transform.position - lata.transform.position : ctx.Motor.transform.forward;
+                    toward.y = 0.0f;
+                    _pending = lata.transform.position + (toward.sqrMagnitude > 0.01f ? toward.normalized : Vector3.forward) * 1.4f;
+                    _react = NecroRules.GuardReactSeconds;
+                }
+                if (_react > 0.0f) { _react -= dt; if (_react <= 0.0f) _spot = _pending; }
+
+                if (!NetAuthority.ShouldResolve()) return;
+                float reach = NecroRules.GuardBlockRadius * NecroRules.GuardScale;
+                foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
+                {
+                    if (s == null || s.State != SlipperState.InFlight || _blocked.Contains(s)) continue;
+                    if ((s.transform.position - _kuro.transform.position).sqrMagnitude > reach * reach) continue;
+                    _blocked.Add(s);
+                    Vector3 away = s.transform.position - _kuro.transform.position; away.y = 0.0f;
+                    s.Deflect((away.sqrMagnitude > 0.01f ? away.normalized : -s.Velocity.normalized) * Balance.LaunchSpeed * Balance.DeflectSpeedScale, 1.0f);
+                    NetCue.PlayImpact("hit_body", "guard_block", s.transform.position, 0.8f);
+                }
+            }
+
+            protected override void OnEnd(AbilityContext ctx) { _kuro?.EndErrand(); _kuro = null; }
+            protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 
         private sealed class NightmareSeanceVoidAbility : HeroAbility

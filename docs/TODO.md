@@ -212,7 +212,14 @@ Necro Nemu, Voodoo Phaister; Pyro (Sean), Electro (Zack) and Hydro (Rafi) have n
   shatter on every peer, ABSOLUTE ZERO) and Dante (SHIELD, BOULDER `DanteBoulder`, BARRIER reflecting
   slippers, EARTHQUAKE) rewritten as role kits. Compiled, not run. The Glacial Wall is still the straight
   barricade and the boulder and barrier are placeholder slabs (`GeoVfx.cs`) until the presentation pass.
-- [ ] Kits: Phaister, Nemu (signature, fetch, guard); placeholders for Sean, Zack, Rafi.
+- [x] Phaister (SHADOW BLINK kept as the signature, CURSE: DISORIENTED doll `VoodooDoll`, CURSE: VULNERABLE
+  cone, HIGOP black hole `VoodooBlackHole` on the seance pull with her slippers spared and no drowse) and
+  Nemu (TERRIFY haunt, KURO FETCH with the taya's intercept, KURO GUARD with the fallible 0.35 s + 0.25 s
+  AI; Kuro errands `GhostPetCompanion.BeginErrand`). Compiled, not run. Nemu's ULTIMATE is still DEVOURING
+  SEANCE: KURO PLAYS (a fifth, seatless bot unit) needs its own design pass and a Unity session.
+- [x] Sean, Zack, Rafi on the four-slot shape: their old second skill is the ATTACKING slot, DEFENDING is
+  `PlaceholderRoleAbility` (COMING SOON, does nothing). With the tree off, no variant name or cue is
+  written over a kit (the old defaults would have renamed Dante's SHIELD "SEISMIC STOMP").
 - [ ] Presentation per ability (clips, FPP, VFX, audio, icons), Feared and Concussed shared clips.
 - [ ] KURO PLAYS (its own design pass first), bots, snapshots, replays, screens, HUD.
 - [ ] Ultimate cutscenes rebuilt per `ultimates.md`.

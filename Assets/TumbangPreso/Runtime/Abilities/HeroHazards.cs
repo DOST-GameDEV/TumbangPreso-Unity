@@ -1090,6 +1090,13 @@ namespace TumbangPreso.Abilities
             /// <summary>How fast a loose tsinelas slides in, in metres per second.</summary>
             public float SlipperPull = 5.5f;
 
+            /// <summary>HIGOP (ABILITY-2): slippers owned by this seat are spared (owner: *"pulls players
+            /// ands slipeprs except for her shit"*). -1 spares none.</summary>
+            public int SparedSlipperOwner = -1;
+
+            /// <summary>Seconds between the small drowse stumbles; 0 turns them off (HIGOP: no mashing).</summary>
+            public float DrowseEvery = 1.25f;
+
             private float _left;
             private readonly Dictionary<int, float> _nextDrowseBySlot = new Dictionary<int, float>();
 
@@ -1248,8 +1255,8 @@ namespace TumbangPreso.Abilities
                     // your own body would flinch you on a frame the host never agreed to, and
                     // `StunElement`/`ApplyStagger` is exactly the class of state `CLAUDE.md` § 4
                     // keeps on one machine.
-                    if (NetAuthority.ShouldResolve() &&
-                        CanPulse(_nextDrowseBySlot, p.PlayerSlot, 1.25f))
+                    if (NetAuthority.ShouldResolve() && DrowseEvery > 0.0f &&
+                        CanPulse(_nextDrowseBySlot, p.PlayerSlot, DrowseEvery))
                     {
                         p.ApplyStagger(0.35f);
                     }
@@ -1269,7 +1276,7 @@ namespace TumbangPreso.Abilities
                 // the carry would be a disarm, which is a verb this game does not have.
                 foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                 {
-                    if (s != null && s.State != SlipperState.Held)
+                    if (s != null && s.State != SlipperState.Held && (SparedSlipperOwner < 0 || s.OwnerSlot != SparedSlipperOwner))
                     {
                         Vector3 sDiff = transform.position - s.transform.position;
                         sDiff.y = 0.0f;
