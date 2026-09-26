@@ -31,7 +31,12 @@ and only then does the next hero start. Keep each hero's identity and quiet colo
 | Dante | anchor | |
 | Phaister | anchor | |
 | Amihan | v7 restyled 2026-09-27: dark teal base and tails, cream lapels and cuffs piped gold, two-tier rust belt with a gold kasikus medallion, gold-edged teal capelet, two-tone hair. Face not yet touched. Awaiting the owner. | `ArtSource/amihan/concept-20260925/evidence/amihan-v5..v7-restyle-beside-dante-phaister.png` |
-| Rafi | next after the owner's word on Amihan (PRIORITY 1 with her) | |
-| Nemu | owner 2026-09-27: *"nemu needs a rework too / she doesnt look like she belongs in the cast / i want hher to stay small and cute with loose clothhes"* | |
-| Sean, Zack, Cheska, custom | to follow, one at a time | |
+| Rafi | v50 pushed 2026-09-27: his tattooed skin is the base (nothing covers the labid or chaklag); two-tier bahag belt with a silver medallion, silver-piped flaps, two-tone hair. | `ArtSource/rafi/islander-rework-20260925/evidence/rafi-v50-restyle-beside-dante-phaister.png` |
+| Nemu | ⚠️⚠️ KEEP HER MODEL AS IT IS (owner 2026-09-27). A rework lowered her cowl, lifted her fringe and grew her head; he: *"u removed the jacket that covered half of nemu's facee / that was on pruposee"*, *"u ruined nemuu"*, then *"nahh keep nemu js improve her animations"*. Reverted in `04886cc4a`. Her cowl over her lower face is her identity. | |
+| Cheska | ⚠️ KEEP HER COLOURS (owner 2026-09-27: *"u changed cheskas colors i dont like it"*). A dark-overall recolour was rendered and thrown away before it shipped. | |
+| Sean, Zack | already in the language (open vest or black base, gold trim, a big buckle): unchanged. | |
 | Paete | a tree: bark and vines, not cloth; the language does not apply | |
+
+⚠️ **The lesson of this pass:** a style audit reads a hero's deliberate signature (Nemu's hidden face, Cheska's pale ice
+palette) as a fault. Before changing a face, a silhouette or a hero's colours, ask the owner which parts are deliberate,
+and show the render before pushing.
