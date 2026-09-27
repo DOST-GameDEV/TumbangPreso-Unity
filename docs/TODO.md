@@ -27,6 +27,8 @@ are merged. One guarded native pass completed7/7 new state/loading cases, with n
 frozen-input drift. [Exact coverage](reports/stability-2026-09-27/input-integration.md)
 supersedes earlier NOT RUN notes only for those cases. Actual peers,player performance
 and unsampled native UI flows remain OPEN; no whole-queue completion claim.
+Incoming Phaister doll v5 assets/source/review tooling are preserved unchanged;
+the Editor consumer compiles, with no runtime change or repeat of the7 native cases.
 
 **NET-SKILLS-1, OPEN:** host authority,stable ability identity,explicit delivery/
 command intent,independent receipts,bounded delayed delivery,phase-aware prepared

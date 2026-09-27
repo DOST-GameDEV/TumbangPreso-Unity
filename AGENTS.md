@@ -68,6 +68,9 @@ replaced, retired and genuinely blocked requirements without reviving old ideas.
 - Preserve run diffs before touching generated churn. Never infer runtime success
   from compilation, exit0, stale XML or zero tests. Native visual checks require
   graphics. See [TESTING](docs/TESTING.md) for commands and evidence levels.
+- New Unity script metadata needs a valid 32-hex GUID; generate it with
+  `Guid.NewGuid().ToString("N")` and verify the file. Direct C# compilation does not
+  establish Unity import validity. Preserve existing valid GUIDs.
 - Final builds use explicit internal Builds/<candidate>/TumbangPreso.exe paths.
   Verify executable/data and run that exact player. No Desktop replacement.
 - Be precise about local tests, actual peers, cross-platform play, hardware and

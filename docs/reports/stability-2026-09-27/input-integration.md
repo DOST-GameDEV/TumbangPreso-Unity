@@ -50,3 +50,12 @@ Do not rerun the7 unchanged cases after unrelated edits.
 The incoming input report records60/60 EditMode and19/20 PlayMode, with the one
 retrieval fixture failure before input. Those are the incoming contributor's receipts,
 not extra cases run by this integration pass. No unrelated fixture was repaired here.
+
+## Subsequent Asset Integration
+
+Incoming `8210c3a7` and `d42f6e7e` then added Phaister's doll model,v5 design/palette,
+builder and review tool. All8 incoming paths were preserved unchanged, and both new
+metadata GUIDs are valid. The new Editor consumer compiles against the unchanged
+merged Runtime/Core. No gameplay runtime changed, so the7 native cases above were
+not rerun and no new art approval is claimed. The frozen input layer now contains194
+paths including these additions. [Editor-only receipt](checks/doll-integration-compile.json).
