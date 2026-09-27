@@ -528,6 +528,9 @@ CAPITAL = [(-0.10, 0.0), (0.22, 0.0), (0.30, 0.10), (0.30, 0.22), (-0.10, 0.22)]
 
 
 DOOR_W, DOOR_H = 2.0, 2.9
+# The brick corner's lot: 18 m square with the street corner cut 4.2 m back. Module level so
+# door_sign_frame() and the city's sign lettering stand on the same numbers as the building.
+BRICK_W, BRICK_D, BRICK_CUT = 18.0, 18.0, 4.2
 
 
 def DOOR_U(f):
@@ -640,7 +643,7 @@ def brick_corner():
     col = bpy.data.collections.new("brick_corner")
     bpy.context.scene.collection.children.link(col)
     rng = random.Random(4)
-    W, D, CUT = 18.0, 18.0, 4.2
+    W, D, CUT = BRICK_W, BRICK_D, BRICK_CUT
     GROUND, STOREY, UPPER = 4.6, 3.4, 4
     TOP = GROUND + STOREY * UPPER
     RECESS = 0.34
@@ -736,7 +739,7 @@ def brick_corner():
     props = Buf("props")
     # Door kick panels (the solid lower part of each leaf) and a shop sign over the door.
     props.box(door.frame(du, 0.5, -0.6 + 0.08), (DOOR_W - 0.1, 0.06, 0.86), "wood")
-    props.box(door.frame(du, 3.2, 0.3), (1.6, 0.12, 0.5), "sign")
+    props.box(door_sign_frame() @ Matrix.Translation((0, -0.06, 0)), (1.6, 0.12, 0.5), "sign")
     leaves = Buf("foliage", foliage=True)
     for f, u, zc, w, h, fi, s, k in windows:
         # SITTING ON THE SILL, NOT HOVERING IN FRONT OF IT. The sill's top is 4 cm above the
@@ -773,6 +776,15 @@ def brick_corner():
     props.finish(col, bevel=0.03)
     leaves.finish(col)
     return col
+
+
+def door_sign_frame():
+    """The centre of the FACE of the painted board over the brick corner's door (1.6 x 0.5 m,
+    0.12 m deep, its back 0.24 m off the cut-corner wall), as a Facade frame: columns along
+    the wall, out of it, up. The board is built blank here; the city lays the shop's name on
+    it (author_kanto_signage.door_plate), which is why the frame is its own function."""
+    door = Facade((0, -BRICK_CUT), (BRICK_CUT, 0), (BRICK_W / 2, -BRICK_D / 2))
+    return door.frame(DOOR_U(door), 3.2, 0.36)
 
 
 MODELS = {"brick_corner": brick_corner}

@@ -32,6 +32,7 @@ import json
 import math
 import shutil
 import random
+import re
 import sys
 from pathlib import Path
 
@@ -784,6 +785,12 @@ def _roster():
 FAR_ROSTER = _roster()
 
 
+# Each street kind's ground-floor height (shop storey). Named once because the shop signs hang
+# off it and --resign rebuilds them without rebuilding the building.
+ARCH_GROUND = {"loft": 4.4, "loft_ph": 4.4, "stucco": 4.2, "glassmid": 4.4, "panel": 4.2, "shophouse": 4.2}
+ARCH_DEPTH = 14.0
+
+
 def archetype(name, kind, w, storeys, colour, seed, detail=True, shop="paint_green", roof="flat"):
     """The street roster: six kinds of building, each a different construction, not a repaint.
       loft      brick, big dark-framed grid windows, painted shop base, water tank
@@ -794,7 +801,7 @@ def archetype(name, kind, w, storeys, colour, seed, detail=True, shop="paint_gre
       shophouse painted plaster, classic windows and balconies (the first walk-up)
     `detail=False` drops planters and wall AC units for the far street blocks.
     `roof`: flat (with rooftop clutter), pitched (tiles and dormers), turret (a corner tower)."""
-    D = 14.0
+    D = ARCH_DEPTH
     foot = [(0, 0), (w, 0), (w, -D), (0, -D)]
     rr = random.Random(seed * 7 + 3)
     common = dict(seed=seed, planters=detail, acs=detail, keystones=False,
@@ -825,14 +832,17 @@ def archetype(name, kind, w, storeys, colour, seed, detail=True, shop="paint_gre
         # name on the fascia, about half a hanging blade sign, and some flat-roofed far blocks
         # a rooftop billboard, as in the Tiny Talisman and Brainchild streets. Imported late:
         # the signage module imports this one.
+        # ⚠️ Each building's sign is HAND-NAMED in SG.SIGNS, keyed by this model's name (owner,
+        # 2026-09-27: generic nouns like "LABADA" read as category labels, not shops).
         import author_kanto_signage as SG
         f0 = c.facades[0]
         if c.shops:
-            shop = SG.SHOP_NAMES[(seed * 7) % len(SG.SHOP_NAMES)]
-            SG.fascia_sign(c.col, shop, min(w * 0.72, 6.5), ("board", "letters", "lightbox")[seed % 3], seed,
-                           at=f0.frame(w / 2, c.ground - 1.0, 0.40))
-            if rr.random() < 0.5:
-                SG.blade_sign(c.col, shop, seed, at=f0.frame(0.9, c.ground + 1.3, 0.0))
+            SG.shop_signs(c.col, name, f0, w, c.ground, seed)
+            # ⚠️ DRAWN AND DISCARDED ON PURPOSE. This roll used to decide the blade sign; the
+            # table decides now (the same buildings keep one). The draw stays because rr goes
+            # on to pick billboards, turrets and roof clutter below, and dropping one draw
+            # would reshuffle every roof in the city.
+            rr.random()
         if roof == "flat" and not detail and rr.random() < 0.3:
             SG.billboard(c.col, seed, w=min(w - 1.5, 8.0), h=3.5,
                          at=Matrix.Translation((w / 2, -D * 0.55, c.TOP - 0.02)))
@@ -847,26 +857,26 @@ def archetype(name, kind, w, storeys, colour, seed, detail=True, shop="paint_gre
             roof_clutter(c, w, D, rr, taken, "concrete" if kind in ("loft", "loft_ph") else colour)
 
     if kind in ("loft", "loft_ph"):
-        return city_building(name, foot, [0], 4.4, 3.3, storeys, (shop, colour), window_style="grid",
+        return city_building(name, foot, [0], ARCH_GROUND[kind], 3.3, storeys, (shop, colour), window_style="grid",
                              frame="frame_dark", shop_frame="frame_dark", fascia=shop, courses="stone",
                              cornice=K.COURSE if kind == "loft_ph" else K.CORNICE,
                              parapet=None if roof == "pitched" else colour, recess=0.22,
                              awnings={0: [["awning_a", "awning_b"], ["awning_c", "awning_b"]][seed % 2]} if detail else None,
                              extras=extras, **common)
     if kind == "stucco":
-        return city_building(name, foot, [0], 4.2, 3.2, storeys, ("stone_blocks", colour), window_style="ribbon",
+        return city_building(name, foot, [0], ARCH_GROUND[kind], 3.2, storeys, ("stone_blocks", colour), window_style="ribbon",
                              frame="metal_dark", shop_frame="metal_dark", fascia=shop, courses=None,
                              slabs="concrete", cornice=None, parapet=None if roof == "pitched" else colour,
                              recess=0.18, extras=extras, **common)
     if kind == "glassmid":
-        return city_building(name, foot, [0], 4.4, 3.4, storeys, (colour, colour), window_style="ribbon",
+        return city_building(name, foot, [0], ARCH_GROUND[kind], 3.4, storeys, (colour, colour), window_style="ribbon",
                              frame="metal_dark", shop_frame="metal_dark", fascia="metal_dark", courses=None,
                              slabs="concrete", cornice=None, parapet=colour, recess=0.2, extras=extras, **common)
     if kind == "panel":
-        return city_building(name, foot, [0], 4.2, 3.1, storeys, (shop, colour), window_style="grid",
+        return city_building(name, foot, [0], ARCH_GROUND[kind], 3.1, storeys, (shop, colour), window_style="grid",
                              frame="frame", shop_frame="frame", fascia=shop, courses="concrete",
                              cornice=K.COURSE, parapet=colour, recess=0.2, extras=extras, **common)
-    return city_building(name, foot, [0], 4.2, 3.2, storeys, ("stone_blocks", colour), bay=3.1, recess=0.26,
+    return city_building(name, foot, [0], ARCH_GROUND[kind], 3.2, storeys, ("stone_blocks", colour), bay=3.1, recess=0.26,
                          parapet=None if roof == "pitched" else colour, courses="stone", fascia=shop,
                          awnings={0: [["awning_a", "awning_b"], ["awning_c", "awning_b"]][seed % 2]} if detail else None,
                          extras=extras, **common)
@@ -1952,8 +1962,18 @@ def layout():
     return poles
 
 
+def brick_corner():
+    """The hero brick corner (author_kanto_models.brick_corner) with its shop's name lettered
+    on the blank board over the corner door (SIGNS' DOOR_PLATE). Lettered here, not in the
+    model script, because the signage module imports the model script."""
+    col = K.brick_corner()
+    import author_kanto_signage as SG
+    SG.door_plate(col, *SG.DOOR_PLATE, at=K.door_sign_frame())
+    return col
+
+
 BUILDERS = {
-    "brick_corner": K.brick_corner,
+    "brick_corner": brick_corner,
     "deco_corner": deco_corner,
     "glass_tower": glass_tower,
     "townhouse_row": townhouse_row,
@@ -2316,8 +2336,132 @@ def review(version, only=None):
     scene.render.film_transparent = False
 
 
+def _sign_rows():
+    return {r[0]: r for r in PARKSIDE + TERMINI + FILLERS}
+
+
+def _placements(name):
+    """The placement empties of one model in the assembled file, in PLACE order."""
+    pat = re.compile(re.escape(name) + r"\.\d{3,}")
+    return sorted((o for o in bpy.data.objects if o.type == "EMPTY" and o.parent is None and pat.fullmatch(o.name)),
+                  key=lambda o: o.name)
+
+
+def resign():
+    """REPLACE ONLY THE SHOP SIGNS in the open kanto_city.blend, and save it.
+
+      blender -b ArtSource/kanto/kanto_city.blend --python tools/author_kanto_city.py -- --resign [--review N]
+
+    WHY. --assemble rebuilds the whole file from the scripts and throws away anything edited in
+    it by hand (section 8 of the design guide). Renaming a shop must not cost that. This finds
+    every sign object in each signed model under Kit (names starting sign_ or blade_) and every
+    linked duplicate of it in the City, deletes them, builds that model's signs afresh from
+    author_kanto_signage.SIGNS (and the brick corner's DOOR_PLATE), and links a duplicate into
+    every placement, exactly as --assemble does. Nothing else in the file is touched."""
+    import author_kanto_signage as SG
+    K.USE_TEXTURES = True
+    kit_root = bpy.data.collections.get("Kit")
+    if kit_root is None:
+        raise RuntimeError("--resign needs the assembled kanto_city.blend open (no 'Kit' collection)")
+    rows = _sign_rows()
+    for name in list(SG.SIGNS) + ["brick_corner"]:
+        col = kit_root.children.get(name)
+        if col is None:
+            print(f"[kanto-city] resign: {name} is not in this file, skipped")
+            continue
+        old = [o for o in col.objects if o.name.split(".")[0].startswith(("sign_", "blade_"))]
+        meshes = {o.data for o in old}
+        dups = [o for o in bpy.data.objects if o.data is not None and o.data in meshes and o not in old]
+        for o in dups + old:
+            bpy.data.objects.remove(o)
+        for m in meshes:
+            if m.users == 0:
+                bpy.data.meshes.remove(m)
+        if name == "brick_corner":
+            new = SG.door_plate(col, *SG.DOOR_PLATE, at=K.door_sign_frame())
+        else:
+            _n, kind, w, _st, _colour, seed, *_ = rows[name]
+            f0 = K.Facade((0, 0), (w, 0), (w / 2, -ARCH_DEPTH / 2))
+            new = SG.shop_signs(col, name, f0, w, ARCH_GROUND[kind], seed)
+        empties = _placements(name)
+        for e in empties:
+            for src in new:
+                dup = src.copy()            # shares src.data: a linked duplicate, as --assemble makes
+                dup.name = f"{e.name} {src.name.split('.')[0]}"
+                dup.parent = e
+                dup.matrix_parent_inverse.identity()
+                dup.matrix_basis = src.matrix_basis.copy()
+                for c in e.users_collection:
+                    c.objects.link(dup)
+        print(f"[kanto-city] resign {name}: removed {len(old)} + {len(dups)} copies, "
+              f"built {len(new)}, placed x{len(empties)}")
+    for name, style, width, h, th in SG.FITS:
+        print(f"[kanto-city] sign {name:28s} {style:8s} {width:4.2f} m  letters {h:.3f} / {th:.3f}")
+    bpy.ops.wm.save_mainfile(compress=True)
+    backup = CITY_BLEND.with_suffix(".blend1")
+    if backup.exists():
+        backup.unlink()
+    print(f"[kanto-city] resigned and saved {bpy.data.filepath}")
+
+
+def sign_closeups(version, only=None):
+    """Close shots of the signs in the open file, for reading every name: each park-facing
+    block from across the ring road at a person's eye (1.7 m, 10.5 m out), and the brick
+    corner's door board from the pavement. Cameras are added for the render only; nothing is
+    saved. Files: Logs/kanto-blender/kanto_city_sign_<model>_vN.png.
+    ⚠️ The Street and Park pieces (power poles, street trees, parked vehicles) are hidden for
+    these shots only: the poles and trees stand 1.5 to 2.2 m in front of every facade, so no
+    camera across the road sees a whole board past them (v1 lost half of three names). The
+    eye_* review cameras are the in-context check; these are for reading the words."""
+    K.PREVIEWS.mkdir(parents=True, exist_ok=True)
+    scene = bpy.context.scene
+    rows = _sign_rows()
+    shots = []
+    for name in [r[0] for r in PARKSIDE] + ["brick_corner"]:
+        empties = _placements(name)
+        if not empties or (only and name not in only):
+            continue
+        m = empties[0].matrix_basis
+        if name == "brick_corner":
+            d = K.door_sign_frame()
+            shots.append((name, m @ d @ Vector((0.8, 7.0, -1.5)), m @ d @ Vector((0, 0, -0.4)), 38))
+        else:
+            _n, kind, w, *_ = rows[name]
+            z = ARCH_GROUND[kind] - 1.0 + 0.42
+            shots.append((name, m @ Vector((w / 2 + 1.5, 10.5, 1.7)), m @ Vector((w / 2, 0.2, z)), 30))
+    cam = bpy.data.objects.new("sign_cam", bpy.data.cameras.new("sign_cam"))
+    cam.data.sensor_fit, cam.data.clip_start, cam.data.clip_end = "HORIZONTAL", 0.05, 2000
+    scene.collection.objects.link(cam)
+    scene.render.film_transparent = True   # as review(): the fog compositor needs the sky's alpha
+    scene.render.image_settings.color_mode = "RGB"
+    hidden = [o for g in ("Street", "Park") if bpy.data.collections.get(g)
+              for o in bpy.data.collections[g].all_objects if not o.hide_render]
+    for o in hidden:
+        o.hide_render = True
+    for name, at, look, lens in shots:
+        cam.location, cam.data.lens = at, lens
+        cam.rotation_euler = (look - at).to_track_quat("-Z", "Y").to_euler()
+        scene.camera = cam
+        scene.render.filepath = str(K.PREVIEWS / f"kanto_city_sign_{name}_v{version}.png")
+        bpy.ops.render.render(write_still=True)
+        print("[kanto-city] sign close-up", scene.render.filepath)
+    for o in hidden:
+        o.hide_render = False
+    scene.render.film_transparent = False
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
+    if "--resign" in argv or "--sign-closeups" in argv:
+        # blender -b ArtSource/kanto/kanto_city.blend --python tools/author_kanto_city.py -- --resign
+        # blender -b ArtSource/kanto/kanto_city.blend --python tools/author_kanto_city.py -- --sign-closeups N
+        if "--resign" in argv:
+            resign()
+        if "--sign-closeups" in argv:
+            only = argv[argv.index("--cams") + 1].split(",") if "--cams" in argv else None
+            sign_closeups(int(argv[argv.index("--sign-closeups") + 1]), only)
+        if "--review" not in argv:
+            return
     if "--assemble" in argv or "--review" in argv:
         # blender -b --python tools/author_kanto_city.py -- --assemble [--review N]
         # blender -b ArtSource/kanto/kanto_city.blend --python tools/author_kanto_city.py -- --review N

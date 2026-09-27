@@ -258,6 +258,38 @@ Unity on 2026-09-25 (`2b69e4f20`, 438 placements, 81 models, textures copied by 
   vehicle/sign material names need Unity palette entries (watch the build log's unmatched-name
   warning).
 
+### 11.1 · Every shop sign is hand-named (2026-09-27)
+
+A teammate on the map screenshot: *"manually do each sign coz ang weird ng LABADA etc"*; the owner:
+*"can u think of other stuff for the building names and replace them"*. The signs had been dealt
+from sixteen bare trade nouns (LABADA, BIGASAN, TAHO), which read as category labels, not shops.
+
+- ⚠️⚠️ **The rule: every sign is hand-named in an explicit table.** `SIGNS` in
+  `tools/author_kanto_signage.py` has one row per signed building, keyed by its model name:
+  style, name, small tagline, trade, hanging-sign content. A name is a person or family plus the
+  trade, the way Manila shops are named (`PURING'S KAINAN`, `RJV HARDWARE`, `BERTO'S
+  BARBERSHOP`), mixing Tagalog and Taglish. Original names only: no real brand or chain, nothing
+  crude or mocking. No two rows share a name. A building missing from the table fails the build.
+  The brick corner's door board carries `DOOR_PLATE` (`AMIHAN`, *Café, est. 1948*).
+- Only the words changed. Board styles and colours still come from each building's seed, and the
+  buildings that had a hanging sign still have one (its content is now in the table: a trade icon
+  or a monogram).
+- **Fit is measured:** `blender -b --python tools/author_kanto_signage.py -- --sheet N` builds every
+  sign at its street width and prints each name's fitted letter height (names 0.29 to 0.48 m;
+  taglines 0.12 m, for someone at the door). Names over ~20 characters on a board drop under the
+  ~0.3 m that reads across the road.
+- **Renaming a shop does not need `--assemble`:** edit the row, then
+  `blender -b ArtSource/kanto/kanto_city.blend --python tools/author_kanto_city.py -- --resign`
+  replaces only the sign objects in the saved file (every other object untouched), and
+  `-- --sign-closeups N` renders each park-facing sign readable (street poles, trees and cars
+  hidden for those shots only). Then re-export the signed models (`-- --only <models>`).
+- Glyph detail is budgeted (3 curve steps for names, 2 and no bevel for taglines): at the old
+  detail the longer names grew the 41 signed `.glb` files from 70.6 to 96.6 MB; now 76.1 MB.
+- Open: raised-letter signs whose seed colour matches the fascia paint under them read
+  tone-on-tone (`KAPEHAN SA KANTO` red on red, `MILK TEA NI BES` teal on teal, plus
+  `JR PRINTING SERVICES`, `ATE LINDA HALO-HALO`, `FARMACIA ESPERANZA`). A colour change, so it
+  waits for the owner.
+
 ## 12 · Remaining work (owner, 2026-09-27): in-game lighting, and moving traffic
 
 🧑 *"kanto is basically done, needs fixes on the lighting when in game since its different

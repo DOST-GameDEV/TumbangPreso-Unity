@@ -1,18 +1,20 @@
 """Shop signage for the Kanto sample map: shop-name boards, hanging blade signs, billboards.
 
   blender -b --python tools/author_kanto_signage.py -- --preview N [--design soda|halo|sun]
-  blender -b --python tools/author_kanto_signage.py -- --zoo N      (every name, icon and design)
+  blender -b --python tools/author_kanto_signage.py -- --zoo N      (every icon and design)
+  blender -b --python tools/author_kanto_signage.py -- --sheet N    (every real sign, readable)
 
 Renders a test wall carrying four fascia signs, two blade signs and a rooftop billboard to
 Logs/kanto-blender/signage_front_vN.png, signage_eye_vN.png (the game's eye from across the
-street), signage_close_vN.png and signage_rear_vN.png; --zoo writes signage_zoo*_vN.png. It saves
+street), signage_close_vN.png and signage_rear_vN.png; --zoo writes signage_zoo*_vN.png and
+--sheet signage_sheet_*_vN.png (every sign in SIGNS at its street size, and its fitted height). It saves
 no .blend: this file is a kit that tools/author_kanto_city.py (or anything else) imports.
 
 WHY. The references (Tiny Talisman's "Stylized Modern City", Brainchild's cartoon town) put a
 shop name over every shopfront, round hanging signs over the pavement and big illustrated
 billboards on the roofs. Ours had none (docs/KANTO_DESIGN_GUIDE.md section 10, "street life").
 The game is Filipino, so the shops are the ones on any Manila street: sari-sari store,
-panaderia, karinderya, botika, barbero.
+panaderia, karinderya, botika, barbershop, each named by hand for whoever runs it (SIGNS).
 
 THE API. Every builder takes `dest`, which is EITHER a bpy collection (the sign becomes its own
 objects in it: a bevelled body and a separate, unbevelled text object) OR a kit `K.Buf` (the
@@ -21,14 +23,19 @@ building buffer's 3 cm bevel is too big for letter strokes. `at` is an optional 
 places the whole sign; `K.Facade.frame(u, z)` is already the right matrix for a fascia or a
 blade sign, because its columns are (along the wall, out of the wall, up).
 
-  fascia_sign(dest, text, width, style="board", seed=0, at=None)
-      A shop-name board `width` m wide and 0.70 to 0.85 m tall. Styles:
+  fascia_sign(dest, text, width, style="board", seed=0, at=None, tagline=None)
+      A shop-name board `width` m wide and 0.70 to 0.85 m tall, with an optional small second
+      line under the name ("board" and "lightbox" only). Styles:
         "board"    a painted plank panel inside a thick rounded rim, two bolts
         "letters"  raised individual 3D letters standing on a thin iron rail (one line)
         "lightbox" a boxy sign with a cap and lip and a cream face panel
   blade_sign(dest, content, seed=0, at=None)
       A round or shield-shaped hanging sign on an iron wall bracket. `content` is an icon name
-      (ICONS: bread, cup, mortar, scissors, bowl), a shop name from SHOP_ICON, or 1 to 3 letters.
+      (ICONS: bread, cup, mortar, scissors, bowl), a trade from SHOP_ICON, or 1 to 3 letters.
+  shop_signs(dest, building, facade, w, ground, seed)
+      One building's fascia and blade sign from its row in SIGNS, placed on its street front.
+  door_plate(dest, name, tagline, at)
+      Lettering alone, for a board that is part of a building's own mesh (the brick corner).
   billboard(dest, seed=0, w=8, h=4, at=None, design=None)
       A rooftop billboard on a steel frame with a catwalk and three lamps, and a flat-colour
       illustration made of geometry plus a short Filipino slogan. DESIGNS: soda, halo, sun.
@@ -76,14 +83,86 @@ import author_kanto_models as K          # noqa: E402  (Buf, material, setup_lig
 ROOT = Path(__file__).resolve().parents[1]
 PREVIEWS = ROOT / "Logs" / "kanto-blender"
 
-SHOP_NAMES = [
-    "SARI-SARI STORE", "PANADERIA", "KARINDERYA", "BOTIKA", "KAPEHAN", "BARBERO",
-    "LUGAWAN", "BIGASAN", "TAHO", "KAKANIN", "LABADA", "HARDWARE", "SIOPAO", "LECHON",
-    "MERYENDA", "BUKO JUICE",
-]
-# The hanging sign that goes with a shop, when there is an obvious picture for it.
-SHOP_ICON = {"PANADERIA": "bread", "KAPEHAN": "cup", "BOTIKA": "mortar", "BARBERO": "scissors",
-             "LUGAWAN": "bowl", "KARINDERYA": "bowl", "SIOPAO": "bowl", "MERYENDA": "cup"}
+# ⚠️⚠️ EVERY SIGN IS HAND-NAMED, ONE LINE PER SHOPFRONT (owner, 2026-09-27). This used to be
+# SHOP_NAMES, sixteen bare trade nouns ("LABADA", "BIGASAN", "TAHO") dealt out by seed, and a
+# teammate's verdict on the map screenshot was "manually do each sign coz ang weird ng LABADA":
+# a category label is not a shop. A Manila shop is named for the person or family who runs it
+# plus the trade ("PURING'S KAINAN", "RJV HARDWARE"), so every building that carries a sign has
+# its own row here, keyed by the model name in tools/author_kanto_city.py. To change one sign,
+# edit one line; a building missing from this table fails the build (KeyError), so a new one
+# cannot ship with a borrowed name.
+#
+# A row is (style, name, tagline, trade, blade):
+#   style    "board", "letters" or "lightbox" (fascia_sign). These are the styles and seeds the
+#            street shipped with (seed % 3); only the words changed. The colours still come
+#            from the building's seed, so nothing about the look moved.
+#   name     the big line. Every name is ORIGINAL: no real brand or chain.
+#   tagline  a small second line, or None. Only "board" and "lightbox" have room for one; the
+#            raised "letters" stand on a rail and are one line (fascia_sign refuses a tagline).
+#   trade    what the shop sells; picks the blade icon through SHOP_ICON.
+#   blade    None (no hanging sign), "icon" (SHOP_ICON[trade]) or 1 to 3 letters (a monogram).
+#            The buildings with a blade are the ones that had one before (the old 50/50 roll).
+# ⚠️ LENGTH IS LEGIBILITY. ~0.3 m letters read across a 10 m road (the note at the end of the
+# module docstring). The boards are 5.5 to 6.5 m wide; a board or letters name over ~20
+# characters drops under 0.3 m, the condensed lightbox face takes ~28. The fitted height of
+# every name is printed by `--sheet` so the rule is measured, not guessed.
+SIGNS = {
+    # The park-facing blocks, three per side, the ones a player reads from the court.
+    "loft_red_5":         ("board",    "DOC REY BOTIKA",          "GAMOT • VITAMINS",            "pharmacy", "icon"),
+    "stucco_tan_6":       ("letters",  "LABAHAN NI ATE JOY",      None,                          "laundry", "AJ"),
+    "shophouse_mint_4":   ("lightbox", "PANADERIA NI MANG ERNING", "MAINIT NA PANDESAL",         "bakery", None),
+    "glassmid_7":         ("board",    "KUYA JM CELLSHOP",        "REPAIR • E-LOAD • CASE",      "cellphone", "JM"),
+    "loft_brown_ph_4":    ("letters",  "MILK TEA NI BES",         None,                          "milk tea", None),
+    "panel_5":            ("lightbox", "LUGAWAN NI LOLA ISING",   "GOTO • ARROZ CALDO • TOKWA'T BABOY", "lugaw", "icon"),
+    "shophouse_rose_3":   ("board",    "BERTO'S BARBERSHOP",      "GUPIT • SHAVE",               "barber", "icon"),
+    "stucco_olive_5":     ("letters",  "KAPEHAN SA KANTO",        None,                          "coffee", None),
+    "loft_red_ph_6":      ("lightbox", "RJV HARDWARE",            "CONSTRUCTION SUPPLY • ELECTRICAL", "hardware", "RJV"),
+    "shophouse_butter_4": ("board",    "PURING'S KAINAN",         "LUTONG BAHAY",                "eatery", "icon"),
+    "loft_brown_3":       ("letters",  "NANAY LYDIA KAKANIN",     None,                          "kakanin", "NL"),
+    "glassmid_5":         ("lightbox", "DORY'S SARI-SARI STORE",  "MAY YELO • MAY LOAD",         "sari-sari", "D"),
+    # The long buildings closing each outward street (they sit in the fog, 144 m out).
+    "terminus_n":         ("letters",  "JR PRINTING SERVICES",    None,                          "printing", "JR"),
+    "terminus_e":         ("lightbox", "ATE LEN'S SIOMAI",        "STEAMED • FRIED",             "siomai", "icon"),
+    "terminus_s":         ("board",    "ALFONSO GLASS",           "SALAMIN • ALUMINUM • SCREEN", "glass", None),
+    "terminus_w":         ("letters",  "KUYA OBET BUKO JUICE",    None,                          "buko", "icon"),
+    # The far street blocks. Each model stands several times along the outward streets (the
+    # placements are linked duplicates), so a name recurs a block or two apart, never twice
+    # in one view down a street.
+    "far_panel_00":       ("lightbox", "APO PANCITERIA",          "PANCIT • LUMPIA • SIOPAO",    "panciteria", "icon"),
+    "far_panel_01":       ("board",    "LITO'S VULCANIZING",      "TIRE REPAIR • 24 HRS",        "vulcanizing", None),
+    "far_stucco_02":      ("letters",  "ESTRELLA TRAVEL",         None,                          "travel", None),
+    "far_loft_ph_03":     ("lightbox", "LOURDES BAKESHOP",        "PANDESAL • ENSAYMADA • MAMON", "bakery", "icon"),
+    "far_panel_04":       ("board",    "PURO TUBIG",              "WATER REFILLING STATION",     "water", None),
+    "far_loft_ph_05":     ("letters",  "EDGAR'S AUTO SUPPLY",     None,                          "auto supply", "E"),
+    "far_stucco_06":      ("lightbox", "BOY ELECTRONICS",         "TV • RADIO • RICE COOKER REPAIR", "electronics", None),
+    "far_shophouse_07":   ("board",    "DODONG'S INASAL",         "IHAW-IHAW • UNLI RICE",       "inasal", None),
+    "far_stucco_08":      ("letters",  "ATE LINDA HALO-HALO",     None,                          "halo-halo", "icon"),
+    "far_shophouse_09":   ("lightbox", "JOVY'S BEAUTY SALON",     "HAIR • NAILS • REBOND",       "salon", None),
+    "far_loft_ph_10":     ("board",    "ANDRES LECHON",           "LECHON MANOK • LIEMPO",       "lechon manok", None),
+    "far_shophouse_11":   ("letters",  "CELY'S VARIETY STORE",    None,                          "variety", None),
+    "far_shophouse_12":   ("lightbox", "NENITA RICE DEALER",      "BIGAS • ASUKAL • MANTIKA",    "rice", "N"),
+    "far_glassmid_13":    ("board",    "RENZ PISONET",            "INTERNET • GAMING • PRINT",   "internet", "RZ"),
+    "far_loft_14":        ("letters",  "ALING TESS MERIENDA",     None,                          "merienda", "icon"),
+    "far_glassmid_15":    ("lightbox", "ROSING'S TAILORING",      "DAMIT • UNIPORME • ALTERASYON", "tailor", "icon"),
+    "far_loft_16":        ("board",    "TAPSI NI KUYA ED",        "OPEN 24 HRS",                 "tapsilog", "icon"),
+    "far_stucco_17":      ("letters",  "FARMACIA ESPERANZA",      None,                          "pharmacy", None),
+    "far_loft_18":        ("lightbox", "BULA LAUNDRY SHOP",       "WASH • DRY • FOLD",           "laundry", None),
+    "far_glassmid_19":    ("board",    "TITA ROSE CAKES",         "BIRTHDAY • BINYAG • KASAL",   "cakes", "icon"),
+    "far_shophouse_20":   ("letters",  "KUSINA NI ELVIE",         None,                          "eatery", "icon"),
+    "far_loft_21":        ("lightbox", "ASO'T PUSA PET SUPPLY",   "DOG FOOD • CAT FOOD • VITAMINS", "pet supply", None),
+    "far_shophouse_22":   ("board",    "SUKI STORE",              "YELO • LOAD • SOFTDRINKS",    "sari-sari", None),
+    "far_loft_23":        ("letters",  "PARES NI MANG CARDING",   None,                          "pares", "icon"),
+}
+# The brick corner's small painted board over its corner door (1.6 x 0.5 m, built blank in
+# author_kanto_models.brick_corner). Too small for a trade line, so a name and a year.
+DOOR_PLATE = ("AMIHAN", "CAFÉ • EST. 1948")
+
+# The picture on a shop's hanging sign, by trade, when there is an obvious one. A trade with
+# no picture takes a monogram in the table instead.
+SHOP_ICON = {"bakery": "bread", "cakes": "bread", "coffee": "cup", "milk tea": "cup", "buko": "cup",
+             "halo-halo": "cup", "merienda": "cup", "pharmacy": "mortar", "barber": "scissors",
+             "tailor": "scissors", "lugaw": "bowl", "eatery": "bowl", "siomai": "bowl",
+             "panciteria": "bowl", "tapsilog": "bowl", "pares": "bowl"}
 
 # New materials, linear RGB. Reused from the kit instead of added: "sign" (yellow), "wood",
 # "metal" (steel frame), "white", "frame" (cream). Every hue here was checked against the two
@@ -201,7 +280,7 @@ def _font(key):
     return None   # Blender's built-in font
 
 
-def _font_mesh(body, size, extrude, bevel, font):
+def _font_mesh(body, size, extrude, bevel, font, res=5):
     cu = bpy.data.curves.new("sign_text", type="FONT")
     cu.body = body
     if font is not None:
@@ -211,7 +290,7 @@ def _font_mesh(body, size, extrude, bevel, font):
     cu.space_line = 0.95
     cu.extrude = extrude
     cu.bevel_depth, cu.bevel_resolution = bevel, 1
-    cu.resolution_u = 5
+    cu.resolution_u = res
     ob = bpy.data.objects.new("sign_text_tmp", cu)
     bpy.context.scene.collection.objects.link(ob)
     bpy.context.view_layer.update()
@@ -237,9 +316,10 @@ def _two_lines(text):
 
 
 def text(buf, body, box_w, box_h, cx, cy, z_back, mat, extrude=0.01, bevel=0.005,
-         font="bold", lines=2, anchor="center"):
+         font="bold", lines=2, anchor="center", res=5):
     """Words fitted into a box on the flat frame's XY plane, standing from z_back towards +Z.
-    anchor "bottom" puts the letters' feet on cy (for letters standing on a rail).
+    anchor "bottom" puts the letters' feet on cy (for letters standing on a rail). `res` is
+    the curve resolution of each glyph outline (see _name_and_tagline for why names use less).
     Returns the fitted (width, height)."""
     fnt = _font(font)
     options = [body]
@@ -255,7 +335,7 @@ def text(buf, body, box_w, box_h, cx, cy, z_back, mat, extrude=0.01, bevel=0.005
         if best is None or s > best[0] * 1.15:
             best = (s, opt)
     s, opt = best
-    me = _font_mesh(opt, s, extrude, bevel, fnt)
+    me = _font_mesh(opt, s, extrude, bevel, fnt, res)
     x0, x1, y0, y1, z0, _ = _bounds(me)
     oy = (cy - y0) if anchor == "bottom" else cy - (y0 + y1) / 2
     off = Vector((cx - (x0 + x1) / 2, oy, z_back - z0))
@@ -403,12 +483,59 @@ ICONS = {"bread": icon_bread, "cup": icon_cup, "mortar": icon_mortar, "scissors"
 
 # ------------------------------------------------------------------ fascia
 
-def fascia_sign(dest, text_, width, style="board", seed=0, at=None):
+FITS = []   # (name, style, board width, fitted name height, fitted tagline height): --sheet prints it
+
+
+def _fitted_height(text_, box_w, box_h, font, lines):
+    """The letter height text() would fit, without building anything: the fit is what the
+    legibility rule (0.3 m letters across a 10 m road) is measured on. For two lines it is the
+    height of one line."""
+    fnt = _font(font)
+    best = None
+    for opt in [text_] + ([_two_lines(text_)] if lines >= 2 and " " in text_.strip() else []):
+        me = _font_mesh(opt, 1.0, 0.0, 0.0, fnt)
+        x0, x1, y0, y1, *_ = _bounds(me)
+        bpy.data.meshes.remove(me)
+        s = min(box_w / (x1 - x0), box_h / (y1 - y0))
+        if best is None or s > best[0] * 1.15:
+            best = (s, (y1 - y0) * s / (opt.count("\n") + 1))
+    return best[1]
+
+
+def _name_and_tagline(words, text_, tagline, box_w, box_h, cy, z_back, mat, font, extrude, bevel):
+    """The name, or the name over a small tagline, inside one box. The name keeps 62 per cent
+    of the height and the tagline 26 (in Arial Black, which holds up small better than
+    Impact), the rest is the gap: the name is what reads from across the road, the tagline is
+    for whoever stands at the door, the way a real board carries "WASH • DRY • FOLD" under it.
+    Returns the fitted (name, tagline) letter heights."""
+    # ⚠️ GLYPH DETAIL IS BUDGETED (measured 2026-09-27). Hand-named signs carry three times the
+    # letters of the old one-word labels, and at the old 5 steps per curve with a bevelled
+    # tagline the 41 signed models grew from 70.6 to 96.6 MB of .glb (far_stucco_06 went from
+    # 2,916 to 15,638 faces). A 0.3 m name needs no more than 3 steps per curve to look round;
+    # a 0.12 m tagline gets 2 and no bevel, which nobody can see at that size. With this the
+    # same 41 models measure 76.1 MB and far_stucco_06 6,733 faces (signage_sheet_*_v2 shows
+    # the letters are still round).
+    if tagline is None:
+        text(words, text_, box_w, box_h, 0, cy, z_back, mat, extrude=extrude, bevel=bevel, font=font, res=3)
+        return _fitted_height(text_, box_w - 2 * bevel, box_h - 2 * bevel, font, 2), 0.0
+    name_h, tag_h = box_h * 0.62, box_h * 0.26
+    top = cy + box_h / 2
+    text(words, text_, box_w, name_h, 0, top - name_h / 2, z_back, mat, extrude=extrude, bevel=bevel,
+         font=font, lines=1, res=3)
+    text(words, tagline, box_w * 0.86, tag_h, 0, cy - box_h / 2 + tag_h / 2, z_back, mat,
+         extrude=extrude, bevel=0.0, font="bold", lines=1, res=2)
+    return (_fitted_height(text_, box_w - 2 * bevel, name_h - 2 * bevel, font, 1),
+            _fitted_height(tagline, box_w * 0.86, tag_h, "bold", 1))
+
+
+def fascia_sign(dest, text_, width, style="board", seed=0, at=None, tagline=None):
     """A shop-name board. Face along +Y, bottom centre at the origin on the wall (y = 0); see
-    the module docstring. Returns the new objects (an empty list when merging into a Buf)."""
+    the module docstring. `tagline` is a small second line under the name ("board" and
+    "lightbox" only). Returns the new objects (an empty list when merging into a Buf)."""
     rng = random.Random(seed)
     at = at if at is not None else Matrix.Identity(4)
     body, words, finish = _targets(dest, "sign_" + _slug(text_), bevel=0.014)
+    fit = (0.0, 0.0)
     if style == "board":
         H, r = 0.85, 0.17
         board_c, text_c, rim_c = BOARD_COMBOS[rng.randrange(len(BOARD_COMBOS))]
@@ -424,13 +551,19 @@ def fascia_sign(dest, text_, width, style="board", seed=0, at=None):
             for side in (-1, 1):
                 body.cylinder(Vector((side * (width / 2 - 0.09), cy, 0.17)), 0.04, 0.035, "sign_iron", sides=12)
         with _Frame(words, at), _Frame(words, FACE_Y):
-            text(words, text_, width - 0.46, H - 0.4, 0, cy, 0.105, text_c, extrude=0.01, bevel=0.006)
+            # With a tagline the box grows 5 cm (0.45 to 0.50 m): the planks inside the rim are
+            # 0.57 m tall, so it still clears the rim by 3.5 cm top and bottom.
+            fit = _name_and_tagline(words, text_, tagline, width - 0.46, H - (0.35 if tagline else 0.4), cy,
+                                    0.105, text_c, "bold", 0.01, 0.006)
     elif style == "letters":
+        if tagline:
+            raise ValueError(f"{text_!r}: raised letters stand on a rail in one line; no tagline")
         colour = LETTER_COLOURS[rng.randrange(len(LETTER_COLOURS))]
         rail_h = 0.09
         with _Frame(words, at), _Frame(words, FACE_Y):
             tw, _ = text(words, text_, width * 0.94, 0.6, 0, rail_h - 0.02, 0.03, colour, extrude=0.03,
-                         bevel=0.01, lines=1, anchor="bottom")
+                         bevel=0.01, lines=1, anchor="bottom", res=3)
+        fit = (_fitted_height(text_, width * 0.94 - 0.02, 0.58, "bold", 1), 0.0)
         with _Frame(body, at), _Frame(body, FACE_Y):
             body.prism(rrect(0, rail_h / 2, tw + 0.3, rail_h, 0.035), -0.02, 0.15, "sign_iron")
             for side in (-1, 1):   # end caps, a touch of colour on the iron
@@ -448,11 +581,50 @@ def fascia_sign(dest, text_, width, style="board", seed=0, at=None):
             body.prism(rrect(0, 0.02, width - 0.06, 0.07, 0.03), -0.02, 0.27, cap_c)
             body.prism(rrect(0, face_cy, width - 0.44, face_h, 0.05), 0.2, 0.255, "sign_cream")
         with _Frame(words, at), _Frame(words, FACE_Y):
-            text(words, text_, width - 0.62, face_h - 0.1, 0, face_cy, 0.245, text_c, extrude=0.008,
-                 bevel=0.005, font="tall")
+            fit = _name_and_tagline(words, text_, tagline, width - 0.62, face_h - 0.1, face_cy, 0.245, text_c,
+                                    "tall", 0.008, 0.005)
     else:
         raise ValueError(f"unknown fascia style {style!r}")
+    FITS.append((text_, style, width, *fit))
     return finish()
+
+
+def door_plate(dest, name, tagline, at, box_w=1.36, box_h=0.36, mat="sign_red"):
+    """Lettering only, for a board that already exists in a building's own mesh (the brick
+    corner's blank door board). `at` is a frame whose origin is the centre of the board's
+    face, columns (along the wall, out of it, up), like K.Facade.frame. The letters sink 5 mm
+    into the face and stand about 2 cm proud of it. Returns the new object in a list."""
+    if isinstance(dest, K.Buf):
+        raise TypeError("door_plate builds its own object; pass a collection")
+    words = K.Buf("sign_" + _slug(name) + "_text")
+    with _Frame(words, at @ Matrix.Translation((0, -0.005, 0))), _Frame(words, FACE_Y):
+        fit = _name_and_tagline(words, name, tagline, box_w, box_h, 0.0, 0.0, mat, "bold", 0.01, 0.004)
+    FITS.append((name, "plate", box_w, *fit))
+    t = words.finish(dest, bevel=0)
+    for p in t.data.polygons:
+        p.use_smooth = False
+    return [t]
+
+
+def blade_content(building):
+    """What a building's hanging sign shows (an icon name or a monogram), or None."""
+    _style, _name, _tag, trade, blade = SIGNS[building]
+    return SHOP_ICON[trade] if blade == "icon" else blade
+
+
+def shop_signs(dest, building, facade, w, ground, seed):
+    """The fascia board and (when the table gives one) the hanging blade sign of one building,
+    where the street has always carried them: the board centred over the shop, 1 m below the
+    first floor, 0.4 m out and up to 6.5 m wide; the blade 0.9 m along the front, 1.3 m above
+    the first floor. `seed` keeps each building's own board colours. Used by the building
+    itself (author_kanto_city.archetype) and by --resign alike. Returns the new objects."""
+    style, name, tagline, _trade, _blade = SIGNS[building]
+    objs = fascia_sign(dest, name, min(w * 0.72, 6.5), style, seed, at=facade.frame(w / 2, ground - 1.0, 0.40),
+                       tagline=tagline)
+    content = blade_content(building)
+    if content:
+        objs += blade_sign(dest, content, seed, at=facade.frame(0.9, ground + 1.3, 0.0))
+    return objs
 
 
 # ------------------------------------------------------------------ blade sign
@@ -662,11 +834,12 @@ def preview(version, design="halo"):
     col, mats = _scene()
     _test_wall(col, mats, 18, (-6.6, -2.2, 2.2, 6.6))
     up = Matrix.Translation
-    for i, (x, name, style) in enumerate(((-6.6, "SARI-SARI STORE", "board"), (-2.2, "PANADERIA", "letters"),
-                                          (2.2, "BOTIKA", "lightbox"), (6.6, "KARINDERYA", "board"))):
-        fascia_sign(col, name, 3.6, style, seed=i + 3, at=up((x, 0, 2.72)))
-    blade_sign(col, "PANADERIA", seed=1, at=up((-4.4, 0, 4.6)))
-    blade_sign(col, "BARBERO", seed=4, at=up((4.4, 0, 4.6)))
+    for i, (x, key) in enumerate(((-6.6, "far_shophouse_22"), (-2.2, "loft_brown_ph_4"),
+                                  (2.2, "far_loft_18"), (6.6, "shophouse_butter_4"))):
+        style, name, tagline, *_ = SIGNS[key]
+        fascia_sign(col, name, 3.6, style, seed=i + 3, at=up((x, 0, 2.72)), tagline=tagline)
+    blade_sign(col, "bakery", seed=1, at=up((-4.4, 0, 4.6)))
+    blade_sign(col, "barber", seed=4, at=up((4.4, 0, 4.6)))
     billboard(col, seed=0, design=design, at=up((0, -1.0, 7.0)))
     eye_lens = 18 / math.tan(math.radians(47.5))   # the game's 95 degree horizontal view
     _render((("front", (0, 28, 6.6), (0, 0, 6.6), 45),
@@ -676,16 +849,18 @@ def preview(version, design="halo"):
 
 
 def zoo(version):
-    """Everything at once, for checking: every shop name, every icon, every billboard design.
-    Blade signs are turned to face the camera here; on a street they face along it."""
+    """Everything at once, for checking: sixteen of the shop names at a common 4.2 m, every
+    icon, every billboard design. Blade signs are turned to face the camera here; on a street
+    they face along it. `--sheet` is the one that shows every real sign at its real size."""
     col, mats = _scene()
     xs = [-17.5 + 5 * i for i in range(8)]
     _test_wall(col, mats, 42, xs)
     up = Matrix.Translation
     styles = ("board", "letters", "lightbox")
-    for i, name in enumerate(SHOP_NAMES):
+    for i, (_style, name, tagline, *_) in enumerate(list(SIGNS.values())[:16]):
         x, z = xs[i % 8], 2.72 if i < 8 else 5.2
-        fascia_sign(col, name, 4.2, styles[i % 3], seed=i, at=up((x, 0, z)))
+        style = styles[i % 3]
+        fascia_sign(col, name, 4.2, style, seed=i, at=up((x, 0, z)), tagline=None if style == "letters" else tagline)
     turn = Matrix.Rotation(math.radians(90), 4, "Z")
     for i, content in enumerate(list(ICONS) + ["TP"]):
         blade_sign(col, content, seed=i, at=up((-15 + 5 * i, 1.6, 4.6)) @ turn)
@@ -696,6 +871,58 @@ def zoo(version):
              ("zoo_boards", (0, 30, 13), (0, 0, 10), 40)), version)
 
 
+def _street_rows():
+    """building -> (front width, seed) for every building that carries a sign, read from the
+    city script so the sheet is built at the sizes and colours the street uses."""
+    import author_kanto_city as C
+    return {r[0]: (r[2], r[5]) for r in C.PARKSIDE + C.TERMINI + C.FILLERS}
+
+
+def sheet(version):
+    """EVERY SIGN THE CITY PLACES, AT ITS REAL WIDTH, STYLE AND COLOURS, readable on one wall
+    (added with the hand-named table, 2026-09-27): the city renders show a sign at street
+    distance, this shows that every name fits its board without being cramped or clipped.
+    Four columns in SIGNS order (park blocks first), ten rows; four close shots of 10 signs
+    each (sheet_a..d, about 33 px per 0.3 m letter), a shot at the game's eye from 11 m
+    (sheet_eye), then every blade sign on its own wall (sheet_blades). Prints each name's
+    fitted letter height and flags any under 0.28 m."""
+    rows = _street_rows()
+    col, mats = _scene()
+    FITS.clear()
+    xs = (-10.95, -3.65, 3.65, 10.95)
+    wall = K.Buf("sheet_wall")
+    box(wall, (0, -2, 8.0), (31, 4, 16), mats[0])
+    wall.finish(col, bevel=0.03)
+    ground = K.Buf("sheet_ground")
+    box(ground, (0, 8, -0.05), (60, 30, 0.1), mats[1])
+    ground.finish(col, bevel=0)
+    for i, (key, (style, name, tagline, *_)) in enumerate(SIGNS.items()):
+        w, seed = rows[key]
+        fascia_sign(col, name, min(w * 0.72, 6.5), style, seed,
+                    at=Matrix.Translation((xs[i % 4], 0, 1.0 + 1.45 * (9 - i // 4))), tagline=tagline)
+    plate = K.Buf("plate_board")   # the brick corner's door board, as built in its model
+    box(plate, (0, 0.06, 15.9 - 0.25), (1.6, 0.12, 0.5), "sign")
+    plate.finish(col, bevel=0.01)
+    door_plate(col, *DOOR_PLATE, at=Matrix.Translation((0, 0.12, 15.9 - 0.25)))
+    print("[signage] fitted letter heights (m), name / tagline:")
+    for name, style, width, h, th in FITS:
+        flag = "  <-- UNDER 0.28" if h < 0.28 and style != "plate" else ""
+        print(f"[signage] {name:28s} {style:8s} {width:4.2f} m  {h:.3f} / {th:.3f}{flag}")
+    eye_lens = 18 / math.tan(math.radians(47.5))
+    shots = [(f"sheet_{'abcd'[k]}", (x, 12.0, z), (x, 0, z), 27.9)
+             for k, (x, z) in enumerate(((-7.3, 11.6), (7.3, 11.6), (-7.3, 4.35), (7.3, 4.35)))]
+    shots.append(("sheet_eye", (0, 11.0, 1.25), (0, 0, 4.0), eye_lens))
+    _render(shots, version)
+    col, mats = _scene()
+    blades = [k for k in SIGNS if blade_content(k)]
+    _test_wall(col, mats, 20, ())
+    turn = Matrix.Rotation(math.radians(90), 4, "Z")
+    for i, key in enumerate(blades):
+        x, z = -8.25 + 1.5 * (i % 12), 5.9 if i < 12 else 3.9
+        blade_sign(col, blade_content(key), rows[key][1], at=Matrix.Translation((x, 1.6, z)) @ turn)
+    _render((("sheet_blades", (0, 14.0, 4.9), (0, 0, 4.9), 23),), version)
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     design = argv[argv.index("--design") + 1] if "--design" in argv else "halo"
@@ -703,6 +930,8 @@ def main():
         preview(int(argv[argv.index("--preview") + 1]), design)
     if "--zoo" in argv:
         zoo(int(argv[argv.index("--zoo") + 1]))
+    if "--sheet" in argv:
+        sheet(int(argv[argv.index("--sheet") + 1]))
 
 
 if __name__ == "__main__":
