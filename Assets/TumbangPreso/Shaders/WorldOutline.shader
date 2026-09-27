@@ -828,7 +828,9 @@ Shader "TumbangPreso/WorldOutline"
                 // Every map with AO had it; Kanto's even, bright court made it obvious. The guard
                 // itself stands (nothing nearer is trusted); the occlusion now ramps in over the
                 // next 1.8 m, so the boundary has no edge.
-                ao=lerp(1,ao,smoothstep(_WorldAOParams.w,_WorldAOParams.w*2,-p.z));
+                // (The gate is 0 on maps with no near-fade prop at the lens: the ramp's end is kept
+                // off its start so smoothstep never divides by zero.)
+                ao=lerp(1,ao,smoothstep(_WorldAOParams.w,max(_WorldAOParams.w*2,_WorldAOParams.w+.01),-p.z));
                 return half4(ao,ao,ao,1);
             }
             ENDCG

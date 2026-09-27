@@ -462,6 +462,32 @@ namespace TumbangPreso.Visual
         // `FindObjectsByType<Renderer>` per second over roughly 450 renderers, which is cheap
         // enough to prototype behind and too rude to ship.
 
+        /// <summary>
+        /// ⚠️⚠️ THE AO NEAR GATE IS ON ONLY WHILE A NEAR-FADE PROP IS AT THE LENS (owner,
+        /// 2026-09-27, on Kanto: "i still see it. do we need the ao gate?"). The gate (the
+        /// shaders ignore every pixel nearer than NearFade.FadeStartMetres) exists for ONE fault:
+        /// a NearFade prop you stand beside (Ilalim's LRT pillars) dissolves in the colour pass
+        /// but lands in the depth-normals prepass as a solid wall at the lens, and the AO read the
+        /// whole frame as occluded. Always on, it drew a screen-wide line wherever a flat floor
+        /// crossed 1.8 m, on every map. It now returns the guard distance only while one of the
+        /// near-fade renderers found by Rescan is within the guard (plus a metre) of the camera,
+        /// and 0 otherwise, so maps with no near-fade props (Kanto, the Lagoon Cove) never gate.
+        /// </summary>
+        private float NearGuard()
+        {
+            if (_camera == null || _nearFade.Count == 0) return 0f;
+            var eye = _camera.transform.position;
+            float reach = NearFade.FadeStartMetres + 1f;
+            foreach (var item in _nearFade)
+            {
+                var r = item.Renderer;
+                if (r == null || !r.enabled) continue;
+                var bounds = item.Stationary ? item.Bounds : r.bounds;
+                if (bounds.SqrDistance(eye) < reach * reach) return NearFade.FadeStartMetres;
+            }
+            return 0f;
+        }
+
         private void Rescan()
         {
             _excluded.Clear();_nearFade.Clear();
@@ -919,7 +945,7 @@ namespace TumbangPreso.Visual
                 var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8)?RenderTextureFormat.R8:RenderTextureFormat.ARGB32;
                 occlusion=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
                 occlusionBlur=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
-                _material.SetVector(WorldAOParamsId,new Vector4(aoStrength,WorldLookProfile.Current.AmbientOcclusionRadius,.03f,NearFade.FadeStartMetres));
+                _material.SetVector(WorldAOParamsId,new Vector4(aoStrength,WorldLookProfile.Current.AmbientOcclusionRadius,.03f,NearGuard()));
                 Graphics.Blit(source,occlusion,_material,AmbientOcclusionPass);
                 Graphics.Blit(occlusion,occlusionBlur,_material,AmbientOcclusionBlurPass);
                 _material.SetTexture(WorldAOId,occlusionBlur);
@@ -927,7 +953,7 @@ namespace TumbangPreso.Visual
             else
             {
                 // w still carries the near-fade guard: the ground occlusion reads it with AO off.
-                _material.SetVector(WorldAOParamsId,new Vector4(0,0,0,NearFade.FadeStartMetres));
+                _material.SetVector(WorldAOParamsId,new Vector4(0,0,0,NearGuard()));
                 _material.SetTexture(WorldAOId,Texture2D.whiteTexture);
             }
             _material.SetTexture(MainTexId, source);
