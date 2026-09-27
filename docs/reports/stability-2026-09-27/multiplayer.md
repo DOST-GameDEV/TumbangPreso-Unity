@@ -1,5 +1,34 @@
 # Multiplayer investigation, 2026-09-27
 
+## Remote stamina clock
+
+Base `8e20a495`,protocol68. CharacterMotor's remote-body FixedUpdate branch returned
+before Stamina.StepFatigue/Step. Only edge recovery had its own remote resource tick.
+The host spends remote shove/slide stamina and sends its resource values back with
+accepted poses,but did not regenerate it or expire fatigue on ordinary remote bodies.
+
+The host now advances those same pure resource clocks without moving the replica.
+Spare effort bits carry the owner's movement/sprint intent only after its pose,
+ownership,epoch and flight gates accept. A0.5s lease stops abandoned held input;
+epoch changes clear it. Current host movement/fear/concussion states apply the same
+resource eligibility as local simulation. Observing clients do not simulate this
+authority path; existing edge recovery does not tick twice. No extra message/byte,
+no map/animation change and no tuning to stamina prices,rates or fatigue duration.
+
+Separately,ApplyNetworkSnapshot always cleared IsSprinting,turning every correction
+below the sprint-start floor into a forced release. It now preserves an already
+running sprint only while stamina is positive and not fatigued. A real input release
+still clears it and a later restart still requires the existing floor.
+
+Two NEW filtered Core tests ran:2executed,2passed,0failed (TRX inspected),covering
+continuation/release/restart and empty/fatigue corrections. Core,Runtime,Editor,
+Tests and PlayTests compile on116frozen inputs (10changed).
+[Receipt](checks/network-stamina-compile.json). A new native case exercises the real
+remote FixedUpdate branch,fatigue recovery,drain,unchanged pose,epoch/lease cleanup
+and observer non-simulation; it is NOT RUN under the existing native disk boundary.
+No old suite/film repeated. Real ranked/casual resource behavior remains unqualified;
+this does not close QA-15 or the separate per-request verb-refund work.
+
 ## Ordinary action scope
 
 Base `ce0edc7a`,protocol67. Ordinary requests only named the current seat/intent.

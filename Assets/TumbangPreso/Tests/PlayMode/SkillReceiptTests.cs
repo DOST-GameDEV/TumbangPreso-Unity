@@ -37,6 +37,14 @@ namespace TumbangPreso.PlayTests
             public int LocalPeerId => 1;
             public bool IsSeatlessReferee => false;
         }
+        private sealed class ObservingHost : INetProvider
+        {
+            public bool IsHost => true;
+            public bool IsNetworked => true;
+            public int LocalSlot => 0;
+            public int LocalPeerId => 0;
+            public bool IsSeatlessReferee => false;
+        }
         [UnitySetUp] public IEnumerator Before()
         { _provider = NetAuthority.Provider; yield return PlayModeWorld.Reset(); }
         [UnityTearDown] public IEnumerator After()
@@ -54,6 +62,44 @@ namespace TumbangPreso.PlayTests
             system.enabled = false; system.BindHero(hero);
             NetAuthority.Provider = new PredictingOwner();
             return system;
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator RemoteHostResourceClocksRecoverAndDrainWithoutMovingTheReplica()
+        {
+            var root = new GameObject("Remote resource clock");
+            var motor = root.AddComponent<CharacterMotor>(); motor.enabled = false;
+            motor.PlayerSlot = 2; motor.RoundActive = true;
+            NetAuthority.Provider = new ObservingHost();
+            Assert.IsFalse(motor.IsLocallySimulated());
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var tick = typeof(CharacterMotor).GetMethod("FixedUpdate", flags);
+            var position = root.transform.position;
+            motor.Stamina.Spend(Balance.StaminaMax);
+            Assert.IsTrue(motor.Stamina.IsFatigued);
+            for (int i = 0; i < 500; i++) tick.Invoke(motor, null);
+            Assert.IsFalse(motor.Stamina.IsFatigued);
+            Assert.AreEqual(0, motor.Stamina.SpeedZones.Count);
+            Assert.AreEqual(Balance.StaminaMax, motor.Stamina.Current, .01f);
+
+            motor.ApplyNetworkResourceIntent(6);
+            for (int i = 0; i < 10; i++) tick.Invoke(motor, null);
+            Assert.Less(motor.Stamina.Current, Balance.StaminaMax);
+            Assert.AreEqual(position, root.transform.position, "Resource authority must not simulate a second body movement.");
+            float spent = motor.Stamina.Current;
+            motor.AdoptMovementEpoch(motor.MovementEpoch + 1);
+            tick.Invoke(motor, null);
+            Assert.AreEqual(spent, motor.Stamina.Current, .01f, "Old movement intent survived the new body epoch.");
+            motor.ApplyNetworkResourceIntent(6);
+            typeof(CharacterMotor).GetField("_netResourceIntentUntil", flags).SetValue(motor, Time.unscaledTime - 1);
+            tick.Invoke(motor, null);
+            Assert.AreEqual(spent, motor.Stamina.Current, .01f, "A stale pose kept draining stamina indefinitely.");
+
+            NetAuthority.Provider = new PredictingOwner();
+            for (int i = 0; i < 100; i++) tick.Invoke(motor, null);
+            Assert.AreEqual(spent, motor.Stamina.Current, .01f, "An observing client simulated host-owned resource clocks.");
+            Object.Destroy(root);
+            yield return null;
         }
 
         [UnityTest, Timeout(30000)]

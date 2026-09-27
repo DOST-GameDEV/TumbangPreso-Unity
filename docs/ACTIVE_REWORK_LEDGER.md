@@ -1,19 +1,20 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`ce0edc7aace9e62497e4626979040d26b138fd17`; ordinary-action scope unit follows it.
+`8e20a49531680d2c40748b21187a2ed479860bd1`; remote stamina unit follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-Protocol67 gives ordinary punch/lunge/slide/shove/grab/throw/reset requests a shared
-match/round/body-epoch scope. Refusals,body actions and charge tells use it too;
-old-context messages cannot act on or roll back a new round. Existing ownership,
-gameplay eligibility and ranked rules stay unchanged. Bounded exact tails and
-action names reject malformed messages before effects. Four assemblies compile;
-one new pure scope check passes. Native codec/charge and actual peers remain OPEN.
-[Evidence](reports/stability-2026-09-27/multiplayer.md#ordinary-action-scope).
+Protocol68 carries move/sprint intent in spare accepted-pose effort bits. The host
+advances remote stamina/fatigue independently of movement simulation; stale input
+expires and body epochs clear it. Previously remote-body early return froze those
+resource clocks while their stale values were echoed to the owner. Resource
+snapshots now preserve an existing held sprint below its start floor; empty/fatigue
+still end it. Two focused Core cases pass; Core plus four Unity assemblies compile.
+Native remote-clock and real-peer checks remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#remote-stamina-clock).
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -24,6 +25,7 @@ and current owner reservations after resuming.
 
 | Revision | Change | Evidence boundary |
 |---|---|---|
+| 8e20a495 | Ordinary action/request/refusal/charge context scoping | Four assemblies compile; one new pure case passes; native/peer cases pending |
 | ce0edc7a | Current docs/routes,whole history archives and conservative generated-media cleanup |33active docs link-check clear;55root docs cataloged;9historical bodies preserved |
 | 9535fc21 | Login field messages persist; field-only error pulse; pair-credential error clears when either input changes | Four assemblies compile; dedicated native/sound/visual case pending |
 | 55aca6cb | Async roster portrait/mode-card preload and one shared retained cache | Four assemblies compile; native cache/first-use timing pending |
@@ -32,7 +34,7 @@ and current owner reservations after resuming.
 | 9a44be97 | Ranked/casual compatibility/capacity filtering and failed-allocation backoff/retry | Three managed checks and compile; live queue/party/results pending |
 | b7d26bcf | Prepared recovery integrated with incoming Phaister rework; screen-effect lifecycle cleanup | Frozen merged source compiles; native/peers pending |
 
-Current protocol is defined by NetSession.cs, now67. Matching clients are required.
+Current protocol is defined by NetSession.cs, now68. Matching clients are required.
 The prior full ledger, including every older feature, contributor record, source
 revision and receipt, remains in [the dated snapshot](archive/snapshots-2026-09-27/docs/ACTIVE_REWORK_LEDGER.md).
 
@@ -64,9 +66,11 @@ before tests; repeated launches at unchanged headroom are not justified. Current
 direct Roslyn checks compile Runtime,Editor,Tests and PlayTests but do not run native
 lifecycle,rendering,IL postprocessing,actual peers or a player build.
 
-Latest frozen implementation candidate:110 source/dependency inputs,9changed for action scope.
-All four assemblies compiled; compiler session58483 ended. One new managed scope case passes.
-Receipts: [action scope](reports/stability-2026-09-27/checks/action-scope-managed.json),
+Latest frozen implementation candidate:116 source/dependency inputs,10changed for stamina.
+Core plus all four Unity assemblies compiled; compiler session10705 ended. Two new
+Core tests pass (2executed,0failed). Receipts:
+[stamina](reports/stability-2026-09-27/checks/network-stamina-compile.json),
+[action scope](reports/stability-2026-09-27/checks/action-scope-managed.json),
 [login](reports/stability-2026-09-27/checks/login-feedback-compile.json),
 [portrait preload](reports/stability-2026-09-27/checks/menu-portraits-compile.json),
 [menu activation](reports/stability-2026-09-27/checks/menu-activation-compile.json),

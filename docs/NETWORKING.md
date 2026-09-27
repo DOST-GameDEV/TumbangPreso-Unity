@@ -17,6 +17,7 @@ Runtime files below are in `Assets/TumbangPreso/Runtime/`.
 | Skill identity/authority | Abilities/HeroAbility.cs,AbilityNetworking,HeroAbilitySystem; Net/SkillCastMessage.cs. Stable IDs and explicit initial/command intent,not temporary art names. |
 | Prediction and delayed bodies | HeroAbilitySystem.SkillReceipts,MatchRpc.SkillReceipts,MatchRpc.SkillDelivery. Independent effect receipts,ordered bounded delivery and recovery are not interchangeable. |
 | Body-held aiming | HeroAbilitySystem.AimReplication,Net/AbilityAimSnapshot,CharacterAnimator.AimPose. Private target guidance stays local; body tells are shared presentation only. |
+| Remote resources | CharacterMotor.NetworkStamina advances host resource clocks from accepted pose intent without a second movement simulation. Input leases/epochs bound it; Stamina resource corrections preserve held-sprint continuation. |
 | Ultimate cutscene/preparation | SharedUltimatePhase,HeroAbilitySystem.SharedUltimate,MatchRpc.UltimatePhase. One accepted cohort controls hold/handback; do not duplicate gameplay on observers. |
 | Persistent recovery | WorldSnapshotHeader,PreparedWorldSnapshot,HeroAbilitySystem.WorldRecovery,IPreparedWorldReplication,IWorldEffectBinding,ITimedKitReplication. Restore state at elapsed simulation time; do not recast. |
 | Compatibility | Net/SkillContractFingerprint and NetSession.ProtocolVersion. Fingerprints exclude cosmetic files,but semantic/wire changes still need explicit versioning. |

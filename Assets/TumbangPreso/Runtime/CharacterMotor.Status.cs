@@ -183,8 +183,8 @@ namespace TumbangPreso
             _netPullProgress = float.IsNaN(pullProgress) ? 0f : Mathf.Clamp01(pullProgress);
         }
 
-        /// <summary>The struggle and the pull packed for the wire: bit 0 struggling, then the pull in 255ths.</summary>
-        public byte EffortFlags => (byte)(IsStruggling ? 1 : 0);
+        /// <summary>Bit0 struggle,bit1 movement input,bit2 sprint input; pull is separate in255ths.</summary>
+        public byte EffortFlags => (byte)((IsStruggling ? 1 : 0) | ResourceIntentFlags);
         public byte PullWire => (byte)Mathf.RoundToInt(PullingPlantProgress * 255f);
 
         /// <summary>

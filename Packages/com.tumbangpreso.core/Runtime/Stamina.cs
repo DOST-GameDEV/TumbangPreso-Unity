@@ -107,7 +107,9 @@ namespace TumbangPreso.Core
             _current = System.Math.Clamp(current, 0.0f, Balance.StaminaMax);
             _idle = System.Math.Max(0.0f, idle);
             _fatigueLeft = System.Math.Clamp(fatigueLeft, 0.0f, Balance.FatigueTime);
-            _isSprinting = false;
+            // A resource correction is not a release of the owner's sprint key.
+            // Preserve continuation below the start floor; empty/fatigue still stop it.
+            _isSprinting = _isSprinting && _current > 0 && !willBeFatigued;
         }
 
         /// <summary>

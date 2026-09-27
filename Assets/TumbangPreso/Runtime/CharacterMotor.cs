@@ -429,6 +429,7 @@ namespace TumbangPreso
         public void AdoptMovementEpoch(int epoch)
         {
             if(epoch<=MovementEpoch)return;
+            ClearNetworkResourceIntent();
             InvalidateFlightEpisode();
             MovementEpoch=epoch;_awaitingTeleport=false;_teleportAbility=-1;
         }
@@ -810,6 +811,7 @@ namespace TumbangPreso
             // visibly bob and fight itself, and it made bots look worse than human peers.
             if (NetAuthority.IsNetworked && !IsLocallySimulated())
             {
+                StepRemoteStamina(dt);
                 StepNetworkReplica(dt);
                 return;
             }

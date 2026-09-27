@@ -492,7 +492,9 @@ namespace TumbangPreso.Net
         // commits close the matching hold token without cancelling a newer hold.
         // 67: ordinary action requests,refusals,body actions and charge tells
         // carry match/round/body-epoch scope; charge kind is always explicit.
-        public const int ProtocolVersion = 67;
+        // 68: accepted pose effort bits carry movement/sprint intent so the host
+        // advances remote resource clocks without simulating the remote body.
+        public const int ProtocolVersion = 68;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

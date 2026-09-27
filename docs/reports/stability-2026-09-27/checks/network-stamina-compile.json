@@ -1,0 +1,61 @@
+{
+  "base": "8e20a49531680d2c40748b21187a2ed479860bd1",
+  "compiler": "Core, Runtime, Editor, Tests and PlayTests exit0",
+  "coreTests": [
+    {
+      "testName": "TumbangPreso.Core.Tests.BalanceTests.NetworkStaminaEmptyOrFatiguedCorrectionStillEndsSprint",
+      "outcome": "Passed",
+      "duration": "00:00:00.1587463"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.BalanceTests.NetworkStaminaCorrectionPreservesAnExistingSprintBelowTheStartFloor",
+      "outcome": "Passed",
+      "duration": "00:00:00.0020309"
+    }
+  ],
+  "nativeTests": "NOT RUN: existing disk reserve boundary; no repeated editor launch",
+  "runtimeAssemblySha256": "E2EADCD1AEA961936E55435457D45DC8A4A1204A23358D8A5E69C17DB01860B1",
+  "coreAssemblySha256": "ECE4E0E1BAE9E4DFB6A106916544C3027D0A06ED42368EB87B096970D4296E4A",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.cs",
+      "sha256": "BED1DFE53EB25224BE2F8D94EA90645E8F0952522E234C9EEBFB72956CD12E53"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.NetworkStamina.cs",
+      "sha256": "0628DAA1979C2F4C628A6ED541DD3703E106915CD6A15A1A527D1B59065BCC9F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.NetworkStamina.cs.meta",
+      "sha256": "D875052F48D2A232B74C1EEAC09B6AF413FB8EF1FE948E0A75F7280C86C5D48F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.Status.cs",
+      "sha256": "6238D63918EAE8F239B1B810BFFA4314644393112D3CC76562AA2D85E699EDC0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "A74D526C14980E4620E51B40C46CEACA76D6322DC2288EA42907B2124EC7556E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "3FD116B31FC8760060F4BCEA4313B7EEDCC1FDF80C208BFA92A5598802B591FC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "F3FD14839687F2AE2F238DC948CAE6B8AD4D412373A574A922632E22DEEBC87E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "BF0B05487F65280E34750FC90C65FF67C62E29A98F5D5754B6F322BD30079976"
+    },
+    {
+      "path": "Core.Tests/BalanceTests.cs",
+      "sha256": "91767A251D419D0AC5B8FE9583AA0B4DE7DE2C73DF18432F644771702C9B1B0A"
+    },
+    {
+      "path": "Packages/com.tumbangpreso.core/Runtime/Stamina.cs",
+      "sha256": "506E61FD409E441A1CBC3724D61908DAC0C4FE4CD28E39EBD4D2E31184E81728"
+    }
+  ]
+}

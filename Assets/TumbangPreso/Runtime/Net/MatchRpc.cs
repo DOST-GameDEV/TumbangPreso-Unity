@@ -2390,6 +2390,7 @@ namespace TumbangPreso.Net
             }
 
             ApplyUnitMove(slot, pos, yaw, velocity, grounded, flightEpisode);
+            unit.ApplyNetworkResourceIntent(effort);
             unit.AbilitySystem?.ApplyNetworkAim(aim);
             SyncUnitTransformClientRpc(slot, pos, yaw, velocity);
         }
