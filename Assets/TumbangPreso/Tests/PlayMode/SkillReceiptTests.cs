@@ -65,6 +65,34 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(30000)]
+        public IEnumerator ReceivedFrozenStateOwnsOneRestraintWithoutCastingOrBlockingAfterThaw()
+        {
+            var system = Owner("sean");
+            var motor = system.GetComponent<CharacterMotor>(); motor.PlayerSlot = 2;
+            void Snapshot(float left) => motor.ApplyNetworkState(left, left, left > 0 ? StunElement.Ice : StunElement.None,
+                9, 0, 0, 0, 0, 0, 100, 0, 0);
+            Snapshot(1f);
+            yield return null;
+            var prison = HeroHazards.SpawnIceCubePrison(motor.transform, 1);
+            Assert.IsNotNull(prison);
+            Assert.AreSame(prison, HeroHazards.SpawnIceCubePrison(motor.transform, 1), "The host cast duplicated the body-owned status picture.");
+            Assert.IsEmpty(prison.GetComponentsInChildren<Collider>());
+            Snapshot(2f);
+            yield return new WaitForSeconds(1.1f);
+            Assert.IsTrue(prison != null, "The initial visual timer overruled a received status refresh.");
+            Snapshot(0);
+            yield return null; yield return null;
+            Assert.IsTrue(prison == null);
+            Assert.IsTrue(motor.CanMove(), "Thaw presentation mutated movement state.");
+            Snapshot(2f);
+            yield return null;
+            prison = HeroHazards.SpawnIceCubePrison(motor.transform, 2);
+            motor.gameObject.SetActive(false);
+            yield return null;
+            Assert.IsTrue(prison == null, "Disabling a body left its restraint in the world.");
+        }
+
+        [UnityTest, Timeout(30000)]
         public IEnumerator NetworkVerbRefusalDoesNotAddRefundToAnAuthoritativePool()
         {
             var owner = Owner("dante");

@@ -63,6 +63,13 @@ world collections use WorldEffectSnapshot; their broader extensibility is still 
 
 ## Compatibility And Checks
 
+Persistent status pictures belong to a body-owned presenter reading replicated
+status,not exclusively inside a host-only victim loop. StatusBodyMarks and
+PhaisterStatusPresenter are current examples. Joining peers need no replayed hit.
+Make spawn idempotent,follow refreshed live status and clean up on disable/despawn.
+When every peer presents a status,play its local cue once; do not relay it again.
+Missing presentation assets must not keep allocating or obstruct gameplay outcomes.
+
 The connection fingerprint includes stable identity,recovery capability,shared
 skill metadata and intro durations. It excludes cosmetic data,live timers and
 current role. Effect-internal rules and arbitrary code are not automatically hashed;

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Rendering;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace TumbangPreso.Visual
 {
@@ -7,10 +9,27 @@ namespace TumbangPreso.Visual
     public static class CheskaIceVisuals
     {
         private static readonly Color Ice = new Color(.23f,.62f,.73f,.72f);
+        private static readonly string[] WallMeshes = { "wall_left", "wall_center", "wall_right" };
+        private static readonly Dictionary<string, Mesh> Meshes = new Dictionary<string, Mesh>();
+
+        public static IEnumerator Warmup()
+        {
+            foreach (string name in WallMeshes) yield return WarmMesh(name);
+            yield return WarmMesh("thaw_shard");
+        }
+
+        private static IEnumerator WarmMesh(string name)
+        {
+            if (Meshes.TryGetValue(name, out var known) && known != null) yield break;
+            var load = Resources.LoadAsync<Mesh>("Models/CheskaIce/" + name);
+            yield return load;
+            if (load.asset is Mesh mesh) Meshes[name] = mesh;
+        }
 
         public static GameObject Piece(Transform parent, string name, string meshName, Color color)
         {
-            var mesh = Resources.Load<Mesh>("Models/CheskaIce/" + meshName);
+            if (!Meshes.TryGetValue(meshName, out var mesh) || mesh == null)
+                Meshes[meshName] = mesh = Resources.Load<Mesh>("Models/CheskaIce/" + meshName);
             if (mesh == null) throw new System.InvalidOperationException("Missing Cheska ice mesh: " + meshName);
             var go = new GameObject(name);
             go.transform.SetParent(parent,false);
@@ -24,11 +43,10 @@ namespace TumbangPreso.Visual
 
         public static void BuildWall(Transform parent, float span, float thickness, bool split = false, bool renderOnly = false)
         {
-            string[] meshes = { "wall_left", "wall_center", "wall_right" };
             for (int i=0;i<3;i++)
             {
                 if (split && i == 1) continue;
-                var slab = Piece(parent,"IcePillar_" + (i-1),meshes[i],Ice);
+                var slab = Piece(parent,"IcePillar_" + (i-1),WallMeshes[i],Ice);
                 slab.transform.localPosition = new Vector3((i-1)*.75f*span,0,0);
                 slab.transform.localScale = new Vector3(1,1,thickness);
                 // Anchor to the lowest supporting corner, so the base buries into a
@@ -113,6 +131,7 @@ namespace TumbangPreso.Visual
         public static void Shatter(Vector3 center, bool wall)
         {
             var root=new GameObject(wall?"BarricadeThaw":"RestraintThaw");root.transform.position=center;
+            Object.Destroy(root,.7f);
             int count=wall?8:5;
             for (int i=0;i<count;i++)
             {
@@ -124,7 +143,6 @@ namespace TumbangPreso.Visual
                 drift.Velocity=new Vector3(Mathf.Cos(angle)*1.1f,.8f+(i%3)*.15f,Mathf.Sin(angle)*1.1f);
                 drift.Spin=new Vector3(70+i*7,95-i*11,40);
             }
-            Object.Destroy(root,.7f);
         }
     }
 

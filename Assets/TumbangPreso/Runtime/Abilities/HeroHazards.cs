@@ -4213,17 +4213,29 @@ namespace TumbangPreso.Abilities
         public static GameObject SpawnIceCubePrison(Transform victim, float duration = 2.5f)
         {
             if (victim == null) return null;
+            if (victim.GetComponent<CharacterMotor>() != null)
+            {
+                var marks = victim.GetComponent<StatusBodyMarks>();
+                if (marks == null) marks = victim.gameObject.AddComponent<StatusBodyMarks>();
+                return marks.EnsureFrozenRestraint();
+            }
+            return CreateIceCubePrison(victim, duration);
+        }
 
+        internal static GameObject CreateIceCubePrison(Transform victim, float duration)
+        {
             var go = new GameObject("IceCubePrison");
-            go.transform.position = victim.position;
-            go.transform.rotation = victim.rotation;
-            CheskaIceVisuals.BuildRestraint(go.transform);
-
-            var comp = go.AddComponent<IceCubePrisonComponent>();
-            comp.Duration = duration;
-            comp.Victim = victim;
-
-            return go;
+            try
+            {
+                go.transform.position = victim.position;
+                go.transform.rotation = victim.rotation;
+                CheskaIceVisuals.BuildRestraint(go.transform);
+                var comp = go.AddComponent<IceCubePrisonComponent>();
+                comp.Duration = duration;
+                comp.Victim = victim;
+                return go;
+            }
+            catch { Object.Destroy(go); throw; }
         }
 
         public sealed class IceCubePrisonComponent : MonoBehaviour
@@ -4233,6 +4245,7 @@ namespace TumbangPreso.Abilities
             private float _left;
             private CharacterMotor _motor;
             private bool _shattered;
+            public bool Shattered => _shattered;
             private void Start()
             {
                 _left=Duration;
@@ -4245,16 +4258,22 @@ namespace TumbangPreso.Abilities
                 _left-=Time.deltaTime;
                 // Mash-out, immunity and a replaced status must release the visual
                 // restraint too; a fixed timer falsely showed escaped players frozen.
-                if (_left<=0 || (_motor != null && (!_motor.IsStunned || _motor.StunElement != StunElement.Ice)))
+                // Received refreshes can extend the same frozen episode. The body's
+                // current status owns its lifetime, not the timer of the first picture.
+                if (_motor != null ? !_motor.IsFrozen : _left <= 0)
                     Shatter();
             }
             public void Shatter()
             {
                 if (_shattered) return;
                 _shattered=true;
-                CheskaIceVisuals.Shatter(transform.position,false);
-                NetCue.PlayVaried("sfx_ice_shatter",transform.position,.98f,1.04f,.45f);
-                Object.Destroy(gameObject);
+                try
+                {
+                    CheskaIceVisuals.Shatter(transform.position,false);
+                    // This status picture now exists on every peer, including joiners.
+                    GameServices.Audio?.PlayAtVaried("sfx_ice_shatter",transform.position,.98f,1.04f,.45f);
+                }
+                finally { Object.Destroy(gameObject); }
             }
         }
 

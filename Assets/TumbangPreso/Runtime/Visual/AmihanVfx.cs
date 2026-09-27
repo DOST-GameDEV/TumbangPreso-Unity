@@ -651,20 +651,48 @@ namespace TumbangPreso.Visual
 
     /// <summary>
     /// Puts the right body tell on a body when it gains a status, on every peer. Added to every
-    /// `CharacterMotor` so a status needs no per-map wiring. Frozen and Tagged already have their
-    /// own tells (the ice coat, the caught mark), so only the two new statuses are drawn here.
+    /// `CharacterMotor` so received timers and joining snapshots need no original cast.
+    /// Frozen's existing restraint is body-owned too; Tagged keeps its caught mark.
     /// </summary>
     public sealed class StatusBodyMarks : MonoBehaviour
     {
         private CharacterMotor _body;
         private WhirledMark _whirled;
         private ChilledMark _chilled;
+        private Abilities.HeroHazards.IceCubePrisonComponent _frozen;
+        private bool _frozenPresentationFailed;
 
         private void Awake() => _body = GetComponent<CharacterMotor>();
+
+        public GameObject EnsureFrozenRestraint()
+        {
+            if (!isActiveAndEnabled || _body == null || !_body.IsFrozen) return null;
+            if (_frozen != null && !_frozen.Shattered) return _frozen.gameObject;
+            if (_frozenPresentationFailed) return null;
+            try
+            {
+                var visual = Abilities.HeroHazards.CreateIceCubePrison(_body.transform, _body.StunLeft);
+                _frozen = visual.GetComponent<Abilities.HeroHazards.IceCubePrisonComponent>();
+                return visual;
+            }
+            catch (System.Exception error)
+            {
+                // Missing/reworked presentation must not retry and allocate every frame.
+                _frozenPresentationFailed = true;
+                Debug.LogException(error);
+                return null;
+            }
+        }
 
         private void LateUpdate()
         {
             if (_body == null) return;
+            if (_body.IsFrozen) EnsureFrozenRestraint();
+            else
+            {
+                _frozenPresentationFailed = false;
+                if (_frozen != null) { _frozen.Shatter(); _frozen = null; }
+            }
             if (_body.IsWhirled && _whirled == null)
             {
                 _whirled = WhirledMark.Attach(_body);
@@ -677,6 +705,17 @@ namespace TumbangPreso.Visual
                 _chilled = ChilledMark.Attach(_body);
                 GameServices.Audio?.PlayAtVaried("sfx_status_chilled", _body.transform.position, 0.95f, 1.05f, 0.7f);
             }
+        }
+
+        private void OnDisable() => Clear();
+        private void OnDestroy() => Clear();
+        private void Clear()
+        {
+            if (_frozen != null) Destroy(_frozen.gameObject);
+            if (_whirled != null) Destroy(_whirled.gameObject);
+            if (_chilled != null) Destroy(_chilled.gameObject);
+            _frozen = null; _whirled = null; _chilled = null;
+            _frozenPresentationFailed = false;
         }
     }
 }

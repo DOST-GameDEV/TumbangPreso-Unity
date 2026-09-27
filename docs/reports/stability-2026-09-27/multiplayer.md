@@ -1,5 +1,31 @@
 # Multiplayer investigation, 2026-09-27
 
+## Received frozen presentation
+
+Base `a60d3f67`,protocol unchanged69. Existing ice restraints were spawned only in
+host-authoritative AbsoluteZero/Frostbite paths. Frozen status reached clients,but
+that status picture did not. StatusBodyMarks now owns the existing restraint from
+the body's live IsFrozen state on each peer,including received/rejoin state.
+Public host spawn calls route through the same idempotent owner. No extra RPC,
+victim decision,stun duration,mesh,colour or authored animation change.
+
+The restraint follows refreshed frozen state instead of expiring on its initial
+picture timer. Thaw shatters once; body disable/despawn silently cleans owned tells.
+Shatter audio is local per peer,not re-relayed. Partial construction cleans up,and
+a missing visual fails once per continuous freeze instead of allocating every
+frame. Shatter cleanup runs even if the thaw effect fails. The four existing ice
+meshes now preload asynchronously during boot and use a retained shared cache.
+
+Four assemblies compile on129frozen inputs (5changed),with unchanged Core reused.
+[Receipt](checks/frozen-presentation-compile.json). New native received-state case
+covers one restraint,refresh,thaw/movement,nocolliders and disable cleanup; NOT RUN
+under the existing native disk boundary. No unchanged film/suite repeated.
+
+QA-15 (Sean movement after Cheska ultimate) remains OPEN. Source inspection found
+ordinary stun expiry,no restraint colliders,root release before activation,and a
+reentrant hitstop guard; it did not reproduce that report or confirm its cause.
+This fixes a separate definite host-only presentation path,not a claimed QA-15 fix.
+
 ## Correlated combat refusals
 
 Base `99ce5338`,protocol69. World scope alone did not identify which same-round

@@ -529,6 +529,7 @@ namespace TumbangPreso.UI
                 AbilityIcons.For(glyph);
             yield return null;
             yield return Visual.VfxFlipbook.Warmup();
+            yield return Visual.CheskaIceVisuals.Warmup();
             yield return Visual.HeroPropAssets.Warmup(done =>
                 SetLoadingStage("loading ability props", Mathf.Lerp(0.61f, 0.66f, done)));
 
