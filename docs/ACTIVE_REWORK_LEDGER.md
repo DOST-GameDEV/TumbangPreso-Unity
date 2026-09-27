@@ -9,6 +9,14 @@ support. Cover cast ownership, prediction/confirmation, authoritative effects,
 persistent state and lifecycle recovery without redesigning skills or presentation.
 This requirement is OPEN; current per-kit routing is not future-proof completion.
 
+First implemented networking slice: kit-owned `ITimedKitReplication` bindings
+replace TimedKit's hero-name switch and live-slot duration assumptions. This fixes
+Dante's twenty-second signature shield being rejected by a ten-second cap or
+clamped to BOULDER's zero duration. Sean/Zack bind to their attacking abilities.
+The wire layout stays unchanged. Focused EditMode 1/1 and source envelope audit
+93/0 pass; actual peers and the rest of NET-SKILLS-1 remain open.
+[Details](reports/stability-2026-09-27/multiplayer.md#timed-state-ownership-correction).
+
 One immediate interaction fix separates hero-shop wallet updates from full hero
 presentation rebuilds. Wallet busy/status/ownership changes now refresh purchase
 controls only; they no longer destroy and reinstantiate the model or ability tiles.

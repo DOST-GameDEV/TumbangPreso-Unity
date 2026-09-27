@@ -21,6 +21,32 @@ namespace TumbangPreso.Tests
     /// </summary>
     public sealed class InputMapAndAbilityTests
     {
+        [Test]
+        public void TimedSnapshotsBindToTheirActualAbilitiesRatherThanTheLiveSecondSlot()
+        {
+            var dante = new DanteHeroKit();
+            var shield = dante.CaptureTimedKit();
+            Assert.AreSame(dante.Skill1, shield.PersonalAbility);
+            Assert.IsTrue(shield.TryAge(18, 0, false, .25f, out var aged));
+            Assert.AreEqual(17.75f, aged.PersonalRemaining, .001f);
+            Assert.IsFalse(shield.TryAge(21, 0, false, 0, out _));
+            Assert.IsFalse(shield.TryAge(1, 1, false, 0, out _));
+            Assert.IsFalse(shield.TryAge(1, 0, true, 0, out _));
+            Assert.IsFalse(shield.TryAge(float.NaN, 0, false, 0, out _));
+            Assert.IsFalse(shield.TryAge(1, 0, false, float.PositiveInfinity, out _));
+
+            var sean = new SeanHeroKit();
+            sean.SetRole(true, null);
+            Assert.AreSame(sean.AttackingSkill, sean.CaptureTimedKit().PersonalAbility);
+            Assert.AreNotSame(sean.Skill2, sean.CaptureTimedKit().PersonalAbility);
+            var zack = new ZackHeroKit();
+            zack.SetRole(true, null);
+            var magnet = zack.CaptureTimedKit();
+            Assert.AreSame(zack.AttackingSkill, magnet.PersonalAbility);
+            Assert.AreSame(zack.Ultimate, magnet.UltimateAbility);
+            Assert.IsTrue(magnet.TryAge(1, 0, true, 0, out _));
+        }
+
         private static InputActionAsset LoadActions()
         {
             var asset = Resources.Load<InputActionAsset>("TumbangPreso");

@@ -21,6 +21,8 @@ Nothing was deleted or renumbered.
 through explicit shared networking contracts and enforced coverage for authority,
 prediction/confirmation, persistent state and lifecycle recovery. Preserve current
 skill behavior and presentation. Implement directly without delegated workers.
+Timed-state bindings now use the actual owning ability instead of a live slot or
+fixed duration cap (focused EditMode 1/1); remaining contract enforcement stays OPEN.
 Hero-shop wallet notifications now refresh purchase controls without rebuilding the
 preview/ability tiles; this narrow flow optimization is source-reviewed.
 

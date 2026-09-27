@@ -8,10 +8,17 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
-    public sealed class ZackHeroKit : HeroKit
+    public sealed class ZackHeroKit : HeroKit, ITimedKitReplication
     {
         public bool IsOverchargeThrowActive { get; set; }
         private bool _joinMagnetSettled, _joinThunderSettled;
+
+        public TimedKitSnapshot CaptureTimedKit()
+            => new TimedKitSnapshot(AttackingSkill, IsOverchargeThrowActive ? AttackingSkill.DurationRemaining : 0,
+                Ultimate, IsThunderstrikeActive ? Ultimate.DurationRemaining : 0, Ultimate.IsWindingUp);
+
+        public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
+            => RestoreJoiningCharges(motor, state.PersonalRemaining, state.UltimateRemaining, state.UltimatePending);
 
         public void ConsumeMagnetCharge()
         {

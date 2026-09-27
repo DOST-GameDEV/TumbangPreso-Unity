@@ -1,5 +1,26 @@
 # Multiplayer investigation, 2026-09-27
 
+## Timed-state ownership correction
+
+The TimedKit receiver used a ten-second fixed bound and then clamped most heroes
+against the live second slot. Dante's current SHIELD is a twenty-second signature;
+its snapshots were either rejected above ten seconds or clamped to BOULDER's zero
+duration. Sean and Zack also need their attacking ability, not a defending placeholder.
+
+`ITimedKitReplication` now binds capture/restore and duration validation to each
+kit's actual timed abilities. The existing seven-field wire envelope and protocol
+61 remain unchanged. Dante, Sean and Zack implement the binding; Nemu's retired
+Phantom Veil no longer emits a meaningless timed message. Amihan keeps its separate
+episode-aware flight state. Common validation rejects nonfinite/negative timers,
+out-of-range values and unsupported ultimate-pending state before restoring anything.
+
+The focused graphics-enabled EditMode case passed 1/1, 0.1096448 s, compiling the
+current source. It checks the eighteen-second shield sample, role-independent
+attacking bindings, pending support and malformed timers. [Receipt](checks/timed-kit-contract.xml).
+The source wire audit remains 93 messages with zero count/type mismatches. This
+does not prove real-peer rejoin behavior or complete NET-SKILLS-1; mandatory skill
+declarations, remaining state channels and extension enforcement are still open.
+
 ## Published lifecycle fixes
 
 Initial source review at `04886cc4` found that host starts could resume after STOP

@@ -23,13 +23,19 @@ namespace TumbangPreso.Abilities
     /// may be immune to (the status table). `IsDemonicCarapaceActive` keeps its name because the wire's
     /// restore path and the ability system read it.
     /// </summary>
-    public sealed class DanteHeroKit : HeroKit
+    public sealed class DanteHeroKit : HeroKit, ITimedKitReplication
     {
         public const float StompContactSeconds = .30f;
 
         /// <summary>True while SHIELD holds: every status but Tagged is refused.</summary>
         public bool IsDemonicCarapaceActive => Skill1 != null && Skill1.IsActive;
         private bool _joiningCarapaceSettled;
+
+        public TimedKitSnapshot CaptureTimedKit()
+            => new TimedKitSnapshot(Skill1, IsDemonicCarapaceActive ? Skill1.DurationRemaining : 0);
+
+        public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
+            => RestoreJoiningCarapace(motor, state.PersonalRemaining);
 
         public bool RestoreJoiningCarapace(CharacterMotor motor, float remaining)
         {

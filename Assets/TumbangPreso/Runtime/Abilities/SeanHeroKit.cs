@@ -8,10 +8,16 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
-    public sealed class SeanHeroKit : HeroKit
+    public sealed class SeanHeroKit : HeroKit, ITimedKitReplication
     {
         public bool IsIgnitionCannonActive { get; set; }
         private bool _joinChargeStateSettled;
+        public TimedKitSnapshot CaptureTimedKit()
+            => new TimedKitSnapshot(AttackingSkill, IsIgnitionCannonActive ? AttackingSkill.DurationRemaining : 0);
+
+        public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
+            => RestoreJoiningIgnition(motor, state.PersonalRemaining);
+
         public HeroMovementState CaptureMovementState()=>((RocketBurnDashAbility)Skill1).CaptureMovement();
         public bool RestoreJoiningMovement(CharacterMotor motor,HeroMovementState state,float age)
             => motor!=null && ((RocketBurnDashAbility)Skill1).RestoreMovement(
