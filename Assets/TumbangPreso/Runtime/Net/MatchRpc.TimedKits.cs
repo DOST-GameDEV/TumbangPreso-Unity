@@ -25,7 +25,7 @@ namespace TumbangPreso.Net
             var scope = new GameplayActionScope { Match = EnsurePresentationMatch(),
                 Round = GameServices.Match.RoundNumber, Epoch = unit.MovementEpoch };
             var state = TimedKitState.Capture(kit, replication.CaptureTimedKit(), slot, scope,
-                ++_timedKitSequence[slot], _nm.ServerTime.Time);
+                ++_timedKitSequence[slot], GameServices.Round.TimeLeft);
             if (!state.IsValid) return;
             using var writer = new FastBufferWriter(TimedKitState.MaxWireBytes, Allocator.Temp);
             writer.WriteNetworkSerializable(state);
@@ -34,14 +34,16 @@ namespace TumbangPreso.Net
 
         private void OnTimedKitStateMsg(ulong sender, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || !FromHost(sender) || _nm == null ||
+            if (NetAuthority.IsHost || !FromHost(sender) ||
                 !TimedKitState.TryRead(ref reader, out var state)) return;
-            ApplyTimedKitState(state, _nm.ServerTime.Time);
+            ApplyTimedKitState(state, GameServices.Round?.TimeLeft ?? -1);
         }
 
-        private bool ApplyTimedKitState(TimedKitState state, double now)
+        private bool ApplyTimedKitState(TimedKitState state, float now)
         {
             if (!state.IsValid) return false;
+            if (GameServices.Round?.RoundActive != true &&
+                (state.PersonalRemaining > 0 || state.UltimateRemaining > 0 || state.UltimatePending)) return false;
             var unit = Unit(state.Seat);
             if (unit == null || !state.Scope.Matches(PresentationMatchId,
                 GameServices.Match?.RoundNumber ?? -1, unit.MovementEpoch)) return false;

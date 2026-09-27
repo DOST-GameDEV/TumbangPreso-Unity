@@ -69,7 +69,9 @@ peer/ranked/reconnect qualification remains OPEN.
 Live familiar recovery now binds world/body scope, hero/ultimate identity and
 accepted phase (protocol85). Two new native codec/real-companion cases pass,
 including duplicate field/role-timer protection and no terminal resurrection.
-Pause-aware recovery aging and actual peers remain OPEN.
+Pause-aware recovery aging now uses remaining-round-clock progress (protocol86),
+with non-live-round guards. Four changed native codec/application cases pass;
+actual peer timing remains OPEN.
 Ordinary action requests/refusals/body playback/charge tells now carry shared
 match/round/body-epoch scope (protocol67). Compiler and one pure scope check pass;
 Native/peer qualification remains OPEN. Same-round combat refusals now correlate

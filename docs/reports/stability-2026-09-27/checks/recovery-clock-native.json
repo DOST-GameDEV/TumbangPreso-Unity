@@ -1,0 +1,46 @@
+{
+  "base": "06aaecdd4852d93e963bb33fcfa450a330e40265",
+  "protocol": 86,
+  "scope": "Changed timed/familiar codecs and simulation-clock recovery application",
+  "result": "Passed",
+  "total": 4,
+  "duration": 0.5997511,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/TimedKitState.cs",
+      "sha256": "CFB092A55F2E20CD91EA4AE3893BA236122B24813C0DB21D0D090473D007C8D5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/FamiliarEffectState.cs",
+      "sha256": "A774C24183A5BFC0CF78F333E38E11DE02B6A6F48DB0F503B83687A40F5C14DD"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.TimedKits.cs",
+      "sha256": "F55BD812C4E72917063F9505398F7D2E9C9F5AEA3E9132EDF2D6982286FF3CF0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.FamiliarEffects.cs",
+      "sha256": "13FAE30CD5F51388A76517D39EBB42AAC3C13960F1ABEFE6052E05CBFD2632E0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "DCB433361420A89901952890CE66A7EF3CB0096B3180BDF33FA20B48926837F4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "AA49642B38ADC7BC73F03AAF774DCFE8D129DDFD126D707E951B564F6DCA94B5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "B4F494BE614DF18844C20E471EC12AF1BE7581B49AF4FF17F01F64A1081A0206"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6432919552,
+  "retryCount": 0,
+  "unverified": [
+    "Actual lossy peers",
+    "Multi-device paused or slow-motion recovery",
+    "Physical input"
+  ]
+}

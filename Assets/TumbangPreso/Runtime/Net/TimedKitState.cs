@@ -8,19 +8,19 @@ namespace TumbangPreso.Net
 {
     public struct TimedKitState : INetworkSerializable
     {
-        public const int MaxWireBytes = 234;
+        public const int MaxWireBytes = 230;
         public int Seat;
         public GameplayActionScope Scope;
         public long Sequence;
         public FixedString64Bytes HeroId, PersonalId, UltimateId;
         public float PersonalRemaining, UltimateRemaining;
-        public double SentAt;
+        public float RoundClock;
         public bool UltimatePending;
 
         public static TimedKitState Capture(HeroKit kit, TimedKitSnapshot state, int seat,
-            GameplayActionScope scope, long sequence, double sentAt) => new TimedKitState
+            GameplayActionScope scope, long sequence, float roundClock) => new TimedKitState
         {
-            Seat = seat, Scope = scope, Sequence = sequence, SentAt = sentAt,
+            Seat = seat, Scope = scope, Sequence = sequence, RoundClock = roundClock,
             HeroId = new FixedString64Bytes(kit.HeroId),
             PersonalId = new FixedString64Bytes(state.PersonalAbility?.Id ?? ""),
             UltimateId = new FixedString64Bytes(state.UltimateAbility?.Id ?? ""),
@@ -34,18 +34,18 @@ namespace TumbangPreso.Net
             NonNegative(PersonalRemaining) && NonNegative(UltimateRemaining) &&
             (PersonalId.Length > 0 || PersonalRemaining == 0) &&
             (UltimateId.Length > 0 || (UltimateRemaining == 0 && !UltimatePending)) &&
-            SentAt >= 0 && !double.IsInfinity(SentAt);
+            Clock(RoundClock);
 
-        public bool TryResolve(HeroKit kit, double now, out TimedKitSnapshot state)
+        public bool TryResolve(HeroKit kit, float now, out TimedKitSnapshot state)
         {
             state = default;
-            if (!IsValid || double.IsNaN(now) || double.IsInfinity(now) ||
+            if (!IsValid || !Clock(now) ||
                 kit == null || HeroId.ToString() != kit.HeroId || !(kit is ITimedKitReplication replication)) return false;
             var binding = replication.CaptureTimedKit();
             if (PersonalId.ToString() != (binding.PersonalAbility?.Id ?? "") ||
                 UltimateId.ToString() != (binding.UltimateAbility?.Id ?? "")) return false;
             return binding.TryAge(PersonalRemaining, UltimateRemaining, UltimatePending,
-                (float)Math.Max(0, now - SentAt), out state);
+                Math.Max(0, RoundClock - now), out state);
         }
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
@@ -58,7 +58,7 @@ namespace TumbangPreso.Net
             SerializeId(serializer, ref UltimateId);
             serializer.SerializeValue(ref PersonalRemaining);
             serializer.SerializeValue(ref UltimateRemaining);
-            serializer.SerializeValue(ref SentAt);
+            serializer.SerializeValue(ref RoundClock);
             byte pending = UltimatePending ? (byte)1 : (byte)0;
             serializer.SerializeValue(ref pending);
             if (pending > 1) throw new ArgumentOutOfRangeException(nameof(UltimatePending));
@@ -83,7 +83,7 @@ namespace TumbangPreso.Net
         {
             state = default;
             int bytes = reader.Length - reader.Position;
-            if (bytes < 51 || bytes > MaxWireBytes) return false;
+            if (bytes < 47 || bytes > MaxWireBytes) return false;
             try
             {
                 reader.ReadNetworkSerializable(out state);
@@ -94,5 +94,6 @@ namespace TumbangPreso.Net
         }
 
         private static bool NonNegative(float value) => value >= 0 && !float.IsInfinity(value);
+        private static bool Clock(float value) => value >= 0 && value <= CustomGameRules.MaxRoundSeconds;
     }
 }
