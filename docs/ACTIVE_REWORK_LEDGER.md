@@ -2,6 +2,15 @@
 
 ## Current networking and flow work, 2026-09-27
 
+Boot now discovers and retains prefab roots in the three existing hero-prop
+folders, yielding between folders and advancing progress only after each load.
+Paete, shared rework and Phaister prop loaders reuse the same source cache; newly
+authored props in these folders join the preload without a duplicate filename list.
+No art, palette, pose or effect behavior changed. Runtime/PlayTests compile; the
+new focused lifecycle test is pending due the existing editor disk-reserve limit.
+No additional editor launch or repeated visual film. Player hitch claims remain OPEN.
+[Loading details](reports/stability-2026-09-27/loading-audit.md#hero-prop-prefab-preparation).
+
 Protocol63 adds a shared bounded skill-cast serializer with stable ability ID and
 explicit activation/command intent. Host checks identity and intent before effects;
 replicas no longer reinterpret an accepted command from their local active timer.

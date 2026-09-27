@@ -46,6 +46,9 @@ preview/ability tiles; this narrow flow optimization is source-reviewed.
 
 **Loading slice, 2026-09-27:** progressive shader completion, staged menu-art/avatar
 cache preparation and duplicate audio-sweep removal are implemented (`c9f55410`).
+Hero-prop prefab discovery/retention now runs inside boot loading, with yielded
+progress and shared source caches for existing prop loaders. Compiler checks pass;
+native lifecycle and player first-use timing remain OPEN under the disk limitation.
 The existing ultimate-introduction tables and 12 shared effect sheets now preload
 in yielded boot stages; those follow-ups are source-reviewed. Player first-use hitch qualification
 remains OPEN, not replaced by the local shader/cache completion check.

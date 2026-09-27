@@ -9,6 +9,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class ReworkProp
     {
+        public const string ResourceFolder = "Models/ReworkProps";
         public static readonly Color[] GeoPalette =
         {
             Hex(0x8A7A66), Hex(0x5E5244), Hex(0xB09C80), Hex(0xE8B43A), Hex(0xA87A1E), Hex(0xC8B89A), Hex(0x4A4036), Hex(0x7A6C5A),
@@ -26,7 +27,7 @@ namespace TumbangPreso.Visual
         /// <summary>The prop <paramref name="name"/> under <paramref name="parent"/>, dressed; null if missing.</summary>
         public static GameObject Spawn(string name, Transform parent, Color[] palette)
         {
-            var source = Resources.Load<GameObject>("Models/ReworkProps/" + name);
+            var source = HeroPropAssets.Load(ResourceFolder, name);
             if (source == null) { Debug.LogWarning("[ReworkProp] Models/ReworkProps/" + name + " is missing; run tools/build_rework_props.py."); return null; }
             var go = Object.Instantiate(source, parent, false);
             go.name = "ReworkProp-" + name;

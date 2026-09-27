@@ -15,6 +15,31 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
 
+        [UnityTest, Timeout(30000)]
+        public IEnumerator HeroPropWarmupYieldsRetainsPrefabsAndDoesNotSpawnEffects()
+        {
+            int sceneObjects = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length;
+            float progress = 0;
+            int stages = 0;
+            yield return Visual.HeroPropAssets.Warmup(done =>
+            {
+                Assert.Greater(done, progress);
+                progress = done; stages++;
+            });
+            Assert.AreEqual(1f, progress);
+            Assert.AreEqual(3, stages);
+            Assert.AreEqual(sceneObjects, Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length,
+                "Loading prefab data must not instantiate or activate gameplay effects.");
+            var plant = Visual.HeroPropAssets.Load(Visual.PaeteProp.ResourceFolder, "seedling");
+            var doll = Visual.HeroPropAssets.Load(Visual.PhaisterProp.ResourceFolder, "manika");
+            var boulder = Visual.HeroPropAssets.Load(Visual.ReworkProp.ResourceFolder, "boulder");
+            Assert.IsNotNull(plant); Assert.IsNotNull(doll); Assert.IsNotNull(boulder);
+            yield return Visual.HeroPropAssets.Warmup();
+            Assert.AreSame(plant, Visual.HeroPropAssets.Load(Visual.PaeteProp.ResourceFolder, "seedling"));
+            Assert.AreSame(doll, Visual.HeroPropAssets.Load(Visual.PhaisterProp.ResourceFolder, "manika"));
+            Assert.AreSame(boulder, Visual.HeroPropAssets.Load(Visual.ReworkProp.ResourceFolder, "boulder"));
+        }
+
         [UnityTest, Timeout(60000)]
         public IEnumerator SplashShaderAndMenuArtWarmupsCompleteInBoundedStages()
         {

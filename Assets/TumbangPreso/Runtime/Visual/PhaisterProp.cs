@@ -12,6 +12,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class PhaisterProp
     {
+        public const string ResourceFolder = "Models/PhaisterProps";
         public const int WingBlack = 0, WingVein = 1, WingEdge = 2, BodyGlow = 3, MothWing = 4, MothVein = 5, MothEdge = 6,
                          Shell = 7, Ink = 8, Cloth = 9, ClothDark = 10, PinGold = 11, PinLilac = 12, PinCrimson = 13, Bone = 14, Fuzz = 15;
 
@@ -40,7 +41,7 @@ namespace TumbangPreso.Visual
         /// <summary>The prop <paramref name="name"/> under <paramref name="parent"/>, dressed; null if it is missing.</summary>
         public static GameObject Spawn(string name, Transform parent, Color[] palette = null, float width = ToonSkin.PersonOutlineWidth)
         {
-            var source = Resources.Load<GameObject>("Models/PhaisterProps/" + name);
+            var source = HeroPropAssets.Load(ResourceFolder, name);
             if (source == null)
             {
                 Debug.LogWarning("[PhaisterProp] Models/PhaisterProps/" + name + " is missing; run tools/build_phaister_props.py.");

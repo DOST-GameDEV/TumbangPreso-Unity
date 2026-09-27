@@ -1,5 +1,29 @@
 # General loading and first-use audit, 2026-09-27
 
+## Hero prop prefab preparation
+
+Base `4b1f39d8`. The roster preload touches body models, but ability props have
+separate resource paths. The general retained-asset cache explicitly excludes
+GameObjects, so it does not retain those prefab roots across menu activation.
+`HeroPropAssets` now loads the existing Paete, Rework and Phaister prop folders in
+yielded boot stages, retaining their source prefabs and caching named lookups for
+the four existing spawn paths. Progress advances after each completed folder load.
+New assets in those folders are discovered without a second list of filenames.
+
+The current source folders contain14 GLBs totaling5,553,428bytes on disk. This is
+NOT their decoded resident-memory cost. No instance, effect, profile, material,
+palette, geometry or animation is created/changed by the warmup. The loading screen
+completes this stage before its existing asset-ready barrier can lift. Instantiation,
+material generation and GPU first-draw cost are separate remaining work, not claimed
+solved by loading prefab data.
+
+Runtime and PlayTests compile with the installed Unity Roslyn toolchain and existing
+Bee inputs.7/7 changed candidate hashes match. [Compiler receipt](checks/hero-props-compile.json).
+Added one focused prefab retention/yield/no-effect-spawn case for the next safe
+native integration run; it has NOT run. The preceding editor startup hit the disk
+reserve, so no repeated editor launch was attempted for this batch. No measured
+player frame-time, peak-memory or hitch-free claim.
+
 ## Evidence boundary
 
 The intake source audit began at ASTRAReworks `04886cc4`; current instrumentation is based on `026fed74` plus reviewed diagnostic amendments. The historical Desktop player identifies itself as a dirty `85832b6b` build, not a current-source performance baseline. The guarded Development build stopped during packaging when storage fell below the protected reserve. No current player boot, first-click, cast or profiler before/after timing exists, so no hitch reduction or FPS improvement is claimed.
