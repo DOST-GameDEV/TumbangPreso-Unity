@@ -38,7 +38,7 @@ Material:
     - _CloudSunCutoff: 6.6844497
     - _CloudYaw: -0.3272515
     - _Exposure: 1
-    - _SunClear: 0.35
+    - _SunClear: 0.45
     - _SunDisc: 0.055
     - _SunHalo: 1
     m_Colors:

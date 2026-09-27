@@ -69,8 +69,9 @@ Shader "TumbangPreso/LagoonCoveWater"
         _Reflection ("Reflection at grazing angles", Range(0, 1)) = 0.4
         _SunPath ("Sun path glow on the water", Range(0, 2)) = 0.6
         _FresnelPower ("Fresnel power", Float) = 4
-        _GlintSize ("Sun glint size (cos of the hit window)", Range(0.99, 0.99999)) = 0.9994
-        _GlintStrength ("Sun glint strength", Range(0, 2)) = 1.0
+        _GlintSize ("Sun glint size (cos of the hit window)", Range(0.99, 0.99999)) = 0.998
+        _GlintStrength ("Sun glint strength", Range(0, 2)) = 1.4
+        _Glimmer ("Glimmer off the sun path, deep water", Range(0, 2)) = 0.7
     }
 
     SubShader
@@ -98,7 +99,7 @@ Shader "TumbangPreso/LagoonCoveWater"
             float _CausticStrength, _CausticScale, _CausticWidth, _CausticFade, _CausticSpeed;
             float _FoamWidth, _FoamLines, _FoamSpeed;
             float _WaveHeight, _WaveLength, _WaveSpeed, _RippleScale, _RippleStrength;
-            float _FresnelPower, _GlintSize, _GlintStrength, _Reflection, _SunPath;
+            float _FresnelPower, _GlintSize, _GlintStrength, _Reflection, _SunPath, _Glimmer;
 
             struct appdata { float4 vertex : POSITION; };
             struct v2f
@@ -325,10 +326,22 @@ Shader "TumbangPreso/LagoonCoveWater"
                 // within about 2 degrees of the sun. Pushed past white on purpose (the brightest
                 // pixels in the frame), and only on the ripple crests so they are points.
                 float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
-                float3 facet = normalize(float3(-rip.x * 0.15, 1, -rip.y * 0.15));
+                // Round 3 (owner: "need more sun path glimmer"): facets +-6 degrees (was 4), a window
+                // of about 3.5 degrees (was 2), and brighter.
+                float3 facet = normalize(float3(-rip.x * 0.22, 1, -rip.y * 0.22));
                 float aim = dot(reflect(-view, facet), lightDir);
                 float glint = smoothstep(_GlintSize, _GlintSize + (1 - _GlintSize) * 0.75, aim);
                 glint *= smoothstep(0.1, 0.5, rip.z) * (1 - far * 0.5);
+                // ⚠️ GLIMMER OFF THE PATH, ON THE DEEP WATER ("and also glimmer from outside the main
+                // sun path where the deep waters are"). On a real sea a few STEEP wavelets catch the
+                // sun well to either side of the path; a second facet set tilted about +-15 degrees
+                // does that, dimmer, only on the higher crests, and only where the water is deep, so
+                // the clear shallows by the shore stay calm and readable.
+                float3 steep = normalize(float3(-rip.x * 0.6, 1, -rip.y * 0.6));
+                float aim2 = dot(reflect(-view, steep), lightDir);
+                float glimmer = smoothstep(0.994, 0.9985, aim2) * smoothstep(0.35, 0.7, rip.z)
+                                * smoothstep(1.5, 4.0, depth) * (1 - far * 0.6) * _Glimmer;
+                glint = max(glint, glimmer);
                 col += _LightColor0.rgb * glint * _GlintStrength * 2.5;
                 alpha = max(alpha, saturate(glint * _GlintStrength * 1.5));
 

@@ -14,7 +14,7 @@ Material:
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -36,8 +36,9 @@ Material:
     - _FoamSpeed: 0.7
     - _FoamWidth: 0.55
     - _FresnelPower: 4
-    - _GlintSize: 0.9994
-    - _GlintStrength: 1
+    - _Glimmer: 0.7
+    - _GlintSize: 0.998
+    - _GlintStrength: 1.4
     - _MidDepth: 0.9
     - _Reflection: 0.4
     - _RippleScale: 0.35
