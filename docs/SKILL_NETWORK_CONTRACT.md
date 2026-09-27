@@ -184,6 +184,14 @@ after1s; fresh late catch feedback occurs once,while restoration does not replay
 Attack timing,placement and authored visuals remain unchanged. This is live target
 delivery,not a change to the staged introduction's local target presentation.
 
+Transport lifecycle is separate from ordinary phase cancellation. A fresh messaging
+binding clears received cohort cursors and pending ultimate requests so the same
+still-active host cohort can be received after reconnect. Preserve the host sequence
+because existing effects may own earlier lifetime IDs. Ordinary Cancel still rejects
+same-transport duplicates. Local session stop/disconnect cancels ultimate/halftime/
+arrival owners and hitstop before restoring normal speed; another peer leaving the
+host does not run that local teardown. No wire change is needed for this cleanup.
+
 ## Victim Feedback
 
 Host-only outcome loops must announce existing contact presentation through the

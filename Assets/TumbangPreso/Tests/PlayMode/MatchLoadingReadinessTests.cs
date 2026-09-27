@@ -17,6 +17,53 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After()
         { HubLoading.Cancel(); yield return PlayModeWorld.Reset(); }
 
+        [Test]
+        public void TransportCleanupCancelsWaitingArrivalAndDoesNotRestoreOldHitstopSpeed()
+        {
+            GameServices.Ensure();
+            bool reduced = Settings.SettingsStore.Current.ReducedEffects;
+            float scale = PresentationClock.RequestedScale;
+            var loadingRoot = new GameObject("Transport cleanup loading"); loadingRoot.SetActive(false);
+            var loading = loadingRoot.AddComponent<HubLoading>();
+            var current = typeof(HubLoading).GetField("_current", BindingFlags.Static | BindingFlags.NonPublic);
+            var previous = current.GetValue(null);
+            var arrivalRoot = new GameObject("Transport cleanup arrival");
+            var arrival = arrivalRoot.AddComponent<MatchArrivalPresentation>();
+            var run = arrival.Run();
+            var cleanup = typeof(Net.NetSession).GetMethod("EndTransportPresentation", BindingFlags.Static | BindingFlags.NonPublic);
+            try
+            {
+                current.SetValue(null, loading); PresentationClock.RequestScale(.5f);
+                Assert.IsTrue(run.MoveNext()); Assert.IsTrue(run.MoveNext());
+                Assert.IsTrue(PresentationClock.Held); Assert.AreEqual(0, Time.timeScale);
+                cleanup.Invoke(null, null);
+                Assert.IsFalse(PresentationClock.Held); Assert.AreEqual(1, Time.timeScale);
+                Assert.IsFalse(run.MoveNext(), "Cancelled externally driven arrival kept waiting and could retake the camera.");
+
+                Settings.SettingsStore.Current.ReducedEffects = false;
+                PresentationClock.RequestScale(.5f); Hitstop.Trigger(.08f, .05f);
+                Assert.IsTrue(Hitstop.Active);
+                cleanup.Invoke(null, null); Hitstop.Step();
+                Assert.IsFalse(Hitstop.Active); Assert.AreEqual(1, Time.timeScale);
+
+                var half = HalftimePresentation.Ensure();
+                typeof(HalftimePresentation).GetProperty("Active").SetValue(half, true);
+                typeof(HalftimePresentation).GetProperty("IsHalftime").SetValue(half, true);
+                typeof(PresentationClock).GetMethod("Hold", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, null);
+                int round = GameServices.Match.RoundNumber;
+                cleanup.Invoke(null, null);
+                Assert.IsFalse(half.Active); Assert.IsFalse(PresentationClock.Held);
+                Assert.AreEqual(1, Time.timeScale); Assert.AreEqual(round, GameServices.Match.RoundNumber);
+            }
+            finally
+            {
+                (run as System.IDisposable)?.Dispose(); arrival.Cancel();
+                HalftimePresentation.Instance?.End(false); SharedUltimatePhase.Instance?.Cancel();
+                current.SetValue(null, previous); Object.DestroyImmediate(arrivalRoot); Object.DestroyImmediate(loadingRoot);
+                Hitstop.End(); PresentationClock.RequestScale(scale); Settings.SettingsStore.Current.ReducedEffects = reduced;
+            }
+        }
+
         private static CharacterMotor IntroductionActor(string hero, bool installModel)
         {
             GameServices.Ensure(); GameServices.Round.Clear();

@@ -1,11 +1,30 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
-`15dd4b9277707c7beed73f3609e41d599c0c8a4c`; live sentry target delivery follows it.
+`98375ad28e2782b61c84ab83e0043a668a3a7cf9`; scoped readiness follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Protocol83 scopes READY and countdown messages to a match, rejects non-seated voters,
+and holds valid quorum until host loading finishes. Manual votes retry until the
+countdown acknowledges them; completed countdowns cannot restart from duplicates.
+Two new native cases pass 2/2 on full base plus six frozen inputs, no drift or retry.
+Actual peers, ranked and physical input remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#scoped-loaded-readiness).
+
+The retained creator requests a fresh preview before relative scale/dress so repeated
+edits cannot compound proportions. Normal player preview reuse stays default and
+the retired creator door stays closed. One new native case passes1/1 on full base
+plus3inputs,no drift,no retry. [Evidence](reports/stability-2026-09-27/loading-audit.md#mutating-preview-callers).
+
+Fresh handler binding resets received cohort/pending-ultimate state but preserves
+host lifetime sequence. Local stop/disconnect cancels ultimate/halftime/arrival
+owners and hitstop before normal speed. Arrival iterators use generation/finally
+cleanup. Two new native cases pass2/2 on full committed base plus7inputs,no drift,
+no retry. Protocol82 unchanged; actual sockets/reconnect/hardware remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#transport-presentation-cleanup).
 
 Protocol82 binds live sentry host masks to accepted ultimate cohorts,including
 pre-birth delivery,late bodies,snapshot identity and duplicate isolation. Replicas

@@ -1243,6 +1243,45 @@ namespace TumbangPreso.PlayTests
         }
 
         [Test]
+        public void NewTransportCanReceiveTheSameActiveCohortWithoutReusingHostIdentities()
+        {
+            var system = Owner("dante");
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(system.GetComponent<CharacterMotor>());
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            var previousRouter = MatchRpc.Instance; var previousPhase = SharedUltimatePhase.Instance;
+            float scale = PresentationClock.RequestedScale;
+            var root = new GameObject("Reconnected cohort"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>(); var phase = root.AddComponent<SharedUltimatePhase>();
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var instance = typeof(MatchRpc).GetProperty("Instance"); var phaseInstance = typeof(SharedUltimatePhase).GetProperty("Instance");
+            var receive = typeof(SharedUltimatePhase).GetMethod("ReceiveTimed", hidden);
+            var commits = new[] { new UltimateCommit(3, 1, Vector3.zero, Vector3.forward, Vector3.up, 0,
+                heroId: "missing", abilityId: "missing_ultimate") };
+            void Receive(long id) => receive.Invoke(phase, new object[] { 123L, 1, id, SharedUltimatePhase.Now, .5f, commits, 50f, 5d });
+            try
+            {
+                instance.SetValue(null, router); phaseInstance.SetValue(null, phase);
+                typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+                Receive(5); Assert.IsTrue(phase.Active); phase.Cancel(); Receive(5);
+                Assert.IsFalse(phase.Active, "Ordinary cancellation must retain same-transport duplicate protection.");
+                Receive(6); Assert.IsTrue(phase.Active); Assert.IsTrue(PresentationClock.Held);
+                typeof(SharedUltimatePhase).GetField("_sequence", hidden).SetValue(phase, 17L);
+                typeof(HeroAbilitySystem).GetField("_pendingUltimateRequest", hidden).SetValue(system, 9L);
+                typeof(MatchRpc).GetMethod("ResetUltimateTransport", hidden).Invoke(router, null);
+                Assert.IsFalse(phase.Active); Assert.IsFalse(PresentationClock.Held);
+                Assert.IsFalse(system.UltimateRequestPending);
+                Assert.AreEqual(0, phase.PhaseId); Assert.AreEqual(17, typeof(SharedUltimatePhase).GetField("_sequence", hidden).GetValue(phase));
+                Receive(6); Assert.IsTrue(phase.Active); Assert.AreEqual(6, phase.PhaseId);
+            }
+            finally
+            {
+                phase.Cancel(); PresentationClock.RequestScale(scale);
+                instance.SetValue(null, previousRouter); phaseInstance.SetValue(null, previousPhase);
+                Object.DestroyImmediate(root);
+            }
+        }
+
+        [Test]
         public void UltimateCommitCodecBoundsIdentityAndPreservesTheRequestBodyScope()
         {
             const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic;

@@ -59,6 +59,9 @@ reuse shared hooks; new gameplay state still needs an explicit contract. Ranked,
 casual,LAN/online,spectators,late join and reconnect are in scope. Preserve existing
 rating/result/leave/device-pool rules. Further state coverage and actual peer/ranked/
 reconnect/results qualification remain OPEN.
+READY and countdown messages now carry match identity (protocol83). Current seated
+membership gates the quorum, host loading must finish, and completed countdowns
+remain consumed. Two new native handler/lifecycle cases pass; actual peers remain OPEN.
 Ordinary action requests/refusals/body playback/charge tells now carry shared
 match/round/body-epoch scope (protocol67). Compiler and one pure scope check pass;
 Native/peer qualification remains OPEN. Same-round combat refusals now correlate
@@ -110,6 +113,10 @@ Ultimate commits now name hero/ability IDs and requests carry the body epoch
 (protocol81). Preparation/execution reject the wrong kit; identity codecs are
 bounded. Two new native cases and the changed duration-wire case pass3/3. Actual
 host-request/peer/ranked qualification remains OPEN.
+Fresh connection bindings now reset received cohort/pending-ultimate state while
+preserving host lifetime sequence. Local teardown cancels presentation holds and
+hitstop; cancelled arrival iterators cannot resume later. Two new native lifecycle
+cases pass; actual reconnect/socket/camera-hardware qualification remains OPEN.
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.
@@ -160,6 +167,9 @@ savings and complete movie/overlay journeys remain OPEN.
 Unchanged preview selections now retain model/material/pose instead of rebuilding
 on lock-in/refresh. Changed inputs retire the old subject immediately. One new
 native reuse/invalidation/cleanup case passes; player click timings remain OPEN.
+The retained creator explicitly requests a fresh subject before relative body
+scaling/dressing,fixing refresh compounding introduced by preview reuse. One new
+native repeated-edit case passes; its retired player door remains closed.
 Ability illustrations now load asynchronously with yielded fallback preparation;
 the cooldown graphic also prepares before HUD construction. New native preload
 case passes. Default-avatar selection now handles minimum-int name hashes without

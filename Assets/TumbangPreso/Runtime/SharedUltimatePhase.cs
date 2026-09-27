@@ -281,6 +281,16 @@ namespace TumbangPreso
             _commits.Clear(); Active=false; _sealed=false; _actorsReady=false; _viewAttempted=false;
             PresentationClock.Release();
         }
+        internal void ResetTransport()
+        {
+            Cancel();
+            _lastReceived = 0; MatchId = 0; Round = 0; PhaseId = 0;
+            Began = ReleasedAt = ActivationMilliseconds = 0; Duration = DefaultDuration;
+            FrozenRoundTime = _deferredRoundTime = 0;
+            _commits.Clear(); _actorsReady = _sealed = _viewAttempted = false;
+            // Keep the host sequence monotonic: surviving effects can still own
+            // earlier cohort identities while a transport is being replaced.
+        }
         private void OnDisable() => Cancel();
         private void OnDestroy() { Cancel(); if (Instance == this) Instance = null; }
     }

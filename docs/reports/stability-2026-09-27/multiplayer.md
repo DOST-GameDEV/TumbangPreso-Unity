@@ -1,5 +1,32 @@
 # Multiplayer investigation, 2026-09-27
 
+## Scoped Loaded Readiness
+
+The arena path dispatched READY before the lobby's voter check, so a spectator or
+seatless sender could enter the player quorum. Manual READY also read the input
+action outside the loading guard. Its messages had no context, allowing delayed
+lobby votes or old countdowns into a later match; completing a countdown cleared
+its only duplicate guard.
+
+Protocol83 sends a9-byte READY (match ID plus canonical boolean) and8-byte countdown
+(match ID), with exact length and authenticated sender checks. Zero identifies a
+lobby vote; positive IDs must match the current arena. Match votes cannot leak
+back into the lobby or be accepted between arena startup and gate installation.
+ReadyGate accepts/counts the same current seated population, including a seated
+host but excluding unknown peers, spectators and seatless referees. Its seat count
+no longer allocates a list. Valid votes wait for the host's loading curtain and are
+reevaluated when it lifts. Manual votes retry every0.5unscaled seconds until the
+countdown acknowledges them, not merely until a local send succeeds. A completed
+countdown remains consumed until explicit gate Open; no countdown timing changed.
+
+Two new guarded native cases pass2/2 in3.6464798s on full `98375ad2` plus six frozen
+source/metadata inputs, no drift or retry. They drive the actual message handlers
+with old/malformed payloads, wrong senders and non-seated voters; verify the host
+loading barrier, lobby isolation and a real completed client countdown's duplicate
+guard. Metadata GUID is valid32hex. No sockets, live services, physical input or
+ranked journey was exercised; manual retransmission is source-reviewed, not a
+lossy-link qualification. [Receipt](checks/ready-gate-native.json),[XML](checks/ready-gate-native.xml).
+
 ## Sentry Target Recovery
 
 Base `03f1c741`,protocol74. PaeteSentry's old restored spawn reran InReach against
@@ -664,6 +691,30 @@ The current flight unit includes protocol-61 episode/receipt/snapshot ordering.
 Its exact implementation and qualification status are in
 [Featherfall](../amihan-kit-2026-09-27/featherfall.md). It does not establish that
 every kit works across real peers.
+
+## Transport Presentation Cleanup
+
+2026-09-28,afteradb6dcfe: a new messaging-handler binding resets received shared
+cohort identity and pending/reserved ultimate requests,while retaining the host's
+monotonic sequence. Otherwise a cancelled cohort could be rejected as a duplicate
+after reconnecting to the same still-active host phase. Ordinary cancellation keeps
+its same-transport duplicate protection. Protocol82 and wire payloads are unchanged.
+
+Local session stop/disconnect now cancels ultimate,halftime andarrival presenters,
+ends hitstop and then restores normal speed. The host's another-peer-left branch
+is unchanged. Arrival Run is externally enumerable: generation checks and finally
+cleanup prevent cancelled/disabled/destroyed/replaced iterators from later retaking
+the camera or hold. Normal8second timing and camera path are not retuned.
+
+Two NEW native cases pass2/2,0.1847669s on full committed base plus7inputs,no drift,
+no retry. They distinguish ordinary cancellation from new-transport replay/reset,
+clear a pending request,retain host sequence,end a loading-wait arrival iterator,
+prevent hitstop restoring an old slow speed,and end halftime without advancing
+the round. Minimum free6,467,403,776bytes; profile/preferences restored.
+[Receipt](checks/transport-presentation-native.json),[XML](checks/transport-presentation-native.xml).
+Raw Logs/transport-presentation-20260928/session-holds.*. Controlled lifecycle calls,
+not an actual socket/reconnect session or physical camera/input acceptance. No old
+films or unrelated native cases were rerun.
 
 ## Live Sentry Target Delivery
 

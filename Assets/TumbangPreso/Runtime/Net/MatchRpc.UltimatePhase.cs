@@ -11,6 +11,14 @@ namespace TumbangPreso.Net
     {
         private long _ultimateRequestSequence;
         private readonly Dictionary<ulong, long> _lastUltimateRequest = new Dictionary<ulong, long>();
+        private void ResetUltimateTransport()
+        {
+            _lastUltimateRequest.Clear(); _ultimateRequestSequence = 0;
+            SharedUltimatePhase.Instance?.ResetTransport();
+            if (GameServices.Round != null)
+                foreach (var actor in GameServices.Round.Players)
+                    if (actor != null) actor.AbilitySystem?.CancelSharedUltimate();
+        }
         public long RequestSharedUltimate(int seat, Vector3 position, Vector3 forward, Vector3 aim, float held, long aimToken = 0)
         {
             if (_nm?.CustomMessagingManager == null || !ValidSlot(seat)) return 0;

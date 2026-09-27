@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 18:24:53Z" end-time="2026-09-27 18:24:57Z" duration="3.6464798">
+  <test-suite type="TestSuite" id="1968" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="775" result="Passed" start-time="2026-09-27 18:24:53Z" end-time="2026-09-27 18:24:57Z" duration="3.646480" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1962" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="775" result="Passed" start-time="2026-09-27 18:24:53Z" end-time="2026-09-27 18:24:57Z" duration="3.635840" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="61628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1963" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="775" result="Passed" start-time="2026-09-27 18:24:53Z" end-time="2026-09-27 18:24:57Z" duration="3.630865" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1964" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="775" result="Passed" start-time="2026-09-27 18:24:53Z" end-time="2026-09-27 18:24:57Z" duration="3.624192" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1627" name="ReadyGateNetworkTests" fullname="TumbangPreso.PlayTests.ReadyGateNetworkTests" classname="TumbangPreso.PlayTests.ReadyGateNetworkTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-27 18:24:54Z" end-time="2026-09-27 18:24:57Z" duration="3.611180" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1628" name="ReadyVotesRequireCurrentMatchSeatedSendersAndLoadedHost" fullname="TumbangPreso.PlayTests.ReadyGateNetworkTests.ReadyVotesRequireCurrentMatchSeatedSendersAndLoadedHost" methodname="ReadyVotesRequireCurrentMatchSeatedSendersAndLoadedHost" classname="TumbangPreso.PlayTests.ReadyGateNetworkTests" runstate="Runnable" seed="955131650" result="Passed" start-time="2026-09-27 18:24:54Z" end-time="2026-09-27 18:24:54Z" duration="0.074208" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetReady] peer 1 seat 1 ready=True -> 1 of 1
+]]></output>
+            </test-case>
+            <test-case id="1629" name="ScopedCountdownRejectsOldWorldAndRemainsConsumedAfterCompletion" fullname="TumbangPreso.PlayTests.ReadyGateNetworkTests.ScopedCountdownRejectsOldWorldAndRemainsConsumedAfterCompletion" methodname="ScopedCountdownRejectsOldWorldAndRemainsConsumedAfterCompletion" classname="TumbangPreso.PlayTests.ReadyGateNetworkTests" runstate="Runnable" seed="1853997635" result="Passed" start-time="2026-09-27 18:24:54Z" end-time="2026-09-27 18:24:57Z" duration="3.526171" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

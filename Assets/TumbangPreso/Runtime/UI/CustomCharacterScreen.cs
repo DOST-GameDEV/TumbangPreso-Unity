@@ -1124,7 +1124,7 @@ namespace TumbangPreso.UI
 
             var palette = CustomCharacterOutfit.PaletteFor(art.Palette, _editing);
 
-            _preview.Show(art.Model, art.Clips, palette, art.PetModel);
+            _preview.Show(art.Model, art.Clips, palette, art.PetModel, forceRebuild: true);
 
             var subject = _preview.Subject;
             if (subject != null)

@@ -16,6 +16,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Deferred SFX/voice samples | UI/SplashScreen.WarmAudioAssets; yielded sample loading and retention,not just clip references; music/streaming policy unchanged |
 | Real menu activation barrier | UI/SplashScreen.MenuActivation.cs and ConvertedMainMenu.IsPrepared; retain existing canvas through Wire/layout,then reveal login/input |
 | Boot failure exit | SplashScreen.MenuActivation exposes one focusable/pointer-accessible EXIT GAME control above the failed curtain; button and Cancel use the same quit path without claiming readiness |
+| Arrival cancellation | MatchArrivalPresentation.Run is generation-owned and finally-cleaned even when another component drives its iterator; cancelled/disabled/replaced runs cannot reacquire the camera or hold after loading |
 | Title/login art and avatars | UI/OwnerMenuArt.cs,Avatars.cs; async cold reads awaited per item,then existing retained texture/sprite caches; supplied pixels and fallback policy unchanged |
 | Hub/HUD portraits and mode cards | UI/OwnerPortraitArt.cs; async roster-driven warmup and shared cache used by HubKit/TumpUiFactory |
 | First HOME loop | UI/Hub/HubSceneVideo.Warmup.cs; async metadata/selected poster,explicit prepare/play until frameReady then pause behind boot,adopting the same player/target; paused preparation alone timed out on Windows |
@@ -34,7 +35,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | First-use/runtime costs | Existing profiler markers,FrameRateHistogram,tools/cold_start.py and current internal player |
 | Settings value changes | UI/TumpSettingsView partials; whole-row reflow only for new sections/text size,cached chips and one unsaved-state calculation per notification |
 | Character preview targets | UI/ModelPreview.cs; coalesce continuous pixel-size reallocations,keep current panel projection,settle exact sizing and capture immediately |
-| Repeated preview selection | ModelPreview.Show compares model/pet,clip/palette snapshots and shading mode; unchanged selections retain their instance/materials/pose,changed subjects deactivate before deferred destruction |
+| Repeated preview selection | ModelPreview.Show compares model/pet,clip/palette snapshots and shading mode; unchanged selections retain their instance/materials/pose,changed subjects deactivate before deferred destruction. Mutating authoring callers use forceRebuild before relative scaling/dressing; the retained creator remains unavailable to players |
 | Runtime avatar lifetime | Visual/CharacterAnimator owns only avatars generated for its binding; release the graph before detaching/destroying them on rebind/clear/teardown,and preserve borrowed/imported avatars |
 | Preview cache ownership | Visual/ToonSkin keys base/overlay variants separately; MapPreviewSurface destroys resized-out targets and rebinds camera/UI together |
 

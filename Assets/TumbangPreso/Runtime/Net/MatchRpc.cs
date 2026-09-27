@@ -318,7 +318,7 @@ namespace TumbangPreso.Net
             PrepareSentryTargetScope(0, -1);
             ResetFeatherfallTransport();
             PresentationMatchId = 0; _pendingMoments.Clear();
-            _lastUltimateRequest.Clear(); _ultimateRequestSequence = 0;
+            ResetUltimateTransport();
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
             _pendingSkillCasts.Clear();
             for (int slot = 0; slot < Balance.PlayerCount; slot++) Unit(slot)?.AbilitySystem?.ResetNetworkSkillReceipts();
@@ -1109,9 +1109,12 @@ namespace TumbangPreso.Net
         /// </returns>
         public bool DeclareReadyServerRpc(bool ready = true)
         {
+            var gate = FindFirstObjectByType<ReadyGate>();
+            long match = gate != null ? EnsurePresentationMatch() : 0;
+            if (gate != null && match <= 0) return false;
             if (NetAuthority.IsHost)
             {
-                HostDeclareReady(NetAuthority.LocalPeerId, ready);
+                HostDeclareReady(NetAuthority.LocalPeerId, ready, match);
                 return true;
             }
 
@@ -1119,6 +1122,7 @@ namespace TumbangPreso.Net
                 return false;
 
             using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(match);
             writer.WriteValueSafe(ready);
             _nm.CustomMessagingManager.SendNamedMessage("DeclareReady", NetworkManager.ServerClientId, writer);
             return true;
@@ -1126,14 +1130,17 @@ namespace TumbangPreso.Net
 
         private void OnDeclareReadyMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || senderClientId > int.MaxValue ||
+                reader.Length - reader.Position != 9 || !reader.TryBeginRead(9)) return;
 
             // ⚠️ THE SENDER IS NGO'S, NOT THE PAYLOAD'S. The peer id used to travel here and be
             // thrown away; it is not written any more, so there is nothing to remember to
             // ignore. See `DeclareReadyServerRpc`.
-            reader.ReadValueSafe(out bool ready);
+            reader.ReadValueSafe(out long match);
+            reader.ReadValueSafe(out byte ready);
+            if (match < 0 || ready > 1) return;
 
-            HostDeclareReady((int)senderClientId, ready);
+            HostDeclareReady((int)senderClientId, ready != 0, match);
         }
 
         // -------------------------------------------------------------------
@@ -1172,7 +1179,7 @@ namespace TumbangPreso.Net
 
         private readonly HashSet<int> _lobbyReady = new HashSet<int>();
 
-        private void HostDeclareReady(int peerId, bool ready)
+        private void HostDeclareReady(int peerId, bool ready, long match)
         {
             if (!NetAuthority.IsHost) return;
 
@@ -1180,12 +1187,12 @@ namespace TumbangPreso.Net
             var gate = FindFirstObjectByType<ReadyGate>();
             if (gate != null)
             {
-                if (ready) gate.DeclareReady(peerId);
+                if (ready && match > 0 && match == EnsurePresentationMatch()) gate.DeclareReady(peerId);
                 return;
             }
 
             var lobby = NetSession.Instance?.Lobby;
-            if (lobby == null) return;
+            if (lobby == null || lobby.MatchInProgress || match != 0) return;
 
             var peer = lobby.PeerById(peerId);
 
@@ -1563,13 +1570,17 @@ namespace TumbangPreso.Net
             if (_nm != null && _nm.CustomMessagingManager != null)
             {
                 using var writer = new FastBufferWriter(16, Allocator.Temp);
+                writer.WriteValueSafe(EnsurePresentationMatch());
                 _nm.CustomMessagingManager.SendNamedMessageToAll("BeginCountdown", writer);
             }
         }
 
         private void OnBeginCountdownMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            if (NetAuthority.IsHost || !FromHost(senderClientId) ||
+                reader.Length - reader.Position != 8 || !reader.TryBeginRead(8)) return;
+            reader.ReadValueSafe(out long match);
+            if (match <= 0 || match != PresentationMatchId) return;
             FindFirstObjectByType<ReadyGate>()?.StartLocalCountdown();
         }
 

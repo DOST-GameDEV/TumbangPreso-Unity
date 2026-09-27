@@ -27,16 +27,36 @@ namespace TumbangPreso
         private readonly CharacterMotor[] _players = new CharacterMotor[Core.Balance.PlayerCount];
         private readonly RaycastHit[] _hits = new RaycastHit[32];
         private int _shownBeat = -2;
+        private int _runGeneration;
 
         public IEnumerator Run()
         {
+            Cancel();
+            _shownBeat = -2; System.Array.Clear(_players, 0, _players.Length);
+            int generation = _runGeneration;
+            var playback = RunCurrent(generation);
+            try { while (playback.MoveNext()) yield return playback.Current; }
+            finally
+            {
+                (playback as System.IDisposable)?.Dispose();
+                if (generation == _runGeneration) Finish();
+            }
+        }
+
+        private bool Current(int generation) => this != null && generation == _runGeneration;
+
+        private IEnumerator RunCurrent(int generation)
+        {
             // Let the new gameplay rig establish its first real eye pose before saving it.
             yield return null;
-            while (PresentationClock.Held) yield return null;
+            if (!Current(generation)) yield break;
+            while (PresentationClock.Held) { if (!Current(generation)) yield break; yield return null; }
+            if (!Current(generation)) yield break;
             PresentationClock.Hold(); _held = true;
-            while (HubLoading.Visible) yield return null;
+            while (HubLoading.Visible) { if (!Current(generation)) yield break; yield return null; }
+            if (!Current(generation)) yield break;
             _camera = Camera.main;
-            if (_camera == null) { Finish(); yield break; }
+            if (_camera == null) yield break;
             _position = _camera.transform.position; _rotation = _camera.transform.rotation; _fov = _camera.fieldOfView;
             _rig = _camera.GetComponent<CameraRig>();
             _spectator = _camera.GetComponent<SpectatorCamera>();
@@ -57,6 +77,7 @@ namespace TumbangPreso
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
             for (float age = 0; age < Seconds; age += Time.unscaledDeltaTime)
             {
+                if (!Current(generation)) yield break;
                 float t = Mathf.Clamp01(age / Seconds);
                 int beat = age < 2.4f || age >= 6.8f ? -1 : Mathf.Clamp((int)((age - 2.4f) / 1.1f), 0, 3);
                 Vector3 focus = centre;
@@ -82,7 +103,6 @@ namespace TumbangPreso
                 Caption(beat, map);
                 yield return null;
             }
-            Finish();
         }
 
         private Vector3 ClearEye(Vector3 focus, Vector3 desired)
@@ -141,8 +161,8 @@ namespace TumbangPreso
             }
             if (_held) { PresentationClock.Release(); _held = false; FreshInput(); }
         }
-        public void Cancel() => Finish();
-        private void OnDisable() => Finish();
-        private void OnDestroy() => Finish();
+        public void Cancel() { _runGeneration++; Finish(); }
+        private void OnDisable() => Cancel();
+        private void OnDestroy() => Cancel();
     }
 }

@@ -522,10 +522,12 @@ namespace TumbangPreso.Net
         // current movement epoch. Receivers wait for the matching caster kit.
         // 82: live sentries bind host-captured targets to the accepted ultimate
         // cohort; replicas no longer infer victims from local positions.
-        // 83: the map list changed (2026-09-27): index 4 is the reworked Lagoon Court (LagoonCove),
+        // 83: READY and countdown messages name their match; only seated peers
+        // count toward a loaded host's one-time pre-round countdown.
+        // 84: the map list changed (2026-09-27): index 4 is the reworked Lagoon Court (LagoonCove),
         // the first Lagoon is vaulted, and Kanto is index 5. Maps travel as indices into
         // SceneFlow.Maps (MatchRpc SyncMap, queue votes), so an older peer would read a different map.
-        public const int ProtocolVersion = 83;
+        public const int ProtocolVersion = 84;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -1467,7 +1469,7 @@ namespace TumbangPreso.Net
             // `MatchResult`'s own header records that exact failure happening once already, from
             // a different writer, and this is the same lifetime rule: whoever can stop time
             // restores it on every exit path including death.
-            PresentationClock.RequestScale(1.0f);
+            EndTransportPresentation();
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
 
             // ⚠️⚠️ A HOST TELLS ITS PEERS IT IS LEAVING. IT USED TO JUST STOP ANSWERING.
@@ -1526,6 +1528,16 @@ namespace TumbangPreso.Net
             IsRelay = false;
             RelayJoinCode = null;
             SetStatus("offline");
+        }
+
+        private static void EndTransportPresentation()
+        {
+            SharedUltimatePhase.Instance?.Cancel();
+            HalftimePresentation.Instance?.End(false);
+            foreach (var arrival in UnityEngine.Object.FindObjectsByType<MatchArrivalPresentation>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None)) arrival.Cancel();
+            Hitstop.End();
+            PresentationClock.RequestScale(1);
         }
 
         public void BrowseLan() => _beacon.StartListening();
@@ -2202,6 +2214,7 @@ namespace TumbangPreso.Net
 
             ClearJoinedClientRoomTitle();
             if (!_localShutdown) _clientTitleOperation = null;
+            EndTransportPresentation();
 
             // ⚠️⚠️ THE REASON IS THE WHOLE POINT OF THIS BRANCH NOW. A refused approval arrives
             // here as an ordinary disconnect, so a build-version mismatch, a full lobby and a

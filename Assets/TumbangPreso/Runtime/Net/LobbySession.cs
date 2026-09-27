@@ -737,20 +737,33 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>Everyone actually holding a seat: no referee, no spectators.</summary>
+        public bool IsSeatedPeer(int peerId)
+        {
+            var peer = PeerById(peerId);
+            return peer != null && !IsSeatlessReferee(peerId) && !peer.Spectator &&
+                   peer.Seat >= 0 && peer.Seat < 4;
+        }
+
         public List<int> SeatedPeerIds()
         {
             var ids = new List<int>();
 
             foreach (var p in _peers.Values)
             {
-                if (IsSeatlessReferee(p.PeerId) || p.Spectator) continue;
+                if (!IsSeatedPeer(p.PeerId)) continue;
                 ids.Add(p.PeerId);
             }
 
             return ids;
         }
 
-        public int SeatedPeerCount() => SeatedPeerIds().Count;
+        public int SeatedPeerCount()
+        {
+            int count = 0;
+            foreach (var peer in _peers.Values)
+                if (IsSeatedPeer(peer.PeerId)) count++;
+            return count;
+        }
 
         /// <summary>How many seated guests can answer the host's READY question. The host is
         /// excluded because its action is START MATCH, not READY; including it creates an

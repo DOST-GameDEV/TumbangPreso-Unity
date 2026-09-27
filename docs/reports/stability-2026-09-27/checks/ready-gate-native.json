@@ -1,0 +1,42 @@
+{
+  "base": "98375ad28e2782b61c84ab83e0043a668a3a7cf9",
+  "protocol": 83,
+  "scope": "Scoped seated readiness, host loading barrier and consumed countdown",
+  "result": "Passed",
+  "total": 2,
+  "duration": 3.6464798,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/ReadyGate.cs",
+      "sha256": "6391D10215780091C500D16326C249AF0B44AC285BFB88D42DDDC67ED345C920"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/LobbySession.cs",
+      "sha256": "EE56DA7C6A105979CB48FB2177A1BA0FA8048CAEDC237E56A40DA0AA6B319A73"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "20DB66A61FE7728192B7898F8AE6851356CD7815340E336EE13042D637D7275E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "2F0956F421FBE344DD71D912885C034998033ABDD8CC2EF2AE21215CD18F727E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ReadyGateNetworkTests.cs",
+      "sha256": "EC3A4DE5CF3F271D54612FF38526F642FE79CFEF938652262E86C8DC8FFABD8F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ReadyGateNetworkTests.cs.meta",
+      "sha256": "CFB730F4B76F50734305D974947A2CC975DDF9B9846DC64F9A3B2A375FB5EB04"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6452543488,
+  "retryCount": 0,
+  "unverified": [
+    "Actual peer or ranked sessions",
+    "Physical input",
+    "Lossy-link manual retransmission"
+  ]
+}
