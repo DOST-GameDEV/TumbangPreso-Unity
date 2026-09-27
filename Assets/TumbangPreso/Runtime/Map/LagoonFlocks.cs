@@ -11,8 +11,8 @@ namespace TumbangPreso
     // ⚠️ Ambient life is scenery. Every bird, fish and feather here is local only, never on the
     // wire, never a collider, never a physics body, and never reads or writes a gameplay random
     // stream. Two peers see different birds and that is correct: nothing a player does depends on
-    // them. The only physics use is read-only: one downward raycast to find the sand when a bird
-    // picks a landing spot.
+    // them. The only physics use is read-only: downward raycasts to find the ground when a bird
+    // picks a landing spot or hops, and (AvoidObstacles only) sphere-casts ahead of flying birds.
     public sealed class LagoonFlocks : MonoBehaviour
     {
         // All models face their local +Z, up +Y, metres.
@@ -36,6 +36,27 @@ namespace TumbangPreso
         // it; left empty, the burst falls back to the old thin boxes in the bird's own colour.
         public Material[] FeatherMaterials;
 
+        // ⚠️ KANTO PIGEONS (owner, 2026-09-27: "now it needs pigeons too, similar to how you made
+        // seagulls"). One more instance of this component runs the Kanto pigeons. Everything
+        // below defaults to the value the Lagoon ran on before these fields existed, so the
+        // Lagoon scene (which never sets them) behaves exactly as it did.
+        // Tuning. Defaults are the Lagoon's (MaxGrounded, LandEvery, one bird per landing, 7 to 11 m/s, scale 1).
+        public int MaxGroundedBirds = MaxGrounded;
+        public Vector2 LandEverySeconds = LandEvery;
+        // ⚠️ Pigeons come down in GROUPS: with LandGroup.y above 1, a landing brings LandGroup.x
+        // to LandGroup.y birds of ONE flock down within about 2.5 m of each other, arriving
+        // staggered by 0.2 to 0.8 s, and the whole group flees when one of them is startled.
+        public Vector2Int LandGroup = new Vector2Int(1, 1);
+        public Vector2 FlightSpeed = new Vector2(7f, 11f);
+        public float BirdScale = 1f;
+        // ⚠️ Kanto has tall buildings around a 26 m park and 10 m streets. With this on, each
+        // flying bird sphere-casts about 1.5 s of travel ahead (a round-robin budget of
+        // AvoidCastBudget casts per frame, triggers skipped, read-only) and steers along the hit
+        // surface and upward. Never a teleport. Off on the Lagoon, where there is nothing to hit.
+        public bool AvoidObstacles = false;
+        // The ground wing fold (see SetWings): how far each wing swings back, and how far it tips onto the body.
+        public float WingFoldSweep = 84f, WingFoldDroop = 10f;
+
         /// <summary>How many bird slots exist (for the soundscape). Stable for the whole match.</summary>
         public int BirdCount => _birdCount;
         /// <summary>World position of bird <paramref name="i"/> (for the soundscape).</summary>
@@ -51,7 +72,8 @@ namespace TumbangPreso
         // ⚠️ Bird numbers. 7 to 11 m/s is a gull or tern cruising, not a pigeon dart. The
         // acceleration cap is what turns a boid swarm into wide arcs: at 3.2 m/s² and 9 m/s the
         // tightest turn is about 25 m across, so a flock changing its mind reads as a long bank.
-        private const float BirdMinSpeed = 7f, BirdMaxSpeed = 11f, BirdAccel = 3.2f;
+        // The speed band itself is the public FlightSpeed (7 to 11 by default).
+        private const float BirdAccel = 3.2f;
         private const float BirdMaxClimb = 3f, BirdMaxDive = 4f, BirdSeparation = 4f;
         // ⚠️ Birds stay at least this far above the water inside CourtKeepOut, so a flock never
         // crosses a player's eye line low over the court (owner brief, 2026-09-27). A bird that
@@ -84,8 +106,19 @@ namespace TumbangPreso
         private const float RescanSeconds = 1f;
         private const int SlipperCapacity = 32;
         private const int FeatherCapacity = 160;
+        // Obstacle avoidance: at most this many casts a frame, each 0.5 m wide and about 1.5 s
+        // of travel long. At 21 birds every bird is re-checked about every third frame.
+        private const int AvoidCastBudget = 8;
+        private const float AvoidRadius = .5f, AvoidLookAhead = 1.5f, AvoidHold = .5f;
 
         private System.Random _random;
+
+        // Group landings and obstacle avoidance.
+        private int[] _group;
+        private bool[] _landPending;
+        private float[] _landDelay, _groupStay, _avoidHold;
+        private Vector3[] _avoid;
+        private int _groupSerial, _castCursor;
 
         // Birds, one slot per bird, flock members contiguous.
         private int _birdCount;
@@ -206,6 +239,10 @@ namespace TumbangPreso
             _landAt = new Vector3[n]; _stateTime = new float[n]; _stayLeft = new float[n];
             _actLeft = new float[n]; _actTime = new float[n]; _yawFrom = new float[n]; _yawTo = new float[n];
             _pitch = new float[n]; _act = new int[n]; _hopFrom = new Vector3[n]; _hopTo = new Vector3[n];
+            _group = new int[n]; _landPending = new bool[n]; _landDelay = new float[n]; _groupStay = new float[n];
+            _avoid = new Vector3[n]; _avoidHold = new float[n];
+            for (int i = 0; i < n; i++) _group[i] = -1;
+            float cruise = (FlightSpeed.x + FlightSpeed.y) * .5f;
             _flockStart = new int[_flockCount]; _flockSize = new int[_flockCount];
             _flockGoal = new Vector3[_flockCount]; _flockGoalTimer = new float[_flockCount]; _dipLeft = new float[_flockCount];
             _nextDip = Range(20f, 40f);
@@ -224,12 +261,13 @@ namespace TumbangPreso
                 {
                     var root = Spawn(BirdTemplate, "Seabird " + f + "." + k);
                     _birdRoot[b] = root; _flockOf[b] = f;
+                    if (BirdScale != 1f) root.localScale *= BirdScale;
                     _birdBody[b] = FindChild(root, "body");
                     _wingL[b] = FindChild(root, "wing_l"); _wingR[b] = FindChild(root, "wing_r");
                     if (_wingL[b] != null) _wingLRest[b] = _wingL[b].localRotation;
                     if (_wingR[b] != null) _wingRRest[b] = _wingR[b].localRotation;
                     _birdPos[b] = home + new Vector3(Range(-5f, 5f), Range(-2f, 2f), Range(-5f, 5f));
-                    _birdVel[b] = tangent * Range(8f, 10f);
+                    _birdVel[b] = tangent * Range(cruise - 1f, cruise + 1f);
                     _heading[b] = Mathf.Atan2(_birdVel[b].x, _birdVel[b].z) * Mathf.Rad2Deg;
                     // ⚠️ Per-bird rate and a staggered first glide: seven wings beating in step
                     // read as one machine, not seven birds.
@@ -467,6 +505,7 @@ namespace TumbangPreso
             if (_rescanLeft <= 0f) { _rescanLeft = RescanSeconds; Rescan(); }
             ReadSlippers();
 
+            if (AvoidObstacles) StepAvoidance(dt);
             StepBirds(dt);
             StepGroundLife(dt);
             // The slipper speed is measured over the real frame, not the clamped one.
@@ -543,6 +582,7 @@ namespace TumbangPreso
 
             float blendBank = 1f - Mathf.Exp(-3f * dt), blendWing = 1f - Mathf.Exp(-10f * dt);
             float skyEdge = SkyRadius * .8f, ceiling = WaterY + SkyHeight.y, courtFloor = WaterY + CourtClearance;
+            float minSpeed = FlightSpeed.x, maxSpeed = FlightSpeed.y, cruise = (minSpeed + maxSpeed) * .5f;
             for (int f = 0; f < _flockCount; f++)
             {
                 int start = _flockStart[f], end = start + _flockSize[f];
@@ -564,7 +604,7 @@ namespace TumbangPreso
                     var steer = sep * 6f;
                     if (n > 0) { steer += (ali / n - vel) * .35f; steer += (coh / n - pos) * .08f; }
                     var toGoal = goal - pos;
-                    if (toGoal.sqrMagnitude > 1e-4f) steer += (toGoal.normalized * 9f - vel) * .5f;
+                    if (toGoal.sqrMagnitude > 1e-4f) steer += (toGoal.normalized * cruise - vel) * .5f;
                     // Flapping pulls forward a little, gliding bleeds a little: the speed breathes with the wings.
                     if (vel.sqrMagnitude > 1e-4f) steer += vel.normalized * (_flapsLeft[i] > 0 ? .9f : -.4f);
                     if (steer.sqrMagnitude > BirdAccel * BirdAccel) steer = steer.normalized * BirdAccel;
@@ -587,10 +627,11 @@ namespace TumbangPreso
                     if (keep.sqrMagnitude > 4f * BirdAccel * BirdAccel) keep = keep.normalized * (2f * BirdAccel);
 
                     vel += (steer + keep) * dt;
+                    if (AvoidObstacles) vel += _avoid[i] * dt;
                     vel.y = Mathf.Clamp(vel.y, -BirdMaxDive, BirdMaxClimb);
                     var flat = Flat(vel); float hs = flat.magnitude;
-                    float hMin = Mathf.Sqrt(Mathf.Max(BirdMinSpeed * BirdMinSpeed - vel.y * vel.y, 1f));
-                    float hMax = Mathf.Sqrt(Mathf.Max(BirdMaxSpeed * BirdMaxSpeed - vel.y * vel.y, 1f));
+                    float hMin = Mathf.Sqrt(Mathf.Max(minSpeed * minSpeed - vel.y * vel.y, 1f));
+                    float hMax = Mathf.Sqrt(Mathf.Max(maxSpeed * maxSpeed - vel.y * vel.y, 1f));
                     if (hs < 1e-3f) { float h = _heading[i] * Mathf.Deg2Rad; flat = new Vector3(Mathf.Sin(h), 0f, Mathf.Cos(h)); hs = 1f; }
                     flat *= Mathf.Clamp(hs, hMin, hMax) / hs;
                     vel = new Vector3(flat.x, vel.y, flat.z);
@@ -650,12 +691,13 @@ namespace TumbangPreso
         // animation. its wings are spread at all times even when landed"). The flap only ever
         // rolled each wing about its spread axis, so a landed bird stood with a 1.3 m span.
         // A grounded bird now eases each wing into a FOLDED pose: swung back about the shoulder
-        // (yaw, left wing -FoldSweep, right +FoldSweep, since the left wing spreads along -X and
+        // (yaw, left wing -WingFoldSweep, right +WingFoldSweep, since the left wing spreads along -X and
         // the right along +X with the bird facing +Z) until it lies along the flank, tipped down
         // a little onto the body, with the tips crossing over the tail as a tern's do. It folds
         // over ~0.35 s after touching down and snaps open in ~0.15 s for takeoff, so the first
         // takeoff beat is already a full-span stroke.
-        private const float FoldSweep = 84f, FoldDroop = 10f;
+        // The sweep and droop are the public WingFoldSweep and WingFoldDroop (84 and 10 by default),
+        // so a smaller bird can fold its own way.
 
         private void SetWings(int i, float angle)
         {
@@ -667,13 +709,13 @@ namespace TumbangPreso
             if (_wingL[i] != null)
             {
                 var spread = _wingLRest[i] * Quaternion.Euler(0f, 0f, -angle);
-                var folded = Quaternion.Euler(0f, -FoldSweep, 0f) * _wingLRest[i] * Quaternion.Euler(0f, 0f, FoldDroop);
+                var folded = Quaternion.Euler(0f, -WingFoldSweep, 0f) * _wingLRest[i] * Quaternion.Euler(0f, 0f, WingFoldDroop);
                 _wingL[i].localRotation = Quaternion.Slerp(spread, folded, f);
             }
             if (_wingR[i] != null)
             {
                 var spread = _wingRRest[i] * Quaternion.Euler(0f, 0f, angle);
-                var folded = Quaternion.Euler(0f, FoldSweep, 0f) * _wingRRest[i] * Quaternion.Euler(0f, 0f, -FoldDroop);
+                var folded = Quaternion.Euler(0f, WingFoldSweep, 0f) * _wingRRest[i] * Quaternion.Euler(0f, 0f, -WingFoldDroop);
                 _wingR[i].localRotation = Quaternion.Slerp(spread, folded, f);
             }
         }
@@ -686,15 +728,29 @@ namespace TumbangPreso
             _nextLanding -= dt;
             if (_nextLanding <= 0f)
             {
-                _nextLanding = Range(LandEvery.x, LandEvery.y);
+                _nextLanding = Range(LandEverySeconds.x, LandEverySeconds.y);
                 int down = 0;
-                for (int i = 0; i < _birdCount; i++) if (_mode[i] == ModeLanding || _mode[i] == ModeGrounded) down++;
-                // ⚠️ At most MaxGrounded on the ground: a few birds on the court are life, a crowd is a hazard to read around.
-                if (down < MaxGrounded) TryStartLanding();
+                for (int i = 0; i < _birdCount; i++) if (_mode[i] == ModeLanding || _mode[i] == ModeGrounded || _landPending[i]) down++;
+                // ⚠️ At most MaxGroundedBirds on the ground: a few birds on the court are life, a crowd is a hazard to read around.
+                if (down < MaxGroundedBirds)
+                {
+                    if (LandGroup.y > 1) TryStartGroupLanding(MaxGroundedBirds - down);
+                    else TryStartLanding();
+                }
             }
             float blendBank = 1f - Mathf.Exp(-3f * dt), blendWing = 1f - Mathf.Exp(-10f * dt);
             for (int i = 0; i < _birdCount; i++)
             {
+                // A group member waits its stagger out in the flock, then peels off for the spot.
+                if (_landPending[i])
+                {
+                    if (_mode[i] != ModeFlying) _landPending[i] = false;
+                    else if ((_landDelay[i] -= dt) <= 0f)
+                    {
+                        _landPending[i] = false;
+                        _mode[i] = ModeLanding; _stateTime[i] = 0f; _flapsLeft[i] = 0; _glideLeft[i] = 99f;
+                    }
+                }
                 switch (_mode[i])
                 {
                     case ModeLanding: StepLanding(i, dt, blendBank, blendWing); break;
@@ -715,6 +771,56 @@ namespace TumbangPreso
             }
             if (pick < 0 || !FindLandingSpot(out var spot)) return;
             _mode[pick] = ModeLanding; _landAt[pick] = spot; _stateTime[pick] = 0f; _flapsLeft[pick] = 0; _glideLeft[pick] = 99f;
+        }
+
+        // ⚠️ Pigeons land as a group: LandGroup.x to LandGroup.y birds of ONE flock, spots within
+        // about 2.5 m of one centre spot (inside the landing square, each on its own raycast
+        // ground), peeling off 0.2 to 0.8 s apart so they touch down one after another. They
+        // share a stay (plus up to 1.5 s each), so they also leave at about the same time.
+        private void TryStartGroupLanding(int room)
+        {
+            int want = Mathf.Min(_random.Next(Mathf.Max(1, LandGroup.x), LandGroup.y + 1), room);
+            if (want <= 0) return;
+            int first = _random.Next(_flockCount), flock = -1;
+            for (int k = 0; k < _flockCount && flock < 0; k++)
+            {
+                int f = (first + k) % _flockCount, start = _flockStart[f];
+                for (int i = start; i < start + _flockSize[f]; i++)
+                    if (_mode[i] == ModeFlying && !_landPending[i]) { flock = f; break; }
+            }
+            if (flock < 0 || !FindLandingSpot(out var centre)) return;
+            int group = ++_groupSerial, taken = 0, size = _flockSize[flock], from = _flockStart[flock], offset = _random.Next(size);
+            float stay = Range(8f, 20f), delay = 0f;
+            for (int k = 0; k < size && taken < want; k++)
+            {
+                int i = from + (offset + k) % size;
+                if (_mode[i] != ModeFlying || _landPending[i]) continue;
+                var spot = centre;
+                if (taken > 0)
+                {
+                    float a = Range(0f, Mathf.PI * 2f), r = Range(.5f, 2.5f);
+                    spot.x = Mathf.Clamp(centre.x + Mathf.Cos(a) * r, CourtCentre.x - CourtHalf, CourtCentre.x + CourtHalf);
+                    spot.z = Mathf.Clamp(centre.z + Mathf.Sin(a) * r, CourtCentre.z - CourtHalf, CourtCentre.z + CourtHalf);
+                    spot.y = GroundAt(spot, centre.y);
+                }
+                _landAt[i] = spot; _group[i] = group; _groupStay[i] = stay + Range(0f, 1.5f);
+                _landPending[i] = true; _landDelay[i] = delay;
+                delay += Range(.2f, .8f);
+                taken++;
+            }
+        }
+
+        // ⚠️ One startled, all gone: the whole group takes off together, including members still
+        // on their way in or waiting their stagger.
+        private void FleeGroup(int group)
+        {
+            for (int j = 0; j < _birdCount; j++)
+            {
+                if (_group[j] != group) continue;
+                _group[j] = -1;
+                _landPending[j] = false;
+                if (_mode[j] == ModeGrounded || _mode[j] == ModeLanding) BeginTakeoff(j);
+            }
         }
 
         // ⚠️ The ground is found with a read-only downward raycast from above the landing square,
@@ -781,7 +887,7 @@ namespace TumbangPreso
             {
                 if (dist >= .25f) { BeginTakeoff(i); return; }
                 _birdPos[i] = _landAt[i]; _birdVel[i] = Vector3.zero;
-                _mode[i] = ModeGrounded; _stayLeft[i] = Range(8f, 20f); _act[i] = 0; _actLeft[i] = Range(.6f, 1.6f); _pitch[i] = 0f;
+                _mode[i] = ModeGrounded; _stayLeft[i] = _group[i] >= 0 ? _groupStay[i] : Range(8f, 20f); _act[i] = 0; _actLeft[i] = Range(.6f, 1.6f); _pitch[i] = 0f;
                 _bank[i] = 0f; _flapsLeft[i] = 0;
                 _birdRoot[i].SetPositionAndRotation(_birdPos[i], Quaternion.Euler(0f, _heading[i], 0f));
                 return;
@@ -790,6 +896,7 @@ namespace TumbangPreso
             var accel = (desired - _birdVel[i]) * 2f;
             if (accel.sqrMagnitude > 49f) accel = accel.normalized * 7f;
             _birdVel[i] += accel * dt;
+            if (AvoidObstacles) _birdVel[i] += _avoid[i] * dt;
             _birdPos[i] += _birdVel[i] * dt;
             if (dist < 3f && _flapsLeft[i] == 0 && _glideLeft[i] > 50f) { _flapsLeft[i] = 3; _flapPhase[i] = 0f; _flapRate[i] = Range(4.2f, 5f); }
             PoseFlying(i, dt, _birdVel[i], blendBank, .4f);
@@ -804,7 +911,12 @@ namespace TumbangPreso
             SetWings(i, Mathf.Lerp(_wingAngle[i], -14f, blendWing));
             _stayLeft[i] -= dt;
             var pos = _birdPos[i];
-            if (_stayLeft[i] <= 0f || NearPlayer(pos, PlayerStartle) || LooseSlipperNear(pos, SlipperStartle)) { BeginTakeoff(i); return; }
+            if (_stayLeft[i] <= 0f) { BeginTakeoff(i); return; }
+            if (NearPlayer(pos, PlayerStartle) || LooseSlipperNear(pos, SlipperStartle))
+            {
+                if (_group[i] >= 0) FleeGroup(_group[i]); else BeginTakeoff(i);
+                return;
+            }
 
             _actTime[i] += dt;
             float yaw = _heading[i], pitch = 0f, lift = 0f;
@@ -873,17 +985,18 @@ namespace TumbangPreso
             _stateTime[i] += dt;
             var vel = _birdVel[i];
             var flat = Flat(vel); var fwd = flat.sqrMagnitude > 1e-4f ? flat.normalized : Vector3.forward;
-            var desired = fwd * 8.5f + Vector3.up * 3.5f;
+            var desired = fwd * (FlightSpeed.x + 1.5f) + Vector3.up * 3.5f;
             var accel = desired - vel;
             if (accel.sqrMagnitude > 36f) accel = accel.normalized * 6f;
             vel += accel * dt;
+            if (AvoidObstacles) vel += _avoid[i] * dt;
             _birdVel[i] = vel; _birdPos[i] += vel * dt;
             if (_flapsLeft[i] < 2) _flapsLeft[i] = 2;
             PoseFlying(i, dt, vel, blendBank, .6f);
             StepWings(i, dt, vel.y, blendWing);
-            if ((vel.magnitude >= 7f && _birdPos[i].y - _landAt[i].y > 5f) || _stateTime[i] > 6f)
+            if ((vel.magnitude >= FlightSpeed.x && _birdPos[i].y - _landAt[i].y > 5f) || _stateTime[i] > 6f)
             {
-                _mode[i] = ModeFlying;
+                _mode[i] = ModeFlying; _group[i] = -1;
                 _flapRate[i] = Range(3.2f, 4.1f);
             }
         }
@@ -906,12 +1019,49 @@ namespace TumbangPreso
                 p = new Vector3(edge.x, p.y, edge.z);
             }
             p.y = Mathf.Max(p.y, WaterY + CourtClearance + 2f);
-            if (!flying || Flat(velocity).sqrMagnitude < 1f) velocity = new Vector3(-away.z, 0f, away.x) * 9f;
+            if (!flying || Flat(velocity).sqrMagnitude < 1f) velocity = new Vector3(-away.z, 0f, away.x) * ((FlightSpeed.x + FlightSpeed.y) * .5f);
             _birdPos[i] = p; _birdVel[i] = velocity;
             _heading[i] = Mathf.Atan2(velocity.x, velocity.z) * Mathf.Rad2Deg; _bank[i] = 0f;
             _mode[i] = ModeFlying; _flapsLeft[i] = 0; _glideLeft[i] = Range(0f, 2f); _flapRate[i] = Range(3.2f, 4.1f);
             _birdRoot[i].gameObject.SetActive(true);
             _birdRoot[i].SetPositionAndRotation(p, Quaternion.Euler(0f, _heading[i], 0f));
+        }
+
+        // ---------------------------------------------------------------- obstacle avoidance
+
+        // ⚠️ Read-only sphere-casts, round-robin, at most AvoidCastBudget a frame. A hit sets a
+        // steering push held for AvoidHold seconds: along the hit surface's normal (away from
+        // the wall), plus a slide along the wall in the direction the bird is already going (so
+        // a head-on approach turns instead of braking into the wall), plus a lift, stronger the
+        // closer the hit. It is added to the velocity like any other steer: never a teleport.
+        // A landing bird ignores the ground it is landing on (a hit no nearer than its spot).
+        private void StepAvoidance(float dt)
+        {
+            for (int i = 0; i < _birdCount; i++)
+                if (_avoidHold[i] > 0f && (_avoidHold[i] -= dt) <= 0f) _avoid[i] = Vector3.zero;
+            int casts = 0;
+            for (int k = 0; k < _birdCount && casts < AvoidCastBudget; k++)
+            {
+                int i = _castCursor;
+                _castCursor = (_castCursor + 1) % _birdCount;
+                int mode = _mode[i];
+                if (mode != ModeFlying && mode != ModeLanding && mode != ModeTakeoff) continue;
+                var vel = _birdVel[i]; float speed = vel.magnitude;
+                if (speed < .5f) continue;
+                var dir = vel / speed;
+                float range = Mathf.Max(2f, speed * AvoidLookAhead);
+                casts++;
+                if (!Physics.SphereCast(_birdPos[i], AvoidRadius, dir, out var hit, range, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+                    continue;
+                if (mode == ModeLanding && hit.distance >= (_landAt[i] - _birdPos[i]).magnitude - 1f) continue;
+                var slide = Vector3.ProjectOnPlane(dir, hit.normal);
+                if (slide.sqrMagnitude < 1e-3f) slide = Vector3.Cross(Vector3.up, hit.normal);
+                if (slide.sqrMagnitude > 1e-6f) slide.Normalize();
+                var push = hit.normal + slide * .8f + Vector3.up * .6f;
+                float urgency = 1f - Mathf.Clamp01(hit.distance / range);
+                _avoid[i] = push.normalized * (BirdAccel * (1.5f + 3f * urgency));
+                _avoidHold[i] = AvoidHold;
+            }
         }
 
         // ---------------------------------------------------------------- the slipper hit
@@ -953,6 +1103,7 @@ namespace TumbangPreso
         private void Burst(int i, Vector3 at)
         {
             _mode[i] = ModeDead;
+            _landPending[i] = false; _group[i] = -1;
             _stayLeft[i] = Range(20f, 40f);
             _birdRoot[i].gameObject.SetActive(false);
             Bursts++;
