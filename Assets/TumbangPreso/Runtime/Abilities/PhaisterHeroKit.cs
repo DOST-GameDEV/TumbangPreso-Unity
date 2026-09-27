@@ -19,8 +19,8 @@ namespace TumbangPreso.Abilities
     /// | Defending | CURSE: VULNERABLE | *"easier to tag and phaister can go out of box and tag them"* |
     /// | Ultimate | HIGOP | *"casts a blackhole ... pulls everyone towards it. No button mashhing"*, *"really slowly cast"*, *"pulls players ands slipeprs except for her shit and no escape for entire duration but they can try to"* |
     ///
-    /// ⚠️ HEX AND GRAND COVEN ARE REPLACED. `RitualBuildSeconds` stays because the introduction's warm-up
-    /// (`PhaisterRitualWarmup`) still times itself by it; `CaptureCoven`/`RestoreCoven` keep their names
+    /// ⚠️ HEX AND GRAND COVEN ARE REPLACED. `RitualBuildSeconds` remains for legacy callers;
+    /// the warmup follows the current ultimate. `CaptureCoven`/`RestoreCoven` keep their names
     /// because the rejoin snapshot (`MatchRpc`) calls them, and now carry the black hole.
     /// </summary>
     public sealed class PhaisterHeroKit : HeroKit

@@ -2,6 +2,12 @@
 
 ## Current networking and flow work, 2026-09-27
 
+Phaister's existing setup warmup now builds the current visual-only OMEN using its
+authored ultimate timings, not the retired Grand Coven. It immediately deactivates
+and disposes that visual; no ability,pull,hazard,score or audio path is invoked.
+Source/API-call reviewed only. No repeated character film or unchanged suite was
+run for this loader correction; no measured first-cast timing claim.
+
 Protocol64 adds a cached skill-contract fingerprint to connection approval. Stable
 roster/ability identity, delivery/resource/aim/preparation metadata and shared intro
 durations must match; cosmetic names/assets,live timers,current role and locale do
