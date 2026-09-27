@@ -1,11 +1,19 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
-`98375ad28e2782b61c84ab83e0043a668a3a7cf9`; scoped readiness follows it.
+`07cfc317738f38d07e23af3de6018f03be162eb3`; asynchronous arena entry follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+SceneFlow now uses owned asynchronous arena loading on every peer after an initial
+curtain frame, with repeated-target deduplication and an explicit observation-only
+option. Boot retains the existing loading illustration deck through async reads.
+Two new native cases pass 2/2 on full base plus six frozen inputs, no drift or retry:
+actual scene loads under offline/controlled network roles, installer/HUD readiness,
+retained artwork and pre-load cancellation. Protocol83 unchanged. No real peers,
+cold-player timing or hitch-free claim. [Evidence](reports/stability-2026-09-27/loading-audit.md#asynchronous-arena-entry).
 
 Protocol83 scopes READY and countdown messages to a match, rejects non-seated voters,
 and holds valid quorum until host loading finishes. Manual votes retry until the

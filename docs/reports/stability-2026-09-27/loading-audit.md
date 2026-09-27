@@ -5,6 +5,32 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Asynchronous Arena Entry
+
+SceneFlow previously passed the network flag into HubLoading.Begin, making online
+matches fall through to synchronous SceneManager.LoadScene. Offline Begin also
+started its async operation before the curtain had a rendered frame. Both now use
+one owned async loader after an initial yield. Duplicate same-destination requests
+share the in-flight owner across frames; explicit externallyLoaded callers retain
+the old observation-only path. A120-second load watchdog reports failure, not success.
+The existing destination installer, introduction and arena-prewarm barriers stay intact.
+
+LoadingArtwork previously synchronously read each of its three images on first
+install/rotation. Boot now awaits per-image LoadAsync and retains the existing cache.
+Artwork, rotation, reduced-motion behavior and direct no-boot fallback are unchanged.
+No map assets, rendering values, network protocol or authored presentation changed.
+
+Two new guarded native cases pass2/2 in15.3152177s on full `07cfc317` plus six frozen
+inputs, no drift or retry. One checks deck identity, no-work repeated warmup and
+cancel-before-start without a scene event. The other drives actual scene loads with
+offline and controlled network-role providers, including same-scene reload, repeated
+requests, exactly one load per entry and final installer/HUD readiness. The mechanical
+named-argument change in an existing test was compiled, not rerun. Online sign-in
+was disabled by the existing batch guard; no sockets or live services were exercised.
+Editor readiness logs were13.54s and0.73s respectively, different cache states, not
+a before/after comparison. Cold-player frame timing, hardware and real peers remain
+unverified. [Receipt](checks/arena-async-native.json),[XML](checks/arena-async-native.xml).
+
 ## Explicit Introduction Preparation
 
 2026-09-28,afterf2309da6: HubLoading.PrepareMatchVisuals now runs the existing

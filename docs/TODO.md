@@ -131,6 +131,10 @@ it and the focused retry passes. Player first-entry/other-device timing stays OP
 Generic match loading now awaits destination-owned setup, rejects stale same-scene
 installers, retains errors instead of timed success, and cancels obsolete curtains.
 Four assemblies compile; native handoff/failure/input checks remain OPEN.
+Arena entry now uses owned async loading on every peer after a curtain frame,
+deduplicates in-flight requests and preloads the existing illustration deck at boot.
+Two new native cache/cancellation and offline/controlled-network-role scene cases
+pass. Actual peers and cold-player hitch/frame timing remain OPEN.
 Supplementary baked-motion data now preloads asynchronously per roster rig and is
 retained for body/introduction binding. No authored clips/models changed. Four
 assemblies compile; native retention and measured first-use/memory checks remain OPEN.

@@ -28,6 +28,7 @@ namespace TumbangPreso.UI.Hub
         private GameObject _failureControls;
         private Button _returnButton;
         private bool _menuTransition;
+        private bool _ownsSceneLoad;
         private MapPreviewSurface _previewPreparation;
         public string FailureReason { get; private set; }
         public static bool Visible => _current != null;
@@ -36,11 +37,12 @@ namespace TumbangPreso.UI.Hub
         public static bool Covers(string scene) => System.Array.IndexOf(SceneFlow.Maps, scene) >= 0;
 
         /// <summary>
-        /// Show the curtain and load <paramref name="scene"/>. Returns true when this took the load
-        /// over (offline: asynchronously), false when the caller should load as it always has.
+        /// Show the curtain and asynchronously load the arena on any peer. An explicit
+        /// external loader can instead ask only for readiness observation.
         /// </summary>
-        public static bool Begin(string scene, bool networked)
+        public static bool Begin(string scene, bool externallyLoaded = false)
         {
+            if (_current != null && _current._ownsSceneLoad && _current._scene == scene) return true;
             Cancel();
             if (!Covers(scene)) return false;
 
@@ -54,19 +56,29 @@ namespace TumbangPreso.UI.Hub
             loading.Build();
             ScreenTakeover.Register(loading, () => _current == loading);
 
-            if (networked) { loading.StartCoroutine(loading.Follow(null)); return false; }
+            if (externallyLoaded) { loading.StartCoroutine(loading.Follow(null)); return false; }
+            loading._ownsSceneLoad = true;
+            loading.StartCoroutine(loading.LoadAndFollow());
+            return true;
+        }
+
+        private IEnumerator LoadAndFollow()
+        {
+            // Render the curtain before starting scene work. Cancelling this frame
+            // also cancels the request before Unity owns a non-cancellable operation.
+            yield return null;
+            AsyncOperation load = null;
             try
             {
-                var load = SceneManager.LoadSceneAsync(scene);
-                if (load == null) loading.Fail("The match could not be loaded.");
-                else loading.StartCoroutine(loading.Follow(load));
+                load = SceneManager.LoadSceneAsync(_scene);
             }
             catch (System.Exception error)
             {
-                loading.Fail("The match could not be loaded.");
-                Debug.LogException(error, loading);
+                Fail("The match could not be loaded.");
+                Debug.LogException(error, this);
             }
-            return true;
+            if (load == null) { if (FailureReason == null) Fail("The match could not be loaded."); yield break; }
+            yield return Follow(load);
         }
 
         public static void Cancel()
@@ -271,6 +283,8 @@ namespace TumbangPreso.UI.Hub
                 {
                     shown = Mathf.Max(shown, Mathf.Clamp01(load.progress / 0.9f) * 60f);
                     _percent.text = Mathf.RoundToInt(shown) + "%";
+                    if (Time.realtimeSinceStartup - _began > 120)
+                    { Fail("The match did not finish loading."); yield break; }
                     yield return null;
                 }
             }
