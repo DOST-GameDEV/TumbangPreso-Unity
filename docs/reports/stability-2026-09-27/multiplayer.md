@@ -1,5 +1,30 @@
 # Multiplayer investigation, 2026-09-27
 
+## Sentry Target Recovery
+
+Base `03f1c741`,protocol74. PaeteSentry's old restored spawn reran InReach against
+the observer's current bodies. That could select a bystander or omit an original
+target who moved; Rooted status alone did not recover the tree's own target list.
+
+WorldEffectSnapshot now carries an explicit four-seat TargetMask. WorldFieldItem's
+base is70bytes,with the new byte before the existing optional water tail. Validation
+rejects out-of-range bits,the owner's bit and use on non-Sentry fields. Capture
+preserves the host's selected seats; empty means empty. Missing bodies bind once
+when installed,independent of their current distance,without duplicating limbs.
+Recapture preserves missing seats. A restored sentry cannot execute another catch,
+pull or root if authority changes. Fresh cast rules and authored visuals are unchanged.
+
+One guarded native pass completed2/2 new cases,0failed/0skipped,0.2904714s. Tests
+exercise the actual70byte receiver,invalid masks,69byte truncation,and restored
+target selection after movement/late installation with no gameplay replay.
+Frozen206inputs,6changed,no drift; Unity6000.5.8f1/D3D11. Minimum sampled free
+storage6,369,206,272bytes; guard restored two named-profile files and three shared
+Editor input preferences. [Receipt](checks/sentry-recovery-native.json),
+[XML](checks/sentry-recovery-native.xml). No previous tests or films repeated.
+
+This closes the local snapshot target-list gap,not fresh-cast peer convergence,
+actual delayed-peer/reconnect/ranked acceptance or the whole networking queue.
+
 ## Voodoo Body Snapshot
 
 Base `1848e1dc`,protocol73. The incoming body API now has a typed27-byte snapshot

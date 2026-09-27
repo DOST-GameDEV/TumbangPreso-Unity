@@ -91,6 +91,15 @@ Cosmetic swaps do not affect the token. Other effect kinds, multiple objects fro
 one cast and shared-ultimate cohorts still need their explicit lifetime contract;
 adding this field does not silently give every existing effect an identity.
 
+Protocol74 adds a bounded TargetMask to the world-field payload. Currently only
+Sentry uses it,with its owner's bit forbidden. Capture keeps the host's selected
+seats; recovery does not choose new targets from current distance. An empty mask
+means no targets,not permission to infer them. Missing bodies bind once when their
+seats install,and the original mask survives recapture in the meantime. Restoring
+presentation cannot perform another catch,pull or root,even if authority later changes.
+This fixes snapshot recovery; fresh-cast peer target convergence and actual delayed
+peer acceptance remain separate. New effect-specific data needs its own semantics.
+
 ## Victim Feedback
 
 Host-only outcome loops must announce existing contact presentation through the

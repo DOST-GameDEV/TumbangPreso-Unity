@@ -563,21 +563,28 @@ namespace TumbangPreso.Abilities
         private float _lead;
         private bool _caught;
         private readonly List<CharacterMotor> _held = new List<CharacterMotor>();
+        private byte? _restoredTargets;
+        private byte _boundTargets;
+        private readonly List<CharacterMotor> _lateTargets = new List<CharacterMotor>();
         private PaeteSentryBody _body;
         private const float Flight = 0.45f;
 
-        public static PaeteSentry Spawn(Vector3 from, Vector3 at, int ownerSlot, float age = 0f, bool handBack = false)
+        public static PaeteSentry Spawn(Vector3 from, Vector3 at, int ownerSlot, float age = 0f, bool handBack = false,
+            byte? restoredTargets = null)
         {
             var go = new GameObject("PaeteSentry");
             go.transform.position = at;
             var s = go.AddComponent<PaeteSentry>();
             s.OwnerSlot = ownerSlot; s.Centre = at;
+            s._restoredTargets = restoredTargets;
+            s._caught = restoredTargets.HasValue; // Recovery never applies a second pull/root.
             // ⚠️ A RESTORED AGE IS ALREADY PAST THE FLIGHT. `WorldEffectSnapshot` restores with the age since the roots arrived
             // (`Capture`'s `Remaining` counts from 0, not from -Flight), and subtracting the flight again put a rejoiner's tree
             // 0.45 s behind everybody else's for its whole life (TODO HERO-9, found 2026-09-26). A fresh cast (age 0) still flies.
-            s._age = age > 0f ? age : handBack ? PaeteRules.SentryCatchSeconds - 0.02f : -Flight;
+            s._age = restoredTargets.HasValue ? Mathf.Max(0, age)
+                : age > 0f ? age : handBack ? PaeteRules.SentryCatchSeconds - 0.02f : -Flight;
             // Every live cast comes up through the cutscene now, so a restored one (a rejoiner, age > 0) is posed with the lead too.
-            s._lead = handBack || age > 0f ? BodyLead : 0f;
+            s._lead = handBack || age > 0f || restoredTargets.HasValue ? BodyLead : 0f;
             s._body = PaeteSentryBody.Build(go.transform);
             s._body.LifeSeconds = PaeteRules.SentryLifeSeconds + s._lead;
             s._body.CatchLead = s._lead;
@@ -600,26 +607,58 @@ namespace TumbangPreso.Abilities
             // so the warning and the catch timing are unchanged. v5 (direction.md 5.14): `PaeteRootRidge`, the court heaving
             // and splitting over them with the light inside the split; `PaeteRootVein`'s lit block at the front read as a seed.
             // The cutscene already showed the roots racing there and the tree crawling out; a hand-back sends no second race.
-            if (age <= 0f && !handBack) PaeteRootRidge.Race(null, new Vector3(from.x, Slipper.GroundY(from), from.z), at, Flight, staged: false);
+            if (age <= 0f && !handBack && !restoredTargets.HasValue) PaeteRootRidge.Race(null, new Vector3(from.x, Slipper.GroundY(from), from.z), at, Flight, staged: false);
             // Who the vines reach for is drawn on every peer from the same rule the host uses.
             var round = GameServices.Round;
-            if (round != null)
+            if (round != null && !restoredTargets.HasValue)
                 foreach (var p in round.Players)
                     if (p != null && p.PlayerSlot != ownerSlot && InReach(at, p)) s._held.Add(p);
             s._body.SetTargets(s._held);
+            s.BindRestoredTargets();
             return s;
         }
 
+        private byte CapturedTargets
+        {
+            get
+            {
+                if (_restoredTargets.HasValue) return _restoredTargets.Value;
+                byte mask = 0;
+                foreach (var body in _held)
+                    if (body != null && body.PlayerSlot >= 0 && body.PlayerSlot < Balance.PlayerCount)
+                        mask |= (byte)(1 << body.PlayerSlot);
+                return mask;
+            }
+        }
+
+        private void BindRestoredTargets()
+        {
+            if (!_restoredTargets.HasValue || _boundTargets == _restoredTargets.Value || GameServices.Round == null) return;
+            _lateTargets.Clear();
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                int bit = 1 << slot;
+                if ((_restoredTargets.Value & bit) == 0 || (_boundTargets & bit) != 0) continue;
+                var body = GameServices.Round.PlayerAt(slot);
+                if (body == null) continue;
+                _boundTargets |= (byte)bit;
+                _held.Add(body); _lateTargets.Add(body);
+            }
+            // SetTargets appends authored limbs; only newly installed seats belong here.
+            if (_lateTargets.Count > 0) _body.SetTargets(_lateTargets);
+            _lateTargets.Clear();
+        }
+
         /// <summary>
-        /// The sentry for a rejoiner and the replay (`Kind.Sentry`). Who it holds is not in the field:
-        /// Rooted rides `SyncUnit`, and a rejoiner's copy only draws (the host alone catches).
+        /// The host's captured seats survive movement and late body installation.
+        /// Rooted still rides SyncUnit; restoring this picture never catches again.
         /// </summary>
         public Net.WorldEffectSnapshot.Field Capture() => new Net.WorldEffectSnapshot.Field
         {
             Type = Net.WorldEffectSnapshot.Kind.Sentry, Source = gameObject, Position = Centre, Forward = Vector3.forward,
             Duration = PaeteRules.SentryLifeSeconds + 0.6f,
             Remaining = Mathf.Clamp(PaeteRules.SentryLifeSeconds + 0.6f - Mathf.Max(0f, _age), 0f, PaeteRules.SentryLifeSeconds + 0.6f),
-            Radius = PaeteRules.SentryRadius, Owner = OwnerSlot,
+            Radius = PaeteRules.SentryRadius, Owner = OwnerSlot, TargetMask = CapturedTargets,
         };
 
         public static bool InReach(Vector3 centre, CharacterMotor p)
@@ -630,6 +669,7 @@ namespace TumbangPreso.Abilities
 
         private void Update()
         {
+            BindRestoredTargets();
             float before = _age;
             _age += Time.deltaTime;
             // The growth cues run on the BODY's clock (so a hand-back, already grown, plays none of them); the rules on `_age`.

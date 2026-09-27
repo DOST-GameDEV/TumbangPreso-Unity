@@ -51,6 +51,97 @@ namespace TumbangPreso.PlayTests
         { yield return PlayModeWorld.Reset(); NetAuthority.Provider = _provider; }
 
         [Test]
+        public void SentryTargetMaskUsesTheWorldFieldReceiverAndRejectsInvalidSeats()
+        {
+            NetAuthority.Provider = new PredictingOwner();
+            var field = new WorldEffectSnapshot.Field { Type = WorldEffectSnapshot.Kind.Sentry,
+                Position = Vector3.zero, Forward = Vector3.forward, Owner = 0,
+                Duration = PaeteRules.SentryLifeSeconds + .6f, Remaining = 5,
+                Radius = PaeteRules.SentryRadius, TargetMask = 10 };
+            Assert.IsTrue(WorldEffectSnapshot.Valid(field));
+            var bad = field; bad.TargetMask = 16; Assert.IsFalse(WorldEffectSnapshot.Valid(bad));
+            bad = field; bad.TargetMask = 1; Assert.IsFalse(WorldEffectSnapshot.Valid(bad));
+            bad = field; bad.Type = WorldEffectSnapshot.Kind.Plant; Assert.IsFalse(WorldEffectSnapshot.Valid(bad));
+            var root = new GameObject("Sentry field receiver"); root.SetActive(false);
+            var receiver = root.AddComponent<MatchRpc>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var batchField = typeof(MatchRpc).GetField("_worldFieldBatch", flags);
+            var receive = typeof(MatchRpc).GetMethod("OnWorldFieldItemMsg", flags);
+            void Deliver(byte mask, bool includeMask)
+            {
+                using var writer = new FastBufferWriter(70, Allocator.Temp);
+                writer.WriteValueSafe(7); writer.WriteValueSafe(0); writer.WriteValueSafe((int)field.Type);
+                writer.WriteValueSafe(field.Position); writer.WriteValueSafe(field.Forward);
+                writer.WriteValueSafe(field.Duration); writer.WriteValueSafe(field.Remaining);
+                writer.WriteValueSafe(field.Radius); writer.WriteValueSafe(field.Owner);
+                writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(false);
+                writer.WriteValueSafe(0L);
+                if (includeMask) writer.WriteValueSafe(mask);
+                Assert.AreEqual(includeMask ? 70 : 69, writer.Length);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                receive.Invoke(receiver, new object[] { NetworkManager.ServerClientId, reader });
+            }
+            try
+            {
+                foreach (byte mask in new byte[] { 16, 1 })
+                {
+                    var rejected = new WorldEffectSnapshot.Batch(7, 1); batchField.SetValue(receiver, rejected);
+                    Deliver(mask, true); Assert.IsFalse(rejected.Finish(7, out _));
+                }
+                var truncated = new WorldEffectSnapshot.Batch(7, 1); batchField.SetValue(receiver, truncated);
+                Deliver(10, false); Assert.IsFalse(truncated.Finish(7, out _));
+                var accepted = new WorldEffectSnapshot.Batch(7, 1); batchField.SetValue(receiver, accepted);
+                Deliver(10, true); Assert.IsTrue(accepted.Finish(7, out var fields));
+                Assert.AreEqual(10, fields[0].TargetMask);
+                Assert.AreEqual(field.Remaining, fields[0].Remaining);
+            }
+            finally { Object.DestroyImmediate(root); }
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator RestoredSentryKeepsCapturedSeatsAndBindsLateBodiesWithoutAnotherCatch()
+        {
+            var owner = Owner("paete").GetComponent<CharacterMotor>(); owner.PlayerSlot = 0;
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(owner);
+            CharacterMotor Body(int slot, Vector3 at)
+            {
+                var body = new GameObject("Sentry target " + slot).AddComponent<CharacterMotor>();
+                body.PlayerSlot = slot; body.enabled = false; body.transform.position = at;
+                GameServices.Round.Register(body); return body;
+            }
+            var first = Body(1, Vector3.right);
+            var lateHost = Body(3, Vector3.left);
+            NetAuthority.Provider = new ObservingHost();
+            var original = PaeteSentry.Spawn(Vector3.zero, Vector3.zero, 0, handBack: true);
+            original.enabled = false;
+            var field = original.Capture();
+            Assert.AreEqual(10, field.TargetMask);
+            first.transform.position = Vector3.right * 20;
+            var bystander = Body(2, Vector3.forward);
+            GameServices.Round.Unregister(lateHost); Object.Destroy(lateHost.gameObject);
+            NetAuthority.Provider = new PredictingOwner();
+            Assert.IsTrue(WorldEffectSnapshot.Apply(new[] { field }, 1f));
+            var restored = Object.FindFirstObjectByType<PaeteSentry>(); Assert.IsNotNull(restored);
+            restored.enabled = false;
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var held = (System.Collections.Generic.List<CharacterMotor>)typeof(PaeteSentry).GetField("_held", flags).GetValue(restored);
+            CollectionAssert.AreEqual(new[] { first }, held, "Recovery selected a nearby bystander instead of the host's distant target.");
+            Assert.AreEqual(10, restored.Capture().TargetMask, "A not-yet-installed seat was lost from recovery state.");
+            var late = Body(3, Vector3.back * 20);
+            var update = typeof(PaeteSentry).GetMethod("Update", flags);
+            update.Invoke(restored, null); update.Invoke(restored, null);
+            CollectionAssert.AreEqual(new[] { first, late }, held, "Late seats must bind once regardless of current distance.");
+            var tree = restored.GetComponentInChildren<Visual.PaeteSentryBody>();
+            var targets = (System.Collections.IList)typeof(Visual.PaeteSentryBody).GetField("_targets", flags).GetValue(tree);
+            Assert.AreEqual(2, targets.Count, "Repeated binding added another authored limb.");
+            NetAuthority.Provider = new ObservingHost();
+            typeof(PaeteSentry).GetMethod("FixedUpdate", flags).Invoke(restored, null);
+            foreach (var body in new[] { first, late, bystander })
+            { Assert.IsFalse(body.IsCarried); Assert.IsFalse(body.IsRooted); }
+            yield return null;
+        }
+
+        [Test]
         public void VoodooBodyPrefixIsBoundedAndLeavesTheExistingAimTailIntact()
         {
             var state = new VoodooBodySnapshot { Drained = 1, Hexed = 2, MarkKind = 2, MarkSource = 0,

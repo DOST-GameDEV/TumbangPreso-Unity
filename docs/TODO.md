@@ -42,6 +42,10 @@ UI-flow native qualification now passes3/3 for range controls,settings row reuse
 preview resizing. The audio sample-preparation case also passes1/1. Exact coverage
 and limits are in the [loading report](reports/stability-2026-09-27/loading-audit.md);
 these do not close player timing,physical-input,visual or actual-peer acceptance.
+Sentry snapshot recovery now preserves captured seats instead of repeating a local
+distance query,binds late bodies once,and never catches again. Two new native
+receiver/recovery cases pass (protocol74); fresh-cast convergence and actual peers
+remain OPEN. [Evidence](reports/stability-2026-09-27/multiplayer.md#sentry-target-recovery).
 
 **NET-SKILLS-1, OPEN:** host authority,stable ability identity,explicit delivery/
 command intent,independent receipts,bounded delayed delivery,phase-aware prepared

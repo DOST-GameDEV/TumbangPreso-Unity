@@ -1979,6 +1979,7 @@ namespace TumbangPreso.Net
                 writer.WriteValueSafe(field.SecondScale);
                 writer.WriteValueSafe(field.Split);
                 writer.WriteValueSafe(field.InstanceId);
+                writer.WriteValueSafe(field.TargetMask);
                 WriteWaterExtra(writer, field);
                 _nm.CustomMessagingManager.SendNamedMessage("WorldFieldItem", peer, writer, NetworkDelivery.ReliableSequenced);
             }
@@ -2036,7 +2037,7 @@ namespace TumbangPreso.Net
 
         private void OnWorldFieldItemMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || !FromHost(senderClientId) || !reader.TryBeginRead(69)) return;
+            if (NetAuthority.IsHost || !FromHost(senderClientId) || !reader.TryBeginRead(70)) return;
             reader.ReadValueSafe(out int generation);
             reader.ReadValueSafe(out int index);
             reader.ReadValueSafe(out int kind);
@@ -2050,10 +2051,11 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float secondScale);
             reader.ReadValueSafe(out bool split);
             reader.ReadValueSafe(out long instanceId);
+            reader.ReadValueSafe(out byte targetMask);
             if (!ReadWaterExtra(ref reader, (WorldEffectSnapshot.Kind)kind, out int eventId, out var path)) return;
             _worldFieldBatch?.Add(generation, index, new WorldEffectSnapshot.Field { Type = (WorldEffectSnapshot.Kind)kind,
                 Position = position, Forward = forward, Duration = duration, Remaining = remaining,
-                Radius = radius, Owner = owner, FirstScale = firstScale, SecondScale = secondScale, Split = split, EventId = eventId, InstanceId = instanceId, Path = path });
+                Radius = radius, Owner = owner, FirstScale = firstScale, SecondScale = secondScale, Split = split, EventId = eventId, InstanceId = instanceId, TargetMask = targetMask, Path = path });
         }
 
         private void OnWorldFieldEndMsg(ulong senderClientId, FastBufferReader reader)

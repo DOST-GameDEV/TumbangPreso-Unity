@@ -25,6 +25,7 @@ namespace TumbangPreso.Net
             public bool Split;
             public int EventId;
             public long InstanceId;
+            public byte TargetMask;
             public Vector3[] Path;
         }
 
@@ -111,7 +112,9 @@ namespace TumbangPreso.Net
             if (!Finite(field.Position) || !Finite(field.Forward) || !Finite(field.Duration) || !Finite(field.Remaining)
                 || !Finite(field.Radius) || !Finite(field.FirstScale) || !Finite(field.SecondScale)
                 || field.Duration <= 0 || field.Duration > 60 || field.Remaining < 0 || field.Remaining > field.Duration + .05f
-                || field.Owner < -1 || field.Owner >= Core.Balance.PlayerCount || field.InstanceId < 0) return false;
+                || field.Owner < -1 || field.Owner >= Core.Balance.PlayerCount || field.InstanceId < 0
+                || (field.TargetMask & ~((1 << Core.Balance.PlayerCount) - 1)) != 0
+                || (field.Type != Kind.Sentry && field.TargetMask != 0)) return false;
             if (RafiWaterField.IsWater(field.Type)) return RafiWaterField.Valid(field);
             if (field.Type == Kind.Sheet)
                 return field.Radius > 0 && field.Radius <= 10 && field.FirstScale > 0 && field.FirstScale <= 1
@@ -139,7 +142,8 @@ namespace TumbangPreso.Net
             if (field.Type == Kind.Thorns)
                 return field.Owner >= 0 && field.Duration <= Core.PaeteRules.ThornConstructSeconds + .05f;
             if (field.Type == Kind.Sentry)
-                return field.Owner >= 0 && field.Duration <= Core.PaeteRules.SentryLifeSeconds + .65f;
+                return field.Owner >= 0 && field.Duration <= Core.PaeteRules.SentryLifeSeconds + .65f
+                    && (field.TargetMask & (1 << field.Owner)) == 0;
             return false;
         }
 
@@ -197,7 +201,8 @@ namespace TumbangPreso.Net
                     PaeteThorns.Restore(field.Position, field.Owner, field.Duration - remaining);
                 else if (field.Type == Kind.Sentry)
                     // A rejoiner's sentry is the same tree at the same age; the host alone catches.
-                    PaeteSentry.Spawn(field.Position, field.Position, field.Owner, field.Duration - remaining);
+                    PaeteSentry.Spawn(field.Position, field.Position, field.Owner, field.Duration - remaining,
+                        restoredTargets: field.TargetMask);
                 else if (field.Type == Kind.Gale)
                 {
                     // A rejoiner's gale is the same front at the same age; the host alone hits.

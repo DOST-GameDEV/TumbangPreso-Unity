@@ -1,11 +1,17 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`de426a0e9dfc1d36c6e6546221aeaf35a5075a21`; deferred audio preparation follows it.
+`03f1c7412b76f1b3ecf5eb4efee6dc5ef93c2958`; sentry target recovery follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Sentry snapshots now preserve the host's captured seat mask rather than guessing
+from current local distance. Late bodies bind once; restoration never reapplies
+the catch. Protocol74,70byte world-field base. New native receiver/restore pass2/2,
+no drift on206frozen inputs,minimum free6,369,206,272bytes. No earlier cases repeated.
+[Exact evidence and limits](reports/stability-2026-09-27/multiplayer.md#sentry-target-recovery).
 
 Splash audio preparation now loads and retains deferred SFX/voice sample data,
 yielding between clips. Native1/1 confirms the original reference-only gap and
@@ -29,6 +35,8 @@ and current owner reservations after resuming.
 
 | Revision | Change | Evidence boundary |
 |---|---|---|
+| 03f1c741 | Deferred SFX/voice samples prepared behind loading; UI-flow evidence recorded | Audio1/1 and first UI3/3 native cases pass; player timings and visual/physical input remain open |
+| de426a0e | Voodoo body status/mark/reach state and explicit outcome | Native codec/receiver2/2 pass; incoming kit gameplay wiring and peers remain open |
 | 0a28bf13 | Merge owner controls/GUID repairs with networking/loading work | Four assemblies compile;7/7 new focused native cases pass; actual peers/player timings pending |
 | 22f71a9c | Received Rooted restraint ownership, dedup, late facing and cleanup | Included in the7/7 native integration pass; actual peers/reconnect pending |
 | e1f21c5f | Coalesced character-preview render-target resizing and invalid-avatar cleanup | Native resize/reuse/capture case passes; visual and player allocation checks pending |
@@ -52,7 +60,7 @@ and current owner reservations after resuming.
 | 9a44be97 | Ranked/casual compatibility/capacity filtering and failed-allocation backoff/retry | Three managed checks and compile; live queue/party/results pending |
 | b7d26bcf | Prepared recovery integrated with incoming Phaister rework; screen-effect lifecycle cleanup | Frozen merged source compiles; native/peers pending |
 
-Current protocol is defined by NetSession.cs, now73. Matching clients are required.
+Current protocol is defined by NetSession.cs, now74. Matching clients are required.
 The prior full ledger, including every older feature, contributor record, source
 revision and receipt, remains in [the dated snapshot](archive/snapshots-2026-09-27/docs/ACTIVE_REWORK_LEDGER.md).
 

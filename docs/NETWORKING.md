@@ -24,6 +24,7 @@ Runtime files below are in `Assets/TumbangPreso/Runtime/`.
 | Ultimate cutscene/preparation | SharedUltimatePhase,HeroAbilitySystem.SharedUltimate,MatchRpc.UltimatePhase. One accepted cohort controls hold/handback; do not duplicate gameplay on observers. |
 | Persistent recovery | WorldSnapshotHeader,PreparedWorldSnapshot,HeroAbilitySystem.WorldRecovery,IPreparedWorldReplication,IWorldEffectBinding,ITimedKitReplication. Restore state at elapsed simulation time; do not recast. |
 | Persistent lifetime | HeroAbility.AcceptedCastEvent and WorldEffectSnapshot.Field.InstanceId; ordinary initial cast identity survives commands/recovery. Plant removal matches exact lifetime plus match/round and remembers retirement before late installation. |
+| Recovered target sets | WorldEffectSnapshot.Field.TargetMask and PaeteSentry; preserve host-selected seats rather than rerunning distance checks. Missing bodies bind once; restoration never recatches. |
 | Contact presentation | Visual/MatchFlair announces accepted outcomes with match/round scope. UltimateImpact reuses HitFeel on the victim's own view; no gameplay mutation or caster confirmation. |
 | Compatibility | Net/SkillContractFingerprint and NetSession.ProtocolVersion. Fingerprints exclude cosmetic files,but semantic/wire changes still need explicit versioning. |
 

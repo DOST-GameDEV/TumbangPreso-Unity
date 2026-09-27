@@ -504,7 +504,9 @@ namespace TumbangPreso.Net
         // victim-camera feedback reaches the affected peer.
         // 73: SyncUnit includes bounded Voodoo status/mark/reach state and an
         // explicit reach result, independent of other bodies' arrival order.
-        public const int ProtocolVersion = 73;
+        // 74: persistent sentries recover their captured target seats, not a new
+        // distance query on the observing peer.
+        public const int ProtocolVersion = 74;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
