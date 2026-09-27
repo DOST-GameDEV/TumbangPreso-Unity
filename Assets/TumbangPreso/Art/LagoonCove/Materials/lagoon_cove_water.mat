@@ -14,7 +14,7 @@ Material:
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 1
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -30,7 +30,8 @@ Material:
     - _CausticSpeed: 0.35
     - _CausticStrength: 0.6
     - _CausticWidth: 0.07
-    - _DeepAlpha: 0.97
+    - _ClarityDepth: 8
+    - _DeepAlpha: 0.9
     - _DeepDepth: 3.6
     - _FoamLines: 3
     - _FoamSpeed: 0.7

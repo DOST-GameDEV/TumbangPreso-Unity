@@ -43,7 +43,8 @@ Shader "TumbangPreso/LagoonCoveWater"
         _MidDepth ("Middle at (m)", Float) = 0.9
         _DeepDepth ("Deep at (m)", Float) = 3.6
         _ShallowAlpha ("Clarity of the shallows (alpha)", Range(0, 1)) = 0.42
-        _DeepAlpha ("Deep alpha", Range(0, 1)) = 0.97
+        _DeepAlpha ("Deep alpha", Range(0, 1)) = 0.9
+        _ClarityDepth ("See-through to (m)", Float) = 8
 
         [Header(Caustics on the seabed)]
         _CausticColor ("Caustic colour", Color) = (1, 1, 0.94, 1)
@@ -95,7 +96,7 @@ Shader "TumbangPreso/LagoonCoveWater"
             UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
             fixed4 _ShallowColor, _MidColor, _DeepColor, _CausticColor, _FoamColor, _SkyColor;
-            float _MidDepth, _DeepDepth, _ShallowAlpha, _DeepAlpha;
+            float _MidDepth, _DeepDepth, _ShallowAlpha, _DeepAlpha, _ClarityDepth;
             float _CausticStrength, _CausticScale, _CausticWidth, _CausticFade, _CausticSpeed;
             float _FoamWidth, _FoamLines, _FoamSpeed;
             float _WaveHeight, _WaveLength, _WaveSpeed, _RippleScale, _RippleStrength;
@@ -252,7 +253,16 @@ Shader "TumbangPreso/LagoonCoveWater"
                 float toDeep = saturate((depth - _MidDepth) / max(_DeepDepth - _MidDepth, 0.01));
                 fixed3 col = lerp(_ShallowColor.rgb, _MidColor.rgb, smoothstep(0, 1, toMid));
                 col = lerp(col, _DeepColor.rgb, smoothstep(0, 1, toDeep));
-                float alpha = lerp(_ShallowAlpha, _DeepAlpha, smoothstep(0, 1, saturate(depth / _DeepDepth)));
+                // ⚠️ CLARITY HAS ITS OWN DEPTH, SEPARATE FROM COLOUR (owner, 2026-09-27, the reefs:
+                // "the seabed is empty rn"). Alpha used to follow the colour's _DeepDepth and hit
+                // 0.97 by 3.6 m, so the reef mounds (crowns 2.4 m down) and every coral past 3 m
+                // were painted over. The colour still turns deep by 3.6 m (the owner's "deep
+                // enough" water), while see-through fades over _ClarityDepth and stops at
+                // _DeepAlpha 0.9, so the reefs show as dark-tinted shapes under deep colour.
+                float alpha = lerp(_ShallowAlpha, _DeepAlpha, smoothstep(0, 1, saturate(depth / _ClarityDepth)));
+                // Open sea (nothing in the depth buffer) has no seabed to show: fully opaque, or
+                // the sky would read through the last 10 per cent.
+                if (open) alpha = 1;
 
                 // ---- caustics, drawn ON THE SEABED (its world xz), so they sit on the sand and
                 // stones seen through the water and drift over them
