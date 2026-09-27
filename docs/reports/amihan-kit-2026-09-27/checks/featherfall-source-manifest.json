@@ -1,0 +1,176 @@
+{
+  "Name": "featherfall-final-main-source",
+  "Head": "819f7266137c5e2830ec1f418945c74fb5d946b6",
+  "CreatedUtc": "2026-09-27T01:17:46.1742438Z",
+  "Count": 32,
+  "Files": [
+    {
+      "Path": "Packages/com.tumbangpreso.core/Runtime/AmihanRules.cs",
+      "SHA256": "EED4941DFE422EB197CC5169A35DE5A5B197F90051468EA657F574B2AA5AAAEB",
+      "Bytes": 6467
+    },
+    {
+      "Path": "Core.Tests/StatusAndAmihanRulesTests.cs",
+      "SHA256": "F3F24104A060B151103A91C240CE5358715F4FDFC95CC7F90909C794ED3DAC38",
+      "Bytes": 7785
+    },
+    {
+      "Path": "Assets/TumbangPreso/Editor/AmihanMotionAuthor.cs",
+      "SHA256": "8D538544912997377209DFD02EFF8C9B0722A6C4E718EC3527181B35ED2C9A59",
+      "Bytes": 3483
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Abilities/AmihanHeroKit.cs",
+      "SHA256": "6775F21C3C972814EC37B7694992CC80DE49FBB2654F8B26860A9BA8FD075CBD",
+      "Bytes": 17369
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+      "SHA256": "4D5E356046EAAE7524F9C69075FF3343F4FB90613EE478B3EBE4F11374FD9F87",
+      "Bytes": 88770
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SkillReceipts.cs",
+      "SHA256": "DB72B1C5F3D2DEAF8CA77ACC77D23AE5B7977EF719C01DF29D147FC9DA01FD3C",
+      "Bytes": 3304
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/CharacterMotor.cs",
+      "SHA256": "CFFC9E29E90E7E11866C6522681B37341F4804F25AE45C7294BBE387C7AE4E6E",
+      "Bytes": 121774
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/CharacterMotor.Status.cs",
+      "SHA256": "75DF6B1A083DFFD129167E5DC1B7FA8E0E5B536FCB6E00EAB2A7926FE03802C5",
+      "Bytes": 26107
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "SHA256": "9B7A5136D8DEB391B295665F61C4687947B5972B64EB758E75AAB18954A039E1",
+      "Bytes": 371774
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.SkillReceipts.cs",
+      "SHA256": "075B6FD0B8215ACBB9F952726398A7D6776E16A2767FAF651EE6EED358494FD0",
+      "Bytes": 3063
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.Featherfall.cs",
+      "SHA256": "759FF5E98AE7F96E87C19597DD45AAABAE89D8AA0F93596B8C5B16410A4675DB",
+      "Bytes": 10374
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.Featherfall.cs.meta",
+      "SHA256": "6F4EF3D2385CA928091253D12621E1D21F39DACAFE744C91BB2E84B06B313DF2",
+      "Bytes": 60
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Visual/AmihanVfx.cs",
+      "SHA256": "625BF3195A9232DE3A4F8ED58E25CAB1292830DC8F0C74BC286922B02EB0E91E",
+      "Bytes": 42602
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Visual/AmihanFlightPose.cs",
+      "SHA256": "9DEB7A4DC124379FDB286B67309FAF93C7750E031E5D59A43D87D30C3B835F5A",
+      "Bytes": 7374
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Visual/AmihanFlightPose.cs.meta",
+      "SHA256": "03F6105E79DF3551CF24FCFCC3C5A7EC05DF17E5C11BD19D9FEA75CADDDCB512",
+      "Bytes": 60
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.Amihan.cs",
+      "SHA256": "7455D8B3A01CC9C0415BDB8F397E20441D4439A5D789EC10C9D30DCC4F0A6ED0",
+      "Bytes": 9619
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Visual/CharacterNameplate.cs",
+      "SHA256": "4EE7F9B526776CED8E4F56966EB0C26F2C1F8CEEA4F14DA9EA0E04D1AE5F8128",
+      "Bytes": 23924
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs",
+      "SHA256": "85A70591E2C7B637EB27B264387DDD0ECDED0C517E798C0F11934D58930BAB75",
+      "Bytes": 170911
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.CastGesture.cs",
+      "SHA256": "643CC169ED3DCBA719BDE581464489FDA0012DB5A0C85349253A677734EF309A",
+      "Bytes": 18036
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.Featherfall.cs",
+      "SHA256": "77120A0763669B08DAEEDE4F8CE9C97E59AE5B2B8A30149893CC5DF086B91F3D",
+      "Bytes": 1648
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.Featherfall.cs.meta",
+      "SHA256": "60F92B7AA57A5F83C0AE5D44567709317B65B500F2B875955AF67346805CAFAB",
+      "Bytes": 60
+    },
+    {
+      "Path": "Assets/TumbangPreso/Tests/PlayMode/AmihanKitPlayProbe.cs",
+      "SHA256": "C31A8E07A59248C70108B401E2189ED2B1B601EB2EA1B85590CDC2A9469A5EF1",
+      "Bytes": 65739
+    },
+    {
+      "Path": "Assets/TumbangPreso/Tests/PlayMode/AmihanKitPlayProbe.FeatherfallFilm.cs",
+      "SHA256": "149148835FBD087089DB276CD5A784D07E7E352C7F000CA8FE86C39A7652E52D",
+      "Bytes": 4933
+    },
+    {
+      "Path": "Assets/TumbangPreso/Tests/PlayMode/AmihanKitPlayProbe.FeatherfallFilm.cs.meta",
+      "SHA256": "4EA34627EC063D52E4BC2EEC85B30E9CFAFAA0AD07FED31C81F4E42B494E7DC6",
+      "Bytes": 60
+    },
+    {
+      "Path": "tools/build_amihan_audio.py",
+      "SHA256": "EE3097382FF0DE91FFE97F6C15F3CEBF056BC98E7C959DB589BE9C854C56DD72",
+      "Bytes": 12824
+    },
+    {
+      "Path": "Assets/TumbangPreso/Resources/Sfx/sfx_amihan_updraft_settle.wav",
+      "SHA256": "6A22C813657A53A9AF6AE729827F33B38B6550831FA49DD84C513982E0EE9757",
+      "Bytes": 44144
+    },
+    {
+      "Path": "docs/reports/amihan-kit-2026-09-27/featherfall.md",
+      "SHA256": "C12BB910D097AE73882133A45A76997617C17F261E45FF70F9737E4FAEF28FDA",
+      "Bytes": 29149
+    },
+    {
+      "Path": "docs/reports/amihan-kit-2026-09-27/featherfall-audio.json",
+      "SHA256": "9E0BEC5005D7EE2ACC075FF62A1D1FDB7F3DE1F2F5094578D2053409D77E7F1B",
+      "Bytes": 853
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "SHA256": "0B662EF5536C01968DBBFA7119D1C687F05A4BEB355741A1DD60CB320AA05923",
+      "Bytes": 129566
+    },
+    {
+      "Path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "SHA256": "7FDD12CBE2531992933BEEF1FE6BAE8576F223CB62A05A668F419AEEEA252660",
+      "Bytes": 23306
+    },
+    {
+      "Path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.Preparations.cs",
+      "SHA256": "52CF83B5808426587CBD0A31BDC9D747D171B50F529D1BFC8A113D2FACF53B7F",
+      "Bytes": 6697
+    },
+    {
+      "Path": "Assets/TumbangPreso/Tests/PlayMode/SessionRestartTests.cs",
+      "SHA256": "75BE9DC2FD021AEE649F504A7AD80FE2764236C11F27EAB97B21CB164F685CD4",
+      "Bytes": 20214
+    }
+  ],
+  "Validation": {
+    "PlayMode": "checks/featherfall-final-behavior.xml",
+    "PlayModeCases": "10/10",
+    "Core": "checks/featherfall-final-core.trx",
+    "CoreCases": "8/8",
+    "IsolatedRuntimeTestMatch": "31/31",
+    "BakedClips": "2/2"
+  }
+}

@@ -1,0 +1,19 @@
+# General loading and first-use audit, 2026-09-27
+
+## Evidence boundary
+
+The intake source audit began at ASTRAReworks `04886cc4`; current instrumentation is based on `026fed74` plus reviewed diagnostic amendments. The historical Desktop player identifies itself as a dirty `85832b6b` build, not a current-source performance baseline. The guarded Development build stopped during packaging when storage fell below the protected reserve. No current player boot, first-click, cast or profiler before/after timing exists, so no hitch reduction or FPS improvement is claimed.
+
+## Concrete boot defect
+
+`SplashScreen.PreloadGameAssets` used `shaderCount` to bound calls to `ShaderVariantCollection.WarmUpProgressively(10)` and stopped on a `false` return. Unity 6 documents the parameter as **variant count** and the return as **true when all variants are warmed** ([API](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/ShaderVariantCollection.WarmUpProgressively.html)). The tracked collection contains more variants than shaders, so the original loop could stop after its first incomplete slice. This is a source-level correctness defect, not a measured frame hitch.
+
+The current main source bounds calls by `variantCount`, stops on `true`, and still yields after every 10-variant slice. It records shader/variant totals, warmed count, completion, call count, elapsed time and longest slice. A bounded pass that remains incomplete emits an explicit warning and continues rather than holding the splash indefinitely. Actual slice time and Android responsiveness require device measurement; ten variants alone cannot guarantee an ANR-free frame.
+
+## Other first-use paths
+
+Boot stages load roster resources, audio folders, UI resources and ability data in separate steps (`SplashScreen.cs`). A first ability use can still create effects or read assets: examples include `PaeteTrees.Spawn`, `FrostSurfacePresentation.Part`, `WindVfx`, `VfxFlipbook.Build` and `UltimatePerformance.Load`. These are candidates for attribution, not measured culprits. The built-in `MatchStatsCollector` frame histogram samples active rounds rather than boot or menu loading; Editor batchmode timing is not a Windows player result. Preserve original model, texture, mesh, audio and effect quality during any future optimization.
+
+## Validation status
+
+The frozen broad pre-build gate completed red: 555 cases, 468 passed, 72 failed and 15 skipped. Four focused EditMode contract classes on the earlier performance candidate passed 74/74, confirming that candidate compiled. A later one-case PlayMode check compiled the current authored source snapshot and passed the corrected shader stage plus staged menu-art/avatar cache references ([loading-warmup-final.xml](checks/loading-warmup-final.xml), 1/1). Its Editor receipt was `shaders=50 variants=97 warmed=97 complete=True calls=10`; the longest recorded slice was 497.021 ms in Editor, so no smooth-loading-frame or handset claim follows. That count belongs to the isolated collection (SHA-256 `FD1C564C55242752C2721AEDCFD2A6512C57F3EE5DA86CB55F4A05DE9BD3B709`); the main collection has different bytes (SHA-256 `99F204ED8EEB12C2C2C353CB35389F3CE9EFE9B092660B7B2299DEC8FC985641`) and was not replaced. The Development player build did not complete, and no player profiler `.raw` or first-use performance table exists. Windows player profiling remains unmeasured until a guarded build and storage headroom are available.

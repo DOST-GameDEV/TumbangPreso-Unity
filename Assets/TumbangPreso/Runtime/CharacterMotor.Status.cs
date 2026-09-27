@@ -248,7 +248,7 @@ namespace TumbangPreso
             _carryLeft = 0.0f;
             ClearReworkStatuses();
             EndRooted();
-            EndFlightImmediately();
+            InvalidateFlightEpisode();
         }
 
         /// <summary>The host's status timers, off the wire (`SyncUnit`).</summary>
@@ -260,6 +260,7 @@ namespace TumbangPreso
             {
                 if (rooted) { _breakFreeHeld = 0.0f; _breakFreeRequested = false; }
                 _rootedLeft = Mathf.Clamp(rootedLeft, 0.0f, StatusRules.RootedSeconds + 0.01f);
+                EndFlightImmediately();
             }
             if (rooted) StatusGained?.Invoke(this, StatusKind.Rooted);
             bool whirled = _whirledLeft <= 0.0f && whirledLeft > 0.0f;
@@ -347,6 +348,17 @@ namespace TumbangPreso
         private enum FlightMode : byte { Grounded, Aloft, Descending }
         private FlightMode _flight;
         private float _flightCeiling, _flightRiseSpeed, _flightDescent;
+        private ulong _flightPoseReceipt, _flightDescentReceipt;
+        private ulong _flightSnapshotPoseFloor;
+        private long _flightEpisode, _previousFlightEpisode, _acceptedFlightEpisode, _networkFlightEpisode;
+        private long _terminalFlightEpisode;
+        private bool _flightEpisodePredicted, _previousFlightWasTerminal;
+        public byte FlightPhase => (byte)_flight;
+        public float FlightCeiling => _flightCeiling;
+        public long FlightEpisode => _flightEpisode;
+        internal long PreviousFlightEpisode => _previousFlightEpisode;
+        internal bool PreviousFlightWasTerminal => _previousFlightWasTerminal;
+        internal bool FlightEpisodeIsTerminal(long episode) => episode != 0 && _terminalFlightEpisode == episode;
 
         /// <summary>
         /// True while held up in the air by a flight (Updraft). A body ALOFT cannot pick up a
@@ -373,6 +385,12 @@ namespace TumbangPreso
             _flightRiseSpeed = Mathf.Max(0.5f, height / Mathf.Max(0.1f, riseSeconds));
             _flightDescent = Mathf.Max(0.5f, descentSpeed);
             _flight = FlightMode.Aloft;
+            _previousFlightEpisode = _acceptedFlightEpisode;
+            _previousFlightWasTerminal = FlightEpisodeIsTerminal(_acceptedFlightEpisode);
+            _flightEpisode = 0;
+            _flightEpisodePredicted = false;
+            _flightDescentReceipt = _flightPoseReceipt;
+            _flightSnapshotPoseFloor = _lastNetworkPoseSerial;
             _grounded = false;
             ReleaseCommitment();
         }
@@ -380,11 +398,91 @@ namespace TumbangPreso
         /// <summary>The glide down. The flight is over when the feet touch.</summary>
         public void EndFlight()
         {
-            if (_flight == FlightMode.Aloft) _flight = FlightMode.Descending;
+            if (_flight == FlightMode.Aloft)
+            {
+                _flight = FlightMode.Descending;
+                _flightDescentReceipt = _flightPoseReceipt;
+            }
         }
 
-        /// <summary>No glide: a tag or a round reset puts the body straight back under gravity.</summary>
-        public void EndFlightImmediately() => _flight = FlightMode.Grounded;
+        /// <summary>No glide: a hard status returns the body to gravity without rekeying its movement stream.</summary>
+        public void EndFlightImmediately()
+        {
+            _flight = FlightMode.Grounded;
+            if (_flightEpisode != 0) _terminalFlightEpisode = _flightEpisode;
+        }
+
+        /// <summary>Coordinated spawn, kit/role/round reset or movement-epoch replacement only.</summary>
+        internal void InvalidateFlightEpisode()
+        {
+            EndFlightImmediately();
+            _flightEpisode = _previousFlightEpisode = _acceptedFlightEpisode = 0;
+            _terminalFlightEpisode = 0;
+            _flightEpisodePredicted = false;
+            _previousFlightWasTerminal = false;
+        }
+
+        internal void IdentifyFlightTakeoff(long episode, bool predicted = false)
+        {
+            if (episode == 0 || episode == long.MinValue || _flight != FlightMode.Aloft || _flightEpisode != 0) return;
+            _flightEpisode = episode;
+            _flightEpisodePredicted = predicted;
+            if (!predicted) { _acceptedFlightEpisode = episode; _terminalFlightEpisode = 0; }
+        }
+
+        internal bool PredictedFlightMatches(long request) => _flightEpisodePredicted && _flightEpisode == request;
+        internal void ConfirmFlightTakeoff(long request)
+        {
+            if (_flightEpisode != request) return;
+            _flightEpisodePredicted = false; _acceptedFlightEpisode = request;
+            if (_terminalFlightEpisode != request) _terminalFlightEpisode = 0;
+        }
+        internal void RestoreRejectedFlightEpisode(long previous, bool terminal)
+        {
+            _flightEpisode = _acceptedFlightEpisode = previous; _flightEpisodePredicted = false;
+            _terminalFlightEpisode = terminal ? previous : 0;
+        }
+
+        public bool AcceptsFlightPoseEpisode(long episode) => episode == _flightEpisode;
+
+        internal void FlightPoseEvidence(out bool grounded, out long episode)
+        {
+            bool replica = AbilitySystem?.Kit is Abilities.AmihanHeroKit && !IsLocallySimulated();
+            grounded = replica ? _networkGrounded : _grounded;
+            episode = replica ? _networkFlightEpisode : _flightEpisode;
+        }
+
+        public bool RestoreFlight(byte phase, float ceiling, ulong snapshotPoseSerial, long episode)
+        {
+            if (phase > 2 || episode == long.MinValue || (phase != 0 && (episode == 0 || FlightEpisodeIsTerminal(episode)))
+                || float.IsNaN(ceiling) || float.IsInfinity(ceiling) || Mathf.Abs(ceiling) > 256) return false;
+            _flight = (FlightMode)phase;
+            _flightEpisode = episode;
+            _acceptedFlightEpisode = episode;
+            _flightEpisodePredicted = false;
+            _terminalFlightEpisode = phase == 0 ? episode : 0;
+            _flightCeiling = ceiling;
+            _flightRiseSpeed = Core.AmihanRules.UpdraftHeight / Core.AmihanRules.UpdraftRiseSeconds;
+            _flightDescent = Core.AmihanRules.UpdraftDescentSpeed;
+            _flightDescentReceipt = _flightPoseReceipt;
+            _flightSnapshotPoseFloor = snapshotPoseSerial;
+            if (phase != 0) _grounded = false;
+            return true;
+        }
+
+        private void ObserveFlightPose(bool grounded, long episode)
+        {
+            _networkFlightEpisode = episode;
+            _flightPoseReceipt++;
+            if (!NetAuthority.IsNetworked || IsLocallySimulated() || _flight == FlightMode.Grounded) return;
+            if (grounded && _flight == FlightMode.Descending && episode != 0 && episode == _flightEpisode
+                && _flightPoseReceipt > _flightDescentReceipt
+                && (NetAuthority.IsHost || _lastNetworkPoseSerial > _flightSnapshotPoseFloor))
+            {
+                EndFlightImmediately();
+                _grounded = true;
+            }
+        }
 
         /// <summary>
         /// ⚠️ RETURNS TRUE WHEN FLIGHT OWNS THE VERTICAL THIS STEP, so `ApplyGravity` skips its own
@@ -393,6 +491,7 @@ namespace TumbangPreso
         /// </summary>
         private bool StepFlightVertical(float dt)
         {
+            if (IsSwimming && _flight != FlightMode.Grounded) EndFlightImmediately();
             if (_flight == FlightMode.Grounded) return false;
             if (_flight == FlightMode.Aloft && IsStunned) _flight = FlightMode.Descending;
 
@@ -409,7 +508,7 @@ namespace TumbangPreso
             // Descending: a steady glide, finished by the ground.
             if (_grounded && _velocity.y <= 0.0f)
             {
-                _flight = FlightMode.Grounded;
+                EndFlightImmediately();
                 _velocity.y = GroundedRestVelocityY;
                 return true;
             }

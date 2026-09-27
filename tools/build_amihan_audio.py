@@ -141,13 +141,13 @@ def updraft():
 
 
 def settle():
-    """UPDRAFT's landing: the column letting go, a soft sweep down and a sandal tap."""
+    """FEATHERFALL contact: sandal tap now, then the column folding away."""
     s = 0.5
     t = times(s)
     n = len(t)
-    fall = band(white(n, 9301), sweep(t, 1300, 300, 0.4), 2.2) * env_ar(t, 0.06, 0.14, 0.1) * 1.6
-    tap = svf(white(n, 9302), 1800, 3.0) * np.exp(-np.maximum(0, t - 0.3) / 0.02) * (t >= 0.3) * 1.2
-    return finish("sfx_amihan_updraft_settle", fall + tap + thump(t, 0.3, 120, 0.04) * 0.3, s, 0.6)
+    fall = band(white(n, 9301), sweep(t, 980, 260, 0.35), 2.2) * env_ar(t, 0.035, 0.11, 0.22) * 0.55
+    tap = svf(white(n, 9302), 1800, 3.0) * np.exp(-np.maximum(0, t - 0.008) / 0.024) * (t >= 0.008) * 1.6
+    return finish("sfx_amihan_updraft_settle", fall + tap + thump(t, 0.008, 120, 0.045) * 0.4, s, 0.6)
 
 
 def whirlwind():

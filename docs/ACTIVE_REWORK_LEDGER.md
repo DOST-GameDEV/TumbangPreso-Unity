@@ -1,5 +1,57 @@
 # Active TUMP rework ledger
 
+## Owner correction: implementation first, 2026-09-27
+
+The owner explicitly rejected validation loops and diagnostic churn. For the
+remainder of this session, prioritize actual improvements and fixes. Do not start
+new capture rigs, broad audits or test-repair projects. Use only short, focused
+checks directly justified by a changed behavior; preserve a failed result and
+fix its real cause without repeatedly expanding the verification scope.
+
+Loading/optimization is the immediate implementation priority. The owner's target
+is that clicking a control does not trigger a loading hitch: expensive asset,
+shader and interface preparation belongs behind the loading screen before the
+player gains control. Current work corrects incomplete progressive shader warmup
+and removes justified redundant loading work. No measured hitch-free or speedup
+claim exists yet; instrumentation alone is not an optimization deliverable.
+
+Finish the already-started flight/recovery unit and publish task-owned work, but
+do not begin a full Amihan pass or new animation/VFX/skill redesign. A new report
+that multiple skills may work only on their client remains an unresolved gameplay
+networking issue, not proof of a specific root cause. Preserve contributor lanes.
+The prior QA batches remain published; the whole TODO and release gate are not done.
+
+Keep this correction active across continuation and compaction. The private resume
+record tracks exact source freezes, jobs and commit preparation; detailed evidence
+belongs in the existing reports, not in another verification framework.
+
+## Loading fixes and flight integration, 2026-09-27 (ASTRAReworks)
+
+Boot now uses the shader variant count and the API's true-on-complete return value,
+instead of stopping at its first incomplete batch. It still yields between slices.
+The duplicate all-audio sweep is removed: the existing yielded folders cover all
+204 current clips. Twenty-seven current menu-art assets and all 22 offered avatars
+are prepared during loading and reused through their existing access paths. Missing
+assets and unknown-avatar fallback retain their behavior; source artwork is unchanged.
+
+The focused native loading check passed 1/1 and compiled the final authored source
+candidate. Its Editor collection reported 97/97 variants warm after 10 calls; the
+longest Editor slice was 497.021 ms. This proves completion and cache reuse, not a
+hitch-free player, a Windows before/after speedup or Android responsiveness.
+[Loading result](reports/stability-2026-09-27/loading-audit.md).
+
+The previously started flight unit is locally qualified: Core 8/8, final focused
+PlayMode behavior 10/10, prior protocol handler checks 4/4. Flight identity survives
+ordinary interruption/landing, stale state cannot resurrect it, and snapshot refresh
+is scoped and coalesced. Protocol is 61; paired builds must match. The two already-
+baked flight clips are integrated without character-model or gait edits.
+[Flight source and evidence](reports/amihan-kit-2026-09-27/featherfall.md).
+
+The normal match-result path parks touch and leaves all six tested result controls
+hittable (1/1). Opt-in title, Sean-freeze and performance diagnostics are preserved
+but their unexecuted scenarios are not called fixes. There is no completed player
+build, green broad gate, real-peer skill qualification or full Amihan completion.
+
 ## Menu QA, room titles and offline rewards, 2026-09-27 (ASTRAReworks)
 
 QA2 follows published `026fed74`. Consent now shows a check; password faults visibly

@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+**Owner correction, 2026-09-27: implementation first.** Stop validation loops and
+diagnostic churn. Prioritize actual loading/runtime fixes so expensive preparation
+finishes behind loading, not when the player clicks. Only short checks tied to a
+specific change; no new capture rigs, broad audits or test-repair projects. Finish
+and publish already-started work without starting a full Amihan or new animation/
+VFX/skill redesign. Loading optimization and reported client-only skill behavior
+remain OPEN until their actual fixes and appropriate evidence exist. See the newest
+[ledger entry](ACTIVE_REWORK_LEDGER.md).
+
 **2026-09-27 QA2 verified slices:** consent/password feedback, current-role
 selector/guide, mode-card clipping, Practice picker, lobby chat, score fitting,
 Paete preview framing and local offline-reward exclusion. See

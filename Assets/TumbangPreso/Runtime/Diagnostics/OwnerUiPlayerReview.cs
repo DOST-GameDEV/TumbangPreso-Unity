@@ -19,12 +19,17 @@ namespace TumbangPreso.Diagnostics
             public string mode,gpu,cpu;public int width,height,samples,framesOver33Ms;
             public int resultPolls,gc0,gc1,gc2;public bool pollEveryFrame;
             public float duration,averageFps,medianMs,p95Ms,p99Ms,maxMs;
+            public float realtimeAtStart,realtimeAtEnd;
             public long framesOver50Ms,framesOver100Ms;
             public double histogramMaxMs;
             public bool includesMenus;
+            public double elapsedMs;
+            public long managedBytesBefore,managedBytesAfter,mainThreadAllocatedBytes;
+            public string graphicsApi,quality,unityQuality;
+            public int targetFrameRate,vSyncCount,unfocusedFrames;
         }
         private struct FrameContext
-        { public float real,simulation,left;public int gc0,gc1,gc2; }
+        { public float real,simulation,left;public int gc0,gc1,gc2;public long allocatedBytes; }
         [Serializable]private sealed class Report
         { public bool passed;public string error;public List<string> stages=new List<string>();public List<FrameWindow> frameWindows=new List<FrameWindow>(); }
         private readonly Report _report=new Report();
@@ -38,12 +43,15 @@ namespace TumbangPreso.Diagnostics
         private int _resultPolls,_gc0Start,_gc1Start,_gc2Start;
         private bool _pollEveryFrame;
         private bool _measureMenus;
+        private bool _performanceReview;
+        private long _frameTick,_windowTick,_allocatedStart,_managedStart;
+        private int _unfocusedFrames;
         private readonly Core.FrameRateHistogram _frameHistogram=new Core.FrameRateHistogram();
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
             var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-tp-uireview");
-            if(Application.isEditor || at<0 || at+1>=args.Length || args.Contains("-tp-tournament"))return;
+            if(Application.isEditor || at<0 || at+1>=args.Length || args.Contains("-tp-tournament") || args.Contains("-tp-performance-only"))return;
             var go=new GameObject("~OwnerUiPlayerReview");DontDestroyOnLoad(go);
             var probe=go.AddComponent<OwnerUiPlayerReview>();probe._folder=Path.GetFullPath(args[at+1]);
             probe._pollEveryFrame=args.Contains("-tp-review-frame-poll");
@@ -67,33 +75,52 @@ namespace TumbangPreso.Diagnostics
         }
         private void Update()
         {
+            if(_performanceReview && !PerformanceHasHeadroom())return;
             if(_frameMode!=null && (_measureMenus || (GameServices.Round!=null && GameServices.Round.RoundActive)))
             {
-                _frameHistogram.Add(Time.unscaledDeltaTime);
-                _frameTimes.Add(Time.unscaledDeltaTime*1000f);
+                long now=System.Diagnostics.Stopwatch.GetTimestamp();
+                double seconds=_performanceReview?(now-_frameTick)/(double)System.Diagnostics.Stopwatch.Frequency:Time.unscaledDeltaTime;
+                _frameTick=now;
+                if(_performanceReview&&!Application.isFocused)_unfocusedFrames++;
+                _frameHistogram.Add(seconds);
+                _frameTimes.Add((float)(seconds*1000));
                 _frameContexts.Add(new FrameContext{real=Time.realtimeSinceStartup-_frameStarted,
                     simulation=Time.time,left=GameServices.Round!=null?GameServices.Round.TimeLeft:0,
-                    gc0=GC.CollectionCount(0),gc1=GC.CollectionCount(1),gc2=GC.CollectionCount(2)});
+                    gc0=GC.CollectionCount(0),gc1=GC.CollectionCount(1),gc2=GC.CollectionCount(2),
+                    allocatedBytes=_performanceReview?GC.GetAllocatedBytesForCurrentThread()-_allocatedStart:0});
             }
             if(!_finished && Time.realtimeSinceStartup>_deadline)Finish(false,"UI review timed out after "+_report.stages.LastOrDefault());
         }
         private void StartFrameWindow(string mode)
         {
             _frameTimes.Clear();_frameContexts.Clear();_resultPolls=0;
+            _unfocusedFrames=0;
             _frameHistogram.Clear();
+            if(_performanceReview)BeginPerformanceProfile(mode);
             _gc0Start=GC.CollectionCount(0);_gc1Start=GC.CollectionCount(1);_gc2Start=GC.CollectionCount(2);
             _frameStarted=Time.realtimeSinceStartup;_frameMode=mode;
+            _windowTick=_frameTick=System.Diagnostics.Stopwatch.GetTimestamp();
+            _allocatedStart=GC.GetAllocatedBytesForCurrentThread();_managedStart=GC.GetTotalMemory(false);
         }
         private void StopFrameWindow()
         {
             if(_frameMode==null)return;
             string mode=_frameMode;_frameMode=null;
+            double elapsedMs=(System.Diagnostics.Stopwatch.GetTimestamp()-_windowTick)*1000.0/System.Diagnostics.Stopwatch.Frequency;
+            long managedEnd=GC.GetTotalMemory(false),allocatedEnd=GC.GetAllocatedBytesForCurrentThread();
+            if(_performanceReview)UnityEngine.Profiling.Profiler.enabled=false;
             var window=new FrameWindow{mode=mode,width=Screen.width,height=Screen.height,samples=_frameTimes.Count,
-                duration=Time.realtimeSinceStartup-_frameStarted,gpu=SystemInfo.graphicsDeviceName,cpu=SystemInfo.processorType,
+                duration=_performanceReview?(float)(elapsedMs/1000):Time.realtimeSinceStartup-_frameStarted,gpu=SystemInfo.graphicsDeviceName,cpu=SystemInfo.processorType,
+                realtimeAtStart=_frameStarted,realtimeAtEnd=Time.realtimeSinceStartup,
                 resultPolls=_resultPolls,pollEveryFrame=_pollEveryFrame,gc0=GC.CollectionCount(0)-_gc0Start,
                 gc1=GC.CollectionCount(1)-_gc1Start,gc2=GC.CollectionCount(2)-_gc2Start,
                 includesMenus=_measureMenus,histogramMaxMs=_frameHistogram.MaxSeconds*1000,
-                framesOver50Ms=_frameHistogram.LongFrames(.05),framesOver100Ms=_frameHistogram.LongFrames(.1)};
+                framesOver50Ms=_frameHistogram.LongFrames(.05),framesOver100Ms=_frameHistogram.LongFrames(.1),
+                elapsedMs=elapsedMs,managedBytesBefore=_managedStart,managedBytesAfter=managedEnd,
+                mainThreadAllocatedBytes=allocatedEnd-_allocatedStart,
+                graphicsApi=SystemInfo.graphicsDeviceType.ToString(),quality=Settings.GraphicsProfiles.Of(Settings.GraphicsProfiles.Current).Label,
+                unityQuality=QualitySettings.names[QualitySettings.GetQualityLevel()],
+                targetFrameRate=Application.targetFrameRate,vSyncCount=QualitySettings.vSyncCount,unfocusedFrames=_unfocusedFrames};
             if(_frameTimes.Count>0)
             {
                 var sorted=_frameTimes.OrderBy(v=>v).ToArray();
@@ -104,8 +131,13 @@ namespace TumbangPreso.Diagnostics
             _report.frameWindows.Add(window);
             File.WriteAllLines(Path.Combine(_folder,mode+"-frame-times.csv"),new[]{"sample,frame_ms"}.Concat(
                 _frameTimes.Select((value,index)=>FormattableString.Invariant($"{index},{value:F6}"))));
-            File.WriteAllLines(Path.Combine(_folder,mode+"-frame-context.csv"),new[]{"sample,real_seconds,simulation_seconds,round_left,gc0,gc1,gc2"}.Concat(
-                _frameContexts.Select((v,i)=>FormattableString.Invariant($"{i},{v.real:F6},{v.simulation:F6},{v.left:F6},{v.gc0},{v.gc1},{v.gc2}"))));
+            File.WriteAllLines(Path.Combine(_folder,mode+"-frame-context.csv"),new[]{"sample,real_seconds,simulation_seconds,round_left,gc0,gc1,gc2,main_thread_allocated_bytes"}.Concat(
+                _frameContexts.Select((v,i)=>FormattableString.Invariant($"{i},{v.real:F6},{v.simulation:F6},{v.left:F6},{v.gc0},{v.gc1},{v.gc2},{v.allocatedBytes}"))));
+            if(_performanceReview)
+            {
+                File.WriteAllText(Path.Combine(_folder,"result.json"),JsonUtility.ToJson(_report,true));
+                File.WriteAllText(Path.Combine(_folder,"performance-actions.json"),JsonUtility.ToJson(_performanceActions,true));
+            }
         }
         private IEnumerator WaitForResult()
         {
@@ -438,6 +470,7 @@ namespace TumbangPreso.Diagnostics
 
         private IEnumerator Walk()
         {
+            if(_performanceReview){yield return PerformanceOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-match-chat-review-only"))
             {yield return MatchChatOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-accessibility-review-only"))

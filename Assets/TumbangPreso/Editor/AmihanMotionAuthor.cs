@@ -18,7 +18,18 @@ namespace TumbangPreso.EditorTools
     {
         private const string Folder="Assets/TumbangPreso/Art/characters/amihan-motion";
 
-        public static AnimationClip[] Bake(GameObject model)
+        public static void BakeFlightFromCommandLine()
+        {
+            var model=RosterBook.Load().FindPersonArt("amihan")?.Model;
+            var clips=Bake(model,flightOnly:true);
+            foreach(var clip in clips)AssetDatabase.SaveAssetIfDirty(clip);
+            Debug.Log("[AmihanMotionAuthor] Saved only the existing launch and hover clips.");
+            EditorApplication.Exit(0);
+        }
+
+        public static AnimationClip[] Bake(GameObject model)=>Bake(model,flightOnly:false);
+
+        private static AnimationClip[] Bake(GameObject model,bool flightOnly)
         {
             if(model==null)throw new ArgumentNullException(nameof(model));
             Directory.CreateDirectory(Folder);AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
@@ -29,7 +40,7 @@ namespace TumbangPreso.EditorTools
             {
                 var animator=copy.GetComponentInChildren<Animator>(true);
                 var root=animator!=null?animator.transform:copy.transform;
-                generated=HeroAbilityClips.BuildAmihanAuthored(root);
+                generated=flightOnly?HeroAbilityClips.BuildAmihanFlightAuthored(root):HeroAbilityClips.BuildAmihanAuthored(root);
                 var saved=new AnimationClip[generated.Length];
                 for(int i=0;i<generated.Length;i++)
                 {

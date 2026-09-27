@@ -15,6 +15,72 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
 
+        [UnityTest, Timeout(60000)]
+        public IEnumerator SplashShaderAndMenuArtWarmupsCompleteInBoundedStages()
+        {
+            var collection = Resources.Load<ShaderVariantCollection>("ShaderWarmup");
+            Assert.IsNotNull(collection);
+            Assert.Greater(collection.variantCount, 10, "The collection no longer exercises multiple slices.");
+            var go = new GameObject("SplashWarmupOnly");
+            var splash = go.AddComponent<SplashScreen>();
+            splash.enabled = false;
+            bool shaderStageFinished = false;
+            void Observe(string message, string stack, LogType type)
+            {
+                if (message.StartsWith("[SplashShaders] shaders=")) shaderStageFinished = true;
+            }
+            Application.logMessageReceived += Observe;
+            IEnumerator preload = null;
+            try
+            {
+                var method = typeof(SplashScreen).GetMethod("PreloadGameAssets",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                Assert.IsNotNull(method);
+                preload = (IEnumerator)method.Invoke(splash, null);
+                int steps = 0;
+                int bound = Mathf.CeilToInt(collection.variantCount / 10f) + 3;
+                while (!shaderStageFinished && steps++ < bound)
+                {
+                    Assert.IsTrue(preload.MoveNext(), "Splash preload ended before its shader stage completed.");
+                    Assert.IsNull(preload.Current, "The shader stage entered a later preload operation.");
+                    yield return null;
+                }
+                Assert.IsTrue(shaderStageFinished, "The bounded shader stage did not finish.");
+                Assert.IsTrue(collection.isWarmedUp, "Splash left shader variants cold.");
+                Assert.AreEqual(collection.variantCount, collection.warmedUpVariantCount);
+            }
+            finally
+            {
+                Application.logMessageReceived -= Observe;
+                (preload as System.IDisposable)?.Dispose();
+                Object.Destroy(go);
+            }
+
+            int menuSteps = 0;
+            var menuWarmup = OwnerMenuArt.Warmup();
+            while (menuWarmup.MoveNext()) { menuSteps++; yield return menuWarmup.Current; }
+            Assert.AreEqual(27, menuSteps, "All current title and login art should get a staged turn.");
+            var background = OwnerMenuArt.Texture("main2-background");
+            var logo = OwnerMenuArt.Piece("login3-logo");
+            Assert.IsNotNull(background);
+            Assert.IsNotNull(logo);
+            menuWarmup = OwnerMenuArt.Warmup();
+            while (menuWarmup.MoveNext()) yield return menuWarmup.Current;
+            Assert.AreSame(background, OwnerMenuArt.Texture("main2-background"));
+            Assert.AreSame(logo, OwnerMenuArt.Piece("login3-logo"));
+
+            int avatarSteps = 0;
+            var avatarWarmup = Avatars.Warmup();
+            while (avatarWarmup.MoveNext()) { avatarSteps++; yield return avatarWarmup.Current; }
+            Assert.AreEqual(Avatars.Ids.Length, avatarSteps);
+            Assert.AreEqual(22, avatarSteps, "Every currently offered avatar should get a staged turn.");
+            var first = Avatars.Get(Avatars.Ids[0]);
+            Assert.IsNotNull(first);
+            Assert.AreSame(first, Avatars.Get(Avatars.Ids[0]));
+            Assert.AreSame(first, Avatars.Get("not-an-offered-avatar"),
+                "Unknown saved IDs must still use the first face.");
+        }
+
         /// <summary>
         /// ⚠️⚠️ THIS FIXTURE USED TO DRIVE THE SETTINGS PENNANT AND THERE IS NO PENNANT NOW.
         /// 🧑 2026-09-18: *"MAIN menu is getting revamped it will lose all buttons and will just
@@ -80,6 +146,146 @@ namespace TumbangPreso.PlayTests
                     "A press anywhere on the street is the way in");
             }
             finally{SceneFlow.BootedThroughSplash=boot;SceneFlow.LoginStepOffered=offered;TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=reduced;}
+        }
+
+        [UnityTest,Timeout(120000)]
+        public IEnumerator TitlePlateSharpnessSeparatesSourceImportAndMaterial()
+        {
+            bool boot=SceneFlow.BootedThroughSplash;
+            bool reduced=TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion;
+            RawImage plate=null;
+            OwnerMenuAir air=null;
+            OwnerMenuLeaves leaves=null;
+            OwnerRoadDust dust=null;
+            Text prompt=null;
+            Texture originalTexture=null;
+            Material originalMaterial=null;
+            Texture2D source=null;
+            bool airEnabled=false,leavesEnabled=false,dustEnabled=false,promptEnabled=false;
+            try
+            {
+                SceneFlow.BootedThroughSplash=false;
+                yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);yield return null;
+                var canvas=GameObject.Find("OwnerHomeCanvas").GetComponent<Canvas>();
+                plate=canvas.GetComponentInChildren<HomeCourtScene>().GetComponent<RawImage>();
+                air=plate.GetComponent<OwnerMenuAir>();
+                leaves=canvas.GetComponentInChildren<OwnerMenuLeaves>();
+                dust=canvas.GetComponentInChildren<OwnerRoadDust>();
+                prompt=canvas.GetComponentsInChildren<Text>().Single(t=>t.name=="ContinuePrompt");
+                Assert.IsNotNull(air);Assert.IsNotNull(leaves);Assert.IsNotNull(dust);
+                originalTexture=plate.texture;originalMaterial=plate.material;
+                airEnabled=air.enabled;leavesEnabled=leaves.enabled;
+                dustEnabled=dust.enabled;promptEnabled=prompt.enabled;
+                Assert.AreEqual("TumbangPreso/UI/OwnerMenuAir",originalMaterial.shader.name);
+
+                var imported=OwnerMenuArt.Texture("main2-background");
+                Assert.AreSame(imported,originalTexture);
+                source=new Texture2D(2,2,TextureFormat.RGBA32,false,false);
+                var path=System.IO.Path.Combine(Application.dataPath,"TumbangPreso","Resources", "UI",
+                    "owner-menu-edits","main2-background.png");
+                Assert.IsTrue(source.LoadImage(System.IO.File.ReadAllBytes(path)));
+                source.filterMode=imported.filterMode;source.wrapMode=imported.wrapMode;
+                source.anisoLevel=imported.anisoLevel;
+                Assert.AreEqual(1920,source.width);Assert.AreEqual(1080,source.height);
+                var logo=new RectInt(105,120,720,430);
+                var can=new RectInt(1560,640,190,310);
+                Debug.Log($"[QA01Title] fixed source-pixel top-left ROIs: logo={logo}, can={can}; " +
+                    $"source={source.width}x{source.height}/{source.format}/{source.filterMode}, " +
+                    $"imported={imported.width}x{imported.height}/{imported.format}/{imported.filterMode}, " +
+                    $"mips={imported.mipmapCount}, colorSpace={QualitySettings.activeColorSpace}");
+
+                foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(3840,2160)})
+                {
+                    int factor=size.x/1920;
+                    Debug.Log($"[QA01Title] {size.x}x{size.y} top-left edge ROIs: " +
+                        $"logo=({logo.x*factor},{logo.y*factor},{logo.width*factor},{logo.height*factor}), " +
+                        $"can=({can.x*factor},{can.y*factor},{can.width*factor},{can.height*factor})");
+                    TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=true;
+                    air.enabled=true;yield return null;yield return null;
+                    air.enabled=false;leaves.enabled=false;dust.enabled=false;prompt.enabled=false;
+                    void Inspect(string arm)
+                    {
+                        var uv=plate.uvRect;
+                        Debug.Log($"[QA01Title] {arm} viewport={size.x}x{size.y} " +
+                            $"texture={plate.texture.width}x{plate.texture.height} " +
+                            $"material={plate.materialForRendering.shader.name} uv={uv} scale={canvas.scaleFactor}");
+                        Assert.That(uv.x,Is.EqualTo(0f).Within(.002f));
+                        Assert.That(uv.y,Is.EqualTo(0f).Within(.002f));
+                        Assert.That(uv.width,Is.EqualTo(1f).Within(.002f));
+                        Assert.That(uv.height,Is.EqualTo(1f).Within(.002f));
+                    }
+
+                    plate.texture=source;plate.material=null;
+                    yield return TumpUiCapture.Capture($"QA01-source-decode-{size.x}x{size.y}",
+                        canvas,size.x,size.y,false,inspectViewport:()=>Inspect("source-decode"));
+                    plate.texture=imported;
+                    yield return TumpUiCapture.Capture($"QA01-imported-ungraded-{size.x}x{size.y}",
+                        canvas,size.x,size.y,false,inspectViewport:()=>Inspect("imported-ungraded"));
+                    plate.material=originalMaterial;
+                    yield return TumpUiCapture.Capture($"QA01-current-material-{size.x}x{size.y}",
+                        canvas,size.x,size.y,false,inspectViewport:()=>Inspect("current-material"));
+
+                    TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=false;
+                    air.enabled=true;leaves.enabled=true;dust.enabled=true;prompt.enabled=true;
+                    yield return null;
+                    yield return TumpUiCapture.Capture($"QA01-live-overlay-{size.x}x{size.y}",
+                        canvas,size.x,size.y,false,inspectViewport:()=>Inspect("live-overlay"));
+                }
+
+                // Capture restores the real canvas mode and viewport. Motion belongs to that
+                // settled window, not to either offscreen image resolution.
+                yield return null;yield return null;Canvas.ForceUpdateCanvases();
+                int windowWidth=Screen.width,windowHeight=Screen.height;
+                Vector2 canvasSize=((RectTransform)canvas.transform).rect.size;
+                float canvasScale=canvas.scaleFactor;
+                void CheckWindow()
+                {
+                    Assert.AreEqual(windowWidth,Screen.width,"The leaf sample changed window width.");
+                    Assert.AreEqual(windowHeight,Screen.height,"The leaf sample changed window height.");
+                    var size=((RectTransform)canvas.transform).rect.size;
+                    Assert.That(size.x,Is.EqualTo(canvasSize.x).Within(.01f));
+                    Assert.That(size.y,Is.EqualTo(canvasSize.y).Within(.01f));
+                    Assert.That(canvas.scaleFactor,Is.EqualTo(canvasScale).Within(.0001f));
+                }
+                CheckWindow();
+                float deadline=Time.realtimeSinceStartup+10f;
+                Mesh firstMesh=leaves.canvasRenderer.GetMesh();
+                while((firstMesh==null || firstMesh.vertexCount==0) && Time.realtimeSinceStartup<deadline)
+                {yield return null;Canvas.ForceUpdateCanvases();CheckWindow();firstMesh=leaves.canvasRenderer.GetMesh();}
+                Assert.IsNotNull(firstMesh,"Live title leaves had no mesh.");
+                Assert.Greater(firstMesh.vertexCount,0,"Live title leaves had no visible vertices.");
+                var first=firstMesh.vertices;
+                float sampledAt=Time.realtimeSinceStartup;
+                deadline=sampledAt+10f;
+                bool moved=false;
+                int secondCount=first.Length;
+                while(!moved && Time.realtimeSinceStartup<deadline)
+                {
+                    yield return new WaitForSecondsRealtime(.15f);
+                    Canvas.ForceUpdateCanvases();CheckWindow();
+                    var secondMesh=leaves.canvasRenderer.GetMesh();
+                    var second=secondMesh!=null?secondMesh.vertices:System.Array.Empty<Vector3>();
+                    secondCount=second.Length;
+                    moved=first.Length!=second.Length;
+                    for(int i=0;i<Mathf.Min(first.Length,second.Length) && !moved;i++)
+                        moved=(first[i]-second[i]).sqrMagnitude>.0025f;
+                }
+                Assert.IsTrue(moved,"The live title leaves did not move during the bounded actual-window sample.");
+                Debug.Log($"[QA01Title] actual-window leaves moved at {windowWidth}x{windowHeight}, " +
+                    $"canvas={canvasSize}, scale={canvasScale:0.###}, " +
+                    $"vertices={first.Length}->{secondCount}, interval={Time.realtimeSinceStartup-sampledAt:0.###}s");
+            }
+            finally
+            {
+                if(plate!=null){plate.texture=originalTexture;plate.material=originalMaterial;}
+                if(air!=null)air.enabled=airEnabled;
+                if(leaves!=null)leaves.enabled=leavesEnabled;
+                if(dust!=null)dust.enabled=dustEnabled;
+                if(prompt!=null)prompt.enabled=promptEnabled;
+                TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=reduced;
+                SceneFlow.BootedThroughSplash=boot;
+                if(source!=null)Object.DestroyImmediate(source);
+            }
         }
 
         [UnityTest,Timeout(90000)]
