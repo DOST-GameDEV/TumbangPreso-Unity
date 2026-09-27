@@ -256,6 +256,10 @@ namespace TumbangPreso.UI
         private readonly Vector3[] _panelCorners=new Vector3[4];
         private Transform _pivot;
         private GameObject _model;
+        private GameObject _sourceModel, _sourcePet;
+        private AnimationClip[] _sourceClips;
+        private Color[] _sourcePalette;
+        private bool _sourceSlipper;
 
         private float _turnPhase;
         private bool _userTookOver;
@@ -699,8 +703,17 @@ namespace TumbangPreso.UI
         /// </summary>
         public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette, GameObject petModel)
         {
-            if (_model != null) Destroy(_model);
-            if (_pet != null) Destroy(_pet);
+            // Lock-in and menu refreshes repeat the same pick. Preserve its pose,
+            // materials and instance; snapshots also detect in-place palette edits.
+            if (_model != null && prefab == _sourceModel && petModel == _sourcePet &&
+                ShowingSlipper == _sourceSlipper && SameValues(_sourceClips, clips) &&
+                SameValues(_sourcePalette, palette) && (petModel == null || _pet != null)) return;
+            if (_model != null) { _model.SetActive(false); Destroy(_model); }
+            if (_pet != null) { _pet.SetActive(false); Destroy(_pet); }
+            _model = null; _pet = null;
+            _sourceModel = prefab; _sourcePet = petModel; _sourceSlipper = ShowingSlipper;
+            _sourceClips = clips != null ? (AnimationClip[])clips.Clone() : null;
+            _sourcePalette = palette != null ? (Color[])palette.Clone() : null;
 
             _idle = null;
 
@@ -804,6 +817,16 @@ namespace TumbangPreso.UI
             _turnPhase = InitialTurnPhase;
 
             _needsFrame = true;
+        }
+
+        private static bool SameValues<T>(T[] left, T[] right)
+        {
+            if (left == null || right == null) return left == right;
+            if (left.Length != right.Length) return false;
+            var comparer = System.Collections.Generic.EqualityComparer<T>.Default;
+            for (int i = 0; i < left.Length; i++)
+                if (!comparer.Equals(left[i], right[i])) return false;
+            return true;
         }
 
         /// <summary>

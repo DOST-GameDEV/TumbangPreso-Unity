@@ -1,11 +1,17 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`0d086f3728ff4ea16477ad0c5d375089479daed9`; scoped match-clock recovery follows it.
+`3e5249469406d89fd7cc6499c4b6b9c05d155977`; repeated-preview reuse follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Unchanged ModelPreview selections retain their live model/materials/pose; changed
+clip/palette snapshots,prefab/pet or shading mode rebuild,and outgoing subjects
+hide before deferred destruction. Null selection clears Subject immediately.
+One new native case passes1/1 on full committed base plus2inputs,no drift. Player
+timings remain OPEN. [Evidence](reports/stability-2026-09-27/loading-audit.md#repeated-preview-selection).
 
 Protocol76 carries match/round/sequence on requested pause/speed and sends recovery
 rate after SyncWorld. Local hitstop stays local; unchanged refreshes preserve it,

@@ -58,6 +58,49 @@ namespace TumbangPreso.PlayTests
         private const string OutDir = "Logs/shots-preview";
 
         [UnityTest]
+        public IEnumerator RepeatedPreviewSelectionReusesSubjectAndRetiresChangedInputsImmediately()
+        {
+            var panel = new GameObject("Preview reuse", typeof(RectTransform));
+            var rect = panel.GetComponent<RectTransform>(); rect.sizeDelta = new Vector2(320, 400);
+            var preview = panel.AddComponent<ModelPreview>(); preview.Attach(rect);
+            var art = RosterBook.Load().FindPersonArt("dante"); Assert.IsNotNull(art);
+            var palette = (Color[])art.Palette.Clone();
+            var clips = (AnimationClip[])art.Clips.Clone();
+            try
+            {
+                preview.Show(art.Model, clips, palette, art.PetModel);
+                yield return null;
+                var first = preview.Subject; Assert.IsNotNull(first);
+                var material = first.GetComponentInChildren<Renderer>().sharedMaterial;
+                preview.Orbit(new Vector2(24, 12));
+                yield return null;
+                var rotation = preview.PreviewCamera.transform.rotation;
+                preview.Show(art.Model, (AnimationClip[])clips.Clone(), (Color[])palette.Clone(), art.PetModel);
+                Assert.AreSame(first, preview.Subject);
+                Assert.AreSame(material, preview.Subject.GetComponentInChildren<Renderer>().sharedMaterial);
+                Assert.AreEqual(rotation, preview.PreviewCamera.transform.rotation);
+
+                palette[0] = Color.magenta;
+                preview.Show(art.Model, clips, palette, art.PetModel);
+                Assert.AreNotSame(first, preview.Subject); Assert.IsFalse(first.activeSelf);
+                var second = preview.Subject;
+                clips[0] = null;
+                preview.Show(art.Model, clips, palette, art.PetModel);
+                Assert.AreNotSame(second, preview.Subject); Assert.IsFalse(second.activeSelf);
+                var third = preview.Subject;
+                preview.ShowingSlipper = true;
+                preview.Show(art.Model, clips, palette, art.PetModel);
+                Assert.AreNotSame(third, preview.Subject); Assert.IsFalse(third.activeSelf);
+                var last = preview.Subject;
+                preview.Show(null, null, null, null);
+                Assert.IsNull(preview.Subject); Assert.IsFalse(last.activeSelf);
+                yield return null;
+                Assert.IsTrue(first == null && second == null && third == null && last == null);
+            }
+            finally { Object.DestroyImmediate(panel); }
+        }
+
+        [UnityTest]
         public IEnumerator TheCharacterPreviewIsFramedPosedAndMovable()
         {
             Directory.CreateDirectory(OutDir);

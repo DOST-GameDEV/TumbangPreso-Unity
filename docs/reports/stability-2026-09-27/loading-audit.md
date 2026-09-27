@@ -5,6 +5,26 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Repeated Preview Selection
+
+After3e524946, ModelPreview.Show uses the same value-snapshot pattern as
+CharacterVisual: matching prefab/pet,clip/palette contents and slipper mode retain
+the subject instead of reinstantiating,reskinning and restarting its pose. This
+serves repeated lock-in/collection refresh calls,not a pool of all characters.
+Input mutations still rebuild; replaced model/pet deactivate before deferred
+destruction to prevent a swap-frame double draw. Null selection clears Subject.
+No authored assets,clips,shading values or animation behavior are redesigned.
+
+One new native case passes1/1,0.9847954s on full committed base plus2inputs,no drift.
+It checks real Dante instance/material/view reuse and palette/clip/mode invalidation,
+immediate retirement and next-frame destruction. First launch was preflight-held
+before Unity; after measured headroom recovered,the one actual run passed without
+retry. Minimum free6,358,962,176bytes; named profile/preferences restored.
+[Receipt](checks/preview-selection-native.json),[XML](checks/preview-selection-native.xml).
+Raw Logs/preview-selection-reuse-20260927/same-pick.*. No old film/scene cases rerun,
+no player timing or memory measurement. Generated valid-Avatar ownership remains
+a separate unresolved runtime-lifetime concern.
+
 ## Hidden HOME Render
 
 After `8821369f`, an opaque HOME video/poster suspends the live court camera and

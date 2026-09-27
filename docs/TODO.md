@@ -135,6 +135,9 @@ cases pass separately; no emitted effects,art changes or player hitch claim.
 Opaque HOME media now suspends the hidden live-court render while retaining its
 prepared fallback. One new native visibility/lifetime case passes; player GPU/FPS
 savings and complete movie/overlay journeys remain OPEN.
+Unchanged preview selections now retain model/material/pose instead of rebuilding
+on lock-in/refresh. Changed inputs retire the old subject immediately. One new
+native reuse/invalidation/cleanup case passes; player click timings remain OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit
