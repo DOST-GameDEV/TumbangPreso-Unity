@@ -477,6 +477,11 @@ patches and stuffing out of a torn hem. Her colours only in the pin heads and pa
 brief `ArtSource/phaister/doll-20260927/design-brief.md`, renders `Logs/phaister-doll-vN/`. The small doll at her hip will be
 the same design at hand size.
 
+**v11 (2026-09-27 night) supersedes the body above.** The owner sent a reference render to take from with its colours moved round
+(`ArtSource/phaister/doll-20260927/owner-reference-20260927.png`): Paete's size, big and fat with a pot belly, textured burlap,
+mitten stumps with NO fingers (twice), and the light coming out of real openings rather than painted on. The brief's v11 section has
+the table of what was taken and what changed colour.
+
 ### 9.11 Proposed numbers (the owner may retune any)
 
 | Number | Value | Why |
@@ -487,4 +492,5 @@ the same design at hand size.
 | Hex mark life | 25 s (10 armed-in plus 15 to use it) | long enough to pick the moment, short enough not to hang over a round |
 | Passive duration | while the mark lives | his text ties it to the mark |
 | Teleport range | 2.0 to 5.5 m | today's, kept |
-| Doll body | a player's size and rules; a tag stuns it 5 s; no skills | the Astig bot plays it like a player |
+| Doll body | PAETE'S SIZE (owner: *"make like paete size"*), a player's rules; a tag stuns it 5 s; no skills | the Astig bot plays it like a player |
+| Doll speed | 0.85 of a player's walk and run, no sprint burst (proposed number; the rule is the owner's: *"big fat voodoo doll that's kinda sllow(to balance it)"*) | a Hard AI that never tires would otherwise out-run the round; slow and heavy is its balance and its look |

@@ -1,7 +1,7 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`b394c7ac319bef20b6204804809f1ec51c92cb05`; custom-preview preparation follows it.
+`8d7950a5` plus incoming `5f1300fe`; custom-preview loading and doll v19 are integrated.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
@@ -14,6 +14,9 @@ took38.52s upfront; five nonblank views were inspected. Frozen210inputs,no drift
 A one-line menu-heading warning correction subsequently compiled in Runtime only.
 [Evidence and limits](reports/stability-2026-09-27/loading-audit.md#custom-preview-loading).
 Player frame/GPU/peak-memory measurements and a new player build remain OPEN.
+Incoming doll v11-v19 artwork/source,cloth/reference choices,glow/spill shaders and
+material helper are preserved across18 paths. Runtime/Editor compile on220 frozen
+inputs; no creative edits,unchanged native reruns or inferred art/shader approval.
 
 Sentry snapshots now preserve the host's captured seat mask rather than guessing
 from current local distance. Late bodies bind once; restoration never reapplies
