@@ -272,6 +272,8 @@ namespace TumbangPreso.UI
             // ⚠️ EVERY FIELD ON THE SCREEN ANSWERS THE PLAYER. See `OwnerFieldSound`: the
             // three most-pressed controls on this screen were the only silent ones on it.
             input.gameObject.AddComponent<OwnerFieldSound>();
+            var pulse = input.gameObject.AddComponent<OwnerFieldPulse>();
+            input.onValueChanged.AddListener(_ => pulse.Clear());
             return input;
         }
 

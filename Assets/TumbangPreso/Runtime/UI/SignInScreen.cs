@@ -1870,9 +1870,15 @@ namespace TumbangPreso.UI
             string username = _username.text?.Trim() ?? "";
             string password = _password.text ?? "";
 
-            if (string.IsNullOrEmpty(username)) { Fail("Enter a username."); return; }
-            if (string.IsNullOrEmpty(password)) { Fail("Enter a password."); return; }
-            if(_nativeForm && !ValidateOwnerRegistration())return;
+            if (_nativeForm)
+            {
+                if (!ValidateOwnerSubmission()) return;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(username)) { Fail("Enter a username."); return; }
+                if (string.IsNullOrEmpty(password)) { Fail("Enter a password."); return; }
+            }
 
             var account = GameServices.Account;
             if (account == null) { Fail("Accounts are not available right now."); return; }

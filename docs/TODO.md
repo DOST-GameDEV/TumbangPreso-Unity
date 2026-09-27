@@ -17,6 +17,18 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+**DOCS-0927, IN PROGRESS:** owner requests documentation organization next,after the
+current loading/login batch and before returning to the task order below. Condense
+current rules and routing,retain important context/methods,and archive only genuinely
+superseded material with backlinks. Include clear starting points for networking,
+menu animation,character building and rendering. No history deletion.
+
+**LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submissions now show stable
+per-field messages,error sound and field-only tint pulses. Correcting either login
+credential clears a stale pair rejection. Artwork/hitboxes are preserved; reduced
+motion uses steady feedback. Four assemblies compile; native interaction/sound/visual
+qualification remains OPEN. [Details](reports/stability-2026-09-27/login-feedback.md).
+
 **NET-SKILLS-1, OPEN (owner 2026-09-27):** future-proof current and newly added skills
 through explicit shared networking contracts and enforced coverage for authority,
 prediction/confirmation, persistent state and lifecycle recovery. Preserve current

@@ -1,5 +1,20 @@
 # Active TUMP rework ledger
 
+## Login field feedback, 2026-09-27
+
+Invalid submits now expose every offending field together,play one existing error
+cue and briefly tint-pulse only those fields without moving their hitboxes. Empty
+confirmation feedback persists until corrected; sign-in required fields no longer
+receive misleading password-policy text. Pair-credential failures pulse both fields
+without guessing which was wrong,and clear when either value changes. Editing,
+mode changes and disable retire the pulse; reduced motion uses a steady tint.
+Supplied art,field positions,password masking and valid input are preserved.
+Four assemblies compile on105 frozen inputs (7changed). The focused native feedback
+case is pending; no live login/profile mutation or visual/auditory approval claimed.
+Next owner priority: organize docs and entry points,preserve methods,archive genuine
+history with backlinks,then return to shared network and loading improvements.
+[Evidence](reports/stability-2026-09-27/login-feedback.md).
+
 ## Shared menu portrait preload, 2026-09-27
 
 Boot now asynchronously loads the live roster's people,can and slipper portraits
