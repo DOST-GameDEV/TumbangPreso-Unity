@@ -33,10 +33,14 @@ Material:
     - _CloudLumaLow: 0.48335156
     - _CloudLumaScale: 1.540209
     - _CloudOpacity: 0.94
+    - _CloudPaint: 0
     - _CloudSpeed: 0.000069444446
     - _CloudSunCutoff: 6.6844497
     - _CloudYaw: -0.3272515
     - _Exposure: 1
+    - _SunClear: 0
+    - _SunDisc: 0
+    - _SunHalo: 0
     m_Colors:
     - _CloudLight: {r: 0.91, g: 0.92, b: 0.89, a: 1}
     - _CloudShade: {r: 0.45, g: 0.54, b: 0.63, a: 1}
