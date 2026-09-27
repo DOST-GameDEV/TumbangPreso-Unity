@@ -62,6 +62,14 @@ their own target lifetime and reset rules. Client presentation remains separate.
 
 ## Prepared World Recovery
 
+Protocol76 scopes requested pause/speed to match,round and sequence. The host sends
+the requested rate after SyncWorld on the same reliable stream,including ordinary
+recovery outside a cinematic phase. Receivers reject stale/malformed envelopes;
+spectator requests retain their existing role check and independent peer ordering.
+Read PresentationClock.RequestedScale for resume state,not Time.timeScale: local
+Hitstop is temporary presentation,not the authoritative speed. Unchanged refreshes
+must not cancel hitstop; a changed rate during a hold applies when that hold ends.
+
 The prepared-effect adapter supplies centre,preparation and remaining life through
 CapturePreparedWorld. RestorePreparedWorld restores only that state and returns
 true when a new preparation needs its body/FPP pose resumed. Zero clocks mean

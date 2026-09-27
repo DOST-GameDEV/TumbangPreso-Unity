@@ -1439,24 +1439,28 @@ namespace TumbangPreso.Net
 
             if (_nm == null || _nm.CustomMessagingManager == null) return;
 
-            using var writer = new FastBufferWriter(16, Allocator.Temp);
-            writer.WriteValueSafe(scale);
-            _nm.CustomMessagingManager.SendNamedMessage("ReqTime", NetworkManager.ServerClientId, writer);
+            var message = new MatchClockMessage { Match = PresentationMatchId,
+                Round = GameServices.Match?.RoundNumber ?? -1, Sequence = ++_clockRequestSequence, Scale = scale };
+            if (!message.IsValid) return;
+            using var writer = new FastBufferWriter(MatchClockMessage.WireBytes, Allocator.Temp);
+            writer.WriteNetworkSerializable(message);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqTime", NetworkManager.ServerClientId, writer, NetworkDelivery.ReliableSequenced);
         }
 
         private void OnReqTimeMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!NetAuthority.IsHost) return;
 
-            reader.ReadValueSafe(out float scale);
+            if (!MatchClockMessage.TryRead(ref reader, out var message)) return;
 
             // ⚠ THE SENDER MUST BE A WATCHER. `TrySenderSeat` answers the opposite question, so
             // this asks the lobby directly: a peer with a chair is playing and may not stop the
             // match it is playing in.
-            var peer = NetSession.Instance?.Lobby?.PeerById((int)senderClientId);
+            var lobby = NetSession.Instance?.Lobby;
+            var peer = lobby?.PeerById((int)senderClientId);
             if (peer == null || !peer.Spectator) return;
-
-            HostSetTimeScale(scale);
+            PruneClockRequests(lobby);
+            if (AcceptClockRequest(senderClientId, message)) HostSetTimeScale(message.Scale);
         }
 
         /// <summary>
@@ -1496,11 +1500,7 @@ namespace TumbangPreso.Net
             PresentationClock.RequestScale(safe);
             TimeScaleChanged?.Invoke(safe);
 
-            if (_nm == null || _nm.CustomMessagingManager == null) return;
-
-            using var writer = new FastBufferWriter(16, Allocator.Temp);
-            writer.WriteValueSafe(safe);
-            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncTime", writer);
+            BroadcastMatchClock();
         }
 
         private void OnSyncTimeMsg(ulong senderClientId, FastBufferReader reader)
@@ -1511,17 +1511,13 @@ namespace TumbangPreso.Net
             if (NetAuthority.IsHost) return;
             if (!FromHost(senderClientId)) return;
 
-            reader.ReadValueSafe(out float scale);
+            if (!MatchClockMessage.TryRead(ref reader, out var message)) return;
 
             // ⚠️⚠️ `Mathf.Clamp` DOES NOT REJECT NaN, so this line could set a client's
             // `Time.timeScale` to NaN and freeze it. `HostSetTimeScale` refuses one now, which
             // means an honest host cannot send it; this is the same guard on the receiving side,
             // because a corrupted packet is not an honest host. `docs/TODO.md` § 149.9.
-            if (!Finite(scale)) return;
-
-            Hitstop.End();
-            PresentationClock.RequestScale(Mathf.Clamp(scale, 0.0f, 1.0f));
-            TimeScaleChanged?.Invoke(PresentationClock.RequestedScale);
+            ApplyMatchClock(message);
         }
 
         /// <summary>
@@ -5421,6 +5417,8 @@ namespace TumbangPreso.Net
                 writer.WriteValueSafe(round != null ? round.AttackerIdleSeconds(slot) : 0.0f);
             writer.WriteValueSafe(EnsurePresentationMatch());
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncWorld", writer);
+            // Same reliable stream: establish match/round before its requested rate.
+            BroadcastMatchClock();
         }
 
         // -------------------------------------------------------------------

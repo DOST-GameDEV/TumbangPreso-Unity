@@ -665,7 +665,31 @@ Its exact implementation and qualification status are in
 [Featherfall](../amihan-kit-2026-09-27/featherfall.md). It does not establish that
 every kit works across real peers.
 
-## Sean after Cheska's ultimate
+## Requested Match Clock
+
+Source at0d086f37 sent bare4byte clock values and omitted ordinary pause/speed from
+world recovery. Protocol76 replaces both request/state values with a24byte envelope
+(match,round,sequence,scale). The host sends state immediately after SyncWorld on
+the same reliable stream. Existing spectator-only request authorization remains;
+per-peer sequences reject repeats and retire disconnected senders. Clients accept
+only the host,current scope and newer sequence. Malformed/nonfinite values reject.
+
+PresentationClock now distinguishes the requested rate from temporary local
+Hitstop. Captures do not turn a micro-freeze into a lasting slow match; unchanged
+refreshes preserve local hitstop. Changed rates during a cinematic hold update its
+release rate rather than releasing that hold early. No authored timings changed.
+
+One new guarded native PlayMode pass:3/3,0.1631748s on full committed0d086f37 plus
+10explicit inputs,no SHA256 drift. Cases exercise the real clock receiver's sender,
+scope,sequence,truncated/nonfinite gates; capture/refresh during hitstop and hold;
+and independent peer request order/reset. Minimum free6,424,379,392bytes; guard
+restored2profile files and3shared input preferences. No retry or old-suite rerun.
+[Structured receipt](checks/match-clock-native.json),[fresh XML](checks/match-clock-native.xml).
+Raw isolated logs:Logs/match-clock-20260927/scoped-rate.*. These are local controlled
+receiver cases,not actual peers/ranked/reconnect acceptance. They do not establish
+QA-15's cause or close that report.
+
+## Sean After Cheska's Ultimate
 
 QA-15 remains unresolved. The expected Ice freeze is 2.5 seconds after impact,
 followed by reduced speed; the ultimate introduction is a separate interval.

@@ -86,6 +86,9 @@ native/peer lifecycle checks and sentry target-list recovery remain OPEN.
 Read [network route](NETWORKING.md),[contract](SKILL_NETWORK_CONTRACT.md) and
 [exact evidence](reports/stability-2026-09-27/multiplayer.md),not a historical
 protocol literal or old test count.
+Requested pause/speed now recovers after world state with match/round/sequence
+gates (protocol76),excluding local hitstop. Three new native clock cases pass on
+the full committed base plus10inputs,no drift. Actual peers and QA-15 remain OPEN.
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.

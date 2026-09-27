@@ -508,7 +508,9 @@ namespace TumbangPreso.Net
         // distance query on the observing peer.
         // 75: received Voodoo statuses now tick, expire, cleanse and affect
         // movement. Older bodies leave these replicated curses inert or stuck.
-        public const int ProtocolVersion = 75;
+        // 76: requested match rate carries scope/sequence and joins world recovery;
+        // transient hitstop is not a replicated pause or spectator speed.
+        public const int ProtocolVersion = 76;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

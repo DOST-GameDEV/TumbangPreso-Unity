@@ -1,11 +1,17 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`8821369f05fbd74de3d0d01581f2b4efdb36923c`; hidden HOME render suppression follows it.
+`0d086f3728ff4ea16477ad0c5d375089479daed9`; scoped match-clock recovery follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Protocol76 carries match/round/sequence on requested pause/speed and sends recovery
+rate after SyncWorld. Local hitstop stays local; unchanged refreshes preserve it,
+and a cinematic hold retains its requested release rate. Three new native cases
+pass on the full clean committed base plus10inputs,no drift. Actual peers and
+QA-15 remain OPEN. [Evidence](reports/stability-2026-09-27/multiplayer.md#requested-match-clock).
 
 Opaque HOME video/poster now suspends the covered court camera/surface and restores
 fallback when needed,without discarding prepared objects. New native case passes1/1

@@ -50,6 +50,112 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After()
         { yield return PlayModeWorld.Reset(); NetAuthority.Provider = _provider; }
 
+        private static MatchRpc ClockReceiver()
+        {
+            GameServices.Ensure(); GameServices.Match.ApplySnapshot(new int[4], 3, true);
+            var root = new GameObject("Match clock receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>();
+            typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 321L);
+            return router;
+        }
+
+        private static void DeliverClock(MatchRpc router, MatchClockMessage message, ulong sender = 0)
+        {
+            using var writer = new FastBufferWriter(MatchClockMessage.WireBytes, Allocator.Temp);
+            writer.WriteNetworkSerializable(message);
+            Assert.AreEqual(MatchClockMessage.WireBytes, writer.Length);
+            using var reader = new FastBufferReader(writer, Allocator.Temp);
+            typeof(MatchRpc).GetMethod("OnSyncTimeMsg", System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic).Invoke(router, new object[] { sender, reader });
+        }
+
+        [Test]
+        public void MatchClockReceiverRejectsStaleScopesSequencesAndTruncatedValues()
+        {
+            NetAuthority.Provider = new PredictingOwner();
+            var router = ClockReceiver(); float original = PresentationClock.RequestedScale;
+            var message = new MatchClockMessage { Match = 321, Round = 3, Sequence = 5, Scale = 0 };
+            try
+            {
+                PresentationClock.RequestScale(1);
+                DeliverClock(router, message, 9);
+                var bad = message; bad.Match--; DeliverClock(router, bad);
+                bad = message; bad.Round--; DeliverClock(router, bad);
+                bad = message; bad.Scale = float.NaN; DeliverClock(router, bad);
+                bad = message; bad.Sequence = 0; DeliverClock(router, bad);
+                using (var writer = new FastBufferWriter(4, Allocator.Temp))
+                {
+                    writer.WriteValueSafe(0f);
+                    using var reader = new FastBufferReader(writer, Allocator.Temp);
+                    typeof(MatchRpc).GetMethod("OnSyncTimeMsg", System.Reflection.BindingFlags.Instance |
+                        System.Reflection.BindingFlags.NonPublic).Invoke(router, new object[] { 0UL, reader });
+                }
+                Assert.AreEqual(1, PresentationClock.RequestedScale);
+                DeliverClock(router, message); Assert.AreEqual(0, PresentationClock.RequestedScale);
+                message.Sequence = 4; message.Scale = 1; DeliverClock(router, message);
+                Assert.AreEqual(0, PresentationClock.RequestedScale);
+                message.Sequence = 6; message.Scale = .5f; DeliverClock(router, message);
+                Assert.AreEqual(.5f, PresentationClock.RequestedScale);
+                message.Scale = 0; DeliverClock(router, message);
+                Assert.AreEqual(.5f, PresentationClock.RequestedScale);
+                typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 322L);
+                message.Match = 322; message.Sequence = 1; message.Scale = 1; DeliverClock(router, message);
+                Assert.AreEqual(1, PresentationClock.RequestedScale);
+            }
+            finally { Hitstop.End(); PresentationClock.RequestScale(original); Object.DestroyImmediate(router.gameObject); }
+        }
+
+        [Test]
+        public void MatchClockCaptureAndRefreshExcludeLocalHitstopAndPreserveAnActiveHold()
+        {
+            NetAuthority.Provider = new ObservingHost();
+            var router = ClockReceiver(); float original = PresentationClock.RequestedScale;
+            bool reduced = Settings.SettingsStore.Current.ReducedEffects;
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.NonPublic;
+            var hold = typeof(PresentationClock).GetMethod("Hold", hidden | System.Reflection.BindingFlags.Static);
+            var release = typeof(PresentationClock).GetMethod("Release", hidden | System.Reflection.BindingFlags.Static);
+            try
+            {
+                Settings.SettingsStore.Current.ReducedEffects = false;
+                PresentationClock.RequestScale(1); Hitstop.Trigger(.08f, .05f);
+                Assert.AreEqual(.05f, Time.timeScale);
+                var message = (MatchClockMessage)typeof(MatchRpc).GetMethod("CaptureMatchClock",
+                    hidden | System.Reflection.BindingFlags.Instance).Invoke(router, null);
+                Assert.AreEqual(1, message.Scale);
+                NetAuthority.Provider = new PredictingOwner(); DeliverClock(router, message);
+                Assert.IsTrue(Hitstop.Active); Assert.AreEqual(.05f, Time.timeScale);
+                Hitstop.End(); hold.Invoke(null, null);
+                message.Sequence++; message.Scale = .5f; DeliverClock(router, message);
+                Assert.AreEqual(0, Time.timeScale); Assert.AreEqual(.5f, PresentationClock.RequestedScale);
+                release.Invoke(null, null); Assert.AreEqual(.5f, Time.timeScale);
+            }
+            finally
+            {
+                release.Invoke(null, null); Hitstop.End(); PresentationClock.RequestScale(original);
+                Settings.SettingsStore.Current.ReducedEffects = reduced; Object.DestroyImmediate(router.gameObject);
+            }
+        }
+
+        [Test]
+        public void ClockRequestsKeepIndependentPeerSequencesWithinTheirWorldScope()
+        {
+            var router = ClockReceiver();
+            var accept = typeof(MatchRpc).GetMethod("AcceptClockRequest", System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic);
+            var message = new MatchClockMessage { Match = 321, Round = 3, Sequence = 9, Scale = 0 };
+            bool Accept(ulong peer, MatchClockMessage value) => (bool)accept.Invoke(router, new object[] { peer, value });
+            try
+            {
+                Assert.IsTrue(Accept(7, message)); Assert.IsFalse(Accept(7, message)); Assert.IsTrue(Accept(8, message));
+                message.Sequence--; Assert.IsFalse(Accept(7, message));
+                message.Match--; Assert.IsFalse(Accept(8, message)); message.Match++;
+                message.Round--; Assert.IsFalse(Accept(8, message));
+                GameServices.Match.ApplySnapshot(new int[4], 4, true);
+                message.Round = 4; message.Sequence = 1; Assert.IsTrue(Accept(7, message));
+            }
+            finally { Object.DestroyImmediate(router.gameObject); }
+        }
+
         [Test]
         public void SentryTargetMaskUsesTheWorldFieldReceiverAndRejectsInvalidSeats()
         {
@@ -320,7 +426,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(30000)]
         public IEnumerator ReceivedVoodooClocksExpireButOnlyTheHostResolvesWaitingCurses()
         {
-            Assert.AreEqual(75, NetSession.ProtocolVersion);
+            Assert.GreaterOrEqual(NetSession.ProtocolVersion, 75);
             var body = Owner("phaister").GetComponent<CharacterMotor>();
             GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
             var step = typeof(CharacterMotor).GetMethod("StepStatuses",
