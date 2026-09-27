@@ -566,6 +566,8 @@ namespace TumbangPreso.Visual
             return thinnest > 0.0f && thinnest < ThinMetres;
         }
 
+        private const string KantoFoliageShaderName = "TumbangPreso/KantoFoliage";
+
         private static bool IsToonSurface(Renderer renderer)
         {
             var materials = renderer.sharedMaterials;
@@ -575,6 +577,13 @@ namespace TumbangPreso.Visual
             {
                 if (material == null || material.shader == null) continue;
                 if (material.shader.name == ToonShaderName) return true;
+                // ⚠️ KANTO'S LEAF CARDS TOO (owner, 2026-09-27: "tree leaves look off in-game",
+                // twice). A canopy is thousands of tiny card-to-card creases in the depth-normals
+                // texture, so the bright look's crease shade, sun-caught bevel and the AO painted
+                // dark blotches and yellow rims all over it. Masked like the cast: foliage keeps
+                // its own shading. Kanto's shader only, so the approved Lagoon Cove look is
+                // unchanged.
+                if (material.shader.name == KantoFoliageShaderName) return true;
             }
 
             return false;

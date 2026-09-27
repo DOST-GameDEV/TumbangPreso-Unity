@@ -554,7 +554,9 @@ Shader "TumbangPreso/WorldOutline"
                     // still saw no AO in face-to-face creases. See the kernel note in pass 2.
                     // The pass already maps a full inside corner to 1, so no steepening here; 0.7
                     // of the way to the violet is about a third darker on screen at the crease.
-                    float occlusion=(1-tex2D(_WorldAO,duv).r)*_WorldAOParams.x;
+                    // Masked like the contact shade: the cast and Kanto's foliage (WorldOutline.
+                    // IsToonSurface) keep their own shading.
+                    float occlusion=(1-tex2D(_WorldAO,duv).r)*_WorldAOParams.x*(1-saturate(mask*_WorldContactMask));
                     source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb*.7,saturate(occlusion));
                 }
                 if(_PeakDepth.w>0)
