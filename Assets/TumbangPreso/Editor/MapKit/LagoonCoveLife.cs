@@ -41,6 +41,7 @@ namespace TumbangPreso.EditorTools.MapKit
             flocks.BirdTemplate = Template("fauna_seabird", templates);
             flocks.FishTemplates = new[] { "fauna_fish_a", "fauna_fish_b", "fauna_fish_c", "fauna_fish_d" }
                 .Select(n => Template(n, templates)).Where(t => t != null).ToArray();
+            flocks.FeatherMaterials = FeatherMaterials();
 
             // Schools over the reef heads the players can see: nearest the court first, 16 m apart.
             var centres = new List<Vector3>(); var floors = new List<float>();
@@ -71,6 +72,45 @@ namespace TumbangPreso.EditorTools.MapKit
         /// <summary>⚠️ The two beds import as PCM, never the default Vorbis: a compressed loop can
         /// carry a few milliseconds of encoder padding at its seam, a click every 32 s that the
         /// synthesis took care to remove (seam step 0.0008 against 0.093 inside the loop).</summary>
+        /// <summary>The slipper burst's feathers: the painted feather (tools/paint_lagoon_feather.py)
+        /// on the cove's painted shader, cut out and two-sided, in the tern's own white, cream and
+        /// grey (the fauna kit's fauna_white #f7f3ea, fauna_cream #f5e6c6, fauna_grey #b9b5af;
+        /// sRGB, used as is, the layout's convention).</summary>
+        private static Material[] FeatherMaterials()
+        {
+            string texPath = Root + "/Fauna/feather_albedo.png";
+            var importer = AssetImporter.GetAtPath(texPath) as TextureImporter;
+            if (importer == null) { Debug.LogWarning(Tag + "No feather texture " + texPath); return new Material[0]; }
+            if (!importer.sRGBTexture || !importer.alphaIsTransparency || importer.wrapMode != TextureWrapMode.Clamp)
+            {
+                importer.sRGBTexture = true; importer.alphaIsTransparency = true; importer.wrapMode = TextureWrapMode.Clamp;
+                importer.SaveAndReimport();
+            }
+            var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(texPath);
+            var painted = Shader.Find("TumbangPreso/LagoonPainted");
+            string folder = Root + "/Fauna/Materials";
+            if (!AssetDatabase.IsValidFolder(folder)) AssetDatabase.CreateFolder(Root + "/Fauna", "Materials");
+            var tints = new[] { ("feather_white", new Color(0.969f, 0.953f, 0.918f)), ("feather_cream", new Color(0.961f, 0.902f, 0.776f)),
+                                ("feather_grey", new Color(0.725f, 0.710f, 0.686f)) };
+            var result = new Material[tints.Length];
+            for (int i = 0; i < tints.Length; i++)
+            {
+                string path = $"{folder}/{tints[i].Item1}.mat";
+                var m = AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (m == null) { m = new Material(painted); AssetDatabase.CreateAsset(m, path); }
+                m.shader = painted;
+                m.SetColor("_Color", tints[i].Item2);
+                m.SetTexture("_MainTex", tex);
+                m.SetFloat("_Cutoff", 0.5f);
+                m.SetFloat("_Cull", (float)CullMode.Off);
+                m.SetFloat("_Glossiness", 0.1f);
+                m.enableInstancing = true;
+                EditorUtility.SetDirty(m);
+                result[i] = m;
+            }
+            return result;
+        }
+
         private static AudioClip Clip(string name)
         {
             string path = $"Assets/TumbangPreso/Art/audio/ambience/{name}.wav";

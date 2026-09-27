@@ -30,6 +30,11 @@ namespace TumbangPreso
         public Vector3 CourtCentre; public float CourtKeepOut = 18f;
         public float CourtHalf = 13f;           // half side of the square a bird may land in, around CourtCentre
         public float CourtGroundY = 0f;         // ground height used when the landing raycast finds nothing
+        // ⚠️ The burst's FEATHERS (owner, 2026-09-27: "can you make an actual feather texture,
+        // instead of just thin blocks?"): cut-out, two-sided materials wearing the painted
+        // feather (tools/paint_lagoon_feather.py), tinted white, cream and grey. The builder fills
+        // it; left empty, the burst falls back to the old thin boxes in the bird's own colour.
+        public Material[] FeatherMaterials;
 
         /// <summary>How many bird slots exist (for the soundscape). Stable for the whole match.</summary>
         public int BirdCount => _birdCount;
@@ -86,6 +91,7 @@ namespace TumbangPreso
         private int _birdCount;
         private Transform[] _birdRoot, _birdBody, _wingL, _wingR;
         private Quaternion[] _wingLRest, _wingRRest;
+        private float[] _fold;          // 0 spread .. 1 folded along the body (grounded)
         private Vector3[] _birdPos, _birdVel;
         private float[] _bank, _heading, _flapPhase, _flapRate, _glideLeft, _wingAngle;
         private int[] _flapsLeft, _mode, _flockOf;
@@ -192,7 +198,7 @@ namespace TumbangPreso
             int perFlock = Mathf.Max(0, BirdsPerFlock);
             int n = _birdCount = _flockCount * perFlock;
             _birdRoot = new Transform[n]; _birdBody = new Transform[n]; _wingL = new Transform[n]; _wingR = new Transform[n];
-            _wingLRest = new Quaternion[n]; _wingRRest = new Quaternion[n];
+            _wingLRest = new Quaternion[n]; _wingRRest = new Quaternion[n]; _fold = new float[n];
             _birdPos = new Vector3[n]; _birdVel = new Vector3[n];
             _bank = new float[n]; _heading = new float[n]; _flapPhase = new float[n];
             _flapRate = new float[n]; _glideLeft = new float[n]; _wingAngle = new float[n];
@@ -301,6 +307,13 @@ namespace TumbangPreso
                 if (source == null) source = _birdRoot[0].GetComponentInChildren<Renderer>(true);
                 if (source != null) body = source.sharedMaterial;
             }
+            if (FeatherMaterials != null && FeatherMaterials.Length > 0)
+            {
+                // Shared, builder-owned materials: never destroyed here.
+                _featherMesh = BuildFeatherCard(.075f, .22f);
+                _featherMats = FeatherMaterials;
+                return;
+            }
             if (body == null) return;
             _featherMesh = BuildBox(new Vector3(.05f, .012f, .11f));
             var cream = new Material(body) { name = "Feather cream" };
@@ -309,6 +322,44 @@ namespace TumbangPreso
             if (grey.HasProperty("_Color")) grey.color = grey.color * new Color(.72f, .7f, .68f, 1f);
             _ownedMats = new[] { cream, grey };
             _featherMats = new[] { body, cream, grey };
+        }
+
+        /// <summary>A feather CARD: a quad along +Z (quill base at -Z, tip at +Z, the texture's V),
+        /// in four rows so it can arch gently along its length and cup across it, which is what
+        /// keeps a tumbling feather from ever reading as a flat sticker. Drawn two-sided by the
+        /// material (Cull Off), so one face is enough.</summary>
+        private static Mesh BuildFeatherCard(float width, float length)
+        {
+            const int rows = 4;
+            var v = new Vector3[(rows + 1) * 3]; var uv = new Vector2[v.Length]; var nrm = new Vector3[v.Length];
+            var tri = new int[rows * 2 * 6];
+            for (int r = 0; r <= rows; r++)
+            {
+                float t = r / (float)rows;
+                float z = (t - .5f) * length;
+                float arch = Mathf.Sin(t * Mathf.PI) * length * .08f;
+                for (int c = 0; c < 3; c++)
+                {
+                    float a = c - 1f;                                  // -1 edge, 0 quill, +1 edge
+                    float cup = a * a * width * .18f;
+                    int k = r * 3 + c;
+                    v[k] = new Vector3(a * width * .5f, arch + cup, z);
+                    uv[k] = new Vector2(c * .5f, t);
+                    nrm[k] = Vector3.up;
+                }
+            }
+            int q = 0;
+            for (int r = 0; r < rows; r++)
+                for (int c = 0; c < 2; c++)
+                {
+                    int a = r * 3 + c, b = a + 1, d = a + 3, e = d + 1;
+                    tri[q++] = a; tri[q++] = d; tri[q++] = b;
+                    tri[q++] = b; tri[q++] = d; tri[q++] = e;
+                }
+            var mesh = new Mesh { name = "Feather card" };
+            mesh.vertices = v; mesh.uv = uv; mesh.normals = nrm; mesh.triangles = tri;
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         private static Mesh BuildBox(Vector3 size)
@@ -595,11 +646,36 @@ namespace TumbangPreso
 
         // ⚠️ Wings roll about the body's forward axis. Positive Z roll lifts +X, so the left wing
         // (at -X) takes the negative angle to rise with the right one.
+        // ⚠️ THE WINGS FOLD ON THE GROUND (owner, 2026-09-27: "the bird needs a non-wing spread
+        // animation. its wings are spread at all times even when landed"). The flap only ever
+        // rolled each wing about its spread axis, so a landed bird stood with a 1.3 m span.
+        // A grounded bird now eases each wing into a FOLDED pose: swung back about the shoulder
+        // (yaw, left wing -FoldSweep, right +FoldSweep, since the left wing spreads along -X and
+        // the right along +X with the bird facing +Z) until it lies along the flank, tipped down
+        // a little onto the body, with the tips crossing over the tail as a tern's do. It folds
+        // over ~0.35 s after touching down and snaps open in ~0.15 s for takeoff, so the first
+        // takeoff beat is already a full-span stroke.
+        private const float FoldSweep = 84f, FoldDroop = 10f;
+
         private void SetWings(int i, float angle)
         {
             _wingAngle[i] = angle;
-            if (_wingL[i] != null) _wingL[i].localRotation = _wingLRest[i] * Quaternion.Euler(0f, 0f, -angle);
-            if (_wingR[i] != null) _wingR[i].localRotation = _wingRRest[i] * Quaternion.Euler(0f, 0f, angle);
+            float target = _mode[i] == ModeGrounded ? 1f : 0f;
+            float dt = Mathf.Min(Time.deltaTime, .05f);
+            _fold[i] = Mathf.MoveTowards(_fold[i], target, dt * (target > _fold[i] ? 3f : 7f));
+            float f = _fold[i] * _fold[i] * (3f - 2f * _fold[i]);
+            if (_wingL[i] != null)
+            {
+                var spread = _wingLRest[i] * Quaternion.Euler(0f, 0f, -angle);
+                var folded = Quaternion.Euler(0f, -FoldSweep, 0f) * _wingLRest[i] * Quaternion.Euler(0f, 0f, FoldDroop);
+                _wingL[i].localRotation = Quaternion.Slerp(spread, folded, f);
+            }
+            if (_wingR[i] != null)
+            {
+                var spread = _wingRRest[i] * Quaternion.Euler(0f, 0f, angle);
+                var folded = Quaternion.Euler(0f, FoldSweep, 0f) * _wingRRest[i] * Quaternion.Euler(0f, 0f, -FoldDroop);
+                _wingR[i].localRotation = Quaternion.Slerp(spread, folded, f);
+            }
         }
 
         // ---------------------------------------------------------------- landing, the ground, takeoff
