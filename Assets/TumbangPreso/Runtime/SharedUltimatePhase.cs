@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TumbangPreso.Abilities;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,12 +11,32 @@ namespace TumbangPreso
     {
         public readonly int Seat;
         public readonly long Request, AimToken;
+        public readonly FixedString64Bytes HeroId, AbilityId;
         public readonly Vector3 Position, Forward, Aim, FamiliarPosition;
         public readonly bool HasFamiliar;
         public readonly float Held;
         public UltimateCommit(int seat, long request, Vector3 position, Vector3 forward, Vector3 aim, float held,
-            bool hasFamiliar = false, Vector3 familiarPosition = default, long aimToken = 0)
-        { Seat=seat; Request=request; Position=position; Forward=forward; Aim=aim; Held=held; HasFamiliar=hasFamiliar; FamiliarPosition=familiarPosition; AimToken=aimToken; }
+            bool hasFamiliar = false, Vector3 familiarPosition = default, long aimToken = 0,
+            string heroId = null, string abilityId = null)
+            : this(seat, request, position, forward, aim, held, hasFamiliar, familiarPosition, aimToken,
+                new FixedString64Bytes(heroId ?? ""), new FixedString64Bytes(abilityId ?? "")) { }
+
+        internal UltimateCommit(int seat, long request, Vector3 position, Vector3 forward, Vector3 aim, float held,
+            bool hasFamiliar, Vector3 familiarPosition, long aimToken, FixedString64Bytes heroId, FixedString64Bytes abilityId)
+        {
+            Seat=seat; Request=request; Position=position; Forward=forward; Aim=aim; Held=held;
+            HasFamiliar=hasFamiliar; FamiliarPosition=familiarPosition; AimToken=aimToken;
+            HeroId = heroId; AbilityId = abilityId;
+        }
+
+        public UltimateCommit WithIdentity(HeroKit kit) => new UltimateCommit(Seat, Request,
+            Position, Forward, Aim, Held, HasFamiliar, FamiliarPosition, AimToken, kit?.HeroId, kit?.Ultimate?.Id);
+
+        // Empty identity is only for existing offline/local probes. Wire commits
+        // require both IDs before reaching this predicate.
+        public bool MatchesKit(HeroKit kit) => kit?.Ultimate != null &&
+            ((HeroId.Length == 0 && AbilityId.Length == 0) ||
+             (HeroId.ToString() == kit.HeroId && AbilityId.ToString() == kit.Ultimate.Id));
     }
 
     // One accepted cohort, one shared boundary. The reservation spends resources;
@@ -24,6 +45,7 @@ namespace TumbangPreso
     public sealed class SharedUltimatePhase : MonoBehaviour
     {
         public const double DefaultDuration = Visual.UltimatePerformance.DefaultSeconds;
+        public const float MaxNetworkDuration = 30f;
         /// <summary>
         /// ⚠️⚠️ THIS PHASE'S LENGTH, NOT A CONSTANT, SINCE REFINE-2.11 (owner 2026-09-24: *"its fine if
         /// its longer than 2.8 seconds part of the work is researching and thinking about how long it
@@ -113,15 +135,22 @@ namespace TumbangPreso
             Duration = Math.Max(Duration, SecondsFor(cast.Seat));
         }
         internal void Receive(long match, int round, long phase, double began, float resume, UltimateCommit[] commits, float frozenRoundTime)
+            => ReceiveTimed(match, round, phase, began, resume, commits, frozenRoundTime, CohortSeconds(commits));
+
+        internal void ReceiveTimed(long match, int round, long phase, double began, float resume,
+            UltimateCommit[] commits, float frozenRoundTime, double duration)
         {
             if (NetAuthority.ShouldResolve() || phase <= 0 || commits == null || commits.Length < 1 || commits.Length > 4
+                || double.IsNaN(duration) || double.IsInfinity(duration) || duration <= 0 || duration > MaxNetworkDuration
                 || !float.IsFinite(frozenRoundTime)||frozenRoundTime<0||frozenRoundTime>Core.CustomGameRules.MaxRoundSeconds
                 || match != Net.MatchRpc.Instance?.PresentationMatchId || double.IsNaN(began) || double.IsInfinity(began) || began > Now + .5) return;
             if (GameServices.Match != null && GameServices.Match.RoundNumber > round) return;
             if (MatchId != match) { Cancel(); _lastReceived = 0; }
             if (phase <= _lastReceived) return;
             _lastReceived = phase;
-            double length = CohortSeconds(commits);
+            // A late peer may not have the caster's body/kit yet. The host's
+            // sealed cohort owns this boundary,not a local fallback duration.
+            double length = duration;
             if (Now >= began + length)
             {
                 // A late newer cohort supersedes the old one even when its intro
@@ -153,7 +182,8 @@ namespace TumbangPreso
         {
             var match = GameServices.Match; var round = GameServices.Round;
             if (match == null || round == null || match.PresentationMatchId != MatchId || match.RoundNumber != Round || !round.RoundActive) return false;
-            foreach (var cast in _commits) if (round.PlayerAt(cast.Seat)?.AbilitySystem?.Kit?.Ultimate == null) return false;
+            foreach (var cast in _commits)
+                if (!cast.MatchesKit(round.PlayerAt(cast.Seat)?.AbilitySystem?.Kit)) return false;
             foreach (var cast in _commits)
             {
                 var actor = round.PlayerAt(cast.Seat);
@@ -170,11 +200,27 @@ namespace TumbangPreso
                 actor.Intent.RequireFreshActions(); actor.AbilitySystem?.ClearPresentationInput();
             }
         }
+
+        private bool PreparePresentation()
+        {
+            if (Visual.UltimateIntroductionCache.Preparing) return false;
+            foreach (var cast in _commits)
+            {
+                var actor = GameServices.Round?.PlayerAt(cast.Seat);
+                if (actor == null || !cast.MatchesKit(actor.AbilitySystem?.Kit) || actor.GetComponent<Visual.CharacterVisual>()?.Model == null) return false;
+                bool held = actor.GetComponent<Carrier>()?.Held != null;
+                if (Visual.UltimateIntroductionCache.HasResult(actor, held)) continue;
+                Visual.UltimateIntroductionCache.WarmOne(actor);
+                return false;
+            }
+            return true;
+        }
+
         private void LateUpdate()
         {
             if (!Active)
             {
-                if(GameServices.Round!=null && UI.SceneFlow.SelectedMode==Core.GameMode.HeroStrike)
+                if(!Visual.UltimateIntroductionCache.Preparing && GameServices.Round!=null && UI.SceneFlow.SelectedMode==Core.GameMode.HeroStrike)
                     foreach(var actor in GameServices.Round.Players)if(Visual.UltimateIntroductionCache.WarmOne(actor))break;
                 return;
             }
@@ -194,7 +240,7 @@ namespace TumbangPreso
                 else { Cancel(); Net.MatchRpc.Instance?.RequestWorldSnapshot(); }
                 return;
             }
-            if (_actorsReady && !_viewAttempted)
+            if (_actorsReady && !_viewAttempted && PreparePresentation())
             {
                 _viewAttempted = true;
                 try { _view = new CameraSystem.UltimatePhaseView(transform, _commits, Duration); }

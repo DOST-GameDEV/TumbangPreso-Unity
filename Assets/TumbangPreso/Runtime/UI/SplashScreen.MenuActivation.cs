@@ -10,6 +10,8 @@ namespace TumbangPreso.UI
         private static SplashScreen _menuCurtain;
         private ConvertedMainMenu _preparedMenu;
         private bool _menuActivationFailed;
+        private bool _quitAfterMenuFailure;
+        private UnityEngine.UI.Button _menuFailureQuit;
         internal static bool MenuActivationPending => _menuCurtain != null;
 
         private void PrepareMenuActivation()
@@ -63,6 +65,15 @@ namespace TumbangPreso.UI
         {
             _menuActivationFailed = true;
             if (_loadingLabel != null) _loadingLabel.text = "MAIN MENU COULD NOT OPEN";
+            if (_canvas != null && _menuFailureQuit == null)
+            {
+                var controls = OwnerUiLayout.DesignArea(_canvas.transform, "LoadingFailureControls");
+                _menuFailureQuit = LoadingLink(controls, "LoadingQuit", "EXIT GAME",
+                    () => _quitAfterMenuFailure = true, 1440, 760, 360, OwnerUiTheme.Current.Pale, onDark: true);
+                InputLayer.ScreenFocus.Install(controls.gameObject).Rebuild();
+                var events = UnityEngine.EventSystems.EventSystem.current;
+                if (events != null) events.SetSelectedGameObject(_menuFailureQuit.gameObject);
+            }
             Debug.LogError("[Splash] main menu activation or initialization failed; readiness was not completed.");
         }
 

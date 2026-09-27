@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
@@ -35,7 +36,10 @@ namespace TumbangPreso.Abilities
         public override float UltimateCost => PaeteRules.SentryCost;
 
         public void RebindWorldEffects(CharacterMotor motor)
-            => ((PunlangTsinelas)AttackingSkill).RestorePlantBinding(motor);
+        {
+            ((PunlangTsinelas)AttackingSkill).RestorePlantBinding(motor);
+            ((YakapNgMakiling)Ultimate).RestoreSentryBindings(motor);
+        }
 
         public PaeteHeroKit() : base("paete", "PAETE")
         {
@@ -257,6 +261,15 @@ namespace TumbangPreso.Abilities
         private sealed class YakapNgMakiling : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
+            private readonly List<PaeteSentry> _sentries = new List<PaeteSentry>();
+
+            public void RestoreSentryBindings(CharacterMotor motor)
+            {
+                _sentries.Clear();
+                if (motor == null) return;
+                foreach (var sentry in Object.FindObjectsByType<PaeteSentry>())
+                    if (sentry != null && sentry.OwnerSlot == motor.PlayerSlot) _sentries.Add(sentry);
+            }
             public YakapNgMakiling()
                 : base("paete_ultimate", "MAKILING'S EMBRACE",
                        "Place a guardian tree. It pulls everyone within 9 m into roots; they can still throw. Hold Interact for 7 s to escape.",
@@ -291,12 +304,16 @@ namespace TumbangPreso.Abilities
                 // ⚠️ PLAY PICKS UP WHERE THE CUTSCENE ENDS (owner, 2026-09-27: after the cutscene started showing the catch, the tree grew
                 // and caught everyone a second time in play; asked, he chose *"Yes, no repeat"*). It comes up already standing and awake
                 // and catches at once (`PaeteSentry.Spawn`'s hand-back).
-                PaeteSentry.Spawn(hands, at, ctx.Motor.PlayerSlot, handBack: true);
+                _sentries.RemoveAll(sentry => sentry == null);
+                _sentries.Add(PaeteSentry.Spawn(hands, at, ctx.Motor.PlayerSlot, handBack: true));
             }
 
             public override void Reset()
             {
-                foreach (var s in Object.FindObjectsByType<PaeteSentry>()) if (s != null) Object.Destroy(s.gameObject);
+                // Resetting one seat must not retire another caster's guardian.
+                foreach (var sentry in _sentries)
+                    if (sentry != null) { sentry.gameObject.SetActive(false); Object.Destroy(sentry.gameObject); }
+                _sentries.Clear();
                 base.Reset();
             }
         }

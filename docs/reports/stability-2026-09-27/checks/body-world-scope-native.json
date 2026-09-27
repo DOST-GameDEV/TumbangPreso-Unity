@@ -1,0 +1,33 @@
+{
+  "base": "c6506327d7fae218425c263141d8d566c64264a5",
+  "protocol": 77,
+  "scope": "Changed SyncUnit receiver with cross-world rejection before cursor/status mutation",
+  "result": "Passed",
+  "total": 1,
+  "duration": 0.2128343,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "D9BE673120982FFD498B895AF5CFC9D69C3065BE8E500654C82D4E46A340E891"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "25EA5CDF22E151CF554149EDF167A96E6F4CF2264ABF96648960F57F6B5C6B16"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "E8DC9FA06C375D842C29E68C1C339B5C26F71FE3D4F1442D2236C8764358A915"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "DE68F46BCC1BAA5404F7261B797256EF4BDCC23A490ACB251494865DC1A6D568"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6401146880,
+  "retryCount": 0,
+  "unverified": [
+    "Actual peers/round transitions",
+    "QA-15 root cause"
+  ]
+}

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 15:38:26Z" end-time="2026-09-27 15:38:26Z" duration="0.4417156">
+  <test-suite type="TestSuite" id="1954" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="762" result="Failed" site="Child" start-time="2026-09-27 15:38:26Z" end-time="2026-09-27 15:38:26Z" duration="0.441716" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1948" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="762" result="Failed" site="Child" start-time="2026-09-27 15:38:26Z" end-time="2026-09-27 15:38:26Z" duration="0.427331" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="62184" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1949" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="762" result="Failed" site="Child" start-time="2026-09-27 15:38:26Z" end-time="2026-09-27 15:38:26Z" duration="0.421827" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1950" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="762" result="Failed" site="Child" start-time="2026-09-27 15:38:26Z" end-time="2026-09-27 15:38:26Z" duration="0.417058" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1512" name="OwnerLoginFeedbackTests" fullname="TumbangPreso.PlayTests.OwnerLoginFeedbackTests" classname="TumbangPreso.PlayTests.OwnerLoginFeedbackTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-27 15:38:26Z" end-time="2026-09-27 15:38:26Z" duration="0.403034" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1513" name="InvalidFieldsKeepTheirOwnMessagesAndPulseWithoutMovingTheirHitBoxes" fullname="TumbangPreso.PlayTests.OwnerLoginFeedbackTests.InvalidFieldsKeepTheirOwnMessagesAndPulseWithoutMovingTheirHitBoxes" methodname="InvalidFieldsKeepTheirOwnMessagesAndPulseWithoutMovingTheirHitBoxes" classname="TumbangPreso.PlayTests.OwnerLoginFeedbackTests" runstate="Runnable" seed="147782736" result="Failed" start-time="2026-09-27 15:38:26Z" end-time="2026-09-27 15:38:26Z" duration="0.391772" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: RGBA(0.998, 0.992, 0.993, 1.000)
+  But was:  RGBA(1.000, 1.000, 1.000, 1.000)
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OwnerLoginFeedbackTests+<InvalidFieldsKeepTheirOwnMessagesAndPulseWithoutMovingTheirHitBoxes>d__3.MoveNext () [0x00459] in C:\Users\Matthew\Documents\Codex\2026-09-27\read-agents-md-too-opus-5\work\stability-validation\Assets\TumbangPreso\Tests\PlayMode\OwnerLoginFeedbackTests.cs:61
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

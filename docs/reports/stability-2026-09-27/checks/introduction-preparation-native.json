@@ -1,0 +1,34 @@
+{
+  "base": "f2309da6566a589a7eb689c2b3e7b5308c728773",
+  "protocol": 81,
+  "scope": "Explicit retained introduction preparation, view readiness and bounded unsupported-rig work",
+  "result": "Passed",
+  "total": 2,
+  "duration": 0.8790633,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/UltimateIntroductionCache.cs",
+      "sha256": "A171BAECDB8DF124E480F3DC84CB0242C59AD7E33F541F479CC3F0063C3A4FDC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs",
+      "sha256": "8DA385D18179476EF6DFC27698CCBDC893D72E6C8C64486336047775E40D310F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubLoading.cs",
+      "sha256": "262DAB000571434AB8893C0A100D24752197931E593F7A7A9B99098C5B66A021"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/MatchLoadingReadinessTests.cs",
+      "sha256": "203298374F7CCB7D6789E5B8393AF427B5F155AB908BFB85653EF02B0BCEA485"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6604496896,
+  "retryCount": 0,
+  "unverified": [
+    "Full-roster visual acceptance",
+    "Player/GPU first-use timing",
+    "Unknown late-roster assets"
+  ]
+}

@@ -24,6 +24,25 @@ Only Paete currently has substantial VFX; other presentation remains provisional
   effect through its preparation/live clocks. MatchRpc discovers these abilities
   automatically,including both role abilities; no hero/effect type switch is needed.
 
+## Cooldowns And Charges
+
+Protocol78 replaces mutable-slot SyncAbility values with AbilityResourceSnapshot:
+GameplayActionScope,seat,sequence,stable hero ID,ultimate meter and the complete
+HeroKit.AllAbilities ID/cooldown/charge set. Both role abilities travel even when
+one is inactive. Reworks keep their stable IDs; role order does not identify state.
+The receiver checks current world/epoch and the complete matching kit before any
+resource mutation,then rejects duplicate/older per-seat sequences. Unknown,missing
+or duplicate IDs reject the whole snapshot,not just one entry. The bounded format
+supports up to8abilities and existing FixedString64Bytes IDs; expanding those limits
+requires an explicit contract/version change,not a silent truncation.
+
+The locally owned live-round kit still cannot have predicted cooldowns lowered or
+charges refunded by a lagging host snapshot. Observers and intermission accept
+authoritative correction. Ultimate meter remains host-owned. Resource application
+does not change role,cast skills,restore active-effect durations or replay visuals.
+HeroKit's legacy slot-based ApplyNetworkSnapshot remains a direct local helper;
+the wire uses the identity-based route in MatchRpc.AbilityResources.
+
 ## Held-Aim Presentation
 
 Protocol66 appends the dominant held slot,stable ability ID,elapsed hold and hold
@@ -61,6 +80,37 @@ New held interactions should reuse this input ownership boundary while specifyin
 their own target lifetime and reset rules. Client presentation remains separate.
 
 ## Prepared World Recovery
+
+Protocol80's UltimatePhase header carries the host-sealed cohort duration. The host
+still derives the longest authored introduction; receiving peers must not derive
+it from whichever kits have loaded locally. Missing actors wait inside that same
+host boundary instead of classifying a longer introduction as already expired.
+The44byte header validates duration as finite,(0,30]seconds; protocol81 extends
+the original73byte commit as described below. The wire enters SharedUltimatePhase.ReceiveTimed. Legacy internal
+Receive remains a local-probe wrapper,not the authoritative network path. No authored
+duration or presentation was retuned. A new range beyond30seconds requires a contract
+decision rather than bypassing the bound.
+
+Protocol81 adds bounded hero and ability IDs to UltimateCommit and uses the existing
+GameplayActionScope for requests,including the body movement epoch. Host acceptance
+checks both IDs and current scope before reservation,and stamps the accepted kit's
+identity. Familiar anchoring preserves it. Preparation waits for the correct kit;
+execution refuses a kit that changed after acceptance. Empty identity is supported
+only by legacy direct local probes; the wire rejects it. Cosmetic model/clip/name
+changes do not rename these IDs. Hero registration validates hero-ID capacity too.
+
+Each commit has77fixed bytes plus two UTF8 ID contents(up to61bytes each),max199;
+request scope adds16(max215),and the44byte cohort header with4commits is at most840.
+Readers reject oversized/truncated IDs and trailing payload. No phase timing,
+casting resource rule or authored presentation was redesigned. Actual peer/ranked
+qualification is separate from the bounded codec and matching-kit native cases.
+
+Introduction view construction also waits for the matching visual and cached
+preparation result. Normal match loading runs existing grounded-clip preparation
+behind its curtain; late views may prepare one missing entry per frame. This never
+extends the host cohort deadline or makes gameplay depend on a rendered view.
+Known unsupported rigs keep the existing fallback and warn once instead of cloning
+every idle frame; see [loading ownership](LOADING_AND_PERFORMANCE.md).
 
 Protocol76 scopes requested pause/speed to match,round and sequence. The host sends
 the requested rate after SyncWorld on the same reliable stream,including ordinary
@@ -108,6 +158,14 @@ presentation cannot perform another catch,pull or root,even if authority later c
 This fixes snapshot recovery; fresh-cast peer target convergence and actual delayed
 peer acceptance remain separate. New effect-specific data needs its own semantics.
 
+Protocol79 fixes sentry cleanup ownership. The Paete ultimate tracks exact fresh
+instances and adopts recovered instances through the existing owner-specific
+IWorldEffectBinding pass. Reset retires only those references,not every matching
+effect type in the scene. An unused kit reset must not affect another caster.
+Apply that ownership rule to new persistent effects; reconstruction must restore
+their cleanup binding as well as their picture. This does not fix fresh-cast target
+selection or establish a shared-ultimate lifetime token for every effect kind.
+
 ## Victim Feedback
 
 Host-only outcome loops must announce existing contact presentation through the
@@ -138,6 +196,13 @@ body cannot leave received curses inert or permanent. Replicas advance received
 clocks and clear expired recovery suppression,but only the host resolves a waiting
 mark/reach into gameplay. One new native received-state/authority check passes;
 the actual peer/doll-entity contract is still separate from body-state transport.
+
+Protocol77 adds match/round to SyncUnit by replacing its bare movement epoch with
+GameplayActionScope. Reject another world's packet before advancing the body pose
+serial or applying status/resources. A fresh body's empty cursor is not permission
+to accept an old round. Base payload is235bytes with Voodoo and the empty aim tail;
+longer aim IDs retain their existing bounded encoding. Reliable handovers and normal
+poses still share the serial,and current-world newer movement epochs still install.
 
 Persistent status pictures belong to a body-owned presenter reading replicated
 status,not exclusively inside a host-only victim loop. StatusBodyMarks and

@@ -89,6 +89,23 @@ protocol literal or old test count.
 Requested pause/speed now recovers after world state with match/round/sequence
 gates (protocol76),excluding local hitstop. Three new native clock cases pass on
 the full committed base plus10inputs,no drift. Actual peers and QA-15 remain OPEN.
+Body pose/status snapshots now carry match/round as well as movement epoch
+(protocol77),rejecting old-world state before fresh-body cursor mutation. The
+changed native receiver case passes; actual peer/round-transition acceptance remains OPEN.
+Cooldown/charge recovery now carries world scope,sequence,hero and stable ability
+IDs for both role abilities (protocol78). Complete-set validation and owner-live
+prediction safeguards remain. Two new native codec/receiver cases pass after one
+test-only reader-lifetime correction. Actual peers/ranked/reconnect remain OPEN.
+Paete sentry cleanup now retires only the resetting kit's fresh/recovered instances
+(protocol79),not other casters' trees. One new native two-caster/restore/reset case
+passes; fresh target convergence and actual peers remain OPEN.
+Shared ultimate cohorts now carry the host-sealed introduction duration(protocol80),
+so missing caster bodies cannot substitute a short fallback and expire playback.
+One new actual-receiver case passes; actual late-peer/cutscene qualification remains OPEN.
+Ultimate commits now name hero/ability IDs and requests carry the body epoch
+(protocol81). Preparation/execution reject the wrong kit; identity codecs are
+bounded. Two new native cases and the changed duration-wire case pass3/3. Actual
+host-request/peer/ranked qualification remains OPEN.
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.
@@ -97,8 +114,9 @@ complete. Keep progress work-driven and loading responsive; do not call a compil
 hitch-free performance. [Source route](LOADING_AND_PERFORMANCE.md),
 [implemented units and limits](reports/stability-2026-09-27/loading-audit.md).
 First-HOME video preparation now runs during boot and reuses one paused decoded
-player; poster/reduced-motion fallback stays. Four assemblies compile; native
-decoder/handoff and player first-entry timings remain OPEN.
+player; poster/reduced-motion fallback stays. First native decoder/handoff exposed
+a30-second paused-preparation timeout; explicit prepare/play-first-frame/pause fixes
+it and the focused retry passes. Player first-entry/other-device timing stays OPEN.
 Generic match loading now awaits destination-owned setup, rejects stale same-scene
 installers, retains errors instead of timed success, and cancels obsolete curtains.
 Four assemblies compile; native handoff/failure/input checks remain OPEN.
@@ -145,12 +163,26 @@ changing other names' defaults; its focused case passes. Player timings remain O
 Runtime-generated avatars now belong to their CharacterAnimator binding and are
 released on rebind/clear/teardown; borrowed assets survive. One new native lifecycle
 case passes. No animation rework or long-running player-heap qualification is claimed.
+Title/login artwork and profile pictures now await asynchronous cold reads during
+their existing staged preparation. One new native request/cache/fallback case passes;
+supplied pixels and staged order remain unchanged. Player cold-read timings remain OPEN.
+Shader preparation now checks elapsed time after each variant and yields at a2ms
+target or10variants,while retaining full completion. The changed native stage case
+passes97/97variants; cached Editor timing is not cold-player/handset acceptance.
+Failed boot-menu initialization now offers a visible focusable/pointer exit above
+the retained curtain,alongside Cancel. New failure controls and first original
+boot activation/handoff cases pass2/2; physical-input/visual acceptance remains OPEN.
+Existing introduction preparation now runs explicitly before the match curtain's
+arena stage,with retained variants,cancellation ownership and no repeated cloning
+for a known unsupported rig. Two new native preparation/reuse/failure-cache cases
+pass. No authored motion changed; full-roster/player first-use acceptance remains OPEN.
 
-**LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
+**LOGIN-0927, IMPLEMENTED / NATIVE STATE PASS:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit
 clears a stale pair rejection; supplied art and hitboxes are unchanged,reduced motion
-gets steady feedback. Four assemblies compile; native interaction/sound/visual
-qualification remains OPEN. [Details](reports/stability-2026-09-27/login-feedback.md).
+gets steady feedback. First native field-state case passes after one fixture colour-
+capture timing correction. Sound/visual and physical-input qualification remain OPEN.
+[Details](reports/stability-2026-09-27/login-feedback.md).
 
 **QA-0927, OPEN:** [19deduplicated comments](reports/stability-2026-09-27/qa-comments.md)
 include the latest login request. Retain [first-batch evidence](reports/stability-2026-09-27/validation.md)

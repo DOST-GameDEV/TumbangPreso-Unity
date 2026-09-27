@@ -1,0 +1,22 @@
+{
+  "base": "97d7f39757bed48f106e3d5f59f45cf4a3c96673",
+  "scope": "First native invalid-login field-state check, no live sign-in",
+  "result": "Passed",
+  "total": 1,
+  "duration": 0.30016,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerLoginFeedbackTests.cs",
+      "sha256": "7C212810B09A7EB64CC545775EA55480CBC6A477644B97EEA167A90B1D8B4A0D"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 5931757568,
+  "retryCount": 1,
+  "firstAttempt": "Fixture expected transient pulse tint instead of rest; moved capture before first submit, no assertion/product change",
+  "unverified": [
+    "Visual/auditory judgment",
+    "Physical mouse/controller/touch",
+    "Live account service"
+  ]
+}

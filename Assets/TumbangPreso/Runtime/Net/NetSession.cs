@@ -510,10 +510,20 @@ namespace TumbangPreso.Net
         // movement. Older bodies leave these replicated curses inert or stuck.
         // 76: requested match rate carries scope/sequence and joins world recovery;
         // transient hitstop is not a replicated pause or spectator speed.
-        // 77: the map list changed (2026-09-27): index 4 is the reworked Lagoon Court (LagoonCove),
+        // 77: body pose/status snapshots carry match/round as well as movement
+        // epoch, so delayed previous-world state cannot seed a fresh body.
+        // 78: cooldown/charge snapshots identify the hero and every ability,
+        // including the idle role, with world scope and per-seat ordering.
+        // 79: resetting a Paete kit retires only its owned/recovered sentries,
+        // not every caster's active guardian in the shared world.
+        // 80: shared ultimate cohorts carry the host's sealed duration even
+        // while a joining peer has not installed the caster's kit yet.
+        // 81: ultimate commits name hero/ability IDs; requests also carry the
+        // current movement epoch. Receivers wait for the matching caster kit.
+        // 82: the map list changed (2026-09-27): index 4 is the reworked Lagoon Court (LagoonCove),
         // the first Lagoon is vaulted, and Kanto is index 5. Maps travel as indices into
         // SceneFlow.Maps (MatchRpc SyncMap, queue votes), so an older peer would read a different map.
-        public const int ProtocolVersion = 77;
+        public const int ProtocolVersion = 82;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

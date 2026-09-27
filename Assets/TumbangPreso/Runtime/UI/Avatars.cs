@@ -61,7 +61,14 @@ namespace TumbangPreso.UI
 
         public static IEnumerator Warmup()
         {
-            foreach (var id in Ids) { Get(id); yield return null; }
+            foreach (var id in Ids)
+            {
+                if (Loaded.TryGetValue(id, out var sprite) && sprite != null) { yield return null; continue; }
+                var request = Resources.LoadAsync<Sprite>("UI/avatars/" + id);
+                yield return request;
+                sprite = request.asset as Sprite;
+                if (sprite != null) Loaded[id] = sprite;
+            }
         }
 
         private static Sprite Load(string id)

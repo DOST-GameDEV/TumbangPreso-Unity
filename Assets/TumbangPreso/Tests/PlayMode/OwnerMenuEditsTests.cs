@@ -16,6 +16,42 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
 
         [UnityTest, Timeout(30000)]
+        public IEnumerator FailedBootMenuOffersOneFocusablePointerExitWithoutReleasingTheCurtain()
+        {
+            var owner = new GameObject("SplashFailureFixture");
+            var events = new GameObject("SplashFailureInput", typeof(EventSystem));
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var splash = owner.AddComponent<SplashScreen>(); splash.enabled = false;
+                typeof(SplashScreen).GetMethod("BuildSurface", flags).Invoke(splash, null);
+                typeof(SplashScreen).GetMethod("PrepareMenuActivation", flags).Invoke(splash, null);
+                var fail = typeof(SplashScreen).GetMethod("FailMenuActivation", flags);
+                const string error = "[Splash] main menu activation or initialization failed; readiness was not completed.";
+                LogAssert.Expect(LogType.Error, error); fail.Invoke(splash, null);
+                var canvas = (GameObject)typeof(SplashScreen).GetField("_canvas", flags).GetValue(splash);
+                var quit = canvas.GetComponentsInChildren<Button>(true).Single(x => x.name == "LoadingQuit");
+                Assert.IsTrue(quit.IsInteractable()); Assert.IsTrue(quit.gameObject.activeInHierarchy);
+                Assert.IsTrue(quit.GetComponentInParent<InputLayer.ScreenFocus>().enabled);
+                Assert.AreSame(quit.gameObject, EventSystem.current.currentSelectedGameObject);
+                LogAssert.Expect(LogType.Error, error); fail.Invoke(splash, null);
+                Assert.AreEqual(1, canvas.GetComponentsInChildren<Button>(true).Count(x => x.name == "LoadingQuit"));
+                Canvas.ForceUpdateCanvases(); yield return null;
+                var quitRect = (RectTransform)quit.transform;
+                var hit = new PointerEventData(EventSystem.current)
+                { position = RectTransformUtility.WorldToScreenPoint(null, quitRect.TransformPoint(quitRect.rect.center)) };
+                var results = new System.Collections.Generic.List<RaycastResult>();
+                EventSystem.current.RaycastAll(hit, results);
+                Assert.IsTrue(results.Any(x => x.gameObject == quit.gameObject || x.gameObject.transform.IsChildOf(quit.transform)),
+                    "The loading curtain hid its own pointer/touch exit.");
+                quit.onClick.Invoke();
+                Assert.IsTrue((bool)typeof(SplashScreen).GetField("_quitAfterMenuFailure", flags).GetValue(splash));
+                Assert.IsTrue(ScreenTakeover.AnyOpen, "Failure exposed the broken menu behind the curtain.");
+            }
+            finally { Object.Destroy(owner); Object.Destroy(events); }
+        }
+
+        [UnityTest, Timeout(30000)]
         public IEnumerator BootActivationRetainsCurtainAndDefersInputAndLoginUntilMenuIsPrepared()
         {
             bool boot = SceneFlow.BootedThroughSplash, offered = SceneFlow.LoginStepOffered;
@@ -385,11 +421,14 @@ namespace TumbangPreso.PlayTests
                 Assert.IsNotNull(method);
                 preload = (IEnumerator)method.Invoke(splash, null);
                 int steps = 0;
-                int bound = Mathf.CeilToInt(collection.variantCount / 10f) + 3;
+                int bound = collection.variantCount + 3;
                 while (!shaderStageFinished && steps++ < bound)
                 {
+                    int before = collection.warmedUpVariantCount;
                     Assert.IsTrue(preload.MoveNext(), "Splash preload ended before its shader stage completed.");
                     Assert.IsNull(preload.Current, "The shader stage entered a later preload operation.");
+                    Assert.LessOrEqual(collection.warmedUpVariantCount - before, 10,
+                        "A shader preparation turn exceeded the existing variant ceiling.");
                     yield return null;
                 }
                 Assert.IsTrue(shaderStageFinished, "The bounded shader stage did not finish.");

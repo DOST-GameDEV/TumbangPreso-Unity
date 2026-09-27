@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 15:13:58Z" end-time="2026-09-27 15:13:58Z" duration="0.1808458">
+  <test-suite type="TestSuite" id="1952" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="760" result="Passed" start-time="2026-09-27 15:13:58Z" end-time="2026-09-27 15:13:58Z" duration="0.180846" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1946" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="760" result="Passed" start-time="2026-09-27 15:13:58Z" end-time="2026-09-27 15:13:58Z" duration="0.169007" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="62660" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1947" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="760" result="Passed" start-time="2026-09-27 15:13:58Z" end-time="2026-09-27 15:13:58Z" duration="0.162904" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1948" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="760" result="Passed" start-time="2026-09-27 15:13:58Z" end-time="2026-09-27 15:13:58Z" duration="0.156253" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1741" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="26" result="Passed" start-time="2026-09-27 15:13:58Z" end-time="2026-09-27 15:13:58Z" duration="0.128906" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1743" name="ResourceReceiverScopesOrdersAndPreservesOwnerPredictionUntilIntermission" fullname="TumbangPreso.PlayTests.SkillReceiptTests.ResourceReceiverScopesOrdersAndPreservesOwnerPredictionUntilIntermission" methodname="ResourceReceiverScopesOrdersAndPreservesOwnerPredictionUntilIntermission" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1763371396" result="Passed" start-time="2026-09-27 15:13:58Z" end-time="2026-09-27 15:13:58Z" duration="0.093987" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1742" name="ResourceSnapshotsMapBothRolesByIdentityAndRejectPartialOrMalformedSets" fullname="TumbangPreso.PlayTests.SkillReceiptTests.ResourceSnapshotsMapBothRolesByIdentityAndRejectPartialOrMalformedSets" methodname="ResourceSnapshotsMapBothRolesByIdentityAndRejectPartialOrMalformedSets" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1107823862" result="Passed" start-time="2026-09-27 15:13:58Z" end-time="2026-09-27 15:13:58Z" duration="0.022373" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

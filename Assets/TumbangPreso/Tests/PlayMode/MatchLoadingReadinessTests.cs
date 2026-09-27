@@ -17,6 +17,116 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After()
         { HubLoading.Cancel(); yield return PlayModeWorld.Reset(); }
 
+        private static CharacterMotor IntroductionActor(string hero, bool installModel)
+        {
+            GameServices.Ensure(); GameServices.Round.Clear();
+            var owner = new GameObject("Introduction preparation actor");
+            var actor = owner.AddComponent<CharacterMotor>(); actor.enabled = false; actor.PlayerSlot = 1;
+            var visual = owner.AddComponent<Visual.CharacterVisual>(); visual.enabled = false;
+            var modelRoot = new GameObject("Visual").transform; modelRoot.SetParent(owner.transform, false);
+            visual.SetModelRoot(modelRoot);
+            var abilities = owner.AddComponent<Abilities.HeroAbilitySystem>(); abilities.enabled = false; abilities.BindHero(hero);
+            if (installModel)
+            {
+                var art = RosterBook.Load().FindPersonArt(hero);
+                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+                owner.GetComponent<Visual.CharacterAnimator>().enabled = false;
+            }
+            GameServices.Round.Register(actor);
+            return actor;
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator LoadingPreparationRetainsBothIntroductionVariantsBeforeArenaWork()
+        {
+            var actor = IntroductionActor("cheska", true);
+            var kit = actor.AbilitySystem.Kit;
+            kit.AddUltimateCharge(7); kit.Skill1.ApplyNetworkSnapshot(5, 0);
+            var position = actor.transform.position;
+            var phaseRoot = new GameObject("Waiting introduction view"); phaseRoot.SetActive(false);
+            var phase = phaseRoot.AddComponent<SharedUltimatePhase>();
+            const BindingFlags hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+            var commits = (System.Collections.Generic.List<UltimateCommit>)typeof(SharedUltimatePhase).GetField("_commits", hidden).GetValue(phase);
+            commits.Add(new UltimateCommit(1, 1, position, Vector3.forward, Vector3.up, 0).WithIdentity(kit));
+            var ready = typeof(SharedUltimatePhase).GetMethod("PreparePresentation", hidden);
+            float progress = 0; int preparationTurns = 0;
+            System.Action<float> report = done =>
+            {
+                Assert.GreaterOrEqual(done, progress); progress = done;
+                if (done > .25f)
+                {
+                    Assert.IsNotNull(Visual.UltimateIntroductionCache.Find(actor, false));
+                    Assert.IsNotNull(Visual.UltimateIntroductionCache.Find(actor, true));
+                }
+            };
+            var work = (IEnumerator)typeof(HubLoading).GetMethod("PrepareMatchVisuals", BindingFlags.Static | BindingFlags.NonPublic)
+                .Invoke(null, new object[] { report });
+            try
+            {
+                while (work.MoveNext())
+                {
+                    if (Visual.UltimateIntroductionCache.Preparing)
+                    {
+                        preparationTurns++;
+                        Assert.IsFalse((bool)ready.Invoke(phase, null), "Active presentation competed with loading preparation.");
+                    }
+                    yield return work.Current;
+                }
+                Assert.GreaterOrEqual(preparationTurns, 2);
+                Assert.AreEqual(1, progress); Assert.IsFalse(Visual.UltimateIntroductionCache.Preparing);
+                var empty = Visual.UltimateIntroductionCache.Find(actor, false);
+                var held = Visual.UltimateIntroductionCache.Find(actor, true);
+                Assert.IsNotNull(empty); Assert.IsNotNull(held); Assert.AreNotSame(empty, held);
+                Assert.IsTrue((bool)ready.Invoke(phase, null));
+                Assert.IsFalse(Visual.UltimateIntroductionCache.PrepareRound().MoveNext());
+                Assert.AreSame(empty, Visual.UltimateIntroductionCache.Find(actor, false));
+                Assert.AreSame(held, Visual.UltimateIntroductionCache.Find(actor, true));
+                Assert.AreEqual(position, actor.transform.position);
+                Assert.AreEqual(7, kit.UltimateCharge); Assert.AreEqual(5, kit.Skill1.CooldownRemaining);
+                Assert.IsFalse(kit.Ultimate.ReservedForIntroduction);
+            }
+            finally { (work as System.IDisposable)?.Dispose(); Object.Destroy(phaseRoot); }
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator UnsupportedIntroductionRigIsRememberedAndCancelledPreparationReleasesItsOwner()
+        {
+            var actor = IntroductionActor("dante", false);
+            var visual = actor.GetComponent<Visual.CharacterVisual>();
+            var source = new GameObject("UnsupportedIntroductionSource");
+            var replacement = new GameObject("ReplacementIntroductionSource");
+            var model = new GameObject("UnsupportedIntroductionModel"); model.transform.SetParent(actor.transform, false);
+            const BindingFlags hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+            typeof(Visual.CharacterVisual).GetField("_instance", hidden).SetValue(visual, model);
+            var sourceProperty = typeof(Visual.CharacterVisual).GetProperty("SourceModel"); sourceProperty.SetValue(visual, source);
+            var work = (IEnumerator)typeof(HubLoading).GetMethod("PrepareMatchVisuals", BindingFlags.Static | BindingFlags.NonPublic)
+                .Invoke(null, new object[] { null });
+            try
+            {
+                LogAssert.Expect(LogType.Warning, "[IntroductionPrewarm] No compatible introduction for dante on UnsupportedIntroductionSource.");
+                Assert.IsTrue(work.MoveNext()); Assert.IsTrue(Visual.UltimateIntroductionCache.Preparing);
+                int stages = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                    .Count(t => t.name == "~IntroductionPrewarm");
+                Assert.IsTrue(Visual.UltimateIntroductionCache.HasResult(actor, false));
+                Assert.IsNull(Visual.UltimateIntroductionCache.Find(actor, false));
+                Assert.IsFalse(Visual.UltimateIntroductionCache.WarmOne(actor));
+                Assert.AreEqual(stages, Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                    .Count(t => t.name == "~IntroductionPrewarm"));
+                (work as System.IDisposable)?.Dispose();
+                Assert.IsFalse(Visual.UltimateIntroductionCache.Preparing);
+                sourceProperty.SetValue(visual, replacement);
+                LogAssert.Expect(LogType.Warning, "[IntroductionPrewarm] No compatible introduction for dante on ReplacementIntroductionSource.");
+                Assert.IsTrue(Visual.UltimateIntroductionCache.WarmOne(actor), "A different source inherited the old source's failure.");
+                Assert.IsFalse(Visual.UltimateIntroductionCache.WarmOne(actor));
+                yield return null;
+            }
+            finally
+            {
+                (work as System.IDisposable)?.Dispose();
+                Object.Destroy(source); Object.Destroy(replacement);
+            }
+        }
+
         [UnityTest, Timeout(30000)]
         public IEnumerator OldRoundOrOldSceneCannotCompleteANewLoadingCurtain()
         {

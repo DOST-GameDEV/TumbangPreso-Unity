@@ -344,8 +344,8 @@ namespace TumbangPreso.Tests
             //62 and 63 (the world-field header and the shared ability serializer) are recorded in NetSession.
             //64 adds the shared skill fingerprint, including Phaister's updated 5.0 s introduction.
             //65 adds phase-aware world freshness and ability-owned prepared-effect recovery.
-            //77 changes what the map indices mean: LagoonCove at 4 (the first Lagoon vaulted), Kanto at 5.
-            Assert.AreEqual(77, NetSession.ProtocolVersion,
+            //82 changes what the map indices mean: LagoonCove at 4 (the first Lagoon vaulted), Kanto at 5.
+            Assert.AreEqual(82, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

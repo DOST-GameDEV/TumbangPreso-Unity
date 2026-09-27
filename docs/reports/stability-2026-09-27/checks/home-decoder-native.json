@@ -1,0 +1,24 @@
+{
+  "base": "f32489ebfd7a9f3f3f57662cb692fafcb962fe43",
+  "scope": "Explicit hidden first-frame decode, paused retention, adoption and cleanup",
+  "result": "Passed",
+  "retryTotal": 1,
+  "retryPassed": 1,
+  "duration": 0.3296335,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubSceneVideo.cs",
+      "sha256": "F13A5DF645CE4D760171F6B7158A5F0F378E90046B9EF6CBF13892C354670232"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6072995840,
+  "retryCount": 1,
+  "firstAttempt": "Two cases: decoder gate timed out30s; reduced-motion passed and was not rerun",
+  "uniqueVerifiedCases": 2,
+  "unverified": [
+    "Whole-player cold boot/first-entry timings",
+    "GPU first-draw and visual quality",
+    "Other-device codecs"
+  ]
+}

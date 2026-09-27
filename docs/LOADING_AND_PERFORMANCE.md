@@ -12,14 +12,17 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Responsibility | Source |
 |---|---|
 | Boot stages and progress | UI/SplashScreen.cs; shader slices,rosters,audio,menu art,input,glyphs and retained dependencies |
+| Shader preparation turns | SplashScreen calls WarmUpProgressively(1),checks a2ms elapsed target between calls and caps10variants/turn; one indivisible native compile may overrun,so this is not a hard frame guarantee |
 | Deferred SFX/voice samples | UI/SplashScreen.WarmAudioAssets; yielded sample loading and retention,not just clip references; music/streaming policy unchanged |
 | Real menu activation barrier | UI/SplashScreen.MenuActivation.cs and ConvertedMainMenu.IsPrepared; retain existing canvas through Wire/layout,then reveal login/input |
-| Title/login art and avatars | UI/OwnerMenuArt.cs,Avatars.cs; yielded preparation and retained resources |
+| Boot failure exit | SplashScreen.MenuActivation exposes one focusable/pointer-accessible EXIT GAME control above the failed curtain; button and Cancel use the same quit path without claiming readiness |
+| Title/login art and avatars | UI/OwnerMenuArt.cs,Avatars.cs; async cold reads awaited per item,then existing retained texture/sprite caches; supplied pixels and fallback policy unchanged |
 | Hub/HUD portraits and mode cards | UI/OwnerPortraitArt.cs; async roster-driven warmup and shared cache used by HubKit/TumpUiFactory |
-| First HOME loop | UI/Hub/HubSceneVideo.Warmup.cs; async metadata/selected poster,one paused decoded frame behind boot,then adoption of the same player/target |
+| First HOME loop | UI/Hub/HubSceneVideo.Warmup.cs; async metadata/selected poster,explicit prepare/play until frameReady then pause behind boot,adopting the same player/target; paused preparation alone timed out on Windows |
 | Hidden HOME background | HubSceneVideo binds MapPreviewSurface rendering visibility; opaque media suspends the covered court camera/surface without discarding prepared scenes or the fallback |
 | Ability prop source prefabs | Visual/HeroPropAssets.cs; current Paete/Rework/Phaister folders,no gameplay spawn during asset preload |
 | Supplementary baked motion | Visual/GeneratedMotionAssets.cs; yielded per-rig data preload shared by CharacterAnimator and rooted introduction lookups,no clip/graph generation |
+| Existing introduction preparation | UltimateIntroductionCache.PrepareRound runs through HubLoading.PrepareMatchVisuals before unchanged arena draws; yields per existing grounded-clip attempt,retains held variants and releases its preparation owner on cancellation |
 | Roster outline geometry | Visual/OutlineNormals.Warmup and boot roster loop; per-mesh welds survive scene notifications while the exact mesh lives,without retaining dead runtime meshes |
 | Effect sheets and authored intro data | Visual/VfxFlipbook.cs,UltimatePerformance and existing per-kit warmups |
 | Shared particles and status icons | Visual/AbilityVfx.WarmupAssets prepares existing cached geometry; UI/StatusIcons.Warmup follows StatusRules.All with async sprite loading |
@@ -50,6 +53,9 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
   enter live services or mutate the player's profile. Preserve local fallback.
 - Cache against real lifetime and invalidation. Do not make art smaller or replace
   supplied materials merely to report a faster launch.
+- Introduction cache HasResult includes a known unsupported-rig result; Find still
+  returns null for it. That result warns once per exact source/hero/held key and
+  resets with a different source or new play session. It is not proof a clip exists.
 - Measure representative player first-use/frame timings when the environment permits.
   Record source/build,hardware,path and memory tradeoffs; no hitch-free claims from
   compilation or a warm cache. Test changed stages,not the same whole boot repeatedly.
@@ -60,8 +66,11 @@ The latest [focused native integration](reports/stability-2026-09-27/input-integ
 passes loading-readiness and supplementary-data retention cases alongside five
 state/presentation cases. The subsequent [UI/audio pass](reports/stability-2026-09-27/loading-audit.md#ui-flow-native-qualification)
 passes three first-run range/settings/preview reuse cases; a separate new audio case
-confirms deferred sample preparation and no playback. Menu activation,portrait/prop
-retention,HOME decoder,physical input and visual acceptance still have separate gaps.
+confirms deferred sample preparation and no playback. HOME decoded-frame handoff
+now passes after fixing a reproduced30-second readiness timeout; reduced-motion
+poster behavior also passes. Original boot menu activation and its failure exit
+now have focused native state/input-routing evidence. Portrait/prop retention,whole-player
+entry timings,other-device codecs,physical input and visual acceptance remain separate.
 Earlier shader/art evidence remains separate. There is no current complete player
 before/after hitch table. Consult the ledger for current headroom/processes; the
 latest native pass succeeded, but player packaging headroom is not established.

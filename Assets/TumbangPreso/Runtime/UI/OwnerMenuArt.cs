@@ -29,8 +29,20 @@ namespace TumbangPreso.UI
         }
         public static IEnumerator Warmup()
         {
-            foreach(var name in TextureOnly){Texture(name);yield return null;}
-            foreach(var name in PaintedPieces){Piece(name);yield return null;}
+            for (int i = 0; i < TextureOnly.Length + PaintedPieces.Length; i++)
+            {
+                bool painted = i >= TextureOnly.Length;
+                string name = painted ? PaintedPieces[i - TextureOnly.Length] : TextureOnly[i];
+                if (!Textures.TryGetValue(name, out var texture) || texture == null)
+                {
+                    var request = Resources.LoadAsync<Texture2D>("UI/owner-menu-edits/" + name);
+                    yield return request;
+                    texture = request.asset as Texture2D;
+                    if (texture != null) Textures[name] = texture;
+                }
+                else yield return null;
+                if (painted && texture != null) Piece(name);
+            }
         }
         public static Sprite Piece(string name)
         {

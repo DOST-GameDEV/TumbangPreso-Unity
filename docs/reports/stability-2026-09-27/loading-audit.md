@@ -5,6 +5,114 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Explicit Introduction Preparation
+
+2026-09-28,afterf2309da6: HubLoading.PrepareMatchVisuals now runs the existing
+UltimateIntroductionCache.PrepareRound before unchanged ArenaPrewarm. Preparation
+yields per existing WarmOne attempt and retains normal/held variants. A counter
+prevents competing idle/view preparation and unwinds through nested cancellation;
+a fully warm pass has no waits. Late introduction views wait for matching model/
+cache results and prepare at most one missing entry per frame. Gameplay and host
+cohort timing remain independent; no authored motion,VFX or map render code changed.
+
+The existing24entry cache now remembers a normal unsupported-rig null result and
+warns once per exact source/hero/held key. Previously it cloned the same unsupported
+hierarchy again on idle frames. HasResult is not a valid-clip claim; Find remains
+null and existing fallback remains. Different sources/new play sessions retry;
+destroyed real clips can rebuild. Replacement keys no longer duplicate FIFO entries.
+
+Two new native cases pass2/2,0.8790633s on full committed base plus4inputs,no drift,
+no retry. The real Cheska pipeline case checks both retained variants before the
+arena stage,reuse/no warm waits,no actor-position/resource mutation and no competing
+view preparation. The unsupported-rig case checks one attempt,no repeated stage
+clone,nested cancellation owner release and different-source retry. Minimum free
+6,604,496,896bytes; profile/preferences restored.
+[Receipt](checks/introduction-preparation-native.json),[XML](checks/introduction-preparation-native.xml).
+Raw Logs/introduction-preparation-20260928/prepared-introductions.*. Full-roster
+visual acceptance,first-use player/GPU timings and unknown late-roster assets remain
+separate. No old films,scene cycles or peer tests were repeated.
+
+## Boot Failure Controls
+
+Afterca83fe1d, failed boot-menu initialization provides one EXIT GAME LoadingLink
+above the retained curtain,focused through existing ScreenFocus. Pointer/touch or
+controller submit queues the same quit path as Cancel. Previously only the unseen
+Cancel path existed. Repeated failures reuse one button; readiness stays failed
+and the broken menu stays covered. No supplied art,layout of normal loading or
+input backend changes.
+
+One new failure-surface case and the FIRST existing original boot-handoff case
+pass2/2,1.059872s on full committed base plus3inputs,no drift,no retry. Failure
+coverage checks focus,interactivity,actual UI raycast reach,idempotence,queued exit
+request and retained takeover; it deliberately does not quit the test process.
+Boot coverage checks menu initialization,retained curtain/deferred login and title
+input,then correct reveal. Minimum free6,312,722,432bytes; profile/preferences restored.
+[Receipt](checks/boot-failure-native.json),[XML](checks/boot-failure-native.xml).
+Raw Logs/boot-failure-exit-20260927/boot-controls.*. Physical input,actual device
+exit,visual judgment and full cold-player boot timing remain separate. No old
+map-cycle,film or unrelated native cases were repeated.
+
+## Decoded HOME Handoff
+
+The FIRST native boot-decoder check onf32489eb reproduced a real loading defect:
+the paused preparation never satisfied the frameReady-driven gate,waited30seconds,
+then fell back to the poster. The other case,reduced motion without a decoder,
+passed. Unity documents that [Pause prepares an unprepared player](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Video.VideoPlayer.Pause.html);
+that behavior alone did not satisfy this callback-based readiness on the Windows
+decoder. Do not mistake an asset reference or prepared flag for a received frame.
+
+HubSceneVideo now explicitly prepares,plays while hidden after prepareCompleted,
+and pauses in its existing first-frame callback. The original player/target stay
+retained for HOME adoption. Audio remains disabled; timeout,failure poster,reduced
+motion,clips and artwork are unchanged. No film or art was regenerated.
+
+Initial batch2cases: decoded warmup failed after30.100773s,reduced motion passed
+in0.066404s. One bounded retry of ONLY the failed decoder case passes1/1,0.3296335s
+on full committed base plus1runtime input,no drift. It checks a paused decoded
+frame,hidden image,frame-event shutdown,same player/target adoption,resumed playback
+and cleanup. Reuse the unchanged reduced-motion branch's first pass; no rerun.
+Minimum retry free6,072,995,840bytes; profile/preferences restored both times.
+[Receipt](checks/home-decoder-native.json),[retry XML](checks/home-decoder-native.xml),
+[initial XML](checks/home-decoder-native-first.xml). Raw Logs/home-decoder-first-20260927/prepared-home*.
+This removes a reproduced readiness timeout; it is not a whole-player cold-boot,
+GPU first-draw,other-device codec or visual-quality measurement.
+
+## Shader Turn Budget
+
+Afterecf1ac8c, splash calls WarmUpProgressively(1) and checks elapsed time after
+each variant,yielding at a2ms target or10variants instead of unconditionally
+compiling10per call. Variant-count bounds and true completion remain; progress
+uses the actual warmed count. One indivisible native compilation can overrun the
+target,so no hard2ms frame guarantee follows. No shader collection,material,quality
+or authored asset changed.
+
+The modified existing shader-stage case passes1/1,0.3210436s on full committed base
+plus2inputs,no drift,no retry. It now allows the one-variant-per-turn worst case,
+asserts no turn exceeds10variants and still requires full collection completion.
+Receipt:50shaders,97variants,97warmed,complete=True,97calls,10turns,9.171ms stage,
+1.493ms maximum slice. These are cached Editor observations,not cold player timings
+or an A/B comparison with older collections/runs. Minimum free6,535,024,640bytes;
+named profile/preferences restored. [Receipt](checks/shader-budget-native.json),
+[XML](checks/shader-budget-native.xml). Raw Logs/shader-budget-20260927/budgeted-variants.*.
+Only the changed existing case ran; no other shader/native cases or films repeated.
+
+## Asynchronous Menu Art
+
+Afterfc1487fa, OwnerMenuArt and Avatars warmups await Resources.LoadAsync for cold
+textures/sprites instead of synchronously loading each item before yielding. The
+same caches feed screen consumers; painted sprites still use the full supplied
+texture. Cached entries keep their staged turn,with27menu and22avatar items in the
+current catalog. Missing resources retain existing consumer fallback. No assets,
+import quality,layout or saved profile are changed.
+
+One new guarded native request/cache/fallback case passes1/1,0.8980249s on full
+committed base plus3inputs,no drift,no retry. It observes actual awaited resource
+requests,staged counts and retained background/logo/face identity across a warm
+pass,plus the existing unknown-avatar fallback. Minimum free6,277,840,896bytes;
+named profile/preferences restored. [Receipt](checks/menu-art-async-native.json),
+[XML](checks/menu-art-async-native.xml). Raw Logs/menu-art-async-20260927/async-pictures.*.
+No old shader/native cases or films rerun. Cold player I/O/frame timings remain OPEN.
+
 ## Generated Avatar Lifetime
 
 Afterc35550fc, CharacterAnimator records the Avatar only when its binding had none

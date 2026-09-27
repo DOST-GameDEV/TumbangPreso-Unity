@@ -19,12 +19,15 @@ namespace TumbangPreso.Abilities
         public static void Validate(HeroKit kit)
         {
             if (kit == null) throw new ArgumentNullException(nameof(kit));
+            int identityCapacity = new Unity.Collections.FixedString64Bytes().Capacity;
+            if (string.IsNullOrWhiteSpace(kit.HeroId) || System.Text.Encoding.UTF8.GetByteCount(kit.HeroId) > identityCapacity)
+                throw new InvalidOperationException("The hero needs a stable ID within the network identity capacity.");
             var ids = new HashSet<string>(StringComparer.Ordinal);
             foreach (var ability in kit.AllAbilities)
             {
                 if (ability == null || string.IsNullOrWhiteSpace(ability.Id) || !ids.Add(ability.Id))
                     throw new InvalidOperationException(kit.HeroId + " has a missing or duplicate network ability ID.");
-                if (System.Text.Encoding.UTF8.GetByteCount(ability.Id) > new Unity.Collections.FixedString64Bytes().Capacity)
+                if (System.Text.Encoding.UTF8.GetByteCount(ability.Id) > identityCapacity)
                     throw new InvalidOperationException(ability.Id + " exceeds the network ability ID capacity.");
                 var mode = ability.NetworkMode;
                 if ((int)mode <= 0 || (int)mode > (int)AbilityNetworkMode.Unavailable)

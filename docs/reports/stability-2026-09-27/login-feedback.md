@@ -22,6 +22,19 @@ All four assemblies compile with the installed Unity Roslyn toolchain on105 froz
 source/dependency inputs (7changed). [Receipt](checks/login-feedback-compile.json).
 One focused native case covers required messages surviving frames,valid fields,
 steady reduced-motion tint,fixed hitboxes,edit cleanup and credential-pair retry.
-It is NOT RUN under the recorded native disk limitation. No broad suite or old
-film repeated,and no live sign-in or profile mutation was performed. Visual and
-auditory judgment across mouse,pad and touch remain OPEN,not inferred from compile.
+Its FIRST native run on full committed97d7f397 reached the field-colour assertion
+and failed because the fixture captured its expected resting colour during the
+first active pulse. Runtime correctly restored original white. Moving that capture
+before the first submit was the one bounded test-only correction; assertions and
+product code stayed unchanged. The retry passes1/1,0.30016s on that base plus the
+one corrected test input,no drift. Minimum free5,931,757,568bytes; the guard restored
+the named profile files and shared input preferences on both attempts.
+
+The case now supplies native evidence for required messages surviving frames,
+field-only tint without hitbox changes,reduced motion,edit cleanup,credential-pair
+retry and service-error separation. All submissions were invalid; server failures
+were injected locally,no live sign-in was submitted. No broad suite or old film
+was repeated. Visual/auditory judgment and physical mouse,pad/touch use remain OPEN.
+[Receipt](checks/login-feedback-native.json),[passing XML](checks/login-feedback-native.xml),
+[initial failed XML](checks/login-feedback-native-first.xml). Raw isolated evidence:
+Logs/login-first-native-20260927/field-feedback*. This does not qualify live auth.

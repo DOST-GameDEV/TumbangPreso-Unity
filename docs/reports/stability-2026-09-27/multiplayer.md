@@ -665,6 +665,113 @@ Its exact implementation and qualification status are in
 [Featherfall](../amihan-kit-2026-09-27/featherfall.md). It does not establish that
 every kit works across real peers.
 
+## Ultimate Identity And Body Scope
+
+2026-09-28,after88b4c536: protocol81 adds hero/ability FixedString64Bytes IDs to
+UltimateCommit. Requests carry GameplayActionScope including movement epoch; the
+host checks current scope/kit before reservation and stamps accepted identity.
+Familiar anchoring retains it. Preparation waits for the matching kit; execution
+refuses a changed kit. A seat alone no longer identifies which ultimate to play.
+Legacy empty IDs stay local-probe-only; the wire rejects them. Hero-ID capacity
+also fails early at registration. No authored animation,VFX,timing or cost change.
+
+Variable bounded commits are77bytes plus ID contents(max199). Requests add16bytes
+of scope(max215); the44byte cohort header plus4commits fits840bytes. Readers reject
+truncated/oversized IDs and trailing bytes. Decoding retains bounded fixed strings
+without reconstructing untrusted bytes through a capacity-limited string constructor.
+
+One native pass3/3,0.2267563s on full committed base plus7inputs,no drift,no retry.
+Two new cases cover the production codec/max IDs/scope,bad lengths/truncation,
+registration bound,different heroes sharing an ability ID,changed ability IDs,
+matching late-kit reservation without early activation,and wrong-kit no-activation.
+The prior duration case was rerun because its actual wire input changed; it now
+also rejects trailing data while preserving host duration and terminal identity.
+Minimum free6,202,015,744bytes; profile/preferences restored.
+[Receipt](checks/ultimate-identity-native.json),[XML](checks/ultimate-identity-native.xml).
+Raw Logs/ultimate-identity-20260928/named-cohorts.*. Live host request admission,
+actual peers/ranked/reworks and full playback remain unqualified; no old films ran.
+
+## Host-Owned Ultimate Duration
+
+2026-09-28,after43ab9fc3: protocol80 adds the host-sealed cohort duration to the
+UltimatePhase header(44bytes,commit73unchanged). The old receiver derived duration
+from local caster kits. A missing caster could supply the2.8s fallback and cause
+a still-active5s host introduction to be treated as expired. ReceiveTimed now
+uses the validated host boundary; the host still computes the longest authored
+introduction. The local-probe Receive wrapper remains. No authored timing changed.
+
+One NEW actual message-receiver case passes1/1,0.1188589s on full committed base
+plus5inputs,no drift,no retry. It uses the production commit writer,asserts117bytes
+for one cast,and has no caster body: invalid sender/durations cannot advance the
+phase cursor,the5s cohort stays active/held past the local fallback,duplicates
+cannot shorten it,and a newer expired host duration retains terminal identity.
+Minimum free6,212,919,296bytes; named profile/preferences restored.
+[Receipt](checks/ultimate-duration-native.json),[XML](checks/ultimate-duration-native.xml).
+Raw Logs/ultimate-duration-20260928/host-cohort-time.*. This is controlled native
+receive evidence,not actual late-peer playback or visual/cross-platform acceptance.
+
+## Sentry Cleanup Ownership
+
+After90b015f2, protocol79 scopes Paete's ultimate cleanup to its own sentries. The
+old Reset found/destroyed every PaeteSentry in the scene,including another caster's
+and even when the resetting kit had never cast. The ability now retains exact
+fresh references,prunes expired ones on cast,and adopts recovered instances through
+the owner-specific IWorldEffectBinding pass. Reset deactivates/destroys only those
+references. Attacks,root timing,escape,artwork and presentation remain unchanged.
+
+One new guarded native case passes1/1,0.5451652s on full committed base plus4inputs,
+no drift,no retry. It uses two actual fresh activation paths,an unused kit reset,
+one owner's reset,a restored owner0sentry binding/reset,and the other owner's final
+reset. The other caster's tree survives until its own reset. Minimum free
+6,587,150,336bytes; named profile/preferences restored.
+[Receipt](checks/sentry-ownership-native.json),[XML](checks/sentry-ownership-native.xml).
+Raw Logs/sentry-ownership-20260927/owned-guardians.*. Controlled local lifecycle,
+not real-peer/ranked or visual acceptance. Fresh-cast target convergence remains OPEN.
+
+## Ability Resource Identity
+
+After6d8083d6, protocol78 replaces SyncAbility's current-slot numbers with a bounded
+AbilityResourceSnapshot: world/epoch scope,seat,sequence,hero ID,ultimate meter and
+all owned ability IDs/cooldowns/charges,including the inactive role. The old message
+could apply an attacking cooldown to a receiver's defending skill and omitted the
+inactive ability entirely. Resource recovery now maps by stable identity,validates
+the entire matching set before mutation,and rejects older/duplicate state. The
+owner-live mayLower safeguard remains; observers/intermission accept correction.
+No roles,skill design,active-effect clocks or authored presentation are changed.
+
+Two NEW native cases pass2/2,0.1808458s on full committed base plus9inputs,no drift.
+They exercise actual serialization and differing role order,both role states,
+unknown/duplicate IDs,nonfinite meter,oversized count,atomic failure; then the real
+receiver's sender/world/epoch/hero/sequence checks and owner-live/intermission rules.
+Initial attempt compiled Runtime but stopped on3CS1657 test-reader lifetime errors;
+no cases ran. One bounded test-only try/finally correction preserved all assertions,
+with a distinct retry log/XML. No other cases or broad suites were repeated.
+Minimum retry free6,195,240,960bytes; named profile/preferences restored both times.
+[Receipt](checks/ability-resources-native.json),[XML](checks/ability-resources-native.xml),
+[initial compiler errors](checks/ability-resources-first-compile.txt).
+Raw Logs/ability-resources-20260927/stable-resources*. Actual peers/ranked/reconnect
+and live rework integration remain separate; no blanket future-proof claim.
+
+## Body Snapshot World Scope
+
+Afterc6506327, SyncUnit includes existing GameplayActionScope in place of its bare
+movement epoch. Protocol77 adds12bytes:235byte base including Voodoo and empty aim
+state. Before this,a fresh body had no serial cursor and could accept delayed state
+from a different match/round. The receiver now rejects wrong-world snapshots before
+pose serial,epoch,status,resource or aiming mutation. Current-world newer epochs
+and shared reliable/unreliable pose serial ordering are otherwise unchanged.
+
+The changed VoodooSync receiver case passes1/1,0.2128343s on full committed base
+plus4inputs,no drift,no retry. Added checks reject earlier/later match/round and
+invalid epoch with serial100,then accept current serial1,proving rejected packets
+do not poison the cursor or apply status. Existing resource correction,reach result,
+stale serial and nonfinite-state checks remain. This case was rerun because its
+actual wire contract changed,not as an unchanged broad regression.
+Minimum free6,401,146,880bytes; named profile/preferences restored.
+[Receipt](checks/body-world-scope-native.json),[XML](checks/body-world-scope-native.xml).
+Raw Logs/body-world-scope-20260927/world-body.*. Actual peers/round transitions and
+QA-15's cause remain unqualified.
+
 ## Requested Match Clock
 
 Source at0d086f37 sent bare4byte clock values and omitted ordinary pause/speed from

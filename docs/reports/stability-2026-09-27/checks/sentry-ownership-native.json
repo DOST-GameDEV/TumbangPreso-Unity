@@ -1,0 +1,34 @@
+{
+  "base": "90b015f26d8db52fe0530cff0d32b771d2e23083",
+  "protocol": 79,
+  "scope": "Fresh/recovered sentry cleanup remains owner-specific",
+  "result": "Passed",
+  "total": 1,
+  "duration": 0.5451652,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/PaeteHeroKit.cs",
+      "sha256": "73620D1A669373189A3DDA6615DF3DD7164FDD4B86ADBCD4398F275E3C87425E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "CA1EB3C80DC51E0C3798F176BBB14FFF640AD4E14EA8EA7E15695605547FD8BC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "35C7A7909367CC1C4C3D73BA35301C947CCAAE0CF2B96C8DDE2A832D39856BD0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "2C7836B9173A4F5EE8EE14555A8D350B9C1CBA0672A7B4137EC8D7624448FD19"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6587150336,
+  "retryCount": 0,
+  "unverified": [
+    "Actual peers/ranked",
+    "Fresh-cast target convergence",
+    "Authored visual acceptance"
+  ]
+}

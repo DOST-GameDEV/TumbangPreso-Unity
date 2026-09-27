@@ -186,16 +186,16 @@ namespace TumbangPreso.UI.Hub
             Player.frameReady += OnFirstFrame;
             Player.sendFrameReadyEvents = true;
             Player.errorReceived += OnError;
-            if (_preloading) Player.Pause();
-            else Player.Prepare();
+            Player.Prepare();
         }
 
         private void OnPrepared(VideoPlayer player)
         {
             if (_failed || player != Player) return;
             Prepared = true;
-            if (_preloading) return;
-            if (AtHome && !Settings.SettingsStore.Current.ReducedUiMotion) player.Play();
+            // A paused preparation did not deliver the frameReady callback on
+            // the Windows decoder. Decode one hidden frame,then pause in that callback.
+            if (_preloading || (AtHome && !Settings.SettingsStore.Current.ReducedUiMotion)) player.Play();
         }
 
         private void OnFirstFrame(VideoPlayer player, long frame)

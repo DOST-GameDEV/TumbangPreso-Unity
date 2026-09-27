@@ -1,11 +1,83 @@
 # Active Rework Checkpoint
 
-Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`c35550fccf4b1d682f20f4beb9a07e74317626d3`; generated-avatar lifetime cleanup follows it.
+Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
+`f2309da6566a589a7eb689c2b3e7b5308c728773`; explicit introduction preparation follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Existing grounded introduction work now stages behind match loading before arena
+draws,with retained variants and cancellation-safe preparation ownership. Views
+wait for model/cache results; known unsupported rigs warn once instead of cloning
+each idle frame. Two new native cases pass2/2 on full committed base plus4inputs,
+no drift,no retry. No authored motion/assets/map-render changes or player-hitch claim.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#explicit-introduction-preparation).
+
+Protocol81 names the committed hero/ability and scopes requests to the body epoch.
+Host identity validation,matching-kit preparation and changed-kit execution guard
+preserve authored presentation/resource rules. Two new cases plus the changed
+duration-wire case pass3/3 on full committed base plus7inputs,no drift,no retry.
+Live host-request/peer/ranked qualification stays OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#ultimate-identity-and-body-scope).
+
+Protocol80 carries the host-sealed ultimate cohort duration rather than deriving
+it from possibly missing local caster kits. New actual receiver case passes1/1 on
+full committed base plus5inputs,no drift,no retry: host5s stays active past local
+2.8s fallback,invalid durations/duplicates reject,and terminal identity stays closed.
+No authored timing changes; actual peers remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#host-owned-ultimate-duration).
+
+Boot menu failure now exposes one focused pointer-accessible EXIT GAME control
+above the retained curtain,using the existing Cancel quit path. New failure-exit
+and first original boot activation/handoff checks pass2/2 on full committed base
+plus3inputs,no drift,no retry. Actual device exit,physical inputs and visual judgment
+remain separate. [Evidence](reports/stability-2026-09-27/loading-audit.md#boot-failure-controls).
+
+First HOME decoder check reproduced a30-second readiness timeout. Explicit
+prepare/play until first frameReady,then pause,now completes the same readiness/
+adoption/cleanup case in0.3296335s Editor. One failed-case-only retry passes on
+full committed base plus1runtime input,no drift. Reduced-motion case passed in
+the initial batch and was not rerun. No video/art changes or whole-player timing claim.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#decoded-home-handoff).
+
+LOGIN-0927's FIRST native field-state case passes1/1 after a fixture-only colour
+baseline timing correction. Runtime was unchanged; required/edit/server-error and
+reduced-motion/hitbox checks remain intact. Full committed base plus1corrected test,
+no drift. Sound/visual/physical-input acceptance stays separate.
+[Evidence](reports/stability-2026-09-27/login-feedback.md).
+
+Protocol79 fixes Paete ultimate Reset destroying every caster's sentry. Exact
+fresh references and recovered owner bindings now govern cleanup. New native
+two-caster/unused-kit/recovery/reset case passes1/1 on full committed base plus
+4inputs,no drift,no retry. No authored attack/visual changes; fresh target
+convergence and actual peers remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#sentry-cleanup-ownership).
+
+Shader warmup now checks elapsed time after each variant,yielding at a2ms target
+or10variants while retaining full completion. The modified native stage case
+passes1/1 on full committed base plus2inputs,no drift,no retry:97variants,10turns,
+max1.493ms in this cached Editor run. One native compile may overrun; no cold-player
+or handset guarantee. [Evidence](reports/stability-2026-09-27/loading-audit.md#shader-turn-budget).
+
+Title/login artwork and avatar warmups now await cold Resources.LoadAsync requests
+per item before retaining their existing texture/sprite caches. Supplied art and
+staged order stay unchanged. One new native request/cache/fallback case passes1/1
+on full committed base plus3inputs,no drift,no retry. Player timings remain OPEN.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#asynchronous-menu-art).
+
+Protocol78 resources use stable hero/ability IDs,world scope,sequence and both
+roles instead of mutable skill slots. Validate the whole identity set before
+mutation; preserve owner-live anti-refund behavior. Two new native cases pass on
+full committed base plus9inputs,no drift,after one test-only CS1657 reader-lifetime
+repair. Actual peers/ranked/reconnect remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#ability-resource-identity).
+
+Protocol77 scopes SyncUnit body pose/status to match/round before accepting its
+serial. Existing GameplayActionScope replaces the bare epoch; movement-epoch and
+resource/status rules stay. The changed receiver case passes1/1 on full committed
+base plus4inputs,no drift. Actual peers and QA-15 remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#body-snapshot-world-scope).
 
 CharacterAnimator now owns and releases only the valid avatars it generated for
 its binding,after graph disposal,on rebind/clear/teardown. Borrowed/imported avatars

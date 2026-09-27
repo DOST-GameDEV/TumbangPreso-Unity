@@ -2438,7 +2438,11 @@ namespace TumbangPreso.Net
             using var writer = new FastBufferWriter(304, Allocator.Temp);
             unit.FlightPoseEvidence(out bool grounded, out long flightEpisode);
             writer.WriteValueSafe(slot);
-            writer.WriteValueSafe(_movementEpochs[slot]);
+            writer.WriteNetworkSerializable(new GameplayActionScope
+            {
+                Match = EnsurePresentationMatch(), Round = GameServices.Match?.RoundNumber ?? 0,
+                Epoch = _movementEpochs[slot],
+            });
             writer.WriteValueSafe(++_unitPoseSerial[slot]);
             writer.WriteValueSafe(pos);
             writer.WriteValueSafe(yaw);
@@ -2499,10 +2503,15 @@ namespace TumbangPreso.Net
             // Netcode invokes the handler locally for the listen host, so every broadcast the
             // host sent was also applied ON the host, a second time, over authoritative state it
             // had just produced. See § THE LOOPBACK.
-            if (NetAuthority.IsHost || !reader.TryBeginRead(196 + VoodooBodySnapshot.WireBytes)) return;
+            if (NetAuthority.IsHost || !reader.TryBeginRead(208 + VoodooBodySnapshot.WireBytes)) return;
 
             reader.ReadValueSafe(out int slot);
-            reader.ReadValueSafe(out int epoch);
+            reader.ReadNetworkSerializable(out GameplayActionScope scope);
+            // Pose serials order deliveries, but a fresh body has no previous
+            // cursor. Reject another world's status before advancing that cursor.
+            if (!ValidSlot(slot) || !scope.IsValid || scope.Match != PresentationMatchId ||
+                scope.Round != (GameServices.Match?.RoundNumber ?? -1)) return;
+            int epoch = scope.Epoch;
             reader.ReadValueSafe(out ulong poseSerial);
             reader.ReadValueSafe(out Vector3 pos);
             reader.ReadValueSafe(out float yaw);
@@ -5832,97 +5841,8 @@ namespace TumbangPreso.Net
         // has to already agree about, which is the shape of bug § 32.2 records three of.
         // -------------------------------------------------------------------
 
-        private void BroadcastAbilityState(int slot, CharacterMotor unit)
-        {
-            if (!NetAuthority.IsHost) return;
-
-            var kit = unit != null && unit.AbilitySystem != null ? unit.AbilitySystem.Kit : null;
-            if (kit == null) return;
-
-            float s1Cd = kit.Skill1 != null ? kit.Skill1.CooldownRemaining : 0.0f;
-            int s1Ch = kit.Skill1 != null ? kit.Skill1.ChargesRemaining : 0;
-            float s2Cd = kit.Skill2 != null ? kit.Skill2.CooldownRemaining : 0.0f;
-            int s2Ch = kit.Skill2 != null ? kit.Skill2.ChargesRemaining : 0;
-            float ultCd = kit.Ultimate != null ? kit.Ultimate.CooldownRemaining : 0.0f;
-
-            SyncAbilityStateClientRpc(slot, kit.UltimateCharge, s1Cd, s1Ch, s2Cd, s2Ch, ultCd);
-
-            if (_nm == null || _nm.CustomMessagingManager == null) return;
-
-            using var writer = new FastBufferWriter(64, Allocator.Temp);
-            writer.WriteValueSafe(slot);
-            writer.WriteValueSafe(kit.UltimateCharge);
-            writer.WriteValueSafe(s1Cd);
-            writer.WriteValueSafe(s1Ch);
-            writer.WriteValueSafe(s2Cd);
-            writer.WriteValueSafe(s2Ch);
-            writer.WriteValueSafe(ultCd);
-            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncAbility", writer);
-        }
-
-        /// <summary>
-        /// ⚠️ THE HOST APPLIES NOTHING. Its kit is the authority and is already correct; letting
-        /// it write its own broadcast back over itself would round-trip every value through the
-        /// wire's precision for no reason, and would overwrite a cooldown that started in the
-        /// same frame the snapshot was built.
-        /// </summary>
-        public void SyncAbilityStateClientRpc(int slot, float ultimateCharge,
-                                              float skill1Cooldown, int skill1Charges,
-                                              float skill2Cooldown, int skill2Charges,
-                                              float ultimateCooldown)
-        {
-            if (NetAuthority.IsHost) return;
-
-            var unit = Unit(slot);
-            var kit = unit != null && unit.AbilitySystem != null ? unit.AbilitySystem.Kit : null;
-            if (kit == null) return;
-
-            // ⚠️⚠️ THE OWNER'S OWN COOLDOWNS MAY BE RAISED BY THIS AND NOT LOWERED, WHILE A
-            // ROUND IS LIVE. That is the spammable-teleport fix; `HeroAbility
-            // .ApplyNetworkSnapshot` carries the whole chain, and the short version is that a
-            // host which REFUSED a cast reports the state it actually has, which is no cooldown,
-            // and assigning that over the cooldown the owner just spent predicting hands the
-            // ability straight back.
-            //
-            // ⚠️⚠️ AND IT IS GATED ON THE ROUND BEING LIVE, WHICH IS NOT A DETAIL. `SliceRunner
-            // .ResetWorld` calls `ResetKit` on every seat at a round boundary, and that is a
-            // legitimate clearing that MUST reach the owner or it starts the next round holding
-            // a cooldown nothing will ever tick away. The intermission is exactly when the round
-            // clock is stopped, so asking the round is asking the right question rather than
-            // special-casing the reset. A reconnecting client is covered too: its kit is rebuilt
-            // at zero, so raising it to the host's value is what the rule already does.
-            bool mine = slot == NetAuthority.LocalSlot;
-            bool roundLive = GameServices.Round != null && GameServices.Round.RoundActive;
-
-            kit.ApplyNetworkSnapshot(ultimateCharge, skill1Cooldown, skill1Charges,
-                                     skill2Cooldown, skill2Charges, ultimateCooldown,
-                                     mayLower: !mine || !roundLive);
-        }
-
-        private void OnSyncAbilityMsg(ulong senderClientId, FastBufferReader reader)
-        {
-            if (!FromHost(senderClientId)) return;
-            // ⚠️ THE HOST IS ITS OWN CLIENT AND `SendNamedMessageToAll` LOOPS BACK TO IT.
-            // Netcode invokes the handler locally for the listen host, so every broadcast the
-            // host sent was also applied ON the host, a second time, over authoritative state it
-            // had just produced. See § THE LOOPBACK.
-            if (NetAuthority.IsHost) return;
-
-            reader.ReadValueSafe(out int slot);
-            reader.ReadValueSafe(out float ultimateCharge);
-            reader.ReadValueSafe(out float s1Cd);
-            reader.ReadValueSafe(out int s1Ch);
-            reader.ReadValueSafe(out float s2Cd);
-            reader.ReadValueSafe(out int s2Ch);
-            reader.ReadValueSafe(out float ultCd);
-
-            // ⚠️ A NaN COOLDOWN IS A COOLDOWN THAT NEVER EXPIRES. Every `> 0.0f` test against it
-            // is false, so the ability reads as READY for ever on that peer while the host refuses
-            // every cast: the deck lights up and nothing happens. § 149.9.
-            if (!Finite(ultimateCharge) || !Finite(s1Cd) || !Finite(s2Cd) || !Finite(ultCd)) return;
-
-            SyncAbilityStateClientRpc(slot, ultimateCharge, s1Cd, s1Ch, s2Cd, s2Ch, ultCd);
-        }
+        // Resource replication lives in MatchRpc.AbilityResources: stable IDs,
+        // both role abilities, world scope and ordered delivery.
 
         private void OnSyncWorldMsg(ulong senderClientId, FastBufferReader reader)
         {

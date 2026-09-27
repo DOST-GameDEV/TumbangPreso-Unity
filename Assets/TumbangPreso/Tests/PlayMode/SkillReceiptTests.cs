@@ -28,6 +28,25 @@ namespace TumbangPreso.PlayTests
             { Skill1 = new AimProbeAbility("aim-one"); Skill2 = new AimProbeAbility("aim-two"); }
         }
 
+        private sealed class ResourceProbeAbility : HeroAbility
+        {
+            public int Activations;
+            public override AbilityNetworkMode NetworkMode => Id == "ultimate"
+                ? AbilityNetworkMode.SharedUltimate : AbilityNetworkMode.Predicted;
+            public ResourceProbeAbility(string id) : base(id, id, "", 30, charges: 3) { }
+            protected override void OnActivate(AbilityContext context) { Activations++; }
+        }
+        private sealed class ResourceProbeKit : HeroKit
+        {
+            public ResourceProbeKit(string hero = "resource-probe") : base(hero, "Resources")
+            {
+                Skill1 = new ResourceProbeAbility("signature");
+                AttackingSkill = new ResourceProbeAbility("attack");
+                DefendingSkill = new ResourceProbeAbility("defend");
+                Ultimate = new ResourceProbeAbility("ultimate");
+            }
+        }
+
         private INetProvider _provider;
         private sealed class PredictingOwner : INetProvider
         {
@@ -49,6 +68,102 @@ namespace TumbangPreso.PlayTests
         { _provider = NetAuthority.Provider; yield return PlayModeWorld.Reset(); }
         [UnityTearDown] public IEnumerator After()
         { yield return PlayModeWorld.Reset(); NetAuthority.Provider = _provider; }
+
+        [Test]
+        public void ResourceSnapshotsMapBothRolesByIdentityAndRejectPartialOrMalformedSets()
+        {
+            var host = new ResourceProbeKit();
+            host.Skill1.ApplyNetworkSnapshot(7, 1); host.AttackingSkill.ApplyNetworkSnapshot(11, 2);
+            host.DefendingSkill.ApplyNetworkSnapshot(21, 0); host.Ultimate.ApplyNetworkSnapshot(4, 2);
+            host.AddUltimateCharge(9);
+            var source = AbilityResourceSnapshot.Capture(host, 1,
+                new GameplayActionScope { Match = 123, Round = 1, Epoch = 0 }, 1);
+            AbilityResourceSnapshot decoded;
+            using (var writer = new FastBufferWriter(AbilityResourceSnapshot.MaxWireBytes, Allocator.Temp))
+            {
+                writer.WriteNetworkSerializable(source);
+                var reader = new FastBufferReader(writer, Allocator.Temp);
+                try { Assert.IsTrue(AbilityResourceSnapshot.TryRead(ref reader, out decoded)); }
+                finally { reader.Dispose(); }
+            }
+            var target = new ResourceProbeKit(); target.SetRole(true, default);
+            Assert.IsTrue(decoded.TryApply(target, true));
+            Assert.IsTrue(target.IsDefending);
+            Assert.AreEqual(21, target.Skill2.CooldownRemaining);
+            Assert.AreEqual(11, target.IdleRoleSkill.CooldownRemaining);
+            Assert.AreEqual(2, target.AttackingSkill.ChargesRemaining);
+            Assert.AreEqual(0, target.DefendingSkill.ChargesRemaining);
+            Assert.AreEqual(9, target.UltimateCharge);
+            var bad = decoded; bad.Abilities = (AbilityResourceSnapshot.Entry[])decoded.Abilities.Clone();
+            bad.UltimateCharge = 1; bad.Abilities[0].Cooldown = 0;
+            bad.Abilities[3].Id = new FixedString64Bytes("unknown");
+            Assert.IsFalse(bad.TryApply(target, true));
+            Assert.AreEqual(9, target.UltimateCharge); Assert.AreEqual(7, target.Skill1.CooldownRemaining);
+            bad.Abilities[3].Id = bad.Abilities[0].Id;
+            using (var writer = new FastBufferWriter(AbilityResourceSnapshot.MaxWireBytes, Allocator.Temp))
+            {
+                writer.WriteNetworkSerializable(bad);
+                var reader = new FastBufferReader(writer, Allocator.Temp);
+                try { Assert.IsFalse(AbilityResourceSnapshot.TryRead(ref reader, out _)); }
+                finally { reader.Dispose(); }
+            }
+            bad = decoded; bad.UltimateCharge = float.NaN; Assert.IsFalse(bad.IsValid);
+            using (var writer = new FastBufferWriter(64, Allocator.Temp))
+            {
+                writer.WriteValueSafe(1); writer.WriteNetworkSerializable(source.Scope); writer.WriteValueSafe(1L);
+                writer.WriteValueSafe((ushort)1); writer.WriteValueSafe((byte)'x'); writer.WriteValueSafe(1f);
+                writer.WriteValueSafe((byte)(AbilityResourceSnapshot.MaxAbilities + 1));
+                var reader = new FastBufferReader(writer, Allocator.Temp);
+                try { Assert.IsFalse(AbilityResourceSnapshot.TryRead(ref reader, out _)); }
+                finally { reader.Dispose(); }
+            }
+        }
+
+        [Test]
+        public void ResourceReceiverScopesOrdersAndPreservesOwnerPredictionUntilIntermission()
+        {
+            var system = Owner("dante"); var body = system.GetComponent<CharacterMotor>();
+            var kit = new ResourceProbeKit(); typeof(HeroAbilitySystem).GetProperty("Kit").SetValue(system, kit);
+            GameServices.Ensure(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            GameServices.Round.ApplySnapshot(50, true, 0, true);
+            var root = new GameObject("Ability resources receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>(); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+            var receive = typeof(MatchRpc).GetMethod("OnSyncAbilityMsg", System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic);
+            var host = new ResourceProbeKit(); host.Skill1.ApplyNetworkSnapshot(5, 3); host.AddUltimateCharge(7);
+            kit.Skill1.ApplyNetworkSnapshot(20, 0);
+            var snapshot = AbilityResourceSnapshot.Capture(host, 1,
+                new GameplayActionScope { Match = 123, Round = 1, Epoch = 0 }, 1);
+            void Deliver(AbilityResourceSnapshot value, ulong sender = 0)
+            {
+                using var writer = new FastBufferWriter(AbilityResourceSnapshot.MaxWireBytes, Allocator.Temp);
+                writer.WriteNetworkSerializable(value);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                receive.Invoke(router, new object[] { sender, reader });
+            }
+            try
+            {
+                var bad = snapshot; bad.Sequence = 100; Deliver(bad, 9);
+                bad.Scope.Match = 122; Deliver(bad);
+                bad.Scope.Match = 123; bad.Scope.Round = 2; Deliver(bad);
+                bad.Scope.Round = 1; bad.Scope.Epoch = 1; Deliver(bad);
+                bad.Scope.Epoch = 0; bad.HeroId = new FixedString64Bytes("another-kit"); Deliver(bad);
+                Assert.AreEqual(0, kit.UltimateCharge);
+                Deliver(snapshot);
+                Assert.AreEqual(7, kit.UltimateCharge);
+                Assert.AreEqual(20, kit.Skill1.CooldownRemaining); Assert.AreEqual(0, kit.Skill1.ChargesRemaining);
+                snapshot.Abilities[0].Cooldown = 30; Deliver(snapshot);
+                Assert.AreEqual(20, kit.Skill1.CooldownRemaining, "Duplicate resource state reapplied.");
+                snapshot.Sequence = 2; Deliver(snapshot); Assert.AreEqual(30, kit.Skill1.CooldownRemaining);
+                GameServices.Round.ApplySnapshot(50, false, 0, true);
+                snapshot.Sequence = 3; snapshot.Abilities[0].Cooldown = 0; Deliver(snapshot);
+                Assert.AreEqual(0, kit.Skill1.CooldownRemaining); Assert.AreEqual(3, kit.Skill1.ChargesRemaining);
+                snapshot.Sequence = 2; snapshot.Abilities[0].Cooldown = 30; Deliver(snapshot);
+                Assert.AreEqual(0, kit.Skill1.CooldownRemaining);
+            }
+            finally { Object.DestroyImmediate(root); }
+        }
 
         private static MatchRpc ClockReceiver()
         {
@@ -154,6 +269,41 @@ namespace TumbangPreso.PlayTests
                 message.Round = 4; message.Sequence = 1; Assert.IsTrue(Accept(7, message));
             }
             finally { Object.DestroyImmediate(router.gameObject); }
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator SentryResetRetiresOnlyItsFreshAndRecoveredOwnedInstances()
+        {
+            var first = Owner("paete").GetComponent<CharacterMotor>(); first.PlayerSlot = 0;
+            var second = Owner("paete").GetComponent<CharacterMotor>(); second.PlayerSlot = 1;
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(first); GameServices.Round.Register(second);
+            var firstKit = (PaeteHeroKit)first.AbilitySystem.Kit;
+            var secondKit = (PaeteHeroKit)second.AbilitySystem.Kit;
+            firstKit.Ultimate.Activate(new AbilityContext(first, null, null, Vector3.zero, Vector3.forward, Vector3.forward * 6));
+            secondKit.Ultimate.Activate(new AbilityContext(second, null, null, Vector3.right * 4, Vector3.forward, new Vector3(4, 0, 6)));
+            PaeteSentry own = null, other = null;
+            foreach (var sentry in Object.FindObjectsByType<PaeteSentry>())
+            {
+                if (sentry.OwnerSlot == 0) own = sentry;
+                if (sentry.OwnerSlot == 1) other = sentry;
+            }
+            Assert.IsNotNull(own); Assert.IsNotNull(other);
+            new PaeteHeroKit().Reset();
+            yield return null;
+            Assert.IsTrue(own != null && other != null, "An unused kit reset retired another kit's world effects.");
+            firstKit.Reset();
+            Assert.IsFalse(own.gameObject.activeSelf); Assert.IsTrue(other.gameObject.activeSelf);
+            yield return null;
+            Assert.IsTrue(own == null); Assert.IsTrue(other != null);
+            var recovered = PaeteSentry.Spawn(Vector3.zero, Vector3.forward * 6, 0, age: 1, restoredTargets: 0);
+            firstKit.RebindWorldEffects(first);
+            firstKit.Reset();
+            Assert.IsFalse(recovered.gameObject.activeSelf); Assert.IsTrue(other.gameObject.activeSelf);
+            yield return null;
+            Assert.IsTrue(recovered == null); Assert.IsTrue(other != null);
+            secondKit.Reset();
+            yield return null;
+            Assert.IsTrue(other == null);
         }
 
         [Test]
@@ -375,14 +525,18 @@ namespace TumbangPreso.PlayTests
             GameServices.Ensure(); GameServices.Round.Register(body);
             var root = new GameObject("Voodoo body receiver"); root.SetActive(false);
             var receiver = root.AddComponent<MatchRpc>();
+            typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(receiver, 123L);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
             const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
             var receive = typeof(MatchRpc).GetMethod("OnSyncUnitMsg", flags);
             var state = new VoodooBodySnapshot { Drained = 2, Hexed = 3, MarkKind = 2, MarkSource = 0,
                 MarkAge = 12, ReachKind = 1, ReachTarget = 2, ReachElapsed = 1 };
-            void Deliver(ulong serial, VoodooBodySnapshot data)
+            void Deliver(ulong serial, VoodooBodySnapshot data, long match = 123, int round = 1, int epoch = 0)
             {
                 using var writer = new FastBufferWriter(304, Allocator.Temp);
-                writer.WriteValueSafe(1); writer.WriteValueSafe(0); writer.WriteValueSafe(serial);
+                writer.WriteValueSafe(1);
+                writer.WriteNetworkSerializable(new GameplayActionScope { Match = match, Round = round, Epoch = epoch });
+                writer.WriteValueSafe(serial);
                 writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0f); writer.WriteValueSafe(Vector3.zero);
                 writer.WriteValueSafe(true);
                 writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe((int)StunElement.None);
@@ -397,10 +551,18 @@ namespace TumbangPreso.PlayTests
                 writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
                 writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0L);
                 writer.WriteNetworkSerializable(data); writer.WriteNetworkSerializable(default(AbilityAimSnapshot));
-                Assert.AreEqual(196 + VoodooBodySnapshot.WireBytes, writer.Length);
+                Assert.AreEqual(208 + VoodooBodySnapshot.WireBytes, writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 receive.Invoke(receiver, new object[] { NetworkManager.ServerClientId, reader });
             }
+            Deliver(100, state, match: 122);
+            Deliver(100, state, match: 124);
+            Deliver(100, state, round: 0);
+            Deliver(100, state, round: 2);
+            Deliver(100, state, epoch: -1);
+            Assert.IsFalse(body.IsDrained); Assert.IsFalse(body.IsHexed);
+            Assert.IsFalse(body.IsVoodooReaching);
+            Assert.AreEqual(0, body.MovementEpoch);
             Deliver(1, state);
             Assert.IsTrue(body.IsDrained); Assert.IsTrue(body.IsHexed);
             Assert.IsTrue(body.Stamina.RecoveryBlocked);
@@ -939,6 +1101,137 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(kit.Ultimate.IsWindingUp);
             yield return null;
             Assert.IsNull(Object.FindAnyObjectByType<VoodooBlackHole>());
+        }
+
+        [Test]
+        public void UltimateCommitCodecBoundsIdentityAndPreservesTheRequestBodyScope()
+        {
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic;
+            var write = typeof(MatchRpc).GetMethod("WriteUltimateCommit", flags);
+            var read = typeof(MatchRpc).GetMethod("TryReadUltimateCommit", flags);
+            string hero = new string('h', 61), ability = new string('a', 61);
+            var cast = new UltimateCommit(1, 4, Vector3.zero, Vector3.forward, Vector3.up, .5f,
+                heroId: hero, abilityId: ability);
+            var scope = new GameplayActionScope { Match = 123, Round = 1, Epoch = 2 };
+            byte[] bytes;
+            using (var writer = new FastBufferWriter(256, Allocator.Temp))
+            {
+                writer.WriteNetworkSerializable(scope); write.Invoke(null, new object[] { writer, cast });
+                Assert.AreEqual(16 + 199, writer.Length);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                reader.ReadNetworkSerializable(out GameplayActionScope restored);
+                Assert.IsTrue(restored.Matches(123, 1, 2));
+                var args = new object[] { reader, default(UltimateCommit) };
+                Assert.IsTrue((bool)read.Invoke(null, args));
+                var decoded = (UltimateCommit)args[1];
+                Assert.AreEqual(hero, decoded.HeroId.ToString()); Assert.AreEqual(ability, decoded.AbilityId.ToString());
+                Assert.AreEqual(cast.Request, decoded.Request); Assert.AreEqual(cast.Held, decoded.Held);
+            }
+            using (var writer = new FastBufferWriter(256, Allocator.Temp))
+            { write.Invoke(null, new object[] { writer, cast }); bytes = writer.ToArray(); }
+            bool Reads(byte[] payload)
+            {
+                using var reader = new FastBufferReader(payload, Allocator.Temp);
+                var args = new object[] { reader, default(UltimateCommit) };
+                return (bool)read.Invoke(null, args);
+            }
+            var oversized = (byte[])bytes.Clone(); oversized[73] = 62; oversized[74] = 0;
+            Assert.IsFalse(Reads(oversized));
+            var truncated = new byte[bytes.Length - 1]; System.Array.Copy(bytes, truncated, truncated.Length);
+            Assert.IsFalse(Reads(truncated)); Assert.IsFalse(Reads(new byte[76]));
+            Assert.Throws<System.InvalidOperationException>(() => AbilityNetworking.Validate(new ResourceProbeKit(new string('x', 62))));
+        }
+
+        [Test]
+        public void UltimatePreparationAndExecutionRequireTheCommittedHeroAndAbility()
+        {
+            var system = Owner("dante"); var body = system.GetComponent<CharacterMotor>();
+            var other = new ResourceProbeKit("other-probe");
+            typeof(HeroAbilitySystem).GetProperty("Kit").SetValue(system, other);
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true); GameServices.Round.ApplySnapshot(50, true, 0, true);
+            var root = new GameObject("Ultimate identity preparation"); root.SetActive(false);
+            var phase = root.AddComponent<SharedUltimatePhase>();
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var cast = new UltimateCommit(1, 1, Vector3.zero, Vector3.forward, Vector3.up, 0,
+                heroId: "resource-probe", abilityId: "ultimate");
+            try
+            {
+                typeof(SharedUltimatePhase).GetProperty("MatchId").SetValue(phase, GameServices.Match.PresentationMatchId);
+                typeof(SharedUltimatePhase).GetProperty("Round").SetValue(phase, 1);
+                var commits = (System.Collections.Generic.List<UltimateCommit>)typeof(SharedUltimatePhase).GetField("_commits", hidden).GetValue(phase);
+                commits.Add(cast);
+                var prepare = typeof(SharedUltimatePhase).GetMethod("PrepareActors", hidden);
+                Assert.IsFalse((bool)prepare.Invoke(phase, null), "A different hero with the same ability ID was accepted.");
+                typeof(HeroKit).GetMethod("AdoptUltimateReservation", hidden).Invoke(other, null);
+                typeof(HeroAbilitySystem).GetMethod("ExecuteSharedUltimate", hidden).Invoke(system, new object[] { cast, false });
+                Assert.AreEqual(0, ((ResourceProbeAbility)other.Ultimate).Activations);
+                Assert.IsTrue(other.Ultimate.ReservedForIntroduction);
+                var matching = new ResourceProbeKit();
+                typeof(HeroAbilitySystem).GetProperty("Kit").SetValue(system, matching);
+                commits[0] = new UltimateCommit(1, 1, Vector3.zero, Vector3.forward, Vector3.up, 0,
+                    heroId: matching.HeroId, abilityId: "changed-ultimate");
+                Assert.IsFalse((bool)prepare.Invoke(phase, null));
+                commits[0] = cast;
+                Assert.IsTrue((bool)prepare.Invoke(phase, null));
+                Assert.IsTrue(matching.Ultimate.ReservedForIntroduction);
+                Assert.AreEqual(0, ((ResourceProbeAbility)matching.Ultimate).Activations, "Preparation cast the ability early.");
+            }
+            finally { system.ResetKitForMatch(); Object.DestroyImmediate(root); }
+        }
+
+        [Test]
+        public void UltimateReceiverKeepsTheHostDurationWhileTheCasterIsMissing()
+        {
+            NetAuthority.Provider = new PredictingOwner();
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            Assert.IsNull(GameServices.Round.PlayerAt(3));
+            var previousRouter = MatchRpc.Instance; var previousPhase = SharedUltimatePhase.Instance;
+            float original = PresentationClock.RequestedScale;
+            var root = new GameObject("Timed cohort receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>(); var phase = root.AddComponent<SharedUltimatePhase>();
+            var instance = typeof(MatchRpc).GetProperty("Instance");
+            var phaseInstance = typeof(SharedUltimatePhase).GetProperty("Instance");
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.NonPublic;
+            var receive = typeof(MatchRpc).GetMethod("OnUltimatePhaseMsg", hidden | System.Reflection.BindingFlags.Instance);
+            var write = typeof(MatchRpc).GetMethod("WriteUltimateCommit", hidden | System.Reflection.BindingFlags.Static);
+            void Deliver(long sequence, float duration, ulong sender = 0, bool trailing = false)
+            {
+                using var writer = new FastBufferWriter(256, Allocator.Temp);
+                writer.WriteValueSafe(123L); writer.WriteValueSafe(1); writer.WriteValueSafe(sequence);
+                writer.WriteValueSafe(SharedUltimatePhase.Now - 3.2); writer.WriteValueSafe(duration);
+                writer.WriteValueSafe(.5f); writer.WriteValueSafe(50f); writer.WriteValueSafe(1);
+                var cast = new UltimateCommit(3, 1, Vector3.zero, Vector3.forward, Vector3.up, 0,
+                    heroId: "missing", abilityId: "missing_ultimate");
+                write.Invoke(null, new object[] { writer, cast });
+                if (trailing) writer.WriteValueSafe((byte)1);
+                Assert.AreEqual(44 + 77 + cast.HeroId.Length + cast.AbilityId.Length + (trailing ? 1 : 0), writer.Length);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                receive.Invoke(router, new object[] { sender, reader });
+            }
+            try
+            {
+                instance.SetValue(null, router); phaseInstance.SetValue(null, phase);
+                typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+                Deliver(100, 5, 9);
+                Deliver(100, 5, trailing: true);
+                foreach (float invalid in new[] { 0f, -1f, float.NaN, float.PositiveInfinity, 31f }) Deliver(100, invalid);
+                Assert.IsFalse(phase.Active);
+                Deliver(1, 5);
+                Assert.IsTrue(phase.Active, "Missing caster replaced the host's five-second introduction with the short fallback.");
+                Assert.AreEqual(5, phase.Duration); Assert.AreEqual(1, phase.PhaseId);
+                Assert.IsTrue(PresentationClock.Held); Assert.AreEqual(.5f, PresentationClock.RequestedScale);
+                Deliver(1, 1); Assert.IsTrue(phase.Active); Assert.AreEqual(5, phase.Duration);
+                Deliver(2, 1); Assert.IsFalse(phase.Active); Assert.AreEqual(2, phase.PhaseId);
+                Assert.AreEqual(1, phase.Duration); Assert.IsFalse(PresentationClock.Held);
+                Deliver(2, 5); Assert.IsFalse(phase.Active, "A duplicate terminal phase restarted playback.");
+            }
+            finally
+            {
+                phase.Cancel(); PresentationClock.RequestScale(original);
+                instance.SetValue(null, previousRouter); phaseInstance.SetValue(null, previousPhase);
+                Object.DestroyImmediate(root);
+            }
         }
 
         [UnityTest, Timeout(30000)]
