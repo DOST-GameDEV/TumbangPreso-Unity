@@ -282,6 +282,33 @@ namespace TumbangPreso.Abilities
         public Visual.GroundReticle.Style TelegraphStyle { get; protected set; }
             = Visual.GroundReticle.Style.Ring;
 
+        // ------------------------------------------------------------------ the hero's own aim picture
+        //
+        // ⚠️⚠️ HERO-10 (Phaister, film v7, 2026-09-27): HOLDING HER SKILLS SHOWED NOTHING. On Bayan Plaza the shared ward never
+        // appeared under her 5 m aim, on her screen or the court's, and her body just stood there. Plan 4.1 and 4.5 ask for more
+        // than a ring anyway: her lunar sigil written where she will arrive with three moths circling it, and for OMEN the height
+        // the eye will hang at. These three hooks let a kit draw its own aim and act out its own tell, without a second reticle
+        // system: `HeroAbilitySystem` still decides WHEN something is being aimed and WHERE; the ability decides what it looks like.
+
+        /// <summary>True when this ability's own aim picture replaces the shared ground ring while it is held.</summary>
+        public virtual bool DrawsOwnAim => false;
+
+        /// <summary>
+        /// Called every frame this ability is being aimed on this peer, with where it would land now (a hold-to-aim power's
+        /// destination, its height included for `AimsInTheAir`) and how long it has been held. Private pictures must check that
+        /// the local camera follows <paramref name="caster"/>; a body's tell is for everyone who can see it.
+        /// </summary>
+        public virtual void PresentAim(CharacterMotor caster, Vector3 at, float heldSeconds) { }
+
+        /// <summary>Called once when the aim ends, cast or not (the release, a stun, the kit changing).</summary>
+        public virtual void EndAim() { }
+
+        /// <summary>
+        /// A clip the caster's body holds while this ability is aimed (her tells), or null for the shared stance. Only used when the
+        /// rig carries a clip of that name (`CharacterAnimator.AimPose`).
+        /// </summary>
+        public string AimPoseAction { get; protected set; }
+
         // ------------------------------------------------------------------ hold to aim
         //
         // ⚠️⚠️ 🧑 2026-08-26, ON THE BLINK: *"let her HOLD e to control where she will go and make

@@ -66,11 +66,32 @@
       "sha256": "685918850ac560e465c9c50f2fb9f02300e7e72c01695116cf5540eba3dc9202"
     },
     {
+      "cue": "sfx_cast_phaister_higop",
+      "seconds": 2.3,
+      "peak": 0.7,
+      "rms": 0.09396756927253473,
+      "sha256": "28cb8dfa516bbecaeef34fdf0ceaca716daa06c9aa89becc45e0a884d339dd37"
+    },
+    {
+      "cue": "sfx_phaister_higop_open",
+      "seconds": 2.8,
+      "peak": 0.72,
+      "rms": 0.09408809119972122,
+      "sha256": "2d6e7844aefa7f400efcf11144cca2b3df02a6b63ec812a73ca9698972203ffd"
+    },
+    {
+      "cue": "sfx_phaister_higop_close",
+      "seconds": 1.2,
+      "peak": 0.7,
+      "rms": 0.06407093013895704,
+      "sha256": "b39d3005c88c943d5fbfddf4727aa6f8ec583585e5207f223f765c98afc608b2"
+    },
+    {
       "cue": "sfx_ult_theme_phaister",
-      "seconds": 4.0,
-      "peak": 0.75,
-      "rms": 0.09675299425574686,
-      "sha256": "7c4d506896ed0ef400524ebdd212f75da5dd7b00e2698ea4ef0c1f42315b9282"
+      "seconds": 5.0,
+      "peak": 0.7500000000000001,
+      "rms": 0.09348939876574092,
+      "sha256": "2677091a9714e92f1378b9a7ad3ba45dbccbf4aba0f818c4b9cb389e434344c1"
     }
   ]
 }

@@ -42,6 +42,13 @@ namespace TumbangPreso.EditorTools
                     saved[i]=AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
                     if(saved[i]==null){AssetDatabase.CreateAsset(clip,path);saved[i]=clip;}
                     else{EditorUtility.CopySerialized(clip,saved[i]);saved[i].name=clip.name;EditorUtility.SetDirty(saved[i]);}
+                    // ⚠️ HER TELLS LOOP (HERO-10, `hero-phaister-*-aim`): the animator holds them for as long as the key is down, and a
+                    // clip that does not loop freezes on its last key after its length.
+                    if(clip.name.EndsWith("-aim"))
+                    {
+                        var settings=AnimationUtility.GetAnimationClipSettings(saved[i]);settings.loopTime=true;
+                        AnimationUtility.SetAnimationClipSettings(saved[i],settings);EditorUtility.SetDirty(saved[i]);
+                    }
                 }
                 return saved;
             }

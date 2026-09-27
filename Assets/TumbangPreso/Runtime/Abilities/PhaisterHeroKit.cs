@@ -109,6 +109,27 @@ namespace TumbangPreso.Abilities
                 // the aim mark, the departure and the arrival are now one visual idea rather than
                 // a grey decal followed by two unrelated effects.
                 AimBeacon = true;
+                // HERO-10 (film v7: holding it showed nothing and she just stood): her own sigil where she will land, three moths
+                // circling it (`PhaisterAimSigil`), and her tell, wrists crossed at her chest with moths crawling from her cuffs.
+                AimPoseAction = "hero-phaister-swarm-aim";
+            }
+
+            private PhaisterAimSigil _sigil;
+            private PhaisterCuffMoths _cuffs;
+            public override bool DrawsOwnAim => true;
+
+            public override void PresentAim(CharacterMotor caster, Vector3 at, float heldSeconds)
+            {
+                if (_sigil == null) _sigil = PhaisterAimSigil.Create(PhaisterAimSigil.Kind.Arrival);
+                _sigil.Show(caster, at);
+                if (_cuffs == null) _cuffs = PhaisterCuffMoths.On(caster);
+            }
+
+            public override void EndAim()
+            {
+                if (_sigil != null) _sigil.Release();
+                if (_cuffs != null) _cuffs.Release();
+                _sigil = null; _cuffs = null;
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -282,6 +303,22 @@ namespace TumbangPreso.Abilities
             {
                 AimByHolding(3.0f, VoodooRules.DollMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Ward;
+                // HERO-10 (film v7: the prick came AFTER the release, so the doll flew half a second before her arm threw): the tell
+                // is the hold, the doll up at her chin with a pin going in; the release clip is only the throw.
+                AimPoseAction = "hero-phaister-manika-aim";
+            }
+
+            private PhaisterHandDoll _doll;
+
+            public override void PresentAim(CharacterMotor caster, Vector3 at, float heldSeconds)
+            {
+                if (_doll == null) _doll = PhaisterHandDoll.Hold(caster);
+            }
+
+            public override void EndAim()
+            {
+                if (_doll != null) _doll.Let();
+                _doll = null;
             }
 
             public override bool CanActivate(AbilityContext ctx) => base.CanActivate(ctx) && !ctx.Motor.IsDefender;
@@ -358,6 +395,24 @@ namespace TumbangPreso.Abilities
                 // and how high ... put ppl on the air"*). The spot and its height travel in the commit's aim.
                 AimByHolding(3.0f, VoodooRules.HigopMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f, whereLooking: true);
                 AimInTheAir(VoodooRules.HigopMinHeight, VoodooRules.HigopMaxHeight);
+                // HERO-10 (plan 4.4; the owner must see how HIGH it will hang before he lets go): the ring on the court, a ghost of the
+                // eye at its height and a line of lights down to the court (`PhaisterAimSigil`); she looks up at it, one hand raised.
+                AimPoseAction = "hero-phaister-omen-aim";
+            }
+
+            private PhaisterAimSigil _aim;
+            public override bool DrawsOwnAim => true;
+
+            public override void PresentAim(CharacterMotor caster, Vector3 at, float heldSeconds)
+            {
+                if (_aim == null) _aim = PhaisterAimSigil.Create(PhaisterAimSigil.Kind.Omen);
+                _aim.Show(caster, at);
+            }
+
+            public override void EndAim()
+            {
+                if (_aim != null) _aim.Release();
+                _aim = null;
             }
 
             public override void Activate(AbilityContext ctx)

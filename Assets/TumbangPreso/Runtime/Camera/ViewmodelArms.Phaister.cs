@@ -20,16 +20,20 @@ namespace TumbangPreso.CameraSystem
             new Key(0.600f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
-        /// <summary>MANIKA MISCHIEF: the left hand cupped up holding the doll, the right pricks it, winds back and flicks it.</summary>
+        /// <summary>
+        /// MANIKA MISCHIEF. v2 (film v7: the prick played AFTER the release, so on her screen the doll left before any throw): key 1
+        /// is the HOLD, held for as long as she aims (`SetAimPreview`), the doll up in her left hand (`PhaisterHandDoll`, raised by
+        /// `HoldingProp`) and the right turned in to prick it; the release plays from there: the left hand draws back and flicks the
+        /// doll away overhand, the right stays where it was.
+        /// </summary>
         private static readonly Key[] ManikaPrickClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
-            new Key(0.140f, 0.200f, 0.100f, -0.100f, 0.350f, 0.100f, 0.150f),
-            new Key(0.260f, 0.350f, 0.200f, -0.200f, 0.400f, 0.100f, 0.150f),
-            new Key(0.400f, 0.700f, 0.100f, -0.150f, 0.350f, 0.050f, 0.100f),
-            new Key(0.480f, -0.700f, -0.100f, 0.200f, 0.300f, 0.000f, 0.100f, true),
-            new Key(0.660f, -0.300f, 0.000f, 0.100f, 0.250f, 0.000f, 0.080f),
-            new Key(0.900f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.050f, 0.350f, 0.200f, -0.200f, 0.400f, 0.100f, 0.150f),
+            new Key(0.100f, 0.300f, 0.150f, -0.150f, 0.750f, 0.050f, 0.100f),
+            new Key(0.160f, 0.250f, 0.100f, -0.100f, -0.600f, -0.050f, 0.100f, true),
+            new Key(0.340f, 0.100f, 0.050f, -0.050f, -0.250f, 0.000f, 0.080f),
+            new Key(0.620f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         /// <summary>SPOTLIGHT PIN: up to the hat band, the pin before her eyes, the stab, the pin held out level.</summary>

@@ -164,12 +164,12 @@ namespace TumbangPreso.CameraSystem
             { "swarm-burst", new CastPath(.10f, false,
                 Rest(0), K(.06f, -.10f, .06f, .02f, .16f, .28f, .02f), K(.10f, .34f, .12f, .10f, -.38f, .32f, .10f),
                 K(.30f, .30f, .10f, .08f, -.34f, .30f, .08f), K(.44f, .06f, .02f, .02f, -.06f, .10f, .02f), Rest(.62f)) },
-            // MANIKA MISCHIEF. The left hand comes up holding the doll close under her chin, the right dips to it and pricks
-            // it, draws back over the shoulder and flicks it overhand down the middle; the left stays up where the doll was.
-            { "manika-prick", new CastPath(.48f, false,
-                Rest(0), K(.14f, -.06f, .10f, .04f, .10f, .34f, .06f), K(.26f, -.12f, .14f, .06f, .08f, .36f, .06f),
-                K(.40f, .10f, .24f, -.10f, .08f, .30f, .04f), K(.48f, -.02f, -.06f, .32f, .08f, .28f, .04f),
-                K(.66f, -.02f, -.05f, .30f, .06f, .26f, .04f), Rest(.90f)) },
+            // MANIKA MISCHIEF. v2 (film v7): the doll is already up in her left hand while she aims (`PhaisterHandDoll` raises it
+            // through `HoldingProp`, which eases out as this plays), the right close by, pricking it. The release is the left
+            // hand's flick: back past her cheek, then out and away down the middle; the right stays near where the doll was.
+            { "manika-prick", new CastPath(.16f, false,
+                Rest(0), K(.05f, -.10f, .08f, .04f, -.02f, .04f, -.04f), K(.10f, -.10f, .06f, .04f, -.04f, .10f, -.08f),
+                K(.16f, -.08f, .04f, .06f, .06f, .02f, .30f), K(.34f, -.06f, .02f, .04f, .05f, .00f, .24f), Rest(.62f)) },
             // SPOTLIGHT PIN. The right hand goes up out of the top of the frame to her hat band, brings the pin down in front
             // of her eyes like a wand, stabs it down and forward, and holds it out level at her victim; the left opens wide.
             { "pin-stab", new CastPath(.34f, false,

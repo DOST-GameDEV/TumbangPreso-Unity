@@ -14,6 +14,7 @@ namespace TumbangPreso.Visual
     /// | Stealing (0.25 s) | on the victim: it slaps onto them and their colour drains INTO it, a swirl turning clockwise |
     /// | Returning (0.35 s) | it flies back to HER LEFT HAND on a low arc, now wearing the victim's colour |
     /// | Held (4 s, the Disoriented time) | in her left hand she turns its head slowly back and forth (third person on her body, first person in her own viewmodel hand, owner: *"show it FPP and TPP ... i want ppl to see and hher to see that shees using it"*) |
+    /// | Held, on the VICTIM's screen | v8 (plan 4.2 row 8): a doll of THEMSELVES peeks in at the lower edge of their frame in glimpses, its head being twisted in time with hers, pins in it (`VictimGlimpse`) |
     /// | Crumbling (0.5 s) | it pops its stitches and falls away as ash |
     /// | A miss | it lands, sits up, looks left and right, then crumbles |
     ///
@@ -33,8 +34,8 @@ namespace TumbangPreso.Visual
         private State _state;
         private float _stateAge;
         private int _owner;
-        private GameObject _model, _fppCopy;
-        private Transform _head, _fppHead;
+        private GameObject _model, _fppCopy, _victimCopy;
+        private Transform _head, _fppHead, _victimHead;
         private CharacterMotor _victim;
         private Vector3 _from;
         private readonly List<Transform> _trail = new List<Transform>();
@@ -111,6 +112,7 @@ namespace TumbangPreso.Visual
             Live.Remove(this);
             foreach (var p in _trail) if (p != null) Destroy(p.gameObject);
             if (_fppCopy != null) Destroy(_fppCopy);
+            if (_victimCopy != null) Destroy(_victimCopy);
             if (_arms != null) _arms.HoldingProp = false;
         }
 
@@ -128,13 +130,23 @@ namespace TumbangPreso.Visual
                 {
                     // Slapped onto the victim's chest; a clockwise swirl of their colour drains into it (the swirl is the
                     // doll turning a full turn on the spot while it pulses up to size).
+                    // ⚠️ v3 (film v8): on the victim's OWN screen the doll at their chest, pulsing to 1.35 of its flying size,
+                    // swallowed their lens: a whole frame of flat mustard. It slaps 0.45 m in front of their chest now (the side it
+                    // came from), pulses less, and on their own view shrinks away inside a metre of their eye.
                     Vector3 chest = _victim != null ? _victim.transform.position + Vector3.up * 1.0f : _from;
+                    Vector3 facing = _from - chest; facing.y = 0f;
+                    if (facing.sqrMagnitude > 0.01f) chest += facing.normalized * 0.45f;
                     float u = Mathf.Clamp01(_stateAge / StealSeconds);
                     transform.position = Vector3.Lerp(_from, chest, Mathf.Clamp01(u * 3f));
                     if (_model != null)
                     {
                         _model.transform.rotation = Quaternion.Euler(0f, -360f * u, 0f);
-                        _model.transform.localScale = Vector3.one * FlyScale * (1f + 0.35f * Mathf.Sin(u * Mathf.PI));
+                        float nearEye = 1f;
+                        var rig = FindFirstObjectByType<CameraRig>();
+                        var cam = UnityEngine.Camera.main;
+                        if (rig != null && cam != null && rig.Following == _victim)
+                            nearEye = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.5f, 1.1f, Vector3.Distance(transform.position, cam.transform.position)));
+                        _model.transform.localScale = Vector3.one * Mathf.Max(0.0001f, FlyScale * (1f + 0.2f * Mathf.Sin(u * Mathf.PI)) * nearEye);
                     }
                     if (u >= 1f) { _from = transform.position; Enter(State.Returning); }
                     break;
@@ -152,7 +164,7 @@ namespace TumbangPreso.Visual
                         _model.transform.rotation = Quaternion.Euler(0f, -360f * u, 20f * Mathf.Sin(u * 6f));
                         _model.transform.localScale = Vector3.one * Mathf.Lerp(FlyScale, HeldScale, e);
                     }
-                    if (u >= 1f) { Enter(State.Held); AttachFirstPerson(); }
+                    if (u >= 1f) { Enter(State.Held); AttachFirstPerson(); AttachVictimGlimpse(); }
                     break;
                 }
                 case State.Held:
@@ -169,6 +181,7 @@ namespace TumbangPreso.Visual
                     float u = Mathf.Clamp01(_stateAge / CrumbleSeconds);
                     Crumble(_model, u);
                     Crumble(_fppCopy, u);
+                    Crumble(_victimCopy, u);
                     if (u >= 1f) Destroy(gameObject);
                     break;
                 }
@@ -205,6 +218,53 @@ namespace TumbangPreso.Visual
             var cam = UnityEngine.Camera.main;
             if (_fppCopy != null && cam != null)
                 _fppCopy.transform.rotation = Quaternion.LookRotation(cam.transform.position - _fppCopy.transform.position, cam.transform.up);
+            VictimGlimpse(cam, twist);
+        }
+
+        /// <summary>
+        /// ⚠️ THE VICTIM'S SIDE (HERO-10, plan 4.2 row 8: "a glimpse of a doll of themselves at the edge"). On the screen of the player
+        /// the doll took, a copy of it (in THEIR colours: it is them) peeks up from the lower right corner of the frame in glimpses
+        /// (in 0.2 s, held about 0.7 s, out 0.2 s, every 1.6 s), its head turning with the twist of her thumb and jerking at each
+        /// prick. It is 0.6 m in front of their lens and drawn only by their own camera (`MainCameraOnly`).
+        /// </summary>
+        private void AttachVictimGlimpse()
+        {
+            if (_model == null || _victim == null) return;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || rig.Following != _victim) return;
+            _victimCopy = Instantiate(_model);
+            _victimCopy.name = "ManikaVictimGlimpse";
+            _victimCopy.transform.localScale = Vector3.one * 0.85f;
+            _victimHead = PhaisterProp.Find(_victimCopy, "head");
+            // A second pin, going into it as she twists it: voodoo, not a toy (film v9 read as a toy on their screen).
+            var pin = PhaisterProp.Spawn("hatpin", _victimCopy.transform, null, PhaisterProp.InsectOutlineWidth);
+            if (pin != null)
+            {
+                pin.transform.localPosition = new Vector3(0.09f, 0.20f, 0.05f);
+                pin.transform.localRotation = Quaternion.Euler(0f, 0f, 58f);
+                pin.transform.localScale = Vector3.one * 0.5f;
+            }
+            _victimCopy.AddComponent<MainCameraOnly>();
+        }
+
+        private void VictimGlimpse(UnityEngine.Camera cam, float twist)
+        {
+            if (_victimCopy == null) return;
+            if (cam == null) { _victimCopy.SetActive(false); return; }
+            float cycle = Mathf.Repeat(_stateAge, 1.6f);
+            float peek = cycle < 0.2f ? cycle / 0.2f : cycle < 0.9f ? 1f : cycle < 1.1f ? 1f - (cycle - 0.9f) / 0.2f : 0f;
+            peek = peek * peek * (3f - 2f * peek);
+            _victimCopy.SetActive(peek > 0.01f);
+            if (peek <= 0.01f) return;
+            const float Depth = 0.6f;
+            float halfH = Depth * Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad), halfW = halfH * cam.aspect;
+            var ct = cam.transform;
+            // From below the frame's lower right corner up into it, cut by the frame's edge: it is AT their screen, not on the court
+            // (film v8: at 0.55 and 0.78 across it stood like a small doll on the road).
+            Vector2 at = new Vector2(0.86f, Mathf.Lerp(-1.45f, -0.66f, peek));
+            _victimCopy.transform.position = ct.position + ct.forward * Depth + ct.right * at.x * halfW + ct.up * at.y * halfH;
+            _victimCopy.transform.rotation = Quaternion.LookRotation(ct.position - _victimCopy.transform.position, ct.up) * Quaternion.Euler(0f, 0f, -12f);
+            if (_victimHead != null) _victimHead.localRotation = Quaternion.Euler(0f, twist, 0f);
         }
 
         private static void Crumble(GameObject model, float u)

@@ -64,6 +64,16 @@ namespace TumbangPreso.Visual
         public static Transform Find(GameObject model, string name) => PaeteProp.Find(model, name);
 
         /// <summary>
+        /// ⚠️⚠️ THE COURT UNDER <paramref name="at"/>, THE SURFACE PLAYERS STAND ON (`Slipper.GroundY`, the highest thing under it that
+        /// is not a body, a slipper or the can). HERO-10 film v9: every flat mark of hers placed with `VfxShapes.GroundPoint` or
+        /// draped with `VfxShapes.DrapeToGround` was invisible on Bayan Plaza (the aim sigil's rings, the swarm's shove ring, OMEN's
+        /// ring and dim, the pin's sweep) while everything standing drew: both prefer the map's named floor groups, and the plaza's
+        /// paving stands above that floor, so a mark a few centimetres over it was under the tiles. Paete's veins hit the same thing
+        /// (`HERO_KIT_METHOD.md` section 8: flat effects sit on `Slipper.GroundY`). Her flat marks are placed on this and not draped.
+        /// </summary>
+        public static Vector3 OnCourt(Vector3 at) => new Vector3(at.x, Slipper.GroundY(at + Vector3.up * 0.5f), at.z);
+
+        /// <summary>
         /// ⚠️ FADE AN EFFECT MATERIAL BY WRITING BOTH COLOUR PROPERTIES. `Material.color` is `_Color` on one pipeline and the
         /// ghost template reads `_BaseColor` on the other, so writing only `.color` left her OMEN ring, sigils and dim stuck at
         /// the alpha 0 they were created with (HERO-10 film v3: none of them showed). `AmihanVfx` writes both for the same reason.

@@ -269,28 +269,34 @@ def build(hero, legacy=False):
 @performance
 def phaister():
     """
-    OMEN, 4.0 s (HERO-10, 2026-09-27; `docs/reports/phaister-kit-2026-09-27/plan.md` 4.4). Replaces GRAND COVEN's laugh and moon
-    serpent, both rejected (owner: *"make her a frigging witchh not a showman"*, *"give me diff proposition"* of the serpent). The
-    owner's asks for this cutscene: *"really slowly cast ... it can be seen in her that power is surging in her and clothes are
-    flying"*, *"try with shorter first like 3-5 seconds"*, and of the eye: *"glitchy and unstable as fuck when forming (make it
-    pulsate?) it starts out small and gradually gets bigger"*. Research: Seele's orbiting camera and held eye close-up, Castorice's
-    night domain and butterflies on diagonals, Hu Tao's one cheeky beat (research.md v2).
+    OMEN, 5.0 s (HERO-10 v8, 2026-09-27; `docs/reports/phaister-kit-2026-09-27/plan.md` 4.4 and `direction.md` section 3). Replaces
+    v7's 4.0 s, which ended on the eye and the maelstrom with nobody in it (the method's section 6: the ending must show what the
+    ultimate DOES to the real players) and framed her close-up with the brim over her eyes and the forming eye over her mouth.
 
-    One sentence: "The omen pours out of her, and she throws it at them." Three shots:
-      SURGE (0 to 1.45): the court goes to her night; she rises, arms opening, palms up, while black butterflies pour out of her
-        sleeves and hat and wheel round her CLOCKWISE and her robe and hair whip upward (the scene's ribbons). The camera orbits her
-        clockwise at waist height, pushing in.
-      THE EYE (1.45 to 2.55): close on her hands and face: the butterflies stream LEFT TO RIGHT into the space between her palms and
-        crush into a tiny eye that is glitchy, pulsing and growing; her face lit from below; she tips her head, smirking (her beat).
-      OMEN (2.55 to 4.0): she hurls it forward and up; it grows as it flies, snaps open into the cosmos window in the air, the impact
-        frame, the ring on the court, the maelstrom forming round it. A crane from behind her shoulder up to high, looking at it.
+    One sentence: "The omen pours out of her, she throws it, and it marks everyone it will take." The travelling thing is the
+    BUTTERFLIES, flowing left to right in every shot. Four beats:
+      SURGE (0 to 1.30): the court goes to her night and lights up in small points round her feet (Castorice's domain); she rises,
+        arms opening, while black butterflies pour out of her sleeves and hat and wheel round her CLOCKWISE, violet ribbons of
+        flame climb round her and strokes sweep round with the camera, which ORBITS HER CLOCKWISE (v7 went the other way) and
+        pushes in (Seele's whip, slowed for her composure).
+      THE EYE (1.30 to 2.40): from below her chin, so the brim frames the top and her face is whole: her eyes light (Seele's
+        glint, Castorice's streak), the butterflies stream left to right into the space between her palms, low in front of her
+        chest (v7 formed it over her mouth), and crush into a tiny glitching eye; she tips her head, smirking (her one cheeky beat).
+      THE THROW (2.40 to 3.20): she hurls it; from her right the eye streaks left to right across the frame to where she aimed and
+        lands: two frames of the picture turned inside out (the impact frame), the butterfly-shaped burst, the ring on the court.
+      THE MARK (3.20 to 5.00): the maelstrom starts to turn round the half-open eye; one black butterfly peels off to EACH real
+        player in reach and settles over their head (the omen: they are marked), and each flinches and leans against its draw;
+        one crane rises round the eye, clockwise, until every one of them is in frame with her floating at its edge.
+    The camera of THE THROW and THE MARK is computed from where she aimed and where they stand
+    (`HeroIntroductionScene.PhaisterMark.cs`); the rows below are its storyboard and its fallback.
+    Play picks up from its end: the eye still unstable over the spot, the marks already on them, the maelstrom already turning.
 
     ⚠️ THE CAST IS CHIBI: THE ARMS ARE ABOUT A HEAD LONG. Measured on the real mesh (the Grand Coven notes): hands raised overhead end
-    inside the brim and vanish from every front shot, so the eye is formed with the arms FORWARD and up, in front of the brim.
+    inside the brim and vanish from every front shot, so the eye is formed with the arms FORWARD, low, in front of the chest.
     ⚠️ THE HEAD GOES BACK ONLY 10 DEGREES: further and the wide brim turns into a flat slab toward the camera.
     """
-    p = Performance("phaister", 4.0)
-    p.voice = (2.05, "hero_phaister_ult")
+    p = Performance("phaister", 5.0)
+    p.voice = (2.12, "hero_phaister_ult")
 
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     # SURGE: arms opening out and up, palms to the sky, chin lifting, weight coming off her feet.
@@ -298,42 +304,42 @@ def phaister():
     # Risen: arms higher and wider, legs hanging loose, one swung forward (these rigs have no knees).
     risen = Pose(torso=(-8, 0, 0), head=(-10, 0, 0), left=(102, 62, 0), right=(102, 62, 0), legs=((-4, 3), (16, 3)))
     risen_b = risen.but(torso=(-7, 4, 0), left=(106, 60, 0), right=(98, 64, 0))
-    # THE EYE: hands brought FORWARD together in front of her chest, the head bowed to them (the close-up).
-    gather = Pose(torso=(6, 0, 0), head=(10, 0, 0), left=(96, 18, 20), right=(96, 18, 20), legs=((-4, 3), (14, 3)))
+    # THE EYE: hands brought FORWARD together, LOW in front of her chest, the head bowed a little to them.
+    gather = Pose(torso=(8, 0, 0), head=(6, 0, 0), left=(78, 22, 20), right=(78, 22, 20), legs=((-4, 3), (14, 3)))
     # Her beat: the head tips to one side, a smirk (her ink face does the smirk; the tilt sells it).
-    smirk = gather.but(head=(8, -12, 10))
+    smirk = gather.but(head=(4, -12, 12))
     # The wind: the joined hands lifted forward and up, the chest leaning back.
     wind = Pose(torso=(-10, 0, 0), head=(-6, 0, 0), left=(150, 20, 16), right=(150, 20, 16), legs=((-6, 3), (12, 3)))
-    # OMEN: she hurls it forward and up, both arms driving through, the chest folding over them.
+    # THE THROW: she hurls it forward and up, both arms driving through, the chest folding over them.
     hurl = Pose(torso=(16, 0, 0), head=(-2, 0, 0), left=(84, 14, 12), right=(84, 14, 12), legs=((8, 4), (-10, 4)))
-    # She hangs there watching it swallow them, arms open again, pleased with herself.
+    # She hangs there watching it mark them, arms open again, pleased with herself.
     watch = Pose(torso=(4, -6, 0), head=(-4, -8, 4), left=(58, 44, 0), right=(46, 40, 0), legs=((-2, 4), (8, 4)))
 
     p.key(0, rest)
-    p.key(.35, open_)
-    p.key(.95, risen)
-    p.key(1.30, risen_b)
-    p.key(1.55, gather)
-    p.hold(1.70, 2.05, gather)
-    p.key(2.20, smirk)
-    p.key(2.45, wind)
-    p.key(2.62, hurl, punch=True)
-    p.hold(2.62, 2.95, hurl)
-    p.key(3.35, watch)
-    p.key(4.0, watch.but(torso=(3, -8, 0)))
+    p.key(.30, open_)
+    p.key(.85, risen)
+    p.key(1.18, risen_b)
+    p.key(1.40, gather)
+    p.hold(1.52, 1.95, gather)
+    p.key(2.15, smirk)
+    p.key(2.34, wind)
+    p.key(2.47, hurl, punch=True)
+    p.hold(2.47, 2.75, hurl)
+    p.key(3.15, watch)
+    p.key(5.0, watch.but(torso=(3, -8, 0)))
 
     # The lift: up with the surge, hanging through the eye and the throw, a little down as she watches.
-    p.rise(0, 0).rise(.3, 0).rise(1.25, .52).rise(2.45, .58).rise(2.8, .50).rise(4.0, .44)
+    p.rise(0, 0).rise(.25, 0).rise(1.15, .52).rise(2.35, .58).rise(2.7, .50).rise(5.0, .44)
 
     # Shot distances are real metres (she is 2.38 m to the hat tip). Hero-local: +z in front of her.
-    # SURGE: orbit clockwise round her at waist height, pushing in (Seele's whip, slowed for her composure).
-    p.shot(0, 1.45, (-2.6, .7, 2.9), (0, 1.35, 0), 50, eye_to=(1.9, .95, 2.5), look_to=(0, 1.7, 0), fov_to=44)
-    # THE EYE: close on her hands and face, a slow pull back as the eye grows.
-    # v2 (film v5: at 1.45 m the lens was inside her brim and the eye was a blob at her chin): pulled back to see hands and face.
-    p.shot(1.45, 2.55, (.75, 1.95, 2.75), (0, 1.75, .35), 34, eye_to=(.95, 2.0, 3.15), look_to=(0, 1.8, .45), fov_to=38, close=True)
-    # OMEN: from behind her shoulder, craning up and back to see the eye open over the court in front of her.
-    # v2 (film v5: her brim filled half the frame from 1.1 m off her shoulder): wider of her hat, still over her shoulder.
-    p.shot(2.55, 4.0, (2.5, 2.5, -2.5), (0, 2.4, 3.6), 52, eye_to=(3.1, 5.4, -3.4), look_to=(0, 1.9, 4.0), fov_to=56)
+    # SURGE: orbit CLOCKWISE seen from above (her right front to her left front: the angle falls), pushing in.
+    p.shot(0, 1.30, (2.2, .75, 2.6), (0, 1.35, 0), 50, eye_to=(-1.9, 1.0, 2.3), look_to=(0, 1.7, 0), fov_to=44)
+    # THE EYE: from below her chin, a slow pull back: her whole face under the brim, the eye forming low between her palms.
+    p.shot(1.30, 2.40, (.55, 1.55, 2.45), (0, 2.05, .30), 36, eye_to=(.75, 1.62, 2.85), look_to=(0, 2.0, .40), fov_to=40, close=True)
+    # THE THROW: from her right, a little behind, so the eye crosses the frame left to right (computed from the aim in play).
+    p.shot(2.40, 3.20, (3.4, 1.8, -1.4), (0, 2.0, 3.0), 54, eye_to=(3.6, 2.0, -1.0), look_to=(0, 2.1, 4.0), fov_to=56)
+    # THE MARK: a crane round the eye, rising (computed from the aim and the players in play).
+    p.shot(3.20, 5.0, (4.2, 1.3, 1.8), (0, 1.6, 4.0), 50, eye_to=(3.2, 5.6, -2.6), look_to=(0, 1.2, 4.0), fov_to=58)
     p.locked((1.6, 1.6, 5.4), (0, 1.8, 1.0), 52)
     return p
 
