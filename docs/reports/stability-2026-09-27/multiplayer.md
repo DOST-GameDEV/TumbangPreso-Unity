@@ -665,6 +665,26 @@ Its exact implementation and qualification status are in
 [Featherfall](../amihan-kit-2026-09-27/featherfall.md). It does not establish that
 every kit works across real peers.
 
+## Body Snapshot World Scope
+
+Afterc6506327, SyncUnit includes existing GameplayActionScope in place of its bare
+movement epoch. Protocol77 adds12bytes:235byte base including Voodoo and empty aim
+state. Before this,a fresh body had no serial cursor and could accept delayed state
+from a different match/round. The receiver now rejects wrong-world snapshots before
+pose serial,epoch,status,resource or aiming mutation. Current-world newer epochs
+and shared reliable/unreliable pose serial ordering are otherwise unchanged.
+
+The changed VoodooSync receiver case passes1/1,0.2128343s on full committed base
+plus4inputs,no drift,no retry. Added checks reject earlier/later match/round and
+invalid epoch with serial100,then accept current serial1,proving rejected packets
+do not poison the cursor or apply status. Existing resource correction,reach result,
+stale serial and nonfinite-state checks remain. This case was rerun because its
+actual wire contract changed,not as an unchanged broad regression.
+Minimum free6,401,146,880bytes; named profile/preferences restored.
+[Receipt](checks/body-world-scope-native.json),[XML](checks/body-world-scope-native.xml).
+Raw Logs/body-world-scope-20260927/world-body.*. Actual peers/round transitions and
+QA-15's cause remain unqualified.
+
 ## Requested Match Clock
 
 Source at0d086f37 sent bare4byte clock values and omitted ordinary pause/speed from

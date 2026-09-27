@@ -1,11 +1,17 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`c35550fccf4b1d682f20f4beb9a07e74317626d3`; generated-avatar lifetime cleanup follows it.
+`c6506327d7fae218425c263141d8d566c64264a5`; body-snapshot world scope follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Protocol77 scopes SyncUnit body pose/status to match/round before accepting its
+serial. Existing GameplayActionScope replaces the bare epoch; movement-epoch and
+resource/status rules stay. The changed receiver case passes1/1 on full committed
+base plus4inputs,no drift. Actual peers and QA-15 remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#body-snapshot-world-scope).
 
 CharacterAnimator now owns and releases only the valid avatars it generated for
 its binding,after graph disposal,on rebind/clear/teardown. Borrowed/imported avatars

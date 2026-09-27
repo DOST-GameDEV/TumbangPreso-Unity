@@ -2436,7 +2436,11 @@ namespace TumbangPreso.Net
             using var writer = new FastBufferWriter(304, Allocator.Temp);
             unit.FlightPoseEvidence(out bool grounded, out long flightEpisode);
             writer.WriteValueSafe(slot);
-            writer.WriteValueSafe(_movementEpochs[slot]);
+            writer.WriteNetworkSerializable(new GameplayActionScope
+            {
+                Match = EnsurePresentationMatch(), Round = GameServices.Match?.RoundNumber ?? 0,
+                Epoch = _movementEpochs[slot],
+            });
             writer.WriteValueSafe(++_unitPoseSerial[slot]);
             writer.WriteValueSafe(pos);
             writer.WriteValueSafe(yaw);
@@ -2497,10 +2501,15 @@ namespace TumbangPreso.Net
             // Netcode invokes the handler locally for the listen host, so every broadcast the
             // host sent was also applied ON the host, a second time, over authoritative state it
             // had just produced. See § THE LOOPBACK.
-            if (NetAuthority.IsHost || !reader.TryBeginRead(196 + VoodooBodySnapshot.WireBytes)) return;
+            if (NetAuthority.IsHost || !reader.TryBeginRead(208 + VoodooBodySnapshot.WireBytes)) return;
 
             reader.ReadValueSafe(out int slot);
-            reader.ReadValueSafe(out int epoch);
+            reader.ReadNetworkSerializable(out GameplayActionScope scope);
+            // Pose serials order deliveries, but a fresh body has no previous
+            // cursor. Reject another world's status before advancing that cursor.
+            if (!ValidSlot(slot) || !scope.IsValid || scope.Match != PresentationMatchId ||
+                scope.Round != (GameServices.Match?.RoundNumber ?? -1)) return;
+            int epoch = scope.Epoch;
             reader.ReadValueSafe(out ulong poseSerial);
             reader.ReadValueSafe(out Vector3 pos);
             reader.ReadValueSafe(out float yaw);

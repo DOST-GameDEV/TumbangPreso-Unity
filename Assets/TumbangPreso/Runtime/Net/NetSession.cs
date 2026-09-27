@@ -510,7 +510,9 @@ namespace TumbangPreso.Net
         // movement. Older bodies leave these replicated curses inert or stuck.
         // 76: requested match rate carries scope/sequence and joins world recovery;
         // transient hitstop is not a replicated pause or spectator speed.
-        public const int ProtocolVersion = 76;
+        // 77: body pose/status snapshots carry match/round as well as movement
+        // epoch, so delayed previous-world state cannot seed a fresh body.
+        public const int ProtocolVersion = 77;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

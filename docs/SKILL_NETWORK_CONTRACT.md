@@ -139,6 +139,13 @@ clocks and clear expired recovery suppression,but only the host resolves a waiti
 mark/reach into gameplay. One new native received-state/authority check passes;
 the actual peer/doll-entity contract is still separate from body-state transport.
 
+Protocol77 adds match/round to SyncUnit by replacing its bare movement epoch with
+GameplayActionScope. Reject another world's packet before advancing the body pose
+serial or applying status/resources. A fresh body's empty cursor is not permission
+to accept an old round. Base payload is235bytes with Voodoo and the empty aim tail;
+longer aim IDs retain their existing bounded encoding. Reliable handovers and normal
+poses still share the serial,and current-world newer movement epochs still install.
+
 Persistent status pictures belong to a body-owned presenter reading replicated
 status,not exclusively inside a host-only victim loop. StatusBodyMarks and
 PhaisterStatusPresenter are current examples. Joining peers need no replayed hit.

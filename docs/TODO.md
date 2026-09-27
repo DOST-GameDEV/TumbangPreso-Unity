@@ -89,6 +89,9 @@ protocol literal or old test count.
 Requested pause/speed now recovers after world state with match/round/sequence
 gates (protocol76),excluding local hitstop. Three new native clock cases pass on
 the full committed base plus10inputs,no drift. Actual peers and QA-15 remain OPEN.
+Body pose/status snapshots now carry match/round as well as movement epoch
+(protocol77),rejecting old-world state before fresh-body cursor mutation. The
+changed native receiver case passes; actual peer/round-transition acceptance remains OPEN.
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.

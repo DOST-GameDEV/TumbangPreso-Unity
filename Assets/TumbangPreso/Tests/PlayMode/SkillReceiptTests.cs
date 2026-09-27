@@ -375,14 +375,18 @@ namespace TumbangPreso.PlayTests
             GameServices.Ensure(); GameServices.Round.Register(body);
             var root = new GameObject("Voodoo body receiver"); root.SetActive(false);
             var receiver = root.AddComponent<MatchRpc>();
+            typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(receiver, 123L);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
             const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
             var receive = typeof(MatchRpc).GetMethod("OnSyncUnitMsg", flags);
             var state = new VoodooBodySnapshot { Drained = 2, Hexed = 3, MarkKind = 2, MarkSource = 0,
                 MarkAge = 12, ReachKind = 1, ReachTarget = 2, ReachElapsed = 1 };
-            void Deliver(ulong serial, VoodooBodySnapshot data)
+            void Deliver(ulong serial, VoodooBodySnapshot data, long match = 123, int round = 1, int epoch = 0)
             {
                 using var writer = new FastBufferWriter(304, Allocator.Temp);
-                writer.WriteValueSafe(1); writer.WriteValueSafe(0); writer.WriteValueSafe(serial);
+                writer.WriteValueSafe(1);
+                writer.WriteNetworkSerializable(new GameplayActionScope { Match = match, Round = round, Epoch = epoch });
+                writer.WriteValueSafe(serial);
                 writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0f); writer.WriteValueSafe(Vector3.zero);
                 writer.WriteValueSafe(true);
                 writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe((int)StunElement.None);
@@ -397,10 +401,18 @@ namespace TumbangPreso.PlayTests
                 writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
                 writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0L);
                 writer.WriteNetworkSerializable(data); writer.WriteNetworkSerializable(default(AbilityAimSnapshot));
-                Assert.AreEqual(196 + VoodooBodySnapshot.WireBytes, writer.Length);
+                Assert.AreEqual(208 + VoodooBodySnapshot.WireBytes, writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 receive.Invoke(receiver, new object[] { NetworkManager.ServerClientId, reader });
             }
+            Deliver(100, state, match: 122);
+            Deliver(100, state, match: 124);
+            Deliver(100, state, round: 0);
+            Deliver(100, state, round: 2);
+            Deliver(100, state, epoch: -1);
+            Assert.IsFalse(body.IsDrained); Assert.IsFalse(body.IsHexed);
+            Assert.IsFalse(body.IsVoodooReaching);
+            Assert.AreEqual(0, body.MovementEpoch);
             Deliver(1, state);
             Assert.IsTrue(body.IsDrained); Assert.IsTrue(body.IsHexed);
             Assert.IsTrue(body.Stamina.RecoveryBlocked);
