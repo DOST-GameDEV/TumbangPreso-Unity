@@ -106,6 +106,64 @@ namespace TumbangPreso.PlayTests
         }
 
         [Test]
+        public void SharedSourceMaterialKeepsBaseAndOverlayVariantsSeparateAndReusable()
+        {
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            var renderer = go.GetComponent<Renderer>();
+            var source = new Material(renderer.sharedMaterial);
+            Material body = null, overlay = null;
+            try
+            {
+                renderer.sharedMaterials = new[] { source, source };
+                Visual.ToonSkin.Apply(renderer, Visual.ToonSkin.PropOutlineWidth);
+                var dressed = renderer.sharedMaterials; body = dressed[0]; overlay = dressed[1];
+                Assert.AreNotSame(body, overlay, "Surface role was omitted from the material cache key.");
+                Assert.Greater(body.GetFloat("_OutlineWidth"), 0);
+                Assert.AreEqual(0, overlay.GetFloat("_OutlineWidth"));
+                Assert.AreEqual(-1, overlay.GetFloat("_ZOffsetFactor"));
+                Assert.AreEqual(-1, overlay.GetFloat("_ZOffsetUnits"));
+                Assert.AreEqual(body.GetColor("_Color"), overlay.GetColor("_Color"));
+                Assert.AreSame(body.GetTexture("_MainTex"), overlay.GetTexture("_MainTex"));
+                Visual.ToonSkin.Apply(renderer, Visual.ToonSkin.PropOutlineWidth);
+                CollectionAssert.AreEqual(dressed, renderer.sharedMaterials, "Reapplying allocated another variant.");
+                renderer.sharedMaterials = new[] { overlay, body };
+                Visual.ToonSkin.Apply(renderer, Visual.ToonSkin.PropOutlineWidth);
+                CollectionAssert.AreEqual(dressed, renderer.sharedMaterials, "Variant origin/role did not survive slot reassignment.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(go);
+                if (body != null) Object.DestroyImmediate(body);
+                if (overlay != null && overlay != body) Object.DestroyImmediate(overlay);
+                Object.DestroyImmediate(source);
+            }
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator MapPreviewResizeDestroysTheOldTargetAndRebindsItsSurface()
+        {
+            var go = new GameObject("Preview target ownership", typeof(RectTransform), typeof(RawImage));
+            var preview = go.AddComponent<MapPreviewSurface>(); preview.enabled = false;
+            var image = go.GetComponent<RawImage>();
+            var old = new RenderTexture(32, 32, 16); old.Create(); image.texture = old;
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            typeof(MapPreviewSurface).GetField("_target", flags).SetValue(preview, old);
+            var ensure = typeof(MapPreviewSurface).GetMethod("EnsureCamera", flags);
+            try
+            {
+                ensure.Invoke(preview, null);
+                var current = preview.Camera.targetTexture;
+                Assert.AreNotSame(old, current); Assert.IsTrue(current.IsCreated());
+                Assert.AreSame(current, image.texture, "The UI still points at the retired target.");
+                ensure.Invoke(preview, null);
+                Assert.AreSame(current, preview.Camera.targetTexture, "An unchanged size allocated again.");
+                yield return null;
+                Assert.IsTrue(old == null, "Release freed pixels but leaked the old RenderTexture object.");
+            }
+            finally { Object.Destroy(go); if (old != null) Object.Destroy(old); }
+        }
+
+        [Test]
         public void OutlineCacheRejectsForeignIdentityAndDoesNotCacheUnfinishedMeshes()
         {
             var first = new Mesh(); var second = new Mesh();

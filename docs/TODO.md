@@ -123,6 +123,9 @@ wait for real UI initialization/layout. Hub preview preparation adopts the same
 owner; the loading canvas now blocks pointer input. New native title/hub handoff
 case passes after one test-frame timing correction. Other destinations/failure
 journeys and player performance remain OPEN; no blanket hitch-free claim.
+Preview cache ownership fixes now keep base/overlay material variants separate and
+destroy/rebind resized map-preview targets. Two new focused native cases pass;
+authored assets and shading values are unchanged. Player memory/FPS remains OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

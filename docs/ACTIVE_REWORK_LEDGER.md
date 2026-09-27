@@ -1,11 +1,16 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`2feb1d4d` plus incoming `923fe634`; menu loading and Voodoo body wiring are integrated.
+`5a50452f261b03ea9faa1b056ec4d69efa0d6c7f`; preview cache ownership follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+ToonSkin now caches base/overlay material roles separately. Map-preview resized
+targets are destroyed/rebound and detached at teardown. Two new native cases pass
+on240inputs with no drift; no art/shading-value change or repeated old tests.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#preview-cache-ownership).
 
 Incoming doll v20/art and Voodoo tick/reset/cleanse/passive-speed/HUD wiring are
 preserved. New native received-clock/authority case passes1/1 on239inputs,no drift:

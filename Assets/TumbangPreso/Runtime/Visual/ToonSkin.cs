@@ -255,14 +255,14 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// One toon material per (source material, quantised outline width). A cast of four in
+        /// One toon material per source, quantised width/palette and base/overlay role. A cast of four in
         /// two rounds costs a handful of materials rather than one per renderer per respawn.
         ///
         /// ⚠️ QUANTISED, or floating-point noise in the measured scale makes every instance its
         /// own key and the cache never hits.
         /// </summary>
-        private static readonly Dictionary<(Material, int), Material> Cache =
-            new Dictionary<(Material, int), Material>();
+        private static readonly Dictionary<(Material, int, bool), Material> Cache =
+            new Dictionary<(Material, int, bool), Material>();
 
         /// <summary>
         /// Which source material each cached variant was derived FROM, so `Apply` is idempotent.
@@ -451,7 +451,8 @@ namespace TumbangPreso.Visual
         private static Material Variant(Material source, int key, float modelWidth, Color[] palette,
                                         int slot = 0)
         {
-            if (Cache.TryGetValue((source, key), out var cached) && cached != null) return cached;
+            bool overlay = slot > 0;
+            if (Cache.TryGetValue((source, key, overlay), out var cached) && cached != null) return cached;
 
             bool transparent = source != null && source.renderQueue >= 2450;
 
@@ -551,7 +552,7 @@ namespace TumbangPreso.Visual
             // ⚠️ SLOT 0 IS THE ONLY THING THAT NEEDS AN OUTLINE. It is the base surface and it
             // carries the silhouette for the whole prop; every later slot is detail sitting on
             // top of a shape that is already outlined. Nothing loses an edge here.
-            if (slot > 0)
+            if (overlay)
             {
                 material.SetFloat(OutlineWidthId, 0.0f);
 
@@ -577,7 +578,7 @@ namespace TumbangPreso.Visual
                 material.SetFloat(ZOffsetUnitsId, -1.0f);
             }
 
-            Cache[(source, key)] = material;
+            Cache[(source, key, overlay)] = material;
 
             // See `Origin`. Recorded so the next `Apply` on a renderer wearing this can find its
             // way back to `source` instead of treating this as a new source of its own.

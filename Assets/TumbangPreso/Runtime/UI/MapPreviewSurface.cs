@@ -1148,6 +1148,7 @@ namespace TumbangPreso.UI
                 // reports precisely.
                 if (_camera != null) _camera.targetTexture = null;
                 _target.Release();
+                if (Application.isPlaying) Destroy(_target); else DestroyImmediate(_target);
                 _target = null;
             }
 
@@ -1189,6 +1190,7 @@ namespace TumbangPreso.UI
 
             _camera.fieldOfView = _lobbyShot ? LobbyFieldOfView : FieldOfView;
             _camera.targetTexture = _target;
+            if (_surface != null) _surface.texture = _target;
             _camera.clearFlags = CameraClearFlags.Skybox;
             _camera.depth = -10;
 
@@ -1301,7 +1303,8 @@ namespace TumbangPreso.UI
             _looks.Clear();
             EndPreviewLoad();_busy=false;
             if(_transitionOwner==this)_transitionOwner=null;
-            if (_camera != null) Destroy(_camera.gameObject);
+            if (_camera != null) { _camera.targetTexture = null; Destroy(_camera.gameObject); }
+            if (_surface != null) _surface.texture = null;
 
             if (_target == null) return;
 

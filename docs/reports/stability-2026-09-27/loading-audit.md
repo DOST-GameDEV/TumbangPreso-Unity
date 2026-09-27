@@ -5,6 +5,22 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Preview Cache Ownership
+
+After `5a50452f`, ToonSkin keys its existing base/overlay distinction explicitly.
+The old cache ignored slot role despite overlays needing zero outline and depth
+bias,so one source material shared across slots could inherit whichever role was
+cached first. Reassignment/reapplication now reuse the correct existing variants;
+palette,texture and shading values are unchanged.
+
+MapPreviewSurface now destroys a resized-out RenderTexture after releasing it,
+rebinds both camera and RawImage to the replacement,and detaches both at teardown.
+Previously EnsureCamera callers outside Swap could leave the UI on the old target.
+Two NEW native cases pass2/2 in0.2274302s on240 frozen inputs,no drift. They check
+material role/properties/reuse and native target destruction/rebinding,not new art
+approval or player FPS. Minimum free6,567,550,976bytes; profile/preferences restored.
+[Receipt](checks/preview-cache-native.json),[XML](checks/preview-cache-native.xml).
+
 ## Converted Menu Transitions
 
 After `57db8dad`, SceneFlow routes the known converted menu scenes through an
