@@ -539,7 +539,9 @@ namespace TumbangPreso.UI
             // "both maps" and warmed Eskinita and Bayan Plaza only, which was every map when it was
             // written; Ilalim ng Tulay, Sa Bubong and the Lagoon then loaded cold on PLAY. Owner,
             // 2026-09-27: every shader and every asset loads behind the loading screen.
-            yield return WarmMapAssets();
+            // The hub now retains the actual prepared preview scenes behind its own
+            // loading barrier. Loading/unloading them here first repeats scene setup.
+            if (!ConvertedMatchSetup.HubEnabled) yield return WarmMapAssets();
 
             // 9. The hero ability layer.
             //

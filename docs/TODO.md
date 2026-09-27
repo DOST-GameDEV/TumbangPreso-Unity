@@ -17,8 +17,8 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
-Current owner order after DOCS-0927: shared network/flow correctness,then actual
-loading/optimization,then remaining applicable QA/TODO requirements. Newer task
+Current owner order after DOCS-0927: actual loading/optimization,then shared
+network/flow correctness,then remaining applicable QA/TODO requirements. Newer task
 scope and contributor reservations override older dated order below. Work alone;
 preserve incoming reworks; no repeated validation/film loops for minor changes.
 
@@ -108,8 +108,11 @@ retained before playback. Native sample-state/no-playback check passes; music an
 import quality are unchanged. Player first-use timings remain OPEN.
 Roster outline preparation now runs in yielded boot turns and survives scene loads
 for retained live meshes. Two focused native cache/geometry cases pass; player
-timings remain OPEN. The latest custom-map switching lag report is being addressed
-at the menu loading/preview lifecycle,not assumed solved by asset preloading.
+timings remain OPEN. Custom-map switching now prebuilds/renders the actual preview
+scenes behind hub loading and reuses scene/look instances. One real-hub native case
+passes: all five maps cycle twice with zero loads and0.090-8.241ms Editor selection
+calls. Initial preparation was38.52s; player frame/memory/build and total-load-time
+qualification remain OPEN. [Evidence](reports/stability-2026-09-27/loading-audit.md#custom-preview-loading).
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

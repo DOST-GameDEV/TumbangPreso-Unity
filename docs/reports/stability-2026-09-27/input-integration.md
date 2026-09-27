@@ -74,3 +74,11 @@ API. All8 paths are preserved unchanged, the new script GUID is valid, and Runti
 Editor compile against the unchanged latest Core. Frozen layer:204 paths.
 No prior tests or films were repeated. Snapshot/tick/reset integration remains open.
 [Body integration receipt](checks/voodoo-body-integration.json).
+
+Incoming `6334cd75` through `5f1300fe` supplies the author's v11-v19 doll/source,
+cloth options,owner reference,glow/spill shaders and runtime material helper.
+All18 incoming paths are preserved byte-for-byte; the new shader metadata GUID
+is valid. Runtime and Editor compile on220 frozen inputs alongside custom-preview
+loading. No network contract changed,old cases/films were not rerun,and no shader
+or art approval is inferred from compilation. Source art/reference options were
+not treated as disposable review captures. [Receipt](checks/doll-v19-integration.json).
