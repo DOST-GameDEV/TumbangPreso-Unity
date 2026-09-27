@@ -1148,6 +1148,29 @@ Supersedes REFINE-2.6 for this map.
   NEXT step). Kit DONE (`tools/lagoon_prop_seabed.py`, `7f3e94b7`). Placement WRITTEN, never run:
   `reefs()` in `tools/lagoon_props_place.py`. Remaining: rebuild the cove, export, rebuild in Unity,
   look in play (see the guide's CURRENT STATE, In flight item 1).
+- [ ] LAGOON-1.3 THE TAGGED CUTSCENE IGNORES THE MAP'S LOOK (owner, 2026-09-27, screenshot of
+  "CAUGHT BY P1" on the cove: *"tagged cutscreen doesn't use the shader-based lighting, it uses the
+  lighting ud see in the editor"*). The catch cutscene renders with the scene's editor lighting and
+  ambient instead of the `WorldLookProfile` sunset that `WorldLookPresentation` installs for the
+  match (the court reads flat and brown, no warm key). Done: the cutscene camera and its lights
+  inherit the match's installed look on every map, checked by a side-by-side of gameplay and the
+  catch shot on the cove and one shipped map.
+- [ ] LAGOON-1.4 BIRDS AND FISH AS BOIDS (owner, 2026-09-27: *"add birds and fish (via boids)"*).
+  Flocks of chunky, style-matched birds over the cove and schools of fish over the reefs, steered
+  by separation, alignment and cohesion, kept inside their volumes (sky band, water between the
+  seabed and 0.3 m under the surface), avoiding the court. Cosmetic and local only: never on the
+  wire, never touching gameplay. Frame cost measured with `FrameRateHistogram` before and after.
+- [ ] LAGOON-1.5 AMBIENT WAVES, WIND AND BIRDS SOUND (owner, 2026-09-27: *"environmental sounds, so
+  being near/facing the water you hear more waves, same with wind when facing/nearer into the
+  land"*). Looping beds whose volume follows the listener: waves by distance to the coast line and
+  how much the camera faces the sea, wind by facing and depth into the land, birds tied to the
+  flocks of LAGOON-1.4. Through the existing audio mixer and volume settings; provisional until the
+  owner hears them in play (CLAUDE.md section 6).
+- [ ] LAGOON-1.6 SHIP LAGOON COVE AND KANTO INTO THE MAP POOL (owner, 2026-09-27: *"ship lagoon and
+  kanto into the main map pool/list"*). Register both in `SceneFlow.Maps`, `GameLaunch`,
+  `MapGeometryCheck.Gated` and build settings, with map-select art; run `Checks.RunAll`, the
+  EditMode suite and the PlayMode gate; decide with the owner whether Lagoon Cove replaces the
+  shipped `Lagoon.unity` or sits beside it.
 
 ### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
 

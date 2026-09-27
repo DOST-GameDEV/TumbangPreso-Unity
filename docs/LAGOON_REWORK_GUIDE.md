@@ -67,15 +67,20 @@ alternatives, `landmark_court_v4.png`); cooler rock tint (asked, no answer: rock
   sea z +24, sides x +-16. See `docs/TODO.md` LAGOON-1.1: CODE DONE, TEST GATE NOT RUN.
 
 **In flight / next (in this order):**
-1. **CORALS (the owner's next step).** Kit done and committed (`tools/lagoon_prop_seabed.py`, psb:
-   brain, branch, fan, table corals, sea grass, urchin/starfish stones; `psb_lineup_v5.png`).
-   Placement is WRITTEN but never run: `reefs()` in `tools/lagoon_props_place.py` (34 reef patches of
-   3 to 6 corals 1.5 to 6.5 m deep, fans facing the court; 12 sea-grass meadows 1.2 to 3 m deep, one
-   current). To land it: rebuild the cove (step 1), check the `[lagoon-props] seabed pieces:` count
-   and render the seabed through the water, export (step 2), rebuild in Unity (step 3), look in play.
-   The kit's colours are greyscale drawings multiplied by a reef colour on the material; check the
-   exporter carries that tint (otherwise every coral goes white-grey), and sea grass needs the
-   two-sided foliage shader.
+1. **CORALS (the owner's next step), IN PROGRESS 2026-09-27.** First run of `reefs()` placed ONE
+   piece: the 1.5 to 6.5 m band lies wholly on the 22.8 degree drop-off past the 8 m shelf, over the
+   16 degree hug limit (1159 "slope" refusals), and anchors out to 55 m sat on the 7.2 m floor (1221
+   "depth"). Fixed: seabed pieces take slopes to 30 degrees and lean only 40 per cent into them,
+   sinking by the gap; anchors sit 10 to 20 m off the coast. **Owner, seeing it: *"corals need to
+   be larger, more organic/creative in shape and more dense. the seabed is empty rn"*.** So:
+   (a) the kit is being reworked bigger and more organic, with new kinds: `reef_head` (a whole
+   colony on a stone mound, 4 to 7 m), `tube_sponge`, `soft_coral`, `giant_clam`, `anemone`;
+   (b) the open floor rises into soft REEF MOUNDS (`author_lagoon_cove.reef_floor`, crowns 2.4 m
+   under the surface, 16 m clear of the coast so the shore profile is unchanged), because at 7.2 m
+   the water's deep colour hides anything; (c) `mound_reefs()` rings a reef head per colony with 5
+   to 10 pieces, and the shore band is 90 patches plus 24 meadows. The exporter carries the reef tint
+   (MULTIPLY on the material colour) and sea grass classifies as two-sided foliage (its card
+   material nudges hue).
 2. **AO flicker (game-wide, not the cove):** the occlusion vanished for 0.5 to 1.5 s at round starts.
    Root cause found and the fix COMMITTED, not yet confirmed by the owner in play (see
    `docs/TODO.md` LIGHT-3.6): `VfxMaterial.ConfigureBuiltInFade` faded Standard hero effects without
@@ -87,6 +92,10 @@ alternatives, `landmark_court_v4.png`); cooler rock tint (asked, no answer: rock
    `py -3 tools/playmode_suite.py --gate`, assert on the XML totals, then tick LAGOON-1.1.
 4. The owner's picks (timber/bamboo/tin, emblem, rock tint); meshes carry no tangents (the exporter
    should write them).
+5. **Owner's next steps after the reefs (2026-09-27), in the owner's order; bodies in `docs/TODO.md`:**
+   the catch cutscene lit by the editor lighting instead of the match look (LAGOON-1.3); birds and
+   fish as boids (LAGOON-1.4); ambient waves, wind and birds that swell with facing and distance
+   (LAGOON-1.5); Lagoon Cove and Kanto into the main map pool (LAGOON-1.6).
 
 **Loose files, deliberately uncommitted:** `Tests/PlayMode/LagoonCoveInGameShots.cs` (an in-game
 capture that HUNG for hours in batch at the scene load; do not run it unattended; fix or delete);

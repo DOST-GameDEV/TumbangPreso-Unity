@@ -58,6 +58,8 @@ KIT_OF = {
     "woven_mat": "lagoon_prop_textile", "hanging_net": "lagoon_prop_textile", "laundry_line": "lagoon_prop_textile",
     "brain_coral": "lagoon_prop_seabed", "branch_coral": "lagoon_prop_seabed", "fan_coral": "lagoon_prop_seabed",
     "table_coral": "lagoon_prop_seabed", "sea_grass": "lagoon_prop_seabed", "urchin_rock": "lagoon_prop_seabed",
+    "reef_head": "lagoon_prop_seabed", "tube_sponge": "lagoon_prop_seabed", "soft_coral": "lagoon_prop_seabed",
+    "giant_clam": "lagoon_prop_seabed", "anemone": "lagoon_prop_seabed",
 }
 # Seeds that give a GROUND variant, per kind (odd/even variants differ in some kits: an even
 # hanging_net is a wall net, an odd sign_hanging a wall sign; those are mounted, not listed here).
@@ -70,7 +72,8 @@ GROUND_SEEDS = {
     "oar_pair": (1, 2, 3, 4), "driftwood": (1, 2, 3, 4), "anchor_stone": (1, 2), "firewood": (1, 2, 3),
     "woven_mat": (1, 2, 3), "hanging_net": (1, 3), "laundry_line": (1, 2, 3),
     "brain_coral": (1, 2, 3), "branch_coral": (1, 2, 3), "fan_coral": (1, 2, 3), "table_coral": (1, 2, 3),
-    "sea_grass": (1, 2, 3), "urchin_rock": (1, 2, 3),
+    "sea_grass": (1, 2, 3), "urchin_rock": (1, 2, 3), "reef_head": (1, 2, 3), "tube_sponge": (1, 2, 3),
+    "soft_coral": (1, 2, 3), "giant_clam": (1, 2, 3), "anemone": (1, 2, 3),
 }
 SARI_SARI_SIGN = 11          # the village kit's wall-bracket sari-sari sign (its notes: on a side wall)
 # ⚠️ OWNER, 2026-09-27: "the baskets you put got clipped into the ground". v53 set every prop at the
@@ -84,10 +87,23 @@ SARI_SARI_SIGN = 11          # the village kit's wall-bracket sari-sari sign (it
 #     5 cm anyway).
 # Heights come from the GROUND MESH by ray cast, not from the height function it was built from:
 # the mesh is a triangulation of that function and differs from it by a few cm between vertices.
-HUG = {"brain_coral", "branch_coral", "fan_coral", "table_coral", "sea_grass", "urchin_rock", "basket", "woven_mat", "net_spread", "net_pile", "rope_coil", "driftwood", "anchor_stone", "bubo",
+HUG = {"brain_coral", "branch_coral", "fan_coral", "table_coral", "sea_grass", "urchin_rock", "reef_head",
+       "tube_sponge", "soft_coral", "giant_clam", "anemone", "basket", "woven_mat", "net_spread", "net_pile", "rope_coil", "driftwood", "anchor_stone", "bubo",
        "oar_pair", "firewood", "banga", "pot_cluster"}
 HUG_MAX_SLOPE = 16.0         # degrees
 HUG_BUMP = 0.04              # metres off the fitted plane
+# ⚠️ The reef band (1.5 to 6.5 m deep) lies wholly on the 0.42 m per m drop-off past the 8 m shelf,
+# 22.8 degrees: at the land limit of 16 the first reef run placed 1 piece (1159 "slope" refusals).
+# Seabed pieces take the drop-off and lean part of the way into it.
+SEABED_MAX_SLOPE = 30.0
+SEABED_LEAN = 0.4
+SEABED_BUMP = 0.08           # metres off the fitted plane per metre of footprint radius
+# ⚠️ Seen from the court 20 to 40 m away, the first seabed kit (half-metre pieces) read as specks
+# (reef_plan_dry_v2). It was placed up-scaled for one pass, then the kit itself was rebuilt at its
+# final size (psb_lineup_v13), so every kind places at 1. The table stays as the knob for a kind
+# that ever needs it; footprints and heights scale with it in box_of.
+PLACE_SCALE = {}
+SEABED_HEADROOM = 0.6          # metres of water kept over the top of every seabed piece
 UPRIGHT_FALL = 0.05          # metres of ground fall allowed under an upright prop
 # Pieces standing on LEGS sink an uphill leg rather than a whole side, so they take more fall (v8 of
 # the placement test: with 5 cm no fish rack found a spot on the beach at all).
@@ -134,7 +150,13 @@ def source(kind, seed):
 
 def box_of(kind, seed):
     """The prop's local footprint (x0, y0, x1, y1) and height, from its root's prop_box when the
-    kit wrote one, else from its meshes' bounds."""
+    kit wrote one, else from its meshes' bounds; times the kind's PLACE_SCALE."""
+    (x0, y0, x1, y1), h = _box_of(kind, seed)
+    k = PLACE_SCALE.get(kind, 1.0)
+    return (x0 * k, y0 * k, x1 * k, y1 * k), h * k
+
+
+def _box_of(kind, seed):
     col, root = source(kind, seed)
     if "prop_box" in root.keys():
         b = list(root["prop_box"])
@@ -165,7 +187,7 @@ def duplicate(c, kind, seed, x, y, z, rz, normal=None):
     new_root = copies[root]
     tilt = Matrix.Identity(4) if normal is None else \
         Vector((0, 0, 1)).rotation_difference(normal).to_matrix().to_4x4()
-    new_root.matrix_world = Matrix.Translation((x, y, z)) @ tilt @ Matrix.Rotation(rz, 4, "Z") @ root.matrix_world
+    new_root.matrix_world = Matrix.Translation((x, y, z)) @ tilt @ Matrix.Rotation(rz, 4, "Z") @         Matrix.Scale(PLACE_SCALE.get(kind, 1.0), 4) @ root.matrix_world
     return new_root
 
 
@@ -276,11 +298,25 @@ class Placer:
                 a_, b_, c_ = M.inverted() @ rhs
             except ValueError:
                 return refuse("plane")
-            if math.degrees(math.atan(math.hypot(b_, c_))) > HUG_MAX_SLOPE:
+            slope = math.degrees(math.atan(math.hypot(b_, c_)))
+            if slope > (SEABED_MAX_SLOPE if seabed is not None else HUG_MAX_SLOPE):
                 return refuse("slope")
-            if max(abs(z - (a_ + b_ * u + c_ * v)) for u, v, z in zip(dx, dy, gz)) > HUG_BUMP:
+            off = [z - (a_ + b_ * u + c_ * v) for u, v, z in zip(dx, dy, gz)]
+            # ⚠️ Seabed pieces are metres across on mound terrain (a reef head is 5 to 7 m): the
+            # land's 4 cm limit refused 1913 spots and let 14 of 90 reef heads land. Their bases are
+            # lumpy stone, so they take SEABED_BUMP per metre of radius and sink by the deepest dip.
+            bump = max(HUG_BUMP, SEABED_BUMP * radius) if seabed is not None else HUG_BUMP
+            if max(abs(o) for o in off) > bump:
                 return refuse("bumpy")
             z0, normal = a_, Vector((-b_, -c_, 1.0)).normalized()
+            if seabed is not None:
+                z0 += min(0.0, min(off))
+                # ⚠️ A coral on the drop-off grows UP, not square to the slope: it leans only
+                # SEABED_LEAN of the way over, and sinks by the gap its downhill rim would
+                # otherwise float over (radius x tan of the untaken tilt).
+                normal = Vector((0, 0, 1)).lerp(normal, SEABED_LEAN).normalized()
+                rest = math.radians(slope) - math.acos(max(-1.0, min(1.0, normal.z)))
+                z0 -= radius * math.tan(max(0.0, rest))
         else:
             if max(gz) - min(gz) > (LEGGED_FALL if kind in LEGGED else UPRIGHT_FALL):
                 return refuse("tilt")
@@ -302,6 +338,8 @@ class Placer:
                 return refuse("blocked by " + obj.name.split(".")[0][:18])   # a stone, a house, a boat
         if seabed is not None and not (seabed[0] <= C.WATER - z0 <= seabed[1]):
             return refuse("depth")
+        if seabed is not None and z0 + box_of(kind, seed)[1] > C.WATER - SEABED_HEADROOM:
+            return refuse("breaks the surface")
         return z0, normal
 
     def deck_z(self, kind, seed, x, y, rz, top):
@@ -655,15 +693,15 @@ def court_ring(P, rng):
             cluster_piece(P, rng, kind, anchor, face=(0, 1), r1=2.2, allow_court=True)
 
 
-def reefs(P, rng, patches=34, meadows=12):
+def reefs(P, rng, patches=90, meadows=24):
     """⚠️ CORALS AND SEA GRASS ON THE SEABED (owner, 2026-09-27: "it lacks corals and plants", with
     the seabed deepened to -9 m the same day). Patches, not a carpet: a reef reads as islands of
     colour on sand, and the sand between them is what shows the water's depth colour.
-      * REEF PATCHES of 3 to 6 corals (brain, branch, table, fan, an urchin stone) from 1.5 to
-        6.5 m deep, packed within 2.2 m of their anchor. Fans turn their broad face toward the
+      * REEF PATCHES (90) of 4 to 8 corals (brain, branch, table, fan, an urchin stone) from 1.5 to
+        6.5 m deep, packed within 3.6 m of their anchor, at PLACE_SCALE. Fans turn their broad face toward the
         court (the kit: edge-on they vanish), and nothing stands closer than 1.5 m below the
         surface, so a fan's top never breaks it.
-      * SEA-GRASS MEADOWS of 4 to 8 clumps in the shallower band, 1.2 to 3 m deep, all leaning with
+      * SEA-GRASS MEADOWS (24) of 6 to 12 clumps in the shallower band, 1.2 to 3 m deep, all leaning with
         one current (each seed carries its own current angle, so the roots are turned to line it
         up across the meadow).
     Anchors are drawn over the water within 55 m of the coast, clear of walks, piers, piles and
@@ -675,8 +713,6 @@ def reefs(P, rng, patches=34, meadows=12):
 
     def anchor(d0, d1):
         for _ in range(40):
-            ax, ay = C.COAST_LINE[rng.randrange(n)]
-            bx, by = C.COAST_LINE[(rng.randrange(n))]
             # A point off the coast: step out along the local outward normal.
             i = rng.randrange(n)
             ax, ay = C.COAST_LINE[i]
@@ -694,16 +730,16 @@ def reefs(P, rng, patches=34, meadows=12):
 
     placed = 0
     for _ in range(patches):
-        a = anchor(9, 55)
+        a = anchor(10, 20)   # depth 1.5..6.5 m lies 9.3..21 m off the coast (first run: 1221 'depth' refusals at 9..55)
         if a is None:
             continue
         kinds = rng.sample(["brain_coral", "branch_coral", "table_coral", "fan_coral", "branch_coral",
-                            "brain_coral", "urchin_rock", "fan_coral"], rng.randint(3, 6))
+                            "brain_coral", "urchin_rock", "fan_coral"], rng.randint(4, 8))
         for kind in kinds:
             seed = rng.choice(GROUND_SEEDS[kind])
             cands = []
             for k in range(14):
-                r = 2.2 * (k / 13) ** 0.8
+                r = 3.6 * (k / 13) ** 0.8
                 t = rng.uniform(0, math.tau)
                 x, y = a.x + math.cos(t) * r, a.y + math.sin(t) * r
                 rz = _face(x, y, 0, 1) if kind == "fan_coral" else rng.uniform(0, math.tau)
@@ -711,17 +747,64 @@ def reefs(P, rng, patches=34, meadows=12):
             if P.try_ground(kind, seed, cands, keep_off=1.2, seabed=(1.5, 6.5)) is not None:
                 placed += 1
     for _ in range(meadows):
-        a = anchor(3, 22)
+        a = anchor(8.8, 12)   # depth 1.2..3.0 m lies 8.7..12.4 m off the coast
         if a is None:
             continue
-        for _k in range(rng.randint(4, 8)):
+        for _k in range(rng.randint(6, 12)):
             seed = rng.choice(GROUND_SEEDS["sea_grass"])
             rz = current - lean[seed]
-            cands = [(a.x + rng.uniform(-2.5, 2.5), a.y + rng.uniform(-2.5, 2.5), rz + rng.uniform(-0.2, 0.2))
+            cands = [(a.x + rng.uniform(-3.5, 3.5), a.y + rng.uniform(-3.5, 3.5), rz + rng.uniform(-0.2, 0.2))
                      for _ in range(8)]
             if P.try_ground("sea_grass", seed, cands, keep_off=1.0, seabed=(1.2, 3.0)) is not None:
                 placed += 1
+    placed += mound_reefs(P, rng)
     print("[lagoon-props] seabed pieces:", placed)
+
+
+def _kit_has(kind):
+    """Whether the seabed kit builds `kind` yet (the newer kinds arrive with the kit rework)."""
+    return kind in getattr(importlib.import_module(KIT_OF[kind]), "KINDS", ())
+
+
+def mound_reefs(P, rng, tries=4000, heads=90):
+    """⚠️ REEFS ON THE MOUNDS (owner, 2026-09-27: "the seabed is empty rn"). The open floor now
+    rises into reef mounds (author_lagoon_cove.reef_floor) whose crowns come to 2.4 m under the
+    surface. Each colony here is one REEF HEAD (a whole colony on a stone mound, the kit's hero
+    piece) ringed by 5 to 10 corals, sponges, clams and anemones within 6 m, on ground 2.4 to 6 m
+    deep: dense clusters with sand lanes between them, never an even carpet."""
+    C = P.cove
+    ring = [k for k in ("brain_coral", "branch_coral", "table_coral", "fan_coral", "branch_coral",
+                        "tube_sponge", "soft_coral", "giant_clam", "anemone", "urchin_rock", "brain_coral",
+                        "soft_coral", "fan_coral") if _kit_has(k)]
+    centre = "reef_head" if _kit_has("reef_head") else "brain_coral"
+    placed = colonies = 0
+    for _ in range(tries):
+        if colonies >= heads:
+            break
+        x, y = rng.uniform(-150, 150), rng.uniform(-150, 170)
+        if C.coast_distance(x, y) > -16:
+            continue
+        g = P.ground_at(x, y)
+        if g is None or not (2.4 <= C.WATER - g <= 6.0):
+            continue
+        seed = rng.choice(GROUND_SEEDS[centre])
+        cands = [(x + rng.uniform(-1.5, 1.5), y + rng.uniform(-1.5, 1.5), rng.uniform(0, math.tau)) for _ in range(6)]
+        if P.try_ground(centre, seed, cands, keep_off=1.5, seabed=(2.4, 6.5)) is None:
+            continue
+        colonies += 1
+        placed += 1
+        for kind in rng.sample(ring, min(len(ring), rng.randint(5, 10))):
+            cands = []
+            for k in range(16):
+                r = 2.5 + 3.5 * (k / 15)
+                t = rng.uniform(0, math.tau)
+                px, py = x + math.cos(t) * r, y + math.sin(t) * r
+                rz = _face(px, py, 0, 1) if kind == "fan_coral" else rng.uniform(0, math.tau)
+                cands.append((px, py, rz))
+            if P.try_ground(kind, rng.choice(GROUND_SEEDS[kind]), cands, keep_off=1.2, seabed=(1.8, 6.5)) is not None:
+                placed += 1
+    print("[lagoon-props] mound colonies:", colonies)
+    return placed
 
 
 def driftwood(P, rng, n=10):

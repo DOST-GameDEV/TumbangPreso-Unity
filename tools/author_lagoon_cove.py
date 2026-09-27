@@ -127,6 +127,26 @@ def in_lagoon(x, y):
     return coast_distance(x, y) < 0
 
 
+# ⚠️ REEF MOUNDS (owner, 2026-09-27, after the first reef pass: "the seabed is empty rn"). Past the
+# drop-off the floor was one flat plane 7.2 m down, where the water's deep colour (full by 3.6 m)
+# hides everything, so no coral out there could ever read. The floor now rises into broad, soft
+# mounds (~30 m across, noise-shaped, never a grid of bumps) whose crowns come up to REEF_TOP under
+# the surface: patches of lighter water over them, and ground shallow enough for the reef heads
+# to show through. The mounds start past REEF_CLEAR m off the coast so the shelf and drop-off by the
+# shore keep their profile (every prop along the waterline stays where it was placed).
+REEF_TOP = 2.4        # metres of water over the highest crown
+REEF_CLEAR = 16.0     # metres off the coast before a mound may rise
+
+
+def reef_floor(x, y, d):
+    if -d < REEF_CLEAR:
+        return SEABED
+    n = noise.noise(Vector((x * 0.034, y * 0.034, 3.7))) + 0.35 * noise.noise(Vector((x * 0.09, y * 0.09, 11.3)))
+    rise = _smoothstep(0.08, 0.55, n) * (WATER - REEF_TOP - SEABED)
+    fade = _smoothstep(REEF_CLEAR, REEF_CLEAR + 10.0, -d)
+    return SEABED + rise * fade
+
+
 def peak_height(x, y):
     h = SEABED
     for px, py, ph, pr in PEAKS:
@@ -146,7 +166,7 @@ def massif(x, y):
         # shows the sand (the owner's stylized water reference; identical to the old profile, so
         # nothing placed along the waterline moves), then DROPS at 0.3 m per m to the seabed 7.2 m
         # down, about 28 m out, so the bay reaches the water's deep blue-green.
-        return max(SEABED, WATER + d * 0.12 - max(0.0, -d - 8) * 0.3)
+        return max(reef_floor(x, y, d), WATER + d * 0.12 - max(0.0, -d - 8) * 0.3)
     h = max(peak_height(x, y), BEACH + 3.0 * max(0.0, min(1.0, (d - BEACH_BAND) / 14)))
     h += 1.6 * noise.noise(Vector((x * 0.06, y * 0.06, 0.3)))
     # The beach: flat sand rising gently from the waterline, with an irregular landward edge that
