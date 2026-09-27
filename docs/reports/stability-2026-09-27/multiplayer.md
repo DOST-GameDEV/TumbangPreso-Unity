@@ -1,5 +1,28 @@
 # Multiplayer investigation, 2026-09-27
 
+## Scoped Familiar Recovery
+
+Live seance recovery previously carried only the round and rebuilt its field on
+every accepted snapshot, ending the current role skill again. Protocol85 binds the
+live effect to match/round/body epoch, accepted ultimate phase and stable hero/ability
+IDs. The178-byte bounded envelope rejects malformed and nonfinite data. Application
+rejects older phases, active duplicates, completed same-phase state and a new reserved
+introduction. Missing companions do not consume the recovery identity. An accepted-
+phase hook covers immediate activation as well as the existing deferred activation.
+
+The current seance restorer, seven-second duration, assets, motion and effect design
+are unchanged. Retired possession pose delivery was not revised. Two new guarded
+native cases pass2/2 in1.035006s on full `1d0bb16e` plus eight frozen inputs, no drift
+or retry. They exercise bounded codec capacity, bad payloads and the real Nemu
+companion/field: missing dependency, stale scope/wrong kit/expiry, single restoration,
+unchanged ultimate meter, active duplicate retention, role-timer preservation and
+completed-lifetime refusal. Both new script GUIDs are valid32hex.
+
+This covers codec and application, not sockets, actual peer cutscenes or visual
+judgment. Expiry retains the former wall-clock semantics; review identified paused
+gameplay aging as the next concrete correction, not a completed part of this unit.
+[Receipt](checks/familiar-recovery-native.json),[XML](checks/familiar-recovery-native.xml).
+
 ## Bound Timed Recovery
 
 Generic TimedKit hydration checked only round and hero, so old-match/body state could

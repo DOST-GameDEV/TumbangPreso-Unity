@@ -100,6 +100,16 @@ their own target lifetime and reset rules. Client presentation remains separate.
 
 ## Prepared World Recovery
 
+Protocol85 scopes the current familiar seance's recovery to GameplayActionScope,
+accepted ultimate phase and stable hero/ultimate IDs, with double-precision expiry.
+Its178-byte bounded envelope rejects malformed payloads; application waits for the
+matching body/kit/companion without consuming missing state. It does not replace an
+active same-phase effect, revive a completed phase or interrupt a new introduction.
+The accepted-phase callback covers immediate activation as well as existing windup.
+No clip, pose, field art or authored duration is encoded as identity. Retired
+possession movement is separate; a genuinely new familiar mechanic still needs an
+explicit state contract, not reuse of the seance restorer by accident.
+
 Protocol80's UltimatePhase header carries the host-sealed cohort duration. The host
 still derives the longest authored introduction; receiving peers must not derive
 it from whichever kits have loaded locally. Missing actors wait inside that same

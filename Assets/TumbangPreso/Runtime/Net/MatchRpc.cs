@@ -1844,50 +1844,7 @@ namespace TumbangPreso.Net
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncFamiliar",writer,PoseDelivery);
         }
 
-        // Reliable accepted effect state, distinct from replaceable flight poses.
-        // The server clock removes transport time from the remaining lifetime.
-        public void BroadcastFamiliarEffect(int slot,ulong? targetPeer=null)
-        {
-            if(!NetAuthority.ShouldResolve() || _nm?.CustomMessagingManager==null)return;
-            var pet=Familiar(slot);var kit=Unit(slot)?.AbilitySystem?.Kit;
-            if(pet==null || kit==null)return;
-            int mode=pet.IsDevouring?2:pet.IsPossessed?1:0;
-            if(mode==0)return;
-            int round=GameServices.Match!=null?GameServices.Match.RoundNumber:0;
-            Vector3 position=mode==2?pet.DevourGround:pet.transform.position;
-            float remaining=mode==2?pet.DevourRemaining:kit.Skill2.DurationRemaining;
-            float expiresAt=(float)_nm.ServerTime.Time+remaining;
-            foreach(ulong peer in _nm.ConnectedClientsIds)
-            {
-                if(peer==_nm.LocalClientId || (targetPeer.HasValue && peer!=targetPeer.Value))continue;
-                using var writer=new FastBufferWriter(48,Allocator.Temp);
-                writer.WriteValueSafe(slot);
-                writer.WriteValueSafe(round);
-                writer.WriteValueSafe(mode);
-                writer.WriteValueSafe(position);
-                writer.WriteValueSafe(expiresAt);
-                writer.WriteValueSafe(pet.transform.eulerAngles.y);
-                _nm.CustomMessagingManager.SendNamedMessage("FamiliarEffect",peer,writer);
-            }
-        }
-
-        private void OnFamiliarEffectMsg(ulong senderClientId,FastBufferReader reader)
-        {
-            if(NetAuthority.IsHost || !FromHost(senderClientId))return;
-            reader.ReadValueSafe(out int slot);
-            reader.ReadValueSafe(out int round);
-            reader.ReadValueSafe(out int mode);
-            reader.ReadValueSafe(out Vector3 position);
-            reader.ReadValueSafe(out float expiresAt);
-            reader.ReadValueSafe(out float yaw);
-            if(!ValidSlot(slot) || (mode!=1 && mode!=2) || !Finite(position) || !Finite(expiresAt) || !Finite(yaw) ||
-                GameServices.Match==null || GameServices.Match.RoundNumber!=round)return;
-            var unit=Unit(slot);
-            float remaining=Mathf.Clamp(expiresAt-(float)_nm.ServerTime.Time,0,7);
-            if(unit?.AbilitySystem?.Kit is Abilities.NemuHeroKit kit)
-                kit.RestoreFamiliar(unit,mode,position,remaining,yaw);
-        }
-
+        // Live familiar effect hydration is scoped in MatchRpc.FamiliarEffects.
         private void SendTimedKitSnapshot(int slot, ulong peer, int fieldGeneration = 0)
         {
             if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;

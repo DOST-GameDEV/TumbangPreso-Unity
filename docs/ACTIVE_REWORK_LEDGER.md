@@ -1,11 +1,19 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
-`6f1d73d4164bec237b7974992a18256cf2c26416`; bound timed recovery follows it.
+`1d0bb16e8eb8e1c24977cca6a6971dbf6209e47e`; scoped familiar recovery follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Protocol85 binds live seance recovery to world/body and accepted ultimate identity.
+Active duplicates, old and completed phases cannot recreate its field or interrupt
+the role skill again. Missing companions remain retryable; authored visuals stay.
+Two new native codec/real-companion cases pass 2/2 on full base plus eight frozen
+inputs, no drift or retry. Pause-aware recovery aging is the next identified issue;
+current expiry still follows the previous wall-clock behavior. Actual peers remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#scoped-familiar-recovery).
 
 Protocol84 binds generic timed skill recovery to world/body scope, sequence and
 both owning ability IDs. Bounded codecs and complete validation precede aged

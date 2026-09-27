@@ -526,7 +526,9 @@ namespace TumbangPreso.Net
         // count toward a loaded host's one-time pre-round countdown.
         // 84: generic timed recovery binds both ability IDs to world/body scope
         // and ordered snapshots; the specialized flight contract is unchanged.
-        public const int ProtocolVersion = 84;
+        // 85: live familiar effects bind match/body and accepted ultimate identity;
+        // old, duplicate and completed effects cannot recreate a seance field.
+        public const int ProtocolVersion = 85;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

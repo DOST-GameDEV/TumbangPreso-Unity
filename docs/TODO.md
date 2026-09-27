@@ -66,6 +66,10 @@ Generic timed skill recovery now binds both owning ability IDs, world/body scope
 and ordered snapshots (protocol84), preserving consumed-state guards and existing
 specialized flight recovery. Two new native codec/application cases pass; actual
 peer/ranked/reconnect qualification remains OPEN.
+Live familiar recovery now binds world/body scope, hero/ultimate identity and
+accepted phase (protocol85). Two new native codec/real-companion cases pass,
+including duplicate field/role-timer protection and no terminal resurrection.
+Pause-aware recovery aging and actual peers remain OPEN.
 Ordinary action requests/refusals/body playback/charge tells now carry shared
 match/round/body-epoch scope (protocol67). Compiler and one pure scope check pass;
 Native/peer qualification remains OPEN. Same-round combat refusals now correlate

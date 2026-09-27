@@ -107,6 +107,107 @@ namespace TumbangPreso.PlayTests
         { yield return PlayModeWorld.Reset(); NetAuthority.Provider = _provider; }
 
         [Test]
+        public void FamiliarEffectCodecBoundsTheWorldAndAcceptedAbilityIdentity()
+        {
+            var kit = new NemuHeroKit();
+            var state = new FamiliarEffectState
+            {
+                Seat = 1, Scope = new GameplayActionScope { Match = 123, Round = 1, Epoch = 0 }, Phase = 4,
+                HeroId = new FixedString64Bytes(kit.HeroId), AbilityId = new FixedString64Bytes(kit.Ultimate.Id),
+                Position = new Vector3(0, 0, 2), ExpiresAt = 104, Yaw = 90,
+            };
+            byte[] bytes;
+            using (var writer = new FastBufferWriter(FamiliarEffectState.MaxWireBytes, Allocator.Temp))
+            {
+                writer.WriteNetworkSerializable(state); bytes = writer.ToArray();
+                var reader = new FastBufferReader(writer, Allocator.Temp);
+                try
+                {
+                    Assert.IsTrue(FamiliarEffectState.TryRead(ref reader, out var decoded));
+                    Assert.IsTrue(decoded.MatchesKit(kit)); Assert.AreEqual(state.Phase, decoded.Phase);
+                    Assert.AreEqual(state.Scope.Epoch, decoded.Scope.Epoch); Assert.AreEqual(state.Position, decoded.Position);
+                }
+                finally { reader.Dispose(); }
+            }
+            bool Reads(byte[] payload)
+            {
+                var reader = new FastBufferReader(payload, Allocator.Temp);
+                try { return FamiliarEffectState.TryRead(ref reader, out _); }
+                finally { reader.Dispose(); }
+            }
+            var oversized = (byte[])bytes.Clone(); oversized[28] = 62; oversized[29] = 0;
+            Assert.IsFalse(Reads(oversized));
+            var truncated = new byte[bytes.Length - 1]; System.Array.Copy(bytes, truncated, truncated.Length);
+            Assert.IsFalse(Reads(truncated));
+            var trailing = new byte[bytes.Length + 1]; System.Array.Copy(bytes, trailing, bytes.Length);
+            Assert.IsFalse(Reads(trailing));
+            var bad = state; bad.ExpiresAt = double.NaN; Assert.IsFalse(bad.IsValid);
+            bad = state; bad.Position.x = float.PositiveInfinity; Assert.IsFalse(bad.IsValid);
+            bad = state; bad.Phase = 0; Assert.IsFalse(bad.IsValid);
+            bad = state; bad.HeroId = new FixedString64Bytes("other"); Assert.IsFalse(bad.MatchesKit(kit));
+            bad = state; bad.AbilityId = new FixedString64Bytes("other"); Assert.IsFalse(bad.MatchesKit(kit));
+            state.HeroId = new FixedString64Bytes(new string('h', 61));
+            state.AbilityId = new FixedString64Bytes(new string('a', 61));
+            using (var writer = new FastBufferWriter(FamiliarEffectState.MaxWireBytes, Allocator.Temp))
+            {
+                writer.WriteNetworkSerializable(state); Assert.AreEqual(FamiliarEffectState.MaxWireBytes, writer.Length);
+                Assert.IsTrue(Reads(writer.ToArray()));
+            }
+        }
+
+        [Test]
+        public void FamiliarRecoveryCannotReplaceAnActiveOrCompletedAcceptedLifetime()
+        {
+            var system = Owner("nemu"); var body = system.GetComponent<CharacterMotor>();
+            var kit = (NemuHeroKit)system.Kit;
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            var visual = body.gameObject.AddComponent<Visual.CharacterVisual>(); visual.enabled = false;
+            var art = RosterBook.Load().FindPersonArt("nemu"); Assert.IsNotNull(art.PetModel);
+            var petRoot = Object.Instantiate(art.PetModel);
+            var pet = petRoot.GetComponent<Visual.GhostPetCompanion>() ?? petRoot.AddComponent<Visual.GhostPetCompanion>();
+            pet.Bind(body.transform); pet.enabled = false;
+            var root = new GameObject("Familiar recovery"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>(); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var apply = typeof(MatchRpc).GetMethod("ApplyFamiliarEffect", hidden);
+            bool Apply(FamiliarEffectState value) => (bool)apply.Invoke(router, new object[] { value, 100d });
+            var state = new FamiliarEffectState
+            {
+                Seat = 1, Scope = new GameplayActionScope { Match = 123, Round = 1, Epoch = body.MovementEpoch }, Phase = 4,
+                HeroId = new FixedString64Bytes(kit.HeroId), AbilityId = new FixedString64Bytes(kit.Ultimate.Id),
+                Position = new Vector3(0, 0, 2), ExpiresAt = 104, Yaw = 90,
+            };
+            try
+            {
+                Assert.IsFalse(Apply(state), "A missing companion must not consume the lifetime.");
+                typeof(Visual.CharacterVisual).GetProperty("Companion").SetValue(visual, pet);
+                var bad = state; bad.Scope.Match = 122; Assert.IsFalse(Apply(bad));
+                bad.Scope.Match = 123; bad.Scope.Round = 2; Assert.IsFalse(Apply(bad));
+                bad.Scope.Round = 1; bad.Scope.Epoch++; Assert.IsFalse(Apply(bad));
+                bad = state; bad.HeroId = new FixedString64Bytes("other"); Assert.IsFalse(Apply(bad));
+                bad = state; bad.AbilityId = new FixedString64Bytes("other"); Assert.IsFalse(Apply(bad));
+                bad = state; bad.ExpiresAt = 99; Assert.IsFalse(Apply(bad));
+                Assert.IsEmpty(Object.FindObjectsByType<HeroHazards.SeanceVoidComponent>(FindObjectsSortMode.None));
+                kit.AddUltimateCharge(3); float meter = kit.UltimateCharge;
+                Assert.IsTrue(Apply(state)); Assert.IsTrue(pet.IsDevouring);
+                Assert.AreEqual(4, kit.Ultimate.AcceptedUltimatePhase); Assert.AreEqual(4, kit.Ultimate.DurationRemaining, .001f);
+                Assert.AreEqual(meter, kit.UltimateCharge);
+                var field = Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>(); Assert.IsNotNull(field);
+                typeof(HeroAbility).GetProperty("DurationRemaining").SetValue(kit.Skill2, 2f);
+                Assert.IsFalse(Apply(state)); Assert.AreEqual(2, kit.Skill2.DurationRemaining);
+                Assert.AreSame(field, Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>());
+                bad = state; bad.Phase = 3; Assert.IsFalse(Apply(bad));
+                var context = new AbilityContext(body, body.GetComponent<Carrier>(), body.GetComponent<CombatVerbs>());
+                kit.Ultimate.EndEarly(context); pet.StopDevouring();
+                Assert.IsFalse(Apply(state), "A completed lifetime was resurrected.");
+                Assert.IsFalse(pet.IsDevouring); Assert.AreEqual(0, kit.Ultimate.DurationRemaining);
+                Assert.AreEqual(2, kit.Skill2.DurationRemaining);
+            }
+            finally { Object.DestroyImmediate(root); Object.DestroyImmediate(petRoot); }
+        }
+
+        [Test]
         public void TimedRecoveryCodecBoundsIdentitiesAndAgesTheOwningChannels()
         {
             var kit = new TimedProbeKit();
