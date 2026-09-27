@@ -262,6 +262,19 @@ namespace TumbangPreso.Visual
         //    0.012 to 0.02 authored here was reaching the shader as about 0.001, a floor nobody
         //    could see. 0.03 to 0.06 linear lands about luma 48 to 68.
         public MapLook[] Maps={
+            // ⚠️ KANTO, the city park sample map (owner, 2026-09-27, on Play vs the editor: "its so
+            // much more bright, and the kanto map doesnt use the AO shader ... just make kanto less
+            // eye sore-y"). With no entry here WorldLookPresentation installed nothing on Kanto, so
+            // in Play it had no ambient occlusion, no soft-light ramp and no coloured shade, and its
+            // saturated teal and cream facades met a poster-blue sky at full strength
+            // (Logs/kanto-look-v1). This look is deliberately CALMER than the shipped city looks:
+            // a greyer teal zenith and a soft grey-blue haze pulled in to 40..230 m so the far towers
+            // recede instead of competing with the court, a gentler sun, deeper cool-violet shade.
+            // Elevation 0 keeps the scene's own sun angle (Euler 44), so the approved building
+            // shadows do not move. Pale paving court, so the chalk is dark, as on Bayan Plaza.
+            new MapLook("Kanto",new Color(.46f,.47f,.6f),new Color(.54f,.52f,.54f),new Color(.52f,.44f,.36f),new Color(.84f,.82f,1.08f),40,230,0,true)
+                .Air(new Color(.8f,.84f,.86f),new Color(.46f,.64f,.8f),new Color(.84f,.86f,.86f),new Color(.97f,.95f,.92f),new Color(.7f,.72f,.82f))
+                .Key(new Color(1,.92f,.8f),1f,0,.8f,new Color(.04f,.035f,.055f)),
             new MapLook("BayanPlaza",new Color(.5f,.47f,.64f),new Color(.6f,.5f,.5f),new Color(.58f,.42f,.3f),new Color(.86f,.8f,1.1f),38,210,0,true)
                 .Air(new Color(.74f,.85f,.94f),new Color(.44f,.7f,.88f),new Color(.76f,.87f,.95f),new Color(1,.96f,.9f),new Color(.72f,.7f,.86f))
                 .Key(new Color(1,.9f,.76f),1.08f,52,.76f,new Color(.045f,.03f,.065f)),
