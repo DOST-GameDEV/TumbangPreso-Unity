@@ -104,6 +104,27 @@ native integration run; it has NOT run. The preceding editor startup hit the dis
 reserve, so no repeated editor launch was attempted for this batch. No measured
 player frame-time, peak-memory or hitch-free claim.
 
+## Settings Value-Change Work
+
+After `2b588964`, ordinary settings slider/name changes no longer rerun the full
+text/row layout pass or discover and resize every chip in the section. Section
+construction caches its chip references and invalidates layout; a larger-text change
+still reflows all rows and refits the cached chips. Binding labels are still read
+on change, but only changed labels are assigned/refitted, avoiding a stale-label
+assumption around device/binding changes.
+
+Each notification evaluates unsaved state once rather than twice. Save-face styling
+is updated only when that boolean changes. The transaction, live preview, profile
+serialization, rebind and save/discard implementations are unchanged. No new settings
+prebuild framework or UI redesign was introduced. This removes source-proven repeated
+hierarchy/geometry work; player frame-time improvement is not measured.
+
+Frozen169 inputs,4 changed sources. Runtime,Editor,Tests and PlayTests compile with
+unchanged Core reused. Added a native case covering volume value changes, retained
+rows, large/normal text reflow, binding rows and discard state. **NOT RUN** under the
+existing editor disk boundary. No previous settings films/suites or Core cases rerun.
+[Receipt](checks/settings-hotpath-compile.json).
+
 ## Supplementary Motion Data
 
 After `fe3a93eb`, boot's roster stage asynchronously loads and retains the five

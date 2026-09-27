@@ -26,6 +26,8 @@ namespace TumbangPreso.UI
         private bool _genericSupportShown;
         private TumpChoice _frameCap;
         private Text _frameReason;
+        private bool? _readingLarge;
+        private Button[] _chips = Array.Empty<Button>();
         public static readonly string[] Sections = { "Controls", "Audio", "Graphics", "Player", "Accessibility" };
 
         public void Open(Transform owner, Action back, Action controller, Action touch)
@@ -123,7 +125,7 @@ namespace TumbangPreso.UI
                 case 4: Accessibility(); break;
             }
             var scroll = _list.GetComponentInParent<ScrollRect>(); scroll.verticalNormalizedPosition = 1;
-            Changed(""); _canvas.GetComponent<ScreenFocus>().Rebuild();
+            PrepareSettingsRows(); Changed(""); _canvas.GetComponent<ScreenFocus>().Rebuild();
         }
         private void NotePrevious(string words)
         {
@@ -245,15 +247,34 @@ namespace TumbangPreso.UI
         }
         private void Changed(string message)
         {
-            SettingsReadingLayout.Apply(_canvas, _list);
+            bool reflow = _readingLarge != SettingsStore.Current.LargerText;
+            if (reflow)
+            {
+                SettingsReadingLayout.Apply(_canvas, _list);
+                _readingLarge = SettingsStore.Current.LargerText;
+            }
             if (_status != null) _status.text = message;
-            if (_save != null) _save.interactable = _session.Dirty;
-            RefreshSave();
+            bool dirty = _session.Dirty;
+            if (_save != null) _save.interactable = dirty;
+            RefreshSave(dirty);
             foreach (var pair in _bindingRows)
-                if (pair.Value != null) { pair.Value.GetComponentInChildren<Text>().text = BindingLabel(pair.Key); SettingsWorkspaceRows.FitChip(pair.Value); }
-            if (_list != null)
-                foreach (var chip in _list.GetComponentsInChildren<Button>(true))
-                    if (chip.transform.Find("ChipFace") != null) SettingsWorkspaceRows.FitChip(chip);
+            {
+                if (pair.Value == null) continue;
+                var label = pair.Value.GetComponentInChildren<Text>();
+                string value = BindingLabel(pair.Key);
+                if (label.text == value) continue;
+                label.text = value;
+                SettingsWorkspaceRows.FitChip(pair.Value);
+            }
+            if (reflow)
+                foreach (var chip in _chips) if (chip != null) SettingsWorkspaceRows.FitChip(chip);
+        }
+
+        private void PrepareSettingsRows()
+        {
+            _readingLarge = null;
+            _chips = _list == null ? Array.Empty<Button>() : _list.GetComponentsInChildren<Button>(false)
+                .Where(button => button.transform.Find("ChipFace") != null).ToArray();
         }
         public void Back()
         {

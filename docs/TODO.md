@@ -69,6 +69,9 @@ Four assemblies compile; native handoff/failure/input checks remain OPEN.
 Supplementary baked-motion data now preloads asynchronously per roster rig and is
 retained for body/introduction binding. No authored clips/models changed. Four
 assemblies compile; native retention and measured first-use/memory checks remain OPEN.
+Settings value changes now avoid redundant whole-screen reflow/chip scans and double
+unsaved-state work. Four assemblies compile; focused native transaction/layout and
+player timing qualification remain OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

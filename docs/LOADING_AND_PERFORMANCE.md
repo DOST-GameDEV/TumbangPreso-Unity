@@ -22,6 +22,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Match loading surface | UI/Hub/HubLoading.cs and MatchInstaller.IsPrepared; destination-scoped installation, failure/return and cancellation instead of timed success |
 | Training controls/targets | PracticeRange.cs,UI/PausePanel.TrainingRange.cs; prebuilt inactive menu and target bodies reused without changing saved preferences |
 | First-use/runtime costs | Existing profiler markers,FrameRateHistogram,tools/cold_start.py and current internal player |
+| Settings value changes | UI/TumpSettingsView partials; whole-row reflow only for new sections/text size,cached chips and one unsaved-state calculation per notification |
 
 ## Rules For Changes
 

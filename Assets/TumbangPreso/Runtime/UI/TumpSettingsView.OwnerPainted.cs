@@ -59,7 +59,7 @@ namespace TumbangPreso.UI
             _heading.text=Sections[_tab];
             switch(_tab){case 0:Controls();break;case 1:Audio();break;case 2:Graphics();break;case 3:Player();break;case 4:Accessibility();break;}
             _list.GetComponentInParent<ScrollRect>().verticalNormalizedPosition=1;
-            Changed("");_canvas.GetComponent<ScreenFocus>().Rebuild();
+            PrepareSettingsRows();Changed("");_canvas.GetComponent<ScreenFocus>().Rebuild();
         }
         /// <summary>
         /// ⚠️⚠️ A NOTE IS THE ONE THING ON THIS SCREEN THAT MAY NOT BE CLIPPED, AND IT WAS BEING

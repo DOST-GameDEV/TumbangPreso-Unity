@@ -6,10 +6,11 @@ namespace TumbangPreso.UI
     public sealed partial class TumpSettingsView
     {
         private Text _unsaved;
-        private void RefreshSave()
+        private bool? _saveDirty;
+        private void RefreshSave(bool dirty)
         {
-            if (_save == null) return;
-            bool dirty = _session != null && _session.Dirty;
+            if (_save == null || _saveDirty == dirty) return;
+            _saveDirty = dirty;
             var face = _save.transform.Find("SaveFace")?.GetComponent<Image>();
             if (face != null)
             {
