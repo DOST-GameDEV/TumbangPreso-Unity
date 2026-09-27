@@ -235,6 +235,23 @@ and shortened arms). Turnarounds: `Logs/phaister-model-v24` (before) to `v27`.
 | 9 | ABILITY-2's numbers | *"those can stay"* | unchanged in `Core.VoodooRules` |
 | 10 | Voice | *"we will record"* | `docs/HUMAN.md` rows for her lines; synthesized sounds only in the builder |
 
+## 7b. The owner's notes while it was built (2026-09-27, films v1 to v6)
+
+| Note | His words | What it became |
+|---|---|---|
+| The first eye | *"needs serious refinement"* (a black ball in a spiky magenta ring) | `Resources/Shaders/CosmosEye.shader` |
+| Bigger, prettier | *"make it look bigger and make the actual blackwhole prettier like ur peeking into the cosmos or smth"* | the eye is a WINDOW INTO SPACE: a procedural nebula in her colours, two star layers, all turning clockwise and spiralling in, each layer shifting with the camera at its own rate (parallax), a thin hot magenta event horizon and a soft outer glow; 2.4 m across; two thin accretion rings turning round it |
+| Aim and height | *"make it so that she can choose as well where blackhole goes and how high bcz i want it to be able to put ppl on the air as well haha"* | OMEN is placed where she looks (`AimsWhereLooking`) and as HIGH as she looks (`HeroAbility.AimsInTheAir`, `CameraRig.TryLookHeight`): 1.1 to 4.5 m (`VoodooRules.HigopMinHeight`, `HigopMaxHeight`); the height rides in the commit's aim, so every peer agrees; the pull's lift holds caught chests at the eye |
+| Forming | *"glitchy and unstable as fuck when forming (make it pulsate?) it starts out small and gradually gets bigger"* | `CosmosEye._Glitch`: slices jumping sideways, a ragged rim, a colour split, dropouts; in the cutscene the eye is born tiny between her palms, pulsing on two beats and growing, and snaps open when it lands; in play it continues from there |
+
+Found and fixed on the way: the doll was thrown at 1 m/s since ABILITY-2 (`Slipper.SolveArc` returns a direction; film v1 showed it
+dropping at her feet); caught bodies were dragged into the eye's middle and covered it (`SeanceVoidComponent.HoldRadius`, a ring at
+1.65 m, film v4); her own screen was decided by `NetAuthority.LocalSlot`, which is 0 in a solo match while her seat is 1
+(`ViewmodelArms.IsFirstPersonFor`, film v2); fading effect materials must write `_BaseColor` too (`PhaisterProp.SetAlpha`, film v3).
+
+Never shown twice: the cutscene ends with the eye thrown and half grown, so play opens on her hovering and watching it
+(`hero-phaister-omen` v2, `PhaisterOmenLift`) and the live eye continues from half size.
+
 ## 8. Rejected, and why (so nobody proposes them again)
 
 - **The showman** (v1: spotlights on a lamp rig, a stage curtain, a ta-da sting, bows): *"make her a frigging witchh not a

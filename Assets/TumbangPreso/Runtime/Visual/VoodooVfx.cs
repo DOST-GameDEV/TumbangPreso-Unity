@@ -11,11 +11,10 @@ namespace TumbangPreso.Abilities
     /// </summary>
     public sealed class VoodooDoll : MonoBehaviour
     {
-        private static readonly Color Cloth = new Color(0.62f, 0.45f, 0.36f), Stitch = new Color(0.16f, 0.08f, 0.12f),
-                                      Pin = new Color(0.85f, 0.2f, 0.62f);
         private Vector3 _velocity;
         private int _owner;
         private bool _done;
+        private Visual.PhaisterManika _manika;
 
         public static VoodooDoll Spawn(Vector3 origin, Vector3 target, int ownerSlot)
         {
@@ -23,17 +22,15 @@ namespace TumbangPreso.Abilities
             go.transform.position = origin;
             var d = go.AddComponent<VoodooDoll>();
             d._owner = ownerSlot;
-            d._velocity = Slipper.SolveArc(origin, target, VoodooRules.DollSpeed);
-            // The modelled doll (`tools/build_rework_props.py`); the blocks below are the fallback only.
-            if (Visual.ReworkProp.Spawn("doll", go.transform, Visual.ReworkProp.VoodooPalette) != null) return d;
-            var body = Visual.GrowthVfx.Block(go.transform, "doll-body", new Vector3(0.16f, 0.22f, 0.10f), Cloth).transform;
-            var head = Visual.GrowthVfx.Block(go.transform, "doll-head", new Vector3(0.14f, 0.13f, 0.12f), Cloth).transform;
-            head.localPosition = new Vector3(0f, 0.18f, 0f);
-            var seam = Visual.GrowthVfx.Block(go.transform, "doll-seam", new Vector3(0.02f, 0.22f, 0.11f), Stitch).transform;
-            seam.localPosition = new Vector3(0f, 0.02f, 0f);
-            var pin = Visual.GrowthVfx.Block(go.transform, "doll-pin", new Vector3(0.02f, 0.02f, 0.26f), Pin, 0.4f).transform;
-            pin.localPosition = new Vector3(0.02f, 0.18f, 0f); pin.localRotation = Quaternion.Euler(0f, 30f, 0f);
-            body.localRotation = Quaternion.identity;
+            // ⚠️⚠️ FIXED 2026-09-27 (HERO-10, film v1): `Slipper.SolveArc` RETURNS A UNIT DIRECTION, NOT A VELOCITY. The first
+            // pass assigned it straight to `_velocity`, so every doll left her hand at 1 m/s instead of `DollSpeed` (12) and
+            // dropped half a metre in front of her feet: MANIKA MISCHIEF could never reach anyone. `Slipper` scales it by the
+            // throw speed itself; so must this.
+            d._velocity = Slipper.SolveArc(origin, target, VoodooRules.DollSpeed) * VoodooRules.DollSpeed;
+            // ⚠️ HERO-10: EVERYTHING SEEN IS `Visual.PhaisterManika` (the modelled manika, its trail, the steal, the return to her
+            // hand, the hold, the crumble). This object is only the flight and the host's hit test.
+            d._manika = Visual.PhaisterManika.Spawn(ownerSlot);
+            d._manika.Follow(origin, Quaternion.identity);
             return d;
         }
 
@@ -44,6 +41,7 @@ namespace TumbangPreso.Abilities
             _velocity.y -= Balance.Gravity * dt;
             transform.position += _velocity * dt;
             transform.Rotate(Vector3.right, 540f * dt, Space.Self);
+            if (_manika != null) _manika.Follow(transform.position, transform.rotation);
             bool landed = transform.position.y <= Slipper.GroundY(transform.position) + 0.1f && _velocity.y < 0f;
             if (NetAuthority.ShouldResolve())
             {
@@ -64,83 +62,42 @@ namespace TumbangPreso.Abilities
             if (landed || transform.position.y < -20f)
             {
                 _done = true;
-                NetCue.Play("sfx_blink_arrive", transform.position);
+                if (_manika != null) _manika.Landed(transform.position);
+                // ⚠️ HERO-10: its own landing sound, no longer the blink's arrival (the method: no two verbs share a recipe).
+                GameServices.Audio?.PlayAt("sfx_phaister_manika_land", transform.position);
                 Destroy(gameObject, 0.25f);
             }
         }
     }
 
-    /// <summary>The pin's cone, drawn as a short-lived fan of stitched thread on the ground.</summary>
-    public sealed class VoodooConeFlash : MonoBehaviour
-    {
-        private float _age;
-        public static void Spawn(Vector3 at, Vector3 forward)
-        {
-            var go = new GameObject("VoodooCone");
-            go.transform.position = at + Vector3.up * 0.05f;
-            go.transform.rotation = Quaternion.LookRotation(forward);
-            float half = VoodooRules.VulnerableConeDegrees * 0.5f, range = VoodooRules.VulnerableConeRange;
-            var colour = new Color(0.85f, 0.2f, 0.62f);
-            foreach (float a in new[] { -half, -half * 0.35f, half * 0.35f, half })
-            {
-                var t = Visual.GrowthVfx.Block(go.transform, "thread", new Vector3(0.04f, 0.02f, range), colour, 0.5f).transform;
-                t.localRotation = Quaternion.Euler(0f, a, 0f);
-                t.localPosition = t.localRotation * new Vector3(0f, 0f, range * 0.5f);
-            }
-            go.AddComponent<VoodooConeFlash>();
-        }
-        private void Update() { _age += Time.deltaTime; transform.localScale = new Vector3(1f, 1f, Mathf.Min(1f, _age / 0.15f)); if (_age > 0.6f) Destroy(gameObject); }
-    }
-
     /// <summary>
-    /// HIGOP, the black hole. A mark grows through her slow cast; then for the pull a dark core with a
-    /// violet rim and a ring of pins turns while `HeroHazards.SeanceVoidComponent` (the same pull Kuro's
+    /// OMEN (was HIGOP), the black eye. Her slow cast, then `HeroHazards.SeanceVoidComponent` (the same pull Kuro's
     /// maw uses, on every peer for its own body and the host for all) drags every other body and every
     /// loose slipper that is not hers to the heart. The pull outruns a run, so pushing away gains a few
     /// steps and loses them (owner: *"they can try to move away but they js get sucked back in"*).
     /// </summary>
     public sealed class VoodooBlackHole : MonoBehaviour
     {
-        private static readonly Color Core = new Color(0.04f, 0.0f, 0.05f), Rim = new Color(0.78f, 0.22f, 0.86f),
-                                      PinCol = new Color(0.95f, 0.85f, 0.9f);
-        private float _age, _castLeft, _life;
-        private Transform _core, _rim, _pins;
+        private float _age, _castLeft, _life, _eyeHeight = VoodooRules.HigopMinHeight;
         private bool _pulling;
         private int _owner;
 
+        /// <summary>
+        /// ⚠️ HERO-10: THIS IS ONLY THE TIMING AND THE PULL NOW. Everything seen (the sigil ring, the ribbons off her, the
+        /// butterflies, the black eye and its corona, the landing, the maelstrom, the burst into the sky) is
+        /// `Visual.PhaisterOmen`, a separate object on its own clock, so nothing here scales the presentation.
+        /// </summary>
         public static GameObject Spawn(Vector3 at, int ownerSlot, float castSeconds, float pullSeconds)
         {
             var go = new GameObject("Higop");
             go.transform.position = Visual.VfxShapes.GroundPoint(at);
             var h = go.AddComponent<VoodooBlackHole>();
             h._owner = ownerSlot; h._castLeft = castSeconds; h._life = pullSeconds;
-            h._core = GameObject.CreatePrimitive(PrimitiveType.Sphere).transform;
-            Visual.VfxMaterial.StripCollider(h._core.gameObject);
-            h._core.SetParent(go.transform, false); h._core.localPosition = Vector3.up * 1.4f;
-            Visual.VfxMaterial.Solid(h._core.GetComponent<MeshRenderer>(), Core, 0.0f);
-            h._rim = new GameObject("rim").transform; h._rim.SetParent(go.transform, false); h._rim.localPosition = Vector3.up * 1.4f;
-            // The modelled accretion ring of stitched thread and pins; the segments below are the fallback only.
-            if (Visual.ReworkProp.Spawn("higop", h._rim, Visual.ReworkProp.VoodooPalette) != null)
-            {
-                h._rim.localRotation = Quaternion.Euler(18f, 0f, 8f);
-                go.transform.localScale = Vector3.one * 0.01f;
-                return go;
-            }
-            for (int i = 0; i < 10; i++)
-            {
-                float a = i * 36f + (i % 2) * 7f;
-                var seg = Visual.GrowthVfx.Block(h._rim, "rim-" + i, new Vector3(0.10f, 0.10f, 0.62f), Rim, 0.8f).transform;
-                seg.localRotation = Quaternion.Euler(0f, a, 0f);
-                seg.localPosition = seg.localRotation * new Vector3(1.05f + 0.04f * (i % 3), 0f, 0f);
-            }
-            h._pins = new GameObject("pins").transform; h._pins.SetParent(go.transform, false); h._pins.localPosition = Vector3.up * 1.4f;
-            for (int i = 0; i < 6; i++)
-            {
-                var pin = Visual.GrowthVfx.Block(h._pins, "pin-" + i, new Vector3(0.03f, 0.03f, 0.42f), PinCol, 0.3f).transform;
-                pin.localRotation = Quaternion.Euler(20f * (i % 2 == 0 ? 1 : -1), i * 60f + 11f * i, 0f);
-                pin.localPosition = pin.localRotation * new Vector3(0f, 0f, 1.8f + 0.15f * (i % 3));
-            }
-            go.transform.localScale = Vector3.one * 0.01f;
+            // ⚠️ HERO-10: THE AIM'S y IS THE EYE'S HEIGHT (she looks up to hang it higher); the hole itself sits on the court under it.
+            h._eyeHeight = Mathf.Clamp(at.y - go.transform.position.y, VoodooRules.HigopMinHeight, VoodooRules.HigopMaxHeight);
+            var owner = GameServices.Round?.PlayerAt(ownerSlot);
+            var omen = Visual.PhaisterOmen.Play(go.transform.position, owner != null ? owner.transform : null, castSeconds, pullSeconds, 0f, h._eyeHeight);
+            omen.transform.SetParent(go.transform, true);
             return go;
         }
 
@@ -150,21 +107,19 @@ namespace TumbangPreso.Abilities
             if (!_pulling)
             {
                 _castLeft -= Time.deltaTime;
-                // Through the cast it gathers: a small dark bead that grows, the rim spinning up.
-                float t = Mathf.Clamp01(_age / Mathf.Max(0.1f, _age + _castLeft));
-                transform.localScale = Vector3.one * Mathf.Lerp(0.05f, 0.45f, t);
                 if (_castLeft <= 0.0f) BeginPull();
             }
             else
             {
                 _life -= Time.deltaTime;
-                float open = Mathf.Clamp01((_age) / 0.35f);
-                float close = Mathf.Clamp01(_life / 0.3f);
-                transform.localScale = Vector3.one * Mathf.Min(open, close);
-                if (_life <= 0.0f) { GameServices.Audio?.PlayAt("sfx_phaister_higop_close", transform.position); Destroy(gameObject); return; }
+                if (_life <= 0.0f)
+                {
+                    GameServices.Audio?.PlayAt("sfx_phaister_higop_close", transform.position);
+                    // The presentation plays its end (the butterflies bursting up) after the pull stops: let it go first.
+                    foreach (var omen in GetComponentsInChildren<Visual.PhaisterOmen>()) omen.transform.SetParent(null, true);
+                    Destroy(gameObject);
+                }
             }
-            if (_rim != null) _rim.Rotate(0f, 220f * Time.deltaTime, 0f, Space.Self);
-            if (_pins != null) _pins.Rotate(0f, -90f * Time.deltaTime, 0f, Space.Self);
         }
 
         private void BeginPull()
@@ -173,8 +128,10 @@ namespace TumbangPreso.Abilities
             GameServices.Audio?.PlayAt("sfx_phaister_higop_open", transform.position);
             var pull = gameObject.AddComponent<HeroHazards.SeanceVoidComponent>();
             pull.Radius = VoodooRules.HigopRadius; pull.Duration = _life; pull.OwnerSlot = _owner;
-            pull.PullStrength = 50.0f; pull.LiftHeight = 0.0f; pull.SlipperPull = 10.0f;
+            // HERO-10: caught bodies are held with their chests at the eye, so an eye hung high puts them in the air.
+            pull.PullStrength = 50.0f; pull.LiftHeight = Mathf.Max(0.0f, _eyeHeight - VoodooRules.HigopLiftBelowEye); pull.SlipperPull = 10.0f;
             pull.SparedSlipperOwner = _owner; pull.DrowseEvery = 0.0f;
+            pull.HoldRadius = VoodooRules.HigopHoldRadius;
             HazardVolume.Attach(gameObject, VoodooRules.HigopRadius, _owner);
         }
     }

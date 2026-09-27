@@ -1,0 +1,76 @@
+{
+  "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",
+  "listening": "Not yet heard by the owner in the game mix. Peak and RMS are measurements, not approval.",
+  "cues": [
+    {
+      "cue": "sfx_cast_phaister_blink",
+      "seconds": 0.55,
+      "peak": 0.7,
+      "rms": 0.08127844731865899,
+      "sha256": "2e8c7faf426ab15a8718b1cf911430c033e6dbe5f03b8798b6754ac567a38d4f"
+    },
+    {
+      "cue": "sfx_phaister_swarm_knit",
+      "seconds": 0.9,
+      "peak": 0.7,
+      "rms": 0.07767651179920954,
+      "sha256": "410de0738d10dc698af2689dc220273a8ad44071f726062d5a548350d5eb40ce"
+    },
+    {
+      "cue": "sfx_cast_phaister_doll",
+      "seconds": 0.6,
+      "peak": 0.7,
+      "rms": 0.05923847074645366,
+      "sha256": "9f82e149988635bb8710f53d94bc86ac31f78c841f6a717839feb6abbcc9794b"
+    },
+    {
+      "cue": "sfx_phaister_manika_land",
+      "seconds": 0.8,
+      "peak": 0.55,
+      "rms": 0.06327347608543536,
+      "sha256": "80ca88c2715af7d52ee393933203465de4129f073e269e93e50dc7a9af93e788"
+    },
+    {
+      "cue": "sfx_phaister_manika_steal",
+      "seconds": 1.4,
+      "peak": 0.7,
+      "rms": 0.2004284291854376,
+      "sha256": "7aaffcdd8b0c45cf3276b6bbc5b145480ef6cc7cd341c3285b1f159591ce60bf"
+    },
+    {
+      "cue": "sfx_phaister_manika_crumble",
+      "seconds": 0.6,
+      "peak": 0.5,
+      "rms": 0.04255705611453113,
+      "sha256": "8771487c0f54ee7f5562383536a6498b95a9f1c9eda5a0fee1b61a643035a1e7"
+    },
+    {
+      "cue": "sfx_cast_phaister_pin",
+      "seconds": 0.7,
+      "peak": 0.7,
+      "rms": 0.17818643580226756,
+      "sha256": "8cffb8a074e20b40cffe27e55db96a810dc14c28981a634742bb8679a763b260"
+    },
+    {
+      "cue": "sfx_phaister_moonlight_on",
+      "seconds": 1.2,
+      "peak": 0.6,
+      "rms": 0.0648184724000058,
+      "sha256": "1dc4806c8a32ba1947cd4c1f967910477293681230746c5d5c36aaa8f58b421a"
+    },
+    {
+      "cue": "sfx_phaister_moonlight_off",
+      "seconds": 0.5,
+      "peak": 0.45,
+      "rms": 0.022291821170693463,
+      "sha256": "685918850ac560e465c9c50f2fb9f02300e7e72c01695116cf5540eba3dc9202"
+    },
+    {
+      "cue": "sfx_ult_theme_phaister",
+      "seconds": 4.0,
+      "peak": 0.75,
+      "rms": 0.09675299425574686,
+      "sha256": "7c4d506896ed0ef400524ebdd212f75da5dd7b00e2698ea4ef0c1f42315b9282"
+    }
+  ]
+}

@@ -1,0 +1,307 @@
+using System;
+using System.Collections;
+using System.IO;
+using System.Text;
+using NUnit.Framework;
+using TumbangPreso.Abilities;
+using TumbangPreso.CameraSystem;
+using TumbangPreso.Core;
+using TumbangPreso.UI;
+using TumbangPreso.Visual;
+using UnityEngine;
+using UnityEngine.TestTools;
+using Object = UnityEngine.Object;
+
+namespace TumbangPreso.PlayTests
+{
+    /// <summary>
+    /// ⚠️⚠️ PHAISTER, PLAYED AND FILMED (HERO-10): a real Hero Strike match on Bayan Plaza, her skills pressed through
+    /// `InputIntent` as a player presses them, host-resolved as in a match, filmed at 30 fps (`Time.captureFramerate`) from her
+    /// own screen and a court camera, every world cue logged for the mp4 (`tools/stitch_ability_film.py`). The method is
+    /// `docs/HERO_KIT_METHOD.md` section 7: film it in a match and send the video; a green test is not a verdict.
+    /// Runs only with TUMP_PHAISTER_FILM=1; frames under TUMP_EVIDENCE (default Logs).
+    /// </summary>
+    public sealed class PhaisterKitPlayProbe
+    {
+        private INetProvider _net;
+
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _net = NetAuthority.Provider;
+            yield return PlayModeWorld.Reset();
+            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, GameMode.HeroStrike);
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
+            yield return new WaitForSeconds(3.6f);
+            NetAuthority.Provider = new SoloProvider();
+            foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
+            foreach (var input in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) input.enabled = false;
+            foreach (var switcher in Object.FindObjectsByType<DebugPlayerSwitcher>(FindObjectsSortMode.None)) switcher.enabled = false;
+            foreach (var player in GameServices.Round.Players)
+            {
+                player.Intent.Clear(); player.Intent.Parked = true;
+                player.Teleport(new Vector3(10 + player.PlayerSlot * 2, .12f, -10));
+            }
+        }
+
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();
+            NetAuthority.Provider = _net;
+        }
+
+        /// <summary>Her body AND her kit on a seat (the Paete lesson: re-binding only the kit filmed a human casting her skills).</summary>
+        private static CharacterMotor Phaister(int slot, Vector3 at)
+        {
+            var who = GameServices.Round.PlayerAt(slot);
+            who.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "phaister");
+            who.AbilitySystem.BindHero("phaister");
+            var art = RosterBook.Load().FindPersonArt("phaister");
+            who.GetComponent<CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+            if (slot == GameLaunch.SoloSeat)
+                foreach (var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None)) arms.MatchCharacter(who);
+            who.Teleport(at); who.transform.rotation = Quaternion.identity;
+            who.Intent.Parked = false; who.IsBot = slot != GameLaunch.SoloSeat;
+            return who;
+        }
+
+        private static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0, v.z);
+
+        /// <summary>
+        /// ⚠️ HER THREE SKILLS IN ONE MATCH, IN THE ORDER OF THE PLAN:
+        ///   0.5 to 1.1  VANISHING ACT: she holds to aim 5 m down a clear lane and lets go; the barang swarm carries her.
+        ///   2.2 to 2.8  MANIKA MISCHIEF: she aims the doll at an attacker 4.5 m away and lets go; it steals their look, flies
+        ///               back to her left hand (her screen shows it in her first-person hand) and she holds it.
+        ///   8.0         SPOTLIGHT PIN: a second Phaister, the taya, stabs her pin at two attackers in front of her; the moonlight
+        ///               drops on each and follows them.
+        /// Views: `owner/` is her own screen (the local seat) and, for the taya's pin, a camera over the taya's shoulder;
+        /// `wide/` is a court camera placed per skill.
+        /// </summary>
+        [UnityTest, Timeout(600000)]
+        public IEnumerator FilmHerSkillsInAMatch()
+        {
+            if (Environment.GetEnvironmentVariable("TUMP_PHAISTER_FILM") != "1") Assert.Ignore("Film only: set TUMP_PHAISTER_FILM=1.");
+            string tag = Environment.GetEnvironmentVariable("TUMP_PHAISTER_TAG") ?? "v1";
+            string root = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs", "phaister-skills-film-" + tag);
+            foreach (string view in new[] { "owner", "wide" }) Directory.CreateDirectory(Path.Combine(root, view));
+            var round = GameServices.Round;
+            var can = Flat(round.Lata.transform.position);
+            int taya = -1;
+            foreach (var p in round.Players) if (p.IsDefender) taya = p.PlayerSlot;
+            Assert.GreaterOrEqual(taya, 0);
+            int me = GameLaunch.SoloSeat != taya ? GameLaunch.SoloSeat : (taya + 1) % 4;
+            int victimSeat = -1, fourth = -1;
+            foreach (var p in round.Players)
+                if (p.PlayerSlot != taya && p.PlayerSlot != me) { if (victimSeat < 0) victimSeat = p.PlayerSlot; else fourth = p.PlayerSlot; }
+
+            Vector3 start = can + new Vector3(0f, .12f, -12f);
+            var her = Phaister(me, start);
+            var witch = Phaister(taya, can + new Vector3(-2f, .12f, -1f));
+            var victim = round.PlayerAt(victimSeat);
+            victim.Teleport(can + new Vector3(1.0f, .12f, -2.5f)); victim.Intent.Parked = true;
+            var other = fourth >= 0 ? round.PlayerAt(fourth) : null;
+            if (other != null) { other.Teleport(can + new Vector3(6f, .12f, 4f)); other.Intent.Parked = true; }
+            void Face(CharacterMotor who, Vector3 toward)
+            {
+                var d = toward - who.transform.position; d.y = 0f;
+                if (d.sqrMagnitude > .01f) who.transform.rotation = Quaternion.LookRotation(d.normalized);
+            }
+
+            Camera Make(string name, float fov)
+            {
+                var c = new GameObject(name).AddComponent<Camera>();
+                c.CopyFrom(Camera.main); c.enabled = false; c.tag = "Untagged"; c.fieldOfView = fov; c.cullingMask &= ~(1 << 5);
+                c.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+                return c;
+            }
+            var wide = Make("PhaisterWide", 50);
+            var shoulder = Make("PhaisterShoulder", 60);
+            var hdr = new RenderTexture(1280, 720, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
+            var ldr = new RenderTexture(1280, 720, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
+            void Shoot(Camera c, string view, int index)
+            {
+                PaeteKitPlayProbe.RenderFilmView(c, hdr);
+                Graphics.Blit(hdr, ldr);
+                var active = RenderTexture.active; RenderTexture.active = ldr;
+                pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply(); RenderTexture.active = active;
+                File.WriteAllBytes(Path.Combine(root, view, $"{index:D5}.jpg"), pixels.EncodeToJPG(92));
+            }
+            int previousRate = Time.captureFramerate;
+            Time.captureFramerate = 30;
+            int frame = 0;
+            var cues = new StringBuilder().AppendLine("seconds,cue,pitch,gain");
+            Action<string, Vector3, float, float> heard = (id, at, pitch, gain) =>
+                cues.AppendLine(FormattableString.Invariant($"{frame / 30.0:F3},{Audio.AudioCues.FileStemFor(id)},{pitch:F3},{gain:F3}"));
+            AudioDirector.WorldCuePlayed += heard;
+            bool moved = false, cursed = false, exposed = false;
+            try
+            {
+                const int frames = (int)(30 * 14.0f);
+                for (int f = 0; f < frames; f++)
+                {
+                    frame = f;
+                    float t = f / 30f;
+                    // VANISHING ACT, down the lane.
+                    if (t < 2.0f) { her.Intent.AimPoint = start + new Vector3(0f, 0f, 5f); Face(her, start + new Vector3(0f, 0f, 8f)); }
+                    her.Intent.Set(Verb.Skill1, t > .5f && t < 1.1f);
+                    // MANIKA MISCHIEF, at the victim.
+                    if (t >= 2.0f && t < 7.0f) { her.Intent.AimPoint = victim.transform.position; Face(her, victim.transform.position); }
+                    her.Intent.Set(Verb.Skill2, t > 2.2f && t < 2.8f);
+                    // SPOTLIGHT PIN: the attackers are placed in front of the taya, and she stabs.
+                    if (f == 210)
+                    {
+                        her.Teleport(witch.transform.position + new Vector3(-0.8f, 0f, -4.2f));
+                        victim.Teleport(witch.transform.position + new Vector3(1.1f, 0f, -3.6f));
+                    }
+                    if (t >= 7.0f) { Face(witch, witch.transform.position + Vector3.back); Face(her, witch.transform.position); witch.Intent.AimPoint = witch.transform.position + Vector3.back * 4f; }
+                    witch.Intent.Set(Verb.Skill2, t > 8.0f && t < 8.2f);
+                    yield return null;
+                    moved |= Vector3.Distance(Flat(her.transform.position), Flat(start)) > 3f;
+                    cursed |= victim.IsDisoriented;
+                    exposed |= her.IsVulnerable || victim.IsVulnerable;
+
+                    // Cameras per skill.
+                    if (t < 2.0f) { wide.transform.position = start + new Vector3(5.5f, 2.2f, 2.5f); wide.transform.LookAt(start + new Vector3(0f, 0.9f, 2.5f)); }
+                    else if (t < 7.0f)
+                    {
+                        Vector3 mid = (her.transform.position + victim.transform.position) * 0.5f;
+                        wide.transform.position = mid + new Vector3(5.0f, 2.6f, -1.5f); wide.transform.LookAt(mid + Vector3.up * 0.9f);
+                    }
+                    else { wide.transform.position = witch.transform.position + new Vector3(4.5f, 3.4f, -5.5f); wide.transform.LookAt(witch.transform.position + new Vector3(0f, 0.8f, -2.5f)); }
+                    if (t < 7.0f && Camera.main != null) Shoot(Camera.main, "owner", f);
+                    else
+                    {
+                        var fwd = witch.transform.forward; fwd.y = 0f; fwd = fwd.sqrMagnitude > .01f ? fwd.normalized : Vector3.forward;
+                        shoulder.transform.position = witch.transform.position - fwd * 3.0f + Vector3.up * 2.1f + Vector3.Cross(Vector3.up, fwd) * .9f;
+                        shoulder.transform.LookAt(witch.transform.position + fwd * 4f + Vector3.up * 1f);
+                        Shoot(shoulder, "owner", f);
+                    }
+                    Shoot(wide, "wide", f);
+                }
+            }
+            finally
+            {
+                AudioDirector.WorldCuePlayed -= heard;
+                File.WriteAllText(Path.Combine(root, "cues.csv"), cues.ToString());
+                Time.captureFramerate = previousRate;
+                Object.Destroy(wide.gameObject); Object.Destroy(shoulder.gameObject);
+                hdr.Release(); ldr.Release();
+            }
+            File.WriteAllText(Path.Combine(root, "claims.csv"), FormattableString.Invariant($"moved,{moved}\ncursed,{cursed}\nexposed,{exposed}\n"));
+            Assert.IsTrue(moved, "VANISHING ACT did not carry her.");
+            Assert.IsTrue(cursed, "MANIKA MISCHIEF never Disoriented its target.");
+            Assert.IsTrue(exposed, "SPOTLIGHT PIN left nobody Vulnerable.");
+        }
+
+        /// <summary>
+        /// ⚠️ OMEN ON HER SCREEN (HERO-10): the cutscene overlay copied in on her own view, then the live eye, filmed with the court
+        /// and a caught player, the round clock read as the cutscene comes up, on its last frame and a second after (it must not
+        /// run under the cutscene). `SharedUltimatePhase.FilmClock` gives the cutscene the film's frame clock so it lasts its
+        /// real length. Runs only with TUMP_PHAISTER_FILM=1.
+        /// </summary>
+        [UnityTest, Timeout(600000)]
+        public IEnumerator FilmOmenOnHerScreen()
+        {
+            if (Environment.GetEnvironmentVariable("TUMP_PHAISTER_FILM") != "1") Assert.Ignore("Film only: set TUMP_PHAISTER_FILM=1.");
+            string tag = Environment.GetEnvironmentVariable("TUMP_PHAISTER_TAG") ?? "v1";
+            string root = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs", "phaister-omen-film-" + tag);
+            foreach (string view in new[] { "owner", "wide", "victim" }) Directory.CreateDirectory(Path.Combine(root, view));
+            var round = GameServices.Round;
+            var her = Phaister(GameLaunch.SoloSeat, new Vector3(0, .12f, -11));
+            her.AbilitySystem.Kit.AddUltimateCharge(100);
+            var centre = new Vector3(0, 0, -4);
+            // HERO-10: she hangs the eye in the air (owner: *"put ppl on the air"*); the aim's y is the height.
+            var aim = centre + Vector3.up * 3.2f;
+            var others = new System.Collections.Generic.List<CharacterMotor>();
+            foreach (var p in round.Players) if (p != her) others.Add(p);
+            var stands = new[] { new Vector3(4.6f, .12f, -2.4f), new Vector3(-4.2f, .12f, -1.8f), new Vector3(1.4f, .12f, 1.6f) };
+            for (int i = 0; i < others.Count && i < stands.Length; i++)
+            {
+                others[i].Teleport(stands[i]); others[i].Intent.Parked = false;
+                others[i].transform.rotation = Quaternion.LookRotation(centre - stands[i]);
+            }
+            her.Intent.AimPoint = aim;
+            Camera Make(string name, float fov)
+            {
+                var c = new GameObject(name).AddComponent<Camera>();
+                c.CopyFrom(Camera.main); c.enabled = false; c.tag = "Untagged"; c.fieldOfView = fov; c.cullingMask &= ~(1 << 5);
+                c.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+                return c;
+            }
+            var wide = Make("OmenWide", 52);
+            var victimCam = Make("OmenVictim", 62);
+            var hdr = new RenderTexture(1280, 720, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
+            var ldr = new RenderTexture(1280, 720, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
+            void Save(Texture source, string view, int index)
+            {
+                Graphics.Blit(source, ldr);
+                var active = RenderTexture.active; RenderTexture.active = ldr;
+                pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply(); RenderTexture.active = active;
+                File.WriteAllBytes(Path.Combine(root, view, $"{index:D5}.jpg"), pixels.EncodeToJPG(92));
+            }
+            void Shoot(Camera c, string view, int index) { PaeteKitPlayProbe.RenderFilmView(c, hdr); Save(hdr, view, index); }
+            bool sawScene = false, pulled = false;
+            float clockAtScene = -1f, clockAtSceneEnd = -1f, clockAfter = -1f; int lastSceneFrame = -1;
+            float startDistance = others.Count > 1 ? Vector3.Distance(Flat(others[1].transform.position), Flat(centre)) : 0f;
+            int previousRate = Time.captureFramerate;
+            Time.captureFramerate = 30;
+            int frame = 0; double clockBase = Time.realtimeSinceStartupAsDouble;
+            SharedUltimatePhase.FilmClock = () => clockBase + frame / 30.0;
+            var cues = new StringBuilder().AppendLine("seconds,cue,pitch,gain");
+            Action<string, Vector3, float, float> heard = (id, at, pitch, gain) =>
+                cues.AppendLine(FormattableString.Invariant($"{frame / 30.0:F3},{Audio.AudioCues.FileStemFor(id)},{pitch:F3},{gain:F3}"));
+            AudioDirector.WorldCuePlayed += heard;
+            try
+            {
+                const int frames = 30 * 16;
+                var victim = others.Count > 1 ? others[1] : others[0];
+                for (int f = 0; f < frames; f++)
+                {
+                    frame = f;
+                    float t = f / 30f;
+                    her.Intent.AimPoint = aim;
+                    her.Intent.Set(Verb.Ultimate, t < .25f);
+                    yield return null;
+                    pulled |= Vector3.Distance(Flat(victim.transform.position), Flat(centre)) < startDistance - 1.5f;
+                    UnityEngine.UI.RawImage scene = null;
+                    foreach (var image in Object.FindObjectsByType<UnityEngine.UI.RawImage>())
+                        if (image.name == "UltimateScene" && image.enabled && image.isActiveAndEnabled && image.texture != null) scene = image;
+                    if (scene != null)
+                    {
+                        // Her theme plays from the introduction's own AudioSource, not as a world cue: log it once for the mp4.
+                        if (!sawScene) { clockAtScene = round.TimeLeft; cues.AppendLine(FormattableString.Invariant($"{f / 30.0:F3},sfx_ult_theme_phaister,1,0.2")); }
+                        sawScene = true; Save(scene.texture, "owner", f);
+                        clockAtSceneEnd = round.TimeLeft; lastSceneFrame = f;
+                    }
+                    else if (Camera.main != null) Shoot(Camera.main, "owner", f);
+                    wide.transform.position = centre + new Vector3(9.5f, 7.0f, 9.0f);
+                    wide.transform.LookAt(centre + Vector3.up * 2.0f);
+                    var toEye = centre - victim.transform.position; toEye.y = 0;
+                    toEye = toEye.sqrMagnitude > .01f ? toEye.normalized : Vector3.back;
+                    var side = Vector3.Cross(Vector3.up, toEye);
+                    victimCam.transform.position = victim.transform.position + side * 3.4f - toEye * 1.4f + Vector3.up * 1.6f;
+                    victimCam.transform.LookAt(victim.transform.position + toEye * 1.0f + Vector3.up * 1.0f);
+                    Shoot(wide, "wide", f);
+                    Shoot(victimCam, "victim", f);
+                    if (lastSceneFrame >= 0 && f == lastSceneFrame + 30) clockAfter = round.TimeLeft;
+                }
+            }
+            finally
+            {
+                SharedUltimatePhase.FilmClock = null;
+                AudioDirector.WorldCuePlayed -= heard;
+                File.WriteAllText(Path.Combine(root, "cues.csv"), cues.ToString());
+                Time.captureFramerate = previousRate;
+                Object.Destroy(wide.gameObject); Object.Destroy(victimCam.gameObject);
+                hdr.Release(); ldr.Release();
+            }
+            string clock = FormattableString.Invariant($"round clock: {clockAtScene:F3} s left as the cutscene came up, {clockAtSceneEnd:F3} on its last frame, {clockAfter:F3} one second after");
+            File.WriteAllText(Path.Combine(root, "clock.txt"), clock + Environment.NewLine + "cutscene frames through " + lastSceneFrame + Environment.NewLine);
+            File.WriteAllText(Path.Combine(root, "claims.csv"), "saw_scene," + sawScene + Environment.NewLine + "pulled," + pulled + Environment.NewLine);
+            Assert.IsTrue(sawScene, "The cutscene never came up on her screen.");
+            Assert.IsTrue(pulled, "OMEN never pulled the filmed player in.");
+            Assert.Less(Mathf.Abs(clockAtScene - clockAtSceneEnd), 0.05f, "The match clock ran during the cutscene: " + clock);
+        }
+    }
+}

@@ -86,8 +86,8 @@ namespace TumbangPreso.Abilities
                        summary: "Aim, release, and fly there as moths. Shoves whoever you left.",
                        telegraphRadius: ArrivalMark,
                        telegraphRange: MaxRange,
-                       castAction: "hero-phaister-blink",
-                       viewmodelAction: "blink",
+                       castAction: "hero-phaister-swarm",
+                       viewmodelAction: "swarm-burst",
                        castCue: "sfx_cast_phaister_blink")
             {
                 // ⚠️⚠️ `maxHoldSeconds: 0` MEANS THE RELEASE IS THE ONLY THING THAT CASTS IT.
@@ -144,7 +144,10 @@ namespace TumbangPreso.Abilities
                 // `SpawnShadowArrival` is written characters falling onto the place she reached.
                 // They shared one `SpawnCastGlyph` call until 2026-08-26, which is most of why
                 // the blink read as "the hex again, twice".
-                HeroHazards.SpawnShadowRift(startPos, facing);
+                // ⚠️ HERO-10: THE BARANG SWARM REPLACES THE TORN SHADOW SHEET. She bursts into moths and beetles here, they
+                // stream along the aim and knit her back at the far end (`PhaisterSwarm`, plan 4.1 and 4.5); the arrival glyph
+                // stays as the sigil that burns out under her. Every peer runs this cast, so every screen sees the same act.
+                PhaisterSwarm.Play(ctx.Motor.transform, startPos, destination, facing);
                 PhaisterArrivalSeal.Create(destination,facing);
 
                 ctx.Motor.Teleport(destination);
@@ -154,7 +157,7 @@ namespace TumbangPreso.Abilities
                 // 2026-08-26 that end of the ability made no sound at all. A cue fired at
                 // `startPos` cannot cover it: `AudioDirector` parks a pooled voice at the point it
                 // is given, which is the same fault `LrtTrainFlyby` records about a moving train.
-                NetCue.Play("sfx_blink_arrive", destination);
+                NetCue.Play("sfx_phaister_swarm_knit", destination);
 
 
 
@@ -273,7 +276,7 @@ namespace TumbangPreso.Abilities
                        VoodooRules.DisorientCooldown, 0.0f, AbilityGlyph.PhaisterCursedDoll,
                        summary: "Throw a doll. The one it hits hallucinates.",
                        telegraphRadius: VoodooRules.DollHitRadius, telegraphRange: VoodooRules.DollMaxRange,
-                       castAction: "hero-phaister-hex", viewmodelAction: "cast-hex",
+                       castAction: "hero-phaister-manika", viewmodelAction: "manika-prick",
                        castCue: "sfx_cast_phaister_doll")
             {
                 AimByHolding(3.0f, VoodooRules.DollMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
@@ -286,6 +289,8 @@ namespace TumbangPreso.Abilities
             {
                 NetCue.Play("hero_phaister_grunt", ctx.Position);
                 Vector3 from = ctx.Position + Vector3.up * 1.5f + ctx.Forward * 0.4f;
+                // HERO-10: the steal, the return to her hand and the victim's mark follow the Disoriented status on every peer.
+                PhaisterStatusPresenter.Ensure();
                 VoodooDoll.Spawn(from, AimedDestination(ctx), ctx.Motor.PlayerSlot);
             }
         }
@@ -300,14 +305,17 @@ namespace TumbangPreso.Abilities
                        VoodooRules.VulnerableCooldown, 0.0f, AbilityGlyph.PhaisterVulnerable,
                        summary: "Pin the attackers in front in moonlight. Tag them anywhere.",
                        telegraphRadius: VoodooRules.VulnerableConeRange * 0.5f, telegraphRange: VoodooRules.VulnerableConeRange * 0.5f,
-                       castAction: "hero-phaister-hex", viewmodelAction: "cast-hex",
+                       castAction: "hero-phaister-pin", viewmodelAction: "pin-stab",
                        castCue: "sfx_cast_phaister_pin") { }
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 NetCue.Play("hero_phaister_grunt", ctx.Position);
                 Vector3 fwd = ctx.Forward; fwd.y = 0.0f; fwd = fwd.sqrMagnitude > 0.001f ? fwd.normalized : Vector3.forward;
-                VoodooConeFlash.Spawn(ctx.Position, fwd);
+                // HERO-10: her sigils sweep the cone left to right; each attacker it catches gets the moonlight, which follows the
+                // Vulnerable status on every peer (`PhaisterStatusPresenter`).
+                PhaisterPinSweep.Play(ctx.Position, fwd);
+                PhaisterStatusPresenter.Ensure();
                 var round = ctx.Round;
                 if (round == null || !NetAuthority.ShouldResolve()) return;
                 float half = VoodooRules.VulnerableConeDegrees * 0.5f;
@@ -335,7 +343,7 @@ namespace TumbangPreso.Abilities
                        0.0f, VoodooRules.HigopSeconds, AbilityGlyph.PhaisterEclipse,
                        summary: "A black eye swallows every player and slipper nearby.",
                        telegraphRadius: VoodooRules.HigopRadius, telegraphRange: VoodooRules.HigopMaxRange,
-                       castAction: "hero-phaister-eclipse", viewmodelAction: "coven-eclipse",
+                       castAction: "hero-phaister-omen", viewmodelAction: "omen-rise",
                        castCue: "sfx_cast_phaister_higop")
             {
                 TelegraphStyle = GroundReticle.Style.Ward;
@@ -343,7 +351,10 @@ namespace TumbangPreso.Abilities
                 // whole"*): she is rooted while the power surges through her (her cast clip), and the
                 // spot is marked for everyone to read.
                 Windup = VoodooRules.HigopCastSeconds;
-                AimByHolding(3.0f, VoodooRules.HigopMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                // HERO-10: placed where she LOOKS, and as HIGH as she looks (owner: *"she can choose as well where blackhole goes
+                // and how high ... put ppl on the air"*). The spot and its height travel in the commit's aim.
+                AimByHolding(3.0f, VoodooRules.HigopMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f, whereLooking: true);
+                AimInTheAir(VoodooRules.HigopMinHeight, VoodooRules.HigopMaxHeight);
             }
 
             public override void Activate(AbilityContext ctx)

@@ -1016,7 +1016,8 @@ namespace TumbangPreso.Abilities
         {
             switch (heroId)
             {
-                case "phaister": return "sfx_coven_summon";
+                // HERO-10 (2026-09-27): OMEN's own theme, timed to its cutscene (`tools/build_phaister_audio.py` theme()).
+                case "phaister": return "sfx_ult_theme_phaister";
                 case "zack": return "sfx_ult_theme_zack";
                 case "cheska": return "sfx_ult_theme_cheska";
                 case "sean": return "sfx_ult_theme_sean";
@@ -1347,6 +1348,19 @@ namespace TumbangPreso.Abilities
 
             at.x = Mathf.Clamp(at.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
             at.z = Mathf.Clamp(at.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            if (ability.AimsInTheAir)
+            {
+                // HERO-10: the height rides in the aim's y. Sent aims keep theirs; the caster's own comes off her camera.
+                float ground = Slipper.GroundY(at);
+                float height = ability.AimMinHeight;
+                if (context.HasAimPoint) height = context.AimPoint.y - ground;
+                else
+                {
+                    Vector3 flatTo = at - context.Position; flatTo.y = 0.0f;
+                    if (CameraSystem.CameraRig.TryLookHeight(context.Motor, flatTo.magnitude, out float sight)) height = sight - ground;
+                }
+                at.y = ground + Mathf.Clamp(height, ability.AimMinHeight, ability.AimMaxHeight);
+            }
             return at;
         }
 

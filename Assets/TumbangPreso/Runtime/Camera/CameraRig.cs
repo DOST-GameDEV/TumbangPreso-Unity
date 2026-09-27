@@ -267,6 +267,23 @@ namespace TumbangPreso.CameraSystem
             if (rig._emoteView) rig._emoteYawDeg = rig.BodyYawDeg();
         }
 
+        /// <summary>
+        /// ⚠️ HERO-10: THE HEIGHT OF THE SIGHT LINE <paramref name="flatDistance"/> metres out, for a power placed in the air
+        /// (Phaister's OMEN: she looks up to hang the eye higher). False unless this camera follows <paramref name="who"/>.
+        /// </summary>
+        public static bool TryLookHeight(CharacterMotor who, float flatDistance, out float height)
+        {
+            height = 0.0f;
+            var cam = Camera.main;
+            var rig = cam != null ? cam.GetComponent<CameraRig>() : null;
+            if (who == null || rig == null || rig._character != who) return false;
+            Vector3 forward = cam.transform.forward;
+            float flat = new Vector2(forward.x, forward.z).magnitude;
+            if (flat < 1e-3f) { height = cam.transform.position.y + 100.0f; return true; }
+            height = cam.transform.position.y + forward.y / flat * flatDistance;
+            return true;
+        }
+
         public static bool TryLookGround(CharacterMotor who, out Vector3 point)
         {
             point = Vector3.zero;
