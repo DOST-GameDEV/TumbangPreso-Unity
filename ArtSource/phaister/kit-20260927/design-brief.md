@@ -20,29 +20,30 @@ direction. Research: `docs/reports/phaister-kit-2026-09-27/research.md`. Plan an
 | `GaitStyles.Phaister` | Struts, one foot across the centre line, chin up, a flourish in the arm swing; the run is an exit with a cape that is not there. |
 | Her model (`tools/build_phaister_voxel.py`, 23 iterations) | Tall stepped witch hat with a violet band, gold buckle and a feather; magenta hair; sleepy-lidded confident eyes, a small smirk; black robe with violet trim, gold collar chain and a violet jewel; gold buckle belt. She and Dante are the look the rest of the cast is being restyled toward (TODO, Nemu and Rafi restyles are rendered "beside Dante and Phaister"). |
 
-**The one sentence for her whole kit: she is a stage magician whose tricks happen to be curses, and every ability is a
-little show with a setup, a reveal and a bow.** Voodoo is her props (pins, a stitched doll, thread), not her mood: she is
-playful and pleased with herself, never menacing.
+**The one sentence for her whole kit (v2, owner: *"make her a frigging witchh not a showman"*, *"MAGIC AND VOODOO"*,
+*"think of fil cutlure integration"*): a mischievous Visayan witch from Capul whose magic is moths, moonlight and a rag
+doll full of pins.** She is playful and pleased with herself, never menacing. v1 (a stage magician) is rejected; see
+`plan.md` section 8.
 
 ## 2. How the personality shows up, channel by channel
 
 | Channel | Rule |
 |---|---|
-| Body | Every cast has a FLOURISH before the release and a PRESENTING gesture after it (open palm, a hat tip, a curtsey, a conductor's point). Each ability gets a different one: the owner rejects repeated gags. She never flinches, never strains; the effort is hidden, like a magician's. |
-| Face | Ink only, her existing face. Her lids stay half-closed (bored-confident) and OPEN only at the reveal of the ultimate. That one change of face is the cutscene's punctuation. |
-| Effects | Stage and moon: a spotlight, a curtain, a moon disc, gold sparkle on the reveal; voodoo props: pins, stitched thread, doll cloth. Solid toon geometry in her palette; only her sigils, the moon and the spotlight glow. |
-| Sound | A performer's kit: a snare roll into a cymbal-less "ta-da" sting, a slide whistle, cloth swish, a pin's bright tick, thread pulled taut (a plucked, tightening pitch), her laugh. Every cue has a transient, a body and a tail (method section 5). |
-| Directing | She plays to a camera. The cutscene is a performance for the audience: she looks INTO the lens at the setup and at the bow. |
+| Body | Unhurried and sure. She casts with small, precise hands (a prick of a pin, a flick of the wrist, a twist of a doll's head) and saves the big body moment for OMEN, where the power visibly surges through her. She never strains. A smirk and a glance at her victim are her tells, not a bow. |
+| Face | Ink only, her existing face. Her lids stay half-closed; in OMEN her eyes light violet. |
+| Effects | Witch and voodoo, Visayan folklore: moths and beetles (the barang swarm), black butterflies (the omen), moonlight, her lunar sigils, the rag manika, long hat pins, ash and embers. Solid toon geometry in her palette; only sigils, moonlight, her eyes and the eye's rim glow. |
+| Sound | Wings as grains, a needle through cloth, a pin's bright tick, a glassy moon chord, candle crackle, a detuned music box for the doll, ash crumbling; her lines recorded by the team. |
+| Directing | The camera treats her as the source of the power: low angles as it surges, close on her hands as she shapes it, and the payoff seen from above as it swallows her victims. |
 
 ## 3. Her palette (from the model; no blue anywhere in the UI, CLAUDE.md 6.4)
 
-Black robe, violet trim, magenta hair, gold hardware, pale skin. Effects use violet and magenta for magic, gold for the
-reveal (sparkle, the spotlight's warm edge), bone white only for the moon and the pins' heads. The black hole's core is
-her robe's black, its rim her hair's magenta.
+Black robe, violet trim, magenta hair, gold hardware, pale skin. Effects use violet and magenta for magic, gold for pin
+shafts and embers, bone only for the pins' heads and moonlight's pale core. OMEN's eye is her robe's black with her hair's
+magenta rim; its butterflies are black with violet undersides.
 
 ## 4. The model
 
-Her body model is the cast's reference and is NOT reworked unless the owner says so (plan question 2). The PROPS of her
-skills are: the rag doll, the pin, the spotlight rig, the curtain, the moon and the serpent are modelled like characters
-in a typed prop builder (`tools/build_phaister_props.py`), every part by hand, the way `tools/build_paete_props.py` does it.
-The current doll and ring in `tools/build_rework_props.py` are first-pass and are replaced.
+A light refinement (owner: *"u can refine a bit i dont mind"*), `plan.md` section 5: hat pins in the band, a rag manika at
+her hip, a crescent moon buckle, two moths on the brim. The PROPS of her skills (the manika, the hat pin, the moth, the
+beetle, the butterfly, the black eye) are modelled like characters in `tools/build_phaister_props.py`, every part by hand,
+the way `tools/build_paete_props.py` does it. The first-pass doll and ring in `tools/build_rework_props.py` are replaced.

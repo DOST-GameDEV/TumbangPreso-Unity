@@ -1,161 +1,245 @@
-# Phaister's overhaul: the plan, 2026-09-27
+# Phaister's overhaul: the plan, 2026-09-27 (v2, the witch)
 
 Owner, 2026-09-27: *"rename her shit too hahah it sucks ass"*, *"it needs really great presentation VFx ANIIMATION SFX AND
 DIRECTING"*, *"think abt her personality too in making her cutscenes and vfx"*, *"thoroughly refine existing animation
-effects and models and vfx of her skills"*. Method: `docs/HERO_KIT_METHOD.md`. Brief:
-`ArtSource/phaister/kit-20260927/design-brief.md`. Research: [research.md](research.md).
+effects and models and vfx of her skills"*. Then, on v1: *"i want u to make her a frigging witchh not a showman"*, *"she's
+supposed to be using MAGIC AND VOODOO BTW"*, *"think of fil cutlure integration with her shit"*. Method:
+`docs/HERO_KIT_METHOD.md`. Brief: `ArtSource/phaister/kit-20260927/design-brief.md`. Research: [research.md](research.md).
 
-**The one sentence for her kit: a stage magician whose tricks happen to be curses; every ability is a small show with a
-setup, a reveal and a bow.** Playful, pleased with herself, never cruel (LORE.md).
+**The one sentence for her kit: a mischievous Visayan witch from Capul whose magic is moths, moonlight and a rag doll
+full of pins.** Playful and pleased with herself, never cruel (LORE.md). v1's showman (spotlights, curtains, bows) is
+REPLACED; section 8 records what was rejected and why.
 
 ## 0. What is there today (audited from the code, 2026-09-27)
 
 | Ability | Today | Verdict |
 |---|---|---|
-| SHADOW BLINK | a torn shadow sheet at the start (`HeroHazards.SpawnShadowRift`), falling glyphs at the end (`PhaisterArrivalSeal`), the old `hero-phaister-blink` clip (a kick), `sfx_blink_arrive` | two unrelated effects; nothing travels between them; no personality |
-| CURSE: DISORIENTED | a first-pass modelled doll (`build_rework_props.py`, block fallback) spinning on an arc; lands with `sfx_blink_arrive`, the BLINK's sound; cast clip `hero-phaister-hex` from the retired Hex | shares a clip and a sound with other abilities; the method forbids both |
-| CURSE: VULNERABLE | `VoodooConeFlash`, a flat fan that scales in over 0.15 s and vanishes at 0.6 s; the SAME `hero-phaister-hex` clip and `cast-hex` first-person action | invisible after 0.6 s, so nobody can tell who is Vulnerable |
-| HIGOP | a placeholder dark sphere with a ring (`VoodooBlackHole`); cast clip `hero-phaister-eclipse` from the retired Eclipse; the cutscene is still the retired Grand Coven ritual | the owner's *"make blackhole really cool"* is not met anywhere |
+| SHADOW BLINK | a torn shadow sheet at the start (`HeroHazards.SpawnShadowRift`), falling glyphs at the end (`PhaisterArrivalSeal`), the old `hero-phaister-blink` clip (a kick), `sfx_blink_arrive` | two unrelated effects; nothing travels between them |
+| CURSE: DISORIENTED | a first-pass doll (`build_rework_props.py`, block fallback) spinning on an arc; lands with `sfx_blink_arrive`, the BLINK's sound; cast clip `hero-phaister-hex` from the retired Hex | shares a clip and a sound with other abilities; the method forbids both |
+| CURSE: VULNERABLE | `VoodooConeFlash`, a flat fan gone at 0.6 s; the SAME `hero-phaister-hex` clip and `cast-hex` first-person action | nobody can tell who is Vulnerable |
+| HIGOP | a placeholder dark sphere with a ring (`VoodooBlackHole`); clip `hero-phaister-eclipse` from the retired Eclipse; the cutscene is still the retired Grand Coven ritual | *"make blackhole really cool"* is not met anywhere |
 
-Mechanics stay as built (`Core.VoodooRules`, ABILITY-2); question 9 asks about the numbers that were never reviewed.
+## 1. Filipino folklore she draws on (inspiration for a fictional witch, never a depiction of a real rite)
 
-## 1. Names (the owner asked; ids unchanged)
+| Folklore | What it gives her |
+|---|---|
+| The *mangkukulam*: a witch who curses through a doll and pins | MANIKA MISCHIEF and SPOTLIGHT PIN: the rag doll and the long hat pins |
+| The *mambabarang* (Visayas): sorcery sent as a swarm of insects | VANISHING ACT: she travels as a swarm of moths and beetles |
+| The black butterfly (*paru-parong itim*), an omen | OMEN, the ultimate: a maelstrom of black butterflies round a black eye |
+| Capul's moon story (`CHARACTER_ORIGINS.md`) | her sigils are lunar (the fictional writing already in `PhaisterSpellGeometry`); moonlight is her one light |
+| Siquijor's herb brewing, black candles | small details on her model and in her sounds (a crackle of candle flame under her hexes) |
 
-Paete's final names were English with one Filipino anchor (BAKYA BLOOM), so hers follow that shape.
+Boundaries: her spell writing stays fictional (as `CHARACTER_ORIGINS.md` says); no real prayer, *orasyon* or ritual is
+shown or quoted; the tone is mischief, not horror. **Names are English** (owner: *"no tagalog"* for the ultimate).
 
-| Slot | Today | Proposed | Why | Alternative |
-|---|---|---|---|---|
-| Signature | SHADOW BLINK | **VANISHING ACT** | the oldest trick on a stage: now you see her, now you do not | CURTAIN CALL |
-| Attacking | CURSE: DISORIENTED | **MANIKA MISCHIEF** | *manika*, a doll; the doll takes the victim's look and scrambles what they see | PUPPET PANIC |
-| Defending | CURSE: VULNERABLE | **SPOTLIGHT PIN** | she pins them in the spotlight, where everyone can catch them | CENTRE STAGE |
-| Ultimate | HIGOP | **BAKUNAWA'S BITE** | her Capul childhood story: the serpent that swallows the moon, performed as her greatest trick | THE GRAND FINALE |
+## 2. Names (ids unchanged)
 
-## 2. The effect family (her rules, written before any effect)
+| Slot | Was | Now |
+|---|---|---|
+| Signature | SHADOW BLINK | **VANISHING ACT** (approved) |
+| Attacking | CURSE: DISORIENTED | **MANIKA MISCHIEF** (approved) |
+| Defending | CURSE: VULNERABLE | **SPOTLIGHT PIN** (approved) |
+| Ultimate | HIGOP | **OMEN** (the black butterfly; *"no tagalog"*) |
 
-1. **Props are solid, toon-lit geometry** in her palette (black, violet, magenta, gold, bone for the moon and pin heads).
-   Only the spotlight, the moon, her sigils and the hole's rim glow. Never white.
-2. **Every effect comes out of her props and is put away again**: pulled from her sleeve or hat, folded, switched off,
-   deflated, swallowed. Nothing fades a solid by alpha.
-3. **Every payoff is a REVEAL**: a beat of gold glints and a presenting gesture, a different gesture per ability.
-4. **The spotlight is her one light**: violet body, warm gold edge, drawn as edges on the ground, never a fill over the can.
-5. **Power sits in a small point; an area is drawn by what moves toward it** and a ring on the ground (Zarya).
-6. **Readable in the 14 m box**: footprints 1.2 to 2.3 m except the ultimate; the can, the chalk and every player stay
-   visible on Low.
-7. **Typed by hand, part by part**, in `tools/build_phaister_props.py`: the rag doll, the pin, the lamp, the curtain, the
-   moon, the serpent.
+## 3. The effect family
 
-**Her sound instruments** (`tools/build_phaister_audio.py`, numpy, seeded; each cue a transient, a body and a tail, no two
-cues sharing a recipe): `snare` (a stage roll), `sting` (a two-note ta-da), `swish` (cloth), `zip` (thread drawn fast),
-`tick` (a pin's bright metal), `lamp` (a stage lamp's clunk and hum), `musicbox` (a warped tine melody), `pluck` (thread
-tightening, pitch rising), `hiss` (cloth hiss for the serpent), `gulp`; her recorded laugh stays the one voice.
+1. **Solid, toon-lit props** in her palette (black, violet, magenta, gold, bone for pin heads and moonlight). Only her
+   sigils, moonlight, her eyes during OMEN and the eye's rim glow. Never white.
+2. **Everything comes out of her and goes back**: moths from her sleeves and back into them, the doll from her belt and
+   back to her hand, pins from her hat band, butterflies out of her robe and away into the sky. Endings crumble to ash,
+   burn out as embers or fly off; nothing fades a solid by alpha.
+3. **Wings are her particles.** Moths (small, violet, fluttering) for the signature, black butterflies (bigger, slow wing
+   beats) for the ultimate; each typed by hand with its own size, wing angle and flight path. Never one quad stamped
+   round a circle.
+4. **Moonlight is her one light**: pale violet columns with a warm edge, drawn as edges on the court, never a fill over
+   the can.
+5. **Power sits in a small point; an area is drawn by what orbits it** and a ring of her sigils on the ground. Nothing
+   reaches out to grab a player (that is Paete's).
+6. **Readable in the 14 m box**; footprints 1.2 to 2.3 m except the ultimate; the can, chalk and players stay visible on Low.
+7. **Typed by hand** in `tools/build_phaister_props.py`: the manika (and its victim-coloured variant), the hat pin, the
+   moth, the beetle, the butterfly, the black eye.
 
-## 3. The six beats per ability
+**Her sound instruments** (`tools/build_phaister_audio.py`, numpy, seeded; transient, body and tail per cue; no two cues
+share a recipe): `flutter` (many wings as grains, not hiss), `buzz` (beetle wings, a low rasp), `stitch` (a needle through
+cloth, a small tearing pop), `tick` (a pin's bright metal), `moon` (a glassy chord), `candle` (a flame's crackle and
+whoomph), `musicbox` (a detuned tine phrase, the doll's), `ash` (a dry crumble), `wind` (the maelstrom's draw), and the
+motif `hex` (three falling tones) every time her sigil is drawn. Her laugh and lines will be recorded by the team.
 
-### 3.1 VANISHING ACT (signature; hold to aim, release, she is there; whoever she left is shoved)
+## 4. The six beats per ability
+
+### 4.1 VANISHING ACT (hold to aim, release, she is there; whoever she left is shoved 2.5 m)
 
 | Beat | Body (everyone) | First person | Effect | Sound |
 |---|---|---|---|---|
-| Tell (while aiming) | she takes her robe's hem in one hand, chin up | her hand lifts the hem into view | the aim ring becomes a SPOTLIGHT: a violet cone from 2.2 m, gold-edged circle on the court where she will arrive | a lamp hum under the aim |
-| Release | a swirl: she sweeps the hem up over her head | the hem sweeps across the screen | a curtain of violet cloth drops round her from a ring at 1.7 m; a snap; the curtain falls EMPTY and its ring of cloth whips out (the shove, 2.5 m) | `swish`, the snap |
-| Travel | (gone) | a black frame for two frames, a stitch line racing ahead | a seam of stitched thread zips along the court from her start to the spot (0.12 s) | `zip` |
-| Contact (arrival) | a curtain rises out of the court round the spot and is pulled up and away; she is there, mid hat tip | the curtain lifts off the screen | the spotlight blazes for 0.2 s, gold glints | `sting` |
-| Linger | she finishes the hat tip, strut resumes | | glints drift down through the cone | |
-| Dissipate | | | the spotlight irises shut to a point; the dropped curtain at the start folds and sinks into the seam | a lamp clunk off |
+| Tell (aiming) | wrists crossed at her chest, moths crawling out of her cuffs | a few moths on the backs of her hands | her lunar sigil drawn on the court where she will arrive, three moths circling it | `flutter`, quiet |
+| Release | she flings her arms open and bursts | her hands break into moths from the fingertips in | ~40 moths and beetles burst outward from her body (typed), the burst's ring is the shove | `candle` whoomph, `buzz` |
+| Travel | (gone) | a flicker of dark wings across the screen | the swarm streams low along the aim as a ribbon, 0.15 s | `flutter` doppler |
+| Arrival | the swarm spirals up at the sigil and knits her back from the feet up; she lands with a hand on her hat | the hands re-knit from the wrists out | the sigil flares | `hex` motif |
+| Linger | strut resumes | | stragglers settle on her brim and shoulders, then crawl into her sleeves | a last wing flutter |
+| Dissipate | | | the sigil burns out as violet embers | `ash` |
 
-### 3.2 MANIKA MISCHIEF (attacking; a thrown doll; the first player within 1.2 m is Disoriented 4 s)
-
-| Beat | Body | First person | Effect | Sound |
-|---|---|---|---|---|
-| Tell | she pulls a rag doll from her sleeve and whispers to it | the doll held up to the lens, her other hand cupped beside it | | a giggle whisper |
-| Release | an underhand juggler's toss with a spin, and a wink | the toss arcs away from the hand | a single thread stays tied between her finger and the doll | `swish` small |
-| Travel | | the thread pays out from her fingers | the doll tumbles on its arc, the thread trailing back to her | `pluck`, rising as the thread pays out |
-| Contact | | | the doll grabs the victim's shoulder and TAKES THEIR LOOK (it copies their colours, question 4); a pop of loose stitches | a soft cloth thump, a `musicbox` phrase that detunes |
-| Linger (4 s) | she tugs the thread once (a puppeteer's twitch) | a tug in the fingers | a tiny ring of three doll-copies of the victim circles their head; the hallucinations on their screen (built) | the music box loops, detuning |
-| Dissipate | | | the doll's stitches pop and it deflates to a flat cloth that sinks | a cloth sigh |
-| Miss | | | the doll lands, sits up, shrugs, flops flat and sinks | a cloth thump, one sad tine |
-
-### 3.3 SPOTLIGHT PIN (defending; a 60 degree, 7 m cone; every attacker in it is Vulnerable 5 s)
+### 4.2 MANIKA MISCHIEF (a thrown doll; the first player within 1.2 m is Disoriented 4 s). Seen in FIRST AND THIRD person
+(owner: *"i want ppl to see and hher to see that shees using it"*)
 
 | Beat | Body | First person | Effect | Sound |
 |---|---|---|---|---|
-| Tell | she draws a long pin out of her hat and spins it between her fingers like a baton | the pin twirls in her hand | | `tick` twice |
-| Release | a conductor's point with the pin along her aim | the pin points down the cone | a fan of three spotlight beams sweeps across the cone from above, drawn as edges on the court | `lamp` clunk x3, fast |
-| Contact | | | each attacker hit: a beam locks onto them from 3 m up; a gold pin sigil stabs into the court at their feet | `tick` on each |
-| Linger (5 s) | she presents the lit victim with an open palm | | the spotlight FOLLOWS the Vulnerable player (everyone can read who is exposed, question 5) | a lamp hum on them |
-| Dissipate | | | the lamp flickers and cools (violet to a dull orange filament), the pin sigil pops out | a clunk off, a cooling tick |
+| Tell | she unhooks the rag manika from her belt, pricks its chest with a pin, smirks | the doll held up in her left hand, the pin going in | | `stitch` |
+| Release | an overhand throw | the doll leaves the hand | a trail of violet hex smoke off the doll | a cloth swish |
+| Travel | | | the doll tumbles on its arc, pins rattling in it | a pin rattle |
+| Contact | | | it slaps onto the victim, drinks their colours (it becomes a doll OF them) and flies BACK to her hand | a soft slap, a rising sucking chime |
+| Linger (4 s) | she holds the victim's doll in her off hand, slowly twisting its head, glancing at the victim | the doll of the victim in her lower left, her thumb turning its head; the victim's name tag on it | a small spinning sigil over the victim; on the VICTIM's screen, the hallucinations (built) and a glimpse of a doll of themselves at the edge | `musicbox` detuning |
+| Dissipate | she crushes it | the doll crumbles in her fist | the doll pops its stitches and falls away as cloth and ash | `ash` |
+| Miss | | | the doll lands, sits up, looks around, crumbles | one sad tine, `ash` |
 
-### 3.4 BAKUNAWA'S BITE (ultimate; 2.2 s slow cast, a hole at an aimed spot up to 8 m; 5 s pull within 7.5 m; no escape)
+### 4.3 SPOTLIGHT PIN (a 60 degree, 7 m cone; every attacker in it is Vulnerable 5 s; the light follows them)
 
-**Live:**
-- The hole is an ECLIPSE: a small black disc (0.6 m) hung at 1.1 m over the spot, with a hot magenta corona. A stitched
-  cloth serpent circles the rim as the accretion ring, its jaws open round the disc.
-- The area is a ring drawn on the court at 7.5 m and thread arcs, dust and loose pins spiralling inward; the court dimples
-  toward the centre. No dome.
-- Every other body and every slipper that is not hers is dragged in (the owner's rule: they can push away for a moment,
-  then are sucked back); caught players bob at the rim, struggling. Slippers whistle and vanish into the disc.
-- The end: the serpent snaps its jaws shut on the disc (a gulp), its coils tighten to a point, a thump releases everyone at
-  the rim, and a small moon pops back OUT of the serpent's mouth and floats up (the trick undone, her open finish,
-  question 8).
-- Victim view: screen edges stretch toward the hole; a low hum rises as they near it.
-
-**The cutscene (direction before building, method section 6).**
-
-One sentence: **"She shows them the moon, and her serpent swallows it."** The travelling thing is the MOON, always moving
-left to right across the frame, from her hand, to the serpent's mouth, down onto the court as the eclipse.
-
-| Shot | Time (6.5 s, question 7) | Picture | Camera | Sound |
+| Beat | Body | First person | Effect | Sound |
 |---|---|---|---|---|
-| 1 SETUP | 0.0 to 2.0 | opens on pins and loose thread already raining through a spotlight cone (the element in the air); she steps into the light, tips her hat INTO the lens, pulls a sewn moon out from under the brim and holds it up | a slow push in from a mid shot to her waist | a snare roll, a cymbal-less sting as the moon appears (the motif) |
-| 2 THE TRICK | 2.0 to 4.4 | power surges: she rises off the court, robe, hair and sleeves whipping UPWARD, pins rising in a slow ring; a stitched serpent pours out of her ring of thread and coils up round her; she lets the moon go and it drifts left to right into the serpent's open jaws; her eyes OPEN (the one held close-up, 0.5 s); the jaws close: eclipse, the frame goes to her dark with only the magenta corona | low angle, looking up past her feet (the Kafka detail shot: pins raining round her shoes), then a cut to the close-up of her face | a long rising whine, cloth whipping, `hiss`, the `gulp` cut dead into silence |
-| 3 THE REVEAL | 4.4 to 6.5 | she flicks her fingers and the eclipse drops onto the aimed spot; the camera rides it down and out to the REAL targets (staged copies, their own clips) as they are yanked off their feet, shocked, and dragged in; it swings wide and settles with every target bobbing at the rim and Phaister behind, landing into a curtsey | one continuous move, never meeting a body (method 6, rules 3 to 5) | her laugh, the hole's drone, a slipper whistle per slipper, the final `sting` on the curtsey |
+| Tell | she draws a long hat pin from her hat band and holds it like a wand | the pin comes down into view | the pin's head glows | `tick` |
+| Release | she stabs the pin down into the air in front of her | the stab | a crescent of her sigils sweeps across the cone on the court | `hex` motif |
+| Contact | | | each attacker in it: a pin of light drives into the court at their feet and a column of pale violet MOONLIGHT drops on them from the sky | `tick` + `moon` per victim |
+| Linger (5 s) | she points the pin at the lit victim | | the moonlight FOLLOWS them, everyone can see who is exposed (approved) | a low moon hum on them |
+| Dissipate | she slides the pin back into her hat | | the column thins to one beam and snaps off; the pin crumbles to ash | a snap, `ash` |
 
-The density pass (method 6) on every beat, in her colours: glints on each reveal, shockwave rings where the eclipse lands,
-rays behind her as she rises, thread ribbons spiralling round her, rising pins as motes, a curtain of streaks round the
-hole, the frame's edges sinking into her violet dark while the power is up. Play hands back at the cutscene's end state,
-never showing the catch twice.
+### 4.4 OMEN (ultimate; 2.2 s cast, a black eye at an aimed spot up to 8 m; 5 s pull within 7.5 m; no escape)
 
-## 4. Files this touches
+**Direction rules for everything she makes** (so every moving part agrees with every other):
+- Everything of hers that turns, turns **CLOCKWISE seen from above** (the maelstrom, the ground ring, the sigils, the moths
+  circling the aim mark, the butterflies round her in the cutscene). One handedness reads as one magic.
+- **Wings are always slow; speed lives in streaks, bodies and the camera** (Seele: fast strokes and slow butterflies in the
+  same frame). A butterfly never moves faster than 4 m/s on screen; its wings beat 3 to 6 times a second, each its own rate.
+- In the cutscene the omen flows **left to right** across the frame in every shot, so each cut continues the one before.
+- In play, the pull reads **inward and down**: streaks on the court point at the eye, the butterflies' orbit tightens and
+  speeds up toward the core, and nothing of hers ever moves outward except at the release and the end.
 
-- **New**: `tools/build_phaister_props.py` (doll, pin, lamp, curtain, moon, serpent glbs), `tools/build_phaister_audio.py`,
-  `Runtime/Visual/PhaisterVanishingAct.cs`, `PhaisterManika.cs`, `PhaisterSpotlight.cs`, `PhaisterBakunawa.cs`
-  (replacing `VoodooVfx.cs` bodies; the gameplay classes keep their host logic), `HeroAbilityClips.Phaister.cs` + a
-  motion author (four clips, no shared clip), `HeroIntroductionScene.Phaister.cs` rewritten + `PhaisterBurst.cs`,
-  `PhaisterKitPlayProbe` (films her screen, the court, a caught player) and a rejoin probe for the hole and the spotlight.
-- **Changed**: `PhaisterHeroKit.cs` (names, descriptions, cast actions, cues), `ViewmodelArms` (four first-person
-  actions), `CharacterAnimator` action map, `tools/author_ultimate_intros.py` `phaister()`, `HeroGlyphs` and
-  `tools/build_ability_icons.py` (four icons), `HeroLines.cs`, `AudioCues`, `WorldEffectSnapshot` kinds for the spotlight,
-  `docs/TODO.md` (a HERO entry with the method's checklist).
-- **Retired**: the Hex, Eclipse and Coven clips and cutscene once nothing references them.
+**Live, every moving part:**
 
-## 5. Order of work
+| # | Part | Starts | Moves (direction) | Speed and shape | Anchored to | Ends |
+|---|---|---|---|---|---|---|
+| 1 | The mark (the 2.2 s cast) | a ring of her sigils drawn on the court at the aimed spot, 7.5 m, as she begins | the sigils write themselves clockwise round the ring, one after another | the full ring in 2.2 s, a rising pace | the court | the ring stays for the 5 s, turning slowly clockwise (6 degrees a second) |
+| 2 | Her body (the cast) | the court | rises 0.4 m, robe, sleeves and hair lifting UPWARD; a violet light in her eyes | slow rise over 2.2 s, cloth fluttering fast | her | lands when the eye opens |
+| 3 | Butterflies from her | her sleeves and hat brim | pour out and stream to the aimed spot in a low arc, clockwise round it | 30 of them over 2 s, each on its own curve | her, then the spot | join the maelstrom |
+| 4 | The eye | a pinpoint at 1.1 m over the spot at 2.2 s | opens to 0.6 m | 0.15 s, an overshoot to 0.7 and back | the spot | see 11 |
+| 5 | The rim | the eye's edge | a magenta corona that flickers | a slow throb, 1.5 a second | the eye | |
+| 6 | The landing | the court under the eye | ONE shockwave ring racing out to 7.5 m; the court flashes in the shape of a BUTTERFLY (the emblem, Castorice) | 0.25 s | the court | fades in 0.4 s |
+| 7 | The maelstrom | 60 black butterflies with magenta wing edges, typed by hand | orbit the eye CLOCKWISE in a flattened disc, faster and lower toward the middle, some dipping into the core | 0.4 turns a second at 7 m, 2 turns a second at 1 m; wings slow | the eye | see 11 |
+| 8 | Pull streaks | the court at the boundary | thin violet streaks slide INWARD along the court toward the eye | 3 m/s, a few at a time, never many | the court | vanish into the rim |
+| 9 | Caught bodies | wherever they are | slide in; they may push away and gain ground for a moment, then are dragged back (the owner's rule); at the rim they bob and struggle; butterflies swarm round each | the pull 1.5 m/s over their run speed | the eye | dropped at 11 |
+| 10 | Slippers not hers | loose or flying | spiral in clockwise, spinning, and vanish into the core with a pop | faster than bodies | the eye | swallowed |
+| 11 | The end (5 s) | the maelstrom | every butterfly bursts UP into the sky at once, a black fountain; the eye pops; everyone drops at the rim | 0.3 s up and out | the eye | three butterflies stay, land on caught players' heads, then flutter away one by one (Seele's aftermath, Hu Tao's single butterfly) |
+| 12 | Her own screen | | a faint violet veil at the edges while the eye is open | | her camera | clears at 11 |
+| 13 | A victim's screen | | butterflies flutter across the edges; the edges pull toward the eye as they near it; a low hum rises | | their camera | clears at 11 |
+| 14 | The court light | the eye's 7.5 m disc | dims a little and cools to her violet (Castorice's domain, small) | 0.4 s in | the court | back at 11 |
 
-1. Owner's answers (section 6), recorded in section 7.
-2. Names and descriptions in the kit and icons (small, ships first).
-3. Props in the typed builder; turnarounds of each prop beside her.
-4. The four body clips and four first-person actions; filmstrips.
-5. Effects per ability, then sound per ability, filmed in a match and sent.
-6. The cutscene: storyboard with `--preview`, then built, filmed on her screen with the clock measured.
-7. Density pass, loudness table; film; send; act on the verdict.
-8. Bots, rejoin probe, full verification, build.
+**The cutscene, 4.0 s** (owner: *"try with shorter first like 3-5 seconds"*). About the power surging through HER (*"it can
+be seen in her that power is surging in her and clothes are flying"*); no summon, nothing grabbing anyone.
 
-## 6. Open questions (ONE batch, 2026-09-27)
+One sentence: **"The omen pours out of her, and she throws it at them."** The travelling thing is the BUTTERFLIES, flowing
+left to right in every shot.
 
-1. **Names**: VANISHING ACT, MANIKA MISCHIEF, SPOTLIGHT PIN, BAKUNAWA'S BITE? Or the alternatives, or your own.
-2. **Her own model**: keep it as it is (she is the look the cast is being restyled toward), or refine her too?
-3. **The teleport's vehicle**: a stage curtain (drops round her, rises round her at the spot, proposed) or the old plan's
-   shadow ribbon along the ground?
-4. **The doll**: on a hit it copies the victim's look (their colours), so it becomes a voodoo doll OF them. Yes?
-5. **Spotlight Pin**: the spotlight follows each Vulnerable player for the whole 5 s so everyone can read who is exposed.
-   Too loud, or good?
-6. **The ultimate's serpent**: a stitched cloth serpent circling the hole and swallowing the moon (proposed), or a pure
-   black hole with no creature?
-7. **Cutscene length**: use the whole 6.5 s cap, since you asked for her to cast it really slowly?
-8. **The ending of the live hole**: the moon pops back out of the serpent after it collapses (her bow). Keep or cut?
-9. **Numbers set on 2026-09-26 and never reviewed**: doll 32 s cooldown, 12 m/s, 10 m; cone 32 s, 60 degrees, 7 m;
-   ultimate 15 points, 2.2 s cast, 5 s pull, 8 m range, 7.5 m radius. Keep them?
-10. **Voice**: her existing laugh stays the only voice (sourced voices must be human recordings). Want new lines recorded
-    by someone on the team, or keep it as is?
+| Shot | Time | Picture, every moving part | Camera | Sound |
+|---|---|---|---|---|
+| 1 SURGE | 0.0 to 1.5 | frame 0: black butterflies already crossing the lens left to right on diagonals (Castorice's near layer); the backdrop drops to HER NIGHT (the sky dims to violet-black, a pale moon, the court's surface picks up tiny glowing motes); she rises off the court, robe, sleeves and hair whipping UPWARD, her lids still half shut and a smirk; butterflies pour OUT of her sleeves and hat brim and spiral round her CLOCKWISE; curved violet streaks follow the camera's orbit | ORBITS her clockwise at waist height while pushing in (Seele's whip), from 3.2 m to 1.8 m | a rising wind, dense `flutter`, `candle` crackle |
+| 2 THE EYE | 1.5 to 2.6 | a held close-up: her eyes OPEN and light violet, one glint (Seele's eye beat, 0.4 s); then her hands: the butterflies stream left to right into the space between her palms and crush into one black eye with a magenta rim; her face lit from below; she WINKS at the lens (Hu Tao's cheeky beat) | cut to the eyes, then a slow pull back to hands and face | the `hex` motif, the wind sucked in and cut dead |
+| 3 OMEN | 2.6 to 4.0 | she flicks the eye down left to right; it lands on the aimed spot: TWO FRAMES INVERTED (Seele's impact frame, black and white with violet ink splashes), then the butterfly-shaped flash and the shockwave ring; the maelstrom blooms clockwise; the REAL targets (staged copies, their own clips) are yanked off their feet and slide in from the frame edges | a high crane looking down into the spiral, turning with it, her floating at the top of frame | a deep whump, the maelstrom's `wind`, one slipper whistle per slipper |
 
-## 7. The owner's answers
+Play hands back at the cutscene's end state (the catch is never shown twice). The cutscene's night and moon are the
+cutscene only; in play it is the small dim of row 14.
 
-(to be recorded here: answer, his words, what it becomes)
+### 4.5 Every moving part of the three skills (the direction of each)
+
+**VANISHING ACT**
+
+| # | Part | Starts | Moves (direction) | Speed | Anchored to | Ends |
+|---|---|---|---|---|---|---|
+| 1 | Aim sigil | drawn on the court at the aim | writes itself clockwise; follows the aim | 0.3 s to draw | the aim point | burns out as embers after the arrival |
+| 2 | Aim moths (3) | her cuffs | fly to the sigil and circle it clockwise | 1.5 turns a second | the sigil | join the swarm |
+| 3 | Her body | standing | bursts from the core outward; the pieces ARE the swarm | instant | | re-forms at 6 |
+| 4 | The burst | her chest | ~40 moths and beetles fly OUTWARD in all directions for 0.1 s | fast out, then they turn | her position | turn and stream to 5 |
+| 5 | The swarm | her start | streams LOW along the aim in a twisting ribbon (clockwise twist about the travel) | 0.15 s | the path | spirals UP at the sigil |
+| 6 | The knit | the sigil | the swarm spirals up clockwise and packs into her from the FEET UP | 0.2 s | the sigil | she is whole |
+| 7 | Stragglers | 5 moths | settle on her brim and shoulders, then crawl into her sleeves | 1 s | her | gone |
+| 8 | Shove ring | her start | a flat ring of dust out to 2.5 m | 0.15 s | the start | fades |
+
+**MANIKA MISCHIEF**
+
+| # | Part | Starts | Moves (direction) | Speed | Anchored to | Ends |
+|---|---|---|---|---|---|---|
+| 1 | The doll (hers) | her belt hook | up to her face, pricked, then thrown overhand | the throw's 12 m/s arc, tumbling end over end | her hand, then the arc | hits or lands |
+| 2 | Hex smoke trail | the doll | a thin violet trail curling behind it | lingers 0.3 s | the doll's path | frays into motes |
+| 3 | Pins inside | the doll | rattle (a sound, and two pin heads glinting as it tumbles) | | the doll | |
+| 4 | The steal | the victim | the victim's colours drain INTO the doll as a swirl (clockwise) | 0.25 s | the victim to the doll | the doll wears their colours |
+| 5 | The return | the victim | the doll flies BACK to her hand on a low arc | 0.35 s | her hand | held |
+| 6 | Held doll | her off hand | she turns its head slowly back and forth; in first person it sits lower left, her thumb turning it | 4 s | her hand | crumbles to ash in her fist |
+| 7 | Victim mark | over the victim | a small sigil spins clockwise over their head | 4 s | the victim | pops |
+| 8 | Hallucinations | the victim's screen | phantom players and slippers (built), and a glimpse of a doll of themselves at the edge | 4 s | their camera | fade |
+| 9 | A miss | the landing | the doll lands, sits up, looks both ways, crumbles | 1 s | the court | ash |
+
+**SPOTLIGHT PIN**
+
+| # | Part | Starts | Moves (direction) | Speed | Anchored to | Ends |
+|---|---|---|---|---|---|---|
+| 1 | The pin | her hat band | drawn out, held like a wand, stabbed DOWN in front of her | 0.3 s | her hand | slid back into the hat |
+| 2 | Sigil crescent | her feet | sweeps across the 60 degree cone from her LEFT to her RIGHT, along the court | 0.2 s | the court | burns out |
+| 3 | Light pins | above each attacker hit | drop straight DOWN into the court at their feet | 0.1 s | the victim's feet | crumble to ash at the end |
+| 4 | Moonlight | the sky over each victim | a pale violet column drops onto them, then FOLLOWS them | 5 s | the victim | thins to one beam and snaps off |
+| 5 | Motes in the light | inside the column | drift slowly DOWN | slow | the column | |
+
+### 4.6 Her own animations (owner: *"refine the animations of phaister herself btw try to really show her personality in everyting"*)
+
+Every clip of hers gets a pass for who she is: unhurried, sure, mischievous, a witch who enjoys it. One at a time, filmed,
+never stamped across the cast (CLAUDE.md section 0).
+
+| Clip | Today | Her version |
+|---|---|---|
+| Idle | the shared idle | weight on one hip; now and then (three variants, each rare) she adjusts her hat brim, spins a hat pin between her fingers, or a moth lands on her finger and she blows it away |
+| Walk | a strut (`GaitStyles.Phaister`) | kept, plus her free hand touching the doll at her hip every few steps |
+| Run | an exit with an imaginary cape | one hand pinning her hat to her head |
+| Throw | shared | a flick from the wrist, a small wink on release |
+| Pick-up | shared | she scoops it with two fingers, as if it were beneath her |
+| Hit, stunned | shared | she clutches her hat first |
+| Taya (defending) | shared | arms crossed, tapping a finger, watching |
+| Win | shared emote | a smug curtsey with the doll held up |
+
+## 5. The model, a light refinement (owner: *"u can refine a bit"*)
+
+She stays who she is (she and Dante are the cast's reference). Witch details only, each typed by hand:
+three hat pins through her hat band on her right, lying out, uneven (the pin SPOTLIGHT PIN draws); a small rag manika
+hanging from the front of her belt at her left hip (the doll MANIKA MISCHIEF throws); two moths resting on her brim at
+different turns. A crescent buckle was dropped: she already wears a gold crescent on her back, and a moon buckle was Nemu's
+focal point in her rework. Applied by `tools/add_phaister_details.py` INTO the shipped glb (a rebuild loses her cast clips
+and shortened arms). Turnarounds: `Logs/phaister-model-v24` (before) to `v27`.
+
+## 6. Files this touches
+
+- **New**: `tools/add_phaister_details.py` (done), `tools/build_phaister_props.py`, `tools/build_phaister_audio.py`, `Runtime/Visual/PhaisterSwarm.cs`
+  (VANISHING ACT), `PhaisterManika.cs`, `PhaisterMoonlight.cs`, `PhaisterOmen.cs` (bodies for the classes in
+  `VoodooVfx.cs`, whose host logic stays), `HeroAbilityClips.Phaister.cs` + motion author (four clips, none shared),
+  `HeroIntroductionScene.Phaister.cs` rewritten, `PhaisterKitPlayProbe`, a rejoin probe for the eye and the moonlight.
+- **Changed**: `PhaisterHeroKit.cs` (names, descriptions, actions, cues), `ViewmodelArms` (four first-person actions and the
+  held doll), `CharacterAnimator` action map, `tools/author_ultimate_intros.py` `phaister()`, icons, `HeroLines.cs`,
+  `AudioCues`, `WorldEffectSnapshot`, `tools/build_phaister_voxel.py` (section 5), `docs/TODO.md` HERO-10.
+
+## 7. The owner's answers, 2026-09-27
+
+| # | Question | Answer | What it becomes |
+|---|---|---|---|
+| 1 | Names | *"ok good"*; the ultimate: *"idk smth diff they suck rn"*, *"no tagalog hehe"* | VANISHING ACT, MANIKA MISCHIEF, SPOTLIGHT PIN; the ultimate is OMEN |
+| 2 | Her model | *"u can refine a bit i dont mind"* | section 5 |
+| 3 | Teleport | *"too flas, try to think of smth else, she's supposed to be using MAGIC AND VOODOO"*; then the barang swarm | 4.1 |
+| 4 | Doll copies the victim | *"yes,,,, show it FPP and TPP okay? i want ppl to see and hher to see that shees using it"* | 4.2, she holds the victim's doll for the 4 s |
+| 5 | The light follows the Vulnerable | *"its good, try to redo ur plan tho i want u to make her a frigging witchh not a showman"* | the whole plan redone; the light is moonlight |
+| 6 | Serpent | *"give me diff proposition"*; then of a thread-knot pull: *"ur copying paete's ult"*; then the black butterfly omen | 4.4 |
+| 7 | Cutscene length | *"try with shorter first like 3-5 seconds, we adjust if needed"* | 4.0 s |
+| 8 | The ending | *"give me diff propsotiion"* | the butterflies burst up into the sky and everyone drops |
+| 9 | ABILITY-2's numbers | *"those can stay"* | unchanged in `Core.VoodooRules` |
+| 10 | Voice | *"we will record"* | `docs/HUMAN.md` rows for her lines; synthesized sounds only in the builder |
+
+## 8. Rejected, and why (so nobody proposes them again)
+
+- **The showman** (v1: spotlights on a lamp rig, a stage curtain, a ta-da sting, bows): *"make her a frigging witchh not a
+  showman"*. Her personality stays playful, but it shows as a witch's mischief, not stagecraft.
+- **A curtain teleport**: *"too flas"*, not magic.
+- **The serpent swallowing the moon**, and **a knot of thread reeling every player in**: the second is Paete's ultimate
+  (something reaching out to each player and dragging them). Her pull is a force that swallows.
+- **Filipino-word names** for the ultimate: *"no tagalog"*.
