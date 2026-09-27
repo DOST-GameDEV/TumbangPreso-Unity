@@ -1,5 +1,14 @@
 # docs/archive: superseded plans and status files, kept whole
 
+## 2026-09-28 Checkpoint
+
+The accumulated [ledger through71396c97](ledger-through-71396c97-2026-09-28.md)
+preserves all341 lines and their evidence links, rebased for this folder. Its stale
+protocol numbers and pending labels are history. The [live checkpoint](../ACTIVE_REWORK_LEDGER.md)
+now gives current source, actual qualification, storage limits and the next action
+without making a new session reread every completed unit. No methods or receipts
+were deleted; detailed loading/network coverage stays in the live topic reports.
+
 ## 2026-09-27 Organization
 
 The owner requested short current routes,updated working guidance and preserved
