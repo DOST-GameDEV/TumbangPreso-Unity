@@ -3474,7 +3474,7 @@ namespace TumbangPreso.Net
             if(match!=PresentationMatchId||round!=GameServices.Match?.RoundNumber||eventId<=0||request<0)return;
             if(flightIntent==long.MinValue || (flightIntent!=0 && !IsFeatherfallSlot(Unit(slot),abilitySlot)))return;
             PrepareSkillReceipts();if(eventId<=_lastSkillEvent[slot])return;_lastSkillEvent[slot]=eventId;
-            if (slot == NetAuthority.LocalSlot)
+            if (slot == NetAuthority.LocalSlot && request > 0)
             {
                 // This owner already performed and paid for the cast. Only release
                 // the world payload/sky that deliberately awaited host acceptance.

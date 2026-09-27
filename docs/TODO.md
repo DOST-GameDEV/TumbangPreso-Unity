@@ -25,6 +25,10 @@ Scope includes body animation, VFX, cutscenes, interruption and cleanup on every
 relevant peer, spectator, late join and reconnect. Explicit delivery declarations
 and the normal pre-build guard are implemented (focused EditMode 5/5); remaining
 state/presentation replication and real-peer qualification stay OPEN.
+Approved replica commands now survive local timer drift; unpredicted owner casts
+take full playback. Phaister's received statuses initialize and clean up with each
+body, without needing the original cast (two new local PlayMode cases pass).
+Preserve incoming reworks; retest changed network contracts, not every cosmetic edit.
 Effect confirmations now have independent request lifetimes; pending initialization,
 recast commands and old denials preserve the correct active effect (four distinct
 local cases pass). Networking comes first; real work-driven loading follows it.

@@ -771,7 +771,7 @@ namespace TumbangPreso.Abilities
             float previousHeld = ability.HeldSecondsOnCast;
             ability.HeldSecondsOnCast = Mathf.Max(0.0f, heldSeconds);
             var context = new AbilityContext(_motor, _carrier, _verbs,
-                                             position, forward, aimPoint);
+                                             position, forward, aimPoint, approvedReplay: !authoritative);
 
             HeroKit.CastOutcome outcome;
             using (NetCue.SuppressRelay())
@@ -860,7 +860,7 @@ namespace TumbangPreso.Abilities
 
             if (slot == Slot.Ultimate)
             {
-                PlayUltimatePresentation(afterIntroduction);
+                PlayUltimatePresentation(afterIntroduction, acceptedContext?.IsApprovedReplay == true);
             }
 
             // Visual feedback: momentary cast flash
@@ -1082,7 +1082,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public static event System.Action<CharacterMotor, HeroKit, HeroAbility> UltimateStarted;
 
-        private void PlayUltimatePresentation(bool afterIntroduction = false)
+        private void PlayUltimatePresentation(bool afterIntroduction = false, bool approvedReplay = false)
         {
             // ⚠️ FIRST, AND OUTSIDE EVERY EARLY RETURN BELOW. The camera work in this method
             // returns early when `Camera.main` is null (a headless probe) and when the caster is
@@ -1159,7 +1159,7 @@ namespace TumbangPreso.Abilities
             // A predicted ritual can be refused. Keep the immediate hand/circle
             // preparation, but wait for host acceptance before replacing global
             // weather. A refusal then cannot erase another hero's current sky.
-            _pendingUltimateSky = !afterIntroduction && Kit?.HeroId == "phaister" && NetAuthority.IsNetworked &&
+            _pendingUltimateSky = !afterIntroduction && !approvedReplay && Kit?.HeroId == "phaister" && NetAuthority.IsNetworked &&
                 !NetAuthority.IsHost && _motor.PlayerSlot == NetAuthority.LocalSlot;
             if (!_pendingUltimateSky) PlayUltimateSky();
 

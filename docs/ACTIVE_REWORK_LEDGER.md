@@ -2,6 +2,21 @@
 
 ## Current networking and flow work, 2026-09-27
 
+Owner correction: preserve incoming character reworks and adapt their network
+integration. Do not rerun unchanged suites/films for minor or cosmetic changes;
+select checks by the changed delivery/state contract and retain prior evidence.
+Cosmetic presentation is independent of authority, not a promise that future
+gameplay changes require no qualification.
+
+Approved replica playback now carries an execution context through preparation.
+Paete's approved command cannot be swallowed by a replica's reload timer; ordinary
+input and host eligibility stay gated. Unpredicted host-origin owner casts take
+full playback, including deferred effects and sky. Phaister's status presenter is
+body-owned, so joining timers need no original cast and despawn cleans its tells.
+Two NEW local PlayMode cases pass (2/2); no old suite or film was rerun. The sky
+flag follow-through is source-reviewed after that run. Real peers remain OPEN.
+[Replica lifecycle evidence](reports/stability-2026-09-27/multiplayer.md#approved-replay-and-joining-status-presentation).
+
 Protocol62 world recovery is implemented: one bounded header serializer, match/
 round/scene-instance/generation and cast/request freshness checks at begin/end,
 simulation-clock aging and coalesced recovery. Owner binding is capability-based;

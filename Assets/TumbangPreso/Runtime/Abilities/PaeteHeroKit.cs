@@ -189,7 +189,7 @@ namespace TumbangPreso.Abilities
                 var plant = ctx?.Motor != null ? PaetePlant.OwnedBy(ctx.Motor.PlayerSlot) : null;
                 if (plant == null) { EndEarly(ctx); return; }
                 CastAction = CommandAction; ViewmodelAction = "seed-command"; CastCue = "sfx_cast_paete_command";
-                plant.Fire(ctx.AimPoint);
+                plant.Fire(ctx.AimPoint, ctx.IsApprovedReplay);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)

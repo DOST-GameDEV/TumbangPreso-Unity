@@ -771,8 +771,7 @@ namespace TumbangPreso.Abilities
                 WindupRemaining = Windup;
                 // Hold the accepted release aim through the delay. A replica's live
                 // intent is not the sender's cast and can point somewhere else.
-                _committedContext=new AbilityContext(ctx.Motor,ctx.Carrier,ctx.Verbs,
-                    ctx.Position,ctx.Forward,ctx.AimPoint);
+                _committedContext = ctx.Capture();
 
                 _rooted = ctx.Motor;
                 _rooted.EnterSpeedZone(RootSpeed);
@@ -781,7 +780,8 @@ namespace TumbangPreso.Abilities
 
             DurationRemaining = Duration;
             if (DefersPredictedEffect && NetAuthority.IsNetworked && !NetAuthority.IsHost
-                && ctx?.Motor != null && ctx.Motor.PlayerSlot == NetAuthority.LocalSlot) return;
+                && ctx?.Motor != null && ctx.Motor.PlayerSlot == NetAuthority.LocalSlot
+                && !ctx.IsApprovedReplay) return;
             OnActivate(ctx);
         }
 
@@ -1014,8 +1014,7 @@ namespace TumbangPreso.Abilities
             ReleaseRoot();
             DurationRemaining = 0;
             WindupRemaining = Mathf.Clamp(remaining, 0, Windup);
-            _committedContext = new AbilityContext(ctx.Motor, ctx.Carrier, ctx.Verbs,
-                ctx.Position, ctx.Forward, ctx.AimPoint);
+            _committedContext = ctx.Capture();
             if (WindupRemaining > 0 && ctx.Motor != null)
             {
                 _rooted = ctx.Motor;

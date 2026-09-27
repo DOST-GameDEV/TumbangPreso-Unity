@@ -1,5 +1,33 @@
 # Multiplayer investigation, 2026-09-27
 
+## Approved replay and joining status presentation
+
+Base `0706a9ef` includes the incoming Phaister rework, preserved unchanged in look
+and mechanics. Her status presenter previously installed only on MANIKA/PIN casts.
+A joining peer receives status timers, not historical casts, so it could omit the
+moonlight and hex mark. Presentation now follows each CharacterMotor's lifecycle,
+like existing body status marks. Disable/despawn destroys only that body's tells;
+received expiry still plays the authored ending. No effect geometry or timing edits.
+
+Accepted replica casts carry an internal execution-context flag, preserved through
+windup capture. This bypasses predicted-effect deferral for unpredicted accepted
+owner casts and permits Paete's accepted shot despite a replica reload clock lag.
+Ordinary commands and host eligibility still enforce readiness; retiring plants
+still refuse shots. Existing transport event deduplication is unchanged. Owner
+request0 uses full playback because there is no predicted cast to confirm. The
+approved flag also avoids waiting for a second approval for Phaister's sky.
+
+Focused native PlayMode: **2/2**, 0 failures/skips, 0.3334298 s, graphics/D3D11 in
+the existing isolated checkout. Receipt: [replica-lifecycle.xml](checks/replica-lifecycle.xml).
+Cases cover the actual replica/authority entry points, normal shot gating, active
+plant retention, received timers with no original cast, expiry and per-body cleanup.
+Only these two new cases ran. No prior passing suite or character film was repeated.
+The private manifest captures100 synchronized dependency/source files (including
+the incoming rework); it is not100 test cases. The runner was initially invoked
+before copying finished and exited before Unity; it was launched once after copy.
+The sky flag follow-through was source-reviewed after the run, not runtime-qualified.
+These are local provider/object checks, not real transport or all-peer acceptance.
+
 ## Scoped world recovery and bound ownership
 
 WorldFieldBegin now has one shared bounded serializer for both directions. It

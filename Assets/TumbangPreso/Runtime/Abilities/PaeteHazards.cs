@@ -99,7 +99,7 @@ namespace TumbangPreso.Abilities
     /// the model gradually change too"*, *"i want the animation for pull out to be good"*.
     ///
     /// It exists on every peer from the accepted cast, on its own clock. Every peer draws it and
-    /// decides locally whether a shot is ready (the clock is the same everywhere); ONLY THE HOST
+    /// predicts readiness locally; host-approved playback cannot be vetoed by clock drift. ONLY THE HOST
     /// resolves what a wooden slipper hits and whether a pull-out is legal, and the pull reaches
     /// everyone through `MatchRpc.BroadcastPlantPulled`.
     /// </summary>
@@ -160,8 +160,12 @@ namespace TumbangPreso.Abilities
         /// the pod pulls back and snaps forward and throws it at <paramref name="aimPoint"/>.
         /// </summary>
         public bool Fire(Vector3 aimPoint)
+            => Fire(aimPoint, approvedReplay: false);
+
+        internal bool Fire(Vector3 aimPoint, bool approvedReplay)
         {
-            if (!ShotReady) return false;
+            bool replay = approvedReplay && NetAuthority.IsNetworked && !NetAuthority.IsHost;
+            if (IsRetiring || (!ShotReady && !replay)) return false;
             _nextShot = _age + PaeteRules.PlantReloadSeconds;
             _recoil = 0f;
             Vector3 target = aimPoint;
