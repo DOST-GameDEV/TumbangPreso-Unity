@@ -66,6 +66,9 @@ decoder/handoff and player first-entry timings remain OPEN.
 Generic match loading now awaits destination-owned setup, rejects stale same-scene
 installers, retains errors instead of timed success, and cancels obsolete curtains.
 Four assemblies compile; native handoff/failure/input checks remain OPEN.
+Supplementary baked-motion data now preloads asynchronously per roster rig and is
+retained for body/introduction binding. No authored clips/models changed. Four
+assemblies compile; native retention and measured first-use/memory checks remain OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

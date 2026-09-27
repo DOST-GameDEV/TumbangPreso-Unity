@@ -1,0 +1,40 @@
+{
+  "base": "fe3a93eb1da67de5d1c907bb00fec91702076700",
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0; unchanged Core reused",
+  "nativeTests": "NOT RUN: existing editor disk-reserve boundary; no repeated native launch",
+  "runtimeAssemblySha256": "FA082492401EEA6161A570AF3F684A180323E18E88667CCF933FF2AFD4A55223",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "2D2F3C3BEF8BF2FF927E080ED1FCCDB7FF3B5E96314DC38B95D2795DE53345E0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs",
+      "sha256": "9A70881E81ACDFC6A7D740DA57D5130A306CC31A22F1BBFB6678E4EDD5ABD2F4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/GeneratedMotionAssets.cs",
+      "sha256": "74283BC83210E58FFCEEF5C4DD303581C5FB70605EFF656762D7FDADF3BDDD4D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/GeneratedMotionAssets.cs.meta",
+      "sha256": "FC12A36ADD1AE1867586A022B4A6061B6BB1CDAC538643F815E2487840146BA6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.PaeteTake.cs",
+      "sha256": "E6D121AB780A54478A3C30688E59223C00EDBDAE55F42D63D517B3CCB0480364"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.PhaisterMark.cs",
+      "sha256": "02CA902B42BDD59B78231CE2655868447F89957046282C28B17A87ED85BA8DC0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/GeneratedMotionAssetsTests.cs",
+      "sha256": "AF7CBB178DCD6232CA00295A240E5AC2C6755EDE5654F94C0C9F569086F8A3D9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/GeneratedMotionAssetsTests.cs.meta",
+      "sha256": "21E63CDF5DF244D6CA99A6EAD1986CDF57BF9D1382CEFF0519016EB75D1C51B7"
+    }
+  ]
+}

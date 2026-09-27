@@ -449,9 +449,7 @@ namespace TumbangPreso.Visual
             if (_animator == null) return;
 
             string rig = DanceClip.ResourceName(_animator.transform);
-            var baked = string.IsNullOrEmpty(rig)
-                ? null
-                : Resources.Load<GeneratedAnimationSet>($"{DanceClip.ResourceFolder}/{rig}");
+            var baked = GeneratedMotionAssets.For(DanceClip.ResourceFolder, rig);
 
             if (baked != null && baked.Clips != null)
             {
@@ -460,17 +458,17 @@ namespace TumbangPreso.Visual
             }
             // Character-specific carrying corrections retain the original rig and
             // source clips; the measured pose also becomes the throw's real basis.
-            var carry=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>("CarryMotion/"+rig);
+            var carry=GeneratedMotionAssets.For("CarryMotion",rig);
             if(carry!=null&&carry.Clips!=null)
                 foreach(var clip in carry.Clips)if(clip!=null)_clips[clip.name]=clip;
-            var swimming=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(SwimmingMotion.Folder+"/"+rig);
+            var swimming=GeneratedMotionAssets.For(SwimmingMotion.Folder,rig);
             if(swimming!=null&&swimming.Clips!=null)
                 foreach(var clip in swimming.Clips)if(clip!=null)_clips[clip.name]=clip;
-            var recovery=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(RecoveryMotion.Folder+"/"+rig);
+            var recovery=GeneratedMotionAssets.For(RecoveryMotion.Folder,rig);
             if(recovery!=null&&recovery.Clips!=null)
                 foreach(var clip in recovery.Clips)if(clip!=null)_clips[clip.name]=clip;
             // Paete's kit (HERO-9): the struggle against his roots and the heave on his seedling, on every rig.
-            var rooted=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(RootedMotion.Folder+"/"+rig);
+            var rooted=GeneratedMotionAssets.For(RootedMotion.Folder,rig);
             if(rooted!=null&&rooted.Clips!=null)
                 foreach(var clip in rooted.Clips)if(clip!=null)_clips[clip.name]=clip;
 

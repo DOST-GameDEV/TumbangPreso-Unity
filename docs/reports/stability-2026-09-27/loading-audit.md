@@ -104,6 +104,33 @@ native integration run; it has NOT run. The preceding editor startup hit the dis
 reserve, so no repeated editor launch was attempted for this batch. No measured
 player frame-time, peak-memory or hitch-free claim.
 
+## Supplementary Motion Data
+
+After `fe3a93eb`, boot's roster stage asynchronously loads and retains the five
+supplementary baked-motion sets resolved by each actual model's rig hierarchy:
+dance,carry,swimming,recovery and rooted interactions. It yields between requests
+and does not instantiate actors,create PlayableGraphs,generate clips or alter any
+authored model,clip,timing,palette or rig path.
+
+GeneratedMotionAssets is shared by CharacterAnimator binding and the existing
+Paete/Phaister introduction rooted-clip lookups. Successful assets stay referenced
+and repeated roster rigs reuse them. Missing/non-rigged assets retain the old null
+fallback and are not permanently negative-cached, including editor authoring changes.
+The cache resets at subsystem registration. Existing imported roster clips remain
+separate; no blanket resource-folder load was added.
+
+This moves supplementary asset lookup/deserialization off the first model bind or
+introduction. It does not remove graph construction,instantiation/material/GPU cost
+or establish a measured no-hitch result. Decoded resident-memory and first-use player
+timings remain unmeasured. HeroVoice's lazy HeroVo lookup was inspected but left
+unchanged because no hero-recording resources are present in the current repository.
+
+Frozen165 inputs,8 owned source/test/metadata paths. Runtime,Editor,Tests and
+PlayTests compile with unchanged Core reused. The new native case checks exact
+retained asset identity,repeated warmup and no actor/animator component creation;
+**NOT RUN** under the existing editor disk boundary. No old Core/broad suite/films
+repeated. [Receipt](checks/motion-loading-compile.json).
+
 ## Destination Setup Readiness
 
 After `a6111f72`, the generic loading handoff no longer treats eight elapsed seconds,

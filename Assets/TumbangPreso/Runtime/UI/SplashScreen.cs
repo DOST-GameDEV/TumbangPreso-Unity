@@ -442,6 +442,7 @@ namespace TumbangPreso.UI
                             _ = p.Clips;
                             _ = p.Palette;
                             _ = p.PetModel;
+                            yield return Visual.GeneratedMotionAssets.Warmup(p.Model);
                         }
 
                         SetLoadingStage("loading characters",

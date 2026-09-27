@@ -103,7 +103,7 @@ namespace TumbangPreso.Visual
             t.AnimRoot = animator != null ? track.CopiedBone(copy, animator.transform) : t.Model;
             if (t.AnimRoot == null) t.AnimRoot = t.Model;
             string rig = animator != null ? DanceClip.ResourceName(animator.transform) : null;
-            var set = string.IsNullOrEmpty(rig) ? null : Resources.Load<GeneratedAnimationSet>(RootedMotion.Folder + "/" + rig);
+            var set = GeneratedMotionAssets.For(RootedMotion.Folder, rig);
             if (set != null && set.Clips != null)
                 foreach (var clip in set.Clips)
                 {
