@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated 2026-09-28. Branch: ASTRAReworks. Latest source checkpoint: `71396c97`.
+Updated 2026-09-28. Branch: ASTRAReworks. Managed source candidate: `8840df78`.
 Current protocol:87 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 TODO is the work-status queue; this file records resumption and evidence boundaries.
@@ -10,8 +10,10 @@ TODO is the work-status queue; this file records resumption and evidence boundar
 The async roster-catalogue implementation is pushed. Boot awaits one shared
 Resources.LoadAsync request before visiting referenced art/clips. Direct fallback,
 once-only missing warning and cancelled-request handoff are retained. Its focused
-test is authored but NOT RUN. Source-only compilation stopped at storage preflight
-before copying or compiling. Do not report a compile or runtime pass for this unit.
+test is authored but NOT RUN natively. After an initial storage-preflight block,
+space recovered enough for one full managed-source check: Core, Runtime, Editor,
+Tests and PlayTests compile, with1233 frozen files and no drift. This is not Unity
+import/IL postprocessing, native execution or a player build.
 [Exact state](reports/stability-2026-09-27/loading-audit.md#asynchronous-roster-catalogue).
 
 The preceding first-person preload unit passed one native case on its frozen
@@ -43,10 +45,11 @@ merged candidate has NOT received a new native pass.
 
 ## Validation Environment
 
-No task-owned job is active at this checkpoint. The latest storage preflight was
-blocked; do not relaunch an unchanged blocked workload. The source-only candidate
-needs about20.24MB of source plus32MB output budget above its5GiB reserve. A full
-asset import/build needs additional headroom. Check actual space once when deciding
+No task-owned job is active at this checkpoint. The lightweight managed check
+completed after external headroom recovery, using about20.24MB of frozen source
+and less than its32MB output budget above a5GiB reserve. A full asset import/build
+still needs additional headroom; do not retry an unchanged blocked workload.
+Check actual space once when deciding
 a new run, not in a polling loop. [Validation rules](TESTING.md).
 
 Freeze a complete current candidate, isolate writable caches/profiles and use the

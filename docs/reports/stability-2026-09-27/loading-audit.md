@@ -22,8 +22,15 @@ the incoming map assets, but its first preflight stopped before creating a sourc
 snapshot or invoking a compiler:20.24MB source plus32MB output budget could not fit
 while retaining the5GiB reserve. Later observed free space was3,183,730,688bytes.
 No unchanged-headroom retry, source compile pass, runtime result or player timing is
-claimed. This qualification remains OPEN; it must not be counted as another native
-success in the completed first-person mesh unit below.
+claimed from that preflight. Space later recovered to5,597,298,688bytes. One actual
+source-only check on `8840df78` then froze1233 managed source/assembly-definition
+files without copying the map assets and compiled Core,Runtime,Editor,Tests and
+PlayTests successfully. All frozen hashes match afterward. This also checks the
+merged managed source, not just the roster files. It does not run Unity import,
+IL postprocessing or tests; native qualification remains OPEN. The existing unrelated
+HeroLoadout EOL-only difference was preserved in the snapshot, not committed.
+[Compiler receipt](checks/roster-catalogue-compile.json). Do not count this as another
+native success in the completed first-person mesh unit below.
 
 ## First-Person Mesh Preload
 

@@ -150,7 +150,8 @@ cache used by ViewmodelArms. One new native case passes with50 retained sources,
 exact identity/reuse and no actors created; player frame timing remains OPEN.
 Boot now awaits a shared asynchronous roster-catalogue request before visiting its
 art references; direct fallback and cancellation handoff remain. Source reviewed;
-compile/native qualification is OPEN because storage preflight blocked the check.
+five assemblies now compile on the full merged managed candidate after storage
+recovered. Native qualification remains OPEN; no player timing claim.
 Supplementary baked-motion data now preloads asynchronously per roster rig and is
 retained for body/introduction binding. No authored clips/models changed. Four
 assemblies compile; native retention and measured first-use/memory checks remain OPEN.
