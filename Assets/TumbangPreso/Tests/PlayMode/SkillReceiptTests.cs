@@ -318,6 +318,49 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(30000)]
+        public IEnumerator ReceivedVoodooClocksExpireButOnlyTheHostResolvesWaitingCurses()
+        {
+            Assert.AreEqual(75, NetSession.ProtocolVersion);
+            var body = Owner("phaister").GetComponent<CharacterMotor>();
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            var step = typeof(CharacterMotor).GetMethod("StepStatuses",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            void Tick(float dt) => step.Invoke(body, new object[] { dt });
+
+            body.ApplyNetworkVoodoo(.3f, .4f, 0, -1, 0, 0, -1, 0);
+            Assert.IsTrue(body.Stamina.RecoveryBlocked);
+            Tick(.15f);
+            Assert.AreEqual(.15f, body.StatusLeft(StatusKind.Drained), .001f);
+            Assert.AreEqual(.25f, body.StatusLeft(StatusKind.Hexed), .001f);
+            Tick(.3f);
+            Assert.IsFalse(body.IsDrained); Assert.IsFalse(body.IsHexed);
+            Assert.IsFalse(body.Stamina.RecoveryBlocked, "Received Drained outlived its timer.");
+
+            int ended = 0;
+            body.VoodooReachEnded += (_, __) => ended++;
+            body.ApplyNetworkVoodoo(0, 0, (byte)VoodooMarkKind.Drain, 0, VoodooRules.DrainDelaySeconds - .05f,
+                (byte)VoodooMarkKind.Drain, 0, VoodooRules.ReachSeconds - .05f);
+            Tick(.1f);
+            Assert.AreEqual(VoodooMarkKind.Drain, body.VoodooMark, "A replica resolved the host's waiting mark.");
+            Assert.IsFalse(body.IsDrained);
+            Assert.IsTrue(body.IsVoodooReaching); Assert.AreEqual(0, ended);
+            Assert.AreEqual(VoodooRules.PassiveSpeedScale(false), body.StatusSpeedScale, .001f);
+
+            body.BodySpeedScale = VoodooRules.DollSpeedScale;
+            body.ClearStatuses();
+            Assert.AreEqual(VoodooRules.DollSpeedScale, body.BodySpeedScale, "Round cleanup erased body identity.");
+            NetAuthority.Provider = new ObservingHost();
+            body.ApplyNetworkVoodoo(0, 0, (byte)VoodooMarkKind.Drain, 0, VoodooRules.DrainDelaySeconds - .05f,
+                0, -1, 0);
+            Tick(.1f);
+            Assert.AreEqual(VoodooMarkKind.None, body.VoodooMark);
+            Assert.IsTrue(body.IsDrained); Assert.IsTrue(body.Stamina.RecoveryBlocked);
+            body.CleanseStatuses();
+            Assert.IsFalse(body.IsDrained); Assert.IsFalse(body.Stamina.RecoveryBlocked);
+            yield return null;
+        }
+
+        [UnityTest, Timeout(30000)]
         public IEnumerator ReceivedRootsOwnTheirRestraintWithoutASentryAndAcceptLateFacingOnce()
         {
             var system = Owner("sean");

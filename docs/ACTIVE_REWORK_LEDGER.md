@@ -1,11 +1,18 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`57db8dad31dd10e37120fb143749003fd2ef7541`; converted-menu loading follows it.
+`2feb1d4d` plus incoming `923fe634`; menu loading and Voodoo body wiring are integrated.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Incoming doll v20/art and Voodoo tick/reset/cleanse/passive-speed/HUD wiring are
+preserved. New native received-clock/authority case passes1/1 on239inputs,no drift:
+client clocks expire without resolving host-only outcomes. Protocol75 rejects older
+unwired bodies. Incoming author tests are not counted as extra runs here. Final kit,
+doll entity ownership/lifetime and actual peers remain OPEN.
+[Integration evidence](reports/stability-2026-09-27/input-integration.md).
 
 Known converted-menu scenes now load asynchronously behind the existing curtain,
 await real initialization/layout,and hand the same owner into hub preview setup.
@@ -41,8 +48,8 @@ Editor slice timing,not player hitch-free acceptance.
 
 Incoming controls,GUID repairs,doll v8/source and Voodoo API remain preserved.
 Protocol73 Voodoo snapshots carry explicit reach outcome and preserve resource
-correction ordering; native2/2 passed. Tick/reset/HUD/speed,new-kit and actual peers
-remain OPEN. [Network evidence](reports/stability-2026-09-27/multiplayer.md#voodoo-body-snapshot).
+correction ordering; native2/2 passed. The new body wiring is integrated above;
+new-kit and actual peers remain OPEN. [Network evidence](reports/stability-2026-09-27/multiplayer.md#voodoo-body-snapshot).
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -80,7 +87,7 @@ and current owner reservations after resuming.
 | 9a44be97 | Ranked/casual compatibility/capacity filtering and failed-allocation backoff/retry | Three managed checks and compile; live queue/party/results pending |
 | b7d26bcf | Prepared recovery integrated with incoming Phaister rework; screen-effect lifecycle cleanup | Frozen merged source compiles; native/peers pending |
 
-Current protocol is defined by NetSession.cs, now74. Matching clients are required.
+Current protocol is defined by NetSession.cs, now75. Matching clients are required.
 The prior full ledger, including every older feature, contributor record, source
 revision and receipt, remains in [the dated snapshot](archive/snapshots-2026-09-27/docs/ACTIVE_REWORK_LEDGER.md).
 

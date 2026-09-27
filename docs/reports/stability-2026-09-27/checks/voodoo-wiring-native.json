@@ -1,0 +1,176 @@
+{
+  "local": "2feb1d4d",
+  "incoming": "923fe634",
+  "preservedIncomingPaths": 33,
+  "incomingNote": "TODO merges both current public queues; original authored code/art unchanged",
+  "protocol": 75,
+  "native": {
+    "result": "Passed",
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "duration": "0.2753341",
+    "unity": "6000.5.8f1",
+    "graphics": "D3D11"
+  },
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.SkillReceiptTests.ReceivedVoodooClocksExpireButOnlyTheHostResolvesWaitingCurses",
+      "result": "Passed",
+      "duration": "0.224658"
+    }
+  ],
+  "originalXmlSha256": "4B96DB8C03309D24B2CFC5DAB72B71CFE96423F0FADE9EA96A7B15BE093619E2",
+  "frozenInputs": 239,
+  "nativeInputChurn": 0,
+  "minimumFreeBytes": 5264646144,
+  "profile": "Guard restored two named-profile files and three shared Editor input preferences",
+  "files": [
+    {
+      "path": "ArtSource/phaister/doll-20260927/cloth-chunky.png",
+      "sha256": "0A8635ED1AC4957B003B576FCB54C448BA9FA5FD96783E6ED661FEC084930F22"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/cloth-felt.png",
+      "sha256": "EB7152DCC02C9969BCE66982F250516CD52176A8C7ADC006FA97BB213F7EA183"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/cloth-painted.png",
+      "sha256": "0399C7E4DC76EC19ADED3172C675416787E967B2E7501A4ED12993E9B71AC1CF"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/cloth-pixel.png",
+      "sha256": "6AB4A64E0AE0F238132F970F5BFFBD0429D6C478B6042E56FC888076048E6EBB"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/cloth.png",
+      "sha256": "36D431809E0791DC9E06633AD0F919DDAD161B3F0A9CA01FE35530D4078A6131"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/design-brief.md",
+      "sha256": "5F6C12A935BAA498636A84DEE87F4691C7E0373C8B16EF3D96E159274048B7AE"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/persons/phaister-doll.glb",
+      "sha256": "1B0D65F0FBE08CDD65386B559C1C947D2EB9523FDED5B99A838005266C73C8DA"
+    },
+    {
+      "path": "Assets/TumbangPreso/Editor/PhaisterDollReview.cs",
+      "sha256": "74513A2239A057BC714535947C047367CE53B25A936B804FEC878B790D5820C3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/HeroBodies.meta",
+      "sha256": "D676003A71477858121AC5D6DC58F80D91201FE7AE8CF6B8F7E738F58734B3C7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/HeroBodies/phaister_doll.asset",
+      "sha256": "967F29E796B42F733A2D6F28E33EA7EC779D078498855A1DA488E747F1D4FB93"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/HeroBodies/phaister_doll.asset.meta",
+      "sha256": "4A9BDC3A85E47E47E3D8FB924151615B1930A164526785A7FFD02B6DF50E4F86"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/UI/status-icons/StatusDrained.png",
+      "sha256": "53BD50A55B915FEA3E8BC20458EABF6D56A9333F679850CE5CA243BE454F5A06"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/UI/status-icons/StatusDrained.png.meta",
+      "sha256": "862F80A75E030663100EAC1A4C9D9653965FE5A60852E5B1A5364421E8431BCC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/UI/status-icons/StatusHexed.png",
+      "sha256": "0E2C057CB5BCE6A86C97D5DFC071467EA2F49971B10F8316C4C40383A0BF1EC3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/UI/status-icons/StatusHexed.png.meta",
+      "sha256": "482AF6A71C3B30270C9250F4B2A48160BA60118C66F8F8E6D19894E1B81C6DB0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.cs",
+      "sha256": "5459B6C5736F175D1DCC1CFEDE2CCDECB1E845BEACAE595302A70F0A1C7EDF8F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.Rework.cs",
+      "sha256": "EBD18555A57C113AD43A7568E231074D1CACBC881F8154B5243D737BE346668F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.Status.cs",
+      "sha256": "6A319B2908E9400C570A5DFF4311E70F35F28D83BFD0A3F5655199BCAEEF19C6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.Voodoo.cs",
+      "sha256": "3940609ECF695CA87B6D8C55FA1C17E04F60D55A6CB2EDB59BF46D035C1250A2"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "11309C8F13C1AB59429644703C4E253EDB285B96CCCC74091D3A8559491B9F58"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/StatusIcons.cs",
+      "sha256": "BE67FBC438000A40136CAD7800CC73B6C51D74EA115EB573EA65279436642E93"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/CharacterVisual.cs",
+      "sha256": "10DC2A95C056D434969A3BB10F88C2EA4C6657E756EF631253F621F8C075D0C3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/GaitStyles.cs",
+      "sha256": "4F64F3984BA8943E7867F097738C4AA875AF7A80CFAEC91E66AD35CDA7447836"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterDollArt.cs",
+      "sha256": "11141F888DAF635EA8B7C860EEF8255BF3D156B382E17D0D713B48C4D0D53D01"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "1F1CBDF90E8EDAFACEFDE1D1EBEC7DF40168D7504BD1F8AC4514F39B2DEF8D8C"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "954511E97D824D16D0C1F2EEB355E5B570BF387431B55D057DB87216BB20DF05"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/VoodooBodyWiringTests.cs",
+      "sha256": "8FD91C7ABF7F76A5D420CE5582CFA4E851B6843B43B9AB2CD1953A192BF8A39E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/VoodooBodyWiringTests.cs.meta",
+      "sha256": "54D85B0F9479AFF5EE5D85D63DD5374756F022E9657DB763AD5DCB5702BC3A75"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/WalkArmsProbe.cs",
+      "sha256": "9BD6F2CF290E19C22DEFC44DD38B73CF1FB4FF10D75330DD34405E7D285DE5D1"
+    },
+    {
+      "path": "docs/reports/phaister-kit-2026-09-27/plan.md",
+      "sha256": "50AB784A7AFEF3DD90C119433A88B41C5E46C25F8BE222CF189186A9128A758E"
+    },
+    {
+      "path": "docs/SKILL_NETWORK_CONTRACT.md",
+      "sha256": "0781536391E772C7427E1283C365A9EF63D6191D22FBFD37A9E3A5F2CDDF757E"
+    },
+    {
+      "path": "docs/TODO.md",
+      "sha256": "273EFEF9E9770EE97C2638E20D10FFFB3E3432297164BC466A50C928080482ED"
+    },
+    {
+      "path": "Packages/com.tumbangpreso.core/Runtime/RosterReworkRules.cs",
+      "sha256": "A53964488AC6550212F194F5D66217EB1C6DA2052CDCECA5CB9CF1E7BA19913A"
+    },
+    {
+      "path": "tools/build_ability_icons.py",
+      "sha256": "8A0268B4A94FC389D80EC5161ABEF5D5DA5BC434EFD92F4DEEF629DB46C1213A"
+    },
+    {
+      "path": "tools/build_phaister_doll_voxel.py",
+      "sha256": "352B6EC73E6964C1847F620E5704C5148C63A3ACE1132C053E9DD6AD4E01DB89"
+    },
+    {
+      "path": "tools/paint_phaister_doll_cloth.py",
+      "sha256": "6862CA0365634AC5EF34CF95C4015F7DB9B1AF7194A378FC56AA59595256D36E"
+    }
+  ],
+  "limits": "Local received-body clocks and host/replica authority. Not actual peers, final kit, doll entity identity, art/animation approval or player performance. Incoming author tests not rerun."
+}

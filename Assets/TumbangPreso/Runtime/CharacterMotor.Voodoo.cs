@@ -63,6 +63,12 @@ namespace TumbangPreso
         /// <summary>0 to 1 through the reach.</summary>
         public float VoodooReachProgress => IsVoodooReaching ? Mathf.Clamp01(_reachElapsed / VoodooRules.ReachSeconds) : 0.0f;
 
+        /// <summary>
+        /// This body's own share of a player's speed: 1 for every person, `VoodooRules.DollSpeedScale` for Phaister's voodoo doll
+        /// (her ultimate's body, slow on the owner's word). Set by whoever makes the body; it is part of what the body is.
+        /// </summary>
+        public float BodySpeedScale { get; set; } = 1.0f;
+
         /// <summary>Raised on every peer when a reach ends: true when it became a mark, false when it snapped.</summary>
         public event System.Action<CharacterMotor, bool> VoodooReachEnded;
 
@@ -221,6 +227,18 @@ namespace TumbangPreso
             ClearVoodooMark();
             EndVoodooReach(marked: false);
             _reachSucceeded = false;
+        }
+
+        /// <summary>
+        /// A cleanse (Geo's Shield): DRAINED, HEXED and any curse waiting on this body end. Her own reach, if this body is hers,
+        /// goes on: a cleanse lifts what was done TO a body.
+        /// </summary>
+        private void CleanseVoodoo()
+        {
+            _drainedLeft = 0.0f;
+            _hexedLeft = 0.0f;
+            Stamina.RecoveryBlocked = false;
+            ClearVoodooMark();
         }
 
         /// <summary>The host's voodoo state for this body, off the wire (`SyncUnit`).</summary>

@@ -16,6 +16,18 @@ namespace TumbangPreso.Visual
         public const string GlowMeshName = "glow-mesh";
         public const string SpillMeshName = "spill-mesh";
 
+        /// <summary>The doll's id (its glb's name, which is also how `GaitStyles` finds its walk).</summary>
+        public const string Id = "phaister-doll";
+
+        /// <summary>
+        /// Its art (model, clips, palette) as a `RosterEntryAsset` under Resources, so the ultimate's body, the cutscene and the
+        /// films can load it in a player. It is NOT in the roster book: the doll is nobody's pick. Baked by
+        /// `PhaisterDollReview.BakeArt`.
+        /// </summary>
+        public const string ArtResource = "HeroBodies/phaister_doll";
+
+        public static RosterEntryAsset LoadArt() => Resources.Load<RosterEntryAsset>(ArtResource);
+
         private static Material _glow;
         private static Material _spill;
 

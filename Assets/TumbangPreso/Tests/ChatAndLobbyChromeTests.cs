@@ -344,7 +344,7 @@ namespace TumbangPreso.Tests
             //62 and 63 (the world-field header and the shared ability serializer) are recorded in NetSession.
             //64 adds the shared skill fingerprint, including Phaister's updated 5.0 s introduction.
             //65 adds phase-aware world freshness and ability-owned prepared-effect recovery.
-            Assert.AreEqual(74, NetSession.ProtocolVersion,
+            Assert.AreEqual(75, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

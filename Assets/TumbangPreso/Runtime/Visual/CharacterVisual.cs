@@ -306,6 +306,9 @@ namespace TumbangPreso.Visual
             // inside it, as its own comment records.
             ToonSkin.Apply(_instance, person ? ToonSkin.PersonOutlineWidth
                                              : ToonSkin.PropOutlineWidth, palette);
+            // Phaister's voodoo doll carries its light as two meshes of its own; the toon paint above treats them as cloth.
+            // Only renderers by those names are touched, so every other model passes through unchanged.
+            PhaisterDollArt.ApplyGlow(_instance);
 
             if (petModel != null)
             {

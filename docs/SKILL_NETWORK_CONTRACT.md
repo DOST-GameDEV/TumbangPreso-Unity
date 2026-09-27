@@ -118,11 +118,18 @@ snapshot, never another body's possibly later packet. Status application precede
 the authoritative resource correction, so a fresh depletion cannot erase that pool.
 RecoveryBlocked updates immediately on received/host Drained application.
 
-The incoming Voodoo body still needs its gameplay tick/reset/HUD/speed wiring and
+The body's gameplay tick, reset, cleanse, passive speed and HUD are wired (HERO-10,
+`VoodooBodyWiringTests`); it still needs
 the kit's final integration. Preserve the owner's no-added-fatigue depletion rule;
 Hexed's screen effect stays victim-local. Mark/doll gameplay entity lifetimes need
 their explicit contracts. Two native codec/receiver checks do not qualify the whole
 unfinished kit or actual peer behavior.
+
+Protocol75 gates the newly active status/movement semantics so an older admitted
+body cannot leave received curses inert or permanent. Replicas advance received
+clocks and clear expired recovery suppression,but only the host resolves a waiting
+mark/reach into gameplay. One new native received-state/authority check passes;
+the actual peer/doll-entity contract is still separate from body-state transport.
 
 Persistent status pictures belong to a body-owned presenter reading replicated
 status,not exclusively inside a host-only victim loop. StatusBodyMarks and

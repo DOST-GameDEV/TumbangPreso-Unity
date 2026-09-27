@@ -118,6 +118,7 @@ namespace TumbangPreso
             _concussedLeft = 0.0f; _fearedLeft = 0.0f; _disorientedLeft = 0.0f; _vulnerableLeft = 0.0f;
             if (IsFrozen) { _stunLeft = 0.0f; _stunTotal = 0.0f; }
             EndRooted();
+            CleanseVoodoo();
         }
 
         /// <summary>The flee direction: straight away from the source, flat. Only the simulating peer uses it.</summary>

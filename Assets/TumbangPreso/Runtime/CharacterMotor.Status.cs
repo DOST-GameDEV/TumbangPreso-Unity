@@ -58,6 +58,8 @@ namespace TumbangPreso
                 case StatusKind.Feared: return _fearedLeft;
                 case StatusKind.Disoriented: return _disorientedLeft;
                 case StatusKind.Vulnerable: return _vulnerableLeft;
+                case StatusKind.Drained: return _drainedLeft;
+                case StatusKind.Hexed: return _hexedLeft;
                 default: return 0.0f;
             }
         }
@@ -73,9 +75,13 @@ namespace TumbangPreso
             }
         }
 
-        /// <summary>The movement multiplier every live status puts on this body. 1 = none.</summary>
+        /// <summary>
+        /// The movement multiplier every live status puts on this body. 1 = none. Phaister's VOODOO passive rides here too
+        /// (`VoodooSpeedScale`): slower while her mark is on this body, faster while her mark is on someone else.
+        /// </summary>
         public float StatusSpeedScale => IsRooted ? 0.0f
-            : (IsChilled ? StatusRules.ChilledSpeedScale : 1.0f) * (IsConcussed ? StatusRules.ConcussedSpeedScale : 1.0f);
+            : (IsChilled ? StatusRules.ChilledSpeedScale : 1.0f) * (IsConcussed ? StatusRules.ConcussedSpeedScale : 1.0f)
+              * VoodooSpeedScale;
 
         /// <summary>
         /// WHIRLED: *"Drops slipper if currently in hand. Prevents slipper retrieval for 2.5
@@ -246,6 +252,7 @@ namespace TumbangPreso
             _chilledLeft = 0.0f;
             _carryLeft = 0.0f;
             ClearReworkStatuses();
+            ClearVoodoo();
             EndRooted();
             InvalidateFlightEpisode();
         }
@@ -281,6 +288,7 @@ namespace TumbangPreso
                 if (_rootedLeft <= 0.0f) EndRooted();
             }
             StepReworkStatuses(dt);
+            StepVoodoo(dt);
             StepBreakFree(dt);
         }
 

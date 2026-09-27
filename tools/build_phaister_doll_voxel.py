@@ -46,7 +46,7 @@ OUT = "Assets/TumbangPreso/Art/characters/persons/phaister-doll.glb"
 PALETTE_OUT = "ArtSource/phaister/doll-20260927/palette.json"
 CLOTH_OUT = "ArtSource/phaister/doll-20260927/cloth.png"
 # Which cloth the glb carries (`paint_phaister_doll_cloth.STYLES`); the owner picks from the review's `texture-options.png`.
-CLOTH_STYLE = "felt"
+CLOTH_STYLE = "chunky"      # felt (v17) vanished under the street's grade
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ITS OWN SKELETON (the rig's seven names, so the gait, animator and bot can drive it). Paete's height: short thick legs, a
@@ -1073,36 +1073,6 @@ def build_details():
             ("whip-mit-r-6", "top", -0.538, 0.048, -66, ["mitten-r"])):
         bone = "arm-left" if name.split("-")[2] == "l" else "arm-right"
         whip(name, bone, face, a, b, angle, only)
-
-    # --- WORN THROUGH: real holes in the cloth, the light showing inside (owner: *"give it real holes bruh not js texture"*).
-    # Clustered where a doll that is dragged about wears out (its belly low on its left, its back, the back of its head, its
-    # right shoulder, its right knee), a big one with smaller ones round it, never scattered evenly. Each is cut in like the eyes.
-    for name, bone, face, centre, radii, depth, only, spread, turn in (
-            ("worn-belly-1", "torso", "front", (0.108, 0.240), [0.016, 0.018, 0.014, 0.017, 0.015, 0.019, 0.013, 0.016],
-             0.040, ["belly"], 0.012, 10.0),
-            ("worn-belly-2", "torso", "front", (0.141, 0.266), [0.010, 0.008, 0.011, 0.009, 0.010, 0.007, 0.009, 0.010],
-             0.026, ["belly"], 0.008, 30.0),
-            ("worn-belly-3", "torso", "front", (0.084, 0.272), [0.006, 0.005, 0.007, 0.006, 0.005, 0.006], 0.018, ["belly"],
-             0.005, 0.0),
-            ("worn-back-1", "torso", "back", (-0.090, 0.262), [0.013, 0.015, 0.012, 0.014, 0.011, 0.015, 0.013, 0.012],
-             0.034, ["back"], 0.010, 22.0),
-            ("worn-back-2", "torso", "back", (-0.121, 0.240), [0.008, 0.007, 0.009, 0.007, 0.008, 0.006], 0.020, ["back"],
-             0.006, 15.0),
-            ("worn-mantle-back", "torso", "back", (0.150, 0.410), [0.010, 0.009, 0.011, 0.008, 0.010, 0.009, 0.011, 0.008],
-             0.024, ["mantle"], 0.008, 5.0),
-            ("worn-head-1", "head", "back", (-0.090, 0.600), [0.012, 0.013, 0.011, 0.014, 0.012, 0.010, 0.013, 0.011],
-             0.030, ["head-back"], 0.010, 40.0),
-            ("worn-head-2", "head", "back", (-0.066, 0.566), [0.007, 0.006, 0.008, 0.006, 0.007, 0.005], 0.018, ["head-back"],
-             0.005, 12.0),
-            ("worn-head-side", "head", "right", (0.030, 0.620), [0.010, 0.011, 0.009, 0.010, 0.008, 0.011, 0.009, 0.010],
-             0.024, ["head"], 0.008, 18.0),
-            ("worn-shoulder-r", "arm-right", "front", (-0.290, 0.410), [0.011, 0.012, 0.010, 0.012, 0.009, 0.011, 0.010, 0.012],
-             0.026, ["upper-r"], 0.009, 8.0),
-            ("worn-knee-r-1", "leg-right", "front", (-0.084, 0.110), [0.012, 0.013, 0.011, 0.012, 0.010, 0.013, 0.011, 0.012],
-             0.028, ["leg-r"], 0.010, 25.0),
-            ("worn-knee-r-2", "leg-right", "front", (-0.112, 0.127), [0.006, 0.007, 0.005, 0.006, 0.006, 0.005], 0.016,
-             ["leg-r"], 0.005, 0.0)):
-        hole(name, bone, face, centre, radii, depth, only, spread, turn=turn)
 
     # --- PINS with her gems: through its head (three), its right shoulder, its back, its right hip, its left arm.
     pin("pin-head-r", "head", "right", -0.030, 0.672, (-0.72, 0.62, -0.30), 0.110, GEM_LILAC, 0.034, ["head"], 10)

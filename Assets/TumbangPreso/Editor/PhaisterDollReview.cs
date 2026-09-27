@@ -49,6 +49,36 @@ namespace TumbangPreso.EditorTools
             EditorApplication.Exit(File.Exists(Path.Combine(folder, "back-close.png")) ? 0 : 1);
         }
 
+        /// <summary>
+        /// Bakes the doll's art asset (`PhaisterDollArt.ArtResource`): its model, every clip inside its glb (so they ship), its
+        /// palette. Run after the builder:
+        ///
+        ///     python tools/run_unity_guarded.py -batchmode -tp-profile presentation-validation-20260921 -executeMethod TumbangPreso.EditorTools.PhaisterDollReview.BakeArt -logFile Logs/phaister-doll-art.log
+        /// </summary>
+        public static void BakeArt()
+        {
+            AssetDatabase.ImportAsset(ModelPath, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(ModelPath);
+            if (model == null) throw new InvalidOperationException("The doll's glb did not import: " + ModelPath);
+            string path = "Assets/TumbangPreso/Resources/" + PhaisterDollArt.ArtResource + ".asset";
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            var art = AssetDatabase.LoadAssetAtPath<RosterEntryAsset>(path);
+            bool fresh = art == null;
+            if (fresh) art = ScriptableObject.CreateInstance<RosterEntryAsset>();
+            art.Id = PhaisterDollArt.Id;
+            art.Model = model;
+            art.Tint = Color.white;
+            art.Palette = Palette();
+            art.Clips = AssetDatabase.LoadAllAssetsAtPath(ModelPath).OfType<AnimationClip>()
+                .Where(c => !c.name.StartsWith("__preview", StringComparison.Ordinal)).OrderBy(c => c.name, StringComparer.Ordinal)
+                .ToArray();
+            if (fresh) AssetDatabase.CreateAsset(art, path);
+            EditorUtility.SetDirty(art);
+            AssetDatabase.SaveAssets();
+            Debug.Log($"[PhaisterDoll] art baked at {path}: {art.Clips.Length} clips");
+            EditorApplication.Exit(art.Clips.Length > 0 ? 0 : 1);
+        }
+
         public static Color[] Palette()
         {
             var file = JsonUtility.FromJson<PaletteFile>(File.ReadAllText(PalettePath));

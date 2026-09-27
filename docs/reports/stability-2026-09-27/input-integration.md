@@ -82,3 +82,21 @@ is valid. Runtime and Editor compile on220 frozen inputs alongside custom-previe
 loading. No network contract changed,old cases/films were not rerun,and no shader
 or art approval is inferred from compilation. Source art/reference options were
 not treated as disposable review captures. [Receipt](checks/doll-v19-integration.json).
+
+Incoming `040283df`/`923fe634` through `fd7258d2` then adds doll v20 motion/art,
+the HeroBodies asset,status icons and Voodoo tick/reset/cleanse/passive-speed/HUD
+wiring. The33 incoming paths are preserved (TODO merges both current queues).
+All new metadata GUIDs are valid; serialized empty-field whitespace is preserved.
+The incoming author reports2/2 VoodooBodyWiringTests; those are not rerun or counted
+as this integration's own evidence.
+
+One NEW network/body integration case passes1/1 in0.2753341s on239 frozen inputs,
+no drift. Received Drained/Hexed clocks expire and release recovery suppression;
+replicas advance clocks but do not resolve a curse/reach; the host resolves a
+waiting curse. Cleanse clears it while round cleanup preserves body speed identity.
+Native import/compilation includes the changed Core and consumer assemblies.
+Protocol75 gates these newly active gameplay semantics,not the cosmetic changes.
+Minimum sampled free5,264,646,144bytes; guard restored two named-profile files and
+three shared Editor preferences. [Receipt](checks/voodoo-wiring-native.json),
+[XML](checks/voodoo-wiring-native.xml). No earlier menu/map/skill cases or films
+repeated. Actual peers,the final kit and doll entity lifetime/ownership remain OPEN.

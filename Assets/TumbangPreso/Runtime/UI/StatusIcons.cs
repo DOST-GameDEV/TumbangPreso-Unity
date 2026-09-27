@@ -40,6 +40,9 @@ namespace TumbangPreso.UI
             if (body.IsConcussed) into.Add(StatusKind.Concussed);
             if (body.IsDisoriented) into.Add(StatusKind.Disoriented);
             if (body.IsVulnerable) into.Add(StatusKind.Vulnerable);
+            // HERO-10 v3: Phaister's curses.
+            if (body.IsDrained) into.Add(StatusKind.Drained);
+            if (body.IsHexed) into.Add(StatusKind.Hexed);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
