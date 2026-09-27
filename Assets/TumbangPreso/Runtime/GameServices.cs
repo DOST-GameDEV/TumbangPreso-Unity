@@ -108,6 +108,46 @@ namespace TumbangPreso
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Bootstrap() => Ensure();
 
+#if UNITY_EDITOR
+        /// ⚠️⚠️ THE ROOT OUTLIVED PLAY MODE IN THE EDITOR, ONE COPY PER PRESS OF PLAY. Owner,
+        /// 2026-09-27, a Scene view screenshot of the Lagoon Cove court in EDIT mode covered in
+        /// AudioSource gizmos: *"whats with all the sound emmiters"*. They were `WorldVoice*`
+        /// pool voices (one read `step_rubber`), about 70 of them: six leaked roots of 12 world
+        /// voices each, parked where their last footstep played. `HideAndDontSave` (below, and
+        /// correct for a build) means Unity never destroys the object when Play ends; the docs
+        /// require a manual `DestroyImmediate`. Every leaked root kept its own AudioListener and
+        /// managers alive in the editor until the next domain reload. A built player never
+        /// leaves Play, so this is editor only.
+        ///
+        /// On returning to edit mode, every `~GameServices` root still alive is destroyed and
+        /// the static references cleared, so the next Play (with or without a domain reload)
+        /// builds a fresh one. Also run once on script reload, which sweeps up roots leaked
+        /// before this existed.
+        [UnityEditor.InitializeOnLoadMethod]
+        private static void HookEditorCleanup()
+        {
+            UnityEditor.EditorApplication.playModeStateChanged += state =>
+            {
+                if (state == UnityEditor.PlayModeStateChange.EnteredEditMode)
+                    PurgeLeakedRoots();
+            };
+            if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+                PurgeLeakedRoots();
+        }
+
+        private static void PurgeLeakedRoots()
+        {
+            foreach (var director in Resources.FindObjectsOfTypeAll<AudioDirector>())
+            {
+                if (director == null || UnityEditor.EditorUtility.IsPersistent(director)) continue;
+                var go = director.gameObject;
+                if (go.name == "~GameServices")
+                    Object.DestroyImmediate(go);
+            }
+            _root = null;
+        }
+#endif
+
         /// <summary>
         /// Builds the services root if it does not exist yet. Idempotent, and public for
         /// exactly one reason: see the ⚠️ below.
