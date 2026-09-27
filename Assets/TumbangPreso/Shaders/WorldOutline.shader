@@ -809,6 +809,15 @@ Shader "TumbangPreso/WorldOutline"
                 float ao=1-saturate(occluded/max(total,1e-4)*2.0);
                 // Fade out with distance, where the samples fall inside a pixel.
                 ao=lerp(ao,1,smoothstep(40,60,-p.z));
+                // ⚠️⚠️ AND FADE IN PAST THE NEAR GUARD, NEVER SWITCH ON AT IT (owner, 2026-09-27, on
+                // Kanto's pale paving: "whats with this weird line across my screen"). The guard
+                // above returns 1 for every pixel nearer than 1.8 m and this pass gave full
+                // occlusion just past it, so looking down at a flat floor drew a straight line
+                // across the screen where the floor crossed 1.8 m: bright below, AO-dimmed above.
+                // Every map with AO had it; Kanto's even, bright court made it obvious. The guard
+                // itself stands (nothing nearer is trusted); the occlusion now ramps in over the
+                // next 1.8 m, so the boundary has no edge.
+                ao=lerp(1,ao,smoothstep(_WorldAOParams.w,_WorldAOParams.w*2,-p.z));
                 return half4(ao,ao,ao,1);
             }
             ENDCG
