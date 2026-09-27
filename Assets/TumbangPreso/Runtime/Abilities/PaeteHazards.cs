@@ -671,7 +671,7 @@ namespace TumbangPreso.Abilities
             _body.Pose(grown, Centre);
             if (_age >= 0f)
                 foreach (var p in _held)
-                    if (p != null && p.IsRooted) PaeteRootCoil.Attach(p, Centre);
+                    if (p != null && p.IsRooted) p.GetComponent<StatusBodyMarks>()?.EnsureRootedRestraint(Centre);
             if (_age >= PaeteRules.SentryLifeSeconds + 0.6f) Destroy(gameObject);
         }
 

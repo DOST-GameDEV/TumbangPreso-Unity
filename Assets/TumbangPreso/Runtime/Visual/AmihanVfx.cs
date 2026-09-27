@@ -661,8 +661,28 @@ namespace TumbangPreso.Visual
         private ChilledMark _chilled;
         private Abilities.HeroHazards.IceCubePrisonComponent _frozen;
         private bool _frozenPresentationFailed;
+        private PaeteRootCoil _rooted;
+        private bool _rootedPresentationFailed;
 
         private void Awake() => _body = GetComponent<CharacterMotor>();
+
+        public PaeteRootCoil EnsureRootedRestraint(Vector3? centre = null)
+        {
+            if (!isActiveAndEnabled || _body == null || !_body.IsRooted || _rootedPresentationFailed) return null;
+            try
+            {
+                _rooted = centre.HasValue ? PaeteRootCoil.Attach(_body, centre.Value) : PaeteRootCoil.Attach(_body);
+                return _rooted;
+            }
+            catch (System.Exception error)
+            {
+                _rootedPresentationFailed = true;
+                var partial = _body.GetComponentInChildren<PaeteRootCoil>();
+                if (partial != null) partial.Retire();
+                Debug.LogException(error);
+                return null;
+            }
+        }
 
         public GameObject EnsureFrozenRestraint()
         {
@@ -687,6 +707,15 @@ namespace TumbangPreso.Visual
         private void LateUpdate()
         {
             if (_body == null) return;
+            if (_body.IsRooted)
+            {
+                if (_rooted == null || !_rooted.gameObject.activeInHierarchy) EnsureRootedRestraint();
+            }
+            else
+            {
+                if (_rooted != null) _rooted.Retire();
+                _rooted = null; _rootedPresentationFailed = false;
+            }
             if (_body.IsFrozen) EnsureFrozenRestraint();
             else
             {
@@ -711,11 +740,13 @@ namespace TumbangPreso.Visual
         private void OnDestroy() => Clear();
         private void Clear()
         {
+            if (_rooted != null) _rooted.Retire();
             if (_frozen != null) Destroy(_frozen.gameObject);
             if (_whirled != null) Destroy(_whirled.gameObject);
             if (_chilled != null) Destroy(_chilled.gameObject);
             _frozen = null; _whirled = null; _chilled = null;
             _frozenPresentationFailed = false;
+            _rooted = null; _rootedPresentationFailed = false;
         }
     }
 }

@@ -1,0 +1,24 @@
+{
+  "base": "e1f21c5f3118c0219e2788854b90acd3b5c35e56",
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0; unchanged Core reused",
+  "nativeTests": "NOT RUN: existing editor disk-reserve boundary; no repeated native launch",
+  "runtimeAssemblySha256": "7FCEC992C82543D17E907C4A84E23E2247703544706ED8FB9C320EDFD14A647C",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/PaeteHazards.cs",
+      "sha256": "BC67FAA0C00ADF293C2D69DD3AECF89E28D6445DD819B2267EA8BB81910B55BA"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/AmihanVfx.cs",
+      "sha256": "0BB29D7322325E278AA0D71DEF0F31FF97240CA2A72FF21A0FC3F4BC0B3C5A09"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PaeteTrees.cs",
+      "sha256": "2DB2EC624B3C342C464F78270CE5AB94ADCD90D46B0C1AE2A8605CC3F3D0D249"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "D5778869DA88FE9E4233FA2A3E108EAAEC0746A6B8D4DAC47712922E5A20A228"
+    }
+  ]
+}

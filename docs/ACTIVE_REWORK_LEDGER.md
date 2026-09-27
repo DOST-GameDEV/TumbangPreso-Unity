@@ -1,19 +1,19 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`b93d2a4a9af927cedecc71e675803dea331bedc6`; character-preview allocation unit follows it.
+`e1f21c5f3118c0219e2788854b90acd3b5c35e56`; received-root restraint unit follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-Character previews now coalesce continuous render-target size changes for120ms,
-retaining current panel projection and exact settled pixel resolution. First targets
-and explicit captures stay immediate; source art,MSAA and the2048 cap are unchanged.
-Unused invalid fallback avatars are released, but valid-avatar ownership remains
-open pending inactive/copy lifetime evidence. Four assemblies compile; native resize,
-DPI/visual and player allocation/timing checks remain OPEN. Protocol stays72.
-[Evidence](reports/stability-2026-09-27/loading-audit.md#character-preview-allocation).
+Received Rooted state now owns the existing body restraint even without a sentry's
+inferred target list. The sentry and fallback share one coil; later source-facing
+is applied once, normal unroot releases it and body disable retires it silently.
+No authored geometry/animation or hold/escape rule changed. Four assemblies compile;
+native received-state/lifecycle and actual peer/reconnect checks remain OPEN.
+Protocol stays72; sentry target-list recovery and QA-15 remain separate work.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#received-rooted-presentation).
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -24,6 +24,7 @@ and current owner reservations after resuming.
 
 | Revision | Change | Evidence boundary |
 |---|---|---|
+| e1f21c5f | Coalesced character-preview render-target resizing and invalid-avatar cleanup | Four assemblies compile; native DPI/resize/visual and player allocation checks pending |
 | b93d2a4a | Remove whole-screen settings reflow/chip scans on ordinary value changes | Four assemblies compile; native transaction/layout and player timings pending |
 | 2b588964 | Async retained supplementary baked-motion data for roster/body/introduction binding | Four assemblies compile; native retention and first-use/memory timings pending |
 | fe3a93eb | Existing ultimate victim-camera feedback through scoped shared match events | Four assemblies compile; native camera/receive and actual peer checks pending |

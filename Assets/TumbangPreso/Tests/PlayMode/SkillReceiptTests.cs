@@ -141,6 +141,39 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(30000)]
+        public IEnumerator ReceivedRootsOwnTheirRestraintWithoutASentryAndAcceptLateFacingOnce()
+        {
+            var system = Owner("sean");
+            var motor = system.GetComponent<CharacterMotor>();
+            motor.ApplyNetworkStatuses(0, 0, 7);
+            yield return null;
+            var coil = motor.GetComponentInChildren<Visual.PaeteRootCoil>();
+            Assert.IsNotNull(coil);
+            Assert.IsNull(Object.FindFirstObjectByType<PaeteSentry>());
+            Assert.IsEmpty(coil.GetComponentsInChildren<Collider>());
+            var marks = motor.GetComponent<Visual.StatusBodyMarks>();
+            Assert.AreSame(coil, marks.EnsureRootedRestraint(new Vector3(-10, 0, 0)));
+            Assert.Greater(Vector3.Dot(motor.transform.forward, Vector3.right), .99f);
+            motor.transform.rotation = Quaternion.identity;
+            marks.EnsureRootedRestraint(new Vector3(-10, 0, 0));
+            Assert.Greater(Vector3.Dot(motor.transform.forward, Vector3.forward), .99f,
+                "Repeated sentry updates must not keep turning a player who can aim freely.");
+            motor.ApplyNetworkStatuses(0, 0, 9);
+            yield return null;
+            Assert.AreSame(coil, motor.GetComponentInChildren<Visual.PaeteRootCoil>());
+            motor.ApplyNetworkStatuses(0, 0, 0);
+            yield return null; yield return null;
+            Assert.IsTrue(coil == null); Assert.IsTrue(motor.CanMove());
+            motor.ApplyNetworkStatuses(0, 0, 7);
+            yield return null;
+            coil = motor.GetComponentInChildren<Visual.PaeteRootCoil>();
+            Assert.IsNotNull(coil);
+            motor.gameObject.SetActive(false);
+            yield return null;
+            Assert.IsTrue(coil == null, "A disabled body retained its old restraint.");
+        }
+
+        [UnityTest, Timeout(30000)]
         public IEnumerator ReceivedFrozenStateOwnsOneRestraintWithoutCastingOrBlockingAfterThaw()
         {
             var system = Owner("sean");

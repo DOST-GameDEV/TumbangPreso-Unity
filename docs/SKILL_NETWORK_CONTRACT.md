@@ -108,6 +108,10 @@ PhaisterStatusPresenter are current examples. Joining peers need no replayed hit
 Make spawn idempotent,follow refreshed live status and clean up on disable/despawn.
 When every peer presents a status,play its local cue once; do not relay it again.
 Missing presentation assets must not keep allocating or obstruct gameplay outcomes.
+Rooted also uses StatusBodyMarks to reconstruct its existing PaeteRootCoil without
+a sentry's inferred target list. The sentry shares that owner and may supply its
+facing origin later, once; it must not turn the player every frame. Body disable
+retires the owned restraint silently, while normal unroot keeps its authored release.
 
 The connection fingerprint includes stable identity,recovery capability,shared
 skill metadata and intro durations. It excludes cosmetic data,live timers and

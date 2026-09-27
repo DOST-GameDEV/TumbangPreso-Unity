@@ -1,5 +1,33 @@
 # Multiplayer investigation, 2026-09-27
 
+## Received Rooted Presentation
+
+Base `e1f21c5f`,protocol unchanged72. The existing root coil was created only from
+PaeteSentry's locally inferred target list. A client with Rooted state but no matching
+list entry, or a not-yet-restored sentry, could therefore have the hold without its
+body restraint. Rooted itself already travels in the body snapshot.
+
+StatusBodyMarks now owns a received-state fallback using the existing PaeteRootCoil.
+The live sentry calls that same owner, so both routes deduplicate. A fallback does
+not invent a tree origin; if the sentry becomes available later, its existing outward
+facing cue is established once, after which the player remains free to aim. Unroot
+keeps the normal release effect; body disable/despawn retires the coil silently and
+does not leave an inactive old restraint to return on reuse. Failed construction is
+bounded for the continuous status and its partial object is retired.
+
+No mesh paths,branch geometry,material colours,animation curves,root duration,
+break-free timing or gameplay victim decision changed. The existing editor review
+caller still uses Attach/Step; disabling only the effect component is not treated
+as body despawn, and editor cleanup does not recursively self-destroy on disable.
+Sentry target-list authority/recovery itself is separate from this body-status fix.
+
+Frozen172 inputs,4 changed sources. Runtime,Editor,Tests and PlayTests compile with
+unchanged Core reused. The new native case covers a received root without a sentry,
+dedup,late facing once,refresh,unroot/movement and disabled-body cleanup. **NOT RUN**
+under the existing native disk boundary; no old Core,broad suite or film rerun.
+Actual peer/reconnect qualification and QA-15 remain OPEN.
+[Receipt](checks/rooted-presentation-compile.json).
+
 ## Existing Ultimate Victim Feedback
 
 Base `ad19d440`,protocol72. Dante and Cheska called HitFeel.Land only inside their

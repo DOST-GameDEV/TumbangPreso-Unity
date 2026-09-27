@@ -50,6 +50,9 @@ remain OPEN, and other persistent effect kinds still require explicit coverage.
 Existing Dante/Cheska victim-camera feedback now uses shared scoped Flair delivery
 (protocol72), preserving authored feedback and gameplay separation. Four assemblies
 compile; native/peer camera checks and QA-15 remain OPEN.
+Received Rooted state now owns its existing restraint without needing a sentry's
+target list, with dedup,late-facing-once and disable cleanup. Four assemblies compile;
+native/peer lifecycle checks and sentry target-list recovery remain OPEN.
 Read [network route](NETWORKING.md),[contract](SKILL_NETWORK_CONTRACT.md) and
 [exact evidence](reports/stability-2026-09-27/multiplayer.md),not a historical
 protocol literal or old test count.
