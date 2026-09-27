@@ -68,3 +68,9 @@ were run,6/6 passed with fresh TRX inspection. [Core integration receipt](checks
 The frozen layer is now202 paths. The prior7 native cases were not rerun; their
 record belongs to the earlier candidate. New status gameplay,replication and the
 new doll's runtime/visual acceptance are not established by these Core tests.
+
+Incoming `322b5d1a`/`1951e1d5` add doll v8 and the not-yet-wired Voodoo body-state
+API. All8 paths are preserved unchanged, the new script GUID is valid, and Runtime/
+Editor compile against the unchanged latest Core. Frozen layer:204 paths.
+No prior tests or films were repeated. Snapshot/tick/reset integration remains open.
+[Body integration receipt](checks/voodoo-body-integration.json).

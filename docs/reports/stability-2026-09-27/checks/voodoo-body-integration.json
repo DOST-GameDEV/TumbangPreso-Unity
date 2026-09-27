@@ -1,0 +1,43 @@
+{
+  "parents": [
+    "73a978a6",
+    "1951e1d5"
+  ],
+  "compiler": "Runtime and Editor exit0; unchanged latest Core reused",
+  "incomingPathsPreserved": 8,
+  "nativeTests": "Not rerun; new body-state wiring remains unfinished",
+  "files": [
+    {
+      "path": "ArtSource/phaister/doll-20260927/design-brief.md",
+      "sha256": "48703EBF3AE685B85C5078A58F6F380B7A0E5CF51EEE7B6F4030F37A5692EAA0"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/palette.json",
+      "sha256": "0CE1B4B9C3A5C6CB138C6626A8C2082055DDD764BDDE8AADC679846996CC4DC7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/persons/phaister-doll.glb",
+      "sha256": "86AFD2FE2A26A76FF408E2AC73996A6D25CA1B12D4E95D7743DC7FC3D0D4300D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Editor/PhaisterDollReview.cs",
+      "sha256": "E80194C569064F6C0EE98F090F2C1D5779CC3103409A1AB55CA5242ACD5F1938"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.Voodoo.cs",
+      "sha256": "F9B7D1B8577230A097BABA384E615235C0AC92DFA3468962347D5A1E2D49648A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/CharacterMotor.Voodoo.cs.meta",
+      "sha256": "FDD0F8E98C5E89C830E1DECDCFB841C9F2F9A5CE2ED2810B263B2D3F35C09054"
+    },
+    {
+      "path": "docs/reports/phaister-kit-2026-09-27/plan.md",
+      "sha256": "BE8A8F2B886A83A5CF882BB6386E7970733856CC6A4627F8757AB8D5C2B255F6"
+    },
+    {
+      "path": "tools/build_phaister_doll_voxel.py",
+      "sha256": "CF136FA11BE30B1DD2AAFE07E74281D3BCB150A0A43B2F29967F25A1E2176FC9"
+    }
+  ]
+}

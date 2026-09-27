@@ -1,7 +1,7 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`d178294c` plus incoming `b8c698f0`; Voodoo Core/refined-asset integration follows those parents.
+`73a978a6` plus incoming `1951e1d5`; Voodoo body/v8 asset integration follows those parents.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
@@ -19,6 +19,9 @@ Phaister's incoming doll model,v6/v7 source/glow and Core DRAINED/HEXED rules ar
 also preserved unchanged. Core plus four Unity assemblies compile; the6 new Core
 Voodoo cases pass. The7 native-case record above precedes these Core additions;
 new status gameplay/replication and doll runtime acceptance remain OPEN.
+The latest v8 doll and Voodoo body-state API are also integrated unchanged. Runtime/
+Editor compile; the API still needs its tick/reset/snapshot wiring. Latest frozen
+layer:204 paths. Earlier native/Core evidence was not rerun or overextended.
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor

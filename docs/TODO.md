@@ -32,6 +32,8 @@ the Editor consumer compiles, with no runtime change or repeat of the7 native ca
 Subsequent v6/v7 doll/glow and Voodoo Core additions are preserved; five assemblies
 compile and6 new Core cases pass. DRAINED/HEXED gameplay/replication and doll runtime
 acceptance remain OPEN; these tests do not qualify the unfinished new kit.
+The v8 doll and Voodoo body-state API are integrated unchanged and Runtime/Editor
+compile; tick/reset/snapshot wiring remains OPEN.
 
 **NET-SKILLS-1, OPEN:** host authority,stable ability identity,explicit delivery/
 command intent,independent receipts,bounded delayed delivery,phase-aware prepared
