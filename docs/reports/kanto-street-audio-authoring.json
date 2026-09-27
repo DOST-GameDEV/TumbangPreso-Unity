@@ -1,0 +1,229 @@
+{
+  "provenance": "Original deterministic synthesis (numpy, fixed seeds). No external samples, recordings or paid API.",
+  "listening": "OPEN. Technical measurements only (peak, RMS, seam). Sourced and authored SFX stay provisional until the owner hears them in play (CLAUDE.md section 6).",
+  "tool": "tools/build_kanto_street_audio.py",
+  "runtime": "Assets/TumbangPreso/Runtime/Map/KantoStreetSound.cs",
+  "seam_rule": "Loops are built periodic; first and last 50 ms RMS within 10 per cent and a seam step no larger than the 99.9th percentile step inside the loop.",
+  "engine_authoring_rate": "Idle to low cruise; the runtime pitches up with speed (about 0.85 to 1.6).",
+  "authoring_passes": [
+    "Pass 1: bed loudest at 40 Hz and 40 dB over its 1 kHz; car engine swung 20 dB per firing (1.6 ms pulses, Q up to 3); diesel knock showed four narrow tonal peaks; one-shot horns carried a wrapped pre-ring tail (a 0.22 s beep measured 0.475 s).",
+    "Pass 2: wash moved to 45 to 320 Hz; car pulses widened to 2.6 ms with lower-Q body; knock rebuilt as a noise burst with rings that wander 10 per cent; one-shot filter padded both sides. Distant horns and far engines still measured about 0 to 1 dB over the wash in their bands.",
+    "Pass 3: far events raised and the mid wash lowered until every authored event measured 2.5 to 4.3 dB over the median in its own band (band_events on the bed row)."
+  ],
+  "files": [
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/kanto_city_bed.wav",
+      "channels": 2,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 38.0,
+      "peak": 0.5,
+      "rms": 0.0846,
+      "sha256": "ef2f5f140b4c38161ff33ee6393bb9cecf34328a385e5e6130961902e1bd113c",
+      "seam": {
+        "rms_first_50ms": 0.10246,
+        "rms_last_50ms": 0.10755,
+        "rms_difference_percent": 4.73,
+        "seam_step": 0.01199,
+        "p99_9_step_anywhere": 0.02637,
+        "click": false
+      },
+      "passes_at": [
+        0.0,
+        4.35,
+        7.65,
+        11.03,
+        14.48,
+        17.66,
+        20.42,
+        23.26,
+        27.13,
+        29.89,
+        32.0,
+        34.94
+      ],
+      "engine_pulls_at": [
+        3.0,
+        14.5,
+        24.0,
+        33.5
+      ],
+      "jeepney_rev_at": 19.0,
+      "distant_horns_at": [
+        8.6,
+        21.7,
+        29.8
+      ],
+      "crowd_phrases": 316,
+      "band_events": {
+        "distant_horn_car_2": {
+          "band_hz": [
+            400,
+            2200
+          ],
+          "db_over_median": 3.3
+        },
+        "distant_horn_car_1": {
+          "band_hz": [
+            400,
+            2200
+          ],
+          "db_over_median": 3.6
+        },
+        "distant_horn_jeepney": {
+          "band_hz": [
+            400,
+            2200
+          ],
+          "db_over_median": 4.2
+        },
+        "jeepney_rev": {
+          "band_hz": [
+            80,
+            700
+          ],
+          "db_over_median": 3.8
+        },
+        "engine_pull_1": {
+          "band_hz": [
+            80,
+            700
+          ],
+          "db_over_median": 2.5
+        },
+        "engine_pull_2": {
+          "band_hz": [
+            80,
+            700
+          ],
+          "db_over_median": 3.2
+        },
+        "engine_pull_3": {
+          "band_hz": [
+            80,
+            700
+          ],
+          "db_over_median": 3.8
+        },
+        "engine_pull_4": {
+          "band_hz": [
+            80,
+            700
+          ],
+          "db_over_median": 4.1
+        }
+      }
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/kanto_engine_car.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 3.0,
+      "peak": 0.6,
+      "rms": 0.1817,
+      "sha256": "85556235a28b6e2bc7ed6848bfd8a81d5120262fb0a97c0cce9edabca9bd5f2f",
+      "seam": {
+        "rms_first_50ms": 0.16775,
+        "rms_last_50ms": 0.16775,
+        "rms_difference_percent": 0.0,
+        "seam_step": 0.02161,
+        "p99_9_step_anywhere": 0.02808,
+        "click": false
+      },
+      "firings": 108,
+      "firing_hz": 36.0
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/kanto_engine_diesel.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 3.2,
+      "peak": 0.6,
+      "rms": 0.0731,
+      "sha256": "063618980709bd4692425aa3e1a439f02da0a1677c6eae3fb362793e42ee72de",
+      "seam": {
+        "rms_first_50ms": 0.07244,
+        "rms_last_50ms": 0.07236,
+        "rms_difference_percent": 0.11,
+        "seam_step": 0.00479,
+        "p99_9_step_anywhere": 0.11985,
+        "click": false
+      },
+      "firings": 88,
+      "firing_hz": 27.5
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/kanto_engine_tricycle.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 2.5,
+      "peak": 0.6,
+      "rms": 0.0578,
+      "sha256": "3d72ff6e72204482f80bced9144f771046399aac49e371ec07a66307c8e73dae",
+      "seam": {
+        "rms_first_50ms": 0.04345,
+        "rms_last_50ms": 0.04349,
+        "rms_difference_percent": 0.08,
+        "seam_step": 6e-05,
+        "p99_9_step_anywhere": 0.08166,
+        "click": false
+      },
+      "firings": 70,
+      "firing_hz": 28.0,
+      "rattling_firings": 26
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/kanto_horn_car_1.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 0.2247,
+      "peak": 0.7,
+      "rms": 0.2557,
+      "sha256": "2ad5200768f8886d7848654cc05cef9331ac50212b3e4e3e777168c2f681f3c0"
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/kanto_horn_car_2.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 0.375,
+      "peak": 0.7,
+      "rms": 0.2178,
+      "sha256": "fb221a4fe6ad800910ffbb504c11a77fce867da88a8034af29e8dc71f1ebd13c"
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/kanto_horn_car_3.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 0.6251,
+      "peak": 0.7,
+      "rms": 0.254,
+      "sha256": "6072fd54b9e4aa23421a788d81a7b94f4fcf353fe3074ebd4704b8d10abd339a"
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/kanto_horn_jeepney.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 0.8342,
+      "peak": 0.7,
+      "rms": 0.2713,
+      "sha256": "3b7bde5e683785de27b5682ee83421cd2a15e5e1a41db8cf23e8c630f5ae88ed"
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/kanto_horn_tricycle.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 0.3251,
+      "peak": 0.7,
+      "rms": 0.2514,
+      "sha256": "ea1e80a921e26edb1f2d8e52b18981181595f03e15610e925f2cc588a2700a51"
+    }
+  ]
+}

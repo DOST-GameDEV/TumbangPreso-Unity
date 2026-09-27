@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -98,12 +99,50 @@ namespace TumbangPreso.EditorTools.MapKit
             var signals = dressing.Find("traffic_signal");
             traffic.Signals = signals != null ? signals.GetComponentsInChildren<Renderer>() : new Renderer[0];
 
+            // The street sound (owner: "needs sfx, bustling city ambience, car engine and driving
+            // sounds, beep/horns"): tools/build_kanto_street_audio.py's clips, played by
+            // KantoStreetSound from the traffic's own state.
+            var sound = go.AddComponent<KantoStreetSound>();
+            sound.Traffic = traffic;
+            sound.CityBed = Clip("kanto_city_bed", true);
+            sound.EngineCar = Clip("kanto_engine_car", true);
+            sound.EngineDiesel = Clip("kanto_engine_diesel", true);
+            sound.EngineTricycle = Clip("kanto_engine_tricycle", true);
+            sound.HornsCar = new[] { Clip("kanto_horn_car_1", false), Clip("kanto_horn_car_2", false), Clip("kanto_horn_car_3", false) }
+                .Where(c => c != null).ToArray();
+            sound.HornJeepney = Clip("kanto_horn_jeepney", false);
+            sound.HornTricycle = Clip("kanto_horn_tricycle", false);
+
             int[] perLane = new int[KantoTraffic.Lanes];
             foreach (var d in drivers) perLane[d.Lane]++;
             Debug.Log($"[Kanto] Traffic: {drivers.Count} drivers, lanes [{string.Join(", ", perLane)}], " +
                       $"stop lane {traffic.StopLane} at {traffic.StopAlong:0.0} (pull-over {traffic.StopShift:0.00} m), " +
-                      $"{traffic.Signals.Length} signal renderers, ground y {traffic.GroundY:0.00}. Model offsets (yaw, deg): " +
+                      $"{traffic.Signals.Length} signal renderers, ground y {traffic.GroundY:0.00}, " +
+                      $"sound bed={sound.CityBed != null} engines={(sound.EngineCar != null ? 1 : 0) + (sound.EngineDiesel != null ? 1 : 0) + (sound.EngineTricycle != null ? 1 : 0)} horns={sound.HornsCar.Length + (sound.HornJeepney != null ? 1 : 0) + (sound.HornTricycle != null ? 1 : 0)}. Model offsets (yaw, deg): " +
                       string.Join("; ", offsets.Select(kv => kv.Key + " " + string.Join("/", kv.Value.OrderBy(a => a)))));
+        }
+
+        /// <summary>⚠️ Loops import as PCM (a compressed loop can carry encoder padding at its
+        /// seam, a click every lap) and NOTHING is normalized: the authoring tool set the bed,
+        /// engines and horns at different peaks on purpose, and Unity's default normalize would
+        /// flatten that balance.</summary>
+        private static AudioClip Clip(string name, bool loop)
+        {
+            string path = $"Assets/TumbangPreso/Art/audio/ambience/{name}.wav";
+            if (AssetImporter.GetAtPath(path) is AudioImporter importer)
+            {
+                bool dirty = false;
+                var so = new SerializedObject(importer);
+                var normalize = so.FindProperty("m_Normalize");
+                if (normalize != null && normalize.boolValue) { normalize.boolValue = false; so.ApplyModifiedPropertiesWithoutUndo(); dirty = true; }
+                var s = importer.defaultSampleSettings;
+                if (loop && s.compressionFormat != AudioCompressionFormat.PCM)
+                { s.compressionFormat = AudioCompressionFormat.PCM; s.loadType = AudioClipLoadType.DecompressOnLoad; importer.defaultSampleSettings = s; dirty = true; }
+                if (dirty) importer.SaveAndReimport();
+            }
+            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            if (clip == null) Debug.LogWarning("[Kanto] Missing street sound " + path);
+            return clip;
         }
 
         private static void MakeDriver(Transform v)
