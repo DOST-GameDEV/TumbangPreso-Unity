@@ -253,6 +253,7 @@ namespace TumbangPreso.Visual
         private Carrier _carrier;
         private Social.EmotePlayer _emote;
         private Animator _animator;
+        private Avatar _ownedAvatar;
 
         private PlayableGraph _graph;
         private AnimationMixerPlayable _mixer;
@@ -339,7 +340,9 @@ namespace TumbangPreso.Visual
             // Animator with a null controller, which is right for Playables, and no Avatar,
             // which is not: an animation output bound to one drives no transforms at all and
             // the whole cast stands in its bind pose. See ModelPreview.EnsureAvatar.
+            bool needsAvatar = _animator.avatar == null;
             UI.ModelPreview.EnsureAvatar(_animator);
+            if (needsAvatar) _ownedAvatar = _animator.avatar;
 
             CacheClips(model, clips);
             // Whose walk and run this body gets (`GaitStyles`), chosen before the gait layer calibrates its cadence.
@@ -509,6 +512,15 @@ namespace TumbangPreso.Visual
             ClearChargePose();
             _throwReleaseTime=-1;_lastThrowPose=ThrowGesture.Rest;
             if (_graph.IsValid()) _graph.Destroy();
+            // Only the binding we built belongs to this driver. Imported or
+            // externally supplied avatars must survive its teardown/rebind.
+            if (_ownedAvatar != null)
+            {
+                if (_animator != null && _animator.avatar == _ownedAvatar) _animator.avatar = null;
+                if (Application.isPlaying) Destroy(_ownedAvatar);
+                else DestroyImmediate(_ownedAvatar);
+            }
+            _ownedAvatar = null;
 #if UNITY_EDITOR
             foreach (var clip in _generated) if (clip != null) DestroyImmediate(clip);
             _generated.Clear();

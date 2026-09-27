@@ -1,11 +1,17 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`8c91589c695c085898a55064da1db32843b8d1f4`; yielded ability-icon preparation follows it.
+`c35550fccf4b1d682f20f4beb9a07e74317626d3`; generated-avatar lifetime cleanup follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+CharacterAnimator now owns and releases only the valid avatars it generated for
+its binding,after graph disposal,on rebind/clear/teardown. Borrowed/imported avatars
+survive. New native real-rig lifecycle case passes1/1 on full committed base plus
+2inputs,no drift. No authored animation change or player-heap claim.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#generated-avatar-lifetime).
 
 Ability-icon preload now uses asynchronous resource requests and one fallback
 bake/upload per yielded turn,including the previously first-use cooldown graphic.

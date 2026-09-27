@@ -58,6 +58,45 @@ namespace TumbangPreso.PlayTests
         private const string OutDir = "Logs/shots-preview";
 
         [UnityTest]
+        public IEnumerator CharacterBindingReleasesGeneratedAvatarsButPreservesBorrowedAssets()
+        {
+            var art = RosterBook.Load().FindPersonArt("dante"); Assert.IsNotNull(art);
+            var actor = new GameObject("Avatar ownership");
+            var model = Object.Instantiate(art.Model, actor.transform);
+            var animator = model.GetComponentInChildren<Animator>(); Assert.IsNotNull(animator);
+            animator.avatar = null;
+            var driver = actor.AddComponent<Visual.CharacterAnimator>(); driver.enabled = false;
+            Avatar borrowed = null;
+            try
+            {
+                driver.Bind(model, art.Clips);
+                var first = animator.avatar; Assert.IsNotNull(first); Assert.IsTrue(first.isValid);
+                driver.Bind(model, art.Clips);
+                var second = animator.avatar; Assert.IsNotNull(second); Assert.AreNotSame(first, second);
+                yield return null;
+                Assert.IsTrue(first == null, "Rebinding leaked its previous runtime avatar.");
+                Assert.IsTrue(second.isValid);
+                driver.Bind(null, null);
+                Assert.IsNull(animator.avatar);
+                yield return null;
+                Assert.IsTrue(second == null, "Clearing the binding leaked its runtime avatar.");
+
+                borrowed = AvatarBuilder.BuildGenericAvatar(animator.gameObject, "");
+                Assert.IsTrue(borrowed.isValid); animator.avatar = borrowed;
+                driver.Bind(model, art.Clips); Assert.AreSame(borrowed, animator.avatar);
+                Object.Destroy(driver);
+                yield return null;
+                Assert.IsTrue(borrowed != null && borrowed.isValid);
+                Assert.AreSame(borrowed, animator.avatar, "Teardown cleared an externally supplied avatar.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(actor);
+                if (borrowed != null) Object.DestroyImmediate(borrowed);
+            }
+        }
+
+        [UnityTest]
         public IEnumerator RepeatedPreviewSelectionReusesSubjectAndRetiresChangedInputsImmediately()
         {
             var panel = new GameObject("Preview reuse", typeof(RectTransform));

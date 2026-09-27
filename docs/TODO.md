@@ -110,7 +110,7 @@ unsaved-state work. The focused native reuse/text-size reflow case passes;
 physical-input/visual and player timing qualification remain OPEN.
 Character preview target reallocations now coalesce continuous resizing while
 preserving final pixel size/aspect and immediate captures. Native resize/reuse passes;
-visual checks,measured player cost and valid-avatar ownership remain OPEN.
+visual checks and measured player cost remain OPEN; generated-avatar cleanup is recorded below.
 Deferred non-streaming SFX/voice samples now load in yielded boot turns and remain
 retained before playback. Native sample-state/no-playback check passes; music and
 import quality are unchanged. Player first-use timings remain OPEN.
@@ -142,6 +142,9 @@ Ability illustrations now load asynchronously with yielded fallback preparation;
 the cooldown graphic also prepares before HUD construction. New native preload
 case passes. Default-avatar selection now handles minimum-int name hashes without
 changing other names' defaults; its focused case passes. Player timings remain OPEN.
+Runtime-generated avatars now belong to their CharacterAnimator binding and are
+released on rebind/clear/teardown; borrowed assets survive. One new native lifecycle
+case passes. No animation rework or long-running player-heap qualification is claimed.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

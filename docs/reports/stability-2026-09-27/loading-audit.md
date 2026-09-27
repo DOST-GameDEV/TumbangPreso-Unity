@@ -5,6 +5,23 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Generated Avatar Lifetime
+
+Afterc35550fc, CharacterAnimator records the Avatar only when its binding had none
+and EnsureAvatar generated one. ReleaseGraph disposes the graph first,detaches the
+matching owned avatar and destroys it on rebind,clear or teardown. An imported or
+externally supplied avatar is not owned and remains alive. Previously only invalid
+generated avatars were destroyed; valid ones outlived replaced/destroyed drivers.
+No rig,clip,pose,timing or authored presentation is changed,and no shared cache is added.
+
+One new guarded native real-Dante lifecycle case passes1/1,0.4791293s on the full
+committed base plus2inputs,no drift,no retry. Rebind destroys the prior runtime
+avatar,clear detaches/destroys its replacement,and driver destruction preserves a
+borrowed valid avatar. Minimum free6,361,055,232bytes; profile/preferences restored.
+[Receipt](checks/avatar-lifetime-native.json),[XML](checks/avatar-lifetime-native.xml).
+Raw Logs/avatar-lifetime-20260927/owned-binding.*. This closes the binding ownership
+defect noted below,not long-running player heap/FPS or general animation acceptance.
+
 ## Ability Icon Preparation
 
 After8c91589c, AbilityIcons.Warmup replaces the single-frame enumeration in splash
