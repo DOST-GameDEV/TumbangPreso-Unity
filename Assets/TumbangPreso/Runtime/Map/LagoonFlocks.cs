@@ -55,6 +55,11 @@ namespace TumbangPreso
         // surface and upward. Never a teleport. Off on the Lagoon, where there is nothing to hit.
         public bool AvoidObstacles = false;
         // The ground wing fold (see SetWings): how far each wing swings back, and how far it tips onto the body.
+        // ⚠️ SWEEP FIRST, THEN ROLL (pigeon fold study, Logs/lagoon-blender/pigeon_fold_v4.png): drooping
+        // the spread wing BEFORE sweeping it only tipped the wing's rear end down and left each folded
+        // wing a flat plate sticking out past the tail. Swinging it back about the shoulder first and
+        // then rolling it about the body's forward axis lays the outer edge down over the flank, the
+        // two wings meeting in a low ridge along the back with the tips crossed over the tail.
         public float WingFoldSweep = 84f, WingFoldDroop = 10f;
 
         /// <summary>How many bird slots exist (for the soundscape). Stable for the whole match.</summary>
@@ -709,13 +714,13 @@ namespace TumbangPreso
             if (_wingL[i] != null)
             {
                 var spread = _wingLRest[i] * Quaternion.Euler(0f, 0f, -angle);
-                var folded = Quaternion.Euler(0f, -WingFoldSweep, 0f) * _wingLRest[i] * Quaternion.Euler(0f, 0f, WingFoldDroop);
+                var folded = Quaternion.AngleAxis(WingFoldDroop, Vector3.forward) * Quaternion.Euler(0f, -WingFoldSweep, 0f) * _wingLRest[i];
                 _wingL[i].localRotation = Quaternion.Slerp(spread, folded, f);
             }
             if (_wingR[i] != null)
             {
                 var spread = _wingRRest[i] * Quaternion.Euler(0f, 0f, angle);
-                var folded = Quaternion.Euler(0f, WingFoldSweep, 0f) * _wingRRest[i] * Quaternion.Euler(0f, 0f, -WingFoldDroop);
+                var folded = Quaternion.AngleAxis(-WingFoldDroop, Vector3.forward) * Quaternion.Euler(0f, WingFoldSweep, 0f) * _wingRRest[i];
                 _wingR[i].localRotation = Quaternion.Slerp(spread, folded, f);
             }
         }

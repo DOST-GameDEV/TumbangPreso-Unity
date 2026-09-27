@@ -76,7 +76,12 @@ namespace TumbangPreso.EditorTools.MapKit
         /// on the cove's painted shader, cut out and two-sided, in the tern's own white, cream and
         /// grey (the fauna kit's fauna_white #f7f3ea, fauna_cream #f5e6c6, fauna_grey #b9b5af;
         /// sRGB, used as is, the layout's convention).</summary>
-        private static Material[] FeatherMaterials()
+        private static Material[] FeatherMaterials() => FeatherMaterials(
+            ("feather_white", new Color(0.969f, 0.953f, 0.918f)), ("feather_cream", new Color(0.961f, 0.902f, 0.776f)),
+            ("feather_grey", new Color(0.725f, 0.710f, 0.686f)));
+
+        /// <summary>The painted feather in the given tints (also Kanto's pigeons: KantoPigeonsAuthor).</summary>
+        internal static Material[] FeatherMaterials(params (string, Color)[] tints)
         {
             string texPath = Root + "/Fauna/feather_albedo.png";
             var importer = AssetImporter.GetAtPath(texPath) as TextureImporter;
@@ -90,8 +95,6 @@ namespace TumbangPreso.EditorTools.MapKit
             var painted = Shader.Find("TumbangPreso/LagoonPainted");
             string folder = Root + "/Fauna/Materials";
             if (!AssetDatabase.IsValidFolder(folder)) AssetDatabase.CreateFolder(Root + "/Fauna", "Materials");
-            var tints = new[] { ("feather_white", new Color(0.969f, 0.953f, 0.918f)), ("feather_cream", new Color(0.961f, 0.902f, 0.776f)),
-                                ("feather_grey", new Color(0.725f, 0.710f, 0.686f)) };
             var result = new Material[tints.Length];
             for (int i = 0; i < tints.Length; i++)
             {
@@ -135,7 +138,7 @@ namespace TumbangPreso.EditorTools.MapKit
         /// <summary>An inactive copy of a fauna model with its flat glTF colours moved onto the
         /// cove's own painted shader, so the animals take the same light, fog and ink as the
         /// props around them.</summary>
-        private static Transform Template(string name, Transform parent)
+        internal static Transform Template(string name, Transform parent)
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{Root}/Fauna/{name}.glb");
             if (prefab == null) { Debug.LogWarning(Tag + "No fauna model " + name); return null; }

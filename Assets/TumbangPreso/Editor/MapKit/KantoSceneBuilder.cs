@@ -93,6 +93,8 @@ namespace TumbangPreso.EditorTools.MapKit
             }
             // Street traffic: the lane vehicles become drivers (KantoTrafficAuthor, guide 12.2).
             KantoTrafficAuthor.Build(root, dressing);
+            // Pigeons: the flock system with the new fauna_pigeon (KantoPigeonsAuthor).
+            KantoPigeonsAuthor.Build(root);
             Gameplay(root, layout.gameplay, materials);
             var sun = new GameObject("Sun").AddComponent<Light>();
             sun.transform.SetParent(root, false);

@@ -3,6 +3,7 @@ the stilt village, built as separate moving parts so the runtime can flock and a
 
   blender -b --python tools/lagoon_prop_fauna.py -- --export        # write every .glb
   blender -b --python tools/lagoon_prop_fauna.py -- --preview N     # render the review sheets
+  blender -b --python tools/lagoon_prop_fauna.py -- --preview N --only pigeon   # pigeon sheets only
 
 WHY THIS KIT EXISTS. OWNER, 2026-09-27, on Lagoon Cove: "add birds and fish (via boids)". The
 runtime spawns flocks of birds and schools of fish and moves them with a boids simulation, then
@@ -18,6 +19,13 @@ MODELS (each a root empty named as the model, at the model's centre of mass):
                       wings are modelled spread flat in the glide pose, so flapping is a rotation
                       about the wing's local FORWARD axis (Blender -Y, Unity +Z). The tail's
                       origin is its root, for a small pitch or fan wobble.
+  * "fauna_pigeon"    a plump cartoon city rock pigeon for the Kanto court (0.66 m span, 0.41 m
+                      long). Children "body" (with the legs and feet), "head" (origin at the
+                      neck, pitch it to peck), "wing_l", "wing_r" (origins at the shoulders, as
+                      the tern) and "tail". The recommended ground fold is FOLD_BEST: sweep 84
+                      degrees back, THEN roll 22 degrees about the body's forward axis (see
+                      fold_wings). Its sheets: pigeon_lineup, pigeon_close, pigeon_fold,
+                      pigeon_court (12 m, 1.4 m eye, 95 degrees), pigeon_court_zoom, pigeon_flock.
   * "fauna_fish_a"    a yellow tang: a tall round DISC with long fins along back and belly.
   * "fauna_fish_b"    a pink-and-cream banded fish with a tall swept pink sail of a dorsal fin.
   * "fauna_fish_c"    a fat sea-green parrotfish torpedo with a lime belly and a square tail.
@@ -94,9 +102,18 @@ COLOURS = {
     "fauna_lime": "a6d24a",         # fish_c belly, fins and tail
     "fauna_silver": "dcdad4",       # fish_d flanks and belly, warm silver
     "fauna_silver_dark": "8f8c86",  # fish_d back and dorsal fin
+    # The pigeon's greys are the rock pigeon's blue-grey kept DESATURATED (under 6 per cent)
+    # so they stay exempt from the role-hue rule and can never read as the defence blue.
+    "fauna_pigeon_grey": "a6a3a8",         # body, rump and tail
+    "fauna_pigeon_pale": "c6c3c7",         # wing tops and underwing, lighter than the body
+    "fauna_pigeon_dark": "5f5c63",         # head, chest and primaries
+    "fauna_pigeon_neck_green": "7fb58f",   # neck patch, soft green (hue 138), mid value
+    "fauna_pigeon_neck_purple": "a584b2",  # neck patch, soft purple (hue 283), mid value
+    "fauna_pigeon_eyering": "e05a74",      # eye ring, pink-red (hue 348), clear of orange
+    "fauna_pigeon_feet": "e0808e",         # legs and feet, pinkish red (hue 351)
 }
 ROLE_HUES = ((24.0, 15.0, "offence orange #f87020"), (207.0, 25.0, "defence blue #0080e8"))
-TRI_BUDGET = {"fauna_seabird": 1500}
+TRI_BUDGET = {"fauna_seabird": 1500, "fauna_pigeon": 1200}
 FISH_TRI_BUDGET = 800
 
 
@@ -443,6 +460,173 @@ if bpy is not None:
                         [("body", Vector((0, 0, 0)), body, body_rule)] + wings
                         + [("tail", tj, tail, tail_rule)])
 
+    # ============================================================ the pigeon
+    # OWNER, 2026-09-27, for the Kanto city map: pigeons on the court, and "no i wanna use a newer
+    # model for pigeons" (not the older ambient-life kalapati.glb). A chunky city rock pigeon in
+    # the tern's cast: the same lofted shells, the same wing construction and pivots, but PLUMP
+    # and ROUND where the tern is long and swept, half its span (0.66 m to 1.30 m), with a big
+    # puffed chest, a round dark head and short broad wings. It is seen mostly on the GROUND at 10
+    # to 25 m, standing and pecking with its wings folded, so it also has chunky pink feet, a
+    # separate "head" child to bob and peck with, and colour marks big enough to read at 25 m:
+    # the dark head and chest, the green and purple neck band, two dark wing bars, the dark tail
+    # band.
+    #
+    # Children of "fauna_pigeon" and their pivots (model space, before the centre-of-mass shift):
+    #   body    the torso, neck band, legs and feet (feet never move on their own)
+    #   head    origin at the NECK joint (0, -0.090, 0.060): pitch it about local X to peck
+    #           (positive Blender X rotation puts the beak down) and bob it along Y
+    #   wing_l  origin at the left SHOULDER (+0.040, -0.064, 0.072), spread flat along +X
+    #   wing_r  origin at the right SHOULDER (-0.040, -0.064, 0.072), spread along -X
+    #   tail    origin at the tail root (0, 0.110, 0.030), a fan the code can tilt or spread
+
+    # ⚠️ The shoulder sits well IN from the flank, forward and high (v2). In v1 it was at the
+    # flank (x 0.058, y -0.040): folded, the wing's leading edge stood 2 cm proud of the body
+    # and the tip ran 4 cm past the tail. In flight the extra root is simply buried in the body.
+    PIGEON_SHOULDER = Vector((0.040, -0.064, 0.072))
+    PIGEON_SPAN_HALF = 0.290               # span = 2 * (0.040 + 0.290) = 0.66 m
+    PIGEON_NECK = Vector((0, -0.090, 0.060))
+    PIGEON_TAIL = Vector((0, 0.110, 0.030))
+
+    def build_pigeon():
+        body = Part()
+        # (y, z centre, half width, half height), neck to tail. The front is raised into the neck
+        # and swells straight into a puffed chest, the widest point just behind it: the pigeon's
+        # whole character is that round front.
+        st = [(-0.128, 0.064, 0.034, 0.036), (-0.114, 0.050, 0.058, 0.066),
+              (-0.090, 0.032, 0.076, 0.088), (-0.050, 0.016, 0.090, 0.094),
+              (0.000, 0.012, 0.092, 0.086), (0.045, 0.016, 0.080, 0.072),
+              (0.082, 0.022, 0.058, 0.050), (0.110, 0.028, 0.036, 0.030),
+              (0.128, 0.030, 0.022, 0.018)]
+        rings = [superellipse((0, y, z), (1, 0, 0), (0, 0, 1), a, b, 14, 2.3)
+                 for y, z, a, b in st]
+        body.loft("body", rings, (0, -0.138, 0.068), (0, 0.138, 0.030))
+        for sx in (1, -1):
+            # A short fat leg from inside the belly, then a round three-lobed MITTEN of a foot:
+            # toes as lobes of one soft pad, never three thin sticks.
+            # ⚠️ Short and stubby: v1's legs (5.7 cm of visible shin) read as stilts at 12 m.
+            body.cone("leg", (sx * 0.032, 0.012, -0.055), (sx * 0.034, 0.004, -0.094), 0.015,
+                      0.012, 6, 1.0)
+            toes = [(0.000, 0.022), (0.022, 0.004), (0.034, -0.036), (0.014, -0.030),
+                    (0.000, -0.056), (-0.014, -0.030), (-0.034, -0.036), (-0.022, 0.004)]
+            body.pillow("foot", (sx * 0.035, 0.000, -0.098), (1, 0, 0), (0, 1, 0), toes, 0.016,
+                        k=10, inset=0.7)
+
+        def body_rule(shell, station, c, n, a):
+            if shell in ("leg", "foot"):
+                return "fauna_pigeon_feet"
+            up = math.sin(a)
+            # Stations -1 to 1 are the neck and upper chest. The iridescent patch is one chunky
+            # band: green over the nape and neck top, purple down the neck sides, and the dark
+            # chest below it, the order a rock pigeon wears them.
+            if station <= 1:
+                if up > 0.10:
+                    return "fauna_pigeon_neck_green"
+                if up > -0.35:
+                    return "fauna_pigeon_neck_purple"
+                return "fauna_pigeon_dark"
+            if station == 2 and up < -0.35:
+                return "fauna_pigeon_dark"      # the dark lower chest runs back one band
+            return "fauna_pigeon_grey"
+
+        head = Part()
+        hc = Vector((0, -0.110, 0.122))
+        # A round head, a little wider than tall, big for the body on purpose (cuteness), set on
+        # top of the neck so the neck band shows below it.
+        head.sphere("head", hc, 0.048, 10, 6, (1.0, 1.08, 0.96))
+        # A short dark beak, blunt, dipping a little, with the pale CERE as a soft lump on top of
+        # its base: the one pale mark on the face.
+        head.cone("beak", hc + Vector((0, -0.040, -0.006)), hc + Vector((0, -0.080, -0.016)),
+                  0.014, 0.004, 8, 0.85)
+        head.sphere("cere", hc + Vector((0, -0.050, 0.004)), 0.011, 6, 3, (1.0, 1.4, 0.7))
+        for sx in (1, -1):
+            # Pink-red eye ring as a bigger disc behind a dark eye: the ring shows as a rim.
+            head.sphere("eyering", hc + Vector((sx * 0.034, -0.018, 0.012)), 0.015, 8, 4,
+                        (0.6, 1, 1))
+            head.sphere("eye", hc + Vector((sx * 0.042, -0.019, 0.012)), 0.0095, 6, 4,
+                        (0.6, 1, 1))
+
+        def head_rule(shell, station, c, n, a):
+            return {"head": "fauna_pigeon_dark", "beak": "fauna_cap", "cere": "fauna_white",
+                    "eyering": "fauna_pigeon_eyering", "eye": "fauna_eye"}[shell]
+
+        wings = []
+        for side, name in ((1, "wing_l"), (-1, "wing_r")):
+            w = Part()
+            # The tern's wing, cut short and broad: a wide chord, a gentle sweep, a round-pointed
+            # tip. The ring samples the chord EVENLY on top (seven points, six equal segments),
+            # so the two dark WING BARS can be exactly two top segments (a third to a half, and
+            # two thirds to five sixths of the chord) on the inner wing, each about 3 cm wide.
+            ss = [0.0, 0.18, 0.36, 0.54, 0.70, 0.83, 0.94]
+            rings = []
+            for s in ss:
+                # The root starts only 5 mm inboard of the shoulder: the shoulder is already
+                # 5 cm inside the flank, and v3 showed a longer buried root swinging forward
+                # out of the body as a jagged stub by the neck when the wing folds.
+                x = -0.005 + s * (PIGEON_SPAN_HALF + 0.005)
+                chord = 0.180 * (1 - 0.40 * s) * math.sqrt(max(0.0, 1 - s ** 4)) + 0.010
+                y_le = -0.050 + 0.080 * s ** 1.6
+                thick = 0.042 * (1 - 0.55 * s)
+                zc = 0.020 * s
+                top, bot = [], []
+                for k in range(7):
+                    u = k / 6
+                    h = thick / 2 * math.sqrt(max(0.0, 4 * u * (1 - u))) * (1 - 0.45 * u)
+                    camber = 0.012 * math.sin(math.pi * u) * (1 - s)
+                    top.append(Vector((side * x, y_le + chord * u, zc + camber + h)))
+                    bot.append(Vector((side * x, y_le + chord * u, zc + camber - h * 0.6)))
+                rings.append(top + list(reversed(bot[1:6])))
+            root_c = sum(rings[0], Vector((0, 0, 0))) / len(rings[0])
+            w.loft("wing", rings, (root_c.x - side * 0.008, root_c.y, root_c.z),
+                   (side * PIGEON_SPAN_HALF, -0.050 + 0.080 + 0.02, 0.020))
+
+            def wing_rule(shell, station, c, n, a):
+                seg = int(a * 12 / (2 * math.pi))       # 0 to 5 top (front to back), 6 to 11 under
+                if station >= 4:
+                    return "fauna_pigeon_dark"          # the dark primaries, s from 0.70
+                # The two bars cover only the MIDDLE of the inner wing (stations 1 and 2, about
+                # 11 cm of span): folded, the rigid wing turns spanwise stripes lengthwise, and
+                # v2's full-length stripes read as racing stripes; short dashes read as bars.
+                if seg < 6 and station in (1, 2) and seg in (2, 4):
+                    return "fauna_tip"                  # the two wing bars
+                return "fauna_pigeon_pale"
+
+            j = Vector((side * PIGEON_SHOULDER.x, PIGEON_SHOULDER.y, PIGEON_SHOULDER.z))
+            bmesh.ops.translate(w.bm, vec=j, verts=w.bm.verts)
+            wings.append((name, j, w, wing_rule))
+
+        tail = Part()
+        # A short rounded-square FAN from inside the rump, grey with the dark terminal band.
+        fan = [(0.000, -0.030), (0.034, -0.020), (0.050, 0.055), (0.052, 0.104), (0.000, 0.112),
+               (-0.052, 0.104), (-0.050, 0.055), (-0.034, -0.020)]
+        tail.pillow("tail", PIGEON_TAIL, (1, 0, 0), (0, 1, 0), fan, 0.024, k=14, inset=0.72)
+
+        def tail_rule(shell, station, c, n, a):
+            return "fauna_tip" if c.y > PIGEON_TAIL.y + 0.072 else "fauna_pigeon_grey"
+
+        return assemble("fauna_pigeon",
+                        [("body", Vector((0, 0, 0)), body, body_rule),
+                         ("head", PIGEON_NECK, head, head_rule)] + wings
+                        + [("tail", PIGEON_TAIL, tail, tail_rule)])
+
+    def fold_wings(root, sweep=84.0, droop=10.0, sweep_first=False):
+        """Pose the wings as the runtime folds them on the ground, in BLENDER terms. Blender's
+        +Z swing of the left wing is Unity's -Y swing (the handedness flip), so the runtime's
+        "left -84, right +84 about up" is (left +84, right -84) here; the droop is a roll about
+        the forward axis that lowers the left wing's outer edge (Blender +Y for the left wing,
+        which is a roll about Unity +Z of the same sign).
+
+        sweep_first=False: droop about the wing's OWN forward axis first, then swing (Blender
+        euler XYZ). The droop then tips the folded wing's rear end down.
+        sweep_first=True: swing first, then roll about the BODY's forward axis (euler ZYX, in
+        Unity localRotation = AngleAxis(droop, forward) * AngleAxis(sweep, up)). The roll then
+        tilts each folded wing's outer edge down over the flank, the two wings meeting in a low
+        ridge along the back, which is how a pigeon's folded wings sit."""
+        for ch in root.children:
+            side = 1 if ch.name.startswith("wing_l") else -1 if ch.name.startswith("wing_r") else 0
+            if side:
+                ch.rotation_mode = "ZYX" if sweep_first else "XYZ"
+                ch.rotation_euler = (0, side * math.radians(droop), side * math.radians(sweep))
+
     # ============================================================ the fish
     # Each fish is a lofted body (stations nose to tail), fins as pillows merged into the body,
     # two big dark eyes, and a separate tail whose origin is the tail joint. Body stations are
@@ -610,10 +794,14 @@ if bpy is not None:
             tail_rule=lambda s, st, c, n, a: "fauna_yellow_deep",
         ),
     }
-    MODELS = ["fauna_seabird"] + list(FISH)
+    MODELS = ["fauna_seabird", "fauna_pigeon"] + list(FISH)
 
     def build(model):
-        return build_seabird() if model == "fauna_seabird" else build_fish(model, FISH[model])
+        if model == "fauna_seabird":
+            return build_seabird()
+        if model == "fauna_pigeon":
+            return build_pigeon()
+        return build_fish(model, FISH[model])
 
     def check(root):
         """Size (x, y, z extent in metres, in the root's frame) and triangle count."""
@@ -793,12 +981,130 @@ if bpy is not None:
             b.rotation_euler = (0, math.radians(bank), math.radians(head))
         _shoot(cam, eye, eye + fwd, LOG_DIR / f"fauna_sky_v{version}.png", fov=95)
 
+    def _ground(name, rgb, size=100):
+        g = bpy.data.meshes.new(name)
+        bm = bmesh.new()
+        bmesh.ops.create_grid(bm, x_segments=1, y_segments=1, size=size)
+        bm.to_mesh(g)
+        bm.free()
+        g.materials.append(_plain(name, rgb))
+        bpy.context.scene.collection.objects.link(bpy.data.objects.new(name, g))
+
+    def _scale_ref(loc):
+        ref = bpy.data.meshes.new("scale_ref_1m60")
+        bm = bmesh.new()
+        bmesh.ops.create_cone(bm, cap_ends=True, segments=24, radius1=0.12, radius2=0.12,
+                              depth=1.6)
+        bmesh.ops.translate(bm, vec=(0, 0, 0.8), verts=bm.verts)
+        bm.to_mesh(ref)
+        bm.free()
+        ref.materials.append(_plain("scale_pink", (0.95, 0.30, 0.55)))
+        o = bpy.data.objects.new("scale_ref_1m60", ref)
+        o.location = loc
+        bpy.context.scene.collection.objects.link(o)
+
+    def _standing(loc, yaw, peck=0.0, sweep=84.0, droop=10.0, sweep_first=False):
+        """A pigeon on the ground: wings folded as the runtime folds them, feet on z = 0, the
+        head pitched down by peck degrees."""
+        root = build("fauna_pigeon")
+        rep = check(root)
+        fold_wings(root, sweep, droop, sweep_first)
+        if peck:
+            next(c for c in root.children if c.name.startswith("head")).rotation_euler = (
+                math.radians(peck), 0, 0)
+        root.location = (loc[0], loc[1], -rep["lo"].z)
+        root.rotation_euler = (0, 0, math.radians(yaw))
+        return root
+
+    # Kanto is a daytime city court: a pale warm-grey paving and a soft daylight sky behind the
+    # pigeon shots (a preview stand-in, never a UI colour).
+    PAVING = (0.62, 0.58, 0.52)
+    # The recommended fold (sweep, droop, sweep_first), chosen from pigeon_fold_v2 onward.
+    FOLD_BEST = (84.0, 22.0, True)
+    DAY_SKY = (0.62, 0.66, 0.70)
+
+    def preview_pigeon(version, sweep=84.0, droop=10.0):
+        LOG_DIR.mkdir(parents=True, exist_ok=True)
+        # 1. Beside the tern and the 1.6 m cylinder: the pigeon spread (flying) and standing.
+        reset()
+        cam = _stage((0.55, 0.60, 0.62), (math.radians(50), 0, math.radians(-140)), 4.0)
+        _ground("sand_pale", (0.78, 0.66, 0.46))
+        tern = build("fauna_seabird")
+        rep = check(tern)
+        tern.location = (0.0, 0.0, 0.30 - rep["lo"].z)
+        tern.rotation_euler = (0, 0, math.radians(-55))
+        pig = build("fauna_pigeon")
+        rep = check(pig)
+        print(f"[fauna] fauna_pigeon size {rep['size']} tris {rep['tris']} {rep['children']}")
+        pig.location = (-0.95, 0.0, 0.30 - rep["lo"].z)
+        pig.rotation_euler = (0, 0, math.radians(-55))
+        _standing((-1.6, 0.0), -55, 0.0, *FOLD_BEST)
+        _scale_ref((-2.2, 0.35, 0))
+        _shoot(cam, (-0.9, -3.4, 1.3), (-1.0, 0, 0.35),
+               LOG_DIR / f"pigeon_lineup_v{version}.png", lens=40)
+        # 2. Close three-quarter view: spread and standing side by side.
+        _shoot(cam, (-1.15, -1.75, 0.62), (-1.28, 0, 0.22),
+               LOG_DIR / f"pigeon_close_v{version}.png", lens=45)
+
+        # 3. The fold: three standing pigeons (profile, three-quarter, from behind), seen from 35
+        # degrees up, to judge whether the folded wings lie along the body.
+        reset()
+        cam = _stage((0.55, 0.60, 0.62), (math.radians(45), 0, math.radians(-150)), 4.0)
+        _ground("paving", PAVING)
+        # Back row: the pose as the runtime states it (sweep 84, droop 10, droop applied first).
+        # Front row: FOLD_BEST, the recommended pose. Same three yaws in each row.
+        for i, yaw in enumerate((90, 35, 180)):
+            _standing((0.45 - 0.45 * i, 0.35), yaw, 0.0, sweep, droop, False)
+            _standing((0.45 - 0.45 * i, -0.15), yaw, 0.0, *FOLD_BEST)
+        _shoot(cam, (0.0, -1.75, 1.15), (0.0, 0.1, 0.08),
+               LOG_DIR / f"pigeon_fold_v{version}.png", lens=42)
+
+        # 4. THE MAIN VIEW: pigeons landed on the court, from 12 m at a 1.4 m eye, the game's 95
+        # degree field of view; then the same spot through a long lens to see what is there.
+        reset()
+        cam = _stage(DAY_SKY, (math.radians(50), 0, math.radians(-130)), 4.0)
+        _ground("paving", PAVING, 300)
+        for (x, y, yaw, peck) in [(0.0, 0.0, 30, 0), (0.5, 0.35, 150, 40), (-0.45, 0.25, 250, 0),
+                                  (0.3, -0.4, 300, 35), (-0.2, 0.75, 100, 0)]:
+            _standing((x, y), yaw, peck, *FOLD_BEST)
+        eye = Vector((0.0, -12.0, 1.4))
+        _shoot(cam, eye, (0.0, 0.0, 0.1), LOG_DIR / f"pigeon_court_v{version}.png", fov=95)
+        _shoot(cam, eye, (0.0, 0.0, 0.12), LOG_DIR / f"pigeon_court_zoom_v{version}.png",
+               lens=260)
+
+        # 5. A small flock overhead, 5 to 22 m, from a 1.4 m eye looking up 30 degrees at 95
+        # degrees, a couple mid-flap (wings rolled up or down about the forward axis).
+        reset()
+        cam = _stage(DAY_SKY, (math.radians(70), 0, math.radians(-110)), 4.0)
+        eye = Vector((0, 0, 1.4))
+        pitch = math.radians(30)
+        fwd = Vector((0, math.cos(pitch), math.sin(pitch)))
+        for i, (dist, az, el, head, bank, flap) in enumerate(
+                [(5, -14, 4, 60, -10, 0), (9, 10, -3, 40, 5, 30), (12, -4, 9, 50, 0, -25),
+                 (16, 20, 5, 30, 10, 0), (22, -22, 0, 70, -5, 20), (22, 2, 14, 45, 0, 0)]):
+            d = Matrix.Rotation(math.radians(az), 3, "Z") @ Matrix.Rotation(
+                math.radians(el), 3, "X") @ fwd
+            b = build("fauna_pigeon")
+            for ch in b.children:
+                if ch.name.startswith("wing_l"):
+                    ch.rotation_euler = (0, -math.radians(flap), 0)
+                elif ch.name.startswith("wing_r"):
+                    ch.rotation_euler = (0, math.radians(flap), 0)
+            b.location = eye + d.normalized() * dist
+            b.rotation_euler = (0, math.radians(bank), math.radians(head))
+        _shoot(cam, eye, eye + fwd, LOG_DIR / f"pigeon_flock_v{version}.png", fov=95)
+
     def main():
         argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
         if "--export" in argv:
             export_all()
         if "--preview" in argv:
-            preview(int(argv[argv.index("--preview") + 1]))
+            version = int(argv[argv.index("--preview") + 1])
+            only = argv[argv.index("--only") + 1] if "--only" in argv else None
+            if only != "pigeon":
+                preview(version)
+            if only in (None, "pigeon"):
+                preview_pigeon(version)
         if not argv:
             for row in audit_palette():
                 print("[fauna]", row)
