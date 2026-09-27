@@ -32,6 +32,8 @@ namespace TumbangPreso.UI
     {
         private TumpHomeView _nativeHome;
         private TumpCreditsView _nativeCredits;
+        private bool _bootLoading;
+        public bool IsPrepared { get; private set; }
 
         /// <summary>
         /// ⚠️⚠️ THE TITLE SCREEN LEAVES THE GAME ON ESCAPE, AND SINCE 2026-09-18 IT IS THE ONLY
@@ -74,6 +76,22 @@ namespace TumbangPreso.UI
             if (signIn == null) signIn = gameObject.AddComponent<SignInScreen>();
             signIn.Opened += open => { if (open) _nativeHome.Suspend(); else _nativeHome.Resume(); };
             Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
+            _bootLoading = SplashScreen.MenuActivationPending;
+            if (_bootLoading)
+            {
+                _nativeHome.SetLoading(true);
+                signIn.Install();
+            }
+            else OfferTheLoginStep();
+            IsPrepared = true;
+        }
+
+        internal void CompleteBootLoading()
+        {
+            if (!_bootLoading) return;
+            _bootLoading = false;
+            _nativeHome.SetLoading(false);
+            // Install ran behind loading; the welcome timer starts only when revealed.
             OfferTheLoginStep();
         }
 

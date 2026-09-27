@@ -1,5 +1,29 @@
 # General loading and first-use audit, 2026-09-27
 
+## Menu activation behind loading
+
+Base `01346a80`. Splash previously destroyed its loading canvas before releasing
+MainMenu's held async load. Unity's90% load had not run the menu's Awake/Start,
+native hierarchy construction or canvas layout, leaving that work outside loading.
+
+The existing loading owner and root canvas now survive activation and are retired
+only after ConvertedMainMenu signals successful wiring and the initial layout/draw
+frame passes. The normal account/preload/reading barriers are preserved. Login is
+installed under loading but offered on reveal, so its welcome interval is not
+consumed invisibly. Home still draws under the curtain but CanvasGroup gates its
+controls; the any-key shortcut now respects that group. Menu music is deferred
+until reveal. Missing/failed menu initialization reports failure instead of ready.
+The curtain blocks pointer input and Escape; its retained video target/canvas and
+takeover registration clean up on destruction. Supplied artwork is unchanged.
+
+All four assemblies compile on the93-file frozen source/dependency candidate,
+including7changed inputs. [Compiler receipt](checks/menu-activation-compile.json).
+BootActivationRetainsCurtainAndDefersInputAndLoginUntilMenuIsPrepared was added to
+the existing PlayMode fixture but NOT RUN under the existing disk limitation.
+No previous shader/art check,character film or broad suite was repeated. Native
+first-boot/return/error interaction and device timings remain OPEN. This removes
+an uncovered initialization boundary; it does not prove all clicks are hitch-free.
+
 ## Hero prop prefab preparation
 
 Follow-up after `750da6ad`: the existing Phaister setup warmup still called the

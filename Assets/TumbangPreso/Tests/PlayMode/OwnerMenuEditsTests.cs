@@ -16,6 +16,45 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
 
         [UnityTest, Timeout(30000)]
+        public IEnumerator BootActivationRetainsCurtainAndDefersInputAndLoginUntilMenuIsPrepared()
+        {
+            bool boot = SceneFlow.BootedThroughSplash, offered = SceneFlow.LoginStepOffered;
+            GameObject owner = null;
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                SceneFlow.BootedThroughSplash = false; SceneFlow.LoginStepOffered = false;
+                owner = new GameObject("SplashActivationOnly");
+                var splash = owner.AddComponent<SplashScreen>(); splash.enabled = false;
+                typeof(SplashScreen).GetMethod("BuildSurface", flags).Invoke(splash, null);
+                var canvas = (GameObject)typeof(SplashScreen).GetField("_canvas", flags).GetValue(splash);
+                yield return (IEnumerator)typeof(SplashScreen).GetMethod("ActivatePreparedMenu", flags).Invoke(splash, null);
+                Assert.IsNotNull(splash, "Scene activation destroyed the loading owner.");
+                Assert.IsNotNull(canvas);
+                Assert.IsTrue(canvas.GetComponent<Canvas>().isActiveAndEnabled);
+                Assert.AreEqual(1500, canvas.GetComponent<Canvas>().sortingOrder);
+                Assert.IsTrue(ScreenTakeover.AnyOpen);
+                var menu = Object.FindAnyObjectByType<ConvertedMainMenu>();
+                Assert.IsNotNull(menu); Assert.IsTrue(menu.IsPrepared);
+                Assert.IsTrue(SceneFlow.BootedThroughSplash);
+                Assert.IsFalse(SceneFlow.LoginStepOffered, "The hidden login consumed its welcome interval.");
+                var signIn = menu.GetComponent<SignInScreen>();
+                Assert.IsNotNull(signIn); Assert.IsFalse(signIn.IsOpen);
+                var press = Object.FindObjectsByType<Button>(FindObjectsSortMode.None).Single(x => x.name == "StartButton");
+                Assert.IsFalse(press.IsInteractable(), "Title accepted input behind the loading curtain.");
+                typeof(SplashScreen).GetMethod("Leave", flags).Invoke(splash, null);
+                yield return null;
+                Assert.IsTrue(splash == null); Assert.IsTrue(canvas == null);
+                Assert.IsTrue(SceneFlow.LoginStepOffered); Assert.IsTrue(signIn.IsOpen);
+            }
+            finally
+            {
+                if (owner != null) Object.Destroy(owner);
+                SceneFlow.BootedThroughSplash = boot; SceneFlow.LoginStepOffered = offered;
+            }
+        }
+
+        [UnityTest, Timeout(30000)]
         public IEnumerator HeroPropWarmupYieldsRetainsPrefabsAndDoesNotSpawnEffects()
         {
             int sceneObjects = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length;

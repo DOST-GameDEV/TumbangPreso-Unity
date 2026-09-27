@@ -227,6 +227,14 @@ namespace TumbangPreso.UI
                 yield return null;
             }
 
+            yield return ActivatePreparedMenu();
+            if (_menuActivationFailed)
+            {
+                while (!InputLayer.MenuNav.CancelPressed) yield return null;
+                SceneFlow.Quit();
+                yield break;
+            }
+
             // ⚠️ FULL ONLY ON THE WAY OUT. Everything above is bounded under 1.0 so that a full
             // bar is never a thing the player can sit and look at.
             Debug.Log($"[Splash] boot loading finished after {_elapsed:F2} s (work-driven, no reading window).");
@@ -1056,24 +1064,9 @@ namespace TumbangPreso.UI
             // playing over the title menu is worse than no sting at all.
             BootSting.Stop();
 
-            if (_target != null)
-            {
-                _video.targetTexture = null;
-                _target.Release();
-            }
-
-            // ⚠️ THE CANVAS IS A ROOT OBJECT NOW, so the scene change does NOT take it with it
-            // on the frame it is torn down; a stale black plate over the title menu is exactly
-            // the failure this file exists to avoid.
-            if (_canvas != null) Destroy(_canvas);
-
-            if (_menu != null)
-            {
-                _menu.allowSceneActivation = true;
-                return;
-            }
-
-            SceneFlow.Go(SceneFlow.MainMenu);
+            _preparedMenu?.CompleteBootLoading();
+            ScreenTakeover.ConsumeEscape();
+            Destroy(gameObject);
         }
     }
 }

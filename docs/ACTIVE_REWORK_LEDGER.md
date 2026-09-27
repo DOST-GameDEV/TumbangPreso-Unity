@@ -1,5 +1,18 @@
 # Active TUMP rework ledger
 
+## Boot menu activation barrier, 2026-09-27
+
+The splash now retains its existing artwork/canvas through actual MainMenu
+activation, native home/login construction and the first layout/draw frame.
+Readiness is signalled only after menu wiring succeeds, not at scene-load90%.
+Hidden title controls are gated through CanvasGroup,including the any-key path;
+welcome timing,menu music and input are released only on reveal. Failed menu
+initialization stays an explicit failure, not a full ready bar. Cleanup retires
+the retained owner,canvas and video target. No artwork or input-backend replacement.
+Runtime,Editor,Tests and PlayTests compile on the93-file frozen candidate (7changed).
+New native handoff/cleanup test is pending; no first-click/hitch-free timing claim.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#menu-activation-behind-loading).
+
 ## Shared held-aim delivery, 2026-09-27
 
 Protocol66 carries body-aim slot,stable ability ID,elapsed hold and scoped token

@@ -69,6 +69,9 @@ helper checks pass; native row interaction and live discovery remain OPEN.
 
 **Loading slice, 2026-09-27:** progressive shader completion, staged menu-art/avatar
 cache preparation and duplicate audio-sweep removal are implemented (`c9f55410`).
+Boot now retains loading through menu activation,home/login construction and initial
+layout; hidden input and welcome/music wait for reveal. Four assemblies compile;
+the new native handoff/cleanup case and actual first-use timings remain OPEN.
 Hero-prop prefab discovery/retention now runs inside boot loading, with yielded
 progress and shared source caches for existing prop loaders. Compiler checks pass;
 native lifecycle and player first-use timing remain OPEN under the disk limitation.
