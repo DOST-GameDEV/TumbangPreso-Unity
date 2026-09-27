@@ -34,6 +34,10 @@ compile and6 new Core cases pass. DRAINED/HEXED gameplay/replication and doll ru
 acceptance remain OPEN; these tests do not qualify the unfinished new kit.
 The v8 doll and Voodoo body-state API are integrated unchanged and Runtime/Editor
 compile; tick/reset/snapshot wiring remains OPEN.
+Voodoo snapshot wiring now carries status/mark/reach state and an explicit reach
+result (protocol73), preserving host stamina corrections. Two new native codec/
+receiver cases pass. Gameplay tick/reset/HUD/speed,new-kit and actual-peer checks
+remain OPEN; snapshot wiring alone does not finish the incoming kit.
 
 **NET-SKILLS-1, OPEN:** host authority,stable ability identity,explicit delivery/
 command intent,independent receipts,bounded delayed delivery,phase-aware prepared

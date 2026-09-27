@@ -1,5 +1,33 @@
 # Multiplayer investigation, 2026-09-27
 
+## Voodoo Body Snapshot
+
+Base `1848e1dc`,protocol73. The incoming body API now has a typed27-byte snapshot
+for Drained/Hexed timers,mark kind/source/age and reach kind/target/elapsed/result.
+SyncUnit's minimum is223bytes and its writer capacity304. The prefix sits before
+AbilityAimSnapshot because that existing reader requires an exact tail. Incoming
+values are finite/bounded with valid kinds,seats and canonical empty state; existing
+body epoch/pose serial gates remain in charge of freshness.
+
+Applying a fresh Drained edge can empty a local bar. It now runs before the existing
+authoritative resource correction, so a legitimate host pool value remains final.
+RecoveryBlocked is updated immediately on local/received application rather than
+waiting for the next gameplay step. Reach success is carried explicitly in the
+caster's state; it no longer depends on the target's mark snapshot arriving first.
+Legacy direct body callers retain optional inference, but the network never uses it.
+
+ONE guarded native pass completed2/2 new checks,0failed/0skipped:
+the fixed prefix/aim tail,invalid bounds/truncation, and the actual223-byte receiver
+with pool42 surviving a fresh status,explicit success without the target body,
+old serial rejection and NaN refusal. Frozen206 inputs,7changed; no input drift.
+Unity6000.5.8f1/D3D11 requested; named profile and shared input preferences restored.
+[XML](checks/voodoo-network-native.xml),[receipt](checks/voodoo-network-native.json).
+No old tests or films were repeated and no separate duplicate compiler pass ran.
+
+This wires transport around the incoming API, not the new creative kit. Body ticking,
+reset/HUD/speed integration,mark/doll gameplay lifetimes and actual peers remain
+OPEN until the corresponding incoming runtime work is integrated and checked.
+
 Latest evidence: the [input integration pass](input-integration.md) completed7/7
 native cases, including the received-root/frozen,hold,plant-lifetime and victim-camera
 checks below. It supersedes their earlier NOT RUN notes only for those exact local

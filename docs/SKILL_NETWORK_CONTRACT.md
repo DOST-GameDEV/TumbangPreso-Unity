@@ -102,13 +102,18 @@ the actual kit identity, not a cosmetic body's roster index.
 
 ## Compatibility And Checks
 
-The incoming Voodoo Core definitions add DRAINED/HEXED, but definitions alone do
-not implement their body state or replication. When the runtime integration lands,
-drive Stamina.RecoveryBlocked from authoritative/received Drained state on both
-locally simulated bodies and the host's remote-body resource path. Preserve the
-owner's no-added-fatigue depletion rule. Hexed's screen effect remains victim-local.
-New status clocks and marked/doll entity identity still need explicit recovery;
-do not claim the new kit ready from enum/table additions or asset import.
+Protocol73's VoodooBodySnapshot carries DRAINED/HEXED timers and mark/reach state
+inside SyncUnit, before the existing exact aim tail. It validates kinds,seats and
+finite bounded clocks. A reach's completion result comes from that caster's own
+snapshot, never another body's possibly later packet. Status application precedes
+the authoritative resource correction, so a fresh depletion cannot erase that pool.
+RecoveryBlocked updates immediately on received/host Drained application.
+
+The incoming Voodoo body still needs its gameplay tick/reset/HUD/speed wiring and
+the kit's final integration. Preserve the owner's no-added-fatigue depletion rule;
+Hexed's screen effect stays victim-local. Mark/doll gameplay entity lifetimes need
+their explicit contracts. Two native codec/receiver checks do not qualify the whole
+unfinished kit or actual peer behavior.
 
 Persistent status pictures belong to a body-owned presenter reading replicated
 status,not exclusively inside a host-only victim loop. StatusBodyMarks and

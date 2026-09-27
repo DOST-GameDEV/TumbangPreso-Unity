@@ -38,6 +38,7 @@ namespace TumbangPreso
         private VoodooMarkKind _reachKind;
         private int _reachTarget = -1;
         private float _reachElapsed;
+        private bool _reachSucceeded;
 
         public bool IsDrained => _drainedLeft > 0.0f;
         public bool IsHexed => _hexedLeft > 0.0f;
@@ -57,6 +58,8 @@ namespace TumbangPreso
         public bool IsVoodooReaching => _reachTarget >= 0 && _reachKind != VoodooMarkKind.None;
         public int VoodooReachTarget => IsVoodooReaching ? _reachTarget : -1;
         public VoodooMarkKind VoodooReachKind => IsVoodooReaching ? _reachKind : VoodooMarkKind.None;
+        public float VoodooReachElapsed => _reachElapsed;
+        public bool VoodooReachSucceeded => _reachSucceeded;
         /// <summary>0 to 1 through the reach.</summary>
         public float VoodooReachProgress => IsVoodooReaching ? Mathf.Clamp01(_reachElapsed / VoodooRules.ReachSeconds) : 0.0f;
 
@@ -70,6 +73,7 @@ namespace TumbangPreso
             if (!MayMutateGameplayState() || StatusImmune) return;
             bool fresh = _drainedLeft <= 0.0f;
             _drainedLeft = StatusRules.Refresh(_drainedLeft, seconds);
+            Stamina.RecoveryBlocked = IsDrained;
             Stamina.Deplete();
             if (fresh) RaiseStatus(StatusKind.Drained);
         }
@@ -92,6 +96,7 @@ namespace TumbangPreso
             _reachKind = kind;
             _reachTarget = target.PlayerSlot;
             _reachElapsed = 0.0f;
+            _reachSucceeded = false;
             return true;
         }
 
@@ -149,6 +154,7 @@ namespace TumbangPreso
         private void EndVoodooReach(bool marked)
         {
             if (!IsVoodooReaching) return;
+            _reachSucceeded = marked;
             _reachKind = VoodooMarkKind.None;
             _reachTarget = -1;
             _reachElapsed = 0.0f;
@@ -214,16 +220,18 @@ namespace TumbangPreso
             Stamina.RecoveryBlocked = false;
             ClearVoodooMark();
             EndVoodooReach(marked: false);
+            _reachSucceeded = false;
         }
 
         /// <summary>The host's voodoo state for this body, off the wire (`SyncUnit`).</summary>
         public void ApplyNetworkVoodoo(float drainedLeft, float hexedLeft, byte markKind, int markSource, float markAge,
-                                       byte reachKind, int reachTarget, float reachElapsed)
+                                       byte reachKind, int reachTarget, float reachElapsed, bool? reachSucceeded = null)
         {
             bool drained = _drainedLeft <= 0.0f && drainedLeft > 0.0f;
             bool hexed = _hexedLeft <= 0.0f && hexedLeft > 0.0f;
             _drainedLeft = Mathf.Clamp(drainedLeft, 0.0f, StatusRules.DrainedSeconds + 0.01f);
             _hexedLeft = Mathf.Clamp(hexedLeft, 0.0f, StatusRules.HexedSeconds + 0.01f);
+            Stamina.RecoveryBlocked = IsDrained;
             if (drained) { Stamina.Deplete(); RaiseStatus(StatusKind.Drained); }
             if (hexed) RaiseStatus(StatusKind.Hexed);
 
@@ -234,18 +242,23 @@ namespace TumbangPreso
             var kind = reachKind <= (byte)VoodooMarkKind.Hex ? (VoodooMarkKind)reachKind : VoodooMarkKind.None;
             if (kind == VoodooMarkKind.None || reachTarget < 0)
             {
-                // The host ended it: a mark on the target, if one now carries her seat, or a snap.
-                bool marked = false;
-                var round = GameServices.Round;
-                var was = round != null && _reachTarget >= 0 ? round.PlayerAt(_reachTarget) : null;
-                if (was != null && was._markSource == _playerSlot && was._markKind != VoodooMarkKind.None) marked = true;
+                // Network receipts carry the host's outcome. Another body's mark
+                // snapshot may arrive later, so only legacy direct callers infer it.
+                bool marked = reachSucceeded ?? false;
+                if (!reachSucceeded.HasValue)
+                {
+                    var was = GameServices.Round != null && _reachTarget >= 0 ? GameServices.Round.PlayerAt(_reachTarget) : null;
+                    marked = was != null && was._markSource == _playerSlot && was._markKind != VoodooMarkKind.None;
+                }
                 EndVoodooReach(marked);
+                _reachSucceeded = marked;
             }
             else
             {
                 _reachKind = kind;
                 _reachTarget = reachTarget;
                 _reachElapsed = Mathf.Clamp(reachElapsed, 0.0f, VoodooRules.ReachSeconds);
+                _reachSucceeded = false;
             }
         }
     }

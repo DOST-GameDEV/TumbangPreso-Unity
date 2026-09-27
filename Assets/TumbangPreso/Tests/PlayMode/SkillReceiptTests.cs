@@ -50,6 +50,36 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After()
         { yield return PlayModeWorld.Reset(); NetAuthority.Provider = _provider; }
 
+        [Test]
+        public void VoodooBodyPrefixIsBoundedAndLeavesTheExistingAimTailIntact()
+        {
+            var state = new VoodooBodySnapshot { Drained = 1, Hexed = 2, MarkKind = 2, MarkSource = 0,
+                MarkAge = 12, ReachKind = 1, ReachTarget = 2, ReachElapsed = 1 };
+            Assert.IsTrue(state.IsValid(1));
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteNetworkSerializable(state);
+            Assert.AreEqual(VoodooBodySnapshot.WireBytes, writer.Length);
+            writer.WriteNetworkSerializable(default(AbilityAimSnapshot));
+            using (var reader = new FastBufferReader(writer, Allocator.Temp))
+            {
+                var input = reader;
+                Assert.IsTrue(VoodooBodySnapshot.TryRead(ref input, 1, out var restored));
+                Assert.AreEqual(state.MarkAge, restored.MarkAge);
+                Assert.AreEqual(state.ReachTarget, restored.ReachTarget);
+                Assert.IsTrue(AbilityAimSnapshot.TryRead(ref input, out _));
+            }
+            using var shortWriter = new FastBufferWriter(VoodooBodySnapshot.WireBytes - 1, Allocator.Temp);
+            for (int i = 0; i < VoodooBodySnapshot.WireBytes - 1; i++) shortWriter.WriteValueSafe((byte)0);
+            using (var reader = new FastBufferReader(shortWriter, Allocator.Temp))
+            { var input = reader; Assert.IsFalse(VoodooBodySnapshot.TryRead(ref input, 1, out _)); }
+            var bad = state; bad.Drained = float.NaN; Assert.IsFalse(bad.IsValid(1));
+            bad = state; bad.Hexed = -1; Assert.IsFalse(bad.IsValid(1));
+            bad = state; bad.MarkKind = 3; Assert.IsFalse(bad.IsValid(1));
+            bad = state; bad.MarkSource = 1; Assert.IsFalse(bad.IsValid(1));
+            bad = state; bad.ReachTarget = 99; Assert.IsFalse(bad.IsValid(1));
+            bad = state; bad.ReachSucceeded = true; Assert.IsFalse(bad.IsValid(1));
+        }
+
         private static HeroAbilitySystem Owner(string hero)
         {
             var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -137,6 +167,62 @@ namespace TumbangPreso.PlayTests
             Deliver(123, 1, 1); Assert.AreEqual(.11f, (float)hold.GetValue(camera), .001f);
             Assert.AreEqual(scale, Time.timeScale); Assert.IsFalse(victim.IsStunned); Assert.IsFalse(victim.IsRooted);
             Object.Destroy(camera.gameObject); Object.Destroy(root);
+            yield return null;
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot()
+        {
+            var system = Owner("phaister");
+            var body = system.GetComponent<CharacterMotor>();
+            GameServices.Ensure(); GameServices.Round.Register(body);
+            var root = new GameObject("Voodoo body receiver"); root.SetActive(false);
+            var receiver = root.AddComponent<MatchRpc>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var receive = typeof(MatchRpc).GetMethod("OnSyncUnitMsg", flags);
+            var state = new VoodooBodySnapshot { Drained = 2, Hexed = 3, MarkKind = 2, MarkSource = 0,
+                MarkAge = 12, ReachKind = 1, ReachTarget = 2, ReachElapsed = 1 };
+            void Deliver(ulong serial, VoodooBodySnapshot data)
+            {
+                using var writer = new FastBufferWriter(304, Allocator.Temp);
+                writer.WriteValueSafe(1); writer.WriteValueSafe(0); writer.WriteValueSafe(serial);
+                writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0f); writer.WriteValueSafe(Vector3.zero);
+                writer.WriteValueSafe(true);
+                writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe((int)StunElement.None);
+                writer.WriteValueSafe(1); writer.WriteValueSafe(0);
+                writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0); writer.WriteValueSafe(0f);
+                writer.WriteValueSafe(42f); writer.WriteValueSafe(1f); writer.WriteValueSafe(0f);
+                writer.WriteValueSafe(0); writer.WriteValueSafe(0);
+                writer.WriteValueSafe((byte)0); writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(Vector3.forward);
+                writer.WriteValueSafe((byte)0); writer.WriteValueSafe(0f);
+                writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
+                writer.WriteValueSafe((byte)0); writer.WriteValueSafe((byte)0);
+                writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
+                writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0L);
+                writer.WriteNetworkSerializable(data); writer.WriteNetworkSerializable(default(AbilityAimSnapshot));
+                Assert.AreEqual(196 + VoodooBodySnapshot.WireBytes, writer.Length);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                receive.Invoke(receiver, new object[] { NetworkManager.ServerClientId, reader });
+            }
+            Deliver(1, state);
+            Assert.IsTrue(body.IsDrained); Assert.IsTrue(body.IsHexed);
+            Assert.IsTrue(body.Stamina.RecoveryBlocked);
+            Assert.AreEqual(42, body.Stamina.Current, "A fresh status edge erased the host's resource correction.");
+            Assert.AreEqual(VoodooMarkKind.Hex, body.VoodooMark); Assert.AreEqual(0, body.VoodooMarkSource);
+            Assert.IsTrue(body.IsVoodooReaching);
+            int ended = 0; bool success = false;
+            body.VoodooReachEnded += (_, marked) => { ended++; success = marked; };
+            Assert.IsNull(GameServices.Round.PlayerAt(2));
+            var finish = new VoodooBodySnapshot { MarkSource = -1, ReachTarget = -1, ReachSucceeded = true };
+            Deliver(2, finish);
+            Assert.AreEqual(1, ended); Assert.IsTrue(success, "Reach outcome depended on another body's later packet.");
+            Assert.IsFalse(body.IsDrained); Assert.IsFalse(body.Stamina.RecoveryBlocked);
+            Deliver(1, state);
+            Assert.IsFalse(body.IsDrained, "An older body serial restored expired voodoo state.");
+            var invalid = state; invalid.Drained = float.NaN;
+            Deliver(3, invalid);
+            Assert.IsFalse(body.IsDrained); Assert.AreEqual(1, ended);
+            Object.Destroy(root);
             yield return null;
         }
 

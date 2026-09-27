@@ -2435,7 +2435,7 @@ namespace TumbangPreso.Net
             var unit = Unit(slot);
             if (unit == null) return;
 
-            using var writer = new FastBufferWriter(272, Allocator.Temp);
+            using var writer = new FastBufferWriter(304, Allocator.Temp);
             unit.FlightPoseEvidence(out bool grounded, out long flightEpisode);
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe(_movementEpochs[slot]);
@@ -2485,6 +2485,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.VulnerableLeft);
             writer.WriteValueSafe(unit.FearSource);
             writer.WriteValueSafe(flightEpisode);
+            writer.WriteNetworkSerializable(VoodooBodySnapshot.Capture(unit));
             writer.WriteNetworkSerializable(unit.AbilitySystem?.CaptureAimPresentation() ?? default(AbilityAimSnapshot));
             var delivery = reliable ? NetworkDelivery.ReliableSequenced : PoseDelivery;
             if (onlyClient.HasValue) _nm.CustomMessagingManager.SendNamedMessage("SyncUnit", onlyClient.Value, writer, delivery);
@@ -2498,7 +2499,7 @@ namespace TumbangPreso.Net
             // Netcode invokes the handler locally for the listen host, so every broadcast the
             // host sent was also applied ON the host, a second time, over authoritative state it
             // had just produced. See § THE LOOPBACK.
-            if (NetAuthority.IsHost || !reader.TryBeginRead(196)) return;
+            if (NetAuthority.IsHost || !reader.TryBeginRead(196 + VoodooBodySnapshot.WireBytes)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int epoch);
@@ -2537,6 +2538,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float vulnerableLeft);
             reader.ReadValueSafe(out Vector3 fearFrom);
             reader.ReadValueSafe(out long flightEpisode);
+            if (!VoodooBodySnapshot.TryRead(ref reader, slot, out var voodoo)) return;
             if (!AbilityAimSnapshot.TryRead(ref reader, out var aim)) return;
             if(!Finite(whirledLeft) || !Finite(chilledLeft) || !Finite(rootedLeft))return;
             if(!Finite(concussedLeft) || !Finite(fearedLeft) || !Finite(disorientedLeft) || !Finite(vulnerableLeft) || !Finite(fearFrom))return;
@@ -2571,6 +2573,9 @@ namespace TumbangPreso.Net
             float facing=local && newEpoch&&!edgeOwned?unit.transform.eulerAngles.y:yaw;
             unit.ApplyNetworkTransform(pos, facing, velocity, grounded, reconcileLocal: local&&!edgeOwned,force:newEpoch,flightEpisode:flightEpisode);
             if(newEpoch)unit.GetComponent<Visual.CharacterVisual>()?.SnapRemoteTransform();
+            // A status edge can deplete locally; the host's resource correction
+            // below must be the final pool value, including legitimate later gains.
+            voodoo.Apply(unit);
             unit.ApplyNetworkState(stunLeft, stunTotal, (StunElement)stunElement,
                                    stunBreakPresses, stunMashPresses,
                                    tripLeft, tripTotal, tripMashPresses, tripMashRemoved,

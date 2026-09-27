@@ -502,7 +502,9 @@ namespace TumbangPreso.Net
         // names that lifetime within its match and round.
         // 72: match moments carry match/round scope and the existing ultimate
         // victim-camera feedback reaches the affected peer.
-        public const int ProtocolVersion = 72;
+        // 73: SyncUnit includes bounded Voodoo status/mark/reach state and an
+        // explicit reach result, independent of other bodies' arrival order.
+        public const int ProtocolVersion = 73;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

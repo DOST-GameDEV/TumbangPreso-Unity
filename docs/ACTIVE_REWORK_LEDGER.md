@@ -1,27 +1,21 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`73a978a6` plus incoming `1951e1d5`; Voodoo body/v8 asset integration follows those parents.
+`1848e1dc3b8af5663358fa011a57339d53876996`; Voodoo snapshot wiring follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-Incoming owner keybinds,shared Shove/Lunge,mouse-wheel glyphs and Phaister v3 plan
-are merged with loading/host-hold/status work. Two incoming script-GUID repairs
-are preserved. Four assemblies compile and one guarded native pass completed7/7
-focused state/loading cases with no frozen-input drift. These cover the new
-root/freeze/plant/hold/victim-feedback/loading-readiness/motion-data paths only.
-Protocol remains72. Actual peers,player performance and other native UI checks
-remain OPEN; no new authored kit or map work is included.
-[Evidence and scope](reports/stability-2026-09-27/input-integration.md).
-Phaister's incoming doll model,v6/v7 source/glow and Core DRAINED/HEXED rules are
-also preserved unchanged. Core plus four Unity assemblies compile; the6 new Core
-Voodoo cases pass. The7 native-case record above precedes these Core additions;
-new status gameplay/replication and doll runtime acceptance remain OPEN.
-The latest v8 doll and Voodoo body-state API are also integrated unchanged. Runtime/
-Editor compile; the API still needs its tick/reset/snapshot wiring. Latest frozen
-layer:204 paths. Earlier native/Core evidence was not rerun or overextended.
+Incoming controls,GUID repairs,doll v8/source and Voodoo Core/body API are integrated
+and preserved. New VoodooBodySnapshot wires that body state into SyncUnit with
+finite/kind/seat bounds and explicit reach completion. Status edges precede the
+host resource correction; RecoveryBlocked updates immediately. Protocol73.
+ONE guarded native codec/real-receiver pass completed2/2 on206 frozen inputs with
+no drift. Earlier7 native/6 Core cases were not rerun. Gameplay tick/reset/HUD/speed,
+the unfinished kit,actual peers and player performance remain OPEN.
+[Latest evidence](reports/stability-2026-09-27/multiplayer.md#voodoo-body-snapshot),
+[incoming preservation](reports/stability-2026-09-27/input-integration.md).
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -55,7 +49,7 @@ and current owner reservations after resuming.
 | 9a44be97 | Ranked/casual compatibility/capacity filtering and failed-allocation backoff/retry | Three managed checks and compile; live queue/party/results pending |
 | b7d26bcf | Prepared recovery integrated with incoming Phaister rework; screen-effect lifecycle cleanup | Frozen merged source compiles; native/peers pending |
 
-Current protocol is defined by NetSession.cs, now72. Matching clients are required.
+Current protocol is defined by NetSession.cs, now73. Matching clients are required.
 The prior full ledger, including every older feature, contributor record, source
 revision and receipt, remains in [the dated snapshot](archive/snapshots-2026-09-27/docs/ACTIVE_REWORK_LEDGER.md).
 
