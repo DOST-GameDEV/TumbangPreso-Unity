@@ -390,6 +390,13 @@ The general lessons under those rows:
   and keep the lens at least 1.8 m to the side of every path (Paete's films r20 and r21 put a flying prisoner's head through the lens twice).
 - **A shot whose eye is computed at runtime still goes through `UltimatePhaseView.ChooseShot`**: it is judged at its end time, and a blocked
   end mirrors or pushes in the whole shot. Keep the computed settle clear, or accept the mirror.
+- **Light "from within" is a hole, never a ridge** (Phaister's doll, 2026-09-27: *"why does it pop out its the opposite it should
+  look like its from withhin"*, *"why do u pop out his features"*). A glowing strip laid on a surface reads as paint; torn lips raised
+  round it read as a neon tube standing OUT. Cut the opening in: a flat mouth on the surface and a lit cup sunk below it, drawn
+  through the mouth (`Shaders/SoulGlow`: stencil mask, open, inside, close), with the light spilling out onto the surface round it.
+- **A texture must speak the cast's language** (same doll: *"make it feel like its part of teh game and not ultra realistic"*). A
+  simulated photographic weave on flat-coloured blocks reads as a real object pasted onto a toy; offer flat-toned stylised options
+  side by side (`PhaisterDollReview`'s `texture-options.png`) and let the owner pick.
 - **Only the committed aim knows who will be hit.** Pass `UltimateCommit.Aim` into the scene (`HeroIntroductionScene`'s `aim` parameter) and
   run the ability's own targeting rule on it; the caster's intent may be stale.
 

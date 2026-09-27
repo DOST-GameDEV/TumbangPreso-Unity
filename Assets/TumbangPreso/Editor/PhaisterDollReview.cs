@@ -38,10 +38,15 @@ namespace TumbangPreso.EditorTools
 
             Shoot(folder, "lineup-front.png", 4200, 1100, (scene) => Lineup(180f), 1.9f, new Vector3(4.8f, 1.05f, -8f));
             Shoot(folder, "lineup-quarter.png", 4200, 1100, (scene) => Lineup(220f), 1.9f, new Vector3(4.8f, 1.05f, -8f));
-            Shoot(folder, "turnaround.png", 3200, 1000, (scene) => Turnaround(), 1.6f, new Vector3(3.9f, 1.35f, -8f));
-            Shoot(folder, "face.png", 1200, 1200, (scene) => Single(180f, Vector3.zero), 0.66f, new Vector3(0f, 1.98f, -8f));
-            Shoot(folder, "face-quarter.png", 1200, 1200, (scene) => Single(215f, Vector3.zero), 0.66f, new Vector3(0f, 1.98f, -8f));
-            EditorApplication.Exit(File.Exists(Path.Combine(folder, "face-quarter.png")) ? 0 : 1);
+            Shoot(folder, "turnaround.png", 3600, 1000, (scene) => Turnaround(), 1.15f, new Vector3(3.3f, 1.0f, -8f));
+            Shoot(folder, "turnaround-day.png", 3600, 1000, (scene) => Turnaround(), 1.15f, new Vector3(3.3f, 1.0f, -8f), day: true);
+            Shoot(folder, "face.png", 1200, 1200, (scene) => Single(180f, Vector3.zero), 0.62f, new Vector3(0f, 1.45f, -8f));
+            Shoot(folder, "face-quarter.png", 1200, 1200, (scene) => Single(215f, Vector3.zero), 0.62f, new Vector3(0f, 1.45f, -8f));
+            Shoot(folder, "belly-quarter.png", 1200, 1200, (scene) => Single(205f, Vector3.zero), 0.50f, new Vector3(0f, 0.72f, -8f));
+            Shoot(folder, "crown.png", 1200, 1200, (scene) => Single(195f, Vector3.zero), 0.34f, new Vector3(0f, 1.72f, -8f));
+            Shoot(folder, "back-close.png", 1200, 1200, (scene) => Single(0f, Vector3.zero), 0.62f, new Vector3(0f, 1.05f, -8f));
+            Shoot(folder, "texture-options.png", 4200, 1100, (scene) => TextureOptions(), 1.3f, new Vector3(4.0f, 1.0f, -8f), day: true);
+            EditorApplication.Exit(File.Exists(Path.Combine(folder, "back-close.png")) ? 0 : 1);
         }
 
         public static Color[] Palette()
@@ -86,8 +91,8 @@ namespace TumbangPreso.EditorTools
         }
 
         /// <summary>
-        /// The pose it holds in play, not the cast's idle: arms hanging to the ground, the body hunched, the head lolled to one
-        /// side. The rig's idle holds the arms out at forty-five degrees, which on arms this long reads as a flex.
+        /// The pose it holds in play, not the cast's idle: its heavy arms hanging beside its belly, leaning a little forward, the
+        /// head lolled to one side. The rig's idle holds the arms out at forty-five degrees, which reads as a flex.
         /// </summary>
         private static void HangLikeAPuppet(GameObject model)
         {
@@ -95,10 +100,10 @@ namespace TumbangPreso.EditorTools
             {
                 switch (bone.name)
                 {
-                    case "arm-left": bone.localRotation = Quaternion.Euler(0f, 0f, 80f); break;
+                    case "arm-left": bone.localRotation = Quaternion.Euler(0f, 0f, 78f); break;
                     case "arm-right": bone.localRotation = Quaternion.Euler(0f, 0f, -80f); break;
-                    case "torso": bone.localRotation = Quaternion.Euler(9f, 0f, 0f); break;
-                    case "head": bone.localRotation = Quaternion.Euler(6f, 0f, 13f); break;
+                    case "torso": bone.localRotation = Quaternion.Euler(4f, 0f, 0f); break;
+                    case "head": bone.localRotation = Quaternion.Euler(4f, 0f, 10f); break;
                 }
             }
         }
@@ -117,30 +122,64 @@ namespace TumbangPreso.EditorTools
             }
         }
 
+        /// <summary>
+        /// The same doll in each cloth the painter offers (`tools/paint_phaister_doll_cloth.py` writes `cloth-&lt;style&gt;.png`
+        /// beside the brief), front and three-quarter, in daylight, so the owner can pick one. Only the picture changes.
+        /// </summary>
+        private static void TextureOptions()
+        {
+            string[] styles = { "felt", "painted", "chunky" };
+            for (int i = 0; i < styles.Length; i++)
+            {
+                var texture = new Texture2D(2, 2, TextureFormat.RGBA32, true) { filterMode = FilterMode.Point };
+                texture.LoadImage(File.ReadAllBytes($"ArtSource/phaister/doll-20260927/cloth-{styles[i]}.png"));
+                texture.filterMode = FilterMode.Point;
+                foreach (float yaw in new[] { 180f, 215f })
+                {
+                    var doll = Spawn("doll", yaw, new Vector3(i * 3.2f + (yaw > 200f ? 1.55f : 0f), 0f, 0f));
+                    foreach (var r in doll.GetComponentsInChildren<Renderer>())
+                    {
+                        if (r.name == PhaisterDollArt.GlowMeshName || r.name == PhaisterDollArt.SpillMeshName) continue;
+                        var materials = r.materials;
+                        foreach (var m in materials) if (m.HasProperty("_MainTex")) m.SetTexture("_MainTex", texture);
+                        r.materials = materials;
+                    }
+                }
+                var label = new GameObject("Label-" + styles[i]).AddComponent<TextMesh>();
+                label.transform.position = new Vector3(i * 3.2f + 0.78f, -0.12f, -0.3f);
+                label.transform.localScale = Vector3.one * 0.012f;
+                label.text = new[] { "A  FELT", "B  PAINTED", "C  CHUNKY" }[i];
+                label.fontSize = 40; label.anchor = TextAnchor.MiddleCenter; label.color = new Color(0.15f, 0.10f, 0.08f);
+            }
+        }
+
         private static void Turnaround()
         {
             float[] yaws = { 180f, 220f, 270f, 0f };
-            for (int i = 0; i < yaws.Length; i++) Spawn("doll", yaws[i], new Vector3(i * 2.6f, 0f, 0f));
+            for (int i = 0; i < yaws.Length; i++) Spawn("doll", yaws[i], new Vector3(i * 2.2f, 0f, 0f));
         }
 
         private static void Single(float yaw, Vector3 at) => Spawn("doll", yaw, at);
 
+        /// <summary>`day`: the key and ambient of a sunny court on a sand backdrop, because it plays in daylight and the light
+        /// inside it has to read there too, not only against the dark.</summary>
         private static void Shoot(string folder, string file, int width, int height, Action<UnityEngine.SceneManagement.Scene> build,
-                                  float orthoSize, Vector3 cameraAt)
+                                  float orthoSize, Vector3 cameraAt, bool day = false)
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var key = new GameObject("Key").AddComponent<Light>();
-            key.type = LightType.Directional; key.intensity = 0.85f; key.color = new Color(1f, 0.97f, 0.90f);
+            key.type = LightType.Directional; key.intensity = day ? 1.15f : 0.85f; key.color = new Color(1f, 0.97f, 0.90f);
             key.transform.rotation = Quaternion.Euler(38f, -40f, 0f);
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
-            RenderSettings.ambientLight = new Color(0.62f, 0.58f, 0.52f) * 0.78f;
+            RenderSettings.ambientLight = new Color(0.62f, 0.58f, 0.52f) * (day ? 1.05f : 0.78f);
             RenderSettings.fog = false;
             build(scene);
 
             var camera = new GameObject("Camera").AddComponent<Camera>();
             camera.enabled = false; camera.orthographic = true; camera.orthographicSize = orthoSize;
             camera.transform.position = cameraAt; camera.transform.rotation = Quaternion.identity;
-            camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = new Color(0.153f, 0.161f, 0.208f);
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = day ? new Color(0.80f, 0.72f, 0.58f) : new Color(0.153f, 0.161f, 0.208f);
             camera.nearClipPlane = 0.1f; camera.farClipPlane = 30f;
             var target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32) { antiAliasing = 4 };
             target.Create(); camera.targetTexture = target; camera.Render();
