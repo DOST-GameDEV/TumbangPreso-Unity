@@ -109,6 +109,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var unmatched = new HashSet<string>();
             int placed = 0, missing = 0, noTangents = 0;
             var checkedMeshes = new HashSet<Mesh>();
+            var reefs = new List<LagoonCoveLife.Reef>();
             foreach (var p in layout.placements)
             {
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{Root}/Models/{p.model}.glb");
@@ -120,6 +121,13 @@ namespace TumbangPreso.EditorTools.MapKit
                 Rematerial(go, materials, p.overrides, unmatched);
                 AddColliders(go, p.collider);
                 MarkStatic(go);
+                // The reef heads the fish schools gather over (LagoonCoveLife), with their crowns.
+                if (p.model.StartsWith("prop_reef_head"))
+                {
+                    float top = float.MinValue;
+                    foreach (var r in go.GetComponentsInChildren<Renderer>()) top = Mathf.Max(top, r.bounds.max.y);
+                    reefs.Add(new LagoonCoveLife.Reef { At = go.transform.position, Top = top > float.MinValue ? top : go.transform.position.y });
+                }
                 foreach (var mf in go.GetComponentsInChildren<MeshFilter>())
                     if (mf.sharedMesh != null && checkedMeshes.Add(mf.sharedMesh) && (mf.sharedMesh.tangents == null || mf.sharedMesh.tangents.Length == 0)) noTangents++;
                 placed++;
@@ -128,6 +136,7 @@ namespace TumbangPreso.EditorTools.MapKit
             Water(root, layout.gameplay);
             Seabed(root, layout.gameplay, materials);
             Lighting(root, layout.sun);
+            LagoonCoveLife.Build(root, layout.gameplay.water, reefs);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();

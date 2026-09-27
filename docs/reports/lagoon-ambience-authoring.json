@@ -1,0 +1,117 @@
+{
+  "provenance": "Original deterministic synthesis (numpy, fixed seeds). No external samples, recordings or paid API.",
+  "listening": "OPEN. Technical measurements only (peak, RMS, seam). Sourced and authored SFX stay provisional until the owner hears them in play (CLAUDE.md section 6).",
+  "tool": "tools/build_lagoon_ambience.py",
+  "seam_rule": "Loops are built periodic; first and last 50 ms RMS within 10 per cent and a seam step no larger than the 99.9th percentile step inside the loop.",
+  "files": [
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/lagoon_waves.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 32.0,
+      "peak": 0.6,
+      "rms": 0.0524,
+      "sha256": "f02d7d89a37f1becb2324bc978fdc6c272743bd3cb163db706207e2389df9eac",
+      "seam": {
+        "rms_first_50ms": 0.07894,
+        "rms_last_50ms": 0.07894,
+        "rms_difference_percent": 0.0,
+        "seam_step": 0.00079,
+        "p99_9_step_anywhere": 0.09296,
+        "click": false
+      },
+      "swells": [
+        {
+          "at": 0.779,
+          "strength": 0.695
+        },
+        {
+          "at": 6.282,
+          "strength": 0.502
+        },
+        {
+          "at": 11.916,
+          "strength": 0.916
+        },
+        {
+          "at": 18.746,
+          "strength": 0.513
+        },
+        {
+          "at": 25.285,
+          "strength": 0.552
+        }
+      ]
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/lagoon_wind.wav",
+      "channels": 2,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 36.0,
+      "peak": 0.55,
+      "rms": 0.0858,
+      "sha256": "ca106a0c2a5f480b1b532f984305f3a62e80006cd0d14eff77ac9860b6a6e881",
+      "seam": {
+        "rms_first_50ms": 0.07802,
+        "rms_last_50ms": 0.07816,
+        "rms_difference_percent": 0.17,
+        "seam_step": 0.00565,
+        "p99_9_step_anywhere": 0.07296,
+        "click": false
+      },
+      "leaf_bursts": 524
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/lagoon_gull_1.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 0.62,
+      "peak": 0.7,
+      "rms": 0.2281,
+      "sha256": "bd5c59f772774244e7c7cbcd1c1703f5609c49a551b5619fd795f16eff12ce04"
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/lagoon_gull_2.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 0.4,
+      "peak": 0.7,
+      "rms": 0.1878,
+      "sha256": "0c813e952e5a5c88887de92662f3190f965da36d961e539371de88d40adbcd69"
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/lagoon_gull_3.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 0.85,
+      "peak": 0.7,
+      "rms": 0.1394,
+      "sha256": "32c73109bcb2a15b33906cecc817e6e18f754229c37f3721f2c3dcf51a5a531d"
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/lagoon_gull_4.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 0.5,
+      "peak": 0.7,
+      "rms": 0.2337,
+      "sha256": "408c987b19db3a2404c832cf43629bb43976c8749f8589fa6b315d6cad2f9279"
+    },
+    {
+      "file": "Assets/TumbangPreso/Art/audio/ambience/lagoon_gull_5.wav",
+      "channels": 1,
+      "sample_rate": 44100,
+      "bits": 16,
+      "seconds": 0.48,
+      "peak": 0.45,
+      "rms": 0.1371,
+      "sha256": "8a8ce2296a76d5d4859afc8ff0a9aeecd88c939855172e1990b3bf6ce69a9c54"
+    }
+  ]
+}

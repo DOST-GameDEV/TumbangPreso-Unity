@@ -1160,6 +1160,12 @@ Supersedes REFINE-2.6 for this map.
   by separation, alignment and cohesion, kept inside their volumes (sky band, water between the
   seabed and 0.3 m under the surface), avoiding the court. Cosmetic and local only: never on the
   wire, never touching gameplay. Frame cost measured with `FrameRateHistogram` before and after.
+  Owner addition (same day): *"if the bird lands on the play area make it so i can throw a slipper
+  at it to explode it into feathers, like how csgo chickens work"*. A bird now and then lands on
+  the court, pecks, flees players; a thrown slipper passing within 0.45 m bursts it into feathers
+  (local cosmetic, the slipper is never touched). Owner asked about 2D sprites; recommended 3D
+  low-poly (banking and angled views break sprites, cost ~100k tris total); open if they prefer
+  sprites.
 - [ ] LAGOON-1.5 AMBIENT WAVES, WIND AND BIRDS SOUND (owner, 2026-09-27: *"environmental sounds, so
   being near/facing the water you hear more waves, same with wind when facing/nearer into the
   land"*). Looping beds whose volume follows the listener: waves by distance to the coast line and
