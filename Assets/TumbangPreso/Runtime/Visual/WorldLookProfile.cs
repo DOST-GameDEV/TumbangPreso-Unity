@@ -272,9 +272,13 @@ namespace TumbangPreso.Visual
             // recede instead of competing with the court, a gentler sun, deeper cool-violet shade.
             // Elevation 0 keeps the scene's own sun angle (Euler 44), so the approved building
             // shadows do not move. Pale paving court, so the chalk is dark, as on Bayan Plaza.
-            new MapLook("Kanto",new Color(.46f,.47f,.6f),new Color(.54f,.52f,.54f),new Color(.52f,.44f,.36f),new Color(.84f,.82f,1.08f),40,230,0,true)
-                .Air(new Color(.8f,.84f,.86f),new Color(.46f,.64f,.8f),new Color(.84f,.86f,.86f),new Color(.97f,.95f,.92f),new Color(.7f,.72f,.82f))
-                .Key(new Color(1,.92f,.8f),1f,0,.8f,new Color(.04f,.035f,.055f)),
+            // ⚠️ COOLED (owner, same day: "i like this, but now its a bit too sunset-y / orange.
+            // make it cooler"): a near-white sun instead of a golden one, the warm ground bounce
+            // and equator taken to neutral-cool, a bluer haze and horizon, neutral cloud light and
+            // a cooler black floor. The sky, fog distances and shade depth are as approved.
+            new MapLook("Kanto",new Color(.46f,.48f,.62f),new Color(.5f,.52f,.56f),new Color(.46f,.44f,.41f),new Color(.82f,.84f,1.1f),40,230,0,true)
+                .Air(new Color(.78f,.84f,.9f),new Color(.46f,.64f,.8f),new Color(.82f,.87f,.9f),new Color(.95f,.96f,.97f),new Color(.68f,.72f,.84f))
+                .Key(new Color(1,.97f,.93f),1f,0,.8f,new Color(.035f,.038f,.058f)),
             new MapLook("BayanPlaza",new Color(.5f,.47f,.64f),new Color(.6f,.5f,.5f),new Color(.58f,.42f,.3f),new Color(.86f,.8f,1.1f),38,210,0,true)
                 .Air(new Color(.74f,.85f,.94f),new Color(.44f,.7f,.88f),new Color(.76f,.87f,.95f),new Color(1,.96f,.9f),new Color(.72f,.7f,.86f))
                 .Key(new Color(1,.9f,.76f),1.08f,52,.76f,new Color(.045f,.03f,.065f)),
