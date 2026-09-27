@@ -33,6 +33,9 @@ Protocol65 protects snapshots across ultimate handback and restores prepared
 effects on the paused simulation clock through ability-owned recovery interfaces,
 without hero/effect-class transport switches. Compiler/capability checks pass;
 native recovery/codec/ranked coverage remains OPEN. See [contract](SKILL_NETWORK_CONTRACT.md).
+Incoming Phaister refinement is integrated with protocol65 and compiler checks;
+remote held-aim presentation remains OPEN. Carry new aim hooks through shared
+network state, without per-hero RPCs, and check ranked admission/recovery callers.
 Scope includes body animation, VFX, cutscenes, interruption and cleanup on every
 relevant peer, spectator, late join and reconnect. Explicit delivery declarations
 and the normal pre-build guard are implemented (focused EditMode 5/5); remaining
@@ -907,6 +910,50 @@ research, plan and questions: `docs/reports/phaister-kit-2026-09-27/`.
 - [ ] `PhaisterKitPlayProbe` films in a match (her screen, the court, a caught player); rejoin probe for the hole and the
   spotlight; mp4s versioned and sent; verdicts recorded in `direction.md`.
 - [ ] Bots; Core, EditMode, the PlayMode gate, `Checks.RunAll`, audits, a build.
+
+**v8 to v11 refinement pass (2026-09-27, `direction.md` sections 0 to 3; films `Logs/phaister-*-film-v10`/`v11`, videos
+`Logs/phaister-share/`).** Built and filmed:
+- [x] Her own aim pictures (`PhaisterAimSigil`, `HeroAbility.DrawsOwnAim`/`PresentAim`/`EndAim`): VANISHING ACT's sigil (ring,
+  crescent, standing runes, three moths); OMEN's ring, ghost eye at its height and a line of light to the court.
+- [x] Body tells while aiming (`HeroAbility.AimPoseAction`, `CharacterAnimator.AimPose`, looping `hero-phaister-*-aim` clips):
+  wrists crossed (moths from her cuffs, `PhaisterCuffMoths`); the doll up at her chin with a pin (`PhaisterHandDoll`, both views);
+  looking up at OMEN's height. MANIKA's release clip is now the throw only (the prick is the hold).
+- [x] Soft smoke (`Shaders/SoftPuff`), a smoke ribbon along the swarm's path, no insect or smoke on her own lens, the arrival
+  re-keyed upright.
+- [x] ROOT CAUSES FOUND: her runes are upright meshes and were laid as ground decals (`PhaisterSpellGeometry.FlatRune`); her flat
+  marks were placed on the map floor under Bayan Plaza's paving (`PhaisterProp.OnCourt`, `Slipper.GroundY`). ⚠️ The shared
+  `GroundReticle` and `VfxShapes.GroundPoint`/`DrapeToGround` likely bury every hero's decals on that map: NOT FIXED, needs a
+  per-map check before touching shared plumbing.
+- [x] SPOTLIGHT PIN: a crescent stroke wiping the cone, inked sigils; moonlight as a soft shaft (`Shaders/MoonShaft`), runes at
+  the feet, the pin standing in the court.
+- [x] MANIKA: the victim's own screen gets a glimpse of a doll of themselves at the corner (`PhaisterManika.VictimGlimpse`); the
+  steal no longer swallows their lens.
+- [x] OMEN in play: the mark (a butterfly over each player in reach through the cast), body glows, screen veils
+  (`Shaders/OmenVeil`, `PhaisterOmenScreen`), play picks up the cutscene's end state; OMEN's three live cues rebuilt in her builder.
+- [x] Cutscene v8, 5.0 s (protocol 62): SURGE / THE EYE / THE THROW / THE MARK, the eye landing at the commit's aim, the REAL
+  targets staged and marked (`HeroIntroductionScene.PhaisterMark.cs`), a real impact frame (`Shaders/PhaisterImpact`,
+  `HeroIntroductionScene.PostProcess`), the density layer (`.PhaisterBurst.cs`), theme retimed.
+- [x] Probe: `FilmHerCursesOnAVictimsScreen` (the victim's own screen), the miss, front views of the caster.
+
+**OPEN, in order (owner's notes first):**
+Publication recovery, 2026-09-27: refinement commit `5b696b6f8` is integrated with
+the current networking/loading work. Protocol 64's skill fingerprint covers the
+5.0-second introduction; the older protocol-62 note above is historical. This
+integration does not close any creative refinement item below.
+
+- [ ] ⚠️ OWNER, on the OMEN film: *"the butterflies are too FAT and big"*, *"in ur references theyre js subtly there they dont
+  have actual 3d models"*, *"u can keep butterfly 3d model tho figure out where to use it next time"*. Replace OMEN's butterflies
+  (play maelstrom, marks, cutscene, screen edges) with subtle FLAT luminous silhouettes (Castorice 25 s: dark wing, bright edge,
+  glowing body, no volume), smaller; keep `butterfly.glb` for another use.
+- [ ] Cutscene v8 review (film v10/v11): SURGE's butterflies crowd her face at the lens; her eye lights did not show (check
+  `FindHerEyes`); a hard purple square appears in THE MARK at ~3.7 s of the scene (identify it); THE MARK's crane is low and the
+  marks read weakly; the storyboard with `--preview` was not rendered.
+- [ ] VANISHING ACT's wide camera films her back during the tell: move it to see the crossed wrists.
+- [ ] Her own animations (plan 4.6): walk hand to the hip doll and run hand on the hat (`GaitStyles.Phaister` quirk, film with
+  `WalkArmsProbe`), idle flourishes (brim, pin twirl, moth), pick-up, stunned, taya arms crossed, win curtsey (`FinishCelebration`).
+- [ ] Her voice lines are still the showman's (`HeroLines.cs` phaister rows, `docs/HUMAN.md`): rewrite for the witch; team records.
+- [ ] Icons/glyphs for the new names, portrait/avatar with the hat pins, bots for OMEN height, rejoin probe (network: Astra's lane).
+- [ ] The PlayMode gate, `Checks.RunAll`, audits, a build.
 
 ### PRACTICE-1 · A practice picker and a Valorant-style training range ⚠️ OPEN, 2026-09-26
 

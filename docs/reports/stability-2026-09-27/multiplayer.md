@@ -2,6 +2,16 @@
 
 ## Phase-aware world and OMEN recovery
 
+Integration follow-up: incoming `baec93c9` adds Phaister's refined aim hooks and
+5-second intro. Both are retained; protocol65 wins the two version/comment conflicts.
+The screen effect introduced by the refinement is logically owned by PhaisterOmen
+for enable/disable/destruction, while retaining its independent screen-space
+transform. This prevents invisible warmup/recovery cleanup leaving its screen layer
+active. Runtime,Editor,Tests and PlayTests compile across73 merged source/asset
+inputs ([receipt](checks/phaister-integration-compile.json)). No film/old suite was
+rerun. The incoming author explicitly notes that remote held-aim presentation is
+not yet on the wire; generic aiming delivery and ranked admission are next checks.
+
 Base `bf0b80db`. WorldSnapshotHeader now carries ultimate cohort ID/stage and
 processed-owner ultimate request alongside its existing cast freshness. A snapshot
 captured before a cohort handback cannot erase the effects created at handback,

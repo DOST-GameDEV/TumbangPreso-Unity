@@ -22,11 +22,22 @@ namespace TumbangPreso.Visual
     /// | 11 | every butterfly bursts UP into the sky at once, the eye pops, three stay and flutter off one by one | the end |
     /// | 14 | the court inside the ring dims to her violet | the pull |
     ///
-    /// Rows 9, 10 (bodies and slippers dragged) are the gameplay pull; 12 and 13 (the screen veils) are owed.
+    /// Rows 9, 10 (bodies and slippers dragged) are the gameplay pull; 12 and 13, the screen veils, are `PhaisterOmenScreen` (v8).
+    /// v8 also adds THE MARK: through the cast, one black butterfly (the omen, *paru-parong itim*) flies out of the eye to every
+    /// player in its reach and flutters over their head, so everyone can read who it will take; leave the reach and it goes back;
+    /// when the eye opens they dive into the maelstrom. And every butterfly's body carries a small light (Castorice's butterflies
+    /// glow at the body and the edge; film v7 read hers as black crows on the dimmed court).
     /// Direction rules (plan 4.4): everything of hers turns clockwise seen from above; wings stay slow, speed lives in paths.
     /// </summary>
     public sealed class PhaisterOmen : MonoBehaviour, IVfxTimeline
     {
+        private PhaisterOmenScreen _screen;
+
+        // Screen-space geometry keeps its own transform, but shares this effect's lifetime.
+        private void OnEnable() { if (_screen != null) _screen.gameObject.SetActive(true); }
+        private void OnDisable() { if (_screen != null) _screen.gameObject.SetActive(false); }
+        private void OnDestroy() { if (_screen != null) Destroy(_screen.gameObject); }
+
         // ⚠️ v3 (owner, of the first eye, a black ball in a spiky ring: *"needs serious refinement"*, *"make it look bigger and make
         // the actual blackwhole prettier like ur peeking into the cosmos"*): the eye is a WINDOW INTO SPACE now, `CosmosEye.shader`
         // on a camera-facing disc, 2.4 m across, with two thin accretion rings turning round it. `CosmosOpen` is how much of the
@@ -74,6 +85,28 @@ namespace TumbangPreso.Visual
         private static readonly Color Violet = new Color(0.60f, 0.30f, 0.92f), Magenta = new Color(0.88f, 0.16f, 0.50f);
         private static readonly Color[] RibbonColours = { new Color(0.10f, 0.08f, 0.14f), new Color(0.29f, 0.12f, 0.47f), new Color(0.85f, 0.09f, 0.43f) };
 
+        // THE MARK, typed: (angle round the head deg, orbit radius m, height over the head m, wing Hz, size).
+        private static readonly (float A, float R, float Up, float Hz, float Size)[] MarkRows =
+        {
+            (0f, 0.26f, 0.30f, 3.6f, 1.35f), (120f, 0.22f, 0.38f, 4.2f, 1.20f), (240f, 0.30f, 0.26f, 3.2f, 1.45f),
+        };
+        private readonly List<(Transform T, Transform[] W)> _marks = new List<(Transform, Transform[])>();
+        private readonly CharacterMotor[] _marked = new CharacterMotor[3];
+        private readonly float[] _markAge = new float[3];
+        private readonly Vector3[] _markFrom = new Vector3[3];
+        private readonly List<(Transform T, Material M)> _bodyGlows = new List<(Transform, Material)>();
+        private float _lastStep;
+        private bool _firstMarks = true;
+
+        /// <summary>Where the eye is now (world).</summary>
+        public Vector3 EyePosition => _eye != null ? _eye.position : transform.position + Vector3.up * EyeHeight;
+        /// <summary>1 while the eye is open (the pull), easing in as it opens and out at the burst; 0 through the cast.</summary>
+        public float OpenAmount { get; private set; }
+        /// <summary>1 from the start of the cast to the burst.</summary>
+        public float Presence { get; private set; }
+        /// <summary>How hard the frame's edges are drawn in on a caught player's screen: a little through the cast, full while it pulls.</summary>
+        public float PullAmount { get; private set; }
+
         private float _cast, _pull, _t;
         private Transform _her;
         private Transform _eye, _ring, _dim, _shock, _flash, _accretionA, _accretionB;
@@ -92,11 +125,12 @@ namespace TumbangPreso.Visual
         public static PhaisterOmen Play(Vector3 at, Transform her, float castSeconds, float pullSeconds, float startAt = 0f, float eyeHeight = VoodooRules.HigopMinHeight)
         {
             var go = new GameObject("PhaisterOmen");
-            go.transform.position = VfxShapes.GroundPoint(at);
+            go.transform.position = PhaisterProp.OnCourt(at);
             var fx = go.AddComponent<PhaisterOmen>();
             fx._cast = castSeconds; fx._pull = pullSeconds; fx._her = her; fx.EyeHeight = eyeHeight;
             fx.Build();
             fx.StepTo(startAt);
+            fx._screen = PhaisterOmenScreen.For(fx, her);
             return fx;
         }
 
@@ -106,20 +140,17 @@ namespace TumbangPreso.Visual
             // Row 14: the dim, a flat disc of her dark over the court inside the ring.
             var dim = VfxShapes.Lay(transform, "OmenDim", VfxShapes.Splat(40, 0.0f, 5), R, 0.02f);
             VfxMaterial.Ghost(dim.GetComponent<Renderer>(), new Color(0.12f, 0.04f, 0.20f, 0f), 0f);
-            VfxShapes.DrapeToGround(dim, 0.02f);
             _dim = dim.transform; _dimInk = dim.GetComponent<Renderer>().sharedMaterial;
             // Row 1: the ring line and twelve sigils round it.
             var ring = VfxShapes.Lay(transform, "OmenRing", VfxShapes.Hollow(64, 0.94f, 0.0f, 9), R, 0.03f);
             VfxMaterial.Ghost(ring.GetComponent<Renderer>(), new Color(0.74f, 0.40f, 1.0f, 0f), 1.2f);
-            VfxShapes.DrapeToGround(ring, 0.03f);
             _ring = ring.transform; _ringInk = ring.GetComponent<Renderer>().sharedMaterial;
             for (int i = 0; i < 12; i++)
             {
                 float a = i * 30f + (i % 3) * 4f;
-                var s = VfxShapes.Lay(transform, "OmenSigil", VfxShapes.Rune(31 + i, 0.12f), 1.30f + 0.15f * (i % 2), 0.035f, -a);
+                var s = VfxShapes.Lay(transform, "OmenSigil", PhaisterSpellGeometry.FlatRune(31 + i, 0.15f), 1.30f + 0.15f * (i % 2), 0.035f, -a);
                 s.transform.localPosition = Quaternion.Euler(0f, a, 0f) * new Vector3(0f, 0.035f, R + 0.55f);
                 VfxMaterial.Ghost(s.GetComponent<Renderer>(), new Color(0.78f, 0.42f, 1.0f, 0f), 1.4f);
-                VfxShapes.DrapeToGround(s, 0.035f);
                 // Clockwise seen from above: the angle decreases, so the writing order runs 0, 330, 300 ...
                 _sigils.Add((s.transform, s.GetComponent<Renderer>().sharedMaterial, (12 - i) % 12 / 12f));
             }
@@ -163,12 +194,29 @@ namespace TumbangPreso.Visual
                 }
                 _flash = flash.transform; _flashInk = shared;
             }
-            // Row 7 and 3: the butterflies.
+            // Row 7 and 3: the butterflies, each with a small light at its body (v8).
+            var glow = Resources.Load<Shader>("Shaders/SpiritGlow");
             foreach (var row in Orbit)
             {
                 var b = PhaisterProp.Spawn("butterfly", transform, null, PhaisterProp.InsectOutlineWidth);
                 if (b == null) continue;
                 _flies.Add((b.transform, new[] { PhaisterProp.Find(b, "wing-l"), PhaisterProp.Find(b, "wing-r") }));
+                if (glow == null) continue;
+                var q = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                q.name = "OmenFlyGlow"; VfxMaterial.StripCollider(q); q.transform.SetParent(transform, false);
+                var gm = new Material(glow) { name = "OmenFlyGlow" };
+                gm.SetFloat("_Billboard", 1f); gm.SetFloat("_Falloff", 2.6f); gm.SetFloat("_Core", 0.9f); gm.SetFloat("_Lift", 0.05f);
+                gm.SetColor("_Color", new Color(Magenta.r, Magenta.g, Magenta.b, 0f));
+                var qr = q.GetComponent<Renderer>(); qr.sharedMaterial = gm; VfxRenderTag.Own(q, gm);
+                qr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; qr.receiveShadows = false;
+                _bodyGlows.Add((q.transform, gm));
+            }
+            // THE MARK: three butterflies that go out to the players in reach through the cast.
+            foreach (var row in MarkRows)
+            {
+                var b = PhaisterProp.Spawn("butterfly", transform, null, PhaisterProp.InsectOutlineWidth);
+                if (b == null) continue;
+                _marks.Add((b.transform, new[] { PhaisterProp.Find(b, "wing-l"), PhaisterProp.Find(b, "wing-r") }));
             }
             // Row 2: ribbons.
             foreach (var rb in Ribbons)
@@ -194,6 +242,8 @@ namespace TumbangPreso.Visual
 
         public void StepTo(float seconds)
         {
+            float step = Mathf.Max(0f, seconds - _lastStep);
+            _lastStep = seconds;
             _t = seconds;
             float R = VoodooRules.HigopRadius;
             float cast = Mathf.Clamp01(seconds / Mathf.Max(0.01f, _cast));
@@ -201,6 +251,10 @@ namespace TumbangPreso.Visual
             float endT = seconds - _cast - _pull;                      // >= 0 at the end
             bool pulling = pullT >= 0f && endT < 0f, ending = endT >= 0f;
             float fadeOut = ending ? Mathf.Clamp01(1f - endT / 0.4f) : 1f;
+            Presence = ending ? fadeOut : 1f;
+            OpenAmount = pulling ? Mathf.Clamp01(pullT / 0.3f) : ending ? fadeOut : 0f;
+            PullAmount = pulling ? 1f : ending ? fadeOut : 0.3f;
+            StepMarks(pullT, step);
 
             // Row 1: the sigils write themselves clockwise through the cast; the ring turns slowly once it is whole.
             foreach (var (t, m, at) in _sigils)
@@ -298,6 +352,8 @@ namespace TumbangPreso.Visual
             }
 
             // Row 3, 7 and 11: the butterflies.
+            var cam = Camera.main;
+            Vector3 lens = cam != null ? cam.transform.position : new Vector3(0f, -1000f, 0f);
             for (int i = 0; i < _flies.Count; i++)
             {
                 var (b, w) = _flies[i];
@@ -306,14 +362,18 @@ namespace TumbangPreso.Visual
                 float stagger = (i % 12) / 12f * 0.9f;
                 if (pullT < 0f)
                 {
-                    // Row 3: out of her sleeves and hat, in a low arc to the spot, arriving on their own orbit slot.
-                    float u = Mathf.Clamp01((seconds - 0.5f - stagger) / 0.9f);
-                    Vector3 src = herAt + Vector3.up * (i % 2 == 0 ? 0.75f : 1.55f);
-                    float a0 = row.Phase * Mathf.Deg2Rad;
-                    Vector3 slot = transform.position + new Vector3(Mathf.Sin(a0), 0f, Mathf.Cos(a0)) * row.R + Vector3.up * row.Y;
-                    p = Vector3.Lerp(src, slot, u * u * (3f - 2f * u)) + Vector3.up * Mathf.Sin(u * Mathf.PI) * 0.8f;
-                    heading = slot - src;
-                    scale *= Mathf.Clamp01(u * 4f);
+                    // Row 3, v8: NEVER SHOWN TWICE. The cutscene already poured them out of her and threw the eye; it ends with a small
+                    // maelstrom turning round the unstable eye, so the cast picks that up: each already wheeling CLOCKWISE round the
+                    // eye, close in (its orbit squeezed toward 1.2 m) and near the eye's height, opening out as the cast wears on
+                    // until the pull spreads them to their full rows.
+                    float squeeze = Mathf.Lerp(0.30f, 0.55f, cast);
+                    float r = 1.2f + (row.R - 1.4f) * squeeze;
+                    float omega = 2.8f / Mathf.Max(0.9f, r) * row.K;
+                    float a = (row.Phase - 360f * omega * seconds) * Mathf.Deg2Rad;
+                    float y = EyeHeight + (row.Y - 1.5f) * 0.6f;
+                    p = transform.position + new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a)) * r + Vector3.up * y;
+                    heading = new Vector3(-Mathf.Cos(a), 0f, Mathf.Sin(a));
+                    scale *= Mathf.Clamp01(0.6f + stagger);
                 }
                 else if (!ending)
                 {
@@ -340,14 +400,84 @@ namespace TumbangPreso.Visual
                     heading = Vector3.up + outward;
                     scale *= late ? 1f : Mathf.Clamp01(1f - (u - 0.6f) / 0.4f);
                 }
+                // ⚠️ v8 (film v9, a caught player's own screen): held at the rim, their lens sits inside the maelstrom and a butterfly
+                // passing it filled a third of the frame. Nothing comes within a metre of the local player's eye.
+                if (lens.y > -999f) scale *= Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.7f, 1.6f, Vector3.Distance(p, lens)));
                 b.position = p;
                 if (heading.sqrMagnitude > 0.0001f) b.rotation = Quaternion.LookRotation(heading.normalized, Vector3.up);
                 b.localScale = Vector3.one * Mathf.Max(0.0001f, scale * FlyScale);
                 b.gameObject.SetActive(scale > 0.01f);
+                if (i < _bodyGlows.Count)
+                {
+                    var (g, gm) = _bodyGlows[i];
+                    g.position = p + Vector3.up * 0.02f;
+                    g.localScale = Vector3.one * 0.30f * scale * FlyScale;
+                    g.gameObject.SetActive(scale > 0.01f);
+                    gm.SetColor("_Color", new Color(Magenta.r, Magenta.g, Magenta.b, 0.55f + 0.25f * Mathf.Sin(seconds * row.Hz + i)));
+                }
                 float wingOpen = 10f + 60f * (0.5f + 0.5f * Mathf.Sin(seconds * row.Hz * Mathf.PI * 2f + row.Phase));
                 if (w[0] != null) w[0].localRotation = Quaternion.AngleAxis(wingOpen, Vector3.forward);
                 if (w[1] != null) w[1].localRotation = Quaternion.AngleAxis(-wingOpen, Vector3.forward);
             }
+        }
+
+        /// <summary>
+        /// THE MARK (v8): through the cast, a butterfly out of the eye to each player in reach (by seat order, three at most), over
+        /// their head, following them; one that leaves the reach loses it back to the eye; at the open they all dive in.
+        /// </summary>
+        private void StepMarks(float pullT, float step)
+        {
+            var round = GameServices.Round;
+            Vector3 eye = EyePosition;
+            int next = 0;
+            var wanted = new CharacterMotor[3];
+            if (round != null && pullT < 0f)
+                foreach (var p in round.Players)
+                {
+                    if (p == null || (_her != null && p.transform == _her) || next >= wanted.Length) continue;
+                    Vector3 d = p.transform.position - transform.position; d.y = 0f;
+                    if (d.magnitude <= VoodooRules.HigopRadius) wanted[next++] = p;
+                }
+            for (int i = 0; i < _marks.Count; i++)
+            {
+                var (t, w) = _marks[i];
+                var row = MarkRows[i];
+                if (wanted[i] != _marked[i])
+                {
+                    _markFrom[i] = t.gameObject.activeSelf ? t.position : eye;
+                    _marked[i] = wanted[i];
+                    // ⚠️ NEVER SHOWN TWICE: the cutscene ended with the marks over their heads, so the first ones start there.
+                    _markAge[i] = _firstMarks ? 1f : 0f;
+                }
+                _markAge[i] += step;
+                float go = Mathf.Clamp01(_markAge[i] / 0.45f);
+                go = go * go * (3f - 2f * go);
+                Vector3 p; Vector3 heading; float size = row.Size;
+                if (_marked[i] != null)
+                {
+                    // Over their head, circling slowly clockwise, bobbing.
+                    float a = (row.A - 110f * _markAge[i]) * Mathf.Deg2Rad;
+                    Vector3 head = _marked[i].transform.position + Vector3.up * (1.95f + row.Up + 0.05f * Mathf.Sin(_markAge[i] * 4f + i));
+                    Vector3 perch = head + new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a)) * row.R;
+                    p = Vector3.Lerp(_markFrom[i], perch, go) + Vector3.up * Mathf.Sin(go * Mathf.PI) * 0.6f;
+                    heading = new Vector3(-Mathf.Cos(a), 0f, Mathf.Sin(a));
+                }
+                else
+                {
+                    // Nobody, or the eye has opened: back into the eye and gone.
+                    p = Vector3.Lerp(_markFrom[i], eye, go);
+                    heading = eye - _markFrom[i];
+                    size *= 1f - go;
+                }
+                t.position = p;
+                if (heading.sqrMagnitude > 0.0001f) t.rotation = Quaternion.LookRotation(heading.normalized, Vector3.up);
+                t.localScale = Vector3.one * Mathf.Max(0.0001f, size * FlyScale);
+                t.gameObject.SetActive(size > 0.02f);
+                float open = 10f + 60f * (0.5f + 0.5f * Mathf.Sin(_t * row.Hz * Mathf.PI * 2f + i));
+                if (w[0] != null) w[0].localRotation = Quaternion.AngleAxis(open, Vector3.forward);
+                if (w[1] != null) w[1].localRotation = Quaternion.AngleAxis(-open, Vector3.forward);
+            }
+            _firstMarks = false;
         }
     }
 }

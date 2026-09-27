@@ -341,6 +341,9 @@ namespace TumbangPreso.Tests
             //59 makes Paete's introduction 6.5 s, places his ultimate where he looks, and hands the grown guardian back at the catch.
             //60 places THORN HARVEST where he looks (a trail runs to the spot, it bursts and catches there) and keeps BAKYA BLOOM out of the box.
             //61 adds Featherfall pose/intent episode keys and timed restoration, with the updated 5 s / 40 s rules.
+            //62 and 63 (the world-field header and the shared ability serializer) are recorded in NetSession.
+            //64 adds the shared skill fingerprint, including Phaister's updated 5.0 s introduction.
+            //65 adds phase-aware world freshness and ability-owned prepared-effect recovery.
             Assert.AreEqual(65, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +

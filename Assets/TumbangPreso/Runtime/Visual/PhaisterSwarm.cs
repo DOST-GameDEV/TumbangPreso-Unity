@@ -102,8 +102,34 @@ namespace TumbangPreso.Visual
             (0.20f, 0.45f, 0.30f, 0.15f, 0.26f), (0.80f, 0.55f, -0.30f, 0.25f, 0.30f), (1.35f, 0.45f, 0.20f, 0.35f, 0.34f),
             (0.50f, 0.40f, -0.40f, 0.10f, 0.28f),
         };
-        private readonly List<(Transform T, Material M, Vector3 From, Vector3 Drift, float Size, float Delay)> _puffs =
-            new List<(Transform, Material, Vector3, Vector3, float, float)>();
+        /// <summary>
+        /// ⚠️ v4 (film v7): the smoke along the path it took, so the court can read where she went: six puffs laid low along the
+        /// stream as its middle passes each one, lingering and fraying (Castorice's blade ribbon lingers 0.3 s, then frays into
+        /// motes). (share of the path, height, size, side offset, linger).
+        /// </summary>
+        // v4b (film v8: six 0.6 m puffs read from the court as a dotted line of small purple dots): nine, near a metre across,
+        // overlapping, low, lingering longer toward where she left, so the path reads as one smoke ribbon fraying away.
+        private static readonly (float U, float Y, float Size, float Side, float Linger)[] PathPuffs =
+        {
+            (0.06f, 0.36f, 0.95f, 0.08f, 0.60f), (0.17f, 0.30f, 1.05f, -0.12f, 0.58f), (0.28f, 0.40f, 0.90f, 0.05f, 0.55f),
+            (0.39f, 0.28f, 1.00f, -0.06f, 0.52f), (0.50f, 0.36f, 0.95f, 0.12f, 0.50f), (0.61f, 0.30f, 1.05f, -0.10f, 0.48f),
+            (0.72f, 0.38f, 0.90f, 0.04f, 0.45f), (0.82f, 0.30f, 0.85f, -0.08f, 0.42f), (0.91f, 0.34f, 0.80f, 0.06f, 0.40f),
+        };
+
+        /// <summary>
+        /// ⚠️ v4 (film v7): on her OWN screen one moth crossed the lens at half the frame's size. Nothing of the swarm comes within a
+        /// metre of her eye now; instead four small moths flick across the edges of her frame as she goes (plan 4.1: "a flicker of
+        /// dark wings across the screen"). Each: start and end in the frame (x, y from -1 to 1), start time, size.
+        /// </summary>
+        private static readonly (Vector2 From, Vector2 To, float At, float Size)[] EdgeMoths =
+        {
+            (new Vector2(-0.95f, -0.80f), new Vector2(-1.30f, 0.35f), 0.02f, 0.26f), (new Vector2(0.92f, -0.75f), new Vector2(1.35f, 0.20f), 0.05f, 0.24f),
+            (new Vector2(-0.70f, 0.95f), new Vector2(-1.25f, 1.20f), 0.10f, 0.20f), (new Vector2(0.80f, 0.90f), new Vector2(1.30f, 1.25f), 0.14f, 0.22f),
+        };
+        private readonly List<(Transform T, Transform[] W)> _edge = new List<(Transform, Transform[])>();
+
+        private readonly List<(Transform T, Material M, Vector3 From, Vector3 Drift, float Size, float Delay, float Life)> _puffs =
+            new List<(Transform, Material, Vector3, Vector3, float, float, float)>();
         private bool _ownView;
         public float LifeSeconds => Life;
 
@@ -133,8 +159,8 @@ namespace TumbangPreso.Visual
             var go = new GameObject("PhaisterVanishingAct");
             var fx = go.AddComponent<PhaisterSwarm>();
             fx._her = her;
-            fx._from = VfxShapes.GroundPoint(from);
-            fx._to = VfxShapes.GroundPoint(to);
+            fx._from = PhaisterProp.OnCourt(from);
+            fx._to = PhaisterProp.OnCourt(to);
             fx._forward = facing.normalized;
             fx._right = Vector3.Cross(Vector3.up, fx._forward).normalized;
             foreach (var row in Rows)
@@ -150,28 +176,69 @@ namespace TumbangPreso.Visual
             var ring = VfxShapes.Lay(go.transform, "ShoveRing", VfxShapes.Hollow(40, 0.78f, 0.22f, 7), 1f, 0.03f);
             ring.transform.position = fx._from + Vector3.up * 0.03f;
             VfxMaterial.Ghost(ring.GetComponent<Renderer>(), new Color(0.58f, 0.36f, 0.82f, 0.7f), 0.35f);
-            VfxShapes.DrapeToGround(ring, 0.03f);
             fx._ring = ring.transform;
             fx._ringInk = ring.GetComponent<Renderer>().sharedMaterial;
             // Her own screen: moths perched on her brim would sit against her camera (film v1), so they perch on her shoulders.
             var motor = her != null ? her.GetComponent<CharacterMotor>() : null;
             fx._ownView = CameraSystem.ViewmodelArms.IsFirstPersonFor(motor);
             int seed = 31;
-            foreach (var (y, size, right, up, delay) in StartPuffs) fx.Puff(fx._from + Vector3.up * y, fx._right * right + Vector3.up * up, size, delay, seed++);
-            foreach (var (y, size, right, up, delay) in EndPuffs) fx.Puff(fx._to + Vector3.up * y, fx._right * right + Vector3.up * up, size, delay, seed++);
+            // ⚠️ On her own screen the smoke where she stands would sit on her lens (film v7): only the low puffs, at her feet.
+            foreach (var (y, size, right, up, delay) in StartPuffs)
+                if (!fx._ownView || y < 0.5f) fx.Puff(fx._from + Vector3.up * y, fx._right * right + Vector3.up * up, size, delay, 0.45f, seed++);
+            foreach (var (y, size, right, up, delay) in EndPuffs)
+                if (!fx._ownView || y < 0.5f) fx.Puff(fx._to + Vector3.up * y, fx._right * right + Vector3.up * up, size, delay, 0.45f, seed++);
+            Vector3 along = fx._to - fx._from; along.y = 0f;
+            Vector3 aside = along.sqrMagnitude > 0.01f ? Vector3.Cross(Vector3.up, along.normalized) : fx._right;
+            Vector3 alongDir = along.sqrMagnitude > 0.01f ? along.normalized : fx._forward;
+            foreach (var row in PathPuffs)
+            {
+                float passes = 0.08f + row.U * (StreamEnd - 0.08f);
+                fx.Puff(Vector3.Lerp(fx._from, fx._to, row.U) + Vector3.up * row.Y + aside * row.Side, Vector3.up * 0.25f + alongDir * 0.3f,
+                    row.Size, passes, row.Linger, seed++);
+            }
+            if (fx._ownView)
+                foreach (var row in EdgeMoths)
+                {
+                    var m = PhaisterProp.Spawn("moth", go.transform, null, PhaisterProp.InsectOutlineWidth);
+                    if (m != null) fx._edge.Add((m.transform, new[] { PhaisterProp.Find(m, "wing-l"), PhaisterProp.Find(m, "wing-r") }));
+                }
             fx.HideHer();
             fx.StepTo(0f);
             return fx;
         }
 
-        private void Puff(Vector3 at, Vector3 drift, float size, float delay, int seed)
+        /// <summary>
+        /// ⚠️ v4 (film v7): SOFT SMOKE (`Shaders/SoftPuff`), a camera-facing round puff that frays into holes as it dies. The splat
+        /// discs before it were flat squares seen edge-on and a purple sheet on her own lens. Falls back to a flat ghost, with a
+        /// warning, if the shader is missing.
+        /// </summary>
+        private void Puff(Vector3 at, Vector3 drift, float size, float delay, float life, int seed)
         {
-            var go = VfxShapes.Lay(transform, "SwarmSmoke", VfxShapes.Splat(10, 0.32f, seed), 1f, 0f);
+            var shader = Resources.Load<Shader>("Shaders/SoftPuff");
+            var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            go.name = "SwarmSmoke"; VfxMaterial.StripCollider(go);
+            go.transform.SetParent(transform, false);
             go.transform.position = at;
-            go.transform.rotation = Quaternion.Euler(-90f + seed * 13f % 40f, seed * 47f % 360f, 0f);
-            // v3 (film v2: at 0.42/0.22/0.62 and 0.75 alpha the puffs were faint smudges on the pale court): darker and denser.
-            VfxMaterial.Ghost(go.GetComponent<Renderer>(), new Color(0.30f, 0.12f, 0.46f, 0f), 0.5f);
-            _puffs.Add((go.transform, go.GetComponent<Renderer>().sharedMaterial, at, drift, size, delay));
+            var r = go.GetComponent<Renderer>();
+            r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; r.receiveShadows = false;
+            Material m;
+            if (shader != null)
+            {
+                m = new Material(shader) { name = "SwarmSmoke" };
+                // Her smoke: a deep violet, dense in the middle, each puff its own rim.
+                m.SetColor("_Color", new Color(0.26f, 0.09f, 0.38f, 0.82f));
+                m.SetFloat("_Seed", seed * 0.37f);
+                m.SetFloat("_Near", 1.3f);
+                r.sharedMaterial = m;
+                VfxRenderTag.Own(go, m);
+            }
+            else
+            {
+                Debug.LogWarning("[PhaisterSwarm] Shaders/SoftPuff is missing; the smoke falls back to a flat ghost.");
+                VfxMaterial.Ghost(r, new Color(0.30f, 0.12f, 0.46f, 0f), 0.5f);
+                m = r.sharedMaterial;
+            }
+            _puffs.Add((go.transform, m, at, drift, size, delay, life));
         }
 
         private void HideHer()
@@ -223,16 +290,20 @@ namespace TumbangPreso.Visual
             Vector3 herAt = _her != null ? _her.position : _to;
             Vector3 herRight = _her != null ? _her.right : _right, herForward = _her != null ? _her.forward : _forward;
 
-            foreach (var (pt, pm, pFrom, drift, size, delay) in _puffs)
+            foreach (var (pt, pm, pFrom, drift, size, delay, life) in _puffs)
             {
-                float u = (seconds - delay) / 0.45f;
+                float u = (seconds - delay) / life;
                 pt.gameObject.SetActive(u >= 0f && u < 1f);
                 if (u < 0f || u >= 1f || pm == null) continue;
                 pt.position = pFrom + drift * u;
-                float k = size * (0.4f + 0.9f * Mathf.Sqrt(u));
-                pt.localScale = new Vector3(k, 1f, k);
-                PhaisterProp.SetAlpha(pm, 0.92f * (1f - u * u) * Mathf.Clamp01(u * 8f));
+                // Blooms fast, then drifts and frays: never a shape fading by alpha alone.
+                float k = size * (0.45f + 0.95f * Mathf.Sqrt(u));
+                pt.localScale = new Vector3(k, k, k);
+                if (pm.HasProperty("_Fray")) { pm.SetFloat("_Fray", Mathf.Clamp01((u - 0.25f) / 0.75f)); PhaisterProp.SetAlpha(pm, 0.82f * Mathf.Clamp01(u * 10f)); }
+                else PhaisterProp.SetAlpha(pm, 0.92f * (1f - u * u) * Mathf.Clamp01(u * 8f));
             }
+            StepEdgeMoths(seconds);
+            var eye = _ownView && UnityEngine.Camera.main != null ? UnityEngine.Camera.main.transform.position : new Vector3(0f, -1000f, 0f);
 
             for (int i = 0; i < Rows.Length; i++)
             {
@@ -290,11 +361,39 @@ namespace TumbangPreso.Visual
                     if (row.Perch < 0 || _ownView) scale *= 1f - Mathf.Clamp01((u - 0.7f) / 0.3f);
                 }
 
+                // ⚠️ Nothing within a metre of her own eye (film v7: a moth the size of half her frame).
+                if (_ownView) scale *= Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.7f, 1.5f, Vector3.Distance(p, eye)));
                 t.position = p;
                 if (heading.sqrMagnitude > 0.0001f) t.rotation = Quaternion.LookRotation(heading.normalized, Vector3.up);
                 t.localScale = Vector3.one * Mathf.Max(0.0001f, scale * SizeScale);
                 t.gameObject.SetActive(scale > 0.001f);
                 Beat(i, row, seconds);
+            }
+        }
+
+        /// <summary>Her own screen: four small moths flick across the frame's edges and out (`EdgeMoths`), 0.3 s each.</summary>
+        private void StepEdgeMoths(float seconds)
+        {
+            var cam = UnityEngine.Camera.main;
+            for (int i = 0; i < _edge.Count; i++)
+            {
+                var (t, w) = _edge[i];
+                var row = EdgeMoths[i];
+                float u = (seconds - row.At) / 0.30f;
+                bool on = cam != null && u >= 0f && u < 1f;
+                t.gameObject.SetActive(on);
+                if (!on) continue;
+                const float Depth = 0.75f;
+                float halfH = Depth * Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad), halfW = halfH * cam.aspect;
+                Vector2 at = Vector2.Lerp(row.From, row.To, u * u);
+                var ct = cam.transform;
+                t.position = ct.position + ct.forward * Depth + ct.right * at.x * halfW + ct.up * at.y * halfH;
+                Vector3 dir = ct.right * (row.To.x - row.From.x) * halfW + ct.up * (row.To.y - row.From.y) * halfH;
+                t.rotation = Quaternion.LookRotation(dir.normalized, -ct.forward);
+                t.localScale = Vector3.one * row.Size;
+                float open = 10f + 60f * (0.5f + 0.5f * Mathf.Sin(seconds * 5.5f * Mathf.PI * 2f + i));
+                if (w[0] != null) w[0].localRotation = Quaternion.AngleAxis(open, Vector3.forward);
+                if (w[1] != null) w[1].localRotation = Quaternion.AngleAxis(-open, Vector3.forward);
             }
         }
 

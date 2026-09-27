@@ -833,6 +833,10 @@ namespace TumbangPreso.Visual
 
             if (_carrier != null && _carrier.ChannelRatio > 0.0f) return Interact;
 
+            // HERO-10: a hero's own tell while a skill is held (`AimPose`); no other hero names one.
+            string aimPose = AimPose();
+            if (aimPose != null) return aimPose;
+
             // ⚠️⚠️ THE **OBSERVED** WIND-UP, NOT THIS PEER'S OWN CHARGE CLOCK, AND THE
             // DIFFERENCE IS THE ENTIRE COUNTERPLAY. `carrier.gd`'s header spells it out: the
             // charge timer only ticks on the peer that controls the unit, so a third-person

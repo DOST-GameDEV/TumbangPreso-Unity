@@ -250,39 +250,105 @@ def glitch(t, seed, start, end, rate, gain=1.0):
     return (square * 0.35 + crackle * 0.8) * gate * gain
 
 
+def omen_cast():
+    """OMEN's live cast, after the cutscene hands back (2.3 s; `sfx_cast_phaister_higop`, played as the eye she threw hangs
+    unstable over the spot and the marks fly out; v8 moves it off the rework builder's generic whine and into her family):
+      0.00       a candle whoomph as the cast takes (her flame, the same one VANISHING ACT bursts with)
+      0.00-2.20  the eye GLITCHING: the stuttering crackle of the cutscene's forming, its step rate climbing as the 2.2 s wears on,
+                 over a low throb that quickens (the eye's pulse)
+      0.25-0.80  the marks: three bursts of wings leaving the eye, one for each butterfly going out to a player
+      0.00-2.20  a wind drawn in under it all, rising, and cut dead at 2.2 where the eye opens (the open is its own cue)"""
+    s = 2.3
+    t = times(s)
+    whoomph = candle(t, 9201, 0.0, 0.8)
+    stutter = glitch(t, 9202, 0.05, 1.2, 12.0, 0.45) + glitch(t, 9203, 1.2, 2.2, 22.0, 0.55)
+    rate = 2.4 + 3.0 * np.clip(t / 2.2, 0, 1)
+    pulse = np.sin(2 * np.pi * 52 * t) * (0.5 + 0.5 * np.sin(2 * np.pi * np.cumsum(rate) / RATE)) ** 2 * window(t, 0.05, 2.2, 0.02) * 0.7
+    marks = sum(svf(flutter(t, 9204 + k, WINGS[k:k + 3], 2600 + 300 * k, window(t, 0.25 + 0.2 * k, 0.55 + 0.2 * k, 0.08)), 2800, 0.9)
+                for k in range(3)) * 0.8
+    wind = svf(noise(len(t), 9208), sweep(t, 260, 1100, 2.2), 1.1) * np.clip(t / 2.2, 0, 1) ** 1.5 * window(t, 0.0, 2.2, 0.01) * 0.9
+    return finish("sfx_cast_phaister_higop", whoomph + stutter + pulse + marks + wind, s)
+
+
+def omen_open():
+    """OMEN opening in play (2.8 s; `sfx_phaister_higop_open`): the eye snaps open and starts to drink (plan 4.4 rows 4, 6, 7):
+      0.00       the snap: a hard two-frame silence already happened in the cast; here a deep whump in her low register and the
+                 moon chord low and wide, a butterfly-shaped burst of wings outward (the landing flash)
+      0.10-2.80  the maelstrom: a turning wind whose band swings round (clockwise, heard as a slow sweep), many wings circling
+                 (the flutter band swinging with the wind), and a low drone under it that sinks a semitone (the drinking)"""
+    s = 2.8
+    t = times(s)
+    local = np.maximum(0, t)
+    whump = np.sin(2 * np.pi * 44 * local * (1 - 0.25 * local)) * np.exp(-local / 0.4) * 2.0
+    chord = moon(t, 0.0, 196.0, 1.4, 0.9)
+    burst = svf(flutter(t, 9211, WINGS, 2600, np.exp(-t / 0.25)), sweep(t, 3000, 1600, 0.3), 0.8) * 1.3
+    turning = 0.6 + 0.4 * np.sin(2 * np.pi * 0.8 * t)
+    wind = svf(noise(len(t), 9212), 600 + 350 * np.sin(2 * np.pi * 0.8 * t), 1.0) * window(t, 0.1, 2.8, 0.4) * 1.0
+    wings = svf(flutter(t, 9213, WINGS[1:], 2200, window(t, 0.15, 2.8, 0.5) * turning), 2400, 0.8) * 0.9
+    f = 55 * sweep(t, 1.0, 0.944, 2.8)
+    drone = np.sin(2 * np.pi * np.cumsum(f) / RATE) * window(t, 0.1, 2.8, 0.6) * 0.6
+    return finish("sfx_phaister_higop_open", whump + chord + burst + wind + wings + drone, s, 0.72)
+
+
+def omen_close():
+    """OMEN ending (1.2 s; `sfx_phaister_higop_close`): every butterfly bursts UP into the sky at once (a dense rush of wings
+    sweeping up in pitch), the eye shuts (the moon chord falling and a soft pop), and three stragglers flutter off in the tail."""
+    s = 1.2
+    t = times(s)
+    rush = svf(flutter(t, 9221, WINGS, 2400, np.clip(t / 0.03, 0, 1) * np.exp(-t / 0.35)), sweep(t, 1800, 5200, 0.5), 0.8) * 1.6
+    shut = moon(t, 0.05, 311.1, 0.3, 0.5)
+    pop = np.sin(2 * np.pi * 120 * np.maximum(0, t - 0.1)) * np.exp(-np.maximum(0, t - 0.1) / 0.03) * (t >= 0.1) * 0.9
+    stragglers = sum(svf(flutter(t, 9222 + k, WINGS[k:k + 2], 2800, window(t, 0.45 + 0.18 * k, 0.75 + 0.18 * k, 0.08)), 3000, 0.9)
+                     for k in range(3)) * 0.4
+    return finish("sfx_phaister_higop_close", rush + shut + pop + stragglers, s)
+
+
 def theme():
-    """OMEN's cutscene, 4.0 s, timed to its beats (`tools/author_ultimate_intros.py` phaister(); the method: one theme file,
-    a cut-in accent on frame 0, a swell drawn in before the impact and cut dead on it, the impact in her own material, her
-    motif where her sign is drawn, a tail):
-      0.00       the cut-in: a candle-flame whoomph and the night falling (a low swell)
-      0.15-1.45  SURGE: wings rising round her, dense and circling (the flutter band swinging left and right), a rising wind
-      1.45-2.55  THE EYE: the wings sucked in and gone; the eye forming, GLITCHING and pulsing (a stuttering crackle whose rate
-                 climbs), a low pulse on the beat of its throb; her motif as it steadies in her hands (2.2)
-      2.55-2.80  the throw: a whoosh upward, the swell drawn in hard
-      2.80       the IMPACT, cut dead on it: a deep whump and the moon chord blooming, a two-frame silence before it
-      2.85-4.00  the maelstrom: a turning wind and many wings, fading as play returns."""
-    s = 4.0
+    """OMEN's cutscene, 5.0 s (v8), timed to its beats (`tools/author_ultimate_intros.py` phaister(); the method: one theme file,
+    a cut-in accent on frame 0, a swell drawn in before the impact and cut dead on it, the impact in her own material, her motif
+    where her sign is drawn, a tail):
+      0.00       the cut-in: a candle-flame whoomph and her night falling (a low swell)
+      0.15-1.30  SURGE: wings rising round her, dense and circling (the flutter band swinging), a rising wind, and a glassy moon
+                 chord blooming low as the column of her light climbs
+      1.38-1.46  her eyes light: one bright pin tick for the glint
+      1.45-2.47  THE EYE: the wings sucked in and gone; the eye forming, GLITCHING and pulsing (a stuttering crackle whose rate
+                 climbs), a low pulse on the beat of its throb; her motif at 2.20, on her wink
+      2.34-2.95  the throw: the swell drawn in, then a whoosh that climbs as the eye crosses the frame
+      2.95-3.00  two frames of silence
+      3.00       the IMPACT, cut dead on it: a deep whump, the moon chord and a dry tearing crack (the picture turned inside out)
+      3.20-5.00  THE MARK: a turning wind and many wings (the maelstrom starting); a small flutter and one falling glass tone as each
+                 mark settles on a player (3.73, 3.83, 3.91: `HeroIntroductionScene.PhaisterMark.cs`); fading as play returns."""
+    s = 5.0
     t = times(s)
     cut_in = candle(t, 9181, 0.0, 1.2) + one_pole_low(noise(len(t), 9182), 90) * env_ar(t, 0.3, 0.6) * 1.5
     circling = 0.6 + 0.4 * np.sin(2 * np.pi * 1.4 * t)
-    wings = svf(flutter(t, 9183, WINGS, 2400, window(t, 0.15, 1.5, 0.3) * circling), sweep(t, 1600, 3000, 1.45), 0.8) * 1.2
-    wind = svf(noise(len(t), 9184), sweep(t, 300, 1400, 2.7), 1.1) * np.clip((t - 0.2) / 2.3, 0, 1) ** 2 * window(t, 0.2, 2.8, 0.02) * 1.1
-    stutter = glitch(t, 9185, 1.5, 2.55, 14.0, 0.6) + glitch(t, 9186, 2.1, 2.55, 26.0, 0.5)
-    throb = np.sin(2 * np.pi * 55 * t) * (0.5 + 0.5 * np.sin(2 * np.pi * 3.7 * t)) ** 2 * window(t, 1.5, 2.55, 0.05) * 0.9
+    wings = svf(flutter(t, 9183, WINGS, 2400, window(t, 0.15, 1.45, 0.3) * circling), sweep(t, 1600, 3000, 1.3), 0.8) * 1.2
+    column = moon(t, 0.30, 261.6, 1.0, 0.35)
+    wind = svf(noise(len(t), 9184), sweep(t, 300, 1400, 2.8), 1.1) * np.clip((t - 0.2) / 2.3, 0, 1) ** 2 * window(t, 0.2, 2.95, 0.02) * 1.1
+    glint = tick(t, 1.42, 3300, 0.45)
+    suck = svf(flutter(t, 9190, WINGS[:4], 2600, window(t, 1.45, 1.95, 0.15)), sweep(t - 1.45, 2000, 5200, 0.5), 0.9) * 0.9
+    stutter = glitch(t, 9185, 1.5, 2.47, 14.0, 0.6) + glitch(t, 9186, 2.05, 2.47, 26.0, 0.5)
+    throb = np.sin(2 * np.pi * 55 * t) * (0.5 + 0.5 * np.sin(2 * np.pi * 3.7 * t)) ** 2 * window(t, 1.5, 2.47, 0.05) * 0.9
     motif = hex_motif(t, 2.2, 1320, 0.55)
-    throw = svf(noise(len(t), 9187), sweep(np.maximum(0, t - 2.55), 500, 3500, 0.25), 1.4) * window(t, 2.55, 2.78, 0.03) * 1.2
-    silence = 1.0 - window(t, 2.745, 2.80, 0.005)
-    whump = np.sin(2 * np.pi * 48 * np.maximum(0, t - 2.8) * (1 - 0.3 * np.maximum(0, t - 2.8))) * np.exp(-np.maximum(0, t - 2.8) / 0.35) * (t >= 2.8) * 2.2
-    chord = moon(t, 2.8, 392.0, 1.2, 0.9)
-    maelstrom = svf(noise(len(t), 9188), 700 + 300 * np.sin(2 * np.pi * 0.9 * t), 1.0) * window(t, 2.85, 4.0, 0.3) * 0.9
-    tail = svf(flutter(t, 9189, WINGS[:4], 2000, window(t, 2.9, 4.0, 0.4)), 2200, 0.8) * 0.8
-    mix = (cut_in + wings + wind + stutter + throb + motif + throw) * silence + whump + chord + maelstrom + tail
+    throw = svf(noise(len(t), 9187), sweep(np.maximum(0, t - 2.47), 500, 3800, 0.48), 1.4) * window(t, 2.47, 2.94, 0.03) * 1.2
+    silence = 1.0 - window(t, 2.945, 3.0, 0.005)
+    hit = np.maximum(0, t - 3.0)
+    whump = np.sin(2 * np.pi * 48 * hit * (1 - 0.3 * hit)) * np.exp(-hit / 0.35) * (t >= 3.0) * 2.2
+    chord = moon(t, 3.0, 392.0, 1.2, 0.9)
+    crack = svf(noise(len(t), 9191), 2400, 0.7) * env_ar(hit, 0.002, 0.05) * (t >= 3.0) * 1.3
+    maelstrom = svf(noise(len(t), 9188), 700 + 300 * np.sin(2 * np.pi * 0.9 * t), 1.0) * window(t, 3.05, 5.0, 0.4) * 0.9
+    tail = svf(flutter(t, 9189, WINGS[:4], 2000, window(t, 3.1, 5.0, 0.5)), 2200, 0.8) * 0.8
+    marks = np.zeros(len(t))
+    for k, at in enumerate((3.73, 3.83, 3.91)):
+        marks += svf(flutter(t, 9192 + k, WINGS[k:k + 2], 2900, window(t, at - 0.08, at + 0.12, 0.04)), 3000, 0.9) * 0.5
+        marks += hex_motif(t, at, 1480 - 90 * k, 0.12)
+    mix = (cut_in + wings + column + wind + glint + suck + stutter + throb + motif + throw) * silence + whump + chord + crack + maelstrom + tail + marks
     return finish("sfx_ult_theme_phaister", mix, s, 0.75)
 
 
 if __name__ == "__main__":
     rows = [blink_cast(), swarm_knit(), doll_cast(), manika_land(), manika_steal(), manika_crumble(), pin_cast(),
-            moonlight_on(), moonlight_off(), theme()]
+            moonlight_on(), moonlight_off(), omen_cast(), omen_open(), omen_close(), theme()]
     report = {
         "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",
         "listening": "Not yet heard by the owner in the game mix. Peak and RMS are measurements, not approval.",

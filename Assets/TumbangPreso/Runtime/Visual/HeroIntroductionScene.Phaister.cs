@@ -6,24 +6,26 @@ namespace TumbangPreso.Visual
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // PHAISTER, OMEN, 4.0 s (HERO-10, 2026-09-27; plan.md 4.4; the body and shots are `tools/author_ultimate_intros.py`
-        // `phaister()`). Replaces GRAND COVEN's laugh and the moon serpent, both rejected by the owner.
+        // PHAISTER, OMEN, 5.0 s (HERO-10 v8, 2026-09-27; plan.md 4.4, direction.md section 3; the body and the storyboard shots are
+        // `tools/author_ultimate_intros.py` `phaister()`). v7 (4.0 s) ended on the eye and its maelstrom with nobody in it, landed
+        // the eye at a fixed spot 4 m ahead whatever she aimed at, formed it over her mouth under a brim that hid her eyes, and
+        // faked the impact with a dark disc. This version:
         //
-        // "The omen pours out of her, and she throws it at them." Every moving part, and its direction:
-        //  * THE NIGHT: the stage goes to her night at once (Castorice's domain): violet-black walls, a pale lilac moon rising
-        //    behind her, a few stars.
-        //  * THE RIBBONS: strips of her robe and hair whip UPWARD off her while the power surges (the rig has no cloth bones);
-        //    owner: *"clothes are flying on her"*.
-        //  * THE BUTTERFLIES (typed rows): out of her sleeves and hat, wheeling CLOCKWISE round her (SURGE); streaming LEFT TO
-        //    RIGHT on screen into the space between her palms and vanishing into it (THE EYE); then round the opened eye in a
-        //    clockwise maelstrom (OMEN). Wings slow, speed in the paths.
-        //  * THE EYE (`CosmosEye.shader`): born between her palms TINY, GLITCHY and PULSING and growing (owner: *"glitchy and
-        //    unstable as fuck when forming (make it pulsate?) it starts out small and gradually gets bigger"*); thrown forward
-        //    and up, growing as it flies; it SNAPS OPEN into the window into space with an overshoot and steadies.
-        //  * THE IMPACT: two frames of her dark over everything with a magenta butterfly silhouette (Seele's impact frame,
-        //    Castorice's emblem), a shockwave racing out over the court, her sigils writing themselves clockwise round the ring.
+        //   0.00-1.30  SURGE     her night falls; she rises; butterflies pour out and wheel CLOCKWISE; the camera orbits clockwise
+        //   1.30-2.40  THE EYE   from below her chin: her eyes light, the butterflies stream LEFT TO RIGHT into her palms, low in
+        //                        front of her chest, and crush into a tiny glitching eye that pulses and grows; her smirk
+        //   2.40-3.20  THE THROW she hurls it; it streaks LEFT TO RIGHT across the frame to WHERE SHE AIMED (the commit's aim, its
+        //                        height included) and lands at 3.00: the impact frame, the butterfly burst, the ring on the court
+        //   3.20-5.00  THE MARK  the maelstrom starts round the unstable eye and one black butterfly goes to every REAL player in
+        //                        its reach (`HeroIntroductionScene.PhaisterMark.cs`); one crane round the eye ends with them all in frame
+        //
+        // ⚠️ NEVER SHOWN TWICE. OMEN's rules keep a 2.2 s cast after the hand-back (the owner: *"those can stay"*), so this does
+        // NOT show the pull: it ends where play begins, the eye still unstable over the spot (the size the live cast starts at),
+        // the marks already on the players and the maelstrom already turning (`PhaisterOmen` picks all three up from there).
         // Nothing here runs on Update: every piece is posed from `t` in `SamplePhaister`.
         // =========================================================================================
+
+        private const float PhEyeAt = 1.30f, PhThrowAt = 2.47f, PhLandAt = 3.00f, PhMarkAt = 3.20f;
 
         // Butterflies, typed: (start angle deg, orbit radius m, height m, turns a second, size, emerge delay s, from hat).
         private static readonly (float A, float R, float Y, float Spin, float Size, float Delay, bool Hat)[] OmenFlies =
@@ -45,21 +47,45 @@ namespace TumbangPreso.Visual
             (265f, .52f, .78f, 1), (150f, 1.25f, .58f, 2), (205f, 1.30f, .66f, 2), (250f, 1.22f, .52f, 2),
         };
 
+        /// <summary>Where the eye lands when the scene has no aim (a preview): 4 m ahead, 2.3 m up.</summary>
         private static readonly Vector3 OmenLands = new Vector3(0f, 2.3f, 4.0f);
         private static readonly Vector3 MoonAt = new Vector3(-4.2f, 5.3f, -5.4f);
-        private const float MoonRadius = 1.55f, OmenOpenAt = 2.80f, OmenThrowAt = 2.55f, OmenEyeRadius = 1.2f;
+        /// <summary>
+        /// ⚠️ THE EYE ENDS THE CUTSCENE AT THE SIZE THE LIVE CAST STARTS AT (`PhaisterOmen`: 0.40 of 2.4 m across, glitching), so the
+        /// hand-back does not jump. v7 opened it fully here and play then showed it small again.
+        /// </summary>
+        private const float MoonRadius = 1.55f, OmenLandedRadius = 0.50f;
+        // ⚠️ The night walls stand wider than the other heroes' 8 m stage: THE MARK's crane circles an eye up to 8 m from her and
+        // backs out until every marked player fits (film v10: at 17 m the crane crossed the wall and filmed through it).
+        private const float OmenStageRadius = 30f;
 
-        private int _nightGround, _nightSky, _moon, _moonHalo, _omenPalmGlow, _impactDark, _shock, _omenRing;
+        private int _nightGround, _nightSky, _moon, _moonHalo, _omenPalmGlow, _shock, _omenRing;
         private readonly List<int> _stars = new List<int>(8), _omenRibbons = new List<int>(10), _omenSigils = new List<int>(8);
         private readonly List<(Transform T, Transform[] W)> _omenFlies = new List<(Transform, Transform[])>();
         private Transform _omenEye, _omenFlash;
         private Material _omenCosmos;
         private readonly List<Material> _omenFlashInks = new List<Material>();
+        /// <summary>Where the eye lands, in the scene's space (her feet, her facing): the commit's aim, its height kept.</summary>
+        private Vector3 _phLand, _phGround;
 
         private void BuildPhaister()
         {
-            _nightGround = Wall("NightFallsGround", 0, 1.1f, new Color(.07f, .02f, .11f, .90f));
-            _nightSky = Wall("NightFallsSky", 1.1f, 11, new Color(.14f, .05f, .24f, .88f), emission: .16f, cap: true);
+            // Where she aimed. The commit's aim is a world point whose height is the eye's (`HeroAbility.AimsInTheAir`).
+            _phLand = OmenLands; _phGround = new Vector3(OmenLands.x, 0f, OmenLands.z);
+            if (_aim != Vector3.zero)
+            {
+                var local = _root.transform.InverseTransformPoint(_aim);
+                var ground = _root.transform.InverseTransformPoint(VfxShapes.GroundPoint(_aim + Vector3.up * 0.5f));
+                float flat = new Vector2(local.x, local.z).magnitude;
+                if (flat > 1.5f && flat < 14f)
+                {
+                    _phGround = new Vector3(local.x, ground.y, local.z);
+                    _phLand = new Vector3(local.x, ground.y + Mathf.Clamp(local.y - ground.y, Core.VoodooRules.HigopMinHeight, Core.VoodooRules.HigopMaxHeight), local.z);
+                }
+            }
+
+            _nightGround = Wall("NightFallsGround", 0, 1.1f, new Color(.07f, .02f, .11f, .90f), OmenStageRadius);
+            _nightSky = Wall("NightFallsSky", 1.1f, 13, new Color(.14f, .05f, .24f, .88f), OmenStageRadius, emission: .16f, cap: true);
             for (int i = 0; i < 7; i++)
                 _stars.Add(Add("NightStar" + i, VfxShapes.TwoSided(VfxShapes.Star(4, .38f, 60 + i)), new Color(.86f, .78f, 1f, .9f), .6f));
             _moon = Add("RisingMoon", MoonDisc(0), new Color(.86f, .80f, .96f, .95f), .5f);
@@ -68,11 +94,10 @@ namespace TumbangPreso.Visual
             foreach (var r in OmenRibbons)
                 _omenRibbons.Add(Add("OmenRibbon", VfxShapes.TwoSided(VfxShapes.Prism(4, 1f, 1f, 1)), ribbonColours[r.Kind], r.Kind == 2 ? .2f : .05f));
             _omenPalmGlow = AddGlow("OmenPalmGlow", new Color(.86f, .22f, .62f, 1f), falloff: 2.4f, core: .8f, lift: .1f);
-            _impactDark = Add("OmenImpactDark", VfxShapes.TwoSided(VfxShapes.Splat(24, 0f, 3)), new Color(.05f, .01f, .09f, .9f), 0f);
-            _shock = Add("OmenShock", VfxShapes.TwoSided(VfxShapes.Hollow(48, .86f, .1f, 4)), new Color(.80f, .36f, 1f, .85f), 1.6f);
-            _omenRing = Add("OmenRing", VfxShapes.TwoSided(VfxShapes.Hollow(64, .94f, 0f, 9)), new Color(.74f, .40f, 1f, .8f), 1.2f);
+            _shock = Add("OmenShock", VfxShapes.Hollow(48, .86f, .1f, 4), new Color(.80f, .36f, 1f, .85f), 1.6f);
+            _omenRing = Add("OmenRing", VfxShapes.Hollow(64, .94f, 0f, 9), new Color(.74f, .40f, 1f, .8f), 1.2f);
             for (int i = 0; i < 8; i++)
-                _omenSigils.Add(Add("OmenSigil" + i, VfxShapes.TwoSided(VfxShapes.Rune(41 + i, .12f)), new Color(.78f, .42f, 1f, .95f), 1.4f));
+                _omenSigils.Add(Add("OmenSigil" + i, PhaisterSpellGeometry.FlatRune(41 + i, .15f), new Color(.78f, .42f, 1f, .95f), 1.4f));
 
             // The eye: a camera-facing window into space (`CosmosEye.shader`) on the glow quad, so its bounds never cull it.
             var eye = new GameObject("OmenEye");
@@ -88,7 +113,7 @@ namespace TumbangPreso.Visual
             else VfxMaterial.Solid(eyeRenderer, new Color(.05f, .01f, .09f), 0f);
             _omenEye = eye.transform;
 
-            // The emblem flash: a butterfly silhouette in her magenta, the impact frame's picture.
+            // The emblem: a butterfly silhouette in her magenta, the burst's shape as it lands (Castorice 27 s).
             var flash = PhaisterProp.Spawn("butterfly", _root.transform, null, PhaisterProp.InsectOutlineWidth);
             if (flash != null)
             {
@@ -107,6 +132,8 @@ namespace TumbangPreso.Visual
                 SetLayer(b, _root.layer);
                 _omenFlies.Add((b.transform, new[] { PhaisterProp.Find(b, "wing-l"), PhaisterProp.Find(b, "wing-r") }));
             }
+            BuildPhaisterBurst();
+            BuildPhaisterMark();
         }
 
         private static void SetLayer(GameObject go, int layer)
@@ -122,13 +149,19 @@ namespace TumbangPreso.Visual
             mesh.normals = normals; return mesh;
         }
 
-        /// <summary>Where the eye is at <paramref name="t"/>: between her palms while it forms, on a rising arc once thrown.</summary>
+        /// <summary>
+        /// Where the forming eye is held: between her palms, pushed forward and down in front of her chest (v2: v7 held it at palm
+        /// height, which on this chibi body is in front of her mouth, and the close-up lost her face behind it).
+        /// </summary>
+        private Vector3 OmenPalms => BothPalms + new Vector3(0f, -.08f, .40f);
+
+        /// <summary>Where the eye is at <paramref name="t"/>: in front of her while it forms, on a rising arc once thrown.</summary>
         private Vector3 OmenEyeAt(float t)
         {
-            Vector3 palms = BothPalms + new Vector3(0f, .05f, .22f);
-            if (t < OmenThrowAt) return palms;
-            float u = Mathf.Clamp01((t - OmenThrowAt) / (OmenOpenAt - OmenThrowAt));
-            return Vector3.Lerp(palms, OmenLands, u * (2f - u)) + Vector3.up * Mathf.Sin(u * Mathf.PI) * .6f;
+            if (t < PhThrowAt) return OmenPalms;
+            float u = Mathf.Clamp01((t - PhThrowAt) / (PhLandAt - PhThrowAt));
+            float lift = .5f + .12f * Vector3.Distance(OmenPalms, _phLand);
+            return Vector3.Lerp(OmenPalms, _phLand, u * (2f - u)) + Vector3.up * Mathf.Sin(u * Mathf.PI) * lift;
         }
 
         private void SamplePhaister(float t)
@@ -137,24 +170,24 @@ namespace TumbangPreso.Visual
             float lift = LiftAt(t);
 
             // THE NIGHT, at once: the change of world is the first thing that happens.
-            float night = Ease(0f, .4f, t) * leave;
+            float night = Ease(0f, .3f, t) * leave;
             Tint(_nightGround, night); Tint(_nightSky, night);
             Quaternion facingCentre(Vector3 at) => Quaternion.LookRotation(-new Vector3(at.x, 0, at.z).normalized, Vector3.up) * Quaternion.Euler(90, 0, 0);
             for (int i = 0; i < _stars.Count; i++)
             {
                 float angle = (-150 + i * 43) * Mathf.Deg2Rad;
-                var at = new Vector3(Mathf.Sin(angle) * 7.6f, 3.4f + (i * 37 % 5) * .55f, Mathf.Cos(angle) * 7.6f - .2f);
+                var at = new Vector3(Mathf.Sin(angle) * 14f, 5.4f + (i * 37 % 5) * .9f, Mathf.Cos(angle) * 14f - .2f);
                 float twinkle = _reducedEffects ? .85f : .7f + .3f * Mathf.Sin(t * 5 + i * 1.7f);
-                Place(_stars[i], at, Vector3.one * (.10f + (i % 3) * .04f), facingCentre(at), night * twinkle * Ease(.3f + i * .06f, .7f + i * .06f, t));
+                Place(_stars[i], at, Vector3.one * (.22f + (i % 3) * .08f), facingCentre(at), night * twinkle * Ease(.2f + i * .05f, .6f + i * .05f, t));
             }
             var moonFacing = Quaternion.LookRotation(-new Vector3(MoonAt.x - 1.2f, 0, MoonAt.z - 5.6f).normalized, Vector3.up) * Quaternion.Euler(90, 0, 0);
-            float rise = Ease(.2f, .9f, t);
+            float rise = Ease(.15f, .8f, t);
             Vector3 moonAt = MoonAt + Vector3.down * (1 - rise) * .9f;
             Place(_moon, moonAt, Vector3.one * MoonRadius * Mathf.Lerp(.7f, 1, rise), moonFacing, rise * leave);
             Place(_moonHalo, moonAt + moonFacing * Vector3.up * .01f, Vector3.one * MoonRadius * 1.25f, moonFacing, rise * leave * .8f);
 
-            // THE RIBBONS whip UPWARD off her while the power surges (0.3 to 2.9 s), each on its own flutter.
-            float surge = Ease(.3f, .9f, t) * (1 - Ease(2.8f, 3.2f, t)) * leave;
+            // THE RIBBONS whip UPWARD off her while the power surges (0.3 to 2.6 s), each on its own flutter.
+            float surge = Ease(.3f, .9f, t) * (1 - Ease(2.5f, 2.9f, t)) * leave;
             for (int i = 0; i < _omenRibbons.Count; i++)
             {
                 var r = OmenRibbons[i];
@@ -167,74 +200,73 @@ namespace TumbangPreso.Visual
                     Quaternion.FromToRotation(Vector3.up, up) * Quaternion.Euler(0f, r.A + 20f * wave, 0f), surge > .02f ? 1f : 0f);
             }
 
-            // THE EYE: tiny, glitchy and pulsing between her palms (1.5 to 2.55), growing; thrown and growing (2.55 to 2.8);
-            // snapping open with an overshoot (2.8) and steadying.
+            // THE EYE: tiny, glitchy and pulsing in front of her (1.45 to 2.47), growing; thrown and growing on its way; landed, still
+            // unstable, at the size the live cast starts at (see `OmenLandedRadius`).
             Vector3 eyeAt = OmenEyeAt(t);
             float radius, glitch;
-            if (t < 1.5f) { radius = 0f; glitch = 1f; }
-            else if (t < OmenThrowAt)
+            if (t < 1.45f) { radius = 0f; glitch = 1f; }
+            else if (t < PhThrowAt)
             {
-                float u = Mathf.Pow(Mathf.InverseLerp(1.5f, OmenThrowAt, t), 1.4f);
+                float u = Mathf.Pow(Mathf.InverseLerp(1.45f, PhThrowAt, t), 1.4f);
                 float pulse = _reducedEffects ? 1f : 1f + .24f * Mathf.Sin(t * 23f) + .12f * Mathf.Sin(t * 37f + 1.3f);
-                // v2: bigger while it forms (film v5: at 4 to 24 cm the cosmos did not show, only the glow).
-                radius = Mathf.Lerp(.08f, .38f, u) * pulse; glitch = 1f - .25f * u;
+                radius = Mathf.Lerp(.08f, .30f, u) * pulse; glitch = 1f - .25f * u;
             }
-            else if (t < OmenOpenAt)
+            else if (t < PhLandAt)
             {
-                float u = Mathf.InverseLerp(OmenThrowAt, OmenOpenAt, t);
+                float u = Mathf.InverseLerp(PhThrowAt, PhLandAt, t);
                 float pulse = _reducedEffects ? 1f : 1f + .15f * Mathf.Sin(t * 29f);
-                radius = Mathf.Lerp(.38f, .62f, u) * pulse; glitch = .8f;
+                radius = Mathf.Lerp(.30f, .44f, u) * pulse; glitch = .8f;
             }
             else
             {
-                float u = t - OmenOpenAt;
-                radius = OmenEyeRadius * (u < .15f ? Mathf.Lerp(.46f, 1.12f, u / .15f) : u < .3f ? Mathf.Lerp(1.12f, 1f, (u - .15f) / .15f) : 1f);
-                glitch = Mathf.Clamp01(1f - u / .3f) * .6f;
+                // Landed: a jolt as it hits, then it hangs there, pulsing on two beats and glitching (it is not open yet).
+                float u = t - PhLandAt;
+                float jolt = u < .12f ? Mathf.Lerp(1.35f, 1f, u / .12f) : 1f;
+                float pulse = _reducedEffects ? 1f : 1f + .12f * Mathf.Sin(t * 21f) + .06f * Mathf.Sin(t * 33f + .7f);
+                radius = OmenLandedRadius * jolt * pulse; glitch = .8f;
             }
             if (_reducedEffects) glitch *= .3f;
             _omenEye.localPosition = eyeAt;
             _omenEye.localScale = Vector3.one * Mathf.Max(.001f, radius * 2f / .78f) * leave;
             _omenEye.gameObject.SetActive(radius > .001f && leave > .01f);
             if (_omenCosmos != null) { _omenCosmos.SetFloat("_Open", .78f); _omenCosmos.SetFloat("_Time0", t); _omenCosmos.SetFloat("_Glitch", glitch); }
-            // The glow of it in her hands, lighting her face from below in the close-up.
-            // v2: a soft ring of light round the forming eye, not over it (film v5: the glow drowned the eye into a pink blob).
-            PlaceGlow(_omenPalmGlow, eyeAt + Vector3.back * .05f, Vector3.one * (radius * 3.2f + .15f), Quaternion.identity, (t > 1.5f && t < OmenOpenAt ? .45f : 0f) * leave);
+            // The glow of it in her hands, lighting her face from below in the close-up: a soft ring round the forming eye.
+            PlaceGlow(_omenPalmGlow, eyeAt + Vector3.back * .05f, Vector3.one * (radius * 3.2f + .15f), Quaternion.identity, (t > 1.45f && t < PhLandAt ? .45f : 0f) * leave);
 
-            // THE IMPACT: two frames of her dark with the emblem, then the shockwave and the ring on the court under the eye.
-            bool impact = !_reducedEffects && t >= OmenOpenAt && t < OmenOpenAt + .07f;
-            Place(_impactDark, eyeAt, Vector3.one * 30f, Quaternion.LookRotation(Vector3.back) * Quaternion.Euler(90, 0, 0), impact ? 1f : 0f);
+            // THE LANDING: the emblem burst (the butterfly silhouette inside the flash), the shockwave, the ring and her sigils. The
+            // two frames of the inverted picture are `PostProcess`.
             if (_omenFlash != null)
             {
-                float f = t >= OmenOpenAt ? Mathf.Clamp01(1f - (t - OmenOpenAt) / .45f) : 0f;
-                _omenFlash.localPosition = eyeAt + Vector3.back * .1f;
-                _omenFlash.localRotation = Quaternion.Euler(-90f, 0f, 0f);
-                _omenFlash.localScale = Vector3.one * (6f + 4f * (1f - f));
+                float f = t >= PhLandAt ? Mathf.Clamp01(1f - (t - PhLandAt) / .45f) : 0f;
+                _omenFlash.localPosition = eyeAt + (PhLens(t, out var lensAt) ? (lensAt - eyeAt).normalized * .15f : Vector3.back * .1f);
+                _omenFlash.localRotation = PhLens(t, out lensAt) ? Quaternion.LookRotation(eyeAt - lensAt, Vector3.up) * Quaternion.Euler(-90f, 0f, 0f) : Quaternion.Euler(-90f, 0f, 0f);
+                _omenFlash.localScale = Vector3.one * (5f + 5f * (1f - f));
                 _omenFlash.gameObject.SetActive(f > .01f);
                 foreach (var m in _omenFlashInks) PhaisterProp.SetAlpha(m, .85f * f * leave);
             }
-            Vector3 ground = new Vector3(OmenLands.x, .03f, OmenLands.z);
-            float shockU = Mathf.InverseLerp(OmenOpenAt, OmenOpenAt + .3f, t);
-            Place(_shock, ground, new Vector3(1, 1, 1) * Mathf.Lerp(.5f, 6f, 1 - (1 - shockU) * (1 - shockU)), Quaternion.identity,
-                (t >= OmenOpenAt ? 1f - shockU : 0f) * leave);
-            float ringOn = Ease(OmenOpenAt, OmenOpenAt + .3f, t) * leave;
-            Place(_omenRing, ground, Vector3.one * 3.6f, Quaternion.Euler(0, -8f * t, 0), ringOn);
+            Vector3 ground = _phGround + Vector3.up * .03f;
+            float shockU = Mathf.InverseLerp(PhLandAt, PhLandAt + .3f, t);
+            Place(_shock, ground, new Vector3(1, 1, 1) * Mathf.Lerp(.5f, 7.5f, 1 - (1 - shockU) * (1 - shockU)), Quaternion.identity,
+                (t >= PhLandAt ? 1f - shockU : 0f) * leave);
+            float ringOn = Ease(PhLandAt, PhLandAt + .3f, t) * leave;
+            Place(_omenRing, ground, Vector3.one * 7.5f, Quaternion.Euler(0, -8f * t, 0), ringOn * .8f);
             for (int i = 0; i < _omenSigils.Count; i++)
             {
                 // Clockwise seen from above: the angle decreases as they write.
                 float a = -i * 45f;
-                float at = OmenOpenAt + .1f + i * .06f;
-                var pos = ground + Quaternion.Euler(0, a, 0) * new Vector3(0, .005f, 4.1f);
-                Place(_omenSigils[i], pos, Vector3.one * .9f * Ease(at, at + .08f, t), Quaternion.Euler(0, a, 0), Ease(at, at + .08f, t) * leave);
+                float at = PhLandAt + .1f + i * .06f;
+                var pos = ground + Quaternion.Euler(0, a, 0) * new Vector3(0, .005f, 8.0f);
+                Place(_omenSigils[i], pos, Vector3.one * 1.3f * Ease(at, at + .08f, t), Quaternion.Euler(0, a, 0), Ease(at, at + .08f, t) * leave);
             }
 
             // THE BUTTERFLIES.
-            Vector3 palms = BothPalms + new Vector3(0f, .05f, .22f);
+            Vector3 palms = OmenPalms;
             for (int i = 0; i < _omenFlies.Count; i++)
             {
                 var (b, w) = _omenFlies[i];
                 var row = OmenFlies[i];
                 Vector3 p; Vector3 heading; float size = row.Size;
-                float intoEye = 1.5f + i * .045f;                 // when this one leaves the orbit for her palms
+                float intoEye = 1.45f + i * .04f;                 // when this one leaves the orbit for her palms
                 if (t < intoEye)
                 {
                     // SURGE: out of her sleeve or hat, wheeling CLOCKWISE round her, the orbit opening out.
@@ -246,7 +278,7 @@ namespace TumbangPreso.Visual
                     heading = new Vector3(-Mathf.Cos(a), 0f, Mathf.Sin(a));
                     size *= Mathf.Clamp01(u * 3f) * (t >= row.Delay ? 1f : 0f);
                 }
-                else if (t < OmenOpenAt)
+                else if (t < PhLandAt)
                 {
                     // THE EYE: into the palms, LEFT TO RIGHT on the close-up's screen (from her +x side), shrinking to nothing.
                     float u = Mathf.Clamp01((t - intoEye) / .45f);
@@ -259,13 +291,13 @@ namespace TumbangPreso.Visual
                 }
                 else
                 {
-                    // OMEN: round the opened eye, CLOCKWISE, tighter and faster in, from the rim of it outward.
-                    float u = t - OmenOpenAt;
-                    float r = Mathf.Lerp(1.4f, 1.4f + row.R * 1.4f, Mathf.Clamp01(u / .5f));
-                    float a = (row.A - 360f * (row.Spin * 1.8f) * u) * Mathf.Deg2Rad;
+                    // THE MARK: out of the eye as it lands and round it CLOCKWISE, the maelstrom starting, wider as it gathers.
+                    float u = t - PhLandAt;
+                    float r = Mathf.Lerp(.6f, 1.2f + row.R * 1.2f, Mathf.Clamp01(u / .6f));
+                    float a = (row.A - 360f * (row.Spin * 1.6f) * u) * Mathf.Deg2Rad;
                     p = eyeAt + new Vector3(Mathf.Sin(a) * r, (row.Y - 1.5f) * .6f, Mathf.Cos(a) * r);
                     heading = new Vector3(-Mathf.Cos(a), 0f, Mathf.Sin(a));
-                    size *= Mathf.Clamp01(u / .2f) * 1.4f;
+                    size *= Mathf.Clamp01(u / .25f) * 1.4f;
                 }
                 b.localPosition = p;
                 if (heading.sqrMagnitude > .0001f) b.localRotation = Quaternion.LookRotation(heading.normalized, Vector3.up);
@@ -275,6 +307,9 @@ namespace TumbangPreso.Visual
                 if (w[0] != null) w[0].localRotation = Quaternion.AngleAxis(wingOpen, Vector3.forward);
                 if (w[1] != null) w[1].localRotation = Quaternion.AngleAxis(-wingOpen, Vector3.forward);
             }
+
+            SamplePhaisterBurst(t, leave, lift);
+            SamplePhaisterMark(t, leave);
         }
     }
 }

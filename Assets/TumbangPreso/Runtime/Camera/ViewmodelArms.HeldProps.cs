@@ -55,6 +55,9 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         public Transform LeftHandForProps() => _leftArm;
 
+        /// <summary>The first-person right arm (HERO-10: the moths crawling over the back of her hand while she aims VANISHING ACT).</summary>
+        public Transform RightHandForProps() => _rightArm;
+
         /// <summary>
         /// Where the palm is in <see cref="LeftHandForProps"/>'s space: the far end of the arm mesh along its longest axis,
         /// the end farther from the pivot. MEASURED from the mesh rather than typed, the lesson `CharacterVisual.PalmCentre`

@@ -30,7 +30,11 @@ namespace TumbangPreso.Visual
         {
             var paths = ResolvePaths(root);
             if (paths == null) throw new System.InvalidOperationException("Phaister rig is missing a required bone.");
-            var clips = new[] { BuildPhaisterSwarm(paths), BuildPhaisterManika(paths), BuildPhaisterPin(paths), BuildPhaisterOmen(paths) };
+            var clips = new[]
+            {
+                BuildPhaisterSwarm(paths), BuildPhaisterManika(paths), BuildPhaisterPin(paths), BuildPhaisterOmen(paths),
+                BuildPhaisterSwarmAim(paths), BuildPhaisterManikaAim(paths), BuildPhaisterOmenAim(paths),
+            };
             foreach (var clip in clips)
                 GroundIntroduction(clip, root, paths["root"], anchorToRest: true,
                     lift: clip.name == "hero-phaister-omen" ? (System.Func<float, float>)PhaisterOmenLift : null);
@@ -40,48 +44,104 @@ namespace TumbangPreso.Visual
         /// <summary>
         /// VANISHING ACT, 0.75 s. Her body is HIDDEN from 0 to 0.30 while the swarm carries her (`PhaisterSwarm`), so the part
         /// anyone sees is the ARRIVAL, and it is keyed for that:
-        ///  * 0.00: the burst, arms flung wide and back, chin up (seen for a frame on some screens before the hide lands);
-        ///  * 0.30 (punch, the reveal): knit back crouched low, knees bent, the left hand already rising, the right arm out for
-        ///    balance, the head down: she is still being put together;
-        ///  * 0.48: she straightens with the LEFT HAND ON HER HAT BRIM, settling it (her beat), the hip cocked;
+        ///  * 0.00: the burst out of the aim tell (wrists crossed), arms flung wide and back, chin up (a frame at most, before the
+        ///    hide lands);
+        ///  * 0.30 (punch, the reveal): v2 (film v7: the old reveal pitched the torso 22 degrees and the head 20 more, so she landed
+        ///    in a bow, a faceplant): knit back UPRIGHT and low, her arms wrapped round herself as the swarm packs in from the feet
+        ///    up, head a little down: she is still being put together;
+        ///  * 0.46: she rises out of it, a small pop, the LEFT HAND GOING UP TO HER HAT BRIM (her beat), the right hand flicking
+        ///    out to the side, chin up;
+        ///  * 0.60: settled on one hip, still holding the brim;
         ///  * 0.75: rest.
         /// </summary>
         private static AnimationClip BuildPhaisterSwarm(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-phaister-swarm", paths);
             PoseKey(b, 0, 0, V(-12, 0, 0), V(-14, 0, 0), V(-40, 0, 70), V(-40, 0, -70), V(8, 0, 8), V(8, 0, -8));
-            PoseKey(b, .12f, -.10f, V(20, 0, 0), V(18, 0, 0), V(-30, 0, 30), V(-20, 0, -40), V(-26, 0, 6), V(-18, 0, -6));
+            PoseKey(b, .12f, -.06f, V(6, 0, 0), V(8, 0, 0), V(-58, 0, -30), V(-54, 0, 30), V(-8, 0, 6), V(-6, 0, -6));
             b.PunchAt(.30f);
             b.HoldAt(.30f, .05f);
-            PoseKey(b, .30f, -.12f, V(22, -6, 0), V(20, 0, 0), V(-110, 10, -10), V(-30, 0, -55), V(-30, 0, 6), V(-20, 0, -8));
-            PoseKey(b, .48f, -.02f, V(2, -10, 4), V(-6, -8, -6), V(-168, 20, -18), V(-6, 0, -22), V(-8, 0, 4), V(4, 0, -6));
-            PoseKey(b, .62f, 0, V(0, -6, 3), V(-4, -4, -4), V(-150, 16, -16), V(0, 0, -18), V(-4, 0, 3), V(2, 0, -5));
+            PoseKey(b, .30f, -.07f, V(5, -4, 0), V(9, -3, 0), V(-64, 4, -42), V(-60, -4, 40), V(-6, 0, 5), V(-4, 0, -5));
+            PoseKey(b, .46f, .02f, V(-4, -8, 2), V(-7, -8, -5), V(-156, 18, -16), V(-18, 0, -34), V(-4, 0, 4), V(4, 0, -6));
+            PoseKey(b, .60f, 0, V(-1, -6, 3), V(-4, -5, -5), V(-150, 16, -16), V(-4, 0, -22), V(-3, 0, 3), V(2, 0, -5));
             PoseKey(b, .75f, 0, V(0, 0, 0), V(0, 0, 0), PhRestLeft, PhRestRight);
             return b.Build();
         }
 
+        // =============================================================================================
+        // HER TELLS WHILE SHE AIMS (HERO-10, film v7: holding a skill left her in the shared idle, and the doll's prick came after
+        // the release). Looping clips, held for as long as the key is down (`HeroAbility.AimPoseAction`,
+        // `CharacterAnimator.AimPose`); the release clip starts from each. `PhaisterMotionAuthor` bakes them looping.
+        // =============================================================================================
+
         /// <summary>
-        /// MANIKA MISCHIEF, 0.8 s, the prick and the throw:
-        ///  * 0.00 to 0.14: the right hand unhooks the manika from her left hip (the arm across the body, low);
-        ///  * 0.26: the doll up at her face in the right hand, her head tipped toward it, the LEFT hand pricking it with a pin
-        ///    (both hands close together in front of her chin): the tell other players read;
-        ///  * 0.40: the wind-up, the right arm drawn back over the shoulder, the trunk turning right, weight on the back foot;
-        ///  * 0.48 (punch): the overhand flick, the arm snapping forward and down, the trunk turning through;
-        ///  * 0.62: her beat: the throwing hand left OPEN in the air and her head following the doll's path;
-        ///  * 0.80: rest.
+        /// VANISHING ACT's tell, a 1.6 s loop: wrists crossed at her chest (plan 4.1), a touch forward over them, her weight on one
+        /// hip and her head up at where she is going. Moths crawl out of her cuffs (`PhaisterCuffMoths`). A slow sway, nothing more:
+        /// she is sure of it.
+        /// </summary>
+        private static AnimationClip BuildPhaisterSwarmAim(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-phaister-swarm-aim", paths);
+            PoseKey(b, 0, 0, V(4, 0, 2), V(2, -4, 0), V(-72, 6, -38), V(-70, -6, 38), V(-2, 0, 4), V(2, 0, -4));
+            PoseKey(b, .8f, 0, V(5, 4, 1), V(3, 4, -2), V(-76, 6, -40), V(-74, -6, 40), V(-2, 0, 4), V(2, 0, -4));
+            PoseKey(b, 1.6f, 0, V(4, 0, 2), V(2, -4, 0), V(-72, 6, -38), V(-70, -6, 38), V(-2, 0, 4), V(2, 0, -4));
+            return b.Build();
+        }
+
+        /// <summary>
+        /// MANIKA MISCHIEF's tell, a 1.24 s loop, two pricks (`PhaisterHandDoll.PrickEvery`): the doll up at her chin in her right
+        /// hand, her head tipped to it, the left hand jabbing the pin in (a quick in at 0.07, out by 0.18), and between the pricks a
+        /// glance up at her target with the smirk (her ink face does the smirk; the tilt sells it).
+        /// </summary>
+        private static AnimationClip BuildPhaisterManikaAim(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-phaister-manika-aim", paths);
+            PoseKey(b, 0, 0, V(-2, 6, 4), V(10, 10, -10), V(-92, -10, -28), V(-118, 12, 18), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, .07f, 0, V(0, 8, 4), V(12, 12, -12), V(-104, -8, -36), V(-120, 12, 18), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, .18f, 0, V(-2, 6, 4), V(10, 10, -10), V(-92, -10, -28), V(-118, 12, 18), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, .45f, 0, V(-3, 4, 4), V(2, 4, -6), V(-90, -10, -26), V(-116, 10, 16), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, .62f, 0, V(-2, 6, 4), V(10, 10, -10), V(-92, -10, -28), V(-118, 12, 18), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, .69f, 0, V(0, 8, 4), V(12, 12, -12), V(-104, -8, -36), V(-120, 12, 18), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, .80f, 0, V(-2, 6, 4), V(10, 10, -10), V(-92, -10, -28), V(-118, 12, 18), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, 1.05f, 0, V(-3, 5, 4), V(4, 6, -12), V(-90, -10, -26), V(-117, 12, 17), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, 1.24f, 0, V(-2, 6, 4), V(10, 10, -10), V(-92, -10, -28), V(-118, 12, 18), V(-6, 0, 4), V(6, 0, -4));
+            return b.Build();
+        }
+
+        /// <summary>
+        /// OMEN's tell, a 1.4 s loop, while she chooses where AND HOW HIGH (plan 4.4; the ghost eye and its line are
+        /// `PhaisterAimSigil`): her chin up at the spot in the air, her right hand raised toward it as if weighing it, her left
+        /// holding her hat on as she looks up.
+        /// </summary>
+        private static AnimationClip BuildPhaisterOmenAim(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-phaister-omen-aim", paths);
+            PoseKey(b, 0, 0, V(-4, 0, 2), V(-14, 0, 0), V(-150, 16, -16), V(-128, 0, -12), V(-2, 0, 4), V(4, 0, -4));
+            PoseKey(b, .7f, 0, V(-5, 3, 2), V(-16, 4, 2), V(-152, 16, -16), V(-134, 4, -14), V(-2, 0, 4), V(4, 0, -4));
+            PoseKey(b, 1.4f, 0, V(-4, 0, 2), V(-14, 0, 0), V(-150, 16, -16), V(-128, 0, -12), V(-2, 0, 4), V(4, 0, -4));
+            return b.Build();
+        }
+
+        /// <summary>
+        /// MANIKA MISCHIEF's release, 0.65 s, THE THROW ONLY. v2 (film v7): the clip used to begin on the release with the unhook
+        /// and the prick, and throw at 0.48 s, while the doll leaves on the release, so it flew half a second before her arm moved.
+        /// The unhook and the prick are the hold now (`hero-phaister-manika-aim`); this starts from that pose:
+        ///  * 0.00: the doll up at her chin in the right hand (the aim pose);
+        ///  * 0.05: a quick draw back over the shoulder, the trunk turning right;
+        ///  * 0.11 (punch): the overhand flick, the arm snapping forward and down, the trunk turning through (the doll is away);
+        ///  * 0.30: her beat: the throwing hand left OPEN in the air and her head following the doll's path, tipped with the smirk;
+        ///  * 0.65: rest.
         /// </summary>
         private static AnimationClip BuildPhaisterManika(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-phaister-manika", paths);
-            PoseKey(b, 0, 0, V(0, 0, 0), V(0, 0, 0), PhRestLeft, PhRestRight);
-            PoseKey(b, .14f, -.02f, V(10, -14, -4), V(14, -10, 0), V(0, 0, 14), V(-24, 10, 34), V(-4, 0, 4), V(4, 0, -4));
-            PoseKey(b, .26f, 0, V(-2, 6, 4), V(10, 10, -10), V(-96, -10, -30), V(-118, 12, 18), V(-6, 0, 4), V(6, 0, -4));
-            PoseKey(b, .40f, -.02f, V(-8, 24, 2), V(-6, 18, 0), V(-60, 0, 10), V(-168, 26, -12), V(-12, 0, 5), V(12, 0, -5));
-            b.PunchAt(.48f);
-            b.HoldAt(.48f, .04f);
-            PoseKey(b, .48f, -.03f, V(14, -18, 0), V(4, -12, 0), V(-30, 0, 24), V(-70, -10, 6), V(-18, 0, 5), V(12, 0, -5));
-            PoseKey(b, .62f, -.01f, V(8, -14, 0), V(6, -16, 0), V(-20, 0, 20), V(-84, -14, 2), V(-10, 0, 4), V(8, 0, -4));
-            PoseKey(b, .80f, 0, V(0, 0, 0), V(0, 0, 0), PhRestLeft, PhRestRight);
+            PoseKey(b, 0, 0, V(-2, 6, 4), V(10, 10, -10), V(-92, -10, -28), V(-118, 12, 18), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, .05f, -.01f, V(-8, 22, 2), V(-6, 16, 0), V(-50, 0, 12), V(-165, 26, -12), V(-12, 0, 5), V(12, 0, -5));
+            b.PunchAt(.11f);
+            b.HoldAt(.11f, .04f);
+            PoseKey(b, .11f, -.03f, V(14, -18, 0), V(4, -12, 0), V(-30, 0, 24), V(-70, -10, 6), V(-18, 0, 5), V(12, 0, -5));
+            PoseKey(b, .30f, -.01f, V(8, -14, 0), V(6, -16, 6), V(-20, 0, 20), V(-84, -14, 2), V(-10, 0, 4), V(8, 0, -4));
+            PoseKey(b, .65f, 0, V(0, 0, 0), V(0, 0, 0), PhRestLeft, PhRestRight);
             return b.Build();
         }
 

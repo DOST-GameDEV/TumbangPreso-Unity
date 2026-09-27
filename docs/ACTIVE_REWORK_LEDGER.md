@@ -1,5 +1,30 @@
 # Active TUMP rework ledger
 
+## Shared rework and recovery integration, 2026-09-27
+
+Integrated prepared recovery `e6fb9afd` with incoming Phaister refinement through
+`baec93c9`. Keep protocol65 and the incoming5-second intro; retain all authored
+aim clips,props,shaders,cutscene and audio. OMEN's independent screen-space effect
+now follows its owning visual's enable/disable/destruction, preventing warmup or
+recovery cleanup from leaving an overlay behind. No look/timing redesign.
+Runtime,Editor,Tests and PlayTests compile on the frozen73-file integrated source/
+asset candidate. No old test suite or film rerun. Incoming7/7 evidence below belongs
+to its earlier protocol64 candidate, not this merge. Native/peer/ranked remain OPEN.
+
+## Phaister interrupted publication recovery, 2026-09-27
+
+Recovered refinement commit `5b696b6f8` and completed its interrupted merge as
+`f55019fb6`, preserving the body-owned status presenter and the two-sided,
+uniformly scaled hex mark. Integrated remote work through `bf0b80db8`.
+Protocol 64 retains the shared skill fingerprint; that fingerprint includes
+Phaister's 5.0-second introduction, so differing phase durations are rejected.
+HERO-10's remaining creative work, including the owner's flat-butterfly correction,
+stays OPEN. Unrelated dirty assets, Supernova work and protected UI metadata remain
+outside this publication batch. Unity 6000.5.8f1 compiled the merged source and
+`ChatAndLobbyChromeTests` passed 7/7 in one guarded EditMode run, using profile
+`presentation-validation-20260921`. Local receipts: `Logs/phaister-recovery-merge.xml`
+and `.log`. No new film, PlayMode run, player build or real-peer claim.
+
 ## Current networking and flow work, 2026-09-27
 
 Owner expansion: ranked is explicitly included, not only custom/LAN matches.

@@ -482,6 +482,9 @@ namespace TumbangPreso.Net
         // activation/command intent. Cosmetic names and assets are not wire identity.
         // 64: ConnectionHello includes deterministic shared skill/phase metadata.
         // Peers with different reworked rules cannot silently join the same match.
+        // HERO-10 also makes Phaister's OMEN introduction 5.0 s (was 4.0).
+        // Its duration is included in the shared skill fingerprint, so peers with
+        // the older presentation clock cannot join even at the same wire version.
         // 65: world recovery includes ultimate phase/stage/request freshness;
         // PreparedWorld replaces CovenEffect with ability-owned spatial recovery,
         // joins its world generation and ages on the round clock.

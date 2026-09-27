@@ -380,11 +380,12 @@ def paete_veins():
 if __name__ == "__main__":
     # ⚠️ HERO-10 (2026-09-27): `sfx_cast_phaister_doll` and `sfx_cast_phaister_pin` are written by `tools/build_phaister_audio.py`
     # now (her witch recipes: the needle, the pin's tick, her motif). Left defined here for history; never both.
+    # ⚠️ HERO-10 v8: so are OMEN's three live cues (`sfx_cast_phaister_higop`, `_higop_open`, `_higop_close`), rebuilt from her own
+    # instruments (her candle, the eye's glitch, wings, the moon chord) in place of the generic whine and drone defined above.
     rows = [cheska_coldfeet(), cheska_frostbite(), cheska_frostbite_hit(), cheska_wall(), cheska_wall_crack(),
             cheska_absolutezero(), dante_shield(), dante_boulder(), dante_boulder_hit(), dante_barrier(),
             dante_barrier_reflect(), dante_earthquake(), nemu_terrify(), nemu_fetch(), nemu_fetch_drop(),
-            nemu_guard(), nemu_guard_block(), phaister_higop_cast(),
-            phaister_higop_open(), phaister_higop_close(), status_concussed(), status_feared(),
+            nemu_guard(), nemu_guard_block(), status_concussed(), status_feared(),
             status_disoriented(), status_vulnerable(), paete_ground_call(), paete_veins()]
     report = {
         "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",

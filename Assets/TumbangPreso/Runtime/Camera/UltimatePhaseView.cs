@@ -202,7 +202,7 @@ namespace TumbangPreso.CameraSystem
             // The hero's own grade for this moment (1, 1 unless their stage asks; Paete's world steps back while the power is on screen).
             var grade=_camera.GetComponent<ColourGrade>();
             if(grade!=null){_primary.Scene.GradeAt(age,out float gradeB,out float gradeS);grade.SetEventGrade(gradeB,gradeS);}
-            try{_camera.Render();}
+            try{_camera.Render();_primary.Scene.PostProcess(_target,_camera,age);}
             finally
             {
                 _primary.Body.ShowOnlyForCapture(false);_primary.Scene.SetVisibleForCapture(false);

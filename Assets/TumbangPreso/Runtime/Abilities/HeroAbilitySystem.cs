@@ -123,6 +123,7 @@ namespace TumbangPreso.Abilities
             // buffered input before losing the only object that can cancel them.
             // Same-hero sidegrade refreshes use UpdateLoadout and retain live state.
             if (Kit != null) ResetKitForMatch();
+            EndOwnAim();
             _pendingUltimateSky = false;
             HeroId = string.IsNullOrEmpty(heroId) ? "dante" : heroId.ToLowerInvariant();
             Kit = CreateKitFor(HeroId);
@@ -470,6 +471,7 @@ namespace TumbangPreso.Abilities
             if (intent == null)
             {
                 if (_reticle != null) _reticle.Hide();
+                EndOwnAim();
                 return;
             }
 
@@ -986,7 +988,7 @@ namespace TumbangPreso.Abilities
                 GameServices.Audio?.PlayUi("ui_error", .55f);
         }
 
-        private HeroAbility AbilityFor(Slot slot)
+        public HeroAbility AbilityFor(Slot slot)
         {
             if (Kit == null) return null;
 
@@ -1280,6 +1282,24 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private void UpdateReticle(InputIntent intent)
         {
+            _ownAimNow = null;
+            UpdateReticleAndAim(intent);
+            // ⚠️ HERO-10: an aim that was being drawn and is not this frame (released, stunned, refused) ends exactly once.
+            if (_ownAim != null && _ownAim != _ownAimNow) _ownAim.EndAim();
+            _ownAim = _ownAimNow;
+        }
+
+        /// <summary>The ability whose `PresentAim` ran last frame, and the one that ran this frame (HERO-10).</summary>
+        private HeroAbility _ownAim, _ownAimNow;
+
+        private void EndOwnAim()
+        {
+            _ownAim?.EndAim();
+            _ownAim = null;
+        }
+
+        private void UpdateReticleAndAim(InputIntent intent)
+        {
             if (_reticle == null || Kit == null) return;
 
             // These instant casts have their own grounded windup warning. Keeping
@@ -1323,9 +1343,16 @@ namespace TumbangPreso.Abilities
             // viaduct, by one player, while they decide. Those are different legibility problems
             // and the second one is the harder of the two. `UiTheme.BrightForHero` carries why a
             // mid-value accent reads as a shadow on ghosted geometry.
+            // ⚠️ HERO-10: the ability's own aim picture and its body's tell (`HeroAbility.PresentAim`), every frame of the hold.
+            // One that draws its own aim (Phaister's sigil, OMEN's height) replaces the shared ring rather than stacking on it.
+            Vector3 aimed = AimPoint(ability, range);
+            if (_ownAim != null && _ownAim != ability) { _ownAim.EndAim(); _ownAim = null; }
+            _ownAimNow = ability;
+            ability.PresentAim(_motor, aimed, HeldSecondsFor(ability));
+            if (ability.DrawsOwnAim) { _reticle.Hide(); return true; }
             _reticle.SetBeacon(ability.AimBeacon);
             _reticle.SetStyle(ability.TelegraphStyle);
-            _reticle.Show(AimPoint(ability, range), ability.TelegraphRadius, AccentBright());
+            _reticle.Show(aimed, ability.TelegraphRadius, AccentBright());
             return true;
         }
 
