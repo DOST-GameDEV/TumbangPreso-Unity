@@ -9,7 +9,8 @@ namespace TumbangPreso.Net
     {
         public void BroadcastFamiliarEffect(int slot, ulong? targetPeer = null)
         {
-            if (!NetAuthority.ShouldResolve() || !ValidSlot(slot) || _nm?.CustomMessagingManager == null) return;
+            if (!NetAuthority.ShouldResolve() || !ValidSlot(slot) || GameServices.Round?.RoundActive != true ||
+                _nm?.CustomMessagingManager == null) return;
             var unit = Unit(slot); var pet = Familiar(slot); var kit = unit?.AbilitySystem?.Kit;
             // Possession is retired from the current kit. This is the live seance.
             if (pet == null || !pet.IsDevouring || kit?.Ultimate == null) return;
@@ -17,7 +18,7 @@ namespace TumbangPreso.Net
             {
                 Seat = slot, Scope = CaptureActionScope(slot), Phase = kit.Ultimate.AcceptedUltimatePhase,
                 HeroId = new FixedString64Bytes(kit.HeroId), AbilityId = new FixedString64Bytes(kit.Ultimate.Id),
-                Position = pet.DevourGround, ExpiresAt = _nm.ServerTime.Time + pet.DevourRemaining,
+                Position = pet.DevourGround, RoundClock = GameServices.Round.TimeLeft, Remaining = pet.DevourRemaining,
                 Yaw = pet.transform.eulerAngles.y,
             };
             if (!state.IsValid) return;
@@ -32,14 +33,14 @@ namespace TumbangPreso.Net
 
         private void OnFamiliarEffectMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || !FromHost(senderClientId) || _nm == null ||
+            if (NetAuthority.IsHost || !FromHost(senderClientId) ||
                 !FamiliarEffectState.TryRead(ref reader, out var state)) return;
-            ApplyFamiliarEffect(state, _nm.ServerTime.Time);
+            ApplyFamiliarEffect(state, GameServices.Round?.TimeLeft ?? -1);
         }
 
-        private bool ApplyFamiliarEffect(FamiliarEffectState state, double now)
+        private bool ApplyFamiliarEffect(FamiliarEffectState state, float now)
         {
-            if (!state.IsValid || double.IsNaN(now) || double.IsInfinity(now)) return false;
+            if (!state.IsValid || GameServices.Round?.RoundActive != true) return false;
             var unit = Unit(state.Seat);
             if (unit == null || !state.Scope.Matches(PresentationMatchId,
                 GameServices.Match?.RoundNumber ?? -1, unit.MovementEpoch) ||
@@ -49,8 +50,7 @@ namespace TumbangPreso.Net
             if (pet == null || ability.ReservedForIntroduction || state.Phase < ability.AcceptedUltimatePhase) return false;
             if (state.Phase == ability.AcceptedUltimatePhase &&
                 ((!ability.IsActive && !ability.IsWindingUp) || pet.IsDevouring)) return false;
-            float remaining = Mathf.Clamp((float)(state.ExpiresAt - now), 0, ability.Duration);
-            if (remaining <= 0) return false;
+            if (!state.TryAge(now, ability.Duration, out float remaining) || remaining <= 0) return false;
             kit.RestoreFamiliar(unit, 2, state.Position, remaining, state.Yaw);
             ability.AdoptUltimatePhase(state.Phase);
             return true;

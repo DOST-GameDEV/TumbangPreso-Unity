@@ -15,12 +15,20 @@ namespace TumbangPreso.Net
         public long Phase;
         public FixedString64Bytes HeroId, AbilityId;
         public Vector3 Position;
-        public double ExpiresAt;
+        public float RoundClock, Remaining;
         public float Yaw;
 
         public bool IsValid => Seat >= 0 && Seat < Balance.PlayerCount && Scope.IsValid && Phase > 0 &&
             HeroId.Length > 0 && AbilityId.Length > 0 && Finite(Position.x) && Finite(Position.y) &&
-            Finite(Position.z) && Finite(Yaw) && ExpiresAt >= 0 && !double.IsInfinity(ExpiresAt);
+            Finite(Position.z) && Finite(Yaw) && Clock(RoundClock) && Finite(Remaining) && Remaining >= 0;
+
+        public bool TryAge(float now, float duration, out float remaining)
+        {
+            remaining = 0;
+            if (!IsValid || !Clock(now) || !Finite(duration) || duration < 0 || Remaining > duration + .1f) return false;
+            remaining = Mathf.Clamp(Remaining - Mathf.Max(0, RoundClock - now), 0, duration);
+            return true;
+        }
 
         public bool MatchesKit(HeroKit kit) => kit?.Ultimate != null &&
             HeroId.ToString() == kit.HeroId && AbilityId.ToString() == kit.Ultimate.Id;
@@ -33,7 +41,8 @@ namespace TumbangPreso.Net
             SerializeId(serializer, ref HeroId);
             SerializeId(serializer, ref AbilityId);
             serializer.SerializeValue(ref Position);
-            serializer.SerializeValue(ref ExpiresAt);
+            serializer.SerializeValue(ref RoundClock);
+            serializer.SerializeValue(ref Remaining);
             serializer.SerializeValue(ref Yaw);
         }
 
@@ -66,5 +75,6 @@ namespace TumbangPreso.Net
         }
 
         private static bool Finite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
+        private static bool Clock(float value) => value >= 0 && value <= CustomGameRules.MaxRoundSeconds;
     }
 }

@@ -1,5 +1,29 @@
 # Multiplayer investigation, 2026-09-27
 
+## Simulation Clock Recovery
+
+Timed buffs and the familiar seance advance with gameplay delta time, but their
+snapshot aging used server wall time. A packet waiting through a paused introduction
+could therefore consume lifetime that the host had not simulated; slow motion had
+the same mismatch. Protocol86 now uses positive progress of the host's remaining
+round clock, matching the existing prepared-world recovery convention. A receiver
+ahead of the captured clock cannot extend the transmitted remaining lifetime.
+
+TimedKitState replaces its double timestamp with one float round clock (230bytes
+maximum). FamiliarEffectState replaces double expiry with float round clock plus
+remaining life (still178bytes). Both enforce bounded clocks and the owning ability's
+duration. Non-live rounds reject nonempty effect hydration, while authoritative
+empty timed state can still settle a joining kit. Identity, ordering, consumed-state
+guards, authored durations and specialized flight recovery remain intact.
+
+Four changed guarded native codec/application cases pass4/4 in0.5997511s on full
+`06aaecdd` plus seven frozen inputs, no drift or retry. Checks include the new wire
+sizes, frozen/progressed/ahead/invalid clock values, expiry, real companion retention,
+non-live rejection and empty timed hydration. They do not simulate a lossy peer or
+certify real multi-device cutscene timing. Earlier wall-clock receipts below remain
+historical and are superseded only for this aging behavior.
+[Receipt](checks/recovery-clock-native.json),[XML](checks/recovery-clock-native.xml).
+
 ## Scoped Familiar Recovery
 
 Live seance recovery previously carried only the round and rebuilt its field on

@@ -528,7 +528,9 @@ namespace TumbangPreso.Net
         // and ordered snapshots; the specialized flight contract is unchanged.
         // 85: live familiar effects bind match/body and accepted ultimate identity;
         // old, duplicate and completed effects cannot recreate a seance field.
-        public const int ProtocolVersion = 85;
+        // 86: timed skill and familiar recovery age by the host round clock,
+        // so pauses, introductions and slow motion do not consume their lifetime.
+        public const int ProtocolVersion = 86;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -1847,7 +1847,8 @@ namespace TumbangPreso.Net
         // Live familiar effect hydration is scoped in MatchRpc.FamiliarEffects.
         private void SendTimedKitSnapshot(int slot, ulong peer, int fieldGeneration = 0)
         {
-            if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
+            if (!NetAuthority.IsHost || GameServices.Match == null || GameServices.Round == null ||
+                _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
             var kit = Unit(slot)?.AbilitySystem?.Kit;
             if (kit is Abilities.AmihanHeroKit amihan)
             {

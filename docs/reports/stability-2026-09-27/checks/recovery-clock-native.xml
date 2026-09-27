@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 19:07:16Z" end-time="2026-09-27 19:07:17Z" duration="0.5997511">
+  <test-suite type="TestSuite" id="1974" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="781" result="Passed" start-time="2026-09-27 19:07:16Z" end-time="2026-09-27 19:07:17Z" duration="0.599751" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1968" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="781" result="Passed" start-time="2026-09-27 19:07:16Z" end-time="2026-09-27 19:07:17Z" duration="0.588402" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="59304" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1969" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="781" result="Passed" start-time="2026-09-27 19:07:16Z" end-time="2026-09-27 19:07:17Z" duration="0.582247" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1970" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="781" result="Passed" start-time="2026-09-27 19:07:16Z" end-time="2026-09-27 19:07:17Z" duration="0.576331" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1751" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="37" result="Passed" start-time="2026-09-27 19:07:16Z" end-time="2026-09-27 19:07:17Z" duration="0.529808" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1752" name="FamiliarEffectCodecBoundsTheWorldAndAcceptedAbilityIdentity" fullname="TumbangPreso.PlayTests.SkillReceiptTests.FamiliarEffectCodecBoundsTheWorldAndAcceptedAbilityIdentity" methodname="FamiliarEffectCodecBoundsTheWorldAndAcceptedAbilityIdentity" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="811412645" result="Passed" start-time="2026-09-27 19:07:16Z" end-time="2026-09-27 19:07:16Z" duration="0.063704" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1753" name="FamiliarRecoveryCannotReplaceAnActiveOrCompletedAcceptedLifetime" fullname="TumbangPreso.PlayTests.SkillReceiptTests.FamiliarRecoveryCannotReplaceAnActiveOrCompletedAcceptedLifetime" methodname="FamiliarRecoveryCannotReplaceAnActiveOrCompletedAcceptedLifetime" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="458406166" result="Passed" start-time="2026-09-27 19:07:16Z" end-time="2026-09-27 19:07:16Z" duration="0.395992" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1754" name="TimedRecoveryCodecBoundsIdentitiesAndAgesTheOwningChannels" fullname="TumbangPreso.PlayTests.SkillReceiptTests.TimedRecoveryCodecBoundsIdentitiesAndAgesTheOwningChannels" methodname="TimedRecoveryCodecBoundsIdentitiesAndAgesTheOwningChannels" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1548710148" result="Passed" start-time="2026-09-27 19:07:16Z" end-time="2026-09-27 19:07:17Z" duration="0.026642" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1755" name="TimedRecoveryRejectsOldScopesWrongBindingsAndReplayedNoOps" fullname="TumbangPreso.PlayTests.SkillReceiptTests.TimedRecoveryRejectsOldScopesWrongBindingsAndReplayedNoOps" methodname="TimedRecoveryRejectsOldScopesWrongBindingsAndReplayedNoOps" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1558663238" result="Passed" start-time="2026-09-27 19:07:17Z" end-time="2026-09-27 19:07:17Z" duration="0.026654" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

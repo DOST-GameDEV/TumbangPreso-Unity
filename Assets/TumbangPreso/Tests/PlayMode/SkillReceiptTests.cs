@@ -114,7 +114,7 @@ namespace TumbangPreso.PlayTests
             {
                 Seat = 1, Scope = new GameplayActionScope { Match = 123, Round = 1, Epoch = 0 }, Phase = 4,
                 HeroId = new FixedString64Bytes(kit.HeroId), AbilityId = new FixedString64Bytes(kit.Ultimate.Id),
-                Position = new Vector3(0, 0, 2), ExpiresAt = 104, Yaw = 90,
+                Position = new Vector3(0, 0, 2), RoundClock = 100, Remaining = 4, Yaw = 90,
             };
             byte[] bytes;
             using (var writer = new FastBufferWriter(FamiliarEffectState.MaxWireBytes, Allocator.Temp))
@@ -141,7 +141,12 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(Reads(truncated));
             var trailing = new byte[bytes.Length + 1]; System.Array.Copy(bytes, trailing, bytes.Length);
             Assert.IsFalse(Reads(trailing));
-            var bad = state; bad.ExpiresAt = double.NaN; Assert.IsFalse(bad.IsValid);
+            Assert.IsTrue(state.TryAge(100, kit.Ultimate.Duration, out float held)); Assert.AreEqual(4, held);
+            Assert.IsTrue(state.TryAge(98, kit.Ultimate.Duration, out float aged)); Assert.AreEqual(2, aged);
+            Assert.IsTrue(state.TryAge(101, kit.Ultimate.Duration, out float ahead)); Assert.AreEqual(4, ahead);
+            Assert.IsFalse(state.TryAge(-1, kit.Ultimate.Duration, out _));
+            var bad = state; bad.RoundClock = float.NaN; Assert.IsFalse(bad.IsValid);
+            bad = state; bad.Remaining = 999; Assert.IsFalse(bad.TryAge(100, kit.Ultimate.Duration, out _));
             bad = state; bad.Position.x = float.PositiveInfinity; Assert.IsFalse(bad.IsValid);
             bad = state; bad.Phase = 0; Assert.IsFalse(bad.IsValid);
             bad = state; bad.HeroId = new FixedString64Bytes("other"); Assert.IsFalse(bad.MatchesKit(kit));
@@ -162,6 +167,7 @@ namespace TumbangPreso.PlayTests
             var kit = (NemuHeroKit)system.Kit;
             GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
             GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            GameServices.Round.ApplySnapshot(100, true, 0, true);
             var visual = body.gameObject.AddComponent<Visual.CharacterVisual>(); visual.enabled = false;
             var art = RosterBook.Load().FindPersonArt("nemu"); Assert.IsNotNull(art.PetModel);
             var petRoot = Object.Instantiate(art.PetModel);
@@ -171,12 +177,12 @@ namespace TumbangPreso.PlayTests
             var router = root.AddComponent<MatchRpc>(); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
             const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
             var apply = typeof(MatchRpc).GetMethod("ApplyFamiliarEffect", hidden);
-            bool Apply(FamiliarEffectState value) => (bool)apply.Invoke(router, new object[] { value, 100d });
+            bool Apply(FamiliarEffectState value) => (bool)apply.Invoke(router, new object[] { value, 100f });
             var state = new FamiliarEffectState
             {
                 Seat = 1, Scope = new GameplayActionScope { Match = 123, Round = 1, Epoch = body.MovementEpoch }, Phase = 4,
                 HeroId = new FixedString64Bytes(kit.HeroId), AbilityId = new FixedString64Bytes(kit.Ultimate.Id),
-                Position = new Vector3(0, 0, 2), ExpiresAt = 104, Yaw = 90,
+                Position = new Vector3(0, 0, 2), RoundClock = 100, Remaining = 4, Yaw = 90,
             };
             try
             {
@@ -187,7 +193,10 @@ namespace TumbangPreso.PlayTests
                 bad.Scope.Round = 1; bad.Scope.Epoch++; Assert.IsFalse(Apply(bad));
                 bad = state; bad.HeroId = new FixedString64Bytes("other"); Assert.IsFalse(Apply(bad));
                 bad = state; bad.AbilityId = new FixedString64Bytes("other"); Assert.IsFalse(Apply(bad));
-                bad = state; bad.ExpiresAt = 99; Assert.IsFalse(Apply(bad));
+                bad = state; bad.RoundClock = 105; Assert.IsFalse(Apply(bad));
+                GameServices.Round.ApplySnapshot(100, false, 0, true);
+                Assert.IsFalse(Apply(state), "A non-live round must not restore the effect.");
+                GameServices.Round.ApplySnapshot(100, true, 0, true);
                 Assert.IsEmpty(Object.FindObjectsByType<HeroHazards.SeanceVoidComponent>(FindObjectsSortMode.None));
                 kit.AddUltimateCharge(3); float meter = kit.UltimateCharge;
                 Assert.IsTrue(Apply(state)); Assert.IsTrue(pet.IsDevouring);
@@ -222,14 +231,18 @@ namespace TumbangPreso.PlayTests
                 finally { reader.Dispose(); }
             }
             kit.SetRole(true, default);
-            Assert.IsTrue(state.TryResolve(kit, 102, out var aged));
+            Assert.IsTrue(state.TryResolve(kit, 98, out var aged));
             Assert.AreSame(kit.AttackingSkill, aged.PersonalAbility);
             Assert.AreEqual(3, aged.PersonalRemaining); Assert.AreEqual(8, aged.UltimateRemaining);
-            Assert.IsFalse(state.TryResolve(new TimedProbeKit("replacement"), 102, out _));
+            Assert.IsTrue(state.TryResolve(kit, 100, out var held));
+            Assert.AreEqual(5, held.PersonalRemaining); Assert.AreEqual(10, held.UltimateRemaining);
+            Assert.IsTrue(state.TryResolve(kit, 101, out var ahead)); Assert.AreEqual(5, ahead.PersonalRemaining);
+            Assert.IsFalse(state.TryResolve(kit, -1, out _));
+            Assert.IsFalse(state.TryResolve(new TimedProbeKit("replacement"), 98, out _));
             var invalid = state; invalid.PersonalRemaining = float.NaN; Assert.IsFalse(invalid.IsValid);
-            invalid = state; invalid.SentAt = double.PositiveInfinity; Assert.IsFalse(invalid.IsValid);
+            invalid = state; invalid.RoundClock = float.PositiveInfinity; Assert.IsFalse(invalid.IsValid);
             invalid = state; invalid.UltimateId = default; Assert.IsFalse(invalid.IsValid);
-            invalid = state; invalid.PersonalRemaining = 999; Assert.IsFalse(invalid.TryResolve(kit, 102, out _));
+            invalid = state; invalid.PersonalRemaining = 999; Assert.IsFalse(invalid.TryResolve(kit, 98, out _));
 
             bool Reads(byte[] payload)
             {
@@ -264,11 +277,12 @@ namespace TumbangPreso.PlayTests
             var kit = new TimedProbeKit(); typeof(HeroAbilitySystem).GetProperty("Kit").SetValue(system, kit);
             GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
             GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            GameServices.Round.ApplySnapshot(98, true, 0, true);
             var root = new GameObject("Timed recovery receiver"); root.SetActive(false);
             var router = root.AddComponent<MatchRpc>(); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
             const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
             var apply = typeof(MatchRpc).GetMethod("ApplyTimedKitState", hidden);
-            bool Apply(TimedKitState value) => (bool)apply.Invoke(router, new object[] { value, 102d });
+            bool Apply(TimedKitState value) => (bool)apply.Invoke(router, new object[] { value, 98f });
             var state = TimedKitState.Capture(kit, kit.CaptureTimedKit(), 1,
                 new GameplayActionScope { Match = 123, Round = 1, Epoch = body.MovementEpoch }, 1, 100);
             try
@@ -291,6 +305,11 @@ namespace TumbangPreso.PlayTests
                 typeof(MatchRpc).GetMethod("ResetTimedKitTransport", hidden).Invoke(router, null);
                 state.Sequence = 1; Assert.IsTrue(Apply(state));
                 Assert.AreEqual(4, kit.Restorations);
+                GameServices.Round.ApplySnapshot(98, false, 0, true);
+                state.Sequence = 2; Assert.IsFalse(Apply(state));
+                state.PersonalRemaining = 0; state.UltimateRemaining = 0;
+                Assert.IsTrue(Apply(state), "Inactive rounds still accept authoritative empty hydration.");
+                Assert.AreEqual(5, kit.Restorations);
             }
             finally { Object.DestroyImmediate(root); }
         }

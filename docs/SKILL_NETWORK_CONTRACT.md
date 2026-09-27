@@ -26,14 +26,16 @@ Only Paete currently has substantial VFX; other presentation remains provisional
 
 ## Timed Recovery
 
-Protocol84 sends generic ITimedKitReplication state through TimedKitState. The
-bounded234-byte envelope carries GameplayActionScope (match, round, body epoch),
+Generic ITimedKitReplication uses TimedKitState (introduced in protocol84). The
+current protocol86 bounded230-byte envelope carries GameplayActionScope (match, round, body epoch),
 seat, per-seat sequence, stable hero ID and the IDs of both optional owning ability
-channels, remaining clocks, pending flag and double-precision server time. A channel
+channels, remaining clocks, pending flag and the host's remaining round clock. A channel
 swap cannot silently restore a different ability just because the hero name matches.
 CaptureTimedKit supplies these bindings; use the same stable IDs through cosmetic
 reworks. Validate every channel and age its clock against that ability's duration
 before invoking RestoreTimedKit. Empty channels must have no time or pending state.
+Age uses positive round-clock progress, not wall time, so paused introductions and
+slow motion preserve simulation lifetime. Non-live rounds accept only empty state.
 
 The receiver rejects stale scope, wrong bindings and duplicate/older snapshots before
 restoration. A valid ignored restore (already active or consumed) still advances its
@@ -101,7 +103,9 @@ their own target lifetime and reset rules. Client presentation remains separate.
 ## Prepared World Recovery
 
 Protocol85 scopes the current familiar seance's recovery to GameplayActionScope,
-accepted ultimate phase and stable hero/ultimate IDs, with double-precision expiry.
+accepted ultimate phase and stable hero/ultimate IDs. Protocol86 replaces wall-clock
+expiry with the host round clock and remaining simulation life, retaining the same
+178-byte maximum and refusing restoration outside an active round.
 Its178-byte bounded envelope rejects malformed payloads; application waits for the
 matching body/kit/companion without consuming missing state. It does not replace an
 active same-phase effect, revive a completed phase or interrupt a new introduction.
