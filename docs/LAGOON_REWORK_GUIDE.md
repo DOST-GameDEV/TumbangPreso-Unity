@@ -10,7 +10,7 @@ nobody re-litigates it. Status row: `docs/TODO.md` **LAGOON-1**.
 ⚠️⚠️ **CURRENT STATE (2026-09-27, late): TEXTURING AND DRESSING, all in Blender; nothing in
 Unity yet** (the shipped Lagoon scene is untouched). Build: `blender -b --python
 tools/author_lagoon_cove.py -- --preview N` writes `ArtSource/lagoon/lagoon_cove.blend` and
-`Logs/lagoon-blender/cove_<shot>_vN.png` (latest v51). The full step list is § 8; this block is
+`Logs/lagoon-blender/cove_<shot>_vN.png` (latest v55; Unity scene LagoonCove.unity). The full step list is § 8; this block is
 the snapshot to resume from.
 
 **Approved by the owner:** layout (cove v16); rock kit with rock_a + brushed organic edge wear
@@ -83,6 +83,25 @@ with the owner's earlier rejection of cold blue-grey rock shade: show it, do not
   hull paint (white 5 in 9; sea green, sun yellow, brick red, deep green; the first, paler set read white and salmon in the sun) and stripe (red, yellow,
   teal green, maroon, leaf green, white, dark), never a stripe of the hull's own hue family, as
   object-level material slots (Unity: one material per boat renderer).
+- **IN UNITY (2026-09-27, owner: *"now put it in unity, make sure you create a proper water shader
+  for it"*).** Export: `blender -b ArtSource/lagoon/lagoon_cove.blend --python
+  tools/export_lagoon_unity.py` (never saves the .blend) writes 132 .glb prototypes, 152 textures
+  and `Art/LagoonCove/lagoon_cove_layout.json` (1236 placements as Unity-axes matrices, 90
+  materials, overrides, sun, gameplay). Scene: `Editor/MapKit/LagoonCoveSceneBuilder.cs`
+  (`Run`, `RunReview`, `Open`; menu Tumbang Preso/Sample Map) builds
+  `Scenes/Maps/LagoonCove.unity`, UNREGISTERED like Kanto: the shipped `Lagoon.unity`, its builder
+  and `LagoonWater.cs` gameplay are untouched until § 7 is settled. Shaders (built-in pipeline; the
+  URP package is installed but not active): `LagoonGround`, `LagoonRock`, `LagoonPainted`,
+  `LagoonFoliage`, `LagoonNoise.cginc`, and the water, `LagoonCoveWater.shader`: colour and
+  clarity by VERTICAL depth over the seabed (from `_CameraDepthTexture`, asked for by
+  `Runtime/Visual/WaterDepthRequest.cs`), caustics drawn on the seabed with two-octave warp, foam
+  from depth intersection at every shore, rock, pile and hull, gentle swells, sparse sun sparkles,
+  no grab pass (Android). Its defaults are the source of truth: the builder resets the material to
+  them on every build. Water review rounds: v5 fixed pale mint shallows and straight caustic
+  cells; v6 fixed glints blowing out into white sheets facing the sun. Renders:
+  `Logs/lagoon-cove-unity-v6/`. Open points: meshes carry no tangents (the exporter should write
+  them; the shaders fall back), shadows beyond 150 m are off (project setting), the sky is the
+  shared cloud sky (the ASTRAReworks sky is still deferred), 3.47 M placed triangles.
 - **Next:** the props are true to scale and so small beside 3 to 6 m boulders from the reference
   angle; the owner decides whether the reference's density is wanted (more pieces, or bigger
   hero pieces such as boats on racks and net-drying frames). Then the owner's picks
