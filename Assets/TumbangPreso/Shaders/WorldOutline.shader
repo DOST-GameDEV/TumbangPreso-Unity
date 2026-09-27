@@ -768,7 +768,18 @@ Shader "TumbangPreso/WorldOutline"
                 // groups off one at a time: the LRT pillars alone. So a pixel that near gets no
                 // occlusion, and a probe that lands on one is not an occluder.
                 if(-p.z<_WorldAOParams.w)return 1;
-                float radius=_WorldAOParams.y,bias=_WorldAOParams.z;
+                float radius=_WorldAOParams.y;
+                // ⚠️⚠️ THE BIAS GROWS WITH DISTANCE, AND OPEN FLAT GROUND MUST READ CLEAN (owner,
+                // 2026-09-27, on Kanto's lawn and court: "still noticeable ... why do we have this ao
+                // ga[p]"). The near guard's edge only shows because this pass darkened OPEN FLAT
+                // GROUND, which has nothing near it to occlude it. Two measurement errors did that:
+                // a fixed 3 cm bias against a depth whose steps coarsen with distance, and probes
+                // leaving the surface as low as 8 degrees, where the depth-normals texture's coarse
+                // normal (a few degrees of error) tips a probe under a flat floor. The bias now adds
+                // 0.4 per cent of the eye distance, and the lowest probe leaves at 17 degrees (see
+                // the elevation below). Real creases still read: a wall's foot or a kerb blocks
+                // directions far steeper than 17 degrees.
+                float bias=_WorldAOParams.z+(-p.z)*.004;
                 // ⚠️⚠️ A 4x4 TILE OF SIXTEEN ROTATIONS, NOT FREE NOISE, BECAUSE THE OWNER SAW THE
                 // NOISE (2026-09-25: "theres some noising artifacts"). Interleaved gradient noise
                 // never repeats inside a small tile, so the 3x3 blur averaged it only partly and a
@@ -787,7 +798,7 @@ Shader "TumbangPreso/WorldOutline"
                 // kernel sends most samples straight out along the normal, where they almost
                 // never reach the face meeting this one, so a wall's foot or a roof's inner
                 // corner stayed nearly clean. Minecraft darkens a face by the blocks BESIDE it.
-                // So the sixteen samples here leave the surface at 8 to 40 degrees, in four
+                // So the sixteen samples here leave the surface at 17 to 40 degrees, in four
                 // rings out to the radius, and a hit counts more the nearer it is. A 90 degree
                 // inside corner blocks about half the directions, and that half is mapped to full
                 // occlusion, ramping to clean by about one radius from the edge.
@@ -795,7 +806,7 @@ Shader "TumbangPreso/WorldOutline"
                 [unroll] for(int k=0;k<16;k++)
                 {
                     float phi=k*2.3999632+angle;
-                    float elevation=lerp(.14,.7,frac(k*.618034+noise));
+                    float elevation=lerp(.30,.7,frac(k*.618034+noise));
                     float ring=(fmod(k,4)+.5)/4;
                     float reach=radius*lerp(.12,1.0,ring);
                     float3 dir=(t*cos(phi)+b*sin(phi))*cos(elevation)+n*sin(elevation);
