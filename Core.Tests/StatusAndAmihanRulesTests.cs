@@ -40,7 +40,7 @@ namespace TumbangPreso.Core.Tests
             Assert.False(rooted.BlocksInteraction, "Rooted players can still throw and use skills (owner).");
             Assert.True(rooted.Removable, "A hold or a tag ends Rooted.");
             Assert.Equal(PaeteRules.SentryLifeSeconds, rooted.Seconds);
-            Assert.Equal(9, StatusRules.All.Count);
+            Assert.Equal(11, StatusRules.All.Count);
         }
 
         [Fact]

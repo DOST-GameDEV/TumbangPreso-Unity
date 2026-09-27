@@ -76,6 +76,7 @@ namespace TumbangPreso.EditorTools
             model.transform.localScale = Vector3.one * 2.38f;
             model.transform.rotation = Quaternion.Euler(0f, CharacterVisual.PersonModelYaw + yaw, 0f);
             ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, palette);
+            if (id == "doll") PhaisterDollArt.ApplyGlow(model);
             idle?.SampleAnimation(model, 0f);
             var renderers = model.GetComponentsInChildren<Renderer>();
             float floor = renderers.Min(r => r.bounds.min.y);

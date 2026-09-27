@@ -29,6 +29,9 @@ supersedes earlier NOT RUN notes only for those cases. Actual peers,player perfo
 and unsampled native UI flows remain OPEN; no whole-queue completion claim.
 Incoming Phaister doll v5 assets/source/review tooling are preserved unchanged;
 the Editor consumer compiles, with no runtime change or repeat of the7 native cases.
+Subsequent v6/v7 doll/glow and Voodoo Core additions are preserved; five assemblies
+compile and6 new Core cases pass. DRAINED/HEXED gameplay/replication and doll runtime
+acceptance remain OPEN; these tests do not qualify the unfinished new kit.
 
 **NET-SKILLS-1, OPEN:** host authority,stable ability identity,explicit delivery/
 command intent,independent receipts,bounded delayed delivery,phase-aware prepared

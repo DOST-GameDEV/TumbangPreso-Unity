@@ -102,6 +102,14 @@ the actual kit identity, not a cosmetic body's roster index.
 
 ## Compatibility And Checks
 
+The incoming Voodoo Core definitions add DRAINED/HEXED, but definitions alone do
+not implement their body state or replication. When the runtime integration lands,
+drive Stamina.RecoveryBlocked from authoritative/received Drained state on both
+locally simulated bodies and the host's remote-body resource path. Preserve the
+owner's no-added-fatigue depletion rule. Hexed's screen effect remains victim-local.
+New status clocks and marked/doll entity identity still need explicit recovery;
+do not claim the new kit ready from enum/table additions or asset import.
+
 Persistent status pictures belong to a body-owned presenter reading replicated
 status,not exclusively inside a host-only victim loop. StatusBodyMarks and
 PhaisterStatusPresenter are current examples. Joining peers need no replayed hit.

@@ -1,7 +1,7 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`0a28bf13` plus incoming `d42f6e7e`; doll asset integration follows those parents.
+`d178294c` plus incoming `b8c698f0`; Voodoo Core/refined-asset integration follows those parents.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
@@ -15,8 +15,10 @@ root/freeze/plant/hold/victim-feedback/loading-readiness/motion-data paths only.
 Protocol remains72. Actual peers,player performance and other native UI checks
 remain OPEN; no new authored kit or map work is included.
 [Evidence and scope](reports/stability-2026-09-27/input-integration.md).
-Phaister's incoming doll model,v5 source and review tool are also preserved unchanged.
-The Editor consumer compiles; no runtime change or native-case rerun was needed.
+Phaister's incoming doll model,v6/v7 source/glow and Core DRAINED/HEXED rules are
+also preserved unchanged. Core plus four Unity assemblies compile; the6 new Core
+Voodoo cases pass. The7 native-case record above precedes these Core additions;
+new status gameplay/replication and doll runtime acceptance remain OPEN.
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -83,8 +85,9 @@ state/loading cases with a6,767,398,912-byte minimum free-space sample. This est
 that focused native work is possible now, not that a player build has enough space.
 
 The native candidate froze186 source/dependency inputs,19 incoming paths over the
-previous layer; no frozen-input drift during execution. The asset-only follow-up
-adds8 paths,194 total, and compiles its new Editor consumer. Four native-candidate assemblies
+previous layer; no frozen-input drift during execution. Subsequent preserved doll
+and Core layers bring the frozen set to202 paths. Five assemblies compile and6 new
+Core cases pass for the latest layer. Four native-candidate assemblies
 also compile directly. [Native receipt](reports/stability-2026-09-27/checks/input-integration-native.json),
 [case XML](reports/stability-2026-09-27/checks/input-integration-native.xml) and
 [exact scope](reports/stability-2026-09-27/input-integration.md). Earlier individual

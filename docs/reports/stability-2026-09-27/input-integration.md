@@ -59,3 +59,12 @@ metadata GUIDs are valid. The new Editor consumer compiles against the unchanged
 merged Runtime/Core. No gameplay runtime changed, so the7 native cases above were
 not rerun and no new art approval is claimed. The frozen input layer now contains194
 paths including these additions. [Editor-only receipt](checks/doll-integration-compile.json).
+
+Incoming `dfb2870b` and `b8c698f0` then refined the doll to v6/v7 with its glow
+shader/helper and added the new Voodoo Core rules, DRAINED/HEXED definitions and
+Stamina.Deplete/RecoveryBlocked. All14 incoming paths are preserved unchanged.
+Core plus the four Unity assemblies compile; only the6 new VoodooKitRulesTests
+were run,6/6 passed with fresh TRX inspection. [Core integration receipt](checks/voodoo-core-integration.json).
+The frozen layer is now202 paths. The prior7 native cases were not rerun; their
+record belongs to the earlier candidate. New status gameplay,replication and the
+new doll's runtime/visual acceptance are not established by these Core tests.
