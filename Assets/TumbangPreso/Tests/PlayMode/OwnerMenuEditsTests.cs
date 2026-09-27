@@ -55,6 +55,32 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(30000)]
+        public IEnumerator PortraitWarmupUsesOneCacheAcrossHubHudAndModeCards()
+        {
+            int objects = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length;
+            float progress = 0;
+            int completed = 0;
+            yield return OwnerPortraitArt.Warmup(done =>
+            {
+                Assert.Greater(done, progress);
+                progress = done; completed++;
+            });
+            int rosterCount = TumbangPreso.Core.Roster.People.Concat(TumbangPreso.Core.Roster.Cans)
+                .Concat(TumbangPreso.Core.Roster.Slippers).Select(x => x.Id).Distinct().Count();
+            Assert.AreEqual(rosterCount + 6, completed);
+            Assert.AreEqual(1f, progress);
+            var portrait = OwnerPortraitArt.Get("UI/portraits/dante");
+            Assert.IsNotNull(portrait);
+            Assert.AreSame(portrait, UI.Hub.HubKit.Portrait("dante"));
+            Assert.AreSame(portrait, TumpUiFactory.Sprite("UI/portraits/dante"));
+            var ranked = OwnerPortraitArt.Get("UI/mode-cards/RankedCard");
+            Assert.IsNotNull(ranked);
+            Assert.AreSame(ranked, TumpUiFactory.Sprite("UI/mode-cards/RankedCard"));
+            Assert.AreEqual(objects, Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length,
+                "Asset preparation must not build UI or enter a lobby.");
+        }
+
+        [UnityTest, Timeout(30000)]
         public IEnumerator HeroPropWarmupYieldsRetainsPrefabsAndDoesNotSpawnEffects()
         {
             int sceneObjects = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length;

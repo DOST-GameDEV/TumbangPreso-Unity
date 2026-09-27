@@ -190,7 +190,7 @@ namespace TumbangPreso.UI.Hub
             // fitted to COVER the card's own art region (`CLAUDE.md` § 6.2c: fitted to the region it
             // is seen in), and the fill, the chalk, the mark and the heads are skipped under it.
             // A card without a poster keeps the drawn layout below.
-            var poster = Resources.Load<Sprite>("UI/mode-cards/" + name);
+            var poster = OwnerPortraitArt.Get("UI/mode-cards/" + name);
             if (poster != null)
             {
                 var picture = HubKit.Picture(art, "Poster", poster, false);

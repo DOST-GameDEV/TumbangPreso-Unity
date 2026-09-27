@@ -1,5 +1,23 @@
 # General loading and first-use audit, 2026-09-27
 
+## Shared menu portrait preload
+
+Base `210cd801`. The avatar/title preload did not cover the separate hub portraits
+and mode-card resource paths. HubKit loaded imported portraits on each lookup and
+kept a second fallback-sprite cache; other native screens used OwnerPortraitArt.
+Boot now loads each live people/can/slipper portrait and the six current mode cards
+with Resources.LoadAsync, yielding per asset and advancing progress on completion.
+Roster additions join without maintaining a second character list. Existing art,
+fallbacks and layout remain; the shared cache retains asset references through
+scene activation. HubKit,TumpUiFactory and the two mode-card callers use that cache.
+
+All four assemblies compile on98 frozen inputs (7changed). The first compiler
+preflight stopped at5,067,190,272freebytes, below5GiB, before starting; one bounded
+retry passed after space recovered. No Unity/native launch or repeated film/suite.
+[Compiler receipt](checks/menu-portraits-compile.json). The new native shared-cache,
+progress and no-spawn check is pending. There is no measured first-click/hitch-free
+claim, no decoder preparation and no additional UI or lobby instantiation here.
+
 ## Menu activation behind loading
 
 Base `01346a80`. Splash previously destroyed its loading canvas before releasing

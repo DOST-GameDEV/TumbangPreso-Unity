@@ -373,7 +373,7 @@ namespace TumbangPreso.UI.Hub
             _modeShape.Fill = choice == 0 ? HubStyle.DeepRed : HubStyle.Night;
             _modeShape.Redraw();
 
-            var poster = Resources.Load<Sprite>("UI/mode-cards/" + (choice == 0 ? "RankedCard" : choice == 1 ? "ClassicChoice" : "HeroStrikeChoice"));
+            var poster = OwnerPortraitArt.Get("UI/mode-cards/" + (choice == 0 ? "RankedCard" : choice == 1 ? "ClassicChoice" : "HeroStrikeChoice"));
             _modePoster.sprite = poster;
             _modePoster.color = poster != null ? Color.white : new Color(0, 0, 0, 0);
             if (poster != null) _modePosterFit.aspectRatio = poster.rect.width / poster.rect.height;

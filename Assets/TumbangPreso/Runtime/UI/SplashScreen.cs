@@ -508,6 +508,8 @@ namespace TumbangPreso.UI
             SetLoadingStage("loading menu artwork", 0.48f);
             yield return OwnerMenuArt.Warmup();
             yield return Avatars.Warmup();
+            yield return OwnerPortraitArt.Warmup(done =>
+                SetLoadingStage("loading menu artwork", Mathf.Lerp(.48f, .52f, done)));
 
             // 6. Every procedurally baked UI sprite.
             //

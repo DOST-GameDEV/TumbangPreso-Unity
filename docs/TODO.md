@@ -69,6 +69,9 @@ helper checks pass; native row interaction and live discovery remain OPEN.
 
 **Loading slice, 2026-09-27:** progressive shader completion, staged menu-art/avatar
 cache preparation and duplicate audio-sweep removal are implemented (`c9f55410`).
+Roster-derived portraits and six current mode cards now load asynchronously during
+boot and share a retained cache across hub/HUD helpers. Four assemblies compile;
+the new native cache/no-spawn case and actual first-use timings remain OPEN.
 Boot now retains loading through menu activation,home/login construction and initial
 layout; hidden input and welcome/music wait for reveal. Four assemblies compile;
 the new native handoff/cleanup case and actual first-use timings remain OPEN.

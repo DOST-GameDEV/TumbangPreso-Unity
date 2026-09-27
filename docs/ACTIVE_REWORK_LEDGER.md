@@ -1,5 +1,17 @@
 # Active TUMP rework ledger
 
+## Shared menu portrait preload, 2026-09-27
+
+Boot now asynchronously loads the live roster's people,can and slipper portraits
+plus the six current mode cards, yielding per asset and advancing on completion.
+Hub,HUD and older native helpers share the existing retained portrait cache instead
+of independent first-click lookups/fallback sprite creation. New roster entries are
+included automatically; no screen,lobby or decoder is created by this warmup.
+Four assemblies compile on the98-file candidate (7changed). Initial compiler
+preflight stopped below5GiB; one retry passed after headroom recovered. Native
+retention/no-spawn check and measured first-use timings remain OPEN.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#shared-menu-portrait-preload).
+
 ## Boot menu activation barrier, 2026-09-27
 
 The splash now retains its existing artwork/canvas through actual MainMenu
