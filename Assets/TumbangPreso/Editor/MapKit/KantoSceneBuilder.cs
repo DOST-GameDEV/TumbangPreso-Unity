@@ -17,9 +17,10 @@ namespace TumbangPreso.EditorTools.MapKit
     /// (tools/author_kanto_city.py) and a layout file that script writes; nothing here makes
     /// geometry except the gameplay markers.
     ///
-    /// ⚠️⚠️ IT IS DELIBERATELY NOT REGISTERED. It is not in `SceneFlow.Maps`, `GameLaunch`,
-    /// `MapGeometryCheck.Gated` or the build settings, so nothing that walks the shipped map list
-    /// sees it and no test changes. Open `Scenes/Maps/Kanto.unity` and press Play to walk it.
+    /// ⚠️⚠️ REGISTERED SINCE 2026-09-27 (owner: "put kanto and lagoon into the selectable map
+    /// list"): it is in `SceneFlow.MapRegistry`, `GameLaunch.Maps` and the build settings, and
+    /// `MapGeometryCheck` reports on it (Informational, not yet Gated, until its first findings
+    /// are reviewed).
     ///
     /// ⚠️ THE PLAY AREA IS BAYAN PLAZA'S: walls at +/-13, a 14 x 14 m box, measured off the
     /// shipped scenes' Bounds colliders. The park IS the play area; the city is backdrop.

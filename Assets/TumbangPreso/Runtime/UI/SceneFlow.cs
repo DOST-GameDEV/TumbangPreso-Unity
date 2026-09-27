@@ -51,7 +51,15 @@ namespace TumbangPreso.UI
         public const string BayanPlaza = "BayanPlaza";
         public const string IlalimNgTulay = "IlalimNgTulay";
         public const string SaBubong = "SaBubong";
+        /// <summary>⚠️ VAULTED 2026-09-27 (owner: "vault the old lagoon"). The first Lagoon Court,
+        /// replaced in the map list by <see cref="LagoonCove"/>. Its scene now lives at
+        /// Scenes/Vault/Lagoon.unity, out of the registry and the build; the name stays because its
+        /// own builders, water and deck code still key on it.</summary>
         public const string Lagoon = "Lagoon";
+        /// <summary>The reworked Lagoon Court, built in Blender (docs/LAGOON_REWORK_GUIDE.md).</summary>
+        public const string LagoonCove = "LagoonCove";
+        /// <summary>The city park block, built in Blender (docs/KANTO_DESIGN_GUIDE.md).</summary>
+        public const string Kanto = "Kanto";
 
         /// <summary>
         /// One map's registry row, from `game_launch.gd`'s `MAPS`.
@@ -147,11 +155,18 @@ namespace TumbangPreso.UI
                          "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", 35.0f, 22.0f, 13.5f),
             new MapEntry(SaBubong,"SA BUBONG",
                          "Condo roofdeck. Watch the edge; lost slippers return after 10s.",35,30,22),
-            new MapEntry(Lagoon,"LAGOON COURT",
-                         "A sheltered village court. Broad bridges, boats and water steps.",25,38,28),
+            // ⚠️ THE LAGOON COURT IS THE REWORKED COVE NOW, and Kanto joins the list (owner,
+            // 2026-09-27: "put kanto and lagoon into the selectable map list. vault the old
+            // lagoon"). The cove keeps the LAGOON COURT name; the old scene is vaulted (see Lagoon).
+            // Preview shots: the cove from the sea side over the court (its review "court_high"
+            // angle), Kanto from over the park's corner so the facades and streets frame the court.
+            new MapEntry(LagoonCove,"LAGOON COURT",
+                         "A cove court in the rocks. Stilt village, reefs and a sunset sea.",0,40,24),
+            new MapEntry(Kanto,"KANTO",
+                         "City park block. Jeepney stop, traffic lights, busy streets.",45,24,16),
         };
 
-        public static readonly string[] Maps = { Eskinita, BayanPlaza, IlalimNgTulay, SaBubong, Lagoon };
+        public static readonly string[] Maps = { Eskinita, BayanPlaza, IlalimNgTulay, SaBubong, LagoonCove, Kanto };
 
         /// <summary>
         /// True while an ARENA is the active scene rather than a menu.

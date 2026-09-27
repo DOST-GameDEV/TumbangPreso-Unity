@@ -126,6 +126,7 @@ namespace TumbangPreso.PlayTests
             finally{Time.timeScale=1;outline.enabled=true;for(int j=0;j<lights.Length;j++)if(lights[j]!=null)lights[j].shadows=shadows[j];}
         }
 
+        [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7.")]
         [UnityTest, Timeout(120000)]
         public IEnumerator LagoonDeckSeparatesDetailOutlineAndShadows()
         {

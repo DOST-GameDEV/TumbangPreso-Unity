@@ -44,7 +44,7 @@ namespace TumbangPreso.EditorTools.MapKit
             string dir = "Logs/map-lineup-v" + v;
             Directory.CreateDirectory(dir);
             var maps = GameLaunch.Maps.Select(m => (m.Id, m.Scene)).ToList();
-            maps.Add(("kanto", "Kanto"));
+            if (!maps.Any(m => m.Scene == "Kanto")) maps.Add(("kanto", "Kanto"));   // registered since 2026-09-27
             foreach (var (id, scene) in maps)
             {
                 string path = AssetDatabase.FindAssets("t:Scene " + scene).Select(AssetDatabase.GUIDToAssetPath)

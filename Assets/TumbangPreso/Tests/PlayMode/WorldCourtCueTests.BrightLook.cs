@@ -19,7 +19,7 @@ namespace TumbangPreso.PlayTests
         // TUMP_WORLD_CUE_OUT, so a baseline checkout and this branch write different folders.
         [UnityTest] public IEnumerator BrightLookSameCameraCapturesOnAllFiveMaps()
         {
-            foreach(string map in new[]{SceneFlow.BayanPlaza,SceneFlow.Eskinita,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong,SceneFlow.Lagoon})
+            foreach(string map in new[]{SceneFlow.BayanPlaza,SceneFlow.Eskinita,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong,SceneFlow.LagoonCove,SceneFlow.Kanto})
             {
                 yield return Load(map,GameMode.HeroStrike);var look=WorldLookPresentation.Current;Assert.IsNotNull(look,map);
                 foreach(var actor in GameServices.Round.Players)

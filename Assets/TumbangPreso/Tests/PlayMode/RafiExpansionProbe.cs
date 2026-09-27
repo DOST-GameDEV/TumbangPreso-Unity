@@ -120,7 +120,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(caster.AbilitySystem.IsImmuneToTags);
         }
 
-        [UnityTest,Timeout(120000)] public IEnumerator InnerAndOuterStairsLetBothModesLeaveTheWater()
+        [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7."),UnityTest,Timeout(120000)] public IEnumerator InnerAndOuterStairsLetBothModesLeaveTheWater()
         {
             foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})
             {

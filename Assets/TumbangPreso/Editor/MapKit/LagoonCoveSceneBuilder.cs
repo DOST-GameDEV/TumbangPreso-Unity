@@ -19,10 +19,10 @@ namespace TumbangPreso.EditorTools.MapKit
     /// from one .glb per PROTOTYPE and a layout file the export writes; nothing here makes
     /// geometry except the gameplay markers and the water plane. Mirrors KantoSceneBuilder.
     ///
-    /// ⚠️⚠️ IT IS DELIBERATELY NOT REGISTERED. It is not in `SceneFlow.Maps`, `GameLaunch`,
-    /// `MapGeometryCheck.Gated` or the build settings, so nothing that walks the shipped map list
-    /// sees it and no test changes. The shipped `Lagoon.unity`, its builders and its water are a
-    /// different map and are not touched. Open `Scenes/Maps/LagoonCove.unity` and press Play.
+    /// ⚠️⚠️ REGISTERED SINCE 2026-09-27 (owner: "put kanto and lagoon into the selectable map list.
+    /// vault the old lagoon"): it is the LAGOON COURT entry in `SceneFlow.MapRegistry` and
+    /// `GameLaunch.Maps` and in the build settings. The first Lagoon is vaulted at
+    /// Scenes/Vault/Lagoon.unity with its builders, water and deck code untouched.
     ///
     /// ⚠️ COORDINATES. Blender (x, y, z) lands in Unity at (-x, z, -y). Each placement carries its
     /// full matrix already in Unity axes (C · M · Cᵀ, C = [[-1,0,0],[0,0,1],[0,-1,0]]), so the

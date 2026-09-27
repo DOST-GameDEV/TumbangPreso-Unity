@@ -1481,6 +1481,23 @@ Supersedes REFINE-2.6 for this map.
   EditMode suite and the PlayMode gate; decide with the owner whether Lagoon Cove replaces the
   shipped `Lagoon.unity` or sits beside it.
 
+  REGISTERED 2026-09-27 (owner: "lets push it to the astra reworks branch. resolve any conflicts
+  and put kanto and lagoon into the selectable map list. vault the old lagoon"): the Lagoon Cove is
+  the LAGOON COURT entry (SceneFlow.LagoonCove; GameLaunch keeps the id "lagoon" so saved choices
+  follow it) and Kanto is a new entry, both in the build settings; MenuSceneBuilder now lists the
+  maps from SceneFlow.Maps. MapGeometryCheck reports both as Informational (not Gated until their
+  first findings are reviewed). NOT DONE until the EditMode suite and the PlayMode gate are green
+  on it; bots and a full played match on each still to verify.
+- [ ] LAGOON-1.7 THE FIRST LAGOON COURT IS VAULTED (owner, 2026-09-27: "vault the old lagoon").
+  Its scene moved to Scenes/Vault/Lagoon.unity, out of the registry and the build; LagoonBuilder
+  writes there and no longer adds itself to the build. Its builders, LagoonWater (swimming and the
+  bridge climb), LagoonDeckPresentation and SceneFlow.Lagoon are kept. Twelve PlayMode tests about
+  that map alone are [Ignore]d with this entry as the reason (MapGraphicsReviewProbe's seven Lagoon
+  finish reviews, WorldCourtCueTests.LagoonDeck's two, MapExperienceProbe.LagoonDeck..., AmbientLife
+  LagoonBirds..., RafiExpansionProbe stairs, LagoonRecoveryProbe's platform swim). OPEN: decide with
+  the owner which of those features the cove should gain (the cove's water has no swim system;
+  UNVERIFIED: what a player wading off the sea side stands on, and whether a slipper thrown into
+  the sea is recovered), then retarget or delete the ignored tests.
 ### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
 
 **Renamed 2026-09-26 (BUGS-0926.5):** Bright is now **Standard** (slot 1, the default) and Classic is

@@ -481,6 +481,7 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7.")]
         [UnityTest,Timeout(300000)]
         public IEnumerator LagoonBirdsFlyGlideAndPause()
         {

@@ -16,7 +16,10 @@ namespace TumbangPreso.EditorTools.MapKit
     // Every repeatable authoring operation is scoped to this new scene/folder.
     public static partial class LagoonBuilder
     {
-        public const string ScenePath = "Assets/TumbangPreso/Scenes/Maps/Lagoon.unity";
+        // ⚠️ VAULTED 2026-09-27 (owner: "vault the old lagoon"): the first Lagoon Court lives in
+        // Scenes/Vault, out of the map registry and the build. Rebuilding it writes there and
+        // no longer adds it to the build settings.
+        public const string ScenePath = "Assets/TumbangPreso/Scenes/Vault/Lagoon.unity";
         private const string Folder = "Assets/TumbangPreso/Art/Lagoon";
         private static Material _wood, _fresh, _dark, _wet, _rope, _chalk, _steel, _glass;
         public static void Run() { Build(); EditorApplication.Exit(0); }
@@ -190,8 +193,6 @@ namespace TumbangPreso.EditorTools.MapKit
             LagoonBoatFinishAuthor.FinishLoadedScene(report);
             LagoonCoastFinishAuthor.FinishLoadedScene(report);
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene,ScenePath);AssetDatabase.SaveAssets();
-            if(!EditorBuildSettings.scenes.Any(s=>s.path==ScenePath))
-                EditorBuildSettings.scenes=EditorBuildSettings.scenes.Concat(new[]{new EditorBuildSettingsScene(ScenePath,true)}).ToArray();
             string output=Environment.GetEnvironmentVariable("TUMP_LAGOON_REVIEW")??"Logs/lagoon-authoring-v1";Directory.CreateDirectory(output);File.WriteAllText(output+"/surfaces.txt",report.ToString());
             Debug.Log("[Lagoon] Generated supported court, loop, eight connected homes, ten detached homes, six watercraft and water access. Native art/route review remains required.");
         }

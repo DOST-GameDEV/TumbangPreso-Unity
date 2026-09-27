@@ -31,7 +31,7 @@ namespace TumbangPreso.PlayTests
             var preview=root.AddComponent<MapPreviewSurface>();
             string shown=null;preview.MapShown+=map=>shown=map;
             var report=new System.Text.StringBuilder("map,floor,pivot_y,fog_end,sun_intensity,bloom_live,target_format\n");
-            var maps=new[]{SceneFlow.BayanPlaza,SceneFlow.Eskinita,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong,SceneFlow.Lagoon,SceneFlow.BayanPlaza};
+            var maps=new[]{SceneFlow.BayanPlaza,SceneFlow.Eskinita,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong,SceneFlow.LagoonCove,SceneFlow.Kanto,SceneFlow.BayanPlaza};
             var authored=new System.Collections.Generic.Dictionary<string,(Light sun,Color colour,float intensity,Vector3 forward)>();
             string previous=null;
             Scene handbackScene=default,priorActive=default;
