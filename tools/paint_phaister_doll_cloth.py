@@ -225,7 +225,9 @@ def sack_art(style, aw, ah, tile, t, specks, seed):
     if style == "felt":
         return tile_art(aw, ah, FELT_4, tones(_shade(mid, 1.05), mid, _shade(mid, 0.95), _shade(mid, 0.9)))
     if style == "chunky":
-        return tile_art(aw, ah, CHUNKY_8, tones(_shade(mid, 1.08), mid, _shade(mid, 0.9), _shade(mid, 0.84)))
+        # ⚠️ The contrast is set for the match street, not the review: the world grade flattened 1.08 / 0.90 to nothing (the
+        # owner, on the first film: *"why dont i see his texture at all here"*).
+        return tile_art(aw, ah, CHUNKY_8, tones(_shade(mid, 1.18), mid, _shade(mid, 0.80), _shade(mid, 0.72)))
     art = np.zeros((ah, aw, 3), np.uint8)
     art[:] = t["M"]
     rng = np.random.default_rng(seed)
@@ -253,16 +255,16 @@ def paint(style="pixel"):
         img[y0:y + h + PAD, x0:x + w + PAD] = padded[y0 - (y - PAD):, x0 - (x - PAD):][:y + h + PAD - y0, :x + w + PAD - x0]
 
     aw, ah, _, _ = _art_size("burlap")
-    put("burlap", sack_art(style, aw, ah, WEAVE_6, tones("c89a5c", "b88b52", "a67d49", "6e4c2a"),
+    put("burlap", sack_art(style, aw, ah, WEAVE_6, tones("c89a5c", "a48a64", "a67d49", "6e4c2a"),
                            ((5, 7, "M"), (22, 13, "L"), (40, 31, "S"), (61, 44, "M"), (13, 58, "L"), (70, 70, "S")), 11))
     aw, ah, _, _ = _art_size("burlap-b")
-    put("burlap-b", sack_art(style, aw, ah, WEAVE_6, tones("bd9660", "ad8856", "9c7a4c", "664a2e"),
+    put("burlap-b", sack_art(style, aw, ah, WEAVE_6, tones("bd9660", "9c8462", "9c7a4c", "664a2e"),
                              ((9, 4, "S"), (33, 26, "L"), (51, 11, "M"), (27, 63, "S"), (74, 49, "L")), 23))
     aw, ah, _, _ = _art_size("head")
-    put("head", sack_art(style, aw, ah, WEAVE_6, tones("d6ab70", "c69c64", "b48c58", "7c5a36"),
+    put("head", sack_art(style, aw, ah, WEAVE_6, tones("d6ab70", "b59a70", "b48c58", "7c5a36"),
                          ((12, 20, "M"), (47, 9, "L"), (66, 58, "S"), (30, 72, "M")), 37))
     aw, ah, _, _ = _art_size("mantle")
-    put("mantle", sack_art(style, aw, ah, WEAVE_8, tones("b98a52", "a67a48", "946c3e", "5a3e22"),
+    put("mantle", sack_art(style, aw, ah, WEAVE_8, tones("b98a52", "927654", "946c3e", "5a3e22"),
                            ((6, 12, "S"), (29, 40, "L"), (55, 18, "M"), (71, 66, "S")), 41))
     aw, ah, _, _ = _art_size("wrap")
     put("wrap", tile_art(aw, ah, TWILL_4, tones("7a3cb4", "5f2a96", "4a1e78", "2e1050")))
@@ -274,11 +276,11 @@ def paint(style="pixel"):
     aw, ah, _, _ = _art_size("straw")
     put("straw", straw_art(aw, ah, "LLMDMMLSDLMMD", tones("ecd494", "d4b670", "b8944e", "7a5c2c")))
     aw, ah, _, _ = _art_size("mitten")
-    put("mitten", sack_art(style, aw, ah, WEAVE_6, tones("b88c56", "a87e4c", "967044", "5e4228"), ((4, 9, "L"), (14, 3, "S")), 73))
+    put("mitten", sack_art(style, aw, ah, WEAVE_6, tones("b88c56", "988060", "967044", "5e4228"), ((4, 9, "L"), (14, 3, "S")), 73))
     aw, ah, _, _ = _art_size("sole")
-    put("sole", sack_art(style, aw, ah, WEAVE_6, tones("8e6a44", "80603c", "725434", "46321e"), (), 79))
+    put("sole", sack_art(style, aw, ah, WEAVE_6, tones("8e6a44", "76604a", "725434", "46321e"), (), 79))
     aw, ah, _, _ = _art_size("hem")
-    put("hem", sack_art(style, aw, ah, WEAVE_6, tones("b08450", "a07748", "8e6a40", "563c22"), ((7, 5, "S"), (30, 26, "L")), 83))
+    put("hem", sack_art(style, aw, ah, WEAVE_6, tones("b08450", "8e7454", "8e6a40", "563c22"), ((7, 5, "S"), (30, 26, "L")), 83))
     aw, ah, _, _ = _art_size("pouch")
     put("pouch", tile_art(aw, ah, TWILL_4, tones("4a3e58", "3a3046", "2c2436", "1c1624")))
     aw, ah, _, _ = _art_size("bundle")

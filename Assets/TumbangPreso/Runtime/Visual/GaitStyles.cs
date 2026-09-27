@@ -37,6 +37,7 @@ namespace TumbangPreso.Visual
                 case "team-rafi": return Rafi;
                 case "team-amihan": return Amihan;
                 case "team-paete": return Paete;
+                case "phaister-doll": return PhaisterDoll;
                 case "team-custom": case "team-custom-base": return Custom;
                 case "team-bayan": case "character-male-f": return Bayan;
                 case "character-female-f": return Maring;
@@ -371,6 +372,87 @@ namespace TumbangPreso.Visual
                 p.HeadRoll += 2.5f * Wave(m.Time, .45f);
             },
         };
+
+        /// <summary>
+        /// PHAISTER'S VOODOO DOLL. Her ultimate's body, not a person (HERO-10 v3, `plan.md` 9.9). Owner, 2026-09-27: *"make the walking
+        /// animation of this voodooo look like its fucking dead or js getting dragged around by magic idk"*, *"js dont make it human
+        /// like"*, *"big fat voodoo doll that's kinda sllow"*, and on the first film's run: *"i daont like how he runs make it look like
+        /// he isnt alive or he's dragging himself"*.
+        ///
+        /// Nothing in it is alive, so nothing in it keeps a rhythm the way a runner does. THE WALK: it hangs from the glowing string
+        /// tied to its crown and her magic hauls it along, the body limp and slumped under the string, swaying from side to side late
+        /// like a sack on a rope, the head lolled over and rolling on its own, the heavy mitten arms dangling, the feet barely leaving
+        /// the court and sliding far more than they step. THE RUN: it DRAGS ITSELF. Its left leg does all the work, one heavy lurch at
+        /// a time; its right leg is dead, trailing stiff behind with its toe scraping, only jerked along by the lurch. The body tips
+        /// into every lurch and sags back after it, the arms hang straight down under the lean like weights and swing late, and the
+        /// head hangs, rolling. The magic does the rest: it slides much further than it steps (`Glide`), which is the look (the
+        /// cast's 1.7 cap is for bodies that walk; this one is hauled, and it is not a roster body, so it is not under that test).
+        /// Every few seconds the string YANKS it: up, upright, head snapped back, arms flicked out, feet off the ground, then it sags.
+        /// </summary>
+        public static readonly GaitStyle PhaisterDoll = new GaitStyle
+        {
+            Name = "phaister-doll",
+            Floats = true,
+            Walk = new Gait
+            {
+                LegForward = 16, LegBack = 20, LegSnap = .8f, Stance = 4,
+                ArmSpread = 8, ArmForward = 5, ArmBack = 7, ArmCarry = 3, ArmSnap = .7f, ArmLag = .12f,
+                Lean = 7, Roll = 7, RollDelay = .22f, Twist = 3,
+                HeadPitch = 9, HeadTilt = 13, HeadSteady = 0, Sway = .06f, Glide = 4.2f,
+            },
+            Run = new Gait
+            {
+                LegForward = 22, LegBack = 12, LegSnap = .45f, Stance = 5,
+                ArmSpread = 9, ArmForward = 5, ArmBack = 5, ArmCarry = 17, ArmSnap = .7f, ArmLag = .16f,
+                Lean = 17, LeanPulse = 7, Roll = 4, RollDelay = .1f, Twist = 4,
+                HeadPitch = 17, HeadTilt = 9, HeadSteady = 0, Stomp = .05f, Sway = .07f, Glide = 5.5f,
+            },
+            Quirk = (ref GaitPose p, in GaitMoment m) =>
+            {
+                float run = m.Run;
+                float step = Mathf.Sin(2f * Mathf.PI * m.Phase);
+                // THE DEAD LEG (running): the right leg hangs back behind the body, stiff, barely moving, only jerked along as the
+                // live leg plants. Walking, both legs shuffle.
+                p.LegRight = Mathf.Lerp(p.LegRight, -24f + 3f * step, run);
+                p.SplayRight = Mathf.Lerp(p.SplayRight, 9f, run);
+                // THE LURCH: the chest heaves over the live leg as it plants and sags off it after.
+                p.TorsoRoll += run * 8f * Mathf.Max(0f, -Mathf.Cos(2f * Mathf.PI * m.Phase));
+                p.TorsoYaw += run * 5f * step;
+                // The head lolls on its own, slowly, never in step with the feet.
+                p.HeadRoll += 9f * Wave(m.Time, .31f) + 4f * Wave(m.Time, .77f);
+                p.HeadPitch += 4f * Wave(m.Time + 1.3f, .23f);
+                // The arms swing only because the body sways: pendulums on the roll, out and in, late.
+                p.SpreadLeft += .9f * p.TorsoRoll;
+                p.SpreadRight -= .9f * p.TorsoRoll;
+                // Hung from one point: the whole body drifts a little from side to side under it.
+                p.RootRight += .03f * Wave(m.Time, .55f);
+                // THE YANK: the string snaps taut. Up, upright, head back, arms flicked out, feet lifted; then it sags.
+                float yank = DollYank(m.Time);
+                p.RootUp += .09f * yank;
+                p.TorsoPitch -= (p.TorsoPitch + 4f) * yank;
+                p.HeadPitch -= 22f * yank;
+                p.HeadRoll *= 1f - .7f * yank;
+                p.SpreadLeft += 16f * yank;
+                p.SpreadRight += 16f * yank;
+                p.ArmLeft += 10f * yank;
+                p.ArmRight += 10f * yank;
+                p.LegLeft *= 1f - .6f * yank;
+                p.LegRight *= 1f - .6f * yank;
+            },
+        };
+
+        /// <summary>
+        /// How hard the doll's string is yanking now, 0 to 1: a snap in 25 ms, gone in about half a second. The yanks come every 2.4
+        /// to 3.6 s, each beat's own moment picked from its count, so they never fall into a rhythm.
+        /// </summary>
+        public static float DollYank(float time)
+        {
+            float Beat(int k) => k * 3f + 1.2f * (Mathf.Abs(Mathf.Sin(k * 12.9898f) * 43758.5453f) % 1f);
+            int beat = Mathf.FloorToInt(time / 3f);
+            float since = time - Beat(beat);
+            if (since < 0f) since = time - Beat(beat - 1);
+            return since < 0f ? 0f : Mathf.Clamp01(since * 40f) * Mathf.Exp(-since * 7f);
+        }
 
         /// <summary>
         /// THE CUSTOM HERO. A player's own fighter, so no personality is assumed: an athletic, confident, even walk and a clean

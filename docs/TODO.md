@@ -977,7 +977,16 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
 
 - [x] Plan v3 (section 9): the table, his answers, how a cast talks, where the slipper goes, THE REACH, DRAIN, HEX, TELEPORT,
   the doll in play, the cutscene, proposed numbers.
-- [ ] The doll's model (section 9.10, `tools/build_phaister_doll_voxel.py`); the hip doll and the teleport decoy on the same design.
+- [x] The doll's model, v11 to v20 (`tools/build_phaister_doll_voxel.py`, brief's v11 section): Paete's size, mitten stumps with
+  no fingers, the owner's reference with the colours moved into hers, every light a HOLE CUT INTO the body (`Shaders/SoulGlow`
+  stencil cut, `Shaders/SoulSpill` for the light falling out), a chunky stylised weave (`tools/paint_phaister_doll_cloth.py`).
+  Its art for runtime: `Resources/HeroBodies/phaister_doll` (`PhaisterDollArt.LoadArt`, baked by `PhaisterDollReview.BakeArt`).
+  Owner's verdict on v20 owed.
+- [ ] The doll's walk and run (`GaitStyles.PhaisterDoll`): hung from its crown string and dragged, the run a lurch on one live leg
+  with the other dead behind it; filmed by `WalkArmsProbe` with `TUMP_WALK_BODIES=phaister-doll`, videos
+  `Logs/phaister-share/doll_walk_vN_phaister-doll.mp4`. Owner on v1's run: *"make it look like he isnt alive or he's dragging
+  himself"*. Its idle (hanging and swaying) is still the rig's.
+- [ ] The hip doll and the teleport decoy on the same design (ask before the decoy's look).
 - [ ] Core: `VoodooRules` v3, DRAINED and HEXED appended to `StatusKind`, a passive on the kit (VOODOO first; the owner will send
   each hero's); tests with his numbers quoted.
 - [ ] The carried slipper leaves the hand a cast needs (shared; each ability declares where it goes; hers is the belt).

@@ -91,6 +91,7 @@ namespace TumbangPreso.PlayTests
             int filmed = 0;
             try
             {
+                var bodies = new List<(GameMode mode, int index, string id, RosterEntryAsset entry)>();
                 foreach (var mode in new[] { GameMode.HeroStrike, GameMode.Classic })
                 {
                     var people = Roster.GetPeople(mode);
@@ -99,8 +100,17 @@ namespace TumbangPreso.PlayTests
                         var id = people[index].Id;
                         if (only.Length > 0 && Array.IndexOf(only, id) < 0) continue;
                         var entry = book.People.FirstOrDefault(p => p.Id == id);
-                        if (entry == null) continue;
-                        who.CharacterIndex = index;
+                        if (entry != null) bodies.Add((mode, index, id, entry));
+                    }
+                }
+                // Phaister's voodoo doll is nobody's pick (it is her ultimate's body), so it is not in the roster: named in
+                // TUMP_WALK_BODIES, it is filmed from its own art asset, on the seat's current character.
+                if (Array.IndexOf(only, PhaisterDollArt.Id) >= 0 && PhaisterDollArt.LoadArt() is RosterEntryAsset doll)
+                    bodies.Add((GameMode.HeroStrike, -1, PhaisterDollArt.Id, doll));
+                foreach (var (mode, index, id, entry) in bodies)
+                {
+                    {
+                        if (index >= 0) who.CharacterIndex = index;
                         who.GetComponent<CharacterVisual>().ApplyModel(entry.Model, entry.Tint, entry.Clips, entry.Palette, entry.PetModel);
                         yield return null; yield return null;
 
