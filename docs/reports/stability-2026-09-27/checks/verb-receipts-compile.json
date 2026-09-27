@@ -1,0 +1,61 @@
+{
+  "base": "99ce5338830ae0366c96e5ec0365c3a05efae6e6",
+  "compiler": "Core, Runtime, Editor, Tests and PlayTests exit0",
+  "coreTests": [
+    {
+      "testName": "TumbangPreso.Core.Tests.PredictionReceiptWindowTests.OldOrDuplicateRefusalsCannotUndoANewerActionOrAnotherChannel",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000832"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.PredictionReceiptWindowTests.ResetRetiresTheScopeWithoutReusingAnOldRequestIdentity",
+      "outcome": "Passed",
+      "duration": "00:00:00.0057945"
+    }
+  ],
+  "nativeTests": "NOT RUN: existing disk reserve boundary; no repeated editor launch",
+  "runtimeAssemblySha256": "7FBF877E809C14978C328F4A4AC59D2929DB5F1BDC239614B4F3343856F4219D",
+  "coreAssemblySha256": "701E8FABB095193A01493A704F03DEC181AC40F5E3ECCACF7287ECC307F32070",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+      "sha256": "2E61B0BFF5E608CC1EA766FD30AB0F79370EBE875CB4345CA954C33366040B40"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "DF98420201839578B4DD28A715B90CAE6DCE57800EE29071FBD417E84DF3F664"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.VerbReceipts.cs",
+      "sha256": "655D83DAD7A78835E9B04850E56FCD5D0D7F2916DC052F23E5D4E363770E5B24"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.VerbReceipts.cs.meta",
+      "sha256": "2F5B84AD0F46BA26A5D4BA3679B0B0B020CB8CAAE273AC61AFFB9452F98247FD"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "6565982D73F37E249C288A2EF060096AFA22B3DA106145A07CFA13FC9A1D3205"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "7EAC835C5AE1B532C0AA7409F4F9A86249CE2061B0FE9D2782B107663272A0EF"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "E2CB2A2932AC871904A32A66689A46D65DBCB73E8D58757A2DF5F18B270E237D"
+    },
+    {
+      "path": "Core.Tests/PredictionReceiptWindowTests.cs",
+      "sha256": "E5DFE7E9F92189ECFEF61838F3E7FA99D99269357030E660C48405601669C485"
+    },
+    {
+      "path": "Packages/com.tumbangpreso.core/Runtime/PredictionReceiptWindow.cs",
+      "sha256": "54204B312F2F34BAF4FD4C585D29993E263902AB6130A7A11974674E56A08809"
+    },
+    {
+      "path": "Packages/com.tumbangpreso.core/Runtime/PredictionReceiptWindow.cs.meta",
+      "sha256": "F19367561E60DD61B8F0F377B49B4D4EFBF702D72F09D7F1CBFE4E42B48C1E54"
+    }
+  ]
+}

@@ -65,6 +65,27 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(30000)]
+        public IEnumerator NetworkVerbRefusalDoesNotAddRefundToAnAuthoritativePool()
+        {
+            var owner = Owner("dante");
+            var motor = owner.GetComponent<CharacterMotor>();
+            var verbs = owner.gameObject.AddComponent<CombatVerbs>(); verbs.enabled = false;
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            motor.Stamina.ApplyNetworkSnapshot(50, 0, 0);
+            typeof(CombatVerbs).GetField("_shoveCooldown", flags).SetValue(verbs, 2f);
+            verbs.RollBackRefusedVerb(MatchRpc.DeniedVerb.Shove, refundResources: false);
+            Assert.AreEqual(0, verbs.ShoveCooldownLeft);
+            Assert.AreEqual(50, motor.Stamina.Current, "Refusal refunded a cost already absent from the authoritative pool.");
+            typeof(CombatVerbs).GetField("_slideCooldown", flags).SetValue(verbs, 2f);
+            motor.Commit(1f);
+            verbs.RollBackRefusedVerb(MatchRpc.DeniedVerb.Slide, refundResources: false);
+            Assert.AreEqual(0, verbs.SlideCooldownLeft);
+            Assert.AreEqual(0, motor.CommitLeft);
+            Assert.AreEqual(50, motor.Stamina.Current);
+            yield return null;
+        }
+
+        [UnityTest, Timeout(30000)]
         public IEnumerator RemoteHostResourceClocksRecoverAndDrainWithoutMovingTheReplica()
         {
             var root = new GameObject("Remote resource clock");

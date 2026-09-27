@@ -877,7 +877,7 @@ namespace TumbangPreso
         // -------------------------------------------------------------------
 
         /// <summary>Gives back what a verb the host refused had already charged this peer.</summary>
-        public void RollBackRefusedVerb(Net.MatchRpc.DeniedVerb verb)
+        public void RollBackRefusedVerb(Net.MatchRpc.DeniedVerb verb, bool refundResources = true)
         {
             switch (verb)
             {
@@ -904,13 +904,13 @@ namespace TumbangPreso
                     // shove is the sprint it costs, so a refusal that returned only the cooldown
                     // would still have taken the escape distance and the player would never know
                     // why they could not get out of the box.
-                    _motor.Stamina.Refund(Balance.ShoveStaminaCost);
+                    if (refundResources) _motor.Stamina.Refund(Balance.ShoveStaminaCost);
                     break;
 
                 case Net.MatchRpc.DeniedVerb.Slide:
                     _slideCooldown = 0.0f;
                     _slideActiveLeft = 0.0f;
-                    _motor.Stamina.Refund(Balance.SlideStaminaCost);
+                    if (refundResources) _motor.Stamina.Refund(Balance.SlideStaminaCost);
 
                     // ⚠️⚠️ THE COMMITMENT IS RETURNED TOO, AND IT IS THE ONE A PLAYER WOULD
                     // ACTUALLY NOTICE. The other two refusals hand back a cooldown and a bar;

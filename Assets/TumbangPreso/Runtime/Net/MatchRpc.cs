@@ -2415,7 +2415,7 @@ namespace TumbangPreso.Net
         public void SyncUnitTransformClientRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
             =>SendUnitPose(slot,pos,yaw,velocity,false);
 
-        private void SendUnitPose(int slot,Vector3 pos,float yaw,Vector3 velocity,bool reliable)
+        private void SendUnitPose(int slot,Vector3 pos,float yaw,Vector3 velocity,bool reliable,ulong? onlyClient = null)
         {
             if (!NetAuthority.IsHost) return;
             if (_nm == null || _nm.CustomMessagingManager == null) return;
@@ -2474,7 +2474,9 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.FearSource);
             writer.WriteValueSafe(flightEpisode);
             writer.WriteNetworkSerializable(unit.AbilitySystem?.CaptureAimPresentation() ?? default(AbilityAimSnapshot));
-            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer,reliable?NetworkDelivery.ReliableSequenced:PoseDelivery);
+            var delivery = reliable ? NetworkDelivery.ReliableSequenced : PoseDelivery;
+            if (onlyClient.HasValue) _nm.CustomMessagingManager.SendNamedMessage("SyncUnit", onlyClient.Value, writer, delivery);
+            else _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer, delivery);
         }
 
         private void OnSyncUnitMsg(ulong senderClientId, FastBufferReader reader)
@@ -2589,13 +2591,14 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe(from);
             writer.WriteValueSafe(facing);
+            writer.WriteValueSafe(BeginVerbRequest(slot, DeniedVerb.Punch));
             writer.WriteNetworkSerializable(CaptureActionScope(slot));
             _nm.CustomMessagingManager.SendNamedMessage("ReqPunch", NetworkManager.ServerClientId, writer);
         }
 
         private void OnReqPunchMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost || !reader.TryBeginRead(28 + GameplayActionScope.WireBytes)) return;
+            if (!NetAuthority.IsHost || !reader.TryBeginRead(36 + GameplayActionScope.WireBytes)) return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out Vector3 from);
             reader.ReadValueSafe(out Vector3 facing);
@@ -2603,12 +2606,12 @@ namespace TumbangPreso.Net
             // ⚠️ ABOVE THIS LINE A BARE RETURN IS CORRECT, BELOW IT IT IS NOT. The seat claim
             // is what separates a refusal from a forgery; see the § note on `HostDenyVerb`.
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
-            if (!ReadCurrentActionScope(ref reader, who, out var scope)) return;
+            if (!ReadNewVerbRequest(senderClientId, who, ref reader, out var scope, out long request)) return;
             if (!PlausibleIntentPose(who, from) || !Finite(facing) ||
                 who == null || !who.IsDefender ||
                 who.GetComponent<CombatVerbs>()?.HostResolvePunch(from, facing) != true)
             {
-                HostDenyVerb(senderClientId, slot, DeniedVerb.Punch, scope);
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Punch, scope, request);
                 return;
             }
 
@@ -2633,13 +2636,14 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(from);
             writer.WriteValueSafe(facing);
             writer.WriteValueSafe(power);
+            writer.WriteValueSafe(BeginVerbRequest(slot, DeniedVerb.Lunge));
             writer.WriteNetworkSerializable(CaptureActionScope(slot));
             _nm.CustomMessagingManager.SendNamedMessage("ReqLunge", NetworkManager.ServerClientId, writer);
         }
 
         private void OnReqLungeMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost || !reader.TryBeginRead(32 + GameplayActionScope.WireBytes)) return;
+            if (!NetAuthority.IsHost || !reader.TryBeginRead(40 + GameplayActionScope.WireBytes)) return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out Vector3 from);
             reader.ReadValueSafe(out Vector3 facing);
@@ -2647,11 +2651,11 @@ namespace TumbangPreso.Net
 
             // Same split as the punch above.
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
-            if (!ReadCurrentActionScope(ref reader, who, out var scope)) return;
+            if (!ReadNewVerbRequest(senderClientId, who, ref reader, out var scope, out long request)) return;
 
             if (!PlausibleIntentPose(who, from) || !Finite(facing) || !Finite(power))
             {
-                HostDenyVerb(senderClientId, slot, DeniedVerb.Lunge, scope);
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Lunge, scope, request);
                 return;
             }
 
@@ -2663,7 +2667,7 @@ namespace TumbangPreso.Net
             if (who == null || !who.IsDefender ||
                 who.GetComponent<CombatVerbs>()?.HostResolveLunge(from, facing, power) != true)
             {
-                HostDenyVerb(senderClientId, slot, DeniedVerb.Lunge, scope);
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Lunge, scope, request);
                 return;
             }
 
@@ -2700,29 +2704,30 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe(from);
             writer.WriteValueSafe(facing);
+            writer.WriteValueSafe(BeginVerbRequest(slot, DeniedVerb.Slide));
             writer.WriteNetworkSerializable(CaptureActionScope(slot));
             _nm.CustomMessagingManager.SendNamedMessage("ReqSlide", NetworkManager.ServerClientId, writer);
         }
 
         private void OnReqSlideMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost || !reader.TryBeginRead(28 + GameplayActionScope.WireBytes)) return;
+            if (!NetAuthority.IsHost || !reader.TryBeginRead(36 + GameplayActionScope.WireBytes)) return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out Vector3 from);
             reader.ReadValueSafe(out Vector3 facing);
 
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
-            if (!ReadCurrentActionScope(ref reader, who, out var scope)) return;
+            if (!ReadNewVerbRequest(senderClientId, who, ref reader, out var scope, out long request)) return;
             if (!PlausibleIntentPose(who, from) || !Finite(facing))
             {
-                HostDenyVerb(senderClientId, slot, DeniedVerb.Slide, scope);
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Slide, scope, request);
                 return;
             }
 
             if (who == null || who.IsDefender ||
                 who.GetComponent<CombatVerbs>()?.HostResolveSlide(from, facing) != true)
             {
-                HostDenyVerb(senderClientId, slot, DeniedVerb.Slide, scope);
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Slide, scope, request);
                 return;
             }
 
@@ -2756,26 +2761,27 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe(from);
             writer.WriteValueSafe(facing);
+            writer.WriteValueSafe(BeginVerbRequest(slot, DeniedVerb.Shove));
             writer.WriteNetworkSerializable(CaptureActionScope(slot));
             _nm.CustomMessagingManager.SendNamedMessage("ReqShove", NetworkManager.ServerClientId, writer);
         }
 
         private void OnReqShoveMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost || !reader.TryBeginRead(28 + GameplayActionScope.WireBytes)) return;
+            if (!NetAuthority.IsHost || !reader.TryBeginRead(36 + GameplayActionScope.WireBytes)) return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out Vector3 from);
             reader.ReadValueSafe(out Vector3 facing);
 
             // Same split as the punch above.
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
-            if (!ReadCurrentActionScope(ref reader, who, out var scope)) return;
+            if (!ReadNewVerbRequest(senderClientId, who, ref reader, out var scope, out long request)) return;
 
             if (!PlausibleIntentPose(who, from) || !Finite(facing) ||
                 who == null || who.IsDefender ||
                 who.GetComponent<CombatVerbs>()?.HostResolveShove(from, facing) != true)
             {
-                HostDenyVerb(senderClientId, slot, DeniedVerb.Shove, scope);
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Shove, scope, request);
                 return;
             }
 
@@ -3708,9 +3714,9 @@ namespace TumbangPreso.Net
         public enum DeniedVerb : byte { Punch = 0, Lunge = 1, Shove = 2, Slide = 3 }
 
         /// <summary>Tells one client the verb it predicted was refused, so it can take it back.</summary>
-        public void HostDenyVerb(ulong clientId, int slot, DeniedVerb verb, GameplayActionScope? requestScope = null)
+        public void HostDenyVerb(ulong clientId, int slot, DeniedVerb verb, GameplayActionScope requestScope, long request)
         {
-            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null || request <= 0) return;
 
             // ⚠️ THE HOST NEVER DENIES ITSELF, exactly as `HostDenyAbilityCast` does not. Its own
             // verbs never travel as a request: `RequestPunchServerRpc` and its two siblings
@@ -3721,8 +3727,14 @@ namespace TumbangPreso.Net
             using var writer = new FastBufferWriter(32, Allocator.Temp);
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe((byte)verb);
-            writer.WriteNetworkSerializable(requestScope ?? CaptureActionScope(slot));
+            writer.WriteValueSafe(request);
+            writer.WriteNetworkSerializable(requestScope);
             _nm.CustomMessagingManager.SendNamedMessage("VerbDenied", clientId, writer);
+
+            // Pool authority now reaches the owner on SyncUnit. An additive refund
+            // after one of those snapshots would credit the refused cost twice.
+            var unit = Unit(slot);
+            if (unit != null) SendUnitPose(slot, unit.transform.position, unit.transform.eulerAngles.y, unit.Velocity, true, clientId);
 
             CountDenial(_denialsSent, "sent", slot, verb);
         }
@@ -3776,10 +3788,11 @@ namespace TumbangPreso.Net
             // The two guards `OnCastDeniedMsg` carries, for the same two reasons: a listen host
             // must not roll back authoritative state, and only the host may refuse.
             if (NetAuthority.IsHost || !FromHost(senderClientId)
-                || !reader.TryBeginRead(5 + GameplayActionScope.WireBytes)) return;
+                || !reader.TryBeginRead(13 + GameplayActionScope.WireBytes)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out byte verb);
+            reader.ReadValueSafe(out long request);
 
             // ⚠️⚠️ THIS BOUND WAS `> (byte)DeniedVerb.Shove` AND IT DROPPED EVERY SLIDE REFUSAL
             // ON THE FLOOR. `Slide` is 3 and `Shove` is 2, so a client that predicted a slide the
@@ -3802,8 +3815,9 @@ namespace TumbangPreso.Net
             if (slot != NetAuthority.LocalSlot) return;
 
             var unit = Unit(slot);
-            if (!ReadCurrentActionScope(ref reader, unit, out _)) return;
-            unit.GetComponent<CombatVerbs>()?.RollBackRefusedVerb((DeniedVerb)verb);
+            if (!ReadCurrentActionScope(ref reader, unit, out var scope)
+                || !TakeVerbDenial(slot, (DeniedVerb)verb, request, scope)) return;
+            unit.GetComponent<CombatVerbs>()?.RollBackRefusedVerb((DeniedVerb)verb, refundResources: false);
 
             // ⚠️ COUNTED ON BOTH ENDS ON PURPOSE. The host's tally says how many it refused and
             // this one says how many were taken back, and the pair is what separates "the host

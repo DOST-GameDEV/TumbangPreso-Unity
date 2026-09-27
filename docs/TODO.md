@@ -31,7 +31,10 @@ rating/result/leave/device-pool rules. Further state coverage and actual peer/ra
 reconnect/results qualification remain OPEN.
 Ordinary action requests/refusals/body playback/charge tells now carry shared
 match/round/body-epoch scope (protocol67). Compiler and one pure scope check pass;
-native/peer checks and same-round per-request verb receipts remain OPEN.
+Native/peer qualification remains OPEN. Same-round combat refusals now correlate
+request IDs,ignore old/duplicate denials and use host resource correction instead
+of additive refunds (protocol69). Two Core cases and five-assembly compile pass;
+native no-double-refund and actual peer behavior remain OPEN.
 Remote host stamina/fatigue clocks now advance from accepted move/sprint intent,
 with stale-intent cleanup; snapshots preserve sprint continuation (protocol68).
 Two Core cases and five-assembly compile pass; native/peer resource checks stay OPEN.

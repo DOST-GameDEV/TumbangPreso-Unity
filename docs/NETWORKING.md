@@ -18,6 +18,7 @@ Runtime files below are in `Assets/TumbangPreso/Runtime/`.
 | Prediction and delayed bodies | HeroAbilitySystem.SkillReceipts,MatchRpc.SkillReceipts,MatchRpc.SkillDelivery. Independent effect receipts,ordered bounded delivery and recovery are not interchangeable. |
 | Body-held aiming | HeroAbilitySystem.AimReplication,Net/AbilityAimSnapshot,CharacterAnimator.AimPose. Private target guidance stays local; body tells are shared presentation only. |
 | Remote resources | CharacterMotor.NetworkStamina advances host resource clocks from accepted pose intent without a second movement simulation. Input leases/epochs bound it; Stamina resource corrections preserve held-sprint continuation. |
+| Combat refusals | MatchRpc.VerbReceipts and Core PredictionReceiptWindow bind denial to the newest prediction per verb; host fixed-seat cursors reject repeats. Network rollback does not add stamina; a targeted reliable SyncUnit corrects the authoritative pool. |
 | Ultimate cutscene/preparation | SharedUltimatePhase,HeroAbilitySystem.SharedUltimate,MatchRpc.UltimatePhase. One accepted cohort controls hold/handback; do not duplicate gameplay on observers. |
 | Persistent recovery | WorldSnapshotHeader,PreparedWorldSnapshot,HeroAbilitySystem.WorldRecovery,IPreparedWorldReplication,IWorldEffectBinding,ITimedKitReplication. Restore state at elapsed simulation time; do not recast. |
 | Compatibility | Net/SkillContractFingerprint and NetSession.ProtocolVersion. Fingerprints exclude cosmetic files,but semantic/wire changes still need explicit versioning. |
@@ -46,7 +47,8 @@ actual peers; a source helper test is not a ranked/reconnect/cross-platform matc
 Current reports separate compiler checks,pure managed checks,native local cases
 and actual peers. Real ranked/party/reconnect/results qualification is still open.
 Persistent world collections retain explicit kinds beyond the generic prepared
-adapter. Same-round ordinary-verb refusals still need per-request receipt coverage.
+adapter. Correlated ordinary-verb refusals are implemented; native and real-peer
+qualification of the new receipt/resource path remains open.
 Do not mark NET-SKILLS-1 complete from declarations or compilation alone.
 Old C4/engineering assignments and port mappings live in [archive](archive/README.md);
 their exclusive reservations and historical counts are not current instructions.

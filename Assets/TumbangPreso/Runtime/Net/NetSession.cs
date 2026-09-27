@@ -494,7 +494,9 @@ namespace TumbangPreso.Net
         // carry match/round/body-epoch scope; charge kind is always explicit.
         // 68: accepted pose effort bits carry movement/sprint intent so the host
         // advances remote resource clocks without simulating the remote body.
-        public const int ProtocolVersion = 68;
+        // 69: combat predictions/refusals carry request identity. Refusals return
+        // current authoritative resource state instead of adding a second refund.
+        public const int ProtocolVersion = 69;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

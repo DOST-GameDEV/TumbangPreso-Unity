@@ -1,5 +1,31 @@
 # Multiplayer investigation, 2026-09-27
 
+## Correlated combat refusals
+
+Base `99ce5338`,protocol69. World scope alone did not identify which same-round
+prediction was refused. A delayed or duplicate denial could clear a newer action's
+cooldown/window. Four combat requests now carry a monotonic request ID; the owner
+accepts a denial only for that verb's latest unconsumed prediction in the same scope.
+PredictionReceiptWindow is a bounded engine-free channel table; reset retires state
+without recycling an old ID. Fixed per-seat host cursors,scoped by owner/world,reject
+repeat requests before gameplay. No unbounded pending dictionary or extra approval RPC.
+
+The older additive stamina refund also assumed the owner never received host pool
+state,which is no longer true. Network rollback now clears only the correlated
+action's timer/window. The host sends reliable current SyncUnit state only to that
+requester; the existing pose serial rejects older corrections across delivery lanes.
+Direct rollback's default resource-refund behavior remains for its existing callers.
+No impulse yank or stamina-price change. Request buffers remain64bytes; denial29bytes
+fits32. Matching clients are required.
+
+Two NEW filtered Core cases ran:2executed,2passed,0failed (TRX inspected),covering
+older/duplicate/cross-channel refusals and reset identity. Core plus all four Unity
+assemblies compile on122frozen inputs (10changed).
+[Receipt](checks/verb-receipts-compile.json). New native no-double-refund/commitment
+case is NOT RUN under the recorded native disk limitation. No previous Core cases,
+native suite or film rerun. Real host/owner/observer/ranked/reconnect qualification
+remains OPEN; these checks do not claim the whole network assignment complete.
+
 ## Remote stamina clock
 
 Base `8e20a495`,protocol68. CharacterMotor's remote-body FixedUpdate branch returned
