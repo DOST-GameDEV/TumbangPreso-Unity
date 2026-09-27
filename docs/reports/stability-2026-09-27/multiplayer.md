@@ -665,6 +665,24 @@ Its exact implementation and qualification status are in
 [Featherfall](../amihan-kit-2026-09-27/featherfall.md). It does not establish that
 every kit works across real peers.
 
+## Sentry Cleanup Ownership
+
+After90b015f2, protocol79 scopes Paete's ultimate cleanup to its own sentries. The
+old Reset found/destroyed every PaeteSentry in the scene,including another caster's
+and even when the resetting kit had never cast. The ability now retains exact
+fresh references,prunes expired ones on cast,and adopts recovered instances through
+the owner-specific IWorldEffectBinding pass. Reset deactivates/destroys only those
+references. Attacks,root timing,escape,artwork and presentation remain unchanged.
+
+One new guarded native case passes1/1,0.5451652s on full committed base plus4inputs,
+no drift,no retry. It uses two actual fresh activation paths,an unused kit reset,
+one owner's reset,a restored owner0sentry binding/reset,and the other owner's final
+reset. The other caster's tree survives until its own reset. Minimum free
+6,587,150,336bytes; named profile/preferences restored.
+[Receipt](checks/sentry-ownership-native.json),[XML](checks/sentry-ownership-native.xml).
+Raw Logs/sentry-ownership-20260927/owned-guardians.*. Controlled local lifecycle,
+not real-peer/ranked or visual acceptance. Fresh-cast target convergence remains OPEN.
+
 ## Ability Resource Identity
 
 After6d8083d6, protocol78 replaces SyncAbility's current-slot numbers with a bounded

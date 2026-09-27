@@ -127,6 +127,14 @@ presentation cannot perform another catch,pull or root,even if authority later c
 This fixes snapshot recovery; fresh-cast peer target convergence and actual delayed
 peer acceptance remain separate. New effect-specific data needs its own semantics.
 
+Protocol79 fixes sentry cleanup ownership. The Paete ultimate tracks exact fresh
+instances and adopts recovered instances through the existing owner-specific
+IWorldEffectBinding pass. Reset retires only those references,not every matching
+effect type in the scene. An unused kit reset must not affect another caster.
+Apply that ownership rule to new persistent effects; reconstruction must restore
+their cleanup binding as well as their picture. This does not fix fresh-cast target
+selection or establish a shared-ultimate lifetime token for every effect kind.
+
 ## Victim Feedback
 
 Host-only outcome loops must announce existing contact presentation through the

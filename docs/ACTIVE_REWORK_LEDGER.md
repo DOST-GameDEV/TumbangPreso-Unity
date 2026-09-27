@@ -1,11 +1,18 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`ecf1ac8cc66d03a910304ccff2e5a4507902c297`; elapsed-budget shader preparation follows it.
+`90b015f26d8db52fe0530cff0d32b771d2e23083`; sentry cleanup ownership follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Protocol79 fixes Paete ultimate Reset destroying every caster's sentry. Exact
+fresh references and recovered owner bindings now govern cleanup. New native
+two-caster/unused-kit/recovery/reset case passes1/1 on full committed base plus
+4inputs,no drift,no retry. No authored attack/visual changes; fresh target
+convergence and actual peers remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#sentry-cleanup-ownership).
 
 Shader warmup now checks elapsed time after each variant,yielding at a2ms target
 or10variants while retaining full completion. The modified native stage case

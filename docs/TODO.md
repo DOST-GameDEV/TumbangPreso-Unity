@@ -96,6 +96,9 @@ Cooldown/charge recovery now carries world scope,sequence,hero and stable abilit
 IDs for both role abilities (protocol78). Complete-set validation and owner-live
 prediction safeguards remain. Two new native codec/receiver cases pass after one
 test-only reader-lifetime correction. Actual peers/ranked/reconnect remain OPEN.
+Paete sentry cleanup now retires only the resetting kit's fresh/recovered instances
+(protocol79),not other casters' trees. One new native two-caster/restore/reset case
+passes; fresh target convergence and actual peers remain OPEN.
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.

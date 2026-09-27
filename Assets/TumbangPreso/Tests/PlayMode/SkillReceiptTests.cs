@@ -270,6 +270,41 @@ namespace TumbangPreso.PlayTests
             finally { Object.DestroyImmediate(router.gameObject); }
         }
 
+        [UnityTest, Timeout(30000)]
+        public IEnumerator SentryResetRetiresOnlyItsFreshAndRecoveredOwnedInstances()
+        {
+            var first = Owner("paete").GetComponent<CharacterMotor>(); first.PlayerSlot = 0;
+            var second = Owner("paete").GetComponent<CharacterMotor>(); second.PlayerSlot = 1;
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(first); GameServices.Round.Register(second);
+            var firstKit = (PaeteHeroKit)first.AbilitySystem.Kit;
+            var secondKit = (PaeteHeroKit)second.AbilitySystem.Kit;
+            firstKit.Ultimate.Activate(new AbilityContext(first, null, null, Vector3.zero, Vector3.forward, Vector3.forward * 6));
+            secondKit.Ultimate.Activate(new AbilityContext(second, null, null, Vector3.right * 4, Vector3.forward, new Vector3(4, 0, 6)));
+            PaeteSentry own = null, other = null;
+            foreach (var sentry in Object.FindObjectsByType<PaeteSentry>())
+            {
+                if (sentry.OwnerSlot == 0) own = sentry;
+                if (sentry.OwnerSlot == 1) other = sentry;
+            }
+            Assert.IsNotNull(own); Assert.IsNotNull(other);
+            new PaeteHeroKit().Reset();
+            yield return null;
+            Assert.IsTrue(own != null && other != null, "An unused kit reset retired another kit's world effects.");
+            firstKit.Reset();
+            Assert.IsFalse(own.gameObject.activeSelf); Assert.IsTrue(other.gameObject.activeSelf);
+            yield return null;
+            Assert.IsTrue(own == null); Assert.IsTrue(other != null);
+            var recovered = PaeteSentry.Spawn(Vector3.zero, Vector3.forward * 6, 0, age: 1, restoredTargets: 0);
+            firstKit.RebindWorldEffects(first);
+            firstKit.Reset();
+            Assert.IsFalse(recovered.gameObject.activeSelf); Assert.IsTrue(other.gameObject.activeSelf);
+            yield return null;
+            Assert.IsTrue(recovered == null); Assert.IsTrue(other != null);
+            secondKit.Reset();
+            yield return null;
+            Assert.IsTrue(other == null);
+        }
+
         [Test]
         public void SentryTargetMaskUsesTheWorldFieldReceiverAndRejectsInvalidSeats()
         {

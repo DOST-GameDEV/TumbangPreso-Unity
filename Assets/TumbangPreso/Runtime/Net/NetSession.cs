@@ -514,7 +514,9 @@ namespace TumbangPreso.Net
         // epoch, so delayed previous-world state cannot seed a fresh body.
         // 78: cooldown/charge snapshots identify the hero and every ability,
         // including the idle role, with world scope and per-seat ordering.
-        public const int ProtocolVersion = 78;
+        // 79: resetting a Paete kit retires only its owned/recovered sentries,
+        // not every caster's active guardian in the shared world.
+        public const int ProtocolVersion = 79;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
