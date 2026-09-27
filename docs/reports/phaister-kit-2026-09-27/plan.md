@@ -425,12 +425,13 @@ One sentence: **"She sews the last stitch, and the doll gets up."** The travelli
 
 ### 9.10 The doll's model
 
-A rag manika in HER colours, typed by hand on the cast's seven-bone rig (so the gait, the animator and the bot drive it like a
-player): a burlap sack body with stitched seams, magenta yarn hair like hers, a tiny copy of her hat worn askew, one button eye and
-one X-stitched eye, a mouth sewn into a grin, pins in its head, twine tied at its neck and wrists, a purple patch sewn over its heart
-(the last stitch of the cutscene), a tuft of stuffing out of one shoulder seam. The small doll at her hip and in her hands is the
-same design at hand size, so the one that grows is the one she carried; the teleport's decoy is a doll of HER (her hat, her hair in
-yarn, her coat's colours) on the same body.
+⚠️⚠️ ITS OWN VOODOO DOLL, NOT A SMALL PHAISTER. Owner on v3 (which wore her hair as yarn and her hat): *"this shit suckls why
+does it have her hair hahahahaa"*, *"and her hat"*, *"make it look like its own vooodoo wtf"*. v5: a stuffed burlap sack on the
+cast's seven-bone rig, tied off at the crown with a frayed tuft, a purple button sewn on for one eye and an ink X for the other,
+a stitched grin, eight pins with coloured heads (one through its heart patch), twine at the neck, waist, wrists and one ankle,
+patches and stuffing out of a torn hem. Her colours only in the pin heads and patches. `tools/build_phaister_doll_voxel.py`,
+brief `ArtSource/phaister/doll-20260927/design-brief.md`, renders `Logs/phaister-doll-vN/`. The small doll at her hip will be
+the same design at hand size.
 
 ### 9.11 Proposed numbers (the owner may retune any)
 

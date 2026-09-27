@@ -3,11 +3,12 @@
     python tools/build_phaister_doll_voxel.py
 
 Owner, 2026-09-27: *"create a new model for the voodoo i guess"*, for his ultimate *"The voodoo doll becomes a sentient
-being that assists you in attacking or defending for the rest of the round"*. The design is
-`docs/reports/phaister-kit-2026-09-27/plan.md` section 9.10: a rag manika in HER colours, a burlap sack body with stitched
-seams, magenta yarn hair like hers, a tiny copy of her hat worn askew, one button eye and one X-stitched eye, a mouth sewn
-into a grin, pins in its head, twine at its neck, wrists and one ankle, a purple patch over its heart crossed by the last
-stitch of the cutscene, and a tuft of stuffing out of one shoulder seam.
+being that assists you in attacking or defending for the rest of the round"*; then, on v3, *"this shit suckls why does it
+have her hair"*, *"and her hat"*, *"make it look like its own vooodoo wtf"*. So it is ITS OWN voodoo doll, not a small
+Phaister: a stuffed burlap sack, gathered and tied off at the crown with a frayed tuft, a purple button sewn on for one eye
+and an ink X for the other, a stitched grin, pins with coloured heads stuck in it all over (one through its heart patch),
+twine bound round its neck, waist, wrists and one ankle, patches and a tuft of stuffing out of a torn hem. Her colours live
+only in the pin heads and the patches. The design and its history: `ArtSource/phaister/doll-20260927/design-brief.md`.
 
 Built the cast's way (`docs/CHARACTER_MODEL_METHOD.md`): the base CC0 rig, Phaister's own skeleton (so her doll moves on
 her proportions and every clip, gait, animator and bot drives it like a player body), chamfered boxes rigidly skinned to
@@ -38,15 +39,15 @@ PALETTE_OUT = "ArtSource/phaister/doll-20260927/palette.json"
 BURLAP = 0          # the sack cloth of the body and limbs
 BURLAP_SHADOW = 1   # soles, the gathered hem, the chin gather
 BURLAP_LIGHT = 2    # the head, a shade lighter so the face reads first
-GOLD = 3            # her one metal: the hat buckle
+GOLD = 3            # her one metal: pin heads
 TWINE = 4           # the ties at the neck, wrists and ankle
 STUFFING = 5        # the tuft out of the shoulder seam
-YARN = 6            # her magenta, as yarn
-YARN_DARK = 7       # the darker yarn strands, so the hair is not one flat colour
+PIN_MAGENTA = 6     # her magenta: pin heads
+SPARE_7 = 7
 INK = 8             # eyes, mouth, every stitch
-PATCH = 9           # her royal purple: the heart patch, the hat band, the button eye
+PATCH = 9           # her royal purple: the heart patch, the button eye
 CRIMSON = 10        # her crimson: the knee patch, the back patch, one pin head
-HAT = 11            # her hat's near black
+SPARE_11 = 11
 PIN_HEAD = 12       # her lilac: pin heads
 PIN_SHAFT = 13      # the pins' shafts, her gold dulled
 SEAM_DARK = 14      # the darkest burlap, inside the stitched seams
@@ -61,12 +62,12 @@ PALETTE = {
     GOLD:          "f8b824",
     TWINE:         "e2d2a8",
     STUFFING:      "f3e9c9",
-    YARN:          "d8186e",
-    YARN_DARK:     "a4105a",
+    PIN_MAGENTA:   "d8186e",
+    SPARE_7:       "a4105a",
     INK:           "14101c",
     PATCH:         "4a1e78",
     CRIMSON:       "8c1424",
-    HAT:           "181622",
+    SPARE_11:      "181622",
     PIN_HEAD:      "9838d8",
     PIN_SHAFT:     "b87814",
     SEAM_DARK:     "6a5539",
@@ -106,6 +107,9 @@ TORSO = [
     ("belly",             "torso", (-0.124, 0.182, -0.104), (0.124, 0.262, -0.062), BURLAP),
     ("hem",               "torso", (-0.151, 0.166, -0.093), (0.151, 0.180, 0.089), BURLAP_SHADOW),
     ("neck-twine",        "torso", (-0.094, 0.326, -0.076), (0.094, 0.352, 0.074), TWINE),
+    # Bound round the middle, as a manika is: the twine wraps the belly and knots on its left.
+    ("waist-twine",       "torso", (-0.152, 0.226, -0.108), (0.152, 0.242, 0.090), TWINE),
+    ("waist-knot",        "torso", (0.070, 0.220, -0.118), (0.100, 0.250, -0.100), TWINE),
     ("neck-knot",         "torso", (0.028, 0.316, -0.092), (0.066, 0.356, -0.072), TWINE),
     ("seam-l",            "torso", (0.147, 0.188, -0.004), (0.154, 0.330, 0.004), INK),
     ("seam-l-t1",         "torso", (0.147, 0.198, -0.018), (0.155, 0.204, 0.016), INK),
@@ -143,54 +147,43 @@ ARM_RIGHT = [
 ]
 
 # ---------------------------------------------------------------------------------------------------------------------
-# HEAD. A big soft sack, a shade lighter than the body, gathered at the neck. The face: a round purple button sewn on for
-# her right eye, an X of ink for her left, a stitched grin a little higher on her left (a smirk). Magenta yarn hangs from a
-# domed yarn cap under the hat: a short uneven fringe across the brow, five strands down each side and six down the back,
-# every one its own width, length and lean (`STRANDS`), with gaps where the sack shows through.
-# ⚠️ v1 hung twenty-one strands of one width straight down, a curtain from every side (a barcode from behind), with a flat
-# slab of yarn under the hat and no fringe, so from the front the hair was two pink side-curtains beside a bare forehead.
+# HEAD. A big soft sack, a shade lighter than the body, gathered at the neck and gathered again at the crown, where it is tied
+# off with twine and the burlap frays up into a tuft (`TUFT`). The face: a round purple button sewn on for its right eye, an
+# X of ink for its left, a stitched grin a little higher on its left. Pins stick out of it everywhere (`PINS`).
+# ⚠️⚠️ v4, OWNER ON v3: *"this shit suckls why does it have her hair hahahahaa"*, *"and her hat"*, *"make it look like its
+# own vooodoo wtf"*. v1 to v3 gave it her magenta hair as yarn and a copy of her hat, which made it a small Phaister rather
+# than a doll. It is its own thing now: a voodoo doll, read by the tied sack top, the stitches and the pins.
 # ---------------------------------------------------------------------------------------------------------------------
 HEAD = [
     ("head-sack",         "head", (-0.198, 0.352, -0.168), (0.198, 0.716, 0.170), BURLAP_LIGHT),
     ("head-crown",        "head", (-0.170, 0.700, -0.140), (0.170, 0.742, 0.142), BURLAP_LIGHT),
     ("chin-gather",       "head", (-0.150, 0.338, -0.140), (0.150, 0.366, 0.142), BURLAP_SHADOW),
-    # The yarn cap, domed in two steps so the hat sits INTO hair, not on a lid.
-    ("yarn-cap",          "head", (-0.188, 0.690, -0.156), (0.188, 0.742, 0.170), YARN),
-    ("yarn-cap-top",      "head", (-0.150, 0.730, -0.124), (0.152, 0.762, 0.142), YARN),
-    # The sack's back seam, seen through the gap in the back strands.
-    ("seam-head-back",    "head", (-0.016, 0.402, 0.168), (-0.008, 0.640, 0.176), INK),
+    # The crown gathered into a neck and tied off, the knot on its left of the front. It tapers in two steps so the top reads
+    # as cloth pulled together, not a lid with a stub on it (v4's first render).
+    ("crown-taper",       "head", (-0.128, 0.734, -0.104), (0.128, 0.758, 0.114), BURLAP_LIGHT),
+    ("crown-taper-2",     "head", (-0.098, 0.750, -0.082), (0.098, 0.768, 0.092), BURLAP_LIGHT),
+    ("crown-gather",      "head", (-0.074, 0.736, -0.062), (0.074, 0.784, 0.070), BURLAP_LIGHT),
+    ("crown-tie",         "head", (-0.082, 0.752, -0.070), (0.082, 0.772, 0.078), TWINE),
+    ("crown-knot",        "head", (0.058, 0.744, -0.086), (0.088, 0.778, -0.062), TWINE),
+    # The sack's back seam, down the back of the head.
+    ("seam-head-back",    "head", (-0.016, 0.402, 0.168), (-0.008, 0.690, 0.176), INK),
     ("seam-head-back-t1", "head", (-0.029, 0.426, 0.168), (0.003, 0.432, 0.177), INK),
     ("seam-head-back-t2", "head", (-0.027, 0.470, 0.168), (0.005, 0.476, 0.177), INK),
     ("seam-head-back-t3", "head", (-0.030, 0.527, 0.168), (0.002, 0.533, 0.177), INK),
     ("seam-head-back-t4", "head", (-0.026, 0.588, 0.168), (0.006, 0.594, 0.177), INK),
+    ("seam-head-back-t5", "head", (-0.028, 0.645, 0.168), (0.004, 0.651, 0.177), INK),
 ]
 
-# Yarn: (name, top, bottom, width across the face it hangs on, depth off it, slot). Each strand is laid from its top to its
-# bottom, so a bottom set off the top is the strand's lean. Front strands stop above the eyes (their tops are y 0.584).
-STRANDS = [
-    ("fringe-1",  (-0.172, 0.742, -0.170), (-0.177, 0.600, -0.176), 0.030, 0.014, YARN),
-    ("fringe-2",  (-0.140, 0.742, -0.172), (-0.136, 0.648, -0.180), 0.026, 0.012, YARN_DARK),
-    ("fringe-3",  (-0.074, 0.742, -0.172), (-0.079, 0.668, -0.179), 0.034, 0.012, YARN),
-    ("fringe-4",  (-0.022, 0.742, -0.172), (-0.016, 0.640, -0.180), 0.028, 0.012, YARN),
-    ("fringe-5",  (0.020, 0.742, -0.172), (0.014, 0.660, -0.179), 0.024, 0.012, YARN_DARK),
-    ("fringe-6",  (0.098, 0.742, -0.172), (0.105, 0.632, -0.180), 0.032, 0.012, YARN),
-    ("fringe-7",  (0.160, 0.742, -0.170), (0.169, 0.560, -0.178), 0.030, 0.014, YARN),
-    ("side-l1",   (0.204, 0.742, -0.128), (0.214, 0.462, -0.134), 0.030, 0.014, YARN),
-    ("side-l2",   (0.204, 0.742, -0.076), (0.210, 0.520, -0.072), 0.024, 0.014, YARN_DARK),
-    ("side-l3",   (0.204, 0.742, -0.020), (0.219, 0.418, -0.028), 0.036, 0.014, YARN),
-    ("side-l4",   (0.204, 0.742, 0.040), (0.212, 0.486, 0.046), 0.026, 0.014, YARN),
-    ("side-l5",   (0.204, 0.742, 0.100), (0.216, 0.440, 0.110), 0.032, 0.014, YARN_DARK),
-    ("side-r1",   (-0.204, 0.742, -0.122), (-0.212, 0.494, -0.118), 0.032, 0.014, YARN),
-    ("side-r2",   (-0.204, 0.742, -0.060), (-0.219, 0.430, -0.066), 0.028, 0.014, YARN),
-    ("side-r3",   (-0.204, 0.742, 0.004), (-0.210, 0.508, 0.012), 0.024, 0.014, YARN_DARK),
-    ("side-r4",   (-0.204, 0.742, 0.066), (-0.216, 0.452, 0.060), 0.034, 0.014, YARN),
-    ("side-r5",   (-0.204, 0.742, 0.124), (-0.210, 0.470, 0.130), 0.026, 0.014, YARN),
-    ("back-1",    (-0.170, 0.742, 0.176), (-0.179, 0.450, 0.182), 0.030, 0.014, YARN),
-    ("back-2",    (-0.112, 0.742, 0.176), (-0.106, 0.398, 0.184), 0.036, 0.014, YARN_DARK),
-    ("back-3",    (-0.052, 0.742, 0.176), (-0.058, 0.470, 0.182), 0.026, 0.014, YARN),
-    ("back-4",    (0.034, 0.742, 0.176), (0.042, 0.408, 0.184), 0.034, 0.014, YARN),
-    ("back-5",    (0.096, 0.742, 0.176), (0.090, 0.462, 0.182), 0.028, 0.014, YARN_DARK),
-    ("back-6",    (0.156, 0.742, 0.176), (0.166, 0.420, 0.184), 0.032, 0.014, YARN),
+# The frayed tuft above the tie: (name, upper end, lower end, width, depth, slot). Burlap threads and a little stuffing,
+# each splayed its own way and its own length, the way a tied-off sack frays.
+TUFT = [
+    ("tuft-1",    (-0.090, 0.852, -0.050), (-0.050, 0.778, -0.030), 0.022, 0.018, BURLAP_LIGHT),
+    ("tuft-2",    (-0.036, 0.874, -0.080), (-0.020, 0.778, -0.040), 0.018, 0.016, STUFFING),
+    ("tuft-3",    (0.006, 0.888, 0.010), (0.010, 0.778, 0.000), 0.024, 0.020, BURLAP_LIGHT),
+    ("tuft-4",    (0.072, 0.862, -0.050), (0.036, 0.778, -0.020), 0.020, 0.016, STUFFING),
+    ("tuft-5",    (0.100, 0.844, 0.070), (0.050, 0.778, 0.040), 0.022, 0.018, BURLAP_LIGHT),
+    ("tuft-6",    (-0.072, 0.858, 0.092), (-0.036, 0.778, 0.044), 0.018, 0.016, STUFFING),
+    ("tuft-7",    (0.022, 0.838, 0.102), (0.000, 0.778, 0.050), 0.016, 0.014, BURLAP_SHADOW),
 ]
 
 # Round parts: (name, bone, centre, radius, depth, sides, slot). They face the viewer (-Z). The button eye is sewn on: an
@@ -219,6 +212,12 @@ OBOX = [
     ("heart-border-1",    "torso", (0.024, 0.326, -0.0995), (0.005, 0.018, 0.004), (0, 0, 9), INK),
     ("heart-border-2",    "torso", (0.095, 0.270, -0.0995), (0.005, 0.016, 0.004), (0, 0, 9), INK),
     ("heart-border-3",    "torso", (0.028, 0.265, -0.0995), (0.016, 0.005, 0.004), (0, 0, 9), INK),
+    # The waist knot's two ends.
+    ("waist-end-1",       "torso", (0.090, 0.200, -0.116), (0.010, 0.046, 0.008), (0, 0, 16), TWINE),
+    ("waist-end-2",       "torso", (0.076, 0.204, -0.114), (0.010, 0.036, 0.008), (0, 0, -10), TWINE),
+    # The crown knot's two ends.
+    ("crown-end-1",       "head", (0.084, 0.728, -0.082), (0.010, 0.040, 0.008), (0, 0, 20), TWINE),
+    ("crown-end-2",       "head", (0.070, 0.726, -0.084), (0.010, 0.034, 0.008), (0, 0, -12), TWINE),
     # The neck knot's two ends, hanging unevenly.
     ("neck-end-1",        "torso", (0.040, 0.300, -0.090), (0.010, 0.044, 0.008), (0, 0, 12), TWINE),
     ("neck-end-2",        "torso", (0.058, 0.303, -0.088), (0.010, 0.036, 0.008), (0, 0, -18), TWINE),
@@ -242,32 +241,21 @@ GRIN = [(-0.118, 0.452), (-0.070, 0.428), (-0.010, 0.418), (0.050, 0.424), (0.09
 GRIN_STITCHES = [-0.092, -0.041, 0.018, 0.071]
 GRIN_Z = -0.171
 
-# The hat, a tiny copy of hers worn askew: typed in its own frame round a pivot on her crown, then tilted as one piece
-# toward her left and back. The upper cone leans further and the tip droops (a hat that has been sat on).
-HAT_PIVOT = (0.030, 0.750, 0.000)
-HAT_TILT = (6.0, 0.0, -11.0)   # back 6 degrees, toward her left 11 (v1: 14, off a flat lid)
-HAT_PARTS = [
-    ("hat-brim",          (-0.180, 0.000, -0.180), (0.180, 0.022, 0.180), HAT),
-    ("hat-band",          (-0.118, 0.022, -0.118), (0.118, 0.056, 0.118), PATCH),
-    ("hat-buckle",        (-0.030, 0.026, -0.126), (0.030, 0.052, -0.116), GOLD),
-    ("hat-cone-1",        (-0.112, 0.056, -0.112), (0.112, 0.100, 0.112), HAT),
-    ("hat-cone-2",        (-0.084, 0.100, -0.090), (0.096, 0.148, 0.090), HAT),
-    ("hat-cone-3",        (-0.050, 0.148, -0.066), (0.082, 0.194, 0.066), HAT),
-    ("hat-cone-4",        (-0.014, 0.194, -0.044), (0.074, 0.236, 0.044), HAT),
-    ("hat-tip-1",         (0.026, 0.232, -0.024), (0.074, 0.262, 0.024), HAT),
-    ("hat-tip-2",         (0.060, 0.244, -0.014), (0.090, 0.268, 0.014), HAT),
-]
-
-# Pins stuck in: (name, bone, where it enters, the direction it leaves in, length, head slot). Out of her right temple,
-# the back of her head twice, and one through her right arm.
+# Pins stuck in: (name, bone, where it enters, the direction it leaves in, length, head slot). Eight, with heads in her
+# lilac, crimson, magenta and gold, so its silhouette bristles: out of its right temple and brow, the crown, twice from the
+# back of its head, through the heart patch, through its right arm and its left thigh.
 PINS = [
     ("pin-temple-r",      "head", (-0.170, 0.640, -0.040), (-0.82, 0.50, -0.28), 0.150, PIN_HEAD),
-    ("pin-back-l",        "head", (0.120, 0.600, 0.150), (0.35, 0.30, 0.89), 0.140, PIN_HEAD),
-    ("pin-back-r",        "head", (-0.110, 0.480, 0.160), (-0.30, -0.10, 0.95), 0.120, CRIMSON),
+    ("pin-brow-r",        "head", (-0.140, 0.664, -0.150), (-0.30, 0.45, -0.84), 0.120, PIN_MAGENTA),
+    ("pin-crown-l",       "head", (0.120, 0.716, -0.030), (0.45, 0.85, -0.25), 0.150, CRIMSON),
+    ("pin-back-l",        "head", (0.120, 0.600, 0.150), (0.35, 0.30, 0.89), 0.140, GOLD),
+    ("pin-back-r",        "head", (-0.110, 0.480, 0.160), (-0.30, -0.10, 0.95), 0.120, PIN_MAGENTA),
+    ("pin-heart",         "torso", (0.058, 0.298, -0.098), (0.25, 0.30, -0.92), 0.130, CRIMSON),
     ("pin-arm-r",         "arm-right", (-0.205, 0.350, -0.010), (-0.15, 0.95, -0.25), 0.120, PIN_HEAD),
+    ("pin-thigh-l",       "leg-left", (0.100, 0.130, -0.078), (0.40, -0.15, -0.90), 0.110, GOLD),
 ]
 PIN_SHAFT_THICK = 0.010
-PIN_HEAD_SIZE = 0.030
+PIN_HEAD_SIZE = 0.034
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -346,13 +334,11 @@ def oriented_rows():
     """Every tilted part as (name, bone, centre, size, matrix, slot)."""
     rows = [(n, b, c, s, _rot(*r), slot, "box") for n, b, c, s, r, slot in OBOX]
 
-    for name, top, bottom, width, depth, slot in STRANDS:
+    for name, top, bottom, width, depth, slot in TUFT:
         up = tuple(top[i] - bottom[i] for i in range(3))
         length = math.sqrt(V._dot(up, up)) + 0.006
         centre = tuple((top[i] + bottom[i]) * 0.5 for i in range(3))
-        # A side strand's width runs along the side of the head (Z); a front or back strand's across it (X).
-        size = (depth, length, width) if name.startswith("side") else (width, length, depth)
-        rows.append(("yarn-" + name, "head", centre, size, _towards(up), slot, "box"))
+        rows.append((name, "head", centre, (width, length, depth), _towards(up), slot, "box"))
 
     for name, bone, centre, radius, depth, sides, slot in DISCS:
         rows.append((name, bone, centre, (radius, depth, sides), _rot(0, 0, 0), slot, "disc"))
@@ -367,14 +353,6 @@ def oriented_rows():
         y, slope = _grin_at(x)
         rows.append((f"grin-stitch-{k}", "head", (x, y, GRIN_Z - 0.001), (0.011, 0.042, 0.007),
                      _rot(0, 0, math.degrees(math.atan(slope))), INK, "box"))
-
-    tilt = _rot(*HAT_TILT)
-    for name, lo, hi, slot in HAT_PARTS:
-        local = tuple((lo[i] + hi[i]) * 0.5 for i in range(3))
-        size = tuple(hi[i] - lo[i] for i in range(3))
-        r = _apply(tilt, local)
-        centre = tuple(HAT_PIVOT[i] + r[i] for i in range(3))
-        rows.append((name, "head", centre, size, tilt, slot, "box"))
 
     for name, bone, base, direction, length, head_slot in PINS:
         d = V._unit(direction)
