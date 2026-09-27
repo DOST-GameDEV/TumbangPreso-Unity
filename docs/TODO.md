@@ -1351,8 +1351,9 @@ light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
   fades the Standard hero-effect template without `SetOverrideTag("RenderType","Transparent")`, so
   every faded effect drew SOLID into `_CameraDepthNormalsTexture`; one round the camera filled the
   frame nearer than the 1.8 m guard above and the whole frame's occlusion dropped. Fix: the tag
-  override (also keeps those effects out of the ink edges). NOT CONFIRMED in play yet; when it is,
-  remove `TraceAo`/`SampleAo` from `WorldOutline.cs` (uncommitted diagnostic) and tick this.
+  override (also keeps those effects out of the ink edges). The `TraceAo`/`SampleAo` diagnostic was
+  never committed and was REMOVED 2026-09-27 at the owner's request ("remove the ao logging"). NOT
+  CONFIRMED in play yet: tick this when the owner confirms the flicker is gone.
   Separate, by design: looking nearly straight down also drops it (the ground is inside 1.8 m).
 - [ ] LIGHT-3.5 The owner's look at the final comparison. The rendering is done: `e26eeb04`,
   Mac, one PlayMode launch, total 3 failed 0 (`FiveMapStageCapturesPreserveGeometryAndRestore

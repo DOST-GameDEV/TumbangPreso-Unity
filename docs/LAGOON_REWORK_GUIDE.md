@@ -89,9 +89,9 @@ alternatives, `landmark_court_v4.png`); cooler rock tint (asked, no answer: rock
    Root cause found and the fix COMMITTED, not yet confirmed by the owner in play (see
    `docs/TODO.md` LIGHT-3.6): `VfxMaterial.ConfigureBuiltInFade` faded Standard hero effects without
    the Transparent RenderType override, so they drew solid into `_CameraDepthNormalsTexture` and the
-   1.8 m near guard dropped the whole frame's occlusion. A TEMPORARY `[AO trace]` / `[AO sample]`
-   diagnostic sits in `Runtime/Visual/WorldOutline.cs` (TraceAo, SampleAo): remove it once the owner
-   confirms the fix.
+   1.8 m near guard dropped the whole frame's occlusion. The temporary `[AO trace]` / `[AO sample]`
+   diagnostic was removed (never committed) on the owner's request, 2026-09-27; the flicker fix
+   itself still awaits the owner's confirmation.
 3. **Bounds test gate:** with the owner's editor closed, rebuild the cove, run EditMode, then
    `py -3 tools/playmode_suite.py --gate`, assert on the XML totals, then tick LAGOON-1.1.
 4. The owner's picks (timber/bamboo/tin, emblem, rock tint); meshes carry no tangents (the exporter
