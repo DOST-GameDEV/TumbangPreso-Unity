@@ -20,6 +20,46 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class LobbyAndSettingsTests
     {
+        [Test]
+        public void HubRoomKeepsReservedSeatAndConnectionAdmissionSeparateFromVisiblePlayerCount()
+        {
+            var entry = new LanEntry
+            {
+                HostName = "Room", Address = "192.0.2.1", Port = 8910,
+                Players = 2, MaxPlayers = 4, Occupied = 4, Connections = 2, MaxConnections = 12
+            };
+            var room = UI.Hub.HubRoom.FromLan(entry);
+            Assert.AreEqual(2, room.Players);
+            Assert.IsFalse(room.IsJoinable, "Reserved seats must not be offered to new players.");
+            entry.Occupied = 2; entry.Connections = 12;
+            Assert.IsFalse(UI.Hub.HubRoom.FromLan(entry).IsJoinable);
+            entry.Connections = 2;
+            Assert.IsTrue(UI.Hub.HubRoom.FromLan(entry).IsJoinable);
+            entry.InProgress = true;
+            Assert.IsFalse(UI.Hub.HubRoom.FromLan(entry).IsJoinable);
+        }
+
+        [Test]
+        public void EveryVisibleHubRoomFieldInvalidatesItsPreviousListing()
+        {
+            var room = new UI.Hub.HubRoom
+            {
+                Key = "ABCD", Name = "First", Map = "LAN", Players = 2,
+                Capacity = 4, InProgress = false, IsJoinable = true
+            };
+            Assert.IsTrue(room.SameListing(room));
+            foreach (var field in typeof(UI.Hub.HubRoom).GetFields(BindingFlags.Instance | BindingFlags.Public))
+            {
+                object changed = room;
+                object value = field.GetValue(room);
+                if (value is string text) field.SetValue(changed, text + " changed");
+                else if (value is int number) field.SetValue(changed, number + 1);
+                else if (value is bool flag) field.SetValue(changed, !flag);
+                else Assert.Fail("Add a changed sample for " + field.Name);
+                Assert.IsFalse(room.SameListing((UI.Hub.HubRoom)changed), field.Name + " left a stale row.");
+            }
+        }
+
         private static LobbySession NewLobby(bool dedicated = false)
         {
             var lobby = new LobbySession { IsDedicated = dedicated };

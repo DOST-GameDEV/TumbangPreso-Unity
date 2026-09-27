@@ -182,6 +182,7 @@ namespace TumbangPreso.Net
         private sealed class ConnectionHello
         {
             public int Protocol;
+            public string SkillContract;
             public string Token;
             public string Name;
 
@@ -479,9 +480,11 @@ namespace TumbangPreso.Net
         // watermarks and the round simulation clock; older snapshots cannot clobber newer casts.
         // 63: shared ReqAbility/PlayAbility serializer carries stable ability ID and
         // activation/command intent. Cosmetic names and assets are not wire identity.
-        // 64 (2026-09-27, HERO-10 v8): Phaister's OMEN introduction is 5.0 s (was 4.0; it now ends on the players it marks). No
-        // bytes changed, but as 52 and 57 recorded, the shared phase's length is derived on every peer from the heroes' tables, so
-        // a 63 peer would release its presentation clock a second before the host.
+        // 64: ConnectionHello includes deterministic shared skill/phase metadata.
+        // Peers with different reworked rules cannot silently join the same match.
+        // HERO-10 also makes Phaister's OMEN introduction 5.0 s (was 4.0).
+        // Its duration is included in the shared skill fingerprint, so peers with
+        // the older presentation clock cannot join even at the same wire version.
         public const int ProtocolVersion = 64;
 
         /// <summary>
@@ -1678,6 +1681,7 @@ namespace TumbangPreso.Net
             var hello = new ConnectionHello
             {
                 Protocol = ProtocolVersion,
+                SkillContract = SkillContractFingerprint.Current,
                 Token = account?.ConnectionToken ?? NetIdentity.Token,
                 Name = LocalLobbyName(),
 
@@ -1847,6 +1851,7 @@ namespace TumbangPreso.Net
         {
             var hello = DecodeHello(request.Payload);
             bool protocolMatches = hello != null && hello.Protocol == ProtocolVersion;
+            bool skillsMatch = protocolMatches && SkillContractFingerprint.Matches(hello.SkillContract);
             bool hasCapacity = _nm == null ||
                                Math.Max(_nm.ConnectedClientsIds.Count, _helloByClient.Count)
                                < LobbySession.MaxConnections;
@@ -1870,7 +1875,7 @@ namespace TumbangPreso.Net
             bool blocked = hello != null &&
                            Core.SocialRules.IsBlocked(GameServices.Social?.List, hello.AccountPlayerId);
 
-            response.Approved = protocolMatches && hasCapacity && !blocked;
+            response.Approved = protocolMatches && skillsMatch && hasCapacity && !blocked;
             response.CreatePlayerObject = false;
             response.Pending = false;
             // ⚠️ THE REFUSAL SAYS WHAT THE ROOM HOLDS. "Lobby is full" is true of a room with
@@ -1884,6 +1889,8 @@ namespace TumbangPreso.Net
             // "Could not join" is what every shipping game says.
             response.Reason = !protocolMatches
                 ? $"Game version mismatch (network protocol {ProtocolVersion})"
+                : !skillsMatch
+                    ? "Skill rules differ from the host. Use matching game builds."
                 : blocked
                     ? "Could not join this game."
                     : hasCapacity

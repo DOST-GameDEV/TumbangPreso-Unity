@@ -105,7 +105,7 @@ namespace TumbangPreso.UI.Hub
         string RoomAddress { get; }
     }
 
-    /// <summary>One joinable room, as the JOIN screen's shared row draws it.</summary>
+    /// <summary>One advertised room, including whether a new player can actually join.</summary>
     public struct HubRoom
     {
         public string Name;
@@ -113,8 +113,20 @@ namespace TumbangPreso.UI.Hub
         public int Players;
         public int Capacity;
         public bool InProgress;
+        public bool IsJoinable;
 
         /// <summary>What JOIN passes to <see cref="IHubHost.Join"/>: a code, or an address.</summary>
         public string Key;
+
+        public static HubRoom FromLan(Net.LanEntry entry) => new HubRoom
+        {
+            Name = entry.HostName, Map = "LAN", Players = entry.Players, Capacity = entry.MaxPlayers,
+            InProgress = entry.InProgress, IsJoinable = entry.IsJoinable, Key = $"{entry.Address}:{entry.Port}"
+        };
+
+        public bool SameListing(HubRoom other)
+            => Key == other.Key && Name == other.Name && Map == other.Map
+                && Players == other.Players && Capacity == other.Capacity
+                && InProgress == other.InProgress && IsJoinable == other.IsJoinable;
     }
 }

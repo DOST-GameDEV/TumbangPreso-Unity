@@ -1,0 +1,31 @@
+{
+  "base": "ac5524d9",
+  "method": "Direct invocation of compiled pure HubRoom/LanEntry helpers; no Unity process or native APIs",
+  "checks": [
+    "Reserved seats, connection capacity, open and running room admission",
+    "Every public listing field invalidates equality"
+  ],
+  "result": "PASS",
+  "fieldCount": 7,
+  "runtimeAssemblySha256": "56FDBD3EFB3F6DFDDF79353BE12D4AC2267E5CF2AD47D96A75BAF3C7C10B02A8",
+  "nativeUI": "NOT RUN",
+  "compiler": "Runtime and Tests exit0",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+      "sha256": "19F5C5106B7FC5134F39FA4833AED2A9D233C125931C9E5AF4EA7B27EFC5A0A0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+      "sha256": "EA670269F0CD9D3C8B8237F17C0380DD6DDDF44A92151D6B1E16217FFD9F8BD5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/IHubHost.cs",
+      "sha256": "65204BA65C0399218BCD9A4826F60ADF6D7F4562D4A3E203CB8A1AEA934E16BB"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/LobbyAndSettingsTests.cs",
+      "sha256": "2A3BAA73264C169E56ADDD69B97BBD525D965F601F34192EDCC46D8761D241C5"
+    }
+  ]
+}

@@ -21,6 +21,9 @@ Nothing was deleted or renumbered.
 through explicit shared networking contracts and enforced coverage for authority,
 prediction/confirmation, persistent state and lifecycle recovery. Preserve current
 skill behavior and presentation. Implement directly without delegated workers.
+Protocol64 now checks shared skill/intro metadata at connection approval while
+ignoring cosmetic data/live state. Compiler checks and two managed contract cases
+pass; native approval/cross-platform checks and broader lifecycle coverage stay OPEN.
 Scope includes body animation, VFX, cutscenes, interruption and cleanup on every
 relevant peer, spectator, late join and reconnect. Explicit delivery declarations
 and the normal pre-build guard are implemented (focused EditMode 5/5); remaining
@@ -43,12 +46,17 @@ Timed-state bindings now use the actual owning ability instead of a live slot or
 fixed duration cap (focused EditMode 1/1); remaining contract enforcement stays OPEN.
 Hero-shop wallet notifications now refresh purchase controls without rebuilding the
 preview/ability tiles; this narrow flow optimization is source-reviewed.
+Room browsing now preserves advertised admission/reserved-seat state and refreshes
+renamed/resized rows through field comparison. Runtime/Tests compile and two managed
+helper checks pass; native row interaction and live discovery remain OPEN.
 
 **Loading slice, 2026-09-27:** progressive shader completion, staged menu-art/avatar
 cache preparation and duplicate audio-sweep removal are implemented (`c9f55410`).
 Hero-prop prefab discovery/retention now runs inside boot loading, with yielded
 progress and shared source caches for existing prop loaders. Compiler checks pass;
 native lifecycle and player first-use timing remain OPEN under the disk limitation.
+Phaister's setup warmup now targets her current visual-only OMEN rather than the
+retired Coven, preserving authored timing/look. This loader correction is source-reviewed.
 The existing ultimate-introduction tables and 12 shared effect sheets now preload
 in yielded boot stages; those follow-ups are source-reviewed. Player first-use hitch qualification
 remains OPEN, not replaced by the local shader/cache completion check.
@@ -916,6 +924,11 @@ research, plan and questions: `docs/reports/phaister-kit-2026-09-27/`.
 - [x] Probe: `FilmHerCursesOnAVictimsScreen` (the victim's own screen), the miss, front views of the caster.
 
 **OPEN, in order (owner's notes first):**
+Publication recovery, 2026-09-27: refinement commit `5b696b6f8` is integrated with
+the current networking/loading work. Protocol 64's skill fingerprint covers the
+5.0-second introduction; the older protocol-62 note above is historical. This
+integration does not close any creative refinement item below.
+
 - [ ] ⚠️ OWNER, on the OMEN film: *"the butterflies are too FAT and big"*, *"in ur references theyre js subtly there they dont
   have actual 3d models"*, *"u can keep butterfly 3d model tho figure out where to use it next time"*. Replace OMEN's butterflies
   (play maelstrom, marks, cutscene, screen edges) with subtle FLAT luminous silhouettes (Castorice 25 s: dark wing, bright edge,

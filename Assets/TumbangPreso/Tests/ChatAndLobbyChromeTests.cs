@@ -41,6 +41,7 @@ namespace TumbangPreso.Tests
                 // Empty account/proof is the supported LAN identity, not an authentication bypass.
                 helloType.GetField("AccountPlayerId").SetValue(hello, "");
                 helloType.GetField("HandleProof").SetValue(hello, "");
+                helloType.GetField("SkillContract").SetValue(hello, SkillContractFingerprint.Current);
                 var approve = typeof(NetSession).GetMethod("ApproveConnection", flags);
                 var cached = (System.Collections.IDictionary)typeof(NetSession).GetField("_helloByClient", flags).GetValue(session);
                 NetworkManager.ConnectionApprovalResponse Submit(int protocol)
@@ -60,6 +61,12 @@ namespace TumbangPreso.Tests
                 Assert.AreEqual($"Game version mismatch (network protocol {NetSession.ProtocolVersion})", old.Reason);
                 Assert.IsFalse(old.Pending);
                 Assert.IsFalse(cached.Contains(42UL), "The refused hello was cached as admitted.");
+                helloType.GetField("SkillContract").SetValue(hello, new string('0', 64));
+                var mismatched = Submit(NetSession.ProtocolVersion);
+                Assert.IsFalse(mismatched.Approved);
+                StringAssert.Contains("Skill rules differ", mismatched.Reason);
+                Assert.IsFalse(cached.Contains(42UL));
+                helloType.GetField("SkillContract").SetValue(hello, SkillContractFingerprint.Current);
                 var current = Submit(NetSession.ProtocolVersion);
                 Assert.IsTrue(current.Approved, "A valid current-protocol LAN hello failed the positive control.");
                 Assert.IsFalse(current.Pending);
@@ -335,7 +342,7 @@ namespace TumbangPreso.Tests
             //60 places THORN HARVEST where he looks (a trail runs to the spot, it bursts and catches there) and keeps BAKYA BLOOM out of the box.
             //61 adds Featherfall pose/intent episode keys and timed restoration, with the updated 5 s / 40 s rules.
             //62 and 63 (the world-field header and the shared ability serializer) are recorded in NetSession.
-            //64 makes Phaister's OMEN introduction 5.0 s (was 4.0), and with it the shared phase a cohort containing her derives.
+            //64 adds the shared skill fingerprint, including Phaister's updated 5.0 s introduction.
             Assert.AreEqual(64, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +

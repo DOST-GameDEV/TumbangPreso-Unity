@@ -361,15 +361,7 @@ namespace TumbangPreso.UI
                 foreach (var entry in net.Beacon?.SortedEntries ?? new List<LanEntry>())
                 {
                     if (!string.IsNullOrEmpty(own) && string.Equals(entry.JoinCode, own, System.StringComparison.OrdinalIgnoreCase)) continue;
-                    rooms.Add(new HubRoom
-                    {
-                        Name = entry.HostName,
-                        Map = "LAN",
-                        Players = entry.Players,
-                        Capacity = entry.MaxPlayers,
-                        InProgress = entry.InProgress,
-                        Key = $"{entry.Address}:{entry.Port}",
-                    });
+                    rooms.Add(HubRoom.FromLan(entry));
                 }
                 return rooms;
             }
@@ -387,6 +379,7 @@ namespace TumbangPreso.UI
                     Players = entry.Players,
                     Capacity = entry.Capacity <= 0 ? LobbySession.MaxPlayers : entry.Capacity,
                     InProgress = entry.InProgress,
+                    IsJoinable = entry.IsJoinable,
                     Key = entry.JoinCode,
                 });
             }

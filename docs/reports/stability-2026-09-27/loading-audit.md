@@ -2,6 +2,14 @@
 
 ## Hero prop prefab preparation
 
+Follow-up after `750da6ad`: the existing Phaister setup warmup still called the
+retired Grand Coven builder after the OMEN rework. It now calls only the authored
+PhaisterOmen presentation with the current ultimate's windup/duration. It uses no
+owner transform and never creates VoodooBlackHole,SeanceVoidComponent or HazardVolume.
+The visual is immediately deactivated and destroyed; Random.state preservation and
+the existing Ready/reset lifecycle remain. Source/API-call reviewed only; no new
+compile/runtime/film or first-cast timing claim for this small loader correction.
+
 Base `4b1f39d8`. The roster preload touches body models, but ability props have
 separate resource paths. The general retained-asset cache explicitly excludes
 GameObjects, so it does not retain those prefab roots across menu activation.

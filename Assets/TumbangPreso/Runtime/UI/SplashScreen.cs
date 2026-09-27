@@ -558,6 +558,7 @@ namespace TumbangPreso.UI
 
             WarmAssetCache.CaptureLoadedAssets();
             Debug.Log($"[Splash] preload retained {WarmAssetCache.Count} assets in memory.");
+            _ = Net.SkillContractFingerprint.Current;
 
             // This must remain the final scene operation in the preload chain. Once activation is
             // held, Unity will not complete an additive load or unload queued behind this one.

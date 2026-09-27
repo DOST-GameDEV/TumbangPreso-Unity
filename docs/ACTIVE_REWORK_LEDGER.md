@@ -1,6 +1,44 @@
 # Active TUMP rework ledger
 
+## Phaister interrupted publication recovery, 2026-09-27
+
+Recovered refinement commit `5b696b6f8` and completed its interrupted merge as
+`f55019fb6`, preserving the body-owned status presenter and the two-sided,
+uniformly scaled hex mark. Integrated remote work through `bf0b80db8`.
+Protocol 64 retains the shared skill fingerprint; that fingerprint includes
+Phaister's 5.0-second introduction, so differing phase durations are rejected.
+HERO-10's remaining creative work, including the owner's flat-butterfly correction,
+stays OPEN. Unrelated dirty assets, Supernova work and protected UI metadata remain
+outside this publication batch. Unity 6000.5.8f1 compiled the merged source and
+`ChatAndLobbyChromeTests` passed 7/7 in one guarded EditMode run, using profile
+`presentation-validation-20260921`. Local receipts: `Logs/phaister-recovery-merge.xml`
+and `.log`. No new film, PlayMode run, player build or real-peer claim.
+
 ## Current networking and flow work, 2026-09-27
+
+Phaister's existing setup warmup now builds the current visual-only OMEN using its
+authored ultimate timings, not the retired Grand Coven. It immediately deactivates
+and disposes that visual; no ability,pull,hazard,score or audio path is invoked.
+Source/API-call reviewed only. No repeated character film or unchanged suite was
+run for this loader correction; no measured first-cast timing claim.
+
+Protocol64 adds a cached skill-contract fingerprint to connection approval. Stable
+roster/ability identity, delivery/resource/aim/preparation metadata and shared intro
+durations must match; cosmetic names/assets,live timers,current role and locale do
+not affect it. Boot prepares the hash after its existing kit/table preload. No
+service/auth request added. Three assemblies compile; two direct managed contract
+cases pass. Actual native approval and cross-platform peers remain unrun. Explicit
+protocol versioning still covers code/effect semantics outside this metadata.
+[Compatibility scope](reports/stability-2026-09-27/multiplayer.md#skill-data-compatibility-without-cosmetic-coupling).
+
+Room browsing now preserves LAN/online advertised joinability instead of inferring
+it from visible player count. Reserved chairs and full LAN connection capacity no
+longer show an enabled JOIN. Visible row comparison includes name,capacity and
+admission changes, replacing a repeatedly concatenated partial key. Layout stays
+unchanged. Runtime/Tests compile; two direct managed data checks pass against the
+compiled helpers. Native UI/discovery remain unrun. Initial compiler preflight was
+blocked; one retry succeeded after free space recovered, without a Unity relaunch.
+[Room listing details](reports/stability-2026-09-27/multiplayer.md#room-listing-state-and-admission).
 
 Boot now discovers and retains prefab roots in the three existing hero-prop
 folders, yielding between folders and advancing progress only after each load.
