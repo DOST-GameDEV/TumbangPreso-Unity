@@ -1,19 +1,19 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`ad19d440516ec8e7ffbbe44946df4eca0165eaef`; existing victim-feedback delivery follows it.
+`b93d2a4a9af927cedecc71e675803dea331bedc6`; character-preview allocation unit follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-Dante/Cheska's existing ultimate victim-camera feedback now travels through the
-shared match-event route, retaining its weight, origin and kit accent. It changes
-only the victim's view, not statuses/global time/caster feedback. Flair messages
-carry match/round scope and bounded known-kind validation. Protocol72; no authored
-animation/VFX change. Four assemblies compile; native receive/camera and actual
-peer qualification remain OPEN. QA-15 is still unconfirmed.
-[Evidence](reports/stability-2026-09-27/multiplayer.md#existing-ultimate-victim-feedback).
+Character previews now coalesce continuous render-target size changes for120ms,
+retaining current panel projection and exact settled pixel resolution. First targets
+and explicit captures stay immediate; source art,MSAA and the2048 cap are unchanged.
+Unused invalid fallback avatars are released, but valid-avatar ownership remains
+open pending inactive/copy lifetime evidence. Four assemblies compile; native resize,
+DPI/visual and player allocation/timing checks remain OPEN. Protocol stays72.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#character-preview-allocation).
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -24,6 +24,9 @@ and current owner reservations after resuming.
 
 | Revision | Change | Evidence boundary |
 |---|---|---|
+| b93d2a4a | Remove whole-screen settings reflow/chip scans on ordinary value changes | Four assemblies compile; native transaction/layout and player timings pending |
+| 2b588964 | Async retained supplementary baked-motion data for roster/body/introduction binding | Four assemblies compile; native retention and first-use/memory timings pending |
+| fe3a93eb | Existing ultimate victim-camera feedback through scoped shared match events | Four assemblies compile; native camera/receive and actual peer checks pending |
 | ad19d440 | Accepted plant lifetime identity through cast/removal/recovery and bounded retirement | Four assemblies compile; native lifetime and delayed-peer/reconnect checks pending |
 | 70ee0152 | Host-timed leased Interact holds and scoped escape/uproot notifications | Four assemblies compile; native and lossy-peer hold checks pending |
 | c90f7ef8 | Destination-owned setup readiness, failure/return surface, cancellation and loading input isolation | Four assemblies compile; native loading lifecycle/input/UI checks pending |

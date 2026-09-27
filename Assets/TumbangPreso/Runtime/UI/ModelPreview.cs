@@ -248,6 +248,9 @@ namespace TumbangPreso.UI
 
         private UnityEngine.Camera _camera;
         private RenderTexture _texture;
+        private int _pendingTextureWidth, _pendingTextureHeight;
+        private float _textureResizeAfter;
+        private const float TextureResizeSettleSeconds = .12f;
         private RawImage _surface;
         private RectTransform _panel;
         private readonly Vector3[] _panelCorners=new Vector3[4];
@@ -575,7 +578,7 @@ namespace TumbangPreso.UI
         /// ⚠️ AND IT IS READ IN LateUpdate, NEVER IN Attach. `rect.width` is 0 before the first
         /// layout pass, and every number derived from it is nonsense.
         /// </summary>
-        private void EnsureTexture()
+        private void EnsureTexture(bool settleImmediately = false)
         {
             if (_panel == null || _camera == null) return;
 
@@ -610,7 +613,32 @@ namespace TumbangPreso.UI
             int width = Mathf.Max(64, Mathf.RoundToInt(displaySize.x * scale));
             int height = Mathf.Max(64, Mathf.RoundToInt(displaySize.y * scale));
 
-            if (_texture != null && _texture.width == width && _texture.height == height) return;
+            float aspect = (float)width / height;
+            if (_frameAspect != aspect)
+            {
+                _frameAspect = aspect;
+                _needsFrame = true;
+            }
+            // Projection follows the displayed panel even while the previous
+            // target is reused during a continuous resize.
+            _camera.aspect = aspect;
+
+            if (_texture != null && _texture.width == width && _texture.height == height)
+            {
+                _pendingTextureWidth = _pendingTextureHeight = 0;
+                return;
+            }
+            if (_texture != null && !settleImmediately)
+            {
+                if (_pendingTextureWidth != width || _pendingTextureHeight != height)
+                {
+                    _pendingTextureWidth = width; _pendingTextureHeight = height;
+                    _textureResizeAfter = Time.unscaledTime + TextureResizeSettleSeconds;
+                    return;
+                }
+                if (Time.unscaledTime < _textureResizeAfter) return;
+            }
+            _pendingTextureWidth = _pendingTextureHeight = 0;
 
             var old = _texture;
 
@@ -886,6 +914,11 @@ namespace TumbangPreso.UI
 
             if (avatar == null || !avatar.isValid)
             {
+                if (avatar != null)
+                {
+                    if (Application.isPlaying) Destroy(avatar);
+                    else DestroyImmediate(avatar);
+                }
                 Debug.LogWarning($"[Preview] could not build a generic avatar for " +
                                  $"{animator.name}; it will stand in its bind pose.");
                 return;
@@ -1044,24 +1077,24 @@ namespace TumbangPreso.UI
         /// </summary>
         public void StepForCapture()
         {
-            Step();
+            Step(settleImmediately: true);
 
             if (_camera != null) _camera.Render();
         }
 
-        private void Step()
+        private void Step(bool settleImmediately = false)
         {
             if (_camera == null) return;
 
-            EnsureTexture();
+            EnsureTexture(settleImmediately);
 
             // ⚠️ RE-DERIVED EVERY FRAME, NOT ONLY WHEN THE TARGET IS BUILT. Setting it once in
             // `EnsureTexture` is correct until something resets it, and a camera's aspect is
             // reset by the engine on a resolution change as well as by any code that assigns
             // `targetTexture`. One frame of the wrong aspect is a visibly stretched portrait, and
-            // this costs a float divide.
+            // keep the current panel projection while resize allocations settle.
             if (_texture != null && _texture.height > 0)
-                _camera.aspect = (float)_texture.width / _texture.height;
+                _camera.aspect = _frameAspect;
 
             SampleIdle();
 

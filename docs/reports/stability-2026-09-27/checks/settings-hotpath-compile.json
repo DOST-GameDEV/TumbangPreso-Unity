@@ -1,0 +1,24 @@
+{
+  "base": "2b5889648e2de70a217450f4405f220b7f73cc5d",
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0; unchanged Core reused",
+  "nativeTests": "NOT RUN: existing editor disk-reserve boundary; no repeated native launch",
+  "runtimeAssemblySha256": "F66B66C6463314DD8012C8EA82D0DF9B95BA4FE3E40EFE2BBB90477E45D189CE",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.cs",
+      "sha256": "E617B24C3275C0F6674F2F1E8F9837B0E80792F6E1E7831BDD932F3E7452C6A7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.OwnerPainted.cs",
+      "sha256": "30324F336636449911BA87595291B3AD90B2449387962199B3E22635FF258448"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.Workspace.cs",
+      "sha256": "E0A4769A2A55CDAB512F54EF7CB61454402CB2CCF9E3966031DA2DBEAFB7F848"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/TumpNativeSettingsTests.cs",
+      "sha256": "8988D1E70A6F45A890C30BA70B7A3F38CFCC11DA3AEC34D09957D8DF36594459"
+    }
+  ]
+}

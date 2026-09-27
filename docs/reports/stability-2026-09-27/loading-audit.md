@@ -104,6 +104,82 @@ native integration run; it has NOT run. The preceding editor startup hit the dis
 reserve, so no repeated editor launch was attempted for this batch. No measured
 player frame-time, peak-memory or hitch-free claim.
 
+## Character Preview Allocation
+
+After `b93d2a4a`, ModelPreview coalesces repeated target-size changes instead of
+releasing/allocating a new4x MSAA RenderTexture for every intermediate pixel size.
+The first target is immediate. Later target allocation waits until dimensions have
+been unchanged for120ms; explicit StepForCapture settles immediately through the
+same path. The current panel projection updates during that wait so the previous
+target's dimensions do not set the new display aspect.
+
+Final physical-pixel sizing, the2048 uniform cap, filtering,MSAA,model framing and
+source art are unchanged. During continuous resize the previous target is briefly
+resampled, rather than allocating at every intermediate dimension. This is a bounded
+allocation policy, not a measured FPS or first-click improvement claim.
+
+EnsureAvatar also destroys a nonnull invalid avatar before returning: that newly
+created object has not been assigned or shared. Valid-avatar lifetime management
+remains OPEN. Unity documents [BuildGenericAvatar](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/AvatarBuilder.BuildGenericAvatar.html)
+as creating a new asset, while [OnDestroy](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/MonoBehaviour.OnDestroy.html)
+only runs for previously active objects. Inactive binding and copied avatar references
+need native ownership evidence before adding a blanket destroy hook or cache. No
+valid/imported avatar,rig,clip or animation was changed in this unit.
+
+Frozen171 inputs,2 changed sources. Runtime,Editor,Tests and PlayTests compile
+with unchanged Core reused. The new native case covers target identity during a
+resize burst, final pixel resolution, stable reuse and capture flush; the existing
+DPI/aspect case is unchanged. **NOT RUN** under the existing editor disk boundary.
+No old Core,broad suite or films rerun. [Receipt](checks/preview-resize-compile.json).
+
+## Settings Value-Change Work
+
+After `2b588964`, ordinary settings slider/name changes no longer rerun the full
+text/row layout pass or discover and resize every chip in the section. Section
+construction caches its chip references and invalidates layout; a larger-text change
+still reflows all rows and refits the cached chips. Binding labels are still read
+on change, but only changed labels are assigned/refitted, avoiding a stale-label
+assumption around device/binding changes.
+
+Each notification evaluates unsaved state once rather than twice. Save-face styling
+is updated only when that boolean changes. The transaction, live preview, profile
+serialization, rebind and save/discard implementations are unchanged. No new settings
+prebuild framework or UI redesign was introduced. This removes source-proven repeated
+hierarchy/geometry work; player frame-time improvement is not measured.
+
+Frozen169 inputs,4 changed sources. Runtime,Editor,Tests and PlayTests compile with
+unchanged Core reused. Added a native case covering volume value changes, retained
+rows, large/normal text reflow, binding rows and discard state. **NOT RUN** under the
+existing editor disk boundary. No previous settings films/suites or Core cases rerun.
+[Receipt](checks/settings-hotpath-compile.json).
+
+## Supplementary Motion Data
+
+After `fe3a93eb`, boot's roster stage asynchronously loads and retains the five
+supplementary baked-motion sets resolved by each actual model's rig hierarchy:
+dance,carry,swimming,recovery and rooted interactions. It yields between requests
+and does not instantiate actors,create PlayableGraphs,generate clips or alter any
+authored model,clip,timing,palette or rig path.
+
+GeneratedMotionAssets is shared by CharacterAnimator binding and the existing
+Paete/Phaister introduction rooted-clip lookups. Successful assets stay referenced
+and repeated roster rigs reuse them. Missing/non-rigged assets retain the old null
+fallback and are not permanently negative-cached, including editor authoring changes.
+The cache resets at subsystem registration. Existing imported roster clips remain
+separate; no blanket resource-folder load was added.
+
+This moves supplementary asset lookup/deserialization off the first model bind or
+introduction. It does not remove graph construction,instantiation/material/GPU cost
+or establish a measured no-hitch result. Decoded resident-memory and first-use player
+timings remain unmeasured. HeroVoice's lazy HeroVo lookup was inspected but left
+unchanged because no hero-recording resources are present in the current repository.
+
+Frozen165 inputs,8 owned source/test/metadata paths. Runtime,Editor,Tests and
+PlayTests compile with unchanged Core reused. The new native case checks exact
+retained asset identity,repeated warmup and no actor/animator component creation;
+**NOT RUN** under the existing editor disk boundary. No old Core/broad suite/films
+repeated. [Receipt](checks/motion-loading-compile.json).
+
 ## Destination Setup Readiness
 
 After `a6111f72`, the generic loading handoff no longer treats eight elapsed seconds,
