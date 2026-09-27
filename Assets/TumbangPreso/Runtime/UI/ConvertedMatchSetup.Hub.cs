@@ -102,19 +102,13 @@ namespace TumbangPreso.UI
 
         public void StartPractice()
         {
-            // ⚠️ PRACTICE IS THE OFFLINE MATCH THE OLD WITH BOTS ROUTE STARTED: no transport, bots
-            // in the empty seats, the mode card's ruleset. A room or a search is left first, so a
-            // practice match can never start while this machine is still offered to strangers.
+            // Cancel room/queue ownership before requesting the explicit offline range.
+            // Training never changes the saved bot difficulty or character choice.
             LeaveRoom();
+            GameLaunch.Reset();
             GameLaunch.Spectator = false;
-            if (_difficulty == AIController.NoBotsIndex)
-            {
-                _difficulty = (int)Difficulty.Normal;
-                Settings.SettingsStore.Current.AiDifficulty = _difficulty;
-                Settings.SettingsStore.Save();
-            }
-            AIController.ApplyDifficulty(_difficulty);
-            AIController.BotsEnabled = true;
+            GameLaunch.AllBots = false;
+            GameLaunch.TrainingRange = true;
             SceneFlow.StartMatch();
         }
 

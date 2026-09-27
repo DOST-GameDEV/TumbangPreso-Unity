@@ -1,20 +1,20 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`a60d3f672d02d54700ce86f678ec9cbbfb4f1db6`; received frozen-presentation unit follows it.
+`6f128705eac2a370276d602c4a14ba3d7e55a716`; offline training-range unit follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-Frozen restraints now follow received body status instead of only host cast calls.
-The existing status presenter owns one restraint per body; host calls deduplicate,
-refreshes keep it alive,thaw/disable/despawn remove it,and shatter audio is local
-on each peer. Existing geometry/colour/stun rules stay unchanged. Failed visual
-construction is bounded/cleaned instead of repeated each frame. Four existing
-ice meshes now preload asynchronously behind boot. Four assemblies compile;
-new native received-state/lifecycle case remains pending. QA-15 is NOT resolved.
-[Evidence](reports/stability-2026-09-27/multiplayer.md#received-frozen-presentation).
+PRACTICE-1 now has an explicit offline range: in-place roster changes, independent
+local resource switches, can-state lock, reusable target bots with seat/role/idle
+controls, and reset through the existing pause/menu route. Bodies and the inactive
+menu are prepared during setup. Saved AI/character preferences stay unchanged;
+network/connecting/revoked/tutorial/spectator sessions reject training controls.
+Five assemblies compile and seven new Core gate cases pass. Native range lifecycle,
+UI, physical input and timing checks remain OPEN, so the parent is not complete.
+[Evidence and exact limits](reports/stability-2026-09-27/practice-range.md).
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -25,6 +25,7 @@ and current owner reservations after resuming.
 
 | Revision | Change | Evidence boundary |
 |---|---|---|
+| 6f128705 | Frozen restraint follows received status; dedup, refresh/thaw/disable cleanup; four meshes preload | Four assemblies compile; native lifecycle/peer checks and QA-15 pending |
 | a60d3f67 | First-HOME paused decoder/first-frame preparation during boot | Four assemblies compile; native handoff/reduced-motion and timing checks pending |
 | 4a9f9cf2 | Correlated combat refusals and authoritative resource correction | Two new Core cases pass; five assemblies compile; native/peer qualification pending |
 | 99ce5338 | Remote host resource clocks and held-sprint snapshot continuity | Two new Core cases pass; five assemblies compile; native/peer resource checks pending |

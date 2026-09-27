@@ -374,9 +374,7 @@ namespace TumbangPreso
                 // ⚠️ THE SPAWN IS RECORDED, NOT JUST USED. The kill plane returns whoever falls
                 // off the world to their OWN spawn, and it has no other way to know where that
                 // is. Written every round because the mark moves when roles rotate.
-                Vector3 mark = m.IsDefender
-                    ? DefenderMark()
-                    : AttackerSpawn(AttackerRoleFor(slot, defenderSlot));
+                Vector3 mark = SpawnPointFor(slot, defenderSlot);
                 m.SpawnPosition = mark;
                 m.Teleport(mark);
 
@@ -434,6 +432,9 @@ namespace TumbangPreso
                 Slippers[slot].transform.position = SlipperHome(slot);
             }
         }
+
+        internal static Vector3 SpawnPointFor(int slot, int defenderSlot) => slot == defenderSlot
+            ? DefenderMark() : AttackerSpawn(AttackerRoleFor(slot, defenderSlot));
 
         private static Vector3 DefenderMark() =>
             new Vector3(0.0f, 0.0f, -Balance.DefenderStartOffset);

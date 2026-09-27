@@ -419,12 +419,13 @@ namespace TumbangPreso.PlayTests
                 yield return Press("PracticeCard");
                 yield return Press("TrainingChoice");
                 until = Time.realtimeSinceStartup + 30;
-                while ((!SceneFlow.InMatch || Object.FindFirstObjectByType<AIController>() == null) &&
+                while ((!SceneFlow.InMatch || !PracticeRange.Active) &&
                        Time.realtimeSinceStartup < until) yield return null;
-                Assert.IsTrue(SceneFlow.InMatch, "TRAINING did not enter the existing free-practice match.");
+                Assert.IsTrue(SceneFlow.InMatch, "TRAINING did not enter the offline range.");
                 Assert.IsFalse(GameLaunch.GuidedTutorial, "TRAINING installed guided lessons.");
                 Assert.IsNull(Object.FindFirstObjectByType<GuidedTraining>());
-                Assert.IsNotNull(Object.FindFirstObjectByType<AIController>(), "TRAINING lost its bot seats.");
+                Assert.IsTrue(PracticeRange.Active, "TRAINING did not install its range controls.");
+                Assert.AreEqual(1, GameServices.Round.Players.Count, "Training should start without active target bots.");
                 Assert.IsFalse(SceneFlow.Networked);
                 Assert.IsFalse(NetAuthority.IsNetworked);
 

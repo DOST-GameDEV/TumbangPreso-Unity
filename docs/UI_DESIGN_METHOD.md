@@ -43,3 +43,12 @@ input/focus behavior would be lost if the rectangle were removed.
   Use the smallest changed-flow interaction and visual check; retain unchanged evidence.
 - Record the surface's owner and route in the existing authorship inventory/TODO.
   Never call missing,unverified or inaccessible functionality complete.
+
+## Training Controls
+
+PRACTICE-1 uses the existing pause entry and `PausePanel.TrainingRange.cs` for the
+offline range, with `PracticeRange.cs` owning gameplay changes. `Panel.Prepare`
+builds without entering; the owner must hide its root-level canvas until opening.
+Reused controls refresh from range state, and each gameplay setter rechecks the
+offline gate. Choice popups own nested Back through `ScreenTakeover`.
+[Current evidence and remaining native checks](reports/stability-2026-09-27/practice-range.md).

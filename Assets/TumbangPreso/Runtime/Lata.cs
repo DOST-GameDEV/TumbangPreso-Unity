@@ -203,6 +203,7 @@ namespace TumbangPreso
         public void HostKnockDown(int throwerSlot, ScoreEvent award)
         {
             if (!NetAuthority.ShouldResolve()) return;
+            if (PracticeRange.CanIsFrozen(this)) return;
             if (!_isUpright) return;
 
             // A reset must create a real safe beat, not only refuse newly launched throws.
@@ -318,6 +319,7 @@ namespace TumbangPreso
         /// </summary>
         public void HostRestore()
         {
+            if (PracticeRange.CanIsFrozen(this)) return;
             // ⚠️⚠️ THIS GATE WAS MISSING AND THREE COMMENTS IN TWO FILES SAID IT WAS HERE.
             // `SetUpright`'s note and `AnnounceUprightChange`'s summary both claimed this method
             // and `HostKnockDown` "both open with `NetAuthority.ShouldResolve()`", and

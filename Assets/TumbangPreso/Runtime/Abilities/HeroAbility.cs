@@ -755,10 +755,10 @@ namespace TumbangPreso.Abilities
         /// method called `ClearCooldown` invites a gameplay caller; there is no legitimate one,
         /// because every cooldown in the game is a balance number.
         /// </summary>
-        public void RefillForSandbox()
+        public void RefillForSandbox(bool cooldown = true, bool charges = true)
         {
-            CooldownRemaining = 0.0f;
-            if (UsesCharges) ChargesRemaining = MaxCharges;
+            if (cooldown) CooldownRemaining = 0.0f;
+            if (charges && UsesCharges) ChargesRemaining = MaxCharges;
         }
 
         public virtual bool CanActivate(AbilityContext ctx)

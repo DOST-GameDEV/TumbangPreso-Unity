@@ -28,6 +28,7 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override void Build()
         {
+            if (PracticeRange.Requested && PracticeRange.Instance != null) { BuildTrainingRange(); return; }
             var design = OwnerUiLayout.DesignArea(Canvas.transform, "LiveMenuComposition");
             var holder = OwnerUiLayout.Rect(design, "LiveMenuColumn"); OwnerUiLayout.Place(holder, 96, 182, 662, 756);
             var card = Hub.HubKit.Plate(holder, "LiveMenuCard", new Color(Hub.HubStyle.Night.r, Hub.HubStyle.Night.g, Hub.HubStyle.Night.b, 0.95f), 41, 5.0f);

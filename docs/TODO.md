@@ -932,13 +932,13 @@ integration does not close any creative refinement item below.
 - [ ] Icons/glyphs for the new names, portrait/avatar with the hat pins, bots for OMEN height, rejoin probe (network: Astra's lane).
 - [ ] The PlayMode gate, `Checks.RunAll`, audits, a build.
 
-### PRACTICE-1 · A practice picker and a Valorant-style training range ⚠️ OPEN, 2026-09-26
+### PRACTICE-1 · A practice picker and a Valorant-style training range ⚠️ NATIVE CHECK OPEN, 2026-09-27
 
 Owner, 2026-09-26: *"can u also make it so that when u click practice theres a screen that pops up
 that lets u pick between Tutorial and Training mode"*, and *"allow character change + cheats +
 summon/remove bots in practice just like valorant practice"*.
 
-- [ ] PRACTICE opens a two-card picker (TUTORIAL, the guided `GuidedTraining` walk-through; TRAINING,
+- [x] PRACTICE opens a two-card picker (TUTORIAL, the guided `GuidedTraining` walk-through; TRAINING,
   the free range), built through `MenuKit`/`ConvertedScreen` so pad focus, thumb targets and one-press
   back come by construction (CLAUDE.md 4a, 6.2).
 - [ ] Training range panel (pause-style, opened by one bound key, pad and touch answered): change hero
@@ -947,6 +947,15 @@ summon/remove bots in practice just like valorant practice"*.
   never reachable from a networked or ranked match.
 - [ ] Render every state over the real background at his window shape; record the journey (presses to
   each action).
+
+Implementation2026-09-27: the offline range now replaces Training's ordinary bot
+match, with prepared/reused menu and target bodies, in-place authored roster changes,
+independent local cheats, bot seat/derived-role/idle controls and reset. Saved
+preferences stay unchanged; selected/connecting network sessions also refuse cheats.
+The picker retains earlier QA2 evidence. Five assemblies compile and seven new Core
+gate cases pass. Native range lifecycle, visuals, pad/touch and first-use timings
+remain OPEN; the range/render checkboxes are intentionally not closed.
+[Implementation and evidence](reports/stability-2026-09-27/practice-range.md).
 
 ### SKILLUI-1 · The yellow skill ring, and cooldowns against charges ⚠️ OPEN, 2026-09-26
 

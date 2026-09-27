@@ -361,6 +361,7 @@ namespace TumbangPreso
 
             _book = RosterBook.Load();
             bool guided = GameLaunch.GuidedTutorial;
+            bool range = PracticeRange.Requested;
 
             // ⚠️ THE SAVED DIFFICULTY WAS BEING IGNORED. It is written by the settings panel
             // and was never read back, so every bot played at Normal no matter what the
@@ -395,6 +396,7 @@ namespace TumbangPreso
             // the first lesson that needs a body in front of you.
             bool soloPractice = !AIController.BotsEnabled
                                 && !guided
+                                && !range
                                 && humanSeat >= 0
                                 && (liveNetwork == null || !liveNetwork.IsNetworked);
 
@@ -451,7 +453,7 @@ namespace TumbangPreso
             // begins under the countdown and the free-roam window never happens. A headless
             // probe has nobody to press R, which is what UseReadyGate is for — leave it true
             // for anything a human will look at.
-            runner.AutoStart = !UseReadyGate && !guided;
+            runner.AutoStart = !UseReadyGate && !guided && !range;
 
             // ⚠️⚠️ THE BOARD IS WIPED HERE, NOT AT `StartMatch`, BECAUSE THE PLAYER LOOKS AT IT
             // FIRST. `GameServices` is `DontDestroyOnLoad`, so the match and round directors
@@ -500,9 +502,9 @@ namespace TumbangPreso
             // Placing them only in `OnRoundStarted` left all four stacked on the world origin
             // underneath the countdown, so the opening shot was an empty street — which is
             // exactly what the report's screenshot of the Unity build shows.
-            if (UseReadyGate || guided) runner.ResetWorld(MatchRules.DefenderSlotFor(1));
+            if (UseReadyGate || guided || range) runner.ResetWorld(MatchRules.DefenderSlotFor(1));
 
-            if (UseReadyGate && !guided) BuildReadyGate(seats[human], runner);
+            if (UseReadyGate && !guided && !range) BuildReadyGate(seats[human], runner);
 
             // ⚠️⚠️ THE HIGHLIGHT WATCHER IS INSTALLED WITH THE ARENA, ON EVERY PEER, AND IT IS THE
             // ONLY PIECE OF `docs/TODO.md` § 147 THAT NEEDS A FRAME. Every other marker rides an
@@ -534,7 +536,7 @@ namespace TumbangPreso
             // and it enters the actual game"*, and `audio_manager.gd::_poll_scene_state()`
             // already answers it on the "match" branch with `stop_music_now()` rather than a
             // fade, under 🧑's *"pls js abruptly cut it"*.
-            if (UseReadyGate && !guided) GameServices.Music?.StopNow();
+            if (UseReadyGate && !guided && !range) GameServices.Music?.StopNow();
             else GameServices.Music?.Play("match", GameServices.MatchTrack);
 
             // Scene management is intentionally game-owned rather than Netcode-owned. Tell
@@ -550,6 +552,8 @@ namespace TumbangPreso
                 var training = gameObject.AddComponent<GuidedTraining>();
                 training.Configure(seats[human], lata, seats, slippers, runner);
             }
+            else if (range)
+                gameObject.AddComponent<PracticeRange>().Configure(seats[human], lata, seats, slippers, runner);
         }
 
         /// <summary>
@@ -1013,7 +1017,7 @@ namespace TumbangPreso
                 // nameplate to a roster name for a player who is still connected.
                 go.AddComponent<AIController>();
             }
-            else if (AIController.BotsEnabled && !isHumanPlayer &&
+            else if ((AIController.BotsEnabled || PracticeRange.Requested) && !isHumanPlayer &&
                      (!isNetworked || NetAuthority.IsHost))
             {
                 // Unoccupied seats run AI on the host only

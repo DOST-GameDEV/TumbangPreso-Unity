@@ -456,7 +456,7 @@ namespace TumbangPreso.Abilities
             // changes at a round boundary, where `ResetKit` has just cleared every cooldown.
             Kit.SetRole(_motor.IsDefender, _context);
 
-            if (PracticeSandbox.Active) RefillForSandbox();
+            if (PracticeRange.Active ? PracticeRange.RefillsAbilities(_motor) : PracticeSandbox.Active) RefillForSandbox();
 
             if (NetAuthority.IsNetworked)
             {
@@ -599,11 +599,13 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private void RefillForSandbox()
         {
-            Kit.Skill1?.RefillForSandbox();
-            Kit.Skill2?.RefillForSandbox();
-            Kit.IdleRoleSkill?.RefillForSandbox();
-            Kit.Ultimate?.RefillForSandbox();
-            Kit.AddUltimateCharge(Kit.UltimateCost);
+            bool cooldown = PracticeSandbox.Active;
+            bool charges = !PracticeRange.Active || PracticeRange.Instance.InfiniteSkills;
+            Kit.Skill1?.RefillForSandbox(cooldown, charges);
+            Kit.Skill2?.RefillForSandbox(cooldown, charges);
+            Kit.IdleRoleSkill?.RefillForSandbox(cooldown, charges);
+            Kit.Ultimate?.RefillForSandbox(cooldown, !PracticeRange.Active || PracticeRange.Instance.FullUltimate);
+            if (!PracticeRange.Active || PracticeRange.Instance.FullUltimate) Kit.AddUltimateCharge(Kit.UltimateCost);
         }
 
         private void Aim(InputIntent intent, Verb verb, Slot slot, ref float bufferedAt)

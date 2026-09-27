@@ -19,6 +19,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Ability prop source prefabs | Visual/HeroPropAssets.cs; current Paete/Rework/Phaister folders,no gameplay spawn during asset preload |
 | Effect sheets and authored intro data | Visual/VfxFlipbook.cs,UltimatePerformance and existing per-kit warmups |
 | Match loading surface | UI/Hub/HubLoading.cs; inspect generic readiness separately from destination-specific asset/presentation work |
+| Training controls/targets | PracticeRange.cs,UI/PausePanel.TrainingRange.cs; prebuilt inactive menu and target bodies reused without changing saved preferences |
 | First-use/runtime costs | Existing profiler markers,FrameRateHistogram,tools/cold_start.py and current internal player |
 
 ## Rules For Changes
