@@ -20,8 +20,8 @@ namespace TumbangPreso.Abilities
     /// | Ultimate | HIGOP | *"casts a blackhole ... pulls everyone towards it. No button mashhing"*, *"really slowly cast"*, *"pulls players ands slipeprs except for her shit and no escape for entire duration but they can try to"* |
     ///
     /// ⚠️ HEX AND GRAND COVEN ARE REPLACED. `RitualBuildSeconds` remains for legacy callers;
-    /// the warmup follows the current ultimate. `CaptureCoven`/`RestoreCoven` keep their names
-    /// because the rejoin snapshot (`MatchRpc`) calls them, and now carry the black hole.
+    /// the warmup follows the current ultimate. `CaptureCoven`/`RestoreCoven` remain local/probe
+    /// compatibility methods; networking discovers the ability's `IPreparedWorldReplication` capability.
     /// </summary>
     public sealed class PhaisterHeroKit : HeroKit
     {
@@ -34,18 +34,10 @@ namespace TumbangPreso.Abilities
         public bool IsEclipseActive => false;
 
         public bool CaptureCoven(out Vector3 centre, out float preparation, out float remaining)
-            => ((Higop)Ultimate).Capture(out centre, out preparation, out remaining);
+            => ((IPreparedWorldReplication)Ultimate).CapturePreparedWorld(out centre, out preparation, out remaining);
 
         public void RestoreCoven(CharacterMotor motor, Vector3 centre, float preparation, float remaining)
-        {
-            if (motor == null || NetAuthority.ShouldResolve() ||
-                float.IsNaN(preparation) || float.IsInfinity(preparation) ||
-                float.IsNaN(remaining) || float.IsInfinity(remaining)) return;
-            var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>(),
-                centre, motor.transform.forward, centre);
-            using (NetCue.SuppressRelay())
-                ((Higop)Ultimate).Restore(context, centre, preparation, remaining);
-        }
+            => HeroAbilitySystem.RestorePreparedWorld(motor, Ultimate, centre, preparation, remaining);
 
         public PhaisterHeroKit() : base("phaister", "PHAISTER")
         {
@@ -332,7 +324,7 @@ namespace TumbangPreso.Abilities
 
         // ================================================================== HIGOP (ultimate)
 
-        private sealed class Higop : HeroAbility
+        private sealed class Higop : HeroAbility, IPreparedWorldReplication
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             private GameObject _hole;
@@ -367,22 +359,31 @@ namespace TumbangPreso.Abilities
                 _hole = VoodooBlackHole.Spawn(_centre, ctx.Motor.PlayerSlot, Windup, Duration);
             }
 
-            public bool Capture(out Vector3 centre, out float preparation, out float remaining)
+            public bool CapturePreparedWorld(out Vector3 centre, out float preparation, out float remaining)
             {
                 centre = _centre; preparation = WindupRemaining; remaining = DurationRemaining;
                 return IsWindingUp || IsActive;
             }
 
-            public void Restore(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
+            public bool RestorePreparedWorld(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
             {
-                if (IsWindingUp || IsActive || (preparation <= 0 && remaining <= 0)) return;
+                if (preparation <= 0 && remaining <= 0)
+                {
+                    RollBackPredictedCast(ctx, refundResources: false);
+                    if (_hole != null) { _hole.SetActive(false); UnityEngine.Object.Destroy(_hole); }
+                    _hole = null;
+                    return false;
+                }
+                if (IsWindingUp || IsActive) return false;
                 _centre = centre;
                 preparation = Mathf.Clamp(preparation, 0, Windup);
                 remaining = Mathf.Clamp(remaining, 0, Duration);
                 if (preparation > 0) RestoreWindupClock(ctx, preparation);
                 else RestoreLiveClock(remaining);
                 if (_hole != null) UnityEngine.Object.Destroy(_hole);
-                _hole = VoodooBlackHole.Spawn(centre, ctx.Motor != null ? ctx.Motor.PlayerSlot : -1, preparation, preparation > 0 ? Duration : remaining);
+                float elapsed = preparation > 0 ? Windup - preparation : Windup + Duration - remaining;
+                _hole = VoodooBlackHole.Spawn(centre, ctx.Motor != null ? ctx.Motor.PlayerSlot : -1, Windup, Duration, elapsed);
+                return true;
             }
 
             protected override void OnActivate(AbilityContext ctx)

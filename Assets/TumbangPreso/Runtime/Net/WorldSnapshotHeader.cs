@@ -13,6 +13,8 @@ namespace TumbangPreso.Net
         public FixedString128Bytes Scene;
         public float SentAt, RoundClock;
         public long Match, SkillEvent, OwnerRequest;
+        public long UltimatePhase, OwnerUltimateRequest;
+        public int UltimateStage;
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
@@ -35,12 +37,22 @@ namespace TumbangPreso.Net
             serializer.SerializeValue(ref SkillEvent);
             serializer.SerializeValue(ref OwnerRequest);
             serializer.SerializeValue(ref RoundClock);
+            serializer.SerializeValue(ref UltimatePhase);
+            serializer.SerializeValue(ref UltimateStage);
+            serializer.SerializeValue(ref OwnerUltimateRequest);
         }
 
         public bool Matches(long match, int round, string scene)
             => Match > 0 && Match == match && Round >= 0 && Round == round && Scene.ToString() == scene
                 && Generation > 0 && Count >= 0 && Count <= WorldEffectSnapshot.MaxFields
-                && SkillEvent >= 0 && OwnerRequest >= 0 && Finite(SentAt) && ValidClock(RoundClock);
+                && SkillEvent >= 0 && OwnerRequest >= 0 && Finite(SentAt) && ValidClock(RoundClock)
+                && UltimatePhase >= 0 && OwnerUltimateRequest >= 0 && UltimateStage >= 0 && UltimateStage <= 2;
+
+        // A cohort's handback creates effects without changing its phase ID.
+        // Stage progression must therefore invalidate a pre-activation snapshot too.
+        public bool IncludesUltimateState(long phase, int stage)
+            => phase >= 0 && stage >= 0 && stage <= 2 && phase <= UltimatePhase
+                && (phase < UltimatePhase || stage <= UltimateStage);
 
         public bool TryAge(float currentClock, out float elapsed)
         {
@@ -53,7 +65,7 @@ namespace TumbangPreso.Net
         public static bool TryRead(ref FastBufferReader reader, out WorldSnapshotHeader header)
         {
             header = default;
-            if (reader.Length - reader.Position < 46 || reader.Length - reader.Position > MaxWireBytes) return false;
+            if (reader.Length - reader.Position < 66 || reader.Length - reader.Position > MaxWireBytes) return false;
             try
             {
                 reader.ReadNetworkSerializable(out header);

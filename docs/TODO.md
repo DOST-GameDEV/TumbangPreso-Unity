@@ -21,9 +21,18 @@ Nothing was deleted or renumbered.
 through explicit shared networking contracts and enforced coverage for authority,
 prediction/confirmation, persistent state and lifecycle recovery. Preserve current
 skill behavior and presentation. Implement directly without delegated workers.
+Only Paete's VFX are currently substantial; other presentation is provisional.
+Keep shared delivery independent of cosmetic reworks so later authors can replace
+models,clips and effects without rebuilding transport plumbing.
+Ranked matchmaking,admission,reconnect and spectators are explicitly included;
+preserve rating/result/leave rules and the existing device-separated ranked pools.
 Protocol64 now checks shared skill/intro metadata at connection approval while
 ignoring cosmetic data/live state. Compiler checks and two managed contract cases
 pass; native approval/cross-platform checks and broader lifecycle coverage stay OPEN.
+Protocol65 protects snapshots across ultimate handback and restores prepared
+effects on the paused simulation clock through ability-owned recovery interfaces,
+without hero/effect-class transport switches. Compiler/capability checks pass;
+native recovery/codec/ranked coverage remains OPEN. See [contract](SKILL_NETWORK_CONTRACT.md).
 Scope includes body animation, VFX, cutscenes, interruption and cleanup on every
 relevant peer, spectator, late join and reconnect. Explicit delivery declarations
 and the normal pre-build guard are implemented (focused EditMode 5/5); remaining

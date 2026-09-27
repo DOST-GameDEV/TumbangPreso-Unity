@@ -482,7 +482,10 @@ namespace TumbangPreso.Net
         // activation/command intent. Cosmetic names and assets are not wire identity.
         // 64: ConnectionHello includes deterministic shared skill/phase metadata.
         // Peers with different reworked rules cannot silently join the same match.
-        public const int ProtocolVersion = 64;
+        // 65: world recovery includes ultimate phase/stage/request freshness;
+        // PreparedWorld replaces CovenEffect with ability-owned spatial recovery,
+        // joins its world generation and ages on the round clock.
+        public const int ProtocolVersion = 65;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

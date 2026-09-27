@@ -2,6 +2,29 @@
 
 ## Current networking and flow work, 2026-09-27
 
+Owner expansion: ranked is explicitly included, not only custom/LAN matches.
+Cover ranked matchmaking,admission,reconnect and spectators as well as shared
+match delivery. Preserve rating/result/leave rules and the existing device pools.
+
+Owner clarification: only Paete currently has substantial VFX; other character
+presentation is provisional and will be reworked. Preserve it without polishing
+or treating current effect classes as permanent network design. Model,clip,VFX
+and cosmetic swaps should reuse shared cast/state delivery. New gameplay state
+still needs an explicit recovery contract; do not add bespoke RPCs for each rework.
+
+Protocol65 extends world freshness through ultimate cohort ID/stage and pending
+owner ultimate requests. Prepared-effect recovery now follows its accepted world batch,
+uses simulation-clock preparation/lifetime, preserves height and seeks the original
+authored timeline/body preparation. Explicit empty state clears obsolete effects.
+Expired newer intros also retire older playback and retain terminal identity.
+IPreparedWorldReplication is ability-owned and auto-discovered; transport no longer
+names Phaister or her current effect class. Ability-ID matching and per-ability
+dedup support multiple such abilities per hero. Three assemblies compile on the
+20-file candidate; one new capability-contract check passes. Two prior managed
+clock/freshness cases remain recorded without repeat. Native cases stay OPEN.
+[Authoring contract](SKILL_NETWORK_CONTRACT.md).
+[Recovery evidence and limits](reports/stability-2026-09-27/multiplayer.md#phase-aware-world-and-omen-recovery).
+
 Phaister's existing setup warmup now builds the current visual-only OMEN using its
 authored ultimate timings, not the retired Grand Coven. It immediately deactivates
 and disposes that visual; no ability,pull,hazard,score or audio path is invoked.

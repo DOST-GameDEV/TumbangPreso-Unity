@@ -1,5 +1,55 @@
 # Multiplayer investigation, 2026-09-27
 
+## Phase-aware world and OMEN recovery
+
+Base `bf0b80db`. WorldSnapshotHeader now carries ultimate cohort ID/stage and
+processed-owner ultimate request alongside its existing cast freshness. A snapshot
+captured before a cohort handback cannot erase the effects created at handback,
+even though its cohort ID has not changed. New pending ultimate requests also keep
+older world data from replacing their state. Protocol is **65**; all peers must match.
+
+The PreparedWorld channel replaces CovenEffect with a single bounded serializer:
+stable ability ID,match,round,accepted world generation,3D centre,preparation/live
+clocks and captured round time. It is sent AFTER its world batch, inherits that batch's scene/phase/
+prediction freshness, suppresses duplicate generations and ages by simulation time,
+not wall time through another cutscene's pause. Empty state is now sent too, so it
+can release an obsolete root/effect rather than waiting for a stale local timer.
+
+VoodooBlackHole's optional elapsed start preserves its normal zero-start behavior.
+Recovery keeps the original windup/live lengths and seeks the authored PhaisterOmen
+timeline; it no longer starts a shortened fresh presentation. A restored preparation
+seeks the existing body/FPP action. Empty recovery does not cancel a reserved new
+introduction. Geometry,palette,animation assets and effect direction are unchanged.
+
+Review also found that receiving a newer EXPIRED introduction retained an older
+active phase and could reset deduplication repeatedly on a new match. That path now
+cancels the older phase and retains the received match/round/phase as terminal,
+without replaying its already-finished introduction or activating its old effects.
+
+The owner clarified that other heroes' current VFX are provisional and that later
+reworks must not rebuild networking. IPreparedWorldReplication now belongs to an
+ability, not a hero/effect type switch. The sender discovers it across the entire
+kit; the receiver matches its stable ability ID and deduplicates per actor/ability.
+Shared restoration handles pose resume and guarded empty-state cleanup. The ability
+owns its current effect factory and state. Multiple prepared abilities can use the
+same channel. The compatibility fingerprint includes this recovery capability.
+[Authoring contract](../../SKILL_NETWORK_CONTRACT.md) states scope and remaining limits.
+Ranked is explicitly included; no queue-type branch or rating/result-rule change
+was added here. Ranked callers/admission still need their own verification.
+
+Validation: initial13-file candidate compiled Runtime,Tests and PlayTests. Two
+compiled NUnit methods were directly invoked as managed code and passed: phase/
+handback freshness and preparation-then-live simulation-clock aging, including
+paused,expired,invalid and empty states. [Managed receipt](checks/omen-recovery-managed.json).
+A follow-up compiler preflight initially refused below5GiB. After the owner's new
+scope clarification, the ability-owned interface replaced the specific receiver;
+the resulting20-file candidate compiles all three assemblies, including the
+terminal-phase correction and its test. One NEW managed capability/fingerprint case
+passes ([receipt](checks/prepared-world-capability-managed.json)). Earlier clock
+cases were not repeated. The final source differs only by a comment after that
+compile. The added codec,OMEN visual/cleanup and expired-cohort native cases have
+NOT run; no real-peer or ranked acceptance claim. No character film was repeated.
+
 ## Skill data compatibility without cosmetic coupling
 
 Base `5d18011e`. A manual wire version alone could admit peers with different

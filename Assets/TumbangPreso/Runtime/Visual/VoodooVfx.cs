@@ -87,16 +87,20 @@ namespace TumbangPreso.Abilities
         /// butterflies, the black eye and its corona, the landing, the maelstrom, the burst into the sky) is
         /// `Visual.PhaisterOmen`, a separate object on its own clock, so nothing here scales the presentation.
         /// </summary>
-        public static GameObject Spawn(Vector3 at, int ownerSlot, float castSeconds, float pullSeconds)
+        public static GameObject Spawn(Vector3 at, int ownerSlot, float castSeconds, float pullSeconds, float startAt = 0f)
         {
             var go = new GameObject("Higop");
             go.transform.position = Visual.VfxShapes.GroundPoint(at);
             var h = go.AddComponent<VoodooBlackHole>();
-            h._owner = ownerSlot; h._castLeft = castSeconds; h._life = pullSeconds;
+            startAt = Mathf.Max(0f, startAt);
+            h._owner = ownerSlot;
+            h._castLeft = Mathf.Max(0f, castSeconds - startAt);
+            h._life = Mathf.Max(0f, pullSeconds - Mathf.Max(0f, startAt - castSeconds));
             // ⚠️ HERO-10: THE AIM'S y IS THE EYE'S HEIGHT (she looks up to hang it higher); the hole itself sits on the court under it.
             h._eyeHeight = Mathf.Clamp(at.y - go.transform.position.y, VoodooRules.HigopMinHeight, VoodooRules.HigopMaxHeight);
             var owner = GameServices.Round?.PlayerAt(ownerSlot);
-            var omen = Visual.PhaisterOmen.Play(go.transform.position, owner != null ? owner.transform : null, castSeconds, pullSeconds, 0f, h._eyeHeight);
+            var omen = Visual.PhaisterOmen.Play(go.transform.position, owner != null ? owner.transform : null,
+                castSeconds, pullSeconds, startAt, h._eyeHeight);
             omen.transform.SetParent(go.transform, true);
             return go;
         }

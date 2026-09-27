@@ -356,7 +356,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SubmitFamiliar", OnSubmitFamiliarMsg);
             cm.RegisterNamedMessageHandler("SyncFamiliar", OnSyncFamiliarMsg);
             cm.RegisterNamedMessageHandler("FamiliarEffect", OnFamiliarEffectMsg);
-            cm.RegisterNamedMessageHandler("CovenEffect", OnCovenEffectMsg);
+            cm.RegisterNamedMessageHandler("PreparedWorld", OnPreparedWorldMsg);
             cm.RegisterNamedMessageHandler("SkyEffect", OnSkyEffectMsg);
             cm.RegisterNamedMessageHandler("TimedKit", OnTimedKitMsg);
             cm.RegisterNamedMessageHandler("CastPreparation", OnCastPreparationMsg);
@@ -1936,11 +1936,13 @@ namespace TumbangPreso.Net
         {
             if (!NetAuthority.IsHost || GameServices.Match == null || GameServices.Round == null
                 || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
+            EnsurePresentationMatch();
             PrepareSkillReceipts();
             var fields = WorldEffectSnapshot.Capture();
             if (fields.Count > WorldEffectSnapshot.MaxFields || fields.Exists(field => !WorldEffectSnapshot.Valid(field)))
             { Debug.LogWarning("[WorldFieldSnapshot] Live fields exceed the valid bounded snapshot."); return; }
             int generation = ++_worldFieldGeneration;
+            CurrentUltimateSnapshotState(out long ultimatePhase, out int ultimateStage);
             using (var writer = new FastBufferWriter(WorldSnapshotHeader.MaxWireBytes, Allocator.Temp))
             {
                 var header = new WorldSnapshotHeader
@@ -1951,6 +1953,8 @@ namespace TumbangPreso.Net
                     Match = EnsurePresentationMatch(), SkillEvent = _skillEventSequence,
                     OwnerRequest = _lastSkillRequest.TryGetValue(peer, out var processed) ? processed.request : 0,
                     RoundClock = GameServices.Round.TimeLeft,
+                    UltimatePhase = ultimatePhase, UltimateStage = ultimateStage,
+                    OwnerUltimateRequest = _lastUltimateRequest.TryGetValue(peer, out long processedUltimate) ? processedUltimate : 0,
                 };
                 writer.WriteNetworkSerializable(header);
                 _nm.CustomMessagingManager.SendNamedMessage("WorldFieldBegin", peer, writer, NetworkDelivery.ReliableSequenced);
@@ -2005,10 +2009,23 @@ namespace TumbangPreso.Net
         {
             PrepareSkillReceipts();
             if (_pendingSkillCasts.Count > 0) return true;
+            CurrentUltimateSnapshotState(out long phase, out int stage);
+            if (!header.IncludesUltimateState(phase, stage)) return true;
             foreach (long observed in _lastSkillEvent)
                 if (observed > header.SkillEvent) return true;
             int local = NetAuthority.LocalSlot;
-            return ValidSlot(local) && Unit(local)?.AbilitySystem?.HasPredictedSkillAfter(header.OwnerRequest) == true;
+            var system = ValidSlot(local) ? Unit(local)?.AbilitySystem : null;
+            return system != null && (system.HasPredictedSkillAfter(header.OwnerRequest)
+                || system.HasPendingUltimateAfter(header.OwnerUltimateRequest));
+        }
+
+        private void CurrentUltimateSnapshotState(out long id, out int stage)
+        {
+            var phase = SharedUltimatePhase.Instance;
+            bool current = phase != null && phase.MatchId == PresentationMatchId
+                && phase.Round == GameServices.Match?.RoundNumber;
+            id = current ? phase.PhaseId : 0;
+            stage = !current || id == 0 ? 0 : !phase.Active ? 2 : phase.Sealed ? 1 : 0;
         }
 
         private void QueueWorldSnapshotRefresh(int round)
@@ -2060,39 +2077,56 @@ namespace TumbangPreso.Net
             using (NetCue.SuppressRelay()) WorldEffectSnapshot.Apply(fields, elapsed);
         }
 
-        private void SendCovenSnapshot(int slot, ulong peer)
+        private void SendPreparedWorldSnapshots(int slot, ulong peer, int generation)
         {
-            if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId ||
-                !(Unit(slot)?.AbilitySystem?.Kit is Abilities.PhaisterHeroKit kit) ||
-                !kit.CaptureCoven(out var centre, out float preparation, out float remaining)) return;
-            float now = (float)_nm.ServerTime.Time;
-            float contactAt = preparation > 0 ? now + preparation : now - (kit.Ultimate.Duration - remaining);
-            using var writer = new FastBufferWriter(48, Allocator.Temp);
-            writer.WriteValueSafe(slot);
-            writer.WriteValueSafe(GameServices.Match.RoundNumber);
-            writer.WriteValueSafe(centre);
-            writer.WriteValueSafe(contactAt);
-            writer.WriteValueSafe(contactAt + kit.Ultimate.Duration);
-            _nm.CustomMessagingManager.SendNamedMessage("CovenEffect", peer, writer);
+            var kit = Unit(slot)?.AbilitySystem?.Kit;
+            if (!NetAuthority.IsHost || GameServices.Match == null || GameServices.Round == null
+                || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId || generation <= 0
+                || kit == null) return;
+            foreach (var ability in kit.AllAbilities)
+            {
+                if (!(ability is Abilities.IPreparedWorldReplication recovery)) continue;
+                bool active = recovery.CapturePreparedWorld(out var centre, out float preparation, out float remaining)
+                    && GameServices.Round.RoundActive;
+                var snapshot = new PreparedWorldSnapshot
+                {
+                    Seat = slot, Round = GameServices.Match.RoundNumber, Generation = generation, Match = PresentationMatchId,
+                    AbilityId = new FixedString64Bytes(ability.Id), Centre = active ? centre : Vector3.zero,
+                    Preparation = active ? preparation : 0,
+                    Remaining = active ? (preparation > 0 ? ability.Duration : remaining) : 0,
+                    RoundClock = GameServices.Round.TimeLeft
+                };
+                using var writer = new FastBufferWriter(PreparedWorldSnapshot.MaxWireBytes, Allocator.Temp);
+                writer.WriteNetworkSerializable(snapshot);
+                _nm.CustomMessagingManager.SendNamedMessage("PreparedWorld", peer, writer);
+            }
         }
 
-        private void OnCovenEffectMsg(ulong senderClientId, FastBufferReader reader)
+        private void OnPreparedWorldMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
-            reader.ReadValueSafe(out int slot);
-            reader.ReadValueSafe(out int round);
-            reader.ReadValueSafe(out Vector3 centre);
-            reader.ReadValueSafe(out float contactAt);
-            reader.ReadValueSafe(out float endsAt);
-            if (!ValidSlot(slot) || !Finite(centre) || !Finite(contactAt) || !Finite(endsAt) ||
-                GameServices.Match == null || GameServices.Match.RoundNumber != round) return;
-            var motor = Unit(slot);
-            if (!(motor?.AbilitySystem?.Kit is Abilities.PhaisterHeroKit kit) ||
-                Mathf.Abs(endsAt - contactAt - kit.Ultimate.Duration) > .1f) return;
-            float now = (float)_nm.ServerTime.Time;
-            if (endsAt <= now) return;
-            kit.RestoreCoven(motor, centre, Mathf.Clamp(contactAt - now, 0, kit.Ultimate.Windup),
-                Mathf.Clamp(endsAt - now, 0, kit.Ultimate.Duration));
+            if (NetAuthority.IsHost || !FromHost(senderClientId)
+                || !PreparedWorldSnapshot.TryRead(ref reader, out var snapshot)) return;
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            if (snapshot.Match != PresentationMatchId || snapshot.Round != GameServices.Match?.RoundNumber
+                || snapshot.Generation != _lastWorldFieldGeneration || snapshot.Generation != _worldFieldHeader.Generation
+                || _worldFieldSceneHandle != scene.handle.GetRawData()
+                || !_worldFieldHeader.Matches(snapshot.Match, snapshot.Round, scene.name)) return;
+            PrepareSkillReceipts();
+            string id = snapshot.AbilityId.ToString();
+            var key = (snapshot.Seat, id);
+            if (_lastPreparedWorldGeneration.TryGetValue(key, out int previous) && snapshot.Generation <= previous) return;
+            var motor = Unit(snapshot.Seat);
+            var ability = motor?.AbilitySystem?.FindPreparedWorldAbility(id);
+            if (ability == null)
+            { QueueWorldSnapshotRefresh(snapshot.Round); return; }
+            bool active = GameServices.Round?.RoundActive == true;
+            if (active && WorldSnapshotNeedsRefresh(_worldFieldHeader))
+            { QueueWorldSnapshotRefresh(snapshot.Round); return; }
+            if (!snapshot.TryAge(GameServices.Round?.TimeLeft ?? -1, ability.Windup, ability.Duration,
+                out float preparation, out float remaining)) return;
+            if (Abilities.HeroAbilitySystem.RestorePreparedWorld(motor, ability, snapshot.Centre,
+                active ? preparation : 0, active ? remaining : 0)) _lastPreparedWorldGeneration[key] = snapshot.Generation;
+            else QueueWorldSnapshotRefresh(snapshot.Round);
         }
 
         private void SendSkySnapshot(ulong peer)
@@ -6163,7 +6197,6 @@ namespace TumbangPreso.Net
             for(int slot=0;slot<Balance.PlayerCount;slot++)
             {
                 BroadcastFamiliarEffect(slot,(ulong)peerId);
-                SendCovenSnapshot(slot, (ulong)peerId);
                 SendTimedKitSnapshot(slot, (ulong)peerId);
                 SendPreparationSnapshot(slot,(ulong)peerId);
             }
@@ -6175,6 +6208,7 @@ namespace TumbangPreso.Net
                 for(int slot=0;slot<Balance.PlayerCount;slot++)
                 {
                     SendMovementSnapshot(slot,(ulong)peerId,_worldFieldGeneration);
+                    SendPreparedWorldSnapshots(slot, (ulong)peerId, _worldFieldGeneration);
                     if (Unit(slot)?.AbilitySystem?.Kit is Abilities.AmihanHeroKit)
                         SendTimedKitSnapshot(slot,(ulong)peerId,_worldFieldGeneration);
                 }

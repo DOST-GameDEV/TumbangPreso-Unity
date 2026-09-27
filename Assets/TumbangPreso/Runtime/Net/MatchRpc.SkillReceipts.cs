@@ -10,6 +10,8 @@ namespace TumbangPreso.Net
     {
         private readonly Dictionary<ulong,(long request,int slot,bool accepted)> _lastSkillRequest=new Dictionary<ulong,(long,int,bool)>();
         private readonly long[] _lastSkillEvent=new long[4];
+        private readonly Dictionary<(int seat, string ability), int> _lastPreparedWorldGeneration =
+            new Dictionary<(int, string), int>();
         private long _skillRequestSequence,_skillEventSequence,_skillEpoch;
         private long _skillRequestScopeFloor;
         private int _skillRound;
@@ -22,6 +24,7 @@ namespace TumbangPreso.Net
             _skillEpoch=PresentationMatchId;_skillRound=round;_skillRequestScopeFloor=_skillRequestSequence;
             _skillScene = scene;
             _pendingSkillCasts.Clear();
+            _lastPreparedWorldGeneration.Clear();
             _lastSkillRequest.Clear();System.Array.Clear(_lastSkillEvent,0,4);
         }
         private static HeroAbility Skill(CharacterMotor actor,int slot)=>slot==0?actor?.AbilitySystem?.Kit?.Skill1:slot==1?actor?.AbilitySystem?.Kit?.Skill2:slot==2?actor?.AbilitySystem?.Kit?.Ultimate:null;

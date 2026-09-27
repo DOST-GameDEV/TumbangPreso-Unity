@@ -123,6 +123,9 @@ namespace TumbangPreso
             double length = CohortSeconds(commits);
             if (Now >= began + length)
             {
+                // A late newer cohort supersedes the old one even when its intro
+                // has finished. Retain its terminal identity for snapshot freshness.
+                Cancel(); MatchId = match; Round = round; PhaseId = phase; Began = began; Duration = length;
                 foreach (var cast in commits) GameServices.Round?.PlayerAt(cast.Seat)?.AbilitySystem?.AcknowledgeSharedUltimate(cast.Request);
                 Net.MatchRpc.Instance?.RequestWorldSnapshot(); return;
             }

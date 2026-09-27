@@ -67,6 +67,7 @@ namespace TumbangPreso.Net
             if (ability == null) return;
             writer.Write(ability.Id);
             writer.Write((int)ability.NetworkMode);
+            writer.Write(ability is IPreparedWorldReplication);
             writer.Write(ability.Cooldown);
             writer.Write(ability.Duration);
             writer.Write(ability.Windup);

@@ -70,6 +70,8 @@ namespace TumbangPreso.Abilities
                 && _motor.PredictedFlightMatches(_motor.FlightEpisode);
         }
 
+        public bool HasPendingUltimateAfter(long processedRequest) => _pendingUltimateRequest > processedRequest;
+
         public bool MatchesSkillRequest(int slot,long request)=>slot>=0&&slot<2&&request>0&&_skillRequests[slot]==request;
         public bool PendingSkillReceipt(int slot,long request)
             =>(MatchesSkillRequest(slot,request)&&!_skillSettled[slot])

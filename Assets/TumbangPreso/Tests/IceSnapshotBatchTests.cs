@@ -9,6 +9,58 @@ namespace TumbangPreso.Tests
     public sealed class IceSnapshotBatchTests
     {
         [Test]
+        public void WorldRecoveryCannotCrossAnUltimateHandbackOrNewerCohort()
+        {
+            var header = new WorldSnapshotHeader { UltimatePhase = 5, UltimateStage = 1 };
+            Assert.IsTrue(header.IncludesUltimateState(4, 2));
+            Assert.IsTrue(header.IncludesUltimateState(5, 1));
+            Assert.IsFalse(header.IncludesUltimateState(5, 2), "A preparation snapshot erased handback effects.");
+            Assert.IsFalse(header.IncludesUltimateState(6, 0));
+            header.UltimateStage = 2;
+            Assert.IsTrue(header.IncludesUltimateState(5, 2));
+            Assert.IsFalse(header.IncludesUltimateState(5, 3));
+        }
+
+        [Test]
+        public void PreparedWorldRecoveryAgesPreparationThenLifeUsingOnlySimulationTime()
+        {
+            var snapshot = new PreparedWorldSnapshot { RoundClock = 50, Preparation = 2, Remaining = 5, Centre = Vector3.up * 4 };
+            Assert.IsTrue(snapshot.TryAge(50, 3, 5, out float prep, out float live));
+            Assert.AreEqual(2, prep); Assert.AreEqual(5, live);
+            Assert.IsTrue(snapshot.TryAge(49, 3, 5, out prep, out live));
+            Assert.AreEqual(1, prep); Assert.AreEqual(5, live);
+            Assert.IsTrue(snapshot.TryAge(47, 3, 5, out prep, out live));
+            Assert.AreEqual(0, prep); Assert.AreEqual(4, live);
+            Assert.IsTrue(snapshot.TryAge(40, 3, 5, out prep, out live));
+            Assert.AreEqual(0, prep); Assert.AreEqual(0, live);
+            Assert.IsFalse(snapshot.TryAge(float.NaN, 3, 5, out _, out _));
+            snapshot.Preparation = 4;
+            Assert.IsFalse(snapshot.TryAge(50, 3, 5, out _, out _));
+            snapshot.Preparation = 0; snapshot.Remaining = 0;
+            Assert.IsTrue(snapshot.TryAge(50, 3, 5, out prep, out live));
+            Assert.AreEqual(0, prep); Assert.AreEqual(0, live);
+        }
+
+        [Test]
+        public void PreparedWorldSnapshotRoundTripsEveryFieldAndKeepsItsExactBound()
+        {
+            var original = new PreparedWorldSnapshot
+            {
+                Seat = 2, Round = 3, Generation = 4, Match = 567,
+                AbilityId = new FixedString64Bytes("phaister_ultimate"),
+                Centre = new Vector3(1, 4, -7), Preparation = .5f, Remaining = 5, RoundClock = 33
+            };
+            using var writer = new FastBufferWriter(PreparedWorldSnapshot.MaxWireBytes, Allocator.Temp);
+            writer.WriteNetworkSerializable(original);
+            Assert.AreEqual(46 + original.AbilityId.Length, writer.Length);
+            using var reader = new FastBufferReader(writer, Allocator.Temp);
+            var input = reader;
+            Assert.IsTrue(PreparedWorldSnapshot.TryRead(ref input, out var restored));
+            foreach (var field in typeof(PreparedWorldSnapshot).GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public))
+                Assert.AreEqual(field.GetValue(original), field.GetValue(restored), field.Name);
+        }
+
+        [Test]
         public void SkillCastCodecRoundTripsEveryFieldIncludingAirAimAndCommandIdentity()
         {
             object boxed = new SkillCastMessage();

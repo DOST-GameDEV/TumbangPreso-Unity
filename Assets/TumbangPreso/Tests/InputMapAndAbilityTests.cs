@@ -80,7 +80,16 @@ namespace TumbangPreso.Tests
         private static string Fingerprint(HeroKit kit, float introductionSeconds = 4)
             => Net.SkillContractFingerprint.Compute(new[] { kit }, (_, held) => introductionSeconds + (held ? .5f : 0));
 
-        private sealed class NetworkingProbeAbility : HeroAbility
+        [Test]
+        public void PreparedRecoveryCapabilityAffectsCompatibilityWithoutEffectNames()
+        {
+            var ordinary = new NetworkingProbeKit(AbilityNetworkMode.Predicted, AbilityNetworkMode.SharedUltimate);
+            var prepared = new NetworkingProbeKit(AbilityNetworkMode.Predicted, AbilityNetworkMode.SharedUltimate, preparedFirst: true);
+            Assert.IsInstanceOf<IPreparedWorldReplication>(prepared.Skill1);
+            Assert.AreNotEqual(Fingerprint(ordinary), Fingerprint(prepared));
+        }
+
+        private class NetworkingProbeAbility : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode { get; }
             public NetworkingProbeAbility(string id, AbilityNetworkMode mode, float cooldown = 1, string presentation = "")
@@ -89,12 +98,23 @@ namespace TumbangPreso.Tests
                 => NetworkMode = mode;
         }
 
+        private sealed class PreparedProbeAbility : NetworkingProbeAbility, IPreparedWorldReplication
+        {
+            public PreparedProbeAbility(string id, AbilityNetworkMode mode, float cooldown, string presentation)
+                : base(id, mode, cooldown, presentation) { }
+            public bool CapturePreparedWorld(out Vector3 centre, out float preparation, out float remaining)
+            { centre = Vector3.zero; preparation = remaining = 0; return false; }
+            public bool RestorePreparedWorld(AbilityContext context, Vector3 centre, float preparation, float remaining) => false;
+        }
+
         private sealed class NetworkingProbeKit : HeroKit
         {
             public NetworkingProbeKit(AbilityNetworkMode first, AbilityNetworkMode ultimate,
-                string presentation = "", float cooldown = 1, string firstId = "one", bool roleKit = false) : base("probe", "probe")
+                string presentation = "", float cooldown = 1, string firstId = "one", bool roleKit = false,
+                bool preparedFirst = false) : base("probe", "probe")
             {
-                Skill1 = new NetworkingProbeAbility(firstId, first, cooldown, presentation);
+                Skill1 = preparedFirst ? new PreparedProbeAbility(firstId, first, cooldown, presentation)
+                    : new NetworkingProbeAbility(firstId, first, cooldown, presentation);
                 Skill2 = new NetworkingProbeAbility("two", AbilityNetworkMode.Predicted, presentation: presentation);
                 if (roleKit)
                 {
