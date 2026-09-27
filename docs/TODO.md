@@ -1128,9 +1128,26 @@ Brainchild's cartoon towns. **Not registered**: it is not in `SceneFlow.Maps`, `
 
 **Read [LAGOON_REWORK_GUIDE.md](LAGOON_REWORK_GUIDE.md) first** (references, art-style rules,
 rock rules, current layout, files, gameplay constraints, and the ordered plan in its § 8).
-Status (2026-09-27): textured and being dressed in Blender (props, organic wood structures in
-flight; sky deferred); see the guide's CURRENT STATE block. Nothing in Unity yet. Supersedes
-REFINE-2.6 for this map.
+Status (2026-09-27, night): dressed in Blender (props, organic wood) and IN UNITY as the
+unregistered sample scene `Scenes/Maps/LagoonCove.unity` (`LagoonCoveSceneBuilder`, export
+`tools/export_lagoon_unity.py`, water `Shaders/LagoonCoveWater.shader`, its own sunset look in
+`WorldLookProfile`); see the guide's CURRENT STATE block. The shipped `Lagoon.unity` is untouched.
+Supersedes REFINE-2.6 for this map.
+
+- [ ] LAGOON-1.1 PER-SIDE ARENA BOUNDS (owner: *"are you able to fan out the bounds so players
+  can also somewhat reach the water at the shore"*, choosing per-side limits over a bigger
+  symmetric box). `AIController.PlayableMinX/MaxX/MinZ/MaxZ` and one shared clamp replace
+  `PlayableHalfX/Z` at every reader (movement, bots, slippers, abilities, spectator, net move
+  check); `MatchInstaller.MeasureWalls` takes the tightest wall per side. Shipped maps all have
+  mirrored walls, so their arithmetic is unchanged (`ArenaBoundsProbe` now fails on a lopsided
+  shipped arena). The cove walls: land z -13, sea z +24, sides x +-16. Core.Tests 659/659.
+  NOT DONE: the EditMode suite and the PlayMode gate (`tools/playmode_suite.py --gate`) have not
+  run on it (the owner's editor held the project); bots' ring logic stays symmetric, so they do
+  not use the sea-side room.
+- [ ] LAGOON-1.2 Corals and underwater plants (owner: *"it lacks corals and plants"*; the owner's
+  NEXT step). Kit DONE (`tools/lagoon_prop_seabed.py`, `7f3e94b7`). Placement WRITTEN, never run:
+  `reefs()` in `tools/lagoon_props_place.py`. Remaining: rebuild the cove, export, rebuild in Unity,
+  look in play (see the guide's CURRENT STATE, In flight item 1).
 
 ### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
 
@@ -1291,6 +1308,18 @@ light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
   - The ink edges and ground contact read the same texture and may still show this near a
     dissolved prop. That is older than LIGHT-3 and not fixed here.
   Open for the owner's playtest.
+  v7 (2026-09-27, owner in the Lagoon Cove: the occlusion "suddenly flashes off randomly", "we've had
+  flickers before", "could be ability related"). MEASURED with a temporary readback of the blurred
+  occlusion twice a second (`WorldOutline.SampleAo`, logged as `[AO sample]`): the frame mean jumped
+  from about 0.95 to 0.995 (no occlusion anywhere) for 0.5 to 1.5 s with the camera standing still,
+  clustered at round starts, while the gate (`[AO trace]`) stayed on at strength 0.8 throughout. Not
+  jumps, not GPU instancing (both tested and ruled out). Cause: `VfxMaterial.ConfigureBuiltInFade`
+  fades the Standard hero-effect template without `SetOverrideTag("RenderType","Transparent")`, so
+  every faded effect drew SOLID into `_CameraDepthNormalsTexture`; one round the camera filled the
+  frame nearer than the 1.8 m guard above and the whole frame's occlusion dropped. Fix: the tag
+  override (also keeps those effects out of the ink edges). NOT CONFIRMED in play yet; when it is,
+  remove `TraceAo`/`SampleAo` from `WorldOutline.cs` (uncommitted diagnostic) and tick this.
+  Separate, by design: looking nearly straight down also drops it (the ground is inside 1.8 m).
 - [ ] LIGHT-3.5 The owner's look at the final comparison. The rendering is done: `e26eeb04`,
   Mac, one PlayMode launch, total 3 failed 0 (`FiveMapStageCapturesPreserveGeometryAndRestore
   OriginalLighting`, `LightingStyleThumbnails` and a scratch same-camera review that was not

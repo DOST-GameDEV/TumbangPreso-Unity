@@ -7,28 +7,93 @@ whose model, texture, foliage and working rules ALL apply here too (Kanto is the
 house style). Every rule below came from the owner reacting to a render; the quote is there so
 nobody re-litigates it. Status row: `docs/TODO.md` **LAGOON-1**.
 
-⚠️⚠️ **CURRENT STATE (2026-09-27, late): TEXTURING AND DRESSING, all in Blender; nothing in
-Unity yet** (the shipped Lagoon scene is untouched). Build: `blender -b --python
-tools/author_lagoon_cove.py -- --preview N` writes `ArtSource/lagoon/lagoon_cove.blend` and
-`Logs/lagoon-blender/cove_<shot>_vN.png` (latest v55; Unity scene LagoonCove.unity). The full step list is § 8; this block is
-the snapshot to resume from.
+⚠️⚠️ **CURRENT STATE (2026-09-27, night): THE COVE IS IN UNITY** as the UNREGISTERED sample scene
+`Assets/TumbangPreso/Scenes/Maps/LagoonCove.unity` (like Kanto: not in SceneFlow.Maps, GameLaunch,
+MapGeometryCheck.Gated or build settings; open it and press Play). The shipped `Lagoon.unity`,
+`LagoonBuilder*.cs` and `LagoonWater.cs` are untouched. This block is the snapshot to resume from;
+the step list is § 8, the Unity pipeline is the "IN UNITY" item below the approved list.
+
+**The pipeline, end to end (run in this order after any Blender change):**
+1. `blender -b --python tools/author_lagoon_cove.py -- --preview N` rebuilds
+   `ArtSource/lagoon/lagoon_cove.blend` and renders `Logs/lagoon-blender/cove_*_vN.png` (latest v56).
+   Before rebuilding: diff the owner's saved .blend against the last committed build and record hand
+   edits in `OWNER_DELETE` / `OWNER_MOVE` / `OWNER_ADD_PLANTS` (they apply 6/8, 1/1 today; the two
+   unmatched deletions have been gone since the plant mix changed and are harmless).
+2. `blender -b ArtSource/lagoon/lagoon_cove.blend --python tools/export_lagoon_unity.py` (about 16 s,
+   never saves the .blend) writes `Assets/TumbangPreso/Art/LagoonCove/` (Models/*.glb, Textures/,
+   `lagoon_cove_layout.json`; coordinates (-x, z, -y), proven to micrometres in its log).
+3. Unity: menu Tumbang Preso > Sample Map > Build Lagoon Cove (or batch
+   `-executeMethod TumbangPreso.EditorTools.MapKit.LagoonCoveSceneBuilder.RunReview`, renders to
+   `Logs/lagoon-cove-unity-vN/`). ⚠️ Batch Unity cannot run while the owner has the editor open on this
+   worktree (Temp/UnityLockfile); ask, never kill it. ⚠️ Editing Runtime .cs while the owner is in Play
+   reloads scripts mid-match and wipes state (it happened once: thousands of null refs).
 
 **Approved by the owner:** layout (cove v16); rock kit with rock_a + brushed organic edge wear
 (§ 8 step 2); thatch a/b/c and sawali a/b/c mixed per house; plank_c; smooth painted terrain
-(sand_a, grass_a, earth_a); Kanto-style leaf cards. **Provisional, awaiting a pick:** timber_a,
-bamboo_a, tin_b (first swatch of each, see § 8 step 3); the landmark emblem (pawikan in the
-build; pagi and bangka are the alternatives, `landmark_court_v4.png`); cooler rock tint (asked,
-no answer: rocks stay rock_a).
+(sand_a, grass_a, earth_a); Kanto-style leaf cards; the organic timber kit; all nine prop kits;
+per-boat hull and stripe colours; the SUNSET look (below). **Provisional, awaiting a pick:** timber_a,
+bamboo_a, tin_b (§ 8 step 3); the landmark emblem (pawikan in the build; pagi and bangka are the
+alternatives, `landmark_court_v4.png`); cooler rock tint (asked, no answer: rocks stay rock_a).
 
-**In the build now:** rock kit + edge atlas, house kit (land, water, stall, capilla) and boat kit
-as linked duplicates, walks, plank stairs with landings, the house paint materials
-(`lagoon_paint_materials.py`: hull, trim, plaster, capiz, cloth), the plant kit with curved
-banded palms, croton, monstera, ground cover, the landmark emblem decal on a 1.4x landmark rock,
-a hazed backdrop of islands and spires, the structures kit (ledge railings replacing the fence
-stubs, three cliff walks, a beach pier, a broken pier; `author_lagoon_structures.py`), the
-owner's hand edits (`OWNER_DELETE`, `OWNER_MOVE`, `OWNER_ADD_PLANTS`), `cull_buried`.
+**The Unity look (owner-directed on 2026-09-27 in play, every value a reaction to a screenshot):**
+- Lighting: its OWN `WorldLookProfile` entry, `LagoonCove` (code defaults AND
+  `Resources/WorldLookProfile.asset`; `Find("LagoonCove")` falls back to Lagoon's if the asset lacks
+  it). Owner: *"can we use the lighting from the other maps... as well as the cloud/sky shader we
+  already have set up"*, then *"too afternoon-y... i want a more sunset style of vibes"*, *"can you also
+  make the sun lower"*. Golden key at 6 degrees over the OPEN SEA south-south-east (Unity -0.30, +0.954;
+  *"we need to move the sun because its getting covered by the mountains"*), violet shade, peach haze
+  70..340 m, dusky blue zenith to a peach horizon, peach clouds with lilac shade.
+- Sky: `Shaders/NeighbourhoodSky.shader` gained three OPT-IN properties, all 0 on the shipped maps:
+  `_SunDisc` (feathered warm disc, 0.055 rad), `_SunHalo` (two glows, 1.0) and `_SunClear` (clouds
+  thin to nothing within 0.45 rad of the sun; *"get rid of that cloud blocking the sun"*). The
+  builder writes them into `Art/MapAtmosphere/LagoonCoveSky.mat`.
+- Water: `Shaders/LagoonCoveWater.shader` (built-in pipeline, `_CameraDepthTexture` requested by
+  `Runtime/Visual/WaterDepthRequest.cs`, no grab pass). Colour and clarity by VERTICAL depth; caustics
+  drawn on the seabed; foam from depth intersection at every shore, rock, pile and hull; a sky
+  reflection of the scene's haze colour taken from the SMOOTH swell (*"light noise blotches"* came
+  from the ripple normal); organic ripples = three rotated gradient-noise octaves with the two finer
+  ones fading by 30 and 60 m (*"blocky noise shaped"*, then *"weird unnatural pattern"* from a sine
+  sum, then *"less noise when viewing from an angle"*); a GLITTER PATH from shallow sun-aimed facets
+  (+-6 degrees, a ~3.5 degree hit window: *"we're not getting any of those brightest reflections"*)
+  plus deep-water GLIMMER from steeper facets (*"glimmer from outside the main sun path where the
+  deep waters are"*). A baked reflection probe was tried and REVERTED (*"this version looks a lot
+  more noisy"*). The builder resets the water material to the shader's defaults on every build, so
+  retune the DEFAULTS; edit `Materials/lagoon_cove_water.mat` too only to show a change without a
+  rebuild.
+- Seabed: `SEABED = -9` (was -3.5, which capped the whole bay at 1.7 m deep: *"the seabed isnt deep
+  enough"*). The first 8 m from the coast keep the old 0.12 m per m shelf; past that 0.3 m per m.
+- Bounds: PER-SIDE arena limits (owner: *"fan out the bounds so players can also somewhat reach the
+  water at the shore"*, choosing per-side over a bigger symmetric box). The cove's walls: land z -13,
+  sea z +24, sides x +-16. See `docs/TODO.md` LAGOON-1.1: CODE DONE, TEST GATE NOT RUN.
 
-**⚠️ Sky is DEFERRED by the owner** (*"we can do the sky stuff later, just focus on the other
+**In flight / next (in this order):**
+1. **CORALS (the owner's next step).** Kit done and committed (`tools/lagoon_prop_seabed.py`, psb:
+   brain, branch, fan, table corals, sea grass, urchin/starfish stones; `psb_lineup_v5.png`).
+   Placement is WRITTEN but never run: `reefs()` in `tools/lagoon_props_place.py` (34 reef patches of
+   3 to 6 corals 1.5 to 6.5 m deep, fans facing the court; 12 sea-grass meadows 1.2 to 3 m deep, one
+   current). To land it: rebuild the cove (step 1), check the `[lagoon-props] seabed pieces:` count
+   and render the seabed through the water, export (step 2), rebuild in Unity (step 3), look in play.
+   The kit's colours are greyscale drawings multiplied by a reef colour on the material; check the
+   exporter carries that tint (otherwise every coral goes white-grey), and sea grass needs the
+   two-sided foliage shader.
+2. **AO flicker (game-wide, not the cove):** the occlusion vanished for 0.5 to 1.5 s at round starts.
+   Root cause found and the fix COMMITTED, not yet confirmed by the owner in play (see
+   `docs/TODO.md` LIGHT-3.6): `VfxMaterial.ConfigureBuiltInFade` faded Standard hero effects without
+   the Transparent RenderType override, so they drew solid into `_CameraDepthNormalsTexture` and the
+   1.8 m near guard dropped the whole frame's occlusion. A TEMPORARY `[AO trace]` / `[AO sample]`
+   diagnostic sits in `Runtime/Visual/WorldOutline.cs` (TraceAo, SampleAo): remove it once the owner
+   confirms the fix.
+3. **Bounds test gate:** with the owner's editor closed, rebuild the cove, run EditMode, then
+   `py -3 tools/playmode_suite.py --gate`, assert on the XML totals, then tick LAGOON-1.1.
+4. The owner's picks (timber/bamboo/tin, emblem, rock tint); meshes carry no tangents (the exporter
+   should write them).
+
+**Loose files, deliberately uncommitted:** `Tests/PlayMode/LagoonCoveInGameShots.cs` (an in-game
+capture that HUNG for hours in batch at the scene load; do not run it unattended; fix or delete);
+`Scenes/Maps/Kanto.unity` and `Art/MapAtmosphere/KantoSky.mat` modified by the owner's editor, not by
+this work (leave them for the owner).
+
+**⚠️ The Blender-side sky port stays DEFERRED** (the Unity scene already wears the game's sky shader and blocky clouds, see above). Earlier note: **Sky is DEFERRED by the owner** (*"we can do the sky stuff later, just focus on the other
 stuff"*). The game's new sky lives in the repo (branch ASTRAReworks, now merged into this branch
 at `e662f361`): `Runtime/Visual/WorldLookProfile.cs` (per-map MapLook, Lagoon entry), 
 `BlockyClouds.cs` + `Shaders/BlockyCloud.shader` (voxel cumulus), `Shaders/NeighbourhoodSky.shader`.
@@ -36,7 +101,7 @@ When resumed, port THAT into the Blender renders (`tools/author_lagoon_sky.py` c
 earlier painted-panorama sky, committed, still called by the build). Its violet shade may clash
 with the owner's earlier rejection of cold blue-grey rock shade: show it, do not silently warm it.
 
-**Landed 2026-09-27 (after the compaction; all committed locally, not pushed):**
+**History: landed 2026-09-27 before the Unity step (all committed locally, not pushed):**
 - The organic timber kit, `tools/author_lagoon_structures.py`: `modelled_walk` (individual planks
   on stringers, planks fanning round bends, bents with round piles), `organic_stairs` (solid
   sawtooth side boards, blocky treads, landings, chunky rails), organic railing, ledge railing,

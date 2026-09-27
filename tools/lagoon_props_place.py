@@ -56,6 +56,8 @@ KIT_OF = {
     "oar_pair": "lagoon_prop_shore", "driftwood": "lagoon_prop_shore", "anchor_stone": "lagoon_prop_shore",
     "firewood": "lagoon_prop_shore",
     "woven_mat": "lagoon_prop_textile", "hanging_net": "lagoon_prop_textile", "laundry_line": "lagoon_prop_textile",
+    "brain_coral": "lagoon_prop_seabed", "branch_coral": "lagoon_prop_seabed", "fan_coral": "lagoon_prop_seabed",
+    "table_coral": "lagoon_prop_seabed", "sea_grass": "lagoon_prop_seabed", "urchin_rock": "lagoon_prop_seabed",
 }
 # Seeds that give a GROUND variant, per kind (odd/even variants differ in some kits: an even
 # hanging_net is a wall net, an odd sign_hanging a wall sign; those are mounted, not listed here).
@@ -67,6 +69,8 @@ GROUND_SEEDS = {
     "crate": (1, 2, 3, 4, 5), "barrel": (1, 2, 3, 4), "water_drum": (1, 2, 3, 4, 5),
     "oar_pair": (1, 2, 3, 4), "driftwood": (1, 2, 3, 4), "anchor_stone": (1, 2), "firewood": (1, 2, 3),
     "woven_mat": (1, 2, 3), "hanging_net": (1, 3), "laundry_line": (1, 2, 3),
+    "brain_coral": (1, 2, 3), "branch_coral": (1, 2, 3), "fan_coral": (1, 2, 3), "table_coral": (1, 2, 3),
+    "sea_grass": (1, 2, 3), "urchin_rock": (1, 2, 3),
 }
 SARI_SARI_SIGN = 11          # the village kit's wall-bracket sari-sari sign (its notes: on a side wall)
 # ⚠️ OWNER, 2026-09-27: "the baskets you put got clipped into the ground". v53 set every prop at the
@@ -80,7 +84,7 @@ SARI_SARI_SIGN = 11          # the village kit's wall-bracket sari-sari sign (it
 #     5 cm anyway).
 # Heights come from the GROUND MESH by ray cast, not from the height function it was built from:
 # the mesh is a triangulation of that function and differs from it by a few cm between vertices.
-HUG = {"basket", "woven_mat", "net_spread", "net_pile", "rope_coil", "driftwood", "anchor_stone", "bubo",
+HUG = {"brain_coral", "branch_coral", "fan_coral", "table_coral", "sea_grass", "urchin_rock", "basket", "woven_mat", "net_spread", "net_pile", "rope_coil", "driftwood", "anchor_stone", "bubo",
        "oar_pair", "firewood", "banga", "pot_cluster"}
 HUG_MAX_SLOPE = 16.0         # degrees
 HUG_BUMP = 0.04              # metres off the fitted plane
@@ -225,7 +229,7 @@ class Placer:
         hit, loc, _n, _i = g.ray_cast(o, d, distance=1000.0, depsgraph=self.depsgraph)
         return (g.matrix_world @ loc).z if hit else None
 
-    def ground_z(self, kind, seed, x, y, rz, allow_court=False, keep_off=0.5, near_stair=False):
+    def ground_z(self, kind, seed, x, y, rz, allow_court=False, keep_off=0.5, near_stair=False, seabed=None):
         """(z, ground normal or None) to set a ground prop at, or None when the spot is refused
         (see the module notes and HUG above)."""
         C = self.cove
@@ -236,8 +240,10 @@ class Placer:
             REFUSED[why] = REFUSED.get(why, 0) + 1
             return None
         for px, py in pts:
-            if C.coast_distance(px, py) < 0.8:
+            if seabed is None and C.coast_distance(px, py) < 0.8:
                 return refuse("water")                        # in (or at the edge of) the water
+            if seabed is not None and C.coast_distance(px, py) > -1.0:
+                return refuse("not under water")
             wall = 13.6 if allow_court else 15.0              # the play walls stand at +-13
             if abs(px) < wall and abs(py) < wall:
                 return refuse("court")
@@ -287,10 +293,15 @@ class Placer:
             g = self.ground_at(px, py)
             if g is None:
                 return refuse("off ground")
-            hit, loc, _n, _i, obj, _m = self._ray_down(px, py, g + CLEAR_RAY, CLEAR_RAY + 0.5)
+            top = (C.WATER + 4.0) if seabed is not None else g + CLEAR_RAY
+            hit, loc, _n, _i, obj, _m = self._ray_down(px, py, top, top - g + 0.5)
+            while hit and obj.name.startswith(("sea", "foam")) and loc.z > g + 0.03:   # the water sheet
+                hit, loc, _n, _i, obj, _m = self._ray_down(px, py, loc.z - 0.01, loc.z - g + 0.5)
             if hit and not obj.name.startswith("ground") and not obj.name.startswith(SOFT_PLANTS) \
                     and loc.z > g + 0.03:
                 return refuse("blocked by " + obj.name.split(".")[0][:18])   # a stone, a house, a boat
+        if seabed is not None and not (seabed[0] <= C.WATER - z0 <= seabed[1]):
+            return refuse("depth")
         return z0, normal
 
     def deck_z(self, kind, seed, x, y, rz, top):
@@ -644,6 +655,75 @@ def court_ring(P, rng):
             cluster_piece(P, rng, kind, anchor, face=(0, 1), r1=2.2, allow_court=True)
 
 
+def reefs(P, rng, patches=34, meadows=12):
+    """⚠️ CORALS AND SEA GRASS ON THE SEABED (owner, 2026-09-27: "it lacks corals and plants", with
+    the seabed deepened to -9 m the same day). Patches, not a carpet: a reef reads as islands of
+    colour on sand, and the sand between them is what shows the water's depth colour.
+      * REEF PATCHES of 3 to 6 corals (brain, branch, table, fan, an urchin stone) from 1.5 to
+        6.5 m deep, packed within 2.2 m of their anchor. Fans turn their broad face toward the
+        court (the kit: edge-on they vanish), and nothing stands closer than 1.5 m below the
+        surface, so a fan's top never breaks it.
+      * SEA-GRASS MEADOWS of 4 to 8 clumps in the shallower band, 1.2 to 3 m deep, all leaning with
+        one current (each seed carries its own current angle, so the roots are turned to line it
+        up across the meadow).
+    Anchors are drawn over the water within 55 m of the coast, clear of walks, piers, piles and
+    boats by the same downward ray the land props use, cast from above the surface."""
+    C = P.cove
+    n = len(C.COAST_LINE)
+    current = rng.uniform(0, math.tau)
+    lean = {1: math.radians(4), 2: math.radians(141), 3: math.radians(116)}   # the kit's per-seed current
+
+    def anchor(d0, d1):
+        for _ in range(40):
+            ax, ay = C.COAST_LINE[rng.randrange(n)]
+            bx, by = C.COAST_LINE[(rng.randrange(n))]
+            # A point off the coast: step out along the local outward normal.
+            i = rng.randrange(n)
+            ax, ay = C.COAST_LINE[i]
+            bx, by = C.COAST_LINE[(i + 1) % n]
+            nx, ny = -(by - ay), bx - ax
+            if C.coast_distance(ax + nx * 0.1, ay + ny * 0.1) > 0:
+                nx, ny = -nx, -ny
+            ln = math.hypot(nx, ny)
+            nx, ny = nx / ln, ny / ln
+            out = rng.uniform(d0, d1)
+            x, y = ax + nx * out, ay + ny * out
+            if C.coast_distance(x, y) < -1.0:
+                return Vector((x, y, 0))
+        return None
+
+    placed = 0
+    for _ in range(patches):
+        a = anchor(9, 55)
+        if a is None:
+            continue
+        kinds = rng.sample(["brain_coral", "branch_coral", "table_coral", "fan_coral", "branch_coral",
+                            "brain_coral", "urchin_rock", "fan_coral"], rng.randint(3, 6))
+        for kind in kinds:
+            seed = rng.choice(GROUND_SEEDS[kind])
+            cands = []
+            for k in range(14):
+                r = 2.2 * (k / 13) ** 0.8
+                t = rng.uniform(0, math.tau)
+                x, y = a.x + math.cos(t) * r, a.y + math.sin(t) * r
+                rz = _face(x, y, 0, 1) if kind == "fan_coral" else rng.uniform(0, math.tau)
+                cands.append((x, y, rz))
+            if P.try_ground(kind, seed, cands, keep_off=1.2, seabed=(1.5, 6.5)) is not None:
+                placed += 1
+    for _ in range(meadows):
+        a = anchor(3, 22)
+        if a is None:
+            continue
+        for _k in range(rng.randint(4, 8)):
+            seed = rng.choice(GROUND_SEEDS["sea_grass"])
+            rz = current - lean[seed]
+            cands = [(a.x + rng.uniform(-2.5, 2.5), a.y + rng.uniform(-2.5, 2.5), rz + rng.uniform(-0.2, 0.2))
+                     for _ in range(8)]
+            if P.try_ground("sea_grass", seed, cands, keep_off=1.0, seabed=(1.2, 3.0)) is not None:
+                placed += 1
+    print("[lagoon-props] seabed pieces:", placed)
+
+
 def driftwood(P, rng, n=10):
     C = P.cove
     m = len(C.COAST_LINE)
@@ -699,4 +779,4 @@ def place_props(c, cove, plants=None):
 
 
 STEPS = (pier_clusters, beached_boat_clusters, stall, court_edge, court_ring, houses, water_homes,
-         stair_feet, beach_drying, driftwood)
+         stair_feet, beach_drying, driftwood, reefs)
