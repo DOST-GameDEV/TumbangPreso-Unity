@@ -13,6 +13,7 @@ Runtime files below are in `Assets/TumbangPreso/Runtime/`.
 |---|---|
 | Session/hello/seat ownership | Net/NetSession.cs,Net/LobbySession.cs,NetAuthority. Authentication or stable ID does not grant another seat. Read the current hello/protocol,not old literals. |
 | Presentation teardown/reconnect | NetSession.EndTransportPresentation cancels local match presenters and hitstop before normal speed. Fresh MatchRpc handler binding resets received cohort/pending-request state,not the host lifetime sequence. Ordinary Cancel retains duplicate protection. |
+| Ready and countdown | ReadyGate and MatchRpc use protocol83 match identity (zero only for lobby READY). Exact payload bounds and current seated membership precede votes; quorum waits for host loading. Manual votes retry until countdown acknowledgment, and a completed countdown stays consumed until the gate explicitly reopens. |
 | Discovery and ranked/casual pairing | Net/ServerQuery.cs,Matchmaker.cs,MatchmakingCandidateCache.cs; Core MatchmakingRules owns pool/band rules. Skill contract and reserved-seat capacity filter automatic pairing. |
 | Requests and received state | Net/MatchRpc.cs and its partials. Check sender,seat,match/round,epoch,request/event freshness BEFORE gameplay or presentation. Ordinary requests/refusals/actions/charge tells share GameplayActionScope; it scopes context,not per-request receipts. |
 | Skill identity/authority | Abilities/HeroAbility.cs,AbilityNetworking,HeroAbilitySystem; Net/SkillCastMessage.cs. Stable IDs and explicit initial/command intent,not temporary art names. |

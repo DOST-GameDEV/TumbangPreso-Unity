@@ -1,5 +1,32 @@
 # Multiplayer investigation, 2026-09-27
 
+## Scoped Loaded Readiness
+
+The arena path dispatched READY before the lobby's voter check, so a spectator or
+seatless sender could enter the player quorum. Manual READY also read the input
+action outside the loading guard. Its messages had no context, allowing delayed
+lobby votes or old countdowns into a later match; completing a countdown cleared
+its only duplicate guard.
+
+Protocol83 sends a9-byte READY (match ID plus canonical boolean) and8-byte countdown
+(match ID), with exact length and authenticated sender checks. Zero identifies a
+lobby vote; positive IDs must match the current arena. Match votes cannot leak
+back into the lobby or be accepted between arena startup and gate installation.
+ReadyGate accepts/counts the same current seated population, including a seated
+host but excluding unknown peers, spectators and seatless referees. Its seat count
+no longer allocates a list. Valid votes wait for the host's loading curtain and are
+reevaluated when it lifts. Manual votes retry every0.5unscaled seconds until the
+countdown acknowledges them, not merely until a local send succeeds. A completed
+countdown remains consumed until explicit gate Open; no countdown timing changed.
+
+Two new guarded native cases pass2/2 in3.6464798s on full `98375ad2` plus six frozen
+source/metadata inputs, no drift or retry. They drive the actual message handlers
+with old/malformed payloads, wrong senders and non-seated voters; verify the host
+loading barrier, lobby isolation and a real completed client countdown's duplicate
+guard. Metadata GUID is valid32hex. No sockets, live services, physical input or
+ranked journey was exercised; manual retransmission is source-reviewed, not a
+lossy-link qualification. [Receipt](checks/ready-gate-native.json),[XML](checks/ready-gate-native.xml).
+
 ## Sentry Target Recovery
 
 Base `03f1c741`,protocol74. PaeteSentry's old restored spawn reran InReach against

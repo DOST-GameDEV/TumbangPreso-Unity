@@ -522,7 +522,9 @@ namespace TumbangPreso.Net
         // current movement epoch. Receivers wait for the matching caster kit.
         // 82: live sentries bind host-captured targets to the accepted ultimate
         // cohort; replicas no longer infer victims from local positions.
-        public const int ProtocolVersion = 82;
+        // 83: READY and countdown messages name their match; only seated peers
+        // count toward a loaded host's one-time pre-round countdown.
+        public const int ProtocolVersion = 83;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

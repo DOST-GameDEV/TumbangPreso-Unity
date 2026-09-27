@@ -1,11 +1,18 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
-`f6bca621ffd0e81a6c1fa90f8e53f8837d183e92`; preview authoring correction follows it.
+`98375ad28e2782b61c84ab83e0043a668a3a7cf9`; scoped readiness follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Protocol83 scopes READY and countdown messages to a match, rejects non-seated voters,
+and holds valid quorum until host loading finishes. Manual votes retry until the
+countdown acknowledges them; completed countdowns cannot restart from duplicates.
+Two new native cases pass 2/2 on full base plus six frozen inputs, no drift or retry.
+Actual peers, ranked and physical input remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#scoped-loaded-readiness).
 
 The retained creator requests a fresh preview before relative scale/dress so repeated
 edits cannot compound proportions. Normal player preview reuse stays default and

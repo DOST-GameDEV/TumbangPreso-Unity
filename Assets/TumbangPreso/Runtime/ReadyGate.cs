@@ -22,7 +22,7 @@ namespace TumbangPreso
     /// characters — the empty seats are bot-filled — and an AI cannot press R, so counting
     /// characters leaves a solo host waiting forever for three bots to agree. Spectators are
     /// excluded for the same reason: they hold no seat and can never press. The count comes
-    /// from `LobbySession.PlayingPeerCount` and nowhere else.
+    /// from the same seated-peer membership used to accept the votes.
     ///
     /// ⚠️ A SECOND PRESS IS IDEMPOTENT. Votes go into a set, so mashing R cannot ready you
     /// twice or start the countdown early.
@@ -52,6 +52,7 @@ namespace TumbangPreso
 
         private bool _awaitingLocalReady;
         private bool _countingDown;
+        private bool _countdownConsumed;
         private bool _automatic, _introductionDone;
         private float _nextAutomaticReady;
         private Coroutine _arrival;
@@ -90,13 +91,13 @@ namespace TumbangPreso
         /// </summary>
         public void DeclareReady(int peerId)
         {
-            if (!NetAuthority.IsHost || !AwaitingNetReady) return;
+            if (!NetAuthority.IsHost || !AwaitingNetReady || !EligiblePeer(peerId)) return;
 
             if (!_netReady.Add(peerId)) return;   // idempotent
 
             RaiseNetReady();
 
-            if ((!_automatic || _introductionDone) && _netReady.Count >= ExpectedReadyCount()) BeginNetCountdown();
+            TryBeginNetCountdown();
         }
 
         /// <summary>
@@ -111,7 +112,7 @@ namespace TumbangPreso
             _netReady.Remove(peerId);
             RaiseNetReady();
 
-            if ((!_automatic || _introductionDone) && _netReady.Count >= ExpectedReadyCount()) BeginNetCountdown();
+            TryBeginNetCountdown();
         }
 
         /// <summary>
@@ -132,15 +133,35 @@ namespace TumbangPreso
         private int ExpectedReadyCount()
         {
             var lobby = Net.NetSession.Instance?.Lobby;
-            return lobby?.PlayingPeerCount() ?? 1;
+            return NetAuthority.IsNetworked ? lobby?.SeatedPeerCount() ?? 0 : 1;
+        }
+
+        private bool EligiblePeer(int peerId)
+            => NetAuthority.IsNetworked
+                ? Net.NetSession.Instance?.Lobby.IsSeatedPeer(peerId) == true
+                : peerId == NetAuthority.LocalPeerId && !GameLaunch.Spectator;
+
+        private int CurrentReadyCount()
+        {
+            int count = 0;
+            foreach (int peer in _netReady) if (EligiblePeer(peer)) count++;
+            return count;
         }
 
         private void RaiseNetReady()
-            => NetReadyChanged?.Invoke(_netReady.Count, ExpectedReadyCount());
+            => NetReadyChanged?.Invoke(CurrentReadyCount(), ExpectedReadyCount());
+
+        private void TryBeginNetCountdown()
+        {
+            if (!NetAuthority.IsHost || !AwaitingNetReady || UI.Hub.HubLoading.Visible ||
+                (_automatic && !_introductionDone) ||
+                (NetAuthority.IsNetworked && Net.NetSession.Instance == null)) return;
+            if (CurrentReadyCount() >= ExpectedReadyCount()) BeginNetCountdown();
+        }
 
         private void BeginNetCountdown()
         {
-            if (_countingDown) return;
+            if (_countingDown || _countdownConsumed || UI.Hub.HubLoading.Visible) return;
             if (_automatic && !_introductionDone) return;
 
             AwaitingNetReady = false;
@@ -155,7 +176,7 @@ namespace TumbangPreso
         /// <summary>Starts the 3, 2, 1, GO countdown locally on clients.</summary>
         public void StartLocalCountdown()
         {
-            if (_countingDown) return;
+            if (_countingDown || _countdownConsumed) return;
             // A host countdown wins over a delayed local introduction. Never keep the player's
             // camera or input held after the network has advanced into the playable round.
             if (_arrival != null)
@@ -182,6 +203,7 @@ namespace TumbangPreso
             _local = local;
             _awaitingLocalReady = true;
             _countingDown = false;
+            _countdownConsumed = false;
             _automatic = !UI.SceneFlow.SelectedRules.ManualReady;
             _introductionDone = !_automatic;
             _readySendPending = false;
@@ -219,14 +241,21 @@ namespace TumbangPreso
         /// the worst case of a retry that was not needed is one extra `Add` that changes nothing.
         /// </summary>
         private bool _readySendPending;
+        private float _nextReadySend;
 
         private void Update()
         {
-            if (_readySendPending)
+            // Manual READY reads its action directly, outside PlayerInputReader's
+            // loading guard. Do not spend a press or start a hidden countdown.
+            if (UI.Hub.HubLoading.Visible) return;
+            TryBeginNetCountdown();
+
+            if (_readySendPending && Time.unscaledTime >= _nextReadySend)
             {
-                if (Net.MatchRpc.Instance != null &&
-                    Net.MatchRpc.Instance.DeclareReadyServerRpc())
-                    _readySendPending = false;
+                // A successful transport send is not host acceptance. Keep the
+                // idempotent vote until the scoped countdown acknowledges it.
+                _nextReadySend = Time.unscaledTime + .5f;
+                Net.MatchRpc.Instance?.DeclareReadyServerRpc();
             }
 
             if (_countingDown || !_awaitingLocalReady) return;
@@ -282,8 +311,8 @@ namespace TumbangPreso
             // press IS the start.
             if (NetAuthority.IsNetworked)
             {
-                _readySendPending = Net.MatchRpc.Instance == null ||
-                                    !Net.MatchRpc.Instance.DeclareReadyServerRpc();
+                _readySendPending = true;
+                _nextReadySend = 0;
             }
             else
             {
@@ -300,6 +329,8 @@ namespace TumbangPreso
         /// </summary>
         private IEnumerator RunReadyCountdown()
         {
+            _countdownConsumed = true;
+            _readySendPending = false;
             _countingDown = true;
             ReadyPromptChanged?.Invoke(false);
 
