@@ -1353,7 +1353,12 @@ def surface_variety(slot, rng):
     for o in bpy.data.objects:
         if o.type != "MESH" or o.parent is None or not any(m and m.name == slot for m in o.data.materials):
             continue
-        if any(c.name.endswith("(source, not placed)") for c in o.users_collection):
+        # The kit sources sit in CHILD collections of the hidden holders, so a check of the
+        # object's own collection missed them (the Unity exporter found source slots overridden
+        # and props inheriting them): test the parent collections too.
+        if any(c.name.endswith("(source, not placed)") or
+               any(c.name in h.children for h in bpy.data.collections if h.name.endswith("(source, not placed)"))
+               for c in o.users_collection):
             continue
         pick = choice.setdefault(o.parent.name, rng.choice(names))
         for ms in o.material_slots:
