@@ -1978,6 +1978,7 @@ namespace TumbangPreso.Net
                 writer.WriteValueSafe(field.FirstScale);
                 writer.WriteValueSafe(field.SecondScale);
                 writer.WriteValueSafe(field.Split);
+                writer.WriteValueSafe(field.InstanceId);
                 WriteWaterExtra(writer, field);
                 _nm.CustomMessagingManager.SendNamedMessage("WorldFieldItem", peer, writer, NetworkDelivery.ReliableSequenced);
             }
@@ -2035,7 +2036,7 @@ namespace TumbangPreso.Net
 
         private void OnWorldFieldItemMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            if (NetAuthority.IsHost || !FromHost(senderClientId) || !reader.TryBeginRead(69)) return;
             reader.ReadValueSafe(out int generation);
             reader.ReadValueSafe(out int index);
             reader.ReadValueSafe(out int kind);
@@ -2048,10 +2049,11 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float firstScale);
             reader.ReadValueSafe(out float secondScale);
             reader.ReadValueSafe(out bool split);
+            reader.ReadValueSafe(out long instanceId);
             if (!ReadWaterExtra(ref reader, (WorldEffectSnapshot.Kind)kind, out int eventId, out var path)) return;
             _worldFieldBatch?.Add(generation, index, new WorldEffectSnapshot.Field { Type = (WorldEffectSnapshot.Kind)kind,
                 Position = position, Forward = forward, Duration = duration, Remaining = remaining,
-                Radius = radius, Owner = owner, FirstScale = firstScale, SecondScale = secondScale, Split = split, EventId = eventId, Path = path });
+                Radius = radius, Owner = owner, FirstScale = firstScale, SecondScale = secondScale, Split = split, EventId = eventId, InstanceId = instanceId, Path = path });
         }
 
         private void OnWorldFieldEndMsg(ulong senderClientId, FastBufferReader reader)
@@ -2281,22 +2283,29 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>Host: someone pulled out Paete's plant. Every peer plays the pull and removes it.</summary>
-        public void BroadcastPlantPulled(int ownerSlot, int pullerSlot)
+        public void BroadcastPlantPulled(int ownerSlot, int pullerSlot, long instanceId)
         {
-            if (!NetAuthority.ShouldResolve() || _nm?.CustomMessagingManager == null) return;
-            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            if (!NetAuthority.ShouldResolve() || _nm?.CustomMessagingManager == null || instanceId <= 0) return;
+            using var writer = new FastBufferWriter(32, Allocator.Temp);
             writer.WriteValueSafe(ownerSlot);
             writer.WriteValueSafe(pullerSlot);
+            writer.WriteValueSafe(PresentationMatchId);
+            writer.WriteValueSafe(GameServices.Match?.RoundNumber ?? 0);
+            writer.WriteValueSafe(instanceId);
             _nm.CustomMessagingManager.SendNamedMessageToAll("PlantPulled", writer);
         }
 
         private void OnPlantPulledMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!FromHost(senderClientId)) return;
+            if (!FromHost(senderClientId) || !reader.TryBeginRead(28)) return;
             reader.ReadValueSafe(out int ownerSlot);
             reader.ReadValueSafe(out int pullerSlot);
-            if (!ValidSlot(ownerSlot)) return;
-            Abilities.PaetePlant.ApplyPulled(ownerSlot, pullerSlot);
+            reader.ReadValueSafe(out long match);
+            reader.ReadValueSafe(out int round);
+            reader.ReadValueSafe(out long instanceId);
+            if (reader.Position != reader.Length || !ValidSlot(ownerSlot) || !ValidSlot(pullerSlot)
+                || match <= 0 || match != PresentationMatchId || round != GameServices.Match?.RoundNumber || instanceId <= 0) return;
+            Abilities.PaetePlant.ApplyPulled(ownerSlot, pullerSlot, instanceId);
         }
 
         public void BroadcastTeleport(int slot,Vector3 position,float yaw)
@@ -3495,6 +3504,7 @@ namespace TumbangPreso.Net
             if (ability == null) return;
 
             PrepareSkillReceipts();long eventId=++_skillEventSequence;
+            ability.AdoptAcceptedCastEvent(eventId, reactivation);
             if(flightIntent==0)IdentifyFeatherfallTakeoff(Unit(slot), abilitySlot, request > 0 ? request : -eventId);
             bool confirmRitualOwner = abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate &&
                 Unit(slot)?.AbilitySystem?.HeroId == "phaister";
@@ -3549,6 +3559,7 @@ namespace TumbangPreso.Net
                     if (!system.ConfirmPredictedWorldEffect(ability, request, position, forward, aimPoint, heldSeconds)) return;
                 }
                 else if(request>0&&!system.MatchesSkillRequest(abilitySlot,request))return;
+                Skill(Unit(slot), abilitySlot)?.AdoptAcceptedCastEvent(eventId, cast.Reactivation);
                 system?.ConfirmPredictedCastPresentation(
                     (Abilities.HeroAbilitySystem.Slot)abilitySlot);
                 return;
@@ -3573,6 +3584,7 @@ namespace TumbangPreso.Net
                 (Abilities.HeroAbilitySystem.Slot)abilitySlot,
                 position, forward, aimPoint, heldSeconds, authoritative: false,
                 abilityId:cast.AbilityId.ToString(), reactivation:cast.Reactivation);
+            Skill(Unit(slot), abilitySlot)?.AdoptAcceptedCastEvent(eventId, cast.Reactivation);
             if(flightIntent==0)IdentifyFeatherfallTakeoff(Unit(slot), abilitySlot, request > 0 ? request : -eventId);
         }
 

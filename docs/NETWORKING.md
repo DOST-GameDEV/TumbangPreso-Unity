@@ -22,6 +22,7 @@ Runtime files below are in `Assets/TumbangPreso/Runtime/`.
 | Held interactions | CharacterMotor.InteractionHeldForSimulation reads local or accepted leased host input. Root/plant hold clocks run on the host; scoped client completion notifications cannot skip time. Visual progress is not authoritative. |
 | Ultimate cutscene/preparation | SharedUltimatePhase,HeroAbilitySystem.SharedUltimate,MatchRpc.UltimatePhase. One accepted cohort controls hold/handback; do not duplicate gameplay on observers. |
 | Persistent recovery | WorldSnapshotHeader,PreparedWorldSnapshot,HeroAbilitySystem.WorldRecovery,IPreparedWorldReplication,IWorldEffectBinding,ITimedKitReplication. Restore state at elapsed simulation time; do not recast. |
+| Persistent lifetime | HeroAbility.AcceptedCastEvent and WorldEffectSnapshot.Field.InstanceId; ordinary initial cast identity survives commands/recovery. Plant removal matches exact lifetime plus match/round and remembers retirement before late installation. |
 | Compatibility | Net/SkillContractFingerprint and NetSession.ProtocolVersion. Fingerprints exclude cosmetic files,but semantic/wire changes still need explicit versioning. |
 
 Ranked,casual,custom,LAN/online and spectators share match delivery. Read the queue,

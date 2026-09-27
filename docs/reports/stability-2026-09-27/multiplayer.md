@@ -1,5 +1,34 @@
 # Multiplayer investigation, 2026-09-27
 
+## Plant Lifetime Delivery
+
+Base `70ee0152`,protocol71. PlantPulled previously named only the owner's seat and
+looked up that seat's newest live plant. A delayed removal could therefore remove
+a replacement; a removal arriving while its cast waited for a body could also be
+lost and allow the old plant to appear later.
+
+Ordinary accepted initial casts now publish a reusable HeroAbility lifetime hook
+from the existing host event ID, reaching host, confirming owner and observers.
+Commands do not rename that birth. Paete binds the token to its created object;
+the hook also supports a later windup-created object without tying transport to art.
+The persistent field carries a separate InstanceId, not an overloaded water-event
+or gameplay scalar. Plant snapshot restoration and kit rebinding preserve it.
+
+PlantPulled now names match,round,owner,puller and birth ID. Bounded readers reject
+wrong contexts and incomplete/trailing removal payloads. Per-seat retirement floors
+reject duplicate/older removals and silently retire a matching late installation;
+a newer plant is untouched. Floors reset with match/round identity. Offline direct
+spawns retain their existing no-network behavior. No model,VFX,animation,range,
+cooldown or duration changes; other persistent effect kinds are not automatically
+given a complete lifetime contract by this addition.
+
+Frozen157 inputs,8 changed sources. Runtime,Editor,Tests and PlayTests compile
+with unchanged Core reused. A new native case covers command identity,replacement
+protection,late retirement and snapshot identity. **NOT RUN** under the existing
+native disk boundary. No unchanged Core/broad suite/films repeated. Actual delayed
+peers/reconnect/ranked qualification remain open.
+[Receipt](checks/plant-lifetime-compile.json).
+
 ## Host Interaction Holds
 
 Base `c90f7ef8`,protocol70. ReqBreakFree previously ended a live root without
@@ -27,8 +56,8 @@ release, stale lease, epoch, automatic host completion and plant restart. It is
 or film rerun. [Receipt](checks/interaction-holds-compile.json).
 
 Actual delayed/lossy peers, reconnect progress and ranked qualification remain open.
-PlantPulled still identifies the plant by owner rather than effect generation;
-that distinct lifetime problem is not fixed by hold authority. QA-15 remains open:
+The separate PlantPulled lifetime defect is addressed by the later unit above,
+not by hold authority itself. QA-15 remains open:
 ordinary stun clocks were confirmed to advance on remote bodies, but that source
 fact is not a reproduction or explanation of the tester's Sean freeze.
 

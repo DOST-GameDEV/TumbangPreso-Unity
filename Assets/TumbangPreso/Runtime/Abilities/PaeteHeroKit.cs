@@ -144,18 +144,24 @@ namespace TumbangPreso.Abilities
             private const string PlantAction = "hero-paete-sprout", CommandAction = "hero-paete-command";
 
             private int _ownerSlot = -1;
+            private PaetePlant _spawned;
+
+            protected override void OnAcceptedCastEvent(long eventId) => _spawned?.AdoptInstance(eventId);
 
             public void RestorePlantBinding(CharacterMotor motor)
             {
                 if (motor == null || motor.IsDefender || motor.AbilitySystem?.AwaitingSkillEffect(this) == true) return;
                 _ownerSlot = motor.PlayerSlot;
                 var plant = PaetePlant.OwnedBy(_ownerSlot);
+                _spawned = plant;
+                if (plant != null) AdoptAcceptedCastEvent(plant.InstanceId, false);
                 RestoreLiveClock(plant != null ? Mathf.Max(0, PaeteRules.PlantLifeSeconds - plant.Age) : 0);
             }
 
             public override void Activate(AbilityContext ctx)
             {
                 CastAction = PlantAction; ViewmodelAction = "seed-toss"; CastCue = "sfx_cast_paete_sprout";
+                _spawned = null;
                 if (ctx?.Motor != null) _ownerSlot = ctx.Motor.PlayerSlot;
                 base.Activate(ctx);
             }
@@ -180,7 +186,8 @@ namespace TumbangPreso.Abilities
                 if (ctx?.Motor == null) return;
                 // Outside the taya's box only (owner, 2026-09-26: *"also make paete's E only placeable outside box"*).
                 Vector3 at = PaeteVine.PlantTarget(ctx.Position, ctx.Forward, ctx.AimPoint);
-                PaetePlant.Spawn(ctx.Position + Vector3.up * 1.2f, at, ctx.Motor.PlayerSlot);
+                _spawned = PaetePlant.Spawn(ctx.Position + Vector3.up * 1.2f, at, ctx.Motor.PlayerSlot);
+                _spawned.AdoptInstance(AcceptedCastEvent);
             }
 
             public override void Reactivate(AbilityContext ctx)
@@ -205,6 +212,7 @@ namespace TumbangPreso.Abilities
                     if (p != null && p.OwnerSlot == _ownerSlot)
                     { p.gameObject.SetActive(false); Object.Destroy(p.gameObject); }
                 _ownerSlot = -1;
+                _spawned = null;
                 base.Reset();
             }
         }

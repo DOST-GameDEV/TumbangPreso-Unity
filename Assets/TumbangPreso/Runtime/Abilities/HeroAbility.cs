@@ -777,6 +777,7 @@ namespace TumbangPreso.Abilities
 
         public virtual void Activate(AbilityContext ctx)
         {
+            AcceptedCastEvent = 0;
             _joiningPreparationSettled=true;
             // ⚠️ A CHARGE ABILITY SPENDS A CHARGE AND NOTHING ELSE. Setting `CooldownRemaining`
             // as well would put it behind two gates, and the deck would then draw it as Cooling
@@ -832,6 +833,19 @@ namespace TumbangPreso.Abilities
             _rooted.ExitSpeedZone(RootSpeed);
             _rooted = null;
         }
+
+        public long AcceptedCastEvent { get; private set; }
+
+        // A command belongs to its original effect lifetime, not a new spawn.
+        // The host and approved playback call this after accepting the initial cast.
+        public void AdoptAcceptedCastEvent(long eventId, bool reactivation)
+        {
+            if (reactivation || eventId <= 0) return;
+            AcceptedCastEvent = eventId;
+            OnAcceptedCastEvent(eventId);
+        }
+
+        protected virtual void OnAcceptedCastEvent(long eventId) { }
 
         public virtual void Tick(AbilityContext ctx, float dt)
         {
@@ -960,6 +974,7 @@ namespace TumbangPreso.Abilities
 
         public virtual void Reset()
         {
+            AcceptedCastEvent = 0;
             _reservedForIntroduction = false;
             // ⚠️ THE ROOT COMES OFF FIRST. A round can end mid-wind-up, and `Reset` zeroing the
             // timer behind the wind-up's back would strand the speed zone with nothing left to

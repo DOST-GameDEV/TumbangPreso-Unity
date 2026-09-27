@@ -65,6 +65,45 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(30000)]
+        public IEnumerator PlantRemovalNamesItsLifetimeAndCannotResurrectAfterLateInstallation()
+        {
+            var system = Owner("paete");
+            GameServices.Ensure();
+            var motor = system.GetComponent<CharacterMotor>();
+            long firstId = System.DateTime.UtcNow.Ticks;
+            void Plant(long identity)
+            {
+                Assert.AreEqual(HeroKit.CastOutcome.Cast, system.ApplyNetworkCast(HeroAbilitySystem.Slot.Skill2,
+                    Vector3.zero, Vector3.forward, new Vector3(0, 0, 9), 0, false, "paete_skill2", false));
+                system.Kit.Skill2.AdoptAcceptedCastEvent(identity, false);
+            }
+            Plant(firstId);
+            var first = PaetePlant.OwnedBy(motor.PlayerSlot);
+            Assert.IsNotNull(first); Assert.AreEqual(firstId, first.InstanceId);
+            system.Kit.Skill2.AdoptAcceptedCastEvent(firstId + 1, true);
+            Assert.AreEqual(firstId, first.InstanceId, "A fire command relabeled the plant's birth.");
+            Plant(firstId + 2);
+            var replacement = PaetePlant.OwnedBy(motor.PlayerSlot);
+            Assert.AreNotSame(first, replacement);
+            PaetePlant.ApplyPulled(motor.PlayerSlot, 2, firstId);
+            Assert.IsFalse(replacement.IsPulled, "An old removal pulled the current replacement.");
+            PaetePlant.ApplyPulled(motor.PlayerSlot, 2, firstId + 2);
+            Assert.IsTrue(replacement.IsPulled);
+            var late = PaetePlant.Restore(new Vector3(0, 0, 9), motor.PlayerSlot, 16, 3, firstId + 2);
+            Assert.IsTrue(late.IsRetiring); Assert.IsFalse(late.gameObject.activeSelf,
+                "A queued cast/recovery resurrected an already-retired lifetime.");
+            var current = PaetePlant.Restore(new Vector3(0, 0, 9), motor.PlayerSlot, 16, 3, firstId + 3);
+            var captured = current.Capture();
+            Assert.AreEqual(firstId + 3, captured.InstanceId);
+            Assert.IsTrue(WorldEffectSnapshot.Apply(new[] { captured }, .1f));
+            var restored = PaetePlant.OwnedBy(motor.PlayerSlot);
+            Assert.IsNotNull(restored); Assert.AreEqual(firstId + 3, restored.InstanceId);
+            PaetePlant.ApplyPulled(motor.PlayerSlot, 2, firstId + 2);
+            Assert.IsFalse(restored.IsPulled);
+            yield return null;
+        }
+
+        [UnityTest, Timeout(30000)]
         public IEnumerator ReceivedFrozenStateOwnsOneRestraintWithoutCastingOrBlockingAfterThaw()
         {
             var system = Owner("sean");

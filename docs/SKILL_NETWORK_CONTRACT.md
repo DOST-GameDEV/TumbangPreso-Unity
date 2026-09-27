@@ -75,6 +75,22 @@ shared data still needs an explicit versioned state contract. Do not overload
 unrelated fields or pretend arbitrary mechanics fit this shape. Existing persistent
 world collections use WorldEffectSnapshot; their broader extensibility is still open.
 
+## Persistent Effect Identity
+
+Protocol71 adds InstanceId to persistent fields. Ordinary accepted initial casts
+call HeroAbility.AdoptAcceptedCastEvent on the host, confirming owner and observers;
+commands keep the original birth identity. Activate/reset clear the previous token.
+An effect-owning ability can override OnAcceptedCastEvent for an immediate object,
+or read AcceptedCastEvent when a committed windup later creates it. Keep this hook
+free of casting, resource spending and presentation replay.
+
+Paete's plant uses that token, carries it through Capture/Restore, and requires it
+on the match/round-scoped PlantPulled message. Bounded per-seat retirement floors
+prevent a removed lifetime returning through delayed installation or recovery.
+Cosmetic swaps do not affect the token. Other effect kinds, multiple objects from
+one cast and shared-ultimate cohorts still need their explicit lifetime contract;
+adding this field does not silently give every existing effect an identity.
+
 ## Compatibility And Checks
 
 Persistent status pictures belong to a body-owned presenter reading replicated

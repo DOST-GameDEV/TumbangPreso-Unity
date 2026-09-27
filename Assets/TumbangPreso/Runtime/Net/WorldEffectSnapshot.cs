@@ -24,6 +24,7 @@ namespace TumbangPreso.Net
             public int Owner;
             public bool Split;
             public int EventId;
+            public long InstanceId;
             public Vector3[] Path;
         }
 
@@ -110,7 +111,7 @@ namespace TumbangPreso.Net
             if (!Finite(field.Position) || !Finite(field.Forward) || !Finite(field.Duration) || !Finite(field.Remaining)
                 || !Finite(field.Radius) || !Finite(field.FirstScale) || !Finite(field.SecondScale)
                 || field.Duration <= 0 || field.Duration > 60 || field.Remaining < 0 || field.Remaining > field.Duration + .05f
-                || field.Owner < -1 || field.Owner >= Core.Balance.PlayerCount) return false;
+                || field.Owner < -1 || field.Owner >= Core.Balance.PlayerCount || field.InstanceId < 0) return false;
             if (RafiWaterField.IsWater(field.Type)) return RafiWaterField.Valid(field);
             if (field.Type == Kind.Sheet)
                 return field.Radius > 0 && field.Radius <= 10 && field.FirstScale > 0 && field.FirstScale <= 1
@@ -191,7 +192,7 @@ namespace TumbangPreso.Net
                     go.GetComponent<HeroHazards.WardInscribe>().StepTo(field.Duration - remaining);
                 }
                 else if (field.Type == Kind.Plant)
-                    PaetePlant.Restore(field.Position, field.Owner, field.Duration - remaining, Mathf.Max(0f, field.FirstScale - elapsed));
+                    PaetePlant.Restore(field.Position, field.Owner, field.Duration - remaining, Mathf.Max(0f, field.FirstScale - elapsed), field.InstanceId);
                 else if (field.Type == Kind.Thorns)
                     PaeteThorns.Restore(field.Position, field.Owner, field.Duration - remaining);
                 else if (field.Type == Kind.Sentry)

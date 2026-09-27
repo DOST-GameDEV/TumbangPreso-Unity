@@ -43,7 +43,10 @@ refresh/thaw/disable cleanup and local shatter audio; ice meshes preload at boot
 Compiler checks pass; native lifecycle/peer checks and QA-15 remain OPEN.
 Root escape/plant pulling now require host-timed accepted Interact input and scoped
 completion notifications (protocol70). Four assemblies compile; native/lossy-peer
-hold checks, reconnect progress and plant-generation delivery remain OPEN.
+hold checks and reconnect progress remain OPEN. Plant removal now has accepted-cast
+lifetime identity, scoped delivery and late-retirement protection, preserved through
+field snapshots (protocol71). Four assemblies compile; native/peer lifetime checks
+remain OPEN, and other persistent effect kinds still require explicit coverage.
 Read [network route](NETWORKING.md),[contract](SKILL_NETWORK_CONTRACT.md) and
 [exact evidence](reports/stability-2026-09-27/multiplayer.md),not a historical
 protocol literal or old test count.

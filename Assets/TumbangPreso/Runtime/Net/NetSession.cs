@@ -498,7 +498,9 @@ namespace TumbangPreso.Net
         // current authoritative resource state instead of adding a second refund.
         // 70: accepted Interact intent drives host hold clocks; escape/uproot
         // notifications carry the shared match/round/body scope.
-        public const int ProtocolVersion = 70;
+        // 71: persistent fields carry accepted-cast lifetime IDs; plant removal
+        // names that lifetime within its match and round.
+        public const int ProtocolVersion = 71;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

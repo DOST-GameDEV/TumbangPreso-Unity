@@ -108,6 +108,32 @@ namespace TumbangPreso.Abilities
         public static readonly List<PaetePlant> Live = new List<PaetePlant>();
 
         public int OwnerSlot { get; private set; } = -1;
+        public long InstanceId { get; private set; }
+        private static readonly long[] RetiredInstances = new long[Balance.PlayerCount];
+        private static long _retiredMatch = -1;
+        private static int _retiredRound = -1;
+
+        private static void FollowRetirementScope()
+        {
+            long match = Net.MatchRpc.Instance?.PresentationMatchId ?? 0;
+            int round = GameServices.Match?.RoundNumber ?? 0;
+            if (_retiredMatch == match && _retiredRound == round) return;
+            _retiredMatch = match; _retiredRound = round;
+            System.Array.Clear(RetiredInstances, 0, RetiredInstances.Length);
+        }
+
+        public void AdoptInstance(long instanceId)
+        {
+            if (instanceId <= 0) return;
+            InstanceId = instanceId;
+            FollowRetirementScope();
+            if (OwnerSlot >= 0 && OwnerSlot < RetiredInstances.Length && instanceId <= RetiredInstances[OwnerSlot])
+            {
+                // A removal can arrive while its accepted cast is waiting for a body.
+                // Late installation/recovery must not resurrect that already-ended plant.
+                _retiring = true; gameObject.SetActive(false); Destroy(gameObject);
+            }
+        }
         public float Age => _age;
         public bool Landed => _age >= 0f;
         public bool Pullable => _age >= PaeteRules.PlantRootedSeconds && !IsRetiring;
@@ -198,16 +224,24 @@ namespace TumbangPreso.Abilities
                 if (d <= PaeteRules.PlantPullReach + 0.35f && d < bestDistance) { best = p; bestDistance = d; }
             }
             if (best == null) return false;
-            Net.MatchRpc.Instance?.BroadcastPlantPulled(best.OwnerSlot, who.PlayerSlot);
+            Net.MatchRpc.Instance?.BroadcastPlantPulled(best.OwnerSlot, who.PlayerSlot, best.InstanceId);
             if (!NetAuthority.IsNetworked) ApplyPulled(best.OwnerSlot, who.PlayerSlot);
             return true;
         }
 
         /// <summary>Every peer: the plant owned by <paramref name="ownerSlot"/> comes out of the ground.</summary>
-        public static void ApplyPulled(int ownerSlot, int pullerSlot)
+        public static void ApplyPulled(int ownerSlot, int pullerSlot, long instanceId = 0)
         {
+            if (ownerSlot < 0 || ownerSlot >= Balance.PlayerCount) return;
+            if (NetAuthority.IsNetworked && instanceId <= 0) return;
+            FollowRetirementScope();
+            if (instanceId > 0)
+            {
+                if (instanceId <= RetiredInstances[ownerSlot]) return;
+                RetiredInstances[ownerSlot] = instanceId;
+            }
             var plant = OwnedBy(ownerSlot);
-            if (plant == null) return;
+            if (plant == null || (instanceId > 0 && plant.InstanceId != instanceId)) return;
             plant._pulled = true;
             plant._pulledAge = 0f;
             var puller = GameServices.Round?.PlayerAt(pullerSlot);
@@ -228,17 +262,19 @@ namespace TumbangPreso.Abilities
             Forward = Vector3.forward, Duration = PaeteRules.PlantLifeSeconds,
             Remaining = Mathf.Clamp(PaeteRules.PlantLifeSeconds - Mathf.Max(0f, _age), 0f, PaeteRules.PlantLifeSeconds),
             Radius = 1f, Owner = OwnerSlot, FirstScale = Mathf.Max(0f, _nextShot - _age),
+            InstanceId = InstanceId,
         };
 
         public bool IsPulled => _pulled;
         public bool IsRetiring => _pulled || _retiring;
 
         /// <summary>A seedling put back at <paramref name="age"/> seconds old with its shot clock; no seed flight, no second ground break.</summary>
-        public static PaetePlant Restore(Vector3 at, int ownerSlot, float age, float untilShot)
+        public static PaetePlant Restore(Vector3 at, int ownerSlot, float age, float untilShot, long instanceId = 0)
         {
             var plant = Spawn(at, at, ownerSlot, 0f);
             plant._age = Mathf.Max(0.5f, age);
             plant._nextShot = plant._age + Mathf.Clamp(untilShot, 0f, PaeteRules.PlantReloadSeconds);
+            plant.AdoptInstance(instanceId);
             return plant;
         }
 
