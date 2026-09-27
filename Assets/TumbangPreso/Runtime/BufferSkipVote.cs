@@ -43,6 +43,11 @@ namespace TumbangPreso
         private InputAction _readyUp;
         private bool _sendPending;
         private bool _votedLocally;
+        private bool _hasTally;
+        private float _nextSend;
+        private long _scopeMatch;
+        private int _scopeRound = -1;
+        private byte _voteMask;
 
         /// <summary>What the HUD draws. 0 of 0 while there is no buffer running.</summary>
         public static int Votes { get; private set; }
@@ -101,9 +106,20 @@ namespace TumbangPreso
 
         private void OnIntermission(int nextRound, int nextDefenderSlot)
         {
-            _votes.Clear();
-            _votedLocally = false;
-            _sendPending = false;
+            _scopeRound = -1;
+            EnsureScope();
+            PublishTally();
+        }
+
+        private void EnsureScope()
+        {
+            var match = GameServices.Match;
+            long identity = match?.PresentationMatchId ?? 0;
+            int round = match?.RoundNumber ?? -1;
+            if (_scopeMatch == identity && _scopeRound == round) return;
+            _scopeMatch = identity; _scopeRound = round;
+            _votes.Clear(); _votedLocally = _sendPending = _hasTally = false;
+            _nextSend = 0; _voteMask = 0; Votes = VotesNeeded = 0;
         }
 
         private void Update()
@@ -113,21 +129,26 @@ namespace TumbangPreso
             if (match == null || !match.IsWarmupBuffer || HalftimePresentation.Playing)
             {
                 Showing = false;
+                if (match == null || !match.IsWarmupBuffer) _sendPending = false;
                 return;
             }
 
-            VotesNeeded = Needed();
-            Votes = NetAuthority.IsNetworked ? _votes.Count : (_votedLocally ? 1 : 0);
-            Showing = true;
+            EnsureScope();
+            if (NetAuthority.ShouldResolve() && RefreshTally()) PublishTally();
+            Showing = !GameLaunch.Spectator && _hasTally && !UI.Hub.HubLoading.Visible &&
+                (NetAuthority.IsNetworked || NetAuthority.ShouldResolve());
+            if (!Showing) return;
 
             // ⚠️ A HELD VOTE IS RETRIED, for the reason `ReadyGate._readySendPending` exists:
             // `NetAuthority.IsNetworked` is true from `StartClient` onward rather than from
             // approval, so a press made during the join window goes to a transport with nowhere
             // to send it and would otherwise be swallowed silently.
-            if (_sendPending && MatchRpc.Instance != null &&
-                MatchRpc.Instance.RequestSkipBufferServerRpc())
+            if (_sendPending && Time.unscaledTime >= _nextSend)
             {
-                _sendPending = false;
+                _nextSend = Time.unscaledTime + .5f;
+                // A local send is not acceptance. The host's seated vote mask
+                // acknowledges this vote; duplicates stay free on the host.
+                MatchRpc.Instance?.RequestSkipBufferServerRpc();
             }
 
             if (_votedLocally) return;
@@ -142,8 +163,8 @@ namespace TumbangPreso
                 return;
             }
 
-            _sendPending = MatchRpc.Instance == null ||
-                           !MatchRpc.Instance.RequestSkipBufferServerRpc();
+            _sendPending = true;
+            _nextSend = 0;
         }
 
         /// <summary>
@@ -151,16 +172,16 @@ namespace TumbangPreso
         /// </summary>
         public void HostCastVote(int peerId)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.ShouldResolve() || !EligiblePeer(peerId)) return;
 
             var match = GameServices.Match;
             if (match == null || !match.IsWarmupBuffer || HalftimePresentation.Playing) return;
 
-            _votes.Add(peerId);
-            Votes = _votes.Count;
-            VotesNeeded = Needed();
+            EnsureScope();
+            if (!_votes.Add(peerId)) return;
+            PublishTally();
 
-            if (_votes.Count < VotesNeeded) return;
+            if (Votes < VotesNeeded) return;
 
             match.SkipBuffer();
         }
@@ -173,17 +194,54 @@ namespace TumbangPreso
         /// </summary>
         public void OnPeerLeft(int peerId)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.ShouldResolve()) return;
 
+            EnsureScope();
             _votes.Remove(peerId);
 
             var match = GameServices.Match;
             if (match == null || !match.IsWarmupBuffer || HalftimePresentation.Playing) return;
 
-            VotesNeeded = Needed();
-            Votes = _votes.Count;
+            PublishTally();
 
-            if (_votes.Count > 0 && _votes.Count >= VotesNeeded) match.SkipBuffer();
+            if (Votes > 0 && Votes >= VotesNeeded) match.SkipBuffer();
+        }
+
+        private static bool EligiblePeer(int peerId) => NetAuthority.IsNetworked
+            ? NetSession.Instance?.Lobby.IsSeatedPeer(peerId) == true
+            : peerId == NetAuthority.LocalPeerId && !GameLaunch.Spectator;
+
+        private bool RefreshTally()
+        {
+            int count = 0; byte mask = 0;
+            foreach (int peer in _votes)
+            {
+                if (!EligiblePeer(peer)) continue;
+                count++;
+                int seat = NetSession.Instance?.Lobby.PeerById(peer)?.Seat ?? NetAuthority.LocalSlot;
+                if (seat >= 0 && seat < Core.Balance.PlayerCount) mask |= (byte)(1 << seat);
+            }
+            int needed = Needed();
+            bool changed = !_hasTally || Votes != count || VotesNeeded != needed || _voteMask != mask;
+            Votes = count; VotesNeeded = needed; _voteMask = mask; _hasTally = true;
+            if (_votes.Contains(NetAuthority.LocalPeerId)) _sendPending = false;
+            return changed;
+        }
+
+        public void PublishTally(ulong? peer = null)
+        {
+            if (!NetAuthority.ShouldResolve() || GameServices.Match?.IsWarmupBuffer != true) return;
+            EnsureScope(); RefreshTally();
+            MatchRpc.Instance?.BroadcastBufferVotes(Votes, VotesNeeded, _voteMask, peer);
+        }
+
+        public void ApplyNetworkTally(int votes, int needed, byte mask)
+        {
+            if (NetAuthority.IsHost || GameServices.Match?.IsWarmupBuffer != true) return;
+            EnsureScope(); Votes = votes; VotesNeeded = needed; _voteMask = mask; _hasTally = true;
+            int seat = NetAuthority.LocalSlot;
+            if (seat >= 0 && seat < Core.Balance.PlayerCount && (mask & (1 << seat)) != 0)
+            { _sendPending = false; _votedLocally = true; }
         }
 
         private static int Needed()
@@ -193,7 +251,7 @@ namespace TumbangPreso
             var lobby = NetSession.Instance?.Lobby;
             if (lobby == null) return 1;
 
-            return Mathf.Max(1, lobby.PlayingPeerCount());
+            return Mathf.Max(1, lobby.SeatedPeerCount());
         }
     }
 }

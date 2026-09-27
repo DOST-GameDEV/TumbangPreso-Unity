@@ -54,6 +54,101 @@ namespace TumbangPreso.PlayTests
         }
 
         [Test]
+        public void BufferVotesAcceptSeatedClientsAndRejectOldBreaks()
+        {
+            GameServices.Ensure();
+            var match = GameServices.Match; match.ApplySnapshot(new int[4], 3, true); match.IsWarmupBuffer = true;
+            typeof(MatchDirector).GetProperty("PresentationMatchId").SetValue(match, 123L);
+            typeof(MatchDirector).GetProperty("SkipRequested").SetValue(match, false);
+            var sessionRoot = new GameObject("Buffer session"); sessionRoot.SetActive(false);
+            var session = sessionRoot.AddComponent<NetSession>(); var rpc = sessionRoot.AddComponent<MatchRpc>();
+            typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(rpc, 123L);
+            var sessionInstance = typeof(NetSession).GetProperty("Instance"); var previous = sessionInstance.GetValue(null);
+            var root = new GameObject("Buffer ballot"); var ballot = root.AddComponent<BufferSkipVote>(); ballot.enabled = false;
+            var receive = typeof(MatchRpc).GetMethod("OnSkipBufferMsg", Hidden);
+            void Vote(ulong sender, long identity = 123, int round = 3, bool trailing = false)
+            {
+                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                writer.WriteValueSafe(identity); writer.WriteValueSafe(round);
+                if (trailing) writer.WriteValueSafe((byte)0);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                receive.Invoke(rpc, new object[] { sender, reader });
+            }
+            try
+            {
+                NetAuthority.Provider = new Peer { Host = true }; sessionInstance.SetValue(null, session);
+                session.Lobby.OpenLobby(new System.Random(42));
+                session.Lobby.Admit(0, "host", "Host"); session.Lobby.Admit(1, "guest", "Guest");
+                var watcher = session.Lobby.Admit(2, "watch", "Watch"); watcher.Spectator = true; watcher.Seat = -1;
+                var seatless = session.Lobby.Admit(3, "none", "None"); seatless.Seat = -1;
+                Vote(1);
+                Assert.AreEqual(1, BufferSkipVote.Votes, "The host discarded a real client vote.");
+                Assert.AreEqual(2, BufferSkipVote.VotesNeeded); Assert.IsFalse(match.SkipRequested);
+                Vote(1); Vote(2); Vote(3); Vote(99); Vote(ulong.MaxValue);
+                Vote(0, 122); Vote(0, round: 2); Vote(0, trailing: true);
+                Assert.AreEqual(1, BufferSkipVote.Votes); Assert.IsFalse(match.SkipRequested);
+                Vote(0); Assert.AreEqual(2, BufferSkipVote.Votes); Assert.IsTrue(match.SkipRequested);
+
+                match.ApplySnapshot(new int[4], 4, true); match.IsWarmupBuffer = true;
+                typeof(MatchDirector).GetProperty("SkipRequested").SetValue(match, false);
+                typeof(BufferSkipVote).GetMethod("Update", Hidden).Invoke(ballot, null);
+                Vote(1); Assert.AreEqual(0, BufferSkipVote.Votes); Assert.IsFalse(match.SkipRequested);
+                Vote(1, round: 4); Assert.AreEqual(1, BufferSkipVote.Votes); Assert.IsFalse(match.SkipRequested);
+                session.Lobby.Depart(0); ballot.OnPeerLeft(0);
+                Assert.IsTrue(match.SkipRequested, "The remaining valid quorum was not reevaluated on departure.");
+            }
+            finally { sessionInstance.SetValue(null, previous); Object.DestroyImmediate(root); Object.DestroyImmediate(sessionRoot); }
+        }
+
+        [Test]
+        public void BufferObserverMirrorsTallyAndAcknowledgementWithoutRoundEvents()
+        {
+            GameServices.Ensure(); NetAuthority.Provider = new Peer();
+            var match = GameServices.Match; match.ApplySnapshot(new int[4], 3, true);
+            typeof(MatchDirector).GetProperty("PresentationMatchId").SetValue(match, 123L);
+            var root = new GameObject("Observer ballot"); var ballot = root.AddComponent<BufferSkipVote>(); ballot.enabled = false;
+            var routerRoot = new GameObject("Observer ballot receiver"); routerRoot.SetActive(false);
+            var rpc = routerRoot.AddComponent<MatchRpc>(); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(rpc, 123L);
+            var boundary = typeof(MatchRpc).GetMethod("ApplyNetworkRoundBoundary", BindingFlags.Static | BindingFlags.NonPublic);
+            var receive = typeof(MatchRpc).GetMethod("OnBufferVotesMsg", Hidden);
+            var update = typeof(BufferSkipVote).GetMethod("Update", Hidden);
+            var pending = typeof(BufferSkipVote).GetField("_sendPending", Hidden);
+            int events = 0;
+            System.Action<int, int> observed = (_, __) => events++;
+            match.IntermissionStarted += observed;
+            void Tally(int votes, int needed, byte mask, ulong sender = 0, long identity = 123, int round = 3, bool trailing = false)
+            {
+                using var writer = new FastBufferWriter(32, Allocator.Temp);
+                writer.WriteValueSafe(identity); writer.WriteValueSafe(round);
+                writer.WriteValueSafe(votes); writer.WriteValueSafe(needed); writer.WriteValueSafe(mask);
+                if (trailing) writer.WriteValueSafe((byte)0);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                receive.Invoke(rpc, new object[] { sender, reader });
+            }
+            try
+            {
+                boundary.Invoke(null, new object[] { true, false, true, 3 });
+                Assert.IsTrue(match.IsWarmupBuffer); Assert.AreEqual(0, events);
+                update.Invoke(ballot, null); pending.SetValue(ballot, true);
+                Tally(1, 2, 1); Assert.AreEqual(1, BufferSkipVote.Votes); Assert.AreEqual(2, BufferSkipVote.VotesNeeded);
+                Assert.IsTrue((bool)pending.GetValue(ballot));
+                Tally(1, 2, 2); Assert.IsFalse((bool)pending.GetValue(ballot));
+                update.Invoke(ballot, null); Assert.AreEqual(1, BufferSkipVote.Votes, "Client Update erased the host tally.");
+                Tally(2, 2, 3, sender: 1); Tally(2, 2, 3, identity: 122); Tally(2, 2, 3, round: 2);
+                Tally(2, 2, 1); Tally(1, 5, 2); Tally(2, 2, 3, trailing: true);
+                Assert.AreEqual(1, BufferSkipVote.Votes);
+                boundary.Invoke(null, new object[] { false, true, true, 4 });
+                update.Invoke(ballot, null); Assert.IsFalse(match.IsWarmupBuffer); Assert.IsFalse(BufferSkipVote.Showing);
+                Assert.AreEqual(0, events, "Client state mirroring raised an authoritative intermission event.");
+            }
+            finally
+            {
+                match.IntermissionStarted -= observed;
+                Object.DestroyImmediate(root); Object.DestroyImmediate(routerRoot);
+            }
+        }
+
+        [Test]
         public void ReadyVotesRequireCurrentMatchSeatedSendersAndLoadedHost()
         {
             var sessionRoot = new GameObject("Ready session"); sessionRoot.SetActive(false);

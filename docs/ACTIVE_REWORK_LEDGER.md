@@ -1,11 +1,19 @@
 # Active Rework Checkpoint
 
-Updated 2026-09-28. Branch: ASTRAReworks. Managed source candidate: `8840df78`.
-Current protocol:87 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
+Updated 2026-09-28. Branch: ASTRAReworks. Latest managed candidate: `f997250d`
+plus the four intermission-vote source changes.
+Current protocol:88 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 TODO is the work-status queue; this file records resumption and evidence boundaries.
 
 ## Current Unit
+
+Intermission voting now accepts client requests instead of requiring a host sender.
+Match/round scope, seated quorum and acknowledged host tally repair the existing
+client workflow; buffer state mirrors without raising authoritative round events.
+All five assemblies compile on1233 frozen managed files, no drift or retry. Two new
+native cases are authored but NOT RUN; actual peers remain unqualified.
+[Details](reports/stability-2026-09-27/multiplayer.md#intermission-voting).
 
 The async roster-catalogue implementation is pushed. Boot awaits one shared
 Resources.LoadAsync request before visiting referenced art/clips. Direct fallback,

@@ -1,5 +1,29 @@
 # Multiplayer investigation, 2026-09-27
 
+## Intermission Voting
+
+OnSkipBufferMsg incorrectly applied FromHost to a client-to-host request, rejecting
+every guest. Clients also never mirrored MatchDirector.IsWarmupBuffer and replaced
+their tally with an empty local vote set. Protocol88 repairs this existing workflow:
+the12-byte request names match/round but never the voter, which remains the authenticated
+sender; the21-byte host tally includes current seated-vote mask acknowledgement.
+Malformed/stale requests and unknown/spectator/seatless votes reject. Duplicate votes
+do not rebroadcast snapshots. Departures reevaluate the same seated quorum.
+
+The world header precedes the tally, including rejoin hydration. Clients derive
+buffer state from the host's round snapshot without raising IntermissionStarted
+(whose subscribers reset bodies and advance rounds). Their Update retains the host
+tally and retries a pending vote every0.5unscaled seconds until acknowledged. Loading,
+spectator and mandatory-halftime guards remain; revoked authority cannot resolve
+votes locally. No rematch, scoring, input backend or presentation redesign.
+
+One full managed-source check on `f997250d` plus four changed files compiles Core,
+Runtime,Editor,Tests and PlayTests.1233 frozen files, no drift, no compiler repair or
+rerun. Two new native cases cover actual handlers/state for guest votes, membership,
+old breaks, departure quorum, received tally/acknowledgement and absence of client
+round events; they are AUTHORED, NOT RUN. No actual sockets/ranked or native-runtime
+success is claimed. [Compiler receipt](checks/buffer-votes-compile.json).
+
 ## Simulation Clock Recovery
 
 Timed buffs and the familiar seance advance with gameplay delta time, but their

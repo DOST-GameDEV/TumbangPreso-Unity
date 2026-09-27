@@ -389,6 +389,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("StartMatch", OnStartMatchMsg);
             cm.RegisterNamedMessageHandler("ReqSnapshot", OnReqSnapshotMsg);
             cm.RegisterNamedMessageHandler("SkipBuffer", OnSkipBufferMsg);
+            cm.RegisterNamedMessageHandler("BufferVotes", OnBufferVotesMsg);
             cm.RegisterNamedMessageHandler("SyncAbility", OnSyncAbilityMsg);
             cm.RegisterNamedMessageHandler("RebindSeat", OnRebindSeatMsg);
             cm.RegisterNamedMessageHandler("ReqCue", OnReqCueMsg);
@@ -5265,6 +5266,10 @@ namespace TumbangPreso.Net
         private static void ApplyNetworkRoundBoundary(bool wasRoundActive, bool roundActive,
                                                       bool inProgress, int roundNumber)
         {
+            // Mirror state only. Raising IntermissionStarted here would let a
+            // client runner reset bodies and advance the authoritative round.
+            if (GameServices.Match != null)
+                GameServices.Match.IsWarmupBuffer = inProgress && !roundActive && roundNumber > 0;
             // ⚠️⚠️ THE ANNOUNCER'S PER-ROUND STATE IS RESET HERE, BECAUSE A CLIENT NEVER GETS
             // `RoundStarted`. 🧑 2026-08-29: *"wrong sfx played for non host, 30 seconds played
             // even tho no 30 seconds yet"*. `VoiceDirector.OnRoundStarted` clears `_clock30Said`
@@ -6158,6 +6163,7 @@ namespace TumbangPreso.Net
             }
             SendReplayShortlist((ulong)peerId);
             SendSkySnapshot((ulong)peerId);
+            FindFirstObjectByType<BufferSkipVote>()?.PublishTally((ulong)peerId);
             int previousFieldGeneration=_worldFieldGeneration;
             SendWorldFieldSnapshot((ulong)peerId);
             if(_worldFieldGeneration>previousFieldGeneration)
@@ -6180,6 +6186,10 @@ namespace TumbangPreso.Net
         /// </summary>
         public bool RequestSkipBufferServerRpc()
         {
+            var match = GameServices.Match;
+            if (match == null || !match.IsWarmupBuffer || HalftimePresentation.Playing) return false;
+            long identity = EnsurePresentationMatch();
+            if (identity <= 0) return false;
             if (NetAuthority.IsHost)
             {
                 FindFirstObjectByType<BufferSkipVote>()?.HostCastVote(NetAuthority.LocalPeerId);
@@ -6196,13 +6206,10 @@ namespace TumbangPreso.Net
             if (_nm == null || !_nm.IsConnectedClient || _nm.CustomMessagingManager == null)
                 return false;
 
-            // ⚠️ NO PAYLOAD AT ALL. The vote carries no data and the voter is `senderClientId`,
-            // which the transport supplies and the sender cannot type. A placeholder byte here
-            // made `tools/audit_wire_payloads.py` report a writer/reader mismatch, correctly:
-            // one field written and none read is exactly the shape of a field somebody forgot to
-            // parse, and the audit cannot tell a deliberate filler from that. `StartMatch` is the
-            // precedent for a genuinely empty message.
-            using var writer = new FastBufferWriter(8, Allocator.Temp);
+            // The payload identifies the break, never the voter.
+            using var writer = new FastBufferWriter(12, Allocator.Temp);
+            writer.WriteValueSafe(identity);
+            writer.WriteValueSafe(match.RoundNumber);
             _nm.CustomMessagingManager.SendNamedMessage("SkipBuffer", NetworkManager.ServerClientId, writer);
             return true;
         }
@@ -6215,10 +6222,43 @@ namespace TumbangPreso.Net
         /// </summary>
         private void OnSkipBufferMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!FromHost(senderClientId)) return;
-            if (!NetAuthority.IsHost) return;
+            // This is a client request, not a host-only notification.
+            if (!NetAuthority.IsHost || senderClientId > int.MaxValue ||
+                reader.Length - reader.Position != 12 || !reader.TryBeginRead(12)) return;
+            reader.ReadValueSafe(out long match);
+            reader.ReadValueSafe(out int round);
+            if (match <= 0 || match != PresentationMatchId || round < 1 ||
+                round != GameServices.Match?.RoundNumber) return;
 
             FindFirstObjectByType<BufferSkipVote>()?.HostCastVote((int)senderClientId);
+        }
+
+        public void BroadcastBufferVotes(int votes, int needed, byte mask, ulong? peer = null)
+        {
+            if (!NetAuthority.IsHost || _nm?.CustomMessagingManager == null || GameServices.Match?.IsWarmupBuffer != true) return;
+            // The client must see the intermission state before its tally, including
+            // a joiner that has never observed a live-to-buffer transition.
+            BroadcastMatchState();
+            using var writer = new FastBufferWriter(21, Allocator.Temp);
+            writer.WriteValueSafe(PresentationMatchId);
+            writer.WriteValueSafe(GameServices.Match.RoundNumber);
+            writer.WriteValueSafe(votes); writer.WriteValueSafe(needed); writer.WriteValueSafe(mask);
+            if (peer.HasValue) _nm.CustomMessagingManager.SendNamedMessage("BufferVotes", peer.Value, writer, NetworkDelivery.ReliableSequenced);
+            else _nm.CustomMessagingManager.SendNamedMessageToAll("BufferVotes", writer, NetworkDelivery.ReliableSequenced);
+        }
+
+        private void OnBufferVotesMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost || !FromHost(senderClientId) || reader.Length - reader.Position != 21 || !reader.TryBeginRead(21)) return;
+            reader.ReadValueSafe(out long match); reader.ReadValueSafe(out int round);
+            reader.ReadValueSafe(out int votes); reader.ReadValueSafe(out int needed); reader.ReadValueSafe(out byte mask);
+            if (match <= 0 || match != PresentationMatchId || round != GameServices.Match?.RoundNumber ||
+                round < 1 || round > 64 || needed < 1 || needed > Balance.PlayerCount || votes < 0 || votes > needed ||
+                (mask & ~((1 << Balance.PlayerCount) - 1)) != 0) return;
+            int count = 0;
+            for (int seat = 0; seat < Balance.PlayerCount; seat++) if ((mask & (1 << seat)) != 0) count++;
+            if (count != votes) return;
+            FindFirstObjectByType<BufferSkipVote>()?.ApplyNetworkTally(votes, needed, mask);
         }
 
         /// <summary>
