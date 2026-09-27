@@ -1,14 +1,19 @@
-"""Kanto street sound: a city-block bed, three engine loops and five horns, by deterministic synthesis.
+"""Kanto street sound: a city-block bed, three engine loops, horns and sirens, by deterministic synthesis.
 
 Writes ONLY these files into Assets/TumbangPreso/Art/audio/ambience/:
     kanto_city_bed.wav
     kanto_engine_car.wav, kanto_engine_diesel.wav, kanto_engine_tricycle.wav
-    kanto_horn_car_1.wav .. kanto_horn_car_3.wav, kanto_horn_jeepney.wav, kanto_horn_tricycle.wav
+    kanto_horn_car_1.wav .. kanto_horn_car_8.wav, kanto_horn_jeepney_1.wav .. kanto_horn_jeepney_3.wav,
+    kanto_horn_bus.wav, kanto_horn_truck.wav, kanto_horn_tricycle_1.wav, kanto_horn_tricycle_2.wav
+    kanto_siren_1.wav .. kanto_siren_4.wav
 and the measurement record docs/reports/kanto-street-audio-authoring.json.
 
 Owner brief (2026-09-27, about Kanto's moving traffic): "needs sfx, bustling city ambience, car
-engine and driving sounds, beep/horns". `Runtime/Map/KantoStreetSound.cs` plays these; this file
-only authors them.
+engine and driving sounds, beep/horns". After hearing the first set in play, the same day: "the
+sfx for the city is too calm. need to be more bustling, add some sirens here and louder and more
+variety of beeps". ⚠️ The single-file `kanto_horn_jeepney.wav` and `kanto_horn_tricycle.wav` of
+the first set were replaced by the numbered sets and removed; this tool never writes them again.
+`Runtime/Map/KantoStreetSound.cs` plays these; this file only authors them.
 
 Same method as build_lagoon_ambience.py: numpy only, fixed seeds, no external samples, so a rerun
 is byte-identical and the provenance is simple to state.
@@ -27,9 +32,31 @@ OUT = ROOT / 'Assets/TumbangPreso/Art/audio/ambience'
 REPORT = ROOT / 'docs/reports/kanto-street-audio-authoring.json'
 RATE = 44100
 
-# ⚠️ 38 s: inside the brief's 30 to 45, and not a multiple of any engine loop (3.0, 3.2, 2.5 s), so
-# the bed's one jeepney rev never lines up with the same engine cycle lap after lap.
-BED_SECONDS = 38.0
+# ⚠️ 50 s (it was 38). A busier bed has far more events to repeat, and at 38 s a listener starts
+# recognising the same horn after the same pass-by within two laps. 50 s is inside the rework
+# brief's 40 to 60, and not a multiple of any engine loop (3.0, 3.2, 2.5 s).
+BED_SECONDS = 50.0
+
+# The first bed's measured RMS (peak 0.50), kept for the before-and-after in the report.
+FIRST_BED_RMS = 0.0846
+
+AUTHORING_PASSES = [
+    'Set 1, pass 1: bed loudest at 40 Hz and 40 dB over its 1 kHz; car engine swung 20 dB per firing '
+    '(1.6 ms pulses, Q up to 3); diesel knock showed four narrow tonal peaks; one-shot horns carried a '
+    'wrapped pre-ring tail (a 0.22 s beep measured 0.475 s).',
+    'Set 1, pass 2: wash moved to 45 to 320 Hz; car pulses widened to 2.6 ms with lower-Q body; knock '
+    'rebuilt as a noise burst with rings that wander 10 per cent; one-shot filter padded both sides. '
+    'Distant horns and far engines still measured about 0 to 1 dB over the wash in their bands.',
+    'Set 1, pass 3: far events raised and the mid wash lowered until every event measured 2.5 to 4.3 dB '
+    'over the median in its own band.',
+    'Owner heard set 1 in play (2026-09-27): too calm, add sirens, louder and more varied beeps.',
+    'Set 2, pass 1: 50 s bed with 81 events; every kind only 0.9 to 1.8 dB over the bed median in its '
+    'band because the pass-bys buried them (horns about 14 dB under the pass-by layer).',
+    'Set 2, pass 2: pass-bys down a third, horns up about 3x near and far, vendor calls and revs up; '
+    'horns now a median 5.2 dB over the bed, vendor calls 3.9, revs 2.8. Soft limiter (tanh, drive 2.2) '
+    'takes the bed RMS from 0.0846 to about 0.16 at a 0.60 peak. Bus horn cut at 2.8 kHz after its '
+    'first render ran bright to 8 kHz.',
+]
 
 # ⚠️⚠️ ENGINE LOOPS ARE AUTHORED AT IDLE-TO-LOW-CRUISE, NOT AT CRUISE. The runtime raises pitch with
 # speed (about 0.85 waiting, up to about 1.6 at cruise), and pitching a loop DOWN below its authored
@@ -337,17 +364,6 @@ def horn_env(seconds, attack=0.008, release=0.03):
     return a * r * (0.92 + 0.08 * np.exp(-t / 0.15))
 
 
-def car_horn_note(f_lo, f_hi, seconds, seed, housing=2300):
-    lo = horn_tone(f_lo, seconds, 0.28, seed)
-    hi = horn_tone(f_hi, seconds, 0.24, seed + 10)
-    x = (lo + 0.9 * hi) * horn_env(seconds)
-    x = lin_filter(x, lambda f: peaks_response(
-        f, [(housing, 3.5, 1.0), (housing * 0.42, 2.5, 0.8), (housing * 1.6, 5.0, 0.35)],
-        floor=0.15, lo=260, hi=5200, order=2))
-    x /= np.max(np.abs(x)) + 1e-12
-    return np.tanh(1.8 * x)
-
-
 def sequence(parts, total_pad=0.12):
     """parts: [(start_seconds, signal)] placed into one buffer with a little tail room."""
     end = max(s + len(sig) / RATE for s, sig in parts)
@@ -369,68 +385,145 @@ def trim_tail(x, floor_db=-50):
     return x
 
 
+def car_horn(f_lo, f_hi, seconds, seed, housing=2300, duty=(0.28, 0.24), lo=260, drive=1.8, pair=0.9):
+    """One press of an electric car horn pair. `housing` moves the trumpet or disc resonance; a
+    higher housing, a narrower duty and a higher low cut make a tinnier horn."""
+    a = horn_tone(f_lo, seconds, duty[0], seed)
+    b = horn_tone(f_hi, seconds, duty[1], seed + 10)
+    x = (a + pair * b) * horn_env(seconds)
+    x = lin_filter(x, lambda f: peaks_response(
+        f, [(housing, 3.5, 1.0), (housing * 0.42, 2.5, 0.8), (housing * 1.6, 5.0, 0.35)],
+        floor=0.15, lo=lo, hi=5200, order=2))
+    x /= np.max(np.abs(x)) + 1e-12
+    return np.tanh(drive * x)
+
+
+def taps(presses, f_lo, f_hi, seed, **kw):
+    """presses: [(start, seconds)], one horn pair pressed several times."""
+    return sequence([(s, car_horn(f_lo, f_hi, d, seed + 3 * k, **kw)) for k, (s, d) in enumerate(presses)])
+
+
+def air_trumpet(f0, seconds, seed, vibrato=0.0, bloom=0.035):
+    """One air trumpet. ⚠️ BRASSY MEANS THE BRIGHTNESS FOLLOWS THE LEVEL: as the air pressure
+    builds, more upper harmonics speak, so the attack blooms from dark to bright. A fixed spectrum
+    at a fixed level reads as an organ stop."""
+    rng = np.random.default_rng(seed)
+    m = int(seconds * RATE)
+    t = np.arange(m) / RATE
+    env = np.clip(t / bloom, 0, 1) ** 1.5 * np.clip((seconds - t) / 0.06, 0, 1)
+    env *= 0.94 + 0.06 * np.exp(-t / 0.2)
+    f = f0 * (1.0 - 0.05 * np.exp(-t / 0.03)) * (1.0 + vibrato * np.sin(2 * np.pi * 5.2 * t) * np.clip((t - 0.15) / 0.2, 0, 1))
+    phase = 2 * np.pi * np.cumsum(f) / RATE + rng.uniform(0, 6.28)
+    sig = np.zeros(m)
+    for h in range(1, 60):
+        if h * f0 > 0.45 * RATE:
+            break
+        bright = np.exp(-h / (2.0 + 9.0 * env))
+        sig += np.sin(h * phase) * bright / h ** 0.6
+    return sig * env
+
+
+def air_chord(roots, seconds, seed, vibrato=0.0, bloom=0.035, peaks=None, lo=200, drive=1.4, hiss=0.0, hi=7000):
+    """Several air trumpets sounding together (a dual or triple air horn), through the bell."""
+    x = np.zeros(int(seconds * RATE))
+    for k, r in enumerate(roots):
+        x += air_trumpet(r, seconds, seed + k, vibrato, bloom) * (1.0 if k == 0 else 0.85)
+    if hiss:
+        # The valve opening: a short burst of air before the reeds speak.
+        m = min(len(x), int(0.12 * RATE))
+        x[:m] += band_noise(m, seed + 50, 1800, 7000)[:m] * np.exp(-np.arange(m) / (0.03 * RATE)) * hiss
+    peaks = peaks or [(1250, 2.2, 1.0), (2600, 3.0, 0.7), (650, 1.8, 0.6)]
+    x = lin_filter(x, lambda f: peaks_response(f, peaks, floor=0.2, lo=lo, hi=hi))
+    x /= np.max(np.abs(x)) + 1e-12
+    return np.tanh(drive * x)
+
+
+def jeep_note(root, seconds, seed, vibrato=0.0):
+    # Two trumpets a major third apart, the upper a hair sharp of true: the jeepney's chord.
+    return air_chord([root, root * 1.26 * 1.004], seconds, seed, vibrato)
+
+
+def trike_note(seconds, seed, f0=510, drift=0.008, scoop=0.05):
+    """One small disc horn on a motorcycle's weak 12 V.
+
+    ⚠️ NASAL COMES FROM A NARROW HIGH HOUSING PEAK AND NO BODY BELOW 600 Hz. A single tone (no
+    pair), a narrower pulse (more upper harmonics) and a buzzier overdrive."""
+    x = horn_tone(f0, seconds, 0.14, seed, scoop=scoop, drift=drift) * horn_env(seconds, 0.006, 0.02)
+    x = lin_filter(x, lambda f: peaks_response(
+        f, [(2850, 6.0, 1.0), (1700, 4.0, 0.45), (4300, 6.0, 0.25)], floor=0.06, lo=650, hi=7500, order=3))
+    x /= np.max(np.abs(x)) + 1e-12
+    return np.tanh(2.4 * x)
+
+
 def author_horns():
+    """Every horn in the set, by file name.
+
+    ⚠️⚠️ VARIETY IS THE BRIEF (owner, 2026-09-27: "louder and more variety of beeps"). Three car
+    horns repeating every few seconds read as one car honking over and over. So each file is a
+    different CAR (its own pair of pitches and housing) or a different DRIVER (tap, double, triple,
+    lean-on, stutter), and the runtime picks at random and detunes each honk a few per cent."""
     horns = {}
-    # 1. One short polite beep: the "I'm here" tap.
-    horns['kanto_horn_car_1.wav'] = sequence([(0.0, car_horn_note(415, 500, 0.22, 7401))])
-    # 2. A double beep from a different car (its pair a major third apart, a touch higher).
-    horns['kanto_horn_car_2.wav'] = sequence([
-        (0.0, car_horn_note(440, 554, 0.12, 7411, housing=2500)),
-        (0.20, car_horn_note(440, 554, 0.17, 7412, housing=2500)),
+    # 1. Short polite tap.
+    horns['kanto_horn_car_1.wav'] = taps([(0.0, 0.16)], 415, 500, 7401)
+    # 2. Double tap, a car tuned a major third apart.
+    horns['kanto_horn_car_2.wav'] = taps([(0.0, 0.11), (0.18, 0.18)], 440, 554, 7411, housing=2500)
+    # 3. Triple tap: "move, move, MOVE", the last one held.
+    horns['kanto_horn_car_3.wav'] = taps([(0.0, 0.09), (0.15, 0.09), (0.30, 0.2)], 415, 523, 7421, housing=2400)
+    # 4. The long lean-on-the-horn, 1.7 s, with a re-grip dip halfway and the battery sagging.
+    lean = car_horn(392, 470, 1.7, 7431, housing=2100)
+    t = np.arange(len(lean)) / RATE
+    lean *= (1.0 - 0.55 * np.exp(-((t - 0.95) / 0.035) ** 2)) * (1.0 - 0.1 * t / 1.7)
+    horns['kanto_horn_car_4.wav'] = sequence([(0.0, lean)])
+    # 5. High tinny hatchback: a small single disc pair, narrow pulses, no body below 600 Hz.
+    horns['kanto_horn_car_5.wav'] = taps([(0.0, 0.1), (0.16, 0.15)], 560, 680, 7441, housing=3300,
+                                         duty=(0.16, 0.14), lo=600, drive=2.2)
+    # 6. Low sedan horn: a big car's deep pair, darker housing, one firm press.
+    horns['kanto_horn_car_6.wav'] = taps([(0.0, 0.55)], 330, 415, 7451, housing=1800, lo=180)
+    # 7. Two-tone European style: trumpet horns rather than discs, so the two notes are TUNEFUL
+    # (brass bloom through a trumpet bell) instead of a buzz.
+    horns['kanto_horn_car_7.wav'] = sequence([(0.0, air_chord([370, 466], 0.5, 7461, bloom=0.015,
+                                                               peaks=[(1500, 2.5, 1.0), (3000, 3.0, 0.6)],
+                                                               lo=280, drive=1.9))])
+    # 8. The nervous stutter: six uneven jabs, a driver who cannot decide.
+    presses = []
+    at = 0.0
+    for d, gap in [(0.06, 0.07), (0.05, 0.05), (0.09, 0.10), (0.05, 0.06), (0.07, 0.08), (0.12, 0.0)]:
+        presses.append((at, d))
+        at += d + gap
+    horns['kanto_horn_car_8.wav'] = taps(presses, 440, 523, 7471, housing=2600)
+
+    # Jeepneys: the brassy air horns.
+    # 1. The musical call: an original four-note rising arpeggio, the last note held.
+    horns['kanto_horn_jeepney_1.wav'] = sequence([
+        (0.0, jeep_note(349.2, 0.12, 7501)), (0.15, jeep_note(440.0, 0.12, 7503)),
+        (0.30, jeep_note(523.3, 0.12, 7505)), (0.45, jeep_note(698.5, 0.5, 7507, vibrato=0.006)),
     ])
-    # 3. The impatient lean-on: longer, lower, a hatchback's thinner pair, sagging at the end.
-    long_note = car_horn_note(392, 470, 0.62, 7421, housing=2100)
-    sag = np.linspace(1.0, 0.9, len(long_note)) ** 0.5
-    horns['kanto_horn_car_3.wav'] = sequence([(0.0, long_note * sag)])
-
-    # The jeepney: a dual-trumpet AIR horn playing its two-note call, "ta-DAAH".
-    # ⚠️ BRASSY MEANS THE BRIGHTNESS FOLLOWS THE LEVEL: as the air pressure builds, more upper
-    # harmonics speak, so the attack blooms from dark to bright. A fixed spectrum at a fixed level
-    # reads as an organ stop. Each note is a chord of two trumpets a major third apart, slightly
-    # detuned from true, with a slow vibrato on the held note from the air valve.
-    def air_trumpet(f0, seconds, seed, vibrato=0.0):
-        rng = np.random.default_rng(seed)
-        m = int(seconds * RATE)
-        t = np.arange(m) / RATE
-        env = np.clip(t / 0.035, 0, 1) ** 1.5 * np.clip((seconds - t) / 0.06, 0, 1)
-        env *= 0.94 + 0.06 * np.exp(-t / 0.2)
-        f = f0 * (1.0 - 0.05 * np.exp(-t / 0.03)) * (1.0 + vibrato * np.sin(2 * np.pi * 5.2 * t) * np.clip((t - 0.15) / 0.2, 0, 1))
-        phase = 2 * np.pi * np.cumsum(f) / RATE + rng.uniform(0, 6.28)
-        sig = np.zeros(m)
-        for h in range(1, 40):
-            if h * f0 > 0.45 * RATE:
-                break
-            bright = np.exp(-h / (2.0 + 9.0 * env))
-            sig += np.sin(h * phase) * bright / h ** 0.6
-        return sig * env
-
-    def jeep_note(root, seconds, seed, vibrato=0.0):
-        a = air_trumpet(root, seconds, seed, vibrato)
-        b = air_trumpet(root * 1.26 * 1.004, seconds, seed + 1, vibrato)
-        x = lin_filter(a + 0.85 * b, lambda f: peaks_response(
-            f, [(1250, 2.2, 1.0), (2600, 3.0, 0.7), (650, 1.8, 0.6)], floor=0.2, lo=200, hi=7000))
-        x /= np.max(np.abs(x)) + 1e-12
-        return np.tanh(1.4 * x)
-
-    horns['kanto_horn_jeepney.wav'] = sequence([
-        (0.0, jeep_note(349.2, 0.17, 7501)),
-        (0.21, jeep_note(466.2, 0.62, 7503, vibrato=0.006)),
+    # 2. The two-note "ta-DAAH".
+    horns['kanto_horn_jeepney_2.wav'] = sequence([
+        (0.0, jeep_note(349.2, 0.17, 7511)),
+        (0.21, jeep_note(466.2, 0.62, 7513, vibrato=0.006)),
     ])
+    # 3. The long one: one held chord, 1.3 s, the air valve's vibrato opening up.
+    horns['kanto_horn_jeepney_3.wav'] = sequence([(0.0, jeep_note(330.0, 1.3, 7521, vibrato=0.008))])
 
-    # The tricycle: one small disc horn on a motorcycle's weak 12 V, thin and nasal, "meep-meep".
-    # ⚠️ NASAL COMES FROM A NARROW HIGH HOUSING PEAK AND NO BODY BELOW 600 Hz. A single tone (no
-    # pair), a narrower pulse (more upper harmonics) and a buzzier overdrive.
-    def trike_note(seconds, seed):
-        x = horn_tone(510, seconds, 0.14, seed, scoop=0.05, drift=0.008) * horn_env(seconds, 0.006, 0.02)
-        x = lin_filter(x, lambda f: peaks_response(
-            f, [(2850, 6.0, 1.0), (1700, 4.0, 0.45), (4300, 6.0, 0.25)], floor=0.06, lo=650, hi=7500, order=3))
-        x /= np.max(np.abs(x)) + 1e-12
-        return np.tanh(2.4 * x)
+    # The city bus: a deep triple air horn, a slower bloom (bigger reeds) and the valve's hiss.
+    # ⚠️ CUT AT 2.8 kHz. The first render ran bright to 8 kHz (three low reeds through the overdrive
+    # throw a lot of upper partials) and read as a brass section, not a big deep horn.
+    horns['kanto_horn_bus.wav'] = sequence([(0.0, air_chord(
+        [174.6, 220.0, 261.6], 1.05, 7601, vibrato=0.004, bloom=0.08,
+        peaks=[(700, 1.8, 1.0), (1400, 2.5, 0.7), (2400, 3.0, 0.3)], lo=90, drive=1.6, hiss=0.5, hi=2800))])
 
-    horns['kanto_horn_tricycle.wav'] = sequence([
-        (0.0, trike_note(0.11, 7601)),
-        (0.17, trike_note(0.15, 7602)),
-    ])
+    # Vans and pickups: a lower, rougher electric pair, a quick tap then a held press.
+    horns['kanto_horn_truck.wav'] = taps([(0.0, 0.2), (0.3, 0.45)], 300, 378, 7611, housing=1700,
+                                         duty=(0.32, 0.3), lo=160, drive=2.0)
+
+    # Tricycles.
+    # 1. "Meep-meep".
+    horns['kanto_horn_tricycle_1.wav'] = sequence([(0.0, trike_note(0.11, 7701)), (0.17, trike_note(0.15, 7702))])
+    # 2. The weak-battery "meeeep": one longer press whose pitch sags and wobbles.
+    long_meep = trike_note(0.42, 7711, f0=540, drift=0.02, scoop=0.08)
+    t = np.arange(len(long_meep)) / RATE
+    horns['kanto_horn_tricycle_2.wav'] = sequence([(0.0, long_meep * (1.0 - 0.15 * t / 0.42))])
 
     for name in horns:
         horns[name] = trim_tail(horns[name])
@@ -438,18 +531,122 @@ def author_horns():
 
 
 # ---------------------------------------------------------------------------------------------
+# Sirens.
+#
+# Four emergency vehicles passing somewhere across the block. Each file is a WHOLE PASS, not a
+# loop and not a clip that starts and stops: it swells in from the distance, peaks as the vehicle
+# is nearest, and fades away, with a gentle Doppler bend (a few per cent sharp approaching, flat
+# receding) baked in. The runtime also moves the source along a road, so the pass is heard
+# travelling; the baked swell is kept gentle (about 10 dB) so the two do not double up.
+# Distance: band-limited (a siren across a block keeps little above 4 kHz), and smeared by a short
+# street reverb so it is heard off the buildings as much as directly.
+# ---------------------------------------------------------------------------------------------
+
+def smear(x, seconds=0.7, wet=0.4, seed=7901):
+    """A short linear reverb: the siren off the facades."""
+    rng = np.random.default_rng(seed)
+    m = int(seconds * RATE)
+    t = np.arange(m) / RATE
+    ir = rng.normal(size=m) * np.exp(-t / (seconds / 6.9))
+    ir[0] = 0.0
+    ir /= np.sqrt(np.sum(ir ** 2))
+    size = len(x) + m
+    y = np.fft.irfft(np.fft.rfft(x, size) * np.fft.rfft(ir, size), size)[:len(x)]
+    y = circ_filter(np.concatenate([y, np.zeros(int(0.1 * RATE))]),
+                    lambda f: peaks_response(f, [], floor=1.0, lo=200, hi=2500))[:len(x)]
+    return (1.0 - wet) * x + wet * y * (rms(x) / (rms(y) + 1e-12))
+
+
+def siren_pass(f_curve, seconds, seed, mechanical=False, peak_at=0.52, bend=0.035):
+    rng = np.random.default_rng(seed)
+    m = int(seconds * RATE)
+    t = np.arange(m) / RATE
+    tp = peak_at * seconds
+    # ⚠️ DOPPLER AS A SMOOTH STEP, NOT A SWITCH: the pitch leans sharp while approaching and flat
+    # after, crossing over the 1.8 s either side of the nearest point, the way a vehicle 40 m away
+    # sounds (a close one flips in a fraction of a second, which would sound like a fault).
+    dop = 1.0 + bend * -np.tanh((t - tp) / 0.9)
+    f = f_curve(t) * dop
+    phase = 2 * np.pi * np.cumsum(f) / RATE + rng.uniform(0, 6.28)
+    sig = np.zeros(m)
+    if mechanical:
+        # A rotor siren: a rounder wave (harmonics fall faster), a sub-octave growl from the rotor,
+        # and air noise rushing through the ports.
+        for h in range(1, 16):
+            sig += np.sin(h * phase) / h ** 1.5 * (np.cos(h * 0.3) * 0.3 + 0.7)
+        sig += 0.25 * np.sin(0.5 * phase)
+        air = band_noise(m, seed + 3, 700, 3200)
+        sig += 0.18 * air * (0.6 + 0.4 * np.sin(phase)) * np.sqrt(np.mean(sig ** 2))
+    else:
+        # An electronic siren driving a horn speaker: a square-ish wave (odd harmonics) plus a
+        # little even content from the amplifier, overdriven.
+        for h in range(1, 20):
+            if h * 1600 > 0.45 * RATE:
+                break
+            sig += np.sin(h * phase) / h * (1.0 if h % 2 else 0.18)
+        sig = np.tanh(1.5 * sig / np.max(np.abs(sig)))
+    x = lin_filter(sig, lambda ff: peaks_response(ff, [(1100, 1.8, 1.0), (2300, 2.5, 0.6)],
+                                                   floor=0.25, lo=250, hi=4200))[:m]
+    # The pass: a gentle swell to the nearest point and away, about 10 dB across the whole file,
+    # and a 1 s fade at each end so it neither starts nor stops.
+    d0 = 40.0
+    v = 17.0
+    dist = np.sqrt(d0 ** 2 + (v * (t - tp)) ** 2)
+    swell = (d0 / dist) ** 0.6
+    edge = np.clip(t / 1.0, 0, 1) * np.clip((seconds - t) / 1.2, 0, 1)
+    edge = edge * edge * (3 - 2 * edge)
+    # The far half is darker: air takes the top end first.
+    dark = lin_filter(x, lambda ff: peaks_response(ff, [], floor=1.0, lo=250, hi=1300))[:m]
+    near = swell ** 1.5
+    x = x * near + dark * (1.0 - near)
+    x = x * swell * edge
+    return smear(x, seed=seed + 7)
+
+
+def author_sirens():
+    sirens = {}
+
+    # 1. Police wail: a slow sweep up (2.6 s) and down (1.4 s), 700 to 1350 Hz.
+    def wail(t):
+        u = (t % 4.0) / 4.0
+        s = np.where(u < 0.65, 0.5 - 0.5 * np.cos(np.pi * u / 0.65), 0.5 + 0.5 * np.cos(np.pi * (u - 0.65) / 0.35))
+        return 700 + 650 * s
+    sirens['kanto_siren_1.wav'] = siren_pass(wail, 8.0, 7801)
+
+    # 2. Yelp: the same sweep at 3.3 cycles a second.
+    sirens['kanto_siren_2.wav'] = siren_pass(lambda t: 720 + 700 * (0.5 - 0.5 * np.cos(2 * np.pi * 3.3 * t)), 6.0, 7811)
+
+    # 3. Ambulance hi-lo: 960 and 770 Hz alternating every 0.55 s, with 15 ms glides between.
+    def hilo(t):
+        hi = ((t % 1.1) < 0.55).astype(float)
+        k = int(0.015 * RATE)
+        return 770 + 190 * np.convolve(hi, np.ones(k) / k, mode='same')
+    sirens['kanto_siren_3.wav'] = siren_pass(hilo, 7.0, 7821, bend=0.03)
+
+    # 4. Fire truck mechanical wail: the rotor spins up over 3 s, holds with a wobble, winds down
+    # partway and is wound up again.
+    def rotor(t):
+        up = 180 + 870 * (1 - np.exp(-t / 1.0))
+        wobble = 1 + 0.02 * np.sin(2 * np.pi * 0.7 * t)
+        down = np.where(t > 5.5, np.exp(-(t - 5.5) / 1.4), 1.0)
+        rewind = np.where(t > 7.2, 1 - np.exp(-(t - 7.2) / 0.6), 0.0)
+        lvl = down + (1 - down) * rewind * 0.9
+        return np.maximum(180, up * wobble * (0.45 + 0.55 * lvl))
+    sirens['kanto_siren_4.wav'] = siren_pass(rotor, 9.0, 7831, mechanical=True, peak_at=0.45, bend=0.03)
+    return sirens
+
+
+# ---------------------------------------------------------------------------------------------
 # The city bed, stereo.
 #
-# A busy Manila block heard from a small park in the middle of it: the traffic is always there
-# but never close (the close traffic is the runtime's own engines, which is why the bed stays in
-# the background). Layers, quietest last:
-#   1. a continuous low WASH of many far engines (30 to 250 Hz) with a slow breathing level;
-#   2. TYRE HISS, the bright half of the wash, from the ring roads further out;
-#   3. distant PASSES, a swell of hiss and engine that sweeps from one side to the other;
-#   4. far ENGINES pulling away through the gears (a rise, a dip at the shift, a rise, a fade);
-#   5. one far JEEPNEY REV, a diesel blipped twice;
-#   6. three DISTANT HORNS, the horn synth darkened and echoed off the buildings;
-#   7. a CROWD MURMUR, many talkers too far away to have words.
+# A busy Manila block at rush hour heard from the small park in the middle of it. Layers:
+#   1. a continuous far WASH of the city (30 to 320 Hz rumble, mids, tyre hiss) that breathes;
+#   2. PASS-BYS at mid distance: the three engine loops driven past with real Doppler and 1/d level;
+#   3. TRICYCLES puttering past, slower and nearer the kerb;
+#   4. JEEPNEY AND BUS REVS at the stops;
+#   5. HORNS, every kind in the set, some mid-distance and bright, some far and dark;
+#   6. a CROWD MURMUR of 40 talkers too far away to have words, and
+#   7. VENDOR CALLS over it, the shape of a call without words.
 # Everything distant goes through one shared "street" reverb, a circular convolution with a
 # decaying noise tail, so the far sounds sit in the same space rather than each in its own.
 # ---------------------------------------------------------------------------------------------
@@ -471,28 +668,6 @@ def street_reverb(x, seconds=1.1, seed=7801, wet=0.55):
     big[:m] = ir
     y = np.fft.irfft(np.fft.rfft(x) * np.fft.rfft(big), n)
     return (1.0 - wet) * x + wet * y * (rms(x) / (rms(y) + 1e-12))
-
-
-def engine_sweep(seconds, seed, f_curve, harmonics_lp, diesel=False):
-    """A far engine: harmonic series of a moving firing rate, darkened for distance.
-
-    f_curve(u) gives the firing rate for u in [0,1]. The level rises with the rate (load)."""
-    rng = np.random.default_rng(seed)
-    m = int(seconds * RATE)
-    u = np.linspace(0, 1, m)
-    f0 = f_curve(u) * (1.0 + 0.01 * slow_random(m, seed + 1, 8.0))
-    phase = 2 * np.pi * np.cumsum(f0) / RATE
-    sig = np.zeros(m)
-    for h in range(1, 30):
-        fh = f0 * h
-        amp = 1.0 / np.sqrt(1.0 + (fh / harmonics_lp) ** 4) / h ** (0.5 if diesel else 0.8)
-        sig += np.sin(h * phase + rng.uniform(0, 6.28)) * amp
-    # Combustion roughness: amplitude flutter at the firing rate, stronger for a diesel.
-    sig *= 1.0 + (0.35 if diesel else 0.15) * np.sin(phase * 0.5 + 1.0)
-    if diesel:
-        clatter = band_noise(m, seed + 2, 1200, 3500) * (0.5 + 0.5 * np.sin(phase)) ** 6
-        sig += 0.8 * clatter * np.sqrt(np.mean(sig ** 2))
-    return sig
 
 
 def babble_voice(seconds, seed, rate):
@@ -537,185 +712,296 @@ def babble_voice(seconds, seed, rate):
     return sig * gate * env
 
 
-def band_events(mono, events):
-    """How far each authored event rises over the bed's MEDIAN level in the band it lives in,
-    in dB, over 100 ms windows. The check that an event is there to be heard at all: a steady
-    noise bed hides a lot, and a far horn that measures 0 dB over the wash was never audible."""
-    n = len(mono)
-    f = np.fft.rfftfreq(n, 1.0 / RATE)
-    spec = np.fft.rfft(mono)
-    w = int(0.1 * RATE)
-    out = {}
-    for name, at, dur, lo, hi in events:
-        y = np.fft.irfft(spec * ((f >= lo) & (f < hi)), n)
-        frames = (y[:n // w * w].reshape(-1, w) ** 2).mean(axis=1)
-        median = np.median(frames)
-        a = int(at * RATE) // w
-        b = max(a + 1, int((at + dur) * RATE) // w)
-        idx = np.arange(a, b) % len(frames)
-        out[name] = {'band_hz': [lo, hi], 'db_over_median': round(float(10 * np.log10(frames[idx].max() / median)), 1)}
+def loop_read(loop, rate):
+    """Reads a periodic loop at a time-varying playback rate (1 = as authored), wrapping, with
+    linear interpolation: a whole engine sped up and slowed down, Doppler and revs included."""
+    pos = np.cumsum(rate)
+    n = len(loop)
+    i0 = np.floor(pos).astype(np.int64)
+    frac = pos - i0
+    i0 %= n
+    return loop[i0] * (1.0 - frac) + loop[(i0 + 1) % n] * frac
+
+
+def spread_times(count, seconds, rng):
+    """`count` start times round the loop, one per equal slot at a random point inside it: busy
+    everywhere, never two piled on one spot, and irregular across the seam like everywhere else."""
+    return (np.arange(count) + rng.uniform(0.05, 0.95, count)) * seconds / count
+
+
+def pass_by(loop, seconds, seed, speed, d0, rpm, tyre_gain, rng):
+    """A vehicle driving past at `speed` m/s, `d0` m away at its nearest (the middle of the file).
+
+    Returns (left, right). ⚠️ REAL GEOMETRY, NOT A FADE: the distance sets the level (1/d), its
+    rate of change sets the Doppler (c / (c + v_radial)) on the whole engine loop, the side sets
+    the pan, and the air takes the top end off the far half. That is what makes a pass WHOOSH by
+    rather than swell up and down in place."""
+    m = int(seconds * RATE)
+    t = np.arange(m) / RATE
+    x = speed * (t - seconds / 2)
+    d = np.sqrt(d0 ** 2 + x ** 2)
+    radial = speed * x / d
+    doppler = 343.0 / (343.0 + radial)
+    engine = loop_read(loop, rpm * doppler * (1.0 + 0.01 * slow_random(m, seed, 2.0)))
+    tyre = band_noise(m, seed + 1, 350, 5000, tilt=-3)
+    near = d0 / d
+    bright = circ_filter(engine * 0.6 + tyre * tyre_gain, lambda f: peaks_response(f, [], floor=1.0, lo=60, hi=6000))
+    dark = circ_filter(engine * 0.6 + tyre * tyre_gain, lambda f: peaks_response(f, [], floor=1.0, lo=60, hi=1200))
+    air = near ** 1.5
+    sig = (bright * air + dark * (1.0 - air)) * near
+    edge = np.clip(t / 0.6, 0, 1) * np.clip((seconds - t) / 0.6, 0, 1)
+    sig *= edge * edge * (3 - 2 * edge)
+    pan = np.clip(x / d, -1, 1) * rng.choice([-0.85, 0.85])
+    a = (pan + 1.0) * np.pi / 4
+    return sig * np.cos(a), sig * np.sin(a)
+
+
+def vendor_call(seed, rate):
+    """A street vendor's call heard from down the block: two or three PROJECTED syllables, the
+    last one held and falling, a voiced source through vowel formants. No words, only the shape
+    of a call (the "ta-hooo" contour), which is what the ear picks out of a crowd."""
+    rng = np.random.default_rng(seed)
+    syllables = rng.integers(2, 4)
+    parts = []
+    at = 0.0
+    base = rng.uniform(170, 300)
+    vowels = [(730, 1090), (570, 840), (300, 870), (530, 1840), (660, 1720)]
+    for k in range(syllables):
+        last = k == syllables - 1
+        d = rng.uniform(0.5, 0.9) if last else rng.uniform(0.14, 0.26)
+        m = int(d * rate)
+        t = np.arange(m) / rate
+        top = base * (1.25 if k == syllables - 2 else 1.0)
+        f0 = top * (1.0 - (0.22 if last else 0.04) * (t / d) ** 1.4) * (1.0 + 0.01 * np.sin(2 * np.pi * 5.5 * t))
+        phase = 2 * np.pi * np.cumsum(f0) / rate
+        f1, f2 = vowels[rng.integers(len(vowels))]
+        sig = np.zeros(m)
+        for h in range(1, 18):
+            if base * h > 0.45 * rate:
+                break
+            fh = f0 * h
+            amp = 1.0 / (1.0 + ((fh - f1) / 120) ** 2) + 0.6 / (1.0 + ((fh - f2) / 170) ** 2)
+            sig += np.sin(h * phase) * amp
+        env = np.clip(t / 0.03, 0, 1) * np.clip((d - t) / (0.25 if last else 0.04), 0, 1)
+        breath = band_noise(max(m, 64), seed + 10 + k, 1000, 3500, rate=rate)[:m] * 0.08
+        parts.append((at, (sig / (np.max(np.abs(sig)) + 1e-9) + breath) * env))
+        at += d + rng.uniform(0.04, 0.12)
+    out = np.zeros(int((at + 0.1) * rate))
+    for s, p in parts:
+        i = int(s * rate)
+        out[i:i + len(p)] += p
     return out
 
 
-def author_city_bed():
+def author_city_bed(engines):
+    """⚠️⚠️ REWORKED 2026-09-27 AFTER THE OWNER HEARD THE FIRST BED IN PLAY: "the sfx for the city
+    is too calm. need to be more bustling". The first bed was a far wash with 20 events in 38 s
+    (31.6 a minute) sitting 2.5 to 4.3 dB over it. This one is a block at rush hour: a NEARER layer
+    of vehicles whooshing past at mid distance (the real engine loops, driven past with Doppler),
+    jeepney and bus revs, tricycles puttering by, horns of every kind near and far, vendors calling
+    over a thicker crowd, and the old far wash underneath. The event count is in the report."""
     n = int(BED_SECONDS * RATE)
     rng = np.random.default_rng(7700)
     left = np.zeros(n)
     right = np.zeros(n)
+    far = [np.zeros(n), np.zeros(n)]
     info = {}
+    events = []   # (category, start seconds, duration, band lo, band hi) for band_events
 
-    def pan_add(sig, start, pan):
-        # Equal-power pan, pan in [-1, 1].
+    def add(dst_l, dst_r, sig_l, sig_r, start):
+        add_wrapped(dst_l, int(start * RATE), sig_l)
+        add_wrapped(dst_r, int(start * RATE), sig_r)
+
+    def pan_add(dst, sig, start, pan):
         a = (pan + 1.0) * np.pi / 4
-        add_wrapped(left, start, sig * np.cos(a))
-        add_wrapped(right, start, sig * np.sin(a))
+        add_wrapped(dst[0], int(start * RATE), sig * np.cos(a))
+        add_wrapped(dst[1], int(start * RATE), sig * np.sin(a))
 
-    # 1. The wash: a common part (the whole city, centred) and a per-ear part (width).
+    loops = {k: v / rms(v) for k, v in engines.items()}
+
+    # 1. The far wash, as before but a little fuller: the city behind the city.
     breath = 0.82 + 0.18 * np.tanh(slow_random(n, 7701, 0.07))
     for ch, dst in enumerate((left, right)):
-        # ⚠️ THE WASH STARTS AT 45 Hz, NOT 28. The first pass put the bed's loudest band at 40 Hz,
-        # 40 dB above its 1 kHz: headroom spent on rumble a laptop speaker cannot play, and a
-        # bed that read as a distant generator rather than a street. The traffic lives in the mids.
         wash = 0.75 * band_noise(n, 7710, 45, 320, tilt=-3) + 0.66 * band_noise(n, 7711 + ch, 45, 320, tilt=-3)
-        dst += wash * 0.22 * breath
+        dst += wash * 0.20 * breath
         mid = 0.7 * band_noise(n, 7715, 180, 1100, tilt=-3) + 0.7 * band_noise(n, 7716 + ch, 180, 1100, tilt=-3)
         dst += mid * 0.07 * breath
-        # 2. Tyre hiss, the far ring roads, own per ear and breathing on its own clock.
         hiss = band_noise(n, 7720 + ch, 700, 5200, tilt=-4)
-        dst += hiss * 0.050 * (0.8 + 0.2 * np.tanh(slow_random(n, 7725 + ch, 0.11)))
+        dst += hiss * 0.055 * (0.8 + 0.2 * np.tanh(slow_random(n, 7725 + ch, 0.11)))
 
-    # 3. Distant passes, each a swell that sweeps across. Intervals sum to the loop (circular).
-    passes = []
-    at = 0.0
-    gaps = rng.uniform(2.4, 5.2, 12)
-    gaps *= BED_SECONDS / gaps.sum()
-    for k, gap in enumerate(gaps):
-        d = rng.uniform(3.5, 6.5)
-        m = int(d * RATE)
+    # 2. Mid-distance pass-bys: cars, taxis, vans, the odd bus or jeepney, 20 to 45 m out.
+    count = 30
+    kinds = []
+    for k, at in enumerate(spread_times(count, BED_SECONDS, rng)):
+        kind = rng.choice(['car', 'car', 'car', 'diesel', 'diesel'])
+        speed = rng.uniform(8.0, 14.0)
+        d0 = rng.uniform(20.0, 45.0)
+        dur = rng.uniform(4.0, 6.5)
+        rpm = rng.uniform(1.15, 1.5) if kind == 'car' else rng.uniform(1.05, 1.35)
+        l, r = pass_by(loops[kind], dur, 7900 + k, speed, d0, rpm, 0.9, rng)
+        g = rng.uniform(0.5, 1.0) * 0.20 * (20.0 / d0) ** 0.5
+        add(left, right, l * g, r * g, at)
+        kinds.append(str(kind))
+        events.append(('pass_by', at, dur, 250, 2500))
+    info['pass_bys'] = {'count': count, 'kinds': {k: kinds.count(k) for k in sorted(set(kinds))}}
+
+    # 3. Tricycles puttering past, slower and closer to the kerb.
+    count = 8
+    for k, at in enumerate(spread_times(count, BED_SECONDS, rng)):
+        dur = rng.uniform(4.5, 7.0)
+        l, r = pass_by(loops['tricycle'], dur, 7950 + k, rng.uniform(6.0, 9.0), rng.uniform(16.0, 35.0),
+                       rng.uniform(1.2, 1.55), 0.35, rng)
+        g = rng.uniform(0.6, 1.0) * 0.20
+        add(left, right, l * g, r * g, at)
+        events.append(('tricycle_pass', at, dur, 250, 2500))
+    info['tricycle_passes'] = count
+
+    # 4. Jeepney and bus revs at the stops: the diesel loop blipped and pulled away, standing still.
+    count = 7
+    for k, at in enumerate(spread_times(count, BED_SECONDS, rng)):
+        dur = rng.uniform(2.6, 3.8)
+        m = int(dur * RATE)
         u = np.linspace(0, 1, m)
-        env = np.sin(np.pi * u) ** 2.4 * rng.uniform(0.45, 1.0)
-        hiss = band_noise(m, 7730 + k, 500, 3800, tilt=-3)[:m]
-        # The engine inside the pass drops in pitch across its centre, a gentle Doppler.
-        fire = rng.uniform(32, 55)
-        drop = rng.uniform(0.04, 0.07)
-        tone = engine_sweep(d, 7740 + k, lambda uu: fire * (1 + drop / 2 - drop / (1 + np.exp(-(uu - 0.5) * 10))),
-                            480, diesel=rng.uniform() < 0.35)
-        tone /= rms(tone) + 1e-12
-        sig = (0.10 * hiss + 0.05 * tone) * env
-        start = int(at * RATE)
-        direction = 1 if rng.uniform() < 0.5 else -1
-        # Sweep: split into slices with a moving pan (crossfaded slices, so the sweep is smooth).
-        pieces = 8
-        edge = m // pieces
-        fade = np.hanning(2 * edge)
-        for p in range(pieces):
-            i0 = max(0, p * edge - edge // 2)
-            chunk = sig[i0:i0 + 2 * edge]
-            w = fade[:len(chunk)]
-            pan = direction * (-0.8 + 1.6 * (p + 0.5) / pieces)
-            pan_add(chunk * w, start + i0, pan)
-        passes.append(round(at, 2))
-        at += gap
-    info['passes_at'] = passes
+        b1, b2 = rng.uniform(0.1, 0.2), rng.uniform(0.3, 0.45)
+        rate = 0.9 + 0.7 * np.exp(-((u - b1) / 0.06) ** 2) + 0.8 * np.exp(-((u - b2) / 0.07) ** 2) \
+            + 0.5 * np.clip((u - 0.6) / 0.4, 0, 1)
+        if rng.uniform() < 0.4:
+            rate *= 0.8   # a bus: bigger, slower engine
+        tone = loop_read(loops['diesel'], rate)
+        env = np.clip(u / 0.04, 0, 1) * np.clip((1 - u) / 0.3, 0, 1) * (0.55 + 0.45 * (rate - 0.9) / 0.8)
+        pan_add(far, tone * env * rng.uniform(0.35, 0.5), at, rng.uniform(-0.8, 0.8))
+        events.append(('diesel_rev', at, dur, 80, 700))
+    info['diesel_revs'] = count
 
-    far = [np.zeros(n), np.zeros(n)]
+    # 5. Horns, every kind, near-ish and far. Near ones keep their brightness; far ones are dark
+    # and wetter. ⚠️ NO TWO HORNS IN A ROW ARE THE SAME FILE, or the variety is thrown away.
+    library = author_horns()
+    names = sorted(library)
+    count = 26
+    last = None
+    near_count = 0
+    for k, at in enumerate(spread_times(count, BED_SECONDS, rng)):
+        name = names[rng.integers(len(names))]
+        while name == last:
+            name = names[rng.integers(len(names))]
+        last = name
+        h = library[name]
+        near = rng.uniform() < 0.55
+        rate = rng.uniform(0.95, 1.05)
+        h = np.interp(np.arange(0, len(h) - 1, rate), np.arange(len(h)), h)
+        if near:
+            near_count += 1
+            h = lin_filter(h, lambda f: peaks_response(f, [], floor=1.0, lo=200, hi=4200))
+            pan_add((left, right), h * rng.uniform(0.7, 1.0), at, rng.uniform(-0.9, 0.9))
+            pan_add(far, h * 0.05, at, 0.0)
+        else:
+            h = lin_filter(h, lambda f: peaks_response(f, [], floor=1.0, lo=200, hi=1900))
+            pan_add(far, h * rng.uniform(1.3, 1.9), at, rng.uniform(-0.9, 0.9))
+        events.append(('horn', at, len(h) / RATE, 400, 2200))
+    info['horns'] = {'count': count, 'mid_distance': near_count, 'far': count - near_count}
 
-    def far_add(sig, start, pan):
-        a = (pan + 1.0) * np.pi / 4
-        add_wrapped(far[0], start, sig * np.cos(a))
-        add_wrapped(far[1], start, sig * np.sin(a))
-
-    # 4. Far engines pulling away through the gears.
-    pulls = []
-    for k, (start_s, pan) in enumerate([(3.0, -0.6), (14.5, 0.5), (24.0, -0.2), (33.5, 0.7)]):
-        d = rng.uniform(4.5, 6.0)
-        shift = rng.uniform(0.42, 0.55)
-
-        def gears(u, shift=shift):
-            first = 26 + 40 * np.clip(u / shift, 0, 1) ** 0.8
-            second = 38 + 22 * np.clip((u - shift) / (1 - shift), 0, 1) ** 0.9
-            return np.where(u < shift, first, second)
-        m = int(d * RATE)
-        u = np.linspace(0, 1, m)
-        tone = engine_sweep(d, 7750 + k, gears, 420)
-        tone /= rms(tone)
-        load = np.clip(0.55 + 0.45 * np.where(u < shift, u / shift, (u - shift) / (1 - shift)), 0, 1)
-        # A dip at the gear change (the throttle lifts), then fading into the distance.
-        dip = 1.0 - 0.6 * np.exp(-((u - shift) / 0.03) ** 2)
-        env = np.clip(u / 0.12, 0, 1) * np.clip((1 - u) / 0.45, 0, 1) ** 1.3 * load * dip
-        far_add(tone * env * 0.55, int(start_s * RATE), pan)
-        pulls.append(start_s)
-    info['engine_pulls_at'] = pulls
-
-    # 5. One far jeepney rev: a diesel blipped twice at the stop, then pulling off.
-    d = 3.4
-    m = int(d * RATE)
-    u = np.linspace(0, 1, m)
-    blips = 24 + 26 * np.exp(-((u - 0.14) / 0.06) ** 2) + 30 * np.exp(-((u - 0.36) / 0.07) ** 2) \
-        + 18 * np.clip((u - 0.6) / 0.4, 0, 1)
-    tone = engine_sweep(d, 7760, lambda uu: np.interp(uu, u, blips), 520, diesel=True)
-    tone /= rms(tone)
-    env = np.clip(u / 0.05, 0, 1) * np.clip((1 - u) / 0.3, 0, 1) * (0.5 + 0.5 * (blips - 24) / 30)
-    far_add(tone * env * 0.42, int(19.0 * RATE), 0.35)
-    info['jeepney_rev_at'] = 19.0
-
-    # 6. Three distant horns, darkened.
-    horns = author_horns()
-    # ⚠️ LEVELS SET BY MEASUREMENT, NOT BY EAR ALONE. At a third of these the second pass showed
-    # no bump at all in the 500 to 2000 Hz band where a horn lives: the events were authored and
-    # inaudible, and the bed read as one steady generator. These put each distant horn and the
-    # jeepney rev a few dB over the wash in their own band (report: `band_events`), which is
-    # "very occasional and far away", not "missing".
-    for name, start_s, pan, g in [('kanto_horn_car_2.wav', 8.6, 0.55, 0.55),
-                                  ('kanto_horn_car_1.wav', 21.7, -0.7, 0.45),
-                                  ('kanto_horn_jeepney.wav', 29.8, -0.25, 0.40)]:
-        h = lin_filter(horns[name], lambda f: peaks_response(f, [], floor=1.0, lo=200, hi=1900))
-        far_add(h * g, int(start_s * RATE), pan)
-    info['distant_horns_at'] = [8.6, 21.7, 29.8]
-
-    # 7. Crowd murmur, synthesised at a quarter rate (it is all below 3 kHz) and upsampled
-    # exactly by zero-padding the spectrum, which keeps it periodic in the loop length.
+    # 6. Crowd murmur, thicker (40 talkers), at a quarter rate and upsampled exactly.
     q = 4
     nq = n // q
     rq = RATE // q
     crowd = [np.zeros(nq), np.zeros(nq)]
-    talkers = 26
     phrases = 0
-    for v in range(talkers):
+    for v in range(40):
         pan = rng.uniform(-0.9, 0.9)
         a = (pan + 1.0) * np.pi / 4
-        t = rng.uniform(0, BED_SECONDS)
+        t0 = rng.uniform(0, BED_SECONDS)
         span = 0.0
         while span < BED_SECONDS:
             d = rng.uniform(0.8, 2.6)
             ph = babble_voice(d, 8000 + v * 97 + phrases, rq) * rng.uniform(0.5, 1.0)
-            add_wrapped(crowd[0], int((t + span) * rq), ph * np.cos(a))
-            add_wrapped(crowd[1], int((t + span) * rq), ph * np.sin(a))
-            span += d + rng.uniform(0.4, 2.8)
+            add_wrapped(crowd[0], int((t0 + span) * rq), ph * np.cos(a))
+            add_wrapped(crowd[1], int((t0 + span) * rq), ph * np.sin(a))
+            span += d + rng.uniform(0.3, 2.2)
             phrases += 1
     info['crowd_phrases'] = phrases
+
+    # 7. Vendor calls over the crowd, from the stalls round the block.
+    count = 10
+    for k, at in enumerate(spread_times(count, BED_SECONDS, rng)):
+        call = vendor_call(8500 + k, rq)
+        pan = rng.uniform(-0.9, 0.9)
+        a = (pan + 1.0) * np.pi / 4
+        g = rng.uniform(2.2, 3.0)
+        add_wrapped(crowd[0], int(at * rq), call * g * np.cos(a))
+        add_wrapped(crowd[1], int(at * rq), call * g * np.sin(a))
+        events.append(('vendor_call', at, len(call) / rq, 250, 1500))
+    info['vendor_calls'] = count
+
     for ch in range(2):
         spec = np.fft.rfft(crowd[ch])
         up = np.zeros(n // 2 + 1, dtype=complex)
         up[:len(spec)] = spec
         c = np.fft.irfft(up, n) * q
-        c = circ_filter(c, lambda f: peaks_response(f, [], floor=1.0, lo=180, hi=2200))
-        far[ch] += c / (rms(c) + 1e-12) * 0.03
+        c = circ_filter(c, lambda f: peaks_response(f, [], floor=1.0, lo=180, hi=2600))
+        far[ch] += c / (rms(c) + 1e-12) * 0.045
 
-    wet = [street_reverb(far[0], seed=7801), street_reverb(far[1], seed=7802)]
+    wet = [street_reverb(far[0], seed=7801, wet=0.45), street_reverb(far[1], seed=7802, wet=0.45)]
     left += wet[0]
     right += wet[1]
 
     stereo = np.stack([left, right], axis=1)
-    info['band_events'] = band_events(stereo.mean(axis=1), [
-        ('distant_horn_car_2', 8.6, 0.4, 400, 2200), ('distant_horn_car_1', 21.7, 0.25, 400, 2200),
-        ('distant_horn_jeepney', 29.8, 0.85, 400, 2200), ('jeepney_rev', 19.0, 2.0, 80, 700)]
-        + [(f'engine_pull_{k + 1}', at, 3.0, 80, 700) for k, at in enumerate(pulls)])
-    # ⚠️ A GENTLE SHELF ABOVE 4 kHz, THE BRIEF'S "NOT HARSH". Nothing in a far city reaches the
-    # ear bright; the runtime's close engines and horns carry the detail.
     for ch in range(2):
-        stereo[:, ch] = circ_filter(stereo[:, ch], lambda f: peaks_response(f, [], floor=1.0, lo=22, hi=5000, order=1))
+        stereo[:, ch] = circ_filter(stereo[:, ch], lambda f: peaks_response(f, [], floor=1.0, lo=35, hi=6500, order=1))
+
+    # ⚠️⚠️ A SOFT LIMITER, SO THE BED IS LOUD WITHOUT CLIPPING. The brief asks for the bed louder
+    # against the horns; normalising a dense mix to its single highest peak leaves the body quiet.
+    # tanh on the peak-normalised mix rounds the few loudest moments (a near horn over a pass) and
+    # lets the whole bed sit higher. It is applied sample by sample, so the loop stays periodic.
+    stereo /= np.max(np.abs(stereo))
+    drive = 2.2
+    stereo = np.tanh(drive * stereo) / np.tanh(drive)
+
+    info['event_density'] = density(events)
+    info['band_events'] = band_events_summary(stereo.mean(axis=1), events)
     return seam_rotate(stereo), info
+
+
+# The first bed's events (38 s): 12 passes, 4 engine pulls, 1 jeepney rev, 3 horns.
+FIRST_BED = {'seconds': 38.0, 'events': 20}
+
+
+def density(events):
+    per_minute = 60.0 * len(events) / BED_SECONDS
+    return {
+        'before': {'seconds': FIRST_BED['seconds'], 'events': FIRST_BED['events'],
+                   'per_minute': round(60.0 * FIRST_BED['events'] / FIRST_BED['seconds'], 1)},
+        'after': {'seconds': BED_SECONDS, 'events': len(events), 'per_minute': round(per_minute, 1),
+                  'by_kind_per_minute': {k: round(60.0 * sum(1 for e in events if e[0] == k) / BED_SECONDS, 1)
+                                         for k in sorted({e[0] for e in events})}},
+        'not_counted': 'the continuous wash and the crowd murmur, which are textures, not events',
+    }
+
+
+def band_events_summary(mono, events):
+    """Per kind: how far its events rise over the bed's median in their own band (dB), the
+    median and the quietest. The check that an event is there to be heard at all."""
+    n = len(mono)
+    f = np.fft.rfftfreq(n, 1.0 / RATE)
+    spec = np.fft.rfft(mono)
+    w = int(0.1 * RATE)
+    frames_by_band = {}
+    out = {}
+    for kind in sorted({e[0] for e in events}):
+        values = []
+        for _, at, dur, lo, hi in (e for e in events if e[0] == kind):
+            if (lo, hi) not in frames_by_band:
+                y = np.fft.irfft(spec * ((f >= lo) & (f < hi)), n)
+                fr = (y[:n // w * w].reshape(-1, w) ** 2).mean(axis=1)
+                frames_by_band[(lo, hi)] = (fr, np.median(fr))
+            fr, med = frames_by_band[(lo, hi)]
+            a = int(at * RATE) // w
+            b = max(a + 1, int((at + dur) * RATE) // w)
+            idx = np.arange(a, b) % len(fr)
+            values.append(10 * np.log10(fr[idx].max() / med))
+        out[kind] = {'band_hz': [events[[e[0] for e in events].index(kind)][3], events[[e[0] for e in events].index(kind)][4]],
+                     'median_db_over_bed': round(float(np.median(values)), 1),
+                     'quietest_db_over_bed': round(float(np.min(values)), 1)}
+    return out
 
 
 # ---------------------------------------------------------------------------------------------
@@ -798,32 +1084,43 @@ def fade_ends(x, attack=0.002, release=0.01):
     return x * np.minimum(1, t / attack) * np.minimum(1, (t[-1] - t) / release)
 
 
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     rows = []
 
-    bed, bed_info = author_city_bed()
-    # ⚠️ PEAKS: the bed at 0.50, engines at 0.60, horns at 0.70. Headroom for Unity's mixer summing
-    # these with the whole match, never normalised to full scale (the lagoon's convention). The
-    # bed is lowest because it plays all match long under everything.
-    pcm = to_pcm(bed, 0.50)
-    write_wav('kanto_city_bed.wav', pcm)
-    row = measure('kanto_city_bed.wav', pcm, True)
-    row.update(bed_info)
-    rows.append(row)
-
-    for name, fn in [('kanto_engine_car.wav', author_engine_car),
-                     ('kanto_engine_diesel.wav', author_engine_diesel),
-                     ('kanto_engine_tricycle.wav', author_engine_tricycle)]:
+    engines = {}
+    engine_rows = []
+    for key, name, fn in [('car', 'kanto_engine_car.wav', author_engine_car),
+                          ('diesel', 'kanto_engine_diesel.wav', author_engine_diesel),
+                          ('tricycle', 'kanto_engine_tricycle.wav', author_engine_tricycle)]:
         sig, info = fn()
+        engines[key] = sig
         pcm = to_pcm(sig, 0.60)
         write_wav(name, pcm)
         row = measure(name, pcm, True)
         row.update(info)
-        rows.append(row)
+        engine_rows.append(row)
+
+    bed, bed_info = author_city_bed(engines)
+    # ⚠️ PEAKS: the bed at 0.60 (it was 0.50, and soft-limited now, so its RMS is far higher),
+    # engines at 0.60, horns and sirens at 0.70. Headroom for Unity's mixer summing these with the
+    # whole match, never normalised to full scale (the lagoon's convention).
+    pcm = to_pcm(bed, 0.60)
+    write_wav('kanto_city_bed.wav', pcm)
+    row = measure('kanto_city_bed.wav', pcm, True)
+    row['rms_before_rework'] = FIRST_BED_RMS
+    row.update(bed_info)
+    rows.append(row)
+    rows.extend(engine_rows)
 
     for name, sig in author_horns().items():
         pcm = to_pcm(fade_ends(sig), 0.70)
+        write_wav(name, pcm)
+        rows.append(measure(name, pcm, False))
+
+    for name, sig in author_sirens().items():
+        pcm = to_pcm(fade_ends(sig, 0.01, 0.05), 0.70)
         write_wav(name, pcm)
         rows.append(measure(name, pcm, False))
 
@@ -832,29 +1129,24 @@ def main():
         if seam and (seam['rms_difference_percent'] >= 10 or seam['click']):
             raise SystemExit(f"{row['file']}: seam check failed {seam}")
     for row in rows:
-        if 'horn' in row['file'] and not (0.2 <= row['seconds'] <= 1.2):
-            raise SystemExit(f"{row['file']}: {row['seconds']} s is outside the brief's 0.2 to 1.2 s")
+        if 'horn' in row['file'] and not (0.15 <= row['seconds'] <= 2.2):
+            raise SystemExit(f"{row['file']}: {row['seconds']} s is outside 0.15 to 2.2 s")
+        if 'siren' in row['file'] and not (5.0 <= row['seconds'] <= 10.0):
+            raise SystemExit(f"{row['file']}: {row['seconds']} s is outside the brief's 5 to 10 s")
 
     result = {
         'provenance': 'Original deterministic synthesis (numpy, fixed seeds). No external samples, recordings or paid API.',
-        'listening': 'OPEN. Technical measurements only (peak, RMS, seam). Sourced and authored SFX stay '
-                     'provisional until the owner hears them in play (CLAUDE.md section 6).',
+        'listening': 'OPEN. The owner heard the first set in play on 2026-09-27 ("too calm ... add some sirens '
+                     '... louder and more variety of beeps"); this rework answers that and has not been heard. '
+                     'Authored SFX stay provisional until the owner hears them in play (CLAUDE.md section 6).',
         'tool': 'tools/build_kanto_street_audio.py',
         'runtime': 'Assets/TumbangPreso/Runtime/Map/KantoStreetSound.cs',
         'seam_rule': 'Loops are built periodic; first and last 50 ms RMS within 10 per cent and a seam '
                      'step no larger than the 99.9th percentile step inside the loop.',
         'engine_authoring_rate': 'Idle to low cruise; the runtime pitches up with speed (about 0.85 to 1.6).',
-        'authoring_passes': [
-            'Pass 1: bed loudest at 40 Hz and 40 dB over its 1 kHz; car engine swung 20 dB per firing '
-            '(1.6 ms pulses, Q up to 3); diesel knock showed four narrow tonal peaks; one-shot horns '
-            'carried a wrapped pre-ring tail (a 0.22 s beep measured 0.475 s).',
-            'Pass 2: wash moved to 45 to 320 Hz; car pulses widened to 2.6 ms with lower-Q body; '
-            'knock rebuilt as a noise burst with rings that wander 10 per cent; one-shot filter padded '
-            'both sides. Distant horns and far engines still measured about 0 to 1 dB over the wash in '
-            'their bands.',
-            'Pass 3: far events raised and the mid wash lowered until every authored event measured '
-            '2.5 to 4.3 dB over the median in its own band (band_events on the bed row).',
-        ],
+        'removed': ['Assets/TumbangPreso/Art/audio/ambience/kanto_horn_jeepney.wav (now kanto_horn_jeepney_1..3)',
+                    'Assets/TumbangPreso/Art/audio/ambience/kanto_horn_tricycle.wav (now kanto_horn_tricycle_1..2)'],
+        'authoring_passes': AUTHORING_PASSES,
         'files': rows,
     }
     REPORT.parent.mkdir(parents=True, exist_ok=True)
@@ -862,6 +1154,8 @@ def main():
     for row in rows:
         extra = f" seam {row['seam']['rms_difference_percent']}% click={row['seam']['click']}" if 'seam' in row else ''
         print(f"{row['file'].split('/')[-1]}: {row['seconds']} s, {row['channels']} ch, peak {row['peak']}, rms {row['rms']}{extra}")
+    print(json.dumps(bed_info['event_density']['after']))
+    print(json.dumps(bed_info['band_events']))
 
 
 if __name__ == '__main__':

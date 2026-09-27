@@ -108,17 +108,23 @@ namespace TumbangPreso.EditorTools.MapKit
             sound.EngineCar = Clip("kanto_engine_car", true);
             sound.EngineDiesel = Clip("kanto_engine_diesel", true);
             sound.EngineTricycle = Clip("kanto_engine_tricycle", true);
-            sound.HornsCar = new[] { Clip("kanto_horn_car_1", false), Clip("kanto_horn_car_2", false), Clip("kanto_horn_car_3", false) }
-                .Where(c => c != null).ToArray();
-            sound.HornJeepney = Clip("kanto_horn_jeepney", false);
-            sound.HornTricycle = Clip("kanto_horn_tricycle", false);
+            // Every numbered variant the tool wrote (owner: "more bustling, add some sirens here and
+            // louder and more variety of beeps"), and the louder gains set explicitly: a scene
+            // built earlier keeps its saved values, so the new defaults alone would not reach it.
+            sound.HornsCar = Clips("kanto_horn_car_");
+            sound.HornsJeepney = Clips("kanto_horn_jeepney_");
+            sound.HornsTricycle = Clips("kanto_horn_tricycle_");
+            sound.HornBus = Clip("kanto_horn_bus", false);
+            sound.HornTruck = Clip("kanto_horn_truck", false);
+            sound.Sirens = Clips("kanto_siren_");
+            sound.BedGain = 0.7f; sound.EngineGain = 0.5f; sound.HornGain = 0.8f; sound.SirenGain = 0.6f;
 
             int[] perLane = new int[KantoTraffic.Lanes];
             foreach (var d in drivers) perLane[d.Lane]++;
             Debug.Log($"[Kanto] Traffic: {drivers.Count} drivers, lanes [{string.Join(", ", perLane)}], " +
                       $"stop lane {traffic.StopLane} at {traffic.StopAlong:0.0} (pull-over {traffic.StopShift:0.00} m), " +
                       $"{traffic.Signals.Length} signal renderers, ground y {traffic.GroundY:0.00}, " +
-                      $"sound bed={sound.CityBed != null} engines={(sound.EngineCar != null ? 1 : 0) + (sound.EngineDiesel != null ? 1 : 0) + (sound.EngineTricycle != null ? 1 : 0)} horns={sound.HornsCar.Length + (sound.HornJeepney != null ? 1 : 0) + (sound.HornTricycle != null ? 1 : 0)}. Model offsets (yaw, deg): " +
+                      $"sound bed={sound.CityBed != null} engines={(sound.EngineCar != null ? 1 : 0) + (sound.EngineDiesel != null ? 1 : 0) + (sound.EngineTricycle != null ? 1 : 0)} horns={sound.HornsCar.Length + sound.HornsJeepney.Length + sound.HornsTricycle.Length + (sound.HornBus != null ? 1 : 0) + (sound.HornTruck != null ? 1 : 0)} sirens={sound.Sirens.Length}. Model offsets (yaw, deg): " +
                       string.Join("; ", offsets.Select(kv => kv.Key + " " + string.Join("/", kv.Value.OrderBy(a => a)))));
         }
 
@@ -143,6 +149,19 @@ namespace TumbangPreso.EditorTools.MapKit
             var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
             if (clip == null) Debug.LogWarning("[Kanto] Missing street sound " + path);
             return clip;
+        }
+
+        /// <summary>Every clip named prefix1, prefix2, ... in order, until one is missing.</summary>
+        private static AudioClip[] Clips(string prefix)
+        {
+            var list = new List<AudioClip>();
+            for (int i = 1; i < 32; i++)
+            {
+                if (AssetImporter.GetAtPath($"Assets/TumbangPreso/Art/audio/ambience/{prefix}{i}.wav") == null) break;
+                var c = Clip(prefix + i, false);
+                if (c != null) list.Add(c);
+            }
+            return list.ToArray();
         }
 
         private static void MakeDriver(Transform v)

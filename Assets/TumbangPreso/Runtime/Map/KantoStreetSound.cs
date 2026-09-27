@@ -5,30 +5,34 @@ namespace TumbangPreso
 {
     /// <summary>
     /// Kanto's street sound: the city around the park, the engines of the traffic that drives past
-    /// it, and the horns of drivers who are waiting.
+    /// it, the horns of drivers who are waiting, and the odd siren across the block.
     ///
     /// Owner brief, 2026-09-27, about Kanto's moving traffic: *"needs sfx, bustling city ambience,
-    /// car engine and driving sounds, beep/horns"*. The clips are authored by
+    /// car engine and driving sounds, beep/horns"*. After hearing the first version in play, the
+    /// same day: *"the sfx for the city is too calm. need to be more bustling, add some sirens here
+    /// and louder and more variety of beeps"*. The clips are authored by
     /// `tools/build_kanto_street_audio.py`; the scene builder adds this component next to
     /// <see cref="KantoTraffic"/> and fills every public field.
     ///
-    /// Three layers:
+    /// Four layers:
     /// 1. THE CITY BED, one 2D loop whose level rises as the listener walks from the court toward
     ///    the kerb (the streets are 22 m out on all four sides, the play walls at +/-13).
     /// 2. ENGINES, a small pool of 3D loops handed to whichever vehicles are nearest the listener,
     ///    pitched by each vehicle's speed and lifted a little under acceleration.
-    /// 3. HORNS, one-shots from vehicles that are waiting: a beep or two when their light turns
-    ///    green and the car in front has not moved, plus the odd impatient honk.
+    /// 3. HORNS, one-shots from vehicles that are waiting or crawling: beeps when their light turns
+    ///    green, impatient honks, and now and then a second driver answering the first.
+    /// 4. SIRENS, a whole pass by an emergency vehicle that is heard (never seen) driving along one
+    ///    of the far roads every 35 to 90 s.
     ///
     /// ⚠️⚠️ PRESENTATION ONLY. Nothing here is networked, nothing reads or writes match state, and
     /// every random choice uses its own `System.Random`, never a gameplay stream: a seeded probe
     /// (`BotBehaviourProbe`) must read the same numbers with or without this component in the map.
-    /// It only READS <see cref="KantoTraffic"/> through the accessors that class exposes for it, and
-    /// never changes the traffic.
+    /// It only READS <see cref="KantoTraffic"/> through the accessors that class exposes for it (and
+    /// its public road geometry for the siren's path), and never changes the traffic.
     ///
     /// ⚠️⚠️ THE CLIPS ARE PROVISIONAL UNTIL THE OWNER HEARS THEM IN PLAY (CLAUDE.md section 6).
     /// `docs/reports/kanto-street-audio-authoring.json` records the measurements and that listening
-    /// acceptance is still open. The three gains below are the knobs for that session.
+    /// acceptance is still open. The four gains below are the knobs for that session.
     /// </summary>
     /// ⚠️ ORDER 1001, ONE AFTER `AudioDirector` (1000), the same as `LagoonSoundscape`. The
     /// director's `LateUpdate` copies the camera pose onto the one `AudioListener`; running after it
@@ -39,10 +43,19 @@ namespace TumbangPreso
     {
         public KantoTraffic Traffic;
         public AudioClip CityBed, EngineCar, EngineDiesel, EngineTricycle;
-        public AudioClip[] HornsCar;
-        public AudioClip HornJeepney, HornTricycle;
-        [Range(0, 1)] public float BedGain = 0.45f, EngineGain = 0.5f, HornGain = 0.55f;
+        public AudioClip[] HornsCar, HornsJeepney, HornsTricycle;
+        public AudioClip HornBus, HornTruck;
+        public AudioClip[] Sirens;
+        [Range(0, 1)] public float BedGain = 0.7f, EngineGain = 0.5f, HornGain = 0.8f, SirenGain = 0.6f;
         public int EngineVoices = 8;
+
+        /// <summary>
+        /// ⚠️⚠️ LEGACY, NOT PLAYED. The first set had one jeepney horn and one tricycle horn; the
+        /// rework replaced them with the `HornsJeepney` and `HornsTricycle` arrays and deleted the
+        /// two files. These two fields stay only so the editor's scene author, which still assigns
+        /// them, keeps compiling in the open editor. Nothing here reads them. Delete them in the
+        /// same commit that moves `KantoTrafficAuthor` onto the arrays.
+        /// </summary>
 
         // ---------------------------------------------------------------------------------------
         // Tuning: the city bed. Distances are flat (XZ) from the court centre, the world origin
@@ -50,21 +63,21 @@ namespace TumbangPreso
         // ---------------------------------------------------------------------------------------
 
         /// <summary>
-        /// ⚠️ A FLOOR, NOT SILENCE. The court sits in the middle of a busy block; a city that
-        /// switched off at the centre spot would read as a bug, not as a park.
+        /// ⚠️ A FLOOR, NOT SILENCE, AND A HIGH ONE. The court sits in the middle of a busy block. The
+        /// first version held 0.45 here and the owner heard the middle of the court as "too calm";
+        /// 0.6 keeps the city loud at the centre spot while still opening up toward the kerb.
         /// </summary>
-        private const float BedFloor = 0.45f;
+        private const float BedFloor = 0.6f;
         /// <summary>Inside this (the court) the bed holds at its floor.</summary>
         private const float BedQuietWithin = 6.0f;
         /// <summary>
-        /// The bed is full this far INSIDE the road centre line: 22 - 4 = 18 m, the kerb, with the
-        /// brief's "fuller at the kerb, around 17 to 22 m out". Measured on the SQUARE distance
-        /// (the larger of |x| and |z|), because the four roads make a square round the park and a
-        /// round distance would call a corner of the park quieter than the middle of a side.
+        /// The bed is full this far INSIDE the road centre line: 22 - 4 = 18 m, the kerb. Measured on
+        /// the SQUARE distance (the larger of |x| and |z|), because the four roads make a square
+        /// round the park and a round distance would call a corner quieter than a side.
         /// </summary>
         private const float BedFullInsideRoad = 4.0f;
-        /// <summary>Used when `Traffic` is missing: the road centre line of the map's # grid.</summary>
-        private const float DefaultRoad = 22.0f;
+        /// <summary>Used when `Traffic` is missing: the map's # grid (KantoTraffic's defaults).</summary>
+        private const float DefaultRoad = 22.0f, DefaultExtent = 128.0f, DefaultLaneOffset = 1.8f;
 
         // ---------------------------------------------------------------------------------------
         // Tuning: engines.
@@ -84,7 +97,7 @@ namespace TumbangPreso
         private const float HeldDistanceFactor = 0.8f;
         /// <summary>Vehicles further than this never get a voice (the rolloff has made them faint).</summary>
         private const float EngineReach = 60.0f;
-        /// <summary>A voice changing vehicle fades out, moves, and fades in, each half this long.</summary>
+        /// <summary>A voice changing vehicle fades out, moves, and fades in, each this long.</summary>
         private const float SwapFadeSeconds = 0.2f;
         /// <summary>Pitch while waiting at a light or in a queue: the loops are authored at idle.</summary>
         private const float PitchIdle = 0.85f;
@@ -94,36 +107,77 @@ namespace TumbangPreso
         private const float LoadGain = 0.35f;
         /// <summary>The acceleration read as full throttle: `KantoTraffic`'s own amax, 1.6 m/s^2.</summary>
         private const float FullThrottleAccel = 1.6f;
-        /// <summary>Pitch glides at this time constant, so a gear of speed never steps the note.</summary>
+        /// <summary>Pitch glides at this time constant, so a change of speed never steps the note.</summary>
         private const float PitchSmoothing = 0.15f;
         private const float LoadSmoothing = 0.25f;
         private const float MinPitch = 0.7f, MaxPitch = 1.9f;
         private const int MaxEngineVoices = 16;
 
         // ---------------------------------------------------------------------------------------
-        // Tuning: horns.
+        // Tuning: horns. ⚠️⚠️ ALL RAISED 2026-09-27 AFTER THE OWNER'S "louder and more variety of
+        // beeps": the first version honked at under half of the greens and once every 12 to 35 s
+        // otherwise, which on a short round could mean hearing two horns in total.
         // ---------------------------------------------------------------------------------------
 
-        /// <summary>When an axis turns green: one horn this often, two horns this much more often.</summary>
-        private const float GreenOneHorn = 0.45f, GreenTwoHorns = 0.20f;
+        /// <summary>When an axis turns green, horns sound this often; then 1, 2 or 3 of them.</summary>
+        private const float GreenHornChance = 0.7f;
         private const float GreenDelayMin = 0.6f, GreenDelayMax = 1.5f;
-        private const float ImpatientMin = 12.0f, ImpatientMax = 35.0f;
-        /// <summary>No waiting vehicle in reach, or the window was full: look again this soon.</summary>
-        private const float ImpatientRetryMin = 3.0f, ImpatientRetryMax = 6.0f;
+        /// <summary>An impatient honk from a waiting or crawling vehicle, every 4 to 12 s.</summary>
+        private const float ImpatientMin = 4.0f, ImpatientMax = 12.0f;
+        /// <summary>No candidate in reach, or the window was full: look again this soon.</summary>
+        private const float ImpatientRetryMin = 1.5f, ImpatientRetryMax = 3.0f;
         /// <summary>
-        /// ⚠️⚠️ NEVER MORE THAN TWO HORNS INSIDE THIS WINDOW (the brief's 1.5 s). A green light on
-        /// a busy axis plus an impatient honk could otherwise stack three or four beeps into one
-        /// second, which stops reading as a street and starts reading as an alarm.
+        /// ⚠️ AN EXCHANGE: after a honk, this often a second driver answers within half a second. It
+        /// is the most "Manila" sound in the set: nobody honks alone. An answer never gets answered,
+        /// or one honk could chain into a whole street leaning on their horns.
+        /// </summary>
+        private const float AnswerChance = 0.3f;
+        private const float AnswerDelayMin = 0.15f, AnswerDelayMax = 0.5f;
+        /// <summary>A vehicle below this share of its cruise speed counts as crawling (and may honk).</summary>
+        private const float CrawlFraction = 0.35f;
+        /// <summary>
+        /// ⚠️⚠️ NEVER MORE THAN THREE HORNS INSIDE THIS WINDOW (the rework's 3 in 1.5 s; the first
+        /// version allowed 2). Busy, but a green light on a full axis plus an exchange could
+        /// otherwise stack five beeps into one second, which stops reading as a street and starts
+        /// reading as an alarm.
         /// </summary>
         private const float HornWindow = 1.5f;
-        /// <summary>Two voices suffice: the window allows two at once, and the longest clip (1.2 s
-        /// at the lowest pitch, 1.25 s) has ended before a third is allowed.</summary>
-        private const int HornVoices = 2;
-        private const float HornReach = 70.0f;
-        private const int PendingHorns = 4;
-        /// <summary>How many random waiting vehicles are sampled to pick the one that honks; the
-        /// nearest of them wins, so a honk usually comes from a car the player can see.</summary>
+        private const int HornsPerWindow = 3;
+        /// <summary>
+        /// Four voices: three may start inside any 1.5 s, and the longest clip (the 1.7 s lean-on,
+        /// 1.77 s at the lowest pitch) can still be sounding when a fourth is allowed.
+        /// </summary>
+        private const int HornVoices = 4;
+        private const float HornReach = 90.0f;
+        private const float HornMaxDistance = 100.0f;
+        private const int PendingHorns = 8;
+        /// <summary>How many random candidates are sampled to pick the one that honks; the nearest of
+        /// them wins, so a honk usually comes from a car the player can see.</summary>
         private const int HornSamples = 3;
+
+        // ---------------------------------------------------------------------------------------
+        // Tuning: sirens.
+        // ---------------------------------------------------------------------------------------
+
+        private const float SirenGapMin = 35.0f, SirenGapMax = 90.0f;
+        /// <summary>Blocked (a replay, the fade-in, the slider at zero): try again this soon.</summary>
+        private const float SirenRetrySeconds = 5.0f;
+        private const float SirenSpeedMin = 15.0f, SirenSpeedMax = 20.0f;
+        /// <summary>
+        /// ⚠️ WHERE IN THE CLIP THE VEHICLE IS NEAREST. The authored passes swell to their nearest
+        /// point at 45 to 52 per cent of the file, so the moving source is started half a clip's
+        /// travel before the listener's side of the road: the level the file bakes in and the level
+        /// the 3D rolloff gives peak together instead of fighting.
+        /// </summary>
+        private const float SirenNearestAt = 0.5f;
+        /// <summary>A siren sits on a roof bar, above the traffic.</summary>
+        private const float SirenHeight = 2.2f;
+        /// <summary>
+        /// ⚠️ WIDE ON PURPOSE: heard across the block. A 12 m inner radius and 150 m reach leave a
+        /// siren on the far road (about 22 to 45 m away) loud enough to turn a head, which is the
+        /// point of a siren.
+        /// </summary>
+        private const float SirenMinDistance = 12.0f, SirenMaxDistance = 150.0f;
 
         // ---------------------------------------------------------------------------------------
         // Mix.
@@ -141,7 +195,7 @@ namespace TumbangPreso
         private const float ListenerRetrySeconds = 0.5f;
 
         private const int KindCar = 0, KindDiesel = 1, KindTricycle = 2;
-        private const int HornCar = 0, HornJeep = 1, HornTrike = 2;
+        private const int HornCar = 0, HornJeep = 1, HornTrike = 2, HornBigBus = 3, HornPickup = 4;
 
         // ---------------------------------------------------------------------------------------
         // State. Allocated in `Build` and `CacheDrivers`; the per-frame path allocates nothing.
@@ -175,15 +229,24 @@ namespace TumbangPreso
         private readonly AudioSource[] _horns = new AudioSource[HornVoices];
         private readonly int[] _hornDriver = new int[HornVoices];
         private readonly float[] _hornClipGain = new float[HornVoices];
-        private int _nextHornVoice;
-        private readonly float[] _hornTimes = new float[2];
+        private readonly float[] _hornStarted = new float[HornVoices];
+        private readonly float[] _hornTimes = new float[HornsPerWindow];
         private readonly int[] _pendAxis = new int[PendingHorns];
         private readonly int[] _pendExclude = new int[PendingHorns];
         private readonly float[] _pendAt = new float[PendingHorns];
         private readonly bool[] _pendUsed = new bool[PendingHorns];
+        private readonly bool[] _pendSlowOk = new bool[PendingHorns];
+        private readonly bool[] _pendAnswer = new bool[PendingHorns];
+        private int _lastCarHorn = -1, _lastJeepHorn = -1, _lastTrikeHorn = -1;
         private float _nextImpatient;
         private KantoTraffic _subscribed;
         private Action<int> _onGreen;
+
+        // Siren.
+        private AudioSource _siren;
+        private float _nextSiren, _sirenAlong, _sirenSpeed;
+        private Vector3 _sirenOrigin, _sirenDir;
+        private int _lastSiren = -1;
 
         private void OnEnable()
         {
@@ -194,9 +257,10 @@ namespace TumbangPreso
             _fadeClock = 0.0f;
             _bedLevel = 0.0f;
             _mix = 1.0f;
-            _hornTimes[0] = _hornTimes[1] = -100.0f;
+            for (int i = 0; i < HornsPerWindow; i++) _hornTimes[i] = -100.0f;
             ClearPending();
             _nextImpatient = _clock + Range(ImpatientMin, ImpatientMax);
+            _nextSiren = _clock + Range(SirenGapMin, SirenGapMax);
         }
 
         private void OnDisable()
@@ -226,8 +290,8 @@ namespace TumbangPreso
             if (!_playing) StartBed();
 
             // ⚠️ `AudioListener.pause` pauses every source here already. What it does not stop is
-            // this method, so the horn clocks are held too: a pause menu left open for a minute
-            // must not release a queue of honks the instant it closes.
+            // this method, so the horn and siren clocks are held too: a pause menu left open for a
+            // minute must not release a queue of honks (or a siren) the instant it closes.
             if (AudioListener.pause) return;
 
             // Unscaled: a hit-stop or slow-motion `timeScale` must not stretch a fade. Clamped so a
@@ -243,7 +307,8 @@ namespace TumbangPreso
             // ⚠️ `IsInReplayMix` IS THE HOOK THE REPLAY LEASE EXPOSES, the one `LagoonSoundscape`,
             // `WorldContactPresentation` and `ColourGrade` read. The lease only mutes the director's
             // own pooled voices, so a component driving its own sources has to ask. Everything here
-            // ducks to zero for the replay and fades back after it, and no horn fires inside one.
+            // ducks to zero for the replay and fades back after it, and no horn or siren starts
+            // inside one.
             bool replay = director != null && director.IsInReplayMix;
             float tau = replay ? ReplaySmoothing : Smoothing;
             float k = 1.0f - Mathf.Exp(-dt / tau);
@@ -266,9 +331,10 @@ namespace TumbangPreso
             float scale = sfx * fade * _mix;
             if (_bed != null) _bed.volume = _bedLevel * BedGain * scale;
 
-            // ---- Engines and horns -----------------------------------------------------------
+            // ---- Engines, horns, sirens ------------------------------------------------------
             UpdateEngines(dt, ear, scale);
             UpdateHorns(ear, scale, replay);
+            UpdateSiren(dt, ear, scale, replay);
         }
 
         // ---------------------------------------------------------------------------------------
@@ -305,10 +371,10 @@ namespace TumbangPreso
                 float pitch = 1.0f, top = 1.6f, gain = 0.8f;
                 if (Has(model, "tricycle")) { engine = KindTricycle; horn = HornTrike; top = 1.7f; gain = 0.9f; }
                 else if (Has(model, "jeepney")) { engine = KindDiesel; horn = HornJeep; top = 1.45f; gain = 1.0f; }
-                else if (Has(model, "bus")) { engine = KindDiesel; horn = HornJeep; pitch = 0.9f; top = 1.35f; gain = 1.15f; }
+                else if (Has(model, "bus")) { engine = KindDiesel; horn = HornBigBus; pitch = 0.9f; top = 1.35f; gain = 1.15f; }
                 // ⚠️ A DELIVERY VAN OR PICKUP IS DIESEL IN MANILA (the L300 and Hilux class), but a
-                // lighter one, so it takes the diesel loop pitched up, and a car's horn.
-                else if (Has(model, "van") || Has(model, "pickup")) { engine = KindDiesel; pitch = 1.14f; top = 1.5f; gain = 0.85f; }
+                // lighter one, so it takes the diesel loop pitched up, and the truck horn.
+                else if (Has(model, "van") || Has(model, "pickup")) { engine = KindDiesel; horn = HornPickup; pitch = 1.14f; top = 1.5f; gain = 0.85f; }
                 else if (Has(model, "hatch")) pitch = 1.08f;
                 else if (Has(model, "taxi")) pitch = 0.97f;
 
@@ -558,26 +624,26 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// A road axis turned green. Now and then one or two drivers still waiting on it beep, a
-        /// moment later (0.6 to 1.5 s: the time it takes to notice the car in front has not moved).
-        /// The honking vehicle is chosen when the horn FIRES, from those still waiting then, so a
-        /// driver who has already pulled away never honks.
+        /// A road axis turned green. Seven times in ten, one to three drivers still waiting on it
+        /// beep, a moment later (0.6 to 1.5 s: the time it takes to notice the car in front has not
+        /// moved), each a beat after the last. The honking vehicle is chosen when the horn FIRES,
+        /// from those still waiting then, so a driver who has already pulled away never honks.
         /// </summary>
         private void OnGreenStarted(int axis)
         {
             if (!_playing || AudioListener.pause || _mix < 0.5f) return;
+            if (_random.NextDouble() >= GreenHornChance) return;
             double roll = _random.NextDouble();
-            int count = roll < GreenOneHorn ? 1 : roll < GreenOneHorn + GreenTwoHorns ? 2 : 0;
+            int count = roll < 0.5 ? 1 : roll < 0.8 ? 2 : 3;
             float at = _clock + Range(GreenDelayMin, GreenDelayMax);
             for (int h = 0; h < count; h++)
             {
-                Queue(axis, at);
-                // The second driver joins in a beat after the first, not in unison.
-                at += Range(0.25f, 0.6f);
+                Queue(axis, at, -1, false, false);
+                at += Range(0.2f, 0.7f);
             }
         }
 
-        private void Queue(int axis, float at)
+        private void Queue(int axis, float at, int exclude, bool slowOk, bool answer)
         {
             for (int p = 0; p < PendingHorns; p++)
             {
@@ -585,7 +651,9 @@ namespace TumbangPreso
                 _pendUsed[p] = true;
                 _pendAxis[p] = axis;
                 _pendAt[p] = at;
-                _pendExclude[p] = -1;
+                _pendExclude[p] = exclude;
+                _pendSlowOk[p] = slowOk;
+                _pendAnswer[p] = answer;
                 return;
             }
         }
@@ -621,35 +689,47 @@ namespace TumbangPreso
             {
                 if (!_pendUsed[p] || _clock < _pendAt[p]) continue;
                 _pendUsed[p] = false;
-                TryHonk(_pendAxis[p], ear, scale);
+                int honked = TryHonk(_pendAxis[p], ear, scale, _pendExclude[p], _pendSlowOk[p]);
+                if (honked >= 0 && !_pendAnswer[p]) MaybeAnswer(honked);
             }
 
             if (_clock >= _nextImpatient)
             {
-                bool honked = TryHonk(-1, ear, scale);
-                _nextImpatient = _clock + (honked ? Range(ImpatientMin, ImpatientMax) : Range(ImpatientRetryMin, ImpatientRetryMax));
+                int honked = TryHonk(-1, ear, scale, -1, true);
+                _nextImpatient = _clock + (honked >= 0 ? Range(ImpatientMin, ImpatientMax) : Range(ImpatientRetryMin, ImpatientRetryMax));
+                if (honked >= 0) MaybeAnswer(honked);
             }
         }
 
-        /// <summary>
-        /// One honk from a waiting vehicle on <paramref name="axis"/> (or any axis for -1), inside
-        /// the window rule. Returns false if the window is full or nobody suitable is waiting.
-        /// </summary>
-        private bool TryHonk(int axis, Vector3 ear, float scale)
+        /// <summary>Now and then another driver, anywhere nearby, honks back within half a second.</summary>
+        private void MaybeAnswer(int first)
         {
-            float oldest = Mathf.Min(_hornTimes[0], _hornTimes[1]);
-            if (_clock - oldest < HornWindow) return false;
+            if (_random.NextDouble() >= AnswerChance) return;
+            Queue(-1, _clock + Range(AnswerDelayMin, AnswerDelayMax), first, true, true);
+        }
+
+        /// <summary>
+        /// One honk from a waiting (or, when <paramref name="slowOk"/>, crawling) vehicle on
+        /// <paramref name="axis"/> (or any axis for -1), never <paramref name="exclude"/>, inside the
+        /// window rule. Returns the vehicle that honked, or -1.
+        /// </summary>
+        private int TryHonk(int axis, Vector3 ear, float scale, int exclude, bool slowOk)
+        {
+            // The window: the oldest of the last three stamps must be at least 1.5 s ago.
+            float oldest = _hornTimes[0];
+            int oldestSlot = 0;
+            for (int i = 1; i < HornsPerWindow; i++)
+                if (_hornTimes[i] < oldest) { oldest = _hornTimes[i]; oldestSlot = i; }
+            if (_clock - oldest < HornWindow) return -1;
 
             int n = _cachedCount;
             float reachSq = HornReach * HornReach;
-            int sounding0 = _horns[0] != null && _horns[0].isPlaying ? _hornDriver[0] : -1;
-            int sounding1 = _horns[1] != null && _horns[1].isPlaying ? _hornDriver[1] : -1;
 
             // Two passes, no list: count the candidates, then pick random ones by index.
             int candidates = 0;
             for (int i = 0; i < n; i++)
-                if (Candidate(i, axis, ear, reachSq, sounding0, sounding1)) candidates++;
-            if (candidates == 0) return false;
+                if (Candidate(i, axis, ear, reachSq, exclude, slowOk)) candidates++;
+            if (candidates == 0) return -1;
 
             int chosen = -1;
             float chosenSq = float.MaxValue;
@@ -658,7 +738,7 @@ namespace TumbangPreso
                 int want = _random.Next(candidates);
                 for (int i = 0; i < n; i++)
                 {
-                    if (!Candidate(i, axis, ear, reachSq, sounding0, sounding1)) continue;
+                    if (!Candidate(i, axis, ear, reachSq, exclude, slowOk)) continue;
                     if (want-- > 0) continue;
                     Present(i, out Vector3 at);
                     float sq = (at - ear).sqrMagnitude;
@@ -666,21 +746,22 @@ namespace TumbangPreso
                     break;
                 }
             }
-            if (chosen < 0) return false;
+            if (chosen < 0) return -1;
 
-            float clipGain;
-            AudioClip clip = HornClip(_hornKind[chosen], out clipGain);
-            if (clip == null) return false;
+            AudioClip clip = HornClip(_hornKind[chosen], out float clipGain);
+            if (clip == null) return -1;
 
-            int voice = _nextHornVoice;
-            if (_horns[voice] != null && _horns[voice].isPlaying)
+            // A free voice, else the one that started longest ago.
+            int voice = -1;
+            float earliest = float.MaxValue;
+            for (int h = 0; h < HornVoices; h++)
             {
-                int other = (voice + 1) % HornVoices;
-                if (_horns[other] == null || !_horns[other].isPlaying) voice = other;
+                if (_horns[h] == null) continue;
+                if (!_horns[h].isPlaying) { voice = h; break; }
+                if (_hornStarted[h] < earliest) { earliest = _hornStarted[h]; voice = h; }
             }
-            _nextHornVoice = (voice + 1) % HornVoices;
+            if (voice < 0) return -1;
             var src = _horns[voice];
-            if (src == null) return false;
 
             Present(chosen, out Vector3 pos);
             src.transform.position = pos;
@@ -689,37 +770,173 @@ namespace TumbangPreso
             src.pitch = Range(0.96f, 1.04f);
             _hornClipGain[voice] = clipGain;
             _hornDriver[voice] = chosen;
+            _hornStarted[voice] = _clock;
             src.volume = HornGain * clipGain * scale;
             src.Play();
 
-            // Replace the older of the two stamps.
-            if (_hornTimes[0] <= _hornTimes[1]) _hornTimes[0] = _clock;
-            else _hornTimes[1] = _clock;
-            return true;
+            _hornTimes[oldestSlot] = _clock;
+            return chosen;
         }
 
-        private bool Candidate(int i, int axis, Vector3 ear, float reachSq, int sounding0, int sounding1)
+        private bool Candidate(int i, int axis, Vector3 ear, float reachSq, int exclude, bool slowOk)
         {
-            if (i == sounding0 || i == sounding1) return false;
-            if (!Traffic.DriverWaiting(i)) return false;
+            if (i == exclude || Sounding(i)) return false;
+            if (!Traffic.DriverWaiting(i))
+            {
+                // ⚠️ CRAWLING COUNTS FOR IMPATIENCE AND ANSWERS, NOT FOR A GREEN: the green's horns
+                // are the drivers stuck behind someone who has not moved yet.
+                if (!slowOk) return false;
+                if (Traffic.DriverSpeed(i) > CrawlFraction * Mathf.Max(1.0f, Traffic.DriverCruise(i))) return false;
+            }
             if (axis >= 0 && Traffic.DriverAxis(i) != axis) return false;
             if (!Present(i, out Vector3 at)) return false;
             return (at - ear).sqrMagnitude <= reachSq;
         }
 
+        private bool Sounding(int driver)
+        {
+            for (int h = 0; h < HornVoices; h++)
+                if (_hornDriver[h] == driver && _horns[h] != null && _horns[h].isPlaying) return true;
+            return false;
+        }
+
         /// <summary>
-        /// Tricycles take the tricycle horn, jeepneys and buses the jeepney's air horn, everything
-        /// else one of the car horns. ⚠️ The jeepney's call is the loudest thing in the set by
-        /// design, so it plays a little under the rest; the tricycle's is thin and plays a little
-        /// over, or it disappears under the bed.
+        /// Tricycles take a tricycle horn, jeepneys a jeepney air horn, buses the bus horn, vans and
+        /// pickups the truck horn, everything else a car horn. ⚠️ Missing clips fall back down the
+        /// same line (bus to jeepney, truck to car) so a half-filled component still honks.
+        /// ⚠️ The jeepney and bus air horns are the loudest things in the set by design, so they play
+        /// a little under the rest; the tricycle's is thin and plays a little over, or it disappears
+        /// under the bed.
         /// </summary>
         private AudioClip HornClip(int kind, out float gain)
         {
             gain = 1.0f;
-            if (kind == HornTrike && HornTricycle != null) { gain = 1.1f; return HornTricycle; }
-            if (kind == HornJeep && HornJeepney != null) { gain = 0.85f; return HornJeepney; }
-            if (HornsCar == null || HornsCar.Length == 0) return null;
-            return HornsCar[_random.Next(HornsCar.Length)];
+            AudioClip clip = null;
+            if (kind == HornTrike)
+            {
+                clip = PickFresh(HornsTricycle, ref _lastTrikeHorn);
+                gain = 1.1f;
+            }
+            else if (kind == HornBigBus)
+            {
+                clip = HornBus;
+                gain = 0.9f;
+                if (clip == null) clip = PickFresh(HornsJeepney, ref _lastJeepHorn);
+            }
+            else if (kind == HornJeep)
+            {
+                clip = PickFresh(HornsJeepney, ref _lastJeepHorn);
+                gain = 0.85f;
+            }
+            else if (kind == HornPickup)
+            {
+                clip = HornTruck;
+            }
+
+            if (clip == null)
+            {
+                gain = 1.0f;
+                clip = PickFresh(HornsCar, ref _lastCarHorn);
+            }
+            return clip;
+        }
+
+        /// <summary>
+        /// A random clip from the set, never the one this set played last: with eight car horns,
+        /// hearing the same one twice in a row reads as one car honking again, not a second car.
+        /// </summary>
+        private AudioClip PickFresh(AudioClip[] set, ref int last)
+        {
+            if (set == null || set.Length == 0) return null;
+            int i = _random.Next(set.Length);
+            if (set.Length > 1 && i == last) i = (i + 1 + _random.Next(set.Length - 1)) % set.Length;
+            last = i;
+            return set[i];
+        }
+
+        // ---------------------------------------------------------------------------------------
+        // Sirens.
+        // ---------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// One siren at a time, every 35 to 90 s. The source is MOVED along a lane of one of the
+        /// two roads furthest from the listener at 15 to 20 m/s, the same lane geometry
+        /// `KantoTraffic` drives (lines at x and z = +/-Road, a lane `LaneOffset` to the right of
+        /// travel, clamped to +/-Extent), so the pass is heard crossing the block.
+        ///
+        /// ⚠️ DOPPLER IS OFF ON THIS SOURCE. The clips already bake a gentle Doppler bend and a
+        /// swell into the pass; Unity's own Doppler on top would double the bend.
+        /// </summary>
+        private void UpdateSiren(float dt, Vector3 ear, float scale, bool replay)
+        {
+            if (_siren == null) return;
+
+            if (_siren.isPlaying)
+            {
+                float extent = Traffic != null ? Traffic.Extent : DefaultExtent;
+                _sirenAlong = Mathf.Min(_sirenAlong + _sirenSpeed * dt, extent);
+                _siren.transform.position = _sirenOrigin + _sirenDir * _sirenAlong + Vector3.up * SirenHeight;
+                _siren.volume = SirenGain * scale;
+                return;
+            }
+
+            if (_clock < _nextSiren) return;
+            if (Sirens == null || Sirens.Length == 0) { _nextSiren = _clock + SirenGapMax; return; }
+            if (replay || scale <= 0.001f) { _nextSiren = _clock + SirenRetrySeconds; return; }
+
+            int pick = _random.Next(Sirens.Length);
+            if (Sirens.Length > 1 && pick == _lastSiren) pick = (pick + 1 + _random.Next(Sirens.Length - 1)) % Sirens.Length;
+            var clip = Sirens[pick];
+            if (clip == null) { _nextSiren = _clock + SirenRetrySeconds; return; }
+            _lastSiren = pick;
+
+            StartSiren(clip, ear, scale);
+            _nextSiren = _clock + clip.length + Range(SirenGapMin, SirenGapMax);
+        }
+
+        private void StartSiren(AudioClip clip, Vector3 ear, float scale)
+        {
+            float road = Traffic != null ? Traffic.Road : DefaultRoad;
+            float extent = Traffic != null ? Traffic.Extent : DefaultExtent;
+            float laneOffset = Traffic != null ? Traffic.LaneOffset : DefaultLaneOffset;
+            float groundY = Traffic != null ? Traffic.GroundY : 0.0f;
+
+            // The four road lines, by how far each is from the listener; take one of the two
+            // furthest (a siren across the block, not in the player's lap).
+            // Road r: axis 0 (runs along X at z = line) for r = 0, 1; axis 1 (along Z at x = line)
+            // for r = 2, 3; line = -road for even r, +road for odd.
+            int far1 = -1, far2 = -1;
+            float d1 = -1.0f, d2 = -1.0f;
+            for (int r = 0; r < 4; r++)
+            {
+                float line = (r & 1) == 0 ? -road : road;
+                float d = r < 2 ? Mathf.Abs(ear.z - line) : Mathf.Abs(ear.x - line);
+                if (d > d1) { far2 = far1; d2 = d1; far1 = r; d1 = d; }
+                else if (d > d2) { far2 = r; d2 = d; }
+            }
+            int chosen = _random.NextDouble() < 0.5 ? far1 : far2;
+            if (chosen < 0) chosen = far1;
+            float chosenLine = (chosen & 1) == 0 ? -road : road;
+            float sign = _random.NextDouble() < 0.5 ? -1.0f : 1.0f;
+
+            Vector3 dir = chosen < 2 ? new Vector3(sign, 0.0f, 0.0f) : new Vector3(0.0f, 0.0f, sign);
+            Vector3 linePoint = chosen < 2 ? new Vector3(0.0f, groundY, chosenLine) : new Vector3(chosenLine, groundY, 0.0f);
+            // ⚠️ RIGHT OF TRAVEL, derived exactly as `KantoTraffic.BuildLanes` derives it.
+            Vector3 right = Vector3.Cross(Vector3.up, dir);
+            _sirenOrigin = linePoint + right * laneOffset;
+            _sirenDir = dir;
+            _sirenSpeed = Range(SirenSpeedMin, SirenSpeedMax);
+
+            // Nearest to the listener at the clip's swell: start half a clip's travel before the
+            // listener's own position along the road.
+            float listenerAlong = Vector3.Dot(ear - _sirenOrigin, dir);
+            _sirenAlong = Mathf.Clamp(listenerAlong - _sirenSpeed * clip.length * SirenNearestAt, -extent, extent);
+
+            _siren.transform.position = _sirenOrigin + _sirenDir * _sirenAlong + Vector3.up * SirenHeight;
+            _siren.clip = clip;
+            _siren.pitch = 1.0f;
+            _siren.volume = SirenGain * scale;
+            _siren.Play();
         }
 
         // ---------------------------------------------------------------------------------------
@@ -809,10 +1026,9 @@ namespace TumbangPreso
                 src.loop = true;
                 // ⚠️ 3D, LOGARITHMIC, 3.5 m INNER RADIUS, NO DOPPLER. The nearest lane is 20 m from
                 // the court centre, where a 3.5 m log rolloff leaves about -15 dB: present, under
-                // the play. The director's 2 to 32 m linear rolloff for court impacts would leave a
-                // car across the road at a third of that. Doppler is off because Unity computes it
-                // from the SOURCE transform's motion, and a voice jumping to a new vehicle would
-                // read as a 100 m/s move and squeal.
+                // the play. Doppler is off because Unity computes it from the SOURCE transform's
+                // motion, and a voice jumping to a new vehicle would read as a 100 m/s move and
+                // squeal.
                 src.spatialBlend = 1.0f;
                 src.rolloffMode = AudioRolloffMode.Logarithmic;
                 src.minDistance = 3.5f;
@@ -833,14 +1049,30 @@ namespace TumbangPreso
                 src.playOnAwake = false;
                 src.loop = false;
                 src.spatialBlend = 1.0f;
-                // Horns carry further than engines: a 5 m inner radius, heard to 80 m.
+                // ⚠️ Horns carry: a 5 m inner radius, heard to 100 m (it was 80 before the owner
+                // asked for louder beeps). Doppler off for the same reason as the engines.
                 src.rolloffMode = AudioRolloffMode.Logarithmic;
                 src.minDistance = 5.0f;
-                src.maxDistance = 80.0f;
+                src.maxDistance = HornMaxDistance;
                 src.dopplerLevel = 0.0f;
                 src.priority = 120;
                 _horns[h] = src;
                 _hornDriver[h] = -1;
+                _hornStarted[h] = -100.0f;
+            }
+
+            {
+                var go = new GameObject("KantoSiren");
+                go.transform.SetParent(transform, false);
+                _siren = go.AddComponent<AudioSource>();
+                _siren.playOnAwake = false;
+                _siren.loop = false;
+                _siren.spatialBlend = 1.0f;
+                _siren.rolloffMode = AudioRolloffMode.Logarithmic;
+                _siren.minDistance = SirenMinDistance;
+                _siren.maxDistance = SirenMaxDistance;
+                _siren.dopplerLevel = 0.0f;
+                _siren.priority = 100;
             }
 
             // Force the vehicle cache to rebuild against the new voice arrays.
@@ -876,6 +1108,7 @@ namespace TumbangPreso
                 if (_horns[h] != null) _horns[h].Stop();
                 _hornDriver[h] = -1;
             }
+            if (_siren != null) _siren.Stop();
         }
 
         private float Range(float a, float b) => a + (b - a) * (float)_random.NextDouble();
