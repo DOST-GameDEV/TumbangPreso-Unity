@@ -81,6 +81,10 @@ alternatives, `landmark_court_v4.png`); cooler rock tint (asked, no answer: rock
    to 10 pieces, and the shore band is 90 patches plus 24 meadows. The exporter carries the reef tint
    (MULTIPLY on the material colour) and sea grass classifies as two-sided foliage (its card
    material nudges hue).
+   IN UNITY (`b924d149`): 453 seabed pieces incl. 37 reef heads; the first review showed them as
+   grey ghosts because the water's alpha hit 0.97 by 3.6 m. Water CLARITY now has its own depth
+   (`_ClarityDepth` 8 m, `_DeepAlpha` 0.9; open sea stays opaque) while the colour still turns
+   deep by 3.6 m. Review `Logs/lagoon-cove-unity-v10`. AWAITING the owner's look in play.
 2. **AO flicker (game-wide, not the cove):** the occlusion vanished for 0.5 to 1.5 s at round starts.
    Root cause found and the fix COMMITTED, not yet confirmed by the owner in play (see
    `docs/TODO.md` LIGHT-3.6): `VfxMaterial.ConfigureBuiltInFade` faded Standard hero effects without
