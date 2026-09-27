@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 13:28:28Z" end-time="2026-09-27 13:28:28Z" duration="0.1104987">
+  <test-suite type="TestSuite" id="1941" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="749" result="Passed" start-time="2026-09-27 13:28:28Z" end-time="2026-09-27 13:28:28Z" duration="0.110499" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1935" name="TumbangPreso.PlayTests.dll" fullname="VALIDATION_PROJECT/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="749" result="Passed" start-time="2026-09-27 13:28:28Z" end-time="2026-09-27 13:28:28Z" duration="0.099702" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="60976" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1936" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="749" result="Passed" start-time="2026-09-27 13:28:28Z" end-time="2026-09-27 13:28:28Z" duration="0.095067" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1937" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="749" result="Passed" start-time="2026-09-27 13:28:28Z" end-time="2026-09-27 13:28:28Z" duration="0.090511" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1511" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-09-27 13:28:28Z" end-time="2026-09-27 13:28:28Z" duration="0.076575" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1515" name="ParticleAssetWarmupRetainsExistingGeometryWithoutEmittersOrRandomChanges" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.ParticleAssetWarmupRetainsExistingGeometryWithoutEmittersOrRandomChanges" methodname="ParticleAssetWarmupRetainsExistingGeometryWithoutEmittersOrRandomChanges" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="1851170104" result="Passed" start-time="2026-09-27 13:28:28Z" end-time="2026-09-27 13:28:28Z" duration="0.065772" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ParticleAssets] retained8meshes vertices=282; no emitters spawned.
+Saving results to: ISOLATED_PROFILE\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

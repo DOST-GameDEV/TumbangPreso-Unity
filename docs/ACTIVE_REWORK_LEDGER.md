@@ -1,11 +1,17 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`5a50452f261b03ea9faa1b056ec4d69efa0d6c7f`; preview cache ownership follows it.
+`959f22f19667a496df9035dcefbd34299b836a55`; remaining first-use data follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Existing particle meshes and catalog-driven status icons now prepare behind
+loading. Rooted's omitted live-status entry is restored. Separate new native cases
+pass1/1 each with no drift241inputs; the status check launched once after a disk
+preflight hold. No effects/artwork/gameplay change or old-case rerun.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#remaining-first-use-data).
 
 ToonSkin now caches base/overlay material roles separately. Map-preview resized
 targets are destroyed/rebound and detached at teardown. Two new native cases pass

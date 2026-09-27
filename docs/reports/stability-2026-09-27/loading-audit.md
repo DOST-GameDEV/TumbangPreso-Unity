@@ -5,6 +5,27 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Remaining First-Use Data
+
+After `959f22f1`, the existing particle warmup also prepares its eight cached meshes
+in five yielded groups. The same282vertices,parameters and random-state-preserving
+builders are used; no emitter or effect is spawned. StatusIcons asynchronously
+prepares the current StatusRules catalog rather than waiting for the first status
+hit to load its sprite. Repeated status preparation reuses the exact cached sprites.
+
+Rooted was missing from the shared live-status list despite its rule/icon existing.
+It now appears with the other movement holds,before slows,using the existing artwork
+and tooltip. No gameplay,animation or authored-effect change.
+
+Two separate NEW native cases pass1/1 each: particle geometry/reuse/no-emitter/no-RNG
+mutation (0.1104987s), then status catalog retention/root priority/clear (0.1735712s).
+The status launch initially stopped at disk preflight without starting Unity; it ran
+once after measured headroom recovered. Earlier geometry was not rerun. Frozen241
+inputs with no drift; profile/preferences restored. These establish readiness/state,
+not measured player hitch reduction or GPU first-draw completion.
+[Receipt](checks/first-use-data-native.json),[geometry XML](checks/particle-data-native.xml),
+[status XML](checks/status-catalog-native.xml).
+
 ## Preview Cache Ownership
 
 After `5a50452f`, ToonSkin keys its existing base/overlay distinction explicitly.

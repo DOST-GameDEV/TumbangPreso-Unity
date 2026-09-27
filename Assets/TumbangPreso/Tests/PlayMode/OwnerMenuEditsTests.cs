@@ -105,6 +105,65 @@ namespace TumbangPreso.PlayTests
             Assert.AreSame(boulder, Visual.HeroPropAssets.Load(Visual.ReworkProp.ResourceFolder, "boulder"));
         }
 
+        [UnityTest, Timeout(30000)]
+        public IEnumerator StatusCatalogWarmupRetainsIconsAndRootedAppearsBeforeSlows()
+        {
+            int objects = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length;
+            yield return StatusIcons.Warmup();
+            var rules = TumbangPreso.Core.StatusRules.All;
+            var sprites = rules.Select(x => StatusIcons.For(x.Kind)).ToArray();
+            for (int i = 0; i < rules.Count; i++) Assert.IsNotNull(sprites[i], rules[i].Kind.ToString());
+            var repeated = StatusIcons.Warmup();
+            Assert.IsFalse(repeated.MoveNext(), "Prepared status icons repeated their resource requests.");
+            for (int i = 0; i < rules.Count; i++) Assert.AreSame(sprites[i], StatusIcons.For(rules[i].Kind));
+            Assert.AreEqual(objects, Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length);
+            var owner = new GameObject("Received rooted readout");
+            var body = owner.AddComponent<CharacterMotor>(); body.enabled = false;
+            try
+            {
+                body.ApplyNetworkStatuses(whirledLeft: 0, chilledLeft: 3, rootedLeft: 7);
+                var statuses = new System.Collections.Generic.List<TumbangPreso.Core.StatusKind>();
+                StatusIcons.Live(body, statuses);
+                CollectionAssert.AreEqual(new[] { TumbangPreso.Core.StatusKind.Rooted, TumbangPreso.Core.StatusKind.Chilled }, statuses);
+                Assert.AreEqual(7, body.StatusLeft(TumbangPreso.Core.StatusKind.Rooted));
+                body.ClearStatuses(); StatusIcons.Live(body, statuses);
+                Assert.IsEmpty(statuses);
+            }
+            finally { Object.Destroy(owner); }
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator ParticleAssetWarmupRetainsExistingGeometryWithoutEmittersOrRandomChanges()
+        {
+            int objects = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length;
+            int emitters = Object.FindObjectsByType<ParticleSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length;
+            var warmup = Visual.AbilityVfx.WarmupAssets();
+            int steps = 0;
+            while (true)
+            {
+                var random = Random.state;
+                bool more = warmup.MoveNext();
+                Assert.AreEqual(random, Random.state, "Loading presentation data changed gameplay's random stream.");
+                if (!more) break;
+                steps++; yield return warmup.Current;
+            }
+            Assert.AreEqual(5, steps);
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic;
+            string[] names = { "_chip", "_grain", "_flake", "_electricNeedle" };
+            var meshes = names.Select(n => (Mesh)typeof(Visual.AbilityVfx).GetField(n, flags).GetValue(null)).ToArray();
+            var runes = (Mesh[])typeof(Visual.AbilityVfx).GetField("_runes", flags).GetValue(null);
+            Assert.AreEqual(4, runes.Length);
+            foreach (var mesh in meshes.Concat(runes))
+            { Assert.IsNotNull(mesh); Assert.Greater(mesh.vertexCount, 0); }
+            yield return Visual.AbilityVfx.WarmupAssets();
+            for (int i = 0; i < names.Length; i++)
+                Assert.AreSame(meshes[i], typeof(Visual.AbilityVfx).GetField(names[i], flags).GetValue(null));
+            Assert.AreSame(runes, typeof(Visual.AbilityVfx).GetField("_runes", flags).GetValue(null));
+            Assert.AreEqual(objects, Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length);
+            Assert.AreEqual(emitters, Object.FindObjectsByType<ParticleSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length);
+            Debug.Log($"[ParticleAssets] retained8meshes vertices={meshes.Concat(runes).Sum(x => x.vertexCount)}; no emitters spawned.");
+        }
+
         [Test]
         public void SharedSourceMaterialKeepsBaseAndOverlayVariantsSeparateAndReusable()
         {

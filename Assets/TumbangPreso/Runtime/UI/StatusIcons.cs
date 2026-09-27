@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// The four status icons (owner's status table, 2026-09-25), drawn by
+    /// The current status catalog's icons, drawn by
     /// `tools/build_ability_icons.py` into `Resources/UI/status-icons`. A status sits on a round
     /// badge so it never reads as an ability icon: an ability is something you DO, a status is
     /// something done TO you. The tooltip is the owner's column, verbatim, from `Core.StatusRules`.
@@ -26,6 +26,19 @@ namespace TumbangPreso.UI
         public static string Name(StatusKind kind) => StatusRules.For(kind)?.Name ?? "";
         public static string Tooltip(StatusKind kind) => StatusRules.For(kind)?.Tooltip ?? "";
 
+        public static System.Collections.IEnumerator Warmup()
+        {
+            foreach (var rule in StatusRules.All)
+            {
+                var kind = rule.Kind;
+                if (kind == StatusKind.None || (Cache.TryGetValue(kind, out var cached) && cached != null)) continue;
+                var request = Resources.LoadAsync<Sprite>("UI/status-icons/Status" + kind);
+                yield return request;
+                if (request.asset is Sprite sprite) Cache[kind] = sprite;
+                yield return null;
+            }
+        }
+
         /// <summary>The statuses running on a body, strongest first (a hold before a slow).</summary>
         public static void Live(CharacterMotor body, List<StatusKind> into)
         {
@@ -33,6 +46,7 @@ namespace TumbangPreso.UI
             if (body == null) return;
             if (body.IsTagged) into.Add(StatusKind.Tagged);
             if (body.IsFrozen) into.Add(StatusKind.Frozen);
+            if (body.IsRooted) into.Add(StatusKind.Rooted);
             if (body.IsWhirled) into.Add(StatusKind.Whirled);
             if (body.IsChilled) into.Add(StatusKind.Chilled);
             // ABILITY-2 (2026-09-26).

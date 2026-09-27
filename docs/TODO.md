@@ -126,6 +126,9 @@ journeys and player performance remain OPEN; no blanket hitch-free claim.
 Preview cache ownership fixes now keep base/overlay material variants separate and
 destroy/rebind resized map-preview targets. Two new focused native cases pass;
 authored assets and shading values are unchanged. Player memory/FPS remains OPEN.
+Existing particle geometry and catalog-driven status icons now prepare during
+loading. Rooted is restored to the shared status readout. Two new native data/state
+cases pass separately; no emitted effects,art changes or player hitch claim.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

@@ -520,6 +520,7 @@ namespace TumbangPreso.UI
             foreach (AbilityGlyph glyph in System.Enum.GetValues(typeof(AbilityGlyph)))
                 AbilityIcons.For(glyph);
             yield return null;
+            yield return StatusIcons.Warmup();
             yield return Visual.VfxFlipbook.Warmup();
             yield return Visual.CheskaIceVisuals.Warmup();
             yield return Visual.HeroPropAssets.Warmup(done =>
@@ -548,7 +549,7 @@ namespace TumbangPreso.UI
             // Construct kits and parse their cached ultimate introductions before first use.
             // The held variant is a separate authored table for heroes that have one.
             SetLoadingStage("preparing hero abilities", 0.84f);
-            Visual.AbilityVfx.Warmup();
+            yield return Visual.AbilityVfx.WarmupAssets();
             foreach (string heroId in Roster.HeroPeople != null
                          ? HeroIdsFrom(Roster.HeroPeople)
                          : new string[0])
