@@ -19,8 +19,8 @@ Nothing was deleted or renumbered.
 
 **Loading slice, 2026-09-27:** progressive shader completion, staged menu-art/avatar
 cache preparation and duplicate audio-sweep removal are implemented (`c9f55410`).
-The existing ultimate-introduction tables now also preload once per hero at boot;
-that follow-up is source-reviewed. Broader player first-use hitch qualification
+The existing ultimate-introduction tables and 12 shared effect sheets now preload
+in yielded boot stages; those follow-ups are source-reviewed. Player first-use hitch qualification
 remains OPEN, not replaced by the local shader/cache completion check.
 
 **Owner correction, 2026-09-27: implementation first.** Stop validation loops and

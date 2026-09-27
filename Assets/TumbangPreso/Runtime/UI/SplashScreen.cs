@@ -516,6 +516,7 @@ namespace TumbangPreso.UI
             foreach (AbilityGlyph glyph in System.Enum.GetValues(typeof(AbilityGlyph)))
                 AbilityIcons.For(glyph);
             yield return null;
+            yield return Visual.VfxFlipbook.Warmup();
 
             // 8. Both arenas, as a dependency load rather than a scene load.
             //

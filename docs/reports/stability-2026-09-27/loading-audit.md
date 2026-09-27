@@ -14,7 +14,7 @@ The same existing splash hero loop now fills `UltimatePerformance`'s parsed-tabl
 
 ## Other first-use paths
 
-Boot stages load roster resources, audio folders, UI resources and ability data in separate steps (`SplashScreen.cs`). A first ability use can still create effects or read assets: examples include `PaeteTrees.Spawn`, `FrostSurfacePresentation.Part`, `WindVfx`, `VfxFlipbook.Build` and `UltimatePerformance.Load`. These are candidates for attribution, not measured culprits. The built-in `MatchStatsCollector` frame histogram samples active rounds rather than boot or menu loading; Editor batchmode timing is not a Windows player result. Preserve original model, texture, mesh, audio and effect quality during any future optimization.
+Boot stages load roster resources, audio folders, UI resources and ability data in separate steps (`SplashScreen.cs`). `VfxFlipbook.Build` formerly loaded its sheet texture on the first effect; it now uses a successful-only texture cache, and the existing ability-resource stage warms the 12 `VfxSheets.All` entries with a yield after each. Their current source PNGs total about 7.15 MiB as uncompressed RGBA with no mipmaps; no effect mesh, material or GameObject is built at boot, and the missing-sheet warning remains on the live path. First ability use can still create effects or read other assets, including `PaeteTrees.Spawn`, `FrostSurfacePresentation.Part` and `WindVfx`; these are unmeasured candidates, not proven frame hitches. The built-in `MatchStatsCollector` histogram samples active rounds rather than boot or menu loading. Preserve original model, texture, mesh, audio and effect quality during any future optimization.
 
 ## Validation status
 

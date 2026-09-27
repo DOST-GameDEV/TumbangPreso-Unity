@@ -34,6 +34,13 @@ the first ultimate could load, parse and sort its table on the action path. Only
 loading order changes; no authored timing, visuals or gameplay rules change. This
 small follow-up is source-reviewed, not an additional player timing measurement.
 
+The shared flipbook loader also prepares its existing 12 texture sheets during
+loading, one per frame, and reuses successful texture references on effect creation.
+The catalogue is about 7.15 MiB of raw RGBA pixels; no geometry, material ownership,
+UVs, tint, authored sheet or ability behavior changes. Missing textures still use
+the existing warning/null path. This resource-cache follow-up is source-reviewed;
+it is not a GPU-residency or measured frame-time claim.
+
 Boot now uses the shader variant count and the API's true-on-complete return value,
 instead of stopping at its first incomplete batch. It still yields between slices.
 The duplicate all-audio sweep is removed: the existing yielded folders cover all
