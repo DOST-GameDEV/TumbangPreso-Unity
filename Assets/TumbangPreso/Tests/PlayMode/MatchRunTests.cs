@@ -202,10 +202,11 @@ namespace TumbangPreso.PlayTests
                 Assert.Less(m.transform.position.y, 5.0f,
                     $"{m.name} is airborne a second in: an impulse or the ground is wrong");
 
-                float reach = Mathf.Max(Mathf.Abs(m.transform.position.x),
-                                        Mathf.Abs(m.transform.position.z));
-                Assert.Less(reach, AIController.PlayableHalfZ + 5.0f,
-                    $"{m.name} left the world entirely");
+                // ⚠️ FIVE METRES PAST ANY WALL, ON ITS OWN SIDE, since the walls went per side
+                // (2026-09-27). The old test measured both axes against the half depth; bodies
+                // are clamped per axis, so this is the same claim with each wall in its place.
+                Assert.IsFalse(AIController.IsOutsidePlayable(m.transform.position, 5.0f),
+                    $"{m.name} left the world entirely at {m.transform.position}");
             }
         }
 

@@ -236,8 +236,7 @@ namespace TumbangPreso.Abilities
                 float step = Mathf.Min(left, speed * dt);
                 Vector3 dir = BlowDirection(Origin, Forward, shoe.transform.position);
                 Vector3 wanted = shoe.transform.position + dir * step;
-                wanted.x = Mathf.Clamp(wanted.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-                wanted.z = Mathf.Clamp(wanted.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+                wanted = AIController.ClampToPlayable(wanted);
                 Vector3 delta = wanted - shoe.transform.position;
                 float moved = shoe.HostSweepLoose(delta);
                 float remaining = moved < delta.magnitude - 0.01f ? 0.0f : left - moved;

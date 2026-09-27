@@ -64,11 +64,17 @@ namespace TumbangPreso.PlayTests
                     }
                     Physics.SyncTransforms();
                     var nodes = new Dictionary<Vector2Int, Vector3>();
-                    float hx = AIController.PlayableHalfX, hz = AIController.PlayableHalfZ;
-                    int ixMax = Mathf.FloorToInt((hx - cc.radius - .1f) / Step);
-                    int izMax = Mathf.FloorToInt((hz - cc.radius - .1f) / Step);
-                    for (int x = -ixMax; x <= ixMax; x++)
-                    for (int z = -izMax; z <= izMax; z++)
+                    // ⚠️ PER SIDE since 2026-09-27: the grid runs from each wall to the other, so
+                    // an asymmetric arena's far side is sampled. On a symmetric arena ixMin is
+                    // exactly -ixMax, the old grid.
+                    float loX = AIController.PlayableMinX, hiX = AIController.PlayableMaxX;
+                    float loZ = AIController.PlayableMinZ, hiZ = AIController.PlayableMaxZ;
+                    int ixMin = Mathf.CeilToInt((loX + cc.radius + .1f) / Step);
+                    int ixMax = Mathf.FloorToInt((hiX - cc.radius - .1f) / Step);
+                    int izMin = Mathf.CeilToInt((loZ + cc.radius + .1f) / Step);
+                    int izMax = Mathf.FloorToInt((hiZ - cc.radius - .1f) / Step);
+                    for (int x = ixMin; x <= ixMax; x++)
+                    for (int z = izMin; z <= izMax; z++)
                     {
                         if (!Floor(new Vector2(x * Step, z * Step), out var feet)) continue;
                         if(map==SceneFlow.SaBubong&&RooftopRecovery.OutsideDeck(feet))continue;
@@ -84,8 +90,8 @@ namespace TumbangPreso.PlayTests
                     var connected = parents.Keys.ToArray();
                     var samples = new List<Vector3>();
                     var bad = new List<string>();
-                    for (float x = -hx + Balance.SlipperHitRadius + .03f; x < hx - Balance.SlipperHitRadius; x += Step)
-                    for (float z = -hz + Balance.SlipperHitRadius + .03f; z < hz - Balance.SlipperHitRadius; z += Step)
+                    for (float x = loX + Balance.SlipperHitRadius + .03f; x < hiX - Balance.SlipperHitRadius; x += Step)
+                    for (float z = loZ + Balance.SlipperHitRadius + .03f; z < hiZ - Balance.SlipperHitRadius; z += Step)
                     {
                         if (!Floor(new Vector2(x, z), out var floor)) continue;
                         // Only off-roof stock incurs a delay. Accessible water is
@@ -123,7 +129,7 @@ namespace TumbangPreso.PlayTests
                         var b = collider.bounds;
                         string path = PathOf(collider.transform);
                         bool table=path.Contains("Resident table");
-                        if ((!table&&b.size.y < 1) || b.size.x > 7 || b.size.z > 7 || Mathf.Abs(b.center.x) >= hx || Mathf.Abs(b.center.z) >= hz) continue;
+                        if ((!table&&b.size.y < 1) || b.size.x > 7 || b.size.z > 7 || b.center.x <= loX || b.center.x >= hiX || b.center.z <= loZ || b.center.z >= hiZ) continue;
                         string kind = path.Contains("Vendor_") ? path.Split('/').First(p=>p.StartsWith("Vendor_")) :
                             path.Contains("SidewalkPole_") ? "utility pole" :
                             path.Contains("Broadleaf") ? "tree trunk" : path.Contains("Pillar") ? "guideway pillar" :

@@ -79,7 +79,7 @@ namespace TumbangPreso.Diagnostics
             {
                 _staged=true;_who.transform.rotation=Quaternion.Euler(0,90,0);
                 _who.Teleport(new Vector3(RooftopRecovery.HalfX-1.2f,.1f,0));
-                Debug.Log($"[RoofProbe] stage scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().name} bounds={AIController.PlayableHalfX}/{AIController.PlayableHalfZ} at={_who.transform.position}");
+                Debug.Log($"[RoofProbe] stage scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().name} bounds=x[{AIController.PlayableMinX},{AIController.PlayableMaxX}] z[{AIController.PlayableMinZ},{AIController.PlayableMaxZ}] at={_who.transform.position}");
             }
             if(NetAuthority.LocalSlot==1)
             {

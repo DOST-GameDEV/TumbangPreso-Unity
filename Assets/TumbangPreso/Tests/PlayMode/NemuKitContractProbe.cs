@@ -745,7 +745,9 @@ namespace TumbangPreso.PlayTests
             var blocked=GhostPetMotion.Move(_who,from,Vector3.right*5);
             Assert.Less(blocked.x,1.7f,"The familiar passed through a body-blocking wall.");
             var beyond=GhostPetMotion.ClampToCourt(_who,new Vector3(1000,1,1000));
-            Assert.LessOrEqual(beyond.x,AIController.PlayableHalfX);Assert.LessOrEqual(beyond.z,AIController.PlayableHalfZ);
+            Assert.LessOrEqual(beyond.x,AIController.PlayableMaxX);Assert.LessOrEqual(beyond.z,AIController.PlayableMaxZ);
+            var below=GhostPetMotion.ClampToCourt(_who,new Vector3(-1000,1,-1000));
+            Assert.GreaterOrEqual(below.x,AIController.PlayableMinX);Assert.GreaterOrEqual(below.z,AIController.PlayableMinZ);
             var landing=GhostPetMotion.Recall(_who,wall.transform.position,_who.transform.position);
             Assert.IsTrue(GhostPetMotion.CanLand(_who,landing),"Recall selected a solid obstruction.");
             var method=typeof(CameraSystem.CameraRig).GetMethod("ConstrainCompanionCamera",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);

@@ -86,8 +86,7 @@ namespace TumbangPreso.Abilities
                 ctx.Motor.BeginCarry(_dir * AmihanRules.QuickDashSpeed, AmihanRules.QuickDashHoldSeconds);
 
                 Vector3 end = _start + _dir * AmihanRules.QuickDashDistance;
-                end.x = Mathf.Clamp(end.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-                end.z = Mathf.Clamp(end.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+                end = AIController.ClampToPlayable(end);
                 AmihanDashWake.Build(_start, end);
                 ctx.Motor.GetComponentInChildren<CharacterSquashStretch>()?.Stretch(0.18f);
             }

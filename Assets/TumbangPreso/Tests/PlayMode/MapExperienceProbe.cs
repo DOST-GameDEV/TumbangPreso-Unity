@@ -181,7 +181,6 @@ namespace TumbangPreso.PlayTests
                     rig.Follow(who); rig.SetAimSource(AimSource.Mouse);
                     Assert.AreEqual(CameraMode.Fpp, rig.Mode);
                     Assert.AreSame(rig.Camera, Camera.main);
-                    float halfX = AIController.PlayableHalfX, halfZ = AIController.PlayableHalfZ;
                     // Eight directions: view into the court, then turn to review
                     // the nearby street/civic/guideway edge from the same legal spot.
                     var stations = new[] { new Vector3(0, 0, 8.8f), new Vector3(-7.2f, 0, 0),
@@ -189,8 +188,8 @@ namespace TumbangPreso.PlayTests
                     for (int station = 0; station < stations.Length; station++)
                     {
                         var at = stations[station];
-                        Assert.Less(Mathf.Abs(at.x) + .4f, halfX);
-                        Assert.Less(Mathf.Abs(at.z) + .4f, halfZ);
+                        // Each station 0.4 m inside the wall on its own side (per side since 2026-09-27).
+                        Assert.IsFalse(AIController.IsOutsidePlayable(at, -0.4f), $"station {at} is not 0.4 m inside the walls");
                         at.y = Slipper.GroundY(at);
                         who.Teleport(at);
                         yield return new WaitForFixedUpdate();

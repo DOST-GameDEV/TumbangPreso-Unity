@@ -436,15 +436,33 @@ namespace TumbangPreso.EditorTools.MapKit
             var trigger = kill.gameObject.AddComponent<BoxCollider>();
             trigger.isTrigger = true;
             trigger.size = new Vector3(KillPlane.PlaneExtent, KillPlane.PlaneThickness, KillPlane.PlaneExtent);
+            // ⚠️⚠️ THE WALLS ARE ASYMMETRIC ON PURPOSE (owner, 2026-09-27: "are you able to fan out
+            // the bounds so players can also somewhat reach the water at the shore"). The land side
+            // (-Z, the massif) keeps Bayan Plaza's face at 13; the sea side (+Z) goes out to 24 so the
+            // shore is reachable; the sides go to 16. He chose per-side bounds over one bigger
+            // symmetric box, which would also have pushed the land wall into the massif. This needs
+            // the per-side clamp (`AIController.PlayableMinX` and its siblings): the old per-axis
+            // minimum would have measured the sea wall at 13 too. `g.half` from the layout JSON is
+            // no longer read here for that reason.
+            //
+            // Every wall is 1 m thick and 12 m tall with its INWARD FACE on the number below
+            // (`MatchInstaller.WallFace` measures the face, not the centre). The X walls run the
+            // whole depth from the land wall to the sea wall plus a metre each end, and the Z walls
+            // the whole width, so the corners close.
+            const float landZ = -13f, seaZ = 24f, sideX = 16f, thick = 1f, tall = 12f;
             var bounds = Group(root, "Bounds");
-            float half = g.half > 0 ? g.half : 13f;
             foreach (float side in new[] { -1f, 1f })
             {
                 var x = Group(bounds, "Limit X " + side).gameObject.AddComponent<BoxCollider>();
-                x.center = new Vector3(side * (half + 0.5f), g.walk + 6, 0); x.size = new Vector3(1, 12, 2 * half + 2);
-                var z = Group(bounds, "Limit Z " + side).gameObject.AddComponent<BoxCollider>();
-                z.center = new Vector3(0, g.walk + 6, side * (half + 0.5f)); z.size = new Vector3(2 * half + 2, 12, 1);
+                x.center = new Vector3(side * (sideX + thick * 0.5f), g.walk + tall * 0.5f, (landZ + seaZ) * 0.5f);
+                x.size = new Vector3(thick, tall, seaZ - landZ + 2f * thick);
             }
+            var land = Group(bounds, "Limit Z -1 (land)").gameObject.AddComponent<BoxCollider>();
+            land.center = new Vector3(0, g.walk + tall * 0.5f, landZ - thick * 0.5f);
+            land.size = new Vector3(2f * sideX + 2f * thick, tall, thick);
+            var sea = Group(bounds, "Limit Z 1 (sea)").gameObject.AddComponent<BoxCollider>();
+            sea.center = new Vector3(0, g.walk + tall * 0.5f, seaZ + thick * 0.5f);
+            sea.size = new Vector3(2f * sideX + 2f * thick, tall, thick);
             // Chalk 6 mm above the court floor (the pocket is flat at walk).
             float y = g.walk + 0.006f;
             string chalkPath = Root + "/Materials/court_chalk.mat";
@@ -628,7 +646,7 @@ namespace TumbangPreso.EditorTools.MapKit
             // just left of the landmark rock over open water, and its glitter path runs across the
             // bay toward the players.
             var look = WorldLookProfile.Current.Find("LagoonCove");
-            float elevation = (look != null && look.SunElevation > 0 ? look.SunElevation : 12f) * Mathf.Deg2Rad;
+            float elevation = (look != null && look.SunElevation > 0 ? look.SunElevation : 6f) * Mathf.Deg2Rad;
             var toSun = new Vector3(Mathf.Cos(elevation) * -0.30f, Mathf.Sin(elevation), Mathf.Cos(elevation) * 0.954f).normalized;
             sun.transform.rotation = Quaternion.LookRotation(-toSun, Vector3.up);
             if (look != null) { sun.color = look.Sun; sun.intensity = look.SunIntensity; sun.shadowStrength = look.ShadowStrength; }
@@ -648,6 +666,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 // A visible setting sun (owner: "theres no actual sun visible, i want to add that"):
                 // NeighbourhoodSky's opt-in disc, 2.6 degrees across, with a warm halo.
                 sky.SetFloat("_SunDisc", .055f); sky.SetFloat("_SunHalo", 1f);
+                sky.SetFloat("_SunClear", .45f);   // owner: "get rid of that cloud blocking the sun"
                 EditorUtility.SetDirty(sky);
             }
         }

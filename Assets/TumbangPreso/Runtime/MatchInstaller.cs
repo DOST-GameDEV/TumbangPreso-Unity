@@ -224,7 +224,7 @@ namespace TumbangPreso
         /// ⚠️⚠️ THE FACE, NOT THE CENTRE, AND READING THE CENTRE IS HALF OF WHY BODIES LEFT THE
         /// MAP. The old measurement took `col.transform.position + col.center`, which is the
         /// middle of the wall, so every limit was too generous by half that wall's thickness.
-        /// `AIController.PlayableHalfX`'s own note says in capitals that it is THE WALL FACES;
+        /// `AIController.PlayableMinX`'s own note says in capitals that it is THE WALL FACES;
         /// the code under it had been measuring centres, and a doc and a number that disagree is
         /// the shape of fault this repo's rules exist to stop.
         ///
@@ -270,8 +270,22 @@ namespace TumbangPreso
         public static float WallTop(Bounds box) => box.center.y + box.extents.y;
 
         public static float WallFace(Bounds box, out bool constrainsX)
+            => WallFace(box, out constrainsX, out _);
+
+        /// <summary>
+        /// <see cref="WallFace(Bounds, out bool)"/>, and which SIDE of the arena the wall stands
+        /// on: +1 when its centre is on the positive side of the axis it walls off, -1 when it is
+        /// on the negative side.
+        ///
+        /// ⚠️ THE SIDE IS THE SIGN OF THE CENTRE, which is the same centre the face is measured
+        /// from, so a wall can never be counted on one side and measured against the other. A
+        /// wall whose centre sits within 1.0 m of the middle is already refused as an obstacle
+        /// rather than an edge, so the sign is never read off a centre near zero.
+        /// </summary>
+        public static float WallFace(Bounds box, out bool constrainsX, out float side)
         {
             constrainsX = box.extents.x < box.extents.z;
+            side = 0.0f;
 
             // A kerb, a pavement and the ground plate are all thin across one axis. Only a wall
             // is also tall. See MinimumWallHalfHeight.
@@ -281,12 +295,94 @@ namespace TumbangPreso
             float extent = constrainsX ? box.extents.x : box.extents.z;
             float face = Mathf.Abs(centre) - extent;
 
-            return face > 1.0f ? face : -1.0f;
+            // Written as the old `face > 1.0f` test negated, so a NaN is refused as it was.
+            if (!(face > 1.0f)) return -1.0f;
+
+            side = centre > 0.0f ? 1.0f : -1.0f;
+            return face;
         }
 
         /// <summary>
-        /// Measures the arena the round is about to be played in, and writes the one pair of
-        /// numbers that clamps every body and every tsinelas in it.
+        /// The four wall faces and the ceiling, measured from a set of wall boxes. Pure, so a
+        /// test can hand it geometry it owns; <see cref="MeasurePlayableBounds"/> hands it the
+        /// scene's.
+        ///
+        /// ⚠️⚠️ THE TIGHTEST WALL ON EACH SIDE, NOT ON EACH AXIS (2026-09-27). The minimum used
+        /// to be taken over both sides of an axis at once, because the clamp was symmetric and
+        /// the tighter side was the only one safe on both. The clamp is per side now, so each
+        /// side keeps its own nearest wall: a far sea wall at z = +24 no longer shrinks to the
+        /// land wall's 13, and it still cannot leak past the land wall either. Within one side it
+        /// is still the minimum, for the reason below: two boxes on the same side mean the inner
+        /// one is the wall a body meets first.
+        ///
+        /// ⚠️ A SIDE WITH NO WALL MIRRORS THE OPPOSITE SIDE, AND AN AXIS WITH NEITHER KEEPS THE
+        /// DEFAULT. The mirror is exactly what the symmetric measurement did with a map that
+        /// walled one side only (the one face it found was applied to both), so such a map
+        /// measures the same as it always did rather than acquiring an open side. An infinity
+        /// would clamp nothing at all.
+        /// </summary>
+        public static void MeasureWalls(System.Collections.Generic.IEnumerable<Bounds> boxes,
+                                        out float minX, out float maxX,
+                                        out float minZ, out float maxZ,
+                                        out float ceiling)
+        {
+            // Each is the DISTANCE from the centre spot to the nearest wall on that side.
+            float negX = float.PositiveInfinity, posX = float.PositiveInfinity;
+            float negZ = float.PositiveInfinity, posZ = float.PositiveInfinity;
+            float top = float.PositiveInfinity;
+
+            if (boxes != null)
+            {
+                foreach (var box in boxes)
+                {
+                    float face = WallFace(box, out bool constrainsX, out float side);
+                    if (face < 0.0f) continue;
+
+                    if (constrainsX)
+                    {
+                        if (side > 0.0f) posX = Mathf.Min(posX, face);
+                        else negX = Mathf.Min(negX, face);
+                    }
+                    else
+                    {
+                        if (side > 0.0f) posZ = Mathf.Min(posZ, face);
+                        else negZ = Mathf.Min(negZ, face);
+                    }
+
+                    // ⚠️ THE LOWEST WALL TOP, because that is the one a tsinelas can be thrown
+                    // over. A ceiling set from the tallest would leave the shortest side open,
+                    // which is the only side anybody would find.
+                    top = Mathf.Min(top, WallTop(box));
+                }
+            }
+
+            ResolveAxis(negX, posX, DefaultHalfX, out minX, out maxX);
+            ResolveAxis(negZ, posZ, DefaultHalfZ, out minZ, out maxZ);
+
+            // ⚠️⚠️ THE ARENA HAS A LID NOW, AND IT DID NOT. 🧑 2026-08-29: *"make sure theres
+            // invisible bounds in the sky as well as those walls that return the slippers or make
+            // them bounce"*. `BounceOffBounds` walled X and Z and left Y open, so a tsinelas
+            // thrown hard and high went straight over the top of a 6 m wall and came down outside
+            // the arena, where the resting clamp then dragged it back to a wall it had never
+            // touched. A shoe that leaves the map is an attacker deleted from the round, which is
+            // the same cost the resting clamp's own note describes at length.
+            ceiling = float.IsInfinity(top) ? DefaultCeilingY : Mathf.Max(top, MinimumCeilingY);
+        }
+
+        /// <summary>One axis's two limits from its two measured distances. See MeasureWalls.</summary>
+        private static void ResolveAxis(float neg, float pos, float fallback, out float min, out float max)
+        {
+            if (float.IsInfinity(neg) && float.IsInfinity(pos)) { neg = fallback; pos = fallback; }
+            else if (float.IsInfinity(neg)) neg = pos;
+            else if (float.IsInfinity(pos)) pos = neg;
+
+            min = -neg;
+            max = pos;
+        }
+
+        /// <summary>
+        /// Measures the arena the round is about to be played in, and writes the four wall faces
+        /// that clamp every body and every tsinelas in it.
         ///
         /// ⚠️⚠️ THE TIGHTEST WALL, NOT THE FARTHEST, AND THE OLD `Mathf.Max` IS THE OTHER HALF OF
         /// 🧑 2026-08-29's *"out of bounds sa ilalim ng tulay map"*. Seeding with Eskinita's 8.6
@@ -299,55 +395,35 @@ namespace TumbangPreso
         /// ⚠️ AND THE MAXIMUM WAS WRONG ON ITS OWN TERMS EVEN WITHOUT THE SEED. Taking the
         /// farthest wall on an axis applies the far side's distance to BOTH sides, so any arena
         /// that is not symmetric lets a body through the near wall by the difference. The minimum
-        /// is the only answer that is safe on both sides of a symmetric clamp, and the clamp is
-        /// symmetric everywhere it is read: `CharacterMotor` twice, `AIController.ClampToPlayable`
-        /// and `Slipper.BounceOffBounds`.
+        /// was the only answer safe on both sides of a SYMMETRIC clamp.
         ///
-        /// ⚠️ ONE NUMBER FOR PEOPLE, BOTS AND TSINELAS, which is what makes 🧑's *"make sure it
-        /// doesnt go past the bounds humans are allowed to go"* true by construction rather than
-        /// by three clamps being kept in step. There is no second bound to forget.
+        /// ⚠️⚠️ SINCE 2026-09-27 THE CLAMP IS PER SIDE, so the minimum is taken per side and the
+        /// far side keeps its room (🧑, Lagoon Cove: *"are you able to fan out the bounds so
+        /// players can also somewhat reach the water at the shore"*). The arithmetic lives in
+        /// <see cref="MeasureWalls"/>; on a symmetric arena it writes exactly -half and +half,
+        /// which is the old pair to the bit.
+        ///
+        /// ⚠️ ONE SET OF NUMBERS FOR PEOPLE, BOTS AND TSINELAS, which is what makes 🧑's *"make
+        /// sure it doesnt go past the bounds humans are allowed to go"* true by construction
+        /// rather than by three clamps being kept in step. There is no second bound to forget.
         /// </summary>
         public static void MeasurePlayableBounds()
         {
-            var bounds = GameObject.Find("Bounds");
+            var node = GameObject.Find("Bounds");
+            var boxes = new System.Collections.Generic.List<Bounds>();
 
-            float halfX = float.PositiveInfinity;
-            float halfZ = float.PositiveInfinity;
-            float ceiling = float.PositiveInfinity;
+            if (node != null)
+                foreach (var col in node.GetComponentsInChildren<BoxCollider>())
+                    boxes.Add(col.bounds);
 
-            if (bounds != null)
-            {
-                foreach (var col in bounds.GetComponentsInChildren<BoxCollider>())
-                {
-                    float face = WallFace(col.bounds, out bool constrainsX);
-                    if (face < 0.0f) continue;
+            MeasureWalls(boxes, out float minX, out float maxX, out float minZ, out float maxZ,
+                         out float ceiling);
 
-                    if (constrainsX) halfX = Mathf.Min(halfX, face);
-                    else halfZ = Mathf.Min(halfZ, face);
-
-                    // ⚠️ THE LOWEST WALL TOP, because that is the one a tsinelas can be thrown
-                    // over. A ceiling set from the tallest would leave the shortest side open,
-                    // which is the only side anybody would find.
-                    ceiling = Mathf.Min(ceiling, WallTop(col.bounds));
-                }
-            }
-
-            // ⚠️ A MAP THAT WALLS ONE AXIS AND NOT THE OTHER KEEPS THE DEFAULT ON THE OTHER,
-            // rather than inheriting an infinity that would clamp nothing at all. Each axis
-            // falls back on its own, because they are measured from different colliders.
-            AIController.PlayableHalfX = float.IsInfinity(halfX) ? DefaultHalfX : halfX;
-            AIController.PlayableHalfZ = float.IsInfinity(halfZ) ? DefaultHalfZ : halfZ;
-
-            // ⚠️⚠️ THE ARENA HAS A LID NOW, AND IT DID NOT. 🧑 2026-08-29: *"make sure theres
-            // invisible bounds in the sky as well as those walls that return the slippers or make
-            // them bounce"*. `BounceOffBounds` walled X and Z and left Y open, so a tsinelas
-            // thrown hard and high went straight over the top of a 6 m wall and came down outside
-            // the arena, where the resting clamp then dragged it back to a wall it had never
-            // touched. A shoe that leaves the map is an attacker deleted from the round, which is
-            // the same cost the resting clamp's own note describes at length.
-            AIController.PlayableCeilingY = float.IsInfinity(ceiling)
-                ? DefaultCeilingY
-                : Mathf.Max(ceiling, MinimumCeilingY);
+            AIController.PlayableMinX = minX;
+            AIController.PlayableMaxX = maxX;
+            AIController.PlayableMinZ = minZ;
+            AIController.PlayableMaxZ = maxZ;
+            AIController.PlayableCeilingY = ceiling;
         }
 
         private void Start()

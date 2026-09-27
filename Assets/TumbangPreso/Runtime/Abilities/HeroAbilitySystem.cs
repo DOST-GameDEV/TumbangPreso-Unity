@@ -1336,8 +1336,7 @@ namespace TumbangPreso.Abilities
 
             if (!ability.HoldToAim) return at;
 
-            at.x = Mathf.Clamp(at.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-            at.z = Mathf.Clamp(at.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            at = AIController.ClampToPlayable(at);
             return at;
         }
 

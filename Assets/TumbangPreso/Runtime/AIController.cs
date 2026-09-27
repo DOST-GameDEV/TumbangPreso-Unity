@@ -2873,27 +2873,82 @@ namespace TumbangPreso
 
         // -------------------------------------------------------------------
 
-        private Vector3 ClampToPlayable(Vector3 goal)
-        {
-            float halfX = PlayableHalfX, halfZ = PlayableHalfZ;
-            goal.x = Mathf.Clamp(goal.x, -halfX, halfX);
-            goal.z = Mathf.Clamp(goal.z, -halfZ, halfZ);
-            return goal;
-        }
-
         /// <summary>
-        /// The WALL FACES, measured off the map's Bounds colliders at load. These defaults are
-        /// Eskinita's house facades.
+        /// The WALL FACES, one per side, measured off the map's Bounds colliders at load by
+        /// `MatchInstaller.MeasurePlayableBounds`. These defaults are Eskinita's house facades.
         ///
         /// ⚠️ THIS IS THE WALL, NOT THE RING. The standoff ring sits at
         /// ConfinementRadius + ThrowStandoff = 8.2, and the wall is at 8.6; confusing the two
         /// makes the clamp reject the very positions it exists to permit. The limit to
         /// remember when growing the box is
-        /// ConfinementRadius + ThrowStandoff + a capsule &lt;= wall face, and two of those
-        /// three numbers live in files the radius does not.
+        /// ConfinementRadius + ThrowStandoff + a capsule &lt;= the NEAREST wall face, and two of
+        /// those three numbers live in files the radius does not.
+        ///
+        /// ⚠️⚠️ FOUR SIDES, NOT TWO HALF EXTENTS (2026-09-27). This was one symmetric pair,
+        /// `PlayableHalfX` and `PlayableHalfZ`, clamped as -half..half and measured as the
+        /// TIGHTER wall on each axis. That is the only safe answer for a symmetric clamp, and it
+        /// made an asymmetric arena impossible: 🧑 asked of Lagoon Cove *"are you able to fan out
+        /// the bounds so players can also somewhat reach the water at the shore"*, whose sea wall
+        /// is 24 m out against a land wall at 13, and the old arithmetic would have walled the sea
+        /// side at 13 too. Each side is now its own wall, so a far wall no longer leaks through
+        /// the near one and a near wall no longer pulls in the far one.
+        ///
+        /// ⚠️ EVERY SHIPPED ARENA IS SYMMETRIC, AND FOR THEM NOTHING MOVED BY A BIT. Min is
+        /// exactly -Max there (the scenes mirror their walls, and IEEE negation is exact), so
+        /// `Mathf.Clamp(v, Min, Max)` is the old `Mathf.Clamp(v, -half, half)` on the same
+        /// operands, and every inset (`Min + a`, `Max - a`) is the old `-half + a`, `half - a`.
+        ///
+        /// ⚠️ CLAMP THROUGH THE HELPERS BELOW rather than writing the pair out again. Twenty-odd
+        /// call sites each spelled out the symmetric clamp, which is why changing its shape
+        /// touched twenty-five files.
         /// </summary>
-        public static float PlayableHalfX = 8.6f;
-        public static float PlayableHalfZ = 13.0f;
+        public static float PlayableMinX = -8.6f;
+        public static float PlayableMaxX = 8.6f;
+        public static float PlayableMinZ = -13.0f;
+        public static float PlayableMaxZ = 13.0f;
+
+        /// <summary>
+        /// The distance from the centre spot to the NEAREST wall on each axis, which is the only
+        /// half extent that still means anything: the room the rules have on every side.
+        ///
+        /// ⚠️ FOR CHECKS AND PROBES THAT ASK "DOES THE RING FIT", NEVER FOR A CLAMP. Clamping to
+        /// -nearest..nearest is the old symmetric box and throws away the far side's room.
+        /// </summary>
+        public static float PlayableNearestX => Mathf.Min(-PlayableMinX, PlayableMaxX);
+        public static float PlayableNearestZ => Mathf.Min(-PlayableMinZ, PlayableMaxZ);
+
+        /// <summary>
+        /// One coordinate held between its two walls, pulled in by <paramref name="inset"/> on
+        /// both sides. A positive inset is a margin inside the wall (a vine anchor 0.4 m off it);
+        /// a negative one is a margin outside it (the spectator camera's 1.5 m).
+        /// </summary>
+        public static float ClampPlayableX(float x, float inset = 0.0f)
+            => Mathf.Clamp(x, PlayableMinX + inset, PlayableMaxX - inset);
+
+        public static float ClampPlayableZ(float z, float inset = 0.0f)
+            => Mathf.Clamp(z, PlayableMinZ + inset, PlayableMaxZ - inset);
+
+        /// <summary>
+        /// A point held inside the walls on X and Z, Y untouched. The one clamp bodies, bot
+        /// goals, ability targets and tsinelas all share.
+        /// </summary>
+        public static Vector3 ClampToPlayable(Vector3 p, float inset = 0.0f)
+        {
+            p.x = ClampPlayableX(p.x, inset);
+            p.z = ClampPlayableZ(p.z, inset);
+            return p;
+        }
+
+        /// <summary>
+        /// True when a point is more than <paramref name="slack"/> past any wall on X or Z.
+        ///
+        /// ⚠️ WRITTEN AS FOUR ONE-SIDED TESTS, `x &lt; Min - slack` and `x &gt; Max + slack`,
+        /// because that is bit for bit the old `Mathf.Abs(x) &gt; half + slack` on a symmetric
+        /// arena: `-half - slack` is exactly `-(half + slack)`.
+        /// </summary>
+        public static bool IsOutsidePlayable(Vector3 p, float slack = 0.0f)
+            => p.x < PlayableMinX - slack || p.x > PlayableMaxX + slack
+            || p.z < PlayableMinZ - slack || p.z > PlayableMaxZ + slack;
 
         /// <summary>
         /// The lowest wall top, which is the height a tsinelas may not be thrown over.
