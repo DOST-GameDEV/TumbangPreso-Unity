@@ -46,6 +46,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class KapitBaging : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private CharacterMotor _caster;
             private Vector3 _anchor;
             private float _elapsed;
@@ -115,9 +116,9 @@ namespace TumbangPreso.Abilities
 
         private sealed class PunlangTsinelas : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             // The seedling is a world object: the owner waits for the host before planting it, as
             // Cheska's barricade and Amihan's gale do.
-            public override bool DefersPredictedEffect => true;
 
             public PunlangTsinelas()
                 : base("paete_skill2", "BAKYA BLOOM",
@@ -198,7 +199,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Bawi : HeroAbility
         {
-            public override bool DefersPredictedEffect => true;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
 
             public Bawi()
                 : base("paete_skill2d", "THORN HARVEST",
@@ -233,6 +234,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class YakapNgMakiling : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             public YakapNgMakiling()
                 : base("paete_ultimate", "MAKILING'S EMBRACE",
                        "Place a guardian tree. It pulls everyone within 9 m into roots; they can still throw. Hold Interact for 7 s to escape.",

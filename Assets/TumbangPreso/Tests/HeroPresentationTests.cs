@@ -480,6 +480,7 @@ namespace TumbangPreso.Tests
         /// </summary>
         private sealed class ProbeAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             public ProbeAbility(float cooldown)
                 : base("probe", "PROBE", "A stand-in.", cooldown, 0.0f, AbilityGlyph.Burst)
             {

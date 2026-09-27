@@ -59,6 +59,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class ShadowPhaseBlinkAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             /// <summary>Nearest she can put herself. Under a body length is not an escape.</summary>
             private const float MinRange = 2.0f;
 
@@ -268,7 +269,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class CurseDisoriented : HeroAbility
         {
-            public override bool DefersPredictedEffect => true;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
 
             public CurseDisoriented()
                 : base("phaister_skill2", "MANIKA MISCHIEF",
@@ -299,6 +300,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class CurseVulnerable : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             public CurseVulnerable()
                 : base("phaister_skill2d", "SPOTLIGHT PIN",
                        "Defending. Stab a hat pin: attackers in front are lit by moonlight and Vulnerable 5 s. Tag them from afar or outside the box.",
@@ -334,6 +336,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Higop : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             private GameObject _hole;
             private Vector3 _centre;
 

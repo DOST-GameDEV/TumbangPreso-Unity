@@ -46,9 +46,9 @@ namespace TumbangPreso.Abilities
         public float Cooldown { get; protected set; }
         public float Duration { get; protected set; }
 
-        // Instant world effects can opt out of local prediction without delaying
-        // their input, resource feedback or cast animation.
-        public virtual bool DefersPredictedEffect => false;
+        // Every new ability must choose its delivery path; no silent client-only default.
+        public abstract AbilityNetworkMode NetworkMode { get; }
+        public bool DefersPredictedEffect => NetworkMode == AbilityNetworkMode.HostConfirmed;
 
         public void ApplyConfirmedEffect(AbilityContext ctx, float heldSeconds)
         {
@@ -836,6 +836,10 @@ namespace TumbangPreso.Abilities
                 OnActivate(committed);
                 return;
             }
+
+            // A deferred effect has not been initialized yet. Its cooldown is spent,
+            // but ticking its live state now can destroy a grant before confirmation.
+            if (DefersPredictedEffect && ctx?.Motor?.AbilitySystem?.AwaitingSkillEffect(this) == true) return;
 
             if (DurationRemaining > 0.0f)
             {

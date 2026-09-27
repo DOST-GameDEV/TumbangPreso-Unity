@@ -23,13 +23,19 @@ namespace TumbangPreso.Abilities
     /// may be immune to (the status table). `IsDemonicCarapaceActive` keeps its name because the wire's
     /// restore path and the ability system read it.
     /// </summary>
-    public sealed class DanteHeroKit : HeroKit
+    public sealed class DanteHeroKit : HeroKit, ITimedKitReplication
     {
         public const float StompContactSeconds = .30f;
 
         /// <summary>True while SHIELD holds: every status but Tagged is refused.</summary>
         public bool IsDemonicCarapaceActive => Skill1 != null && Skill1.IsActive;
         private bool _joiningCarapaceSettled;
+
+        public TimedKitSnapshot CaptureTimedKit()
+            => new TimedKitSnapshot(Skill1, IsDemonicCarapaceActive ? Skill1.DurationRemaining : 0);
+
+        public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
+            => RestoreJoiningCarapace(motor, state.PersonalRemaining);
 
         public bool RestoreJoiningCarapace(CharacterMotor motor, float remaining)
         {
@@ -54,6 +60,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Shield : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly DanteHeroKit _kit;
             private DanteCarapaceVisual _ward;
 
@@ -101,7 +108,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Boulder : HeroAbility
         {
-            public override bool DefersPredictedEffect => true;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
 
             public Boulder()
                 : base("dante_skill2", "BOULDER",
@@ -131,6 +138,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Barrier : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private GameObject _field;
             private CharacterMotor _owner;
 
@@ -176,6 +184,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Earthquake : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             public Earthquake()
                 : base("dante_ultimate", "EARTHQUAKE",
                        "Stamp and the whole court heaves. Every other player is Concussed: slower, no sprint, wobbly aim.",

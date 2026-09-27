@@ -21,6 +21,70 @@ namespace TumbangPreso.Tests
     /// </summary>
     public sealed class InputMapAndAbilityTests
     {
+        [Test]
+        public void EveryRosterAbilityDeclaresItsNetworkDeliveryAndPassesTheBuildGate()
+        {
+            Assert.IsTrue(typeof(HeroAbility).GetProperty(nameof(HeroAbility.NetworkMode)).GetMethod.IsAbstract,
+                "A new ability must not silently inherit a default delivery mode.");
+            AbilityNetworking.ValidateRoster();
+            new EditorTools.AbilityNetworkingBuildCheck().OnPreprocessBuild(null);
+            foreach (var hero in Roster.HeroPeople)
+                foreach (var ability in HeroAbilitySystem.CreateKitFor(hero.Id).AllAbilities)
+                    Assert.AreEqual(ability.NetworkMode == AbilityNetworkMode.HostConfirmed,
+                        ability.DefersPredictedEffect, ability.Id);
+        }
+
+        [TestCase(AbilityNetworkMode.Unspecified, AbilityNetworkMode.SharedUltimate)]
+        [TestCase(AbilityNetworkMode.SharedUltimate, AbilityNetworkMode.SharedUltimate)]
+        [TestCase(AbilityNetworkMode.Predicted, AbilityNetworkMode.Predicted)]
+        [TestCase((AbilityNetworkMode)99, AbilityNetworkMode.SharedUltimate)]
+        public void InvalidAbilityDeliveryCannotEnterACheckedKit(AbilityNetworkMode first, AbilityNetworkMode ultimate)
+            => Assert.Throws<System.InvalidOperationException>(() =>
+                AbilityNetworking.Validate(new NetworkingProbeKit(first, ultimate)));
+
+        private sealed class NetworkingProbeAbility : HeroAbility
+        {
+            public override AbilityNetworkMode NetworkMode { get; }
+            public NetworkingProbeAbility(string id, AbilityNetworkMode mode) : base(id, id, "", 1)
+                => NetworkMode = mode;
+        }
+
+        private sealed class NetworkingProbeKit : HeroKit
+        {
+            public NetworkingProbeKit(AbilityNetworkMode first, AbilityNetworkMode ultimate) : base("probe", "probe")
+            {
+                Skill1 = new NetworkingProbeAbility("one", first);
+                Skill2 = new NetworkingProbeAbility("two", AbilityNetworkMode.Predicted);
+                Ultimate = new NetworkingProbeAbility("ultimate", ultimate);
+            }
+        }
+
+        [Test]
+        public void TimedSnapshotsBindToTheirActualAbilitiesRatherThanTheLiveSecondSlot()
+        {
+            var dante = new DanteHeroKit();
+            var shield = dante.CaptureTimedKit();
+            Assert.AreSame(dante.Skill1, shield.PersonalAbility);
+            Assert.IsTrue(shield.TryAge(18, 0, false, .25f, out var aged));
+            Assert.AreEqual(17.75f, aged.PersonalRemaining, .001f);
+            Assert.IsFalse(shield.TryAge(21, 0, false, 0, out _));
+            Assert.IsFalse(shield.TryAge(1, 1, false, 0, out _));
+            Assert.IsFalse(shield.TryAge(1, 0, true, 0, out _));
+            Assert.IsFalse(shield.TryAge(float.NaN, 0, false, 0, out _));
+            Assert.IsFalse(shield.TryAge(1, 0, false, float.PositiveInfinity, out _));
+
+            var sean = new SeanHeroKit();
+            sean.SetRole(true, null);
+            Assert.AreSame(sean.AttackingSkill, sean.CaptureTimedKit().PersonalAbility);
+            Assert.AreNotSame(sean.Skill2, sean.CaptureTimedKit().PersonalAbility);
+            var zack = new ZackHeroKit();
+            zack.SetRole(true, null);
+            var magnet = zack.CaptureTimedKit();
+            Assert.AreSame(zack.AttackingSkill, magnet.PersonalAbility);
+            Assert.AreSame(zack.Ultimate, magnet.UltimateAbility);
+            Assert.IsTrue(magnet.TryAge(1, 0, true, 0, out _));
+        }
+
         private static InputActionAsset LoadActions()
         {
             var asset = Resources.Load<InputActionAsset>("TumbangPreso");
@@ -537,6 +601,7 @@ namespace TumbangPreso.Tests
         /// </summary>
         private sealed class ProbeAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             public bool EndRan;
 
             public ProbeAbility() : base("probe", "PROBE", "A stand-in.", 5.0f, 3.0f,

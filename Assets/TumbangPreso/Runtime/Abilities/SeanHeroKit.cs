@@ -8,10 +8,16 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
-    public sealed class SeanHeroKit : HeroKit
+    public sealed class SeanHeroKit : HeroKit, ITimedKitReplication
     {
         public bool IsIgnitionCannonActive { get; set; }
         private bool _joinChargeStateSettled;
+        public TimedKitSnapshot CaptureTimedKit()
+            => new TimedKitSnapshot(AttackingSkill, IsIgnitionCannonActive ? AttackingSkill.DurationRemaining : 0);
+
+        public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
+            => RestoreJoiningIgnition(motor, state.PersonalRemaining);
+
         public HeroMovementState CaptureMovementState()=>((RocketBurnDashAbility)Skill1).CaptureMovement();
         public bool RestoreJoiningMovement(CharacterMotor motor,HeroMovementState state,float age)
             => motor!=null && ((RocketBurnDashAbility)Skill1).RestoreMovement(
@@ -67,6 +73,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class RocketBurnDashAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly HashSet<int> _hitSlots = new HashSet<int>();
 
             /// <summary>
@@ -314,6 +321,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class IgnitionCannonAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly SeanHeroKit _kit;
 
             public IgnitionCannonAbility(SeanHeroKit kit)
@@ -384,6 +392,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class SupernovaSmashdownAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             private float _airTimer;
             private readonly SeanHeroKit _kit;
             private float _landingAge;

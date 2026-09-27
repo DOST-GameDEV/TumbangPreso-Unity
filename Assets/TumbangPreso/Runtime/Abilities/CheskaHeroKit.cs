@@ -44,7 +44,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class ColdFeet : HeroAbility
         {
-            public override bool DefersPredictedEffect => true;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
 
             public ColdFeet()
                 : base("cheska_skill1", "COLD FEET",
@@ -75,6 +75,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Frostbite : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly CheskaHeroKit _kit;
 
             public Frostbite(CheskaHeroKit kit)
@@ -108,7 +109,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class GlacialWall : HeroAbility
         {
-            public override bool DefersPredictedEffect => true;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
 
             public GlacialWall()
                 : base("cheska_skill2d", "GLACIAL WALL",
@@ -139,6 +140,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class AbsoluteZero : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             public AbsoluteZero()
                 : base("cheska_ultimate", "ABSOLUTE ZERO",
                        "The whole street freezes. Every other player is Frozen for 2.5 s, then Chilled for 5 s as they thaw.",

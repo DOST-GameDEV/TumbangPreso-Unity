@@ -318,6 +318,7 @@ namespace TumbangPreso.Net
             PresentationMatchId = 0; _pendingMoments.Clear();
             _lastUltimateRequest.Clear(); _ultimateRequestSequence = 0;
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
+            for (int slot = 0; slot < Balance.PlayerCount; slot++) Unit(slot)?.AbilitySystem?.ResetNetworkSkillReceipts();
             ClearReplayTransfer();
 
             ClearPeerDepartureState();
@@ -1883,27 +1884,16 @@ namespace TumbangPreso.Net
                 if (fieldGeneration > 0) SendFeatherfallSnapshot(slot, peer, fieldGeneration, amihan);
                 return;
             }
-            float chargeRemaining, ultimateRemaining = 0;
-            if (kit is Abilities.SeanHeroKit sean)
-                chargeRemaining = sean.IsIgnitionCannonActive ? kit.Skill2.DurationRemaining : 0;
-            else if (kit is Abilities.ZackHeroKit zack)
-            {
-                chargeRemaining = zack.IsOverchargeThrowActive ? kit.Skill2.DurationRemaining : 0;
-                ultimateRemaining = zack.IsThunderstrikeActive ? kit.Ultimate.DurationRemaining : 0;
-            }
-            else if (kit is Abilities.DanteHeroKit dante)
-                chargeRemaining = dante.IsDemonicCarapaceActive ? kit.Skill1.DurationRemaining : 0;  // SHIELD is the signature now (ABILITY-2)
-            else if (kit is Abilities.NemuHeroKit nemu)
-                chargeRemaining = nemu.IsPhantomPhaseActive ? kit.Skill1.DurationRemaining : 0;
-            else return;
+            if (!(kit is Abilities.ITimedKitReplication replication)) return;
+            var state = replication.CaptureTimedKit();
             using var writer = new FastBufferWriter(64, Allocator.Temp);
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe(GameServices.Match.RoundNumber);
             writer.WriteValueSafe(kit.HeroId);
-            writer.WriteValueSafe(chargeRemaining);
-            writer.WriteValueSafe(ultimateRemaining);
+            writer.WriteValueSafe(state.PersonalRemaining);
+            writer.WriteValueSafe(state.UltimateRemaining);
             writer.WriteValueSafe((float)_nm.ServerTime.Time);
-            writer.WriteValueSafe(kit is Abilities.ZackHeroKit && kit.Ultimate.IsWindingUp);
+            writer.WriteValueSafe(state.UltimatePending);
             _nm.CustomMessagingManager.SendNamedMessage("TimedKit", peer, writer);
         }
 
@@ -1922,24 +1912,16 @@ namespace TumbangPreso.Net
                 ReadFeatherfallSnapshot(ref reader, slot, round, remaining, ultimateRemaining, sentAt, ultimatePending);
                 return;
             }
-            if (!ValidSlot(slot) || !Finite(remaining) || !Finite(ultimateRemaining) || !Finite(sentAt)
-                || remaining < 0 || remaining > 10.1f || ultimateRemaining < 0 || ultimateRemaining > 7.1f
-                || (ultimatePending && hero != "zack")
+            if (!ValidSlot(slot) || !Finite(sentAt)
                 || GameServices.Match == null || GameServices.Match.RoundNumber != round) return;
             var motor = Unit(slot);
             var kit = motor?.AbilitySystem?.Kit;
-            if (kit == null || kit.HeroId != hero) return;
+            if (kit == null || kit.HeroId != hero || !(kit is Abilities.ITimedKitReplication replication)) return;
             float elapsed = Mathf.Max(0, (float)_nm.ServerTime.Time - sentAt);
-            var personalSkill = kit is Abilities.NemuHeroKit ? kit.Skill1 : kit.Skill2;
-            remaining = Mathf.Clamp(remaining - elapsed, 0, personalSkill.Duration);
-            ultimateRemaining = Mathf.Max(0, ultimateRemaining - elapsed);
+            // The owning ability supplies its bound; a role/slot change cannot substitute another skill's duration.
+            if (!replication.CaptureTimedKit().TryAge(remaining, ultimateRemaining, ultimatePending, elapsed, out var state)) return;
             using (NetCue.SuppressRelay())
-            {
-                if (kit is Abilities.SeanHeroKit sean && ultimateRemaining <= 0) sean.RestoreJoiningIgnition(motor, remaining);
-                else if (kit is Abilities.ZackHeroKit zack) zack.RestoreJoiningCharges(motor, remaining, ultimateRemaining, ultimatePending);
-                else if (kit is Abilities.DanteHeroKit dante && ultimateRemaining <= 0) dante.RestoreJoiningCarapace(motor, remaining);
-                else if (kit is Abilities.NemuHeroKit nemu && ultimateRemaining <= 0) nemu.RestoreJoiningVeil(motor, remaining);
-            }
+                replication.RestoreTimedKit(motor, state);
         }
 
         private int _worldFieldGeneration, _lastWorldFieldGeneration, _worldFieldRound;
@@ -3268,7 +3250,8 @@ namespace TumbangPreso.Net
         public void RequestAbilityCastServerRpc(int claimedSlot, int abilitySlot,
                                                 Vector3 position, Vector3 forward,
                                                 Vector3 aimPoint, float heldSeconds,
-                                                bool hasFamiliar=false, Vector3 familiarPosition=default,long flightIntent=0)
+                                                bool hasFamiliar=false, Vector3 familiarPosition=default,long flightIntent=0,
+                                                bool predictedReactivation=false)
         {
             if (abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate)
             { RequestSharedUltimate(claimedSlot, position, forward, aimPoint, heldSeconds); return; }
@@ -3292,7 +3275,7 @@ namespace TumbangPreso.Net
             }
 
             PrepareSkillReceipts();long request=++_skillRequestSequence;
-            Unit(claimedSlot)?.AbilitySystem?.TrackSkillRequest(abilitySlot,request);
+            if (Unit(claimedSlot)?.AbilitySystem?.TrackSkillRequest(abilitySlot,request,predictedReactivation) != true) return;
             using var writer = new FastBufferWriter(128, Allocator.Temp);
             writer.WriteValueSafe(claimedSlot);
             writer.WriteValueSafe(abilitySlot);
@@ -3465,9 +3448,13 @@ namespace TumbangPreso.Net
                 // This owner already performed and paid for the cast. Only release
                 // the world payload/sky that deliberately awaited host acceptance.
                 var system = Unit(slot)?.AbilitySystem;
-                if(request>0&&system?.MatchesSkillRequest(abilitySlot,request)!=true)return;
-                system?.ConfirmPredictedWorldEffect((Abilities.HeroAbilitySystem.Slot)abilitySlot,
-                    position, forward, aimPoint, heldSeconds);
+                if (system == null) return;
+                var ability = (Abilities.HeroAbilitySystem.Slot)abilitySlot;
+                if (system.NeedsOwnerEffectConfirmation(ability))
+                {
+                    if (!system.ConfirmPredictedWorldEffect(ability, request, position, forward, aimPoint, heldSeconds)) return;
+                }
+                else if(request>0&&!system.MatchesSkillRequest(abilitySlot,request))return;
                 system?.ConfirmPredictedCastPresentation(
                     (Abilities.HeroAbilitySystem.Slot)abilitySlot);
                 return;
@@ -3579,7 +3566,8 @@ namespace TumbangPreso.Net
 
             var unit=Unit(slot);
             if(unit?.AbilitySystem?.PendingSkillReceipt(abilitySlot,request)!=true)return;
-            if(unit!=null && unit.RefuseAbilityTeleport(abilitySlot) && epoch>=unit.MovementEpoch)
+            if(unit!=null && unit.AbilitySystem.MatchesSkillRequest(abilitySlot,request)
+                && unit.RefuseAbilityTeleport(abilitySlot) && epoch>=unit.MovementEpoch)
             {
                 unit.AdoptMovementEpoch(epoch);
                 unit.ApplyNetworkTransform(position,unit.transform.eulerAngles.y,Vector3.zero,true,false,true);

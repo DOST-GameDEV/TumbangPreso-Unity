@@ -2,12 +2,40 @@
 
 ## Current networking and flow work, 2026-09-27
 
+Newest order: finish network correctness/presentation first, then optimization
+and actual work-driven loading-screen readiness. Do not treat hardcoded stage
+timing as asset/scene/shader initialization completion.
+
+Current receipt fix separates accepted effect delivery from latest-slot resource
+receipts. Pending initial effects wait before ticking/recasting; confirmations
+are exactly-once per tracked request. Paete command confirmation does not replant,
+and command denial does not cancel the older accepted plant. Transport reset
+retires pending requests. Four distinct local native cases pass across one run
+and one role-correct fixture repair; no real-peer or whole-network completion.
+[Receipt details](reports/stability-2026-09-27/multiplayer.md#independent-effect-receipts-and-command-lifecycle).
+
 Owner direction: perform the implementation directly, without delegated workers.
 Continue concrete network/flow fixes. The new skill requirement is an explicit
 shared networking contract so new skills cannot silently omit required multiplayer
 support. Cover cast ownership, prediction/confirmation, authoritative effects,
 persistent state and lifecycle recovery without redesigning skills or presentation.
 This requirement is OPEN; current per-kit routing is not future-proof completion.
+
+Owner expansion: network consistency includes body animations, effects, cutscenes,
+interruption and cleanup for host, owner, observers and spectators, including late
+join/reconnect. No local-only check closes this requirement. All abilities now
+declare an explicit delivery mode through an abstract base property; kit creation
+and the normal pre-build hook reject invalid declarations and missing roster
+registration. Five focused EditMode cases pass. This authoring guard is implemented,
+but remaining state and presentation delivery work stays OPEN.
+
+First implemented networking slice: kit-owned `ITimedKitReplication` bindings
+replace TimedKit's hero-name switch and live-slot duration assumptions. This fixes
+Dante's twenty-second signature shield being rejected by a ten-second cap or
+clamped to BOULDER's zero duration. Sean/Zack bind to their attacking abilities.
+The wire layout stays unchanged. Focused EditMode 1/1 and source envelope audit
+93/0 pass; actual peers and the rest of NET-SKILLS-1 remain open.
+[Details](reports/stability-2026-09-27/multiplayer.md#timed-state-ownership-correction).
 
 One immediate interaction fix separates hero-shop wallet updates from full hero
 presentation rebuilds. Wallet busy/status/ownership changes now refresh purchase
