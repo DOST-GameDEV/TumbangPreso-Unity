@@ -164,6 +164,9 @@ savings and complete movie/overlay journeys remain OPEN.
 Unchanged preview selections now retain model/material/pose instead of rebuilding
 on lock-in/refresh. Changed inputs retire the old subject immediately. One new
 native reuse/invalidation/cleanup case passes; player click timings remain OPEN.
+The retained creator explicitly requests a fresh subject before relative body
+scaling/dressing,fixing refresh compounding introduced by preview reuse. One new
+native repeated-edit case passes; its retired player door remains closed.
 Ability illustrations now load asynchronously with yielded fallback preparation;
 the cooldown graphic also prepares before HUD construction. New native preload
 case passes. Default-avatar selection now handles minimum-int name hashes without

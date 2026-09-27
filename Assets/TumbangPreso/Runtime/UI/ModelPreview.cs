@@ -701,11 +701,13 @@ namespace TumbangPreso.UI
         /// what walks out cannot look like two different characters, and the only way to
         /// guarantee that is for both to go through `ToonSkin` with the same sixteen colours.
         /// </summary>
-        public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette, GameObject petModel)
+        public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette, GameObject petModel,
+                         bool forceRebuild = false)
         {
             // Lock-in and menu refreshes repeat the same pick. Preserve its pose,
             // materials and instance; snapshots also detect in-place palette edits.
-            if (_model != null && prefab == _sourceModel && petModel == _sourcePet &&
+            // Authoring callers that scale/dress the subject need a clean instance.
+            if (!forceRebuild && _model != null && prefab == _sourceModel && petModel == _sourcePet &&
                 ShowingSlipper == _sourceSlipper && SameValues(_sourceClips, clips) &&
                 SameValues(_sourcePalette, palette) && (petModel == null || _pet != null)) return;
             if (_model != null) { _model.SetActive(false); Destroy(_model); }

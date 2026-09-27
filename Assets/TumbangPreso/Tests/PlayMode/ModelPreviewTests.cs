@@ -58,6 +58,56 @@ namespace TumbangPreso.PlayTests
         private const string OutDir = "Logs/shots-preview";
 
         [UnityTest]
+        public IEnumerator RetainedCharacterAuthoringDoesNotCompoundBodyScaleOnRefresh()
+        {
+            var panel = new GameObject("Authoring preview", typeof(RectTransform));
+            var rect = panel.GetComponent<RectTransform>(); rect.sizeDelta = new Vector2(320, 400);
+            var preview = panel.AddComponent<ModelPreview>(); preview.Attach(rect);
+            var screen = panel.AddComponent<CustomCharacterScreen>();
+            var editing = new Core.CustomCharacter { HeightPercent = 115, BuildSizeIndex = 2 };
+            const System.Reflection.BindingFlags fields = System.Reflection.BindingFlags.Instance |
+                                                          System.Reflection.BindingFlags.NonPublic;
+            typeof(CustomCharacterScreen).GetField("_preview", fields).SetValue(screen, preview);
+            typeof(CustomCharacterScreen).GetField("_editing", fields).SetValue(screen, editing);
+            var refresh = typeof(CustomCharacterScreen).GetMethod("ShowModel", fields);
+            var art = RosterBook.Load().FindPersonArt(Core.CustomCharacterRules.BaseRigId);
+            Assert.IsNotNull(art);
+            try
+            {
+                var palette = Visual.CustomCharacterOutfit.PaletteFor(art.Palette, editing);
+                preview.Show(art.Model, art.Clips, palette, art.PetModel);
+                var baseScale = preview.Subject.transform.localScale;
+                refresh.Invoke(screen, null);
+                var first = preview.Subject;
+                var expected = Vector3.Scale(baseScale, new Vector3(
+                    Core.CustomCharacterRules.BuildWidthScale(2), 1.15f,
+                    Core.CustomCharacterRules.BuildWidthScale(2)));
+                Assert.Less(Vector3.Distance(expected, first.transform.localScale), 0.0001f);
+                int dressedParts = first.GetComponentsInChildren<Renderer>().Length;
+                refresh.Invoke(screen, null);
+                Assert.AreNotSame(first, preview.Subject);
+                Assert.IsFalse(first.activeSelf);
+                Assert.Less(Vector3.Distance(expected, preview.Subject.transform.localScale), 0.0001f);
+                Assert.AreEqual(dressedParts, preview.Subject.GetComponentsInChildren<Renderer>().Length);
+
+                editing.HeightPercent = 85; editing.BuildSizeIndex = 1;
+                refresh.Invoke(screen, null);
+                expected = Vector3.Scale(baseScale, new Vector3(
+                    Core.CustomCharacterRules.BuildWidthScale(1), 0.85f,
+                    Core.CustomCharacterRules.BuildWidthScale(1)));
+                Assert.Less(Vector3.Distance(expected, preview.Subject.transform.localScale), 0.0001f);
+                var current = preview.Subject;
+                preview.Show(art.Model, art.Clips, palette, art.PetModel);
+                Assert.AreSame(current, preview.Subject, "Ordinary selection must still reuse its subject.");
+                Assert.IsFalse(CustomCharacterScreen.AvailableToPlayers);
+                Assert.IsFalse(screen.IsOpen, "The retained authoring check must not enable its retired player door.");
+                yield return null;
+                Assert.IsTrue(first == null);
+            }
+            finally { Object.DestroyImmediate(panel); }
+        }
+
+        [UnityTest]
         public IEnumerator CharacterBindingReleasesGeneratedAvatarsButPreservesBorrowedAssets()
         {
             var art = RosterBook.Load().FindPersonArt("dante"); Assert.IsNotNull(art);

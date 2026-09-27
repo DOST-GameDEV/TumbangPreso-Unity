@@ -35,7 +35,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | First-use/runtime costs | Existing profiler markers,FrameRateHistogram,tools/cold_start.py and current internal player |
 | Settings value changes | UI/TumpSettingsView partials; whole-row reflow only for new sections/text size,cached chips and one unsaved-state calculation per notification |
 | Character preview targets | UI/ModelPreview.cs; coalesce continuous pixel-size reallocations,keep current panel projection,settle exact sizing and capture immediately |
-| Repeated preview selection | ModelPreview.Show compares model/pet,clip/palette snapshots and shading mode; unchanged selections retain their instance/materials/pose,changed subjects deactivate before deferred destruction |
+| Repeated preview selection | ModelPreview.Show compares model/pet,clip/palette snapshots and shading mode; unchanged selections retain their instance/materials/pose,changed subjects deactivate before deferred destruction. Mutating authoring callers use forceRebuild before relative scaling/dressing; the retained creator remains unavailable to players |
 | Runtime avatar lifetime | Visual/CharacterAnimator owns only avatars generated for its binding; release the graph before detaching/destroying them on rebind/clear/teardown,and preserve borrowed/imported avatars |
 | Preview cache ownership | Visual/ToonSkin keys base/overlay variants separately; MapPreviewSurface destroys resized-out targets and rebinds camera/UI together |
 

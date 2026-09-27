@@ -1,11 +1,16 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
-`adb6dcfedb5c266bb26c24f03427f8964e4a6742`; transport presentation cleanup follows it.
+`f6bca621ffd0e81a6c1fa90f8e53f8837d183e92`; preview authoring correction follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+The retained creator requests a fresh preview before relative scale/dress so repeated
+edits cannot compound proportions. Normal player preview reuse stays default and
+the retired creator door stays closed. One new native case passes1/1 on full base
+plus3inputs,no drift,no retry. [Evidence](reports/stability-2026-09-27/loading-audit.md#mutating-preview-callers).
 
 Fresh handler binding resets received cohort/pending-ultimate state but preserves
 host lifetime sequence. Local stop/disconnect cancels ultimate/halftime/arrival

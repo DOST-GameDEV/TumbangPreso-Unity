@@ -579,6 +579,21 @@ It is **NOT RUN** under the existing editor disk-reserve limitation. No old Core
 films or broad suites were repeated, and no player hitch-free claim follows.
 [Compiler/source receipt](checks/match-loading-compile.json).
 
+## Mutating Preview Callers
+
+Preview reuse introduced a retained-authoring regression: CustomCharacterScreen
+applies relative body scaling after Show,so reusing the previously scaled subject
+compounded its proportions on unchanged-palette edits. Show now offers an explicit
+forceRebuild opt-out and that mutating caller uses it before scale/dress. Ordinary
+selection keeps reuse. The creator remains intentionally unavailable to players;
+this does not reactivate it or change wardrobe/model design.
+
+One new guarded native case passes1/1 in0.5002313s on full `f6bca621` plus3frozen
+source inputs,no drift,no retry. It invokes the real creator refresh repeatedly,
+changes proportions,checks retirement/stable dressing count and default reuse,and
+keeps the retired door closed. No captures,full suite or player timing claim.
+[Receipt](checks/preview-authoring-native.json),[XML](checks/preview-authoring-native.xml).
+
 ## Evidence boundary
 
 The intake source audit began at ASTRAReworks `04886cc4`; current instrumentation is based on `026fed74` plus reviewed diagnostic amendments. The historical Desktop player identifies itself as a dirty `85832b6b` build, not a current-source performance baseline. The guarded Development build stopped during packaging when storage fell below the protected reserve. No current player boot, first-click, cast or profiler before/after timing exists, so no hitch reduction or FPS improvement is claimed.
