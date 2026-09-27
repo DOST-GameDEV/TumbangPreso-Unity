@@ -5,6 +5,22 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Hidden HOME Render
+
+After `8821369f`, an opaque HOME video/poster suspends the live court camera and
+its covered RawImage instead of rendering a second background underneath. Missing
+or translucent media,disable and destruction restore the fallback. A camera created
+after binding inherits that visibility. The prepared scenes,camera and target are
+retained; explicit loading draws still run. Media/artwork/animation timing is unchanged.
+
+One NEW native case passes1/1 in0.235466s: reduced-motion poster coverage without a
+decoder,late camera creation,fallback/opacity/disable/re-enable/destruction and
+camera/target reuse. It uses the full clean committed base plus4source changes,
+not the earlier partial overlay. No input drift; minimum free6,203,879,424bytes;
+profile/preferences restored. [Receipt](checks/home-hidden-render-native.json),
+[XML](checks/home-hidden-render-native.xml). This removes a confirmed redundant
+render path; player GPU/FPS savings and full movie/overlay journeys remain unmeasured.
+
 ## Remaining First-Use Data
 
 After `959f22f1`, the existing particle warmup also prepares its eight cached meshes

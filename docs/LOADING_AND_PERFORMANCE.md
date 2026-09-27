@@ -17,6 +17,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Title/login art and avatars | UI/OwnerMenuArt.cs,Avatars.cs; yielded preparation and retained resources |
 | Hub/HUD portraits and mode cards | UI/OwnerPortraitArt.cs; async roster-driven warmup and shared cache used by HubKit/TumpUiFactory |
 | First HOME loop | UI/Hub/HubSceneVideo.Warmup.cs; async metadata/selected poster,one paused decoded frame behind boot,then adoption of the same player/target |
+| Hidden HOME background | HubSceneVideo binds MapPreviewSurface rendering visibility; opaque media suspends the covered court camera/surface without discarding prepared scenes or the fallback |
 | Ability prop source prefabs | Visual/HeroPropAssets.cs; current Paete/Rework/Phaister folders,no gameplay spawn during asset preload |
 | Supplementary baked motion | Visual/GeneratedMotionAssets.cs; yielded per-rig data preload shared by CharacterAnimator and rooted introduction lookups,no clip/graph generation |
 | Roster outline geometry | Visual/OutlineNormals.Warmup and boot roster loop; per-mesh welds survive scene notifications while the exact mesh lives,without retaining dead runtime meshes |

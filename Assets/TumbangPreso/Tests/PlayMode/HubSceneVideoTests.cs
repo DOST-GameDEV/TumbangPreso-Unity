@@ -21,6 +21,55 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp] public IEnumerator Before() { HubSceneVideo.ForcedHero = null; yield return PlayModeWorld.Reset(); }
         [UnityTearDown] public IEnumerator After() { HubSceneVideo.ForcedHero = null; yield return PlayModeWorld.Reset(); }
 
+        [UnityTest, Timeout(30000)]
+        public IEnumerator OpaqueHomeMediaSuspendsTheHiddenCourtAndRestoresItsFallback()
+        {
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            GameObject owner = null, previewRoot = null;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion = true;
+                HubSceneVideo.ForcedHero = "zack";
+                owner = new GameObject("Home render ownership");
+                var canvas = UI.OwnerUiLayout.Canvas(owner.transform, "HomeRenderCanvas", 100);
+                var scene = UI.OwnerUiLayout.Rect(canvas.transform, "Scene"); UI.OwnerUiLayout.Fill(scene);
+                previewRoot = new GameObject("Covered court", typeof(RectTransform), typeof(UnityEngine.UI.RawImage));
+                var preview = previewRoot.AddComponent<UI.MapPreviewSurface>(); preview.enabled = false;
+                var video = HubSceneVideo.Install(scene, preview);
+                var image = video.GetComponent<UnityEngine.UI.RawImage>();
+                const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                var update = typeof(HubSceneVideo).GetMethod("Update", flags);
+                yield return null; Canvas.ForceUpdateCanvases(); update.Invoke(video, null);
+                Assert.IsNull(video.Player, "Reduced motion opened a decoder.");
+                Assert.IsTrue(image.enabled); Assert.IsNotNull(image.texture);
+                typeof(UI.MapPreviewSurface).GetMethod("EnsureCamera", flags).Invoke(preview, null);
+                Assert.IsFalse(preview.Camera.enabled, "A late-created camera ignored its covered state.");
+                Assert.IsFalse(previewRoot.GetComponent<UnityEngine.UI.RawImage>().enabled);
+                var camera = preview.Camera; var target = camera.targetTexture;
+                var posterField = typeof(HubSceneVideo).GetField("_poster", flags);
+                var poster = posterField.GetValue(video);
+                posterField.SetValue(video, null); update.Invoke(video, null);
+                Assert.IsFalse(image.enabled); Assert.IsTrue(camera.enabled, "Missing media did not restore the live court.");
+                posterField.SetValue(video, poster); image.color = new Color(1, 1, 1, .5f); update.Invoke(video, null);
+                Assert.IsTrue(camera.enabled, "Translucent media was treated as complete coverage.");
+                image.color = Color.white; update.Invoke(video, null);
+                Assert.IsFalse(camera.enabled);
+                video.gameObject.SetActive(false);
+                Assert.IsTrue(camera.enabled, "Disabling the media kept its fallback camera hidden.");
+                Assert.AreSame(camera, preview.Camera); Assert.AreSame(target, camera.targetTexture);
+                video.gameObject.SetActive(true); update.Invoke(video, null);
+                Assert.IsFalse(camera.enabled);
+                Object.Destroy(video.gameObject); yield return null;
+                Assert.IsTrue(camera.enabled, "Destroying the media did not release court visibility.");
+            }
+            finally
+            {
+                if (owner != null) Object.Destroy(owner);
+                if (previewRoot != null) Object.Destroy(previewRoot);
+                Settings.SettingsStore.Current.ReducedUiMotion = reduced;
+            }
+        }
+
         [UnityTest, Timeout(45000)]
         public IEnumerator BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome()
         {

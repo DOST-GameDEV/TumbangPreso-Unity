@@ -129,6 +129,9 @@ authored assets and shading values are unchanged. Player memory/FPS remains OPEN
 Existing particle geometry and catalog-driven status icons now prepare during
 loading. Rooted is restored to the shared status readout. Two new native data/state
 cases pass separately; no emitted effects,art changes or player hitch claim.
+Opaque HOME media now suspends the hidden live-court render while retaining its
+prepared fallback. One new native visibility/lifetime case passes; player GPU/FPS
+savings and complete movie/overlay journeys remain OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

@@ -90,16 +90,40 @@ namespace TumbangPreso.UI.Hub
         private Texture2D _poster;
         private VideoClip _clip;
         private bool _preloading, _failed;
+        private MapPreviewSurface _court;
 
         /// <summary>Put the scene into the hub's background slot, above the court. Idempotent.</summary>
-        public static HubSceneVideo Install(RectTransform scene)
+        public static HubSceneVideo Install(RectTransform scene, MapPreviewSurface court = null)
         {
             if (scene == null) return null;
             var existing = scene.GetComponentInChildren<HubSceneVideo>(true);
-            if (existing != null) return existing;
+            if (existing != null) { existing.BindCourt(court); return existing; }
             var warm = TakePreloaded(scene);
-            if (warm != null) return warm;
-            return Create(scene, false);
+            if (warm != null) { warm.BindCourt(court); return warm; }
+            var video = Create(scene, false);
+            video.BindCourt(court);
+            return video;
+        }
+
+        private void BindCourt(MapPreviewSurface court)
+        {
+            if (court == null) return;
+            if (_court != null && _court != court) _court.SetRenderingEnabled(true);
+            _court = court;
+            UpdateCourtVisibility();
+        }
+
+        private void UpdateCourtVisibility()
+        {
+            if (_court == null) return;
+            bool covered = !_preloading && _image != null && _image.isActiveAndEnabled &&
+                _image.texture != null && _image.color.a >= .999f && _image.canvasRenderer.GetInheritedAlpha() >= .999f;
+            _court.SetRenderingEnabled(!covered);
+        }
+
+        private void OnDisable()
+        {
+            if (_court != null) _court.SetRenderingEnabled(true);
         }
 
         private static HubSceneVideo Create(RectTransform scene, bool preloading, string hero = null)
@@ -206,6 +230,7 @@ namespace TumbangPreso.UI.Hub
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
             _image.texture = !reduced && FirstFrameReady && _target != null ? _target : _poster;
             _image.enabled = home && _image.texture != null;
+            UpdateCourtVisibility();
             if (home && !reduced && Player == null) PreparePlayback();
             if (Player == null || !Prepared) return;
             if (home && !reduced && !Player.isPlaying) Player.Play();
@@ -214,6 +239,7 @@ namespace TumbangPreso.UI.Hub
 
         private void OnDestroy()
         {
+            if (_court != null) _court.SetRenderingEnabled(true);
             if (_preloaded == this) _preloaded = null;
             if (Player != null)
             {

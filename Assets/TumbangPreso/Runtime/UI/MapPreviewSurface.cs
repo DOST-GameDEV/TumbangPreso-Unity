@@ -184,6 +184,14 @@ namespace TumbangPreso.UI
         private RawImage _surface;
         private RenderTexture _target;
         private Camera _camera;
+        private bool _renderingEnabled = true;
+
+        public void SetRenderingEnabled(bool visible)
+        {
+            _renderingEnabled = visible;
+            if (_camera != null && _camera.enabled != visible) _camera.enabled = visible;
+            if (_surface != null && _surface.enabled != visible) _surface.enabled = visible;
+        }
         private string _showing;
         private bool _busy;
         private bool _preparing;
@@ -1190,6 +1198,7 @@ namespace TumbangPreso.UI
 
             _camera.fieldOfView = _lobbyShot ? LobbyFieldOfView : FieldOfView;
             _camera.targetTexture = _target;
+            _camera.enabled = _renderingEnabled;
             if (_surface != null) _surface.texture = _target;
             _camera.clearFlags = CameraClearFlags.Skybox;
             _camera.depth = -10;

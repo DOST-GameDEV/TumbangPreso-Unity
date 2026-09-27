@@ -1,11 +1,16 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`959f22f19667a496df9035dcefbd34299b836a55`; remaining first-use data follows it.
+`8821369f05fbd74de3d0d01581f2b4efdb36923c`; hidden HOME render suppression follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Opaque HOME video/poster now suspends the covered court camera/surface and restores
+fallback when needed,without discarding prepared objects. New native case passes1/1
+on the full clean committed base plus4changed inputs,no drift. Player GPU/FPS delta
+is not measured. [Evidence](reports/stability-2026-09-27/loading-audit.md#hidden-home-render).
 
 Existing particle meshes and catalog-driven status icons now prepare behind
 loading. Rooted's omitted live-status entry is restored. Separate new native cases
