@@ -814,10 +814,42 @@ def status_vulnerable(a):
     a.add(a.circle(230, 250, 60), LEMON)
 
 
+def status_drained(a):
+    # DRAINED (HERO-10 v3, the owner's table: "Depletes stamina to 0. Prevents stamina recovery"): the stamina bar wrung out
+    # like a cloth, empty, pinched to a twist in its middle, two crossed pins stuck through it (its recovery nailed shut).
+    # Crimson, because DRAIN is her crimson curse; the shape is the twist, so it reads without the colour.
+    _badge(a)
+    a.add(a.poly([(140, 380), (470, 470), (470, 554), (140, 644)]), RIMRED)
+    a.add(a.poly([(884, 380), (554, 470), (554, 554), (884, 644)]), RIMRED)
+    a.add(a.poly([(200, 448), (440, 496), (440, 528), (200, 576)]), STATUS_BADGE, shade=False)
+    a.add(a.poly([(824, 448), (584, 496), (584, 528), (824, 576)]), STATUS_BADGE, shade=False)
+    a.add(a.poly([(456, 448), (512, 494), (568, 448), (568, 576), (512, 530), (456, 576)]), DEEPRED)
+    a.add(a.band([(318, 262), (706, 762)], 20), HONEY)
+    a.add(a.circle(318, 262, 44), LEMON)
+    a.add(a.band([(706, 262), (318, 762)], 20), HONEY)
+    a.add(a.circle(706, 262, 44), LEMON)
+
+
+def status_hexed(a):
+    # HEXED ("Hallucinations of slippers randomly appear on your screen"): her button eye stitched shut across, and a pale ghost
+    # of a slipper behind it that is not really there. Violet (her lilac, kept red above blue), the shape is the eye.
+    _badge(a)
+    slipper(a, 640, 640, 360, 25, hexc("E8C9D8"), CREAM)
+    a.add(a.circle(430, 440, 250), WITCH)
+    a.add(a.circle(430, 440, 200), PLUM)
+    for hx, hy in ((380, 390), (480, 390), (380, 490), (480, 490)):
+        a.add(a.circle(hx, hy, 30), KURO, shade=False)
+    a.add(a.band([(170, 470), (690, 410)], 44), KURO)
+    for x0, y0 in ((250, 420), (390, 404), (530, 388)):
+        a.add(a.band([(x0 - 30, y0 - 40), (x0 + 30, y0 + 40)], 16), CREAM)
+        a.add(a.band([(x0 + 30, y0 - 40), (x0 - 30, y0 + 40)], 16), CREAM)
+
+
 STATUSES = {"StatusWhirled": status_whirled, "StatusChilled": status_chilled,
             "StatusFrozen": status_frozen, "StatusTagged": status_tagged, "StatusRooted": status_rooted,
             "StatusConcussed": status_concussed, "StatusFeared": status_feared,
-            "StatusDisoriented": status_disoriented, "StatusVulnerable": status_vulnerable}
+            "StatusDisoriented": status_disoriented, "StatusVulnerable": status_vulnerable,
+            "StatusDrained": status_drained, "StatusHexed": status_hexed}
 
 
 # the nine job glyphs, for any power without a bespoke picture

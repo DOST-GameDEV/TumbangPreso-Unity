@@ -118,7 +118,8 @@ snapshot, never another body's possibly later packet. Status application precede
 the authoritative resource correction, so a fresh depletion cannot erase that pool.
 RecoveryBlocked updates immediately on received/host Drained application.
 
-The incoming Voodoo body still needs its gameplay tick/reset/HUD/speed wiring and
+The body's gameplay tick, reset, cleanse, passive speed and HUD are wired (HERO-10,
+`VoodooBodyWiringTests`); it still needs
 the kit's final integration. Preserve the owner's no-added-fatigue depletion rule;
 Hexed's screen effect stays victim-local. Mark/doll gameplay entity lifetimes need
 their explicit contracts. Two native codec/receiver checks do not qualify the whole

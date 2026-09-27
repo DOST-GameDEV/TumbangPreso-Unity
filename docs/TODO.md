@@ -36,8 +36,10 @@ The v8 doll and Voodoo body-state API are integrated unchanged and Runtime/Edito
 compile; tick/reset/snapshot wiring remains OPEN.
 Voodoo snapshot wiring now carries status/mark/reach state and an explicit reach
 result (protocol73), preserving host stamina corrections. Two new native codec/
-receiver cases pass. Gameplay tick/reset/HUD/speed,new-kit and actual-peer checks
-remain OPEN; snapshot wiring alone does not finish the incoming kit.
+receiver cases pass. The body now runs it (HERO-10, 2026-09-27): the status clock steps it,
+the round reset and a cleanse end it, the VOODOO passive reaches the speed, the HUD lists
+DRAINED and HEXED with their icons (`VoodooBodyWiringTests`, 2/2). The new kit's abilities
+and actual-peer checks remain OPEN.
 UI-flow native qualification now passes3/3 for range controls,settings row reuse and
 preview resizing. The audio sample-preparation case also passes1/1. Exact coverage
 and limits are in the [loading report](reports/stability-2026-09-27/loading-audit.md);

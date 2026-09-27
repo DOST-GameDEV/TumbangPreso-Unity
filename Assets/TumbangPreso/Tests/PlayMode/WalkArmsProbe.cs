@@ -111,6 +111,8 @@ namespace TumbangPreso.PlayTests
                 {
                     {
                         if (index >= 0) who.CharacterIndex = index;
+                        // The doll moves at its own (slower) share of a player's speed, and its gait is written for that speed.
+                        who.BodySpeedScale = id == PhaisterDollArt.Id ? VoodooRules.DollSpeedScale : 1.0f;
                         who.GetComponent<CharacterVisual>().ApplyModel(entry.Model, entry.Tint, entry.Clips, entry.Palette, entry.PetModel);
                         yield return null; yield return null;
 

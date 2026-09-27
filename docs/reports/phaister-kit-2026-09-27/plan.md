@@ -493,4 +493,4 @@ the table of what was taken and what changed colour.
 | Passive duration | while the mark lives | his text ties it to the mark |
 | Teleport range | 2.0 to 5.5 m | today's, kept |
 | Doll body | PAETE'S SIZE (owner: *"make like paete size"*), a player's rules; a tag stuns it 5 s; no skills | the Astig bot plays it like a player |
-| Doll speed | 0.85 of a player's walk and run, no sprint burst (proposed number; the rule is the owner's: *"big fat voodoo doll that's kinda sllow(to balance it)"*) | a Hard AI that never tires would otherwise out-run the round; slow and heavy is its balance and its look |
+| Doll speed | 0.65 of a player's walk and run (`VoodooRules.DollSpeedScale`, set on the body as `CharacterMotor.BodySpeedScale`; proposed number, the rule is the owner's: *"big fat voodoo doll that's kinda sllow(to balance it)"*, *"make him look sluggish and its okay if he's slower than others"*) | a Hard AI that never tires would otherwise out-run the round; and at a player's speed its short legs could only skate (film v3 "looks liek he is floating") |

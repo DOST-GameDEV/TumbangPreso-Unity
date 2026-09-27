@@ -177,6 +177,13 @@ namespace TumbangPreso.Core
         /// <summary>VOODOO DOLL, *"12 Objective Points"*.</summary>
         public const float DollCost = 12.0f;
 
+        /// <summary>
+        /// The doll body's share of a player's walk and run. The rule is the owner's (*"big fat voodoo doll that's kinda sllow(to
+        /// balance it)"*, *"make him look sluggish and its okay if he's slower than others"*); the number is proposed. Slow is its
+        /// balance (a Hard AI that never tires) and its look: at a player's speed its short legs could only skate.
+        /// </summary>
+        public const float DollSpeedScale = 0.65f;
+
         /// <summary>May she start reaching for someone this far away and this far off her aim, in sight?</summary>
         public static bool ReachCanStart(float distance, float offAimDegrees, bool inSight)
             => inSight && distance <= ReachStartRange && offAimDegrees <= ReachConeDegrees;
