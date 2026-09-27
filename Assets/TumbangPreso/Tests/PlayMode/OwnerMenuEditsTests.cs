@@ -105,6 +105,74 @@ namespace TumbangPreso.PlayTests
             Assert.AreSame(boulder, Visual.HeroPropAssets.Load(Visual.ReworkProp.ResourceFolder, "boulder"));
         }
 
+        [UnityTest, Timeout(30000)]
+        public IEnumerator AudioWarmupLoadsDeferredSamplesWithoutPlaybackAndRetainsThem()
+        {
+            var toggle = Resources.Load<AudioClip>("Sfx/ui_toggle");
+            Assert.IsNotNull(toggle);
+            Assert.IsFalse(toggle.preloadAudioData, "This case needs a deferred-data imported cue.");
+            Assert.IsTrue(toggle.UnloadAudioData());
+            Assert.AreEqual(AudioDataLoadState.Unloaded, toggle.loadState);
+            Assert.AreSame(toggle, Resources.Load<AudioClip>("Sfx/ui_toggle"));
+            Assert.AreEqual(AudioDataLoadState.Unloaded, toggle.loadState,
+                "Loading the clip reference alone must exercise the original first-play gap.");
+            var cues = Resources.LoadAll<AudioClip>("Sfx").Concat(Resources.LoadAll<AudioClip>("Vo")).ToArray();
+            int cold = cues.Count(x => x.loadState != AudioDataLoadState.Loaded);
+            long beforeBytes = cues.Sum(x => UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(x));
+            var music = Resources.Load<AudioClip>("Music/ost_match");
+            var musicState = music != null ? music.loadState : AudioDataLoadState.Unloaded;
+            var sources = Object.FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var playing = sources.Where(x => x.isPlaying).ToArray();
+            var owner = new GameObject("SplashAudioOnly");
+            var splash = owner.AddComponent<SplashScreen>(); splash.enabled = false;
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var method = typeof(SplashScreen).GetMethod("WarmAudioAssets", flags);
+            var progressField = typeof(SplashScreen).GetField("_targetProgress", flags);
+            IEnumerator warmup = null;
+            try
+            {
+                warmup = (IEnumerator)method.Invoke(splash, null);
+                int steps = 0;
+                float progress = 0;
+                double longestStepMs = 0;
+                var timer = new System.Diagnostics.Stopwatch();
+                while (true)
+                {
+                    timer.Restart();
+                    bool more = warmup.MoveNext();
+                    timer.Stop();
+                    longestStepMs = System.Math.Max(longestStepMs, timer.Elapsed.TotalMilliseconds);
+                    if (!more) break;
+                    steps++;
+                    float next = (float)progressField.GetValue(splash);
+                    Assert.GreaterOrEqual(next, progress); progress = next;
+                    yield return warmup.Current;
+                }
+                Assert.Greater(steps, 3, "Deferred samples need yielded turns, not one folder-sized decode burst.");
+                Assert.AreEqual(.34f, (float)progressField.GetValue(splash), .00001f);
+                foreach (var clip in cues)
+                    if (clip.loadType != AudioClipLoadType.Streaming)
+                        Assert.AreEqual(AudioDataLoadState.Loaded, clip.loadState, clip.name);
+                var cache = typeof(SplashScreen).GetNestedType("WarmAssetCache", System.Reflection.BindingFlags.NonPublic);
+                var retained = (System.Collections.IList)cache.GetField("Assets",
+                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).GetValue(null);
+                Assert.IsTrue(retained.Contains(toggle), "Menu activation must not discard the prepared cue.");
+                yield return (IEnumerator)method.Invoke(splash, null);
+                Assert.AreSame(toggle, Resources.Load<AudioClip>("Sfx/ui_toggle"));
+                Assert.AreEqual(AudioDataLoadState.Loaded, toggle.loadState);
+                CollectionAssert.AreEquivalent(sources, Object.FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None));
+                CollectionAssert.AreEquivalent(playing, sources.Where(x => x.isPlaying).ToArray());
+                if (music != null) Assert.AreEqual(musicState, music.loadState, "Do not change music's preparation policy.");
+                long afterBytes = cues.Sum(x => UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(x));
+                Debug.Log(System.FormattableString.Invariant($"[SplashAudioCheck] clips={cues.Length} initiallyCold={cold} steps={steps} beforeBytes={beforeBytes} afterBytes={afterBytes} maxStepMs={longestStepMs:F3}"));
+            }
+            finally
+            {
+                (warmup as System.IDisposable)?.Dispose();
+                Object.Destroy(owner);
+            }
+        }
+
         [UnityTest, Timeout(60000)]
         public IEnumerator SplashShaderAndMenuArtWarmupsCompleteInBoundedStages()
         {

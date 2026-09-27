@@ -1,0 +1,38 @@
+{
+  "base": "de426a0e9dfc1d36c6e6546221aeaf35a5075a21",
+  "native": {
+    "result": "Passed",
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "duration": "1.4623945",
+    "unity": "6000.5.8f1",
+    "platform": "WindowsEditor",
+    "graphics": "D3D11"
+  },
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.AudioWarmupLoadsDeferredSamplesWithoutPlaybackAndRetainsThem",
+      "result": "Passed",
+      "duration": "1.417120",
+      "output": "[SplashAudioCheck] clips=209 initiallyCold=150 steps=153 beforeBytes=2971985 afterBytes=21735549 maxStepMs=57.680\nSaving results to: <isolated-profile>\\TestResults.xml\n"
+    }
+  ],
+  "originalXmlSha256": "8B6F3129E2DB2907E75BDB6E8724837012F2C0937632C4A211CB3E4DB71D9563",
+  "minimumFreeBytes": 6720446464.0,
+  "frozenInputs": 206,
+  "nativeInputChurn": 0,
+  "profile": "Guard restored two named-profile files and three shared Editor input preferences",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "2D5B1D32BC5615DA354BD172A861A51227C9AE9FAAB1E372AA07E309F5077A5B"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerMenuEditsTests.cs",
+      "sha256": "F97AF85984CADBDA0C22089AA42D5CD31C4E21A0678DC4104DD761222E906C1A"
+    }
+  ],
+  "limits": "Editor sample-readiness and reuse only; folder lookup and per-clip decode can still exceed a frame budget. Not a player before/after hitch measurement."
+}

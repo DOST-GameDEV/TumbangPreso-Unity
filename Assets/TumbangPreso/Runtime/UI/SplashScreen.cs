@@ -100,13 +100,15 @@ namespace TumbangPreso.UI
 
             public static int Count => Assets.Count;
 
+            public static void Retain(Object asset)
+            {
+                if (ShouldRetain(asset) && EntityIds.Add(asset.GetEntityId())) Assets.Add(asset);
+            }
+
             public static void CaptureLoadedAssets()
             {
                 foreach (Object asset in Resources.FindObjectsOfTypeAll<Object>())
-                {
-                    if (!ShouldRetain(asset) || !EntityIds.Add(asset.GetEntityId())) continue;
-                    Assets.Add(asset);
-                }
+                    Retain(asset);
             }
 
             private static bool ShouldRetain(Object asset)
@@ -471,21 +473,8 @@ namespace TumbangPreso.UI
             SetLoadingStage("loading characters", 0.24f);
             yield return null;
 
-            // 3. Pre-load Audio clips and sound resources
-            //
-            // Load each audio folder on its own frame so the loading animation can advance.
-            string[] audioFolders = { "Sfx", "Vo", "Music" };
-            for (int i = 0; i < audioFolders.Length; i++)
-            {
-                SetLoadingStage("loading audio",
-                    Mathf.Lerp(0.24f, 0.34f, (i + 1) / (float)audioFolders.Length));
-                try
-                {
-                    _ = Resources.LoadAll<AudioClip>(audioFolders[i]);
-                }
-                catch (System.Exception) { }
-                yield return null;
-            }
+            // 3. Load clip references AND short-cue sample data before first playback.
+            yield return WarmAudioAssets();
 
             // 4. Pre-load Settings & Roster tables
             SetLoadingStage("applying settings", 0.36f);
@@ -589,6 +578,45 @@ namespace TumbangPreso.UI
             var ids = new string[people.Count];
             for (int i = 0; i < people.Count; i++) ids[i] = people[i] != null ? people[i].Id : null;
             return ids;
+        }
+
+        private IEnumerator WarmAudioAssets()
+        {
+            string[] folders = { "Sfx", "Vo", "Music" };
+            for (int folder = 0; folder < folders.Length; folder++)
+            {
+                SetLoadingStage("loading audio", Mathf.Lerp(.24f, .34f, folder / (float)folders.Length));
+                yield return null;
+                AudioClip[] clips;
+                try { clips = Resources.LoadAll<AudioClip>(folders[folder]); }
+                catch (System.Exception error)
+                {
+                    Debug.LogWarning($"[SplashAudio] Cannot load {folders[folder]}: {error.Message}");
+                    continue;
+                }
+
+                for (int i = 0; i < clips.Length; i++)
+                {
+                    var clip = clips[i];
+                    WarmAssetCache.Retain(clip);
+                    // Preserve the music/streaming policy. Loading an AudioClip alone does
+                    // not load samples when its importer disables preloadAudioData.
+                    if (clip != null && folders[folder] != "Music" &&
+                        clip.loadType != AudioClipLoadType.Streaming && clip.loadState != AudioDataLoadState.Loaded)
+                    {
+                        yield return null;
+                        if (clip.loadState == AudioDataLoadState.Unloaded) clip.LoadAudioData();
+                        float deadline = Time.realtimeSinceStartup + 10f;
+                        while (clip.loadState == AudioDataLoadState.Loading && Time.realtimeSinceStartup < deadline)
+                            yield return null;
+                        if (clip.loadState != AudioDataLoadState.Loaded)
+                            Debug.LogWarning($"[SplashAudio] {clip.name} sample preparation ended in {clip.loadState}; playback may load late or remain silent.");
+                    }
+                    SetLoadingStage("loading audio", Mathf.Lerp(.24f, .34f,
+                        (folder + (i + 1f) / clips.Length) / folders.Length));
+                }
+                SetLoadingStage("loading audio", Mathf.Lerp(.24f, .34f, (folder + 1f) / folders.Length));
+            }
         }
 
         /// <summary>

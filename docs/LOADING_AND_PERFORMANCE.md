@@ -12,6 +12,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Responsibility | Source |
 |---|---|
 | Boot stages and progress | UI/SplashScreen.cs; shader slices,rosters,audio,menu art,input,glyphs and retained dependencies |
+| Deferred SFX/voice samples | UI/SplashScreen.WarmAudioAssets; yielded sample loading and retention,not just clip references; music/streaming policy unchanged |
 | Real menu activation barrier | UI/SplashScreen.MenuActivation.cs and ConvertedMainMenu.IsPrepared; retain existing canvas through Wire/layout,then reveal login/input |
 | Title/login art and avatars | UI/OwnerMenuArt.cs,Avatars.cs; yielded preparation and retained resources |
 | Hub/HUD portraits and mode cards | UI/OwnerPortraitArt.cs; async roster-driven warmup and shared cache used by HubKit/TumpUiFactory |
@@ -45,8 +46,10 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 
 The latest [focused native integration](reports/stability-2026-09-27/input-integration.md)
 passes loading-readiness and supplementary-data retention cases alongside five
-state/presentation cases. Menu activation,portrait/prop retention,HOME decoder,
-settings,training and preview-resize checks still have separate evidence gaps.
+state/presentation cases. The subsequent [UI/audio pass](reports/stability-2026-09-27/loading-audit.md#ui-flow-native-qualification)
+passes three first-run range/settings/preview reuse cases; a separate new audio case
+confirms deferred sample preparation and no playback. Menu activation,portrait/prop
+retention,HOME decoder,physical input and visual acceptance still have separate gaps.
 Earlier shader/art evidence remains separate. There is no current complete player
 before/after hitch table. Consult the ledger for current headroom/processes; the
 latest native pass succeeded, but player packaging headroom is not established.

@@ -1,21 +1,24 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`1848e1dc3b8af5663358fa011a57339d53876996`; Voodoo snapshot wiring follows it.
+`de426a0e9dfc1d36c6e6546221aeaf35a5075a21`; deferred audio preparation follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-Incoming controls,GUID repairs,doll v8/source and Voodoo Core/body API are integrated
-and preserved. New VoodooBodySnapshot wires that body state into SyncUnit with
-finite/kind/seat bounds and explicit reach completion. Status edges precede the
-host resource correction; RecoveryBlocked updates immediately. Protocol73.
-ONE guarded native codec/real-receiver pass completed2/2 on206 frozen inputs with
-no drift. Earlier7 native/6 Core cases were not rerun. Gameplay tick/reset/HUD/speed,
-the unfinished kit,actual peers and player performance remain OPEN.
-[Latest evidence](reports/stability-2026-09-27/multiplayer.md#voodoo-body-snapshot),
-[incoming preservation](reports/stability-2026-09-27/input-integration.md).
+Splash audio preparation now loads and retains deferred SFX/voice sample data,
+yielding between clips. Native1/1 confirms the original reference-only gap and
+prepared samples without playback. Music/import settings are unchanged. The first
+UI reuse pass also completed3/3 for range controls,settings and preview resizing.
+Both runs used206 frozen inputs with no drift; no earlier cases were repeated.
+[Loading evidence](reports/stability-2026-09-27/loading-audit.md) records memory and
+Editor slice timing,not player hitch-free acceptance.
+
+Incoming controls,GUID repairs,doll v8/source and Voodoo API remain preserved.
+Protocol73 Voodoo snapshots carry explicit reach outcome and preserve resource
+correction ordering; native2/2 passed. Tick/reset/HUD/speed,new-kit and actual peers
+remain OPEN. [Network evidence](reports/stability-2026-09-27/multiplayer.md#voodoo-body-snapshot).
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -28,15 +31,15 @@ and current owner reservations after resuming.
 |---|---|---|
 | 0a28bf13 | Merge owner controls/GUID repairs with networking/loading work | Four assemblies compile;7/7 new focused native cases pass; actual peers/player timings pending |
 | 22f71a9c | Received Rooted restraint ownership, dedup, late facing and cleanup | Included in the7/7 native integration pass; actual peers/reconnect pending |
-| e1f21c5f | Coalesced character-preview render-target resizing and invalid-avatar cleanup | Four assemblies compile; native DPI/resize/visual and player allocation checks pending |
-| b93d2a4a | Remove whole-screen settings reflow/chip scans on ordinary value changes | Four assemblies compile; native transaction/layout and player timings pending |
-| 2b588964 | Async retained supplementary baked-motion data for roster/body/introduction binding | Four assemblies compile; native retention and first-use/memory timings pending |
-| fe3a93eb | Existing ultimate victim-camera feedback through scoped shared match events | Four assemblies compile; native camera/receive and actual peer checks pending |
-| ad19d440 | Accepted plant lifetime identity through cast/removal/recovery and bounded retirement | Four assemblies compile; native lifetime and delayed-peer/reconnect checks pending |
-| 70ee0152 | Host-timed leased Interact holds and scoped escape/uproot notifications | Four assemblies compile; native and lossy-peer hold checks pending |
-| c90f7ef8 | Destination-owned setup readiness, failure/return surface, cancellation and loading input isolation | Four assemblies compile; native loading lifecycle/input/UI checks pending |
-| a6111f72 | Explicit offline range, independent local resources, prepared controls and reusable target bots | Five assemblies compile; seven Core gate cases pass; native range/UI/physical input checks pending |
-| 6f128705 | Frozen restraint follows received status; dedup, refresh/thaw/disable cleanup; four meshes preload | Four assemblies compile; native lifecycle/peer checks and QA-15 pending |
+| e1f21c5f | Coalesced character-preview render-target resizing and invalid-avatar cleanup | Native resize/reuse/capture case passes; visual and player allocation checks pending |
+| b93d2a4a | Remove whole-screen settings reflow/chip scans on ordinary value changes | Native reuse/text-size reflow case passes; visual/physical input/player timings pending |
+| 2b588964 | Async retained supplementary baked-motion data for roster/body/introduction binding | Native retention case passes; first-use/memory timings pending |
+| fe3a93eb | Existing ultimate victim-camera feedback through scoped shared match events | Native scoped receive case passes; actual peers pending |
+| ad19d440 | Accepted plant lifetime identity through cast/removal/recovery and bounded retirement | Native retirement/late-install case passes; delayed peers/reconnect pending |
+| 70ee0152 | Host-timed leased Interact holds and scoped escape/uproot notifications | Native lease/epoch/host-time case passes; lossy peers pending |
+| c90f7ef8 | Destination-owned setup readiness, failure/return surface, cancellation and loading input isolation | Native readiness/cancellation case passes; full physical-input journey pending |
+| a6111f72 | Explicit offline range, independent local resources, prepared controls and reusable target bots | Seven Core cases and native control/reuse case pass; visual/physical input pending |
+| 6f128705 | Frozen restraint follows received status; dedup, refresh/thaw/disable cleanup; four meshes preload | Native lifecycle case passes; peers and QA-15 pending |
 | a60d3f67 | First-HOME paused decoder/first-frame preparation during boot | Four assemblies compile; native handoff/reduced-motion and timing checks pending |
 | 4a9f9cf2 | Correlated combat refusals and authoritative resource correction | Two new Core cases pass; five assemblies compile; native/peer qualification pending |
 | 99ce5338 | Remote host resource clocks and held-sprint snapshot continuity | Two new Core cases pass; five assemblies compile; native/peer resource checks pending |
@@ -81,11 +84,13 @@ incoming metadata repairs, one guarded changed-candidate run completed7/7 native
 state/loading cases with a6,767,398,912-byte minimum free-space sample. This establishes
 that focused native work is possible now, not that a player build has enough space.
 
-The native candidate froze186 source/dependency inputs,19 incoming paths over the
-previous layer; no frozen-input drift during execution. Subsequent preserved doll
-and Core layers bring the frozen set to202 paths. Five assemblies compile and6 new
-Core cases pass for the latest layer. Four native-candidate assemblies
-also compile directly. [Native receipt](reports/stability-2026-09-27/checks/input-integration-native.json),
+The first native candidate froze186 source/dependency inputs,19 incoming paths over
+the previous layer. Subsequent preserved doll/Core/body layers and snapshot wiring
+bring the set to206 paths. Six new Voodoo Core cases and two snapshot native cases
+pass. Latest separate UI/audio runs pass3/3 and1/1 with no frozen drift; minimum
+free storage6,864,703,488 and6,720,446,464bytes respectively. Native runs compiled
+their changed inputs; no duplicate direct compiler passes were needed.
+[Initial receipt](reports/stability-2026-09-27/checks/input-integration-native.json),
 [case XML](reports/stability-2026-09-27/checks/input-integration-native.xml) and
 [exact scope](reports/stability-2026-09-27/input-integration.md). Earlier individual
 compiler/managed receipts remain in the network/loading reports and their checks

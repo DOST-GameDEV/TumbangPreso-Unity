@@ -5,6 +5,50 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Deferred Audio Samples
+
+Base `de426a0e`. The old splash audio stage loaded AudioClip references only.
+139 of198 SFX importers disable preloadAudioData, all with DecompressOnLoad; the11
+voice clips also arrived without loaded samples in the native check. The existing
+reference preload therefore still left sample loading on first playback. Unity's
+[sample-loading API](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/AudioClip.LoadAudioData.html)
+and [preload flag](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/AudioClip-preloadAudioData.html)
+distinguish those two operations.
+
+SplashScreen now loads non-streaming SFX/voice samples in yielded turns and retains
+the actual clip references in its existing asset cache. Progress advances after
+each completed cue; already-loaded clips are reused. An asynchronous loading state
+gets a10-second per-clip bound and failures report a warning rather than hanging or
+silently claiming sample readiness. No sound plays during preparation. Recordings,
+import settings,quality,mix,music policy and streaming clips are unchanged.
+
+One NEW guarded native test passed1/1 on206 frozen inputs with no drift. It reproduced
+the reference-only gap with ui_toggle, then checked loaded samples,retained identity,
+monotonic progress,repeated reuse,no new/playing sources and unchanged music state.
+209 clips:150 initially cold,153 yielded turns,reported clip memory2,971,985 to
+21,735,549bytes (17.9MiB moved earlier). Longest Editor iterator slice57.680ms;
+the existing synchronous folder lookup and individual decodes are not frame-budget
+guarantees. This is a sample-readiness fix,not a measured player hitch reduction.
+Test duration1.4623945s; minimum sampled free storage6,720,446,464bytes; guard restored
+two named-profile files and three shared Editor preferences. No old suite/films rerun.
+[Receipt](checks/audio-preload-native.json),[native XML](checks/audio-preload-native.xml).
+
+## UI Flow Native Qualification
+
+The first focused pass for the previously implemented practice controls,settings
+value-change path and preview resizing passed3/3 on the unchanged `de426a0e` layer:
+206 frozen inputs,no drift,8.0297146s test duration,minimum free6,864,703,488bytes.
+The guard restored two named-profile files and three shared Editor preferences.
+
+- Practice: local control gates,prepared menu/target-body reuse and role/resource controls.
+- Settings: retained rows,ordinary value changes and larger-text reflow.
+- Preview: shared target during resize,exact settled dimensions and immediate capture sizing.
+
+These results supersede only the corresponding NOT RUN notes below. They do not
+establish visual approval,physical-device input,actual peers or player frame timings.
+The earlier7 state/loading cases and2 Voodoo cases were not rerun.
+[Receipt](checks/ui-flow-native.json),[native XML](checks/ui-flow-native.xml).
+
 ## First HOME decoder preparation
 
 Base `4a9f9cf2`. HubSceneVideo previously loaded its clip/poster and prepared a

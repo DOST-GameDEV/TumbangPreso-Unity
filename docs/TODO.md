@@ -38,6 +38,10 @@ Voodoo snapshot wiring now carries status/mark/reach state and an explicit reach
 result (protocol73), preserving host stamina corrections. Two new native codec/
 receiver cases pass. Gameplay tick/reset/HUD/speed,new-kit and actual-peer checks
 remain OPEN; snapshot wiring alone does not finish the incoming kit.
+UI-flow native qualification now passes3/3 for range controls,settings row reuse and
+preview resizing. The audio sample-preparation case also passes1/1. Exact coverage
+and limits are in the [loading report](reports/stability-2026-09-27/loading-audit.md);
+these do not close player timing,physical-input,visual or actual-peer acceptance.
 
 **NET-SKILLS-1, OPEN:** host authority,stable ability identity,explicit delivery/
 command intent,independent receipts,bounded delayed delivery,phase-aware prepared
@@ -90,11 +94,14 @@ Supplementary baked-motion data now preloads asynchronously per roster rig and i
 retained for body/introduction binding. No authored clips/models changed. Four
 assemblies compile; native retention and measured first-use/memory checks remain OPEN.
 Settings value changes now avoid redundant whole-screen reflow/chip scans and double
-unsaved-state work. Four assemblies compile; focused native transaction/layout and
-player timing qualification remain OPEN.
+unsaved-state work. The focused native reuse/text-size reflow case passes;
+physical-input/visual and player timing qualification remain OPEN.
 Character preview target reallocations now coalesce continuous resizing while
-preserving final pixel size/aspect and immediate captures. Four assemblies compile;
-native resize/visual checks, measured cost and valid-avatar ownership remain OPEN.
+preserving final pixel size/aspect and immediate captures. Native resize/reuse passes;
+visual checks,measured player cost and valid-avatar ownership remain OPEN.
+Deferred non-streaming SFX/voice samples now load in yielded boot turns and remain
+retained before playback. Native sample-state/no-playback check passes; music and
+import quality are unchanged. Player first-use timings remain OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit
