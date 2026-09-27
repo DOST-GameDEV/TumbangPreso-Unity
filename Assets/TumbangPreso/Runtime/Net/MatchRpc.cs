@@ -318,7 +318,7 @@ namespace TumbangPreso.Net
             PrepareSentryTargetScope(0, -1);
             ResetFeatherfallTransport();
             PresentationMatchId = 0; _pendingMoments.Clear();
-            _lastUltimateRequest.Clear(); _ultimateRequestSequence = 0;
+            ResetUltimateTransport();
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
             _pendingSkillCasts.Clear();
             for (int slot = 0; slot < Balance.PlayerCount; slot++) Unit(slot)?.AbilitySystem?.ResetNetworkSkillReceipts();

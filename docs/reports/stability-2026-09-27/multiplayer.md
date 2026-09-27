@@ -665,6 +665,30 @@ Its exact implementation and qualification status are in
 [Featherfall](../amihan-kit-2026-09-27/featherfall.md). It does not establish that
 every kit works across real peers.
 
+## Transport Presentation Cleanup
+
+2026-09-28,afteradb6dcfe: a new messaging-handler binding resets received shared
+cohort identity and pending/reserved ultimate requests,while retaining the host's
+monotonic sequence. Otherwise a cancelled cohort could be rejected as a duplicate
+after reconnecting to the same still-active host phase. Ordinary cancellation keeps
+its same-transport duplicate protection. Protocol82 and wire payloads are unchanged.
+
+Local session stop/disconnect now cancels ultimate,halftime andarrival presenters,
+ends hitstop and then restores normal speed. The host's another-peer-left branch
+is unchanged. Arrival Run is externally enumerable: generation checks and finally
+cleanup prevent cancelled/disabled/destroyed/replaced iterators from later retaking
+the camera or hold. Normal8second timing and camera path are not retuned.
+
+Two NEW native cases pass2/2,0.1847669s on full committed base plus7inputs,no drift,
+no retry. They distinguish ordinary cancellation from new-transport replay/reset,
+clear a pending request,retain host sequence,end a loading-wait arrival iterator,
+prevent hitstop restoring an old slow speed,and end halftime without advancing
+the round. Minimum free6,467,403,776bytes; profile/preferences restored.
+[Receipt](checks/transport-presentation-native.json),[XML](checks/transport-presentation-native.xml).
+Raw Logs/transport-presentation-20260928/session-holds.*. Controlled lifecycle calls,
+not an actual socket/reconnect session or physical camera/input acceptance. No old
+films or unrelated native cases were rerun.
+
 ## Live Sentry Target Delivery
 
 2026-09-28,after15dd4b92: protocol82 replaces fresh replica distance inference with

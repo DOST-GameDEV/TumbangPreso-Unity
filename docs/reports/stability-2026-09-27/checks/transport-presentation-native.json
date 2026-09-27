@@ -1,0 +1,46 @@
+{
+  "base": "adb6dcfedb5c266bb26c24f03427f8964e4a6742",
+  "protocol": 82,
+  "scope": "Transport cohort reset and local hold/arrival/hitstop cleanup",
+  "result": "Passed",
+  "total": 2,
+  "duration": 0.1847669,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs",
+      "sha256": "B84C23DF9D522F4586A406CA964E6B362FEC833DEE2041D6260F6D2214661C8F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.UltimatePhase.cs",
+      "sha256": "FE0A0D7C1524FBA7610736E18425FC2C9253A666256DCC507369AD25B1BEC72F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "8296A24B914F7312782C91B094E6AB65DA00E791024FE0457D49F66FD0F4ED92"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "F5DB0BCC3E6DEC92F874FBFC923E327A11BDEF56132B3A047D8626DBD26BF90E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchArrivalPresentation.cs",
+      "sha256": "698D32FE974CF90DA243668CDC1AC67BB3BF3AD525698F3112D7E4FEFB664A63"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "43CA0F5AB497810E1F0B7E222F06BE804457447F3B7ED0E338D73C10582CC99A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/MatchLoadingReadinessTests.cs",
+      "sha256": "D56F5E9557AC30C9FC64250225F6F4659AC4FDB47F6F5ECA891E61DE1C745671"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6467403776,
+  "retryCount": 0,
+  "unverified": [
+    "Actual sockets/reconnect",
+    "Physical camera/input behavior",
+    "QA-15 root cause"
+  ]
+}

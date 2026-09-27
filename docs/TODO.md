@@ -110,6 +110,10 @@ Ultimate commits now name hero/ability IDs and requests carry the body epoch
 (protocol81). Preparation/execution reject the wrong kit; identity codecs are
 bounded. Two new native cases and the changed duration-wire case pass3/3. Actual
 host-request/peer/ranked qualification remains OPEN.
+Fresh connection bindings now reset received cohort/pending-ultimate state while
+preserving host lifetime sequence. Local teardown cancels presentation holds and
+hitstop; cancelled arrival iterators cannot resume later. Two new native lifecycle
+cases pass; actual reconnect/socket/camera-hardware qualification remains OPEN.
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.

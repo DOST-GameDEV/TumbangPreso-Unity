@@ -1,11 +1,18 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
-`15dd4b9277707c7beed73f3609e41d599c0c8a4c`; live sentry target delivery follows it.
+`adb6dcfedb5c266bb26c24f03427f8964e4a6742`; transport presentation cleanup follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Fresh handler binding resets received cohort/pending-ultimate state but preserves
+host lifetime sequence. Local stop/disconnect cancels ultimate/halftime/arrival
+owners and hitstop before normal speed. Arrival iterators use generation/finally
+cleanup. Two new native cases pass2/2 on full committed base plus7inputs,no drift,
+no retry. Protocol82 unchanged; actual sockets/reconnect/hardware remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#transport-presentation-cleanup).
 
 Protocol82 binds live sentry host masks to accepted ultimate cohorts,including
 pre-birth delivery,late bodies,snapshot identity and duplicate isolation. Replicas

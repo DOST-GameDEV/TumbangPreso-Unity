@@ -1464,7 +1464,7 @@ namespace TumbangPreso.Net
             // `MatchResult`'s own header records that exact failure happening once already, from
             // a different writer, and this is the same lifetime rule: whoever can stop time
             // restores it on every exit path including death.
-            PresentationClock.RequestScale(1.0f);
+            EndTransportPresentation();
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
 
             // ⚠️⚠️ A HOST TELLS ITS PEERS IT IS LEAVING. IT USED TO JUST STOP ANSWERING.
@@ -1523,6 +1523,16 @@ namespace TumbangPreso.Net
             IsRelay = false;
             RelayJoinCode = null;
             SetStatus("offline");
+        }
+
+        private static void EndTransportPresentation()
+        {
+            SharedUltimatePhase.Instance?.Cancel();
+            HalftimePresentation.Instance?.End(false);
+            foreach (var arrival in UnityEngine.Object.FindObjectsByType<MatchArrivalPresentation>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None)) arrival.Cancel();
+            Hitstop.End();
+            PresentationClock.RequestScale(1);
         }
 
         public void BrowseLan() => _beacon.StartListening();
@@ -2199,6 +2209,7 @@ namespace TumbangPreso.Net
 
             ClearJoinedClientRoomTitle();
             if (!_localShutdown) _clientTitleOperation = null;
+            EndTransportPresentation();
 
             // ⚠️⚠️ THE REASON IS THE WHOLE POINT OF THIS BRANCH NOW. A refused approval arrives
             // here as an ordinary disconnect, so a build-version mismatch, a full lobby and a
