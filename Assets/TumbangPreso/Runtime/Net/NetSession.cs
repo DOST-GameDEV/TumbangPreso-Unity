@@ -524,7 +524,9 @@ namespace TumbangPreso.Net
         // cohort; replicas no longer infer victims from local positions.
         // 83: READY and countdown messages name their match; only seated peers
         // count toward a loaded host's one-time pre-round countdown.
-        public const int ProtocolVersion = 83;
+        // 84: generic timed recovery binds both ability IDs to world/body scope
+        // and ordered snapshots; the specialized flight contract is unchanged.
+        public const int ProtocolVersion = 84;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

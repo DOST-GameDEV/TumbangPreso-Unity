@@ -24,6 +24,25 @@ Only Paete currently has substantial VFX; other presentation remains provisional
   effect through its preparation/live clocks. MatchRpc discovers these abilities
   automatically,including both role abilities; no hero/effect type switch is needed.
 
+## Timed Recovery
+
+Protocol84 sends generic ITimedKitReplication state through TimedKitState. The
+bounded234-byte envelope carries GameplayActionScope (match, round, body epoch),
+seat, per-seat sequence, stable hero ID and the IDs of both optional owning ability
+channels, remaining clocks, pending flag and double-precision server time. A channel
+swap cannot silently restore a different ability just because the hero name matches.
+CaptureTimedKit supplies these bindings; use the same stable IDs through cosmetic
+reworks. Validate every channel and age its clock against that ability's duration
+before invoking RestoreTimedKit. Empty channels must have no time or pending state.
+
+The receiver rejects stale scope, wrong bindings and duplicate/older snapshots before
+restoration. A valid ignored restore (already active or consumed) still advances its
+cursor. New transport binding resets receive cursors, not the host's sequence. Keep
+the kit's existing consumed/active guards; this is recovery, not permission to cast
+or spend resources. The specialized Amihan flight TimedKit envelope and its existing
+generation/request/event/pose/episode checks remain separate and unchanged. The old
+unscoped generic fallback is no longer accepted.
+
 ## Cooldowns And Charges
 
 Protocol78 replaces mutable-slot SyncAbility values with AbilityResourceSnapshot:

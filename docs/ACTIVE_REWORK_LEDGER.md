@@ -1,11 +1,19 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
-`07cfc317738f38d07e23af3de6018f03be162eb3`; asynchronous arena entry follows it.
+`6f1d73d4164bec237b7974992a18256cf2c26416`; bound timed recovery follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Protocol84 binds generic timed skill recovery to world/body scope, sequence and
+both owning ability IDs. Bounded codecs and complete validation precede aged
+restoration; valid no-ops close older state and new transport resets receive cursors.
+Existing specialized flight recovery and authored skills are unchanged. Two new
+native codec/application cases pass 2/2 on full base plus eight frozen inputs,
+no drift or retry. Actual peers/ranked/reconnect remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#bound-timed-recovery).
 
 SceneFlow now uses owned asynchronous arena loading on every peer after an initial
 curtain frame, with repeated-target deduplication and an explicit observation-only

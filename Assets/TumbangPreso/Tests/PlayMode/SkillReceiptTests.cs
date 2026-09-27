@@ -59,6 +59,31 @@ namespace TumbangPreso.PlayTests
             protected override void OnAcceptedUltimatePhase(long phaseId) { Bindings++; }
         }
 
+        private sealed class TimedProbeAbility : HeroAbility
+        {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
+            public TimedProbeAbility(string id) : base(id, "Presentation label", "", 30, 20)
+            { SupportsPendingSnapshot = true; }
+            protected override void OnActivate(AbilityContext context) { Assert.Fail("Recovery cast an ability."); }
+        }
+
+        private sealed class TimedProbeKit : HeroKit, ITimedKitReplication
+        {
+            public int Restorations;
+            public bool Accept = true;
+            public TimedKitSnapshot Last;
+            public TimedProbeKit(string personal = "personal") : base("timed-probe", "Presentation name")
+            {
+                Skill1 = new TimedProbeAbility("signature");
+                AttackingSkill = new TimedProbeAbility(personal);
+                DefendingSkill = new TimedProbeAbility("defending");
+                Ultimate = new TimedProbeAbility("ultimate");
+            }
+            public TimedKitSnapshot CaptureTimedKit() => new TimedKitSnapshot(AttackingSkill, 5, Ultimate, 10);
+            public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
+            { Restorations++; Last = state; return Accept; }
+        }
+
         private INetProvider _provider;
         private sealed class PredictingOwner : INetProvider
         {
@@ -80,6 +105,94 @@ namespace TumbangPreso.PlayTests
         { _provider = NetAuthority.Provider; yield return PlayModeWorld.Reset(); }
         [UnityTearDown] public IEnumerator After()
         { yield return PlayModeWorld.Reset(); NetAuthority.Provider = _provider; }
+
+        [Test]
+        public void TimedRecoveryCodecBoundsIdentitiesAndAgesTheOwningChannels()
+        {
+            var kit = new TimedProbeKit();
+            var state = TimedKitState.Capture(kit, kit.CaptureTimedKit(), 1,
+                new GameplayActionScope { Match = 123, Round = 1, Epoch = 0 }, 1, 100);
+            byte[] bytes;
+            using (var writer = new FastBufferWriter(TimedKitState.MaxWireBytes, Allocator.Temp))
+            {
+                writer.WriteNetworkSerializable(state); bytes = writer.ToArray();
+                var reader = new FastBufferReader(writer, Allocator.Temp);
+                try { Assert.IsTrue(TimedKitState.TryRead(ref reader, out state)); }
+                finally { reader.Dispose(); }
+            }
+            kit.SetRole(true, default);
+            Assert.IsTrue(state.TryResolve(kit, 102, out var aged));
+            Assert.AreSame(kit.AttackingSkill, aged.PersonalAbility);
+            Assert.AreEqual(3, aged.PersonalRemaining); Assert.AreEqual(8, aged.UltimateRemaining);
+            Assert.IsFalse(state.TryResolve(new TimedProbeKit("replacement"), 102, out _));
+            var invalid = state; invalid.PersonalRemaining = float.NaN; Assert.IsFalse(invalid.IsValid);
+            invalid = state; invalid.SentAt = double.PositiveInfinity; Assert.IsFalse(invalid.IsValid);
+            invalid = state; invalid.UltimateId = default; Assert.IsFalse(invalid.IsValid);
+            invalid = state; invalid.PersonalRemaining = 999; Assert.IsFalse(invalid.TryResolve(kit, 102, out _));
+
+            bool Reads(byte[] payload)
+            {
+                var reader = new FastBufferReader(payload, Allocator.Temp);
+                try { return TimedKitState.TryRead(ref reader, out _); }
+                finally { reader.Dispose(); }
+            }
+            var oversized = (byte[])bytes.Clone(); oversized[28] = 62; oversized[29] = 0;
+            Assert.IsFalse(Reads(oversized));
+            var truncated = new byte[bytes.Length - 1]; System.Array.Copy(bytes, truncated, truncated.Length);
+            Assert.IsFalse(Reads(truncated));
+            var trailing = new byte[bytes.Length + 1]; System.Array.Copy(bytes, trailing, bytes.Length);
+            Assert.IsFalse(Reads(trailing));
+            var invalidBoolean = (byte[])bytes.Clone(); invalidBoolean[invalidBoolean.Length - 1] = 2;
+            Assert.IsFalse(Reads(invalidBoolean));
+            var maximum = state;
+            maximum.HeroId = new FixedString64Bytes(new string('h', 61));
+            maximum.PersonalId = new FixedString64Bytes(new string('p', 61));
+            maximum.UltimateId = new FixedString64Bytes(new string('u', 61));
+            using (var writer = new FastBufferWriter(TimedKitState.MaxWireBytes, Allocator.Temp))
+            {
+                writer.WriteNetworkSerializable(maximum);
+                Assert.AreEqual(TimedKitState.MaxWireBytes, writer.Length);
+                Assert.IsTrue(Reads(writer.ToArray()));
+            }
+        }
+
+        [Test]
+        public void TimedRecoveryRejectsOldScopesWrongBindingsAndReplayedNoOps()
+        {
+            var system = Owner("dante"); var body = system.GetComponent<CharacterMotor>();
+            var kit = new TimedProbeKit(); typeof(HeroAbilitySystem).GetProperty("Kit").SetValue(system, kit);
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            var root = new GameObject("Timed recovery receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>(); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var apply = typeof(MatchRpc).GetMethod("ApplyTimedKitState", hidden);
+            bool Apply(TimedKitState value) => (bool)apply.Invoke(router, new object[] { value, 102d });
+            var state = TimedKitState.Capture(kit, kit.CaptureTimedKit(), 1,
+                new GameplayActionScope { Match = 123, Round = 1, Epoch = body.MovementEpoch }, 1, 100);
+            try
+            {
+                var bad = state; bad.Sequence = 100; bad.Scope.Match = 122; Assert.IsFalse(Apply(bad));
+                bad.Scope.Match = 123; bad.Scope.Round = 2; Assert.IsFalse(Apply(bad));
+                bad.Scope.Round = 1; bad.Scope.Epoch++; Assert.IsFalse(Apply(bad));
+                bad.Scope = state.Scope; bad.HeroId = new FixedString64Bytes("other"); Assert.IsFalse(Apply(bad));
+                bad.HeroId = state.HeroId; bad.PersonalId = new FixedString64Bytes("defending"); Assert.IsFalse(Apply(bad));
+                Assert.AreEqual(0, kit.Restorations);
+                Assert.IsTrue(Apply(state)); Assert.AreEqual(1, kit.Restorations);
+                Assert.AreEqual(3, kit.Last.PersonalRemaining); Assert.AreEqual(8, kit.Last.UltimateRemaining);
+                Assert.IsFalse(Apply(state)); Assert.AreEqual(1, kit.Restorations);
+                kit.Accept = false; state.Sequence = 3;
+                Assert.IsTrue(Apply(state)); Assert.AreEqual(2, kit.Restorations);
+                state.Sequence = 2; Assert.IsFalse(Apply(state));
+                body.AdoptMovementEpoch(body.MovementEpoch + 1);
+                state.Sequence = 4; Assert.IsFalse(Apply(state));
+                state.Scope.Epoch = body.MovementEpoch; Assert.IsTrue(Apply(state));
+                typeof(MatchRpc).GetMethod("ResetTimedKitTransport", hidden).Invoke(router, null);
+                state.Sequence = 1; Assert.IsTrue(Apply(state));
+                Assert.AreEqual(4, kit.Restorations);
+            }
+            finally { Object.DestroyImmediate(root); }
+        }
 
         [Test]
         public void ResourceSnapshotsMapBothRolesByIdentityAndRejectPartialOrMalformedSets()

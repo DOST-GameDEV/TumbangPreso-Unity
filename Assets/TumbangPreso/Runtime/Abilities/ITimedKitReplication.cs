@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
-    /// <summary>Bindings for the existing two-channel TimedKit wire message.</summary>
+    /// <summary>Ability-owned channels for scoped TimedKitState recovery.</summary>
     public interface ITimedKitReplication
     {
         TimedKitSnapshot CaptureTimedKit();

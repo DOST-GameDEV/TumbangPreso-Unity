@@ -1,5 +1,30 @@
 # Multiplayer investigation, 2026-09-27
 
+## Bound Timed Recovery
+
+Generic TimedKit hydration checked only round and hero, so old-match/body state could
+reach a fresh kit and channel ownership could change without wire identity. Protocol84
+routes ITimedKitReplication through TimedKitState: match/round/epoch, per-seat order,
+stable hero and both optional ability IDs, bounded clocks/pending flag and double
+server time. The234-byte maximum is exercised at all three IDs' full capacity.
+Truncated, trailing, oversized and noncanonical payloads reject before restoration.
+
+The application path validates the entire matching binding and age-adjusted durations
+before RestoreTimedKit. A valid ignored restore still advances freshness, preventing
+an older packet from retrying after consumed/active state changes. Fresh transport
+binding clears receive cursors, not host sequence. Existing kit hydration guards stay
+in force. The specialized Amihan flight sender/parser/tail is unchanged; only its
+old generic fallback has moved to the new shared route. No authored skill or VFX work.
+
+Two new guarded native cases pass2/2 in0.1856602s on full `6f1d73d4` plus eight frozen
+source/metadata inputs, no drift or retry. Coverage includes codec capacity and bad
+payloads, role-independent owning bindings and age, wrong hero/channel/world/round/
+epoch rejection, per-seat ordering, valid no-op consumption and transport reset.
+These drive the codec and application boundary, not sockets or the server-time
+callback. Real peers/ranked/reconnect and specialized flight gameplay remain separate;
+no unchanged cases were rerun. Both new metadata GUIDs are valid32hex.
+[Receipt](checks/timed-recovery-native.json),[XML](checks/timed-recovery-native.xml).
+
 ## Scoped Loaded Readiness
 
 The arena path dispatched READY before the lobby's voter check, so a spectator or

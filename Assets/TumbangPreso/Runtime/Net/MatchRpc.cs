@@ -319,6 +319,7 @@ namespace TumbangPreso.Net
             ResetFeatherfallTransport();
             PresentationMatchId = 0; _pendingMoments.Clear();
             ResetUltimateTransport();
+            ResetTimedKitTransport();
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
             _pendingSkillCasts.Clear();
             for (int slot = 0; slot < Balance.PlayerCount; slot++) Unit(slot)?.AbilitySystem?.ResetNetworkSkillReceipts();
@@ -360,6 +361,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PreparedWorld", OnPreparedWorldMsg);
             cm.RegisterNamedMessageHandler("SkyEffect", OnSkyEffectMsg);
             cm.RegisterNamedMessageHandler("TimedKit", OnTimedKitMsg);
+            cm.RegisterNamedMessageHandler("TimedKitState", OnTimedKitStateMsg);
             cm.RegisterNamedMessageHandler("CastPreparation", OnCastPreparationMsg);
             cm.RegisterNamedMessageHandler("MovementWindow", OnMovementWindowMsg);
             cm.RegisterNamedMessageHandler("WorldFieldBegin", OnWorldFieldBeginMsg);
@@ -1896,21 +1898,14 @@ namespace TumbangPreso.Net
                 return;
             }
             if (!(kit is Abilities.ITimedKitReplication replication)) return;
-            var state = replication.CaptureTimedKit();
-            using var writer = new FastBufferWriter(64, Allocator.Temp);
-            writer.WriteValueSafe(slot);
-            writer.WriteValueSafe(GameServices.Match.RoundNumber);
-            writer.WriteValueSafe(kit.HeroId);
-            writer.WriteValueSafe(state.PersonalRemaining);
-            writer.WriteValueSafe(state.UltimateRemaining);
-            writer.WriteValueSafe((float)_nm.ServerTime.Time);
-            writer.WriteValueSafe(state.UltimatePending);
-            _nm.CustomMessagingManager.SendNamedMessage("TimedKit", peer, writer);
+            SendBoundTimedKit(slot, peer, kit, replication);
         }
 
         private void OnTimedKitMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            // The existing specialized flight contract keeps its own scoped tail.
+            // Generic timed channels now use TimedKitState and cannot enter here.
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int round);
             reader.ReadValueSafe(out string hero);
@@ -1923,16 +1918,6 @@ namespace TumbangPreso.Net
                 ReadFeatherfallSnapshot(ref reader, slot, round, remaining, ultimateRemaining, sentAt, ultimatePending);
                 return;
             }
-            if (!ValidSlot(slot) || !Finite(sentAt)
-                || GameServices.Match == null || GameServices.Match.RoundNumber != round) return;
-            var motor = Unit(slot);
-            var kit = motor?.AbilitySystem?.Kit;
-            if (kit == null || kit.HeroId != hero || !(kit is Abilities.ITimedKitReplication replication)) return;
-            float elapsed = Mathf.Max(0, (float)_nm.ServerTime.Time - sentAt);
-            // The owning ability supplies its bound; a role/slot change cannot substitute another skill's duration.
-            if (!replication.CaptureTimedKit().TryAge(remaining, ultimateRemaining, ultimatePending, elapsed, out var state)) return;
-            using (NetCue.SuppressRelay())
-                replication.RestoreTimedKit(motor, state);
         }
 
         private int _worldFieldGeneration, _lastWorldFieldGeneration, _worldFieldRound;
