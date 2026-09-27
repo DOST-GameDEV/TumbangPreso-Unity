@@ -1486,8 +1486,17 @@ Supersedes REFINE-2.6 for this map.
   the LAGOON COURT entry (SceneFlow.LagoonCove; GameLaunch keeps the id "lagoon" so saved choices
   follow it) and Kanto is a new entry, both in the build settings; MenuSceneBuilder now lists the
   maps from SceneFlow.Maps. MapGeometryCheck reports both as Informational (not Gated until their
-  first findings are reviewed). NOT DONE until the EditMode suite and the PlayMode gate are green
-  on it; bots and a full played match on each still to verify.
+  first findings are reviewed). GATE 2026-09-28 on the merge with ASTRAReworks (c6506327): EditMode
+  635/640; PlayMode 99 failures, of which 89 also fail on a clean ASTRAReworks checkout (same
+  fixtures, same profile) and 6 more pass there only because the full groups leak state; the 4
+  caused by the merge are FIXED (catch-replay camera moved out of the recorded stage; the stage
+  capture list names the new maps; map vote row scales for six courts; the host test waits for
+  the screen to draw). The 4 EditMode failures fail on clean ASTRAReworks too. Known cost: Custom
+  and Host prepare every map's preview, and six courts take ~3.5 s against ~2.3 s with five (the
+  Lagoon Cove is 3.47 M triangles). Map vote cards for both maps rendered in Play by
+  MapCardCapture. NetSession.ProtocolVersion 77 (map indices changed). Still open: bots and a
+  full played match on each new map; the PlayMode bot matches never end on Eskinita/Ilalim on
+  clean ASTRAReworks as well.
 - [ ] LAGOON-1.7 THE FIRST LAGOON COURT IS VAULTED (owner, 2026-09-27: "vault the old lagoon").
   Its scene moved to Scenes/Vault/Lagoon.unity, out of the registry and the build; LagoonBuilder
   writes there and no longer adds itself to the build. Its builders, LagoonWater (swimming and the

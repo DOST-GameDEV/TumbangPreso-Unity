@@ -510,7 +510,10 @@ namespace TumbangPreso.Net
         // movement. Older bodies leave these replicated curses inert or stuck.
         // 76: requested match rate carries scope/sequence and joins world recovery;
         // transient hitstop is not a replicated pause or spectator speed.
-        public const int ProtocolVersion = 76;
+        // 77: the map list changed (2026-09-27): index 4 is the reworked Lagoon Court (LagoonCove),
+        // the first Lagoon is vaulted, and Kanto is index 5. Maps travel as indices into
+        // SceneFlow.Maps (MatchRpc SyncMap, queue votes), so an older peer would read a different map.
+        public const int ProtocolVersion = 77;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

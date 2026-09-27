@@ -154,7 +154,10 @@ namespace TumbangPreso.CameraSystem
         }
         private void BuildView()
         {
-            var go = new GameObject("~CatchPlaybackCamera"); go.transform.SetParent(_stage.transform, false);
+            // ⚠️ The camera is NOT under the copies stage: the stage holds recorded bodies, which must carry
+            // no script at all (CatchReconstructionTests), and the camera now carries the match look's
+            // ColourGrade and WorldOutline. It lives beside the stage and is destroyed with it in End.
+            var go = new GameObject("~CatchPlaybackCamera"); go.transform.SetParent(transform, false);
             _camera = go.AddComponent<Camera>(); _camera.CopyFrom(Camera.main); _camera.enabled = false;
             _camera.tag = "Untagged"; _camera.fieldOfView = 58; _camera.nearClipPlane = .08f;
             _camera.depth = -100; _camera.clearFlags = CameraClearFlags.Skybox;
@@ -275,6 +278,7 @@ namespace TumbangPreso.CameraSystem
             if (_camera != null) _camera.targetTexture = null;
             if (_canvas != null) Destroy(_canvas.gameObject);
             if (_target != null) { _target.Release(); Destroy(_target); }
+            if (_camera != null) Destroy(_camera.gameObject);
             if (_stage != null) Destroy(_stage);
             _stage = null; _canvas = null; _target = null; _camera = null; _picture = null;
             _actorCopy = _victimCopy = null; _actorTrack = _victimTrack = null; _victim = null;

@@ -116,6 +116,17 @@ namespace TumbangPreso.PlayTests
                 yield return HubFlowTests.Press("HostDoor");
 
                 var hub = TumbangPreso.UI.Hub.TumpHub.Current;
+                // ⚠️ WAIT FOR THE SCREEN TO BE USABLE, AS A PLAYER DOES (2026-09-27): Host prepares a
+                // preview of every registered map behind the loading curtain, and the hub canvas is
+                // off while the curtain is open. Six courts (Kanto and the Lagoon Cove joined) take
+                // longer than the 0.45 s Press waits, so the field was checked under the curtain.
+                float usable = Time.realtimeSinceStartup + 15f;
+                while (!hub.Canvas.enabled && Time.realtimeSinceStartup < usable) yield return null;
+                Assert.IsTrue(hub.Canvas.enabled, "The host screen never became usable after its previews prepared.");
+                // A re-enabled canvas's graphics get their draw depth when it next renders, and the
+                // raycaster skips undrawn ones: let it draw before clicking, as a player's click
+                // can only land on a frame they have seen.
+                yield return null; yield return null;
                 Assert.IsInstanceOf<TumbangPreso.UI.Hub.HubHost>(hub.Top);
                 var field = hub.Top.GetComponentsInChildren<InputField>(false)
                     .Single(input => input.name == "LobbyName");

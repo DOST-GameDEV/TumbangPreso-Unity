@@ -26,7 +26,7 @@ namespace TumbangPreso.PlayTests
         {var p=WorldCueProfile.Current;p.WorldLighting=weight;p.CourtSurface=weight;p.HeroObjects=weight;}
         [UnityTest] public IEnumerator FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting()
         {
-            foreach(string map in new[]{SceneFlow.BayanPlaza,SceneFlow.Eskinita,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong,SceneFlow.Lagoon})
+            foreach(string map in new[]{SceneFlow.BayanPlaza,SceneFlow.Eskinita,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong,SceneFlow.LagoonCove,SceneFlow.Kanto})
             {
                 yield return Load(map,GameMode.HeroStrike);var look=WorldLookPresentation.Current;Assert.IsNotNull(look,map);
                 var floor=Object.FindAnyObjectByType<CourtSurfacePresentation>();Assert.IsNotNull(floor);
