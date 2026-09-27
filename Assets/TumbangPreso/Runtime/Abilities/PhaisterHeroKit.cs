@@ -80,10 +80,10 @@ namespace TumbangPreso.Abilities
             private const float ShoveRadius = 2.5f;
 
             public ShadowPhaseBlinkAbility()
-                : base("phaister_skill1", "SHADOW BLINK",
-                       "Hold to pick a spot, let go and you are simply there. Whoever you left standing gets shoved back.",
+                : base("phaister_skill1", "VANISHING ACT",
+                       "Hold to pick a spot, let go and you burst into a swarm of moths that carries you there. Whoever you left is shoved back.",
                        VoodooRules.BlinkCooldown, 0.4f, AbilityGlyph.PhaisterShadowBlink,
-                       summary: "Hold to aim, release to teleport. Shoves whoever you left.",
+                       summary: "Aim, release, and fly there as moths. Shoves whoever you left.",
                        telegraphRadius: ArrivalMark,
                        telegraphRange: MaxRange,
                        castAction: "hero-phaister-blink",
@@ -268,10 +268,10 @@ namespace TumbangPreso.Abilities
             public override bool DefersPredictedEffect => true;
 
             public CurseDisoriented()
-                : base("phaister_skill2", "CURSE: DISORIENTED",
-                       "Attacking. Aim and throw a cursed doll. Its target sees real threats mixed with hallucinations.",
+                : base("phaister_skill2", "MANIKA MISCHIEF",
+                       "Attacking. Throw a rag doll. It steals the look of the player it hits, flies back to your hand and makes them hallucinate.",
                        VoodooRules.DisorientCooldown, 0.0f, AbilityGlyph.PhaisterCursedDoll,
-                       summary: "Throw a cursed doll. The one it hits hallucinates.",
+                       summary: "Throw a doll. The one it hits hallucinates.",
                        telegraphRadius: VoodooRules.DollHitRadius, telegraphRange: VoodooRules.DollMaxRange,
                        castAction: "hero-phaister-hex", viewmodelAction: "cast-hex",
                        castCue: "sfx_cast_phaister_doll")
@@ -295,10 +295,10 @@ namespace TumbangPreso.Abilities
         private sealed class CurseVulnerable : HeroAbility
         {
             public CurseVulnerable()
-                : base("phaister_skill2d", "CURSE: VULNERABLE",
-                       "Defending. Pin the doll: attackers in front are Vulnerable for 5 s. Tag them from farther away or outside the box.",
+                : base("phaister_skill2d", "SPOTLIGHT PIN",
+                       "Defending. Stab a hat pin: attackers in front are lit by moonlight and Vulnerable 5 s. Tag them from afar or outside the box.",
                        VoodooRules.VulnerableCooldown, 0.0f, AbilityGlyph.PhaisterVulnerable,
-                       summary: "Curse the attackers in front of you. Tag them anywhere.",
+                       summary: "Pin the attackers in front in moonlight. Tag them anywhere.",
                        telegraphRadius: VoodooRules.VulnerableConeRange * 0.5f, telegraphRange: VoodooRules.VulnerableConeRange * 0.5f,
                        castAction: "hero-phaister-hex", viewmodelAction: "cast-hex",
                        castCue: "sfx_cast_phaister_pin") { }
@@ -330,10 +330,10 @@ namespace TumbangPreso.Abilities
             private Vector3 _centre;
 
             public Higop()
-                : base("phaister_ultimate", "HIGOP",
-                       "Aim a black hole. For 5 s it pulls other players and their slippers toward its heart, even as they run away.",
+                : base("phaister_ultimate", "OMEN",
+                       "Aim a black eye in a storm of black butterflies. For 5 s it drags other players and their slippers in, even as they run.",
                        0.0f, VoodooRules.HigopSeconds, AbilityGlyph.PhaisterEclipse,
-                       summary: "A black hole drags every player and slipper to it.",
+                       summary: "A black eye swallows every player and slipper nearby.",
                        telegraphRadius: VoodooRules.HigopRadius, telegraphRange: VoodooRules.HigopMaxRange,
                        castAction: "hero-phaister-eclipse", viewmodelAction: "coven-eclipse",
                        castCue: "sfx_cast_phaister_higop")

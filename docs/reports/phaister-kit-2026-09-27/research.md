@@ -1,66 +1,103 @@
-# Phaister's overhaul: research, 2026-09-27
+# Phaister's overhaul: research, 2026-09-27 (v2)
 
-Method: `docs/HERO_KIT_METHOD.md` section 2. Footage, stepped frame by frame in the built-in browser (the `<video>` pinned
-full window, paused, sought, a screenshot every 1.2 to 8 s), then closed. Each reference: what it does, what TUMP takes,
-what TUMP does NOT take.
+Method: `docs/HERO_KIT_METHOD.md` section 2. Footage stepped frame by frame in the built-in browser (the `<video>` pinned full
+window, paused, sought, a frame every 0.5 to 2 s, finer through the key beats), then closed. Owner, on v1: *"thoroughhly
+research again for direction i recommend looking at seele's ult and other character with butterflies"*, *"really try to
+capture the many movingh parts of the vfx in ur research"*, *"really think abt all moving parts and the direction of
+everything"*. So every reference below is taken apart into its LAYERS: what each thing is, where it starts, which way it
+moves, how fast, what it is anchored to, and how it ends.
 
 ## 1. Sources watched
 
 | Reference | Footage | Frames read |
 |---|---|---|
-| Lyney, Genshin Impact (a stage magician) | "Character Demo: Lyney: Secret Inside the Hat" (youtube `InFM4OvLbxk`, 2:07) | 14, 0:24 to 1:52 |
-| Zarya, Overwatch, Graviton Surge (a pull to one point) | "Overwatch - Zarya - Graviton Surge [HD]" (`KnlCFZxHzAc`, 0:09) | 5, 1.2 to 7.2 s |
-| Kafka, Honkai: Star Rail, ultimate (a slow, relishing puppeteer) | "Honkai:Star Rail Kafka Ultimate" (`6wEBvHuszVM`, 0:11) | 7, 1.0 to 10.0 s |
+| Seele, Honkai: Star Rail, ultimate (the owner's link) | `youtube.com/shorts/RuGfWIDdINA` (0:16) | 20, two passes, 0.5 s apart through 7.9 to 12.6 s |
+| Castorice, Honkai: Star Rail, ultimate (a butterfly character) | `LQWNfzPMDVY` (0:31) | 22, two passes |
+| Hu Tao, Genshin Impact, burst (a butterfly character) | `rId7RHyezLA` (0:07) | 6 |
+| Lyney, Genshin Impact, character demo (magic tricks) | `InFM4OvLbxk` (2:07) | 14 |
+| Zarya, Overwatch, Graviton Surge (a pull to a point) | `KnlCFZxHzAc` (0:09) | 5 |
+| Kafka, Honkai: Star Rail, ultimate (a calm, relishing caster) | `6wEBvHuszVM` (0:11) | 7 |
 
-From the earlier rounds, already in the repo and not re-watched: Genshin burst vocabulary and density
-(`docs/reports/ultimate-performances-2026-09-24/research.md` section 4, `docs/HERO_KIT_METHOD.md` section 6), Nahida and
-Wanderer for power lifting cloth (`ability-rework-2026-09-26/ultimates.md` 3.3).
+## 2. Each reference, layer by layer
 
-## 2. What each taught
+### Seele (the owner's pick)
 
-### Lyney (the magician)
+Beat order: wind-up in the world, the camera whips round her, a held eye close-up, the strike, the aftermath.
 
-| What it does | TUMP takes | TUMP does NOT take |
-|---|---|---|
-| Opens on a STORM of playing cards tumbling through a spotlight cone | open the ultimate on her element already in the air (the method's rule), in her props: pins and loose thread, not cards | cards, top hats, a cat mascot: they are his, and copying them would read as a copy |
-| A spotlight iris: a single white disc on black, the trick shown inside it | the SPOTLIGHT as her stage tool: it picks out a victim (Spotlight Pin), it frames her bow | a white disc; hers is warm gold-edged violet |
-| Hard graphic cut-ins: flat red, black and white panels on diagonals, a sunburst, a card with his silhouette | one flat graphic beat per cutscene at most, in her colours, on the reveal | a comic-panel cutscene; TUMP's cutscenes are staged in the 3D scene |
-| A spiral tunnel of red and black tiles closing on a figure | the black hole's pull drawn as a spiral closing in (rings of thread turning inward) | the tile pattern |
-| He vanishes into his hat and reappears | the idea that her teleport is a TRICK with a prop, performed, not a blur | the hat as the vehicle (that is his signature) |
+| Layer | Starts | Moves | Speed and shape | Anchored to | Ends |
+|---|---|---|---|---|---|
+| Her body | crouched, weapon drawn back | a leap up and forward, one arm flung up | a snap out of a held crouch (anticipation, then fast) | the ground, then the air | lands past the target |
+| Camera | beside her at waist height | ORBITS round her while pushing in, then cuts to the eye | fast, a whip | her body | a hard cut |
+| Violet light streaks | behind her | long curved strokes following the camera's orbit | fast, many at once, of different lengths | the orbit, not the world | streak off the frame edge |
+| Her red ribbon | at her back | whips across the FOREGROUND, close to the lens | follows her turn, a beat late | her body | out of frame |
+| Small violet butterflies and shards | round her shoulders | drift outward and slightly up | slow against the fast streaks (the contrast is the point) | her | fade while flying off |
+| Eye close-up | cut in | a held frame, a violet sparkle glints in the eye | still, one glint | her face | cut |
+| Spiral rings | centred on the target | concentric white-violet arcs turning round the centre | fast turn, rings at different radii and speeds | the target | flash out |
+| White-out | the whole frame | one frame of near white | instant | the screen | cut |
+| Impact frame | the whole frame | inverted to black and white, black ink splashes flying outward | 2 to 3 frames only | the hit | colour returns |
+| Aftermath butterflies | off the hit | a few flutter UP and away, trailing glowing motes | slow, wings beating | the victim | fly out of frame |
 
-### Zarya (the pull)
+What it teaches: fast strokes and slow butterflies in the same frame; one held close-up in the middle of speed; an inverted
+impact frame on the hit; the aftermath is the butterflies leaving.
 
-| What it does | TUMP takes | TUMP does NOT take |
-|---|---|---|
-| A SMALL dark core with a bright rim: the power is in the tiny point, not a big ball | the hole is small at the centre (about 0.6 m) with a hot magenta rim; the area is drawn separately | a big dark sphere (the current placeholder) |
-| The area is ribbons sweeping in big curved arcs round the core, and a pale sphere boundary | the pull area read by what MOVES inward (thread arcs, debris, dust), with the boundary drawn on the ground as a ring | a translucent dome over the court (it hides the can and the chalk, VISION section 2) |
-| Victims lifted off their feet and bobbing at the core | caught players held bobbing at the rim (already the plan's rule), struggling | lifting players high: the court must stay readable |
+### Castorice (the butterfly domain)
 
-### Kafka (the relish)
+| Layer | Starts | Moves | Speed and shape | Anchored to | Ends |
+|---|---|---|---|---|---|
+| Her swing | weapon high | one wide arc down | slow start, fast finish | her hands | the blade trails a violet ribbon |
+| Blade ribbon | the blade's edge | follows the arc, then lingers | lingers ~0.3 s after the blade passes | the blade's path in the world | frays into motes |
+| Rising flame ribbons | the ground round her | tall wavy ribbons climb upward | slow, rippling | the ground | top out and fade into motes |
+| Cyan motes | everywhere | drift slowly, many, tiny | slow | the air | twinkle out |
+| Butterflies (close) | the lens edge | cross the frame on DIAGONALS, wings beating | medium, each on its own curve | the camera (a near layer) | leave the frame |
+| Butterfly design | | dark violet wings, darker veins, a BRIGHT EDGE on the wing, a small glowing body | | | |
+| The domain | the arena | the sky goes to night with a big moon; the ground becomes a field of tiny glowing lights | a transformation, held | the world | returns at the end |
+| Area ring | round the target | a thin cyan ring lies on the ground and turns slowly | slow | the ground | fades |
+| Speed streaks | across the frame | long horizontal violet lines | fast | the camera | off frame |
+| Breath beam | the dragon's mouth | a beam to the target | fast | the dragon | an impact flower of violet spikes |
+| Final burst | the target | a radial explosion whose SILHOUETTE is a butterfly | instant, then expanding | the target | white-violet flash |
 
-| What it does | TUMP takes | TUMP does NOT take |
-|---|---|---|
-| She walks AWAY from the fight, unhurried; the ultimate is about her composure | Phaister never hurries in her cutscene; the slow cast the owner asked for is played as savouring, not effort | the menace: Phaister is playful (LORE: not cruelty) |
-| A close-up of her calm face, the one held beat | one held close-up of her face at the reveal, the one time her eyes open fully | |
-| A low shot of her feet with brass casings falling round them | a low shot where her props (pins) rain down round her feet: detail at the ground sells the scale | casings, guns |
-| Stage-light beams converge on her from all sides | a ring of spotlight beams swinging onto her as the curtain rises | cold white beams |
-| The hit framed as a split grid of panels, each victim strung up | the ending shows every real target, as the method requires | a split grid |
+What it teaches: the world becomes HER place (night, a moon, a glowing ground); wings with a bright edge read against dark;
+butterflies close to the lens on diagonals; the payoff's silhouette is her emblem.
 
-## 3. The Bakunawa (her own lore, not a reference game)
+### Hu Tao (personality inside power)
 
-Her origin story is a moon swallowed by a serpent (the Abaknon account on Capul, National Museum source in
-`docs/CHARACTER_ORIGINS.md`; the Visayan Bakunawa is the same image). The black hole is that story told as her greatest
-trick: she shows the audience a moon, and the serpent eats it. It gives the ultimate a meaning the method asks for ("one
-sentence") and ties it to who she is. Boundary: the serpent is drawn as HER stagecraft (a stitched, thread-and-cloth
-puppet serpent), not as a depiction of a sacred being or a documented rite; her "lunar writing" stays fictional, as
-`CHARACTER_ORIGINS.md` already says.
+| Layer | Starts | Moves | Anchored to | Ends |
+|---|---|---|---|---|
+| Her | a grin to the camera, a finger gesture | a cheeky pose held a beat | the lens | cut |
+| A comic beat | a little ghost pops up beside her with a "?" | bobs | her shoulder | cut |
+| The blast | her staff | a flat ring of fire out over the ground | the ground | burns out |
+| One butterfly | the blast | flutters away alone | the air | leaves |
 
-## 4. Rules this gives Phaister (feeds plan.md)
+What it teaches: one cheeky beat of personality inside the big moment, and one small thing (a single butterfly) after it.
 
-1. Every ability is a small show: setup, reveal, bow. The flourish and the presenting gesture differ per ability.
-2. Stage tools are her effects vocabulary: spotlight, curtain, moon, sparkle on the reveal. Voodoo props are her objects:
-   pins, thread, the rag doll.
-3. Power sits in a small bright point; the AREA is drawn by what moves toward it and a ring on the ground.
-4. Composure: she never strains. Speed and chaos belong to what happens TO the victims.
-5. Open the cutscene on her props already in the air; one held close-up of her face; end on the real targets caught.
-6. No white: gold, violet, magenta, bone only for the moon and the pin heads.
+### Lyney, Zarya, Kafka (v1 references, kept for their lessons)
+
+- **Lyney**: open on the element already in the air (a storm of cards); one flat graphic beat at most. NOT his cards, hat or
+  stagecraft (the owner rejected the showman).
+- **Zarya**: a SMALL dark core with a bright rim; the area drawn by ribbons sweeping inward in big arcs and a boundary; the
+  victims bob at the core. NOT a dome over the court.
+- **Kafka**: composure; a held close-up of a calm face; detail at the feet (things falling round her shoes) sells scale.
+
+## 3. What Phaister takes, and what she does not
+
+| Take | For |
+|---|---|
+| Seele's orbiting camera with curved streaks during the build | OMEN's second shot |
+| Seele's held eye close-up with one glint | OMEN, the moment her eyes light |
+| Seele's inverted impact frame (2 to 3 frames) | OMEN's landing, and only there |
+| Butterflies as the AFTERMATH, fluttering up and away | OMEN's end, and a single moth after VANISHING ACT |
+| Castorice's wing design: dark wing, darker veins, bright edge, glowing body | her butterflies (black with a magenta edge) and moths (violet with a lilac edge) |
+| Castorice's domain: the world turns to her night, a moon, a glowing ground | OMEN's cutscene backdrop, and a faint version in play (the court's lights dim in the eye's radius) |
+| Castorice's thin ring on the ground, slowly turning | OMEN's 7.5 m boundary |
+| Castorice's emblem-shaped blast | OMEN's landing flash is a butterfly silhouette |
+| Hu Tao's one cheeky beat | Phaister's smirk and wink inside OMEN, and a small gag in each skill |
+| Fast strokes and slow wings in one frame | every beat: speed is in streaks and bodies, the wings stay slow |
+
+Not taken: Seele's scythe and sprint (Phaister does not fight up close); Castorice's dragon (a summon is Paete's shape);
+any white core (her rule: violet, magenta, never white); the cyan (it is too close to blue for her; her accent is magenta).
+
+## 4. The Bakunawa and the folklore (her own)
+
+Unchanged from v1 in spirit, now as a witch: Capul's moon story gives her moonlight and lunar sigils; the Visayan barang
+(insect sorcery), the mangkukulam's doll and pins, and the black butterfly omen give her kit its objects. Fiction inspired by
+folklore, never a real rite (`plan.md` section 1).

@@ -813,11 +813,15 @@ presentation VFx ANIIMATION SFX AND DIRECTING"*, *"think abt her personality too
 (Paete's baseline). Mechanics are ABILITY-2's (`Core.VoodooRules`). Brief: `ArtSource/phaister/kit-20260927/design-brief.md`;
 research, plan and questions: `docs/reports/phaister-kit-2026-09-27/`.
 
-- [x] Brief and research from footage (Lyney, Zarya, Kafka; her own Bakunawa story); audit of what is there today.
+- [x] Brief and research from footage, v2 layer by layer (Seele, Castorice, Hu Tao; Lyney, Zarya, Kafka); audit of today.
 - [x] Plan: names proposed, the effect family, six beats per ability, the cutscene direction (one sentence, three shots,
   the moon travelling left to right), the file list; ONE batch of ten questions.
-- [ ] The owner's answers recorded in `plan.md` section 7.
-- [ ] Names and descriptions; icons.
+- [x] The owner's answers recorded in `plan.md` section 7; v2 is the WITCH (v1's showman rejected), every moving part and
+  its direction tabled (section 4.4 and 4.5), her own animations listed (4.6).
+- [x] Names and descriptions: VANISHING ACT, MANIKA MISCHIEF, SPOTLIGHT PIN, OMEN (ids unchanged). Icons still owed.
+- [x] Model details (hip manika, three hat pins, two brim moths) applied INTO the shipped glb by
+  `tools/add_phaister_details.py` (36 clips and the shortened arms kept; a builder rerun loses them). Owner's verdict owed.
+- [ ] Her own animations (idle variants, walk, run, throw, pick-up, hit, taya, win), one at a time, filmed.
 - [ ] Props typed in `tools/build_phaister_props.py` (doll, pin, lamp, curtain, moon, serpent); turnarounds.
 - [ ] One body clip and one first-person action per ability (today both curses share `hero-phaister-hex` and `cast-hex`,
   and the ultimate uses the retired `hero-phaister-eclipse`); filmstrips reviewed.
