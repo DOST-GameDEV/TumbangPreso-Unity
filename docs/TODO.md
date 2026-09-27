@@ -155,6 +155,9 @@ case passes. No animation rework or long-running player-heap qualification is cl
 Title/login artwork and profile pictures now await asynchronous cold reads during
 their existing staged preparation. One new native request/cache/fallback case passes;
 supplied pixels and staged order remain unchanged. Player cold-read timings remain OPEN.
+Shader preparation now checks elapsed time after each variant and yields at a2ms
+target or10variants,while retaining full completion. The changed native stage case
+passes97/97variants; cached Editor timing is not cold-player/handset acceptance.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

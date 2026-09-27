@@ -1,11 +1,17 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`fc1487fa6f7decd68190fbfad8f05dd769940d14`; asynchronous menu-art preparation follows it.
+`ecf1ac8cc66d03a910304ccff2e5a4507902c297`; elapsed-budget shader preparation follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Shader warmup now checks elapsed time after each variant,yielding at a2ms target
+or10variants while retaining full completion. The modified native stage case
+passes1/1 on full committed base plus2inputs,no drift,no retry:97variants,10turns,
+max1.493ms in this cached Editor run. One native compile may overrun; no cold-player
+or handset guarantee. [Evidence](reports/stability-2026-09-27/loading-audit.md#shader-turn-budget).
 
 Title/login artwork and avatar warmups now await cold Resources.LoadAsync requests
 per item before retaining their existing texture/sprite caches. Supplied art and

@@ -385,11 +385,14 @@ namespace TumbangPreso.PlayTests
                 Assert.IsNotNull(method);
                 preload = (IEnumerator)method.Invoke(splash, null);
                 int steps = 0;
-                int bound = Mathf.CeilToInt(collection.variantCount / 10f) + 3;
+                int bound = collection.variantCount + 3;
                 while (!shaderStageFinished && steps++ < bound)
                 {
+                    int before = collection.warmedUpVariantCount;
                     Assert.IsTrue(preload.MoveNext(), "Splash preload ended before its shader stage completed.");
                     Assert.IsNull(preload.Current, "The shader stage entered a later preload operation.");
+                    Assert.LessOrEqual(collection.warmedUpVariantCount - before, 10,
+                        "A shader preparation turn exceeded the existing variant ceiling.");
                     yield return null;
                 }
                 Assert.IsTrue(shaderStageFinished, "The bounded shader stage did not finish.");

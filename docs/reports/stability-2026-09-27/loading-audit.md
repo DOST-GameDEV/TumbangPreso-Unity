@@ -5,6 +5,25 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Shader Turn Budget
+
+Afterecf1ac8c, splash calls WarmUpProgressively(1) and checks elapsed time after
+each variant,yielding at a2ms target or10variants instead of unconditionally
+compiling10per call. Variant-count bounds and true completion remain; progress
+uses the actual warmed count. One indivisible native compilation can overrun the
+target,so no hard2ms frame guarantee follows. No shader collection,material,quality
+or authored asset changed.
+
+The modified existing shader-stage case passes1/1,0.3210436s on full committed base
+plus2inputs,no drift,no retry. It now allows the one-variant-per-turn worst case,
+asserts no turn exceeds10variants and still requires full collection completion.
+Receipt:50shaders,97variants,97warmed,complete=True,97calls,10turns,9.171ms stage,
+1.493ms maximum slice. These are cached Editor observations,not cold player timings
+or an A/B comparison with older collections/runs. Minimum free6,535,024,640bytes;
+named profile/preferences restored. [Receipt](checks/shader-budget-native.json),
+[XML](checks/shader-budget-native.xml). Raw Logs/shader-budget-20260927/budgeted-variants.*.
+Only the changed existing case ran; no other shader/native cases or films repeated.
+
 ## Asynchronous Menu Art
 
 Afterfc1487fa, OwnerMenuArt and Avatars warmups await Resources.LoadAsync for cold

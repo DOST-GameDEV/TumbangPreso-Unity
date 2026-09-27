@@ -332,15 +332,16 @@ namespace TumbangPreso.UI
         private const string ShaderWarmupResource = "ShaderWarmup";
 
         /// <summary>
-        /// How many shader variants are warmed between two frames.
+        /// Maximum shader variants warmed between two frames.
         ///
         /// ⚠️ SMALL ON PURPOSE. The whole point is that the main thread comes back between
         /// slices, and the target device is a cheap handset rather than this desktop. Ten
-        /// variants bounds work per frame instead of compiling the whole collection in one
-        /// call. Actual handset slice time still needs measurement; the loading screen yields
-        /// after each slice.
+        /// variants is a ceiling,not an unconditional batch. Check elapsed time after each
+        /// variant so a slow compilation yields before starting another. One native compile
+        /// can exceed the budget; actual handset slice time still needs measurement.
         /// </summary>
         private const int ShaderWarmupSlice = 10;
+        private const double ShaderWarmupBudgetMs = 2;
 
         private IEnumerator PreloadGameAssets()
         {
@@ -386,31 +387,37 @@ namespace TumbangPreso.UI
             {
                 // The API takes variants per call and returns true when the collection is done.
                 // Keep a variant-count bound as protection against a stalled warmup.
-                int slices = Mathf.CeilToInt(Mathf.Max(1, warmup.variantCount) /
-                                             (float)ShaderWarmupSlice);
+                int callLimit = Mathf.Max(1, warmup.variantCount);
                 var warmupWatch = System.Diagnostics.Stopwatch.StartNew();
                 double maxSliceMs = 0;
-                int warmupCalls = 0;
+                int warmupCalls = 0, warmupFrames = 0;
+                bool done = false;
 
-                for (int i = 0; i < slices; i++)
+                while (!done && warmupCalls < callLimit)
                 {
                     long sliceTick = System.Diagnostics.Stopwatch.GetTimestamp();
+                    double sliceMs;
+                    int frameCalls = 0;
                     UnityEngine.Profiling.Profiler.BeginSample("TUMP.Boot.ShaderWarmupSlice");
-                    bool done = warmup.WarmUpProgressively(ShaderWarmupSlice);
+                    do
+                    {
+                        done = warmup.WarmUpProgressively(1);
+                        warmupCalls++; frameCalls++;
+                        sliceMs = (System.Diagnostics.Stopwatch.GetTimestamp() - sliceTick) * 1000.0 /
+                            System.Diagnostics.Stopwatch.Frequency;
+                    }
+                    while (!done && warmupCalls < callLimit && frameCalls < ShaderWarmupSlice && sliceMs < ShaderWarmupBudgetMs);
                     UnityEngine.Profiling.Profiler.EndSample();
-                    maxSliceMs = System.Math.Max(maxSliceMs,
-                        (System.Diagnostics.Stopwatch.GetTimestamp() - sliceTick) * 1000.0 / System.Diagnostics.Stopwatch.Frequency);
-                    warmupCalls++;
+                    maxSliceMs = System.Math.Max(maxSliceMs, sliceMs);
+                    warmupFrames++;
 
                     // The bar moves inside the stage rather than only at its boundaries, so the
                     // stage that used to look frozen is now the one that visibly counts down.
                     SetLoadingStage("preparing shaders",
-                                    Mathf.Lerp(0.04f, 0.09f, (i + 1) / (float)slices));
+                                    Mathf.Lerp(0.04f, 0.09f, warmup.warmedUpVariantCount / (float)callLimit));
                     yield return null;
-
-                    if (done) break;
                 }
-                Debug.Log(System.FormattableString.Invariant($"[SplashShaders] shaders={warmup.shaderCount} variants={warmup.variantCount} warmed={warmup.warmedUpVariantCount} complete={warmup.isWarmedUp} calls={warmupCalls} elapsed_ms={warmupWatch.Elapsed.TotalMilliseconds:F3} max_slice_ms={maxSliceMs:F3}"));
+                Debug.Log(System.FormattableString.Invariant($"[SplashShaders] shaders={warmup.shaderCount} variants={warmup.variantCount} warmed={warmup.warmedUpVariantCount} complete={warmup.isWarmedUp} calls={warmupCalls} frames={warmupFrames} budget_ms={ShaderWarmupBudgetMs:F1} elapsed_ms={warmupWatch.Elapsed.TotalMilliseconds:F3} max_slice_ms={maxSliceMs:F3}"));
                 if (!warmup.isWarmedUp)
                     Debug.LogWarning($"[SplashShaders] bounded warmup incomplete: {warmup.warmedUpVariantCount}/{warmup.variantCount} variants; remaining variants may compile on first use.");
             }

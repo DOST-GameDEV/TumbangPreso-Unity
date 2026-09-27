@@ -12,6 +12,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Responsibility | Source |
 |---|---|
 | Boot stages and progress | UI/SplashScreen.cs; shader slices,rosters,audio,menu art,input,glyphs and retained dependencies |
+| Shader preparation turns | SplashScreen calls WarmUpProgressively(1),checks a2ms elapsed target between calls and caps10variants/turn; one indivisible native compile may overrun,so this is not a hard frame guarantee |
 | Deferred SFX/voice samples | UI/SplashScreen.WarmAudioAssets; yielded sample loading and retention,not just clip references; music/streaming policy unchanged |
 | Real menu activation barrier | UI/SplashScreen.MenuActivation.cs and ConvertedMainMenu.IsPrepared; retain existing canvas through Wire/layout,then reveal login/input |
 | Title/login art and avatars | UI/OwnerMenuArt.cs,Avatars.cs; async cold reads awaited per item,then existing retained texture/sprite caches; supplied pixels and fallback policy unchanged |
