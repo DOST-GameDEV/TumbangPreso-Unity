@@ -1155,6 +1155,11 @@ Supersedes REFINE-2.6 for this map.
   match (the court reads flat and brown, no warm key). Done: the cutscene camera and its lights
   inherit the match's installed look on every map, checked by a side-by-side of gameplay and the
   catch shot on the cove and one shipped map.
+  FIX WRITTEN 2026-09-27, awaiting the owner's look in play: the cause was
+  `CatchReconstruction.BuildView` making its playback camera with `Camera.CopyFrom`, which copies
+  no components, so it drew without the rig's `ColourGrade` and `WorldOutline` (grade, ink, AO).
+  It now adds both, as `RecordedWorldView` and `UltimatePhaseView` already did. Game-wide, not
+  only the cove.
 - [ ] LAGOON-1.4 BIRDS AND FISH AS BOIDS (owner, 2026-09-27: *"add birds and fish (via boids)"*).
   Flocks of chunky, style-matched birds over the cove and schools of fish over the reefs, steered
   by separation, alignment and cohesion, kept inside their volumes (sky band, water between the

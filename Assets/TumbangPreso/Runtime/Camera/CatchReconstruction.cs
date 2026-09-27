@@ -158,6 +158,19 @@ namespace TumbangPreso.CameraSystem
             _camera = go.AddComponent<Camera>(); _camera.CopyFrom(Camera.main); _camera.enabled = false;
             _camera.tag = "Untagged"; _camera.fieldOfView = 58; _camera.nearClipPlane = .08f;
             _camera.depth = -100; _camera.clearFlags = CameraClearFlags.Skybox;
+            // ⚠️⚠️ THE MATCH'S LOOK, NOT THE EDITOR'S. Owner, 2026-09-27, twice, with "CAUGHT BY"
+            // screenshots on Lagoon Cove: *"tagged cutscreen doesn't use the shader-based
+            // lighting, it uses the lighting ud see in the editor"*. `Camera.CopyFrom` copies the
+            // camera's settings and none of its components, and the look lives in components the
+            // gameplay rig adds (CameraRig: ColourGrade, then PostAntiAlias, then WorldOutline),
+            // so this camera drew the raw lit scene: no map grade, no ink and no ambient
+            // occlusion. The same two effects RecordedWorldView and UltimatePhaseView already add
+            // to their playback cameras go on here, the grade FIRST (image effects run in
+            // component order and the outline composites over a graded frame on the rig too).
+            // PostAntiAlias stays off, as on those views: the frame lands in a RawImage.
+            _camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            _camera.gameObject.AddComponent<WorldOutline>().PrototypeEnabled =
+                Camera.main.GetComponent<WorldOutline>()?.PrototypeEnabled ?? true;
             int width = Mathf.Clamp(Screen.width, 960, 1920);
             int height = Mathf.Max(540, Mathf.RoundToInt(width * Screen.height / (float)Mathf.Max(1, Screen.width)));
             _target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32) { name = "CatchPlaybackFrame" };
