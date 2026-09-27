@@ -163,6 +163,20 @@ namespace TumbangPreso
 
         public const int Lanes = LaneCount;
 
+        // ---- read by the street sound (KantoStreetSound): nothing here changes the traffic.
+        public int DriverCount => Drivers.Length;
+        public Vector3 DriverPosition(int i) => Drivers[i].Body != null ? Drivers[i].Body.position : Vector3.zero;
+        public float DriverSpeed(int i) => _speed != null ? _speed[i] : 0f;
+        public float DriverCruise(int i) => Drivers[i].Cruise;
+        /// <summary>The vehicle's model (its dressing group's name: sedan_red, jeepney, tricycle...).</summary>
+        public string DriverModel(int i) => Drivers[i].Body != null && Drivers[i].Body.parent != null ? Drivers[i].Body.parent.name : "";
+        /// <summary>True while the vehicle waits at a light, in a queue, or at the jeepney stop.</summary>
+        public bool DriverWaiting(int i) => _speed != null && _speed[i] < .3f;
+        /// <summary>The road axis the vehicle drives along: 0 = X, 1 = Z (matches GreenStarted).</summary>
+        public int DriverAxis(int i) => Drivers[i].Lane >= 4 ? 1 : 0;
+        /// <summary>Fired when a road axis (0 = along X, 1 = along Z) turns green.</summary>
+        public event Action<int> GreenStarted;
+
         /// <summary>A lane's frame: the point at Along = 0 and the unit travel direction. Shared with
         /// the scene builder so placement and runtime use one geometry.</summary>
         public void LaneFrame(int lane, out Vector3 origin, out Vector3 dir)
@@ -328,6 +342,12 @@ namespace TumbangPreso
         {
             int phase = PhaseFor(0) * 3 + PhaseFor(1);
             if (phase == _lastPhase) return;
+            if (_lastPhase >= 0)
+                for (int axis = 0; axis < 2; axis++)
+                {
+                    int was = axis == 0 ? _lastPhase / 3 : _lastPhase % 3, now = PhaseFor(axis);
+                    if (now == 1 && was != 1) GreenStarted?.Invoke(axis);
+                }
             _lastPhase = phase;
             for (int s = 0; s < Signals.Length; s++)
             {
