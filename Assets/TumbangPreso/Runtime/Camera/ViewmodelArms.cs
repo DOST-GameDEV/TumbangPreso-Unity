@@ -993,9 +993,9 @@ namespace TumbangPreso.CameraSystem
             new Key(.13f,-.14f,-.12f,-.06f,-.62f,.38f,.30f,true), new Key(.30f,-.12f,-.10f,-.05f,-.56f,.34f,.28f,true),
             new Key(.62f,0,0,0,0,0,0,true) };
         private static readonly Key[] UpdraftLiftClip = {
-            new Key(0,0,0,0,0,0,0,true), new Key(.16f,.30f,.06f,.04f,.34f,-.06f,-.04f,true),
-            new Key(.24f,-.70f,.10f,.10f,-.78f,-.10f,-.12f,true), new Key(.46f,-.56f,.16f,.12f,-.62f,-.16f,-.14f,true),
-            new Key(.80f,0,0,0,0,0,0,true) };
+            new Key(0,.08f,.02f,.02f,.12f,-.03f,-.03f,true), new Key(.10f,.26f,.08f,.04f,.32f,-.08f,-.05f,true),
+            new Key(.20f,.42f,.12f,.08f,.50f,-.14f,-.10f,true), new Key(.43f,.16f,.10f,.06f,.21f,-.12f,-.08f,true),
+            new Key(.68f,0,0,0,0,0,0,true) };
         private static readonly Key[] GaleSweepClip = {
             new Key(0,0,0,0,0,0,0,true), new Key(.20f,-.18f,.40f,.08f,-.10f,.36f,.12f,true),
             new Key(.32f,-.40f,-.46f,-.10f,-.46f,-.40f,-.08f,true), new Key(.52f,-.36f,-.52f,-.10f,-.40f,-.46f,-.10f,true),
@@ -2786,6 +2786,7 @@ namespace TumbangPreso.CameraSystem
             RestoreCastGesture();
             RestoreRaiseCan();
             RestoreRunSway();
+            RestoreFeatherfall();
             RestoreSwimming();
             _phase += dt;
 
@@ -2823,6 +2824,7 @@ namespace TumbangPreso.CameraSystem
                                _rightRestScale, dt);
                 }
                 ApplySwimming(dt);
+                ApplyFeatherfall();
                 ApplyRunSway(dt);
                 ApplyRaiseCan(dt);
                 ApplyTagReach();
@@ -2868,6 +2870,7 @@ namespace TumbangPreso.CameraSystem
                 StepToward(elbow, Quaternion.LookRotation(forward, dir), Vector3.one * CarryScale, dt);
             }
             ApplySwimming(dt);
+            ApplyFeatherfall();
             ApplyRunSway(dt);
             ApplyThrowReach();
             ApplyTagReach();

@@ -208,7 +208,11 @@ namespace TumbangPreso.Net
 
         private void OnEnable() => NetSession.ClientDisconnected += HandleClientDisconnected;
 
-        private void OnDisable() => NetSession.ClientDisconnected -= HandleClientDisconnected;
+        private void OnDisable()
+        {
+            NetSession.ClientDisconnected -= HandleClientDisconnected;
+            CancelSnapshotRefreshWork(clearSnapshotTimes: false);
+        }
 
         /// <summary>
         /// The host is gone. Leave, from wherever this peer happens to be.
@@ -284,6 +288,7 @@ namespace TumbangPreso.Net
 
         public void Initialize(NetworkManager nm)
         {
+            if (!ReferenceEquals(_nm, nm)) CancelSnapshotRefreshWork();
             _nm = nm;
             ResetQueueArrival();
             RegisterHandlers();
@@ -305,9 +310,11 @@ namespace TumbangPreso.Net
             if (ReferenceEquals(_handlersOn, _nm.CustomMessagingManager)) return;
 
             var cm = _nm.CustomMessagingManager;
+            CancelSnapshotRefreshWork();
             // A new transport session owns a new snapshot sequence. Never reject
             // its generation one because this process previously joined another host.
             _worldFieldBatch = null; _lastWorldFieldGeneration = 0; _worldFieldGeneration = 0;
+            ResetFeatherfallTransport();
             PresentationMatchId = 0; _pendingMoments.Clear();
             _lastUltimateRequest.Clear(); _ultimateRequestSequence = 0;
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
@@ -1867,10 +1874,15 @@ namespace TumbangPreso.Net
                 kit.RestoreFamiliar(unit,mode,position,remaining,yaw);
         }
 
-        private void SendTimedKitSnapshot(int slot, ulong peer)
+        private void SendTimedKitSnapshot(int slot, ulong peer, int fieldGeneration = 0)
         {
             if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
             var kit = Unit(slot)?.AbilitySystem?.Kit;
+            if (kit is Abilities.AmihanHeroKit amihan)
+            {
+                if (fieldGeneration > 0) SendFeatherfallSnapshot(slot, peer, fieldGeneration, amihan);
+                return;
+            }
             float chargeRemaining, ultimateRemaining = 0;
             if (kit is Abilities.SeanHeroKit sean)
                 chargeRemaining = sean.IsIgnitionCannonActive ? kit.Skill2.DurationRemaining : 0;
@@ -1905,6 +1917,11 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float ultimateRemaining);
             reader.ReadValueSafe(out float sentAt);
             reader.ReadValueSafe(out bool ultimatePending);
+            if (hero == "amihan")
+            {
+                ReadFeatherfallSnapshot(ref reader, slot, round, remaining, ultimateRemaining, sentAt, ultimatePending);
+                return;
+            }
             if (!ValidSlot(slot) || !Finite(remaining) || !Finite(ultimateRemaining) || !Finite(sentAt)
                 || remaining < 0 || remaining > 10.1f || ultimateRemaining < 0 || ultimateRemaining > 7.1f
                 || (ultimatePending && hero != "zack")
@@ -2263,7 +2280,7 @@ namespace TumbangPreso.Net
         {
             if (NetAuthority.IsHost)
             {
-                ApplyUnitMove(slot, pos, yaw, velocity, grounded);
+                ApplyUnitMove(slot, pos, yaw, velocity, grounded, Unit(slot)?.FlightEpisode ?? 0);
                 SyncUnitTransformClientRpc(slot, pos, yaw, velocity);
                 return;
             }
@@ -2284,13 +2301,14 @@ namespace TumbangPreso.Net
             // uproot are still decided by `ReqBreakFree` and `ReqUproot`, never by these bytes.
             writer.WriteValueSafe(owner.EffortFlags);
             writer.WriteValueSafe(owner.PullWire);
+            writer.WriteValueSafe(owner.FlightEpisode);
             _nm.CustomMessagingManager.SendNamedMessage("SubmitMove", NetworkManager.ServerClientId,
                                                         writer, PoseDelivery);
         }
 
         private void OnSubmitMoveMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || !reader.TryBeginRead(47)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int epoch);
@@ -2300,17 +2318,26 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out bool grounded);
             reader.ReadValueSafe(out byte effort);
             reader.ReadValueSafe(out byte pull);
+            reader.ReadValueSafe(out long flightEpisode);
 
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var unit)) return;
+            if (epoch != _movementEpochs[slot])
+            {
+                SyncUnitTransformClientRpc(slot, unit.transform.position, unit.transform.eulerAngles.y, unit.Velocity);
+                return;
+            }
+            // A predicted takeoff can beat its reliable request. Drop those poses until
+            // acceptance establishes the key; never adopt or relabel a client key here.
+            if (!unit.AcceptsFlightPoseEpisode(flightEpisode)) return;
             unit.ApplyNetworkEffort((effort & 1) != 0 && unit.IsRooted, pull / 255f);
-            if (epoch!=_movementEpochs[slot] || !AcceptMove(slot, unit, pos, yaw, velocity))
+            if (!AcceptMove(slot, unit, pos, yaw, velocity))
             {
                 SyncUnitTransformClientRpc(slot, unit.transform.position,
                                            unit.transform.eulerAngles.y, unit.Velocity);
                 return;
             }
 
-            ApplyUnitMove(slot, pos, yaw, velocity, grounded);
+            ApplyUnitMove(slot, pos, yaw, velocity, grounded, flightEpisode);
             SyncUnitTransformClientRpc(slot, pos, yaw, velocity);
         }
 
@@ -2322,13 +2349,13 @@ namespace TumbangPreso.Net
         /// everybody and the pose would be wrong on three screens instead of one.
         /// </summary>
         private static void ApplyUnitMove(int slot, Vector3 pos, float yaw, Vector3 velocity,
-                                          bool grounded)
+                                          bool grounded, long flightEpisode)
         {
             var unit = Unit(slot);
             if (unit == null) return;
 
             unit.ApplyNetworkTransform(pos, yaw, velocity, grounded,
-                                       reconcileLocal: false, force: true);
+                                       reconcileLocal: false, force: true, flightEpisode: flightEpisode);
         }
 
         public void SyncUnitTransformClientRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
@@ -2343,6 +2370,7 @@ namespace TumbangPreso.Net
             if (unit == null) return;
 
             using var writer = new FastBufferWriter(192, Allocator.Temp);
+            unit.FlightPoseEvidence(out bool grounded, out long flightEpisode);
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe(_movementEpochs[slot]);
             writer.WriteValueSafe(++_unitPoseSerial[slot]);
@@ -2354,7 +2382,7 @@ namespace TumbangPreso.Net
             // `ApplyUnitMove` HAS ALREADY STORED THE OWNER'S VALUE. For a host-driven body this
             // is the real simulated flag; for a client-driven one it is what that client last
             // submitted. Inferring it from `velocity` on the receiving end is what this replaced.
-            writer.WriteValueSafe(unit.IsGrounded);
+            writer.WriteValueSafe(grounded);
             writer.WriteValueSafe(unit.StunLeft);
             writer.WriteValueSafe(unit.StunTotal);
             writer.WriteValueSafe((int)unit.StunElement);
@@ -2390,6 +2418,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.DisorientedLeft);
             writer.WriteValueSafe(unit.VulnerableLeft);
             writer.WriteValueSafe(unit.FearSource);
+            writer.WriteValueSafe(flightEpisode);
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer,reliable?NetworkDelivery.ReliableSequenced:PoseDelivery);
         }
 
@@ -2400,7 +2429,7 @@ namespace TumbangPreso.Net
             // Netcode invokes the handler locally for the listen host, so every broadcast the
             // host sent was also applied ON the host, a second time, over authoritative state it
             // had just produced. See § THE LOOPBACK.
-            if (NetAuthority.IsHost) return;
+            if (NetAuthority.IsHost || !reader.TryBeginRead(181)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int epoch);
@@ -2438,6 +2467,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float disorientedLeft);
             reader.ReadValueSafe(out float vulnerableLeft);
             reader.ReadValueSafe(out Vector3 fearFrom);
+            reader.ReadValueSafe(out long flightEpisode);
             if(!Finite(whirledLeft) || !Finite(chilledLeft) || !Finite(rootedLeft))return;
             if(!Finite(concussedLeft) || !Finite(fearedLeft) || !Finite(disorientedLeft) || !Finite(vulnerableLeft) || !Finite(fearFrom))return;
             if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
@@ -2469,7 +2499,7 @@ namespace TumbangPreso.Net
             bool edgeOwned=unit.IsEdgeRecovering||edgeKind!=0;
             unit.ApplyEdgeRecoverySnapshot((EdgeRecoveryKind)edgeKind,edgeGrip,edgeOutward,edgePhase,edgeRatio);
             float facing=local && newEpoch&&!edgeOwned?unit.transform.eulerAngles.y:yaw;
-            unit.ApplyNetworkTransform(pos, facing, velocity, grounded, reconcileLocal: local&&!edgeOwned,force:newEpoch);
+            unit.ApplyNetworkTransform(pos, facing, velocity, grounded, reconcileLocal: local&&!edgeOwned,force:newEpoch,flightEpisode:flightEpisode);
             if(newEpoch)unit.GetComponent<Visual.CharacterVisual>()?.SnapRemoteTransform();
             unit.ApplyNetworkState(stunLeft, stunTotal, (StunElement)stunElement,
                                    stunBreakPresses, stunMashPresses,
@@ -3238,7 +3268,7 @@ namespace TumbangPreso.Net
         public void RequestAbilityCastServerRpc(int claimedSlot, int abilitySlot,
                                                 Vector3 position, Vector3 forward,
                                                 Vector3 aimPoint, float heldSeconds,
-                                                bool hasFamiliar=false, Vector3 familiarPosition=default)
+                                                bool hasFamiliar=false, Vector3 familiarPosition=default,long flightIntent=0)
         {
             if (abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate)
             { RequestSharedUltimate(claimedSlot, position, forward, aimPoint, heldSeconds); return; }
@@ -3249,12 +3279,13 @@ namespace TumbangPreso.Net
             {
                 var system = Unit(claimedSlot)?.AbilitySystem;
                 var slot = (Abilities.HeroAbilitySystem.Slot)Mathf.Clamp(abilitySlot, 0, 2);
+                if (!ValidFeatherfallIntent(Unit(claimedSlot), abilitySlot, flightIntent)) return;
                 if (system?.ApplyNetworkCast(slot, position, forward, aimPoint,
                                              heldSeconds, authoritative: true)
                     == Abilities.HeroKit.CastOutcome.Cast)
                 {
                     BroadcastAbilityCast(claimedSlot, abilitySlot, position, forward,
-                                         aimPoint, heldSeconds, null, hasFamiliar, familiarPosition);
+                                         aimPoint, heldSeconds, null, hasFamiliar, familiarPosition,flightIntent:flightIntent);
                     BroadcastAbilityState(claimedSlot, Unit(claimedSlot));
                 }
                 return;
@@ -3272,12 +3303,13 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(hasFamiliar);
             writer.WriteValueSafe(familiarPosition);
             writer.WriteValueSafe(PresentationMatchId);writer.WriteValueSafe(GameServices.Match?.RoundNumber??0);writer.WriteValueSafe(request);
+            writer.WriteValueSafe(flightIntent);
             _nm.CustomMessagingManager.SendNamedMessage("ReqAbility", NetworkManager.ServerClientId, writer);
         }
 
         private void OnReqAbilityMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost || !reader.TryBeginRead(81)) return;
+            if (!NetAuthority.IsHost || !reader.TryBeginRead(89)) return;
 
             reader.ReadValueSafe(out int claimedSlot);
             reader.ReadValueSafe(out int abilitySlot);
@@ -3288,6 +3320,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out bool hasFamiliar);
             reader.ReadValueSafe(out Vector3 familiarPosition);
             reader.ReadValueSafe(out long match);reader.ReadValueSafe(out int round);reader.ReadValueSafe(out long request);
+            reader.ReadValueSafe(out long flightIntent);
 
             if (abilitySlot < 0 || abilitySlot > 2) return;
             if (!SenderOwnsClaimedSeat(senderClientId, claimedSlot, out var unit)) return;
@@ -3301,6 +3334,8 @@ namespace TumbangPreso.Net
             }
             _lastSkillRequest[senderClientId]=(request,abilitySlot,false);
             if (abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate)
+            { HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot,request); return; }
+            if (!ValidFeatherfallIntent(unit, abilitySlot, flightIntent))
             { HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot,request); return; }
 
             // ⚠️⚠️ FROM HERE DOWN EVERY REFUSAL ANSWERS THE SENDER. Above this line the message is
@@ -3359,7 +3394,7 @@ namespace TumbangPreso.Net
 
             _lastSkillRequest[senderClientId]=(request,abilitySlot,true);
             BroadcastAbilityCast(claimedSlot, abilitySlot, position, forward,
-                                 aimPoint, heldSeconds, senderClientId, hasFamiliar, familiarPosition,request);
+                                 aimPoint, heldSeconds, senderClientId, hasFamiliar, familiarPosition,request,flightIntent);
             AcceptSkillReceipt(senderClientId,claimedSlot,abilitySlot,request);
             BroadcastAbilityState(claimedSlot, unit);
         }
@@ -3367,11 +3402,12 @@ namespace TumbangPreso.Net
         /// <summary>Host announcement. Every observer runs presentation; only the host resolves.</summary>
         public void BroadcastAbilityCast(int slot, int abilitySlot, Vector3 position,
                                          Vector3 forward, Vector3 aimPoint, float heldSeconds,
-                                         ulong? exceptClientId, bool hasFamiliar=false, Vector3 familiarPosition=default,long request=0)
+                                         ulong? exceptClientId, bool hasFamiliar=false, Vector3 familiarPosition=default,long request=0,long flightIntent=0)
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
 
             PrepareSkillReceipts();long eventId=++_skillEventSequence;
+            if(flightIntent==0)IdentifyFeatherfallTakeoff(Unit(slot), abilitySlot, request > 0 ? request : -eventId);
             bool confirmRitualOwner = abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate &&
                 Unit(slot)?.AbilitySystem?.HeroId == "phaister";
             bool confirmWorldOwner = Unit(slot)?.AbilitySystem?.NeedsOwnerEffectConfirmation(
@@ -3392,13 +3428,14 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(hasFamiliar);
             writer.WriteValueSafe(familiarPosition);
                 writer.WriteValueSafe(PresentationMatchId);writer.WriteValueSafe(GameServices.Match?.RoundNumber??0);writer.WriteValueSafe(request);writer.WriteValueSafe(eventId);
+                writer.WriteValueSafe(flightIntent);
                 _nm.CustomMessagingManager.SendNamedMessage("PlayAbility", clientId, writer);
             }
         }
 
         private void OnPlayAbilityMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || senderClientId != NetworkManager.ServerClientId || !reader.TryBeginRead(89)) return;
+            if (NetAuthority.IsHost || senderClientId != NetworkManager.ServerClientId || !reader.TryBeginRead(97)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int abilitySlot);
@@ -3409,6 +3446,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out bool hasFamiliar);
             reader.ReadValueSafe(out Vector3 familiarPosition);
             reader.ReadValueSafe(out long match);reader.ReadValueSafe(out int round);reader.ReadValueSafe(out long request);reader.ReadValueSafe(out long eventId);
+            reader.ReadValueSafe(out long flightIntent);
 
             if (slot < 0 || slot >= Balance.PlayerCount || abilitySlot < 0 || abilitySlot > 2)
                 return;
@@ -3420,6 +3458,7 @@ namespace TumbangPreso.Net
                 return;
 
             if(match!=PresentationMatchId||round!=GameServices.Match?.RoundNumber||eventId<=0||request<0)return;
+            if(flightIntent==long.MinValue || (flightIntent!=0 && !IsFeatherfallSlot(Unit(slot),abilitySlot)))return;
             PrepareSkillReceipts();if(eventId<=_lastSkillEvent[slot])return;_lastSkillEvent[slot]=eventId;
             if (slot == NetAuthority.LocalSlot)
             {
@@ -3439,9 +3478,20 @@ namespace TumbangPreso.Net
                 if(!Finite(familiarPosition))return;
                 Familiar(slot)?.ApplyCastAnchor(familiarPosition);
             }
+            if(IsFeatherfallSlot(Unit(slot),abilitySlot))
+            {
+                var actor=Unit(slot);
+                if(flightIntent!=0)
+                {
+                    ApplyFeatherfallRecast(actor,flightIntent);
+                    return;
+                }
+                ((Abilities.AmihanHeroKit)actor.AbilitySystem.Kit).CancelFeatherfall(actor);
+            }
             Unit(slot)?.AbilitySystem?.ApplyNetworkCast(
                 (Abilities.HeroAbilitySystem.Slot)abilitySlot,
                 position, forward, aimPoint, heldSeconds, authoritative: false);
+            if(flightIntent==0)IdentifyFeatherfallTakeoff(Unit(slot), abilitySlot, request > 0 ? request : -eventId);
         }
 
         // -------------------------------------------------------------------
@@ -5086,6 +5136,9 @@ namespace TumbangPreso.Net
             GameServices.Match?.ApplySnapshot(scores, roundNumber, inProgress);
             GameServices.Round?.ApplySnapshot(timeLeft, roundActive, defenderSlot, inProgress);
 
+            if (!NetAuthority.IsHost && GameServices.Match?.RoundNumber == roundNumber && GameServices.Round != null)
+                AdoptFeatherfallRoundClock(roundNumber);
+
             if (NetAuthority.IsHost) return;
 
             ApplyNetworkRoundBoundary(wasRoundActive, roundActive, inProgress, roundNumber);
@@ -5977,18 +6030,69 @@ namespace TumbangPreso.Net
         private const float SnapshotRequestInterval = 0.5f;
 
         private readonly Dictionary<ulong, float> _lastSnapshotRequest = new Dictionary<ulong, float>();
+        private readonly Dictionary<ulong, long> _pendingSnapshotReplies = new Dictionary<ulong, long>();
+        private long _snapshotReplySequence;
+
+        private void CancelSnapshotRefreshWork(bool clearSnapshotTimes = true)
+        {
+            _pendingSnapshotReplies.Clear();
+            if (clearSnapshotTimes) _lastSnapshotRequest.Clear();
+            CancelPreparationRefresh();
+            ResetFeatherfallSnapshots();
+        }
+
+        private void CancelSnapshotReply(ulong peer)
+        {
+            _pendingSnapshotReplies.Remove(peer);
+            _lastSnapshotRequest.Remove(peer);
+        }
+
+        private long QueueSnapshotReply(ulong peer)
+        {
+            if (_pendingSnapshotReplies.ContainsKey(peer)) return 0;
+            long ticket = ++_snapshotReplySequence;
+            _pendingSnapshotReplies[peer] = ticket;
+            return ticket;
+        }
+
+        private bool TakeSnapshotReply(ulong peer, long ticket, float now)
+        {
+            if (!_pendingSnapshotReplies.TryGetValue(peer, out long queued) || queued != ticket) return false;
+            if (_lastSnapshotRequest.TryGetValue(peer, out float last) && now - last < SnapshotRequestInterval) return false;
+            _pendingSnapshotReplies.Remove(peer);
+            _lastSnapshotRequest[peer] = now;
+            return true;
+        }
+
+        private bool SnapshotPeerConnected(ulong peer)
+            => isActiveAndEnabled && NetAuthority.IsHost && _nm != null && _nm.IsServer
+                && _nm.IsListening && !_nm.ShutdownInProgress && _nm.CustomMessagingManager != null
+                && _nm.ConnectedClients.ContainsKey(peer);
+
+        private IEnumerator ReplyAfterSnapshotThrottle(ulong peer, long ticket)
+        {
+            var network = _nm;
+            var messages = network.CustomMessagingManager;
+            float wait = _lastSnapshotRequest[peer] + SnapshotRequestInterval - Time.realtimeSinceStartup;
+            yield return new WaitForSecondsRealtime(Mathf.Max(0, wait) + .02f);
+            if (network != null && _nm == network && ReferenceEquals(network.CustomMessagingManager, messages)
+                && SnapshotPeerConnected(peer) && TakeSnapshotReply(peer, ticket, Time.realtimeSinceStartup))
+            {
+                HostSyncPeer((int)peer);
+            }
+            else if (_pendingSnapshotReplies.TryGetValue(peer, out long current) && current == ticket)
+                _pendingSnapshotReplies.Remove(peer);
+        }
 
         private void OnReqSnapshotMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost) return;
-
-            float now = Time.realtimeSinceStartup;
-            if (_lastSnapshotRequest.TryGetValue(senderClientId, out float last) &&
-                now - last < SnapshotRequestInterval)
-                return;
-
-            _lastSnapshotRequest[senderClientId] = now;
-            HostSyncPeer((int)senderClientId);
+            if (!SnapshotPeerConnected(senderClientId)) return;
+            long ticket = QueueSnapshotReply(senderClientId);
+            if (ticket == 0) return;
+            if (TakeSnapshotReply(senderClientId, ticket, Time.realtimeSinceStartup))
+                HostSyncPeer((int)senderClientId);
+            else
+                StartCoroutine(ReplyAfterSnapshotThrottle(senderClientId, ticket));
         }
 
         private IEnumerator RequestSnapshotWhenArenaReady()
@@ -6049,7 +6153,12 @@ namespace TumbangPreso.Net
             int previousFieldGeneration=_worldFieldGeneration;
             SendWorldFieldSnapshot((ulong)peerId);
             if(_worldFieldGeneration>previousFieldGeneration)
-                for(int slot=0;slot<Balance.PlayerCount;slot++) SendMovementSnapshot(slot,(ulong)peerId,_worldFieldGeneration);
+                for(int slot=0;slot<Balance.PlayerCount;slot++)
+                {
+                    SendMovementSnapshot(slot,(ulong)peerId,_worldFieldGeneration);
+                    if (Unit(slot)?.AbilitySystem?.Kit is Abilities.AmihanHeroKit)
+                        SendTimedKitSnapshot(slot,(ulong)peerId,_worldFieldGeneration);
+                }
         }
 
         /// <summary>
@@ -6131,6 +6240,7 @@ namespace TumbangPreso.Net
         public void HostPeerLeft(int peerId)
         {
             if (!NetAuthority.IsHost) return;
+            CancelSnapshotReply((ulong)peerId);
             bool intentional = _peerLeaveIntents.Consume(peerId, PresentationMatchId,
                 Time.realtimeSinceStartupAsDouble);
 

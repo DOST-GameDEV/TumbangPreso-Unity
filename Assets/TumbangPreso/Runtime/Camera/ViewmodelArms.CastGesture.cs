@@ -179,11 +179,10 @@ namespace TumbangPreso.CameraSystem
             { "gust-dash", new CastPath(.13f, false,
                 Rest(0), K(.08f, .04f, -.08f, -.10f, .02f, .06f, -.10f),
                 K(.13f, .02f, .00f, -.06f, -.12f, .36f, .26f), K(.30f, .02f, .00f, -.05f, -.11f, .34f, .25f), Rest(.62f)) },
-            // UPDRAFT. Palms press down at the bottom of the frame, then both hands fly up out of it
-            // with the lift, and come back to hang either side as she settles into the air.
-            { "updraft-lift", new CastPath(.24f, false,
-                Rest(0), K(.16f, .02f, -.20f, .04f, -.02f, .10f, .04f),
-                K(.24f, .06f, .44f, .02f, -.06f, .62f, .02f), K(.46f, .08f, .32f, .02f, -.08f, .50f, .02f), Rest(.80f)) },
+            // FEATHERFALL. Push the air down and back, then open low for balance.
+            { "updraft-lift", new CastPath(.20f, false,
+                K(0, .01f, -.04f, .01f, -.02f, .12f, .01f), K(.10f, .03f, -.13f, -.03f, -.04f, .03f, -.02f),
+                K(.20f, .06f, -.20f, -.07f, -.09f, -.05f, -.06f), K(.43f, .07f, -.12f, -.03f, -.08f, .06f, .01f), Rest(.68f)) },
             // WHIRLWIND. Both hands wound up to the right, then one sweep across the front to the
             // left at shoulder height: the gale leaves them.
             { "gale-sweep", new CastPath(.32f, false,

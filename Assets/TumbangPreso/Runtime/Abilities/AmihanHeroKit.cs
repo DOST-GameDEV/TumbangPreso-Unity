@@ -14,7 +14,7 @@ namespace TumbangPreso.Abilities
     /// | Slot | Name | Owner's table |
     /// |---|---|---|
     /// | Signature | QUICK DASH | Propel forward in the target direction; inflicts Whirled and slightly pushes back other players. 40 s. |
-    /// | Attacking | UPDRAFT | Fly for 10 seconds (owner: *"flies high and can throw slippers but cant pick up unless they choose to go down"*). |
+    /// | Attacking | FEATHERFALL | Fly for 5 seconds; move and throw aloft, descend to retrieve. 40 s (updated owner table, 2026-09-26). |
     /// | Defending | WHIRLWIND | An arc-shaped gale that inflicts Whirled on players it hits as it swiftly moves forward. Lasts 2.5 s. 35 s. |
     /// | Ultimate | STORM SURGE | After a 2.5 s delay, a map-wide fan of wind in the target direction that greatly pushes back all players and slippers caught inside. 15 points. |
     ///
@@ -41,6 +41,18 @@ namespace TumbangPreso.Abilities
 
         /// <summary>True while Updraft holds her in the air.</summary>
         public bool IsFlying => AttackingSkill != null && AttackingSkill.IsActive;
+
+        public bool RestoreFeatherfall(CharacterMotor actor, float remaining, float ceiling, byte phase, ulong poseSerial, long episode)
+        {
+            if (actor == null || phase > 2 || episode == long.MinValue || (phase != 0 && episode == 0) || float.IsNaN(remaining) || float.IsInfinity(remaining)
+                || remaining < 0 || remaining > AmihanRules.UpdraftSeconds
+                || float.IsNaN(ceiling) || float.IsInfinity(ceiling) || Mathf.Abs(ceiling) > 256
+                || (phase != 0 && actor.IsDefender)) return false;
+            return ((Updraft)AttackingSkill).Restore(actor, remaining, ceiling, phase, poseSerial, episode);
+        }
+
+        internal void CancelFeatherfall(CharacterMotor actor)
+            => ((Updraft)AttackingSkill).Restore(actor, 0, actor.FlightCeiling, 0, 0, 0);
 
         // ================================================================== QUICK DASH (signature)
 
@@ -135,14 +147,34 @@ namespace TumbangPreso.Abilities
             private CharacterMotor _flyer;
 
             public Updraft()
-                : base("amihan_skill2", "UPDRAFT",
-                       "Attacking. Fly high for 10 s, out of the taya's reach. Throw from the air; press again or grab to land and pick up.",
+                : base("amihan_skill2", "FEATHERFALL",
+                       "Fly for 5 s. Move and throw aloft; press again or grab to descend before picking up.",
                        AmihanRules.UpdraftCooldown, AmihanRules.UpdraftSeconds, AbilityGlyph.AmihanUpdraft,
-                       summary: "Fly high for 10 s. Throw from the air, land to grab.",
+                       summary: "Fly for 5 s. Move and throw aloft; descend to retrieve.",
                        castAction: "hero-amihan-updraft", viewmodelAction: "updraft-lift",
                        castCue: "sfx_cast_amihan_updraft") { }
 
             public override bool CanReactivate => true;
+
+            public bool Restore(CharacterMotor actor, float remaining, float ceiling, byte phase, ulong poseSerial, long episode)
+            {
+                if (phase == 0)
+                {
+                    _flyer = actor;
+                    StopFlightImmediately();
+                    RestoreLiveClock(0);
+                    return actor.RestoreFlight(0, ceiling, poseSerial, episode);
+                }
+                if (actor.IsTagged || actor.IsRooted || actor.IsTripped || actor.IsSwimming || actor.IsEdgeRecovering) return false;
+                if (remaining <= 0 || actor.IsStunned) phase = 2;
+                if (!actor.RestoreFlight(phase, ceiling, poseSerial, episode)) return false;
+                _flyer = actor;
+                RestoreLiveClock(phase == 1 ? remaining : 0);
+                var pose = actor.GetComponent<AmihanFlightPose>();
+                if (pose == null || !pose.BelongsTo(actor)) pose = AmihanFlightPose.Attach(actor);
+                AmihanHoverRing.Attach(actor, pose);
+                return true;
+            }
 
             public override bool CanActivate(AbilityContext ctx)
             {
@@ -163,30 +195,51 @@ namespace TumbangPreso.Abilities
                 // every peer poses her with; only the peer simulating her body moves it.
                 _flyer.BeginFlight(AmihanRules.UpdraftHeight, AmihanRules.UpdraftRiseSeconds, AmihanRules.UpdraftDescentSpeed);
                 AmihanUpdraftLaunch.Build(ctx.Position, AmihanRules.UpdraftHeight);
-                AmihanHoverRing.Attach(_flyer);
+                var pose = AmihanFlightPose.Attach(_flyer);
+                AmihanHoverRing.Attach(_flyer, pose);
                 _flyer.GetComponentInChildren<CharacterSquashStretch>()?.Stretch(0.28f);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
+                if (_flyer != null && (_flyer.IsRooted || _flyer.IsTagged || _flyer.IsTripped || _flyer.IsSwimming || _flyer.IsEdgeRecovering))
+                {
+                    StopFlightImmediately();
+                    DurationRemaining = 0;
+                    return;
+                }
                 // A stun takes her out of the sky: the motor has already turned the hold into the
                 // glide (`StepFlightVertical`), and the flight is over as far as the kit goes.
-                if (_flyer != null && _flyer.IsStunned) DurationRemaining = 0.0f;
+                if (_flyer != null && (_flyer.IsStunned || !_flyer.IsFlying)) DurationRemaining = 0.0f;
             }
 
             protected override void OnEnd(AbilityContext ctx)
             {
                 if (_flyer == null) return;
                 _flyer.EndFlight();
-                NetCue.PlayVaried("sfx_amihan_updraft_settle", _flyer.transform.position, 0.96f, 1.04f, 0.8f);
-                _flyer = null;
+                // Keep the body until reset so cancellation can also clean an unfinished glide.
             }
 
             protected override void OnCancelled(AbilityContext ctx)
+                => StopFlightImmediately();
+
+            public override void Reset()
             {
-                // A round reset or a refused cast: straight back under gravity, no glide.
-                _flyer?.EndFlightImmediately();
+                StopFlightImmediately();
+                _flyer?.InvalidateFlightEpisode();
                 _flyer = null;
+                base.Reset();
+            }
+
+            private void StopFlightImmediately()
+            {
+                // Status cancellation keeps the pose key; Reset owns identity invalidation.
+                if (_flyer != null)
+                {
+                    foreach (var pose in _flyer.GetComponents<AmihanFlightPose>()) pose.Cancel();
+                    foreach (var wind in _flyer.GetComponentsInChildren<AmihanHoverRing>()) wind.Cancel();
+                }
+                _flyer?.EndFlightImmediately();
             }
         }
 

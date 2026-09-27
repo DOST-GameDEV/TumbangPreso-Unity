@@ -322,13 +322,13 @@ namespace TumbangPreso.UI
         private const string ShaderWarmupResource = "ShaderWarmup";
 
         /// <summary>
-        /// How many shaders are compiled between two frames.
+        /// How many shader variants are warmed between two frames.
         ///
         /// ⚠️ SMALL ON PURPOSE. The whole point is that the main thread comes back between
         /// slices, and the target device is a cheap handset rather than this desktop. Ten
-        /// shaders is a slice short enough that Android's five-second ANR watchdog never sees a
-        /// blocked main thread, and the collection is a few hundred shaders, so the stage costs
-        /// a few dozen frames of a screen that is already playing a video.
+        /// variants bounds work per frame instead of compiling the whole collection in one
+        /// call. Actual handset slice time still needs measurement; the loading screen yields
+        /// after each slice.
         /// </summary>
         private const int ShaderWarmupSlice = 10;
 
@@ -374,18 +374,23 @@ namespace TumbangPreso.UI
             }
             else
             {
-                // ⚠️⚠️ THE LOOP IS BOUNDED BY THE SHADER COUNT AS WELL AS BY THE RETURN VALUE,
-                // AND THE BOUND IS THE HALF THAT MATTERS. `WarmUpProgressively` answers "is there
-                // more to do", and a warm-up that misreads that answer once would spin on the
-                // loading screen for ever: the failure this replaced is a frozen boot, so a fix
-                // whose worst case is also a frozen boot is not a fix. The count cannot be wrong
-                // because the collection knows it.
-                int slices = Mathf.CeilToInt(Mathf.Max(1, warmup.shaderCount) /
+                // The API takes variants per call and returns true when the collection is done.
+                // Keep a variant-count bound as protection against a stalled warmup.
+                int slices = Mathf.CeilToInt(Mathf.Max(1, warmup.variantCount) /
                                              (float)ShaderWarmupSlice);
+                var warmupWatch = System.Diagnostics.Stopwatch.StartNew();
+                double maxSliceMs = 0;
+                int warmupCalls = 0;
 
                 for (int i = 0; i < slices; i++)
                 {
-                    bool more = warmup.WarmUpProgressively(ShaderWarmupSlice);
+                    long sliceTick = System.Diagnostics.Stopwatch.GetTimestamp();
+                    UnityEngine.Profiling.Profiler.BeginSample("TUMP.Boot.ShaderWarmupSlice");
+                    bool done = warmup.WarmUpProgressively(ShaderWarmupSlice);
+                    UnityEngine.Profiling.Profiler.EndSample();
+                    maxSliceMs = System.Math.Max(maxSliceMs,
+                        (System.Diagnostics.Stopwatch.GetTimestamp() - sliceTick) * 1000.0 / System.Diagnostics.Stopwatch.Frequency);
+                    warmupCalls++;
 
                     // The bar moves inside the stage rather than only at its boundaries, so the
                     // stage that used to look frozen is now the one that visibly counts down.
@@ -393,8 +398,11 @@ namespace TumbangPreso.UI
                                     Mathf.Lerp(0.04f, 0.09f, (i + 1) / (float)slices));
                     yield return null;
 
-                    if (!more) break;
+                    if (done) break;
                 }
+                Debug.Log(System.FormattableString.Invariant($"[SplashShaders] shaders={warmup.shaderCount} variants={warmup.variantCount} warmed={warmup.warmedUpVariantCount} complete={warmup.isWarmedUp} calls={warmupCalls} elapsed_ms={warmupWatch.Elapsed.TotalMilliseconds:F3} max_slice_ms={maxSliceMs:F3}"));
+                if (!warmup.isWarmedUp)
+                    Debug.LogWarning($"[SplashShaders] bounded warmup incomplete: {warmup.warmedUpVariantCount}/{warmup.variantCount} variants; remaining variants may compile on first use.");
             }
 
             yield return null;
@@ -456,11 +464,7 @@ namespace TumbangPreso.UI
 
             // 3. Pre-load Audio clips and sound resources
             //
-            // ⚠️⚠️ THREE FOLDERS WITH A `yield` BETWEEN THEM, NOT ONE `LoadAll("")`. That single
-            // call decodes 100 clips (2 music, 87 sfx, 11 vo, counted 2026-09-01) on one frame and
-            // is the second of the two stages that used to freeze the animation solid. The final
-            // sweep is kept as the safety net for anything outside these three folders and is
-            // nearly free once they are warm, because `Resources.LoadAll` answers from the cache.
+            // Load each audio folder on its own frame so the loading animation can advance.
             string[] audioFolders = { "Sfx", "Vo", "Music" };
             for (int i = 0; i < audioFolders.Length; i++)
             {
@@ -473,13 +477,6 @@ namespace TumbangPreso.UI
                 catch (System.Exception) { }
                 yield return null;
             }
-
-            try
-            {
-                _ = Resources.LoadAll<AudioClip>("");
-            }
-            catch (System.Exception) { }
-            yield return null;
 
             // 4. Pre-load Settings & Roster tables
             SetLoadingStage("applying settings", 0.36f);
@@ -500,6 +497,10 @@ namespace TumbangPreso.UI
             if (actions != null) Settings.Rebinding.Load(actions);
             yield return null;
 
+            SetLoadingStage("loading menu artwork", 0.48f);
+            yield return OwnerMenuArt.Warmup();
+            yield return Avatars.Warmup();
+
             // 6. Every procedurally baked UI sprite.
             //
             // ⚠️⚠️ THESE ARE PAINTED PIXEL BY PIXEL ON FIRST USE AND THAT IS NOT FREE. Each
@@ -515,6 +516,7 @@ namespace TumbangPreso.UI
             foreach (AbilityGlyph glyph in System.Enum.GetValues(typeof(AbilityGlyph)))
                 AbilityIcons.For(glyph);
             yield return null;
+            yield return Visual.VfxFlipbook.Warmup();
 
             // 8. Both arenas, as a dependency load rather than a scene load.
             //
@@ -534,8 +536,8 @@ namespace TumbangPreso.UI
 
             // 9. The hero ability layer.
             //
-            // ⚠️ CONSTRUCTING EVERY KIT TOUCHES EVERY ABILITY OBJECT, its strings and its glyph,
-            // which is what the character select and the HUD read the instant Hero Strike opens.
+            // Construct kits and parse their cached ultimate introductions before first use.
+            // The held variant is a separate authored table for heroes that have one.
             SetLoadingStage("preparing hero abilities", 0.84f);
             Visual.AbilityVfx.Warmup();
             foreach (string heroId in Roster.HeroPeople != null
@@ -546,6 +548,9 @@ namespace TumbangPreso.UI
                 _ = kit?.Skill1?.Name;
                 _ = kit?.Skill2?.Name;
                 _ = kit?.Ultimate?.Name;
+                _ = Visual.UltimatePerformance.For(heroId);
+                _ = Visual.UltimatePerformance.For(heroId, holdingSlipper: true);
+                yield return null;
             }
             yield return null;
 

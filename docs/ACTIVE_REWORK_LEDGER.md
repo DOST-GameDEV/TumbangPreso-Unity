@@ -1,5 +1,86 @@
 # Active TUMP rework ledger
 
+## Current networking and flow work, 2026-09-27
+
+Owner direction: perform the implementation directly, without delegated workers.
+Continue concrete network/flow fixes. The new skill requirement is an explicit
+shared networking contract so new skills cannot silently omit required multiplayer
+support. Cover cast ownership, prediction/confirmation, authoritative effects,
+persistent state and lifecycle recovery without redesigning skills or presentation.
+This requirement is OPEN; current per-kit routing is not future-proof completion.
+
+One immediate interaction fix separates hero-shop wallet updates from full hero
+presentation rebuilds. Wallet busy/status/ownership changes now refresh purchase
+controls only; they no longer destroy and reinstantiate the model or ability tiles.
+Hero selection still takes the existing full Show path. Source-reviewed, with no
+new measured player frame-time or purchase-service claim.
+
+## Owner correction: implementation first, 2026-09-27
+
+The owner explicitly rejected validation loops and diagnostic churn. For the
+remainder of this session, prioritize actual improvements and fixes. Do not start
+new capture rigs, broad audits or test-repair projects. Use only short, focused
+checks directly justified by a changed behavior; preserve a failed result and
+fix its real cause without repeatedly expanding the verification scope.
+
+Loading/optimization is the immediate implementation priority. The owner's target
+is that clicking a control does not trigger a loading hitch: expensive asset,
+shader and interface preparation belongs behind the loading screen before the
+player gains control. Current work corrects incomplete progressive shader warmup
+and removes justified redundant loading work. No measured hitch-free or speedup
+claim exists yet; instrumentation alone is not an optimization deliverable.
+
+Finish the already-started flight/recovery unit and publish task-owned work, but
+do not begin a full Amihan pass or new animation/VFX/skill redesign. A new report
+that multiple skills may work only on their client remains an unresolved gameplay
+networking issue, not proof of a specific root cause. Preserve contributor lanes.
+The prior QA batches remain published; the whole TODO and release gate are not done.
+
+Keep this correction active across continuation and compaction. The private resume
+record tracks exact source freezes, jobs and commit preparation; detailed evidence
+belongs in the existing reports, not in another verification framework.
+
+## Loading fixes and flight integration, 2026-09-27 (ASTRAReworks)
+
+Published integration: `c9f55410`, followed by shared-branch merge `70fb4ede`.
+The next narrow loading fix also populates the existing parsed ultimate-introduction
+cache at boot, including held-slipper variants, yielding once per hero. Previously
+the first ultimate could load, parse and sort its table on the action path. Only
+loading order changes; no authored timing, visuals or gameplay rules change. This
+small follow-up is source-reviewed, not an additional player timing measurement.
+
+The shared flipbook loader also prepares its existing 12 texture sheets during
+loading, one per frame, and reuses successful texture references on effect creation.
+The catalogue is about 7.15 MiB of raw RGBA pixels; no geometry, material ownership,
+UVs, tint, authored sheet or ability behavior changes. Missing textures still use
+the existing warning/null path. This resource-cache follow-up is source-reviewed;
+it is not a GPU-residency or measured frame-time claim.
+
+Boot now uses the shader variant count and the API's true-on-complete return value,
+instead of stopping at its first incomplete batch. It still yields between slices.
+The duplicate all-audio sweep is removed: the existing yielded folders cover all
+204 current clips. Twenty-seven current menu-art assets and all 22 offered avatars
+are prepared during loading and reused through their existing access paths. Missing
+assets and unknown-avatar fallback retain their behavior; source artwork is unchanged.
+
+The focused native loading check passed 1/1 and compiled the final authored source
+candidate. Its Editor collection reported 97/97 variants warm after 10 calls; the
+longest Editor slice was 497.021 ms. This proves completion and cache reuse, not a
+hitch-free player, a Windows before/after speedup or Android responsiveness.
+[Loading result](reports/stability-2026-09-27/loading-audit.md).
+
+The previously started flight unit is locally qualified: Core 8/8, final focused
+PlayMode behavior 10/10, prior protocol handler checks 4/4. Flight identity survives
+ordinary interruption/landing, stale state cannot resurrect it, and snapshot refresh
+is scoped and coalesced. Protocol is 61; paired builds must match. The two already-
+baked flight clips are integrated without character-model or gait edits.
+[Flight source and evidence](reports/amihan-kit-2026-09-27/featherfall.md).
+
+The normal match-result path parks touch and leaves all six tested result controls
+hittable (1/1). Opt-in title, Sean-freeze and performance diagnostics are preserved
+but their unexecuted scenarios are not called fixes. There is no completed player
+build, green broad gate, real-peer skill qualification or full Amihan completion.
+
 ## Menu QA, room titles and offline rewards, 2026-09-27 (ASTRAReworks)
 
 QA2 follows published `026fed74`. Consent now shows a check; password faults visibly

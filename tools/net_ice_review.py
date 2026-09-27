@@ -1,4 +1,4 @@
-"""Check accepted/refused ice effects in three real Windows player processes."""
+"""Check ice effects with three players, or Cheska/Sean thaw with two players."""
 import argparse
 import csv
 import hashlib
@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import socket
 import statistics
 import subprocess
 import sys
@@ -109,18 +110,118 @@ def evaluate(folder, case, reconnected=False):
     return {"ok": not errors, "errors": errors, "measurements": details}
 
 
+def evaluate_sean(folder):
+    required = ("time", "wallTime", "local", "host", "cheska", "sean", "ultStarted",
+                "phaseSeen", "phase", "phaseAge", "phaseDuration", "held", "scale",
+                "stun", "trip", "rooted", "chilled", "canMove", "simulated", "parked",
+                "moveX", "moveY", "seanX", "seanZ")
+    errors, measured = [], {}
+    try:
+        data = {name: read(folder / (name + ".csv")) for name in ("host", "owner")}
+    except (OSError, ValueError, TypeError) as exc:
+        return {"ok": False, "errors": ["Missing or malformed Sean trace: " + str(exc)], "measurements": {}}
+    for name, rows in data.items():
+        seat = 0 if name == "host" else 1
+        invalid = len(rows) < 75 or any(set(required) - row.keys() or
+                                        any(not math.isfinite(row[key]) for key in required) or
+                                        row["local"] != seat or row["host"] != (1 if seat == 0 else 0) or
+                                        row["cheska"] != 1 or row["sean"] != 1
+                                        for row in rows)
+        if invalid:
+            errors.append(name + " lacks finite, continuous Cheska/Sean evidence from its required seat")
+            continue
+        if any(later["wallTime"] <= earlier["wallTime"] or
+               later["time"] < earlier["time"] - .001
+               for earlier, later in zip(rows, rows[1:])):
+            errors.append(name + " has unordered wall/server timestamps")
+    if errors:
+        return {"ok": False, "errors": errors, "measurements": measured}
+    host = data["host"]
+    if (max(row["ultStarted"] for row in host) != 1 or host[-1]["ultStarted"] != 1 or
+            not any(row["phase"] == 1 for row in host)):
+        errors.append("Host did not accept and present exactly one Cheska ultimate")
+    for name, rows in data.items():
+        if not any(row["phaseSeen"] == 1 and row["phase"] == 1 for row in rows):
+            errors.append(name + " never observed the shared ultimate phase")
+    impact = next((row["wallTime"] for row in host if row["stun"] > .25), None)
+    if impact is None:
+        errors.append("Host never applied the ultimate's Frozen stun to Sean")
+        return {"ok": False, "errors": errors, "measurements": measured}
+    measured["impact_wall_time"] = impact
+    for name, rows in data.items():
+        critical = [row for row in rows if impact - .1 <= row["wallTime"] <= impact + 5.1]
+        if (not critical or critical[0]["wallTime"] > impact + .1 or
+                critical[-1]["wallTime"] < impact + 5.0 or
+                any(later["wallTime"] - earlier["wallTime"] > .35
+                    for earlier, later in zip(critical, critical[1:]))):
+            errors.append(name + " has sparse evidence across the freeze/thaw window")
+        observed = [row for row in rows if impact - .25 <= row["wallTime"] <= impact + 1.2
+                    and row["stun"] > .25 and row["canMove"] == 0]
+        frozen = [row for row in rows if impact + 1 <= row["wallTime"] <= impact + 1.8]
+        thawed = [row for row in rows if impact + 3.2 <= row["wallTime"] <= impact + 4.8]
+        baseline = [row for row in rows if impact + 2.8 <= row["wallTime"] <= impact + 3.1]
+        late = [row for row in rows if impact + 4.2 <= row["wallTime"] <= impact + 5.1]
+        if len(observed) < 3:
+            errors.append(name + " did not observe Sean Frozen before thaw")
+        if len(frozen) < 5 or sum(row["stun"] > .1 for row in frozen) < len(frozen) - 2:
+            errors.append(name + " did not retain the intended early Frozen window")
+        recovered = [row for row in thawed if row["stun"] <= .05 and row["trip"] <= .05 and
+                     row["rooted"] <= .05 and row["canMove"] == 1 and row["held"] == 0 and
+                     row["scale"] > .5 and row["phase"] == 0]
+        if len(thawed) < 10 or len(recovered) < len(thawed) - 2:
+            errors.append(name + " did not release Sean's movement gate after the 2.5 s freeze")
+        displacement = math.dist((baseline[0]["seanX"], baseline[0]["seanZ"]),
+                                 (late[-1]["seanX"], late[-1]["seanZ"])) if baseline and late else 0
+        if displacement < .35:
+            errors.append(name + " did not show Sean moving after thaw")
+        measured[name] = {"samples": len(rows), "frozen_samples": len(observed),
+                          "recovered_samples": len(recovered), "post_thaw_distance": displacement}
+    owner = data["owner"]
+    driven = [row for row in owner if impact + 3.9 <= row["wallTime"] <= impact + 4.8]
+    if len(driven) < 10 or sum(row["simulated"] == 1 and row["parked"] == 0 and
+                              row["moveY"] > .8 for row in driven) < len(driven) - 2:
+        errors.append("Sean owner lacked a sustained, locally simulated forward intent after thaw")
+    return {"ok": not errors, "errors": errors, "measurements": measured}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("exe", type=Path)
-    parser.add_argument("--case", choices=["both", "denied", "sheet-then-denied"], required=True)
-    parser.add_argument("--delay", type=float, default=150)
+    parser.add_argument("--case", choices=["both", "denied", "sheet-then-denied", "cheska-sean"], required=True)
+    parser.add_argument("--delay", type=float)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--reconnect", action="store_true")
     args = parser.parse_args()
+    sean_case = args.case == "cheska-sean"
+    if args.delay is None: args.delay = 0 if sean_case else 150
+    if args.delay < 0: parser.error("Delay cannot be negative")
+    if args.reconnect and sean_case: parser.error("The Sean case uses exactly two peers")
     if args.reconnect and args.case != "both": parser.error("Reconnect qualification uses the both case")
+    if not args.exe.is_file(): parser.error("Player executable does not exist")
+    args.exe = args.exe.resolve()
+    if sean_case and (ROOT / "Builds").resolve() not in args.exe.parents:
+        parser.error("The Sean diagnostic requires a player executable inside this checkout's Builds")
+    def free_port(exclude=()):
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as check:
+            check.bind(("0.0.0.0", 0))
+            port = check.getsockname()[1]
+        return free_port(exclude) if port in exclude else port
+    def check_port(port):
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as check:
+            check.bind(("0.0.0.0", port))
+    host_port = free_port() if sean_case else 9010
+    proxy_port = free_port((host_port,)) if sean_case and args.delay else 9011
+    try:
+        check_port(host_port)
+        if args.delay: check_port(proxy_port)
+    except OSError as exc:
+        parser.error("A required UDP port is already occupied: " + str(exc))
     folder = args.out.resolve(); folder.mkdir(parents=True, exist_ok=False)
     backups, processes, handles = [], [], []
-    for name in ("icehost", "iceowner", "iceobserver"):
+    sean_prefix = "icesean-" + hashlib.sha256(str(folder).encode()).hexdigest()[:12]
+    profiles = {name: (sean_prefix + "-" + name if sean_case else "ice" + name)
+                for name in (("host", "owner") if sean_case else ("host", "owner", "observer"))}
+    for name in profiles.values():
         profile = profile_root(["-tp-profile", name])
         for source in profile.rglob("*"):
             if not source.is_file() or source.suffix == ".log": continue
@@ -133,8 +234,10 @@ def main():
     def launch(command):
         process = subprocess.Popen(command, cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, startupinfo=startup)
         processes.append(process); return process
+    overall_deadline = time.monotonic() + 100 if sean_case else None
     def wait_log(name, process, pattern, seconds):
         deadline = time.monotonic() + seconds
+        if overall_deadline is not None: deadline = min(deadline, overall_deadline)
         while time.monotonic() < deadline:
             path = folder / (name + ".log")
             if path.exists() and re.search(pattern, path.read_text(errors="replace")): return
@@ -143,24 +246,26 @@ def main():
         raise RuntimeError(name + " setup did not finish")
     def peer(name, route):
         return launch([str(args.exe.resolve()), "-batchmode", "-screen-width", "640", "-screen-height", "360",
-                       "-screen-fullscreen", "0", "-tp-framecap", "60", "-tp-autostart", "3", "-tp-profile", "ice" + name,
+                       "-screen-fullscreen", "0", "-tp-framecap", "60", "-tp-autostart", "2" if sean_case else "3",
+                       "-tp-profile", profiles[name],
                        "-tp-icecase", args.case, "-tp-icetrace", str(folder / (name + ".csv")),
                        "-logFile", str(folder / (name + ".log"))] + route)
     try:
-        host = peer("host", ["-tp-host", "9010"])
+        host = peer("host", ["-tp-host", str(host_port)])
         wait_log("host", host, r"arena installed: LocalSlot=0[^\n]*host=True", 45)
-        port = "9010"
+        port = str(host_port)
         if args.delay:
-            port = "9011"; log = (folder / "link.log").open("w"); handles.append(log)
+            port = str(proxy_port); log = (folder / "link.log").open("w"); handles.append(log)
             proxy = subprocess.Popen([sys.executable, str(ROOT / "tools/net_link.py"), "--listen", port,
-                                      "--to", "127.0.0.1:9010", "--delay", str(args.delay), "--seconds", "110"],
+                                      "--to", "127.0.0.1:" + str(host_port), "--delay", str(args.delay), "--seconds", "110"],
                                      cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, startupinfo=startup)
             processes.append(proxy); time.sleep(1)
         owner = peer("owner", ["-tp-join", "127.0.0.1", port])
         wait_log("owner", owner, r"(?:seat changed|arena installed): LocalSlot=1[^\n]*host=False", 35)
-        observer = peer("observer", ["-tp-join", "127.0.0.1", "9010"])
+        if not sean_case:
+            observer = peer("observer", ["-tp-join", "127.0.0.1", str(host_port)])
         print("Tracing " + args.case + " in " + str(folder), flush=True)
-        deadline = time.monotonic() + 90
+        deadline = overall_deadline if sean_case else time.monotonic() + 90
         rejoined = False
         while time.monotonic() < deadline and host.poll() is None:
             if args.reconnect and not rejoined:
@@ -170,16 +275,19 @@ def main():
                     observer.terminate(); observer.wait(timeout=8)
                     (folder / "observer.csv").rename(folder / "observer-before.csv")
                     (folder / "observer.log").rename(folder / "observer-before.log")
-                    observer = peer("observer", ["-tp-join", "127.0.0.1", "9010"])
+                    observer = peer("observer", ["-tp-join", "127.0.0.1", str(host_port)])
                     rejoined = True
                     print("Reconnecting the same observer profile during active ice", flush=True)
             time.sleep(.25)
         time.sleep(.5)
-        result = evaluate(folder, args.case, rejoined)
+        result = evaluate_sean(folder) if sean_case else evaluate(folder, args.case, rejoined)
+        if sean_case and time.monotonic() >= overall_deadline and host.poll() is None:
+            result["ok"] = False; result["errors"].append("Sean run exceeded its 100 s overall deadline")
         if args.reconnect and not rejoined:
             result["ok"] = False; result["errors"].append("The requested reconnect was never exercised")
         result["observer_reconnected"] = rejoined
         result["case"] = args.case; result["delay_one_way_ms"] = args.delay
+        if sean_case: result["host_udp_port"] = host_port
         result["exe_sha256"] = hashlib.sha256(args.exe.read_bytes()).hexdigest()
         runtime = args.exe.parent / (args.exe.stem + "_Data") / "Managed/TumbangPreso.Runtime.dll"
         result["runtime_sha256"] = hashlib.sha256(runtime.read_bytes()).hexdigest()

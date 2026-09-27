@@ -695,6 +695,8 @@ namespace TumbangPreso.Abilities
             bool hasFamiliar=familiar!=null;
             Vector3 familiarPosition=hasFamiliar?familiar.transform.position:Vector3.zero;
             Vector3 castPosition=_context.Position,castForward=_context.Forward,castAim=_context.AimPoint;
+            bool flightRecast=slot==Slot.Skill2 && Kit is AmihanHeroKit && !Kit.IsDefending && Kit.AttackingSkill.IsActive;
+            long flightIntent=flightRecast?_motor.FlightEpisode:0;
             HeroKit.CastOutcome outcome;
             if (NetAuthority.IsNetworked)
             {
@@ -707,6 +709,8 @@ namespace TumbangPreso.Abilities
                 outcome = CastWithContext(slot, _context);
             }
             if (outcome != HeroKit.CastOutcome.Cast || !NetAuthority.IsNetworked) return outcome;
+            // A prediction never submitted to transport has no accepted episode to cancel.
+            if(flightRecast && flightIntent==0)return outcome;
 
             var ability = AbilityFor(slot);
             float held = ability != null ? ability.HeldSecondsOnCast : 0.0f;
@@ -716,13 +720,13 @@ namespace TumbangPreso.Abilities
             {
                 Net.MatchRpc.Instance?.BroadcastAbilityCast(
                     _motor.PlayerSlot, (int)slot, castPosition, castForward,
-                    aimPoint, held, exceptClientId: null, hasFamiliar:hasFamiliar, familiarPosition:familiarPosition);
+                    aimPoint, held, exceptClientId: null, hasFamiliar:hasFamiliar, familiarPosition:familiarPosition,flightIntent:flightIntent);
             }
             else if (_motor.PlayerSlot == NetAuthority.LocalSlot)
             {
                 Net.MatchRpc.Instance?.RequestAbilityCastServerRpc(
                     _motor.PlayerSlot, (int)slot, castPosition, castForward,
-                    aimPoint, held, hasFamiliar, familiarPosition);
+                    aimPoint, held, hasFamiliar, familiarPosition,flightIntent);
             }
 
             return outcome;
@@ -782,6 +786,11 @@ namespace TumbangPreso.Abilities
         {
             var animator = GetComponentInChildren<Visual.CharacterAnimator>();
             var ability = AbilityFor(slot);
+            if(slot==Slot.Skill2 && Kit is AmihanHeroKit && !Kit.IsDefending && !_motor.IsAloft)
+            {
+                animator?.CancelHeroAction("hero-amihan-updraft","updraft-lift");
+                return;
+            }
 
             // ⚠️⚠️ EVERY CAST SOUNDS FROM HERE AND FROM NOWHERE ELSE. See `HeroAbility.CastCue`
             // for what this replaces: eighteen powers opening on six shared element cues, so a

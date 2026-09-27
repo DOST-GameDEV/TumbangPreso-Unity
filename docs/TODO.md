@@ -17,6 +17,28 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+**NET-SKILLS-1, OPEN (owner 2026-09-27):** future-proof current and newly added skills
+through explicit shared networking contracts and enforced coverage for authority,
+prediction/confirmation, persistent state and lifecycle recovery. Preserve current
+skill behavior and presentation. Implement directly without delegated workers.
+Hero-shop wallet notifications now refresh purchase controls without rebuilding the
+preview/ability tiles; this narrow flow optimization is source-reviewed.
+
+**Loading slice, 2026-09-27:** progressive shader completion, staged menu-art/avatar
+cache preparation and duplicate audio-sweep removal are implemented (`c9f55410`).
+The existing ultimate-introduction tables and 12 shared effect sheets now preload
+in yielded boot stages; those follow-ups are source-reviewed. Player first-use hitch qualification
+remains OPEN, not replaced by the local shader/cache completion check.
+
+**Owner correction, 2026-09-27: implementation first.** Stop validation loops and
+diagnostic churn. Prioritize actual loading/runtime fixes so expensive preparation
+finishes behind loading, not when the player clicks. Only short checks tied to a
+specific change; no new capture rigs, broad audits or test-repair projects. Finish
+and publish already-started work without starting a full Amihan or new animation/
+VFX/skill redesign. Loading optimization and reported client-only skill behavior
+remain OPEN until their actual fixes and appropriate evidence exist. See the newest
+[ledger entry](ACTIVE_REWORK_LEDGER.md).
+
 **2026-09-27 QA2 verified slices:** consent/password feedback, current-role
 selector/guide, mode-card clipping, Practice picker, lobby chat, score fitting,
 Paete preview framing and local offline-reward exclusion. See

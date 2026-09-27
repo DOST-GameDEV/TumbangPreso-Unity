@@ -123,12 +123,12 @@ namespace TumbangPreso.UI.Hub
             Show();
             HubSlap.On(stage, 0, -1.5f);
             HubSlap.On(side, 0.08f, 1);
-            if (GameServices.Wallet != null) GameServices.Wallet.Changed += Show;
+            if (GameServices.Wallet != null) GameServices.Wallet.Changed += RefreshWallet;
         }
 
         private void OnDestroy()
         {
-            if (GameServices.Wallet != null) GameServices.Wallet.Changed -= Show;
+            if (GameServices.Wallet != null) GameServices.Wallet.Changed -= RefreshWallet;
         }
 
         private int StartIndex()
@@ -220,6 +220,12 @@ namespace TumbangPreso.UI.Hub
             }
         }
 
+        private void RefreshWallet()
+        {
+            // Wallet requests change ownership/status, not the displayed model or ability tiles.
+            if (_primary != null) RefreshAction(Heroes[_index].Id);
+        }
+
         private void RefreshAction(string heroId)
         {
             bool owned = Owned(heroId);
@@ -268,7 +274,7 @@ namespace TumbangPreso.UI.Hub
             string result = await wallet.BuyAsync(EconomyRules.ItemId(ShopKind.Hero, hero.Id));
             if (this == null) return;
             Hub.Toast(result == "offline" ? wallet.Status : Net.WalletStore.Sentence(result));
-            Show();
+            RefreshWallet();
         }
 
         private void TryInPractice()

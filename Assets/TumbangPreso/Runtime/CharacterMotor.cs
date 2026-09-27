@@ -428,6 +428,7 @@ namespace TumbangPreso
         public void AdoptMovementEpoch(int epoch)
         {
             if(epoch<=MovementEpoch)return;
+            InvalidateFlightEpisode();
             MovementEpoch=epoch;_awaitingTeleport=false;_teleportAbility=-1;
         }
 
@@ -1114,13 +1115,14 @@ namespace TumbangPreso
         /// accepts a correction when prediction has drifted far enough to be visible.
         /// </summary>
         public void ApplyNetworkTransform(Vector3 position, float yaw, Vector3 velocity,
-                                          bool grounded, bool reconcileLocal, bool force = false)
+                                          bool grounded, bool reconcileLocal, bool force = false, long flightEpisode = 0)
         {
             // ⚠️ ASSIGNED BEFORE THE RECONCILE RETURN BELOW, AND THAT ORDERING MATTERS. A body
             // whose owner is predicting it skips the rest of this method whenever the error is
             // small, which is most frames; the pose it keeps is its own, but the grounded bit is
             // still the owner's truth and `StepNetworkReplica` never runs for it anyway.
             _networkGrounded = grounded;
+            ObserveFlightPose(grounded, flightEpisode);
 
             float error = Vector3.Distance(transform.position, position);
             if(reconcileLocal && !force && _awaitingTeleport)return;
@@ -1165,6 +1167,7 @@ namespace TumbangPreso
             if (!snap) return;
 
             SetNetworkPose(position, yaw);
+            if (IsSwimming) EndFlightImmediately();
             _networkSmoothVelocity = Vector3.zero;
             _networkYawVelocity = 0.0f;
         }
@@ -1723,6 +1726,7 @@ namespace TumbangPreso
             AdvanceRecoveryEpisode();
             _tripLeft = Mathf.Max(_tripLeft, duration);
             _tripTotal = Mathf.Max(_tripTotal, _tripLeft);
+            if (IsTripped) EndFlightImmediately();
             ReleaseCommitment();
             _velocity.x = 0.0f;
             _velocity.z = 0.0f;
@@ -1947,6 +1951,7 @@ namespace TumbangPreso
 
             if (recoveryEpisode>=0 && _playerSlot==NetAuthority.LocalSlot)
                 ReplayUnacknowledgedRecovery();
+            if (IsTagged || IsTripped) EndFlightImmediately();
             Stamina?.ApplyNetworkSnapshot(staminaCurrent, staminaIdle, fatigueLeft);
         }
 

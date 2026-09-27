@@ -473,7 +473,9 @@ namespace TumbangPreso.Net
         // rattan bursts and catches THERE; and BAKYA BLOOM lands outside the taya's box (`PaeteRules.PlantSpotOutsideBox`). No
         // bytes changed, but a 59 peer would burst the thorns under his feet at once, catching a different set of slippers a
         // quarter of a second early, and plant the pot inside the box where everyone else sees it outside.
-        public const int ProtocolVersion = 60;
+        // 61 (2026-09-27): FEATHERFALL is 5 s / 40 s. SubmitMove/SyncUnit retain its takeoff key,
+        // ReqAbility/PlayAbility carry explicit takeoff/recast intent, and TimedKit adds its 57-byte restore tail.
+        public const int ProtocolVersion = 61;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

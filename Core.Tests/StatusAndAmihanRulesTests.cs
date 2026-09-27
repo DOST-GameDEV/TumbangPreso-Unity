@@ -119,12 +119,22 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void FeatherfallSnapshotAgesOnlyWithTheAdoptedSimulationClock()
+        {
+            Assert.Equal(3.0f, AmihanRules.FlightRemainingAtClock(3, 42, 42));
+            Assert.Equal(2.75f, AmihanRules.FlightRemainingAtClock(3, 42, 41.75f));
+            Assert.Equal(3.0f, AmihanRules.FlightRemainingAtClock(3, 42, 42.1f));
+            Assert.Equal(0.0f, AmihanRules.FlightRemainingAtClock(3, 42, 36));
+        }
+
+        [Fact]
         public void AmihanUsesTheOwnersCostsAndStaysInsideTheKnockbackCap()
         {
             Assert.Equal(40.0f, AmihanRules.QuickDashCooldown);
             Assert.Equal(35.0f, AmihanRules.WhirlwindCooldown);
             Assert.Equal(2.5f, AmihanRules.WhirlwindSeconds);
-            Assert.Equal(10.0f, AmihanRules.UpdraftSeconds);
+            Assert.Equal(5.0f, AmihanRules.UpdraftSeconds);
+            Assert.Equal(40.0f, AmihanRules.UpdraftCooldown);
             Assert.Equal(15.0f, AmihanRules.StormSurgeCost);
             Assert.Equal(2.5f, AmihanRules.StormSurgeGatherSeconds);
 

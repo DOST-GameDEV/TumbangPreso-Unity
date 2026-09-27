@@ -10,6 +10,36 @@ namespace TumbangPreso.Net
     public sealed partial class MatchRpc
     {
         private bool _preparationFollowupPending;
+        private long _preparationFollowupTicket, _preparationFollowupMatch;
+        private NetworkManager _preparationFollowupNetwork;
+        private CustomMessagingManager _preparationFollowupMessages;
+        private ulong _preparationFollowupClient;
+        private int _preparationFollowupRound;
+        private ulong _preparationFollowupScene;
+
+        private bool PreparationRefreshScopeMatches(int round)
+            => _nm != null && _nm == _preparationFollowupNetwork
+                && ReferenceEquals(_nm.CustomMessagingManager, _preparationFollowupMessages)
+                && _nm.LocalClientId == _preparationFollowupClient
+                && round == _preparationFollowupRound && GameServices.Match?.RoundNumber == round
+                && PresentationMatchId == _preparationFollowupMatch
+                && SceneManager.GetActiveScene().handle.GetRawData() == _preparationFollowupScene;
+
+        private void CancelPreparationRefresh()
+        {
+            _preparationFollowupTicket++;
+            _preparationFollowupPending = false;
+            _preparationFollowupNetwork = null;
+            _preparationFollowupMessages = null;
+        }
+
+        private bool CompletePreparationRefresh(long ticket, int round)
+        {
+            if (ticket != _preparationFollowupTicket) return false;
+            _preparationFollowupPending = false;
+            return isActiveAndEnabled && _nm != null && _nm.IsConnectedClient && !_nm.ShutdownInProgress
+                && _nm.CustomMessagingManager != null && PreparationRefreshScopeMatches(round);
+        }
         private static HeroAbility PreparationAbility(HeroKit kit,int kind)
         {
             if(kit==null)return null;
@@ -59,7 +89,7 @@ namespace TumbangPreso.Net
             using(NetCue.SuppressRelay())system.RestoreJoiningPreparation((HeroAbilitySystem.Slot)kind,position,forward,aim,held,live);
             // Contact may have happened after the host captured this pre-impact
             // batch. Ask for current fields instead of replaying an expired hit.
-            if(remaining>0 && live<=0 && !_preparationFollowupPending)
+            if(remaining>0 && live<=0)
             {
                 Debug.Log($"[CastPreparation] expired in transit seat={seat} kind={kind} remaining={remaining:F4} age={age:F4}");
                 StartCoroutine(RefreshAfterExpiredPreparation(round));
@@ -67,12 +97,18 @@ namespace TumbangPreso.Net
         }
         private IEnumerator RefreshAfterExpiredPreparation(int round)
         {
+            if (_nm == null || !_nm.IsConnectedClient || _nm.ShutdownInProgress || _nm.CustomMessagingManager == null || !isActiveAndEnabled) yield break;
+            if (_preparationFollowupPending && PreparationRefreshScopeMatches(round)) yield break;
+            long ticket = ++_preparationFollowupTicket;
             _preparationFollowupPending=true;
-            var network=_nm;ulong client=network.LocalClientId;string scene=SceneManager.GetActiveScene().name;
+            _preparationFollowupNetwork = _nm;
+            _preparationFollowupMessages = _nm.CustomMessagingManager;
+            _preparationFollowupClient = _nm.LocalClientId;
+            _preparationFollowupRound = round;
+            _preparationFollowupMatch = PresentationMatchId;
+            _preparationFollowupScene = SceneManager.GetActiveScene().handle.GetRawData();
             yield return new WaitForSecondsRealtime(SnapshotRequestInterval+.05f);
-            _preparationFollowupPending=false;
-            if(_nm==network && network!=null && network.IsConnectedClient && network.LocalClientId==client
-                && GameServices.Match?.RoundNumber==round && SceneManager.GetActiveScene().name==scene)
+            if(CompletePreparationRefresh(ticket, round))
                 RequestWorldSnapshot();
         }
     }
