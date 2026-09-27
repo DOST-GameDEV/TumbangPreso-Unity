@@ -27,6 +27,13 @@ belongs in the existing reports, not in another verification framework.
 
 ## Loading fixes and flight integration, 2026-09-27 (ASTRAReworks)
 
+Published integration: `c9f55410`, followed by shared-branch merge `70fb4ede`.
+The next narrow loading fix also populates the existing parsed ultimate-introduction
+cache at boot, including held-slipper variants, yielding once per hero. Previously
+the first ultimate could load, parse and sort its table on the action path. Only
+loading order changes; no authored timing, visuals or gameplay rules change. This
+small follow-up is source-reviewed, not an additional player timing measurement.
+
 Boot now uses the shader variant count and the API's true-on-complete return value,
 instead of stopping at its first incomplete batch. It still yields between slices.
 The duplicate all-audio sweep is removed: the existing yielded folders cover all

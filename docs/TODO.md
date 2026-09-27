@@ -17,6 +17,12 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+**Loading slice, 2026-09-27:** progressive shader completion, staged menu-art/avatar
+cache preparation and duplicate audio-sweep removal are implemented (`c9f55410`).
+The existing ultimate-introduction tables now also preload once per hero at boot;
+that follow-up is source-reviewed. Broader player first-use hitch qualification
+remains OPEN, not replaced by the local shader/cache completion check.
+
 **Owner correction, 2026-09-27: implementation first.** Stop validation loops and
 diagnostic churn. Prioritize actual loading/runtime fixes so expensive preparation
 finishes behind loading, not when the player clicks. Only short checks tied to a

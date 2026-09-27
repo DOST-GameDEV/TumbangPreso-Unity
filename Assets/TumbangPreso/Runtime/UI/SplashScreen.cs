@@ -535,8 +535,8 @@ namespace TumbangPreso.UI
 
             // 9. The hero ability layer.
             //
-            // ⚠️ CONSTRUCTING EVERY KIT TOUCHES EVERY ABILITY OBJECT, its strings and its glyph,
-            // which is what the character select and the HUD read the instant Hero Strike opens.
+            // Construct kits and parse their cached ultimate introductions before first use.
+            // The held variant is a separate authored table for heroes that have one.
             SetLoadingStage("preparing hero abilities", 0.84f);
             Visual.AbilityVfx.Warmup();
             foreach (string heroId in Roster.HeroPeople != null
@@ -547,6 +547,9 @@ namespace TumbangPreso.UI
                 _ = kit?.Skill1?.Name;
                 _ = kit?.Skill2?.Name;
                 _ = kit?.Ultimate?.Name;
+                _ = Visual.UltimatePerformance.For(heroId);
+                _ = Visual.UltimatePerformance.For(heroId, holdingSlipper: true);
+                yield return null;
             }
             yield return null;
 
