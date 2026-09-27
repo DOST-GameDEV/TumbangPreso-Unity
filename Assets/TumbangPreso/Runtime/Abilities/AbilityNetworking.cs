@@ -35,6 +35,8 @@ namespace TumbangPreso.Abilities
                 }
                 if ((ability == kit.Ultimate) != (mode == AbilityNetworkMode.SharedUltimate))
                     throw new InvalidOperationException(ability.Id + " must use the shared ultimate route only in the ultimate slot.");
+                if (mode == AbilityNetworkMode.HostConfirmed && ability.Windup > 0)
+                    throw new InvalidOperationException(ability.Id + " needs a deferred preparation adapter before using a host-confirmed windup.");
             }
         }
 

@@ -318,6 +318,7 @@ namespace TumbangPreso.Net
             PresentationMatchId = 0; _pendingMoments.Clear();
             _lastUltimateRequest.Clear(); _ultimateRequestSequence = 0;
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
+            for (int slot = 0; slot < Balance.PlayerCount; slot++) Unit(slot)?.AbilitySystem?.ResetNetworkSkillReceipts();
             ClearReplayTransfer();
 
             ClearPeerDepartureState();
@@ -3249,7 +3250,8 @@ namespace TumbangPreso.Net
         public void RequestAbilityCastServerRpc(int claimedSlot, int abilitySlot,
                                                 Vector3 position, Vector3 forward,
                                                 Vector3 aimPoint, float heldSeconds,
-                                                bool hasFamiliar=false, Vector3 familiarPosition=default,long flightIntent=0)
+                                                bool hasFamiliar=false, Vector3 familiarPosition=default,long flightIntent=0,
+                                                bool predictedReactivation=false)
         {
             if (abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate)
             { RequestSharedUltimate(claimedSlot, position, forward, aimPoint, heldSeconds); return; }
@@ -3273,7 +3275,7 @@ namespace TumbangPreso.Net
             }
 
             PrepareSkillReceipts();long request=++_skillRequestSequence;
-            Unit(claimedSlot)?.AbilitySystem?.TrackSkillRequest(abilitySlot,request);
+            if (Unit(claimedSlot)?.AbilitySystem?.TrackSkillRequest(abilitySlot,request,predictedReactivation) != true) return;
             using var writer = new FastBufferWriter(128, Allocator.Temp);
             writer.WriteValueSafe(claimedSlot);
             writer.WriteValueSafe(abilitySlot);
@@ -3446,9 +3448,13 @@ namespace TumbangPreso.Net
                 // This owner already performed and paid for the cast. Only release
                 // the world payload/sky that deliberately awaited host acceptance.
                 var system = Unit(slot)?.AbilitySystem;
-                if(request>0&&system?.MatchesSkillRequest(abilitySlot,request)!=true)return;
-                system?.ConfirmPredictedWorldEffect((Abilities.HeroAbilitySystem.Slot)abilitySlot,
-                    position, forward, aimPoint, heldSeconds);
+                if (system == null) return;
+                var ability = (Abilities.HeroAbilitySystem.Slot)abilitySlot;
+                if (system.NeedsOwnerEffectConfirmation(ability))
+                {
+                    if (!system.ConfirmPredictedWorldEffect(ability, request, position, forward, aimPoint, heldSeconds)) return;
+                }
+                else if(request>0&&!system.MatchesSkillRequest(abilitySlot,request))return;
                 system?.ConfirmPredictedCastPresentation(
                     (Abilities.HeroAbilitySystem.Slot)abilitySlot);
                 return;
@@ -3560,7 +3566,8 @@ namespace TumbangPreso.Net
 
             var unit=Unit(slot);
             if(unit?.AbilitySystem?.PendingSkillReceipt(abilitySlot,request)!=true)return;
-            if(unit!=null && unit.RefuseAbilityTeleport(abilitySlot) && epoch>=unit.MovementEpoch)
+            if(unit!=null && unit.AbilitySystem.MatchesSkillRequest(abilitySlot,request)
+                && unit.RefuseAbilityTeleport(abilitySlot) && epoch>=unit.MovementEpoch)
             {
                 unit.AdoptMovementEpoch(epoch);
                 unit.ApplyNetworkTransform(position,unit.transform.eulerAngles.y,Vector3.zero,true,false,true);

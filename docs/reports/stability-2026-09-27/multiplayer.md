@@ -1,5 +1,35 @@
 # Multiplayer investigation, 2026-09-27
 
+## Independent effect receipts and command lifecycle
+
+Owner effect confirmations no longer depend on the newest request in a slot.
+They are tracked per request, slot and ability instance, independently of the
+latest resource receipt. An earlier accepted effect can appear after a later
+prediction; duplicate, denied and reset confirmations cannot create it again.
+The bounded 64-entry window applies prediction backpressure instead of evicting
+accepted work. Real message-manager replacement retires the old request scope.
+Older denials cannot correct a newer teleport or overwrite newer resources.
+
+An active deferred skill cannot recast until its first object is confirmed. Its
+cooldown still drains, but live-state ticking waits until initialization. This
+prevents Paete's missing-plant check from ending the skill during response delay.
+Recast confirmations are commands, not new activations: they do not rerun the
+initial plant spawn. A denied deferred command preserves the earlier accepted
+active effect while still giving refusal feedback and authoritative resources.
+The wire layout is unchanged; recast intent here is local receipt bookkeeping.
+
+Four distinct local PlayMode cases pass across one run and one fixture-only repair.
+The [initial run](checks/effect-receipts-initial.xml) passed both new lifecycle
+cases and the existing ice case; the old wall fixture selected attacking FROSTBITE
+instead of defending GLACIAL WALL. Selecting the actual defending role retained
+all wall/collision assertions and [passed alone](checks/effect-wall-role-repair.xml).
+No broad rerun, player build or real-peer claim. Source envelopes remain 93/0.
+
+Host-confirmed windups without a deferred preparation adapter now fail contract
+validation rather than silently executing the owner effect before approval.
+Explicit observer recast intent, late-join active-state hydration and complete
+presentation/state coverage remain open. These tests do not close NET-SKILLS-1.
+
 ## Explicit skill delivery contracts
 
 Every concrete `HeroAbility` must now implement `NetworkMode`: Predicted,

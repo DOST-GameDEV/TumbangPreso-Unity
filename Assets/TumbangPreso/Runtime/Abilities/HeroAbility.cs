@@ -822,6 +822,10 @@ namespace TumbangPreso.Abilities
                 return;
             }
 
+            // A deferred effect has not been initialized yet. Its cooldown is spent,
+            // but ticking its live state now can destroy a grant before confirmation.
+            if (DefersPredictedEffect && ctx?.Motor?.AbilitySystem?.AwaitingSkillEffect(this) == true) return;
+
             if (DurationRemaining > 0.0f)
             {
                 DurationRemaining = Mathf.Max(0.0f, DurationRemaining - dt);

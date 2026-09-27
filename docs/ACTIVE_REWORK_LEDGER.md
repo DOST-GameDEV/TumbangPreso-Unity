@@ -2,6 +2,18 @@
 
 ## Current networking and flow work, 2026-09-27
 
+Newest order: finish network correctness/presentation first, then optimization
+and actual work-driven loading-screen readiness. Do not treat hardcoded stage
+timing as asset/scene/shader initialization completion.
+
+Current receipt fix separates accepted effect delivery from latest-slot resource
+receipts. Pending initial effects wait before ticking/recasting; confirmations
+are exactly-once per tracked request. Paete command confirmation does not replant,
+and command denial does not cancel the older accepted plant. Transport reset
+retires pending requests. Four distinct local native cases pass across one run
+and one role-correct fixture repair; no real-peer or whole-network completion.
+[Receipt details](reports/stability-2026-09-27/multiplayer.md#independent-effect-receipts-and-command-lifecycle).
+
 Owner direction: perform the implementation directly, without delegated workers.
 Continue concrete network/flow fixes. The new skill requirement is an explicit
 shared networking contract so new skills cannot silently omit required multiplayer

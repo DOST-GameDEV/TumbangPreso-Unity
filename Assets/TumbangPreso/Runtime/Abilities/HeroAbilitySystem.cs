@@ -696,6 +696,10 @@ namespace TumbangPreso.Abilities
         private HeroKit.CastOutcome Cast(Slot slot)
         {
             if (slot == Slot.Ultimate) return SubmitSharedUltimate();
+            if (NetAuthority.IsNetworked && !NetAuthority.IsHost && _motor.PlayerSlot == NetAuthority.LocalSlot
+                && !CanPredictSkill(slot)) return HeroKit.CastOutcome.CannotAct;
+            var requestedAbility = AbilityFor(slot);
+            bool reactivation = requestedAbility != null && requestedAbility.IsActive && requestedAbility.CanReactivate;
             // Capture before reactivation returns the pet or moves its owner.
             var familiar=_motor.GetComponent<Visual.CharacterVisual>()?.Companion;
             bool hasFamiliar=familiar!=null;
@@ -732,7 +736,7 @@ namespace TumbangPreso.Abilities
             {
                 Net.MatchRpc.Instance?.RequestAbilityCastServerRpc(
                     _motor.PlayerSlot, (int)slot, castPosition, castForward,
-                    aimPoint, held, hasFamiliar, familiarPosition,flightIntent);
+                    aimPoint, held, hasFamiliar, familiarPosition,flightIntent,reactivation);
             }
 
             return outcome;
@@ -936,7 +940,7 @@ namespace TumbangPreso.Abilities
         /// that is not this peer's own; the guard here is the second half of that pair, so a
         /// future caller cannot roll back somebody else's kit.
         /// </summary>
-        public void RollBackPredictedCast(Slot slot, bool refundResources = true)
+        public void RollBackPredictedCast(Slot slot, bool refundResources = true, bool preserveActiveEffect = false)
         {
             if (Kit == null || _motor == null) return;
             if (NetAuthority.IsHost) return;
@@ -949,7 +953,8 @@ namespace TumbangPreso.Abilities
             // THIS FILE. `EndEarly` reaches `OnEnd`, and some `OnEnd` bodies play a cue; relaying
             // those outward would have a client asking the host to announce the end of an effect
             // the host never started.
-            using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context,refundResources);
+            if (!preserveActiveEffect)
+                using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context,refundResources);
             if (slot == Slot.Ultimate) _pendingUltimateSky = false;
             _motor.GetComponent<Visual.CharacterAnimator>()?.CancelHeroAction(ability.CastAction,ability.ViewmodelAction);
 
@@ -1453,17 +1458,25 @@ namespace TumbangPreso.Abilities
             return applied;
         }
 
-        public void ConfirmPredictedWorldEffect(Slot slot, Vector3 position, Vector3 forward,
+        public bool ConfirmPredictedWorldEffect(Slot slot, long request, Vector3 position, Vector3 forward,
                                                Vector3 aimPoint, float heldSeconds)
         {
-            if (_motor == null || NetAuthority.IsHost || _motor.PlayerSlot != NetAuthority.LocalSlot) return;
+            if (_motor == null || NetAuthority.IsHost || _motor.PlayerSlot != NetAuthority.LocalSlot) return false;
             var ability = AbilityFor(slot);
-            if (ability?.DefersPredictedEffect != true) return;
+            if (ability?.DefersPredictedEffect != true || request < 0) return false;
+            // Effects settle independently; an older confirmation must not be discarded just
+            // because a newer request owns the resource receipt for this slot.
+            bool reactivation = false;
+            if (request > 0 && !TakePendingEffect((int)slot, request, out reactivation)) return false;
             var context = new AbilityContext(_motor, _carrier, _verbs, position, forward, aimPoint);
             // The host already accepted the cast. Do not spend another charge or
             // restart its animation, and do not relay its payload cues back out.
-            using (NetCue.SuppressRelay()) ability.ApplyConfirmedEffect(context, heldSeconds);
+            // A confirmed command must not run the initial spawn again. Its predicted
+            // command presentation already ran; authoritative world results arrive separately.
+            if (!reactivation)
+                using (NetCue.SuppressRelay()) ability.ApplyConfirmedEffect(context, heldSeconds);
             FlashCastTarget(ability, context, heldSeconds);
+            return true;
         }
 
         /// <summary>Release deferred sky presentation without replaying the owner's cast.</summary>
