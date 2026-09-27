@@ -5,6 +5,26 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Boot Failure Controls
+
+Afterca83fe1d, failed boot-menu initialization provides one EXIT GAME LoadingLink
+above the retained curtain,focused through existing ScreenFocus. Pointer/touch or
+controller submit queues the same quit path as Cancel. Previously only the unseen
+Cancel path existed. Repeated failures reuse one button; readiness stays failed
+and the broken menu stays covered. No supplied art,layout of normal loading or
+input backend changes.
+
+One new failure-surface case and the FIRST existing original boot-handoff case
+pass2/2,1.059872s on full committed base plus3inputs,no drift,no retry. Failure
+coverage checks focus,interactivity,actual UI raycast reach,idempotence,queued exit
+request and retained takeover; it deliberately does not quit the test process.
+Boot coverage checks menu initialization,retained curtain/deferred login and title
+input,then correct reveal. Minimum free6,312,722,432bytes; profile/preferences restored.
+[Receipt](checks/boot-failure-native.json),[XML](checks/boot-failure-native.xml).
+Raw Logs/boot-failure-exit-20260927/boot-controls.*. Physical input,actual device
+exit,visual judgment and full cold-player boot timing remain separate. No old
+map-cycle,film or unrelated native cases were repeated.
+
 ## Decoded HOME Handoff
 
 The FIRST native boot-decoder check onf32489eb reproduced a real loading defect:

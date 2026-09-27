@@ -1,11 +1,17 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`f32489ebfd7a9f3f3f57662cb692fafcb962fe43`; decoded HOME preload fix follows it.
+`ca83fe1d79d4e31607150082b38d4824a7d2886e`; boot failure exit follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Boot menu failure now exposes one focused pointer-accessible EXIT GAME control
+above the retained curtain,using the existing Cancel quit path. New failure-exit
+and first original boot activation/handoff checks pass2/2 on full committed base
+plus3inputs,no drift,no retry. Actual device exit,physical inputs and visual judgment
+remain separate. [Evidence](reports/stability-2026-09-27/loading-audit.md#boot-failure-controls).
 
 First HOME decoder check reproduced a30-second readiness timeout. Explicit
 prepare/play until first frameReady,then pause,now completes the same readiness/

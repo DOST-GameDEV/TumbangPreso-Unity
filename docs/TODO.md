@@ -162,6 +162,9 @@ supplied pixels and staged order remain unchanged. Player cold-read timings rema
 Shader preparation now checks elapsed time after each variant and yields at a2ms
 target or10variants,while retaining full completion. The changed native stage case
 passes97/97variants; cached Editor timing is not cold-player/handset acceptance.
+Failed boot-menu initialization now offers a visible focusable/pointer exit above
+the retained curtain,alongside Cancel. New failure controls and first original
+boot activation/handoff cases pass2/2; physical-input/visual acceptance remains OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE STATE PASS:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

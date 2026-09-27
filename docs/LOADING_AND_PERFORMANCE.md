@@ -15,6 +15,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Shader preparation turns | SplashScreen calls WarmUpProgressively(1),checks a2ms elapsed target between calls and caps10variants/turn; one indivisible native compile may overrun,so this is not a hard frame guarantee |
 | Deferred SFX/voice samples | UI/SplashScreen.WarmAudioAssets; yielded sample loading and retention,not just clip references; music/streaming policy unchanged |
 | Real menu activation barrier | UI/SplashScreen.MenuActivation.cs and ConvertedMainMenu.IsPrepared; retain existing canvas through Wire/layout,then reveal login/input |
+| Boot failure exit | SplashScreen.MenuActivation exposes one focusable/pointer-accessible EXIT GAME control above the failed curtain; button and Cancel use the same quit path without claiming readiness |
 | Title/login art and avatars | UI/OwnerMenuArt.cs,Avatars.cs; async cold reads awaited per item,then existing retained texture/sprite caches; supplied pixels and fallback policy unchanged |
 | Hub/HUD portraits and mode cards | UI/OwnerPortraitArt.cs; async roster-driven warmup and shared cache used by HubKit/TumpUiFactory |
 | First HOME loop | UI/Hub/HubSceneVideo.Warmup.cs; async metadata/selected poster,explicit prepare/play until frameReady then pause behind boot,adopting the same player/target; paused preparation alone timed out on Windows |
@@ -63,7 +64,8 @@ state/presentation cases. The subsequent [UI/audio pass](reports/stability-2026-
 passes three first-run range/settings/preview reuse cases; a separate new audio case
 confirms deferred sample preparation and no playback. HOME decoded-frame handoff
 now passes after fixing a reproduced30-second readiness timeout; reduced-motion
-poster behavior also passes. Menu activation,portrait/prop retention,whole-player
+poster behavior also passes. Original boot menu activation and its failure exit
+now have focused native state/input-routing evidence. Portrait/prop retention,whole-player
 entry timings,other-device codecs,physical input and visual acceptance remain separate.
 Earlier shader/art evidence remains separate. There is no current complete player
 before/after hitch table. Consult the ledger for current headroom/processes; the

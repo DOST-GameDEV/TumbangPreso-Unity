@@ -232,7 +232,7 @@ namespace TumbangPreso.UI
             yield return ActivatePreparedMenu();
             if (_menuActivationFailed)
             {
-                while (!InputLayer.MenuNav.CancelPressed) yield return null;
+                while (!_quitAfterMenuFailure && !InputLayer.MenuNav.CancelPressed) yield return null;
                 SceneFlow.Quit();
                 yield break;
             }
