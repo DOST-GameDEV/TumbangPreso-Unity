@@ -665,6 +665,30 @@ Its exact implementation and qualification status are in
 [Featherfall](../amihan-kit-2026-09-27/featherfall.md). It does not establish that
 every kit works across real peers.
 
+## Ability Resource Identity
+
+After6d8083d6, protocol78 replaces SyncAbility's current-slot numbers with a bounded
+AbilityResourceSnapshot: world/epoch scope,seat,sequence,hero ID,ultimate meter and
+all owned ability IDs/cooldowns/charges,including the inactive role. The old message
+could apply an attacking cooldown to a receiver's defending skill and omitted the
+inactive ability entirely. Resource recovery now maps by stable identity,validates
+the entire matching set before mutation,and rejects older/duplicate state. The
+owner-live mayLower safeguard remains; observers/intermission accept correction.
+No roles,skill design,active-effect clocks or authored presentation are changed.
+
+Two NEW native cases pass2/2,0.1808458s on full committed base plus9inputs,no drift.
+They exercise actual serialization and differing role order,both role states,
+unknown/duplicate IDs,nonfinite meter,oversized count,atomic failure; then the real
+receiver's sender/world/epoch/hero/sequence checks and owner-live/intermission rules.
+Initial attempt compiled Runtime but stopped on3CS1657 test-reader lifetime errors;
+no cases ran. One bounded test-only try/finally correction preserved all assertions,
+with a distinct retry log/XML. No other cases or broad suites were repeated.
+Minimum retry free6,195,240,960bytes; named profile/preferences restored both times.
+[Receipt](checks/ability-resources-native.json),[XML](checks/ability-resources-native.xml),
+[initial compiler errors](checks/ability-resources-first-compile.txt).
+Raw Logs/ability-resources-20260927/stable-resources*. Actual peers/ranked/reconnect
+and live rework integration remain separate; no blanket future-proof claim.
+
 ## Body Snapshot World Scope
 
 Afterc6506327, SyncUnit includes existing GameplayActionScope in place of its bare

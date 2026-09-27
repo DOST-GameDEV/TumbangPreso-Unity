@@ -28,6 +28,24 @@ namespace TumbangPreso.PlayTests
             { Skill1 = new AimProbeAbility("aim-one"); Skill2 = new AimProbeAbility("aim-two"); }
         }
 
+        private sealed class ResourceProbeAbility : HeroAbility
+        {
+            public override AbilityNetworkMode NetworkMode => Id == "ultimate"
+                ? AbilityNetworkMode.SharedUltimate : AbilityNetworkMode.Predicted;
+            public ResourceProbeAbility(string id) : base(id, id, "", 30, charges: 3) { }
+            protected override void OnActivate(AbilityContext context) { }
+        }
+        private sealed class ResourceProbeKit : HeroKit
+        {
+            public ResourceProbeKit() : base("resource-probe", "Resources")
+            {
+                Skill1 = new ResourceProbeAbility("signature");
+                AttackingSkill = new ResourceProbeAbility("attack");
+                DefendingSkill = new ResourceProbeAbility("defend");
+                Ultimate = new ResourceProbeAbility("ultimate");
+            }
+        }
+
         private INetProvider _provider;
         private sealed class PredictingOwner : INetProvider
         {
@@ -49,6 +67,102 @@ namespace TumbangPreso.PlayTests
         { _provider = NetAuthority.Provider; yield return PlayModeWorld.Reset(); }
         [UnityTearDown] public IEnumerator After()
         { yield return PlayModeWorld.Reset(); NetAuthority.Provider = _provider; }
+
+        [Test]
+        public void ResourceSnapshotsMapBothRolesByIdentityAndRejectPartialOrMalformedSets()
+        {
+            var host = new ResourceProbeKit();
+            host.Skill1.ApplyNetworkSnapshot(7, 1); host.AttackingSkill.ApplyNetworkSnapshot(11, 2);
+            host.DefendingSkill.ApplyNetworkSnapshot(21, 0); host.Ultimate.ApplyNetworkSnapshot(4, 2);
+            host.AddUltimateCharge(9);
+            var source = AbilityResourceSnapshot.Capture(host, 1,
+                new GameplayActionScope { Match = 123, Round = 1, Epoch = 0 }, 1);
+            AbilityResourceSnapshot decoded;
+            using (var writer = new FastBufferWriter(AbilityResourceSnapshot.MaxWireBytes, Allocator.Temp))
+            {
+                writer.WriteNetworkSerializable(source);
+                var reader = new FastBufferReader(writer, Allocator.Temp);
+                try { Assert.IsTrue(AbilityResourceSnapshot.TryRead(ref reader, out decoded)); }
+                finally { reader.Dispose(); }
+            }
+            var target = new ResourceProbeKit(); target.SetRole(true, default);
+            Assert.IsTrue(decoded.TryApply(target, true));
+            Assert.IsTrue(target.IsDefending);
+            Assert.AreEqual(21, target.Skill2.CooldownRemaining);
+            Assert.AreEqual(11, target.IdleRoleSkill.CooldownRemaining);
+            Assert.AreEqual(2, target.AttackingSkill.ChargesRemaining);
+            Assert.AreEqual(0, target.DefendingSkill.ChargesRemaining);
+            Assert.AreEqual(9, target.UltimateCharge);
+            var bad = decoded; bad.Abilities = (AbilityResourceSnapshot.Entry[])decoded.Abilities.Clone();
+            bad.UltimateCharge = 1; bad.Abilities[0].Cooldown = 0;
+            bad.Abilities[3].Id = new FixedString64Bytes("unknown");
+            Assert.IsFalse(bad.TryApply(target, true));
+            Assert.AreEqual(9, target.UltimateCharge); Assert.AreEqual(7, target.Skill1.CooldownRemaining);
+            bad.Abilities[3].Id = bad.Abilities[0].Id;
+            using (var writer = new FastBufferWriter(AbilityResourceSnapshot.MaxWireBytes, Allocator.Temp))
+            {
+                writer.WriteNetworkSerializable(bad);
+                var reader = new FastBufferReader(writer, Allocator.Temp);
+                try { Assert.IsFalse(AbilityResourceSnapshot.TryRead(ref reader, out _)); }
+                finally { reader.Dispose(); }
+            }
+            bad = decoded; bad.UltimateCharge = float.NaN; Assert.IsFalse(bad.IsValid);
+            using (var writer = new FastBufferWriter(64, Allocator.Temp))
+            {
+                writer.WriteValueSafe(1); writer.WriteNetworkSerializable(source.Scope); writer.WriteValueSafe(1L);
+                writer.WriteValueSafe((ushort)1); writer.WriteValueSafe((byte)'x'); writer.WriteValueSafe(1f);
+                writer.WriteValueSafe((byte)(AbilityResourceSnapshot.MaxAbilities + 1));
+                var reader = new FastBufferReader(writer, Allocator.Temp);
+                try { Assert.IsFalse(AbilityResourceSnapshot.TryRead(ref reader, out _)); }
+                finally { reader.Dispose(); }
+            }
+        }
+
+        [Test]
+        public void ResourceReceiverScopesOrdersAndPreservesOwnerPredictionUntilIntermission()
+        {
+            var system = Owner("dante"); var body = system.GetComponent<CharacterMotor>();
+            var kit = new ResourceProbeKit(); typeof(HeroAbilitySystem).GetProperty("Kit").SetValue(system, kit);
+            GameServices.Ensure(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            GameServices.Round.ApplySnapshot(50, true, 0, true);
+            var root = new GameObject("Ability resources receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>(); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+            var receive = typeof(MatchRpc).GetMethod("OnSyncAbilityMsg", System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic);
+            var host = new ResourceProbeKit(); host.Skill1.ApplyNetworkSnapshot(5, 3); host.AddUltimateCharge(7);
+            kit.Skill1.ApplyNetworkSnapshot(20, 0);
+            var snapshot = AbilityResourceSnapshot.Capture(host, 1,
+                new GameplayActionScope { Match = 123, Round = 1, Epoch = 0 }, 1);
+            void Deliver(AbilityResourceSnapshot value, ulong sender = 0)
+            {
+                using var writer = new FastBufferWriter(AbilityResourceSnapshot.MaxWireBytes, Allocator.Temp);
+                writer.WriteNetworkSerializable(value);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                receive.Invoke(router, new object[] { sender, reader });
+            }
+            try
+            {
+                var bad = snapshot; bad.Sequence = 100; Deliver(bad, 9);
+                bad.Scope.Match = 122; Deliver(bad);
+                bad.Scope.Match = 123; bad.Scope.Round = 2; Deliver(bad);
+                bad.Scope.Round = 1; bad.Scope.Epoch = 1; Deliver(bad);
+                bad.Scope.Epoch = 0; bad.HeroId = new FixedString64Bytes("another-kit"); Deliver(bad);
+                Assert.AreEqual(0, kit.UltimateCharge);
+                Deliver(snapshot);
+                Assert.AreEqual(7, kit.UltimateCharge);
+                Assert.AreEqual(20, kit.Skill1.CooldownRemaining); Assert.AreEqual(0, kit.Skill1.ChargesRemaining);
+                snapshot.Abilities[0].Cooldown = 30; Deliver(snapshot);
+                Assert.AreEqual(20, kit.Skill1.CooldownRemaining, "Duplicate resource state reapplied.");
+                snapshot.Sequence = 2; Deliver(snapshot); Assert.AreEqual(30, kit.Skill1.CooldownRemaining);
+                GameServices.Round.ApplySnapshot(50, false, 0, true);
+                snapshot.Sequence = 3; snapshot.Abilities[0].Cooldown = 0; Deliver(snapshot);
+                Assert.AreEqual(0, kit.Skill1.CooldownRemaining); Assert.AreEqual(3, kit.Skill1.ChargesRemaining);
+                snapshot.Sequence = 2; snapshot.Abilities[0].Cooldown = 30; Deliver(snapshot);
+                Assert.AreEqual(0, kit.Skill1.CooldownRemaining);
+            }
+            finally { Object.DestroyImmediate(root); }
+        }
 
         private static MatchRpc ClockReceiver()
         {

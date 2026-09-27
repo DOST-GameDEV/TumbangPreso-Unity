@@ -24,6 +24,25 @@ Only Paete currently has substantial VFX; other presentation remains provisional
   effect through its preparation/live clocks. MatchRpc discovers these abilities
   automatically,including both role abilities; no hero/effect type switch is needed.
 
+## Cooldowns And Charges
+
+Protocol78 replaces mutable-slot SyncAbility values with AbilityResourceSnapshot:
+GameplayActionScope,seat,sequence,stable hero ID,ultimate meter and the complete
+HeroKit.AllAbilities ID/cooldown/charge set. Both role abilities travel even when
+one is inactive. Reworks keep their stable IDs; role order does not identify state.
+The receiver checks current world/epoch and the complete matching kit before any
+resource mutation,then rejects duplicate/older per-seat sequences. Unknown,missing
+or duplicate IDs reject the whole snapshot,not just one entry. The bounded format
+supports up to8abilities and existing FixedString64Bytes IDs; expanding those limits
+requires an explicit contract/version change,not a silent truncation.
+
+The locally owned live-round kit still cannot have predicted cooldowns lowered or
+charges refunded by a lagging host snapshot. Observers and intermission accept
+authoritative correction. Ultimate meter remains host-owned. Resource application
+does not change role,cast skills,restore active-effect durations or replay visuals.
+HeroKit's legacy slot-based ApplyNetworkSnapshot remains a direct local helper;
+the wire uses the identity-based route in MatchRpc.AbilityResources.
+
 ## Held-Aim Presentation
 
 Protocol66 appends the dominant held slot,stable ability ID,elapsed hold and hold

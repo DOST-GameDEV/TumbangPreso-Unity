@@ -262,11 +262,17 @@ namespace TumbangPreso.Abilities
                                          float ultimateCooldown,
                                          bool mayLower = true)
         {
-            UltimateCharge = Mathf.Clamp(ultimateCharge, 0.0f, UltimateCost);
+            ApplyNetworkUltimateCharge(ultimateCharge);
 
             Skill1?.ApplyNetworkSnapshot(skill1Cooldown, skill1Charges, mayLower);
             Skill2?.ApplyNetworkSnapshot(skill2Cooldown, skill2Charges, mayLower);
             Ultimate?.ApplyNetworkSnapshot(ultimateCooldown, 0, mayLower);
+        }
+
+        public void ApplyNetworkUltimateCharge(float charge)
+        {
+            if (float.IsNaN(charge) || float.IsInfinity(charge)) return;
+            UltimateCharge = Mathf.Clamp(charge, 0, UltimateCost);
         }
 
         /// <summary>

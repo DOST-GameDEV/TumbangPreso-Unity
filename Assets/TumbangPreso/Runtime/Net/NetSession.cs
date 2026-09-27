@@ -512,7 +512,9 @@ namespace TumbangPreso.Net
         // transient hitstop is not a replicated pause or spectator speed.
         // 77: body pose/status snapshots carry match/round as well as movement
         // epoch, so delayed previous-world state cannot seed a fresh body.
-        public const int ProtocolVersion = 77;
+        // 78: cooldown/charge snapshots identify the hero and every ability,
+        // including the idle role, with world scope and per-seat ordering.
+        public const int ProtocolVersion = 78;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

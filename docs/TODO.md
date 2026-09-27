@@ -92,6 +92,10 @@ the full committed base plus10inputs,no drift. Actual peers and QA-15 remain OPE
 Body pose/status snapshots now carry match/round as well as movement epoch
 (protocol77),rejecting old-world state before fresh-body cursor mutation. The
 changed native receiver case passes; actual peer/round-transition acceptance remains OPEN.
+Cooldown/charge recovery now carries world scope,sequence,hero and stable ability
+IDs for both role abilities (protocol78). Complete-set validation and owner-live
+prediction safeguards remain. Two new native codec/receiver cases pass after one
+test-only reader-lifetime correction. Actual peers/ranked/reconnect remain OPEN.
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.
