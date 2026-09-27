@@ -1,20 +1,20 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`6f128705eac2a370276d602c4a14ba3d7e55a716`; offline training-range unit follows it.
+`a6111f72b0c24909685a9f752b3b7e5d46d7f9bf`; generic match-loading handoff follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-PRACTICE-1 now has an explicit offline range: in-place roster changes, independent
-local resource switches, can-state lock, reusable target bots with seat/role/idle
-controls, and reset through the existing pause/menu route. Bodies and the inactive
-menu are prepared during setup. Saved AI/character preferences stay unchanged;
-network/connecting/revoked/tutorial/spectator sessions reject training controls.
-Five assemblies compile and seven new Core gate cases pass. Native range lifecycle,
-UI, physical input and timing checks remain OPEN, so the parent is not complete.
-[Evidence and exact limits](reports/stability-2026-09-27/practice-range.md).
+Generic match loading now requires destination-owned setup success, not an eight-
+second timeout or an old global round. Same-scene network reloads wait for a fresh
+Scene; failures retain an error/return surface instead of claiming readiness.
+Replacement/non-match transitions cancel the old curtain and dispose its existing
+preparation iterator. Gameplay input clears behind loading and waits for held menu
+actions to release on handoff. No map/warmup implementation or protocol changed.
+Four assemblies compile; new native lifecycle/input/UI qualification remains OPEN.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#destination-setup-readiness).
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -25,6 +25,7 @@ and current owner reservations after resuming.
 
 | Revision | Change | Evidence boundary |
 |---|---|---|
+| a6111f72 | Explicit offline range, independent local resources, prepared controls and reusable target bots | Five assemblies compile; seven Core gate cases pass; native range/UI/physical input checks pending |
 | 6f128705 | Frozen restraint follows received status; dedup, refresh/thaw/disable cleanup; four meshes preload | Four assemblies compile; native lifecycle/peer checks and QA-15 pending |
 | a60d3f67 | First-HOME paused decoder/first-frame preparation during boot | Four assemblies compile; native handoff/reduced-motion and timing checks pending |
 | 4a9f9cf2 | Correlated combat refusals and authoritative resource correction | Two new Core cases pass; five assemblies compile; native/peer qualification pending |

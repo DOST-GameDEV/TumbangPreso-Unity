@@ -54,6 +54,9 @@ hitch-free performance. [Source route](LOADING_AND_PERFORMANCE.md),
 First-HOME video preparation now runs during boot and reuses one paused decoded
 player; poster/reduced-motion fallback stays. Four assemblies compile; native
 decoder/handoff and player first-entry timings remain OPEN.
+Generic match loading now awaits destination-owned setup, rejects stale same-scene
+installers, retains errors instead of timed success, and cancels obsolete curtains.
+Four assemblies compile; native handoff/failure/input checks remain OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

@@ -104,6 +104,37 @@ native integration run; it has NOT run. The preceding editor startup hit the dis
 reserve, so no repeated editor launch was attempted for this batch. No measured
 player frame-time, peak-memory or hitch-free claim.
 
+## Destination Setup Readiness
+
+After `a6111f72`, the generic loading handoff no longer treats eight elapsed seconds,
+an unrelated ReadyGate or a persistent active RoundDirector as completed setup.
+MatchInstaller publishes success only after its body, HUD and control installation
+returns; range launches additionally await the range's live startup. Installation
+exceptions remain failures and retain their diagnostic exception.
+
+HubLoading requires an installer in the actual destination scene. A networked
+same-scene rematch must first replace the previous Scene instance. Progress stays
+at the completed scene-load stage while installation is pending instead of advancing
+by elapsed time. A60-second watchdog produces an error and a focused return-to-menu
+button, never100percent or a ready log. Prewarm exceptions likewise retain the
+curtain with an error. Existing warmup views, camera settings and map assets are
+unchanged. The loading owner disposes its existing preparation iterator so its
+camera/target cleanup runs on cancellation or destruction too.
+
+A non-match transition or replacement cancels the obsolete curtain, releases its
+root canvas and input ownership, and cannot leave it covering HOME. PlayerInputReader
+clears held gameplay input while loading and discards held menu actions until release
+when loading finishes. No new input backend, match rule or network protocol was added.
+
+Frozen154 inputs,5 owned source/test/metadata paths. Runtime, Editor, Tests and
+PlayTests compile; unchanged Core is reused. The first compiler run found obsolete
+integer SceneHandle conversions in the new code; the bounded correction retains
+and compares Scene values directly. The new native case covers stale global round,
+unprepared destination, error/return availability, cancellation and same-scene reload.
+It is **NOT RUN** under the existing editor disk-reserve limitation. No old Core tests,
+films or broad suites were repeated, and no player hitch-free claim follows.
+[Compiler/source receipt](checks/match-loading-compile.json).
+
 ## Evidence boundary
 
 The intake source audit began at ASTRAReworks `04886cc4`; current instrumentation is based on `026fed74` plus reviewed diagnostic amendments. The historical Desktop player identifies itself as a dirty `85832b6b` build, not a current-source performance baseline. The guarded Development build stopped during packaging when storage fell below the protected reserve. No current player boot, first-click, cast or profiler before/after timing exists, so no hitch reduction or FPS improvement is claimed.

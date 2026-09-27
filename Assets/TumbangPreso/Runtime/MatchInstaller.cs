@@ -56,6 +56,9 @@ namespace TumbangPreso
         private RosterBook _book;
         private bool _spectating;
         private CharacterMotor[] _seats;
+        private bool _installed;
+        public bool IsPrepared => _installed && (!PracticeRange.Requested || PracticeRange.Active);
+        public string InstallationError { get; private set; }
 
         /// <summary>
         /// ⚠️⚠️ THE ARENA FOLLOWS THE SEAT FROM WHEREVER IT CHANGES, NOT FROM ONE MESSAGE.
@@ -352,13 +355,25 @@ namespace TumbangPreso
 
         private void Start()
         {
-            // The arena was loaded to be looked at, not played. See PreviewOnly.
             if (PreviewOnly)
             {
                 enabled = false;
                 return;
             }
+            try
+            {
+                InstallMatch();
+                _installed = true;
+            }
+            catch (Exception error)
+            {
+                InstallationError = error.Message;
+                Debug.LogException(error, this);
+            }
+        }
 
+        private void InstallMatch()
+        {
             _book = RosterBook.Load();
             bool guided = GameLaunch.GuidedTutorial;
             bool range = PracticeRange.Requested;
