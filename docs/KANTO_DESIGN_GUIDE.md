@@ -5,10 +5,16 @@ City", PEAK and Brainchild's cartoon towns. Read this before touching any Kanto 
 rule below came from the owner reacting to a render; the quote is there so nobody re-litigates
 it. Status and open items: `docs/TODO.md` **KANTO-1**.
 
-⚠️⚠️ **NEXT STEP, OWNER, 2026-09-24: "i want the map in full in blender first before finalizing
-in unity".** The Unity scene exists (commit `7eb8ec862`) but is NOT the place to iterate. Build
-and review the whole assembled map in Blender (`ArtSource/kanto/kanto_city.blend`), get it
-approved there, and only then re-export to Unity. See § 8.
+⚠️⚠️ **STATUS, OWNER, 2026-09-27: "kanto is basically done".** The map was built and approved in
+Blender (`ArtSource/kanto/kanto_city.blend`, § 8, § 11) and exported to Unity (`2b69e4f20`).
+**Two things remain, both in Unity, both in § 12:**
+1. **Lighting in game differs from the editor.** Fix it so Play looks like the approved scene.
+2. **Liveliness: moving cars and traffic** on the streets round the park.
+
+The art is settled: do not reopen buildings, textures, bark or trees unless the owner asks.
+
+(Superseded 2026-09-27: the 2026-09-24 instruction "the map in full in blender first before
+finalizing in unity" is done; Blender remains the place to change any MODEL.)
 
 ---
 
@@ -251,3 +257,66 @@ Unity on 2026-09-25 (`2b69e4f20`, 438 placements, 81 models, textures copied by 
 - Open: vehicle chrome reads grey; Unity lacks the Blender mist, anti-tiling and hills; the
   vehicle/sign material names need Unity palette entries (watch the build log's unmatched-name
   warning).
+
+## 12 · Remaining work (owner, 2026-09-27): in-game lighting, and moving traffic
+
+🧑 *"kanto is basically done, needs fixes on the lighting when in game since its different
+compared to when in the editor + liveliness like moving cars/traffic."*
+
+### 12.1 · The lighting in Play differs from the editor
+
+**Measure before changing anything.** Capture the same view two ways and diff them: the editor
+review (`KantoSceneBuilder.RunReview`, which renders the saved scene with `ColourGrade` +
+`WorldOutline` on an offscreen camera) and the actual game camera in Play (`MatchInstaller`
+running the match). Log both sides' `RenderSettings` (ambient mode and colours, fog mode,
+colour, start and end, skybox), the sun (colour, intensity, rotation, shadow strength), the
+grade the camera adopted, and `QualitySettings` (level, shadow distance and cascades). Show the
+owner the two frames side by side; the owner decides which one is right.
+
+Leads, found reading the code on 2026-09-27 (NOT yet confirmed as the cause):
+- **Kanto has no world look.** `MatchInstaller` calls `WorldLookPresentation.Install`, which
+  looks up `WorldLookProfile.Current.Find(scene.name)`. `Resources/WorldLookProfile.asset` has
+  entries for BayanPlaza, Eskinita, IlalimNgTulay, SaBubong and Lagoon only, so in Play Kanto
+  keeps the scene's own lighting while every shipped map is re-lit by its tuned look (sun,
+  trilight ambient, fog, sky, and the `_World*` shader globals). If the owner wants Kanto to
+  match the game's current look, the fix is a Kanto `MapLook` (code defaults in
+  `WorldLookProfile.cs` `MapLook` AND the asset row: the asset overrides the code).
+- **The play camera is not the review camera.** In Play the camera rig applies the player's
+  render style, `ColourGrade`, `WorldOutline` and the graphics profile
+  (`Settings.GraphicsProfiles`); the review uses its own camera with `AdoptFromScene`. Any of
+  these can move exposure, saturation or shadows.
+- **The Blender look has no Unity half yet:** the mist, anti-tiling and the horizon hills exist
+  only in Blender (§ 8, § 11).
+- `SkyEvent` changes the sky only during an ultimate; it is not the everyday difference.
+
+### 12.2 · Liveliness: moving cars and traffic
+
+What exists: the vehicles are modelled (`tools/author_kanto_vehicles.py`: sedans, taxi, van,
+pickup, bus, jeepney, tricycle) and PLACED static; traffic signals exist with separate lamp
+materials; traffic is right-hand in both lanes; there is a jeepney stop and a tricycle rank.
+
+What to build, and the rules it must keep:
+- Vehicles DRIVE their lanes on the ring road and the grid streets, slow and stop at the
+  signals (which cycle, lamps lit per phase), pull in at the jeepney stop, and leave or
+  respawn beyond the fog. Tricycles wander the side streets.
+- ⚠️ **Traffic never enters the play area** (walls at ±13; the ring road starts at 17), never
+  collides with players, the lata or tsinelas, and never blocks a camera: visual only.
+- ⚠️ **It is not gameplay, so it is not networked** unless the owner asks. If every client must
+  see the same car at the same time, drive it from the match clock deterministically rather
+  than sending positions (`LrtTrainFlyby` on Ilalim ng Tulay is the precedent for a timed
+  moving event).
+- Reuse before writing: `Runtime/Map/AmbientLife*.cs` (the ambient life system and its visits),
+  `LrtTrainFlyby.cs` (a moving vehicle event), `LagoonResident.cs`.
+- A performance budget: the map already carries ~440 placements; measure frame time with
+  traffic on in a built player, not in the editor.
+- Show it moving: a short capture or a sequence of versioned frames, not a description.
+
+### 12.3 · Where Kanto's work lives
+
+- The Kanto branch is **`claude/kanto-blender-assembly-909442`** (its own worktree). The
+  ASTRAReworks worktree `tumbangpreso-unity-setup-24d106` has a PARTIAL copy of Kanto files
+  in its working tree (Unity assets synced from the Kanto branch, ArtSource and docs not):
+  do not commit Kanto from there without checking what `git status` actually contains.
+- Kanto is still **not registered** as a playable map (`SceneFlow.Maps`, `GameLaunch`,
+  `WorldLookProfile`, `MenuSceneBuilder`, `MapGeometryCheck.Gated`). Registering it is a
+  separate owner decision; if it happens, run the map checks against its ±13 bounds.

@@ -1082,9 +1082,20 @@ cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 pass
 ### KANTO-1 · Sample map: a city park block modelled in Blender ⚠️ OPEN, 2026-09-24
 
 **Read [KANTO_DESIGN_GUIDE.md](KANTO_DESIGN_GUIDE.md) first**: every owner decision on style,
-models, textures, foliage and layout. ⚠️ **Next step (owner): "i want the map in full in blender
-first before finalizing in unity"**: assemble `ArtSource/kanto/kanto_city.blend` and iterate
-there before re-exporting (guide § 8).
+models, textures, foliage and layout.
+
+⚠️⚠️ **2026-09-27, owner: "kanto is basically done".** Built and approved in Blender, exported
+to Unity (`2b69e4f20`). The art is settled. **Two items remain (guide § 12):**
+- [ ] **Lighting in Play differs from the editor.** Measure both (RenderSettings, sun, grade,
+  quality) and show the owner side by side before changing anything. Lead: Kanto has no
+  `WorldLookProfile` entry, so `WorldLookPresentation.Install` leaves it unlit by the world look
+  every shipped map gets in Play (guide § 12.1).
+- [ ] **Moving cars and traffic** on the ring road and grid streets: lanes, signals that cycle,
+  the jeepney stop, respawn beyond the fog; never inside the ±13 play area; visual only, not
+  networked; reuse `AmbientLife` / `LrtTrainFlyby` patterns; frame time measured in a built
+  player (guide § 12.2).
+
+(Superseded: "the map in full in blender first before finalizing in unity" is done.)
 
 - **2026-09-24, assembled.** `author_kanto_city.py -- --assemble --review N` writes
   `kanto_city.blend`: 33 models built once, textured, under Kit; 220 collection instances from
