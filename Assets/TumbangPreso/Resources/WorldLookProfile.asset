@@ -166,7 +166,7 @@ MonoBehaviour:
     WearKind: 4
     Sun: {r: 1, g: 0.8, b: 0.56, a: 1}
     SunIntensity: 1.25
-    SunElevation: 12
+    SunElevation: 6
     ShadowStrength: 0.7
     Fog: {r: 0.98, g: 0.78, b: 0.64, a: 1}
     Zenith: {r: 0.3, g: 0.46, b: 0.72, a: 1}

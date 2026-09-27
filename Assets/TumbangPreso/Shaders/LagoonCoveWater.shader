@@ -60,17 +60,17 @@ Shader "TumbangPreso/LagoonCoveWater"
         _FoamSpeed ("Foam ripple speed", Float) = 0.7
 
         [Header(Surface)]
-        _WaveHeight ("Wave height (m)", Float) = 0.06
-        _WaveLength ("Wave length (m)", Float) = 9
+        _WaveHeight ("Wave height (m)", Float) = 0.1
+        _WaveLength ("Wave length (m)", Float) = 12
         _WaveSpeed ("Wave speed", Float) = 0.6
-        _RippleScale ("Ripple size (per metre)", Float) = 0.9
+        _RippleScale ("Ripple size (per metre)", Float) = 0.35
         _RippleStrength ("Ripple strength", Range(0, 1)) = 0.5
         _SkyColor ("Upper sky in the water (tint over the haze)", Color) = (0.62, 0.6, 0.82, 1)
         _Reflection ("Reflection at grazing angles", Range(0, 1)) = 0.4
         _SunPath ("Sun path glow on the water", Range(0, 2)) = 0.6
         _FresnelPower ("Fresnel power", Float) = 4
-        _GlintSize ("Sun glint size", Range(0.9, 0.9999)) = 0.9935
-        _GlintStrength ("Sun glint strength", Range(0, 2)) = 0.6
+        _GlintSize ("Sun glint size (cos of the hit window)", Range(0.99, 0.99999)) = 0.9994
+        _GlintStrength ("Sun glint strength", Range(0, 2)) = 1.0
     }
 
     SubShader
@@ -146,25 +146,49 @@ Shader "TumbangPreso/LagoonCoveWater"
             }
 
             // ⚠️ ORGANIC RIPPLES (owner, 2026-09-27: "the blotches in the water are blocky noise
-            // shaped. are you able to make them more organic"). The ripple normal and the sparkle
-            // mask were value noise, a square lattice whose cells showed as blocky highlights under
-            // the low sun. They are now a sum of travelling sine ripples in five directions at
-            // irrational angles and unrelated wavelengths, each bent by a slow large warp: no two
-            // line up, so there is no lattice to see, and the crests read as rounded, flowing
-            // shapes. Returns the ripple SLOPE (x, z) and a crest value for the sparkles.
-            float3 ripples(float2 p, float t)
+            // shaped. are you able to make them more organic", then of the sine version: "now it has
+            // a weird unnatural pattern"). Value noise showed its square lattice as blocky
+            // highlights; a sum of five sine ripples fixed that but its fixed directions interfered
+            // into regular moire bands. Now: GRADIENT noise (no flat cells, quintic fade), three
+            // octaves each ROTATED about 37 degrees from the last and drifting its own way, over a
+            // slow domain warp. No lattice, no repeating direction, so nothing lines up into bands.
+            // The slope comes from finite differences of that height; the height drives the
+            // sparkles, so they sit on rounded crests.
+            float gnoise(float2 p)
             {
-                float2 warp = float2(valueNoise(p * 0.11 + t * 0.03), valueNoise(p * 0.11 - t * 0.025 + 5.3)) - 0.5;
-                p += warp * 3.2;
-                const float2 d0 = float2(0.9063, 0.4226), d1 = float2(-0.3584, 0.9336), d2 = float2(-0.8829, -0.4695),
-                             d3 = float2(0.5299, -0.8480), d4 = float2(0.1219, 0.9925);
-                const float k0 = 2.1, k1 = 2.9, k2 = 3.7, k3 = 4.6, k4 = 6.1;
-                float p0 = dot(d0, p) * k0 - t * 1.1, p1 = dot(d1, p) * k1 - t * 1.3, p2 = dot(d2, p) * k2 - t * 1.5;
-                float p3 = dot(d3, p) * k3 - t * 1.7, p4 = dot(d4, p) * k4 - t * 2.0;
-                float2 slope = d0 * cos(p0) * 0.30 + d1 * cos(p1) * 0.25 + d2 * cos(p2) * 0.20
-                             + d3 * cos(p3) * 0.15 + d4 * cos(p4) * 0.10;
-                float crest = sin(p0) * 0.30 + sin(p1) * 0.25 + sin(p2) * 0.20 + sin(p3) * 0.15 + sin(p4) * 0.10;
-                return float3(slope, crest);
+                float2 i = floor(p), f = frac(p);
+                float2 u = f * f * f * (f * (f * 6 - 15) + 10);
+                float2 ga = hash2(i) * 2 - 1, gb = hash2(i + float2(1, 0)) * 2 - 1;
+                float2 gc = hash2(i + float2(0, 1)) * 2 - 1, gd = hash2(i + 1) * 2 - 1;
+                float a = dot(ga, f), b = dot(gb, f - float2(1, 0)), c = dot(gc, f - float2(0, 1)), d = dot(gd, f - 1);
+                return lerp(lerp(a, b, u.x), lerp(c, d, u.x), u.y);   // about -0.7..0.7
+            }
+
+            float rippleHeight(float2 p, float t, float fine, float finest)
+            {
+                const float2x2 turn = float2x2(0.7986, -0.6018, 0.6018, 0.7986);
+                p += float2(gnoise(p * 0.13 + t * 0.03), gnoise(p * 0.13 - t * 0.025 + 7.7)) * 2.5;
+                float h = gnoise(p + float2(t * 0.35, t * 0.12)) * 0.55;
+                p = mul(turn, p) * 1.93;
+                h += gnoise(p - float2(t * 0.28, -t * 0.41)) * 0.3 * fine;
+                p = mul(turn, p) * 1.97;
+                h += gnoise(p + float2(-t * 0.52, t * 0.33)) * 0.15 * finest;
+                return h;
+            }
+
+            // ⚠️ DETAIL FADES WITH DISTANCE (owner, 2026-09-27, on the bay at eye height: "either the
+            // peaks need to be taller or the whole waves need to be bigger so theres less noise when
+            // viewing from an angle"). Seen at a grazing angle a ripple a few decimetres across
+            // shrinks below a pixel and flickers into noise. The ripples are now larger
+            // (_RippleScale 0.35, was 0.9), and the two finer octaves fade out with distance, the
+            // finest by 30 m and the middle one by 60 m, so far water keeps only the broad shapes.
+            float3 ripples(float2 p, float t, float dist)
+            {
+                const float e = 0.07;
+                float fine = 1 - smoothstep(20, 60, dist), finest = 1 - smoothstep(8, 30, dist);
+                float h = rippleHeight(p, t, fine, finest);
+                float hx = rippleHeight(p + float2(e, 0), t, fine, finest), hz = rippleHeight(p + float2(0, e), t, fine, finest);
+                return float3((hx - h) / e * 0.35, (hz - h) / e * 0.35, h * 1.6);
             }
 
             // ---------------------------------------------------------------- waves
@@ -219,7 +243,7 @@ Shader "TumbangPreso/LagoonCoveWater"
 
                 // ---- surface normal: the swell plus two drifting ripple layers
                 float2 rp = i.world.xz * _RippleScale;
-                float3 rip = ripples(rp, t);
+                float3 rip = ripples(rp, t, dist);
                 float3 normal = normalize(i.waveNormal + float3(-rip.x, 0, -rip.y) * _RippleStrength * (1 - far));
 
                 // ---- colour and clarity by depth
@@ -284,16 +308,29 @@ Shader "TumbangPreso/LagoonCoveWater"
                 col += _LightColor0.rgb * path;
                 alpha = max(alpha, saturate(path));
 
-                // ---- stylized sun glints: a hard-edged highlight, not a soft sheen
+                // ---- the GLITTER PATH under the sun
+                // ⚠️ OWNER, 2026-09-27, marking the water under a 6-degree sun: "we're not getting any
+                // of those brightest reflections ud typically see along the sun's visual path". The
+                // old glints tested the RIPPLE normal against the half vector, and those ripples tilt
+                // only a few degrees: with the sun and the eye both near the horizon almost no facet
+                // could reflect the sun into the eye, so the path stayed empty. Real glitter comes
+                // from the wavelets that do. So the sparkles get their own facets
+                // and light up only where a facet's mirror ray points at the sun: bright points
+                // gather in a column under the sun and thin out to either side, as on a real sunset
+                // sea. ⚠️ ROUND 2 ("still nothing"): the first facets were four times STEEPER than
+                // the ripples, 50 to 70 degrees, which scattered nearly every mirror ray away from a
+                // sun 6 degrees up. The opposite is true: with the sun and the eye both near the
+                // horizon a nearly flat sea almost reflects the sun already, so the glitter comes
+                // from facets tilted only a few degrees. They now tilt about +-4 degrees and must hit
+                // within about 2 degrees of the sun. Pushed past white on purpose (the brightest
+                // pixels in the frame), and only on the ripple crests so they are points.
                 float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
-                float3 h = normalize(lightDir + view);
-                float glint = smoothstep(_GlintSize, _GlintSize + (1 - _GlintSize) * 0.4, saturate(dot(normal, h)));
-                // ⚠️ SPARKLES, NOT A SHEET (Unity review v5: facing the sun, the glints merged into
-                // white blotches across a fifth of the frame). A fine drifting noise lets through only
-                // its peaks, so the sun path reads as scattered sparkles, as in the reference.
-                glint *= smoothstep(0.25, 0.6, rip.z);   // on the ripple crests: rounded, flowing sparkles
-                col += _LightColor0.rgb * glint * _GlintStrength;
-                alpha = max(alpha, glint * _GlintStrength);
+                float3 facet = normalize(float3(-rip.x * 0.15, 1, -rip.y * 0.15));
+                float aim = dot(reflect(-view, facet), lightDir);
+                float glint = smoothstep(_GlintSize, _GlintSize + (1 - _GlintSize) * 0.75, aim);
+                glint *= smoothstep(0.1, 0.5, rip.z) * (1 - far * 0.5);
+                col += _LightColor0.rgb * glint * _GlintStrength * 2.5;
+                alpha = max(alpha, saturate(glint * _GlintStrength * 1.5));
 
                 // ---- foam where anything meets the water: a crisp edge line and ripple lines
                 // travelling outward from it, broken up by noise so it is never a clean ring

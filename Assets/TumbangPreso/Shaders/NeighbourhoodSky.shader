@@ -22,6 +22,7 @@ Shader "TumbangPreso/NeighbourhoodSky"
         _CloudPaint("Painted clouds (bright look)", Range(0,1))=0
         _SunDisc("Sun disc radius (radians, 0 = none)", Range(0,.2))=0
         _SunHalo("Sun halo strength", Range(0,2))=0
+        _SunClear("Clear sky round the sun (radians, 0 = none)", Range(0,1))=0
     }
     SubShader
     {
@@ -34,7 +35,7 @@ Shader "TumbangPreso/NeighbourhoodSky"
             #pragma fragment frag
             #include "UnityCG.cginc"
             sampler2D _CloudMap;
-            float4 _Zenith,_Horizon,_Ground,_SunColor,_SunDirection,_Tint,_CloudLight,_CloudShade;float _SunDisc,_SunHalo;
+            float4 _Zenith,_Horizon,_Ground,_SunColor,_SunDirection,_Tint,_CloudLight,_CloudShade;float _SunDisc,_SunHalo,_SunClear;
             float _TumpSkyTime;
             float _CloudSpeed;
             float _Exposure,_CloudYaw,_CloudLumaScale,_CloudSunCutoff,_CloudOpacity,_CloudLumaLow,_CloudLumaHigh,_CloudPaint;
@@ -79,6 +80,15 @@ Shader "TumbangPreso/NeighbourhoodSky"
                 // flatten an entire panorama into the light endpoint.
                 // A painted edge: the blurred coverage steps into a shape with a narrow soft rim.
                 cloud=lerp(cloud,smoothstep(.24,.56,cloud),_CloudPaint);
+                // ⚠️ A CLEAR PATCH ROUND THE SUN, OPT-IN (owner, 2026-09-27, on the Lagoon Cove sunset:
+                // "get rid of that cloud blocking the sun"). Clouds thin out to nothing within
+                // _SunClear of the sun, with a soft edge, so the disc and its halo always show. The
+                // shipped maps' materials leave it at 0 and keep every cloud where it was.
+                if(_SunClear>0)
+                {
+                    float sunAngle=acos(clamp(dot(direction,normalize(_SunDirection.xyz)),-1,1));
+                    cloud*=smoothstep(_SunClear*.55,_SunClear,sunAngle);
+                }
                 float light=smoothstep(_CloudLumaLow,_CloudLumaHigh,luma);
                 // Two tones, lit top and body, with a brushed rather than a hard transition.
                 // ⚠️ THE STEP SITS LOW (0.22 to 0.50) SO MOST OF A CLOUD IS ITS LIT CREAM TONE and

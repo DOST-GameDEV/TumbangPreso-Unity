@@ -36,16 +36,16 @@ Material:
     - _FoamSpeed: 0.7
     - _FoamWidth: 0.55
     - _FresnelPower: 4
-    - _GlintSize: 0.9935
-    - _GlintStrength: 0.6
+    - _GlintSize: 0.9994
+    - _GlintStrength: 1
     - _MidDepth: 0.9
     - _Reflection: 0.4
-    - _RippleScale: 0.9
+    - _RippleScale: 0.35
     - _RippleStrength: 0.5
     - _ShallowAlpha: 0.42
     - _SunPath: 0.6
-    - _WaveHeight: 0.06
-    - _WaveLength: 9
+    - _WaveHeight: 0.1
+    - _WaveLength: 12
     - _WaveSpeed: 0.6
     m_Colors:
     - _CausticColor: {r: 1, g: 1, b: 0.94, a: 1}

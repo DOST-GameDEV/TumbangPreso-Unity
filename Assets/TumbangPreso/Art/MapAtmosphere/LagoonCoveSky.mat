@@ -38,6 +38,7 @@ Material:
     - _CloudSunCutoff: 6.6844497
     - _CloudYaw: -0.3272515
     - _Exposure: 1
+    - _SunClear: 0.35
     - _SunDisc: 0.055
     - _SunHalo: 1
     m_Colors:
@@ -46,7 +47,7 @@ Material:
     - _Ground: {r: 0.4, g: 0.37, b: 0.31, a: 1}
     - _Horizon: {r: 1, g: 0.74, b: 0.54, a: 1}
     - _SunColor: {r: 1, g: 0.8, b: 0.56, a: 1}
-    - _SunDirection: {r: -0.293428, g: 0.20790015, b: 0.933101, a: 0}
+    - _SunDirection: {r: -0.29833946, g: 0.10452246, b: 0.9487194, a: 0}
     - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Zenith: {r: 0.3, g: 0.46, b: 0.72, a: 1}
   m_BuildTextureStacks: []

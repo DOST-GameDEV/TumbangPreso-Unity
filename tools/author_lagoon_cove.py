@@ -44,7 +44,10 @@ import author_lagoon_structures as S   # noqa: E402  railings, cliff walks, pier
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "ArtSource" / "lagoon"
 PREVIEWS = ROOT / "Logs" / "lagoon-blender"
-BEACH, WATER, SEABED = -1.2, -1.8, -3.5
+# ⚠️ SEABED -9 (was -3.5, owner 2026-09-27: "the reason why the water colors dont get deep enough is
+# because the seabed isnt deep enough"). At -3.5 the deepest water in the whole bay was 1.7 m, so the
+# Unity water's depth colour never left its shallow and middle bands. See massif() for the profile.
+BEACH, WATER, SEABED = -1.2, -1.8, -9.0
 
 B.COLOURS.update({
     "rock": (0.62, 0.46, 0.28), "rock_light": (0.74, 0.60, 0.40), "rock_fill": (0.36, 0.27, 0.17),
@@ -139,9 +142,11 @@ def massif(x, y):
     # interpolates a smooth slope and the waterline falls wherever that slope crosses the water.
     d = coast_distance(x, y)
     if d < 0:
-        # The shelf slopes gently (0.12 m per m) so a wide band of clear shallows shows the sand
-        # (the owner's stylized water reference), then drops to the seabed.
-        return max(SEABED, WATER + d * 0.12 - max(0.0, -d - 12) * 0.2)
+        # The shelf slopes gently (0.12 m per m) for the first 8 m so a band of clear shallows
+        # shows the sand (the owner's stylized water reference; identical to the old profile, so
+        # nothing placed along the waterline moves), then DROPS at 0.3 m per m to the seabed 7.2 m
+        # down, about 28 m out, so the bay reaches the water's deep blue-green.
+        return max(SEABED, WATER + d * 0.12 - max(0.0, -d - 8) * 0.3)
     h = max(peak_height(x, y), BEACH + 3.0 * max(0.0, min(1.0, (d - BEACH_BAND) / 14)))
     h += 1.6 * noise.noise(Vector((x * 0.06, y * 0.06, 0.3)))
     # The beach: flat sand rising gently from the waterline, with an irregular landward edge that

@@ -7,7 +7,7 @@
   "half": 13,
   "walk": 0.0,
   "water": -1.8,
-  "seabed": -3.5
+  "seabed": -9.0
  },
  "sun": {
   "euler": [
@@ -4742,7 +4742,7 @@
     },
     {
      "from": "thatch",
-     "to": "thatch_c"
+     "to": "thatch_b"
     }
    ],
    "group": "Houses",
@@ -4771,11 +4771,11 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_a"
+     "to": "sawali_c"
     },
     {
      "from": "thatch",
-     "to": "thatch_c"
+     "to": "thatch_a"
     }
    ],
    "group": "Houses",
@@ -4804,11 +4804,11 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_c"
+     "to": "sawali_b"
     },
     {
      "from": "thatch",
-     "to": "thatch_c"
+     "to": "thatch_a"
     }
    ],
    "group": "Houses",
@@ -4870,11 +4870,11 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_c"
+     "to": "sawali_a"
     },
     {
      "from": "thatch",
-     "to": "thatch_a"
+     "to": "thatch_b"
     }
    ],
    "group": "Houses",
@@ -4936,7 +4936,7 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_c"
+     "to": "sawali_a"
     },
     {
      "from": "thatch",
@@ -4973,7 +4973,7 @@
     },
     {
      "from": "thatch",
-     "to": "thatch_b"
+     "to": "thatch_a"
     }
    ],
    "group": "Houses",
@@ -5002,11 +5002,11 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_a"
+     "to": "sawali_c"
     },
     {
      "from": "thatch",
-     "to": "thatch_a"
+     "to": "thatch_b"
     }
    ],
    "group": "Houses",
@@ -5035,7 +5035,7 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_a"
+     "to": "sawali_c"
     },
     {
      "from": "thatch",
@@ -5068,7 +5068,7 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_c"
+     "to": "sawali_b"
     }
    ],
    "group": "Houses",
@@ -5097,11 +5097,11 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_a"
+     "to": "sawali_b"
     },
     {
      "from": "thatch",
-     "to": "thatch_b"
+     "to": "thatch_a"
     }
    ],
    "group": "Houses",
@@ -5134,7 +5134,7 @@
     },
     {
      "from": "thatch",
-     "to": "thatch_c"
+     "to": "thatch_b"
     }
    ],
    "group": "Houses",
@@ -5192,11 +5192,11 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_a"
+     "to": "sawali_b"
     },
     {
      "from": "thatch",
-     "to": "thatch_c"
+     "to": "thatch_a"
     }
    ],
    "group": "Houses",
@@ -5229,7 +5229,7 @@
     },
     {
      "from": "thatch",
-     "to": "thatch_a"
+     "to": "thatch_b"
     }
    ],
    "group": "Houses",
@@ -5258,7 +5258,7 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_a"
+     "to": "sawali_c"
     },
     {
      "from": "thatch",
@@ -5295,7 +5295,7 @@
     },
     {
      "from": "thatch",
-     "to": "thatch_b"
+     "to": "thatch_a"
     }
    ],
    "group": "Houses",
@@ -5324,7 +5324,7 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_b"
+     "to": "sawali_c"
     },
     {
      "from": "thatch",
@@ -5357,7 +5357,7 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_b"
+     "to": "sawali_c"
     }
    ],
    "group": "Houses",
@@ -5386,11 +5386,11 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_b"
+     "to": "sawali_a"
     },
     {
      "from": "thatch",
-     "to": "thatch_a"
+     "to": "thatch_b"
     }
    ],
    "group": "Houses",
@@ -5419,11 +5419,11 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_a"
+     "to": "sawali_b"
     },
     {
      "from": "thatch",
-     "to": "thatch_c"
+     "to": "thatch_b"
     }
    ],
    "group": "Houses",
@@ -5452,7 +5452,7 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_a"
+     "to": "sawali_b"
     }
    ],
    "group": "Houses",
@@ -5485,7 +5485,7 @@
     },
     {
      "from": "thatch",
-     "to": "thatch_c"
+     "to": "thatch_b"
     }
    ],
    "group": "Houses",
@@ -5514,7 +5514,7 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_c"
+     "to": "sawali_a"
     }
    ],
    "group": "Houses",
@@ -5543,7 +5543,7 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_b"
+     "to": "sawali_c"
     },
     {
      "from": "thatch",
@@ -5580,7 +5580,7 @@
     },
     {
      "from": "thatch",
-     "to": "thatch_a"
+     "to": "thatch_c"
     }
    ],
    "group": "Houses",
@@ -5675,7 +5675,7 @@
     },
     {
      "from": "thatch",
-     "to": "thatch_a"
+     "to": "thatch_c"
     }
    ],
    "group": "Boats",
@@ -5964,7 +5964,7 @@
     },
     {
      "from": "thatch",
-     "to": "thatch_b"
+     "to": "thatch_a"
     }
    ],
    "group": "Boats",
@@ -6030,7 +6030,7 @@
     },
     {
      "from": "thatch",
-     "to": "thatch_a"
+     "to": "thatch_c"
     }
    ],
    "group": "Boats",
@@ -6290,7 +6290,7 @@
     },
     {
      "from": "thatch",
-     "to": "thatch_b"
+     "to": "thatch_c"
     }
    ],
    "group": "Boats",
@@ -6620,11 +6620,11 @@
    "overrides": [
     {
      "from": "sawali",
-     "to": "sawali_b"
+     "to": "sawali_a"
     },
     {
      "from": "thatch",
-     "to": "thatch_c"
+     "to": "thatch_a"
     }
    ],
    "group": "Houses",
@@ -27093,7 +27093,7 @@
     0.0,
     1.804475,
     0.0,
-    11.674487,
+    11.674472,
     -0.747817,
     0.0,
     1.642224,
@@ -27338,6 +27338,54 @@
     0.0,
     1.321335,
     18.552784,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "overrides": [],
+   "group": "Plants",
+   "collider": "none"
+  },
+  {
+   "model": "plant_tuft_1",
+   "matrix": [
+    0.663392,
+    0.0,
+    1.367918,
+    57.746834,
+    0.0,
+    1.520292,
+    0.0,
+    1.155019,
+    -1.367918,
+    0.0,
+    0.663392,
+    19.934361,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "overrides": [],
+   "group": "Plants",
+   "collider": "none"
+  },
+  {
+   "model": "plant_groundcover_1",
+   "matrix": [
+    1.241067,
+    0.0,
+    -0.640224,
+    56.787334,
+    0.0,
+    1.396472,
+    0.0,
+    1.061726,
+    0.640224,
+    0.0,
+    1.241067,
+    18.655949,
     0.0,
     0.0,
     0.0,
@@ -32069,7 +32117,7 @@
     0.0,
     1.495492,
     0.0,
-    25.015156,
+    25.015171,
     -1.450421,
     0.0,
     0.364381,
@@ -32266,7 +32314,7 @@
     0.0,
     1.435891,
     0.0,
-    27.974277,
+    27.974262,
     1.111222,
     0.0,
     -0.909378,
@@ -34595,7 +34643,7 @@
     0.0,
     1.378052,
     0.0,
-    22.606159,
+    22.606144,
     1.026645,
     0.0,
     -0.919254,
