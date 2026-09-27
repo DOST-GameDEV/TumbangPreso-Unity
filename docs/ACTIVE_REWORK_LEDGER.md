@@ -1,5 +1,20 @@
 # Active TUMP rework ledger
 
+## Current networking and flow work, 2026-09-27
+
+Owner direction: perform the implementation directly, without delegated workers.
+Continue concrete network/flow fixes. The new skill requirement is an explicit
+shared networking contract so new skills cannot silently omit required multiplayer
+support. Cover cast ownership, prediction/confirmation, authoritative effects,
+persistent state and lifecycle recovery without redesigning skills or presentation.
+This requirement is OPEN; current per-kit routing is not future-proof completion.
+
+One immediate interaction fix separates hero-shop wallet updates from full hero
+presentation rebuilds. Wallet busy/status/ownership changes now refresh purchase
+controls only; they no longer destroy and reinstantiate the model or ability tiles.
+Hero selection still takes the existing full Show path. Source-reviewed, with no
+new measured player frame-time or purchase-service claim.
+
 ## Owner correction: implementation first, 2026-09-27
 
 The owner explicitly rejected validation loops and diagnostic churn. For the

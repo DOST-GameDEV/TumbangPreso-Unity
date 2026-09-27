@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+**NET-SKILLS-1, OPEN (owner 2026-09-27):** future-proof current and newly added skills
+through explicit shared networking contracts and enforced coverage for authority,
+prediction/confirmation, persistent state and lifecycle recovery. Preserve current
+skill behavior and presentation. Implement directly without delegated workers.
+Hero-shop wallet notifications now refresh purchase controls without rebuilding the
+preview/ability tiles; this narrow flow optimization is source-reviewed.
+
 **Loading slice, 2026-09-27:** progressive shader completion, staged menu-art/avatar
 cache preparation and duplicate audio-sweep removal are implemented (`c9f55410`).
 The existing ultimate-introduction tables and 12 shared effect sheets now preload
