@@ -162,11 +162,12 @@ Shader preparation now checks elapsed time after each variant and yields at a2ms
 target or10variants,while retaining full completion. The changed native stage case
 passes97/97variants; cached Editor timing is not cold-player/handset acceptance.
 
-**LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
+**LOGIN-0927, IMPLEMENTED / NATIVE STATE PASS:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit
 clears a stale pair rejection; supplied art and hitboxes are unchanged,reduced motion
-gets steady feedback. Four assemblies compile; native interaction/sound/visual
-qualification remains OPEN. [Details](reports/stability-2026-09-27/login-feedback.md).
+gets steady feedback. First native field-state case passes after one fixture colour-
+capture timing correction. Sound/visual and physical-input qualification remain OPEN.
+[Details](reports/stability-2026-09-27/login-feedback.md).
 
 **QA-0927, OPEN:** [19deduplicated comments](reports/stability-2026-09-27/qa-comments.md)
 include the latest login request. Retain [first-batch evidence](reports/stability-2026-09-27/validation.md)

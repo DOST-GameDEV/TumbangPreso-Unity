@@ -33,6 +33,7 @@ namespace TumbangPreso.PlayTests
                 yield return null;
                 Assert.IsEmpty(Fault(canvas, "UsernameFault"));
                 Assert.IsEmpty(Fault(canvas, "ConfirmFault"));
+                var ink = confirm.image.color;
                 submit.onClick.Invoke(); // Every attempt here is invalid; never reaches an account service.
                 yield return null;
                 Assert.AreEqual("Enter a username.", Fault(canvas, "UsernameFault"));
@@ -47,7 +48,7 @@ namespace TumbangPreso.PlayTests
                 Settings.SettingsStore.Current.ReducedUiMotion = true;
                 var rect = (RectTransform)confirm.transform;
                 var position = rect.anchoredPosition; var size = rect.sizeDelta;
-                var scale = rect.localScale; var ink = confirm.image.color;
+                var scale = rect.localScale;
                 submit.onClick.Invoke();
                 Assert.IsFalse(user.GetComponent<OwnerFieldPulse>().IsPulsing);
                 Assert.IsFalse(pass.GetComponent<OwnerFieldPulse>().IsPulsing);

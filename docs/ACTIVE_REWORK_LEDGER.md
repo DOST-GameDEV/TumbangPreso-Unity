@@ -1,11 +1,17 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`90b015f26d8db52fe0530cff0d32b771d2e23083`; sentry cleanup ownership follows it.
+`97d7f39757bed48f106e3d5f59f45cf4a3c96673`; first login field-state evidence follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+LOGIN-0927's FIRST native field-state case passes1/1 after a fixture-only colour
+baseline timing correction. Runtime was unchanged; required/edit/server-error and
+reduced-motion/hitbox checks remain intact. Full committed base plus1corrected test,
+no drift. Sound/visual/physical-input acceptance stays separate.
+[Evidence](reports/stability-2026-09-27/login-feedback.md).
 
 Protocol79 fixes Paete ultimate Reset destroying every caster's sentry. Exact
 fresh references and recovered owner bindings now govern cleanup. New native
