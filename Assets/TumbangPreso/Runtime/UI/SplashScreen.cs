@@ -445,6 +445,8 @@ namespace TumbangPreso.UI
                             _ = p.Palette;
                             _ = p.PetModel;
                             yield return Visual.GeneratedMotionAssets.Warmup(p.Model);
+                            yield return Visual.OutlineNormals.Warmup(p.Model);
+                            yield return Visual.OutlineNormals.Warmup(p.PetModel);
                         }
 
                         SetLoadingStage("loading characters",
@@ -457,7 +459,7 @@ namespace TumbangPreso.UI
                 {
                     foreach (var c in book.Cans)
                     {
-                        if (c != null) _ = c.Model;
+                        if (c != null) yield return Visual.OutlineNormals.Warmup(c.Model);
                     }
                 }
                 yield return null;
@@ -466,7 +468,7 @@ namespace TumbangPreso.UI
                 {
                     foreach (var s in book.Slippers)
                     {
-                        if (s != null) _ = s.Model;
+                        if (s != null) yield return Visual.OutlineNormals.Warmup(s.Model);
                     }
                 }
             }

@@ -7,6 +7,12 @@ This is current state, not another backlog.
 
 ## Current Unit
 
+Roster outline vertex preparation now runs during loading and survives scene changes
+for retained live meshes. New native identity/pruning/warmup cases pass2/2; the exact
+Dante check reports2.818ms cold and0.046ms reused traversal,not a player FPS claim.
+The owner's new custom-map switching lag report is the next implementation priority:
+trace actual scene/setup initialization on selection,not just resource references.
+
 Sentry snapshots now preserve the host's captured seat mask rather than guessing
 from current local distance. Late bodies bind once; restoration never reapplies
 the catch. Protocol74,70byte world-field base. New native receiver/restore pass2/2,

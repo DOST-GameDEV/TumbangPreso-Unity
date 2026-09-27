@@ -5,6 +5,22 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Retained Roster Outline Preparation
+
+After `cc21bdce`, boot welds existing roster model,pet,can and slipper outline data
+in yielded per-mesh turns. The same vertex calculation is retained. The cache now
+checks weakly held live mesh identity and prunes dead entries at scene notifications,
+instead of clearing completed work for still-retained assets. Incomplete meshes are
+not marked prepared; explicit Forget still supports runtime mesh edits/destruction.
+No actors/material variants are created and no authored geometry or look is changed.
+
+Two new native cases pass on207 frozen inputs: incomplete/foreign identity handling,
+dead-entry pruning,explicit invalidation,and real Dante asset warmup/reuse without
+spawning objects or dressing materials. For2meshes/13,785vertices, Editor cold work
+was2.818ms,longest slice1.822ms,reused traversal0.046ms. This is local CPU preparation,
+not player frame-time qualification. [Receipt](checks/outline-preload-native.json).
+The custom-map switching report remains separate and is the next implementation focus.
+
 ## Deferred Audio Samples
 
 Base `de426a0e`. The old splash audio stage loaded AudioClip references only.

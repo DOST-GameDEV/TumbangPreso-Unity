@@ -105,6 +105,78 @@ namespace TumbangPreso.PlayTests
             Assert.AreSame(boulder, Visual.HeroPropAssets.Load(Visual.ReworkProp.ResourceFolder, "boulder"));
         }
 
+        [Test]
+        public void OutlineCacheRejectsForeignIdentityAndDoesNotCacheUnfinishedMeshes()
+        {
+            var first = new Mesh(); var second = new Mesh();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic;
+            var cache = (System.Collections.IDictionary)typeof(Visual.OutlineNormals).GetField("Welded", flags).GetValue(null);
+            var sceneChanged = typeof(Visual.OutlineNormals).GetMethod("OnSceneLoaded", flags);
+            try
+            {
+                Visual.OutlineNormals.Weld(first);
+                Assert.IsFalse(cache.Contains(first.GetEntityId()), "An unfinished mesh was marked prepared.");
+                first.vertices = new[] { Vector3.zero, Vector3.zero, Vector3.right };
+                first.normals = new[] { Vector3.right, Vector3.up, Vector3.forward };
+                Visual.OutlineNormals.Weld(first);
+                Assert.AreEqual(first.tangents[0], first.tangents[1]);
+                Assert.Greater(first.tangents[0].y, .7f);
+                second.vertices = new[] { Vector3.zero, Vector3.right, Vector3.up };
+                second.normals = new[] { Vector3.back, Vector3.back, Vector3.back };
+                cache[second.GetEntityId()] = new System.WeakReference<Mesh>(first);
+                Visual.OutlineNormals.Weld(second);
+                Assert.AreEqual(-1, second.tangents[0].z, "An id hit reused a different live mesh's preparation.");
+                second.normals = new[] { Vector3.forward, Vector3.forward, Vector3.forward };
+                Visual.OutlineNormals.Forget(second); Visual.OutlineNormals.Weld(second);
+                Assert.AreEqual(1, second.tangents[0].z, "An explicit invalidation did not rebuild an edited mesh.");
+                var firstId = first.GetEntityId(); var secondEntry = cache[second.GetEntityId()];
+                Object.DestroyImmediate(first);
+                sceneChanged.Invoke(null, new object[] { default(Scene), LoadSceneMode.Single });
+                Assert.IsFalse(cache.Contains(firstId), "A retired mesh's entry survived pruning.");
+                Assert.AreSame(secondEntry, cache[second.GetEntityId()], "Scene notification discarded a live mesh's work.");
+            }
+            finally
+            {
+                if (first != null) { Visual.OutlineNormals.Forget(first); Object.DestroyImmediate(first); }
+                Visual.OutlineNormals.Forget(second); Object.DestroyImmediate(second);
+            }
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels()
+        {
+            var model = RosterBook.Load().FindPersonArt("dante").Model;
+            Assert.IsNotNull(model);
+            var renderers = model.GetComponentsInChildren<Renderer>(true);
+            var meshes = renderers.Select(x => x is SkinnedMeshRenderer skin ? skin.sharedMesh : x.GetComponent<MeshFilter>()?.sharedMesh)
+                .Where(x => x != null && x.isReadable).Distinct().ToArray();
+            Assert.IsNotEmpty(meshes);
+            var materials = renderers.Select(x => x.sharedMaterials).ToArray();
+            int objects = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length;
+            foreach (var mesh in meshes) Visual.OutlineNormals.Forget(mesh);
+            var warmup = Visual.OutlineNormals.Warmup(model);
+            var timer = new System.Diagnostics.Stopwatch();
+            double totalMs = 0, maxStepMs = 0; int steps = 0;
+            while (true)
+            {
+                timer.Restart(); bool more = warmup.MoveNext(); timer.Stop();
+                totalMs += timer.Elapsed.TotalMilliseconds;
+                maxStepMs = System.Math.Max(maxStepMs, timer.Elapsed.TotalMilliseconds);
+                if (!more) break;
+                steps++; yield return warmup.Current;
+            }
+            Assert.AreEqual(meshes.Length, steps, "Each distinct cold mesh must get a yielded preparation turn.");
+            foreach (var mesh in meshes) Assert.AreEqual(mesh.vertexCount, mesh.tangents.Length);
+            typeof(Visual.OutlineNormals).GetMethod("OnSceneLoaded",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(null, new object[] { default(Scene), LoadSceneMode.Single });
+            var repeated = Visual.OutlineNormals.Warmup(model);
+            timer.Restart(); Assert.IsFalse(repeated.MoveNext()); timer.Stop();
+            Assert.AreEqual(objects, Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length);
+            for (int i = 0; i < renderers.Length; i++) CollectionAssert.AreEqual(materials[i], renderers[i].sharedMaterials);
+            Debug.Log(System.FormattableString.Invariant($"[OutlineWarmupCheck] meshes={meshes.Length} vertices={meshes.Sum(x => x.vertexCount)} coldMs={totalMs:F3} maxStepMs={maxStepMs:F3} reusedMs={timer.Elapsed.TotalMilliseconds:F3}"));
+        }
+
         [UnityTest, Timeout(30000)]
         public IEnumerator AudioWarmupLoadsDeferredSamplesWithoutPlaybackAndRetainsThem()
         {
