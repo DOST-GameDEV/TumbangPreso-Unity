@@ -2,6 +2,15 @@
 
 ## Current networking and flow work, 2026-09-27
 
+Room browsing now preserves LAN/online advertised joinability instead of inferring
+it from visible player count. Reserved chairs and full LAN connection capacity no
+longer show an enabled JOIN. Visible row comparison includes name,capacity and
+admission changes, replacing a repeatedly concatenated partial key. Layout stays
+unchanged. Runtime/Tests compile; two direct managed data checks pass against the
+compiled helpers. Native UI/discovery remain unrun. Initial compiler preflight was
+blocked; one retry succeeded after free space recovered, without a Unity relaunch.
+[Room listing details](reports/stability-2026-09-27/multiplayer.md#room-listing-state-and-admission).
+
 Boot now discovers and retains prefab roots in the three existing hero-prop
 folders, yielding between folders and advancing progress only after each load.
 Paete, shared rework and Phaister prop loaders reuse the same source cache; newly

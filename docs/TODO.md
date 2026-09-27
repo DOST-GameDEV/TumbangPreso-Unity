@@ -43,6 +43,9 @@ Timed-state bindings now use the actual owning ability instead of a live slot or
 fixed duration cap (focused EditMode 1/1); remaining contract enforcement stays OPEN.
 Hero-shop wallet notifications now refresh purchase controls without rebuilding the
 preview/ability tiles; this narrow flow optimization is source-reviewed.
+Room browsing now preserves advertised admission/reserved-seat state and refreshes
+renamed/resized rows through field comparison. Runtime/Tests compile and two managed
+helper checks pass; native row interaction and live discovery remain OPEN.
 
 **Loading slice, 2026-09-27:** progressive shader completion, staged menu-art/avatar
 cache preparation and duplicate audio-sweep removal are implemented (`c9f55410`).

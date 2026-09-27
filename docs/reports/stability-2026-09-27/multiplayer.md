@@ -1,5 +1,33 @@
 # Multiplayer investigation, 2026-09-27
 
+## Room listing state and admission
+
+Base `ac5524d9`. The room adapter discarded LAN `IsJoinable` (which includes reserved
+seats and connection capacity), and the screen inferred JOIN eligibility from
+visible player count. Online occupied/reserved seats were likewise ignored by the
+row. Both adapters now carry the source admission decision. Displayed player counts
+remain seated players, not a misleading total including reservations/spectators.
+
+The redraw key concatenated every room's key/player-count/in-progress fields each
+second, but omitted name,capacity and admission. It now compares the actual visible
+row values directly, including all displayed metadata. Renaming or closing admission
+refreshes the row even when the visible player count is unchanged. Unchanged rows
+and changes outside the existing five-row window do not rebuild the displayed list.
+No layout redesign or change to the guarded connection path.
+
+Runtime/Tests compiler checks pass. Two direct managed checks invoke the compiled
+HubRoom/LanEntry helpers without Unity: reserved/socket capacity admission versus
+visible player count, and every public listing field invalidating equality (7fields).
+[Managed receipt](checks/room-listing-managed.json). Added equivalent focused
+EditMode cases for the next native integration run; no Unity runner case ran here.
+Native row interaction and live discovery remain pending.
+
+Compiler preflight initially refused before launching because freeC was below5GiB;
+a read showed3,779,158,016bytes with no Unity/dotnet process. After free space
+recovered above7GB, one bounded compiler retry completed. A proposed cleanup of the
+earlier task-owned aborted player was blocked by the tool before execution; no
+files were deleted and no alternate deletion method was used. No Unity relaunch.
+
 ## Explicit cast identity, intent and delayed delivery
 
 Base `0e00de51`. ReqAbility/PlayAbility now share `SkillCastMessage`'s single bounded

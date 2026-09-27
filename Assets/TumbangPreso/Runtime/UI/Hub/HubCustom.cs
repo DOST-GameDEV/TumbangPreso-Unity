@@ -149,7 +149,9 @@ namespace TumbangPreso.UI.Hub
         private InputField _codeField;
         private bool _busy;
         private float _nextDraw;
-        private string _drawn = "";
+        private const int VisibleRooms = 5;
+        private readonly List<HubRoom> _drawnRooms = new List<HubRoom>(VisibleRooms);
+        private int _drawnSource = -1;
 
         public override void Build()
         {
@@ -243,7 +245,7 @@ namespace TumbangPreso.UI.Hub
             _list.gameObject.SetActive(!code);
             _list.parent.Find("Columns").gameObject.SetActive(!code);
             _header.text = code ? "JOIN BY CODE" : index == 0 ? "SERVERS (ONLINE)" : "SERVERS (LAN)";
-            _drawn = "";
+            _drawnSource = -1;
             Draw();
             if (code) UnityEngine.EventSystems.EventSystem.current?.SetSelectedGameObject(_codeField.gameObject);
             Hub.RefreshFocus();
@@ -260,10 +262,13 @@ namespace TumbangPreso.UI.Hub
         {
             if (_source == 2) return;
             var rooms = Hub.Host.Rooms(_source == 1);
-            string key = _source + ":";
-            foreach (var r in rooms) key += r.Key + r.Players + r.InProgress + ";";
-            if (key == _drawn) return;
-            _drawn = key;
+            int visible = Mathf.Min(rooms.Count, VisibleRooms);
+            bool same = _drawnSource == _source && _drawnRooms.Count == visible;
+            for (int i = 0; same && i < visible; i++) same = _drawnRooms[i].SameListing(rooms[i]);
+            if (same) return;
+            _drawnSource = _source;
+            _drawnRooms.Clear();
+            for (int i = 0; i < visible; i++) _drawnRooms.Add(rooms[i]);
 
             for (int i = _list.childCount - 1; i >= 0; i--)
                 if (_list.GetChild(i) != _empty.transform) Destroy(_list.GetChild(i).gameObject);
@@ -273,7 +278,7 @@ namespace TumbangPreso.UI.Hub
                 : "";
             _emptyCan.gameObject.SetActive(rooms.Count == 0);
 
-            for (int i = 0; i < Mathf.Min(rooms.Count, 5); i++)
+            for (int i = 0; i < visible; i++)
             {
                 var room = rooms[i];
                 var row = HubKit.Place(HubKit.Rect(_list, "Room" + i), HubKit.TopLeft, new Vector2(0, -(i * 104)), new Vector2(1180, 92));
@@ -290,7 +295,7 @@ namespace TumbangPreso.UI.Hub
                 string key2 = room.Key;
                 var join = HubKit.Button(row, "Join" + i, "JOIN", HubStyle.Chartreuse, () => Join(key2), HubStyle.Label, 950 + i);
                 HubKit.Place((RectTransform)join.transform, HubKit.Right, new Vector2(-14, 0), new Vector2(180, 72));
-                join.interactable = !room.InProgress && room.Players < room.Capacity;
+                join.interactable = room.IsJoinable;
             }
             Hub.RefreshFocus();
         }
