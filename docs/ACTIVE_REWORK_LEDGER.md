@@ -2,6 +2,15 @@
 
 ## Current networking and flow work, 2026-09-27
 
+Protocol64 adds a cached skill-contract fingerprint to connection approval. Stable
+roster/ability identity, delivery/resource/aim/preparation metadata and shared intro
+durations must match; cosmetic names/assets,live timers,current role and locale do
+not affect it. Boot prepares the hash after its existing kit/table preload. No
+service/auth request added. Three assemblies compile; two direct managed contract
+cases pass. Actual native approval and cross-platform peers remain unrun. Explicit
+protocol versioning still covers code/effect semantics outside this metadata.
+[Compatibility scope](reports/stability-2026-09-27/multiplayer.md#skill-data-compatibility-without-cosmetic-coupling).
+
 Room browsing now preserves LAN/online advertised joinability instead of inferring
 it from visible player count. Reserved chairs and full LAN connection capacity no
 longer show an enabled JOIN. Visible row comparison includes name,capacity and

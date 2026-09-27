@@ -1,5 +1,31 @@
 # Multiplayer investigation, 2026-09-27
 
+## Skill data compatibility without cosmetic coupling
+
+Base `5d18011e`. A manual wire version alone could admit peers with different
+reworked cooldowns,aim rules or shared intro duration. `SkillContractFingerprint`
+hashes canonical roster order and ability-role identity, delivery mode, resource/
+duration/preparation/aim metadata and normal/held shared intro lengths. Binary
+encoding avoids locale-sensitive float formatting; role order is canonical and
+live timers never enter the hash. Names/descriptions,cues,clips,glyphs,palettes and
+model files are deliberately excluded. Boot fills this local cache after the
+existing kit/intro preload. There is no service call or LAN authentication wait.
+
+ConnectionHello carries the fingerprint; host approval refuses a mismatch with a
+specific message before admission. Existing protocol,capacity,block and identity
+checks remain. Protocol is **64** and every participating build must match it.
+This is compatibility, not anti-cheat or proof that arbitrary future code is safe.
+Effect-internal rules and new wire/lifecycle semantics still require explicit
+protocol changes and focused coverage; the hash does not inspect arbitrary code.
+
+Runtime,Tests and PlayTests compile. Two compiled NUnit contract methods were
+invoked directly as managed code: cosmetic/live-state/role/locale invariance, and
+identity/mode/cooldown/intro-duration mismatch detection. Both pass. No Unity
+process or native API was used by these methods. [Managed receipt](checks/skill-compatibility-managed.json).
+The existing real approval fixture now includes the new hello field and negative
+control, but it has NOT run on this candidate. Native approval,actual transport
+and Windows/Android compatibility remain pending under the recorded disk limit.
+
 ## Room listing state and admission
 
 Base `ac5524d9`. The room adapter discarded LAN `IsJoinable` (which includes reserved

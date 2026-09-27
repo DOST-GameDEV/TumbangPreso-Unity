@@ -42,20 +42,66 @@ namespace TumbangPreso.Tests
             => Assert.Throws<System.InvalidOperationException>(() =>
                 AbilityNetworking.Validate(new NetworkingProbeKit(first, ultimate)));
 
+        [Test]
+        public void SkillCompatibilityIgnoresCosmeticsLiveTimersAndCurrentRole()
+        {
+            var first = new NetworkingProbeKit(AbilityNetworkMode.Predicted, AbilityNetworkMode.SharedUltimate,
+                presentation: "old art", roleKit: true);
+            var restyled = new NetworkingProbeKit(AbilityNetworkMode.Predicted, AbilityNetworkMode.SharedUltimate,
+                presentation: "new art", roleKit: true);
+            string expected = Fingerprint(first);
+            Assert.AreEqual(64, expected.Length);
+            restyled.SetRole(true, null);
+            restyled.Skill1.Activate(null);
+            Assert.AreEqual(expected, Fingerprint(restyled));
+            var culture = System.Globalization.CultureInfo.CurrentCulture;
+            try
+            {
+                System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("fr-FR");
+                Assert.AreEqual(expected, Fingerprint(restyled), "Locale changed network compatibility.");
+            }
+            finally { System.Globalization.CultureInfo.CurrentCulture = culture; }
+        }
+
+        [Test]
+        public void SkillCompatibilityChangesWithRulesDeliveryIdentityAndSharedTiming()
+        {
+            var first = new NetworkingProbeKit(AbilityNetworkMode.Predicted, AbilityNetworkMode.SharedUltimate);
+            string expected = Fingerprint(first);
+            Assert.AreNotEqual(expected, Fingerprint(new NetworkingProbeKit(
+                AbilityNetworkMode.HostConfirmed, AbilityNetworkMode.SharedUltimate)));
+            Assert.AreNotEqual(expected, Fingerprint(new NetworkingProbeKit(
+                AbilityNetworkMode.Predicted, AbilityNetworkMode.SharedUltimate, cooldown: 2)));
+            Assert.AreNotEqual(expected, Fingerprint(new NetworkingProbeKit(
+                AbilityNetworkMode.Predicted, AbilityNetworkMode.SharedUltimate, firstId: "new-skill")));
+            Assert.AreNotEqual(expected, Fingerprint(first, introductionSeconds: 5));
+        }
+
+        private static string Fingerprint(HeroKit kit, float introductionSeconds = 4)
+            => Net.SkillContractFingerprint.Compute(new[] { kit }, (_, held) => introductionSeconds + (held ? .5f : 0));
+
         private sealed class NetworkingProbeAbility : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode { get; }
-            public NetworkingProbeAbility(string id, AbilityNetworkMode mode) : base(id, id, "", 1)
+            public NetworkingProbeAbility(string id, AbilityNetworkMode mode, float cooldown = 1, string presentation = "")
+                : base(id, presentation, presentation, cooldown, castAction: presentation, viewmodelAction: presentation,
+                    castCue: presentation)
                 => NetworkMode = mode;
         }
 
         private sealed class NetworkingProbeKit : HeroKit
         {
-            public NetworkingProbeKit(AbilityNetworkMode first, AbilityNetworkMode ultimate) : base("probe", "probe")
+            public NetworkingProbeKit(AbilityNetworkMode first, AbilityNetworkMode ultimate,
+                string presentation = "", float cooldown = 1, string firstId = "one", bool roleKit = false) : base("probe", "probe")
             {
-                Skill1 = new NetworkingProbeAbility("one", first);
-                Skill2 = new NetworkingProbeAbility("two", AbilityNetworkMode.Predicted);
-                Ultimate = new NetworkingProbeAbility("ultimate", ultimate);
+                Skill1 = new NetworkingProbeAbility(firstId, first, cooldown, presentation);
+                Skill2 = new NetworkingProbeAbility("two", AbilityNetworkMode.Predicted, presentation: presentation);
+                if (roleKit)
+                {
+                    AttackingSkill = Skill2;
+                    DefendingSkill = new NetworkingProbeAbility("defending", AbilityNetworkMode.Predicted, presentation: presentation);
+                }
+                Ultimate = new NetworkingProbeAbility("ultimate", ultimate, presentation: presentation);
             }
         }
 

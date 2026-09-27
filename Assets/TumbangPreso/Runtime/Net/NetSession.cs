@@ -182,6 +182,7 @@ namespace TumbangPreso.Net
         private sealed class ConnectionHello
         {
             public int Protocol;
+            public string SkillContract;
             public string Token;
             public string Name;
 
@@ -479,7 +480,9 @@ namespace TumbangPreso.Net
         // watermarks and the round simulation clock; older snapshots cannot clobber newer casts.
         // 63: shared ReqAbility/PlayAbility serializer carries stable ability ID and
         // activation/command intent. Cosmetic names and assets are not wire identity.
-        public const int ProtocolVersion = 63;
+        // 64: ConnectionHello includes deterministic shared skill/phase metadata.
+        // Peers with different reworked rules cannot silently join the same match.
+        public const int ProtocolVersion = 64;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -1675,6 +1678,7 @@ namespace TumbangPreso.Net
             var hello = new ConnectionHello
             {
                 Protocol = ProtocolVersion,
+                SkillContract = SkillContractFingerprint.Current,
                 Token = account?.ConnectionToken ?? NetIdentity.Token,
                 Name = LocalLobbyName(),
 
@@ -1844,6 +1848,7 @@ namespace TumbangPreso.Net
         {
             var hello = DecodeHello(request.Payload);
             bool protocolMatches = hello != null && hello.Protocol == ProtocolVersion;
+            bool skillsMatch = protocolMatches && SkillContractFingerprint.Matches(hello.SkillContract);
             bool hasCapacity = _nm == null ||
                                Math.Max(_nm.ConnectedClientsIds.Count, _helloByClient.Count)
                                < LobbySession.MaxConnections;
@@ -1867,7 +1872,7 @@ namespace TumbangPreso.Net
             bool blocked = hello != null &&
                            Core.SocialRules.IsBlocked(GameServices.Social?.List, hello.AccountPlayerId);
 
-            response.Approved = protocolMatches && hasCapacity && !blocked;
+            response.Approved = protocolMatches && skillsMatch && hasCapacity && !blocked;
             response.CreatePlayerObject = false;
             response.Pending = false;
             // ⚠️ THE REFUSAL SAYS WHAT THE ROOM HOLDS. "Lobby is full" is true of a room with
@@ -1881,6 +1886,8 @@ namespace TumbangPreso.Net
             // "Could not join" is what every shipping game says.
             response.Reason = !protocolMatches
                 ? $"Game version mismatch (network protocol {ProtocolVersion})"
+                : !skillsMatch
+                    ? "Skill rules differ from the host. Use matching game builds."
                 : blocked
                     ? "Could not join this game."
                     : hasCapacity

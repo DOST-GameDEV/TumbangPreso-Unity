@@ -41,6 +41,7 @@ namespace TumbangPreso.Tests
                 // Empty account/proof is the supported LAN identity, not an authentication bypass.
                 helloType.GetField("AccountPlayerId").SetValue(hello, "");
                 helloType.GetField("HandleProof").SetValue(hello, "");
+                helloType.GetField("SkillContract").SetValue(hello, SkillContractFingerprint.Current);
                 var approve = typeof(NetSession).GetMethod("ApproveConnection", flags);
                 var cached = (System.Collections.IDictionary)typeof(NetSession).GetField("_helloByClient", flags).GetValue(session);
                 NetworkManager.ConnectionApprovalResponse Submit(int protocol)
@@ -60,6 +61,12 @@ namespace TumbangPreso.Tests
                 Assert.AreEqual($"Game version mismatch (network protocol {NetSession.ProtocolVersion})", old.Reason);
                 Assert.IsFalse(old.Pending);
                 Assert.IsFalse(cached.Contains(42UL), "The refused hello was cached as admitted.");
+                helloType.GetField("SkillContract").SetValue(hello, new string('0', 64));
+                var mismatched = Submit(NetSession.ProtocolVersion);
+                Assert.IsFalse(mismatched.Approved);
+                StringAssert.Contains("Skill rules differ", mismatched.Reason);
+                Assert.IsFalse(cached.Contains(42UL));
+                helloType.GetField("SkillContract").SetValue(hello, SkillContractFingerprint.Current);
                 var current = Submit(NetSession.ProtocolVersion);
                 Assert.IsTrue(current.Approved, "A valid current-protocol LAN hello failed the positive control.");
                 Assert.IsFalse(current.Pending);
@@ -334,7 +341,7 @@ namespace TumbangPreso.Tests
             //59 makes Paete's introduction 6.5 s, places his ultimate where he looks, and hands the grown guardian back at the catch.
             //60 places THORN HARVEST where he looks (a trail runs to the spot, it bursts and catches there) and keeps BAKYA BLOOM out of the box.
             //61 adds Featherfall pose/intent episode keys and timed restoration, with the updated 5 s / 40 s rules.
-            Assert.AreEqual(63, NetSession.ProtocolVersion,
+            Assert.AreEqual(64, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");
