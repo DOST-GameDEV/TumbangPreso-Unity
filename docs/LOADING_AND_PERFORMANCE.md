@@ -23,6 +23,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Training controls/targets | PracticeRange.cs,UI/PausePanel.TrainingRange.cs; prebuilt inactive menu and target bodies reused without changing saved preferences |
 | First-use/runtime costs | Existing profiler markers,FrameRateHistogram,tools/cold_start.py and current internal player |
 | Settings value changes | UI/TumpSettingsView partials; whole-row reflow only for new sections/text size,cached chips and one unsaved-state calculation per notification |
+| Character preview targets | UI/ModelPreview.cs; coalesce continuous pixel-size reallocations,keep current panel projection,settle exact sizing and capture immediately |
 
 ## Rules For Changes
 

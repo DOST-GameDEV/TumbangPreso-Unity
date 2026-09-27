@@ -72,6 +72,9 @@ assemblies compile; native retention and measured first-use/memory checks remain
 Settings value changes now avoid redundant whole-screen reflow/chip scans and double
 unsaved-state work. Four assemblies compile; focused native transaction/layout and
 player timing qualification remain OPEN.
+Character preview target reallocations now coalesce continuous resizing while
+preserving final pixel size/aspect and immediate captures. Four assemblies compile;
+native resize/visual checks, measured cost and valid-avatar ownership remain OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

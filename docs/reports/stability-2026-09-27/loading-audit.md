@@ -104,6 +104,34 @@ native integration run; it has NOT run. The preceding editor startup hit the dis
 reserve, so no repeated editor launch was attempted for this batch. No measured
 player frame-time, peak-memory or hitch-free claim.
 
+## Character Preview Allocation
+
+After `b93d2a4a`, ModelPreview coalesces repeated target-size changes instead of
+releasing/allocating a new4x MSAA RenderTexture for every intermediate pixel size.
+The first target is immediate. Later target allocation waits until dimensions have
+been unchanged for120ms; explicit StepForCapture settles immediately through the
+same path. The current panel projection updates during that wait so the previous
+target's dimensions do not set the new display aspect.
+
+Final physical-pixel sizing, the2048 uniform cap, filtering,MSAA,model framing and
+source art are unchanged. During continuous resize the previous target is briefly
+resampled, rather than allocating at every intermediate dimension. This is a bounded
+allocation policy, not a measured FPS or first-click improvement claim.
+
+EnsureAvatar also destroys a nonnull invalid avatar before returning: that newly
+created object has not been assigned or shared. Valid-avatar lifetime management
+remains OPEN. Unity documents [BuildGenericAvatar](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/AvatarBuilder.BuildGenericAvatar.html)
+as creating a new asset, while [OnDestroy](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/MonoBehaviour.OnDestroy.html)
+only runs for previously active objects. Inactive binding and copied avatar references
+need native ownership evidence before adding a blanket destroy hook or cache. No
+valid/imported avatar,rig,clip or animation was changed in this unit.
+
+Frozen171 inputs,2 changed sources. Runtime,Editor,Tests and PlayTests compile
+with unchanged Core reused. The new native case covers target identity during a
+resize burst, final pixel resolution, stable reuse and capture flush; the existing
+DPI/aspect case is unchanged. **NOT RUN** under the existing editor disk boundary.
+No old Core,broad suite or films rerun. [Receipt](checks/preview-resize-compile.json).
+
 ## Settings Value-Change Work
 
 After `2b588964`, ordinary settings slider/name changes no longer rerun the full
