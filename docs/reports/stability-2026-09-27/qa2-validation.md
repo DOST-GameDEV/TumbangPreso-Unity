@@ -4,6 +4,13 @@ The guarded Windows/D3D11 QA candidate initially used the isolated `work/stabili
 
 ## Results
 
+Checksum portability: [capture hashes](qa2-evidence.sha256) preserve the original
+Windows bytes. Git normalized CRLF to LF in the 14 XML receipts; all 25 PNGs are
+byte-identical. [Repository hashes](qa2-repository-evidence.sha256) cover exact blob
+content in `367a78ae608ab85626ff0cc5bb750501c66c6c72`. All 14 differences were checked
+to be newline normalization only. Use the matching manifest for original captures
+versus Git blob bytes; no evidence content was repaired or regenerated.
+
 **Latest accepted amendment:** the combined room-title/input group passed 4/4 in
 14.860 seconds on the 55-file candidate. It replaces the earlier controller-local
 cache case and adds two session cases plus the actual name-field path. Latest distinct
