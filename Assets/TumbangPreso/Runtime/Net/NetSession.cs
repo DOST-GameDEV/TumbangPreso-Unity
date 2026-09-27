@@ -475,7 +475,9 @@ namespace TumbangPreso.Net
         // quarter of a second early, and plant the pot inside the box where everyone else sees it outside.
         // 61 (2026-09-27): FEATHERFALL is 5 s / 40 s. SubmitMove/SyncUnit retain its takeoff key,
         // ReqAbility/PlayAbility carry explicit takeoff/recast intent, and TimedKit adds its 57-byte restore tail.
-        public const int ProtocolVersion = 61;
+        // 62: WorldFieldBegin uses a shared bounded header with match identity, request/event
+        // watermarks and the round simulation clock; older snapshots cannot clobber newer casts.
+        public const int ProtocolVersion = 62;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

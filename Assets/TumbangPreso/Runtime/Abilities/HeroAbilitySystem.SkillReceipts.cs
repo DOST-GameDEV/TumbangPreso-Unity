@@ -60,6 +60,16 @@ namespace TumbangPreso.Abilities
             return false;
         }
 
+        public bool HasPredictedSkillAfter(long processedRequest)
+        {
+            for (int slot = 0; slot < _skillRequests.Length; slot++)
+                if (_skillRequests[slot] > processedRequest && !_skillSettled[slot]) return true;
+            foreach (var pending in _pendingSkillEffects)
+                if (pending.Key > processedRequest) return true;
+            return _motor != null && _motor.FlightEpisode > processedRequest
+                && _motor.PredictedFlightMatches(_motor.FlightEpisode);
+        }
+
         public bool MatchesSkillRequest(int slot,long request)=>slot>=0&&slot<2&&request>0&&_skillRequests[slot]==request;
         public bool PendingSkillReceipt(int slot,long request)
             =>(MatchesSkillRequest(slot,request)&&!_skillSettled[slot])

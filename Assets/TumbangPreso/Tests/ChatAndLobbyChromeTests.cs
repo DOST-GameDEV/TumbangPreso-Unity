@@ -55,9 +55,9 @@ namespace TumbangPreso.Tests
                     approve.Invoke(session, new object[] { request, response });
                     return response;
                 }
-                var old = Submit(60);
+                var old = Submit(NetSession.ProtocolVersion - 1);
                 Assert.IsFalse(old.Approved);
-                Assert.AreEqual("Game version mismatch (network protocol 61)", old.Reason);
+                Assert.AreEqual($"Game version mismatch (network protocol {NetSession.ProtocolVersion})", old.Reason);
                 Assert.IsFalse(old.Pending);
                 Assert.IsFalse(cached.Contains(42UL), "The refused hello was cached as admitted.");
                 var current = Submit(NetSession.ProtocolVersion);
@@ -334,7 +334,7 @@ namespace TumbangPreso.Tests
             //59 makes Paete's introduction 6.5 s, places his ultimate where he looks, and hands the grown guardian back at the catch.
             //60 places THORN HARVEST where he looks (a trail runs to the spot, it bursts and catches there) and keeps BAKYA BLOOM out of the box.
             //61 adds Featherfall pose/intent episode keys and timed restoration, with the updated 5 s / 40 s rules.
-            Assert.AreEqual(61, NetSession.ProtocolVersion,
+            Assert.AreEqual(62, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

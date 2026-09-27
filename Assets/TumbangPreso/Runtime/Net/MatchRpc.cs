@@ -1925,24 +1925,32 @@ namespace TumbangPreso.Net
         }
 
         private int _worldFieldGeneration, _lastWorldFieldGeneration, _worldFieldRound;
-        private float _worldFieldSentAt;
         private string _worldFieldScene;
+        private ulong _worldFieldSceneHandle;
+        private WorldSnapshotHeader _worldFieldHeader;
         private WorldEffectSnapshot.Batch _worldFieldBatch;
 
         private void SendWorldFieldSnapshot(ulong peer)
         {
-            if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
+            if (!NetAuthority.IsHost || GameServices.Match == null || GameServices.Round == null
+                || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
+            PrepareSkillReceipts();
             var fields = WorldEffectSnapshot.Capture();
             if (fields.Count > WorldEffectSnapshot.MaxFields || fields.Exists(field => !WorldEffectSnapshot.Valid(field)))
             { Debug.LogWarning("[WorldFieldSnapshot] Live fields exceed the valid bounded snapshot."); return; }
             int generation = ++_worldFieldGeneration;
-            using (var writer = new FastBufferWriter(160, Allocator.Temp))
+            using (var writer = new FastBufferWriter(WorldSnapshotHeader.MaxWireBytes, Allocator.Temp))
             {
-                writer.WriteValueSafe(generation);
-                writer.WriteValueSafe(GameServices.Match.RoundNumber);
-                writer.WriteValueSafe(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-                writer.WriteValueSafe(fields.Count);
-                writer.WriteValueSafe((float)_nm.ServerTime.Time);
+                var header = new WorldSnapshotHeader
+                {
+                    Generation = generation, Round = GameServices.Match.RoundNumber,
+                    Scene = new FixedString128Bytes(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name),
+                    Count = fields.Count, SentAt = (float)_nm.ServerTime.Time,
+                    Match = EnsurePresentationMatch(), SkillEvent = _skillEventSequence,
+                    OwnerRequest = _lastSkillRequest.TryGetValue(peer, out var processed) ? processed.request : 0,
+                    RoundClock = GameServices.Round.TimeLeft,
+                };
+                writer.WriteNetworkSerializable(header);
                 _nm.CustomMessagingManager.SendNamedMessage("WorldFieldBegin", peer, writer, NetworkDelivery.ReliableSequenced);
             }
             // Small packets keep the same reliable pipeline as PlayAbility. Do
@@ -1977,17 +1985,32 @@ namespace TumbangPreso.Net
         private void OnWorldFieldBeginMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
-            reader.ReadValueSafe(out int generation);
-            reader.ReadValueSafe(out int round);
-            reader.ReadValueSafe(out string scene);
-            reader.ReadValueSafe(out int count);
-            reader.ReadValueSafe(out float sentAt);
-            if (generation <= _lastWorldFieldGeneration || (_worldFieldBatch != null && generation <= _worldFieldBatch.Generation)
-                || count < 0 || count > WorldEffectSnapshot.MaxFields || !Finite(sentAt)
-                || GameServices.Match == null || GameServices.Match.RoundNumber != round
-                || scene != UnityEngine.SceneManagement.SceneManager.GetActiveScene().name) return;
-            _worldFieldBatch = new WorldEffectSnapshot.Batch(generation, count);
-            _worldFieldRound = round; _worldFieldScene = scene; _worldFieldSentAt = sentAt;
+            if (!WorldSnapshotHeader.TryRead(ref reader, out var header)) return;
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            if (!header.Matches(PresentationMatchId, GameServices.Match?.RoundNumber ?? -1, scene.name)
+                || header.Generation <= _lastWorldFieldGeneration
+                || (_worldFieldBatch != null && header.Generation <= _worldFieldBatch.Generation)) return;
+            _worldFieldBatch = null;
+            if (GameServices.Round?.RoundActive == true && WorldSnapshotNeedsRefresh(header))
+            { QueueWorldSnapshotRefresh(header.Round); return; }
+            _worldFieldBatch = new WorldEffectSnapshot.Batch(header.Generation, header.Count);
+            _worldFieldHeader = header;
+            _worldFieldRound = header.Round; _worldFieldScene = scene.name;
+            _worldFieldSceneHandle = scene.handle.GetRawData();
+        }
+
+        private bool WorldSnapshotNeedsRefresh(WorldSnapshotHeader header)
+        {
+            PrepareSkillReceipts();
+            foreach (long observed in _lastSkillEvent)
+                if (observed > header.SkillEvent) return true;
+            int local = NetAuthority.LocalSlot;
+            return ValidSlot(local) && Unit(local)?.AbilitySystem?.HasPredictedSkillAfter(header.OwnerRequest) == true;
+        }
+
+        private void QueueWorldSnapshotRefresh(int round)
+        {
+            if (isActiveAndEnabled) StartCoroutine(RefreshAfterExpiredPreparation(round));
         }
 
         private void OnWorldFieldItemMsg(ulong senderClientId, FastBufferReader reader)
@@ -2017,12 +2040,20 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int generation);
             if (_worldFieldBatch == null || _worldFieldBatch.Generation != generation) return;
             var batch = _worldFieldBatch; _worldFieldBatch = null;
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             if (!batch.Finish(generation, out var fields) || GameServices.Match == null || GameServices.Match.RoundNumber != _worldFieldRound
-                || _worldFieldScene != UnityEngine.SceneManagement.SceneManager.GetActiveScene().name) return;
-            _lastWorldFieldGeneration = generation;
+                || _worldFieldScene != scene.name || _worldFieldSceneHandle != scene.handle.GetRawData()
+                || !_worldFieldHeader.Matches(PresentationMatchId, GameServices.Match.RoundNumber, scene.name)) return;
             if(GameServices.Round!=null&&!GameServices.Round.RoundActive)
-            {WorldEffectSnapshot.ClearPersistentFields();return;}
-            float elapsed = Mathf.Max(0, (float)_nm.ServerTime.Time - _worldFieldSentAt);
+            {
+                _lastWorldFieldGeneration = generation;
+                WorldEffectSnapshot.ClearPersistentFields();
+                return;
+            }
+            if (WorldSnapshotNeedsRefresh(_worldFieldHeader)
+                || !_worldFieldHeader.TryAge(GameServices.Round?.TimeLeft ?? -1, out float elapsed))
+            { QueueWorldSnapshotRefresh(_worldFieldRound); return; }
+            _lastWorldFieldGeneration = generation;
             using (NetCue.SuppressRelay()) WorldEffectSnapshot.Apply(fields, elapsed);
         }
 

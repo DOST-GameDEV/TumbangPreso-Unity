@@ -1,5 +1,38 @@
 # Multiplayer investigation, 2026-09-27
 
+## Scoped world recovery and bound ownership
+
+WorldFieldBegin now has one shared bounded serializer for both directions. It
+carries presentation-match identity, round/scene/generation, processed-owner-request
+and host-event watermarks, and the round simulation clock. Scene bytes are bounded
+before fixed-capacity storage, including unchecked player builds. Malformed,
+truncated and trailing data are rejected. Protocol is **62**; older builds must
+not mix with this envelope, and all participating platforms need matching builds.
+
+The receiver checks freshness at both beginning and completion, including actual
+unsettled owner predictions, observed host casts and the local scene instance.
+An obsolete batch cannot erase newer work; the existing scoped/coalesced refresh
+requests current state. An ended round still clears persistent fields. Snapshot
+aging uses simulation-clock difference so a held cutscene does not consume lifetime
+merely because wall time advanced.
+
+World ownership reconnects through `IWorldEffectBinding`, retaining Sean/Zack's
+existing behavior and adding Paete's active clock/owner binding. A restored visible
+plant no longer leaves the corresponding skill inactive. Replaced plants leave
+gameplay/capture immediately while retaining their existing fade; lookup skips
+disabled/retiring objects. Retirement releases pullers, and kit reset removes only
+that player's plant instead of all players' plants.
+
+Focused evidence: [EditMode 6/6](checks/world-snapshot-codec.xml), 0.1174826 s,
+including header round-trip, malformed data, paused clock and old/current protocol
+approval/pool checks; [PlayMode 2/2](checks/world-snapshot-lifecycle.xml), 8.731889 s,
+including the actual receiver's stale-prediction/event rejection, current empty
+replacement, restored plant command state and independent-owner reset. The first
+compile needed the existing Unity.Collections assembly explicitly referenced by
+Runtime and PlayTests; no package update occurred. Seventeen authored source hashes
+matched the frozen native candidate. No physical peers, player build or complete
+network-presentation qualification is claimed.
+
 ## Independent effect receipts and command lifecycle
 
 Owner effect confirmations no longer depend on the newest request in a slot.

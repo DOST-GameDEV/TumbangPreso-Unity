@@ -110,8 +110,8 @@ namespace TumbangPreso.Abilities
         public int OwnerSlot { get; private set; } = -1;
         public float Age => _age;
         public bool Landed => _age >= 0f;
-        public bool Pullable => _age >= PaeteRules.PlantRootedSeconds && !_pulled;
-        public bool ShotReady => Landed && !_pulled && _age >= _nextShot;
+        public bool Pullable => _age >= PaeteRules.PlantRootedSeconds && !IsRetiring;
+        public bool ShotReady => Landed && !IsRetiring && _age >= _nextShot;
 
         /// <summary>Seconds until the next clog has grown (the deck's countdown for the command, `PunlangTsinelas`).</summary>
         public float ShotIn => Mathf.Max(0f, _nextShot - _age);
@@ -119,7 +119,7 @@ namespace TumbangPreso.Abilities
         public float ShotGrowth => Mathf.Clamp01(1f - (_nextShot - _age) / PaeteRules.PlantReloadSeconds);
 
         private float _age, _nextShot, _pulledAge, _recoil = 99f;
-        private bool _pulled;
+        private bool _pulled, _retiring;
         private Vector3 _pullFrom;
         private readonly Dictionary<CharacterMotor, float> _pulling = new Dictionary<CharacterMotor, float>();
         private readonly HashSet<CharacterMotor> _requested = new HashSet<CharacterMotor>();
@@ -144,7 +144,11 @@ namespace TumbangPreso.Abilities
 
         public static PaetePlant OwnedBy(int ownerSlot)
         {
-            foreach (var p in Live) if (p != null && p.OwnerSlot == ownerSlot && !p._pulled) return p;
+            for (int i = Live.Count - 1; i >= 0; i--)
+            {
+                var p = Live[i];
+                if (p != null && p.isActiveAndEnabled && p.OwnerSlot == ownerSlot && !p.IsRetiring) return p;
+            }
             return null;
         }
 
@@ -169,6 +173,8 @@ namespace TumbangPreso.Abilities
         public void Wither()
         {
             if (_pulled) return;
+            _retiring = true;
+            ReleasePullers();
             _age = Mathf.Max(_age, PaeteRules.PlantLifeSeconds - 0.6f);
         }
 
@@ -220,6 +226,7 @@ namespace TumbangPreso.Abilities
         };
 
         public bool IsPulled => _pulled;
+        public bool IsRetiring => _pulled || _retiring;
 
         /// <summary>A seedling put back at <paramref name="age"/> seconds old with its shot clock; no seed flight, no second ground break.</summary>
         public static PaetePlant Restore(Vector3 at, int ownerSlot, float age, float untilShot)
@@ -233,8 +240,17 @@ namespace TumbangPreso.Abilities
         private void OnDestroy()
         {
             Live.Remove(this);
-            // A plant that withers or is pulled mid-hold must not leave a puller frozen in the heave.
+            ReleasePullers();
+        }
+
+        private void OnDisable() => ReleasePullers();
+
+        private void ReleasePullers()
+        {
+            // Retired objects must release their hold before their replacement starts accepting input.
             foreach (var p in _pulling.Keys) if (p != null) p.PullingPlantProgress = 0f;
+            _pulling.Clear();
+            _requested.Clear();
         }
 
         private void Update()

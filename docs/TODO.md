@@ -28,6 +28,9 @@ state/presentation replication and real-peer qualification stay OPEN.
 Effect confirmations now have independent request lifetimes; pending initialization,
 recast commands and old denials preserve the correct active effect (four distinct
 local cases pass). Networking comes first; real work-driven loading follows it.
+Protocol62 world snapshots now reject stale prediction/event state and bind restored
+objects to their owning skills; independent plant cleanup is corrected. Focused
+EditMode6/6 and PlayMode2/2 pass. All-peer presentation qualification remains OPEN.
 Timed-state bindings now use the actual owning ability instead of a live slot or
 fixed duration cap (focused EditMode 1/1); remaining contract enforcement stays OPEN.
 Hero-shop wallet notifications now refresh purchase controls without rebuilding the

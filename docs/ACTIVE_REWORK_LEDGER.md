@@ -2,6 +2,15 @@
 
 ## Current networking and flow work, 2026-09-27
 
+Protocol62 world recovery is implemented: one bounded header serializer, match/
+round/scene-instance/generation and cast/request freshness checks at begin/end,
+simulation-clock aging and coalesced recovery. Owner binding is capability-based;
+Paete's restored object also restores its active skill, retires old ownership,
+releases pullers and no longer deletes other players' plants on reset. Focused
+EditMode6/6 and PlayMode2/2 pass. All platforms need matching protocol62 builds.
+[World recovery evidence](reports/stability-2026-09-27/multiplayer.md#scoped-world-recovery-and-bound-ownership).
+Real-peer presentation/cutscene coverage and the full networking requirement stay OPEN.
+
 Newest order: finish network correctness/presentation first, then optimization
 and actual work-driven loading-screen readiness. Do not treat hardcoded stage
 timing as asset/scene/shader initialization completion.

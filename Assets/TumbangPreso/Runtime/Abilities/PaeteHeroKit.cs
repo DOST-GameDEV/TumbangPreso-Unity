@@ -30,9 +30,12 @@ namespace TumbangPreso.Abilities
     /// score is behind `NetAuthority.ShouldResolve()` (`tools/audit_ability_authority.py`); a peer
     /// moves only its own body (the vine reel), as the other kits do.
     /// </summary>
-    public sealed class PaeteHeroKit : HeroKit
+    public sealed class PaeteHeroKit : HeroKit, IWorldEffectBinding
     {
         public override float UltimateCost => PaeteRules.SentryCost;
+
+        public void RebindWorldEffects(CharacterMotor motor)
+            => ((PunlangTsinelas)AttackingSkill).RestorePlantBinding(motor);
 
         public PaeteHeroKit() : base("paete", "PAETE")
         {
@@ -142,6 +145,14 @@ namespace TumbangPreso.Abilities
 
             private int _ownerSlot = -1;
 
+            public void RestorePlantBinding(CharacterMotor motor)
+            {
+                if (motor == null || motor.IsDefender || motor.AbilitySystem?.AwaitingSkillEffect(this) == true) return;
+                _ownerSlot = motor.PlayerSlot;
+                var plant = PaetePlant.OwnedBy(_ownerSlot);
+                RestoreLiveClock(plant != null ? Mathf.Max(0, PaeteRules.PlantLifeSeconds - plant.Age) : 0);
+            }
+
             public override void Activate(AbilityContext ctx)
             {
                 CastAction = PlantAction; ViewmodelAction = "seed-toss"; CastCue = "sfx_cast_paete_sprout";
@@ -190,7 +201,10 @@ namespace TumbangPreso.Abilities
 
             public override void Reset()
             {
-                foreach (var p in PaetePlant.Live.ToArray()) if (p != null) Object.Destroy(p.gameObject);
+                foreach (var p in PaetePlant.Live.ToArray())
+                    if (p != null && p.OwnerSlot == _ownerSlot)
+                    { p.gameObject.SetActive(false); Object.Destroy(p.gameObject); }
+                _ownerSlot = -1;
                 base.Reset();
             }
         }

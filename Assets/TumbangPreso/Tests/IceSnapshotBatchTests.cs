@@ -1,11 +1,75 @@
 using NUnit.Framework;
 using TumbangPreso.Net;
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace TumbangPreso.Tests
 {
     public sealed class IceSnapshotBatchTests
     {
+        [Test]
+        public void WorldSnapshotHeaderRoundTripsEveryDeclaredField()
+        {
+            object boxed = new WorldSnapshotHeader();
+            var fields = typeof(WorldSnapshotHeader).GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+            for (int i = 0; i < fields.Length; i++)
+            {
+                object value;
+                if (fields[i].FieldType == typeof(int)) value = 7 + i;
+                else if (fields[i].FieldType == typeof(long)) value = 1234567L + i;
+                else if (fields[i].FieldType == typeof(float)) value = 40.25f + i;
+                else if (fields[i].FieldType == typeof(FixedString128Bytes)) value = new FixedString128Bytes("snapshot-test-scene");
+                else { Assert.Fail("Add a nondefault sample for " + fields[i].Name); return; }
+                fields[i].SetValue(boxed, value);
+            }
+            var original = (WorldSnapshotHeader)boxed;
+            using var writer = new FastBufferWriter(WorldSnapshotHeader.MaxWireBytes, Allocator.Temp);
+            writer.WriteNetworkSerializable(original);
+            using var reader = new FastBufferReader(writer, Allocator.Temp);
+            var input = reader;
+            Assert.IsTrue(WorldSnapshotHeader.TryRead(ref input, out var restored));
+            foreach (var field in fields)
+                Assert.AreEqual(field.GetValue(original), field.GetValue(restored), field.Name + " was omitted from the common serializer.");
+        }
+
+        [Test]
+        public void WorldSnapshotClockAndIdentityCannotCrossMatchOrPauseBoundaries()
+        {
+            var header = new WorldSnapshotHeader
+            { Generation = 1, Match = 17, Round = 2, Scene = new FixedString128Bytes("court"), RoundClock = 50 };
+            Assert.IsTrue(header.Matches(17, 2, "court"));
+            Assert.IsFalse(header.Matches(18, 2, "court"));
+            Assert.IsFalse(header.Matches(17, 3, "court"));
+            Assert.IsFalse(header.Matches(17, 2, "another"));
+            header.SentAt = 1000;
+            Assert.IsTrue(header.TryAge(50, out float age));
+            Assert.Zero(age, "Wall time must not age effects while the round clock is held.");
+            Assert.IsTrue(header.TryAge(47.5f, out age));
+            Assert.AreEqual(2.5f, age);
+            Assert.IsFalse(header.TryAge(float.NaN, out _));
+            header.OwnerRequest = -1;
+            Assert.IsFalse(header.Matches(17, 2, "court"));
+        }
+
+        [Test]
+        public void WorldSnapshotHeaderRejectsTruncationAndOversizedSceneStorage()
+        {
+            using (var shortWriter = new FastBufferWriter(8, Allocator.Temp))
+            {
+                shortWriter.WriteValueSafe(1);
+                using var shortReader = new FastBufferReader(shortWriter, Allocator.Temp);
+                var input = shortReader;
+                Assert.IsFalse(WorldSnapshotHeader.TryRead(ref input, out _));
+            }
+            using var writer = new FastBufferWriter(128, Allocator.Temp);
+            writer.WriteValueSafe(1); writer.WriteValueSafe(2); writer.WriteValueSafe(ushort.MaxValue);
+            writer.WriteBytesSafe(new byte[64]);
+            using var reader = new FastBufferReader(writer, Allocator.Temp);
+            var malformed = reader;
+            Assert.IsFalse(WorldSnapshotHeader.TryRead(ref malformed, out _));
+        }
+
         private static WorldEffectSnapshot.Field Sheet()=>new WorldEffectSnapshot.Field{
             Type=WorldEffectSnapshot.Kind.Sheet,Position=Vector3.zero,Forward=Vector3.forward,
             Duration=5,Remaining=2,Radius=2.3f,Owner=1,FirstScale=.55f,SecondScale=1};

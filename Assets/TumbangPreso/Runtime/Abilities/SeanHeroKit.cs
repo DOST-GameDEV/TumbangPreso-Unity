@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
-    public sealed class SeanHeroKit : HeroKit, ITimedKitReplication
+    public sealed class SeanHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
     {
         public bool IsIgnitionCannonActive { get; set; }
         private bool _joinChargeStateSettled;
@@ -23,6 +23,8 @@ namespace TumbangPreso.Abilities
             => motor!=null && ((RocketBurnDashAbility)Skill1).RestoreMovement(
                 new AbilityContext(motor,motor.GetComponent<Carrier>(),motor.GetComponent<CombatVerbs>()),state,age);
         public void AdoptMovementFields(int owner)=>((RocketBurnDashAbility)Skill1).AdoptFields(owner);
+        public void RebindWorldEffects(CharacterMotor motor)
+        { if (motor != null) AdoptMovementFields(motor.PlayerSlot); }
 
         public bool RestoreJoiningIgnition(CharacterMotor motor, float remaining)
         {
