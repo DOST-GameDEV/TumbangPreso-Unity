@@ -28,6 +28,49 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator RosterCatalogueWarmupCoalescesAndHandsOffAfterCancellation()
+        {
+            const BindingFlags flags = BindingFlags.Static | BindingFlags.NonPublic;
+            var cached = typeof(RosterBook).GetField("_cached", flags);
+            var tried = typeof(RosterBook).GetField("_tried", flags);
+            var pending = typeof(RosterBook).GetField("_pending", flags);
+            var oldCached = cached.GetValue(null); var oldTried = tried.GetValue(null); var oldPending = pending.GetValue(null);
+            var first = default(System.Collections.IEnumerator); var second = default(System.Collections.IEnumerator);
+            var cancelled = default(System.Collections.IEnumerator);
+            void Clear() { cached.SetValue(null, null); tried.SetValue(null, false); pending.SetValue(null, null); }
+            try
+            {
+                Clear(); first = RosterBook.Warmup(); second = RosterBook.Warmup();
+                Assert.IsTrue(first.MoveNext()); Assert.IsTrue(second.MoveNext());
+                Assert.IsInstanceOf<ResourceRequest>(first.Current); Assert.AreSame(first.Current, second.Current);
+                yield return first.Current;
+                Assert.IsFalse(first.MoveNext()); Assert.IsFalse(second.MoveNext());
+                var book = RosterBook.Load(); Assert.IsNotNull(book);
+                Assert.AreSame(book, cached.GetValue(null)); Assert.IsTrue((bool)tried.GetValue(null));
+                Assert.IsNull(pending.GetValue(null));
+                Assert.AreSame(book, Resources.Load<RosterBook>(RosterBook.ResourcePath));
+                Assert.IsFalse(RosterBook.Warmup().MoveNext());
+                Assert.AreEqual(Core.Roster.GetPeople(Core.GameMode.Classic)[0].Id,
+                    book.PersonArt(0, Core.GameMode.Classic).Id);
+
+                Clear(); cancelled = RosterBook.Warmup(); Assert.IsTrue(cancelled.MoveNext());
+                var request = cancelled.Current;
+                (cancelled as System.IDisposable)?.Dispose();
+                yield return request;
+                Assert.AreSame(book, RosterBook.Load()); Assert.IsNull(pending.GetValue(null));
+
+                Clear(); tried.SetValue(null, true);
+                Assert.IsNull(RosterBook.Load()); Assert.IsFalse(RosterBook.Warmup().MoveNext());
+            }
+            finally
+            {
+                (first as System.IDisposable)?.Dispose(); (second as System.IDisposable)?.Dispose();
+                (cancelled as System.IDisposable)?.Dispose();
+                cached.SetValue(null, oldCached); tried.SetValue(null, oldTried); pending.SetValue(null, oldPending);
+            }
+        }
+
+        [UnityTest]
         public IEnumerator ViewmodelMeshWarmupRetainsTheExactSourcesWithoutBuildingActors()
         {
             int actors = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).Length;

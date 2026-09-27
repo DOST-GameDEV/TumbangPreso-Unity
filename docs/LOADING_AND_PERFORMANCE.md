@@ -12,6 +12,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Responsibility | Source |
 |---|---|
 | Boot stages and progress | UI/SplashScreen.cs; shader slices,rosters,audio,menu art,input,glyphs and retained dependencies |
+| Roster catalogue handoff | RosterBook.Warmup shares one async catalogue request before SplashScreen iterates its referenced art/clips. Load adopts a completed cancelled request and retains direct synchronous fallback plus the once-only missing warning; no roster IDs/order or serialized art changes |
 | Shader preparation turns | SplashScreen calls WarmUpProgressively(1),checks a2ms elapsed target between calls and caps10variants/turn; one indivisible native compile may overrun,so this is not a hard frame guarantee |
 | Deferred SFX/voice samples | UI/SplashScreen.WarmAudioAssets; yielded sample loading and retention,not just clip references; music/streaming policy unchanged |
 | Real menu activation barrier | UI/SplashScreen.MenuActivation.cs and ConvertedMainMenu.IsPrepared; retain existing canvas through Wire/layout,then reveal login/input |

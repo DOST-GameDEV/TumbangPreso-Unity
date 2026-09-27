@@ -5,6 +5,26 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Asynchronous Roster Catalogue
+
+After integration `68bc1008`, boot now awaits RosterBook.Warmup before reading its
+people/prop lists. Previously the catalogue and its serialized dependencies were
+entered through synchronous Resources.Load before the per-roster yields. Concurrent
+warmups share a ResourceRequest. Direct callers keep their fallback, a cancelled
+coroutine's completed native request can be adopted by Load, and a completed direct
+load is not overwritten when the old iterator resumes. The existing once-only
+missing warning and stable ID-based roster resolution are unchanged.
+
+Three source files changed. Source/diff review is complete; the focused native test
+for coalescing, reuse, cancellation adoption, fallback and ID resolution is authored
+but NOT RUN. A full merged-source Roslyn check was prepared without copying/importing
+the incoming map assets, but its first preflight stopped before creating a source
+snapshot or invoking a compiler:20.24MB source plus32MB output budget could not fit
+while retaining the5GiB reserve. Later observed free space was3,183,730,688bytes.
+No unchanged-headroom retry, source compile pass, runtime result or player timing is
+claimed. This qualification remains OPEN; it must not be counted as another native
+success in the completed first-person mesh unit below.
+
 ## First-Person Mesh Preload
 
 ViewmodelArms performed seven direct mesh reads on construction or character

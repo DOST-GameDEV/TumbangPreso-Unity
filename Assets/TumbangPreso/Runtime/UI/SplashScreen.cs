@@ -437,6 +437,7 @@ namespace TumbangPreso.UI
             // ⚠️ THE PROGRESS MOVES INSIDE THE STAGE TOO, rather than only at its boundaries, so
             // the longest stage is not also the flattest part of the bar.
             SetLoadingStage("loading characters", 0.10f);
+            yield return RosterBook.Warmup();
             var book = RosterBook.Load();
             if (book != null)
             {

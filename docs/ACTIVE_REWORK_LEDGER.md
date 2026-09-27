@@ -1,11 +1,20 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-28. Branch: ASTRAReworks. Incoming integration:
-`10c0e28e` plus the completed first-person preload unit `d7ad338d`.
+`68bc1008` (teammate integration plus preload); async roster handoff follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+RosterBook now offers a shared async warmup awaited by boot before catalogue
+iteration. Direct-load fallback and missing-book behavior remain; completed native
+requests can be adopted after coroutine cancellation. Three owned source files,
+source reviewed and diff checked. The new focused test is AUTHORED, NOT RUN.
+The source-only compile also stopped at its storage preflight before copying or
+compiling anything. No compile/native/build pass is claimed. Publish implementation
+with this boundary and retain the exact pending check rather than retrying in a loop.
+[Details](reports/stability-2026-09-27/loading-audit.md#asynchronous-roster-catalogue).
 
 The incoming integration merges cleanly with the preload unit. Its authored assets,
 per-side bounds, shared regression repairs and protocol87 map-index compatibility
