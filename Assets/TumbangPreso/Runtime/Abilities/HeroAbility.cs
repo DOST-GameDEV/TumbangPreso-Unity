@@ -325,6 +325,21 @@ namespace TumbangPreso.Abilities
         public bool AimsWhereLooking { get; protected set; }
 
         /// <summary>
+        /// ⚠️ PLACED IN THE AIR AS WELL AS ON THE COURT (HERO-10, Phaister's OMEN): the aimed spot keeps a HEIGHT, taken from where
+        /// the caster's sight line is at the aimed distance (`CameraRig.TryLookHeight`), clamped to AimMinHeight .. AimMaxHeight
+        /// above the court; a received aim keeps the height it was sent with, so every peer agrees.
+        /// </summary>
+        public bool AimsInTheAir { get; protected set; }
+        public float AimMinHeight { get; protected set; }
+        public float AimMaxHeight { get; protected set; }
+
+        /// <summary>Lets the aim carry a height between <paramref name="min"/> and <paramref name="max"/> metres. Call from a kit.</summary>
+        protected void AimInTheAir(float min, float max)
+        {
+            AimsInTheAir = true; AimMinHeight = min; AimMaxHeight = max;
+        }
+
+        /// <summary>
         /// How long a hold may last before the ability fires on its own. Seconds.
         /// <b>Zero means it never fires on its own: only the release casts it.</b>
         ///

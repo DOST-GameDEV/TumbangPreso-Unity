@@ -223,6 +223,11 @@ namespace TumbangPreso.Visual
             { "hero-phaister-hex", new[] { "hero-phaister-hex", "interact-right", "attack-melee-right" } },
             { "hero-phaister-blink", new[] { "hero-phaister-blink", "attack-kick-right", Sprint } },
             { "hero-phaister-eclipse", new[] { "hero-phaister-eclipse", Crouch, "holding-both" } },
+            // PHAISTER (HERO-10, 2026-09-27): one clip per skill, baked by `PhaisterMotionAuthor`, the old clip as the fallback.
+            { "hero-phaister-swarm", new[] { "hero-phaister-swarm", "hero-phaister-blink", Sprint } },
+            { "hero-phaister-manika", new[] { "hero-phaister-manika", "attack-melee-right" } },
+            { "hero-phaister-pin", new[] { "hero-phaister-pin", "hero-phaister-hex", "interact-right" } },
+            { "hero-phaister-omen", new[] { "hero-phaister-omen", "hero-phaister-eclipse", "holding-both" } },
             { "hero-rafi-cut", new[] { "hero-rafi-cut", "interact-left" } },
             { "hero-rafi-feint", new[] { "hero-rafi-feint", "attack-melee-right" } },
             { "hero-rafi-breakwater", new[] { "hero-rafi-breakwater", "holding-both-shoot" } },

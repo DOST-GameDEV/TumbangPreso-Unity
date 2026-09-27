@@ -1074,6 +1074,14 @@ namespace TumbangPreso.Abilities
             public float CentreBite = 2.2f;
 
             /// <summary>
+            /// ⚠️ HERO-10 (Phaister's OMEN): > 0 holds caught bodies on a RING this far out instead of dragging them to the
+            /// middle, pushing a body back out if it is inside it, so they orbit the rim of her eye rather than covering it. The
+            /// lift is then measured from the ring, so a body on it is held at the full `LiftHeight`. 0 (every other use, Nemu's
+            /// void and Kuro's maw) keeps the old pull to the centre exactly as it was.
+            /// </summary>
+            public float HoldRadius = 0.0f;
+
+            /// <summary>
             /// How far off the ground the very centre of the vortex holds a body.
             ///
             /// ⚠️ IT TAPERS TO NOTHING AT THE RIM, so walking past the edge of a void does not
@@ -1183,6 +1191,14 @@ namespace TumbangPreso.Abilities
                     // the rim, so the rim behaves exactly as it did and only the inside changes.
                     float closeness = 1.0f - (distance / Radius);
                     float bite = Mathf.Lerp(1.0f, CentreBite, closeness);
+                    if (HoldRadius > 0.0f)
+                    {
+                        // Toward the ring from either side, gently near it so the body settles on it instead of oscillating.
+                        float error = distance - HoldRadius;
+                        closeness = Mathf.Clamp01(1.0f - error / Mathf.Max(0.01f, Radius - HoldRadius));
+                        bite = Mathf.Lerp(1.0f, CentreBite, closeness) * Mathf.Clamp(Mathf.Abs(error) / 0.6f, 0.15f, 1.0f);
+                        if (error < 0.0f) diff = -diff;
+                    }
 
                     // ⚠️⚠️ THE PULL HAS TO BEAT `Balance.Friction`, AND THIS IS THE ARITHMETIC
                     // THAT EXPLAINS WHY 14 FELT LIKE NOTHING EVEN ON THE HOST.

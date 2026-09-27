@@ -157,6 +157,32 @@ namespace TumbangPreso.CameraSystem
                 K(1.04f, -.28f, -.06f, .12f, .10f, .34f, .05f), K(1.26f, -.06f, .34f, .08f, .08f, .40f, .08f),
                 K(1.55f, .10f, -.16f, .10f, -.10f, -.10f, .10f), K(1.76f, .09f, -.14f, .10f, -.09f, -.09f, .10f), Rest(2.12f)) },
 
+            // ---------------------------------------------------------------- PHAISTER, THE WITCH (HERO-10, 2026-09-27)
+            // Her hands are the magic: small, precise, unhurried, each cast its own shape (plan 4 and 4.6).
+            // VANISHING ACT. The wrists cross at the chest (the tell), then fling out wide off both edges as she bursts
+            // into moths, and come back in from the edges as she is knitted back together.
+            { "swarm-burst", new CastPath(.10f, false,
+                Rest(0), K(.06f, -.10f, .06f, .02f, .16f, .28f, .02f), K(.10f, .34f, .12f, .10f, -.38f, .32f, .10f),
+                K(.30f, .30f, .10f, .08f, -.34f, .30f, .08f), K(.44f, .06f, .02f, .02f, -.06f, .10f, .02f), Rest(.62f)) },
+            // MANIKA MISCHIEF. The left hand comes up holding the doll close under her chin, the right dips to it and pricks
+            // it, draws back over the shoulder and flicks it overhand down the middle; the left stays up where the doll was.
+            { "manika-prick", new CastPath(.48f, false,
+                Rest(0), K(.14f, -.06f, .10f, .04f, .10f, .34f, .06f), K(.26f, -.12f, .14f, .06f, .08f, .36f, .06f),
+                K(.40f, .10f, .24f, -.10f, .08f, .30f, .04f), K(.48f, -.02f, -.06f, .32f, .08f, .28f, .04f),
+                K(.66f, -.02f, -.05f, .30f, .06f, .26f, .04f), Rest(.90f)) },
+            // SPOTLIGHT PIN. The right hand goes up out of the top of the frame to her hat band, brings the pin down in front
+            // of her eyes like a wand, stabs it down and forward, and holds it out level at her victim; the left opens wide.
+            { "pin-stab", new CastPath(.34f, false,
+                Rest(0), K(.14f, .02f, .44f, .02f, .00f, .00f, .00f), K(.24f, .00f, .18f, .12f, -.10f, .16f, .02f),
+                K(.34f, -.02f, -.16f, .30f, -.30f, .22f, .06f), K(.52f, .00f, .02f, .34f, -.28f, .20f, .06f), Rest(.82f)) },
+            // OMEN. Both hands rise into view and part wide, palms up, as she lifts off the court; they draw together high in
+            // the middle where the butterflies crush into the eye; at 2.2 s she hurls it down, both hands driving through.
+            // v2: it opens with her hands already up and open, where the cutscene left them (never shown twice).
+            { "omen-rise", new CastPath(2.2f, false,
+                K(0f, .22f, .20f, .06f, -.22f, .44f, .06f), K(.70f, .16f, .30f, .12f, -.16f, .50f, .12f), K(1.2f, .14f, .40f, .10f, -.14f, .60f, .10f),
+                K(1.9f, .04f, .52f, .06f, -.04f, .70f, .06f), K(2.2f, -.02f, -.18f, .34f, .02f, .04f, .34f),
+                K(2.45f, -.02f, -.16f, .32f, .02f, .06f, .32f), Rest(2.9f)) },
+
             // ---------------------------------------------------------------- RAFI: the tease
             // CROSSCURRENT. The off-hand cut: the LEFT slices across left to right and a little down,
             // the line the slipper will bend along, while the right curls the slipper in.

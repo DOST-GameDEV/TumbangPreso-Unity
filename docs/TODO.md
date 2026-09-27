@@ -856,6 +856,18 @@ research, plan and questions: `docs/reports/phaister-kit-2026-09-27/`.
 - [x] Model details (hip manika, three hat pins, two brim moths) applied INTO the shipped glb by
   `tools/add_phaister_details.py` (36 clips and the shortened arms kept; a builder rerun loses them). Owner's verdict owed.
 - [ ] Her own animations (idle variants, walk, run, throw, pick-up, hit, taya, win), one at a time, filmed.
+- [x] Props typed (`tools/build_phaister_props.py`: butterfly, moth, beetle, manika, hat pin), reviewed in the game's look
+  (`Editor/PhaisterPropReview`, props v2).
+- [x] Four body clips and four first-person gestures, none shared (`HeroAbilityClips.Phaister.cs` baked by `PhaisterMotionAuthor`;
+  `ViewmodelArms.Phaister.cs` and her `CastPaths` rows); the doll held in her first-person left hand (`ViewmodelArms.HoldingProp`).
+- [x] Effects: `PhaisterSwarm` (VANISHING ACT), `PhaisterManika` (the doll, steal, return, hold, crumble), `PhaisterMoonlight` and
+  `PhaisterPinSweep` (SPOTLIGHT PIN), `PhaisterOmen` + `CosmosEye.shader` (OMEN), statuses presented by `PhaisterStatusPresenter`.
+- [x] Sounds: `tools/build_phaister_audio.py`, ten cues including her OMEN theme; ownership moved off the rework builders.
+- [x] OMEN aimed where and how HIGH she looks; bodies held on a ring round the eye (`SeanceVoidComponent.HoldRadius`).
+- [x] Cutscene rebuilt (4.0 s, SURGE / THE EYE / OMEN; `author_ultimate_intros.py` phaister(), `HeroIntroductionScene.Phaister.cs`);
+  clock measured frozen under it. OWED: stage the REAL targets in its ending (the method's section 6 "take"), and its eye lands
+  at a fixed spot in front of her rather than at the commit's aim.
+- [x] `PhaisterKitPlayProbe` films her skills and OMEN in a match (her screen, the court, a caught player).
 - [ ] Props typed in `tools/build_phaister_props.py` (doll, pin, lamp, curtain, moon, serpent); turnarounds.
 - [ ] One body clip and one first-person action per ability (today both curses share `hero-phaister-hex` and `cast-hex`,
   and the ultimate uses the retired `hero-phaister-eclipse`); filmstrips reviewed.

@@ -876,7 +876,7 @@ GENERATORS = {
     "sfx_cast_nemu_seance.wav": (14, cast_nemu_seance),
 
     "sfx_cast_phaister_hex.wav": (15, cast_phaister_hex),
-    "sfx_cast_phaister_blink.wav": (16, cast_phaister_blink),
+    # ⚠️ HERO-10 (2026-09-27): `sfx_cast_phaister_blink` is written by `tools/build_phaister_audio.py` (the barang swarm's burst).
     "sfx_cast_phaister_coven.wav": (17, cast_phaister_coven),
 
     # The twelve loadout alternates.

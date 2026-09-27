@@ -119,6 +119,21 @@ namespace TumbangPreso.Core
         /// <summary>The pull is faster than anyone can run, so pushing away gains ground only for a
         /// moment (the owner's "they can try to").</summary>
         public const float HigopPullOverRun = 1.5f;
-        public const float HigopHoldRadius = 0.8f;
+        /// <summary>
+        /// Where caught bodies are held: on a RING this far from the eye's axis, not at its centre. ⚠️ 1.65, was 0.8 (unused): the
+        /// HERO-10 film v4 dragged every body into the middle of the 2.4 m cosmos window and they covered it. On the ring they
+        /// orbit its rim, bobbing, and the portal stays in view. Eye radius 1.2 plus about half a body. Set here.
+        /// </summary>
+        public const float HigopHoldRadius = 1.65f;
+
+        /// <summary>
+        /// OMEN's eye is placed IN THE AIR as well as on the court (owner, 2026-09-27: *"make it so that she can choose as well
+        /// where blackhole goes and how high bcz i want it to be able to put ppl on the air as well haha"*). She aims the height
+        /// by looking up: the eye's centre goes where her sight line is at the aimed distance, between chest height and this cap.
+        /// The pull's lift then holds caught bodies with their chests at the eye (`HigopLiftBelowEye` under it). Set here.
+        /// </summary>
+        public const float HigopMinHeight = 1.1f;
+        public const float HigopMaxHeight = 4.5f;
+        public const float HigopLiftBelowEye = 1.0f;
     }
 }

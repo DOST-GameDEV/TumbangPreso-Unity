@@ -964,7 +964,10 @@ namespace TumbangPreso.CameraSystem
             : action == "raise-barricade" ? RaiseBarricadeClip
             : action == "summon-lightning" ? SummonLightningClip
             : action == "cast-hex" ? CastHexClip
-            : action == "blink" ? BlinkClip : null;
+            : action == "blink" ? BlinkClip
+            : action == "swarm-burst" ? SwarmBurstClip
+            : action == "manika-prick" ? ManikaPrickClip
+            : action == "pin-stab" ? PinStabClip : null;
 
         /// <summary>
         /// Play `throw`, `grab`, `slam`, `cast`, or bespoke hero actions on the viewmodel arm.
@@ -1122,6 +1125,10 @@ namespace TumbangPreso.CameraSystem
                   : clip == "thorn-stamp" ? ThornStampClip
                   : clip == "ground-call" ? GroundCallClip
                   : clip == "coven-eclipse" ? CovenEclipseClip
+                  : clip == "swarm-burst" ? SwarmBurstClip
+                  : clip == "manika-prick" ? ManikaPrickClip
+                  : clip == "pin-stab" ? PinStabClip
+                  : clip == "omen-rise" ? OmenRiseClip
                   : null;
 
             // A held gesture has already paid its preparation visually. Continue
@@ -2787,6 +2794,7 @@ namespace TumbangPreso.CameraSystem
             RestoreRaiseCan();
             RestoreRunSway();
             RestoreFeatherfall();
+            RestoreHeldProp();
             RestoreSwimming();
             _phase += dt;
 
@@ -2825,6 +2833,7 @@ namespace TumbangPreso.CameraSystem
                 }
                 ApplySwimming(dt);
                 ApplyFeatherfall();
+                ApplyHeldProp();
                 ApplyRunSway(dt);
                 ApplyRaiseCan(dt);
                 ApplyTagReach();
@@ -2871,6 +2880,7 @@ namespace TumbangPreso.CameraSystem
             }
             ApplySwimming(dt);
             ApplyFeatherfall();
+            ApplyHeldProp();
             ApplyRunSway(dt);
             ApplyThrowReach();
             ApplyTagReach();
