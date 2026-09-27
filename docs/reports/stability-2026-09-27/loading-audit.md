@@ -5,6 +5,33 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Explicit Introduction Preparation
+
+2026-09-28,afterf2309da6: HubLoading.PrepareMatchVisuals now runs the existing
+UltimateIntroductionCache.PrepareRound before unchanged ArenaPrewarm. Preparation
+yields per existing WarmOne attempt and retains normal/held variants. A counter
+prevents competing idle/view preparation and unwinds through nested cancellation;
+a fully warm pass has no waits. Late introduction views wait for matching model/
+cache results and prepare at most one missing entry per frame. Gameplay and host
+cohort timing remain independent; no authored motion,VFX or map render code changed.
+
+The existing24entry cache now remembers a normal unsupported-rig null result and
+warns once per exact source/hero/held key. Previously it cloned the same unsupported
+hierarchy again on idle frames. HasResult is not a valid-clip claim; Find remains
+null and existing fallback remains. Different sources/new play sessions retry;
+destroyed real clips can rebuild. Replacement keys no longer duplicate FIFO entries.
+
+Two new native cases pass2/2,0.8790633s on full committed base plus4inputs,no drift,
+no retry. The real Cheska pipeline case checks both retained variants before the
+arena stage,reuse/no warm waits,no actor-position/resource mutation and no competing
+view preparation. The unsupported-rig case checks one attempt,no repeated stage
+clone,nested cancellation owner release and different-source retry. Minimum free
+6,604,496,896bytes; profile/preferences restored.
+[Receipt](checks/introduction-preparation-native.json),[XML](checks/introduction-preparation-native.xml).
+Raw Logs/introduction-preparation-20260928/prepared-introductions.*. Full-roster
+visual acceptance,first-use player/GPU timings and unknown late-roster assets remain
+separate. No old films,scene cycles or peer tests were repeated.
+
 ## Boot Failure Controls
 
 Afterca83fe1d, failed boot-menu initialization provides one EXIT GAME LoadingLink

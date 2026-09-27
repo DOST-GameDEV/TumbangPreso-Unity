@@ -1,11 +1,18 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
-`88b4c536d89ac4c743c553a33de550956093375e`; ultimate identity/body scope follows it.
+`f2309da6566a589a7eb689c2b3e7b5308c728773`; explicit introduction preparation follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Existing grounded introduction work now stages behind match loading before arena
+draws,with retained variants and cancellation-safe preparation ownership. Views
+wait for model/cache results; known unsupported rigs warn once instead of cloning
+each idle frame. Two new native cases pass2/2 on full committed base plus4inputs,
+no drift,no retry. No authored motion/assets/map-render changes or player-hitch claim.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#explicit-introduction-preparation).
 
 Protocol81 names the committed hero/ability and scopes requests to the body epoch.
 Host identity validation,matching-kit preparation and changed-kit execution guard

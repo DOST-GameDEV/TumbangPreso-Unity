@@ -307,8 +307,8 @@ namespace TumbangPreso.UI.Hub
             shown = Mathf.Max(shown, 75f);
             _percent.text = "75%";
 
-            // Draw the arena behind the curtain so the first visible frames do not compile.
-            _prewarm = Visual.ArenaPrewarm.Run(done =>
+            // Retain introduction setup before drawing the arena and releasing input.
+            _prewarm = PrepareMatchVisuals(done =>
             {
                 shown = Mathf.Max(shown, Mathf.Lerp(75f, 99f, done));
                 _percent.text = Mathf.RoundToInt(shown) + "%";
@@ -343,6 +343,16 @@ namespace TumbangPreso.UI.Hub
                 yield return null;
             }
             Destroy(gameObject);
+        }
+
+        private static IEnumerator PrepareMatchVisuals(System.Action<float> progress)
+        {
+            var introductions = Visual.UltimateIntroductionCache.PrepareRound(done => progress?.Invoke(done * .25f));
+            try { while (introductions.MoveNext()) yield return introductions.Current; }
+            finally { (introductions as System.IDisposable)?.Dispose(); }
+            var arena = Visual.ArenaPrewarm.Run(done => progress?.Invoke(.25f + done * .75f));
+            try { while (arena.MoveNext()) yield return arena.Current; }
+            finally { (arena as System.IDisposable)?.Dispose(); }
         }
 
         private void OnDestroy()

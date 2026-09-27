@@ -105,6 +105,13 @@ Readers reject oversized/truncated IDs and trailing payload. No phase timing,
 casting resource rule or authored presentation was redesigned. Actual peer/ranked
 qualification is separate from the bounded codec and matching-kit native cases.
 
+Introduction view construction also waits for the matching visual and cached
+preparation result. Normal match loading runs existing grounded-clip preparation
+behind its curtain; late views may prepare one missing entry per frame. This never
+extends the host cohort deadline or makes gameplay depend on a rendered view.
+Known unsupported rigs keep the existing fallback and warn once instead of cloning
+every idle frame; see [loading ownership](LOADING_AND_PERFORMANCE.md).
+
 Protocol76 scopes requested pause/speed to match,round and sequence. The host sends
 the requested rate after SyncWorld on the same reliable stream,including ordinary
 recovery outside a cinematic phase. Receivers reject stale/malformed envelopes;

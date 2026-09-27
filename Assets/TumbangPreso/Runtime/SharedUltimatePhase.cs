@@ -200,11 +200,27 @@ namespace TumbangPreso
                 actor.Intent.RequireFreshActions(); actor.AbilitySystem?.ClearPresentationInput();
             }
         }
+
+        private bool PreparePresentation()
+        {
+            if (Visual.UltimateIntroductionCache.Preparing) return false;
+            foreach (var cast in _commits)
+            {
+                var actor = GameServices.Round?.PlayerAt(cast.Seat);
+                if (actor == null || !cast.MatchesKit(actor.AbilitySystem?.Kit) || actor.GetComponent<Visual.CharacterVisual>()?.Model == null) return false;
+                bool held = actor.GetComponent<Carrier>()?.Held != null;
+                if (Visual.UltimateIntroductionCache.HasResult(actor, held)) continue;
+                Visual.UltimateIntroductionCache.WarmOne(actor);
+                return false;
+            }
+            return true;
+        }
+
         private void LateUpdate()
         {
             if (!Active)
             {
-                if(GameServices.Round!=null && UI.SceneFlow.SelectedMode==Core.GameMode.HeroStrike)
+                if(!Visual.UltimateIntroductionCache.Preparing && GameServices.Round!=null && UI.SceneFlow.SelectedMode==Core.GameMode.HeroStrike)
                     foreach(var actor in GameServices.Round.Players)if(Visual.UltimateIntroductionCache.WarmOne(actor))break;
                 return;
             }
@@ -224,7 +240,7 @@ namespace TumbangPreso
                 else { Cancel(); Net.MatchRpc.Instance?.RequestWorldSnapshot(); }
                 return;
             }
-            if (_actorsReady && !_viewAttempted)
+            if (_actorsReady && !_viewAttempted && PreparePresentation())
             {
                 _viewAttempted = true;
                 try { _view = new CameraSystem.UltimatePhaseView(transform, _commits, Duration); }

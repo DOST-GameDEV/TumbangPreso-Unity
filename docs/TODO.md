@@ -172,6 +172,10 @@ passes97/97variants; cached Editor timing is not cold-player/handset acceptance.
 Failed boot-menu initialization now offers a visible focusable/pointer exit above
 the retained curtain,alongside Cancel. New failure controls and first original
 boot activation/handoff cases pass2/2; physical-input/visual acceptance remains OPEN.
+Existing introduction preparation now runs explicitly before the match curtain's
+arena stage,with retained variants,cancellation ownership and no repeated cloning
+for a known unsupported rig. Two new native preparation/reuse/failure-cache cases
+pass. No authored motion changed; full-roster/player first-use acceptance remains OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE STATE PASS:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

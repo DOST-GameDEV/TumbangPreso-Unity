@@ -22,6 +22,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Hidden HOME background | HubSceneVideo binds MapPreviewSurface rendering visibility; opaque media suspends the covered court camera/surface without discarding prepared scenes or the fallback |
 | Ability prop source prefabs | Visual/HeroPropAssets.cs; current Paete/Rework/Phaister folders,no gameplay spawn during asset preload |
 | Supplementary baked motion | Visual/GeneratedMotionAssets.cs; yielded per-rig data preload shared by CharacterAnimator and rooted introduction lookups,no clip/graph generation |
+| Existing introduction preparation | UltimateIntroductionCache.PrepareRound runs through HubLoading.PrepareMatchVisuals before unchanged arena draws; yields per existing grounded-clip attempt,retains held variants and releases its preparation owner on cancellation |
 | Roster outline geometry | Visual/OutlineNormals.Warmup and boot roster loop; per-mesh welds survive scene notifications while the exact mesh lives,without retaining dead runtime meshes |
 | Effect sheets and authored intro data | Visual/VfxFlipbook.cs,UltimatePerformance and existing per-kit warmups |
 | Shared particles and status icons | Visual/AbilityVfx.WarmupAssets prepares existing cached geometry; UI/StatusIcons.Warmup follows StatusRules.All with async sprite loading |
@@ -52,6 +53,9 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
   enter live services or mutate the player's profile. Preserve local fallback.
 - Cache against real lifetime and invalidation. Do not make art smaller or replace
   supplied materials merely to report a faster launch.
+- Introduction cache HasResult includes a known unsupported-rig result; Find still
+  returns null for it. That result warns once per exact source/hero/held key and
+  resets with a different source or new play session. It is not proof a clip exists.
 - Measure representative player first-use/frame timings when the environment permits.
   Record source/build,hardware,path and memory tradeoffs; no hitch-free claims from
   compilation or a warm cache. Test changed stages,not the same whole boot repeatedly.
