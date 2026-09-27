@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TumbangPreso.Abilities;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,12 +11,32 @@ namespace TumbangPreso
     {
         public readonly int Seat;
         public readonly long Request, AimToken;
+        public readonly FixedString64Bytes HeroId, AbilityId;
         public readonly Vector3 Position, Forward, Aim, FamiliarPosition;
         public readonly bool HasFamiliar;
         public readonly float Held;
         public UltimateCommit(int seat, long request, Vector3 position, Vector3 forward, Vector3 aim, float held,
-            bool hasFamiliar = false, Vector3 familiarPosition = default, long aimToken = 0)
-        { Seat=seat; Request=request; Position=position; Forward=forward; Aim=aim; Held=held; HasFamiliar=hasFamiliar; FamiliarPosition=familiarPosition; AimToken=aimToken; }
+            bool hasFamiliar = false, Vector3 familiarPosition = default, long aimToken = 0,
+            string heroId = null, string abilityId = null)
+            : this(seat, request, position, forward, aim, held, hasFamiliar, familiarPosition, aimToken,
+                new FixedString64Bytes(heroId ?? ""), new FixedString64Bytes(abilityId ?? "")) { }
+
+        internal UltimateCommit(int seat, long request, Vector3 position, Vector3 forward, Vector3 aim, float held,
+            bool hasFamiliar, Vector3 familiarPosition, long aimToken, FixedString64Bytes heroId, FixedString64Bytes abilityId)
+        {
+            Seat=seat; Request=request; Position=position; Forward=forward; Aim=aim; Held=held;
+            HasFamiliar=hasFamiliar; FamiliarPosition=familiarPosition; AimToken=aimToken;
+            HeroId = heroId; AbilityId = abilityId;
+        }
+
+        public UltimateCommit WithIdentity(HeroKit kit) => new UltimateCommit(Seat, Request,
+            Position, Forward, Aim, Held, HasFamiliar, FamiliarPosition, AimToken, kit?.HeroId, kit?.Ultimate?.Id);
+
+        // Empty identity is only for existing offline/local probes. Wire commits
+        // require both IDs before reaching this predicate.
+        public bool MatchesKit(HeroKit kit) => kit?.Ultimate != null &&
+            ((HeroId.Length == 0 && AbilityId.Length == 0) ||
+             (HeroId.ToString() == kit.HeroId && AbilityId.ToString() == kit.Ultimate.Id));
     }
 
     // One accepted cohort, one shared boundary. The reservation spends resources;
@@ -161,7 +182,8 @@ namespace TumbangPreso
         {
             var match = GameServices.Match; var round = GameServices.Round;
             if (match == null || round == null || match.PresentationMatchId != MatchId || match.RoundNumber != Round || !round.RoundActive) return false;
-            foreach (var cast in _commits) if (round.PlayerAt(cast.Seat)?.AbilitySystem?.Kit?.Ultimate == null) return false;
+            foreach (var cast in _commits)
+                if (!cast.MatchesKit(round.PlayerAt(cast.Seat)?.AbilitySystem?.Kit)) return false;
             foreach (var cast in _commits)
             {
                 var actor = round.PlayerAt(cast.Seat);

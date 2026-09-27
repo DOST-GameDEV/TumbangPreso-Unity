@@ -665,6 +665,32 @@ Its exact implementation and qualification status are in
 [Featherfall](../amihan-kit-2026-09-27/featherfall.md). It does not establish that
 every kit works across real peers.
 
+## Ultimate Identity And Body Scope
+
+2026-09-28,after88b4c536: protocol81 adds hero/ability FixedString64Bytes IDs to
+UltimateCommit. Requests carry GameplayActionScope including movement epoch; the
+host checks current scope/kit before reservation and stamps accepted identity.
+Familiar anchoring retains it. Preparation waits for the matching kit; execution
+refuses a changed kit. A seat alone no longer identifies which ultimate to play.
+Legacy empty IDs stay local-probe-only; the wire rejects them. Hero-ID capacity
+also fails early at registration. No authored animation,VFX,timing or cost change.
+
+Variable bounded commits are77bytes plus ID contents(max199). Requests add16bytes
+of scope(max215); the44byte cohort header plus4commits fits840bytes. Readers reject
+truncated/oversized IDs and trailing bytes. Decoding retains bounded fixed strings
+without reconstructing untrusted bytes through a capacity-limited string constructor.
+
+One native pass3/3,0.2267563s on full committed base plus7inputs,no drift,no retry.
+Two new cases cover the production codec/max IDs/scope,bad lengths/truncation,
+registration bound,different heroes sharing an ability ID,changed ability IDs,
+matching late-kit reservation without early activation,and wrong-kit no-activation.
+The prior duration case was rerun because its actual wire input changed; it now
+also rejects trailing data while preserving host duration and terminal identity.
+Minimum free6,202,015,744bytes; profile/preferences restored.
+[Receipt](checks/ultimate-identity-native.json),[XML](checks/ultimate-identity-native.xml).
+Raw Logs/ultimate-identity-20260928/named-cohorts.*. Live host request admission,
+actual peers/ranked/reworks and full playback remain unqualified; no old films ran.
+
 ## Host-Owned Ultimate Duration
 
 2026-09-28,after43ab9fc3: protocol80 adds the host-sealed cohort duration to the

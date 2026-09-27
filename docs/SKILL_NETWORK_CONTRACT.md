@@ -85,11 +85,25 @@ Protocol80's UltimatePhase header carries the host-sealed cohort duration. The h
 still derives the longest authored introduction; receiving peers must not derive
 it from whichever kits have loaded locally. Missing actors wait inside that same
 host boundary instead of classifying a longer introduction as already expired.
-The44byte header validates duration as finite,(0,30]seconds; the73byte commit is
-unchanged. The runtime wire enters SharedUltimatePhase.ReceiveTimed. Legacy internal
+The44byte header validates duration as finite,(0,30]seconds; protocol81 extends
+the original73byte commit as described below. The wire enters SharedUltimatePhase.ReceiveTimed. Legacy internal
 Receive remains a local-probe wrapper,not the authoritative network path. No authored
 duration or presentation was retuned. A new range beyond30seconds requires a contract
 decision rather than bypassing the bound.
+
+Protocol81 adds bounded hero and ability IDs to UltimateCommit and uses the existing
+GameplayActionScope for requests,including the body movement epoch. Host acceptance
+checks both IDs and current scope before reservation,and stamps the accepted kit's
+identity. Familiar anchoring preserves it. Preparation waits for the correct kit;
+execution refuses a kit that changed after acceptance. Empty identity is supported
+only by legacy direct local probes; the wire rejects it. Cosmetic model/clip/name
+changes do not rename these IDs. Hero registration validates hero-ID capacity too.
+
+Each commit has77fixed bytes plus two UTF8 ID contents(up to61bytes each),max199;
+request scope adds16(max215),and the44byte cohort header with4commits is at most840.
+Readers reject oversized/truncated IDs and trailing payload. No phase timing,
+casting resource rule or authored presentation was redesigned. Actual peer/ranked
+qualification is separate from the bounded codec and matching-kit native cases.
 
 Protocol76 scopes requested pause/speed to match,round and sequence. The host sends
 the requested rate after SyncWorld on the same reliable stream,including ordinary

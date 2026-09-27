@@ -30,14 +30,15 @@ namespace TumbangPreso.PlayTests
 
         private sealed class ResourceProbeAbility : HeroAbility
         {
+            public int Activations;
             public override AbilityNetworkMode NetworkMode => Id == "ultimate"
                 ? AbilityNetworkMode.SharedUltimate : AbilityNetworkMode.Predicted;
             public ResourceProbeAbility(string id) : base(id, id, "", 30, charges: 3) { }
-            protected override void OnActivate(AbilityContext context) { }
+            protected override void OnActivate(AbilityContext context) { Activations++; }
         }
         private sealed class ResourceProbeKit : HeroKit
         {
-            public ResourceProbeKit() : base("resource-probe", "Resources")
+            public ResourceProbeKit(string hero = "resource-probe") : base(hero, "Resources")
             {
                 Skill1 = new ResourceProbeAbility("signature");
                 AttackingSkill = new ResourceProbeAbility("attack");
@@ -1103,6 +1104,83 @@ namespace TumbangPreso.PlayTests
         }
 
         [Test]
+        public void UltimateCommitCodecBoundsIdentityAndPreservesTheRequestBodyScope()
+        {
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic;
+            var write = typeof(MatchRpc).GetMethod("WriteUltimateCommit", flags);
+            var read = typeof(MatchRpc).GetMethod("TryReadUltimateCommit", flags);
+            string hero = new string('h', 61), ability = new string('a', 61);
+            var cast = new UltimateCommit(1, 4, Vector3.zero, Vector3.forward, Vector3.up, .5f,
+                heroId: hero, abilityId: ability);
+            var scope = new GameplayActionScope { Match = 123, Round = 1, Epoch = 2 };
+            byte[] bytes;
+            using (var writer = new FastBufferWriter(256, Allocator.Temp))
+            {
+                writer.WriteNetworkSerializable(scope); write.Invoke(null, new object[] { writer, cast });
+                Assert.AreEqual(16 + 199, writer.Length);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                reader.ReadNetworkSerializable(out GameplayActionScope restored);
+                Assert.IsTrue(restored.Matches(123, 1, 2));
+                var args = new object[] { reader, default(UltimateCommit) };
+                Assert.IsTrue((bool)read.Invoke(null, args));
+                var decoded = (UltimateCommit)args[1];
+                Assert.AreEqual(hero, decoded.HeroId.ToString()); Assert.AreEqual(ability, decoded.AbilityId.ToString());
+                Assert.AreEqual(cast.Request, decoded.Request); Assert.AreEqual(cast.Held, decoded.Held);
+            }
+            using (var writer = new FastBufferWriter(256, Allocator.Temp))
+            { write.Invoke(null, new object[] { writer, cast }); bytes = writer.ToArray(); }
+            bool Reads(byte[] payload)
+            {
+                using var reader = new FastBufferReader(payload, Allocator.Temp);
+                var args = new object[] { reader, default(UltimateCommit) };
+                return (bool)read.Invoke(null, args);
+            }
+            var oversized = (byte[])bytes.Clone(); oversized[73] = 62; oversized[74] = 0;
+            Assert.IsFalse(Reads(oversized));
+            var truncated = new byte[bytes.Length - 1]; System.Array.Copy(bytes, truncated, truncated.Length);
+            Assert.IsFalse(Reads(truncated)); Assert.IsFalse(Reads(new byte[76]));
+            Assert.Throws<System.InvalidOperationException>(() => AbilityNetworking.Validate(new ResourceProbeKit(new string('x', 62))));
+        }
+
+        [Test]
+        public void UltimatePreparationAndExecutionRequireTheCommittedHeroAndAbility()
+        {
+            var system = Owner("dante"); var body = system.GetComponent<CharacterMotor>();
+            var other = new ResourceProbeKit("other-probe");
+            typeof(HeroAbilitySystem).GetProperty("Kit").SetValue(system, other);
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true); GameServices.Round.ApplySnapshot(50, true, 0, true);
+            var root = new GameObject("Ultimate identity preparation"); root.SetActive(false);
+            var phase = root.AddComponent<SharedUltimatePhase>();
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var cast = new UltimateCommit(1, 1, Vector3.zero, Vector3.forward, Vector3.up, 0,
+                heroId: "resource-probe", abilityId: "ultimate");
+            try
+            {
+                typeof(SharedUltimatePhase).GetProperty("MatchId").SetValue(phase, GameServices.Match.PresentationMatchId);
+                typeof(SharedUltimatePhase).GetProperty("Round").SetValue(phase, 1);
+                var commits = (System.Collections.Generic.List<UltimateCommit>)typeof(SharedUltimatePhase).GetField("_commits", hidden).GetValue(phase);
+                commits.Add(cast);
+                var prepare = typeof(SharedUltimatePhase).GetMethod("PrepareActors", hidden);
+                Assert.IsFalse((bool)prepare.Invoke(phase, null), "A different hero with the same ability ID was accepted.");
+                typeof(HeroKit).GetMethod("AdoptUltimateReservation", hidden).Invoke(other, null);
+                typeof(HeroAbilitySystem).GetMethod("ExecuteSharedUltimate", hidden).Invoke(system, new object[] { cast, false });
+                Assert.AreEqual(0, ((ResourceProbeAbility)other.Ultimate).Activations);
+                Assert.IsTrue(other.Ultimate.ReservedForIntroduction);
+                var matching = new ResourceProbeKit();
+                typeof(HeroAbilitySystem).GetProperty("Kit").SetValue(system, matching);
+                commits[0] = new UltimateCommit(1, 1, Vector3.zero, Vector3.forward, Vector3.up, 0,
+                    heroId: matching.HeroId, abilityId: "changed-ultimate");
+                Assert.IsFalse((bool)prepare.Invoke(phase, null));
+                commits[0] = cast;
+                Assert.IsTrue((bool)prepare.Invoke(phase, null));
+                Assert.IsTrue(matching.Ultimate.ReservedForIntroduction);
+                Assert.AreEqual(0, ((ResourceProbeAbility)matching.Ultimate).Activations, "Preparation cast the ability early.");
+            }
+            finally { system.ResetKitForMatch(); Object.DestroyImmediate(root); }
+        }
+
+        [Test]
         public void UltimateReceiverKeepsTheHostDurationWhileTheCasterIsMissing()
         {
             NetAuthority.Provider = new PredictingOwner();
@@ -1117,15 +1195,17 @@ namespace TumbangPreso.PlayTests
             const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.NonPublic;
             var receive = typeof(MatchRpc).GetMethod("OnUltimatePhaseMsg", hidden | System.Reflection.BindingFlags.Instance);
             var write = typeof(MatchRpc).GetMethod("WriteUltimateCommit", hidden | System.Reflection.BindingFlags.Static);
-            void Deliver(long sequence, float duration, ulong sender = 0)
+            void Deliver(long sequence, float duration, ulong sender = 0, bool trailing = false)
             {
-                using var writer = new FastBufferWriter(128, Allocator.Temp);
+                using var writer = new FastBufferWriter(256, Allocator.Temp);
                 writer.WriteValueSafe(123L); writer.WriteValueSafe(1); writer.WriteValueSafe(sequence);
                 writer.WriteValueSafe(SharedUltimatePhase.Now - 3.2); writer.WriteValueSafe(duration);
                 writer.WriteValueSafe(.5f); writer.WriteValueSafe(50f); writer.WriteValueSafe(1);
-                write.Invoke(null, new object[] { writer,
-                    new UltimateCommit(3, 1, Vector3.zero, Vector3.forward, Vector3.up, 0) });
-                Assert.AreEqual(44 + 73, writer.Length);
+                var cast = new UltimateCommit(3, 1, Vector3.zero, Vector3.forward, Vector3.up, 0,
+                    heroId: "missing", abilityId: "missing_ultimate");
+                write.Invoke(null, new object[] { writer, cast });
+                if (trailing) writer.WriteValueSafe((byte)1);
+                Assert.AreEqual(44 + 77 + cast.HeroId.Length + cast.AbilityId.Length + (trailing ? 1 : 0), writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 receive.Invoke(router, new object[] { sender, reader });
             }
@@ -1134,6 +1214,7 @@ namespace TumbangPreso.PlayTests
                 instance.SetValue(null, router); phaseInstance.SetValue(null, phase);
                 typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
                 Deliver(100, 5, 9);
+                Deliver(100, 5, trailing: true);
                 foreach (float invalid in new[] { 0f, -1f, float.NaN, float.PositiveInfinity, 31f }) Deliver(100, invalid);
                 Assert.IsFalse(phase.Active);
                 Deliver(1, 5);

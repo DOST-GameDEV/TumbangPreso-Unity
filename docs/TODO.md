@@ -102,6 +102,10 @@ passes; fresh target convergence and actual peers remain OPEN.
 Shared ultimate cohorts now carry the host-sealed introduction duration(protocol80),
 so missing caster bodies cannot substitute a short fallback and expire playback.
 One new actual-receiver case passes; actual late-peer/cutscene qualification remains OPEN.
+Ultimate commits now name hero/ability IDs and requests carry the body epoch
+(protocol81). Preparation/execution reject the wrong kit; identity codecs are
+bounded. Two new native cases and the changed duration-wire case pass3/3. Actual
+host-request/peer/ranked qualification remains OPEN.
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.

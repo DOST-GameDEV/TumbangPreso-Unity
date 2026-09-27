@@ -37,6 +37,7 @@ namespace TumbangPreso.Abilities
         internal HeroKit.CastOutcome CheckSharedUltimate(UltimateCommit cast)
         {
             if (!NetAuthority.ShouldResolve() || Kit?.Ultimate == null || _motor == null) return HeroKit.CastOutcome.Missing;
+            if (!cast.MatchesKit(Kit)) return HeroKit.CastOutcome.Missing;
             var phase = SharedUltimatePhase.Ensure();
             if (phase == null || !phase.CanAccept(_motor.PlayerSlot)) return HeroKit.CastOutcome.CannotAct;
             var context = new AbilityContext(_motor, _carrier, _verbs, cast.Position, cast.Forward, cast.Aim);
@@ -52,7 +53,7 @@ namespace TumbangPreso.Abilities
             var allowed = Kit.ReserveUltimate(context);
             if (allowed != HeroKit.CastOutcome.Cast) return allowed;
             Kit.Ultimate.HeldSecondsOnCast = cast.Held;
-            phase.Accept(cast); return allowed;
+            phase.Accept(cast.WithIdentity(Kit)); return allowed;
         }
         internal void AcknowledgeSharedUltimate(long request)
         { if (_pendingUltimateRequest == request) _pendingUltimateRequest = 0; }
@@ -71,7 +72,7 @@ namespace TumbangPreso.Abilities
         }
         internal void ExecuteSharedUltimate(UltimateCommit cast, bool themePlayed)
         {
-            if (Kit?.Ultimate == null || !Kit.Ultimate.ReservedForIntroduction) return;
+            if (!cast.MatchesKit(Kit) || !Kit.Ultimate.ReservedForIntroduction) return;
             var context = new AbilityContext(_motor, _carrier, _verbs, cast.Position, cast.Forward, cast.Aim);
             Kit.Ultimate.HeldSecondsOnCast = cast.Held;
             if (cast.HasFamiliar) _motor.GetComponent<Visual.CharacterVisual>()?.Companion?.ApplyCastAnchor(cast.FamiliarPosition);

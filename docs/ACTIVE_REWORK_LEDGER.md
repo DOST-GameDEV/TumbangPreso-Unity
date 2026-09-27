@@ -1,11 +1,18 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
-`43ab9fc3a079240c2984823dbf1c37e7e3e5a276`; host-owned ultimate duration follows it.
+`88b4c536d89ac4c743c553a33de550956093375e`; ultimate identity/body scope follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Protocol81 names the committed hero/ability and scopes requests to the body epoch.
+Host identity validation,matching-kit preparation and changed-kit execution guard
+preserve authored presentation/resource rules. Two new cases plus the changed
+duration-wire case pass3/3 on full committed base plus7inputs,no drift,no retry.
+Live host-request/peer/ranked qualification stays OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#ultimate-identity-and-body-scope).
 
 Protocol80 carries the host-sealed ultimate cohort duration rather than deriving
 it from possibly missing local caster kits. New actual receiver case passes1/1 on

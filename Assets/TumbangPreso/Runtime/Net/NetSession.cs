@@ -518,7 +518,9 @@ namespace TumbangPreso.Net
         // not every caster's active guardian in the shared world.
         // 80: shared ultimate cohorts carry the host's sealed duration even
         // while a joining peer has not installed the caster's kit yet.
-        public const int ProtocolVersion = 80;
+        // 81: ultimate commits name hero/ability IDs; requests also carry the
+        // current movement epoch. Receivers wait for the matching caster kit.
+        public const int ProtocolVersion = 81;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
