@@ -188,11 +188,12 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public static bool HostTryUproot(CharacterMotor who)
         {
-            if (!NetAuthority.ShouldResolve() || who == null) return false;
+            if (!NetAuthority.ShouldResolve() || who == null || !who.CanAct() || !who.InteractionHeldForSimulation) return false;
             PaetePlant best = null; float bestDistance = float.MaxValue;
             foreach (var p in Live)
             {
                 if (p == null || p.OwnerSlot == who.PlayerSlot || !p.Pullable) continue;
+                if (!p._pulling.TryGetValue(who, out float held) || held < PaeteRules.PlantPullSeconds) continue;
                 float d = Flat(p.transform.position - who.transform.position).magnitude;
                 if (d <= PaeteRules.PlantPullReach + 0.35f && d < bestDistance) { best = p; bestDistance = d; }
             }
@@ -281,9 +282,8 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>
-        /// The pull-out is read where the input is: every body this peer simulates (the local human,
-        /// and on the host its bots) holding Interact next to someone else's pullable plant fills a
-        /// hold; at `PaeteRules.PlantPullSeconds` the host pulls it, a client asks the host once.
+        /// Local bodies predict the hold; the host also times accepted remote Interact
+        /// input against reach and CanAct. Client progress is presentation, not authority.
         /// </summary>
         private void StepPullers(float dt)
         {
@@ -291,8 +291,8 @@ namespace TumbangPreso.Abilities
             if (round == null || !Pullable) { _pulling.Clear(); return; }
             foreach (var p in round.Players)
             {
-                if (p == null || p.PlayerSlot == OwnerSlot || !p.IsLocallySimulated()) continue;
-                bool holding = p.Intent != null && p.Intent.Pressed(Verb.Interact) && p.CanAct()
+                if (p == null || p.PlayerSlot == OwnerSlot || (!p.IsLocallySimulated() && !NetAuthority.ShouldResolve())) continue;
+                bool holding = p.InteractionHeldForSimulation && p.CanAct()
                     && Flat(transform.position - p.transform.position).magnitude <= PaeteRules.PlantPullReach;
                 if (!holding) { _pulling.Remove(p); _requested.Remove(p); p.PullingPlantProgress = 0f; continue; }
                 _pulling.TryGetValue(p, out float held);

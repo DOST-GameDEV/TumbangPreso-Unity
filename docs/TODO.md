@@ -41,6 +41,9 @@ Two Core cases and five-assembly compile pass; native/peer resource checks stay 
 Frozen's existing restraint now follows received body status with per-body dedup,
 refresh/thaw/disable cleanup and local shatter audio; ice meshes preload at boot.
 Compiler checks pass; native lifecycle/peer checks and QA-15 remain OPEN.
+Root escape/plant pulling now require host-timed accepted Interact input and scoped
+completion notifications (protocol70). Four assemblies compile; native/lossy-peer
+hold checks, reconnect progress and plant-generation delivery remain OPEN.
 Read [network route](NETWORKING.md),[contract](SKILL_NETWORK_CONTRACT.md) and
 [exact evidence](reports/stability-2026-09-27/multiplayer.md),not a historical
 protocol literal or old test count.

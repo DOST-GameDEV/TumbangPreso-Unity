@@ -1,5 +1,37 @@
 # Multiplayer investigation, 2026-09-27
 
+## Host Interaction Holds
+
+Base `c90f7ef8`,protocol70. ReqBreakFree previously ended a live root without
+checking a hold duration. HostTryUproot checked plant age/reach but neither the
+puller's live CanAct nor accumulated hold. The host relied on the owner's claim
+that its local progress was complete.
+
+Interact now travels in bit3 of the existing effort byte. It is adopted only after
+the pose sender, epoch, flight episode and movement checks, using the same bounded
+input lease as movement/sprint. Epoch changes and stale input clear its authority.
+The host times remote root escape and plant pulling from this input. Root progress
+persists on release; plant progress resets when the hold, reach or CanAct fails.
+Existing durations, range, authored visuals and local input behavior are unchanged.
+
+Completion requests carry the shared match/round/body scope and have bounded
+readers. Neither can bypass the host's accumulated hold. The host also completes a
+real remote hold itself, so an early/lost client completion notification is no longer
+the sole path to escaping/pulling. This contract serves the shared ranked/casual
+match code; it changes no rating, results, leave or device-pool rules.
+
+Frozen155 inputs,7 changed sources. Runtime,Editor,Tests and PlayTests compile with
+unchanged Core reused. The new native case covers early refusal, earned progress,
+release, stale lease, epoch, automatic host completion and plant restart. It is
+**NOT RUN** under the existing editor disk boundary; no unchanged Core/broad suite
+or film rerun. [Receipt](checks/interaction-holds-compile.json).
+
+Actual delayed/lossy peers, reconnect progress and ranked qualification remain open.
+PlantPulled still identifies the plant by owner rather than effect generation;
+that distinct lifetime problem is not fixed by hold authority. QA-15 remains open:
+ordinary stun clocks were confirmed to advance on remote bodies, but that source
+fact is not a reproduction or explanation of the tester's Sean freeze.
+
 ## Received frozen presentation
 
 Base `a60d3f67`,protocol unchanged69. Existing ice restraints were spawned only in
@@ -477,14 +509,15 @@ with zero count/type mismatches. The authority scan's RafiWaterField alert is
 caller-gated; the Paete pull-sound alert has an existing PlantPulled receive route.
 Those alerts do not establish product defects.
 
-Two specific findings remain OPEN:
+Two findings from the initial audit, reconciled against the current source:
 - Dante's ultimate calls HitFeel.Land inside its host-only impact loop, so that
   local feedback does not execute on remote peers. Authoritative impact resolution
   is separate and remains host-owned; this is not evidence that damage/status fails.
-- PlayAbility advances its event watermark before null-conditionally applying to
-  the installed body. An event received before that body exists can be consumed
-  without playing. The conditional source loss is real, but actual occurrence and
-  its proper recovery require a focused reproduction before changing routing.
+- The original PlayAbility body-not-ready loss is addressed by MatchRpc.SkillDelivery:
+  accepted events enter a bounded ordered queue, wait for the matching body/kit,
+  and request state recovery on expiry/overflow. Its current compiler/native/peer
+  limits are recorded in the cast-delivery unit above; do not revive the retired
+  null-conditional implementation as a new finding.
 
 The current flight unit includes protocol-61 episode/receipt/snapshot ordering.
 Its exact implementation and qualification status are in

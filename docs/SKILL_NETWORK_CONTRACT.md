@@ -46,6 +46,20 @@ epoch and ordering checks run before presentation is accepted. Replicas tick kit
 clocks but never turn the received hold/release into input or another cast.
 Keep shared body hooks independent of private target guides during later reworks.
 
+## Held Interactions
+
+Protocol70 carries Interact in bit3 of the existing accepted pose intent. Use
+CharacterMotor.InteractionHeldForSimulation for gameplay hold clocks: local input
+for simulated bodies, accepted host input with a0.5-second lease for remote bodies.
+Movement-epoch changes clear that lease. Do not authorize an outcome from the
+client's visual progress byte or a claim that its hold finished.
+
+Root escape preserves earned progress on release; plant pulling resets on release
+or loss of reach/CanAct, using the existing durations. The host advances and completes
+both clocks. Scoped completion notifications are hints, not permission to skip time.
+New held interactions should reuse this input ownership boundary while specifying
+their own target lifetime and reset rules. Client presentation remains separate.
+
 ## Prepared World Recovery
 
 The prepared-effect adapter supplies centre,preparation and remaining life through

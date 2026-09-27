@@ -2232,23 +2232,25 @@ namespace TumbangPreso.Net
         /// <summary>
         /// ⚠️ A ROOTED CLIENT HAS HELD INTERACT FOR THE WHOLE `PaeteRules.BreakFreeHoldSeconds`
         /// (2026-09-25). The hold is read where the input is, on the owner; the host decides. It
-        /// only accepts from the seat's own peer and only while that body is rooted, so a forged
-        /// request can at worst end a root the owner could have ended by holding a key.
+        /// accepts from the seat's own peer in the current action scope. The host's
+        /// accepted Interact input clock, not this notification, proves completion.
         /// </summary>
         public void RequestBreakFree(int slot)
         {
             if (NetAuthority.IsHost) { Unit(slot)?.HostBreakFree(); return; }
             if (_nm?.CustomMessagingManager == null || !ValidSlot(slot)) return;
-            using var writer = new FastBufferWriter(8, Allocator.Temp);
+            using var writer = new FastBufferWriter(24, Allocator.Temp);
             writer.WriteValueSafe(slot);
+            writer.WriteNetworkSerializable(CaptureActionScope(slot));
             _nm.CustomMessagingManager.SendNamedMessage("ReqBreakFree", NetworkManager.ServerClientId, writer);
         }
 
         private void OnReqBreakFreeMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || !reader.TryBeginRead(4 + GameplayActionScope.WireBytes)) return;
             reader.ReadValueSafe(out int slot);
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who) || who == null) return;
+            if (!ReadCurrentActionScope(ref reader, who, out _)) return;
             who.HostBreakFree();
         }
 
@@ -2260,18 +2262,20 @@ namespace TumbangPreso.Net
         {
             if (NetAuthority.IsHost) { Abilities.PaetePlant.HostTryUproot(Unit(slot)); return; }
             if (_nm?.CustomMessagingManager == null || !ValidSlot(slot) || !Finite(from)) return;
-            using var writer = new FastBufferWriter(24, Allocator.Temp);
+            using var writer = new FastBufferWriter(40, Allocator.Temp);
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe(from);
+            writer.WriteNetworkSerializable(CaptureActionScope(slot));
             _nm.CustomMessagingManager.SendNamedMessage("ReqUproot", NetworkManager.ServerClientId, writer);
         }
 
         private void OnReqUprootMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || !reader.TryBeginRead(16 + GameplayActionScope.WireBytes)) return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out Vector3 from);
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who) || who == null) return;
+            if (!ReadCurrentActionScope(ref reader, who, out _)) return;
             if (!PlausibleIntentPose(who, from)) return;
             Abilities.PaetePlant.HostTryUproot(who);
         }
@@ -2346,9 +2350,8 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(yaw);
             writer.WriteValueSafe(velocity);
             writer.WriteValueSafe(grounded);
-            // ⚠️ PAETE'S KIT, PROTOCOL 55: the owner's struggle against the roots and pull on a
-            // seedling, so the host can relay the pose. Presentation only: the break-free and the
-            // uproot are still decided by `ReqBreakFree` and `ReqUproot`, never by these bytes.
+            // Visual struggle/pull progress is separate from leased movement,
+            // sprint and Interact intent. The host times holds from accepted input.
             writer.WriteValueSafe(owner.EffortFlags);
             writer.WriteValueSafe(owner.PullWire);
             writer.WriteValueSafe(owner.FlightEpisode);

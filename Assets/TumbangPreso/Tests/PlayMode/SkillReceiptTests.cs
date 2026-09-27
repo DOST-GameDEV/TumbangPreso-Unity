@@ -152,6 +152,51 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(30000)]
+        public IEnumerator RemoteInteractionHoldsNeedHostTimeAndExpireWithInputOrEpoch()
+        {
+            var root = new GameObject("Remote interaction hold");
+            var motor = root.AddComponent<CharacterMotor>(); motor.enabled = false;
+            motor.PlayerSlot = 2; motor.RoundActive = true;
+            NetAuthority.Provider = new ObservingHost();
+            GameServices.Ensure(); GameServices.Round.Register(motor);
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var step = typeof(CharacterMotor).GetMethod("StepStatuses", flags);
+            motor.ApplyRooted(30);
+            motor.HostBreakFree(); Assert.IsTrue(motor.IsRooted, "A completion request skipped the host hold clock.");
+            motor.ApplyNetworkResourceIntent(8);
+            for (int i = 0; i < 10; i++) step.Invoke(motor, new object[] { .1f });
+            float earned = motor.BreakFreeProgress; Assert.Greater(earned, 0);
+            motor.ApplyNetworkResourceIntent(0);
+            step.Invoke(motor, new object[] { 1f });
+            Assert.AreEqual(earned, motor.BreakFreeProgress, .001f, "Release must preserve root progress without adding time.");
+            motor.ApplyNetworkResourceIntent(8);
+            typeof(CharacterMotor).GetField("_netResourceIntentUntil", flags).SetValue(motor, Time.unscaledTime - 1);
+            step.Invoke(motor, new object[] { 1f });
+            Assert.AreEqual(earned, motor.BreakFreeProgress, .001f, "An expired input lease completed a hold.");
+            motor.ApplyNetworkResourceIntent(8);
+            motor.AdoptMovementEpoch(motor.MovementEpoch + 1);
+            Assert.IsFalse(motor.InteractionHeldForSimulation);
+            motor.ApplyNetworkResourceIntent(8);
+            for (int i = 0; i < 100 && motor.IsRooted; i++) step.Invoke(motor, new object[] { .1f });
+            Assert.IsFalse(motor.IsRooted, "The host did not finish a real remote hold without a second completion request.");
+
+            var plant = PaetePlant.Restore(motor.transform.position, 0, PaeteRules.PlantRootedSeconds + 1, 3);
+            plant.enabled = false;
+            var pull = typeof(PaetePlant).GetMethod("StepPullers", flags);
+            Assert.IsFalse(PaetePlant.HostTryUproot(motor), "A nearby client pulled a plant without holding.");
+            motor.ApplyNetworkResourceIntent(8);
+            for (int i = 0; i < 14; i++) pull.Invoke(plant, new object[] { .1f });
+            Assert.IsTrue(PaetePlant.HostTryUproot(motor));
+            motor.ApplyNetworkResourceIntent(0);
+            Assert.IsFalse(PaetePlant.HostTryUproot(motor), "A released hold remained actionable until the next Update.");
+            pull.Invoke(plant, new object[] { .1f });
+            motor.ApplyNetworkResourceIntent(8);
+            Assert.IsFalse(PaetePlant.HostTryUproot(motor), "A plant pull must restart after release.");
+            Object.Destroy(root); Object.Destroy(plant.gameObject);
+            yield return null;
+        }
+
+        [UnityTest, Timeout(30000)]
         public IEnumerator RemoteAimPresentsOnlyBodyTellsAndRejectsClosedOrOlderHolds()
         {
             var system = Owner("phaister");

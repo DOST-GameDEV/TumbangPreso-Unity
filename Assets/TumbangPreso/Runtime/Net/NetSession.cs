@@ -496,7 +496,9 @@ namespace TumbangPreso.Net
         // advances remote resource clocks without simulating the remote body.
         // 69: combat predictions/refusals carry request identity. Refusals return
         // current authoritative resource state instead of adding a second refund.
-        public const int ProtocolVersion = 69;
+        // 70: accepted Interact intent drives host hold clocks; escape/uproot
+        // notifications carry the shared match/round/body scope.
+        public const int ProtocolVersion = 70;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

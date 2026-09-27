@@ -1,20 +1,20 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`a6111f72b0c24909685a9f752b3b7e5d46d7f9bf`; generic match-loading handoff follows it.
+`c90f7ef864adf4e33b315154e5d62c46cee3fa79`; host interaction-hold unit follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-Generic match loading now requires destination-owned setup success, not an eight-
-second timeout or an old global round. Same-scene network reloads wait for a fresh
-Scene; failures retain an error/return surface instead of claiming readiness.
-Replacement/non-match transitions cancel the old curtain and dispose its existing
-preparation iterator. Gameplay input clears behind loading and waits for held menu
-actions to release on handoff. No map/warmup implementation or protocol changed.
-Four assemblies compile; new native lifecycle/input/UI qualification remains OPEN.
-[Evidence](reports/stability-2026-09-27/loading-audit.md#destination-setup-readiness).
+Root escape and plant pull now require host-timed accepted Interact input rather
+than trusting a client's completed-progress notification. Input leases/epochs bound
+remote holds; completion requests carry match/round/body scope. Root progress keeps
+its existing release behavior; plant progress resets on release/reach/CanAct loss.
+The host completes valid holds without needing a second request. Protocol70, no
+art/timing/rating changes. Four assemblies compile; native and real-peer checks
+remain OPEN. Plant effect-generation delivery and QA-15 are separate unresolved work.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#host-interaction-holds).
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -25,6 +25,7 @@ and current owner reservations after resuming.
 
 | Revision | Change | Evidence boundary |
 |---|---|---|
+| c90f7ef8 | Destination-owned setup readiness, failure/return surface, cancellation and loading input isolation | Four assemblies compile; native loading lifecycle/input/UI checks pending |
 | a6111f72 | Explicit offline range, independent local resources, prepared controls and reusable target bots | Five assemblies compile; seven Core gate cases pass; native range/UI/physical input checks pending |
 | 6f128705 | Frozen restraint follows received status; dedup, refresh/thaw/disable cleanup; four meshes preload | Four assemblies compile; native lifecycle/peer checks and QA-15 pending |
 | a60d3f67 | First-HOME paused decoder/first-frame preparation during boot | Four assemblies compile; native handoff/reduced-motion and timing checks pending |
@@ -39,7 +40,7 @@ and current owner reservations after resuming.
 | 9a44be97 | Ranked/casual compatibility/capacity filtering and failed-allocation backoff/retry | Three managed checks and compile; live queue/party/results pending |
 | b7d26bcf | Prepared recovery integrated with incoming Phaister rework; screen-effect lifecycle cleanup | Frozen merged source compiles; native/peers pending |
 
-Current protocol is defined by NetSession.cs, now69. Matching clients are required.
+Current protocol is defined by NetSession.cs, now70. Matching clients are required.
 The prior full ledger, including every older feature, contributor record, source
 revision and receipt, remains in [the dated snapshot](archive/snapshots-2026-09-27/docs/ACTIVE_REWORK_LEDGER.md).
 

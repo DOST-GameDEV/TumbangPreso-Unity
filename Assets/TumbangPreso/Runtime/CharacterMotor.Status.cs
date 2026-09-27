@@ -183,7 +183,7 @@ namespace TumbangPreso
             _netPullProgress = float.IsNaN(pullProgress) ? 0f : Mathf.Clamp01(pullProgress);
         }
 
-        /// <summary>Bit0 struggle,bit1 movement input,bit2 sprint input; pull is separate in255ths.</summary>
+        /// <summary>Bits0..3: struggle,movement,sprint,Interact; pull presentation is separate in255ths.</summary>
         public byte EffortFlags => (byte)((IsStruggling ? 1 : 0) | ResourceIntentFlags);
         public byte PullWire => (byte)Mathf.RoundToInt(PullingPlantProgress * 255f);
 
@@ -215,19 +215,18 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// The owner's half of breaking free: while rooted and holding Interact, the hold fills
-        /// (progress is kept if they let go, plan § 7). On the host it ends the roots at once; a
-        /// client asks the host once, and the host checks the roots have been on long enough.
+        /// Local feedback and the host's remote hold use the same clock. Root progress
+        /// survives release; only the host completes escape from its accepted input.
         /// </summary>
         private void StepBreakFree(float dt)
         {
             _struggling = false;
-            if (!IsRooted || !IsLocallySimulated()) return;
-            if (Intent == null || !Intent.Pressed(Verb.Interact)) return;
+            if (!IsRooted || (!IsLocallySimulated() && !NetAuthority.ShouldResolve())) return;
+            if (!InteractionHeldForSimulation) return;
             _struggling = true;
             _breakFreeHeld += dt;
             if (_breakFreeHeld < PaeteRules.BreakFreeHoldSeconds) return;
-            if (NetAuthority.ShouldResolve()) { EndRooted(); return; }
+            if (NetAuthority.ShouldResolve()) { HostBreakFree(); return; }
             if (_breakFreeRequested) return;
             _breakFreeRequested = true;
             Net.MatchRpc.Instance?.RequestBreakFree(_playerSlot);
@@ -236,7 +235,7 @@ namespace TumbangPreso
         /// <summary>The host's answer to a client's break-free request.</summary>
         public void HostBreakFree()
         {
-            if (!NetAuthority.ShouldResolve() || !IsRooted) return;
+            if (!NetAuthority.ShouldResolve() || !IsRooted || _breakFreeHeld < PaeteRules.BreakFreeHoldSeconds) return;
             EndRooted();
         }
 
