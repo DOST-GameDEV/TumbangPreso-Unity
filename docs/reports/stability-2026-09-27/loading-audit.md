@@ -5,6 +5,26 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## First-Person Mesh Preload
+
+ViewmodelArms performed seven direct mesh reads on construction or character
+application: stock arms/slipper, Inday source details and per-character roster arms.
+The standalone resources were not in the explicit boot character warmup. The new
+ViewmodelMeshAssets cache asynchronously reads these paths after roster preparation
+and is also the consumer's source, with successful-only retention and the existing
+missing-asset fallback. Roster IDs generate the left/right paths; no second hero list
+needs updating. The cache clears on a new play session. No geometry, palette,
+materials, poses, actors or animation graphs are created or redesigned by preload.
+
+One new guarded native case passes1/1 in1.468545s on full `8ed5ef3d` plus five frozen
+source/metadata inputs, no drift or retry. The stage issued50 async requests and
+retained50 exact source meshes, including stock, Inday, Paete and Rafi meshes checked
+against the real resources. Repeated warmup retained identity, missing fallback
+remained null, progress completed monotonically, and actor/viewmodel counts did not
+change. The new script GUID is valid32hex. Protected contributor arm assets were
+not changed or included in the candidate. No player first-use or GPU-upload/frame
+timing claim. [Receipt](checks/viewmodel-preload-native.json),[XML](checks/viewmodel-preload-native.xml).
+
 ## Asynchronous Arena Entry
 
 SceneFlow previously passed the network flag into HubLoading.Begin, making online

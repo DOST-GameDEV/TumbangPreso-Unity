@@ -23,6 +23,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Hidden HOME background | HubSceneVideo binds MapPreviewSurface rendering visibility; opaque media suspends the covered court camera/surface without discarding prepared scenes or the fallback |
 | Ability prop source prefabs | Visual/HeroPropAssets.cs; current Paete/Rework/Phaister folders,no gameplay spawn during asset preload |
 | Supplementary baked motion | Visual/GeneratedMotionAssets.cs; yielded per-rig data preload shared by CharacterAnimator and rooted introduction lookups,no clip/graph generation |
+| First-person source meshes | Camera/ViewmodelMeshAssets.cs; async boot reads for stock arm/slipper, Inday details and roster-ID-derived left/right arms, retained by the same cache ViewmodelArms uses. Missing fallback and authored geometry/materials/poses are unchanged |
 | Existing introduction preparation | UltimateIntroductionCache.PrepareRound runs through HubLoading.PrepareMatchVisuals before unchanged arena draws; yields per existing grounded-clip attempt,retains held variants and releases its preparation owner on cancellation |
 | Roster outline geometry | Visual/OutlineNormals.Warmup and boot roster loop; per-mesh welds survive scene notifications while the exact mesh lives,without retaining dead runtime meshes |
 | Effect sheets and authored intro data | Visual/VfxFlipbook.cs,UltimatePerformance and existing per-kit warmups |

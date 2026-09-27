@@ -1,0 +1,40 @@
+{
+  "base": "8ed5ef3dbf1e119ed91eba304eab77933630d774",
+  "protocol": 86,
+  "scope": "Async retained first-person mesh sources",
+  "result": "Passed",
+  "total": 1,
+  "duration": 1.468545,
+  "retainedMeshes": 50,
+  "asyncRequests": 50,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/ViewmodelMeshAssets.cs",
+      "sha256": "F50EB0A5CD40FE487EE65118851C46E2B60B23F490531C96C34ACCADA1EF76B1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/ViewmodelMeshAssets.cs.meta",
+      "sha256": "6BA93C4338DAFF840BAAF57EA5551AA9993C802222F976E5615CB84083A3E53D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs",
+      "sha256": "C88F091D3088B58CFD882BE4B9AA1AB11F35A7125FD351ADC010C6A00212D800"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "656BEBB59173AA8511532F302D52F8FA789E7AD8AEEF2E09EC615F7A8046BB53"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/MatchLoadingReadinessTests.cs",
+      "sha256": "985A67F3F6DF847957AC547AF276B56A53A28651787514778374C089AA2C90AE"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 5886091264,
+  "retryCount": 0,
+  "unverified": [
+    "Player first-use frame timings",
+    "GPU upload cost",
+    "Visual or physical-device qualification"
+  ]
+}

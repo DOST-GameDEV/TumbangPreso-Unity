@@ -1281,7 +1281,7 @@ namespace TumbangPreso.CameraSystem
         private void Build()
         {
             _swimApplied=false;_swimBlend=0;
-            var armMesh = Resources.Load<Mesh>("Models/viewmodel_arm");
+            var armMesh = ViewmodelMeshAssets.Load("Models/viewmodel_arm");
 
             _rightPivot = BuildArm("RightPivot", RightBasisX, RightBasisY, RightBasisZ,
                 RightOrigin, armMesh, out _rightArm, out _rightArmRenderer);
@@ -1298,7 +1298,7 @@ namespace TumbangPreso.CameraSystem
             _heldSlipper.SetParent(_rightArm, false);
             _heldSlipper.localPosition = HeldSlipperLocal;
 
-            var slipperMesh = Resources.Load<Mesh>("Models/tsinelas_classic");
+            var slipperMesh = ViewmodelMeshAssets.Load("Models/tsinelas_classic");
             if (slipperMesh != null)
             {
                 var mf = slipperGo.AddComponent<MeshFilter>();
@@ -1557,7 +1557,7 @@ namespace TumbangPreso.CameraSystem
             // sleeves and skin. Extracting every body gauntlet/prop into this
             // close view created the rejected fragmented hands. All action
             // pivots, reach and timing remain on the established hand rig.
-            var fallback = Resources.Load<Mesh>("Models/viewmodel_arm");
+            var fallback = ViewmodelMeshAssets.Load("Models/viewmodel_arm");
             _rightArmRenderer.GetComponent<MeshFilter>().sharedMesh = fallback;
             _leftArmRenderer.GetComponent<MeshFilter>().sharedMesh = fallback;
 
@@ -1620,8 +1620,8 @@ namespace TumbangPreso.CameraSystem
 
         private bool UseIndaySourceArms()
         {
-            var right=Resources.Load<Mesh>("Models/FppDetails/inday_right_arm");
-            var left=Resources.Load<Mesh>("Models/FppDetails/inday_left_arm");
+            var right=ViewmodelMeshAssets.Load("Models/FppDetails/inday_right_arm");
+            var left=ViewmodelMeshAssets.Load("Models/FppDetails/inday_left_arm");
             var entry=RosterBook.Load().FindPersonArt("inday");
             if(right==null||left==null||entry?.Model==null)return false;
             Material source=null;
@@ -1641,8 +1641,8 @@ namespace TumbangPreso.CameraSystem
                 foreach (var candidate in RosterBook.Load().People)
                     if (candidate.Model == actual.SourceModel) { characterId=candidate.Id; break; }
             }
-            var right = Resources.Load<Mesh>("Models/RosterArms/" + characterId + "_right");
-            var left = Resources.Load<Mesh>("Models/RosterArms/" + characterId + "_left");
+            var right = ViewmodelMeshAssets.Load("Models/RosterArms/" + characterId + "_right");
+            var left = ViewmodelMeshAssets.Load("Models/RosterArms/" + characterId + "_left");
             var entry = RosterBook.Load()?.FindPersonArt(characterId);
             if (right == null || left == null || entry == null || entry.Model == null) return false;
             var source = entry.Model.GetComponentInChildren<SkinnedMeshRenderer>(true);

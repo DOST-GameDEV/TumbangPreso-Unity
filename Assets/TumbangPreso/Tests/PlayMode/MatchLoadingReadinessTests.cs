@@ -28,6 +28,42 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator ViewmodelMeshWarmupRetainsTheExactSourcesWithoutBuildingActors()
+        {
+            int actors = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).Length;
+            int viewmodels = Object.FindObjectsByType<CameraSystem.ViewmodelArms>(FindObjectsSortMode.None).Length;
+            float progress = 0;
+            var warm = CameraSystem.ViewmodelMeshAssets.Warmup(RosterBook.Load(), done =>
+            { Assert.GreaterOrEqual(done, progress); progress = done; });
+            int requests = 0;
+            while (warm.MoveNext())
+            {
+                Assert.IsInstanceOf<ResourceRequest>(warm.Current);
+                requests++; yield return warm.Current;
+            }
+            Assert.Greater(requests, 0); Assert.AreEqual(1, progress);
+            var cache = (System.Collections.Generic.Dictionary<string, Mesh>)typeof(CameraSystem.ViewmodelMeshAssets)
+                .GetField("Cache", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+            foreach (string path in new[] { "Models/viewmodel_arm", "Models/tsinelas_classic",
+                "Models/FppDetails/inday_left_arm", "Models/FppDetails/inday_right_arm",
+                "Models/RosterArms/paete_left", "Models/RosterArms/paete_right",
+                "Models/RosterArms/rafi_left", "Models/RosterArms/rafi_right" })
+            {
+                Assert.IsTrue(cache.TryGetValue(path, out var mesh) && mesh != null, path);
+                Assert.AreSame(mesh, CameraSystem.ViewmodelMeshAssets.Load(path), path);
+                Assert.AreSame(mesh, Resources.Load<Mesh>(path), path);
+            }
+            var retained = cache.ToArray();
+            yield return CameraSystem.ViewmodelMeshAssets.Warmup(RosterBook.Load());
+            foreach (var pair in retained) Assert.AreSame(pair.Value, cache[pair.Key]);
+            Assert.IsNull(CameraSystem.ViewmodelMeshAssets.Load("Models/RosterArms/not-a-roster-member_left"));
+            Assert.IsNull(CameraSystem.ViewmodelMeshAssets.Load(null));
+            Assert.AreEqual(actors, Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).Length);
+            Assert.AreEqual(viewmodels, Object.FindObjectsByType<CameraSystem.ViewmodelArms>(FindObjectsSortMode.None).Length);
+            Debug.Log($"[ViewmodelMeshWarmup] retained={cache.Count} asyncRequests={requests}; no actors or viewmodels created.");
+        }
+
+        [UnityTest]
         public IEnumerator LoadingDeckIsRetainedAndAnUnstartedArenaLoadCanBeCancelled()
         {
             yield return LoadingArtwork.Warmup();

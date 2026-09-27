@@ -1,11 +1,19 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
-`06aaecdd4852d93e963bb33fcfa450a330e40265`; simulation-clock recovery follows it.
+`8ed5ef3dbf1e119ed91eba304eab77933630d774`; first-person mesh preload follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+First-person source meshes now load asynchronously during boot and share a retained
+cache with all seven ViewmodelArms lookup sites. Paths follow roster IDs; authored
+meshes/materials/poses and missing fallback stay unchanged. One new native case
+passes 1/1: 50 retained meshes/50 async requests, exact source identity, repeated
+retention and no actor/viewmodel creation. Full base plus five frozen inputs, no
+drift or retry. Player hitch/frame timings remain OPEN.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#first-person-mesh-preload).
 
 Protocol86 ages generic timed and familiar recovery by remaining-round-clock
 progress, not server wall time. Pauses/introduction holds and slow motion therefore

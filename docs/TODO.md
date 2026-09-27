@@ -145,6 +145,9 @@ Arena entry now uses owned async loading on every peer after a curtain frame,
 deduplicates in-flight requests and preloads the existing illustration deck at boot.
 Two new native cache/cancellation and offline/controlled-network-role scene cases
 pass. Actual peers and cold-player hitch/frame timing remain OPEN.
+First-person source mesh reads now stage asynchronously at boot through the same
+cache used by ViewmodelArms. One new native case passes with50 retained sources,
+exact identity/reuse and no actors created; player frame timing remains OPEN.
 Supplementary baked-motion data now preloads asynchronously per roster rig and is
 retained for body/introduction binding. No authored clips/models changed. Four
 assemblies compile; native retention and measured first-use/memory checks remain OPEN.

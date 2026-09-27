@@ -479,6 +479,8 @@ namespace TumbangPreso.UI
                     }
                 }
             }
+            yield return CameraSystem.ViewmodelMeshAssets.Warmup(book, done =>
+                SetLoadingStage("preparing first-person meshes", Mathf.Lerp(.22f, .24f, done)));
             SetLoadingStage("loading characters", 0.24f);
             yield return null;
 
