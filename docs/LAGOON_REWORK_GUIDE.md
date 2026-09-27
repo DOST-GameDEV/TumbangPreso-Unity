@@ -68,6 +68,21 @@ with the owner's earlier rejection of cold blue-grey rock shade: show it, do not
 - Owner: *"theres this green untextured barrel too"*: `pg_plastic` (the water drums) was 3.5 %
   patches; now sun-chalked +14 %, warm grime -16 % and a few soft 14 cm scuffs with a shallow
   dent (`pg_drum_beforeafter_v1.png`; a 7 cm scuff pass read as a rash of specks and was cut).
+- Owner, on v53 (four notes, all in cove v54):
+  *"the baskets you put got clipped into the ground"*: props sat at the LOWEST ground under them
+  with 0.35 m of fall allowed. Now low pieces (baskets, mats, nets, rope, driftwood, traps, jars)
+  are TILTED onto a plane fitted to the real ground MESH under nine points (refused over 16
+  degrees or where the ground bulges 4 cm off it); upright pieces take 5 cm of fall, legged ones
+  (racks, tables, benches, posts) 15 cm. *"this shack near the play area"*: a lean-to stood over
+  the foot of the court's west stair between the nine clearance samples; clearance is now a grid
+  every 0.4 m, and nothing stands within 1.4 m of a flight's line or 2 m past its ends (pots at
+  stair feet excepted). *"can we have some fishing stuff sparsely scattered in clusters around
+  the rock platform outside the play area?"*: `court_ring`, six small clusters of two or three
+  fishing pieces on the court's flat ground outside the play walls. *"can we have variations in
+  the colors of the boats?"*: `boat_colours` in the cove script gives each PLACED boat its own
+  hull paint (white 5 in 9; sea green, sun yellow, brick red, deep green; the first, paler set read white and salmon in the sun) and stripe (red, yellow,
+  teal green, maroon, leaf green, white, dark), never a stripe of the hull's own hue family, as
+  object-level material slots (Unity: one material per boat renderer).
 - **Next:** the props are true to scale and so small beside 3 to 6 m boulders from the reference
   angle; the owner decides whether the reference's density is wanted (more pieces, or bigger
   hero pieces such as boats on racks and net-drying frames). Then the owner's picks

@@ -1249,6 +1249,91 @@ def chosen_textures():
             T.uv_material(m, tex)
 
 
+# ⚠️ OWNER, 2026-09-27: "can we have variations in the colors of the boats?" The kit gives each of
+# its few seeds one trim colour (a mesh attribute), so every linked duplicate of a seed was the
+# same boat. Each PLACED boat now draws its own hull paint and stripe colour. Weighted so most
+# hulls stay the classic white with a coloured stripe and a painted hull is the exception, and a
+# painted hull never wears a stripe of its own hue family. ⚠️ Role hues (Art_Direction.md § 1):
+# nothing near offence orange #f87020 or defence blue #0080e8; the yellow sits at about 48 degrees,
+# the teal-green at about 160. Hull values MULTIPLY the cream hull texture; trim values are the
+# linear colour that replaces the per-seed "trim_tint".
+# Round 2 (cove_boats_moored_v54): the first multipliers were too pale under the sun, brick red
+# read as salmon and mint and sea green as white. Deeper now, and mint is replaced by a deep green.
+BOAT_HULLS = {"white": ((1.0, 1.0, 1.0), 5, "none"), "sea_green": ((0.30, 0.64, 0.42), 1, "green"),
+              "sun_yellow": ((1.0, 0.80, 0.20), 1, "yellow"), "brick_red": ((0.62, 0.15, 0.11), 1, "red"),
+              "deep_green": ((0.16, 0.40, 0.22), 1, "green")}
+BOAT_TRIMS = {"red": ((0.62, 0.035, 0.03), "red"), "yellow": ((0.92, 0.62, 0.04), "yellow"),
+              "teal_green": ((0.02, 0.36, 0.20), "green"), "maroon": ((0.26, 0.012, 0.025), "red"),
+              "leaf_green": ((0.09, 0.34, 0.04), "green"), "white": ((0.86, 0.85, 0.82), "none"),
+              "dark": ((0.05, 0.035, 0.025), "none")}
+
+
+def _boat_material(base, name, hull_mult=None, trim_rgb=None):
+    """A copy of the hull or trim material recoloured: the hull's texture multiplied by hull_mult,
+    or the trim's per-seed attribute replaced by the constant trim_rgb."""
+    m = bpy.data.materials.get(name)
+    if m is not None:
+        return m
+    m = base.copy()
+    m.name = name
+    nt = m.node_tree
+    bsdf = next(n for n in nt.nodes if n.type == "BSDF_PRINCIPLED")
+    if hull_mult is not None:
+        link = bsdf.inputs["Base Color"].links[0]
+        mix = nt.nodes.new("ShaderNodeMix")
+        mix.data_type, mix.blend_type = "RGBA", "MULTIPLY"
+        mix.inputs["Factor"].default_value = 1.0
+        nt.links.new(link.from_socket, mix.inputs["A"])
+        mix.inputs["B"].default_value = (*hull_mult, 1)
+        nt.links.new(mix.outputs["Result"], bsdf.inputs["Base Color"])
+        m.diffuse_color = (*(c * h for c, h in zip(m.diffuse_color[:3], hull_mult)), 1)
+    if trim_rgb is not None:
+        rgb = nt.nodes.new("ShaderNodeRGB")
+        rgb.outputs[0].default_value = (*trim_rgb, 1)
+        for n in list(nt.nodes):
+            if n.type == "ATTRIBUTE" and n.attribute_name == "trim_tint":
+                for l in list(n.outputs["Color"].links):
+                    nt.links.new(rgb.outputs[0], l.to_socket)
+        m.diffuse_color = (*trim_rgb, 1)
+    return m
+
+
+def boat_colours(rng):
+    """Give every placed boat its own hull paint and stripe (see BOAT_HULLS). Object-level material
+    slots, as surface_variety does for the houses: the shared kit meshes stay untouched."""
+    hull_base, trim_base = bpy.data.materials.get("paint_hull"), bpy.data.materials.get("paint_trim")
+    if hull_base is None or trim_base is None:
+        return
+    names, weights = list(BOAT_HULLS), [BOAT_HULLS[k][1] for k in BOAT_HULLS]
+    tally = {}
+    for root in bpy.data.objects:
+        if root.parent is not None or root.get("boat_kind") is None:
+            continue
+        # The kit sources live in child collections of the hidden holder, so test the holder too.
+        holder = bpy.data.collections.get("Boat kit (source, not placed)")
+        if holder is not None and any(c.name in holder.children for c in root.users_collection):
+            continue
+        hull = rng.choices(names, weights)[0]
+        family = BOAT_HULLS[hull][2]
+        trim = rng.choice([t for t, (_c, f) in BOAT_TRIMS.items()
+                           if f != family and (hull == "white" or t in ("white", "dark", "maroon", "teal_green",
+                                                                         "leaf_green", "red", "yellow"))])
+        hm = None if hull == "white" else _boat_material(hull_base, f"paint_hull_{hull}", hull_mult=BOAT_HULLS[hull][0])
+        tm = _boat_material(trim_base, f"paint_trim_{trim}", trim_rgb=BOAT_TRIMS[trim][0])
+        for o in root.children_recursive:
+            if o.type != "MESH":
+                continue
+            for ms in o.material_slots:
+                if ms.material is None:
+                    continue
+                if ms.material.name == "paint_hull" and hm is not None:
+                    ms.link, ms.material = "OBJECT", hm
+                elif ms.material.name == "paint_trim":
+                    ms.link, ms.material = "OBJECT", tm
+        tally[f"{hull}/{trim}"] = tally.get(f"{hull}/{trim}", 0) + 1
+    print("[lagoon-cove] boat colours:", dict(sorted(tally.items())))
+
+
 def surface_variety(slot, rng):
     """Each placed house or boat gets ONE variant of `slot` for the whole surface, chosen per
     house so neighbours differ. Houses are linked duplicates sharing one mesh, so the choice is
@@ -1422,6 +1507,7 @@ def main():
     apply_owner_edits()
     import lagoon_paint_materials as PM          # hull, trim, lime plaster, capiz, cloth
     PM.apply_paint_materials()
+    boat_colours(random.Random(91))              # its own stream: the layout's is untouched
     # The landmark's painted emblem and the backdrop of distant islands and spires (gap review
     # items 5 and 11; tools/author_lagoon_landmark.py). The emblem is the owner's pick
     # (EMBLEM); the backdrop comes after the bake and the burying pass, which it must not join.

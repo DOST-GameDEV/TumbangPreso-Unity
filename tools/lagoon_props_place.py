@@ -13,7 +13,7 @@ HOW A PROP IS PLACED
     (objects copied, meshes shared), the way the house and boat kits are placed.
   * A ground prop is set on the LOWEST ground under its footprint: the kits sink their own feet
     1 to 5 cm, so the lowest corner keeps every corner in contact and none floating. A footprint
-    whose corners differ by more than MAX_TILT metres is refused (a rack on a slope reads broken).
+    that falls more than UPRIGHT_FALL is refused; low HUG kinds are tilted to the slope (see HUG).
   * It is refused if any footprint point is in the water, inside the court's play walls, near a
     walk, stair or pier (`S.near_structure`), within SPACING of another prop, or if a ray cast
     down from 2.4 m over any footprint point hits anything that is not the ground (a boulder, a
@@ -69,7 +69,33 @@ GROUND_SEEDS = {
     "woven_mat": (1, 2, 3), "hanging_net": (1, 3), "laundry_line": (1, 2, 3),
 }
 SARI_SARI_SIGN = 11          # the village kit's wall-bracket sari-sari sign (its notes: on a side wall)
-MAX_TILT = 0.35              # metres of ground difference allowed across a footprint
+# ⚠️ OWNER, 2026-09-27: "the baskets you put got clipped into the ground". v53 set every prop at the
+# LOWEST ground under its footprint and allowed 0.35 m of fall across it, so on a slope the uphill
+# side of a basket sank up to 35 cm, and a 10 cm bilao vanished. Now:
+#   * HUG kinds (low things that lie on the ground) are TILTED to the ground: a plane is fitted
+#     through the real ground under nine points of the outline and the prop is set on it, refused
+#     over HUG_MAX_SLOPE degrees or where the ground bulges more than HUG_BUMP off the plane;
+#   * every other kind stands upright and is refused where the ground falls more than UPRIGHT_FALL
+#     across its outline, so an uphill corner sinks at most that (the kits sink their feet 1 to
+#     5 cm anyway).
+# Heights come from the GROUND MESH by ray cast, not from the height function it was built from:
+# the mesh is a triangulation of that function and differs from it by a few cm between vertices.
+HUG = {"basket", "woven_mat", "net_spread", "net_pile", "rope_coil", "driftwood", "anchor_stone", "bubo",
+       "oar_pair", "firewood", "banga", "pot_cluster"}
+HUG_MAX_SLOPE = 16.0         # degrees
+HUG_BUMP = 0.04              # metres off the fitted plane
+UPRIGHT_FALL = 0.05          # metres of ground fall allowed under an upright prop
+# Pieces standing on LEGS sink an uphill leg rather than a whole side, so they take more fall (v8 of
+# the placement test: with 5 cm no fish rack found a spot on the beach at all).
+LEGGED = {"fish_rack", "table_round", "bench", "lean_to", "laundry_line", "hanging_net", "net_rack",
+          "lantern_post"}
+LEGGED_FALL = 0.15
+# ⚠️ OWNER, 2026-09-27, a lean-to standing over the foot of the court's west stair: "this shack
+# near the play area". The nine clearance samples were ~1.5 m apart and a 1.5 m flight passed
+# between them. Clearance is now tested on a grid every CLEAR_STEP metres over the outline, and
+# nothing stands within STAIR_KEEP of a flight's line (extended past both ends for its landing).
+CLEAR_STEP = 0.4
+STAIR_KEEP = 1.4
 # 0.15 (was 0.35): cove v52's piles read as scattered pieces with sand between them, where the
 # reference packs its gear against itself.
 SPACING = 0.15               # metres between two props' footprint circles
@@ -119,8 +145,9 @@ def box_of(kind, seed):
     return (lo.x, lo.y, hi.x, hi.y), hi.z - lo.z
 
 
-def duplicate(c, kind, seed, x, y, z, rz):
-    """A linked duplicate of (kind, seed) with its root at (x, y, z), turned rz about Z."""
+def duplicate(c, kind, seed, x, y, z, rz, normal=None):
+    """A linked duplicate of (kind, seed) with its root at (x, y, z), turned rz about Z, and tilted
+    so its up axis follows `normal` when one is given (a HUG prop on sloping ground)."""
     col, root = source(kind, seed)
     copies = {}
     for o in col.all_objects:
@@ -132,7 +159,9 @@ def duplicate(c, kind, seed, x, y, z, rz):
             d.parent = copies[o.parent]
             d.matrix_parent_inverse = o.matrix_parent_inverse.copy()
     new_root = copies[root]
-    new_root.matrix_world = Matrix.Translation((x, y, z)) @ Matrix.Rotation(rz, 4, "Z") @ root.matrix_world
+    tilt = Matrix.Identity(4) if normal is None else \
+        Vector((0, 0, 1)).rotation_difference(normal).to_matrix().to_4x4()
+    new_root.matrix_world = Matrix.Translation((x, y, z)) @ tilt @ Matrix.Rotation(rz, 4, "Z") @ root.matrix_world
     return new_root
 
 
@@ -142,6 +171,10 @@ class Placer:
         self.scene = bpy.context.scene
         bpy.context.view_layer.update()
         self.depsgraph = bpy.context.evaluated_depsgraph_get()
+        self.ground = bpy.data.objects["ground"]
+        self.ground_inv = self.ground.matrix_world.inverted()
+        # The flights only (a walk segment in the same list rises less than 1.5 m).
+        self.stairs = [(a, b) for a, b in getattr(cove, "_STAIR_SEGMENTS", []) if abs(a.z - b.z) >= 1.5]
         self.count = {}
 
     # ------------------------------------------------------------ tests
@@ -159,11 +192,46 @@ class Placer:
     def _ray_down(self, px, py, top, dist):
         return self.scene.ray_cast(self.depsgraph, Vector((px, py, top)), Vector((0, 0, -1)), distance=dist)
 
-    def ground_z(self, kind, seed, x, y, rz, allow_court=False, keep_off=0.5):
-        """The z to set a ground prop at, or None when the spot is refused (see the module notes)."""
+    @staticmethod
+    def _grid(full):
+        """Points every CLEAR_STEP metres over an outline given as [centre, c0, c1, c2, c3]."""
+        c0, c1, _c2, c3 = full[1], full[2], full[3], full[4]
+        ux, uy = c1[0] - c0[0], c1[1] - c0[1]
+        vx, vy = c3[0] - c0[0], c3[1] - c0[1]
+        nu = max(1, int(math.hypot(ux, uy) / CLEAR_STEP))
+        nv = max(1, int(math.hypot(vx, vy) / CLEAR_STEP))
+        return [(c0[0] + ux * i / nu + vx * j / nv, c0[1] + uy * i / nu + vy * j / nv)
+                for i in range(nu + 1) for j in range(nv + 1)]
+
+    def _near_stair(self, full):
+        for ea, eb in self.stairs:
+            ax, ay, bx, by = ea.x, ea.y, eb.x, eb.y
+            dx, dy = bx - ax, by - ay
+            ln = math.hypot(dx, dy)
+            if ln < 1e-3:
+                continue
+            ux, uy = dx / ln, dy / ln
+            for px, py in full:
+                t = (px - ax) * ux + (py - ay) * uy
+                if -2.0 <= t <= ln + 2.0 and abs((px - ax) * uy - (py - ay) * ux) < STAIR_KEEP:
+                    return True
+        return False
+
+    def ground_at(self, x, y):
+        """The ground MESH's height at (x, y), or None off the mesh."""
+        g = self.ground
+        o = self.ground_inv @ Vector((x, y, 400.0))
+        d = (self.ground_inv.to_3x3() @ Vector((0, 0, -1))).normalized()
+        hit, loc, _n, _i = g.ray_cast(o, d, distance=1000.0, depsgraph=self.depsgraph)
+        return (g.matrix_world @ loc).z if hit else None
+
+    def ground_z(self, kind, seed, x, y, rz, allow_court=False, keep_off=0.5, near_stair=False):
+        """(z, ground normal or None) to set a ground prop at, or None when the spot is refused
+        (see the module notes and HUG above)."""
         C = self.cove
         pts, radius = self._footprint(kind, seed, x, y, rz)
-        zs = []
+        full, _r = self._footprint(kind, seed, x, y, rz, shrink=1.05)
+
         def refuse(why):
             REFUSED[why] = REFUSED.get(why, 0) + 1
             return None
@@ -175,20 +243,55 @@ class Placer:
                 return refuse("court")
             if self.S.near_structure(px, py, keep_off):
                 return refuse("structure")
-            zs.append(C.height(px, py))
-        if max(zs) - min(zs) > MAX_TILT:
-            return refuse("tilt")
         if any(math.hypot(x - q[0], y - q[1]) < radius + q[3] + SPACING for q in PLACED):
             return refuse("spacing")
+        # Nine samples: the full outline's corners, its edge midpoints and the centre.
+        cx, cy = full[0]
+        ring = full[1:]
+        samples = [(cx, cy)] + ring + [((ring[i][0] + ring[(i + 1) % 4][0]) / 2,
+                                        (ring[i][1] + ring[(i + 1) % 4][1]) / 2) for i in range(4)]
+        gz = []
+        for px, py in samples:
+            z = self.ground_at(px, py)
+            if z is None:
+                return refuse("off ground")
+            gz.append(z)
+        normal = None
+        if kind in HUG:
+            # Least-squares plane z = a + b dx + c dy through the samples.
+            n = len(samples)
+            dx = [px - cx for px, _ in samples]
+            dy = [py - cy for _, py in samples]
+            M = Matrix(((n, sum(dx), sum(dy)),
+                        (sum(dx), sum(u * u for u in dx), sum(u * v for u, v in zip(dx, dy))),
+                        (sum(dy), sum(u * v for u, v in zip(dx, dy)), sum(v * v for v in dy))))
+            rhs = Vector((sum(gz), sum(u * z for u, z in zip(dx, gz)), sum(v * z for v, z in zip(dy, gz))))
+            try:
+                a_, b_, c_ = M.inverted() @ rhs
+            except ValueError:
+                return refuse("plane")
+            if math.degrees(math.atan(math.hypot(b_, c_))) > HUG_MAX_SLOPE:
+                return refuse("slope")
+            if max(abs(z - (a_ + b_ * u + c_ * v)) for u, v, z in zip(dx, dy, gz)) > HUG_BUMP:
+                return refuse("bumpy")
+            z0, normal = a_, Vector((-b_, -c_, 1.0)).normalized()
+        else:
+            if max(gz) - min(gz) > (LEGGED_FALL if kind in LEGGED else UPRIGHT_FALL):
+                return refuse("tilt")
+            z0 = min(gz)
+        if not near_stair and self._near_stair(full):
+            return refuse("stair")
         # The clearance rays use the FULL outline plus 5 % (owner's screenshot of the stall: a barrel
         # on its side touched the stall's front step, which stood just outside the 85 % outline).
-        full, _r = self._footprint(kind, seed, x, y, rz, shrink=1.05)
-        for px, py in full:
-            gz = C.height(px, py)
-            hit, loc, _n, _i, obj, _m = self._ray_down(px, py, gz + CLEAR_RAY, CLEAR_RAY + 0.5)
-            if hit and not obj.name.startswith("ground") and not obj.name.startswith(SOFT_PLANTS)                     and loc.z > gz + 0.03:
+        for px, py in self._grid(full):
+            g = self.ground_at(px, py)
+            if g is None:
+                return refuse("off ground")
+            hit, loc, _n, _i, obj, _m = self._ray_down(px, py, g + CLEAR_RAY, CLEAR_RAY + 0.5)
+            if hit and not obj.name.startswith("ground") and not obj.name.startswith(SOFT_PLANTS) \
+                    and loc.z > g + 0.03:
                 return refuse("blocked by " + obj.name.split(".")[0][:18])   # a stone, a house, a boat
-        return min(zs)
+        return z0, normal
 
     def deck_z(self, kind, seed, x, y, rz, top):
         """The z of a flat DECK under the whole footprint (a porch, a walk), casting down from
@@ -212,8 +315,8 @@ class Placer:
             return None
         return max(zs)
 
-    def put(self, kind, seed, x, y, z, rz):
-        root = duplicate(self.c, kind, seed, x, y, z, rz)
+    def put(self, kind, seed, x, y, z, rz, normal=None):
+        root = duplicate(self.c, kind, seed, x, y, z, rz, normal)
         _pts, radius = self._footprint(kind, seed, x, y, rz)
         PLACED.append((x, y, z, radius, kind))
         self.count[kind] = self.count.get(kind, 0) + 1
@@ -222,9 +325,9 @@ class Placer:
     def try_ground(self, kind, seed, candidates, **kw):
         """Place (kind, seed) at the first candidate (x, y, rz) that passes; returns its root."""
         for x, y, rz in candidates:
-            z = self.ground_z(kind, seed, x, y, rz, **kw)
-            if z is not None:
-                return self.put(kind, seed, x, y, z, rz)
+            got = self.ground_z(kind, seed, x, y, rz, **kw)
+            if got is not None:
+                return self.put(kind, seed, x, y, got[0], rz, got[1])
         return None
 
 
@@ -477,7 +580,8 @@ def stair_feet(P, rng):
             kind = rng.choice(("potted_plant", "banga", "pot_cluster", "potted_plant"))
             cands = [((foot - d * b + side * sgn * l).x, (foot - d * b + side * sgn * l).y, rng.uniform(0, math.tau))
                      for b in (0.8, 1.4, 0.3, 2.0) for l in (1.3, 1.7, 2.2)]
-            P.try_ground(kind, rng.choice(GROUND_SEEDS[kind]), cands, allow_court=True, keep_off=0.2)
+            P.try_ground(kind, rng.choice(GROUND_SEEDS[kind]), cands, allow_court=True, keep_off=0.2,
+                         near_stair=True)
 
 
 def stall(P, rng):
@@ -520,6 +624,24 @@ def court_edge(P, rng):
                 spots.remove((x, y))
                 placed += 1
                 break
+
+
+def court_ring(P, rng):
+    """⚠️ OWNER, 2026-09-27: "can we have some fishing stuff sparsely scattered in clusters around the
+    rock platform outside the play area?" The court's flat ground between the play walls (+-13 m)
+    and the pocket's rim (19 by 17 m round (0, 1)): six small clusters of two or three fishing
+    pieces, evenly round the ring with some jitter, each packed within 1.6 m of its anchor. Sparse
+    on purpose: the ring is where players run past the walls. The stair keep-out still holds."""
+    kinds = [("bubo", "basket"), ("net_pile", "rope_coil", "basket"), ("oar_pair", "bubo"),
+             ("fish_rack", "basket"), ("crate", "net_pile"), ("bubo", "rope_coil", "anchor_stone")]
+    rng.shuffle(kinds)
+    phase = rng.uniform(0, math.tau)
+    for k, group in enumerate(kinds):
+        a = phase + math.tau * k / len(kinds) + rng.uniform(-0.25, 0.25)
+        f = rng.uniform(0.84, 0.93)
+        anchor = Vector((math.cos(a) * 19.0 * f, 1.0 + math.sin(a) * 17.0 * f, 0))
+        for kind in group:
+            cluster_piece(P, rng, kind, anchor, face=(0, 1), r1=2.2, allow_court=True)
 
 
 def driftwood(P, rng, n=10):
@@ -576,5 +698,5 @@ def place_props(c, cove, plants=None):
     return P.count
 
 
-STEPS = (pier_clusters, beached_boat_clusters, stall, court_edge, houses, water_homes, stair_feet,
-         beach_drying, driftwood)
+STEPS = (pier_clusters, beached_boat_clusters, stall, court_edge, court_ring, houses, water_homes,
+         stair_feet, beach_drying, driftwood)
