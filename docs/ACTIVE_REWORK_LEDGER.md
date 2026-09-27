@@ -1,17 +1,19 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`03f1c7412b76f1b3ecf5eb4efee6dc5ef93c2958`; sentry target recovery follows it.
+`b394c7ac319bef20b6204804809f1ec51c92cb05`; custom-preview preparation follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-Roster outline vertex preparation now runs during loading and survives scene changes
-for retained live meshes. New native identity/pruning/warmup cases pass2/2; the exact
-Dante check reports2.818ms cold and0.046ms reused traversal,not a player FPS claim.
-The owner's new custom-map switching lag report is the next implementation priority:
-trace actual scene/setup initialization on selection,not just resource references.
+Custom-map previews now finish scene/setup/first draw behind the hub's loading
+curtain and retain their scenes/look instances. One real-hub native check passes:
+five maps,two cycles,zero new loads,0.090-8.241ms Editor selection calls. Preparation
+took38.52s upfront; five nonblank views were inspected. Frozen210inputs,no drift.
+A one-line menu-heading warning correction subsequently compiled in Runtime only.
+[Evidence and limits](reports/stability-2026-09-27/loading-audit.md#custom-preview-loading).
+Player frame/GPU/peak-memory measurements and a new player build remain OPEN.
 
 Sentry snapshots now preserve the host's captured seat mask rather than guessing
 from current local distance. Late bodies bind once; restoration never reapplies
@@ -41,6 +43,8 @@ and current owner reservations after resuming.
 
 | Revision | Change | Evidence boundary |
 |---|---|---|
+| b394c7ac | Retained roster outline preparation before first skin application | Two native identity/cache/geometry cases pass; player timing not measured |
+| cc21bdce | Sentry target masks through world recovery | Two native receiver/restore cases pass; real peers and fresh-cast convergence pending |
 | 03f1c741 | Deferred SFX/voice samples prepared behind loading; UI-flow evidence recorded | Audio1/1 and first UI3/3 native cases pass; player timings and visual/physical input remain open |
 | de426a0e | Voodoo body status/mark/reach state and explicit outcome | Native codec/receiver2/2 pass; incoming kit gameplay wiring and peers remain open |
 | 0a28bf13 | Merge owner controls/GUID repairs with networking/loading work | Four assemblies compile;7/7 new focused native cases pass; actual peers/player timings pending |

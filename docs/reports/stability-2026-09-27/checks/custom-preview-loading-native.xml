@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 12:29:47Z" end-time="2026-09-27 12:30:27Z" duration="40.1732623">
+  <test-suite type="TestSuite" id="1933" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="742" result="Passed" start-time="2026-09-27 12:29:47Z" end-time="2026-09-27 12:30:27Z" duration="40.173262" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1927" name="TumbangPreso.PlayTests.dll" fullname="VALIDATION_PROJECT/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="742" result="Passed" start-time="2026-09-27 12:29:47Z" end-time="2026-09-27 12:30:27Z" duration="40.163453" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="62408" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1928" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="742" result="Passed" start-time="2026-09-27 12:29:47Z" end-time="2026-09-27 12:30:27Z" duration="40.159422" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1929" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="742" result="Passed" start-time="2026-09-27 12:29:47Z" end-time="2026-09-27 12:30:27Z" duration="40.155418" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1415" name="MatchLoadingReadinessTests" fullname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" classname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-27 12:29:47Z" end-time="2026-09-27 12:30:27Z" duration="40.141754" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1417" name="CustomMapSwitchesReusePreparedScenesAndLooksAfterTheLoadingCurtain" fullname="TumbangPreso.PlayTests.MatchLoadingReadinessTests.CustomMapSwitchesReusePreparedScenesAndLooksAfterTheLoadingCurtain" methodname="CustomMapSwitchesReusePreparedScenesAndLooksAfterTheLoadingCurtain" classname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" runstate="Runnable" seed="1393083749" result="Passed" start-time="2026-09-27 12:29:47Z" end-time="2026-09-27 12:30:27Z" duration="40.131460" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'MatchSetup', falling back to 'Eskinita'.
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 325 of 2847 renderers, 0 with a roof variant.
+[NearFade] 3402 occluder nodes matched, 1648 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 0 of 232 renderers, 0 with a roof variant.
+[NearFade] 'TumbangPreso/BlockyCloud' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.
+[NearFade] 'TumbangPreso/BlockyCloud' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.
+[NearFade] 'TumbangPreso/BlockyCloud' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.
+[NearFade] 7866 occluder nodes matched, 83 renderers moved onto TumbangPreso/NearFade.
+[HubLoading] custom previews ready after 38.52 s.
+[CustomMapSwitch] pass=0 map=Eskinita selectMs=0.090
+[CustomMapSwitch] pass=0 map=BayanPlaza selectMs=1.642
+[CustomMapSwitch] pass=0 map=IlalimNgTulay selectMs=3.300
+[CustomMapSwitch] pass=0 map=SaBubong selectMs=3.328
+[CustomMapSwitch] pass=0 map=Lagoon selectMs=8.241
+[CustomMapSwitch] pass=1 map=Eskinita selectMs=3.772
+[CustomMapSwitch] pass=1 map=BayanPlaza selectMs=1.363
+[CustomMapSwitch] pass=1 map=IlalimNgTulay selectMs=3.470
+[CustomMapSwitch] pass=1 map=SaBubong selectMs=3.256
+[CustomMapSwitch] pass=1 map=Lagoon selectMs=7.156
+Saving results to: ISOLATED_PROFILE\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

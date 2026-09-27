@@ -5,6 +5,56 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Custom Preview Loading
+
+Owner report: switching maps in Custom still lags despite asset preloading. Base
+`b394c7ac`. Boot retained dependencies but unloaded the scene instances. The actual
+MapPreviewSurface still loaded each scene on its first selection,then destroyed and
+rebuilt its WorldLookPresentation resources on later switches. Resource residency
+was not scene/instance/first-draw readiness.
+
+The normal hub route also skips splash's earlier load/unload-only scene pass:
+the hub now prepares the actual retained instances,so first constructing disposable
+copies repeats initialization. Legacy preparation-board mode keeps its old warmup.
+Title/login art,roster,audio and other splash stages are unchanged.
+
+The hub now keeps the existing loading curtain up while its actual preview owner
+loads all registered scenes,finishes their setup and draws each view. It restores
+the selected map before releasing input. Scene and look instances are retained for
+subsequent selections; resumed looks reapply the same authored values. Pending
+selections keep the latest request. Transitions and cancelled preparation retain
+the match-install suppression gate until an outstanding additive load completes.
+No map asset,lighting parameter,layout,model or authored effect was changed.
+
+ONE new native case loaded the real hub,entered HubHost and cycled all five maps
+twice. It passed1/1 in40.1732623s: the curtain covered38.52s of preparation; subsequent
+selection calls took0.090 to8.241ms in Editor,with ZERO new scene loads and identical
+scene/look instances. All five rendered previews passed nonflat-pixel checks and
+were visually inspected. Sample selection timings in milliseconds:
+
+| Map | First cycle | Second cycle |
+|---|---:|---:|
+| Eskinita |0.090|3.772|
+| Bayan Plaza |1.642|1.363|
+| Ilalim Ng Tulay |3.300|3.470|
+| Sa Bubong |3.328|3.256|
+| Lagoon |8.241|7.156|
+
+Frozen210 inputs,5changed,no drift; minimum free6,074,322,944bytes. Guard restored
+two named-profile files and three shared Editor preferences. A one-line follow-up
+stops the menu heading from looking up MatchSetup as a map; the normal splash route
+then skips its redundant disposable-map pass. Runtime compilation passes after
+these follow-ups,with no repeat of the native run. The native case starts at the hub
+without the splash dependency pass,covering the same cold-hub preparation boundary.
+[Receipt](checks/custom-preview-loading-native.json),[XML](checks/custom-preview-loading-native.xml).
+
+This deliberately moves real initialization into loading,with all five preview
+instances resident earlier. Peak resident memory and player frame/GPU timing are
+not measured;38.52s is an Editor preparation result,not a fixed delay or player
+startup guarantee. No new player build exists. The cached-preview path is qualified,
+not every future map asset or all gameplay loading. Legacy preparation-board mode
+does not use this hub barrier. Full boot-to-hub elapsed time remains unmeasured.
+
 ## Retained Roster Outline Preparation
 
 After `cc21bdce`, boot welds existing roster model,pet,can and slipper outline data
@@ -19,7 +69,7 @@ dead-entry pruning,explicit invalidation,and real Dante asset warmup/reuse witho
 spawning objects or dressing materials. For2meshes/13,785vertices, Editor cold work
 was2.818ms,longest slice1.822ms,reused traversal0.046ms. This is local CPU preparation,
 not player frame-time qualification. [Receipt](checks/outline-preload-native.json).
-The custom-map switching report remains separate and is the next implementation focus.
+The custom-map switching report is addressed separately above.
 
 ## Deferred Audio Samples
 

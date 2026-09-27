@@ -74,7 +74,9 @@ namespace TumbangPreso.UI
             Settings.SettingsStore.Save();
             if(net!=null && net.IsNetworked)
                 MatchRpc.Instance?.SelectLobbyPickServerRpc(settings.CharacterPick,settings.CanPick,settings.SlipperPick);
-            RefreshOwnerPreparation();RejoinRunningMatch();AutoHost();
+            RefreshOwnerPreparation();
+            if (HubEnabled && _preview != null) Hub.HubLoading.PreparePreview(_preview);
+            RejoinRunningMatch();AutoHost();
         }
         private void OwnerPreparationBack()
         {

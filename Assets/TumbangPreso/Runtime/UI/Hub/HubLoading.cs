@@ -78,6 +78,50 @@ namespace TumbangPreso.UI.Hub
             Destroy(current.gameObject);
         }
 
+        public static void PreparePreview(MapPreviewSurface preview)
+        {
+            if (preview == null || preview.IsPrepared) return;
+            Cancel();
+            var root = new GameObject("TumpLoading", typeof(RectTransform));
+            DontDestroyOnLoad(root);
+            var loading = root.AddComponent<HubLoading>();
+            _current = loading; loading._scene = SceneFlow.MatchSetup;
+            loading._began = Time.realtimeSinceStartup;
+            loading._sourceScene = SceneManager.GetActiveScene();
+            loading.Build();
+            ScreenTakeover.Register(loading, () => _current == loading);
+            loading.StartCoroutine(loading.FollowPreview(preview));
+        }
+
+        private IEnumerator FollowPreview(MapPreviewSurface preview)
+        {
+            yield return null;
+            _prewarm = preview.PrepareAll(done => _percent.text = Mathf.RoundToInt(done * 100) + "%");
+            while (preview != null && SceneManager.GetActiveScene() == _sourceScene)
+            {
+                bool next = false;
+                System.Exception failure = null;
+                try { next = _prewarm.MoveNext(); }
+                catch (System.Exception error) { failure = error; }
+                if (failure != null)
+                {
+                    ReleasePrewarm(); Fail("The menu could not finish preparing.");
+                    Debug.LogException(failure, this); yield break;
+                }
+                if (!next)
+                {
+                    ReleasePrewarm();
+                    if (!preview.IsPrepared) { Fail("The menu preparation was interrupted."); yield break; }
+                    Debug.Log($"[HubLoading] custom previews ready after {Time.realtimeSinceStartup - _began:F2} s.");
+                    Destroy(gameObject); yield break;
+                }
+                if (Time.realtimeSinceStartup - _began > 120)
+                { ReleasePrewarm(); Fail("The menu did not finish preparing."); yield break; }
+                yield return _prewarm.Current;
+            }
+            Cancel();
+        }
+
         private void Build()
         {
             var canvas = _canvas = OwnerUiLayout.Canvas(transform, "TumpLoadingCanvas", 900);
@@ -92,13 +136,14 @@ namespace TumbangPreso.UI.Hub
             var vignette = HubKit.Stretch(HubKit.Rect(root, "Vignette")).gameObject.AddComponent<HubVignette>();
             vignette.raycastTarget = false;
 
-            var map = SceneFlow.PreviewFor(_scene);
-            var name = HubKit.Text(root, "Heading", map.Name, 150, true, HubStyle.Honey, TextAnchor.MiddleCenter);
+            bool menu = _scene == SceneFlow.MatchSetup;
+            var map = SceneFlow.PreviewFor(menu ? SceneFlow.SelectedMap : _scene);
+            var name = HubKit.Text(root, "Heading", menu ? "GETTING READY" : map.Name, 150, true, HubStyle.Honey, TextAnchor.MiddleCenter);
             HubKit.Place(name.rectTransform, HubKit.Centre, new Vector2(0, 70), new Vector2(1600, 190));
             var outline = name.gameObject.AddComponent<Outline>();
             outline.effectColor = HubStyle.Ink; outline.effectDistance = new Vector2(6, -6);
             HubKit.Fit(name, 1600);
-            var tagline = HubKit.Text(root, "Tagline", map.Tagline, HubStyle.Label, false, HubStyle.Honey, TextAnchor.MiddleCenter);
+            var tagline = HubKit.Text(root, "Tagline", menu ? "" : map.Tagline, HubStyle.Label, false, HubStyle.Honey, TextAnchor.MiddleCenter);
             HubKit.Place(tagline.rectTransform, HubKit.Centre, new Vector2(0, -40), new Vector2(1400, 50));
             tagline.gameObject.AddComponent<Shadow>().effectColor = HubStyle.Ink;
 
