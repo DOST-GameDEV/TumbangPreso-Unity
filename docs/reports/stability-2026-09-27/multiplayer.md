@@ -665,6 +665,25 @@ Its exact implementation and qualification status are in
 [Featherfall](../amihan-kit-2026-09-27/featherfall.md). It does not establish that
 every kit works across real peers.
 
+## Host-Owned Ultimate Duration
+
+2026-09-28,after43ab9fc3: protocol80 adds the host-sealed cohort duration to the
+UltimatePhase header(44bytes,commit73unchanged). The old receiver derived duration
+from local caster kits. A missing caster could supply the2.8s fallback and cause
+a still-active5s host introduction to be treated as expired. ReceiveTimed now
+uses the validated host boundary; the host still computes the longest authored
+introduction. The local-probe Receive wrapper remains. No authored timing changed.
+
+One NEW actual message-receiver case passes1/1,0.1188589s on full committed base
+plus5inputs,no drift,no retry. It uses the production commit writer,asserts117bytes
+for one cast,and has no caster body: invalid sender/durations cannot advance the
+phase cursor,the5s cohort stays active/held past the local fallback,duplicates
+cannot shorten it,and a newer expired host duration retains terminal identity.
+Minimum free6,212,919,296bytes; named profile/preferences restored.
+[Receipt](checks/ultimate-duration-native.json),[XML](checks/ultimate-duration-native.xml).
+Raw Logs/ultimate-duration-20260928/host-cohort-time.*. This is controlled native
+receive evidence,not actual late-peer playback or visual/cross-platform acceptance.
+
 ## Sentry Cleanup Ownership
 
 After90b015f2, protocol79 scopes Paete's ultimate cleanup to its own sentries. The

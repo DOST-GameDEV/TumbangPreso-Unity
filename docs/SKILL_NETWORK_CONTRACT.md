@@ -81,6 +81,16 @@ their own target lifetime and reset rules. Client presentation remains separate.
 
 ## Prepared World Recovery
 
+Protocol80's UltimatePhase header carries the host-sealed cohort duration. The host
+still derives the longest authored introduction; receiving peers must not derive
+it from whichever kits have loaded locally. Missing actors wait inside that same
+host boundary instead of classifying a longer introduction as already expired.
+The44byte header validates duration as finite,(0,30]seconds; the73byte commit is
+unchanged. The runtime wire enters SharedUltimatePhase.ReceiveTimed. Legacy internal
+Receive remains a local-probe wrapper,not the authoritative network path. No authored
+duration or presentation was retuned. A new range beyond30seconds requires a contract
+decision rather than bypassing the bound.
+
 Protocol76 scopes requested pause/speed to match,round and sequence. The host sends
 the requested rate after SyncWorld on the same reliable stream,including ordinary
 recovery outside a cinematic phase. Receivers reject stale/malformed envelopes;

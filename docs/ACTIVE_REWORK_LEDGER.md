@@ -1,11 +1,18 @@
 # Active Rework Checkpoint
 
-Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`ca83fe1d79d4e31607150082b38d4824a7d2886e`; boot failure exit follows it.
+Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
+`43ab9fc3a079240c2984823dbf1c37e7e3e5a276`; host-owned ultimate duration follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Protocol80 carries the host-sealed ultimate cohort duration rather than deriving
+it from possibly missing local caster kits. New actual receiver case passes1/1 on
+full committed base plus5inputs,no drift,no retry: host5s stays active past local
+2.8s fallback,invalid durations/duplicates reject,and terminal identity stays closed.
+No authored timing changes; actual peers remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#host-owned-ultimate-duration).
 
 Boot menu failure now exposes one focused pointer-accessible EXIT GAME control
 above the retained curtain,using the existing Cancel quit path. New failure-exit

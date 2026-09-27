@@ -1102,6 +1102,57 @@ namespace TumbangPreso.PlayTests
             Assert.IsNull(Object.FindAnyObjectByType<VoodooBlackHole>());
         }
 
+        [Test]
+        public void UltimateReceiverKeepsTheHostDurationWhileTheCasterIsMissing()
+        {
+            NetAuthority.Provider = new PredictingOwner();
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            Assert.IsNull(GameServices.Round.PlayerAt(3));
+            var previousRouter = MatchRpc.Instance; var previousPhase = SharedUltimatePhase.Instance;
+            float original = PresentationClock.RequestedScale;
+            var root = new GameObject("Timed cohort receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>(); var phase = root.AddComponent<SharedUltimatePhase>();
+            var instance = typeof(MatchRpc).GetProperty("Instance");
+            var phaseInstance = typeof(SharedUltimatePhase).GetProperty("Instance");
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.NonPublic;
+            var receive = typeof(MatchRpc).GetMethod("OnUltimatePhaseMsg", hidden | System.Reflection.BindingFlags.Instance);
+            var write = typeof(MatchRpc).GetMethod("WriteUltimateCommit", hidden | System.Reflection.BindingFlags.Static);
+            void Deliver(long sequence, float duration, ulong sender = 0)
+            {
+                using var writer = new FastBufferWriter(128, Allocator.Temp);
+                writer.WriteValueSafe(123L); writer.WriteValueSafe(1); writer.WriteValueSafe(sequence);
+                writer.WriteValueSafe(SharedUltimatePhase.Now - 3.2); writer.WriteValueSafe(duration);
+                writer.WriteValueSafe(.5f); writer.WriteValueSafe(50f); writer.WriteValueSafe(1);
+                write.Invoke(null, new object[] { writer,
+                    new UltimateCommit(3, 1, Vector3.zero, Vector3.forward, Vector3.up, 0) });
+                Assert.AreEqual(44 + 73, writer.Length);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                receive.Invoke(router, new object[] { sender, reader });
+            }
+            try
+            {
+                instance.SetValue(null, router); phaseInstance.SetValue(null, phase);
+                typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+                Deliver(100, 5, 9);
+                foreach (float invalid in new[] { 0f, -1f, float.NaN, float.PositiveInfinity, 31f }) Deliver(100, invalid);
+                Assert.IsFalse(phase.Active);
+                Deliver(1, 5);
+                Assert.IsTrue(phase.Active, "Missing caster replaced the host's five-second introduction with the short fallback.");
+                Assert.AreEqual(5, phase.Duration); Assert.AreEqual(1, phase.PhaseId);
+                Assert.IsTrue(PresentationClock.Held); Assert.AreEqual(.5f, PresentationClock.RequestedScale);
+                Deliver(1, 1); Assert.IsTrue(phase.Active); Assert.AreEqual(5, phase.Duration);
+                Deliver(2, 1); Assert.IsFalse(phase.Active); Assert.AreEqual(2, phase.PhaseId);
+                Assert.AreEqual(1, phase.Duration); Assert.IsFalse(PresentationClock.Held);
+                Deliver(2, 5); Assert.IsFalse(phase.Active, "A duplicate terminal phase restarted playback.");
+            }
+            finally
+            {
+                phase.Cancel(); PresentationClock.RequestScale(original);
+                instance.SetValue(null, previousRouter); phaseInstance.SetValue(null, previousPhase);
+                Object.DestroyImmediate(root);
+            }
+        }
+
         [UnityTest, Timeout(30000)]
         public IEnumerator ExpiredUltimateCohortsRetireOlderPlaybackAndKeepTheirTerminalIdentity()
         {

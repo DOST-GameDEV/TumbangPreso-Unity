@@ -516,7 +516,9 @@ namespace TumbangPreso.Net
         // including the idle role, with world scope and per-seat ordering.
         // 79: resetting a Paete kit retires only its owned/recovered sentries,
         // not every caster's active guardian in the shared world.
-        public const int ProtocolVersion = 79;
+        // 80: shared ultimate cohorts carry the host's sealed duration even
+        // while a joining peer has not installed the caster's kit yet.
+        public const int ProtocolVersion = 80;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -1,0 +1,38 @@
+{
+  "base": "43ab9fc3a079240c2984823dbf1c37e7e3e5a276",
+  "protocol": 80,
+  "scope": "Host-sealed ultimate duration survives missing local caster and terminal replay",
+  "result": "Passed",
+  "total": 1,
+  "duration": 0.1188589,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs",
+      "sha256": "CECD12BA7B570F40963805DF3D0B32E53530268AC65F2263D88C3CF4F2FAE067"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.UltimatePhase.cs",
+      "sha256": "BCE336E026C78F01B2EB44FC25F9F48EB0F7AB91B6BD3186F8D52B84E39D6EA3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "2250277886A8126FCB847AD6C1BF1309959AC7681D168B49179117C1883E637C"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "8756EABECA73616DB8143C6F25D72277B35C9F0EFD5204FC3350A5E482A05A95"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "A5CA2D2713E097BB54F5AC54A08015481A02DA34A621D829C0BD0900CDEAFF02"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6212919296,
+  "retryCount": 0,
+  "unverified": [
+    "Actual late peers",
+    "Visual/cross-platform playback",
+    "QA-15 root cause"
+  ]
+}

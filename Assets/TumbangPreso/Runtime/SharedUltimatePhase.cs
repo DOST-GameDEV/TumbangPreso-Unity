@@ -24,6 +24,7 @@ namespace TumbangPreso
     public sealed class SharedUltimatePhase : MonoBehaviour
     {
         public const double DefaultDuration = Visual.UltimatePerformance.DefaultSeconds;
+        public const float MaxNetworkDuration = 30f;
         /// <summary>
         /// ⚠️⚠️ THIS PHASE'S LENGTH, NOT A CONSTANT, SINCE REFINE-2.11 (owner 2026-09-24: *"its fine if
         /// its longer than 2.8 seconds part of the work is researching and thinking about how long it
@@ -113,15 +114,22 @@ namespace TumbangPreso
             Duration = Math.Max(Duration, SecondsFor(cast.Seat));
         }
         internal void Receive(long match, int round, long phase, double began, float resume, UltimateCommit[] commits, float frozenRoundTime)
+            => ReceiveTimed(match, round, phase, began, resume, commits, frozenRoundTime, CohortSeconds(commits));
+
+        internal void ReceiveTimed(long match, int round, long phase, double began, float resume,
+            UltimateCommit[] commits, float frozenRoundTime, double duration)
         {
             if (NetAuthority.ShouldResolve() || phase <= 0 || commits == null || commits.Length < 1 || commits.Length > 4
+                || double.IsNaN(duration) || double.IsInfinity(duration) || duration <= 0 || duration > MaxNetworkDuration
                 || !float.IsFinite(frozenRoundTime)||frozenRoundTime<0||frozenRoundTime>Core.CustomGameRules.MaxRoundSeconds
                 || match != Net.MatchRpc.Instance?.PresentationMatchId || double.IsNaN(began) || double.IsInfinity(began) || began > Now + .5) return;
             if (GameServices.Match != null && GameServices.Match.RoundNumber > round) return;
             if (MatchId != match) { Cancel(); _lastReceived = 0; }
             if (phase <= _lastReceived) return;
             _lastReceived = phase;
-            double length = CohortSeconds(commits);
+            // A late peer may not have the caster's body/kit yet. The host's
+            // sealed cohort owns this boundary,not a local fallback duration.
+            double length = duration;
             if (Now >= began + length)
             {
                 // A late newer cohort supersedes the old one even when its intro

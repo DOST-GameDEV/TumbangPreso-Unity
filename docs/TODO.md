@@ -99,6 +99,9 @@ test-only reader-lifetime correction. Actual peers/ranked/reconnect remain OPEN.
 Paete sentry cleanup now retires only the resetting kit's fresh/recovered instances
 (protocol79),not other casters' trees. One new native two-caster/restore/reset case
 passes; fresh target convergence and actual peers remain OPEN.
+Shared ultimate cohorts now carry the host-sealed introduction duration(protocol80),
+so missing caster bodies cannot substitute a short fallback and expire playback.
+One new actual-receiver case passes; actual late-peer/cutscene qualification remains OPEN.
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.
