@@ -1,5 +1,18 @@
 # Active TUMP rework ledger
 
+## Ranked and casual discovery fixes, 2026-09-27
+
+Online advertisements now carry nonindexed shared skill compatibility; automatic
+pairing rejects missing/mismatched contracts or missing endpoints before connecting.
+Party capacity uses actual occupied/reserved chairs, while existing backfill,band,
+device-pool,rating and leave rules stay unchanged. Failed allocations are suppressed
+per lobby/endpoint for30s in a bounded queue-local cache; the cached list is retried
+after failure even when discovery/band width stops changing. Relevant advertisement
+changes now notify the queue. No extra service query or live account operation.
+Four assemblies compile; three new managed cases pass (casual,ranked,retry lifecycle).
+Live ranked/casual connection,party and result flows remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#ranked-and-casual-discovery-admission).
+
 ## Shared rework and recovery integration, 2026-09-27
 
 Integrated prepared recovery `e6fb9afd` with incoming Phaister refinement through

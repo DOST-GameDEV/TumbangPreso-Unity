@@ -26,6 +26,9 @@ Keep shared delivery independent of cosmetic reworks so later authors can replac
 models,clips and effects without rebuilding transport plumbing.
 Ranked matchmaking,admission,reconnect and spectators are explicitly included;
 preserve rating/result/leave rules and the existing device-separated ranked pools.
+Ranked/casual discovery now filters shared skill incompatibility and reserved-seat
+capacity, backs off failed allocations and retries a stable cached list after failure.
+Three managed cases and compiler checks pass; live ranked/party/result coverage stays OPEN.
 Protocol64 now checks shared skill/intro metadata at connection approval while
 ignoring cosmetic data/live state. Compiler checks and two managed contract cases
 pass; native approval/cross-platform checks and broader lifecycle coverage stay OPEN.

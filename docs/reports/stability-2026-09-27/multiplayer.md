@@ -1,5 +1,34 @@
 # Multiplayer investigation, 2026-09-27
 
+## Ranked and casual discovery admission
+
+Base `b7d26bcf`. Connection approval checked skill compatibility, but automatic
+pairing could still choose the same incompatible host before being refused. Online
+room creation/update now publishes the cached contract as an additional public,
+nonindexed data value; existing queries read it. No new service request or index.
+Automatic pairing requires the matching contract and a usable allocation endpoint.
+Missing metadata is not auto-paired; manual joins still use normal approval.
+
+Candidate eligibility also accounts for occupied/reserved chairs and the full party
+size. It does not use the browser's no-in-progress rule, which would incorrectly
+disable permitted backfill. Existing Core band,spread,block,backfill and device-pool
+rules still decide among eligible candidates. No rating,result or penalty changes.
+
+A failed connection records the attempted lobby/allocation pair for30s (maximum64
+entries), not a mutable advertisement's later endpoint. A replacement allocation
+can be tried immediately without reviving a stale failed advertisement. New tickets
+and cancellation clear this queue-local cache. After failure, the cached list is
+reconsidered after0.25s without issuing another query; a stable list at maximum band
+width no longer leaves the search inert. Allocation,pool,band,backfill and contract
+changes now participate in the existing discovery-change notification.
+
+Runtime,Editor,Tests and PlayTests compile. Three new compiled NUnit cases invoked
+as managed code pass: casual and ranked compatibility/party/backfill eligibility
+with unchanged pool separation, plus failed-endpoint expiry/replacement/ticket reset.
+[Receipt](checks/ranked-discovery-managed.json). No Unity process,live service,
+profile mutation or existing suite rerun. Actual queue/admission/reconnect/party/
+spectator/result integration remains OPEN; these are not real ranked matches.
+
 ## Phase-aware world and OMEN recovery
 
 Integration follow-up: incoming `baec93c9` adds Phaister's refined aim hooks and
