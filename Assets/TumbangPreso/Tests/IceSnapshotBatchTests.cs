@@ -9,6 +9,46 @@ namespace TumbangPreso.Tests
     public sealed class IceSnapshotBatchTests
     {
         [Test]
+        public void OrdinaryActionsCannotCrossMatchRoundOrBodyEpochBoundaries()
+        {
+            var scope = new GameplayActionScope { Match = 42, Round = 3, Epoch = 5 };
+            Assert.IsTrue(scope.Matches(42, 3, 5));
+            Assert.IsFalse(scope.Matches(43, 3, 5));
+            Assert.IsFalse(scope.Matches(42, 4, 5));
+            Assert.IsFalse(scope.Matches(42, 3, 6));
+            Assert.IsFalse(default(GameplayActionScope).Matches(0, 0, 0));
+            scope.Round = -1; Assert.IsFalse(scope.IsValid);
+            scope.Round = 0; Assert.IsTrue(scope.IsValid, "Pre-round presentation still has a match identity.");
+            scope.Epoch = -1; Assert.IsFalse(scope.IsValid);
+        }
+
+        [Test]
+        public void OrdinaryActionScopeTailHasOneExactShape()
+        {
+            var scope = new GameplayActionScope { Match = 1234, Round = 2, Epoch = 6 };
+            using var writer = new FastBufferWriter(GameplayActionScope.WireBytes + 1, Allocator.Temp);
+            writer.WriteNetworkSerializable(scope);
+            Assert.AreEqual(GameplayActionScope.WireBytes, writer.Length);
+            using (var reader = new FastBufferReader(writer, Allocator.Temp))
+            {
+                var input = reader;
+                Assert.IsTrue(GameplayActionScope.TryReadTail(ref input, out var restored));
+                Assert.IsTrue(restored.Matches(scope.Match, scope.Round, scope.Epoch));
+            }
+            writer.WriteValueSafe((byte)0);
+            using (var reader = new FastBufferReader(writer, Allocator.Temp))
+            {
+                var input = reader;
+                Assert.IsFalse(GameplayActionScope.TryReadTail(ref input, out _), "Trailing data must not be silently accepted.");
+            }
+            using var shortWriter = new FastBufferWriter(4, Allocator.Temp);
+            shortWriter.WriteValueSafe(1);
+            using var shortReader = new FastBufferReader(shortWriter, Allocator.Temp);
+            var shortInput = shortReader;
+            Assert.IsFalse(GameplayActionScope.TryReadTail(ref shortInput, out _));
+        }
+
+        [Test]
         public void AimTokensSeparateHoldsAndMovementEpochsWithoutExposingTargets()
         {
             long first = AbilityAimSnapshot.MakeToken(3, 1);

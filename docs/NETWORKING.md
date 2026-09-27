@@ -13,7 +13,7 @@ Runtime files below are in `Assets/TumbangPreso/Runtime/`.
 |---|---|
 | Session/hello/seat ownership | Net/NetSession.cs,Net/LobbySession.cs,NetAuthority. Authentication or stable ID does not grant another seat. Read the current hello/protocol,not old literals. |
 | Discovery and ranked/casual pairing | Net/ServerQuery.cs,Matchmaker.cs,MatchmakingCandidateCache.cs; Core MatchmakingRules owns pool/band rules. Skill contract and reserved-seat capacity filter automatic pairing. |
-| Requests and received state | Net/MatchRpc.cs and its partials. Check sender,seat,match/round,epoch,request/event freshness BEFORE gameplay or presentation. |
+| Requests and received state | Net/MatchRpc.cs and its partials. Check sender,seat,match/round,epoch,request/event freshness BEFORE gameplay or presentation. Ordinary requests/refusals/actions/charge tells share GameplayActionScope; it scopes context,not per-request receipts. |
 | Skill identity/authority | Abilities/HeroAbility.cs,AbilityNetworking,HeroAbilitySystem; Net/SkillCastMessage.cs. Stable IDs and explicit initial/command intent,not temporary art names. |
 | Prediction and delayed bodies | HeroAbilitySystem.SkillReceipts,MatchRpc.SkillReceipts,MatchRpc.SkillDelivery. Independent effect receipts,ordered bounded delivery and recovery are not interchangeable. |
 | Body-held aiming | HeroAbilitySystem.AimReplication,Net/AbilityAimSnapshot,CharacterAnimator.AimPose. Private target guidance stays local; body tells are shared presentation only. |
@@ -45,6 +45,7 @@ actual peers; a source helper test is not a ranked/reconnect/cross-platform matc
 Current reports separate compiler checks,pure managed checks,native local cases
 and actual peers. Real ranked/party/reconnect/results qualification is still open.
 Persistent world collections retain explicit kinds beyond the generic prepared
-adapter. Do not mark NET-SKILLS-1 complete from declarations or compilation alone.
+adapter. Same-round ordinary-verb refusals still need per-request receipt coverage.
+Do not mark NET-SKILLS-1 complete from declarations or compilation alone.
 Old C4/engineering assignments and port mappings live in [archive](archive/README.md);
 their exclusive reservations and historical counts are not current instructions.

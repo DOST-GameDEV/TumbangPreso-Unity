@@ -490,7 +490,9 @@ namespace TumbangPreso.Net
         // joins its world generation and ages on the round clock.
         // 66: pose streams carry shared held-aim presentation; casts/ultimate
         // commits close the matching hold token without cancelling a newer hold.
-        public const int ProtocolVersion = 66;
+        // 67: ordinary action requests,refusals,body actions and charge tells
+        // carry match/round/body-epoch scope; charge kind is always explicit.
+        public const int ProtocolVersion = 67;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

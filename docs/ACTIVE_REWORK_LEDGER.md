@@ -1,19 +1,21 @@
 # Active Rework Checkpoint
 
-Updated 2026-09-27. Branch: ASTRAReworks. Published implementation checkpoint:
-`9535fc216b943f4fd945fa1145ba421dcfe8a1d3`.
+Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
+`ce0edc7aace9e62497e4626979040d26b138fd17`; ordinary-action scope unit follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-DOCS-0927 organization is complete: current rules/task routes,55-document catalog,
-updated methods/execution policy,whole historical archives and source snapshots.
-Nine old generated captures pruned with retained iteration pairs and an exact
-manifest; supplied/shipped/source/essential decision evidence remains intact.
-[Preservation record](reports/documentation-cleanup-2026-09-27/README.md).
+Protocol67 gives ordinary punch/lunge/slide/shove/grab/throw/reset requests a shared
+match/round/body-epoch scope. Refusals,body actions and charge tells use it too;
+old-context messages cannot act on or roll back a new round. Existing ownership,
+gameplay eligibility and ranked rules stay unchanged. Bounded exact tails and
+action names reject malformed messages before effects. Four assemblies compile;
+one new pure scope check passes. Native codec/charge and actual peers remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#ordinary-action-scope).
 
-Current implementation is committed/pushed; documentation publication follows this checkpoint.
+DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
 changes and protected UI metadata; stage only owned paths. Inspect actual Git state
 and current owner reservations after resuming.
@@ -22,6 +24,7 @@ and current owner reservations after resuming.
 
 | Revision | Change | Evidence boundary |
 |---|---|---|
+| ce0edc7a | Current docs/routes,whole history archives and conservative generated-media cleanup |33active docs link-check clear;55root docs cataloged;9historical bodies preserved |
 | 9535fc21 | Login field messages persist; field-only error pulse; pair-credential error clears when either input changes | Four assemblies compile; dedicated native/sound/visual case pending |
 | 55aca6cb | Async roster portrait/mode-card preload and one shared retained cache | Four assemblies compile; native cache/first-use timing pending |
 | 210cd801 | Boot curtain survives menu activation, construction and layout; hidden input/welcome/music deferred | Four assemblies compile; native handoff/cleanup pending |
@@ -29,7 +32,7 @@ and current owner reservations after resuming.
 | 9a44be97 | Ranked/casual compatibility/capacity filtering and failed-allocation backoff/retry | Three managed checks and compile; live queue/party/results pending |
 | b7d26bcf | Prepared recovery integrated with incoming Phaister rework; screen-effect lifecycle cleanup | Frozen merged source compiles; native/peers pending |
 
-Current protocol is defined by NetSession.cs, now66. Matching clients are required.
+Current protocol is defined by NetSession.cs, now67. Matching clients are required.
 The prior full ledger, including every older feature, contributor record, source
 revision and receipt, remains in [the dated snapshot](archive/snapshots-2026-09-27/docs/ACTIVE_REWORK_LEDGER.md).
 
@@ -61,8 +64,9 @@ before tests; repeated launches at unchanged headroom are not justified. Current
 direct Roslyn checks compile Runtime,Editor,Tests and PlayTests but do not run native
 lifecycle,rendering,IL postprocessing,actual peers or a player build.
 
-Latest frozen implementation candidate:105 source/dependency inputs,7changed for login.
-All four assemblies compiled; compiler session66116 ended. Receipts:
+Latest frozen implementation candidate:110 source/dependency inputs,9changed for action scope.
+All four assemblies compiled; compiler session58483 ended. One new managed scope case passes.
+Receipts: [action scope](reports/stability-2026-09-27/checks/action-scope-managed.json),
 [login](reports/stability-2026-09-27/checks/login-feedback-compile.json),
 [portrait preload](reports/stability-2026-09-27/checks/menu-portraits-compile.json),
 [menu activation](reports/stability-2026-09-27/checks/menu-activation-compile.json),
@@ -75,7 +79,7 @@ current player build, cross-platform acceptance or complete before/after hitch t
 
 ## Next Action
 
-Commit/push the coherent documentation unit after final reference/preservation
-checks, then return to current
-network/flow correctness and loading improvements. Reuse existing tools and evidence;
+Continue network/flow correctness and loading improvements after publishing this unit.
+Same-round combat refusals still lack per-request receipts; persistent state and
+real-peer qualification remain open. Reuse existing tools and evidence;
 make actual fixes, not repeated audits. No subagents or cross-chat delegation.

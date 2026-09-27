@@ -29,6 +29,9 @@ reuse shared hooks; new gameplay state still needs an explicit contract. Ranked,
 casual,LAN/online,spectators,late join and reconnect are in scope. Preserve existing
 rating/result/leave/device-pool rules. Further state coverage and actual peer/ranked/
 reconnect/results qualification remain OPEN.
+Ordinary action requests/refusals/body playback/charge tells now carry shared
+match/round/body-epoch scope (protocol67). Compiler and one pure scope check pass;
+native/peer checks and same-round per-request verb receipts remain OPEN.
 Read [network route](NETWORKING.md),[contract](SKILL_NETWORK_CONTRACT.md) and
 [exact evidence](reports/stability-2026-09-27/multiplayer.md),not a historical
 protocol literal or old test count.

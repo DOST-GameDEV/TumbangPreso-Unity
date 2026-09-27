@@ -1,5 +1,30 @@
 # Multiplayer investigation, 2026-09-27
 
+## Ordinary action scope
+
+Base `ce0edc7a`,protocol67. Ordinary requests only named the current seat/intent.
+An old round's queued input could satisfy a later round's current ownership and
+pose gates; unscoped refusals and body/charge playback had the corresponding risk.
+GameplayActionScope adds16bytes: match identity,round and body movement epoch.
+Requests for punch,lunge,slide,shove,grab,throw and can-reset require an exact valid
+scope before the existing eligibility/outcome logic. Combat action/refusal replies
+retain the original request's context even if resolution advances the world.
+
+Body actions and charge tells also require current context; snapshot charge refresh
+uses the same updated writer. Charge kind is explicit rather than an optional tail.
+All changed handlers check minimum lengths and exact scope tails. Action names use
+the NGO string layout with a64-character bound and exact remaining payload size,
+and the writer sizes from the name. No hero-specific logic,score/rating/leave change,
+input redesign or extra service query. Matching clients are required.
+
+Frozen110source/dependency inputs,9changed: Runtime,Editor,Tests and PlayTests compile
+with exit0. One new pure match/round/epoch case passes by direct managed invocation.
+[Receipt](checks/action-scope-managed.json). New native codec test and amended charge
+fixture (current,foreign match/round/epoch,malformed/unseated/cancel cases) are NOT RUN.
+No unchanged suite/film repeat or new Unity launch under unchanged disk headroom.
+Actual ranked/casual/reconnect peers remain OPEN. Scope does not provide same-round
+per-request verb receipts; old same-round denials are a separate remaining issue.
+
 ## Held-aim body presentation
 
 Base `9a44be97`, protocol66. Held aiming had no remote state even though incoming
