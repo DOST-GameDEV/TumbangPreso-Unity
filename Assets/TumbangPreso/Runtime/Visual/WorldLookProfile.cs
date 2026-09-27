@@ -280,7 +280,7 @@ namespace TumbangPreso.Visual
             // ⚠️ THE LAGOON REWORK AT SUNSET (owner, 2026-09-27, on the rebuilt cove wearing the
             // Lagoon's afternoon: "i think the lighting is too afternoon-y... i want a more sunset
             // style of vibes"). Its own entry so the shipped Lagoon keeps its afternoon. A LOW
-            // golden key (12 degrees: long shadows, warm rims on every boulder), a golden hue at
+            // golden key (6 degrees, just over the horizon, owner: "can you also make the sun lower": long shadows, warm rims on every boulder), a golden hue at
             // about 35 degrees rather than an orange, kept clear of offence orange's 24; SHADE
             // (the ambient trilight, which in this pipeline IS every shadow's colour) goes violet
             // and dusky, the bounce off the sand warm; the air a warm peach haze; the sky a dusky
@@ -288,7 +288,7 @@ namespace TumbangPreso.Visual
             // the gradient (the sky rule above). High key still: nothing black, a coloured floor.
             new MapLook("LagoonCove",new Color(.44f,.42f,.64f),new Color(.66f,.52f,.54f),new Color(.62f,.46f,.34f),new Color(.9f,.8f,1.1f),70,340,4,false)
                 .Air(new Color(.98f,.78f,.64f),new Color(.3f,.46f,.72f),new Color(1,.74f,.54f),new Color(1,.8f,.64f),new Color(.62f,.54f,.74f))
-                .Key(new Color(1,.8f,.56f),1.25f,12,.7f,new Color(.05f,.03f,.06f))
+                .Key(new Color(1,.8f,.56f),1.25f,6,.7f,new Color(.05f,.03f,.06f))
         };
         public MapLook Find(string map)
         {
