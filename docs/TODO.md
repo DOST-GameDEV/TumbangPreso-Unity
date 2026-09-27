@@ -62,6 +62,14 @@ reconnect/results qualification remain OPEN.
 READY and countdown messages now carry match identity (protocol83). Current seated
 membership gates the quorum, host loading must finish, and completed countdowns
 remain consumed. Two new native handler/lifecycle cases pass; actual peers remain OPEN.
+Generic timed skill recovery now binds both owning ability IDs, world/body scope
+and ordered snapshots (protocol84), preserving consumed-state guards and existing
+specialized flight recovery. Two new native codec/application cases pass; actual
+peer/ranked/reconnect qualification remains OPEN.
+Live familiar recovery now binds world/body scope, hero/ultimate identity and
+accepted phase (protocol85). Two new native codec/real-companion cases pass,
+including duplicate field/role-timer protection and no terminal resurrection.
+Pause-aware recovery aging and actual peers remain OPEN.
 Ordinary action requests/refusals/body playback/charge tells now carry shared
 match/round/body-epoch scope (protocol67). Compiler and one pure scope check pass;
 Native/peer qualification remains OPEN. Same-round combat refusals now correlate
@@ -131,6 +139,10 @@ it and the focused retry passes. Player first-entry/other-device timing stays OP
 Generic match loading now awaits destination-owned setup, rejects stale same-scene
 installers, retains errors instead of timed success, and cancels obsolete curtains.
 Four assemblies compile; native handoff/failure/input checks remain OPEN.
+Arena entry now uses owned async loading on every peer after a curtain frame,
+deduplicates in-flight requests and preloads the existing illustration deck at boot.
+Two new native cache/cancellation and offline/controlled-network-role scene cases
+pass. Actual peers and cold-player hitch/frame timing remain OPEN.
 Supplementary baked-motion data now preloads asynchronously per roster rig and is
 retained for body/introduction binding. No authored clips/models changed. Four
 assemblies compile; native retention and measured first-use/memory checks remain OPEN.

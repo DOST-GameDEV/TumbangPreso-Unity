@@ -319,6 +319,7 @@ namespace TumbangPreso.Net
             ResetFeatherfallTransport();
             PresentationMatchId = 0; _pendingMoments.Clear();
             ResetUltimateTransport();
+            ResetTimedKitTransport();
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
             _pendingSkillCasts.Clear();
             for (int slot = 0; slot < Balance.PlayerCount; slot++) Unit(slot)?.AbilitySystem?.ResetNetworkSkillReceipts();
@@ -360,6 +361,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PreparedWorld", OnPreparedWorldMsg);
             cm.RegisterNamedMessageHandler("SkyEffect", OnSkyEffectMsg);
             cm.RegisterNamedMessageHandler("TimedKit", OnTimedKitMsg);
+            cm.RegisterNamedMessageHandler("TimedKitState", OnTimedKitStateMsg);
             cm.RegisterNamedMessageHandler("CastPreparation", OnCastPreparationMsg);
             cm.RegisterNamedMessageHandler("MovementWindow", OnMovementWindowMsg);
             cm.RegisterNamedMessageHandler("WorldFieldBegin", OnWorldFieldBeginMsg);
@@ -1844,50 +1846,7 @@ namespace TumbangPreso.Net
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncFamiliar",writer,PoseDelivery);
         }
 
-        // Reliable accepted effect state, distinct from replaceable flight poses.
-        // The server clock removes transport time from the remaining lifetime.
-        public void BroadcastFamiliarEffect(int slot,ulong? targetPeer=null)
-        {
-            if(!NetAuthority.ShouldResolve() || _nm?.CustomMessagingManager==null)return;
-            var pet=Familiar(slot);var kit=Unit(slot)?.AbilitySystem?.Kit;
-            if(pet==null || kit==null)return;
-            int mode=pet.IsDevouring?2:pet.IsPossessed?1:0;
-            if(mode==0)return;
-            int round=GameServices.Match!=null?GameServices.Match.RoundNumber:0;
-            Vector3 position=mode==2?pet.DevourGround:pet.transform.position;
-            float remaining=mode==2?pet.DevourRemaining:kit.Skill2.DurationRemaining;
-            float expiresAt=(float)_nm.ServerTime.Time+remaining;
-            foreach(ulong peer in _nm.ConnectedClientsIds)
-            {
-                if(peer==_nm.LocalClientId || (targetPeer.HasValue && peer!=targetPeer.Value))continue;
-                using var writer=new FastBufferWriter(48,Allocator.Temp);
-                writer.WriteValueSafe(slot);
-                writer.WriteValueSafe(round);
-                writer.WriteValueSafe(mode);
-                writer.WriteValueSafe(position);
-                writer.WriteValueSafe(expiresAt);
-                writer.WriteValueSafe(pet.transform.eulerAngles.y);
-                _nm.CustomMessagingManager.SendNamedMessage("FamiliarEffect",peer,writer);
-            }
-        }
-
-        private void OnFamiliarEffectMsg(ulong senderClientId,FastBufferReader reader)
-        {
-            if(NetAuthority.IsHost || !FromHost(senderClientId))return;
-            reader.ReadValueSafe(out int slot);
-            reader.ReadValueSafe(out int round);
-            reader.ReadValueSafe(out int mode);
-            reader.ReadValueSafe(out Vector3 position);
-            reader.ReadValueSafe(out float expiresAt);
-            reader.ReadValueSafe(out float yaw);
-            if(!ValidSlot(slot) || (mode!=1 && mode!=2) || !Finite(position) || !Finite(expiresAt) || !Finite(yaw) ||
-                GameServices.Match==null || GameServices.Match.RoundNumber!=round)return;
-            var unit=Unit(slot);
-            float remaining=Mathf.Clamp(expiresAt-(float)_nm.ServerTime.Time,0,7);
-            if(unit?.AbilitySystem?.Kit is Abilities.NemuHeroKit kit)
-                kit.RestoreFamiliar(unit,mode,position,remaining,yaw);
-        }
-
+        // Live familiar effect hydration is scoped in MatchRpc.FamiliarEffects.
         private void SendTimedKitSnapshot(int slot, ulong peer, int fieldGeneration = 0)
         {
             if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
@@ -1898,21 +1857,14 @@ namespace TumbangPreso.Net
                 return;
             }
             if (!(kit is Abilities.ITimedKitReplication replication)) return;
-            var state = replication.CaptureTimedKit();
-            using var writer = new FastBufferWriter(64, Allocator.Temp);
-            writer.WriteValueSafe(slot);
-            writer.WriteValueSafe(GameServices.Match.RoundNumber);
-            writer.WriteValueSafe(kit.HeroId);
-            writer.WriteValueSafe(state.PersonalRemaining);
-            writer.WriteValueSafe(state.UltimateRemaining);
-            writer.WriteValueSafe((float)_nm.ServerTime.Time);
-            writer.WriteValueSafe(state.UltimatePending);
-            _nm.CustomMessagingManager.SendNamedMessage("TimedKit", peer, writer);
+            SendBoundTimedKit(slot, peer, kit, replication);
         }
 
         private void OnTimedKitMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            // The existing specialized flight contract keeps its own scoped tail.
+            // Generic timed channels now use TimedKitState and cannot enter here.
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int round);
             reader.ReadValueSafe(out string hero);
@@ -1925,16 +1877,6 @@ namespace TumbangPreso.Net
                 ReadFeatherfallSnapshot(ref reader, slot, round, remaining, ultimateRemaining, sentAt, ultimatePending);
                 return;
             }
-            if (!ValidSlot(slot) || !Finite(sentAt)
-                || GameServices.Match == null || GameServices.Match.RoundNumber != round) return;
-            var motor = Unit(slot);
-            var kit = motor?.AbilitySystem?.Kit;
-            if (kit == null || kit.HeroId != hero || !(kit is Abilities.ITimedKitReplication replication)) return;
-            float elapsed = Mathf.Max(0, (float)_nm.ServerTime.Time - sentAt);
-            // The owning ability supplies its bound; a role/slot change cannot substitute another skill's duration.
-            if (!replication.CaptureTimedKit().TryAge(remaining, ultimateRemaining, ultimatePending, elapsed, out var state)) return;
-            using (NetCue.SuppressRelay())
-                replication.RestoreTimedKit(motor, state);
         }
 
         private int _worldFieldGeneration, _lastWorldFieldGeneration, _worldFieldRound;

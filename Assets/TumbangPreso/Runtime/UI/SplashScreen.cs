@@ -506,6 +506,7 @@ namespace TumbangPreso.UI
 
             SetLoadingStage("loading menu artwork", 0.48f);
             yield return OwnerMenuArt.Warmup();
+            yield return LoadingArtwork.Warmup();
             yield return Avatars.Warmup();
             yield return OwnerPortraitArt.Warmup(done =>
                 SetLoadingStage("loading menu artwork", Mathf.Lerp(.48f, .52f, done)));

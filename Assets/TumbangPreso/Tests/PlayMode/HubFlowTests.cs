@@ -762,7 +762,7 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(Net.NetSession.Instance.IsNetworked, "BACK from the lobby leaves the room.");
 
                 // The loading curtain, drawn over the court without loading anything.
-                HubLoading.Begin(SceneFlow.Eskinita, networked: true);
+                HubLoading.Begin(SceneFlow.Eskinita, externallyLoaded: true);
                 yield return new WaitForSecondsRealtime(0.3f);
                 var loading = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).First(c => c.name == "TumpLoadingCanvas");
                 var settings = Settings.SettingsStore.Current;

@@ -274,6 +274,7 @@ namespace TumbangPreso.Abilities
             /// <summary>Where it opens when Kuro is not out. Her own reach, as before.</summary>
             private GameObject _field;
             private GhostPetCompanion _familiar;
+            private CharacterMotor _castMotor;
             private const float FallbackRange = 3.5f;
             private Vector3 _castAnchor,_approachStart;
             private Quaternion _castFacing;
@@ -311,6 +312,13 @@ namespace TumbangPreso.Abilities
                 return pet==null || !pet.IsDevouring;
             }
 
+            protected override void OnAcceptedUltimatePhase(long phaseId)
+            {
+                // Immediate activation binds its accepted lifetime after OnActivate.
+                if (IsActive && _castMotor != null)
+                    Net.MatchRpc.Instance?.BroadcastFamiliarEffect(_castMotor.PlayerSlot);
+            }
+
             public void RestoreSeance(AbilityContext ctx,Vector3 position,float remaining)
             {
                 remaining=Mathf.Clamp(remaining,0,Duration);
@@ -345,6 +353,7 @@ namespace TumbangPreso.Abilities
 
             public override void Activate(AbilityContext ctx)
             {
+                _castMotor = ctx.Motor;
                 _castAnchor=ResolveAnchor(ctx);
                 _familiar=ctx.Motor.GetComponent<CharacterVisual>()?.Companion;
                 _familiar?.PrepareForInvocation();
@@ -425,7 +434,7 @@ namespace TumbangPreso.Abilities
             protected override void OnEnd(AbilityContext ctx)
             {
                 // Their matching timers own the normal close cue and return.
-                _field=null;_familiar=null;_approaching=false;
+                _field=null;_familiar=null;_castMotor=null;_approaching=false;
             }
             protected override void OnCancelled(AbilityContext ctx)
             {
@@ -438,7 +447,7 @@ namespace TumbangPreso.Abilities
                     else UnityEngine.Object.DestroyImmediate(_field);
                 }
                 if(_familiar!=null)_familiar.StopDevouring();
-                _field=null;_familiar=null;
+                _field=null;_familiar=null;_castMotor=null;
             }
         }
     }

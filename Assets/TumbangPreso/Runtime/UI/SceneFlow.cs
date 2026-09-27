@@ -567,11 +567,10 @@ namespace TumbangPreso.UI
 
             if(MapPreviewSurface.DeferTransition(scene))return;
 
-            // ⚠️ UX-1.7: an arena load is covered by the LOADING screen. Offline it takes the load
-            // over (asynchronously, so its percentage is the real one); a networked load stays the
-            // synchronous one every peer has always used. `Hub.HubLoading`'s header has why.
+            // Every peer owns its asynchronous scene load; NGO scene management is
+            // disabled. The curtain also owns destination setup and first-draw work.
             if (Hub.HubLoading.BeginMenu(scene)) return;
-            if (Hub.HubLoading.Begin(scene, NetAuthority.IsNetworked)) return;
+            if (Hub.HubLoading.Begin(scene)) return;
             SceneManager.LoadScene(scene);
         }
 

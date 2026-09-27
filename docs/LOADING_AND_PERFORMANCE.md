@@ -28,7 +28,8 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Effect sheets and authored intro data | Visual/VfxFlipbook.cs,UltimatePerformance and existing per-kit warmups |
 | Shared particles and status icons | Visual/AbilityVfx.WarmupAssets prepares existing cached geometry; UI/StatusIcons.Warmup follows StatusRules.All with async sprite loading |
 | Ability icons and cooldown | UI/AbilityIcons.Warmup async-loads illustrations,yields per existing fallback bake/upload and prepares the radial cooldown graphic; repeated warmup reuses completed cache entries |
-| Match loading surface | UI/Hub/HubLoading.cs and MatchInstaller.IsPrepared; destination-scoped installation, failure/return and cancellation instead of timed success |
+| Match loading surface | UI/Hub/HubLoading.cs and MatchInstaller.IsPrepared; every SceneFlow peer uses owned async loading after a curtain frame, with in-flight target deduplication, destination setup, failure/return and cancellation instead of timed success. externallyLoaded is explicit observation only, not the network default |
+| Loading illustration deck | LoadingArtwork.Warmup asynchronously retains all three existing textures during boot; subsequent curtain installs and rotations reuse them. Direct no-boot fallback and artwork remain unchanged |
 | Menu scene entry | SceneFlow.Go -> HubLoading.BeginMenu; asynchronous known converted scenes,ConvertedScreen initialization/error,canvas layout and same-curtain hub preparation; root pointer blocker |
 | Custom map switching | HubLoading.PreparePreview and MapPreviewSurface.PrepareAll; real hub curtain covers all scene/setup/first-draw work,then cached scene/look instances serve selection without new loads |
 | Training controls/targets | PracticeRange.cs,UI/PausePanel.TrainingRange.cs; prebuilt inactive menu and target bodies reused without changing saved preferences |

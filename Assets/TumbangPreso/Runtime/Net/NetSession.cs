@@ -524,10 +524,14 @@ namespace TumbangPreso.Net
         // cohort; replicas no longer infer victims from local positions.
         // 83: READY and countdown messages name their match; only seated peers
         // count toward a loaded host's one-time pre-round countdown.
-        // 84: the map list changed (2026-09-27): index 4 is the reworked Lagoon Court (LagoonCove),
+        // 84: generic timed recovery binds both ability IDs to world/body scope
+        // and ordered snapshots; the specialized flight contract is unchanged.
+        // 85: live familiar effects bind match/body and accepted ultimate identity;
+        // old, duplicate and completed effects cannot recreate a seance field.
+        // 86: the map list changed (2026-09-27): index 4 is the reworked Lagoon Court (LagoonCove),
         // the first Lagoon is vaulted, and Kanto is index 5. Maps travel as indices into
         // SceneFlow.Maps (MatchRpc SyncMap, queue votes), so an older peer would read a different map.
-        public const int ProtocolVersion = 84;
+        public const int ProtocolVersion = 86;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

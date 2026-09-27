@@ -20,6 +20,17 @@ namespace TumbangPreso.UI
         private float _nextChange, _changedAt;
         public int FrameIndex { get; private set; }
 
+        public static System.Collections.IEnumerator Warmup()
+        {
+            for (int index = 0; index < Paths.Length; index++)
+            {
+                if (Cached[index] != null) continue;
+                var request = Resources.LoadAsync<Texture2D>(Paths[index]);
+                yield return request;
+                Cached[index] = request.asset as Texture2D;
+            }
+        }
+
         public static LoadingArtwork Install(RectTransform parent)
         {
             var root = OwnerUiLayout.Rect(parent, "LoadingIllustrations");

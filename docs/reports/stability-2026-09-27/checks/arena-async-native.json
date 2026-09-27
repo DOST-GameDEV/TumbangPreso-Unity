@@ -1,0 +1,42 @@
+{
+  "base": "07cfc317738f38d07e23af3de6018f03be162eb3",
+  "protocol": 83,
+  "scope": "Owned async arena entry, deduplication, early cancellation and retained loading art",
+  "result": "Passed",
+  "total": 2,
+  "duration": 15.3152177,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubLoading.cs",
+      "sha256": "788BFD38B9026EAA69B0B40164D94A29A8F2B91B9053ED66BC0AB2BBEE39C519"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SceneFlow.cs",
+      "sha256": "6CD1ADB7983007F8F59A516B71FF42E897018E7C9ECEA966F293FE6FE3EE9F8F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/LoadingArtwork.cs",
+      "sha256": "682849EA1F4D6449FE8A9714F306F8CCD8F0AB2135308448609A7F934A4E42A1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "8EB898EE58398C0A6DA6714E606E3C3D4FDEC33FF6D419CF72D004947F597B24"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/MatchLoadingReadinessTests.cs",
+      "sha256": "CB2FC0767FCCE8D24C2F37B2ACD19D79ECCDA49D2484AAF40B6491B53CC7750F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/HubFlowTests.cs",
+      "sha256": "08FA8B6DA00D9241C0CB787B26F6687C9BC03B11439F383874979839BF8F3ED6"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6438346752,
+  "retryCount": 0,
+  "unverified": [
+    "Actual peer or ranked sessions",
+    "Cold player timings or hitch-free frames",
+    "Physical input"
+  ]
+}

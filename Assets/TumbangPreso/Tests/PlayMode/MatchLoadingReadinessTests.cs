@@ -17,6 +17,102 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After()
         { HubLoading.Cancel(); yield return PlayModeWorld.Reset(); }
 
+        private sealed class LoadingPeer : INetProvider
+        {
+            public bool Networked;
+            public bool IsHost => true;
+            public bool IsNetworked => Networked;
+            public int LocalSlot => 0;
+            public int LocalPeerId => 0;
+            public bool IsSeatlessReferee => false;
+        }
+
+        [UnityTest]
+        public IEnumerator LoadingDeckIsRetainedAndAnUnstartedArenaLoadCanBeCancelled()
+        {
+            yield return LoadingArtwork.Warmup();
+            var cached = (Texture2D[])typeof(LoadingArtwork).GetField("Cached", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+            Assert.AreEqual(3, cached.Length); Assert.IsTrue(cached.All(texture => texture != null));
+            var retained = cached.ToArray();
+            var warm = LoadingArtwork.Warmup();
+            Assert.IsFalse(warm.MoveNext(), "A prepared loading deck scheduled fresh asset reads.");
+            int loads = 0;
+            void Loaded(Scene scene, LoadSceneMode mode) { loads++; }
+            SceneManager.sceneLoaded += Loaded;
+            var source = SceneManager.GetActiveScene();
+            try
+            {
+                for (int index = 0; index < 3; index++)
+                {
+                    Assert.IsTrue(HubLoading.Begin(SceneFlow.Eskinita));
+                    var owner = Object.FindFirstObjectByType<HubLoading>();
+                    Assert.IsTrue(HubLoading.Begin(SceneFlow.Eskinita));
+                    Assert.AreSame(owner, Object.FindFirstObjectByType<HubLoading>());
+                    var artwork = Object.FindFirstObjectByType<LoadingArtwork>();
+                    var front = artwork.GetComponentsInChildren<RawImage>().Single(i => i.name == "CurrentIllustration");
+                    Assert.AreSame(retained[artwork.FrameIndex], front.texture);
+                    HubLoading.Cancel();
+                    yield return null;
+                    Assert.AreEqual(source, SceneManager.GetActiveScene()); Assert.AreEqual(0, loads);
+                }
+            }
+            finally { SceneManager.sceneLoaded -= Loaded; HubLoading.Cancel(); }
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator OfflineAndNetworkArenaEntryShareOneAsynchronousLoadingOwner()
+        {
+            var provider = NetAuthority.Provider;
+            bool networked = SceneFlow.Networked, pinned = SceneFlow.RulesPinned;
+            var rules = SceneFlow.SelectedRules.Clone();
+            var launch = typeof(GameLaunch).GetFields(BindingFlags.Public | BindingFlags.Static)
+                .Where(field => !field.IsInitOnly).ToDictionary(field => field, field => field.GetValue(null));
+            var seats = new System.Collections.Generic.Dictionary<int, string>(GameLaunch.SeatTokens);
+            int loads = 0;
+            void Loaded(Scene scene, LoadSceneMode mode) { if (scene.name == SceneFlow.Eskinita) loads++; }
+            SceneManager.sceneLoaded += Loaded;
+            try
+            {
+                SceneFlow.PinSelectedRules(Core.CustomGameRules.Defaults(Core.GameMode.Classic));
+                foreach (bool online in new[] { false, true })
+                {
+                    GameLaunch.PendingAction = ""; GameLaunch.Spectator = false; GameLaunch.AllBots = false;
+                    GameLaunch.GuidedTutorial = false; GameLaunch.TrainingRange = false;
+                    SceneFlow.Networked = online;
+                    NetAuthority.Provider = new LoadingPeer { Networked = online };
+                    var source = SceneManager.GetActiveScene(); int before = loads;
+                    SceneFlow.Go(SceneFlow.Eskinita);
+                    var owner = Object.FindFirstObjectByType<HubLoading>(); Assert.IsNotNull(owner);
+                    Assert.IsTrue((bool)typeof(HubLoading).GetField("_ownsSceneLoad", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(owner));
+                    Assert.AreEqual(source, SceneManager.GetActiveScene()); Assert.AreEqual(before, loads);
+                    yield return null;
+                    SceneFlow.Go(SceneFlow.Eskinita);
+                    Assert.AreSame(owner, Object.FindFirstObjectByType<HubLoading>());
+                    float deadline = Time.realtimeSinceStartup + 70;
+                    while (HubLoading.Visible && Time.realtimeSinceStartup < deadline)
+                    {
+                        Assert.IsTrue(owner == null || string.IsNullOrEmpty(owner.FailureReason), owner != null ? owner.FailureReason : "");
+                        yield return null;
+                    }
+                    Assert.IsFalse(HubLoading.Visible); Assert.AreEqual(before + 1, loads);
+                    var destination = SceneManager.GetActiveScene();
+                    Assert.AreEqual(SceneFlow.Eskinita, destination.name); Assert.AreNotEqual(source, destination);
+                    var installer = Object.FindObjectsByType<MatchInstaller>(FindObjectsSortMode.None)
+                        .Single(i => i.gameObject.scene == destination);
+                    Assert.IsTrue(installer.IsPrepared); Assert.IsNotNull(Hud.Instance);
+                }
+            }
+            finally
+            {
+                SceneManager.sceneLoaded -= Loaded; HubLoading.Cancel(); NetAuthority.Provider = provider;
+                SceneFlow.Networked = networked;
+                foreach (var field in launch) field.Key.SetValue(null, field.Value);
+                GameLaunch.SeatTokens.Clear();
+                foreach (var seat in seats) GameLaunch.SeatTokens.Add(seat.Key, seat.Value);
+                if (pinned) SceneFlow.PinSelectedRules(rules); else SceneFlow.UnpinSelectedRules();
+            }
+        }
+
         [Test]
         public void TransportCleanupCancelsWaitingArrivalAndDoesNotRestoreOldHitstopSpeed()
         {
