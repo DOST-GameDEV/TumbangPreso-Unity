@@ -45,7 +45,7 @@ namespace TumbangPreso.UI.Hub
     ///   - NO AUDIO TRACK. The loop is silent by design; `docs/reports/home-scene/README.md` § 4 lists
     ///     the cue times if the hub ever wants to play its own sounds against it.
     /// </summary>
-    public sealed class HubSceneVideo : MonoBehaviour
+    public sealed partial class HubSceneVideo : MonoBehaviour
     {
         /// <summary>Zack's loop: the fallback when a picked hero's files are missing.</summary>
         public const string ClipPath = "UI/home/zack-home-loop";
@@ -72,7 +72,7 @@ namespace TumbangPreso.UI.Hub
         /// </summary>
         public static string Pick(System.Func<int, int> roll, System.Func<string, bool> hasClip = null)
         {
-            hasClip = hasClip ?? (h => Resources.Load<VideoClip>(ClipPathFor(h)) != null);
+            hasClip = hasClip ?? (h => LoadClip(h) != null);
             var candidates = new System.Collections.Generic.List<string>();
             foreach (var h in Heroes)
                 if (hasClip(h)) candidates.Add(h);
@@ -82,11 +82,14 @@ namespace TumbangPreso.UI.Hub
 
         public VideoPlayer Player { get; private set; }
         public bool Prepared { get; private set; }
+        public bool FirstFrameReady { get; private set; }
         public bool ShowingVideo => _image != null && _target != null && _image.texture == _target;
 
         private RawImage _image;
         private RenderTexture _target;
         private Texture2D _poster;
+        private VideoClip _clip;
+        private bool _preloading, _failed;
 
         /// <summary>Put the scene into the hub's background slot, above the court. Idempotent.</summary>
         public static HubSceneVideo Install(RectTransform scene)
@@ -94,38 +97,55 @@ namespace TumbangPreso.UI.Hub
             if (scene == null) return null;
             var existing = scene.GetComponentInChildren<HubSceneVideo>(true);
             if (existing != null) return existing;
+            var warm = TakePreloaded(scene);
+            if (warm != null) return warm;
+            return Create(scene, false);
+        }
+
+        private static HubSceneVideo Create(RectTransform scene, bool preloading, string hero = null)
+        {
             var go = new GameObject("HomeSceneVideo", typeof(RectTransform), typeof(RawImage));
-            go.layer = scene.gameObject.layer;
+            go.SetActive(false);
+            if (scene != null) go.layer = scene.gameObject.layer;
             var rect = (RectTransform)go.transform;
             rect.SetParent(scene, false);
             rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
             rect.anchoredPosition = Vector2.zero;
             var fitter = go.AddComponent<AspectRatioFitter>();
+            fitter.enabled = !preloading;
             fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
             fitter.aspectRatio = 16f / 9f;
-            return go.AddComponent<HubSceneVideo>();
+            var video = go.AddComponent<HubSceneVideo>();
+            video._preloading = preloading; video.Hero = hero;
+            if (preloading) DontDestroyOnLoad(go);
+            go.SetActive(true);
+            return video;
         }
 
         private void Awake()
         {
             _image = GetComponent<RawImage>();
             _image.raycastTarget = false;
-            Hero = string.IsNullOrEmpty(ForcedHero) ? Pick(n => Random.Range(0, n)) : ForcedHero;
+            if (string.IsNullOrEmpty(Hero)) Hero = string.IsNullOrEmpty(ForcedHero) ? Pick(n => Random.Range(0, n)) : ForcedHero;
             // ⚠️ POSTER AND CLIP ARE ONE HERO'S PAIR. The poster is that loop's own frame 0, so a fallback
             // takes both of Zack's rather than showing one hero's poster before another hero's clip.
-            var clip = Resources.Load<VideoClip>(ClipPathFor(Hero));
-            _poster = Resources.Load<Texture2D>(PosterPathFor(Hero));
-            if (clip == null || _poster == null)
+            _clip = LoadClip(Hero);
+            _poster = LoadPoster(Hero);
+            if (_clip == null || _poster == null)
             {
                 Hero = "zack";
-                clip = Resources.Load<VideoClip>(ClipPath);
-                _poster = Resources.Load<Texture2D>(PosterPath);
+                _clip = LoadClip(Hero);
+                _poster = LoadPoster(Hero);
             }
             _image.texture = _poster;
             _image.enabled = _poster != null;
 
-            if (Settings.SettingsStore.Current.ReducedUiMotion) return;
-            if (clip == null) return;
+            if (!Settings.SettingsStore.Current.ReducedUiMotion) PreparePlayback();
+        }
+
+        private void PreparePlayback()
+        {
+            if (Player != null || _clip == null || _failed) return;
 
             _target = new RenderTexture(1920, 1080, 0) { name = "HomeSceneVideo" };
             Player = gameObject.AddComponent<VideoPlayer>();
@@ -137,54 +157,81 @@ namespace TumbangPreso.UI.Hub
             Player.targetTexture = _target;
             Player.audioOutputMode = VideoAudioOutputMode.None;
             Player.aspectRatio = VideoAspectRatio.FitOutside;
-            Player.clip = clip;
+            Player.clip = _clip;
             Player.prepareCompleted += OnPrepared;
+            Player.frameReady += OnFirstFrame;
+            Player.sendFrameReadyEvents = true;
             Player.errorReceived += OnError;
-            Player.Prepare();
+            if (_preloading) Player.Pause();
+            else Player.Prepare();
         }
 
         private void OnPrepared(VideoPlayer player)
         {
+            if (_failed || player != Player) return;
             Prepared = true;
-            _image.texture = _target;
-            _image.enabled = true;
-            if (AtHome) player.Play();
-            else _image.enabled = false;
+            if (_preloading) return;
+            if (AtHome && !Settings.SettingsStore.Current.ReducedUiMotion) player.Play();
+        }
+
+        private void OnFirstFrame(VideoPlayer player, long frame)
+        {
+            if (_failed || player != Player) return;
+            FirstFrameReady = true;
+            Prepared = player.isPrepared;
+            player.sendFrameReadyEvents = false;
+            if (_preloading) player.Pause();
         }
 
         private void OnError(VideoPlayer player, string message)
         {
+            if (_failed) return;
             // ⚠️ A decoder that cannot play the file leaves the poster up rather than a black hole.
             Debug.LogWarning("[HubSceneVideo] " + message + " - showing the poster instead.");
-            Prepared = false;
+            Prepared = false; FirstFrameReady = false; _failed = true;
             _image.texture = _poster;
-            _image.enabled = _poster != null;
+            _image.enabled = !_preloading && AtHome && _poster != null;
+            if (player != null) player.Stop();
+            ReleaseTarget();
         }
 
         private static bool AtHome => TumpHub.Current == null || TumpHub.Current.ShowingHome;
 
         private void Update()
         {
+            if (_preloading) { _image.enabled = false; return; }
             // HOME only, in every state: the poster before the clip prepares, with reduced motion, and
             // after a decode failure too, or a hub opened straight into the lobby would cover its map.
             bool home = AtHome;
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            _image.texture = !reduced && FirstFrameReady && _target != null ? _target : _poster;
             _image.enabled = home && _image.texture != null;
+            if (home && !reduced && Player == null) PreparePlayback();
             if (Player == null || !Prepared) return;
-            if (home && !Player.isPlaying) Player.Play();
-            else if (!home && Player.isPlaying) Player.Pause();
+            if (home && !reduced && !Player.isPlaying) Player.Play();
+            else if ((!home || reduced) && Player.isPlaying) Player.Pause();
         }
 
         private void OnDestroy()
         {
+            if (_preloaded == this) _preloaded = null;
             if (Player != null)
             {
                 Player.prepareCompleted -= OnPrepared;
+                Player.frameReady -= OnFirstFrame;
                 Player.errorReceived -= OnError;
             }
+            ReleaseTarget();
+        }
+
+        private void ReleaseTarget()
+        {
             if (_target != null)
             {
+                if (Player != null) Player.targetTexture = null;
                 _target.Release();
                 Destroy(_target);
+                _target = null;
             }
         }
     }

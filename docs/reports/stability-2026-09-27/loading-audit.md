@@ -1,5 +1,35 @@
 # General loading and first-use audit, 2026-09-27
 
+## First HOME decoder preparation
+
+Base `4a9f9cf2`. HubSceneVideo previously loaded its clip/poster and prepared a
+decoder in Awake on hub entry. Boot now asynchronously fetches the declared loop
+metadata and selected poster,then retains one hidden paused player until a real
+first decoded frame is ready. The first hub adopts that same player and render
+target instead of reopening the decoder. Random selection,paired fallback,16:9
+fit,silent playback and the authored movies are unchanged.
+
+The image keeps its poster until frameReady,not just prepareCompleted. First-frame
+callbacks are disabled after use. Reduced motion starts no decoder; live toggling
+also pauses/shows the poster. Error or a30s failure budget ends preparation with
+poster fallback and releases the target; this is not a minimum loading duration.
+Concurrent asset waiters recheck the cache before creating a player. At most one
+preloaded player is retained; later newly built hubs still use the normal path.
+Memory tradeoff: one prepared decoder/1920x1080target lives earlier,until adoption.
+No claim that every later hub rebuild or every click is now hitch-free.
+
+API basis: Unity documents [paused preparation](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Video.VideoPlayer.Pause.html),
+[retaining preparation by pausing rather than stopping](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Video.VideoPlayer.Prepare.html),
+and [first-frame notification plus disabling its ongoing overhead](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Video.VideoPlayer-frameReady.html).
+
+Runtime,Editor,Tests and PlayTests compile on126frozen inputs (5changed),reusing
+the unchanged Core assembly. A final duplicate-creation guard was compiled in
+Runtime only; unaffected assemblies/tests were not rerun.
+[Receipt](checks/home-video-compile.json). Two new native tests cover paused first
+frame/player-target reuse/cleanup and reduced-motion poster-only startup. They are
+NOT RUN under the existing native disk boundary. No old film/suite repeat or asset
+edit. Actual decoder/GPU/first-entry timings and native visuals remain OPEN.
+
 ## Shared menu portrait preload
 
 Base `210cd801`. The avatar/title preload did not cover the separate hub portraits

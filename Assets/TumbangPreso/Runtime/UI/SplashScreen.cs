@@ -520,6 +520,8 @@ namespace TumbangPreso.UI
             SetLoadingStage("building interface", 0.52f);
             WarmSprites();
             yield return null;
+            yield return Hub.HubSceneVideo.Warmup(done =>
+                SetLoadingStage("preparing home", Mathf.Lerp(.52f, .6f, done)));
 
             // 7. Every ability glyph.
             SetLoadingStage("loading abilities", 0.61f);

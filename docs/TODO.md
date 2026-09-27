@@ -48,6 +48,9 @@ Instance/material/GPU first use and measured player hitch qualification are not 
 complete. Keep progress work-driven and loading responsive; do not call a compile
 hitch-free performance. [Source route](LOADING_AND_PERFORMANCE.md),
 [implemented units and limits](reports/stability-2026-09-27/loading-audit.md).
+First-HOME video preparation now runs during boot and reuses one paused decoded
+player; poster/reduced-motion fallback stays. Four assemblies compile; native
+decoder/handoff and player first-entry timings remain OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

@@ -201,6 +201,11 @@ done: the owner's bar is *"atleast same level or EVEN better"*.
 
 - HOME picks one hero's loop AT RANDOM (🧑 2026-09-24): ship `Resources/UI/home/<hero>-home-loop.mp4`
   and `<hero>-home-poster.png` (`npm run ship:<hero>`), then add the id to `HubSceneVideo.Heroes`.
+- Boot's shared HubSceneVideo warmup reads that same hero list and prepares the first
+  selected loop behind loading. Do not add a separate loader for each film. It keeps
+  one paused decoded player until the first hub adopts it; reduced motion uses the
+  poster without a decoder. New native warmup qualification remains open in the
+  [loading record](reports/stability-2026-09-27/loading-audit.md#first-home-decoder-preparation).
 - The hub's `Scene` layer is where a home background lives (`TumpHub.Install`); a `VideoPlayer`
   into a `RenderTexture` on a `RawImage`, enveloped at 16:9, poster first, reduced motion shows the
   poster, and it is HOME's only (the lobby shows the room's map).

@@ -1,0 +1,29 @@
+{
+  "base": "4a9f9cf2d8f22544a247ee8c107c6bff4090957a",
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0; final duplicate creation guard Runtime-only exit0",
+  "core": "Unchanged Core/ref assemblies reused from prior coherent candidate",
+  "nativeTests": "NOT RUN: existing disk reserve boundary; no repeated editor launch",
+  "runtimeAssemblySha256": "30F24EB71D1582861081B0E16980E5834D46F0ED744B518EC3AB7F4271007B22",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubSceneVideo.cs",
+      "sha256": "17DEE1BEA61B4FFD371A1F82BA0B0DB7F622D10DFA8DD3344B55CEB0BB806CB2"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubSceneVideo.Warmup.cs",
+      "sha256": "F9A45A219FC1CA5C268CC445E2D325EB29CD01F34613DB0FF6FBBFDA7CEE24EC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubSceneVideo.Warmup.cs.meta",
+      "sha256": "42CD5C6820ED2D460ED3FED6BC9D7AD41E6168C295C57E89B0A29020BA06AA85"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "67276C289E5AE534C270BDF4629508B25A4282B3DC75A5F29B8B23CE7E35DCAC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/HubSceneVideoTests.cs",
+      "sha256": "F806EC5BD421A5A7953A25A7A4117741C70AB4FC30F5CD748F4A0FE27FCB572D"
+    }
+  ]
+}

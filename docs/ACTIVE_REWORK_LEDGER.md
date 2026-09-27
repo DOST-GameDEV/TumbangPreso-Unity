@@ -1,20 +1,20 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`99ce5338830ae0366c96e5ec0365c3a05efae6e6`; correlated verb-refusal unit follows it.
+`4a9f9cf2d8f22544a247ee8c107c6bff4090957a`; first-HOME video warmup follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-Protocol69 correlates four combat predictions/refusals by request ID within their
-existing world scope. Older/duplicate denials cannot reset newer cooldowns/windows;
-fixed per-seat host cursors reject replayed requests. Network rollback clears action
-state without adding stamina already corrected by SyncUnit. A denial sends one
-reliable current-state correction only to the requester. Two focused Core cases
-pass; Core plus four Unity assemblies compile. Native/no-double-refund and actual
-peer qualification remain OPEN.
-[Evidence](reports/stability-2026-09-27/multiplayer.md#correlated-combat-refusals).
+Boot now asynchronously loads HOME clip metadata/selected poster,prepares one
+hidden paused player through its first decoded frame,and hands that same player/
+target to the first hub. Poster stays until a frame exists; reduced motion opens
+no decoder. Failure settles to the poster and releases the target. No film,art,
+map or protocol change. Four assemblies compile; final duplicate-creation guard
+has a focused Runtime compile. New native handoff/reduced-motion cases and actual
+first-entry timing remain OPEN.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#first-home-decoder-preparation).
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -25,6 +25,7 @@ and current owner reservations after resuming.
 
 | Revision | Change | Evidence boundary |
 |---|---|---|
+| 4a9f9cf2 | Correlated combat refusals and authoritative resource correction | Two new Core cases pass; five assemblies compile; native/peer qualification pending |
 | 99ce5338 | Remote host resource clocks and held-sprint snapshot continuity | Two new Core cases pass; five assemblies compile; native/peer resource checks pending |
 | 8e20a495 | Ordinary action/request/refusal/charge context scoping | Four assemblies compile; one new pure case passes; native/peer cases pending |
 | ce0edc7a | Current docs/routes,whole history archives and conservative generated-media cleanup |33active docs link-check clear;55root docs cataloged;9historical bodies preserved |
@@ -67,9 +68,10 @@ before tests; repeated launches at unchanged headroom are not justified. Current
 direct Roslyn checks compile Runtime,Editor,Tests and PlayTests but do not run native
 lifecycle,rendering,IL postprocessing,actual peers or a player build.
 
-Latest frozen implementation candidate:122 source/dependency inputs,10changed for verb receipts.
-Core plus all four Unity assemblies compiled; compiler session45272 ended. Two new
-Core tests pass (2executed,0failed). Receipts:
+Latest frozen implementation candidate:126 source/dependency inputs,5changed for HOME loading.
+Four Unity assemblies compiled; session77966 ended. Final duplicate-creation guard
+received Runtime-only compile exit0; unaffected assemblies/Core evidence reused.
+Receipts: [HOME warmup](reports/stability-2026-09-27/checks/home-video-compile.json),
 [verb receipts](reports/stability-2026-09-27/checks/verb-receipts-compile.json),
 [stamina](reports/stability-2026-09-27/checks/network-stamina-compile.json),
 [action scope](reports/stability-2026-09-27/checks/action-scope-managed.json),
