@@ -162,6 +162,8 @@ GROUPS = [
         "MatchArrivalFlowTests", "ColdLobbyCodeTests",
         # The animated HOME scene in the hub's reserved background layer (docs/reports/home-scene).
         "HubSceneVideoTests",
+        # Placed 2026-09-27 when ASTRAReworks was merged with the Kanto branch: login feedback is a screen.
+        "OwnerLoginFeedbackTests",
     ]),
 
     ("match", """
@@ -196,6 +198,9 @@ GROUPS = [
         "SplitSpiresPassageProbe", "ThrowAimIntegrationProbe", "ThrowMotionReviewProbe",
         "TumpNativeHudTests", "TumpNativeResultTests", "ZackKitAcceptanceProbe",
         "ZackSkillPresentationProbe",
+        # Placed 2026-09-27 with the ASTRAReworks merge: each loads an arena or match state (map-loading
+        # readiness, the practice range, the voodoo body, the generated motion clips on a body).
+        "MatchLoadingReadinessTests", "PracticeRangeTests", "VoodooBodyWiringTests", "GeneratedMotionAssetsTests",
         # Presentation and preview-transition contracts install real arenas and
         # assert accepted state/lifecycle outcomes; their occasional images are evidence.
         "ActionChainIntegrationTests",
