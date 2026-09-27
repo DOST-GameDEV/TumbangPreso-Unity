@@ -814,6 +814,31 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
 - [ ] Deploy the cloud-code hero lists once they name him (needs the owner's UGS deploy); record his
   lines (human voices only, `docs/HUMAN.md` PAETE rows).
 
+### HERO-10 · Phaister's overhaul (names, VFX, animation, SFX, directing) ⚠️ OPEN, 2026-09-27
+
+Owner, 2026-09-27: *"start working on the phaister overhaul next"*, *"rename her shit too"*, *"it needs really great
+presentation VFx ANIIMATION SFX AND DIRECTING"*, *"think abt her personality too in making her cutscenes and vfx"*,
+*"thoroughly refine existing animation effects and models and vfx of her skills"*. Method: `docs/HERO_KIT_METHOD.md`
+(Paete's baseline). Mechanics are ABILITY-2's (`Core.VoodooRules`). Brief: `ArtSource/phaister/kit-20260927/design-brief.md`;
+research, plan and questions: `docs/reports/phaister-kit-2026-09-27/`.
+
+- [x] Brief and research from footage (Lyney, Zarya, Kafka; her own Bakunawa story); audit of what is there today.
+- [x] Plan: names proposed, the effect family, six beats per ability, the cutscene direction (one sentence, three shots,
+  the moon travelling left to right), the file list; ONE batch of ten questions.
+- [ ] The owner's answers recorded in `plan.md` section 7.
+- [ ] Names and descriptions; icons.
+- [ ] Props typed in `tools/build_phaister_props.py` (doll, pin, lamp, curtain, moon, serpent); turnarounds.
+- [ ] One body clip and one first-person action per ability (today both curses share `hero-phaister-hex` and `cast-hex`,
+  and the ultimate uses the retired `hero-phaister-eclipse`); filmstrips reviewed.
+- [ ] Effects per ability (today: the doll lands with the blink's `sfx_blink_arrive`, the Vulnerable cone vanishes at
+  0.6 s, the hole is a placeholder sphere); every effect comes out of a prop and is put away.
+- [ ] One sound recipe per cue in `tools/build_phaister_audio.py`; loudness checked.
+- [ ] Cutscene rebuilt (today it is the retired Grand Coven ritual): storyboard with `--preview`, at most 6.5 s, clock
+  frozen, the density pass, the ending on the real targets, play picks up from its end state.
+- [ ] `PhaisterKitPlayProbe` films in a match (her screen, the court, a caught player); rejoin probe for the hole and the
+  spotlight; mp4s versioned and sent; verdicts recorded in `direction.md`.
+- [ ] Bots; Core, EditMode, the PlayMode gate, `Checks.RunAll`, audits, a build.
+
 ### PRACTICE-1 · A practice picker and a Valorant-style training range ⚠️ OPEN, 2026-09-26
 
 Owner, 2026-09-26: *"can u also make it so that when u click practice theres a screen that pops up
