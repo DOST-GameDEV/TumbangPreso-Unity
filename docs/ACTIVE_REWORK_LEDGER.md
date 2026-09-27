@@ -1,11 +1,19 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
-`f2309da6566a589a7eb689c2b3e7b5308c728773`; explicit introduction preparation follows it.
+`15dd4b9277707c7beed73f3609e41d599c0c8a4c`; live sentry target delivery follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Protocol82 binds live sentry host masks to accepted ultimate cohorts,including
+pre-birth delivery,late bodies,snapshot identity and duplicate isolation. Replicas
+never choose local victims or catch; late fresh cue is once-only and restoration
+does not replay it. Two new native cases pass2/2 on full committed base plus14inputs,
+no drift,no retry. Actual transport/ranked/staged visuals remain OPEN.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#live-sentry-target-delivery).
+QA-19's comment row now agrees with its already-published native field-state pass.
 
 Existing grounded introduction work now stages behind match loading before arena
 draws,with retained variants and cancellation-safe preparation ownership. Views

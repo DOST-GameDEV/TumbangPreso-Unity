@@ -29,6 +29,7 @@ Runtime files below are in `Assets/TumbangPreso/Runtime/`.
 | Persistent recovery | WorldSnapshotHeader,PreparedWorldSnapshot,HeroAbilitySystem.WorldRecovery,IPreparedWorldReplication,IWorldEffectBinding,ITimedKitReplication. Restore state at elapsed simulation time; do not recast. |
 | Persistent lifetime | HeroAbility.AcceptedCastEvent and WorldEffectSnapshot.Field.InstanceId; ordinary initial cast identity survives commands/recovery. Plant removal matches exact lifetime plus match/round and remembers retirement before late installation. |
 | Recovered target sets | WorldEffectSnapshot.Field.TargetMask and PaeteSentry; preserve host-selected seats rather than rerunning distance checks. Missing bodies bind once; restoration never recatches. |
+| Live sentry targets | SentryTargetState and MatchRpc.SentryTargets deliver the host mask by match/round/owner/ultimate cohort,with bounded pre-birth delivery. PaeteSentry live registry binds it once; replicas never infer or catch. |
 | Effect cleanup ownership | PaeteHeroKit's ultimate tracks its exact fresh sentries and adopts recovered owner instances through IWorldEffectBinding. One kit reset must not destroy other casters' effects. |
 | Contact presentation | Visual/MatchFlair announces accepted outcomes with match/round scope. UltimateImpact reuses HitFeel on the victim's own view; no gameplay mutation or caster confirmation. |
 | Compatibility | Net/SkillContractFingerprint and NetSession.ProtocolVersion. Fingerprints exclude cosmetic files,but semantic/wire changes still need explicit versioning. |

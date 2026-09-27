@@ -520,7 +520,9 @@ namespace TumbangPreso.Net
         // while a joining peer has not installed the caster's kit yet.
         // 81: ultimate commits name hero/ability IDs; requests also carry the
         // current movement epoch. Receivers wait for the matching caster kit.
-        public const int ProtocolVersion = 81;
+        // 82: live sentries bind host-captured targets to the accepted ultimate
+        // cohort; replicas no longer infer victims from local positions.
+        public const int ProtocolVersion = 82;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

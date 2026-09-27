@@ -47,6 +47,18 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        private sealed class UltimateLifetimeProbe : HeroAbility
+        {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
+            public int Activations, Bindings;
+            public long PhaseAtActivation;
+            public UltimateLifetimeProbe(bool delayed) : base("phase-probe", "Phase", "", 0)
+            { Windup = delayed ? .1f : 0; }
+            protected override void OnActivate(AbilityContext context)
+            { Activations++; PhaseAtActivation = AcceptedUltimatePhase; }
+            protected override void OnAcceptedUltimatePhase(long phaseId) { Bindings++; }
+        }
+
         private INetProvider _provider;
         private sealed class PredictingOwner : INetProvider
         {
@@ -269,6 +281,133 @@ namespace TumbangPreso.PlayTests
                 message.Round = 4; message.Sequence = 1; Assert.IsTrue(Accept(7, message));
             }
             finally { Object.DestroyImmediate(router.gameObject); }
+        }
+
+        [Test]
+        public void UltimatePhaseIdentitySurvivesWindupAndBindsImmediateSentriesOnce()
+        {
+            var system = Owner("paete"); var body = system.GetComponent<CharacterMotor>();
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true); GameServices.Match.AdoptPresentationMatch(123);
+            var context = new AbilityContext(body, null, null, Vector3.zero, Vector3.forward, Vector3.forward * 6);
+            var delayed = new UltimateLifetimeProbe(true);
+            try
+            {
+                delayed.Activate(context); Assert.IsTrue(delayed.IsWindingUp);
+                delayed.AdoptUltimatePhase(7); delayed.AdoptUltimatePhase(7);
+                Assert.AreEqual(1, delayed.Bindings);
+                delayed.Tick(context, .2f);
+                Assert.AreEqual(1, delayed.Activations); Assert.AreEqual(7, delayed.PhaseAtActivation);
+                delayed.Reset(); Assert.AreEqual(0, delayed.AcceptedUltimatePhase);
+                delayed.Activate(context); Assert.AreEqual(0, delayed.AcceptedUltimatePhase);
+                delayed.Reset();
+
+                NetAuthority.Provider = new ObservingHost();
+                const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                typeof(HeroKit).GetMethod("AdoptUltimateReservation", hidden).Invoke(system.Kit, null);
+                var cast = new UltimateCommit(1, 1, Vector3.zero, Vector3.forward, Vector3.forward * 6, 0).WithIdentity(system.Kit);
+                typeof(HeroAbilitySystem).GetMethod("ExecuteSharedUltimate", hidden).Invoke(system, new object[] { cast, false, 9L });
+                var sentries = Object.FindObjectsByType<PaeteSentry>();
+                Assert.AreEqual(1, sentries.Length); Assert.AreEqual(9, sentries[0].InstanceId);
+                Assert.AreEqual(9, system.Kit.Ultimate.AcceptedUltimatePhase);
+                system.Kit.Ultimate.AdoptUltimatePhase(9);
+                Assert.AreEqual(1, Object.FindObjectsByType<PaeteSentry>().Length);
+            }
+            finally { delayed.Reset(); system.ResetKitForMatch(); }
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator FreshSentryReceivesCapturedTargetsBeforeBirthWithoutLocalSelectionOrRecatching()
+        {
+            var owner = Owner("paete").GetComponent<CharacterMotor>(); owner.PlayerSlot = 0;
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(owner);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true); GameServices.Match.AdoptPresentationMatch(123);
+            CharacterMotor Body(int slot, Vector3 at)
+            {
+                var body = new GameObject("Sentry wire target " + slot).AddComponent<CharacterMotor>();
+                body.PlayerSlot = slot; body.enabled = false; body.transform.position = at;
+                GameServices.Round.Register(body); return body;
+            }
+            var first = Body(1, Vector3.right); var bystander = Body(2, Vector3.right * 20);
+            var missing = Body(3, Vector3.left);
+            NetAuthority.Provider = new ObservingHost();
+            var host = PaeteSentry.Spawn(Vector3.zero, Vector3.zero, 0, handBack: true);
+            host.AdoptInstance(7); host.enabled = false;
+            var state = SentryTargetState.Capture(host); Assert.IsTrue(state.IsValid); Assert.AreEqual(10, state.Mask);
+            Object.DestroyImmediate(host.gameObject);
+            first.transform.position = Vector3.right * 20; bystander.transform.position = Vector3.right;
+            GameServices.Round.Unregister(missing); Object.DestroyImmediate(missing.gameObject);
+            NetAuthority.Provider = new PredictingOwner();
+            var previous = MatchRpc.Instance;
+            var root = new GameObject("Sentry targets receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>();
+            var instance = typeof(MatchRpc).GetProperty("Instance");
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var receive = typeof(MatchRpc).GetMethod("OnSentryTargetsMsg", hidden);
+            void Deliver(SentryTargetState value, ulong sender = 0)
+            {
+                using var writer = new FastBufferWriter(SentryTargetState.WireBytes, Allocator.Temp);
+                writer.WriteNetworkSerializable(value); Assert.AreEqual(25, writer.Length);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                receive.Invoke(router, new object[] { sender, reader });
+            }
+            try
+            {
+                instance.SetValue(null, router); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+                var replica = PaeteSentry.Spawn(Vector3.zero, Vector3.zero, 0, handBack: true);
+                replica.AdoptInstance(7);
+                var heldField = typeof(PaeteSentry).GetField("_held", hidden);
+                var held = (System.Collections.Generic.List<CharacterMotor>)heldField.GetValue(replica);
+                Assert.IsEmpty(held, "A nearby local bystander was inferred before host selection.");
+                var bad = state; bad.Match = 122; Deliver(bad);
+                bad = state; bad.Round = 2; Deliver(bad);
+                bad = state; bad.Mask = 1; Deliver(bad);
+                bad = state; bad.Mask = 16; Deliver(bad); Deliver(state, 9);
+                using (var writer = new FastBufferWriter(25, Allocator.Temp))
+                {
+                    writer.WriteNetworkSerializable(state); var valid = writer.ToArray();
+                    foreach (int length in new[] { 24, 26 })
+                    {
+                        var malformed = new byte[length]; System.Array.Copy(valid, malformed, System.Math.Min(valid.Length, length));
+                        using var reader = new FastBufferReader(malformed, Allocator.Temp);
+                        receive.Invoke(router, new object[] { 0UL, reader });
+                    }
+                }
+                Assert.IsFalse(replica.HasCapturedTargets);
+                Object.DestroyImmediate(replica.gameObject);
+                Deliver(state); // Accepted selection precedes this peer's tree.
+                replica = PaeteSentry.Spawn(Vector3.zero, Vector3.zero, 0, handBack: true);
+                replica.AdoptInstance(7);
+                held = (System.Collections.Generic.List<CharacterMotor>)heldField.GetValue(replica);
+                CollectionAssert.AreEqual(new[] { first }, held); Assert.AreEqual(10, replica.Capture().TargetMask);
+                bad = state; bad.Mask = 4; Deliver(bad);
+                CollectionAssert.AreEqual(new[] { first }, held);
+                var next = state; next.Instance = 8; next.Mask = 4; Deliver(next);
+                var other = PaeteSentry.Spawn(Vector3.zero, Vector3.zero, 0, handBack: true); other.AdoptInstance(8);
+                CollectionAssert.AreEqual(new[] { bystander }, (System.Collections.Generic.List<CharacterMotor>)heldField.GetValue(other));
+                Assert.AreEqual(10, replica.Capture().TargetMask);
+                Object.DestroyImmediate(other.gameObject);
+                var late = Body(3, Vector3.back * 20);
+                var bind = typeof(PaeteSentry).GetMethod("BindRestoredTargets", hidden);
+                bind.Invoke(replica, null); bind.Invoke(replica, null);
+                CollectionAssert.AreEquivalent(new[] { first, late }, held);
+                typeof(PaeteSentry).GetField("_age", hidden).SetValue(replica, 1f);
+                typeof(PaeteSentry).GetMethod("Update", hidden).Invoke(replica, null);
+                Assert.IsTrue((bool)typeof(PaeteSentry).GetField("_catchCuePlayed", hidden).GetValue(replica));
+                NetAuthority.Provider = new ObservingHost();
+                typeof(PaeteSentry).GetMethod("FixedUpdate", hidden).Invoke(replica, null);
+                Assert.IsFalse(first.IsRooted); Assert.IsFalse(late.IsRooted);
+                NetAuthority.Provider = new PredictingOwner();
+                var captured = replica.Capture(); Assert.AreEqual(7, captured.InstanceId);
+                Assert.IsTrue(WorldEffectSnapshot.Apply(new[] { captured }, .1f));
+                var restored = PaeteSentry.Find(state); Assert.IsNotNull(restored);
+                Assert.IsTrue(restored.HasCapturedTargets); Assert.AreEqual(7, restored.Capture().InstanceId);
+                Deliver(bad); Assert.AreEqual(10, restored.Capture().TargetMask, "Birth replay overwrote restored state.");
+                typeof(PaeteSentry).GetMethod("Update", hidden).Invoke(restored, null);
+                Assert.IsFalse((bool)typeof(PaeteSentry).GetField("_catchCuePlayed", hidden).GetValue(restored), "Recovery replayed the catch cue.");
+            }
+            finally { instance.SetValue(null, previous); Object.Destroy(root); }
+            yield return null;
         }
 
         [UnityTest, Timeout(30000)]
@@ -1164,7 +1303,7 @@ namespace TumbangPreso.PlayTests
                 var prepare = typeof(SharedUltimatePhase).GetMethod("PrepareActors", hidden);
                 Assert.IsFalse((bool)prepare.Invoke(phase, null), "A different hero with the same ability ID was accepted.");
                 typeof(HeroKit).GetMethod("AdoptUltimateReservation", hidden).Invoke(other, null);
-                typeof(HeroAbilitySystem).GetMethod("ExecuteSharedUltimate", hidden).Invoke(system, new object[] { cast, false });
+                typeof(HeroAbilitySystem).GetMethod("ExecuteSharedUltimate", hidden).Invoke(system, new object[] { cast, false, 1L });
                 Assert.AreEqual(0, ((ResourceProbeAbility)other.Ultimate).Activations);
                 Assert.IsTrue(other.Ultimate.ReservedForIntroduction);
                 var matching = new ResourceProbeKit();

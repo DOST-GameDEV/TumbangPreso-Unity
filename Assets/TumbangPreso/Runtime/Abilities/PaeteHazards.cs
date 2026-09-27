@@ -548,9 +548,54 @@ namespace TumbangPreso.Abilities
     /// </summary>
     public sealed class PaeteSentry : MonoBehaviour
     {
+        private static readonly List<PaeteSentry> Live = new List<PaeteSentry>();
         public int OwnerSlot { get; private set; } = -1;
         public Vector3 Centre { get; private set; }
         public float Age => _age;
+        public long InstanceId { get; private set; }
+        public long MatchId { get; private set; }
+        public int RoundNumber { get; private set; }
+        public bool OwnsSelection { get; private set; }
+        public bool HasCapturedTargets => OwnsSelection || _restoredTargets.HasValue;
+        private float _targetsSince;
+        private bool _requestedTargets, _playCatchCue, _catchCuePlayed;
+
+        private void OnEnable()
+        {
+            Live.Add(this);
+            if (InstanceId > 0 && !NetAuthority.IsHost) Net.MatchRpc.Instance?.SentryReady(this);
+        }
+        private void OnDisable() => Live.Remove(this);
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetLive() => Live.Clear();
+
+        public void AdoptInstance(long phaseId)
+        {
+            if (phaseId <= 0 || InstanceId == phaseId) return;
+            InstanceId = phaseId;
+            MatchId = GameServices.Match?.PresentationMatchId ?? 0;
+            RoundNumber = GameServices.Match?.RoundNumber ?? 0;
+            _targetsSince = Time.unscaledTime; _requestedTargets = false;
+            Net.MatchRpc.Instance?.SentryReady(this);
+        }
+
+        private bool Matches(Net.SentryTargetState state) => state.IsValid && state.Match == MatchId &&
+            state.Round == RoundNumber && state.Owner == OwnerSlot && state.Instance == InstanceId;
+
+        public static PaeteSentry Find(Net.SentryTargetState state)
+        {
+            foreach (var sentry in Live) if (sentry != null && sentry.Matches(state)) return sentry;
+            return null;
+        }
+
+        public void ApplyTargetState(Net.SentryTargetState state)
+        {
+            // A snapshot already contains a later authoritative set. Never replay
+            // the birth selection over it or append the same authored limbs twice.
+            if (!Matches(state) || HasCapturedTargets || _age >= PaeteRules.SentryLifeSeconds + .6f) return;
+            _restoredTargets = state.Mask; _caught = true;
+            BindRestoredTargets();
+        }
 
         private float _age;
         // ⚠️⚠️ THE BODY IS SHOWN THIS FAR AHEAD OF THE RULES' CLOCK (v7, 2026-09-27). The owner, asked whether play should pick up where
@@ -570,14 +615,16 @@ namespace TumbangPreso.Abilities
         private const float Flight = 0.45f;
 
         public static PaeteSentry Spawn(Vector3 from, Vector3 at, int ownerSlot, float age = 0f, bool handBack = false,
-            byte? restoredTargets = null)
+            byte? restoredTargets = null, long instanceId = 0)
         {
             var go = new GameObject("PaeteSentry");
             go.transform.position = at;
             var s = go.AddComponent<PaeteSentry>();
             s.OwnerSlot = ownerSlot; s.Centre = at;
             s._restoredTargets = restoredTargets;
-            s._caught = restoredTargets.HasValue; // Recovery never applies a second pull/root.
+            s.OwnsSelection = !restoredTargets.HasValue && NetAuthority.ShouldResolve();
+            s._caught = !s.OwnsSelection; // Replicas/recovery never apply a pull/root.
+            s._playCatchCue = age <= 0 && !restoredTargets.HasValue;
             // ⚠️ A RESTORED AGE IS ALREADY PAST THE FLIGHT. `WorldEffectSnapshot` restores with the age since the roots arrived
             // (`Capture`'s `Remaining` counts from 0, not from -Flight), and subtracting the flight again put a rejoiner's tree
             // 0.45 s behind everybody else's for its whole life (TODO HERO-9, found 2026-09-26). A fresh cast (age 0) still flies.
@@ -608,13 +655,14 @@ namespace TumbangPreso.Abilities
             // and splitting over them with the light inside the split; `PaeteRootVein`'s lit block at the front read as a seed.
             // The cutscene already showed the roots racing there and the tree crawling out; a hand-back sends no second race.
             if (age <= 0f && !handBack && !restoredTargets.HasValue) PaeteRootRidge.Race(null, new Vector3(from.x, Slipper.GroundY(from), from.z), at, Flight, staged: false);
-            // Who the vines reach for is drawn on every peer from the same rule the host uses.
+            // Only authority selects victims. Fresh replicas wait for the captured set.
             var round = GameServices.Round;
-            if (round != null && !restoredTargets.HasValue)
+            if (round != null && s.OwnsSelection)
                 foreach (var p in round.Players)
                     if (p != null && p.PlayerSlot != ownerSlot && InReach(at, p)) s._held.Add(p);
             s._body.SetTargets(s._held);
             s.BindRestoredTargets();
+            s.AdoptInstance(instanceId);
             return s;
         }
 
@@ -658,7 +706,7 @@ namespace TumbangPreso.Abilities
             Type = Net.WorldEffectSnapshot.Kind.Sentry, Source = gameObject, Position = Centre, Forward = Vector3.forward,
             Duration = PaeteRules.SentryLifeSeconds + 0.6f,
             Remaining = Mathf.Clamp(PaeteRules.SentryLifeSeconds + 0.6f - Mathf.Max(0f, _age), 0f, PaeteRules.SentryLifeSeconds + 0.6f),
-            Radius = PaeteRules.SentryRadius, Owner = OwnerSlot, TargetMask = CapturedTargets,
+            Radius = PaeteRules.SentryRadius, Owner = OwnerSlot, TargetMask = CapturedTargets, InstanceId = InstanceId,
         };
 
         public static bool InReach(Vector3 centre, CharacterMotor p)
@@ -670,6 +718,11 @@ namespace TumbangPreso.Abilities
         private void Update()
         {
             BindRestoredTargets();
+            if (!HasCapturedTargets && InstanceId > 0 && !_requestedTargets && Time.unscaledTime - _targetsSince >= 1f)
+            {
+                _requestedTargets = true;
+                Net.MatchRpc.Instance?.RequestWorldSnapshot();
+            }
             float before = _age;
             _age += Time.deltaTime;
             // The growth cues run on the BODY's clock (so a hand-back, already grown, plays none of them); the rules on `_age`.
@@ -704,8 +757,12 @@ namespace TumbangPreso.Abilities
             // The tree waking: the light opens in its hollows (`PaeteSentryBody`'s WAKE beat, last).
             if (grownBefore < _body.WakeAt && grown >= _body.WakeAt)
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_wake", Centre);
-            if (before < PaeteRules.SentryCatchSeconds && _age >= PaeteRules.SentryCatchSeconds && _held.Count > 0)
+            if (_playCatchCue && !_catchCuePlayed && _age >= PaeteRules.SentryCatchSeconds &&
+                _age < PaeteRules.SentryLifeSeconds && _held.Count > 0)
+            {
+                _catchCuePlayed = true;
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_catch", Centre);
+            }
             if (before < PaeteRules.SentryLifeSeconds && _age >= PaeteRules.SentryLifeSeconds)
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_wilt", Centre);
             _body.Pose(grown, Centre);
