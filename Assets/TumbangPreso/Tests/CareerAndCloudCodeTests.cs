@@ -21,6 +21,58 @@ namespace TumbangPreso.Tests
     {
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
+
+        [Test]
+        public void OfflinePracticeResultDoesNotEnterTheLocalCareerOrUploadQueue()
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Any(arg =>
+                string.Equals(arg, "-tp-profile", System.StringComparison.OrdinalIgnoreCase)),
+                "this career test requires an isolated -tp-profile");
+
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("PracticeCareerEligibility");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            try
+            {
+                string playerId = TumbangPreso.Net.CareerStore.LocalPlayerId;
+                int history = career.History.Count;
+                int queued = career.QueuedCount;
+                int xp = career.Profile.Xp;
+                int applied = career.Profile.AppliedMatchIds.Count;
+                var record = new MatchRecord
+                {
+                    MatchId = System.Guid.NewGuid().ToString("N"),
+                    Mode = GameMode.Classic.ToString(), Online = false,
+                    PlayedUtc = System.DateTime.UtcNow.ToString("O"), Rounds = 8,
+                    Players = new[] { new PlayerMatchStats
+                    {
+                        Slot = 0, PlayerId = playerId, IsBot = false,
+                        Placement = 1, ActiveRounds = 8,
+                    } },
+                };
+                Assert.AreEqual(MatchRecordRules.SubmitVerdict.Ok,
+                    MatchRecordRules.Submittable(record, playerId), "the fixture has no payable human line");
+
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("LastAward")
+                    .SetValue(career, new XpAward());
+                career.Record(record);
+
+                Assert.AreEqual(history, career.History.Count);
+                Assert.AreEqual(queued, career.QueuedCount);
+                Assert.AreEqual(xp, career.Profile.Xp);
+                Assert.AreEqual(applied, career.Profile.AppliedMatchIds.Count);
+                Assert.IsNull(career.LastAward);
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                if (prior != null)
+                    typeof(TumbangPreso.Net.CareerStore)
+                        .GetProperty("Instance", System.Reflection.BindingFlags.Public |
+                                                 System.Reflection.BindingFlags.Static)
+                        .SetValue(null, prior);
+            }
+        }
         /// <summary>
         /// ⚠️⚠️ SPLIT ACROSS THE `+` ON PURPOSE, AND DO NOT "TIDY" IT BACK INTO ONE STRING.
         /// The test below searches every `.cs` file under `Assets` for this host name, and

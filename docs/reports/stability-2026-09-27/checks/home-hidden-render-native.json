@@ -1,0 +1,45 @@
+{
+  "base": "8821369f05fbd74de3d0d01581f2b4efdb36923c",
+  "sourceScope": "Full clean committed base plus four explicit source changes",
+  "native": {
+    "result": "Passed",
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "duration": "0.235466",
+    "unity": "6000.5.8f1",
+    "graphics": "D3D11"
+  },
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.HubSceneVideoTests.OpaqueHomeMediaSuspendsTheHiddenCourtAndRestoresItsFallback",
+      "result": "Passed",
+      "duration": "0.195304"
+    }
+  ],
+  "originalXmlSha256": "2D336F21245D063C7B3F50D5FDD39D345D97A4DBC4A816E5440F1DE430A495E5",
+  "changedInputs": 4,
+  "nativeInputChurn": 0,
+  "minimumFreeBytes": 6203879424,
+  "profile": "Guard restored two named-profile files and three shared Editor input preferences",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/MapPreviewSurface.cs",
+      "sha256": "24A47518C7621F677F1056718851EC2154D69887F10F6061D8C35D8C0911750E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubSceneVideo.cs",
+      "sha256": "58378B7A3299597853B73715C57F2C7C80E96A4C76DDE3F5E00E39F79D5CE3EA"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/TumpHub.cs",
+      "sha256": "C37A6CADA23CE94361C74C9363D7CF5B87C6E40A6EEF6C61D5FFF5AF7C2E8B3C"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/HubSceneVideoTests.cs",
+      "sha256": "F7B7A1EEDE9852C005B23D434B31D26FF65282B681AC73CF1F143F3AE9CE6B4B"
+    }
+  ],
+  "limits": "Native coverage/fallback/camera lifetime, not player GPU/FPS savings or full decoded-movie/overlay journeys."
+}

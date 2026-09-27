@@ -1,0 +1,323 @@
+{
+  "local": "e6fb9afd",
+  "incoming": "baec93c9",
+  "protocol": 65,
+  "method": "Existing Unity Roslyn/Bee compilation, redirected output, merged source dependencies",
+  "assemblies": [
+    {
+      "name": "TumbangPreso.Runtime",
+      "compilerExit": 0,
+      "sha256": "6C8ECBBAB6DCC803E3C576648949BDB6AAD38256464F7D456572C7670C364AA6"
+    },
+    {
+      "name": "TumbangPreso.Editor",
+      "compilerExit": 0,
+      "sha256": "149F27E178FB23399EC67A21CE2D422ACA4BEEC123FC9F07E3623F0CA3EC62C0"
+    },
+    {
+      "name": "TumbangPreso.Tests",
+      "compilerExit": 0,
+      "sha256": "EA873D5CE1D7ADBDC8B7D2FF75D5389D3E9AD7020B3A4F38430D6796058D68DB"
+    },
+    {
+      "name": "TumbangPreso.PlayTests",
+      "compilerExit": 0,
+      "sha256": "D93D385E6D0B1EFDC9A1E3A4FC4B72C6CAEB97C0928F71415810AFE526F2586D"
+    }
+  ],
+  "nativeTests": "NOT RUN",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Art/characters/phaister-motion/hero-phaister-manika-aim.anim",
+      "sha256": "A31F3D691822EE7B6CB4DEB573CFBA7D8CD662B2E72C737DBFE37A5E48C132B7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/phaister-motion/hero-phaister-manika-aim.anim.meta",
+      "sha256": "AFCE83F063457544797F4D0D7636CF961A19D2F81FB57E6495855C849DE998D4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/phaister-motion/hero-phaister-manika.anim",
+      "sha256": "A886D2948BF92A73AA37F48BE584E4611688B9672792F41A00E01B835B5AB59A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/phaister-motion/hero-phaister-omen-aim.anim",
+      "sha256": "43F4CC2F8520970768A96A897166BFB6D97AC1261933693C86F12E60490DE854"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/phaister-motion/hero-phaister-omen-aim.anim.meta",
+      "sha256": "CD8656B438E5088D2C62560578354E60A83DFB6F0C74FF93D318CCD5447CF32A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/phaister-motion/hero-phaister-swarm-aim.anim",
+      "sha256": "3A1BD23CEBBC6A319B81CCDF95BF394AB88CF95BC27CB7267756E1C6C5C42098"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/phaister-motion/hero-phaister-swarm-aim.anim.meta",
+      "sha256": "795A542F6A24C2E3CC095C5211C7BA532E202255EA2090F7498ED0DF224974B7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/phaister-motion/hero-phaister-swarm.anim",
+      "sha256": "7199F7AE00F09C4F321BD832332BF549A44308D3642D71B54D2B8650B0A1952F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Editor/PhaisterMotionAuthor.cs",
+      "sha256": "81D1C7D89361B44563D835FEB5705FC46C2D57D274D5ECE456E4EBD9BFCF5FAB"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Roster/person_phaister.asset",
+      "sha256": "1DB5B6DACB5628571E132E089BE200CCCC7DE53DCDE12082459EAEFE69076BC9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Sfx/sfx_cast_phaister_higop.wav",
+      "sha256": "28CB8DFA516BBECAEEF34FDF0CEACA716DAA06C9AA89BECC45E0A884D339DD37"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Sfx/sfx_phaister_higop_close.wav",
+      "sha256": "B39D3005C88C943D5FBFDDF4727AA6F8EC583585E5207F223F765C98AFC608B2"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Sfx/sfx_phaister_higop_open.wav",
+      "sha256": "2D6E7844AEFA7F400EFCF11144CCA2B3DF02A6B63EC812A73CA9698972203FFD"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Sfx/sfx_ult_theme_phaister.wav",
+      "sha256": "2677091A9714E92F1378B9A7AD3BA45DBCCBF4ABA0F818C4B9CB389E434344C1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/MoonShaft.shader",
+      "sha256": "D226FA018650ED9EEBB9CBDC3184A7861123DB9D8E51BF1AB106288ACD3DE7B9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/MoonShaft.shader.meta",
+      "sha256": "B816077265719C9252555FF2A23DB3839456ADC230BE443614EF52D9F9A7FA7C"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/OmenVeil.shader",
+      "sha256": "3730131CB5F9DBFCA4B1C83C70BA33D919E3FD341CEA7D9B5E7D0EB81815AECD"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/OmenVeil.shader.meta",
+      "sha256": "2C0AB1B4DF50E85BC1934BE7A0F21189130DF664C3848EA348DDFBBFEEAEC7DB"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/PhaisterImpact.shader",
+      "sha256": "A21BB1153AB131AFA54B8E9F2C37D3C44B94411034CFEC87FA591723B2D030B8"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/PhaisterImpact.shader.meta",
+      "sha256": "C1F43728E07296A26876933FB84D39DB92DA67C4E8C10467988998A38D3BE8A3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/SoftPuff.shader",
+      "sha256": "316B020A2EDD90755076BAD529A529A87B051C40F9EC717E6281B0137F18F523"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/SoftPuff.shader.meta",
+      "sha256": "F130A6AB03F1FF2C8F8F9E206F82427AE011FCB545FE1B40BCB98364D62B26C8"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/UltimateIntros/phaister.txt",
+      "sha256": "4C2604EF587EC9A2640EFCAE3AB9962C3EB7084D251A11591C307FBBA364416D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbility.cs",
+      "sha256": "31F9FAFEBAA807D5D70894314011F37C3AC2351A49C6AE0A2554A3289D71901E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+      "sha256": "0A85A200B2656729633C073214D9C180C503AE77F51BF59CF64592A94B29266C"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SkillReceipts.cs",
+      "sha256": "53C7C0E1C59D7E4FBFB24DD8D1EA66FD36A7EA2939449A8D031733910B2C2C0D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.WorldRecovery.cs",
+      "sha256": "9325A2FE0C1A94931B7B9D142642EA955910BFC0DF0D83BF985B2C7A9092681A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.WorldRecovery.cs.meta",
+      "sha256": "20C01A9C7D65EB4D406073295410936895C3E77FBC00400183B07EC05A98EAF8"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/IPreparedWorldReplication.cs",
+      "sha256": "D61685EDA450DDC8C4DD7AA2C41B745FA9929678AE8E4197895A892A2C9DD439"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/IPreparedWorldReplication.cs.meta",
+      "sha256": "9D51387A36387BE0C53EE1E3D159DA433ACED1E880650E5DC9BE33AA14E3845E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs",
+      "sha256": "EA387AA1B406BD0A98CF4A9BE1CDAFBBADD4CF5522D4C0B08E291C88B1C78FD3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/UltimatePhaseView.cs",
+      "sha256": "470FB722ED1972BCAF1B4DCE7E109581F52B877C82574E30FF382BE8AF79C8FC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.CastGesture.cs",
+      "sha256": "2F5D7FDF22FE9297759A25F05FF631A56A25797732556D88E3DEB13ECEE99998"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.HeldProps.cs",
+      "sha256": "904BA4EC91D45EC4D606F9738A896024AF98B1C1772DEC01F3B245A63FC0E565"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.Phaister.cs",
+      "sha256": "0C59CD8686CDF47931B0524E0B001326C4A248B7E93CD82859A8148F86E6FC3A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "29A30B518094FE48EDC194A59FFD97D17125F1C0EB01B040474CEA1A33777CA3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.SkillReceipts.cs",
+      "sha256": "DE0A404DD64F020A526EEDD4EB99A7AC82E25469F2E3E0D129F1DC07DB3BB83B"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "6645B5FDB7E4414AA664977C10AB76F94A28A584E5F4D626DD7D052AC4380618"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/PreparedWorldSnapshot.cs",
+      "sha256": "32FCA576BF0E9A6B3F3FB863F3E31D2C545411040D6B102E64717D86E5A679B6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/PreparedWorldSnapshot.cs.meta",
+      "sha256": "D4701B684C94DA6A7B7BA4B4CE243A67997D934593D13C12BDE6469C21D1CDC9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/SkillContractFingerprint.cs",
+      "sha256": "534F306871A366677C132CE9775DE18948C542B1BF35784E02A05364B3EDEF9B"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/WorldSnapshotHeader.cs",
+      "sha256": "24484BA55799A309677C134C63627D5513687CC7CF5DB4B0796717CB79A74403"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs",
+      "sha256": "5977BC176C1ABD75B9CB969CE4D926378B648AAA006FF875EAB7C2CCF8D8C264"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.AimPose.cs",
+      "sha256": "81E5FDC1E69FE78C968BE329243895D0EF019D3B3CDDC58B726F3AF12B686B6E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.AimPose.cs.meta",
+      "sha256": "41DAB51598523C68EA2BDE773841A586D09CAE239514769A7CB23DCDC627290F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs",
+      "sha256": "A1A1E99E6D17D3E2E7BDB2E2C1D63B220774131DF5ABD25D8644329183BC1D50"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.Phaister.cs",
+      "sha256": "2A0DD4DEE741C355382FA63AA13F4727C429763C12454D8C0D9D766880890F0D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.cs",
+      "sha256": "C72F6D132D72EBC57C536A1F7A3CD95E41CAD70A654AB7BC422D1831D756C024"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.Phaister.cs",
+      "sha256": "1B7D8CFD3CC4C015C01E93FAC7AA54AE00689703C08FEFA335739ECA572BC214"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.PhaisterBurst.cs",
+      "sha256": "360ECBC6AA6021654F5BC5BD2E99EBE9DE8CE9724FF98A8D177608207D074684"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.PhaisterBurst.cs.meta",
+      "sha256": "EF41DD3B2563A5E6E5A3DF4F3A9A47364C6728A91C5A52F371225FF967200794"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.PhaisterMark.cs",
+      "sha256": "9A3BC31979AE49C740216A12EF27644A79F4C896980DC4483EB506870F353CB3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.PhaisterMark.cs.meta",
+      "sha256": "F8565C6A415971B1BA0A2355BA19693DDB6971566DCC8E17F8879D44810345FE"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterAimSigil.cs",
+      "sha256": "1003FFADDD07D96D1C5D1857530F100AD0E50E687E8B3E66CF7BF7157418D0C5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterAimSigil.cs.meta",
+      "sha256": "4816E96638BE77F83E806FE4342D259C3168CB03DF47DCCDD88AAE432F22E2E4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterArrivalSeal.cs",
+      "sha256": "CD3044D816E31888A01440207CEEC26060706F4955F771AE617AC870FF6F2655"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterHandProps.cs",
+      "sha256": "4EE88F420F63A2FFBFF373FCA98B8DA335D0D4D6172F9699908613C2905F3C74"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterHandProps.cs.meta",
+      "sha256": "3104017C87E6ABCCD779CAB3F2EF6434515BE438B02EAAEA1A9B2FF5294DA0DC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterManika.cs",
+      "sha256": "3161061B14AB129BE2A714BB92D811F9B9B39374FF9D8BD6887F0075FF6FE6A9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterMoonlight.cs",
+      "sha256": "9C7C83F6DBF76A902A7B5EAC2ED00145AD3D58E14737B89ADF542418E6E8AED3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterOmen.cs",
+      "sha256": "A25F3ECE62C2DC1EE62A6481965099088EBB86E01227DEBFF42D1BBCD5D2B033"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterOmenScreen.cs",
+      "sha256": "157461C2723C4D264A11137C9A1FDF8030F3913C348ED851293108A314EC6593"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterOmenScreen.cs.meta",
+      "sha256": "CA42061A6F437ED735B235B2A44B3949D55F761A00C0C3F88A7614ECD1C6D3C8"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterProp.cs",
+      "sha256": "894B953819B4E9091878835541DC815FB1C492B64403B350734D922748FD224D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterRitualWarmup.cs",
+      "sha256": "1AAC77BB1594B12EDE99DB1995D8E3401970D65B7413C742FA9F3A32BCE2D7A1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterSpellGeometry.cs",
+      "sha256": "A689937D75831FE6FA91F3D4D3F740D50902CB3B8AF99AFD99FD18B3CAF680CC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterSwarm.cs",
+      "sha256": "5970EB8AFB5465766766B9459F3AB393699D27D8A514AF9B22E009F1509FBC4C"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/VoodooVfx.cs",
+      "sha256": "338C949BD44768620EB89C78B383702ACD98D177FA448D27EB3F31A4AA1E7E6F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "C923B07BFF0E1609675722C48C3FE7029344FDD8745C76B460A3E0957411F6A7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/IceSnapshotBatchTests.cs",
+      "sha256": "C408F973FE18A94F24C42A8842657348D621E79F6B5950F25A10EB66512BA81D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/InputMapAndAbilityTests.cs",
+      "sha256": "89193446354ACBB8B9552789BBFCEA52549043D9F66D13C1FDAD9D6AF47AEEF9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/PhaisterKitPlayProbe.cs",
+      "sha256": "A688A5ACC22E5B51D79EE7B646F8A06AAE57043E693CAB94EF40E0A91D63FD7A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "256B40FBF514AA79410898C22819DFB4DEC33537BF15F3FB62D9F7B77D539E48"
+    }
+  ]
+}

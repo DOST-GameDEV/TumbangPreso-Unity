@@ -269,76 +269,78 @@ def build(hero, legacy=False):
 @performance
 def phaister():
     """
-    GRAND COVEN, 4.2 s. Delighted mischief (plan.md section 2): she enjoys the setup more than
-    winning, so the performance is a joke she is in on. A sly hat tip, a chuckle she tries to
-    hold in, then the laugh breaks out and LIFTS her off the ground (owner's direction), she
-    draws the eclipse overhead at the top, claims the ground with one pointed hand and lands.
-    The five laugh syllables of `hero_phaister_ult` (0, .17, .34, .49, .62 of 1.55 s) each
-    throw her head and chest back: the body laughs WITH the voice, not beside it.
+    OMEN, 5.0 s (HERO-10 v8, 2026-09-27; `docs/reports/phaister-kit-2026-09-27/plan.md` 4.4 and `direction.md` section 3). Replaces
+    v7's 4.0 s, which ended on the eye and the maelstrom with nobody in it (the method's section 6: the ending must show what the
+    ultimate DOES to the real players) and framed her close-up with the brim over her eyes and the forming eye over her mouth.
+
+    One sentence: "The omen pours out of her, she throws it, and it marks everyone it will take." The travelling thing is the
+    BUTTERFLIES, flowing left to right in every shot. Four beats:
+      SURGE (0 to 1.30): the court goes to her night and lights up in small points round her feet (Castorice's domain); she rises,
+        arms opening, while black butterflies pour out of her sleeves and hat and wheel round her CLOCKWISE, violet ribbons of
+        flame climb round her and strokes sweep round with the camera, which ORBITS HER CLOCKWISE (v7 went the other way) and
+        pushes in (Seele's whip, slowed for her composure).
+      THE EYE (1.30 to 2.40): from below her chin, so the brim frames the top and her face is whole: her eyes light (Seele's
+        glint, Castorice's streak), the butterflies stream left to right into the space between her palms, low in front of her
+        chest (v7 formed it over her mouth), and crush into a tiny glitching eye; she tips her head, smirking (her one cheeky beat).
+      THE THROW (2.40 to 3.20): she hurls it; from her right the eye streaks left to right across the frame to where she aimed and
+        lands: two frames of the picture turned inside out (the impact frame), the butterfly-shaped burst, the ring on the court.
+      THE MARK (3.20 to 5.00): the maelstrom starts to turn round the half-open eye; one black butterfly peels off to EACH real
+        player in reach and settles over their head (the omen: they are marked), and each flinches and leans against its draw;
+        one crane rises round the eye, clockwise, until every one of them is in frame with her floating at its edge.
+    The camera of THE THROW and THE MARK is computed from where she aimed and where they stand
+    (`HeroIntroductionScene.PhaisterMark.cs`); the rows below are its storyboard and its fallback.
+    Play picks up from its end: the eye still unstable over the spot, the marks already on them, the maelstrom already turning.
+
+    ⚠️ THE CAST IS CHIBI: THE ARMS ARE ABOUT A HEAD LONG. Measured on the real mesh (the Grand Coven notes): hands raised overhead end
+    inside the brim and vanish from every front shot, so the eye is formed with the arms FORWARD, low, in front of the chest.
+    ⚠️ THE HEAD GOES BACK ONLY 10 DEGREES: further and the wide brim turns into a flat slab toward the camera.
     """
-    p = Performance("phaister", 4.2)
-    p.voice = (1.15, "hero_phaister_ult")
+    p = Performance("phaister", 5.0)
+    p.voice = (2.12, "hero_phaister_ult")
 
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    # The sly beat: hand to the hat brim, head dipped and turned to the camera side, the other
-    # hand on the hip, weight on one leg.
-    sly = Pose(torso=(3, 8, 4), head=(10, 16, 6), left=(12, 38, -10), right=(150, 40, 18),
-               legs=((4, 4), (-2, 6)))
-    # The chuckle she is holding in: hand brought in front of the chin, head tilted, shoulders up.
-    hold_in = Pose(torso=(5, 4, 2), head=(6, 10, 10), left=(18, 34, -10), right=(112, 10, 40),
-                   legs=((2, 3), (0, 4)))
-    hold_hop = hold_in.but(torso=(-2, 4, 2), head=(0, 10, 12))
-    # The laugh: chest open, arms flung up and out past the shoulders, legs trailing together.
-    # ⚠️ THE HEAD GOES BACK ONLY 12 DEGREES. Further and the wide brim turns into a flat slab
-    # toward the camera (the Hex complaint in the gameplay-animation report); the laugh reads
-    # from the shaking chest and the open arms instead.
-    laugh = Pose(torso=(-9, 0, 0), head=(-10, -6, 0), left=(34, 90, 0), right=(34, 90, 0),
-                 legs=((-8, 1), (-12, 1)))
-    ha = laugh.but(torso=(-15, 0, 0), head=(-14, -6, 0), left=(40, 98, 0), right=(40, 98, 0))
-    # ⚠️ THE CAST IS CHIBI: THE ARMS ARE ABOUT A HEAD LONG. Measured on the real mesh, hands
-    # raised overhead end inside the hat brim and hair and vanish from every front shot, so the
-    # eclipse is drawn with the arms FORWARD and up, presenting the moon, hands in front of the
-    # brim where they read.
-    draw = Pose(torso=(-5, 10, 0), head=(-12, 6, 0), left=(135, 30, 0), right=(135, 30, 0),
-                legs=((-10, 2), (-14, 2)))
-    open_ = Pose(torso=(-4, -8, 0), head=(-10, -4, 0), left=(118, 62, 0), right=(118, 62, 0),
-                 legs=((-10, 2), (-14, 2)))
-    # The claim: one hand snaps down to point at the ground ahead, the other stays up and out.
-    # Head only a little down: any more and the brim covers her face in every shot.
-    claim = Pose(torso=(6, -6, 0), head=(5, -8, 0), left=(135, 45, 0), right=(42, 10, 0),
-                 legs=((-6, 3), (-10, 3)))
-    land = claim.but(torso=(12, -6, 0), head=(4, -8, 0), legs=((4, 5), (2, 5)))
-    settle = claim.but(torso=(5, -6, 0), head=(3, -8, 0), legs=((2, 5), (0, 5)))
+    # SURGE: arms opening out and up, palms to the sky, chin lifting, weight coming off her feet.
+    open_ = Pose(torso=(-5, 0, 0), head=(-6, 0, 0), left=(62, 68, 0), right=(62, 68, 0), legs=((0, 5), (0, 5)))
+    # Risen: arms higher and wider, legs hanging loose, one swung forward (these rigs have no knees).
+    risen = Pose(torso=(-8, 0, 0), head=(-10, 0, 0), left=(102, 62, 0), right=(102, 62, 0), legs=((-4, 3), (16, 3)))
+    risen_b = risen.but(torso=(-7, 4, 0), left=(106, 60, 0), right=(98, 64, 0))
+    # THE EYE: hands brought FORWARD together, LOW in front of her chest, the head bowed a little to them.
+    gather = Pose(torso=(8, 0, 0), head=(6, 0, 0), left=(78, 22, 20), right=(78, 22, 20), legs=((-4, 3), (14, 3)))
+    # Her beat: the head tips to one side, a smirk (her ink face does the smirk; the tilt sells it).
+    smirk = gather.but(head=(4, -12, 12))
+    # The wind: the joined hands lifted forward and up, the chest leaning back.
+    wind = Pose(torso=(-10, 0, 0), head=(-6, 0, 0), left=(150, 20, 16), right=(150, 20, 16), legs=((-6, 3), (12, 3)))
+    # THE THROW: she hurls it forward and up, both arms driving through, the chest folding over them.
+    hurl = Pose(torso=(16, 0, 0), head=(-2, 0, 0), left=(84, 14, 12), right=(84, 14, 12), legs=((8, 4), (-10, 4)))
+    # She hangs there watching it mark them, arms open again, pleased with herself.
+    watch = Pose(torso=(4, -6, 0), head=(-4, -8, 4), left=(58, 44, 0), right=(46, 40, 0), legs=((-2, 4), (8, 4)))
 
     p.key(0, rest)
-    p.hold(.34, .66, sly)
-    p.key(.80, hold_in).key(.88, hold_hop).key(.96, hold_in).key(1.04, hold_hop)
-    p.key(1.15, laugh)
-    for ts in (1.15, 1.41, 1.68, 1.91, 2.11):
-        p.key(ts + .06, ha).key(ts + .17, laugh)
-    p.key(2.30, laugh)
-    p.key(2.55, draw)
-    p.key(3.05, draw.but(torso=(-5, -10, 0)))
-    p.key(3.30, open_)
-    p.key(3.50, claim, punch=True)
-    p.hold(3.50, 3.72, claim)
-    p.key(3.95, land)
-    p.key(4.20, settle)
+    p.key(.30, open_)
+    p.key(.85, risen)
+    p.key(1.18, risen_b)
+    p.key(1.40, gather)
+    p.hold(1.52, 1.95, gather)
+    p.key(2.15, smirk)
+    p.key(2.34, wind)
+    p.key(2.47, hurl, punch=True)
+    p.hold(2.47, 2.75, hurl)
+    p.key(3.15, watch)
+    p.key(5.0, watch.but(torso=(3, -8, 0)))
 
-    # The levitation: up with the laugh, hanging at the top for the eclipse, down for the claim.
-    p.rise(0, 0).rise(1.12, 0).rise(1.70, .30).rise(2.30, .55).rise(3.45, .58).rise(3.92, 0).rise(4.2, 0)
+    # The lift: up with the surge, hanging through the eye and the throw, a little down as she watches.
+    p.rise(0, 0).rise(.25, 0).rise(1.15, .52).rise(2.35, .58).rise(2.7, .50).rise(5.0, .44)
 
-    # Shot distances are real metres: a person glb is scaled by PersonScale 2.38, which makes
-    # Phaister 2.38 m to the top of her hat.
-    # A: waist-up on her and the hat for the sly beat and the held-in chuckle.
-    p.shot(0, 1.08, (1.75, 1.85, 3.8), (0, 1.5, 0), 42, eye_to=(1.55, 1.8, 3.4), close=True)
-    # B: low from her right front, tilting up as she rises and laughs.
-    p.shot(1.08, 2.42, (-2.1, .8, 4.3), (0, 1.3, 0), 48, eye_to=(-2.3, .75, 4.6), look_to=(0, 1.85, 0))
-    # C: wide and a little below her, the eclipse filling the sky behind; follows her down.
-    # Aimed between her and the moon (up and to her left) so both share the frame, settling
-    # onto her as she lands.
-    p.shot(2.42, 4.2, (1.3, 1.05, 6.1), (-1.0, 2.5, -.6), 54, eye_to=(1.1, 1.05, 5.5), look_to=(-.3, 1.55, 0))
-    p.locked((1.4, 1.15, 6.2), (0, 1.6, 0), 50)
+    # Shot distances are real metres (she is 2.38 m to the hat tip). Hero-local: +z in front of her.
+    # SURGE: orbit CLOCKWISE seen from above (her right front to her left front: the angle falls), pushing in.
+    p.shot(0, 1.30, (2.2, .75, 2.6), (0, 1.35, 0), 50, eye_to=(-1.9, 1.0, 2.3), look_to=(0, 1.7, 0), fov_to=44)
+    # THE EYE: from below her chin, a slow pull back: her whole face under the brim, the eye forming low between her palms.
+    p.shot(1.30, 2.40, (.55, 1.55, 2.45), (0, 2.05, .30), 36, eye_to=(.75, 1.62, 2.85), look_to=(0, 2.0, .40), fov_to=40, close=True)
+    # THE THROW: from her right, a little behind, so the eye crosses the frame left to right (computed from the aim in play).
+    p.shot(2.40, 3.20, (3.4, 1.8, -1.4), (0, 2.0, 3.0), 54, eye_to=(3.6, 2.0, -1.0), look_to=(0, 2.1, 4.0), fov_to=56)
+    # THE MARK: a crane round the eye, rising (computed from the aim and the players in play).
+    p.shot(3.20, 5.0, (4.2, 1.3, 1.8), (0, 1.6, 4.0), 50, eye_to=(3.2, 5.6, -2.6), look_to=(0, 1.2, 4.0), fov_to=58)
+    p.locked((1.6, 1.6, 5.4), (0, 1.8, 1.0), 52)
     return p
 
 

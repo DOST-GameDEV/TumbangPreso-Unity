@@ -41,7 +41,12 @@ namespace TumbangPreso.Net
         /// `ProtocolVersion` does not move. Empty and 0 are exactly today's behaviour: the host's
         /// handle as the name, listed publicly.
         /// </summary>
-        public static string RoomTitle = "";
+        private static string _roomTitle = "";
+        public static string RoomTitle
+        {
+            get => _roomTitle;
+            set => _roomTitle = Settings.GameSettings.SanitiseRoomTitle(value);
+        }
         public static string RoomMap = "";
         public static int RoomVisibility;
 
@@ -72,6 +77,59 @@ namespace TumbangPreso.Net
 
         /// <summary>The local network beacon for LAN game discovery.</summary>
         public LanBeacon Beacon => _beacon;
+
+        // A joined client's directory title is display data for this transport operation,
+        // not the host's static RoomTitle and not part of the match wire.
+        private JoinAttemptGate.Attempt? _clientTitleOperation, _pendingTitleOwner, _joinedTitleOwner;
+        private string _pendingClientTitle = "", _pendingClientCode = "";
+        private string _joinedClientTitle = "", _joinedClientCode = "";
+        public JoinAttemptGate.Attempt? ClientTitleOperation => _clientTitleOperation;
+        public string JoinedClientRoomTitle => _joinedTitleOwner?.CanContinue == true &&
+            NetAuthority.IsNetworked && !NetAuthority.IsHost &&
+            !string.IsNullOrEmpty(Lobby.JoinCode) &&
+            string.Equals(Lobby.JoinCode, _joinedClientCode, StringComparison.OrdinalIgnoreCase)
+                ? _joinedClientTitle : "";
+
+        public void RememberJoinedClientRoomTitle(string title, string code, JoinAttemptGate.Attempt? operation)
+        {
+            if (operation?.CanContinue != true || !_clientTitleOperation.HasValue ||
+                !operation.Value.Equals(_clientTitleOperation.Value) ||
+                !NetAuthority.IsNetworked || NetAuthority.IsHost) return;
+            string clean = Settings.GameSettings.SanitiseRoomTitle(title);
+            if (string.IsNullOrEmpty(clean) || string.IsNullOrEmpty(code)) return;
+            _pendingClientTitle = clean;
+            _pendingClientCode = code;
+            _pendingTitleOwner = operation;
+            if (!string.IsNullOrEmpty(Lobby.JoinCode)) OnClientTitleCodeChanged(Lobby.JoinCode);
+        }
+
+        private void OnClientTitleCodeChanged(string code)
+        {
+            if (!string.IsNullOrEmpty(code) && !string.IsNullOrEmpty(_joinedClientCode) &&
+                !string.Equals(code, _joinedClientCode, StringComparison.OrdinalIgnoreCase))
+            {
+                _joinedClientTitle = _joinedClientCode = "";
+                _joinedTitleOwner = null;
+            }
+            if (string.IsNullOrEmpty(_pendingClientTitle) || string.IsNullOrEmpty(code)) return;
+            if (_pendingTitleOwner?.CanContinue == true && _clientTitleOperation.HasValue &&
+                _pendingTitleOwner.Value.Equals(_clientTitleOperation.Value) &&
+                string.Equals(code, _pendingClientCode, StringComparison.OrdinalIgnoreCase))
+            {
+                _joinedClientTitle = _pendingClientTitle;
+                _joinedClientCode = _pendingClientCode;
+                _joinedTitleOwner = _pendingTitleOwner;
+            }
+            _pendingClientTitle = _pendingClientCode = "";
+            _pendingTitleOwner = null;
+        }
+
+        private void ClearJoinedClientRoomTitle()
+        {
+            _pendingClientTitle = _pendingClientCode = "";
+            _joinedClientTitle = _joinedClientCode = "";
+            _pendingTitleOwner = _joinedTitleOwner = null;
+        }
 
         public event Action<string> StatusChanged;
 
@@ -124,6 +182,7 @@ namespace TumbangPreso.Net
         private sealed class ConnectionHello
         {
             public int Protocol;
+            public string SkillContract;
             public string Token;
             public string Name;
 
@@ -415,7 +474,43 @@ namespace TumbangPreso.Net
         // rattan bursts and catches THERE; and BAKYA BLOOM lands outside the taya's box (`PaeteRules.PlantSpotOutsideBox`). No
         // bytes changed, but a 59 peer would burst the thorns under his feet at once, catching a different set of slippers a
         // quarter of a second early, and plant the pot inside the box where everyone else sees it outside.
-        public const int ProtocolVersion = 60;
+        // 61 (2026-09-27): FEATHERFALL is 5 s / 40 s. SubmitMove/SyncUnit retain its takeoff key,
+        // ReqAbility/PlayAbility carry explicit takeoff/recast intent, and TimedKit adds its 57-byte restore tail.
+        // 62: WorldFieldBegin uses a shared bounded header with match identity, request/event
+        // watermarks and the round simulation clock; older snapshots cannot clobber newer casts.
+        // 63: shared ReqAbility/PlayAbility serializer carries stable ability ID and
+        // activation/command intent. Cosmetic names and assets are not wire identity.
+        // 64: ConnectionHello includes deterministic shared skill/phase metadata.
+        // Peers with different reworked rules cannot silently join the same match.
+        // HERO-10 also makes Phaister's OMEN introduction 5.0 s (was 4.0).
+        // Its duration is included in the shared skill fingerprint, so peers with
+        // the older presentation clock cannot join even at the same wire version.
+        // 65: world recovery includes ultimate phase/stage/request freshness;
+        // PreparedWorld replaces CovenEffect with ability-owned spatial recovery,
+        // joins its world generation and ages on the round clock.
+        // 66: pose streams carry shared held-aim presentation; casts/ultimate
+        // commits close the matching hold token without cancelling a newer hold.
+        // 67: ordinary action requests,refusals,body actions and charge tells
+        // carry match/round/body-epoch scope; charge kind is always explicit.
+        // 68: accepted pose effort bits carry movement/sprint intent so the host
+        // advances remote resource clocks without simulating the remote body.
+        // 69: combat predictions/refusals carry request identity. Refusals return
+        // current authoritative resource state instead of adding a second refund.
+        // 70: accepted Interact intent drives host hold clocks; escape/uproot
+        // notifications carry the shared match/round/body scope.
+        // 71: persistent fields carry accepted-cast lifetime IDs; plant removal
+        // names that lifetime within its match and round.
+        // 72: match moments carry match/round scope and the existing ultimate
+        // victim-camera feedback reaches the affected peer.
+        // 73: SyncUnit includes bounded Voodoo status/mark/reach state and an
+        // explicit reach result, independent of other bodies' arrival order.
+        // 74: persistent sentries recover their captured target seats, not a new
+        // distance query on the observing peer.
+        // 75: received Voodoo statuses now tick, expire, cleanse and affect
+        // movement. Older bodies leave these replicated curses inert or stuck.
+        // 76: requested match rate carries scope/sequence and joins world recovery;
+        // transient hitstop is not a replicated pause or spectator speed.
+        public const int ProtocolVersion = 76;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -481,6 +576,7 @@ namespace TumbangPreso.Net
 
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            Lobby.JoinCodeChanged += OnClientTitleCodeChanged;
 
             _nm = GetComponent<NetworkManager>();
             if (_nm == null) _nm = gameObject.AddComponent<NetworkManager>();
@@ -557,6 +653,7 @@ namespace TumbangPreso.Net
 
         private void OnDestroy()
         {
+            Lobby.JoinCodeChanged -= OnClientTitleCodeChanged;
             if (_nm != null)
             {
                 _nm.OnClientConnectedCallback -= OnClientConnected;
@@ -730,6 +827,8 @@ namespace TumbangPreso.Net
         public async Task<bool> StartHostAsync(int port = DefaultPort, bool dedicated = false)
         {
             var attempt = _joinAttempts.Begin();
+            _clientTitleOperation = attempt;
+            ClearJoinedClientRoomTitle();
             await EnsureStoppedAsync(attempt);
             if (!CanContinueJoin(attempt)) return false;
 
@@ -1035,6 +1134,8 @@ namespace TumbangPreso.Net
         {
             var attempt = _joinAttempts.Begin(cancellationToken);
             if (!CanContinueJoin(attempt)) return false;
+            _clientTitleOperation = attempt;
+            ClearJoinedClientRoomTitle();
             await EnsureStoppedAsync(attempt);
             if (!CanContinueJoin(attempt)) return false;
 
@@ -1104,6 +1205,8 @@ namespace TumbangPreso.Net
         {
             var attempt = _joinAttempts.Begin(cancellationToken);
             if (!CanContinueJoin(attempt)) return false;
+            _clientTitleOperation = attempt;
+            ClearJoinedClientRoomTitle();
             await EnsureStoppedAsync(attempt);
             if (!CanContinueJoin(attempt)) return false;
 
@@ -1207,6 +1310,8 @@ namespace TumbangPreso.Net
         {
             var attempt = _joinAttempts.Begin(cancellationToken);
             if (!CanContinueJoin(attempt)) return false;
+            _clientTitleOperation = attempt;
+            ClearJoinedClientRoomTitle();
             await EnsureStoppedAsync(attempt);
             if (!CanContinueJoin(attempt)) return false;
 
@@ -1307,6 +1412,8 @@ namespace TumbangPreso.Net
             bool stopClient = _connectingAttempt.HasValue && _connectingAttempt.Value.OwnsSession &&
                               _nm != null && _nm.IsListening && !_nm.IsServer;
             _joinAttempts.Invalidate();
+            _clientTitleOperation = null;
+            ClearJoinedClientRoomTitle();
             _connectingAttempt = null;
             if (stopClient) StopCurrentTransport();
             return stopClient;
@@ -1330,6 +1437,7 @@ namespace TumbangPreso.Net
 
         private void StopCurrentTransport()
         {
+            ClearJoinedClientRoomTitle();
             _connectingAttempt = null;
             if (!_localShutdown) MatchRpc.Instance?.NotifyLocalPeerLeaving();
             _localShutdown = true;
@@ -1598,6 +1706,7 @@ namespace TumbangPreso.Net
             var hello = new ConnectionHello
             {
                 Protocol = ProtocolVersion,
+                SkillContract = SkillContractFingerprint.Current,
                 Token = account?.ConnectionToken ?? NetIdentity.Token,
                 Name = LocalLobbyName(),
 
@@ -1767,6 +1876,7 @@ namespace TumbangPreso.Net
         {
             var hello = DecodeHello(request.Payload);
             bool protocolMatches = hello != null && hello.Protocol == ProtocolVersion;
+            bool skillsMatch = protocolMatches && SkillContractFingerprint.Matches(hello.SkillContract);
             bool hasCapacity = _nm == null ||
                                Math.Max(_nm.ConnectedClientsIds.Count, _helloByClient.Count)
                                < LobbySession.MaxConnections;
@@ -1790,7 +1900,7 @@ namespace TumbangPreso.Net
             bool blocked = hello != null &&
                            Core.SocialRules.IsBlocked(GameServices.Social?.List, hello.AccountPlayerId);
 
-            response.Approved = protocolMatches && hasCapacity && !blocked;
+            response.Approved = protocolMatches && skillsMatch && hasCapacity && !blocked;
             response.CreatePlayerObject = false;
             response.Pending = false;
             // ⚠️ THE REFUSAL SAYS WHAT THE ROOM HOLDS. "Lobby is full" is true of a room with
@@ -1804,6 +1914,8 @@ namespace TumbangPreso.Net
             // "Could not join" is what every shipping game says.
             response.Reason = !protocolMatches
                 ? $"Game version mismatch (network protocol {ProtocolVersion})"
+                : !skillsMatch
+                    ? "Skill rules differ from the host. Use matching game builds."
                 : blocked
                     ? "Could not join this game."
                     : hasCapacity
@@ -2072,6 +2184,9 @@ namespace TumbangPreso.Net
                 SetStatus($"{Lobby.PeerCount} connected");
                 return;
             }
+
+            ClearJoinedClientRoomTitle();
+            if (!_localShutdown) _clientTitleOperation = null;
 
             // ⚠️⚠️ THE REASON IS THE WHOLE POINT OF THIS BRANCH NOW. A refused approval arrives
             // here as an ordinary disconnect, so a build-version mismatch, a full lobby and a

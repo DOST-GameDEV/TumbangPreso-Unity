@@ -1,12 +1,18 @@
 # The front end, designed: one theme, five screens that are not each other
 
-**Read `CLAUDE.md` § 6.2, § 6.2b, § 6.2c and § 6.3 first, then `docs/FUTURE.md` § 0.5b.** This
+**Current reader,2026-09-27:** read [UI_DESIGN_METHOD](UI_DESIGN_METHOD.md),
+[OWNER_UI_AUTHORING](OWNER_UI_AUTHORING.md) and the
+[adopted UX-1 routes](reports/front-end-flow-2026-09-23/ux1-plan.md) first.
+This document retains earlier front-end rationale,not current work order or proof
+that an old layout is still shipped. Current owner-painted screens and HUD rules win.
+
+**Historical method references:** `CLAUDE.md` § 6.2, § 6.2b, § 6.2c and § 6.3, then `FUTURE.md` § 0.5b. This
 file is those methods applied to the five screens `docs/TODO.md` § 133 covers. It is not a new
 set of rules and it does not overrule any of them.
 
 Written 2026-09-03, branch `abilities-rework`, for § 133.
 
-⚠️⚠️ **THE IN-MATCH LAYER IS NOT IN THIS FILE AND MUST NOT BE TOUCHED IN THIS PASS.** § 133.4
+**Historical scope for section133, superseded by VISUAL-1's in-match assignment:** section133.4
 draws the line at "is it drawn while a round is live": `Hud`, `AbilityDeckHud`,
 `AbilityInspectPanel`, `StatusStack`, `HudDeclutter`, `OffscreenIndicators`, `PlayerNameplate`,
 `RoleSwapCard`, `EmoteWheel`, `PausePanel` and `ComicPopup` stay exactly as they are. The HUD

@@ -184,8 +184,20 @@ namespace TumbangPreso.UI
         private RawImage _surface;
         private RenderTexture _target;
         private Camera _camera;
+        private bool _renderingEnabled = true;
+
+        public void SetRenderingEnabled(bool visible)
+        {
+            _renderingEnabled = visible;
+            if (_camera != null && _camera.enabled != visible) _camera.enabled = visible;
+            if (_surface != null && _surface.enabled != visible) _surface.enabled = visible;
+        }
         private string _showing;
         private bool _busy;
+        private bool _preparing;
+        private string _wantedMap;
+        private AsyncOperation _pendingLoad;
+        public bool IsPrepared { get; private set; }
         private bool _retiring,_ownsPreviewGate;
         private string _transitionScene;
         private static int _previewLoads;
@@ -203,7 +215,7 @@ namespace TumbangPreso.UI
             foreach(var preview in previews)
             {
                 preview._retiring=true;
-                if(preview._busy&&owner==null)owner=preview;
+                if((preview._busy || preview._pendingLoad != null || preview._preparing)&&owner==null)owner=preview;
             }
             if(owner==null)return false;
             _transitionOwner=owner;owner._transitionScene=scene;
@@ -215,7 +227,8 @@ namespace TumbangPreso.UI
             bool pending;
             do
             {
-                pending=false;foreach(var preview in previews)pending|=preview!=null&&preview._busy;
+                pending=false;foreach(var preview in previews)pending|=preview!=null &&
+                    (preview._busy || preview._pendingLoad != null || preview._preparing);
                 if(pending)yield return null;
             }while(pending);
             string destination=_transitionScene;_transitionOwner=null;
@@ -230,6 +243,7 @@ namespace TumbangPreso.UI
         }
         private void EndPreviewLoad()
         {
+            if (_pendingLoad != null && !_pendingLoad.isDone) return;
             if(!_ownsPreviewGate)return;
             _ownsPreviewGate=false;
             if(--_previewLoads==0)MatchInstaller.PreviewOnly=_previousPreviewGate;
@@ -343,8 +357,53 @@ namespace TumbangPreso.UI
 
         public void Show(string map)
         {
-            if (_retiring || _busy || map == _showing) return;
+            if (_retiring || string.IsNullOrEmpty(map)) return;
+            if (_busy || _preparing) { _wantedMap = map; return; }
+            if (map == _showing) return;
             StartCoroutine(Swap(map));
+        }
+
+        public IEnumerator PrepareAll(System.Action<float> progress)
+        {
+            if (IsPrepared) { progress?.Invoke(1); yield break; }
+            _preparing = true;
+            try
+            {
+                while (_busy || _pendingLoad != null) yield return null;
+                var maps = SceneFlow.Maps;
+                for (int i = 0; i < maps.Length; i++)
+                {
+                    if (_retiring) yield break;
+                    if (!Application.CanStreamedLevelBeLoaded(maps[i]))
+                        throw new System.InvalidOperationException("Preview scene missing: " + maps[i]);
+                    var swap = Swap(maps[i]);
+                    try { while (swap.MoveNext()) yield return swap.Current; }
+                    finally { (swap as System.IDisposable)?.Dispose(); }
+                    if (!_cache.TryGetValue(maps[i], out var scene) || !scene.IsValid() || !scene.isLoaded)
+                        throw new System.InvalidOperationException("Preview scene did not prepare: " + maps[i]);
+                    // Let authored Start/Update initialization run and draw the actual preview
+                    // behind the curtain, rather than leaving its first draw on the map click.
+                    yield return null;
+                    if (_camera != null) _camera.Render();
+                    progress?.Invoke((i + 1f) / (maps.Length + 1f));
+                }
+                string selected = _wantedMap ?? SceneFlow.SelectedMap;
+                _wantedMap = null;
+                if (_showing != selected)
+                {
+                    var restore = Swap(selected);
+                    try { while (restore.MoveNext()) yield return restore.Current; }
+                    finally { (restore as System.IDisposable)?.Dispose(); }
+                }
+                IsPrepared = true;
+                progress?.Invoke(1);
+            }
+            finally
+            {
+                _preparing = false;
+                if (IsPrepared && !_retiring && isActiveAndEnabled && _wantedMap != null)
+                { string wanted = _wantedMap; _wantedMap = null; Show(wanted); }
+            }
         }
 
         private IEnumerator Swap(string map)
@@ -405,8 +464,13 @@ namespace TumbangPreso.UI
                     // this coroutine is still alive, so the new scene is confined and PARKED (lights
                     // off, roots inactive) the frame it arrives; the coroutine unparks it only if it
                     // is still here to show it. A surface that was destroyed meanwhile unloads it.
-                    var load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
-                    if (load != null) load.completed += _ => Claim(map, existing);
+                    var load = _pendingLoad = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
+                    if (load != null) load.completed += _ =>
+                    {
+                        _pendingLoad = null;
+                        try { Claim(map, existing); }
+                        finally { EndPreviewLoad(); }
+                    };
                     while (load != null && !load.isDone) yield return null;
 
                     EndPreviewLoad();
@@ -432,7 +496,15 @@ namespace TumbangPreso.UI
                 // framed by and a scene to be parented into) are both set up above.
                 MapShown?.Invoke(map);
             }
-            finally{EndPreviewLoad();_busy=false;}
+            finally
+            {
+                EndPreviewLoad(); _busy = false;
+                if (!_preparing && !_retiring && isActiveAndEnabled && _wantedMap != null)
+                {
+                    string wanted = _wantedMap; _wantedMap = null;
+                    Show(wanted);
+                }
+            }
         }
 
         /// <summary>
@@ -881,6 +953,8 @@ namespace TumbangPreso.UI
         private readonly System.Collections.Generic.Dictionary<string, MapEnvironment> _envs =
             new System.Collections.Generic.Dictionary<string, MapEnvironment>();
         private Visual.WorldLookPresentation _previewLook;
+        private readonly System.Collections.Generic.Dictionary<string, Visual.WorldLookPresentation> _looks =
+            new System.Collections.Generic.Dictionary<string, Visual.WorldLookPresentation>();
 
         public void ReapplyEnvironment()
         {
@@ -981,6 +1055,13 @@ namespace TumbangPreso.UI
             {_previewLook.ReapplyPreview();return;}
             ReleasePreviewLook();
             if(!_cache.TryGetValue(map,out var scene) || !scene.IsValid() || !scene.isLoaded)return;
+            if (_looks.TryGetValue(map, out var prepared) && prepared != null)
+            {
+                _previewLook = prepared;
+                prepared.gameObject.SetActive(true);
+                prepared.ResumePreview();
+                return;
+            }
             Transform parent=null;Light sun=null;
             foreach(var root in scene.GetRootGameObjects())
             {
@@ -996,15 +1077,16 @@ namespace TumbangPreso.UI
             Physics.SyncTransforms();
             float floor=Visual.WorldGround.TryBelow(_pivot,2,15,out float ground)?ground:_pivot.y;
             _previewLook=Visual.WorldLookPresentation.InstallPreview(parent,floor,sun);
+            if (_previewLook != null) _looks[map] = _previewLook;
         }
 
         private void ReleasePreviewLook()
         {
             if(_previewLook==null)return;
-            // Disable now: Destroy is deferred, and the next map needs the previous
-            // sun, globals and temporary ground properties restored before it loads.
+            // Restore the previous globals now; retain its prepared resources for
+            // the next visit instead of rebuilding them on the selection path.
             _previewLook.gameObject.SetActive(false);
-            Destroy(_previewLook.gameObject);_previewLook=null;
+            _previewLook=null;
         }
 
         /// <summary>
@@ -1074,6 +1156,7 @@ namespace TumbangPreso.UI
                 // reports precisely.
                 if (_camera != null) _camera.targetTexture = null;
                 _target.Release();
+                if (Application.isPlaying) Destroy(_target); else DestroyImmediate(_target);
                 _target = null;
             }
 
@@ -1115,6 +1198,8 @@ namespace TumbangPreso.UI
 
             _camera.fieldOfView = _lobbyShot ? LobbyFieldOfView : FieldOfView;
             _camera.targetTexture = _target;
+            _camera.enabled = _renderingEnabled;
+            if (_surface != null) _surface.texture = _target;
             _camera.clearFlags = CameraClearFlags.Skybox;
             _camera.depth = -10;
 
@@ -1223,9 +1308,12 @@ namespace TumbangPreso.UI
         private void OnDestroy()
         {
             ReleasePreviewLook();
+            foreach (var look in _looks.Values) if (look != null) Destroy(look.gameObject);
+            _looks.Clear();
             EndPreviewLoad();_busy=false;
             if(_transitionOwner==this)_transitionOwner=null;
-            if (_camera != null) Destroy(_camera.gameObject);
+            if (_camera != null) { _camera.targetTexture = null; Destroy(_camera.gameObject); }
+            if (_surface != null) _surface.texture = null;
 
             if (_target == null) return;
 

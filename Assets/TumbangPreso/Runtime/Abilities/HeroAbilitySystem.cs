@@ -123,6 +123,7 @@ namespace TumbangPreso.Abilities
             // buffered input before losing the only object that can cancel them.
             // Same-hero sidegrade refreshes use UpdateLoadout and retain live state.
             if (Kit != null) ResetKitForMatch();
+            EndOwnAim();
             _pendingUltimateSky = false;
             HeroId = string.IsNullOrEmpty(heroId) ? "dante" : heroId.ToLowerInvariant();
             Kit = CreateKitFor(HeroId);
@@ -371,46 +372,52 @@ namespace TumbangPreso.Abilities
 
         public static HeroKit CreateKitFor(string heroId)
         {
-            if (string.IsNullOrEmpty(heroId)) return new DanteHeroKit();
+            if (string.IsNullOrEmpty(heroId)) return CheckedKit(new DanteHeroKit());
 
             switch (heroId.ToLowerInvariant())
             {
                 case "dante":
                 case "bayan":
-                    return new DanteHeroKit();
+                    return CheckedKit(new DanteHeroKit());
 
                 case "cheska":
                 case "inday":
-                    return new CheskaHeroKit();
+                    return CheckedKit(new CheskaHeroKit());
 
                 case "sean":
                 case "kuya_boy":
                 case "iggy":
-                    return new SeanHeroKit();
+                    return CheckedKit(new SeanHeroKit());
 
                 case "zack":
-                    return new ZackHeroKit();
+                    return CheckedKit(new ZackHeroKit());
 
                 case "nemu":
-                    return new NemuHeroKit();
+                    return CheckedKit(new NemuHeroKit());
 
                 case "phaister":
-                    return new PhaisterHeroKit();
+                    return CheckedKit(new PhaisterHeroKit());
 
                 case "rafi":
-                    return new RafiHeroKit();
+                    return CheckedKit(new RafiHeroKit());
 
                 // The first ROLE kit: a signature, an attacking and a defending ability (2026-09-25).
                 case "amihan":
-                    return new AmihanHeroKit();
+                    return CheckedKit(new AmihanHeroKit());
 
                 // The ninth hero, a plant: signature, attacking, defending, ultimate (2026-09-25).
                 case "paete":
-                    return new PaeteHeroKit();
+                    return CheckedKit(new PaeteHeroKit());
 
                 default:
-                    return new DanteHeroKit();
+                    return CheckedKit(new DanteHeroKit());
             }
+        }
+
+        private static HeroKit CheckedKit(HeroKit kit)
+        {
+            AbilityNetworking.Validate(kit);
+            return kit;
         }
 
         private void Update()
@@ -449,7 +456,7 @@ namespace TumbangPreso.Abilities
             // changes at a round boundary, where `ResetKit` has just cleared every cooldown.
             Kit.SetRole(_motor.IsDefender, _context);
 
-            if (PracticeSandbox.Active) RefillForSandbox();
+            if (PracticeRange.Active ? PracticeRange.RefillsAbilities(_motor) : PracticeSandbox.Active) RefillForSandbox();
 
             if (NetAuthority.IsNetworked)
             {
@@ -460,10 +467,19 @@ namespace TumbangPreso.Abilities
                 Kit.Tick(_context, dt);
             }
 
+            if (UsesNetworkAim)
+            {
+                _reticle?.Hide();
+                EndOwnAim();
+                UpdateBodyAim();
+                return;
+            }
+
             var intent = _motor.Intent;
             if (intent == null)
             {
                 if (_reticle != null) _reticle.Hide();
+                ClearAimPresentation();
                 return;
             }
 
@@ -486,6 +502,7 @@ namespace TumbangPreso.Abilities
             Aim(intent, Verb.Ultimate, Slot.Ultimate, ref _ultimateBufferedAt);
 
             UpdateReticle(intent);
+            UpdateBodyAim();
 
             ServiceBuffer(ref _skill1BufferedAt, Slot.Skill1);
             ServiceBuffer(ref _skill2BufferedAt, Slot.Skill2);
@@ -521,6 +538,9 @@ namespace TumbangPreso.Abilities
         /// <summary>Seconds the current hold has lasted, or 0 when nothing is being aimed.</summary>
         public float HeldSeconds(Slot slot)
         {
+            if (UsesNetworkAim)
+                return NetworkAimActive() && _networkAim.Slot == (byte)((int)slot + 1)
+                    ? Mathf.Clamp(_networkAim.Held + Time.time - _networkAimAt, 0, 30) : 0;
             float since = _heldSince[(int)slot];
             return since < 0.0f ? 0.0f : Time.time - since;
         }
@@ -528,6 +548,7 @@ namespace TumbangPreso.Abilities
         /// <summary>True while this slot is being aimed rather than cast.</summary>
         public bool IsAiming(Slot slot)
         {
+            if (UsesNetworkAim) return NetworkAimActive() && _networkAim.Slot == (byte)((int)slot + 1);
             var ability = AbilityFor(slot);
             return ability != null && ability.HoldToAim && _heldSince[(int)slot] >= 0.0f;
         }
@@ -578,11 +599,13 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private void RefillForSandbox()
         {
-            Kit.Skill1?.RefillForSandbox();
-            Kit.Skill2?.RefillForSandbox();
-            Kit.IdleRoleSkill?.RefillForSandbox();
-            Kit.Ultimate?.RefillForSandbox();
-            Kit.AddUltimateCharge(Kit.UltimateCost);
+            bool cooldown = PracticeSandbox.Active;
+            bool charges = !PracticeRange.Active || PracticeRange.Instance.InfiniteSkills;
+            Kit.Skill1?.RefillForSandbox(cooldown, charges);
+            Kit.Skill2?.RefillForSandbox(cooldown, charges);
+            Kit.IdleRoleSkill?.RefillForSandbox(cooldown, charges);
+            Kit.Ultimate?.RefillForSandbox(cooldown, !PracticeRange.Active || PracticeRange.Instance.FullUltimate);
+            if (!PracticeRange.Active || PracticeRange.Instance.FullUltimate) Kit.AddUltimateCharge(Kit.UltimateCost);
         }
 
         private void Aim(InputIntent intent, Verb verb, Slot slot, ref float bufferedAt)
@@ -605,6 +628,7 @@ namespace TumbangPreso.Abilities
             if (justPressed)
             {
                 _heldSince[i] = Time.time;
+                BeginAimToken(slot);
                 return;
             }
 
@@ -690,11 +714,18 @@ namespace TumbangPreso.Abilities
         private HeroKit.CastOutcome Cast(Slot slot)
         {
             if (slot == Slot.Ultimate) return SubmitSharedUltimate();
+            if (NetAuthority.IsNetworked && !NetAuthority.IsHost && _motor.PlayerSlot == NetAuthority.LocalSlot
+                && !CanPredictSkill(slot)) return HeroKit.CastOutcome.CannotAct;
+            var requestedAbility = AbilityFor(slot);
+            long aimToken = AimTokenFor(slot);
+            bool reactivation = requestedAbility != null && requestedAbility.IsActive && requestedAbility.CanReactivate;
             // Capture before reactivation returns the pet or moves its owner.
             var familiar=_motor.GetComponent<Visual.CharacterVisual>()?.Companion;
             bool hasFamiliar=familiar!=null;
             Vector3 familiarPosition=hasFamiliar?familiar.transform.position:Vector3.zero;
             Vector3 castPosition=_context.Position,castForward=_context.Forward,castAim=_context.AimPoint;
+            bool flightRecast=slot==Slot.Skill2 && Kit is AmihanHeroKit && !Kit.IsDefending && Kit.AttackingSkill.IsActive;
+            long flightIntent=flightRecast?_motor.FlightEpisode:0;
             HeroKit.CastOutcome outcome;
             if (NetAuthority.IsNetworked)
             {
@@ -707,6 +738,8 @@ namespace TumbangPreso.Abilities
                 outcome = CastWithContext(slot, _context);
             }
             if (outcome != HeroKit.CastOutcome.Cast || !NetAuthority.IsNetworked) return outcome;
+            // A prediction never submitted to transport has no accepted episode to cancel.
+            if(flightRecast && flightIntent==0)return outcome;
 
             var ability = AbilityFor(slot);
             float held = ability != null ? ability.HeldSecondsOnCast : 0.0f;
@@ -716,13 +749,14 @@ namespace TumbangPreso.Abilities
             {
                 Net.MatchRpc.Instance?.BroadcastAbilityCast(
                     _motor.PlayerSlot, (int)slot, castPosition, castForward,
-                    aimPoint, held, exceptClientId: null, hasFamiliar:hasFamiliar, familiarPosition:familiarPosition);
+                    aimPoint, held, exceptClientId: null, hasFamiliar:hasFamiliar, familiarPosition:familiarPosition,
+                    flightIntent:flightIntent, reactivation:reactivation, aimToken:aimToken);
             }
             else if (_motor.PlayerSlot == NetAuthority.LocalSlot)
             {
                 Net.MatchRpc.Instance?.RequestAbilityCastServerRpc(
                     _motor.PlayerSlot, (int)slot, castPosition, castForward,
-                    aimPoint, held, hasFamiliar, familiarPosition);
+                    aimPoint, held, hasFamiliar, familiarPosition,flightIntent,reactivation,aimToken);
             }
 
             return outcome;
@@ -746,23 +780,36 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public HeroKit.CastOutcome ApplyNetworkCast(Slot slot, Vector3 position,
                                                     Vector3 forward, Vector3 aimPoint,
-                                                    float heldSeconds, bool authoritative)
+                                                    float heldSeconds, bool authoritative,
+                                                    string abilityId = null, bool? reactivation = null)
         {
             if (Kit == null || _motor == null) return HeroKit.CastOutcome.Missing;
 
             var ability = AbilityFor(slot);
             if (ability == null) return HeroKit.CastOutcome.Missing;
+            if (abilityId != null && ability.Id != abilityId) return HeroKit.CastOutcome.Missing;
+            if (reactivation == true && !ability.CanReactivate) return HeroKit.CastOutcome.Missing;
+            if (authoritative && reactivation.HasValue
+                && reactivation.Value != (ability.IsActive && ability.CanReactivate)) return HeroKit.CastOutcome.NotYet;
 
             if (authoritative && PresentationClock.BlocksInput) return HeroKit.CastOutcome.CannotAct;
             float previousHeld = ability.HeldSecondsOnCast;
             ability.HeldSecondsOnCast = Mathf.Max(0.0f, heldSeconds);
             var context = new AbilityContext(_motor, _carrier, _verbs,
-                                             position, forward, aimPoint);
+                                             position, forward, aimPoint, approvedReplay: !authoritative);
 
             HeroKit.CastOutcome outcome;
             using (NetCue.SuppressRelay())
             {
-                outcome = CastWithContext(slot, context);
+                // An accepted command stays a command even if this replica's live
+                // clock expired. Never reinterpret it as a fresh world-object spawn.
+                if (!authoritative && reactivation.HasValue)
+                {
+                    if (reactivation.Value) ability.Reactivate(context);
+                    else ability.Activate(context);
+                    outcome = HeroKit.CastOutcome.Cast;
+                }
+                else outcome = CastWithContext(slot, context);
                 if (!authoritative && outcome != HeroKit.CastOutcome.Cast)
                 {
                     if (ability.IsActive && ability.CanReactivate)
@@ -782,6 +829,11 @@ namespace TumbangPreso.Abilities
         {
             var animator = GetComponentInChildren<Visual.CharacterAnimator>();
             var ability = AbilityFor(slot);
+            if(slot==Slot.Skill2 && Kit is AmihanHeroKit && !Kit.IsDefending && !_motor.IsAloft)
+            {
+                animator?.CancelHeroAction("hero-amihan-updraft","updraft-lift");
+                return;
+            }
 
             // ⚠️⚠️ EVERY CAST SOUNDS FROM HERE AND FROM NOWHERE ELSE. See `HeroAbility.CastCue`
             // for what this replaces: eighteen powers opening on six shared element cues, so a
@@ -841,7 +893,7 @@ namespace TumbangPreso.Abilities
 
             if (slot == Slot.Ultimate)
             {
-                PlayUltimatePresentation(afterIntroduction);
+                PlayUltimatePresentation(afterIntroduction, acceptedContext?.IsApprovedReplay == true);
             }
 
             // Visual feedback: momentary cast flash
@@ -921,7 +973,7 @@ namespace TumbangPreso.Abilities
         /// that is not this peer's own; the guard here is the second half of that pair, so a
         /// future caller cannot roll back somebody else's kit.
         /// </summary>
-        public void RollBackPredictedCast(Slot slot, bool refundResources = true)
+        public void RollBackPredictedCast(Slot slot, bool refundResources = true, bool preserveActiveEffect = false)
         {
             if (Kit == null || _motor == null) return;
             if (NetAuthority.IsHost) return;
@@ -934,7 +986,8 @@ namespace TumbangPreso.Abilities
             // THIS FILE. `EndEarly` reaches `OnEnd`, and some `OnEnd` bodies play a cue; relaying
             // those outward would have a client asking the host to announce the end of an effect
             // the host never started.
-            using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context,refundResources);
+            if (!preserveActiveEffect)
+                using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context,refundResources);
             if (slot == Slot.Ultimate) _pendingUltimateSky = false;
             _motor.GetComponent<Visual.CharacterAnimator>()?.CancelHeroAction(ability.CastAction,ability.ViewmodelAction);
 
@@ -952,7 +1005,7 @@ namespace TumbangPreso.Abilities
                 GameServices.Audio?.PlayUi("ui_error", .55f);
         }
 
-        private HeroAbility AbilityFor(Slot slot)
+        public HeroAbility AbilityFor(Slot slot)
         {
             if (Kit == null) return null;
 
@@ -1007,7 +1060,8 @@ namespace TumbangPreso.Abilities
         {
             switch (heroId)
             {
-                case "phaister": return "sfx_coven_summon";
+                // HERO-10 (2026-09-27): OMEN's own theme, timed to its cutscene (`tools/build_phaister_audio.py` theme()).
+                case "phaister": return "sfx_ult_theme_phaister";
                 case "zack": return "sfx_ult_theme_zack";
                 case "cheska": return "sfx_ult_theme_cheska";
                 case "sean": return "sfx_ult_theme_sean";
@@ -1061,7 +1115,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public static event System.Action<CharacterMotor, HeroKit, HeroAbility> UltimateStarted;
 
-        private void PlayUltimatePresentation(bool afterIntroduction = false)
+        private void PlayUltimatePresentation(bool afterIntroduction = false, bool approvedReplay = false)
         {
             // ⚠️ FIRST, AND OUTSIDE EVERY EARLY RETURN BELOW. The camera work in this method
             // returns early when `Camera.main` is null (a headless probe) and when the caster is
@@ -1138,7 +1192,7 @@ namespace TumbangPreso.Abilities
             // A predicted ritual can be refused. Keep the immediate hand/circle
             // preparation, but wait for host acceptance before replacing global
             // weather. A refusal then cannot erase another hero's current sky.
-            _pendingUltimateSky = !afterIntroduction && Kit?.HeroId == "phaister" && NetAuthority.IsNetworked &&
+            _pendingUltimateSky = !afterIntroduction && !approvedReplay && Kit?.HeroId == "phaister" && NetAuthority.IsNetworked &&
                 !NetAuthority.IsHost && _motor.PlayerSlot == NetAuthority.LocalSlot;
             if (!_pendingUltimateSky) PlayUltimateSky();
 
@@ -1245,6 +1299,24 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private void UpdateReticle(InputIntent intent)
         {
+            _ownAimNow = null;
+            UpdateReticleAndAim(intent);
+            // ⚠️ HERO-10: an aim that was being drawn and is not this frame (released, stunned, refused) ends exactly once.
+            if (_ownAim != null && _ownAim != _ownAimNow) _ownAim.EndAim();
+            _ownAim = _ownAimNow;
+        }
+
+        /// <summary>The ability whose `PresentAim` ran last frame, and the one that ran this frame (HERO-10).</summary>
+        private HeroAbility _ownAim, _ownAimNow;
+
+        private void EndOwnAim()
+        {
+            _ownAim?.EndAim();
+            _ownAim = null;
+        }
+
+        private void UpdateReticleAndAim(InputIntent intent)
+        {
             if (_reticle == null || Kit == null) return;
 
             // These instant casts have their own grounded windup warning. Keeping
@@ -1288,9 +1360,16 @@ namespace TumbangPreso.Abilities
             // viaduct, by one player, while they decide. Those are different legibility problems
             // and the second one is the harder of the two. `UiTheme.BrightForHero` carries why a
             // mid-value accent reads as a shadow on ghosted geometry.
+            // ⚠️ HERO-10: the ability's own aim picture and its body's tell (`HeroAbility.PresentAim`), every frame of the hold.
+            // One that draws its own aim (Phaister's sigil, OMEN's height) replaces the shared ring rather than stacking on it.
+            Vector3 aimed = AimPoint(ability, range);
+            if (_ownAim != null && _ownAim != ability) { _ownAim.EndAim(); _ownAim = null; }
+            _ownAimNow = ability;
+            ability.PresentAim(_motor, aimed, HeldSecondsFor(ability));
+            if (ability.DrawsOwnAim) { _reticle.Hide(); return true; }
             _reticle.SetBeacon(ability.AimBeacon);
             _reticle.SetStyle(ability.TelegraphStyle);
-            _reticle.Show(AimPoint(ability, range), ability.TelegraphRadius, AccentBright());
+            _reticle.Show(aimed, ability.TelegraphRadius, AccentBright());
             return true;
         }
 
@@ -1337,6 +1416,19 @@ namespace TumbangPreso.Abilities
             if (!ability.HoldToAim) return at;
 
             at = AIController.ClampToPlayable(at);
+            if (ability.AimsInTheAir)
+            {
+                // HERO-10: the height rides in the aim's y. Sent aims keep theirs; the caster's own comes off her camera.
+                float ground = Slipper.GroundY(at);
+                float height = ability.AimMinHeight;
+                if (context.HasAimPoint) height = context.AimPoint.y - ground;
+                else
+                {
+                    Vector3 flatTo = at - context.Position; flatTo.y = 0.0f;
+                    if (CameraSystem.CameraRig.TryLookHeight(context.Motor, flatTo.magnitude, out float sight)) height = sight - ground;
+                }
+                at.y = ground + Mathf.Clamp(height, ability.AimMinHeight, ability.AimMaxHeight);
+            }
             return at;
         }
 
@@ -1437,17 +1529,25 @@ namespace TumbangPreso.Abilities
             return applied;
         }
 
-        public void ConfirmPredictedWorldEffect(Slot slot, Vector3 position, Vector3 forward,
+        public bool ConfirmPredictedWorldEffect(Slot slot, long request, Vector3 position, Vector3 forward,
                                                Vector3 aimPoint, float heldSeconds)
         {
-            if (_motor == null || NetAuthority.IsHost || _motor.PlayerSlot != NetAuthority.LocalSlot) return;
+            if (_motor == null || NetAuthority.IsHost || _motor.PlayerSlot != NetAuthority.LocalSlot) return false;
             var ability = AbilityFor(slot);
-            if (ability?.DefersPredictedEffect != true) return;
+            if (ability?.DefersPredictedEffect != true || request < 0) return false;
+            // Effects settle independently; an older confirmation must not be discarded just
+            // because a newer request owns the resource receipt for this slot.
+            bool reactivation = false;
+            if (request > 0 && !TakePendingEffect((int)slot, request, out reactivation)) return false;
             var context = new AbilityContext(_motor, _carrier, _verbs, position, forward, aimPoint);
             // The host already accepted the cast. Do not spend another charge or
             // restart its animation, and do not relay its payload cues back out.
-            using (NetCue.SuppressRelay()) ability.ApplyConfirmedEffect(context, heldSeconds);
+            // A confirmed command must not run the initial spawn again. Its predicted
+            // command presentation already ran; authoritative world results arrive separately.
+            if (!reactivation)
+                using (NetCue.SuppressRelay()) ability.ApplyConfirmedEffect(context, heldSeconds);
             FlashCastTarget(ability, context, heldSeconds);
+            return true;
         }
 
         /// <summary>Release deferred sky presentation without replaying the owner's cast.</summary>
@@ -1508,6 +1608,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private void ClearBuffers()
         {
+            ClearAimPresentation();
             _pendingUltimateRequest = 0;
             _pendingUltimateSky = false;
             _skill1BufferedAt = float.NegativeInfinity;

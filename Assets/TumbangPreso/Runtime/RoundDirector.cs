@@ -96,6 +96,7 @@ namespace TumbangPreso
         }
 
         public void Clear() => _players.Clear();
+        public void Unregister(CharacterMotor motor) => _players.Remove(motor);
 
         public CharacterMotor PlayerAt(int slot)
         {
@@ -311,7 +312,7 @@ namespace TumbangPreso
             // Guided training is a practice range, not a scored round. The rules and every
             // verb stay live, including throw restoration protection and real ability
             // cooldowns, but the lesson must not end halfway through because 90 seconds passed.
-            if (GameLaunch.GuidedTutorial)
+            if (GameLaunch.GuidedTutorial || PracticeRange.Active)
             {
                 TimeLeft = RoundLength;
                 return;

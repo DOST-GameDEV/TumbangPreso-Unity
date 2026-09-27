@@ -20,6 +20,72 @@ namespace TumbangPreso.PlayTests
     {
         [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+
+        [UnityTest]
+        public IEnumerator LargeScoreChipsStayInsideTheBarAtNormalAndAccessibleSizes()
+        {
+            yield return Open(GameMode.Classic);
+            var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
+            var row = canvas.transform.Find("MatchScores/ScoreRow0") as RectTransform;
+            Assert.IsNotNull(row);
+            var score = row.Find("Score").GetComponent<Text>();
+            var seat = row.Find("SeatTag").GetComponent<Text>();
+            var settings = SettingsStore.Current;
+            float oldScale = settings.HudScale;
+            bool oldLarger = settings.LargerText;
+            try
+            {
+                var cases = new[]
+                {
+                    (Value: 10000, Name: "five-digit-960x540", Width: 960, Height: 540, Scale: 1f, Larger: false),
+                    (Value: -100000, Name: "negative-six-digit-1920x1080", Width: 1920, Height: 1080, Scale: 1f, Larger: false),
+                    (Value: -888888, Name: "negative-widest-1280x720", Width: 1280, Height: 720, Scale: 1f, Larger: false),
+                    (Value: 999999, Name: "six-digit-phone-2340x1080", Width: 2340, Height: 1080, Scale: 1f, Larger: false),
+                    (Value: int.MinValue, Name: "minimum-int-accessible-1600x680", Width: 1600, Height: 680, Scale: 1.2f, Larger: true),
+                };
+                foreach (var sample in cases)
+                {
+                    settings.HudScale = sample.Scale;
+                    settings.LargerText = sample.Larger;
+                    yield return null;
+                    yield return TumpUiCapture.Capture("CourtHud-score-" + sample.Name, canvas,
+                        sample.Width, sample.Height, false, true, inspectViewport: () =>
+                        {
+                            score.text = ""; // Stage through the same formatter/fitter used by Scores.
+                            TumpMatchReadout.PaintScoreValue(score, sample.Value);
+                            score.rectTransform.localScale = Vector3.one * (score.fontSize < 36 ? 1f : 1.07f);
+                            Assert.GreaterOrEqual(score.fontSize, 28);
+                            Assert.LessOrEqual(score.preferredWidth, score.rectTransform.rect.width + 0.5f,
+                                sample.Name + ": score font=" + score.fontSize + " preferred=" + score.preferredWidth +
+                                " rect=" + score.rectTransform.rect.width);
+                            var corners = new Vector3[4];
+                            score.rectTransform.GetWorldCorners(corners);
+                            foreach (var corner in corners)
+                            {
+                                var point = row.InverseTransformPoint(corner);
+                                Assert.GreaterOrEqual(point.x, -0.5f);
+                                Assert.LessOrEqual(point.x, row.rect.width + 0.5f,
+                                    "Score pulse left its chip at " + sample.Name);
+                            }
+                            float glyphRight = row.InverseTransformPoint(score.rectTransform.TransformPoint(
+                                new Vector3(score.rectTransform.rect.xMax, 0f, 0f))).x;
+                            float glyphLeft = glyphRight - score.preferredWidth * score.rectTransform.localScale.x;
+                            float seatRight = seat.rectTransform.anchoredPosition.x + seat.preferredWidth;
+                            Assert.Greater(glyphLeft, seatRight,
+                                "A long score covered the seat identity at " + sample.Name);
+                        });
+                }
+            }
+            finally
+            {
+                settings.HudScale = oldScale;
+                settings.LargerText = oldLarger;
+                score.rectTransform.localScale = Vector3.one;
+                score.text = "";
+                TumpMatchReadout.PaintScoreValue(score, GameServices.Match.ScoreFor(0));
+            }
+        }
+
         [UnityTest]
         public IEnumerator ClassicHudReflectsTheRealRoundRoleAndRecoveryState()
         {

@@ -1,6 +1,10 @@
 using NUnit.Framework;
+using System.Reflection;
+using System.Text;
 using TumbangPreso.Net;
 using TumbangPreso.UI;
+using Unity.Netcode;
+using UnityEngine;
 
 namespace TumbangPreso.Tests
 {
@@ -16,6 +20,71 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class ChatAndLobbyChromeTests
     {
+        [Test]
+        public void ConnectionApprovalRefusesThePreviousProtocolAndAcceptsTheCurrentLanHello()
+        {
+            var previousSession = NetSession.Instance;
+            var previousProvider = NetAuthority.Provider;
+            var root = new GameObject("Protocol approval contract");
+            root.SetActive(false);
+            try
+            {
+                var session = root.AddComponent<NetSession>();
+                Assert.IsNull(root.GetComponent<NetworkManager>(), "The inactive fixture ran session Awake.");
+                Assert.AreSame(previousSession, NetSession.Instance);
+                Assert.AreSame(previousProvider, NetAuthority.Provider);
+                const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                var helloType = typeof(NetSession).GetNestedType("ConnectionHello", BindingFlags.NonPublic);
+                var hello = System.Activator.CreateInstance(helloType, true);
+                helloType.GetField("Token").SetValue(hello, "protocol-contract-lan");
+                helloType.GetField("Name").SetValue(hello, "Protocol contract");
+                // Empty account/proof is the supported LAN identity, not an authentication bypass.
+                helloType.GetField("AccountPlayerId").SetValue(hello, "");
+                helloType.GetField("HandleProof").SetValue(hello, "");
+                helloType.GetField("SkillContract").SetValue(hello, SkillContractFingerprint.Current);
+                var approve = typeof(NetSession).GetMethod("ApproveConnection", flags);
+                var cached = (System.Collections.IDictionary)typeof(NetSession).GetField("_helloByClient", flags).GetValue(session);
+                NetworkManager.ConnectionApprovalResponse Submit(int protocol)
+                {
+                    helloType.GetField("Protocol").SetValue(hello, protocol);
+                    var request = new NetworkManager.ConnectionApprovalRequest
+                    {
+                        ClientNetworkId = 42,
+                        Payload = Encoding.UTF8.GetBytes(JsonUtility.ToJson(hello)),
+                    };
+                    var response = new NetworkManager.ConnectionApprovalResponse { Pending = true, CreatePlayerObject = true };
+                    approve.Invoke(session, new object[] { request, response });
+                    return response;
+                }
+                var old = Submit(NetSession.ProtocolVersion - 1);
+                Assert.IsFalse(old.Approved);
+                Assert.AreEqual($"Game version mismatch (network protocol {NetSession.ProtocolVersion})", old.Reason);
+                Assert.IsFalse(old.Pending);
+                Assert.IsFalse(cached.Contains(42UL), "The refused hello was cached as admitted.");
+                helloType.GetField("SkillContract").SetValue(hello, new string('0', 64));
+                var mismatched = Submit(NetSession.ProtocolVersion);
+                Assert.IsFalse(mismatched.Approved);
+                StringAssert.Contains("Skill rules differ", mismatched.Reason);
+                Assert.IsFalse(cached.Contains(42UL));
+                helloType.GetField("SkillContract").SetValue(hello, SkillContractFingerprint.Current);
+                var current = Submit(NetSession.ProtocolVersion);
+                Assert.IsTrue(current.Approved, "A valid current-protocol LAN hello failed the positive control.");
+                Assert.IsFalse(current.Pending);
+                Assert.IsFalse(current.CreatePlayerObject);
+                Assert.AreEqual("", current.Reason);
+                Assert.IsTrue(cached.Contains(42UL));
+                Assert.IsNull(root.GetComponent<NetworkManager>());
+                Assert.AreSame(previousSession, NetSession.Instance);
+                Assert.AreSame(previousProvider, NetAuthority.Provider);
+            }
+            finally
+            {
+                Object.DestroyImmediate(root);
+                Assert.AreSame(previousSession, NetSession.Instance);
+                Assert.AreSame(previousProvider, NetAuthority.Provider);
+            }
+        }
+
         // -------------------------------------------------------------------
         // THE HOST'S CLAMP ON A CHAT LINE
         //
@@ -271,7 +340,11 @@ namespace TumbangPreso.Tests
             //58 keeps Paete's guardian off the can and holds its prisoners 1.4 m out; every peer computes both.
             //59 makes Paete's introduction 6.5 s, places his ultimate where he looks, and hands the grown guardian back at the catch.
             //60 places THORN HARVEST where he looks (a trail runs to the spot, it bursts and catches there) and keeps BAKYA BLOOM out of the box.
-            Assert.AreEqual(60, NetSession.ProtocolVersion,
+            //61 adds Featherfall pose/intent episode keys and timed restoration, with the updated 5 s / 40 s rules.
+            //62 and 63 (the world-field header and the shared ability serializer) are recorded in NetSession.
+            //64 adds the shared skill fingerprint, including Phaister's updated 5.0 s introduction.
+            //65 adds phase-aware world freshness and ability-owned prepared-effect recovery.
+            Assert.AreEqual(76, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

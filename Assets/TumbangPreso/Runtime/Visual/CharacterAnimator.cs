@@ -223,6 +223,11 @@ namespace TumbangPreso.Visual
             { "hero-phaister-hex", new[] { "hero-phaister-hex", "interact-right", "attack-melee-right" } },
             { "hero-phaister-blink", new[] { "hero-phaister-blink", "attack-kick-right", Sprint } },
             { "hero-phaister-eclipse", new[] { "hero-phaister-eclipse", Crouch, "holding-both" } },
+            // PHAISTER (HERO-10, 2026-09-27): one clip per skill, baked by `PhaisterMotionAuthor`, the old clip as the fallback.
+            { "hero-phaister-swarm", new[] { "hero-phaister-swarm", "hero-phaister-blink", Sprint } },
+            { "hero-phaister-manika", new[] { "hero-phaister-manika", "attack-melee-right" } },
+            { "hero-phaister-pin", new[] { "hero-phaister-pin", "hero-phaister-hex", "interact-right" } },
+            { "hero-phaister-omen", new[] { "hero-phaister-omen", "hero-phaister-eclipse", "holding-both" } },
             { "hero-rafi-cut", new[] { "hero-rafi-cut", "interact-left" } },
             { "hero-rafi-feint", new[] { "hero-rafi-feint", "attack-melee-right" } },
             { "hero-rafi-breakwater", new[] { "hero-rafi-breakwater", "holding-both-shoot" } },
@@ -248,6 +253,7 @@ namespace TumbangPreso.Visual
         private Carrier _carrier;
         private Social.EmotePlayer _emote;
         private Animator _animator;
+        private Avatar _ownedAvatar;
 
         private PlayableGraph _graph;
         private AnimationMixerPlayable _mixer;
@@ -334,7 +340,9 @@ namespace TumbangPreso.Visual
             // Animator with a null controller, which is right for Playables, and no Avatar,
             // which is not: an animation output bound to one drives no transforms at all and
             // the whole cast stands in its bind pose. See ModelPreview.EnsureAvatar.
+            bool needsAvatar = _animator.avatar == null;
             UI.ModelPreview.EnsureAvatar(_animator);
+            if (needsAvatar) _ownedAvatar = _animator.avatar;
 
             CacheClips(model, clips);
             // Whose walk and run this body gets (`GaitStyles`), chosen before the gait layer calibrates its cadence.
@@ -444,9 +452,7 @@ namespace TumbangPreso.Visual
             if (_animator == null) return;
 
             string rig = DanceClip.ResourceName(_animator.transform);
-            var baked = string.IsNullOrEmpty(rig)
-                ? null
-                : Resources.Load<GeneratedAnimationSet>($"{DanceClip.ResourceFolder}/{rig}");
+            var baked = GeneratedMotionAssets.For(DanceClip.ResourceFolder, rig);
 
             if (baked != null && baked.Clips != null)
             {
@@ -455,17 +461,17 @@ namespace TumbangPreso.Visual
             }
             // Character-specific carrying corrections retain the original rig and
             // source clips; the measured pose also becomes the throw's real basis.
-            var carry=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>("CarryMotion/"+rig);
+            var carry=GeneratedMotionAssets.For("CarryMotion",rig);
             if(carry!=null&&carry.Clips!=null)
                 foreach(var clip in carry.Clips)if(clip!=null)_clips[clip.name]=clip;
-            var swimming=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(SwimmingMotion.Folder+"/"+rig);
+            var swimming=GeneratedMotionAssets.For(SwimmingMotion.Folder,rig);
             if(swimming!=null&&swimming.Clips!=null)
                 foreach(var clip in swimming.Clips)if(clip!=null)_clips[clip.name]=clip;
-            var recovery=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(RecoveryMotion.Folder+"/"+rig);
+            var recovery=GeneratedMotionAssets.For(RecoveryMotion.Folder,rig);
             if(recovery!=null&&recovery.Clips!=null)
                 foreach(var clip in recovery.Clips)if(clip!=null)_clips[clip.name]=clip;
             // Paete's kit (HERO-9): the struggle against his roots and the heave on his seedling, on every rig.
-            var rooted=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(RootedMotion.Folder+"/"+rig);
+            var rooted=GeneratedMotionAssets.For(RootedMotion.Folder,rig);
             if(rooted!=null&&rooted.Clips!=null)
                 foreach(var clip in rooted.Clips)if(clip!=null)_clips[clip.name]=clip;
 
@@ -506,6 +512,15 @@ namespace TumbangPreso.Visual
             ClearChargePose();
             _throwReleaseTime=-1;_lastThrowPose=ThrowGesture.Rest;
             if (_graph.IsValid()) _graph.Destroy();
+            // Only the binding we built belongs to this driver. Imported or
+            // externally supplied avatars must survive its teardown/rebind.
+            if (_ownedAvatar != null)
+            {
+                if (_animator != null && _animator.avatar == _ownedAvatar) _animator.avatar = null;
+                if (Application.isPlaying) Destroy(_ownedAvatar);
+                else DestroyImmediate(_ownedAvatar);
+            }
+            _ownedAvatar = null;
 #if UNITY_EDITOR
             foreach (var clip in _generated) if (clip != null) DestroyImmediate(clip);
             _generated.Clear();
@@ -827,6 +842,10 @@ namespace TumbangPreso.Visual
             }
 
             if (_carrier != null && _carrier.ChannelRatio > 0.0f) return Interact;
+
+            // HERO-10: a hero's own tell while a skill is held (`AimPose`); no other hero names one.
+            string aimPose = AimPose();
+            if (aimPose != null) return aimPose;
 
             // ⚠️⚠️ THE **OBSERVED** WIND-UP, NOT THIS PEER'S OWN CHARGE CLOCK, AND THE
             // DIFFERENCE IS THE ENTIRE COUNTERPLAY. `carrier.gd`'s header spells it out: the

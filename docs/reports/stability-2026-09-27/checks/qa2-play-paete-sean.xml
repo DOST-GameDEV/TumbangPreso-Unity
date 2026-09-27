@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 22:14:02Z" end-time="2026-09-26 22:14:15Z" duration="13.1080743">
+  <test-suite type="TestSuite" id="1869" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="683" result="Failed" site="Child" start-time="2026-09-26 22:14:02Z" end-time="2026-09-26 22:14:15Z" duration="13.108074" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1863" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="683" result="Failed" site="Child" start-time="2026-09-26 22:14:02Z" end-time="2026-09-26 22:14:15Z" duration="13.099915" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="51348" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1864" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="683" result="Failed" site="Child" start-time="2026-09-26 22:14:02Z" end-time="2026-09-26 22:14:15Z" duration="13.097314" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1865" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="683" result="Failed" site="Child" start-time="2026-09-26 22:14:02Z" end-time="2026-09-26 22:14:15Z" duration="13.094648" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1222" name="HubFlowTests" fullname="TumbangPreso.PlayTests.HubFlowTests" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-09-26 22:14:02Z" end-time="2026-09-26 22:14:15Z" duration="13.079098" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1223" name="PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect" fullname="TumbangPreso.PlayTests.HubFlowTests.PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect" methodname="PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" seed="122049388" result="Failed" start-time="2026-09-26 22:14:02Z" end-time="2026-09-26 22:14:15Z" duration="13.067836" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Paete should read larger than Sean on the actual shop stage.
+  Expected: greater than 0.704545438f
+  But was:  0.678030312f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HubFlowTests+<PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect>d__11.MoveNext () [0x0089e] in C:\Users\Matthew\Documents\Codex\2026-09-27\read-agents-md-too-opus-5\work\stability-validation\Assets\TumbangPreso\Tests\PlayMode\HubFlowTests.cs:191
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpGeometry] Hub-HeroShop-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-sean-1600x680/Glyph: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-sean-1600x680 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-HeroShop-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-sean-2340x1080/Glyph: vertices=100, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-sean-2340x1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-HeroShop-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-paete-1600x680 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-HeroShop-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-HeroShop-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-HeroShop-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-HeroShop-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-HeroShop-paete-2340x1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 4RHS
+[TumpGeometry] Hub-CharacterSelect-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-CharacterSelect-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-CharacterSelect-sean-1600x680/Glyph: vertices=100, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-CharacterSelect-sean-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-CharacterSelect-sean-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-CharacterSelect-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-CharacterSelect-sean-2340x1080/Glyph: vertices=100, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-CharacterSelect-sean-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-CharacterSelect-sean-2340x1080 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-CharacterSelect-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-CharacterSelect-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-CharacterSelect-paete-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-CharacterSelect-paete-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] Hub-CharacterSelect-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] Hub-CharacterSelect-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] Hub-CharacterSelect-paete-2340x1080/Glyph: vertices=4, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] Hub-CharacterSelect-paete-2340x1080 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[HeroSize] 1600x680: shop Sean=0.705, Paete=0.678; selector Sean=0.680, Paete=0.650
+[Net] offline
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

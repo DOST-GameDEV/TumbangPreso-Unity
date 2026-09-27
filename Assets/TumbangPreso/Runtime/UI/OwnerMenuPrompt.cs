@@ -63,7 +63,7 @@ namespace TumbangPreso.UI
             // frame, and would skip a title the player never saw. The caption itself only starts
             // arriving at 0.45 s, so the guard is invisible.
             float age = Time.unscaledTime - _born;
-            if (Press != null && Press.isActiveAndEnabled && Press.interactable && age > .25f
+            if (Press != null && Press.isActiveAndEnabled && Press.IsInteractable() && age > .25f
                 && ((LastInputDevice.Current == InputDeviceKind.Gamepad && MenuNav.PadAnyPressed)
                     || MenuNav.KeyboardAnyPressed))
                 Press.onClick.Invoke();

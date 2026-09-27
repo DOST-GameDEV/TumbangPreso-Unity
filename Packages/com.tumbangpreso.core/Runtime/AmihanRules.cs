@@ -36,14 +36,11 @@ namespace TumbangPreso.Core
 
         // ------------------------------------------------------------------ UPDRAFT (attacking role)
 
-        /// <summary>
-        /// ⚠️ NOT GIVEN BY THE OWNER. 45 s sits beside her other two (35 and 40), and a flight is a
-        /// move-your-own-body power, which `HeroAbility`'s charge rule gives a long cooldown.
-        /// </summary>
-        public const float UpdraftCooldown = 45.0f;
+        /// <summary>Owner's updated FEATHERFALL table, 2026-09-26: "40 Seconds Cooldown".</summary>
+        public const float UpdraftCooldown = 40.0f;
 
-        /// <summary>Owner's table: *"Fly for 10 seconds."*</summary>
-        public const float UpdraftSeconds = 10.0f;
+        /// <summary>Owner's updated FEATHERFALL table, 2026-09-26: "fly for 5 seconds".</summary>
+        public const float UpdraftSeconds = 5.0f;
 
         /// <summary>
         /// Owner, 2026-09-25: *"flies high"*. 2.8 m of air under her feet is well over a standing
@@ -55,6 +52,11 @@ namespace TumbangPreso.Core
 
         /// <summary>*"cant pick up unless they choose to go down"*: the glide down, m/s.</summary>
         public const float UpdraftDescentSpeed = 3.5f;
+
+        /// <summary>A shared presentation pause leaves both round-clock samples equal.</summary>
+        public static float FlightRemainingAtClock(float remaining, float capturedRoundTime, float adoptedRoundTime)
+            => System.Math.Max(0, System.Math.Min(UpdraftSeconds, remaining)
+                - System.Math.Max(0, capturedRoundTime - adoptedRoundTime));
 
         // ------------------------------------------------------------------ WHIRLWIND (defending role)
 

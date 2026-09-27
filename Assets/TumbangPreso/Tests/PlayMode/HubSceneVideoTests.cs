@@ -21,6 +21,114 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp] public IEnumerator Before() { HubSceneVideo.ForcedHero = null; yield return PlayModeWorld.Reset(); }
         [UnityTearDown] public IEnumerator After() { HubSceneVideo.ForcedHero = null; yield return PlayModeWorld.Reset(); }
 
+        [UnityTest, Timeout(30000)]
+        public IEnumerator OpaqueHomeMediaSuspendsTheHiddenCourtAndRestoresItsFallback()
+        {
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            GameObject owner = null, previewRoot = null;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion = true;
+                HubSceneVideo.ForcedHero = "zack";
+                owner = new GameObject("Home render ownership");
+                var canvas = UI.OwnerUiLayout.Canvas(owner.transform, "HomeRenderCanvas", 100);
+                var scene = UI.OwnerUiLayout.Rect(canvas.transform, "Scene"); UI.OwnerUiLayout.Fill(scene);
+                previewRoot = new GameObject("Covered court", typeof(RectTransform), typeof(UnityEngine.UI.RawImage));
+                var preview = previewRoot.AddComponent<UI.MapPreviewSurface>(); preview.enabled = false;
+                var video = HubSceneVideo.Install(scene, preview);
+                var image = video.GetComponent<UnityEngine.UI.RawImage>();
+                const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                var update = typeof(HubSceneVideo).GetMethod("Update", flags);
+                yield return null; Canvas.ForceUpdateCanvases(); update.Invoke(video, null);
+                Assert.IsNull(video.Player, "Reduced motion opened a decoder.");
+                Assert.IsTrue(image.enabled); Assert.IsNotNull(image.texture);
+                typeof(UI.MapPreviewSurface).GetMethod("EnsureCamera", flags).Invoke(preview, null);
+                Assert.IsFalse(preview.Camera.enabled, "A late-created camera ignored its covered state.");
+                Assert.IsFalse(previewRoot.GetComponent<UnityEngine.UI.RawImage>().enabled);
+                var camera = preview.Camera; var target = camera.targetTexture;
+                var posterField = typeof(HubSceneVideo).GetField("_poster", flags);
+                var poster = posterField.GetValue(video);
+                posterField.SetValue(video, null); update.Invoke(video, null);
+                Assert.IsFalse(image.enabled); Assert.IsTrue(camera.enabled, "Missing media did not restore the live court.");
+                posterField.SetValue(video, poster); image.color = new Color(1, 1, 1, .5f); update.Invoke(video, null);
+                Assert.IsTrue(camera.enabled, "Translucent media was treated as complete coverage.");
+                image.color = Color.white; update.Invoke(video, null);
+                Assert.IsFalse(camera.enabled);
+                video.gameObject.SetActive(false);
+                Assert.IsTrue(camera.enabled, "Disabling the media kept its fallback camera hidden.");
+                Assert.AreSame(camera, preview.Camera); Assert.AreSame(target, camera.targetTexture);
+                video.gameObject.SetActive(true); update.Invoke(video, null);
+                Assert.IsFalse(camera.enabled);
+                Object.Destroy(video.gameObject); yield return null;
+                Assert.IsTrue(camera.enabled, "Destroying the media did not release court visibility.");
+            }
+            finally
+            {
+                if (owner != null) Object.Destroy(owner);
+                if (previewRoot != null) Object.Destroy(previewRoot);
+                Settings.SettingsStore.Current.ReducedUiMotion = reduced;
+            }
+        }
+
+        [UnityTest, Timeout(45000)]
+        public IEnumerator BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome()
+        {
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            GameObject parent = null;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion = false;
+                HubSceneVideo.ForcedHero = "zack";
+                float progress = 0;
+                yield return HubSceneVideo.Warmup(done => { Assert.GreaterOrEqual(done, progress); progress = done; });
+                Assert.AreEqual(1f, progress);
+                var prepared = Object.FindAnyObjectByType<HubSceneVideo>();
+                Assert.IsNotNull(prepared); Assert.IsTrue(prepared.Prepared); Assert.IsTrue(prepared.FirstFrameReady);
+                var player = prepared.Player; var target = player.targetTexture;
+                Assert.IsNotNull(target); Assert.IsFalse(player.isPlaying);
+                Assert.IsFalse(player.sendFrameReadyEvents, "Warmup left a per-frame callback running.");
+                Assert.IsFalse(prepared.GetComponent<UnityEngine.UI.RawImage>().enabled);
+                parent = new GameObject("HomeWarmupAdoption", typeof(RectTransform));
+                var adopted = HubSceneVideo.Install((RectTransform)parent.transform);
+                Assert.AreSame(prepared, adopted); Assert.AreSame(player, adopted.Player);
+                Assert.AreSame(target, adopted.Player.targetTexture);
+                yield return null;
+                Assert.IsTrue(adopted.ShowingVideo);
+                Assert.IsTrue(player.isPlaying);
+                Object.Destroy(parent); parent = null;
+                yield return null;
+                Assert.IsTrue(player == null); Assert.IsTrue(target == null);
+            }
+            finally
+            {
+                if (parent != null) Object.Destroy(parent);
+                Settings.SettingsStore.Current.ReducedUiMotion = reduced;
+            }
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder()
+        {
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            GameObject parent = null;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion = true;
+                HubSceneVideo.ForcedHero = "phaister";
+                yield return HubSceneVideo.Warmup();
+                parent = new GameObject("ReducedHomeAdoption", typeof(RectTransform));
+                var adopted = HubSceneVideo.Install((RectTransform)parent.transform);
+                yield return null;
+                Assert.IsNull(adopted.Player); Assert.IsFalse(adopted.ShowingVideo);
+                Assert.IsNotNull(adopted.GetComponent<UnityEngine.UI.RawImage>().texture);
+            }
+            finally
+            {
+                if (parent != null) Object.Destroy(parent);
+                Settings.SettingsStore.Current.ReducedUiMotion = reduced;
+            }
+        }
+
         /// <summary>
         /// ⚠️ EVERY HERO THE PICK CAN LAND ON SHIPS BOTH HALVES OF ITS PAIR. A hero listed with a clip and
         /// no poster would fall back to Zack's pair; with neither, the pick would quietly never choose

@@ -40,7 +40,7 @@ namespace TumbangPreso.Core.Tests
             Assert.False(rooted.BlocksInteraction, "Rooted players can still throw and use skills (owner).");
             Assert.True(rooted.Removable, "A hold or a tag ends Rooted.");
             Assert.Equal(PaeteRules.SentryLifeSeconds, rooted.Seconds);
-            Assert.Equal(9, StatusRules.All.Count);
+            Assert.Equal(11, StatusRules.All.Count);
         }
 
         [Fact]
@@ -119,12 +119,22 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void FeatherfallSnapshotAgesOnlyWithTheAdoptedSimulationClock()
+        {
+            Assert.Equal(3.0f, AmihanRules.FlightRemainingAtClock(3, 42, 42));
+            Assert.Equal(2.75f, AmihanRules.FlightRemainingAtClock(3, 42, 41.75f));
+            Assert.Equal(3.0f, AmihanRules.FlightRemainingAtClock(3, 42, 42.1f));
+            Assert.Equal(0.0f, AmihanRules.FlightRemainingAtClock(3, 42, 36));
+        }
+
+        [Fact]
         public void AmihanUsesTheOwnersCostsAndStaysInsideTheKnockbackCap()
         {
             Assert.Equal(40.0f, AmihanRules.QuickDashCooldown);
             Assert.Equal(35.0f, AmihanRules.WhirlwindCooldown);
             Assert.Equal(2.5f, AmihanRules.WhirlwindSeconds);
-            Assert.Equal(10.0f, AmihanRules.UpdraftSeconds);
+            Assert.Equal(5.0f, AmihanRules.UpdraftSeconds);
+            Assert.Equal(40.0f, AmihanRules.UpdraftCooldown);
             Assert.Equal(15.0f, AmihanRules.StormSurgeCost);
             Assert.Equal(2.5f, AmihanRules.StormSurgeGatherSeconds);
 

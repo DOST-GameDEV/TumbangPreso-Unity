@@ -1,0 +1,37 @@
+{
+  "base": "01346a8045b4f8bfd5eb2b7f74dcff1a6499e038",
+  "method": "Direct Unity Roslyn compiler using frozen source and existing Bee response inputs",
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0",
+  "nativeTests": "NOT RUN: existing disk reserve boundary; no repeated editor launch",
+  "runtimeAssemblySha256": "376DAA67A979A5743973933674E77A2DD22A848D15600571906818A3E60F9EB3",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/ConvertedMainMenu.cs",
+      "sha256": "EE98236201BE60E109E52C426E406A95302156983EAFDDE193583F8537DEA013"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/OwnerMenuPrompt.cs",
+      "sha256": "DA6A82D4D151F767F8433E5D76DBDC8397ED0E3BC0CFAF1F44B4188F6BCE1FA0"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "A95871F1D36DBAC28F5A91B25087A428AE9DBA88D7DFA3A47183FDDD65F72EDF"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.MenuActivation.cs",
+      "sha256": "DEE81A0282CCC57CCAB2BE80546D353E6E8A2CAE9011AEAD184D309C9AEC7A1A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.MenuActivation.cs.meta",
+      "sha256": "F555E454B5CF5B238B81C0548693BCE586DB60A1263EE248917D0960B81902AE"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpHomeView.cs",
+      "sha256": "D3F53AE9CD441EA7AB7E34EC4E47E008E644938B6C283F1A68B5D5A882D1877D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerMenuEditsTests.cs",
+      "sha256": "5C2CF4E58574FE32AE5E37A87223635F2D6B86B28BFFF164DB571971563C97C8"
+    }
+  ]
+}

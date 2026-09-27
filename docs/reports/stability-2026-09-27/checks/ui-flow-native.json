@@ -1,0 +1,37 @@
+{
+  "base": "de426a0e9dfc1d36c6e6546221aeaf35a5075a21",
+  "native": {
+    "result": "Passed",
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "duration": "8.0297146",
+    "unity": "6000.5.8f1",
+    "platform": "WindowsEditor",
+    "graphics": "D3D11"
+  },
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.ModelPreviewPixelTests.ContinuousResizeReusesTheTargetAndSettlesAtFullPanelResolution",
+      "result": "Passed",
+      "duration": "0.417669"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.PracticeRangeTests.RangeControlsStayLocalAndReuseTheirPreparedMenuAndBodies",
+      "result": "Passed",
+      "duration": "6.652889"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.TumpNativeSettingsTests.ValueChangesReuseRowsAndLargerTextStillReflowsThem",
+      "result": "Passed",
+      "duration": "0.878429"
+    }
+  ],
+  "originalXmlSha256": "BFEC127CAB3CAABD0D319EEFF5E8BA5AE06923AE700FDF63CAE86AEB3757E712",
+  "minimumFreeBytes": 6864703488.0,
+  "frozenInputs": 206,
+  "nativeInputChurn": 0,
+  "profile": "Guard restored two named-profile files and three shared Editor input preferences",
+  "limits": "First native reuse/state checks only; not visual acceptance, physical input, peer play or player frame-time measurements."
+}

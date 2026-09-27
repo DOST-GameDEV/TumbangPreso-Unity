@@ -51,7 +51,25 @@ namespace TumbangPreso.UI
         private readonly Dictionary<string, List<Transform>> _byName =
             new Dictionary<string, List<Transform>>();
 
+        public bool IsInitialized { get; private set; }
+        public string InitializationError { get; private set; }
+
         protected virtual void Start()
+        {
+            try
+            {
+                InitializeConvertedSurface();
+                Wire();
+                IsInitialized = true;
+            }
+            catch (System.Exception error)
+            {
+                InitializationError = error.Message;
+                throw;
+            }
+        }
+
+        private void InitializeConvertedSurface()
         {
             // ⚠️⚠️ EVERY MENU RELEASES THE MOUSE, AND ONLY THE TITLE SCREEN USED TO. A match
             // captures the pointer; a screen reached straight from a match — the results board,
@@ -110,7 +128,6 @@ namespace TumbangPreso.UI
             foreach (var field in GetComponentsInChildren<UnityEngine.UI.InputField>(true))
                 MenuKit.Dress(field);
 
-            Wire();
         }
 
         /// <summary>

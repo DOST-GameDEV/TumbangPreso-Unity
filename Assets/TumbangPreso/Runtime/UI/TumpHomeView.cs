@@ -10,6 +10,7 @@ namespace TumbangPreso.UI
     {
         private Canvas _canvas;
         private bool _musicStarted;
+        private bool _loading;
         public void Build(Transform owner, Action settings, Action credits)
             => _canvas=HomeCourtView.Build(owner,settings,credits);
 
@@ -48,11 +49,19 @@ namespace TumbangPreso.UI
         }
         public void Suspend() { if (_canvas != null) _canvas.gameObject.SetActive(false); }
         public void Resume() { if (_canvas != null) { _canvas.gameObject.SetActive(true); _canvas.GetComponent<ScreenFocus>().Rebuild(); } }
+        internal void SetLoading(bool loading)
+        {
+            _loading = loading;
+            if (_canvas == null) return;
+            var group = _canvas.GetComponent<CanvasGroup>();
+            if (group == null) group = _canvas.gameObject.AddComponent<CanvasGroup>();
+            group.interactable = group.blocksRaycasts = !loading;
+        }
         private void LateUpdate()
         {
             // Wire can open startup login immediately after building the home.
             // Wait until that decision has settled and the home is actually shown.
-            if(_musicStarted || _canvas==null || !_canvas.isActiveAndEnabled || GameServices.Music==null)return;
+            if(_loading || _musicStarted || _canvas==null || !_canvas.isActiveAndEnabled || GameServices.Music==null)return;
             GameServices.Music.Play("menu",GameServices.MenuTrack);
             _musicStarted=true;
         }

@@ -15,6 +15,59 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class MatchmakingWireTests
     {
+        [TestCase(QueueStake.Casual)]
+        [TestCase(QueueStake.Ranked)]
+        public void QueueCandidatesNeedMatchingSkillDataWithoutChangingTheirPoolRules(QueueStake stake)
+        {
+            string contract = new string('A', 64);
+            string pool = MatchmakingRules.PoolKey(GameMode.HeroStrike, stake, InputDevice.KeyboardMouse,
+                PlatformFamily.Desktop, NetSession.ProtocolVersion);
+            var entry = new ServerQuery.Entry
+            {
+                Id = "room", RelayCode = "relay", SkillContract = contract, PoolKey = pool,
+                Seated = 1, Occupied = 1, Capacity = 4, BandLow = 1000, BandHigh = 2000,
+                SeatLow = 1500, SeatHigh = 1500, HostPlayerId = "other"
+            };
+            var candidates = new MatchmakingCandidateCache();
+            Assert.IsTrue(candidates.CanTry(entry, contract, 0));
+            Assert.AreEqual(JoinRefusal.None, MatchmakingRules.Evaluate(entry.AsAdvert(), "me", 1500, 0, pool, null));
+            entry.Occupied = 3;
+            Assert.IsFalse(candidates.CanTry(entry, contract, 0, seatsNeeded: 2), "The party was offered reserved chairs.");
+            Assert.IsTrue(candidates.CanTry(entry, contract, 0, seatsNeeded: 1));
+            entry.Occupied = 1; entry.InProgress = true; entry.Backfill = true;
+            Assert.IsTrue(candidates.CanTry(entry, contract, 0), "Compatibility filtering must not disable allowed backfill.");
+            Assert.AreEqual(JoinRefusal.None, MatchmakingRules.Evaluate(entry.AsAdvert(), "me", 1500, 0, pool, null));
+            entry.InProgress = false; entry.Backfill = false;
+            entry.SkillContract = new string('B', 64);
+            Assert.IsFalse(candidates.CanTry(entry, contract, 0));
+            entry.SkillContract = "";
+            Assert.IsFalse(candidates.CanTry(entry, contract, 0), "Unknown compatibility must not enter automatic pairing.");
+            entry.SkillContract = contract; entry.RelayCode = "";
+            Assert.IsFalse(candidates.CanTry(entry, contract, 0));
+            string padPool = MatchmakingRules.PoolKey(GameMode.HeroStrike, stake, InputDevice.Gamepad,
+                PlatformFamily.Desktop, NetSession.ProtocolVersion);
+            if (stake == QueueStake.Ranked) Assert.AreNotEqual(pool, padPool);
+            else Assert.AreEqual(pool, padPool);
+        }
+
+        [Test]
+        public void QueueFailureCooldownTracksTheAttemptedEndpointAndResetsPerTicket()
+        {
+            string contract = new string('A', 64);
+            var entry = new ServerQuery.Entry { Id = "room", RelayCode = "old", SkillContract = contract };
+            var candidates = new MatchmakingCandidateCache();
+            candidates.Failed(entry.Id, entry.RelayCode, 10);
+            Assert.IsFalse(candidates.CanTry(entry, contract, 11));
+            entry.RelayCode = "replacement";
+            Assert.IsTrue(candidates.CanTry(entry, contract, 11));
+            entry.RelayCode = "old";
+            Assert.IsFalse(candidates.CanTry(entry, contract, 11), "A stale advertisement resurrected its failed allocation.");
+            Assert.IsTrue(candidates.CanTry(entry, contract, 10 + MatchmakingCandidateCache.RetrySeconds));
+            candidates.Failed(entry.Id, entry.RelayCode, 50);
+            candidates.Clear();
+            Assert.IsTrue(candidates.CanTry(entry, contract, 51));
+        }
+
         // ------------------------------------------------------------------------------
         // The look frame
         // ------------------------------------------------------------------------------

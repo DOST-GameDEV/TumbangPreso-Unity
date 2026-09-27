@@ -16,6 +16,7 @@ namespace TumbangPreso.UI
         public int Value => _value;
         public void Bind(string[] choices, int value, Action<int> changed)
         {
+            ScreenTakeover.Register(this, () => IsOpen);
             _choices = choices; _changed = changed;
             _label = GetComponentInChildren<Text>();
             GetComponent<Button>().onClick.AddListener(Open);
@@ -32,7 +33,12 @@ namespace TumbangPreso.UI
             ScreenTakeover.ConsumeEscape(); Close();
         }
         private void OnDisable() => Close();
-        private void OnDestroy() { if (_popup != null) Destroy(_popup); }
+        private void OnDestroy()
+        {
+            ScreenTakeover.Unregister(this);
+            if (OpenChoice == this) OpenChoice = null;
+            if (_popup != null) Destroy(_popup);
+        }
         private void Open()
         {
             if (IsOpen) { Close(); return; }
@@ -50,7 +56,9 @@ namespace TumbangPreso.UI
             var root = (RectTransform)canvas.transform;
             Vector2 center = root.InverseTransformPoint(rect.TransformPoint(rect.rect.center));
             float width = Mathf.Max(440, rect.rect.width);
-            float height = Mathf.Min(680, _choices.Length * 84 + 32);
+            float optionHeight = InputLayer.TouchHud.ShouldShow ? InputLayer.TouchMetrics.MinTargetUnits : 76;
+            float gap = InputLayer.TouchHud.ShouldShow ? InputLayer.TouchMetrics.MinGapUnits : 4;
+            float height = Mathf.Min(680, _choices.Length * (optionHeight + gap) + 32);
             float x = Mathf.Clamp(center.x, root.rect.xMin + width * .5f + 24, root.rect.xMax - width * .5f - 24);
             float below = center.y - rect.rect.height * .5f - height * .5f - 8;
             float y = below - height * .5f < root.rect.yMin + 24
@@ -60,14 +68,14 @@ namespace TumbangPreso.UI
             TumpUiFactory.Anchor(paper.rectTransform, new Vector2(.5f, .5f), new Vector2(x, y), new Vector2(width, height));
             var list = TumpUiFactory.Scroll(paper.transform, "OptionsScroll", out var scroll);
             TumpUiFactory.Stretch((RectTransform)scroll.transform, 14);
-            list.GetComponent<VerticalLayoutGroup>().spacing = 4;
+            list.GetComponent<VerticalLayoutGroup>().spacing = gap;
             for (int i = 0; i < _choices.Length; i++)
             {
                 int value = i;
                 var option = TumpUiFactory.Button(list, "Choice" + i, _choices[i], () =>
                 { SetWithoutNotify(value); Close(); _changed?.Invoke(value); }, TumpSurface.Form.Link, TumpUiTheme.Current.Cream, 30);
                 option.GetComponent<TumpSurface>().Selected = i == _value;
-                TumpUiFactory.Height(option, 76);
+                TumpUiFactory.Height(option, optionHeight);
             }
             InputLayer.ScreenFocus.Install(overlay.gameObject).Rebuild();
         }

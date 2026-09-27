@@ -451,7 +451,7 @@ namespace TumbangPreso.Core
         public static bool TryRead(MatchRecord record, string playerId, out EarnedMatch earned)
         {
             earned = default;
-            if (record == null || string.IsNullOrEmpty(record.MatchId)) return false;
+            if (record == null || !record.Online || string.IsNullOrEmpty(record.MatchId)) return false;
             var line = MatchRecordRules.LineFor(record, playerId);
             if (line == null || line.IsBot) return false;
 

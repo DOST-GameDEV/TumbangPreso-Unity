@@ -55,7 +55,12 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place((RectTransform)_queueCard.transform,0,0,620,440);
             _queueCard.Status+=SetStatus;_queueCard.Joined+=HandleJoinedInPlace;_queueCard.StartWithBots+=StartAgainstBots;
             _chat=LobbyChat.Attach(ChatParent(),inMatch:false);
-            if(_chat!=null){_chat.PlaceBottomRight(770,220,1060);_chat.SetPresented(false);}
+            if(_chat!=null)
+            {
+                if(_hubView!=null){_chat.PlaceLobbyColumn();_chat.PresentedChanged+=OnRoomChatPresented;}
+                else _chat.PlaceBottomRight(770,220,1060);
+                _chat.SetPresented(false);
+            }
             _hub=GetComponent<PlayerHub>();if(_hub==null)_hub=gameObject.AddComponent<PlayerHub>();_hub.Install();
             MatchRpc.OnMapChanged+=HandleMapSynced;MatchRpc.OnDifficultyChanged+=HandleDifficultySynced;
             MatchRpc.OnFormatChanged+=HandleFormatSynced;MatchRpc.OnRulesChanged+=HandleRulesSynced;
@@ -69,7 +74,9 @@ namespace TumbangPreso.UI
             Settings.SettingsStore.Save();
             if(net!=null && net.IsNetworked)
                 MatchRpc.Instance?.SelectLobbyPickServerRpc(settings.CharacterPick,settings.CanPick,settings.SlipperPick);
-            RefreshOwnerPreparation();RejoinRunningMatch();AutoHost();
+            RefreshOwnerPreparation();
+            if (HubEnabled && _preview != null) Hub.HubLoading.PreparePreview(_preview);
+            RejoinRunningMatch();AutoHost();
         }
         private void OwnerPreparationBack()
         {

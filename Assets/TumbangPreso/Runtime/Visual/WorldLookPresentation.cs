@@ -97,6 +97,12 @@ namespace TumbangPreso.Visual
         // Menu refresh restores its cached authored environment first. Reapply the
         // same live rig without rebuilding ramps, sky instances or ground discovery.
         public void ReapplyPreview(){if(_preview && Current==this)ApplyScene();}
+        public void ResumePreview()
+        {
+            if (!_preview || !isActiveAndEnabled) return;
+            Current = this;
+            ApplyScene();
+        }
         private void OnEnable(){Camera.onPreCull+=BeginCamera;Camera.onPostRender+=EndCamera;}
         private void OnDisable()
         {

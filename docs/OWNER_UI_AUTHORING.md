@@ -1,8 +1,10 @@
 # Editing the owner-painted UI
 
-Current visuals are NOT approved: the owner rejected repeated main-menu assets
-on 2026-09-15. These authoring facilities preserve editability, not the current
-composition. Create new art/designs inspired by the source and old PDF layouts;
+These authoring facilities preserve editability; they do not establish visual
+approval. The owner rejected repeated main-menu assets on2026-09-15. That dated
+rejection is not a blanket description of every later screen: read the current
+[ledger](ACTIVE_REWORK_LEDGER.md),[UI method](UI_DESIGN_METHOD.md) and screen's
+source/evidence before changing it. Preserve successful supplied compositions;
 do not make every control use the same sheet piece.
 
 The original artwork is preserved in ArtSource/ui/owner-handdrawn-2026-09-15.

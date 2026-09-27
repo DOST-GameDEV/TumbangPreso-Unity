@@ -82,6 +82,35 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator ValueChangesReuseRowsAndLargerTextStillReflowsThem()
+        {
+            yield return Open();
+            var view = Object.FindFirstObjectByType<TumpSettingsView>();
+            var canvas = PaintedScreens.Settings();
+            try
+            {
+                view.ShowSection(1); yield return null;
+                var scroll = canvas.GetComponentInChildren<ScrollRect>();
+                var rows = scroll.content.Cast<Transform>().Select(t => t.gameObject).ToArray();
+                var volume = canvas.GetComponentsInChildren<Slider>().First();
+                volume.value = volume.value > .5f ? .2f : .8f;
+                Assert.IsTrue(view.Session.Dirty); Assert.IsTrue(Find("TumpSaveSettings").interactable);
+                CollectionAssert.AreEqual(rows, scroll.content.Cast<Transform>().Select(t => t.gameObject).ToArray());
+                bool large = SettingsStore.Current.LargerText;
+                SettingsStore.Current.LargerText = !large; view.Session.Preview();
+                var row = scroll.content.Cast<Transform>().First(t => t.Find("Control") != null && t.Find("Label") != null);
+                Assert.AreEqual(!large ? 190 : 104, row.GetComponent<LayoutElement>().preferredHeight);
+                SettingsStore.Current.LargerText = large; view.Session.Preview();
+                Assert.AreEqual(large ? 190 : 104, row.GetComponent<LayoutElement>().preferredHeight);
+                view.ShowSection(0); yield return null;
+                Assert.IsNotEmpty(canvas.GetComponentsInChildren<Button>().Where(b => b.name.StartsWith("Binding_")));
+                view.Session.Discard();
+                Assert.IsFalse(view.Session.Dirty); Assert.IsFalse(Find("TumpSaveSettings").interactable);
+            }
+            finally { if (view != null) { view.Session?.Discard(); view.enabled = false; } }
+        }
+
+        [UnityTest]
         public IEnumerator NativeSettingsPagesAndFramePacingHaveTruthfulStates()
         {
             yield return Open();

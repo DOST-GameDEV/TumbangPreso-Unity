@@ -556,6 +556,22 @@ namespace TumbangPreso.Settings
             return clean;
         }
 
+        public const int RoomTitleMax = 24;
+
+        /// <summary>A room title is one line, but it is not a 14-character player name.</summary>
+        public static string SanitiseRoomTitle(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return "";
+
+            var sb = new System.Text.StringBuilder(raw.Length);
+            foreach (char c in raw.Trim())
+                if (!char.IsControl(c) && c != '\u2028' && c != '\u2029') sb.Append(c);
+
+            string clean = sb.ToString().Trim();
+            if (clean.Length > RoomTitleMax) clean = clean.Substring(0, RoomTitleMax).TrimEnd();
+            return clean;
+        }
+
         /// <summary>
         /// Push the saved settings at the systems that own them.
         ///

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.Core;
@@ -112,6 +113,346 @@ namespace TumbangPreso.PlayTests
         {
             for (int i = 0; i < 6 && !(TumpHub.Current.Top is HubHome); i++) { Back(); yield return new WaitForSecondsRealtime(0.2f); }
             Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top, "BACK did not lead home.");
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect()
+        {
+            var settings = Settings.SettingsStore.Current;
+            int picked = settings.CharacterPick, can = settings.CanPick, slipper = settings.SlipperPick;
+            var mode = SceneFlow.SelectedMode;
+            string map = SceneFlow.SelectedMap;
+            bool networked = SceneFlow.Networked, larger = settings.LargerText;
+            var sizes = new[] { TumpUiCapture.OwnerWindow, new Vector2Int(2340, 1080) };
+            var shop = new HeroFrame[3, 2];
+            var selector = new HeroFrame[3, 2];
+            var roleFits = new List<RoleCaptionFit>();
+            var ids = new[] { "sean", "cheska", "paete" };
+            try
+            {
+                settings.LargerText = false;
+                yield return OpenHome();
+                yield return Press("ShopButton");
+                yield return Press("HeroShopDoor");
+                var hero = TumpHub.Current.Top as HubHero;
+                Assert.IsNotNull(hero,"The shop's HEROES door did not open the hero stage.");
+                Assert.IsTrue(hero.ShopMode);
+                for (int h = 0; h < ids.Length; h++)
+                {
+                    string target = Roster.HeroPeople.First(p => p.Id == ids[h]).Name;
+                    bool found = false;
+                    for (int step = 0; step < Roster.HeroPeople.Count; step++)
+                    {
+                        var heading = hero.GetComponentsInChildren<Text>().Single(t => t.name == "Heading").text;
+                        if (heading == target) { found = true; break; }
+                        yield return Press("NextHero");
+                    }
+                    Assert.IsTrue(found,"The shop hero arrows never reached " + target);
+                    hero.GetComponentsInChildren<HubButton>().First(b => b.name == "Ability1").Select();
+                    yield return new WaitForSecondsRealtime(.3f);
+                    for (int s = 0; s < sizes.Length; s++)
+                    {
+                        int heroIndex = h, sizeIndex = s;
+                        var size = sizes[s];
+                        yield return TumpUiCapture.Capture("Hub-HeroShop-"+ids[h]+"-"+size.x+"x"+size.y,
+                            TumpHub.Current.Canvas,size.x,size.y,false,checkActionBounds:true,
+                            inspectViewport:()=>
+                            {
+                                shop[heroIndex,sizeIndex]=DrawnHeroFrame(hero);
+                                roleFits.Add(MeasureRoleCaptions(hero,ids[heroIndex]+"/"+size.x+"x"+size.y+"/attacking"));
+                            });
+                    }
+                }
+
+                hero.GetComponentsInChildren<HubButton>().First(b => b.name == "Ability2").Select();
+                yield return new WaitForSecondsRealtime(.3f);
+                yield return TumpUiCapture.Capture("Hub-HeroShop-paete-defending-focus-1600x680",
+                    TumpHub.Current.Canvas,1600,680,false,checkActionBounds:true,
+                    inspectViewport:()=>roleFits.Add(MeasureRoleCaptions(hero,"paete/defending-focus")));
+                var tilted = hero.GetComponentsInChildren<HubButton>()
+                    .Where(b=>b.name.StartsWith("Ability")).OrderBy(b=>b.name).ToArray();
+                var rotations = tilted.Select(b=>b.transform.localRotation).ToArray();
+                try
+                {
+                    for(int i=0;i<tilted.Length;i++)
+                        tilted[i].transform.localRotation=Quaternion.Euler(0,0,2-i*2);
+                    yield return TumpUiCapture.Capture("Hub-HeroShop-paete-tilted-focus-1600x680",
+                        TumpHub.Current.Canvas,1600,680,false,checkActionBounds:true,
+                        inspectViewport:()=>roleFits.Add(MeasureRoleCaptions(hero,"paete/tilted-defending-focus")));
+                }
+                finally
+                {
+                    for(int i=0;i<tilted.Length;i++)
+                        if(tilted[i]!=null)tilted[i].transform.localRotation=rotations[i];
+                }
+                settings.LargerText = true;
+                yield return Press("NextHero");
+                yield return Press("PreviousHero");
+                hero.GetComponentsInChildren<HubButton>().First(b => b.name == "Ability2").Select();
+                yield return new WaitForSecondsRealtime(.3f);
+                foreach (var size in sizes)
+                    yield return TumpUiCapture.Capture("Hub-HeroShop-paete-larger-"+size.x+"x"+size.y,
+                        TumpHub.Current.Canvas,size.x,size.y,false,checkActionBounds:true,
+                        inspectViewport:()=>roleFits.Add(MeasureRoleCaptions(hero,"paete/larger/"+size.x+"x"+size.y)));
+                settings.LargerText = false;
+
+                yield return BackToHome();
+                var hosting = TumpHub.Current.Host.HostRoom("PREVIEW SIZE",SceneFlow.Eskinita,
+                    GameMode.HeroStrike,RoomVisibility.Public,false);
+                float until = Time.realtimeSinceStartup + 15;
+                while (!hosting.IsCompleted && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsTrue(hosting.IsCompleted && string.IsNullOrEmpty(hosting.Result),
+                    "Local LAN preview room did not open.");
+                until = Time.realtimeSinceStartup + 5;
+                while (!(TumpHub.Current.Top is HubLobby) && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
+                yield return Press("CharacterDoor");
+                var picker = TumpHub.Current.Top as HubCharacterSelect;
+                Assert.IsNotNull(picker);
+                var people = Roster.GetPeople(GameMode.HeroStrike);
+                for (int h = 0; h < ids.Length; h++)
+                {
+                    int index = -1;
+                    for (int i = 0; i < people.Count; i++) if (people[i].Id == ids[h]) { index = i; break; }
+                    Assert.GreaterOrEqual(index,0,"The current hero picker has no " + ids[h]);
+                    yield return Press("Portrait"+index);
+                    for (int s = 0; s < sizes.Length; s++)
+                    {
+                        int heroIndex = h, sizeIndex = s;
+                        var size = sizes[s];
+                        yield return TumpUiCapture.Capture("Hub-CharacterSelect-"+ids[h]+"-"+size.x+"x"+size.y,
+                            TumpHub.Current.Canvas,size.x,size.y,false,checkActionBounds:true,
+                            inspectViewport:()=>selector[heroIndex,sizeIndex]=DrawnHeroFrame(picker));
+                    }
+                }
+
+                Assert.AreEqual(10,roleFits.Count,"The shop viewports, focus/tilt states and LargerText captures did not all report role bounds.");
+                foreach (var fit in roleFits)
+                {
+                    Assert.IsTrue(fit.Present,fit.Context+" is missing a role caption.");
+                    Assert.GreaterOrEqual(fit.SmallestFont,HubStyle.Floor,fit.Context+" dropped below the type floor.");
+                    Assert.LessOrEqual(fit.WidthOverflow,1,fit.Context+" text overflows its own rect.");
+                    Assert.LessOrEqual(fit.HeightOverflow,1,fit.Context+" text is vertically clipped.");
+                    Assert.LessOrEqual(fit.TileOverflow,1,fit.Context+" tilted/hovered text leaves its tile.");
+                    Assert.LessOrEqual(fit.RowOverflow,1,fit.Context+" text leaves the ability row.");
+                    Assert.GreaterOrEqual(fit.NeighbourGap,0,fit.Context+" role captions overlap each other.");
+                    Assert.LessOrEqual(fit.OuterHorizontalOverflow,1,fit.Context+" a tilted tile leaves the right-column width.");
+                    Assert.GreaterOrEqual(fit.TileGap,0,fit.Context+" adjacent tilted tiles overlap.");
+                }
+                for (int s = 0; s < sizes.Length; s++)
+                {
+                    for (int h = 0; h < ids.Length; h++)
+                    {
+                        AssertHeroFrame(shop[h,s],"shop/"+ids[h]+"/"+sizes[s]);
+                        AssertHeroFrame(selector[h,s],"selector/"+ids[h]+"/"+sizes[s]);
+                    }
+                    Debug.Log($"[HeroSize] {sizes[s].x}x{sizes[s].y}: shop Sean={shop[0,s].Share:F3}, Cheska={shop[1,s].Share:F3}, Paete={shop[2,s].Share:F3}; selector Sean={selector[0,s].Share:F3}, Cheska={selector[1,s].Share:F3}, Paete={selector[2,s].Share:F3}");
+                    Assert.Greater(shop[2,s].Share,shop[0,s].Share,"Paete should read larger than Sean on the actual shop stage.");
+                    Assert.Greater(selector[2,s].Share,selector[0,s].Share,"Paete should read larger than Sean on character select.");
+                    Assert.LessOrEqual(Mathf.Abs(shop[2,s].Share-shop[1,s].Share)/shop[1,s].Share,.1f,
+                        "Paete shop height differs from Cheska by over 10%.");
+                    Assert.LessOrEqual(Mathf.Abs(selector[2,s].Share-selector[1,s].Share)/selector[1,s].Share,.1f,
+                        "Paete selector height differs from Cheska by over 10%.");
+                }
+            }
+            finally
+            {
+                if (TumpHub.Current != null) TumpHub.Current.Home();
+                Net.NetSession.Instance?.Stop();
+                SceneFlow.Networked=networked;
+                SceneFlow.SelectedMode=mode;SceneFlow.SelectedMap=map;
+                settings.CharacterPick=picked;settings.CanPick=can;settings.SlipperPick=slipper;
+                settings.LargerText=larger;
+                Settings.SettingsStore.Save();
+            }
+        }
+
+        private struct HeroFrame
+        {
+            public bool HasTarget;
+            public int Bottom, Top, Height;
+            public float Share;
+        }
+
+        private static void AssertHeroFrame(HeroFrame frame, string where)
+        {
+            Assert.IsTrue(frame.HasTarget,where+" has no rendered hero texture.");
+            Assert.Greater(frame.Bottom,2,where+" clips or misses the feet.");
+            Assert.Less(frame.Top,frame.Height-3,where+" clips the head.");
+        }
+
+        private static HeroFrame DrawnHeroFrame(HubScreen screen)
+        {
+            var target = screen?.GetComponentInChildren<ModelPreview>()?.Target;
+            if (target == null) return default;
+            var before = RenderTexture.active;
+            var pixels = new Texture2D(target.width,target.height,TextureFormat.RGBA32,false);
+            try
+            {
+                RenderTexture.active=target;
+                pixels.ReadPixels(new Rect(0,0,target.width,target.height),0,0);
+                pixels.Apply();
+                var colors=pixels.GetPixels32();
+                int bottom=-1,top=-1;
+                for(int y=0;y<target.height;y++)
+                    for(int x=0;x<target.width;x++)
+                        if(colors[y*target.width+x].a>40){if(bottom<0)bottom=y;top=y;break;}
+                return new HeroFrame { HasTarget=true, Bottom=bottom, Top=top, Height=target.height,
+                    Share=bottom<0?0:(top-bottom+1)/(float)target.height };
+            }
+            finally { RenderTexture.active=before;Object.Destroy(pixels); }
+        }
+
+        private struct RoleCaptionFit
+        {
+            public string Context;
+            public bool Present;
+            public int SmallestFont;
+            public float WidthOverflow, HeightOverflow, TileOverflow, RowOverflow, NeighbourGap;
+            public float OuterHorizontalOverflow, TileGap;
+        }
+
+        private static float Outside(Rect rect, Vector2 point)
+            => Mathf.Max(0,rect.xMin-point.x,point.x-rect.xMax,rect.yMin-point.y,point.y-rect.yMax);
+
+        private static RoleCaptionFit MeasureRoleCaptions(HubHero hero, string context)
+        {
+            var result = new RoleCaptionFit { Context=context, SmallestFont=int.MaxValue };
+            var row = hero.GetComponentsInChildren<RectTransform>().FirstOrDefault(r=>r.name=="Abilities");
+            var buttons = new HubButton[2];
+            var captions = new Text[2];
+            for (int i=0;i<2;i++)
+            {
+                string name="Ability"+(i+1);
+                buttons[i]=hero.GetComponentsInChildren<HubButton>().FirstOrDefault(b=>b.name==name);
+                captions[i]=buttons[i]?.Body?.Find("Key")?.GetComponent<Text>();
+            }
+            if(row==null || captions[0]==null || captions[1]==null)return result;
+            result.Present=captions[0].text=="ATTACKING" && captions[1].text=="DEFENDING";
+            var edges=new float[2,2];
+            var corners=new Vector3[4];
+            for(int i=0;i<2;i++)
+            {
+                var label=captions[i];var tile=(RectTransform)buttons[i].transform;
+                result.SmallestFont=Mathf.Min(result.SmallestFont,label.fontSize);
+                result.WidthOverflow=Mathf.Max(result.WidthOverflow,label.preferredWidth-label.rectTransform.rect.width);
+                result.HeightOverflow=Mathf.Max(result.HeightOverflow,label.preferredHeight-label.rectTransform.rect.height);
+                label.rectTransform.GetWorldCorners(corners);
+                edges[i,0]=float.PositiveInfinity;edges[i,1]=float.NegativeInfinity;
+                foreach(var corner in corners)
+                {
+                    Vector2 inTile=tile.InverseTransformPoint(corner);
+                    Vector2 inRow=row.InverseTransformPoint(corner);
+                    result.TileOverflow=Mathf.Max(result.TileOverflow,Outside(tile.rect,inTile));
+                    result.RowOverflow=Mathf.Max(result.RowOverflow,Outside(row.rect,inRow));
+                    edges[i,0]=Mathf.Min(edges[i,0],inRow.x);
+                    edges[i,1]=Mathf.Max(edges[i,1],inRow.x);
+                }
+            }
+            result.NeighbourGap=edges[1,0]-edges[0,1];
+            result.TileGap=float.PositiveInfinity;
+            float previousRight=float.NegativeInfinity;
+            for(int i=0;i<4;i++)
+            {
+                var button=hero.GetComponentsInChildren<HubButton>().FirstOrDefault(b=>b.name=="Ability"+i);
+                if(button==null){result.Present=false;return result;}
+                ((RectTransform)button.transform).GetWorldCorners(corners);
+                float left=float.PositiveInfinity,right=float.NegativeInfinity;
+                foreach(var corner in corners)
+                {
+                    Vector2 local=row.InverseTransformPoint(corner);
+                    result.OuterHorizontalOverflow=Mathf.Max(result.OuterHorizontalOverflow,
+                        row.rect.xMin-local.x,local.x-row.rect.xMax);
+                    left=Mathf.Min(left,local.x);right=Mathf.Max(right,local.x);
+                }
+                if(i>0)result.TileGap=Mathf.Min(result.TileGap,left-previousRight);
+                previousRight=right;
+            }
+            return result;
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator PracticePickerBackAndBothChoicesUseTheirOfflineRoutes()
+        {
+            var settings = Settings.SettingsStore.Current;
+            int difficulty = settings.AiDifficulty, format = settings.MatchFormat;
+            string rulesWire = settings.CustomRulesWire;
+            var rules = CustomGameRules.Parse(CustomGameRules.ToWire(SceneFlow.SelectedRules), SceneFlow.SelectedMode);
+            rules.Password = SceneFlow.SelectedRules.Password;
+            bool pinned = SceneFlow.RulesPinned, guided = GameLaunch.GuidedTutorial;
+            bool spectator = GameLaunch.Spectator, bots = AIController.BotsEnabled;
+            string sceneMap = SceneFlow.SelectedMap, launchMap = GameLaunch.SelectedMap;
+            try
+            {
+                yield return OpenHome();
+                yield return Press("ModeCard");
+                yield return Press("PracticeCard");
+                Assert.IsInstanceOf<HubPracticePopup>(TumpHub.Current.Top);
+                Assert.AreEqual("TutorialChoice", TumpHub.Current.Top.FirstFocus?.name);
+                Assert.IsNotNull(TumpHub.Current.Top.GetComponentsInChildren<Button>()
+                    .FirstOrDefault(b => b.name == "TrainingChoice"));
+                yield return Shots("PracticePopup");
+
+                Back(); yield return null;
+                Assert.IsInstanceOf<HubModeSelect>(TumpHub.Current.Top,
+                    "BACK from the picker must leave GAMEMODE SELECT in place.");
+                Assert.IsFalse(SceneFlow.InMatch, "BACK from the picker started a match.");
+
+                yield return Press("PracticeCard");
+                yield return Press("TutorialChoice");
+                float until = Time.realtimeSinceStartup + 30;
+                while (Object.FindFirstObjectByType<GuidedTraining>() == null && Time.realtimeSinceStartup < until)
+                    yield return null;
+                Assert.IsNotNull(Object.FindFirstObjectByType<GuidedTraining>(),
+                    "TUTORIAL did not enter the existing guided route.");
+                Assert.IsFalse(SceneFlow.Networked);
+                Assert.IsFalse(NetAuthority.IsNetworked);
+
+                SceneFlow.LeaveMatchToMainMenu();
+                until = Time.realtimeSinceStartup + 30;
+                while ((TumpHub.Current == null || !(TumpHub.Current.Top is HubHome)) &&
+                       Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsNotNull(TumpHub.Current);
+                Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top);
+
+                yield return Press("ModeCard");
+                yield return Press("PracticeCard");
+                yield return Press("TrainingChoice");
+                until = Time.realtimeSinceStartup + 30;
+                while ((!SceneFlow.InMatch || !PracticeRange.Active) &&
+                       Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsTrue(SceneFlow.InMatch, "TRAINING did not enter the offline range.");
+                Assert.IsFalse(GameLaunch.GuidedTutorial, "TRAINING installed guided lessons.");
+                Assert.IsNull(Object.FindFirstObjectByType<GuidedTraining>());
+                Assert.IsTrue(PracticeRange.Active, "TRAINING did not install its range controls.");
+                Assert.AreEqual(1, GameServices.Round.Players.Count, "Training should start without active target bots.");
+                Assert.IsFalse(SceneFlow.Networked);
+                Assert.IsFalse(NetAuthority.IsNetworked);
+
+                SceneFlow.LeaveMatchToMainMenu();
+                until = Time.realtimeSinceStartup + 30;
+                while ((TumpHub.Current == null || !(TumpHub.Current.Top is HubHome)) &&
+                       Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsNotNull(TumpHub.Current);
+                Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top);
+            }
+            finally
+            {
+                if (SceneFlow.InMatch) SceneFlow.LeaveMatchToMainMenu();
+                GameLaunch.GuidedTutorial = guided;
+                GameLaunch.Spectator = spectator;
+                SceneFlow.SelectedMap = sceneMap;
+                GameLaunch.SelectedMap = launchMap;
+                SceneFlow.AdoptRemoteRules(rules);
+                if (pinned) SceneFlow.PinSelectedRules(rules); else SceneFlow.UnpinSelectedRules();
+                SceneFlow.SelectedRules.Password = rules.Password;
+                settings.CustomRulesWire = rulesWire;
+                settings.MatchFormat = format;
+                settings.AiDifficulty = difficulty;
+                AIController.ApplyDifficulty(difficulty);
+                Settings.SettingsStore.Save();
+                AIController.BotsEnabled = bots;
+            }
         }
 
         [UnityTest, Timeout(600000)]
@@ -269,6 +610,29 @@ namespace TumbangPreso.PlayTests
                 yield return OpenHome();
                 yield return Press("ModeCard");
                 Assert.IsInstanceOf<HubModeSelect>(TumpHub.Current.Top);
+                foreach (string name in new[] { "PracticeCard", "CustomCard", "ClassicCard", "RankedCard" })
+                {
+                    var card = TumpHub.Current.Top.GetComponentsInChildren<HubButton>()
+                        .Single(b => b.name == name);
+                    var art = card.Body.Find("Art");
+                    Assert.IsNotNull(art, name + " has no poster region");
+                    var mask = art.GetComponent<Mask>();
+                    var stencil = art.GetComponent<HubShape>();
+                    Assert.IsNotNull(mask, name + " has no chamfered art mask");
+                    Assert.IsNotNull(stencil, name + " has no shaped stencil");
+                    Assert.IsFalse(mask.showMaskGraphic);
+                    Assert.IsFalse(stencil.raycastTarget);
+                    Assert.AreEqual(0, stencil.OutlineWidth);
+                    Assert.AreEqual(0, stencil.RimWidth);
+                    Assert.AreEqual(0, stencil.RingWidth);
+                    Assert.AreEqual(Vector2.zero, stencil.ShadowOffset);
+                    Assert.AreEqual(card.Shape.Seed, stencil.Seed);
+                    Assert.IsNotNull(art.Find("Poster"));
+                    Assert.IsFalse(card.Body.Find("Label").IsChildOf(art),
+                        name + " must keep its title above the poster mask");
+                    Assert.IsFalse(card.transform.Find("Tape").IsChildOf(art),
+                        name + " must leave the tape outside the poster mask");
+                }
                 yield return Shots("GameModes");
 
                 // Hover and focus reveal a card's description (the owner's darkened CLASSIC card).

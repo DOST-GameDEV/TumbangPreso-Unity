@@ -1,0 +1,138 @@
+{
+  "base": "6f128705eac2a370276d602c4a14ba3d7e55a716",
+  "compiler": "Core, Runtime, Editor, Tests and PlayTests exit0; final root-canvas correction recompiled Runtime and PlayTests only",
+  "coreTests": [
+    {
+      "testName": "TumbangPreso.Core.Tests.PracticeRangeRulesTests.OnlyAnExplicitLocalRangeAllowsTrainingControls(requested: True, transport: False, selectedNetwork: False, revoked: False, tutorial: False, observing: True, expected: False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000058"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.PracticeRangeRulesTests.OnlyAnExplicitLocalRangeAllowsTrainingControls(requested: False, transport: False, selectedNetwork: False, revoked: False, tutorial: False, observing: False, expected: False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.2348564"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.PracticeRangeRulesTests.OnlyAnExplicitLocalRangeAllowsTrainingControls(requested: True, transport: False, selectedNetwork: False, revoked: True, tutorial: False, observing: False, expected: False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000012"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.PracticeRangeRulesTests.OnlyAnExplicitLocalRangeAllowsTrainingControls(requested: True, transport: False, selectedNetwork: False, revoked: False, tutorial: False, observing: False, expected: True)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000013"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.PracticeRangeRulesTests.OnlyAnExplicitLocalRangeAllowsTrainingControls(requested: True, transport: False, selectedNetwork: True, revoked: False, tutorial: False, observing: False, expected: False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000010"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.PracticeRangeRulesTests.OnlyAnExplicitLocalRangeAllowsTrainingControls(requested: True, transport: True, selectedNetwork: False, revoked: False, tutorial: False, observing: False, expected: False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0002420"
+    },
+    {
+      "testName": "TumbangPreso.Core.Tests.PracticeRangeRulesTests.OnlyAnExplicitLocalRangeAllowsTrainingControls(requested: True, transport: False, selectedNetwork: False, revoked: False, tutorial: True, observing: False, expected: False)",
+      "outcome": "Passed",
+      "duration": "00:00:00.0000011"
+    }
+  ],
+  "nativeTests": "NOT RUN: existing editor disk-reserve boundary; no repeated native launch",
+  "runtimeAssemblySha256": "0768BB2D39AA9698C7DD646B09B30EAE31FE0964E7CD888A052D06D05236D774",
+  "coreAssemblySha256": "178283F17A6476682149946B3E2D1198FCF4AD7CB26CE739B08971513C2E2D9E",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbility.cs",
+      "sha256": "4CC1D42178302054C72784A037E776AC30FC4AF17CFAC45E21F3D395CFBF1AC7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+      "sha256": "BC9DE24894BF5D0A56F3CAE420C66EBA9F7D16ADA83362DE3123256C40C98934"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/GameLaunch.cs",
+      "sha256": "8164DF029A862116688EFCE978CE517AE95E03163E17C299FB4E2BEA33528294"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Lata.cs",
+      "sha256": "3E6AF175ABCA8E0FD6E3F3745DEACC15B0AE932805EBFED197B27C6DFA092ECC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchInstaller.cs",
+      "sha256": "E4DAB288E11A18F62DB0FC9EF3D7114B2AC9E134FAD7F0EA0CEB6B42E64FAAD2"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/PracticeRange.cs",
+      "sha256": "377057328E8530E161CB881E81FEF71BDC8D29080EAA708C31A2373FCB27A0B9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/PracticeRange.cs.meta",
+      "sha256": "01561DA6A60D64AEDDF764C7C117BBE7E25905185F965E48FF4C26890D8AC3A3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/PracticeSandbox.cs",
+      "sha256": "C808E6985F2D3C13DB3FFD00CB24561B5F43CB5E1048051AEDD868D75835F8C5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/RoundDirector.cs",
+      "sha256": "0D67761C3675CF4893A9A21A609B6AD4F80248D1949D9E77E804EB95EB28003B"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/SliceRunner.cs",
+      "sha256": "7C7E8F6DB0EC695D267D669D188BA926724B9F4D60609E089BB274EF7A317D74"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+      "sha256": "1B751545DEFBFD99A1F76A8139ED54048C713F14E44CA215D531F74A110D8F52"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Panel.cs",
+      "sha256": "85BD5B4CFFE58DFAF069DF1805DA72CF039BEEFD771E90164200717AC2EFFC57"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/PausePanel.cs",
+      "sha256": "5B3D108B9041CC8A0D45B682F7C34664D01D20A79CD0F5DD722DC3851A058832"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/PausePanel.LiveMenu.cs",
+      "sha256": "4CA09EFA791AC12A91588FA302D10175F3273385BE8DA6325145F4906098FC55"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/PausePanel.TrainingRange.cs",
+      "sha256": "66F499BD651CE6792F699EF78F8F22F4D71BFCE65759044971BF26A3E8D670F4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/PausePanel.TrainingRange.cs.meta",
+      "sha256": "8B9E746B81D13999B139B2D608EEEE287A026A226D3B8BC811F250BE0774AD98"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpChoice.cs",
+      "sha256": "3DE393C65C92A598D8AA46B5DB95C0F0AAA0B95C9D98BAFC9A7D9EB22A334A89"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/HubFlowTests.cs",
+      "sha256": "BABC288006C9FD37AFF063C5B3F23D01FAE377DEE2C8ACF1ADC083908E8D8C74"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/PracticeRangeTests.cs",
+      "sha256": "C3E0EB4A8F3D7EDE196A96D213FEF55A1BC354841DF690AD022616935D05B0D3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/PracticeRangeTests.cs.meta",
+      "sha256": "48DA2F69086B011A7881FAE63D7CE0082A39B32B8945E9A78C1035BE5E7327CA"
+    },
+    {
+      "path": "Core.Tests/PracticeRangeRulesTests.cs",
+      "sha256": "78CCC7E3349D768E35F61D40B8087EE8DFEEBC151E02D3188330749EA94766A1"
+    },
+    {
+      "path": "Packages/com.tumbangpreso.core/Runtime/PracticeRangeRules.cs",
+      "sha256": "97BD775A2DA161CB6A136AA8CCB4C0955437D88CB73577E39AA9503AA9DBAE36"
+    },
+    {
+      "path": "Packages/com.tumbangpreso.core/Runtime/PracticeRangeRules.cs.meta",
+      "sha256": "09E49F71372963A6B3F46AD0B534B5F6839B452B6CDFD6D3A7CD18614F16DE31"
+    }
+  ]
+}

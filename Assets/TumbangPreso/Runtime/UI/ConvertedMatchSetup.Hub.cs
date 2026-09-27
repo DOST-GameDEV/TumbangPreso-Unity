@@ -44,6 +44,27 @@ namespace TumbangPreso.UI
         private TumpHub _hubView;
         private int _roomRequest;
 
+        private static void ListedLanTitleFor(string typed, out string title, out string code)
+        {
+            title = code = "";
+            var net = NetSession.Instance;
+            var beacon = net?.Beacon;
+            if (beacon == null || string.IsNullOrWhiteSpace(typed)) return;
+            typed = typed.Trim();
+            bool address = typed.Contains(".") || typed.Contains(":") ||
+                           string.Equals(typed, "localhost", System.StringComparison.OrdinalIgnoreCase);
+            if (!address) return;
+            int port = NetSession.DefaultPort;
+            string host = NetSession.SplitHostPort(typed, ref port);
+            foreach (var entry in beacon.SortedEntries)
+                if (entry.Port == port && string.Equals(entry.Address, host, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    title = entry.HostName;
+                    code = entry.JoinCode;
+                    return;
+                }
+        }
+
         private void InstallHubView()
         {
             if (!HubEnabled || _ownerPreparation == null) return;
@@ -81,19 +102,13 @@ namespace TumbangPreso.UI
 
         public void StartPractice()
         {
-            // ⚠️ PRACTICE IS THE OFFLINE MATCH THE OLD WITH BOTS ROUTE STARTED: no transport, bots
-            // in the empty seats, the mode card's ruleset. A room or a search is left first, so a
-            // practice match can never start while this machine is still offered to strangers.
+            // Cancel room/queue ownership before requesting the explicit offline range.
+            // Training never changes the saved bot difficulty or character choice.
             LeaveRoom();
+            GameLaunch.Reset();
             GameLaunch.Spectator = false;
-            if (_difficulty == AIController.NoBotsIndex)
-            {
-                _difficulty = (int)Difficulty.Normal;
-                Settings.SettingsStore.Current.AiDifficulty = _difficulty;
-                Settings.SettingsStore.Save();
-            }
-            AIController.ApplyDifficulty(_difficulty);
-            AIController.BotsEnabled = true;
+            GameLaunch.AllBots = false;
+            GameLaunch.TrainingRange = true;
             SceneFlow.StartMatch();
         }
 
@@ -163,6 +178,7 @@ namespace TumbangPreso.UI
         public async Task<string> Join(string codeOrAddress)
         {
             if (_joinPanel == null) return "The join path is not ready yet.";
+            ListedLanTitleFor(codeOrAddress, out string listedTitle, out string listedCode);
             LeaveRoom();
             int request = _roomRequest;
             SceneFlow.Networked = true;
@@ -172,10 +188,18 @@ namespace TumbangPreso.UI
             void NoteStatus(string line) { if (request == _roomRequest) status = line; }
             panel.Status += NoteStatus;
             bool ok;
-            try { ok = await panel.AutomationJoin(codeOrAddress); }
+            var joining = panel.AutomationJoin(codeOrAddress);
+            var titleOperation = NetSession.Instance?.ClientTitleOperation;
+            try { ok = await joining; }
             finally { if (panel != null) panel.Status -= NoteStatus; }
             if (this == null || request != _roomRequest) return "Room request cancelled.";
-            if (ok) return "";
+            if (ok)
+            {
+                var net = NetSession.Instance;
+                if (net != null)
+                    net.RememberJoinedClientRoomTitle(listedTitle, listedCode, titleOperation);
+                return "";
+            }
             SceneFlow.Networked = false;
             return string.IsNullOrWhiteSpace(status) ? "Could not join that room." : status;
         }
@@ -208,9 +232,12 @@ namespace TumbangPreso.UI
             {
                 if (!string.IsNullOrWhiteSpace(NetSession.RoomTitle)) return NetSession.RoomTitle;
 
-                // A joiner has no title of its own: read the room's name off the listing it came from.
+                // The client keeps a code-bound title for this live session across menu reloads.
+                // Other joins still read the current directory when no matching title was captured.
                 var net = NetSession.Instance;
                 string code = RoomCode;
+                string joinedTitle = SceneFlow.Networked ? net?.JoinedClientRoomTitle : "";
+                if (!string.IsNullOrEmpty(joinedTitle)) return joinedTitle;
                 if (net?.Query != null && !string.IsNullOrEmpty(code))
                     foreach (var entry in net.Query.Servers)
                         if (string.Equals(entry.JoinCode, code, System.StringComparison.OrdinalIgnoreCase)) return entry.Name;
@@ -328,15 +355,7 @@ namespace TumbangPreso.UI
                 foreach (var entry in net.Beacon?.SortedEntries ?? new List<LanEntry>())
                 {
                     if (!string.IsNullOrEmpty(own) && string.Equals(entry.JoinCode, own, System.StringComparison.OrdinalIgnoreCase)) continue;
-                    rooms.Add(new HubRoom
-                    {
-                        Name = entry.HostName,
-                        Map = "LAN",
-                        Players = entry.Players,
-                        Capacity = entry.MaxPlayers,
-                        InProgress = entry.InProgress,
-                        Key = $"{entry.Address}:{entry.Port}",
-                    });
+                    rooms.Add(HubRoom.FromLan(entry));
                 }
                 return rooms;
             }
@@ -354,6 +373,7 @@ namespace TumbangPreso.UI
                     Players = entry.Players,
                     Capacity = entry.Capacity <= 0 ? LobbySession.MaxPlayers : entry.Capacity,
                     InProgress = entry.InProgress,
+                    IsJoinable = entry.IsJoinable,
                     Key = entry.JoinCode,
                 });
             }
@@ -367,6 +387,11 @@ namespace TumbangPreso.UI
         public void ToggleChat()
         {
             if (_chat != null) _chat.SetPresented(!_chat.IsPresented && IsLive);
+        }
+
+        private void OnRoomChatPresented(bool shown)
+        {
+            _hubView?.Find<HubLobby>()?.SetChatPresented(shown);
         }
 
         // ------------------------------------------------------------------ routing

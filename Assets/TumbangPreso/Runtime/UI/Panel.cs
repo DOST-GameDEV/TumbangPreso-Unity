@@ -99,9 +99,17 @@ namespace TumbangPreso.UI
 
         protected virtual void Start()
         {
+            Prepare();
+            Enter();
+        }
+
+        // Construction can run under a loading curtain without entering the menu,
+        // parking player input or stealing the cursor.
+        internal void Prepare()
+        {
+            if (Canvas != null) return;
             Canvas = CreateCanvas();
             Build();
-            Enter();
         }
 
         protected virtual Canvas CreateCanvas()

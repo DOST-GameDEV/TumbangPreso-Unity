@@ -2584,13 +2584,14 @@ namespace TumbangPreso
             if (toVictim <= Balance.ShoveRange * 0.9f
                 && Facing(victim, Balance.ShoveArcDeg * 0.6f))
             {
-                Tap(intent, Verb.Grab);
+                // Shove / Lunge is the shove's button since 2026-09-27 (`CombatVerbs.Update`).
+                Tap(intent, Verb.Lunge);
                 SabotageShovesAttempted++;
                 AbandonSabotage(cool: true);
                 return;
             }
 
-            Press(intent, Verb.Grab, false);
+            Press(intent, Verb.Lunge, false);
         }
 
         private void DoIdle(InputIntent intent) => Loiter(intent);

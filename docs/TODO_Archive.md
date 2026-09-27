@@ -1,5 +1,24 @@
 # TODO archive: the batch reports and the closed work
 
+## DOCS-0927 Documentation Organization DONE 2026-09-27
+
+Owner requested documentation organization next,after the current loading/login
+batch and before returning to network/loading work. Condense current rules and
+routing,retain important context/methods,and archive only genuinely superseded
+material with backlinks. Include clear starting points for networking,menu
+animation,character building and rendering. No history deletion. Later additions:
+update stale documents too,and keep the latest two generated visual iterations
+when pruning old captures.
+
+Implemented: short current entry points,working rules,55-document catalog,task
+routes,live UI/network/loading guides,current guarded testing/render/build/setup
+instructions,nine whole historical archives with old-path pointers,seven complete
+pre-cleanup snapshots,public queue snapshot and compact current ledger/queue header.
+Model/kit/HOME animation methods and all numbered history remain. Nine superseded
+captures pruned with hashes/retained pairs; essential references and all unique
+footage preserved. [Record and evidence](reports/documentation-cleanup-2026-09-27/README.md).
+This completes organization,not the still-open runtime/network/QA assignment.
+
 ## 2026-09-15 pre-demo checkpoint and ordering notes
 
 These notes are preserved whole as history. Their scheduling is superseded by

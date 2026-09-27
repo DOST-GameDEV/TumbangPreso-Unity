@@ -63,6 +63,7 @@ namespace TumbangPreso
         }
 
         public static bool Active => _active;
+        public static float RequestedScale => _active ? _restoreScale : Time.timeScale;
 
         /// <summary>Freeze. Re-entrant calls during a freeze are ignored rather than
         /// extending it — three attackers landing hits together must not stack into a stall.</summary>

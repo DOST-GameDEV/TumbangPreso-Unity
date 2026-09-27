@@ -73,6 +73,8 @@ namespace TumbangPreso.Net
         private bool _subscribed;
         private bool _busy;
         private readonly JoinAttemptGate _queueAttempts = new JoinAttemptGate();
+        private readonly MatchmakingCandidateCache _candidates = new MatchmakingCandidateCache();
+        private float _reevaluateAt = float.PositiveInfinity;
         private CancellationTokenSource _queueCancellation = new CancellationTokenSource();
 
         /// <summary>
@@ -198,6 +200,8 @@ namespace TumbangPreso.Net
             _queueCancellation = new CancellationTokenSource();
             _queueAttempts.Invalidate();
             _busy = false;
+            _candidates.Clear();
+            _reevaluateAt = float.PositiveInfinity;
             Mode = mode;
             Stake = stake;
             PartySize = Mathf.Clamp(partySize, 1, PartyRules.MaxSize);
@@ -275,6 +279,8 @@ namespace TumbangPreso.Net
             _queueCancellation.Cancel();
             _busy = false;
             State = QueueState.Cancelled;
+            _candidates.Clear();
+            _reevaluateAt = float.PositiveInfinity;
             Elapsed = 0.0f;
             Unsubscribe();
             ClearAdvert();
@@ -316,6 +322,7 @@ namespace TumbangPreso.Net
                 Evaluate();
                 Raise();
             }
+            if (!_busy && Time.unscaledTime >= _reevaluateAt) Evaluate();
         }
 
         private void Subscribe()
@@ -353,12 +360,15 @@ namespace TumbangPreso.Net
         private async void Evaluate()
         {
             if (!IsQueueing || _busy || _net == null) return;
+            _reevaluateAt = float.PositiveInfinity;
 
             var adverts = new List<LobbyAdvert>();
             var entries = new List<ServerQuery.Entry>();
 
             foreach (var entry in _net.Query?.Servers ?? Array.Empty<ServerQuery.Entry>())
             {
+                if (!_candidates.CanTry(entry, SkillContractFingerprint.Current, Time.unscaledTime,
+                    PartyRules.SeatsNeeded(PartySize))) continue;
                 entries.Add(entry);
                 adverts.Add(entry.AsAdvert());
             }
@@ -371,10 +381,11 @@ namespace TumbangPreso.Net
             if (best >= 0)
             {
                 var entry = entries[best];
+                string relay = entry.RelayCode;
                 var cancellation = _queueCancellation.Token;
                 await JoinAsync(entry, async () =>
                 {
-                    bool started = await _net.StartRelayClient(entry.RelayCode, cancellation);
+                    bool started = await _net.StartRelayClient(relay, cancellation);
                     return started && await _net.WaitForConnectionAsync(cancellation);
                 });
                 return;
@@ -407,6 +418,7 @@ namespace TumbangPreso.Net
         private async Task JoinAsync(ServerQuery.Entry entry, Func<Task<bool>> startJoin)
         {
             var attempt = _queueAttempts.Begin();
+            string attemptedLobby = entry.Id, attemptedRelay = entry.RelayCode;
             _busy = true;
             State = QueueState.Joining;
             Raise();
@@ -437,6 +449,10 @@ namespace TumbangPreso.Net
                 // report, because the correct response is to try the next one. A join the PLAYER
                 // asked for still reports, in `LobbyJoinPanel`.
                 Debug.Log($"[Queue] {entry.JoinCode} did not answer, still searching");
+                _candidates.Failed(attemptedLobby, attemptedRelay, Time.unscaledTime);
+                // Reconsider the cached list even when it has not changed and the
+                // rating band has already finished widening. No extra query needed.
+                _reevaluateAt = Time.unscaledTime + .25f;
                 State = QueueState.Searching;
                 Raise();
             }

@@ -37,7 +37,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Crosscurrent : HeroAbility
         {
-            public override bool DefersPredictedEffect => true;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             public Crosscurrent() : base("rafi_skill1", "CROSSCURRENT",
                 "Aim a narrow current to bend one flying slipper. Its thrower keeps the credit; later throws pass through.",
                 0, glyph: AbilityGlyph.RafiCrosscurrent,
@@ -56,8 +56,8 @@ namespace TumbangPreso.Abilities
 
         private sealed class Mirrorwake : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             private readonly RafiHeroKit _kit;
-            public override bool DefersPredictedEffect => true;
             public Mirrorwake(RafiHeroKit kit) : base("rafi_skill2", "MIRRORWAKE",
                 "Replay your route as a watery decoy with one harmless throw feint. You stay visible and vulnerable.",
                 0, glyph: AbilityGlyph.RafiMirrorwake,
@@ -76,6 +76,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Breakwater : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             public Breakwater() : base("rafi_ultimate", "BREAKWATER",
                 "Release a low wave that nudges each rival once and carries loose slippers. Jump, sidestep or use cover.",
                 0, glyph: AbilityGlyph.RafiBreakwater,

@@ -60,6 +60,7 @@ namespace TumbangPreso.Visual
         private GameObject _headModel;
         private Transform _head;
         private bool _placedOnWater;
+        private bool _placedForFlight;
         private TextMesh _label;
         private Transform _labelTransform;
         private Color _roleColor = UiTheme.Defense;
@@ -243,6 +244,19 @@ namespace TumbangPreso.Visual
         private void PlaceForCurrentSurface()
         {
             if (_character == null || _ring == null || _labelTransform == null) return;
+            if (_character.IsFlying && _character.AbilitySystem?.Kit?.HeroId == "amihan")
+            {
+                var feet = _character.transform.position;
+                float floor = VfxShapes.GroundAt(feet, feet.y - 3, 5);
+                _ring.position = new Vector3(feet.x, floor + RingFloorMargin, feet.z);
+                _placedForFlight = true;
+                return;
+            }
+            if (_placedForFlight)
+            {
+                _ring.localPosition = _landRingPosition;
+                _placedForFlight = false;
+            }
             float surface = 0;
             bool swimming = _character.IsSwimming && RooftopPool.TrySurface(_character.transform.position, out surface);
             if (!swimming)

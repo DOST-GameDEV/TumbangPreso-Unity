@@ -219,6 +219,19 @@ namespace TumbangPreso.Tests
             Assert.IsEmpty(failures,string.Join("\n",failures));
         }
 
+        [Test]
+        public void NemuKeepsHerMouthInHerCowl()
+        {
+            // Her cowl rides the torso and her mouth the head: any chin lift against the chest bares her mouth. The weight
+            // layer lifts the chin up to 0.45 of an 8 degree lean on a hard start, so the gait keeps 3.6 degrees in hand.
+            for (float run = 0; run <= 1.001f; run += .25f)
+                for (float t = 0; t < 4; t += .05f)
+                {
+                    var p = GaitStyles.Nemu.Evaluate(t * .7f % 1f, run, t, 1.4f);
+                    Assert.GreaterOrEqual(p.HeadPitch, 3.6f, $"run {run:F2}, t {t:F2}: her chin lifts out of the cowl");
+                }
+        }
+
         private static T Get<T>(object target, string name) => (T)target.GetType().GetField(name, Private).GetValue(target);
         private static void Set(object target, string name, object value) => target.GetType().GetField(name, Private).SetValue(target, value);
         private static object Invoke(object target, string name, params object[] args)

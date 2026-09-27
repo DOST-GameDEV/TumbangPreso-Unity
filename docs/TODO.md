@@ -17,10 +17,152 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
-**2026-09-27 verified stability batch:** room cancellation/seating, native interaction
-prompts, distinct current-kit glyphs, live symbol refresh and avatar sprite imports.
-Exact checks and remaining limits: [validation](reports/stability-2026-09-27/validation.md).
-Remaining owner QA, current-kit regressions and final qualification stay open.
+Current owner order after DOCS-0927: actual loading/optimization,then shared
+network/flow correctness,then remaining applicable QA/TODO requirements. Newer task
+scope and contributor reservations override older dated order below. Work alone;
+preserve incoming reworks; no repeated validation/film loops for minor changes.
+
+**Integration checkpoint, 2026-09-27:** incoming owner keybinds and script-GUID repairs
+are merged. One guarded native pass completed7/7 new state/loading cases, with no
+frozen-input drift. [Exact coverage](reports/stability-2026-09-27/input-integration.md)
+supersedes earlier NOT RUN notes only for those cases. Actual peers,player performance
+and unsampled native UI flows remain OPEN; no whole-queue completion claim.
+Incoming Phaister doll v5 assets/source/review tooling are preserved unchanged;
+the Editor consumer compiles, with no runtime change or repeat of the7 native cases.
+Subsequent v6/v7 doll/glow and Voodoo Core additions are preserved; five assemblies
+compile and6 new Core cases pass. DRAINED/HEXED gameplay/replication and doll runtime
+acceptance remain OPEN; these tests do not qualify the unfinished new kit.
+The v8 doll and Voodoo body-state API are integrated unchanged and Runtime/Editor
+compile; tick/reset/snapshot wiring remains OPEN.
+Voodoo snapshot wiring now carries status/mark/reach state and an explicit reach
+result (protocol73), preserving host stamina corrections. Two new native codec/
+receiver cases pass. The body now runs it (HERO-10, 2026-09-27): the status clock steps it,
+the round reset and a cleanse end it, the VOODOO passive reaches the speed, the HUD lists
+DRAINED and HEXED with their icons (`VoodooBodyWiringTests`, 2/2). The new kit's abilities
+and actual-peer checks remain OPEN.
+The merged body's received-state/authority integration now passes one new native
+case: client clocks expire without resolving host-only outcomes. Protocol75 gates
+these gameplay semantics. Doll entity ownership/lifetime and actual peers remain OPEN.
+UI-flow native qualification now passes3/3 for range controls,settings row reuse and
+preview resizing. The audio sample-preparation case also passes1/1. Exact coverage
+and limits are in the [loading report](reports/stability-2026-09-27/loading-audit.md);
+these do not close player timing,physical-input,visual or actual-peer acceptance.
+Sentry snapshot recovery now preserves captured seats instead of repeating a local
+distance query,binds late bodies once,and never catches again. Two new native
+receiver/recovery cases pass (protocol74); fresh-cast convergence and actual peers
+remain OPEN. [Evidence](reports/stability-2026-09-27/multiplayer.md#sentry-target-recovery).
+
+**NET-SKILLS-1, OPEN:** host authority,stable ability identity,explicit delivery/
+command intent,independent receipts,bounded delayed delivery,phase-aware prepared
+recovery and held-aim body state are implemented. Cosmetic model/clip/effect swaps
+reuse shared hooks; new gameplay state still needs an explicit contract. Ranked,
+casual,LAN/online,spectators,late join and reconnect are in scope. Preserve existing
+rating/result/leave/device-pool rules. Further state coverage and actual peer/ranked/
+reconnect/results qualification remain OPEN.
+Ordinary action requests/refusals/body playback/charge tells now carry shared
+match/round/body-epoch scope (protocol67). Compiler and one pure scope check pass;
+Native/peer qualification remains OPEN. Same-round combat refusals now correlate
+request IDs,ignore old/duplicate denials and use host resource correction instead
+of additive refunds (protocol69). Two Core cases and five-assembly compile pass;
+native no-double-refund and actual peer behavior remain OPEN.
+Remote host stamina/fatigue clocks now advance from accepted move/sprint intent,
+with stale-intent cleanup; snapshots preserve sprint continuation (protocol68).
+Two Core cases and five-assembly compile pass; native/peer resource checks stay OPEN.
+Frozen's existing restraint now follows received body status with per-body dedup,
+refresh/thaw/disable cleanup and local shatter audio; ice meshes preload at boot.
+Compiler checks pass; native lifecycle/peer checks and QA-15 remain OPEN.
+Root escape/plant pulling now require host-timed accepted Interact input and scoped
+completion notifications (protocol70). Four assemblies compile; native/lossy-peer
+hold checks and reconnect progress remain OPEN. Plant removal now has accepted-cast
+lifetime identity, scoped delivery and late-retirement protection, preserved through
+field snapshots (protocol71). Four assemblies compile; native/peer lifetime checks
+remain OPEN, and other persistent effect kinds still require explicit coverage.
+Existing Dante/Cheska victim-camera feedback now uses shared scoped Flair delivery
+(protocol72), preserving authored feedback and gameplay separation. Four assemblies
+compile; native/peer camera checks and QA-15 remain OPEN.
+Received Rooted state now owns its existing restraint without needing a sentry's
+target list, with dedup,late-facing-once and disable cleanup. Four assemblies compile;
+native/peer lifecycle checks and sentry target-list recovery remain OPEN.
+Read [network route](NETWORKING.md),[contract](SKILL_NETWORK_CONTRACT.md) and
+[exact evidence](reports/stability-2026-09-27/multiplayer.md),not a historical
+protocol literal or old test count.
+Requested pause/speed now recovers after world state with match/round/sequence
+gates (protocol76),excluding local hitstop. Three new native clock cases pass on
+the full committed base plus10inputs,no drift. Actual peers and QA-15 remain OPEN.
+
+**Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
+retained ability props/effect data and actual menu activation readiness are implemented.
+Instance/material/GPU first use and measured player hitch qualification are not all
+complete. Keep progress work-driven and loading responsive; do not call a compile
+hitch-free performance. [Source route](LOADING_AND_PERFORMANCE.md),
+[implemented units and limits](reports/stability-2026-09-27/loading-audit.md).
+First-HOME video preparation now runs during boot and reuses one paused decoded
+player; poster/reduced-motion fallback stays. Four assemblies compile; native
+decoder/handoff and player first-entry timings remain OPEN.
+Generic match loading now awaits destination-owned setup, rejects stale same-scene
+installers, retains errors instead of timed success, and cancels obsolete curtains.
+Four assemblies compile; native handoff/failure/input checks remain OPEN.
+Supplementary baked-motion data now preloads asynchronously per roster rig and is
+retained for body/introduction binding. No authored clips/models changed. Four
+assemblies compile; native retention and measured first-use/memory checks remain OPEN.
+Settings value changes now avoid redundant whole-screen reflow/chip scans and double
+unsaved-state work. The focused native reuse/text-size reflow case passes;
+physical-input/visual and player timing qualification remain OPEN.
+Character preview target reallocations now coalesce continuous resizing while
+preserving final pixel size/aspect and immediate captures. Native resize/reuse passes;
+visual checks and measured player cost remain OPEN; generated-avatar cleanup is recorded below.
+Deferred non-streaming SFX/voice samples now load in yielded boot turns and remain
+retained before playback. Native sample-state/no-playback check passes; music and
+import quality are unchanged. Player first-use timings remain OPEN.
+Roster outline preparation now runs in yielded boot turns and survives scene loads
+for retained live meshes. Two focused native cache/geometry cases pass; player
+timings remain OPEN. Custom-map switching now prebuilds/renders the actual preview
+scenes behind hub loading and reuses scene/look instances. One real-hub native case
+passes: all five maps cycle twice with zero loads and0.090-8.241ms Editor selection
+calls. Initial preparation was38.52s; player frame/memory/build and total-load-time
+qualification remain OPEN. [Evidence](reports/stability-2026-09-27/loading-audit.md#custom-preview-loading).
+Converted menu scene loads are now asynchronous behind the existing curtain and
+wait for real UI initialization/layout. Hub preview preparation adopts the same
+owner; the loading canvas now blocks pointer input. New native title/hub handoff
+case passes after one test-frame timing correction. Other destinations/failure
+journeys and player performance remain OPEN; no blanket hitch-free claim.
+Preview cache ownership fixes now keep base/overlay material variants separate and
+destroy/rebind resized map-preview targets. Two new focused native cases pass;
+authored assets and shading values are unchanged. Player memory/FPS remains OPEN.
+Existing particle geometry and catalog-driven status icons now prepare during
+loading. Rooted is restored to the shared status readout. Two new native data/state
+cases pass separately; no emitted effects,art changes or player hitch claim.
+Opaque HOME media now suspends the hidden live-court render while retaining its
+prepared fallback. One new native visibility/lifetime case passes; player GPU/FPS
+savings and complete movie/overlay journeys remain OPEN.
+Unchanged preview selections now retain model/material/pose instead of rebuilding
+on lock-in/refresh. Changed inputs retire the old subject immediately. One new
+native reuse/invalidation/cleanup case passes; player click timings remain OPEN.
+Ability illustrations now load asynchronously with yielded fallback preparation;
+the cooldown graphic also prepares before HUD construction. New native preload
+case passes. Default-avatar selection now handles minimum-int name hashes without
+changing other names' defaults; its focused case passes. Player timings remain OPEN.
+Runtime-generated avatars now belong to their CharacterAnimator binding and are
+released on rebind/clear/teardown; borrowed assets survive. One new native lifecycle
+case passes. No animation rework or long-running player-heap qualification is claimed.
+
+**LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
+per-field messages,one error cue and field-only tint pulses. Either credential edit
+clears a stale pair rejection; supplied art and hitboxes are unchanged,reduced motion
+gets steady feedback. Four assemblies compile; native interaction/sound/visual
+qualification remains OPEN. [Details](reports/stability-2026-09-27/login-feedback.md).
+
+**QA-0927, OPEN:** [19deduplicated comments](reports/stability-2026-09-27/qa-comments.md)
+include the latest login request. Retain [first-batch evidence](reports/stability-2026-09-27/validation.md)
+and [QA2 evidence](reports/stability-2026-09-27/qa2-validation.md); neither closes
+unsampled devices/peers or the whole queue. Title blur,Sean/Cheska freeze,full Practice
+range,owner-only service deployment and final qualification remain OPEN.
+The music complaint is resolved by the owner; leave it alone.
+
+**DOCS-0927:** organization completed; [archived entry](TODO_Archive.md#docs-0927-documentation-organization-done-2026-09-27)
+and [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
+The full public queue before this header condensation is [preserved](archive/TODO_queue_2026-09-27.md).
+Detailed current methods remain live; numbered backlog bodies/IDs were not removed.
 
 **Standing mandate (owner, 2026-09-21):** "finish everything note yet done", then "i want
 every single thing in todo to be done pls mark that in todo and shit". Every unfinished
@@ -796,13 +938,149 @@ Research and plan: `docs/reports/paete-kit-2026-09-25/`.
 - [ ] Deploy the cloud-code hero lists once they name him (needs the owner's UGS deploy); record his
   lines (human voices only, `docs/HUMAN.md` PAETE rows).
 
-### PRACTICE-1 · A practice picker and a Valorant-style training range ⚠️ OPEN, 2026-09-26
+### HERO-10 · Phaister's overhaul (names, VFX, animation, SFX, directing) ⚠️ OPEN, 2026-09-27
+
+Owner, 2026-09-27: *"start working on the phaister overhaul next"*, *"rename her shit too"*, *"it needs really great
+presentation VFx ANIIMATION SFX AND DIRECTING"*, *"think abt her personality too in making her cutscenes and vfx"*,
+*"thoroughly refine existing animation effects and models and vfx of her skills"*. Method: `docs/HERO_KIT_METHOD.md`
+(Paete's baseline). Mechanics are ABILITY-2's (`Core.VoodooRules`). Brief: `ArtSource/phaister/kit-20260927/design-brief.md`;
+research, plan and questions: `docs/reports/phaister-kit-2026-09-27/`.
+
+- [x] Brief and research from footage, v2 layer by layer (Seele, Castorice, Hu Tao; Lyney, Zarya, Kafka); audit of today.
+- [x] Plan: names proposed, the effect family, six beats per ability, the cutscene direction (one sentence, three shots,
+  the moon travelling left to right), the file list; ONE batch of ten questions.
+- [x] The owner's answers recorded in `plan.md` section 7; v2 is the WITCH (v1's showman rejected), every moving part and
+  its direction tabled (section 4.4 and 4.5), her own animations listed (4.6).
+- [x] Names and descriptions: VANISHING ACT, MANIKA MISCHIEF, SPOTLIGHT PIN, OMEN (ids unchanged). Icons still owed.
+- [x] Model details (hip manika, three hat pins, two brim moths) applied INTO the shipped glb by
+  `tools/add_phaister_details.py` (36 clips and the shortened arms kept; a builder rerun loses them). Owner's verdict owed.
+- [ ] Her own animations (idle variants, walk, run, throw, pick-up, hit, taya, win), one at a time, filmed.
+- [x] Props typed (`tools/build_phaister_props.py`: butterfly, moth, beetle, manika, hat pin), reviewed in the game's look
+  (`Editor/PhaisterPropReview`, props v2).
+- [x] Four body clips and four first-person gestures, none shared (`HeroAbilityClips.Phaister.cs` baked by `PhaisterMotionAuthor`;
+  `ViewmodelArms.Phaister.cs` and her `CastPaths` rows); the doll held in her first-person left hand (`ViewmodelArms.HoldingProp`).
+- [x] Effects: `PhaisterSwarm` (VANISHING ACT), `PhaisterManika` (the doll, steal, return, hold, crumble), `PhaisterMoonlight` and
+  `PhaisterPinSweep` (SPOTLIGHT PIN), `PhaisterOmen` + `CosmosEye.shader` (OMEN), statuses presented by `PhaisterStatusPresenter`.
+- [x] Sounds: `tools/build_phaister_audio.py`, ten cues including her OMEN theme; ownership moved off the rework builders.
+- [x] OMEN aimed where and how HIGH she looks; bodies held on a ring round the eye (`SeanceVoidComponent.HoldRadius`).
+- [x] Cutscene rebuilt (4.0 s, SURGE / THE EYE / OMEN; `author_ultimate_intros.py` phaister(), `HeroIntroductionScene.Phaister.cs`);
+  clock measured frozen under it. OWED: stage the REAL targets in its ending (the method's section 6 "take"), and its eye lands
+  at a fixed spot in front of her rather than at the commit's aim.
+- [x] `PhaisterKitPlayProbe` films her skills and OMEN in a match (her screen, the court, a caught player).
+- [ ] Props typed in `tools/build_phaister_props.py` (doll, pin, lamp, curtain, moon, serpent); turnarounds.
+- [ ] One body clip and one first-person action per ability (today both curses share `hero-phaister-hex` and `cast-hex`,
+  and the ultimate uses the retired `hero-phaister-eclipse`); filmstrips reviewed.
+- [ ] Effects per ability (today: the doll lands with the blink's `sfx_blink_arrive`, the Vulnerable cone vanishes at
+  0.6 s, the hole is a placeholder sphere); every effect comes out of a prop and is put away.
+- [ ] One sound recipe per cue in `tools/build_phaister_audio.py`; loudness checked.
+- [ ] Cutscene rebuilt (today it is the retired Grand Coven ritual): storyboard with `--preview`, at most 6.5 s, clock
+  frozen, the density pass, the ending on the real targets, play picks up from its end state.
+- [ ] `PhaisterKitPlayProbe` films in a match (her screen, the court, a caught player); rejoin probe for the hole and the
+  spotlight; mp4s versioned and sent; verdicts recorded in `direction.md`.
+- [ ] Bots; Core, EditMode, the PlayMode gate, `Checks.RunAll`, audits, a build.
+
+**v8 to v11 refinement pass (2026-09-27, `direction.md` sections 0 to 3; films `Logs/phaister-*-film-v10`/`v11`, videos
+`Logs/phaister-share/`).** Built and filmed:
+- [x] Her own aim pictures (`PhaisterAimSigil`, `HeroAbility.DrawsOwnAim`/`PresentAim`/`EndAim`): VANISHING ACT's sigil (ring,
+  crescent, standing runes, three moths); OMEN's ring, ghost eye at its height and a line of light to the court.
+- [x] Body tells while aiming (`HeroAbility.AimPoseAction`, `CharacterAnimator.AimPose`, looping `hero-phaister-*-aim` clips):
+  wrists crossed (moths from her cuffs, `PhaisterCuffMoths`); the doll up at her chin with a pin (`PhaisterHandDoll`, both views);
+  looking up at OMEN's height. MANIKA's release clip is now the throw only (the prick is the hold).
+- [x] Soft smoke (`Shaders/SoftPuff`), a smoke ribbon along the swarm's path, no insect or smoke on her own lens, the arrival
+  re-keyed upright.
+- [x] ROOT CAUSES FOUND: her runes are upright meshes and were laid as ground decals (`PhaisterSpellGeometry.FlatRune`); her flat
+  marks were placed on the map floor under Bayan Plaza's paving (`PhaisterProp.OnCourt`, `Slipper.GroundY`). ⚠️ The shared
+  `GroundReticle` and `VfxShapes.GroundPoint`/`DrapeToGround` likely bury every hero's decals on that map: NOT FIXED, needs a
+  per-map check before touching shared plumbing.
+- [x] SPOTLIGHT PIN: a crescent stroke wiping the cone, inked sigils; moonlight as a soft shaft (`Shaders/MoonShaft`), runes at
+  the feet, the pin standing in the court.
+- [x] MANIKA: the victim's own screen gets a glimpse of a doll of themselves at the corner (`PhaisterManika.VictimGlimpse`); the
+  steal no longer swallows their lens.
+- [x] OMEN in play: the mark (a butterfly over each player in reach through the cast), body glows, screen veils
+  (`Shaders/OmenVeil`, `PhaisterOmenScreen`), play picks up the cutscene's end state; OMEN's three live cues rebuilt in her builder.
+- [x] Cutscene v8, 5.0 s (protocol 62): SURGE / THE EYE / THE THROW / THE MARK, the eye landing at the commit's aim, the REAL
+  targets staged and marked (`HeroIntroductionScene.PhaisterMark.cs`), a real impact frame (`Shaders/PhaisterImpact`,
+  `HeroIntroductionScene.PostProcess`), the density layer (`.PhaisterBurst.cs`), theme retimed.
+- [x] Probe: `FilmHerCursesOnAVictimsScreen` (the victim's own screen), the miss, front views of the caster.
+
+**v3, 2026-09-27 evening: THE OWNER'S NEW TABLE REPLACES MANIKA MISCHIEF, SPOTLIGHT PIN AND OMEN.** Owner: *"the only one i
+like from last session is the teleport but that has to be improved too"*, then the table: passive VOODOO (a mark takes 10 % of
+the target's speed for her), TELEPORT, CURSE: DRAIN (mark, 1.5 s, DRAINED), CURSE: HEX (mark, recast after 10 s, HEXED), and the
+VOODOO DOLL ultimate (the doll becomes a Hard AI body on her side for the rest of the round; its points are hers; tagging it pays
+nobody; 12 objective points). Marking is a 2 s reach with her hand out and an eerie thread between them. The plan, his answers
+and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` section 9. The OMEN items below are superseded.
+
+- [x] Plan v3 (section 9): the table, his answers, how a cast talks, where the slipper goes, THE REACH, DRAIN, HEX, TELEPORT,
+  the doll in play, the cutscene, proposed numbers.
+- [x] The doll's model, v11 to v20 (`tools/build_phaister_doll_voxel.py`, brief's v11 section): Paete's size, mitten stumps with
+  no fingers, the owner's reference with the colours moved into hers, every light a HOLE CUT INTO the body (`Shaders/SoulGlow`
+  stencil cut, `Shaders/SoulSpill` for the light falling out), a chunky stylised weave (`tools/paint_phaister_doll_cloth.py`).
+  Its art for runtime: `Resources/HeroBodies/phaister_doll` (`PhaisterDollArt.LoadArt`, baked by `PhaisterDollReview.BakeArt`).
+  Owner's verdict on v20 owed.
+- [ ] The doll's walk and run (`GaitStyles.PhaisterDoll`): hung from its crown string and dragged, the run a lurch on one live leg
+  with the other dead behind it; filmed by `WalkArmsProbe` with `TUMP_WALK_BODIES=phaister-doll`, videos
+  `Logs/phaister-share/doll_walk_vN_phaister-doll.mp4`. Owner on v1's run: *"make it look like he isnt alive or he's dragging
+  himself"*. Its idle (hanging and swaying) is still the rig's.
+- [ ] The hip doll and the teleport decoy on the same design (ask before the decoy's look).
+- [ ] Core: `VoodooRules` v3, DRAINED and HEXED appended to `StatusKind`, a passive on the kit (VOODOO first; the owner will send
+  each hero's); tests with his numbers quoted.
+- [ ] The carried slipper leaves the hand a cast needs (shared; each ability declares where it goes; hers is the belt).
+- [ ] THE REACH (a 2 s channel and its thread), DRAIN, HEX (the fuse and the recast), the passive; statuses presented on the body
+  and on the victim's screen.
+- [ ] TELEPORT improved: the decoy doll of her flopping where she stood, the moths streaming to her, a front-on tell.
+- [ ] VOODOO DOLL: a fifth body, Astig AI, attacking or defending with her role, points to her, none for tagging it, gone at the
+  round's end; its network contract in `docs/SKILL_NETWORK_CONTRACT.md` (owner: *"You build it all"*).
+- [ ] The cutscene SEW / GROW / WAKE; sounds; voice rows; icons; bots; films sent; the gate.
+
+**OPEN before v3 (superseded where it names OMEN, MANIKA or SPOTLIGHT PIN):**
+Publication recovery, 2026-09-27: refinement commit `5b696b6f8` is integrated with
+the current networking/loading work. Protocol 64's skill fingerprint covers the
+5.0-second introduction; the older protocol-62 note above is historical. This
+integration does not close any creative refinement item below.
+
+- [ ] ⚠️ OWNER, on the OMEN film: *"the butterflies are too FAT and big"*, *"in ur references theyre js subtly there they dont
+  have actual 3d models"*, *"u can keep butterfly 3d model tho figure out where to use it next time"*. Replace OMEN's butterflies
+  (play maelstrom, marks, cutscene, screen edges) with subtle FLAT luminous silhouettes (Castorice 25 s: dark wing, bright edge,
+  glowing body, no volume), smaller; keep `butterfly.glb` for another use.
+- [ ] Cutscene v8 review (film v10/v11): SURGE's butterflies crowd her face at the lens; her eye lights did not show (check
+  `FindHerEyes`); a hard purple square appears in THE MARK at ~3.7 s of the scene (identify it); THE MARK's crane is low and the
+  marks read weakly; the storyboard with `--preview` was not rendered.
+- [ ] VANISHING ACT's wide camera films her back during the tell: move it to see the crossed wrists.
+- [ ] Her own animations (plan 4.6): walk hand to the hip doll and run hand on the hat (`GaitStyles.Phaister` quirk, film with
+  `WalkArmsProbe`), idle flourishes (brim, pin twirl, moth), pick-up, stunned, taya arms crossed, win curtsey (`FinishCelebration`).
+- [ ] Her voice lines are still the showman's (`HeroLines.cs` phaister rows, `docs/HUMAN.md`): rewrite for the witch; team records.
+- [ ] Icons/glyphs for the new names, portrait/avatar with the hat pins, bots for OMEN height, rejoin probe (network: Astra's lane).
+- [ ] The PlayMode gate, `Checks.RunAll`, audits, a build.
+
+### INPUT-0927 · The owner's default keybinds ✅ DONE, 2026-09-27
+
+Owner, 2026-09-27, forwarding the team's layout: *"change defualt keybiands to this too"*. MOVEMENT: WASD, sprint Left Shift,
+jump Space. ACTIONS: Throw / Tag left click, Shove / Lunge right click, Curve Throw the mouse wheel, Interact / Use F.
+ABILITIES: Signature E, Attacking / Defending Q, Ultimate X. INTERFACE: Ability Tooltips Tab. COMMUNICATIONS: Emote Wheel T.
+
+- [x] Keyboard defaults in `TumbangPreso.inputactions`; the settings panel's rows are named and grouped under his five headings
+  (`Settings.Rebinding`). Pad and touch bindings unchanged.
+- [x] The shove left the pickup key for Shove / Lunge on every device (`CombatVerbs.Update`): an attacker's right click slides
+  when a loose tsinelas lies in reach ahead, shoves otherwise; one press is one verb (a press edge is readable for several
+  Updates, and the first build of this stacked a shove on every slide). Bots shove on the same verb.
+- [x] `Grab` and `Interact` both on F, the one sanctioned pair (`Rebinding.IsOneUseKey`): they are his one Interact / Use key.
+- [x] The curve is a wheel notch: each press edge steps it, a held key still turns it (`PlayerInputReader.CurveInput`); the
+  hardcoded wheel read is gone. WHEEL UP / WHEEL DOWN glyphs drawn into the mouse sheet's empty cells (`InputGlyphs`).
+- [x] Tutorial's shove lesson teaches Shove / Lunge. `Design.md` section 4 rewritten.
+- [x] Found on the way and fixed: `CharacterMotor.NetworkStamina.cs.meta` and `HubSceneVideo.Warmup.cs.meta` carried 33-character
+  GUIDs, so the editor IGNORED both files and the project did not compile in Unity (the direct compiler never reads metas).
+- Evidence: EditMode input suites 60/60 (`Logs/keybinds-editmode-v2.xml`); PlayMode pickup, slide and tutorial 19/20
+  (`Logs/keybinds-playmode-v2.xml`). The one red, `RetrievalSlideTests.AnIneligibleTsinelasIsNotASlideTarget`, fails in its
+  fixture before any input: `Slipper.HostForceEquip` now enforces the ownership lock the fixture's comment says it bypasses.
+  Not this change; left for the ownership-lock owner.
+
+### PRACTICE-1 · A practice picker and a Valorant-style training range ⚠️ NATIVE CHECK OPEN, 2026-09-27
 
 Owner, 2026-09-26: *"can u also make it so that when u click practice theres a screen that pops up
 that lets u pick between Tutorial and Training mode"*, and *"allow character change + cheats +
 summon/remove bots in practice just like valorant practice"*.
 
-- [ ] PRACTICE opens a two-card picker (TUTORIAL, the guided `GuidedTraining` walk-through; TRAINING,
+- [x] PRACTICE opens a two-card picker (TUTORIAL, the guided `GuidedTraining` walk-through; TRAINING,
   the free range), built through `MenuKit`/`ConvertedScreen` so pad focus, thumb targets and one-press
   back come by construction (CLAUDE.md 4a, 6.2).
 - [ ] Training range panel (pause-style, opened by one bound key, pad and touch answered): change hero
@@ -811,6 +1089,15 @@ summon/remove bots in practice just like valorant practice"*.
   never reachable from a networked or ranked match.
 - [ ] Render every state over the real background at his window shape; record the journey (presses to
   each action).
+
+Implementation2026-09-27: the offline range now replaces Training's ordinary bot
+match, with prepared/reused menu and target bodies, in-place authored roster changes,
+independent local cheats, bot seat/derived-role/idle controls and reset. Saved
+preferences stay unchanged; selected/connecting network sessions also refuse cheats.
+The picker retains earlier QA2 evidence. Five assemblies compile and seven new Core
+gate cases pass. Native range lifecycle, visuals, pad/touch and first-use timings
+remain OPEN; the range/render checkboxes are intentionally not closed.
+[Implementation and evidence](reports/stability-2026-09-27/practice-range.md).
 
 ### SKILLUI-1 · The yellow skill ring, and cooldowns against charges ⚠️ OPEN, 2026-09-26
 

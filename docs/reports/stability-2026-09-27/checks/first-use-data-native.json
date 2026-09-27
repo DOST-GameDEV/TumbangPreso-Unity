@@ -1,0 +1,80 @@
+{
+  "base": "959f22f19667a496df9035dcefbd34299b836a55",
+  "unity": "6000.5.8f1",
+  "graphics": "D3D11",
+  "runs": [
+    {
+      "name": "retained-geometry",
+      "result": "Passed",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "duration": "0.1104987",
+      "originalXmlSha256": "3CC432A96476AC9A604D741DEF75D2D6B08A7A6745E7B0783E2AAB239040C1D5",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.ParticleAssetWarmupRetainsExistingGeometryWithoutEmittersOrRandomChanges",
+          "result": "Passed",
+          "output": "[ParticleAssets] retained8meshes vertices=282; no emitters spawned.\nSaving results to: ISOLATED_PROFILE\\TestResults.xml\n"
+        }
+      ]
+    },
+    {
+      "name": "status-catalog",
+      "result": "Passed",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "duration": "0.1735712",
+      "originalXmlSha256": "43AA3D41E275203F0CF8A3B43BAD5552A202406DB67F1F3B12E492182D39AA82",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.StatusCatalogWarmupRetainsIconsAndRootedAppearsBeforeSlows",
+          "result": "Passed",
+          "output": "Saving results to: ISOLATED_PROFILE\\TestResults.xml\n"
+        }
+      ]
+    }
+  ],
+  "frozenInputs": 241,
+  "nativeInputChurn": 0,
+  "geometryMinimumFreeBytes": 6533545984,
+  "statusMinimumFreeBytes": 6233817088,
+  "statusPreflight": "Initial launch stopped before Unity for headroom; one native run after measured recovery",
+  "profile": "Each guard restored two named-profile files and three shared Editor input preferences",
+  "geometryFiles": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "846E9B4D0548D083DBB63DDD0762180C48760B497575B817A00D20F62DB00CC3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/AbilityVfx.cs",
+      "sha256": "F805FA7B2287F394A0FC68716C8ADA75B4870CE326E1625DDBA46AACDAEB6835"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerMenuEditsTests.cs",
+      "sha256": "3B144825B0CCAB0B4233BA4F08BDC382A0ABF36B23BD9403EBF49487031085BE"
+    }
+  ],
+  "finalFiles": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "5EC4486A86BFDBA396F52E606C5B5DF0E51B99A40782337E053A9C897C76521A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/StatusIcons.cs",
+      "sha256": "B5C612BE948101C31C85EB77C853D41A8B4CCADC1C41C26D5F2D1B6DC809F403"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/AbilityVfx.cs",
+      "sha256": "F805FA7B2287F394A0FC68716C8ADA75B4870CE326E1625DDBA46AACDAEB6835"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerMenuEditsTests.cs",
+      "sha256": "CC0E478684910795E7B33C4949B7B0B99BB2B33704E551BC00A8CF20BE000532"
+    }
+  ],
+  "limits": "Local data residency/reuse and status readout, not player hitch/GPU performance or art approval."
+}

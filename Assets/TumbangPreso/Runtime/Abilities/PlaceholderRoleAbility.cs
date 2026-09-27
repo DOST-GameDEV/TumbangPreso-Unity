@@ -12,6 +12,7 @@ namespace TumbangPreso.Abilities
     /// </summary>
     public sealed class PlaceholderRoleAbility : HeroAbility
     {
+        public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Unavailable;
         public PlaceholderRoleAbility(string id, string heroName, AbilityGlyph glyph)
             : base(id, "COMING SOON",
                    "Defending. " + heroName + "'s defending skill is still being designed. For now it does nothing.",

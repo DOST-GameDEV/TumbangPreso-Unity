@@ -44,6 +44,7 @@ namespace TumbangPreso
     {
         private readonly HashSet<Verb> _menuButtons=new HashSet<Verb>();
         private int _menuClosedFrame=-1;
+        private bool _loadingInputHeld;
         private readonly Core.ToggleControl _sprintToggle = new();
         private readonly Core.ToggleControl _restoreToggle = new();
         private Carrier _carrier;
@@ -75,6 +76,12 @@ namespace TumbangPreso
             if(!down)_menuButtons.Remove(verb);
             return Time.frameCount!=_menuClosedFrame && !_menuButtons.Contains(verb) && down;
         }
+        /// <summary>This frame's curve from one direction: a step on the press edge, a turn while held.</summary>
+        private static float CurveInput(InputAction action)
+        {
+            if (action == null) return 0.0f;
+            return (action.WasPressedThisFrame() ? CurveStep : 0.0f) + (action.IsPressed() ? Time.deltaTime * CurveRate : 0.0f);
+        }
         [SerializeField] private InputActionAsset _actions;
         [SerializeField] private CharacterMotor _motor;
         [SerializeField] private Camera _aimCamera;
@@ -92,16 +99,19 @@ namespace TumbangPreso
         /// other lesson drew the live binding. 🧑, 2026-08-26: *"im not sure as well if pektus
         /// controls are in settings"*. They were not.
         ///
-        /// ⚠️ THE MOUSE WHEEL IS STILL READ DIRECTLY AND THAT IS NOT THE SAME FAULT. A scroll
-        /// axis is not a button and there is nothing to rebind it to; it is the shortcut, and
-        /// these two are the binding the panel teaches.
-        ///
-        /// ⚠️ THE DEFAULTS ARE Z AND C SINCE 2026-08-27, NOT THE ARROWS. 🧑: *"its so hard to
-        /// touch the arrow keys and some keyboards dont have it"*, and the curve has to be held
-        /// while the left hand is on WASD and the throw is charging. `Settings.Rebinding`'s class
-        /// note carries the reasoning and the one legal cross-context collision.
+        /// ⚠️⚠️ THE DEFAULTS ARE THE MOUSE WHEEL SINCE 2026-09-27 (the owner's layout: *"Curve
+        /// Throw: Mouse Wheel Up / Mouse Wheel Up"*, wheel down curving left, up right, the way the
+        /// wheel always turned it). Z and C before that, the arrows before THAT. A wheel notch is
+        /// a one-frame pulse, not a hold, so every press EDGE of either action steps the curve by
+        /// `CurveStep` and a held key or d-pad keeps turning it at `CurveRate`. The wheel used to be
+        /// read straight off `Mouse.current` as well; that read is gone, or a wheel binding would
+        /// count every notch twice and a player who rebound the curve to keys could never free
+        /// the wheel.
         /// </summary>
         private InputAction _curveLeft, _curveRight;
+
+        /// <summary>One wheel notch (or one tap) of curve, and the turn rate while a key is held.</summary>
+        private const float CurveStep = 0.35f, CurveRate = 2.5f;
 
         /// <summary>
         /// The pad's right stick. There is no keyboard binding on it: a mouse reports a DELTA and
@@ -200,6 +210,10 @@ namespace TumbangPreso
 
             if (_motor == null) return;
 
+            bool loading = UI.Hub.HubLoading.Visible;
+            if (_loadingInputHeld && !loading) DiscardMenuButtonsUntilRelease();
+            _loadingInputHeld = loading;
+
             var intent = _motor.Intent;
             int roundNumber = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
             if (_toggleContextKnown && (_toggleRound != roundNumber || _toggleDefender != _motor.IsDefender || _toggleRoundActive != _motor.RoundActive))
@@ -223,7 +237,7 @@ namespace TumbangPreso
             // ⚠️ AND CHAT IS THE THIRD INPUT CONTEXT, per `CLAUDE.md` § 4. A player who is typing
             // has no verbs and a player who has verbs is not typing, so the two sets can never
             // both fire, which is the same narrowing `Rebinding.SpectatorContext` records.
-            if (UI.LobbyChat.AnyTyping)
+            if (UI.LobbyChat.AnyTyping || loading)
             {
                 ResetToggleControls();
                 InputLayer.TouchInput.ConsumeRecoveryPress();
@@ -300,23 +314,13 @@ namespace TumbangPreso
 
             intent.LookDelta = ReadLookDelta();
 
-            // Pektus (Curve Spin) control: Independent of WASD movement!
-            // Controlled via Mouse Wheel Up/Down (or Left/Right arrow keys) while charging throw.
+            // Pektus (curve spin), independent of WASD movement, only while the throw charges.
+            // ⚠️ THROUGH THE MAP, SO THE PANEL CAN REBIND THEM. See `_curveLeft`: a press edge is
+            // one step (a wheel notch is nothing but an edge), a held key keeps turning.
             if (intent.Pressed(Verb.SpecialAbility))
             {
-                if (Mouse.current != null)
-                {
-                    float scrollY = Mouse.current.scroll.ReadValue().y;
-                    if (scrollY > 0.1f) _currentPektusSpin = Mathf.Clamp(_currentPektusSpin + 0.35f, -1.0f, 1.0f);
-                    else if (scrollY < -0.1f) _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - 0.35f, -1.0f, 1.0f);
-                }
-
-                // ⚠️ THROUGH THE MAP, SO THE PANEL CAN REBIND THEM. See `_curveLeft`.
-                if (_curveLeft != null && _curveLeft.IsPressed())
-                    _currentPektusSpin = Mathf.Clamp(_currentPektusSpin - Time.deltaTime * 2.5f, -1.0f, 1.0f);
-
-                if (_curveRight != null && _curveRight.IsPressed())
-                    _currentPektusSpin = Mathf.Clamp(_currentPektusSpin + Time.deltaTime * 2.5f, -1.0f, 1.0f);
+                _currentPektusSpin = Mathf.Clamp(_currentPektusSpin
+                    - CurveInput(_curveLeft) + CurveInput(_curveRight), -1.0f, 1.0f);
             }
             else
             {

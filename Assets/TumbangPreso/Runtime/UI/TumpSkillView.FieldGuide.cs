@@ -1,4 +1,5 @@
 using System;
+using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,16 +22,19 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(_ownerHeroPortrait.rectTransform, 87, 100, 235, 180);
             _ownerHeroName = OwnerUiLayout.Text(_content, "Heading", "", 74, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_ownerHeroName.rectTransform, 368, 121, 1420, 124); _ownerHeroName.color = OwnerUiTheme.Current.Pale;
-            for (int i = 0; i < 3; i++)
+            var slots = HeroAbilitySystem.CreateKitFor(_hero).ScreenSlots;
+            float tabStep = slots.Length == 4 ? 450 : 594;
+            float tabWidth = slots.Length == 4 ? 430 : 556;
+            for (int i = 0; i < slots.Length; i++)
             {
-                int slot = i == 2 ? 0 : i + 1;
-                var tab = GuideLink(_content, "TumpSkillSlot" + slot, i == 2 ? "ULTIMATE" : "SKILL " + (i + 1),
-                    () => { _slot = slot; _selected = null; Build(); }, 92 + i * 594, 295, 556, 110, true);
-                var label = tab.GetComponentInChildren<Text>(); OwnerUiLayout.Place(label.rectTransform, 127, 0, 414, 96);
+                int slot = GuideSlotAt(i, slots.Length);
+                var tab = GuideLink(_content, "TumpSkillSlot" + slot, slots[i].Label,
+                    () => { _slot = slot; _selected = null; Build(); }, 92 + i * tabStep, 295, tabWidth, 110, true);
+                var label = tab.GetComponentInChildren<Text>(); OwnerUiLayout.Place(label.rectTransform, 127, 0, tabWidth - 142, 96);
                 var icon = OwnerUiLayout.Rect(tab.transform, "Symbol").gameObject.AddComponent<TumpAbilitySymbol>();
                 OwnerUiLayout.Place(icon.rectTransform, 12, 5, 91, 85); icon.color = OwnerUiTheme.Current.Pale; icon.raycastTarget = false;
                 var line = OwnerUiLayout.Rect(tab.transform, "SelectedSlot").gameObject.AddComponent<Image>();
-                OwnerUiLayout.Place(line.rectTransform, 124, 99, 299, 5); line.color = OwnerUiTheme.Current.Lime; line.raycastTarget = false;
+                OwnerUiLayout.Place(line.rectTransform, 124, 99, tabWidth - 257, 5); line.color = OwnerUiTheme.Current.Lime; line.raycastTarget = false;
                 _ownerTabs.Add(tab);
             }
             _ownerOptions = OwnerUiLayout.Rect(_content, "VariantChoices"); OwnerUiLayout.Place(_ownerOptions, 89, 529, 636, 508);

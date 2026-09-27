@@ -107,7 +107,9 @@ namespace TumbangPreso.Core
             _current = System.Math.Clamp(current, 0.0f, Balance.StaminaMax);
             _idle = System.Math.Max(0.0f, idle);
             _fatigueLeft = System.Math.Clamp(fatigueLeft, 0.0f, Balance.FatigueTime);
-            _isSprinting = false;
+            // A resource correction is not a release of the owner's sprint key.
+            // Preserve continuation below the start floor; empty/fatigue still stop it.
+            _isSprinting = _isSprinting && _current > 0 && !willBeFatigued;
         }
 
         /// <summary>
@@ -151,12 +153,31 @@ namespace TumbangPreso.Core
             }
 
             _idle += delta;
-            if (_idle >= Balance.StaminaRegenDelay)
+            if (_idle >= Balance.StaminaRegenDelay && !RecoveryBlocked)
             {
                 _current += Balance.StaminaRegenRate * delta;
                 if (_current > Balance.StaminaMax) _current = Balance.StaminaMax;
             }
             return 1.0f;
+        }
+
+        /// <summary>
+        /// ⚠️ DRAINED (HERO-10 v3, the owner's table): *"Prevents stamina recovery for 2.5 seconds."* Set every step by
+        /// the body from its own replicated status timer, so the bar and the icon cannot disagree and a joining peer needs
+        /// nothing extra. The idle clock keeps counting through it, so recovery resumes the moment the status ends rather
+        /// than a regen delay later.
+        /// </summary>
+        public bool RecoveryBlocked { get; set; }
+
+        /// <summary>
+        /// ⚠️ DRAINED: *"Depletes stamina to 0."* The bar empties and any sprint stops. It is NOT fatigue: the owner's
+        /// row says nothing about the fatigue slow, so none is added; an empty bar already refuses a sprint start
+        /// (`StaminaSprintFloor`) and every paid verb.
+        /// </summary>
+        public void Deplete()
+        {
+            _current = 0.0f;
+            _isSprinting = false;
         }
 
         /// <summary>

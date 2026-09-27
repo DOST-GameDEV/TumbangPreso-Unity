@@ -19,9 +19,9 @@ namespace TumbangPreso.Abilities
     /// | Defending | CURSE: VULNERABLE | *"easier to tag and phaister can go out of box and tag them"* |
     /// | Ultimate | HIGOP | *"casts a blackhole ... pulls everyone towards it. No button mashhing"*, *"really slowly cast"*, *"pulls players ands slipeprs except for her shit and no escape for entire duration but they can try to"* |
     ///
-    /// ⚠️ HEX AND GRAND COVEN ARE REPLACED. `RitualBuildSeconds` stays because the introduction's warm-up
-    /// (`PhaisterRitualWarmup`) still times itself by it; `CaptureCoven`/`RestoreCoven` keep their names
-    /// because the rejoin snapshot (`MatchRpc`) calls them, and now carry the black hole.
+    /// ⚠️ HEX AND GRAND COVEN ARE REPLACED. `RitualBuildSeconds` remains for legacy callers;
+    /// the warmup follows the current ultimate. `CaptureCoven`/`RestoreCoven` remain local/probe
+    /// compatibility methods; networking discovers the ability's `IPreparedWorldReplication` capability.
     /// </summary>
     public sealed class PhaisterHeroKit : HeroKit
     {
@@ -34,18 +34,10 @@ namespace TumbangPreso.Abilities
         public bool IsEclipseActive => false;
 
         public bool CaptureCoven(out Vector3 centre, out float preparation, out float remaining)
-            => ((Higop)Ultimate).Capture(out centre, out preparation, out remaining);
+            => ((IPreparedWorldReplication)Ultimate).CapturePreparedWorld(out centre, out preparation, out remaining);
 
         public void RestoreCoven(CharacterMotor motor, Vector3 centre, float preparation, float remaining)
-        {
-            if (motor == null || NetAuthority.ShouldResolve() ||
-                float.IsNaN(preparation) || float.IsInfinity(preparation) ||
-                float.IsNaN(remaining) || float.IsInfinity(remaining)) return;
-            var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>(),
-                centre, motor.transform.forward, centre);
-            using (NetCue.SuppressRelay())
-                ((Higop)Ultimate).Restore(context, centre, preparation, remaining);
-        }
+            => HeroAbilitySystem.RestorePreparedWorld(motor, Ultimate, centre, preparation, remaining);
 
         public PhaisterHeroKit() : base("phaister", "PHAISTER")
         {
@@ -59,6 +51,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class ShadowPhaseBlinkAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             /// <summary>Nearest she can put herself. Under a body length is not an escape.</summary>
             private const float MinRange = 2.0f;
 
@@ -80,14 +73,14 @@ namespace TumbangPreso.Abilities
             private const float ShoveRadius = 2.5f;
 
             public ShadowPhaseBlinkAbility()
-                : base("phaister_skill1", "SHADOW BLINK",
-                       "Hold to pick a spot, let go and you are simply there. Whoever you left standing gets shoved back.",
+                : base("phaister_skill1", "VANISHING ACT",
+                       "Hold to pick a spot, let go and you burst into a swarm of moths that carries you there. Whoever you left is shoved back.",
                        VoodooRules.BlinkCooldown, 0.4f, AbilityGlyph.PhaisterShadowBlink,
-                       summary: "Hold to aim, release to teleport. Shoves whoever you left.",
+                       summary: "Aim, release, and fly there as moths. Shoves whoever you left.",
                        telegraphRadius: ArrivalMark,
                        telegraphRange: MaxRange,
-                       castAction: "hero-phaister-blink",
-                       viewmodelAction: "blink",
+                       castAction: "hero-phaister-swarm",
+                       viewmodelAction: "swarm-burst",
                        castCue: "sfx_cast_phaister_blink")
             {
                 // ⚠️⚠️ `maxHoldSeconds: 0` MEANS THE RELEASE IS THE ONLY THING THAT CASTS IT.
@@ -108,6 +101,36 @@ namespace TumbangPreso.Abilities
                 // the aim mark, the departure and the arrival are now one visual idea rather than
                 // a grey decal followed by two unrelated effects.
                 AimBeacon = true;
+                // HERO-10 (film v7: holding it showed nothing and she just stood): her own sigil where she will land, three moths
+                // circling it (`PhaisterAimSigil`), and her tell, wrists crossed at her chest with moths crawling from her cuffs.
+                AimPoseAction = "hero-phaister-swarm-aim";
+            }
+
+            private PhaisterAimSigil _sigil;
+            private PhaisterCuffMoths _cuffs;
+            public override bool DrawsOwnAim => true;
+
+            public override void PresentAim(CharacterMotor caster, Vector3 at, float heldSeconds)
+            {
+                if (_sigil == null) _sigil = PhaisterAimSigil.Create(PhaisterAimSigil.Kind.Arrival);
+                _sigil.Show(caster, at);
+            }
+
+            public override void PresentAimBody(CharacterMotor caster, float heldSeconds)
+            {
+                if (_cuffs == null) _cuffs = PhaisterCuffMoths.On(caster);
+            }
+
+            public override void EndAim()
+            {
+                if (_sigil != null) _sigil.Release();
+                _sigil = null;
+            }
+
+            public override void EndAimBody()
+            {
+                if (_cuffs != null) _cuffs.Release();
+                _cuffs = null;
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -144,7 +167,10 @@ namespace TumbangPreso.Abilities
                 // `SpawnShadowArrival` is written characters falling onto the place she reached.
                 // They shared one `SpawnCastGlyph` call until 2026-08-26, which is most of why
                 // the blink read as "the hex again, twice".
-                HeroHazards.SpawnShadowRift(startPos, facing);
+                // ⚠️ HERO-10: THE BARANG SWARM REPLACES THE TORN SHADOW SHEET. She bursts into moths and beetles here, they
+                // stream along the aim and knit her back at the far end (`PhaisterSwarm`, plan 4.1 and 4.5); the arrival glyph
+                // stays as the sigil that burns out under her. Every peer runs this cast, so every screen sees the same act.
+                PhaisterSwarm.Play(ctx.Motor.transform, startPos, destination, facing);
                 PhaisterArrivalSeal.Create(destination,facing);
 
                 ctx.Motor.Teleport(destination);
@@ -154,7 +180,7 @@ namespace TumbangPreso.Abilities
                 // 2026-08-26 that end of the ability made no sound at all. A cue fired at
                 // `startPos` cannot cover it: `AudioDirector` parks a pooled voice at the point it
                 // is given, which is the same fault `LrtTrainFlyby` records about a moving train.
-                NetCue.Play("sfx_blink_arrive", destination);
+                NetCue.Play("sfx_phaister_swarm_knit", destination);
 
 
 
@@ -265,19 +291,35 @@ namespace TumbangPreso.Abilities
 
         private sealed class CurseDisoriented : HeroAbility
         {
-            public override bool DefersPredictedEffect => true;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
 
             public CurseDisoriented()
-                : base("phaister_skill2", "CURSE: DISORIENTED",
-                       "Attacking. Aim and throw a cursed doll. Its target sees real threats mixed with hallucinations.",
+                : base("phaister_skill2", "MANIKA MISCHIEF",
+                       "Attacking. Throw a rag doll. It steals the look of the player it hits, flies back to your hand and makes them hallucinate.",
                        VoodooRules.DisorientCooldown, 0.0f, AbilityGlyph.PhaisterCursedDoll,
-                       summary: "Throw a cursed doll. The one it hits hallucinates.",
+                       summary: "Throw a doll. The one it hits hallucinates.",
                        telegraphRadius: VoodooRules.DollHitRadius, telegraphRange: VoodooRules.DollMaxRange,
-                       castAction: "hero-phaister-hex", viewmodelAction: "cast-hex",
+                       castAction: "hero-phaister-manika", viewmodelAction: "manika-prick",
                        castCue: "sfx_cast_phaister_doll")
             {
                 AimByHolding(3.0f, VoodooRules.DollMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Ward;
+                // HERO-10 (film v7: the prick came AFTER the release, so the doll flew half a second before her arm threw): the tell
+                // is the hold, the doll up at her chin with a pin going in; the release clip is only the throw.
+                AimPoseAction = "hero-phaister-manika-aim";
+            }
+
+            private PhaisterHandDoll _doll;
+
+            public override void PresentAimBody(CharacterMotor caster, float heldSeconds)
+            {
+                if (_doll == null) _doll = PhaisterHandDoll.Hold(caster);
+            }
+
+            public override void EndAimBody()
+            {
+                if (_doll != null) _doll.Let();
+                _doll = null;
             }
 
             public override bool CanActivate(AbilityContext ctx) => base.CanActivate(ctx) && !ctx.Motor.IsDefender;
@@ -286,6 +328,7 @@ namespace TumbangPreso.Abilities
             {
                 NetCue.Play("hero_phaister_grunt", ctx.Position);
                 Vector3 from = ctx.Position + Vector3.up * 1.5f + ctx.Forward * 0.4f;
+                // HERO-10: the steal, the return to her hand and the victim's mark follow the Disoriented status on every peer.
                 VoodooDoll.Spawn(from, AimedDestination(ctx), ctx.Motor.PlayerSlot);
             }
         }
@@ -294,20 +337,23 @@ namespace TumbangPreso.Abilities
 
         private sealed class CurseVulnerable : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             public CurseVulnerable()
-                : base("phaister_skill2d", "CURSE: VULNERABLE",
-                       "Defending. Pin the doll: attackers in front are Vulnerable for 5 s. Tag them from farther away or outside the box.",
+                : base("phaister_skill2d", "SPOTLIGHT PIN",
+                       "Defending. Stab a hat pin: attackers in front are lit by moonlight and Vulnerable 5 s. Tag them from afar or outside the box.",
                        VoodooRules.VulnerableCooldown, 0.0f, AbilityGlyph.PhaisterVulnerable,
-                       summary: "Curse the attackers in front of you. Tag them anywhere.",
+                       summary: "Pin the attackers in front in moonlight. Tag them anywhere.",
                        telegraphRadius: VoodooRules.VulnerableConeRange * 0.5f, telegraphRange: VoodooRules.VulnerableConeRange * 0.5f,
-                       castAction: "hero-phaister-hex", viewmodelAction: "cast-hex",
+                       castAction: "hero-phaister-pin", viewmodelAction: "pin-stab",
                        castCue: "sfx_cast_phaister_pin") { }
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 NetCue.Play("hero_phaister_grunt", ctx.Position);
                 Vector3 fwd = ctx.Forward; fwd.y = 0.0f; fwd = fwd.sqrMagnitude > 0.001f ? fwd.normalized : Vector3.forward;
-                VoodooConeFlash.Spawn(ctx.Position, fwd);
+                // HERO-10: her sigils sweep the cone left to right; each attacker it catches gets the moonlight, which follows the
+                // Vulnerable status on every peer (`PhaisterStatusPresenter`).
+                PhaisterPinSweep.Play(ctx.Position, fwd);
                 var round = ctx.Round;
                 if (round == null || !NetAuthority.ShouldResolve()) return;
                 float half = VoodooRules.VulnerableConeDegrees * 0.5f;
@@ -324,18 +370,19 @@ namespace TumbangPreso.Abilities
 
         // ================================================================== HIGOP (ultimate)
 
-        private sealed class Higop : HeroAbility
+        private sealed class Higop : HeroAbility, IPreparedWorldReplication
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             private GameObject _hole;
             private Vector3 _centre;
 
             public Higop()
-                : base("phaister_ultimate", "HIGOP",
-                       "Aim a black hole. For 5 s it pulls other players and their slippers toward its heart, even as they run away.",
+                : base("phaister_ultimate", "OMEN",
+                       "Aim a black eye in a storm of black butterflies. For 5 s it drags other players and their slippers in, even as they run.",
                        0.0f, VoodooRules.HigopSeconds, AbilityGlyph.PhaisterEclipse,
-                       summary: "A black hole drags every player and slipper to it.",
+                       summary: "A black eye swallows every player and slipper nearby.",
                        telegraphRadius: VoodooRules.HigopRadius, telegraphRange: VoodooRules.HigopMaxRange,
-                       castAction: "hero-phaister-eclipse", viewmodelAction: "coven-eclipse",
+                       castAction: "hero-phaister-omen", viewmodelAction: "omen-rise",
                        castCue: "sfx_cast_phaister_higop")
             {
                 TelegraphStyle = GroundReticle.Style.Ward;
@@ -343,7 +390,28 @@ namespace TumbangPreso.Abilities
                 // whole"*): she is rooted while the power surges through her (her cast clip), and the
                 // spot is marked for everyone to read.
                 Windup = VoodooRules.HigopCastSeconds;
-                AimByHolding(3.0f, VoodooRules.HigopMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                // HERO-10: placed where she LOOKS, and as HIGH as she looks (owner: *"she can choose as well where blackhole goes
+                // and how high ... put ppl on the air"*). The spot and its height travel in the commit's aim.
+                AimByHolding(3.0f, VoodooRules.HigopMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f, whereLooking: true);
+                AimInTheAir(VoodooRules.HigopMinHeight, VoodooRules.HigopMaxHeight);
+                // HERO-10 (plan 4.4; the owner must see how HIGH it will hang before he lets go): the ring on the court, a ghost of the
+                // eye at its height and a line of lights down to the court (`PhaisterAimSigil`); she looks up at it, one hand raised.
+                AimPoseAction = "hero-phaister-omen-aim";
+            }
+
+            private PhaisterAimSigil _aim;
+            public override bool DrawsOwnAim => true;
+
+            public override void PresentAim(CharacterMotor caster, Vector3 at, float heldSeconds)
+            {
+                if (_aim == null) _aim = PhaisterAimSigil.Create(PhaisterAimSigil.Kind.Omen);
+                _aim.Show(caster, at);
+            }
+
+            public override void EndAim()
+            {
+                if (_aim != null) _aim.Release();
+                _aim = null;
             }
 
             public override void Activate(AbilityContext ctx)
@@ -355,22 +423,31 @@ namespace TumbangPreso.Abilities
                 _hole = VoodooBlackHole.Spawn(_centre, ctx.Motor.PlayerSlot, Windup, Duration);
             }
 
-            public bool Capture(out Vector3 centre, out float preparation, out float remaining)
+            public bool CapturePreparedWorld(out Vector3 centre, out float preparation, out float remaining)
             {
                 centre = _centre; preparation = WindupRemaining; remaining = DurationRemaining;
                 return IsWindingUp || IsActive;
             }
 
-            public void Restore(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
+            public bool RestorePreparedWorld(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
             {
-                if (IsWindingUp || IsActive || (preparation <= 0 && remaining <= 0)) return;
+                if (preparation <= 0 && remaining <= 0)
+                {
+                    RollBackPredictedCast(ctx, refundResources: false);
+                    if (_hole != null) { _hole.SetActive(false); UnityEngine.Object.Destroy(_hole); }
+                    _hole = null;
+                    return false;
+                }
+                if (IsWindingUp || IsActive) return false;
                 _centre = centre;
                 preparation = Mathf.Clamp(preparation, 0, Windup);
                 remaining = Mathf.Clamp(remaining, 0, Duration);
                 if (preparation > 0) RestoreWindupClock(ctx, preparation);
                 else RestoreLiveClock(remaining);
                 if (_hole != null) UnityEngine.Object.Destroy(_hole);
-                _hole = VoodooBlackHole.Spawn(centre, ctx.Motor != null ? ctx.Motor.PlayerSlot : -1, preparation, preparation > 0 ? Duration : remaining);
+                float elapsed = preparation > 0 ? Windup - preparation : Windup + Duration - remaining;
+                _hole = VoodooBlackHole.Spawn(centre, ctx.Motor != null ? ctx.Motor.PlayerSlot : -1, Windup, Duration, elapsed);
+                return true;
             }
 
             protected override void OnActivate(AbilityContext ctx)

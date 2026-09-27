@@ -28,6 +28,7 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public class ModelPreviewTests
     {
+        private bool _hubEnabled;
         /// <summary>
         /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
         /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
@@ -35,7 +36,11 @@ namespace TumbangPreso.PlayTests
         /// mechanism and why BOTH hooks are needed rather than one.
         /// </summary>
         [UnitySetUp]
-        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+        public IEnumerator ResetWorldBefore()
+        {
+            _hubEnabled = ConvertedMatchSetup.HubEnabled;
+            yield return PlayModeWorld.Reset();
+        }
 
         /// <summary>
         /// ⚠️ THE RULE PIN IS RELEASED HERE OR EVERY SUITE AFTER THIS ONE INHERITS IT.
@@ -45,11 +50,94 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown]
         public IEnumerator ResetWorldAfter()
         {
+            ConvertedMatchSetup.HubEnabled = _hubEnabled;
             UI.SceneFlow.UnpinSelectedRules();
             yield return PlayModeWorld.Reset();
         }
 
         private const string OutDir = "Logs/shots-preview";
+
+        [UnityTest]
+        public IEnumerator CharacterBindingReleasesGeneratedAvatarsButPreservesBorrowedAssets()
+        {
+            var art = RosterBook.Load().FindPersonArt("dante"); Assert.IsNotNull(art);
+            var actor = new GameObject("Avatar ownership");
+            var model = Object.Instantiate(art.Model, actor.transform);
+            var animator = model.GetComponentInChildren<Animator>(); Assert.IsNotNull(animator);
+            animator.avatar = null;
+            var driver = actor.AddComponent<Visual.CharacterAnimator>(); driver.enabled = false;
+            Avatar borrowed = null;
+            try
+            {
+                driver.Bind(model, art.Clips);
+                var first = animator.avatar; Assert.IsNotNull(first); Assert.IsTrue(first.isValid);
+                driver.Bind(model, art.Clips);
+                var second = animator.avatar; Assert.IsNotNull(second); Assert.AreNotSame(first, second);
+                yield return null;
+                Assert.IsTrue(first == null, "Rebinding leaked its previous runtime avatar.");
+                Assert.IsTrue(second.isValid);
+                driver.Bind(null, null);
+                Assert.IsNull(animator.avatar);
+                yield return null;
+                Assert.IsTrue(second == null, "Clearing the binding leaked its runtime avatar.");
+
+                borrowed = AvatarBuilder.BuildGenericAvatar(animator.gameObject, "");
+                Assert.IsTrue(borrowed.isValid); animator.avatar = borrowed;
+                driver.Bind(model, art.Clips); Assert.AreSame(borrowed, animator.avatar);
+                Object.Destroy(driver);
+                yield return null;
+                Assert.IsTrue(borrowed != null && borrowed.isValid);
+                Assert.AreSame(borrowed, animator.avatar, "Teardown cleared an externally supplied avatar.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(actor);
+                if (borrowed != null) Object.DestroyImmediate(borrowed);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator RepeatedPreviewSelectionReusesSubjectAndRetiresChangedInputsImmediately()
+        {
+            var panel = new GameObject("Preview reuse", typeof(RectTransform));
+            var rect = panel.GetComponent<RectTransform>(); rect.sizeDelta = new Vector2(320, 400);
+            var preview = panel.AddComponent<ModelPreview>(); preview.Attach(rect);
+            var art = RosterBook.Load().FindPersonArt("dante"); Assert.IsNotNull(art);
+            var palette = (Color[])art.Palette.Clone();
+            var clips = (AnimationClip[])art.Clips.Clone();
+            try
+            {
+                preview.Show(art.Model, clips, palette, art.PetModel);
+                yield return null;
+                var first = preview.Subject; Assert.IsNotNull(first);
+                var material = first.GetComponentInChildren<Renderer>().sharedMaterial;
+                preview.Orbit(new Vector2(24, 12));
+                yield return null;
+                var rotation = preview.PreviewCamera.transform.rotation;
+                preview.Show(art.Model, (AnimationClip[])clips.Clone(), (Color[])palette.Clone(), art.PetModel);
+                Assert.AreSame(first, preview.Subject);
+                Assert.AreSame(material, preview.Subject.GetComponentInChildren<Renderer>().sharedMaterial);
+                Assert.AreEqual(rotation, preview.PreviewCamera.transform.rotation);
+
+                palette[0] = Color.magenta;
+                preview.Show(art.Model, clips, palette, art.PetModel);
+                Assert.AreNotSame(first, preview.Subject); Assert.IsFalse(first.activeSelf);
+                var second = preview.Subject;
+                clips[0] = null;
+                preview.Show(art.Model, clips, palette, art.PetModel);
+                Assert.AreNotSame(second, preview.Subject); Assert.IsFalse(second.activeSelf);
+                var third = preview.Subject;
+                preview.ShowingSlipper = true;
+                preview.Show(art.Model, clips, palette, art.PetModel);
+                Assert.AreNotSame(third, preview.Subject); Assert.IsFalse(third.activeSelf);
+                var last = preview.Subject;
+                preview.Show(null, null, null, null);
+                Assert.IsNull(preview.Subject); Assert.IsFalse(last.activeSelf);
+                yield return null;
+                Assert.IsTrue(first == null && second == null && third == null && last == null);
+            }
+            finally { Object.DestroyImmediate(panel); }
+        }
 
         [UnityTest]
         public IEnumerator TheCharacterPreviewIsFramedPosedAndMovable()
@@ -378,6 +466,8 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes()
         {
+            Assert.IsFalse(Core.HeroLoadoutRules.SidegradesOpen);
+            ConvertedMatchSetup.HubEnabled = false; // Exercise the supported preparation-board route.
             Settings.SettingsStore.Current.CharacterPick = 0;
             UI.SceneFlow.PinSelectedRules(Core.CustomGameRules.Defaults(Core.GameMode.HeroStrike));
 
@@ -391,19 +481,8 @@ namespace TumbangPreso.PlayTests
             panel.SetActive(true);
             for (int i = 0; i < 20; i++) yield return null;
 
-            // ⚠️⚠️ THE KIT IS BEHIND A DOOR NOW AND THE CLAIM IS NARROWED ON PURPOSE.
-            // `TraitRows` listed all three of a hero's powers on the picker itself. The painted
-            // picker gives the hero a portrait, a paragraph and two links, and `TumpSkills`
-            // opens `TumpSkillView`: three tabs, one power named and explained on each.
-            //
-            // ⚠️⚠️ WHAT SURVIVES IS THE REASON THE OLD ASSERTION EXISTED, NOT ITS SHAPE. An
-            // earlier pass showed a ribbon of three glyphs with a details card carrying only the
-            // SELECTED power, so two of every hero's three abilities were invisible until
-            // clicked and nothing on screen said they were there. The skills screen keeps all
-            // three NAMED as tabs with their own glyphs and one press away, which is the
-            // difference between "hidden" and "one press away". **So this walks the three tabs
-            // rather than reading one screen**, and the picker is still checked for the Classic
-            // attributes it must not show.
+            // The supported preparation board keeps SKILLS as its route to the four current
+            // role powers. The guide is read-only while sidegrades are closed.
             var picker = FindActive("TumpSkills");
             Assert.IsNotNull(picker,
                 "the hero picker has no SKILLS door, so a player choosing a hero cannot read "
@@ -421,36 +500,43 @@ namespace TumbangPreso.PlayTests
             var skills = Find("OwnerSkillsCanvas");
             Assert.IsNotNull(skills, "pressing SKILLS drew no skills screen.");
 
-            string copy = string.Empty;
-            foreach (int slot in new[] { 1, 2, 0 })
+            var danteKit = Abilities.HeroAbilitySystem.CreateKitFor("dante");
+            var slots = danteKit.ScreenSlots;
+            Assert.AreEqual(4, slots.Length);
+            for (int index = 0; index < slots.Length; index++)
             {
+                int slot = index == slots.Length - 1 ? 0 : index + 1;
                 var tab = FindActive("TumpSkillSlot" + slot);
                 Assert.IsNotNull(tab, $"the skills screen has no TumpSkillSlot{slot} tab.");
+                Assert.AreEqual(slots[index].Label, tab.GetComponentInChildren<UnityEngine.UI.Text>().text);
                 tab.onClick.Invoke();
                 for (int i = 0; i < 6; i++) yield return null;
 
-                foreach (var label in skills.GetComponentsInChildren<UnityEngine.UI.Text>(false))
-                    copy += label.text + "\n";
+                var texts = skills.GetComponentsInChildren<UnityEngine.UI.Text>(false);
+                Assert.AreEqual(slots[index].Ability.Name,
+                    texts.Single(t => t.name == "AbilityName").text);
+                Assert.AreEqual(slots[index].Ability.Summary,
+                    texts.Single(t => t.name == "WhatItDoes").text);
+                StringAssert.Contains(slots[index].Label,
+                    texts.Single(t => t.name == "Binding").text);
+                Assert.AreEqual(slots[index].Ability.Glyph,
+                    skills.GetComponentsInChildren<TumpAbilitySymbol>(false)
+                        .Single(g => g.name == "AbilityPicture").Glyph);
+                if (slot == 3)
+                    yield return TumpUiCapture.Capture("preparation-skills-defending-960x540",
+                        skills.GetComponent<Canvas>(), 960, 540, false, checkActionBounds: true);
             }
 
-            // ⚠️⚠️ THE NAMES ARE ASKED OF THE KIT, NOT SPELLED OUT HERE. This used to
-            // hard-code three strings and went red the day an ability was renamed, which is a
-            // test failing for a reason that has nothing to do with what it is checking.
-            var danteKit = Abilities.HeroAbilitySystem.CreateKitFor("dante");
-
-            StringAssert.Contains(danteKit.Skill1.Name.ToUpperInvariant(), copy.ToUpperInvariant(),
-                "Dante's first skill is not named behind the Hero picker's SKILLS door.");
-            StringAssert.Contains(danteKit.Skill2.Name.ToUpperInvariant(), copy.ToUpperInvariant(),
-                "Dante's second skill is not named behind the Hero picker's SKILLS door.");
-            StringAssert.Contains(danteKit.Ultimate.Name.ToUpperInvariant(), copy.ToUpperInvariant(),
-                "Dante's ultimate is not named behind the Hero picker's SKILLS door.");
-            StringAssert.Contains(Core.HeroLoadoutRules.DefaultFor("dante", 1).Description, copy,
-                "The selected power is named but never explained.");
+            Assert.IsFalse(skills.GetComponentsInChildren<RectTransform>(true)
+                .Single(r => r.name == "VariantChoices").gameObject.activeInHierarchy);
+            Assert.IsFalse(skills.GetComponentsInChildren<UnityEngine.UI.Button>(true)
+                .Single(b => b.name == "TumpEquipSkill").gameObject.activeInHierarchy);
             StringAssert.DoesNotContain("SPEED", pickerCopy,
                 "Hero select still exposes Classic SPEED attributes.");
             StringAssert.DoesNotContain("POWER", pickerCopy,
                 "Hero select still exposes Classic POWER attributes.");
-            StringAssert.DoesNotContain("GRIT", copy,
+            StringAssert.DoesNotContain("GRIT", skills.GetComponentsInChildren<UnityEngine.UI.Text>(false)
+                .Single(t => t.name == "WhatItDoes").text,
                 "Hero select still exposes Classic GRIT attributes.");
 
             Capture("character-hero-abilities");

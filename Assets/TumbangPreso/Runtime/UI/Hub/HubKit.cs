@@ -160,22 +160,7 @@ namespace TumbangPreso.UI.Hub
         }
 
         public static Sprite Portrait(string id) =>
-            string.IsNullOrEmpty(id) ? null : Resources.Load<Sprite>("UI/portraits/" + id)
-                                               ?? SpriteFromTexture("UI/portraits/" + id);
-
-        private static readonly System.Collections.Generic.Dictionary<string, Sprite> Made =
-            new System.Collections.Generic.Dictionary<string, Sprite>();
-
-        private static Sprite SpriteFromTexture(string path)
-        {
-            if (Made.TryGetValue(path, out var made) && made != null) return made;
-            var texture = Resources.Load<Texture2D>(path);
-            if (texture == null) return null;
-            made = Sprite.Create(texture, new UnityEngine.Rect(0, 0, texture.width, texture.height), Centre);
-            made.name = "Hub_" + path;
-            Made[path] = made;
-            return made;
-        }
+            string.IsNullOrEmpty(id) ? null : OwnerPortraitArt.Get("UI/portraits/" + id);
 
         // ------------------------------------------------------------------ controls
 

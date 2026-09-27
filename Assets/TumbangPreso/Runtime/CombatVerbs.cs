@@ -37,6 +37,8 @@ namespace TumbangPreso
         private Vector3 _lungeFrom;
 
         private float _slideCooldown;
+        /// <summary>An attacker's Shove / Lunge press already became a slide or a shove (see `Update`).</summary>
+        private bool _shoveLungePressSpent;
         private float _slideActiveLeft;
         private Vector3 _slideFrom;
 
@@ -146,8 +148,25 @@ namespace TumbangPreso
             }
             else
             {
-                StepShove();
-                StepSlide(dt);
+                // ⚠️ ONE BUTTON, SHOVE / LUNGE (the owner's default layout, 2026-09-27: *"Shove /
+                // Lunge - Right Click"*, beside *"Throw / Tag - Left Click"*). The taya lunges on it;
+                // an attacker slides when a loose tsinelas lies in reach ahead (the retrieval slide
+                // this button already carried) and shoves otherwise. The slide asks first because
+                // its predicate is narrow and refuses without spending the press.
+                //
+                // ⚠️⚠️ ONE PRESS, ONE VERB. A press edge stays readable for every Update before the
+                // next physics commit (`PickupPressOwnershipProbe` measures the same thing on the
+                // pickup key), so the frame after a slide started, the slide's own cooldown made it
+                // refuse and the SAME press fell through to a shove: a 25-stamina shove stacked on
+                // every slide (`RetrievalSlideTests.ARefusedSlideHandsBackTheCooldownTheStaminaAndTheCommitment`
+                // read 35 against 60). Whichever verb took the press owns it until the button is up.
+                if (!_motor.Intent.Pressed(Verb.Lunge)) _shoveLungePressSpent = false;
+                else if (!_shoveLungePressSpent)
+                {
+                    float shoveBefore = _shoveCooldown;
+                    if (StepSlide(dt)) _shoveLungePressSpent = true;
+                    else { StepShove(); if (_shoveCooldown > shoveBefore) _shoveLungePressSpent = true; }
+                }
             }
 
             if (_lungeActiveLeft > 0.0f)
@@ -178,11 +197,11 @@ namespace TumbangPreso
         {
             if (_shoveCooldown > 0.0f) return;
 
-            // ⚠️ `IsBusy` NOW ALSO MEANS "A GRAB ALREADY SPENT THIS PRESS". See its own note on
-            // `Carrier`: a pickup and a shove are the same key, and without that word every
-            // successful pickup also fired a shove.
+            // ⚠️ `IsBusy` still refuses a shove mid-charge or mid-channel. The shove left the pickup
+            // key on 2026-09-27 (it is Shove / Lunge now, `Verb.Lunge`), so a pickup can no longer
+            // fire one; before that, `IsBusy` also carried "a grab already spent this press".
             if (_carrier != null && _carrier.IsBusy) return;
-            if (!_motor.Intent.JustPressed(Verb.Grab)) return;
+            if (!_motor.Intent.JustPressed(Verb.Lunge)) return;
 
             // ⚠️⚠️ FATIGUE REFUSES THE SHOVE OUTRIGHT, AND THAT CHECK WAS MISSING.
             // `character_base.gd::_step_shove` is `if _stamina < SHOVE_STAMINA_COST or
@@ -437,9 +456,9 @@ namespace TumbangPreso
         // host"*.
         // -------------------------------------------------------------------
 
-        private void StepSlide(float dt)
+        private bool StepSlide(float dt)
         {
-            if (_slideCooldown > 0.0f) return;
+            if (_slideCooldown > 0.0f) return false;
 
             // ⚠️⚠️ IT IS AN EDGE, NOT A HOLD, AND THAT IS THE DIFFERENCE FROM THE LUNGE. The taya
             // charges because the charge is *"exactly long enough for them to leave"*, it is
@@ -447,7 +466,7 @@ namespace TumbangPreso
             // is not going anywhere, so a wind-up would only tell the taya what is coming without
             // asking the attacker for anything in return. The commitment is spent AFTER the press
             // instead of before it.
-            if (!_motor.Intent.JustPressed(Verb.Lunge)) return;
+            if (!_motor.Intent.JustPressed(Verb.Lunge)) return false;
 
             // ⚠⚠ THE PREDICATE IS THE HOST'S OWN, ASKED FROM THIS BODY'S CURRENT POSE. Every
             // reason a slide may not start lives in one method now (`SlideMayStartFrom`), so the
@@ -463,11 +482,12 @@ namespace TumbangPreso
             // too. `HostResolveShove` opens with `_motor.Stamina.IsFatigued` for the same reason:
             // a bar that has bottomed out is the one moment the game already says you have
             // overcommitted, and letting a commitment verb through it would make the bar advisory.
-            if (!SlideMayStartFrom(transform.position, transform.forward, out _)) return;
+            if (!SlideMayStartFrom(transform.position, transform.forward, out _)) return false;
 
-            if (!_motor.Stamina.Spend(Balance.SlideStaminaCost)) return;
+            if (!_motor.Stamina.Spend(Balance.SlideStaminaCost)) return false;
 
             ReleaseSlide();
+            return true;
         }
 
         /// <summary>
@@ -877,7 +897,7 @@ namespace TumbangPreso
         // -------------------------------------------------------------------
 
         /// <summary>Gives back what a verb the host refused had already charged this peer.</summary>
-        public void RollBackRefusedVerb(Net.MatchRpc.DeniedVerb verb)
+        public void RollBackRefusedVerb(Net.MatchRpc.DeniedVerb verb, bool refundResources = true)
         {
             switch (verb)
             {
@@ -904,13 +924,13 @@ namespace TumbangPreso
                     // shove is the sprint it costs, so a refusal that returned only the cooldown
                     // would still have taken the escape distance and the player would never know
                     // why they could not get out of the box.
-                    _motor.Stamina.Refund(Balance.ShoveStaminaCost);
+                    if (refundResources) _motor.Stamina.Refund(Balance.ShoveStaminaCost);
                     break;
 
                 case Net.MatchRpc.DeniedVerb.Slide:
                     _slideCooldown = 0.0f;
                     _slideActiveLeft = 0.0f;
-                    _motor.Stamina.Refund(Balance.SlideStaminaCost);
+                    if (refundResources) _motor.Stamina.Refund(Balance.SlideStaminaCost);
 
                     // ⚠️⚠️ THE COMMITMENT IS RETURNED TOO, AND IT IS THE ONE A PLAYER WOULD
                     // ACTUALLY NOTICE. The other two refusals hand back a cooldown and a bar;

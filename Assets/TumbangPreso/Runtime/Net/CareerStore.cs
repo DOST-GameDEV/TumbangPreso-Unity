@@ -380,10 +380,13 @@ namespace TumbangPreso.Net
         {
             if (record == null || string.IsNullOrWhiteSpace(record.MatchId)) return;
 
-            // ⚠️ PLAYING TO THE WHISTLE IS WHAT CLEARS THE FLAG, and it is cleared here
-            // rather than in `Adopt` so that a spectator, who has no line and returns early below,
-            // does not clear a flag it never set.
-            _cache.InMatchSinceUtc = "";
+            // Practice and training can show an immediate result, but do not enter career history
+            // or the upload queue that the server wallet settles from.
+            if (!record.Online)
+            {
+                LastAward = null;
+                return;
+            }
 
             string me = LocalPlayerId;
             var line = MatchRecordRules.LineFor(record, me);
@@ -392,6 +395,10 @@ namespace TumbangPreso.Net
             // referee has no line in the record, so there is nothing to add to a career and
             // nothing to submit.
             if (line == null) return;
+
+            // Playing to the whistle clears this player's abandon marker. A spectator has no
+            // line and cannot clear a marker for a match they never played.
+            _cache.InMatchSinceUtc = "";
 
             bool applied = ProfileRules.Apply(_cache.Profile, record, me, out XpAward award);
             LastAward = award;

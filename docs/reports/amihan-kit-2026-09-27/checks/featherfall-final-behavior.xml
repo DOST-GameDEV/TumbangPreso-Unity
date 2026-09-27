@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Passed" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 01:14:16Z" end-time="2026-09-27 01:15:22Z" duration="66.4490712">
+  <test-suite type="TestSuite" id="1886" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="700" result="Passed" start-time="2026-09-27 01:14:16Z" end-time="2026-09-27 01:15:22Z" duration="66.449071" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1880" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-27/read-agents-md-too-opus-5/work/stability-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="700" result="Passed" start-time="2026-09-27 01:14:16Z" end-time="2026-09-27 01:15:22Z" duration="66.442364" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34480" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1881" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="700" result="Passed" start-time="2026-09-27 01:14:16Z" end-time="2026-09-27 01:15:22Z" duration="66.440937" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1882" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="700" result="Passed" start-time="2026-09-27 01:14:16Z" end-time="2026-09-27 01:15:22Z" duration="66.440027" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1047" name="AmihanKitPlayProbe" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-09-27 01:14:16Z" end-time="2026-09-27 01:15:21Z" duration="64.749005" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1057" name="FeatherfallEarlyDescentResetAndReplacementCleanTheFlight" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FeatherfallEarlyDescentResetAndReplacementCleanTheFlight" methodname="FeatherfallEarlyDescentResetAndReplacementCleanTheFlight" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="577663688" result="Passed" start-time="2026-09-27 01:14:16Z" end-time="2026-09-27 01:14:27Z" duration="11.406890" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1052" name="FeatherfallHardStatusesKeepTheMovementEpisodeAfterLandingAndExpiry" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FeatherfallHardStatusesKeepTheMovementEpisodeAfterLandingAndExpiry" methodname="FeatherfallHardStatusesKeepTheMovementEpisodeAfterLandingAndExpiry" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="102803186" result="Passed" start-time="2026-09-27 01:14:27Z" end-time="2026-09-27 01:14:33Z" duration="5.513774" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1056" name="FeatherfallMovesThrowsAndSettlesAtGroundContact" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FeatherfallMovesThrowsAndSettlesAtGroundContact" methodname="FeatherfallMovesThrowsAndSettlesAtGroundContact" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="1804155084" result="Passed" start-time="2026-09-27 01:14:33Z" end-time="2026-09-27 01:14:44Z" duration="11.128176" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1051" name="FeatherfallReplicaRejectsOldEpisodesEvenWhenAllAirbornePacketsAreLost" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FeatherfallReplicaRejectsOldEpisodesEvenWhenAllAirbornePacketsAreLost" methodname="FeatherfallReplicaRejectsOldEpisodesEvenWhenAllAirbornePacketsAreLost" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="247820404" result="Passed" start-time="2026-09-27 01:14:44Z" end-time="2026-09-27 01:14:49Z" duration="4.836493" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1050" name="FeatherfallRestoreKeepsAbsoluteHeightAndThePausedClock" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FeatherfallRestoreKeepsAbsoluteHeightAndThePausedClock" methodname="FeatherfallRestoreKeepsAbsoluteHeightAndThePausedClock" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="149720982" result="Passed" start-time="2026-09-27 01:14:49Z" end-time="2026-09-27 01:14:54Z" duration="5.285274" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1053" name="FeatherfallSnapshotRefreshCoalescesProgressAndRejectsObsoleteTickets" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FeatherfallSnapshotRefreshCoalescesProgressAndRejectsObsoleteTickets" methodname="FeatherfallSnapshotRefreshCoalescesProgressAndRejectsObsoleteTickets" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="1727513339" result="Passed" start-time="2026-09-27 01:14:54Z" end-time="2026-09-27 01:14:59Z" duration="4.820441" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1049" name="FeatherfallTakeoffReceiptsCannotResurrectOrUnwindNewerInput" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FeatherfallTakeoffReceiptsCannotResurrectOrUnwindNewerInput" methodname="FeatherfallTakeoffReceiptsCannotResurrectOrUnwindNewerInput" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="558426775" result="Passed" start-time="2026-09-27 01:14:59Z" end-time="2026-09-27 01:15:04Z" duration="4.838008" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1055" name="FeatherfallTimedKitHonoursGenerationRequestsAndKitIdentity" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FeatherfallTimedKitHonoursGenerationRequestsAndKitIdentity" methodname="FeatherfallTimedKitHonoursGenerationRequestsAndKitIdentity" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="1616190542" result="Passed" start-time="2026-09-27 01:15:04Z" end-time="2026-09-27 01:15:08Z" duration="4.829230" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1054" name="FeatherfallUnknownSwimmingOwnerHydratesIdentityWithoutRevivingMotion" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FeatherfallUnknownSwimmingOwnerHydratesIdentityWithoutRevivingMotion" methodname="FeatherfallUnknownSwimmingOwnerHydratesIdentityWithoutRevivingMotion" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="1580836098" result="Passed" start-time="2026-09-27 01:15:08Z" end-time="2026-09-27 01:15:21Z" duration="12.074840" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1682" name="SessionRestartTests" fullname="TumbangPreso.PlayTests.SessionRestartTests" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-09-27 01:15:21Z" end-time="2026-09-27 01:15:22Z" duration="1.535052" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1683" name="SnapshotRequestsCoalesceOnTheConnectedHostAndCancelOnDisable" fullname="TumbangPreso.PlayTests.SessionRestartTests.SnapshotRequestsCoalesceOnTheConnectedHostAndCancelOnDisable" methodname="SnapshotRequestsCoalesceOnTheConnectedHostAndCancelOnDisable" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="171546000" result="Passed" start-time="2026-09-27 01:15:21Z" end-time="2026-09-27 01:15:22Z" duration="1.528736" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18689, join code RH9J
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

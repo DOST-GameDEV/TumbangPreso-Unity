@@ -366,9 +366,7 @@ namespace TumbangPreso.UI
             }
 
             var career = GameServices.Career;
-            string queued = career != null && career.QueuedCount > 0
-                ? "  ·  SAVED ON THIS MACHINE, WILL UPLOAD"
-                : "";
+            string queued = UploadCopyFor(record, career?.QueuedCount ?? 0);
 
             _lastLine = line; _lastRecord = record;
             ShowProgression(career?.LastAward, career?.Profile);
@@ -383,6 +381,11 @@ namespace TumbangPreso.UI
             _lastLine = line;
             _lastRecord = record;
         }
+
+        /// <summary>An offline match never inherits the queue's upload notice.</summary>
+        public static string UploadCopyFor(Core.MatchRecord record, int queuedCount)
+            => record != null && record.Online && queuedCount > 0
+                ? "  ·  SAVED ON THIS MACHINE, WILL UPLOAD" : "";
 
         private Core.PlayerMatchStats _lastLine;
         private Core.MatchRecord _lastRecord;

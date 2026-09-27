@@ -1,5 +1,10 @@
 # Current owner revision: PC loadout composition
 
+**Reference status,2026-09-27:** these are preserved dated UI correction notes,
+not a second work queue or evidence that a job is still running. Current status is
+in [TODO](TODO.md) and the [ledger](ACTIVE_REWORK_LEDGER.md); use current source and
+newer receipts before redoing any item. The original decisions remain below.
+
 **Controller styling reopened:** owner now allows redesign of controller settings
 and map, keeping the controller central and its lines/core mapping intact. Dark
 settings theme and current typography now have focused passing evidence; native

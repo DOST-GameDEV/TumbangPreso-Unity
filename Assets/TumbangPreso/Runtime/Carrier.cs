@@ -8,17 +8,17 @@ namespace TumbangPreso
     /// <summary>
     /// Holding, charging, throwing, and the lata reset channel.
     ///
-    /// ⚠️⚠️ E DOES THREE JOBS AND PICKS BY WHAT IS IN FRONT OF YOU. Rather than inventing two
-    /// more keybinds for a game whose entire brief is "simpler", the press resolves against
-    /// context, and THIS COMPONENT GETS FIRST REFUSAL. Only a press that neither a pickup nor
-    /// a channel consumed falls through to the shove or the lunge.
+    /// ⚠️⚠️ THE OWNER'S LAYOUT, 2026-09-27: INTERACT / USE (F) PICKS UP AND RESETS; SHOVE / LUNGE
+    /// (right click) SHOVES AND LUNGES. Until then one key did all four and this component took
+    /// first refusal so a pickup never also shoved; that is why `IsBusy` and the press-consumed
+    /// flag below exist. The shove and the lunge now live on their own button (`CombatVerbs`).
     ///
-    /// | press            | condition                                   | result           |
-    /// |------------------|---------------------------------------------|------------------|
-    /// | E tap            | Attacker, loose slipper within PickupRadius  | pick up          |
-    /// | E tap            | Attacker, nothing grabbable                  | shove, instantly |
-    /// | E hold           | Defender, in the lata's ring, lata down      | reset the lata   |
-    /// | E hold 0.5 s     | Defender, anything else                      | lunge            |
+    /// | press               | condition                                   | result           |
+    /// |---------------------|---------------------------------------------|------------------|
+    /// | F tap               | Attacker, loose slipper within PickupRadius  | pick up          |
+    /// | F hold              | Defender, in the lata's ring, lata down      | reset the lata   |
+    /// | right click         | Attacker                                    | shove (or slide) |
+    /// | right click hold    | Defender                                    | lunge            |
     ///
     /// ⚠️ WHILE THE CHANNEL IS RUNNING THE LUNGE CHARGE IS CANCELLED, so resetting the can can
     /// never fire a lunge out of it. That is the one interaction between the two that a player

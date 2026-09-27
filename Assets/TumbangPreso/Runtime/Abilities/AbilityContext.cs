@@ -13,6 +13,8 @@ namespace TumbangPreso.Abilities
         public CombatVerbs Verbs { get; }
         public RoundDirector Round => GameServices.Round;
         public MatchDirector Match => GameServices.Match;
+        // Only accepted network playback sets this, never a request or local input.
+        internal bool IsApprovedReplay { get; }
 
         public bool HasVariant(string variantId)
             => Motor != null && Motor.AbilitySystem != null
@@ -74,6 +76,10 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public AbilityContext(CharacterMotor motor, Carrier carrier, CombatVerbs verbs,
                               Vector3 position, Vector3 forward, Vector3 aimPoint)
+            : this(motor, carrier, verbs, position, forward, aimPoint, false) { }
+
+        internal AbilityContext(CharacterMotor motor, Carrier carrier, CombatVerbs verbs,
+                                Vector3 position, Vector3 forward, Vector3 aimPoint, bool approvedReplay)
             : this(motor, carrier, verbs)
         {
             forward.y = 0.0f;
@@ -84,6 +90,10 @@ namespace TumbangPreso.Abilities
             _forward = forward.normalized;
             _hasAimPoint = true;
             _aimPoint = aimPoint;
+            IsApprovedReplay = approvedReplay;
         }
+
+        internal AbilityContext Capture()
+            => new AbilityContext(Motor, Carrier, Verbs, Position, Forward, AimPoint, IsApprovedReplay);
     }
 }

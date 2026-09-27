@@ -30,9 +30,12 @@ namespace TumbangPreso.Abilities
     /// score is behind `NetAuthority.ShouldResolve()` (`tools/audit_ability_authority.py`); a peer
     /// moves only its own body (the vine reel), as the other kits do.
     /// </summary>
-    public sealed class PaeteHeroKit : HeroKit
+    public sealed class PaeteHeroKit : HeroKit, IWorldEffectBinding
     {
         public override float UltimateCost => PaeteRules.SentryCost;
+
+        public void RebindWorldEffects(CharacterMotor motor)
+            => ((PunlangTsinelas)AttackingSkill).RestorePlantBinding(motor);
 
         public PaeteHeroKit() : base("paete", "PAETE")
         {
@@ -46,6 +49,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class KapitBaging : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private CharacterMotor _caster;
             private Vector3 _anchor;
             private float _elapsed;
@@ -115,9 +119,9 @@ namespace TumbangPreso.Abilities
 
         private sealed class PunlangTsinelas : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             // The seedling is a world object: the owner waits for the host before planting it, as
             // Cheska's barricade and Amihan's gale do.
-            public override bool DefersPredictedEffect => true;
 
             public PunlangTsinelas()
                 : base("paete_skill2", "BAKYA BLOOM",
@@ -140,10 +144,24 @@ namespace TumbangPreso.Abilities
             private const string PlantAction = "hero-paete-sprout", CommandAction = "hero-paete-command";
 
             private int _ownerSlot = -1;
+            private PaetePlant _spawned;
+
+            protected override void OnAcceptedCastEvent(long eventId) => _spawned?.AdoptInstance(eventId);
+
+            public void RestorePlantBinding(CharacterMotor motor)
+            {
+                if (motor == null || motor.IsDefender || motor.AbilitySystem?.AwaitingSkillEffect(this) == true) return;
+                _ownerSlot = motor.PlayerSlot;
+                var plant = PaetePlant.OwnedBy(_ownerSlot);
+                _spawned = plant;
+                if (plant != null) AdoptAcceptedCastEvent(plant.InstanceId, false);
+                RestoreLiveClock(plant != null ? Mathf.Max(0, PaeteRules.PlantLifeSeconds - plant.Age) : 0);
+            }
 
             public override void Activate(AbilityContext ctx)
             {
                 CastAction = PlantAction; ViewmodelAction = "seed-toss"; CastCue = "sfx_cast_paete_sprout";
+                _spawned = null;
                 if (ctx?.Motor != null) _ownerSlot = ctx.Motor.PlayerSlot;
                 base.Activate(ctx);
             }
@@ -168,7 +186,8 @@ namespace TumbangPreso.Abilities
                 if (ctx?.Motor == null) return;
                 // Outside the taya's box only (owner, 2026-09-26: *"also make paete's E only placeable outside box"*).
                 Vector3 at = PaeteVine.PlantTarget(ctx.Position, ctx.Forward, ctx.AimPoint);
-                PaetePlant.Spawn(ctx.Position + Vector3.up * 1.2f, at, ctx.Motor.PlayerSlot);
+                _spawned = PaetePlant.Spawn(ctx.Position + Vector3.up * 1.2f, at, ctx.Motor.PlayerSlot);
+                _spawned.AdoptInstance(AcceptedCastEvent);
             }
 
             public override void Reactivate(AbilityContext ctx)
@@ -177,7 +196,7 @@ namespace TumbangPreso.Abilities
                 var plant = ctx?.Motor != null ? PaetePlant.OwnedBy(ctx.Motor.PlayerSlot) : null;
                 if (plant == null) { EndEarly(ctx); return; }
                 CastAction = CommandAction; ViewmodelAction = "seed-command"; CastCue = "sfx_cast_paete_command";
-                plant.Fire(ctx.AimPoint);
+                plant.Fire(ctx.AimPoint, ctx.IsApprovedReplay);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
@@ -189,7 +208,11 @@ namespace TumbangPreso.Abilities
 
             public override void Reset()
             {
-                foreach (var p in PaetePlant.Live.ToArray()) if (p != null) Object.Destroy(p.gameObject);
+                foreach (var p in PaetePlant.Live.ToArray())
+                    if (p != null && p.OwnerSlot == _ownerSlot)
+                    { p.gameObject.SetActive(false); Object.Destroy(p.gameObject); }
+                _ownerSlot = -1;
+                _spawned = null;
                 base.Reset();
             }
         }
@@ -198,7 +221,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Bawi : HeroAbility
         {
-            public override bool DefersPredictedEffect => true;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
 
             public Bawi()
                 : base("paete_skill2d", "THORN HARVEST",
@@ -233,6 +256,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class YakapNgMakiling : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             public YakapNgMakiling()
                 : base("paete_ultimate", "MAKILING'S EMBRACE",
                        "Place a guardian tree. It pulls everyone within 9 m into roots; they can still throw. Hold Interact for 7 s to escape.",

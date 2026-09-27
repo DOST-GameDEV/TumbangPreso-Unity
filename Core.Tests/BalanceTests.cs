@@ -179,6 +179,34 @@ namespace TumbangPreso.Core.Tests
             Assert.False(s.IsSprinting);
         }
 
+        [Fact]
+        public void NetworkStaminaCorrectionPreservesAnExistingSprintBelowTheStartFloor()
+        {
+            var stamina = new Stamina();
+            stamina.Step(.1f, moving: true, sprintHeld: true);
+            stamina.ApplyNetworkSnapshot(Balance.StaminaSprintFloor - 1, 0, 0);
+            Assert.True(stamina.IsSprinting);
+            Assert.Equal(Balance.SprintScale, stamina.Step(.01f, moving: true, sprintHeld: true));
+            stamina.Step(.01f, moving: true, sprintHeld: false);
+            stamina.ApplyNetworkSnapshot(Balance.StaminaSprintFloor - 1, 0, 0);
+            Assert.Equal(1f, stamina.Step(.01f, moving: true, sprintHeld: true));
+            Assert.False(stamina.IsSprinting);
+        }
+
+        [Fact]
+        public void NetworkStaminaEmptyOrFatiguedCorrectionStillEndsSprint()
+        {
+            var stamina = new Stamina();
+            stamina.Step(.1f, moving: true, sprintHeld: true);
+            stamina.ApplyNetworkSnapshot(0, 0, Balance.FatigueTime);
+            Assert.False(stamina.IsSprinting); Assert.True(stamina.IsFatigued);
+            stamina.ApplyNetworkSnapshot(Balance.StaminaMax, 0, 0);
+            Assert.False(stamina.IsSprinting);
+            stamina.Step(.1f, moving: true, sprintHeld: true);
+            stamina.ApplyNetworkSnapshot(0, 0, 0);
+            Assert.False(stamina.IsSprinting);
+        }
+
         /// <summary>
         /// ⚠️⚠️ A TAG CLEANSES. The moment an attacker is most likely to be tagged is the
         /// moment they are most likely to be empty, so the old behaviour stacked a 5 s

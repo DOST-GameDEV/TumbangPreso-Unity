@@ -32,6 +32,8 @@ namespace TumbangPreso.UI
         private Slipper[] _slippers;
         private float _scanAt;
         private float _scoreAt;
+        private readonly int[] _lastScoreValues = new int[4];
+        private readonly bool[] _hasScoreValue = new bool[4];
         private CameraSystem.SpectatorCamera _spectatorCamera;
         public bool ReadyWindow;
 
@@ -257,7 +259,14 @@ namespace TumbangPreso.UI
                 int slot = i; _scoreRowSeats[i] = slot; var actor = GameServices.Round.PlayerAt(slot);
                 _scoreRows[i].gameObject.SetActive(actor != null); if (actor == null) continue;
                 _names[i].text = SeatLabel.WithIdentity(slot);
-                _names[i].color = PlayerIdentity.Colour(slot); _scores[i].text = match.ScoreFor(slot).ToString();
+                _names[i].color = PlayerIdentity.Colour(slot);
+                int score = match.ScoreFor(slot);
+                if (!_hasScoreValue[i] || _lastScoreValues[i] != score)
+                {
+                    _hasScoreValue[i] = true;
+                    _lastScoreValues[i] = score;
+                    PaintScoreValue(_scores[i], score);
+                }
                 bool defender = slot == match.DefenderSlot;
                 string state = defender ? "Defender" : "";
                 if (!spectating && local != null && slot == local.PlayerSlot) state = string.IsNullOrEmpty(state) ? "You" : "You · Defender";

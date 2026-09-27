@@ -1,0 +1,91 @@
+{
+  "base": "b394c7ac319bef20b6204804809f1ec51c92cb05",
+  "native": {
+    "result": "Passed",
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "duration": "40.1732623",
+    "unity": "6000.5.8f1",
+    "graphics": "D3D11"
+  },
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.MatchLoadingReadinessTests.CustomMapSwitchesReusePreparedScenesAndLooksAfterTheLoadingCurtain",
+      "result": "Passed",
+      "duration": "40.131460",
+      "output": "[Flow] unknown map 'MatchSetup', falling back to 'Eskinita'.\n[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.\n[Env] repainted 371 of 1117 renderers, 161 with a roof variant.\n[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.\n[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.\n[Env] repainted 524 of 867 renderers, 108 with a roof variant.\n[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.\n[Env] repainted 325 of 2847 renderers, 0 with a roof variant.\n[NearFade] 3402 occluder nodes matched, 1648 renderers moved onto TumbangPreso/NearFade.\n[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.\n[Env] repainted 0 of 297 renderers, 0 with a roof variant.\n[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.\n[Env] repainted 0 of 232 renderers, 0 with a roof variant.\n[NearFade] 'TumbangPreso/BlockyCloud' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.\n[NearFade] 'TumbangPreso/BlockyCloud' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.\n[NearFade] 'TumbangPreso/BlockyCloud' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.\n[NearFade] 7866 occluder nodes matched, 83 renderers moved onto TumbangPreso/NearFade.\n[HubLoading] custom previews ready after 38.52 s.\n[CustomMapSwitch] pass=0 map=Eskinita selectMs=0.090\n[CustomMapSwitch] pass=0 map=BayanPlaza selectMs=1.642\n[CustomMapSwitch] pass=0 map=IlalimNgTulay selectMs=3.300\n[CustomMapSwitch] pass=0 map=SaBubong selectMs=3.328\n[CustomMapSwitch] pass=0 map=Lagoon selectMs=8.241\n[CustomMapSwitch] pass=1 map=Eskinita selectMs=3.772\n[CustomMapSwitch] pass=1 map=BayanPlaza selectMs=1.363\n[CustomMapSwitch] pass=1 map=IlalimNgTulay selectMs=3.470\n[CustomMapSwitch] pass=1 map=SaBubong selectMs=3.256\n[CustomMapSwitch] pass=1 map=Lagoon selectMs=7.156\nSaving results to: ISOLATED_PROFILE\\TestResults.xml\n"
+    }
+  ],
+  "originalXmlSha256": "1BE34BAA9BF0336386C260E20DB8959E740A769480165B1463E2B13ABA49751D",
+  "frozenInputs": 210,
+  "nativeInputChurn": 0,
+  "minimumFreeBytes": 6074322944,
+  "profile": "Guard restored two named-profile files and three shared Editor input preferences",
+  "nativeFiles": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.OwnerPainted.cs",
+      "sha256": "95A0E34E860FCE6A922AA0940D8373E81C19874759DA00A28F95E8EA67AAF16B"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubLoading.cs",
+      "sha256": "CBB4F489E19E1291300E7C13C688A362886028C884A87830F30805627FD5DBFF"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/MapPreviewSurface.cs",
+      "sha256": "6F3D41D874D9D5B1B22D450273A98D035038456BC95E579359BB9BA566EFB076"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/WorldLookPresentation.cs",
+      "sha256": "7C406C44774E5F0A9AD6D8F8CDC7C71A16F18A86B1681A9DA97C408D35A821B7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/MatchLoadingReadinessTests.cs",
+      "sha256": "1C721556DF48AFE8DFD1F8B208DDC237AC61666031D2B6AD99AA21CCA16C3924"
+    }
+  ],
+  "postNativeChanges": {
+    "description": "Avoid menu heading lookup of MatchSetup as a map; skip redundant splash scene load/unload when the hub prepares retained previews.",
+    "runtimeCompilerExit": 0,
+    "compilerLogSha256": "381F1252057E1DBF0E18841A758BDFD2F75A4E6A88151DDD9E74A7AE0ADC7AE6",
+    "files": [
+      {
+        "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubLoading.cs",
+        "sha256": "8B153D4C91AD4124763CB1922AD421375D3CD2E3CCA0271F6A636306500DF207"
+      },
+      {
+        "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+        "sha256": "0B0D78E6774262BF8A3521A38CB99961C29C196755890020E6E0E79F1CF89E40"
+      }
+    ]
+  },
+  "previewCaptures": [
+    {
+      "name": "BayanPlaza.png",
+      "sha256": "8F6BDBED5BAE51BB6E65A3BACE08E5B87F422221F412BA3A49EDAABFBA15092E",
+      "visuallyInspected": true
+    },
+    {
+      "name": "Eskinita.png",
+      "sha256": "3382B2E8DAC0A1A941BE5F87BFB97697A31D7DFCA7EF516A9A29715E311B389A",
+      "visuallyInspected": true
+    },
+    {
+      "name": "IlalimNgTulay.png",
+      "sha256": "5F62F36F77D5FD17B03E4B953905D2D5C09D50355A24215BE6C194952C5E9CAD",
+      "visuallyInspected": true
+    },
+    {
+      "name": "Lagoon.png",
+      "sha256": "4488F2F5947BBB42CFB490F7D43A1555703E098A6698B8DC8ADDEFD1414BBB19",
+      "visuallyInspected": true
+    },
+    {
+      "name": "SaBubong.png",
+      "sha256": "17B5CD236335AE050903DB95D1943F03047D7ACABF0584FA4316D651D0EBB7AC",
+      "visuallyInspected": true
+    }
+  ],
+  "limits": "Editor custom-selection CPU times, cached scene/look identity and native view pixels. No player frame/GPU/peak-memory measurement or fresh player build. Full boot-to-hub elapsed time unmeasured."
+}

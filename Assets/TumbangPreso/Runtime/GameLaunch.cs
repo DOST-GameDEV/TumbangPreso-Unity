@@ -130,6 +130,7 @@ namespace TumbangPreso
         /// is cleared on every ordinary launch reset.
         /// </summary>
         public static bool GuidedTutorial;
+        public static bool TrainingRange;
 
         public static void ClearSeating() => SeatTokens.Clear();
 
@@ -140,6 +141,7 @@ namespace TumbangPreso
             PendingStatusMessage = "";
             Spectator = false;
             GuidedTutorial = false;
+            TrainingRange = false;
 
             // ⚠️ THE SANDBOX SWITCH IS OFF ON EVERY LAUNCH, WHICH IS ABOUT THE BUTTON AND NOT
             // ABOUT THE RULE. `PracticeSandbox.Active` already ands with "this session is not

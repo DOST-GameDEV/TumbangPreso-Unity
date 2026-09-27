@@ -1,0 +1,38 @@
+{
+  "base": "5d18011e",
+  "protocol": 64,
+  "method": "Direct managed invocation of the two compiled NUnit contract methods; no Unity process/native API/connection approval run",
+  "result": "PASS",
+  "cases": [
+    "SkillCompatibilityIgnoresCosmeticsLiveTimersAndCurrentRole",
+    "SkillCompatibilityChangesWithRulesDeliveryIdentityAndSharedTiming"
+  ],
+  "compiler": "Runtime, Tests and PlayTests exit0",
+  "runtimeAssemblySha256": "162A1F6B9B8EA98257DE17612A29E68473FA54538B3563B9BC5FBA3FC142097F",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "BB917EDAF3E6F920B1D5910375C198DA03FE36DEF91E4A08E9845B89E6EB26C5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "7E8AD5094ED9861DE8002BCBF1036DFD26945EBF083DE4639BFE4681FCE998B7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "CE2D4C0430677C21A2C756D5F6F75B95E71535B0CFA0F46141D549A4637A62B5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/InputMapAndAbilityTests.cs",
+      "sha256": "1B87F24DF206B19D9B13A0EEDF7FB39E82997C37812411A587C804E76D563C8F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/SkillContractFingerprint.cs",
+      "sha256": "51BDE0A99E22E9CAD1D19F584631CBA0E29D541F65FB30973BD55FF15D731B17"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/SkillContractFingerprint.cs.meta",
+      "sha256": "5C6889E244173C3ABBB42E2B594F0CAEB35A2E6AEAA18922A73DF1F36877E9CD"
+    }
+  ]
+}

@@ -119,6 +119,9 @@ namespace TumbangPreso.UI
 
         public static Sprite Sprite(string resource)
         {
+            if (resource != null && (resource.StartsWith("UI/portraits/", System.StringComparison.Ordinal)
+                || resource.StartsWith("UI/mode-cards/", System.StringComparison.Ordinal)))
+                return OwnerPortraitArt.Get(resource);
             if (Sprites.TryGetValue(resource, out var known) && known != null) return known;
             var sprite = Resources.Load<Sprite>(resource);
             if (sprite == null)

@@ -1044,7 +1044,7 @@ namespace TumbangPreso.UI
                 case "sean": return "FLAME RUSH  ·  IGNITION CANNON  ·  SUPERNOVA";
                 case "zack": return "BOLT SPRINT  ·  MAGNET  ·  THUNDERSTRIKE";
                 case "nemu": return "PHANTOM VEIL  ·  ASTRAL HIJACK  ·  DEVOURING SEANCE";
-                default: return "HEX  ·  SHADOW BLINK  ·  GRAND COVEN";
+                default: return "VANISHING ACT  ·  MANIKA MISCHIEF  ·  SPOTLIGHT PIN  ·  OMEN";
             }
         }
 

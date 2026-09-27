@@ -104,6 +104,49 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void OfflinePracticeRecordsCannotPayOrAdvanceTasks()
+        {
+            var played = new DateTime(2026, 9, 27, 12, 0, 0, DateTimeKind.Utc);
+            int day = EconomyRules.DayOf(played);
+            MatchRecord Record(string id, string mode, bool online, bool ranked = false) =>
+                new MatchRecord
+                {
+                    MatchId = id, Mode = mode, Online = online, Ranked = ranked,
+                    PlayedUtc = played.ToString("O"), Rounds = 8,
+                    Players = new[] { new PlayerMatchStats
+                    {
+                        Slot = 0, PlayerId = "player", IsBot = false, Placement = 1,
+                        ActiveRounds = 8, Throws = 5, Knockdowns = 1,
+                    } },
+                };
+
+            Assert.False(EconomyRules.TryRead(Record("practice-classic", "Classic", false), "player", out _));
+            Assert.False(EconomyRules.TryRead(Record("practice-hero", "HeroStrike", false), "player", out _));
+
+            var eligible = new List<EarnedMatch>();
+            foreach (var record in new[]
+            {
+                Record("casual-relay", "Classic", true),
+                Record("ranked-relay", "HeroStrike", true, ranked: true),
+                Record("single-human-lan", "Classic", true),
+            })
+            {
+                Assert.True(EconomyRules.TryRead(record, "player", out var earned));
+                eligible.Add(earned);
+            }
+
+            var wallet = EconomyRules.Create(null, "");
+            int paid = EconomyRules.Settle(wallet, eligible, day);
+            Assert.Equal(3 * (EconomyRules.CompletionPay + EconomyRules.PlacementPay[0]), paid);
+            Assert.Equal(3, wallet.PaidMatchIds.Count);
+            Assert.DoesNotContain("practice-classic", wallet.PaidMatchIds);
+            Assert.DoesNotContain("practice-hero", wallet.PaidMatchIds);
+            var matchesTask = new TaskDef("test", TaskPeriod.Daily, TaskStat.Matches, 10, 1, "{0}");
+            Assert.Equal(3, EconomyRules.Progress(matchesTask, eligible, day));
+            Assert.Equal(0, EconomyRules.Settle(wallet, eligible, day));
+        }
+
+        [Fact]
         public void TheDailyCapLimitsMoneyRatherThanDelayingIt()
         {
             var wallet = EconomyRules.Create(null, "");

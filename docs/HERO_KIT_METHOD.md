@@ -1,5 +1,15 @@
 # How a hero kit is built here: Paete, the worked example
 
+**Current integration,2026-09-27:** this remains the live creative method,not a
+task assignment. Start with [AGENTS](../AGENTS.md),then use
+[SKILL_NETWORK_CONTRACT](SKILL_NETWORK_CONTRACT.md) for authority,body-held aim,
+cast delivery and ability-owned recovery. Cosmetic/model/clip/effect swaps use
+those hooks without a new RPC or protocol bump. Genuinely new gameplay state or
+wire semantics still needs an explicit contract and matching clients. Do not
+hardcode a reworked hero into transport merely because Paete's original work did.
+Use [TESTING](TESTING.md) for focused checks; do not repeat full gates/films after
+every small edit. All original worked steps,beat tables and review history remain below.
+
 Owner, 2026-09-27: *"i want u to record in a docs somewhere too how this entire character (paete) shit was build all abiltiies sfx
 and requirements and ult cutscene and refinements so that it can be used as inspiration ... to make the abilities for other
 charcters"*, and on Paete himself, 2026-09-26: *"I WANT THIS TO BE THE BASELINE QUALITY OF EVERYTHING ELSE MOVING FORWARD"*.
@@ -8,7 +18,7 @@ charcters"*, and on Paete himself, 2026-09-26: *"I WANT THIS TO BE THE BASELINE 
 cutscene), including a less capable model working alone. It is written as steps to follow, in order, with the reason for each
 step and the mistake that step prevents. Every reason is something that actually went wrong on Paete or was said by the owner.
 
-**How to use it.** Read `CLAUDE.md`, `docs/VISION.md` and `docs/TODO.md` first (they are the rules; this is a method). Then read
+**How to use it.** Read `AGENTS.md`, `docs/VISION.md` and `docs/TODO.md` first (they are the rules; this is a method). Then read
 this whole file once. Then, for your hero, copy the checklist in section 9 into the hero's TODO entry and work down it. When a step
 here disagrees with the code, the code is current and this file is out of date: fix this file in the same commit.
 
@@ -380,6 +390,13 @@ The general lessons under those rows:
   and keep the lens at least 1.8 m to the side of every path (Paete's films r20 and r21 put a flying prisoner's head through the lens twice).
 - **A shot whose eye is computed at runtime still goes through `UltimatePhaseView.ChooseShot`**: it is judged at its end time, and a blocked
   end mirrors or pushes in the whole shot. Keep the computed settle clear, or accept the mirror.
+- **Light "from within" is a hole, never a ridge** (Phaister's doll, 2026-09-27: *"why does it pop out its the opposite it should
+  look like its from withhin"*, *"why do u pop out his features"*). A glowing strip laid on a surface reads as paint; torn lips raised
+  round it read as a neon tube standing OUT. Cut the opening in: a flat mouth on the surface and a lit cup sunk below it, drawn
+  through the mouth (`Shaders/SoulGlow`: stencil mask, open, inside, close), with the light spilling out onto the surface round it.
+- **A texture must speak the cast's language** (same doll: *"make it feel like its part of teh game and not ultra realistic"*). A
+  simulated photographic weave on flat-coloured blocks reads as a real object pasted onto a toy; offer flat-toned stylised options
+  side by side (`PhaisterDollReview`'s `texture-options.png`) and let the owner pick.
 - **Only the committed aim knows who will be hit.** Pass `UltimateCommit.Aim` into the scene (`HeroIntroductionScene`'s `aim` parameter) and
   run the ability's own targeting rule on it; the caster's intent may be stale.
 
@@ -391,7 +408,7 @@ The general lessons under those rows:
 - [ ] Plan with the kit mechanically, the six-beat table per ability, the file list, ONE batch of questions; answers recorded
 - [ ] Model per `CHARACTER_MODEL_METHOD.md`; owner's verdict
 - [ ] `<Hero>Rules.cs` + tests: owner numbers quoted, distances solved against `Friction`, measured geometry written down
-- [ ] Kit, hazards, status, input (pad + thumb), network (protocol bump + test), snapshot kinds + a rejoin probe, replay `Staged`
+- [ ] Kit,hazards,status,input (pad + thumb),explicit shared network/recovery contracts and changed-behavior checks; bump protocol only for changed wire/semantics,not cosmetic swaps; preserve replay `Staged`
 - [ ] Roster, loadout, lines, glyphs, icons, HUD card, portrait (framing measured against the cast), avatar, FPP arms, bake
 - [ ] One body clip and one first-person action per ability; filmstrips reviewed
 - [ ] The effect family's rules written; every effect grows from something and withers into something; props modelled and typed

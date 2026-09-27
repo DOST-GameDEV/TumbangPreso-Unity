@@ -115,7 +115,7 @@ namespace TumbangPreso.Audio
                 // Paete (HERO-9, `tools/build_paete_audio.py`). The sentry burst is his biggest
                 // moment and is mixed as an ultimate payload; the command sits under the seedling's
                 // own fire; the roots on a victim are a status, three can land inside a second.
-                { "sfx_ult_theme_paete", -14.0f },
+                { "sfx_ult_theme_paete", -14.0f }, { "sfx_ult_theme_phaister", -14.0f },
                 { "sfx_cast_paete_vine", -6.0f }, { "sfx_cast_paete_sprout", -8.0f },
                 { "sfx_cast_paete_command", -12.0f }, { "sfx_paete_sprout_land", -9.0f },
                 { "sfx_paete_sprout_fire", -7.0f }, { "sfx_paete_sprout_uproot", -6.0f },
@@ -128,6 +128,10 @@ namespace TumbangPreso.Audio
                 { "sfx_paete_sentry_heave", -6.0f },
                 // The roster rework (ABILITY-2, `tools/build_rework_audio.py`): one recipe per ability and status.
                 { "sfx_cast_cheska_coldfeet", -7.0f }, { "sfx_cast_cheska_frostbite", -7.0f }, { "sfx_cheska_frostbite_hit", -7.0f }, { "sfx_cast_cheska_glacialwall", -7.0f }, { "sfx_cheska_wall_crack", -7.0f }, { "sfx_cast_cheska_absolutezero", -4.0f }, { "sfx_cast_dante_shield", -7.0f }, { "sfx_cast_dante_boulder", -7.0f }, { "sfx_dante_boulder_hit", -7.0f }, { "sfx_cast_dante_barrier", -7.0f }, { "sfx_dante_barrier_reflect", -7.0f }, { "sfx_cast_dante_earthquake", -4.0f }, { "sfx_cast_nemu_terrify", -7.0f }, { "sfx_cast_nemu_fetch", -7.0f }, { "sfx_nemu_fetch_drop", -7.0f }, { "sfx_cast_nemu_guard", -7.0f }, { "sfx_nemu_guard_block", -7.0f }, { "sfx_cast_phaister_doll", -7.0f }, { "sfx_cast_phaister_pin", -7.0f }, { "sfx_cast_phaister_higop", -8.0f }, { "sfx_phaister_higop_open", -4.0f }, { "sfx_phaister_higop_close", -7.0f }, { "sfx_status_concussed", -9.0f }, { "sfx_status_feared", -9.0f }, { "sfx_status_disoriented", -9.0f }, { "sfx_status_vulnerable", -9.0f }, { "sfx_paete_root_vein", -7.0f },
+                // PHAISTER, THE WITCH (HERO-10, 2026-09-27, `tools/build_phaister_audio.py`): the swarm's arrival, the doll's
+                // three fates, the moonlight's two ends.
+                { "sfx_phaister_swarm_knit", -7.0f }, { "sfx_phaister_manika_land", -9.0f }, { "sfx_phaister_manika_steal", -6.0f },
+                { "sfx_phaister_manika_crumble", -9.0f }, { "sfx_phaister_moonlight_on", -7.0f }, { "sfx_phaister_moonlight_off", -9.0f },
                 { "sfx_hex_cast",     -4.0f },
 
                 // ⚠️ THE BREAK IS MIXED LIKE A STATUS, NOT AN EVENT, for the same reason
@@ -407,10 +411,12 @@ namespace TumbangPreso.Audio
             "sfx_paete_sprout_land", "sfx_paete_sprout_fire", "sfx_paete_sprout_uproot",
             "sfx_cast_paete_thorns", "sfx_paete_thorn_burst", "sfx_cast_paete_sentry",
             "sfx_paete_sentry_burst", "sfx_paete_sentry_catch", "sfx_paete_sentry_wilt",
-            "sfx_status_rooted", "sfx_paete_root_break", "sfx_ult_theme_paete", "sfx_sky_canopy",
+            "sfx_status_rooted", "sfx_paete_root_break", "sfx_ult_theme_paete", "sfx_ult_theme_phaister", "sfx_sky_canopy",
             "sfx_paete_sentry_wake", "sfx_paete_sprout_ready", "sfx_paete_sentry_heave",
             // The roster rework (ABILITY-2): `tools/build_rework_audio.py`.
             "sfx_cast_cheska_coldfeet", "sfx_cast_cheska_frostbite", "sfx_cheska_frostbite_hit", "sfx_cast_cheska_glacialwall", "sfx_cheska_wall_crack", "sfx_cast_cheska_absolutezero", "sfx_cast_dante_shield", "sfx_cast_dante_boulder", "sfx_dante_boulder_hit", "sfx_cast_dante_barrier", "sfx_dante_barrier_reflect", "sfx_cast_dante_earthquake", "sfx_cast_nemu_terrify", "sfx_cast_nemu_fetch", "sfx_nemu_fetch_drop", "sfx_cast_nemu_guard", "sfx_nemu_guard_block", "sfx_cast_phaister_doll", "sfx_cast_phaister_pin", "sfx_cast_phaister_higop", "sfx_phaister_higop_open", "sfx_phaister_higop_close", "sfx_status_concussed", "sfx_status_feared", "sfx_status_disoriented", "sfx_status_vulnerable", "sfx_paete_root_vein",
+            "sfx_phaister_swarm_knit", "sfx_phaister_manika_land", "sfx_phaister_manika_steal", "sfx_phaister_manika_crumble",
+            "sfx_phaister_moonlight_on", "sfx_phaister_moonlight_off",
 
             // ⚠️ THE TWELVE ALTERNATES. A sidegrade changes what the power does, so it changes
             // what the power sounds like doing it: Long Tremor sweeps feet instead of throwing

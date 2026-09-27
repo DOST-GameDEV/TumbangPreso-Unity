@@ -15,6 +15,419 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
 
+        [UnityTest, Timeout(30000)]
+        public IEnumerator BootActivationRetainsCurtainAndDefersInputAndLoginUntilMenuIsPrepared()
+        {
+            bool boot = SceneFlow.BootedThroughSplash, offered = SceneFlow.LoginStepOffered;
+            GameObject owner = null;
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                SceneFlow.BootedThroughSplash = false; SceneFlow.LoginStepOffered = false;
+                owner = new GameObject("SplashActivationOnly");
+                var splash = owner.AddComponent<SplashScreen>(); splash.enabled = false;
+                typeof(SplashScreen).GetMethod("BuildSurface", flags).Invoke(splash, null);
+                var canvas = (GameObject)typeof(SplashScreen).GetField("_canvas", flags).GetValue(splash);
+                yield return (IEnumerator)typeof(SplashScreen).GetMethod("ActivatePreparedMenu", flags).Invoke(splash, null);
+                Assert.IsNotNull(splash, "Scene activation destroyed the loading owner.");
+                Assert.IsNotNull(canvas);
+                Assert.IsTrue(canvas.GetComponent<Canvas>().isActiveAndEnabled);
+                Assert.AreEqual(1500, canvas.GetComponent<Canvas>().sortingOrder);
+                Assert.IsTrue(ScreenTakeover.AnyOpen);
+                var menu = Object.FindAnyObjectByType<ConvertedMainMenu>();
+                Assert.IsNotNull(menu); Assert.IsTrue(menu.IsPrepared);
+                Assert.IsTrue(SceneFlow.BootedThroughSplash);
+                Assert.IsFalse(SceneFlow.LoginStepOffered, "The hidden login consumed its welcome interval.");
+                var signIn = menu.GetComponent<SignInScreen>();
+                Assert.IsNotNull(signIn); Assert.IsFalse(signIn.IsOpen);
+                var press = Object.FindObjectsByType<Button>(FindObjectsSortMode.None).Single(x => x.name == "StartButton");
+                Assert.IsFalse(press.IsInteractable(), "Title accepted input behind the loading curtain.");
+                typeof(SplashScreen).GetMethod("Leave", flags).Invoke(splash, null);
+                yield return null;
+                Assert.IsTrue(splash == null); Assert.IsTrue(canvas == null);
+                Assert.IsTrue(SceneFlow.LoginStepOffered); Assert.IsTrue(signIn.IsOpen);
+            }
+            finally
+            {
+                if (owner != null) Object.Destroy(owner);
+                SceneFlow.BootedThroughSplash = boot; SceneFlow.LoginStepOffered = offered;
+            }
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator PortraitWarmupUsesOneCacheAcrossHubHudAndModeCards()
+        {
+            int objects = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length;
+            float progress = 0;
+            int completed = 0;
+            yield return OwnerPortraitArt.Warmup(done =>
+            {
+                Assert.Greater(done, progress);
+                progress = done; completed++;
+            });
+            int rosterCount = TumbangPreso.Core.Roster.People.Concat(TumbangPreso.Core.Roster.Cans)
+                .Concat(TumbangPreso.Core.Roster.Slippers).Select(x => x.Id).Distinct().Count();
+            Assert.AreEqual(rosterCount + 6, completed);
+            Assert.AreEqual(1f, progress);
+            var portrait = OwnerPortraitArt.Get("UI/portraits/dante");
+            Assert.IsNotNull(portrait);
+            Assert.AreSame(portrait, UI.Hub.HubKit.Portrait("dante"));
+            Assert.AreSame(portrait, TumpUiFactory.Sprite("UI/portraits/dante"));
+            var ranked = OwnerPortraitArt.Get("UI/mode-cards/RankedCard");
+            Assert.IsNotNull(ranked);
+            Assert.AreSame(ranked, TumpUiFactory.Sprite("UI/mode-cards/RankedCard"));
+            Assert.AreEqual(objects, Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length,
+                "Asset preparation must not build UI or enter a lobby.");
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator HeroPropWarmupYieldsRetainsPrefabsAndDoesNotSpawnEffects()
+        {
+            int sceneObjects = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length;
+            float progress = 0;
+            int stages = 0;
+            yield return Visual.HeroPropAssets.Warmup(done =>
+            {
+                Assert.Greater(done, progress);
+                progress = done; stages++;
+            });
+            Assert.AreEqual(1f, progress);
+            Assert.AreEqual(3, stages);
+            Assert.AreEqual(sceneObjects, Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length,
+                "Loading prefab data must not instantiate or activate gameplay effects.");
+            var plant = Visual.HeroPropAssets.Load(Visual.PaeteProp.ResourceFolder, "seedling");
+            var doll = Visual.HeroPropAssets.Load(Visual.PhaisterProp.ResourceFolder, "manika");
+            var boulder = Visual.HeroPropAssets.Load(Visual.ReworkProp.ResourceFolder, "boulder");
+            Assert.IsNotNull(plant); Assert.IsNotNull(doll); Assert.IsNotNull(boulder);
+            yield return Visual.HeroPropAssets.Warmup();
+            Assert.AreSame(plant, Visual.HeroPropAssets.Load(Visual.PaeteProp.ResourceFolder, "seedling"));
+            Assert.AreSame(doll, Visual.HeroPropAssets.Load(Visual.PhaisterProp.ResourceFolder, "manika"));
+            Assert.AreSame(boulder, Visual.HeroPropAssets.Load(Visual.ReworkProp.ResourceFolder, "boulder"));
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator StatusCatalogWarmupRetainsIconsAndRootedAppearsBeforeSlows()
+        {
+            int objects = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length;
+            yield return StatusIcons.Warmup();
+            var rules = TumbangPreso.Core.StatusRules.All;
+            var sprites = rules.Select(x => StatusIcons.For(x.Kind)).ToArray();
+            for (int i = 0; i < rules.Count; i++) Assert.IsNotNull(sprites[i], rules[i].Kind.ToString());
+            var repeated = StatusIcons.Warmup();
+            Assert.IsFalse(repeated.MoveNext(), "Prepared status icons repeated their resource requests.");
+            for (int i = 0; i < rules.Count; i++) Assert.AreSame(sprites[i], StatusIcons.For(rules[i].Kind));
+            Assert.AreEqual(objects, Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length);
+            var owner = new GameObject("Received rooted readout");
+            var body = owner.AddComponent<CharacterMotor>(); body.enabled = false;
+            try
+            {
+                body.ApplyNetworkStatuses(whirledLeft: 0, chilledLeft: 3, rootedLeft: 7);
+                var statuses = new System.Collections.Generic.List<TumbangPreso.Core.StatusKind>();
+                StatusIcons.Live(body, statuses);
+                CollectionAssert.AreEqual(new[] { TumbangPreso.Core.StatusKind.Rooted, TumbangPreso.Core.StatusKind.Chilled }, statuses);
+                Assert.AreEqual(7, body.StatusLeft(TumbangPreso.Core.StatusKind.Rooted));
+                body.ClearStatuses(); StatusIcons.Live(body, statuses);
+                Assert.IsEmpty(statuses);
+            }
+            finally { Object.Destroy(owner); }
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator ParticleAssetWarmupRetainsExistingGeometryWithoutEmittersOrRandomChanges()
+        {
+            int objects = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length;
+            int emitters = Object.FindObjectsByType<ParticleSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length;
+            var warmup = Visual.AbilityVfx.WarmupAssets();
+            int steps = 0;
+            while (true)
+            {
+                var random = Random.state;
+                bool more = warmup.MoveNext();
+                Assert.AreEqual(random, Random.state, "Loading presentation data changed gameplay's random stream.");
+                if (!more) break;
+                steps++; yield return warmup.Current;
+            }
+            Assert.AreEqual(5, steps);
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic;
+            string[] names = { "_chip", "_grain", "_flake", "_electricNeedle" };
+            var meshes = names.Select(n => (Mesh)typeof(Visual.AbilityVfx).GetField(n, flags).GetValue(null)).ToArray();
+            var runes = (Mesh[])typeof(Visual.AbilityVfx).GetField("_runes", flags).GetValue(null);
+            Assert.AreEqual(4, runes.Length);
+            foreach (var mesh in meshes.Concat(runes))
+            { Assert.IsNotNull(mesh); Assert.Greater(mesh.vertexCount, 0); }
+            yield return Visual.AbilityVfx.WarmupAssets();
+            for (int i = 0; i < names.Length; i++)
+                Assert.AreSame(meshes[i], typeof(Visual.AbilityVfx).GetField(names[i], flags).GetValue(null));
+            Assert.AreSame(runes, typeof(Visual.AbilityVfx).GetField("_runes", flags).GetValue(null));
+            Assert.AreEqual(objects, Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length);
+            Assert.AreEqual(emitters, Object.FindObjectsByType<ParticleSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length);
+            Debug.Log($"[ParticleAssets] retained8meshes vertices={meshes.Concat(runes).Sum(x => x.vertexCount)}; no emitters spawned.");
+        }
+
+        [Test]
+        public void SharedSourceMaterialKeepsBaseAndOverlayVariantsSeparateAndReusable()
+        {
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            var renderer = go.GetComponent<Renderer>();
+            var source = new Material(renderer.sharedMaterial);
+            Material body = null, overlay = null;
+            try
+            {
+                renderer.sharedMaterials = new[] { source, source };
+                Visual.ToonSkin.Apply(renderer, Visual.ToonSkin.PropOutlineWidth);
+                var dressed = renderer.sharedMaterials; body = dressed[0]; overlay = dressed[1];
+                Assert.AreNotSame(body, overlay, "Surface role was omitted from the material cache key.");
+                Assert.Greater(body.GetFloat("_OutlineWidth"), 0);
+                Assert.AreEqual(0, overlay.GetFloat("_OutlineWidth"));
+                Assert.AreEqual(-1, overlay.GetFloat("_ZOffsetFactor"));
+                Assert.AreEqual(-1, overlay.GetFloat("_ZOffsetUnits"));
+                Assert.AreEqual(body.GetColor("_Color"), overlay.GetColor("_Color"));
+                Assert.AreSame(body.GetTexture("_MainTex"), overlay.GetTexture("_MainTex"));
+                Visual.ToonSkin.Apply(renderer, Visual.ToonSkin.PropOutlineWidth);
+                CollectionAssert.AreEqual(dressed, renderer.sharedMaterials, "Reapplying allocated another variant.");
+                renderer.sharedMaterials = new[] { overlay, body };
+                Visual.ToonSkin.Apply(renderer, Visual.ToonSkin.PropOutlineWidth);
+                CollectionAssert.AreEqual(dressed, renderer.sharedMaterials, "Variant origin/role did not survive slot reassignment.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(go);
+                if (body != null) Object.DestroyImmediate(body);
+                if (overlay != null && overlay != body) Object.DestroyImmediate(overlay);
+                Object.DestroyImmediate(source);
+            }
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator MapPreviewResizeDestroysTheOldTargetAndRebindsItsSurface()
+        {
+            var go = new GameObject("Preview target ownership", typeof(RectTransform), typeof(RawImage));
+            var preview = go.AddComponent<MapPreviewSurface>(); preview.enabled = false;
+            var image = go.GetComponent<RawImage>();
+            var old = new RenderTexture(32, 32, 16); old.Create(); image.texture = old;
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            typeof(MapPreviewSurface).GetField("_target", flags).SetValue(preview, old);
+            var ensure = typeof(MapPreviewSurface).GetMethod("EnsureCamera", flags);
+            try
+            {
+                ensure.Invoke(preview, null);
+                var current = preview.Camera.targetTexture;
+                Assert.AreNotSame(old, current); Assert.IsTrue(current.IsCreated());
+                Assert.AreSame(current, image.texture, "The UI still points at the retired target.");
+                ensure.Invoke(preview, null);
+                Assert.AreSame(current, preview.Camera.targetTexture, "An unchanged size allocated again.");
+                yield return null;
+                Assert.IsTrue(old == null, "Release freed pixels but leaked the old RenderTexture object.");
+            }
+            finally { Object.Destroy(go); if (old != null) Object.Destroy(old); }
+        }
+
+        [Test]
+        public void OutlineCacheRejectsForeignIdentityAndDoesNotCacheUnfinishedMeshes()
+        {
+            var first = new Mesh(); var second = new Mesh();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic;
+            var cache = (System.Collections.IDictionary)typeof(Visual.OutlineNormals).GetField("Welded", flags).GetValue(null);
+            var sceneChanged = typeof(Visual.OutlineNormals).GetMethod("OnSceneLoaded", flags);
+            try
+            {
+                Visual.OutlineNormals.Weld(first);
+                Assert.IsFalse(cache.Contains(first.GetEntityId()), "An unfinished mesh was marked prepared.");
+                first.vertices = new[] { Vector3.zero, Vector3.zero, Vector3.right };
+                first.normals = new[] { Vector3.right, Vector3.up, Vector3.forward };
+                Visual.OutlineNormals.Weld(first);
+                Assert.AreEqual(first.tangents[0], first.tangents[1]);
+                Assert.Greater(first.tangents[0].y, .7f);
+                second.vertices = new[] { Vector3.zero, Vector3.right, Vector3.up };
+                second.normals = new[] { Vector3.back, Vector3.back, Vector3.back };
+                cache[second.GetEntityId()] = new System.WeakReference<Mesh>(first);
+                Visual.OutlineNormals.Weld(second);
+                Assert.AreEqual(-1, second.tangents[0].z, "An id hit reused a different live mesh's preparation.");
+                second.normals = new[] { Vector3.forward, Vector3.forward, Vector3.forward };
+                Visual.OutlineNormals.Forget(second); Visual.OutlineNormals.Weld(second);
+                Assert.AreEqual(1, second.tangents[0].z, "An explicit invalidation did not rebuild an edited mesh.");
+                var firstId = first.GetEntityId(); var secondEntry = cache[second.GetEntityId()];
+                Object.DestroyImmediate(first);
+                sceneChanged.Invoke(null, new object[] { default(Scene), LoadSceneMode.Single });
+                Assert.IsFalse(cache.Contains(firstId), "A retired mesh's entry survived pruning.");
+                Assert.AreSame(secondEntry, cache[second.GetEntityId()], "Scene notification discarded a live mesh's work.");
+            }
+            finally
+            {
+                if (first != null) { Visual.OutlineNormals.Forget(first); Object.DestroyImmediate(first); }
+                Visual.OutlineNormals.Forget(second); Object.DestroyImmediate(second);
+            }
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels()
+        {
+            var model = RosterBook.Load().FindPersonArt("dante").Model;
+            Assert.IsNotNull(model);
+            var renderers = model.GetComponentsInChildren<Renderer>(true);
+            var meshes = renderers.Select(x => x is SkinnedMeshRenderer skin ? skin.sharedMesh : x.GetComponent<MeshFilter>()?.sharedMesh)
+                .Where(x => x != null && x.isReadable).Distinct().ToArray();
+            Assert.IsNotEmpty(meshes);
+            var materials = renderers.Select(x => x.sharedMaterials).ToArray();
+            int objects = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length;
+            foreach (var mesh in meshes) Visual.OutlineNormals.Forget(mesh);
+            var warmup = Visual.OutlineNormals.Warmup(model);
+            var timer = new System.Diagnostics.Stopwatch();
+            double totalMs = 0, maxStepMs = 0; int steps = 0;
+            while (true)
+            {
+                timer.Restart(); bool more = warmup.MoveNext(); timer.Stop();
+                totalMs += timer.Elapsed.TotalMilliseconds;
+                maxStepMs = System.Math.Max(maxStepMs, timer.Elapsed.TotalMilliseconds);
+                if (!more) break;
+                steps++; yield return warmup.Current;
+            }
+            Assert.AreEqual(meshes.Length, steps, "Each distinct cold mesh must get a yielded preparation turn.");
+            foreach (var mesh in meshes) Assert.AreEqual(mesh.vertexCount, mesh.tangents.Length);
+            typeof(Visual.OutlineNormals).GetMethod("OnSceneLoaded",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(null, new object[] { default(Scene), LoadSceneMode.Single });
+            var repeated = Visual.OutlineNormals.Warmup(model);
+            timer.Restart(); Assert.IsFalse(repeated.MoveNext()); timer.Stop();
+            Assert.AreEqual(objects, Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Length);
+            for (int i = 0; i < renderers.Length; i++) CollectionAssert.AreEqual(materials[i], renderers[i].sharedMaterials);
+            Debug.Log(System.FormattableString.Invariant($"[OutlineWarmupCheck] meshes={meshes.Length} vertices={meshes.Sum(x => x.vertexCount)} coldMs={totalMs:F3} maxStepMs={maxStepMs:F3} reusedMs={timer.Elapsed.TotalMilliseconds:F3}"));
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator AudioWarmupLoadsDeferredSamplesWithoutPlaybackAndRetainsThem()
+        {
+            var toggle = Resources.Load<AudioClip>("Sfx/ui_toggle");
+            Assert.IsNotNull(toggle);
+            Assert.IsFalse(toggle.preloadAudioData, "This case needs a deferred-data imported cue.");
+            Assert.IsTrue(toggle.UnloadAudioData());
+            Assert.AreEqual(AudioDataLoadState.Unloaded, toggle.loadState);
+            Assert.AreSame(toggle, Resources.Load<AudioClip>("Sfx/ui_toggle"));
+            Assert.AreEqual(AudioDataLoadState.Unloaded, toggle.loadState,
+                "Loading the clip reference alone must exercise the original first-play gap.");
+            var cues = Resources.LoadAll<AudioClip>("Sfx").Concat(Resources.LoadAll<AudioClip>("Vo")).ToArray();
+            int cold = cues.Count(x => x.loadState != AudioDataLoadState.Loaded);
+            long beforeBytes = cues.Sum(x => UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(x));
+            var music = Resources.Load<AudioClip>("Music/ost_match");
+            var musicState = music != null ? music.loadState : AudioDataLoadState.Unloaded;
+            var sources = Object.FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var playing = sources.Where(x => x.isPlaying).ToArray();
+            var owner = new GameObject("SplashAudioOnly");
+            var splash = owner.AddComponent<SplashScreen>(); splash.enabled = false;
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var method = typeof(SplashScreen).GetMethod("WarmAudioAssets", flags);
+            var progressField = typeof(SplashScreen).GetField("_targetProgress", flags);
+            IEnumerator warmup = null;
+            try
+            {
+                warmup = (IEnumerator)method.Invoke(splash, null);
+                int steps = 0;
+                float progress = 0;
+                double longestStepMs = 0;
+                var timer = new System.Diagnostics.Stopwatch();
+                while (true)
+                {
+                    timer.Restart();
+                    bool more = warmup.MoveNext();
+                    timer.Stop();
+                    longestStepMs = System.Math.Max(longestStepMs, timer.Elapsed.TotalMilliseconds);
+                    if (!more) break;
+                    steps++;
+                    float next = (float)progressField.GetValue(splash);
+                    Assert.GreaterOrEqual(next, progress); progress = next;
+                    yield return warmup.Current;
+                }
+                Assert.Greater(steps, 3, "Deferred samples need yielded turns, not one folder-sized decode burst.");
+                Assert.AreEqual(.34f, (float)progressField.GetValue(splash), .00001f);
+                foreach (var clip in cues)
+                    if (clip.loadType != AudioClipLoadType.Streaming)
+                        Assert.AreEqual(AudioDataLoadState.Loaded, clip.loadState, clip.name);
+                var cache = typeof(SplashScreen).GetNestedType("WarmAssetCache", System.Reflection.BindingFlags.NonPublic);
+                var retained = (System.Collections.IList)cache.GetField("Assets",
+                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).GetValue(null);
+                Assert.IsTrue(retained.Contains(toggle), "Menu activation must not discard the prepared cue.");
+                yield return (IEnumerator)method.Invoke(splash, null);
+                Assert.AreSame(toggle, Resources.Load<AudioClip>("Sfx/ui_toggle"));
+                Assert.AreEqual(AudioDataLoadState.Loaded, toggle.loadState);
+                CollectionAssert.AreEquivalent(sources, Object.FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None));
+                CollectionAssert.AreEquivalent(playing, sources.Where(x => x.isPlaying).ToArray());
+                if (music != null) Assert.AreEqual(musicState, music.loadState, "Do not change music's preparation policy.");
+                long afterBytes = cues.Sum(x => UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(x));
+                Debug.Log(System.FormattableString.Invariant($"[SplashAudioCheck] clips={cues.Length} initiallyCold={cold} steps={steps} beforeBytes={beforeBytes} afterBytes={afterBytes} maxStepMs={longestStepMs:F3}"));
+            }
+            finally
+            {
+                (warmup as System.IDisposable)?.Dispose();
+                Object.Destroy(owner);
+            }
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator SplashShaderAndMenuArtWarmupsCompleteInBoundedStages()
+        {
+            var collection = Resources.Load<ShaderVariantCollection>("ShaderWarmup");
+            Assert.IsNotNull(collection);
+            Assert.Greater(collection.variantCount, 10, "The collection no longer exercises multiple slices.");
+            var go = new GameObject("SplashWarmupOnly");
+            var splash = go.AddComponent<SplashScreen>();
+            splash.enabled = false;
+            bool shaderStageFinished = false;
+            void Observe(string message, string stack, LogType type)
+            {
+                if (message.StartsWith("[SplashShaders] shaders=")) shaderStageFinished = true;
+            }
+            Application.logMessageReceived += Observe;
+            IEnumerator preload = null;
+            try
+            {
+                var method = typeof(SplashScreen).GetMethod("PreloadGameAssets",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                Assert.IsNotNull(method);
+                preload = (IEnumerator)method.Invoke(splash, null);
+                int steps = 0;
+                int bound = Mathf.CeilToInt(collection.variantCount / 10f) + 3;
+                while (!shaderStageFinished && steps++ < bound)
+                {
+                    Assert.IsTrue(preload.MoveNext(), "Splash preload ended before its shader stage completed.");
+                    Assert.IsNull(preload.Current, "The shader stage entered a later preload operation.");
+                    yield return null;
+                }
+                Assert.IsTrue(shaderStageFinished, "The bounded shader stage did not finish.");
+                Assert.IsTrue(collection.isWarmedUp, "Splash left shader variants cold.");
+                Assert.AreEqual(collection.variantCount, collection.warmedUpVariantCount);
+            }
+            finally
+            {
+                Application.logMessageReceived -= Observe;
+                (preload as System.IDisposable)?.Dispose();
+                Object.Destroy(go);
+            }
+
+            int menuSteps = 0;
+            var menuWarmup = OwnerMenuArt.Warmup();
+            while (menuWarmup.MoveNext()) { menuSteps++; yield return menuWarmup.Current; }
+            Assert.AreEqual(27, menuSteps, "All current title and login art should get a staged turn.");
+            var background = OwnerMenuArt.Texture("main2-background");
+            var logo = OwnerMenuArt.Piece("login3-logo");
+            Assert.IsNotNull(background);
+            Assert.IsNotNull(logo);
+            menuWarmup = OwnerMenuArt.Warmup();
+            while (menuWarmup.MoveNext()) yield return menuWarmup.Current;
+            Assert.AreSame(background, OwnerMenuArt.Texture("main2-background"));
+            Assert.AreSame(logo, OwnerMenuArt.Piece("login3-logo"));
+
+            int avatarSteps = 0;
+            var avatarWarmup = Avatars.Warmup();
+            while (avatarWarmup.MoveNext()) { avatarSteps++; yield return avatarWarmup.Current; }
+            Assert.AreEqual(Avatars.Ids.Length, avatarSteps);
+            Assert.AreEqual(22, avatarSteps, "Every currently offered avatar should get a staged turn.");
+            var first = Avatars.Get(Avatars.Ids[0]);
+            Assert.IsNotNull(first);
+            Assert.AreSame(first, Avatars.Get(Avatars.Ids[0]));
+            Assert.AreSame(first, Avatars.Get("not-an-offered-avatar"),
+                "Unknown saved IDs must still use the first face.");
+        }
+
         /// <summary>
         /// ⚠️⚠️ THIS FIXTURE USED TO DRIVE THE SETTINGS PENNANT AND THERE IS NO PENNANT NOW.
         /// 🧑 2026-09-18: *"MAIN menu is getting revamped it will lose all buttons and will just
@@ -82,6 +495,146 @@ namespace TumbangPreso.PlayTests
             finally{SceneFlow.BootedThroughSplash=boot;SceneFlow.LoginStepOffered=offered;TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=reduced;}
         }
 
+        [UnityTest,Timeout(120000)]
+        public IEnumerator TitlePlateSharpnessSeparatesSourceImportAndMaterial()
+        {
+            bool boot=SceneFlow.BootedThroughSplash;
+            bool reduced=TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion;
+            RawImage plate=null;
+            OwnerMenuAir air=null;
+            OwnerMenuLeaves leaves=null;
+            OwnerRoadDust dust=null;
+            Text prompt=null;
+            Texture originalTexture=null;
+            Material originalMaterial=null;
+            Texture2D source=null;
+            bool airEnabled=false,leavesEnabled=false,dustEnabled=false,promptEnabled=false;
+            try
+            {
+                SceneFlow.BootedThroughSplash=false;
+                yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);yield return null;
+                var canvas=GameObject.Find("OwnerHomeCanvas").GetComponent<Canvas>();
+                plate=canvas.GetComponentInChildren<HomeCourtScene>().GetComponent<RawImage>();
+                air=plate.GetComponent<OwnerMenuAir>();
+                leaves=canvas.GetComponentInChildren<OwnerMenuLeaves>();
+                dust=canvas.GetComponentInChildren<OwnerRoadDust>();
+                prompt=canvas.GetComponentsInChildren<Text>().Single(t=>t.name=="ContinuePrompt");
+                Assert.IsNotNull(air);Assert.IsNotNull(leaves);Assert.IsNotNull(dust);
+                originalTexture=plate.texture;originalMaterial=plate.material;
+                airEnabled=air.enabled;leavesEnabled=leaves.enabled;
+                dustEnabled=dust.enabled;promptEnabled=prompt.enabled;
+                Assert.AreEqual("TumbangPreso/UI/OwnerMenuAir",originalMaterial.shader.name);
+
+                var imported=OwnerMenuArt.Texture("main2-background");
+                Assert.AreSame(imported,originalTexture);
+                source=new Texture2D(2,2,TextureFormat.RGBA32,false,false);
+                var path=System.IO.Path.Combine(Application.dataPath,"TumbangPreso","Resources", "UI",
+                    "owner-menu-edits","main2-background.png");
+                Assert.IsTrue(source.LoadImage(System.IO.File.ReadAllBytes(path)));
+                source.filterMode=imported.filterMode;source.wrapMode=imported.wrapMode;
+                source.anisoLevel=imported.anisoLevel;
+                Assert.AreEqual(1920,source.width);Assert.AreEqual(1080,source.height);
+                var logo=new RectInt(105,120,720,430);
+                var can=new RectInt(1560,640,190,310);
+                Debug.Log($"[QA01Title] fixed source-pixel top-left ROIs: logo={logo}, can={can}; " +
+                    $"source={source.width}x{source.height}/{source.format}/{source.filterMode}, " +
+                    $"imported={imported.width}x{imported.height}/{imported.format}/{imported.filterMode}, " +
+                    $"mips={imported.mipmapCount}, colorSpace={QualitySettings.activeColorSpace}");
+
+                foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(3840,2160)})
+                {
+                    int factor=size.x/1920;
+                    Debug.Log($"[QA01Title] {size.x}x{size.y} top-left edge ROIs: " +
+                        $"logo=({logo.x*factor},{logo.y*factor},{logo.width*factor},{logo.height*factor}), " +
+                        $"can=({can.x*factor},{can.y*factor},{can.width*factor},{can.height*factor})");
+                    TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=true;
+                    air.enabled=true;yield return null;yield return null;
+                    air.enabled=false;leaves.enabled=false;dust.enabled=false;prompt.enabled=false;
+                    void Inspect(string arm)
+                    {
+                        var uv=plate.uvRect;
+                        Debug.Log($"[QA01Title] {arm} viewport={size.x}x{size.y} " +
+                            $"texture={plate.texture.width}x{plate.texture.height} " +
+                            $"material={plate.materialForRendering.shader.name} uv={uv} scale={canvas.scaleFactor}");
+                        Assert.That(uv.x,Is.EqualTo(0f).Within(.002f));
+                        Assert.That(uv.y,Is.EqualTo(0f).Within(.002f));
+                        Assert.That(uv.width,Is.EqualTo(1f).Within(.002f));
+                        Assert.That(uv.height,Is.EqualTo(1f).Within(.002f));
+                    }
+
+                    plate.texture=source;plate.material=null;
+                    yield return TumpUiCapture.Capture($"QA01-source-decode-{size.x}x{size.y}",
+                        canvas,size.x,size.y,false,inspectViewport:()=>Inspect("source-decode"));
+                    plate.texture=imported;
+                    yield return TumpUiCapture.Capture($"QA01-imported-ungraded-{size.x}x{size.y}",
+                        canvas,size.x,size.y,false,inspectViewport:()=>Inspect("imported-ungraded"));
+                    plate.material=originalMaterial;
+                    yield return TumpUiCapture.Capture($"QA01-current-material-{size.x}x{size.y}",
+                        canvas,size.x,size.y,false,inspectViewport:()=>Inspect("current-material"));
+
+                    TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=false;
+                    air.enabled=true;leaves.enabled=true;dust.enabled=true;prompt.enabled=true;
+                    yield return null;
+                    yield return TumpUiCapture.Capture($"QA01-live-overlay-{size.x}x{size.y}",
+                        canvas,size.x,size.y,false,inspectViewport:()=>Inspect("live-overlay"));
+                }
+
+                // Capture restores the real canvas mode and viewport. Motion belongs to that
+                // settled window, not to either offscreen image resolution.
+                yield return null;yield return null;Canvas.ForceUpdateCanvases();
+                int windowWidth=Screen.width,windowHeight=Screen.height;
+                Vector2 canvasSize=((RectTransform)canvas.transform).rect.size;
+                float canvasScale=canvas.scaleFactor;
+                void CheckWindow()
+                {
+                    Assert.AreEqual(windowWidth,Screen.width,"The leaf sample changed window width.");
+                    Assert.AreEqual(windowHeight,Screen.height,"The leaf sample changed window height.");
+                    var size=((RectTransform)canvas.transform).rect.size;
+                    Assert.That(size.x,Is.EqualTo(canvasSize.x).Within(.01f));
+                    Assert.That(size.y,Is.EqualTo(canvasSize.y).Within(.01f));
+                    Assert.That(canvas.scaleFactor,Is.EqualTo(canvasScale).Within(.0001f));
+                }
+                CheckWindow();
+                float deadline=Time.realtimeSinceStartup+10f;
+                Mesh firstMesh=leaves.canvasRenderer.GetMesh();
+                while((firstMesh==null || firstMesh.vertexCount==0) && Time.realtimeSinceStartup<deadline)
+                {yield return null;Canvas.ForceUpdateCanvases();CheckWindow();firstMesh=leaves.canvasRenderer.GetMesh();}
+                Assert.IsNotNull(firstMesh,"Live title leaves had no mesh.");
+                Assert.Greater(firstMesh.vertexCount,0,"Live title leaves had no visible vertices.");
+                var first=firstMesh.vertices;
+                float sampledAt=Time.realtimeSinceStartup;
+                deadline=sampledAt+10f;
+                bool moved=false;
+                int secondCount=first.Length;
+                while(!moved && Time.realtimeSinceStartup<deadline)
+                {
+                    yield return new WaitForSecondsRealtime(.15f);
+                    Canvas.ForceUpdateCanvases();CheckWindow();
+                    var secondMesh=leaves.canvasRenderer.GetMesh();
+                    var second=secondMesh!=null?secondMesh.vertices:System.Array.Empty<Vector3>();
+                    secondCount=second.Length;
+                    moved=first.Length!=second.Length;
+                    for(int i=0;i<Mathf.Min(first.Length,second.Length) && !moved;i++)
+                        moved=(first[i]-second[i]).sqrMagnitude>.0025f;
+                }
+                Assert.IsTrue(moved,"The live title leaves did not move during the bounded actual-window sample.");
+                Debug.Log($"[QA01Title] actual-window leaves moved at {windowWidth}x{windowHeight}, " +
+                    $"canvas={canvasSize}, scale={canvasScale:0.###}, " +
+                    $"vertices={first.Length}->{secondCount}, interval={Time.realtimeSinceStartup-sampledAt:0.###}s");
+            }
+            finally
+            {
+                if(plate!=null){plate.texture=originalTexture;plate.material=originalMaterial;}
+                if(air!=null)air.enabled=airEnabled;
+                if(leaves!=null)leaves.enabled=leavesEnabled;
+                if(dust!=null)dust.enabled=dustEnabled;
+                if(prompt!=null)prompt.enabled=promptEnabled;
+                TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=reduced;
+                SceneFlow.BootedThroughSplash=boot;
+                if(source!=null)Object.DestroyImmediate(source);
+            }
+        }
+
         [UnityTest,Timeout(90000)]
         public IEnumerator StartupLoginStaysSilentUntilGuestRevealsHome()
         {
@@ -101,7 +654,9 @@ namespace TumbangPreso.PlayTests
                 var terms = canvas.GetComponentsInChildren<Toggle>().First(t => t.name == "TermsAcceptance");
                 Assert.IsFalse(terms.isOn);
                 Assert.Less(terms.graphic.canvasRenderer.GetAlpha(), .05f, "Unaccepted consent must look empty.");
-                Assert.IsInstanceOf<Image>(terms.graphic, "Acceptance must be a filled rectangle, not a check glyph.");
+                var consentMark = terms.graphic as OwnerUiGlyph;
+                Assert.IsNotNull(consentMark, "Accepted consent must use the check mark.");
+                Assert.AreEqual(OwnerUiGlyph.Mark.Check, consentMark.Shape);
                 bool larger = Settings.SettingsStore.Current.LargerText;
                 try
                 {
@@ -127,13 +682,18 @@ namespace TumbangPreso.PlayTests
                 finally { Settings.SettingsStore.Current.LargerText = larger; }
                 Find("TermsLink").onClick.Invoke(); yield return null;
                 Find("AcceptGuidelines").onClick.Invoke(); yield return new WaitForSecondsRealtime(.2f);
-                Assert.True(terms.isOn, "I AGREE fills the signup consent square.");
-                Assert.Greater(terms.graphic.canvasRenderer.GetAlpha(), .95f, "The accepted fill must be visible.");
-                yield return TumpUiCapture.Capture("Login-consent-filled", canvas, 960, 540, false, checkActionBounds: true);
+                Assert.True(terms.isOn, "I AGREE marks the signup consent square.");
+                Assert.Greater(terms.graphic.canvasRenderer.GetAlpha(), .95f, "The accepted check must be visible.");
+                yield return TumpUiCapture.Capture("Login-consent-checked", canvas, 960, 540, false, checkActionBounds: true);
                 var fields=canvas.GetComponentsInChildren<InputField>();
                 Assert.IsFalse(fields.Any(f=>f.name=="Email"));
                 var confirmation=fields.First(f=>f.name=="ConfirmPassword");
                 fields.First(f=>f.name=="Username").text="local.validation";
+                fields.First(f=>f.name=="Password").text="short";
+                confirmation.text="short";Find("SubmitAccount").onClick.Invoke();yield return null;
+                Assert.AreEqual("Use at least 8 characters.",
+                    canvas.GetComponentsInChildren<Text>().First(t=>t.name=="PasswordFault").text);
+                Assert.IsEmpty(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="AccountStatus").text);
                 // ⚠️ A PASSWORD THAT PASSES THE REAL RULES, so this case still reaches the
                 // confirmation check. `OwnerFieldFault` enforces UGS's own 8-to-30 with an
                 // upper, a lower, a digit and a symbol, and the old fixture's "test-only"
@@ -167,6 +727,26 @@ namespace TumbangPreso.PlayTests
                 Assert.That(Mathf.Abs((left.anchoredPosition.y-left.sizeDelta.y*.5f)
                                      -(right.anchoredPosition.y-right.sizeDelta.y*.5f)),Is.LessThanOrEqualTo(1f),
                     "The two strokes must share an optical centre line either side of OR");
+                var status = canvas.GetComponentsInChildren<Text>().First(t=>t.name=="AccountStatus");
+                var passwordFault = canvas.GetComponentsInChildren<Text>().First(t=>t.name=="PasswordFault");
+                status.text = "Creating your account...";
+                var fail = typeof(SignInScreen).GetMethod("Fail",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                Assert.IsNotNull(fail);
+                fail.Invoke(login, new object[] { "Password provider: internal check failed." });
+                Assert.AreEqual("Password not accepted. Try a different one.", passwordFault.text);
+                Assert.IsEmpty(status.text, "A failed password must not leave the account appearing busy");
+                yield return new WaitForSecondsRealtime(.25f);
+                Canvas.ForceUpdateCanvases();
+                Assert.Greater(passwordFault.color.a, .95f,"The password fault did not finish fading in.");
+                Assert.Greater(passwordFault.canvasRenderer.GetInheritedAlpha(), .95f);
+                Assert.GreaterOrEqual(passwordFault.cachedTextGenerator.characterCountVisible,
+                    passwordFault.text.Length,"The password fault lost visible characters.");
+                Assert.Greater(passwordFault.canvasRenderer.GetMesh()?.vertexCount ?? 0, 0,
+                    "The password fault has no rendered glyphs.");
+                Assert.LessOrEqual(passwordFault.preferredWidth,passwordFault.rectTransform.rect.width + 1,
+                    "The password fault leaves its available line width.");
+                yield return TumpUiCapture.Capture("OwnerLogin-password-fault", canvas, 960, 540, false);
                 fields.First(f=>f.name=="Username").text="";fields.First(f=>f.name=="Password").text="";
                 confirmation.text="";
                 Find("SignInTab").onClick.Invoke();yield return null;

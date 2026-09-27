@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,15 +7,27 @@ namespace TumbangPreso.UI
     public sealed partial class LobbyChat
     {
         private CanvasGroup _ownerVisibility;
+        public event Action<bool> PresentedChanged;
         private static readonly Color ChatSurface=new Color32(220,230,219,255);
         private static readonly Color ChatInk=new Color32(35,49,43,255);
         public bool IsPresented=>_ownerVisibility==null || _ownerVisibility.alpha>.5f;
         public void SetPresented(bool shown)
         {
+            bool changed=IsPresented!=shown;
             if(_ownerVisibility==null)_ownerVisibility=gameObject.AddComponent<CanvasGroup>();
             _ownerVisibility.alpha=shown?1:0;_ownerVisibility.interactable=shown;_ownerVisibility.blocksRaycasts=shown;
             if(!shown){Close();CloseHistory();}
             if(_field!=null)_field.interactable=shown;
+            if(changed)PresentedChanged?.Invoke(shown);
+        }
+        public void PlaceLobbyColumn()
+        {
+            if(_rect==null || _inMatch)return;
+            // Keep the chat in the lobby's centered room columns on every canvas width.
+            _rect.anchorMin=_rect.anchorMax=new Vector2(.5f,0);
+            _rect.pivot=Vector2.zero;
+            _rect.anchoredPosition=new Vector2(Hub.HubLobby.RoomChatLeft,220);
+            _rect.sizeDelta=new Vector2(Hub.HubLobby.RoomChatWidth,_rect.sizeDelta.y);
         }
         private void ConstructNative()
         {
@@ -105,7 +118,7 @@ namespace TumbangPreso.UI
             rect.gameObject.AddComponent<LayoutElement>().ignoreLayout=true;
             // Expand over the compact transcript; keep one composer below, not two copies of the same conversation.
             rect.anchorMin=Vector2.zero;rect.anchorMax=new Vector2(1,0);rect.pivot=new Vector2(.5f,0);
-            rect.offsetMin=new Vector2(0,98);rect.offsetMax=new Vector2(0,650);
+            rect.offsetMin=new Vector2(0,98);rect.offsetMax=new Vector2(0,600);
             var canvas=rect.gameObject.AddComponent<Canvas>();canvas.overrideSorting=true;canvas.vertexColorAlwaysGammaSpace=true;
             var parent=_rect.GetComponentInParent<Canvas>();canvas.sortingOrder=parent!=null?parent.sortingOrder+10:710;
             rect.gameObject.AddComponent<GraphicRaycaster>();

@@ -365,12 +365,12 @@ namespace TumbangPreso.Tests
         {
             var expected = new Dictionary<string, string>
             {
-                { "dante", "TITAN FISSURE" },
-                { "cheska", "GLACIAL NOVA" },
+                { "dante", "EARTHQUAKE" },
+                { "cheska", "ABSOLUTE ZERO" },
                 { "sean", "SUPERNOVA" },
                 { "zack", "THUNDERSTRIKE" },
                 { "nemu", "DEVOURING SEANCE" },
-                { "phaister", "GRAND COVEN" },
+                { "phaister", "OMEN" },
             };
 
             var seen = new HashSet<string>();

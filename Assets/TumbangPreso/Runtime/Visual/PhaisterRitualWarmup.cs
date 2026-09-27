@@ -1,4 +1,3 @@
-using TumbangPreso.Abilities;
 using UnityEngine;
 
 namespace TumbangPreso.Visual
@@ -11,10 +10,14 @@ namespace TumbangPreso.Visual
         public static bool WarmIfNeeded(CharacterMotor actor)
         {
             if(Ready||actor==null||actor.AbilitySystem?.HeroId!="phaister")return false;
+            var ultimate = actor.AbilitySystem.Kit?.Ultimate;
+            if (ultimate == null) return false;
             var random=Random.state;GameObject visual=null;
             try
             {
-                visual=HeroHazards.SpawnGrandCovenEclipse(actor.transform.position,5,7,PhaisterHeroKit.RitualBuildSeconds,renderOnly:true);
+                // Prepare the current authored presentation, not the retired Coven.
+                // The gameplay VoodooBlackHole and its pull component are never spawned.
+                visual = PhaisterOmen.Play(actor.transform.position, null, ultimate.Windup, ultimate.Duration).gameObject;
                 visual.SetActive(false);Ready=true;return true;
             }
             finally{if(visual!=null)Object.Destroy(visual);Random.state=random;}

@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -55,6 +57,21 @@ namespace TumbangPreso.UI
         /// <summary>How many of <see cref="Ids"/> are faces (the rest are objects).</summary>
         public const int FaceCount = 20;
 
+        private static readonly Dictionary<string,Sprite> Loaded = new Dictionary<string,Sprite>();
+
+        public static IEnumerator Warmup()
+        {
+            foreach (var id in Ids) { Get(id); yield return null; }
+        }
+
+        private static Sprite Load(string id)
+        {
+            if (Loaded.TryGetValue(id, out var sprite) && sprite != null) return sprite;
+            sprite = Resources.Load<Sprite>($"UI/avatars/{id}");
+            if (sprite != null) Loaded[id] = sprite;
+            return sprite;
+        }
+
         /// <summary>
 
         /// <summary>Loads one by id, or the first face if the id is unknown.</summary>
@@ -62,11 +79,11 @@ namespace TumbangPreso.UI
         {
             if (!string.IsNullOrEmpty(id))
             {
-                var found = Resources.Load<Sprite>($"UI/avatars/{id}");
+                var found = Load(id);
                 if (found != null) return found;
             }
 
-            return Resources.Load<Sprite>($"UI/avatars/{Ids[0]}");
+            return Load(Ids[0]);
         }
 
         /// <summary>
@@ -88,7 +105,9 @@ namespace TumbangPreso.UI
             {
                 int k = 17;
                 foreach (char c in playerName) k = (k * 31) + c;
-                return Ids[Mathf.Abs(k) % FaceCount];
+                // int.MinValue has no positive int counterpart. Widen before
+                // taking its magnitude so every valid name still selects a face.
+                return Ids[(int)(System.Math.Abs((long)k) % FaceCount)];
             }
         }
 

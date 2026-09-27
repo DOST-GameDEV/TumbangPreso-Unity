@@ -474,9 +474,12 @@ namespace TumbangPreso.PlayTests
             yield return Seconds(0.25f);
 
             Assert.AreEqual(0.0f, verbs.SlideCooldownLeft, 0.001f,
-                "The press was spent with no tsinelas in front of it, which is a 1.75 m dash " +
+                "The slide was spent with no tsinelas in front of it, which is a 1.75 m dash " +
                 "for free.");
-            Assert.AreEqual(staminaBefore, who.Stamina.Current, 0.001f);
+            // Since 2026-09-27 the button is the owner's Shove / Lunge: with nothing to slide for,
+            // the attacker's press is a shove, at the shove's price and never the slide's.
+            Assert.Greater(verbs.ShoveCooldownLeft, 0.0f, "Shove / Lunge with nothing to slide for did not shove.");
+            Assert.AreEqual(staminaBefore - Balance.ShoveStaminaCost, who.Stamina.Current, 0.001f);
             Assert.Less(Vector3.Distance(before, who.transform.position), 0.35f,
                 "The body travelled. A slide with no target must not launch.");
         }

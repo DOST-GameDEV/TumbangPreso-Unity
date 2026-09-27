@@ -56,7 +56,11 @@ namespace TumbangPreso.Tests
             if (key == "Right Button" || key == "RightButton") return "RMB";
             if (key == "Middle Button" || key == "MiddleButton") return "MMB";
 
-            return key.ToUpperInvariant();
+            string upper = key.ToUpperInvariant();
+            if (upper == "SCROLL/UP" || upper == "SCROLL UP") return "WHEEL UP";
+            if (upper == "SCROLL/DOWN" || upper == "SCROLL DOWN") return "WHEEL DOWN";
+
+            return upper;
         }
 
         [Test]

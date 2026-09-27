@@ -1,0 +1,24 @@
+{
+  "base": "c35550fccf4b1d682f20f4beb9a07e74317626d3",
+  "scope": "Runtime-generated avatar binding ownership and borrowed-asset preservation",
+  "result": "Passed",
+  "total": 1,
+  "duration": 0.4791293,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs",
+      "sha256": "A1F4F95BC3C940BD2CBDA3DB751BD337932CADE35BB145488465815B58A6D8CE"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ModelPreviewTests.cs",
+      "sha256": "6352C4B129664884FEC7829EFBF2292DC9ECA9A4DF33FC81AE4167CB5F24B4A9"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6361055232,
+  "retryCount": 0,
+  "unverified": [
+    "Long-running player heap/FPS",
+    "General animation acceptance"
+  ]
+}

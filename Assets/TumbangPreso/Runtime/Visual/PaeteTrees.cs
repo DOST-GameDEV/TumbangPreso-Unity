@@ -16,6 +16,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class PaeteProp
     {
+        public const string ResourceFolder = "Models/PaeteProps";
         private static Color[] _palette;
 
         /// <summary>His palette, from the roster (the same sixteen slots his body wears).</summary>
@@ -34,7 +35,7 @@ namespace TumbangPreso.Visual
         /// <summary>As above, in <paramref name="palette"/> (his when null) with an outline <paramref name="width"/> wide.</summary>
         public static GameObject Spawn(string name, Transform parent, Color[] palette, float width)
         {
-            var source = Resources.Load<GameObject>("Models/PaeteProps/" + name);
+            var source = HeroPropAssets.Load(ResourceFolder, name);
             if (source == null)
             {
                 Debug.LogWarning("[PaeteProp] Models/PaeteProps/" + name + " is missing; run tools/build_paete_props.py.");
@@ -64,7 +65,7 @@ namespace TumbangPreso.Visual
         /// <summary>The prop undressed: for a surface that brings its own material (Makiling's spirit).</summary>
         public static GameObject SpawnRaw(string name, Transform parent)
         {
-            var source = Resources.Load<GameObject>("Models/PaeteProps/" + name);
+            var source = HeroPropAssets.Load(ResourceFolder, name);
             if (source == null) { Debug.LogWarning("[PaeteProp] Models/PaeteProps/" + name + " is missing."); return null; }
             var go = Object.Instantiate(source, parent, false);
             go.name = "PaeteProp-" + name;
@@ -541,6 +542,7 @@ namespace TumbangPreso.Visual
         private readonly List<Vector3> _points = new List<Vector3>();
         private readonly List<float> _radii = new List<float>();
         private float _age;
+        private bool _facingEstablished, _retiring;
 
         /// <summary>
         /// ⚠️ CAUGHT FACING OUT, BACK TO THE TRUNK (owner, 2026-09-27: *"make everyone get caught in opposite direction (they should
@@ -550,21 +552,25 @@ namespace TumbangPreso.Visual
         /// <paramref name="treeCentre"/> and the held view reopens behind it, looking out at the court. Once: they may turn freely
         /// after. On each peer, like the coil; the player's own peer is the one whose turn sticks (their yaw is theirs).
         /// </summary>
-        public static void Attach(CharacterMotor body, Vector3 treeCentre)
+        public static PaeteRootCoil Attach(CharacterMotor body, Vector3 treeCentre)
         {
-            if (body == null || body.GetComponentInChildren<PaeteRootCoil>() != null) return;
+            var coil = Attach(body);
+            if (coil == null || coil._facingEstablished) return coil;
             var away = body.transform.position - treeCentre; away.y = 0f;
             if (away.sqrMagnitude > 1e-4f)
             {
                 body.transform.rotation = Quaternion.LookRotation(away.normalized, Vector3.up);
                 CameraSystem.CameraRig.FaceHeldView(body);
             }
-            Attach(body);
+            coil._facingEstablished = true;
+            return coil;
         }
 
-        public static void Attach(CharacterMotor body)
+        public static PaeteRootCoil Attach(CharacterMotor body)
         {
-            if (body == null || body.GetComponentInChildren<PaeteRootCoil>() != null) return;
+            if (body == null || !body.gameObject.activeInHierarchy) return null;
+            var existing = body.GetComponentInChildren<PaeteRootCoil>();
+            if (existing != null) return existing;
             var go = new GameObject("PaeteRootCoil");
             go.transform.SetParent(body.transform, false);
             var fx = go.AddComponent<PaeteRootCoil>();
@@ -579,6 +585,20 @@ namespace TumbangPreso.Visual
             PaeteInk.Tube(knotMesh, new List<Vector3> { new Vector3(-0.05f, 0f, 0f), new Vector3(0.05f, 0.01f, 0f) }, new List<float> { 0.10f, 0.09f }, 5);
             fx._knot = PaeteInk.Part(go.transform, "shin-knot", knotMesh, PaeteSentryBody.BarkDark).transform;
             fx._leaf = PaeteInk.Part(go.transform, "shin-leaf", PaeteInk.Leaf(0.20f, 0.11f, 0.016f), PaeteSentryBody.Leaf).transform;
+            return fx;
+        }
+
+        public void Retire()
+        {
+            if (_retiring) return;
+            _retiring = true;
+            gameObject.SetActive(false);
+            PaeteProp.Kill(gameObject);
+        }
+
+        private void OnDisable()
+        {
+            if (Application.isPlaying && (_body == null || !_body.gameObject.activeInHierarchy)) Retire();
         }
 
         /// <summary>The break-out (direction.md section 5.6): chunks, leaves and the snap, on every peer.</summary>
@@ -594,12 +614,13 @@ namespace TumbangPreso.Visual
         /// <summary>One step of the growth (the review probe drives this in edit mode).</summary>
         public void Step(float dt)
         {
+            if (_retiring) return;
             if (_body == null || !_body.IsRooted)
             {
                 // The roots letting go: the hold finished, a tag landed or the sentry slept. Local on
                 // every peer off the replicated state, like the gain below.
                 if (_body != null) Break(_body.transform.position);
-                PaeteProp.Kill(gameObject); return;
+                Retire(); return;
             }
             if (_age <= 0f) GameServices.Audio?.PlayAtVaried("sfx_status_rooted", _body.transform.position, 0.95f, 1.05f, 0.8f);
             _age += dt;

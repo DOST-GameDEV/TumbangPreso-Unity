@@ -46,9 +46,9 @@ namespace TumbangPreso.Abilities
         public float Cooldown { get; protected set; }
         public float Duration { get; protected set; }
 
-        // Instant world effects can opt out of local prediction without delaying
-        // their input, resource feedback or cast animation.
-        public virtual bool DefersPredictedEffect => false;
+        // Every new ability must choose its delivery path; no silent client-only default.
+        public abstract AbilityNetworkMode NetworkMode { get; }
+        public bool DefersPredictedEffect => NetworkMode == AbilityNetworkMode.HostConfirmed;
 
         public void ApplyConfirmedEffect(AbilityContext ctx, float heldSeconds)
         {
@@ -282,6 +282,37 @@ namespace TumbangPreso.Abilities
         public Visual.GroundReticle.Style TelegraphStyle { get; protected set; }
             = Visual.GroundReticle.Style.Ring;
 
+        // ------------------------------------------------------------------ the hero's own aim picture
+        //
+        // ⚠️⚠️ HERO-10 (Phaister, film v7, 2026-09-27): HOLDING HER SKILLS SHOWED NOTHING. On Bayan Plaza the shared ward never
+        // appeared under her 5 m aim, on her screen or the court's, and her body just stood there. Plan 4.1 and 4.5 ask for more
+        // than a ring anyway: her lunar sigil written where she will arrive with three moths circling it, and for OMEN the height
+        // the eye will hang at. These three hooks let a kit draw its own aim and act out its own tell, without a second reticle
+        // system: `HeroAbilitySystem` still decides WHEN something is being aimed and WHERE; the ability decides what it looks like.
+
+        /// <summary>True when this ability's own aim picture replaces the shared ground ring while it is held.</summary>
+        public virtual bool DrawsOwnAim => false;
+
+        /// <summary>
+        /// Called every frame this ability is being aimed on this peer, with where it would land now (a hold-to-aim power's
+        /// destination, its height included for `AimsInTheAir`) and how long it has been held. Private pictures must check that
+        /// the local camera follows <paramref name="caster"/>; a body's tell is for everyone who can see it.
+        /// </summary>
+        public virtual void PresentAim(CharacterMotor caster, Vector3 at, float heldSeconds) { }
+
+        /// <summary>Called once when the aim ends, cast or not (the release, a stun, the kit changing).</summary>
+        public virtual void EndAim() { }
+
+        /// <summary>Shared body props/tells while aiming; no private target point or gameplay mutation.</summary>
+        public virtual void PresentAimBody(CharacterMotor caster, float heldSeconds) { }
+        public virtual void EndAimBody() { }
+
+        /// <summary>
+        /// A clip the caster's body holds while this ability is aimed (her tells), or null for the shared stance. Only used when the
+        /// rig carries a clip of that name (`CharacterAnimator.AimPose`).
+        /// </summary>
+        public string AimPoseAction { get; protected set; }
+
         // ------------------------------------------------------------------ hold to aim
         //
         // ⚠️⚠️ 🧑 2026-08-26, ON THE BLINK: *"let her HOLD e to control where she will go and make
@@ -323,6 +354,21 @@ namespace TumbangPreso.Abilities
         /// `AimMaxRange` from the caster, and the release sends that spot as the cast's aim, so every peer lands it in the same place.
         /// </summary>
         public bool AimsWhereLooking { get; protected set; }
+
+        /// <summary>
+        /// ⚠️ PLACED IN THE AIR AS WELL AS ON THE COURT (HERO-10, Phaister's OMEN): the aimed spot keeps a HEIGHT, taken from where
+        /// the caster's sight line is at the aimed distance (`CameraRig.TryLookHeight`), clamped to AimMinHeight .. AimMaxHeight
+        /// above the court; a received aim keeps the height it was sent with, so every peer agrees.
+        /// </summary>
+        public bool AimsInTheAir { get; protected set; }
+        public float AimMinHeight { get; protected set; }
+        public float AimMaxHeight { get; protected set; }
+
+        /// <summary>Lets the aim carry a height between <paramref name="min"/> and <paramref name="max"/> metres. Call from a kit.</summary>
+        protected void AimInTheAir(float min, float max)
+        {
+            AimsInTheAir = true; AimMinHeight = min; AimMaxHeight = max;
+        }
 
         /// <summary>
         /// How long a hold may last before the ability fires on its own. Seconds.
@@ -709,10 +755,10 @@ namespace TumbangPreso.Abilities
         /// method called `ClearCooldown` invites a gameplay caller; there is no legitimate one,
         /// because every cooldown in the game is a balance number.
         /// </summary>
-        public void RefillForSandbox()
+        public void RefillForSandbox(bool cooldown = true, bool charges = true)
         {
-            CooldownRemaining = 0.0f;
-            if (UsesCharges) ChargesRemaining = MaxCharges;
+            if (cooldown) CooldownRemaining = 0.0f;
+            if (charges && UsesCharges) ChargesRemaining = MaxCharges;
         }
 
         public virtual bool CanActivate(AbilityContext ctx)
@@ -731,6 +777,7 @@ namespace TumbangPreso.Abilities
 
         public virtual void Activate(AbilityContext ctx)
         {
+            AcceptedCastEvent = 0;
             _joiningPreparationSettled=true;
             // ⚠️ A CHARGE ABILITY SPENDS A CHARGE AND NOTHING ELSE. Setting `CooldownRemaining`
             // as well would put it behind two gates, and the deck would then draw it as Cooling
@@ -756,8 +803,7 @@ namespace TumbangPreso.Abilities
                 WindupRemaining = Windup;
                 // Hold the accepted release aim through the delay. A replica's live
                 // intent is not the sender's cast and can point somewhere else.
-                _committedContext=new AbilityContext(ctx.Motor,ctx.Carrier,ctx.Verbs,
-                    ctx.Position,ctx.Forward,ctx.AimPoint);
+                _committedContext = ctx.Capture();
 
                 _rooted = ctx.Motor;
                 _rooted.EnterSpeedZone(RootSpeed);
@@ -766,7 +812,8 @@ namespace TumbangPreso.Abilities
 
             DurationRemaining = Duration;
             if (DefersPredictedEffect && NetAuthority.IsNetworked && !NetAuthority.IsHost
-                && ctx?.Motor != null && ctx.Motor.PlayerSlot == NetAuthority.LocalSlot) return;
+                && ctx?.Motor != null && ctx.Motor.PlayerSlot == NetAuthority.LocalSlot
+                && !ctx.IsApprovedReplay) return;
             OnActivate(ctx);
         }
 
@@ -786,6 +833,19 @@ namespace TumbangPreso.Abilities
             _rooted.ExitSpeedZone(RootSpeed);
             _rooted = null;
         }
+
+        public long AcceptedCastEvent { get; private set; }
+
+        // A command belongs to its original effect lifetime, not a new spawn.
+        // The host and approved playback call this after accepting the initial cast.
+        public void AdoptAcceptedCastEvent(long eventId, bool reactivation)
+        {
+            if (reactivation || eventId <= 0) return;
+            AcceptedCastEvent = eventId;
+            OnAcceptedCastEvent(eventId);
+        }
+
+        protected virtual void OnAcceptedCastEvent(long eventId) { }
 
         public virtual void Tick(AbilityContext ctx, float dt)
         {
@@ -821,6 +881,10 @@ namespace TumbangPreso.Abilities
                 OnActivate(committed);
                 return;
             }
+
+            // A deferred effect has not been initialized yet. Its cooldown is spent,
+            // but ticking its live state now can destroy a grant before confirmation.
+            if (DefersPredictedEffect && ctx?.Motor?.AbilitySystem?.AwaitingSkillEffect(this) == true) return;
 
             if (DurationRemaining > 0.0f)
             {
@@ -910,6 +974,7 @@ namespace TumbangPreso.Abilities
 
         public virtual void Reset()
         {
+            AcceptedCastEvent = 0;
             _reservedForIntroduction = false;
             // ⚠️ THE ROOT COMES OFF FIRST. A round can end mid-wind-up, and `Reset` zeroing the
             // timer behind the wind-up's back would strand the speed zone with nothing left to
@@ -995,8 +1060,7 @@ namespace TumbangPreso.Abilities
             ReleaseRoot();
             DurationRemaining = 0;
             WindupRemaining = Mathf.Clamp(remaining, 0, Windup);
-            _committedContext = new AbilityContext(ctx.Motor, ctx.Carrier, ctx.Verbs,
-                ctx.Position, ctx.Forward, ctx.AimPoint);
+            _committedContext = ctx.Capture();
             if (WindupRemaining > 0 && ctx.Motor != null)
             {
                 _rooted = ctx.Motor;

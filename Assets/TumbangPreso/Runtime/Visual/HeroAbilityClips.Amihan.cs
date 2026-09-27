@@ -23,9 +23,8 @@ namespace TumbangPreso.Visual
     // =============================================================================================
     public static partial class HeroAbilityClips
     {
-        /// <summary>The flight pose's length: longer than Updraft's 10 s so a non-looping clip never
-        /// runs out mid-flight; the bob keys repeat inside it.</summary>
-        public const float AmihanHoverSeconds = 10.5f;
+        /// <summary>One authored settle, breath and balance correction, with a closed loop.</summary>
+        public const float AmihanHoverSeconds = 3.4f;
 
 #if UNITY_EDITOR
         public static AnimationClip[] BuildAmihanAuthored(Transform root)
@@ -37,6 +36,15 @@ namespace TumbangPreso.Visual
                 BuildAmihanDash(paths), BuildAmihanUpdraft(paths), BuildAmihanHover(paths),
                 BuildAmihanWhirlwind(paths), BuildAmihanStorm(paths),
             };
+            foreach (var clip in clips) GroundIntroduction(clip, root, paths["root"], anchorToRest: true);
+            return clips;
+        }
+
+        public static AnimationClip[] BuildAmihanFlightAuthored(Transform root)
+        {
+            var paths = ResolvePaths(root);
+            if (paths == null) throw new System.InvalidOperationException("Amihan rig is missing a required bone.");
+            var clips = new[] { BuildAmihanUpdraft(paths), BuildAmihanHover(paths) };
             foreach (var clip in clips) GroundIntroduction(clip, root, paths["root"], anchorToRest: true);
             return clips;
         }
@@ -63,43 +71,35 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// UPDRAFT's launch, 0.82 s. Tell: she sinks with both palms pressed down at the road, the
-        /// air gathering under her. Release (0.22, punch): springs up, arms thrown overhead and open,
-        /// head back, legs trailing, the torso already turning with the column. Settles into the
-        /// flight pose (`hero-amihan-hover`), which the animator holds while she is aloft.
+        /// FEATHERFALL's launch: press the air down, then balance on its lift. The accepted
+        /// ability already moves her; the visual compression adds no root or gameplay delay.
         /// </summary>
         private static AnimationClip BuildAmihanUpdraft(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-amihan-updraft", paths);
-            PoseKey(b, 0, 0, V(0, 0, 0), V(0, 0, 0), V(0, 0, 15), V(0, 0, -15));
-            PoseKey(b, .14f, -.09f, V(14, 6, 0), V(12, 0, 0), V(-24, 8, 36), V(-24, -8, -36), V(-16, 0, 8), V(-16, 0, -8));
-            b.PunchAt(.22f);
-            b.HoldAt(.22f, .14f);
-            PoseKey(b, .22f, .10f, V(-10, 14, 0), V(-18, -8, 0), V(-168, 10, 30), V(-160, -14, -34), V(14, 0, 6), V(22, 0, -6));
-            PoseKey(b, .46f, .06f, V(-6, 26, 2), V(-12, -14, 0), V(-120, 16, 64), V(-110, -18, -68), V(10, 0, 8), V(16, 0, -8));
-            PoseKey(b, .82f, .02f, V(-4, 8, 0), V(-4, -4, 0), V(-24, 4, 70), V(-22, -4, -70), V(8, 0, 6), V(12, 0, -6));
+            PoseKey(b, 0, -.035f, V(8, -8, 0), V(4, 5, 0), V(-12, 8, 32), V(-8, -6, -28), V(-12, 0, 7), V(-8, 0, -5));
+            PoseKey(b, .10f, -.055f, V(10, -12, -2), V(0, 9, 0), V(12, 12, 44), V(18, -10, -34), V(6, 0, 8), V(12, 0, -6));
+            b.PunchAt(.20f);
+            PoseKey(b, .20f, .025f, V(-6, 12, 3), V(-8, -8, 0), V(28, 16, 54), V(22, -10, -40), V(16, 0, 6), V(26, 0, -5));
+            PoseKey(b, .43f, .045f, V(-3, 20, 2), V(-5, -12, 0), V(4, 10, 60), V(10, -8, -44), V(-8, 0, 5), V(18, 0, -6));
+            PoseKey(b, .68f, .01f, V(-2, 4, -2), V(-3, -3, 0), V(-18, 8, 54), V(-8, -6, -38), V(-18, 0, 6), V(12, 0, -4));
             return b.Build();
         }
 
         /// <summary>
-        /// UPDRAFT aloft, 10.5 s: arms out and a little forward like a glide, legs loose and trailing,
-        /// and a slow breathing bob with the torso rocking into the turns. Keyed every 0.9 s so the
-        /// body is never a statue; it is a base pose, not an action, and the animator holds it for as
-        /// long as `CharacterMotor.IsFlying` says she is in the air.
+        /// FEATHERFALL aloft: settle on the left, breathe, correct with the right hand, look back
+        /// to play. Unequal intervals and silhouettes keep the wind from reading as a metronome.
         /// </summary>
         private static AnimationClip BuildAmihanHover(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-amihan-hover", paths);
-            for (int i = 0; i * .9f <= AmihanHoverSeconds; i++)
-            {
-                float t = i * .9f;
-                bool up = i % 2 == 0;
-                float rock = (i % 4 < 2 ? 1 : -1) * 6;
-                PoseKey(b, t, up ? .03f : -.02f,
-                        V(-4, rock, up ? 2 : -2), V(-4, -rock * .6f, 0),
-                        V(up ? -24 : -18, 4, up ? 72 : 64), V(up ? -20 : -26, -4, up ? -66 : -74),
-                        V(up ? 8 : 14, 0, 6), V(up ? 16 : 8, 0, -6));
-            }
+            PoseKey(b, 0, .01f, V(-2, 4, -2), V(-3, -3, 0), V(-18, 8, 54), V(-8, -6, -38), V(-18, 0, 6), V(12, 0, -4));
+            PoseKey(b, .55f, -.018f, V(1, 7, -3), V(-2, -5, 1), V(-12, 11, 48), V(-5, -4, -42), V(-12, 0, 5), V(16, 0, -5));
+            PoseKey(b, 1.18f, .026f, V(-5, 2, -1), V(-5, -2, 0), V(-21, 6, 55), V(-13, -5, -40), V(-20, 0, 6), V(9, 0, -4));
+            PoseKey(b, 1.72f, .018f, V(-3, -7, 3), V(-1, 8, -1), V(-14, 4, 47), V(-24, -12, -53), V(-9, 0, 4), V(19, 0, -6));
+            PoseKey(b, 2.22f, -.012f, V(2, -3, 1), V(1, 7, 0), V(-10, 5, 45), V(-16, -9, -46), V(-14, 0, 5), V(14, 0, -5));
+            PoseKey(b, 2.86f, .022f, V(-4, 5, -1), V(-4, -6, 0), V(-20, 9, 56), V(-9, -6, -39), V(-21, 0, 6), V(10, 0, -4));
+            PoseKey(b, AmihanHoverSeconds, .01f, V(-2, 4, -2), V(-3, -3, 0), V(-18, 8, 54), V(-8, -6, -38), V(-18, 0, 6), V(12, 0, -4));
             return b.Build();
         }
 

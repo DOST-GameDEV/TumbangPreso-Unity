@@ -1,0 +1,39 @@
+{
+  "base": "b7d26bcf",
+  "method": "Direct managed invocation of three new compiled NUnit cases; no live services, profiles, or Unity process",
+  "result": "PASS",
+  "cases": [
+    "QueueCandidatesNeedMatchingSkillDataWithoutChangingTheirPoolRules(Casual) QueueCandidatesNeedMatchingSkillDataWithoutChangingTheirPoolRules(Ranked) QueueFailureCooldownTracksTheAttemptedEndpointAndResetsPerTicket"
+  ],
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0",
+  "runtimeAssemblySha256": "FB326E5480562B500BE5E51C47ABCA2CB79B9EE52593984509BE5B86CEB43632",
+  "changed": [
+    "Assets/TumbangPreso/Runtime/Net/Matchmaker.cs",
+    "Assets/TumbangPreso/Runtime/Net/ServerQuery.cs",
+    "Assets/TumbangPreso/Tests/MatchmakingWireTests.cs",
+    "Assets/TumbangPreso/Runtime/Net/MatchmakingCandidateCache.cs",
+    "Assets/TumbangPreso/Runtime/Net/MatchmakingCandidateCache.cs.meta"
+  ],
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/Matchmaker.cs",
+      "sha256": "BAF3F02FC9B61B0161895A048EFB6BAC0A75DB26BEA8E02A5B58695EC53A4FE5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/ServerQuery.cs",
+      "sha256": "374306FBDE12136D8D0C8851101B8780239399BE14EA2551BCD7458BB4788AE8"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/MatchmakingWireTests.cs",
+      "sha256": "D6FAFB6D598133883B7B5E9F4557795754886842A6DB92D8B6F22E09D16D58F8"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchmakingCandidateCache.cs",
+      "sha256": "51384F3FCD42B1696626EBE985A5C997AF145FDEFB042A5D7CA8D9AAAF84140F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchmakingCandidateCache.cs.meta",
+      "sha256": "45835027447E10E870F49D4EEB49F73E022A57B27D47BF0C5F91FF0B468D3E2A"
+    }
+  ]
+}

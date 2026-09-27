@@ -1,276 +1,66 @@
-# Workstation setup and reproducible workflow
+# Workstation Setup
 
-## Latest transfer update: 2026-09-15
+Discover the actual machine and checkout. Old usernames,absolute paths,PIDs,
+installed modules and available builds are historical evidence,not instructions.
 
-Every absolute path and installed-tool location below is historical environment
-evidence, NOT a required destination layout. Discover the actual checkout and
-tools on the new laptop. Preserve local changes, fetch and safely pull
-ASTRAReworks first. Do not reset/clean or copy an old user's profile. The current
-resume point is ACTIVE_REWORK_LEDGER and reports/owner-ui-u8-checkpoint.md.
-
-The newest owner UI originals are tracked under
-ArtSource/ui/owner-handdrawn-2026-09-15: TUMP (3).png (background), TUMP (5).png
-(separated art), TUMP (6).png (composition reference), plus measured palette,
-regions, font colours and SHA manifests. They supersede the old theme below.
-Runtime originals are in Assets/TumbangPreso/Resources/UI/owner-painted.
-OWNER_UI_AUTHORING.md describes the new editable Inspector overrides and named
-element export. The original older PDF and all four logo JPGs remain under
-ArtSource/ui/owner-brand-2026-09-13; do not require Downloads on the new PC.
-
-U8 introduced tools/run_ui_player_review.py and the opt-in runtime
-OwnerUiPlayerReview. They are review tooling, not ordinary startup behavior.
-Use an INTERNAL Builds/... executable, a NEW Logs output and isolated profile.
-The runner deliberately DOES NOT pass -batchmode: NetBootstrap interprets that
-as a dedicated server, so batch launch cannot qualify the menu. It starts a
-hidden normal player with -tp-uireview, which disables online sign-in for this
-non-tournament diagnostic. It preserves existing named-profile files and checks
-shared standalone input preferences remain unchanged. Do not call this physical
-mouse/controller certification. Read the latest checkpoint's actual result;
-the driver itself is not proof that every planned route was exercised.
-
-The source internal build and ignored Logs do not arrive via Git. Rebuild on the
-destination only when needed, with explicit -buildOutput Builds/<chosen-folder>/
-TumbangPreso.exe and the guarded Editor runner. Record the new Runtime.dll hash;
-the executable stub hash alone cannot establish freshness. Any process/session
-IDs in older entries belong to their original laptop, not the destination.
-
-Current UI workflow used game-ui-design, unity-ui, unity-ui-ugui,
-unity-unity-cli, unity-sprite-editor and relevant workbench feature/bug/build
-skills. Existing portable bundle includes the main workflow/reference skills;
-install/read an available current official sprite-editor skill when sprite
-import authoring is actually needed. No Figma, agents or reset credits are
-authorized. Built-in imagegen was used once for a critiqued companion study,
-not for redrawing the owner's art or manufacturing runtime evidence.
-The supplemental docs/tooling/ui-sprite-skill-reference.zip now preserves that
-sprite-editor skill and all 13 instruction/example files with a SHA manifest.
-The old PDF remains available; the owner's latest rejection requires revisiting
-its layout ideas and using built-in image generation for NEW complementary
-screen art/backgrounds. Do not spread the orange pattern across the whole game.
-
-Recorded 2026-09-14 for continuing this project on another PC. This is an
-environment guide, not a claim that the whole game is finished. The continuation
-prompt is delivered directly in chat. Start with AGENTS.md and the newest
-ACTIVE_REWORK_LEDGER / EXECUTION_PLAN entries, not historical process notes.
-
-## Checkout and source of truth
+## Checkout
 
 - Repository: https://github.com/DOST-GameDEV/TumbangPreso-Unity.git
-- Only authorized work/push branch: **ASTRAReworks**. Never main.
-- Old primary checkout: C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity.
-- Pick a new local project path on the destination PC. Do not reuse the old
-  absolute path blindly, reset existing work, or operate on another checkout.
-- A fresh clone needs the complete Assets, ProjectSettings, Packages, Core,
-  Core.Tests, tools, MapSource, ArtSource and docs folders with all tracked .meta
-  files. Restore packages from manifest.json and packages-lock.json unchanged.
-- Packages/com.tumbangpreso.core and Packages/com.unity.transport are local
-  packages. Do not replace them with unrelated registry versions.
-- Builds, Library, Logs and user profiles are ignored. They do NOT arrive through
-  a Git push. Checked-in reports contain selected real evidence; rebuild an
-  INTERNAL player on the new PC when required for new runtime work.
+- Work/integrate on ASTRAReworks. Inspect status,fetch,inspect divergence and
+  integrate safely. No main/reset/clean/force,profile copying or discarded dirt.
+- Preserve tracked Assets and .meta,ProjectSettings,Packages,Core/Core.Tests,
+  tools,ArtSource,MapSource and docs. Embedded packages are intentional.
+- Library,Temp,Logs,Builds and player profiles do not arrive through Git.
+  An old hash or filename in a report is not a current local build.
+- Read [AGENTS](../AGENTS.md),[task routes](README.md),[ledger](ACTIVE_REWORK_LEDGER.md)
+  and the latest owner/contributor scope before resuming.
 
-For a fresh destination directory, use git clone --branch ASTRAReworks with the
-repository URL. For an existing authorized checkout: inspect status, fetch,
-inspect divergence and fast-forward only if safe. Never reset to an old hash in
-TODO.md. The transfer's full latest hash is supplied with the chat prompt.
+## Installed Tools
 
-## Known working versions
+Read ProjectSettings/ProjectVersion.txt and Packages/manifest.json plus lockfile.
+The current project uses Unity6000.5.8f1; installed location/module availability
+must still be checked on the destination machine. run_unity_guarded.py supports
+UNITY_EDITOR_PATH and selects a platform-specific default. Do not blindly copy a
+Windows command onto another OS.
 
-Destination verified on 2026-09-14: active checkout is
-C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks. Unity's exact
-Editor/revision and .NET SDK match below. Python is 3.12.8 and Blender is 5.2.0;
-do not assume the source-PC patch versions or username. The official CLI beta.5
-was installed and checksum-verified at C:/Users/matth/AppData/Local/Unity/bin/unity.exe.
-Use that absolute CLI path: C:/Users/matth/bin/unity.cmd is an older Editor wrapper.
+Use available Python and .NET deliberately. Core.Tests needs the installed SDK;
+Unity's bundled compiler can support a labelled compilation fallback but does not
+run native tests. Set PYTHONIOENCODING=utf-8 on Windows when needed for tool output.
+Do not install paid/unrelated tools or replace package versions just to make a
+historical command run.
 
-The task shell omitted ALLUSERSPROFILE although PROGRAMDATA exists. Unity's
-package manager failed with an undefined path before compilation. The guard now
-restores this alias from the existing local ProgramData directory in the child
-environment only. Explicit values/global settings are preserved. Clearing the
-project package cache did not fix it; the original cache was restored. Do not
-change package versions or transport source to work around this environment bug.
+## Isolation And Profiles
 
-All 16 portable skills are downloaded under Logs/portable-skills-2026-09-14;
-all 225 files match the manifest sizes/hashes. Current corresponding installed
-skills were retained. The owner explicitly excludes Figma calls on this PC.
+Use a named validation profile and guarded runner. Every concurrent candidate needs
+its own writable project caches,profile,ports and output. Freeze tested inputs and
+limit heavy workloads. Profile hashes and shared input preferences are preserved
+by the existing guard; never delete the player profile or copy credentials/saves
+from another machine.
 
-| Component | Source workstation |
-| --- | --- |
-| OS / target | Windows, Win64 player |
-| Unity Editor | 6000.5.8f1, revision 5cb7df797b7d |
-| Unity Editor executable | C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe |
-| Unity CLI | 1.0.0-beta.5; C:/Users/Matthew/AppData/Local/Unity/bin/unity.exe |
-| Blender | 5.2.1; C:/Program Files/Blender Foundation/Blender 5.2/blender.exe |
-| Python | 3.12.10; C:/Users/Matthew/AppData/Local/Programs/Python/Python312/python.exe |
-| .NET SDK | 9.0.317; Core.Tests targets net9.0, Core targets netstandard2.1 |
-| Git / Git LFS | 2.55.0.windows.3 / 3.7.1 |
-| Current renderer | Built-in RP; GraphicsSettings.m_CustomRenderPipeline is 0 |
+Check free disk/memory before a launch. The recent native validation environment
+hit its disk reserve during editor startup; headroom readings before launch did
+not prove it could finish. Reuse recorded evidence and make independent fixes
+instead of repeatedly restarting an unchanged blocked job. See [TESTING](TESTING.md).
 
-URP 17.5.0 is in the package manifest, but that does not make this an active URP
-project. Do not migrate it. Active packages include NGO 2.13.1, Input System
-1.20.0, glTFast 6.14.1, Test Framework 1.7.0, uGUI 2.5.0 and Pipeline 0.6.0-exp.1.
-The manifest/lockfile, not this summary, owns exact dependencies.
+## Player Review
 
-Use Unity Hub or the official CLI to install the matching Editor and necessary
-Windows build modules if missing. Authenticate/license locally as needed; never
-copy another PC's credentials. The CLI and Editor are DIFFERENT executables.
-The preserved unity-unity-cli skill contains official installation and Pipeline
-connection instructions. Do not upgrade the project merely to match a preinstalled
-Editor. Detect actual paths before changing a runner.
+Build only when the coherent candidate needs it,with explicit internal
+Builds/<candidate>/TumbangPreso.exe. Keep the Desktop player intact. Verify data and
+Runtime.dll as well as the launcher; an unchanged executable stub does not prove
+source freshness.
 
-Python packages used by the workflow include Pillow 12.3.0, numpy 2.5.1,
-pypdf 6.14.2, imageio-ffmpeg 0.6.0 and requests 2.32.3. Use a local virtual
-environment when appropriate. Install only imports needed by the selected tool;
-do not copy the entire source PC's Python installation. Blender author scripts
-requiring bpy run through Blender, not ordinary Python. For PDF rendering, use
-the document runtime's Poppler when available; load_workspace_dependencies
-discovers that runtime on the destination. pypdf text extraction alone cannot
-replace visual inspection of the moodboard. Existing Unity portrait/source art
-and MP4 evidence can be inspected before any rendering dependencies are installed.
+tools/run_ui_player_review.py requires --exe,--out and --profile. Use a fresh owned
+output and its narrow relevant option (for example --menu-only or --performance-only).
+It intentionally runs a normal player,not -batchmode,which NetBootstrap treats as
+a dedicated server. Its opt-in diagnostics are not physical-device certification.
 
-## Portable skills and tool capabilities
+## Art And History
 
-docs/tooling/skill-reference-bundle.zip contains 16 selected skill packages,
-including their relative references/scripts. skill-reference-manifest.json lists
-the original provenance, entries and SHA256 of every file. It contains no account
-configuration, conversation history, saved profiles or authentication tokens.
+Supplied UI originals,regions,palette/font records and source manifests live in
+ArtSource/ui and the current resources. Use [OWNER_UI_AUTHORING](OWNER_UI_AUTHORING.md)
+and the task's method,not a former user's Downloads directory. Source/internal
+render outputs may need regeneration; shipped assets and source references remain.
 
-Extract into a NEW local reference directory such as Logs/portable-skills. An
-agent can read the SKILL.md files and their references directly there. For skills
-to appear automatically in a future Codex session, install the corresponding
-plugins or use the destination's supported skill installation workflow. A ZIP of
-instructions does NOT install MCP servers, create a tool, or transfer logins.
-Do not overwrite newer installed skills indiscriminately.
-
-| Skill package | Use and setup |
-| --- | --- |
-| unity-bug-investigation | Evidence-led Unity defects and visual regressions |
-| unity-feature-implementation | Existing architecture, state ownership, implementation and focused verification |
-| unity-build-validation | Honest compile/runtime/build/evidence boundaries |
-| unity-project-onboarding | Consult existing project context; no repeated broad audit just to resume |
-| unity-mcp-workflow | Discover/check a real Unity provider and Editor connection |
-| unity-project-health-check | Read-only audit if an actual task warrants it |
-| unity-ui | Detect framework before UI implementation |
-| unity-ui-ugui | This game's Canvas/uGUI work |
-| unity-unity-cli | Official CLI/Pipeline workflow, commands and installation references |
-| game-ui-design | Includes patterns, sharp_edges and validations references |
-| imagegen | Built-in image generation/editing, art direction and critical review |
-| pdf | Render and visually read the 49-page owner moodboard |
-| figma-use | Required before Figma JavaScript read/write actions |
-| figma-create-new-file | Required before any Figma create_new_file call |
-| figma-generate-design | Full composed layouts in Figma when actually useful |
-| figma-generate-library | Editable components/tokens when actually useful |
-
-The six workbench skills came from **Unity Essentials / unity-workbench 0.1.3**.
-The three Unity skills came from **Unity 0.1.5-beta**. Figma was **2.0.21**;
-PDF runtime **26.909.12148**; imagegen was the supplied system skill;
-game-ui-design was installed under the user's .agents/skills.
-
-Relevant destination capabilities: shell/file editing, image viewing, web search,
-built-in image generation, document runtime discovery, optionally official Unity
-CLI/Pipeline. Figma is not authorized. Check actual tools; do not invent tool names.
-The latest primary passes used guarded Unity batch processes and repository
-probes, so lack of a live Unity MCP bridge is not a reason to halt independent
-work. Figma reached the free MCP allowance here; local source assets are complete.
-Do not pay, bypass the quota, or delay gameplay to reconnect Figma.
-
-Use built-in imagegen when useful; no exact GPT image model version was exposed
-by that tool. No paid API fallback or copied API key is authorized. Preserve the
-owner's actual logo. Generated art is a candidate to critique, never automatic
-approval. For future/current tools, live system/developer/user constraints take
-precedence over archived skill text, especially NO agents, NO resets and focused
-tests only. Do not load all 225 skill files into every prompt; route to the relevant
-skill and its required references for the task.
-
-## Launch, profile safety and focused verification
-
-Every Editor launch goes through tools/run_unity_guarded.py. It uses its own
-repository path automatically but has a source-PC UNITY executable constant.
-If the matching Editor is elsewhere, adapt only that executable path after
-checking it. Preserve the profile and Editor input-preference guards.
-
-The guard snapshots/restores existing profile file bytes and these shared Editor
-PlayerPrefs: tumbangpreso.bindings and tumbangpreso.touchlayout (including Unity
-hashed registry names). It verifies restoration. Named -tp-profile isolates
-test files; some Editor input preferences are shared, hence both protections.
-Never clear the player profile, reset all PlayerPrefs, or copy authentication
-data into Git. Avoid any native review that touches a profile the owner is using.
-
-One Editor at a time. Check process ownership first. No C# or imported-asset
-edits during an active Editor run. While it runs, review footage, docs, research
-or prepare nonimported files. Start Windows helpers hidden. Do not kill unrelated
-Unity/player processes. Active sessions from the old PC are all retired.
-
-Examples below are recipes for RELEVANT future checks, not a request to rerun
-everything at transfer. Use new output names and ensure Logs exists.
-
-```powershell
-python tools/run_unity_guarded.py -batchmode -runTests -testPlatform EditMode -testFilter 'TumbangPreso\.Tests\.(CarrySupportExtentTests|ThrowMotionTests|ThrowGestureContinuityTests)' -buildTarget Win64 -testResults Logs/related-edit.xml -logFile Logs/related-edit.log -tp-profile owner-review-editor
-```
-
-Unity testFilter accepts regex group names in this installed test runner.
-Semicolon lists previously ran ZERO tests. Always inspect fresh XML for the
-expected fixture names, nonzero counts and actual failures. PlayMode rendering
-requires NO -nographics. A process exit code alone is not proof. For core-only
-changes use dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj --filter with
-the appropriate xUnit class/method filter. No routine full Core/Edit/Play suites.
-Do not invoke a broad qualification wrapper merely because it exists.
-
-```powershell
-python tools/run_unity_guarded.py -batchmode -executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows -buildTarget Win64 -buildOutput Builds/TransferReview/TumbangPreso.exe -logFile Logs/transfer-review-build.log -tp-profile owner-review-editor
-```
-
-Always give buildOutput. The builder's default can write to the owner's Desktop,
-which is NOT currently requested. It purges its previous selected build output:
-use a deliberate internal folder and check that player is not running. Do not
-hand-delete an unchecked computed path. Verify exe AND data/build identity, then
-launch that exact artifact. New screenshots must be captured in-engine, never
-generated/painted as if they were game evidence.
-
-```powershell
-python tools/net_throw_matrix.py Builds/TransferReview/TumbangPreso.exe --mode classic --out Logs/throw-classic-new
-python tools/net_throw_matrix.py Builds/TransferReview/TumbangPreso.exe --mode hero --delay 150 --rejoin --out Logs/throw-hero-new
-```
-
-These TWO matrices run SEQUENTIALLY: shared ports 8950/8951 and profiles
-throwhost/throwowner/throwobserver. Runner restores only those named profiles.
-The three processes within each run are intentional networking peers, not agents.
-The probe's batchmode is valid for state replication but not render timings.
-Use tools/net_roof_matrix.py and net_familiar_matrix.py only for their related
-changes; read their current flags first. tools/graphics_review.py uses a normal
-hidden rendered player, not batchmode, and measures actual available counters.
-
-tools/encode_motion_evidence.py encodes timestamped captures with
-imageio_ffmpeg, preserving their real speed; no generated/interpolated frames.
-tools/playerprefs_guard.py, test_playerprefs_guard.py and
-test_run_unity_guarded.py preserve the testing workflow. The old narrow
-tangent-only import-dirt helper is archived as a .py.txt in transfer-evidence.
-It is historical diagnostic source, NOT blanket permission to restore assets
-against HEAD. Inspect a pre-run diff and back up first; retain unrelated changes.
-
-## Source assets and editing routes
-
-- Original branding: ArtSource/ui/owner-brand-2026-09-13, including the PDF,
-  all four JPGs, newest logo/palette sheets, measured palette and source hashes.
-- Runtime brand/portraits/illustration imports:
-  Assets/TumbangPreso/Resources/UI/{brand,portraits,illustrations}.
-- Original swimming reference: ArtSource/maps/owner-swimming-2026-09-13.
-- Research and source attribution: docs/Asset_Sourcing.md,
-  docs/reports/improvement-2026-09-12/map-reference-research.md and
-  docs/PHILIPPINE_ABILITY_DIRECTION.md. Reuse findings; browse for new claims.
-- Environment authoring: Assets/TumbangPreso/Editor/MapKit and
-  tools/author_*.py (street stalls/signs, civic paving, trees, laundry, rooftop,
-  animals, birds). Use semantic repeated authoring checks instead of interpreting
-  changing Unity object IDs as geometry changes.
-- Retained cast/animations: MapSource, ArtSource, RosterBookBuilder,
-  ViewmodelArmAuthor, SwimmingAnimationAuthor, RecoveryAnimationAuthor and
-  GeneratedAnimationAuthor. Preserve existing rig/action/GUID contracts.
-- Paid raw control-icon pack under scratchpad/input-icons is intentionally NOT
-  tracked. Runtime derivatives are tracked; obtain the owner's licensed original
-  privately only if regeneration becomes necessary. Do not publish that pack.
-- CC0 raw downloads under scratchpad/asset-src are ignored for size; sourcing URLs
-  and runtime derivatives are in the repo. Do not mistake absent download caches
-  for missing final runtime assets.
-
-Do not transfer .codex auth/config/history, browser sessions, game profiles,
-Library, entire Downloads, or installed executables through the repository.
-Ordinary owner authentication on the new machine is separate from code/art setup.
+The complete older transfer/setup notes,including specific tools and asset receipts,
+are retained in [the dated snapshot](archive/snapshots-2026-09-27/docs/WORKSTATION_SETUP.md).
+Use them for provenance,not current work order or process ownership.

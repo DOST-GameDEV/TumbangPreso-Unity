@@ -85,11 +85,12 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override void OnOpened()
         {
+            RefreshTrainingRange();
             if (Canvas != null) Canvas.gameObject.SetActive(true);
             // This is a menu, not a time-control path. Only SpectatorCamera's broadcast keys
             // may pause or slow the match; opening settings as a player never stops the game.
             if (_title != null)
-                _title.text = GameLaunch.Spectator ? "BROADCAST MENU" : "MATCH MENU";
+                _title.text = PracticeRange.Active ? "TRAINING" : GameLaunch.Spectator ? "BROADCAST MENU" : "MATCH MENU";
 
             if (Local != null) Local.Intent.Parked = true;
 
@@ -169,5 +170,10 @@ namespace TumbangPreso.UI
         /// <summary>⚠️ IT ONLY CLOSES. The input park and cursor are restored by
         /// <see cref="OnClosed"/>, which every exit from this card goes through.</summary>
         private void Resume() => Close();
+
+        private void OnDestroy()
+        {
+            if (Canvas != null) Destroy(Canvas.gameObject);
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,8 +7,31 @@ namespace TumbangPreso.UI
     // Screen-scoped copies of the owner's supplied pixels, not a global reskin.
     public static class OwnerMenuArt
     {
+        private static readonly Dictionary<string,Texture2D> Textures=new Dictionary<string,Texture2D>();
         private static readonly Dictionary<string,Sprite> Sprites=new Dictionary<string,Sprite>();
-        public static Texture2D Texture(string name)=>Resources.Load<Texture2D>("UI/owner-menu-edits/"+name);
+        private static readonly string[] TextureOnly = {
+            "login-background", "main2-background", "main2-sky-mask", "main2-cloud",
+            "main2-shadow", "main2-leaf", "main-ground-mask", "main-sky-cutout",
+            "main-sky-background-data", "cloud-bank-a", "cloud-bank-b"
+        };
+        private static readonly string[] PaintedPieces = {
+            "login3-logo", "login3-tabs-track", "login3-tabs-pill", "login3-field-user",
+            "login3-field-pass", "login3-field-confirm", "login3-checkbox", "login3-key",
+            "login3-primary", "login3-guest", "login3-google", "login3-rule-left",
+            "login3-rule-right", "login3-eye-open", "login3-eye-shut", "login3-invalid"
+        };
+        public static Texture2D Texture(string name)
+        {
+            if(Textures.TryGetValue(name,out var texture) && texture!=null) return texture;
+            texture=Resources.Load<Texture2D>("UI/owner-menu-edits/"+name);
+            if(texture!=null) Textures[name]=texture;
+            return texture;
+        }
+        public static IEnumerator Warmup()
+        {
+            foreach(var name in TextureOnly){Texture(name);yield return null;}
+            foreach(var name in PaintedPieces){Piece(name);yield return null;}
+        }
         public static Sprite Piece(string name)
         {
             if(Sprites.TryGetValue(name,out var sprite) && sprite!=null) return sprite;

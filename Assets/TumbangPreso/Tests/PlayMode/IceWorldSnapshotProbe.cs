@@ -4,6 +4,9 @@ using NUnit.Framework;
 using TumbangPreso.Abilities;
 using TumbangPreso.Net;
 using TumbangPreso.Visual;
+using TumbangPreso.Core;
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -11,6 +14,114 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class IceWorldSnapshotProbe
     {
+        private sealed class SnapshotOwner : INetProvider
+        {
+            public bool IsHost => false;
+            public bool IsNetworked => true;
+            public int LocalSlot => 1;
+            public int LocalPeerId => 1;
+            public bool IsSeatlessReferee => false;
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator SnapshotReceiverRejectsPredictionsAndNewerEventsBeforeReplacingFields()
+        {
+            var previous = NetAuthority.Provider;
+            GameObject root = null;
+            try
+            {
+                yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
+                GameServices.Match.ApplySnapshot(new int[4], 1, true);
+                GameServices.Round.ApplySnapshot(60, true, 0, true);
+                var actor = GameServices.Round.PlayerAt(1);
+                actor.AbilitySystem.BindHero("cheska");
+                NetAuthority.Provider = new SnapshotOwner();
+                root = new GameObject("Snapshot receiver contract"); root.SetActive(false);
+                var router = root.AddComponent<MatchRpc>();
+                typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 12345L);
+                const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                var begin = typeof(MatchRpc).GetMethod("OnWorldFieldBeginMsg", flags);
+                var end = typeof(MatchRpc).GetMethod("OnWorldFieldEndMsg", flags);
+                var pending = typeof(MatchRpc).GetField("_worldFieldBatch", flags);
+                var accepted = typeof(MatchRpc).GetField("_lastWorldFieldGeneration", flags);
+                var sentinel = HeroHazards.SpawnIceSheet(Vector3.zero, 1, 5, 1, 1);
+                var header = new WorldSnapshotHeader
+                {
+                    Match = 12345, Round = 1, Generation = 1, Count = 0, RoundClock = 60,
+                    Scene = new FixedString128Bytes(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name),
+                };
+                void Begin()
+                {
+                    using var writer = new FastBufferWriter(WorldSnapshotHeader.MaxWireBytes, Allocator.Temp);
+                    writer.WriteNetworkSerializable(header);
+                    using var reader = new FastBufferReader(writer, Allocator.Temp);
+                    begin.Invoke(router, new object[] { NetworkManager.ServerClientId, reader });
+                }
+                void End()
+                {
+                    using var writer = new FastBufferWriter(4, Allocator.Temp);
+                    writer.WriteValueSafe(header.Generation);
+                    using var reader = new FastBufferReader(writer, Allocator.Temp);
+                    end.Invoke(router, new object[] { NetworkManager.ServerClientId, reader });
+                }
+                actor.AbilitySystem.TrackSkillRequest(0, 11);
+                Begin(); Assert.IsNull(pending.GetValue(router));
+                Assert.IsTrue(sentinel.activeSelf);
+                header.Generation = 2; header.OwnerRequest = 11;
+                Begin(); Assert.IsNotNull(pending.GetValue(router));
+                actor.AbilitySystem.TrackSkillRequest(0, 12);
+                End(); Assert.Zero((int)accepted.GetValue(router));
+                Assert.IsTrue(sentinel.activeSelf, "An in-flight snapshot erased a newer local prediction.");
+                var events = (long[])typeof(MatchRpc).GetField("_lastSkillEvent", flags).GetValue(router);
+                events[2] = 9;
+                header.Generation = 3; header.OwnerRequest = 12; header.SkillEvent = 8;
+                Begin(); Assert.IsNull(pending.GetValue(router));
+                header.Generation = 4; header.SkillEvent = 9;
+                Begin(); End();
+                Assert.AreEqual(4, (int)accepted.GetValue(router));
+                Assert.IsFalse(sentinel.activeSelf, "A current complete empty snapshot did not replace fields.");
+            }
+            finally
+            {
+                NetAuthority.Provider = previous;
+                if (root != null) Object.Destroy(root);
+            }
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator RestoredPlantsBindTheirOwnersAndOneResetPreservesAnotherPlayersPlant()
+        {
+            yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
+            var one = GameServices.Round.PlayerAt(1);
+            var two = GameServices.Round.PlayerAt(2);
+            one.IsDefender = two.IsDefender = false;
+            one.AbilitySystem.BindHero("paete"); two.AbilitySystem.BindHero("paete");
+            var first = PaetePlant.Restore(new Vector3(-10, 0, -8), 1, 4, 0);
+            PaetePlant.Restore(new Vector3(10, 0, -8), 2, 5, 1);
+            var fields = WorldEffectSnapshot.Capture().Where(f => f.Type == WorldEffectSnapshot.Kind.Plant).ToArray();
+            Assert.AreEqual(2, fields.Length);
+            Assert.IsTrue(WorldEffectSnapshot.Apply(fields, .25f));
+            var restored = PaetePlant.OwnedBy(1);
+            var other = PaetePlant.OwnedBy(2);
+            Assert.IsNotNull(restored); Assert.IsNotNull(other);
+            Assert.AreNotSame(first, restored);
+            Assert.IsFalse(first.isActiveAndEnabled);
+            var skill = one.AbilitySystem.Kit.AttackingSkill;
+            Assert.IsTrue(skill.IsActive, "A visible restored plant left its owning ability inactive.");
+            Assert.AreEqual(PaeteRules.PlantLifeSeconds - 4.25f, skill.DurationRemaining, .001f);
+            Assert.IsTrue(skill.ReactivateReady);
+            var context = new AbilityContext(one, one.GetComponent<Carrier>(), one.GetComponent<CombatVerbs>(),
+                one.transform.position, Vector3.forward, Vector3.zero);
+            skill.Reactivate(context);
+            Assert.AreSame(restored, PaetePlant.OwnedBy(1));
+            Assert.IsFalse(restored.ShotReady);
+            Assert.AreEqual(2, WorldEffectSnapshot.Capture().Count(f => f.Type == WorldEffectSnapshot.Kind.Plant));
+            one.AbilitySystem.ResetKit();
+            Assert.IsNull(PaetePlant.OwnedBy(1));
+            yield return null;
+            Assert.IsTrue(other != null && other.isActiveAndEnabled, "Resetting one kit destroyed another player's plant.");
+        }
+
         [UnitySetUp] public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown] public IEnumerator After()=>PlayModeWorld.Reset();
         private static void Floor()

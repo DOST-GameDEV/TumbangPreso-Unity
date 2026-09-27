@@ -52,13 +52,14 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(_promptPlate.rectTransform, (1100 - width) * .5f, 11, width, 52);
         }
 
-        private const float ChipWidth = 180, ChipHeight = 64, ClockWidth = 232, BarTop = 12;
-        private static readonly float[] ChipX = { 2, 192, 628, 818 };
+        private const float ChipWidth = 220, ChipHeight = 64, ClockWidth = 232, BarTop = 12;
+        private const int ScoreFont = 36, ScoreFontFloor = 28;
+        private static readonly float[] ChipX = { 0, 230, 710, 940 };
 
         private void BuildMatchBar()
         {
             _scoreRoot = OwnerUiLayout.Rect(_root, "MatchScores");
-            Pin(_scoreRoot, new Vector2(.5f, 1), new Vector2(0, -(BarTop + ChipHeight * .5f)), new Vector2(1000, ChipHeight));
+            Pin(_scoreRoot, new Vector2(.5f, 1), new Vector2(0, -(BarTop + ChipHeight * .5f)), new Vector2(1160, ChipHeight));
             for (int i = 0; i < 4; i++) BuildChip(i);
 
             _clockRoot = OwnerUiLayout.Rect(_root, "RoundClock");
@@ -112,21 +113,51 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(_crowns[i].rectTransform, 18, -15, 28, 22); _crowns[i].raycastTarget = false;
 
             _seatTags[i] = OwnerUiLayout.Text(row, "SeatTag", "", 28, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_seatTags[i].rectTransform, 64, 2, 56, 32);
+            OwnerUiLayout.Place(_seatTags[i].rectTransform, 58, 2, 56, 32);
             _seatTags[i].color = HudDraw.CardInk; _seatTags[i].verticalOverflow = VerticalWrapMode.Overflow;
             _stateBadges[i] = OwnerUiLayout.Rect(row, "StateBadge").gameObject.AddComponent<HudBadge>();
-            OwnerUiLayout.Place(_stateBadges[i].rectTransform, 64, 32, 30, 30);
+            OwnerUiLayout.Place(_stateBadges[i].rectTransform, 58, 32, 30, 30);
             _stateBadges[i].Detail = CourtPresentationPalette.Paper; _stateBadges[i].raycastTarget = false;
 
-            _scores[i] = OwnerUiLayout.Text(row, "Score", "", 36, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_scores[i].rectTransform, 90, 2, 82, 60);
+            _scores[i] = OwnerUiLayout.Text(row, "Score", "", ScoreFont, OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Place(_scores[i].rectTransform, 90, 2, 120, 60);
             _scores[i].alignment = TextAnchor.MiddleRight; _scores[i].color = HudDraw.CardInk;
+            _scores[i].horizontalOverflow = HorizontalWrapMode.Overflow;
             _scores[i].verticalOverflow = VerticalWrapMode.Overflow;
 
             _names[i] = Ink(row, "PlayerName", "", 28, false);
             OwnerUiLayout.Place(_names[i].rectTransform, -30, 68, ChipWidth + 60, 34);
             _roles[i] = Ink(row, "RoleState", "", 28, false);
             OwnerUiLayout.Place(_roles[i].rectTransform, -30, 102, ChipWidth + 60, 34); _roles[i].enabled = false;
+        }
+
+        /// <summary>The compact chip never changes the exact score held by MatchDirector or shown at results.</summary>
+        public static string ScoreTextForChip(int score)
+        {
+            long magnitude = score < 0 ? -(long)score : score;
+            if (magnitude < 1000000) return score.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+            long unit = magnitude >= 1000000000 ? 1000000000 : 1000000;
+            string suffix = unit == 1000000000 ? "B" : "M";
+            long whole = magnitude / unit;
+            int places = whole < 10 ? 2 : whole < 100 ? 1 : 0;
+            long scale = places == 2 ? 100 : places == 1 ? 10 : 1;
+            long fraction = magnitude % unit * scale / unit;
+            string shown = whole.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (fraction > 0)
+                shown += "." + fraction.ToString("D" + places, System.Globalization.CultureInfo.InvariantCulture).TrimEnd('0');
+            return (score < 0 ? "-" : "") + shown + suffix;
+        }
+
+        /// <summary>Fit only a changed score, leaving normal three-digit totals at their authored size.</summary>
+        public static void PaintScoreValue(Text label, int value)
+        {
+            string shown = ScoreTextForChip(value);
+            if (label.text == shown) return;
+            label.text = shown;
+            label.fontSize = ScoreFont;
+            while (label.fontSize > ScoreFontFloor && label.preferredWidth > label.rectTransform.rect.width)
+                label.fontSize -= 2;
         }
 
         private void BuildStaminaArc()

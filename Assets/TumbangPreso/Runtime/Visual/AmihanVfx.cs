@@ -152,14 +152,14 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
-    /// UPDRAFT's launch: a column of three strands spiralling up from her feet to where she will
-    /// hover, a ring of air bursting out across the road, and cotton lifted with her.
+    /// FEATHERFALL's launch: unequal rising streaks carry her out of the court's pressure rim.
     /// </summary>
     public sealed class AmihanUpdraftLaunch : MonoBehaviour, IVfxTimeline
     {
         public const float Life = 1.0f;
         private readonly List<WindVfx.Ribbon> _column = new List<WindVfx.Ribbon>();
-        private WindVfx.Ribbon _burst, _burstOuter;
+        private readonly List<float> _delays = new List<float>();
+        private WindVfx.Ribbon _burst, _burstOuter, _spiral;
         private WindVfx.Motif _motif;
         private float _age, _height;
         public float LifeSeconds => Life;
@@ -169,12 +169,17 @@ namespace TumbangPreso.Visual
             var go = new GameObject("AmihanUpdraftLaunch");
             go.transform.position = VfxShapes.GroundPoint(at);
             var fx = go.AddComponent<AmihanUpdraftLaunch>(); fx._height = height;
-            for (int i = 0; i < 3; i++)
-            {
-                var spine = WindVfx.Helix(Vector3.up * 0.05f, Vector3.up * (height + 0.9f), 0.55f - i * 0.1f, 1.6f + i * 0.35f, 30, i * 120.0f, 0.55f);
-                fx._column.Add(WindVfx.Build(go.transform, "UpdraftStrand" + i, spine, 0.2f - i * 0.04f,
-                                             WindVfx.AroundAxis(spine, Vector3.up), 5.0f, 0.2f, i * 1.7f));
-            }
+            fx.Rise("NearLeft", new Vector3(-.56f,.03f,.38f), new Vector3(-.70f,height*.43f,.24f), new Vector3(-.43f,height+.44f,.09f), .055f, .01f, 1);
+            fx.Rise("FarRight", new Vector3(.46f,.02f,-.47f), new Vector3(.59f,height*.58f,-.38f), new Vector3(.34f,height+.65f,-.18f), .044f, .09f, 3);
+            fx.Rise("NearRight", new Vector3(.62f,.04f,.25f), new Vector3(.78f,height*.39f,.16f), new Vector3(.54f,height+.22f,-.02f), .038f, .05f, 6);
+            fx.Rise("BackLeft", new Vector3(-.28f,.02f,-.64f), new Vector3(-.40f,height*.50f,-.72f), new Vector3(-.13f,height+.38f,-.43f), .061f, .13f, 9);
+            fx.Rise("FrontThread", new Vector3(.04f,.03f,.65f), new Vector3(-.09f,height*.48f,.71f), new Vector3(.12f,height+.31f,.46f), .031f, .16f, 12);
+            fx.Rise("LeftThread", new Vector3(-.82f,.02f,-.12f), new Vector3(-.91f,height*.33f,.03f), new Vector3(-.66f,height+.12f,.23f), .034f, .19f, 16);
+            fx.Rise("BackThread", new Vector3(.18f,.04f,-.83f), new Vector3(.30f,height*.61f,-.89f), new Vector3(.04f,height+.72f,-.60f), .029f, .07f, 20);
+            fx.Rise("RightThread", new Vector3(.81f,.02f,-.13f), new Vector3(.88f,height*.52f,-.25f), new Vector3(.62f,height+.39f,-.38f), .041f, .11f, 25);
+            fx.Rise("InnerLift", new Vector3(-.07f,.03f,-.35f), new Vector3(.14f,height*.46f,-.49f), new Vector3(-.02f,height+.51f,-.31f), .046f, .03f, 31);
+            var spiral = WindVfx.Helix(Vector3.up * .04f, Vector3.up * (height + .42f), .69f, .83f, 28, 24, .57f);
+            fx._spiral = WindVfx.Build(go.transform, "ClimbingGust", spiral, .075f, WindVfx.AroundAxis(spiral, Vector3.up), 4, .18f, 35);
             var ring = WindVfx.Arc(0.6f, 355.0f, 30, 0.05f);
             fx._burst = WindVfx.Build(go.transform, "LiftRing", ring, 0.18f, WindVfx.Flat(ring), 6.0f, 0.2f, 3.0f);
             var outer = WindVfx.Arc(0.9f, 355.0f, 30, 0.03f);
@@ -182,6 +187,12 @@ namespace TumbangPreso.Visual
             fx._motif = new WindVfx.Motif(go.transform, 12, at.x * 2.9f + at.z * 0.3f, 0.3f);
             fx.StepTo(0.0f);
             return fx;
+        }
+
+        private void Rise(string name, Vector3 start, Vector3 bend, Vector3 top, float width, float delay, float seed)
+        {
+            _column.Add(WindVfx.Build(transform, name, new[] { start, bend, top }, width, _ => Vector3.right, 3, .18f, seed));
+            _delays.Add(delay);
         }
 
         private void Update() { StepTo(_age + Time.deltaTime); if (_age >= Life) Destroy(gameObject); }
@@ -193,9 +204,10 @@ namespace TumbangPreso.Visual
             float phase = WindVfx.Reduced ? 0.0f : t * 4.0f;
             for (int i = 0; i < _column.Count; i++)
             {
-                _column[i].GameObject.transform.localRotation = Quaternion.Euler(0, t * (220.0f + i * 60.0f), 0);
-                _column[i].Set(0.95f - i * 0.2f, phase + i, WindVfx.Ease(0.0f, 0.42f, t), WindVfx.Ease(0.3f, 0.95f, t), WindVfx.Ease(0.5f, 1.0f, t));
+                float age = t - _delays[i];
+                _column[i].Set(WindVfx.Reduced ? .38f : .72f, -phase, WindVfx.Ease(0, .34f, age), WindVfx.Ease(.23f, .74f, age), WindVfx.Ease(.42f, .82f, age));
             }
+            _spiral.Set(WindVfx.Reduced ? .32f : .6f, phase, WindVfx.Ease(.04f, .45f, t), WindVfx.Ease(.28f, .93f, t), WindVfx.Ease(.55f, 1, t));
             _burst.GameObject.transform.localScale = Vector3.one * Mathf.Lerp(0.5f, 2.6f, WindVfx.Ease(0.0f, 0.45f, t));
             _burst.Set(1.0f - WindVfx.Ease(0.3f, 0.75f, t), phase, 1, 0, WindVfx.Ease(0.1f, 0.6f, t));
             _burstOuter.GameObject.transform.localScale = Vector3.one * Mathf.Lerp(0.6f, 3.4f, WindVfx.Ease(0.05f, 0.6f, t));
@@ -211,63 +223,95 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
-    /// UPDRAFT while aloft: a ring of air turning under her feet, two strands swirling round her
-    /// legs, a thin downdraft line to the road and a ring ON the road, so every player can read
-    /// where she is above them (and the taya can read where she will come down). It follows the
-    /// body and removes itself when the flight is over.
+    /// FEATHERFALL support: open curls at the limbs and air rising beside the body.
+    /// The legacy component name is retained, but no flat ring travels with her feet.
     /// </summary>
     public sealed class AmihanHoverRing : MonoBehaviour
     {
         private CharacterMotor _body;
-        private WindVfx.Ribbon _feet, _feetOuter, _legA, _legB, _shadowRing, _downdraft;
+        private Abilities.HeroKit _kit;
+        private AmihanFlightPose _pose;
+        private WindVfx.Ribbon _legA, _legB, _handA, _handB, _liftA, _liftB, _liftC;
+        private WindVfx.Ribbon _dustA, _dustB, _dustC;
         private Transform _groundAnchor;
-        private float _age, _fade;
+        private float _age, _fade, _landing = -1;
+        private bool _descending, _cancelled;
+        private int _movementEpoch;
 
-        public static AmihanHoverRing Attach(CharacterMotor body)
+        public static AmihanHoverRing Attach(CharacterMotor body, AmihanFlightPose pose = null)
         {
             if (body == null) return null;
-            var existing = body.GetComponentInChildren<AmihanHoverRing>();
-            if (existing != null) { existing._fade = 0.0f; return existing; }
+            foreach (var existing in body.GetComponentsInChildren<AmihanHoverRing>())
+                if (!existing._cancelled && existing._kit == body.AbilitySystem?.Kit && existing._movementEpoch == body.MovementEpoch)
+                {
+                    if (pose != null) existing._pose = pose;
+                    if (body.IsAloft) existing._landing = -1;
+                    return existing;
+                }
+                else Destroy(existing.gameObject);
             var go = new GameObject("AmihanHoverRing");
             go.transform.SetParent(body.transform, false);
-            var fx = go.AddComponent<AmihanHoverRing>(); fx._body = body;
-            var feet = WindVfx.Arc(0.42f, 340.0f, 26, 0.02f);
-            fx._feet = WindVfx.Build(go.transform, "FeetRing", feet, 0.13f, WindVfx.Flat(feet), 5.0f, 0.25f, 1.0f);
-            var outer = WindVfx.Arc(0.62f, 300.0f, 26, -0.08f);
-            fx._feetOuter = WindVfx.Build(go.transform, "FeetRingOuter", outer, 0.08f, WindVfx.Flat(outer), 7.0f, 0.2f, 2.0f);
-            var legA = WindVfx.Helix(Vector3.up * -0.1f, Vector3.up * 0.9f, 0.34f, 1.2f, 20, 0, 0.8f);
-            var legB = WindVfx.Helix(Vector3.up * -0.2f, Vector3.up * 0.7f, 0.4f, 1.0f, 20, 180, 0.7f);
-            fx._legA = WindVfx.Build(go.transform, "LegStrandA", legA, 0.08f, WindVfx.AroundAxis(legA, Vector3.up), 4.0f, 0.25f, 3.0f);
-            fx._legB = WindVfx.Build(go.transform, "LegStrandB", legB, 0.07f, WindVfx.AroundAxis(legB, Vector3.up), 4.0f, 0.25f, 4.0f);
+            var fx = go.AddComponent<AmihanHoverRing>(); fx._body = body; fx._kit = body.AbilitySystem?.Kit;
+            fx._movementEpoch = body.MovementEpoch;
+            fx._pose = pose != null ? pose : body.GetComponent<AmihanFlightPose>();
+            fx._legA = Curl(go.transform, "LeftShinCurl", new Vector3(-.16f, -.06f, .08f), new Vector3(-.16f, .58f, .08f), .20f, .72f, .055f, 3);
+            fx._legB = Curl(go.transform, "RightShinCurl", new Vector3(.16f, .02f, -.06f), new Vector3(.16f, .76f, -.06f), .17f, .91f, .045f, 4);
+            fx._handA = Curl(go.transform, "LeftWristCurl", Vector3.down * .10f, Vector3.up * .13f, .12f, .64f, .035f, 8);
+            fx._handB = Curl(go.transform, "RightWristCurl", Vector3.down * .08f, Vector3.up * .17f, .10f, .79f, .030f, 12);
+            fx._liftA = WindVfx.Build(go.transform, "RisingAirLeft", new[] { new Vector3(-.58f,-.75f,-.08f), new Vector3(-.64f,.18f,-.02f), new Vector3(-.48f,1.35f,.16f) }, .045f, _ => Vector3.right, 3, .22f, 15);
+            fx._liftB = WindVfx.Build(go.transform, "RisingAirBack", new[] { new Vector3(.24f,-.55f,-.52f), new Vector3(.34f,.42f,-.58f), new Vector3(.18f,1.65f,-.36f) }, .032f, _ => Vector3.right, 4, .18f, 21);
+            fx._liftC = WindVfx.Build(go.transform, "RisingAirRight", new[] { new Vector3(.51f,-.92f,.18f), new Vector3(.65f,.08f,.23f), new Vector3(.46f,1.02f,.35f) }, .038f, _ => Vector3.forward, 3, .20f, 28);
             var anchor = new GameObject("GroundMark").transform; anchor.SetParent(go.transform, false);
             fx._groundAnchor = anchor;
-            var shadow = WindVfx.Arc(0.5f, 350.0f, 28, 0.0f);
-            fx._shadowRing = WindVfx.Build(anchor, "GroundRing", shadow, 0.1f, WindVfx.Flat(shadow), 6.0f, 0.3f, 5.0f);
-            var draft = new List<Vector3>();
-            for (int i = 0; i < 10; i++) draft.Add(Vector3.up * (i / 9.0f));
-            fx._downdraft = WindVfx.Build(anchor, "Downdraft", draft, 0.06f, _ => Vector3.right, 6.0f, 0.4f, 6.0f);
+            var dustA = WindVfx.Arc(.62f, 115, 14, .02f, 15);
+            var dustB = WindVfx.Arc(.87f, 82, 11, .035f, 176);
+            var dustC = WindVfx.Arc(.48f, 68, 10, .045f, 282);
+            fx._dustA = WindVfx.Build(anchor, "CourtDustLeft", dustA, .065f, WindVfx.Flat(dustA), 4, .12f, 5);
+            fx._dustB = WindVfx.Build(anchor, "CourtDustBack", dustB, .04f, WindVfx.Flat(dustB), 3, .10f, 7);
+            fx._dustC = WindVfx.Build(anchor, "CourtDustNear", dustC, .05f, WindVfx.Flat(dustC), 3, .10f, 9);
+            var dust = new Color(.50f, .52f, .39f, 1);
+            fx._dustA.Recolour(WindVfx.Cotton, dust, WindVfx.Ink);
+            fx._dustB.Recolour(WindVfx.Cotton, dust, WindVfx.Ink);
+            fx._dustC.Recolour(WindVfx.Cotton, dust, WindVfx.Ink);
             return fx;
         }
+
+        private static WindVfx.Ribbon Curl(Transform parent, string name, Vector3 from, Vector3 to, float radius, float turns, float width, float seed)
+        {
+            var spine = WindVfx.Helix(from, to, radius, turns, 18, seed * 31, .65f);
+            return WindVfx.Build(parent, name, spine, width, WindVfx.AroundAxis(spine, Vector3.up), 4, .20f, seed);
+        }
+
+        public void Cancel() { _cancelled = true; _landing = -1; }
 
         private void LateUpdate()
         {
             if (_body == null) { Destroy(gameObject); return; }
             float dt = Time.deltaTime;
             _age += dt;
-            bool flying = _body.IsFlying;
-            _fade = Mathf.Clamp01(_fade + (flying ? dt * 4.0f : -dt * 3.0f));
-            if (!flying && _fade <= 0.0f) { Destroy(gameObject); return; }
+            if (_body.AbilitySystem?.Kit != _kit || _body.MovementEpoch != _movementEpoch
+                || _body.IsTagged || _body.IsRooted || _body.IsTripped || _body.IsSwimming || _body.IsEdgeRecovering) Cancel();
+            bool flying = !_cancelled && _body.IsFlying;
+            if (!_cancelled && _descending && _body.IsGrounded && !_body.IsFlying)
+            {
+                _landing = 0;
+                // Every peer observes contact locally; never rebroadcast this presentation cue.
+                using (NetCue.SuppressRelay()) NetCue.PlayVaried("sfx_amihan_updraft_settle", _body.transform.position, .96f, 1.04f, .8f);
+            }
+            _descending = !_cancelled && _body.IsFlying && !_body.IsAloft;
+            if (_landing >= 0) _landing += dt;
+            _fade = Mathf.Clamp01(_fade + (flying ? dt * 4 : -dt * 4));
+            if (!flying && _fade <= 0 && (_landing < 0 || _landing > .45f)) { Destroy(gameObject); return; }
             float phase = WindVfx.Reduced ? 0.0f : _age * 3.0f;
-            float a = _fade;
-            _feet.GameObject.transform.localRotation = Quaternion.Euler(0, _age * 140.0f, 0);
-            _feet.Set(0.9f * a, phase, 1, 0, 1 - a);
-            _feetOuter.GameObject.transform.localRotation = Quaternion.Euler(0, -_age * 90.0f, 0);
-            _feetOuter.Set(0.55f * a, phase * 1.3f, 1, 0, 1 - a);
-            _legA.GameObject.transform.localRotation = Quaternion.Euler(0, _age * 260.0f, 0);
-            _legB.GameObject.transform.localRotation = Quaternion.Euler(0, _age * 200.0f + 90.0f, 0);
+            float a = _fade * (WindVfx.Reduced ? .55f : 1);
             float breathe = 0.5f + 0.5f * Mathf.Sin(_age * 2.2f);
-            _legA.Set(0.6f * a, phase, Mathf.Lerp(0.6f, 1.0f, breathe), 0.0f, 0.2f);
-            _legB.Set(0.5f * a, phase + 1, 1.0f, Mathf.Lerp(0.0f, 0.3f, breathe), 0.25f);
+            _legA.Set(.55f * a, phase, Mathf.Lerp(.66f, 1, breathe), 0, .3f);
+            _legB.Set(.43f * a, phase + 1, 1, Mathf.Lerp(0, .22f, breathe), .35f);
+            Wrist(_handA, _pose != null ? _pose.LeftPalm : null, .48f * a, phase);
+            Wrist(_handB, _pose != null ? _pose.RightPalm : null, .37f * a, phase + 1.1f);
+            _liftA.Set(.38f * a, -phase * 1.3f, 1, 0, .35f);
+            _liftB.Set(.26f * a, -phase * 1.1f + 2, 1, 0, .45f);
+            _liftC.Set(.31f * a, -phase * 1.5f + 4, 1, 0, .4f);
 
             // The road mark: straight down from her, on whatever surface is under her.
             Vector3 feet = _body.transform.position;
@@ -275,11 +319,19 @@ namespace TumbangPreso.Visual
             float gap = Mathf.Max(0.0f, feet.y - ground);
             _groundAnchor.position = new Vector3(feet.x, ground + 0.03f, feet.z);
             _groundAnchor.rotation = Quaternion.identity;
-            _shadowRing.GameObject.transform.localRotation = Quaternion.Euler(0, -_age * 60.0f, 0);
-            _shadowRing.Set(Mathf.Clamp01(gap / 1.2f) * 0.8f * a, phase, 1, 0, 0.3f);
-            _downdraft.GameObject.transform.localScale = new Vector3(1, Mathf.Max(0.01f, gap), 1);
-            _downdraft.GameObject.transform.rotation = Quaternion.LookRotation(Camera.main != null ? Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up) + Vector3.forward * 0.001f : Vector3.forward);
-            _downdraft.Set(Mathf.Clamp01(gap / 1.5f) * 0.45f * a, -phase * 2.0f, 1, 0, 0.5f);
+            float landing = _landing >= 0 ? 1 - Mathf.Clamp01(_landing / .45f) : 0;
+            float dust = Mathf.Clamp01(gap / 1.2f) * .23f * a + landing * .5f;
+            _groundAnchor.localScale = Vector3.one * (1 + (_landing >= 0 ? Mathf.Clamp01(_landing / .45f) * .65f : gap * .08f));
+            _dustA.Set(dust, phase * .6f, 1, 0, .4f + .5f * (1 - _fade));
+            _dustB.Set(dust * .65f, phase * .45f + 1, 1, 0, .5f);
+            _dustC.Set(dust * .8f, phase * .7f + 2, 1, 0, .45f);
+        }
+
+        private static void Wrist(WindVfx.Ribbon ribbon, Transform palm, float alpha, float phase)
+        {
+            if (palm == null) { ribbon.Set(0, 0); return; }
+            ribbon.GameObject.transform.SetPositionAndRotation(palm.position, palm.rotation);
+            ribbon.Set(alpha, phase, 1, 0, .3f);
         }
     }
 
@@ -599,20 +651,77 @@ namespace TumbangPreso.Visual
 
     /// <summary>
     /// Puts the right body tell on a body when it gains a status, on every peer. Added to every
-    /// `CharacterMotor` so a status needs no per-map wiring. Frozen and Tagged already have their
-    /// own tells (the ice coat, the caught mark), so only the two new statuses are drawn here.
+    /// `CharacterMotor` so received timers and joining snapshots need no original cast.
+    /// Frozen's existing restraint is body-owned too; Tagged keeps its caught mark.
     /// </summary>
     public sealed class StatusBodyMarks : MonoBehaviour
     {
         private CharacterMotor _body;
         private WhirledMark _whirled;
         private ChilledMark _chilled;
+        private Abilities.HeroHazards.IceCubePrisonComponent _frozen;
+        private bool _frozenPresentationFailed;
+        private PaeteRootCoil _rooted;
+        private bool _rootedPresentationFailed;
 
         private void Awake() => _body = GetComponent<CharacterMotor>();
+
+        public PaeteRootCoil EnsureRootedRestraint(Vector3? centre = null)
+        {
+            if (!isActiveAndEnabled || _body == null || !_body.IsRooted || _rootedPresentationFailed) return null;
+            try
+            {
+                _rooted = centre.HasValue ? PaeteRootCoil.Attach(_body, centre.Value) : PaeteRootCoil.Attach(_body);
+                return _rooted;
+            }
+            catch (System.Exception error)
+            {
+                _rootedPresentationFailed = true;
+                var partial = _body.GetComponentInChildren<PaeteRootCoil>();
+                if (partial != null) partial.Retire();
+                Debug.LogException(error);
+                return null;
+            }
+        }
+
+        public GameObject EnsureFrozenRestraint()
+        {
+            if (!isActiveAndEnabled || _body == null || !_body.IsFrozen) return null;
+            if (_frozen != null && !_frozen.Shattered) return _frozen.gameObject;
+            if (_frozenPresentationFailed) return null;
+            try
+            {
+                var visual = Abilities.HeroHazards.CreateIceCubePrison(_body.transform, _body.StunLeft);
+                _frozen = visual.GetComponent<Abilities.HeroHazards.IceCubePrisonComponent>();
+                return visual;
+            }
+            catch (System.Exception error)
+            {
+                // Missing/reworked presentation must not retry and allocate every frame.
+                _frozenPresentationFailed = true;
+                Debug.LogException(error);
+                return null;
+            }
+        }
 
         private void LateUpdate()
         {
             if (_body == null) return;
+            if (_body.IsRooted)
+            {
+                if (_rooted == null || !_rooted.gameObject.activeInHierarchy) EnsureRootedRestraint();
+            }
+            else
+            {
+                if (_rooted != null) _rooted.Retire();
+                _rooted = null; _rootedPresentationFailed = false;
+            }
+            if (_body.IsFrozen) EnsureFrozenRestraint();
+            else
+            {
+                _frozenPresentationFailed = false;
+                if (_frozen != null) { _frozen.Shatter(); _frozen = null; }
+            }
             if (_body.IsWhirled && _whirled == null)
             {
                 _whirled = WhirledMark.Attach(_body);
@@ -625,6 +734,19 @@ namespace TumbangPreso.Visual
                 _chilled = ChilledMark.Attach(_body);
                 GameServices.Audio?.PlayAtVaried("sfx_status_chilled", _body.transform.position, 0.95f, 1.05f, 0.7f);
             }
+        }
+
+        private void OnDisable() => Clear();
+        private void OnDestroy() => Clear();
+        private void Clear()
+        {
+            if (_rooted != null) _rooted.Retire();
+            if (_frozen != null) Destroy(_frozen.gameObject);
+            if (_whirled != null) Destroy(_whirled.gameObject);
+            if (_chilled != null) Destroy(_chilled.gameObject);
+            _frozen = null; _whirled = null; _chilled = null;
+            _frozenPresentationFailed = false;
+            _rooted = null; _rootedPresentationFailed = false;
         }
     }
 }

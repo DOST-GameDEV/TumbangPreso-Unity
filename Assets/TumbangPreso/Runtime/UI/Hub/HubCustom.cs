@@ -51,7 +51,8 @@ namespace TumbangPreso.UI.Hub
             if (string.IsNullOrWhiteSpace(me)) me = "PLAYER";
 
             HubField.Label(panel, "LOBBY NAME", new Vector2(44, -34));
-            _name = HubField.Build(panel, "LobbyName", (me + "'s room").ToUpperInvariant(), "Name your room", 24, 902);
+            _name = HubField.Build(panel, "LobbyName", (me + "'s room").ToUpperInvariant(), "Name your room",
+                                   Settings.GameSettings.RoomTitleMax, 902);
             HubKit.Place((RectTransform)_name.transform, HubKit.TopLeft, new Vector2(40, -76), new Vector2(740, 92));
 
             string[] maps = new string[SceneFlow.MapRegistry.Length];
@@ -148,7 +149,9 @@ namespace TumbangPreso.UI.Hub
         private InputField _codeField;
         private bool _busy;
         private float _nextDraw;
-        private string _drawn = "";
+        private const int VisibleRooms = 5;
+        private readonly List<HubRoom> _drawnRooms = new List<HubRoom>(VisibleRooms);
+        private int _drawnSource = -1;
 
         public override void Build()
         {
@@ -242,7 +245,7 @@ namespace TumbangPreso.UI.Hub
             _list.gameObject.SetActive(!code);
             _list.parent.Find("Columns").gameObject.SetActive(!code);
             _header.text = code ? "JOIN BY CODE" : index == 0 ? "SERVERS (ONLINE)" : "SERVERS (LAN)";
-            _drawn = "";
+            _drawnSource = -1;
             Draw();
             if (code) UnityEngine.EventSystems.EventSystem.current?.SetSelectedGameObject(_codeField.gameObject);
             Hub.RefreshFocus();
@@ -259,10 +262,13 @@ namespace TumbangPreso.UI.Hub
         {
             if (_source == 2) return;
             var rooms = Hub.Host.Rooms(_source == 1);
-            string key = _source + ":";
-            foreach (var r in rooms) key += r.Key + r.Players + r.InProgress + ";";
-            if (key == _drawn) return;
-            _drawn = key;
+            int visible = Mathf.Min(rooms.Count, VisibleRooms);
+            bool same = _drawnSource == _source && _drawnRooms.Count == visible;
+            for (int i = 0; same && i < visible; i++) same = _drawnRooms[i].SameListing(rooms[i]);
+            if (same) return;
+            _drawnSource = _source;
+            _drawnRooms.Clear();
+            for (int i = 0; i < visible; i++) _drawnRooms.Add(rooms[i]);
 
             for (int i = _list.childCount - 1; i >= 0; i--)
                 if (_list.GetChild(i) != _empty.transform) Destroy(_list.GetChild(i).gameObject);
@@ -272,7 +278,7 @@ namespace TumbangPreso.UI.Hub
                 : "";
             _emptyCan.gameObject.SetActive(rooms.Count == 0);
 
-            for (int i = 0; i < Mathf.Min(rooms.Count, 5); i++)
+            for (int i = 0; i < visible; i++)
             {
                 var room = rooms[i];
                 var row = HubKit.Place(HubKit.Rect(_list, "Room" + i), HubKit.TopLeft, new Vector2(0, -(i * 104)), new Vector2(1180, 92));
@@ -289,7 +295,7 @@ namespace TumbangPreso.UI.Hub
                 string key2 = room.Key;
                 var join = HubKit.Button(row, "Join" + i, "JOIN", HubStyle.Chartreuse, () => Join(key2), HubStyle.Label, 950 + i);
                 HubKit.Place((RectTransform)join.transform, HubKit.Right, new Vector2(-14, 0), new Vector2(180, 72));
-                join.interactable = !room.InProgress && room.Players < room.Capacity;
+                join.interactable = room.IsJoinable;
             }
             Hub.RefreshFocus();
         }
@@ -325,10 +331,17 @@ namespace TumbangPreso.UI.Hub
     /// </summary>
     public sealed class HubLobby : HubScreen
     {
+        internal const float RoomContentWidth = 1808;
+        internal const float RoomSeatWidth = 900;
+        internal const float RoomColumnGap = 24;
+        internal const float RoomChatWidth = RoomContentWidth - RoomSeatWidth - RoomColumnGap;
+        internal const float RoomChatLeft = -RoomContentWidth * .5f + RoomSeatWidth + RoomColumnGap;
+        private const float RoomSeatsOffset = -(RoomContentWidth - RoomSeatWidth) * .5f;
         public override float CourtShade => 0.3f;
         private Text _title, _code, _count, _mapLine, _status, _address;
-        private RectTransform _rows;
+        private RectTransform _rows, _playersPanel;
         private HubButton _primary, _map, _watch;
+        private bool _chatShown;
 
         public override Selectable FirstFocus => _primary;
         private string _drawn = "";
@@ -354,7 +367,7 @@ namespace TumbangPreso.UI.Hub
             _mapLine = HubKit.Text(Root, "MapLine", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleLeft);
             HubKit.Place(_mapLine.rectTransform, HubKit.TopLeft, new Vector2(HubKit.Margin + HubChrome.BarHeight + 34, -HubKit.Margin - 100), new Vector2(900, 50));
 
-            var panel = HubKit.Place(HubKit.Rect(Root, "Players"), HubKit.Centre, new Vector2(0, 10), new Vector2(900, 620));
+            var panel = _playersPanel = HubKit.Place(HubKit.Rect(Root, "Players"), HubKit.Centre, new Vector2(0, 10), new Vector2(RoomSeatWidth, 620));
             var plate = HubKit.Shape(panel, "Plate", HubStyle.Night, false, 962, 6, 30);
             HubKit.Stretch(plate.rectTransform);
             plate.color = new Color(1, 1, 1, 0.93f);
@@ -376,7 +389,11 @@ namespace TumbangPreso.UI.Hub
             Door("SettingsDoor", HubGlyph.Mark.Gear, "RULES", 1, () => Hub.Host.OpenCustomRules());
             Door("ChatDoor", HubGlyph.Mark.Friends, "CHAT", 2, () => Hub.Host.ToggleChat());
 
-            _map = HubKit.Button(Root, "MapDoor", null, HubStyle.Honey, ChangeMap, 0, 967, HubGlyph.Mark.House);
+            _map = HubKit.Button(Root, "MapDoor", null, HubStyle.Honey, () =>
+            {
+                if (_chatShown) Hub.Host.ToggleChat();
+                ChangeMap();
+            }, 0, 967, HubGlyph.Mark.House);
             HubKit.Place((RectTransform)_map.transform, HubKit.BottomLeft, new Vector2(HubKit.Margin, HubKit.Margin), new Vector2(420, 110));
             var mapLabel = HubKit.Text(_map.Body, "Label", "CHANGE MAP", HubStyle.Label, true, HubStyle.Ink, TextAnchor.MiddleCenter);
             HubKit.Stretch(mapLabel.rectTransform);
@@ -388,7 +405,11 @@ namespace TumbangPreso.UI.Hub
 
         private void Door(string name, HubGlyph.Mark mark, string words, int index, System.Action action)
         {
-            var door = HubKit.Button(Root, name, null, HubStyle.Honey, action, 0, 964 + index);
+            var door = HubKit.Button(Root, name, null, HubStyle.Honey, () =>
+            {
+                if (index != 2 && _chatShown) Hub.Host.ToggleChat();
+                action();
+            }, 0, 964 + index);
             // ⚠️ 176 WIDE, FOR "CHARACTER" AT THE 28 FLOOR, which overran a 150 door in the first capture.
             HubKit.Place((RectTransform)door.transform, HubKit.BottomRight, new Vector2(-(HubKit.Margin + index * 192), HubKit.Margin), new Vector2(176, 150));
             var glyph = HubKit.Glyph(door.Body, "Icon", mark, HubStyle.Ink, 0.1f);
@@ -396,6 +417,26 @@ namespace TumbangPreso.UI.Hub
             var label = HubKit.Text(door.Body, "Label", words, HubStyle.Floor, true, HubStyle.Ink, TextAnchor.MiddleCenter);
             HubKit.Place(label.rectTransform, HubKit.Bottom, new Vector2(0, 10), new Vector2(164, 40));
             HubKit.Fit(label, 160);
+        }
+
+        public void SetChatPresented(bool shown)
+        {
+            if (_chatShown == shown) return;
+            _chatShown = shown;
+            if (_playersPanel != null)
+                _playersPanel.anchoredPosition = shown ? new Vector2(RoomSeatsOffset, 10) : new Vector2(0, 10);
+            if (_status != null)
+            {
+                _status.rectTransform.anchoredPosition = shown
+                    ? new Vector2(RoomSeatsOffset, HubKit.Margin + 140)
+                    : new Vector2(0, HubKit.Margin + 140);
+                _status.rectTransform.sizeDelta = new Vector2(shown ? RoomSeatWidth : 1200, 48);
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (_chatShown && Hub != null) Hub.Host.ToggleChat();
         }
 
         private void ChangeMap()

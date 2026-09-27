@@ -1,0 +1,125 @@
+{
+  "base": "bf0b80db",
+  "protocol": 65,
+  "method": "Direct managed invocation of two compiled NUnit clock/freshness methods; no Unity process/native transport/visual lifecycle run",
+  "result": "PASS",
+  "cases": [
+    "WorldRecoveryCannotCrossAnUltimateHandbackOrNewerCohort",
+    "CovenRecoveryAgesPreparationThenLifeUsingOnlySimulationTime"
+  ],
+  "compiler": "Runtime, Tests and PlayTests exit0",
+  "runtimeAssemblySha256": "387EEBA2B475527F0D363179DCBA4EA3E231B4B1B4619F5A87FCA7821113A868",
+  "compiledFiles": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SkillReceipts.cs",
+      "sha256": "53C7C0E1C59D7E4FBFB24DD8D1EA66FD36A7EA2939449A8D031733910B2C2C0D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs",
+      "sha256": "919912141897A67438FD10E97D6A0E6D624D21692780076EBF101DBD796BA561"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/CovenSnapshot.cs",
+      "sha256": "1EA4BD18AC7928336E39EB18225D46D0E790184BE8E9EE19012DF77EA7206221"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/CovenSnapshot.cs.meta",
+      "sha256": "D4701B684C94DA6A7B7BA4B4CE243A67997D934593D13C12BDE6469C21D1CDC9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "32E8C1791E6BA03D8C5CF711F5830905E8E334078E51DF07E85D82F6B7167484"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.SkillReceipts.cs",
+      "sha256": "06D6CE1392D265584ECC3D98E6AD17666311FCFD1F67C554438CF1AAB954BFB8"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "50AEE84D6BF42EB350E001522AD310FC852C1B7E85B8F5ECBF3E26F9B3D977D6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/WorldSnapshotHeader.cs",
+      "sha256": "24484BA55799A309677C134C63627D5513687CC7CF5DB4B0796717CB79A74403"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterRitualWarmup.cs",
+      "sha256": "1AAC77BB1594B12EDE99DB1995D8E3401970D65B7413C742FA9F3A32BCE2D7A1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/VoodooVfx.cs",
+      "sha256": "338C949BD44768620EB89C78B383702ACD98D177FA448D27EB3F31A4AA1E7E6F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "A6498497DC27AFB101B029B72BA6BFA1B2A58C3AE572A28A154E9D246B2CEB34"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/IceSnapshotBatchTests.cs",
+      "sha256": "5B41881602D12A7FA35169E47A64305FECE36C05357B6FFD9237E176C6BF57AE"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "90BA832DD0D07B173CF053C3B1B578804A6B2D11F1F19B91271DA17BF1EE94B5"
+    }
+  ],
+  "finalCandidateFiles": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SkillReceipts.cs",
+      "sha256": "53C7C0E1C59D7E4FBFB24DD8D1EA66FD36A7EA2939449A8D031733910B2C2C0D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs",
+      "sha256": "919912141897A67438FD10E97D6A0E6D624D21692780076EBF101DBD796BA561"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/CovenSnapshot.cs",
+      "sha256": "1EA4BD18AC7928336E39EB18225D46D0E790184BE8E9EE19012DF77EA7206221"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/CovenSnapshot.cs.meta",
+      "sha256": "D4701B684C94DA6A7B7BA4B4CE243A67997D934593D13C12BDE6469C21D1CDC9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "32E8C1791E6BA03D8C5CF711F5830905E8E334078E51DF07E85D82F6B7167484"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.SkillReceipts.cs",
+      "sha256": "06D6CE1392D265584ECC3D98E6AD17666311FCFD1F67C554438CF1AAB954BFB8"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "50AEE84D6BF42EB350E001522AD310FC852C1B7E85B8F5ECBF3E26F9B3D977D6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/WorldSnapshotHeader.cs",
+      "sha256": "24484BA55799A309677C134C63627D5513687CC7CF5DB4B0796717CB79A74403"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterRitualWarmup.cs",
+      "sha256": "1AAC77BB1594B12EDE99DB1995D8E3401970D65B7413C742FA9F3A32BCE2D7A1"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/VoodooVfx.cs",
+      "sha256": "338C949BD44768620EB89C78B383702ACD98D177FA448D27EB3F31A4AA1E7E6F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "A6498497DC27AFB101B029B72BA6BFA1B2A58C3AE572A28A154E9D246B2CEB34"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/IceSnapshotBatchTests.cs",
+      "sha256": "5B41881602D12A7FA35169E47A64305FECE36C05357B6FFD9237E176C6BF57AE"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs",
+      "sha256": "5977BC176C1ABD75B9CB969CE4D926378B648AAA006FF875EAB7C2CCF8D8C264"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "8C2462BEDC7EFFDF45105E0DF2DD811EE708B62E1D1AA187CC7D8D3841BAFD60"
+    }
+  ],
+  "terminalPhaseFollowup": "SOURCE-REVIEWED ONLY: subsequent compiler preflight blocked below 5 GiB; no native cases run"
+}

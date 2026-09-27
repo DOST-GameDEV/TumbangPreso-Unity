@@ -296,23 +296,23 @@ namespace TumbangPreso.Tests
         }
 
         [Test]
-        public void Nemu_AstralProjection_SupportsReactivation()
+        public void NemuRoleSkillSwitchesBetweenFetchAndGuard()
         {
             var nemu = new Abilities.NemuHeroKit();
-            Assert.IsTrue(nemu.Skill2.CanReactivate, "Nemu Skill 2 should support early reactivation");
+            Assert.IsTrue(nemu.HasRoleAbilities);
+            var fetch = nemu.AttackingSkill;
+            var guard = nemu.DefendingSkill;
+            Assert.AreEqual("KURO FETCH", fetch.Name);
+            Assert.AreEqual("KURO GUARD", guard.Name);
+            Assert.IsFalse(fetch.CanReactivate, "Kuro Fetch is not the removed Astral Projection");
+            Assert.AreSame(fetch, nemu.Skill2);
 
-            var go = new GameObject("TestMotor");
-            var motor = go.AddComponent<CharacterMotor>();
-            var ctx = new Abilities.AbilityContext(motor, null, null);
-
-            Assert.IsTrue(nemu.TryActivateSkill2(ctx));
-            Assert.IsTrue(nemu.Skill2.IsActive);
-
-            // Second activation reactivates and ends early (teleport trigger)
-            Assert.IsTrue(nemu.TryActivateSkill2(ctx));
-            Assert.IsFalse(nemu.Skill2.IsActive, "Second activation should end early");
-
-            Object.DestroyImmediate(go);
+            nemu.SetRole(true, null);
+            Assert.AreSame(guard, nemu.Skill2, "the defending role did not equip Kuro Guard");
+            Assert.AreSame(fetch, nemu.IdleRoleSkill);
+            nemu.SetRole(false, null);
+            Assert.AreSame(fetch, nemu.Skill2, "the attacking role did not restore Kuro Fetch");
+            Assert.AreSame(guard, nemu.IdleRoleSkill);
         }
 
         [Test]

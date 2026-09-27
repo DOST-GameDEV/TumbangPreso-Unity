@@ -345,6 +345,7 @@ namespace TumbangPreso
             // The Whirled and Chilled body tells, on every peer (`Visual.StatusBodyMarks`).
             if (GetComponent<Visual.StatusBodyMarks>() == null) gameObject.AddComponent<Visual.StatusBodyMarks>();
             if (GetComponent<Visual.StatusOverhead>() == null) gameObject.AddComponent<Visual.StatusOverhead>();
+            if (GetComponent<Visual.PhaisterStatusPresenter>() == null) gameObject.AddComponent<Visual.PhaisterStatusPresenter>();
         }
 
         /// ⚠️ THE SPECTATABLE REGISTRY IS POPULATED HERE, NOT AT THE SPAWN SITE. Godot's
@@ -428,6 +429,8 @@ namespace TumbangPreso
         public void AdoptMovementEpoch(int epoch)
         {
             if(epoch<=MovementEpoch)return;
+            ClearNetworkResourceIntent();
+            InvalidateFlightEpisode();
             MovementEpoch=epoch;_awaitingTeleport=false;_teleportAbility=-1;
         }
 
@@ -807,6 +810,7 @@ namespace TumbangPreso
             // visibly bob and fight itself, and it made bots look worse than human peers.
             if (NetAuthority.IsNetworked && !IsLocallySimulated())
             {
+                StepRemoteStamina(dt);
                 StepNetworkReplica(dt);
                 return;
             }
@@ -898,6 +902,7 @@ namespace TumbangPreso
                           * (AbilitySystem?.Kit?.MovementSpeedScale ?? 1.0f)
                           * (CommitLeft > 0.0f ? Balance.SlideSteerScale : 1.0f)
                           * StatusSpeedScale
+                          * BodySpeedScale
                           * RooftopPool.MovementScale(transform.position);
 
             if (canSteer)
@@ -1113,13 +1118,14 @@ namespace TumbangPreso
         /// accepts a correction when prediction has drifted far enough to be visible.
         /// </summary>
         public void ApplyNetworkTransform(Vector3 position, float yaw, Vector3 velocity,
-                                          bool grounded, bool reconcileLocal, bool force = false)
+                                          bool grounded, bool reconcileLocal, bool force = false, long flightEpisode = 0)
         {
             // ⚠️ ASSIGNED BEFORE THE RECONCILE RETURN BELOW, AND THAT ORDERING MATTERS. A body
             // whose owner is predicting it skips the rest of this method whenever the error is
             // small, which is most frames; the pose it keeps is its own, but the grounded bit is
             // still the owner's truth and `StepNetworkReplica` never runs for it anyway.
             _networkGrounded = grounded;
+            ObserveFlightPose(grounded, flightEpisode);
 
             float error = Vector3.Distance(transform.position, position);
             if(reconcileLocal && !force && _awaitingTeleport)return;
@@ -1164,6 +1170,7 @@ namespace TumbangPreso
             if (!snap) return;
 
             SetNetworkPose(position, yaw);
+            if (IsSwimming) EndFlightImmediately();
             _networkSmoothVelocity = Vector3.zero;
             _networkYawVelocity = 0.0f;
         }
@@ -1726,6 +1733,7 @@ namespace TumbangPreso
             AdvanceRecoveryEpisode();
             _tripLeft = Mathf.Max(_tripLeft, duration);
             _tripTotal = Mathf.Max(_tripTotal, _tripLeft);
+            if (IsTripped) EndFlightImmediately();
             ReleaseCommitment();
             _velocity.x = 0.0f;
             _velocity.z = 0.0f;
@@ -1950,6 +1958,7 @@ namespace TumbangPreso
 
             if (recoveryEpisode>=0 && _playerSlot==NetAuthority.LocalSlot)
                 ReplayUnacknowledgedRecovery();
+            if (IsTagged || IsTripped) EndFlightImmediately();
             Stamina?.ApplyNetworkSnapshot(staminaCurrent, staminaIdle, fatigueLeft);
         }
 

@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using TumbangPreso.Net;
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -84,6 +86,69 @@ namespace TumbangPreso.PlayTests
         private static void SetQueueNet(Matchmaker queue, NetSession net)
             => typeof(Matchmaker).GetField("_net", BindingFlags.Instance | BindingFlags.NonPublic)
                                  .SetValue(queue, net);
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator SnapshotRequestsCoalesceOnTheConnectedHostAndCancelOnDisable()
+        {
+            var net = NetSession.Ensure();
+            yield return null;
+            MatchRpc router = null;
+            try
+            {
+                bool hosted = false;
+                yield return Await(net.StartHostAsync(18689), value => hosted = value);
+                Assert.IsTrue(hosted, net.Status);
+                var network = net.GetComponent<NetworkManager>();
+                router = net.GetComponent<MatchRpc>();
+                Assert.IsTrue(network.ConnectedClients.ContainsKey(NetworkManager.ServerClientId));
+                const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                var handler = typeof(MatchRpc).GetMethod("OnReqSnapshotMsg", flags);
+                var sent = (System.Collections.Generic.Dictionary<ulong, float>)typeof(MatchRpc).GetField("_lastSnapshotRequest", flags).GetValue(router);
+                var pending = (System.Collections.Generic.Dictionary<ulong, long>)typeof(MatchRpc).GetField("_pendingSnapshotReplies", flags).GetValue(router);
+                void Request(ulong peer)
+                {
+                    using var writer = new FastBufferWriter(1, Allocator.Temp);
+                    writer.WriteValueSafe((byte)0);
+                    using var reader = new FastBufferReader(writer, Allocator.Temp);
+                    handler.Invoke(router, new object[] { peer, reader });
+                }
+                const ulong peer = NetworkManager.ServerClientId;
+                Request(peer);
+                Assert.IsTrue(sent.ContainsKey(peer));
+                float first = sent[peer];
+                for (int i = 0; i < 8; i++) Request(peer);
+                Assert.AreEqual(1, pending.Count);
+                yield return new WaitForSecondsRealtime(.15f);
+                if (Time.realtimeSinceStartup - first < .5f)
+                    Assert.AreEqual(first, sent[peer], "The coalesced reply ignored the half-second floor.");
+                float deadline = Time.realtimeSinceStartup + 2;
+                while (pending.ContainsKey(peer) && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.IsFalse(pending.ContainsKey(peer), "A throttled request was dropped instead of receiving its deferred reply.");
+                float second = sent[peer];
+                Assert.GreaterOrEqual(second - first, .5f);
+                yield return new WaitForSecondsRealtime(.1f);
+                Assert.AreEqual(second, sent[peer], "Duplicate requests produced additional deadline replies.");
+                Request(ulong.MaxValue);
+                Assert.IsFalse(pending.ContainsKey(ulong.MaxValue));
+                Request(peer);
+                Request(peer);
+                Assert.AreEqual(1, pending.Count);
+                float beforeDisable = sent[peer];
+                router.enabled = false;
+                Assert.IsEmpty(pending);
+                yield return new WaitForSecondsRealtime(.65f);
+                Assert.AreEqual(beforeDisable, sent[peer], "A disabled router's pending callback still sent state.");
+                router.enabled = true;
+                Request(peer);
+                Assert.Greater(sent[peer], beforeDisable);
+                Assert.IsEmpty(pending);
+            }
+            finally
+            {
+                if (router != null) router.enabled = true;
+                net.Stop();
+            }
+        }
 
         /// <summary>
         /// ⚠️⚠️ A NESTED SESSION STILL HOSTS (QA, 2026-09-26: *"Could not open an online room. (relay allocation failed: There

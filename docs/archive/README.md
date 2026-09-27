@@ -1,5 +1,34 @@
 # docs/archive: superseded plans and status files, kept whole
 
+## 2026-09-27 Organization
+
+The owner requested short current routes,updated working guidance and preserved
+history. [Task routes](../README.md),[reference index](../REFERENCE_INDEX.md) and
+[working rules](../WORKING_RULES.md) are current. Archived prompts/counts/reservations
+are not current instructions. Original-path stubs lead here; inline relative links
+in moved documents were rebased. Their complete substantive text remains.
+
+| Former path | Whole history | Current source |
+|---|---|---|
+| docs/FUTURE.md | [Systems roadmap](FUTURE.md) | TODO; reusable [UI method](../UI_DESIGN_METHOD.md) |
+| docs/INSPIRATION.md | [Research](INSPIRATION.md) | Current adopted design and task-specific research |
+| docs/IMPROVEMENT_PLAN.md | [P1-P10](IMPROVEMENT_PLAN.md) | TODO and NATIONALS_POLISH |
+| docs/CLAUDE_ENGINEERING_LANE.md | [Old lane](CLAUDE_ENGINEERING_LANE.md) | Current owner reservations and ledger |
+| docs/CLAUDE_REQUEST_SAFETY_LANE.md | [C4 evidence](CLAUDE_REQUEST_SAFETY_LANE.md) | TODO149.4 and [network guide](../NETWORKING.md) |
+| docs/Port_Plan.md | [Port phase plan](Port_Plan.md) | Current Unity source and TODO |
+| docs/Port_Ledger.md | [Source parity/incident ledger](Port_Ledger.md) | Current source,not original port counts |
+| docs/Design_Drift_Report.md | [Dated reconciliation](Design_Drift_Report.md) | Live Design/Core reconciliation |
+| docs/Voxel_Person_Log.md | [Zack build history](Voxel_Person_Log.md) | Live Voxel_Person_Guide and character method |
+
+Complete pre-cleanup rules,index,ledger,testing,rendering and setup documents are
+in [snapshots-2026-09-27](snapshots-2026-09-27/README.md). The character,hero-kit and
+HOME-animation methods were NOT retired. No numbered TODO history was removed.
+The public queue before header condensation is preserved in
+[TODO_queue_2026-09-27](TODO_queue_2026-09-27.md); it is a snapshot,not a work order.
+Its relative paths refer to the original docs/TODO.md location.
+
+## Earlier Archives
+
 Moved here in the 2026-09-23 docs cleanup so the top of `docs/` only holds documents that
 are live or referenced by live work. **Nothing was deleted.** Each file is unchanged apart
 from relative links that now go up one level. Links from other documents were rewritten to

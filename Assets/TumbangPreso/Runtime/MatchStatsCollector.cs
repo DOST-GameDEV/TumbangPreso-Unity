@@ -80,6 +80,7 @@ namespace TumbangPreso
         private string _matchId = "";
         private string _mode = "";
         private string _mapId = "";
+        private bool _onlineAtStart;
         private int _roundsSeen;
         private float _matchClock;
         private bool _running;
@@ -249,6 +250,7 @@ namespace TumbangPreso
             _matchId = Guid.NewGuid().ToString("N");
             _mode = UI.SceneFlow.SelectedMode.ToString();
             _mapId = UI.SceneFlow.SelectedMap ?? "";
+            _onlineAtStart = UI.SceneFlow.Networked && NetAuthority.IsNetworked;
             _matchClock = 0.0f;
             _roundsSeen = 0;
             _roundsCommitted = 0;
@@ -428,7 +430,7 @@ namespace TumbangPreso
                 DurationSeconds = _matchClock,
                 PlayedUtc = DateTime.UtcNow.ToString("O"),
                 WinningSlot = winningSlot,
-                Online = NetAuthority.IsNetworked,
+                Online = _onlineAtStart,
 
                 // ⚠️⚠️ THE STAKES COME OFF THE QUEUE THAT PRODUCED THE ROOM, NOT OFF A
                 // TOGGLE. `INSPIRATION.md` § 3.1: the mode is the ruleset and the queue is the

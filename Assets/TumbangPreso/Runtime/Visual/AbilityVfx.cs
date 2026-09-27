@@ -36,6 +36,16 @@ namespace TumbangPreso.Visual
             GetParticleMaterial();
         }
 
+        public static System.Collections.IEnumerator WarmupAssets()
+        {
+            Warmup();
+            _ = Chip; yield return null;
+            _ = Grain; yield return null;
+            _ = Flake; yield return null;
+            _ = ElectricNeedle; yield return null;
+            _ = Runes; yield return null;
+        }
+
         /// <summary>
         /// Stop a freshly added emitter dead before anything is written to it.
         ///

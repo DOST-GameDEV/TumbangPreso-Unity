@@ -33,6 +33,21 @@ namespace TumbangPreso.PlayTests
                 // layer for every selectable hero without a live selection deadline expiring.
                 var selector = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = false);
                 var people = Roster.GetPeople(GameMode.HeroStrike);
+                Assert.IsFalse(WalletStore.OnlineRoute);
+                for (int index = 0; index < people.Count; index++)
+                {
+                    var portrait = selector.GetComponentsInChildren<HubButton>(true)
+                        .Single(b => b.name == "Portrait" + index);
+                    Assert.IsTrue(portrait.IsInteractable(), "Offline play keeps every hero available");
+                    Assert.IsFalse(portrait.Hatched, "Offline portraits must not look locked");
+                    Assert.AreEqual(Color.white, portrait.GetComponentsInChildren<Image>()
+                        .Single(i => i.name == "Face").color,
+                        "Offline portraits must keep their full image");
+                }
+                for (int index = people.Count; index < 12; index++)
+                    Assert.IsFalse(selector.GetComponentsInChildren<HubButton>(true)
+                        .Single(b => b.name == "Portrait" + index).IsInteractable(),
+                        "Empty grid slots are not selectable heroes");
                 for (int hero = 0; hero < people.Count; hero++)
                 {
                     yield return HubFlowTests.Press("Portrait" + hero);
@@ -44,7 +59,7 @@ namespace TumbangPreso.PlayTests
                         yield return HubFlowTests.Press("SelectionAbility" + slot);
                         Assert.AreSame(selector, TumpHub.Current.Top, "Skill inspection must stay inline.");
                         var settings = Settings.SettingsStore.Current;
-                        var variant = slots[slot].LoadoutSlot > 0 ? HeroBuildRules.Equipped(HeroBuildRules.RowFor(settings.HeroBuilds,
+                        var variant = HeroLoadoutRules.SidegradesOpen && slots[slot].LoadoutSlot > 0 ? HeroBuildRules.Equipped(HeroBuildRules.RowFor(settings.HeroBuilds,
                             people[hero].Id), people[hero].Id, slots[slot].LoadoutSlot, settings.AbilityChallenges) : null;
                         bool alternate = variant != null && !variant.IsDefault;
                         var labels = selector.GetComponentsInChildren<Text>();
@@ -88,6 +103,108 @@ namespace TumbangPreso.PlayTests
             SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
             var classic = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = false);
             Assert.IsNull(classic.transform.Find("SelectionAbilities"), "Classic stays neutral and has no hero kit.");
+        }
+
+        [UnityTest]
+        public IEnumerator ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate()
+        {
+            Assert.IsFalse(HeroLoadoutRules.SidegradesOpen);
+            SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+            yield return HubFlowTests.OpenHome();
+
+            var alternate = HeroLoadoutRules.VariantsFor("dante", 1).First(v => !v.IsDefault);
+            var settings = Settings.SettingsStore.Current;
+            settings.CharacterPick = 0;
+            settings.HeroBuilds = new List<HeroBuild>
+            {
+                new HeroBuild { HeroId = "dante", Slot1VariantId = alternate.Id },
+            };
+            settings.AbilityChallenges = new List<AbilityChallengeProgress>
+            {
+                new AbilityChallengeProgress { VariantId = alternate.Id, Count = 999 },
+            };
+            Assert.AreEqual(alternate.Id, HeroBuildRules.Equipped(settings.HeroBuilds[0],
+                "dante", 1, settings.AbilityChallenges).Id, "fixture must contain an unlocked stale alternate");
+
+            var selector = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = false);
+            yield return HubFlowTests.Press("SelectionAbility0");
+            var labels = selector.GetComponentsInChildren<Text>();
+            var authored = HeroAbilitySystem.CreateKitFor("dante").ScreenSlots[0].Ability;
+            Assert.AreEqual(authored.Name.ToUpperInvariant(), labels.Single(t => t.name == "AbilityName").text);
+            Assert.AreEqual(authored.Summary, labels.Single(t => t.name == "AbilitySummary").text);
+            Assert.AreNotEqual(alternate.Name.ToUpperInvariant(), labels.Single(t => t.name == "AbilityName").text);
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall()
+        {
+            yield return HubFlowTests.OpenHome();
+            Settings.SettingsStore.Current.CharacterPick = 0;
+            var hosting = TumpHub.Current.Host.HostRoom("PORTRAIT CHECK", SceneFlow.Eskinita,
+                GameMode.HeroStrike, RoomVisibility.Private, false);
+            float until = Time.realtimeSinceStartup + 15;
+            while (!hosting.IsCompleted && Time.realtimeSinceStartup < until) yield return null;
+            Assert.IsTrue(hosting.IsCompleted && !hosting.IsFaulted && string.IsNullOrEmpty(hosting.Result),
+                "The local LAN host did not open for the no-service selector check");
+            until = Time.realtimeSinceStartup + 5;
+            while (!(TumpHub.Current.Top is HubLobby) && Time.realtimeSinceStartup < until) yield return null;
+            Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top,
+                "The local room must be visible before opening its character selector.");
+
+            var net = NetSession.Instance;
+            var wallet = GameServices.Wallet;
+            Assert.IsNotNull(net); Assert.IsNotNull(wallet);
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var relayField = typeof(NetSession).GetField("<IsRelay>k__BackingField", flags);
+            var queryField = typeof(NetSession).GetField("<Query>k__BackingField", flags);
+            var cacheField = typeof(WalletStore).GetField("_cache", flags);
+            Assert.IsNotNull(relayField); Assert.IsNotNull(queryField); Assert.IsNotNull(cacheField);
+            object oldRelay = relayField.GetValue(net), oldQuery = queryField.GetValue(net);
+            object oldCache = cacheField.GetValue(wallet);
+            try
+            {
+                var localCache = System.Activator.CreateInstance(cacheField.FieldType, true);
+                cacheField.FieldType.GetField("Known").SetValue(localCache, true);
+                cacheField.SetValue(wallet, localCache);
+                queryField.SetValue(net, null); // A LAN transport, with no hosted UGS query to update.
+                relayField.SetValue(net, true);
+                Assert.IsTrue(WalletStore.OnlineRoute);
+                Assert.IsTrue(HubOwnership.OwnsHero("dante"));
+                Assert.IsFalse(HubOwnership.OwnsHero("zack"));
+
+                yield return HubFlowTests.Press("CharacterDoor");
+                var selector = TumpHub.Current.Top as HubCharacterSelect;
+                Assert.IsNotNull(selector,"The lobby's CHARACTER door did not open the selector.");
+                var portraits = selector.GetComponentsInChildren<HubButton>(true);
+                var owned = portraits.Single(b => b.name == "Portrait0");
+                var unowned = portraits.Single(b => b.name == "Portrait3");
+                var ownedFace = owned.GetComponentsInChildren<Image>().Single(i => i.name == "Face");
+                var unownedFace = unowned.GetComponentsInChildren<Image>().Single(i => i.name == "Face");
+                Assert.IsFalse(owned.Hatched); Assert.AreEqual(Color.white, ownedFace.color);
+                Assert.IsTrue(unowned.Hatched); Assert.IsTrue(unowned.IsInteractable());
+                Assert.AreEqual(0.62f, unownedFace.color.r, 0.001f);
+                Assert.AreEqual(0.62f, unownedFace.color.g, 0.001f);
+                Assert.AreEqual(0.62f, unownedFace.color.b, 0.001f);
+                Assert.AreEqual(1.0f, unownedFace.color.a, 0.001f);
+                yield return TumpUiCapture.Capture("qa11-owned-hero", TumpHub.Current.Canvas, 1280, 720, false);
+
+                yield return HubFlowTests.Press("Portrait3");
+                Assert.AreEqual(Roster.HeroPeople[3].Name,
+                    selector.GetComponentsInChildren<Text>().Single(t => t.name == "Heading").text);
+                yield return HubFlowTests.Press("SelectionAbility0");
+                Assert.AreEqual(HeroAbilitySystem.CreateKitFor("zack").Skill1.Name,
+                    selector.GetComponentsInChildren<Text>().Single(t => t.name == "AbilityName").text);
+                yield return TumpUiCapture.Capture("qa11-unowned-hero", TumpHub.Current.Canvas, 1280, 720, false);
+                yield return HubFlowTests.Press("SelectButton");
+                Assert.AreSame(selector, TumpHub.Current.Top,
+                    "An unowned online hero may be inspected, but cannot be confirmed for play");
+            }
+            finally
+            {
+                relayField.SetValue(net, oldRelay);
+                queryField.SetValue(net, oldQuery);
+                cacheField.SetValue(wallet, oldCache);
+            }
         }
 
         [UnitySetUp] public IEnumerator Before()

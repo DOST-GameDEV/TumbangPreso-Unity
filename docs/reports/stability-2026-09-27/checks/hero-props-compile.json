@@ -1,0 +1,51 @@
+{
+  "base": "4b1f39d8",
+  "unity": "6000.5.8f1",
+  "method": "Installed Roslyn with existing Bee response files; redirected outputs and new source files included",
+  "nativeTests": "NOT RUN: existing editor startup disk-reserve limit",
+  "playerTimingMeasured": false,
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs",
+      "sha256": "8E3145F8D6DDEEBD625DCE2F3E3D76588D6976896A7B54D4816BD9D1A493C70F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PaeteTrees.cs",
+      "sha256": "60B05DFCD8214EE65D003F9B26AFC6014EDEF95AE76E8F9A811F37B2A5C3D985"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterProp.cs",
+      "sha256": "4C94BA26642A4FB4AA05BD8B1BC6DF5B92432258E3BD7B07893B4A45E94BE80E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/ReworkProp.cs",
+      "sha256": "147D0D259A2BF246B510C1ED329D0AF9D855FCF7D9677B4D7BC0C74F35283358"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/OwnerMenuEditsTests.cs",
+      "sha256": "4511440AC20BBFACA12F75436BF5917A58E9C25A0BE321D018009ED0E88B8C04"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/HeroPropAssets.cs",
+      "sha256": "943D8F99DB0B8FDABC266E11A11B52294E60CA04B647307A82AF5318023D1F07"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/HeroPropAssets.cs.meta",
+      "sha256": "306561359F3BFF9A44A7B990C2F85ACE822D821D0738CFF97DE8E1DEB49BA54E"
+    }
+  ],
+  "assemblies": [
+    {
+      "assembly": "TumbangPreso.Runtime",
+      "compilerExitCode": 0,
+      "outputSha256": "E1E9F49C506920DBDCE15717CE4FD4C64521875AC51F6F910E4FBA986E50EED2",
+      "logSha256": "6A161133DD22D3BD44F3D35F75C01C11D47C8CE98EC28DF06C405D21A19279F8"
+    },
+    {
+      "assembly": "TumbangPreso.PlayTests",
+      "compilerExitCode": 0,
+      "outputSha256": "19506BC100779FB491A443C64E054F801CC7C8A5CFAD912403025B8212A0FAE7",
+      "logSha256": "0DDA82C2B21F602C8B4BB809987509F282174D5A01714617809283316E8F3B07"
+    }
+  ]
+}

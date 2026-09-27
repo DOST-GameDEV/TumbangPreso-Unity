@@ -23,6 +23,13 @@ namespace TumbangPreso.UI.Hub
         private Canvas _canvas;
         private string _scene;
         private float _began;
+        private Scene _sourceScene;
+        private IEnumerator _prewarm;
+        private GameObject _failureControls;
+        private Button _returnButton;
+        private bool _menuTransition;
+        private MapPreviewSurface _previewPreparation;
+        public string FailureReason { get; private set; }
         public static bool Visible => _current != null;
 
         /// <summary>True when <paramref name="scene"/> is an arena, the only kind of load this covers.</summary>
@@ -34,8 +41,8 @@ namespace TumbangPreso.UI.Hub
         /// </summary>
         public static bool Begin(string scene, bool networked)
         {
+            Cancel();
             if (!Covers(scene)) return false;
-            if (_current != null) Destroy(_current.gameObject);
 
             var root = new GameObject("TumpLoading", typeof(RectTransform));
             DontDestroyOnLoad(root);
@@ -43,12 +50,155 @@ namespace TumbangPreso.UI.Hub
             _current = loading;
             loading._scene = scene;
             loading._began = Time.realtimeSinceStartup;
+            loading._sourceScene = SceneManager.GetActiveScene();
             loading.Build();
+            ScreenTakeover.Register(loading, () => _current == loading);
 
             if (networked) { loading.StartCoroutine(loading.Follow(null)); return false; }
-            var load = SceneManager.LoadSceneAsync(scene);
-            loading.StartCoroutine(loading.Follow(load));
+            try
+            {
+                var load = SceneManager.LoadSceneAsync(scene);
+                if (load == null) loading.Fail("The match could not be loaded.");
+                else loading.StartCoroutine(loading.Follow(load));
+            }
+            catch (System.Exception error)
+            {
+                loading.Fail("The match could not be loaded.");
+                Debug.LogException(error, loading);
+            }
             return true;
+        }
+
+        public static void Cancel()
+        {
+            var current = _current;
+            if (current == null) return;
+            _current = null;
+            current.StopAllCoroutines();
+            current.ReleasePrewarm();
+            if (current._canvas != null) current._canvas.gameObject.SetActive(false);
+            Destroy(current.gameObject);
+        }
+
+        public static void PreparePreview(MapPreviewSurface preview)
+        {
+            if (preview == null || preview.IsPrepared) return;
+            if (_current != null)
+            {
+                // Adopt only the hub that this transition loaded. A retiring hub must
+                // not replace a newer match/menu's curtain while its Start finishes.
+                if (_current._menuTransition && _current._scene == SceneFlow.MatchSetup &&
+                    preview.gameObject.scene != _current._sourceScene)
+                    _current._previewPreparation = preview;
+                return;
+            }
+            Cancel();
+            var root = new GameObject("TumpLoading", typeof(RectTransform));
+            DontDestroyOnLoad(root);
+            var loading = root.AddComponent<HubLoading>();
+            _current = loading; loading._scene = SceneFlow.MatchSetup;
+            loading._began = Time.realtimeSinceStartup;
+            loading._sourceScene = SceneManager.GetActiveScene();
+            loading.Build();
+            ScreenTakeover.Register(loading, () => _current == loading);
+            loading.StartCoroutine(loading.FollowPreview(preview));
+        }
+
+        public static bool BeginMenu(string scene)
+        {
+            if (scene != SceneFlow.MainMenu && scene != SceneFlow.MatchSetup &&
+                scene != SceneFlow.CharacterSelect && scene != SceneFlow.MatchResult &&
+                scene != SceneFlow.ModeSelect && scene != SceneFlow.MultiplayerSetup) return false;
+            if (_current != null && _current._menuTransition && _current._scene == scene) return true;
+            Cancel();
+            var root = new GameObject("TumpLoading", typeof(RectTransform));
+            DontDestroyOnLoad(root);
+            var loading = root.AddComponent<HubLoading>();
+            _current = loading; loading._scene = scene; loading._menuTransition = true;
+            loading._began = Time.realtimeSinceStartup;
+            loading._sourceScene = SceneManager.GetActiveScene();
+            loading.Build();
+            ScreenTakeover.Register(loading, () => _current == loading);
+            loading.StartCoroutine(loading.FollowMenu());
+            return true;
+        }
+
+        private IEnumerator FollowMenu()
+        {
+            // Give the curtain a rendered frame before starting scene activation work.
+            yield return null;
+            AsyncOperation load = null;
+            try { load = SceneManager.LoadSceneAsync(_scene); }
+            catch (System.Exception error) { Fail("The menu could not be loaded."); Debug.LogException(error, this); }
+            if (load == null) { if (FailureReason == null) Fail("The menu could not be loaded."); yield break; }
+            while (!load.isDone)
+            {
+                _percent.text = Mathf.RoundToInt(Mathf.Clamp01(load.progress / .9f) * 25) + "%";
+                if (Time.realtimeSinceStartup - _began > 120)
+                { Fail("The menu did not finish loading."); yield break; }
+                yield return null;
+            }
+            var destination = SceneManager.GetActiveScene();
+            if (destination.name != _scene || destination == _sourceScene)
+            { Fail("The menu did not become ready."); yield break; }
+            _percent.text = "25%";
+            while (_current == this && SceneManager.GetActiveScene() == destination)
+            {
+                bool found = false, ready = true;
+                foreach (var screen in Object.FindObjectsByType<ConvertedScreen>(FindObjectsSortMode.None))
+                {
+                    if (screen.gameObject.scene != destination || !screen.isActiveAndEnabled) continue;
+                    found = true;
+                    if (!string.IsNullOrEmpty(screen.InitializationError))
+                    { Fail("The menu could not finish preparing."); yield break; }
+                    ready &= screen.IsInitialized;
+                }
+                if (found && ready) break;
+                if (Time.realtimeSinceStartup - _began > 120)
+                { Fail("The menu did not finish preparing."); yield break; }
+                yield return null;
+            }
+            if (_current != this) yield break;
+            if (SceneManager.GetActiveScene() != destination) { Cancel(); yield break; }
+            Canvas.ForceUpdateCanvases();
+            if (_previewPreparation != null)
+            {
+                _sourceScene = destination; _menuTransition = false; _percent.text = "30%";
+                yield return FollowPreview(_previewPreparation, 30);
+                yield break;
+            }
+            _percent.text = "100%";
+            yield return null;
+            Destroy(gameObject);
+        }
+
+        private IEnumerator FollowPreview(MapPreviewSurface preview, float startProgress = 0)
+        {
+            yield return null;
+            _prewarm = preview.PrepareAll(done => _percent.text = Mathf.RoundToInt(Mathf.Lerp(startProgress, 100, done)) + "%");
+            while (preview != null && SceneManager.GetActiveScene() == _sourceScene)
+            {
+                bool next = false;
+                System.Exception failure = null;
+                try { next = _prewarm.MoveNext(); }
+                catch (System.Exception error) { failure = error; }
+                if (failure != null)
+                {
+                    ReleasePrewarm(); Fail("The menu could not finish preparing.");
+                    Debug.LogException(failure, this); yield break;
+                }
+                if (!next)
+                {
+                    ReleasePrewarm();
+                    if (!preview.IsPrepared) { Fail("The menu preparation was interrupted."); yield break; }
+                    Debug.Log($"[HubLoading] custom previews ready after {Time.realtimeSinceStartup - _began:F2} s.");
+                    Destroy(gameObject); yield break;
+                }
+                if (Time.realtimeSinceStartup - _began > 120)
+                { ReleasePrewarm(); Fail("The menu did not finish preparing."); yield break; }
+                yield return _prewarm.Current;
+            }
+            Cancel();
         }
 
         private void Build()
@@ -56,6 +206,8 @@ namespace TumbangPreso.UI.Hub
             var canvas = _canvas = OwnerUiLayout.Canvas(transform, "TumpLoadingCanvas", 900);
             DontDestroyOnLoad(canvas.gameObject);
             var root = (RectTransform)canvas.transform;
+            var blocker = canvas.gameObject.AddComponent<Image>();
+            blocker.color = HubStyle.Night; blocker.raycastTarget = true;
 
             HubPattern.Ground(root, HubStyle.Night, 81);
             var artwork = LoadingArtwork.Install(root);
@@ -65,13 +217,14 @@ namespace TumbangPreso.UI.Hub
             var vignette = HubKit.Stretch(HubKit.Rect(root, "Vignette")).gameObject.AddComponent<HubVignette>();
             vignette.raycastTarget = false;
 
-            var map = SceneFlow.PreviewFor(_scene);
-            var name = HubKit.Text(root, "Heading", map.Name, 150, true, HubStyle.Honey, TextAnchor.MiddleCenter);
+            bool menu = _menuTransition || _scene == SceneFlow.MatchSetup;
+            var map = SceneFlow.PreviewFor(menu ? SceneFlow.SelectedMap : _scene);
+            var name = HubKit.Text(root, "Heading", menu ? "GETTING READY" : map.Name, 150, true, HubStyle.Honey, TextAnchor.MiddleCenter);
             HubKit.Place(name.rectTransform, HubKit.Centre, new Vector2(0, 70), new Vector2(1600, 190));
             var outline = name.gameObject.AddComponent<Outline>();
             outline.effectColor = HubStyle.Ink; outline.effectDistance = new Vector2(6, -6);
             HubKit.Fit(name, 1600);
-            var tagline = HubKit.Text(root, "Tagline", map.Tagline, HubStyle.Label, false, HubStyle.Honey, TextAnchor.MiddleCenter);
+            var tagline = HubKit.Text(root, "Tagline", menu ? "" : map.Tagline, HubStyle.Label, false, HubStyle.Honey, TextAnchor.MiddleCenter);
             HubKit.Place(tagline.rectTransform, HubKit.Centre, new Vector2(0, -40), new Vector2(1400, 50));
             tagline.gameObject.AddComponent<Shadow>().effectColor = HubStyle.Ink;
 
@@ -98,6 +251,15 @@ namespace TumbangPreso.UI.Hub
                 mark.color = mark.sprite != null ? Color.white : new Color(0, 0, 0, 0);
             }
             HubKit.Place(mark.rectTransform, HubKit.Right, new Vector2(-HubKit.Margin, 0), new Vector2(220, 110));
+
+            var failure = HubKit.Rect(root, "LoadingFailure"); HubKit.Stretch(failure);
+            _failureControls = failure.gameObject; _failureControls.SetActive(false);
+            var message = HubKit.Text(failure, "Error", "", HubStyle.Body, false, HubStyle.Honey, TextAnchor.MiddleCenter);
+            HubKit.Place(message.rectTransform, HubKit.Centre, new Vector2(0, -205), new Vector2(1300, 70));
+            var back = HubKit.Button(failure, "LoadingReturn", "RETURN TO MENU", HubStyle.Honey,
+                SceneFlow.LeaveMatchToMainMenu, HubStyle.Label);
+            _returnButton = back;
+            HubKit.Place((RectTransform)back.transform, HubKit.Centre, new Vector2(0, -315), new Vector2(560, 144));
         }
 
         private IEnumerator Follow(AsyncOperation load)
@@ -114,31 +276,59 @@ namespace TumbangPreso.UI.Hub
             }
             else
             {
-                // Networked: the synchronous load happens at the end of this frame.
-                while (SceneManager.GetActiveScene().name != _scene) yield return null;
+                // A same-scene rematch must not adopt the previous scene's installer.
+                while (SceneManager.GetActiveScene().name != _scene || SceneManager.GetActiveScene() == _sourceScene)
+                {
+                    if (Time.realtimeSinceStartup - _began > 60)
+                    { Fail("The match did not finish loading."); yield break; }
+                    yield return null;
+                }
             }
 
             shown = Mathf.Max(shown, 60f);
             _percent.text = "60%";
 
-            // The match is installed once its ready gate or its round exists.
-            float until = Time.unscaledTime + 8f;
-            while (Time.unscaledTime < until && Object.FindAnyObjectByType<ReadyGate>() == null
-                   && (GameServices.Round == null || !GameServices.Round.RoundActive))
+            var destination = SceneManager.GetActiveScene();
+            float until = Time.realtimeSinceStartup + 60;
+            MatchInstaller installer = null;
+            while (true)
             {
-                shown = Mathf.MoveTowards(shown, 74f, Time.unscaledDeltaTime * 30f);
-                _percent.text = Mathf.RoundToInt(shown) + "%";
+                if (SceneManager.GetActiveScene() != destination) { Cancel(); yield break; }
+                if (installer == null)
+                    foreach (var candidate in Object.FindObjectsByType<MatchInstaller>(FindObjectsSortMode.None))
+                        if (candidate.gameObject.scene == destination) { installer = candidate; break; }
+                if (installer != null && !string.IsNullOrEmpty(installer.InstallationError))
+                { Fail("The match could not be prepared."); yield break; }
+                if (installer != null && installer.IsPrepared) break;
+                if (Time.realtimeSinceStartup >= until)
+                { Fail("The match did not finish preparing."); yield break; }
                 yield return null;
             }
             shown = Mathf.Max(shown, 75f);
             _percent.text = "75%";
 
             // Draw the arena behind the curtain so the first visible frames do not compile.
-            yield return Visual.ArenaPrewarm.Run(done =>
+            _prewarm = Visual.ArenaPrewarm.Run(done =>
             {
                 shown = Mathf.Max(shown, Mathf.Lerp(75f, 99f, done));
                 _percent.text = Mathf.RoundToInt(shown) + "%";
             });
+            while (true)
+            {
+                bool next = false;
+                System.Exception failure = null;
+                try { next = _prewarm.MoveNext(); }
+                catch (System.Exception error) { failure = error; }
+                if (failure != null)
+                {
+                    ReleasePrewarm(); Fail("The match could not finish preparing.");
+                    Debug.LogException(failure, this); yield break;
+                }
+                if (!next) break;
+                yield return _prewarm.Current;
+                if (SceneManager.GetActiveScene() != destination) { Cancel(); yield break; }
+            }
+            ReleasePrewarm();
             _percent.text = "100%";
             Debug.Log($"[HubLoading] {_scene} ready after {Time.realtimeSinceStartup - _began:F2} s.");
             yield return null;
@@ -157,8 +347,28 @@ namespace TumbangPreso.UI.Hub
 
         private void OnDestroy()
         {
+            ReleasePrewarm();
+            ScreenTakeover.Unregister(this);
             if (_canvas != null) Destroy(_canvas.gameObject);
             if (_current == this) _current = null;
+        }
+
+        private void ReleasePrewarm()
+        {
+            var preparation = _prewarm; _prewarm = null;
+            (preparation as System.IDisposable)?.Dispose();
+        }
+
+        private void Fail(string message)
+        {
+            FailureReason = message;
+            _percent.text = "!";
+            _failureControls.GetComponentInChildren<Text>(true).text = message;
+            _failureControls.SetActive(true);
+            CursorMode.Release();
+            InputLayer.ScreenFocus.Install(_canvas.gameObject).Rebuild();
+            UnityEngine.EventSystems.EventSystem.current?.SetSelectedGameObject(_returnButton.gameObject);
+            Debug.LogWarning($"[HubLoading] {_scene}: {message}");
         }
     }
 

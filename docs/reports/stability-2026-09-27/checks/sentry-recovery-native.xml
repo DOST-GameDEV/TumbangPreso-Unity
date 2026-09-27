@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 12:07:46Z" end-time="2026-09-27 12:07:46Z" duration="0.2904714">
+  <test-suite type="TestSuite" id="1930" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="739" result="Passed" start-time="2026-09-27 12:07:46Z" end-time="2026-09-27 12:07:46Z" duration="0.290471" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1924" name="TumbangPreso.PlayTests.dll" fullname="&lt;validation-project&gt;/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="739" result="Passed" start-time="2026-09-27 12:07:46Z" end-time="2026-09-27 12:07:46Z" duration="0.277348" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="37604" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1925" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="739" result="Passed" start-time="2026-09-27 12:07:46Z" end-time="2026-09-27 12:07:46Z" duration="0.270129" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1926" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="739" result="Passed" start-time="2026-09-27 12:07:46Z" end-time="2026-09-27 12:07:46Z" duration="0.262851" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1730" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="20" result="Passed" start-time="2026-09-27 12:07:46Z" end-time="2026-09-27 12:07:46Z" duration="0.236727" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1732" name="RestoredSentryKeepsCapturedSeatsAndBindsLateBodiesWithoutAnotherCatch" fullname="TumbangPreso.PlayTests.SkillReceiptTests.RestoredSentryKeepsCapturedSeatsAndBindsLateBodiesWithoutAnotherCatch" methodname="RestoredSentryKeepsCapturedSeatsAndBindsLateBodiesWithoutAnotherCatch" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="468892266" result="Passed" start-time="2026-09-27 12:07:46Z" end-time="2026-09-27 12:07:46Z" duration="0.192633" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1731" name="SentryTargetMaskUsesTheWorldFieldReceiverAndRejectsInvalidSeats" fullname="TumbangPreso.PlayTests.SkillReceiptTests.SentryTargetMaskUsesTheWorldFieldReceiverAndRejectsInvalidSeats" methodname="SentryTargetMaskUsesTheWorldFieldReceiverAndRejectsInvalidSeats" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1065803211" result="Passed" start-time="2026-09-27 12:07:46Z" end-time="2026-09-27 12:07:46Z" duration="0.030861" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: <isolated-profile>\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

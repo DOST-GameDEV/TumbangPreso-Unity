@@ -8,15 +8,23 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
-    public sealed class SeanHeroKit : HeroKit
+    public sealed class SeanHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
     {
         public bool IsIgnitionCannonActive { get; set; }
         private bool _joinChargeStateSettled;
+        public TimedKitSnapshot CaptureTimedKit()
+            => new TimedKitSnapshot(AttackingSkill, IsIgnitionCannonActive ? AttackingSkill.DurationRemaining : 0);
+
+        public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
+            => RestoreJoiningIgnition(motor, state.PersonalRemaining);
+
         public HeroMovementState CaptureMovementState()=>((RocketBurnDashAbility)Skill1).CaptureMovement();
         public bool RestoreJoiningMovement(CharacterMotor motor,HeroMovementState state,float age)
             => motor!=null && ((RocketBurnDashAbility)Skill1).RestoreMovement(
                 new AbilityContext(motor,motor.GetComponent<Carrier>(),motor.GetComponent<CombatVerbs>()),state,age);
         public void AdoptMovementFields(int owner)=>((RocketBurnDashAbility)Skill1).AdoptFields(owner);
+        public void RebindWorldEffects(CharacterMotor motor)
+        { if (motor != null) AdoptMovementFields(motor.PlayerSlot); }
 
         public bool RestoreJoiningIgnition(CharacterMotor motor, float remaining)
         {
@@ -67,6 +75,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class RocketBurnDashAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly HashSet<int> _hitSlots = new HashSet<int>();
 
             /// <summary>
@@ -314,6 +323,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class IgnitionCannonAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly SeanHeroKit _kit;
 
             public IgnitionCannonAbility(SeanHeroKit kit)
@@ -384,6 +394,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class SupernovaSmashdownAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             private float _airTimer;
             private readonly SeanHeroKit _kit;
             private float _landingAge;

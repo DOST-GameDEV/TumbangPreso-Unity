@@ -98,7 +98,7 @@ namespace TumbangPreso.Abilities
     /// the model gradually change too"*, *"i want the animation for pull out to be good"*.
     ///
     /// It exists on every peer from the accepted cast, on its own clock. Every peer draws it and
-    /// decides locally whether a shot is ready (the clock is the same everywhere); ONLY THE HOST
+    /// predicts readiness locally; host-approved playback cannot be vetoed by clock drift. ONLY THE HOST
     /// resolves what a wooden slipper hits and whether a pull-out is legal, and the pull reaches
     /// everyone through `MatchRpc.BroadcastPlantPulled`.
     /// </summary>
@@ -107,10 +107,36 @@ namespace TumbangPreso.Abilities
         public static readonly List<PaetePlant> Live = new List<PaetePlant>();
 
         public int OwnerSlot { get; private set; } = -1;
+        public long InstanceId { get; private set; }
+        private static readonly long[] RetiredInstances = new long[Balance.PlayerCount];
+        private static long _retiredMatch = -1;
+        private static int _retiredRound = -1;
+
+        private static void FollowRetirementScope()
+        {
+            long match = Net.MatchRpc.Instance?.PresentationMatchId ?? 0;
+            int round = GameServices.Match?.RoundNumber ?? 0;
+            if (_retiredMatch == match && _retiredRound == round) return;
+            _retiredMatch = match; _retiredRound = round;
+            System.Array.Clear(RetiredInstances, 0, RetiredInstances.Length);
+        }
+
+        public void AdoptInstance(long instanceId)
+        {
+            if (instanceId <= 0) return;
+            InstanceId = instanceId;
+            FollowRetirementScope();
+            if (OwnerSlot >= 0 && OwnerSlot < RetiredInstances.Length && instanceId <= RetiredInstances[OwnerSlot])
+            {
+                // A removal can arrive while its accepted cast is waiting for a body.
+                // Late installation/recovery must not resurrect that already-ended plant.
+                _retiring = true; gameObject.SetActive(false); Destroy(gameObject);
+            }
+        }
         public float Age => _age;
         public bool Landed => _age >= 0f;
-        public bool Pullable => _age >= PaeteRules.PlantRootedSeconds && !_pulled;
-        public bool ShotReady => Landed && !_pulled && _age >= _nextShot;
+        public bool Pullable => _age >= PaeteRules.PlantRootedSeconds && !IsRetiring;
+        public bool ShotReady => Landed && !IsRetiring && _age >= _nextShot;
 
         /// <summary>Seconds until the next clog has grown (the deck's countdown for the command, `PunlangTsinelas`).</summary>
         public float ShotIn => Mathf.Max(0f, _nextShot - _age);
@@ -118,7 +144,7 @@ namespace TumbangPreso.Abilities
         public float ShotGrowth => Mathf.Clamp01(1f - (_nextShot - _age) / PaeteRules.PlantReloadSeconds);
 
         private float _age, _nextShot, _pulledAge, _recoil = 99f;
-        private bool _pulled;
+        private bool _pulled, _retiring;
         private Vector3 _pullFrom;
         private readonly Dictionary<CharacterMotor, float> _pulling = new Dictionary<CharacterMotor, float>();
         private readonly HashSet<CharacterMotor> _requested = new HashSet<CharacterMotor>();
@@ -143,7 +169,11 @@ namespace TumbangPreso.Abilities
 
         public static PaetePlant OwnedBy(int ownerSlot)
         {
-            foreach (var p in Live) if (p != null && p.OwnerSlot == ownerSlot && !p._pulled) return p;
+            for (int i = Live.Count - 1; i >= 0; i--)
+            {
+                var p = Live[i];
+                if (p != null && p.isActiveAndEnabled && p.OwnerSlot == ownerSlot && !p.IsRetiring) return p;
+            }
             return null;
         }
 
@@ -155,8 +185,12 @@ namespace TumbangPreso.Abilities
         /// the pod pulls back and snaps forward and throws it at <paramref name="aimPoint"/>.
         /// </summary>
         public bool Fire(Vector3 aimPoint)
+            => Fire(aimPoint, approvedReplay: false);
+
+        internal bool Fire(Vector3 aimPoint, bool approvedReplay)
         {
-            if (!ShotReady) return false;
+            bool replay = approvedReplay && NetAuthority.IsNetworked && !NetAuthority.IsHost;
+            if (IsRetiring || (!ShotReady && !replay)) return false;
             _nextShot = _age + PaeteRules.PlantReloadSeconds;
             _recoil = 0f;
             Vector3 target = aimPoint;
@@ -168,6 +202,8 @@ namespace TumbangPreso.Abilities
         public void Wither()
         {
             if (_pulled) return;
+            _retiring = true;
+            ReleasePullers();
             _age = Mathf.Max(_age, PaeteRules.PlantLifeSeconds - 0.6f);
         }
 
@@ -177,25 +213,34 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public static bool HostTryUproot(CharacterMotor who)
         {
-            if (!NetAuthority.ShouldResolve() || who == null) return false;
+            if (!NetAuthority.ShouldResolve() || who == null || !who.CanAct() || !who.InteractionHeldForSimulation) return false;
             PaetePlant best = null; float bestDistance = float.MaxValue;
             foreach (var p in Live)
             {
                 if (p == null || p.OwnerSlot == who.PlayerSlot || !p.Pullable) continue;
+                if (!p._pulling.TryGetValue(who, out float held) || held < PaeteRules.PlantPullSeconds) continue;
                 float d = Flat(p.transform.position - who.transform.position).magnitude;
                 if (d <= PaeteRules.PlantPullReach + 0.35f && d < bestDistance) { best = p; bestDistance = d; }
             }
             if (best == null) return false;
-            Net.MatchRpc.Instance?.BroadcastPlantPulled(best.OwnerSlot, who.PlayerSlot);
+            Net.MatchRpc.Instance?.BroadcastPlantPulled(best.OwnerSlot, who.PlayerSlot, best.InstanceId);
             if (!NetAuthority.IsNetworked) ApplyPulled(best.OwnerSlot, who.PlayerSlot);
             return true;
         }
 
         /// <summary>Every peer: the plant owned by <paramref name="ownerSlot"/> comes out of the ground.</summary>
-        public static void ApplyPulled(int ownerSlot, int pullerSlot)
+        public static void ApplyPulled(int ownerSlot, int pullerSlot, long instanceId = 0)
         {
+            if (ownerSlot < 0 || ownerSlot >= Balance.PlayerCount) return;
+            if (NetAuthority.IsNetworked && instanceId <= 0) return;
+            FollowRetirementScope();
+            if (instanceId > 0)
+            {
+                if (instanceId <= RetiredInstances[ownerSlot]) return;
+                RetiredInstances[ownerSlot] = instanceId;
+            }
             var plant = OwnedBy(ownerSlot);
-            if (plant == null) return;
+            if (plant == null || (instanceId > 0 && plant.InstanceId != instanceId)) return;
             plant._pulled = true;
             plant._pulledAge = 0f;
             var puller = GameServices.Round?.PlayerAt(pullerSlot);
@@ -216,24 +261,36 @@ namespace TumbangPreso.Abilities
             Forward = Vector3.forward, Duration = PaeteRules.PlantLifeSeconds,
             Remaining = Mathf.Clamp(PaeteRules.PlantLifeSeconds - Mathf.Max(0f, _age), 0f, PaeteRules.PlantLifeSeconds),
             Radius = 1f, Owner = OwnerSlot, FirstScale = Mathf.Max(0f, _nextShot - _age),
+            InstanceId = InstanceId,
         };
 
         public bool IsPulled => _pulled;
+        public bool IsRetiring => _pulled || _retiring;
 
         /// <summary>A seedling put back at <paramref name="age"/> seconds old with its shot clock; no seed flight, no second ground break.</summary>
-        public static PaetePlant Restore(Vector3 at, int ownerSlot, float age, float untilShot)
+        public static PaetePlant Restore(Vector3 at, int ownerSlot, float age, float untilShot, long instanceId = 0)
         {
             var plant = Spawn(at, at, ownerSlot, 0f);
             plant._age = Mathf.Max(0.5f, age);
             plant._nextShot = plant._age + Mathf.Clamp(untilShot, 0f, PaeteRules.PlantReloadSeconds);
+            plant.AdoptInstance(instanceId);
             return plant;
         }
 
         private void OnDestroy()
         {
             Live.Remove(this);
-            // A plant that withers or is pulled mid-hold must not leave a puller frozen in the heave.
+            ReleasePullers();
+        }
+
+        private void OnDisable() => ReleasePullers();
+
+        private void ReleasePullers()
+        {
+            // Retired objects must release their hold before their replacement starts accepting input.
             foreach (var p in _pulling.Keys) if (p != null) p.PullingPlantProgress = 0f;
+            _pulling.Clear();
+            _requested.Clear();
         }
 
         private void Update()
@@ -260,9 +317,8 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>
-        /// The pull-out is read where the input is: every body this peer simulates (the local human,
-        /// and on the host its bots) holding Interact next to someone else's pullable plant fills a
-        /// hold; at `PaeteRules.PlantPullSeconds` the host pulls it, a client asks the host once.
+        /// Local bodies predict the hold; the host also times accepted remote Interact
+        /// input against reach and CanAct. Client progress is presentation, not authority.
         /// </summary>
         private void StepPullers(float dt)
         {
@@ -270,8 +326,8 @@ namespace TumbangPreso.Abilities
             if (round == null || !Pullable) { _pulling.Clear(); return; }
             foreach (var p in round.Players)
             {
-                if (p == null || p.PlayerSlot == OwnerSlot || !p.IsLocallySimulated()) continue;
-                bool holding = p.Intent != null && p.Intent.Pressed(Verb.Interact) && p.CanAct()
+                if (p == null || p.PlayerSlot == OwnerSlot || (!p.IsLocallySimulated() && !NetAuthority.ShouldResolve())) continue;
+                bool holding = p.InteractionHeldForSimulation && p.CanAct()
                     && Flat(transform.position - p.transform.position).magnitude <= PaeteRules.PlantPullReach;
                 if (!holding) { _pulling.Remove(p); _requested.Remove(p); p.PullingPlantProgress = 0f; continue; }
                 _pulling.TryGetValue(p, out float held);
@@ -506,21 +562,28 @@ namespace TumbangPreso.Abilities
         private float _lead;
         private bool _caught;
         private readonly List<CharacterMotor> _held = new List<CharacterMotor>();
+        private byte? _restoredTargets;
+        private byte _boundTargets;
+        private readonly List<CharacterMotor> _lateTargets = new List<CharacterMotor>();
         private PaeteSentryBody _body;
         private const float Flight = 0.45f;
 
-        public static PaeteSentry Spawn(Vector3 from, Vector3 at, int ownerSlot, float age = 0f, bool handBack = false)
+        public static PaeteSentry Spawn(Vector3 from, Vector3 at, int ownerSlot, float age = 0f, bool handBack = false,
+            byte? restoredTargets = null)
         {
             var go = new GameObject("PaeteSentry");
             go.transform.position = at;
             var s = go.AddComponent<PaeteSentry>();
             s.OwnerSlot = ownerSlot; s.Centre = at;
+            s._restoredTargets = restoredTargets;
+            s._caught = restoredTargets.HasValue; // Recovery never applies a second pull/root.
             // ⚠️ A RESTORED AGE IS ALREADY PAST THE FLIGHT. `WorldEffectSnapshot` restores with the age since the roots arrived
             // (`Capture`'s `Remaining` counts from 0, not from -Flight), and subtracting the flight again put a rejoiner's tree
             // 0.45 s behind everybody else's for its whole life (TODO HERO-9, found 2026-09-26). A fresh cast (age 0) still flies.
-            s._age = age > 0f ? age : handBack ? PaeteRules.SentryCatchSeconds - 0.02f : -Flight;
+            s._age = restoredTargets.HasValue ? Mathf.Max(0, age)
+                : age > 0f ? age : handBack ? PaeteRules.SentryCatchSeconds - 0.02f : -Flight;
             // Every live cast comes up through the cutscene now, so a restored one (a rejoiner, age > 0) is posed with the lead too.
-            s._lead = handBack || age > 0f ? BodyLead : 0f;
+            s._lead = handBack || age > 0f || restoredTargets.HasValue ? BodyLead : 0f;
             s._body = PaeteSentryBody.Build(go.transform);
             s._body.LifeSeconds = PaeteRules.SentryLifeSeconds + s._lead;
             s._body.CatchLead = s._lead;
@@ -543,26 +606,58 @@ namespace TumbangPreso.Abilities
             // so the warning and the catch timing are unchanged. v5 (direction.md 5.14): `PaeteRootRidge`, the court heaving
             // and splitting over them with the light inside the split; `PaeteRootVein`'s lit block at the front read as a seed.
             // The cutscene already showed the roots racing there and the tree crawling out; a hand-back sends no second race.
-            if (age <= 0f && !handBack) PaeteRootRidge.Race(null, new Vector3(from.x, Slipper.GroundY(from), from.z), at, Flight, staged: false);
+            if (age <= 0f && !handBack && !restoredTargets.HasValue) PaeteRootRidge.Race(null, new Vector3(from.x, Slipper.GroundY(from), from.z), at, Flight, staged: false);
             // Who the vines reach for is drawn on every peer from the same rule the host uses.
             var round = GameServices.Round;
-            if (round != null)
+            if (round != null && !restoredTargets.HasValue)
                 foreach (var p in round.Players)
                     if (p != null && p.PlayerSlot != ownerSlot && InReach(at, p)) s._held.Add(p);
             s._body.SetTargets(s._held);
+            s.BindRestoredTargets();
             return s;
         }
 
+        private byte CapturedTargets
+        {
+            get
+            {
+                if (_restoredTargets.HasValue) return _restoredTargets.Value;
+                byte mask = 0;
+                foreach (var body in _held)
+                    if (body != null && body.PlayerSlot >= 0 && body.PlayerSlot < Balance.PlayerCount)
+                        mask |= (byte)(1 << body.PlayerSlot);
+                return mask;
+            }
+        }
+
+        private void BindRestoredTargets()
+        {
+            if (!_restoredTargets.HasValue || _boundTargets == _restoredTargets.Value || GameServices.Round == null) return;
+            _lateTargets.Clear();
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                int bit = 1 << slot;
+                if ((_restoredTargets.Value & bit) == 0 || (_boundTargets & bit) != 0) continue;
+                var body = GameServices.Round.PlayerAt(slot);
+                if (body == null) continue;
+                _boundTargets |= (byte)bit;
+                _held.Add(body); _lateTargets.Add(body);
+            }
+            // SetTargets appends authored limbs; only newly installed seats belong here.
+            if (_lateTargets.Count > 0) _body.SetTargets(_lateTargets);
+            _lateTargets.Clear();
+        }
+
         /// <summary>
-        /// The sentry for a rejoiner and the replay (`Kind.Sentry`). Who it holds is not in the field:
-        /// Rooted rides `SyncUnit`, and a rejoiner's copy only draws (the host alone catches).
+        /// The host's captured seats survive movement and late body installation.
+        /// Rooted still rides SyncUnit; restoring this picture never catches again.
         /// </summary>
         public Net.WorldEffectSnapshot.Field Capture() => new Net.WorldEffectSnapshot.Field
         {
             Type = Net.WorldEffectSnapshot.Kind.Sentry, Source = gameObject, Position = Centre, Forward = Vector3.forward,
             Duration = PaeteRules.SentryLifeSeconds + 0.6f,
             Remaining = Mathf.Clamp(PaeteRules.SentryLifeSeconds + 0.6f - Mathf.Max(0f, _age), 0f, PaeteRules.SentryLifeSeconds + 0.6f),
-            Radius = PaeteRules.SentryRadius, Owner = OwnerSlot,
+            Radius = PaeteRules.SentryRadius, Owner = OwnerSlot, TargetMask = CapturedTargets,
         };
 
         public static bool InReach(Vector3 centre, CharacterMotor p)
@@ -573,6 +668,7 @@ namespace TumbangPreso.Abilities
 
         private void Update()
         {
+            BindRestoredTargets();
             float before = _age;
             _age += Time.deltaTime;
             // The growth cues run on the BODY's clock (so a hand-back, already grown, plays none of them); the rules on `_age`.
@@ -614,7 +710,7 @@ namespace TumbangPreso.Abilities
             _body.Pose(grown, Centre);
             if (_age >= 0f)
                 foreach (var p in _held)
-                    if (p != null && p.IsRooted) PaeteRootCoil.Attach(p, Centre);
+                    if (p != null && p.IsRooted) p.GetComponent<StatusBodyMarks>()?.EnsureRootedRestraint(Centre);
             if (_age >= PaeteRules.SentryLifeSeconds + 0.6f) Destroy(gameObject);
         }
 

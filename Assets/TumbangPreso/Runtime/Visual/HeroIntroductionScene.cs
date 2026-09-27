@@ -406,6 +406,8 @@ namespace TumbangPreso.Visual
             _performance.Shot(index, seconds, out var eye, out var look, out fov);
             // Paete's RISE follows his guardian when it had to be pushed off the can (`HeroIntroductionScene.PaeteVfx.cs`).
             if (_hero == "paete") PaeteFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Phaister's THROW and MARK are computed from where she aimed and who is marked (`HeroIntroductionScene.PhaisterMark.cs`).
+            if (_hero == "phaister") PhaisterFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // A hero's own blows shake the lens (Paete's palm and eruption); reduced effects keep it still.
             if (!_reducedEffects) { var shake = Shake(Local(seconds)); eye += shake; look += shake * .5f; }
             position = _ground + _facing * eye; focus = _ground + _facing * look;
@@ -424,6 +426,18 @@ namespace TumbangPreso.Visual
         {
             brightness = 1f; saturation = 1f;
             if (_hero == "paete") PaeteGrade(Local(seconds) / PaeteStretch, out brightness, out saturation);
+            if (_hero == "phaister") PhaisterGrade(Local(seconds), out brightness, out saturation);
+        }
+
+        /// <summary>
+        /// ⚠️ A HERO'S OWN PASS OVER THE FINISHED FRAME (HERO-10, 2026-09-27): `UltimatePhaseView` hands every rendered frame of the
+        /// cutscene here before it goes on screen. Only Phaister's impact frame uses it (two frames of the picture turned inside out
+        /// as her eye lands, `HeroIntroductionScene.PhaisterMark.cs`); every other hero returns at once.
+        /// </summary>
+        public void PostProcess(RenderTexture frame, Camera camera, float seconds)
+        {
+            if (frame == null || camera == null) return;
+            if (_hero == "phaister") PhaisterPostProcess(frame, camera, Local(seconds));
         }
 
         /// <summary>The single locked shot for reduced motion: no cut and no camera move.</summary>

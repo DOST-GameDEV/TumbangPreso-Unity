@@ -102,9 +102,9 @@ namespace TumbangPreso.Net
         ///
         /// ⚠️⚠️ A NEW MAGIC RATHER THAN A NEW FIELD COUNT, BECAUSE THE NAME IS THE LAST FIELD AND
         /// IT MAY CONTAIN THE SEPARATOR. `TryParsePayload` reads the host name as "everything
-        /// from index N onwards" precisely so a player called `A|B` truncates nothing, and that
+        /// from index N onwards" precisely so a room called `A|B` truncates nothing, and that
         /// is exactly what makes `parts.Length` useless as a version discriminator: a v1 packet
-        /// from a player with one pipe in their name has the same field count as a v2 packet.
+        /// from a room title with one pipe has the same field count as a v2 packet.
         /// The magic is field 0, is never free-form, and settles it in one comparison.
         ///
         /// ⚠️ v1 IS STILL READ. A build from before this change advertises the old magic and is
@@ -552,22 +552,20 @@ namespace TumbangPreso.Net
                     maxConnections = LobbySession.MaxConnections;
             }
 
-            // ⚠️ THE NAME IS EVERYTHING FROM ITS INDEX ONWARDS, not one field. A player name is
-            // the only value on this wire that a person types, and rejoining the remainder is
-            // what keeps a name containing the separator from truncating rather than corrupting.
+            // ⚠️ THE ROOM TITLE IS EVERYTHING FROM ITS INDEX ONWARDS, not one field. It is
+            // the only free-form value on this wire, and rejoining the remainder is
+            // what keeps a title containing the separator from truncating rather than corrupting.
             // v2 spends one more field on the beacon id, so the name starts one later.
             string beaconId = v2 && parts.Length >= 11 ? parts[9] : "";
 
             int nameIndex = v2 && parts.Length >= 11 ? 10 : extended ? 9 : 6;
             string name = string.Join("|", parts, nameIndex, parts.Length - nameIndex);
-            if (name.Length > Core.Balance.PlayerNameMax)
-                name = name.Substring(0, Core.Balance.PlayerNameMax);
 
             entry = new LanEntry
             {
                 Address = remoteAddress,
                 Port = port,
-                HostName = Settings.GameSettings.SanitiseName(name),
+                HostName = Settings.GameSettings.SanitiseRoomTitle(name),
                 JoinCode = parts[5],
                 Players = Mathf.Clamp(seated, 0, 64),
                 MaxPlayers = Mathf.Clamp(maxSeats, 1, 64),

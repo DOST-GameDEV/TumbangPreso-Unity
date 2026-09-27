@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.Core;
+using TumbangPreso.InputLayer;
 using TumbangPreso.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -22,6 +24,166 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator HeroResultsKeepStandingsPlayersMapChoiceAndRealRematch()
             => ReviewResults(GameMode.HeroStrike);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator RealMatchEndParksTouchAndLeavesOverlayResultActionsHittable()
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Any(arg =>
+                string.Equals(arg, "-tp-profile", System.StringComparison.OrdinalIgnoreCase)),
+                "The result-touch check needs a named isolated profile.");
+
+            bool networked = SceneFlow.Networked;
+            string map = SceneFlow.SelectedMap;
+            var rules = SceneFlow.SelectedRules.Clone();
+            bool pinned = SceneFlow.RulesPinned;
+            bool allBots = GameLaunch.AllBots;
+            bool spectator = GameLaunch.Spectator;
+            int soloSeat = GameLaunch.SoloSeat;
+            bool forceVisible = TouchHud.ForceVisible;
+            bool touchActive = TouchInput.Active;
+            var inputSettings = InputSystem.settings;
+            var background = inputSettings.backgroundBehavior;
+            var editorInput = inputSettings.editorInputBehaviorInPlayMode;
+            Touchscreen createdTouchscreen = null;
+
+            try
+            {
+                SceneFlow.Networked = false;
+                SceneFlow.SelectedMap = SceneFlow.Eskinita;
+                var oneRound = CustomGameRules.Defaults(GameMode.Classic);
+                oneRound.Rounds = 1;
+                SceneFlow.PinSelectedRules(oneRound);
+                GameLaunch.AllBots = false;
+                GameLaunch.Spectator = false;
+                GameLaunch.SoloSeat = 1;
+                TouchHud.ForceVisible = false;
+
+                if (Touchscreen.current == null)
+                {
+                    inputSettings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+                    inputSettings.editorInputBehaviorInPlayMode =
+                        InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+                    createdTouchscreen = InputSystem.AddDevice<Touchscreen>();
+                    InputSystem.EnableDevice(createdTouchscreen);
+                }
+                Assert.IsTrue(TouchHud.ShouldShow, "The touchscreen did not select the ordinary touch path.");
+
+                yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
+                yield return new WaitForSecondsRealtime(.4f);
+                var runner = Object.FindFirstObjectByType<SliceRunner>();
+                var gate = Object.FindFirstObjectByType<ReadyGate>();
+                Assert.IsNotNull(runner);
+                Assert.IsNotNull(gate, "The arena did not offer its normal READY gate.");
+                if (!GameServices.Round.RoundActive) gate.StartLocalCountdown();
+                float until = Time.realtimeSinceStartup + 6f;
+                while (Time.realtimeSinceStartup < until &&
+                    (!GameServices.Round.RoundActive || gate.AwaitingReady || gate.CountingDown))
+                    yield return null;
+                Assert.IsTrue(GameServices.Round.RoundActive, "The READY countdown never began the round.");
+                Assert.IsFalse(gate.AwaitingReady, "The READY prompt remained open over the live round.");
+                Assert.IsFalse(gate.CountingDown, "The READY countdown remained open over the live round.");
+                yield return null;
+
+                var match = GameServices.Match;
+                var local = GameServices.Round.PlayerAt(1);
+                var result = Object.FindFirstObjectByType<MatchResult>();
+                var touch = TouchHud.Instance;
+                Assert.IsNotNull(local);
+                Assert.IsNotNull(result);
+                Assert.IsNotNull(touch, "The arena did not install touch controls for its touchscreen.");
+                Assert.IsTrue(match.MatchInProgress);
+                Assert.AreEqual(1, match.RoundNumber);
+                Assert.AreEqual(1, match.TotalRounds);
+                Assert.IsTrue(runner.Running);
+                Assert.IsFalse(local.Intent.Parked, "The ordinary round never reached an unparked local seat.");
+                Assert.IsTrue(touch.ShouldBeOnScreen);
+                Assert.IsTrue(touch.Canvas.enabled, "Touch controls were not visible during the live round.");
+                Assert.IsFalse(result.IsVisible);
+
+                GameServices.Round.EndRound();
+                match.BeginIntermission();
+                yield return null;
+                yield return null;
+
+                Assert.IsFalse(match.MatchInProgress);
+                Assert.IsFalse(runner.Running, "SliceRunner did not receive the match-end event.");
+                Assert.IsTrue(local.Intent.Parked, "The match-end event did not park local input.");
+                Assert.IsTrue(result.IsVisible, "The director event did not present the result board.");
+                Assert.IsFalse(touch.ShouldBeOnScreen);
+                Assert.IsFalse(touch.Canvas.enabled, "Parked touch controls still intercept the result board.");
+
+                var canvasField = typeof(MatchResult).GetField("_canvas",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                Assert.IsNotNull(canvasField);
+                var resultCanvas = (Canvas)canvasField.GetValue(result);
+                Assert.IsNotNull(resultCanvas, "The visible MatchResult lost its own canvas.");
+                var activeResults = Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include,
+                    FindObjectsSortMode.None).Where(c => c.name == "OwnerResultCanvas" && c.isActiveAndEnabled).ToArray();
+                Assert.AreEqual(1, activeResults.Length, "More than one active result canvas could alter the top hit.");
+                Assert.AreSame(resultCanvas, activeResults[0], "The active result canvas is not the board's own canvas.");
+                Assert.AreEqual(RenderMode.ScreenSpaceOverlay, touch.Canvas.renderMode);
+                Assert.AreEqual(RenderMode.ScreenSpaceOverlay, resultCanvas.renderMode);
+                Debug.Log("[ResultTouch] canvas=" + resultCanvas.name +
+                    " override=" + resultCanvas.overrideSorting +
+                    " order=" + resultCanvas.sortingOrder +
+                    " root=" + (resultCanvas.rootCanvas != null ? resultCanvas.rootCanvas.name : "none") +
+                    " parent=" + (resultCanvas.transform.parent != null ? resultCanvas.transform.parent.name : "none") +
+                    " touchOrder=" + touch.Canvas.sortingOrder);
+                var system = EventSystem.current;
+                Assert.IsNotNull(system);
+                Canvas.ForceUpdateCanvases();
+                foreach (string name in new[] { "ResultTab0", "ResultTab1", "ResultTab2",
+                    "ResultRematch", "ResultNextMap", "ResultMainMenu" })
+                {
+                    var button = Find(name);
+                    var rect = ScreenFocus.HitRectOf(button);
+                    Vector2 point = RectTransformUtility.WorldToScreenPoint(null,
+                        rect.TransformPoint(rect.rect.center));
+                    var hits = new List<RaycastResult>();
+                    system.RaycastAll(new PointerEventData(system) { position = point }, hits);
+                    Assert.IsNotEmpty(hits, name + " had no Overlay raycast hit.");
+                    Assert.AreSame(button, hits[0].gameObject.GetComponentInParent<Button>(),
+                        name + " was intercepted by " + hits[0].gameObject.name);
+                    Assert.IsFalse(hits.Any(hit => hit.gameObject.transform.IsChildOf(touch.Canvas.transform)),
+                        name + " still raycast through the disabled touch canvas.");
+                }
+            }
+            finally
+            {
+                if (createdTouchscreen != null && createdTouchscreen.added)
+                    InputSystem.RemoveDevice(createdTouchscreen);
+                inputSettings.backgroundBehavior = background;
+                inputSettings.editorInputBehaviorInPlayMode = editorInput;
+                TouchInput.ReleaseAll();
+                TouchInput.Active = touchActive;
+                TouchHud.ForceVisible = forceVisible;
+                GameLaunch.AllBots = allBots;
+                GameLaunch.Spectator = spectator;
+                GameLaunch.SoloSeat = soloSeat;
+                SceneFlow.Networked = networked;
+                SceneFlow.SelectedMap = map;
+                SceneFlow.AdoptRemoteRules(rules);
+                SceneFlow.SelectedRules.Password = rules.Password;
+                if (pinned) SceneFlow.PinSelectedRules(rules);
+                else SceneFlow.UnpinSelectedRules();
+            }
+        }
+        [Test]
+        public void PracticeSummaryDoesNotClaimAnOlderQueuedMatchWillUpload()
+        {
+            var priorOnlineQueue = new List<MatchRecord>
+            {
+                new MatchRecord { MatchId = "older-online-pending", Online = true }
+            };
+            var current = new MatchRecord { MatchId = "practice-result-copy", Online = false };
+            Assert.AreEqual("", MatchResult.UploadCopyFor(current, priorOnlineQueue.Count),
+                "Practice must not claim that its own result will upload because another match is queued.");
+
+            current.Online = true;
+            StringAssert.Contains("WILL UPLOAD", MatchResult.UploadCopyFor(current, priorOnlineQueue.Count));
+            Assert.AreEqual("", MatchResult.UploadCopyFor(current, 0));
+            Assert.AreEqual("", MatchResult.UploadCopyFor(null, priorOnlineQueue.Count));
+        }
+
         private static IEnumerator ReviewResults(GameMode mode)
         {
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));

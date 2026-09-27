@@ -37,6 +37,7 @@ namespace TumbangPreso.Visual
                 case "team-rafi": return Rafi;
                 case "team-amihan": return Amihan;
                 case "team-paete": return Paete;
+                case "phaister-doll": return PhaisterDoll;
                 case "team-custom": case "team-custom-base": return Custom;
                 case "team-bayan": case "character-male-f": return Bayan;
                 case "character-female-f": return Maring;
@@ -193,6 +194,11 @@ namespace TumbangPreso.Visual
         /// long as she is tall: hung down, the lavender cuffs landed at her feet as bars across the hem (film v19), so they are
         /// carried out at 38 degrees, the way her own model pose holds them. The run stays the ghost at
         /// speed: low, sleeves streaming straight back and fluttering.
+        /// ⚠️ HER COWL IS ON THE TORSO BONE AND HER MOUTH IS ON THE HEAD (owner, of the run: *"the shit on her mouth
+        /// disappered hehre"*). The run lifted her chin 18 degrees against the chest (-12 held, 0.3 of a 20 lean taken back),
+        /// which pulled the lower face up out of the collar. Her head never tips back against her chest: `HeadSteady` 0 so it
+        /// rides the lean and hover, and a few degrees down so the weight layer's chin lift on a hard start stays inside the
+        /// cowl. `NemuKeepsHerMouthInHerCowl` holds it.
         /// </summary>
         public static readonly GaitStyle Nemu = new GaitStyle
         {
@@ -203,14 +209,14 @@ namespace TumbangPreso.Visual
                 LegForward = 16, LegBack = 14, LegSnap = 1, Stance = 0,
                 ArmSpread = 38, ArmForward = 4, ArmBack = 4, ArmCarry = -6, ArmSnap = 1, ArmLag = .1f,
                 Lean = 3, Roll = 1, Twist = 1,
-                HeadPitch = 2, HeadSteady = .9f, Sway = .01f, Glide = 2.6f,
+                HeadPitch = 4, HeadSteady = 0, Sway = .01f, Glide = 2.6f,
             },
             Run = new Gait
             {
                 LegForward = 52, LegBack = 50, LegSnap = 1.2f, Stance = 0,
                 ArmSpread = 12, ArmForward = 5, ArmBack = 5, ArmCarry = -58, ArmSnap = 1, ArmLag = .08f,
-                Lean = 20, Roll = 1, Twist = 2,
-                HeadPitch = -12, HeadSteady = .3f, Bounce = .03f, BounceDelay = .05f, Sway = .01f, Glide = 1.45f,
+                Lean = 14, Roll = 1, Twist = 2,
+                HeadPitch = 5, HeadSteady = 0, Bounce = .03f, BounceDelay = .05f, Sway = .01f, Glide = 1.45f,
             },
             Quirk = (ref GaitPose p, in GaitMoment m) =>
             {
@@ -366,6 +372,85 @@ namespace TumbangPreso.Visual
                 p.HeadRoll += 2.5f * Wave(m.Time, .45f);
             },
         };
+
+        /// <summary>
+        /// PHAISTER'S VOODOO DOLL. Her ultimate's body, not a person (HERO-10 v3, `plan.md` 9.9). Owner, 2026-09-27: *"make the walking
+        /// animation of this voodooo look like its fucking dead or js getting dragged around by magic idk"*, *"js dont make it human
+        /// like"*, *"big fat voodoo doll that's kinda sllow"*, on the first film's run *"make it look like he isnt alive or he's
+        /// dragging himself"*, and on the second, whose feet slid five times further than they stepped: *"looks liek he is floating
+        /// from the side, make him look sluggish and its okay if he's slower than others"*.
+        ///
+        /// So it is SLOW (`VoodooRules.DollSpeedScale`, set on the body) and PLANTED: its feet stay where they land, and nothing in it
+        /// keeps a runner's rhythm. THE WALK: a heavy shuffle, each step landing with a drop and the head nodding down on it, the sack
+        /// rolling late over the foot that holds it, the head lolled over and rolling on its own, the mitten arms dangling, swung only
+        /// by the roll. THE RUN: it DRAGS ITSELF. Its left leg does all the work, one heavy lurch at a time; its right leg is dead,
+        /// trailing stiff behind, only jerked along by the lurch. The body tips into every lurch and drops on it, the arms hang
+        /// straight down under the lean like weights, and the head hangs. Every few seconds the string on its crown YANKS it: up,
+        /// upright, head snapped back, arms flicked out, then it sags.
+        /// </summary>
+        public static readonly GaitStyle PhaisterDoll = new GaitStyle
+        {
+            Name = "phaister-doll",
+            Walk = new Gait
+            {
+                LegForward = 30, LegBack = 28, LegSnap = .55f, Stance = 6,
+                ArmSpread = 8, ArmForward = 6, ArmBack = 8, ArmCarry = 3, ArmSnap = .7f, ArmLag = .12f,
+                Lean = 8, LeanPulse = 4, Roll = 8, RollDelay = .18f, Twist = 3,
+                HeadPitch = 10, HeadTilt = 12, HeadNod = 6, HeadSteady = 0, Stomp = .07f, Sway = .09f, Glide = 1.6f,
+            },
+            Run = new Gait
+            {
+                LegForward = 36, LegBack = 20, LegSnap = .45f, Stance = 6,
+                ArmSpread = 9, ArmForward = 6, ArmBack = 6, ArmCarry = 16, ArmSnap = .7f, ArmLag = .16f,
+                Lean = 16, LeanPulse = 8, Roll = 6, RollDelay = .12f, Twist = 5,
+                HeadPitch = 16, HeadTilt = 9, HeadNod = 7, HeadSteady = 0, Stomp = .08f, Sway = .08f, Glide = 1.7f,
+            },
+            Quirk = (ref GaitPose p, in GaitMoment m) =>
+            {
+                float run = m.Run;
+                float step = Mathf.Sin(2f * Mathf.PI * m.Phase);
+                // THE DEAD LEG (running): the right leg hangs back behind the body, stiff, barely moving, only jerked along as the
+                // live leg plants. Walking, both legs shuffle.
+                p.LegRight = Mathf.Lerp(p.LegRight, -24f + 3f * step, run);
+                p.SplayRight = Mathf.Lerp(p.SplayRight, 9f, run);
+                // THE LURCH: the chest heaves over the live leg as it plants and sags off it after.
+                p.TorsoRoll += run * 8f * Mathf.Max(0f, -Mathf.Cos(2f * Mathf.PI * m.Phase));
+                p.TorsoYaw += run * 5f * step;
+                // The head lolls on its own, slowly, never in step with the feet.
+                p.HeadRoll += 9f * Wave(m.Time, .31f) + 4f * Wave(m.Time, .77f);
+                p.HeadPitch += 4f * Wave(m.Time + 1.3f, .23f);
+                // The arms swing only because the body sways: pendulums on the roll, out and in, late.
+                p.SpreadLeft += .9f * p.TorsoRoll;
+                p.SpreadRight -= .9f * p.TorsoRoll;
+                // Hung from one point: the whole body drifts a little from side to side under it.
+                p.RootRight += .03f * Wave(m.Time, .55f);
+                // THE YANK: the string snaps taut. Up, upright, head back, arms flicked out, feet lifted; then it sags.
+                float yank = DollYank(m.Time);
+                p.RootUp += .05f * yank;
+                p.TorsoPitch -= (p.TorsoPitch + 4f) * yank;
+                p.HeadPitch -= 22f * yank;
+                p.HeadRoll *= 1f - .7f * yank;
+                p.SpreadLeft += 16f * yank;
+                p.SpreadRight += 16f * yank;
+                p.ArmLeft += 10f * yank;
+                p.ArmRight += 10f * yank;
+                p.LegLeft *= 1f - .6f * yank;
+                p.LegRight *= 1f - .6f * yank;
+            },
+        };
+
+        /// <summary>
+        /// How hard the doll's string is yanking now, 0 to 1: a snap in 25 ms, gone in about half a second. The yanks come every 2.4
+        /// to 3.6 s, each beat's own moment picked from its count, so they never fall into a rhythm.
+        /// </summary>
+        public static float DollYank(float time)
+        {
+            float Beat(int k) => k * 3f + 1.2f * (Mathf.Abs(Mathf.Sin(k * 12.9898f) * 43758.5453f) % 1f);
+            int beat = Mathf.FloorToInt(time / 3f);
+            float since = time - Beat(beat);
+            if (since < 0f) since = time - Beat(beat - 1);
+            return since < 0f ? 0f : Mathf.Clamp01(since * 40f) * Mathf.Exp(-since * 7f);
+        }
 
         /// <summary>
         /// THE CUSTOM HERO. A player's own fighter, so no personality is assumed: an athletic, confident, even walk and a clean

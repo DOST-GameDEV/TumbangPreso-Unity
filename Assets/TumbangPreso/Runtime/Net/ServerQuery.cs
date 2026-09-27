@@ -83,6 +83,7 @@ namespace TumbangPreso.Net
             /// issues nothing of its own.
             /// </summary>
             public string PoolKey = "";
+            public string SkillContract = "";
             public int BandLow;
             public int BandHigh;
             public int SeatLow;
@@ -99,6 +100,9 @@ namespace TumbangPreso.Net
 
             public int Players => Seated;
             public bool IsJoinable => !InProgress && Occupied < Capacity;
+
+            public bool MatchesSkillContract(string local)
+                => local != null && local.Length == 64 && string.Equals(SkillContract, local, StringComparison.Ordinal);
 
             /// <summary>This entry as the shape `MatchmakingRules` decides on.</summary>
             public Core.LobbyAdvert AsAdvert() => new Core.LobbyAdvert(
@@ -305,6 +309,8 @@ namespace TumbangPreso.Net
                             entry.Capacity = lobby.MaxPlayers;
                             entry.InProgress = inProgress;
                             entry.PoolKey = poolKey;
+                            entry.SkillContract = lobby.Data != null && lobby.Data.TryGetValue("SkillContract", out var contract)
+                                ? contract.Value ?? "" : "";
                             entry.HostPlayerId = hostPlayerId;
                             entry.BandLow = bandLow;
                             entry.BandHigh = bandHigh;
@@ -488,6 +494,7 @@ namespace TumbangPreso.Net
                         // read client-side off records the browse loop already has, so indexing
                         // them would spend a scarce slot to save nothing.
                         { "Pool", new DataObject(DataObject.VisibilityOptions.Public, advert.PoolKey ?? "", DataObject.IndexOptions.S3) },
+                        { "SkillContract", new DataObject(DataObject.VisibilityOptions.Public, SkillContractFingerprint.Current) },
                         { "HostId", new DataObject(DataObject.VisibilityOptions.Public, advert.HostPlayerId ?? "") },
                         { "BandLow", new DataObject(DataObject.VisibilityOptions.Public, advert.BandLow.ToString()) },
                         { "BandHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.BandHigh.ToString()) },
@@ -576,6 +583,7 @@ namespace TumbangPreso.Net
                         // host without the patient host having to say anything. What genuinely
                         // has to be pushed is a seat opening, and that is a count change.
                         { "Pool", new DataObject(DataObject.VisibilityOptions.Public, advert.PoolKey ?? "", DataObject.IndexOptions.S3) },
+                        { "SkillContract", new DataObject(DataObject.VisibilityOptions.Public, SkillContractFingerprint.Current) },
                         { "HostId", new DataObject(DataObject.VisibilityOptions.Public, advert.HostPlayerId ?? "") },
                         { "BandLow", new DataObject(DataObject.VisibilityOptions.Public, advert.BandLow.ToString()) },
                         { "BandHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.BandHigh.ToString()) },
@@ -646,6 +654,7 @@ namespace TumbangPreso.Net
                 foreach (var e in _seen.Values)
                 {
                     sb.Append($"{e.Id}:{e.Name}:{e.JoinCode}:{e.Seated}/{e.Occupied}/{e.Capacity}:{e.InProgress};");
+                    sb.Append($"{e.RelayCode}:{e.PoolKey}:{e.SkillContract}:{e.HostPlayerId}:{e.BandLow}/{e.BandHigh}/{e.SeatLow}/{e.SeatHigh}:{e.Backfill};");
                 }
             }
 

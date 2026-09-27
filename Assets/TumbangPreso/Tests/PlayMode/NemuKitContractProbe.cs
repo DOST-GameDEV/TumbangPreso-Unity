@@ -520,6 +520,7 @@ namespace TumbangPreso.PlayTests
 
         private sealed class DelayedAimProbe : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             public AbilityContext Seen;
             public DelayedAimProbe():base("aim-probe","AIM","probe",0,0,
                 TumbangPreso.UI.AbilityGlyph.Burst){Windup=.4f;}

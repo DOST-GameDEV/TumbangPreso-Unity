@@ -1,0 +1,88 @@
+{
+  "local": "8d7950a5",
+  "incoming": "5f1300fe",
+  "authored": "6334cd75",
+  "preservedIncomingPaths": 18,
+  "metadata": "New shader GUID is valid32hex",
+  "frozenInputs": 220,
+  "inputChurn": 0,
+  "compilation": [
+    "TumbangPreso.Runtime: exit0",
+    "TumbangPreso.Editor: exit0"
+  ],
+  "files": [
+    {
+      "path": "ArtSource/phaister/doll-20260927/cloth-chunky.png",
+      "sha256": "9CE13BEE1872979ADC9F40FF3C259BBDF3033D9F61C9CB38A2561B8F81439A67"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/cloth-felt.png",
+      "sha256": "631F3608D3F15B06D946C0219F316DD3E65DBE12BB4437209AAEBFA626F1B2A0"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/cloth-painted.png",
+      "sha256": "00286C08346B8015163A5B812949E402F49EA6DDFBEF55E76E7B9B5E701C39DF"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/cloth-pixel.png",
+      "sha256": "C1A8DFA63D57CB5CEE27D5CCD1F522BDF1612B535543DCD7456747A2F8DA7CAC"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/cloth.png",
+      "sha256": "1FBA0C7F7721CDB4BC8EFC861AB1FAD8469B9D15CC5EBEBBA6DEB258CEB07CC2"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/design-brief.md",
+      "sha256": "2E31B68B850D1472D34075985FC69226B42906A84FD0D9F836231500C2DBCAB4"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/owner-reference-20260927.png",
+      "sha256": "744F5FF423BB8E78B2695955A3F98076BC7F628D71AEB2F6DC352310FBCC3844"
+    },
+    {
+      "path": "ArtSource/phaister/doll-20260927/palette.json",
+      "sha256": "F603D2C45B85E3BBDE541ED5CE18E11FFA340085B08911CC56DC0FC9BB324D25"
+    },
+    {
+      "path": "Assets/TumbangPreso/Art/characters/persons/phaister-doll.glb",
+      "sha256": "44482A81CAF13BC8864F9C91AFD46BD172737828FFCB17793ADE181035B9B22F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Editor/PhaisterDollReview.cs",
+      "sha256": "F87724EC72EB7E893C45657DABD629C35D722CD113B3B8F9982EABC9E48965E6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/SoulGlow.shader",
+      "sha256": "58BE1126E69891CEDE1D943F321667D9B987FED1A42751CFF241B3272F8CC401"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/SoulSpill.shader",
+      "sha256": "36741655C3B1F285DB128E1FA1A14A0DCB14F0D7E8F17C92AA03A546DF52A45F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Shaders/SoulSpill.shader.meta",
+      "sha256": "62900431C7BB35C38A7E7AE61896350C14CF60B4D2E403F498F85E042E3C2EEE"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/PhaisterDollArt.cs",
+      "sha256": "5739CC4E89F40BBA379DAE29D574722DBB1A9A321AE7B0D5EAD116835ED1B9A8"
+    },
+    {
+      "path": "docs/HERO_KIT_METHOD.md",
+      "sha256": "B8F02931C32634C5DBDD407341CA1C903D52856D0562E0E27CED72E90C5E2261"
+    },
+    {
+      "path": "docs/reports/phaister-kit-2026-09-27/plan.md",
+      "sha256": "7726867B1CDD349256A792C84CD37446861B94D1D052108D865794F56EB940D2"
+    },
+    {
+      "path": "tools/build_phaister_doll_voxel.py",
+      "sha256": "DADD0C8F40622D0677B0EA879F7A076ADFA9AE09DAC5BB71B15562866EDC26C2"
+    },
+    {
+      "path": "tools/paint_phaister_doll_cloth.py",
+      "sha256": "6741EDD3A9AE14825C5B0BBBD1AF66148B4A172B947289DD6B0CF87A4990E877"
+    }
+  ],
+  "limits": "No network change. No repeated native tests or films. Managed compilation is not shader/visual or player acceptance."
+}
