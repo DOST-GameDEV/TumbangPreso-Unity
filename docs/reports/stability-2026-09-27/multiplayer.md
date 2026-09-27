@@ -1,5 +1,31 @@
 # Multiplayer investigation, 2026-09-27
 
+## Existing Ultimate Victim Feedback
+
+Base `ad19d440`,protocol72. Dante and Cheska called HitFeel.Land only inside their
+host-authoritative victim loops. Since Land affects only the view following that
+victim, a remote victim never received the existing camera hold/punch, chromatic
+pulse and vignette. Their authoritative statuses/impulses were a separate path.
+
+Both calls now announce UltimateImpact through MatchFlair. The receive branch
+invokes only the existing HitFeel behavior with the original ultimate weight and
+accepted origin; no stars, extra animation, new VFX or global hitstop was added.
+The accent follows AbilitySystem.HeroId, retaining the roster fallback for bodies
+without a kit, so a cosmetic/custom body index cannot misidentify the power.
+
+The shared Flair payload now carries match/round context, with a bounded37-byte
+reader, known-kind validation and exact-length check before presentation. Old-match
+or old-round messages cannot play against the current cast. Host local playback
+still happens once and the relay excludes that host.
+
+Frozen160 inputs,7 changed sources. Runtime,Editor,Tests and PlayTests compile with
+unchanged Core reused. The new native receive-handler case covers wrong match/round,
+non-victim view, the existing0.11-second victim hold and unchanged global scale/status.
+It is **NOT RUN** under the existing native disk boundary; no old Core/broad suite
+or film rerun. Actual peer/camera and device acceptance remain open, and this is not
+a claimed fix for QA-15's unconfirmed permanent movement freeze.
+[Receipt](checks/victim-feedback-compile.json).
+
 ## Plant Lifetime Delivery
 
 Base `70ee0152`,protocol71. PlantPulled previously named only the owner's seat and
@@ -539,9 +565,9 @@ caller-gated; the Paete pull-sound alert has an existing PlantPulled receive rou
 Those alerts do not establish product defects.
 
 Two findings from the initial audit, reconciled against the current source:
-- Dante's ultimate calls HitFeel.Land inside its host-only impact loop, so that
-  local feedback does not execute on remote peers. Authoritative impact resolution
-  is separate and remains host-owned; this is not evidence that damage/status fails.
+- The host-only Dante victim-feedback path, also present in Cheska, is routed through
+  the shared event channel by the later victim-feedback unit above. Native/peer
+  qualification remains separate from its successful compiler check.
 - The original PlayAbility body-not-ready loss is addressed by MatchRpc.SkillDelivery:
   accepted events enter a bounded ordered queue, wait for the matching body/kit,
   and request state recovery on expiry/overflow. Its current compiler/native/peer

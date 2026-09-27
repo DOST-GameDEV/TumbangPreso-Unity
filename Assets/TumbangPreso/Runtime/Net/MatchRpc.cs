@@ -3284,6 +3284,8 @@ namespace TumbangPreso.Net
             // reason `MatchDirector.AddScore` keeps its own.
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
             if (!Finite(at) || !Finite(strength)) return;
+            int round = GameServices.Match?.RoundNumber ?? 0;
+            if (PresentationMatchId <= 0 || round <= 0 || kind > (byte)Visual.MatchFlair.Kind.UltimateImpact) return;
 
             using var writer = new FastBufferWriter(64, Allocator.Temp);
             writer.WriteValueSafe(kind);
@@ -3291,6 +3293,8 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(subject);
             writer.WriteValueSafe(at);
             writer.WriteValueSafe(strength);
+            writer.WriteValueSafe(PresentationMatchId);
+            writer.WriteValueSafe(round);
             HostRelayFlair(writer);
         }
 
@@ -3307,15 +3311,19 @@ namespace TumbangPreso.Net
 
         private void OnFlairMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!FromHost(senderClientId)) return;
+            if (!FromHost(senderClientId) || !reader.TryBeginRead(37)) return;
 
             reader.ReadValueSafe(out byte kind);
             reader.ReadValueSafe(out int actor);
             reader.ReadValueSafe(out int subject);
             reader.ReadValueSafe(out Vector3 at);
             reader.ReadValueSafe(out float strength);
+            reader.ReadValueSafe(out long match);
+            reader.ReadValueSafe(out int round);
 
-            if (!Finite(at) || !Finite(strength)) return;
+            if (reader.Position != reader.Length || !Finite(at) || !Finite(strength)
+                || kind > (byte)Visual.MatchFlair.Kind.UltimateImpact || match <= 0 || match != PresentationMatchId
+                || round <= 0 || round != GameServices.Match?.RoundNumber) return;
             if (actor < -1 || actor >= Balance.PlayerCount) return;
             if (subject < -1 || subject >= Balance.PlayerCount) return;
 

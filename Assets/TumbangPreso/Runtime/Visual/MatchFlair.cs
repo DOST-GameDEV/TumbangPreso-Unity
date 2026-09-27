@@ -112,6 +112,9 @@ namespace TumbangPreso.Visual
 
             /// <summary>Zack's bolt reaching the street. `at` is the strike.</summary>
             Thunder = 15,
+
+            /// <summary>Existing ultimate camera feedback, only on the named victim's view.</summary>
+            UltimateImpact = 16,
         }
 
         /// <summary>
@@ -217,6 +220,10 @@ namespace TumbangPreso.Visual
                 case Kind.Thunder:
                     ComicPopup.Zap(at);
                     break;
+
+                case Kind.UltimateImpact:
+                    HitFeel.Land(Seat(subject), HitFeel.Weight.Ultimate, AccentOf(Seat(actor)), at);
+                    break;
             }
         }
 
@@ -224,7 +231,7 @@ namespace TumbangPreso.Visual
         /// Turns a flair event into a highlight marker where one is justified.
         ///
         /// ⚠️⚠️ NOT EVERY FLAIR IS A HIGHLIGHT AND THE LIST IS SHORT ON PURPOSE. `Kind` has
-        /// sixteen values and most of them are a hero power landing on a body, which happens
+        /// several values and most of them are a hero power landing on a body, which happens
         /// several times a round in Hero Strike and is the thing `docs/VISION.md` § 2 already
         /// calls unreadable when there is too much of it. A highlight reel of every stagger is a
         /// reel nobody watches. `docs/TODO.md` § 147: *"detect events that can be established
@@ -301,8 +308,8 @@ namespace TumbangPreso.Visual
             // `-victim.transform.forward` instead: **every hero skill in the game shoved the
             // victim's camera straight backwards regardless of where the attack actually came
             // from**, which is not a missing effect but a WRONG one, and a player turning to face
-            // it turned away. The two ultimates that call `Land` directly
-            // (`CheskaHeroKit`, `DanteHeroKit`) always passed `ctx.Position` and were correct;
+            // it turned away. The two ultimates routed through UltimateImpact
+            // (`CheskaHeroKit`, `DanteHeroKit`) preserve their accepted `ctx.Position`;
             // this method routes all five of the skill-weight hits and passed nothing.
             //
             // ⚠️ THE CASTER WAS ALREADY IN HAND: `AccentOf(caster)` on the line above is the
@@ -342,6 +349,8 @@ namespace TumbangPreso.Visual
         private static Color AccentOf(CharacterMotor caster)
         {
             if (caster == null) return UI.UiTheme.HeroEarthBright;
+            string heroId = caster.AbilitySystem?.HeroId;
+            if (!string.IsNullOrEmpty(heroId)) return UI.UiTheme.BrightForHero(heroId);
 
             var heroes = Roster.GetPeople(GameMode.HeroStrike);
             if (heroes == null || caster.CharacterIndex < 0 || caster.CharacterIndex >= heroes.Count)

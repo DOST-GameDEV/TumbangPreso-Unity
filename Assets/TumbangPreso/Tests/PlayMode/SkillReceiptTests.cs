@@ -104,6 +104,43 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(30000)]
+        public IEnumerator ScopedUltimateImpactReachesOnlyTheVictimsCameraWithoutGameplayMutation()
+        {
+            var caster = Owner("cheska").GetComponent<CharacterMotor>(); caster.PlayerSlot = 0;
+            var victim = new GameObject("Impact victim").AddComponent<CharacterMotor>();
+            victim.PlayerSlot = 1; victim.enabled = false;
+            GameServices.Ensure(); GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            GameServices.Round.Clear(); GameServices.Round.Register(caster); GameServices.Round.Register(victim);
+            var camera = new GameObject("Impact view", typeof(Camera)).AddComponent<CameraSystem.CameraRig>();
+            camera.enabled = false;
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            typeof(CameraSystem.CameraRig).GetField("_character", flags).SetValue(camera, victim);
+            var hold = typeof(CameraSystem.CameraRig).GetField("_holdLeft", flags);
+            var root = new GameObject("Impact receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>();
+            typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+            var receive = typeof(MatchRpc).GetMethod("OnFlairMsg", flags);
+            void Deliver(long match, int round, int subject)
+            {
+                using var writer = new FastBufferWriter(64, Allocator.Temp);
+                writer.WriteValueSafe((byte)Visual.MatchFlair.Kind.UltimateImpact);
+                writer.WriteValueSafe(0); writer.WriteValueSafe(subject);
+                writer.WriteValueSafe(Vector3.forward); writer.WriteValueSafe(0f);
+                writer.WriteValueSafe(match); writer.WriteValueSafe(round);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                receive.Invoke(router, new object[] { NetworkManager.ServerClientId, reader });
+            }
+            float scale = Time.timeScale;
+            Deliver(122, 1, 1); Assert.AreEqual(0f, hold.GetValue(camera));
+            Deliver(123, 2, 1); Assert.AreEqual(0f, hold.GetValue(camera));
+            Deliver(123, 1, 0); Assert.AreEqual(0f, hold.GetValue(camera), "An impact on another body changed this view.");
+            Deliver(123, 1, 1); Assert.AreEqual(.11f, (float)hold.GetValue(camera), .001f);
+            Assert.AreEqual(scale, Time.timeScale); Assert.IsFalse(victim.IsStunned); Assert.IsFalse(victim.IsRooted);
+            Object.Destroy(camera.gameObject); Object.Destroy(root);
+            yield return null;
+        }
+
+        [UnityTest, Timeout(30000)]
         public IEnumerator ReceivedFrozenStateOwnsOneRestraintWithoutCastingOrBlockingAfterThaw()
         {
             var system = Owner("sean");

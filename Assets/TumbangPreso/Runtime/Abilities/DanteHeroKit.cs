@@ -212,7 +212,7 @@ namespace TumbangPreso.Abilities
                     if (p == null || p.PlayerSlot == ctx.Motor.PlayerSlot) continue;
                     p.ApplyConcussed();
                     p.ApplyResolvedImpact(Vector3.up * 3.0f);
-                    HitFeel.Land(p, HitFeel.Weight.Ultimate, UiTheme.HeroEarthBright, ctx.Position);
+                    MatchFlair.Announce(MatchFlair.Kind.UltimateImpact, ctx.Motor.PlayerSlot, p.PlayerSlot, ctx.Position);
                 }
             }
         }

@@ -500,7 +500,9 @@ namespace TumbangPreso.Net
         // notifications carry the shared match/round/body scope.
         // 71: persistent fields carry accepted-cast lifetime IDs; plant removal
         // names that lifetime within its match and round.
-        public const int ProtocolVersion = 71;
+        // 72: match moments carry match/round scope and the existing ultimate
+        // victim-camera feedback reaches the affected peer.
+        public const int ProtocolVersion = 72;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

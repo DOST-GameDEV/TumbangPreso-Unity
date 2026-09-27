@@ -1,20 +1,19 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`70ee0152a48bcde9b70379296666f7f16f49fc0d`; plant lifetime-delivery unit follows it.
+`ad19d440516ec8e7ffbbe44946df4eca0165eaef`; existing victim-feedback delivery follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-Persistent plant removal now names the accepted initial-cast lifetime within its
-match/round. Shared ordinary-cast hooks deliver that identity to host, owner and
-observers; commands retain it, and field snapshots restore it. Bounded retirement
-floors prevent an old removal touching a replacement or a late cast resurrecting a
-removed plant. Protocol71, no art/timing/rating changes. Four assemblies compile;
-new native lifetime and actual delayed-peer/reconnect/ranked checks remain OPEN.
-QA-15 is not resolved by this separate defect fix.
-[Evidence](reports/stability-2026-09-27/multiplayer.md#plant-lifetime-delivery).
+Dante/Cheska's existing ultimate victim-camera feedback now travels through the
+shared match-event route, retaining its weight, origin and kit accent. It changes
+only the victim's view, not statuses/global time/caster feedback. Flair messages
+carry match/round scope and bounded known-kind validation. Protocol72; no authored
+animation/VFX change. Four assemblies compile; native receive/camera and actual
+peer qualification remain OPEN. QA-15 is still unconfirmed.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#existing-ultimate-victim-feedback).
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -25,6 +24,7 @@ and current owner reservations after resuming.
 
 | Revision | Change | Evidence boundary |
 |---|---|---|
+| ad19d440 | Accepted plant lifetime identity through cast/removal/recovery and bounded retirement | Four assemblies compile; native lifetime and delayed-peer/reconnect checks pending |
 | 70ee0152 | Host-timed leased Interact holds and scoped escape/uproot notifications | Four assemblies compile; native and lossy-peer hold checks pending |
 | c90f7ef8 | Destination-owned setup readiness, failure/return surface, cancellation and loading input isolation | Four assemblies compile; native loading lifecycle/input/UI checks pending |
 | a6111f72 | Explicit offline range, independent local resources, prepared controls and reusable target bots | Five assemblies compile; seven Core gate cases pass; native range/UI/physical input checks pending |
@@ -41,7 +41,7 @@ and current owner reservations after resuming.
 | 9a44be97 | Ranked/casual compatibility/capacity filtering and failed-allocation backoff/retry | Three managed checks and compile; live queue/party/results pending |
 | b7d26bcf | Prepared recovery integrated with incoming Phaister rework; screen-effect lifecycle cleanup | Frozen merged source compiles; native/peers pending |
 
-Current protocol is defined by NetSession.cs, now71. Matching clients are required.
+Current protocol is defined by NetSession.cs, now72. Matching clients are required.
 The prior full ledger, including every older feature, contributor record, source
 revision and receipt, remains in [the dated snapshot](archive/snapshots-2026-09-27/docs/ACTIVE_REWORK_LEDGER.md).
 

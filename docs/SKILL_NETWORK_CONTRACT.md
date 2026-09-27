@@ -91,6 +91,15 @@ Cosmetic swaps do not affect the token. Other effect kinds, multiple objects fro
 one cast and shared-ultimate cohorts still need their explicit lifetime contract;
 adding this field does not silently give every existing effect an identity.
 
+## Victim Feedback
+
+Host-only outcome loops must announce existing contact presentation through the
+shared match-event route. UltimateImpact reuses the current HitFeel camera hold,
+punch, chromatic pulse and vignette; it changes only the view following the victim.
+It does not apply status, modify global time scale or add a second effect on the
+caster. Flair messages carry match/round scope in protocol72. Derive the accent from
+the actual kit identity, not a cosmetic body's roster index.
+
 ## Compatibility And Checks
 
 Persistent status pictures belong to a body-owned presenter reading replicated

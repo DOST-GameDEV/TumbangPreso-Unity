@@ -172,7 +172,7 @@ namespace TumbangPreso.Abilities
                         p.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);
                         p.ApplyChilled(StatusRules.FrozenSeconds + StatusRules.ChilledSeconds);
                         HeroHazards.SpawnIceCubePrison(p.transform, StatusRules.FrozenSeconds);
-                        HitFeel.Land(p, HitFeel.Weight.Ultimate, UiTheme.HeroIceBright, ctx.Position);
+                        MatchFlair.Announce(MatchFlair.Kind.UltimateImpact, ctx.Motor.PlayerSlot, p.PlayerSlot, ctx.Position);
                     }
                 }
                 FrostSurfacePresentation.Nova(ctx.Position, 4.6f);

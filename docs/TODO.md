@@ -47,6 +47,9 @@ hold checks and reconnect progress remain OPEN. Plant removal now has accepted-c
 lifetime identity, scoped delivery and late-retirement protection, preserved through
 field snapshots (protocol71). Four assemblies compile; native/peer lifetime checks
 remain OPEN, and other persistent effect kinds still require explicit coverage.
+Existing Dante/Cheska victim-camera feedback now uses shared scoped Flair delivery
+(protocol72), preserving authored feedback and gameplay separation. Four assemblies
+compile; native/peer camera checks and QA-15 remain OPEN.
 Read [network route](NETWORKING.md),[contract](SKILL_NETWORK_CONTRACT.md) and
 [exact evidence](reports/stability-2026-09-27/multiplayer.md),not a historical
 protocol literal or old test count.
