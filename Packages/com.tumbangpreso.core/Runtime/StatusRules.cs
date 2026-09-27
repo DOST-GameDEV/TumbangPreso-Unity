@@ -57,6 +57,17 @@ namespace TumbangPreso.Core
         /// <summary>Voodoo (Phaister's defending curse). Owner: *"easier to tag and phaister can go out of
         /// box and tag them"*.</summary>
         Vulnerable = 9,
+
+        // ⚠️⚠️ APPENDED 2026-09-27 FOR PHAISTER'S VOODOO KIT (HERO-10 v3), from the owner's status table:
+        // `docs/reports/phaister-kit-2026-09-27/plan.md` section 9.1.
+
+        /// <summary>Voodoo (CURSE: DRAIN). *"Depletes stamina to 0. Prevents stamina recovery for 2.5
+        /// seconds."*</summary>
+        Drained = 10,
+
+        /// <summary>Voodoo (CURSE: HEX). *"Hallucinations of slippers randomly appear on your screen for 7.5
+        /// seconds."* Local presentation on the victim's screen only, like Disoriented.</summary>
+        Hexed = 11,
     }
 
     /// <summary>One row of the owner's status table.</summary>
@@ -138,6 +149,12 @@ namespace TumbangPreso.Core
         public const float VulnerableTagReachScale = 1.5f;
         public const float VulnerableStunScale = 1.5f;
 
+        /// <summary>*"Depletes stamina to 0. Prevents stamina recovery for 2.5 seconds."*</summary>
+        public const float DrainedSeconds = 2.5f;
+
+        /// <summary>*"Hallucinations of slippers randomly appear on your screen for 7.5 seconds."*</summary>
+        public const float HexedSeconds = 7.5f;
+
         private static readonly StatusRule[] Table =
         {
             new StatusRule(StatusKind.Whirled, "WHIRLED",
@@ -187,6 +204,17 @@ namespace TumbangPreso.Core
                 "For 5 seconds the taya can tag you from further away, even from outside the box, and stuns on you last longer.",
                 "Vulnerable: Easy to Tag",
                 VulnerableSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            // ⚠️ APPENDED (the enum's note). HERO-10 v3, the owner's rows verbatim.
+            new StatusRule(StatusKind.Drained, "DRAINED",
+                "Depletes stamina to 0. Prevents stamina recovery for 2.5 seconds.",
+                "Disabled Stamina Recovery",
+                DrainedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Hexed, "HEXED",
+                "Hallucinations of slippers randomly appear on your screen for 7.5 seconds.",
+                "Hallucinations",
+                HexedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
         };
 
