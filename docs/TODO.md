@@ -152,6 +152,9 @@ changing other names' defaults; its focused case passes. Player timings remain O
 Runtime-generated avatars now belong to their CharacterAnimator binding and are
 released on rebind/clear/teardown; borrowed assets survive. One new native lifecycle
 case passes. No animation rework or long-running player-heap qualification is claimed.
+Title/login artwork and profile pictures now await asynchronous cold reads during
+their existing staged preparation. One new native request/cache/fallback case passes;
+supplied pixels and staged order remain unchanged. Player cold-read timings remain OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

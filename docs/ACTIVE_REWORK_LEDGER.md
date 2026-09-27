@@ -1,11 +1,17 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`6d8083d6b7ca5187687876443507be5a3067d637`; stable ability-resource recovery follows it.
+`fc1487fa6f7decd68190fbfad8f05dd769940d14`; asynchronous menu-art preparation follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Title/login artwork and avatar warmups now await cold Resources.LoadAsync requests
+per item before retaining their existing texture/sprite caches. Supplied art and
+staged order stay unchanged. One new native request/cache/fallback case passes1/1
+on full committed base plus3inputs,no drift,no retry. Player timings remain OPEN.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#asynchronous-menu-art).
 
 Protocol78 resources use stable hero/ability IDs,world scope,sequence and both
 roles instead of mutable skill slots. Validate the whole identity set before

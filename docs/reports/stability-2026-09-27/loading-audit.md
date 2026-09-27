@@ -5,6 +5,23 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Asynchronous Menu Art
+
+Afterfc1487fa, OwnerMenuArt and Avatars warmups await Resources.LoadAsync for cold
+textures/sprites instead of synchronously loading each item before yielding. The
+same caches feed screen consumers; painted sprites still use the full supplied
+texture. Cached entries keep their staged turn,with27menu and22avatar items in the
+current catalog. Missing resources retain existing consumer fallback. No assets,
+import quality,layout or saved profile are changed.
+
+One new guarded native request/cache/fallback case passes1/1,0.8980249s on full
+committed base plus3inputs,no drift,no retry. It observes actual awaited resource
+requests,staged counts and retained background/logo/face identity across a warm
+pass,plus the existing unknown-avatar fallback. Minimum free6,277,840,896bytes;
+named profile/preferences restored. [Receipt](checks/menu-art-async-native.json),
+[XML](checks/menu-art-async-native.xml). Raw Logs/menu-art-async-20260927/async-pictures.*.
+No old shader/native cases or films rerun. Cold player I/O/frame timings remain OPEN.
+
 ## Generated Avatar Lifetime
 
 Afterc35550fc, CharacterAnimator records the Avatar only when its binding had none

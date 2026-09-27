@@ -81,6 +81,39 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator MenuAndAvatarPreparationAwaitsAsyncReadsAndRetainsScreenAssets()
+        {
+            int requests = 0, menuSteps = 0, avatarSteps = 0;
+            var menu = OwnerMenuArt.Warmup();
+            while (menu.MoveNext())
+            {
+                menuSteps++;
+                if (menu.Current is ResourceRequest) requests++;
+                yield return menu.Current;
+                if (menu.Current is ResourceRequest request) Assert.IsTrue(request.isDone);
+            }
+            var avatars = Avatars.Warmup();
+            while (avatars.MoveNext())
+            {
+                avatarSteps++;
+                if (avatars.Current is ResourceRequest) requests++;
+                yield return avatars.Current;
+                if (avatars.Current is ResourceRequest request) Assert.IsTrue(request.isDone);
+            }
+            Assert.Greater(requests, 0, "Cold art preparation should schedule asynchronous reads.");
+            Assert.AreEqual(27, menuSteps); Assert.AreEqual(Avatars.Ids.Length, avatarSteps);
+            var background = OwnerMenuArt.Texture("main2-background");
+            var logo = OwnerMenuArt.Piece("login3-logo");
+            var face = Avatars.Get(Avatars.Ids[0]);
+            Assert.IsNotNull(background); Assert.IsNotNull(logo); Assert.IsNotNull(face);
+            yield return OwnerMenuArt.Warmup(); yield return Avatars.Warmup();
+            Assert.AreSame(background, OwnerMenuArt.Texture("main2-background"));
+            Assert.AreSame(logo, OwnerMenuArt.Piece("login3-logo"));
+            Assert.AreSame(face, Avatars.Get(Avatars.Ids[0]));
+            Assert.AreSame(face, Avatars.Get("not-an-offered-avatar"));
+        }
+
+        [UnityTest]
         public IEnumerator ChangingAnAbilityGlyphRebuildsItsRenderedMeshAndTexture()
         {
             var root = new GameObject("GlyphProbeCanvas", typeof(RectTransform), typeof(Canvas));
