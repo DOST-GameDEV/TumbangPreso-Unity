@@ -289,6 +289,22 @@ Leads, found reading the code on 2026-09-27 (NOT yet confirmed as the cause):
   only in Blender (§ 8, § 11).
 - `SkyEvent` changes the sky only during an ultimate; it is not the everyday difference.
 
+**MEASURED 2026-09-27** (`Editor/MapKit/KantoLookMeasure.cs`, menu Sample Map > Measure Kanto
+Look; `Logs/kanto-look-v1/side_*.png`, `look.txt`). IDENTICAL on both sides: every RenderSettings
+value (trilight ambient, linear fog 90..360, KantoSky), the sun (1.25, Euler 44/140), the grade's
+fields, and the world look (NOT installed on either side: the lead above is true, but it is a Kanto
+vs shipped-maps difference, not an editor vs Play one). DIFFERENT, all from the game's player
+settings rather than the map:
+- Quality (the graphics profile): shadow distance 150 -> **40 m**, cascades 4 -> 2, resolution
+  High -> Medium, pixel lights 4 -> 2. Past 40 m nothing casts a shadow, so the city's buildings
+  lose their shadows and the aerial is shadowless.
+- Camera HDR on -> **off**: the grade tonemaps an LDR frame, so highlights clip and the frame reads
+  washed and warm.
+- Render style (the player's "Standard"): ink outlines off, a persistent colour fringe 0.34 and a
+  radial split, visible as colour fringes on every edge.
+- `PreviewKey` / `PreviewFill` lights are the HUD portrait's, culled to layer 30: not a cause.
+AWAITING the owner's pick of which frame is right before anything changes.
+
 ### 12.2 · Liveliness: moving cars and traffic
 
 What exists: the vehicles are modelled (`tools/author_kanto_vehicles.py`: sedans, taxi, van,
