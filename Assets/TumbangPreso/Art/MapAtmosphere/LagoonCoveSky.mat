@@ -32,20 +32,22 @@ Material:
     - _CloudLumaHigh: 1.9445188
     - _CloudLumaLow: 0.48335156
     - _CloudLumaScale: 1.540209
-    - _CloudOpacity: 0.94
+    - _CloudOpacity: 0.79
     - _CloudPaint: 0
-    - _CloudSpeed: 0.000069444446
+    - _CloudSpeed: 0.000105555555
     - _CloudSunCutoff: 6.6844497
     - _CloudYaw: -0.3272515
     - _Exposure: 1
+    - _SunDisc: 0.055
+    - _SunHalo: 1
     m_Colors:
-    - _CloudLight: {r: 0.98, g: 0.97, b: 0.95, a: 1}
-    - _CloudShade: {r: 0.74, g: 0.76, b: 0.86, a: 1}
+    - _CloudLight: {r: 1, g: 0.8, b: 0.64, a: 1}
+    - _CloudShade: {r: 0.62, g: 0.54, b: 0.74, a: 1}
     - _Ground: {r: 0.4, g: 0.37, b: 0.31, a: 1}
-    - _Horizon: {r: 0.86, g: 0.92, b: 0.93, a: 1}
-    - _SunColor: {r: 1, g: 0.93574, b: 0.83228, a: 1}
-    - _SunDirection: {r: 0.69468033, g: 0.52991927, b: 0.48642036, a: 0}
+    - _Horizon: {r: 1, g: 0.74, b: 0.54, a: 1}
+    - _SunColor: {r: 1, g: 0.8, b: 0.56, a: 1}
+    - _SunDirection: {r: -0.293428, g: 0.20790015, b: 0.933101, a: 0}
     - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    - _Zenith: {r: 0.24, g: 0.52, b: 0.9, a: 1}
+    - _Zenith: {r: 0.3, g: 0.46, b: 0.72, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

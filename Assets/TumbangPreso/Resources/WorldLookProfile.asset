@@ -154,3 +154,24 @@ MonoBehaviour:
     CloudShade: {r: 0.68, g: 0.74, b: 0.88, a: 1}
     Lift: {r: 0.03, g: 0.035, b: 0.065, a: 1}
     GroundLift: 1
+  - Map: LagoonCove
+    Sky: {r: 0.44, g: 0.42, b: 0.64, a: 1}
+    Equator: {r: 0.66, g: 0.52, b: 0.54, a: 1}
+    Ground: {r: 0.62, g: 0.46, b: 0.34, a: 1}
+    ShadowTint: {r: 0.9, g: 0.8, b: 1.1, a: 1}
+    Chalk: {r: 0.96, g: 0.92, b: 0.81, a: 1}
+    ChalkEdge: {r: 0.14, g: 0.11, b: 0.075, a: 1}
+    FogStart: 70
+    FogEnd: 340
+    WearKind: 4
+    Sun: {r: 1, g: 0.8, b: 0.56, a: 1}
+    SunIntensity: 1.25
+    SunElevation: 12
+    ShadowStrength: 0.7
+    Fog: {r: 0.98, g: 0.78, b: 0.64, a: 1}
+    Zenith: {r: 0.3, g: 0.46, b: 0.72, a: 1}
+    Horizon: {r: 1, g: 0.74, b: 0.54, a: 1}
+    CloudLight: {r: 1, g: 0.8, b: 0.64, a: 1}
+    CloudShade: {r: 0.62, g: 0.54, b: 0.74, a: 1}
+    Lift: {r: 0.05, g: 0.03, b: 0.06, a: 1}
+    GroundLift: 1

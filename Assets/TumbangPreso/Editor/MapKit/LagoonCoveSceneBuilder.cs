@@ -605,42 +605,51 @@ namespace TumbangPreso.EditorTools.MapKit
             var sun = new GameObject("Sun").AddComponent<Light>();
             sun.transform.SetParent(root, false);
             sun.type = LightType.Directional;
+            // ⚠️ THE SHIPPED LAGOON'S LIGHT AND SKY, NOT THE BLENDER PREVIEW'S (owner, 2026-09-27: "can
+            // we use the lighting from the other maps in the game? as well as the cloud/sky shader we
+            // already have set up"). Exactly the steps LagoonBuilder takes after its own Apply, into
+            // this scene's own sky material (Art/MapAtmosphere/LagoonCoveSky.mat), so the shipped
+            // LagoonSky.mat is never written from here. Apply finds the Lagoon look through
+            // WorldLookProfile.Find's LagoonCove alias; at runtime MatchInstaller's
+            // WorldLookPresentation adds the look's key light, grade and blocky clouds on top.
+            // The earlier Blender-matched values (a Blender-angle sun, a 300..1400 m fog, a 0.85
+            // saturation grade) are gone with this; the layout's `sun` block is only logged.
             MapAtmosphereAuthor.Apply("LagoonCove");
-            // The Blender scene's own sun, after Apply (which rotates every directional light to
-            // the shipped maps' afternoon).
-            if (spec != null && spec.euler != null && spec.euler.Length == 3)
-                sun.transform.rotation = Quaternion.Euler(spec.euler[0], spec.euler[1], spec.euler[2]);
-            if (spec != null && spec.color != null && spec.color.Length >= 3)
-                sun.color = new Color(spec.color[0], spec.color[1], spec.color[2]);
-            // ⚠️ Blender's sun strength is irradiance in W/m² (about 3 to 5 for daylight); a Unity
-            // directional light is a multiplier near 1. The Blender value is logged, not copied.
-            sun.intensity = 1.15f;   // Kanto's 1.25 read brighter than the Blender renders (v3)
-            if (spec != null) Debug.Log($"{Tag}Sun from layout: euler ({string.Join(", ", spec.euler ?? new float[0])}), Blender strength {spec.intensity}");
-            sun.shadows = LightShadows.Soft; sun.shadowStrength = 0.9f;   // review v1: 0.7 left the palm and house shadows far fainter than Blender's
-            sun.shadowBias = 0.025f; sun.shadowNormalBias = 0.3f;
-            // Matched to the Blender world (tools/author_lagoon_cove.py sky()): a warm grey fill
-            // (0.55, 0.60, 0.66 linear) so shade stays warm, and a clear blue gradient the camera sees.
-            RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.62f, 0.66f, 0.72f);
-            RenderSettings.ambientEquatorColor = new Color(0.56f, 0.58f, 0.60f);
-            RenderSettings.ambientGroundColor = new Color(0.40f, 0.37f, 0.32f);
-            var sky = RenderSettings.skybox;
-            if (sky != null)
+            if (spec != null) Debug.Log($"{Tag}Layout sun (not used; the map wears its WorldLookProfile look): euler ({string.Join(", ", spec.euler ?? new float[0])})");
+            // ⚠️ SUNSET (owner, 2026-09-27: "i think the lighting is too afternoon-y... i want a more
+            // sunset style of vibes"). The authored scene matches the "LagoonCove" entry in
+            // WorldLookProfile, so the look's weight changes nothing but the extras it owns.
+            // ⚠️ THE SUN SETS OVER THE OPEN SEA, SOUTH-SOUTH-EAST (Unity -X a little, +Z; Blender's
+            // south and a little east). Owner, 2026-09-27, circling the sky between the stilt houses
+            // in a Play screenshot: "we need to move the sun because its getting covered by the
+            // mountains". The first sunset put it in the WEST-SOUTH-WEST, behind the spit's boulders
+            // as seen from the court, so its disc and the water's path of sun sparkles (the only
+            // strong reflection the water shader draws) were hidden. Now, from the court, it hangs
+            // just left of the landmark rock over open water, and its glitter path runs across the
+            // bay toward the players.
+            var look = WorldLookProfile.Current.Find("LagoonCove");
+            float elevation = (look != null && look.SunElevation > 0 ? look.SunElevation : 12f) * Mathf.Deg2Rad;
+            var toSun = new Vector3(Mathf.Cos(elevation) * -0.30f, Mathf.Sin(elevation), Mathf.Cos(elevation) * 0.954f).normalized;
+            sun.transform.rotation = Quaternion.LookRotation(-toSun, Vector3.up);
+            if (look != null) { sun.color = look.Sun; sun.intensity = look.SunIntensity; sun.shadowStrength = look.ShadowStrength; }
+            if (look != null)
             {
-                sky.SetColor("_Zenith", new Color(0.24f, 0.52f, 0.90f));
-                sky.SetColor("_Horizon", new Color(0.86f, 0.92f, 0.93f));
-                sky.SetColor("_SunColor", sun.color);
-                sky.SetVector("_SunDirection", -sun.transform.forward);
-                // Review v1: the shipped maps' cloud shade (0.45, 0.54, 0.63) read as storm grey
-                // against this clear tropical sky; the Blender clouds are white with lilac shade.
-                sky.SetColor("_CloudLight", new Color(0.98f, 0.97f, 0.95f));
-                sky.SetColor("_CloudShade", new Color(0.74f, 0.76f, 0.86f));
+                RenderSettings.ambientSkyColor = look.Sky; RenderSettings.ambientEquatorColor = look.Equator;
+                RenderSettings.ambientGroundColor = look.Ground;
+                RenderSettings.fogColor = look.Fog; RenderSettings.fogStartDistance = look.FogStart; RenderSettings.fogEndDistance = look.FogEnd;
+            }
+            var sky = RenderSettings.skybox;
+            if (sky != null && look != null)
+            {
+                sky.SetColor("_Zenith", look.Zenith); sky.SetColor("_Horizon", look.Horizon);
+                sky.SetColor("_CloudLight", look.CloudLight); sky.SetColor("_CloudShade", look.CloudShade);
+                sky.SetColor("_SunColor", look.Sun); sky.SetVector("_SunDirection", toSun);
+                sky.SetFloat("_CloudOpacity", .79f); sky.SetFloat("_CloudSpeed", .038f / 360);
+                // A visible setting sun (owner: "theres no actual sun visible, i want to add that"):
+                // NeighbourhoodSky's opt-in disc, 2.6 degrees across, with a warm halo.
+                sky.SetFloat("_SunDisc", .055f); sky.SetFloat("_SunHalo", 1f);
                 EditorUtility.SetDirty(sky);
             }
-            RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear;
-            RenderSettings.fogColor = new Color(0.84f, 0.90f, 0.92f);
-            RenderSettings.fogStartDistance = 300; RenderSettings.fogEndDistance = 1400;   // v1: 160..900 hazed the aerial, which Blender renders clear
-            root.GetComponent<MapGrade>().Set(1.0f, 1.05f, 0.85f, 1, 1.9f);   // v1 1.08, v2 0.97, v3 0.9: sand and grass still read hotter than the Blender renders (Blender's view transform desaturates highlights)
         }
 
         // ------------------------------------------------------------------ review renders
@@ -669,6 +678,20 @@ namespace TumbangPreso.EditorTools.MapKit
             camera.depthTextureMode |= DepthTextureMode.Depth;
             camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
             camera.gameObject.AddComponent<WorldOutline>().PrototypeEnabled = true;
+            // The review shows the map as a MATCH shows it: the Lagoon look (key light, sky ambient,
+            // grade and the blocky clouds) installed the way the map preview installs it, since
+            // MatchInstaller only does so in Play. Without it the renders would show the authored
+            // light alone and no clouds.
+            WorldLookPresentation look = null;
+            var reviewSun = Object.FindObjectsByType<Light>(FindObjectsSortMode.None).FirstOrDefault(l => l.type == LightType.Directional);
+            var sceneRoot = GameObject.Find("LagoonCove");
+            try
+            {
+                camera.gameObject.AddComponent<WorldLookCamera>();
+                if (sceneRoot != null) look = WorldLookPresentation.InstallPreview(sceneRoot.transform, 0f, reviewSun);
+                Debug.Log(Tag + (look != null ? "Review wears the Lagoon look (" + look.Look.Map + ")" : "No world look found for the review"));
+            }
+            catch (Exception e) { Debug.LogWarning(Tag + "World look preview failed: " + e.Message); }
             const float eye = 1.3f;
             // The Blender preview shots (tools/author_lagoon_cove.py preview()), same positions,
             // targets and lenses, converted to Unity axes, plus the court from straight above.
