@@ -187,6 +187,7 @@ namespace TumbangPreso.UI
         }
         private void Update()
         {
+            TickRematchVote();
             TickFinishPerformance();
             if(!_nativeResult||!NativeVisible||!MenuNav.CancelPressed||ScreenTakeover.EscapeIsSpokenExcept(this))return;
             ScreenTakeover.ConsumeEscape();OnMenuPressed();

@@ -54,6 +54,77 @@ namespace TumbangPreso.PlayTests
         }
 
         [Test]
+        public void RematchRotatesWorldIdentityOnceAndRejectsOldAnnouncements()
+        {
+            GameServices.Ensure(); NetAuthority.Provider = new Peer { Host = true };
+            var match = GameServices.Match; match.ApplySnapshot(new int[4], 8, false);
+            typeof(MatchDirector).GetProperty("PresentationMatchId").SetValue(match, 123L);
+            var root = new GameObject("Rematch identity"); root.SetActive(false);
+            var rpc = root.AddComponent<MatchRpc>();
+            var identity = typeof(MatchRpc).GetProperty("PresentationMatchId"); identity.SetValue(rpc, 123L);
+            try
+            {
+                rpc.BeginRematchClientRpc(); long next = rpc.PresentationMatchId;
+                Assert.Greater(next, 123);
+                Assert.IsTrue((bool)typeof(MatchRpc).GetField("_loadingOwnArena", Hidden).GetValue(rpc));
+                rpc.BeginRematchClientRpc(); Assert.AreEqual(next, rpc.PresentationMatchId);
+                Assert.IsFalse(new GameplayActionScope { Match = 123, Round = 1, Epoch = 0 }.Matches(next, 1, 0),
+                    "A prior match's first-round/body-zero packet matched the rematch.");
+
+                NetAuthority.Provider = new Peer(); identity.SetValue(rpc, 123L);
+                var adopt = typeof(MatchRpc).GetMethod("AdoptRematchIdentity", Hidden);
+                bool Accept(long previous, long target) => (bool)adopt.Invoke(rpc, new object[] { previous, target });
+                Assert.IsFalse(Accept(122, next)); Assert.IsFalse(Accept(123, 123)); Assert.IsFalse(Accept(0, next));
+                Assert.IsTrue(Accept(123, next)); Assert.AreEqual(next, match.PresentationMatchId);
+                Assert.IsFalse(Accept(123, next)); Assert.IsFalse(Accept(next, 123));
+            }
+            finally { Object.DestroyImmediate(root); }
+        }
+
+        [Test]
+        public void RematchVotesRequireCurrentMembershipAndAcknowledgeTheLocalSeat()
+        {
+            GameServices.Ensure();
+            var match = GameServices.Match; match.ApplySnapshot(new int[4], 8, false);
+            typeof(MatchDirector).GetProperty("PresentationMatchId").SetValue(match, 123L);
+            var sessionRoot = new GameObject("Rematch session"); sessionRoot.SetActive(false);
+            var session = sessionRoot.AddComponent<NetSession>();
+            var sessionInstance = typeof(NetSession).GetProperty("Instance"); var previous = sessionInstance.GetValue(null);
+            var root = new GameObject("Rematch membership"); var result = root.AddComponent<MatchResult>(); result.enabled = false;
+            var canvas = (Canvas)typeof(MatchResult).GetField("_canvas", Hidden).GetValue(result);
+            canvas.gameObject.SetActive(true);
+            var pending = typeof(MatchResult).GetField("_rematchPending", Hidden);
+            try
+            {
+                NetAuthority.Provider = new Peer { Host = true }; sessionInstance.SetValue(null, session);
+                session.Lobby.OpenLobby(new System.Random(42));
+                session.Lobby.Admit(0, "host", "Host");
+                var guest = session.Lobby.Admit(1, "guest", "Guest");
+                var watcher = session.Lobby.Admit(2, "watch", "Watch"); watcher.Spectator = true; watcher.Seat = -1;
+                session.Lobby.Admit(3, "third", "Third");
+                result.HostReceiveVote(2); result.HostReceiveVote(99); Assert.AreEqual(0, result.VoteCount);
+                result.HostReceiveVote(1); result.HostReceiveVote(1); Assert.AreEqual(1, result.VoteCount);
+                guest.Spectator = true; guest.Seat = -1;
+                result.HostReceiveVote(0);
+                Assert.AreEqual(1, result.VoteCount, "A withdrawn participant's old vote survived.");
+                Assert.AreEqual(2, result.ExpectedVotes()); Assert.IsTrue(result.IsVisible);
+
+                guest.Spectator = false; guest.Seat = 1; NetAuthority.Provider = new Peer();
+                pending.SetValue(result, true);
+                result.ApplyRematchTally(1, 3, 1); Assert.IsTrue((bool)pending.GetValue(result));
+                result.ApplyRematchTally(1, 3, 2); Assert.IsFalse((bool)pending.GetValue(result));
+                Assert.AreEqual(MatchResult.TallyLine(1, 3), result.TallyText);
+                result.RequestRematch(); Assert.IsFalse((bool)pending.GetValue(result), "An acknowledged vote was requeued.");
+                Assert.AreEqual(MatchResult.TallyLine(1, 3), result.TallyText, "A local press erased the received tally.");
+            }
+            finally
+            {
+                sessionInstance.SetValue(null, previous);
+                Object.DestroyImmediate(root); Object.DestroyImmediate(sessionRoot);
+            }
+        }
+
+        [Test]
         public void BufferVotesAcceptSeatedClientsAndRejectOldBreaks()
         {
             GameServices.Ensure();

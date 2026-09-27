@@ -1,12 +1,19 @@
 # Active Rework Checkpoint
 
-Updated 2026-09-28. Branch: ASTRAReworks. Latest managed candidate: `f997250d`
-plus the four intermission-vote source changes.
-Current protocol:88 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
+Updated 2026-09-28. Branch: ASTRAReworks. Latest managed candidate: `9636c156`
+plus the rematch identity/voting changes.
+Current protocol:89 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 TODO is the work-status queue; this file records resumption and evidence boundaries.
 
 ## Current Unit
+
+Rematches now allocate a fresh host world identity before reload, adopt a matching
+previous/next pair on clients, scope votes/tallies and acknowledge seated voters.
+Existing rotation/result policies remain. Core, Runtime and Editor compile on the
+frozen managed candidate; the disk guard stopped BEFORE Tests, PlayTests and the
+new focused Core case. Those checks and two authored native cases are NOT RUN.
+Do not repeat the completed compiler stages. [Details](reports/stability-2026-09-27/multiplayer.md#rematch-identity-and-voting).
 
 Intermission voting now accepts client requests instead of requiring a host sender.
 Match/round scope, seated quorum and acknowledged host tally repair the existing

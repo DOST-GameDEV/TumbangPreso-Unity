@@ -76,6 +76,10 @@ Intermission voting now accepts seated clients, rejects old match/round requests
 and acknowledges the host tally (protocol88). Client buffer state mirrors without
 host round events or local tally overwrite. Five assemblies compile; two new
 native cases and actual peer qualification remain OPEN.
+Rematches now rotate the world identity before reload and scope/acknowledge seated
+votes (protocol89), preventing old round-one/body-zero packets from matching the
+next game. Core/Runtime/Editor compile; storage stopped the remaining compiler
+stages and focused Core test. Authored native and actual-peer checks remain OPEN.
 Ordinary action requests/refusals/body playback/charge tells now carry shared
 match/round/body-epoch scope (protocol67). Compiler and one pure scope check pass;
 Native/peer qualification remains OPEN. Same-round combat refusals now correlate

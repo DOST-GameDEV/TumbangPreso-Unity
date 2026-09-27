@@ -4,6 +4,12 @@ Presentation is replaceable. Stable ability IDs and shared gameplay state are th
 network boundary, not model files,effect class names,clips,palettes or cue names.
 Only Paete currently has substantial VFX; other presentation remains provisional.
 
+World identity must change on every network match, including rematches. Protocol89
+announces the ended/current identity pair before arena reload and accepts only a
+matching forward transition. Reusing a round-one/body-zero scope from the previous
+game defeats otherwise correct packet guards. Cosmetic changes do not mint world
+identities; the host's match/rematch transition owns them.
+
 ## Cosmetic Reworks
 
 - Keep an ability's ID when its gameplay identity is unchanged. Display names,

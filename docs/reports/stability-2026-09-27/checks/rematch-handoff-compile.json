@@ -1,0 +1,68 @@
+{
+  "base": "9636c156fb7997d0b9592b659e0d0c4751dbfac3",
+  "protocol": 89,
+  "scope": "Frozen merged managed source and Core test project",
+  "result": "PartialCompileStorageBlocked",
+  "assemblies": [
+    {
+      "assembly": "TumbangPreso.Core",
+      "exitCode": 0
+    },
+    {
+      "assembly": "TumbangPreso.Runtime",
+      "exitCode": 0
+    },
+    {
+      "assembly": "TumbangPreso.Editor",
+      "exitCode": 0
+    }
+  ],
+  "frozenFileCount": 1280,
+  "sourceBytes": 20790275,
+  "manifestSha256": "EBFE34907152E2AA44732D37BE727ACFF4593CA7733628B70229755963A486C6",
+  "ownedInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "C56B72A92E308CE98D737B583C455F82F6C480C3D9B37287B4FAA461349FFCF4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "E786C7364A9D5C072375D0648448056E9033B7AAE169A1A193C8D6FE3EC9F733"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/MatchResult.Native.cs",
+      "sha256": "1EE9F1C7418702A0B4F1E8341851987F56EE4A896C1227057FE20BDEB199D012"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/MatchResult.cs",
+      "sha256": "4B603453E6DF24E636B69D9E87D9614B4FBA861EC55413C6620FF0C6998AE024"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ReadyGateNetworkTests.cs",
+      "sha256": "B3BD7941CA1F603B3873E813106D17DFF4B76EAC669788D2E45B8F0F9727FA7B"
+    },
+    {
+      "path": "Core.Tests/BalanceTests.cs",
+      "sha256": "36FA2A24536D59D22FE10BA3855BF529453E0DDBCCA5CE1CB867E088C2EEB24C"
+    },
+    {
+      "path": "Packages/com.tumbangpreso.core/Runtime/RematchVote.cs",
+      "sha256": "B7778FC0C4F7D5A94C4B9EEDAC36DCE84DF146566E762B6CEE75CAF1A1F41A49"
+    }
+  ],
+  "drift": 0,
+  "nativeTestsRun": 0,
+  "coreTestsRun": 0,
+  "actualCompilerAttempts": 1,
+  "remaining": [
+    "TumbangPreso.Tests",
+    "TumbangPreso.PlayTests",
+    "New focused Core eligibility test",
+    "Two native state/identity cases",
+    "Actual peers/ranked"
+  ],
+  "notes": [
+    "Core, Runtime and Editor succeeded before disk preflight stopped the next stage",
+    "No compiler error, Unity import, IL postprocessing or runtime claim"
+  ]
+}

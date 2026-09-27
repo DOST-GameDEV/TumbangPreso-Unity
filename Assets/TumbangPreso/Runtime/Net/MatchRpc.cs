@@ -1605,6 +1605,8 @@ namespace TumbangPreso.Net
         /// <returns>False when the vote could not be delivered. See `DeclareReadyServerRpc`.</returns>
         public bool VoteRematchServerRpc()
         {
+            long match = EnsurePresentationMatch();
+            if (match <= 0) return false;
             if (NetAuthority.IsHost)
             {
                 FindFirstObjectByType<UI.MatchResult>()?.HostReceiveVote(NetAuthority.LocalPeerId);
@@ -1614,14 +1616,18 @@ namespace TumbangPreso.Net
             if (_nm == null || _nm.CustomMessagingManager == null || !_nm.IsConnectedClient)
                 return false;
 
-            using var writer = new FastBufferWriter(1, Allocator.Temp);
+            using var writer = new FastBufferWriter(8, Allocator.Temp);
+            writer.WriteValueSafe(match);
             _nm.CustomMessagingManager.SendNamedMessage("VoteRematch", NetworkManager.ServerClientId, writer);
             return true;
         }
 
         private void OnVoteRematchMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || senderClientId > int.MaxValue ||
+                reader.Length - reader.Position != 8 || !reader.TryBeginRead(8)) return;
+            reader.ReadValueSafe(out long match);
+            if (match <= 0 || match != PresentationMatchId) return;
             FindFirstObjectByType<UI.MatchResult>()?.HostReceiveVote((int)senderClientId);
         }
 
@@ -1753,40 +1759,68 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>HOST ONLY. Broadcasts "n of m have voted" so every screen can draw it.</summary>
-        public void RematchTallyClientRpc(int votes, int expected)
+        public void RematchTallyClientRpc(int votes, int expected, byte mask, ulong? peer = null)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsNetworked || !NetAuthority.IsHost) return;
             if (_nm == null || _nm.CustomMessagingManager == null) return;
 
+            BroadcastMatchState();
             using var writer = new FastBufferWriter(32, Allocator.Temp);
+            writer.WriteValueSafe(PresentationMatchId);
             writer.WriteValueSafe(votes);
             writer.WriteValueSafe(expected);
-            _nm.CustomMessagingManager.SendNamedMessageToAll("RematchTally", writer);
+            writer.WriteValueSafe(mask);
+            if (peer.HasValue) _nm.CustomMessagingManager.SendNamedMessage("RematchTally", peer.Value, writer, NetworkDelivery.ReliableSequenced);
+            else _nm.CustomMessagingManager.SendNamedMessageToAll("RematchTally", writer, NetworkDelivery.ReliableSequenced);
         }
 
         private void OnRematchTallyMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            if (NetAuthority.IsHost || !FromHost(senderClientId) ||
+                reader.Length - reader.Position != 17 || !reader.TryBeginRead(17)) return;
+            reader.ReadValueSafe(out long match);
             reader.ReadValueSafe(out int votes);
             reader.ReadValueSafe(out int expected);
-            FindFirstObjectByType<UI.MatchResult>()?.ShowTally(votes, expected);
+            reader.ReadValueSafe(out byte mask);
+            if (match <= 0 || match != PresentationMatchId || expected < 1 || expected > Balance.PlayerCount ||
+                votes < 0 || votes > expected || (mask & ~((1 << Balance.PlayerCount) - 1)) != 0) return;
+            int count = 0;
+            for (int seat = 0; seat < Balance.PlayerCount; seat++) if ((mask & (1 << seat)) != 0) count++;
+            if (count != votes) return;
+            FindFirstObjectByType<UI.MatchResult>()?.ApplyRematchTally(votes, expected, mask);
         }
 
         /// <summary>HOST ONLY. Every playing peer has voted; everyone starts.</summary>
         public void BeginRematchClientRpc()
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.ShouldResolve()) return;
+            long previous = GameServices.Match?.PresentationMatchId ?? 0;
+            if (previous <= 0 || previous != PresentationMatchId) return;
+            // Rotate the world identity before any new arena state can be sent.
+            // A second call from the old result board cannot allocate another one.
+            PreparePresentationMatch();
+            _loadingOwnArena = true;
             if (_nm == null || _nm.CustomMessagingManager == null) return;
 
             using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(previous);
+            writer.WriteValueSafe(PresentationMatchId);
             _nm.CustomMessagingManager.SendNamedMessageToAll("BeginRematch", writer);
         }
 
         private void OnBeginRematchMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
-            FindFirstObjectByType<UI.MatchResult>()?.BeginRematchLocally();
+            if (NetAuthority.IsHost || !FromHost(senderClientId) ||
+                reader.Length - reader.Position != 16 || !reader.TryBeginRead(16)) return;
+            reader.ReadValueSafe(out long previous); reader.ReadValueSafe(out long next);
+            if (!AdoptRematchIdentity(previous, next)) return;
+            var result = FindFirstObjectByType<UI.MatchResult>();
+            if (result != null) result.BeginRematchLocally();
+            else UI.SceneFlow.StartMatch();
         }
+
+        private bool AdoptRematchIdentity(long previous, long next)
+            => previous > 0 && previous == PresentationMatchId && next > previous && AdoptPresentationMatch(next);
 
         // -------------------------------------------------------------------
         // MOVEMENT AND POSITION SYNCHRONIZATION
@@ -6164,6 +6198,7 @@ namespace TumbangPreso.Net
             SendReplayShortlist((ulong)peerId);
             SendSkySnapshot((ulong)peerId);
             FindFirstObjectByType<BufferSkipVote>()?.PublishTally((ulong)peerId);
+            FindFirstObjectByType<UI.MatchResult>()?.PublishRematchTally((ulong)peerId);
             int previousFieldGeneration=_worldFieldGeneration;
             SendWorldFieldSnapshot((ulong)peerId);
             if(_worldFieldGeneration>previousFieldGeneration)

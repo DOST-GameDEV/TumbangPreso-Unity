@@ -94,6 +94,8 @@ namespace TumbangPreso.UI
         /// `Core.RematchVote`, engine-free, because every bug this has ever had was a counting
         /// bug and counting can be asserted in a millisecond.</summary>
         private readonly Core.RematchVote _rematchVotes = new Core.RematchVote();
+        private bool _rematchPending, _rematchStarting;
+        private float _nextRematchSend;
 
         /// <summary>
         /// ⚠️⚠️ EVERY PLAYING PEER VOTES ON A REMATCH, NOT ONLY THE HOST. 🧑 2026-08-01:
@@ -137,6 +139,7 @@ namespace TumbangPreso.UI
 
         private void OnDisable()
         {
+            _rematchPending = false;
             if (_nativeResult && _canvas != null) _canvas.gameObject.SetActive(false);
             if (GameServices.Match != null) GameServices.Match.MatchEnded -= OnMatchWon;
             if (GameServices.Stats != null) GameServices.Stats.RecordReady -= OnRecordReady;
@@ -203,6 +206,7 @@ namespace TumbangPreso.UI
             if (GameServices.Stats?.Last != null) OnRecordReady(GameServices.Stats.Last);
 
             _rematchVotes.Clear();
+            _rematchPending = _rematchStarting = false;
             _rematch.gameObject.SetActive(!IsSpectator);
             _rematch.interactable = true;
 
@@ -1162,6 +1166,8 @@ namespace TumbangPreso.UI
 
         private void OnRematchPressed()
         {
+            if (!IsVisible || _rematchStarting || _rematchPending || IsSpectator || GameLaunch.Spectator ||
+                NetAuthority.IsSeatlessReferee || (_rematch != null && !_rematch.interactable)) return;
             // ⚠️ THE SCOREBOARD MUST NOT DISAPPEAR ON THE PRESS. 🧑: *"when rematch happens the
             // UI for the scoreboard doesnt dissappear"* — it stays up until the rematch is
             // actually agreed and the next round starts.
@@ -1170,6 +1176,7 @@ namespace TumbangPreso.UI
             // Single player is a vote of one, so it starts immediately.
             if (!NetAuthority.IsNetworked)
             {
+                if (!NetAuthority.ShouldResolve()) return;
                 _rematchVotes.Add(0);
                 BeginRematchNow();
                 return;
@@ -1179,21 +1186,27 @@ namespace TumbangPreso.UI
             // peer's and comes back in the broadcast tally. Counting it here as well would give
             // this screen a number the host does not have, and the first thing a player would
             // see is their own count disagreeing with everybody else's.
-            // ⚠️⚠️ THE BUTTON IS ONLY DEADENED ONCE THE VOTE HAS ACTUALLY LEFT. It was disabled
-            // first and the send attempted afterwards, so a vote that could not be delivered
-            // (the host gone, or the transport still finishing its handshake) left the player
-            // staring at a dead REMATCH button with no way to try again and no tally to explain
-            // it. `DeclareReadyServerRpc` reports delivery for the same reason and
-            // `ReadyGate.Update` resends off it.
-            if (Net.MatchRpc.Instance == null || !Net.MatchRpc.Instance.VoteRematchServerRpc())
-            {
-                ShowTally(_rematchVotes.Count, ExpectedVotes());
-                return;
-            }
-
+            // Local delivery is not host acceptance. Keep a retryable pending vote
+            // until the scoped host tally acknowledges this seat; preserve its count.
+            _rematchPending = true;
+            _nextRematchSend = 0;
             _rematch.interactable = false;
-            ShowTally(_rematchVotes.Count, ExpectedVotes());
+            TickRematchVote();
         }
+
+        private void TickRematchVote()
+        {
+            if (!_rematchPending || _rematchStarting || !IsVisible) return;
+            if (!NetAuthority.IsNetworked)
+            { _rematchPending = false; if (_rematch != null) _rematch.interactable = true; return; }
+            if (Time.unscaledTime < _nextRematchSend) return;
+            _nextRematchSend = Time.unscaledTime + .5f;
+            Net.MatchRpc.Instance?.VoteRematchServerRpc();
+        }
+
+        private static bool EligibleRematchPeer(int peer) => NetAuthority.IsNetworked
+            ? Net.NetSession.Instance?.Lobby.IsSeatedPeer(peer) == true
+            : peer == NetAuthority.LocalPeerId && !GameLaunch.Spectator;
 
         /// <summary>
         /// HOST ONLY. A peer voted.
@@ -1203,14 +1216,14 @@ namespace TumbangPreso.UI
         /// </summary>
         public void HostReceiveVote(int peerId)
         {
-            if (!NetAuthority.IsHost || _canvas==null || !_canvas.gameObject.activeSelf) return;
+            if (!NetAuthority.ShouldResolve() || !IsVisible || _rematchStarting || !EligibleRematchPeer(peerId)) return;
 
+            _rematchVotes.RetainEligible(EligibleRematchPeer);
             if (!_rematchVotes.Add(peerId)) return;   // idempotent, like the ready set
 
             int expected = ExpectedVotes();
 
-            Net.MatchRpc.Instance?.RematchTallyClientRpc(_rematchVotes.Count, expected);
-            ShowTally(_rematchVotes.Count, expected);
+            PublishRematchTally();
 
             if (_rematchVotes.Satisfied(expected))
             {
@@ -1227,14 +1240,13 @@ namespace TumbangPreso.UI
         /// </summary>
         public void OnPeerLeft(int peerId)
         {
-            if (!NetAuthority.IsHost) return;
-            if (!_canvas.gameObject.activeSelf) return;
+            if (!NetAuthority.ShouldResolve() || !IsVisible || _rematchStarting) return;
 
             _rematchVotes.Remove(peerId);
+            _rematchVotes.RetainEligible(EligibleRematchPeer);
 
             int expected = ExpectedVotes();
-            Net.MatchRpc.Instance?.RematchTallyClientRpc(_rematchVotes.Count, expected);
-            ShowTally(_rematchVotes.Count, expected);
+            PublishRematchTally();
 
             if (_rematchVotes.Satisfied(expected))
             {
@@ -1264,7 +1276,30 @@ namespace TumbangPreso.UI
         public int ExpectedVotes()
         {
             var lobby = Net.NetSession.Instance?.Lobby;
-            return lobby?.PlayingPeerCount() ?? 1;
+            return NetAuthority.IsNetworked ? Mathf.Max(1, lobby?.SeatedPeerCount() ?? 0) : 1;
+        }
+
+        public void PublishRematchTally(ulong? peer = null)
+        {
+            if (!NetAuthority.ShouldResolve() || !IsVisible || _rematchStarting) return;
+            _rematchVotes.RetainEligible(EligibleRematchPeer);
+            byte mask = 0;
+            var lobby = Net.NetSession.Instance?.Lobby;
+            if (lobby != null)
+                foreach (int voter in lobby.SeatedPeerIds())
+                    if (_rematchVotes.HasVoted(voter)) mask |= (byte)(1 << lobby.PeerById(voter).Seat);
+            ShowTally(_rematchVotes.Count, ExpectedVotes());
+            if (_rematchVotes.HasVoted(NetAuthority.LocalPeerId)) _rematchPending = false;
+            Net.MatchRpc.Instance?.RematchTallyClientRpc(_rematchVotes.Count, ExpectedVotes(), mask, peer);
+        }
+
+        public void ApplyRematchTally(int votes, int expected, byte mask)
+        {
+            if (_rematchStarting) return;
+            ShowTally(votes, expected);
+            int seat = NetAuthority.LocalSlot;
+            if (seat >= 0 && seat < Core.Balance.PlayerCount && (mask & (1 << seat)) != 0)
+            { _rematchPending = false; if (_rematch != null) _rematch.interactable = false; }
         }
 
         /// <summary>
@@ -1446,8 +1481,11 @@ namespace TumbangPreso.UI
 
         private void BeginRematchNow()
         {
-            _canvas.gameObject.SetActive(false);
-            _rematch.interactable = true;
+            if (_rematchStarting) return;
+            _rematchStarting = true; _rematchPending = false;
+            RestoreTime();
+            if (_canvas != null) _canvas.gameObject.SetActive(false);
+            if (_rematch != null) _rematch.interactable = true;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 

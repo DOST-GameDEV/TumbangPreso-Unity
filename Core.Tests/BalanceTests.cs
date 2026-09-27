@@ -1297,6 +1297,17 @@ namespace TumbangPreso.Core.Tests
         /// gate one vote short forever.
         /// </summary>
         [Fact]
+        public void Rematch_WithdrawnEligibilityCannotSatisfyTheRemainingQuorum()
+        {
+            var vote = new RematchVote(); vote.Add(0); vote.Add(1); vote.Add(2);
+            vote.RetainEligible(peer => peer == 0);
+            Assert.Equal(1, vote.Count); Assert.True(vote.HasVoted(0));
+            Assert.False(vote.HasVoted(1)); Assert.False(vote.Satisfied(2));
+            vote.RetainEligible(_ => false);
+            Assert.False(vote.Satisfied(0));
+        }
+
+        [Fact]
         public void Rematch_HostPeerZeroNeverCollidesWithClientOne()
         {
             var vote = new RematchVote();

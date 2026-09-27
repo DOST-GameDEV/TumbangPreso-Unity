@@ -1,5 +1,34 @@
 # Multiplayer investigation, 2026-09-27
 
+## Rematch Identity And Voting
+
+The rematch route set only the arena-loading latch and sent an empty BeginRematch
+message. It never called PreparePresentationMatch, so the next game's round1/body0
+could match the old game's scope. Protocol89 allocates a new host identity from the
+ended director's current identity before reload, then announces the previous/next
+pair. Clients adopt only a matching forward transition; duplicates reject. A peer
+without a result component still follows the accepted arena transition. The result
+board also has a local transition latch. Existing map-state ordering and rotation
+remain unchanged; no map assets or authored presentation were revised.
+
+Rematch requests now carry the old match ID (8bytes), tallies carry that ID plus
+counts and seat-mask acknowledgement (17bytes), and the transition pair is16bytes.
+Readers enforce exact lengths, sender roles, scope and bounded tallies. The host
+accepts only seated voters and prunes withdrawn eligibility through the engine-free
+vote set. Pending local votes retry every0.5unscaled seconds until acknowledged;
+pressing the button no longer overwrites the host's tally. Rejoin snapshots include
+the current tally, and the board remains visible until agreement. Existing ranking,
+scoring, result/leave and input policies were not redesigned.
+
+The managed check on `9636c156` plus seven changed source/test files compiled Core,
+Runtime and Editor successfully. Frozen inputs have no drift. Storage then fell
+below the configured reserve, stopping BEFORE Tests, PlayTests or the focused Core
+test. This was not a compiler error. One new Core eligibility case and two native
+identity/membership/acknowledgement cases are authored but NOT EXECUTED; the new
+test assemblies were not compiled in this attempt. No native reload, real-peer or
+ranked qualification is claimed. Do not rerun completed compiler stages at the
+same blocked headroom. [Partial compiler receipt](checks/rematch-handoff-compile.json).
+
 ## Intermission Voting
 
 OnSkipBufferMsg incorrectly applied FromHost to a client-to-host request, rejecting

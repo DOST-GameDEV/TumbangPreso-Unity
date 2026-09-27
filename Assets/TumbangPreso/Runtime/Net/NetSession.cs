@@ -535,7 +535,9 @@ namespace TumbangPreso.Net
         // SceneFlow.Maps (MatchRpc SyncMap, queue votes), so an older peer would read a different map.
         // 88: intermission votes accept seated clients, name their match/round,
         // and acknowledge the authoritative tally without client round events.
-        public const int ProtocolVersion = 88;
+        // 89: rematches allocate and announce a fresh world identity; rematch
+        // votes/tallies name the old result and acknowledge seated participants.
+        public const int ProtocolVersion = 89;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
