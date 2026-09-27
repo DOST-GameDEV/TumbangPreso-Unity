@@ -193,6 +193,11 @@ namespace TumbangPreso.Visual
         /// long as she is tall: hung down, the lavender cuffs landed at her feet as bars across the hem (film v19), so they are
         /// carried out at 38 degrees, the way her own model pose holds them. The run stays the ghost at
         /// speed: low, sleeves streaming straight back and fluttering.
+        /// ⚠️ HER COWL IS ON THE TORSO BONE AND HER MOUTH IS ON THE HEAD (owner, of the run: *"the shit on her mouth
+        /// disappered hehre"*). The run lifted her chin 18 degrees against the chest (-12 held, 0.3 of a 20 lean taken back),
+        /// which pulled the lower face up out of the collar. Her head never tips back against her chest: `HeadSteady` 0 so it
+        /// rides the lean and hover, and a few degrees down so the weight layer's chin lift on a hard start stays inside the
+        /// cowl. `NemuKeepsHerMouthInHerCowl` holds it.
         /// </summary>
         public static readonly GaitStyle Nemu = new GaitStyle
         {
@@ -203,14 +208,14 @@ namespace TumbangPreso.Visual
                 LegForward = 16, LegBack = 14, LegSnap = 1, Stance = 0,
                 ArmSpread = 38, ArmForward = 4, ArmBack = 4, ArmCarry = -6, ArmSnap = 1, ArmLag = .1f,
                 Lean = 3, Roll = 1, Twist = 1,
-                HeadPitch = 2, HeadSteady = .9f, Sway = .01f, Glide = 2.6f,
+                HeadPitch = 4, HeadSteady = 0, Sway = .01f, Glide = 2.6f,
             },
             Run = new Gait
             {
                 LegForward = 52, LegBack = 50, LegSnap = 1.2f, Stance = 0,
                 ArmSpread = 12, ArmForward = 5, ArmBack = 5, ArmCarry = -58, ArmSnap = 1, ArmLag = .08f,
-                Lean = 20, Roll = 1, Twist = 2,
-                HeadPitch = -12, HeadSteady = .3f, Bounce = .03f, BounceDelay = .05f, Sway = .01f, Glide = 1.45f,
+                Lean = 14, Roll = 1, Twist = 2,
+                HeadPitch = 5, HeadSteady = 0, Bounce = .03f, BounceDelay = .05f, Sway = .01f, Glide = 1.45f,
             },
             Quirk = (ref GaitPose p, in GaitMoment m) =>
             {
