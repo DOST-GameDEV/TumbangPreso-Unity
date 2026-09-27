@@ -555,6 +555,7 @@ namespace TumbangPreso.UI
             // ⚠️ UX-1.7: an arena load is covered by the LOADING screen. Offline it takes the load
             // over (asynchronously, so its percentage is the real one); a networked load stays the
             // synchronous one every peer has always used. `Hub.HubLoading`'s header has why.
+            if (Hub.HubLoading.BeginMenu(scene)) return;
             if (Hub.HubLoading.Begin(scene, NetAuthority.IsNetworked)) return;
             SceneManager.LoadScene(scene);
         }

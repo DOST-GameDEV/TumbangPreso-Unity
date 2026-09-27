@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-27 12:56:39Z" end-time="2026-09-27 12:56:45Z" duration="5.7856593">
+  <test-suite type="TestSuite" id="1934" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="743" result="Passed" start-time="2026-09-27 12:56:39Z" end-time="2026-09-27 12:56:45Z" duration="5.785659" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1928" name="TumbangPreso.PlayTests.dll" fullname="VALIDATION_PROJECT/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="743" result="Passed" start-time="2026-09-27 12:56:39Z" end-time="2026-09-27 12:56:45Z" duration="5.776090" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="61828" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1929" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="743" result="Passed" start-time="2026-09-27 12:56:39Z" end-time="2026-09-27 12:56:45Z" duration="5.771955" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1930" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="743" result="Passed" start-time="2026-09-27 12:56:39Z" end-time="2026-09-27 12:56:45Z" duration="5.768132" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1415" name="MatchLoadingReadinessTests" fullname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" classname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-27 12:56:39Z" end-time="2026-09-27 12:56:45Z" duration="5.752595" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1418" name="MenuTransitionsBlockPointerAndKeepOneCurtainThroughHubPreparation" fullname="TumbangPreso.PlayTests.MatchLoadingReadinessTests.MenuTransitionsBlockPointerAndKeepOneCurtainThroughHubPreparation" methodname="MenuTransitionsBlockPointerAndKeepOneCurtainThroughHubPreparation" classname="TumbangPreso.PlayTests.MatchLoadingReadinessTests" runstate="Runnable" seed="377587182" result="Passed" start-time="2026-09-27 12:56:39Z" end-time="2026-09-27 12:56:45Z" duration="5.742636" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 325 of 2847 renderers, 0 with a roof variant.
+[NearFade] 3402 occluder nodes matched, 1648 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 0 of 232 renderers, 0 with a roof variant.
+[NearFade] 'TumbangPreso/BlockyCloud' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.
+[NearFade] 'TumbangPreso/BlockyCloud' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.
+[NearFade] 'TumbangPreso/BlockyCloud' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.
+[NearFade] 7866 occluder nodes matched, 83 renderers moved onto TumbangPreso/NearFade.
+[HubLoading] custom previews ready after 4.65 s.
+[MenuLoadingCheck] title initialized; hub curtain -2114 retained through preview readiness; pointer blocked.
+Saving results to: ISOLATED_PROFILE\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

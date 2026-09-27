@@ -5,6 +5,39 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Converted Menu Transitions
+
+After `57db8dad`, SceneFlow routes the known converted menu scenes through an
+asynchronous loading owner instead of calling synchronous LoadScene first. The
+curtain receives a frame before loading begins; ConvertedScreen exposes actual
+initialization completion/error around its existing setup and Wire. Exceptions
+remain logged rather than swallowed. Destination-owned active screens and canvas
+layout must finish before the curtain retires,with a120-second failure bound.
+
+Hub construction adopts the SAME owner into preview preparation,with monotonic
+scene/setup progress. Duplicate menu requests reuse it; stale hub initialization
+cannot replace a newer destination's curtain. The existing arena Begin/Covers
+contract and splash-specific menu/login handoff remain unchanged. Cheap in-place
+panels do not acquire artificial loading delays.
+
+Loading's decorative artwork was entirely non-raycastable. Its root canvas now
+provides an actual pointer blocker beneath the artwork and above underlying menus;
+the existing failure/return controls stay usable above it.
+
+The new native real-SceneFlow title/hub case passes1/1 in5.7856593s on222 frozen
+inputs with no drift. It checks pointer hit ownership,duplicate requests,initialized
+title and same-curtain hub handoff. The first attempt checked raycasts before the
+new canvas rendered and failed; one bounded test timing correction waits the first
+frame without weakening that assertion. Both receipts are retained. The warm-cache
+Editor hub preparation in this case was4.65s; do NOT compare it to the previous
+38.52s cold run as a measured speedup. Minimum free6,497,083,392bytes; named-profile
+files/shared input preferences restored. No previous map-cycle or film rerun.
+[Receipt](checks/menu-transition-loading-native.json),[passing XML](checks/menu-transition-loading-native.xml).
+
+Other converted destinations use the same route but were not each exercised here.
+Failure-timeout and live-network interruption journeys,physical device input,
+player frame/GPU/memory and complete cold-start timings remain separate checks.
+
 ## Custom Preview Loading
 
 Owner report: switching maps in Custom still lags despite asset preloading. Base

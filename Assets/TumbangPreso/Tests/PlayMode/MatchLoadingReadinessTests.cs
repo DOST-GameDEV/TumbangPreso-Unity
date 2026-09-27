@@ -140,5 +140,67 @@ namespace TumbangPreso.PlayTests
                 ConvertedMatchSetup.HubEnabled = hubEnabled; SceneFlow.SelectedMap = selected;
             }
         }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator MenuTransitionsBlockPointerAndKeepOneCurtainThroughHubPreparation()
+        {
+            bool boot = SceneFlow.BootedThroughSplash, networked = SceneFlow.Networked;
+            bool hubEnabled = ConvertedMatchSetup.HubEnabled;
+            var priorScene = SceneManager.GetActiveScene();
+            try
+            {
+                SceneFlow.BootedThroughSplash = false; SceneFlow.Networked = false;
+                ConvertedMatchSetup.HubEnabled = true; TumpHub.PendingEntry = HubEntry.Home;
+                SceneFlow.Go(SceneFlow.MainMenu);
+                var loading = Object.FindFirstObjectByType<HubLoading>();
+                Assert.IsNotNull(loading);
+                Assert.AreEqual(priorScene, SceneManager.GetActiveScene(), "Scene work started before the curtain got a frame.");
+                Assert.IsTrue(HubLoading.BeginMenu(SceneFlow.MainMenu));
+                Assert.AreSame(loading, Object.FindFirstObjectByType<HubLoading>(), "Repeated navigation replaced the in-flight owner.");
+                yield return null;
+                Canvas.ForceUpdateCanvases();
+                var pointer = new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current)
+                    { position = new Vector2(Screen.width * .5f, Screen.height * .5f) };
+                var hits = new System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult>();
+                UnityEngine.EventSystems.EventSystem.current.RaycastAll(pointer, hits);
+                var loadingCanvas = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).Single(x => x.name == "TumpLoadingCanvas");
+                Assert.IsNotEmpty(hits, $"Loading rect={((RectTransform)loadingCanvas.transform).rect}, graphic depth={loadingCanvas.GetComponent<Image>().depth}, screen={Screen.width}x{Screen.height}");
+                Assert.AreEqual("TumpLoadingCanvas", hits[0].gameObject.name, "Pointer input passes through the loading art.");
+                float until = Time.realtimeSinceStartup + 150;
+                while (HubLoading.Visible)
+                {
+                    Assert.IsNull(loading.FailureReason, loading.FailureReason);
+                    Assert.Less(Time.realtimeSinceStartup, until);
+                    yield return null;
+                }
+                var menu = Object.FindFirstObjectByType<ConvertedMainMenu>();
+                Assert.IsNotNull(menu); Assert.IsTrue(menu.IsInitialized); Assert.IsTrue(menu.IsPrepared);
+                Assert.IsNull(menu.InitializationError);
+
+                SceneFlow.Go(SceneFlow.MatchSetup);
+                loading = Object.FindFirstObjectByType<HubLoading>();
+                Assert.IsNotNull(loading);
+                int ownerId = loading.GetHashCode();
+                until = Time.realtimeSinceStartup + 150;
+                bool enteredHub = false;
+                while (HubLoading.Visible)
+                {
+                    Assert.AreSame(loading, Object.FindFirstObjectByType<HubLoading>(), "Hub Wire replaced rather than adopted the transition curtain.");
+                    Assert.IsNull(loading.FailureReason, loading.FailureReason);
+                    Assert.Less(Time.realtimeSinceStartup, until);
+                    enteredHub |= SceneManager.GetActiveScene().name == SceneFlow.MatchSetup;
+                    yield return null;
+                }
+                var hub = Object.FindFirstObjectByType<ConvertedMatchSetup>();
+                Assert.IsTrue(enteredHub); Assert.IsNotNull(hub); Assert.IsTrue(hub.IsInitialized);
+                Assert.IsTrue(hub.Preview.IsPrepared); Assert.IsFalse(MatchInstaller.PreviewOnly);
+                Debug.Log($"[MenuLoadingCheck] title initialized; hub curtain {ownerId} retained through preview readiness; pointer blocked.");
+            }
+            finally
+            {
+                HubLoading.Cancel(); SceneFlow.BootedThroughSplash = boot;
+                SceneFlow.Networked = networked; ConvertedMatchSetup.HubEnabled = hubEnabled;
+            }
+        }
     }
 }

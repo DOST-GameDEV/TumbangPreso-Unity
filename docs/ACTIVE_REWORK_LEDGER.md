@@ -1,11 +1,18 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`8d7950a5` plus incoming `5f1300fe`; custom-preview loading and doll v19 are integrated.
+`57db8dad31dd10e37120fb143749003fd2ef7541`; converted-menu loading follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Known converted-menu scenes now load asynchronously behind the existing curtain,
+await real initialization/layout,and hand the same owner into hub preview setup.
+The root surface blocks pointer input; duplicate/stale requests preserve ownership.
+New native title/hub case passes1/1 on222inputs,no drift,after one test correction
+to sample raycasts after the first rendered frame. No old map-cycle/film rerun.
+[Exact evidence](reports/stability-2026-09-27/loading-audit.md#converted-menu-transitions).
 
 Custom-map previews now finish scene/setup/first draw behind the hub's loading
 curtain and retain their scenes/look instances. One real-hub native check passes:

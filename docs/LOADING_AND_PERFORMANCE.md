@@ -22,6 +22,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Roster outline geometry | Visual/OutlineNormals.Warmup and boot roster loop; per-mesh welds survive scene notifications while the exact mesh lives,without retaining dead runtime meshes |
 | Effect sheets and authored intro data | Visual/VfxFlipbook.cs,UltimatePerformance and existing per-kit warmups |
 | Match loading surface | UI/Hub/HubLoading.cs and MatchInstaller.IsPrepared; destination-scoped installation, failure/return and cancellation instead of timed success |
+| Menu scene entry | SceneFlow.Go -> HubLoading.BeginMenu; asynchronous known converted scenes,ConvertedScreen initialization/error,canvas layout and same-curtain hub preparation; root pointer blocker |
 | Custom map switching | HubLoading.PreparePreview and MapPreviewSurface.PrepareAll; real hub curtain covers all scene/setup/first-draw work,then cached scene/look instances serve selection without new loads |
 | Training controls/targets | PracticeRange.cs,UI/PausePanel.TrainingRange.cs; prebuilt inactive menu and target bodies reused without changing saved preferences |
 | First-use/runtime costs | Existing profiler markers,FrameRateHistogram,tools/cold_start.py and current internal player |

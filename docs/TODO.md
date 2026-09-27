@@ -113,6 +113,11 @@ scenes behind hub loading and reuses scene/look instances. One real-hub native c
 passes: all five maps cycle twice with zero loads and0.090-8.241ms Editor selection
 calls. Initial preparation was38.52s; player frame/memory/build and total-load-time
 qualification remain OPEN. [Evidence](reports/stability-2026-09-27/loading-audit.md#custom-preview-loading).
+Converted menu scene loads are now asynchronous behind the existing curtain and
+wait for real UI initialization/layout. Hub preview preparation adopts the same
+owner; the loading canvas now blocks pointer input. New native title/hub handoff
+case passes after one test-frame timing correction. Other destinations/failure
+journeys and player performance remain OPEN; no blanket hitch-free claim.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

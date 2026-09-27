@@ -1,0 +1,51 @@
+{
+  "base": "57db8dad31dd10e37120fb143749003fd2ef7541",
+  "native": {
+    "result": "Passed",
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "duration": "5.7856593",
+    "unity": "6000.5.8f1",
+    "graphics": "D3D11"
+  },
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.MatchLoadingReadinessTests.MenuTransitionsBlockPointerAndKeepOneCurtainThroughHubPreparation",
+      "result": "Passed",
+      "duration": "5.742636",
+      "output": "[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.\n[Env] repainted 371 of 1117 renderers, 161 with a roof variant.\n[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.\n[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.\n[Env] repainted 524 of 867 renderers, 108 with a roof variant.\n[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.\n[Env] repainted 325 of 2847 renderers, 0 with a roof variant.\n[NearFade] 3402 occluder nodes matched, 1648 renderers moved onto TumbangPreso/NearFade.\n[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.\n[Env] repainted 0 of 297 renderers, 0 with a roof variant.\n[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.\n[Env] repainted 0 of 232 renderers, 0 with a roof variant.\n[NearFade] 'TumbangPreso/BlockyCloud' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.\n[NearFade] 'TumbangPreso/BlockyCloud' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.\n[NearFade] 'TumbangPreso/BlockyCloud' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.\n[NearFade] 7866 occluder nodes matched, 83 renderers moved onto TumbangPreso/NearFade.\n[HubLoading] custom previews ready after 4.65 s.\n[MenuLoadingCheck] title initialized; hub curtain -2114 retained through preview readiness; pointer blocked.\nSaving results to: ISOLATED_PROFILE\\TestResults.xml\n"
+    }
+  ],
+  "firstAttempt": {
+    "result": "Failed",
+    "reason": "Pointer raycast sampled before new canvas rendered",
+    "correction": "One frame before raycast; hit assertion unchanged",
+    "originalXmlSha256": "319AAF081B4820332773E02D3C32EF67B170D06BBC4487F03065CFA2F54711BE"
+  },
+  "originalXmlSha256": "66DBE7FA2EC2CDD60ED1A5F2F6E82D48AC68690C55EAFBE61FB70F197514A17B",
+  "frozenInputs": 222,
+  "nativeInputChurn": 0,
+  "minimumFreeBytes": 6497083392,
+  "profile": "Guard restored two named-profile files and three shared Editor input preferences",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/ConvertedScreen.cs",
+      "sha256": "ED27F036B3878A643E8771FE7B98727008BD7E95B8051BB5F3ED7C8C846384AC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubLoading.cs",
+      "sha256": "4DBAF435407F18B400E6F51B577B201A1F6170D6B12DDC2701978B5A63C71EF9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/SceneFlow.cs",
+      "sha256": "E778241CD2B2759CD1E486C6A2ECF2C67525BD5955BD9F1A8732F05875DD598D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/MatchLoadingReadinessTests.cs",
+      "sha256": "A8EB53AFE7C2A67D685C3749A3257A8199F2DFC111C3AAF3CB400B44BC3CBAF4"
+    }
+  ],
+  "limits": "Native title/hub lifecycle and pointer hit ownership; not all menu destinations, timeout/live-network interruption journeys, physical input or player performance. Warm-cache timings are not compared with cold runs."
+}

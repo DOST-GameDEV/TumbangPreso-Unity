@@ -27,6 +27,8 @@ namespace TumbangPreso.UI.Hub
         private IEnumerator _prewarm;
         private GameObject _failureControls;
         private Button _returnButton;
+        private bool _menuTransition;
+        private MapPreviewSurface _previewPreparation;
         public string FailureReason { get; private set; }
         public static bool Visible => _current != null;
 
@@ -81,6 +83,15 @@ namespace TumbangPreso.UI.Hub
         public static void PreparePreview(MapPreviewSurface preview)
         {
             if (preview == null || preview.IsPrepared) return;
+            if (_current != null)
+            {
+                // Adopt only the hub that this transition loaded. A retiring hub must
+                // not replace a newer match/menu's curtain while its Start finishes.
+                if (_current._menuTransition && _current._scene == SceneFlow.MatchSetup &&
+                    preview.gameObject.scene != _current._sourceScene)
+                    _current._previewPreparation = preview;
+                return;
+            }
             Cancel();
             var root = new GameObject("TumpLoading", typeof(RectTransform));
             DontDestroyOnLoad(root);
@@ -93,10 +104,78 @@ namespace TumbangPreso.UI.Hub
             loading.StartCoroutine(loading.FollowPreview(preview));
         }
 
-        private IEnumerator FollowPreview(MapPreviewSurface preview)
+        public static bool BeginMenu(string scene)
+        {
+            if (scene != SceneFlow.MainMenu && scene != SceneFlow.MatchSetup &&
+                scene != SceneFlow.CharacterSelect && scene != SceneFlow.MatchResult &&
+                scene != SceneFlow.ModeSelect && scene != SceneFlow.MultiplayerSetup) return false;
+            if (_current != null && _current._menuTransition && _current._scene == scene) return true;
+            Cancel();
+            var root = new GameObject("TumpLoading", typeof(RectTransform));
+            DontDestroyOnLoad(root);
+            var loading = root.AddComponent<HubLoading>();
+            _current = loading; loading._scene = scene; loading._menuTransition = true;
+            loading._began = Time.realtimeSinceStartup;
+            loading._sourceScene = SceneManager.GetActiveScene();
+            loading.Build();
+            ScreenTakeover.Register(loading, () => _current == loading);
+            loading.StartCoroutine(loading.FollowMenu());
+            return true;
+        }
+
+        private IEnumerator FollowMenu()
+        {
+            // Give the curtain a rendered frame before starting scene activation work.
+            yield return null;
+            AsyncOperation load = null;
+            try { load = SceneManager.LoadSceneAsync(_scene); }
+            catch (System.Exception error) { Fail("The menu could not be loaded."); Debug.LogException(error, this); }
+            if (load == null) { if (FailureReason == null) Fail("The menu could not be loaded."); yield break; }
+            while (!load.isDone)
+            {
+                _percent.text = Mathf.RoundToInt(Mathf.Clamp01(load.progress / .9f) * 25) + "%";
+                if (Time.realtimeSinceStartup - _began > 120)
+                { Fail("The menu did not finish loading."); yield break; }
+                yield return null;
+            }
+            var destination = SceneManager.GetActiveScene();
+            if (destination.name != _scene || destination == _sourceScene)
+            { Fail("The menu did not become ready."); yield break; }
+            _percent.text = "25%";
+            while (_current == this && SceneManager.GetActiveScene() == destination)
+            {
+                bool found = false, ready = true;
+                foreach (var screen in Object.FindObjectsByType<ConvertedScreen>(FindObjectsSortMode.None))
+                {
+                    if (screen.gameObject.scene != destination || !screen.isActiveAndEnabled) continue;
+                    found = true;
+                    if (!string.IsNullOrEmpty(screen.InitializationError))
+                    { Fail("The menu could not finish preparing."); yield break; }
+                    ready &= screen.IsInitialized;
+                }
+                if (found && ready) break;
+                if (Time.realtimeSinceStartup - _began > 120)
+                { Fail("The menu did not finish preparing."); yield break; }
+                yield return null;
+            }
+            if (_current != this) yield break;
+            if (SceneManager.GetActiveScene() != destination) { Cancel(); yield break; }
+            Canvas.ForceUpdateCanvases();
+            if (_previewPreparation != null)
+            {
+                _sourceScene = destination; _menuTransition = false; _percent.text = "30%";
+                yield return FollowPreview(_previewPreparation, 30);
+                yield break;
+            }
+            _percent.text = "100%";
+            yield return null;
+            Destroy(gameObject);
+        }
+
+        private IEnumerator FollowPreview(MapPreviewSurface preview, float startProgress = 0)
         {
             yield return null;
-            _prewarm = preview.PrepareAll(done => _percent.text = Mathf.RoundToInt(done * 100) + "%");
+            _prewarm = preview.PrepareAll(done => _percent.text = Mathf.RoundToInt(Mathf.Lerp(startProgress, 100, done)) + "%");
             while (preview != null && SceneManager.GetActiveScene() == _sourceScene)
             {
                 bool next = false;
@@ -127,6 +206,8 @@ namespace TumbangPreso.UI.Hub
             var canvas = _canvas = OwnerUiLayout.Canvas(transform, "TumpLoadingCanvas", 900);
             DontDestroyOnLoad(canvas.gameObject);
             var root = (RectTransform)canvas.transform;
+            var blocker = canvas.gameObject.AddComponent<Image>();
+            blocker.color = HubStyle.Night; blocker.raycastTarget = true;
 
             HubPattern.Ground(root, HubStyle.Night, 81);
             var artwork = LoadingArtwork.Install(root);
@@ -136,7 +217,7 @@ namespace TumbangPreso.UI.Hub
             var vignette = HubKit.Stretch(HubKit.Rect(root, "Vignette")).gameObject.AddComponent<HubVignette>();
             vignette.raycastTarget = false;
 
-            bool menu = _scene == SceneFlow.MatchSetup;
+            bool menu = _menuTransition || _scene == SceneFlow.MatchSetup;
             var map = SceneFlow.PreviewFor(menu ? SceneFlow.SelectedMap : _scene);
             var name = HubKit.Text(root, "Heading", menu ? "GETTING READY" : map.Name, 150, true, HubStyle.Honey, TextAnchor.MiddleCenter);
             HubKit.Place(name.rectTransform, HubKit.Centre, new Vector2(0, 70), new Vector2(1600, 190));
