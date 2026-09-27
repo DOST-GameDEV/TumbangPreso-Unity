@@ -60,6 +60,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Shield : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly DanteHeroKit _kit;
             private DanteCarapaceVisual _ward;
 
@@ -107,7 +108,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Boulder : HeroAbility
         {
-            public override bool DefersPredictedEffect => true;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
 
             public Boulder()
                 : base("dante_skill2", "BOULDER",
@@ -137,6 +138,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Barrier : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private GameObject _field;
             private CharacterMotor _owner;
 
@@ -182,6 +184,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Earthquake : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             public Earthquake()
                 : base("dante_ultimate", "EARTHQUAKE",
                        "Stamp and the whole court heaves. Every other player is Concussed: slower, no sprint, wobbly aim.",

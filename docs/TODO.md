@@ -21,6 +21,10 @@ Nothing was deleted or renumbered.
 through explicit shared networking contracts and enforced coverage for authority,
 prediction/confirmation, persistent state and lifecycle recovery. Preserve current
 skill behavior and presentation. Implement directly without delegated workers.
+Scope includes body animation, VFX, cutscenes, interruption and cleanup on every
+relevant peer, spectator, late join and reconnect. Explicit delivery declarations
+and the normal pre-build guard are implemented (focused EditMode 5/5); remaining
+state/presentation replication and real-peer qualification stay OPEN.
 Timed-state bindings now use the actual owning ability instead of a live slot or
 fixed duration cap (focused EditMode 1/1); remaining contract enforcement stays OPEN.
 Hero-shop wallet notifications now refresh purchase controls without rebuilding the

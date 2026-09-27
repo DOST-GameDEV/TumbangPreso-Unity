@@ -1,5 +1,30 @@
 # Multiplayer investigation, 2026-09-27
 
+## Explicit skill delivery contracts
+
+Every concrete `HeroAbility` must now implement `NetworkMode`: Predicted,
+HostConfirmed, SharedUltimate or Unavailable. There is no inherited default. The
+existing owner-effect deferral flag derives from that declaration, so ordinary
+host-confirmed effects keep using the shared request/receipt route. All 34 current
+runtime ability classes and the existing test doubles declare their current behavior;
+no skill mechanics, animation or effect design changed.
+
+The kit factory validates IDs and routing. A normal Unity pre-build callback also
+checks the whole current hero roster, including missing factory registration,
+unspecified/invalid modes, ultimate-slot routing and bogus unavailable real skills.
+It uses Unity's [pre-build interface](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Build.IPreprocessBuildWithReport.html).
+Five focused EditMode cases passed, including the actual callback and rejected
+invalid declarations ([receipt](checks/skill-delivery-contract.xml), 0.0672063 s).
+No player build was produced by this check.
+
+For a new skill, choose its delivery mode explicitly and use the existing cast
+pipeline. A new timed grant must bind its owning ability through timed replication;
+world, movement, companion and flight state still require their appropriate restore
+path. The declarations do not prove those paths exist or behave correctly. Owner
+scope now explicitly includes body animations, VFX, cutscenes, cancellation and
+cleanup for all peers/spectators, including late join/reconnect. Remaining state
+coverage and real-peer presentation qualification stay OPEN under NET-SKILLS-1.
+
 ## Timed-state ownership correction
 
 The TimedKit receiver used a ten-second fixed bound and then clamped most heroes

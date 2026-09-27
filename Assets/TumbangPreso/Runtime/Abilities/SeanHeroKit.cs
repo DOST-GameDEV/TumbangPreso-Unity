@@ -73,6 +73,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class RocketBurnDashAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly HashSet<int> _hitSlots = new HashSet<int>();
 
             /// <summary>
@@ -320,6 +321,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class IgnitionCannonAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly SeanHeroKit _kit;
 
             public IgnitionCannonAbility(SeanHeroKit kit)
@@ -390,6 +392,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class SupernovaSmashdownAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             private float _airTimer;
             private readonly SeanHeroKit _kit;
             private float _landingAge;

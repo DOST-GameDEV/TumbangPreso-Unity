@@ -371,46 +371,52 @@ namespace TumbangPreso.Abilities
 
         public static HeroKit CreateKitFor(string heroId)
         {
-            if (string.IsNullOrEmpty(heroId)) return new DanteHeroKit();
+            if (string.IsNullOrEmpty(heroId)) return CheckedKit(new DanteHeroKit());
 
             switch (heroId.ToLowerInvariant())
             {
                 case "dante":
                 case "bayan":
-                    return new DanteHeroKit();
+                    return CheckedKit(new DanteHeroKit());
 
                 case "cheska":
                 case "inday":
-                    return new CheskaHeroKit();
+                    return CheckedKit(new CheskaHeroKit());
 
                 case "sean":
                 case "kuya_boy":
                 case "iggy":
-                    return new SeanHeroKit();
+                    return CheckedKit(new SeanHeroKit());
 
                 case "zack":
-                    return new ZackHeroKit();
+                    return CheckedKit(new ZackHeroKit());
 
                 case "nemu":
-                    return new NemuHeroKit();
+                    return CheckedKit(new NemuHeroKit());
 
                 case "phaister":
-                    return new PhaisterHeroKit();
+                    return CheckedKit(new PhaisterHeroKit());
 
                 case "rafi":
-                    return new RafiHeroKit();
+                    return CheckedKit(new RafiHeroKit());
 
                 // The first ROLE kit: a signature, an attacking and a defending ability (2026-09-25).
                 case "amihan":
-                    return new AmihanHeroKit();
+                    return CheckedKit(new AmihanHeroKit());
 
                 // The ninth hero, a plant: signature, attacking, defending, ultimate (2026-09-25).
                 case "paete":
-                    return new PaeteHeroKit();
+                    return CheckedKit(new PaeteHeroKit());
 
                 default:
-                    return new DanteHeroKit();
+                    return CheckedKit(new DanteHeroKit());
             }
+        }
+
+        private static HeroKit CheckedKit(HeroKit kit)
+        {
+            AbilityNetworking.Validate(kit);
+            return kit;
         }
 
         private void Update()

@@ -65,6 +65,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Terrify : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private Vector3 _spot;
             private readonly HashSet<int> _feared = new HashSet<int>();
             private GhostPetCompanion _kuro;
@@ -116,6 +117,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class KuroFetch : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private Slipper _shoe;
             private GhostPetCompanion _kuro;
             private bool _carrying;
@@ -199,6 +201,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class KuroGuard : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private GhostPetCompanion _kuro;
             private Vector3 _spot, _pending;
             private float _think, _react;
@@ -267,6 +270,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class NightmareSeanceVoidAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             /// <summary>Where it opens when Kuro is not out. Her own reach, as before.</summary>
             private GameObject _field;
             private GhostPetCompanion _familiar;

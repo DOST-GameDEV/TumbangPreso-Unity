@@ -9,6 +9,14 @@ support. Cover cast ownership, prediction/confirmation, authoritative effects,
 persistent state and lifecycle recovery without redesigning skills or presentation.
 This requirement is OPEN; current per-kit routing is not future-proof completion.
 
+Owner expansion: network consistency includes body animations, effects, cutscenes,
+interruption and cleanup for host, owner, observers and spectators, including late
+join/reconnect. No local-only check closes this requirement. All abilities now
+declare an explicit delivery mode through an abstract base property; kit creation
+and the normal pre-build hook reject invalid declarations and missing roster
+registration. Five focused EditMode cases pass. This authoring guard is implemented,
+but remaining state and presentation delivery work stays OPEN.
+
 First implemented networking slice: kit-owned `ITimedKitReplication` bindings
 replace TimedKit's hero-name switch and live-slot duration assumptions. This fixes
 Dante's twenty-second signature shield being rejected by a ten-second cap or

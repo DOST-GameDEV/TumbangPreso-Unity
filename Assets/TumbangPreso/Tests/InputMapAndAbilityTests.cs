@@ -22,6 +22,44 @@ namespace TumbangPreso.Tests
     public sealed class InputMapAndAbilityTests
     {
         [Test]
+        public void EveryRosterAbilityDeclaresItsNetworkDeliveryAndPassesTheBuildGate()
+        {
+            Assert.IsTrue(typeof(HeroAbility).GetProperty(nameof(HeroAbility.NetworkMode)).GetMethod.IsAbstract,
+                "A new ability must not silently inherit a default delivery mode.");
+            AbilityNetworking.ValidateRoster();
+            new EditorTools.AbilityNetworkingBuildCheck().OnPreprocessBuild(null);
+            foreach (var hero in Roster.HeroPeople)
+                foreach (var ability in HeroAbilitySystem.CreateKitFor(hero.Id).AllAbilities)
+                    Assert.AreEqual(ability.NetworkMode == AbilityNetworkMode.HostConfirmed,
+                        ability.DefersPredictedEffect, ability.Id);
+        }
+
+        [TestCase(AbilityNetworkMode.Unspecified, AbilityNetworkMode.SharedUltimate)]
+        [TestCase(AbilityNetworkMode.SharedUltimate, AbilityNetworkMode.SharedUltimate)]
+        [TestCase(AbilityNetworkMode.Predicted, AbilityNetworkMode.Predicted)]
+        [TestCase((AbilityNetworkMode)99, AbilityNetworkMode.SharedUltimate)]
+        public void InvalidAbilityDeliveryCannotEnterACheckedKit(AbilityNetworkMode first, AbilityNetworkMode ultimate)
+            => Assert.Throws<System.InvalidOperationException>(() =>
+                AbilityNetworking.Validate(new NetworkingProbeKit(first, ultimate)));
+
+        private sealed class NetworkingProbeAbility : HeroAbility
+        {
+            public override AbilityNetworkMode NetworkMode { get; }
+            public NetworkingProbeAbility(string id, AbilityNetworkMode mode) : base(id, id, "", 1)
+                => NetworkMode = mode;
+        }
+
+        private sealed class NetworkingProbeKit : HeroKit
+        {
+            public NetworkingProbeKit(AbilityNetworkMode first, AbilityNetworkMode ultimate) : base("probe", "probe")
+            {
+                Skill1 = new NetworkingProbeAbility("one", first);
+                Skill2 = new NetworkingProbeAbility("two", AbilityNetworkMode.Predicted);
+                Ultimate = new NetworkingProbeAbility("ultimate", ultimate);
+            }
+        }
+
+        [Test]
         public void TimedSnapshotsBindToTheirActualAbilitiesRatherThanTheLiveSecondSlot()
         {
             var dante = new DanteHeroKit();
@@ -563,6 +601,7 @@ namespace TumbangPreso.Tests
         /// </summary>
         private sealed class ProbeAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             public bool EndRan;
 
             public ProbeAbility() : base("probe", "PROBE", "A stand-in.", 5.0f, 3.0f,

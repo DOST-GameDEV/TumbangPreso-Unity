@@ -58,6 +58,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class QuickDash : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private Vector3 _start, _dir;
             private CharacterMotor _caster;
             private readonly System.Collections.Generic.HashSet<int> _hit = new System.Collections.Generic.HashSet<int>();
@@ -144,6 +145,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class Updraft : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private CharacterMotor _flyer;
 
             public Updraft()
@@ -247,10 +249,10 @@ namespace TumbangPreso.Abilities
 
         private sealed class Whirlwind : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             // ⚠️ THE GALE IS A WORLD OBJECT, SO THE OWNER WAITS FOR THE HOST before drawing it, as
             // Cheska's barricade does: a refused cast must not leave a front rolling across one
             // player's screen that exists nowhere else.
-            public override bool DefersPredictedEffect => true;
 
             public Whirlwind()
                 : base("amihan_skill2d", "WHIRLWIND",
@@ -274,6 +276,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class StormSurge : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             private AmihanStorm _storm;
 
             public StormSurge()

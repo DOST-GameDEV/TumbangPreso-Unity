@@ -15,6 +15,7 @@ namespace TumbangPreso.PlayTests
         { yield return PlayModeWorld.Reset();NetAuthority.Provider=_net; }
         private sealed class Preparation : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             public int Impacts;public Vector3 At,Aim;
             public Preparation():base("pending-test","Pending test","",0,1,charges:2)
             { Windup=.4f;SupportsPendingSnapshot=true; }

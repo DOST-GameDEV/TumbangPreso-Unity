@@ -88,6 +88,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class StaticRailGrindAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly ZackHeroKit _kit;
             private float _trailDropTimer;
             private GameObject _sprintAura;
@@ -357,6 +358,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private sealed class MagnetRecallAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             // Recall already equips immediately on the host. The previous 0.45 s
             // flight comment described no implemented delay. A short collapsing
             // trace now shows the actual source and receiving hand without changing
@@ -495,6 +497,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class ThunderstrikeOverdriveAbility : HeroAbility
         {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             private readonly ZackHeroKit _kit;
 
             /// <summary>Closest he can call it. Under this it is on his own head.</summary>
