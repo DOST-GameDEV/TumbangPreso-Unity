@@ -155,8 +155,8 @@ seats; recovery does not choose new targets from current distance. An empty mask
 means no targets,not permission to infer them. Missing bodies bind once when their
 seats install,and the original mask survives recapture in the meantime. Restoring
 presentation cannot perform another catch,pull or root,even if authority later changes.
-This fixes snapshot recovery; fresh-cast peer target convergence and actual delayed
-peer acceptance remain separate. New effect-specific data needs its own semantics.
+This fixes snapshot recovery; protocol82 below adds live delivery. Actual delayed
+peer/staged-scene acceptance remains separate. New effect data needs its own semantics.
 
 Protocol79 fixes sentry cleanup ownership. The Paete ultimate tracks exact fresh
 instances and adopts recovered instances through the existing owner-specific
@@ -165,6 +165,24 @@ effect type in the scene. An unused kit reset must not affect another caster.
 Apply that ownership rule to new persistent effects; reconstruction must restore
 their cleanup binding as well as their picture. This does not fix fresh-cast target
 selection or establish a shared-ultimate lifetime token for every effect kind.
+
+Protocol82 supplies live sentry target masks. HeroAbility.AcceptedUltimatePhase is
+a distinct identity space from ordinary AcceptedCastEvent. Shared execution passes
+the accepted cohort ID,adopts it after activation,and keeps it through windup.
+Immediate effects use OnAcceptedUltimatePhase; deferred spawns read the retained
+property. Activation/reset clear it. Paete captures it into the tree's InstanceId,
+which also survives world recovery. Its identity is match/round/owner/cohort; this
+assumes one sentry per caster/cohort. Multiple objects need an additional explicit
+identity contract rather than blindly reusing that key.
+
+The25byte SentryTargets message follows a reliable world header,comes only from
+the host,and validates scope/owner/mask. A bounded pending set waits for local tree
+birth; overflow requests normal recovery. Live lookup uses the field registry.
+Replicas do not choose nearby victims or execute catches. Late bodies bind once;
+snapshot state wins over a delayed birth message. Missing selection requests recovery
+after1s; fresh late catch feedback occurs once,while restoration does not replay it.
+Attack timing,placement and authored visuals remain unchanged. This is live target
+delivery,not a change to the staged introduction's local target presentation.
 
 ## Victim Feedback
 

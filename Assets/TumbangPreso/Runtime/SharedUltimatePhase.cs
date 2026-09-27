@@ -268,7 +268,7 @@ namespace TumbangPreso
             ReleasedAt=Now;double activationBegan=Time.realtimeSinceStartupAsDouble;
             Active=false; _sealed=false; _viewAttempted=false; PresentationClock.Release();
             foreach (var cast in accepted)
-                round?.PlayerAt(cast.Seat)?.AbilitySystem?.ExecuteSharedUltimate(cast, themePlayed);
+                round?.PlayerAt(cast.Seat)?.AbilitySystem?.ExecuteSharedUltimate(cast, themePlayed, PhaseId);
             ActivationMilliseconds=(Time.realtimeSinceStartupAsDouble-activationBegan)*1000;
             _commits.Clear();
             if (NetAuthority.ShouldResolve()) Net.MatchRpc.Instance?.BroadcastWorldSnapshot();

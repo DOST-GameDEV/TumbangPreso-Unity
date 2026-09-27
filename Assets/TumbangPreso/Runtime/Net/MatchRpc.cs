@@ -315,6 +315,7 @@ namespace TumbangPreso.Net
             // A new transport session owns a new snapshot sequence. Never reject
             // its generation one because this process previously joined another host.
             _worldFieldBatch = null; _lastWorldFieldGeneration = 0; _worldFieldGeneration = 0;
+            PrepareSentryTargetScope(0, -1);
             ResetFeatherfallTransport();
             PresentationMatchId = 0; _pendingMoments.Clear();
             _lastUltimateRequest.Clear(); _ultimateRequestSequence = 0;
@@ -373,6 +374,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqBreakFree", OnReqBreakFreeMsg);
             cm.RegisterNamedMessageHandler("ReqUproot", OnReqUprootMsg);
             cm.RegisterNamedMessageHandler("PlantPulled", OnPlantPulledMsg);
+            cm.RegisterNamedMessageHandler("SentryTargets", OnSentryTargetsMsg);
             cm.RegisterNamedMessageHandler("ReqPunch", OnReqPunchMsg);
             cm.RegisterNamedMessageHandler("ReqLunge", OnReqLungeMsg);
             cm.RegisterNamedMessageHandler("ReqSlide", OnReqSlideMsg);

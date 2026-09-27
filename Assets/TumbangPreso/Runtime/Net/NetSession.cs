@@ -520,10 +520,12 @@ namespace TumbangPreso.Net
         // while a joining peer has not installed the caster's kit yet.
         // 81: ultimate commits name hero/ability IDs; requests also carry the
         // current movement epoch. Receivers wait for the matching caster kit.
-        // 82: the map list changed (2026-09-27): index 4 is the reworked Lagoon Court (LagoonCove),
+        // 82: live sentries bind host-captured targets to the accepted ultimate
+        // cohort; replicas no longer infer victims from local positions.
+        // 83: the map list changed (2026-09-27): index 4 is the reworked Lagoon Court (LagoonCove),
         // the first Lagoon is vaulted, and Kanto is index 5. Maps travel as indices into
         // SceneFlow.Maps (MatchRpc SyncMap, queue votes), so an older peer would read a different map.
-        public const int ProtocolVersion = 82;
+        public const int ProtocolVersion = 83;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

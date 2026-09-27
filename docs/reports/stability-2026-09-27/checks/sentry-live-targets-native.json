@@ -1,0 +1,74 @@
+{
+  "base": "15dd4b9277707c7beed73f3609e41d599c0c8a4c",
+  "protocol": 82,
+  "scope": "Captured live sentry masks and accepted cohort lifetime through delivery/recovery",
+  "result": "Passed",
+  "total": 2,
+  "duration": 0.6431768,
+  "frozenInputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbility.cs",
+      "sha256": "5E243C2BA1D454C71AA537AC30BB75C7351F4617E79BC784783F4326715D5323"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SharedUltimate.cs",
+      "sha256": "B58C2FFC40AA7EDDC3FA5754E8240F318ACAE0C3937078CBF65F320138985437"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/PaeteHazards.cs",
+      "sha256": "B17B6DAE329A460E47B5EFB2052CC597AE7F0112937A15D064718E14796BED82"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/PaeteHeroKit.cs",
+      "sha256": "9BEE31723ECF258B46A773EDBB0509CB8C007DB034E3DEB5A2EDCC9EB60628FE"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "076F01D533F479606FA8B6BB994547F060869F8C0710E8D50EDE6A37E8C13DEC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "36A062DFBD14E7EB3F2F8B1D3F1764FE03BBBBD63F67436931C4DA297D2AC75B"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/WorldEffectSnapshot.cs",
+      "sha256": "8ED23CA7D4589D58886FD51F29BC7F4FDDF4FBBFE997ABD5597CCF35AA978A79"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs",
+      "sha256": "C8B57E81571418EF5F758120DAFEB62C513D86BDCF996AE03D214DCE7BD46E05"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/SentryTargetState.cs",
+      "sha256": "B3E12DE3DC4B829DC31FA0F5C494A82766F004895D9AE90ECF9011078AE505B4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/SentryTargetState.cs.meta",
+      "sha256": "0966E826E013C9F6433B769CFAEC375284CBDD48C1B6DE78758A178EAB019382"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.SentryTargets.cs",
+      "sha256": "516D743C4F589DC8BF9135CF8AD44BE78E325AFC2A3DC055F962676836D9782A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.SentryTargets.cs.meta",
+      "sha256": "ABF580296676A3947F9791327AEC07606061C83B9283F9E5964EE7B0057AEEF4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "D5464BC4764900411D41AC80274D624AE7EA649E6AEA1151B071D9930E988CA4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "1E22617ED21B36D42FA9BB1A2CF4C9F6B871AD0D1C670F7D1D88F3414513E15A"
+    }
+  ],
+  "drift": 0,
+  "minimumFreeBytes": 6459875328,
+  "retryCount": 0,
+  "unverified": [
+    "Actual transport/ranked",
+    "Staged introduction target presentation",
+    "Full visual/audio acceptance"
+  ]
+}

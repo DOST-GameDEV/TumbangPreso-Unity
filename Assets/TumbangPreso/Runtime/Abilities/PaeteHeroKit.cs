@@ -262,6 +262,13 @@ namespace TumbangPreso.Abilities
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             private readonly List<PaeteSentry> _sentries = new List<PaeteSentry>();
+            private PaeteSentry _spawned;
+
+            public override void Activate(AbilityContext ctx)
+            { _spawned = null; base.Activate(ctx); }
+
+            protected override void OnAcceptedUltimatePhase(long phaseId)
+            { if (_spawned != null) _spawned.AdoptInstance(phaseId); }
 
             public void RestoreSentryBindings(CharacterMotor motor)
             {
@@ -305,7 +312,9 @@ namespace TumbangPreso.Abilities
                 // and caught everyone a second time in play; asked, he chose *"Yes, no repeat"*). It comes up already standing and awake
                 // and catches at once (`PaeteSentry.Spawn`'s hand-back).
                 _sentries.RemoveAll(sentry => sentry == null);
-                _sentries.Add(PaeteSentry.Spawn(hands, at, ctx.Motor.PlayerSlot, handBack: true));
+                _spawned = PaeteSentry.Spawn(hands, at, ctx.Motor.PlayerSlot, handBack: true);
+                _sentries.Add(_spawned);
+                _spawned.AdoptInstance(AcceptedUltimatePhase);
             }
 
             public override void Reset()
@@ -314,6 +323,7 @@ namespace TumbangPreso.Abilities
                 foreach (var sentry in _sentries)
                     if (sentry != null) { sentry.gameObject.SetActive(false); Object.Destroy(sentry.gameObject); }
                 _sentries.Clear();
+                _spawned = null;
                 base.Reset();
             }
         }

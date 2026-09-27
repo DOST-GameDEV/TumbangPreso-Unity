@@ -70,7 +70,7 @@ namespace TumbangPreso.Abilities
             _pendingUltimateRequest = 0; _answer[(int)Slot.Ultimate] = HeroKit.CastOutcome.CannotAct;
             _answeredAt[(int)Slot.Ultimate] = Time.time; PlayRefusal();
         }
-        internal void ExecuteSharedUltimate(UltimateCommit cast, bool themePlayed)
+        internal void ExecuteSharedUltimate(UltimateCommit cast, bool themePlayed, long phaseId)
         {
             if (!cast.MatchesKit(Kit) || !Kit.Ultimate.ReservedForIntroduction) return;
             var context = new AbilityContext(_motor, _carrier, _verbs, cast.Position, cast.Forward, cast.Aim);
@@ -79,6 +79,7 @@ namespace TumbangPreso.Abilities
             if (NetAuthority.IsNetworked)
             { using (NetCue.SuppressRelay()) Kit.Ultimate.BeginReservedActivation(context); }
             else Kit.Ultimate.BeginReservedActivation(context);
+            Kit.Ultimate.AdoptUltimatePhase(phaseId);
             DeliveringSharedIntroduction = true;
             try { PlayCastConfirm(Slot.Ultimate, context, afterIntroduction: true); }
             finally { DeliveringSharedIntroduction = false; }

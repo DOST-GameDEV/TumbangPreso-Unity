@@ -665,6 +665,35 @@ Its exact implementation and qualification status are in
 [Featherfall](../amihan-kit-2026-09-27/featherfall.md). It does not establish that
 every kit works across real peers.
 
+## Live Sentry Target Delivery
+
+2026-09-28,after15dd4b92: protocol82 replaces fresh replica distance inference with
+the host's captured seat mask. SentryTargetState is25bytes:match,round,owner,accepted
+ultimate cohort andmask. A reliable world header precedes it. Pending delivery is
+bounded by MaxFields,cleared by scope/transport,and overflows into normal recovery.
+The live registry resolves exact tree identity without receiver-wide scene scans.
+
+HeroAbility.AcceptedUltimatePhase is separate from ordinary cast receipts,clears
+on activation/reset and survives windup. Generic shared execution passes its phase;
+Paete binds an immediate tree through the callback or a deferred one from retained
+state. Existing world InstanceId now carries that tree identity through recovery.
+Replicas never infer victims or catch,even after an authority change. Duplicate
+births cannot append limbs or replace restored selection. Missing masks request
+recovery after1s. Late fresh catch feedback is once-only; recovery does not replay it.
+Host selection,attacks,timing,placement,models and authored animation are unchanged.
+
+Two NEW native cases pass2/2,0.6431768s on full committed base plus14inputs,no drift,
+no retry. One exercises retained phase identity through windup and the actual
+shared-Paete execution callback. The other captures a host set,changes local
+positions,then exercises the real receiver:bad sender/scope/mask/lengths,pre-birth
+queue,duplicates,another cohort,late body binding,no observer recatch,persisted
+snapshot identity and fresh-versus-restored catch-cue state. Minimum free
+6,459,875,328bytes; profile/preferences restored. Both new script GUIDs are32hex.
+[Receipt](checks/sentry-live-targets-native.json),[XML](checks/sentry-live-targets-native.xml).
+Raw Logs/sentry-live-targets-20260928/captured-targets.*. These controlled host/receiver
+roles do not constitute real transport/ranked play. The staged introduction's own
+target presentation and full visual/audio acceptance remain separate; no films ran.
+
 ## Ultimate Identity And Body Scope
 
 2026-09-28,after88b4c536: protocol81 adds hero/ability FixedString64Bytes IDs to

@@ -202,7 +202,7 @@ namespace TumbangPreso.Net
                 else if (field.Type == Kind.Sentry)
                     // A rejoiner's sentry is the same tree at the same age; the host alone catches.
                     PaeteSentry.Spawn(field.Position, field.Position, field.Owner, field.Duration - remaining,
-                        restoredTargets: field.TargetMask);
+                        restoredTargets: field.TargetMask, instanceId: field.InstanceId);
                 else if (field.Type == Kind.Gale)
                 {
                     // A rejoiner's gale is the same front at the same age; the host alone hits.

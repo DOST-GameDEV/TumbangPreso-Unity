@@ -778,6 +778,7 @@ namespace TumbangPreso.Abilities
         public virtual void Activate(AbilityContext ctx)
         {
             AcceptedCastEvent = 0;
+            AcceptedUltimatePhase = 0;
             _joiningPreparationSettled=true;
             // ⚠️ A CHARGE ABILITY SPENDS A CHARGE AND NOTHING ELSE. Setting `CooldownRemaining`
             // as well would put it behind two gates, and the deck would then draw it as Cooling
@@ -846,6 +847,17 @@ namespace TumbangPreso.Abilities
         }
 
         protected virtual void OnAcceptedCastEvent(long eventId) { }
+
+        // Shared cohorts have their own identity space, separate from ordinary
+        // cast receipts. Deferred spawns retain this until their activation runs.
+        public long AcceptedUltimatePhase { get; private set; }
+        public void AdoptUltimatePhase(long phaseId)
+        {
+            if (phaseId <= 0 || phaseId == AcceptedUltimatePhase) return;
+            AcceptedUltimatePhase = phaseId;
+            OnAcceptedUltimatePhase(phaseId);
+        }
+        protected virtual void OnAcceptedUltimatePhase(long phaseId) { }
 
         public virtual void Tick(AbilityContext ctx, float dt)
         {
@@ -975,6 +987,7 @@ namespace TumbangPreso.Abilities
         public virtual void Reset()
         {
             AcceptedCastEvent = 0;
+            AcceptedUltimatePhase = 0;
             _reservedForIntroduction = false;
             // ⚠️ THE ROOT COMES OFF FIRST. A round can end mid-wind-up, and `Reset` zeroing the
             // timer behind the wind-up's back would strand the speed zone with nothing left to
