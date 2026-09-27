@@ -106,6 +106,10 @@ visual checks,measured player cost and valid-avatar ownership remain OPEN.
 Deferred non-streaming SFX/voice samples now load in yielded boot turns and remain
 retained before playback. Native sample-state/no-playback check passes; music and
 import quality are unchanged. Player first-use timings remain OPEN.
+Roster outline preparation now runs in yielded boot turns and survives scene loads
+for retained live meshes. Two focused native cache/geometry cases pass; player
+timings remain OPEN. The latest custom-map switching lag report is being addressed
+at the menu loading/preview lifecycle,not assumed solved by asset preloading.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit
