@@ -105,7 +105,9 @@ namespace TumbangPreso.UI
             {
                 int k = 17;
                 foreach (char c in playerName) k = (k * 31) + c;
-                return Ids[Mathf.Abs(k) % FaceCount];
+                // int.MinValue has no positive int counterpart. Widen before
+                // taking its magnitude so every valid name still selects a face.
+                return Ids[(int)(System.Math.Abs((long)k) % FaceCount)];
             }
         }
 

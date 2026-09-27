@@ -5,6 +5,28 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Ability Icon Preparation
+
+After8c91589c, AbilityIcons.Warmup replaces the single-frame enumeration in splash
+with async illustration loads and a yield after each existing glyph fallback bake/
+upload. It also prepares the radial cooldown disc previously first-built by Hud.
+Completed entries retain their current caches; a fully warm call schedules no asset
+work. Loading progress advances per glyph. No icon artwork or skill behavior changed.
+
+The same UI batch fixes an independent deterministic profile failure: the valid
+name aPoew65 hashes to int.MinValue,whose int absolute value remained negative and
+indexed outside Avatars.Ids. Taking the magnitude as a long preserves every other
+name's old default and gives that edge a valid face. No saved selection changes.
+
+One new guarded native pass2/2,0.5315099s on full committed base plus4inputs,no
+drift,no retry. The icon case checks yielded preparation,all drawn/fallback cache
+entries,cooldown readiness,monotonic completion and the no-work warm path. The hash
+case checks the exact edge,representative old names and null/empty fallback.
+Minimum free6,159,544,320bytes; named profile/preferences restored.
+[Receipt](checks/icon-loading-native.json),[XML](checks/icon-loading-native.xml).
+Raw Logs/icon-loading-20260927/icon-ready.*. This does not measure player hitches
+or qualify all UI screens. Old cases/films were not rerun.
+
 ## Repeated Preview Selection
 
 After3e524946, ModelPreview.Show uses the same value-snapshot pattern as

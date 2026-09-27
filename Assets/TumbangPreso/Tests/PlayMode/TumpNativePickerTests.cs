@@ -27,6 +27,47 @@ namespace TumbangPreso.PlayTests
             yield return PlayModeWorld.Reset();
         }
 
+        [UnityTest]
+        public IEnumerator AbilityIconPreparationYieldsAndRetainsIllustrationsFallbacksAndCooldown()
+        {
+            var progress = new List<float>();
+            var warmup = AbilityIcons.Warmup(progress.Add);
+            int slices = 0;
+            while (warmup.MoveNext()) { slices++; yield return warmup.Current; }
+            Assert.Greater(slices, 1, "Cold icon preparation should not run as one synchronous sweep.");
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic;
+            var cache = (Dictionary<AbilityGlyph, Sprite>)typeof(AbilityIcons).GetField("Cache", flags).GetValue(null);
+            var drawn = (Dictionary<AbilityGlyph, Sprite>)typeof(AbilityIcons).GetField("Drawn", flags).GetValue(null);
+            foreach (AbilityGlyph glyph in System.Enum.GetValues(typeof(AbilityGlyph)))
+            {
+                Assert.IsTrue(drawn.ContainsKey(glyph), glyph.ToString());
+                Assert.IsTrue(cache.TryGetValue(glyph, out var prepared), glyph.ToString());
+                Assert.IsNotNull(prepared); Assert.AreSame(prepared, AbilityIcons.For(glyph));
+                if (drawn[glyph] != null) Assert.AreSame(drawn[glyph], prepared);
+            }
+            var cooldown = (Sprite)typeof(AbilityIcons).GetField("_cooldownDisc", flags).GetValue(null);
+            Assert.IsNotNull(cooldown); Assert.AreSame(cooldown, AbilityIcons.CooldownDisc());
+            Assert.AreEqual(1, progress[progress.Count - 1]);
+            for (int i = 1; i < progress.Count; i++) Assert.GreaterOrEqual(progress[i], progress[i - 1]);
+            Assert.IsFalse(AbilityIcons.Warmup().MoveNext(), "Prepared icons should not schedule more asset work.");
+        }
+
+        [Test]
+        public void DefaultAvatarHandlesMinimumHashWithoutChangingOtherNames()
+        {
+            int Hash(string name)
+            {
+                unchecked { int hash = 17; foreach (char c in name) hash = hash * 31 + c; return hash; }
+            }
+            const string edge = "aPoew65";
+            Assert.AreEqual(int.MinValue, Hash(edge));
+            Assert.AreEqual(Avatars.Ids[(int)(2147483648L % Avatars.FaceCount)], Avatars.DefaultFor(edge));
+            foreach (string name in new[] { "Matthew", "Player#8226", "dante", "cheska", "Player#1" })
+                Assert.AreEqual(Avatars.Ids[Mathf.Abs(Hash(name)) % Avatars.FaceCount], Avatars.DefaultFor(name));
+            Assert.AreEqual(Avatars.Ids[0], Avatars.DefaultFor(null));
+            Assert.AreEqual(Avatars.Ids[0], Avatars.DefaultFor(""));
+        }
+
         [Test]
         public void EveryOfferedAvatarLoadsAsItsOwnSprite()
         {

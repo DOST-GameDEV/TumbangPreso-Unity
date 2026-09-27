@@ -138,6 +138,10 @@ savings and complete movie/overlay journeys remain OPEN.
 Unchanged preview selections now retain model/material/pose instead of rebuilding
 on lock-in/refresh. Changed inputs retire the old subject immediately. One new
 native reuse/invalidation/cleanup case passes; player click timings remain OPEN.
+Ability illustrations now load asynchronously with yielded fallback preparation;
+the cooldown graphic also prepares before HUD construction. New native preload
+case passes. Default-avatar selection now handles minimum-int name hashes without
+changing other names' defaults; its focused case passes. Player timings remain OPEN.
 
 **LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
 per-field messages,one error cue and field-only tint pulses. Either credential edit

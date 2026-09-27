@@ -517,14 +517,13 @@ namespace TumbangPreso.UI
 
             // 7. Every ability glyph.
             SetLoadingStage("loading abilities", 0.61f);
-            foreach (AbilityGlyph glyph in System.Enum.GetValues(typeof(AbilityGlyph)))
-                AbilityIcons.For(glyph);
-            yield return null;
+            yield return AbilityIcons.Warmup(done =>
+                SetLoadingStage("loading abilities", Mathf.Lerp(.61f, .63f, done)));
             yield return StatusIcons.Warmup();
             yield return Visual.VfxFlipbook.Warmup();
             yield return Visual.CheskaIceVisuals.Warmup();
             yield return Visual.HeroPropAssets.Warmup(done =>
-                SetLoadingStage("loading ability props", Mathf.Lerp(0.61f, 0.66f, done)));
+                SetLoadingStage("loading ability props", Mathf.Lerp(0.63f, 0.66f, done)));
 
             // 8. Both arenas, as a dependency load rather than a scene load.
             //

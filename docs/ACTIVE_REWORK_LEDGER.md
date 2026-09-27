@@ -1,11 +1,17 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`3e5249469406d89fd7cc6499c4b6b9c05d155977`; repeated-preview reuse follows it.
+`8c91589c695c085898a55064da1db32843b8d1f4`; yielded ability-icon preparation follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+Ability-icon preload now uses asynchronous resource requests and one fallback
+bake/upload per yielded turn,including the previously first-use cooldown graphic.
+Default-avatar hashing safely handles int.MinValue without changing other defaults.
+New native cases2/2 pass on full committed base plus4inputs,no drift; no retry.
+Player timings remain OPEN. [Evidence](reports/stability-2026-09-27/loading-audit.md#ability-icon-preparation).
 
 Unchanged ModelPreview selections retain their live model/materials/pose; changed
 clip/palette snapshots,prefab/pet or shading mode rebuild,and outgoing subjects

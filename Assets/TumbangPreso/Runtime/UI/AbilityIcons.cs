@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -163,6 +164,35 @@ namespace TumbangPreso.UI
         private static readonly Dictionary<AbilityGlyph, Sprite> Cache =
             new Dictionary<AbilityGlyph, Sprite>();
         private static Sprite _cooldownDisc;
+
+        public static IEnumerator Warmup(System.Action<float> completed = null)
+        {
+            var glyphs = (AbilityGlyph[])System.Enum.GetValues(typeof(AbilityGlyph));
+            for (int i = 0; i < glyphs.Length; i++)
+            {
+                var glyph = glyphs[i];
+                if (!Cache.TryGetValue(glyph, out var cached) || cached == null)
+                {
+                    if (!Drawn.ContainsKey(glyph))
+                    {
+                        var load = Resources.LoadAsync<Sprite>("UI/ability-icons/" + glyph);
+                        yield return load;
+                        Drawn[glyph] = load.asset as Sprite;
+                    }
+                    // Missing illustrations keep their existing baked fallback,
+                    // with only one glyph's generation/upload in this turn.
+                    For(glyph);
+                    yield return null;
+                }
+                completed?.Invoke((i + 1f) / (glyphs.Length + 1));
+            }
+            if (_cooldownDisc == null)
+            {
+                CooldownDisc();
+                yield return null;
+            }
+            completed?.Invoke(1);
+        }
 
         public static Sprite For(AbilityGlyph glyph)
         {
