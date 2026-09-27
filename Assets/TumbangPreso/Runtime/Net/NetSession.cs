@@ -488,7 +488,9 @@ namespace TumbangPreso.Net
         // 65: world recovery includes ultimate phase/stage/request freshness;
         // PreparedWorld replaces CovenEffect with ability-owned spatial recovery,
         // joins its world generation and ages on the round clock.
-        public const int ProtocolVersion = 65;
+        // 66: pose streams carry shared held-aim presentation; casts/ultimate
+        // commits close the matching hold token without cancelling a newer hold.
+        public const int ProtocolVersion = 66;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -79,7 +79,7 @@ namespace TumbangPreso.Abilities
                 ||(slot==1 && Kit is AmihanHeroKit && _motor.PredictedFlightMatches(request));
         private void ClearSkillReceipts()
         {Array.Clear(_skillRequests,0,2);Array.Clear(_skillSettled,0,2);_pendingSkillEffects.Clear();}
-        internal void ResetNetworkSkillReceipts() => ClearSkillReceipts();
+        internal void ResetNetworkSkillReceipts() { ClearSkillReceipts(); ResetNetworkAimTransport(); }
         public bool ResolveSkillReceipt(int slot,long request,bool accepted,float cooldown,int charges)
         {
             if(slot<0||slot>=2||request<=0||NetAuthority.IsHost||_motor.PlayerSlot!=NetAuthority.LocalSlot)return false;

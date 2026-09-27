@@ -9,12 +9,13 @@ namespace TumbangPreso
     public readonly struct UltimateCommit
     {
         public readonly int Seat;
-        public readonly long Request;
+        public readonly long Request, AimToken;
         public readonly Vector3 Position, Forward, Aim, FamiliarPosition;
         public readonly bool HasFamiliar;
         public readonly float Held;
-        public UltimateCommit(int seat, long request, Vector3 position, Vector3 forward, Vector3 aim, float held, bool hasFamiliar = false, Vector3 familiarPosition = default)
-        { Seat=seat; Request=request; Position=position; Forward=forward; Aim=aim; Held=held; HasFamiliar=hasFamiliar; FamiliarPosition=familiarPosition; }
+        public UltimateCommit(int seat, long request, Vector3 position, Vector3 forward, Vector3 aim, float held,
+            bool hasFamiliar = false, Vector3 familiarPosition = default, long aimToken = 0)
+        { Seat=seat; Request=request; Position=position; Forward=forward; Aim=aim; Held=held; HasFamiliar=hasFamiliar; FamiliarPosition=familiarPosition; AimToken=aimToken; }
     }
 
     // One accepted cohort, one shared boundary. The reservation spends resources;
@@ -126,7 +127,12 @@ namespace TumbangPreso
                 // A late newer cohort supersedes the old one even when its intro
                 // has finished. Retain its terminal identity for snapshot freshness.
                 Cancel(); MatchId = match; Round = round; PhaseId = phase; Began = began; Duration = length;
-                foreach (var cast in commits) GameServices.Round?.PlayerAt(cast.Seat)?.AbilitySystem?.AcknowledgeSharedUltimate(cast.Request);
+                foreach (var cast in commits)
+                {
+                    var system = GameServices.Round?.PlayerAt(cast.Seat)?.AbilitySystem;
+                    system?.CloseNetworkAim((int)HeroAbilitySystem.Slot.Ultimate, cast.AimToken);
+                    system?.AcknowledgeSharedUltimate(cast.Request);
+                }
                 Net.MatchRpc.Instance?.RequestWorldSnapshot(); return;
             }
             Cancel(); MatchId=match; Round=round; PhaseId=phase; Began=began; Duration=length;
@@ -152,7 +158,7 @@ namespace TumbangPreso
             {
                 var actor = round.PlayerAt(cast.Seat);
                 if (cast.HasFamiliar) actor.GetComponent<Visual.CharacterVisual>()?.Companion?.ApplyCastAnchor(cast.FamiliarPosition);
-                actor.AbilitySystem.AdoptSharedUltimate(cast.Request);
+                actor.AbilitySystem.AdoptSharedUltimate(cast.Request, cast.AimToken);
             }
             _scene = SceneManager.GetActiveScene(); _actorsReady=true; ClearActions(); return true;
         }

@@ -37,8 +37,10 @@ effects on the paused simulation clock through ability-owned recovery interfaces
 without hero/effect-class transport switches. Compiler/capability checks pass;
 native recovery/codec/ranked coverage remains OPEN. See [contract](SKILL_NETWORK_CONTRACT.md).
 Incoming Phaister refinement is integrated with protocol65 and compiler checks;
-remote held-aim presentation remains OPEN. Carry new aim hooks through shared
-network state, without per-hero RPCs, and check ranked admission/recovery callers.
+protocol66 now carries generic held-aim body state through the accepted pose stream.
+Private targeting stays local; cast/ultimate tokens,epoch and lifecycle cleanup
+prevent stale holds. Four assemblies compile and one pure token case passes;
+native codec/lifecycle and actual ranked/peer qualification remain OPEN.
 Scope includes body animation, VFX, cutscenes, interruption and cleanup on every
 relevant peer, spectator, late join and reconnect. Explicit delivery declarations
 and the normal pre-build guard are implemented (focused EditMode 5/5); remaining

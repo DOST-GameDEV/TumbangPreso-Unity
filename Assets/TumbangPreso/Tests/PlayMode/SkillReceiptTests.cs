@@ -12,6 +12,22 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class SkillReceiptTests
     {
+        private sealed class AimProbeAbility : HeroAbility
+        {
+            public int Activations, PrivatePresents, BodyPresents, BodyEnds;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
+            public AimProbeAbility(string id) : base(id, id, "", 1) => AimByHolding(1, 3);
+            protected override void OnActivate(AbilityContext context) => Activations++;
+            public override void PresentAim(CharacterMotor caster, Vector3 at, float held) => PrivatePresents++;
+            public override void PresentAimBody(CharacterMotor caster, float held) => BodyPresents++;
+            public override void EndAimBody() => BodyEnds++;
+        }
+        private sealed class AimProbeKit : HeroKit
+        {
+            public AimProbeKit() : base("aim-probe", "aim-probe")
+            { Skill1 = new AimProbeAbility("aim-one"); Skill2 = new AimProbeAbility("aim-two"); }
+        }
+
         private INetProvider _provider;
         private sealed class PredictingOwner : INetProvider
         {
@@ -38,6 +54,52 @@ namespace TumbangPreso.PlayTests
             system.enabled = false; system.BindHero(hero);
             NetAuthority.Provider = new PredictingOwner();
             return system;
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator RemoteAimPresentsOnlyBodyTellsAndRejectsClosedOrOlderHolds()
+        {
+            var system = Owner("phaister");
+            var motor = system.GetComponent<CharacterMotor>();
+            motor.PlayerSlot = 2; motor.RoundActive = true;
+            var kit = new AimProbeKit();
+            typeof(HeroAbilitySystem).GetProperty("Kit").SetValue(system, kit);
+            system.enabled = true;
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var update = typeof(HeroAbilitySystem).GetMethod("Update", flags);
+            var one = (AimProbeAbility)kit.Skill1; var two = (AimProbeAbility)kit.Skill2;
+            var aim = new AbilityAimSnapshot
+            { Slot = 1, AbilityId = new FixedString64Bytes(one.Id), Held = .4f, Token = AbilityAimSnapshot.MakeToken(motor.MovementEpoch, 7) };
+            system.ApplyNetworkAim(aim); update.Invoke(system, null);
+            Assert.IsTrue(system.IsAiming(HeroAbilitySystem.Slot.Skill1));
+            Assert.Greater(one.BodyPresents, 0); Assert.Zero(one.PrivatePresents); Assert.Zero(one.Activations);
+            system.CloseNetworkAim(0, aim.Token);
+            system.ApplyNetworkAim(aim);
+            Assert.IsFalse(system.IsAiming(HeroAbilitySystem.Slot.Skill1));
+            aim.Token = AbilityAimSnapshot.MakeToken(motor.MovementEpoch, 8);
+            system.ApplyNetworkAim(aim);
+            system.CloseNetworkAim(0, AbilityAimSnapshot.MakeToken(motor.MovementEpoch, 7));
+            Assert.IsTrue(system.IsAiming(HeroAbilitySystem.Slot.Skill1), "Old release cancelled a new hold.");
+            aim.Token = AbilityAimSnapshot.MakeToken(motor.MovementEpoch, 6);
+            system.ApplyNetworkAim(aim);
+            Assert.AreEqual(AbilityAimSnapshot.MakeToken(motor.MovementEpoch, 8), system.CaptureAimPresentation().Token);
+
+            aim.Slot = 2; aim.AbilityId = new FixedString64Bytes(two.Id);
+            aim.Token = AbilityAimSnapshot.MakeToken(motor.MovementEpoch, 9);
+            system.ApplyNetworkAim(aim); update.Invoke(system, null);
+            system.CloseNetworkAim(0, AbilityAimSnapshot.MakeToken(motor.MovementEpoch, 10));
+            Assert.IsTrue(system.IsAiming(HeroAbilitySystem.Slot.Skill2), "Another slot's cast ended this hold.");
+            typeof(HeroAbilitySystem).GetField("_networkAimUntil", flags).SetValue(system, Time.unscaledTime - 1);
+            update.Invoke(system, null);
+            Assert.IsFalse(system.IsAiming(HeroAbilitySystem.Slot.Skill2));
+            Assert.Greater(two.BodyEnds, 0);
+            system.ApplyNetworkAim(aim);
+            Assert.IsTrue(system.IsAiming(HeroAbilitySystem.Slot.Skill2), "A fresh packet could not renew an expired lease.");
+            system.ResetKit();
+            Assert.IsFalse(system.IsAiming(HeroAbilitySystem.Slot.Skill2));
+            Assert.Zero(one.Activations + two.Activations, "Visual hold replication cast a gameplay ability.");
+            system.enabled = false;
+            yield return null;
         }
 
         [UnityTest, Timeout(30000)]

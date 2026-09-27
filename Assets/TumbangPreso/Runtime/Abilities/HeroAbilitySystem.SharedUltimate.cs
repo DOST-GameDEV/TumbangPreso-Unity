@@ -14,7 +14,8 @@ namespace TumbangPreso.Abilities
             var familiar = _motor.GetComponent<Visual.CharacterVisual>()?.Companion;
             if (NetAuthority.ShouldResolve())
                 return AcceptSharedUltimate(new UltimateCommit(_motor.PlayerSlot, 0, _context.Position,
-                    _context.Forward, SharedUltimateAim(), Kit.Ultimate?.HeldSecondsOnCast ?? 0, familiar != null, familiar != null ? familiar.transform.position : Vector3.zero));
+                    _context.Forward, SharedUltimateAim(), Kit.Ultimate?.HeldSecondsOnCast ?? 0, familiar != null,
+                    familiar != null ? familiar.transform.position : Vector3.zero, AimTokenFor(Slot.Ultimate)));
             var allowed = Kit.CheckUltimate(_context);
             if (allowed != HeroKit.CastOutcome.Cast) return allowed;
             if (_pendingUltimateRequest > 0) return HeroKit.CastOutcome.Cooling;
@@ -22,7 +23,7 @@ namespace TumbangPreso.Abilities
             if (rpc == null) return HeroKit.CastOutcome.CannotAct;
             _pendingUltimateUntil = Time.unscaledTime + 8;
             _pendingUltimateRequest = rpc.RequestSharedUltimate(_motor.PlayerSlot, _context.Position,
-                _context.Forward, SharedUltimateAim(), Kit.Ultimate.HeldSecondsOnCast);
+                _context.Forward, SharedUltimateAim(), Kit.Ultimate.HeldSecondsOnCast, AimTokenFor(Slot.Ultimate));
             // No prediction, cost, clip or world effect while host acceptance is pending.
             return _pendingUltimateRequest > 0 ? HeroKit.CastOutcome.Cast : HeroKit.CastOutcome.CannotAct;
         }
@@ -43,6 +44,7 @@ namespace TumbangPreso.Abilities
         }
         internal HeroKit.CastOutcome AcceptSharedUltimate(UltimateCommit cast)
         {
+            CloseNetworkAim((int)Slot.Ultimate, cast.AimToken);
             var check = CheckSharedUltimate(cast);
             if (check != HeroKit.CastOutcome.Cast) return check;
             var phase = SharedUltimatePhase.Instance;
@@ -54,8 +56,9 @@ namespace TumbangPreso.Abilities
         }
         internal void AcknowledgeSharedUltimate(long request)
         { if (_pendingUltimateRequest == request) _pendingUltimateRequest = 0; }
-        internal void AdoptSharedUltimate(long request)
+        internal void AdoptSharedUltimate(long request, long aimToken = 0)
         {
+            CloseNetworkAim((int)Slot.Ultimate, aimToken);
             if (Kit?.Ultimate == null) return;
             Kit.AdoptUltimateReservation();
             AcknowledgeSharedUltimate(request);
@@ -84,7 +87,7 @@ namespace TumbangPreso.Abilities
         internal void ClearPresentationInput()
         {
             _skill1BufferedAt = _skill2BufferedAt = _ultimateBufferedAt = float.NegativeInfinity;
-            for (int i = 0; i < _heldSince.Length; i++) _heldSince[i] = -1;
+            ClearAimPresentation();
             _reticle?.Hide();
         }
     }

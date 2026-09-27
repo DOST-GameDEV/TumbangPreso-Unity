@@ -17,6 +17,7 @@ namespace TumbangPreso.Net
         public float HeldSeconds;
         public bool HasFamiliar, Reactivation;
         public long Match, Request, Event, FlightIntent;
+        public long AimToken;
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
@@ -44,13 +45,14 @@ namespace TumbangPreso.Net
             serializer.SerializeValue(ref Request);
             serializer.SerializeValue(ref Event);
             serializer.SerializeValue(ref FlightIntent);
+            serializer.SerializeValue(ref AimToken);
         }
 
         public bool IsValid(bool accepted)
             => Seat >= 0 && Seat < Balance.PlayerCount && Slot >= 0 && Slot <= 2
                 && AbilityId.Length > 0 && Match > 0 && Round >= 0
                 && (accepted ? Event > 0 && Request >= 0 : Event == 0 && Request > 0)
-                && FlightIntent != long.MinValue && Finite(Position) && Finite(Forward)
+                && FlightIntent != long.MinValue && AimToken >= 0 && Finite(Position) && Finite(Forward)
                 && Finite(AimPoint) && Finite(HeldSeconds) && HeldSeconds >= 0
                 && (!HasFamiliar || Finite(FamiliarPosition));
 
@@ -58,7 +60,7 @@ namespace TumbangPreso.Net
         {
             cast = default;
             int bytes = reader.Length - reader.Position;
-            if (bytes < 100 || bytes > MaxWireBytes) return false;
+            if (bytes < 108 || bytes > MaxWireBytes) return false;
             try
             {
                 reader.ReadNetworkSerializable(out cast);

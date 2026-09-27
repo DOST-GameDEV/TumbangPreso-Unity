@@ -24,6 +24,30 @@ Only Paete currently has substantial VFX; other presentation remains provisional
   effect through its preparation/live clocks. MatchRpc discovers these abilities
   automatically,including both role abilities; no hero/effect type switch is needed.
 
+## Held-Aim Presentation
+
+Protocol66 appends the dominant held slot,stable ability ID,elapsed hold and hold
+token to the existing accepted pose stream. No target position travels in that
+state. Ranked,casual,custom and spectators use the same route and authority gates.
+
+- AimPoseAction names an existing body clip. CharacterAnimator consumes IsAiming
+  on local and remote bodies; neither clips nor bone transforms need a new RPC.
+- PresentAimBody/EndAimBody own shared body props or tells. These hooks are
+  presentation only: never cast,spend resources or resolve hits inside them.
+- PresentAim/EndAim remain private aiming guidance. Do not move destination
+  markers into the body hooks; peers should not receive hidden targeting intent.
+- The system ends presentation on cancellation,disable,reset or input-blocking
+  phases. An unrefreshed remote hold expires after0.75s; fresh state can renew it.
+  Cast/ultimate messages close only their corresponding slot/hold token, so an
+  older pose cannot restore a consumed hold or erase a newer one.
+
+Tokens are scoped to the movement epoch and advance on each hold. Pose ownership,
+epoch and ordering checks run before presentation is accepted. Replicas tick kit
+clocks but never turn the received hold/release into input or another cast.
+Keep shared body hooks independent of private target guides during later reworks.
+
+## Prepared World Recovery
+
 The prepared-effect adapter supplies centre,preparation and remaining life through
 CapturePreparedWorld. RestorePreparedWorld restores only that state and returns
 true when a new preparation needs its body/FPP pose resumed. Zero clocks mean

@@ -9,6 +9,40 @@ namespace TumbangPreso.Tests
     public sealed class IceSnapshotBatchTests
     {
         [Test]
+        public void AimTokensSeparateHoldsAndMovementEpochsWithoutExposingTargets()
+        {
+            long first = AbilityAimSnapshot.MakeToken(3, 1);
+            long next = AbilityAimSnapshot.MakeToken(3, 2);
+            long handover = AbilityAimSnapshot.MakeToken(4, 1);
+            Assert.Greater(next, first); Assert.Greater(handover, next);
+            Assert.IsTrue(AbilityAimSnapshot.MatchesEpoch(first, 3));
+            Assert.IsFalse(AbilityAimSnapshot.MatchesEpoch(first, 4));
+            Assert.IsFalse(AbilityAimSnapshot.MatchesEpoch(0, 0));
+            Assert.IsTrue(default(AbilityAimSnapshot).IsValid);
+            var invalid = new AbilityAimSnapshot { Slot = 4 };
+            Assert.IsFalse(invalid.IsValid);
+            invalid = new AbilityAimSnapshot { Held = float.NaN };
+            Assert.IsFalse(invalid.IsValid);
+            foreach (var field in typeof(AbilityAimSnapshot).GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public))
+                Assert.AreNotEqual(typeof(Vector3), field.FieldType, "Private target points must not enter body-aim replication.");
+        }
+
+        [Test]
+        public void AimTailRoundTripsItsExactShapeAndClosesAtTheEndOfAPose()
+        {
+            var original = new AbilityAimSnapshot
+            { Slot = 2, AbilityId = new FixedString64Bytes("phaister_skill2"), Held = .75f, Token = AbilityAimSnapshot.MakeToken(3, 4) };
+            using var writer = new FastBufferWriter(AbilityAimSnapshot.MaxWireBytes, Allocator.Temp);
+            writer.WriteNetworkSerializable(original);
+            Assert.AreEqual(15 + original.AbilityId.Length, writer.Length);
+            using var reader = new FastBufferReader(writer, Allocator.Temp);
+            var input = reader;
+            Assert.IsTrue(AbilityAimSnapshot.TryRead(ref input, out var restored));
+            foreach (var field in typeof(AbilityAimSnapshot).GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public))
+                Assert.AreEqual(field.GetValue(original), field.GetValue(restored), field.Name);
+        }
+
+        [Test]
         public void WorldRecoveryCannotCrossAnUltimateHandbackOrNewerCohort()
         {
             var header = new WorldSnapshotHeader { UltimatePhase = 5, UltimateStage = 1 };
@@ -113,7 +147,7 @@ namespace TumbangPreso.Tests
             using (var writer = new FastBufferWriter(128, Allocator.Temp))
             {
                 writer.WriteValueSafe(1); writer.WriteValueSafe(1); writer.WriteValueSafe(ushort.MaxValue);
-                writer.WriteBytesSafe(new byte[90]);
+                writer.WriteBytesSafe(new byte[98]);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 var input = reader;
                 Assert.IsFalse(SkillCastMessage.TryRead(ref input, out _));

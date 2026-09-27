@@ -1,0 +1,88 @@
+{
+  "base": "9a44be9782c1d149fa22a335b6074e0ee86e5ac3",
+  "result": "PASS",
+  "method": "Direct managed invocation of one new compiled NUnit case; no Unity native process",
+  "cases": [
+    "AimTokensSeparateHoldsAndMovementEpochsWithoutExposingTargets"
+  ],
+  "compiler": "Runtime, Editor, Tests and PlayTests exit0",
+  "runtimeAssemblySha256": "EFA0B053FF7FEA10F754B7A7D9C4CD3D333ED1116DD4958457E3ED0501D12484",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbility.cs",
+      "sha256": "8924E9D9B7763402B802CDBD6F37F5C7BFC06E754A501E9F98042979F5E8768F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.AimReplication.cs",
+      "sha256": "C4EFF75F5B96BD30E3CD15A9D9A0ABF07E5244BC101D86ED61075AC08B479A2D"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.AimReplication.cs.meta",
+      "sha256": "5DE6BB36AC93217B17D1D068D7CB9502015EC807B9C2999FF8C6473531B6CD7A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+      "sha256": "A5D2F49D9CA54A0328B1A82E821815E496A39A42081BCBAFAF5DFD7E503B9816"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SharedUltimate.cs",
+      "sha256": "6476946DFF4915D40F824826E30EF18A87979BD292D89C1141E7B0EE50271C61"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SkillReceipts.cs",
+      "sha256": "2499DA0C7098378F7E256FDDF4A1F5E8F9C713D2B3A63E56D58B99F800950224"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs",
+      "sha256": "9125EB981ED3D37E0F5F3214EBD6010F64F9B45D6DD370A35EAFD943A5C4CBCE"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/AbilityAimSnapshot.cs",
+      "sha256": "0EE68069C2128C0821CC52D7A3B37E98723C80B2756DAF63F0021D344EB6C597"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/AbilityAimSnapshot.cs.meta",
+      "sha256": "53656CD38D4FC271E9986B648F69D2FCF481A8F726487A2396ED5295702EA9B5"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "3606746243FD5ACF791DE0A3E7C0B8F8BB4E87812122515B920652C28E4C6BF3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.UltimatePhase.cs",
+      "sha256": "FD700FA89357DE8C13A83E889CFF5EC436FC6AB14EBA5714BB69A3C6B27F9B25"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "34C3C0F4BA645226D02530F18A5931E17E48B0DE0F813E4561ACAB75E569E743"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/SkillCastMessage.cs",
+      "sha256": "43C074A76F0DE5FFB1B2D5D0AF77597E6E6C4CD08C0CD97AB783D9B49FA80AB6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs",
+      "sha256": "1468110FD95412E2EE3E490785524682E69B2FF76B585F7523C151AC76EDB4AE"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.AimPose.cs",
+      "sha256": "4D3CD4B99387A7D267138601DCFB3049D34E8DD7270EB62FE8E80ED1982D517F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "AC0BAC4419E88217491A39FA0CA5E05CB44D1A1D69BEE9B19EF1B205DA220D61"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/IceSnapshotBatchTests.cs",
+      "sha256": "7F3C44B29C44414348EB484240ADE0EEBA3CC4AD2A24AB4214DD22E812E08370"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/AmihanKitPlayProbe.cs",
+      "sha256": "EF57B3A19610F94E8252A44ED28709404D608EF8D56F501DAF4692B8E8B5DF36"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "4FB440FDF52C457D28C691B7349C7A8C2468EC361FFF7401D934170ABB154B15"
+    }
+  ]
+}

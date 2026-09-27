@@ -114,14 +114,23 @@ namespace TumbangPreso.Abilities
             {
                 if (_sigil == null) _sigil = PhaisterAimSigil.Create(PhaisterAimSigil.Kind.Arrival);
                 _sigil.Show(caster, at);
+            }
+
+            public override void PresentAimBody(CharacterMotor caster, float heldSeconds)
+            {
                 if (_cuffs == null) _cuffs = PhaisterCuffMoths.On(caster);
             }
 
             public override void EndAim()
             {
                 if (_sigil != null) _sigil.Release();
+                _sigil = null;
+            }
+
+            public override void EndAimBody()
+            {
                 if (_cuffs != null) _cuffs.Release();
-                _sigil = null; _cuffs = null;
+                _cuffs = null;
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -302,12 +311,12 @@ namespace TumbangPreso.Abilities
 
             private PhaisterHandDoll _doll;
 
-            public override void PresentAim(CharacterMotor caster, Vector3 at, float heldSeconds)
+            public override void PresentAimBody(CharacterMotor caster, float heldSeconds)
             {
                 if (_doll == null) _doll = PhaisterHandDoll.Hold(caster);
             }
 
-            public override void EndAim()
+            public override void EndAimBody()
             {
                 if (_doll != null) _doll.Let();
                 _doll = null;

@@ -12,8 +12,8 @@ namespace TumbangPreso.Visual
         ///
         /// An ability names the pose (`HeroAbility.AimPoseAction`) and the rig must carry a clip of that name; otherwise nothing
         /// changes, so no other hero is touched. It loops for as long as the aim lasts, and the release clip starts from it.
-        /// ⚠️ `IsAiming` is this peer's own hold clock: the tell shows for the player aiming and for bodies this peer simulates
-        /// (the host's bots). A remote human's hold is not on the wire, so their tell starts at the release there.
+        /// `IsAiming` reads local input or the shared replicated body-aim state. Clip names remain local presentation data;
+        /// remote holds never enter gameplay input or cause a release-cast on this peer.
         /// </summary>
         private string AimPose()
         {

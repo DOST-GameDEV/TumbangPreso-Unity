@@ -467,11 +467,19 @@ namespace TumbangPreso.Abilities
                 Kit.Tick(_context, dt);
             }
 
+            if (UsesNetworkAim)
+            {
+                _reticle?.Hide();
+                EndOwnAim();
+                UpdateBodyAim();
+                return;
+            }
+
             var intent = _motor.Intent;
             if (intent == null)
             {
                 if (_reticle != null) _reticle.Hide();
-                EndOwnAim();
+                ClearAimPresentation();
                 return;
             }
 
@@ -494,6 +502,7 @@ namespace TumbangPreso.Abilities
             Aim(intent, Verb.Ultimate, Slot.Ultimate, ref _ultimateBufferedAt);
 
             UpdateReticle(intent);
+            UpdateBodyAim();
 
             ServiceBuffer(ref _skill1BufferedAt, Slot.Skill1);
             ServiceBuffer(ref _skill2BufferedAt, Slot.Skill2);
@@ -529,6 +538,9 @@ namespace TumbangPreso.Abilities
         /// <summary>Seconds the current hold has lasted, or 0 when nothing is being aimed.</summary>
         public float HeldSeconds(Slot slot)
         {
+            if (UsesNetworkAim)
+                return NetworkAimActive() && _networkAim.Slot == (byte)((int)slot + 1)
+                    ? Mathf.Clamp(_networkAim.Held + Time.time - _networkAimAt, 0, 30) : 0;
             float since = _heldSince[(int)slot];
             return since < 0.0f ? 0.0f : Time.time - since;
         }
@@ -536,6 +548,7 @@ namespace TumbangPreso.Abilities
         /// <summary>True while this slot is being aimed rather than cast.</summary>
         public bool IsAiming(Slot slot)
         {
+            if (UsesNetworkAim) return NetworkAimActive() && _networkAim.Slot == (byte)((int)slot + 1);
             var ability = AbilityFor(slot);
             return ability != null && ability.HoldToAim && _heldSince[(int)slot] >= 0.0f;
         }
@@ -613,6 +626,7 @@ namespace TumbangPreso.Abilities
             if (justPressed)
             {
                 _heldSince[i] = Time.time;
+                BeginAimToken(slot);
                 return;
             }
 
@@ -701,6 +715,7 @@ namespace TumbangPreso.Abilities
             if (NetAuthority.IsNetworked && !NetAuthority.IsHost && _motor.PlayerSlot == NetAuthority.LocalSlot
                 && !CanPredictSkill(slot)) return HeroKit.CastOutcome.CannotAct;
             var requestedAbility = AbilityFor(slot);
+            long aimToken = AimTokenFor(slot);
             bool reactivation = requestedAbility != null && requestedAbility.IsActive && requestedAbility.CanReactivate;
             // Capture before reactivation returns the pet or moves its owner.
             var familiar=_motor.GetComponent<Visual.CharacterVisual>()?.Companion;
@@ -733,13 +748,13 @@ namespace TumbangPreso.Abilities
                 Net.MatchRpc.Instance?.BroadcastAbilityCast(
                     _motor.PlayerSlot, (int)slot, castPosition, castForward,
                     aimPoint, held, exceptClientId: null, hasFamiliar:hasFamiliar, familiarPosition:familiarPosition,
-                    flightIntent:flightIntent, reactivation:reactivation);
+                    flightIntent:flightIntent, reactivation:reactivation, aimToken:aimToken);
             }
             else if (_motor.PlayerSlot == NetAuthority.LocalSlot)
             {
                 Net.MatchRpc.Instance?.RequestAbilityCastServerRpc(
                     _motor.PlayerSlot, (int)slot, castPosition, castForward,
-                    aimPoint, held, hasFamiliar, familiarPosition,flightIntent,reactivation);
+                    aimPoint, held, hasFamiliar, familiarPosition,flightIntent,reactivation,aimToken);
             }
 
             return outcome;
@@ -1592,6 +1607,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private void ClearBuffers()
         {
+            ClearAimPresentation();
             _pendingUltimateRequest = 0;
             _pendingUltimateSky = false;
             _skill1BufferedAt = float.NegativeInfinity;

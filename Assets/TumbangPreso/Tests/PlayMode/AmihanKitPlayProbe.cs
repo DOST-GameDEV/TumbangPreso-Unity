@@ -725,7 +725,7 @@ namespace TumbangPreso.PlayTests
                 };
                 using var writer = new FastBufferWriter(SkillCastMessage.MaxWireBytes, Allocator.Temp);
                 writer.WriteNetworkSerializable(cast);
-                Assert.AreEqual(100 + cast.AbilityId.Length, writer.Length);
+                Assert.AreEqual(108 + cast.AbilityId.Length, writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 typeof(MatchRpc).GetMethod("OnPlayAbilityMsg", flags).Invoke(router, new object[] { NetworkManager.ServerClientId, reader });
             }
@@ -740,7 +740,7 @@ namespace TumbangPreso.PlayTests
                 };
                 using var writer = new FastBufferWriter(SkillCastMessage.MaxWireBytes, Allocator.Temp);
                 writer.WriteNetworkSerializable(cast);
-                Assert.AreEqual(100 + cast.AbilityId.Length, writer.Length);
+                Assert.AreEqual(108 + cast.AbilityId.Length, writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 var input = reader;
                 Assert.IsTrue(SkillCastMessage.TryRead(ref input, out var decoded));

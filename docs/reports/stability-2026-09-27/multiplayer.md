@@ -1,5 +1,30 @@
 # Multiplayer investigation, 2026-09-27
 
+## Held-aim body presentation
+
+Base `9a44be97`, protocol66. Held aiming had no remote state even though incoming
+reworks authored AimPoseAction and prop hooks. AbilityAimSnapshot now travels at
+the existing pose cadence: slot,stable ID,held time and movement-epoch/hold token.
+SubmitMove/SyncUnit retain their owner,epoch and pose-order gates. Private target
+positions are absent. The maximum added tail is76bytes (empty15); writer budgets
+are128/272bytes. Skill and shared-ultimate commits carry the consumed hold token.
+
+Replicas tick their kits and run shared PresentAimBody/EndAimBody, never local
+input/cast buffers. CharacterAnimator reads replicated IsAiming through its existing
+hook. Phaister cuffs/doll move to shared body hooks; her sigils stay in private
+PresentAim/EndAim. No clip,geometry,palette or timing changes. Per-slot closed/seen
+tokens reject stale holds without cancelling a newer hold or another slot. A0.75s
+lease clears disconnected presentation; reset,disable,phase and epoch changes
+clean up. The expired-newer ultimate phase also closes its consumed hold.
+
+One frozen86-file source/dependency candidate (19changed inputs) compiled Runtime,
+Editor,Tests and PlayTests with exit0. One new pure token/scope NUnit method passed
+by direct managed invocation. [Receipt](checks/aim-replication-managed.json).
+The new native codec roundtrip and replica body/private/cleanup case are NOT RUN;
+the prior disk-reserve limitation still applies. No old suites or films repeated.
+Actual ranked/casual/observer/spectator/reconnect play remains OPEN; compilation
+and a pure check do not establish multi-peer correctness.
+
 ## Ranked and casual discovery admission
 
 Base `b7d26bcf`. Connection approval checked skill compatibility, but automatic

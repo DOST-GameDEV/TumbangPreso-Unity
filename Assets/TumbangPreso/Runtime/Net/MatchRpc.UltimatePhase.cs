@@ -11,12 +11,13 @@ namespace TumbangPreso.Net
     {
         private long _ultimateRequestSequence;
         private readonly Dictionary<ulong, long> _lastUltimateRequest = new Dictionary<ulong, long>();
-        public long RequestSharedUltimate(int seat, Vector3 position, Vector3 forward, Vector3 aim, float held)
+        public long RequestSharedUltimate(int seat, Vector3 position, Vector3 forward, Vector3 aim, float held, long aimToken = 0)
         {
             if (_nm?.CustomMessagingManager == null || !ValidSlot(seat)) return 0;
             long request = ++_ultimateRequestSequence;
             var pet = Familiar(seat);
-            var cast = new UltimateCommit(seat, request, position, forward, aim, held, pet != null, pet != null ? pet.transform.position : Vector3.zero);
+            var cast = new UltimateCommit(seat, request, position, forward, aim, held, pet != null,
+                pet != null ? pet.transform.position : Vector3.zero, aimToken);
             if (NetAuthority.ShouldResolve())
             { Unit(seat)?.AbilitySystem?.AcceptSharedUltimate(cast); return request; }
             using var writer = new FastBufferWriter(96, Allocator.Temp);
@@ -31,6 +32,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(cast.Position); writer.WriteValueSafe(cast.Forward);
             writer.WriteValueSafe(cast.Aim); writer.WriteValueSafe(cast.Held);
             writer.WriteValueSafe(cast.HasFamiliar); writer.WriteValueSafe(cast.FamiliarPosition);
+            writer.WriteValueSafe(cast.AimToken);
         }
         private static UltimateCommit ReadUltimateCommit(ref FastBufferReader reader)
         {
@@ -38,15 +40,16 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 position); reader.ReadValueSafe(out Vector3 forward);
             reader.ReadValueSafe(out Vector3 aim); reader.ReadValueSafe(out float held);
             reader.ReadValueSafe(out bool hasFamiliar); reader.ReadValueSafe(out Vector3 familiarPosition);
-            return new UltimateCommit(seat, request, position, forward, aim, held, hasFamiliar, familiarPosition);
+            reader.ReadValueSafe(out long aimToken);
+            return new UltimateCommit(seat, request, position, forward, aim, held, hasFamiliar, familiarPosition, aimToken);
         }
-        private static bool ValidUltimateCommit(UltimateCommit cast) => ValidSlot(cast.Seat) && cast.Request >= 0
+        private static bool ValidUltimateCommit(UltimateCommit cast) => ValidSlot(cast.Seat) && cast.Request >= 0 && cast.AimToken >= 0
             && Finite(cast.Position) && Finite(cast.Forward) && cast.Forward.sqrMagnitude > .001f
             && Finite(cast.Aim) && Finite(cast.Held) && cast.Held >= 0 && cast.Held <= 30
             && (!cast.HasFamiliar || Finite(cast.FamiliarPosition));
         private void OnReqUltimateMsg(ulong sender, FastBufferReader reader)
         {
-            if (!NetAuthority.ShouldResolve() || !reader.TryBeginRead(77)) return;
+            if (!NetAuthority.ShouldResolve() || !reader.TryBeginRead(85)) return;
             reader.ReadValueSafe(out long match); reader.ReadValueSafe(out int round);
             var cast = ReadUltimateCommit(ref reader);
             if (!SenderOwnsClaimedSeat(sender, cast.Seat, out var actor)) return;
@@ -64,6 +67,7 @@ namespace TumbangPreso.Net
                 return;
             }
             _lastUltimateRequest[sender] = cast.Request;
+            actor.AbilitySystem?.CloseNetworkAim((int)HeroAbilitySystem.Slot.Ultimate, cast.AimToken);
             if (actor.AbilitySystem?.CheckSharedUltimate(cast) != HeroKit.CastOutcome.Cast)
             { DenySharedUltimate(sender, cast.Request, cast.Seat); return; }
             var pet = Familiar(cast.Seat);
@@ -71,7 +75,8 @@ namespace TumbangPreso.Net
             {
                 if (pet.IsPossessed && (!cast.HasFamiliar || !pet.AcceptFlightPose(cast.FamiliarPosition, pet.transform.eulerAngles.y)))
                 { DenySharedUltimate(sender, cast.Request, cast.Seat); return; }
-                cast = new UltimateCommit(cast.Seat, cast.Request, cast.Position, cast.Forward, cast.Aim, cast.Held, true, pet.transform.position);
+                cast = new UltimateCommit(cast.Seat, cast.Request, cast.Position, cast.Forward, cast.Aim, cast.Held,
+                    true, pet.transform.position, cast.AimToken);
             }
             else if (cast.HasFamiliar) { DenySharedUltimate(sender, cast.Request, cast.Seat); return; }
             var outcome = actor.AbilitySystem?.AcceptSharedUltimate(cast) ?? HeroKit.CastOutcome.Missing;
@@ -113,7 +118,7 @@ namespace TumbangPreso.Net
             if (match != PresentationMatchId || round < 1 || round > 64 || phase <= 0
                 || double.IsNaN(began) || double.IsInfinity(began) || !Finite(resume) || resume < 0 || resume > 1
                 || !Finite(frozen)||frozen<0||frozen>Core.CustomGameRules.MaxRoundSeconds
-                || count < 1 || count > 4 || !reader.TryBeginRead(count * 65)) return;
+                || count < 1 || count > 4 || !reader.TryBeginRead(count * 73)) return;
             var commits = new UltimateCommit[count]; int seats = 0;
             for (int i = 0; i < count; i++)
             {

@@ -303,6 +303,10 @@ namespace TumbangPreso.Abilities
         /// <summary>Called once when the aim ends, cast or not (the release, a stun, the kit changing).</summary>
         public virtual void EndAim() { }
 
+        /// <summary>Shared body props/tells while aiming; no private target point or gameplay mutation.</summary>
+        public virtual void PresentAimBody(CharacterMotor caster, float heldSeconds) { }
+        public virtual void EndAimBody() { }
+
         /// <summary>
         /// A clip the caster's body holds while this ability is aimed (her tells), or null for the shared stance. Only used when the
         /// rig carries a clip of that name (`CharacterAnimator.AimPose`).

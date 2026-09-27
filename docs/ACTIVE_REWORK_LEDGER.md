@@ -1,5 +1,20 @@
 # Active TUMP rework ledger
 
+## Shared held-aim delivery, 2026-09-27
+
+Protocol66 carries body-aim slot,stable ability ID,elapsed hold and scoped token
+through accepted pose delivery. Private targets stay local; remote holds never
+become gameplay input. Shared body hooks preserve incoming Phaister cuffs/doll
+and authored aim clips while keeping her target sigils private. Cast and ultimate
+delivery close the correct hold; newer holds survive old releases. Epoch,lease,
+phase,reset and disable cleanup cover stale presentation. No art/timing redesign.
+This is shared match transport,including ranked and spectators,not a queue fork.
+Runtime,Editor,Tests and PlayTests compile on the frozen86-file candidate; one
+new pure token/scope case passes. Native codec/lifecycle tests and actual peer/
+ranked qualification remain OPEN under the recorded disk limitation. No old
+suite or film repeated. Next: generic boot/menu activation readiness.
+[Evidence](reports/stability-2026-09-27/multiplayer.md#held-aim-body-presentation).
+
 ## Ranked and casual discovery fixes, 2026-09-27
 
 Online advertisements now carry nonindexed shared skill compatibility; automatic
