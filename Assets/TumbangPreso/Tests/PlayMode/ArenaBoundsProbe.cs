@@ -57,7 +57,7 @@ namespace TumbangPreso.PlayTests
         /// The furthest out any RULE puts a body: the taya's box corner is the confinement
         /// radius, and an attacker stands off it to throw.
         ///
-        /// ⚠️ `AIController.PlayableHalfX`'s own note states the relation this asserts:
+        /// ⚠️ `AIController.PlayableMinX`'s own note states the relation this asserts:
         /// "ConfinementRadius + ThrowStandoff + a capsule &lt;= wall face", and records that two
         /// of the three numbers live in files the radius does not. This is that sentence as a
         /// test, which is the only form of it that survives somebody moving one of them.
@@ -69,7 +69,7 @@ namespace TumbangPreso.PlayTests
         {
             var report = new StringBuilder();
             var bad = new List<string>();
-            var seen = new Dictionary<string, Vector2>();
+            var seen = new Dictionary<string, Vector4>();
 
             foreach (string arena in Arenas)
             {
@@ -109,15 +109,31 @@ namespace TumbangPreso.PlayTests
                     }
                 }
 
-                float halfX = AIController.PlayableHalfX;
-                float halfZ = AIController.PlayableHalfZ;
-                seen[arena] = new Vector2(halfX, halfZ);
+                // ⚠️ PER SIDE since 2026-09-27 (`AIController.PlayableMinX`). The throwing line has
+                // to fit on EVERY side, so the relation below is asserted against the nearest wall
+                // on each axis, which on a symmetric arena is the old half extent exactly.
+                float minX = AIController.PlayableMinX, maxX = AIController.PlayableMaxX;
+                float minZ = AIController.PlayableMinZ, maxZ = AIController.PlayableMaxZ;
+                float halfX = AIController.PlayableNearestX;
+                float halfZ = AIController.PlayableNearestZ;
+                seen[arena] = new Vector4(minX, maxX, minZ, maxZ);
 
                 float ceiling = AIController.PlayableCeilingY;
 
-                report.AppendLine($"{arena}: halfX {halfX:0.00}  halfZ {halfZ:0.00}  " +
+                report.AppendLine($"{arena}: x [{minX:0.00}, {maxX:0.00}]  z [{minZ:0.00}, {maxZ:0.00}]  " +
+                                  $"nearest x {halfX:0.00}  nearest z {halfZ:0.00}  " +
                                   $"ceiling {ceiling:0.00}  " +
                                   $"(needs at least {MinimumUsableHalfWidth:0.00})");
+
+                // ⚠️ EVERY SHIPPED ARENA IS SYMMETRIC, and the per-side clamp is proved identical to
+                // the old symmetric one only while that holds. A shipped map that goes asymmetric
+                // must do it on purpose, with this line changed and a note on why.
+                if (minX != -maxX || minZ != -maxZ)
+                {
+                    bad.Add($"{arena}: walls are not symmetric (x [{minX:0.00}, {maxX:0.00}], " +
+                            $"z [{minZ:0.00}, {maxZ:0.00}]); every shipped arena was symmetric when " +
+                            "the clamp went per side");
+                }
 
                 // ⚠️ NO ARENA GETS A LOW LID. 🧑: *"give reasonable high ceilings in all maps"*.
                 // Ilalim ng Tulay's walls are 3.0 in half height, so its own wall tops would have
@@ -154,12 +170,12 @@ namespace TumbangPreso.PlayTests
             // constant.
             if (seen.Count == Arenas.Length)
             {
-                var values = new HashSet<Vector2>(seen.Values);
+                var values = new HashSet<Vector4>(seen.Values);
 
                 if (values.Count == 1)
                 {
                     bad.Add("every arena measured identically " +
-                            $"({seen[Arenas[0]].x:0.00} x {seen[Arenas[0]].y:0.00}), which is what " +
+                            $"({seen[Arenas[0]].y:0.00} x {seen[Arenas[0]].w:0.00}), which is what " +
                             "a measurement that cannot shrink looks like. See MeasurePlayableBounds.");
                 }
             }
@@ -237,6 +253,70 @@ namespace TumbangPreso.PlayTests
             var pier = Box(new Vector3(0.4f, 2.0f, 0.0f), new Vector3(0.5f, 2.0f, 0.5f));
 
             Assert.Less(MatchInstaller.WallFace(pier, out _), 0.0f);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ EACH SIDE IS ITS OWN WALL (2026-09-27). 🧑 of Lagoon Cove: *"are you able to fan out
+        /// the bounds so players can also somewhat reach the water at the shore"*. The cove walls
+        /// the land side at z = -13 and the sea side at z = +24; the old per-axis minimum would have
+        /// measured both as 13 and walled the shore off. Asserted on geometry this test owns, the
+        /// cove's own boxes, so a layout run cannot move it.
+        /// </summary>
+        [Test]
+        public void AnAsymmetricArenaKeepsEachWallOnItsOwnSide()
+        {
+            var cove = new[]
+            {
+                Box(new Vector3(-16.5f, 6.0f, 5.5f), new Vector3(0.5f, 6.0f, 19.5f)),
+                Box(new Vector3(16.5f, 6.0f, 5.5f), new Vector3(0.5f, 6.0f, 19.5f)),
+                Box(new Vector3(0.0f, 6.0f, -13.5f), new Vector3(17.0f, 6.0f, 0.5f)),
+                Box(new Vector3(0.0f, 6.0f, 24.5f), new Vector3(17.0f, 6.0f, 0.5f)),
+            };
+
+            MatchInstaller.MeasureWalls(cove, out float minX, out float maxX, out float minZ, out float maxZ, out _);
+
+            Assert.AreEqual(-16.0f, minX, 0.001f);
+            Assert.AreEqual(16.0f, maxX, 0.001f);
+            Assert.AreEqual(-13.0f, minZ, 0.001f, "the land wall");
+            Assert.AreEqual(24.0f, maxZ, 0.001f, "the sea wall, which the old per-axis minimum pulled in to 13");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A SYMMETRIC ARENA MEASURES EXACTLY -HALF AND +HALF, TO THE BIT, which is the whole of
+        /// why the per-side clamp changes nothing on a shipped map. Eskinita's walls, transcribed from
+        /// the scene. And a side with no wall mirrors the other, which is what the symmetric
+        /// measurement did with a one-sided map.
+        /// </summary>
+        [Test]
+        public void ASymmetricArenaMeasuresTheOldHalfExtentOnBothSidesAndAMissingSideMirrors()
+        {
+            var eskinita = new[]
+            {
+                Box(new Vector3(-8.6f, 6.0f, 0.0f), new Vector3(0.5f, 6.0f, 20.0f)),
+                Box(new Vector3(8.6f, 6.0f, 0.0f), new Vector3(0.5f, 6.0f, 20.0f)),
+                Box(new Vector3(0.0f, 6.0f, -18.0f), new Vector3(10.0f, 6.0f, 0.5f)),
+                Box(new Vector3(0.0f, 6.0f, 18.0f), new Vector3(10.0f, 6.0f, 0.5f)),
+            };
+
+            MatchInstaller.MeasureWalls(eskinita, out float minX, out float maxX, out float minZ, out float maxZ, out _);
+
+            Assert.AreEqual(-maxX, minX, 0.0f, "not a mirror to the bit");
+            Assert.AreEqual(-maxZ, minZ, 0.0f, "not a mirror to the bit");
+            Assert.AreEqual(MatchInstaller.WallFace(eskinita[1], out _), maxX, 0.0f);
+
+            // Only the east wall and the north wall: each missing side mirrors the one found.
+            MatchInstaller.MeasureWalls(new[] { eskinita[1], eskinita[3] },
+                out minX, out maxX, out minZ, out maxZ, out _);
+            Assert.AreEqual(-maxX, minX, 0.0f);
+            Assert.AreEqual(-maxZ, minZ, 0.0f);
+
+            // No walls at all: the defaults.
+            MatchInstaller.MeasureWalls(new Bounds[0], out minX, out maxX, out minZ, out maxZ, out float ceiling);
+            Assert.AreEqual(-MatchInstaller.DefaultHalfX, minX);
+            Assert.AreEqual(MatchInstaller.DefaultHalfX, maxX);
+            Assert.AreEqual(-MatchInstaller.DefaultHalfZ, minZ);
+            Assert.AreEqual(MatchInstaller.DefaultHalfZ, maxZ);
+            Assert.AreEqual(MatchInstaller.DefaultCeilingY, ceiling);
         }
 
         /// <summary>

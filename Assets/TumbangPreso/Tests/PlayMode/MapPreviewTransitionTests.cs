@@ -41,7 +41,7 @@ namespace TumbangPreso.PlayTests
             menuCamera.tag="MainCamera";
             try
             {
-                foreach(string map in new[]{SceneFlow.Eskinita,SceneFlow.Lagoon,SceneFlow.Eskinita})
+                foreach(string map in new[]{SceneFlow.Eskinita,SceneFlow.LagoonCove,SceneFlow.Eskinita})
                 {
                     preview.Show(map);float until=Time.realtimeSinceStartup+20;
                     while(preview.Showing!=map && Time.realtimeSinceStartup<until)yield return null;

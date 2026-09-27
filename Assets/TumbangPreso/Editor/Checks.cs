@@ -69,7 +69,7 @@ namespace TumbangPreso.EditorTools
                 new Check("headless", HeadlessCheck.Execute, "Logs/headless-check.txt"),
 
                 new Check("arena", () => MapKit.ArenaCheck.Execute(
-                              AIController.PlayableHalfX, AIController.PlayableHalfZ),
+                              AIController.PlayableNearestX, AIController.PlayableNearestZ),
                           "Logs/arena-check.txt"),
 
                 new Check("map geometry", () => MapKit.MapGeometryCheck.Execute(true),

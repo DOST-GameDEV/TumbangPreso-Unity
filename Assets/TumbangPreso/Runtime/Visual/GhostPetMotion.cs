@@ -7,10 +7,15 @@ namespace TumbangPreso.Visual
     {
         public static Vector3 ClampToCourt(CharacterMotor owner,Vector3 position)
         {
-            float x=owner!=null && owner.IsDefender?Core.Balance.ConfinementRadius:AIController.PlayableHalfX;
-            float z=owner!=null && owner.IsDefender?Core.Balance.ConfinementRadius:AIController.PlayableHalfZ;
-            position.x=Mathf.Clamp(position.x,-x,x);position.z=Mathf.Clamp(position.z,-z,z);
-            return position;
+            // ⚠️ THE TAYA KEEPS THE SQUARE CHALK BOX; everybody else gets the arena walls, PER SIDE since
+            // 2026-09-27 (`AIController.PlayableMinX`), so a familiar can scout to a shore the far wall allows.
+            if(owner!=null && owner.IsDefender)
+            {
+                float r=Core.Balance.ConfinementRadius;
+                position.x=Mathf.Clamp(position.x,-r,r);position.z=Mathf.Clamp(position.z,-r,r);
+                return position;
+            }
+            return AIController.ClampToPlayable(position);
         }
         private static void Capsule(CharacterMotor owner,Vector3 ground,bool allowSteps,out Vector3 low,out Vector3 high,out float radius)
         {

@@ -47,8 +47,12 @@ namespace TumbangPreso
                 "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", SceneFlow.IlalimNgTulay),
             new MapEntry("sa_bubong","SA BUBONG",
                 "Condo roofdeck. Watch the edge; lost slippers return after 10s.",SceneFlow.SaBubong),
+            // "lagoon" keeps its id so a saved preference follows the Lagoon Court to its reworked
+            // scene; the first Lagoon is vaulted (SceneFlow.Lagoon).
             new MapEntry("lagoon","LAGOON COURT",
-                "A sheltered village court. Broad bridges, boats and water steps.",SceneFlow.Lagoon),
+                "A cove court in the rocks. Stilt village, reefs and a sunset sea.",SceneFlow.LagoonCove),
+            new MapEntry("kanto","KANTO",
+                "City park block. Jeepney stop, traffic lights, busy streets.",SceneFlow.Kanto),
         };
 
         public static string SelectedMap = "eskinita";

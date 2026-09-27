@@ -1429,6 +1429,147 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
 Capture: `WorldCourtCueTests.BrightLookSameCameraCapturesOnAllFiveMaps` writes stage, eye and
 cast frames per map to `TUMP_WORLD_CUE_OUT`. Baseline 1/1 and branch v1 1/1 passed on the Mac.
 
+### KANTO-1 · Sample map: a city park block modelled in Blender ⚠️ OPEN, 2026-09-24
+
+**Read [KANTO_DESIGN_GUIDE.md](KANTO_DESIGN_GUIDE.md) first**: every owner decision on style,
+models, textures, foliage and layout.
+
+⚠️⚠️ **2026-09-27, owner: "kanto is basically done".** Built and approved in Blender, exported
+to Unity (`2b69e4f20`). The art is settled. **Two items remain (guide § 12):**
+- [ ] **Lighting in Play differs from the editor.** Measure both (RenderSettings, sun, grade,
+  quality) and show the owner side by side before changing anything. Lead: Kanto has no
+  `WorldLookProfile` entry, so `WorldLookPresentation.Install` leaves it unlit by the world look
+  every shipped map gets in Play (guide § 12.1).
+- [ ] **Moving cars and traffic** on the ring road and grid streets: lanes, signals that cycle,
+  the jeepney stop, respawn beyond the fog; never inside the ±13 play area; visual only, not
+  networked; reuse `AmbientLife` / `LrtTrainFlyby` patterns; frame time measured in a built
+  player (guide § 12.2).
+
+(Superseded: "the map in full in blender first before finalizing in unity" is done.)
+
+- **2026-09-24, assembled.** `author_kanto_city.py -- --assemble --review N` writes
+  `kanto_city.blend`: 33 models built once, textured, under Kit; 220 collection instances from
+  the same `PLACE` list as the Unity JSON, plus ground, road markings, court chalk and wires
+  (222 placements, matching `Logs/kanto-build.log`); the horizon ring and hills; Unity's sun,
+  gradient sky and 90 to 360 m fog; saved cameras `eye_north/east/south/west` (spawn ring,
+  1.25 m, 95°) and `aerial`. Renders: `Logs/kanto-blender/kanto_city_<camera>_vN.png`.
+  ⚠️ **Awaiting owner review in Blender. Do not re-export until approved.**
+- **Seen in review v1, open:** at Unity's sun (Euler 44, 140) the south-east glass tower and
+  its neighbours throw long shadows across about half the court in the east and south views.
+  A readability question for the owner, not yet changed.
+
+A style study the owner directed, from Tiny Talisman's "Stylized Modern City", PEAK and
+Brainchild's cartoon towns. **Not registered**: it is not in `SceneFlow.Maps`, `GameLaunch`,
+`MapGeometryCheck.Gated` or the build settings, so no shipped list or test sees it. Open
+`Scenes/Maps/Kanto.unity` and press Play.
+
+- **The pipeline, source to scene.** `tools/author_kanto_textures.py` paints the tileable
+  textures (flat illustrated style: organic bricks, feathered patches, no grain; the owner
+  rejected two grainier rounds). `tools/author_kanto_models.py` is the building kit (one-piece
+  wall shells with recessed windows, swept mouldings, cut-out frames, shingled leaf foliage)
+  and the hero brick corner. `tools/author_kanto_blockout.py` is the approved layout.
+  `tools/author_kanto_city.py` builds every other model, the ground and wires, exports one
+  `.glb` per model (material NAMES only) and `Art/Kanto/kanto_layout.json`.
+  `Editor/MapKit/KantoSceneBuilder.Run` / `.RunReview` builds the scene and renders
+  `Logs/kanto-unity-vN`. Rebuild order: textures, city (Blender, headless), then the builder.
+- **Play area = Bayan Plaza's**, measured off the shipped Bounds colliders: walls at +/-13,
+  box 14 x 14 on a 20 x 20 paved court, lawns, trees 11.6 m out, clutter under 1 m.
+- **Measured:** 222 pieces placed, 0 missing, 59 materials, 0 unmatched material names
+  (`Logs/kanto-build.log`); review v3 shows the chalk and throwing lines from above.
+- **Not yet verified:** a played match (bots, throws, retrieval) on it; `MapGeometryCheck` /
+  `ArenaCheck` against its bounds (they only walk registered maps); the Hero Strike footprint
+  rule against a 26 x 26 area; frame rate with ~35 k-face buildings and leaf cards.
+- **Open art items:** anti-tiling exists only in the Blender previews (Unity materials tile
+  plainly); the court is large and plain at eye level; far fillers could use more roof life.
+- **Rules learnt:** no two surfaces may share a plane (the ground is non-overlapping cells;
+  everything placed on a surface sinks 1 to 2 cm into it); glTFast negates X, so a Blender
+  point (x, y, z) lands at Unity (-x, z, -y); painted shop bases avoid the role hues.
+
+### LAGOON-1 · Lagoon Court full rework ⚠️ OPEN, 2026-09-26
+
+**Read [LAGOON_REWORK_GUIDE.md](LAGOON_REWORK_GUIDE.md) first** (references, art-style rules,
+rock rules, current layout, files, gameplay constraints, and the ordered plan in its § 8).
+Status (2026-09-27, night): dressed in Blender (props, organic wood) and IN UNITY as the
+unregistered sample scene `Scenes/Maps/LagoonCove.unity` (`LagoonCoveSceneBuilder`, export
+`tools/export_lagoon_unity.py`, water `Shaders/LagoonCoveWater.shader`, its own sunset look in
+`WorldLookProfile`); see the guide's CURRENT STATE block. The shipped `Lagoon.unity` is untouched.
+Supersedes REFINE-2.6 for this map.
+
+- [ ] LAGOON-1.1 PER-SIDE ARENA BOUNDS (owner: *"are you able to fan out the bounds so players
+  can also somewhat reach the water at the shore"*, choosing per-side limits over a bigger
+  symmetric box). `AIController.PlayableMinX/MaxX/MinZ/MaxZ` and one shared clamp replace
+  `PlayableHalfX/Z` at every reader (movement, bots, slippers, abilities, spectator, net move
+  check); `MatchInstaller.MeasureWalls` takes the tightest wall per side. Shipped maps all have
+  mirrored walls, so their arithmetic is unchanged (`ArenaBoundsProbe` now fails on a lopsided
+  shipped arena). The cove walls: land z -13, sea z +24, sides x +-16. Core.Tests 659/659.
+  NOT DONE: the EditMode suite and the PlayMode gate (`tools/playmode_suite.py --gate`) have not
+  run on it (the owner's editor held the project); bots' ring logic stays symmetric, so they do
+  not use the sea-side room.
+- [ ] LAGOON-1.2 Corals and underwater plants (owner: *"it lacks corals and plants"*; the owner's
+  NEXT step). Kit DONE (`tools/lagoon_prop_seabed.py`, `7f3e94b7`). Placement WRITTEN, never run:
+  `reefs()` in `tools/lagoon_props_place.py`. Remaining: rebuild the cove, export, rebuild in Unity,
+  look in play (see the guide's CURRENT STATE, In flight item 1).
+- [ ] LAGOON-1.3 THE TAGGED CUTSCENE IGNORES THE MAP'S LOOK (owner, 2026-09-27, screenshot of
+  "CAUGHT BY P1" on the cove: *"tagged cutscreen doesn't use the shader-based lighting, it uses the
+  lighting ud see in the editor"*). The catch cutscene renders with the scene's editor lighting and
+  ambient instead of the `WorldLookProfile` sunset that `WorldLookPresentation` installs for the
+  match (the court reads flat and brown, no warm key). Done: the cutscene camera and its lights
+  inherit the match's installed look on every map, checked by a side-by-side of gameplay and the
+  catch shot on the cove and one shipped map.
+  FIX WRITTEN 2026-09-27, awaiting the owner's look in play: the cause was
+  `CatchReconstruction.BuildView` making its playback camera with `Camera.CopyFrom`, which copies
+  no components, so it drew without the rig's `ColourGrade` and `WorldOutline` (grade, ink, AO).
+  It now adds both, as `RecordedWorldView` and `UltimatePhaseView` already did. Game-wide, not
+  only the cove.
+- [ ] LAGOON-1.4 BIRDS AND FISH AS BOIDS (owner, 2026-09-27: *"add birds and fish (via boids)"*).
+  Flocks of chunky, style-matched birds over the cove and schools of fish over the reefs, steered
+  by separation, alignment and cohesion, kept inside their volumes (sky band, water between the
+  seabed and 0.3 m under the surface), avoiding the court. Cosmetic and local only: never on the
+  wire, never touching gameplay. Frame cost measured with `FrameRateHistogram` before and after.
+  Owner addition (same day): *"if the bird lands on the play area make it so i can throw a slipper
+  at it to explode it into feathers, like how csgo chickens work"*. A bird now and then lands on
+  the court, pecks, flees players; a thrown slipper passing within 0.45 m bursts it into feathers
+  (local cosmetic, the slipper is never touched). Owner asked about 2D sprites; recommended 3D
+  low-poly (banking and angled views break sprites, cost ~100k tris total); open if they prefer
+  sprites.
+- [ ] LAGOON-1.5 AMBIENT WAVES, WIND AND BIRDS SOUND (owner, 2026-09-27: *"environmental sounds, so
+  being near/facing the water you hear more waves, same with wind when facing/nearer into the
+  land"*). Looping beds whose volume follows the listener: waves by distance to the coast line and
+  how much the camera faces the sea, wind by facing and depth into the land, birds tied to the
+  flocks of LAGOON-1.4. Through the existing audio mixer and volume settings; provisional until the
+  owner hears them in play (CLAUDE.md section 6).
+- [ ] LAGOON-1.6 SHIP LAGOON COVE AND KANTO INTO THE MAP POOL (owner, 2026-09-27: *"ship lagoon and
+  kanto into the main map pool/list"*). Register both in `SceneFlow.Maps`, `GameLaunch`,
+  `MapGeometryCheck.Gated` and build settings, with map-select art; run `Checks.RunAll`, the
+  EditMode suite and the PlayMode gate; decide with the owner whether Lagoon Cove replaces the
+  shipped `Lagoon.unity` or sits beside it.
+
+  REGISTERED 2026-09-27 (owner: "lets push it to the astra reworks branch. resolve any conflicts
+  and put kanto and lagoon into the selectable map list. vault the old lagoon"): the Lagoon Cove is
+  the LAGOON COURT entry (SceneFlow.LagoonCove; GameLaunch keeps the id "lagoon" so saved choices
+  follow it) and Kanto is a new entry, both in the build settings; MenuSceneBuilder now lists the
+  maps from SceneFlow.Maps. MapGeometryCheck reports both as Informational (not Gated until their
+  first findings are reviewed). GATE 2026-09-28 on the merge with ASTRAReworks (c6506327): EditMode
+  635/640; PlayMode 99 failures, of which 89 also fail on a clean ASTRAReworks checkout (same
+  fixtures, same profile) and 6 more pass there only because the full groups leak state; the 4
+  caused by the merge are FIXED (catch-replay camera moved out of the recorded stage; the stage
+  capture list names the new maps; map vote row scales for six courts; the host test waits for
+  the screen to draw). The 4 EditMode failures fail on clean ASTRAReworks too. Known cost: Custom
+  and Host prepare every map's preview, and six courts take ~3.5 s against ~2.3 s with five (the
+  Lagoon Cove is 3.47 M triangles). Map vote cards for both maps rendered in Play by
+  MapCardCapture. NetSession.ProtocolVersion 77 (map indices changed). Still open: bots and a
+  full played match on each new map; the PlayMode bot matches never end on Eskinita/Ilalim on
+  clean ASTRAReworks as well.
+- [ ] LAGOON-1.7 THE FIRST LAGOON COURT IS VAULTED (owner, 2026-09-27: "vault the old lagoon").
+  Its scene moved to Scenes/Vault/Lagoon.unity, out of the registry and the build; LagoonBuilder
+  writes there and no longer adds itself to the build. Its builders, LagoonWater (swimming and the
+  bridge climb), LagoonDeckPresentation and SceneFlow.Lagoon are kept. Twelve PlayMode tests about
+  that map alone are [Ignore]d with this entry as the reason (MapGraphicsReviewProbe's seven Lagoon
+  finish reviews, WorldCourtCueTests.LagoonDeck's two, MapExperienceProbe.LagoonDeck..., AmbientLife
+  LagoonBirds..., RafiExpansionProbe stairs, LagoonRecoveryProbe's platform swim). OPEN: decide with
+  the owner which of those features the cove should gain (the cove's water has no swim system;
+  UNVERIFIED: what a player wading off the sea side stands on, and whether a slipper thrown into
+  the sea is recovered), then retarget or delete the ignored tests.
 ### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
 
 **Renamed 2026-09-26 (BUGS-0926.5):** Bright is now **Standard** (slot 1, the default) and Classic is
@@ -1588,6 +1729,19 @@ light that rolls over the blocks, darkened crevices, and fewer, bigger clouds.
   - The ink edges and ground contact read the same texture and may still show this near a
     dissolved prop. That is older than LIGHT-3 and not fixed here.
   Open for the owner's playtest.
+  v7 (2026-09-27, owner in the Lagoon Cove: the occlusion "suddenly flashes off randomly", "we've had
+  flickers before", "could be ability related"). MEASURED with a temporary readback of the blurred
+  occlusion twice a second (`WorldOutline.SampleAo`, logged as `[AO sample]`): the frame mean jumped
+  from about 0.95 to 0.995 (no occlusion anywhere) for 0.5 to 1.5 s with the camera standing still,
+  clustered at round starts, while the gate (`[AO trace]`) stayed on at strength 0.8 throughout. Not
+  jumps, not GPU instancing (both tested and ruled out). Cause: `VfxMaterial.ConfigureBuiltInFade`
+  fades the Standard hero-effect template without `SetOverrideTag("RenderType","Transparent")`, so
+  every faded effect drew SOLID into `_CameraDepthNormalsTexture`; one round the camera filled the
+  frame nearer than the 1.8 m guard above and the whole frame's occlusion dropped. Fix: the tag
+  override (also keeps those effects out of the ink edges). The `TraceAo`/`SampleAo` diagnostic was
+  never committed and was REMOVED 2026-09-27 at the owner's request ("remove the ao logging"). NOT
+  CONFIRMED in play yet: tick this when the owner confirms the flicker is gone.
+  Separate, by design: looking nearly straight down also drops it (the ground is inside 1.8 m).
 - [ ] LIGHT-3.5 The owner's look at the final comparison. The rendering is done: `e26eeb04`,
   Mac, one PlayMode launch, total 3 failed 0 (`FiveMapStageCapturesPreserveGeometryAndRestore
   OriginalLighting`, `LightingStyleThumbnails` and a scratch same-camera review that was not

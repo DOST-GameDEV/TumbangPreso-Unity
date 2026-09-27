@@ -1,11 +1,20 @@
 # Active Rework Checkpoint
 
-Updated 2026-09-28. Branch: ASTRAReworks. Integrated base checkpoint:
-`8ed5ef3dbf1e119ed91eba304eab77933630d774`; first-person mesh preload follows it.
+Updated 2026-09-28. Branch: ASTRAReworks. Incoming integration:
+`10c0e28e` plus the completed first-person preload unit `d7ad338d`.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+The incoming integration merges cleanly with the preload unit. Its authored assets,
+per-side bounds, shared regression repairs and protocol87 map-index compatibility
+are preserved. Before this checkpoint update, the merged index differed from the
+incoming tree only by the eleven reviewed preload-unit paths. No source conflict
+or manual map alteration. Local native integration/build is NOT RUN: remaining disk
+space is below the5GiB launch reserve. The existing per-unit receipts remain valid
+only for their frozen inputs, not this whole merged candidate. Continue independent
+implementation without retrying a blocked import/build at unchanged headroom.
 
 First-person source meshes now load asynchronously during boot and share a retained
 cache with all seven ViewmodelArms lookup sites. Paths follow roster IDs; authored

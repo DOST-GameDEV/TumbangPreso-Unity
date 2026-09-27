@@ -262,6 +262,25 @@ namespace TumbangPreso.Visual
         //    0.012 to 0.02 authored here was reaching the shader as about 0.001, a floor nobody
         //    could see. 0.03 to 0.06 linear lands about luma 48 to 68.
         public MapLook[] Maps={
+            // ⚠️ KANTO, the city park sample map (owner, 2026-09-27, on Play vs the editor: "its so
+            // much more bright, and the kanto map doesnt use the AO shader ... just make kanto less
+            // eye sore-y"). With no entry here WorldLookPresentation installed nothing on Kanto, so
+            // in Play it had no ambient occlusion, no soft-light ramp and no coloured shade, and its
+            // saturated teal and cream facades met a poster-blue sky at full strength
+            // (Logs/kanto-look-v1). This look is deliberately CALMER than the shipped city looks:
+            // a greyer teal zenith and a soft grey-blue haze pulled in to 40..230 m so the far towers
+            // recede instead of competing with the court, a gentler sun, deeper cool-violet shade.
+            // Elevation 0 keeps the scene's own sun angle (Euler 44), so the approved building
+            // shadows do not move. ⚠️ LIGHT CHALK (owner, same day: "the play area in game is blacked.. its
+            // supposed to be white"): the first pass copied Bayan Plaza's dark chalk and drew Kanto's
+            // court lines black.
+            // ⚠️ COOLED (owner, same day: "i like this, but now its a bit too sunset-y / orange.
+            // make it cooler"): a near-white sun instead of a golden one, the warm ground bounce
+            // and equator taken to neutral-cool, a bluer haze and horizon, neutral cloud light and
+            // a cooler black floor. The sky, fog distances and shade depth are as approved.
+            new MapLook("Kanto",new Color(.46f,.48f,.62f),new Color(.5f,.52f,.56f),new Color(.46f,.44f,.41f),new Color(.82f,.84f,1.1f),40,230,0,false)
+                .Air(new Color(.78f,.84f,.9f),new Color(.46f,.64f,.8f),new Color(.82f,.87f,.9f),new Color(.95f,.96f,.97f),new Color(.68f,.72f,.84f))
+                .Key(new Color(1,.97f,.93f),1f,0,.8f,new Color(.035f,.038f,.058f)),
             new MapLook("BayanPlaza",new Color(.5f,.47f,.64f),new Color(.6f,.5f,.5f),new Color(.58f,.42f,.3f),new Color(.86f,.8f,1.1f),38,210,0,true)
                 .Air(new Color(.74f,.85f,.94f),new Color(.44f,.7f,.88f),new Color(.76f,.87f,.95f),new Color(1,.96f,.9f),new Color(.72f,.7f,.86f))
                 .Key(new Color(1,.9f,.76f),1.08f,52,.76f,new Color(.045f,.03f,.065f)),
@@ -276,10 +295,29 @@ namespace TumbangPreso.Visual
                 .Key(new Color(1,.84f,.64f),1.08f,42,.74f,new Color(.06f,.03f,.065f)),
             new MapLook("Lagoon",new Color(.46f,.52f,.68f),new Color(.52f,.56f,.62f),new Color(.58f,.5f,.38f),new Color(.82f,.86f,1.1f),55,290,4,false)
                 .Air(new Color(.7f,.87f,.94f),new Color(.38f,.7f,.86f),new Color(.74f,.89f,.95f),new Color(.98f,.98f,.95f),new Color(.68f,.74f,.88f))
-                .Key(new Color(1,.94f,.84f),1.1f,52,.72f,new Color(.03f,.035f,.065f))
+                .Key(new Color(1,.94f,.84f),1.1f,52,.72f,new Color(.03f,.035f,.065f)),
+            // ⚠️ THE LAGOON REWORK AT SUNSET (owner, 2026-09-27, on the rebuilt cove wearing the
+            // Lagoon's afternoon: "i think the lighting is too afternoon-y... i want a more sunset
+            // style of vibes"). Its own entry so the shipped Lagoon keeps its afternoon. A LOW
+            // golden key (6 degrees, just over the horizon, owner: "can you also make the sun lower": long shadows, warm rims on every boulder), a golden hue at
+            // about 35 degrees rather than an orange, kept clear of offence orange's 24; SHADE
+            // (the ambient trilight, which in this pipeline IS every shadow's colour) goes violet
+            // and dusky, the bounce off the sand warm; the air a warm peach haze; the sky a dusky
+            // blue zenith down to a peach horizon with the violet kept in the cloud shade, never in
+            // the gradient (the sky rule above). High key still: nothing black, a coloured floor.
+            new MapLook("LagoonCove",new Color(.44f,.42f,.64f),new Color(.66f,.52f,.54f),new Color(.62f,.46f,.34f),new Color(.9f,.8f,1.1f),70,340,4,false)
+                .Air(new Color(.98f,.78f,.64f),new Color(.3f,.46f,.72f),new Color(1,.74f,.54f),new Color(1,.8f,.64f),new Color(.62f,.54f,.74f))
+                .Key(new Color(1,.8f,.56f),1.25f,6,.7f,new Color(.05f,.03f,.06f))
         };
         public MapLook Find(string map)
-        {foreach(var entry in Maps)if(entry.Map==map)return entry;return null;}
+        {
+            foreach(var entry in Maps)if(entry.Map==map)return entry;
+            // The rebuilt Lagoon (its own unregistered scene until it replaces Lagoon.unity,
+            // docs/LAGOON_REWORK_GUIDE.md § 7) has its own sunset entry; a profile asset authored
+            // before that entry existed falls back to the Lagoon's look rather than to none.
+            if(map=="LagoonCove")return Find("Lagoon");
+            return null;
+        }
         private static WorldLookProfile _current;
         public static WorldLookProfile Current
         {

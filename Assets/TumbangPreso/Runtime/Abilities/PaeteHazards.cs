@@ -34,8 +34,7 @@ namespace TumbangPreso.Abilities
             }
             // Aimed at the sky with nothing to catch: the vines take the ground under that point.
             if (float.IsPositiveInfinity(best)) anchor.y = Mathf.Min(anchor.y, feet.y + 0.2f);
-            anchor.x = Mathf.Clamp(anchor.x, -AIController.PlayableHalfX + 0.4f, AIController.PlayableHalfX - 0.4f);
-            anchor.z = Mathf.Clamp(anchor.z, -AIController.PlayableHalfZ + 0.4f, AIController.PlayableHalfZ - 0.4f);
+            anchor = AIController.ClampToPlayable(anchor, 0.4f);
             anchor.y = Mathf.Max(anchor.y, feet.y + 0.05f);
             return anchor;
         }
@@ -47,8 +46,7 @@ namespace TumbangPreso.Abilities
             if (d.sqrMagnitude < 0.04f) { d = forward; d.y = 0f; d = d.normalized * range; }
             if (d.magnitude > range) d = d.normalized * range;
             Vector3 p = feet + d;
-            p.x = Mathf.Clamp(p.x, -AIController.PlayableHalfX + 0.5f, AIController.PlayableHalfX - 0.5f);
-            p.z = Mathf.Clamp(p.z, -AIController.PlayableHalfZ + 0.5f, AIController.PlayableHalfZ - 0.5f);
+            p = AIController.ClampToPlayable(p, 0.5f);
             p.y = Slipper.GroundY(p);
             return p;
         }
@@ -63,8 +61,8 @@ namespace TumbangPreso.Abilities
             Vector3 p = GroundTarget(feet, forward, aimPoint, PaeteRules.PlantThrowRange);
             float x = p.x, z = p.z;
             PaeteRules.PlantSpotOutsideBox(ref x, ref z);
-            p.x = Mathf.Clamp(x, -AIController.PlayableHalfX + 0.5f, AIController.PlayableHalfX - 0.5f);
-            p.z = Mathf.Clamp(z, -AIController.PlayableHalfZ + 0.5f, AIController.PlayableHalfZ - 0.5f);
+            p.x = AIController.ClampPlayableX(x, 0.5f);
+            p.z = AIController.ClampPlayableZ(z, 0.5f);
             p.y = Slipper.GroundY(p);
             return p;
         }
@@ -85,7 +83,8 @@ namespace TumbangPreso.Abilities
         public static Vector3 ClearOfCan(Vector3 spot, Vector3 can, Vector3 from)
         {
             PaeteRules.SentrySpotClearOfCan(spot.x, spot.z, can.x, can.z, from.x, from.z,
-                                            AIController.PlayableHalfX - 0.5f, AIController.PlayableHalfZ - 0.5f, out float x, out float z);
+                                            AIController.PlayableMinX + 0.5f, AIController.PlayableMaxX - 0.5f,
+                                            AIController.PlayableMinZ + 0.5f, AIController.PlayableMaxZ - 0.5f, out float x, out float z);
             var p = new Vector3(x, spot.y, z);
             p.y = Slipper.GroundY(p);
             return p;

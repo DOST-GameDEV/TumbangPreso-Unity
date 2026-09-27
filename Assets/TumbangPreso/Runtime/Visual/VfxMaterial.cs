@@ -83,6 +83,20 @@ namespace TumbangPreso.Visual
             m.EnableKeyword("_ALPHABLEND_ON");
             m.DisableKeyword("_ALPHAPREMULTIPLY_ON");
             m.renderQueue = (int)RenderQueue.Transparent;
+            // ⚠️⚠️ THE TAG, WHICH THE BLEND HALF ABOVE NEVER SET (owner, 2026-09-27: the ambient
+            // occlusion "suddenly flashes off randomly", "we've had flickers before", "could be ability
+            // related"). `Standard` has ONE SubShader and it is tagged `Opaque`; its inspector's Fade
+            // mode rewrites that tag with SetOverrideTag, and nothing runs an inspector in a player.
+            // Unity fills `_CameraDepthNormalsTexture` by redrawing the scene through a replacement
+            // shader keyed on this tag, so every faded hero effect cloned from this template (domes,
+            // bubbles, telegraphs round a player) was drawn SOLID into it. `WorldOutline`'s occlusion
+            // ignores depth-normals pixels nearer than NearFade.FadeStartMetres (1.8 m; LIGHT-3.6's
+            // pillar fix), so an effect round the camera filled the frame with "too near" and the
+            // occlusion vanished for as long as the effect lived. Measured before the fix with an
+            // [AO sample] readback: the frame's mean occlusion jumped from about 0.95 to 0.995 for
+            // 0.5 to 1.5 s with the camera standing still, clustered at the start of rounds.
+            // The same tag also stops these effects growing an ink outline in that texture.
+            m.SetOverrideTag("RenderType", "Transparent");
 
             // ⚠️ FLAT AND SELF-LIT, BECAUSE THE ARENA IS LIT FOR CHARACTERS AND NOT FOR THESE.
             // A frost sheet shaded by the scene's key light goes dark on the shadowed half of

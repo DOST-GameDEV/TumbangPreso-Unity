@@ -1415,8 +1415,7 @@ namespace TumbangPreso.Abilities
 
             if (!ability.HoldToAim) return at;
 
-            at.x = Mathf.Clamp(at.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-            at.z = Mathf.Clamp(at.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            at = AIController.ClampToPlayable(at);
             if (ability.AimsInTheAir)
             {
                 // HERO-10: the height rides in the aim's y. Sent aims keep theirs; the caster's own comes off her camera.

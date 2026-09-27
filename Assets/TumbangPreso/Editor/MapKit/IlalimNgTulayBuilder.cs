@@ -690,7 +690,7 @@ namespace TumbangPreso.EditorTools.MapKit
 
             // ⚠️ THE WALL FACE IS THE PLAYER-REACHABLE EDGE, NOT THE WALL'S CENTRE. A 1.0 m thick
             // wall centred on the pavement edge takes half a metre of pavement away from the
-            // player and the bots both, and `AIController.PlayableHalfX` is read from the CENTRE
+            // player and the bots both, and the playable limits (`AIController.PlayableMinX`) were read from the CENTRE
             // (`MatchInstaller.Start`), so the AI then aims at ground it cannot occupy. Thin, and
             // pushed out by its own half-thickness.
             const float wallThickness = 0.4f;

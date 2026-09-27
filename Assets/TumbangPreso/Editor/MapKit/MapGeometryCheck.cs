@@ -114,8 +114,15 @@ namespace TumbangPreso.EditorTools.MapKit
             "Assets/TumbangPreso/Scenes/Maps/Eskinita.unity",
         };
 
+        // ⚠️ KANTO AND THE LAGOON COVE ARE REPORTED, NOT YET GATED (2026-09-27, registered the day
+        // they joined the map list). Both are built from Blender (a different pipeline from the
+        // gated maps) and neither has been through this check; their first report is the
+        // worklist, and each joins Gated once its findings are fixed, as Bayan Plaza and Eskinita
+        // did. Gating an unreviewed map would block every build on findings nobody has seen.
         private static readonly string[] Informational =
         {
+            "Assets/TumbangPreso/Scenes/Maps/Kanto.unity",
+            "Assets/TumbangPreso/Scenes/Maps/LagoonCove.unity",
         };
 
         public static bool Execute(bool gate)

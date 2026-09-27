@@ -456,8 +456,7 @@ namespace TumbangPreso
             //
             // ⚠️ THE SPAWN MARKS AND THE TAG SAFE ZONE ARE ALL WELL INSIDE THIS, so nothing that
             // was already correct moves by a millimetre.
-            position.x = Mathf.Clamp(position.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-            position.z = Mathf.Clamp(position.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            position = AIController.ClampToPlayable(position);
 
             _cc.enabled = false;      // CharacterController fights direct transform writes
             transform.position = position;
@@ -1279,8 +1278,7 @@ namespace TumbangPreso
         /// </summary>
         private void SetNetworkPose(Vector3 position, float yaw)
         {
-            position.x = Mathf.Clamp(position.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-            position.z = Mathf.Clamp(position.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            position = AIController.ClampToPlayable(position);
 
             bool enabled = _cc != null && _cc.enabled;
             if (enabled) _cc.enabled = false;
@@ -1417,7 +1415,7 @@ namespace TumbangPreso
             // ⚠️⚠️ AND NOBODY LEAVES THE ARENA AT ALL, ROLE OR NO ROLE. The chalk box above is a
             // RULE and applies to the taya only; this is the WALL and applies to everybody. The
             // port had the wall for the tsinelas and not for the people: `Slipper.BounceOffBounds`
-            // has bounced off `PlayableHalfX/Z` since it was written, while a body could walk or
+            // has bounced off the playable walls since it was written, while a body could walk or
             // be launched straight through the same line into empty space.
             //
             // ⚠️ MEASURED, AND IT IS NOT A CORNER CASE. `AiDiagnosticProbe` on 2026-08-23 caught
@@ -1431,8 +1429,13 @@ namespace TumbangPreso
             // ⚠️ HERO STRIKE IS WHERE IT SURFACES BUT IT IS NOT A HERO BUG. Its kits apply far
             // more knockback than Classic's do, so they find the missing wall first. A human
             // shoved off the same edge in Classic has always had the same hole to fall into.
-            x = Mathf.Clamp(x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-            z = Mathf.Clamp(z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            //
+            // ⚠️ PER SIDE SINCE 2026-09-27: each wall is its own limit, so an arena whose sea wall
+            // is farther out than its land wall lets a body walk to the shore without also letting
+            // it through the land side. Symmetric arenas clamp exactly as before
+            // (`AIController.PlayableMinX` has the arithmetic).
+            x = AIController.ClampPlayableX(x);
+            z = AIController.ClampPlayableZ(z);
 
             if (x == p.x && z == p.z) return;
 

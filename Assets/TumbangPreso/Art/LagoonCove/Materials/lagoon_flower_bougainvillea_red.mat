@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: lagoon_flower_bougainvillea_red
+  m_Shader: {fileID: 4800000, guid: 375ab21e8dc0a314fb034ccf3c410c8c, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _PALEON_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 3ee6775c2ecea2e45bd85a43822bf4f2, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Cutoff: 0.5
+    - _Gain: 1
+    - _Glossiness: 0.3
+    - _PaleOn: 1
+    - _VertexTint: 0
+    m_Colors:
+    - _Color: {r: 1, g: 0.42358, b: 0.56109, a: 1}
+    - _Nudge: {r: 0.9, g: 1.08, b: -0.014999986, a: 0.014999986}
+    - _PaleColour: {r: 0.98, g: 0.93, b: 0.7, a: 1}
+    - _PaleRange: {r: 0.7484, g: 0.9331, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

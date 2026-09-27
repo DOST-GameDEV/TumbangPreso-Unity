@@ -183,7 +183,7 @@ namespace TumbangPreso.CameraSystem
         /// <summary>
         /// How far from the playable box the camera may stand, in metres.
         ///
-        /// ⚠️ `AIController.PlayableHalfX/Z` ARE MEASURED OFF THE MAP'S OWN BOUNDS AT LOAD and
+        /// ⚠️ `AIController.PlayableMinX` AND ITS THREE SIBLINGS ARE MEASURED OFF THE MAP'S OWN BOUNDS AT LOAD and
         /// are the same numbers the bots are held to. The margin is what lets a wide shot stand
         /// outside the chalk; past it, both maps are solid.
         /// </summary>
@@ -828,10 +828,11 @@ namespace TumbangPreso.CameraSystem
             // camera allowed to solve for a bearing that puts it outside them spends the shot
             // looking at the inside face of a wall, and on a broadcast that is indistinguishable
             // from the stream having broken.
-            float halfX = AIController.PlayableHalfX + BoundsMargin;
-            float halfZ = AIController.PlayableHalfZ + BoundsMargin;
-            position.x = Mathf.Clamp(position.x, -halfX, halfX);
-            position.z = Mathf.Clamp(position.z, -halfZ, halfZ);
+            //
+            // ⚠️ PER SIDE since 2026-09-27: the margin goes out past each wall on its own side.
+            // A negative inset is the margin outward; on a symmetric arena `Min - m` and
+            // `Max + m` are the old `-(half + m)` and `half + m` to the bit.
+            position = AIController.ClampToPlayable(position, -BoundsMargin);
         }
 
         // -------------------------------------------------------------------
@@ -926,7 +927,7 @@ namespace TumbangPreso.CameraSystem
             // Pulled back a little along Z so the shot is a raked overhead rather than a plan
             // view, which reads as a security camera.
             pose.z -= 5.0f;
-            pose.z = Mathf.Clamp(pose.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            pose.z = AIController.ClampPlayableZ(pose.z);
 
             return pose;
         }

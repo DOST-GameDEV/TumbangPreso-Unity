@@ -691,8 +691,7 @@ namespace TumbangPreso.Abilities
                     // teleport itself is clamped as a last line of defence, but clamping the
                     // ghost is what keeps the destination somewhere worth blinking to.
                     Vector3 flown = transform.position;
-                    flown.x = Mathf.Clamp(flown.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-                    flown.z = Mathf.Clamp(flown.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+                    flown = AIController.ClampToPlayable(flown);
                     transform.position = flown;
                 }
                 else

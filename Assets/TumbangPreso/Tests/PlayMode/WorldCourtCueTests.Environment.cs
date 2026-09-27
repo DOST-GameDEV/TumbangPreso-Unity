@@ -14,7 +14,7 @@ namespace TumbangPreso.PlayTests
     {
         [UnityTest] public IEnumerator ArchitectureIsCameraScopedAndFiestaStaysOutsideTheCourt()
         {
-            foreach(string map in new[]{SceneFlow.BayanPlaza,SceneFlow.Eskinita,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong,SceneFlow.Lagoon})
+            foreach(string map in new[]{SceneFlow.BayanPlaza,SceneFlow.Eskinita,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong,SceneFlow.LagoonCove,SceneFlow.Kanto})
             {
                 yield return Load(map);var look=WorldLookPresentation.Current;
                 var witness=StageCamera(new Vector3(5,look.Floor+3.7f,-8),new Vector3(0,look.Floor+.65f,0));

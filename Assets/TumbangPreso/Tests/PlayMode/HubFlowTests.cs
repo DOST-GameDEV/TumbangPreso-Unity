@@ -583,7 +583,7 @@ namespace TumbangPreso.PlayTests
             TumpHub.Current.Push<HubHost>();
             var preview = TumpHub.Current.Host.Preview;
             Assert.IsNotNull(preview);
-            foreach (string map in new[] { SceneFlow.IlalimNgTulay, SceneFlow.Lagoon })
+            foreach (string map in new[] { SceneFlow.IlalimNgTulay, SceneFlow.LagoonCove })
             {
                 TumpHub.Current.Host.SelectMap(map);
                 float until = Time.realtimeSinceStartup + 40;

@@ -530,7 +530,10 @@ namespace TumbangPreso.Net
         // old, duplicate and completed effects cannot recreate a seance field.
         // 86: timed skill and familiar recovery age by the host round clock,
         // so pauses, introductions and slow motion do not consume their lifetime.
-        public const int ProtocolVersion = 86;
+        // 87: the map list changed (2026-09-27): index 4 is the reworked Lagoon Court (LagoonCove),
+        // the first Lagoon is vaulted, and Kanto is index 5. Maps travel as indices into
+        // SceneFlow.Maps (MatchRpc SyncMap, queue votes), so an older peer would read a different map.
+        public const int ProtocolVersion = 87;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

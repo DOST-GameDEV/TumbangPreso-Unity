@@ -13,7 +13,7 @@ namespace TumbangPreso.PlayTests
 {
     public sealed partial class WorldCourtCueTests
     {
-        [UnityTest] public IEnumerator LagoonDeckRefinementKeepsSupportAndRestoresItsOriginalLook()
+        [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7."),UnityTest] public IEnumerator LagoonDeckRefinementKeepsSupportAndRestoresItsOriginalLook()
         {
             yield return Load(SceneFlow.Lagoon);
             var finish=Object.FindAnyObjectByType<LagoonDeckPresentation>();Assert.IsNotNull(finish);Assert.AreEqual(47,finish.BoardRenderers);
@@ -43,7 +43,7 @@ namespace TumbangPreso.PlayTests
             }
             finally{WorldCueProfile.Current.LagoonDeckDetail=1;Time.timeScale=1;rig.enabled=true;}
         }
-        [UnityTest] public IEnumerator LagoonDeckDistinguishesMaterialDepthAndNormalEdges()
+        [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7."),UnityTest] public IEnumerator LagoonDeckDistinguishesMaterialDepthAndNormalEdges()
         {
             yield return Load(SceneFlow.Lagoon);
             var actor=GameServices.Round.PlayerAt(1);var camera=Camera.main;var rig=camera.GetComponent<CameraRig>();

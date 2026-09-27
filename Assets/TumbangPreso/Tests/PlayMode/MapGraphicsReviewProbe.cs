@@ -86,6 +86,7 @@ namespace TumbangPreso.PlayTests
             finally{File.WriteAllText(Path.Combine(Output,"world-render.csv"),report.ToString());}
         }
 
+        [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator LagoonCoastFinishReview()
         {
@@ -146,6 +147,7 @@ namespace TumbangPreso.PlayTests
             finally{change(true);Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=clockEnabled;}
         }
 
+        [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator LagoonBoatFinishReview()
         {
@@ -187,6 +189,7 @@ namespace TumbangPreso.PlayTests
             finally{Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=clockEnabled;}
         }
 
+        [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator LagoonWaterFinishReview()
         {
@@ -247,6 +250,7 @@ namespace TumbangPreso.PlayTests
             finally{change(true);Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=clockEnabled;}
         }
 
+        [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator LagoonMetalFinishReview()
         {
@@ -286,6 +290,7 @@ namespace TumbangPreso.PlayTests
             finally{Time.timeScale=1;Camera.onPreCull-=pin;}
         }
 
+        [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator LagoonVerandaFinishReview()
         {
@@ -325,6 +330,7 @@ namespace TumbangPreso.PlayTests
             finally{Time.timeScale=1;Camera.onPreCull-=pin;}
         }
 
+        [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator LagoonGableFinishReview()
         {
@@ -378,6 +384,7 @@ namespace TumbangPreso.PlayTests
             finally{Time.timeScale=1;Camera.onPreCull-=pin;}
         }
 
+        [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator LagoonArtBaselineReview()
         {

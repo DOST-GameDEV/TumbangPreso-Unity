@@ -305,6 +305,13 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>Difference as a fraction of the larger of the two, so it is symmetric.</summary>
+        /// <summary>Metres past the nearer X (or Z) wall, negative while inside. Per side.</summary>
+        private static float PastX(float x)
+            => Mathf.Max(AIController.PlayableMinX - x, x - AIController.PlayableMaxX);
+
+        private static float PastZ(float z)
+            => Mathf.Max(AIController.PlayableMinZ - z, z - AIController.PlayableMaxZ);
+
         private static float Spread(int a, int b)
         {
             int high = Mathf.Max(a, b);
@@ -588,10 +595,15 @@ namespace TumbangPreso.PlayTests
             const int frameBudget = 64000;
             int frames = 0;
             float guard = 0.0f;
-            float strayX = 0.0f;
-            float strayZ = 0.0f;
-            float bodyX = 0.0f;
-            float bodyZ = 0.0f;
+            // ⚠️ METRES PAST THE NEAREST WALL ON EACH AXIS, NEGATIVE WHILE INSIDE, since the walls
+            // went per side (2026-09-27). This was the largest |x| against a half width, which
+            // cannot describe an arena whose two walls on an axis are at different distances.
+            float strayX = float.NegativeInfinity;
+            float strayZ = float.NegativeInfinity;
+            float bodyX = float.NegativeInfinity;
+            float bodyZ = float.NegativeInfinity;
+            // The furthest |x| and |z| reached, kept so the report line stays comparable with older runs.
+            float reachX = 0.0f, reachZ = 0.0f, strayReachX = 0.0f, strayReachZ = 0.0f;
             var escapes = new List<string>();
 
             while (match.MatchInProgress && frames < frameBudget)
@@ -608,8 +620,10 @@ namespace TumbangPreso.PlayTests
                                                      new Vector3(lastAt[i].x, 0.0f, lastAt[i].z));
                     lastAt[i] = now;
 
-                    bodyX = Mathf.Max(bodyX, Mathf.Abs(now.x));
-                    bodyZ = Mathf.Max(bodyZ, Mathf.Abs(now.z));
+                    bodyX = Mathf.Max(bodyX, PastX(now.x));
+                    bodyZ = Mathf.Max(bodyZ, PastZ(now.z));
+                    reachX = Mathf.Max(reachX, Mathf.Abs(now.x));
+                    reachZ = Mathf.Max(reachZ, Mathf.Abs(now.z));
                 }
 
                 foreach (var slipper in Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
@@ -642,11 +656,12 @@ namespace TumbangPreso.PlayTests
                     // game expects somebody to walk to.
                     if (slipper.State == SlipperState.Held) continue;
 
-                    strayX = Mathf.Max(strayX, Mathf.Abs(slipper.transform.position.x));
-                    strayZ = Mathf.Max(strayZ, Mathf.Abs(slipper.transform.position.z));
+                    strayX = Mathf.Max(strayX, PastX(slipper.transform.position.x));
+                    strayZ = Mathf.Max(strayZ, PastZ(slipper.transform.position.z));
+                    strayReachX = Mathf.Max(strayReachX, Mathf.Abs(slipper.transform.position.x));
+                    strayReachZ = Mathf.Max(strayReachZ, Mathf.Abs(slipper.transform.position.z));
 
-                    bool outside = Mathf.Abs(slipper.transform.position.x) > AIController.PlayableHalfX + 0.5f
-                                || Mathf.Abs(slipper.transform.position.z) > AIController.PlayableHalfZ + 0.5f;
+                    bool outside = AIController.IsOutsidePlayable(slipper.transform.position, 0.5f);
 
                     if (outside && escapes.Count < 12)
                         escapes.Add($"slipper own={slipper.OwnerSlot} at {slipper.transform.position} " +
@@ -755,9 +770,13 @@ namespace TumbangPreso.PlayTests
                                $"model {(visual != null && visual.Model != null ? visual.Model.name : "-")}");
             }
 
-            log.AppendLine($"furthest a body reached: x {bodyX:F2} of {AIController.PlayableHalfX:F1}  " +
-                           $"z {bodyZ:F2} of {AIController.PlayableHalfZ:F1}");
-            log.AppendLine($"furthest a free slipper reached: x {strayX:F2}  z {strayZ:F2}");
+            log.AppendLine($"furthest a body reached: x {reachX:F2} of {AIController.PlayableNearestX:F1}  " +
+                           $"z {reachZ:F2} of {AIController.PlayableNearestZ:F1}");
+            log.AppendLine($"furthest a free slipper reached: x {strayReachX:F2}  z {strayReachZ:F2}");
+            log.AppendLine($"walls: x [{AIController.PlayableMinX:F1}, {AIController.PlayableMaxX:F1}]  " +
+                           $"z [{AIController.PlayableMinZ:F1}, {AIController.PlayableMaxZ:F1}]");
+            log.AppendLine($"closest a body came to a wall (m past it, negative inside): x {bodyX:F2}  z {bodyZ:F2}");
+            log.AppendLine($"closest a free slipper came to a wall (m past it): x {strayX:F2}  z {strayZ:F2}");
             foreach (string escape in escapes) log.AppendLine("  escaped: " + escape);
             match.Scored -= traceIdle;
             log.AppendLine($"Unretrieved-slipper penalty trace ({idleTrace.Count} lines, capped at 400):");
@@ -819,20 +838,20 @@ namespace TumbangPreso.PlayTests
             //
             // ⚠️ HALF A METRE OF SLACK. The clamp lands a body ON the line and a capsule's own
             // radius can read fractionally past it for a frame.
-            Assert.LessOrEqual(bodyX, AIController.PlayableHalfX + 0.1f,
-                $"{mode} on {map}: a body reached x {bodyX:F2} against a half width of " +
-                $"{AIController.PlayableHalfX:F1}, so somebody left the arena.");
+            Assert.LessOrEqual(bodyX, 0.1f,
+                $"{mode} on {map}: a body went {bodyX:F2} m past an X wall (walls at " +
+                $"{AIController.PlayableMinX:F1} and {AIController.PlayableMaxX:F1}), so somebody left the arena.");
 
-            Assert.LessOrEqual(bodyZ, AIController.PlayableHalfZ + 0.1f,
-                $"{mode} on {map}: a body reached z {bodyZ:F2} against a half depth of " +
-                $"{AIController.PlayableHalfZ:F1}, so somebody left the arena.");
+            Assert.LessOrEqual(bodyZ, 0.1f,
+                $"{mode} on {map}: a body went {bodyZ:F2} m past a Z wall (walls at " +
+                $"{AIController.PlayableMinZ:F1} and {AIController.PlayableMaxZ:F1}), so somebody left the arena.");
 
-            Assert.LessOrEqual(strayX, AIController.PlayableHalfX + 0.5f,
-                $"{mode} on {map}: a free slipper reached x {strayX:F2}, so a piece of ammunition " +
+            Assert.LessOrEqual(strayX, 0.5f,
+                $"{mode} on {map}: a free slipper went {strayX:F2} m past an X wall, so a piece of ammunition " +
                 "is somewhere no attacker is allowed to walk to.");
 
-            Assert.LessOrEqual(strayZ, AIController.PlayableHalfZ + 0.5f,
-                $"{mode} on {map}: a free slipper reached z {strayZ:F2}, so a piece of ammunition " +
+            Assert.LessOrEqual(strayZ, 0.5f,
+                $"{mode} on {map}: a free slipper went {strayZ:F2} m past a Z wall, so a piece of ammunition " +
                 "is somewhere no attacker is allowed to walk to.");
 
             // ---- THE ATTACKING LOOP ----------------------------------------------------

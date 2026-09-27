@@ -206,6 +206,16 @@ namespace TumbangPreso.Core
         /// </summary>
         public static void SentrySpotClearOfCan(float spotX, float spotZ, float canX, float canZ, float fromX, float fromZ,
                                                 float halfX, float halfZ, out float x, out float z)
+            => SentrySpotClearOfCan(spotX, spotZ, canX, canZ, fromX, fromZ, -halfX, halfX, -halfZ, halfZ, out x, out z);
+
+        /// <summary>
+        /// ⚠️ THE SAME PUSH INSIDE A BOX GIVEN SIDE BY SIDE (2026-09-27). The arena clamp became per side so an
+        /// asymmetric map (Lagoon Cove, sea wall farther out than the land wall) keeps its far side, and the guardian
+        /// has to be kept inside the same four walls the bodies are. The half-size overload above passes
+        /// -half..half, which clamps exactly as it always did.
+        /// </summary>
+        public static void SentrySpotClearOfCan(float spotX, float spotZ, float canX, float canZ, float fromX, float fromZ,
+                                                float minX, float maxX, float minZ, float maxZ, out float x, out float z)
         {
             x = spotX; z = spotZ;
             float dx = spotX - canX, dz = spotZ - canZ;
@@ -224,8 +234,8 @@ namespace TumbangPreso.Core
             float bestX = spotX, bestZ = spotZ, bestGap = -1f;
             for (int i = 0; i < 4; i++)
             {
-                float cx = Clamp(canX + tryX[i] * SentryCanClearance, -halfX, halfX);
-                float cz = Clamp(canZ + tryZ[i] * SentryCanClearance, -halfZ, halfZ);
+                float cx = Clamp(canX + tryX[i] * SentryCanClearance, minX, maxX);
+                float cz = Clamp(canZ + tryZ[i] * SentryCanClearance, minZ, maxZ);
                 float gx = cx - canX, gz = cz - canZ;
                 float gap = (float)System.Math.Sqrt(gx * gx + gz * gz);
                 if (gap >= SentryCanClearance - 1e-3f) { x = cx; z = cz; return; }

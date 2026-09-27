@@ -877,8 +877,7 @@ namespace TumbangPreso
             if (!NetAuthority.ShouldResolve() || State != SlipperState.Loose) return;
             offset.y = 0.0f;
             var at = transform.position + offset;
-            at.x = Mathf.Clamp(at.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
-            at.z = Mathf.Clamp(at.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+            at = AIController.ClampToPlayable(at);
             transform.position = at;
             Land(false, FindGroundY(at, Balance.SlipperRestHeight + 2.0f));
         }
@@ -940,8 +939,8 @@ namespace TumbangPreso
                 // can only ever refuse a position the host would also have refused. A tsinelas
                 // that came to rest outside the wall is an attacker deleted from the round, which
                 // is what the note on the resting clamp already says at length.
-                position.x = ClampToPlayableAxis(position.x, AIController.PlayableHalfX);
-                position.z = ClampToPlayableAxis(position.z, AIController.PlayableHalfZ);
+                position.x = ClampToPlayableAxis(position.x, AIController.PlayableMinX, AIController.PlayableMaxX);
+                position.z = ClampToPlayableAxis(position.z, AIController.PlayableMinZ, AIController.PlayableMaxZ);
 
                 // ⚠️ THE LID IS CLAMPED ON THE REPLICA TOO, and only downward: a client must not
                 // draw a tsinelas above a ceiling the host bounced it off, but it must not push
@@ -1046,8 +1045,8 @@ namespace TumbangPreso
         {
             if (State == SlipperState.Held) return;
 
-            position.x = ClampToPlayableAxis(position.x, AIController.PlayableHalfX);
-            position.z = ClampToPlayableAxis(position.z, AIController.PlayableHalfZ);
+            position.x = ClampToPlayableAxis(position.x, AIController.PlayableMinX, AIController.PlayableMaxX);
+            position.z = ClampToPlayableAxis(position.z, AIController.PlayableMinZ, AIController.PlayableMaxZ);
 
             float ceiling = AIController.PlayableCeilingY - Balance.SlipperHitRadius;
             if (position.y > ceiling) position.y = ceiling;
@@ -1649,17 +1648,25 @@ namespace TumbangPreso
         /// ⚠️ IT IS SHARED BY THE BOUNCE, THE RESTING PLACE AND THE REPLICA so the three cannot
         /// drift. All three had the same two lines written out separately, which is how the
         /// replica came to be missing them entirely.
+        ///
+        /// ⚠️ PER SIDE SINCE 2026-09-27 (`AIController.PlayableMinX`'s note has why). The margin
+        /// comes in from each wall: `min + r` and `max - r`. On a symmetric arena that is the old
+        /// `-(half - r)` and `half - r` to the bit, and `hi &gt; lo` is the old `limit &gt; 0`,
+        /// the guard that leaves a degenerate arena narrower than a tsinelas unclamped.
         /// </summary>
-        private static float ClampToPlayableAxis(float value, float half)
+        private static float ClampToPlayableAxis(float value, float min, float max)
         {
-            float limit = half - Balance.SlipperHitRadius;
-            return limit > 0.0f ? Mathf.Clamp(value, -limit, limit) : value;
+            float lo = min + Balance.SlipperHitRadius;
+            float hi = max - Balance.SlipperHitRadius;
+            return hi > lo ? Mathf.Clamp(value, lo, hi) : value;
         }
 
         private void BounceOffBounds()
         {
-            float limitX = AIController.PlayableHalfX - Balance.SlipperHitRadius;
-            float limitZ = AIController.PlayableHalfZ - Balance.SlipperHitRadius;
+            float loX = AIController.PlayableMinX + Balance.SlipperHitRadius;
+            float hiX = AIController.PlayableMaxX - Balance.SlipperHitRadius;
+            float loZ = AIController.PlayableMinZ + Balance.SlipperHitRadius;
+            float hiZ = AIController.PlayableMaxZ - Balance.SlipperHitRadius;
 
             Vector3 p = transform.position;
             bool bounced = false;
@@ -1668,18 +1675,43 @@ namespace TumbangPreso
                 ? Balance.PektusBankRestitution
                 : Balance.BounceRestitution;
 
-            if (limitX > 0.0f && Mathf.Abs(p.x) > limitX)
+            // ⚠️⚠️ EACH WALL TURNS THE SHOE BACK TOWARD THE MIDDLE, WHICHEVER SIDE IT IS ON.
+            // The symmetric version read the side off `Mathf.Sign(p.x)`; with per-side walls the
+            // side is WHICH LIMIT WAS CROSSED, so the far wall sends velocity negative and the near
+            // wall sends it positive. Past the high wall is `p > hi`, pinned to `hi` and sent
+            // back with `-|v|`; past the low wall is `p < lo`, pinned to `lo` with `+|v|`. On a
+            // symmetric arena these are the old branches exactly (`Sign(p) * limit` is `hi` or
+            // `-limit == lo`, and `-Sign(p) * |v|` is `-|v|` or `+|v|`).
+            if (hiX > loX)
             {
-                p.x = Mathf.Sign(p.x) * limitX;
-                _velocity.x = -Mathf.Sign(p.x) * Mathf.Abs(_velocity.x) * restitution;
-                bounced = true;
+                if (p.x > hiX)
+                {
+                    p.x = hiX;
+                    _velocity.x = -Mathf.Abs(_velocity.x) * restitution;
+                    bounced = true;
+                }
+                else if (p.x < loX)
+                {
+                    p.x = loX;
+                    _velocity.x = Mathf.Abs(_velocity.x) * restitution;
+                    bounced = true;
+                }
             }
 
-            if (limitZ > 0.0f && Mathf.Abs(p.z) > limitZ)
+            if (hiZ > loZ)
             {
-                p.z = Mathf.Sign(p.z) * limitZ;
-                _velocity.z = -Mathf.Sign(p.z) * Mathf.Abs(_velocity.z) * restitution;
-                bounced = true;
+                if (p.z > hiZ)
+                {
+                    p.z = hiZ;
+                    _velocity.z = -Mathf.Abs(_velocity.z) * restitution;
+                    bounced = true;
+                }
+                else if (p.z < loZ)
+                {
+                    p.z = loZ;
+                    _velocity.z = Mathf.Abs(_velocity.z) * restitution;
+                    bounced = true;
+                }
             }
 
             // ⚠️⚠️ AND THE SKY IS A WALL TOO, WHICH IT WAS NOT UNTIL 2026-08-29. 🧑: *"make sure
@@ -1969,12 +2001,10 @@ namespace TumbangPreso
             // from the round exactly as the note above describes.
             //
             // ⚠️ THE SAME LIMITS THE BOUNCE USES, so a slipper cannot come to rest anywhere a
-            // flight would have been turned back from.
-            float restLimitX = AIController.PlayableHalfX - Balance.SlipperHitRadius;
-            float restLimitZ = AIController.PlayableHalfZ - Balance.SlipperHitRadius;
-
-            if (restLimitX > 0.0f) p.x = Mathf.Clamp(p.x, -restLimitX, restLimitX);
-            if (restLimitZ > 0.0f) p.z = Mathf.Clamp(p.z, -restLimitZ, restLimitZ);
+            // flight would have been turned back from. Per side since 2026-09-27, through the
+            // one helper the bounce's margin and the replica share.
+            p.x = ClampToPlayableAxis(p.x, AIController.PlayableMinX, AIController.PlayableMaxX);
+            p.z = ClampToPlayableAxis(p.z, AIController.PlayableMinZ, AIController.PlayableMaxZ);
 
             transform.position = new Vector3(p.x, rest, p.z);
 

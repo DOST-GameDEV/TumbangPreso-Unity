@@ -142,6 +142,29 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(x, x2); Assert.Equal(z, z2);
         }
 
+        /// <summary>
+        /// ⚠️ THE ARENA CLAMP IS PER SIDE SINCE 2026-09-27 (an asymmetric map keeps its far side). The half-size
+        /// overload must stay exactly the -half..half case of the per-side one, and the per-side one must keep the
+        /// guardian inside walls that are not mirror images of each other.
+        /// </summary>
+        [Fact]
+        public void TheGuardianStaysInsideAnAsymmetricArenaAndTheHalfOverloadIsTheSymmetricCase()
+        {
+            for (int a = 0; a < 360; a += 30)
+            {
+                float sx = 0.5f * (float)Math.Sin(a * Math.PI / 180), sz = 0.5f * (float)Math.Cos(a * Math.PI / 180);
+                PaeteRules.SentrySpotClearOfCan(6.0f + sx, 6.0f + sz, 6.0f, 6.0f, 0f, 0f, Half, Half, out float hx, out float hz);
+                PaeteRules.SentrySpotClearOfCan(6.0f + sx, 6.0f + sz, 6.0f, 6.0f, 0f, 0f, -Half, Half, -Half, Half, out float px, out float pz);
+                Assert.Equal(hx, px); Assert.Equal(hz, pz);
+            }
+
+            // Land wall near (z = -3), sea wall far (z = +12), and the can knocked against the land wall.
+            const float minZ = -3.0f, maxZ = 12.0f;
+            PaeteRules.SentrySpotClearOfCan(0f, -2.9f, 0f, -2.5f, 0f, 5f, -Half, Half, minZ, maxZ, out float x, out float z);
+            Assert.True(Gap(x, z, 0f, -2.5f) >= PaeteRules.SentryCanClearance - 1e-3f, $"({x}, {z})");
+            Assert.InRange(x, -Half, Half); Assert.InRange(z, minZ, maxZ);
+        }
+
         [Fact]
         public void AHeldBodyIsPressedIntoTheRootsAndClearOfTheCan()
         {

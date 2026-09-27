@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: lagoon_cove_water
+  m_Shader: {fileID: 4800000, guid: 697b5856e54eee542b337609fdca8457, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _CausticFade: 3.2
+    - _CausticScale: 0.55
+    - _CausticSpeed: 0.35
+    - _CausticStrength: 0.6
+    - _CausticWidth: 0.07
+    - _ClarityDepth: 8
+    - _DeepAlpha: 0.9
+    - _DeepDepth: 3.6
+    - _FoamLines: 3
+    - _FoamSpeed: 0.7
+    - _FoamWidth: 0.55
+    - _FresnelPower: 4
+    - _Glimmer: 0.7
+    - _GlintSize: 0.998
+    - _GlintStrength: 1.4
+    - _MidDepth: 0.9
+    - _Reflection: 0.4
+    - _RippleScale: 0.35
+    - _RippleStrength: 0.5
+    - _ShallowAlpha: 0.42
+    - _SunPath: 0.6
+    - _WaveHeight: 0.1
+    - _WaveLength: 12
+    - _WaveSpeed: 0.6
+    m_Colors:
+    - _CausticColor: {r: 1, g: 1, b: 0.94, a: 1}
+    - _DeepColor: {r: 0.02, g: 0.21999997, b: 0.32999998, a: 1}
+    - _FoamColor: {r: 0.96999997, g: 0.98999995, b: 0.96, a: 1}
+    - _MidColor: {r: 0.03, g: 0.5, b: 0.62, a: 1}
+    - _ShallowColor: {r: 0.14999998, g: 0.8, b: 0.8, a: 1}
+    - _SkyColor: {r: 0.62, g: 0.6, b: 0.82, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

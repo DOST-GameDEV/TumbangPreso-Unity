@@ -255,8 +255,7 @@ namespace TumbangPreso.PlayTests
                 {
                     if (seat == null) continue;
 
-                    bool away = Mathf.Abs(seat.transform.position.x) > AIController.PlayableHalfX + 0.5f
-                             || Mathf.Abs(seat.transform.position.z) > AIController.PlayableHalfZ + 0.5f;
+                    bool away = AIController.IsOutsidePlayable(seat.transform.position, 0.5f);
 
                     if (away && strayed.Add(seat))
                         log.AppendLine($"!! t={elapsed:F1} seat {seat.PlayerSlot} LEFT THE ARENA at " +
@@ -277,8 +276,7 @@ namespace TumbangPreso.PlayTests
                     // First moment a slipper leaves the playable rectangle, with the state and
                     // velocity that took it there. Out of bounds is unrecoverable for the owner,
                     // so naming the frame it happens on names the verb responsible.
-                    bool outside = Mathf.Abs(slipper.transform.position.x) > AIController.PlayableHalfX + 0.5f
-                                || Mathf.Abs(slipper.transform.position.z) > AIController.PlayableHalfZ + 0.5f;
+                    bool outside = AIController.IsOutsidePlayable(slipper.transform.position, 0.5f);
                     if (outside && escaped.Add(slipper))
                     {
                         log.AppendLine($"!! t={elapsed:F1} slipper own={slipper.OwnerSlot} LEFT THE ARENA at " +
@@ -466,12 +464,12 @@ namespace TumbangPreso.PlayTests
             {
                 if (seat == null) continue;
 
-                Assert.LessOrEqual(Mathf.Abs(seat.transform.position.x),
-                    AIController.PlayableHalfX + 0.1f,
-                    $"{mode}: seat {seat.PlayerSlot} finished outside the arena on X.");
-                Assert.LessOrEqual(Mathf.Abs(seat.transform.position.z),
-                    AIController.PlayableHalfZ + 0.1f,
-                    $"{mode}: seat {seat.PlayerSlot} finished outside the arena on Z.");
+                // Per side since 2026-09-27: each wall in its own place, 0.1 m of slack.
+                Vector3 at = seat.transform.position;
+                Assert.IsTrue(at.x >= AIController.PlayableMinX - 0.1f && at.x <= AIController.PlayableMaxX + 0.1f,
+                    $"{mode}: seat {seat.PlayerSlot} finished outside the arena on X at {at.x:F2}.");
+                Assert.IsTrue(at.z >= AIController.PlayableMinZ - 0.1f && at.z <= AIController.PlayableMaxZ + 0.1f,
+                    $"{mode}: seat {seat.PlayerSlot} finished outside the arena on Z at {at.z:F2}.");
             }
 
             // ⚠️ TWICE THE TOURNAMENT GRACE PERIOD, NOT THE GRACE PERIOD ITSELF. A bot that is

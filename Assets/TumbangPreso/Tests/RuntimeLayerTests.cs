@@ -244,7 +244,7 @@ namespace TumbangPreso.Tests
 
             float ring = Balance.ConfinementRadius + throwStandoff + capsuleRadius;
 
-            Assert.LessOrEqual(ring, AIController.PlayableHalfX,
+            Assert.LessOrEqual(ring, AIController.PlayableNearestX,
                 "the standoff ring lands inside a wall: bots will jam against it trying to " +
                 "reach a goal they can never stand on, and it reads as broken pathfinding");
         }

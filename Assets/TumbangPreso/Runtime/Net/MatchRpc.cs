@@ -529,8 +529,10 @@ namespace TumbangPreso.Net
             if (unit == null || !Finite(position) || !Finite(yaw) || !Finite(velocity)) return false;
             if (unit.IsEdgeRecovering) return false;
 
-            if (Mathf.Abs(position.x) > AIController.PlayableHalfX + 1.0f ||
-                Mathf.Abs(position.z) > AIController.PlayableHalfZ + 1.0f ||
+            // ⚠️ A METRE PAST ANY WALL, PER SIDE since 2026-09-27: a client standing on Lagoon
+            // Cove's shore, past the land wall's distance but inside the sea wall, is legal.
+            // `IsOutsidePlayable` is the old `Abs(x) > half + 1` to the bit on a symmetric arena.
+            if (AIController.IsOutsidePlayable(position, 1.0f) ||
                 position.y < -5.0f || position.y > 20.0f)
                 return false;
 

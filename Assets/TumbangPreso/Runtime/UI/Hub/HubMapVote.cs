@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI.Hub
 {
     /// <summary>
-    /// Five real courts, one vote per playing seat. Character lock-in has already finished.
+    /// Every registered court (six since Kanto and the Lagoon Cove joined, 2026-09-27), one vote per playing seat. Character lock-in has already finished.
     /// The map image and name are the target; the four portraits show the actual shared vote.
     /// No confirm button or local winner calculation: the host owns the decision and arena load.
     /// </summary>
@@ -37,6 +37,13 @@ namespace TumbangPreso.UI.Hub
             int count = SceneFlow.MapRegistry.Length;
             _cards = new HubButton[count]; _counts = new Text[count]; _names = new Text[count]; _faces = new Image[count, Balance.PlayerCount];
             var row = HubKit.Place(HubKit.Rect(Root, "MapChoices"), HubKit.Centre, new Vector2(0, -15), new Vector2(count * 340 - 24, 480));
+            // ⚠️ THE ROW FITS THE NARROWEST SCREEN, WHATEVER THE COURT COUNT (2026-09-27: a sixth
+            // court made the row 2016 units wide and pushed the first card 24 units off a 960 px
+            // screen, MatchArrivalFlowTests). The canvas is at least 1920 units wide; the row keeps
+            // RowRoom of it and scales down as a whole, so every card keeps its own layout.
+            const float RowRoom = 1800f;
+            float rowWidth = count * 340 - 24;
+            if (rowWidth > RowRoom) row.localScale = Vector3.one * (RowRoom / rowWidth);
             for (int i = 0; i < count; i++)
             {
                 int index = i;

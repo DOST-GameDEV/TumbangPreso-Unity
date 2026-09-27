@@ -1,0 +1,5759 @@
+{
+ "note": "Written by tools/author_kanto_city.py. Positions are UNITY axes: (x, y, z) = (-bx, bz, -by), glTFast's conversion; yaw is degrees about Unity Y.",
+ "gameplay": {
+  "box": 7.0,
+  "throw": 8.0,
+  "spawn": 9.0,
+  "half": 13.0,
+  "walk": 0.12
+ },
+ "materials": [
+  {
+   "name": "stone_blocks",
+   "texture": "stone_blocks",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "brick",
+   "texture": "brick",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "stone",
+   "texture": "stone",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "stone_shade",
+   "texture": "stone",
+   "tint": [
+    0.82,
+    0.78,
+    0.7
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "trim",
+   "texture": "paint",
+   "tint": [
+    0.4144,
+    0.6091,
+    0.5785
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "glass",
+   "texture": "glass",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": true
+  },
+  {
+   "name": "frame",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "roof",
+   "texture": "roof",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.35,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "metal",
+   "texture": "metal",
+   "tint": [
+    0.6828,
+    0.7163,
+    0.7163
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "awning_a",
+   "texture": "paint",
+   "tint": [
+    0.9704,
+    0.4855,
+    0.4587
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "awning_b",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    1.0,
+    0.9816
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "awning_c",
+   "texture": "paint",
+   "tint": [
+    0.5227,
+    0.7782,
+    0.6285
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "tank",
+   "texture": "paint",
+   "tint": [
+    0.7163,
+    0.8613,
+    0.8347
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    0.9704,
+    0.5459
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "wood",
+   "texture": "wood",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plant",
+   "texture": "paint",
+   "tint": [
+    0.8071,
+    0.9474,
+    0.5227
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "leaf_light",
+   "texture": "leaf",
+   "tint": [
+    0.6285,
+    0.8869,
+    0.2784
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "leaf_dark",
+   "texture": "leaf",
+   "tint": [
+    0.3815,
+    0.6563,
+    0.2515
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "leaf_core",
+   "texture": "",
+   "tint": [
+    0.2784,
+    0.4812,
+    0.2031
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "soil",
+   "texture": "",
+   "tint": [
+    0.4347,
+    0.3347,
+    0.2562
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "white",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "ground",
+   "texture": "",
+   "tint": [
+    0.6041,
+    0.5958,
+    0.6205
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plaster_cream",
+   "texture": "plaster",
+   "tint": [
+    1.0,
+    1.0,
+    0.8869
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plaster_mint",
+   "texture": "plaster",
+   "tint": [
+    0.8071,
+    0.959,
+    0.8869
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plaster_butter",
+   "texture": "plaster",
+   "tint": [
+    1.0,
+    0.9816,
+    0.7324
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plaster_rose",
+   "texture": "plaster",
+   "tint": [
+    1.0,
+    0.8279,
+    0.8279
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plaster_sage",
+   "texture": "plaster",
+   "tint": [
+    0.8481,
+    0.9238,
+    0.7928
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plaster_sky",
+   "texture": "plaster",
+   "tint": [
+    0.8279,
+    0.9357,
+    0.9704
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "mustard",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    0.8613,
+    0.4723
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "concrete",
+   "texture": "paint",
+   "tint": [
+    0.9357,
+    0.9238,
+    0.8994
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "tin_teal",
+   "texture": "paint",
+   "tint": [
+    0.5679,
+    0.7928,
+    0.7782
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "tin_red",
+   "texture": "paint",
+   "tint": [
+    0.8742,
+    0.5459,
+    0.4855
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "railing",
+   "texture": "metal",
+   "tint": [
+    0.4445,
+    0.5889,
+    0.5459
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "asphalt",
+   "texture": "asphalt",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.4,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "paving",
+   "texture": "paving",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "court",
+   "texture": "court",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "grass",
+   "texture": "grass",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "kerb",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    0.9982,
+    0.9647
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "road_paint",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "lane_yellow",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    0.9704,
+    0.5227
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "trunk",
+   "texture": "bark",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "pole",
+   "texture": "metal",
+   "tint": [
+    0.5889,
+    0.6091,
+    0.5991
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "timber_pole",
+   "texture": "timber",
+   "tint": [
+    0.7324,
+    0.638,
+    0.5459
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "wire",
+   "texture": "",
+   "tint": [
+    0.3347,
+    0.3347,
+    0.3511
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "signal_red",
+   "texture": "",
+   "tint": [
+    0.977,
+    0.4812,
+    0.4347
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": true,
+   "glossy": false
+  },
+  {
+   "name": "signal_amber",
+   "texture": "",
+   "tint": [
+    0.9909,
+    0.9238,
+    0.5025
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": true,
+   "glossy": false
+  },
+  {
+   "name": "signal_green",
+   "texture": "",
+   "tint": [
+    0.5785,
+    0.9288,
+    0.6741
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": true,
+   "glossy": false
+  },
+  {
+   "name": "bin_green",
+   "texture": "metal",
+   "tint": [
+    0.5679,
+    0.7928,
+    0.6653
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "lamp_glass",
+   "texture": "",
+   "tint": [
+    0.9909,
+    0.9723,
+    0.8932
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": true,
+   "glossy": false
+  },
+  {
+   "name": "brick_brown",
+   "texture": "brick_brown",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "panel",
+   "texture": "panel",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "stucco_tan",
+   "texture": "plaster",
+   "tint": [
+    0.8994,
+    0.7928,
+    0.6472
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "stucco_olive",
+   "texture": "plaster",
+   "tint": [
+    0.7928,
+    0.7928,
+    0.6472
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "frame_dark",
+   "texture": "paint",
+   "tint": [
+    0.3024,
+    0.3815,
+    0.3636
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "metal_dark",
+   "texture": "metal",
+   "tint": [
+    0.4144,
+    0.4445,
+    0.4587
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "paint_ochre",
+   "texture": "paint",
+   "tint": [
+    0.9816,
+    0.8279,
+    0.3815
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "paint_red",
+   "texture": "paint",
+   "tint": [
+    0.8279,
+    0.3815,
+    0.3447
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "paint_green",
+   "texture": "paint",
+   "tint": [
+    0.4144,
+    0.6653,
+    0.5227
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "paint_teal",
+   "texture": "paint",
+   "tint": [
+    0.3815,
+    0.6828,
+    0.6828
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "curtain_teal",
+   "texture": "",
+   "tint": [
+    0.2562,
+    0.5402,
+    0.5207
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": true
+  },
+  {
+   "name": "curtain_green",
+   "texture": "",
+   "tint": [
+    0.2698,
+    0.544,
+    0.4469
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": true
+  },
+  {
+   "name": "curtain_dark",
+   "texture": "",
+   "tint": [
+    0.2031,
+    0.4409,
+    0.4347
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": true
+  },
+  {
+   "name": "mullion_light",
+   "texture": "paint",
+   "tint": [
+    0.9816,
+    0.9927,
+    0.976
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "steel",
+   "texture": "metal",
+   "tint": [
+    0.6285,
+    0.6563,
+    0.6563
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "trunk_grey",
+   "texture": "bark",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "frame_bronze",
+   "texture": "metal",
+   "tint": [
+    0.5889,
+    0.4723,
+    0.3636
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "frame_charcoal",
+   "texture": "metal",
+   "tint": [
+    0.3244,
+    0.3447,
+    0.3447
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "frame_teal",
+   "texture": "metal",
+   "tint": [
+    0.2207,
+    0.3983,
+    0.3815
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "panel_sand",
+   "texture": "panelg",
+   "tint": [
+    0.9816,
+    0.8994,
+    0.7782
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "panel_terracotta",
+   "texture": "panelg",
+   "tint": [
+    0.9357,
+    0.7324,
+    0.6285
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "panel_sage",
+   "texture": "panelg",
+   "tint": [
+    0.8481,
+    0.8994,
+    0.8071
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "panel_cream",
+   "texture": "panelg",
+   "tint": [
+    1.0,
+    1.0,
+    0.9357
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "roof_warm",
+   "texture": "paint",
+   "tint": [
+    0.7928,
+    0.7324,
+    0.6828
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "roof_light",
+   "texture": "paint",
+   "tint": [
+    0.9238,
+    0.9117,
+    0.8869
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "roof_tile",
+   "texture": "tiles_clay",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "roof_tile_green",
+   "texture": "tiles_teal",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "roof_tile_grey",
+   "texture": "tiles_slate",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "brass",
+   "texture": "metal",
+   "tint": [
+    0.9357,
+    0.8279,
+    0.5227
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_green",
+   "texture": "metal",
+   "tint": [
+    0.3815,
+    0.7163,
+    0.5459
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "leaf_light_lime",
+   "texture": "leaf",
+   "tint": [
+    0.8279,
+    0.9816,
+    0.3815
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "leaf_dark_lime",
+   "texture": "leaf",
+   "tint": [
+    0.5889,
+    0.7928,
+    0.2784
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "leaf_light_deep",
+   "texture": "leaf",
+   "tint": [
+    0.4723,
+    0.7633,
+    0.3815
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "leaf_dark_deep",
+   "texture": "leaf",
+   "tint": [
+    0.2784,
+    0.5459,
+    0.2784
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "leaf_light_olive",
+   "texture": "leaf",
+   "tint": [
+    0.7928,
+    0.8613,
+    0.4144
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "leaf_dark_olive",
+   "texture": "leaf",
+   "tint": [
+    0.5679,
+    0.6472,
+    0.3024
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "car_red",
+   "texture": "paint",
+   "tint": [
+    0.8481,
+    0.3024,
+    0.2784
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "tyre",
+   "texture": "paint",
+   "tint": [
+    0.2653,
+    0.2653,
+    0.2784
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "glass_dark",
+   "texture": "paint",
+   "tint": [
+    0.2207,
+    0.3024,
+    0.307
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "hubcap",
+   "texture": "paint",
+   "tint": [
+    0.9238,
+    0.9238,
+    0.9056
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "jeep_chrome",
+   "texture": "paint",
+   "tint": [
+    0.8994,
+    0.9117,
+    0.8994
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "chassis",
+   "texture": "paint",
+   "tint": [
+    0.3244,
+    0.3244,
+    0.3347
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "vinyl_dark",
+   "texture": "paint",
+   "tint": [
+    0.5227,
+    0.3024,
+    0.2515
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "plate",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_red",
+   "texture": "paint",
+   "tint": [
+    0.8613,
+    0.3024,
+    0.2784
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_cream",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    1.0,
+    0.8994
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_gold",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    0.9238,
+    0.3815
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_ink",
+   "texture": "paint",
+   "tint": [
+    0.2784,
+    0.2367,
+    0.2207
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_teal",
+   "texture": "paint",
+   "tint": [
+    0.2515,
+    0.6285,
+    0.5991
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_leaf",
+   "texture": "paint",
+   "tint": [
+    0.3447,
+    0.6653,
+    0.4298
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_plum",
+   "texture": "paint",
+   "tint": [
+    0.6091,
+    0.3024,
+    0.4723
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_pink",
+   "texture": "paint",
+   "tint": [
+    1.0,
+    0.7163,
+    0.7557
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_mint",
+   "texture": "paint",
+   "tint": [
+    0.7557,
+    0.9474,
+    0.8279
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_ube",
+   "texture": "paint",
+   "tint": [
+    0.6091,
+    0.3815,
+    0.7557
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_crust",
+   "texture": "paint",
+   "tint": [
+    0.8613,
+    0.7163,
+    0.4144
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  },
+  {
+   "name": "sign_iron",
+   "texture": "paint",
+   "tint": [
+    0.3244,
+    0.3244,
+    0.3244
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false
+  }
+ ],
+ "placements": [
+  {
+   "model": "brick_corner",
+   "position": [
+    -30.0,
+    0.1,
+    -30.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "deco_corner",
+   "position": [
+    30.0,
+    0.1,
+    -30.0
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "glass_tower",
+   "position": [
+    -30.0,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "townhouse_row",
+   "position": [
+    30.0,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "loft_red_5",
+   "position": [
+    4.5,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "stucco_tan_6",
+   "position": [
+    -4.8,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "shophouse_mint_4",
+   "position": [
+    -14.6,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "glassmid_7",
+   "position": [
+    30.0,
+    0.1,
+    4.5
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "loft_brown_ph_4",
+   "position": [
+    30.0,
+    0.1,
+    -4.8
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "panel_5",
+   "position": [
+    30.0,
+    0.1,
+    -14.6
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "shophouse_rose_3",
+   "position": [
+    -4.5,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "stucco_olive_5",
+   "position": [
+    4.8,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "loft_red_ph_6",
+   "position": [
+    14.6,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "shophouse_butter_4",
+   "position": [
+    -30.0,
+    0.1,
+    -4.5
+   ],
+   "yaw": 270.0,
+   "scale": 1.0
+  },
+  {
+   "model": "loft_brown_3",
+   "position": [
+    -30.0,
+    0.1,
+    4.8
+   ],
+   "yaw": 270.0,
+   "scale": 1.0
+  },
+  {
+   "model": "glassmid_5",
+   "position": [
+    -30.0,
+    0.1,
+    14.6
+   ],
+   "yaw": 270.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_12",
+   "position": [
+    30.0,
+    0.1,
+    -60.4
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_13",
+   "position": [
+    30.0,
+    0.1,
+    -71.9
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_14",
+   "position": [
+    30.0,
+    0.1,
+    -82.8
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_15",
+   "position": [
+    30.0,
+    0.1,
+    -94.3
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_16",
+   "position": [
+    30.0,
+    0.1,
+    -104.5
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_17",
+   "position": [
+    30.0,
+    0.1,
+    -115.7
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_18",
+   "position": [
+    30.0,
+    0.1,
+    -127.6
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_19",
+   "position": [
+    30.0,
+    0.1,
+    -137.3
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_20",
+   "position": [
+    14.0,
+    0.1,
+    -48.5
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_21",
+   "position": [
+    14.0,
+    0.1,
+    -58.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_22",
+   "position": [
+    14.0,
+    0.1,
+    -70.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_23",
+   "position": [
+    14.0,
+    0.1,
+    -77.9
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_00",
+   "position": [
+    14.0,
+    0.1,
+    -89.7
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_01",
+   "position": [
+    14.0,
+    0.1,
+    -98.9
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_02",
+   "position": [
+    14.0,
+    0.1,
+    -110.4
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_03",
+   "position": [
+    14.0,
+    0.1,
+    -120.1
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_04",
+   "position": [
+    -14.0,
+    0.1,
+    -59.7
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_05",
+   "position": [
+    -14.0,
+    0.1,
+    -69.1
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_06",
+   "position": [
+    -14.0,
+    0.1,
+    -77.9
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_07",
+   "position": [
+    -14.0,
+    0.1,
+    -87.1
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_08",
+   "position": [
+    -14.0,
+    0.1,
+    -97.0
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_09",
+   "position": [
+    -14.0,
+    0.1,
+    -107.1
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_10",
+   "position": [
+    -14.0,
+    0.1,
+    -117.4
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_11",
+   "position": [
+    -14.0,
+    0.1,
+    -128.4
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_12",
+   "position": [
+    -14.0,
+    0.1,
+    -140.6
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_13",
+   "position": [
+    -30.0,
+    0.1,
+    -48.5
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_14",
+   "position": [
+    -30.0,
+    0.1,
+    -60.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_15",
+   "position": [
+    -30.0,
+    0.1,
+    -70.9
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_16",
+   "position": [
+    -30.0,
+    0.1,
+    -82.4
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_17",
+   "position": [
+    -30.0,
+    0.1,
+    -92.6
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_18",
+   "position": [
+    -30.0,
+    0.1,
+    -103.8
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_19",
+   "position": [
+    -30.0,
+    0.1,
+    -115.7
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_20",
+   "position": [
+    -30.0,
+    0.1,
+    -125.4
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_21",
+   "position": [
+    60.2,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_22",
+   "position": [
+    68.1,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_23",
+   "position": [
+    79.9,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_00",
+   "position": [
+    89.1,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_01",
+   "position": [
+    100.6,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_02",
+   "position": [
+    110.3,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_03",
+   "position": [
+    122.0,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_04",
+   "position": [
+    133.5,
+    0.1,
+    30.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_05",
+   "position": [
+    48.5,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_06",
+   "position": [
+    57.9,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_07",
+   "position": [
+    66.7,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_08",
+   "position": [
+    75.9,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_09",
+   "position": [
+    85.8,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_10",
+   "position": [
+    95.9,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_11",
+   "position": [
+    106.2,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_12",
+   "position": [
+    117.2,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_13",
+   "position": [
+    129.4,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_14",
+   "position": [
+    59.1,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_15",
+   "position": [
+    70.6,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_16",
+   "position": [
+    80.8,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_17",
+   "position": [
+    92.0,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_18",
+   "position": [
+    103.9,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_19",
+   "position": [
+    113.6,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_20",
+   "position": [
+    123.1,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_21",
+   "position": [
+    135.1,
+    0.1,
+    -14.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_22",
+   "position": [
+    48.5,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_23",
+   "position": [
+    56.4,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_00",
+   "position": [
+    68.2,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_01",
+   "position": [
+    77.4,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_02",
+   "position": [
+    88.9,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_03",
+   "position": [
+    98.6,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_04",
+   "position": [
+    110.3,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_05",
+   "position": [
+    121.8,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_06",
+   "position": [
+    -30.0,
+    0.1,
+    57.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_07",
+   "position": [
+    -30.0,
+    0.1,
+    66.2
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_08",
+   "position": [
+    -30.0,
+    0.1,
+    76.1
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_09",
+   "position": [
+    -30.0,
+    0.1,
+    86.2
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_10",
+   "position": [
+    -30.0,
+    0.1,
+    96.5
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_11",
+   "position": [
+    -30.0,
+    0.1,
+    107.5
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_12",
+   "position": [
+    -30.0,
+    0.1,
+    119.7
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_13",
+   "position": [
+    -30.0,
+    0.1,
+    131.2
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_14",
+   "position": [
+    -14.0,
+    0.1,
+    48.5
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_15",
+   "position": [
+    -14.0,
+    0.1,
+    59.4
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_16",
+   "position": [
+    -14.0,
+    0.1,
+    70.9
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_17",
+   "position": [
+    -14.0,
+    0.1,
+    81.1
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_18",
+   "position": [
+    -14.0,
+    0.1,
+    92.3
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_19",
+   "position": [
+    -14.0,
+    0.1,
+    104.2
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_20",
+   "position": [
+    -14.0,
+    0.1,
+    113.9
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_21",
+   "position": [
+    -14.0,
+    0.1,
+    123.4
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_22",
+   "position": [
+    14.0,
+    0.1,
+    56.1
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_23",
+   "position": [
+    14.0,
+    0.1,
+    67.9
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_00",
+   "position": [
+    14.0,
+    0.1,
+    77.1
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_01",
+   "position": [
+    14.0,
+    0.1,
+    88.6
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_02",
+   "position": [
+    14.0,
+    0.1,
+    98.3
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_03",
+   "position": [
+    14.0,
+    0.1,
+    110.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_04",
+   "position": [
+    14.0,
+    0.1,
+    121.5
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_05",
+   "position": [
+    14.0,
+    0.1,
+    130.9
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_06",
+   "position": [
+    30.0,
+    0.1,
+    48.5
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_07",
+   "position": [
+    30.0,
+    0.1,
+    57.3
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_08",
+   "position": [
+    30.0,
+    0.1,
+    66.5
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_09",
+   "position": [
+    30.0,
+    0.1,
+    76.4
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_10",
+   "position": [
+    30.0,
+    0.1,
+    86.5
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_11",
+   "position": [
+    30.0,
+    0.1,
+    96.8
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_12",
+   "position": [
+    30.0,
+    0.1,
+    107.8
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_13",
+   "position": [
+    30.0,
+    0.1,
+    120.0
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_14",
+   "position": [
+    -59.1,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_15",
+   "position": [
+    -70.6,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_16",
+   "position": [
+    -80.8,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_17",
+   "position": [
+    -92.0,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_18",
+   "position": [
+    -103.9,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_19",
+   "position": [
+    -113.6,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_20",
+   "position": [
+    -123.1,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_21",
+   "position": [
+    -135.1,
+    0.1,
+    -30.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_22",
+   "position": [
+    -48.5,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_23",
+   "position": [
+    -56.4,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_00",
+   "position": [
+    -68.2,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_01",
+   "position": [
+    -77.4,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_02",
+   "position": [
+    -88.9,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_03",
+   "position": [
+    -98.6,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_panel_04",
+   "position": [
+    -110.3,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_05",
+   "position": [
+    -121.8,
+    0.1,
+    -14.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_06",
+   "position": [
+    -57.0,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_07",
+   "position": [
+    -66.2,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_08",
+   "position": [
+    -76.1,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_09",
+   "position": [
+    -86.2,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_ph_10",
+   "position": [
+    -96.5,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_11",
+   "position": [
+    -107.5,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_12",
+   "position": [
+    -119.7,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_13",
+   "position": [
+    -131.2,
+    0.1,
+    14.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_14",
+   "position": [
+    -48.5,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_15",
+   "position": [
+    -59.4,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_16",
+   "position": [
+    -70.9,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_stucco_17",
+   "position": [
+    -81.1,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_18",
+   "position": [
+    -92.3,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_glassmid_19",
+   "position": [
+    -104.2,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_shophouse_20",
+   "position": [
+    -113.9,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "far_loft_21",
+   "position": [
+    -123.4,
+    0.1,
+    30.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "terminus_n",
+   "position": [
+    -31.0,
+    0.1,
+    -144.0
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "terminus_e",
+   "position": [
+    144.0,
+    0.1,
+    -31.0
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "terminus_s",
+   "position": [
+    31.0,
+    0.1,
+    144.0
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "terminus_w",
+   "position": [
+    -144.0,
+    0.1,
+    31.0
+   ],
+   "yaw": 270.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tree_broad_lime",
+   "position": [
+    -11.6,
+    0.13,
+    -11.6
+   ],
+   "yaw": -107.6815,
+   "scale": 0.9989
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    -11.6,
+    0.13,
+    -6.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    -6.0,
+    0.13,
+    -11.6
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    -10.8,
+    0.13,
+    -3.0
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    -3.0,
+    0.13,
+    -10.8
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    -13.0,
+    0.13,
+    -3.4
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    -3.4,
+    0.13,
+    -13.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tree_round",
+   "position": [
+    11.6,
+    0.13,
+    -11.6
+   ],
+   "yaw": 93.4223,
+   "scale": 1.0734
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    11.6,
+    0.13,
+    -6.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    6.0,
+    0.13,
+    -11.6
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    10.8,
+    0.13,
+    -3.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    3.0,
+    0.13,
+    -10.8
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    13.0,
+    0.13,
+    -3.4
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    3.4,
+    0.13,
+    -13.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tree_lean_olive",
+   "position": [
+    11.6,
+    0.13,
+    11.6
+   ],
+   "yaw": 138.5775,
+   "scale": 1.0214
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    11.6,
+    0.13,
+    6.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    6.0,
+    0.13,
+    11.6
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    10.8,
+    0.13,
+    3.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    3.0,
+    0.13,
+    10.8
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    13.0,
+    0.13,
+    3.4
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    3.4,
+    0.13,
+    13.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tree_tall_deep",
+   "position": [
+    -11.6,
+    0.13,
+    11.6
+   ],
+   "yaw": -20.8421,
+   "scale": 1.0417
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    -11.6,
+    0.13,
+    6.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "hedge_bed",
+   "position": [
+    -6.0,
+    0.13,
+    11.6
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    -10.8,
+    0.13,
+    3.0
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_bench",
+   "position": [
+    -3.0,
+    0.13,
+    10.8
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    -13.0,
+    0.13,
+    3.4
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_lamp",
+   "position": [
+    -3.4,
+    0.13,
+    13.0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    7.75,
+    0.13,
+    -13.7
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    -7.75,
+    0.13,
+    -13.7
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    13.7,
+    0.13,
+    7.75
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    13.7,
+    0.13,
+    -7.75
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    -7.75,
+    0.13,
+    13.7
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    7.75,
+    0.13,
+    13.7
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    -13.7,
+    0.13,
+    -7.75
+   ],
+   "yaw": -270.0,
+   "scale": 1.0
+  },
+  {
+   "model": "park_fence",
+   "position": [
+    -13.7,
+    0.13,
+    7.75
+   ],
+   "yaw": -270.0,
+   "scale": 1.0
+  },
+  {
+   "model": "traffic_signal",
+   "position": [
+    -16.4,
+    0.11,
+    -16.4
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "street_bin",
+   "position": [
+    -15.8,
+    0.12,
+    -5.5
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "street_round_deep",
+   "position": [
+    -6.0,
+    0.11,
+    -28.5
+   ],
+   "yaw": -20.1207,
+   "scale": 1.0483
+  },
+  {
+   "model": "street_young",
+   "position": [
+    -28.5,
+    0.11,
+    -6.0
+   ],
+   "yaw": -126.4028,
+   "scale": 0.8585
+  },
+  {
+   "model": "street_broad",
+   "position": [
+    -12.0,
+    0.11,
+    -28.5
+   ],
+   "yaw": 117.8352,
+   "scale": 1.094
+  },
+  {
+   "model": "street_broad",
+   "position": [
+    -28.5,
+    0.11,
+    -12.0
+   ],
+   "yaw": 114.1653,
+   "scale": 0.9464
+  },
+  {
+   "model": "traffic_signal",
+   "position": [
+    16.4,
+    0.11,
+    -16.4
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "street_bin",
+   "position": [
+    15.8,
+    0.12,
+    -5.5
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "street_young",
+   "position": [
+    6.0,
+    0.11,
+    -28.5
+   ],
+   "yaw": -18.3556,
+   "scale": 0.9281
+  },
+  {
+   "model": "street_broad",
+   "position": [
+    28.5,
+    0.11,
+    -6.0
+   ],
+   "yaw": 106.2086,
+   "scale": 0.9075
+  },
+  {
+   "model": "street_young",
+   "position": [
+    12.0,
+    0.11,
+    -28.5
+   ],
+   "yaw": -124.3416,
+   "scale": 1.0592
+  },
+  {
+   "model": "street_broad",
+   "position": [
+    28.5,
+    0.11,
+    -12.0
+   ],
+   "yaw": -34.3155,
+   "scale": 1.0116
+  },
+  {
+   "model": "traffic_signal",
+   "position": [
+    16.4,
+    0.11,
+    16.4
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "street_bin",
+   "position": [
+    15.8,
+    0.12,
+    5.5
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "street_young",
+   "position": [
+    6.0,
+    0.11,
+    28.5
+   ],
+   "yaw": -122.2153,
+   "scale": 1.1446
+  },
+  {
+   "model": "street_round_deep",
+   "position": [
+    28.5,
+    0.11,
+    6.0
+   ],
+   "yaw": -87.5281,
+   "scale": 1.1049
+  },
+  {
+   "model": "street_young",
+   "position": [
+    12.0,
+    0.11,
+    28.5
+   ],
+   "yaw": -27.6802,
+   "scale": 1.0982
+  },
+  {
+   "model": "street_young",
+   "position": [
+    28.5,
+    0.11,
+    12.0
+   ],
+   "yaw": 82.1074,
+   "scale": 1.0381
+  },
+  {
+   "model": "traffic_signal",
+   "position": [
+    -16.4,
+    0.11,
+    16.4
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "street_bin",
+   "position": [
+    -15.8,
+    0.12,
+    5.5
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "street_young",
+   "position": [
+    -6.0,
+    0.11,
+    28.5
+   ],
+   "yaw": 53.4912,
+   "scale": 1.0089
+  },
+  {
+   "model": "street_broad",
+   "position": [
+    -28.5,
+    0.11,
+    6.0
+   ],
+   "yaw": -90.3809,
+   "scale": 1.1338
+  },
+  {
+   "model": "street_round_deep",
+   "position": [
+    -12.0,
+    0.11,
+    28.5
+   ],
+   "yaw": 101.1027,
+   "scale": 0.9917
+  },
+  {
+   "model": "street_round_deep",
+   "position": [
+    -28.5,
+    0.11,
+    12.0
+   ],
+   "yaw": -96.6639,
+   "scale": 0.9653
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    104.0,
+    0.11,
+    27.8
+   ],
+   "yaw": 2.5655,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    88.0,
+    0.11,
+    27.8
+   ],
+   "yaw": -1.4086,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    72.0,
+    0.11,
+    27.8
+   ],
+   "yaw": 2.1893,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    56.0,
+    0.11,
+    27.8
+   ],
+   "yaw": 2.5442,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    40.0,
+    0.11,
+    27.8
+   ],
+   "yaw": -1.8484,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    8.0,
+    0.11,
+    27.8
+   ],
+   "yaw": 2.0202,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -8.0,
+    0.11,
+    27.8
+   ],
+   "yaw": 2.7664,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    -40.0,
+    0.11,
+    27.8
+   ],
+   "yaw": -2.3793,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    -56.0,
+    0.11,
+    27.8
+   ],
+   "yaw": -0.433,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -72.0,
+    0.11,
+    27.8
+   ],
+   "yaw": -1.6852,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -88.0,
+    0.11,
+    27.8
+   ],
+   "yaw": -1.4933,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -104.0,
+    0.11,
+    27.8
+   ],
+   "yaw": -1.1516,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.11,
+    104.0
+   ],
+   "yaw": -87.6404,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    27.8,
+    0.11,
+    88.0
+   ],
+   "yaw": -87.7853,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    27.8,
+    0.11,
+    72.0
+   ],
+   "yaw": -92.7184,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.11,
+    56.0
+   ],
+   "yaw": -92.1988,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.11,
+    40.0
+   ],
+   "yaw": -88.5067,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.11,
+    8.0
+   ],
+   "yaw": -91.558,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.11,
+    -8.0
+   ],
+   "yaw": -88.0607,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.11,
+    -40.0
+   ],
+   "yaw": -87.279,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    27.8,
+    0.11,
+    -56.0
+   ],
+   "yaw": -90.9764,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    27.8,
+    0.11,
+    -72.0
+   ],
+   "yaw": -92.6753,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    27.8,
+    0.11,
+    -88.0
+   ],
+   "yaw": -89.9399,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_transformer",
+   "position": [
+    27.8,
+    0.11,
+    -104.0
+   ],
+   "yaw": -90.563,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    104.0,
+    0.11,
+    -27.8
+   ],
+   "yaw": 0.1635,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    88.0,
+    0.11,
+    -27.8
+   ],
+   "yaw": 1.1743,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_transformer",
+   "position": [
+    72.0,
+    0.11,
+    -27.8
+   ],
+   "yaw": 1.2168,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    56.0,
+    0.11,
+    -27.8
+   ],
+   "yaw": 2.7599,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    40.0,
+    0.11,
+    -27.8
+   ],
+   "yaw": 2.4594,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    8.0,
+    0.11,
+    -27.8
+   ],
+   "yaw": -1.3471,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -8.0,
+    0.11,
+    -27.8
+   ],
+   "yaw": 2.3495,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -40.0,
+    0.11,
+    -27.8
+   ],
+   "yaw": -0.0595,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -56.0,
+    0.11,
+    -27.8
+   ],
+   "yaw": -1.5988,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -72.0,
+    0.11,
+    -27.8
+   ],
+   "yaw": 2.2432,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    -88.0,
+    0.11,
+    -27.8
+   ],
+   "yaw": 1.2387,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    -104.0,
+    0.11,
+    -27.8
+   ],
+   "yaw": -0.1864,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    -27.8,
+    0.11,
+    104.0
+   ],
+   "yaw": -88.2467,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    -27.8,
+    0.11,
+    88.0
+   ],
+   "yaw": -91.9793,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_transformer",
+   "position": [
+    -27.8,
+    0.11,
+    72.0
+   ],
+   "yaw": -92.0873,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.11,
+    56.0
+   ],
+   "yaw": -92.0512,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_transformer",
+   "position": [
+    -27.8,
+    0.11,
+    40.0
+   ],
+   "yaw": -88.9401,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole",
+   "position": [
+    -27.8,
+    0.11,
+    8.0
+   ],
+   "yaw": -91.5806,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_transformer",
+   "position": [
+    -27.8,
+    0.11,
+    -8.0
+   ],
+   "yaw": -91.4602,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    -27.8,
+    0.11,
+    -40.0
+   ],
+   "yaw": -92.7789,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    -27.8,
+    0.11,
+    -56.0
+   ],
+   "yaw": -90.0248,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_lamp",
+   "position": [
+    -27.8,
+    0.11,
+    -72.0
+   ],
+   "yaw": -92.6882,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_transformer",
+   "position": [
+    -27.8,
+    0.11,
+    -88.0
+   ],
+   "yaw": -89.304,
+   "scale": 1.0
+  },
+  {
+   "model": "power_pole_transformer",
+   "position": [
+    -27.8,
+    0.11,
+    -104.0
+   ],
+   "yaw": -92.4345,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_lattice",
+   "position": [
+    -123.7895,
+    0.1,
+    127.4899
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_stepped_stone",
+   "position": [
+    93.2986,
+    0.1,
+    148.0516
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_round_spire",
+   "position": [
+    -79.0728,
+    0.1,
+    169.596
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_slant_green",
+   "position": [
+    125.5131,
+    0.1,
+    -62.2947
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_slant_dark",
+   "position": [
+    -160.7461,
+    0.1,
+    -60.7366
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_round_spire",
+   "position": [
+    -82.3606,
+    0.1,
+    -185.6943
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_chamfer_spire",
+   "position": [
+    -33.6429,
+    0.1,
+    -194.1028
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_octagon_fins",
+   "position": [
+    133.6438,
+    0.1,
+    99.1062
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_chamfer_spire",
+   "position": [
+    -96.4849,
+    0.1,
+    -66.3391
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_lattice",
+   "position": [
+    178.1129,
+    0.1,
+    -18.4672
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_helipad",
+   "position": [
+    -83.6361,
+    0.1,
+    -149.06
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_stepped_stone",
+   "position": [
+    -33.6471,
+    0.1,
+    187.8561
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_slim_pyramid",
+   "position": [
+    108.4553,
+    0.1,
+    -133.3163
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_helipad",
+   "position": [
+    70.473,
+    0.1,
+    -92.7386
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_round_rings",
+   "position": [
+    72.1264,
+    0.1,
+    -146.0246
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_slant_dark",
+   "position": [
+    51.567,
+    0.1,
+    -190.7903
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_slant_green",
+   "position": [
+    -144.6599,
+    0.1,
+    -130.2548
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_octagon_fins",
+   "position": [
+    47.3694,
+    0.1,
+    183.3771
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_round_rings",
+   "position": [
+    -198.1381,
+    0.1,
+    46.7141
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tower_slim_pyramid",
+   "position": [
+    167.0479,
+    0.1,
+    115.7802
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    8.9242,
+    -0.0,
+    -20.2
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -6.5165,
+    -0.0,
+    -20.2
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    8.5917,
+    -0.0,
+    -23.8
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    -7.2438,
+    -0.0,
+    -23.8
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "bus_city",
+   "position": [
+    20.2,
+    -0.0,
+    -78.8987
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    20.2,
+    -0.0,
+    -120.8945
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "bus_city",
+   "position": [
+    23.8,
+    -0.0,
+    -49.2761
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    23.8,
+    -0.0,
+    -64.4761
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    23.8,
+    -0.0,
+    -119.8056
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    25.95,
+    -0.0,
+    -49.1971
+   ],
+   "yaw": 89.3646,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    25.95,
+    -0.0,
+    -60.4847
+   ],
+   "yaw": 89.9292,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    25.95,
+    -0.0,
+    -70.1309
+   ],
+   "yaw": 91.095,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    25.95,
+    -0.0,
+    -82.7824
+   ],
+   "yaw": 90.8186,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    25.95,
+    -0.0,
+    -91.7941
+   ],
+   "yaw": 89.233,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    25.95,
+    -0.0,
+    -101.2015
+   ],
+   "yaw": 91.0689,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    25.95,
+    -0.0,
+    -108.3627
+   ],
+   "yaw": 88.6381,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    18.05,
+    -0.0,
+    -46.2576
+   ],
+   "yaw": -90.4771,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    18.05,
+    -0.0,
+    -60.196
+   ],
+   "yaw": -90.7573,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    18.05,
+    -0.0,
+    -70.7773
+   ],
+   "yaw": -91.6912,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    18.05,
+    -0.0,
+    -80.611
+   ],
+   "yaw": -88.316,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    18.05,
+    -0.0,
+    -103.0253
+   ],
+   "yaw": -90.4616,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    18.05,
+    -0.0,
+    -109.5279
+   ],
+   "yaw": -89.5017,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    18.05,
+    -0.0,
+    -123.258
+   ],
+   "yaw": -90.1601,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -23.8,
+    -0.0,
+    -70.4482
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    -23.8,
+    -0.0,
+    -102.7375
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tricycle",
+   "position": [
+    -23.8,
+    -0.0,
+    -123.228
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tricycle",
+   "position": [
+    -20.2,
+    -0.0,
+    -57.6939
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    -20.2,
+    -0.0,
+    -67.437
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -20.2,
+    -0.0,
+    -80.4171
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    -20.2,
+    -0.0,
+    -99.5068
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -18.05,
+    -0.0,
+    -43.751
+   ],
+   "yaw": 91.5055,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    -18.05,
+    -0.0,
+    -51.2711
+   ],
+   "yaw": 90.1728,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    -18.05,
+    -0.0,
+    -63.3095
+   ],
+   "yaw": 89.4196,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -18.05,
+    -0.0,
+    -72.088
+   ],
+   "yaw": 91.1737,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    -18.05,
+    -0.0,
+    -81.0244
+   ],
+   "yaw": 91.2466,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    -18.05,
+    -0.0,
+    -91.2754
+   ],
+   "yaw": 90.9457,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    -25.95,
+    -0.0,
+    -42.8227
+   ],
+   "yaw": -90.0176,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -25.95,
+    -0.0,
+    -55.0085
+   ],
+   "yaw": -88.9486,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    -25.95,
+    -0.0,
+    -85.1536
+   ],
+   "yaw": -88.7468,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -25.95,
+    -0.0,
+    -98.4178
+   ],
+   "yaw": -90.9521,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    -25.95,
+    -0.0,
+    -106.8441
+   ],
+   "yaw": -91.2622,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    -25.95,
+    -0.0,
+    -115.8981
+   ],
+   "yaw": -91.4609,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    20.2,
+    -0.0,
+    -6.3736
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    23.8,
+    -0.0,
+    10.5574
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tricycle",
+   "position": [
+    23.8,
+    -0.0,
+    -8.4232
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    67.9392,
+    -0.0,
+    20.2
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    123.7009,
+    -0.0,
+    20.2
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    66.7399,
+    -0.0,
+    23.8
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    70.8689,
+    -0.0,
+    25.95
+   ],
+   "yaw": -1.5428,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    80.785,
+    -0.0,
+    25.95
+   ],
+   "yaw": 0.5597,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    97.3617,
+    -0.0,
+    25.95
+   ],
+   "yaw": 0.078,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    104.1824,
+    -0.0,
+    25.95
+   ],
+   "yaw": 0.5987,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    113.4557,
+    -0.0,
+    25.95
+   ],
+   "yaw": -1.2511,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    123.4313,
+    -0.0,
+    25.95
+   ],
+   "yaw": -0.943,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    44.6653,
+    -0.0,
+    18.05
+   ],
+   "yaw": -179.3833,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    54.0641,
+    -0.0,
+    18.05
+   ],
+   "yaw": -181.2774,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    62.7023,
+    -0.0,
+    18.05
+   ],
+   "yaw": -179.7421,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    73.7552,
+    -0.0,
+    18.05
+   ],
+   "yaw": -178.9626,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    94.3008,
+    -0.0,
+    18.05
+   ],
+   "yaw": -179.3219,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    107.2933,
+    -0.0,
+    18.05
+   ],
+   "yaw": -180.0956,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    114.5675,
+    -0.0,
+    18.05
+   ],
+   "yaw": -179.2413,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    122.5323,
+    -0.0,
+    18.05
+   ],
+   "yaw": -180.4658,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    54.101,
+    -0.0,
+    -23.8
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tricycle",
+   "position": [
+    64.5433,
+    -0.0,
+    -23.8
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    79.2115,
+    -0.0,
+    -23.8
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    89.9607,
+    -0.0,
+    -23.8
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    123.3082,
+    -0.0,
+    -23.8
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    57.5308,
+    -0.0,
+    -20.2
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    99.0794,
+    -0.0,
+    -20.2
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    57.6889,
+    -0.0,
+    -18.05
+   ],
+   "yaw": 0.1172,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    67.2961,
+    -0.0,
+    -18.05
+   ],
+   "yaw": 0.3759,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    88.4943,
+    -0.0,
+    -18.05
+   ],
+   "yaw": 1.2403,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    100.4784,
+    -0.0,
+    -18.05
+   ],
+   "yaw": 1.2995,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    64.8908,
+    -0.0,
+    -25.95
+   ],
+   "yaw": -180.3191,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    85.3429,
+    -0.0,
+    -25.95
+   ],
+   "yaw": -179.7208,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -10.1696,
+    -0.0,
+    20.2
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -11.7745,
+    -0.0,
+    23.8
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    5.5373,
+    -0.0,
+    23.8
+   ],
+   "yaw": 0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -20.2,
+    -0.0,
+    49.5353
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    -20.2,
+    -0.0,
+    83.762
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    -23.8,
+    -0.0,
+    49.7914
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "bus_city",
+   "position": [
+    -23.8,
+    -0.0,
+    81.44
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    -23.8,
+    -0.0,
+    102.0705
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    -23.8,
+    -0.0,
+    114.493
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -25.95,
+    -0.0,
+    47.1957
+   ],
+   "yaw": -90.3529,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -25.95,
+    -0.0,
+    56.3196
+   ],
+   "yaw": -91.033,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    -25.95,
+    -0.0,
+    96.1516
+   ],
+   "yaw": -90.117,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    -25.95,
+    -0.0,
+    105.6446
+   ],
+   "yaw": -88.987,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    -25.95,
+    -0.0,
+    114.8316
+   ],
+   "yaw": -90.5276,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -25.95,
+    -0.0,
+    125.4778
+   ],
+   "yaw": -88.373,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    -18.05,
+    -0.0,
+    47.9654
+   ],
+   "yaw": 89.4071,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    -18.05,
+    -0.0,
+    67.5723
+   ],
+   "yaw": 91.3703,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    -18.05,
+    -0.0,
+    74.9817
+   ],
+   "yaw": 91.5237,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    -18.05,
+    -0.0,
+    92.9737
+   ],
+   "yaw": 88.9947,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -18.05,
+    -0.0,
+    105.9543
+   ],
+   "yaw": 88.3665,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    -18.05,
+    -0.0,
+    114.9277
+   ],
+   "yaw": 88.7403,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    23.8,
+    -0.0,
+    81.3422
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    23.8,
+    -0.0,
+    101.2273
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    20.2,
+    -0.0,
+    54.0364
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    20.2,
+    -0.0,
+    74.9413
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    20.2,
+    -0.0,
+    110.3492
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    18.05,
+    -0.0,
+    66.1843
+   ],
+   "yaw": -90.7367,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    18.05,
+    -0.0,
+    89.8525
+   ],
+   "yaw": -90.5692,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    18.05,
+    -0.0,
+    98.6634
+   ],
+   "yaw": -89.749,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    18.05,
+    -0.0,
+    121.8904
+   ],
+   "yaw": -88.866,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    25.95,
+    -0.0,
+    74.3454
+   ],
+   "yaw": 89.8803,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    25.95,
+    -0.0,
+    83.5839
+   ],
+   "yaw": 91.4105,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    25.95,
+    -0.0,
+    90.4044
+   ],
+   "yaw": 89.308,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    25.95,
+    -0.0,
+    111.3809
+   ],
+   "yaw": 91.5444,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    25.95,
+    -0.0,
+    120.9693
+   ],
+   "yaw": 89.6038,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    -20.2,
+    -0.0,
+    -9.3677
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -20.2,
+    -0.0,
+    5.864
+   ],
+   "yaw": 90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tricycle",
+   "position": [
+    -23.8,
+    -0.0,
+    -11.4562
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "bus_city",
+   "position": [
+    -23.8,
+    -0.0,
+    6.2078
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -55.6314,
+    -0.0,
+    -20.2
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    -85.8529,
+    -0.0,
+    -20.2
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -96.044,
+    -0.0,
+    -20.2
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    -116.6176,
+    -0.0,
+    -20.2
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    -56.7586,
+    -0.0,
+    -23.8
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tricycle",
+   "position": [
+    -71.6612,
+    -0.0,
+    -23.8
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -91.0423,
+    -0.0,
+    -23.8
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    -104.8739,
+    -0.0,
+    -23.8
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    -118.7291,
+    -0.0,
+    -23.8
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    -49.9828,
+    -0.0,
+    -25.95
+   ],
+   "yaw": 181.0359,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -64.0066,
+    -0.0,
+    -25.95
+   ],
+   "yaw": 179.4386,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    -77.2886,
+    -0.0,
+    -25.95
+   ],
+   "yaw": 181.4685,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    -88.0923,
+    -0.0,
+    -25.95
+   ],
+   "yaw": 179.3825,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    -95.338,
+    -0.0,
+    -25.95
+   ],
+   "yaw": 179.1201,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -108.435,
+    -0.0,
+    -25.95
+   ],
+   "yaw": 180.5664,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -121.9684,
+    -0.0,
+    -25.95
+   ],
+   "yaw": 179.0188,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    -135.2039,
+    -0.0,
+    -25.95
+   ],
+   "yaw": 180.5575,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    -58.0726,
+    -0.0,
+    -18.05
+   ],
+   "yaw": -0.0542,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -88.5479,
+    -0.0,
+    -18.05
+   ],
+   "yaw": -0.84,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    -96.3891,
+    -0.0,
+    -18.05
+   ],
+   "yaw": -0.0297,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -107.7943,
+    -0.0,
+    -18.05
+   ],
+   "yaw": -0.0005,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    -123.46,
+    -0.0,
+    -18.05
+   ],
+   "yaw": 0.2105,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    -49.8696,
+    -0.0,
+    23.8
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    -78.6035,
+    -0.0,
+    23.8
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -100.3474,
+    -0.0,
+    23.8
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    -110.7989,
+    -0.0,
+    23.8
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    -124.5457,
+    -0.0,
+    23.8
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "bus_city",
+   "position": [
+    -60.9822,
+    -0.0,
+    20.2
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -79.0196,
+    -0.0,
+    20.2
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "taxi",
+   "position": [
+    -90.4201,
+    -0.0,
+    20.2
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    -110.0242,
+    -0.0,
+    20.2
+   ],
+   "yaw": 180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    -42.6068,
+    -0.0,
+    18.05
+   ],
+   "yaw": 180.7936,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    -56.1206,
+    -0.0,
+    18.05
+   ],
+   "yaw": 181.4731,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -74.8523,
+    -0.0,
+    18.05
+   ],
+   "yaw": 179.6564,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_cream",
+   "position": [
+    -95.4646,
+    -0.0,
+    18.05
+   ],
+   "yaw": 180.5188,
+   "scale": 1.0
+  },
+  {
+   "model": "sedan_red",
+   "position": [
+    -123.7881,
+    -0.0,
+    18.05
+   ],
+   "yaw": 181.0452,
+   "scale": 1.0
+  },
+  {
+   "model": "pickup_mustard",
+   "position": [
+    -57.9746,
+    -0.0,
+    25.95
+   ],
+   "yaw": -1.4489,
+   "scale": 1.0
+  },
+  {
+   "model": "van_delivery",
+   "position": [
+    -88.1848,
+    -0.0,
+    25.95
+   ],
+   "yaw": 0.3693,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    -100.9338,
+    -0.0,
+    25.95
+   ],
+   "yaw": 0.5185,
+   "scale": 1.0
+  },
+  {
+   "model": "hatch_mint",
+   "position": [
+    -125.5445,
+    -0.0,
+    25.95
+   ],
+   "yaw": 0.6323,
+   "scale": 1.0
+  },
+  {
+   "model": "jeepney",
+   "position": [
+    4.0,
+    -0.0,
+    17.95
+   ],
+   "yaw": -180.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tricycle",
+   "position": [
+    18.0,
+    -0.0,
+    -3.0
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tricycle",
+   "position": [
+    18.0,
+    -0.0,
+    -5.6
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "tricycle",
+   "position": [
+    18.0,
+    -0.0,
+    -8.2
+   ],
+   "yaw": -90.0,
+   "scale": 1.0
+  },
+  {
+   "model": "ground",
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  },
+  {
+   "model": "wires",
+   "position": [
+    0,
+    0,
+    0
+   ],
+   "yaw": -0.0,
+   "scale": 1.0
+  }
+ ]
+}

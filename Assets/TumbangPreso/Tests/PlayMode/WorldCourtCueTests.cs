@@ -56,7 +56,7 @@ namespace TumbangPreso.PlayTests
         }
         [UnityTest] public IEnumerator CourtMatchesAllFiveMapsAndCapturesRestArmedAndOff()
         {
-            foreach(string map in new[]{SceneFlow.BayanPlaza,SceneFlow.Eskinita,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong,SceneFlow.Lagoon})
+            foreach(string map in new[]{SceneFlow.BayanPlaza,SceneFlow.Eskinita,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong,SceneFlow.LagoonCove,SceneFlow.Kanto})
             {
                 yield return Load(map);
                 var cue=Object.FindFirstObjectByType<CourtBoundaryPresentation>();Assert.IsNotNull(cue);
