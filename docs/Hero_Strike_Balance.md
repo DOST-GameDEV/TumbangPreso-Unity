@@ -1,5 +1,11 @@
 # Hero Strike: footprints, economy and the rework plan
 
+**Current reader,2026-09-27:** the measurements/proposals below retain their named
+historical revisions. Do not treat their old roster or numbers as the latest kits.
+Read current Core/ability source,[kit method](HERO_KIT_METHOD.md),[network contract](SKILL_NETWORK_CONTRACT.md)
+and TODO. Preserve this rationale while recording actual balance changes explicitly;
+never silently reapply an old proposal during a cosmetic or network rework.
+
 **This file is the home of the per-ability footprint table.** `docs/VISION.md` § 2 sets the
 readability budget and used to point at `docs/TODO.md` § 1 for the numbers; § 1 became peer
 rematch voting and the numbers were never written anywhere. They are here now.

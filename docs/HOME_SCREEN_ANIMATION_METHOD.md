@@ -1,5 +1,11 @@
 # Making a home-screen animation: the method
 
+**Current routing,2026-09-27:** this is a LIVE method. Read [AGENTS](../AGENTS.md)
+and the task's current scope first. [Canonical rendering](CANONICAL_RENDERING_PIPELINE.md)
+and [TESTING](TESTING.md) own safe launch/build/evidence policy. Keep the direction,
+timing,real-model,face and review methods below; reuse unchanged evidence instead
+of rerendering the same loop after unrelated source edits.
+
 Read this before making ANY home-screen, menu-background, season or hero-showcase animation
 for TUMP. It records how the Zack HOME loop (`ArtSource/home-scene/`,
 `docs/reports/home-scene/README.md`) got from "ugly as fuck" to "this is amazing i love it"

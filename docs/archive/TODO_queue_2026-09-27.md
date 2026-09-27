@@ -17,46 +17,107 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
-Current owner order after DOCS-0927: shared network/flow correctness,then actual
-loading/optimization,then remaining applicable QA/TODO requirements. Newer task
-scope and contributor reservations override older dated order below. Work alone;
-preserve incoming reworks; no repeated validation/film loops for minor changes.
+**DOCS-0927, IN PROGRESS:** owner requests documentation organization next,after the
+current loading/login batch and before returning to the task order below. Condense
+current rules and routing,retain important context/methods,and archive only genuinely
+superseded material with backlinks. Include clear starting points for networking,
+menu animation,character building and rendering. No history deletion.
 
-**NET-SKILLS-1, OPEN:** host authority,stable ability identity,explicit delivery/
-command intent,independent receipts,bounded delayed delivery,phase-aware prepared
-recovery and held-aim body state are implemented. Cosmetic model/clip/effect swaps
-reuse shared hooks; new gameplay state still needs an explicit contract. Ranked,
-casual,LAN/online,spectators,late join and reconnect are in scope. Preserve existing
-rating/result/leave/device-pool rules. Further state coverage and actual peer/ranked/
-reconnect/results qualification remain OPEN.
-Read [network route](NETWORKING.md),[contract](SKILL_NETWORK_CONTRACT.md) and
-[exact evidence](reports/stability-2026-09-27/multiplayer.md),not a historical
-protocol literal or old test count.
-
-**Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
-retained ability props/effect data and actual menu activation readiness are implemented.
-Instance/material/GPU first use and measured player hitch qualification are not all
-complete. Keep progress work-driven and loading responsive; do not call a compile
-hitch-free performance. [Source route](LOADING_AND_PERFORMANCE.md),
-[implemented units and limits](reports/stability-2026-09-27/loading-audit.md).
-
-**LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submits expose persistent
-per-field messages,one error cue and field-only tint pulses. Either credential edit
-clears a stale pair rejection; supplied art and hitboxes are unchanged,reduced motion
-gets steady feedback. Four assemblies compile; native interaction/sound/visual
+**LOGIN-0927, IMPLEMENTED / NATIVE CHECK OPEN:** invalid submissions now show stable
+per-field messages,error sound and field-only tint pulses. Correcting either login
+credential clears a stale pair rejection. Artwork/hitboxes are preserved; reduced
+motion uses steady feedback. Four assemblies compile; native interaction/sound/visual
 qualification remains OPEN. [Details](reports/stability-2026-09-27/login-feedback.md).
 
-**QA-0927, OPEN:** [19deduplicated comments](reports/stability-2026-09-27/qa-comments.md)
-include the latest login request. Retain [first-batch evidence](reports/stability-2026-09-27/validation.md)
-and [QA2 evidence](reports/stability-2026-09-27/qa2-validation.md); neither closes
-unsampled devices/peers or the whole queue. Title blur,Sean/Cheska freeze,full Practice
-range,owner-only service deployment and final qualification remain OPEN.
-The music complaint is resolved by the owner; leave it alone.
+**NET-SKILLS-1, OPEN (owner 2026-09-27):** future-proof current and newly added skills
+through explicit shared networking contracts and enforced coverage for authority,
+prediction/confirmation, persistent state and lifecycle recovery. Preserve current
+skill behavior and presentation. Implement directly without delegated workers.
+Only Paete's VFX are currently substantial; other presentation is provisional.
+Keep shared delivery independent of cosmetic reworks so later authors can replace
+models,clips and effects without rebuilding transport plumbing.
+Ranked matchmaking,admission,reconnect and spectators are explicitly included;
+preserve rating/result/leave rules and the existing device-separated ranked pools.
+Ranked/casual discovery now filters shared skill incompatibility and reserved-seat
+capacity, backs off failed allocations and retries a stable cached list after failure.
+Three managed cases and compiler checks pass; live ranked/party/result coverage stays OPEN.
+Protocol64 now checks shared skill/intro metadata at connection approval while
+ignoring cosmetic data/live state. Compiler checks and two managed contract cases
+pass; native approval/cross-platform checks and broader lifecycle coverage stay OPEN.
+Protocol65 protects snapshots across ultimate handback and restores prepared
+effects on the paused simulation clock through ability-owned recovery interfaces,
+without hero/effect-class transport switches. Compiler/capability checks pass;
+native recovery/codec/ranked coverage remains OPEN. See [contract](SKILL_NETWORK_CONTRACT.md).
+Incoming Phaister refinement is integrated with protocol65 and compiler checks;
+protocol66 now carries generic held-aim body state through the accepted pose stream.
+Private targeting stays local; cast/ultimate tokens,epoch and lifecycle cleanup
+prevent stale holds. Four assemblies compile and one pure token case passes;
+native codec/lifecycle and actual ranked/peer qualification remain OPEN.
+Scope includes body animation, VFX, cutscenes, interruption and cleanup on every
+relevant peer, spectator, late join and reconnect. Explicit delivery declarations
+and the normal pre-build guard are implemented (focused EditMode 5/5); remaining
+state/presentation replication and real-peer qualification stay OPEN.
+Approved replica commands now survive local timer drift; unpredicted owner casts
+take full playback. Phaister's received statuses initialize and clean up with each
+body, without needing the original cast (two new local PlayMode cases pass).
+Preserve incoming reworks; retest changed network contracts, not every cosmetic edit.
+Protocol63 now carries stable ability identity and explicit activation/command
+intent; accepted casts wait briefly for their body/kit in an ordered,scoped queue.
+Compiler checks pass; native codec/delivery checks remain OPEN after a disk-reserve
+stop before tests. Reuse the saved candidate at the next safe integration run.
+Effect confirmations now have independent request lifetimes; pending initialization,
+recast commands and old denials preserve the correct active effect (four distinct
+local cases pass). Networking comes first; real work-driven loading follows it.
+Protocol62 world snapshots now reject stale prediction/event state and bind restored
+objects to their owning skills; independent plant cleanup is corrected. Focused
+EditMode6/6 and PlayMode2/2 pass. All-peer presentation qualification remains OPEN.
+Timed-state bindings now use the actual owning ability instead of a live slot or
+fixed duration cap (focused EditMode 1/1); remaining contract enforcement stays OPEN.
+Hero-shop wallet notifications now refresh purchase controls without rebuilding the
+preview/ability tiles; this narrow flow optimization is source-reviewed.
+Room browsing now preserves advertised admission/reserved-seat state and refreshes
+renamed/resized rows through field comparison. Runtime/Tests compile and two managed
+helper checks pass; native row interaction and live discovery remain OPEN.
 
-**DOCS-0927:** organization completed; [archived entry](TODO_Archive.md#docs-0927-documentation-organization-done-2026-09-27)
-and [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
-The full public queue before this header condensation is [preserved](archive/TODO_queue_2026-09-27.md).
-Detailed current methods remain live; numbered backlog bodies/IDs were not removed.
+**Loading slice, 2026-09-27:** progressive shader completion, staged menu-art/avatar
+cache preparation and duplicate audio-sweep removal are implemented (`c9f55410`).
+Roster-derived portraits and six current mode cards now load asynchronously during
+boot and share a retained cache across hub/HUD helpers. Four assemblies compile;
+the new native cache/no-spawn case and actual first-use timings remain OPEN.
+Boot now retains loading through menu activation,home/login construction and initial
+layout; hidden input and welcome/music wait for reveal. Four assemblies compile;
+the new native handoff/cleanup case and actual first-use timings remain OPEN.
+Hero-prop prefab discovery/retention now runs inside boot loading, with yielded
+progress and shared source caches for existing prop loaders. Compiler checks pass;
+native lifecycle and player first-use timing remain OPEN under the disk limitation.
+Phaister's setup warmup now targets her current visual-only OMEN rather than the
+retired Coven, preserving authored timing/look. This loader correction is source-reviewed.
+The existing ultimate-introduction tables and 12 shared effect sheets now preload
+in yielded boot stages; those follow-ups are source-reviewed. Player first-use hitch qualification
+remains OPEN, not replaced by the local shader/cache completion check.
+
+**Owner correction, 2026-09-27: implementation first.** Stop validation loops and
+diagnostic churn. Prioritize actual loading/runtime fixes so expensive preparation
+finishes behind loading, not when the player clicks. Only short checks tied to a
+specific change; no new capture rigs, broad audits or test-repair projects. Finish
+and publish already-started work without starting a full Amihan or new animation/
+VFX/skill redesign. Loading optimization and reported client-only skill behavior
+remain OPEN until their actual fixes and appropriate evidence exist. See the newest
+[ledger entry](ACTIVE_REWORK_LEDGER.md).
+
+**2026-09-27 QA2 verified slices:** consent/password feedback, current-role
+selector/guide, mode-card clipping, Practice picker, lobby chat, score fitting,
+Paete preview framing and local offline-reward exclusion. See
+[QA2 receipts](reports/stability-2026-09-27/qa2-validation.md) and
+[QA comments](reports/stability-2026-09-27/qa-comments.md).
+LAN title parsing has passed; full title/input/peer coverage remains open.
+PRACTICE-1's range controls, live service deployment and final qualification
+remain open. These focused checks do not close their parent requirements.
+
+**2026-09-27 verified stability batch:** room cancellation/seating, native interaction
+prompts, distinct current-kit glyphs, live symbol refresh and avatar sprite imports.
+Exact checks and remaining limits: [validation](reports/stability-2026-09-27/validation.md).
+Remaining owner QA, current-kit regressions and final qualification stay open.
 
 **Standing mandate (owner, 2026-09-21):** "finish everything note yet done", then "i want
 every single thing in todo to be done pls mark that in todo and shit". Every unfinished

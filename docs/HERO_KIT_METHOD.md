@@ -1,5 +1,15 @@
 # How a hero kit is built here: Paete, the worked example
 
+**Current integration,2026-09-27:** this remains the live creative method,not a
+task assignment. Start with [AGENTS](../AGENTS.md),then use
+[SKILL_NETWORK_CONTRACT](SKILL_NETWORK_CONTRACT.md) for authority,body-held aim,
+cast delivery and ability-owned recovery. Cosmetic/model/clip/effect swaps use
+those hooks without a new RPC or protocol bump. Genuinely new gameplay state or
+wire semantics still needs an explicit contract and matching clients. Do not
+hardcode a reworked hero into transport merely because Paete's original work did.
+Use [TESTING](TESTING.md) for focused checks; do not repeat full gates/films after
+every small edit. All original worked steps,beat tables and review history remain below.
+
 Owner, 2026-09-27: *"i want u to record in a docs somewhere too how this entire character (paete) shit was build all abiltiies sfx
 and requirements and ult cutscene and refinements so that it can be used as inspiration ... to make the abilities for other
 charcters"*, and on Paete himself, 2026-09-26: *"I WANT THIS TO BE THE BASELINE QUALITY OF EVERYTHING ELSE MOVING FORWARD"*.
@@ -8,7 +18,7 @@ charcters"*, and on Paete himself, 2026-09-26: *"I WANT THIS TO BE THE BASELINE 
 cutscene), including a less capable model working alone. It is written as steps to follow, in order, with the reason for each
 step and the mistake that step prevents. Every reason is something that actually went wrong on Paete or was said by the owner.
 
-**How to use it.** Read `CLAUDE.md`, `docs/VISION.md` and `docs/TODO.md` first (they are the rules; this is a method). Then read
+**How to use it.** Read `AGENTS.md`, `docs/VISION.md` and `docs/TODO.md` first (they are the rules; this is a method). Then read
 this whole file once. Then, for your hero, copy the checklist in section 9 into the hero's TODO entry and work down it. When a step
 here disagrees with the code, the code is current and this file is out of date: fix this file in the same commit.
 
@@ -391,7 +401,7 @@ The general lessons under those rows:
 - [ ] Plan with the kit mechanically, the six-beat table per ability, the file list, ONE batch of questions; answers recorded
 - [ ] Model per `CHARACTER_MODEL_METHOD.md`; owner's verdict
 - [ ] `<Hero>Rules.cs` + tests: owner numbers quoted, distances solved against `Friction`, measured geometry written down
-- [ ] Kit, hazards, status, input (pad + thumb), network (protocol bump + test), snapshot kinds + a rejoin probe, replay `Staged`
+- [ ] Kit,hazards,status,input (pad + thumb),explicit shared network/recovery contracts and changed-behavior checks; bump protocol only for changed wire/semantics,not cosmetic swaps; preserve replay `Staged`
 - [ ] Roster, loadout, lines, glyphs, icons, HUD card, portrait (framing measured against the cast), avatar, FPP arms, bake
 - [ ] One body clip and one first-person action per ability; filmstrips reviewed
 - [ ] The effect family's rules written; every effect grows from something and withers into something; props modelled and typed

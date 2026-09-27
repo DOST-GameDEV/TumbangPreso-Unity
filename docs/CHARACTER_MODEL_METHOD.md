@@ -1,5 +1,11 @@
 # Character model method
 
+**Live routing,2026-09-27:** read [AGENTS](../AGENTS.md) and the current hero's
+[clothing/preservation constraints](CAST_CLOTHING_STYLE.md). The detailed method
+below remains current. Use [canonical rendering](CANONICAL_RENDERING_PIPELINE.md)
+and [TESTING](TESTING.md) for guarded,named-profile execution and internal builds;
+old machine paths or broad-gate wording do not override those instructions.
+
 How a hero model is made or reworked in this repository, written down after the Rafi
 islander rework of 2026-09-25 (v10 to v29, `tools/build_rafi_voxel.py`). CLAUDE.md and
 AGENTS.md point here. Read [Art_Direction.md section 0](Art_Direction.md#0--new-models-must-belong-to-tump)
@@ -119,7 +125,7 @@ table space against the same numbers as the box they sit on.
   iteration**:
 
   ```bash
-  python tools/run_unity_guarded.py -batchmode -quit -executeMethod TumbangPreso.EditorTools.RafiNativeModelReview.Run -tp-head-study -rig rafi -out Logs/rafi-vNN/rafi-turnaround.png -logFile Logs/rafi-vNN.log
+  python tools/run_unity_guarded.py -batchmode -quit -tp-profile presentation-validation-20260921 -executeMethod TumbangPreso.EditorTools.RafiNativeModelReview.Run -tp-head-study -rig rafi -out Logs/rafi-vNN/rafi-turnaround.png -logFile Logs/rafi-vNN.log
   ```
 
   It writes the hero lineup (front and three-quarter), the head study, the turnaround, and
