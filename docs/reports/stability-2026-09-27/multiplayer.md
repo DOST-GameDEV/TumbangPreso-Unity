@@ -1,5 +1,10 @@
 # Multiplayer investigation, 2026-09-27
 
+Latest evidence: the [input integration pass](input-integration.md) completed7/7
+native cases, including the received-root/frozen,hold,plant-lifetime and victim-camera
+checks below. It supersedes their earlier NOT RUN notes only for those exact local
+cases. Actual peer/ranked/reconnect qualification remains separate and OPEN.
+
 ## Received Rooted Presentation
 
 Base `e1f21c5f`,protocol unchanged72. The existing root coil was created only from

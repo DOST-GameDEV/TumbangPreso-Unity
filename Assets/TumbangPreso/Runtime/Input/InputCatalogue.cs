@@ -155,10 +155,10 @@ namespace TumbangPreso.InputLayer
                 Verb.SpecialAbility, "SpecialAbility", "<Gamepad>/rightTrigger",
                 TouchZone.ActionCluster, 0, TouchSize.Large, "THROW", UI.VerbGlyph.ThrowSlipper),
 
-            // ⚠️ GRAB IS CONTEXTUAL AND STAYS ONE CONTROL. Tap picks up, tap with nothing in
-            // reach shoves, hold as the taya runs the lata reset. `PlayerInputReader`'s note is
-            // why that is resolved downstream: one key, one action, several jobs decided by the
-            // world. A second touch button per job would be three controls for one verb.
+            // ⚠️ GRAB IS CONTEXTUAL AND STAYS ONE CONTROL. Tap picks up, hold as the taya runs the
+            // lata reset. The shove left it on 2026-09-27 for the LUNGE control (the owner's Shove /
+            // Lunge), on every device, so an attacker shoves with the other trigger and the button
+            // beside THROW. A second touch button per job would be more controls for one verb.
             Verb.Grab => new VerbInput(
                 Verb.Grab, "Grab", "<Gamepad>/buttonWest",
                 TouchZone.ActionCluster, 1, TouchSize.Medium, "GRAB", UI.VerbGlyph.Hand),

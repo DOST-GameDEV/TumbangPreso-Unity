@@ -1,5 +1,10 @@
 # General loading and first-use audit, 2026-09-27
 
+Latest evidence: the [input integration pass](input-integration.md) completed7/7
+native state/loading cases, including destination readiness and supplementary-motion
+retention. Its exact coverage supersedes earlier NOT RUN notes below for those
+cases only. No player hitch table or blanket native qualification is implied.
+
 ## First HOME decoder preparation
 
 Base `4a9f9cf2`. HubSceneVideo previously loaded its clip/poster and prepared a

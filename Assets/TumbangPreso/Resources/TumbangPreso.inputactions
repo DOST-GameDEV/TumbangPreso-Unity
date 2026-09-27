@@ -389,7 +389,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000005",
-                    "path": "<Keyboard>/x",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -411,7 +411,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000009",
-                    "path": "<Keyboard>/b",
+                    "path": "<Keyboard>/t",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -466,7 +466,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000020",
-                    "path": "<Keyboard>/q",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -477,7 +477,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000021",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -488,7 +488,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000022",
-                    "path": "<Keyboard>/f",
+                    "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -510,7 +510,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0004-4000-8000-000000000101",
-                    "path": "<Keyboard>/z",
+                    "path": "<Mouse>/scroll/down",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -521,7 +521,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0004-4000-8000-000000000102",
-                    "path": "<Keyboard>/c",
+                    "path": "<Mouse>/scroll/up",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -939,7 +939,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-0000000000a1",
-                    "path": "<Keyboard>/g",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",

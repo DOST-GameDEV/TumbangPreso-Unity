@@ -1,19 +1,20 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`e1f21c5f3118c0219e2788854b90acd3b5c35e56`; received-root restraint unit follows it.
+`22f71a9c` plus incoming `1de7706f`; input integration follows those parents.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
 
-Received Rooted state now owns the existing body restraint even without a sentry's
-inferred target list. The sentry and fallback share one coil; later source-facing
-is applied once, normal unroot releases it and body disable retires it silently.
-No authored geometry/animation or hold/escape rule changed. Four assemblies compile;
-native received-state/lifecycle and actual peer/reconnect checks remain OPEN.
-Protocol stays72; sentry target-list recovery and QA-15 remain separate work.
-[Evidence](reports/stability-2026-09-27/multiplayer.md#received-rooted-presentation).
+Incoming owner keybinds,shared Shove/Lunge,mouse-wheel glyphs and Phaister v3 plan
+are merged with loading/host-hold/status work. Two incoming script-GUID repairs
+are preserved. Four assemblies compile and one guarded native pass completed7/7
+focused state/loading cases with no frozen-input drift. These cover the new
+root/freeze/plant/hold/victim-feedback/loading-readiness/motion-data paths only.
+Protocol remains72. Actual peers,player performance and other native UI checks
+remain OPEN; no new authored kit or map work is included.
+[Evidence and scope](reports/stability-2026-09-27/input-integration.md).
 
 DOCS-0927 is published as ce0edc7a; [preservation/media record](reports/documentation-cleanup-2026-09-27/README.md).
 No task-owned Unity/compiler/player process is running. Preserve unrelated contributor
@@ -24,6 +25,7 @@ and current owner reservations after resuming.
 
 | Revision | Change | Evidence boundary |
 |---|---|---|
+| 22f71a9c | Received Rooted restraint ownership, dedup, late facing and cleanup | Included in the7/7 native integration pass; actual peers/reconnect pending |
 | e1f21c5f | Coalesced character-preview render-target resizing and invalid-avatar cleanup | Four assemblies compile; native DPI/resize/visual and player allocation checks pending |
 | b93d2a4a | Remove whole-screen settings reflow/chip scans on ordinary value changes | Four assemblies compile; native transaction/layout and player timings pending |
 | 2b588964 | Async retained supplementary baked-motion data for roster/body/introduction binding | Four assemblies compile; native retention and first-use/memory timings pending |
@@ -71,24 +73,21 @@ revision and receipt, remains in [the dated snapshot](archive/snapshots-2026-09-
 
 ## Validation Environment
 
-Use the task's isolated validation checkout and named profile, not another worker's
-caches or the real player profile. Existing native launches hit the disk reserve
-before tests; repeated launches at unchanged headroom are not justified. Current
-direct Roslyn checks compile Runtime,Editor,Tests and PlayTests but do not run native
-lifecycle,rendering,IL postprocessing,actual peers or a player build.
+Use the isolated validation checkout and named profile, not another worker's caches
+or the real player profile. Earlier native launches hit the disk reserve. After the
+incoming metadata repairs, one guarded changed-candidate run completed7/7 native
+state/loading cases with a6,767,398,912-byte minimum free-space sample. This establishes
+that focused native work is possible now, not that a player build has enough space.
 
-Latest frozen implementation candidate:129 source/dependency inputs,5changed for frozen presentation.
-Four Unity assemblies compiled; session33753 ended. Unaffected Core evidence reused.
-Receipts: [frozen presentation](reports/stability-2026-09-27/checks/frozen-presentation-compile.json),
-[HOME warmup](reports/stability-2026-09-27/checks/home-video-compile.json),
-[verb receipts](reports/stability-2026-09-27/checks/verb-receipts-compile.json),
-[stamina](reports/stability-2026-09-27/checks/network-stamina-compile.json),
-[action scope](reports/stability-2026-09-27/checks/action-scope-managed.json),
-[login](reports/stability-2026-09-27/checks/login-feedback-compile.json),
-[portrait preload](reports/stability-2026-09-27/checks/menu-portraits-compile.json),
-[menu activation](reports/stability-2026-09-27/checks/menu-activation-compile.json),
-[aim](reports/stability-2026-09-27/checks/aim-replication-managed.json).
-Native cases remain pending; no broad suites or unchanged films repeated.
+Latest frozen candidate:186 source/dependency inputs,19 incoming paths over the
+previous layer; no frozen-input drift during native execution. Four assemblies
+also compile directly. [Native receipt](reports/stability-2026-09-27/checks/input-integration-native.json),
+[case XML](reports/stability-2026-09-27/checks/input-integration-native.xml) and
+[exact scope](reports/stability-2026-09-27/input-integration.md). Earlier individual
+compiler/managed receipts remain in the network/loading reports and their checks
+directory; do not repeat their unchanged cases or equate compilation with runtime.
+The guard restored the named-profile files/shared input preferences. No active job
+remains. Recheck headroom before any new heavy job and stop at the existing reserve.
 
 Earlier broad survey:555 cases,468passed,72failed,15skipped. Do not turn that old
 survey into a repair loop or call it current source qualification. No successful

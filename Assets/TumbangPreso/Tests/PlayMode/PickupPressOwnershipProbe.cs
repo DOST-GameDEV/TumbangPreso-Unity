@@ -67,7 +67,14 @@ namespace TumbangPreso.PlayTests
             who.Intent.CommitFrame();
             who.Intent.Set(Verb.Grab, true);
             UpdateConsumers();
-            Assert.Greater(combat.ShoveCooldownLeft, 0, "A fresh press while carrying must still shove");
+            // The owner's layout, 2026-09-27: the pickup key is Interact / Use and never shoves.
+            Assert.AreEqual(0, combat.ShoveCooldownLeft, "A fresh pickup-key press while carrying shoved");
+            who.Intent.Set(Verb.Grab, false);
+            UpdateConsumers();
+            who.Intent.CommitFrame();
+            who.Intent.Set(Verb.Lunge, true);
+            UpdateConsumers();
+            Assert.Greater(combat.ShoveCooldownLeft, 0, "Shove / Lunge while carrying must shove");
             Assert.AreEqual(stamina - Balance.ShoveStaminaCost, who.Stamina.Current, .001f);
             Assert.Greater(combat.LastShoveLandedAt, -1);
         }

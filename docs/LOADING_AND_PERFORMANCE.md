@@ -43,8 +43,11 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 
 ## Current Qualification Boundary
 
-Recent menu activation,portrait and hero-prop units compile; their dedicated native
-cases remain pending under the recorded editor disk-space limitation. Earlier
-shader/art evidence remains separate. There is no current complete before/after
-player hitch table. Consult the ledger for current environment headroom/processes,
-not historical absolute paths. Do not relaunch unchanged blocked workloads in a loop.
+The latest [focused native integration](reports/stability-2026-09-27/input-integration.md)
+passes loading-readiness and supplementary-data retention cases alongside five
+state/presentation cases. Menu activation,portrait/prop retention,HOME decoder,
+settings,training and preview-resize checks still have separate evidence gaps.
+Earlier shader/art evidence remains separate. There is no current complete player
+before/after hitch table. Consult the ledger for current headroom/processes; the
+latest native pass succeeded, but player packaging headroom is not established.
+Do not repeat unchanged successful cases or relaunch a blocked workload in a loop.

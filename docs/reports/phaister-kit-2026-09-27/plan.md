@@ -6,7 +6,10 @@ effects and models and vfx of her skills"*. Then, on v1: *"i want u to make her 
 supposed to be using MAGIC AND VOODOO BTW"*, *"think of fil cutlure integration with her shit"*. Method:
 `docs/HERO_KIT_METHOD.md`. Brief: `ArtSource/phaister/kit-20260927/design-brief.md`. Research: [research.md](research.md).
 
-**The one sentence for her kit: a mischievous Visayan witch from Capul whose magic is moths, moonlight and a rag doll
+**v3, 2026-09-27 evening: the owner's new table REPLACES sections 2 to 4.5; the live plan is section 9.** (What follows up to
+section 8 is v2, kept for its reasons.)
+
+**The one sentence for her kit (v2): a mischievous Visayan witch from Capul whose magic is moths, moonlight and a rag doll
 full of pins.** Playful and pleased with herself, never cruel (LORE.md). v1's showman (spotlights, curtains, bows) is
 REPLACED; section 8 records what was rejected and why.
 
@@ -260,3 +263,183 @@ Never shown twice: the cutscene ends with the eye thrown and half grown, so play
 - **The serpent swallowing the moon**, and **a knot of thread reeling every player in**: the second is Paete's ultimate
   (something reaching out to each player and dragging them). Her pull is a force that swallows.
 - **Filipino-word names** for the ultimate: *"no tagalog"*.
+
+
+## 9. v3, the voodoo kit (2026-09-27, evening): the owner's new table replaces sections 2 to 4.5
+
+Owner: *"the only one i like from last session is the teleport but that has to be improved too"*, *"here new status effects
+and skill i want to let phaister have"*, *"we will completley refine hhow phaister works can u think with me on art direction and
+how skills shouyld look and be executed"*, then *"thoroughly think abt each aspect of skill cast from top to bottom like all vfx
+animation etc to deliver the messaghe that it is happening"*. MANIKA MISCHIEF, SPOTLIGHT PIN and OMEN (the moonlight, the
+butterflies, the cosmos eye and its cutscene) are RETIRED by this table. `butterfly.glb` is kept for a later use (owner, on the
+v11 film).
+
+### 9.1 The table (the owner's words; numbers he gave are his, the rest are marked proposed)
+
+| Slot | Name | The owner's text | Cooldown / cost |
+|---|---|---|---|
+| Passive | VOODOO | *"Whenever Phaister marks someone she takes 10% of their speed and they slow down by 10%"* | |
+| Signature | TELEPORT | *"Teleport to the target location instantly."* | 35 s |
+| Attacking | CURSE: DRAIN | *"Mark a person with a curse and attach their soul to the voodoo doll. After a 1.5 seconds delay, inflict Drained"* | 35 s |
+| Defending | CURSE: HEX | *"Mark a person with a curse and attach their soul to the voodoo doll. After 10 seconds it can be recast to inflict Hex"* | 35 s |
+| Ultimate | VOODOO DOLL | *"The voodoo doll becomes a sentient being that assists you in attacking or defending for the rest of the round."* *"The doll does not give points when tagged/sabotaged"*, *"The doll gives points gained to Phaister"*, *"The doll is a Hard AI"* | 12 objective points |
+
+Statuses (the owner's status table, 2026-09-27):
+
+| Status | Description | Tooltip |
+|---|---|---|
+| DRAINED | *"Depletes stamina to 0. Prevents stamina recovery for 2.5 seconds."* | *"Disabled Stamina Recovery"* |
+| HEXED | *"Hallucinations of slippers randomly appear on your screen for 7.5 seconds."* (HUD Hexed visual effect) | *"Hallucinations"* |
+
+The same table also retunes other heroes' statuses (Concussed 75 % slower for 2.5 s, Rooted 2.5 s, Whirled also blocks the can
+reset, new Zapped and Haunted; Feared, Disoriented and Vulnerable absent). Those belong to those heroes' passes and are NOT
+applied by this one; recorded in `docs/TODO.md` HERO-10. The owner will send each hero's passive on that hero's turn.
+
+### 9.2 The owner's answers (2026-09-27)
+
+| Question | Answer | What it becomes |
+|---|---|---|
+| "Players near it" | *"this is a typo bcz old version was throw based, only affects marked"* | each curse lands on the marked player only; no area |
+| How she marks | first a thrown hat pin; then *"actually dont throw needle to mark them"*, *"i want her to just hold her hand out towards someone for like 2 seconds or smth and thats marked and whiels he's holding towards them it shows like an eerie vfx connecitng the two"* | THE REACH (9.5) |
+| The teleport | moths plus a doll decoy | 9.6 |
+| The doll's network side | *"You build it all"* | its own contract in `SKILL_NETWORK_CONTRACT.md` |
+| The doll's body | *"create a new model for the voodoo i guess"* | 9.10, `tools/build_phaister_doll_voxel.py` |
+| The slipper during a skill | *"think abt where slipper goes when u use skill and make it so that u can use right hand when doing skills"* | 9.4 |
+
+### 9.3 The idea, the look, and how a cast talks
+
+**One sentence: what she does to the doll happens to you.** Every skill is two beats: her hands act on the doll (the cause), and
+the one she marked feels it across the court (the effect). Players learn to watch her hands.
+
+- **One material family:** rag cloth, thread, X stitches, pins, stuffing. No moon, no butterflies, no space.
+- **One light:** a soul glow in her palette, only on threads, marks, pin heads and the doll's eye. DRAIN glows **crimson** (her
+  `CRIMSON`, lifted), HEX glows **violet** (her `LILAC_GEM`), so a player can tell which curse is on whom from across the court.
+  Shape carries it too, for colour-blind players: DRAIN is a TWIST (spirals, a wrung cloth), HEX is an EYE (a button, a stitched band
+  across the eyes).
+- **One graphic, the stitch:** dashed seams for threads, aims and trails; X stitches for marks. A dashed line reads at 14 m on Low
+  where a soft glow does not.
+- **Moths only in the teleport** (the one he kept).
+
+**How a cast talks.** Every cast answers five questions, for three people, at the same moment on every layer (her body, her screen,
+the effect, the target's body, the target's screen, the sound): **is it coming? who is it for? is it working? did it land? when
+is it over?** The three people are HER (it is working), the TARGET (it is happening to me, and here is my way out) and EVERYONE
+ELSE (who is doing what to whom). A layer that says something different from the others at that moment is cut.
+
+| Question | Her | The target | Everyone else |
+|---|---|---|---|
+| Is it coming? | her tile lights; a bracket on the player she would reach | her body's tell (arm rising toward them) | the tell |
+| Who is it for? | the bracket, the thread | the thread lands on THEIR chest; an edge marker points to her | the thread across the court |
+| Is it working? | the doll changing into their colours | the vignette creeping in, the heartbeat quickening | the thread tightening, their ghost leaning out |
+| Did it land? | the tug, the doll wearing them | the stitch mark, the jolt, the status icon | the snap, the mark over them |
+| When is it over? | the doll going back to burlap at her hip | the pins popping out, the screen clearing | the mark fraying away |
+
+### 9.4 Where the slipper goes
+
+A carried slipper leaves her right hand whenever a skill needs it: for THE REACH and both curses she tucks it into her belt at the
+back (the right hand reaches, the left holds the doll), and it returns to her right hand when the gesture ends. In first person
+the right hand dips out of the bottom right of the frame as it tucks the slipper, and comes back up with it. The TELEPORT keeps it in
+hand (she arrives holding it). This is a shared mechanism: each ability declares where the carried slipper goes while it is cast
+(`Hand` right as today, `OffHand` left, `Belt`, or `Kept`), the default is the left hand, and each hero's choice is their own.
+
+### 9.5 THE REACH: how both curses mark (proposed numbers)
+
+Input (proposed): **tap** the skill to start reaching toward the opponent under the crosshair; it keeps going on its own while she
+keeps them in view; tap again to let go. (Holding the key for the 2 s is the alternative: it matches "hold her hand out", but on a
+phone it ties up the thumb that aims the camera.) Reach 9 m to start, breaks past 11 m, behind a wall, or if they leave 35 degrees
+of her aim; she can walk while reaching but not sprint. A broken reach refunds half the cooldown. Each curse reaches in its own way.
+
+| Time | Her body (everyone) | Her screen | The effect | The target's body | The target's screen | Sound |
+|---|---|---|---|---|---|---|
+| Ready | the doll at her hip twitches once | a thin stitched bracket on the opponent she would reach (her screen only) | | | | |
+| 0.00 lock | slipper tucked to the belt (0.12 s); left hand unhooks the doll; right arm swings up toward them, palm out. DRAIN: arm at their chest height, leaning back as if pulling a rope. HEX: arm higher, at their head, the doll lifted to her own cheek, peeking over it | right hand rises into view, the doll lower left | the thread whips from her palm to them in 0.12 s and pierces with a small X stitch: DRAIN at the chest, HEX at the eyes | a small flinch | a stitched thread enters from the edge in her direction; a marker at the edge points to her; a status chip "BEING CURSED" with a 2 s ring, named DRAIN or HEX | a sharp thread whip and a needle prick; for the target, a heartbeat thump |
+| 0.1 to 2.0 hold | she leans into it; her arm trembles; the doll twitches in time with the target's heartbeat | the thread runs from her palm; a ring fills round her crosshair | the thread: a thin wavering cord of dark smoke with a bright core in the curse's colour and dashed stitches along it; the stitches crawl from them TO her; it tightens as it fills (less sway, thicker, brighter). The doll in her hand changes into their colours from the feet up (the progress bar is the doll) | a pale ghost of them leans out of their body toward her, further as it fills | the vignette creeps in from her side; the heartbeat quickens; the chip's ring fills | a low hum rising; cloth creaking; the heartbeat for the target |
+| 2.0 mark | a sharp tug back to her chest, as if pulling a stitch tight | the tug; the doll now wears them | the thread snaps taut, zips into the doll; their ghost is yanked along it INTO the doll | a stagger (0.3 s); the MARK appears over them (DRAIN: a twisted crimson knot; HEX: a violet button with a stitch through it) | a stitch stamp flashes at the edge; one skipped heartbeat; the chip becomes the mark's status | a stitch pulled tight; a breathy gasp for the target |
+| broken | her arm snaps back; the doll goes limp back to burlap | the thread frays off her palm | the thread unravels into strands and snaps back toward her | the ghost slides back in | the thread and vignette withdraw | a fray and snap |
+
+The **VOODOO passive** starts at the mark and lasts while the mark lives (proposed): the marked one runs 10 % slower and she runs
+10 % faster. Seen on both: their footsteps leave faint stitched prints in the curse's colour, hers a short trail of moth dust; her
+HUD shows VOODOO +10 %, theirs VOODOO -10 %.
+
+**CURSE: DRAIN (attacking): she wrings them out.**
+
+| Time after the mark | Her body | Her screen | The effect | The target's body | The target's screen | Sound |
+|---|---|---|---|---|---|---|
+| 0.0 to 1.5 the wind-up | both hands on the doll of them, twisting it tighter and tighter (she keeps walking) | the doll twisting in both hands | a crimson spiral tightens round the target's middle in time with each twist | their body twists a little with each turn of hers | their stamina bar shakes and starts to fray at its ends; the crimson vignette pulses with each twist. The message: your stamina is about to go, spend it now | rope creak on each twist; the heartbeat heavy |
+| 1.5 the wring | the last hard wring; drops wrung out of the doll | the drops fall past her hands | the spiral snaps tight and bursts; crimson drops scatter from them | a slump: shoulders drop, head bows (0.6 s), then they keep moving | the bar pinches in the middle like a twisted cloth and empties at once; two crossed pins stamp over it | a wet-cloth squeeze; an exhausted exhale |
+| 1.5 to 4.0 DRAINED | the doll goes limp and back to burlap; she hooks it on her hip; the slipper comes back to her hand | | | a little grey and crimson in their colour; two crossed pins as the status over them | the pinned bar; no sprint | |
+| 4.0 recovered | | | | the colour returns | the pins pop out and the bar starts refilling | a tink and a breath in |
+
+**CURSE: HEX (defending): she pins its eye.**
+
+| Time after the mark | Her body | Her screen | The effect | The target's body | The target's screen | Sound |
+|---|---|---|---|---|---|---|
+| 0 to 10 the fuse | the doll of them hangs at her hip in their colours, a pin in its head; it swings as she moves (everyone can see whom she holds) | her Hex tile turns into a fuse ring filling for 10 s; a thread marker at the edge of her screen points to the marked one | the pin's head in the doll lights up slowly, like a fuse | their mark (the violet button) fills with light as the fuse burns | a small chip HEX MARKED with the same ring; a faint stitched seam at the corners | a slow tick for the target only, speeding up near 10 |
+| 10 to 25 armed | the doll at her hip jitters, the pin glowing | the tile reads RECAST, pulsing | | the button over them is fully lit and throbs | the chip throbs; the tick holds steady | a low hum while armed |
+| recast | she yanks the doll to her face and stabs the pin into its button eye, grinning | the stab, close in her hands | the pin goes in; violet threads burst from the doll's eye | the button over them bursts; a stitched band snaps across their eyes (seen by all for the 7.5 s) | a stitch-blink: a seam closes across the whole screen for 0.15 s and opens; then HEXED | the stab; a squelchy pop; a music-box sting falling |
+| 0 to 7.5 HEXED | the doll goes back to burlap at her hip; the slipper returns | | | the stitched band across their eyes, fraying at the end | phantom slippers appear at random, among the real ones, each for a few seconds; a phantom casts no shadow (the tell for sharp players); the seam vignette at the corners | a detuned music box, muffled, and whispers under it |
+| 7.5 end | | | | the band frays away | the seam unstitches and pulls off the screen | a breath out |
+| 25 expiry (never recast) | the doll at her hip goes limp and back to burlap | the tile goes to cooldown | the pin in the doll crumbles | the button over them unravels | the chip fades | a soft fray |
+
+### 9.6 TELEPORT (the kept one, improved): she leaves you a doll
+
+| Time | Her body | Her screen | The effect | Anyone chasing her | Sound |
+|---|---|---|---|---|---|
+| aim (hold) | wrists crossed at her chest, moths crawling out of her cuffs, more as the hold goes on | her lunar sigil on the court where she will arrive, three moths circling it; her crossed hands low in view with moths on them | | the tell: crossed wrists and gathering moths mean she is about to vanish | a quiet flutter |
+| 0.00 release | she is at the sigil at once, already upright, a hand on her hat brim (the slipper still in her hand) | a flutter of wings at the frame's EDGES only, a small field-of-view kick, a violet pulse at the edges; her hands re-knit from moths at the fingertips | at the sigil: a swirl of moths spirals up round her and settles; the sigil flares and burns out as embers | where she stood, a limp rag doll OF HER (her hat, yarn hair in her colour) in her pose | a whoosh in, her three-note motif |
+| 0.00 to 0.35 | | | | the decoy flops: knees buckle, it folds and sits slumped (the gag lands; a taya lunging at it gets nothing) | a cloth flop and a small music-box plink |
+| 0.35 to 0.9 | | | the decoy bursts into about 30 moths that stream in a low arc to her new spot and into her sleeves; a dashed stitched trail on the court from there to her fades over 0.8 s | the trail says where she went | a flutter doppler toward her |
+
+Fixes owed from v11: the tell is filmed from the front; no smoke or insect on her own lens. The 2.5 m shove is dropped (not in
+his text).
+
+### 9.7 VOODOO DOLL (the ultimate)
+
+| Beat | What happens | Sound |
+|---|---|---|
+| Ready | the doll at her hip wakes: its button eye glows faintly, it turns its head to look at whoever is near, it twitches now and then. Everyone who sees her knows her ultimate is up | a faint music-box note when it first wakes |
+| Cast | the cutscene, 5.0 s, the match clock frozen (9.8) | |
+| Hand-back | the doll stands beside her at player size, swaying, head tilted, eye lit; play picks up here | |
+| In play | a fifth body on her side, Astig (hard) bot. It walks like a puppet with half its strings cut: head lolling, arms swinging late, a jerk now and then. Nameplate PHAISTER'S DOLL in her colour. Attacking: it throws its own slipper at the can with a floppy overhand. Defending: it guards and tags with a flopping lunge. Its points pop over it as +100 in her colour with a small doll icon, and go to her | soft cloth footsteps, creaks, a music-box motif when it scores |
+| Tagged or sabotaged | stuffing puffs out, it sits slumped like a dropped doll for the stun; a grey stitched X pops over it so the one who tagged it knows it paid nothing; it gets back up with a jerk as if its strings were pulled | a stuffing puff; a sad tine |
+| Round end | it shrinks back in three jolts (the cutscene's growth in reverse) to a small limp doll that unravels into thread; her hip doll is back | a descending music box |
+
+### 9.8 The ultimate's cutscene (about 5 s)
+
+One sentence: **"She sews the last stitch, and the doll gets up."** The travelling thing is her THREAD, left to right in every shot.
+
+| Shot | Time | Picture | Camera | Sound |
+|---|---|---|---|---|
+| SEW | 0.0 to 1.6 | her hands close: the small doll in her left palm; she draws a long pin from her hat band, threads it with a line of her glow, and pulls the last stitch tight across its chest (the purple heart patch); its button eye flickers once | a close two-shot of her hands and face, pushing in | a thread drawn through cloth; a heartbeat starts |
+| GROW | 1.6 to 3.4 | she drops it; it hits the court and grows in three jolts (0.4 m, 0.8 m, full), stitches straining, stuffing puffing from its seams, pins popping out and sliding back in; her thread whips round it as it grows | low on the court looking up, the doll growing into the frame | three cloth stretches, each bigger; the heartbeat louder |
+| WAKE | 3.4 to 5.0 | its button eye lights; it cracks its neck; it turns its head to the REAL opponents (staged copies, their own clips), who flinch; she leans an elbow on its shoulder and winks at the lens | a slow orbit from behind the doll to a two-shot of her and the doll, the opponents in the back of frame | the neck crack; her motif; the music box resolves |
+
+### 9.9 Every moving part of the doll-in-play (the direction of each)
+
+| Part | Moves | Speed | Ends |
+|---|---|---|---|
+| Head | lolls to one side and rights itself with a jerk | a jerk every 2 to 4 s | |
+| Arms | swing late and loose, overshooting | the gait's `ArmLag` at the cap | |
+| Pins in its head | wobble when it lands a step | | |
+| Yarn hair | swings with the head | | |
+| Eye | always lit (it is awake); flares on a score or a tag | | goes dark at the round's end |
+
+### 9.10 The doll's model
+
+A rag manika in HER colours, typed by hand on the cast's seven-bone rig (so the gait, the animator and the bot drive it like a
+player): a burlap sack body with stitched seams, magenta yarn hair like hers, a tiny copy of her hat worn askew, one button eye and
+one X-stitched eye, a mouth sewn into a grin, pins in its head, twine tied at its neck and wrists, a purple patch sewn over its heart
+(the last stitch of the cutscene), a tuft of stuffing out of one shoulder seam. The small doll at her hip and in her hands is the
+same design at hand size, so the one that grows is the one she carried; the teleport's decoy is a doll of HER (her hat, her hair in
+yarn, her coat's colours) on the same body.
+
+### 9.11 Proposed numbers (the owner may retune any)
+
+| Number | Value | Why |
+|---|---|---|
+| Reach start / break range | 9 m / 11 m | the court is a 14 m box; 9 m reaches across half of it |
+| Reach cone / time | 35 degrees / 2.0 s | his *"like 2 seconds or smth"* |
+| Broken reach refund | half the cooldown | a broken reach should cost something, not everything |
+| Hex mark life | 25 s (10 armed-in plus 15 to use it) | long enough to pick the moment, short enough not to hang over a round |
+| Passive duration | while the mark lives | his text ties it to the mark |
+| Teleport range | 2.0 to 5.5 m | today's, kept |
+| Doll body | a player's size and rules; a tag stuns it 5 s; no skills | the Astig bot plays it like a player |

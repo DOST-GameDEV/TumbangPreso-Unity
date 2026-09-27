@@ -148,10 +148,10 @@ namespace TumbangPreso.PlayTests
             // produces and what `JustPressed` needs.
             for (int press = 0; press < 6; press++)
             {
-                intent.Set(Verb.Grab, true);
+                intent.Set(Verb.Lunge, true);
                 yield return null;
                 yield return null;
-                intent.Set(Verb.Grab, false);
+                intent.Set(Verb.Lunge, false);
                 yield return null;
                 yield return null;
             }

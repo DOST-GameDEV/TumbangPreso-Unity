@@ -22,6 +22,12 @@ loading/optimization,then remaining applicable QA/TODO requirements. Newer task
 scope and contributor reservations override older dated order below. Work alone;
 preserve incoming reworks; no repeated validation/film loops for minor changes.
 
+**Integration checkpoint, 2026-09-27:** incoming owner keybinds and script-GUID repairs
+are merged. One guarded native pass completed7/7 new state/loading cases, with no
+frozen-input drift. [Exact coverage](reports/stability-2026-09-27/input-integration.md)
+supersedes earlier NOT RUN notes only for those cases. Actual peers,player performance
+and unsampled native UI flows remain OPEN; no whole-queue completion claim.
+
 **NET-SKILLS-1, OPEN:** host authority,stable ability identity,explicit delivery/
 command intent,independent receipts,bounded delayed delivery,phase-aware prepared
 recovery and held-aim body state are implemented. Cosmetic model/clip/effect swaps
@@ -936,7 +942,27 @@ research, plan and questions: `docs/reports/phaister-kit-2026-09-27/`.
   `HeroIntroductionScene.PostProcess`), the density layer (`.PhaisterBurst.cs`), theme retimed.
 - [x] Probe: `FilmHerCursesOnAVictimsScreen` (the victim's own screen), the miss, front views of the caster.
 
-**OPEN, in order (owner's notes first):**
+**v3, 2026-09-27 evening: THE OWNER'S NEW TABLE REPLACES MANIKA MISCHIEF, SPOTLIGHT PIN AND OMEN.** Owner: *"the only one i
+like from last session is the teleport but that has to be improved too"*, then the table: passive VOODOO (a mark takes 10 % of
+the target's speed for her), TELEPORT, CURSE: DRAIN (mark, 1.5 s, DRAINED), CURSE: HEX (mark, recast after 10 s, HEXED), and the
+VOODOO DOLL ultimate (the doll becomes a Hard AI body on her side for the rest of the round; its points are hers; tagging it pays
+nobody; 12 objective points). Marking is a 2 s reach with her hand out and an eerie thread between them. The plan, his answers
+and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` section 9. The OMEN items below are superseded.
+
+- [x] Plan v3 (section 9): the table, his answers, how a cast talks, where the slipper goes, THE REACH, DRAIN, HEX, TELEPORT,
+  the doll in play, the cutscene, proposed numbers.
+- [ ] The doll's model (section 9.10, `tools/build_phaister_doll_voxel.py`); the hip doll and the teleport decoy on the same design.
+- [ ] Core: `VoodooRules` v3, DRAINED and HEXED appended to `StatusKind`, a passive on the kit (VOODOO first; the owner will send
+  each hero's); tests with his numbers quoted.
+- [ ] The carried slipper leaves the hand a cast needs (shared; each ability declares where it goes; hers is the belt).
+- [ ] THE REACH (a 2 s channel and its thread), DRAIN, HEX (the fuse and the recast), the passive; statuses presented on the body
+  and on the victim's screen.
+- [ ] TELEPORT improved: the decoy doll of her flopping where she stood, the moths streaming to her, a front-on tell.
+- [ ] VOODOO DOLL: a fifth body, Astig AI, attacking or defending with her role, points to her, none for tagging it, gone at the
+  round's end; its network contract in `docs/SKILL_NETWORK_CONTRACT.md` (owner: *"You build it all"*).
+- [ ] The cutscene SEW / GROW / WAKE; sounds; voice rows; icons; bots; films sent; the gate.
+
+**OPEN before v3 (superseded where it names OMEN, MANIKA or SPOTLIGHT PIN):**
 Publication recovery, 2026-09-27: refinement commit `5b696b6f8` is integrated with
 the current networking/loading work. Protocol 64's skill fingerprint covers the
 5.0-second introduction; the older protocol-62 note above is historical. This
@@ -955,6 +981,28 @@ integration does not close any creative refinement item below.
 - [ ] Her voice lines are still the showman's (`HeroLines.cs` phaister rows, `docs/HUMAN.md`): rewrite for the witch; team records.
 - [ ] Icons/glyphs for the new names, portrait/avatar with the hat pins, bots for OMEN height, rejoin probe (network: Astra's lane).
 - [ ] The PlayMode gate, `Checks.RunAll`, audits, a build.
+
+### INPUT-0927 · The owner's default keybinds ✅ DONE, 2026-09-27
+
+Owner, 2026-09-27, forwarding the team's layout: *"change defualt keybiands to this too"*. MOVEMENT: WASD, sprint Left Shift,
+jump Space. ACTIONS: Throw / Tag left click, Shove / Lunge right click, Curve Throw the mouse wheel, Interact / Use F.
+ABILITIES: Signature E, Attacking / Defending Q, Ultimate X. INTERFACE: Ability Tooltips Tab. COMMUNICATIONS: Emote Wheel T.
+
+- [x] Keyboard defaults in `TumbangPreso.inputactions`; the settings panel's rows are named and grouped under his five headings
+  (`Settings.Rebinding`). Pad and touch bindings unchanged.
+- [x] The shove left the pickup key for Shove / Lunge on every device (`CombatVerbs.Update`): an attacker's right click slides
+  when a loose tsinelas lies in reach ahead, shoves otherwise; one press is one verb (a press edge is readable for several
+  Updates, and the first build of this stacked a shove on every slide). Bots shove on the same verb.
+- [x] `Grab` and `Interact` both on F, the one sanctioned pair (`Rebinding.IsOneUseKey`): they are his one Interact / Use key.
+- [x] The curve is a wheel notch: each press edge steps it, a held key still turns it (`PlayerInputReader.CurveInput`); the
+  hardcoded wheel read is gone. WHEEL UP / WHEEL DOWN glyphs drawn into the mouse sheet's empty cells (`InputGlyphs`).
+- [x] Tutorial's shove lesson teaches Shove / Lunge. `Design.md` section 4 rewritten.
+- [x] Found on the way and fixed: `CharacterMotor.NetworkStamina.cs.meta` and `HubSceneVideo.Warmup.cs.meta` carried 33-character
+  GUIDs, so the editor IGNORED both files and the project did not compile in Unity (the direct compiler never reads metas).
+- Evidence: EditMode input suites 60/60 (`Logs/keybinds-editmode-v2.xml`); PlayMode pickup, slide and tutorial 19/20
+  (`Logs/keybinds-playmode-v2.xml`). The one red, `RetrievalSlideTests.AnIneligibleTsinelasIsNotASlideTarget`, fails in its
+  fixture before any input: `Slipper.HostForceEquip` now enforces the ownership lock the fixture's comment says it bypasses.
+  Not this change; left for the ownership-lock owner.
 
 ### PRACTICE-1 · A practice picker and a Valorant-style training range ⚠️ NATIVE CHECK OPEN, 2026-09-27
 

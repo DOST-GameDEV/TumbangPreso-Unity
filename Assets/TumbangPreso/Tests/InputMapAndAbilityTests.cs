@@ -266,19 +266,33 @@ namespace TumbangPreso.Tests
             }
         }
 
-        /// <summary>The three power prompts form the adjacent Q, E, F combat cluster.</summary>
+        /// <summary>
+        /// The owner's default layout, 2026-09-27, key for key: Throw / Tag left click, Shove /
+        /// Lunge right click, Curve Throw the wheel, Interact / Use F, Signature E, Attacking /
+        /// Defending Q, Ultimate X, Ability Tooltips Tab, Emote Wheel T.
+        /// </summary>
         [Test]
-        public void HeroPowerDefaultsMatchTheHudCluster()
+        public void TheDefaultsAreTheOwnersLayout()
         {
             var asset = LoadActions();
             asset.RemoveAllBindingOverrides();
             var map = asset.FindActionMap("Player", true);
 
-            Assert.AreEqual("<Keyboard>/q", map.FindAction("Skill1", true).bindings[0].effectivePath);
-            Assert.AreEqual("<Keyboard>/e", map.FindAction("Skill2", true).bindings[0].effectivePath);
-            Assert.AreEqual("<Keyboard>/f", map.FindAction("Ultimate", true).bindings[0].effectivePath);
-            Assert.AreEqual("<Keyboard>/x", map.FindAction("Grab", true).bindings[0].effectivePath,
-                "contextual pickup must not compete with the E power key");
+            string Key(string action) => map.FindAction(action, true).bindings[0].effectivePath;
+
+            Assert.AreEqual("<Keyboard>/leftShift", Key("Sprint"));
+            Assert.AreEqual("<Keyboard>/space", Key("Jump"));
+            Assert.AreEqual("<Mouse>/leftButton", Key("SpecialAbility"));
+            Assert.AreEqual("<Mouse>/rightButton", Key("Lunge"));
+            Assert.AreEqual("<Mouse>/scroll/up", Key("CurveRight"));
+            Assert.AreEqual("<Mouse>/scroll/down", Key("CurveLeft"));
+            Assert.AreEqual("<Keyboard>/f", Key("Grab"));
+            Assert.AreEqual("<Keyboard>/f", Key("Interact"));
+            Assert.AreEqual("<Keyboard>/e", Key("Skill1"), "the signature ability");
+            Assert.AreEqual("<Keyboard>/q", Key("Skill2"), "the attacking / defending ability");
+            Assert.AreEqual("<Keyboard>/x", Key("Ultimate"));
+            Assert.AreEqual("<Keyboard>/tab", Key("AbilityInfo"));
+            Assert.AreEqual("<Keyboard>/t", Key("EmoteWheel"));
         }
 
         /// <summary>
