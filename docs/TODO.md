@@ -29,6 +29,10 @@ Approved replica commands now survive local timer drift; unpredicted owner casts
 take full playback. Phaister's received statuses initialize and clean up with each
 body, without needing the original cast (two new local PlayMode cases pass).
 Preserve incoming reworks; retest changed network contracts, not every cosmetic edit.
+Protocol63 now carries stable ability identity and explicit activation/command
+intent; accepted casts wait briefly for their body/kit in an ordered,scoped queue.
+Compiler checks pass; native codec/delivery checks remain OPEN after a disk-reserve
+stop before tests. Reuse the saved candidate at the next safe integration run.
 Effect confirmations now have independent request lifetimes; pending initialization,
 recast commands and old denials preserve the correct active effect (four distinct
 local cases pass). Networking comes first; real work-driven loading follows it.

@@ -24,6 +24,8 @@ namespace TumbangPreso.Abilities
             {
                 if (ability == null || string.IsNullOrWhiteSpace(ability.Id) || !ids.Add(ability.Id))
                     throw new InvalidOperationException(kit.HeroId + " has a missing or duplicate network ability ID.");
+                if (System.Text.Encoding.UTF8.GetByteCount(ability.Id) > new Unity.Collections.FixedString64Bytes().Capacity)
+                    throw new InvalidOperationException(ability.Id + " exceeds the network ability ID capacity.");
                 var mode = ability.NetworkMode;
                 if ((int)mode <= 0 || (int)mode > (int)AbilityNetworkMode.Unavailable)
                     throw new InvalidOperationException(ability.Id + " must declare its network delivery mode.");

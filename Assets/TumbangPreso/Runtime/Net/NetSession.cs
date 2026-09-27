@@ -477,7 +477,9 @@ namespace TumbangPreso.Net
         // ReqAbility/PlayAbility carry explicit takeoff/recast intent, and TimedKit adds its 57-byte restore tail.
         // 62: WorldFieldBegin uses a shared bounded header with match identity, request/event
         // watermarks and the round simulation clock; older snapshots cannot clobber newer casts.
-        public const int ProtocolVersion = 62;
+        // 63: shared ReqAbility/PlayAbility serializer carries stable ability ID and
+        // activation/command intent. Cosmetic names and assets are not wire identity.
+        public const int ProtocolVersion = 63;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

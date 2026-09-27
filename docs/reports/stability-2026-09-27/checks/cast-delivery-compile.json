@@ -1,0 +1,87 @@
+{
+  "base": "0e00de51",
+  "protocol": 63,
+  "unity": "6000.5.8f1",
+  "method": "Installed Roslyn with existing Bee response files; redirected outputs and two added sources",
+  "nativeTests": "NOT RUN: editor stopped by disk-reserve guard before compilation",
+  "playModeAttempted": false,
+  "minimumObservedFreeBytes": 4668747776,
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/AbilityNetworking.cs",
+      "sha256": "7C95847609B287B1272B00E908CF2D13EBD74BF7FC051196A1976DEC4795CF7E"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs",
+      "sha256": "2E1643049D887F51FED98AB0456A215C1FF07DEF45B001AB97C4B310C8489E3C"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.Moments.cs",
+      "sha256": "CDE3625BA91C6EE35882436B8C984FC0353EC10BE65876239A85BE2746AC5833"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.SkillReceipts.cs",
+      "sha256": "D81A7EFC1DAEA15DF93F9FB83FCDD34A343EF3FB330C8ECC0B4D35EAA25B54C4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "sha256": "FF14C7B80099A2729AD4EABC78041A2F54A7024CA145449A981C9862FFA748C7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+      "sha256": "3ED39A35E190E6E8B59C58904AC6DFE0CED2961D4CEA1B27347E211F9CD3B07A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs",
+      "sha256": "1DFCF655B9A180F211B873ACD14EBD1B9C6E2E3A5A2AAA4E5E87037B2FF00D43"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/IceSnapshotBatchTests.cs",
+      "sha256": "9A2B8455FD89DC99B008442EA9B9A87746973FFB14F1425057B035C7FE27C5A4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/AmihanKitPlayProbe.cs",
+      "sha256": "715B628802B9CD221AA98412F64A77D78F5178C967D7D2702DDEE6C0F94628F8"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+      "sha256": "7D6AF471D4901FE68B09FC7708141D52DC2C4BAED7E07063BFFCB69D8D94F052"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.SkillDelivery.cs",
+      "sha256": "CA6D797ED5495E48442BE21FC7E022AF2EA2CD57EBF23A02BD117500DF824AFB"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.SkillDelivery.cs.meta",
+      "sha256": "80D3F307CE1057F081DF15019B7DD14E7A7DE2DA1638BB0300989787156F74C7"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/SkillCastMessage.cs",
+      "sha256": "9228076821A3111E323B4096AB0E62C3C8CC04D63BD3DC8738909C5F5777A883"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/SkillCastMessage.cs.meta",
+      "sha256": "8B0AEE5FF650DD6B2E9AC1993F598AFCF8D9DDB1B4BB602769F4E335F5C14FC9"
+    }
+  ],
+  "assemblies": [
+    {
+      "assembly": "TumbangPreso.Runtime",
+      "compilerExitCode": 0,
+      "outputSha256": "62264AD0F0EE502620DD1111C2FEEE8AED457F819753FE6D749D206886D90AEC",
+      "logSha256": "44BE4C87D99F2AF055AB26317D7F4028BC45E0A9411B7FB243759D0A07C7B921"
+    },
+    {
+      "assembly": "TumbangPreso.Tests",
+      "compilerExitCode": 0,
+      "outputSha256": "F40B46691558793D540E795DC1A1F780AAF4CEDFF6B18F9ADE4D79C6B9F435CF",
+      "logSha256": "03649D9F0DEC205DF83AF13D146E3DA64B395B19C01FBC2F4A4658BA63B7CA63"
+    },
+    {
+      "assembly": "TumbangPreso.PlayTests",
+      "compilerExitCode": 0,
+      "outputSha256": "681D36AA07C41865008D65CBA50A03CC281247402052DD38CD1F31C434A76790",
+      "logSha256": "8429350A9F42FC3AEF37E404C07A44FF330202B635D9B1F8EA3ADF3FD681F4F4"
+    }
+  ]
+}

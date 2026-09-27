@@ -9,6 +9,73 @@ namespace TumbangPreso.Tests
     public sealed class IceSnapshotBatchTests
     {
         [Test]
+        public void SkillCastCodecRoundTripsEveryFieldIncludingAirAimAndCommandIdentity()
+        {
+            object boxed = new SkillCastMessage();
+            var fields = typeof(SkillCastMessage).GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+            for (int i = 0; i < fields.Length; i++)
+            {
+                object value;
+                if (fields[i].FieldType == typeof(int)) value = 7 + i;
+                else if (fields[i].FieldType == typeof(long)) value = 1234567L + i;
+                else if (fields[i].FieldType == typeof(float)) value = 2.25f + i;
+                else if (fields[i].FieldType == typeof(bool)) value = true;
+                else if (fields[i].FieldType == typeof(Vector3)) value = new Vector3(i + 1, i + 2, i + 3);
+                else if (fields[i].FieldType == typeof(FixedString64Bytes)) value = new FixedString64Bytes("phaister_skill2d");
+                else { Assert.Fail("Add a nondefault sample for " + fields[i].Name); return; }
+                fields[i].SetValue(boxed, value);
+            }
+            var original = (SkillCastMessage)boxed;
+            using var writer = new FastBufferWriter(SkillCastMessage.MaxWireBytes, Allocator.Temp);
+            writer.WriteNetworkSerializable(original);
+            using var reader = new FastBufferReader(writer, Allocator.Temp);
+            var input = reader;
+            Assert.IsTrue(SkillCastMessage.TryRead(ref input, out var restored));
+            foreach (var field in fields)
+                Assert.AreEqual(field.GetValue(original), field.GetValue(restored), field.Name);
+        }
+
+        [Test]
+        public void SkillCastCodecRejectsMalformedIdentityTrailingDataAndInvalidFields()
+        {
+            var cast = new SkillCastMessage
+            {
+                Seat = 1, Slot = 1, AbilityId = new FixedString64Bytes("paete_skill2"), Match = 123, Round = 1,
+                Event = 2, Request = 1, Forward = Vector3.forward, AimPoint = new Vector3(4, 3, 5)
+            };
+            Assert.IsTrue(cast.IsValid(true));
+            Assert.IsFalse(cast.IsValid(false));
+            cast.Event = 0;
+            Assert.IsTrue(cast.IsValid(false));
+            cast.AimPoint = new Vector3(0, float.NaN, 0);
+            Assert.IsFalse(cast.IsValid(false));
+            cast.AimPoint = Vector3.up;
+            using (var writer = new FastBufferWriter(SkillCastMessage.MaxWireBytes, Allocator.Temp))
+            {
+                writer.WriteNetworkSerializable(cast);
+                writer.WriteValueSafe((byte)1);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                var input = reader;
+                Assert.IsFalse(SkillCastMessage.TryRead(ref input, out _));
+            }
+            using (var writer = new FastBufferWriter(128, Allocator.Temp))
+            {
+                writer.WriteValueSafe(1); writer.WriteValueSafe(1); writer.WriteValueSafe(ushort.MaxValue);
+                writer.WriteBytesSafe(new byte[90]);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                var input = reader;
+                Assert.IsFalse(SkillCastMessage.TryRead(ref input, out _));
+            }
+            using (var writer = new FastBufferWriter(4, Allocator.Temp))
+            {
+                writer.WriteValueSafe(1);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                var input = reader;
+                Assert.IsFalse(SkillCastMessage.TryRead(ref input, out _));
+            }
+        }
+
+        [Test]
         public void WorldSnapshotHeaderRoundTripsEveryDeclaredField()
         {
             object boxed = new WorldSnapshotHeader();

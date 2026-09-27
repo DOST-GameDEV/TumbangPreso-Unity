@@ -1,5 +1,40 @@
 # Multiplayer investigation, 2026-09-27
 
+## Explicit cast identity, intent and delayed delivery
+
+Base `0e00de51`. ReqAbility/PlayAbility now share `SkillCastMessage`'s single bounded
+serializer. It carries the stable ability ID, explicit new-cast/command intent,
+full3D aim and the existing match/round/request/event/familiar/flight facts. IDs are
+UTF8-capacity-checked at kit/build validation. Model, clip, effect and display names
+are not identity. The host rejects wrong role/ability/intent before mutation and
+still owns resources/outcomes. Accepted replicas preserve command intent even if
+their active clock expired; they cannot silently turn a command into a new spawn.
+
+A64-entry,2-second delivery queue retains accepted casts while the matching body,
+kit or familiar is installing. It preserves each actor's order, deduplicates before
+queueing, and lets other ready actors proceed. Match/round/active-scene/transport
+changes retire the queue. Expiry/overflow uses existing scoped snapshot recovery,
+not indefinite replay. World snapshots defer replacement while casts are queued.
+Protocol is **63**; every participating platform needs matching builds.
+
+Added focused codec round-trip/malformed cases and an actual receiver case for
+body arrival, duplicates, command intent, wrong ability identity and round reset.
+Updated the existing flight message fixture and protocol pin for the changed wire
+format. These are pending tests, not claimed passes.
+
+Native attempt stopped BEFORE compilation/tests at11:44:35 when freeC reached
+4,668,747,776bytes, below the4.5GiB precaution threshold. No resultXML exists.
+The PlayMode pass was not launched. The initial editor log had no compiler verdict.
+Free space rebounded after exit; the cause of these transient startup drops is
+unresolved. No repeated editor launch was used for this batch.
+
+Bounded fallback: Unity's installed Roslyn compiler and existing Bee response files,
+with outputs redirected outside the project cache and the two new sources included.
+Runtime, EditMode tests and PlayMode tests each exit0. This checks compilation only:
+no IL postprocessing, player build, tests or real peers.14/14 candidate input hashes
+match. [Compiler receipt](checks/cast-delivery-compile.json). Shared presentation,
+new runtime cases, real peers and full NET-SKILLS-1 acceptance remain OPEN.
+
 ## Approved replay and joining status presentation
 
 Base `0706a9ef` includes the incoming Phaister rework, preserved unchanged in look

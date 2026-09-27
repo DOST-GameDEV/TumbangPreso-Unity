@@ -2,6 +2,9 @@ using System.Collections;
 using NUnit.Framework;
 using TumbangPreso.Abilities;
 using TumbangPreso.Core;
+using TumbangPreso.Net;
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -198,6 +201,71 @@ namespace TumbangPreso.PlayTests
             Object.Destroy(second.gameObject);
             yield return null;
             Assert.AreEqual(0, Object.FindObjectsByType<Visual.PhaisterMoonlight>(FindObjectsSortMode.None).Length);
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator AcceptedCastsWaitForTheirBodyAndKeepExplicitCommandIntentExactlyOnce()
+        {
+            var system = Owner("paete");
+            var motor = system.GetComponent<CharacterMotor>();
+            GameServices.Ensure();
+            GameServices.Round.Clear();
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            var root = new GameObject("Delayed body receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>();
+            typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var receive = typeof(MatchRpc).GetMethod("OnPlayAbilityMsg", flags);
+            var flush = typeof(MatchRpc).GetMethod("FlushPendingSkills", flags);
+            int Pending() => ((ICollection)typeof(MatchRpc).GetField("_pendingSkillCasts", flags).GetValue(router)).Count;
+            var cast = new SkillCastMessage
+            {
+                Seat = 1, Slot = 1, AbilityId = new FixedString64Bytes("paete_skill2"), Match = 123, Round = 1,
+                Event = 1, Position = new Vector3(-10, .12f, -10), Forward = Vector3.forward,
+                AimPoint = new Vector3(-10, .12f, -6)
+            };
+            void Send()
+            {
+                using var writer = new FastBufferWriter(SkillCastMessage.MaxWireBytes, Allocator.Temp);
+                writer.WriteNetworkSerializable(cast);
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                receive.Invoke(router, new object[] { NetworkManager.ServerClientId, reader });
+            }
+            Send(); Send();
+            Assert.AreEqual(1, Pending(), "A duplicate queued the same accepted cast twice.");
+            cast.Event = 2; cast.Reactivation = true; Send();
+            Assert.AreEqual(2, Pending());
+            var staleWorld = new WorldSnapshotHeader { SkillEvent = 2 };
+            Assert.IsTrue((bool)typeof(MatchRpc).GetMethod("WorldSnapshotNeedsRefresh", flags)
+                .Invoke(router, new object[] { staleWorld }), "A world restore raced ahead of pending casts.");
+            GameServices.Round.Register(motor);
+            flush.Invoke(router, null);
+            Assert.Zero(Pending());
+            var plant = PaetePlant.OwnedBy(1);
+            Assert.IsNotNull(plant);
+            Assert.AreEqual(1, Object.FindObjectsByType<PaeteWoodenSlipper>(FindObjectsSortMode.None).Length);
+            Send();
+            Assert.AreEqual(1, Object.FindObjectsByType<PaeteWoodenSlipper>(FindObjectsSortMode.None).Length);
+
+            var skill = system.Kit.Skill2;
+            var context = new AbilityContext(motor, null, null);
+            skill.Tick(context, PaeteRules.PlantLifeSeconds + 1);
+            Assert.IsFalse(skill.IsActive);
+            cast.Event = 3; Send();
+            Assert.AreSame(plant, PaetePlant.OwnedBy(1), "An accepted command became a new plant after timer drift.");
+            Assert.AreEqual(2, Object.FindObjectsByType<PaeteWoodenSlipper>(FindObjectsSortMode.None).Length);
+            Assert.AreEqual(HeroKit.CastOutcome.Missing, system.ApplyNetworkCast(HeroAbilitySystem.Slot.Skill2,
+                cast.Position, cast.Forward, cast.AimPoint, 0, false, "paete_skill2d", false));
+
+            GameServices.Round.Clear(); cast.Event = 4; cast.Reactivation = false; Send();
+            Assert.AreEqual(1, Pending());
+            GameServices.Match.ApplySnapshot(new int[4], 2, true);
+            flush.Invoke(router, null);
+            Assert.Zero(Pending(), "A queued cast survived its round scope.");
+            GameServices.Round.Register(motor);
+            Assert.AreSame(plant, PaetePlant.OwnedBy(1));
+            Object.Destroy(root);
+            yield return null;
         }
     }
 }

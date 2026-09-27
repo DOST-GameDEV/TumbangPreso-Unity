@@ -730,7 +730,8 @@ namespace TumbangPreso.Abilities
             {
                 Net.MatchRpc.Instance?.BroadcastAbilityCast(
                     _motor.PlayerSlot, (int)slot, castPosition, castForward,
-                    aimPoint, held, exceptClientId: null, hasFamiliar:hasFamiliar, familiarPosition:familiarPosition,flightIntent:flightIntent);
+                    aimPoint, held, exceptClientId: null, hasFamiliar:hasFamiliar, familiarPosition:familiarPosition,
+                    flightIntent:flightIntent, reactivation:reactivation);
             }
             else if (_motor.PlayerSlot == NetAuthority.LocalSlot)
             {
@@ -760,12 +761,17 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public HeroKit.CastOutcome ApplyNetworkCast(Slot slot, Vector3 position,
                                                     Vector3 forward, Vector3 aimPoint,
-                                                    float heldSeconds, bool authoritative)
+                                                    float heldSeconds, bool authoritative,
+                                                    string abilityId = null, bool? reactivation = null)
         {
             if (Kit == null || _motor == null) return HeroKit.CastOutcome.Missing;
 
             var ability = AbilityFor(slot);
             if (ability == null) return HeroKit.CastOutcome.Missing;
+            if (abilityId != null && ability.Id != abilityId) return HeroKit.CastOutcome.Missing;
+            if (reactivation == true && !ability.CanReactivate) return HeroKit.CastOutcome.Missing;
+            if (authoritative && reactivation.HasValue
+                && reactivation.Value != (ability.IsActive && ability.CanReactivate)) return HeroKit.CastOutcome.NotYet;
 
             if (authoritative && PresentationClock.BlocksInput) return HeroKit.CastOutcome.CannotAct;
             float previousHeld = ability.HeldSecondsOnCast;
@@ -776,7 +782,15 @@ namespace TumbangPreso.Abilities
             HeroKit.CastOutcome outcome;
             using (NetCue.SuppressRelay())
             {
-                outcome = CastWithContext(slot, context);
+                // An accepted command stays a command even if this replica's live
+                // clock expired. Never reinterpret it as a fresh world-object spawn.
+                if (!authoritative && reactivation.HasValue)
+                {
+                    if (reactivation.Value) ability.Reactivate(context);
+                    else ability.Activate(context);
+                    outcome = HeroKit.CastOutcome.Cast;
+                }
+                else outcome = CastWithContext(slot, context);
                 if (!authoritative && outcome != HeroKit.CastOutcome.Cast)
                 {
                     if (ability.IsActive && ability.CanReactivate)

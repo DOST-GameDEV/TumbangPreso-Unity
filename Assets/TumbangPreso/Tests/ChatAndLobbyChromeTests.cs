@@ -334,7 +334,7 @@ namespace TumbangPreso.Tests
             //59 makes Paete's introduction 6.5 s, places his ultimate where he looks, and hands the grown guardian back at the catch.
             //60 places THORN HARVEST where he looks (a trail runs to the spot, it bursts and catches there) and keeps BAKYA BLOOM out of the box.
             //61 adds Featherfall pose/intent episode keys and timed restoration, with the updated 5 s / 40 s rules.
-            Assert.AreEqual(62, NetSession.ProtocolVersion,
+            Assert.AreEqual(63, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

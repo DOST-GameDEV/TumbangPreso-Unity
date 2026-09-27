@@ -2,6 +2,17 @@
 
 ## Current networking and flow work, 2026-09-27
 
+Protocol63 adds a shared bounded skill-cast serializer with stable ability ID and
+explicit activation/command intent. Host checks identity and intent before effects;
+replicas no longer reinterpret an accepted command from their local active timer.
+Body/kit/familiar arrival uses a64-entry,2-second,per-actor-ordered queue; round,
+match,scene and transport changes retire it. World recovery cannot race queued casts.
+Runtime and both test assemblies pass a direct compiler check. Native validation
+did NOT run: the guard stopped the editor below the disk reserve before compilation.
+Do not repeat launches at unchanged headroom; new codec/delivery and affected flight
+cases remain pending for the next safe integration run. All platforms need63.
+[Delivery contract and exact limits](reports/stability-2026-09-27/multiplayer.md#explicit-cast-identity-intent-and-delayed-delivery).
+
 Owner correction: preserve incoming character reworks and adapt their network
 integration. Do not rerun unchanged suites/films for minor or cosmetic changes;
 select checks by the changed delivery/state contract and retain prior evidence.
