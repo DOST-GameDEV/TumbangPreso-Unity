@@ -36,11 +36,11 @@ namespace TumbangPreso.EditorTools
             Directory.CreateDirectory(folder);
             AssetDatabase.ImportAsset(ModelPath, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
 
-            Shoot(folder, "lineup-front.png", 4200, 1100, (scene) => Lineup(180f), 1.9f, new Vector3(4f, 0.95f, -8f));
-            Shoot(folder, "lineup-quarter.png", 4200, 1100, (scene) => Lineup(220f), 1.9f, new Vector3(4f, 0.95f, -8f));
-            Shoot(folder, "turnaround.png", 3200, 1000, (scene) => Turnaround(), 1.3f, new Vector3(3f, 1.15f, -8f));
-            Shoot(folder, "face.png", 1200, 1200, (scene) => Single(180f, Vector3.zero), 0.82f, new Vector3(0f, 1.6f, -8f));
-            Shoot(folder, "face-quarter.png", 1200, 1200, (scene) => Single(215f, Vector3.zero), 0.82f, new Vector3(0f, 1.6f, -8f));
+            Shoot(folder, "lineup-front.png", 4200, 1100, (scene) => Lineup(180f), 1.9f, new Vector3(4.8f, 1.05f, -8f));
+            Shoot(folder, "lineup-quarter.png", 4200, 1100, (scene) => Lineup(220f), 1.9f, new Vector3(4.8f, 1.05f, -8f));
+            Shoot(folder, "turnaround.png", 3200, 1000, (scene) => Turnaround(), 1.6f, new Vector3(3.9f, 1.35f, -8f));
+            Shoot(folder, "face.png", 1200, 1200, (scene) => Single(180f, Vector3.zero), 0.66f, new Vector3(0f, 1.98f, -8f));
+            Shoot(folder, "face-quarter.png", 1200, 1200, (scene) => Single(215f, Vector3.zero), 0.66f, new Vector3(0f, 1.98f, -8f));
             EditorApplication.Exit(File.Exists(Path.Combine(folder, "face-quarter.png")) ? 0 : 1);
         }
 
@@ -78,19 +78,38 @@ namespace TumbangPreso.EditorTools
             ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth, palette);
             if (id == "doll") PhaisterDollArt.ApplyGlow(model);
             idle?.SampleAnimation(model, 0f);
+            if (id == "doll") HangLikeAPuppet(model);
             var renderers = model.GetComponentsInChildren<Renderer>();
             float floor = renderers.Min(r => r.bounds.min.y);
             model.transform.position = at + Vector3.up * -floor;
             return model;
         }
 
+        /// <summary>
+        /// The pose it holds in play, not the cast's idle: arms hanging to the ground, the body hunched, the head lolled to one
+        /// side. The rig's idle holds the arms out at forty-five degrees, which on arms this long reads as a flex.
+        /// </summary>
+        private static void HangLikeAPuppet(GameObject model)
+        {
+            foreach (var bone in model.GetComponentsInChildren<Transform>(true))
+            {
+                switch (bone.name)
+                {
+                    case "arm-left": bone.localRotation = Quaternion.Euler(0f, 0f, 80f); break;
+                    case "arm-right": bone.localRotation = Quaternion.Euler(0f, 0f, -80f); break;
+                    case "torso": bone.localRotation = Quaternion.Euler(9f, 0f, 0f); break;
+                    case "head": bone.localRotation = Quaternion.Euler(6f, 0f, 13f); break;
+                }
+            }
+        }
+
         private static void Lineup(float yaw)
         {
             for (int i = 0; i < Cast.Length; i++)
             {
-                Spawn(Cast[i], yaw, new Vector3(i * 2f, 0f, 0f));
+                Spawn(Cast[i], yaw, new Vector3(i * 2.4f, 0f, 0f));
                 var label = new GameObject("Label-" + Cast[i]).AddComponent<TextMesh>();
-                label.transform.position = new Vector3(i * 2f, -0.2f, -0.3f);
+                label.transform.position = new Vector3(i * 2.4f, -0.2f, -0.3f);
                 label.transform.localScale = Vector3.one * 0.010f;
                 label.text = Cast[i] == "doll" ? "VOODOO DOLL" : Cast[i].ToUpperInvariant();
                 label.fontSize = 38; label.anchor = TextAnchor.MiddleCenter;
@@ -101,7 +120,7 @@ namespace TumbangPreso.EditorTools
         private static void Turnaround()
         {
             float[] yaws = { 180f, 220f, 270f, 0f };
-            for (int i = 0; i < yaws.Length; i++) Spawn("doll", yaws[i], new Vector3(i * 2f, 0f, 0f));
+            for (int i = 0; i < yaws.Length; i++) Spawn("doll", yaws[i], new Vector3(i * 2.6f, 0f, 0f));
         }
 
         private static void Single(float yaw, Vector3 at) => Spawn("doll", yaw, at);

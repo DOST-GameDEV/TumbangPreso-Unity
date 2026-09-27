@@ -403,25 +403,69 @@ his text).
 | Tagged or sabotaged | stuffing puffs out, it sits slumped like a dropped doll for the stun; a grey stitched X pops over it so the one who tagged it knows it paid nothing; it gets back up with a jerk as if its strings were pulled | a stuffing puff; a sad tine |
 | Round end | it shrinks back in three jolts (the cutscene's growth in reverse) to a small limp doll that unravels into thread; her hip doll is back | a descending music box |
 
-### 9.8 The ultimate's cutscene (about 5 s)
+### 9.8 The ultimate's cutscene, v2 pitch (about 5.6 s)
 
-One sentence: **"She sews the last stitch, and the doll gets up."** The travelling thing is her THREAD, left to right in every shot.
+Owner: *"thoroughly plan as well how the new ult cutscene woudl look like and pitch it to me"*, *"the vfx theme animation direciton
+etc"*, *"thoroughly think abt how to make each part of the voodoo doll ult that moves"*. Written for the v7 doll: a rag sack
+glowing inside and stitched shut.
 
-| Shot | Time | Picture | Camera | Sound |
+**One sentence: "She pours her soul into the doll, sews it shut, and her magic lifts it off the ground."**
+**The travelling thing: her soul light, left to right in every shot:** out of her palm as a thread, through the needle, into the
+doll's chest, out through its seams, up its crown string, and out of its eyes at the end.
+
+**The theme.** A puppet show in the dark. When she casts, the world steps back: the court drops to violet-black and the only
+light is hers (the method's "the backdrop steps back"). Everything is cloth, thread, pins and that light. The emblem is her X
+stitch, the last one she sews; it flashes once on the court under the doll. The power is the string: a single glowing thread
+from the doll's tied crown up into the dark sky, the vertical light every ultimate needs. The sound is a detuned music box over
+a slow heartbeat.
+
+| Shot | Time | Picture, every moving part | Camera | Sound |
 |---|---|---|---|---|
-| SEW | 0.0 to 1.6 | her hands close: the small doll in her left palm; she draws a long pin from her hat band, threads it with a line of her glow, and pulls the last stitch tight across its chest (the purple heart patch); its button eye flickers once | a close two-shot of her hands and face, pushing in | a thread drawn through cloth; a heartbeat starts |
-| GROW | 1.6 to 3.4 | she drops it; it hits the court and grows in three jolts (0.4 m, 0.8 m, full), stitches straining, stuffing puffing from its seams, pins popping out and sliding back in; her thread whips round it as it grows | low on the court looking up, the doll growing into the frame | three cloth stretches, each bigger; the heartbeat louder |
-| WAKE | 3.4 to 5.0 | its button eye lights; it cracks its neck; it turns its head to the REAL opponents (staged copies, their own clips), who flinch; she leans an elbow on its shoulder and winks at the lens | a slow orbit from behind the doll to a two-shot of her and the doll, the opponents in the back of frame | the neck crack; her motif; the music box resolves |
+| 1 THE THREAD | 0.00 to 1.40 | The court goes dark round her at frame 0; motes of her light drift up out of the dark. The small doll lies limp in her left palm, its chest split open and dark. She draws a long pin from her hat band; a strand of soul light pulls out of her right palm like thread off a spool and she threads the pin with it. Her eyes catch the glow from below. Loose glowing threads drift across the lens left to right (the near layer). | a close two-shot of her hands and face, pushing in slowly, a slight tilt | a low hum rising; a thread drawn off a spool; one faint heartbeat |
+| 2 THE STITCH | 1.40 to 2.60 | She stabs the pin through the doll's chest split and draws the thread through in one long pull: the thread whips across the frame left to right as a stroke of light (the strike). She knots the X. Two impact frames on the knot (the whole picture inverted, her ink splashing). Then the doll floods with light: the splits light up one after another (chest, shoulders, spine, thigh), its grin glows, light leaks round its button, the eye under its X opens behind the stitches. | tight on the doll in her palm, then a whip pan riding the thread's pull | the pin's prick; a long cloth draw rising in pitch; the knot's snap; silence for the two frames; a deep heartbeat as it floods |
+| 3 THE LIFT | 2.60 to 4.20 | She tips it off her palm. It tumbles down through the frame and lands in a heap with a puff of stuffing. Her X stitch flashes on the court under it as a ring of light races out. A glowing string shoots up out of its tied crown into the sky and pulls taut: it is hauled up off the court by its head, limp, toes dragging. It grows in three jerks, each one a yank on the string: its seams flare and spit light, its pins pop out and slide back in, stuffing puffs from its hem, until it hangs at full size, limbs dangling. | low on the court looking up; the doll grows up into and past the top of the frame, the string rising into the dark above it | a soft thud; three cloth stretches with a bass swell, each bigger; the music box plays one note per jerk |
+| 4 THE WAKE | 4.20 to 5.60 | A held beat, hanging still, head lolled. Then its head snaps up: light streaks out of its X eye and round its button across the lens, and its grin splits wider and brighter. It cracks its neck side to side. It turns its head to the REAL opponents (staged copies of who is on the court, their own clips), who flinch. She steps in beside it, leans her elbow on its shoulder and points at them with her chin, smirking. | a slow orbit from behind its shoulder (the opponents ahead, soft) round to a two-shot of her and the doll with the opponents in frame | a held silence; a neck crack; her three-note motif on the music box, resolving |
 
-### 9.9 Every moving part of the doll-in-play (the direction of each)
+**Hand-back.** Play opens on the doll standing beside her, lit, facing the opponents, its string up. Nothing is shown twice: the
+cutscene ends on it waking; play is it moving. The world was frozen underneath (the match clock stops, as Paete's did).
 
-| Part | Moves | Speed | Ends |
+### 9.9 Every moving part of the doll, in the cutscene and in play
+
+| # | Part | Starts | Moves (direction) | Speed and shape | Anchored to | Ends |
+|---|---|---|---|---|---|---|
+| 1 | The dark | frame 0 | the court's light drops to violet-black round her | 0.2 s in | the scene | lifts at the hand-back (0.4 s) |
+| 2 | Motes | the dark | drift UP, slowly, a few at a time | 0.3 m/s | the air | fade in the last shot |
+| 3 | The soul thread | her right palm | pulled out to the RIGHT like thread off a spool, then threaded | 0.8 s | her hand, then the pin | pulled through the doll |
+| 4 | The pin | her hat band | drawn up and out, then stabbed DOWN through the doll's chest | 0.25 s stab | her hand | stays in (it is the pin in its chest) |
+| 5 | The pull | the doll's chest | the thread whips LEFT TO RIGHT across the frame as a stroke | 0.2 s | the pin | knotted |
+| 6 | The flood | the chest split | light runs split to split: chest, shoulders, spine, thigh, grin, button, eye | 0.08 s apart | the doll | stays lit (the glow mesh) |
+| 7 | The fall | her palm | tumbles DOWN, turning once | gravity | the air | a heap on the court |
+| 8 | The emblem | under the doll | her X stitch flashes on the court and a ring races OUT | 0.25 s | the court | fades 0.4 s |
+| 9 | The string | the doll's crown | shoots UP into the sky and pulls taut | 0.1 s | the crown, and a point in the dark far above | stays for the round |
+| 10 | The growth | a heap | hauled UP by the string in three jerks: 0.35, 0.7, full size | each jerk 0.12 s, a rest between | the string | hanging at full size |
+| 11 | Spurts | each split | light spits OUT of the splits at each jerk | 0.1 s | the doll | gone |
+| 12 | Pins | its head | pop OUT at each jerk and slide back IN | 0.1 s out, 0.2 s in | the doll | back in |
+| 13 | Stuffing | its hem | puffs DOWN and out at each jerk | 0.3 s | the doll | settles |
+| 14 | The wake | its head, lolled | snaps UP, then cracks side to side | 0.08 s snap, two cracks | the doll | facing the opponents |
+| 15 | Eye streaks | its eyes | light streaks out sideways across the lens | 0.15 s | its eyes | fade |
+| 16 | Her lean | beside it | steps in, elbow onto its shoulder | 0.4 s | the doll | the hand-back pose |
+
+**In play** (the doll is a fifth body on her side for the rest of the round; the owner: *"make the walking animation of this
+voodooo look like its fucking dead or js getting dragged around by magic idk"*, *"js dont make it human like"*):
+
+| # | Part | What it does | Why |
 |---|---|---|---|
-| Head | lolls to one side and rights itself with a jerk | a jerk every 2 to 4 s | |
-| Arms | swing late and loose, overshooting | the gait's `ArmLag` at the cap | |
-| Pins in its head | wobble when it lands a step | | |
-| Yarn hair | swings with the head | | |
-| Eye | always lit (it is awake); flares on a score or a tag | | goes dark at the round's end |
+| 1 | The string | a thin glowing thread from its crown up into the air, fading out a few metres up; it sways behind the doll's moves and snaps taut on every jerk | it is her magic that moves it, not legs; everyone can see what is doll and what is player |
+| 2 | Walk | it hangs from the string: head up, body limp under it, feet barely lifting and dragging their toes, arms dangling and swinging only when its body sways; every few seconds a jerk yanks it upright and its limbs flick | dead, carried by magic, not walking |
+| 3 | Run | the string drags it: its chest leads, its legs trail behind with their toes scraping, arms flung back | dragged, not running |
+| 4 | Idle | it hangs and sways, head lolled, a twitch now and then, a slow breath of light up its seams | alive only inside |
+| 5 | Throw (attacking) | the string yanks its arm up and flings it; the slipper leaves; it flops forward after | a puppet's throw |
+| 6 | Tag (defending) | it is yanked forward along the court by the string, arms first, lands in a heap and is hauled back up | a puppet's lunge |
+| 7 | Pick-up | it folds at the waist like a dropped puppet and is hauled back up | not a human bend |
+| 8 | Tagged or sabotaged | the string goes slack: it collapses sitting, its light dims to embers, stuffing puffs, a stitched X pops over it (no points); after the stun the string snaps taut and yanks it up | reads as "switched off", and the tagger sees it paid nothing |
+| 9 | Scores | its seams flare, the music box plays a note, +100 floats up in her colour with a small doll mark | the points are hers |
+| 10 | Toe scuffs | faint lit scuffs where its toes drag, fading in a second | you can follow where it went |
+| 11 | Round end | the string hauls it up, it shrinks in three jerks back to hand size and the thread reels it back to her hip | nothing vanishes; it goes back where it came from |
 
 ### 9.10 The doll's model
 
