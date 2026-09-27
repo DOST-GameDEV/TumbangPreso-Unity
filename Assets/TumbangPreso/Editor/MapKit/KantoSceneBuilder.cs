@@ -91,6 +91,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 foreach (var t in go.GetComponentsInChildren<Transform>()) t.gameObject.isStatic = true;
                 placed++;
             }
+            // Street traffic: the lane vehicles become drivers (KantoTrafficAuthor, guide 12.2).
+            KantoTrafficAuthor.Build(root, dressing);
             Gameplay(root, layout.gameplay, materials);
             var sun = new GameObject("Sun").AddComponent<Light>();
             sun.transform.SetParent(root, false);
