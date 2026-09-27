@@ -17,7 +17,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Real menu activation barrier | UI/SplashScreen.MenuActivation.cs and ConvertedMainMenu.IsPrepared; retain existing canvas through Wire/layout,then reveal login/input |
 | Title/login art and avatars | UI/OwnerMenuArt.cs,Avatars.cs; async cold reads awaited per item,then existing retained texture/sprite caches; supplied pixels and fallback policy unchanged |
 | Hub/HUD portraits and mode cards | UI/OwnerPortraitArt.cs; async roster-driven warmup and shared cache used by HubKit/TumpUiFactory |
-| First HOME loop | UI/Hub/HubSceneVideo.Warmup.cs; async metadata/selected poster,one paused decoded frame behind boot,then adoption of the same player/target |
+| First HOME loop | UI/Hub/HubSceneVideo.Warmup.cs; async metadata/selected poster,explicit prepare/play until frameReady then pause behind boot,adopting the same player/target; paused preparation alone timed out on Windows |
 | Hidden HOME background | HubSceneVideo binds MapPreviewSurface rendering visibility; opaque media suspends the covered court camera/surface without discarding prepared scenes or the fallback |
 | Ability prop source prefabs | Visual/HeroPropAssets.cs; current Paete/Rework/Phaister folders,no gameplay spawn during asset preload |
 | Supplementary baked motion | Visual/GeneratedMotionAssets.cs; yielded per-rig data preload shared by CharacterAnimator and rooted introduction lookups,no clip/graph generation |
@@ -61,8 +61,10 @@ The latest [focused native integration](reports/stability-2026-09-27/input-integ
 passes loading-readiness and supplementary-data retention cases alongside five
 state/presentation cases. The subsequent [UI/audio pass](reports/stability-2026-09-27/loading-audit.md#ui-flow-native-qualification)
 passes three first-run range/settings/preview reuse cases; a separate new audio case
-confirms deferred sample preparation and no playback. Menu activation,portrait/prop
-retention,HOME decoder,physical input and visual acceptance still have separate gaps.
+confirms deferred sample preparation and no playback. HOME decoded-frame handoff
+now passes after fixing a reproduced30-second readiness timeout; reduced-motion
+poster behavior also passes. Menu activation,portrait/prop retention,whole-player
+entry timings,other-device codecs,physical input and visual acceptance remain separate.
 Earlier shader/art evidence remains separate. There is no current complete player
 before/after hitch table. Consult the ledger for current headroom/processes; the
 latest native pass succeeded, but player packaging headroom is not established.

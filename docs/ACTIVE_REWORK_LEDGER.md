@@ -1,11 +1,18 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-27. Branch: ASTRAReworks. Integrated base checkpoint:
-`97d7f39757bed48f106e3d5f59f45cf4a3c96673`; first login field-state evidence follows it.
+`f32489ebfd7a9f3f3f57662cb692fafcb962fe43`; decoded HOME preload fix follows it.
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 This is current state, not another backlog.
 
 ## Current Unit
+
+First HOME decoder check reproduced a30-second readiness timeout. Explicit
+prepare/play until first frameReady,then pause,now completes the same readiness/
+adoption/cleanup case in0.3296335s Editor. One failed-case-only retry passes on
+full committed base plus1runtime input,no drift. Reduced-motion case passed in
+the initial batch and was not rerun. No video/art changes or whole-player timing claim.
+[Evidence](reports/stability-2026-09-27/loading-audit.md#decoded-home-handoff).
 
 LOGIN-0927's FIRST native field-state case passes1/1 after a fixture-only colour
 baseline timing correction. Runtime was unchanged; required/edit/server-error and

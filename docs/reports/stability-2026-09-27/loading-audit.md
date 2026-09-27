@@ -5,6 +5,31 @@ native state/loading cases, including destination readiness and supplementary-mo
 retention. Its exact coverage supersedes earlier NOT RUN notes below for those
 cases only. No player hitch table or blanket native qualification is implied.
 
+## Decoded HOME Handoff
+
+The FIRST native boot-decoder check onf32489eb reproduced a real loading defect:
+the paused preparation never satisfied the frameReady-driven gate,waited30seconds,
+then fell back to the poster. The other case,reduced motion without a decoder,
+passed. Unity documents that [Pause prepares an unprepared player](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Video.VideoPlayer.Pause.html);
+that behavior alone did not satisfy this callback-based readiness on the Windows
+decoder. Do not mistake an asset reference or prepared flag for a received frame.
+
+HubSceneVideo now explicitly prepares,plays while hidden after prepareCompleted,
+and pauses in its existing first-frame callback. The original player/target stay
+retained for HOME adoption. Audio remains disabled; timeout,failure poster,reduced
+motion,clips and artwork are unchanged. No film or art was regenerated.
+
+Initial batch2cases: decoded warmup failed after30.100773s,reduced motion passed
+in0.066404s. One bounded retry of ONLY the failed decoder case passes1/1,0.3296335s
+on full committed base plus1runtime input,no drift. It checks a paused decoded
+frame,hidden image,frame-event shutdown,same player/target adoption,resumed playback
+and cleanup. Reuse the unchanged reduced-motion branch's first pass; no rerun.
+Minimum retry free6,072,995,840bytes; profile/preferences restored both times.
+[Receipt](checks/home-decoder-native.json),[retry XML](checks/home-decoder-native.xml),
+[initial XML](checks/home-decoder-native-first.xml). Raw Logs/home-decoder-first-20260927/prepared-home*.
+This removes a reproduced readiness timeout; it is not a whole-player cold-boot,
+GPU first-draw,other-device codec or visual-quality measurement.
+
 ## Shader Turn Budget
 
 Afterecf1ac8c, splash calls WarmUpProgressively(1) and checks elapsed time after

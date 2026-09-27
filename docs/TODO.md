@@ -107,8 +107,9 @@ complete. Keep progress work-driven and loading responsive; do not call a compil
 hitch-free performance. [Source route](LOADING_AND_PERFORMANCE.md),
 [implemented units and limits](reports/stability-2026-09-27/loading-audit.md).
 First-HOME video preparation now runs during boot and reuses one paused decoded
-player; poster/reduced-motion fallback stays. Four assemblies compile; native
-decoder/handoff and player first-entry timings remain OPEN.
+player; poster/reduced-motion fallback stays. First native decoder/handoff exposed
+a30-second paused-preparation timeout; explicit prepare/play-first-frame/pause fixes
+it and the focused retry passes. Player first-entry/other-device timing stays OPEN.
 Generic match loading now awaits destination-owned setup, rejects stale same-scene
 installers, retains errors instead of timed success, and cancels obsolete curtains.
 Four assemblies compile; native handoff/failure/input checks remain OPEN.
