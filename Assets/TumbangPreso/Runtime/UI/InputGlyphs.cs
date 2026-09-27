@@ -179,6 +179,12 @@ namespace TumbangPreso.UI
             table["LMB"] = new Cell(Sheet.Mouse, 1, 4);
             table["RMB"] = new Cell(Sheet.Mouse, 1, 6);
             table["MMB"] = new Cell(Sheet.Mouse, 0, 8);
+            // ⚠️ THE WHEEL'S TWO DIRECTIONS WERE DRAWN INTO THIS SHEET'S EMPTY CELLS ON 2026-09-27, when
+            // the curve throw moved onto the wheel (the owner's default layout). The pack draws one
+            // wheel and no direction, and the pektus lesson shows both curves side by side, so two
+            // identical wheels would teach nothing. Same palette, bare row then keyline row.
+            table["WHEEL UP"] = new Cell(Sheet.Mouse, 4, 8);
+            table["WHEEL DOWN"] = new Cell(Sheet.Mouse, 5, 8);
 
             // ⚠️⚠️ THE PAD ROWS USED TO BE HERE AND ARE NOW A SHEET OF THEIR OWN. Every gamepad
             // control resolves through `PadColumns` below, off Kenney's PS4 prompts, and this

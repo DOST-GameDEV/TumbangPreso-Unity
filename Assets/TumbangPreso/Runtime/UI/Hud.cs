@@ -4899,7 +4899,7 @@ namespace TumbangPreso.UI
                 if (_bindingAsset != null) Settings.Rebinding.Load(_bindingAsset);
             }
 
-            if (_bindingAsset == null) return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
+            if (_bindingAsset == null) return action == "Ultimate" ? "X" : action == "Skill2" ? "Q" : "E";
 
             // ⚠️⚠️ THE CACHE IS KEYED ON THE DEVICE AS WELL AS ON THE BINDING REVISION SINCE
             // 2026-09-02, AND WITHOUT THAT A PAD PLAYER IS TAUGHT KEYS THEY DO NOT HAVE. This
@@ -4933,7 +4933,7 @@ namespace TumbangPreso.UI
             var act = map?.FindAction(action);
 
             if (act == null || act.bindings.Count == 0)
-                return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
+                return action == "Ultimate" ? "X" : action == "Skill2" ? "Q" : "E";
 
             // ⚠️⚠️ THE PAD'S OWN BINDING FIRST, WHEN THE PLAYER IS ON A PAD. `Rebinding` resolves
             // per device and returns "-" rather than falling back, which is right for the
@@ -5072,7 +5072,12 @@ namespace TumbangPreso.UI
             if (key == "Right Button" || key == "RightButton") return "RMB";
             if (key == "Middle Button" || key == "MiddleButton") return "MMB";
 
-            return key.ToUpperInvariant();
+            // The curve throw's default since 2026-09-27; `Scroll/Up` reads as a menu path.
+            string upper = key.ToUpperInvariant();
+            if (upper == "SCROLL/UP" || upper == "SCROLL UP") return "WHEEL UP";
+            if (upper == "SCROLL/DOWN" || upper == "SCROLL DOWN") return "WHEEL DOWN";
+
+            return upper;
         }
 
         private static UnityEngine.InputSystem.InputActionAsset _bindingAsset;

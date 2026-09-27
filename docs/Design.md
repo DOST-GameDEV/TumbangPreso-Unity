@@ -269,24 +269,29 @@ winning.
 | Input | Action |
 |---|---|
 | **WASD** | 8-way movement |
-| **Shift** | sprint |
+| **Left Shift** | sprint |
 | **Space** | jump |
-| **Left-click** | hold to charge a throw, release to throw |
-| **E** | contextual — see below |
+| **Left click** | Throw / Tag: hold to charge a throw, release to throw; the taya's jab tag |
+| **Right click** | Shove / Lunge: an attacker's shove (or the retrieval slide); the taya's lunge |
+| **Mouse wheel** | Curve Throw while charging: up curves right, down curves left |
+| **F** | Interact / Use: pick up, reset the can, break free, pull out |
+| **E / Q / X** | Hero Strike: Signature, Attacking or Defending, Ultimate |
+| **Tab** | Ability Tooltips (hold) |
+| **T** | Emote Wheel |
 
-⚠️ **E DOES THREE JOBS AND PICKS BY WHAT IS IN FRONT OF YOU.** The GDD gives it all
-three; rather than inventing two more keybinds for a game whose brief is "simpler", the
-press resolves against context. `carrier.gd` gets first refusal, and only a press
-neither pickup nor channel consumed reaches the shove.
+⚠️⚠️ **THE OWNER'S DEFAULT LAYOUT, 2026-09-27, KEY FOR KEY** (`Settings.Rebinding`'s class
+note; `InputMapAndAbilityTests.TheDefaultsAreTheOwnersLayout`). It split the old contextual
+E (then X) key: picking up and resetting stay on Interact / Use, and the shove joined the
+lunge on the other mouse button, so each mouse button is one verb by role.
 
 | Press | Condition | Result |
 |---|---|---|
-| **E tap** | Attacker, loose slipper within `PICKUP_RADIUS` | **pick up** |
-| **E tap** | Attacker, nothing grabbable | **shove**, instantly |
-| **E hold** | Defender, in the lata's ring, lata down | **reset the lata** |
-| **E hold 0.5 s** | Defender, anything else | charge, release to **lunge** and tag |
-| **Left-click** | Defender | **punch** — a quick close-range tag |
-| **Right-click** | Defender | the lunge again, kept as a second binding |
+| **F tap** | Attacker, loose slipper within `PICKUP_RADIUS` | **pick up** |
+| **F hold** | Defender, in the lata's ring, lata down | **reset the lata** |
+| **Right click** | Attacker, loose slipper in slide reach ahead | **retrieval slide** |
+| **Right click** | Attacker, anything else | **shove**, instantly |
+| **Right click hold 0.5 s** | Defender | charge, release to **lunge** and tag |
+| **Left click** | Defender | **punch**, a quick close-range tag |
 
 ⚠️⚠️ **THE TAYA HAS TWO TAG VERBS SINCE 2026-08-01**, on human instruction: *"Melee
 Punch Tag (Left-Click) ... a quick close-range punch"* and *"Lunge Tag (Hold E for

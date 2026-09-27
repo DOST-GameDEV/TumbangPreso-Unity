@@ -3,23 +3,27 @@ using UnityEngine;
 
 namespace TumbangPreso
 {
-    /// <summary>The verbs a unit can press. One name per Godot input action.</summary>
+    /// <summary>
+    /// The verbs a unit can press. One name per Godot input action. The keys are the owner's
+    /// default layout, 2026-09-27 (`Settings.Rebinding`'s class note has it in full).
+    /// </summary>
     public enum Verb
     {
         Sprint,
         Jump,
-        SpecialAbility, // Left click. Throw charge for an attacker, punch for the taya.
-        Grab,           // E. Contextual: pickup, shove, or the lata reset channel.
-        Lunge,          // Right click. The taya's dash tag.
-        EmoteWheel,     // B
-        Skill1,         // Hero Skill 1. Q
-        Skill2,         // Hero Skill 2. E
-        Ultimate,       // Hero Ultimate. F
+        SpecialAbility, // Left click. Throw / Tag: the throw charge for an attacker, the jab tag for the taya.
+        Grab,           // F. Interact / Use: pick up, or the lata reset channel.
+        Lunge,          // Right click. Shove / Lunge: the taya's dash tag; an attacker's shove (or retrieval slide).
+        EmoteWheel,     // T
+        Skill1,         // The signature ability. E
+        Skill2,         // The attacking / defending ability. Q
+        Ultimate,       // X
 
         // ⚠️ APPENDED (2026-09-25). The general INTERACT: do the thing in front of me that is not a
         // pickup. Owner, on pulling out Paete's plant: *"dont make the keybind shove maybe make like
         // a general keybind for interact and remove and shit"*, and on breaking out of his roots:
-        // *"i suggest the general interact button"*. G on a keyboard.
+        // *"i suggest the general interact button"*. F on a keyboard, beside `Grab`
+        // (`Settings.Rebinding.IsOneUseKey`).
         Interact,
     }
 

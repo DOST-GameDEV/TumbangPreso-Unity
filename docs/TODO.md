@@ -944,6 +944,28 @@ integration does not close any creative refinement item below.
 - [ ] Icons/glyphs for the new names, portrait/avatar with the hat pins, bots for OMEN height, rejoin probe (network: Astra's lane).
 - [ ] The PlayMode gate, `Checks.RunAll`, audits, a build.
 
+### INPUT-0927 · The owner's default keybinds ✅ DONE, 2026-09-27
+
+Owner, 2026-09-27, forwarding the team's layout: *"change defualt keybiands to this too"*. MOVEMENT: WASD, sprint Left Shift,
+jump Space. ACTIONS: Throw / Tag left click, Shove / Lunge right click, Curve Throw the mouse wheel, Interact / Use F.
+ABILITIES: Signature E, Attacking / Defending Q, Ultimate X. INTERFACE: Ability Tooltips Tab. COMMUNICATIONS: Emote Wheel T.
+
+- [x] Keyboard defaults in `TumbangPreso.inputactions`; the settings panel's rows are named and grouped under his five headings
+  (`Settings.Rebinding`). Pad and touch bindings unchanged.
+- [x] The shove left the pickup key for Shove / Lunge on every device (`CombatVerbs.Update`): an attacker's right click slides
+  when a loose tsinelas lies in reach ahead, shoves otherwise; one press is one verb (a press edge is readable for several
+  Updates, and the first build of this stacked a shove on every slide). Bots shove on the same verb.
+- [x] `Grab` and `Interact` both on F, the one sanctioned pair (`Rebinding.IsOneUseKey`): they are his one Interact / Use key.
+- [x] The curve is a wheel notch: each press edge steps it, a held key still turns it (`PlayerInputReader.CurveInput`); the
+  hardcoded wheel read is gone. WHEEL UP / WHEEL DOWN glyphs drawn into the mouse sheet's empty cells (`InputGlyphs`).
+- [x] Tutorial's shove lesson teaches Shove / Lunge. `Design.md` section 4 rewritten.
+- [x] Found on the way and fixed: `CharacterMotor.NetworkStamina.cs.meta` and `HubSceneVideo.Warmup.cs.meta` carried 33-character
+  GUIDs, so the editor IGNORED both files and the project did not compile in Unity (the direct compiler never reads metas).
+- Evidence: EditMode input suites 60/60 (`Logs/keybinds-editmode-v2.xml`); PlayMode pickup, slide and tutorial 19/20
+  (`Logs/keybinds-playmode-v2.xml`). The one red, `RetrievalSlideTests.AnIneligibleTsinelasIsNotASlideTarget`, fails in its
+  fixture before any input: `Slipper.HostForceEquip` now enforces the ownership lock the fixture's comment says it bypasses.
+  Not this change; left for the ownership-lock owner.
+
 ### PRACTICE-1 · A practice picker and a Valorant-style training range ⚠️ NATIVE CHECK OPEN, 2026-09-27
 
 Owner, 2026-09-26: *"can u also make it so that when u click practice theres a screen that pops up

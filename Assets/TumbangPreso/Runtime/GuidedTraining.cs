@@ -484,7 +484,7 @@ namespace TumbangPreso
                 case Lesson.Throw:          return Verb.SpecialAbility;
                 case Lesson.Retrieve:       return Verb.Grab;
                 case Lesson.Pektus:         return Verb.SpecialAbility;
-                case Lesson.Shove:          return Verb.Grab;
+                case Lesson.Shove:          return Verb.Lunge;
                 case Lesson.AbilityInfo:    return null;
                 case Lesson.Skill1:         return Verb.Skill1;
                 case Lesson.Skill2:         return Verb.Skill2;
@@ -753,7 +753,7 @@ namespace TumbangPreso
                     _local.Stamina.RefillAndClearFatigue();
                     title = "SHOVE AN ATTACKER";
                     body = "Shove the training dummy. It costs stamina you may need for the run back out.";
-                    action = Key("Grab") + "  ·  SHOVE";
+                    action = Key("Lunge") + "  ·  SHOVE";
                     _marker?.Bind(_dummy != null ? _dummy.transform : null);
                     break;
 
