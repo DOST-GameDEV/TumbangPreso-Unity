@@ -21,7 +21,8 @@ tied sack top, the stitches, the pins, the binding); her colours live only in it
 | Pins | eight, heads in lilac, crimson, magenta and gold: its right temple and brow, the crown, twice from the back of its head, through the heart patch, its right arm, its left thigh | a voodoo doll bristles with pins |
 | Twine | tied at the neck, bound round the waist (knot on its left, two ends), both wrists, the right ankle (knot outside, two ends) | how a manika is bound |
 | Patches | a purple heart patch crossed by the last stitch (the cutscene sews it), a crimson knee patch, a crimson patch low on the back, a purple patch on the right forearm | repairs, placed unevenly |
-| Stuffing | a tuft out of a torn hem at the front of the right hip | a thing that has been used |
+| Stuffing | a tuft out of a torn hem at the back of the right hip | a thing that has been used |
+| The light | a third skinned mesh, `glow-mesh`, painted unlit by `Resources/Shaders/SoulGlow` (`PhaisterDollArt.ApplyGlow`): the splits, the grin, the eye under the X, the ring round the button, the top of the tie; an edge colour and a hot core, breathing up the body | it is alive inside; the splits are where the soul shows, and the stitches are what holds it in |
 
 Palette: linen `b59c74` (head `c6ae86`, shadow `8c7352`), twine `e2d2a8`, stuffing `f3e9c9`, her purple `4a1e78` and
 crimson `8c1424` (patches), pin heads in her lilac `9838d8`, magenta `d8186e`, crimson and gold `f8b824`, dulled gold shafts
@@ -36,6 +37,8 @@ crimson `8c1424` (patches), pin heads in her lilac `9838d8`, magenta `d8186e`, c
 | 3 | uneven fringe spacing; the stuffing to the front of the right hip | the fringe read as a comb; the arm hid the tuft |
 | 4 | her hair and hat removed; the crown gathered and tied with a frayed tuft; eight pins; a waist binding | the owner: it must be its own voodoo doll, not her hair and her hat |
 | 5 | the crown tapers in two steps into the tie | v4's top read as a flat lid with a stub on it |
+| 6 | GLOWING INSIDE, STITCHED SHUT: split seams down the chest, spine, shoulders and right thigh with the soul light showing, a glowing grin, a glowing eye under the X, light round the button; crosshatched patches and a woven back of the head; a gris-gris pouch with two black feathers; twine wound round the forearms and shin; thumbs | the owner: *"refine this shit more"*, *"make it look way more detailed"*, *"add crosshatch or smth"*, and with a reference of a stitched bear with glowing seams, *"make it look liek its glowing inside and it stitched tgthr also u dont have to copy other models in making it let it be its own"* |
+| 7 | a hot core line down every split (`SoulGlow` `_Core`); the chest held by bold black cross-stitches; the chest split longer and wider; light spilling out of the tied top | v6's light was one flat pink; its linen tape vanished into the linen |
 
 Still to do on the same design: the small doll at her hip (in her glb, by `add_phaister_details.py`-style surgery). The
 teleport's decoy is the one place a doll wears her likeness (it is the joke: you grabbed a doll of her); ask before building it.

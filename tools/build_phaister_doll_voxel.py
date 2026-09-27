@@ -43,15 +43,15 @@ GOLD = 3            # her one metal: pin heads
 TWINE = 4           # the ties at the neck, wrists and ankle
 STUFFING = 5        # the tuft out of the shoulder seam
 PIN_MAGENTA = 6     # her magenta: pin heads
-SPARE_7 = 7
+FABRIC_DARK = 7     # a darker cloth: the patch sewn on its head
 INK = 8             # eyes, mouth, every stitch
 PATCH = 9           # her royal purple: the heart patch, the button eye
 CRIMSON = 10        # her crimson: the knee patch, the back patch, one pin head
-SPARE_11 = 11
+FEATHER = 11        # the black feathers in the gris-gris pouch
 PIN_HEAD = 12       # her lilac: pin heads
 PIN_SHAFT = 13      # the pins' shafts, her gold dulled
-SEAM_DARK = 14      # the darkest burlap, inside the stitched seams
-SPARE = 15
+GLOW_CORE = 14      # the hot line down the middle of every split (`SoulGlow` paints this cell `_Core`)
+GLOW = 15           # the soul light: every part in this slot goes to the glow mesh, painted by `SoulGlow`
 
 # ⚠️ v2: the cloth is a paler linen than v1's a2865f, which sat beside Paete's bark and Sean's skin in the lineup as a third
 # brown. Paler and a little greyer, it reads as sackcloth and stays apart from both.
@@ -63,15 +63,15 @@ PALETTE = {
     TWINE:         "e2d2a8",
     STUFFING:      "f3e9c9",
     PIN_MAGENTA:   "d8186e",
-    SPARE_7:       "a4105a",
+    FABRIC_DARK:   "6f5a43",
     INK:           "14101c",
     PATCH:         "4a1e78",
     CRIMSON:       "8c1424",
-    SPARE_11:      "181622",
+    FEATHER:       "241c2c",
     PIN_HEAD:      "9838d8",
     PIN_SHAFT:     "b87814",
-    SEAM_DARK:     "6a5539",
-    SPARE:         "a2865f",
+    GLOW_CORE:     "ffd9f5",
+    GLOW:          "ff54e6",
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ LEG_LEFT = [
     ("foot-l",            "leg-left", (0.012, 0.012, -0.112), (0.156, 0.062, 0.078), BURLAP),
     ("sole-l",            "leg-left", (0.014, 0.000, -0.108), (0.154, 0.014, 0.074), BURLAP_SHADOW),
     ("knee-patch-l",      "leg-left", (0.038, 0.086, -0.086), (0.120, 0.150, -0.074), CRIMSON),
-    ("ankle-seam-l",      "leg-left", (0.016, 0.060, -0.082), (0.152, 0.068, 0.076), SEAM_DARK),
+    ("ankle-seam-l",      "leg-left", (0.016, 0.060, -0.082), (0.152, 0.068, 0.076), BURLAP_SHADOW),
 ]
 LEG_RIGHT = [
     ("leg-sack-r",        "leg-right", (-0.150, 0.028, -0.072), (-0.018, 0.184, 0.074), BURLAP),
@@ -98,32 +98,38 @@ LEG_RIGHT = [
 ]
 
 # ---------------------------------------------------------------------------------------------------------------------
-# TORSO. A stuffed sack with a round belly and a gathered hem. Twine at the neck, knotted on her left of the chest. The
-# heart patch sits high on her left, tilted as if sewn in a hurry. Seams down both sides, drawn separately (the right side
-# has fewer stitches). Stuffing escapes at the back of the right shoulder. A crimson patch low on the back.
+# TORSO. A stuffed sack with a round belly and a gathered hem, split open down the chest where the soul light shows through
+# and held shut by three X straps (`CRACKS`, `STRAPS`); split again down the spine. Twine at the neck and round the waist,
+# both knotted on its right. A red gris-gris pouch hangs at its left hip with two black feathers. Seams down both sides,
+# drawn separately. Stuffing escapes at the back of the right hip. A crosshatched crimson patch low on the back.
 # ---------------------------------------------------------------------------------------------------------------------
 TORSO = [
     ("body-sack",         "torso", (-0.148, 0.168, -0.090), (0.148, 0.338, 0.086), BURLAP),
-    ("belly",             "torso", (-0.124, 0.182, -0.104), (0.124, 0.262, -0.062), BURLAP),
+    ("belly",             "torso", (-0.124, 0.182, -0.104), (0.124, 0.250, -0.062), BURLAP),
     ("hem",               "torso", (-0.151, 0.166, -0.093), (0.151, 0.180, 0.089), BURLAP_SHADOW),
     ("neck-twine",        "torso", (-0.094, 0.326, -0.076), (0.094, 0.352, 0.074), TWINE),
-    # Bound round the middle, as a manika is: the twine wraps the belly and knots on its left.
+    # Bound round the middle, as a manika is: the twine wraps the belly and knots on its right.
     ("waist-twine",       "torso", (-0.152, 0.226, -0.108), (0.152, 0.242, 0.090), TWINE),
-    ("waist-knot",        "torso", (0.070, 0.220, -0.118), (0.100, 0.250, -0.100), TWINE),
-    ("neck-knot",         "torso", (0.028, 0.316, -0.092), (0.066, 0.356, -0.072), TWINE),
+    ("waist-knot",        "torso", (-0.100, 0.220, -0.118), (-0.070, 0.250, -0.100), TWINE),
+    ("neck-knot",         "torso", (-0.066, 0.316, -0.092), (-0.028, 0.356, -0.072), TWINE),
+    # The gris-gris pouch: a little red bag on a string from the waist twine, tied at its neck.
+    ("pouch",             "torso", (0.075, 0.166, -0.137), (0.125, 0.218, -0.103), CRIMSON),
+    ("pouch-neck",        "torso", (0.086, 0.216, -0.131), (0.114, 0.228, -0.109), CRIMSON),
+    ("pouch-tie",         "torso", (0.084, 0.221, -0.133), (0.116, 0.228, -0.107), TWINE),
+    ("pouch-string",      "torso", (0.098, 0.227, -0.124), (0.102, 0.244, -0.118), TWINE),
     ("seam-l",            "torso", (0.147, 0.188, -0.004), (0.154, 0.330, 0.004), INK),
     ("seam-l-t1",         "torso", (0.147, 0.198, -0.018), (0.155, 0.204, 0.016), INK),
     ("seam-l-t2",         "torso", (0.147, 0.229, -0.015), (0.155, 0.235, 0.019), INK),
     ("seam-l-t3",         "torso", (0.147, 0.257, -0.019), (0.155, 0.263, 0.015), INK),
     ("seam-l-t4",         "torso", (0.147, 0.296, -0.016), (0.155, 0.302, 0.018), INK),
     ("seam-l-t5",         "torso", (0.147, 0.318, -0.017), (0.155, 0.324, 0.014), INK),
-    # The hem is torn at the front of the right hip and the stuffing escapes there (v2 hid it behind the hanging arm).
+    # The hem is torn at the back of the right hip and the stuffing escapes there.
     ("seam-r",            "torso", (-0.154, 0.228, -0.004), (-0.147, 0.326, 0.004), INK),
     ("seam-r-t2",         "torso", (-0.155, 0.247, -0.014), (-0.147, 0.253, 0.019), INK),
     ("seam-r-t3",         "torso", (-0.155, 0.289, -0.018), (-0.147, 0.295, 0.015), INK),
-    ("stuffing-a",        "torso", (-0.150, 0.166, -0.104), (-0.116, 0.196, -0.080), STUFFING),
-    ("stuffing-b",        "torso", (-0.136, 0.156, -0.112), (-0.108, 0.180, -0.088), STUFFING),
-    ("stuffing-c",        "torso", (-0.160, 0.182, -0.098), (-0.134, 0.206, -0.076), STUFFING),
+    ("stuffing-a",        "torso", (-0.150, 0.166, 0.080), (-0.116, 0.196, 0.104), STUFFING),
+    ("stuffing-b",        "torso", (-0.136, 0.156, 0.088), (-0.108, 0.180, 0.112), STUFFING),
+    ("stuffing-c",        "torso", (-0.160, 0.182, 0.076), (-0.134, 0.206, 0.098), STUFFING),
 ]
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -134,6 +140,7 @@ ARM_LEFT = [
     ("arm-sack-l",        "arm-left", (0.096, 0.222, -0.070), (0.300, 0.354, 0.074), BURLAP),
     ("mitten-l",          "arm-left", (0.290, 0.218, -0.066), (0.356, 0.350, 0.070), BURLAP),
     ("wrist-twine-l",     "arm-left", (0.282, 0.215, -0.075), (0.300, 0.358, 0.079), TWINE),
+    ("thumb-l",           "arm-left", (0.310, 0.332, -0.084), (0.342, 0.362, -0.052), BURLAP),
     ("seam-arm-l",        "arm-left", (0.112, 0.353, -0.004), (0.280, 0.360, 0.004), INK),
     ("seam-arm-l-t1",     "arm-left", (0.130, 0.352, -0.017), (0.136, 0.361, 0.017), INK),
     ("seam-arm-l-t2",     "arm-left", (0.168, 0.352, -0.015), (0.174, 0.361, 0.019), INK),
@@ -144,6 +151,7 @@ ARM_RIGHT = [
     ("arm-sack-r",        "arm-right", (-0.300, 0.224, -0.072), (-0.096, 0.352, 0.072), BURLAP),
     ("mitten-r",          "arm-right", (-0.352, 0.220, -0.068), (-0.290, 0.348, 0.068), BURLAP),
     ("wrist-twine-r",     "arm-right", (-0.300, 0.217, -0.077), (-0.283, 0.355, 0.077), TWINE),
+    ("thumb-r",           "arm-right", (-0.340, 0.330, -0.082), (-0.308, 0.360, -0.050), BURLAP),
 ]
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -189,6 +197,7 @@ TUFT = [
 # Round parts: (name, bone, centre, radius, depth, sides, slot). They face the viewer (-Z). The button eye is sewn on: an
 # ink rim, the purple button proud of it, two holes and the thread between them.
 DISCS = [
+    ("button-glow",       "head", (-0.078, 0.542, -0.1675), 0.058, 0.003, 14, GLOW),
     ("button-rim",        "head", (-0.078, 0.542, -0.169), 0.050, 0.010, 12, INK),
     ("button",            "head", (-0.078, 0.542, -0.1755), 0.041, 0.011, 12, PATCH),
     ("button-hole-a",     "head", (-0.090, 0.546, -0.1815), 0.0085, 0.004, 8, INK),
@@ -201,60 +210,153 @@ DISCS = [
 # ---------------------------------------------------------------------------------------------------------------------
 OBOX = [
     # Left knee: one stitch across the patch.
-    ("knee-stitch-l",     "leg-left", (0.079, 0.118, -0.088), (0.074, 0.010, 0.004), (0, 0, 36), INK),
     # Right ankle: the twine's two loose ends.
     ("ankle-end-r1",      "leg-right", (-0.171, 0.046, -0.010), (0.010, 0.040, 0.010), (0, 0, -15), TWINE),
     ("ankle-end-r2",      "leg-right", (-0.166, 0.050, 0.008), (0.010, 0.032, 0.010), (0, 0, 22), TWINE),
-    # The heart patch, tilted, and the last stitch across it (the cutscene's): a big X, plus three border stitches.
-    ("heart-patch",       "torso", (0.058, 0.298, -0.094), (0.078, 0.072, 0.008), (0, 0, 9), PATCH),
-    ("heart-stitch-a",    "torso", (0.058, 0.298, -0.0995), (0.086, 0.012, 0.004), (0, 0, 49), INK),
-    ("heart-stitch-b",    "torso", (0.058, 0.298, -0.0995), (0.080, 0.012, 0.004), (0, 0, -31), INK),
-    ("heart-border-1",    "torso", (0.024, 0.326, -0.0995), (0.005, 0.018, 0.004), (0, 0, 9), INK),
-    ("heart-border-2",    "torso", (0.095, 0.270, -0.0995), (0.005, 0.016, 0.004), (0, 0, 9), INK),
-    ("heart-border-3",    "torso", (0.028, 0.265, -0.0995), (0.016, 0.005, 0.004), (0, 0, 9), INK),
     # The waist knot's two ends.
-    ("waist-end-1",       "torso", (0.090, 0.200, -0.116), (0.010, 0.046, 0.008), (0, 0, 16), TWINE),
-    ("waist-end-2",       "torso", (0.076, 0.204, -0.114), (0.010, 0.036, 0.008), (0, 0, -10), TWINE),
+    ("waist-end-1",       "torso", (-0.090, 0.200, -0.116), (0.010, 0.046, 0.008), (0, 0, -16), TWINE),
+    ("waist-end-2",       "torso", (-0.076, 0.204, -0.114), (0.010, 0.036, 0.008), (0, 0, 10), TWINE),
+    # Two black feathers out of the pouch's neck.
+    ("feather-1",         "torso", (0.090, 0.250, -0.126), (0.010, 0.050, 0.004), (0, 0, 16), FEATHER),
+    ("feather-2",         "torso", (0.110, 0.246, -0.128), (0.009, 0.042, 0.004), (0, 0, -22), FEATHER),
     # The crown knot's two ends.
     ("crown-end-1",       "head", (0.084, 0.728, -0.082), (0.010, 0.040, 0.008), (0, 0, 20), TWINE),
     ("crown-end-2",       "head", (0.070, 0.726, -0.084), (0.010, 0.034, 0.008), (0, 0, -12), TWINE),
     # The neck knot's two ends, hanging unevenly.
-    ("neck-end-1",        "torso", (0.040, 0.300, -0.090), (0.010, 0.044, 0.008), (0, 0, 12), TWINE),
-    ("neck-end-2",        "torso", (0.058, 0.303, -0.088), (0.010, 0.036, 0.008), (0, 0, -18), TWINE),
+    ("neck-end-1",        "torso", (-0.040, 0.300, -0.090), (0.010, 0.044, 0.008), (0, 0, -12), TWINE),
+    ("neck-end-2",        "torso", (-0.058, 0.303, -0.088), (0.010, 0.036, 0.008), (0, 0, 18), TWINE),
     # The crimson patch low on the back, and its two stitches.
     ("back-patch",        "torso", (-0.050, 0.230, 0.090), (0.070, 0.060, 0.008), (0, 0, -7), CRIMSON),
-    ("back-stitch-1",     "torso", (-0.070, 0.230, 0.0945), (0.006, 0.040, 0.004), (0, 0, -7), INK),
-    ("back-stitch-2",     "torso", (-0.030, 0.232, 0.0945), (0.006, 0.034, 0.004), (0, 0, -3), INK),
     # The right forearm's purple patch.
     ("arm-patch-r",       "arm-right", (-0.222, 0.300, -0.076), (0.060, 0.050, 0.006), (0, 0, 12), PATCH),
     # The X for her left eye.
     ("eye-x-a",           "head", (0.080, 0.542, -0.171), (0.088, 0.020, 0.008), (0, 0, 42), INK),
     ("eye-x-b",           "head", (0.080, 0.542, -0.171), (0.084, 0.020, 0.008), (0, 0, -40), INK),
+    # The eye under the X is not gone: it glows through the stitches.
+    ("eye-x-slit",        "head", (0.080, 0.542, -0.1690), (0.066, 0.024, 0.004), (0, 0, 0), GLOW),
+    ("eye-x-slit-core",   "head", (0.080, 0.542, -0.1702), (0.044, 0.010, 0.004), (0, 0, 0), GLOW_CORE),
+    # Light spills out of the top where the sack is tied, between the frayed threads.
+    ("crown-glow",        "head", (0.000, 0.786, 0.004), (0.098, 0.010, 0.104), (0, 0, 0), GLOW),
+    ("crown-glow-core",   "head", (0.000, 0.790, 0.004), (0.060, 0.008, 0.066), (0, 0, 0), GLOW_CORE),
+    # Twine wound round the forearms, each its own lean, and round the right shin.
+    ("wrap-l1",           "arm-left", (0.196, 0.288, 0.002), (0.012, 0.144, 0.154), (0, 0, 22), TWINE),
+    ("wrap-l2",           "arm-left", (0.236, 0.288, 0.002), (0.011, 0.142, 0.152), (0, 0, -17), TWINE),
+    ("wrap-r1",           "arm-right", (-0.160, 0.288, 0.000), (0.012, 0.140, 0.152), (0, 0, -24), TWINE),
+    ("wrap-shin-r",       "leg-right", (-0.084, 0.096, -0.001), (0.140, 0.012, 0.154), (0, 0, 12), TWINE),
+    # A patch of darker cloth sewn on its brow.
+    ("head-patch",        "head", (0.106, 0.622, -0.1705), (0.068, 0.054, 0.005), (0, 0, -7), FABRIC_DARK),
     # The button and its rim, turned 45 degrees over their squares so both read round.
     # The thread holding the button on, from hole to hole.
     ("button-thread",     "head", (-0.078, 0.542, -0.1830), (0.030, 0.005, 0.003), (0, 0, -18), INK),
 ]
 
-# The stitched grin: a line through six points, higher at her left end (the smirk), then four cross stitches at uneven
-# spacing, each laid across the line where it crosses it.
+# The stitched grin: a slit of soul light through six points, higher at its left end (a smirk), sewn shut by four dark cross
+# stitches at uneven spacing, each laid across the slit where it crosses it.
 GRIN = [(-0.118, 0.452), (-0.070, 0.428), (-0.010, 0.418), (0.050, 0.424), (0.094, 0.440), (0.116, 0.464)]
 GRIN_STITCHES = [-0.092, -0.041, 0.018, 0.071]
-GRIN_Z = -0.171
+GRIN_Z = -0.1700
 
 # Pins stuck in: (name, bone, where it enters, the direction it leaves in, length, head slot). Eight, with heads in her
 # lilac, crimson, magenta and gold, so its silhouette bristles: out of its right temple and brow, the crown, twice from the
-# back of its head, through the heart patch, through its right arm and its left thigh.
+# back of its head, through the split in its chest, through its right arm and its left thigh.
 PINS = [
     ("pin-temple-r",      "head", (-0.170, 0.640, -0.040), (-0.82, 0.50, -0.28), 0.150, PIN_HEAD),
     ("pin-brow-r",        "head", (-0.140, 0.664, -0.150), (-0.30, 0.45, -0.84), 0.120, PIN_MAGENTA),
     ("pin-crown-l",       "head", (0.120, 0.716, -0.030), (0.45, 0.85, -0.25), 0.150, CRIMSON),
     ("pin-back-l",        "head", (0.120, 0.600, 0.150), (0.35, 0.30, 0.89), 0.140, GOLD),
     ("pin-back-r",        "head", (-0.110, 0.480, 0.160), (-0.30, -0.10, 0.95), 0.120, PIN_MAGENTA),
-    ("pin-heart",         "torso", (0.058, 0.298, -0.098), (0.25, 0.30, -0.92), 0.130, CRIMSON),
+    ("pin-heart",         "torso", (0.052, 0.290, -0.092), (0.25, 0.30, -0.92), 0.130, CRIMSON),
     ("pin-arm-r",         "arm-right", (-0.205, 0.350, -0.010), (-0.15, 0.95, -0.25), 0.120, PIN_HEAD),
     ("pin-thigh-l",       "leg-left", (0.100, 0.130, -0.078), (0.40, -0.15, -0.90), 0.110, GOLD),
 ]
 PIN_SHAFT_THICK = 0.010
+
+# ---------------------------------------------------------------------------------------------------------------------
+# GLOWING INSIDE, STITCHED TOGETHER (v6; owner: *"make it look liek its glowing inside and it stitched tgthr"*, *"let it be its
+# own"*, *"add crosshatch or smth"*, *"make it look way more detailed"*). Where it has split, the soul light shows (`GLOW`, the
+# glow mesh), and it is held shut. Each list is typed by hand; a point is (across, up) on the named face at the named depth
+# ("front"/"back" faces: x, y).
+# ---------------------------------------------------------------------------------------------------------------------
+
+# Splits: (name, bone, face, depth, the jagged line's points, each piece's width).
+CRACKS = [
+    ("crack-chest",   "torso", "front", -0.0915, [(0.092, 0.338), (0.070, 0.318), (0.078, 0.300), (0.052, 0.281), (0.060, 0.266),
+                                                  (0.036, 0.252)], [0.022, 0.017, 0.024, 0.018, 0.021]),
+    ("crack-belly",   "torso", "front", -0.1055, [(0.036, 0.248), (0.016, 0.232), (0.024, 0.215), (0.000, 0.199), (-0.016, 0.185)],
+     [0.019, 0.022, 0.017, 0.020]),
+    ("crack-spine",   "torso", "back", 0.0875, [(0.012, 0.322), (0.004, 0.296), (0.014, 0.268), (0.006, 0.238), (0.016, 0.206),
+                                                (0.008, 0.188)], [0.012, 0.014, 0.011, 0.015, 0.012]),
+    ("crack-shoulder-l", "arm-left", "front", -0.0715, [(0.118, 0.346), (0.114, 0.300), (0.120, 0.262), (0.116, 0.230)],
+     [0.012, 0.014, 0.011]),
+    ("crack-shoulder-r", "arm-right", "front", -0.0735, [(-0.118, 0.342), (-0.121, 0.294), (-0.115, 0.236)], [0.013, 0.012]),
+    ("crack-thigh-r", "leg-right", "front", -0.0735, [(-0.128, 0.166), (-0.104, 0.146), (-0.086, 0.128), (-0.064, 0.114)],
+     [0.012, 0.015, 0.011]),
+]
+
+# The big X stitches holding the chest shut: (name, bone, face, depth, centre, length, width, the two angles). Thick dark
+# thread over the light; the top one is the cutscene's last stitch. ⚠️ v6 made them linen tape, which vanished into the linen.
+STRAPS = [
+    ("strap-chest-1", "torso", "front", -0.0955, (0.078, 0.318), 0.052, 0.010, 40, -44),
+    ("strap-chest-2", "torso", "front", -0.0955, (0.062, 0.286), 0.048, 0.010, 36, -48),
+    ("strap-chest-3", "torso", "front", -0.0955, (0.046, 0.260), 0.042, 0.009, 46, -40),
+    ("strap-belly-1", "torso", "front", -0.1095, (0.022, 0.222), 0.048, 0.010, 44, -38),
+    ("strap-belly-2", "torso", "front", -0.1095, (0.004, 0.196), 0.044, 0.009, 38, -46),
+]
+
+# Dark stitches across the other splits: (name, bone, face, depth, centre, angle, length).
+STAPLES = [
+    ("staple-sl-1", "arm-left", "front", -0.0755, (0.116, 0.330), 0, 0.026),
+    ("staple-sl-2", "arm-left", "front", -0.0755, (0.117, 0.284), 8, 0.024),
+    ("staple-sl-3", "arm-left", "front", -0.0755, (0.118, 0.245), -6, 0.026),
+    ("staple-sr-1", "arm-right", "front", -0.0775, (-0.119, 0.318), -5, 0.026),
+    ("staple-sr-2", "arm-right", "front", -0.0775, (-0.118, 0.262), 7, 0.024),
+    ("staple-sp-1", "torso", "back", 0.0905, (0.008, 0.310), 4, 0.028),
+    ("staple-sp-2", "torso", "back", 0.0905, (0.010, 0.281), -6, 0.026),
+    ("staple-sp-3", "torso", "back", 0.0905, (0.010, 0.252), 3, 0.028),
+    ("staple-sp-4", "torso", "back", 0.0905, (0.011, 0.222), -4, 0.026),
+    ("staple-sp-5", "torso", "back", 0.0905, (0.012, 0.197), 6, 0.024),
+    ("staple-th-1a", "leg-right", "front", -0.0775, (-0.116, 0.156), 45, 0.024),
+    ("staple-th-1b", "leg-right", "front", -0.0775, (-0.116, 0.156), -45, 0.024),
+    ("staple-th-2a", "leg-right", "front", -0.0775, (-0.078, 0.121), 40, 0.022),
+    ("staple-th-2b", "leg-right", "front", -0.0775, (-0.078, 0.121), -48, 0.022),
+]
+
+# Crosshatch: (name, bone, face, depth, centre, angle, length, slot). The patches are crosshatched in thread, and the back of
+# the head carries a coarse weave, so the big faces read as cloth rather than flat colour.
+HATCH = [
+    ("hatch-knee-1", "leg-left", "front", -0.0875, (0.066, 0.118), 45, 0.050, INK),
+    ("hatch-knee-2", "leg-left", "front", -0.0875, (0.080, 0.118), 45, 0.068, INK),
+    ("hatch-knee-3", "leg-left", "front", -0.0875, (0.093, 0.118), 45, 0.048, INK),
+    ("hatch-knee-4", "leg-left", "front", -0.0875, (0.065, 0.119), -45, 0.048, INK),
+    ("hatch-knee-5", "leg-left", "front", -0.0875, (0.079, 0.117), -45, 0.070, INK),
+    ("hatch-knee-6", "leg-left", "front", -0.0875, (0.094, 0.118), -45, 0.050, INK),
+    ("hatch-back-1", "torso", "back", 0.0955, (-0.064, 0.230), 45, 0.045, INK),
+    ("hatch-back-2", "torso", "back", 0.0955, (-0.050, 0.231), 45, 0.062, INK),
+    ("hatch-back-3", "torso", "back", 0.0955, (-0.036, 0.229), 45, 0.044, INK),
+    ("hatch-back-4", "torso", "back", 0.0955, (-0.063, 0.229), -45, 0.046, INK),
+    ("hatch-back-5", "torso", "back", 0.0955, (-0.049, 0.230), -45, 0.060, INK),
+    ("hatch-back-6", "torso", "back", 0.0955, (-0.036, 0.231), -45, 0.045, INK),
+    ("hatch-arm-1",  "arm-right", "front", -0.0805, (-0.232, 0.300), 45, 0.042, TWINE),
+    ("hatch-arm-2",  "arm-right", "front", -0.0805, (-0.212, 0.301), 45, 0.040, TWINE),
+    ("hatch-arm-3",  "arm-right", "front", -0.0805, (-0.231, 0.299), -45, 0.040, TWINE),
+    ("hatch-arm-4",  "arm-right", "front", -0.0805, (-0.213, 0.300), -45, 0.042, TWINE),
+    ("hatch-brow-1", "head", "front", -0.1745, (0.096, 0.622), 45, 0.042, TWINE),
+    ("hatch-brow-2", "head", "front", -0.1745, (0.116, 0.621), 45, 0.040, TWINE),
+    ("hatch-brow-3", "head", "front", -0.1745, (0.097, 0.621), -45, 0.040, TWINE),
+    ("hatch-brow-4", "head", "front", -0.1745, (0.115, 0.623), -45, 0.042, TWINE),
+    ("weave-back-1", "head", "back", 0.1715, (-0.100, 0.534), 45, 0.200, BURLAP_SHADOW),
+    ("weave-back-2", "head", "back", 0.1715, (-0.030, 0.528), 45, 0.290, BURLAP_SHADOW),
+    ("weave-back-3", "head", "back", 0.1715, (0.052, 0.531), 45, 0.280, BURLAP_SHADOW),
+    ("weave-back-4", "head", "back", 0.1715, (0.122, 0.536), 45, 0.190, BURLAP_SHADOW),
+    ("weave-back-5", "head", "back", 0.1715, (-0.098, 0.530), -45, 0.210, BURLAP_SHADOW),
+    ("weave-back-6", "head", "back", 0.1715, (-0.024, 0.533), -45, 0.280, BURLAP_SHADOW),
+    ("weave-back-7", "head", "back", 0.1715, (0.050, 0.527), -45, 0.290, BURLAP_SHADOW),
+    ("weave-back-8", "head", "back", 0.1715, (0.120, 0.531), -45, 0.200, BURLAP_SHADOW),
+]
+
+FACE_NORMALS = {"front": (0.0, 0.0, -1.0), "back": (0.0, 0.0, 1.0)}
+STAPLE_WIDTH = 0.006
+HATCH_WIDTH = 0.0035
 PIN_HEAD_SIZE = 0.034
 
 
@@ -330,6 +432,16 @@ def _disc_polygons(centre, radius, depth, sides, m):
         yield n, _outward(pts, n)
 
 
+def _face_row(name, bone, face, depth, centre, angle, length, width, thick, slot):
+    """One flat stroke on a front or back face: centred at (x, y) on it, `depth` along Z, turned `angle` degrees in the face."""
+    n = FACE_NORMALS[face]
+    a = math.radians(angle)
+    along = (math.cos(a), math.sin(a), 0.0)
+    across = V._cross(n, along)
+    m = tuple(tuple((along, across, n)[k][i] for k in range(3)) for i in range(3))
+    return (name, bone, (centre[0], centre[1], depth), (length, width, thick), m, slot, "box")
+
+
 def oriented_rows():
     """Every tilted part as (name, bone, centre, size, matrix, slot)."""
     rows = [(n, b, c, s, _rot(*r), slot, "box") for n, b, c, s, r, slot in OBOX]
@@ -347,12 +459,34 @@ def oriented_rows():
         (x0, y0), (x1, y1) = GRIN[k], GRIN[k + 1]
         length = math.hypot(x1 - x0, y1 - y0) + 0.008
         angle = math.degrees(math.atan2(y1 - y0, x1 - x0))
-        rows.append((f"grin-{k}", "head", ((x0 + x1) / 2, (y0 + y1) / 2, GRIN_Z), (length, 0.013, 0.007),
-                     _rot(0, 0, angle), INK, "box"))
+        rows.append((f"grin-{k}", "head", ((x0 + x1) / 2, (y0 + y1) / 2, GRIN_Z), (length, 0.018, 0.004),
+                     _rot(0, 0, angle), GLOW, "box"))
+        rows.append((f"grin-{k}-core", "head", ((x0 + x1) / 2, (y0 + y1) / 2, GRIN_Z - 0.0012), (length - 0.004, 0.007, 0.004),
+                     _rot(0, 0, angle), GLOW_CORE, "box"))
     for k, x in enumerate(GRIN_STITCHES):
         y, slope = _grin_at(x)
-        rows.append((f"grin-stitch-{k}", "head", (x, y, GRIN_Z - 0.001), (0.011, 0.042, 0.007),
+        rows.append((f"grin-stitch-{k}", "head", (x, y, GRIN_Z - 0.0035), (0.011, 0.044, 0.005),
                      _rot(0, 0, math.degrees(math.atan(slope))), INK, "box"))
+
+    # The splits, piece by piece along each jagged line, in the soul light.
+    for name, bone, face, depth, points, widths in CRACKS:
+        for k in range(len(points) - 1):
+            (x0, y0), (x1, y1) = points[k], points[k + 1]
+            length = math.hypot(x1 - x0, y1 - y0) + 0.006
+            angle = math.degrees(math.atan2(y1 - y0, x1 - x0))
+            rows.append(_face_row(f"{name}-{k}", bone, face, depth, ((x0 + x1) / 2, (y0 + y1) / 2), angle, length, widths[k],
+                                  0.004, GLOW))
+            proud = depth - 0.0012 if face == "front" else depth + 0.0012
+            rows.append(_face_row(f"{name}-{k}-core", bone, face, proud, ((x0 + x1) / 2, (y0 + y1) / 2), angle, length - 0.004,
+                                  widths[k] * 0.42, 0.004, GLOW_CORE))
+    for name, bone, face, depth, centre, length, width, a1, a2 in STRAPS:
+        rows.append(_face_row(name + "-a", bone, face, depth, centre, a1, length, width, 0.006, INK))
+        rows.append(_face_row(name + "-b", bone, face, depth - 0.001 if face == "front" else depth + 0.001, centre, a2,
+                              length * 0.96, width, 0.006, INK))
+    for name, bone, face, depth, centre, angle, length in STAPLES:
+        rows.append(_face_row(name, bone, face, depth, centre, angle, length, STAPLE_WIDTH, 0.004, INK))
+    for name, bone, face, depth, centre, angle, length, slot in HATCH:
+        rows.append(_face_row(name, bone, face, depth, centre, angle, length, HATCH_WIDTH, 0.003, slot))
 
     for name, bone, base, direction, length, head_slot in PINS:
         d = V._unit(direction)
@@ -434,11 +568,15 @@ def main():
     V.bind_matrices(gltf)
 
     rows = oriented_rows()
-    body_rows = [r for r in rows if r[1] != "head"]
-    head_rows = [r for r in rows if r[1] == "head"]
+    lit = (GLOW, GLOW_CORE)
+    glow_rows = [r for r in rows if r[5] in lit]
+    body_rows = [r for r in rows if r[1] != "head" and r[5] not in lit]
+    head_rows = [r for r in rows if r[1] == "head" and r[5] not in lit]
     body = assemble(BODY_BOXES, body_rows)
     head = assemble(HEAD_BOXES, head_rows)
+    glow = assemble([], glow_rows)
     verify(body, head, rows)
+    print(f"glow parts: {len(glow_rows)}, tris {len(glow[5]) // 3}")
 
     blob, new_views, new_accessors, remap = bytearray(), [], [], {}
 
@@ -488,7 +626,13 @@ def main():
             values = V.read_accessor(gltf, buffer, sampler["output"])
             sampler["output"] = add([tuple(v[a] + delta[a] for a in range(3)) for v in values], "f", "VEC3", 5126)
 
-    for mesh, built in ((gltf["meshes"][0], body), (gltf["meshes"][1], head)):
+    # ⚠️ THE SOUL LIGHT IS A THIRD SKINNED MESH ON THE BODY'S SKIN, NAMED `glow-mesh`, so the game can paint it unlit
+    # (`PhaisterDollArt.ApplyGlow`) while the toon paint keeps the cloth. Its joints index the same seven bones.
+    gltf["meshes"].append({"name": "glow-mesh", "primitives": []})
+    gltf["nodes"].append({"name": "glow-mesh", "mesh": len(gltf["meshes"]) - 1, "skin": 0})
+    gltf["nodes"][0].setdefault("children", []).append(len(gltf["nodes"]) - 1)
+
+    for mesh, built in ((gltf["meshes"][0], body), (gltf["meshes"][1], head), (gltf["meshes"][-1], glow)):
         pos, nrm, uv, joints, weights, idx = built
         mesh["primitives"] = [{
             "attributes": {
