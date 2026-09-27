@@ -345,6 +345,7 @@ namespace TumbangPreso
             // The Whirled and Chilled body tells, on every peer (`Visual.StatusBodyMarks`).
             if (GetComponent<Visual.StatusBodyMarks>() == null) gameObject.AddComponent<Visual.StatusBodyMarks>();
             if (GetComponent<Visual.StatusOverhead>() == null) gameObject.AddComponent<Visual.StatusOverhead>();
+            if (GetComponent<Visual.PhaisterStatusPresenter>() == null) gameObject.AddComponent<Visual.PhaisterStatusPresenter>();
         }
 
         /// ⚠️ THE SPECTATABLE REGISTRY IS POPULATED HERE, NOT AT THE SPAWN SITE. Godot's

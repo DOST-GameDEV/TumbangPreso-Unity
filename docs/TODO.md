@@ -25,9 +25,20 @@ Scope includes body animation, VFX, cutscenes, interruption and cleanup on every
 relevant peer, spectator, late join and reconnect. Explicit delivery declarations
 and the normal pre-build guard are implemented (focused EditMode 5/5); remaining
 state/presentation replication and real-peer qualification stay OPEN.
+Approved replica commands now survive local timer drift; unpredicted owner casts
+take full playback. Phaister's received statuses initialize and clean up with each
+body, without needing the original cast (two new local PlayMode cases pass).
+Preserve incoming reworks; retest changed network contracts, not every cosmetic edit.
+Protocol63 now carries stable ability identity and explicit activation/command
+intent; accepted casts wait briefly for their body/kit in an ordered,scoped queue.
+Compiler checks pass; native codec/delivery checks remain OPEN after a disk-reserve
+stop before tests. Reuse the saved candidate at the next safe integration run.
 Effect confirmations now have independent request lifetimes; pending initialization,
 recast commands and old denials preserve the correct active effect (four distinct
 local cases pass). Networking comes first; real work-driven loading follows it.
+Protocol62 world snapshots now reject stale prediction/event state and bind restored
+objects to their owning skills; independent plant cleanup is corrected. Focused
+EditMode6/6 and PlayMode2/2 pass. All-peer presentation qualification remains OPEN.
 Timed-state bindings now use the actual owning ability instead of a live slot or
 fixed duration cap (focused EditMode 1/1); remaining contract enforcement stays OPEN.
 Hero-shop wallet notifications now refresh purchase controls without rebuilding the
@@ -35,6 +46,9 @@ preview/ability tiles; this narrow flow optimization is source-reviewed.
 
 **Loading slice, 2026-09-27:** progressive shader completion, staged menu-art/avatar
 cache preparation and duplicate audio-sweep removal are implemented (`c9f55410`).
+Hero-prop prefab discovery/retention now runs inside boot loading, with yielded
+progress and shared source caches for existing prop loaders. Compiler checks pass;
+native lifecycle and player first-use timing remain OPEN under the disk limitation.
 The existing ultimate-introduction tables and 12 shared effect sheets now preload
 in yielded boot stages; those follow-ups are source-reviewed. Player first-use hitch qualification
 remains OPEN, not replaced by the local shader/cache completion check.

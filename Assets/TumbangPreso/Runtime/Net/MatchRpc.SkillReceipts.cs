@@ -13,14 +13,18 @@ namespace TumbangPreso.Net
         private long _skillRequestSequence,_skillEventSequence,_skillEpoch;
         private long _skillRequestScopeFloor;
         private int _skillRound;
+        private ulong _skillScene;
         private void PrepareSkillReceipts()
         {
             int round=GameServices.Match?.RoundNumber??0;
-            if(_skillEpoch==PresentationMatchId&&_skillRound==round)return;
+            ulong scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().handle.GetRawData();
+            if(_skillEpoch==PresentationMatchId&&_skillRound==round&&_skillScene==scene)return;
             _skillEpoch=PresentationMatchId;_skillRound=round;_skillRequestScopeFloor=_skillRequestSequence;
+            _skillScene = scene;
+            _pendingSkillCasts.Clear();
             _lastSkillRequest.Clear();System.Array.Clear(_lastSkillEvent,0,4);
         }
-        private static HeroAbility Skill(CharacterMotor actor,int slot)=>slot==0?actor?.AbilitySystem?.Kit?.Skill1:slot==1?actor?.AbilitySystem?.Kit?.Skill2:null;
+        private static HeroAbility Skill(CharacterMotor actor,int slot)=>slot==0?actor?.AbilitySystem?.Kit?.Skill1:slot==1?actor?.AbilitySystem?.Kit?.Skill2:slot==2?actor?.AbilitySystem?.Kit?.Ultimate:null;
         private void AcceptSkillReceipt(ulong client,int seat,int slot,long request)
         {
             var ability=Skill(Unit(seat),slot);if(ability==null||request<=0)return;

@@ -716,40 +716,43 @@ namespace TumbangPreso.PlayTests
             }
             void Play(long eventId, long request, long flightIntent, int round = -1)
             {
-                using var writer = new FastBufferWriter(128, Allocator.Temp);
-                writer.WriteValueSafe(actor.PlayerSlot); writer.WriteValueSafe(1);
-                writer.WriteValueSafe(actor.transform.position); writer.WriteValueSafe(Vector3.forward);
-                writer.WriteValueSafe(Vector3.forward * 3); writer.WriteValueSafe(0f);
-                writer.WriteValueSafe(false); writer.WriteValueSafe(Vector3.zero);
-                writer.WriteValueSafe(12345L); writer.WriteValueSafe(round < 0 ? GameServices.Match.RoundNumber : round);
-                writer.WriteValueSafe(request); writer.WriteValueSafe(eventId); writer.WriteValueSafe(flightIntent);
-                Assert.AreEqual(97, writer.Length);
+                var cast = new SkillCastMessage
+                {
+                    Seat = actor.PlayerSlot, Slot = 1, AbilityId = new FixedString64Bytes(actor.AbilitySystem.Kit.Skill2.Id),
+                    Position = actor.transform.position, Forward = Vector3.forward, AimPoint = Vector3.forward * 3,
+                    Match = 12345, Round = round < 0 ? GameServices.Match.RoundNumber : round,
+                    Request = request, Event = eventId, FlightIntent = flightIntent, Reactivation = flightIntent != 0
+                };
+                using var writer = new FastBufferWriter(SkillCastMessage.MaxWireBytes, Allocator.Temp);
+                writer.WriteNetworkSerializable(cast);
+                Assert.AreEqual(100 + cast.AbilityId.Length, writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 typeof(MatchRpc).GetMethod("OnPlayAbilityMsg", flags).Invoke(router, new object[] { NetworkManager.ServerClientId, reader });
             }
             void RequestRoundTrip(long flightIntent)
             {
-                using var writer = new FastBufferWriter(128, Allocator.Temp);
-                writer.WriteValueSafe(actor.PlayerSlot); writer.WriteValueSafe(1);
-                writer.WriteValueSafe(actor.transform.position); writer.WriteValueSafe(Vector3.forward);
-                writer.WriteValueSafe(Vector3.forward * 3); writer.WriteValueSafe(0f);
-                writer.WriteValueSafe(false); writer.WriteValueSafe(Vector3.zero);
-                writer.WriteValueSafe(12345L); writer.WriteValueSafe(GameServices.Match.RoundNumber);
-                writer.WriteValueSafe(7L); writer.WriteValueSafe(flightIntent);
-                Assert.AreEqual(89, writer.Length);
+                var cast = new SkillCastMessage
+                {
+                    Seat = actor.PlayerSlot, Slot = 1, AbilityId = new FixedString64Bytes(actor.AbilitySystem.Kit.Skill2.Id),
+                    Position = actor.transform.position, Forward = Vector3.forward, AimPoint = Vector3.forward * 3,
+                    Match = 12345, Round = GameServices.Match.RoundNumber, Request = 7,
+                    FlightIntent = flightIntent, Reactivation = flightIntent != 0
+                };
+                using var writer = new FastBufferWriter(SkillCastMessage.MaxWireBytes, Allocator.Temp);
+                writer.WriteNetworkSerializable(cast);
+                Assert.AreEqual(100 + cast.AbilityId.Length, writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
-                reader.ReadValueSafe(out int seat); reader.ReadValueSafe(out int slot);
-                reader.ReadValueSafe(out Vector3 position); reader.ReadValueSafe(out Vector3 forward);
-                reader.ReadValueSafe(out Vector3 aim); reader.ReadValueSafe(out float held);
-                reader.ReadValueSafe(out bool familiar); reader.ReadValueSafe(out Vector3 familiarAt);
-                reader.ReadValueSafe(out long match); reader.ReadValueSafe(out int round);
-                reader.ReadValueSafe(out long request); reader.ReadValueSafe(out long decoded);
-                Assert.AreEqual(actor.PlayerSlot, seat); Assert.AreEqual(1, slot);
-                Assert.AreEqual(actor.transform.position, position); Assert.AreEqual(Vector3.forward, forward);
-                Assert.AreEqual(Vector3.forward * 3, aim); Assert.AreEqual(0, held);
-                Assert.IsFalse(familiar); Assert.AreEqual(Vector3.zero, familiarAt);
-                Assert.AreEqual(12345, match); Assert.AreEqual(GameServices.Match.RoundNumber, round);
-                Assert.AreEqual(7, request); Assert.AreEqual(flightIntent, decoded);
+                var input = reader;
+                Assert.IsTrue(SkillCastMessage.TryRead(ref input, out var decoded));
+                Assert.IsTrue(decoded.IsValid(false));
+                Assert.AreEqual(actor.PlayerSlot, decoded.Seat); Assert.AreEqual(1, decoded.Slot);
+                Assert.AreEqual(actor.transform.position, decoded.Position); Assert.AreEqual(Vector3.forward, decoded.Forward);
+                Assert.AreEqual(Vector3.forward * 3, decoded.AimPoint); Assert.AreEqual(0, decoded.HeldSeconds);
+                Assert.IsFalse(decoded.HasFamiliar); Assert.AreEqual(Vector3.zero, decoded.FamiliarPosition);
+                Assert.AreEqual(12345, decoded.Match); Assert.AreEqual(GameServices.Match.RoundNumber, decoded.Round);
+                Assert.AreEqual(7, decoded.Request); Assert.AreEqual(flightIntent, decoded.FlightIntent);
+                Assert.AreEqual(actor.AbilitySystem.Kit.Skill2.Id, decoded.AbilityId.ToString());
+                Assert.AreEqual(flightIntent != 0, decoded.Reactivation);
             }
             try
             {

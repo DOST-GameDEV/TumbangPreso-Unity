@@ -2,6 +2,50 @@
 
 ## Current networking and flow work, 2026-09-27
 
+Boot now discovers and retains prefab roots in the three existing hero-prop
+folders, yielding between folders and advancing progress only after each load.
+Paete, shared rework and Phaister prop loaders reuse the same source cache; newly
+authored props in these folders join the preload without a duplicate filename list.
+No art, palette, pose or effect behavior changed. Runtime/PlayTests compile; the
+new focused lifecycle test is pending due the existing editor disk-reserve limit.
+No additional editor launch or repeated visual film. Player hitch claims remain OPEN.
+[Loading details](reports/stability-2026-09-27/loading-audit.md#hero-prop-prefab-preparation).
+
+Protocol63 adds a shared bounded skill-cast serializer with stable ability ID and
+explicit activation/command intent. Host checks identity and intent before effects;
+replicas no longer reinterpret an accepted command from their local active timer.
+Body/kit/familiar arrival uses a64-entry,2-second,per-actor-ordered queue; round,
+match,scene and transport changes retire it. World recovery cannot race queued casts.
+Runtime and both test assemblies pass a direct compiler check. Native validation
+did NOT run: the guard stopped the editor below the disk reserve before compilation.
+Do not repeat launches at unchanged headroom; new codec/delivery and affected flight
+cases remain pending for the next safe integration run. All platforms need63.
+[Delivery contract and exact limits](reports/stability-2026-09-27/multiplayer.md#explicit-cast-identity-intent-and-delayed-delivery).
+
+Owner correction: preserve incoming character reworks and adapt their network
+integration. Do not rerun unchanged suites/films for minor or cosmetic changes;
+select checks by the changed delivery/state contract and retain prior evidence.
+Cosmetic presentation is independent of authority, not a promise that future
+gameplay changes require no qualification.
+
+Approved replica playback now carries an execution context through preparation.
+Paete's approved command cannot be swallowed by a replica's reload timer; ordinary
+input and host eligibility stay gated. Unpredicted host-origin owner casts take
+full playback, including deferred effects and sky. Phaister's status presenter is
+body-owned, so joining timers need no original cast and despawn cleans its tells.
+Two NEW local PlayMode cases pass (2/2); no old suite or film was rerun. The sky
+flag follow-through is source-reviewed after that run. Real peers remain OPEN.
+[Replica lifecycle evidence](reports/stability-2026-09-27/multiplayer.md#approved-replay-and-joining-status-presentation).
+
+Protocol62 world recovery is implemented: one bounded header serializer, match/
+round/scene-instance/generation and cast/request freshness checks at begin/end,
+simulation-clock aging and coalesced recovery. Owner binding is capability-based;
+Paete's restored object also restores its active skill, retires old ownership,
+releases pullers and no longer deletes other players' plants on reset. Focused
+EditMode6/6 and PlayMode2/2 pass. All platforms need matching protocol62 builds.
+[World recovery evidence](reports/stability-2026-09-27/multiplayer.md#scoped-world-recovery-and-bound-ownership).
+Real-peer presentation/cutscene coverage and the full networking requirement stay OPEN.
+
 Newest order: finish network correctness/presentation first, then optimization
 and actual work-driven loading-screen readiness. Do not treat hardcoded stage
 timing as asset/scene/shader initialization completion.

@@ -357,54 +357,48 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed class PhaisterStatusPresenter : MonoBehaviour
     {
-        private static PhaisterStatusPresenter _instance;
-        private readonly Dictionary<CharacterMotor, PhaisterMoonlight> _moon = new Dictionary<CharacterMotor, PhaisterMoonlight>();
-        private readonly Dictionary<CharacterMotor, Transform> _mark = new Dictionary<CharacterMotor, Transform>();
-        private readonly HashSet<CharacterMotor> _wasDisoriented = new HashSet<CharacterMotor>();
+        private CharacterMotor _body;
+        private PhaisterMoonlight _moon;
+        private Transform _mark;
+        private bool _wasDisoriented;
 
-        public static void Ensure()
+        // Body-owned, like StatusBodyMarks: joining peers receive timers without
+        // replaying the original cast, and despawning a body must remove its tells.
+        private void Awake() => _body = GetComponent<CharacterMotor>();
+
+        private void LateUpdate()
         {
-            if (_instance != null) return;
-            _instance = new GameObject("PhaisterStatusPresenter").AddComponent<PhaisterStatusPresenter>();
+            if (_body == null) { Clear(); return; }
+            if (_body.IsVulnerable && (_moon == null || _moon.Ending)) _moon = PhaisterMoonlight.On(_body);
+            else if (!_body.IsVulnerable && _moon != null && !_moon.Ending) _moon.Finish();
+
+            bool dis = _body.IsDisoriented;
+            if (dis && !_wasDisoriented)
+                PhaisterManika.Nearest(_body.transform.position + Vector3.up, 4.5f)?.Steal(_body);
+            _wasDisoriented = dis;
+            if (dis && _mark == null)
+            {
+                var go = VfxShapes.Lay(null, "HexMark", VfxShapes.TwoSided(VfxShapes.Rune(21, 0.12f)), 0.32f, 0f);
+                VfxMaterial.Ghost(go.GetComponent<Renderer>(), new Color(0.80f, 0.50f, 1.0f, 0.85f), 1.1f);
+                go.transform.localScale = Vector3.one * 0.42f; // An upright glyph needs scale in all three axes.
+                _mark = go.transform;
+            }
+            if (_mark == null) return;
+            if (!dis) { Destroy(_mark.gameObject); _mark = null; return; }
+            _mark.position = _body.transform.position + Vector3.up * 2.25f;
+            _mark.rotation = Quaternion.Euler(0f, -140f * Time.time, 0f);
         }
 
-        private void OnDestroy() { if (_instance == this) _instance = null; }
+        private void OnDisable() => Clear();
+        private void OnDestroy() => Clear();
 
-        private void Update()
+        private void Clear()
         {
-            var round = GameServices.Round;
-            if (round == null) return;
-            foreach (var p in round.Players)
-            {
-                if (p == null) continue;
-                // Moonlight on the Vulnerable.
-                _moon.TryGetValue(p, out var moon);
-                if (p.IsVulnerable && (moon == null || moon.Ending)) _moon[p] = PhaisterMoonlight.On(p);
-                else if (!p.IsVulnerable && moon != null && !moon.Ending) moon.Finish();
-
-                // The doll's steal on the rising edge; the victim's mark while it lasts.
-                bool dis = p.IsDisoriented;
-                if (dis && !_wasDisoriented.Contains(p))
-                {
-                    PhaisterManika.Nearest(p.transform.position + Vector3.up, 4.5f)?.Steal(p);
-                    _wasDisoriented.Add(p);
-                }
-                else if (!dis) _wasDisoriented.Remove(p);
-                _mark.TryGetValue(p, out var mark);
-                if (dis && mark == null)
-                {
-                    var go = VfxShapes.Lay(null, "HexMark", VfxShapes.TwoSided(VfxShapes.Rune(21, 0.12f)), 0.32f, 0f);
-                    VfxMaterial.Ghost(go.GetComponent<Renderer>(), new Color(0.80f, 0.50f, 1.0f, 0.85f), 1.1f);
-                    go.transform.localScale = Vector3.one * 0.42f; // an upright glyph spinning over their head: scaled in all three axes (Lay scales x and z only)
-                    _mark[p] = mark = go.transform;
-                }
-                if (mark != null)
-                {
-                    if (!dis) { Destroy(mark.gameObject); _mark.Remove(p); continue; }
-                    mark.position = p.transform.position + Vector3.up * 2.25f;
-                    mark.rotation = Quaternion.Euler(0f, -140f * Time.time, 0f);
-                }
-            }
+            if (_moon != null) Destroy(_moon.gameObject);
+            if (_mark != null) Destroy(_mark.gameObject);
+            _moon = null;
+            _mark = null;
+            _wasDisoriented = false;
         }
     }
 }

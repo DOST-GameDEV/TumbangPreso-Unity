@@ -1,5 +1,101 @@
 # Multiplayer investigation, 2026-09-27
 
+## Explicit cast identity, intent and delayed delivery
+
+Base `0e00de51`. ReqAbility/PlayAbility now share `SkillCastMessage`'s single bounded
+serializer. It carries the stable ability ID, explicit new-cast/command intent,
+full3D aim and the existing match/round/request/event/familiar/flight facts. IDs are
+UTF8-capacity-checked at kit/build validation. Model, clip, effect and display names
+are not identity. The host rejects wrong role/ability/intent before mutation and
+still owns resources/outcomes. Accepted replicas preserve command intent even if
+their active clock expired; they cannot silently turn a command into a new spawn.
+
+A64-entry,2-second delivery queue retains accepted casts while the matching body,
+kit or familiar is installing. It preserves each actor's order, deduplicates before
+queueing, and lets other ready actors proceed. Match/round/active-scene/transport
+changes retire the queue. Expiry/overflow uses existing scoped snapshot recovery,
+not indefinite replay. World snapshots defer replacement while casts are queued.
+Protocol is **63**; every participating platform needs matching builds.
+
+Added focused codec round-trip/malformed cases and an actual receiver case for
+body arrival, duplicates, command intent, wrong ability identity and round reset.
+Updated the existing flight message fixture and protocol pin for the changed wire
+format. These are pending tests, not claimed passes.
+
+Native attempt stopped BEFORE compilation/tests at11:44:35 when freeC reached
+4,668,747,776bytes, below the4.5GiB precaution threshold. No resultXML exists.
+The PlayMode pass was not launched. The initial editor log had no compiler verdict.
+Free space rebounded after exit; the cause of these transient startup drops is
+unresolved. No repeated editor launch was used for this batch.
+
+Bounded fallback: Unity's installed Roslyn compiler and existing Bee response files,
+with outputs redirected outside the project cache and the two new sources included.
+Runtime, EditMode tests and PlayMode tests each exit0. This checks compilation only:
+no IL postprocessing, player build, tests or real peers.14/14 candidate input hashes
+match. [Compiler receipt](checks/cast-delivery-compile.json). Shared presentation,
+new runtime cases, real peers and full NET-SKILLS-1 acceptance remain OPEN.
+
+## Approved replay and joining status presentation
+
+Base `0706a9ef` includes the incoming Phaister rework, preserved unchanged in look
+and mechanics. Her status presenter previously installed only on MANIKA/PIN casts.
+A joining peer receives status timers, not historical casts, so it could omit the
+moonlight and hex mark. Presentation now follows each CharacterMotor's lifecycle,
+like existing body status marks. Disable/despawn destroys only that body's tells;
+received expiry still plays the authored ending. No effect geometry or timing edits.
+
+Accepted replica casts carry an internal execution-context flag, preserved through
+windup capture. This bypasses predicted-effect deferral for unpredicted accepted
+owner casts and permits Paete's accepted shot despite a replica reload clock lag.
+Ordinary commands and host eligibility still enforce readiness; retiring plants
+still refuse shots. Existing transport event deduplication is unchanged. Owner
+request0 uses full playback because there is no predicted cast to confirm. The
+approved flag also avoids waiting for a second approval for Phaister's sky.
+
+Focused native PlayMode: **2/2**, 0 failures/skips, 0.3334298 s, graphics/D3D11 in
+the existing isolated checkout. Receipt: [replica-lifecycle.xml](checks/replica-lifecycle.xml).
+Cases cover the actual replica/authority entry points, normal shot gating, active
+plant retention, received timers with no original cast, expiry and per-body cleanup.
+Only these two new cases ran. No prior passing suite or character film was repeated.
+The private manifest captures100 synchronized dependency/source files (including
+the incoming rework); it is not100 test cases. The runner was initially invoked
+before copying finished and exited before Unity; it was launched once after copy.
+The sky flag follow-through was source-reviewed after the run, not runtime-qualified.
+These are local provider/object checks, not real transport or all-peer acceptance.
+
+## Scoped world recovery and bound ownership
+
+WorldFieldBegin now has one shared bounded serializer for both directions. It
+carries presentation-match identity, round/scene/generation, processed-owner-request
+and host-event watermarks, and the round simulation clock. Scene bytes are bounded
+before fixed-capacity storage, including unchecked player builds. Malformed,
+truncated and trailing data are rejected. Protocol is **62**; older builds must
+not mix with this envelope, and all participating platforms need matching builds.
+
+The receiver checks freshness at both beginning and completion, including actual
+unsettled owner predictions, observed host casts and the local scene instance.
+An obsolete batch cannot erase newer work; the existing scoped/coalesced refresh
+requests current state. An ended round still clears persistent fields. Snapshot
+aging uses simulation-clock difference so a held cutscene does not consume lifetime
+merely because wall time advanced.
+
+World ownership reconnects through `IWorldEffectBinding`, retaining Sean/Zack's
+existing behavior and adding Paete's active clock/owner binding. A restored visible
+plant no longer leaves the corresponding skill inactive. Replaced plants leave
+gameplay/capture immediately while retaining their existing fade; lookup skips
+disabled/retiring objects. Retirement releases pullers, and kit reset removes only
+that player's plant instead of all players' plants.
+
+Focused evidence: [EditMode 6/6](checks/world-snapshot-codec.xml), 0.1174826 s,
+including header round-trip, malformed data, paused clock and old/current protocol
+approval/pool checks; [PlayMode 2/2](checks/world-snapshot-lifecycle.xml), 8.731889 s,
+including the actual receiver's stale-prediction/event rejection, current empty
+replacement, restored plant command state and independent-owner reset. The first
+compile needed the existing Unity.Collections assembly explicitly referenced by
+Runtime and PlayTests; no package update occurred. Seventeen authored source hashes
+matched the frozen native candidate. No physical peers, player build or complete
+network-presentation qualification is claimed.
+
 ## Independent effect receipts and command lifecycle
 
 Owner effect confirmations no longer depend on the newest request in a slot.

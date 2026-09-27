@@ -475,10 +475,14 @@ namespace TumbangPreso.Net
         // quarter of a second early, and plant the pot inside the box where everyone else sees it outside.
         // 61 (2026-09-27): FEATHERFALL is 5 s / 40 s. SubmitMove/SyncUnit retain its takeoff key,
         // ReqAbility/PlayAbility carry explicit takeoff/recast intent, and TimedKit adds its 57-byte restore tail.
-        // 62 (2026-09-27, HERO-10 v8): Phaister's OMEN introduction is 5.0 s (was 4.0; it now ends on the players it marks). No
+        // 62: WorldFieldBegin uses a shared bounded header with match identity, request/event
+        // watermarks and the round simulation clock; older snapshots cannot clobber newer casts.
+        // 63: shared ReqAbility/PlayAbility serializer carries stable ability ID and
+        // activation/command intent. Cosmetic names and assets are not wire identity.
+        // 64 (2026-09-27, HERO-10 v8): Phaister's OMEN introduction is 5.0 s (was 4.0; it now ends on the players it marks). No
         // bytes changed, but as 52 and 57 recorded, the shared phase's length is derived on every peer from the heroes' tables, so
-        // a 61 peer would release its presentation clock a second before the host.
-        public const int ProtocolVersion = 62;
+        // a 63 peer would release its presentation clock a second before the host.
+        public const int ProtocolVersion = 64;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

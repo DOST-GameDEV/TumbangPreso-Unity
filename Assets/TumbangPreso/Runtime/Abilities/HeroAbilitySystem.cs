@@ -732,7 +732,8 @@ namespace TumbangPreso.Abilities
             {
                 Net.MatchRpc.Instance?.BroadcastAbilityCast(
                     _motor.PlayerSlot, (int)slot, castPosition, castForward,
-                    aimPoint, held, exceptClientId: null, hasFamiliar:hasFamiliar, familiarPosition:familiarPosition,flightIntent:flightIntent);
+                    aimPoint, held, exceptClientId: null, hasFamiliar:hasFamiliar, familiarPosition:familiarPosition,
+                    flightIntent:flightIntent, reactivation:reactivation);
             }
             else if (_motor.PlayerSlot == NetAuthority.LocalSlot)
             {
@@ -762,23 +763,36 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public HeroKit.CastOutcome ApplyNetworkCast(Slot slot, Vector3 position,
                                                     Vector3 forward, Vector3 aimPoint,
-                                                    float heldSeconds, bool authoritative)
+                                                    float heldSeconds, bool authoritative,
+                                                    string abilityId = null, bool? reactivation = null)
         {
             if (Kit == null || _motor == null) return HeroKit.CastOutcome.Missing;
 
             var ability = AbilityFor(slot);
             if (ability == null) return HeroKit.CastOutcome.Missing;
+            if (abilityId != null && ability.Id != abilityId) return HeroKit.CastOutcome.Missing;
+            if (reactivation == true && !ability.CanReactivate) return HeroKit.CastOutcome.Missing;
+            if (authoritative && reactivation.HasValue
+                && reactivation.Value != (ability.IsActive && ability.CanReactivate)) return HeroKit.CastOutcome.NotYet;
 
             if (authoritative && PresentationClock.BlocksInput) return HeroKit.CastOutcome.CannotAct;
             float previousHeld = ability.HeldSecondsOnCast;
             ability.HeldSecondsOnCast = Mathf.Max(0.0f, heldSeconds);
             var context = new AbilityContext(_motor, _carrier, _verbs,
-                                             position, forward, aimPoint);
+                                             position, forward, aimPoint, approvedReplay: !authoritative);
 
             HeroKit.CastOutcome outcome;
             using (NetCue.SuppressRelay())
             {
-                outcome = CastWithContext(slot, context);
+                // An accepted command stays a command even if this replica's live
+                // clock expired. Never reinterpret it as a fresh world-object spawn.
+                if (!authoritative && reactivation.HasValue)
+                {
+                    if (reactivation.Value) ability.Reactivate(context);
+                    else ability.Activate(context);
+                    outcome = HeroKit.CastOutcome.Cast;
+                }
+                else outcome = CastWithContext(slot, context);
                 if (!authoritative && outcome != HeroKit.CastOutcome.Cast)
                 {
                     if (ability.IsActive && ability.CanReactivate)
@@ -862,7 +876,7 @@ namespace TumbangPreso.Abilities
 
             if (slot == Slot.Ultimate)
             {
-                PlayUltimatePresentation(afterIntroduction);
+                PlayUltimatePresentation(afterIntroduction, acceptedContext?.IsApprovedReplay == true);
             }
 
             // Visual feedback: momentary cast flash
@@ -1084,7 +1098,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public static event System.Action<CharacterMotor, HeroKit, HeroAbility> UltimateStarted;
 
-        private void PlayUltimatePresentation(bool afterIntroduction = false)
+        private void PlayUltimatePresentation(bool afterIntroduction = false, bool approvedReplay = false)
         {
             // ⚠️ FIRST, AND OUTSIDE EVERY EARLY RETURN BELOW. The camera work in this method
             // returns early when `Camera.main` is null (a headless probe) and when the caster is
@@ -1161,7 +1175,7 @@ namespace TumbangPreso.Abilities
             // A predicted ritual can be refused. Keep the immediate hand/circle
             // preparation, but wait for host acceptance before replacing global
             // weather. A refusal then cannot erase another hero's current sky.
-            _pendingUltimateSky = !afterIntroduction && Kit?.HeroId == "phaister" && NetAuthority.IsNetworked &&
+            _pendingUltimateSky = !afterIntroduction && !approvedReplay && Kit?.HeroId == "phaister" && NetAuthority.IsNetworked &&
                 !NetAuthority.IsHost && _motor.PlayerSlot == NetAuthority.LocalSlot;
             if (!_pendingUltimateSky) PlayUltimateSky();
 

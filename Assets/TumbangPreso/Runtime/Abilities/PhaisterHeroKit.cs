@@ -328,7 +328,6 @@ namespace TumbangPreso.Abilities
                 NetCue.Play("hero_phaister_grunt", ctx.Position);
                 Vector3 from = ctx.Position + Vector3.up * 1.5f + ctx.Forward * 0.4f;
                 // HERO-10: the steal, the return to her hand and the victim's mark follow the Disoriented status on every peer.
-                PhaisterStatusPresenter.Ensure();
                 VoodooDoll.Spawn(from, AimedDestination(ctx), ctx.Motor.PlayerSlot);
             }
         }
@@ -354,7 +353,6 @@ namespace TumbangPreso.Abilities
                 // HERO-10: her sigils sweep the cone left to right; each attacker it catches gets the moonlight, which follows the
                 // Vulnerable status on every peer (`PhaisterStatusPresenter`).
                 PhaisterPinSweep.Play(ctx.Position, fwd);
-                PhaisterStatusPresenter.Ensure();
                 var round = ctx.Round;
                 if (round == null || !NetAuthority.ShouldResolve()) return;
                 float half = VoodooRules.VulnerableConeDegrees * 0.5f;

@@ -93,7 +93,7 @@ namespace TumbangPreso.Net
             foreach (var gale in Object.FindObjectsByType<AmihanGale>())
                 if (gale.isActiveAndEnabled && gale.Remaining > .02f) fields.Add(gale.Capture());
             foreach (var plant in PaetePlant.Live)
-                if (plant != null && plant.isActiveAndEnabled && plant.Landed && !plant.IsPulled) fields.Add(plant.Capture());
+                if (plant != null && plant.isActiveAndEnabled && plant.Landed && !plant.IsRetiring) fields.Add(plant.Capture());
             foreach (var thorns in Object.FindObjectsByType<PaeteThorns>())
                 if (thorns.isActiveAndEnabled && thorns.Age < Core.PaeteRules.ThornConstructSeconds - .05f) fields.Add(thorns.Capture());
             foreach (var sentry in Object.FindObjectsByType<PaeteSentry>())
@@ -214,8 +214,7 @@ namespace TumbangPreso.Net
             if(GameServices.Round!=null) foreach(var player in GameServices.Round.Players)
             {
                 if(player==null) continue;
-                if(player.AbilitySystem?.Kit is ZackHeroKit zack) zack.AdoptMovementFields(player.PlayerSlot);
-                else if(player.AbilitySystem?.Kit is SeanHeroKit sean) sean.AdoptMovementFields(player.PlayerSlot);
+                if(player.AbilitySystem?.Kit is IWorldEffectBinding binding) binding.RebindWorldEffects(player);
             }
             return true;
         }

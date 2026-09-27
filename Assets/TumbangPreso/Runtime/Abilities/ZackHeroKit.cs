@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
-    public sealed class ZackHeroKit : HeroKit, ITimedKitReplication
+    public sealed class ZackHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
     {
         public bool IsOverchargeThrowActive { get; set; }
         private bool _joinMagnetSettled, _joinThunderSettled;
@@ -54,6 +54,8 @@ namespace TumbangPreso.Abilities
             => motor!=null && ((StaticRailGrindAbility)Skill1).RestoreMovement(
                 new AbilityContext(motor,motor.GetComponent<Carrier>(),motor.GetComponent<CombatVerbs>()),state,age);
         public void AdoptMovementFields(int owner)=>((StaticRailGrindAbility)Skill1).AdoptFields(owner);
+        public void RebindWorldEffects(CharacterMotor motor)
+        { if (motor != null) AdoptMovementFields(motor.PlayerSlot); }
         public override float MovementSpeedScale => Skill1 != null && Skill1.IsActive
             ? Balance.ZackSprintSpeedScale : 1.0f;
 

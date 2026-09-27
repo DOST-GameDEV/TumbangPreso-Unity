@@ -16,6 +16,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class PaeteProp
     {
+        public const string ResourceFolder = "Models/PaeteProps";
         private static Color[] _palette;
 
         /// <summary>His palette, from the roster (the same sixteen slots his body wears).</summary>
@@ -34,7 +35,7 @@ namespace TumbangPreso.Visual
         /// <summary>As above, in <paramref name="palette"/> (his when null) with an outline <paramref name="width"/> wide.</summary>
         public static GameObject Spawn(string name, Transform parent, Color[] palette, float width)
         {
-            var source = Resources.Load<GameObject>("Models/PaeteProps/" + name);
+            var source = HeroPropAssets.Load(ResourceFolder, name);
             if (source == null)
             {
                 Debug.LogWarning("[PaeteProp] Models/PaeteProps/" + name + " is missing; run tools/build_paete_props.py.");
@@ -64,7 +65,7 @@ namespace TumbangPreso.Visual
         /// <summary>The prop undressed: for a surface that brings its own material (Makiling's spirit).</summary>
         public static GameObject SpawnRaw(string name, Transform parent)
         {
-            var source = Resources.Load<GameObject>("Models/PaeteProps/" + name);
+            var source = HeroPropAssets.Load(ResourceFolder, name);
             if (source == null) { Debug.LogWarning("[PaeteProp] Models/PaeteProps/" + name + " is missing."); return null; }
             var go = Object.Instantiate(source, parent, false);
             go.name = "PaeteProp-" + name;

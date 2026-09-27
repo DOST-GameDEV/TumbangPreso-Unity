@@ -212,6 +212,7 @@ namespace TumbangPreso.Net
         {
             NetSession.ClientDisconnected -= HandleClientDisconnected;
             CancelSnapshotRefreshWork(clearSnapshotTimes: false);
+            _pendingSkillCasts.Clear();
         }
 
         /// <summary>
@@ -318,6 +319,7 @@ namespace TumbangPreso.Net
             PresentationMatchId = 0; _pendingMoments.Clear();
             _lastUltimateRequest.Clear(); _ultimateRequestSequence = 0;
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
+            _pendingSkillCasts.Clear();
             for (int slot = 0; slot < Balance.PlayerCount; slot++) Unit(slot)?.AbilitySystem?.ResetNetworkSkillReceipts();
             ClearReplayTransfer();
 
@@ -1925,24 +1927,32 @@ namespace TumbangPreso.Net
         }
 
         private int _worldFieldGeneration, _lastWorldFieldGeneration, _worldFieldRound;
-        private float _worldFieldSentAt;
         private string _worldFieldScene;
+        private ulong _worldFieldSceneHandle;
+        private WorldSnapshotHeader _worldFieldHeader;
         private WorldEffectSnapshot.Batch _worldFieldBatch;
 
         private void SendWorldFieldSnapshot(ulong peer)
         {
-            if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
+            if (!NetAuthority.IsHost || GameServices.Match == null || GameServices.Round == null
+                || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
+            PrepareSkillReceipts();
             var fields = WorldEffectSnapshot.Capture();
             if (fields.Count > WorldEffectSnapshot.MaxFields || fields.Exists(field => !WorldEffectSnapshot.Valid(field)))
             { Debug.LogWarning("[WorldFieldSnapshot] Live fields exceed the valid bounded snapshot."); return; }
             int generation = ++_worldFieldGeneration;
-            using (var writer = new FastBufferWriter(160, Allocator.Temp))
+            using (var writer = new FastBufferWriter(WorldSnapshotHeader.MaxWireBytes, Allocator.Temp))
             {
-                writer.WriteValueSafe(generation);
-                writer.WriteValueSafe(GameServices.Match.RoundNumber);
-                writer.WriteValueSafe(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-                writer.WriteValueSafe(fields.Count);
-                writer.WriteValueSafe((float)_nm.ServerTime.Time);
+                var header = new WorldSnapshotHeader
+                {
+                    Generation = generation, Round = GameServices.Match.RoundNumber,
+                    Scene = new FixedString128Bytes(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name),
+                    Count = fields.Count, SentAt = (float)_nm.ServerTime.Time,
+                    Match = EnsurePresentationMatch(), SkillEvent = _skillEventSequence,
+                    OwnerRequest = _lastSkillRequest.TryGetValue(peer, out var processed) ? processed.request : 0,
+                    RoundClock = GameServices.Round.TimeLeft,
+                };
+                writer.WriteNetworkSerializable(header);
                 _nm.CustomMessagingManager.SendNamedMessage("WorldFieldBegin", peer, writer, NetworkDelivery.ReliableSequenced);
             }
             // Small packets keep the same reliable pipeline as PlayAbility. Do
@@ -1977,17 +1987,33 @@ namespace TumbangPreso.Net
         private void OnWorldFieldBeginMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
-            reader.ReadValueSafe(out int generation);
-            reader.ReadValueSafe(out int round);
-            reader.ReadValueSafe(out string scene);
-            reader.ReadValueSafe(out int count);
-            reader.ReadValueSafe(out float sentAt);
-            if (generation <= _lastWorldFieldGeneration || (_worldFieldBatch != null && generation <= _worldFieldBatch.Generation)
-                || count < 0 || count > WorldEffectSnapshot.MaxFields || !Finite(sentAt)
-                || GameServices.Match == null || GameServices.Match.RoundNumber != round
-                || scene != UnityEngine.SceneManagement.SceneManager.GetActiveScene().name) return;
-            _worldFieldBatch = new WorldEffectSnapshot.Batch(generation, count);
-            _worldFieldRound = round; _worldFieldScene = scene; _worldFieldSentAt = sentAt;
+            if (!WorldSnapshotHeader.TryRead(ref reader, out var header)) return;
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            if (!header.Matches(PresentationMatchId, GameServices.Match?.RoundNumber ?? -1, scene.name)
+                || header.Generation <= _lastWorldFieldGeneration
+                || (_worldFieldBatch != null && header.Generation <= _worldFieldBatch.Generation)) return;
+            _worldFieldBatch = null;
+            if (GameServices.Round?.RoundActive == true && WorldSnapshotNeedsRefresh(header))
+            { QueueWorldSnapshotRefresh(header.Round); return; }
+            _worldFieldBatch = new WorldEffectSnapshot.Batch(header.Generation, header.Count);
+            _worldFieldHeader = header;
+            _worldFieldRound = header.Round; _worldFieldScene = scene.name;
+            _worldFieldSceneHandle = scene.handle.GetRawData();
+        }
+
+        private bool WorldSnapshotNeedsRefresh(WorldSnapshotHeader header)
+        {
+            PrepareSkillReceipts();
+            if (_pendingSkillCasts.Count > 0) return true;
+            foreach (long observed in _lastSkillEvent)
+                if (observed > header.SkillEvent) return true;
+            int local = NetAuthority.LocalSlot;
+            return ValidSlot(local) && Unit(local)?.AbilitySystem?.HasPredictedSkillAfter(header.OwnerRequest) == true;
+        }
+
+        private void QueueWorldSnapshotRefresh(int round)
+        {
+            if (isActiveAndEnabled) StartCoroutine(RefreshAfterExpiredPreparation(round));
         }
 
         private void OnWorldFieldItemMsg(ulong senderClientId, FastBufferReader reader)
@@ -2017,12 +2043,20 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int generation);
             if (_worldFieldBatch == null || _worldFieldBatch.Generation != generation) return;
             var batch = _worldFieldBatch; _worldFieldBatch = null;
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             if (!batch.Finish(generation, out var fields) || GameServices.Match == null || GameServices.Match.RoundNumber != _worldFieldRound
-                || _worldFieldScene != UnityEngine.SceneManagement.SceneManager.GetActiveScene().name) return;
-            _lastWorldFieldGeneration = generation;
+                || _worldFieldScene != scene.name || _worldFieldSceneHandle != scene.handle.GetRawData()
+                || !_worldFieldHeader.Matches(PresentationMatchId, GameServices.Match.RoundNumber, scene.name)) return;
             if(GameServices.Round!=null&&!GameServices.Round.RoundActive)
-            {WorldEffectSnapshot.ClearPersistentFields();return;}
-            float elapsed = Mathf.Max(0, (float)_nm.ServerTime.Time - _worldFieldSentAt);
+            {
+                _lastWorldFieldGeneration = generation;
+                WorldEffectSnapshot.ClearPersistentFields();
+                return;
+            }
+            if (WorldSnapshotNeedsRefresh(_worldFieldHeader)
+                || !_worldFieldHeader.TryAge(GameServices.Round?.TimeLeft ?? -1, out float elapsed))
+            { QueueWorldSnapshotRefresh(_worldFieldRound); return; }
+            _lastWorldFieldGeneration = generation;
             using (NetCue.SuppressRelay()) WorldEffectSnapshot.Apply(fields, elapsed);
         }
 
@@ -3262,48 +3296,46 @@ namespace TumbangPreso.Net
             {
                 var system = Unit(claimedSlot)?.AbilitySystem;
                 var slot = (Abilities.HeroAbilitySystem.Slot)Mathf.Clamp(abilitySlot, 0, 2);
+                var ability = Skill(Unit(claimedSlot), abilitySlot);
+                bool reactivation = ability != null && ability.IsActive && ability.CanReactivate;
                 if (!ValidFeatherfallIntent(Unit(claimedSlot), abilitySlot, flightIntent)) return;
                 if (system?.ApplyNetworkCast(slot, position, forward, aimPoint,
                                              heldSeconds, authoritative: true)
                     == Abilities.HeroKit.CastOutcome.Cast)
                 {
                     BroadcastAbilityCast(claimedSlot, abilitySlot, position, forward,
-                                         aimPoint, heldSeconds, null, hasFamiliar, familiarPosition,flightIntent:flightIntent);
+                                         aimPoint, heldSeconds, null, hasFamiliar, familiarPosition,
+                                         flightIntent:flightIntent, reactivation:reactivation);
                     BroadcastAbilityState(claimedSlot, Unit(claimedSlot));
                 }
                 return;
             }
 
             PrepareSkillReceipts();long request=++_skillRequestSequence;
+            var requestedAbility = Skill(Unit(claimedSlot), abilitySlot);
+            if (requestedAbility == null) return;
             if (Unit(claimedSlot)?.AbilitySystem?.TrackSkillRequest(abilitySlot,request,predictedReactivation) != true) return;
-            using var writer = new FastBufferWriter(128, Allocator.Temp);
-            writer.WriteValueSafe(claimedSlot);
-            writer.WriteValueSafe(abilitySlot);
-            writer.WriteValueSafe(position);
-            writer.WriteValueSafe(forward);
-            writer.WriteValueSafe(aimPoint);
-            writer.WriteValueSafe(heldSeconds);
-            writer.WriteValueSafe(hasFamiliar);
-            writer.WriteValueSafe(familiarPosition);
-            writer.WriteValueSafe(PresentationMatchId);writer.WriteValueSafe(GameServices.Match?.RoundNumber??0);writer.WriteValueSafe(request);
-            writer.WriteValueSafe(flightIntent);
+            var cast = new SkillCastMessage
+            {
+                Seat = claimedSlot, Slot = abilitySlot, AbilityId = new FixedString64Bytes(requestedAbility.Id),
+                Reactivation = predictedReactivation, Position = position, Forward = forward, AimPoint = aimPoint,
+                HeldSeconds = heldSeconds, HasFamiliar = hasFamiliar, FamiliarPosition = familiarPosition,
+                Match = PresentationMatchId, Round = GameServices.Match?.RoundNumber ?? 0,
+                Request = request, FlightIntent = flightIntent
+            };
+            using var writer = new FastBufferWriter(SkillCastMessage.MaxWireBytes, Allocator.Temp);
+            writer.WriteNetworkSerializable(cast);
             _nm.CustomMessagingManager.SendNamedMessage("ReqAbility", NetworkManager.ServerClientId, writer);
         }
 
         private void OnReqAbilityMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost || !reader.TryBeginRead(89)) return;
-
-            reader.ReadValueSafe(out int claimedSlot);
-            reader.ReadValueSafe(out int abilitySlot);
-            reader.ReadValueSafe(out Vector3 position);
-            reader.ReadValueSafe(out Vector3 forward);
-            reader.ReadValueSafe(out Vector3 aimPoint);
-            reader.ReadValueSafe(out float heldSeconds);
-            reader.ReadValueSafe(out bool hasFamiliar);
-            reader.ReadValueSafe(out Vector3 familiarPosition);
-            reader.ReadValueSafe(out long match);reader.ReadValueSafe(out int round);reader.ReadValueSafe(out long request);
-            reader.ReadValueSafe(out long flightIntent);
+            if (!NetAuthority.IsHost || !SkillCastMessage.TryRead(ref reader, out var cast)) return;
+            int claimedSlot = cast.Seat, abilitySlot = cast.Slot, round = cast.Round;
+            Vector3 position = cast.Position, forward = cast.Forward, aimPoint = cast.AimPoint, familiarPosition = cast.FamiliarPosition;
+            float heldSeconds = cast.HeldSeconds;
+            bool hasFamiliar = cast.HasFamiliar;
+            long match = cast.Match, request = cast.Request, flightIntent = cast.FlightIntent;
 
             if (abilitySlot < 0 || abilitySlot > 2) return;
             if (!SenderOwnsClaimedSeat(senderClientId, claimedSlot, out var unit)) return;
@@ -3316,6 +3348,8 @@ namespace TumbangPreso.Net
                 return;
             }
             _lastSkillRequest[senderClientId]=(request,abilitySlot,false);
+            if (!cast.IsValid(false))
+            { HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot, request); return; }
             if (abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate)
             { HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot,request); return; }
             if (!ValidFeatherfallIntent(unit, abilitySlot, flightIntent))
@@ -3341,6 +3375,10 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            var requestedAbility = Skill(unit, abilitySlot);
+            if (requestedAbility == null || requestedAbility.Id != cast.AbilityId.ToString()
+                || cast.Reactivation != (requestedAbility.IsActive && requestedAbility.CanReactivate))
+            { HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot, request); return; }
             if(system.CheckNetworkSkill((Abilities.HeroAbilitySystem.Slot)abilitySlot,position,forward,aimPoint,heldSeconds)!=Abilities.HeroKit.CastOutcome.Cast)
             {HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot,request);return;}
             var pet=Familiar(claimedSlot);
@@ -3363,7 +3401,8 @@ namespace TumbangPreso.Net
             }
             var slot = (Abilities.HeroAbilitySystem.Slot)abilitySlot;
             var outcome = system.ApplyNetworkCast(slot, position, forward, aimPoint,
-                                                  heldSeconds, authoritative: true);
+                                                  heldSeconds, authoritative: true,
+                                                  abilityId:cast.AbilityId.ToString(), reactivation:cast.Reactivation);
             if (outcome != Abilities.HeroKit.CastOutcome.Cast)
             {
                 // ⚠️ `Missing` IS REFUSED LIKE THE REST AND THAT IS DELIBERATE. A hero with no
@@ -3377,7 +3416,7 @@ namespace TumbangPreso.Net
 
             _lastSkillRequest[senderClientId]=(request,abilitySlot,true);
             BroadcastAbilityCast(claimedSlot, abilitySlot, position, forward,
-                                 aimPoint, heldSeconds, senderClientId, hasFamiliar, familiarPosition,request,flightIntent);
+                                 aimPoint, heldSeconds, senderClientId, hasFamiliar, familiarPosition,request,flightIntent,cast.Reactivation);
             AcceptSkillReceipt(senderClientId,claimedSlot,abilitySlot,request);
             BroadcastAbilityState(claimedSlot, unit);
         }
@@ -3385,9 +3424,12 @@ namespace TumbangPreso.Net
         /// <summary>Host announcement. Every observer runs presentation; only the host resolves.</summary>
         public void BroadcastAbilityCast(int slot, int abilitySlot, Vector3 position,
                                          Vector3 forward, Vector3 aimPoint, float heldSeconds,
-                                         ulong? exceptClientId, bool hasFamiliar=false, Vector3 familiarPosition=default,long request=0,long flightIntent=0)
+                                         ulong? exceptClientId, bool hasFamiliar=false, Vector3 familiarPosition=default,
+                                         long request=0,long flightIntent=0, bool reactivation=false)
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            var ability = Skill(Unit(slot), abilitySlot);
+            if (ability == null) return;
 
             PrepareSkillReceipts();long eventId=++_skillEventSequence;
             if(flightIntent==0)IdentifyFeatherfallTakeoff(Unit(slot), abilitySlot, request > 0 ? request : -eventId);
@@ -3395,55 +3437,43 @@ namespace TumbangPreso.Net
                 Unit(slot)?.AbilitySystem?.HeroId == "phaister";
             bool confirmWorldOwner = Unit(slot)?.AbilitySystem?.NeedsOwnerEffectConfirmation(
                 (Abilities.HeroAbilitySystem.Slot)abilitySlot) == true;
+            var cast = new SkillCastMessage
+            {
+                Seat = slot, Slot = abilitySlot, AbilityId = new FixedString64Bytes(ability.Id), Reactivation = reactivation,
+                Position = position, Forward = forward, AimPoint = aimPoint, HeldSeconds = heldSeconds,
+                HasFamiliar = hasFamiliar, FamiliarPosition = familiarPosition,
+                Match = PresentationMatchId, Round = GameServices.Match?.RoundNumber ?? 0,
+                Request = request, Event = eventId, FlightIntent = flightIntent
+            };
             foreach (ulong clientId in _nm.ConnectedClientsIds)
             {
                 if (clientId == _nm.LocalClientId ||
                     (exceptClientId.HasValue && clientId == exceptClientId.Value && !confirmRitualOwner && !confirmWorldOwner))
                     continue;
 
-                using var writer = new FastBufferWriter(128, Allocator.Temp);
-                writer.WriteValueSafe(slot);
-                writer.WriteValueSafe(abilitySlot);
-                writer.WriteValueSafe(position);
-                writer.WriteValueSafe(forward);
-                writer.WriteValueSafe(aimPoint);
-                writer.WriteValueSafe(heldSeconds);
-            writer.WriteValueSafe(hasFamiliar);
-            writer.WriteValueSafe(familiarPosition);
-                writer.WriteValueSafe(PresentationMatchId);writer.WriteValueSafe(GameServices.Match?.RoundNumber??0);writer.WriteValueSafe(request);writer.WriteValueSafe(eventId);
-                writer.WriteValueSafe(flightIntent);
+                using var writer = new FastBufferWriter(SkillCastMessage.MaxWireBytes, Allocator.Temp);
+                writer.WriteNetworkSerializable(cast);
                 _nm.CustomMessagingManager.SendNamedMessage("PlayAbility", clientId, writer);
             }
         }
 
         private void OnPlayAbilityMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || senderClientId != NetworkManager.ServerClientId || !reader.TryBeginRead(97)) return;
+            if (NetAuthority.IsHost || senderClientId != NetworkManager.ServerClientId
+                || !SkillCastMessage.TryRead(ref reader, out var cast) || !cast.IsValid(true)) return;
+            if (cast.Match != PresentationMatchId || cast.Round != GameServices.Match?.RoundNumber) return;
+            QueueAcceptedSkill(cast);
+        }
 
-            reader.ReadValueSafe(out int slot);
-            reader.ReadValueSafe(out int abilitySlot);
-            reader.ReadValueSafe(out Vector3 position);
-            reader.ReadValueSafe(out Vector3 forward);
-            reader.ReadValueSafe(out Vector3 aimPoint);
-            reader.ReadValueSafe(out float heldSeconds);
-            reader.ReadValueSafe(out bool hasFamiliar);
-            reader.ReadValueSafe(out Vector3 familiarPosition);
-            reader.ReadValueSafe(out long match);reader.ReadValueSafe(out int round);reader.ReadValueSafe(out long request);reader.ReadValueSafe(out long eventId);
-            reader.ReadValueSafe(out long flightIntent);
-
-            if (slot < 0 || slot >= Balance.PlayerCount || abilitySlot < 0 || abilitySlot > 2)
-                return;
-
-            // ⚠️ THE REQUEST SIDE (`OnReqAbilityMsg`) CHECKS THESE AND THE PLAY SIDE DID NOT.
-            // Every effect this places reads the position and the forward, and a NaN reaches a
-            // `Transform` through the zone it spawns. § 149.9.
-            if (!Finite(position) || !Finite(forward) || !Finite(aimPoint) || !Finite(heldSeconds))
-                return;
-
-            if(match!=PresentationMatchId||round!=GameServices.Match?.RoundNumber||eventId<=0||request<0)return;
+        private void PlayReceivedAbility(SkillCastMessage cast)
+        {
+            int slot = cast.Seat, abilitySlot = cast.Slot;
+            Vector3 position = cast.Position, forward = cast.Forward, aimPoint = cast.AimPoint, familiarPosition = cast.FamiliarPosition;
+            float heldSeconds = cast.HeldSeconds;
+            bool hasFamiliar = cast.HasFamiliar;
+            long request = cast.Request, eventId = cast.Event, flightIntent = cast.FlightIntent;
             if(flightIntent==long.MinValue || (flightIntent!=0 && !IsFeatherfallSlot(Unit(slot),abilitySlot)))return;
-            PrepareSkillReceipts();if(eventId<=_lastSkillEvent[slot])return;_lastSkillEvent[slot]=eventId;
-            if (slot == NetAuthority.LocalSlot)
+            if (slot == NetAuthority.LocalSlot && request > 0)
             {
                 // This owner already performed and paid for the cast. Only release
                 // the world payload/sky that deliberately awaited host acceptance.
@@ -3477,7 +3507,8 @@ namespace TumbangPreso.Net
             }
             Unit(slot)?.AbilitySystem?.ApplyNetworkCast(
                 (Abilities.HeroAbilitySystem.Slot)abilitySlot,
-                position, forward, aimPoint, heldSeconds, authoritative: false);
+                position, forward, aimPoint, heldSeconds, authoritative: false,
+                abilityId:cast.AbilityId.ToString(), reactivation:cast.Reactivation);
             if(flightIntent==0)IdentifyFeatherfallTakeoff(Unit(slot), abilitySlot, request > 0 ? request : -eventId);
         }
 
