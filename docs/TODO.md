@@ -1595,7 +1595,7 @@ Supersedes REFINE-2.6 for this map.
   the screen to draw). The 4 EditMode failures fail on clean ASTRAReworks too. Known cost: Custom
   and Host prepare every map's preview, and six courts take ~3.5 s against ~2.3 s with five (the
   Lagoon Cove is 3.47 M triangles). Map vote cards for both maps rendered in Play by
-  MapCardCapture. NetSession.ProtocolVersion 77 (map indices changed). Still open: bots and a
+  MapCardCapture. NetSession.ProtocolVersion bumped for the new map indices (87 at the merge). Still open: bots and a
   full played match on each new map; the PlayMode bot matches never end on Eskinita/Ilalim on
   clean ASTRAReworks as well.
 - [ ] LAGOON-1.7 THE FIRST LAGOON COURT IS VAULTED (owner, 2026-09-27: "vault the old lagoon").
@@ -1608,6 +1608,34 @@ Supersedes REFINE-2.6 for this map.
   the owner which of those features the cove should gain (the cove's water has no swim system;
   UNVERIFIED: what a player wading off the sea side stands on, and whether a slipper thrown into
   the sea is recovered), then retarget or delete the ignored tests.
+
+### ILALIM-1 · Ilalim ng Tulay rebuilt in Blender ⚠️ OPEN, NOT STARTED, 2026-09-29
+
+**Read [ILALIM_REWORK_GUIDE.md](ILALIM_REWORK_GUIDE.md) first** (its CURRENT STATE block, the
+gameplay contract in § 1, the proven pipeline in § 2, the traps in § 3), then
+[Ilalim_Ng_Tulay.md](Ilalim_Ng_Tulay.md) § 0, § 1, § 4 and § 10.2. The owner picked this map next,
+after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
+[map-integration issues](reports/map-integration-2026-09-28/issues.md).
+
+- [ ] ILALIM-1.1 References and feel: the real place under the LRT-2 guideway, written up with the
+  owner in the format of the Kanto and Lagoon guides' § 1.
+- [ ] ILALIM-1.2 A Blender blockout at the exact gameplay dimensions (the 14 m carriageway box, the
+  flanks to x +/-11.2 and z +/-16.7, the columns, the hoop and the pad). Eye-height and aerial
+  renders, then owner review.
+- [ ] ILALIM-1.3 Kits and textures, one at a time with owner review: the guideway and columns,
+  shopfronts and signs, props and trip hazards, vehicles, and the LRT consist.
+- [ ] ILALIM-1.4 Export, and a Unity builder that writes an UNREGISTERED sample scene. Every column
+  goes on `TumbangPreso/NearFade`, because the AO NearGuard depends on it. Retune the Ilalim
+  WorldLookProfile row in Play. Keep BridgeHoop, the overclock pad, LrtTrainFlyby, and the match
+  between the train and the train window.
+- [ ] ILALIM-1.5 Checks:
+  - MapGeometryCheck is clean (Ilalim is Gated);
+  - the map's probes are green against a clean baseline;
+  - a bot match and a played match both finish;
+  - the triangle count and the preview-preparation time are measured.
+- [ ] ILALIM-1.6 Swap the rebuild in under the `IlalimNgTulay` scene name. That keeps the same map
+  index, so there is no protocol bump. Vault the old scene in `Scenes/Vault/`, and re-render the
+  map card with MapCardCapture.
 ### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
 
 **Renamed 2026-09-26 (BUGS-0926.5):** Bright is now **Standard** (slot 1, the default) and Classic is
