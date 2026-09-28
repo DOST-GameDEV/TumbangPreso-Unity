@@ -354,7 +354,7 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.PhaisterHexSigil: return "GROUND ZONE";
                 case AbilityGlyph.PhaisterShadowBlink: return "MOBILITY";
                 case AbilityGlyph.PhaisterEclipse: return "GROUND ZONE";
-                case AbilityGlyph.PhaisterCursedDoll: return "PROJECTILE";
+                case AbilityGlyph.PhaisterCursedDoll: return "STATUS CURSE";
                 case AbilityGlyph.PhaisterVulnerable: return "STATUS CURSE";
                 case AbilityGlyph.PhaisterWitchfire: return "SLIPPER BUFF";
                 case AbilityGlyph.RafiCrosscurrent: return "REDIRECTION";

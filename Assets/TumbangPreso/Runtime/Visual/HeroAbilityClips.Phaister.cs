@@ -34,6 +34,8 @@ namespace TumbangPreso.Visual
             {
                 BuildPhaisterSwarm(paths), BuildPhaisterManika(paths), BuildPhaisterPin(paths), BuildPhaisterOmen(paths),
                 BuildPhaisterSwarmAim(paths), BuildPhaisterManikaAim(paths), BuildPhaisterOmenAim(paths),
+                BuildPhaisterDrain(paths), BuildPhaisterDrainAim(paths), BuildPhaisterWring(paths),
+                BuildPhaisterHexReach(paths), BuildPhaisterHexReachAim(paths), BuildPhaisterHexStab(paths),
             };
             foreach (var clip in clips)
                 GroundIntroduction(clip, root, paths["root"], anchorToRest: true,
@@ -189,6 +191,120 @@ namespace TumbangPreso.Visual
             PoseKey(b, 2.2f, 0, V(18, 0, 0), V(6, 0, 0), V(-86, 0, 10), V(-86, 0, -10), V(-8, 0, 5), V(14, 0, -5));
             PoseKey(b, 2.5f, -.05f, V(8, 0, 0), V(2, 0, 0), V(-40, 0, 16), V(-40, 0, -16), V(-14, 0, 6), V(8, 0, -6));
             PoseKey(b, 2.8f, 0, V(0, 0, 0), V(0, 0, 0), PhRestLeft, PhRestRight);
+            return b.Build();
+        }
+
+        // =============================================================================================
+        // v3, THE REACH (HERO-10, plan 9.5): both curses mark by holding her hand out at someone for 2 s, the slipper tucked
+        // into her belt at the back (`Carrier`, `CharacterMotor.StowsCarriedSlipper`) so the RIGHT hand is free to reach and the
+        // LEFT unhooks the doll. Each curse reaches its own way, so a player reads which one is coming from her silhouette:
+        // DRAIN at the chest, leaning back as if hauling a rope; HEX higher, at the head, the doll lifted to her own cheek and
+        // her peeking over it. The lock is a one-shot; the hold loops for as long as the body is reaching
+        // (`CharacterAnimator.ReachPose`), which is replicated body state, so every screen sees the same arm.
+        // =============================================================================================
+
+        /// <summary>
+        /// CURSE: DRAIN's lock, 0.40 s:
+        ///  * 0.06: the right hand dips back to the belt (the slipper goes in), the left unhooks the doll from her hip;
+        ///  * 0.16 (punch): the right arm whips up at chest height, palm out at them, her weight thrown back onto the rear foot;
+        ///  * 0.40: settled into the haul (`hero-phaister-drain-aim`'s first key).
+        /// </summary>
+        private static AnimationClip BuildPhaisterDrain(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-phaister-drain", paths);
+            PoseKey(b, 0, 0, V(0, 0, 0), V(0, 0, 0), PhRestLeft, PhRestRight);
+            PoseKey(b, .06f, 0, V(2, -6, 0), V(2, -4, 0), V(-10, 0, 8), V(22, 0, -22), V(-2, 0, 4), V(2, 0, -4));
+            b.PunchAt(.16f);
+            b.HoldAt(.16f, .04f);
+            PoseKey(b, .16f, -.02f, V(-8, 12, 0), V(-6, 8, 0), V(-44, 0, -10), V(-94, -12, 6), V(-12, 0, 5), V(10, 0, -5));
+            PoseKey(b, .40f, 0, V(-9, 10, 0), V(-5, 6, 0), V(-42, 0, -8), V(-90, -12, 4), V(-12, 0, 4), V(9, 0, -4));
+            return b.Build();
+        }
+
+        /// <summary>
+        /// CURSE: DRAIN's hold, a 0.9 s loop for as long as she reaches: leaning back on the rear foot as if hauling a rope, the
+        /// reaching arm trembling a few degrees, a heave back at 0.45 as the thread tightens; the left hand low with the doll.
+        /// </summary>
+        private static AnimationClip BuildPhaisterDrainAim(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-phaister-drain-aim", paths);
+            PoseKey(b, 0, 0, V(-9, 10, 0), V(-5, 6, 0), V(-42, 0, -8), V(-90, -12, 4), V(-12, 0, 4), V(9, 0, -4));
+            PoseKey(b, .15f, 0, V(-10, 11, 0), V(-5, 7, 0), V(-42, 0, -8), V(-92, -10, 5), V(-12, 0, 4), V(9, 0, -4));
+            PoseKey(b, .30f, 0, V(-9, 10, 0), V(-4, 6, 0), V(-43, 0, -8), V(-89, -13, 3), V(-12, 0, 4), V(9, 0, -4));
+            PoseKey(b, .45f, -.01f, V(-12, 10, 0), V(-6, 6, 0), V(-40, 0, -9), V(-91, -11, 5), V(-13, 0, 4), V(11, 0, -4));
+            PoseKey(b, .60f, 0, V(-10, 10, 0), V(-5, 6, 0), V(-42, 0, -8), V(-90, -12, 4), V(-12, 0, 4), V(9, 0, -4));
+            PoseKey(b, .75f, 0, V(-9, 11, 0), V(-5, 7, 0), V(-43, 0, -8), V(-92, -12, 5), V(-12, 0, 4), V(9, 0, -4));
+            PoseKey(b, .90f, 0, V(-9, 10, 0), V(-5, 6, 0), V(-42, 0, -8), V(-90, -12, 4), V(-12, 0, 4), V(9, 0, -4));
+            return b.Build();
+        }
+
+        /// <summary>
+        /// CURSE: DRAIN's wring, 1.85 s, from the mark to the drain (plan 9.5: *"both hands on the doll of them, twisting it
+        /// tighter and tighter (she keeps walking)"*): both hands on the doll at her chest, three twists each harder than the last,
+        /// the trunk turning with them; the last hard wring lands at 1.50, the moment DRAINED does, head bowed over it; then rest.
+        /// </summary>
+        private static AnimationClip BuildPhaisterWring(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-phaister-wring", paths);
+            PoseKey(b, 0, 0, V(4, 0, 0), V(10, 0, 0), V(-70, -6, -30), V(-70, 6, 30), V(-2, 0, 4), V(2, 0, -4));
+            PoseKey(b, .25f, 0, V(4, -6, 0), V(10, -3, 0), V(-76, -30, -30), V(-64, 30, 30), V(-2, 0, 4), V(2, 0, -4));
+            PoseKey(b, .50f, 0, V(5, 6, 0), V(11, 3, 0), V(-64, 20, -32), V(-76, -20, 32), V(-2, 0, 4), V(2, 0, -4));
+            PoseKey(b, .75f, 0, V(6, -9, 0), V(12, -4, 0), V(-78, -40, -30), V(-62, 40, 30), V(-2, 0, 4), V(2, 0, -4));
+            PoseKey(b, 1.00f, 0, V(6, 9, 0), V(12, 4, 0), V(-62, 28, -33), V(-78, -28, 33), V(-2, 0, 4), V(2, 0, -4));
+            PoseKey(b, 1.25f, 0, V(7, -12, 0), V(13, -5, 0), V(-80, -50, -30), V(-60, 50, 30), V(-2, 0, 4), V(2, 0, -4));
+            b.PunchAt(1.50f);
+            b.HoldAt(1.50f, .08f);
+            PoseKey(b, 1.50f, -.03f, V(10, -14, 0), V(16, -6, 0), V(-84, -62, -28), V(-56, 62, 28), V(-4, 0, 4), V(4, 0, -4));
+            PoseKey(b, 1.85f, 0, V(0, 0, 0), V(0, 0, 0), PhRestLeft, PhRestRight);
+            return b.Build();
+        }
+
+        /// <summary>
+        /// CURSE: HEX's lock, 0.40 s: the right hand tucks the slipper (0.06), then the arm rises HIGH, at their head, palm out
+        /// (0.16, punch), while the left lifts the doll to her own cheek and her head tips to peek over it; settles into the hold.
+        /// </summary>
+        private static AnimationClip BuildPhaisterHexReach(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-phaister-hexreach", paths);
+            PoseKey(b, 0, 0, V(0, 0, 0), V(0, 0, 0), PhRestLeft, PhRestRight);
+            PoseKey(b, .06f, 0, V(2, -6, 0), V(2, -4, 0), V(-30, 0, 4), V(22, 0, -22), V(-2, 0, 4), V(2, 0, -4));
+            b.PunchAt(.16f);
+            b.HoldAt(.16f, .04f);
+            PoseKey(b, .16f, .01f, V(-3, -6, -4), V(9, -11, 11), V(-120, -12, -19), V(-120, -8, 7), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, .40f, 0, V(-2, -6, -4), V(8, -10, 10), V(-118, -12, -18), V(-116, -8, 6), V(-6, 0, 4), V(6, 0, -4));
+            return b.Build();
+        }
+
+        /// <summary>
+        /// CURSE: HEX's hold, a 1.2 s loop: peeking over the doll at her cheek, the reaching hand held high and steady, the head
+        /// tilting a little from side to side as if deciding (she has ten seconds; she is enjoying it).
+        /// </summary>
+        private static AnimationClip BuildPhaisterHexReachAim(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-phaister-hexreach-aim", paths);
+            PoseKey(b, 0, 0, V(-2, -6, -4), V(8, -10, 10), V(-118, -12, -18), V(-116, -8, 6), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, .30f, 0, V(-2, -7, -4), V(6, -12, 12), V(-118, -12, -18), V(-118, -7, 7), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, .60f, 0, V(-2, -5, -3), V(9, -9, 9), V(-120, -12, -19), V(-115, -9, 5), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, .90f, 0, V(-2, -6, -4), V(7, -11, 11), V(-118, -12, -18), V(-117, -8, 6), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, 1.20f, 0, V(-2, -6, -4), V(8, -10, 10), V(-118, -12, -18), V(-116, -8, 6), V(-6, 0, 4), V(6, 0, -4));
+            return b.Build();
+        }
+
+        /// <summary>
+        /// CURSE: HEX's recast, 0.60 s (plan 9.5: *"she yanks the doll to her face and stabs the pin into its button eye,
+        /// grinning"*): the doll yanked up in front of her face and the right hand up with the pin (0.10); the stab across into
+        /// its eye (0.22, punch), the trunk turning into it; a twist of the pin with her head tipped to the grin (0.36); rest.
+        /// </summary>
+        private static AnimationClip BuildPhaisterHexStab(Dictionary<string, string> paths)
+        {
+            var b = new ClipBuilder("hero-phaister-hexstab", paths);
+            PoseKey(b, 0, 0, V(0, 0, 0), V(0, 0, 0), PhRestLeft, PhRestRight);
+            PoseKey(b, .10f, 0, V(-2, 4, 0), V(8, -4, 0), V(-130, -10, -30), V(-150, 10, 10), V(-4, 0, 4), V(4, 0, -4));
+            b.PunchAt(.22f);
+            b.HoldAt(.22f, .05f);
+            PoseKey(b, .22f, -.02f, V(6, -8, 0), V(14, -4, 2), V(-128, -10, -32), V(-110, -20, 34), V(-8, 0, 4), V(8, 0, -4));
+            PoseKey(b, .36f, 0, V(5, -8, 2), V(12, -2, 6), V(-126, -10, -30), V(-112, -24, 36), V(-6, 0, 4), V(6, 0, -4));
+            PoseKey(b, .60f, 0, V(0, 0, 0), V(0, 0, 0), PhRestLeft, PhRestRight);
             return b.Build();
         }
 

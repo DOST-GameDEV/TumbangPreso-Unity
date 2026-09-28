@@ -967,7 +967,9 @@ namespace TumbangPreso.CameraSystem
             : action == "blink" ? BlinkClip
             : action == "swarm-burst" ? SwarmBurstClip
             : action == "manika-prick" ? ManikaPrickClip
-            : action == "pin-stab" ? PinStabClip : null;
+            : action == "pin-stab" ? PinStabClip
+            : action == "reach-drain" ? ReachDrainClip
+            : action == "reach-hex" ? ReachHexClip : null;
 
         /// <summary>
         /// Play `throw`, `grab`, `slam`, `cast`, or bespoke hero actions on the viewmodel arm.
@@ -1129,6 +1131,10 @@ namespace TumbangPreso.CameraSystem
                   : clip == "manika-prick" ? ManikaPrickClip
                   : clip == "pin-stab" ? PinStabClip
                   : clip == "omen-rise" ? OmenRiseClip
+                  : clip == "reach-drain" ? ReachDrainClip
+                  : clip == "reach-hex" ? ReachHexClip
+                  : clip == "hex-stab" ? HexStabClip
+                  : clip == "wring" ? WringClip
                   : null;
 
             // A held gesture has already paid its preparation visually. Continue
@@ -1228,6 +1234,13 @@ namespace TumbangPreso.CameraSystem
             {
                 _clip = null;
                 _heroAction = false;
+                // ⚠️ A LOCK THAT ENDS ON ITS OWN HOLD (Phaister's reach) HANDS STRAIGHT TO IT: snapping to rest first put the arm
+                // down for a frame and back up on every reach. The hold settles from where the clip left it.
+                if (AimClip(_aimPreview) != null && _aimPreview == _actionName)
+                {
+                    if (HeldCastPaths.Contains(_aimPreview)) { _heldPathBlend = 1.0f; _heldPath = _aimPreview; }
+                    return;
+                }
                 _rightArm.localRotation = Quaternion.identity;
                 if (_leftArm != null) _leftArm.localRotation = Quaternion.identity;
                 return;

@@ -1099,10 +1099,28 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
 - [ ] The hip doll and the teleport decoy on the same design (ask before the decoy's look).
 - [ ] Core: `VoodooRules` v3, DRAINED and HEXED appended to `StatusKind`, a passive on the kit (VOODOO first; the owner will send
   each hero's); tests with his numbers quoted.
-- [ ] The carried slipper leaves the hand a cast needs (shared; each ability declares where it goes; hers is the belt).
-- [ ] THE REACH (a 2 s channel and its thread), DRAIN, HEX (the fuse and the recast), the passive; statuses presented on the body
-  and on the victim's screen.
-- [ ] TELEPORT improved: the decoy doll of her flopping where she stood, the moths streaming to her, a front-on tell.
+- [~] The carried slipper leaves the hand a cast needs. Built for HER curses only (2026-09-28): the slipper rides her belt at the
+  back while she reaches, through DRAIN's wring and HEX's stab (`CharacterMotor.StowsCarriedSlipper`, `Carrier.RideBelt`,
+  `CharacterVisual.TorsoBone`); her first-person right hand is empty meanwhile; a throw charge takes it back. NOT built: the
+  shared per-ability declaration with a left-hand default, because it would move every other hero's casts (one hero at a time).
+  The belt's position and turn are typed, not yet seen in a film.
+- [x] THE REACH, DRAIN, HEX, the passive, as mechanics (2026-09-28, `PhaisterHeroKit.Curse`): a tap reaches the player nearest her
+  facing that `CharacterMotor.VoodooReachIsValid` accepts (`PhaisterHeroKit.ReachTargetFor`; nobody there refuses the press;
+  a shielded body is skipped), HostConfirmed; the host begins the body's reach; a broken reach hands back half the cooldown on
+  every peer from `VoodooReachEnded` (a peer that never saw the reach reads `VoodooReachSucceeded` after 2.75 s); HEX's recast is
+  a reactivation while cooling (`CanReactivate`, `ReactivateReady` = her armed mark, `ReactivateReadyIn`), sets it off through
+  `HostDetonateHex`, never touches the cooldown; she cannot sprint while reaching. `PhaisterVoodooKitTests` 4/4 in a real round.
+  Bots reach the taya (DRAIN) or the attacker nearest the can (HEX), face their victim while reaching, and recast an armed hex
+  when the victim is not carrying (`AIController.SlotIsSpendable` now lets any armed recast through while cooling, which also
+  lets FEATHERFALL land early and BAKYA BLOOM command on time).
+- [~] Presented: her body (`hero-phaister-drain` + `-drain-aim` loop, `-hexreach` + `-hexreach-aim`, `-hexstab`, `-wring`, held
+  while the BODY reaches, `CharacterAnimator.ReachPose`), her first person (`reach-drain`, `reach-hex` held in view,
+  `hex-stab`, `wring`), eight sounds (`tools/build_phaister_audio.py`: the two locks, the mark, the snap, the wring, the stab,
+  DRAINED and HEXED on the victim), HEXED phantom slippers on the victim's screen (`HexedPhantomSlippers`, no shadow is the
+  tell). OPEN: the thread, the marks over a cursed body, DRAINED's pins on the stamina arc, the target's screen (chip, edge
+  marker, vignette), the doll in her hand changing into their colours; films of all of it.
+- [~] TELEPORT: renamed from VANISHING ACT, 35 s (`VoodooRules.TeleportCooldown`), the 2.5 m shove and its host resolver deleted.
+  OPEN: the decoy doll of her flopping where she stood (ask before its look), the moths streaming to her, a front-on tell.
 - [ ] VOODOO DOLL: a fifth body, Astig AI, attacking or defending with her role, points to her, none for tagging it, gone at the
   round's end; its network contract in `docs/SKILL_NETWORK_CONTRACT.md` (owner: *"You build it all"*).
 - [ ] The cutscene SEW / GROW / WAKE; sounds; voice rows; icons; bots; films sent; the gate.

@@ -369,6 +369,12 @@ namespace TumbangPreso.Visual
         public Transform HandAnchor { get; private set; }
 
         /// <summary>
+        /// The rig's `torso` bone, or null. HERO-10 v3: a carried slipper tucked into the belt while a cast needs the hand
+        /// (`Carrier`, `CharacterMotor.StowsCarriedSlipper`) rides the waist through the torso's own lean. Found with the hand.
+        /// </summary>
+        public Transform TorsoBone { get; private set; }
+
+        /// <summary>
         /// The node the model hangs under. Exposed so `Carrier` has something body-shaped to
         /// hang a held slipper off while <see cref="HandAnchor"/> is still null — see its
         /// `CarryAnchor`. Read-only on purpose: <see cref="SetModelRoot"/> is the one writer.
@@ -419,10 +425,14 @@ namespace TumbangPreso.Visual
         private void BuildHandAnchor()
         {
             HandAnchor = null;
+            TorsoBone = null;
             if (_instance == null) return;
 
             var skinned = _instance.GetComponentInChildren<SkinnedMeshRenderer>();
             if (skinned == null || skinned.sharedMesh == null || skinned.bones == null) return;
+
+            foreach (var b in skinned.bones)
+                if (b != null && string.Equals(b.name, "torso", System.StringComparison.OrdinalIgnoreCase)) { TorsoBone = b; break; }
 
             int bone = -1;
 

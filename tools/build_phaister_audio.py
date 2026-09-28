@@ -346,9 +346,142 @@ def theme():
     return finish("sfx_ult_theme_phaister", mix, s, 0.75)
 
 
+# ------------------------------------------------------------------ v3, THE VOODOO KIT (plan 9.5): thread, pins and cloth
+# Two more instruments for the curses, named where they are defined:
+# - `whip`: a thread snapped taut across the court, a narrow band of noise sweeping up fast and cut off.
+# - `rope`: a rope or rag wrung, stick-slip clicks through a woody mid band, their rate climbing as it tightens.
+# - `hum`: the soul thread holding, two slow-beating low sines under a breath of noise, rising in pitch as the reach fills.
+
+def whip(t, seed, at, lo, hi, gain=1.0):
+    """A thread snapped taut: 60 ms of narrow noise sweeping `lo` to `hi` Hz, cut off hard."""
+    local = t - at
+    on = (local >= 0) & (local < 0.06)
+    band = svf(noise(len(t), seed), lo + (hi - lo) * np.clip(local / 0.06, 0, 1), 3.0)
+    return band * on * np.clip(local / 0.01, 0, 1) * gain
+
+
+def rope(t, seed, at, seconds, rate0, rate1, gain=1.0):
+    """A rag wrung: stick-slip clicks through a woody band at a rate rising from `rate0` to `rate1` per second."""
+    local = t - at
+    on = (local >= 0) & (local < seconds)
+    rate = rate0 + (rate1 - rate0) * np.clip(local / seconds, 0, 1)
+    phase = np.cumsum(np.where(on, rate, 0.0)) / RATE
+    clicks = (np.diff(np.floor(phase), prepend=0) > 0).astype(float)
+    body = svf(clicks * (0.6 + 0.4 * noise(len(t), seed)), 700, 1.6) + 0.4 * svf(clicks, 1900, 2.2)
+    return body * np.clip(local / 0.04, 0, 1) * on * gain
+
+
+def hum(t, at, seconds, root, gain=1.0):
+    """The thread holding: two low sines a few Hz apart (a slow beat) with a breath of noise, rising a fifth over `seconds`."""
+    local = np.maximum(0, t - at)
+    on = (t >= at) & (t < at + seconds)
+    f = root * (1 + 0.5 * np.clip(local / seconds, 0, 1))
+    phase = 2 * np.pi * np.cumsum(np.where(on, f, 0.0)) / RATE
+    tone = np.sin(phase) + 0.8 * np.sin(phase * 1.012)
+    return tone * np.clip(local / 0.2, 0, 1) * on * gain
+
+
+def drain_cast():
+    """CURSE: DRAIN's lock (0.9 s): the slipper tucked (a cloth rustle), the thread whipped out LOW and heavy, the needle's
+    prick at their chest, one heavy heartbeat, and the crimson hum starting under it (the hold's first second)."""
+    s = 0.9
+    t = times(s)
+    tuck = svf(noise(len(t), 9301), 1800, 0.9) * env_ar(t, 0.005, 0.04) * 0.35
+    lash = whip(t, 9302, 0.08, 500, 2600, 1.2)
+    prick = stitch(t, 9303, 0.14, 0.9)
+    beat = np.sin(2 * np.pi * 52 * np.maximum(0, t - 0.2)) * np.exp(-np.maximum(0, t - 0.2) / 0.07) * (t >= 0.2) * 1.6
+    hold = hum(t, 0.18, 0.72, 98.0, 0.35) * np.exp(-np.maximum(0, t - 0.6) / 0.12)
+    return finish("sfx_cast_phaister_drain", tuck + lash + prick + beat + hold, s)
+
+
+def hex_cast():
+    """CURSE: HEX's lock (0.9 s): the tuck, the thread whipped out HIGH and thin, a finer prick at their eyes, one struck
+    tine from the doll lifted to her cheek, and the violet hum starting higher than DRAIN's."""
+    s = 0.9
+    t = times(s)
+    tuck = svf(noise(len(t), 9311), 1900, 0.9) * env_ar(t, 0.005, 0.04) * 0.35
+    lash = whip(t, 9312, 0.08, 1400, 5200, 1.0)
+    prick = stitch(t, 9313, 0.14, 0.7) + tick(t, 0.17, 3900, 0.25)
+    tine = musicbox(t, 0.2, [(0.0, 1046.5)], 0.02, 0.35)
+    hold = hum(t, 0.18, 0.72, 147.0, 0.3) * np.exp(-np.maximum(0, t - 0.6) / 0.12)
+    return finish("sfx_cast_phaister_hexreach", tuck + lash + prick + tine + hold, s)
+
+
+def reach_mark():
+    """The reach landing (0.55 s): the stitch pulled tight (a tearing zip rising into a tick), a skipped heartbeat, her motif
+    faint: the soul is in the doll."""
+    s = 0.55
+    t = times(s)
+    zip_ = svf(noise(len(t), 9321), sweep(t, 900, 4200, 0.16), 2.2) * window(t, 0.0, 0.16, 0.01) * 0.9
+    tight = tick(t, 0.16, 2200, 0.8)
+    skip = np.sin(2 * np.pi * 60 * np.maximum(0, t - 0.2)) * np.exp(-np.maximum(0, t - 0.2) / 0.05) * (t >= 0.2) * 1.0
+    motif = hex_motif(t, 0.22, 1175, 0.25)
+    return finish("sfx_phaister_mark", zip_ + tight + skip + motif, s, 0.6)
+
+
+def reach_snap():
+    """The reach broken (0.45 s): the thread frays (a thin crackle) and snaps back (a dry tick and a falling whip)."""
+    s = 0.45
+    t = times(s)
+    fray = ash(t, 9331, 0.0, 0.18, 0.5)
+    snap = tick(t, 0.12, 2900, 0.7) + whip(t, 9332, 0.12, 3800, 900, 0.6)
+    return finish("sfx_phaister_reach_snap", fray + snap, s, 0.5)
+
+
+def wring():
+    """DRAIN's wring, 1.7 s, the mark to the drain (plan 9.5: *"rope creak on each twist"*, *"a wet-cloth squeeze; an
+    exhausted exhale"*): three twists at 0.25, 0.75 and 1.25, each longer and tighter, the wet squeeze on the last hard wring
+    at 1.5 (the moment the body drains them), and an exhausted breath out after it (air only, never a voice)."""
+    s = 1.7
+    t = times(s)
+    twists = (rope(t, 9341, 0.20, 0.22, 40, 90, 0.7) + rope(t, 9342, 0.70, 0.26, 50, 120, 0.85)
+              + rope(t, 9343, 1.20, 0.30, 60, 160, 1.0))
+    wet = svf(noise(len(t), 9344), 420 + 260 * np.sin(2 * np.pi * 23 * t), 1.3) * window(t, 1.48, 1.62, 0.02) * 1.3
+    squeeze = rope(t, 9345, 1.48, 0.12, 180, 260, 0.8)
+    exhale = svf(noise(len(t), 9346), 1100, 0.7) * window(t, 1.55, 1.7, 0.05) * np.exp(-np.maximum(0, t - 1.55) / 0.1) * 0.35
+    return finish("sfx_phaister_wring", twists + wet + squeeze + exhale, s)
+
+
+def hex_stab():
+    """HEX's recast (0.95 s): the doll yanked up (a cloth whoosh), the pin STABBED into its eye (a dry thud and a stitch), a
+    squelchy pop, then a music-box sting falling out of tune."""
+    s = 0.95
+    t = times(s)
+    yank = svf(noise(len(t), 9351), sweep(t, 600, 2200, 0.1), 1.2) * window(t, 0.0, 0.12, 0.02) * 0.6
+    stab = svf(noise(len(t), 9352), 1400, 1.1) * env_ar(np.maximum(0, t - 0.22), 0.002, 0.03) * (t >= 0.22) * 1.2
+    thread = stitch(t, 9353, 0.21, 0.8)
+    local = np.maximum(0, t - 0.25)
+    pop = np.sin(2 * np.pi * np.cumsum(np.where(t >= 0.25, 320 * np.exp(-local / 0.04) + 90, 0.0)) / RATE) \
+        * np.exp(-local / 0.05) * (t >= 0.25) * 0.9
+    sting = musicbox(t, 0.32, [(0.0, 1318.5), (0.12, 1108.7), (0.24, 880.0), (0.40, 622.3)], 0.06, 0.5)
+    return finish("sfx_cast_phaister_hexstab", yank + stab + thread + pop + sting, s)
+
+
+def status_drained():
+    """DRAINED landing on its victim (0.8 s): two pins stamped over them (two ticks), and the breath going out of them."""
+    s = 0.8
+    t = times(s)
+    pins = tick(t, 0.0, 2500, 0.8) + tick(t, 0.07, 2150, 0.7)
+    out_ = svf(noise(len(t), 9361), sweep(t, 1400, 500, 0.6), 0.8) * window(t, 0.08, 0.75, 0.08) * 0.4
+    return finish("sfx_status_drained", pins + out_, s, 0.55)
+
+
+def status_hexed():
+    """HEXED landing on its victim (1.4 s): the stitch-blink across their eyes (a quick zip), then a detuned music box,
+    muffled, with whispers under it (bands of noise breathing at speech-like rates; never a voice)."""
+    s = 1.4
+    t = times(s)
+    blink = svf(noise(len(t), 9371), 3000, 1.8) * window(t, 0.0, 0.1, 0.01) * 0.6
+    box = one_pole_low(musicbox(t, 0.1, [(0.0, 783.99), (0.18, 698.46), (0.36, 587.33), (0.6, 523.25)], 0.08, 1.0), 1400) * 0.6
+    whisper = sum(svf(noise(len(t), 9372 + k), 2600 + 700 * k, 2.0) * (0.5 + 0.5 * np.sin(2 * np.pi * (4.1 + 1.3 * k) * t)) ** 2
+                  for k in range(3)) * window(t, 0.15, 1.35, 0.2) * 0.22
+    return finish("sfx_status_hexed", blink + box + whisper, s, 0.55)
+
+
 if __name__ == "__main__":
     rows = [blink_cast(), swarm_knit(), doll_cast(), manika_land(), manika_steal(), manika_crumble(), pin_cast(),
-            moonlight_on(), moonlight_off(), omen_cast(), omen_open(), omen_close(), theme()]
+            moonlight_on(), moonlight_off(), omen_cast(), omen_open(), omen_close(), theme(),
+            drain_cast(), hex_cast(), reach_mark(), reach_snap(), wring(), hex_stab(), status_drained(), status_hexed()]
     report = {
         "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",
         "listening": "Not yet heard by the owner in the game mix. Peak and RMS are measurements, not approval.",

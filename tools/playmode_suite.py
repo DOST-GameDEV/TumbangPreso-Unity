@@ -239,6 +239,8 @@ GROUPS = [
         "AmihanKitPlayProbe",
         # Placed 2026-09-27: films Phaister's overhauled kit through real input on Bayan Plaza (HERO-10).
         "PhaisterKitPlayProbe",
+        # Placed 2026-09-28: casts Phaister's v3 kit (TELEPORT, the two reach curses) in a real round on Bayan Plaza (HERO-10).
+        "PhaisterVoodooKitTests",
         # Placed 2026-09-26: walks every roster body on Eskinita and measures each hand against the hip (ASKS-0926).
         "WalkArmsProbe",
     ]),

@@ -64,6 +64,28 @@ namespace TumbangPreso
         public float VoodooReachProgress => IsVoodooReaching ? Mathf.Clamp01(_reachElapsed / VoodooRules.ReachSeconds) : 0.0f;
 
         /// <summary>
+        /// ⚠️ HER SLIPPER GOES TO HER BELT WHILE A CURSE NEEDS HER HANDS (plan 9.4, owner: *"think abt where slipper goes when u
+        /// use skill and make it so that u can use right hand when doing skills"*). True through the reach and a moment after it
+        /// (the tug), and for as long as a curse's gesture asked (`HoldSlipperAtBelt`: DRAIN's wring, HEX's stab). Presentation
+        /// only: the slipper is still carried, and a throw charge takes it straight back to her hand (`Carrier`). Every peer
+        /// computes it from the replicated reach and the same cast events, so every screen agrees.
+        /// </summary>
+        public bool StowsCarriedSlipper => IsVoodooReaching || _stowLeft > 0.0f;
+
+        /// <summary>Keep the carried slipper at her belt for this long (a curse's two-handed gesture).</summary>
+        public void HoldSlipperAtBelt(float seconds) => _stowLeft = Mathf.Max(_stowLeft, seconds);
+
+        /// <summary>How long the slipper stays at the belt after a reach ends: the tug back to her chest.</summary>
+        private const float StowAfterReach = 0.3f;
+        private float _stowLeft;
+
+        /// <summary>
+        /// True while no curse can land on this body (Geo's Shield): `HostVoodooMark` would refuse it, so her reach picks
+        /// someone else rather than spending 2 s on a mark that cannot happen.
+        /// </summary>
+        public bool RefusesVoodoo => StatusImmune;
+
+        /// <summary>
         /// This body's own share of a player's speed: 1 for every person, `VoodooRules.DollSpeedScale` for Phaister's voodoo doll
         /// (her ultimate's body, slow on the owner's word). Set by whoever makes the body; it is part of what the body is.
         /// </summary>
@@ -174,7 +196,8 @@ namespace TumbangPreso
             if (_hexedLeft > 0.0f) _hexedLeft = Mathf.Max(0.0f, _hexedLeft - dt);
             Stamina.RecoveryBlocked = IsDrained;
             if (_markKind != VoodooMarkKind.None) _markAge += dt;
-            if (IsVoodooReaching) _reachElapsed += dt;
+            if (IsVoodooReaching) { _reachElapsed += dt; _stowLeft = Mathf.Max(_stowLeft, StowAfterReach); }
+            else if (_stowLeft > 0.0f) _stowLeft = Mathf.Max(0.0f, _stowLeft - dt);
 
             if (!NetAuthority.ShouldResolve()) return;
 
@@ -227,6 +250,7 @@ namespace TumbangPreso
             ClearVoodooMark();
             EndVoodooReach(marked: false);
             _reachSucceeded = false;
+            _stowLeft = 0.0f;
         }
 
         /// <summary>

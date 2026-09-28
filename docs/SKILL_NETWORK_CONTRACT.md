@@ -256,6 +256,25 @@ Hexed's screen effect stays victim-local. Mark/doll gameplay entity lifetimes ne
 their explicit contracts. Two native codec/receiver checks do not qualify the whole
 unfinished kit or actual peer behavior.
 
+Phaister's curses (HERO-10 v3) cast through the existing routes with no new message.
+CURSE: DRAIN (`phaister_skill2`) and CURSE: HEX (`phaister_skill2d`) are HostConfirmed.
+The owner's press and the host's acceptance both require `PhaisterHeroKit.ReachTargetFor`
+to find somebody; the host picks the target again from its own bodies and starts the
+body's reach (`HostBeginVoodooReach`). From there the body owns the reach and the mark
+(protocol73 state). Every peer settles the cast when the caster's reach ends: through
+`VoodooReachEnded`, or, for a reach it never saw start, from the caster's replicated
+`VoodooReachSucceeded` 0.75 s after the reach's own 2 s. A broken reach takes half the
+cooldown off what is LEFT on every peer, so the owner (whose cooldown a host snapshot
+never lowers) and the host agree. HEX's recast is a reactivation on the existing cast
+route: valid while the ability is active (reach plus mark life) and `ReactivateReady`
+(an armed Hex mark of this seat); the host sets it off with `HostDetonateHex(source)`
+and no resource changes. The changed cooldown, duration and reactivation metadata are
+in the skill fingerprint, so mismatched builds are refused at connect. Presentation
+reads replicated state or accepted casts: the reach pose, the belt, the wring, the stab;
+HEXED's phantom slippers are victim-local. OPEN: a rejoining Phaister's live HEX (a
+duration is not restored, so she cannot recast a hex she placed before the drop) and
+actual peers.
+
 Protocol75 gates the newly active status/movement semantics so an older admitted
 body cannot leave received curses inert or permanent. Replicas advance received
 clocks and clear expired recovery suppression,but only the host resolves a waiting

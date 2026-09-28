@@ -47,6 +47,51 @@ namespace TumbangPreso.CameraSystem
             new Key(0.820f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
+        // ---------------------------------------------------------------- v3, THE REACH (plan 9.5)
+        // Her right hand dips out of the bottom right with the slipper (it goes to her belt) and rises into view palm out; the
+        // hold is key 1, kept for as long as the body reaches (`CameraRig` feeds the reach to `SetAimPreview`), and each lock
+        // ENDS on that key so the hold takes over without a dip. DRAIN reaches at chest height with the doll low in her left;
+        // HEX reaches higher with the doll up by her eye.
+
+        /// <summary>CURSE: DRAIN's lock and hold: the palm out ahead at chest height, the left low with the doll.</summary>
+        private static readonly Key[] ReachDrainClip =
+        {
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.140f, 0.450f, 0.120f, 0.050f, 0.200f, -0.100f, 0.100f, true),
+            new Key(0.400f, 0.450f, 0.120f, 0.050f, 0.200f, -0.100f, 0.100f),
+        };
+
+        /// <summary>CURSE: HEX's lock and hold: the palm out high, at their head, the doll up by her left eye.</summary>
+        private static readonly Key[] ReachHexClip =
+        {
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.140f, 0.620f, 0.080f, 0.000f, 0.700f, -0.200f, -0.200f, true),
+            new Key(0.400f, 0.620f, 0.080f, 0.000f, 0.700f, -0.200f, -0.200f),
+        };
+
+        /// <summary>CURSE: HEX's recast: the doll yanked up before her eyes, the pin raised, stabbed across into its eye, twisted.</summary>
+        private static readonly Key[] HexStabClip =
+        {
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.100f, 0.900f, 0.100f, 0.000f, 0.600f, -0.300f, -0.300f),
+            new Key(0.220f, 0.200f, 0.500f, 0.300f, 0.600f, -0.300f, -0.300f, true),
+            new Key(0.360f, 0.250f, 0.550f, 0.450f, 0.600f, -0.300f, -0.300f),
+            new Key(0.600f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+        };
+
+        /// <summary>CURSE: DRAIN's wring: both hands on the doll before her, three twists each harder, the last a sharp wring.</summary>
+        private static readonly Key[] WringClip =
+        {
+            new Key(0.000f, 0.300f, 0.000f, 0.000f, 0.300f, 0.000f, 0.000f),
+            new Key(0.250f, 0.300f, 0.000f, 0.350f, 0.300f, 0.000f, -0.350f),
+            new Key(0.500f, 0.300f, 0.000f, -0.250f, 0.300f, 0.000f, 0.250f),
+            new Key(0.750f, 0.320f, 0.000f, 0.500f, 0.320f, 0.000f, -0.500f),
+            new Key(1.000f, 0.320f, 0.000f, -0.350f, 0.320f, 0.000f, 0.350f),
+            new Key(1.250f, 0.340f, 0.000f, 0.650f, 0.340f, 0.000f, -0.650f),
+            new Key(1.500f, 0.380f, 0.000f, -0.800f, 0.380f, 0.000f, 0.800f, true),
+            new Key(1.850f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+        };
+
         /// <summary>OMEN: both arms rise and open, palms up, draw together overhead, and drive down at 2.2 s.</summary>
         private static readonly Key[] OmenRiseClip =
         {

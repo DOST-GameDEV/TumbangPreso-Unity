@@ -183,6 +183,24 @@ namespace TumbangPreso.CameraSystem
                 K(1.9f, .04f, .52f, .06f, -.04f, .70f, .06f), K(2.2f, -.02f, -.18f, .34f, .02f, .04f, .34f),
                 K(2.45f, -.02f, -.16f, .32f, .02f, .06f, .32f), Rest(2.9f)) },
 
+            // v3, THE REACH (plan 9.5). DRAIN: the right hand dips out bottom right (the slipper to her belt) and comes up
+            // palm out at chest height, the left brings the doll into the lower left; it ENDS on the hold (key 1), which stays for
+            // as long as she reaches (`HeldCastPaths`). HEX: the same dip, then higher, the doll up by her left eye.
+            { "reach-drain", new CastPath(.14f, false,
+                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .04f, .00f), K(.14f, .02f, .10f, .22f, -.04f, .22f, .06f),
+                K(.40f, .02f, .10f, .22f, -.04f, .22f, .06f)) },
+            { "reach-hex", new CastPath(.14f, false,
+                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .06f, .00f), K(.14f, .00f, .18f, .20f, -.10f, .34f, .04f),
+                K(.40f, .00f, .18f, .20f, -.10f, .34f, .04f)) },
+            // HEX's recast: the doll up before her eyes, the pin raised high on the right, stabbed down and across into it.
+            { "hex-stab", new CastPath(.22f, false,
+                Rest(0), K(.10f, .06f, .34f, .06f, -.06f, .30f, .10f), K(.22f, -.04f, .22f, .14f, -.06f, .30f, .10f),
+                K(.36f, -.05f, .21f, .14f, -.06f, .30f, .10f), Rest(.60f)) },
+            // DRAIN's wring: both hands together before her, twisting the doll; the last wring dips them a little.
+            { "wring", new CastPath(1.5f, false,
+                Rest(0), K(.20f, -.04f, .22f, .14f, .04f, .24f, .14f), K(1.25f, -.04f, .24f, .15f, .04f, .26f, .15f),
+                K(1.5f, -.04f, .18f, .16f, .04f, .20f, .16f), K(1.62f, -.04f, .18f, .16f, .04f, .20f, .16f), Rest(1.85f)) },
+
             // ---------------------------------------------------------------- RAFI: the tease
             // CROSSCURRENT. The off-hand cut: the LEFT slices across left to right and a little down,
             // the line the slipper will bend along, while the right curls the slipper in.
@@ -225,6 +243,15 @@ namespace TumbangPreso.CameraSystem
         private bool _castApplied;
         private Vector3 _castRight, _castLeft;
 
+        /// <summary>
+        /// ⚠️ THE CASTS WHOSE HOLD KEEPS ITS POSITION TOO (HERO-10 v3, Phaister's reach). Every other held gesture turns the arms
+        /// to key 1 and leaves them where they rest; a reach must hold the hand UP IN VIEW, palm out, for the whole 2 s, so these
+        /// few keep key 1's offsets as well, eased in and out. Opt-in, so no other hero's hold moves.
+        /// </summary>
+        private static readonly HashSet<string> HeldCastPaths = new HashSet<string> { "reach-drain", "reach-hex" };
+        private float _heldPathBlend;
+        private string _heldPath;
+
         private void RestoreCastGesture()
         {
             if (!_castApplied) return;
@@ -235,13 +262,29 @@ namespace TumbangPreso.CameraSystem
 
         private void ApplyCastGesture()
         {
-            if (_rightPivot == null || _leftPivot == null || _clip == null || _actionName == null) return;
+            if (_rightPivot == null || _leftPivot == null) return;
+            ApplyHeldCastPath();
+            if (_castApplied || _clip == null || _actionName == null) return;
             if (!CastPaths.TryGetValue(_actionName, out var path)) return;
             if (Settings.SettingsStore.Current.ReducedUiMotion) return;
             if (_clipTime >= path.End) return;
             Sample(path, _clipTime, out var r, out var l);
             _castRight = r; _castLeft = l;
             _rightPivot.localPosition += r; _leftPivot.localPosition += l;
+            _castApplied = true;
+        }
+
+        /// <summary>The hold of an opted-in path (`HeldCastPaths`) while nothing is playing: key 1, eased in and out.</summary>
+        private void ApplyHeldCastPath()
+        {
+            bool holding = _clip == null && _aimPreview != null && HeldCastPaths.Contains(_aimPreview)
+                           && !Settings.SettingsStore.Current.ReducedUiMotion;
+            if (holding) _heldPath = _aimPreview;
+            _heldPathBlend = Mathf.MoveTowards(_heldPathBlend, holding ? 1.0f : 0.0f, Time.deltaTime / .12f);
+            if (_heldPathBlend <= 0.0f || _heldPath == null || !CastPaths.TryGetValue(_heldPath, out var path)) return;
+            var hold = path.Keys[1];
+            _castRight = hold.R * _heldPathBlend; _castLeft = hold.L * _heldPathBlend;
+            _rightPivot.localPosition += _castRight; _leftPivot.localPosition += _castLeft;
             _castApplied = true;
         }
 

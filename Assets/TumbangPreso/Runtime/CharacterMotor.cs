@@ -861,7 +861,9 @@ namespace TumbangPreso
 
             // The sprint multiplier. Fatigue is NOT in this value: it rides the speed-zone
             // stack so it composes with a hazard zone rather than one silently winning.
-            float sprint = Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && Intent.Pressed(Verb.Sprint));
+            // HERO-10 (plan 9.5): Phaister walks while she reaches for someone with a curse, but she cannot sprint.
+            float sprint = Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && !IsVoodooReaching
+                                                   && Intent.Pressed(Verb.Sprint));
 
             // ⚠️⚠️ THE FATIGUE CUE, WHICH SHIPPED REGISTERED AND WAS NEVER FIRED ONCE.
             // `character_base.gd::_enter_fatigue` plays it on the frame the bar bottoms out, and

@@ -1003,7 +1003,9 @@ namespace TumbangPreso.CameraSystem
             var carrier = _character.GetComponent<Carrier>();
             var held = carrier != null ? carrier.Held : null;
 
-            _arms.SetHolding(held != null);
+            // HERO-10 v3: while a curse has her slipper at her belt the right hand is empty and reaching (`StowsCarriedSlipper`).
+            bool stowed = held != null && _character.StowsCarriedSlipper && (carrier == null || carrier.ObservedChargePower < 0.0f);
+            _arms.SetHolding(held != null && !stowed);
 
             // § THE WIND-UP, POLLED. `character_visual.gd` polls charge for the same reason it
             // polls carry scale and spin: *"charge is a continuously-varying value, not an event,
@@ -1033,6 +1035,9 @@ namespace TumbangPreso.CameraSystem
                 if (hero.IsAiming(Abilities.HeroAbilitySystem.Slot.Skill1)) aiming=hero.Kit.Skill1.ViewmodelAction;
                 else if (hero.IsAiming(Abilities.HeroAbilitySystem.Slot.Skill2)) aiming=hero.Kit.Skill2.ViewmodelAction;
                 else if (hero.IsAiming(Abilities.HeroAbilitySystem.Slot.Ultimate)) aiming=hero.Kit.Ultimate.ViewmodelAction;
+                // HERO-10 v3: Phaister's reach holds her hand out in view for as long as the body reaches (a tap, not a held key).
+                if (aiming == null && _character.IsVoodooReaching)
+                    aiming = _character.VoodooReachKind == VoodooMarkKind.Drain ? "reach-drain" : "reach-hex";
             }
             _arms.SetAimPreview(aiming);
 

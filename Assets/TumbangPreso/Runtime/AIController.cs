@@ -4523,6 +4523,21 @@ namespace TumbangPreso
             => _driving && Flat(transform.position, _goal) >= AiTuning.AbilityTravelWorthwhile;
 
         /// <summary>
+        /// ⚠️ A CURSE'S REACH SNAPS WHEN ITS VICTIM LEAVES HER AIM (HERO-10, `VoodooRules.ReachConeDegrees`), and a bot's body
+        /// faces where it walks, so a bot reaching while it moved on lost every reach it started. While one runs, the body turns
+        /// to the victim through the same `FaceAimPoint` request the throw uses (the motor keeps its bounded turn). Never during
+        /// a throw's wind-up: that aim point is the throw's.
+        /// </summary>
+        private void StepVoodooReachFacing(InputIntent intent, RoundDirector round)
+        {
+            if (!_motor.IsVoodooReaching || Plan == AiPlan.Windup) return;
+            var victim = round.PlayerAt(_motor.VoodooReachTarget);
+            if (victim == null) return;
+            intent.AimPoint = At(victim) + Vector3.up * 1.2f;
+            intent.FaceAimPoint = true;
+        }
+
+        /// <summary>
         /// May this slot be pressed at all, before anything about the board is considered?
         ///
         /// ⚠️⚠️ A POWER THAT IS STILL RUNNING MUST NOT BE RECAST, AND NOTHING CHECKED THAT.
@@ -4534,8 +4549,12 @@ namespace TumbangPreso
         /// the game's only `CanReactivate` power: the second press is *"press again to follow him
         /// there"*, so refusing a press while it is active would delete half of it.
         /// </summary>
+        /// ⚠️⚠️ AND A RECAST DOES NOT WAIT FOR THE COOLDOWN, SO IT MUST NOT BE GATED ON `IsReady` (HERO-10, Phaister's CURSE:
+        /// HEX). `HeroKit.Fire` routes a press on an active `CanReactivate` power to `Reactivate` whatever the cooldown says, and
+        /// asks `ReactivateReady` instead. Gated on `IsReady`, a bot could only recast a power whose cooldown ran out before its
+        /// duration did: never HEX (35 s against 27), never FEATHERFALL's early landing, and BAKYA BLOOM's command only late.
         private static bool SlotIsSpendable(Abilities.HeroAbility ability)
-            => ability != null && ability.IsReady && (!ability.IsActive || ability.CanReactivate);
+            => ability != null && (ability.IsActive && ability.CanReactivate ? ability.ReactivateReady : ability.IsReady && !ability.IsActive);
 
         private void StepHeroAbilities(InputIntent intent, float dt)
         {
@@ -4596,6 +4615,8 @@ namespace TumbangPreso
             // -------------------------------------------------------------------
             _roundLiveFor += dt;
             if (_abilityCadenceLeft > 0.0f) _abilityCadenceLeft -= dt;
+
+            StepVoodooReachFacing(intent, round);
 
             // ⚠️ A RELEASED HOLD LEAVES ITS KEY IN THE TABLE WITH -1 IN IT (`HoldAim` writes
             // -1.0 rather than removing the entry), so `_aimHeld.Count` latches true after the
@@ -4822,10 +4843,13 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.PhaisterHeroKit)
                 {
-                    // ⚠️ THE HEX IS A CIRCLE ON THE FLOOR 4.5 m AHEAD, and the old 6.5 m gate to
-                    // a target said nothing about where it would land or whether one was already
-                    // lying there. Two sigils on one another is the § 19 stacking exactly.
-                    if (WorthDenying(kit.Skill1)) Consider(intent, Verb.Skill1, dt);
+                    // TELEPORT (HERO-10 v3) is her signature now and it only moves her: no shove at the place she leaves.
+                    // Worth it for the journey, or to get out from under a taya closing on her. ⚠️ Its telegraph is the
+                    // ARRIVAL mark, not a payload, so `WouldCatch`/`WorthDenying` must not judge it. `Consider` gives the
+                    // hold-to-aim power its hold (§ HOLDING A HOLD-TO-AIM POWER).
+                    bool escape = !_motor.IsDefender && targetDistance <= 3.0f; // an attacker's target is the taya
+                    if (_driving && (Plan == AiPlan.Withdraw || escape || WorthTravelling()))
+                        Consider(intent, Verb.Skill1, dt);
                 }
                 else if (kit is Abilities.AmihanHeroKit)
                 {
@@ -4905,24 +4929,31 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.PhaisterHeroKit)
                 {
-                    // ⚠️ HER BLINK IS THE ONE HOLD-TO-AIM POWER IN THE GAME. See § HOLDING A
-                    // HOLD-TO-AIM POWER: `Tap` would give it a one-frame hold and pin every bot
-                    // blink to the minimum 2.0 m.
-                    //
-                    // ⚠️⚠️ AND ITS TELEGRAPH IS NOT A PAYLOAD, SO `WouldCatch` MUST NOT JUDGE IT.
-                    // `TelegraphRadius` 1.15 is the ARRIVAL MARK: where she will be standing, not
-                    // an area of effect. What the power does to somebody else is the shove at the
-                    // point she LEAVES, so the question is whether anybody is near her now.
-                    bool shoveOnDeparture = targetDistance <= 3.0f;
-
-                    // ⚠️ THROUGH `Consider` LIKE EVERY OTHER SLOT SINCE 2026-09-02. This was
-                    // `Weighed` and then `HoldAim` written out by hand, because the blink was the
-                    // only hold-to-aim power in the game; `Consider` asks the ability now, so the
-                    // five that exist today and any hero added later all get the hold without a
-                    // second call site to remember. `Consider`'s own note has the report.
-                    if (_driving && (Plan == AiPlan.Withdraw || shoveOnDeparture
-                                     || targetDistance <= 5.5f))
-                        Consider(intent, Verb.Skill2, dt);
+                    // ⚠️⚠️ HER CURSES (HERO-10 v3) ARE A 2 s REACH AT WHOEVER SHE FACES, SO THE QUESTION IS WHOM, NOT WHERE.
+                    // `ReachTargetFor` is the cast's own test (in reach, in her cone, in sight, not shielded); pressing with
+                    // nobody there would only be refused. DRAIN is for the taya closing on an attacker who needs to run (their
+                    // sprint dies 1.5 s after the mark); HEX, as the taya, is for the attacker nearest the can. HEX's recast is
+                    // its own press once `ReactivateReady` says her mark is armed (`SlotIsSpendable`), spent while the victim
+                    // is going for a slipper, which is when phantom slippers cost them something.
+                    // Facing the victim while the reach runs is `StepVoodooReachFacing`, above every slot.
+                    var curse = kit.Skill2;
+                    if (curse.IsActive && curse.CanReactivate)
+                    {
+                        CharacterMotor hexed = null;
+                        foreach (var p in round.Players)
+                            if (p != null && p.VoodooMark == VoodooMarkKind.Hex && p.VoodooMarkSource == _motor.PlayerSlot) hexed = p;
+                        bool fraying = hexed != null && hexed.VoodooMarkAge >= Core.VoodooRules.HexMarkLifeSeconds - 4.0f;
+                        if (curse.ReactivateReady && hexed != null && (!hexed.HoldingSlipper || fraying))
+                            Consider(intent, Verb.Skill2, dt);
+                    }
+                    else if (!_motor.IsVoodooReaching)
+                    {
+                        var victim = Abilities.PhaisterHeroKit.ReachTargetFor(_motor, transform.forward);
+                        bool worth = victim != null && (_motor.IsDefender
+                            ? lata != null && Flat(At(victim), lata.transform.position) <= 6.0f
+                            : victim.IsDefender);
+                        if (worth) Consider(intent, Verb.Skill2, dt);
+                    }
                 }
                 else if (kit is Abilities.RafiHeroKit && _driving && targetDistance < 5
                     && (Plan == AiPlan.Withdraw || Plan == AiPlan.Fetch || _motor.IsDefender))

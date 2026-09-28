@@ -132,6 +132,11 @@ namespace TumbangPreso.Audio
                 // three fates, the moonlight's two ends.
                 { "sfx_phaister_swarm_knit", -7.0f }, { "sfx_phaister_manika_land", -9.0f }, { "sfx_phaister_manika_steal", -6.0f },
                 { "sfx_phaister_manika_crumble", -9.0f }, { "sfx_phaister_moonlight_on", -7.0f }, { "sfx_phaister_moonlight_off", -9.0f },
+                // v3, the voodoo kit (plan 9.5): the two locks, the mark and the snap, DRAIN's wring, HEX's stab; the two
+                // statuses sound on the victim like the others.
+                { "sfx_cast_phaister_drain", -7.0f }, { "sfx_cast_phaister_hexreach", -7.0f }, { "sfx_cast_phaister_hexstab", -6.0f },
+                { "sfx_phaister_mark", -8.0f }, { "sfx_phaister_reach_snap", -10.0f }, { "sfx_phaister_wring", -8.0f },
+                { "sfx_status_drained", -9.0f }, { "sfx_status_hexed", -9.0f },
                 { "sfx_hex_cast",     -4.0f },
 
                 // ⚠️ THE BREAK IS MIXED LIKE A STATUS, NOT AN EVENT, for the same reason
@@ -417,6 +422,8 @@ namespace TumbangPreso.Audio
             "sfx_cast_cheska_coldfeet", "sfx_cast_cheska_frostbite", "sfx_cheska_frostbite_hit", "sfx_cast_cheska_glacialwall", "sfx_cheska_wall_crack", "sfx_cast_cheska_absolutezero", "sfx_cast_dante_shield", "sfx_cast_dante_boulder", "sfx_dante_boulder_hit", "sfx_cast_dante_barrier", "sfx_dante_barrier_reflect", "sfx_cast_dante_earthquake", "sfx_cast_nemu_terrify", "sfx_cast_nemu_fetch", "sfx_nemu_fetch_drop", "sfx_cast_nemu_guard", "sfx_nemu_guard_block", "sfx_cast_phaister_doll", "sfx_cast_phaister_pin", "sfx_cast_phaister_higop", "sfx_phaister_higop_open", "sfx_phaister_higop_close", "sfx_status_concussed", "sfx_status_feared", "sfx_status_disoriented", "sfx_status_vulnerable", "sfx_paete_root_vein",
             "sfx_phaister_swarm_knit", "sfx_phaister_manika_land", "sfx_phaister_manika_steal", "sfx_phaister_manika_crumble",
             "sfx_phaister_moonlight_on", "sfx_phaister_moonlight_off",
+            "sfx_cast_phaister_drain", "sfx_cast_phaister_hexreach", "sfx_cast_phaister_hexstab", "sfx_phaister_mark",
+            "sfx_phaister_reach_snap", "sfx_phaister_wring", "sfx_status_drained", "sfx_status_hexed",
 
             // ⚠️ THE TWELVE ALTERNATES. A sidegrade changes what the power does, so it changes
             // what the power sounds like doing it: Long Tremor sweeps feet instead of throwing

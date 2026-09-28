@@ -228,6 +228,11 @@ namespace TumbangPreso.Visual
             { "hero-phaister-manika", new[] { "hero-phaister-manika", "attack-melee-right" } },
             { "hero-phaister-pin", new[] { "hero-phaister-pin", "hero-phaister-hex", "interact-right" } },
             { "hero-phaister-omen", new[] { "hero-phaister-omen", "hero-phaister-eclipse", "holding-both" } },
+            // v3, the reach (HERO-10 plan 9.5): each curse locks on its own way, HEX's recast is its own stab, DRAIN's wring is its own.
+            { "hero-phaister-drain", new[] { "hero-phaister-drain", "interact-right" } },
+            { "hero-phaister-wring", new[] { "hero-phaister-wring", "holding-both" } },
+            { "hero-phaister-hexreach", new[] { "hero-phaister-hexreach", "interact-right" } },
+            { "hero-phaister-hexstab", new[] { "hero-phaister-hexstab", "attack-melee-right" } },
             { "hero-rafi-cut", new[] { "hero-rafi-cut", "interact-left" } },
             { "hero-rafi-feint", new[] { "hero-rafi-feint", "attack-melee-right" } },
             { "hero-rafi-breakwater", new[] { "hero-rafi-breakwater", "holding-both-shoot" } },

@@ -506,6 +506,8 @@ namespace TumbangPreso
         {
             if (Held == null) return;
 
+            if (RideBelt()) return;
+
             var hand = Hand();
 
             if (hand != null)
@@ -571,6 +573,28 @@ namespace TumbangPreso
                 fallback.TransformPoint(FallbackCarryOffset),
                 fallback.rotation * Slipper.CarryRotation);
         }
+
+        /// <summary>
+        /// Where the carried slipper goes while a cast needs her right hand (HERO-10 v3, plan 9.4; only Phaister's curses ask,
+        /// through `CharacterMotor.StowsCarriedSlipper`): tucked flat against her back at the belt, toe down, riding the torso
+        /// bone so it leans when she leans. A throw charge overrides it (the slipper is back in the hand the moment she winds up).
+        /// </summary>
+        private bool RideBelt()
+        {
+            if (_motor == null || !_motor.StowsCarriedSlipper || _charging) return false;
+            var torso = GetComponent<Visual.CharacterVisual>()?.TorsoBone;
+            if (torso == null) return false;
+            Quaternion body = transform.rotation;
+            Held.transform.rotation = body * BeltRotation;
+            Held.transform.position = torso.position + body * BeltOffset - Held.DrawnCentreOffset;
+            return true;
+        }
+
+        /// <summary>The belt, from the torso bone in the body's frame (metres): a little to her right, at the waist, at her back.</summary>
+        private static readonly Vector3 BeltOffset = new Vector3(0.10f, 0.03f, -0.30f);
+
+        /// <summary>The sole flat against her back (the shoe's up out of it), its length hanging down.</summary>
+        private static readonly Quaternion BeltRotation = Quaternion.LookRotation(Vector3.right, Vector3.back);
 
         // -------------------------------------------------------------------
 

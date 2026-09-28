@@ -306,11 +306,11 @@ namespace TumbangPreso.Tests
             AssertTelegraph("zack", 2, 0.0f, 0.0f);     // throw empower
             AssertTelegraph("zack", 3, 4.5f, 7.0f);     // CreateThunderstrike(aimed, max 7.0, 4.5)
 
-            AssertTelegraph("phaister", 1, 1.15f, 5.5f); // Shadow Blink's arrival mark and max reach.
+            AssertTelegraph("phaister", 1, 1.15f, 5.5f); // TELEPORT's arrival mark and max reach.
 
-            AssertTelegraph("phaister", 2, 1.2f, 10.0f); // Cursed doll's hit radius and aimed throw.
+            AssertTelegraph("phaister", 2, 0.0f, 0.0f);  // CURSE: DRAIN reaches a player; nothing on the ground.
             AssertTelegraph("phaister", 3, 7.5f, 8.0f); // Higop's aimed black hole and pull radius.
-            AssertRoleTelegraph("phaister", 3.5f, 3.5f); // Vulnerable's 7 m forward cone.
+            AssertRoleTelegraph("phaister", 0.0f, 0.0f); // CURSE: HEX reaches a player too.
         }
 
         /// <summary>

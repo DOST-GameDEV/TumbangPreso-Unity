@@ -61,6 +61,12 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 11179c6744fc6d74ba7b71b039064774, type: 2}
   - {fileID: 7400000, guid: 11ceac42ed0c942438e6175f352bce4e, type: 2}
   - {fileID: 7400000, guid: 470644580f19be743b802f2355b04ba4, type: 2}
+  - {fileID: 7400000, guid: 45e71a8349815e741b46bbed3560841a, type: 2}
+  - {fileID: 7400000, guid: 56f947459434e4246bf2152a48f1caf6, type: 2}
+  - {fileID: 7400000, guid: 5e6cb9dbbe9ec3a4ba887ffc1f1ccd6e, type: 2}
+  - {fileID: 7400000, guid: e73c4a910813c0b40adae4e34912ba02, type: 2}
+  - {fileID: 7400000, guid: 6fbcaf9153e223e469be0eeda76b6ecf, type: 2}
+  - {fileID: 7400000, guid: 78bfcb28080850a4783ec4874919f45b, type: 2}
   Palette:
   - {r: 0.094118, g: 0.086275, b: 0.133333, a: 1}
   - {r: 0.290196, g: 0.117647, b: 0.470588, a: 1}
