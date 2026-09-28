@@ -1117,12 +1117,20 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   while the BODY reaches, `CharacterAnimator.ReachPose`), her first person (`reach-drain`, `reach-hex` held in view,
   `hex-stab`, `wring`), eight sounds (`tools/build_phaister_audio.py`: the two locks, the mark, the snap, the wring, the stab,
   DRAINED and HEXED on the victim), HEXED phantom slippers on the victim's screen (`HexedPhantomSlippers`, no shadow is the
-  tell). OPEN: the thread, the marks over a cursed body, DRAINED's pins on the stamina arc, the target's screen (chip, edge
-  marker, vignette), the doll in her hand changing into their colours; films of all of it.
+  tell). 2026-09-28 v12 to v14: the soul thread (`VoodooCursePresenter`, `Shaders/VoodooThread`: a dark smoke cord with a hot
+  core and stitches crawling to her, whipped out, tightening, zipping home on a mark, fraying on a snap; it leaves her
+  first-person hand on her screen and arrives in view on the victim's), the X it pierces with, the marks (DRAIN's turning knot,
+  HEX's button filling over the fuse and throbbing armed), HEXED's stitched band across the eyes for everyone else, DRAINED's
+  crossed pins on the victim's stamina arc and the arc shaking while she wrings. Films `phaister_voodoo_kit_v14.mp4` and
+  `phaister_voodoo_victim_v14.mp4` sent; `direction.md` section 4 has the rounds. OPEN: the owner's verdict; HEX's raised arm
+  reads weakly on this rig (the head is most of the silhouette); the target's screen (the BEING CURSED chip, the edge marker,
+  the vignette, the stitch-blink); the doll in her hand changing into their colours.
 - [~] TELEPORT: renamed from VANISHING ACT, 35 s (`VoodooRules.TeleportCooldown`), the 2.5 m shove and its host resolver deleted.
   OPEN: the decoy doll of her flopping where she stood (ask before its look), the moths streaming to her, a front-on tell.
 - [ ] VOODOO DOLL: a fifth body, Astig AI, attacking or defending with her role, points to her, none for tagging it, gone at the
-  round's end; its network contract in `docs/SKILL_NETWORK_CONTRACT.md` (owner: *"You build it all"*).
+  round's end; its network contract in `docs/SKILL_NETWORK_CONTRACT.md` (owner: *"You build it all"*). Owner, 2026-09-28, asked
+  what it does while she attacks: **"Own slipper, throws"** (a true fifth player with a fifth slipper). Built on a COMPANION
+  SEAT (`PlayerCount` + her seat), plan 9.12.
 - [ ] The cutscene SEW / GROW / WAKE; sounds; voice rows; icons; bots; films sent; the gate.
 
 **OPEN before v3 (superseded where it names OMEN, MANIKA or SPOTLIGHT PIN):**

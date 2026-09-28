@@ -346,6 +346,8 @@ namespace TumbangPreso
             if (GetComponent<Visual.StatusBodyMarks>() == null) gameObject.AddComponent<Visual.StatusBodyMarks>();
             if (GetComponent<Visual.StatusOverhead>() == null) gameObject.AddComponent<Visual.StatusOverhead>();
             if (GetComponent<Visual.PhaisterStatusPresenter>() == null) gameObject.AddComponent<Visual.PhaisterStatusPresenter>();
+            // HERO-10 v3: her reach's thread on the caster and her marks over the cursed, from replicated body state.
+            if (GetComponent<Visual.VoodooCursePresenter>() == null) gameObject.AddComponent<Visual.VoodooCursePresenter>();
         }
 
         /// ⚠️ THE SPECTATABLE REGISTRY IS POPULATED HERE, NOT AT THE SPAWN SITE. Godot's

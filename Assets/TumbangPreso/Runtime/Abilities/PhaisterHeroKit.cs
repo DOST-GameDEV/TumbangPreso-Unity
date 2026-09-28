@@ -409,10 +409,11 @@ namespace TumbangPreso.Abilities
                 // The stab takes both hands (the doll up at her face, the pin into its eye).
                 ctx?.Motor?.HoldSlipperAtBelt(0.6f);
                 if (ctx?.Motor != null) CasterSlot = ctx.Motor.PlayerSlot;
+                // ⚠️ NO HEXED FLAIR (film v12): `MatchFlair`'s hero hit draws dizzy stars for the whole 7.5 s and a comic word at
+                // the victim's head, which on their own screen is a block in their lens. HEXED is shown by its own pictures: the
+                // stab, the band across their eyes for everyone else, the phantoms on their screen, its badge and its sound.
                 var victim = OwnMark();
-                if (NetAuthority.ShouldResolve() && victim != null && victim.HostDetonateHex(CasterSlot))
-                    MatchFlair.Announce(MatchFlair.Kind.HeroHexed, CasterSlot, victim.PlayerSlot, victim.transform.position,
-                                        StatusRules.HexedSeconds);
+                if (NetAuthority.ShouldResolve() && victim != null) victim.HostDetonateHex(CasterSlot);
                 EndEarly(ctx);
             }
         }

@@ -450,5 +450,311 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(pulled, "OMEN never pulled the filmed player in.");
             Assert.Less(Mathf.Abs(clockAtScene - clockAtSceneEnd), 0.05f, "The match clock ran during the cutscene: " + clock);
         }
+
+        // ============================================================================================ v3, THE VOODOO KIT
+
+        /// <summary>Jump a body's voodoo mark to this age (the HEX fuse is 10 s; a film does not wait it out).</summary>
+        private static void AgeMark(CharacterMotor body, float age)
+            => typeof(CharacterMotor).GetField("_markAge", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(body, age);
+
+        private static void FaceTo(CharacterMotor who, Vector3 toward)
+        {
+            var d = toward - who.transform.position; d.y = 0f;
+            if (d.sqrMagnitude > .01f) who.transform.rotation = Quaternion.LookRotation(d.normalized);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ HER v3 KIT, FILMED IN A MATCH (HERO-10, plan 9; the owner's table of 2026-09-27), from her screen and the court:
+        ///   0.4 to 1.3   TELEPORT down the lane: her sigil and the moths while she aims, then she is there.
+        ///   2.3          CURSE: DRAIN at an attacker 5 m ahead: the slipper to her belt, her arm up at their chest, the thread
+        ///                whipping out and piercing, 2 s of hold (the cord tightening, its stitches crawling to her), the mark,
+        ///                the knot over them, her two-handed wring, DRAINED at 1.5 s.
+        ///   6.6          a second Phaister reaches for them and they are carried out of reach at 7.4: the thread frays and snaps.
+        ///   8.6          CURSE: HEX by the taya Phaister: her arm high, the doll at her cheek, the thread to their eyes, the violet
+        ///                button over them filling (its 10 s fuse jumped for the film at 11.0), armed and throbbing, and her
+        ///                recast at 12.4: the stab, HEXED.
+        /// Views: `owner/` her screen until 6.5, then over the shoulder of whichever Phaister is casting; `wide/` the court.
+        /// Runs only with TUMP_PHAISTER_FILM=1; frames under TUMP_EVIDENCE (default Logs), folder `phaister-voodoo-film-TAG`.
+        /// </summary>
+        [UnityTest, Timeout(600000)]
+        public IEnumerator FilmHerVoodooKitInAMatch()
+        {
+            if (Environment.GetEnvironmentVariable("TUMP_PHAISTER_FILM") != "1") Assert.Ignore("Film only: set TUMP_PHAISTER_FILM=1.");
+            string tag = Environment.GetEnvironmentVariable("TUMP_PHAISTER_TAG") ?? "v1";
+            string root = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs", "phaister-voodoo-film-" + tag);
+            foreach (string view in new[] { "owner", "wide" }) Directory.CreateDirectory(Path.Combine(root, view));
+            var round = GameServices.Round;
+            var can = Flat(round.Lata.transform.position);
+            int taya = -1;
+            foreach (var p in round.Players) if (p.IsDefender) taya = p.PlayerSlot;
+            Assert.GreaterOrEqual(taya, 0);
+            int me = GameLaunch.SoloSeat != taya ? GameLaunch.SoloSeat : (taya + 1) % 4;
+            int victimSeat = -1, fourth = -1;
+            foreach (var p in round.Players)
+                if (p.PlayerSlot != taya && p.PlayerSlot != me) { if (victimSeat < 0) victimSeat = p.PlayerSlot; else fourth = p.PlayerSlot; }
+            Assert.GreaterOrEqual(fourth, 0, "The film needs four seats.");
+
+            Vector3 start = can + new Vector3(0f, .12f, -12f);
+            var her = Phaister(me, start);
+            var witch = Phaister(taya, can + new Vector3(-2f, .12f, -1f));
+            var other = Phaister(fourth, can + new Vector3(7f, .12f, 5f));
+            other.Intent.Parked = true; witch.Intent.Parked = false;
+            var victim = round.PlayerAt(victimSeat);
+            victim.Teleport(can + new Vector3(6f, .12f, -4f)); victim.Intent.Parked = true;
+
+            Camera Make(string name, float fov)
+            {
+                var c = new GameObject(name).AddComponent<Camera>();
+                c.CopyFrom(Camera.main); c.enabled = false; c.tag = "Untagged"; c.fieldOfView = fov; c.cullingMask &= ~(1 << 5);
+                c.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+                return c;
+            }
+            var wide = Make("VoodooWide", 50);
+            var shoulder = Make("VoodooShoulder", 58);
+            var hdr = new RenderTexture(1280, 720, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
+            var ldr = new RenderTexture(1280, 720, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
+            void Shoot(Camera c, string view, int index)
+            {
+                PaeteKitPlayProbe.RenderFilmView(c, hdr);
+                Graphics.Blit(hdr, ldr);
+                var active = RenderTexture.active; RenderTexture.active = ldr;
+                pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply(); RenderTexture.active = active;
+                File.WriteAllBytes(Path.Combine(root, view, $"{index:D5}.jpg"), pixels.EncodeToJPG(92));
+            }
+            // A front three-quarter on a caster: her face, her reaching arm and the thread leaving it.
+            void FrontThreeQuarter(CharacterMotor who, Vector3 target)
+            {
+                var fwd = target - who.transform.position; fwd.y = 0f; fwd = fwd.sqrMagnitude > .01f ? fwd.normalized : Vector3.forward;
+                var right = Vector3.Cross(Vector3.up, fwd);
+                shoulder.transform.position = who.transform.position + fwd * 2.4f - right * 2.6f + Vector3.up * 1.7f;
+                shoulder.transform.LookAt(who.transform.position + Vector3.up * 1.0f + fwd * 1.4f);
+            }
+            int previousRate = Time.captureFramerate;
+            Time.captureFramerate = 30;
+            int frame = 0;
+            var cues = new StringBuilder().AppendLine("seconds,cue,pitch,gain");
+            Action<string, Vector3, float, float> heard = (id, at, pitch, gain) =>
+                cues.AppendLine(FormattableString.Invariant($"{frame / 30.0:F3},{Audio.AudioCues.FileStemFor(id)},{pitch:F3},{gain:F3}"));
+            AudioDirector.WorldCuePlayed += heard;
+            bool moved = false, reached = false, drained = false, snapped = false, hexed = false, stowed = false;
+            try
+            {
+                const int frames = (int)(30 * 15.0f);
+                for (int f = 0; f < frames; f++)
+                {
+                    frame = f;
+                    float t = f / 30f;
+                    // TELEPORT, down the lane.
+                    if (t < 2.0f) { her.Intent.AimPoint = start + new Vector3(0f, 0f, 5f); FaceTo(her, start + new Vector3(0f, 0f, 8f)); }
+                    her.Intent.Set(Verb.Skill1, t > .4f && t < 1.3f);
+                    // DRAIN: the victim straight ahead of her own view, 5 m.
+                    if (f == 60)
+                    {
+                        var ahead = her.transform.forward; ahead.y = 0f; ahead = ahead.sqrMagnitude > .01f ? ahead.normalized : Vector3.forward;
+                        victim.Teleport(her.transform.position + ahead * 5.0f);
+                        FaceTo(victim, her.transform.position);
+                    }
+                    if (t >= 2.0f && t < 6.5f) FaceTo(her, victim.transform.position);
+                    her.Intent.Set(Verb.Skill2, t > 2.3f && t < 2.4f);
+                    // THE SNAP: the fourth seat, a Phaister, reaches for the victim alone (v12 staged it with the taya in her cone,
+                    // and nearest-her-facing rightly took the taya), then turns her back on them at 7.4: the thread snaps.
+                    if (f == 190)
+                    {
+                        victim.Teleport(can + new Vector3(5f, .12f, -8f));
+                        other.Teleport(can + new Vector3(1f, .12f, -10f)); other.Intent.Parked = false;
+                    }
+                    if (t >= 6.3f && t < 7.4f) FaceTo(other, victim.transform.position);
+                    else if (t >= 7.4f && t < 8.2f) FaceTo(other, other.transform.position * 2f - victim.transform.position);
+                    other.Intent.Set(Verb.Skill2, t > 6.6f && t < 6.7f);
+                    // HEX: the taya Phaister, the victim 4.5 m in front of her.
+                    if (f == 246) { victim.Teleport(witch.transform.position + new Vector3(0.6f, 0f, -4.5f)); FaceTo(victim, witch.transform.position); }
+                    if (t >= 8.2f) FaceTo(witch, victim.transform.position);
+                    witch.Intent.Set(Verb.Skill2, (t > 8.6f && t < 8.7f) || (t > 12.4f && t < 12.5f));
+                    if (f == 330 && victim.VoodooMark == VoodooMarkKind.Hex) AgeMark(victim, VoodooRules.HexArmSeconds - 0.6f);
+                    yield return null;
+                    moved |= Vector3.Distance(Flat(her.transform.position), Flat(start)) > 1.8f;
+                    reached |= her.IsVoodooReaching;
+                    stowed |= her.StowsCarriedSlipper && her.HoldingSlipper;
+                    drained |= victim.IsDrained;
+                    snapped |= t > 7.4f && t < 8.2f && !other.IsVoodooReaching && victim.VoodooMarkSource != other.PlayerSlot
+                               && !other.VoodooReachSucceeded;
+                    hexed |= victim.IsHexed;
+
+                    // Cameras per beat.
+                    if (t < 2.0f) { wide.transform.position = start + new Vector3(5.5f, 2.2f, 2.5f); wide.transform.LookAt(start + new Vector3(0f, 0.9f, 2.5f)); }
+                    else if (t < 6.5f)
+                    {
+                        Vector3 mid = (her.transform.position + victim.transform.position) * 0.5f;
+                        var line = victim.transform.position - her.transform.position; line.y = 0f; line.Normalize();
+                        var side = Vector3.Cross(Vector3.up, line);
+                        wide.transform.position = mid + side * 6.0f + Vector3.up * 2.4f - line * 1.0f;
+                        wide.transform.LookAt(mid + Vector3.up * 0.9f);
+                    }
+                    else if (t < 8.2f)
+                    {
+                        Vector3 mid = (other.transform.position + victim.transform.position) * 0.5f;
+                        wide.transform.position = mid + new Vector3(1.5f, 3.2f, -7.5f); wide.transform.LookAt(mid + Vector3.up * 0.9f);
+                    }
+                    else
+                    {
+                        Vector3 mid = (witch.transform.position + victim.transform.position) * 0.5f;
+                        var line = victim.transform.position - witch.transform.position; line.y = 0f; line.Normalize();
+                        var side = Vector3.Cross(Vector3.up, line);
+                        wide.transform.position = mid - side * 5.5f + Vector3.up * 2.6f; wide.transform.LookAt(mid + Vector3.up * 1.2f);
+                    }
+                    if (t < 6.5f && Camera.main != null) Shoot(Camera.main, "owner", f);
+                    else
+                    {
+                        if (t < 8.2f) FrontThreeQuarter(other, victim.transform.position);
+                        else FrontThreeQuarter(witch, victim.transform.position);
+                        Shoot(shoulder, "owner", f);
+                    }
+                    Shoot(wide, "wide", f);
+                }
+            }
+            finally
+            {
+                AudioDirector.WorldCuePlayed -= heard;
+                File.WriteAllText(Path.Combine(root, "cues.csv"), cues.ToString());
+                Time.captureFramerate = previousRate;
+                Object.Destroy(wide.gameObject); Object.Destroy(shoulder.gameObject);
+                hdr.Release(); ldr.Release();
+            }
+            File.WriteAllText(Path.Combine(root, "claims.csv"), FormattableString.Invariant(
+                $"moved,{moved}\nreached,{reached}\nslipper_at_belt,{stowed}\ndrained,{drained}\nsnapped,{snapped}\nhexed,{hexed}\n"));
+            Assert.IsTrue(moved, "TELEPORT did not carry her.");
+            Assert.IsTrue(reached, "DRAIN never started a reach.");
+            Assert.IsTrue(drained, "DRAIN never drained its target.");
+            Assert.IsTrue(snapped, "The second Phaister's reach never snapped.");
+            Assert.IsTrue(hexed, "HEX's recast never hexed its target.");
+        }
+
+        /// <summary>
+        /// ⚠️ HER CURSES ON THE VICTIM'S OWN SCREEN (HERO-10 v3, the owner's third view). The local seat is the victim:
+        ///   0.5          an attacking Phaister reaches for them with DRAIN (the thread coming at them from her hand, 2 s), the
+        ///                mark, their stamina arc shaking as she wrings, then DRAINED: the arc pinned, two pins stamped over it.
+        ///   5.5          the taya Phaister reaches with HEX (the thread to their eyes), the fuse jumped at 8.0, her recast at 9.0:
+        ///                HEXED, phantom slippers on their screen among the real ones (no shadow), for 7.5 s.
+        /// Views: `victim/` their screen, `wide/` the court. Runs only with TUMP_PHAISTER_FILM=1.
+        /// </summary>
+        [UnityTest, Timeout(600000)]
+        public IEnumerator FilmHerVoodooOnAVictimsScreen()
+        {
+            if (Environment.GetEnvironmentVariable("TUMP_PHAISTER_FILM") != "1") Assert.Ignore("Film only: set TUMP_PHAISTER_FILM=1.");
+            string tag = Environment.GetEnvironmentVariable("TUMP_PHAISTER_TAG") ?? "v1";
+            string root = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs", "phaister-voodoo-victim-film-" + tag);
+            foreach (string view in new[] { "victim", "wide" }) Directory.CreateDirectory(Path.Combine(root, view));
+            var round = GameServices.Round;
+            var can = Flat(round.Lata.transform.position);
+            var me = round.PlayerAt(GameLaunch.SoloSeat);
+            Assert.IsFalse(me.IsDefender, "The film expects the local seat to attack.");
+            int drainerSeat = -1, tayaSeat = -1;
+            foreach (var p in round.Players)
+            {
+                if (p.IsDefender) tayaSeat = p.PlayerSlot;
+                else if (p != me && drainerSeat < 0) drainerSeat = p.PlayerSlot;
+            }
+            var mine = can + new Vector3(1.5f, .12f, -5.5f);
+            me.Teleport(mine); me.Intent.Parked = true;
+            // v12 left this seat a bot, so the phantom slippers (the local human's alone) never drew.
+            me.IsBot = false;
+            var drainer = Phaister(drainerSeat, mine + new Vector3(-1.0f, 0f, -5.0f));
+            var witch = Phaister(tayaSeat, can + new Vector3(-1.5f, .12f, -1.5f));
+            witch.Intent.Parked = false;
+            foreach (var p in round.Players)
+                if (p != me && p != drainer && p != witch) p.Teleport(can + new Vector3(8f, .12f, 6f));
+
+            Camera Make(string name, float fov)
+            {
+                var c = new GameObject(name).AddComponent<Camera>();
+                c.CopyFrom(Camera.main); c.enabled = false; c.tag = "Untagged"; c.fieldOfView = fov; c.cullingMask &= ~(1 << 5);
+                c.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+                return c;
+            }
+            var wide = Make("VoodooVictimWide", 52);
+            var hdr = new RenderTexture(1280, 720, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
+            var ldr = new RenderTexture(1280, 720, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
+            // ⚠️ THE HUD IS IN THE VICTIM'S FRAME (DRAINED's pins live on the stamina arc): overlay canvases are composited after
+            // the camera and never reach a camera render, so for the film they are moved onto a UI camera drawn over each frame
+            // (`GameplayShots`' way) and put back after.
+            // ⚠️ v13 found the HUD's canvases on the Default layer, not UI: the camera draws whatever layers they are on, from far
+            // below the court so nothing of the world is inside its 10 m.
+            var uiCam = new GameObject("VoodooVictimUi").AddComponent<Camera>();
+            uiCam.transform.position = new Vector3(0f, -500f, 0f);
+            uiCam.enabled = false; uiCam.clearFlags = CameraClearFlags.Depth; uiCam.cullingMask = 0;
+            uiCam.nearClipPlane = 0.01f; uiCam.farClipPlane = 10f; uiCam.targetTexture = ldr;
+            var flipped = new System.Collections.Generic.List<(Canvas canvas, Camera camera, float plane)>();
+            foreach (var canvas in Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None))
+                if (canvas != null && canvas.isRootCanvas && canvas.renderMode == RenderMode.ScreenSpaceOverlay && canvas.gameObject.activeInHierarchy)
+                {
+                    flipped.Add((canvas, canvas.worldCamera, canvas.planeDistance));
+                    canvas.renderMode = RenderMode.ScreenSpaceCamera; canvas.worldCamera = uiCam; canvas.planeDistance = 1f;
+                    uiCam.cullingMask |= 1 << canvas.gameObject.layer;
+                }
+            File.WriteAllText(Path.Combine(root, "hud.txt"), "canvases drawn over the victim's view: " + flipped.Count + Environment.NewLine);
+            yield return null;
+            yield return null;
+            void Shoot(Camera c, string view, int index, bool hud = false)
+            {
+                PaeteKitPlayProbe.RenderFilmView(c, hdr);
+                Graphics.Blit(hdr, ldr);
+                if (hud) { Canvas.ForceUpdateCanvases(); uiCam.Render(); }
+                var active = RenderTexture.active; RenderTexture.active = ldr;
+                pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply(); RenderTexture.active = active;
+                File.WriteAllBytes(Path.Combine(root, view, $"{index:D5}.jpg"), pixels.EncodeToJPG(92));
+            }
+            int previousRate = Time.captureFramerate;
+            Time.captureFramerate = 30;
+            int frame = 0;
+            var cues = new StringBuilder().AppendLine("seconds,cue,pitch,gain");
+            Action<string, Vector3, float, float> heard = (id, at, pitch, gain) =>
+                cues.AppendLine(FormattableString.Invariant($"{frame / 30.0:F3},{Audio.AudioCues.FileStemFor(id)},{pitch:F3},{gain:F3}"));
+            AudioDirector.WorldCuePlayed += heard;
+            bool drained = false, hexed = false, phantoms = false;
+            try
+            {
+                const int frames = 30 * 17;
+                for (int f = 0; f < frames; f++)
+                {
+                    frame = f;
+                    float t = f / 30f;
+                    var caster = t < 5.0f ? drainer : witch;
+                    FaceTo(me, caster.transform.position);
+                    if (t < 5.0f) FaceTo(drainer, me.transform.position);
+                    drainer.Intent.Set(Verb.Skill2, t > 0.5f && t < 0.6f);
+                    if (t >= 5.0f) FaceTo(witch, me.transform.position);
+                    if (f == 150) me.Teleport(witch.transform.position + new Vector3(0.8f, 0f, -4.6f));
+                    witch.Intent.Set(Verb.Skill2, (t > 5.5f && t < 5.6f) || (t > 9.0f && t < 9.1f));
+                    if (f == 240 && me.VoodooMark == VoodooMarkKind.Hex) AgeMark(me, VoodooRules.HexArmSeconds - 0.5f);
+                    yield return null;
+                    drained |= me.IsDrained;
+                    hexed |= me.IsHexed;
+                    phantoms |= GameObject.Find("~HexedPhantomSlippers") != null && GameObject.Find("phantom-slipper") != null;
+                    if (Camera.main != null) Shoot(Camera.main, "victim", f, hud: true);
+                    Vector3 mid = (me.transform.position + caster.transform.position) * 0.5f;
+                    wide.transform.position = mid + new Vector3(6.5f, 3.6f, -2.0f);
+                    wide.transform.LookAt(mid + Vector3.up * 1.0f);
+                    Shoot(wide, "wide", f);
+                }
+            }
+            finally
+            {
+                AudioDirector.WorldCuePlayed -= heard;
+                File.WriteAllText(Path.Combine(root, "cues.csv"), cues.ToString());
+                Time.captureFramerate = previousRate;
+                foreach (var (canvas, camera, plane) in flipped)
+                    if (canvas != null) { canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.worldCamera = camera; canvas.planeDistance = plane; }
+                Object.Destroy(uiCam.gameObject);
+                Object.Destroy(wide.gameObject);
+                hdr.Release(); ldr.Release();
+            }
+            File.WriteAllText(Path.Combine(root, "claims.csv"), FormattableString.Invariant($"drained,{drained}\nhexed,{hexed}\nphantoms,{phantoms}\n"));
+            Assert.IsTrue(drained, "DRAIN never drained the local player.");
+            Assert.IsTrue(hexed, "HEX never hexed the local player.");
+            Assert.IsTrue(phantoms, "HEXED showed no phantom slippers on the victim's screen.");
+        }
     }
 }

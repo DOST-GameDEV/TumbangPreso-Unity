@@ -39,6 +39,8 @@ namespace TumbangPreso.UI
         private HudRing _staminaArc;
         private CanvasGroup _staminaGroup;
         private float _staminaAlpha;
+        private RectTransform _staminaRoot, _drainPins;
+        private float _drainPinsAge = -1.0f;
         private HudCard _promptPlate;
 
         /// <summary>Fits the prompt pill to the words it carries; hidden when there are none.</summary>
@@ -176,6 +178,38 @@ namespace TumbangPreso.UI
             _staminaArc.FillFromEnd = true;
             _staminaArc.Track = new Color(0, 0, 0, .42f); _staminaArc.color = CourtPresentationPalette.Gold;
             _staminaArc.raycastTarget = false;
+            _staminaRoot = root;
+            BuildDrainPins(root);
+        }
+
+        /// <summary>
+        /// ⚠️ DRAINED, ON THE VICTIM'S OWN ARC (HERO-10 v3, plan 9.5: *"the bar pinches in the middle like a twisted cloth and
+        /// empties at once; two crossed pins stamp over it"*, then *"the pinned bar; no sprint"* until *"the pins pop out and the
+        /// bar starts refilling"*). Two pins, gold shafts and crimson heads, crossed over the middle of the arc beside the
+        /// reticle, stamped in when DRAINED lands and popped out when it ends. Outlined black like every in-match mark.
+        /// </summary>
+        private void BuildDrainPins(RectTransform arc)
+        {
+            _drainPins = OwnerUiLayout.Rect(arc, "DrainedPins");
+            Pin(_drainPins, new Vector2(.5f, .5f), new Vector2(60, 0), new Vector2(44, 44));
+            DrainPin(_drainPins, "PinA", 38f);
+            DrainPin(_drainPins, "PinB", -38f);
+            _drainPins.gameObject.SetActive(false);
+        }
+
+        private static void DrainPin(RectTransform parent, string name, float degrees)
+        {
+            var pin = OwnerUiLayout.Rect(parent, name);
+            Pin(pin, new Vector2(.5f, .5f), Vector2.zero, new Vector2(44, 44));
+            pin.localRotation = Quaternion.Euler(0, 0, degrees);
+            var shaft = OwnerUiLayout.Rect(pin, "Shaft").gameObject.AddComponent<Image>();
+            Pin(shaft.rectTransform, new Vector2(.5f, .5f), new Vector2(0, -3), new Vector2(4, 36));
+            shaft.color = CourtPresentationPalette.Gold; shaft.raycastTarget = false;
+            shaft.gameObject.AddComponent<Outline>().effectColor = UiTheme.InGameOutline;
+            var head = OwnerUiLayout.Rect(pin, "Head").gameObject.AddComponent<Image>();
+            Pin(head.rectTransform, new Vector2(.5f, .5f), new Vector2(0, 17), new Vector2(10, 10));
+            head.color = new Color(.86f, .14f, .24f, 1f); head.raycastTarget = false;
+            head.gameObject.AddComponent<Outline>().effectColor = UiTheme.InGameOutline;
         }
 
         private void MatchBarClock(MatchDirector match, RoundDirector round, int time)
@@ -221,18 +255,44 @@ namespace TumbangPreso.UI
         private void StaminaArc(CharacterMotor local)
         {
             if (_staminaArc == null) return;
-            bool want = false;
+            bool want = false, drained = false, wringing = false;
             if (local != null && local.Stamina != null)
             {
                 float ratio = Mathf.Clamp01(local.Stamina.Ratio);
                 bool fatigued = local.Stamina.IsFatigued;
-                want = ratio < .995f || fatigued;
+                drained = local.IsDrained;
+                // HERO-10 v3: Phaister's DRAIN mark is on them and wringing (plan 9.5: *"their stamina bar shakes ... spend it now"*).
+                wringing = local.VoodooMark == VoodooMarkKind.Drain;
+                want = ratio < .995f || fatigued || drained || wringing;
                 _staminaArc.Set(ratio);
-                _staminaArc.Paint(fatigued ? OwnerUiTheme.Current.Orange : CourtPresentationPalette.Gold, new Color(0, 0, 0, .42f));
+                var fill = drained ? new Color(.62f, .30f, .34f, 1f) : fatigued ? OwnerUiTheme.Current.Orange : CourtPresentationPalette.Gold;
+                _staminaArc.Paint(fill, drained ? new Color(.30f, .04f, .08f, .55f) : new Color(0, 0, 0, .42f));
             }
             float dt = Time.unscaledDeltaTime;
+            StepDrainPins(drained, wringing, local, dt);
             _staminaAlpha = Mathf.MoveTowards(_staminaAlpha, want ? 1 : 0, dt / (want ? .15f : .4f));
             _staminaGroup.alpha = _staminaAlpha;
+        }
+
+        /// <summary>The pins stamp in (big to size in 0.12 s) when DRAINED lands, pop out when it ends; the arc shakes while wrung.</summary>
+        private void StepDrainPins(bool drained, bool wringing, CharacterMotor local, float dt)
+        {
+            if (_drainPins == null || _staminaRoot == null) return;
+            if (drained && _drainPinsAge < 0.0f) _drainPinsAge = 0.0f;
+            if (!drained && _drainPinsAge >= 0.0f) _drainPinsAge = -1.0f;
+            bool show = _drainPinsAge >= 0.0f;
+            if (_drainPins.gameObject.activeSelf != show) _drainPins.gameObject.SetActive(show);
+            if (show)
+            {
+                _drainPinsAge += dt;
+                float stamp = Mathf.Clamp01(_drainPinsAge / .12f);
+                _drainPins.localScale = Vector3.one * Mathf.Lerp(1.8f, 1.0f, stamp * stamp);
+            }
+            // The shake speeds up as the wring tightens toward the drain.
+            float tighten = wringing && local != null ? Mathf.Clamp01(local.VoodooMarkAge / VoodooRules.DrainDelaySeconds) : 0.0f;
+            Vector2 shake = wringing ? new Vector2(Mathf.Sin(Time.unscaledTime * (40f + 50f * tighten)), Mathf.Sin(Time.unscaledTime * 53f))
+                                       * (1.5f + 2.5f * tighten) : Vector2.zero;
+            _staminaArc.rectTransform.anchoredPosition = shake;
         }
     }
 }

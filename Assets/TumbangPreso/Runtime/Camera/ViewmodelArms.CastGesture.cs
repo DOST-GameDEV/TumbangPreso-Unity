@@ -187,11 +187,11 @@ namespace TumbangPreso.CameraSystem
             // palm out at chest height, the left brings the doll into the lower left; it ENDS on the hold (key 1), which stays for
             // as long as she reaches (`HeldCastPaths`). HEX: the same dip, then higher, the doll up by her left eye.
             { "reach-drain", new CastPath(.14f, false,
-                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .04f, .00f), K(.14f, .02f, .10f, .22f, -.04f, .22f, .06f),
-                K(.40f, .02f, .10f, .22f, -.04f, .22f, .06f)) },
+                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .04f, .00f), K(.14f, -.05f, .22f, .26f, -.04f, .24f, .06f),
+                K(.40f, -.05f, .22f, .26f, -.04f, .24f, .06f)) },
             { "reach-hex", new CastPath(.14f, false,
-                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .06f, .00f), K(.14f, .00f, .18f, .20f, -.10f, .34f, .04f),
-                K(.40f, .00f, .18f, .20f, -.10f, .34f, .04f)) },
+                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .06f, .00f), K(.14f, -.06f, .32f, .22f, -.12f, .36f, .04f),
+                K(.40f, -.06f, .32f, .22f, -.12f, .36f, .04f)) },
             // HEX's recast: the doll up before her eyes, the pin raised high on the right, stabbed down and across into it.
             { "hex-stab", new CastPath(.22f, false,
                 Rest(0), K(.10f, .06f, .34f, .06f, -.06f, .30f, .10f), K(.22f, -.04f, .22f, .14f, -.06f, .30f, .10f),

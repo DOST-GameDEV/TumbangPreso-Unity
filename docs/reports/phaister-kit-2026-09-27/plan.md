@@ -305,6 +305,7 @@ applied by this one; recorded in `docs/TODO.md` HERO-10. The owner will send eac
 | The doll's network side | *"You build it all"* | its own contract in `SKILL_NETWORK_CONTRACT.md` |
 | The doll's body | *"create a new model for the voodoo i guess"* | 9.10, `tools/build_phaister_doll_voxel.py` |
 | The slipper during a skill | *"think abt where slipper goes when u use skill and make it so that u can use right hand when doing skills"* | 9.4 |
+| The doll while she ATTACKS (asked 2026-09-28: assist without a slipper, its own slipper, or defend only) | **"Own slipper, throws"** | a true fifth player with its own fifth slipper, its knockdowns paid to her; 9.12 |
 
 ### 9.3 The idea, the look, and how a cast talks
 
@@ -494,3 +495,22 @@ the table of what was taken and what changed colour.
 | Teleport range | 2.0 to 5.5 m | today's, kept |
 | Doll body | PAETE'S SIZE (owner: *"make like paete size"*), a player's rules; a tag stuns it 5 s; no skills | the Astig bot plays it like a player |
 | Doll speed | 0.65 of a player's walk and run (`VoodooRules.DollSpeedScale`, set on the body as `CharacterMotor.BodySpeedScale`; proposed number, the rule is the owner's: *"big fat voodoo doll that's kinda sllow(to balance it)"*, *"make him look sluggish and its okay if he's slower than others"*) | a Hard AI that never tires would otherwise out-run the round; and at a player's speed its short legs could only skate (film v3 "looks liek he is floating") |
+
+### 9.12 The doll as a fifth body: how it is built (2026-09-28)
+
+The owner chose the full version (9.2): when she attacks, the doll is a real attacker with its OWN slipper, which it throws at the
+can; when she defends, it defends. The game has four seats everywhere (slippers by seat of origin, poses by seat, holders by seat),
+so the doll gets a seat of its own rather than borrowing hers: a COMPANION SEAT, `PlayerCount + her seat` (4 to 7). One number then
+means one body on every peer, in every message that already names a body by seat: its pose, its slipper (seat of origin and
+holder), its throws and lunges. Nemu's KURO PLAYS is the same kind of body and will use the same seats.
+
+| Rule | How |
+|---|---|
+| Its points are hers (*"The doll gives points gained to Phaister"*) | `MatchDirector.AddScore` maps a companion seat to its owner (`Core` `CompanionSeats.OwnerOf`), so a knockdown by its slipper and a tag by its lunge score for her through the paths that already exist |
+| Tagging it pays nobody (*"The doll does not give points when tagged/sabotaged"*) | the tag stuns it 5 s where it stands (no respawn), no score, no sabotage credit; a grey stitched X over it (9.7) |
+| Hard AI (*"The doll is a Hard AI"*) | an `AIController` at Astig on the host; no skills |
+| Its side | her role for the round (`IsDefender` copied from her); as the taya it guards and tags with her, confined like her |
+| Its slipper | a fifth slipper, seat of origin and owner = the doll's seat, armed into its hand when it attacks, parked when it defends |
+| Lifetime | spawned by her ultimate beside her, removed with its slipper at the round's end, the match's end, or if she leaves |
+| Slow | `VoodooRules.DollSpeedScale` 0.65 on the body; its own dead, dragged gait (`GaitStyles.PhaisterDoll`) |
+| Network | host-owned; a spawn and a despawn message scoped to match and round; its pose, slipper and actions ride the existing seat-keyed messages with companion seats admitted; a rejoiner is sent live companions; protocol bumped. The contract is `docs/SKILL_NETWORK_CONTRACT.md` "Companion bodies" |

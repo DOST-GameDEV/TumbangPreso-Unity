@@ -98,3 +98,15 @@ maelstrom already turning (the cast's butterflies start on their orbits, not out
 
 **Length.** 5.0 s (was 4.0; the owner: *"try with shorter first like 3-5 seconds, we adjust if needed"*). Protocol 62: every peer
 derives the shared phase's length from these tables.
+
+## 4. v3, the voodoo kit in a match: films v12 to v14 (2026-09-28)
+
+`PhaisterKitPlayProbe.FilmHerVoodooKitInAMatch` (her screen, then over the caster's shoulder; the court) and
+`FilmHerVoodooOnAVictimsScreen` (the victim's own screen with the HUD; the court). Videos `Logs/phaister-share/`
+`phaister_voodoo_kit_v14.mp4` and `phaister_voodoo_victim_v14.mp4`, sent 2026-09-28. The owner's verdict is owed.
+
+| Film | What the frames showed | What changed |
+|---|---|---|
+| v12 | the thread reads across the court (crimson and violet cords with crawling stitches); her reach barely reads on her small arms and the trunk turned the WRONG way for a right-hand reach; on her screen the hand stayed low and the thread came from below the lens; the marks over the victim were too small to see; the thread to a victim's own eyes stood as a column through their lens; the HEXED flair put dizzy stars and a word block in the victim's lens; the HUD was not in the victim's frames; the staged snap reached the taya (the nearest-her-facing rule was right, the staging wrong) | the trunk turns so the reaching shoulder leads, she leans back and braces; her first-person hand rises into view and the thread leaves it; a victim's own screen sees the thread arrive below the middle of their view; the knot and the button twice the size; the HEXED flair dropped for a stitched band across the eyes seen by everyone else; the HUD composited into the victim film; the snap staged with the victim alone in her cone |
+| v13 | DRAIN reads: the lean, the cord, the knot over them, the wring; the snap frays and falls back; the phantoms lie among the real slippers; HEX's arm, raised to head height, is hidden behind her head and hair from every side; the HUD canvases were on the Default layer and the film's UI camera culled them | HEX reaches OUT and a little up with the elbow wide, the doll in front of her chest; the UI camera draws whatever layer each canvas is on |
+| v14 | the victim's HUD shows the DRAINED card and the crossed pins beside the reticle; HEX's arm still reads weakly on this rig (the head is most of the silhouette): the violet cord and the button carry the read | sent for the owner's eye |

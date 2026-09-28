@@ -57,16 +57,16 @@ namespace TumbangPreso.CameraSystem
         private static readonly Key[] ReachDrainClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
-            new Key(0.140f, 0.450f, 0.120f, 0.050f, 0.200f, -0.100f, 0.100f, true),
-            new Key(0.400f, 0.450f, 0.120f, 0.050f, 0.200f, -0.100f, 0.100f),
+            new Key(0.140f, 0.850f, 0.160f, 0.100f, 0.250f, -0.100f, 0.100f, true),
+            new Key(0.400f, 0.850f, 0.160f, 0.100f, 0.250f, -0.100f, 0.100f),
         };
 
         /// <summary>CURSE: HEX's lock and hold: the palm out high, at their head, the doll up by her left eye.</summary>
         private static readonly Key[] ReachHexClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
-            new Key(0.140f, 0.620f, 0.080f, 0.000f, 0.700f, -0.200f, -0.200f, true),
-            new Key(0.400f, 0.620f, 0.080f, 0.000f, 0.700f, -0.200f, -0.200f),
+            new Key(0.140f, 1.050f, 0.100f, 0.000f, 0.750f, -0.200f, -0.200f, true),
+            new Key(0.400f, 1.050f, 0.100f, 0.000f, 0.750f, -0.200f, -0.200f),
         };
 
         /// <summary>CURSE: HEX's recast: the doll yanked up before her eyes, the pin raised, stabbed across into its eye, twisted.</summary>

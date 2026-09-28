@@ -59,6 +59,27 @@ namespace TumbangPreso.CameraSystem
         public Transform RightHandForProps() => _rightArm;
 
         /// <summary>
+        /// Where the first-person RIGHT palm is in the world, measured off the arm mesh like <see cref="LeftPalmOffset"/> (HERO-10 v3:
+        /// on her own screen Phaister's soul thread leaves the hand she sees, not her hidden body's hand below the lens).
+        /// </summary>
+        public bool TryRightPalmWorld(out Vector3 palm)
+        {
+            palm = Vector3.zero;
+            if (_rightArm == null || _rightArmRenderer == null) return false;
+            var filter = _rightArmRenderer.GetComponent<MeshFilter>();
+            if (filter == null || filter.sharedMesh == null) return false;
+            var b = filter.sharedMesh.bounds;
+            Vector3 size = b.size;
+            int axis = size.x > size.y ? (size.x > size.z ? 0 : 2) : (size.y > size.z ? 1 : 2);
+            Vector3 low = b.center, high = b.center;
+            low[axis] = b.min[axis] + size[axis] * 0.08f;
+            high[axis] = b.max[axis] - size[axis] * 0.08f;
+            Vector3 a = _rightArmRenderer.transform.TransformPoint(low), c = _rightArmRenderer.transform.TransformPoint(high);
+            palm = (a - _rightArm.position).sqrMagnitude > (c - _rightArm.position).sqrMagnitude ? a : c;
+            return true;
+        }
+
+        /// <summary>
         /// Where the palm is in <see cref="LeftHandForProps"/>'s space: the far end of the arm mesh along its longest axis,
         /// the end farther from the pivot. MEASURED from the mesh rather than typed, the lesson `CharacterVisual.PalmCentre`
         /// records (eight guessed hand offsets, eight wrong places).
