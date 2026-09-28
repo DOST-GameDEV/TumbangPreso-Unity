@@ -306,6 +306,7 @@ applied by this one; recorded in `docs/TODO.md` HERO-10. The owner will send eac
 | The doll's body | *"create a new model for the voodoo i guess"* | 9.10, `tools/build_phaister_doll_voxel.py` |
 | The slipper during a skill | *"think abt where slipper goes when u use skill and make it so that u can use right hand when doing skills"* | 9.4 |
 | The doll while she ATTACKS (asked 2026-09-28: assist without a slipper, its own slipper, or defend only) | **"Own slipper, throws"** | a true fifth player with its own fifth slipper, its knockdowns paid to her; 9.12 |
+| The cutscene pitch 9.8 (SEW / GROW / WAKE: THE THREAD, THE STITCH, THE LIFT, THE WAKE), asked 2026-09-28 | **"her ult is supposed to be like its own character i approve everything except for any part where she ends up dead and controls the vooodoo"** | APPROVED as pitched. Standing rule: the doll is its own character (its own AI); she never dies, faints or possesses it, in the cutscene or in play |
 
 ### 9.3 The idea, the look, and how a cast talks
 

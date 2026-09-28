@@ -33,6 +33,11 @@ namespace TumbangPreso.Visual
         private const float ChestHeight = 0.62f, EyeHeight = 1.38f, ChestFront = 0.40f, FaceFront = 0.75f;
 
         private const int Points = 26;
+
+        /// <summary>The thread's width along it: even, or narrowing into a victim's own lens (their chest below it, their eyes).</summary>
+        private static readonly AnimationCurve Even = AnimationCurve.Constant(0f, 1f, 1f);
+        private static readonly AnimationCurve IntoChest = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(0.7f, 0.8f), new Keyframe(1f, 0.3f));
+        private static readonly AnimationCurve IntoEyes = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(0.75f, 0.7f), new Keyframe(1f, 0.3f));
         private const float WhipSeconds = 0.12f, ZipSeconds = 0.16f, FraySeconds = 0.32f, PierceSeconds = 0.5f;
 
         private CharacterMotor _body;
@@ -167,6 +172,10 @@ namespace TumbangPreso.Visual
             _thread.SetPositions(_points);
             float width = Mathf.Lerp(0.07f, 0.11f, tight);
             _thread.widthMultiplier = width;
+            // Into the victim's own lens it narrows, or its last half metre would fill their screen.
+            var victimBody = round != null ? round.PlayerAt(_target) : null;
+            bool intoLens = victimBody != null && FirstPersonArms(victimBody) != null;
+            _thread.widthCurve = intoLens ? (_kind == VoodooMarkKind.Drain ? IntoChest : IntoEyes) : Even;
             Paint(_thread, hue, alpha, tight, stitches: 1.0f);
             _thread.enabled = true;
 
@@ -197,6 +206,9 @@ namespace TumbangPreso.Visual
         /// <summary>The small X the thread pierces them with, stitched where it landed; it fades in half a second.</summary>
         private void StepPierce(float dt, Color hue, float alpha)
         {
+            // On the victim's own screen the pierce is at their lens (or below it): its X would cover their view.
+            var victim = GameServices.Round != null && _target >= 0 ? GameServices.Round.PlayerAt(_target) : null;
+            if (victim != null && FirstPersonArms(victim) != null) { SetEnabled(_pierceA, false); SetEnabled(_pierceB, false); return; }
             if (_pierceAge < 0.0f) { SetEnabled(_pierceA, false); SetEnabled(_pierceB, false); return; }
             _pierceAge += dt;
             float u = Mathf.Clamp01(_pierceAge / PierceSeconds);
@@ -237,15 +249,19 @@ namespace TumbangPreso.Visual
 
         /// <summary>
         /// Where the thread goes into them: the chest (DRAIN) or the eyes (HEX), on their side facing her. ⚠️ On the VICTIM'S OWN
-        /// screen their eyes are the lens, so a thread to them would stand as a column through the frame (film v12); there it
-        /// arrives just below the middle of their view, low for DRAIN and higher for HEX, so they watch it come at them.
+        /// screen their body is hidden and their eyes are the lens. Film v12 ran it to the lens and it stood as a column through
+        /// the frame; v14 stopped it in the air in front of them and the owner saw a thread that *"doesnt even connect to the
+        /// character"*. So it runs INTO them, off the bottom of their screen: DRAIN low and wide into their chest, HEX higher and
+        /// tighter under their eyes (v15 aimed HEX into the middle of their view, and a thread coming straight down the line of
+        /// sight is a dot). `IntoChest` and `IntoEyes` taper it so its last half metre does not fill their screen.
         /// </summary>
         private static Vector3 Pierce(CharacterMotor victim, VoodooMarkKind kind, Vector3 from)
         {
             var view = Camera.main;
             if (view != null && FirstPersonArms(victim) != null)
-                return view.transform.position + view.transform.forward * 0.8f
-                       - view.transform.up * (kind == VoodooMarkKind.Drain ? 0.42f : 0.2f);
+                return kind == VoodooMarkKind.Drain
+                    ? view.transform.position + view.transform.forward * 0.45f - view.transform.up * 0.85f
+                    : view.transform.position + view.transform.forward * 0.35f - view.transform.up * 0.34f;
             Vector3 toward = from - victim.transform.position; toward.y = 0.0f;
             toward = toward.sqrMagnitude > 0.01f ? toward.normalized : victim.transform.forward;
             return victim.transform.position + Vector3.up * (kind == VoodooMarkKind.Drain ? ChestHeight : EyeHeight)
