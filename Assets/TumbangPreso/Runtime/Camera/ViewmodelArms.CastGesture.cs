@@ -189,11 +189,11 @@ namespace TumbangPreso.CameraSystem
             // view, at them (`VoodooSoulDraw` sets `HoldingProp`, which already lifts it by (.10, .30, .08)), and their soul streams
             // into it. DRAIN holds it at chest height; HEX raises it.
             { "reach-drain", new CastPath(.14f, false,
-                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .04f, .00f), K(.14f, -.02f, .12f, .24f, .06f, .04f, .22f),
-                K(.40f, -.02f, .12f, .24f, .06f, .04f, .22f)) },
+                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .04f, .00f), K(.14f, -.02f, .12f, .24f, .08f, .14f, .22f),
+                K(.40f, -.02f, .12f, .24f, .08f, .14f, .22f)) },
             { "reach-hex", new CastPath(.14f, false,
-                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .06f, .00f), K(.14f, -.04f, .18f, .22f, .04f, .16f, .20f),
-                K(.40f, -.04f, .18f, .22f, .04f, .16f, .20f)) },
+                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .06f, .00f), K(.14f, -.04f, .18f, .22f, .06f, .24f, .20f),
+                K(.40f, -.04f, .18f, .22f, .06f, .24f, .20f)) },
             // HEX's recast: the doll up before her eyes, the pin raised high on the right, stabbed down and across into it.
             { "hex-stab", new CastPath(.22f, false,
                 Rest(0), K(.10f, .06f, .34f, .06f, -.06f, .30f, .10f), K(.22f, -.04f, .22f, .14f, -.06f, .30f, .10f),

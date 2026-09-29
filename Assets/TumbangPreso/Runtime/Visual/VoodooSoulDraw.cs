@@ -6,82 +6,110 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// ⚠️⚠️ THE REACH IS A SOUL BEING SUCKED INTO HER DOLL, NOT A CORD (HERO-10 v3, 2026-09-29). The owner on films v12 to v16, where
-    /// the reach was a thread from her palm to them: *"dont make the pulling thing look like a physical line i want it to look like
-    /// sucking aura or smth"*, *"it sucks rn ur implementation"*, and *"i want u to make her hold up her voodoo too towards the person
-    /// when markingt hem"*. His table already said it: *"attach their soul to the voodoo doll"*.
+    /// ⚠️⚠️ THE REACH IS THE VICTIM'S SOUL PULLED OUT OF THEM INTO HER DOLL, NOT A CORD (HERO-10 v3, 2026-09-29). The owner on films
+    /// v12 to v16, where the reach was a thread from her palm to them: *"dont make the pulling thing look like a physical line i want it
+    /// to look like sucking aura or smth"*, *"it sucks rn ur implementation"*, *"i want u to make her hold up her voodoo too towards the
+    /// person when markingt hem"*. Then on v19, where it was blobs of coloured smoke round the victim and the doll sat in the air past
+    /// her hand: *"this animation dont look that good yet"*, *"lock in thoroughly improve also hthe doll is floating"*. His table already
+    /// said what it is: *"attach their soul to the voodoo doll"*.
     ///
     /// | Moment | What | Direction |
     /// |---|---|---|
-    /// | the lock | her doll comes up in her hand, held out at them; their aura lights up round their body | the doll toward them |
-    /// | the hold (2 s) | wisps of their aura peel off their body (DRAIN from the chest, HEX from the head), linger, then are SUCKED along a curve into the doll, faster and thinner as they near it; more and more as it fills. DRAIN's stream twists (its shape is a twist), HEX's wavers straight in. A swirl of light glows at the doll, growing | from them INTO the doll |
-    /// | the mark | a gulp: everything in flight rushes in, a last burst is ripped off them, the doll flares | into the doll |
-    /// | broken | the pull lets go: the wisps slow, drift up and thin away | nowhere |
+    /// | the lock | the doll comes up GRIPPED in her left hand (her fist round its lower body), held out at them; a see-through GHOST of the victim, their own shape lit in the curse's colour, appears over their body | the doll toward them |
+    /// | the hold (2 s) | the ghost is dragged OUT of their body toward the doll, further as it fills, smearing toward her with bands of light crawling along it; fine bright motes tear off the ghost and are sucked in braided currents into the doll, faster and smaller as they go in (DRAIN's currents twist round each other, HEX's waver straight); a light swells at the doll | out of them, INTO the doll |
+    /// | the mark | the gulp: the ghost is yanked the rest of the way, shrinking and eaten away as it goes, into the doll, which flares; a last burst of motes follows | into the doll |
+    /// | broken | the ghost snaps back into their body and fades; the motes lose the pull and drift up | back to them |
     ///
     /// Body-owned like `VoodooCursePresenter` (which adds it) and read off the body's REPLICATED reach (`CharacterMotor.Voodoo.cs`),
-    /// so every screen draws the same thing and a rejoiner sees a reach already running. There is no line anywhere: every piece is a
-    /// separate wisp (`Shaders/VoodooWisp`), so it reads as something drawn out of them, never as a rope.
+    /// so every screen draws the same thing and a rejoiner sees a reach already running. Nothing here is a line: the ghost is the
+    /// victim's own shape (their skinned meshes baked each frame, `Shaders/VoodooGhost`) and the stream is separate motes
+    /// (`Shaders/VoodooWisp`). On the VICTIM'S OWN screen their body is the lens, so the ghost is not drawn there; motes rise from under
+    /// their view and stream away toward her.
     ///
-    /// ⚠️ THE DOLL IS IN HER HANDS EXACTLY WHILE THE SLIPPER IS AT HER BELT (`CharacterMotor.StowsCarriedSlipper`: the reach, DRAIN's
-    /// wring and HEX's stab), which is the one moment her hands need to be free for it. It is the ultimate's doll at hand size
-    /// (`PhaisterDollArt`, plan 9.10: *"The small doll at her hip will be the same design at hand size"*), with its light in its
-    /// openings, so the soul visibly goes INTO it. Everyone else sees it in her body's left hand; on her own screen her body is hidden
-    /// and a copy rides her first-person left hand (`ViewmodelArms.HoldingProp` lifts it into view).
+    /// ⚠️ THE DOLL IS IN HER HAND EXACTLY WHILE THE SLIPPER IS AT HER BELT (`CharacterMotor.StowsCarriedSlipper`: the reach, DRAIN's
+    /// wring and HEX's stab). It is the ultimate's doll at hand size (`PhaisterDollArt`, plan 9.10), its light in its openings.
+    /// Everyone else sees it in her body's left fist; on her own screen her body is hidden and a copy rides her first-person left hand
+    /// (`ViewmodelArms.HoldingProp` lifts it into view).
     /// </summary>
     public sealed class VoodooSoulDraw : MonoBehaviour
     {
         /// <summary>The held doll's height, metres: on her body (the cast's scale), and in her first-person hand.</summary>
-        private const float BodyDollHeight = 0.58f, ViewDollHeight = 0.30f;
+        private const float BodyDollHeight = 0.62f, ViewDollHeight = 0.42f;
 
-        /// <summary>How far past her palm, toward them, the held doll sits (v18: at the palm it sat by her cheek and read as hugged).</summary>
-        private const float DollOut = 0.42f;
+        /// <summary>How much of the doll's height sits below the top of her fist: she holds it round its legs and waist.</summary>
+        private const float GripDepth = 0.3f;
 
-        /// <summary>Wisps a second at the start of the hold and when it is full.</summary>
-        private const float EmitStart = 50f, EmitFull = 120f;
+        /// <summary>Motes a second at the start of the hold and when it is full.</summary>
+        private const float EmitStart = 80f, EmitFull = 170f;
 
-        private const int MaxWisps = 420, AuraGlows = 9;
-        private const float GulpSeconds = 0.28f, ReleaseSeconds = 0.5f;
+        /// <summary>How far the ghost has come out of their body toward the doll at the start and end of the hold, metres.</summary>
+        private const float GhostOutStart = 0.3f, GhostOutFull = 1.25f;
 
-        private struct Wisp
+        private const int MaxMotes = 420;
+        private const float GulpSeconds = 0.3f, ReleaseSeconds = 0.5f, SnapSeconds = 0.25f;
+
+        private struct Mote
         {
-            public Vector3 Offset;     // from the victim's feet (world axes), or in the victim's LENS frame when Lens
+            public Vector3 Offset;     // from the ghost's centre (world axes), or in the victim's LENS frame when Lens
             public bool Lens;
-            public float S, Rate, Seed, Size, Age, Fade;
+            public float S, Rate, Seed, Size, Age;
+            public int Strand;
             public Vector3 Pos, Vel;
-            public byte Mode;          // 0 drawn in, 1 released, 2 the glow at the doll
+            public bool Released;
+        }
+
+        /// <summary>
+        /// One of the victim's meshes, redrawn as the ghost. ⚠️ A REAL RENDERER, NOT `Graphics.DrawMesh` (review v20: the ghost was
+        /// on no frame at all, because a draw call queued in `LateUpdate` is not in a camera rendered before it).
+        /// </summary>
+        private sealed class GhostPart
+        {
+            public Renderer Source;
+            public Mesh Baked;
+            public GameObject Go;
+            public MeshFilter Filter;
+            public MeshRenderer Draw;
+            public MaterialPropertyBlock Block;
         }
 
         private CharacterMotor _body;
         private ParticleSystem _ps;
         private ParticleSystem.Particle[] _out;
-        private readonly List<Wisp> _wisps = new List<Wisp>(MaxWisps);
+        private readonly List<Mote> _motes = new List<Mote>(MaxMotes);
         private int _victim = -1;
         private VoodooMarkKind _kind;
         private bool _wasReaching;
         private float _emitCarry;
-        private float _flash;          // the doll's flare at the mark, 1 falling to 0
-        private Vector3 _lastVictimAt;
-        private bool _lastVictimLens;
+        private float _flash;
 
-        // The doll in her hands.
+        // The ghost.
+        private enum GhostState { None, Pull, Yank, Snap }
+        private GhostState _ghostState;
+        private CharacterMotor _ghostOf;
+        private readonly List<GhostPart> _ghost = new List<GhostPart>();
+        private float _ghostAge;
+        private float _ghostOut;
+        private Vector3 _ghostCentre, _ghostOffset;
+        private float _ghostScale = 1f;
+        private readonly List<Vector3> _vertexScratch = new List<Vector3>(2048);
+
+        // The doll in her hand.
         private GameObject _bodyDoll, _viewDoll;
+        private float _bodyDollFoot;   // metres from the doll's pivot down to its feet, at its held scale
         private Transform _leftArm;
         private Vector3 _leftPalm;
         private ViewmodelArms _arms;
         private float _dollAge;
 
-        private static Material _material;
+        private static Material _moteMaterial, _ghostMaterial;
 
-        private static Material WispMaterial
+        private static Material MoteMaterial => _moteMaterial != null ? _moteMaterial : (_moteMaterial = Make("Shaders/VoodooWisp", "VoodooWisp"));
+        private static Material GhostMaterial => _ghostMaterial != null ? _ghostMaterial : (_ghostMaterial = Make("Shaders/VoodooGhost", "VoodooGhost"));
+
+        private static Material Make(string path, string name)
         {
-            get
-            {
-                if (_material != null) return _material;
-                var shader = Resources.Load<Shader>("Shaders/VoodooWisp");
-                if (shader == null) return null;
-                _material = new Material(shader) { name = "VoodooWisp" };
-                return _material;
-            }
+            var shader = Resources.Load<Shader>(path);
+            return shader == null ? null : new Material(shader) { name = name };
         }
 
         private void Awake() => _body = GetComponent<CharacterMotor>();
@@ -94,7 +122,9 @@ namespace TumbangPreso.Visual
             StepDraw(dt);
         }
 
-        // ------------------------------------------------------------------ the doll in her hands
+        private Color Hue => _kind == VoodooMarkKind.Drain ? VoodooCursePresenter.DrainHue : VoodooCursePresenter.HexHue;
+
+        // ------------------------------------------------------------------ the doll in her fist
 
         private void StepDoll(float dt)
         {
@@ -107,22 +137,20 @@ namespace TumbangPreso.Visual
             float twitch = Twitch();
             if (_bodyDoll != null && _leftArm != null)
             {
-                // Upright in her left hand, its face turned to whoever she holds it at (she shows them who it is).
+                // Standing in her fist, gripped round its legs and waist, its face turned to whoever she holds it at.
                 Vector3 palm = _leftArm.TransformPoint(_leftPalm);
                 Vector3 toward = at - palm; toward.y = 0f;
                 if (toward.sqrMagnitude < 0.01f) toward = transform.forward;
-                _bodyDoll.transform.position = palm + Vector3.up * (BodyDollHeight * 0.1f) + toward.normalized * DollOut;
-                _bodyDoll.transform.rotation = Quaternion.LookRotation(toward.normalized, Vector3.up) * Quaternion.Euler(-6f + 14f * twitch, 0f, 9f * twitch);
+                _bodyDoll.transform.rotation = Quaternion.LookRotation(toward.normalized, Vector3.up) * Quaternion.Euler(-4f + 12f * twitch, 0f, 8f * twitch);
+                _bodyDoll.transform.position = palm + Vector3.up * (_bodyDollFoot - BodyDollHeight * GripDepth);
             }
             if (_viewDoll != null)
             {
                 var view = Camera.main;
                 if (view != null)
                 {
-                    // On her own screen it faces AWAY from her, at them: she is holding it up at them, and she sees its back and
-                    // its lit seams, a little turned so its button eye shows.
-                    Vector3 fwd = view.transform.forward;
-                    _viewDoll.transform.rotation = Quaternion.LookRotation(fwd, view.transform.up) * Quaternion.Euler(8f * twitch, 155f, 6f * twitch);
+                    // On her own screen it faces AWAY from her, at them, a little turned so its button eye shows.
+                    _viewDoll.transform.rotation = Quaternion.LookRotation(view.transform.forward, view.transform.up) * Quaternion.Euler(8f * twitch, 155f, 6f * twitch);
                 }
             }
         }
@@ -149,7 +177,7 @@ namespace TumbangPreso.Visual
             bool mine = ViewmodelArms.IsFirstPersonFor(_body);
             if (_leftArm != null)
             {
-                _bodyDoll = MakeDoll(art, null, BodyDollHeight, "VoodooHeldDoll");
+                _bodyDoll = MakeDoll(art, null, BodyDollHeight, "VoodooHeldDoll", out _bodyDollFoot);
                 // Her own lens is inside her body: that doll is for everyone else.
                 if (_bodyDoll != null && mine) _bodyDoll.AddComponent<HiddenFromMainCamera>();
             }
@@ -159,10 +187,12 @@ namespace TumbangPreso.Visual
                 if (arms == null || arms.BoundCharacter != _body) continue;
                 var left = arms.LeftHandForProps();
                 if (left == null) break;
-                _viewDoll = MakeDoll(art, left, ViewDollHeight, "VoodooHeldDollFirstPerson");
+                _viewDoll = MakeDoll(art, left, ViewDollHeight, "VoodooHeldDollFirstPerson", out float foot);
                 if (_viewDoll != null)
                 {
-                    _viewDoll.transform.localPosition = arms.LeftPalmOffset() + new Vector3(0f, ViewDollHeight * 0.45f, 0f);
+                    // In the fist, as on her body: its feet below the top of the hand.
+                    float scale = Mathf.Max(0.0001f, left.lossyScale.y);
+                    _viewDoll.transform.localPosition = arms.LeftPalmOffset() + new Vector3(0f, (foot - ViewDollHeight * GripDepth) / scale, 0f);
                     foreach (var t in _viewDoll.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = left.gameObject.layer;
                 }
                 arms.HoldingProp = true;
@@ -171,9 +201,13 @@ namespace TumbangPreso.Visual
             }
         }
 
-        /// <summary>The ultimate's doll at <paramref name="height"/> metres, its light painted in its openings, no animator (it hangs limp).</summary>
-        private static GameObject MakeDoll(RosterEntryAsset art, Transform parent, float height, string name)
+        /// <summary>
+        /// The ultimate's doll at <paramref name="height"/> metres, its light painted in its openings, no animator (it hangs limp).
+        /// <paramref name="foot"/> is how far its pivot sits ABOVE its feet at that size, so a caller can stand it in a fist.
+        /// </summary>
+        private static GameObject MakeDoll(RosterEntryAsset art, Transform parent, float height, string name, out float foot)
         {
+            foot = 0f;
             if (art == null || art.Model == null) return null;
             var go = Object.Instantiate(art.Model, parent, false);
             go.name = name;
@@ -197,8 +231,10 @@ namespace TumbangPreso.Visual
                 if (!any) { bounds = r.bounds; any = true; } else bounds.Encapsulate(r.bounds);
             }
             float tall = any ? Mathf.Max(0.01f, bounds.size.y) : 1f;
+            float k = height / tall;
+            foot = any ? (go.transform.position.y - bounds.min.y) * k : 0f;
             float parentScale = parent != null ? Mathf.Max(0.0001f, parent.lossyScale.y) : 1f;
-            go.transform.localScale = Vector3.one * (height / tall / parentScale);
+            go.transform.localScale = Vector3.one * (k / parentScale);
             return go;
         }
 
@@ -213,7 +249,7 @@ namespace TumbangPreso.Visual
 
         /// <summary>
         /// Where the soul goes: the doll's middle, on the screen that is looking (her first-person doll on hers, her body's doll on
-        /// everyone else's), or her left hand if the doll is missing.
+        /// everyone else's), or her left fist if the doll is missing.
         /// </summary>
         private Vector3 Intake()
         {
@@ -229,8 +265,6 @@ namespace TumbangPreso.Visual
             return r != null ? r.bounds.center : go.transform.position;
         }
 
-        // ------------------------------------------------------------------ the soul, drawn out of them
-
         private CharacterMotor Victim(out bool lens)
         {
             lens = false;
@@ -241,6 +275,8 @@ namespace TumbangPreso.Visual
             return v;
         }
 
+        // ------------------------------------------------------------------ the draw
+
         private void StepDraw(float dt)
         {
             bool reaching = _body.IsVoodooReaching && _body.isActiveAndEnabled;
@@ -248,190 +284,335 @@ namespace TumbangPreso.Visual
             {
                 _victim = _body.VoodooReachTarget; _kind = _body.VoodooReachKind;
                 _emitCarry = 0f;
+                BeginGhost(Victim(out _));
             }
             if (!reaching && _wasReaching) EndReach(_body.VoodooReachSucceeded);
             _wasReaching = reaching;
 
             var victim = Victim(out bool lens);
-            if (victim != null) { _lastVictimAt = victim.transform.position; _lastVictimLens = lens; }
             Vector3 intake = Intake();
+            float fill = reaching ? _body.VoodooReachProgress : 1f;
+
+            StepGhost(dt, victim, lens, intake, fill);
 
             if (reaching && victim != null)
             {
-                float fill = _body.VoodooReachProgress;
-                _emitCarry += dt * Mathf.Lerp(EmitStart, EmitFull, fill * fill);
-                while (_emitCarry >= 1f && _wisps.Count < MaxWisps) { _emitCarry -= 1f; _wisps.Add(Peel(victim, lens, intake, fast: false)); }
+                _emitCarry += dt * Mathf.Lerp(EmitStart, EmitFull, fill);
+                while (_emitCarry >= 1f && _motes.Count < MaxMotes) { _emitCarry -= 1f; _motes.Add(Tear(victim, lens, fast: false)); }
                 _emitCarry = Mathf.Min(_emitCarry, 1f);
             }
             _flash = Mathf.Max(0f, _flash - dt / GulpSeconds);
 
-            if (_wisps.Count == 0 && !reaching && _flash <= 0f) { if (_ps != null) _ps.Clear(); return; }
+            if (_motes.Count == 0 && !reaching && _flash <= 0f) { if (_ps != null) _ps.Clear(); return; }
             Ensure();
 
-            Color hue = _kind == VoodooMarkKind.Drain ? VoodooCursePresenter.DrainHue : VoodooCursePresenter.HexHue;
+            Color hue = Hue;
             int count = 0;
-            if (_out == null || _out.Length < MaxWisps + AuraGlows + 1) _out = new ParticleSystem.Particle[MaxWisps + AuraGlows + 1];
-            for (int i = _wisps.Count - 1; i >= 0; i--)
+            if (_out == null || _out.Length < MaxMotes + 1) _out = new ParticleSystem.Particle[MaxMotes + 1];
+            for (int i = _motes.Count - 1; i >= 0; i--)
             {
-                var w = _wisps[i];
-                if (!StepWisp(ref w, dt, victim, lens, intake)) { _wisps.RemoveAt(i); continue; }
-                _wisps[i] = w;
+                var m = _motes[i];
+                if (!StepMote(ref m, dt, victim, lens, intake)) { _motes.RemoveAt(i); continue; }
+                _motes[i] = m;
             }
-            foreach (var w in _wisps)
+            foreach (var m in _motes)
             {
-                float fadeIn = Mathf.Clamp01(w.Age / 0.18f);
-                float fadeOut = w.Mode == 1 ? 1f - Mathf.Clamp01(w.Age / ReleaseSeconds) : Mathf.Clamp01((1f - w.S) / 0.1f);
-                float life = Mathf.Clamp01(Mathf.Min(fadeIn, fadeOut) * w.Fade) * 0.8f;
-                float size = w.Mode == 1 ? w.Size * (1f + w.Age) : Mathf.Lerp(w.Size, w.Size * 0.18f, Mathf.Pow(Mathf.Clamp01(w.S), 1.4f));
-                // Close to the doll the light gets hotter: it is going in.
-                Color c = Color.Lerp(hue, Color.Lerp(hue, Color.white, 0.45f), Mathf.Clamp01((w.S - 0.6f) / 0.4f));
+                float fadeIn = Mathf.Clamp01(m.Age / 0.12f);
+                float fadeOut = m.Released ? 1f - Mathf.Clamp01(m.Age / ReleaseSeconds) : Mathf.Clamp01((1f - m.S) / 0.08f);
+                float life = Mathf.Clamp01(Mathf.Min(fadeIn, fadeOut));
+                float size = m.Released ? m.Size : Mathf.Lerp(m.Size, m.Size * 0.35f, Mathf.Clamp01(m.S));
+                // Hotter as it goes in.
+                Color c = Color.Lerp(hue, Color.Lerp(hue, Color.white, 0.55f), Mathf.Clamp01(m.S * 1.3f - 0.2f));
                 c.a = life;
-                _out[count++] = Particle(w.Pos, w.Vel, size, c, w.Seed);
+                _out[count++] = Particle(m.Pos, m.Vel, size, c, m.Seed);
             }
-            // THEIR AURA (v18: v17 had wisps and nothing round the body they came from): a few big soft glows clinging round
-            // them, breathing with the heartbeat and leaning toward her, brighter as it fills. Not on their own screen, where their
-            // body is the lens.
-            if (reaching && victim != null && !lens)
-            {
-                float fill = _body.VoodooReachProgress;
-                Vector3 toward = intake - victim.transform.position; toward.y = 0f;
-                toward = toward.sqrMagnitude > 0.01f ? toward.normalized : victim.transform.forward;
-                float beat = Mathf.Repeat(Time.time * Mathf.Lerp(1.2f, 2.6f, fill), 1f);
-                float thump = beat < 0.16f ? Mathf.Sin(beat / 0.16f * Mathf.PI) : 0f;
-                for (int k = 0; k < AuraGlows && count < _out.Length; k++)
-                {
-                    float a = k / (float)AuraGlows * Mathf.PI * 2f + Time.time * 0.9f;
-                    Vector3 round = new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * 0.34f;
-                    float h = _kind == VoodooMarkKind.Drain ? 0.55f + 0.35f * Mathf.Sin(a * 2f) : 1.25f + 0.3f * Mathf.Sin(a * 2f);
-                    Vector3 at = victim.transform.position + round + Vector3.up * h + toward * (0.12f + 0.25f * fill);
-                    Color g = hue; g.a = (0.34f + 0.3f * fill) * (0.8f + 0.4f * thump);
-                    _out[count++] = Particle(at, toward * 0.6f, 0.95f + 0.35f * fill + 0.2f * thump, g, k * 0.13f);
-                }
-            }
-            // The swirl at the doll: it glows while it fills and flares at the mark.
+            // The light at the doll: it swells while it drinks and flares at the mark.
             if (reaching || _flash > 0f)
             {
-                float fill = reaching ? _body.VoodooReachProgress : 1f;
                 float pulse = 0.5f + 0.5f * Mathf.Sin(Time.time * Mathf.Lerp(7f, 15f, fill));
                 bool view = _viewDoll != null;
-                float size = (view ? 0.12f : 0.34f) * (0.7f + 0.6f * fill + 0.2f * pulse) + (view ? 0.3f : 0.9f) * _flash;
-                Color c = Color.Lerp(hue, Color.white, 0.3f + 0.4f * _flash);
-                c.a = Mathf.Clamp01(0.45f + 0.35f * fill + _flash);
+                float size = (view ? 0.1f : 0.26f) * (0.6f + 0.7f * fill + 0.2f * pulse) + (view ? 0.28f : 0.8f) * _flash;
+                Color c = Color.Lerp(hue, Color.white, 0.35f + 0.4f * _flash);
+                c.a = Mathf.Clamp01(0.35f + 0.4f * fill + _flash);
                 _out[count++] = Particle(intake, Vector3.zero, size, c, 0.37f);
             }
             _ps.SetParticles(_out, count);
         }
 
-        /// <summary>
-        /// A wisp peeled off the victim. On everyone else's screen it leaves their BODY, from all round it but mostly the side facing
-        /// her (DRAIN from the chest, HEX from the head). On the VICTIM'S OWN screen their body is hidden and their eyes are the lens,
-        /// so it leaves from just under and beside their view (their own chest) and is seen streaming AWAY from them toward her.
-        /// </summary>
-        private Wisp Peel(CharacterMotor victim, bool lens, Vector3 intake, bool fast)
+        // ------------------------------------------------------------------ the ghost
+
+        private void BeginGhost(CharacterMotor victim)
         {
-            var w = new Wisp { Seed = Random.value, Fade = 1f, Mode = 0, Lens = lens };
+            ClearGhost();
+            if (victim == null) return;
+            var visual = victim.GetComponent<CharacterVisual>();
+            var model = visual != null ? visual.Model : null;
+            if (model == null) return;
+            foreach (var r in model.GetComponentsInChildren<Renderer>())
+            {
+                if (r == null || !r.enabled) continue;
+                if (r is SkinnedMeshRenderer s) { if (s.sharedMesh == null) continue; }
+                else if (r is MeshRenderer) { var f = r.GetComponent<MeshFilter>(); if (f == null || f.sharedMesh == null) continue; }
+                else continue;
+                // The doll's light meshes and anything already drawn as light are not part of a person.
+                if (r.name == PhaisterDollArt.GlowMeshName || r.name == PhaisterDollArt.SpillMeshName) continue;
+                var part = new GhostPart { Source = r, Baked = r is SkinnedMeshRenderer ? new Mesh { name = "VoodooGhost" } : null, Block = new MaterialPropertyBlock() };
+                part.Go = new GameObject("VoodooGhost-" + r.name);
+                part.Filter = part.Go.AddComponent<MeshFilter>();
+                part.Draw = part.Go.AddComponent<MeshRenderer>();
+                part.Draw.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                part.Draw.receiveShadows = false;
+                part.Draw.enabled = false;
+                _ghost.Add(part);
+            }
+            _ghostOf = victim;
+            _ghostState = GhostState.Pull;
+            _ghostAge = 0f;
+            _ghostOut = 0f;
+            _ghostScale = 1f;
+        }
+
+        private void ClearGhost()
+        {
+            foreach (var part in _ghost)
+            {
+                if (part.Baked != null) Destroy(part.Baked);
+                if (part.Go != null) Destroy(part.Go);
+            }
+            _ghost.Clear();
+            _ghostOf = null;
+            _ghostState = GhostState.None;
+        }
+
+        private void StepGhost(float dt, CharacterMotor victim, bool lens, Vector3 intake, float fill)
+        {
+            if (_ghostState == GhostState.None || _ghostOf == null || _ghost.Count == 0) { if (_ghostState != GhostState.None) ClearGhost(); return; }
+            _ghostAge += dt;
+            var capsule = _ghostOf.GetComponent<CharacterController>();
+            float height = capsule != null ? capsule.height * _ghostOf.transform.lossyScale.y : 1.6f;
+            _ghostCentre = _ghostOf.transform.position + Vector3.up * height * 0.55f;
+            Vector3 span = intake - _ghostCentre;
+            Vector3 pull = span.sqrMagnitude > 1e-4f ? span.normalized : _ghostOf.transform.forward;
+
+            float alpha, stretch, dissolve = 0f;
+            switch (_ghostState)
+            {
+                case GhostState.Pull:
+                {
+                    // Coming out of them: eased so it tears free slowly, then leans harder as the hold fills.
+                    float fade = Mathf.Clamp01(_ghostAge / 0.2f);
+                    _ghostOut = Mathf.Lerp(GhostOutStart, GhostOutFull, 1f - (1f - fill) * (1f - fill));
+                    _ghostScale = 1.03f;
+                    alpha = fade * Mathf.Lerp(0.75f, 1f, fill);
+                    stretch = Mathf.Lerp(0.3f, 0.85f, fill);
+                    break;
+                }
+                case GhostState.Yank:
+                {
+                    // The gulp: dragged the rest of the way into the doll, shrinking and eaten away from the far end.
+                    float u = Mathf.Clamp01(_ghostAge / GulpSeconds);
+                    float e = u * u;
+                    _ghostOut = Mathf.Lerp(GhostOutFull, span.magnitude, e);
+                    _ghostScale = Mathf.Lerp(1.03f, 0.08f, e);
+                    alpha = 1f - u * 0.3f;
+                    stretch = Mathf.Lerp(1.2f, 0.4f, u);
+                    dissolve = u * 0.9f;
+                    if (u >= 1f) { ClearGhost(); return; }
+                    break;
+                }
+                default:
+                {
+                    // Let go: it snaps back into them and fades.
+                    float u = Mathf.Clamp01(_ghostAge / SnapSeconds);
+                    _ghostOut = Mathf.Lerp(_ghostOut, 0f, 1f - Mathf.Exp(-dt * 18f));
+                    alpha = 1f - u;
+                    stretch = Mathf.Lerp(0.6f, 0f, u);
+                    if (u >= 1f) { ClearGhost(); return; }
+                    break;
+                }
+            }
+            _ghostOffset = pull * _ghostOut;
+            var material = GhostMaterial;
+            Vector3 centre = _ghostCentre + _ghostOffset;
+            foreach (var part in _ghost)
+            {
+                if (part.Source == null || part.Go == null) continue;
+                // Their own eyes are the lens on their own screen: the ghost is for everyone else.
+                bool show = !lens && material != null && part.Source.enabled;
+                part.Draw.enabled = show;
+                if (!show) continue;
+                Mesh mesh;
+                Vector3 scale;
+                if (part.Baked != null)
+                {
+                    ((SkinnedMeshRenderer)part.Source).BakeMesh(part.Baked, true);
+                    mesh = part.Baked;
+                    scale = Vector3.one;
+                }
+                else
+                {
+                    mesh = part.Source.GetComponent<MeshFilter>().sharedMesh;
+                    scale = part.Source.transform.lossyScale;
+                }
+                if (part.Filter.sharedMesh != mesh) part.Filter.sharedMesh = mesh;
+                if (part.Draw.sharedMaterial != material)
+                {
+                    var mats = new Material[mesh.subMeshCount];
+                    for (int m = 0; m < mats.Length; m++) mats[m] = material;
+                    part.Draw.sharedMaterials = mats;
+                }
+                // Scaled about the body's middle and moved out toward the doll: T(centre) S(k) T(-middle) on the source's pose.
+                var t = part.Go.transform;
+                t.SetPositionAndRotation(centre + (part.Source.transform.position - _ghostCentre) * _ghostScale, part.Source.transform.rotation);
+                t.localScale = scale * _ghostScale;
+                part.Block.SetColor("_Color", Hue);
+                part.Block.SetVector("_Pull", pull);
+                part.Block.SetFloat("_Stretch", stretch);
+                part.Block.SetVector("_Origin", centre);
+                part.Block.SetFloat("_Alpha", alpha);
+                part.Block.SetFloat("_Dissolve", dissolve);
+                part.Draw.SetPropertyBlock(part.Block);
+            }
+        }
+
+        /// <summary>A point on the ghost's surface, in the world, where it is drawn this frame (a mote tears off there).</summary>
+        private bool GhostPoint(out Vector3 at)
+        {
+            at = Vector3.zero;
+            if (_ghost.Count == 0) return false;
+            var part = _ghost[Random.Range(0, _ghost.Count)];
+            if (part.Source == null) return false;
+            Mesh mesh; Matrix4x4 local;
+            if (part.Baked != null)
+            {
+                mesh = part.Baked;
+                local = Matrix4x4.TRS(part.Source.transform.position, part.Source.transform.rotation, Vector3.one);
+            }
+            else
+            {
+                mesh = part.Source.GetComponent<MeshFilter>().sharedMesh;
+                local = part.Source.localToWorldMatrix;
+            }
+            if (mesh == null || mesh.vertexCount == 0 || !mesh.isReadable && part.Baked == null) return false;
+            _vertexScratch.Clear();
+            mesh.GetVertices(_vertexScratch);
+            if (_vertexScratch.Count == 0) return false;
+            Vector3 p = local.MultiplyPoint3x4(_vertexScratch[Random.Range(0, _vertexScratch.Count)]);
+            Vector3 centre = _ghostCentre + _ghostOffset;
+            at = centre + (p - _ghostCentre) * _ghostScale;
+            return true;
+        }
+
+        // ------------------------------------------------------------------ the motes
+
+        /// <summary>
+        /// A mote torn off the ghost (everyone else's screen) or, on the VICTIM'S OWN screen, off their own chest just under their view.
+        /// DRAIN tears mostly from the chest down, HEX from the head.
+        /// </summary>
+        private Mote Tear(CharacterMotor victim, bool lens, bool fast)
+        {
+            var m = new Mote { Seed = Random.value, Lens = lens, Strand = Random.Range(0, 3) };
             bool drain = _kind == VoodooMarkKind.Drain;
             if (lens)
             {
                 // x across, y up, z ahead in the lens frame.
-                w.Offset = new Vector3(Random.Range(-0.55f, 0.55f), drain ? Random.Range(-0.95f, -0.6f) : Random.Range(-0.7f, -0.42f), Random.Range(0.25f, 0.6f));
-                w.Size = Random.Range(0.2f, 0.34f);
+                m.Offset = new Vector3(Random.Range(-0.5f, 0.5f), drain ? Random.Range(-0.9f, -0.6f) : Random.Range(-0.66f, -0.42f), Random.Range(0.3f, 0.6f));
+                m.Size = Random.Range(0.05f, 0.1f);
             }
             else
             {
-                Vector3 toward = intake - victim.transform.position; toward.y = 0f;
-                toward = toward.sqrMagnitude > 0.01f ? toward.normalized : victim.transform.forward;
-                // Round the body, weighted to her side: a cosine lobe, so the aura visibly leans toward her.
-                float angle = Random.Range(-1f, 1f); angle = angle * Mathf.Abs(angle) * 150f;
-                Vector3 dir = Quaternion.AngleAxis(angle, Vector3.up) * toward;
-                float height = drain ? Random.Range(0.25f, 1.15f) : Random.Range(0.95f, 1.85f);
-                if (Random.value < 0.22f) height = Random.Range(0.1f, 1.8f); // a few from anywhere on them: the whole aura goes
-                w.Offset = dir * Random.Range(0.32f, 0.55f) + Vector3.up * height;
-                w.Size = Random.Range(0.36f, 0.62f);
+                Vector3 at;
+                bool ok = GhostPoint(out at);
+                // Bias to the part of them each curse takes: a second try if the first landed outside it.
+                float head = victim.transform.position.y + 1.0f;
+                if (ok && (drain ? at.y > head + 0.2f : at.y < head - 0.1f)) ok = GhostPoint(out at);
+                if (!ok) at = victim.transform.position + Vector3.up * (drain ? 0.7f : 1.4f);
+                m.Offset = at - (_ghostCentre + _ghostOffset);
+                m.Size = Random.Range(0.1f, 0.2f);
             }
-            // Most linger by the body a moment before the pull takes them (the aura); some are torn straight off.
-            // v19 (film v18: with many lingering, the hold read as scattered petals; the gulp, one quick flow, read right): most
-            // flow steadily, a few cling a moment first.
-            w.Rate = fast ? Random.Range(2.2f, 3.0f) : Random.value < 0.18f ? Random.Range(0.6f, 0.8f) : Random.Range(1.15f, 1.5f);
-            if (fast) w.S = 0.25f;
-            w.Pos = Origin(w, victim, lens);
-            return w;
+            m.Rate = fast ? Random.Range(2.6f, 3.4f) : Random.Range(1.3f, 1.9f);
+            if (fast) m.S = 0.2f;
+            m.Pos = Origin(m, lens);
+            return m;
         }
 
-        private Vector3 Origin(in Wisp w, CharacterMotor victim, bool lens)
+        private Vector3 Origin(in Mote m, bool lens)
         {
-            if (w.Lens)
+            if (m.Lens)
             {
                 var view = Camera.main;
                 if (lens && view != null)
-                    return view.transform.position + view.transform.right * w.Offset.x + view.transform.up * w.Offset.y + view.transform.forward * w.Offset.z;
-                return _lastVictimAt + Vector3.up * 1.2f;
+                    return view.transform.position + view.transform.right * m.Offset.x + view.transform.up * m.Offset.y + view.transform.forward * m.Offset.z;
+                return _ghostCentre;
             }
-            return (victim != null ? victim.transform.position : _lastVictimAt) + w.Offset;
+            return _ghostCentre + _ghostOffset + m.Offset;
         }
 
-        private bool StepWisp(ref Wisp w, float dt, CharacterMotor victim, bool lens, Vector3 intake)
+        private bool StepMote(ref Mote m, float dt, CharacterMotor victim, bool lens, Vector3 intake)
         {
-            w.Age += dt;
-            Vector3 was = w.Pos;
-            if (w.Mode == 1)
+            m.Age += dt;
+            Vector3 was = m.Pos;
+            if (m.Released)
             {
-                // Released: the pull is gone; it slows, drifts up and thins away.
-                w.Vel = Vector3.Lerp(w.Vel, Vector3.up * 0.35f, 1f - Mathf.Exp(-dt * 4f));
-                w.Pos += w.Vel * dt;
-                return w.Age < ReleaseSeconds;
+                // The pull is gone: it slows, drifts up and thins away.
+                m.Vel = Vector3.Lerp(m.Vel, Vector3.up * 0.4f, 1f - Mathf.Exp(-dt * 5f));
+                m.Pos += m.Vel * dt;
+                return m.Age < ReleaseSeconds;
             }
-            // Sucked: slow at first (it clings to them), then faster and faster into the doll.
-            w.S += dt * w.Rate * (0.42f + 3.4f * w.S * w.S);
-            if (w.S >= 1f) return false;
-            Vector3 from = Origin(w, victim, lens);
+            // Sucked: it leaves steadily and quickens all the way in.
+            m.S += dt * m.Rate * (0.5f + 2.2f * m.S * m.S);
+            if (m.S >= 1f) return false;
+            Vector3 from = Origin(m, lens);
             Vector3 span = intake - from;
             Vector3 dir = span.sqrMagnitude > 1e-4f ? span.normalized : transform.forward;
             Vector3 side = Vector3.Cross(dir, Vector3.up);
             if (side.sqrMagnitude < 1e-4f) side = transform.right;
             side.Normalize();
             Vector3 up = Vector3.Cross(side, dir).normalized;
-            // Off their body first (outward and up), then curving into the doll: a funnel, wide at them, a point at the doll.
-            Vector3 outward = from - (victim != null ? victim.transform.position : _lastVictimAt);
-            outward.y = 0f;
-            outward = outward.sqrMagnitude > 1e-4f ? outward.normalized : -dir;
-            Vector3 bend = from + outward * 0.45f + Vector3.up * 0.3f + span * 0.25f;
-            float s = w.S, u = 1f - s;
+            float s = m.S;
+            // Off the ghost a little way first (it is torn off, not slid), then straight for the doll.
+            Vector3 lift = (from - (_ghostCentre + _ghostOffset));
+            lift = lift.sqrMagnitude > 1e-4f ? lift.normalized * 0.25f : Vector3.zero;
+            Vector3 bend = from + lift + span * 0.35f + Vector3.up * 0.15f;
+            float u = 1f - s;
             Vector3 p = u * u * from + 2f * u * s * bend + s * s * intake;
-            float envelope = Mathf.Sin(Mathf.PI * Mathf.Clamp01(s)) * (1f - s);
-            float spin = w.Seed * Mathf.PI * 2f;
+            float envelope = Mathf.Sin(Mathf.PI * Mathf.Clamp01(s)) * (1f - s * 0.6f);
+            float phase = m.Strand * (Mathf.PI * 2f / 3f);
             if (_kind == VoodooMarkKind.Drain)
             {
-                // DRAIN twists: the stream winds round its own axis as it goes (plan 9.3, DRAIN is a TWIST).
-                float a = spin + s * 11f + Time.time * 2.5f;
-                p += (side * Mathf.Cos(a) + up * Mathf.Sin(a)) * 0.26f * envelope;
+                // DRAIN's three currents wind round each other on the way in (plan 9.3: DRAIN is a TWIST).
+                float a = phase + s * 12f - Time.time * 3f;
+                p += (side * Mathf.Cos(a) + up * Mathf.Sin(a)) * 0.2f * envelope;
             }
             else
             {
-                // HEX wavers in straight, like breath drawn through a gap.
-                p += (side * Mathf.Sin(spin + s * 6f - Time.time * 4f) * 0.22f + up * Mathf.Cos(spin * 1.7f + s * 4f) * 0.12f) * envelope;
+                // HEX's waver in side by side, like breath drawn through a gap.
+                p += (side * (Mathf.Sin(phase + s * 7f - Time.time * 4f) * 0.14f + (m.Strand - 1) * 0.08f)
+                      + up * Mathf.Cos(phase * 1.7f + s * 5f) * 0.08f) * envelope;
             }
-            w.Pos = p;
-            w.Vel = dt > 1e-5f ? (p - was) / dt : Vector3.zero;
+            p += side * ((m.Seed - 0.5f) * 0.12f * envelope);
+            m.Pos = p;
+            m.Vel = dt > 1e-5f ? (p - was) / dt : Vector3.zero;
             return true;
         }
 
+        /// <summary>Silent on purpose: every hero skill sound is deleted until they are reworked (`AudioCues.IsSkillSfx`).</summary>
         private void EndReach(bool succeeded)
         {
             var victim = Victim(out bool lens);
             Vector3 intake = Intake();
             if (succeeded)
             {
-                // The gulp: everything in flight rushes in, and a last handful is ripped off them.
-                for (int i = 0; i < _wisps.Count; i++) { var w = _wisps[i]; w.Rate *= 4.5f; w.S = Mathf.Max(w.S, 0.35f); _wisps[i] = w; }
-                if (victim != null) for (int i = 0; i < 22 && _wisps.Count < MaxWisps; i++) _wisps.Add(Peel(victim, lens, intake, fast: true));
+                // The gulp: the ghost is yanked in, everything in flight rushes after it, and a last handful is ripped off them.
+                if (_ghostState == GhostState.Pull) { _ghostState = GhostState.Yank; _ghostAge = 0f; }
+                for (int i = 0; i < _motes.Count; i++) { var m = _motes[i]; m.Rate *= 3.5f; _motes[i] = m; }
+                if (victim != null) for (int i = 0; i < 30 && _motes.Count < MaxMotes; i++) _motes.Add(Tear(victim, lens, fast: true));
                 _flash = 1f;
-                GameServices.Audio?.PlayAt("sfx_phaister_mark", victim != null ? victim.transform.position : _lastVictimAt);
             }
             else
             {
-                for (int i = 0; i < _wisps.Count; i++) { var w = _wisps[i]; w.Mode = 1; w.Age = 0f; w.Vel *= 0.25f; _wisps[i] = w; }
-                GameServices.Audio?.PlayAt("sfx_phaister_reach_snap", intake);
+                if (_ghostState == GhostState.Pull) { _ghostState = GhostState.Snap; _ghostAge = 0f; }
+                for (int i = 0; i < _motes.Count; i++) { var m = _motes[i]; m.Released = true; m.Age = 0f; m.Vel *= 0.25f; _motes[i] = m; }
             }
         }
 
@@ -453,23 +634,22 @@ namespace TumbangPreso.Visual
         {
             if (_ps != null) return;
             var go = new GameObject("VoodooSoulDraw");
-            go.transform.SetParent(null, false);
             _ps = go.AddComponent<ParticleSystem>();
             _ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             var main = _ps.main;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             main.playOnAwake = false;
-            main.maxParticles = MaxWisps + AuraGlows + 1;
+            main.maxParticles = MaxMotes + 1;
             main.startSpeed = 0f;
             main.gravityModifier = 0f;
             var emission = _ps.emission; emission.enabled = false;
             var shape = _ps.shape; shape.enabled = false;
             var r = go.GetComponent<ParticleSystemRenderer>();
             r.renderMode = ParticleSystemRenderMode.Stretch;
-            r.velocityScale = 0.06f;
-            r.lengthScale = 1.6f;
+            r.velocityScale = 0.012f;
+            r.lengthScale = 1.0f;
             r.sortMode = ParticleSystemSortMode.Distance;
-            r.sharedMaterial = WispMaterial;
+            r.sharedMaterial = MoteMaterial;
             r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             r.receiveShadows = false;
             r.minParticleSize = 0f;
@@ -480,7 +660,8 @@ namespace TumbangPreso.Visual
         private void OnDisable()
         {
             LetDoll();
-            _wisps.Clear();
+            _motes.Clear();
+            ClearGhost();
             _wasReaching = false;
             _flash = 0f;
             if (_ps != null) _ps.Clear();
@@ -489,6 +670,7 @@ namespace TumbangPreso.Visual
         private void OnDestroy()
         {
             LetDoll();
+            ClearGhost();
             if (_ps != null) Destroy(_ps.gameObject);
         }
     }

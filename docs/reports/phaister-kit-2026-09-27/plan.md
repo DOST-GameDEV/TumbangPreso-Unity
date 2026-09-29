@@ -356,6 +356,13 @@ off them, the doll flares); a broken reach lets go (the wisps slow, drift up and
 at them, the right open beside it. The pierce X at their chest is gone with the thread. `Visual.VoodooSoulDraw`,
 `Shaders/VoodooWisp`.
 
+⚠️⚠️ **v20 to v22 (the owner on v19: *"this animation dont look that good yet"*, *"the doll is floating"*): THE SOUL IS A GHOST OF
+THEM.** Read the soul draw above as: a see-through ghost of the victim (their own shape, a lit rim over a faint fill, in the curse's
+colour; `Shaders/VoodooGhost`) is dragged OUT of their body toward the doll, 0.3 m at the lock to 1.25 m full, smearing toward her;
+fine motes tear off the ghost into the doll; on the mark the ghost is yanked the rest of the way in, shrinking; a broken reach snaps
+it back into them. The doll is GRIPPED in her fist and RAISED at them (DRAIN 26 degrees above level, HEX 38). Not drawn on the
+victim's own screen (their body is the lens), where motes rise from under their view. No sound (skill sounds are deleted).
+
 Input (proposed): **tap** the skill to start reaching toward the opponent under the crosshair; it keeps going on its own while she
 keeps them in view; tap again to let go. (Holding the key for the 2 s is the alternative: it matches "hold her hand out", but on a
 phone it ties up the thumb that aims the camera.) Reach 9 m to start, breaks past 11 m, behind a wall, or if they leave 35 degrees

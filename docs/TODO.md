@@ -1132,6 +1132,15 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   at hand size, held out at them in her left hand in both views (while the slipper is at her belt); a gulp on the mark, a
   let-go on a snap. Body and first-person reach poses rebuilt round the doll (v17, v18). The marks and the HEXED band stay in
   `VoodooCursePresenter`.
+  v20 to v22 (owner on v19: *"this animation dont look that good yet"*, *"the doll is floating"*): the victim's own shape as a
+  see-through GHOST dragged out of them into the doll (`Shaders/VoodooGhost`), fine motes off it, the doll gripped in her fist and
+  raised at them; `PhaisterKitPlayProbe.ReviewHerReachFromEverySide` stages both curses from every side for review; films v22 sent.
+- [x] ⚠️ EVERY HERO SKILL SOUND DELETED (2026-09-29, owner: *"also all ur skill sfx suck shit what is that HAHAHA even paete's"*,
+  *"dont put sfx for all skills for now"*, *"will rework them at a lter date"*, *"can we delete all skill abilities sfx ty haha"*).
+  149 files out of `Resources/Sfx` and out of `AudioCues.Live`: casts, variants, statuses, payloads, zones, ultimate themes and
+  weather, every hero. Call sites stay silent through `AudioCues.Audible` (`IsSkillSfx`, `SkillSfxOn` false), including the cutscene
+  theme; `AudioCueCheck` passes them as deleted; the Featherfall landing test no longer counts its cue. Voices and base-game sounds
+  stay. OPEN, when he asks: the skill sound rework.
 - [~] TELEPORT: renamed from VANISHING ACT, 35 s (`VoodooRules.TeleportCooldown`), the 2.5 m shove and its host resolver deleted.
   OPEN: the decoy doll of her flopping where she stood (ask before its look), the moths streaming to her, a front-on tell.
 - [ ] VOODOO DOLL: a fifth body, Astig AI, attacking or defending with her role, points to her, none for tagging it, gone at the

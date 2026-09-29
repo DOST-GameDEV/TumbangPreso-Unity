@@ -756,5 +756,99 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(hexed, "HEX never hexed the local player.");
             Assert.IsTrue(phantoms, "HEXED showed no phantom slippers on the victim's screen.");
         }
+
+        /// <summary>
+        /// ⚠️ THE REACH, STAGED FOR REVIEW (HERO-10 v3, 2026-09-29). The owner on film v19: *"this animation dont look that good yet"*,
+        /// *"lock in thoroughly improve also hthe doll is floating"*. A whole match film costs minutes a round; the reach's pose, the
+        /// doll in her hand and the soul drawn out of the victim are judged here from every side first, then filmed. Each curse is
+        /// pressed once at a victim 4.5 m in front of the caster and photographed at five moments (the lock, early and late in the
+        /// hold, the mark, the gulp after it) from her FRONT three-quarter, her SIDE, BEHIND her toward the victim, and (DRAIN, the
+        /// local seat) HER OWN SCREEN. Frames: `phaister-reach-review-TAG/{drain,hex}_{view}_{ms}.jpg`. Runs only with
+        /// TUMP_PHAISTER_FILM=1.
+        /// </summary>
+        [UnityTest, Timeout(300000)]
+        public IEnumerator ReviewHerReachFromEverySide()
+        {
+            if (Environment.GetEnvironmentVariable("TUMP_PHAISTER_FILM") != "1") Assert.Ignore("Film only: set TUMP_PHAISTER_FILM=1.");
+            string tag = Environment.GetEnvironmentVariable("TUMP_PHAISTER_TAG") ?? "v1";
+            string root = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs", "phaister-reach-review-" + tag);
+            Directory.CreateDirectory(root);
+            var round = GameServices.Round;
+            var can = Flat(round.Lata.transform.position);
+            int taya = -1;
+            foreach (var p in round.Players) if (p.IsDefender) taya = p.PlayerSlot;
+            int me = GameLaunch.SoloSeat != taya ? GameLaunch.SoloSeat : (taya + 1) % 4;
+            int victimSeat = -1;
+            foreach (var p in round.Players) if (p.PlayerSlot != taya && p.PlayerSlot != me && victimSeat < 0) victimSeat = p.PlayerSlot;
+            var victim = round.PlayerAt(victimSeat);
+            victim.Intent.Parked = true;
+
+            var cam = new GameObject("ReachReview").AddComponent<Camera>();
+            cam.CopyFrom(Camera.main); cam.enabled = false; cam.tag = "Untagged"; cam.fieldOfView = 42; cam.cullingMask &= ~(1 << 5);
+            cam.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            var hdr = new RenderTexture(1280, 720, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
+            var ldr = new RenderTexture(1280, 720, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
+            void Shoot(Camera c, string name)
+            {
+                PaeteKitPlayProbe.RenderFilmView(c, hdr);
+                Graphics.Blit(hdr, ldr);
+                var active = RenderTexture.active; RenderTexture.active = ldr;
+                pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply(); RenderTexture.active = active;
+                File.WriteAllBytes(Path.Combine(root, name + ".jpg"), pixels.EncodeToJPG(90));
+            }
+            void Place(CharacterMotor caster, string view)
+            {
+                Vector3 at = caster.transform.position, to = victim.transform.position;
+                var line = to - at; line.y = 0f; line.Normalize();
+                var side = Vector3.Cross(Vector3.up, line);
+                Vector3 mid = (at + to) * 0.5f;
+                switch (view)
+                {
+                    case "front": cam.transform.position = at + line * 2.6f - side * 2.2f + Vector3.up * 1.5f; cam.transform.LookAt(at + Vector3.up * 1.0f + line * 0.6f); break;
+                    case "side": cam.transform.position = mid + side * 6.2f + Vector3.up * 1.6f; cam.transform.LookAt(mid + Vector3.up * 0.9f); break;
+                    default: cam.transform.position = at - line * 2.2f + side * 2.0f + Vector3.up * 2.8f; cam.transform.LookAt(mid + Vector3.up * 0.8f); break;
+                }
+            }
+            int previousRate = Time.captureFramerate;
+            Time.captureFramerate = 30;
+            var moments = new[] { 4, 18, 40, 62, 68 };   // frames after the press: the lock, the hold, late hold, the mark, the gulp
+            bool reachedDrain = false, reachedHex = false;
+            try
+            {
+                foreach (string curse in new[] { "drain", "hex" })
+                {
+                    bool drain = curse == "drain";
+                    var caster = Phaister(drain ? me : taya, can + new Vector3(drain ? -3f : 3f, .12f, -7f));
+                    caster.Intent.Parked = false;
+                    victim.Teleport(caster.transform.position + new Vector3(0f, 0f, 4.5f));
+                    FaceTo(victim, caster.transform.position);
+                    FaceTo(caster, victim.transform.position);
+                    for (int w = 0; w < 6; w++) yield return null;
+                    for (int f = 0; f <= 70; f++)
+                    {
+                        FaceTo(caster, victim.transform.position);
+                        caster.Intent.Set(Verb.Skill2, f == 1 || f == 2);
+                        yield return null;
+                        if (drain) reachedDrain |= caster.IsVoodooReaching; else reachedHex |= caster.IsVoodooReaching;
+                        if (Array.IndexOf(moments, f) < 0) continue;
+                        int ms = Mathf.RoundToInt(f / 30f * 1000f);
+                        foreach (string view in new[] { "front", "side", "behind" }) { Place(caster, view); Shoot(cam, $"{curse}_{view}_{ms:D4}"); }
+                        if (drain && Camera.main != null) Shoot(Camera.main, $"{curse}_screen_{ms:D4}");
+                    }
+                    caster.Intent.Clear(); caster.Intent.Parked = true;
+                    caster.Teleport(can + new Vector3(10f, .12f, 8f));
+                    for (int w = 0; w < 90; w++) yield return null;
+                }
+            }
+            finally
+            {
+                Time.captureFramerate = previousRate;
+                Object.Destroy(cam.gameObject);
+                hdr.Release(); ldr.Release();
+            }
+            Assert.IsTrue(reachedDrain, "DRAIN never reached.");
+            Assert.IsTrue(reachedHex, "HEX never reached.");
+        }
     }
 }

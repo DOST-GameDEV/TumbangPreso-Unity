@@ -208,8 +208,10 @@ namespace TumbangPreso.Visual
         // chest where it shows.
         // v17 (2026-09-29, the owner: *"i want u to make her hold up her voodoo too towards the person when markingt hem"*): the
         // LEFT hand holds the doll OUT AT THEM (`VoodooSoulDraw` puts it there) and their soul is sucked into it; the right hand is
-        // out beside it, palm open. The trunk turns a little to her RIGHT so the doll's shoulder leads. DRAIN holds it at their
-        // chest, leaning back as if hauling; HEX raises it, head tipped to peek past it.
+        // out beside it, palm open. The trunk turns a little to her RIGHT so the doll's shoulder leads. v21 (review v20: at chest
+        // height the doll read as hugged, and from behind the hat hid it): the doll arm is RAISED up and out at them, so the doll
+        // stands above her fist clear of the brim from every side; DRAIN at 26 degrees above level, leaning back as if hauling,
+        // HEX a little higher (38; review v21: at 56 her hand and the doll went behind her head and hat), head tipped to peek past it.
         // =============================================================================================
 
         /// <summary>
@@ -226,8 +228,8 @@ namespace TumbangPreso.Visual
             PoseKey(b, .06f, 0, V(2, -6, 0), V(2, -4, 0), V(-10, 0, 8), V(22, 0, -22), V(-2, 0, 4), V(2, 0, -4));
             b.PunchAt(.16f);
             b.HoldAt(.16f, .04f);
-            PoseKey(b, .16f, -.03f, V(-6, 12, 0), V(-8, -10, 0), V(-98, 0, -12), V(-82, -6, 30), V(-16, 0, 6), V(14, 0, -6));
-            PoseKey(b, .40f, -.02f, V(-7, 8, 0), V(-6, -8, 0), V(-92, 0, -10), V(-78, -6, 26), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .16f, -.03f, V(-6, 12, 0), V(-8, -10, 0), V(-122, 0, -10), V(-82, -6, 30), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .40f, -.02f, V(-7, 8, 0), V(-6, -8, 0), V(-116, 0, -8), V(-78, -6, 26), V(-16, 0, 6), V(14, 0, -6));
             return b.Build();
         }
 
@@ -238,13 +240,13 @@ namespace TumbangPreso.Visual
         private static AnimationClip BuildPhaisterDrainAim(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-phaister-drain-aim", paths);
-            PoseKey(b, 0, -.02f, V(-7, 8, 0), V(-6, -8, 0), V(-92, 0, -10), V(-78, -6, 26), V(-16, 0, 6), V(14, 0, -6));
-            PoseKey(b, .15f, -.02f, V(-8, 8, 0), V(-6, -9, 0), V(-94, -2, -10), V(-80, -4, 27), V(-16, 0, 6), V(14, 0, -6));
-            PoseKey(b, .30f, -.02f, V(-7, 7, 0), V(-5, -8, 0), V(-91, 1, -11), V(-77, -7, 25), V(-16, 0, 6), V(14, 0, -6));
-            PoseKey(b, .45f, -.03f, V(-11, 8, 0), V(-9, -8, 0), V(-88, 0, -9), V(-74, -5, 27), V(-17, 0, 6), V(16, 0, -6));
-            PoseKey(b, .60f, -.02f, V(-8, 8, 0), V(-6, -8, 0), V(-92, 0, -10), V(-78, -6, 26), V(-16, 0, 6), V(14, 0, -6));
-            PoseKey(b, .75f, -.02f, V(-7, 9, 0), V(-6, -9, 0), V(-93, -2, -10), V(-80, -6, 27), V(-16, 0, 6), V(14, 0, -6));
-            PoseKey(b, .90f, -.02f, V(-7, 8, 0), V(-6, -8, 0), V(-92, 0, -10), V(-78, -6, 26), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, 0, -.02f, V(-7, 8, 0), V(-6, -8, 0), V(-116, 0, -8), V(-78, -6, 26), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .15f, -.02f, V(-8, 8, 0), V(-6, -9, 0), V(-118, -2, -8), V(-80, -4, 27), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .30f, -.02f, V(-7, 7, 0), V(-5, -8, 0), V(-115, 1, -9), V(-77, -7, 25), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .45f, -.03f, V(-11, 8, 0), V(-9, -8, 0), V(-112, 0, -7), V(-74, -5, 27), V(-17, 0, 6), V(16, 0, -6));
+            PoseKey(b, .60f, -.02f, V(-8, 8, 0), V(-6, -8, 0), V(-116, 0, -8), V(-78, -6, 26), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .75f, -.02f, V(-7, 9, 0), V(-6, -9, 0), V(-117, -2, -8), V(-80, -6, 27), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .90f, -.02f, V(-7, 8, 0), V(-6, -8, 0), V(-116, 0, -8), V(-78, -6, 26), V(-16, 0, 6), V(14, 0, -6));
             return b.Build();
         }
 
@@ -280,8 +282,8 @@ namespace TumbangPreso.Visual
             PoseKey(b, .06f, 0, V(2, -6, 0), V(2, -4, 0), V(-30, 0, 4), V(22, 0, -22), V(-2, 0, 4), V(2, 0, -4));
             b.PunchAt(.16f);
             b.HoldAt(.16f, .04f);
-            PoseKey(b, .16f, .01f, V(-6, 12, -3), V(4, -12, 10), V(-116, -8, -14), V(-98, -6, 34), V(-10, 0, 5), V(10, 0, -5));
-            PoseKey(b, .40f, 0, V(-5, 10, -2), V(4, -10, 8), V(-110, -8, -12), V(-94, -6, 32), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, .16f, .01f, V(-6, 12, -3), V(4, -12, 10), V(-134, -6, -12), V(-98, -6, 34), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, .40f, 0, V(-5, 10, -2), V(4, -10, 8), V(-128, -6, -10), V(-94, -6, 32), V(-10, 0, 5), V(10, 0, -5));
             return b.Build();
         }
 
@@ -292,11 +294,11 @@ namespace TumbangPreso.Visual
         private static AnimationClip BuildPhaisterHexReachAim(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-phaister-hexreach-aim", paths);
-            PoseKey(b, 0, 0, V(-5, 10, -2), V(4, -10, 8), V(-110, -8, -12), V(-94, -6, 32), V(-10, 0, 5), V(10, 0, -5));
-            PoseKey(b, .30f, 0, V(-5, 11, -2), V(2, -12, 10), V(-111, -7, -12), V(-96, -5, 33), V(-10, 0, 5), V(10, 0, -5));
-            PoseKey(b, .60f, 0, V(-5, 9, -1), V(5, -8, 6), V(-109, -9, -13), V(-93, -7, 31), V(-10, 0, 5), V(10, 0, -5));
-            PoseKey(b, .90f, 0, V(-5, 10, -2), V(3, -11, 9), V(-111, -8, -12), V(-95, -6, 32), V(-10, 0, 5), V(10, 0, -5));
-            PoseKey(b, 1.20f, 0, V(-5, 10, -2), V(4, -10, 8), V(-110, -8, -12), V(-94, -6, 32), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, 0, 0, V(-5, 10, -2), V(4, -10, 8), V(-128, -6, -10), V(-94, -6, 32), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, .30f, 0, V(-5, 11, -2), V(2, -12, 10), V(-129, -5, -10), V(-96, -5, 33), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, .60f, 0, V(-5, 9, -1), V(5, -8, 6), V(-127, -7, -11), V(-93, -7, 31), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, .90f, 0, V(-5, 10, -2), V(3, -11, 9), V(-129, -6, -10), V(-95, -6, 32), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, 1.20f, 0, V(-5, 10, -2), V(4, -10, 8), V(-128, -6, -10), V(-94, -6, 32), V(-10, 0, 5), V(10, 0, -5));
             return b.Build();
         }
 
