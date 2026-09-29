@@ -1193,7 +1193,8 @@ class Kit:
         ctx = self.ctx
         # By the shop doors at the south end of the east row, on its step against the facade.
         self.cluster((11.3, -17.0), Vector((0, -1, 0)), Vector((1, 0, 0)),
-                     ["pot_santan_clay", "pot_lily_can", "pot_shrub_bucket"], "shopA")
+                     ["pot_santan_clay", "pot_bloom_clay", "pot_shrub_bucket"], "shopA")   # the lily's leaves
+                                                                                  # reached the shopfront
         self.cluster((11.3, -19.6), Vector((0, -1, 0)), Vector((1, 0, 0)),
                      ["pot_bloom_clay", "pot_trough", "pot_santan_clay"], "shopB")
         # By the lugaw eatery on the Astral podium's Padre Faura face.

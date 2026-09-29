@@ -988,22 +988,68 @@ def east_grime_splash():
 # ------------------------------------------------------------------ PC Express, the brand exception
 
 def east_pcx_mark():
-    """The supplied official artwork on the lightbox's white acrylic, unchanged in colour. The
-    registered-mark badge is painted out, as the real storefront has none."""
+    """The supplied official artwork on the lightbox's acrylic, kept recognisable: its shapes and
+    red and blue stay, the registered-mark badge is painted out (the real storefront has none).
+
+    v1 pasted the crisp vector mark on flat white and the owner saw it as "an image just slapped
+    on there". It is now drawn in the map's hand like every other sign:
+      * the mark's edges wobble by a millimetre or two and carry a one-pixel feather, so they read
+        as a print on acrylic, not a vector;
+      * its colours are a little sun-faded, and it is laid on as ink (multiplied), so the
+        artwork's own white outline is the acrylic showing through, not a white sticker rim;
+      * the acrylic has its OWN drawing: warm off-white, two soft brighter bands where the tubes
+        sit behind it, yellowed edges, a dust band under the top lip with two tide marks running
+        from it, and a soft dark band along the bottom where dirt and dead insects collect.
+    Big feathered shapes only, no speckle."""
+    spec = S.SIGNS["pcx"]
+    c = Canvas(spec["w"], spec["h"], 480)
     im = Image.open(LOGO).convert("RGBA")
     W, H = im.size
     d = ImageDraw.Draw(im)
     # The (R) badge sits in the top-right corner of the red field, about 94..97 % across.
     d.ellipse((int(W * 0.94), int(H * 0.09), int(W * 0.975), int(H * 0.2)), fill=(213, 39, 51, 255))
-    im = im.resize((2048, int(2048 * H / W)), Image.LANCZOS)
-    face = Image.new("RGB", (2400, int(2400 * S.SIGNS["pcx"]["h"] / S.SIGNS["pcx"]["w"])), (244, 241, 234))
-    lw = int(min(face.width * 0.94, face.height * 0.9 * im.width / im.height))
-    lh = int(lw * im.height / im.width)
-    logo = im.resize((lw, lh), Image.LANCZOS)
-    face.paste(logo, ((face.width - lw) // 2, (face.height - lh) // 2), logo)
+    lw = int(min(c.w * 0.9, c.h * 0.84 * W / H))
+    lh = int(lw * H / W)
+    logo = np.asarray(im.resize((lw, lh), Image.LANCZOS), dtype=float) / 255
+    # The acrylic.
+    img = c.flat("efebe0")
+    Z = c.Y
+    for zc in (0.3, 0.72):                          # the tubes behind the face
+        band = np.exp(-((Z / c.h_m - zc) / 0.16) ** 2)
+        img = img * (1 + 0.035 * band[..., None])
+    edge = np.minimum(np.minimum(c.X, c.w_m - c.X), np.minimum(Z, c.h_m - Z))
+    img = img * (1 - (1 - hexcol("e6dcc0")) * np.clip(1 - edge / 0.22, 0, 1)[..., None] * 0.9)
+    img = c.coat(img, (1.03, 1.03, 1.02), 0.9, 0.25, 9901, feather=1.3)
+    # The mark, laid on with a wobble and a feather, then faded.
+    x0, y0 = (c.w - lw) // 2, (c.h - lh) // 2
+    layer = np.zeros((c.h, c.w, 4))
+    layer[y0:y0 + lh, x0:x0 + lw] = logo
+    dx, dy = c.wob(0.0025, 0.25, 9902)
+    yy, xx = np.mgrid[0:c.h, 0:c.w].astype(float)
+    coords = [yy + dy * c.ppm, xx + dx * c.ppm]
+    warped = np.stack([ndimage.map_coordinates(layer[..., k], coords, order=1, mode="constant")
+                       for k in range(4)], axis=-1)
+    a = ndimage.gaussian_filter(warped[..., 3], 0.8)
+    rgb = warped[..., :3]
+    grey = rgb.mean(axis=-1, keepdims=True)
+    rgb = rgb * 0.88 + grey * 0.12                      # sun fade
+    # Laid on as INK: multiplied into the acrylic, so the artwork's white outline and white
+    # letters become the acrylic itself instead of a brighter sticker edge around the band.
+    ink = 1 - a[..., None] * (1 - rgb)
+    img = img * ink
+    img = c.coat(img, (1.04, 1.04, 1.03), 0.7, 0.2, 9903, feather=1.4)   # fade patches over it all
+    # Dirt: under the top lip, two tide marks from it, and the bottom band.
+    top = soft(Z - (0.07 + 0.02 * c.field(0.4, 9904)), 0.035)
+    img = img * (1 - 0.13 * top[..., None])
+    for xm, length in ((0.18 * c.w_m, 0.3), (0.83 * c.w_m, 0.22)):
+        w = 0.06 * np.clip(1 - Z / length, 0, 1)
+        tide = soft(np.abs(c.X - xm - 0.02 * c.field(0.3, 9905)) - w, 0.02) * (Z < length)
+        img = img * (1 - 0.08 * tide[..., None])
+    bottom = soft((c.h_m - Z) - (0.1 + 0.025 * c.field(0.35, 9906)), 0.04)
+    img = img * (1 - 0.16 * bottom[..., None])
     OUT.mkdir(parents=True, exist_ok=True)
-    face.save(OUT / "east_sign_pcx_albedo.png")
-    print("[east-tex] east_sign_pcx (official mark)")
+    Image.fromarray((np.clip(img, 0, 1) * 255).astype(np.uint8)).save(OUT / "east_sign_pcx_albedo.png")
+    print("[east-tex] east_sign_pcx (official mark, drawn onto its acrylic)")
 
 
 # ------------------------------------------------------------------ sign faces

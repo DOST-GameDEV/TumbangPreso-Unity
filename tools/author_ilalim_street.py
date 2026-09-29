@@ -1372,7 +1372,11 @@ def furniture(kit, placed, fl, layout):
     poles_col = collection("power poles", placed)
     cable_col = collection("overhead cables", placed)
     cables = SBuf("overhead cables")
-    W, E = -(PAVE_OUT - 0.42), PAVE_OUT - 0.42
+    # The east line stands 1.2 m off the shopfront line, not 0.42: at 0.42 the poles ran through
+    # the shop row's awnings, its signs and the PC Express lightbox, and their crossarms into the
+    # facades (owner: "fix these canopy + pole clipping issues"). The east kit cuts its awnings
+    # round what still stands under them.
+    W, E = -(PAVE_OUT - 0.42), PAVE_OUT - 1.2
     var = lambda k: ("pole_tx" if k % 4 == 1 else "pole_coil" if k % 4 == 3 else "pole")
     # Taft, west (the campus side): crossarms toward the street (+x, heading 0).
     west_s = [(W, y, 0.0, var(k)) for k, y in enumerate((-100, -86, -72, -58, -44, -30, -17.4, -5.0, 6.0, 17.4))]
@@ -1409,10 +1413,28 @@ def furniture(kit, placed, fl, layout):
         corner = lines["west_s"][-1] if side == "south" else lines["west_n"][0]
         pts = pole_line(protos, poles_col, cables, pl, rng)
         cables_between(cables, corner, pts[0], rng)
+    polys = [bd["poly"] for bd in layout["buildings"]]
+
+    def clearance(px, py):
+        return min(0.0 if B.point_in_poly(px, py, poly) else
+                   min(float(seg_dist(px, py, tuple(poly[k - 1]), tuple(poly[k]))) for k in range(len(poly)))
+                   for poly in polys)
+
+    def clear_spot(x, y):
+        # OSM buildings come right up to this sidewalk: building 39's front stood 0.4 m from the
+        # x = 54 pole, and the east kit grows footprints 8 cm and runs slab bands 0.38 m proud. Try
+        # spots along the street, the nearest first, up to 8 m either way, until one is 0.75 m clear
+        # of every footprint (bands, growth and the pole's own radius).
+        for dx in [0.0] + [s * k * 0.5 for k in range(1, 17) for s in (1, -1)]:
+            px, py = snap(S, x + dx, y, -0.4)
+            if clearance(px, py) >= 0.75:
+                return px, py
+        return snap(S, x, y, -0.4)
+
     east_arm = []
     for k, x in enumerate((26, 40, 54, 68, 82)):
         y0 = sample_center_y(fl["R"], x)
-        px, py = snap(S, x, y0 - 6.0, -0.4)
+        px, py = clear_spot(x, y0 - 6.0)
         east_arm.append((px, py, math.pi / 2, var(k + 1)))
     pts = pole_line(protos, poles_col, cables, east_arm, rng)
     cables_between(cables, lines["east_s"][-1], pts[0], rng)
@@ -1425,10 +1447,10 @@ def furniture(kit, placed, fl, layout):
 
     # Street lamps: arms over the road, never inside the chalk box's air.
     lamps = collection("street lamps", placed)
-    for x, y, h in ((-(PAVE_OUT - 0.35), 0.5, 0.0), ((PAVE_OUT - 0.35), -12.0, math.pi),
+    for x, y, h in ((-(PAVE_OUT - 0.35), 0.5, 0.0), ((PAVE_OUT - 0.88), -10.0, math.pi),
                     (-(PAVE_OUT - 0.35), -51.0, 0.0), (-(PAVE_OUT - 0.35), -79.0, 0.0), (-(PAVE_OUT - 0.35), 61.0, 0.0),
-                    (-(PAVE_OUT - 0.35), 89.0, 0.0), ((PAVE_OUT - 0.35), -47.0, math.pi), ((PAVE_OUT - 0.35), -75.0, math.pi),
-                    ((PAVE_OUT - 0.35), 60.0, math.pi), ((PAVE_OUT - 0.35), 88.0, math.pi)):
+                    (-(PAVE_OUT - 0.35), 89.0, 0.0), ((PAVE_OUT - 0.88), -47.0, math.pi), ((PAVE_OUT - 0.88), -75.0, math.pi),
+                    ((PAVE_OUT - 0.88), 60.0, math.pi), ((PAVE_OUT - 0.88), 88.0, math.pi)):
         place(lamp, lamps, (x, y, PAVE_TOP - 0.05), h)
     for x in (-34, -60, -86, -112):
         for side in (-1, 1):
@@ -1453,7 +1475,8 @@ def furniture(kit, placed, fl, layout):
     s3 = snap(S, 16.5, 25.5, -0.5)
     place(ow, signs, (s3[0], s3[1], PAVE_TOP - 0.05), math.pi)
     place(bawal, signs, (0.0, 20.2, 0.36), 0.0)                        # in the median stub, facing the court
-    place(brgy, signs, (PAVE_OUT - 0.75, 20.6, PAVE_TOP - 0.05), math.radians(-90 + 25))
+    # y 21.6, not 20.6: at 20.6 the board's panel ran through the shop row's end awning (y ..20.0).
+    place(brgy, signs, (PAVE_OUT - 0.75, 21.6, PAVE_TOP - 0.05), math.radians(-90 + 25))
 
     # Railings along the kerb at the crossings (outside the play area) and crowd barriers.
     rails = SBuf("railings yellow")

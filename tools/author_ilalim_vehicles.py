@@ -299,6 +299,12 @@ def liveries(name, col):
     elif name == "veh_bus_liner":
         side_boards(b, -1.95, 2.3, 0.56, 1.08, 1.27, "veh_bus_side")
         side_boards(b, -4.4, 3.4, 2.64, 2.9, 1.25, "veh_bus_route", proud=0.012)
+        # A rub rail along the seam between the maroon skirt (sides at 1.27, top 1.12) and the cream
+        # body (sides at 1.25, bottom 1.04). Kanto's 12 cm body bevel rounds both edges inside the
+        # same 8 cm band, so they crossed at a grazing angle and flickered like z-fighting (owner:
+        # "z-fighting on the buss"). The rail covers the whole band, as a real bus's does.
+        for s in (-1, 1):
+            board(b, Vector((0.0, s * 1.305, 1.12)), Vector((-s, 0, 0)), 9.62, 0.14, 0.08, "veh_maroon")
     elif name == "veh_uv_express":
         side_boards(b, -0.8, 0.86, 0.42, 0.84, 0.98, "veh_uv_side")
         # The strip across the top of the windscreen, on the glass's slope.

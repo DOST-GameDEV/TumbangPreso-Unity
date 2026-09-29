@@ -173,6 +173,12 @@ def lightbox(buf_cls, key, spec, depth=0.34):
             z = 0.09 + zz * h
             body.tube([Vector((sx * (w / 2 - 0.5), -0.03, z)), Vector((sx * (w / 2 - 0.5), y0 + 0.04, z))],
                       0.05, "east_sign_metal", sides=8)
+    # A chunky retaining lip round the acrylic, as on a real lightbox: the face sits 2.5 cm inside
+    # it instead of lying flat on the box front (owner, on the PC Express sign: "just so it doesnt
+    # look out of place like an image just slapped on there").
+    lip_out = _rr(w / 2 + 0.1, h / 2 + 0.1, 0.09)
+    lip_in = _rr(w / 2 - 0.035, h / 2 - 0.035, 0.03)
+    body.frame_y(lip_out, lip_in, y0 + depth - 0.01, y0 + depth + 0.04, "east_sign_metal", zc=h / 2 + 0.09)
     face = buf_cls(f"sign_{key}_face")
     _face(face, key, -w / 2, w / 2, 0.09, h + 0.09, y0 + depth + 0.015)
     return [(body, 0.03), (face, 0)]

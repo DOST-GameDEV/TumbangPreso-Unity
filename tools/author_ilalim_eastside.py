@@ -297,7 +297,7 @@ ALPHA = {"east_grille", S.face_material("pisonet")} | {grille_mat(g) for g in GR
 # The flat roofs repeated as wallpaper from above (owner: "not only ground but the flat roofs"):
 # rotated, feathered extra samples (tools/ilalim_antitile.py).
 ANTI_TILE = {"east_roof"}
-EMIT = {S.face_material("pcx"): 0.55, S.face_material("dental"): 0.4, "east_int_pc": 0.25,
+EMIT = {S.face_material("pcx"): 0.22, S.face_material("dental"): 0.4, "east_int_pc": 0.25,
         S.face_material("manok_pylon"): 0.35}
 
 
@@ -1411,10 +1411,15 @@ def shopfront(buf, glass, y0, y1, key, setback, front, rng):
     w = y1 - y0 - 0.6
     if front in ("glass_pcx", "glass_shelves"):
         # Glass between chunky dark mullions, centre doors, a kick plate.
-        buf.box((xf + 0.02, mid, 0.55), (0.14, w + 0.1, 0.4), "east_metal", r=0.03)
+        # The door pair spans mid +/- 1.08: the kick plate stops at it, and a mullion stands at each
+        # door edge instead of the even rhythm running through the leaves (owner: "weird doors").
+        dh = 1.14
+        for ya, yb in ((y0 + 0.25, mid - dh), (mid + dh, y1 - 0.25)):
+            buf.box((xf + 0.02, (ya + yb) / 2, 0.55), (0.14, yb - ya, 0.4), "east_metal", r=0.03)
         n = max(2, round(w / 1.6))
-        for i in range(n + 1):
-            y = y0 + 0.3 + i * w / n
+        ys = [y0 + 0.3 + i * w / n for i in range(n + 1)]
+        ys = [y for y in ys if abs(y - mid) > dh + 0.35] + [mid - dh, mid + dh]
+        for y in ys:
             buf.box((xf, y, (0.36 + ceil) / 2), (0.16, 0.12, ceil - 0.3), "east_metal", r=0.03)
         buf.box((xf, mid, ceil - 0.05), (0.18, w + 0.1, 0.16), "east_metal", r=0.03)
         glass.quad([Vector((xf + 0.01, y1 - 0.3, 0.72)), Vector((xf + 0.01, y0 + 0.3, 0.72)),
@@ -1473,9 +1478,11 @@ def shop_row(col, rng):
     glass = EBuf("east_shoprow_glass")
     kit = EBuf("east_shoprow_awnings")
     signs = bpy.data.collections["east shop signs"]
-    # The end walls of the row, where the podiums turn the corner.
-    buf.box((FRONT + 3.3, -24.28, WEC_G / 2 - 0.1), (6.6, 0.42, WEC_G + 0.1), "east_wec_render", r=0.06)
-    buf.box((FRONT + 3.3, 20.38, ASTRAL_G / 2 - 0.1), (6.6, 0.42, ASTRAL_G + 0.1), "east_astral_cream", r=0.06)
+    # The end walls of the row, where the podiums turn the corner. They start 6 cm behind the
+    # frontage, inside the end pilaster: flush at x = FRONT their faces shared the pilaster's plane
+    # and the tiles flickered (owner: "z-fighting + clipping signage").
+    buf.box((FRONT + 3.33, -24.28, WEC_G / 2 - 0.1), (6.54, 0.42, WEC_G + 0.1), "east_wec_render", r=0.06)
+    buf.box((FRONT + 3.33, 20.38, ASTRAL_G / 2 - 0.1), (6.54, 0.42, ASTRAL_G + 0.1), "east_astral_cream", r=0.06)
     # The fascia beam over the whole row (the sign zone), in each podium's own paint.
     for (ya, yb), g, mat in (((-24.3, SPLIT_Y + 0.08), WEC_G, "east_wec_render"), ((SPLIT_Y - 0.08, 20.4), ASTRAL_G, "east_astral_cream")):
         buf.extrude_y(fillet([(FRONT, 3.2), (FRONT + 1.8, 3.2), (FRONT + 1.8, g + 0.05), (FRONT, g + 0.05)], 0.08, 2),
@@ -1488,10 +1495,21 @@ def shop_row(col, rng):
         depth = max(r[3] for r in near) + 0.25
         key = near[-1][2]
         pilaster(buf, y, depth, tiles[key])
+    # The street kit's poles and lamps that still stand under the awnings: each awning is cut into
+    # pieces round them, as awnings on Taft are cut round the poles (owner: "fix these canopy +
+    # pole clipping issues"). Boxes come padded 0.25 m by read_boxes().
+    poles = [bx for bx in read_boxes(SOURCE / "street.blend") if bx[5] - bx[4] > 5.0]
     for y0, y1, key, setback, front, aw in SHOP_ROW:
         shopfront(buf, glass, y0 + 0.28, y1 - 0.28, key, setback, front, rng)
         if aw:
-            awning(kit, y0 + 0.2, y1 - 0.2, aw, rng)
+            xe = FRONT - aw[1]
+            gaps = sorted((by0 - 0.1, by1 + 0.1) for bx0, bx1, by0, by1, bz0, bz1 in poles
+                          if bx0 < FRONT and bx1 > xe and by1 > y0 and by0 < y1)
+            a0 = y0 + 0.2
+            for g0, g1 in gaps + [(y1 - 0.2, y1 - 0.2)]:
+                if g0 - a0 >= 0.8:
+                    awning(kit, a0, g0, aw, rng)
+                a0 = max(a0, g1)
 
     # The signs, each on its own system (tools/author_ilalim_signs.py).
     def put(key, x, y, z, m=None):

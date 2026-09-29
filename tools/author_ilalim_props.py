@@ -84,7 +84,7 @@ Footprints are x by y (metres, world axes) and height above the pavement top:
                                  YELO sign, under a four-colour umbrella (R 1.2).
   prop_clutter: prop_crate_stack_w (-10.55, 11.05), prop_crate_stack_e (10.45, -6.80),
     prop_water_drum (-10.55, 15.95, r 0.30, 0.92 tall, a cream drum with a tabo on the lid),
-    prop_bench (-10.62, 6.20, 0.34 x 1.6, 0.46 high), prop_trash_bin (-10.50, -12.30, r 0.27,
+    prop_bench (-10.62, 7.70, 0.34 x 1.6, 0.46 high), prop_trash_bin (-10.50, -12.30, r 0.27,
     0.84 tall, green), prop_chair_w1 (-10.25, 13.62) and prop_chair_w2 (-10.35, -15.75).
   prop_column_signs, built at the ORIGIN (hidden from renders) for the Unity builder to place.
   Each has its BACK at local y = +0.008 and its face toward local -Y, so it sits on a column face
@@ -1126,7 +1126,9 @@ def clutter(parent):
     b.finish(col, origin=(dx, dy, PT))
 
     b = PBuf("prop_bench", top=PT + 0.46)
-    bx, by = -10.62, 6.2
+    # y 7.7, not 6.2: the west Taft pole at y 5.9 stood in the bench (owner: "fix these canopy + pole
+    # clipping issues").
+    bx, by = -10.62, 7.7
     b.rbox((bx, by, PT + 0.435), (0.34, 1.6, 0.05), "prop_wood", r=0.02)
     for ly in (by - 0.6, by + 0.6):
         for sx in (-1, 1):

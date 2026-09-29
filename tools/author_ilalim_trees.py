@@ -879,6 +879,30 @@ def seg_dist(px, py, ax, ay, bx, by):
     return math.hypot(px - (ax + t * dx), py - (ay + t * dy))
 
 
+def street_furniture():
+    """Plan boxes of the street kit's poles, lamps, signals and bus shelters, read from
+    ArtSource/ilalim/street.blend (linked for the reading, then unlinked)."""
+    path = SOURCE / "street.blend"
+    if not path.exists():
+        return []
+    before = set(bpy.data.libraries)
+    with bpy.data.libraries.load(str(path), link=True) as (src, dst):
+        dst.objects = [n for n in src.objects if n.startswith(("street_pole", "street_lamp", "street_signal",
+                                                                 "street_bus_shelter"))]
+    boxes = []
+    for o in dst.objects:
+        if o is None or o.type != "MESH" or o.location.length < 1.0:
+            continue                      # the prototypes stand at the origin
+        m = o.matrix_basis
+        pts = [m @ Vector(c) for c in o.bound_box]
+        boxes.append((min(p.x for p in pts), max(p.x for p in pts), min(p.y for p in pts), max(p.y for p in pts)))
+    for lib in list(bpy.data.libraries):
+        if lib not in before:
+            bpy.data.libraries.remove(lib)
+    print(f"[trees] street furniture to keep trunks clear of: {len(boxes)}")
+    return boxes
+
+
 class Site:
     """Everything a tree must keep clear of, from the sightline-overridden layout."""
 
@@ -911,6 +935,16 @@ class Site:
         self.portico = (self.oblation[0], self.front_y - 2.6)
         self.eyes = [(0.0, -B.SPAWN), (-8.0, 16.0), (8.0, 0.0), (-8.0, -10.0)]
         self.placed = []          # (x, y, r)
+        self.furniture = street_furniture()
+
+    def clear_of_furniture(self, x, y, r):
+        """A trunk and its main limbs keep clear of the street kit's poles, lamps, signals and bus
+        shelters (owner: "validate all the street posts/lamps ... fix these canopy + pole clipping
+        issues"): a pole stood inside a fig's trunk and pit, another in a narra's limbs. Leaves may
+        still brush a pole, as they do on Taft."""
+        reach = max(1.3, 0.45 * r)
+        return all(not (x0 - reach < x < x1 + reach and y0 - reach < y < y1 + reach)
+                   for x0, x1, y0, y1 in self.furniture)
 
     def view_clear(self, x, y, r):
         """No canopy within 4 m, in plan, of the court-to-portico view lines."""
@@ -948,6 +982,8 @@ class Site:
         if self.in_building(x, y, max(trunk_margin, canopy_k * r)):
             return False
         if not street and self.on_road(x, y):
+            return False
+        if not self.clear_of_furniture(x, y, r):
             return False
         return self.spacing_ok(x, y, r)
 
