@@ -1,6 +1,52 @@
 # Ilalim ng Tulay rework guide (ILALIM-1)
 
-⚠️⚠️ **CURRENT STATE (2026-09-29): BLOCKOUT v9 (REAL OSM LAYOUT, SIGHTLINE OVERRIDE) BUILT, AWAITING OWNER REVIEW.** The owner chose
+⚠️⚠️ **CURRENT STATE (2026-09-29, end of session): EVERY KIT BUILT IN BLENDER AND ASSEMBLED.
+Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on branch
+`claude/kanto-blender-assembly-909442` and NOT pushed (the owner plays before a push).**
+
+- **The scene:** `blender -b --python tools/author_ilalim_city.py -- --preview N` links every kit
+  into `ArtSource/ilalim/ilalim_city.blend` and renders `Logs/ilalim-blender/city_<shot>_vN.png`
+  (latest v1; the Rizal shots are v2 plus `city_centre_tele_v1`).
+- **The kits:** each has its own `tools/author_ilalim_<kit>.py`, a
+  `tools/author_ilalim_textures_<kit>.py` and a `.blend`. They are:
+  - `lrt` (the guideway, v11);
+  - `rizal_hall`;
+  - `heritage`;
+  - `eastside` with `signs`;
+  - `street`;
+  - `trees`;
+  - `props`;
+  - `train` and `vehicles`.
+
+  The table and the open decisions are further down, under "The rest of the map, built in
+  parallel". The layout is the real OpenStreetMap one (`osm_layout.json`), except for
+  `sightline_override()` in `tools/author_ilalim_blockout.py`, which every kit imports.
+- **Owner feedback applied this session:**
+  - the guideway: its real underside, pale sand columns, drawn grime, ballast, gantries, and
+    steel that reads;
+  - Rizal Hall moved 26 m east, with the Supreme Court thinned (not removed);
+  - the trees now reuse the Kanto leaf and the Lagoon round leaf, broad frond and blade
+    ("can you use the leaf textures we made previously?").
+- **PENDING owner request, not started:** "can you put a sari sari store somewhere". There is a
+  small sidewalk sari-sari STAND in the props kit at (-10.35, -14.2) already. The request is a
+  proper store: a small house-front tindahan with a grilled counter window, hanging sachets,
+  and a hand-painted sign with an invented name. The lead was checking the free north-east corner
+  of Taft and Padre Faura (about x 13..23, y 37..48, between the east pavement and the 4-storey
+  block at x 23..39, y 48..83) for visibility from the court. Build it in its own new script
+  (`tools/author_ilalim_sarisari.py`) and link it in `author_ilalim_city.py`.
+- **OPEN owner decisions** (details under "Open decisions for the owner" below):
+  - the train is invisible behind the solid parapet; a steel-railing parapet is recommended;
+  - cable shadows on the court;
+  - how big Rizal Hall reads from the court;
+  - names.
+- **Then ILALIM-1.4:** export and a Unity builder into an unregistered sample scene. The grime UV
+  channels, emissive and cutout materials, the train prefab, the collider resizes and the
+  triangle budget are all listed below.
+
+---
+
+**History of this guide's earlier states (kept for the reasoning; the block above is current).**
+The owner chose
 Ilalim ng Tulay as the next map after Kanto and the Lagoon Court, and set it at UP Manila's
 Padre Faura corner "cuz we wanna see our school's Rizal Hall in the game". § 0 is the proposed
 place and feel, with the open decisions in § 0.6. The evidence is in

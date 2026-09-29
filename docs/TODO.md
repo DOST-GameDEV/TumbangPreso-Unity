@@ -1636,7 +1636,16 @@ after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
 - [ ] ILALIM-1.3 Kits and textures, one at a time with owner review: the guideway and columns,
   shopfronts and signs, props and trip hazards, vehicles, and the LRT consist. GUIDEWAY KIT
   v3 BUILT 2026-09-29 (`tools/author_ilalim_lrt.py`, `tools/author_ilalim_textures.py`, then
-  `ArtSource/ilalim/lrt_kit.blend`; guide CURRENT STATE). OPEN: owner review; the other kits.
+  `ArtSource/ilalim/lrt_kit.blend`; guide CURRENT STATE). ALL KITS BUILT 2026-09-29, the rest
+  by parallel agents: guideway v11, Rizal Hall, heritage, east side, streets, trees (reusing
+  the Kanto and Lagoon leaves), props, train and vehicles. They are assembled by
+  `tools/author_ilalim_city.py` into `ilalim_city.blend`. OPEN:
+  - the sari-sari store the owner asked for (not started);
+  - owner decisions: the train hidden by the parapet, cable shadows on the court, Rizal Hall's
+    size from the court, and names;
+  - owner review of the assembled map.
+
+  All of it is committed locally and not pushed.
 - [ ] ILALIM-1.4 Export, and a Unity builder that writes an UNREGISTERED sample scene. Every column
   goes on `TumbangPreso/NearFade`, because the AO NearGuard depends on it. Retune the Ilalim
   WorldLookProfile row in Play. Keep BridgeHoop, the overclock pad, LrtTrainFlyby, and the match
