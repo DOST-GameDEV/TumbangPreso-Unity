@@ -135,17 +135,26 @@ Shader "TumbangPreso/VoodooCircle"
                 col += _Violet.rgb * 2.0 * ring(r, 0.5, 0.01) * inner;
                 dark += voidMask * 0.92;
 
-                // --- the eye: almond lids opening, a burning slit that twitches.
-                float eyeW = 0.36;
-                float lid = 0.19 * saturate(_Eye) * saturate(1.0 - pow(p.x / eyeW, 2.0));
-                float inEye = step(abs(p.x), eyeW) * step(abs(p.y), lid);
-                float lidLine = saturate(1.0 - abs(abs(p.y) - lid) / 0.012) * step(abs(p.x), eyeW) * step(0.01, _Eye);
-                col += _Violet.rgb * 3.0 * lidLine;
-                float2 q = p - float2(_Look * 0.12, 0.0);
-                float iris = ring(length(q), 0.11, 0.012) * inEye;
-                col += _Crimson.rgb * 2.6 * iris + _Crimson.rgb * 0.8 * inEye * saturate(1.0 - length(q) / 0.14);
-                float slit = saturate(1.0 - abs(q.x) / 0.022) * step(abs(q.y), lid * 0.9) * inEye;
-                col += _Ember.rgb * 5.0 * slit;
+                // --- the eye: almond lids opening, a burning slit that twitches. v5 (film v4: *"the eye in the void does not show"*, it
+                // was a thin ring in the dark): nearly the void's width, thick hot lids with a halo and X stitches across them, the
+                // inside burning from the iris out, so it reads from under the circle and from across the court.
+                float eyeW = 0.46;
+                float bulge = saturate(1.0 - pow(p.x / eyeW, 2.0));
+                float lid = 0.27 * saturate(_Eye) * bulge;
+                float onEye = step(abs(p.x), eyeW) * step(0.01, _Eye);
+                float inEye = onEye * step(abs(p.y), lid);
+                float fromLid = abs(abs(p.y) - lid);
+                col += _Violet.rgb * 4.0 * saturate(1.0 - fromLid / 0.026) * onEye;
+                col += _Crimson.rgb * 1.2 * exp(-pow(fromLid / 0.06, 2.0)) * onEye * (1.0 - inEye);
+                float stitchAt = abs(frac(p.x / eyeW * 3.5 + 0.5) - 0.5);
+                float stitch = saturate(1.0 - stitchAt / 0.08) * step(fromLid, 0.05) * onEye * step(0.3, bulge);
+                col += _Crimson.rgb * 3.0 * stitch;
+                float2 q = p - float2(_Look * 0.14, 0.0);
+                col += _Crimson.rgb * inEye * (0.9 + 2.2 * saturate(1.0 - length(q) / 0.24));
+                float iris = ring(length(q), 0.16, 0.024) * inEye;
+                col += _Ember.rgb * 3.4 * iris;
+                float slit = saturate(1.0 - abs(q.x) / 0.038) * step(abs(q.y), lid * 0.92) * inEye;
+                col = lerp(col, _Ember.rgb * 7.0, slit);
 
                 col *= _Glow;
                 float light = saturate(max(col.r, max(col.g, col.b)) * 0.35);

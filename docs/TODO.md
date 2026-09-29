@@ -1173,8 +1173,11 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   computed cameras; OMEN's `.PhaisterBurst.cs` deleted). THE CIRCLE redone as light after *"it looks underwhelming af it doesnt feel
   like an ult"* and *"use genshin reference"* (research.md section 5): `Shaders/VoodooCircle` on a disc plus 3D pins and lightning
   (`Visual.SkyCircle`), the same object in play; marionette strings in play from the eye to the doll's crown and hands; play opens
-  with the circle already open (never sewn twice). Film v4 sent. OPEN from v4: the offering close-up (brim fills it), a darker
-  replaced night, the eye in the void, the landing pose (reads toppled); the owner's verdict.
+  with the circle already open (never sewn twice). Film v4 sent. v5 and v6 (2026-09-29) fixed v4's four faults: the doll gripped in
+  her left fist at her side and the lens at her eye line (her face and grin in frame); her night REPLACES the world
+  (`Shaders/VoodooNight`, an unlit dome and a floor on the court's own surface); the eye nearly the void's width with thick stitched
+  lids, open by 2.2 s; the landing slumps (v4 pitched its head 60 degrees face-down on top of the torso); the puppet's close-up on
+  its face, its head turned to the real opponents. Film v6 sent (`phaister_voodoo_doll_ult_v6_small.mp4`). OPEN: the owner's verdict.
   (`SkillReceiptTests.RefusedFreeRecallDoesNotCreateAChargeAndEligibilityDoesNotMutateHeldTime`, Nemu, fails `CannotAct`; it failed
   the same way on 2026-09-27 and before this work on 2026-09-29, so it is not the doll's.)
 - [ ] The cutscene SEW / GROW / WAKE; sounds; voice rows; icons; bots; films sent; the gate.

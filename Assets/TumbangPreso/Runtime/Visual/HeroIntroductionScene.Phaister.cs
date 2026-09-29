@@ -12,8 +12,8 @@ namespace TumbangPreso.Visual
         // direction is his: *"i want her to cast like a really scary magic circle in teh sky for her cutscene and then this monster comes
         // out of it and looks like its controlled by strings and scary"*.
         //
-        //   0.00-1.10  THE OFFERING  the night falls; she lifts the small doll up in front of her face; its eye lights; a thread of
-        //                            light rises out of it into the dark
+        //   0.00-1.10  THE OFFERING  her night replaces the world; she raises the small doll out to her side in her left fist; its eye
+        //                            lights; a thread of light rises out of it into the dark
         //   1.10-2.40  THE CIRCLE    the thread reaches the sky and THE CIRCLE tears open over her right (`SkyCircle`: rims sewn,
         //                            teeth, pins, runes, the eye opening); at 2.10 the doll is yanked up out of her hands into the eye
         //   2.40-4.10  THE DESCENT   the MONSTER (the doll at its fighting size) is lowered out of the eye on strings (crown, both
@@ -32,12 +32,12 @@ namespace TumbangPreso.Visual
         private const float PhCircleAt = 1.10f, PhSwallowAt = 2.10f, PhDescentAt = 2.40f, PhLandAt = 4.10f, PhPuppetAt = 4.70f;
         /// <summary>When the circle starts to open, and its age runs 1:1 from there (fully open at 2.6 s, `SkyCircle.FullyOpenAge`).</summary>
         private const float PhCircleOpens = 1.20f;
-        private const float PhStageRadius = 30f, PhSmallDoll = 0.55f;
+        private const float PhStageRadius = 17f, PhDomeHeight = 16f, PhSmallDoll = 0.55f;
         private static Vector3 PhDollSpot => new Vector3(Abilities.VoodooDollBody.BesideHer, 0f, 0f);
         private static Vector3 PhDollEnd => new Vector3(Abilities.VoodooDollBody.BesideHer, 0f, Abilities.VoodooDollBody.LurchForward);
         private static Vector3 PhCircleCentre => PhDollSpot + Vector3.up * VoodooSkyCircle.Height;
 
-        private int _nightGround, _nightSky, _phDollGlow, _phDust, _phDustInner, _phEyeFlare;
+        private int _nightDome, _nightFloor, _phDollGlow, _phDust, _phDustInner, _phEyeFlare;
         private readonly List<int> _stars = new List<int>(8), _phEmbers = new List<int>(24);
         /// <summary>Embers rising through the whole scene, some right at the lens (research: never an empty frame, something near the
         /// lens; Castorice's butterflies, Nahida's leaves). Typed: (angle deg, radius m, start height m, rise m/s, size, phase).</summary>
@@ -53,15 +53,22 @@ namespace TumbangPreso.Visual
         private LineRenderer _phRise;
         private readonly List<LineRenderer> _phStrings = new List<LineRenderer>(4);
         private Transform _phSmall, _phMonster;
-        private float _phSmallFoot, _phMonsterFoot, _phMonsterHeight = 2.2f;
+        private float _phCourtY, _phSmallFoot, _phMonsterFoot, _phMonsterHeight = 2.2f;
         private Transform _phMTorso, _phMHead, _phMArmL, _phMArmR, _phMLegL, _phMLegR;
         private Vector3 _phMPalmL, _phMPalmR;
         private readonly Vector3[] _phStringPoints = new Vector3[10];
 
         private void BuildPhaister()
         {
-            _nightGround = Wall("NightFallsGround", 0, 1.1f, new Color(.06f, .01f, .06f, .92f), PhStageRadius);
-            _nightSky = Wall("NightFallsSky", 1.1f, 13, new Color(.12f, .02f, .12f, .90f), PhStageRadius, emission: .14f, cap: true);
+            // ⚠️ The stage's root is on the map floor (`VfxShapes.GroundPoint`), and Bayan Plaza's paving stands above it: flat pieces
+            // sit on the court's own surface (`Slipper.GroundY`, the method's section 8 trap), or v5's floor z-fights under it.
+            var rootAt = _root.transform.position;
+            _phCourtY = Mathf.Max(0f, Slipper.GroundY(rootAt + Vector3.up * .3f) - rootAt.y);
+            // ⚠️ HER NIGHT REPLACES THE WORLD (v5; film v4's lit translucent wall took the day's blue ambient and fog and read grey-blue,
+            // with the court still in daylight under it): an unlit dome and floor of her own (`Shaders/VoodooNight`), PhStageRadius out,
+            // which hides the plaza beyond the court and still holds every opponent who can be staged (within PmReach of the doll).
+            _nightDome = PhNight("NightDome", WallMesh(40, cap: true), ground: false);
+            _nightFloor = PhNight("NightFloor", PhFloorQuad(), ground: true);
             for (int i = 0; i < 7; i++)
                 _stars.Add(Add("NightStar" + i, VfxShapes.TwoSided(VfxShapes.Star(4, .38f, 60 + i)), new Color(.95f, .62f, .78f, .9f), .6f));
             _phDollGlow = AddGlow("PhDollGlow", new Color(.86f, .22f, .62f, 1f), falloff: 2.4f, core: .8f, lift: .1f);
@@ -95,6 +102,56 @@ namespace TumbangPreso.Visual
                     }
             }
             BuildPhaisterStage();
+        }
+
+        /// <summary>A piece of her night (`Shaders/VoodooNight`): the dome round the stage or the floor over the court. Faded by `Tint`.</summary>
+        private int PhNight(string name, Mesh mesh, bool ground)
+        {
+            var go = VfxShapes.Stand(_root.transform, name, mesh, 1);
+            go.layer = _root.layer;
+            var renderer = go.GetComponent<Renderer>();
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; renderer.receiveShadows = false;
+            var shader = Resources.Load<Shader>("Shaders/VoodooNight");
+            if (shader != null)
+            {
+                var m = new Material(shader) { name = name };
+                m.SetFloat("_Ground", ground ? 1f : 0f);
+                if (ground) m.renderQueue = 2950;
+                renderer.sharedMaterial = m;
+                VfxRenderTag.Own(go, m);
+            }
+            else VfxMaterial.Ghost(renderer, new Color(.04f, .01f, .06f, 1f), .1f);
+            go.transform.localPosition = ground ? Vector3.up * (_phCourtY + .025f) : Vector3.zero;
+            go.transform.localScale = ground ? new Vector3(PhStageRadius, 1f, PhStageRadius) : new Vector3(PhStageRadius, PhDomeHeight, PhStageRadius);
+            _pieces.Add(new Piece { Transform = go.transform, Renderer = renderer, Color = Color.white });
+            return _pieces.Count - 1;
+        }
+
+        /// <summary>A flat quad over the court, x and z -1 to 1 (the shader rounds it).</summary>
+        private static Mesh PhFloorQuad()
+        {
+            var mesh = new Mesh { name = "VoodooNightFloor" };
+            mesh.vertices = new[] { new Vector3(-1f, 0f, -1f), new Vector3(1f, 0f, -1f), new Vector3(1f, 0f, 1f), new Vector3(-1f, 0f, 1f) };
+            mesh.triangles = new[] { 0, 2, 1, 0, 3, 2 };
+            mesh.RecalculateNormals();
+            mesh.bounds = new Bounds(Vector3.zero, new Vector3(2f, .1f, 2f));
+            return mesh;
+        }
+
+        /// <summary>The circle's light on her night: where it hangs over the dome's cap and the floor (object space), and how bright.</summary>
+        private void PhNightLight(float t)
+        {
+            float glow = Ease(PhCircleOpens, PhCircleOpens + .7f, t);
+            var pool = new Vector4(PhDollSpot.x / PhStageRadius, PhDollSpot.z / PhStageRadius, .38f, 0f);
+            foreach (int index in new[] { _nightDome, _nightFloor })
+            {
+                var p = _pieces[index];
+                p.Renderer.GetPropertyBlock(p.Block);
+                p.Block.SetVector("_Pool", pool);
+                p.Block.SetFloat("_Glow", glow);
+                p.Block.SetFloat("_Phase", t);
+                p.Renderer.SetPropertyBlock(p.Block);
+            }
         }
 
         /// <summary>A thread of her light in the circle's own material (`Shaders/VoodooThread`), in the stage's space.</summary>
@@ -165,8 +222,9 @@ namespace TumbangPreso.Visual
 
         // ------------------------------------------------------------------ where things are at t
 
-        /// <summary>The small doll in her hands, up in front of her face (it rides her hands as the body keys move them).</summary>
-        private Vector3 PhOffered => BothPalms + new Vector3(0f, .22f, .12f);
+        /// <summary>The small doll gripped in her left fist, raised at her side (it rides her hand as the body keys move it); its middle
+        /// sits above the fist, which holds it by the legs.</summary>
+        private Vector3 PhOffered => FreePalm + new Vector3(0f, .2f, 0f);
 
         /// <summary>The small doll at <paramref name="t"/>: in her hands, then yanked up the thread into the eye (gone at 2.40).</summary>
         private Vector3 PhSmallAt(float t, out float size)
@@ -201,7 +259,8 @@ namespace TumbangPreso.Visual
                 return PhDollSpot + Vector3.up * y;
             }
             float land = t - PhLandAt;
-            float buckle = land < .08f ? -.28f * land / .08f : -.28f * Mathf.Exp(-(land - .08f) * 7f);
+            // A dip at the landing, not a sink: v4 dropped it 0.28 m through the court.
+            float buckle = land < .08f ? -.1f * land / .08f : -.1f * Mathf.Exp(-(land - .08f) * 7f);
             float lurch = Ease(PhPuppetAt + .28f, PhPuppetAt + .52f, t);
             return Vector3.Lerp(PhDollSpot, PhDollEnd, lurch) + Vector3.up * buckle;
         }
@@ -213,7 +272,8 @@ namespace TumbangPreso.Visual
             float leave = 1 - Ease(Seconds - .45f, Seconds - .05f, t);
             // THE NIGHT, at once, blood-dark: the change of world is the first thing that happens.
             float night = Ease(0f, .3f, t);
-            Tint(_nightGround, night * leave); Tint(_nightSky, night * leave);
+            Tint(_nightDome, night * leave); Tint(_nightFloor, night * leave);
+            PhNightLight(t);
             Quaternion facingCentre(Vector3 at) => Quaternion.LookRotation(-new Vector3(at.x, 0, at.z).normalized, Vector3.up) * Quaternion.Euler(90, 0, 0);
             for (int i = 0; i < _stars.Count; i++)
             {
@@ -233,7 +293,8 @@ namespace TumbangPreso.Visual
                 {
                     _phSmall.localPosition = small - Vector3.up * (PhSmallDoll * .5f - _phSmallFoot) * size;
                     float jolt = Flash(t, .55f, .1f) * 14f;
-                    _phSmall.localRotation = Quaternion.Euler(-12f + jolt, 180f + 8f * Mathf.Sin(t * 3f), 0f);
+                    // Its face out to the lens and the court (v4 turned it to her, so the lit eye was on the far side).
+                    _phSmall.localRotation = Quaternion.Euler(-8f + jolt, -14f + 8f * Mathf.Sin(t * 3f), 0f);
                     _phSmall.localScale = Vector3.one * _phSmallBaseScale * size;
                 }
                 float glow = Ease(.4f, .9f, t) * (t < PhDescentAt ? 1f : 0f);
@@ -306,42 +367,51 @@ namespace TumbangPreso.Visual
             _phMonster.localPosition = feet + Vector3.up * _phMonsterFoot;
 
             // Its pose: a marionette. Hanging, the hand strings haul its arms up and its head lolls; each jerk flicks it; landed, the
-            // arms drop and the knees buckle; then the head snaps up, the arms jerk out, one leg lurches forward.
+            // arms drop, the legs splay and the head flops to one side; then the head snaps up, the arms jerk out, one leg lurches.
+            // ⚠️ Raw euler on the cast's rig (`author_ultimate_intros.py`): +x on the torso and head pitches FORWARD. v4 landed with
+            // the torso at 22 and the head at 38 on top of it, 60 degrees face-down: on a body that is mostly head that read as
+            // toppled flat. A dropped puppet slumps a little and its head falls SIDEWAYS (z), and its legs splay (spread).
+            const float LandTorso = 8f, LandHeadX = 12f, LandHeadY = 12f, LandHeadZ = 26f;
             float jerk = 0f;
             foreach (float at in new[] { PhDescentAt + .02f, PhDescentAt + .58f, PhDescentAt + 1.14f }) jerk = Mathf.Max(jerk, Flash(t, at + .05f, .12f));
-            Vector3 torso, head; float lRaise, lSpread, rRaise, rSpread, lLeg, rLeg;
+            Vector3 torso, head; float lRaise, lSpread, rRaise, rSpread, lLeg, rLeg, legSpread = 3f, torsoTurn = 0f;
             if (t < PhLandAt)
             {
-                torso = new Vector3(14f - 10f * jerk, 0f, 4f * Mathf.Sin(t * 3f));
-                head = new Vector3(28f - 30f * jerk, 10f * Mathf.Sin(t * 2.3f), 14f);
+                torso = new Vector3(10f - 10f * jerk, 0f, 4f * Mathf.Sin(t * 3f));
+                head = new Vector3(20f - 26f * jerk, 10f * Mathf.Sin(t * 2.3f), 14f);
                 lRaise = 150f + 20f * jerk; lSpread = 42f; rRaise = 146f + 22f * jerk; rSpread = 46f;
                 lLeg = 6f * Mathf.Sin(t * 4f); rLeg = -6f * Mathf.Sin(t * 4f + .6f);
             }
             else if (t < PhPuppetAt)
             {
                 float drop = Ease(PhLandAt, PhLandAt + .12f, t);
-                torso = new Vector3(Mathf.Lerp(14f, 22f, drop), 0f, 6f);
-                head = new Vector3(Mathf.Lerp(28f, 38f, drop), 12f, 18f);
+                torso = new Vector3(Mathf.Lerp(10f, LandTorso, drop), 0f, Mathf.Lerp(4f, 6f, drop));
+                head = new Vector3(Mathf.Lerp(20f, LandHeadX, drop), LandHeadY, Mathf.Lerp(14f, LandHeadZ, drop));
                 lRaise = Mathf.Lerp(150f, 18f, drop); lSpread = 30f; rRaise = Mathf.Lerp(146f, 24f, drop); rSpread = 34f;
-                lLeg = 4f; rLeg = -4f;
+                lLeg = 4f; rLeg = -4f; legSpread = Mathf.Lerp(3f, 12f, drop);
             }
             else
             {
                 float snap = Ease(PhPuppetAt, PhPuppetAt + .07f, t), arms = Ease(PhPuppetAt + .14f, PhPuppetAt + .24f, t);
                 float step = Ease(PhPuppetAt + .28f, PhPuppetAt + .5f, t), settle = Ease(PhPuppetAt + .55f, PhPuppetAt + .9f, t);
                 float twitch = Mathf.Sin(t * 17f) * (1f - settle) * 3f;
-                torso = new Vector3(Mathf.Lerp(22f, 16f, snap) + 8f * step - 4f * settle, 0f, Mathf.Lerp(6f, -8f, settle));
-                head = new Vector3(Mathf.Lerp(38f, -8f, snap) + twitch, Mathf.Lerp(12f, -14f, snap) + 8f * settle, Mathf.Lerp(18f, 22f, settle));
+                torso = new Vector3(Mathf.Lerp(LandTorso, 4f, snap) + 8f * step - 4f * settle, 0f, Mathf.Lerp(6f, -8f, settle));
+                // The head jerks round to the real opponents (as far as a neck goes), the chest a little after it.
+                float look = PmLookYaw();
+                head = new Vector3(Mathf.Lerp(LandHeadX, -8f, snap) + twitch, Mathf.Lerp(LandHeadY, look * .75f, snap) + 6f * settle,
+                                   Mathf.Lerp(LandHeadZ, 22f, settle));
+                torsoTurn = look * .25f * arms;
                 lRaise = Mathf.Lerp(18f, 78f, arms) - 20f * settle; lSpread = Mathf.Lerp(30f, 58f, arms);
                 rRaise = Mathf.Lerp(24f, 70f, arms) - 16f * settle; rSpread = Mathf.Lerp(34f, 62f, arms);
                 lLeg = 4f + 26f * step * (1f - settle * .6f); rLeg = -4f - 8f * step;
+                legSpread = Mathf.Lerp(12f, 5f, snap);
             }
-            PoseBone(_phMTorso, torso);
+            PoseBone(_phMTorso, torso + new Vector3(0f, torsoTurn, 0f));
             PoseBone(_phMHead, head);
             PoseBone(_phMArmL, new Vector3(-lRaise, 0f, 80f - lSpread));
             PoseBone(_phMArmR, new Vector3(-rRaise, 0f, -(80f - rSpread)));
-            PoseBone(_phMLegL, new Vector3(-lLeg, 0f, -3f));
-            PoseBone(_phMLegR, new Vector3(-rLeg, 0f, 3f));
+            PoseBone(_phMLegL, new Vector3(-lLeg, 0f, -legSpread));
+            PoseBone(_phMLegR, new Vector3(-rLeg, 0f, legSpread));
 
             // THE STRINGS, from the eye to its crown, both hands and its back: taut while it hangs, slack on the landing, snapping taut
             // with the puppet's jerks.
@@ -371,7 +441,7 @@ namespace TumbangPreso.Visual
             }
 
             // THE DROP: a ring of dust and light racing out from its feet; its eyes flare as its head snaps up.
-            Vector3 ground = PhDollSpot + Vector3.up * .03f;
+            Vector3 ground = PhDollSpot + Vector3.up * (_phCourtY + .04f);
             float u2 = Mathf.InverseLerp(PhLandAt, PhLandAt + .35f, t);
             Place(_phDust, ground, Vector3.one * Mathf.Lerp(.6f, 7f, 1 - (1 - u2) * (1 - u2)), Quaternion.identity, (t >= PhLandAt ? 1f - u2 : 0f) * leave);
             float ringU = Mathf.InverseLerp(PhLandAt, PhLandAt + .25f, t);
@@ -394,8 +464,9 @@ namespace TumbangPreso.Visual
         private void PhaisterGrade(float t, out float brightness, out float saturation)
         {
             float away = Ease(0f, .3f, t) * (1f - .3f * Ease(PhPuppetAt, PhPuppetAt + .4f, t)) * (1f - Ease(Seconds - .16f, Seconds, t));
-            brightness = 1f - .32f * away;
-            saturation = 1f - .18f * away;
+            // v5: her night is dark in itself now (`Shaders/VoodooNight`), so the grade only has to settle the lit bodies into it.
+            brightness = 1f - .24f * away;
+            saturation = 1f - .14f * away;
         }
 
         private Material _phImpact;

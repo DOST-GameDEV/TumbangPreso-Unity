@@ -289,19 +289,22 @@ def phaister():
     Play picks up from its end: the doll standing where it lurched to (`VoodooDollBody.BesideHer`, `LurchForward`), the circle open
     overhead with its strings down to the doll (`VoodooSkyCircle` starts fully open).
 
-    ⚠️ THE CAST IS CHIBI: THE ARMS ARE ABOUT A HEAD LONG. Hands raised overhead end inside the brim and vanish from every front shot, so
-    the doll is offered up in FRONT of her face (arms forward and up), never straight overhead.
+    ⚠️ THE CAST IS CHIBI: THE ARMS ARE ABOUT A HEAD LONG. Hands raised overhead end inside the brim and vanish from every front shot.
+    ⚠️ v5 (film v4: the close-up was all brim and the doll, held up in front of her face in both hands, covered it): the doll is
+    GRIPPED IN HER LEFT FIST, raised out to her left side at shoulder height, its face to the lens, and she turns her head to it; the
+    camera stands back at her eye line, so her face, her grin and the doll are all in the frame.
     ⚠️ THE HEAD GOES BACK ONLY 10 DEGREES: further and the wide brim turns into a flat slab toward the camera.
     """
     p = Performance("phaister", 5.8)
     p.voice = (1.35, "hero_phaister_ult")
 
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    # THE OFFERING: both hands forward and up in front of her face, the doll held between them; chin up, leaning back a little.
-    offer = Pose(torso=(-6, 0, 0), head=(-10, 0, 0), left=(128, 20, 18), right=(128, 20, 18), legs=((0, 5), (0, 5)))
-    offer_b = offer.but(torso=(-7, 3, 0), head=(-10, 4, 3))
-    # Yanked away: the arms flung up and open after it, the chest thrown back, a half step back.
-    recoil = Pose(torso=(-12, 0, 0), head=(-10, 0, 0), left=(150, 55, 0), right=(150, 55, 0), legs=((-10, 5), (6, 5)))
+    # THE OFFERING: the doll gripped in her left fist, raised out to her left side at shoulder height; her head turned to it, chin a
+    # little up, the right hand low and open.
+    offer = Pose(torso=(-4, -8, 0), head=(-8, -20, 4), left=(100, 55, 0), right=(25, 28, 0), legs=((0, 5), (0, 5)))
+    offer_b = offer.but(torso=(-5, -6, 0), head=(-10, -16, 6), left=(108, 52, 0))
+    # Yanked away: the left arm flung up after it, the right thrown out, the chest thrown back, a half step back.
+    recoil = Pose(torso=(-12, 0, 0), head=(-10, -6, 0), left=(160, 40, 0), right=(70, 45, 0), legs=((-10, 5), (6, 5)))
     # Watching it come down: hands low and open at her sides, chin up, weight back.
     watch = Pose(torso=(-6, -8, 0), head=(-8, 10, 0), left=(20, 34, 0), right=(24, 30, 0), legs=((-6, 5), (6, 5)))
     # The drop: a small flinch at the landing (it is big), then pleased.
@@ -324,8 +327,9 @@ def phaister():
     p.key(5.8, smirk.but(torso=(-2, -12, 4), head=(3, 18, 12)))
 
     # Shot distances are real metres (she is 2.38 m to the hat tip). Hero-local: +x her right, +z in front of her.
-    # THE OFFERING: low in front of her, looking up past the doll into the sky, pushing in.
-    p.shot(0, 1.10, (.8, .5, 2.1), (.25, 2.3, .3), 54, eye_to=(.6, .45, 1.8), look_to=(.25, 2.6, .3), fov_to=50)
+    # THE OFFERING: in front of her at her eye line, a little to her right, her face and the doll at her left side both in frame,
+    # pushing in slowly.
+    p.shot(0, 1.10, (.9, 1.25, 3.3), (-.35, 1.65, .2), 46, eye_to=(.7, 1.2, 2.9), look_to=(-.4, 1.75, .2), fov_to=42)
     # THE CIRCLE: tilting up from the doll in her hands to the circle tearing open over her right (computed from the circle).
     p.shot(1.10, 2.40, (.3, .7, 2.4), (.4, 3.0, .6), 50, eye_to=(-.6, .6, 3.2), look_to=(1.3, 7.0, 0), fov_to=70)
     # THE DESCENT: from under the circle, looking up as the monster is lowered at the lens (computed from its height).

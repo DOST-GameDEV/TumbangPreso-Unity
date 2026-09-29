@@ -20,7 +20,7 @@ namespace TumbangPreso.Visual
     /// | 0.50 to 0.98 | eight long PINS stab in through the rim from above, one after another (3D, so they have depth) | in, from above |
     /// | 0.55 | the FLASH: the whole circle blazes as it closes | out |
     /// | 0.45 to 0.95 | the rune band, the star {8/3} and the stitches light up inside, crawling against the rim | anticlockwise |
-    /// | 0.90 to 1.40 | the EYE in the dark void at its centre opens, an ember slit twitching | opening |
+    /// | 0.50 to 0.95 | the EYE in the dark void at its centre opens, nearly the void's width, an ember slit twitching | opening |
     /// | then | the rim, the runes and the star turn against each other; the void swirls | slow |
     ///
     /// One object, posed from an age, used by the cutscene (`HeroIntroductionScene.Phaister.cs`, from the scene clock) and by play
@@ -28,7 +28,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed class SkyCircle
     {
-        public const float Radius = 5.6f, EyeHalfWidth = 0.36f * Radius, EyeHalfHeight = 0.19f * Radius;
+        public const float Radius = 5.6f, EyeHalfWidth = 0.46f * Radius, EyeHalfHeight = 0.27f * Radius;
         public const float FullyOpenAge = 1.4f;
         private const int Pins = 8, Bolts = 6, BoltPoints = 9;
 
@@ -141,7 +141,7 @@ namespace TumbangPreso.Visual
                 {
                     _circle.SetFloat("_Reveal", reveal * reveal * (3f - 2f * reveal));
                     _circle.SetFloat("_Inner", Mathf.Clamp01((age - 0.45f) / 0.5f));
-                    _circle.SetFloat("_Eye", Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((age - 0.9f) / 0.5f)));
+                    _circle.SetFloat("_Eye", Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((age - 0.5f) / 0.45f)));
                     _circle.SetFloat("_Look", Mathf.Sin(age * 3.1f) * 0.7f + Mathf.Sin(age * 7.7f) * 0.2f);
                     _circle.SetFloat("_Spin", spin);
                     _circle.SetFloat("_Phase", age);

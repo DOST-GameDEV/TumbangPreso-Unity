@@ -188,6 +188,20 @@ namespace TumbangPreso.Visual
             }
         }
 
+        /// <summary>Where the staged opponents are from the doll, flat (its forward when nobody is staged).</summary>
+        private Vector3 PmToward()
+        {
+            if (_pmTargets.Count == 0) return Vector3.forward;
+            Vector3 sum = Vector3.zero;
+            foreach (var c in _pmTargets) sum += c.Feet;
+            var d = sum / _pmTargets.Count - PhDollEnd; d.y = 0f;
+            return d.sqrMagnitude > .25f ? d.normalized : Vector3.forward;
+        }
+
+        /// <summary>How far its head turns to them: the signed angle from its forward (her forward) to them, as far as a neck goes
+        /// (+ is to its right, the raw head convention).</summary>
+        private float PmLookYaw() => Mathf.Clamp(Vector3.SignedAngle(Vector3.forward, PmToward(), Vector3.up), -60f, 60f);
+
         /// <summary>
         /// THE PUPPET: in on its face as it snaps up (from the opponents' side, so it lurches at the lens), then back until it, her and
         /// every opponent staged are in frame.
@@ -198,18 +212,14 @@ namespace TumbangPreso.Visual
             // to the ending the references share (Castorice's last frames): the caster small in front, smirking, the summon LOOMING
             // over her, eyes burning, the circle above, the real opponents' shoulders in the foreground.
             Vector3 doll = PhMonsterFeet(t);
-            Vector3 toward = Vector3.forward;
-            if (_pmTargets.Count > 0)
-            {
-                Vector3 sum = Vector3.zero;
-                foreach (var c in _pmTargets) sum += c.Feet;
-                var d = sum / _pmTargets.Count - doll; d.y = 0f;
-                if (d.sqrMagnitude > .25f) toward = d.normalized;
-            }
+            Vector3 toward = PmToward();
             Vector3 side = Vector3.Cross(Vector3.up, toward);
             Vector3 face = doll + Vector3.up * (_phMonsterHeight * .8f);
             float u = Ease(PhPuppetAt + .5f, Seconds - .25f, t);
-            Vector3 closeEye = face + toward * 2.3f + side * .4f;
+            // ⚠️ In on its FACE. It stands facing her way (play picks up there) and only its head turns to them, so the lens sits between
+            // its front and its look; v5 put the lens on the opponents' side, which was behind its ear whenever they stood off its shoulder.
+            Vector3 faceDir = Quaternion.Euler(0f, PmLookYaw() * .6f, 0f) * Vector3.forward;
+            Vector3 closeEye = face + faceDir * 2.3f + Vector3.Cross(Vector3.up, faceDir) * .4f;
             // Low (her eye line), in front of her and a little to her left, so she is nearer the lens than the doll beside her.
             Vector3 her = Vector3.up * 1.2f;
             Vector3 lowEye = her + toward * 3.6f - side * 1.5f + Vector3.down * .5f;
