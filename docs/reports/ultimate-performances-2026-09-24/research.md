@@ -110,6 +110,14 @@ With section 4 (Nahida's shrine, Raiden's emblem, Neuvillette's floor ring and p
 layers turning against each other** (a hot rim with a halo, a rune band, a geometric star, a dark centre), it OPENS with a flash,
 and the summon comes out of its middle. `Shaders/VoodooCircle` and `Visual.SkyCircle` are built to that.
 
+**Round two, on the owner's notes on film v6 (2026-09-29): making it TERRIFYING.** Honkai: Star Rail, Black Swan's ultimate
+(`ZK6JM-GXxeE`, scrub frames): she FLOATS while casting, cards circling her; the world drains to a dark space cut by shafts of light;
+a close-up of her face at the peak; giant hands reach in; a radial burst of rays and shards at the release. Genshin, Flins' burst (the
+owner's pick, `Y_pDrlAelzc`; its scrub frames are 48 px, so his description stands in: it opens in darkness with him lit by his own
+light and a storm of effects). The owner's screenshot of an IMPACT FRAME: one or two frames of black ink on white with radial speed
+lines, on the hits. The rules: let the day die on screen; light the caster from below only; hide the summon, then let it LOOK AT the
+lens; show the hands of whatever works it, never a body; punctuate the hits with ink frames. Applied in the Phaister plan, section 9.8c.
+
 **Limits for TUMP.** The cutscene is not a gameplay frame, but `AbilityShowcaseProbe`'s white-blowout rule (12 per cent) is kept in
 spirit: saturated hero colours, never white, because white is where those frames lose their subject. `Art_Direction.md` section 0
 still governs every shape: blocky, readable, hand-typed, the hero's own palette. The world is paused under the cutscene, so every

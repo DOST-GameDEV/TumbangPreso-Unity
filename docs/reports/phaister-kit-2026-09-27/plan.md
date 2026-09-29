@@ -474,6 +474,66 @@ circle as a monster hung on strings.**
 up into the circle (the marionette read the owner asked for, in play too: 9.9 in-play rows 1 and 12). The circle draws in to a
 smaller ring high over it after 3 s and the strings stay, so everyone can always see it is a puppet and whose.
 
+### 9.8c The cutscene, v7 direction: THE PUPPETEER (2026-09-29, the owner's notes on film v6)
+
+The owner on v6: *"I like the eye but the execution is weird"*, *"dont make her raise it up"*, *"i want her to look like she starts
+flying and is casting"*, *"i want the handheld vodoo to look diff from ult too"*, *"show transition from day to dark too"*, *"when the
+eye opens the theres like a lot of vfx or smth of it being summoned"*, *"I want the portal (eye) to be diff from the thing that
+controls it too"*, a photo of white-gloved hands working a wooden marionette control (*"like this"*, *"i want the wires on its head to
+look like this"*), *"thoroughly plan first how to make it look better and cooler"*, Flins' burst as the reference (*"his ult starts
+with darkness in the bg ... making him look cool and terrifying"*), *"phaister's ult does not have a terrifying feeel at all eh"*,
+and a screenshot of an ink impact frame (*"a complete 1-2 frames change everything biriefy to put focus on some moments"*).
+
+**Why v6 was not terrifying.** Everything was lit and seen at once: the night arrived in the first 0.3 s (you never saw the day
+die), the circle was a bright friendly disc, the eye opened while the camera was busy, the monster came down in full view with
+nothing hidden, and nobody on screen was afraid. Fear is WAITING for something you cannot see yet, then being LOOKED AT by it.
+
+**References.** Flins (Genshin): the burst opens in darkness, the character lit only by his own light, a dense storm of effects
+round him. Black Swan (Star Rail, `ZK6JM-GXxeE`, YouTube's own scrub frames): she floats while casting with cards circling her,
+the world drains to a dark space cut by shafts of light, a close-up of her face at the peak, then giant hands reach in and a
+radial burst of rays and shards goes off. The owner's impact-frame screenshot: one or two frames of black ink on white with radial
+speed lines, on the hits. Castorice (`research.md` section 5): the world is replaced; show the summon's face big.
+
+**One sentence: the day dies, she rises into the dark, an eye tears open in the sky and LOOKS AT YOU, and out of it two huge hands
+lower a puppet on wires.**
+
+**Three separate things, three looks.** THE EYE is the PORTAL (the circle), where it comes from. THE PUPPETEER is two huge white
+mitten gloves (no fingers, the cast's rule) on long black sleeves reaching out of the eye, working a wooden MARIONETTE CONTROL
+(`Visual.MarionetteControl`): the thing that controls it. THE DOLL is the monster on the wires. Nothing is hers: she opens the door,
+the puppeteer does the rest (plan 9.2: she never controls it).
+
+| Shot | Time | What happens (cause, then effect) | Terror device | Camera |
+|---|---|---|---|---|
+| 1 THE DAY DIES | 0.00 to 1.10 | Daylight. She lowers her head; the light drains in a WAVE: the sky goes dark from the top down, the ground goes dark outward from her feet, her shadow stretches long, then everything but her is black-violet | you watch the world be taken | wide and low in front, the whole sky in frame, holding still |
+| 2 SHE RISES | 1.10 to 2.10 | Her feet leave the court; she rises slowly 0.8 m, limp at first as if something lifted her, then her arms spread low, palms down, casting; her coat drifts up; eight pins orbit her, points out; her eyes and the doll at her hip glow; light is drawn up out of the ground into her palms | lit only from below by her own light, her face in shadow but for the eyes and grin | a slow push up her body to her face from below (Black Swan's close-up) |
+| 3 THE SEAM | 2.10 to 2.90 | Above her the sky SPLITS along a line: a stitched seam, red light leaking between the stitches, the stitches snapping one by one; the circle's rim sews round it in the dark; pins stab in | something behind the sky is trying to get out | from under her, tilting up past her to the seam |
+| 4 THE EYE OPENS | 2.90 to 3.60 | The seam opens slowly into the EYE; the pupil darts left, right, then LOCKS ON THE LENS. IMPACT FRAME. Then THE BURST: a flash, rays radiating from the eye, two shockwave rings racing out across the sky, shards and embers flung out, lightning down all round the court | it looks at you | straight up at the eye, filling the frame |
+| 5 THE PUPPETEER | 3.60 to 4.60 | Out of the pupil two huge white GLOVES push through on black sleeves, holding the control; wires run from it down into the eye; they PULL: IMPACT FRAME; the doll is dragged out head-first, upside down, limp, turning slowly on the wires | the hands are too big and have no body | under the eye, the gloves coming at the lens |
+| 6 THE DESCENT | 4.60 to 5.40 | The gloves lower it in three jerks, its limbs flicking at each; at the last it rights itself on the wires; its head turns round too far to face the lens before its body follows | a head that turns the wrong way | from the court looking up, its face coming down at the lens |
+| 7 THE DROP AND THE PUPPET | 5.40 to 6.40 | The gloves let the wires go slack: it drops to the court, knees buckling: IMPACT FRAME; dust and light race out; the real opponents stagger back. The gloves jerk the control: its head snaps up at them, its grin tearing open with light: IMPACT FRAME; it lurches one step. She floats down behind it, smirking. The gloves let go and draw back up into the eye; the control stays over its head | its first look at them | low, the opponents' shoulders in front, the doll looming, her behind, the eye and the control above |
+
+**The impact frames** (four: the eye locking on, the first pull, the landing, the head snap): one or two frames each of the picture
+turned to black ink on white, radial speed lines from the focus, a slight zoom (`Shaders/PhaisterImpact` extended with the lines).
+Reduced effects drops them.
+
+**The day to dark** (`Shaders/VoodooNight` gains a reach): the dome darkens from its top down and the floor outward from her feet over
+0.3 to 1.0 s, the grade following; the day shows beyond the wave until it is gone.
+
+**The eye, done properly.** Shut, it is a stitched seam leaking light. It opens with the lids peeling apart and the stitches tearing.
+The iris is hot crimson with an ember slit that DARTS, then fixes on the lens (the cutscene aims `_Look` at the camera). Lashes of
+black thread. It never blinks after that.
+
+**In play.** The eye closes and fades after 3 s (the portal shuts); the MARIONETTE CONTROL hangs about 1.3 m over the doll's head for
+the round, swaying behind its moves and tilting on its jerks, with wires to its crown and both mitten hands (*"the wires on its
+head"*). No gloves in play (they would cover the court); the control alone.
+
+**Her handheld doll, a different doll** (*"i want the handheld vodoo to look diff from ult too"*). The monster is a fat burlap sack.
+Her own doll becomes a small, flat, gingerbread-shaped doll of BLACK cloth (her coat's charcoal) with magenta stitching round its
+edge, two mismatched buttons for eyes (one violet, one crimson), a red thread mouth sewn shut, and three pins through its chest with
+her colours on their heads. It lives at her hip and is the doll she holds out in THE REACH. Proposed; built with its own builder.
+
+**Sound.** Still none: skill sounds are deleted until the owner asks (2026-09-29).
+
 ### 9.9 Every moving part of the doll, in the cutscene and in play
 
 | # | Part | Starts | Moves (direction) | Speed and shape | Anchored to | Ends |
