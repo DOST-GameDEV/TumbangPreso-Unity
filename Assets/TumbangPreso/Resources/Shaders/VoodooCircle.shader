@@ -27,6 +27,9 @@ Shader "TumbangPreso/VoodooCircle"
         _Inner ("Inner reveal (runes, star, stitches)", Float) = 1
         _Eye ("Eye open", Float) = 1
         _Look ("Pupil offset", Float) = 0
+        _LookY ("Pupil offset, across", Float) = 0
+        _Seam ("The shut seam showing", Float) = 0
+        _Tear ("Seam stitches snapped", Float) = 0
         _Spin ("Spin (radians)", Float) = 0
         _Phase ("Phase", Float) = 0
         _Glow ("Glow", Float) = 2.6
@@ -48,7 +51,7 @@ Shader "TumbangPreso/VoodooCircle"
             #include "UnityCG.cginc"
 
             float4 _Crimson, _Violet, _Ember;
-            float _Reveal, _Inner, _Eye, _Look, _Spin, _Phase, _Glow, _Alpha;
+            float _Reveal, _Inner, _Eye, _Look, _LookY, _Seam, _Tear, _Spin, _Phase, _Glow, _Alpha;
 
             struct appdata { float4 vertex : POSITION; float2 uv : TEXCOORD0; };
             struct v2f { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; };
@@ -144,17 +147,44 @@ Shader "TumbangPreso/VoodooCircle"
                 float onEye = step(abs(p.x), eyeW) * step(0.01, _Eye);
                 float inEye = onEye * step(abs(p.y), lid);
                 float fromLid = abs(abs(p.y) - lid);
-                col += _Violet.rgb * 4.0 * saturate(1.0 - fromLid / 0.026) * onEye;
-                col += _Crimson.rgb * 1.2 * exp(-pow(fromLid / 0.06, 2.0)) * onEye * (1.0 - inEye);
+                col += _Violet.rgb * 2.6 * saturate(1.0 - fromLid / 0.026) * onEye;
+                col += _Crimson.rgb * 0.9 * exp(-pow(fromLid / 0.06, 2.0)) * onEye * (1.0 - inEye);
                 float stitchAt = abs(frac(p.x / eyeW * 3.5 + 0.5) - 0.5);
                 float stitch = saturate(1.0 - stitchAt / 0.08) * step(fromLid, 0.05) * onEye * step(0.3, bulge);
                 col += _Crimson.rgb * 3.0 * stitch;
-                float2 q = p - float2(_Look * 0.14, 0.0);
-                col += _Crimson.rgb * inEye * (0.9 + 2.2 * saturate(1.0 - length(q) / 0.24));
-                float iris = ring(length(q), 0.16, 0.024) * inEye;
-                col += _Ember.rgb * 3.4 * iris;
-                float slit = saturate(1.0 - abs(q.x) / 0.038) * step(abs(q.y), lid * 0.92) * inEye;
-                col = lerp(col, _Ember.rgb * 7.0, slit);
+                // v8 (film v7: the open eye read as a flat pink symbol): a DARK bloodshot white with red veins running in to the iris,
+                // a burning ember iris, and a BLACK slit pupil with a hot rim. It is dark where a symbol would be bright.
+                float2 q = p - float2(_Look * 0.14, _LookY * 0.06 * saturate(_Eye));
+                float qr = length(q);
+                float qa = atan2(q.y, q.x);
+                float vein = saturate(1.0 - abs(frac(qa * 3.0 + sin(qr * 40.0) * 0.08) - 0.5) / 0.05) * saturate((qr - 0.17) / 0.1);
+                // (`col` is multiplied by `_Glow`, about 2.6, below: the white is kept near black before it.)
+                col = lerp(col, _Crimson.rgb * 0.05, inEye);
+                col += _Crimson.rgb * 0.55 * vein * inEye;
+                col += _Crimson.rgb * 0.5 * inEye * saturate(1.0 - fromLid / 0.04);
+                float irisIn = saturate((0.17 - qr) / 0.01) * inEye;
+                // v9: the iris is kept under the bloom's threshold, or its glow floods the dark white red again (film v9).
+                col = lerp(col, lerp(_Ember.rgb * 0.9, _Crimson.rgb * 0.45, saturate(qr / 0.17)), irisIn);
+                col += _Ember.rgb * 0.7 * ring(qr, 0.17, 0.014) * inEye;
+                // A cat's slit: wide at its middle, pinched to points at the lids.
+                float slitW = 0.085 * saturate(1.0 - pow(q.y / max(0.001, lid * 0.86), 2.0));
+                float slit = saturate(1.0 - abs(q.x) / slitW) * step(abs(q.y), lid * 0.86) * irisIn;
+                float slitRim = saturate(1.0 - abs(abs(q.x) - slitW) / 0.012) * step(abs(q.y), lid * 0.86) * irisIn;
+                col = lerp(col, float3(0.0, 0.0, 0.0), step(0.2, slit));
+                col += float3(1.0, 0.7, 0.35) * 0.8 * slitRim;
+                dark += inEye * 0.9;
+
+                // --- THE SEAM (cutscene v7): before it opens, the eye is a stitched split in the sky, red light leaking out between
+                // black thread stitches that snap one by one (`_Tear`); the lids then peel apart from it.
+                float seamOn = saturate(_Seam) * step(abs(p.x), eyeW) * (1.0 - saturate(_Eye * 3.0));
+                float seamFrom = abs(p.y);
+                col += _Crimson.rgb * seamOn * (5.0 * saturate(1.0 - seamFrom / 0.012) + 1.6 * exp(-seamFrom / 0.05));
+                float sk = floor((p.x / eyeW * 0.5 + 0.5) * 9.0);
+                float sl = frac((p.x / eyeW * 0.5 + 0.5) * 9.0) - 0.5;
+                float held = step(_Tear, hash(sk + 3.7));
+                float xst = max(saturate(1.0 - abs(sl * 2.2 - p.y * 7.0) / 0.35), saturate(1.0 - abs(sl * 2.2 + p.y * 7.0) / 0.35)) * step(abs(p.y), 0.07);
+                col *= 1.0 - xst * held * seamOn;
+                dark += xst * held * seamOn;
 
                 col *= _Glow;
                 float light = saturate(max(col.r, max(col.g, col.b)) * 0.35);

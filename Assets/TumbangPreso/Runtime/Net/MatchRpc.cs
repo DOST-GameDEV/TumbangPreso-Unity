@@ -3983,14 +3983,17 @@ namespace TumbangPreso.Net
         ///
         /// Broadcast so every peer hears the match react; only the toast is local.
         /// </summary>
-        public void BroadcastScore(int slot, Core.ScoreEvent e)
+        public void BroadcastScore(int slot, Core.ScoreEvent e, int body = -1)
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
             if (!ValidSlot(slot)) return;
 
+            // Protocol 91: the BODY that scored follows (its own seat, or a companion's, whose owner `slot` is), so every peer can
+            // show the point over the doll that made it. The points are still `slot`'s alone.
             using var writer = new FastBufferWriter(16, Allocator.Temp);
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe((int)e);
+            writer.WriteValueSafe(CompanionSeats.IsBody(body) ? body : slot);
             _nm.CustomMessagingManager.SendNamedMessageToAll("Score", writer);
         }
 
@@ -4099,6 +4102,7 @@ namespace TumbangPreso.Net
 
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int rawEvent);
+            reader.ReadValueSafe(out int body);
 
             if (!ValidSlot(slot)) return;
 
@@ -4108,7 +4112,7 @@ namespace TumbangPreso.Net
             // for and pay whatever its default is.
             if (!System.Enum.IsDefined(typeof(Core.ScoreEvent), rawEvent)) return;
 
-            GameServices.Match?.ApplyNetworkScoreEvent(slot, (Core.ScoreEvent)rawEvent);
+            GameServices.Match?.ApplyNetworkScoreEvent(slot, (Core.ScoreEvent)rawEvent, CompanionSeats.IsBody(body) ? body : -1);
         }
 
         /// <summary>

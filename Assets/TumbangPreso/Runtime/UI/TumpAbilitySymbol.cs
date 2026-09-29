@@ -161,6 +161,11 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.PhaisterShadowBlink:
                     P(vh,-.35f,.34f,-.13f,.08f,-.25f,-.21f,.04f,-.38f);
                     P(vh,-.09f,.34f,.18f,.34f,.31f,.10f,.21f,-.20f); break;
+                case AbilityGlyph.PhaisterVoodooDoll:
+                    P(vh,-.36f,.33f,-.19f,.40f,0,.42f,.19f,.40f,.36f,.33f);
+                    P(vh,0,.42f,0,.17f);P(vh,-.27f,.37f,-.29f,-.02f);P(vh,.27f,.37f,.29f,-.02f);
+                    Ring(vh,0,.05f,.12f);P(vh,.02f,.09f,.08f,.02f);P(vh,.02f,.02f,.08f,.09f);
+                    P(vh,-.13f,-.08f,-.15f,-.37f,.15f,-.37f,.13f,-.08f);P(vh,-.13f,-.13f,-.29f,-.02f);P(vh,.13f,-.13f,.29f,-.02f);break;
                 case AbilityGlyph.PhaisterEclipse:
                     Ring(vh,0,0,.28f);P(vh,.06f,.28f,-.09f,.10f,-.05f,-.12f,.11f,-.26f);
                     Rays(vh,6,.35f,.44f); break;

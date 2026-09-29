@@ -141,6 +141,10 @@ namespace TumbangPreso.UI
         PhaisterVulnerable,
         /// <summary>A role slot whose ability has not been designed yet.</summary>
         ComingSoon,
+
+        /// <summary>Phaister ultimate: VOODOO DOLL (HERO-10 v3; it replaced OMEN, whose eclipse it borrowed): a doll hung on three
+        /// strings from the arc of THE CIRCLE, an X for one eye. Appended after `ComingSoon` to keep every serialized value.</summary>
+        PhaisterVoodooDoll,
     }
 
     /// <summary>
@@ -356,6 +360,7 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.PhaisterEclipse: return "GROUND ZONE";
                 case AbilityGlyph.PhaisterCursedDoll: return "STATUS CURSE";
                 case AbilityGlyph.PhaisterVulnerable: return "STATUS CURSE";
+                case AbilityGlyph.PhaisterVoodooDoll: return "COMPANION";
                 case AbilityGlyph.PhaisterWitchfire: return "SLIPPER BUFF";
                 case AbilityGlyph.RafiCrosscurrent: return "REDIRECTION";
                 case AbilityGlyph.RafiMirrorwake: return "DECOY";
@@ -605,6 +610,9 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.PhaisterWitchfire:
                     // Empowered witchfire flame wisp
                     return WitchfireOrb(u, v);
+
+                case AbilityGlyph.PhaisterVoodooDoll:
+                    return VoodooMarionette(u, v);
 
                 default:
                     return Disc(u, v, 0.62f);
@@ -941,6 +949,24 @@ namespace TumbangPreso.UI
             float moonDisc = Disc(u + 0.08f, v - 0.04f, 0.38f);
             float innerCrescent = Sub(Disc(u, v, 0.40f), moonDisc);
             return Mathf.Max(corona, Mathf.Max(rays8, innerCrescent));
+        }
+
+        /// <summary>
+        /// VOODOO DOLL: the arc of THE CIRCLE across the top, three strings down to the doll's crown and mitten hands, a round sack
+        /// head with a button hole and an X cut out of it, a stout body, arms held up by the strings. Few parts at the one stroke weight.
+        /// </summary>
+        private static float VoodooMarionette(float u, float v)
+        {
+            float arc = EllipseRing(u, v - 0.66f, 0.62f, 0.2f, Stroke);
+            float strings = Mathf.Max(Segment(u, v, 0f, 0.5f, 0f, 0.26f, 0.045f),
+                Mathf.Max(Segment(u, v, -0.44f, 0.56f, -0.5f, -0.04f, 0.045f), Segment(u, v, 0.44f, 0.56f, 0.5f, -0.04f, 0.045f)));
+            float head = Disc(u, v - 0.02f, 0.27f);
+            float body = Box(u, v + 0.44f, 0.25f, 0.2f);
+            float arms = Mathf.Max(Segment(u, v, -0.2f, -0.3f, -0.5f, -0.04f, 0.09f), Segment(u, v, 0.2f, -0.3f, 0.5f, -0.04f, 0.09f));
+            float doll = Mathf.Max(head, Mathf.Max(body, arms));
+            float button = Disc(u + 0.1f, v - 0.04f, 0.065f);
+            float cross = Mathf.Max(Segment(u, v, 0.05f, 0.11f, 0.17f, -0.03f, 0.035f), Segment(u, v, 0.05f, -0.03f, 0.17f, 0.11f, 0.035f));
+            return Mathf.Max(Sub(doll, Mathf.Max(button, cross)), Mathf.Max(arc, strings));
         }
 
         private static float WitchfireOrb(float u, float v)

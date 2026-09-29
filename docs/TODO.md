@@ -1177,7 +1177,20 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   her left fist at her side and the lens at her eye line (her face and grin in frame); her night REPLACES the world
   (`Shaders/VoodooNight`, an unlit dome and a floor on the court's own surface); the eye nearly the void's width with thick stitched
   lids, open by 2.2 s; the landing slumps (v4 pitched its head 60 degrees face-down on top of the torso); the puppet's close-up on
-  its face, its head turned to the real opponents. Film v6 sent (`phaister_voodoo_doll_ult_v6_small.mp4`). OPEN: the owner's verdict.
+  its face, its head turned to the real opponents. Film v6 sent (`phaister_voodoo_doll_ult_v6_small.mp4`).
+  [~] v7 THE PUPPETEER (plan 9.8c; the owner on v6: *"phaister's ult does not have a terrifying feeel at all eh"*, Flins as the
+  reference, the portal apart from what controls it, a marionette-control photo, ink impact frames), 6.4 s: the day dies on screen
+  (`Shaders/VoodooNight` reach); she rises and casts, pins circling her, light drawn up into her palms, lit from below; a stitched
+  SEAM splits the sky and tears (`Shaders/VoodooCircle` `_Seam`, `_Tear`); the eye opens, darts and LOCKS ON THE LENS; THE BURST
+  (rays, two shockwave rings, shards, lightning); two huge white mitten GLOVES push out of the pupil working a wooden control
+  (`Visual.MarionetteControl`), PULL, and the doll is dragged out head-first and swings through; lowered in three jerks, its head
+  turning round too far; the drop; the puppet; four ink impact frames with radial speed lines (`Shaders/PhaisterImpact` `_Lines`,
+  `_Zoom`). In play the portal shuts after 3 s and the control hangs over the doll's head with its wires, slack while it is tagged.
+  Her handheld doll is her own (`Visual.PhaisterHandVoodoo`: flat black cloth, magenta stitches, mismatched button eyes, mouth sewn
+  shut, pins), no longer the monster at hand size. Film v11 sent (`phaister_voodoo_doll_ult_v11_small.mp4`). OPEN: the owner's verdict; the hip doll in her model is still the old one.
+  [~] The doll's own glyph (`AbilityGlyph.PhaisterVoodooDoll`, a doll hung from the circle on three strings), its nameplate
+  PHAISTER'S DOLL in her colour, the grey stitched X over it while tagged and +100 over it in her colour when it scores
+  (`Visual.VoodooDollPresence`, `MatchDirector.CompanionScored`, protocol 91).
   (`SkillReceiptTests.RefusedFreeRecallDoesNotCreateAChargeAndEligibilityDoesNotMutateHeldTime`, Nemu, fails `CannotAct`; it failed
   the same way on 2026-09-27 and before this work on 2026-09-29, so it is not the doll's.)
 - [ ] The cutscene SEW / GROW / WAKE; sounds; voice rows; icons; bots; films sent; the gate.

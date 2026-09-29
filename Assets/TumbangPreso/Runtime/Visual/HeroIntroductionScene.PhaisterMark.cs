@@ -115,7 +115,8 @@ namespace TumbangPreso.Visual
 
         private void SamplePhaisterStage(float t, float leave)
         {
-            bool on = t >= PhLandAt - .3f;
+            // They stand in THE DROP and THE PUPPET only (the shots before are about her, the eye and the puppeteer).
+            bool on = t >= PhDropAt;
             Vector3 monster = PhMonsterFeet(t);
             foreach (var c in _pmTargets)
             {
@@ -160,31 +161,51 @@ namespace TumbangPreso.Visual
 
         // ------------------------------------------------------------------ the cameras
 
-        /// <summary>THE CIRCLE, THE DESCENT and THE PUPPET are computed from where things are (scene space); `ShotAt` hands their
-        /// storyboard eye, look and lens to this.</summary>
+        /// <summary>THE SEAM, THE EYE OPENS, THE PUPPETEER, THE DESCENT and THE PUPPET are computed from where things are (scene
+        /// space); `ShotAt` hands their storyboard eye, look and lens to this.</summary>
         private void PhaisterFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
         {
             if (_performance == null || index < 0) return;
             float start = _performance.Shots[index].Start;
-            if (start >= PhPuppetAt - .01f) PmPuppetCamera(t, ref eye, ref look, ref fov);
-            else if (start >= PhDescentAt - .01f && start < PhLandAt - .01f)
+            if (start >= PhPuppetAt - .01f) { PmPuppetCamera(t, ref eye, ref look, ref fov); return; }
+            if (start >= PhDropAt - .01f) return;
+            if (start >= PhDescentAt - .01f)
             {
-                // Its FACE first, coming out of the eye in close-up from just under the circle (Castorice's dragon filling the frame),
-                // then the lens drops with it and backs off until the whole hanging body and its strings are in, looking up.
-                Vector3 feetNow = PhMonsterFeet(t);
-                Vector3 face = feetNow + Vector3.up * (_phMonsterHeight * .8f);
-                float u = Ease(PhDescentAt + .35f, PhLandAt - .1f, t);
-                Vector3 closeEye = face + new Vector3(1.6f, -.9f, 2.4f);
-                Vector3 wideEye = PhDollSpot + new Vector3(3.9f, .6f, 3.4f);
-                eye = Vector3.Lerp(closeEye, wideEye, u);
-                look = Vector3.Lerp(face, feetNow + Vector3.up * (_phMonsterHeight * .6f), u);
-                fov = Mathf.Lerp(46f, 62f, u);
+                // From the court looking up at it coming down: its face (the head come round to the lens) filling more of the frame.
+                Vector3 feet = PhMonsterFeet(t);
+                Vector3 face = feet + Vector3.up * (_phMonsterHeight * .8f);
+                float u = Ease(PhDescentAt, PhDropAt, t);
+                eye = PhDollSpot + new Vector3(.6f, Mathf.Lerp(.6f, 1.0f, u), Mathf.Lerp(4.0f, 3.1f, u));
+                look = Vector3.Lerp(face, face + Vector3.up * .6f, .3f);
+                fov = Mathf.Lerp(58f, 50f, u);
+                return;
             }
-            else if (start >= PhCircleAt - .01f && start < PhDescentAt - .01f)
+            if (start >= PhGlovesAt - .01f)
             {
-                // Tilting up from the doll in her hands to the circle, and holding the eye as the doll is drawn up into it.
-                float u = Ease(PhCircleAt, 2.0f, t);
-                look = Vector3.Lerp(PhOffered, PhCircleCentre, u);
+                // Under the eye: the gloves pushing out at the lens, then the doll dragged out and swinging through toward it.
+                Vector3 control = PhControlAt(t, out _);
+                Vector3 doll = PhMonsterFeet(t) + Vector3.up * (_phMonsterHeight * .5f);
+                float u = Ease(PhPullAt, PhDescentAt, t);
+                eye = PhEye + new Vector3(2.4f, Mathf.Lerp(-5.2f, -5.9f, u), Mathf.Lerp(3.8f, 4.6f, u));
+                look = Vector3.Lerp(control + Vector3.up * .4f, (control + doll) * .5f, u);
+                fov = Mathf.Lerp(56f, 64f, u);
+                return;
+            }
+            if (start >= PhEyeAt - .01f)
+            {
+                // Straight up at the eye, filling the frame as it opens and finds the lens; then THE BURST throws the lens out and
+                // sideways so the rays and rings are seen racing out across the sky.
+                float back = Ease(PhBurstAt, PhGlovesAt - .05f, t);
+                eye = PhEye + Vector3.Lerp(new Vector3(0f, -4.2f, .35f), new Vector3(4.6f, -6.3f, 6.0f), back);
+                look = PhEye + Vector3.down * 1.2f * back;
+                fov = Mathf.Lerp(Mathf.Lerp(66f, 54f, Ease(PhEyeAt, PhLockAt, t)), 74f, back);
+                return;
+            }
+            if (start >= PhSeamAt - .01f)
+            {
+                // From under her, tilting up past her to the seam as it splits.
+                Vector3 her = new Vector3(0f, LiftAt(t) + 1.7f, 0f);
+                look = Vector3.Lerp(her, PhEye, Ease(PhSeamAt + .08f, PhSeamAt + .55f, t));
             }
         }
 
@@ -215,7 +236,7 @@ namespace TumbangPreso.Visual
             Vector3 toward = PmToward();
             Vector3 side = Vector3.Cross(Vector3.up, toward);
             Vector3 face = doll + Vector3.up * (_phMonsterHeight * .8f);
-            float u = Ease(PhPuppetAt + .5f, Seconds - .25f, t);
+            float u = Ease(PhPuppetAt + .22f, Seconds - .08f, t);
             // ⚠️ In on its FACE. It stands facing her way (play picks up there) and only its head turns to them, so the lens sits between
             // its front and its look; v5 put the lens on the opponents' side, which was behind its ear whenever they stood off its shoulder.
             Vector3 faceDir = Quaternion.Euler(0f, PmLookYaw() * .6f, 0f) * Vector3.forward;

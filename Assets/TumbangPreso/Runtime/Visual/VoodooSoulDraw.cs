@@ -27,7 +27,7 @@ namespace TumbangPreso.Visual
     /// their view and stream away toward her.
     ///
     /// ⚠️ THE DOLL IS IN HER HAND EXACTLY WHILE THE SLIPPER IS AT HER BELT (`CharacterMotor.StowsCarriedSlipper`: the reach, DRAIN's
-    /// wring and HEX's stab). It is the ultimate's doll at hand size (`PhaisterDollArt`, plan 9.10), its light in its openings.
+    /// wring and HEX's stab). It is HER OWN doll (`PhaisterHandVoodoo`: flat black cloth, magenta stitches, button eyes, a mouth sewn shut, pins), never the ultimate's monster at hand size (owner, 2026-09-29: *"i want the handheld vodoo to look diff from ult too"*).
     /// Everyone else sees it in her body's left fist; on her own screen her body is hidden and a copy rides her first-person left hand
     /// (`ViewmodelArms.HoldingProp` lifts it into view).
     /// </summary>
@@ -166,7 +166,6 @@ namespace TumbangPreso.Visual
 
         private void HoldDoll()
         {
-            var art = PhaisterDollArt.LoadArt();
             var visual = GetComponent<CharacterVisual>();
             var skinned = visual != null && visual.Model != null ? visual.Model.GetComponentInChildren<SkinnedMeshRenderer>() : null;
             if (skinned != null)
@@ -177,7 +176,7 @@ namespace TumbangPreso.Visual
             bool mine = ViewmodelArms.IsFirstPersonFor(_body);
             if (_leftArm != null)
             {
-                _bodyDoll = MakeDoll(art, null, BodyDollHeight, "VoodooHeldDoll", out _bodyDollFoot);
+                _bodyDoll = MakeDoll(null, BodyDollHeight, "VoodooHeldDoll", out _bodyDollFoot);
                 // Her own lens is inside her body: that doll is for everyone else.
                 if (_bodyDoll != null && mine) _bodyDoll.AddComponent<HiddenFromMainCamera>();
             }
@@ -187,7 +186,7 @@ namespace TumbangPreso.Visual
                 if (arms == null || arms.BoundCharacter != _body) continue;
                 var left = arms.LeftHandForProps();
                 if (left == null) break;
-                _viewDoll = MakeDoll(art, left, ViewDollHeight, "VoodooHeldDollFirstPerson", out float foot);
+                _viewDoll = MakeDoll(left, ViewDollHeight, "VoodooHeldDollFirstPerson", out float foot);
                 if (_viewDoll != null)
                 {
                     // In the fist, as on her body: its feet below the top of the hand.
@@ -202,39 +201,17 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// The ultimate's doll at <paramref name="height"/> metres, its light painted in its openings, no animator (it hangs limp).
-        /// <paramref name="foot"/> is how far its pivot sits ABOVE its feet at that size, so a caller can stand it in a fist.
+        /// Her own doll (`PhaisterHandVoodoo`) at <paramref name="height"/> metres. <paramref name="foot"/> is how far its pivot sits
+        /// ABOVE its feet at that size (0: it is built with its feet at its pivot), so a caller can stand it in a fist.
         /// </summary>
-        private static GameObject MakeDoll(RosterEntryAsset art, Transform parent, float height, string name, out float foot)
+        private static GameObject MakeDoll(Transform parent, float height, string name, out float foot)
         {
             foot = 0f;
-            if (art == null || art.Model == null) return null;
-            var go = Object.Instantiate(art.Model, parent, false);
-            go.name = name;
-            foreach (var animator in go.GetComponentsInChildren<Animator>(true)) animator.enabled = false;
-            foreach (var c in go.GetComponentsInChildren<Collider>(true)) Object.Destroy(c);
-            foreach (var r in go.GetComponentsInChildren<Renderer>(true))
-            {
-                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                if (r is SkinnedMeshRenderer s) s.updateWhenOffscreen = true;
-            }
-            ToonSkin.Apply(go, ToonSkin.PropOutlineWidth * 0.6f, art.Palette);
-            PhaisterDollArt.ApplyGlow(go);
-            // Sized off its own bounds, so a rebuilt model keeps its hand size.
+            var go = PhaisterHandVoodoo.Build(parent, name, parent != null ? parent.gameObject.layer : 0);
+            float parentScale = parent != null ? Mathf.Max(0.0001f, parent.lossyScale.y) : 1f;
             go.transform.localPosition = Vector3.zero;
             go.transform.localRotation = Quaternion.identity;
-            go.transform.localScale = Vector3.one;
-            var bounds = new Bounds(go.transform.position, Vector3.zero);
-            bool any = false;
-            foreach (var r in go.GetComponentsInChildren<Renderer>(true))
-            {
-                if (!any) { bounds = r.bounds; any = true; } else bounds.Encapsulate(r.bounds);
-            }
-            float tall = any ? Mathf.Max(0.01f, bounds.size.y) : 1f;
-            float k = height / tall;
-            foot = any ? (go.transform.position.y - bounds.min.y) * k : 0f;
-            float parentScale = parent != null ? Mathf.Max(0.0001f, parent.lossyScale.y) : 1f;
-            go.transform.localScale = Vector3.one * (k / parentScale);
+            go.transform.localScale = Vector3.one * (height / parentScale);
             return go;
         }
 

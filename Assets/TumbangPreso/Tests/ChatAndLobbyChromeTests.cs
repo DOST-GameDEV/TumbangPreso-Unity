@@ -345,7 +345,10 @@ namespace TumbangPreso.Tests
             //64 adds the shared skill fingerprint, including Phaister's updated 5.0 s introduction.
             //65 adds phase-aware world freshness and ability-owned prepared-effect recovery.
             //87 changes what the map indices mean: LagoonCove at 4 (the first Lagoon vaulted), Kanto at 5.
-            Assert.AreEqual(87, NetSession.ProtocolVersion,
+            //88 and 89 (intermission votes, rematch identities) are recorded in NetSession; this line was not moved with them.
+            //90 adds companion bodies (seats 4 to 7, `CompanionSet`).
+            //91 names the scoring body in `Score` and lengthens Phaister's introduction to 6.4 s (VOODOO DOLL v7).
+            Assert.AreEqual(91, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

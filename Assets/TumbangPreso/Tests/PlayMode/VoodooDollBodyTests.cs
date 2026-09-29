@@ -88,12 +88,39 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(slippersBefore + 1, Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None).Length);
             Assert.AreNotSame(her.GetComponent<Carrier>().Held, shoe, "It took her slipper.");
 
-            // Its points are hers.
+            // Its nameplate: its own name in her colour (plan 9.7).
+            var plate = doll.GetComponentInChildren<Visual.CharacterNameplate>();
+            Assert.IsNotNull(plate, "The doll has no nameplate.");
+            yield return null;
+            var label = plate.GetComponentInChildren<TextMesh>(true);
+            Assert.AreEqual(VoodooDollBody.DisplayName, label.text, "The doll's nameplate does not say whose doll it is.");
+            Assert.IsNotNull(doll.GetComponent<Visual.VoodooDollPresence>(), "Nothing shows the doll's points or its tag.");
+
+            // Its points are hers, and the point is announced as the doll's (its +100 pops over it, protocol 91).
             var match = GameServices.Match;
             int hers = match.ScoreFor(her.PlayerSlot);
-            match.AddScore(seat, ScoreEvent.LataKnocked);
+            var companionPoints = new System.Collections.Generic.List<(int, ScoreEvent)>();
+            System.Action<int, ScoreEvent> onCompanionPoint = (body, e) => companionPoints.Add((body, e));
+            match.CompanionScored += onCompanionPoint;
+            try { match.AddScore(seat, ScoreEvent.LataKnocked); }
+            finally { match.CompanionScored -= onCompanionPoint; }
             Assert.AreEqual(hers + MatchRules.PointsFor(ScoreEvent.LataKnocked), match.ScoreFor(her.PlayerSlot),
                 "A knockdown by the doll did not score for her.");
+            CollectionAssert.AreEqual(new[] { (seat, ScoreEvent.LataKnocked) }, companionPoints, "The doll's point was not announced as the doll's.");
+            yield return null;
+            Assert.IsTrue(doll.transform.Find("DollScorePop").gameObject.activeSelf, "No +100 over the doll.");
+
+            // A client hears the same from the Score message: only for a companion its owner was paid for.
+            companionPoints.Clear();
+            match.CompanionScored += onCompanionPoint;
+            try
+            {
+                match.ApplyNetworkScoreEvent(her.PlayerSlot, ScoreEvent.Tag, seat);
+                match.ApplyNetworkScoreEvent(her.PlayerSlot, ScoreEvent.Tag, her.PlayerSlot);
+                match.ApplyNetworkScoreEvent((her.PlayerSlot + 1) % 4, ScoreEvent.Tag, seat);
+            }
+            finally { match.CompanionScored -= onCompanionPoint; }
+            CollectionAssert.AreEqual(new[] { (seat, ScoreEvent.Tag) }, companionPoints, "A client announced a point that was not the doll's.");
 
             // Tagging it stuns it where it stands and pays nobody.
             var taya = Taya();
@@ -124,6 +151,8 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(hers, match.ScoreFor(her.PlayerSlot), "Tagging the doll cost her.");
             yield return null;
             Assert.Less(Vector3.Distance(where, doll.transform.position), 0.5f, "The tag sent the doll home; it stays where it stands.");
+            yield return null;
+            Assert.IsTrue(doll.transform.Find("DollTaggedX").gameObject.activeSelf, "No grey X over the tagged doll.");
 
             // It leaves with the round, and takes its slipper.
             round.EndRound();

@@ -35,6 +35,13 @@ namespace TumbangPreso.Visual
         public static readonly Color Crimson = new Color(1.00f, 0.22f, 0.30f, 1f);
         public static readonly Color Violet = new Color(0.74f, 0.40f, 1.00f, 1f);
 
+        /// <summary>
+        /// The cutscene's hand on it (v7, plan 9.8c): the eye's opening (0 shut to 1 open; negative leaves it to the age), where the
+        /// pupil looks (x along the eye, y across; NaN leaves it to its own darting), the stitched SEAM that shows before it opens and
+        /// how many of its stitches have snapped, and the age of THE BURST as the eye opens (negative for none). Play leaves them.
+        /// </summary>
+        public float EyeOverride = -1f, LookX = float.NaN, LookY = 0f, Seam = 0f, Tear = 0f, BurstAge = -1f;
+
         private static Material _thread;
         private static Mesh _disc;
         private readonly bool _world;
@@ -141,11 +148,15 @@ namespace TumbangPreso.Visual
                 {
                     _circle.SetFloat("_Reveal", reveal * reveal * (3f - 2f * reveal));
                     _circle.SetFloat("_Inner", Mathf.Clamp01((age - 0.45f) / 0.5f));
-                    _circle.SetFloat("_Eye", Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((age - 0.5f) / 0.45f)));
-                    _circle.SetFloat("_Look", Mathf.Sin(age * 3.1f) * 0.7f + Mathf.Sin(age * 7.7f) * 0.2f);
+                    _circle.SetFloat("_Eye", EyeOverride >= 0f ? EyeOverride : Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((age - 0.5f) / 0.45f)));
+                    _circle.SetFloat("_Look", float.IsNaN(LookX) ? Mathf.Sin(age * 3.1f) * 0.7f + Mathf.Sin(age * 7.7f) * 0.2f : LookX);
+                    _circle.SetFloat("_LookY", float.IsNaN(LookX) ? 0f : LookY);
+                    _circle.SetFloat("_Seam", Seam);
+                    _circle.SetFloat("_Tear", Tear);
                     _circle.SetFloat("_Spin", spin);
                     _circle.SetFloat("_Phase", age);
-                    _circle.SetFloat("_Glow", 2.6f + 4.5f * flash + 0.25f * Mathf.Sin(age * 6f));
+                    float burst = BurstAge >= 0f ? Mathf.Exp(-BurstAge * 5f) : 0f;
+                    _circle.SetFloat("_Glow", 2.6f + 4.5f * flash + 7f * burst + 0.25f * Mathf.Sin(age * 6f));
                     _circle.SetFloat("_Alpha", alpha);
                 }
             }
@@ -171,6 +182,8 @@ namespace TumbangPreso.Visual
             for (int b = 0; b < Bolts; b++)
             {
                 float life = Mathf.Clamp01((age - 0.15f - b * 0.09f) / 0.35f);
+                // THE BURST fires them all again, down round the court (v7).
+                if (BurstAge >= 0f && BurstAge < 0.8f) life = Mathf.Clamp01((BurstAge - b * 0.05f) / 0.45f);
                 float flicker = Mathf.Repeat(age * 17f + b * 0.37f, 1f) < 0.55f ? 1f : 0.25f;
                 bool bolt = on && life > 0f && life < 1f && detail > 0.05f;
                 SetEnabled(_bolts[b], bolt);
@@ -219,31 +232,36 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
-    /// ⚠️⚠️ THE CIRCLE OVER THE DOLL IN PLAY, AND ITS STRINGS (HERO-10 v3, plan 9.7 and 9.9 in-play rows 1 and 12). Owned by the doll's
-    /// body on every peer (`Abilities.VoodooDollBody` adds it, the replica included), so everyone sees it and it goes with the doll.
+    /// ⚠️⚠️ THE PORTAL AND THE CONTROL OVER THE DOLL IN PLAY (HERO-10 v3, plan 9.7, 9.8c and 9.9 in-play rows 1 and 12). Owned by the
+    /// doll's body on every peer (`Abilities.VoodooDollBody` adds it, the replica included), so everyone sees it and it goes with the doll.
+    /// The owner, 2026-09-29: *"I want the portal (eye) to be diff from the thing that controls it too"*, *"i want the wires on its head
+    /// to look like this"* (a photo of a marionette control).
     ///
     /// | Time | What |
     /// |---|---|
-    /// | the hand-back | the circle hangs full size and open 7 m over where the doll landed, exactly as the cutscene left it (never sewn twice) |
-    /// | 3.0 to 3.8 s | it draws in to a small burning ring high over the doll that follows it for the round, the pins and lightning gone |
-    /// | always | MARIONETTE STRINGS: thin glowing threads from the eye down to the doll's crown and both mitten hands, swaying, so everyone can see it is a puppet and whose |
+    /// | the hand-back | the circle hangs open 7 m over where the doll landed, its eye staring, exactly as the cutscene left it (never sewn twice) |
+    /// | 3.0 to 3.8 s | the PORTAL SHUTS: the eye closes and the circle shrinks away into the dark and is gone |
+    /// | always | the MARIONETTE CONTROL (`MarionetteControl`) hangs over its head, swaying behind its moves and leaning into them, WIRES from it to its crown and both mitten hands; slack while it is tagged |
     /// </summary>
     public sealed class VoodooSkyCircle : MonoBehaviour
     {
-        public const float Height = 7.0f, SmallHeight = 4.4f, SmallScale = 0.16f;
+        public const float Height = 7.0f;
         public const float OpenSeconds = 3.0f, DrawInSeconds = 0.8f;
         private const float TurnDegreesPerSecond = 8.0f;
 
         private SkyCircle _circle;
+        private Transform _control;
         private readonly List<LineRenderer> _strings = new List<LineRenderer>(3);
         private readonly List<GameObject> _owned = new List<GameObject>();
         private Transform _crown, _leftArm, _rightArm;
         private Vector3 _leftPalm, _rightPalm;
-        private float _age, _turn;
-        private Vector3 _centre;
+        private float _age, _turn, _slack;
+        private Vector3 _centre, _controlAt, _controlVelocity;
+        private bool _placed;
+        private CharacterMotor _motor;
 
-        /// <summary>Opens the circle over <paramref name="doll"/>, already fully open (the cutscene sewed it); <paramref name="late"/>
-        /// (a rejoiner's view) starts at the small ring.</summary>
+        /// <summary>Opens the portal over <paramref name="doll"/>, already fully open (the cutscene tore it open); <paramref name="late"/>
+        /// (a rejoiner's view) starts with it already shut.</summary>
         public static VoodooSkyCircle Open(GameObject doll, bool late)
         {
             if (doll == null) return null;
@@ -256,13 +274,17 @@ namespace TumbangPreso.Visual
         private void Awake()
         {
             _circle = new SkyCircle(null, world: true, layer: 0);
+            _motor = GetComponent<CharacterMotor>();
+            _control = MarionetteControl.BuildControl(null, 0);
+            _control.localScale = Vector3.one * MarionetteControl.DollScale;
+            _owned.Add(_control.gameObject);
             for (int i = 0; i < 3; i++)
             {
-                var go = new GameObject("DollString" + i);
+                var go = new GameObject("DollWire" + i);
                 _owned.Add(go);
                 var line = go.AddComponent<LineRenderer>();
                 line.useWorldSpace = true;
-                line.positionCount = 12;
+                line.positionCount = 10;
                 line.alignment = LineAlignment.View;
                 line.textureMode = LineTextureMode.Tile;
                 line.numCapVertices = 2;
@@ -294,16 +316,37 @@ namespace TumbangPreso.Visual
             float dt = Time.deltaTime;
             _age += dt;
             if (_crown == null) FindJoints();
-            float drawIn = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((_age - OpenSeconds) / DrawInSeconds));
-            Vector3 over = transform.position + Vector3.up * SmallHeight;
-            Vector3 centre = Vector3.Lerp(_centre, over, drawIn);
-            float scale = Mathf.Lerp(1f, SmallScale, drawIn);
-            _turn += TurnDegreesPerSecond * dt * Mathf.Lerp(1f, 3f, drawIn);
-            _circle.Pose(_age, centre, scale, _turn * Mathf.Deg2Rad, 1f, detail: 1f - drawIn);
 
+            // THE PORTAL: open and staring, then the eye shuts and it shrinks away into the dark.
+            float shut = Mathf.Clamp01((_age - OpenSeconds) / DrawInSeconds);
+            _turn += TurnDegreesPerSecond * dt;
+            if (shut < 1f)
+            {
+                _circle.EyeOverride = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(shut / 0.35f));
+                float scale = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((shut - 0.25f) / 0.75f));
+                _circle.Pose(_age, _centre, Mathf.Max(0.01f, scale), _turn * Mathf.Deg2Rad, Mathf.Clamp01(scale * 1.5f), detail: 1f - shut);
+            }
+            else _circle.Hide();
+
+            // THE CONTROL over its head: it follows on a spring (so it swings behind the doll's moves), leans into them, and turns with
+            // the doll so its bar's ends stay over the matching hands.
             var capsule = GetComponent<CharacterController>();
             float tall = capsule != null ? capsule.height * transform.lossyScale.y : 1.6f;
             Vector3 crown = _crown != null ? _crown.position + Vector3.up * 0.55f : transform.position + Vector3.up * (tall + 0.25f);
+            Vector3 target = crown + Vector3.up * MarionetteControl.AboveCrown;
+            if (!_placed) { _controlAt = target; _placed = true; }
+            float step = Mathf.Min(dt, 0.05f);
+            Vector3 pull = (target - _controlAt) * 60f - _controlVelocity * 11f;
+            _controlVelocity += pull * step;
+            _controlAt += _controlVelocity * step;
+            Vector3 lean = transform.InverseTransformDirection(_controlVelocity);
+            float yaw = transform.eulerAngles.y;
+            _control.SetPositionAndRotation(_controlAt,
+                Quaternion.Euler(0f, yaw, 0f) * Quaternion.Euler(Mathf.Clamp(lean.z * 9f, -25f, 25f), 0f, Mathf.Clamp(-lean.x * 9f, -25f, 25f)));
+
+            // THE WIRES: slack while it is tagged (plan 9.9 row 8: the string goes slack), taut again after.
+            bool tagged = _motor != null && _motor.IsTagged;
+            _slack = Mathf.MoveTowards(_slack, tagged ? 1f : 0f, dt * (tagged ? 3f : 8f));
             Vector3 left = _leftArm != null ? _leftArm.TransformPoint(_leftPalm) : transform.position + transform.right * -0.6f + Vector3.up * 0.9f;
             Vector3 right = _rightArm != null ? _rightArm.TransformPoint(_rightPalm) : transform.position + transform.right * 0.6f + Vector3.up * 0.9f;
             var ends = new[] { crown, left, right };
@@ -311,16 +354,17 @@ namespace TumbangPreso.Visual
             for (int s = 0; s < _strings.Count; s++)
             {
                 var line = _strings[s];
-                Vector3 top = SkyCircle.StringAnchor(centre, scale, s, _strings.Count);
+                Vector3 top = _control.TransformPoint(MarionetteControl.Anchor(s));
                 for (int i = 0; i < line.positionCount; i++)
                 {
                     float u = i / (float)(line.positionCount - 1);
                     Vector3 p = Vector3.Lerp(ends[s], top, u);
                     float envelope = Mathf.Sin(Mathf.PI * u);
-                    p += new Vector3(Mathf.Sin(t * 1.3f + u * 5f + s), 0f, Mathf.Cos(t * 1.1f + u * 4f + s * 2f)) * 0.12f * envelope;
+                    p += Vector3.down * _slack * 0.45f * envelope;
+                    p += new Vector3(Mathf.Sin(t * 1.3f + u * 5f + s), 0f, Mathf.Cos(t * 1.1f + u * 4f + s * 2f)) * 0.03f * envelope;
                     line.SetPosition(i, p);
                 }
-                line.widthMultiplier = s == 0 ? 0.06f : 0.045f;
+                line.widthMultiplier = s == 0 ? 0.05f : 0.04f;
                 _circle.Paint(line, SkyCircle.Violet, 1f, 1f, 1f);
                 line.enabled = true;
             }

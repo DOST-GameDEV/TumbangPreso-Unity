@@ -271,7 +271,18 @@ body blocks, bot tag targets, flair seat lookups) find it.
   armed into its hand by the host when it attacks, parked (inactive, owner -1) when it
   defends, destroyed with it.
 - A tag on a companion (`RoundDirector.ResolveTag`) stuns it five seconds where it stands,
-  pays nobody, credits no sabotage and raises `CompanionTagged`, never `Tagged`.
+  pays nobody, credits no sabotage and raises `CompanionTagged`, never `Tagged`. Every peer
+  shows the grey stitched X from the replicated stun (`CharacterMotor.IsTagged`), with no
+  message of its own (`Visual.VoodooDollPresence`).
+- Protocol91: the `Score` message carries the scoring BODY after the event (its own seat, or
+  a companion's seat whose owner is the paid `slot`). The host raises
+  `MatchDirector.CompanionScored` in `AddScore`; a client raises it in
+  `ApplyNetworkScoreEvent` only when that body is a companion owned by `slot`. It is
+  presentation (the +100 over the doll in its owner's colour), never a second payment.
+- Presentation owned by the body on every peer: its nameplate (`CharacterNameplate` reads a
+  companion seat: the owner's colour, the body's own name), THE CIRCLE as a portal that shuts
+  3 s after the hand-back, and the marionette control over its head with its wires
+  (`VoodooSkyCircle`, `MarionetteControl`). A rejoiner builds it with the portal already shut.
 
 ## Compatibility And Checks
 

@@ -539,7 +539,10 @@ namespace TumbangPreso.Net
         // votes/tallies name the old result and acknowledge seated participants.
         // 90: companion bodies (HERO-10 v3, Phaister's VOODOO DOLL): seats 4 to 7 exist; `CompanionSet` lists them
         // and SyncUnit, Teleport, PlayAction, SyncSlipper and SlipperPose admit their seats.
-        public const int ProtocolVersion = 90;
+        // 91: the `Score` message names the body that scored after the event (a companion's seat, whose owner is paid), so every
+        // peer shows the point over the doll that made it (`MatchDirector.CompanionScored`, HERO-10 v3); and Phaister's introduction
+        // becomes 6.4 s (VOODOO DOLL v7), which changes the shared ultimate phase every peer derives.
+        public const int ProtocolVersion = 91;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

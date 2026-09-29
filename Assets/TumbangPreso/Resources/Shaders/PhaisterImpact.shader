@@ -20,6 +20,8 @@ Shader "Hidden/TumbangPreso/PhaisterImpact"
         _Dark ("Dark tone", Color) = (0.07, 0.02, 0.10, 1)
         _Ink ("Ink", Color) = (0.88, 0.16, 0.50, 1)
         _Seed ("Seed", Float) = 0
+        _Lines ("Radial speed lines", Float) = 0
+        _Zoom ("Punch-in toward the focus", Float) = 0
     }
     SubShader
     {
@@ -33,7 +35,7 @@ Shader "Hidden/TumbangPreso/PhaisterImpact"
 
             sampler2D _MainTex;
             float4 _MainTex_TexelSize;
-            float _Amount, _Seed;
+            float _Amount, _Seed, _Lines, _Zoom;
             float4 _Focus;
             fixed4 _Light, _Dark, _Ink;
 
@@ -41,7 +43,9 @@ Shader "Hidden/TumbangPreso/PhaisterImpact"
 
             fixed4 frag(v2f_img i) : SV_Target
             {
-                fixed4 src = tex2D(_MainTex, i.uv);
+                // v7 (the owner's screenshot of an ink frame, 2026-09-29): the frame punches in toward the focus.
+                float2 uv = lerp(i.uv, _Focus.xy, _Zoom);
+                fixed4 src = tex2D(_MainTex, uv);
                 float lum = dot(src.rgb, float3(0.30, 0.59, 0.11));
                 // Inverted and posterised to two tones: the lit world goes dark, the shadows go pale.
                 float t = smoothstep(0.30, 0.40, lum);
@@ -65,6 +69,15 @@ Shader "Hidden/TumbangPreso/PhaisterImpact"
                 // A ring of ink right round the eye.
                 ink = max(ink, step(abs(r - 0.045), 0.012));
                 float3 c = lerp(two, _Ink.rgb, ink);
+                // v7: RADIAL SPEED LINES from the focus, the owner's reference: many thin streaks of the opposite tone, broken, each its
+                // own length, thickest at the frame's edge, none near the focus.
+                float lineCell = floor(ang * 160.0);
+                float lineIn = frac(ang * 160.0);
+                float lineOn = step(0.45, hash(lineCell * 1.7 + _Seed * 31.0));
+                float lineStart = 0.12 + 0.35 * hash(lineCell + 4.0 + _Seed);
+                float lineW = 0.08 + 0.3 * hash(lineCell + 8.0) * saturate((r - lineStart) * 2.0);
+                float streak = lineOn * step(lineStart, r) * step(abs(lineIn - 0.5), lineW);
+                c = lerp(c, 1.0 - c, streak * _Lines);
                 return fixed4(lerp(src.rgb, c, _Amount), 1.0);
             }
             ENDCG

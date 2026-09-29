@@ -20,6 +20,7 @@ Shader "TumbangPreso/VoodooNight"
         _Pool ("Circle light centre (object xz) and radius", Vector) = (0, 0, 0.3, 0)
         _Glow ("Circle light", Float) = 0
         _Phase ("Phase", Float) = 0
+        _Reach ("How far the night has spread (0 day, 1 all)", Float) = 1
     }
     SubShader
     {
@@ -37,7 +38,7 @@ Shader "TumbangPreso/VoodooNight"
             #include "UnityCG.cginc"
 
             float4 _Color, _Pool;
-            float _Ground, _Glow, _Phase;
+            float _Ground, _Glow, _Phase, _Reach;
 
             struct appdata { float4 vertex : POSITION; };
             struct v2f { float4 pos : SV_POSITION; float3 obj : TEXCOORD0; };
@@ -82,6 +83,10 @@ Shader "TumbangPreso/VoodooNight"
                     float mottle = noise(p * 9.0 + _Phase * 0.05) * noise(p * 23.0 - _Phase * 0.03);
                     col *= 0.8 + 0.4 * mottle;
                     alpha = saturate((1.0 - r) / 0.04);
+                    // THE DAY DIES (v7): the dark spreads out from her feet, a lit rim of ember at its edge.
+                    float front = _Reach * 1.15;
+                    alpha *= saturate((front - r) / 0.06);
+                    col += Ember * 1.4 * saturate(1.0 - abs(r - front) / 0.05) * step(_Reach, 0.99);
                 }
                 else
                 {
@@ -103,6 +108,14 @@ Shader "TumbangPreso/VoodooNight"
                         col = lerp(col, Black * 0.5, smoothstep(0.15, 0.45, wisp) * smoothstep(0.08, 0.3, y) * 0.8);
                         col += float3(1.0, 0.7, 0.85) * stars(float2(a * 40.0, y * 26.0), 0.08) * smoothstep(0.25, 0.6, y) * 0.7;
                     }
+                }
+                // THE DAY DIES (v7): the dome darkens from its top down, an ember band at the edge of the dark.
+                if (_Ground < 0.5)
+                {
+                    float edge = 1.3 - _Reach * 1.4;
+                    float h = i.obj.y > 0.999 ? 1.12 : i.obj.y;
+                    alpha *= saturate((h - edge) / 0.05);
+                    col += Ember * 1.2 * saturate(1.0 - abs(h - edge) / 0.04) * step(_Reach, 0.99);
                 }
                 alpha *= _Color.a;
                 return fixed4(col * alpha, alpha);

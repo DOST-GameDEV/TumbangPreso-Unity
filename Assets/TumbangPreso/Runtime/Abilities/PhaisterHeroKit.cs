@@ -435,8 +435,8 @@ namespace TumbangPreso.Abilities
             public VoodooDoll()
                 : base("phaister_ultimate", "VOODOO DOLL",
                        "Your voodoo doll wakes beside you as its own fighter for the round, with its own slipper. Its points are yours.",
-                       // The eclipse glyph OMEN left (every glyph is one ability's); a doll glyph of its own is owed.
-                       0.0f, 0.0f, AbilityGlyph.PhaisterEclipse,
+                       // Its own glyph: the doll hung on three strings from THE CIRCLE (it borrowed OMEN's eclipse until 2026-09-29).
+                       0.0f, 0.0f, AbilityGlyph.PhaisterVoodooDoll,
                        summary: "Wake the voodoo doll to fight on your side for the round.",
                        castAction: "hero-phaister-omen", viewmodelAction: "omen-rise")
             {

@@ -98,6 +98,14 @@ namespace TumbangPreso.Abilities
                 StripColliders(go);
             }
 
+            // Its nameplate: PHAISTER'S DOLL in her colour, a ring under it (`CharacterNameplate` reads a companion seat).
+            var plate = new GameObject("Nameplate");
+            plate.transform.SetParent(go.transform, false);
+            plate.AddComponent<Visual.CharacterNameplate>();
+
+            // What shows over its head: its points in her colour, the grey stitched X when it is tagged (plan 9.7).
+            go.AddComponent<Visual.VoodooDollPresence>();
+
             var doll = go.AddComponent<VoodooDollBody>();
             doll.Owner = owner;
             doll.Body = motor;
