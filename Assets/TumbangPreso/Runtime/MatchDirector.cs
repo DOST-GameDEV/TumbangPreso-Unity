@@ -110,6 +110,10 @@ namespace TumbangPreso
             if (IsWarmupBuffer) return;
             if (!NetAuthority.ShouldResolve()) return;
 
+            // ⚠️ A COMPANION'S POINTS ARE ITS OWNER'S (the owner: *"The doll gives points gained to Phaister"*). Mapped here, the
+            // one function that makes a point, so nothing that awards one has to know companions exist (plan 9.12).
+            if (CompanionSeats.IsCompanion(slot)) slot = CompanionSeats.OwnerOf(slot);
+
             int previousLeader = _scores.WinningSlot();
             _scores.Add(slot, e);
             Scored?.Invoke(slot, e);

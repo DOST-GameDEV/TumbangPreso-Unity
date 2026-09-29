@@ -1147,6 +1147,15 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   round's end; its network contract in `docs/SKILL_NETWORK_CONTRACT.md` (owner: *"You build it all"*). Owner, 2026-09-28, asked
   what it does while she attacks: **"Own slipper, throws"** (a true fifth player with a fifth slipper). Built on a COMPANION
   SEAT (`PlayerCount` + her seat), plan 9.12.
+  [~] 2026-09-29, the body on the host (`Abilities.VoodooDollBody.HostSpawn`/`Spawn`): a `CharacterMotor` in her companion seat
+  with the doll's art, `BodySpeedScale` 0.65, an Astig `AIController`, no skills, its own fifth slipper (seat of origin and owner =
+  its seat) in its hand when attacking and parked when defending; `RoundDirector` keeps companions OUT of `Players` (`Companions`,
+  `Bodies`, `BodyAt`, `RegisterCompanion`, `ReleaseCompanions` at `EndRound`/`ResetForNewMatch`/`Clear`, and with its owner on
+  `Unregister`); `MatchDirector.AddScore` pays a companion's points to its owner; `ResolveTag` on a companion stuns it 5 s where it
+  stands, pays nobody and raises `CompanionTagged`; the lunge and shove sweeps, a slipper's body blocks, the bots' tag targets and
+  `MatchFlair`'s seat lookup see companions (a companion and its owner never shove each other). `VoodooDollBodyTests` 3/3. NOT YET:
+  the network (seat arrays sized to `CompanionSeats.BodyCount`, a companion-set message, protocol bump, contract section), the cast
+  that spawns it (replacing OMEN), its nameplate and presentation, the cutscene, THE CIRCLE.
 - [ ] The cutscene SEW / GROW / WAKE; sounds; voice rows; icons; bots; films sent; the gate.
 
 **OPEN before v3 (superseded where it names OMEN, MANIKA or SPOTLIGHT PIN):**

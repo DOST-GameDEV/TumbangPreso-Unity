@@ -1909,7 +1909,8 @@ namespace TumbangPreso
             }
 
             _tagCandidates.Clear();
-            foreach (var who in round.Players)
+            // `Bodies`: a companion attacker (Phaister's doll) is chased like any attacker, though tagging it pays nothing.
+            foreach (var who in round.Bodies)
             {
                 if (who == null || who == _motor || who.IsDefender || !who.IsTaggable()) continue;
                 _tagCandidates.Add(who);

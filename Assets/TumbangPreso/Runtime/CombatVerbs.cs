@@ -406,7 +406,8 @@ namespace TumbangPreso
             var round = GameServices.Round;
             if (round == null || round.Lata == null || !round.Lata.IsUpright) return;
 
-            foreach (var p in round.Players)
+            // `Bodies`, not `Players`: a companion attacker is taggable like any attacker (plan 9.12).
+            foreach (var p in round.Bodies)
             {
                 if (p == null || p == _motor || p.IsDefender) continue;
                 if (!p.IsTaggable()) continue;
@@ -1011,10 +1012,12 @@ namespace TumbangPreso
             facing.y = 0.0f;
             facing.Normalize();
 
-            foreach (var p in round.Players)
+            foreach (var p in round.Bodies)
             {
                 if (p == null || p == _motor) continue;
                 if (requireTaggable && !p.IsTaggable()) continue;
+                // A companion and its owner never shove each other: it is on her side.
+                if (CompanionSeats.OwnerOf(p.PlayerSlot) == CompanionSeats.OwnerOf(_motor.PlayerSlot)) continue;
 
                 // Attackers shove attackers. The defender is neither a shover nor a target.
                 if (!requireTaggable && (p.IsDefender || _motor.IsDefender)) continue;

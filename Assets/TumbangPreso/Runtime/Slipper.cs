@@ -1318,7 +1318,7 @@ namespace TumbangPreso
 
             var round = GameServices.Round;
             if (round != null && _bodyContacts != 0)
-                foreach (var player in round.Players)
+                foreach (var player in round.Bodies)
                     if (player != null && !HitsBody(player)) _bodyContacts &= ~(1 << player.PlayerSlot);
 
             // ⚠️⚠️ THE TAYA'S BODY IS TESTED BEFORE THE CAN, AND EVERY OTHER BODY AFTER IT.
@@ -1340,7 +1340,7 @@ namespace TumbangPreso
             // this line is what makes the trade a real one rather than a lost tie.
             if (round != null && _throwerIgnoreLeft <= 0.0f)
             {
-                foreach (var p in round.Players)
+                foreach (var p in round.Bodies)
                 {
                     if (p == null || !p.IsDefender || p.PlayerSlot == _throwerSlot) continue;
                     if (!HitsBody(p)) continue;
@@ -1378,9 +1378,10 @@ namespace TumbangPreso
             // ⚠️ THEN ANY STANDING BODY, ATTACKERS INCLUDED. Three of them crowding one box
             // means friendly fire is part of the traffic, and a slipper that passed through
             // teammates would make the Defender's body block the only block in the game.
+            // `Bodies`: a companion (Phaister's doll) stands in the way like anyone.
             if (round != null && _throwerIgnoreLeft <= 0.0f)
             {
-                foreach (var p in round.Players)
+                foreach (var p in round.Bodies)
                 {
                     if (p == null || p.PlayerSlot == _throwerSlot) continue;
                     if (!HitsBody(p)) continue;
