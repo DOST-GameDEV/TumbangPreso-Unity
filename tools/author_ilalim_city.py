@@ -48,13 +48,20 @@ PREVIEWS = ROOT / "Logs" / "ilalim-blender"
 KITS = ["lrt_kit", "rizal_hall", "heritage", "eastside", "street", "trees", "props", "sarisari"]
 # The liveliness pass (owner: "can you think of a way to make the place look more lively, more
 # unique building shapes etc?"): linked when their files exist.
-OPTIONAL_KITS = ["rooftops", "streetlife", "landmarks"]
+OPTIONAL_KITS = ["rooftops", "streetlife", "landmarks", "stations"]
 SKIP = ("prototype", "review", "stand-in", "kit (", "(source", "(place on piers)")
 # The props kit's pier signs, placed on the piers, live in a review-named collection. Only that
 # one: its prototypes, "prop_column_signs (place on piers)", sit at the origin for the Unity
 # builder and showed up in the middle of the court (owner: "extra sign in this play area").
 ALWAYS = ("review placement (column signs)",)
 RAIL_HEAD = 9.19
+# A light distance haze (owner chose "Stations + haze" to end the view along Taft), done as Kanto
+# does it (tools/author_kanto_city.py city_fog): the compositor fades geometry toward the haze
+# colour by the mist pass, capped, and lays the sky back underneath. A world volume would be
+# simpler but EEVEE's is infinite and swallowed the sun (the v5 renders came out black). Unity
+# uses its own linear fog over the same distances.
+HAZE_START, HAZE_DEPTH, HAZE_CAP = 45.0, 360.0, 0.55
+HAZE = (0.58, 0.68, 0.82)          # close to the sky as rendered, so the sky barely shifts
 
 
 def link_kit(name, parent):
@@ -191,6 +198,8 @@ def lighting():
     bg = world.node_tree.nodes["Background"]
     bg.inputs["Color"].default_value = (0.60, 0.74, 0.92, 1)
     bg.inputs["Strength"].default_value = 0.7
+    world.mist_settings.start, world.mist_settings.depth = HAZE_START, HAZE_DEPTH
+    world.mist_settings.falloff = "LINEAR"
     sun = bpy.data.objects.new("sun", bpy.data.lights.new("sun", "SUN"))
     sun.data.energy, sun.data.angle, sun.data.color = 4.6, math.radians(2.5), (1.0, 0.86, 0.68)
     # Late afternoon, low from the west-south-west: light travels east and a little north.
@@ -219,6 +228,28 @@ def lighting():
                         space.overlay.show_axis_y = False
 
 
+def haze(scene):
+    """Fade the frame toward HAZE by the mist pass, capped. The sky has mist 1, so it takes the full
+    cap; HAZE sits close to the sky colour, so the sky barely shifts. (Kanto keeps its gradient sky
+    out of the fog with a transparent film; here that left a white fringe round every silhouette,
+    and the Ilalim sky is flat, so it is not needed.)"""
+    scene.view_layers[0].use_pass_mist = True
+    tree = bpy.data.node_groups.new("ilalim haze", "CompositorNodeTree")
+    scene.compositing_node_group = tree
+    tree.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+    out = tree.nodes.new("NodeGroupOutput")
+    rl = tree.nodes.new("CompositorNodeRLayers")
+    cap = tree.nodes.new("ShaderNodeMath")
+    cap.operation, cap.inputs[1].default_value = "MINIMUM", HAZE_CAP
+    tree.links.new(rl.outputs["Mist"], cap.inputs[0])
+    mix = tree.nodes.new("ShaderNodeMix")
+    mix.data_type = "RGBA"
+    tree.links.new(cap.outputs[0], mix.inputs[0])
+    tree.links.new(rl.outputs["Image"], mix.inputs[6])
+    mix.inputs[7].default_value = (*HAZE, 1)
+    tree.links.new(mix.outputs[2], out.inputs[0])
+
+
 def preview(version, only):
     PREVIEWS.mkdir(parents=True, exist_ok=True)
     scene = bpy.context.scene
@@ -228,6 +259,7 @@ def preview(version, only):
     cam.data.clip_end = 3000
     scene.collection.objects.link(cam)
     scene.camera = cam
+    haze(scene)
     eye = 18 / math.tan(math.radians(95 / 2))
     shots = [
         ("spawn_north", Vector((0.0, -9.0, 1.25)), Vector((0, 30, 4)), eye),
