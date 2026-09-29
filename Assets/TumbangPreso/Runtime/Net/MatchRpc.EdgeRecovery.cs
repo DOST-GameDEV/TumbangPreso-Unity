@@ -5,7 +5,7 @@ namespace TumbangPreso.Net
 {
     public sealed partial class MatchRpc
     {
-        private readonly ulong[] _unitPoseSerial=new ulong[TumbangPreso.Core.Balance.PlayerCount];
+        private readonly ulong[] _unitPoseSerial=new ulong[TumbangPreso.Core.CompanionSeats.BodyCount];
         public void BeginEdgeMovementOwnership(int slot)
         {
             if(!NetAuthority.IsHost||!ValidSlot(slot))return;

@@ -240,6 +240,39 @@ It does not apply status, modify global time scale or add a second effect on the
 caster. Flair messages carry match/round scope in protocol72. Derive the accent from
 the actual kit identity, not a cosmetic body's roster index.
 
+## Companion Bodies
+
+Protocol90 (HERO-10 v3, Phaister's VOODOO DOLL; Nemu's KURO PLAYS is the same kind of body).
+A companion is a body that is not a player, in a companion seat: `Core.CompanionSeats`,
+`PlayerCount + owner` (4 to 7), at most one per player. The HOST owns it: it spawns it
+(`Abilities.VoodooDollBody.HostSpawn`), runs its brain (an Astig `AIController`) and
+resolves everything it does. It is never in `RoundDirector.Players`; `Companions`,
+`Bodies` and `BodyAt` are how the few sweeps that must see it (tags, shoves, a slipper's
+body blocks, bot tag targets, flair seat lookups) find it.
+
+- Existence: `CompanionSet` (host to all; to one peer inside `HostSyncPeer`) lists every
+  live companion (seat, kind, position, yaw) scoped to the presentation match and round.
+  A receiver keeps or builds a brainless replica (`VoodooDollBody.Spawn(..., brain:false)`)
+  for each listed seat and removes every other companion with its slipper. A list from
+  another match, from an earlier round than the receiver's, or from a peer that is not the
+  host is ignored. The host sends it on every change (`RoundDirector.CompanionsChanged`:
+  spawn, `EndRound`, `ResetForNewMatch`, `Clear`, its owner's `Unregister`).
+- Body state rides the existing seat-keyed routes, which admit companion seats
+  (`MatchRpc.ValidBody`): SyncUnit (pose, statuses, the voodoo snapshot), Teleport,
+  PlayAction, ThrowCharge, SyncSlipper and SlipperPose. `_movementEpochs`,
+  `_unitPoseSerial` and `_slippersBySeat` are sized `CompanionSeats.BodyCount`; the host
+  broadcasts only LIVE companions' slippers, so an empty seat never forces a rescan.
+- Stays four seats wide (`ValidSlot`): abilities, cooldown receipts, timed kits, emotes,
+  scores, seat ownership and departures. A companion has no kit, no peer can claim its
+  seat, and `MatchDirector.AddScore` pays its points to its owner before any Score
+  message exists. Impact and Carry target a peer-simulated body; a companion is always
+  host-simulated, so the host applies them directly.
+- Its slipper is a fifth `Slipper`: seat of origin and owner = the companion's seat,
+  armed into its hand by the host when it attacks, parked (inactive, owner -1) when it
+  defends, destroyed with it.
+- A tag on a companion (`RoundDirector.ResolveTag`) stuns it five seconds where it stands,
+  pays nobody, credits no sabotage and raises `CompanionTagged`, never `Tagged`.
+
 ## Compatibility And Checks
 
 Protocol73's VoodooBodySnapshot carries DRAINED/HEXED timers and mark/reach state

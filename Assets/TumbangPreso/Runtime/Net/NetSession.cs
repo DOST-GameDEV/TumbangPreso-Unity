@@ -537,7 +537,9 @@ namespace TumbangPreso.Net
         // and acknowledge the authoritative tally without client round events.
         // 89: rematches allocate and announce a fresh world identity; rematch
         // votes/tallies name the old result and acknowledge seated participants.
-        public const int ProtocolVersion = 89;
+        // 90: companion bodies (HERO-10 v3, Phaister's VOODOO DOLL): seats 4 to 7 exist; `CompanionSet` lists them
+        // and SyncUnit, Teleport, PlayAction, SyncSlipper and SlipperPose admit their seats.
+        public const int ProtocolVersion = 90;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

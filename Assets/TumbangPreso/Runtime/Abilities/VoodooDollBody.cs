@@ -114,6 +114,8 @@ namespace TumbangPreso.Abilities
                 var ai = go.AddComponent<AIController>();
                 ai.SeatDifficulty = Difficulty.Astig;
             }
+            // The motor caches who drives it (`HostDrivesThisBody`): ask again now its brain (or its absence) is final.
+            motor.ForgetInputSource();
             return motor;
         }
 

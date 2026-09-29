@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
+using TumbangPreso.Net;
+using Unity.Collections;
+using Unity.Netcode;
 using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
@@ -182,6 +186,83 @@ namespace TumbangPreso.PlayTests
             Assert.Greater(travelled, 1.5f, "Its brain never moved it.");
             // It can never outrun a player: its whole share of their speed is 0.65 (a sprint included).
             Assert.Less(travelled / 8f, Balance.Speed * Balance.SprintScale * VoodooRules.DollSpeedScale * 1.15f, "It moved faster than its share.");
+        }
+
+        private sealed class Client : INetProvider
+        {
+            public bool IsHost => false;
+            public bool IsNetworked => true;
+            public int LocalSlot => 3;
+            public int LocalPeerId => 3;
+            public bool IsSeatlessReferee => false;
+        }
+
+        /// <summary>
+        /// ⚠️ A CLIENT BUILDS AND DROPS THE DOLL FROM THE HOST'S LIST (`MatchRpc.OnCompanionSetMsg`, protocol 90): a listed companion
+        /// becomes a brainless replica in its seat with its own slipper; a list from an earlier round changes nothing; a list without
+        /// it takes it away with its slipper; a list from anybody but the host is ignored.
+        /// </summary>
+        [UnityTest, Timeout(60000)]
+        public IEnumerator AClientBuildsAndDropsTheDollFromTheHostsCompanionList()
+        {
+            var round = GameServices.Round;
+            var her = Attacker();
+            her.AbilitySystem.BindHero("phaister");
+            int seat = CompanionSeats.For(her.PlayerSlot);
+            // The match's own router if there is one (a second one refuses to exist), else a bare one for the test.
+            GameObject host = null;
+            var rpc = MatchRpc.Instance;
+            if (rpc == null) { host = new GameObject("CompanionSet receiver"); rpc = host.AddComponent<MatchRpc>(); }
+            var matchId = typeof(MatchRpc).GetProperty(nameof(MatchRpc.PresentationMatchId));
+            long previousMatch = rpc.PresentationMatchId;
+            matchId.GetSetMethod(true).Invoke(rpc, new object[] { 100L });
+            NetAuthority.Provider = new Client();
+            int roundNumber = GameServices.Match.RoundNumber;
+            void Deliver(ulong sender, long match, int number, params int[] seats)
+            {
+                using var writer = new FastBufferWriter(128, Allocator.Temp);
+                writer.WriteValueSafe(match); writer.WriteValueSafe(number); writer.WriteValueSafe((byte)seats.Length);
+                foreach (int s in seats)
+                {
+                    writer.WriteValueSafe(s); writer.WriteValueSafe((byte)1);
+                    writer.WriteValueSafe(her.transform.position + Vector3.right * 1.3f); writer.WriteValueSafe(90f);
+                }
+                using var reader = new FastBufferReader(writer, Allocator.Temp);
+                typeof(MatchRpc).GetMethod("OnCompanionSetMsg", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .Invoke(rpc, new object[] { sender, reader });
+            }
+            try
+            {
+                Deliver(7, 100, roundNumber, seat);
+                Assert.IsNull(round.BodyAt(seat), "A peer that is not the host made a doll.");
+                Deliver(NetworkManager.ServerClientId, 99, roundNumber, seat);
+                Assert.IsNull(round.BodyAt(seat), "Another match's list made a doll.");
+
+                Deliver(NetworkManager.ServerClientId, 100, roundNumber, seat);
+                yield return null;
+                var doll = round.BodyAt(seat);
+                Assert.IsNotNull(doll, "The host's list did not build the doll.");
+                Assert.IsNull(doll.GetComponent<AIController>(), "A replica has a brain.");
+                var shoe = doll.GetComponent<VoodooDollBody>().Shoe;
+                Assert.IsNotNull(shoe);
+                Assert.AreEqual(seat, shoe.SeatOfOrigin);
+
+                Deliver(NetworkManager.ServerClientId, 100, roundNumber - 1);
+                yield return null;
+                Assert.IsTrue(doll != null, "A stale round's empty list removed the doll.");
+
+                Deliver(NetworkManager.ServerClientId, 100, roundNumber);
+                yield return null;
+                Assert.IsTrue(doll == null, "The host's empty list did not remove the doll.");
+                Assert.IsTrue(shoe == null, "Its slipper outlived it.");
+                Assert.AreEqual(0, round.Companions.Count);
+            }
+            finally
+            {
+                NetAuthority.Provider = new SoloProvider();
+                if (rpc != null) matchId.GetSetMethod(true).Invoke(rpc, new object[] { previousMatch });
+                if (host != null) Object.Destroy(host);
+            }
         }
     }
 }

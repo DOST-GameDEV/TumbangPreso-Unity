@@ -33,7 +33,8 @@ namespace TumbangPreso.Net
         public static MatchRpc Instance { get; private set; }
 
         private NetworkManager _nm;
-        private readonly int[] _movementEpochs=new int[Balance.PlayerCount];
+        // Sized for every BODY, companions included (plan 9.12): a companion's pose and teleports carry its epoch.
+        private readonly int[] _movementEpochs=new int[CompanionSeats.BodyCount];
         private readonly LobbySeatInfo[] _replicatedSeats = new LobbySeatInfo[Balance.PlayerCount];
         /// <summary>
         /// The messaging manager these handlers are registered ON, not merely whether they once
@@ -352,6 +353,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SyncWorld", OnSyncWorldMsg);
             cm.RegisterNamedMessageHandler("SyncLata", OnSyncLataMsg);
             cm.RegisterNamedMessageHandler("SyncSlipper", OnSyncSlipperMsg);
+            cm.RegisterNamedMessageHandler("CompanionSet", OnCompanionSetMsg);
             cm.RegisterNamedMessageHandler("LataPose", OnLataPoseMsg);
             cm.RegisterNamedMessageHandler("SlipperPose", OnSlipperPoseMsg);
             cm.RegisterNamedMessageHandler("SubmitMove", OnSubmitMoveMsg);
@@ -561,10 +563,11 @@ namespace TumbangPreso.Net
             return budget;
         }
 
+        /// <summary>The body in a seat, a player's or (plan 9.12) a companion's.</summary>
         private static CharacterMotor Unit(int slot)
         {
             var round = GameServices.Round;
-            return round != null ? round.PlayerAt(slot) : null;
+            return round != null ? round.BodyAt(slot) : null;
         }
 
         /// <summary>
@@ -595,7 +598,8 @@ namespace TumbangPreso.Net
         /// stopped sending it, and a client could not have applied it either. Every non-host peer
         /// therefore drew the taya carrying a slipper for the whole round.
         /// `Slipper.SeatOfOrigin` is assigned once per match on every peer and never moves.
-        private static readonly Slipper[] _slippersBySeat = new Slipper[Balance.PlayerCount];
+        /// ⚠️ ONE PER BODY: a companion (Phaister's doll) has its own slipper, addressed by its seat (plan 9.12).
+        private static readonly Slipper[] _slippersBySeat = new Slipper[CompanionSeats.BodyCount];
 
         /// ⚠️⚠️ INACTIVE OBJECTS ARE INCLUDED, AND THAT IS THE SECOND HALF OF § 78.1. Keying on
         /// `SeatOfOrigin` alone did NOT fix the taya's tsinelas, and the verification run is what
@@ -645,10 +649,16 @@ namespace TumbangPreso.Net
                 return;
 
             HostStepResetChannels();
+            HookCompanions();
 
             BroadcastLataStateIfChanged();
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
                 BroadcastSlipperStateIfChanged(FindSlipper(slot));
+            // A companion's own slipper (plan 9.12): only live companions, so an empty seat never forces a rescan.
+            var companions = GameServices.Round?.Companions;
+            if (companions != null)
+                for (int i = 0; i < companions.Count; i++)
+                    if (companions[i] != null) BroadcastSlipperStateIfChanged(FindSlipper(companions[i].PlayerSlot));
 
             _matchSyncLeft -= Time.fixedDeltaTime;
             if (_matchSyncLeft > 0.0f) return;
@@ -2301,7 +2311,7 @@ namespace TumbangPreso.Net
 
         public void BroadcastTeleport(int slot,Vector3 position,float yaw)
         {
-            if(!NetAuthority.ShouldResolve() || !ValidSlot(slot) || _nm?.CustomMessagingManager==null)return;
+            if(!NetAuthority.ShouldResolve() || !ValidBody(slot) || _nm?.CustomMessagingManager==null)return;
             var unit=Unit(slot);if(unit==null)return;
             int epoch=++_movementEpochs[slot];unit.AdoptMovementEpoch(epoch);
             _moveBudgets.Remove(slot);
@@ -2320,7 +2330,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int epoch);
             reader.ReadValueSafe(out Vector3 position);
             reader.ReadValueSafe(out float yaw);
-            if(!ValidSlot(slot) || !Finite(position) || !Finite(yaw))return;
+            if(!ValidBody(slot) || !Finite(position) || !Finite(yaw))return;
             var unit=Unit(slot);if(unit==null || epoch<=unit.MovementEpoch)return;
             unit.AdoptMovementEpoch(epoch);
             float facing=slot==NetAuthority.LocalSlot?unit.transform.eulerAngles.y:yaw;
@@ -2500,7 +2510,7 @@ namespace TumbangPreso.Net
             reader.ReadNetworkSerializable(out GameplayActionScope scope);
             // Pose serials order deliveries, but a fresh body has no previous
             // cursor. Reject another world's status before advancing that cursor.
-            if (!ValidSlot(slot) || !scope.IsValid || scope.Match != PresentationMatchId ||
+            if (!ValidBody(slot) || !scope.IsValid || scope.Match != PresentationMatchId ||
                 scope.Round != (GameServices.Match?.RoundNumber ?? -1)) return;
             int epoch = scope.Epoch;
             reader.ReadValueSafe(out ulong poseSerial);
@@ -4156,7 +4166,7 @@ namespace TumbangPreso.Net
         public void BroadcastAction(int slot, string action, ulong? exceptClientId = null, GameplayActionScope? requestScope = null)
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
-            if (!ValidSlot(slot) || string.IsNullOrEmpty(action) || action.Length > MaxActionNameLength) return;
+            if (!ValidBody(slot) || string.IsNullOrEmpty(action) || action.Length > MaxActionNameLength) return;
 
             foreach (ulong clientId in _nm.ConnectedClientsIds)
             {
@@ -4175,7 +4185,7 @@ namespace TumbangPreso.Net
         {
             if (NetAuthority.IsHost || !FromHost(senderClientId) || !reader.TryBeginRead(8 + GameplayActionScope.WireBytes)) return;
             reader.ReadValueSafe(out int slot);
-            if (!ValidSlot(slot) || !ReadActionName(ref reader, out string action)) return;
+            if (!ValidBody(slot) || !ReadActionName(ref reader, out string action)) return;
             var unit = Unit(slot);
             if (!ReadCurrentActionScope(ref reader, unit, out _)) return;
             unit.GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction(action);
@@ -5955,7 +5965,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Quaternion rot);
             reader.ReadValueSafe(out Vector3 velocity);
 
-            if (!ValidSlot(seatOfOrigin)) return;
+            if (!ValidBody(seatOfOrigin)) return;
             if (!Finite(pos) || !Finite(rot) || !Finite(velocity)) return;
 
             FindSlipper(seatOfOrigin)?.ApplySnapshotPose(pos, rot, velocity);
@@ -6187,6 +6197,8 @@ namespace TumbangPreso.Net
             // The joiner needs the whole world state, not just its own seat. Broadcast is
             // intentionally idempotent and also repairs any packet-lagged observer.
             BroadcastWorldSnapshot();
+            // Live companions before their poses: a rejoiner builds the doll, then its pose and slipper land on it (plan 9.12).
+            SendCompanionSet((ulong)peerId);
             // Only the synchronizing peer needs to reconstruct live familiar
             // state; broadcasting it would rewind somebody else's predicted input.
             for(int slot=0;slot<Balance.PlayerCount;slot++)

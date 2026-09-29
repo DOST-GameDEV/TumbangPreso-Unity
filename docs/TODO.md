@@ -1153,9 +1153,14 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   `Bodies`, `BodyAt`, `RegisterCompanion`, `ReleaseCompanions` at `EndRound`/`ResetForNewMatch`/`Clear`, and with its owner on
   `Unregister`); `MatchDirector.AddScore` pays a companion's points to its owner; `ResolveTag` on a companion stuns it 5 s where it
   stands, pays nobody and raises `CompanionTagged`; the lunge and shove sweeps, a slipper's body blocks, the bots' tag targets and
-  `MatchFlair`'s seat lookup see companions (a companion and its owner never shove each other). `VoodooDollBodyTests` 3/3. NOT YET:
-  the network (seat arrays sized to `CompanionSeats.BodyCount`, a companion-set message, protocol bump, contract section), the cast
-  that spawns it (replacing OMEN), its nameplate and presentation, the cutscene, THE CIRCLE.
+  `MatchFlair`'s seat lookup see companions (a companion and its owner never shove each other). `VoodooDollBodyTests` 3/3.
+  [x] Its network (protocol 90, `SKILL_NETWORK_CONTRACT.md` "Companion Bodies"): `CompanionSet` builds and removes brainless
+  replicas on every peer and reaches a rejoiner in `HostSyncPeer`; SyncUnit, Teleport, PlayAction, SyncSlipper and SlipperPose admit
+  companion seats (`ValidBody`), `Unit` is `BodyAt`, the body-level seat arrays are `BodyCount` wide, the host streams live
+  companions' slippers. `VoodooDollBodyTests.AClientBuildsAndDropsTheDollFromTheHostsCompanionList`. Not yet proved between two
+  real processes. NOT YET: the cast that spawns it (replacing OMEN), its nameplate and presentation, the cutscene, THE CIRCLE.
+  (`SkillReceiptTests.RefusedFreeRecallDoesNotCreateAChargeAndEligibilityDoesNotMutateHeldTime`, Nemu, fails `CannotAct`; it failed
+  the same way on 2026-09-27 and before this work on 2026-09-29, so it is not the doll's.)
 - [ ] The cutscene SEW / GROW / WAKE; sounds; voice rows; icons; bots; films sent; the gate.
 
 **OPEN before v3 (superseded where it names OMEN, MANIKA or SPOTLIGHT PIN):**
