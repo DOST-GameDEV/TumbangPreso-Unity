@@ -1,13 +1,23 @@
 # Ilalim ng Tulay rework guide (ILALIM-1)
 
-⚠️⚠️ **CURRENT STATE (2026-09-29): ILALIM-1.1 PROPOSAL WRITTEN, AWAITING OWNER REVIEW.** The
-owner chose Ilalim ng Tulay as the next map after Kanto and the Lagoon Court, and set it at UP
-Manila's Padre Faura corner "cuz we wanna see our school's Rizal Hall in the game". § 0 is the
-proposed place and feel, with the open decisions in § 0.6. The evidence is in
+⚠️⚠️ **CURRENT STATE (2026-09-29): BLOCKOUT v3 BUILT, AWAITING OWNER REVIEW.** The owner chose
+Ilalim ng Tulay as the next map after Kanto and the Lagoon Court, and set it at UP Manila's
+Padre Faura corner "cuz we wanna see our school's Rizal Hall in the game". § 0 is the proposed
+place and feel, with the open decisions in § 0.6. The evidence is in
 [the research report](reports/ilalim-rework-2026-09-29/research.md), and the plan is in
 [place-plan-v1.png](reports/ilalim-rework-2026-09-29/place-plan-v1.png).
-NEXT: the owner answers § 0.6, then ILALIM-1.2 (the grey Blender blockout). Nothing is modelled
-yet. Update this block as the work moves; it is the snapshot a new session resumes from.
+
+The owner then asked "give me a blockout in blender". `tools/author_ilalim_blockout.py` writes
+`ArtSource/ilalim/ilalim_blockout.blend`, and with `-- --preview N` it writes eight renders to
+`Logs/ilalim-blender/blockout_<shot>_vN.png`. It takes § 0.6's DEFAULT answers:
+- the campus on the west and PC Express on the east;
+- Rizal Hall facing south, with the Oblation;
+- twin-leg piers;
+- late-afternoon sun.
+
+Each default is a small edit if the owner picks the other answer.
+
+NEXT: the owner reviews the blockout and answers § 0.6. Then ILALIM-1.3, the kits.
 
 Read first, in order: [AGENTS](../AGENTS.md), [VISION](VISION.md), [WORKING_RULES](WORKING_RULES.md),
 this guide, then the map's existing design document [Ilalim_Ng_Tulay.md](Ilalim_Ng_Tulay.md)

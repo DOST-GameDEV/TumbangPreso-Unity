@@ -1624,7 +1624,9 @@ after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
   not LRT-2. OPEN: the owner's answers to guide § 0.6.
 - [ ] ILALIM-1.2 A Blender blockout at the exact gameplay dimensions (the 14 m carriageway box, the
   flanks to x +/-11.2 and z +/-16.7, the columns, the hoop and the pad). Eye-height and aerial
-  renders, then owner review.
+  renders, then owner review. BUILT 2026-09-29 as v3: `tools/author_ilalim_blockout.py` writes
+  `ArtSource/ilalim/ilalim_blockout.blend` and eight renders (two plans, two aerials, four
+  eye-level views). It uses the guide's § 0.6 default answers. OPEN: owner review.
 - [ ] ILALIM-1.3 Kits and textures, one at a time with owner review: the guideway and columns,
   shopfronts and signs, props and trip hazards, vehicles, and the LRT consist.
 - [ ] ILALIM-1.4 Export, and a Unity builder that writes an UNREGISTERED sample scene. Every column
