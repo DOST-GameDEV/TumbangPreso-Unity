@@ -51,6 +51,19 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
     west pavement and the hoop. From the spawn the street kit's BARANGAY 712 board (at
     (10.25, 20.6)) hides about half of the signboard; moving that board is an owner call.
   - The props kit's small sidewalk STAND at (-10.35, -14.2) stays.
+- **Anti-tiling on the flat roofs, and the viewport z-fighting** (owner: "dont we have something
+  that we used in lagoon and kanto to have random tile rotation and feather offsets", "not only
+  ground but the flat roofs", "z fighting on ground plane"):
+  - `tools/ilalim_antitile.py` is Kanto's and the Lagoon's method as one shared node chain: two
+    extra rotated, scaled and offset samples, each blended in through a big feathered noise
+    mask. The street kit's lot, asphalt, parking and lawn already had the one-sample version.
+    `east_roof` and `heritage_flat_roof` now use the shared chain, and `east_roof` is redrawn as
+    broad fields (its small blotches repeated as wallpaper).
+  - The grid and flicker on the ground were the VIEWPORT, not the geometry. The road top is
+    z = 0 (the contract), where Blender draws its floor grid, and a 0.01 m near clip left the
+    depth buffer about 6 cm of precision from the air. The city file now opens with the floor
+    grid off and a 0.1 m near clip. Renders were always clean.
+  - Unity (ILALIM-1.4) needs the same anti-tiling in the map shader.
 - **OPEN owner decisions** (details under "Open decisions for the owner" below):
   - the train is invisible behind the solid parapet; a steel-railing parapet is recommended;
   - cable shadows on the court;

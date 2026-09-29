@@ -177,7 +177,16 @@ def lighting():
                 for space in area.spaces:
                     if space.type == "VIEW_3D":
                         space.shading.type = "MATERIAL"
+                        # The road top is z = 0, exactly where the viewport floor grid draws, and a
+                        # 0.01 m near clip against a 3 km far clip leaves the depth buffer about
+                        # 6 cm of precision at aerial distances: the owner saw the grid and the
+                        # ground z-fighting ("z fighting on ground plane"). Renders use the camera
+                        # clip and were clean; this fixes the viewport the file opens with.
+                        space.clip_start = 0.1
                         space.clip_end = 3000
+                        space.overlay.show_floor = False
+                        space.overlay.show_axis_x = False
+                        space.overlay.show_axis_y = False
 
 
 def preview(version, only):

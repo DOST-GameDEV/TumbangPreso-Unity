@@ -79,6 +79,7 @@ TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS))
 import author_ilalim_lrt as L            # noqa: E402  (fillet, rounded_rect: read-only)
 import author_ilalim_signs as S          # noqa: E402
+from ilalim_antitile import anti_tile    # noqa: E402
 
 ROOT = TOOLS.parent
 SOURCE = ROOT / "ArtSource" / "ilalim"
@@ -171,6 +172,9 @@ GRIMED = {"east_wec_render", "east_wec_breeze", "east_wec_wall", "east_astral_wa
           "east_tile_green", "east_shutter", "east_brick", "east_maroon", "east_mustard", "east_tank",
           "east_tank_dark"}
 ALPHA = {"east_grille", S.face_material("pisonet")}
+# The flat roofs repeated as wallpaper from above (owner: "not only ground but the flat roofs"):
+# rotated, feathered extra samples (tools/ilalim_antitile.py).
+ANTI_TILE = {"east_roof"}
 EMIT = {S.face_material("pcx"): 0.55, S.face_material("dental"): 0.4, "east_int_pc": 0.25,
         S.face_material("manok_pylon"): 0.35}
 
@@ -196,6 +200,8 @@ def material(name):
     albedo.image = bpy.data.images.load(str(TEXTURES / f"{tex}_albedo.png"), check_existing=True)
     links.new(uv.outputs["UV"], albedo.inputs["Vector"])
     colour = albedo.outputs["Color"]
+    if name in ANTI_TILE:
+        colour = anti_tile(nodes, links, uv.outputs["UV"], albedo.image, colour)
     if tint is not None:
         mix = nodes.new("ShaderNodeMix")
         mix.data_type, mix.blend_type = "RGBA", "MULTIPLY"

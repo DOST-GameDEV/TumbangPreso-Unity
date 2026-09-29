@@ -89,6 +89,11 @@ TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS))
 import author_ilalim_blockout as BO  # noqa: E402  (read-only: sightline_override, the ground heights)
 import author_ilalim_lrt as LRT  # noqa: E402  (read-only: fillet, rounded_rect)
+from ilalim_antitile import anti_tile  # noqa: E402
+
+# Flat roofs read as wallpaper from above (owner: "not only ground but the flat roofs"): rotated,
+# feathered extra samples (tools/ilalim_antitile.py).
+ANTI_TILE = {"heritage_flat_roof"}
 
 ROOT = TOOLS.parent
 SOURCE = ROOT / "ArtSource" / "ilalim"
@@ -221,6 +226,8 @@ def material(name, tex, tint=None, overlays=(), rough=0.85, normal=0.4, base="f4
     albedo.image = bpy.data.images.load(str(TEXTURES / f"{tex}_albedo.png"), check_existing=True)
     links.new(uv.outputs["UV"], albedo.inputs["Vector"])
     colour = albedo.outputs["Color"]
+    if name in ANTI_TILE:
+        colour = anti_tile(nodes, links, uv.outputs["UV"], albedo.image, colour)
     avg = (0.7, 0.7, 0.7)
     if tint is not None:
         t, b = srgb_lin(tint), srgb_lin(base)

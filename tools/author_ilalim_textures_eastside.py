@@ -617,11 +617,13 @@ def east_curtain():
 def east_roof():
     c = Canvas(6, 6, 170)
     img = c.flat("a09c93")
-    img = c.coat(img, (1.03, 1.03, 1.025), 2.0, 0.3, 741, feather=1.3)
-    # Two or three big bitumen patches over repaired cracks and a greenish damp corner: large,
-    # soft and only a few steps darker (v1 read as leopard spots).
-    img = c.coat(img, None, 2.6, 0.12, 742, feather=1.4, colour="8a857c")
-    img = c.coat(img, None, 3.0, 0.07, 743, feather=1.6, colour="959985")
+    img = c.coat(img, (1.025, 1.025, 1.02), 4.5, 0.3, 741, feather=1.5)
+    # One broad bitumen field and one greenish damp field per tile: large, soft and only a few
+    # steps darker. v1 read as leopard spots; v2's 2..3 m coats still drew small S-shaped blotches
+    # that repeated as wallpaper from the air (owner: "not only ground but the flat roofs"). The
+    # material also carries rotated, feathered extra samples (tools/ilalim_antitile.py).
+    img = c.coat(img, None, 5.5, 0.14, 742, feather=1.8, colour="928d84")
+    img = c.coat(img, None, 6.0, 0.08, 743, feather=1.8, colour="9a9d8c")
     save("east_roof", img)
 
 
