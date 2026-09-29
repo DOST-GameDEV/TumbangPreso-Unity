@@ -59,7 +59,33 @@ The same review also rebuilt the ground: "fix the plane..". Each ground class is
 dissolved surface, with kerb walls only where heights differ: about 3,300 faces in total,
 instead of hundreds of thousands of boxes.
 
-NEXT: the owner reviews v9 and answers § 0.6. Then ILALIM-1.3, the kits.
+**The first kit: the LRT-1 guideway (v3).** The owner said "proceed. i want you to give me
+models for the LRT way. we're still following that artistic stylized handdrawn design."
+- `py -3 tools/author_ilalim_textures.py` paints four surfaces into `ArtSource/ilalim/textures/`,
+  with a swatch sheet in `Logs/ilalim-blender/`. Each surface has its own drawing:
+  - `lrt_concrete`: faint pour lines every 2 m;
+  - `lrt_soffit`: soft damp patches and joints;
+  - `lrt_track_bed`: brake-dust patches;
+  - `lrt_steel`: neutral, tinted per material.
+- `blender -b --python tools/author_ilalim_lrt.py -- --preview N` models the kit into
+  `ArtSource/ilalim/lrt_kit.blend`. Every prototype sits at the origin in its own collection,
+  and the same prototypes are assembled over the court as linked duplicates:
+  - `lrt_pier`: twin tapered legs, a hammerhead cap, bearings, and a drain pipe with clamps;
+  - `lrt_span_9/20/25`: a rounded box girder, the panelled parapet with coping, cable troughs,
+    and slab track with rails;
+  - `lrt_mast`: a catenary mast with its arm, brace and insulators, plus the sagging contact
+    wires.
+- The contract numbers hold: soffit 8.0, deck top 9.04, width 10.5, rail head 9.19, and legs
+  1.4 m at x ±4.45. The piers carry their own material, `lrt_pier`, for NearFade.
+
+Self-review faults fixed before the owner saw it:
+- The first pier read as a Greek colonnade: flared bases, a cap overhanging like a cornice, and
+  pour lines every metre reading as stone courses.
+- Smooth shading streaked the big faces.
+- Anti-tiling turned the pour lines diagonal. Directional textures are now left out of it, as
+  on Kanto.
+
+NEXT: owner review of the guideway kit. Then the next kit, and § 0.6 still open.
 
 Read first, in order: [AGENTS](../AGENTS.md), [VISION](VISION.md), [WORKING_RULES](WORKING_RULES.md),
 this guide, then the map's existing design document [Ilalim_Ng_Tulay.md](Ilalim_Ng_Tulay.md)

@@ -1634,7 +1634,9 @@ after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
   the PGH block in the view line is removed and the view-line trees are cleared. Rizal Hall now
   reads from the spawn. The ground is rebuilt as clean dissolved surfaces. OPEN: owner review.
 - [ ] ILALIM-1.3 Kits and textures, one at a time with owner review: the guideway and columns,
-  shopfronts and signs, props and trip hazards, vehicles, and the LRT consist.
+  shopfronts and signs, props and trip hazards, vehicles, and the LRT consist. GUIDEWAY KIT
+  v3 BUILT 2026-09-29 (`tools/author_ilalim_lrt.py`, `tools/author_ilalim_textures.py`, then
+  `ArtSource/ilalim/lrt_kit.blend`; guide CURRENT STATE). OPEN: owner review; the other kits.
 - [ ] ILALIM-1.4 Export, and a Unity builder that writes an UNREGISTERED sample scene. Every column
   goes on `TumbangPreso/NearFade`, because the AO NearGuard depends on it. Retune the Ilalim
   WorldLookProfile row in Play. Keep BridgeHoop, the overclock pad, LrtTrainFlyby, and the match
