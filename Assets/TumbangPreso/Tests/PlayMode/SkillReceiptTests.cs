@@ -1439,42 +1439,6 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
-        [UnityTest, Timeout(30000)]
-        public IEnumerator OmenRecoverySeeksAuthoredVisualTimeAndEmptyStateEndsItsGrant()
-        {
-            var system = Owner("phaister");
-            var motor = system.GetComponent<CharacterMotor>();
-            var kit = (PhaisterHeroKit)system.Kit;
-            Assert.AreSame(kit.Ultimate, system.FindPreparedWorldAbility(kit.Ultimate.Id));
-            Assert.IsNull(system.FindPreparedWorldAbility(kit.Skill1.Id));
-            var centre = new Vector3(-10, 4, -8);
-            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
-            kit.RestoreCoven(motor, centre, 0, 2);
-            var hole = Object.FindAnyObjectByType<VoodooBlackHole>();
-            Assert.IsNotNull(hole);
-            var omen = hole.GetComponentInChildren<Visual.PhaisterOmen>();
-            float expected = kit.Ultimate.Windup + kit.Ultimate.Duration - 2;
-            Assert.AreEqual(expected, (float)typeof(Visual.PhaisterOmen).GetField("_t", flags).GetValue(omen), .001f);
-            Assert.AreEqual(2, (float)typeof(VoodooBlackHole).GetField("_life", flags).GetValue(hole), .001f);
-            Assert.Greater(omen.LifeSeconds, kit.Ultimate.Windup + kit.Ultimate.Duration,
-                "Recovery shortened the authored timeline instead of seeking it.");
-            kit.RestoreCoven(motor, centre, 0, 0);
-            Assert.IsFalse(kit.Ultimate.IsActive);
-            yield return null;
-            Assert.IsNull(Object.FindAnyObjectByType<VoodooBlackHole>());
-
-            kit.RestoreCoven(motor, centre, .3f, kit.Ultimate.Duration);
-            hole = Object.FindAnyObjectByType<VoodooBlackHole>();
-            omen = hole.GetComponentInChildren<Visual.PhaisterOmen>();
-            Assert.AreEqual(kit.Ultimate.Windup - .3f,
-                (float)typeof(Visual.PhaisterOmen).GetField("_t", flags).GetValue(omen), .001f);
-            Assert.IsTrue(kit.Ultimate.IsWindingUp);
-            kit.RestoreCoven(motor, centre, 0, 0);
-            Assert.IsFalse(kit.Ultimate.IsWindingUp);
-            yield return null;
-            Assert.IsNull(Object.FindAnyObjectByType<VoodooBlackHole>());
-        }
-
         [Test]
         public void NewTransportCanReceiveTheSameActiveCohortWithoutReusingHostIdentities()
         {

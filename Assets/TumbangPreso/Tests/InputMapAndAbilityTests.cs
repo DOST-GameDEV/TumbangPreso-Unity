@@ -493,7 +493,7 @@ namespace TumbangPreso.Tests
                 ["sean"] = 15.0f,
                 ["zack"] = 20.0f,
                 ["nemu"] = 10.0f,
-                ["phaister"] = VoodooRules.HigopCost,
+                ["phaister"] = VoodooRules.DollCost,
                 ["rafi"] = 16.0f,
                 ["amihan"] = AmihanRules.StormSurgeCost,
                 ["paete"] = PaeteRules.SentryCost,

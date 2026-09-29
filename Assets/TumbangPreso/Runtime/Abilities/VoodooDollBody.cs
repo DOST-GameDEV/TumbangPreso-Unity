@@ -107,6 +107,8 @@ namespace TumbangPreso.Abilities
             }
 
             doll.Shoe = BuildSlipper(owner, seat);
+            // THE CIRCLE opens in the sky over it and holds its string for the round (owner: *"a big magic circle in the sky"*).
+            Visual.VoodooSkyCircle.Open(go, late: false);
             if (NetAuthority.ShouldResolve()) doll.ArmOrPark();
 
             if (brain)

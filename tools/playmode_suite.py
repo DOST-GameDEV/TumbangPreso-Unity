@@ -191,7 +191,7 @@ GROUPS = [
         "EquipmentIntegrationProbe", "FootSupportProbe", "FppHandsReviewProbe",
         "FppSlipperShadowProbe", "IceWorldSnapshotProbe", "MapGraphicsReviewProbe",
         "MovementSnapshotProbe", "OwnerTrainingUiTests", "PendingPreparationTests",
-        "PendingPresentationProbe", "PhaisterRitualContractProbe", "PickupPressOwnershipProbe",
+        "PendingPresentationProbe", "PickupPressOwnershipProbe",
         "PinnedFetchProbe", "RecoveryDeviceProbe", "RecoveryMenuBoundaryProbe",
         "ResidentLaundrySceneTests", "RooftopRecoveryProbe", "RooftopSwimmingProbe",
         "SeanSkillTimingProbe", "SlipperLookupCostProbe", "SpectatorReplayOwnershipProbe",

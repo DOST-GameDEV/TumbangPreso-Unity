@@ -1158,7 +1158,15 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   replicas on every peer and reaches a rejoiner in `HostSyncPeer`; SyncUnit, Teleport, PlayAction, SyncSlipper and SlipperPose admit
   companion seats (`ValidBody`), `Unit` is `BodyAt`, the body-level seat arrays are `BodyCount` wide, the host streams live
   companions' slippers. `VoodooDollBodyTests.AClientBuildsAndDropsTheDollFromTheHostsCompanionList`. Not yet proved between two
-  real processes. NOT YET: the cast that spawns it (replacing OMEN), its nameplate and presentation, the cutscene, THE CIRCLE.
+  real processes.
+  [x] 2026-09-29, VOODOO DOLL replaces OMEN (id `phaister_ultimate`, `VoodooRules.DollCost` 12, SharedUltimate): after the shared
+  introduction the host stands the doll up beside her (`VoodooDollBody.HostSpawn`), refused while her doll stands; bots cast it
+  ready with 20 s or more left, or in the dump window. THE CIRCLE (`Visual.VoodooSkyCircle`, owned by the doll on every peer): the
+  rim sews round, eight pins stab in, her X sigil blooms 7 m up, 3 s later it draws in to a small ring holding the doll's string.
+  `PhaisterKitPlayProbe.FilmTheVoodooDollInAMatch`, film v3 sent. OMEN's `PhaisterRitualContractProbe` and the Omen recovery
+  receipt test retired. OWED: a doll glyph of its own (it borrows OMEN's eclipse glyph), its nameplate, the CUTSCENE (the OMEN
+  one still plays; owner on it, 2026-09-29: *"ult cutscene doesnt amke sense why does she thhrow some random shit and it doesnt
+  touch anythhing thhoroughly rethink direction of it"*).
   (`SkillReceiptTests.RefusedFreeRecallDoesNotCreateAChargeAndEligibilityDoesNotMutateHeldTime`, Nemu, fails `CannotAct`; it failed
   the same way on 2026-09-27 and before this work on 2026-09-29, so it is not the doll's.)
 - [ ] The cutscene SEW / GROW / WAKE; sounds; voice rows; icons; bots; films sent; the gate.

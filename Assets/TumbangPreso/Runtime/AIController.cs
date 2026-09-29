@@ -1890,6 +1890,9 @@ namespace TumbangPreso
         /// check, but it was still identity bias, and over a round it could make one player feel
         /// singled out for reasons no action in the arena explained.
         /// </summary>
+        /// <summary>A bot Phaister wakes her VOODOO DOLL while at least this much of the round is left for it to earn in.</summary>
+        private const float PhaisterDollWorthSeconds = 20.0f;
+
         private CharacterMotor TagTarget()
         {
             var round = GameServices.Round;
@@ -4703,7 +4706,9 @@ namespace TumbangPreso
                 ultimateWorthIt =
                     underIt >= AiTuning.UltimateWantsVictims
                     || _ultimateReadyFor >= AiTuning.UltimateHoldSeconds
-                    || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds;
+                    || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds
+                    // Phaister's doll needs nobody under it: its worth is the round it has left.
+                    || (kit is Abilities.PhaisterHeroKit && round.TimeLeft >= PhaisterDollWorthSeconds);
             }
 
             if (kit.IsUltimateReady && kit.Ultimate != null && ultimateWorthIt)
@@ -4762,23 +4767,10 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.PhaisterHeroKit)
                 {
-                    // ⚠️ § 31.4 MADE THE ECLIPSE A ZONE, AND A ZONE HAS A SECOND CORRECT USE THE
-                    // OLD DISTANCE GATE COULD NOT EXPRESS. Cast over the lata by a DEFENDING
-                    // Phaister it makes the retrieval run impossible for its whole duration, so
-                    // it is worth its `UltimateCost` 115 with nobody standing in it yet. Cast by
-                    // an attacker it is a hole in the defence, and then it needs a body in it.
-                    // ⚠️⚠️ AND "IT COVERS THE LATA" ALONE IS NOT ENOUGH, BECAUSE ITS REACH IS
-                    // 10.5 m IN A 14 m BOX. A defending Phaister is nearly always inside that of
-                    // the can, so covering it is very close to "cast the moment it is ready",
-                    // which is the frame-one dump § 31.7 spent an opening delay removing. What
-                    // makes the zone worth 115 charge is that it denies a RETRIEVAL, so there has
-                    // to be a retrieval left to deny: a tsinelas lying loose inside the chalk that
-                    // somebody has to come back in for.
-                    bool overTheCan = _motor.IsDefender && lata != null
-                                      && lataDistance <= kit.Ultimate.TelegraphRadius
-                                      && AnyLooseSlipperInsideTheBox();
-
-                    if (overTheCan || WouldCatch(kit.Ultimate, stunPayload: true))
+                    // ⚠️ VOODOO DOLL (HERO-10 v3) is a body on her side for the REST OF THE ROUND, so it is worth most the earlier it
+                    // wakes: cast as soon as the meter allows while a doll still has a round to earn in, or in the last seconds
+                    // rather than waste the charge. Nothing is aimed; it wakes beside her.
+                    if (round.TimeLeft >= PhaisterDollWorthSeconds || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds)
                         Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.RafiHeroKit && target != null && targetDistance < 8 && Facing(target, 42))
