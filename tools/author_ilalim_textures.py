@@ -175,9 +175,17 @@ def lrt_track_bed():
 
 
 def lrt_steel():
+    # PAINTED STEEL THAT READS ON A THIN MEMBER (owner, review v9: "are these pipes and poles
+    # textured correctly?"). The first coat had only metre-wide patches, so a 20 cm post or pipe
+    # showed one flat colour and looked untextured. Now: one broad sheen, and small drawn paint
+    # CHIPS, 3 to 8 cm, where the warm undercoat and rust show through. Still few, soft-edged
+    # shapes at low contrast. NEUTRAL: each material tints it.
     img = flat("e2e2e2")
     img = coat(img, (1.03, 1.03, 1.03), 1.0, 0.25, seed=331, feather=1.2)
     img = coat(img, (0.975, 0.975, 0.975), 1.4, 0.18, seed=332, feather=1.2)
+    # Few and soft: at 7 per cent coverage and this contrast the gantry read as leopard spots.
+    img = coat(img, (0.92, 0.87, 0.81), 0.07, 0.025, seed=333, feather=0.45)
+    img = coat(img, (1.04, 1.035, 1.025), 0.05, 0.02, seed=334, feather=0.45)
     save("lrt_steel", img, np.zeros((SIZE, SIZE)))
 
 

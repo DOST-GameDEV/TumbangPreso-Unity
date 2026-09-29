@@ -97,10 +97,13 @@ MATERIALS = {
     "lrt_deck_top":  ("lrt_track_bed", None, 0.4),
     "lrt_plinth":    ("lrt_track_bed", (0.88, 0.88, 0.88), 0.4),
     "lrt_rail":      ("lrt_steel", (0.44, 0.32, 0.25), 0.3),
-    "lrt_mast":      ("lrt_steel", (0.56, 0.57, 0.56), 0.3),
+    # Galvanized grey, warmer and darker than the sky it stands against (review v9).
+    "lrt_mast":      ("lrt_steel", (0.36, 0.36, 0.34), 0.3),
     "lrt_ballast":   ("lrt_ballast", None, 0.25),
     "lrt_sleeper":   ("lrt_concrete", (0.80, 0.79, 0.77), 0.5),
-    "lrt_pipe":      ("lrt_steel", (0.36, 0.40, 0.39), 0.3),
+    # Dark charcoal, so the drain pipe reads against the pale sand column (review v9: the
+    # blue-grey first colour all but vanished on it).
+    "lrt_pipe":      ("lrt_steel", (0.23, 0.21, 0.19), 0.3),
     "lrt_bearing":   (None, (0.13, 0.13, 0.14), 0),
     "lrt_insulator": (None, (0.36, 0.24, 0.18), 0),
     "lrt_wire":      (None, (0.07, 0.07, 0.07), 0),
@@ -108,7 +111,8 @@ MATERIALS = {
 # Directional textures (the concrete's pour lines, the soffit's joints) are left out: the rotated
 # second sample drew their lines diagonally across the piers and girder (review v2).
 ANTI_TILE = {"lrt_track_bed"}
-GRIMED = {"lrt_concrete", "lrt_pier", "lrt_pier_cap", "lrt_girder", "lrt_coping", "lrt_soffit", "lrt_sleeper"}
+GRIMED = {"lrt_concrete", "lrt_pier", "lrt_pier_cap", "lrt_girder", "lrt_coping", "lrt_soffit", "lrt_sleeper",
+          "lrt_mast", "lrt_pipe"}
 
 
 def material(name):
@@ -515,8 +519,9 @@ def gantry(col, seed=3):
     """A two-post portal over both tracks: tapered posts on the walkways, a chunky crossbeam,
     knee braces at the corners, and a drop hanger with an insulator over each track."""
     rng = random.Random(seed)
-    g = Buf("lrt_gantry")
     beam_z = WIRE_Z + 1.0
+    # Rain runs off the crossbeam and down the posts.
+    g = Buf("lrt_gantry", drip_top=beam_z + 0.15)
     for s in (-1, 1):
         g.extrude_z(rounded_rect(0.17, 0.14, 0.05), DECK_TOP - 0.03, beam_z + 0.2, "lrt_mast", top_scale=0.82,
                     offset=(s * GANTRY_X, 0), lean=(rng.uniform(-0.02, 0.02), 0))
@@ -660,6 +665,8 @@ def preview(version):
         ("aerial", Vector((34.0, -46.0, 24.0)), Vector((0, 4, 7)), 30),
         ("elevation", Vector((38.0, -2.0, 5.0)), Vector((0, -2, 6)), 30),
         ("grime_side", Vector((13.0, -22.0, 3.2)), Vector((4.5, -8.0, 7.0)), 30),
+        ("pipe_close", Vector((7.6, -6.8, 2.2)), Vector((5.3, -9.65, 3.2)), 32),
+        ("gantry_close", Vector((8.0, -15.0, 12.2)), Vector((3.6, -10.0, 12.6)), 30),
     ]
     for name, pos, tgt, lens in shots:
         cam.location, cam.data.lens = pos, lens
