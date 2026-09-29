@@ -121,7 +121,57 @@ slab's underside. Mapped onto the girders themselves, both drew blocky patches.
 The Taft median also has a green-painted planter wall with lilies around the columns. It is a
 candidate for the prop kit.
 
-NEXT: owner review of guideway v9. Then the next kit. § 0.6 is still open.
+**The rest of the map, built in parallel (2026-09-29).** The owner asked: "lets proceed with the
+rest of the map. spin up parallel agents to develop different aspects of the map in parallel,
+same workflow that was done with the lagooncove map". Seven agents each wrote their own
+scripts, textures (with their own prefix) and .blend, then rendered and self-reviewed their
+kit. The lead reviewed each and assembled them.
+
+| Kit | Script | .blend |
+|---|---|---|
+| Rizal Hall and the Oblation | `author_ilalim_rizal_hall.py` | `rizal_hall.blend` |
+| heritage and government buildings west of Taft | `author_ilalim_heritage.py` | `heritage.blend` |
+| east shop row and district, hand-named signs | `author_ilalim_eastside.py`, `author_ilalim_signs.py` | `eastside.blend` |
+| ground, kerbs, markings, median planter, furniture, cables, fences | `author_ilalim_street.py` | `street.blend` |
+| trees, shrubs, median lilies (Kanto leaf-card method) | `author_ilalim_trees.py` | `trees.blend` |
+| gameplay props (pisonet and cord hazard, pares cart, pad, hoop, stalls, column signs) | `author_ilalim_props.py` | `props.blend` |
+| LRT-1 train and road vehicles | `author_ilalim_train.py`, `author_ilalim_vehicles.py` | `train.blend`, `vehicles.blend` |
+
+Each kit has a matching `author_ilalim_textures_<kit>.py`. Every script's docstring records its
+contents, positions and owner-facing decisions.
+
+`tools/author_ilalim_city.py` LINKS every kit's placed collections into `ilalim_city.blend`, so
+each kit stays editable in its own file. It also adds:
+- the median lilies, placed on the street kit's placeholders;
+- the train on the deck;
+- traffic in the lanes the street kit left clear of the pier collars;
+- a late-afternoon sun.
+
+It renders `city_<shot>_vN.png`.
+
+⚠️ **Open decisions for the owner:**
+1. **The train cannot be seen from the play area.** The solid parapet top (10.32) hides the
+   consist from both pavements, whatever the distance along the street. The recommended fix is
+   what parts of LRT-1 really have: a low concrete upstand with a see-through steel railing
+   above. The other options are a parapet about 0.6 m tall, or the train as sound only.
+2. **Cable shadows stripe the court floor under the low sun.** That breaks "the ability floor
+   stays quiet". The proposal: the overhead cables cast no shadows in Unity.
+3. **Rizal Hall IS visible from the court,** but only through the gap between the PGH block and
+   the thinned Supreme Court, and small at about 95 m (`city_centre_tele_v1`). If the owner
+   wants it bigger, it can move further east, or the Supreme Court can be thinned more.
+4. **Naming:** real names for Manila Science High School and the churches, the invented
+   barangay boards (BRGY. 671 on the hoop, Barangay 712 on the street board), the dull
+   brick-red intersection box, and the Manok forecourt setback.
+
+For ILALIM-1.4, Unity needs, from every kit:
+- the extra UV channels (`UVGrime`, `UVSplash`, `UVSill`), or the grime baked into the albedo;
+- emissive materials for screens, pad bars, signs and lamps, and cutout for grilles and leaves;
+- the train consist at scale 1 on `lrt_train_root`;
+- the pisonet cord trigger and the pares collider resized to the new props;
+- a triangle budget: heritage about 770k, street about 560k, 400 trees; the trees need LODs or
+  instancing.
+
+NEXT: owner review of the assembled map and the decisions above.
 
 Read first, in order: [AGENTS](../AGENTS.md), [VISION](VISION.md), [WORKING_RULES](WORKING_RULES.md),
 this guide, then the map's existing design document [Ilalim_Ng_Tulay.md](Ilalim_Ng_Tulay.md)
