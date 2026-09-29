@@ -657,21 +657,29 @@ def simplify(pts, tol):
 
 def ground(col, fl):
     R, S, D, P, W = fl["R"], fl["S"], fl["D"], fl["P"], fl["W"]
-    gR = np.gradient(R, CELL)
 
     def road_grime(bm):
-        """UVGrime: u along the kerb, v = metres out from the kerb face / 2."""
+        """UVGrime: u runs with the kerb, v = metres out from the kerb face / 2.
+
+        u is (x + y) / 8, continuous everywhere. It used to be the position along the kerb from
+        the field's gradient, which flips direction across a junction's middle, so neighbouring
+        vertices of one big face got u values metres apart and the silt drew as jagged sawtooth
+        streaks through the Taft and Padre Faura box (owner: "weird texture issue on the
+        intersection")."""
         layer = bm.loops.layers.uv.new("UVGrime")
         for f in bm.faces:
             for lp in f.loops:
                 x, y = lp.vert.co.x, lp.vert.co.y
                 r = sample(R, x, y)
-                gx, gy = sample(gR[1], x, y), sample(gR[0], x, y)
-                n = math.hypot(gx, gy) or 1.0
-                along = (-gy * x + gx * y) / n
-                lp[layer].uv = (along / 8.0, min(0.999, max(0.0, -r / 2.0)))
-                if r < -GUTTER + 0.05:
-                    lp[layer].uv = (along / 8.0, 0.999)
+                v = 0.999 if r < -GUTTER + 0.05 else min(0.999, max(0.0, -r / 2.0))
+                lp[layer].uv = ((x + y) / 8.0, v)
+
+    def clean_grime(bm):
+        """The core carries no silt: UVGrime v = 1 everywhere."""
+        layer = bm.loops.layers.uv.new("UVGrime")
+        for f in bm.faces:
+            for lp in f.loops:
+                lp[layer].uv = ((lp.vert.co.x + lp.vert.co.y) / 8.0, 0.999)
 
     def pave_mat(x, y):
         return "street_pavement" if abs(x) <= PAVE_OUT + 0.01 else "street_sidewalk"
@@ -681,7 +689,7 @@ def ground(col, fl):
     # and the clean CORE. The core's UVGrime is v = 1 everywhere (no silt).
     region_mesh("ground road gutters", np.maximum(R - KERB_W / 2, -R - GUTTER), 0.0, -0.25,
                 lambda x, y: "street_asphalt", col, extra_uv=road_grime, bevel=0)
-    region_mesh("ground road", R + GUTTER, 0.0, -0.25, lambda x, y: "street_asphalt", col, extra_uv=road_grime,
+    region_mesh("ground road", R + GUTTER, 0.0, -0.25, lambda x, y: "street_asphalt", col, extra_uv=clean_grime,
                 bevel=0)
     region_mesh("ground pavement", np.maximum(KERB_W - 0.02 - R, S), PAVE_TOP, -0.05, pave_mat, col, bevel=0.03)
     lot = -S - 0.02
