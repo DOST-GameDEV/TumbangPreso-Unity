@@ -93,7 +93,32 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
     The buildings they replace are listed in `landmarks.json` under `hide`. The east kit drops
     them after its build (`drop_replaced()`). A linked object's visibility cannot be saved in the
     city file, so hiding them there is not enough.
-  - **Build order:** eastside, then rooftops and streetlife, then the city.
+- **Ending the view along Taft** (owner: "lrt way ending is visible from the play area", then chose
+  "Stations + haze"):
+  - `author_ilalim_stations.py` (`stations.blend`) builds UN AVENUE (y 94 to 185) and PEDRO GIL
+    (y -94 to -185), one design placed twice. They sit much closer than the real stations: a
+    deliberate sightline departure, like Rizal Hall's.
+    - The guideway meets each station through its own 6 cm expansion gap.
+    - Each station has a closed concourse, stairs down to both pavements and a green barrel roof.
+    - Behind each, a row of six buildings (fronts at |y| about 220) closes the street-level view
+      where the ground ends.
+  - `author_ilalim_city.py` adds a compositor haze, as Kanto does: fade toward a sky-close colour
+    by the mist pass, from 45 m, capped at 0.55. A world volume blacked out the sun in EEVEE. Unity
+    needs matching linear fog.
+- **Street furniture validated** (owner: "validate all the street posts/lamps across the visible
+  area from the play field and fix these canopy + pole clipping issues"). Every pole, lamp and sign
+  post within about 70 m of the court was checked by mesh overlap against every kit. The fixes:
+  - The east Taft poles and lamps stand 1.2 m off the shopfronts, and the shop-row awnings are cut
+    round them.
+  - The Padre Faura poles search for a spot 0.75 m clear of every footprint.
+  - Trees keep their trunks off poles, lamps, signals, sign posts, shelters, the bamboo fiesta
+    poles and the stations.
+  - The west bench and the median lilies clear their posts.
+
+  Only leaves brushing poles remain, which is accepted. The check script is `pole_clash.py` in the
+  session scratchpad; re-run something like it after any furniture move.
+- **Build order:** street, then trees, then eastside and props, then rooftops and streetlife (these
+  read the east roofs and walls), then the city.
 - **OPEN owner decisions** (details under "Open decisions for the owner" below):
   - the train is invisible behind the solid parapet; a steel-railing parapet is recommended;
   - cable shadows on the court;

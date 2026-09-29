@@ -882,23 +882,29 @@ def seg_dist(px, py, ax, ay, bx, by):
 def street_furniture():
     """Plan boxes of the street kit's poles, lamps, signals and bus shelters, read from
     ArtSource/ilalim/street.blend (linked for the reading, then unlinked)."""
-    path = SOURCE / "street.blend"
-    if not path.exists():
-        return []
-    before = set(bpy.data.libraries)
-    with bpy.data.libraries.load(str(path), link=True) as (src, dst):
-        dst.objects = [n for n in src.objects if n.startswith(("street_pole", "street_lamp", "street_signal",
-                                                                 "street_bus_shelter"))]
     boxes = []
-    for o in dst.objects:
-        if o is None or o.type != "MESH" or o.location.length < 1.0:
-            continue                      # the prototypes stand at the origin
-        m = o.matrix_basis
-        pts = [m @ Vector(c) for c in o.bound_box]
-        boxes.append((min(p.x for p in pts), max(p.x for p in pts), min(p.y for p in pts), max(p.y for p in pts)))
-    for lib in list(bpy.data.libraries):
-        if lib not in before:
-            bpy.data.libraries.remove(lib)
+    # The street kit's furniture, and the street-life kit's bamboo fiesta poles (their canopy gaps
+    # moved whenever the trees did, and the poles ended up in leaves).
+    for blend, prefixes in (("street.blend", ("street_pole", "street_lamp", "street_signal", "street_bus_shelter", "street_oneway",
+                                              "street_bawal", "street_sakayan", "street_blade_post")),
+                            ("streetlife.blend", ("life_bamboo_pole",))):
+        path = SOURCE / blend
+        if not path.exists():
+            continue
+        before = set(bpy.data.libraries)
+        with bpy.data.libraries.load(str(path), link=True) as (src, dst):
+            dst.objects = [n for n in src.objects if n.startswith(prefixes)]
+        for o in dst.objects:
+            if o is None or o.type != "MESH" or o.location.length < 1.0:
+                continue                  # the prototypes stand at the origin
+            m = o.matrix_basis
+            pts = [m @ Vector(c) for c in o.bound_box]
+            pad = 1.2 if blend == "streetlife.blend" else 0.0     # a canopy clear of the pole's top
+            boxes.append((min(p.x for p in pts) - pad, max(p.x for p in pts) + pad,
+                          min(p.y for p in pts) - pad, max(p.y for p in pts) + pad))
+        for lib in list(bpy.data.libraries):
+            if lib not in before:
+                bpy.data.libraries.remove(lib)
     print(f"[trees] street furniture to keep trunks clear of: {len(boxes)}")
     return boxes
 
@@ -985,7 +991,19 @@ class Site:
             return False
         if not self.clear_of_furniture(x, y, r):
             return False
+        if not self.clear_of_stations(x, y, r):
+            return False
         return self.spacing_ok(x, y, r)
+
+    @staticmethod
+    def clear_of_stations(x, y, r):
+        """The LRT stations at the ends of the guideway (tools/author_ilalim_stations.py: |y| 94 to
+        185, roof eaves out to |x| 9.9, stairs to 9.2) and the rows of buildings that close Taft
+        behind them (|y| 218 to 235, x -45 to 10.6). Canopies stay out of both (owner chose
+        "Stations + haze"; 11 kerb trees ran through the stations)."""
+        if 92.0 < abs(y) < 188.0 and abs(x) - r < 10.5:
+            return False
+        return not (216.0 < abs(y) < 236.0 and -46.0 < x + r and x - r < 11.0)
 
 
 def plant(site, info, target):

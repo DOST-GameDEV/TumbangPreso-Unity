@@ -114,6 +114,9 @@ def lilies(parent, street_cols, tree_cols):
     # Sign posts standing in the planter: no clump grows through one.
     posts = [o.matrix_basis.translation.copy() for c in street_cols for o in c.all_objects
              if o.name.startswith(("street_bawal", "street_oneway", "street_sakayan")) and o.location.length > 1.0]
+    # The station columns in the median (tools/author_ilalim_stations.py: twin legs at x +/-4.45, at
+    # 25, 50, 75 and 90 m past each end of the guideway) stand in the planter collars there.
+    posts += [Vector((sx * 4.45, sy * (94.0 + d), 0)) for sx in (-1, 1) for sy in (-1, 1) for d in (25, 50, 75, 90)]
     col = bpy.data.collections.new("median lilies (from placeholders)")
     parent.children.link(col)
     mw = holder.matrix_world
@@ -122,7 +125,8 @@ def lilies(parent, street_cols, tree_cols):
         ys = [p.y for p in part]
         zs = [p.z for p in part]
         at = mw @ Vector(((min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2, min(zs)))
-        if any((Vector((at.x, at.y)) - Vector((p.x, p.y))).length < 0.6 for p in posts):
+        if any((Vector((at.x, at.y)) - Vector((p.x, p.y))).length < (1.1 if abs(p.y) > 100 else 0.6)
+               for p in posts):
             continue
         inst = bpy.data.objects.new(f"lily {k}", None)
         inst.instance_type = "COLLECTION"
