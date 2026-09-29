@@ -1125,6 +1125,13 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   `phaister_voodoo_victim_v14.mp4` sent; `direction.md` section 4 has the rounds. OPEN: the owner's verdict; HEX's raised arm
   reads weakly on this rig (the head is most of the silhouette); the target's screen (the BEING CURSED chip, the edge marker,
   the vignette, the stitch-blink); the doll in her hand changing into their colours.
+  ⚠️ 2026-09-29, v16 sent (HEX's thread now runs into the victim), then the owner: *"dont make the pulling thing look like a
+  physical line i want it to look like sucking aura or smth"*, *"it sucks rn ur implementation"*, *"i want u to make her hold up
+  her voodoo too towards the person when markingt hem"*. THE THREAD AND ITS PIERCE X ARE GONE: `VoodooSoulDraw` peels wisps of the
+  victim's aura off their body (`Shaders/VoodooWisp`), a glow clings round them, and the wisps are sucked into the ultimate's doll
+  at hand size, held out at them in her left hand in both views (while the slipper is at her belt); a gulp on the mark, a
+  let-go on a snap. Body and first-person reach poses rebuilt round the doll (v17, v18). The marks and the HEXED band stay in
+  `VoodooCursePresenter`.
 - [~] TELEPORT: renamed from VANISHING ACT, 35 s (`VoodooRules.TeleportCooldown`), the 2.5 m shove and its host resolver deleted.
   OPEN: the decoy doll of her flopping where she stood (ask before its look), the moths streaming to her, a front-on tell.
 - [ ] VOODOO DOLL: a fifth body, Astig AI, attacking or defending with her role, points to her, none for tagging it, gone at the

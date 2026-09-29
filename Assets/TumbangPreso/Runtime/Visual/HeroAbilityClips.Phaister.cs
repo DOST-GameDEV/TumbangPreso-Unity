@@ -206,12 +206,17 @@ namespace TumbangPreso.Visual
         // elbow out, the head turns back to them and tips up, the feet braced wide. v14 (film v13: an arm at head height hides
         // behind her head and hair from every side): HEX reaches OUT and a little up with the elbow wide, the doll in front of her
         // chest where it shows.
+        // v17 (2026-09-29, the owner: *"i want u to make her hold up her voodoo too towards the person when markingt hem"*): the
+        // LEFT hand holds the doll OUT AT THEM (`VoodooSoulDraw` puts it there) and their soul is sucked into it; the right hand is
+        // out beside it, palm open. The trunk turns a little to her RIGHT so the doll's shoulder leads. DRAIN holds it at their
+        // chest, leaning back as if hauling; HEX raises it, head tipped to peek past it.
         // =============================================================================================
 
         /// <summary>
         /// CURSE: DRAIN's lock, 0.40 s:
         ///  * 0.06: the right hand dips back to the belt (the slipper goes in), the left unhooks the doll from her hip;
-        ///  * 0.16 (punch): the right arm whips up at chest height, palm out at them, her weight thrown back onto the rear foot;
+        ///  * 0.16 (punch): the left thrusts the doll out at their chest, the right comes out beside it palm open, her weight thrown
+        ///    back onto the rear foot;
         ///  * 0.40: settled into the haul (`hero-phaister-drain-aim`'s first key).
         /// </summary>
         private static AnimationClip BuildPhaisterDrain(Dictionary<string, string> paths)
@@ -221,25 +226,25 @@ namespace TumbangPreso.Visual
             PoseKey(b, .06f, 0, V(2, -6, 0), V(2, -4, 0), V(-10, 0, 8), V(22, 0, -22), V(-2, 0, 4), V(2, 0, -4));
             b.PunchAt(.16f);
             b.HoldAt(.16f, .04f);
-            PoseKey(b, .16f, -.03f, V(-14, -18, 0), V(-10, 14, 0), V(-46, 0, -10), V(-104, -6, 16), V(-16, 0, 6), V(14, 0, -6));
-            PoseKey(b, .40f, -.02f, V(-15, -16, 0), V(-9, 12, 0), V(-42, 0, -8), V(-100, -6, 12), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .16f, -.03f, V(-6, 12, 0), V(-8, -10, 0), V(-98, 0, -12), V(-82, -6, 30), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .40f, -.02f, V(-7, 8, 0), V(-6, -8, 0), V(-92, 0, -10), V(-78, -6, 26), V(-16, 0, 6), V(14, 0, -6));
             return b.Build();
         }
 
         /// <summary>
-        /// CURSE: DRAIN's hold, a 0.9 s loop for as long as she reaches: leaning back on the rear foot as if hauling a rope, the
-        /// reaching arm trembling a few degrees, a heave back at 0.45 as the thread tightens; the left hand low with the doll.
+        /// CURSE: DRAIN's hold, a 0.9 s loop for as long as she reaches: leaning back on the rear foot as if hauling, the doll held
+        /// out at them trembling a few degrees, a heave back at 0.45; the right hand open beside it.
         /// </summary>
         private static AnimationClip BuildPhaisterDrainAim(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-phaister-drain-aim", paths);
-            PoseKey(b, 0, -.02f, V(-15, -16, 0), V(-9, 12, 0), V(-42, 0, -8), V(-100, -6, 12), V(-16, 0, 6), V(14, 0, -6));
-            PoseKey(b, .15f, -.02f, V(-16, -17, 0), V(-9, 13, 0), V(-42, 0, -8), V(-102, -4, 13), V(-16, 0, 6), V(14, 0, -6));
-            PoseKey(b, .30f, -.02f, V(-15, -16, 0), V(-8, 12, 0), V(-43, 0, -8), V(-99, -7, 11), V(-16, 0, 6), V(14, 0, -6));
-            PoseKey(b, .45f, -.03f, V(-19, -16, 0), V(-11, 12, 0), V(-40, 0, -9), V(-101, -5, 13), V(-17, 0, 6), V(16, 0, -6));
-            PoseKey(b, .60f, -.02f, V(-16, -16, 0), V(-9, 12, 0), V(-42, 0, -8), V(-100, -6, 12), V(-16, 0, 6), V(14, 0, -6));
-            PoseKey(b, .75f, -.02f, V(-15, -17, 0), V(-9, 13, 0), V(-43, 0, -8), V(-102, -6, 13), V(-16, 0, 6), V(14, 0, -6));
-            PoseKey(b, .90f, -.02f, V(-15, -16, 0), V(-9, 12, 0), V(-42, 0, -8), V(-100, -6, 12), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, 0, -.02f, V(-7, 8, 0), V(-6, -8, 0), V(-92, 0, -10), V(-78, -6, 26), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .15f, -.02f, V(-8, 8, 0), V(-6, -9, 0), V(-94, -2, -10), V(-80, -4, 27), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .30f, -.02f, V(-7, 7, 0), V(-5, -8, 0), V(-91, 1, -11), V(-77, -7, 25), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .45f, -.03f, V(-11, 8, 0), V(-9, -8, 0), V(-88, 0, -9), V(-74, -5, 27), V(-17, 0, 6), V(16, 0, -6));
+            PoseKey(b, .60f, -.02f, V(-8, 8, 0), V(-6, -8, 0), V(-92, 0, -10), V(-78, -6, 26), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .75f, -.02f, V(-7, 9, 0), V(-6, -9, 0), V(-93, -2, -10), V(-80, -6, 27), V(-16, 0, 6), V(14, 0, -6));
+            PoseKey(b, .90f, -.02f, V(-7, 8, 0), V(-6, -8, 0), V(-92, 0, -10), V(-78, -6, 26), V(-16, 0, 6), V(14, 0, -6));
             return b.Build();
         }
 
@@ -265,8 +270,8 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// CURSE: HEX's lock, 0.40 s: the right hand tucks the slipper (0.06), then the arm rises HIGH, at their head, palm out
-        /// (0.16, punch), while the left lifts the doll to her own cheek and her head tips to peek over it; settles into the hold.
+        /// CURSE: HEX's lock, 0.40 s: the right hand tucks the slipper (0.06), then the left raises the doll out at their head and the
+        /// right comes out below it palm open (0.16, punch), her head tipping to peek past the doll; settles into the hold.
         /// </summary>
         private static AnimationClip BuildPhaisterHexReach(Dictionary<string, string> paths)
         {
@@ -275,23 +280,23 @@ namespace TumbangPreso.Visual
             PoseKey(b, .06f, 0, V(2, -6, 0), V(2, -4, 0), V(-30, 0, 4), V(22, 0, -22), V(-2, 0, 4), V(2, 0, -4));
             b.PunchAt(.16f);
             b.HoldAt(.16f, .04f);
-            PoseKey(b, .16f, .01f, V(-7, -20, -3), V(8, 14, 10), V(-100, -14, -28), V(-116, -6, 36), V(-10, 0, 5), V(10, 0, -5));
-            PoseKey(b, .40f, 0, V(-6, -18, -3), V(7, 12, 9), V(-98, -14, -26), V(-112, -6, 34), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, .16f, .01f, V(-6, 12, -3), V(4, -12, 10), V(-116, -8, -14), V(-98, -6, 34), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, .40f, 0, V(-5, 10, -2), V(4, -10, 8), V(-110, -8, -12), V(-94, -6, 32), V(-10, 0, 5), V(10, 0, -5));
             return b.Build();
         }
 
         /// <summary>
-        /// CURSE: HEX's hold, a 1.2 s loop: peeking over the doll at her cheek, the reaching hand held high and steady, the head
-        /// tilting a little from side to side as if deciding (she has ten seconds; she is enjoying it).
+        /// CURSE: HEX's hold, a 1.2 s loop: the doll held up at them, steady, her head peeking past it and tilting a little from side
+        /// to side as if deciding (she has ten seconds; she is enjoying it).
         /// </summary>
         private static AnimationClip BuildPhaisterHexReachAim(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-phaister-hexreach-aim", paths);
-            PoseKey(b, 0, 0, V(-6, -18, -3), V(7, 12, 9), V(-98, -14, -26), V(-112, -6, 34), V(-10, 0, 5), V(10, 0, -5));
-            PoseKey(b, .30f, 0, V(-6, -19, -3), V(5, 10, 11), V(-98, -14, -26), V(-114, -5, 35), V(-10, 0, 5), V(10, 0, -5));
-            PoseKey(b, .60f, 0, V(-6, -17, -2), V(8, 14, 7), V(-100, -14, -27), V(-111, -7, 33), V(-10, 0, 5), V(10, 0, -5));
-            PoseKey(b, .90f, 0, V(-6, -18, -3), V(6, 11, 10), V(-98, -14, -26), V(-113, -6, 34), V(-10, 0, 5), V(10, 0, -5));
-            PoseKey(b, 1.20f, 0, V(-6, -18, -3), V(7, 12, 9), V(-98, -14, -26), V(-112, -6, 34), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, 0, 0, V(-5, 10, -2), V(4, -10, 8), V(-110, -8, -12), V(-94, -6, 32), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, .30f, 0, V(-5, 11, -2), V(2, -12, 10), V(-111, -7, -12), V(-96, -5, 33), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, .60f, 0, V(-5, 9, -1), V(5, -8, 6), V(-109, -9, -13), V(-93, -7, 31), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, .90f, 0, V(-5, 10, -2), V(3, -11, 9), V(-111, -8, -12), V(-95, -6, 32), V(-10, 0, 5), V(10, 0, -5));
+            PoseKey(b, 1.20f, 0, V(-5, 10, -2), V(4, -10, 8), V(-110, -8, -12), V(-94, -6, 32), V(-10, 0, 5), V(10, 0, -5));
             return b.Build();
         }
 

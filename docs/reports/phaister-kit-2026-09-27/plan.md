@@ -307,6 +307,8 @@ applied by this one; recorded in `docs/TODO.md` HERO-10. The owner will send eac
 | The slipper during a skill | *"think abt where slipper goes when u use skill and make it so that u can use right hand when doing skills"* | 9.4 |
 | The doll while she ATTACKS (asked 2026-09-28: assist without a slipper, its own slipper, or defend only) | **"Own slipper, throws"** | a true fifth player with its own fifth slipper, its knockdowns paid to her; 9.12 |
 | The cutscene pitch 9.8 (SEW / GROW / WAKE: THE THREAD, THE STITCH, THE LIFT, THE WAKE), asked 2026-09-28 | **"her ult is supposed to be like its own character i approve everything except for any part where she ends up dead and controls the vooodoo"** | APPROVED as pitched. Standing rule: the doll is its own character (its own AI); she never dies, faints or possesses it, in the cutscene or in play |
+| The reach's look, on film v16 (2026-09-29) | *"dont make the pulling thing look like a physical line i want it to look like sucking aura or smth"*, *"it sucks rn ur implementation"* | THE SOUL DRAW replaces the thread (9.5): wisps of their aura peeled off them and sucked into the doll; no line anywhere |
+| Her pose while marking (2026-09-29) | *"i want u to make her hold up her voodoo too towards the person when markingt hem"* | the doll is in her LEFT hand held OUT AT THEM through the reach (and through DRAIN's wring and HEX's stab), the right hand open beside it; the soul goes into the doll |
 | The cast's spectacle (his note, 2026-09-29) | *"to make it cooler cast like a big magic circle in the sky or smth when she ults"* | THE CIRCLE: a huge stitched magic circle opens in the sky over the court when she ults; the doll's string hangs from its centre. In the cutscene (9.8 shot 3) and in play for every player (9.7, 9.9 rows 17 and in-play 12) |
 
 ### 9.3 The idea, the look, and how a cast talks
@@ -345,6 +347,14 @@ hand (she arrives holding it). This is a shared mechanism: each ability declares
 (`Hand` right as today, `OffHand` left, `Belt`, or `Kept`), the default is the left hand, and each hero's choice is their own.
 
 ### 9.5 THE REACH: how both curses mark (proposed numbers)
+
+⚠️⚠️ **2026-09-29: THE THREAD BELOW IS REPLACED BY THE SOUL DRAW (9.2).** Wherever this table says "the thread", read: wisps of the
+victim's aura peel off their body (DRAIN from the chest, HEX from the head, some from all over them), cling a moment, then are
+SUCKED along a curve into the doll she holds out at them, faster and thinner as they go in; DRAIN's stream twists, HEX's wavers
+straight; more of them as it fills; a swirl of light at the doll. The mark is a gulp (everything rushes in, a last burst is ripped
+off them, the doll flares); a broken reach lets go (the wisps slow, drift up and thin away). The doll is in her LEFT hand held out
+at them, the right open beside it. The pierce X at their chest is gone with the thread. `Visual.VoodooSoulDraw`,
+`Shaders/VoodooWisp`.
 
 Input (proposed): **tap** the skill to start reaching toward the opponent under the crosshair; it keeps going on its own while she
 keeps them in view; tap again to let go. (Holding the key for the 2 s is the alternative: it matches "hold her hand out", but on a
