@@ -1609,7 +1609,7 @@ Supersedes REFINE-2.6 for this map.
   UNVERIFIED: what a player wading off the sea side stands on, and whether a slipper thrown into
   the sea is recovered), then retarget or delete the ignored tests.
 
-### ILALIM-1 · Ilalim ng Tulay rebuilt in Blender ⚠️ OPEN, NOT STARTED, 2026-09-29
+### ILALIM-1 · Ilalim ng Tulay rebuilt in Blender ⚠️ OPEN, 1.1 AWAITING OWNER REVIEW, 2026-09-29
 
 **Read [ILALIM_REWORK_GUIDE.md](ILALIM_REWORK_GUIDE.md) first** (its CURRENT STATE block, the
 gameplay contract in § 1, the proven pipeline in § 2, the traps in § 3), then
@@ -1617,8 +1617,11 @@ gameplay contract in § 1, the proven pipeline in § 2, the traps in § 3), then
 after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
 [map-integration issues](reports/map-integration-2026-09-28/issues.md).
 
-- [ ] ILALIM-1.1 References and feel: the real place under the LRT-2 guideway, written up with the
-  owner in the format of the Kanto and Lagoon guides' § 1.
+- [ ] ILALIM-1.1 References and feel (owner, 2026-09-29: the UP Manila Padre Faura area, "cuz we
+  wanna see our school's Rizal Hall in the game"). PROPOSAL WRITTEN: guide § 0, with the
+  [research](reports/ilalim-rework-2026-09-29/research.md) and the
+  [plan](reports/ilalim-rework-2026-09-29/place-plan-v1.png). The line is LRT-1 over Taft Avenue,
+  not LRT-2. OPEN: the owner's answers to guide § 0.6.
 - [ ] ILALIM-1.2 A Blender blockout at the exact gameplay dimensions (the 14 m carriageway box, the
   flanks to x +/-11.2 and z +/-16.7, the columns, the hoop and the pad). Eye-height and aerial
   renders, then owner review.

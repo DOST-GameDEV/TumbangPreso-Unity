@@ -1,10 +1,13 @@
 # Ilalim ng Tulay rework guide (ILALIM-1)
 
-⚠️⚠️ **CURRENT STATE (2026-09-29): NOT STARTED.** The owner chose Ilalim ng Tulay as the next map
-after Kanto and the Lagoon Court ("Ilalim ng Tulay", 2026-09-29). This guide is the starting
-point: what the rebuild must keep, the pipeline Kanto and the Lagoon Cove proved, and every trap
-those two maps hit. Update this block as the work moves; it is the snapshot a new session
-resumes from.
+⚠️⚠️ **CURRENT STATE (2026-09-29): ILALIM-1.1 PROPOSAL WRITTEN, AWAITING OWNER REVIEW.** The
+owner chose Ilalim ng Tulay as the next map after Kanto and the Lagoon Court, and set it at UP
+Manila's Padre Faura corner "cuz we wanna see our school's Rizal Hall in the game". § 0 is the
+proposed place and feel, with the open decisions in § 0.6. The evidence is in
+[the research report](reports/ilalim-rework-2026-09-29/research.md), and the plan is in
+[place-plan-v1.png](reports/ilalim-rework-2026-09-29/place-plan-v1.png).
+NEXT: the owner answers § 0.6, then ILALIM-1.2 (the grey Blender blockout). Nothing is modelled
+yet. Update this block as the work moves; it is the snapshot a new session resumes from.
 
 Read first, in order: [AGENTS](../AGENTS.md), [VISION](VISION.md), [WORKING_RULES](WORKING_RULES.md),
 this guide, then the map's existing design document [Ilalim_Ng_Tulay.md](Ilalim_Ng_Tulay.md)
@@ -12,6 +15,143 @@ this guide, then the map's existing design document [Ilalim_Ng_Tulay.md](Ilalim_
 Blender maps are the worked examples: [KANTO_DESIGN_GUIDE.md](KANTO_DESIGN_GUIDE.md) (city
 style, textures, signs, traffic, sound) and [LAGOON_REWORK_GUIDE.md](LAGOON_REWORK_GUIDE.md)
 (organic terrain, prop kits, water, life, the Unity look).
+
+---
+
+## 0 · Place and feel (ILALIM-1.1 PROPOSAL, awaiting owner review)
+
+### 0.1 The place, corrected
+
+The elevated line past UP Manila is **LRT-1 over Taft Avenue**, not LRT-2. The old design
+document's "Gilmore strip on Aurora Boulevard" is LRT-2, and it is replaced.
+
+The new setting is **Taft Avenue at the Padre Faura corner, Ermita**:
+- the UP Manila and PGH campus on the west side;
+- the student commercial strip on the east side;
+- LRT-1 overhead;
+- **Rizal Hall** about 100 m down Padre Faura.
+
+The facts and the photograph notes are in [the research report](reports/ilalim-rework-2026-09-29/research.md).
+
+### 0.2 One line
+
+**"After class on Taft."** One side of the street is heritage: shady trees, a fence, and Rizal
+Hall. The other side is dense and noisy: shops, wires and signs. The grey concrete LRT-1 rumbles
+overhead, and the late afternoon sun comes through the campus trees.
+
+### 0.3 How the real block becomes the game
+
+See [place-plan-v1.png](reports/ilalim-rework-2026-09-29/place-plan-v1.png). The real block is on
+the left, and the proposed game plan is on the right.
+
+- **The court is Taft's carriageway, under the viaduct.** The gameplay contract in § 1 is
+  unchanged: the 14 m box, the walls at |x| 11 and |z| 16.5, and the piers at (±4.45, ±10).
+  The game's +z is Taft's north, toward UN Avenue.
+- **The west side (-x) is the campus.** Its elements:
+  - A low iron fence stands on the |x| = 11 wall line, with the invisible wall collider behind
+    it.
+  - Behind the fence are lawn, shade trees, and a hospital front with gates. PGH is the real
+    neighbour.
+  - Vendors work against the fence, with striped umbrellas.
+
+  The fence is see-through, so the frame opens up to the west. This is where the map gets its
+  calm. Real Taft on the PGH side looks like this.
+- **The east side (+x) is the shop row.** Real Taft on the east side is like this. The row
+  carries:
+  - **PC Express and its overclock pad**, which move here from the west wall;
+  - the pisonet;
+  - the pares cart;
+  - a print, photocopy and bind shop;
+  - a carinderia;
+  - a medical-supply and uniform shop, because PGH is across the street;
+  - dorm "bedspace" boards.
+
+  Wires, awnings and signs are hand-named, in the Kanto way.
+- **Padre Faura is the north cross street, at z ≈ +31, one-way west.** The ≈ +31 position is
+  where the current map already has an intersection. Its corners:
+  - **North-west: Rizal Hall**, pulled in from 100 m to about 50 m. It stands in its true
+    orientation, with the portico facing south onto Padre Faura. From the court you see it
+    across the campus lawn, at an angle, over the low fence. The plan keeps that view line
+    clear of the hospital block and of the columned corner hall.
+  - **The corner in front of Rizal Hall:** a white columned heritage hall, standing in for the
+    Supreme Court. It is generic, with no seal and no name.
+  - **North-east:** a tall school block, standing in for Manila Science High School.
+- **The skyline to the east** has one landmark: a banded cream and salmon residential tower.
+  This is the Astral Tower silhouette, generic and with no name. The mid-rise district fades
+  into fog, as § 10.3 of the old document requires.
+- **The south end** is a generic side street toward Pedro Gil.
+
+### 0.4 The look, in kit terms
+
+- **Rizal Hall.** Its parts:
+  - three storeys of ivory stucco;
+  - tall Ionic columns;
+  - an entablature with a dentil cornice and round rosettes;
+  - a red-brown hipped roof with deep eaves and exposed rafters;
+  - dark steel-sash windows in deep reveals;
+  - maroon serif "RIZAL HALL" letters over the entrance;
+  - aircon units on the facade.
+
+  It is chunky and bevelled in the Kanto style. It is the ONE hero building, and it gets the
+  modelling time that PC Express got in the old map.
+- **The campus mass.** Low heritage wings in cream with **red roofs among trees**. From the air,
+  the real campus is a sea of red roofs.
+- **The LRT-1 viaduct.** It follows the real structure's language:
+  - a grey box-girder deck with a projecting parapet lip;
+  - a dark, panel-jointed soffit;
+  - catenary masts on top.
+
+  ⚠️ The real piers are single median columns. The game needs two per row, which gives the
+  7.5 m centre lane and the 1.85 m gutters. The proposal is **twin-leg piers under one pier
+  cap**, in the same grey concrete, so the rows read as LRT-1 and still play the same.
+- **The train.** It is yellow and blue in the LRT-1 manner. ⚠️ The livery blue must be shifted
+  away from the defence role hue `#0080e8` (Art_Direction § 1). Use a deep navy or teal-grey,
+  never a mid blue. The consist keeps its 15.6 m length and its 18 m/s speed, so the 2.70 s
+  window and `OverclockSeconds` stay true.
+- **The street kit, all taken from the photographs:**
+  - tangled overhead cables on leaning poles;
+  - yellow-painted steel railings and crowd barriers;
+  - striped vendor umbrellas;
+  - green street-name blades;
+  - black ONE WAY signs;
+  - mast-arm traffic lights;
+  - a hand-painted yellow and red barangay board with invented names;
+  - jeepneys, UV Express vans and buses (the traffic stays outside |z| 16.5).
+- **Light.** A warm late-afternoon sun, low from the west, through the campus trees. The viaduct
+  keeps its hard shade band across the court. The look profile row is retuned in Play.
+- **Sound.** An LRT rumble, and jeepney barkers calling Taft routes. An ambulance siren from the
+  hospital side, now and then. Vendors, and the pisonet and pares callouts that already exist.
+  The Kanto street-sound pattern supplies all of these.
+- **Life.** Kanto's pigeons on the campus lawn, and birds in the campus trees.
+
+### 0.5 Kept exactly, from § 1
+
+- The box stays empty and flat.
+- The 4.2 m flanks stay clear.
+- The hoop stays by the south-west pier.
+- The pad stays reachable on the pavement.
+- The trip hazards stay off the spawn-to-can line.
+- The train stays at 6 s, then every 150 s.
+- Every pier stays on NearFade.
+- The cars stay outside |z| 16.5.
+
+The only contract-adjacent change is WHICH pavement PC Express stands on (§ 0.6 decision 1).
+
+### 0.6 Decisions for the owner before the blockout
+
+1. **Campus on the west, shops on the east.** This moves PC Express and its pad from the west
+   wall to the east pavement. The alternative is to keep shops on both sides and show the
+   campus only behind the north-west corner.
+2. **Rizal Hall at about 50 m, true orientation, portico facing south.** The alternative is to
+   turn it to face the court, which is less true but reads more strongly from the play area.
+3. **The Oblation** in front of Rizal Hall: include it (a stylized, chunky statue) or leave it
+   out.
+4. **Real names on screen.** "RIZAL HALL" is on the building in real life, so the proposal
+   keeps it. Should PGH be named on the hospital gate? The Supreme Court corner stays unnamed.
+5. **Twin-leg piers** as the honest compromise with the real single piers.
+6. **Late-afternoon light.** The current Ilalim look is a cooler dusk.
+7. **The display name.** Keep ILALIM NG TULAY. The scene name must stay `IlalimNgTulay`
+   either way.
 
 ---
 
@@ -57,8 +197,9 @@ never these, unless the owner says so:
 Source of truth is Python in `tools/`, run by headless Blender 5.0; nothing is hand-modelled in a
 `.blend` that a script cannot rebuild. Then one export, then one Unity builder.
 
-1. **Research and blockout.** Real references first (Gilmore/Aurora Boulevard under the LRT-2
-   guideway: the soffit, the column rhythm, the shopfronts, wires, jeepneys, the pisonet), then a
+1. **Research and blockout.** Real references first (Taft Avenue at Padre Faura under LRT-1,
+   § 0: the viaduct, the pier rhythm, Rizal Hall, the campus fence, the shop row, wires,
+   jeepneys, the pisonet), then a
    grey blockout at the EXACT gameplay dimensions of § 1, reviewed by the owner in Blender before
    any detail (Kanto: `tools/author_kanto_blockout.py`; Lagoon: `author_lagoon_blockout.py`).
 2. **Kits, textures, renders.** One script per kit (buildings, signs, props, vehicles), flat
