@@ -450,6 +450,30 @@ a slow heartbeat.
 **Hand-back.** Play opens on the doll standing beside her, lit, facing the opponents, its string up. Nothing is shown twice: the
 cutscene ends on it waking; play is it moving. The world was frozen underneath (the match clock stops, as Paete's did).
 
+### 9.8b The cutscene, v3 direction: THE CIRCLE AND THE MARIONETTE (2026-09-29, the owner's)
+
+The owner, on the OMEN cutscene still playing in front of the doll: *"ult cutscene doesnt amke sense why does she thhrow some random
+shit and it doesnt touch anythhing thhoroughly rethink direction of it"*, then his direction: **"i want her to cast like a really
+scary magic circle in teh sky for her cutscene and then this monster comes out of it and looks like its controlled by strings and
+scary"**. This replaces 9.8 (SEW / GROW / WAKE) and the ONE THREAD pitch. The rules it keeps: nothing leaves her hand without landing
+on something you can see; every beat is caused by the one before; the doll is its own character and she never dies, faints or
+controls it (the STRINGS come from the circle, not from her); no sound (skill sounds are deleted).
+
+**One sentence: she offers her doll up to the sky, a terrible circle tears open and swallows it, and it comes back down out of the
+circle as a monster hung on strings.**
+
+| Shot | Time | Cause | Effect | Camera |
+|---|---|---|---|---|
+| 1 THE OFFERING | 0.00 to 1.10 | the court drops to violet-black; she lifts the small doll high over her head in both hands, grinning up | its button eye lights; its seams leak light; a first thread of light rises from it into the dark | low on her, looking up past the doll into the sky |
+| 2 THE CIRCLE | 1.10 to 2.40 | the thread reaches the sky | THE CIRCLE tears open, huge and scary: a black cord with a crimson core sews a ring of jagged teeth, eight long pins stab in, runes crawl round it counter-turning, and in its centre a stitched EYE opens; the small doll is yanked up out of her hands into the eye and gone | tilt up with the doll into the circle, the circle filling the frame |
+| 3 THE DESCENT | 2.40 to 4.10 | the eye looks down | strings drop out of the circle and the MONSTER is lowered out of the eye on them: the doll, huge, hanging limp and head-down at first, strings at its crown, both mitten hands and its back; it turns upright on the strings in jerks, limbs dangling late, light spitting from its seams | from under the circle looking up as it comes down at the lens |
+| 4 THE DROP | 4.10 to 4.70 | the strings let go an arm's length | it lands on the court feet-first at full size, knees buckling like a puppet's, a ring of dust and light racing out; the real opponents stagger back | low and wide, the opponents behind it |
+| 5 THE PUPPET | 4.70 to 5.80 | the strings jerk | its head snaps up and lolls, its grin splits wide and glows, its X eye and button eye flare; it jerks its head to the real opponents and takes one lurching step at them, strings taut to the circle; she stands behind it, smirking | a slow push in on its face, the opponents small in front of it, then the two-shot with her |
+
+**Hand-back and in play.** Play opens there: the monster beside her, the circle full overhead, STRINGS from its crown and both hands
+up into the circle (the marionette read the owner asked for, in play too: 9.9 in-play rows 1 and 12). The circle draws in to a
+smaller ring high over it after 3 s and the strings stay, so everyone can always see it is a puppet and whose.
+
 ### 9.9 Every moving part of the doll, in the cutscene and in play
 
 | # | Part | Starts | Moves (direction) | Speed and shape | Anchored to | Ends |

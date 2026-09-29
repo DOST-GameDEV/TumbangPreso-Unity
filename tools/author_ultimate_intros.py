@@ -269,78 +269,72 @@ def build(hero, legacy=False):
 @performance
 def phaister():
     """
-    OMEN, 5.0 s (HERO-10 v8, 2026-09-27; `docs/reports/phaister-kit-2026-09-27/plan.md` 4.4 and `direction.md` section 3). Replaces
-    v7's 4.0 s, which ended on the eye and the maelstrom with nobody in it (the method's section 6: the ending must show what the
-    ultimate DOES to the real players) and framed her close-up with the brim over her eyes and the forming eye over her mouth.
+    VOODOO DOLL, 5.8 s (HERO-10 v3, 2026-09-29; `docs/reports/phaister-kit-2026-09-27/plan.md` 9.8b). Replaces OMEN's cutscene. The
+    owner on it: *"ult cutscene doesnt amke sense why does she thhrow some random shit and it doesnt touch anythhing thhoroughly rethink
+    direction of it"*, then his direction: *"i want her to cast like a really scary magic circle in teh sky for her cutscene and then
+    this monster comes out of it and looks like its controlled by strings and scary"*.
 
-    One sentence: "The omen pours out of her, she throws it, and it marks everyone it will take." The travelling thing is the
-    BUTTERFLIES, flowing left to right in every shot. Four beats:
-      SURGE (0 to 1.30): the court goes to her night and lights up in small points round her feet (Castorice's domain); she rises,
-        arms opening, while black butterflies pour out of her sleeves and hat and wheel round her CLOCKWISE, violet ribbons of
-        flame climb round her and strokes sweep round with the camera, which ORBITS HER CLOCKWISE (v7 went the other way) and
-        pushes in (Seele's whip, slowed for her composure).
-      THE EYE (1.30 to 2.40): from below her chin, so the brim frames the top and her face is whole: her eyes light (Seele's
-        glint, Castorice's streak), the butterflies stream left to right into the space between her palms, low in front of her
-        chest (v7 formed it over her mouth), and crush into a tiny glitching eye; she tips her head, smirking (her one cheeky beat).
-      THE THROW (2.40 to 3.20): she hurls it; from her right the eye streaks left to right across the frame to where she aimed and
-        lands: two frames of the picture turned inside out (the impact frame), the butterfly-shaped burst, the ring on the court.
-      THE MARK (3.20 to 5.00): the maelstrom starts to turn round the half-open eye; one black butterfly peels off to EACH real
-        player in reach and settles over their head (the omen: they are marked), and each flinches and leans against its draw;
-        one crane rises round the eye, clockwise, until every one of them is in frame with her floating at its edge.
-    The camera of THE THROW and THE MARK is computed from where she aimed and where they stand
-    (`HeroIntroductionScene.PhaisterMark.cs`); the rows below are its storyboard and its fallback.
-    Play picks up from its end: the eye still unstable over the spot, the marks already on them, the maelstrom already turning.
+    One sentence: "She offers her doll up to the sky, a terrible circle tears open and swallows it, and it comes back down out of the
+    circle as a monster hung on strings." Five beats; nothing leaves her hand without landing on something; each beat causes the next:
+      THE OFFERING (0 to 1.10): the night falls; she lifts the small doll up in front of her face in both hands, grinning up at the sky;
+        its button eye lights and a thread of light rises out of it.
+      THE CIRCLE (1.10 to 2.40): the thread reaches the sky and the circle tears open (`SkyCircleLines`: rims sewn, teeth, pins,
+        runes, the eye opening); at 2.10 the doll is yanked up out of her hands along the thread into the eye; she recoils, arms flung.
+      THE DESCENT (2.40 to 4.10): the monster is lowered out of the eye on strings (crown, both hands, back) in three jerks, limp,
+        turning; she backs off a step, watching it come.
+      THE DROP (4.10 to 4.70): it lands beside her, knees buckling like a puppet's; the dust ring races out; the real opponents flinch.
+      THE PUPPET (4.70 to 5.80): its head snaps up, it lurches one step at them on its strings, grin glowing; she smirks behind it.
+    The monster, the circle, the strings and the staged opponents are `HeroIntroductionScene.Phaister.cs`; this table is her body and
+    the shots (shots 2, 3 and 5 are computed there from where the doll and the opponents are; these rows are their fallback).
+    Play picks up from its end: the doll standing where it lurched to (`VoodooDollBody.BesideHer`, `LurchForward`), the circle open
+    overhead with its strings down to the doll (`VoodooSkyCircle` starts fully open).
 
-    ⚠️ THE CAST IS CHIBI: THE ARMS ARE ABOUT A HEAD LONG. Measured on the real mesh (the Grand Coven notes): hands raised overhead end
-    inside the brim and vanish from every front shot, so the eye is formed with the arms FORWARD, low, in front of the chest.
+    ⚠️ THE CAST IS CHIBI: THE ARMS ARE ABOUT A HEAD LONG. Hands raised overhead end inside the brim and vanish from every front shot, so
+    the doll is offered up in FRONT of her face (arms forward and up), never straight overhead.
     ⚠️ THE HEAD GOES BACK ONLY 10 DEGREES: further and the wide brim turns into a flat slab toward the camera.
     """
-    p = Performance("phaister", 5.0)
-    p.voice = (2.12, "hero_phaister_ult")
+    p = Performance("phaister", 5.8)
+    p.voice = (1.35, "hero_phaister_ult")
 
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    # SURGE: arms opening out and up, palms to the sky, chin lifting, weight coming off her feet.
-    open_ = Pose(torso=(-5, 0, 0), head=(-6, 0, 0), left=(62, 68, 0), right=(62, 68, 0), legs=((0, 5), (0, 5)))
-    # Risen: arms higher and wider, legs hanging loose, one swung forward (these rigs have no knees).
-    risen = Pose(torso=(-8, 0, 0), head=(-10, 0, 0), left=(102, 62, 0), right=(102, 62, 0), legs=((-4, 3), (16, 3)))
-    risen_b = risen.but(torso=(-7, 4, 0), left=(106, 60, 0), right=(98, 64, 0))
-    # THE EYE: hands brought FORWARD together, LOW in front of her chest, the head bowed a little to them.
-    gather = Pose(torso=(8, 0, 0), head=(6, 0, 0), left=(78, 22, 20), right=(78, 22, 20), legs=((-4, 3), (14, 3)))
-    # Her beat: the head tips to one side, a smirk (her ink face does the smirk; the tilt sells it).
-    smirk = gather.but(head=(4, -12, 12))
-    # The wind: the joined hands lifted forward and up, the chest leaning back.
-    wind = Pose(torso=(-10, 0, 0), head=(-6, 0, 0), left=(150, 20, 16), right=(150, 20, 16), legs=((-6, 3), (12, 3)))
-    # THE THROW: she hurls it forward and up, both arms driving through, the chest folding over them.
-    hurl = Pose(torso=(16, 0, 0), head=(-2, 0, 0), left=(84, 14, 12), right=(84, 14, 12), legs=((8, 4), (-10, 4)))
-    # She hangs there watching it mark them, arms open again, pleased with herself.
-    watch = Pose(torso=(4, -6, 0), head=(-4, -8, 4), left=(58, 44, 0), right=(46, 40, 0), legs=((-2, 4), (8, 4)))
+    # THE OFFERING: both hands forward and up in front of her face, the doll held between them; chin up, leaning back a little.
+    offer = Pose(torso=(-6, 0, 0), head=(-10, 0, 0), left=(128, 20, 18), right=(128, 20, 18), legs=((0, 5), (0, 5)))
+    offer_b = offer.but(torso=(-7, 3, 0), head=(-10, 4, 3))
+    # Yanked away: the arms flung up and open after it, the chest thrown back, a half step back.
+    recoil = Pose(torso=(-12, 0, 0), head=(-10, 0, 0), left=(150, 55, 0), right=(150, 55, 0), legs=((-10, 5), (6, 5)))
+    # Watching it come down: hands low and open at her sides, chin up, weight back.
+    watch = Pose(torso=(-6, -8, 0), head=(-8, 10, 0), left=(20, 34, 0), right=(24, 30, 0), legs=((-6, 5), (6, 5)))
+    # The drop: a small flinch at the landing (it is big), then pleased.
+    flinch = watch.but(torso=(2, -10, 0), head=(0, 14, 0), left=(40, 30, 0), right=(46, 26, 0))
+    # THE PUPPET: her smirk behind it, head tipped, one hand up to her hat brim (her beat), the other on her hip.
+    smirk = Pose(torso=(-2, -14, 4), head=(2, 16, 12), left=(10, 50, -70), right=(150, 10, 10), legs=((-2, 6), (8, 6)))
 
     p.key(0, rest)
-    p.key(.30, open_)
-    p.key(.85, risen)
-    p.key(1.18, risen_b)
-    p.key(1.40, gather)
-    p.hold(1.52, 1.95, gather)
-    p.key(2.15, smirk)
-    p.key(2.34, wind)
-    p.key(2.47, hurl, punch=True)
-    p.hold(2.47, 2.75, hurl)
-    p.key(3.15, watch)
-    p.key(5.0, watch.but(torso=(3, -8, 0)))
+    p.key(.35, offer)
+    p.hold(.55, 1.05, offer)
+    p.key(1.40, offer_b)
+    p.hold(1.40, 2.05, offer_b)
+    p.key(2.18, recoil, punch=True)
+    p.hold(2.18, 2.45, recoil)
+    p.key(2.85, watch)
+    p.hold(2.85, 4.05, watch)
+    p.key(4.18, flinch, punch=True)
+    p.key(4.55, watch)
+    p.key(4.95, smirk)
+    p.key(5.8, smirk.but(torso=(-2, -12, 4), head=(3, 18, 12)))
 
-    # The lift: up with the surge, hanging through the eye and the throw, a little down as she watches.
-    p.rise(0, 0).rise(.25, 0).rise(1.15, .52).rise(2.35, .58).rise(2.7, .50).rise(5.0, .44)
-
-    # Shot distances are real metres (she is 2.38 m to the hat tip). Hero-local: +z in front of her.
-    # SURGE: orbit CLOCKWISE seen from above (her right front to her left front: the angle falls), pushing in.
-    p.shot(0, 1.30, (2.2, .75, 2.6), (0, 1.35, 0), 50, eye_to=(-1.9, 1.0, 2.3), look_to=(0, 1.7, 0), fov_to=44)
-    # THE EYE: from below her chin, a slow pull back: her whole face under the brim, the eye forming low between her palms.
-    p.shot(1.30, 2.40, (.55, 1.55, 2.45), (0, 2.05, .30), 36, eye_to=(.75, 1.62, 2.85), look_to=(0, 2.0, .40), fov_to=40, close=True)
-    # THE THROW: from her right, a little behind, so the eye crosses the frame left to right (computed from the aim in play).
-    p.shot(2.40, 3.20, (3.4, 1.8, -1.4), (0, 2.0, 3.0), 54, eye_to=(3.6, 2.0, -1.0), look_to=(0, 2.1, 4.0), fov_to=56)
-    # THE MARK: a crane round the eye, rising (computed from the aim and the players in play).
-    p.shot(3.20, 5.0, (4.2, 1.3, 1.8), (0, 1.6, 4.0), 50, eye_to=(3.2, 5.6, -2.6), look_to=(0, 1.2, 4.0), fov_to=58)
-    p.locked((1.6, 1.6, 5.4), (0, 1.8, 1.0), 52)
+    # Shot distances are real metres (she is 2.38 m to the hat tip). Hero-local: +x her right, +z in front of her.
+    # THE OFFERING: low in front of her, looking up past the doll into the sky, pushing in.
+    p.shot(0, 1.10, (.8, .5, 2.1), (.25, 2.3, .3), 54, eye_to=(.6, .45, 1.8), look_to=(.25, 2.6, .3), fov_to=50)
+    # THE CIRCLE: tilting up from the doll in her hands to the circle tearing open over her right (computed from the circle).
+    p.shot(1.10, 2.40, (.3, .7, 2.4), (.4, 3.0, .6), 50, eye_to=(-.6, .6, 3.2), look_to=(1.3, 7.0, 0), fov_to=70)
+    # THE DESCENT: from under the circle, looking up as the monster is lowered at the lens (computed from its height).
+    p.shot(2.40, 4.10, (3.9, .6, 3.4), (1.3, 3.5, 0), 60, eye_to=(3.6, .6, 3.2), look_to=(1.3, 1.6, 0), fov_to=60)
+    # THE DROP: low and wide from in front, the landing and her beside it.
+    p.shot(4.10, 4.70, (-1.8, .45, 4.6), (1.0, 1.1, .3), 62, eye_to=(-1.6, .5, 4.3), look_to=(1.0, 1.2, .3), fov_to=60)
+    # THE PUPPET: in on its face as it lurches, then back to it, her and the opponents (computed from where they stand).
+    p.shot(4.70, 5.80, (1.6, 1.7, 3.0), (1.3, 1.7, .3), 44, eye_to=(2.4, 2.2, 6.0), look_to=(.8, 1.3, .3), fov_to=56)
+    p.locked((1.2, 1.8, 6.2), (.8, 2.4, .3), 60)
     return p
 
 

@@ -1167,6 +1167,14 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   receipt test retired. OWED: a doll glyph of its own (it borrows OMEN's eclipse glyph), its nameplate, the CUTSCENE (the OMEN
   one still plays; owner on it, 2026-09-29: *"ult cutscene doesnt amke sense why does she thhrow some random shit and it doesnt
   touch anythhing thhoroughly rethink direction of it"*).
+  [~] The new cutscene (plan 9.8b, the owner's direction: *"a really scary magic circle in teh sky ... this monster comes out of it
+  and looks like its controlled by strings and scary"*): THE OFFERING, THE CIRCLE, THE DESCENT, THE DROP, THE PUPPET, 5.8 s
+  (`author_ultimate_intros.py` `phaister()`, `HeroIntroductionScene.Phaister.cs`, `.PhaisterMark.cs` for the real opponents and the
+  computed cameras; OMEN's `.PhaisterBurst.cs` deleted). THE CIRCLE redone as light after *"it looks underwhelming af it doesnt feel
+  like an ult"* and *"use genshin reference"* (research.md section 5): `Shaders/VoodooCircle` on a disc plus 3D pins and lightning
+  (`Visual.SkyCircle`), the same object in play; marionette strings in play from the eye to the doll's crown and hands; play opens
+  with the circle already open (never sewn twice). Film v4 sent. OPEN from v4: the offering close-up (brim fills it), a darker
+  replaced night, the eye in the void, the landing pose (reads toppled); the owner's verdict.
   (`SkillReceiptTests.RefusedFreeRecallDoesNotCreateAChargeAndEligibilityDoesNotMutateHeldTime`, Nemu, fails `CannotAct`; it failed
   the same way on 2026-09-27 and before this work on 2026-09-29, so it is not the doll's.)
 - [ ] The cutscene SEW / GROW / WAKE; sounds; voice rows; icons; bots; films sent; the gate.

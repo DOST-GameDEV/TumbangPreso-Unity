@@ -31,6 +31,10 @@ namespace TumbangPreso.Abilities
         /// <summary>How far to her side it stands up, metres (plan 9.7, the hand-back: *"the doll stands beside her"*).</summary>
         public const float BesideHer = 1.3f;
 
+        /// <summary>How far ahead of her it stands: the one step its cutscene ends on (it lurches at the opponents), so play picks up
+        /// exactly where the cutscene leaves it (plan 9.8b).</summary>
+        public const float LurchForward = 0.35f;
+
         public CharacterMotor Owner { get; private set; }
         public CharacterMotor Body { get; private set; }
         public Slipper Shoe { get; private set; }
@@ -42,7 +46,7 @@ namespace TumbangPreso.Abilities
         public static CharacterMotor HostSpawn(CharacterMotor owner)
         {
             if (owner == null || !NetAuthority.ShouldResolve()) return null;
-            Vector3 at = owner.transform.position + owner.transform.right * BesideHer;
+            Vector3 at = owner.transform.position + owner.transform.right * BesideHer + owner.transform.forward * LurchForward;
             return Spawn(owner, at, owner.transform.eulerAngles.y, brain: true);
         }
 

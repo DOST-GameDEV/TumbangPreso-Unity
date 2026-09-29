@@ -92,6 +92,24 @@ ultimate is recognisable by ear alone): a cut-in accent on frame 0, a swell draw
 impact itself in the hero's own material, ONE motif that returns every time the emblem is drawn, and a tail that says it is over.
 Light gets a pure tone; matter (wood, stone, water) gets noise and struck bodies, so the ear can tell them apart.
 
+## 5 · Summoning a monster out of a circle (Phaister's VOODOO DOLL, 2026-09-29)
+
+The owner, on the first circle (stitched lines against the sky): *"improve magic circle it looks underwhelming af it doesnt feel like
+an ult"*, *"her ult aint that good still pls refine how u made the cutscene pls use genshin reference and other ult cutscenes"*. Looked
+at on footage: Honkai: Star Rail, Castorice's ultimate (`LQWNfzPMDVY`, YouTube's own 1 s scrub frames, because the hidden browser pane
+does not decode video). Aglaea's and Kafka's uploads gave no usable frames (idle clips first; 48 px thumbnails only).
+
+| Seen (Castorice, 0 to 8 s) | The rule it gives us |
+|---|---|
+| The world is REPLACED, not dimmed: a night field, a moon, glowing ground | a summon changes the whole world for its length |
+| Violet energy tears the sky vertically as the summon arrives | the arrival is announced by vertical light before the creature |
+| The dragon's head fills the frame in close-up, eyes lit, butterflies at the lens | show the summon's FACE big first; scale is sold by framing |
+| The last frames: the caster small in front, the dragon looming behind her, the enemy in frame | the ending composition: caster near, summon looming, target present |
+
+With section 4 (Nahida's shrine, Raiden's emblem, Neuvillette's floor ring and pillars): **a circle is a light source with many
+layers turning against each other** (a hot rim with a halo, a rune band, a geometric star, a dark centre), it OPENS with a flash,
+and the summon comes out of its middle. `Shaders/VoodooCircle` and `Visual.SkyCircle` are built to that.
+
 **Limits for TUMP.** The cutscene is not a gameplay frame, but `AbilityShowcaseProbe`'s white-blowout rule (12 per cent) is kept in
 spirit: saturated hero colours, never white, because white is where those frames lose their subject. `Art_Direction.md` section 0
 still governs every shape: blocky, readable, hand-typed, the hero's own palette. The world is paused under the cutscene, so every
