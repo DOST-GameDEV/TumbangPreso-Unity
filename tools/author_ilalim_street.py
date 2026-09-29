@@ -1056,12 +1056,15 @@ def proto_blade_post(col):
     b = SBuf(col.name)
     circle = [(math.cos(a), math.sin(a)) for a in (k / 10 * math.tau for k in range(10))]
     b.extrude_z([(0.07 * x, 0.07 * y) for x, y in circle], -0.2, 3.35, "street_galvanized")
-    b.panel(0.05, 1.55, 2.95, 3.3, -0.02, 0.02, "street_sign_blade_taft", "street_board_back",
-            back_mat="street_sign_blade_taft", r=0.05)
+    # A blade runs PARALLEL to the street it names. The post stands unrotated, so the lower blade
+    # (along x, east-west) names Padre Faura and the upper one (turned to run along y, north-south)
+    # names Taft. They were the other way round (owner: "wrong signage").
+    b.panel(0.05, 1.55, 2.95, 3.3, -0.02, 0.02, "street_sign_blade_faura", "street_board_back",
+            back_mat="street_sign_blade_faura", r=0.05)
     # the second blade crosses above, turned 90 degrees
     q = SBuf("tmp")
-    q.panel(0.05, 1.55, 3.36, 3.71, -0.02, 0.02, "street_sign_blade_faura", "street_board_back",
-            back_mat="street_sign_blade_faura", r=0.05)
+    q.panel(0.05, 1.55, 3.36, 3.71, -0.02, 0.02, "street_sign_blade_taft", "street_board_back",
+            back_mat="street_sign_blade_taft", r=0.05)
     bmesh.ops.rotate(q.bm, verts=q.bm.verts, cent=(0, 0, 0), matrix=Matrix.Rotation(math.pi / 2, 3, "Z"))
     for faces, o, au, av, w, h in q.decals:
         q_rot = Matrix.Rotation(math.pi / 2, 3, "Z")
