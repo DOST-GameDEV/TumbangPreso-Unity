@@ -1205,7 +1205,11 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   the end; v20 left them live and the doll turned and two ink frames fired on nothing). Each ink frame its own: the eye a target of
   rings, the pull a one-frame rake, the emergence three torn frames, the stare his face in ink with his eyes crimson (`_Style`). The
   doll's gait v3: plain slow swings, dragged steps, a slow sink per step, a heaving yank. Cutscene-only film v21 and `doll_walk_v6`
-  sent. OPEN: the owner's verdict; the rings frame's inverted cyan; the hip doll in her model is still the old one.
+  sent. v22: the eye's
+  ink frame crimson on black with thin rings (v21's inverted bands went cyan). v27: she floats beside it through THE TWIST (v19 to v22
+  flew her 3 m up to clear the stare, the owner: *"why tf is she flying away"*); THE STARE is its close-up alone (her renderers off for
+  that shot only). Cutscene-only v27 sent. OPEN: the owner's verdict; the hip doll in her model is still the old one; her kit's notes
+  (her handheld doll reads just black; the soul-draw aura bunches in the middle; the status-effect UI blocks the screen, move it aside).
   [~] The doll's own glyph (`AbilityGlyph.PhaisterVoodooDoll`, a doll hung from the circle on three strings), its nameplate
   PHAISTER'S DOLL in her colour, the grey stitched X over it while tagged and +100 over it in her colour when it scores
   (`Visual.VoodooDollPresence`, `MatchDirector.CompanionScored`, protocol 91).

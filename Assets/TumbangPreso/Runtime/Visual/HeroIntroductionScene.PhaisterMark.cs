@@ -185,7 +185,8 @@ namespace TumbangPreso.Visual
                 float distance = Mathf.Lerp(Mathf.Lerp(2.3f, 1.9f, Ease(PhCranks[0].To, PhFaceAt, t)), 1.7f, zoom);
                 // As its body swings round under the head the lens backs off, or the turning head comes through it (v13).
                 distance = Mathf.Lerp(distance, 2.4f, Ease(PhBodyTurnAt - .03f, PhBodyTurnAt + .12f, t));
-                // Between her and it, a little toward her, so she is behind the lens and it is alone with you (v15: +x put her in shot).
+                // Between her and it, a little toward her (the framing of film v18 that the owner picked); she is left out of this one
+                // close-up rather than sent flying off (`SamplePhaister`).
                 Vector3 closeEye = face + new Vector3(-.5f, -.08f, distance);
                 eye = Vector3.Lerp(wideEye, closeEye, inward);
                 look = Vector3.Lerp(wideLook, face, inward);

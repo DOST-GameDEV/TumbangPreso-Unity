@@ -483,6 +483,12 @@ namespace TumbangPreso.Visual
                     night * twinkle * Mathf.Clamp01(local * 2f) * Mathf.Clamp01((5.5f - local) * 2f));
             }
 
+            // THE STARE is the doll's close-up alone: she is left out of that one shot (she floats beside it; v19 to v22 flew her off
+            // into the sky to clear the frame, and the owner: *"why tf is she flying away"*). `enabled`, not `forceRenderingOff`, which
+            // the phase view sets for every capture.
+            bool inStare = t >= PhFaceAt - .03f;
+            if (_bodyRenderers != null) foreach (var r in _bodyRenderers) if (r != null && r.enabled == inStare) r.enabled = !inStare;
+            if (_heldRenderers != null) foreach (var r in _heldRenderers) if (r != null && r.enabled == inStare) r.enabled = !inStare;
             SamplePhaisterCast(t, leave);
             SamplePhaisterSparks(t, leave);
             SamplePhaisterSky(t, leave);

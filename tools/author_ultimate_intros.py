@@ -332,10 +332,10 @@ def phaister():
     p.key(3.8, watch)
     p.hold(3.8, 6.0, watch)
 
-    # She rises 0.8 m and hangs there through the summoning, bobbing. As the gloves begin to crank its head she floats up HIGH to
-    # watch from above (out of THE STARE: it is alone with you), then drops back down behind it as it lands.
+    # She rises 0.8 m and floats there to the end, bobbing (v19 to v22 sent her 3 m up into the sky to clear THE STARE, the owner:
+    # *"why tf is she flying away"*). THE STARE is its close-up alone: the scene leaves her out of that one shot.
     p.rise(0, 0).rise(.9, 0).rise(1.2, .25).rise(1.65, .8).rise(1.9, .86).rise(2.8, .8).rise(2.92, .95).rise(3.6, .85) \
-        .rise(4.42, .8).rise(4.72, 3.6).rise(6.0, 3.7)
+        .rise(4.9, .8).rise(6.0, .86)
 
     # Shot distances are real metres (she is 2.38 m to the hat tip). Hero-local: +x her right, +z in front of her.
     # THE DAY DIES: wide and low in front, the whole sky in frame, nearly still.
