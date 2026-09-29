@@ -103,7 +103,25 @@ The self-review caught four more faults:
 
 ⚠️ For ILALIM-1.4: Unity needs the two extra UV channels, or the grime baked into the albedo.
 
-NEXT: owner review of guideway v6. Then the next kit. § 0.6 is still open.
+**Guideway v9: the real underside, and columns that stand apart.** The owner sent two street
+views of Taft under LRT-1, with two notes: "rework the supporting columns texture in a way that
+it doesnt look blended in to the main duct/railway", and "the underside also looks different
+from what you currently have". The changes:
+- **The span is now a deck slab carried by four precast girders,** with dark channels between
+  them, a deep fascia beam along each edge under the parapet, and end crossbeams at the pier.
+  It replaces the box girder. Soffit 8.0 and deck top 9.04 still hold.
+- **The columns have their own texture,** `lrt_pier`: pale warm sand with broad vertical
+  washes and no pour lines. The cap takes the girders' grey, `lrt_pier_cap`, but stays in the
+  pier object, so it is on NearFade too.
+- **The underside is darker:** `lrt_soffit` and `lrt_girder`.
+
+Rain tongues now go only on the fascia, parapet, cap and columns. The soot band goes only on the
+slab's underside. Mapped onto the girders themselves, both drew blocky patches.
+
+The Taft median also has a green-painted planter wall with lilies around the columns. It is a
+candidate for the prop kit.
+
+NEXT: owner review of guideway v9. Then the next kit. § 0.6 is still open.
 
 Read first, in order: [AGENTS](../AGENTS.md), [VISION](VISION.md), [WORKING_RULES](WORKING_RULES.md),
 this guide, then the map's existing design document [Ilalim_Ng_Tulay.md](Ilalim_Ng_Tulay.md)
