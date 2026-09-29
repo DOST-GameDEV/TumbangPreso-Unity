@@ -124,9 +124,13 @@ Shader "Hidden/TumbangPreso/PhaisterImpact"
                 }
                 else if (_Style > 0.5)
                 {
-                    // TARGET: concentric rings closing on the focus, alternate bands of the picture turned inside out.
-                    float band = step(0.5, frac(r * 9.0 - _Seed * 0.25)) * step(0.03, r);
-                    streak = band;
+                    // THE EYE LOCKS ON (v22; v21 turned alternate bands inside out and the red went cyan, a flat target sign): black paper,
+                    // the eye's bright lids, iris and slit edge as crimson ink, and a few THIN crimson rings closing on it. Nothing inverted.
+                    float lit = smoothstep(0.3, 0.45, lum);
+                    c = lerp(_Dark.rgb, _Light.rgb, lit);
+                    float thin = saturate(1.0 - abs(frac(r * 7.0 - _Seed * 0.35) - 0.5) / 0.05) * step(0.12, r);
+                    c = lerp(c, _Light.rgb * 0.8, thin * (1.0 - lit));
+                    streak = 0.0;
                 }
                 c = lerp(c, 1.0 - c, streak * _Lines);
                 // THE STARE (v14): the dark closes in round its face, the edges going to a blood-black.
