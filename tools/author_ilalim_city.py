@@ -45,8 +45,11 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "ArtSource" / "ilalim"
 PREVIEWS = ROOT / "Logs" / "ilalim-blender"
 KITS = ["lrt_kit", "rizal_hall", "heritage", "eastside", "street", "trees", "props", "sarisari"]
-SKIP = ("prototype", "review", "stand-in", "kit (", "(source")
-ALWAYS = ("column signs",)          # the props kit's pier signs live in a review-named collection
+SKIP = ("prototype", "review", "stand-in", "kit (", "(source", "(place on piers)")
+# The props kit's pier signs, placed on the piers, live in a review-named collection. Only that
+# one: its prototypes, "prop_column_signs (place on piers)", sit at the origin for the Unity
+# builder and showed up in the middle of the court (owner: "extra sign in this play area").
+ALWAYS = ("review placement (column signs)",)
 RAIL_HEAD = 9.19
 
 
@@ -59,7 +62,7 @@ def link_kit(name, parent):
     placed = []
     for c in linked:
         lower = c.name.lower()
-        keep = any(a in lower for a in ALWAYS) or (c.name not in children and not any(s in lower for s in SKIP))
+        keep = c.name in ALWAYS or (c.name not in children and not any(s in lower for s in SKIP))
         if keep:
             parent.children.link(c)
             placed.append(c.name)
