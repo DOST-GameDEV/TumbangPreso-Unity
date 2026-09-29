@@ -2477,6 +2477,11 @@ Batch A, communication:
   [look-1.2-world](reports/visual-research-2026-09-23/look-1.2-world/report.md).
   Target checks passed v4; wire compatibility v3; strengthened actual clock v7 (1/1).
   Real peer/latency and native/human interpretation acceptance remain P7.
+  Follow-up 2026-09-30 (owner: the taya did not notice the can fell): the local taya
+  gets the VISUAL-1.1 frame and onset cue in Offense orange while the can is down.
+  Two new native cases pass 2/2 with renders in
+  [taya-can-down-frame](reports/taya-can-down-frame-2026-09-30/README.md). Peers and
+  mid-chase human review remain P7.
 - [x] **VISUAL-1.3 Timers on objects.** DONE (look-batchA-v4 icon sheet): the recall ring
   drains in gold through the fetch warning, turns solid Offense orange while the penalty
   runs and drains in the owner's seat colour during a roof or lagoon return

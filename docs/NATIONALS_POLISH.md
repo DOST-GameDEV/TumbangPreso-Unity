@@ -153,6 +153,11 @@ today's look, so the owner can reject a treatment without a code change.
   only: taggable attackers get a Defense-blue rim through the existing `_RimColor` / `_RimStrength` property-block path (`CharacterVisual`), and their
   nameplate ring switches to a "catchable" shape. In punch or lunge reach inside the arc,
   the reticle shows a ready tick. Spectators see a quieter version.
+- For the local taya while the can is down (owner, 2026-09-30: the taya did not notice
+  the can fell): the same thin screen-edge frame and onset cue as the armed attacker's,
+  in Offense orange, held until the can stands again. Blue says "the taya can catch you";
+  orange tells the taya "the attackers are free". The knockdown usually lands behind a
+  chasing taya, so the cue lives at the screen edge rather than at the can.
 - A world restore ring on the lata's collar filling with `Carrier.ChannelRatio`, visible
   to everyone; attackers read it as the countdown to danger. After restore, the
   protection collar drains with `Lata.ProtectionLeft`. Replay records both.
