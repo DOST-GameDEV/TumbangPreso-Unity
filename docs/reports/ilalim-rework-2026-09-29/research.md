@@ -154,3 +154,33 @@ a 4-lane west carriageway and a 3-lane east one, about 26 m kerb to kerb. Padre 
 y ≈ 32. On the west, the PGH fence falls on x = -11 once the road is squeezed. On the east, the
 real frontage is 11 m deep (sidewalk plus a drive-through lane); it is squeezed into the 4 m
 pavement.
+
+## 8 · How the LRT-1 viaduct actually weathers (for the guideway kit)
+
+The owner's review of guideway kit v3: "you should take a look at how the lrt way actually
+looks. theres no dirt or grime on what you have". What the photographs show:
+
+- **Rain stains.** Dark tongues run down the girder sides and the parapet's outer face from
+  every edge and panel joint. There is yellow-brown rust bleed from bearings and fixings, and
+  green-black damp where water sits.
+- **The underside** is darkest in a soot and damp band just inside the deck edges.
+- **The piers** are stained under the cap and grimy at the foot, where rain and traffic splash.
+- **The parapet** is grey concrete panels with chipped spots and bolt holes. The walkways have
+  cable troughs.
+- **The track is ballasted:** grey gravel with concrete sleepers, and rust-brown rail sides. It
+  is not slab track.
+- **The overhead wires hang from portal gantries.** These are two steel posts with a
+  crossbeam spanning both tracks, galvanized grey. Single masts were wrong.
+- **Taft's median** has a low terracotta-painted planter wall with shrubs, a candidate for the
+  prop kit.
+
+| Commons file | Licence | Author |
+|---|---|---|
+| [LRT Line 1, Rizal Avenue (2019)](https://commons.wikimedia.org/wiki/File:LRT_Line_1,_Rizal_Avenue_(Santa_Cruz,_Manila;_08-07-2019).jpg) | CC BY-SA 4.0 | patrickroque001 |
+| [Rizal Avenue (2025)](https://commons.wikimedia.org/wiki/File:Rizal_Avenue_(Santa_Cruz,_Manila;_02-01-2025).jpg) | CC BY-SA 4.0 | Patrickroque01 |
+| [LRT-1 Baclaran x Taft Avenue Ext., Oct 2025](https://commons.wikimedia.org/wiki/File:LRT-1_Baclaran_x_Taft_Avenue_Ext.,_Oct_2025.jpg) | CC BY-SA 4.0 | Ralff Nestor Nacor |
+| [Taft Avenue Vito Cruz LRT Station 11](https://commons.wikimedia.org/wiki/File:04475jfTaft_Avenue_Vito_Cruz_LRT_Station_Malate_Manilafvf_11.jpg) | Public domain | Judgefloro |
+| [Taft Avenue Landscape Vito Cruz 03](https://commons.wikimedia.org/wiki/File:04516jfTaft_Avenue_Landscape_Vito_Cruz_LRT_Station_Malate_Manilafvf_03.jpg) | Public domain | Judgefloro |
+| [Quirino Avenue LRT Taft Avenue 10](https://commons.wikimedia.org/wiki/File:0092jfQuirino_Avenue_LRT_Taft_Avenue_San_Andres_Street_Malate_Manilafvf_10.jpg) | Public domain | Judgefloro |
+
+These were studied only; none is committed or copied.

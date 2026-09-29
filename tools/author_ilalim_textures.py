@@ -25,6 +25,24 @@ concrete box deck with a panelled parapet, a dark flat underside, square piers.
     of brake dust.
   * lrt_steel: painted steel for the masts, arms and pipe clamps. NEUTRAL: each material tints
     it. A flat coat with one broad soft sheen and one broad soft shade, nothing else.
+
+DIRT AND GRIME (owner, review of kit v3: "you should take a look at how the lrt way actually
+looks. theres no dirt or grime on what you have"). The references (research.md section 8) show
+where it sits:
+  * dark rain tongues running down from every edge and parapet joint;
+  * yellow-brown rust bleeding from bearings and fixings;
+  * green-black damp patches where water sits;
+  * a sooty band just inside the deck edges on the underside;
+  * a splash zone at the foot of every pier.
+It is POSITIONAL, so it is not painted into the tiling textures above. It is two MULTIPLIER
+overlays (white means no change), mapped by the models' second and third UV maps:
+  * grime_drips: 8 m wide, 4 m down from an edge. A soft darker band under the edge, and
+    tongues of stain hanging from it, each a soft rounded shape with a feathered edge.
+  * grime_splash: 8 m wide, 2 m up from the ground. A dark band with a ragged soft top, and
+    short mud tongues reaching up.
+Still the house style: big soft drawn shapes at low contrast, never photographic streak noise.
+  * lrt_ballast: the gravel bed of the ballasted track LRT-1 actually runs on. Pebbles drawn as
+    soft rounded lozenges with one flat highlight, in warm greys with a little rust dust.
 """
 import os
 import sys
@@ -138,7 +156,113 @@ def lrt_steel():
     save("lrt_steel", img, np.zeros((SIZE, SIZE)))
 
 
-PAINTERS = [lrt_concrete, lrt_soffit, lrt_track_bed, lrt_steel]
+def lrt_ballast():
+    """Pebbles: jittered points, each pixel belongs to its nearest one. A pixel is stone when it
+    is well inside its cell, with a rounded edge and a flat highlight toward the top-left."""
+    rng = np.random.default_rng(351)
+    cell_m = 0.11
+    n = int(TILE_M / cell_m)
+    gy, gx = np.mgrid[0:n, 0:n]
+    px = (gx + 0.5 + rng.uniform(-0.35, 0.35, (n, n))) * cell_m
+    py = (gy + 0.5 + rng.uniform(-0.35, 0.35, (n, n))) * cell_m
+    tone = rng.choice([0.93, 0.98, 1.03, 1.07], size=(n, n))
+    best = np.full((SIZE, SIZE), 9.0)
+    second = np.full((SIZE, SIZE), 9.0)
+    val = np.ones((SIZE, SIZE))
+    hl = np.zeros((SIZE, SIZE))
+    ci, cj = (Y / cell_m).astype(int), (X / cell_m).astype(int)
+    for di in (-1, 0, 1):
+        for dj in (-1, 0, 1):
+            i, j = (ci + di) % n, (cj + dj) % n
+            cx = px[i, j] + (cj + dj - j) * cell_m
+            cy = py[i, j] + (ci + di - i) * cell_m
+            d = np.hypot(X - cx, Y - cy)
+            closer = d < best
+            second = np.where(closer, best, np.minimum(second, d))
+            val = np.where(closer, tone[i, j], val)
+            hl = np.where(closer, ((X - cx) + (Y - cy) < -0.012) & (d < cell_m * 0.28), hl)
+            best = np.where(closer, d, best)
+    gap = second - best
+    # Loose gravel, not paving: the gaps are barely darker than the stones, so no stone gets a
+    # mortar outline (review v4 read the first version as cobbles).
+    stone = np.clip((gap - 0.004) / 0.02, 0, 1)
+    img = flat("928c83") * (1 - stone[..., None]) + (hexcol("a19b92") * val[..., None]) * stone[..., None]
+    img = img * (1 + 0.06 * hl[..., None] * stone[..., None])
+    img = coat(img, (1.0, 0.94, 0.88), 1.2, 0.25, seed=352, feather=1.2)
+    save("lrt_ballast", img, stone)
+
+
+def _mult(name, a):
+    """Save a multiplier overlay. Row 0 of `a` is the EDGE; it is flipped so that UV v = 0 (the
+    image's bottom row in Blender) is the edge."""
+    OUT.mkdir(parents=True, exist_ok=True)
+    img = np.flipud(np.clip(a, 0, 1))
+    Image.fromarray((img * 255).astype(np.uint8)).save(OUT / f"{name}.png")
+    print("[ilalim-tex]", name)
+
+
+def _noise1d(n, scale_px, seed):
+    white = np.random.default_rng(seed).standard_normal(n)
+    f = np.fft.fftfreq(n)
+    s = np.real(np.fft.ifft(np.fft.fft(white) * np.exp(-(f * scale_px) ** 2 * 2)))
+    return (s - s.mean()) / (s.std() + 1e-9)
+
+
+def grime_drips():
+    W_M, H_M, ppm = 8.0, 4.0, 200
+    w, h = int(W_M * ppm), int(H_M * ppm)
+    v, u = np.mgrid[0:h, 0:w] / ppm           # v: metres down from the edge
+    a = np.ones((h, w, 3))
+    # The soft band right under the edge, its lower boundary wobbling.
+    edge = 0.22 + 0.08 * _noise1d(w, 0.8 * ppm, 401)[None, :]
+    band = np.clip((edge - v) / 0.12 + 0.5, 0, 1)
+    a *= 1 - 0.13 * band[..., None]
+    rng = np.random.default_rng(402)
+    colours = [np.array([0.80, 0.79, 0.77])] * 5 + [np.array([0.88, 0.82, 0.74])] * 2 + [np.array([0.78, 0.81, 0.75])]
+    for k in range(16):
+        u0 = rng.uniform(0, W_M)
+        width = rng.uniform(0.10, 0.45)
+        length = rng.choice([rng.uniform(0.4, 1.2), rng.uniform(1.2, 3.4)], p=[0.6, 0.4])
+        col = colours[rng.integers(len(colours))]
+        phase = rng.uniform(0, 6.28)
+        centre = u0 + 0.06 * np.sin(v * 1.4 + phase)
+        du = np.abs(((u - centre + W_M / 2) % W_M) - W_M / 2)
+        # A DRAWN shape, not an airbrushed blur (review v4): a flat fill whose width wobbles
+        # and narrows toward a rounded end, with only a narrow soft edge.
+        taper = np.clip(1 - v / length, 0, 1) ** 0.5
+        wob = 1 + 0.08 * np.sin(v * 3.5 + phase * 2) + 0.04 * np.sin(v * 8.0 + phase)
+        half = width * (0.45 + 0.55 * taper) * wob
+        end = np.sqrt(np.clip(1 - ((v - (length - width)) / width) ** 2, 0, 1))
+        half = np.where(v > length - width, half * end, half)
+        feather = 0.025
+        mask = np.clip((half - du) / feather + 0.5, 0, 1) * (v < length)
+        mask *= rng.uniform(0.35, 0.75)
+        a *= 1 - mask[..., None] * (1 - col)
+    _mult("grime_drips", a)
+
+
+def grime_splash():
+    W_M, H_M, ppm = 8.0, 2.0, 200
+    w, h = int(W_M * ppm), int(H_M * ppm)
+    v, u = np.mgrid[0:h, 0:w] / ppm           # v: metres UP from the ground
+    a = np.ones((h, w, 3))
+    top = 0.55 + 0.18 * _noise1d(w, 0.5 * ppm, 411)[None, :]
+    band = np.clip((top - v) / 0.15 + 0.5, 0, 1)
+    a *= 1 - band[..., None] * (1 - np.array([0.80, 0.78, 0.74]))
+    rng = np.random.default_rng(412)
+    for k in range(14):
+        u0 = rng.uniform(0, W_M)
+        width = rng.uniform(0.08, 0.3)
+        length = rng.uniform(0.6, 1.3)
+        du = np.abs(((u - u0 + W_M / 2) % W_M) - W_M / 2)
+        mask = np.exp(-(du / width) ** 4) * np.clip((length - v) / 0.2, 0, 1) * rng.uniform(0.4, 0.8)
+        a *= 1 - mask[..., None] * (1 - np.array([0.84, 0.81, 0.76]))
+    _mult("grime_splash", a)
+
+
+STRENGTH["lrt_ballast"] = 0.6
+PAINTERS = [lrt_concrete, lrt_soffit, lrt_track_bed, lrt_steel, lrt_ballast]
+OVERLAYS = [grime_drips, grime_splash]
 
 
 def swatch_sheet(names, version, tint=None):
@@ -176,10 +300,20 @@ def main():
     if "--normals-only" in sys.argv:
         normals_only()
         return
-    for paint in PAINTERS:
+    for paint in PAINTERS + OVERLAYS:
         paint()
     version = int(sys.argv[sys.argv.index("--sheet") + 1]) if "--sheet" in sys.argv else 1
     swatch_sheet([p.__name__ for p in PAINTERS], version)
+    # The overlays, shown over plain concrete so the stains read as they will on the models.
+    base = np.asarray(Image.open(OUT / "lrt_concrete_albedo.png").convert("RGB"), dtype=float) / 255
+    for name in ("grime_drips", "grime_splash"):
+        over = np.asarray(Image.open(OUT / f"{name}.png").convert("RGB"), dtype=float) / 255
+        h, w = over.shape[:2]
+        reps = np.tile(base, (h // SIZE + 1, w // SIZE + 1, 1))[:h, :w]
+        shown = np.clip(reps * over, 0, 1)
+        if name == "grime_drips":
+            shown = np.flipud(shown)            # edge at the top, as it hangs on the models
+        Image.fromarray((shown * 255).astype(np.uint8)).save(SHEETS / f"{name}_on_concrete_v{version}.png")
 
 
 if __name__ == "__main__":

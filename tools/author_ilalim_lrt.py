@@ -37,10 +37,23 @@ THE KIT, each piece a prototype in its own collection at the origin, then assemb
 court with linked duplicates:
   * lrt_pier: two tapered, rounded legs on footings; a hammerhead cap with sloped ends;
     bearing pads; a drain pipe with clamps down the east leg.
-  * lrt_span_<L>: one girder span of length L. Rounded box section, a panelled parapet on both
-    sides with its coping, cable troughs, and slab track with chunky rails.
-  * lrt_mast: a tapered steel post with a cantilever arm, brace and insulators, placed at every
-    pier row on both sides. The contact wires run between the masts with a slight sag.
+  * lrt_span_<L>: one girder span of length L. Rounded box section with a ballast trough, a
+    panelled parapet on both sides with its coping, cable troughs, and BALLASTED track:
+    a gravel bed, chunky concrete sleepers and rust-brown rails. LRT-1 runs on ballast, not
+    slab track (review of v3, research.md section 8).
+  * lrt_gantry: a two-post portal spanning both tracks, with knee braces, drop hangers and
+    insulators, at every pier row. It is what the photographs show; the first kit's single
+    cantilever masts were wrong. The contact wires sag a little between gantries.
+
+DIRT AND GRIME (owner, review of v3: "you should take a look at how the lrt way actually looks.
+theres no dirt or grime on what you have"). Concrete materials multiply two drawn overlays
+from tools/author_ilalim_textures.py, grime_drips and grime_splash, through two extra UV maps
+that every piece writes:
+  * UVGrime: u along the surface, v = metres below the edge the water runs from (the coping
+    for the parapet, the cap for the piers), in 4 m.
+  * UVSplash: v = metres above the road, in 2 m, on the pier legs. On the underside it is
+    stretched inward from the deck edges as a ragged soot band.
+Tiling concrete stays clean; the grime sits where water and traffic put it.
 """
 import math
 import random
@@ -69,8 +82,9 @@ PIER_HALF = 0.70
 CAP_TOP = 7.80
 PIER_ROWS = (-94.0, -69.0, -44.0, -19.0, -10.0, 10.0, 19.0, 44.0, 69.0, 94.0)
 JOINT = 0.03                 # half the expansion joint between span ends
-MAST_X = 4.25
+GANTRY_X = 4.3
 WIRE_Z = DECK_TOP + 4.7
+TROUGH = 0.20                # the ballast trough's depth below the walkways
 
 # Material: (texture, tint multiplier or None for the texture's own colour, normal strength)
 MATERIALS = {
@@ -80,8 +94,10 @@ MATERIALS = {
     "lrt_soffit":    ("lrt_soffit", None, 0.5),
     "lrt_deck_top":  ("lrt_track_bed", None, 0.4),
     "lrt_plinth":    ("lrt_track_bed", (0.88, 0.88, 0.88), 0.4),
-    "lrt_rail":      ("lrt_steel", (0.34, 0.32, 0.30), 0.3),
-    "lrt_mast":      ("lrt_steel", (0.42, 0.50, 0.47), 0.3),
+    "lrt_rail":      ("lrt_steel", (0.44, 0.32, 0.25), 0.3),
+    "lrt_mast":      ("lrt_steel", (0.56, 0.57, 0.56), 0.3),
+    "lrt_ballast":   ("lrt_ballast", None, 0.25),
+    "lrt_sleeper":   ("lrt_concrete", (0.80, 0.79, 0.77), 0.5),
     "lrt_pipe":      ("lrt_steel", (0.36, 0.40, 0.39), 0.3),
     "lrt_bearing":   (None, (0.13, 0.13, 0.14), 0),
     "lrt_insulator": (None, (0.36, 0.24, 0.18), 0),
@@ -90,6 +106,7 @@ MATERIALS = {
 # Directional textures (the concrete's pour lines, the soffit's joints) are left out: the rotated
 # second sample drew their lines diagonally across the piers and girder (review v2).
 ANTI_TILE = {"lrt_track_bed"}
+GRIMED = {"lrt_concrete", "lrt_pier", "lrt_coping", "lrt_soffit", "lrt_sleeper"}
 
 
 def material(name):
@@ -143,6 +160,21 @@ def material(name):
         links.new(colour, mix.inputs[6])
         mix.inputs[7].default_value = (*tint, 1)
         colour = mix.outputs[2]
+    if name in GRIMED:
+        # The positional grime: each overlay is a multiplier (white = clean) on its own UV map.
+        for image, layer in (("grime_drips", "UVGrime"), ("grime_splash", "UVSplash")):
+            guv = nodes.new("ShaderNodeUVMap")
+            guv.uv_map = layer
+            gtex = nodes.new("ShaderNodeTexImage")
+            gtex.image = bpy.data.images.load(str(TEXTURES / f"{image}.png"), check_existing=True)
+            gtex.image.colorspace_settings.name = "Non-Color"
+            links.new(guv.outputs["UV"], gtex.inputs["Vector"])
+            mul = nodes.new("ShaderNodeMix")
+            mul.data_type, mul.blend_type = "RGBA", "MULTIPLY"
+            mul.inputs["Factor"].default_value = 1.0
+            links.new(colour, mul.inputs[6])
+            links.new(gtex.outputs["Color"], mul.inputs[7])
+            colour = mul.outputs[2]
     links.new(colour, bsdf.inputs["Base Color"])
     normal = nodes.new("ShaderNodeTexImage")
     normal.image = bpy.data.images.load(str(TEXTURES / f"{tex}_normal.png"), check_existing=True)
@@ -191,8 +223,12 @@ def rounded_rect(hw, hd, r):
 class Buf:
     """One object's worth of geometry in a single bmesh, with material indices."""
 
-    def __init__(self, name):
+    def __init__(self, name, drip_top=None, splash=False, soffit_edge=False):
         self.name, self.bm, self.mats = name, bmesh.new(), []
+        # Grime mapping: `drip_top` is the z the water runs down from (a number, or a function of
+        # a face's centre z); `splash` maps the road splash; `soffit_edge` maps undersides inward
+        # from the deck edge.
+        self.drip_top, self.splash, self.soffit_edge = drip_top, splash, soffit_edge
 
     def mi(self, mat):
         if mat not in self.mats:
@@ -268,6 +304,34 @@ class Buf:
             t = t.normalized() if t.length > 1e-6 else Vector((1, 0, 0))
             for l in f.loops:
                 l[uv].uv = (l.vert.co.dot(t) / TILE_M, l.vert.co.z / TILE_M)
+        self.grime_uvs()
+
+    def grime_uvs(self):
+        drip = self.bm.loops.layers.uv.new("UVGrime")
+        splash = self.bm.loops.layers.uv.new("UVSplash")
+        clean = 0.999
+        for f in self.bm.faces:
+            n = f.normal
+            cz = f.calc_center_median().z
+            side = abs(n.z) <= 0.7
+            t = UP.cross(n)
+            t = t.normalized() if t.length > 1e-6 else Vector((1, 0, 0))
+            top = self.drip_top(cz) if callable(self.drip_top) else self.drip_top
+            for l in f.loops:
+                co = l.vert.co
+                if side and top is not None:
+                    l[drip].uv = (co.dot(t) / 8.0, min(clean, max(0.0, (top - co.z) / 4.0)))
+                else:
+                    l[drip].uv = (co.x / 8.0, clean)
+                if side and self.splash:
+                    l[splash].uv = (co.dot(t) / 8.0, min(clean, max(0.0, co.z / 2.0)))
+                elif n.z < -0.7 and self.soffit_edge:
+                    # The underside takes the SPLASH drawing, stretched 2.2 times, as a ragged
+                    # soot band creeping in from each deck edge. Drip tongues mapped here drew
+                    # wavy wood-grain stripes across the sloped webs (review v4).
+                    l[splash].uv = (co.y / 8.0, min(clean, max(0.0, (DECK_HALF - abs(co.x)) / 4.4)))
+                else:
+                    l[splash].uv = (co.x / 8.0, clean)
 
     def finish(self, collection, bevel=0.04, segments=2, smooth=True):
         self.world_uvs()
@@ -302,7 +366,8 @@ def pier(col, seed=1):
     """Two legs under one hammerhead cap. Legs taper 3 per cent and lean a fraction of a degree
     each, so the pair reads as poured, not extruded."""
     rng = random.Random(seed)
-    body = Buf("lrt_pier")
+    # Water runs off the cap's edges and from under the cap down the legs; traffic splashes the feet.
+    body = Buf("lrt_pier", drip_top=lambda z: CAP_TOP if z > CAP_TOP - 1.2 else CAP_TOP - 0.95, splash=True)
     for s in (-1, 1):
         # A low footing, barely proud of the road and only 0.1 wider than the leg. The first
         # version flared 0.25 m and 0.14 high and read as a Greek column base (review v1).
@@ -319,7 +384,7 @@ def pier(col, seed=1):
     body.extrude_y(fillet(cap, 0.22, 3), -0.88, 0.88, "lrt_pier")
     body.finish(col, bevel=0.05)
 
-    parts = Buf("lrt_pier_fittings")
+    parts = Buf("lrt_pier_fittings", drip_top=CAP_TOP)
     # Bearings: one pair under each span end, penetrating both cap and soffit.
     for x in (-2.6, 2.6):
         for y in (-0.45, 0.45):
@@ -341,9 +406,11 @@ def pier(col, seed=1):
 def girder_profile():
     """The box girder's cross-section: flat soffit at 8.0, sloping webs, thin wings out to the
     deck edge, flat top at 9.04. Every corner softly rounded."""
-    right = [(3.4, SOFFIT), (4.6, SOFFIT + 0.5), (DECK_HALF, SOFFIT + 0.64), (DECK_HALF, DECK_TOP)]
+    # Walkways at DECK_TOP outside x 3.95; between them a ballast trough TROUGH deep.
+    right = [(3.4, SOFFIT), (4.6, SOFFIT + 0.5), (DECK_HALF, SOFFIT + 0.64), (DECK_HALF, DECK_TOP),
+             (3.95, DECK_TOP), (3.75, DECK_TOP - TROUGH)]
     left = [(-x, z) for x, z in reversed(right)]
-    return fillet(right + left, 0.25, 3)
+    return fillet(right + left, 0.12, 3)
 
 
 def span(col, length, seed):
@@ -358,7 +425,7 @@ def span(col, length, seed):
             return "lrt_deck_top"
         return "lrt_concrete"
 
-    girder = Buf(f"lrt_span_{int(length)}_girder")
+    girder = Buf(f"lrt_span_{int(length)}_girder", drip_top=DECK_TOP, soffit_edge=True)
     girder.extrude_y(girder_profile(), y0, y1, "lrt_concrete", mat_of=by_normal)
     # Cable troughs inside each parapet, sunk into the deck.
     for s in (-1, 1):
@@ -368,7 +435,7 @@ def span(col, length, seed):
 
     # The parapet: LRT-1's tall outer panels, a coping on each, with a joint between panels.
     # Each panel leans and rises by a hair, so the run is drawn, not ruled.
-    parapet = Buf(f"lrt_span_{int(length)}_parapet")
+    parapet = Buf(f"lrt_span_{int(length)}_parapet", drip_top=DECK_TOP + 1.28)
     count = max(2, round((y1 - y0) / 2.4))
     step = (y1 - y0) / count
     panel = fillet([(5.10, SOFFIT + 0.72), (5.38, SOFFIT + 0.78), (5.38, DECK_TOP + 1.12), (5.10, DECK_TOP + 1.12)], 0.07, 2)
@@ -384,36 +451,51 @@ def span(col, length, seed):
             parapet.extrude_y([(s * x, z) for x, z in coping], a - 0.01, b + 0.01, "lrt_coping", xform=xf)
     parapet.finish(col, bevel=0.03)
 
-    # Slab track: a low plinth under each rail, and the rails, head at RAIL_HEAD.
+    # Ballasted track, as LRT-1 really is: a gravel bed filling the trough, chunky concrete
+    # sleepers bedded in it, and rust-brown rails on the sleepers with their head at RAIL_HEAD.
     track = Buf(f"lrt_span_{int(length)}_track")
+    bed_top = RAIL_HEAD - 0.13 - 0.07
+    bed = [(-3.66, DECK_TOP - TROUGH - 0.03), (3.66, DECK_TOP - TROUGH - 0.03), (3.62, bed_top - 0.04),
+           (3.2, bed_top), (1.1, bed_top + 0.02), (-1.1, bed_top + 0.02), (-3.2, bed_top), (-3.62, bed_top - 0.04)]
+    track.extrude_y(fillet(bed, 0.2, 3), y0 + 0.02, y1 - 0.02, "lrt_ballast")
+    sleeper = Buf(f"lrt_span_{int(length)}_sleepers")
+    count = int((y1 - y0 - 0.4) / 0.75)
+    for tx in (-TRACK_X, TRACK_X):
+        for k in range(count):
+            y = y0 + 0.4 + k * (y1 - y0 - 0.8) / max(1, count - 1) + rng.uniform(-0.03, 0.03)
+            sleeper.extrude_z(rounded_rect(1.15, 0.14, 0.05), bed_top - 0.08, RAIL_HEAD - 0.13, "lrt_sleeper",
+                              top_scale=0.97, offset=(tx + rng.uniform(-0.02, 0.02), y))
+    sleeper.finish(col, bevel=0.02)
     rail = fillet([(-0.07, RAIL_HEAD - 0.13), (0.07, RAIL_HEAD - 0.13), (0.035, RAIL_HEAD - 0.1), (0.035, RAIL_HEAD - 0.05),
                    (0.055, RAIL_HEAD - 0.04), (0.055, RAIL_HEAD), (-0.055, RAIL_HEAD), (-0.055, RAIL_HEAD - 0.04),
                    (-0.035, RAIL_HEAD - 0.05), (-0.035, RAIL_HEAD - 0.1)], 0.015, 2)
     for tx in (-TRACK_X, TRACK_X):
         for g in (-GAUGE_HALF, GAUGE_HALF):
-            x = tx + g
-            track.extrude_y(fillet([(x - 0.24, DECK_TOP - 0.03), (x + 0.24, DECK_TOP - 0.03), (x + 0.22, DECK_TOP + 0.06),
-                                    (x - 0.22, DECK_TOP + 0.06)], 0.04, 2), y0 + 0.1, y1 - 0.1, "lrt_plinth")
-            track.extrude_y([(x + px, z) for px, z in rail], y0, y1, "lrt_rail")
+            track.extrude_y([(tx + g + px, z - 0.005) for px, z in rail], y0, y1, "lrt_rail")
     track.finish(col, bevel=0.012)
 
 
 # ------------------------------------------------------------------ the catenary mast
 
-def mast(col):
-    """A tapered steel post with a cantilever arm over its track, a brace and two insulators.
-    Built on the east side; the west ones are mirrored copies."""
-    m = Buf("lrt_mast")
-    top = WIRE_Z + 0.9
-    m.extrude_z(rounded_rect(0.16, 0.13, 0.05), DECK_TOP - 0.03, top, "lrt_mast", top_scale=0.78, offset=(MAST_X, 0))
-    m.extrude_z(rounded_rect(0.26, 0.24, 0.07), DECK_TOP - 0.03, DECK_TOP + 0.22, "lrt_mast", offset=(MAST_X, 0))
-    arm_z = WIRE_Z + 0.55
-    m.tube([Vector((MAST_X + 0.05, 0, arm_z)), Vector((TRACK_X - 0.35, 0, arm_z - 0.06))], 0.075, "lrt_mast", sides=10)
-    m.tube([Vector((MAST_X - 0.02, 0, arm_z - 1.1)), Vector((3.05, 0, arm_z - 0.03))], 0.05, "lrt_mast", sides=8)
-    m.blob(Vector((MAST_X - 0.35, 0, arm_z)), (0.13, 0.09, 0.09), "lrt_insulator")
-    m.blob(Vector((TRACK_X - 0.2, 0, arm_z - 0.2)), (0.07, 0.07, 0.16), "lrt_insulator")
-    m.tube([Vector((TRACK_X - 0.2, 0, arm_z - 0.1)), Vector((TRACK_X, 0, WIRE_Z + 0.02))], 0.025, "lrt_wire", sides=6)
-    m.finish(col, bevel=0.015)
+def gantry(col, seed=3):
+    """A two-post portal over both tracks: tapered posts on the walkways, a chunky crossbeam,
+    knee braces at the corners, and a drop hanger with an insulator over each track."""
+    rng = random.Random(seed)
+    g = Buf("lrt_gantry")
+    beam_z = WIRE_Z + 1.0
+    for s in (-1, 1):
+        g.extrude_z(rounded_rect(0.17, 0.14, 0.05), DECK_TOP - 0.03, beam_z + 0.2, "lrt_mast", top_scale=0.82,
+                    offset=(s * GANTRY_X, 0), lean=(rng.uniform(-0.02, 0.02), 0))
+        g.extrude_z(rounded_rect(0.28, 0.25, 0.07), DECK_TOP - 0.03, DECK_TOP + 0.2, "lrt_mast", offset=(s * GANTRY_X, 0))
+        g.tube([Vector((s * (GANTRY_X - 0.05), 0, beam_z - 1.05)), Vector((s * (GANTRY_X - 1.1), 0, beam_z - 0.05))],
+               0.055, "lrt_mast", sides=8)
+        g.tube([Vector((s * TRACK_X, 0, beam_z - 0.1)), Vector((s * TRACK_X, 0, WIRE_Z + 0.45))], 0.04, "lrt_mast", sides=8)
+        g.blob(Vector((s * TRACK_X, 0, WIRE_Z + 0.36)), (0.07, 0.07, 0.15), "lrt_insulator")
+        g.tube([Vector((s * TRACK_X, 0, WIRE_Z + 0.25)), Vector((s * (TRACK_X - 0.25), 0, WIRE_Z + 0.02))], 0.022, "lrt_wire", sides=6)
+    beam = fillet([(-GANTRY_X - 0.3, beam_z - 0.15), (GANTRY_X + 0.3, beam_z - 0.15), (GANTRY_X + 0.3, beam_z + 0.15),
+                   (-GANTRY_X - 0.3, beam_z + 0.15)], 0.06, 2)
+    g.extrude_y(beam, -0.12, 0.12, "lrt_mast")
+    g.finish(col, bevel=0.015)
 
 
 def wires(col, ys):
@@ -454,16 +536,15 @@ def assemble():
         c = collection(f"lrt_span_{L}", kit)
         span(c, float(L), seed=L)
         protos[L] = c
-    mc = collection("lrt_mast", kit)
-    mast(mc)
+    gc = collection("lrt_gantry", kit)
+    gantry(gc)
     for y in PIER_ROWS:
         instance(protos["pier"], run, (0, y, 0))
-        instance(mc, run, (0, y, 0))
-        instance(mc, run, (0, y, 0), mirror_x=True)
+        instance(gc, run, (0, y, 0))
     for a, b in zip(PIER_ROWS, PIER_ROWS[1:]):
         instance(protos[round(b - a)], run, (0, a, 0))
     wires(run, list(PIER_ROWS))
-    print(f"[ilalim-lrt] kit: pier, spans {lengths}, mast; {len(run.objects)} placed objects")
+    print(f"[ilalim-lrt] kit: pier, spans {lengths}, gantry; {len(run.objects)} placed objects")
 
 
 def review_set():
@@ -544,6 +625,7 @@ def preview(version):
         ("deck_top", Vector((9.0, -17.0, 13.5)), Vector((0, 2, 10.5)), 28),
         ("aerial", Vector((34.0, -46.0, 24.0)), Vector((0, 4, 7)), 30),
         ("elevation", Vector((38.0, -2.0, 5.0)), Vector((0, -2, 6)), 30),
+        ("grime_side", Vector((13.0, -22.0, 3.2)), Vector((4.5, -8.0, 7.0)), 30),
     ]
     for name, pos, tgt, lens in shots:
         cam.location, cam.data.lens = pos, lens

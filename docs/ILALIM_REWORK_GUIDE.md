@@ -85,7 +85,25 @@ Self-review faults fixed before the owner saw it:
 - Anti-tiling turned the pour lines diagonal. Directional textures are now left out of it, as
   on Kanto.
 
-NEXT: owner review of the guideway kit. Then the next kit, and § 0.6 still open.
+**Guideway v6: dirt, grime and the real track.** The owner said: "you should take a look at how
+the lrt way actually looks. theres no dirt or grime on what you have". The references are in
+research.md § 8. The changes:
+- **Positional grime.** Two drawn multiplier overlays, `grime_drips` and `grime_splash`, go on
+  through the UV maps `UVGrime` and `UVSplash`. Stain tongues hang from the coping and the cap,
+  the pier feet carry a splash band, and a soot band creeps in from the deck edges underneath.
+- **Ballasted track** with sleepers and rust-brown rails, in a trough in the girder. The rail head
+  is still at 9.19.
+- **Portal gantries** replace the single masts.
+
+The self-review caught four more faults:
+- the drips were airbrushed blur, then melting slime; they are now drawn shapes;
+- the underside drips drew wood-grain stripes; the underside now takes the soot band instead;
+- the ballast read as cobble paving, from its outlines and its bump;
+- the textures were too strong.
+
+⚠️ For ILALIM-1.4: Unity needs the two extra UV channels, or the grime baked into the albedo.
+
+NEXT: owner review of guideway v6. Then the next kit. § 0.6 is still open.
 
 Read first, in order: [AGENTS](../AGENTS.md), [VISION](VISION.md), [WORKING_RULES](WORKING_RULES.md),
 this guide, then the map's existing design document [Ilalim_Ng_Tulay.md](Ilalim_Ng_Tulay.md)
