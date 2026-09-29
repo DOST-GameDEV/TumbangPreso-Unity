@@ -179,8 +179,10 @@ namespace TumbangPreso.Visual
                 Vector3 wideEye = PhDollSpot + new Vector3(1.1f, 1.5f, 4.4f), wideLook = (control + face) * .5f;
                 // THE STARE: a dolly zoom. The lens pushes in on its face while the lens widens, so its face holds its size and the
                 // world behind it stretches away: the moment it has you.
-                float zoom = Ease(PhFaceAt + .02f, PhBodyTurnAt, t);
-                float distance = Mathf.Lerp(Mathf.Lerp(2.3f, 1.9f, Ease(PhCranks[0].To, PhFaceAt, t)), 1.3f, zoom);
+                // v20 (the owner on v19: *"hold that frame"*): the lens HOLDS the frame it had as the face locked on, creeping in only a
+                // little; v19's dolly zoom widened it away from the close face he picked.
+                float zoom = Ease(PhFaceAt + .02f, PhEndAt, t);
+                float distance = Mathf.Lerp(Mathf.Lerp(2.3f, 1.9f, Ease(PhCranks[0].To, PhFaceAt, t)), 1.7f, zoom);
                 // As its body swings round under the head the lens backs off, or the turning head comes through it (v13).
                 distance = Mathf.Lerp(distance, 2.4f, Ease(PhBodyTurnAt - .03f, PhBodyTurnAt + .12f, t));
                 // Between her and it, a little toward her, so she is behind the lens and it is alone with you (v15: +x put her in shot).
@@ -188,7 +190,7 @@ namespace TumbangPreso.Visual
                 eye = Vector3.Lerp(wideEye, closeEye, inward);
                 look = Vector3.Lerp(wideLook, face, inward);
                 // Half a dolly zoom (to 46 degrees, not the whole way): wider, and she comes into the frame beside it (v14).
-                float held = Mathf.Lerp(38f, 46f, zoom);
+                float held = Mathf.Lerp(38f, 36f, zoom);
                 fov = Mathf.Lerp(54f, held, inward) - 4f * Flash(t, PhFaceAt + .02f, .1f);
                 return;
             }

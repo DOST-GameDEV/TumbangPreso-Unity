@@ -295,7 +295,7 @@ def phaister():
     ⚠️ THE CAST IS CHIBI: THE ARMS ARE ABOUT A HEAD LONG, and hands overhead vanish inside the brim, so her cast is LOW and WIDE.
     ⚠️ THE HEAD GOES BACK ONLY 10 DEGREES: further and the wide brim turns into a flat slab toward the camera.
     """
-    p = Performance("phaister", 6.35)
+    p = Performance("phaister", 6.0)
     p.voice = (1.3, "hero_phaister_ult")
 
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
@@ -330,16 +330,12 @@ def phaister():
     p.key(2.84, blown, punch=True)
     p.key(3.2, watch_up)
     p.key(3.8, watch)
-    p.hold(3.8, 5.3, watch)
-    p.key(5.45, flinch, punch=True)
-    p.key(5.7, watch)
-    p.key(5.95, smirk)
-    p.key(6.35, smirk.but(torso=(-2, -12, 4), head=(3, 18, 12)))
+    p.hold(3.8, 6.0, watch)
 
     # She rises 0.8 m and hangs there through the summoning, bobbing. As the gloves begin to crank its head she floats up HIGH to
     # watch from above (out of THE STARE: it is alone with you), then drops back down behind it as it lands.
     p.rise(0, 0).rise(.9, 0).rise(1.2, .25).rise(1.65, .8).rise(1.9, .86).rise(2.8, .8).rise(2.92, .95).rise(3.6, .85) \
-        .rise(4.42, .8).rise(4.72, 3.6).rise(5.3, 3.7).rise(5.6, .06).rise(5.72, 0)
+        .rise(4.42, .8).rise(4.72, 3.6).rise(6.0, 3.7)
 
     # Shot distances are real metres (she is 2.38 m to the hat tip). Hero-local: +x her right, +z in front of her.
     # THE DAY DIES: wide and low in front, the whole sky in frame, nearly still.
@@ -354,12 +350,9 @@ def phaister():
     p.shot(3.0, 3.85, (3.1, 1.6, 3.8), (1.3, 5.0, 0), 58, eye_to=(3.3, 1.2, 4.2), look_to=(1.3, 4.2, 0), fov_to=62)
     # THE DESCENT: from the court looking up, it coming down (computed).
     p.shot(3.85, 4.45, (1.9, .7, 3.6), (1.3, 3.0, 0), 56, eye_to=(1.8, .6, 3.4), look_to=(1.3, 2.0, 0), fov_to=58)
-    # THE TWIST: the gloves crank the control, then in behind its head as its face comes round into the lens (computed).
-    p.shot(4.45, 5.35, (2.4, 1.8, 4.4), (1.3, 3.2, 0), 54, eye_to=(1.6, 2.2, 2.0), look_to=(1.3, 2.3, 0), fov_to=40, close=True)
-    # THE DROP: low and wide from in front, the landing, her and the opponents.
-    p.shot(5.35, 5.75, (-1.8, .45, 4.8), (1.0, 1.3, .3), 62, eye_to=(-1.6, .5, 4.5), look_to=(1.0, 1.3, .3), fov_to=60)
-    # THE PUPPET: in on its face as it snaps up, then back to it, her and the opponents (computed).
-    p.shot(5.75, 6.35, (1.6, 1.7, 3.0), (1.3, 1.7, .3), 44, eye_to=(2.4, 2.2, 6.0), look_to=(.8, 1.3, .3), fov_to=56)
+    # THE TWIST and THE STARE: the gloves crank the control, then in behind its head as its face comes round into the lens, and it
+    # holds on its stare to the end, the dark closing round its eyes (computed). The cutscene ENDS here (the owner: "just end it here").
+    p.shot(4.45, 6.0, (2.4, 1.8, 4.4), (1.3, 3.2, 0), 54, eye_to=(1.6, 2.2, 2.0), look_to=(1.3, 2.3, 0), fov_to=40, close=True)
     p.locked((1.2, 1.8, 6.2), (.8, 2.4, .3), 60)
     return p
 

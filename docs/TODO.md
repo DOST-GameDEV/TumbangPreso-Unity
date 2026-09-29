@@ -1197,7 +1197,15 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   THE TWIST in its own shot (the gloves crank the control round, its head ratchets 180 degrees, an ink frame as its face locks on);
   THE STARE (burning pinpoint eyes, twitches, a half dolly zoom, the dark closing in; she floats up out of frame); an ink frame as its
   face clears the pupil; 6.35 s. In play the doll is 0.5 of a player's speed with a heavier gait (`GaitStyles.PhaisterDoll` v2, a
-  slump on every step). Film v18 and `doll_walk_v5` sent. OPEN: the owner's verdict; the hip doll in her model is still the old one.
+  slump on every step). Film v18 and `doll_walk_v5` sent.
+  v19 to v21 (the owner on v18: *"just end it here"* on the stare, *"hold that frame and make the ending transition ... scary"*, *"all ur
+  impact frames look very similar"*, *"make this dark frame show his eyes"*, *"or draw eyes similar to his 0 and X"*, *"his aniamtion
+  seems poppy and fast"*): the cutscene ENDS ON THE STARE, 6.0 s (protocol 93): the frame holds, then fades to black leaving only his
+  O and X burning (drawn over his real eyes, `PhaisterImpact` `_Iris`, `_Eyes`); no body turn, drop or puppet (their timings are past
+  the end; v20 left them live and the doll turned and two ink frames fired on nothing). Each ink frame its own: the eye a target of
+  rings, the pull a one-frame rake, the emergence three torn frames, the stare his face in ink with his eyes crimson (`_Style`). The
+  doll's gait v3: plain slow swings, dragged steps, a slow sink per step, a heaving yank. Cutscene-only film v21 and `doll_walk_v6`
+  sent. OPEN: the owner's verdict; the rings frame's inverted cyan; the hip doll in her model is still the old one.
   [~] The doll's own glyph (`AbilityGlyph.PhaisterVoodooDoll`, a doll hung from the circle on three strings), its nameplate
   PHAISTER'S DOLL in her colour, the grey stitched X over it while tagged and +100 over it in her colour when it scores
   (`Visual.VoodooDollPresence`, `MatchDirector.CompanionScored`, protocol 91).

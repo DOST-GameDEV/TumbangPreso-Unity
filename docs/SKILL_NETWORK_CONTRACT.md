@@ -280,7 +280,8 @@ body blocks, bot tag targets, flair seat lookups) find it.
   `ApplyNetworkScoreEvent` only when that body is a companion owned by `slot`. It is
   presentation (the +100 over the doll in its owner's colour), never a second payment.
 - Protocol92: Phaister's introduction is 6.35 s (the shared phase every peer derives) and
-  the doll's `BodySpeedScale` is 0.5 (`VoodooRules.DollSpeedScale`).
+  the doll's `BodySpeedScale` is 0.5 (`VoodooRules.DollSpeedScale`). Protocol93: the
+  introduction is 6.0 s (it ends on the doll's stare).
 - Presentation owned by the body on every peer: its nameplate (`CharacterNameplate` reads a
   companion seat: the owner's colour, the body's own name), THE CIRCLE as a portal that shuts
   3 s after the hand-back, and the marionette control over its head with its wires

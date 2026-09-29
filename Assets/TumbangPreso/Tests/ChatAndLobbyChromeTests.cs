@@ -349,7 +349,8 @@ namespace TumbangPreso.Tests
             //90 adds companion bodies (seats 4 to 7, `CompanionSet`).
             //91 names the scoring body in `Score` and lengthens Phaister's introduction to 6.4 s (VOODOO DOLL v7).
             //92 makes Phaister's introduction 6.35 s (THE TWIST) and the doll 0.5 of a player's speed.
-            Assert.AreEqual(92, NetSession.ProtocolVersion,
+            //93 makes Phaister's introduction 6.0 s (it ends on the doll's stare).
+            Assert.AreEqual(93, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

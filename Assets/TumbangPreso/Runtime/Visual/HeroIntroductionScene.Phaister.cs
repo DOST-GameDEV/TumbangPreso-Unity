@@ -34,10 +34,20 @@ namespace TumbangPreso.Visual
         // v12 (the owner on v11: *"put more focus as well on the head twist its fine if u speed up other parts a bit"*): everything
         // before THE TWIST is quicker, and THE TWIST has a shot of its own.
         private const float PhRiseAt = 0.90f, PhSeamAt = 1.70f, PhEyeAt = 2.40f, PhLockAt = 2.72f, PhBurstAt = 2.78f;
-        private const float PhGlovesAt = 3.00f, PhPullAt = 3.30f, PhDescentAt = 3.85f, PhTwistAt = 4.45f, PhFaceAt = 4.80f, PhBodyTurnAt = 5.18f;
+        private const float PhGlovesAt = 3.00f, PhPullAt = 3.30f, PhDescentAt = 3.85f, PhTwistAt = 4.45f, PhFaceAt = 4.80f, PhBodyTurnAt = 99f;
+        /// <summary>
+        /// v19, IT ENDS ON THE STARE (the owner on v18: *"just end it here"*, then *"hold that frame and make the ending transition of
+        /// this frame to actual gameplay scary"*). The stare holds; from `PhIrisAt` the dark closes in until only its two burning eyes
+        /// are left in black; they flare; one last ink frame; play. The body never turns round and it never drops in the cutscene: play
+        /// stands it up beside her (a cut, out of the black).
+        /// </summary>
+        private const float PhIrisAt = 5.1f, PhEndAt = 6.0f;
         /// <summary>When its face clears the pupil, dragged out head-first (an ink frame: the owner, *"add impact frames for him"*).</summary>
         private const float PhEmergeAt = 3.52f;
-        private const float PhDropAt = 5.35f, PhLandAt = 5.42f, PhPuppetAt = 5.75f;
+        // ⚠️ v21: THE DROP, THE LANDING and THE PUPPET no longer happen in the cutscene (it ends on the stare). v20 left them at 5.35,
+        // 5.42 and 5.75: the doll fell and its body turned round after the stare, and two ink frames fired on nothing (the owner:
+        // *"WHHY DOES he turn againa fter this"*, *"the impact frame shit after the last pic i sent maeks no sense"*). Past the end.
+        private const float PhDropAt = 99f, PhLandAt = 99.07f, PhPuppetAt = 99.4f;
         /// <summary>When the circle starts to sew round the seam; its age runs 1:1 from there.</summary>
         private const float PhCircleOpens = 1.70f;
         /// <summary>THE TWIST's three cranks of the control: (start, end, head turn reached, degrees).</summary>
@@ -445,7 +455,8 @@ namespace TumbangPreso.Visual
 
         private void SamplePhaister(float t)
         {
-            float leave = 1 - Ease(Seconds - .45f, Seconds - .05f, t);
+            // The night holds to the last frame: the picture goes to black round its eyes, never back to day, before play.
+            float leave = 1 - Ease(Seconds - .02f, Seconds, t);
             float reach = PhReach(t);
             Tint(_nightDome, leave > .02f ? leave : 0f); Tint(_nightFloor, leave > .02f ? leave : 0f);
             PhNightLight(t);
@@ -709,7 +720,8 @@ namespace TumbangPreso.Visual
                 _phControl.localPosition = control;
                 _phControl.localRotation = controlTurn;
                 // The gloves grip the bar's ends, sleeves running back up into the pupil; they let go and draw back into it at the end.
-                float withdraw = Ease(PhPuppetAt + .25f, Seconds - .02f, t);
+                // They hold the control through THE STARE and draw back into the eye as the dark closes.
+                float withdraw = Ease(PhIrisAt, PhEndAt - .05f, t);
                 PlaceGlove(_phGloveL, 1, withdraw);
                 PlaceGlove(_phGloveR, 2, withdraw);
             }
@@ -763,7 +775,7 @@ namespace TumbangPreso.Visual
                 foreach (float at in new[] { PhFaceAt + .14f, PhFaceAt + .25f, PhFaceAt + .33f }) twitch += Flash(t, at, .03f) * (at == PhFaceAt + .33f ? .5f : 1f);
                 torso = new Vector3(10f - 10f * jerk, 0f, 4f * Mathf.Sin(t * 3f) * (1f - round));
                 head = new Vector3(Mathf.Lerp(20f - 26f * jerk, -8f, round) + 5f * twitch * stare, headYaw + 7f * twitch * stare,
-                                   Mathf.Lerp(14f, 0f, round) + 18f * stare - 9f * twitch * stare);
+                                   Mathf.Lerp(14f, 0f, round) + 18f * stare - 9f * twitch * stare + 12f * Ease(PhFaceAt + .4f, PhEndAt, t));
                 lRaise = 150f + 20f * jerk; lSpread = 42f; rRaise = 146f + 22f * jerk; rSpread = 46f;
                 lLeg = 6f * Mathf.Sin(t * 4f); rLeg = -6f * Mathf.Sin(t * 4f + .6f);
             }
@@ -845,17 +857,24 @@ namespace TumbangPreso.Visual
                     PlaceGlow(g, Vector3.zero, Vector3.one, Quaternion.identity, 0f);
                 return;
             }
-            float stare = Ease(PhFaceAt - .02f, PhFaceAt + .05f, t) * (1f - .6f * Ease(PhBodyTurnAt + .1f, PhDropAt, t));
+            float stare = Ease(PhFaceAt - .02f, PhFaceAt + .05f, t);
+            // The flare before the cut, and the eyes growing a little as the dark closes on them.
             float puppet = Flash(t, PhPuppetAt + .04f, .25f) + .5f * Ease(PhPuppetAt, PhPuppetAt + .2f, t);
+            // The eyes brighten as the dark closes on them and FLARE for two frames before the cut, staying pinpoints (v19's flare
+            // swelled them into two soft blobs).
+            float closing = .8f * Ease(PhIrisAt, PhEndAt - .15f, t) + 2.5f * Flash(t, PhEndAt - .05f, .06f);
             float flicker = .75f + .25f * Mathf.Sin(t * 37f) * Mathf.Sin(t * 23f + 1f);
-            float power = (.55f + 2.2f * stare + 1.8f * puppet) * flicker * leave;
+            float power = (.55f + 2.2f * stare + 1.8f * puppet + 2f * closing) * flicker * leave;
             Vector3 facing = _phMHead.TransformDirection(Vector3.forward);
             Vector3 face = _root.transform.InverseTransformDirection(facing);
             foreach (var (glow, bloom, x) in new[] { (_phDollEyeL, _phDollEyeBloomL, .065f), (_phDollEyeR, _phDollEyeBloomR, -.065f) })
             {
                 Vector3 at = _root.transform.InverseTransformPoint(_phMHead.TransformPoint(new Vector3(x, .146f, .17f)));
-                PlaceGlow(glow, at, Vector3.one * (.07f + .03f * stare + .06f * puppet), Quaternion.identity, power * 3.5f, face);
-                PlaceGlow(bloom, at, Vector3.one * (.35f + .35f * stare + .3f * puppet), Quaternion.identity, power * .55f, face);
+                if (glow == _phDollEyeL) _phEyeAtL = at; else _phEyeAtR = at;
+                // As the dark closes the glows shrink back into the eyes, so it is HIS button and X that burn in the black, not two dots.
+                float shrink = 1f - .7f * Ease(PhIrisAt, PhEndAt - .2f, t);
+                PlaceGlow(glow, at, Vector3.one * (.07f + .03f * stare + .06f * puppet) * shrink, Quaternion.identity, power * 3.5f, face);
+                PlaceGlow(bloom, at, Vector3.one * (.35f + .35f * stare + .3f * puppet) * shrink, Quaternion.identity, power * .55f, face);
             }
         }
 
@@ -921,6 +940,7 @@ namespace TumbangPreso.Visual
         }
 
         private Material _phImpact;
+        private Vector3 _phEyeAtL, _phEyeAtR;
 
         /// <summary>
         /// THE IMPACT FRAMES (the owner's reference: *"a complete 1-2 frames change everything biriefy to put focus on some moments"*):
@@ -931,28 +951,47 @@ namespace TumbangPreso.Visual
         {
             if (_reducedEffects) return;
             int hit = -1;
-            for (int i = 0; i < PhImpacts.Length; i++) if (t >= PhImpacts[i] && t < PhImpacts[i] + .067f) hit = i;
+            for (int i = 0; i < PhImpacts.Length; i++) if (t >= PhImpacts[i] && t < PhImpacts[i] + .1f) hit = i;
             float vignette = Ease(PhFaceAt + .06f, PhFaceAt + .16f, t) * (1f - Ease(PhBodyTurnAt, PhBodyTurnAt + .1f, t));
+            // v21 (the owner: *"after this js let it fade to darkness with it ending in only his eyes glowing"*): a plain fade to black
+            // from 5.1 s, his O and X burning in over his real eyes as it goes; the last quarter second is his eyes alone.
+            float iris = Ease(PhIrisAt, PhEndAt - .25f, t);
             if (hit < 0 && vignette <= .01f) return;
             if (_phImpact == null)
             {
                 var shader = Resources.Load<Shader>("Shaders/PhaisterImpact");
                 if (shader == null) return;
                 _phImpact = new Material(shader) { name = "PhaisterImpact" };
-                _phImpact.SetColor("_Light", new Color(.95f, .94f, .96f, 1f));
-                _phImpact.SetColor("_Dark", new Color(.03f, .02f, .04f, 1f));
                 _phImpact.SetColor("_Ink", new Color(.85f, .10f, .22f, 1f));
             }
+            // EACH HIT ITS OWN FRAME (the owner: *"all ur impact frames look very similar"*): its style, its two tones, how many frames.
+            int style = 0; float frames = 2f; Color light = new Color(.95f, .94f, .96f, 1f), dark = new Color(.03f, .02f, .04f, 1f);
+            if (hit == 3) { style = 4; frames = 2f; }                                                                          // the stare: his face in ink
+            else if (hit == 0) { style = 1; light = new Color(.95f, .16f, .24f, 1f); dark = new Color(.02f, 0f, .02f, 1f); }       // the eye: a crimson target
+            else if (hit == 1) { style = 2; frames = 1f; }                                                                    // the pull: raked, one frame
+            else if (hit == 2) { style = 3; frames = 3f; light = new Color(.1f, .06f, .12f, 1f); dark = new Color(.96f, .92f, .88f, 1f); } // the emergence: torn, a negative
+            if (hit >= 0 && t >= PhImpacts[hit] + frames / 30f) hit = -1;
+            if (hit < 0 && vignette <= .01f) return;
+            _phImpact.SetColor("_Light", light);
+            _phImpact.SetColor("_Dark", dark);
+            _phImpact.SetFloat("_Style", style);
+            _phImpact.SetVector("_Dir", new Vector4(0f, -1f, 0f, 0f));
             Vector3 focus = hit < 0 ? PhDollFace() : hit == 0 ? PhEye : hit == 1 ? PhControlAt(t, out _) : hit == 4 ? PhDollSpot + Vector3.up * .8f : PhDollFace();
             var vp = camera.WorldToViewportPoint(_root.transform.TransformPoint(focus));
             if (vp.z < 0f) vp = new Vector3(.5f, .5f, 1f);
             bool first = hit >= 0 && t < PhImpacts[hit] + .034f;
+            bool third = hit >= 0 && t >= PhImpacts[hit] + .067f;
             _phImpact.SetVector("_Focus", new Vector4(Mathf.Clamp01(vp.x), Mathf.Clamp01(vp.y), 0f, 0f));
-            _phImpact.SetFloat("_Amount", hit < 0 ? 0f : first ? 1f : .85f);
+            _phImpact.SetFloat("_Amount", hit < 0 ? 0f : first ? 1f : third ? .55f : .85f);
             _phImpact.SetFloat("_Seed", Mathf.Max(0, hit) * 2 + (first ? 0f : 1f));
             _phImpact.SetFloat("_Lines", hit < 0 ? 0f : 1f);
-            _phImpact.SetFloat("_Zoom", hit < 0 ? 0f : first ? .06f : .03f);
+            _phImpact.SetFloat("_Zoom", hit < 0 ? 0f : hit == 1 ? .1f : first ? .06f : .03f);
             _phImpact.SetFloat("_Vignette", hit < 0 ? vignette * .85f : 0f);
+            // THE IRIS: the dark closes in until only its two eyes burn in black.
+            var eyeA = camera.WorldToViewportPoint(_root.transform.TransformPoint(_phEyeAtL));
+            var eyeB = camera.WorldToViewportPoint(_root.transform.TransformPoint(_phEyeAtR));
+            _phImpact.SetVector("_Eyes", new Vector4(eyeA.x, eyeA.y, eyeB.x, eyeB.y));
+            _phImpact.SetFloat("_Iris", hit < 0 ? iris : 0f);
             var tmp = RenderTexture.GetTemporary(frame.descriptor);
             Graphics.Blit(frame, tmp, _phImpact);
             Graphics.Blit(tmp, frame);
