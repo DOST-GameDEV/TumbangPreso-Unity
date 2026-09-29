@@ -124,9 +124,23 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
   - cable shadows on the court;
   - how big Rizal Hall reads from the court;
   - names.
-- **Then ILALIM-1.4:** export and a Unity builder into an unregistered sample scene. The grime UV
-  channels, emissive and cutout materials, the train prefab, the collider resizes and the
-  triangle budget are all listed below.
+- **ILALIM-1.4, IN UNITY (2026-09-30, owner: "put it in game").** Unregistered sample scene
+  `Scenes/Samples/IlalimRebuild.unity`:
+  - Export: `blender -b ArtSource/ilalim/ilalim_city.blend --python tools/export_ilalim_unity.py`
+    (about 2 minutes, never saves a .blend) writes `Art/IlalimRebuild/` (Models, Textures,
+    `ilalim_layout.json`). Its docstring records every decision.
+  - Build: `tools/run_unity_guarded.py -batchmode -force-d3d11 -tp-profile <name> -executeMethod
+    TumbangPreso.EditorTools.MapKit.IlalimSceneBuilder.RunReview` (build, frame proof, geometry
+    check, renders into `Logs/ilalim-unity/vN`).
+  - ⚠️ The frame: the kits are modelled in the game's frame, so Blender (x, y, z) is Unity
+    (x, z, y), NOT Kanto's (-x, z, -y). The frame proof reads the shipped scene.
+  - Grime stays positional: UVGrime, UVSplash, UVSill travel as TEXCOORD 1, 2, 3 and
+    `Shaders/IlalimPainted.shader` multiplies them. The piers alone are baked (Cycles) so they can
+    wear `TumbangPreso/NearFade`. Leaves use `LagoonFoliage`.
+  - About 6.43 million placed triangles (trees 2.78 million). Nothing decimated; trees, lilies,
+    rooftop items, street life and parked traffic get cull-only LODGroups.
+  - OPEN: the WorldLookProfile retune in Play (the sample wears the Ilalim row through an alias in
+    `WorldLookProfile.Find`), the owner's look review, then ILALIM-1.5 and 1.6.
 
 ---
 

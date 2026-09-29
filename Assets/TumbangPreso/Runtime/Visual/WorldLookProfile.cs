@@ -316,6 +316,10 @@ namespace TumbangPreso.Visual
             // docs/LAGOON_REWORK_GUIDE.md § 7) has its own sunset entry; a profile asset authored
             // before that entry existed falls back to the Lagoon's look rather than to none.
             if(map=="LagoonCove")return Find("Lagoon");
+            // The Ilalim ng Tulay rebuild's unregistered sample scene (ILALIM-1.4,
+            // Editor/MapKit/IlalimSceneBuilder.cs) wears the shipped Ilalim look until it is swapped
+            // in under the IlalimNgTulay name (ILALIM-1.6), where that row applies directly.
+            if(map=="IlalimRebuild")return Find("IlalimNgTulay");
             return null;
         }
         private static WorldLookProfile _current;

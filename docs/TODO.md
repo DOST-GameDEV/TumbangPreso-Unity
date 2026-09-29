@@ -1650,7 +1650,16 @@ after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
 - [ ] ILALIM-1.4 Export, and a Unity builder that writes an UNREGISTERED sample scene. Every column
   goes on `TumbangPreso/NearFade`, because the AO NearGuard depends on it. Retune the Ilalim
   WorldLookProfile row in Play. Keep BridgeHoop, the overclock pad, LrtTrainFlyby, and the match
-  between the train and the train window.
+  between the train and the train window. BUILT 2026-09-30 (owner: "put it in game"):
+  `tools/export_ilalim_unity.py` writes `Art/IlalimRebuild/` (614 prototype .glb, 628 materials,
+  the pier grime baked for NearFade), and `Editor/MapKit/IlalimSceneBuilder.cs` (`.Run`,
+  `.RunReview`) writes the unregistered `Scenes/Samples/IlalimRebuild.unity`. Blender (x, y, z) is
+  Unity (x, z, y) here, proved against the shipped scene (`Logs/ilalim-unity/v2/frame_proof.txt`:
+  hoop, pares cart, pillars, walls and spawns agree to 0.000 m). Gameplay wired: Bounds, pier
+  legs with HazardVolume, deck, hoop, pad, pisonet booths, cord trigger, pares cart, flyby (150 s,
+  6 s, window 24.3). Review renders `Logs/ilalim-unity/v2`. OPEN: the WorldLookProfile retune in
+  Play (the rebuild wears the Ilalim row through an alias: sun lifted to 52 degrees, fog 36..180 m,
+  against Blender's 27 degree sun and 45..405 m haze), and the owner's look review.
 - [ ] ILALIM-1.5 Checks:
   - MapGeometryCheck is clean (Ilalim is Gated);
   - the map's probes are green against a clean baseline;
