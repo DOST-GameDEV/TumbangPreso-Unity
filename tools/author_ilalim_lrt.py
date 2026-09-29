@@ -89,7 +89,9 @@ TROUGH = 0.20                # the ballast trough's depth below the walkways
 # Material: (texture, tint multiplier or None for the texture's own colour, normal strength)
 MATERIALS = {
     "lrt_concrete":  ("lrt_concrete", None, 0.6),
-    "lrt_pier":      ("lrt_concrete", (1.0, 0.99, 0.97), 0.6),
+    "lrt_pier":      ("lrt_pier", None, 0.5),
+    "lrt_pier_cap":  ("lrt_girder", (1.06, 1.06, 1.05), 0.5),
+    "lrt_girder":    ("lrt_girder", None, 0.5),
     "lrt_coping":    ("lrt_concrete", (1.07, 1.07, 1.06), 0.5),
     "lrt_soffit":    ("lrt_soffit", None, 0.5),
     "lrt_deck_top":  ("lrt_track_bed", None, 0.4),
@@ -106,7 +108,7 @@ MATERIALS = {
 # Directional textures (the concrete's pour lines, the soffit's joints) are left out: the rotated
 # second sample drew their lines diagonally across the piers and girder (review v2).
 ANTI_TILE = {"lrt_track_bed"}
-GRIMED = {"lrt_concrete", "lrt_pier", "lrt_coping", "lrt_soffit", "lrt_sleeper"}
+GRIMED = {"lrt_concrete", "lrt_pier", "lrt_pier_cap", "lrt_girder", "lrt_coping", "lrt_soffit", "lrt_sleeper"}
 
 
 def material(name):
@@ -381,12 +383,14 @@ def pier(col, seed=1):
     # with a flat lintel underside and read as a temple cornice (review v1).
     cap = [(-5.6, CAP_TOP - 0.40), (-4.9, CAP_TOP - 1.05), (-3.0, CAP_TOP - 0.95), (0.0, CAP_TOP - 0.84),
            (3.0, CAP_TOP - 0.95), (4.9, CAP_TOP - 1.05), (5.6, CAP_TOP - 0.40), (5.6, CAP_TOP), (-5.6, CAP_TOP)]
-    body.extrude_y(fillet(cap, 0.22, 3), -0.88, 0.88, "lrt_pier")
+    # The cap takes the girders' grey, not the columns' sand: on Taft the pale columns stand
+    # clear of everything they carry (owner, review v6).
+    body.extrude_y(fillet(cap, 0.22, 3), -0.88, 0.88, "lrt_pier_cap")
     body.finish(col, bevel=0.05)
 
     parts = Buf("lrt_pier_fittings", drip_top=CAP_TOP)
-    # Bearings: one pair under each span end, penetrating both cap and soffit.
-    for x in (-2.6, 2.6):
+    # Bearings: one under each girder at each span end, penetrating both cap and girder.
+    for x in GIRDER_XS + (-4.85, 4.85):
         for y in (-0.45, 0.45):
             parts.extrude_z(rounded_rect(0.26, 0.2, 0.06), CAP_TOP - 0.04, SOFFIT + 0.05, "lrt_bearing",
                             offset=(x, y))
@@ -403,18 +407,26 @@ def pier(col, seed=1):
 
 # ------------------------------------------------------------------ a girder span
 
-def girder_profile():
-    """The box girder's cross-section: flat soffit at 8.0, sloping webs, thin wings out to the
-    deck edge, flat top at 9.04. Every corner softly rounded."""
-    # Walkways at DECK_TOP outside x 3.95; between them a ballast trough TROUGH deep.
-    right = [(3.4, SOFFIT), (4.6, SOFFIT + 0.5), (DECK_HALF, SOFFIT + 0.64), (DECK_HALF, DECK_TOP),
-             (3.95, DECK_TOP), (3.75, DECK_TOP - TROUGH)]
-    left = [(-x, z) for x, z in reversed(right)]
-    return fillet(right + left, 0.12, 3)
+GIRDER_XS = (-2.85, -0.95, 0.95, 2.85)
+SLAB_BOTTOM = SOFFIT + 0.60
+
+
+def slab_profile():
+    """The deck slab: walkways at DECK_TOP outside x 3.95, a ballast trough TROUGH deep between
+    them, and a flat underside at SLAB_BOTTOM that the girders carry."""
+    pts = [(-DECK_HALF, SLAB_BOTTOM), (DECK_HALF, SLAB_BOTTOM), (DECK_HALF, DECK_TOP), (3.95, DECK_TOP),
+           (3.75, DECK_TOP - TROUGH), (-3.75, DECK_TOP - TROUGH), (-3.95, DECK_TOP), (-DECK_HALF, DECK_TOP)]
+    return fillet(pts, 0.1, 3)
 
 
 def span(col, length, seed):
-    """One span, running y 0..length (the joints are left by the caller's placement)."""
+    """One span, running y 0..length (the joints are left by the caller's placement).
+
+    THE UNDERSIDE IS GIRDERS, NOT A BOX (owner's street view, review v6: "the underside also
+    looks different from what you currently have"). On Taft the deck is a slab carried by
+    separate precast girders, with deep dark channels between them, a heavy fascia beam along
+    each edge under the parapet, and an end crossbeam where the span bears on the pier. The
+    lowest face is still SOFFIT (8.0) and the deck top DECK_TOP (9.04)."""
     rng = random.Random(seed)
     y0, y1 = JOINT, length - JOINT
 
@@ -423,15 +435,37 @@ def span(col, length, seed):
             return "lrt_soffit"
         if f.normal.z > 0.6:
             return "lrt_deck_top"
-        return "lrt_concrete"
+        return "lrt_girder"
 
-    girder = Buf(f"lrt_span_{int(length)}_girder", drip_top=DECK_TOP, soffit_edge=True)
-    girder.extrude_y(girder_profile(), y0, y1, "lrt_concrete", mat_of=by_normal)
+    # The inner girders carry only the soot band underneath: rain tongues drawn on them read as
+    # blocky patches (review v7). The tongues belong on the outer fascia, where water runs.
+    # Only the slab takes the soot band; on the girders' own undersides it drew blocks (review v8).
+    slab = Buf(f"lrt_span_{int(length)}_slab", soffit_edge=True)
+    girder = Buf(f"lrt_span_{int(length)}_girder")
+    edge = Buf(f"lrt_span_{int(length)}_fascia", drip_top=DECK_TOP)
+    slab.extrude_y(slab_profile(), y0, y1, "lrt_girder", mat_of=by_normal)
+    # Inner girders: a chunky bottom flange and a web, rising 4 cm into the slab.
+    web = [(-0.36, SOFFIT), (0.36, SOFFIT), (0.36, SOFFIT + 0.2), (0.2, SOFFIT + 0.32), (0.2, SLAB_BOTTOM + 0.04),
+           (-0.2, SLAB_BOTTOM + 0.04), (-0.2, SOFFIT + 0.32), (-0.36, SOFFIT + 0.2)]
+    for gx in GIRDER_XS:
+        girder.extrude_y([(gx + x, z) for x, z in fillet(web, 0.07, 2)], y0 + 0.02, y1 - 0.02, "lrt_girder")
+    # Fascia beams: deep edge girders whose outer face stands 5 cm proud of the slab edge and
+    # shows below the parapet as the heavy band seen from the street.
+    fascia = fillet([(4.40, SOFFIT), (DECK_HALF + 0.05, SOFFIT), (DECK_HALF + 0.05, DECK_TOP - 0.04),
+                     (4.10, DECK_TOP - 0.04), (4.10, SOFFIT + 0.45)], 0.1, 3)
+    for sgn in (-1, 1):
+        edge.extrude_y([(sgn * x, z) for x, z in fascia], y0, y1, "lrt_girder")
+    # End crossbeams where the span bears on the pier cap.
+    cross = fillet([(-4.2, SOFFIT + 0.06), (4.2, SOFFIT + 0.06), (4.2, SLAB_BOTTOM + 0.03), (-4.2, SLAB_BOTTOM + 0.03)], 0.08, 2)
+    for a_, b_ in ((y0 + 0.15, y0 + 0.6), (y1 - 0.6, y1 - 0.15)):
+        girder.extrude_y(cross, a_, b_, "lrt_girder")
     # Cable troughs inside each parapet, sunk into the deck.
-    for s in (-1, 1):
+    for sgn in (-1, 1):
         trough = fillet([(4.62, DECK_TOP - 0.03), (4.98, DECK_TOP - 0.03), (4.98, DECK_TOP + 0.26), (4.62, DECK_TOP + 0.26)], 0.06, 2)
-        girder.extrude_y([(s * x, z) for x, z in trough], y0 + 0.2, y1 - 0.2, "lrt_coping")
-    girder.finish(col, bevel=0.06)
+        slab.extrude_y([(sgn * x, z) for x, z in trough], y0 + 0.2, y1 - 0.2, "lrt_coping")
+    slab.finish(col, bevel=0.04)
+    girder.finish(col, bevel=0.04)
+    edge.finish(col, bevel=0.04)
 
     # The parapet: LRT-1's tall outer panels, a coping on each, with a joint between panels.
     # Each panel leans and rises by a hair, so the run is drawn, not ruled.

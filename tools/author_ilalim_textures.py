@@ -134,12 +134,37 @@ def lrt_concrete():
 
 
 def lrt_soffit():
-    img = flat("9fa2a4")
-    img = coat(img, (0.95, 0.952, 0.958), 1.5, 0.30, seed=311, feather=1.2)
-    img = coat(img, (1.025, 1.025, 1.025), 0.9, 0.15, seed=312, feather=1.0)
+    # The slab's underside between the girders: DARK, as on Taft (owner's street view, review
+    # v6: "the underside also looks different from what you currently have"). Warm dark grey
+    # with big soft damp patches; kept a little lighter than the photograph so it still reads.
+    img = flat("7f7b76")
+    img = coat(img, (0.93, 0.93, 0.935), 1.5, 0.30, seed=311, feather=1.2)
+    img = coat(img, (1.03, 1.03, 1.025), 0.9, 0.15, seed=312, feather=1.0)
     joints = wobbly_lines(2.0, "x", 0.012, 0.015, seed=313)
-    img = img * (1 - 0.06 * joints[..., None])
+    img = img * (1 - 0.05 * joints[..., None])
     save("lrt_soffit", img, -joints)
+
+
+def lrt_girder():
+    # The precast girders, fascia beams and pier caps: a mid, slightly cool grey, darker than
+    # the parapet and far cooler than the piers. Soft coats stretched ALONG the beam (broad
+    # weathering bands where water runs along the bottom flange), no drawn lines.
+    img = flat("8f8b85")
+    img = coat(img, (0.95, 0.95, 0.95), 1.2, 0.28, seed=361, feather=1.5, stretch=(1.0, 0.6))
+    img = coat(img, (1.035, 1.03, 1.025), 0.9, 0.18, seed=362, feather=1.1)
+    save("lrt_girder", img, np.zeros((SIZE, SIZE)))
+
+
+def lrt_pier():
+    # THE COLUMNS HAVE THEIR OWN DRAWING (owner, review v6: "rework the supporting columns
+    # texture in a way that it doesnt look blended in to the main duct/railway"). On Taft they
+    # are a warm, pale, sandy concrete that stands clear of the dark deck above. Broad soft
+    # VERTICAL washes, as rain and render leave on a column, and no pour lines: those belong
+    # to the deck.
+    img = flat("cbc2b1")
+    img = coat(img, (0.975, 0.968, 0.958), 1.0, 0.26, seed=371, feather=1.6, stretch=(0.4, 1.0))
+    img = coat(img, (1.03, 1.028, 1.02), 1.2, 0.20, seed=372, feather=1.2)
+    save("lrt_pier", img, np.zeros((SIZE, SIZE)))
 
 
 def lrt_track_bed():
@@ -261,7 +286,9 @@ def grime_splash():
 
 
 STRENGTH["lrt_ballast"] = 0.6
-PAINTERS = [lrt_concrete, lrt_soffit, lrt_track_bed, lrt_steel, lrt_ballast]
+STRENGTH["lrt_girder"] = 0.6
+STRENGTH["lrt_pier"] = 0.6
+PAINTERS = [lrt_concrete, lrt_girder, lrt_pier, lrt_soffit, lrt_track_bed, lrt_steel, lrt_ballast]
 OVERLAYS = [grime_drips, grime_splash]
 
 
