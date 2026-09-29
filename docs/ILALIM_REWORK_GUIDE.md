@@ -16,6 +16,7 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
   - `street`;
   - `trees`;
   - `props`;
+  - `sarisari` (the corner store);
   - `train` and `vehicles`.
 
   The table and the open decisions are further down, under "The rest of the map, built in
@@ -27,13 +28,29 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
   - Rizal Hall moved 26 m east, with the Supreme Court thinned (not removed);
   - the trees now reuse the Kanto leaf and the Lagoon round leaf, broad frond and blade
     ("can you use the leaf textures we made previously?").
-- **PENDING owner request, not started:** "can you put a sari sari store somewhere". There is a
-  small sidewalk sari-sari STAND in the props kit at (-10.35, -14.2) already. The request is a
-  proper store: a small house-front tindahan with a grilled counter window, hanging sachets,
-  and a hand-painted sign with an invented name. The lead was checking the free north-east corner
-  of Taft and Padre Faura (about x 13..23, y 37..48, between the east pavement and the 4-storey
-  block at x 23..39, y 48..83) for visibility from the court. Build it in its own new script
-  (`tools/author_ilalim_sarisari.py`) and link it in `author_ilalim_city.py`.
+- **The sari-sari store (owner: "can you put a sari sari store somewhere"), BUILT, awaiting
+  review.** `py -3 tools/author_ilalim_textures_sarisari.py`, then
+  `blender -b --python tools/author_ilalim_sarisari.py -- --preview N` writes
+  `ArtSource/ilalim/sarisari.blend` and close-ups `Logs/ilalim-blender/sari_<shot>_vN.png`
+  (latest v3). The city links it (`city_*sarisari*_v1.png`).
+  - **Where:** the free north-east corner lot of Taft and Padre Faura, checked against every
+    kit: the house stands at x 12.3..19.3, y 38.9..45.9, on the lot surface (0.24), clear of the
+    Taft signal pole, the street pole and the fig tree.
+  - **What:** Bebang's Sari-Sari Store is a two-storey corner house. The ground floor is rose
+    plaster, the upper floor cream lap siding, and the roof galvanised iron. The front room has:
+    - a grilled counter window with a plank ledge, candy jars, sachet strips and stocked
+      shelves;
+    - the BAWAL ANG UTANG / "bukas pwede :)" card;
+    - a green and cream awning with snack strips;
+    - the painted signboard.
+
+    Outside there are a bench, a red cooler with a MAY YELO card, crates of empty bottles, a tin
+    BIGAS / ASUKAL / MANTIKA sign, the electric meter with its service drop, a window aircon,
+    and a maroon NO PARKING side gate.
+  - **Sightline (ray-sampled):** fully in view from the taya spot, the north-east court, the
+    west pavement and the hoop. From the spawn the street kit's BARANGAY 712 board (at
+    (10.25, 20.6)) hides about half of the signboard; moving that board is an owner call.
+  - The props kit's small sidewalk STAND at (-10.35, -14.2) stays.
 - **OPEN owner decisions** (details under "Open decisions for the owner" below):
   - the train is invisible behind the solid parapet; a steel-railing parapet is recommended;
   - cable shadows on the court;
@@ -181,6 +198,7 @@ kit. The lead reviewed each and assembled them.
 | ground, kerbs, markings, median planter, furniture, cables, fences | `author_ilalim_street.py` | `street.blend` |
 | trees, shrubs, median lilies (Kanto leaf-card method) | `author_ilalim_trees.py` | `trees.blend` |
 | gameplay props (pisonet and cord hazard, pares cart, pad, hoop, stalls, column signs) | `author_ilalim_props.py` | `props.blend` |
+| the corner sari-sari store (added after the parallel kits) | `author_ilalim_sarisari.py` | `sarisari.blend` |
 | LRT-1 train and road vehicles | `author_ilalim_train.py`, `author_ilalim_vehicles.py` | `train.blend`, `vehicles.blend` |
 
 Each kit has a matching `author_ilalim_textures_<kit>.py`. Every script's docstring records its

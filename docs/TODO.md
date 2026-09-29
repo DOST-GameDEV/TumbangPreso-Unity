@@ -1640,7 +1640,8 @@ after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
   by parallel agents: guideway v11, Rizal Hall, heritage, east side, streets, trees (reusing
   the Kanto and Lagoon leaves), props, train and vehicles. They are assembled by
   `tools/author_ilalim_city.py` into `ilalim_city.blend`. OPEN:
-  - the sari-sari store the owner asked for (not started);
+  - owner review of the sari-sari store, BUILT 2026-09-29 (`tools/author_ilalim_sarisari.py`, the
+    north-east corner of Taft and Padre Faura, linked into the city);
   - owner decisions: the train hidden by the parapet, cable shadows on the court, Rizal Hall's
     size from the court, and names;
   - owner review of the assembled map.

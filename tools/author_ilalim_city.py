@@ -7,7 +7,8 @@ Logs/ilalim-blender/city_<shot>_vN.png.
 
 Owner, 2026-09-29: "lets proceed with the rest of the map. spin up parallel agents to develop
 different aspects of the map in parallel, same workflow that was done with the lagooncove map".
-Eight kits were built in parallel, each in its own script and .blend:
+Eight kits were built in parallel, each in its own script and .blend, and the sari-sari store
+after them (owner: "can you put a sari sari store somewhere"):
 
   kit              script                                 placed collections
   LRT-1 guideway   tools/author_ilalim_lrt.py            guideway over the court
@@ -17,6 +18,7 @@ Eight kits were built in parallel, each in its own script and .blend:
   streets, ground  tools/author_ilalim_street.py         street ground, markings, median, furniture...
   trees            tools/author_ilalim_trees.py          trees over Ilalim
   gameplay props   tools/author_ilalim_props.py          props (placed), column signs
+  sari-sari store  tools/author_ilalim_sarisari.py       sarisari (placed)
   train, vehicles  tools/author_ilalim_train.py, _vehicles.py   lrt_train, veh_*
 
 HOW IT ASSEMBLES. Every kit's top-level PLACED collections are LINKED (library links), so a kit
@@ -42,7 +44,7 @@ from mathutils import Vector
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "ArtSource" / "ilalim"
 PREVIEWS = ROOT / "Logs" / "ilalim-blender"
-KITS = ["lrt_kit", "rizal_hall", "heritage", "eastside", "street", "trees", "props"]
+KITS = ["lrt_kit", "rizal_hall", "heritage", "eastside", "street", "trees", "props", "sarisari"]
 SKIP = ("prototype", "review", "stand-in", "kit (", "(source")
 ALWAYS = ("column signs",)          # the props kit's pier signs live in a review-named collection
 RAIL_HEAD = 9.19
@@ -195,6 +197,12 @@ def preview(version, only):
         ("east_pavement_west", Vector((9.3, 2.0, 1.46)), Vector((-14, -4, 3)), eye),
         ("spawn_to_rizal", Vector((3.0, -9.0, 1.25)), Vector((-88, 60, 9)), eye),
         ("court_to_rizal", Vector((-8.0, 16.0, 1.46)), Vector((-88, 60, 9)), eye),
+        ("spawn_to_sarisari", Vector((0.0, -9.0, 1.25)), Vector((15, 40, 2.6)), eye),
+        ("court_to_sarisari", Vector((9.3, 14.0, 1.46)), Vector((15, 40, 2.6)), eye),
+        ("spawn_tele_sarisari", Vector((0.0, -9.0, 1.25)), Vector((15, 40, 2.6)), 50),
+        ("hoop_to_sarisari", Vector((-6.0, -10.0, 1.25)), Vector((15, 40, 2.6)), eye),
+        ("taya_tele_sarisari", Vector((0.0, 4.0, 1.25)), Vector((15, 40, 2.6)), 50),
+        ("sarisari_close", Vector((11.5, 31.0, 1.6)), Vector((14.8, 39.5, 2.5)), 20),
         ("aerial_nw", Vector((48.0, -62.0, 52.0)), Vector((-30, 30, 4)), 24),
         ("aerial_se", Vector((-70.0, 70.0, 48.0)), Vector((6, -6, 4)), 24),
         ("plan", Vector((-20.0, 10.0, 420.0)), Vector((-20, 10, 0)), None),
