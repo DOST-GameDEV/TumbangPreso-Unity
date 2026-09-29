@@ -135,13 +135,26 @@ LEAF_TINTS = {
     "shrub":    ((0.24, 0.46, 0.14), (0.08, 0.22, 0.06)),
     "hedge":    ((0.30, 0.52, 0.14), (0.10, 0.26, 0.06)),
 }
-LEAF_TEX = {"raintree": "tree_leaf_raintree", "narra": "tree_leaf_narra", "mango": "tree_leaf_mango",
-            "fig": "tree_leaf_fig", "palm": "tree_frond", "lily": "tree_lily_leaf", "shrub": "tree_shrub_leaf",
-            "hedge": "tree_hedge_leaf"}
-# Card width over length, from each drawing's own aspect, so no drawing is stretched.
-CARD_ASPECT = {"tree_leaf_raintree": 1.0, "tree_leaf_narra": 0.6, "tree_leaf_mango": 1.0, "tree_leaf_fig": 0.75,
-               "tree_frond": 0.5, "tree_lily_leaf": 0.125, "tree_shrub_leaf": 0.75, "tree_hedge_leaf": 1.0,
+# THE LEAVES ARE THE ONES WE ALREADY MADE (owner, 2026-09-29: "can you use the leaf textures we made
+# previously?"). The first pass painted a new drawing per species (the tree_leaf_* set, still
+# painted by author_ilalim_textures_trees.py but no longer used). Now every card reuses the
+# owner-approved drawings:
+#   * Kanto's leaf (ArtSource/kanto/textures/leaf_albedo.png, KANTO_DESIGN_GUIDE section 5) for the
+#     broadleaf canopies: rain tree, narra, mango;
+#   * the Lagoon's round leaf for the small-leaved fig, the santan shrubs and the hedges;
+#   * the Lagoon's broad palm frond for the Manila and royal palms (painted in colour, so it takes
+#     the Lagoon's colour tint at gain 1.0);
+#   * the Lagoon's grass blade for the spider lily straps.
+# A "kanto:" or "lagoon:" prefix names the other map's texture folder.
+LEAF_TEX = {"raintree": "kanto:leaf", "narra": "kanto:leaf", "mango": "kanto:leaf",
+            "fig": "lagoon:leaf_round", "palm": "lagoon:frond_broad", "lily": "lagoon:blade",
+            "shrub": "lagoon:leaf_round", "hedge": "lagoon:leaf_round"}
+COLOUR_LEAVES = {"lagoon:frond_broad"}
+# Card width over length, from each drawing's own aspect, so no drawing is stretched (Kanto's leaf
+# card is 0.7 of its length wide; the Lagoon's aspects are from lagoon_cove_planting.LEAF_TEX).
+CARD_ASPECT = {"kanto:leaf": 0.7, "lagoon:leaf_round": 1.0, "lagoon:frond_broad": 0.5, "lagoon:blade": 0.25,
                "tree_ixora": 1.0, "tree_lily_flower": 1.0}
+OTHER_TEXTURES = {"kanto": ROOT / "ArtSource" / "kanto" / "textures", "lagoon": ROOT / "ArtSource" / "lagoon" / "textures"}
 # Wood: (texture, desaturation 0..1, multiply tint, limewashed). Bark is J for every species; the
 # species differ only by a tint on it (the owner settled the bark drawing).
 WOOD = {
@@ -161,7 +174,11 @@ WOOD = {
 
 def _img(nodes, name, colour=True):
     n = nodes.new("ShaderNodeTexImage")
-    n.image = bpy.data.images.load(str(TEXTURES / name), check_existing=True)
+    folder = TEXTURES
+    if ":" in name:
+        prefix, name = name.split(":", 1)
+        folder = OTHER_TEXTURES[prefix]
+    n.image = bpy.data.images.load(str(folder / name), check_existing=True)
     if not colour:
         n.image.colorspace_settings.name = "Non-Color"
     return n
@@ -210,7 +227,12 @@ def card_material(name, tex, rgb, gain=1.25):
 
 def leaf_material(kind, which):
     k = 0 if which == "light" else 1
-    return card_material(f"tree_leaf_{kind}_{which}", LEAF_TEX[kind], LEAF_TINTS[kind][k])
+    tex = LEAF_TEX[kind]
+    if tex in COLOUR_LEAVES:
+        # The Lagoon's palm_broad pair: the frond already carries its greens.
+        tint = ((1.0, 1.0, 0.96), (0.58, 0.66, 0.50))[k]
+        return card_material(f"tree_leaf_{kind}_{which}", tex, tint, gain=1.0)
+    return card_material(f"tree_leaf_{kind}_{which}", tex, LEAF_TINTS[kind][k])
 
 
 def wood_material(name):
