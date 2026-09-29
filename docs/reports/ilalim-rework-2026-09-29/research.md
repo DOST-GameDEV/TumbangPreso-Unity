@@ -120,3 +120,37 @@ into the game. Licences as listed on Wikimedia Commons:
 - The exact pier spacing on this block.
 - The inside of the campus behind the Taft fence.
 - Whether the Oblation in front of Rizal Hall matches the Diliman pose.
+
+## 7 · The blockout's layout extract (v4 and later)
+
+The layout comes from one Overpass query, fetched 2026-09-29. It is centred on the court, on
+Taft 28 m south of the Padre Faura crossing, with a 260 m radius. The query returns:
+- ways: buildings, highways, landuse, leisure, barriers, bridges, railways and parking;
+- nodes: trees, historic features, flagpoles, traffic signals, bus stops and power poles.
+
+The result is saved as `area.json` and converted with:
+
+    node tools/ilalim_osm_layout.js area.json ArtSource/ilalim/osm_layout.json
+
+The query:
+
+    [out:json][timeout:90];(
+      way(around:260,14.57964,120.98618)["building"];
+      way(around:260,14.57964,120.98618)["highway"];
+      way(around:260,14.57964,120.98618)["landuse"];
+      way(around:260,14.57964,120.98618)["leisure"];
+      way(around:260,14.57964,120.98618)["barrier"];
+      way(around:260,14.57964,120.98618)["man_made"="bridge"];
+      way(around:260,14.57964,120.98618)["railway"];
+      way(around:260,14.57964,120.98618)["amenity"="parking"];
+      node(around:260,14.57964,120.98618)["natural"="tree"];
+      node(around:260,14.57964,120.98618)["historic"];
+      node(around:260,14.57964,120.98618)["man_made"="flagpole"];
+      node(around:260,14.57964,120.98618)["highway"~"traffic_signals|bus_stop"];
+      node(around:260,14.57964,120.98618)["power"="pole"];);out geom;
+
+**Measured in the game frame.** The real LRT-1 viaduct spans x 2.9..11.5 (8.6 m wide). Taft is
+a 4-lane west carriageway and a 3-lane east one, about 26 m kerb to kerb. Padre Faura crosses at
+y ≈ 32. On the west, the PGH fence falls on x = -11 once the road is squeezed. On the east, the
+real frontage is 11 m deep (sidewalk plus a drive-through lane); it is squeezed into the 4 m
+pavement.

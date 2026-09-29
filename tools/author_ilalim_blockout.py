@@ -3,14 +3,29 @@
   blender -b --python tools/author_ilalim_blockout.py -- [--preview N]
 
 Writes ArtSource/ilalim/ilalim_blockout.blend. With --preview it also writes versioned renders
-to Logs/ilalim-blender/blockout_<shot>_vN.png: two plans, two aerials and four views from inside
-the play area at the game's eye (1.25 m, 95 degrees).
+to Logs/ilalim-blender/blockout_<shot>_vN.png: plans, aerials, and views from inside the play
+area at the game's eye (1.25 m, 95 degrees).
 
 THE PLACE (docs/ILALIM_REWORK_GUIDE.md section 0). Taft Avenue at the Padre Faura corner,
-Ermita, under LRT-1. The UP Manila and PGH campus is on the west side, the student shop row is
-on the east side, and Rizal Hall stands at the north-west corner across Padre Faura, with its
-portico facing south. The blockout takes the proposal's default answers to the open decisions
-in section 0.6. Each one is a small edit here if the owner picks the alternative.
+Ermita, under LRT-1.
+
+THE LAYOUT IS THE REAL ONE (owner, v3 review, 2026-09-29: "you should take a look at street map
+to see how the place is actually laid out", then "the models are pretty much accurate but the
+positioning, zoning and lack of sidewalks arent"). Everything outside the play area comes from
+ArtSource/ilalim/osm_layout.json, which tools/ilalim_osm_layout.js converts from OpenStreetMap
+(ODbL): the building footprints and storeys, the streets with their lanes, the lawns, parking,
+walls and fences, the mapped trees, the Oblation, the flagpoles, the statues and the bus stops.
+Only the road and the east frontage band are squeezed to fit the game's 14 m box; see that
+script's header. Every street gets sidewalks with a kerb step.
+
+What that puts around the court:
+  * West: PGH's fenced frontage (parking under trees), then the PGH Nurses Home and the OPD.
+  * North across Padre Faura: the Supreme Court corner (Centennial Building, Old Supreme
+    Court, with the Lady Justice and Moses statues facing Taft).
+  * North-west, behind the Supreme Court: Rizal Hall, a quadrangle whose south front faces
+    Padre Faura across a lawn, with the Oblation.
+  * East: the Astral Tower and West East Center podium, with KFC and Vista GL Taft south of
+    them; Manila Science High School across Padre Faura.
 
 COORDINATES. Blender is Z-up. Blender X is the game's x (east), and Blender Y is the game's z
 (north, toward UN Avenue). All numbers are metres. The export step owns the glTF axis change.
@@ -31,6 +46,7 @@ THE GAMEPLAY CONTRACT (guide section 1). These numbers are copied from the live 
     pavement, against the shopfront edge. The potholes stay flat at |x| = 3.4.
   * Every car stays outside |y| = 16.5.
 """
+import json
 import math
 import random
 import sys
@@ -38,10 +54,11 @@ from pathlib import Path
 
 import bmesh
 import bpy
-from mathutils import Euler, Matrix, Vector
+from mathutils import Matrix, Vector
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "ArtSource" / "ilalim"
+LAYOUT = SOURCE / "osm_layout.json"
 PREVIEWS = ROOT / "Logs" / "ilalim-blender"
 
 BOX = 7.0             # Balance.ConfinementRadius
@@ -59,17 +76,34 @@ TRACK_X = 2.35
 PIER_X = 4.45
 PIER_HALF = 0.70
 LIVE_PIERS = (-10.0, 10.0)
-STRUCT_PIERS = (-19.0, 19.0, -44.0, 44.0, -69.0, 69.0, -94.0, 94.0)
-FAURA = (26.0, 36.0)       # Padre Faura carriageway, y from..to, one-way west
-SOUTH_ST = (-36.0, -26.0)  # the side street toward Pedro Gil
+STRUCT_PIERS = (-19.0, 19.0, -44.0, 44.0, -69.0, 69.0, -94.0, 94.0, -119.0, 119.0, -144.0, 144.0)
 EYE = 1.25
-LAWN_TOP = 0.26
+
+# The ground grid (outside the Taft corridor): classes, their top heights, and their colours.
+EXTENT = 210          # half-size of the detailed ground, metres
+CELL = 0.5           # fine enough that diagonal kerbs do not read as stairs
+LOT_TOP = 0.24
+GROUND = {            # class: (top, colour)
+    "road":     (0.000, "road_cross"),
+    "sidewalk": (PAVE_TOP, "sidewalk"),
+    "drive":    (LOT_TOP, "drive"),
+    "parking":  (LOT_TOP, "parking"),
+    "lawn":     (0.26, "lawn"),
+    "lot":      (LOT_TOP, "lot"),
+}
+PRIORITY = ["road", "sidewalk", "drive", "parking", "lawn", "lot"]
+STREET_KINDS = {"primary", "secondary", "tertiary", "residential", "unclassified", "living_street"}
+SIDEWALK = 2.5
 
 COLOURS = {
     "road":        (0.22, 0.22, 0.24),
-    "road_cross":  (0.26, 0.26, 0.28),
+    "road_cross":  (0.25, 0.25, 0.27),
     "kerb":        (0.95, 0.95, 0.92),
     "pavement":    (0.62, 0.58, 0.52),
+    "sidewalk":    (0.86, 0.84, 0.78),
+    "drive":       (0.72, 0.70, 0.66),
+    "parking":     (0.50, 0.50, 0.50),
+    "lot":         (0.64, 0.64, 0.56),
     "chalk":       (1.00, 1.00, 1.00),
     "throw":       (0.95, 0.85, 0.25),
     "bounds":      (0.90, 0.15, 0.12),
@@ -85,11 +119,13 @@ COLOURS = {
     "tree":        (0.24, 0.50, 0.14),
     "trunk":       (0.40, 0.27, 0.16),
     "fence":       (0.12, 0.16, 0.14),
+    "wall":        (0.78, 0.74, 0.66),
     "heritage":    (0.93, 0.89, 0.78),
     "heritage_w":  (0.97, 0.96, 0.93),
     "red_roof":    (0.62, 0.24, 0.17),
     "rizal":       (0.88, 0.78, 0.58),
     "rizal_type":  (0.45, 0.10, 0.12),
+    "court_white": (0.95, 0.95, 0.93),
     "hospital":    (0.90, 0.85, 0.74),
     "shop":        (0.80, 0.66, 0.56),
     "shop_b":      (0.70, 0.74, 0.66),
@@ -101,6 +137,7 @@ COLOURS = {
     "cord":        (0.95, 0.85, 0.15),
     "awning":      (0.55, 0.62, 0.40),
     "midrise":     (0.74, 0.72, 0.68),
+    "church":      (0.86, 0.84, 0.80),
     "school":      (0.70, 0.78, 0.84),
     "tower":       (0.94, 0.90, 0.82),
     "tower_band":  (0.86, 0.58, 0.50),
@@ -114,7 +151,7 @@ COLOURS = {
     "railing":     (0.95, 0.80, 0.20),
     "hoop":        (0.55, 0.25, 0.60),
     "signal":      (0.15, 0.15, 0.15),
-    "street_sign": (0.15, 0.50, 0.30),
+    "shelter":     (0.55, 0.62, 0.62),
 }
 
 
@@ -174,7 +211,7 @@ def slab(col, name, x0, x1, y0, y1, top, thick, colour):
     return box(col, name, ((x0 + x1) / 2, (y0 + y1) / 2, top - thick / 2), (x1 - x0, y1 - y0, thick), colour)
 
 
-def cylinder(col, name, center, radius, depth, colour, sides=16, rot=(0, 0, 0)):
+def cylinder(col, name, center, radius, depth, colour, sides=16):
     mesh = bpy.data.meshes.new(name)
     bm = bmesh.new()
     bmesh.ops.create_cone(bm, cap_ends=True, segments=sides, radius1=radius, radius2=radius, depth=depth)
@@ -182,7 +219,6 @@ def cylinder(col, name, center, radius, depth, colour, sides=16, rot=(0, 0, 0)):
     bm.free()
     o = _obj(col, name, mesh, colour, smooth=sides > 10)
     o.location = center
-    o.rotation_euler = rot
     return o
 
 
@@ -208,30 +244,6 @@ def blob(col, name, center, radius, colour):
     return o
 
 
-def hip_roof(col, name, x0, x1, y0, y1, base, rise, overhang, colour):
-    """A hipped roof: a rectangle at the eaves rising to a ridge along the long side."""
-    x0, x1, y0, y1 = x0 - overhang, x1 + overhang, y0 - overhang, y1 + overhang
-    w, d = x1 - x0, y1 - y0
-    inset = min(w, d) / 2
-    mesh = bpy.data.meshes.new(name)
-    bm = bmesh.new()
-    if w >= d:
-        verts = [(x0, y0, base), (x1, y0, base), (x1, y1, base), (x0, y1, base),
-                 (x0 + inset, (y0 + y1) / 2, base + rise), (x1 - inset, (y0 + y1) / 2, base + rise)]
-        faces = [(0, 1, 5, 4), (2, 3, 4, 5), (1, 2, 5), (3, 0, 4), (3, 2, 1, 0)]
-    else:
-        verts = [(x0, y0, base), (x1, y0, base), (x1, y1, base), (x0, y1, base),
-                 ((x0 + x1) / 2, y0 + inset, base + rise), ((x0 + x1) / 2, y1 - inset, base + rise)]
-        faces = [(1, 2, 5, 4), (3, 0, 4, 5), (0, 1, 4), (2, 3, 5), (3, 2, 1, 0)]
-    vs = [bm.verts.new(v) for v in verts]
-    for f in faces:
-        bm.faces.new([vs[i] for i in f])
-    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
-    bm.to_mesh(mesh)
-    bm.free()
-    return _obj(col, name, mesh, colour)
-
-
 def text(col, body, at, size, colour, rot=(math.pi / 2, 0, 0), extrude=0.04, render=True):
     curve = bpy.data.curves.new(body, "FONT")
     curve.body = body
@@ -253,26 +265,147 @@ def label(col, body, at, size=1.4):
     return text(col, body, at, size, "chalk", rot=(0, 0, 0), extrude=0.0, render=False)
 
 
+def point_in_poly(x, y, poly):
+    inside = False
+    j = len(poly) - 1
+    for i in range(len(poly)):
+        xi, yi = poly[i]
+        xj, yj = poly[j]
+        if (yi > y) != (yj > y) and x < (xj - xi) * (y - yi) / (yj - yi + 1e-12) + xi:
+            inside = not inside
+        j = i
+    return inside
+
+
+def in_corridor(x, y):
+    """The Taft corridor the contract owns: carriageway, kerbs and pavements, |x| <= 11."""
+    return abs(x) <= PAVE_OUT
+
+
 # ------------------------------------------------------------------ ground
 
-def ground(root):
+def classify(layout):
+    """Rasterise the real streets, sidewalks, driveways, lawns and parking on a 1 m grid.
+    Taft itself is left out: the corridor is built exactly by corridor()."""
+    n = int(2 * EXTENT / CELL)
+    rank = {c: i for i, c in enumerate(PRIORITY)}
+    grid = [[rank["lot"]] * n for _ in range(n)]
+
+    def paint(cls, x, y):
+        i, j = int((x + EXTENT) / CELL), int((y + EXTENT) / CELL)
+        if 0 <= i < n and 0 <= j < n and rank[cls] < grid[j][i]:
+            grid[j][i] = rank[cls]
+
+    def ribbon(line, half, cls):
+        for (x0, y0), (x1, y1) in zip(line, line[1:]):
+            lo_x, hi_x = min(x0, x1) - half, max(x0, x1) + half
+            lo_y, hi_y = min(y0, y1) - half, max(y0, y1) + half
+            dx, dy = x1 - x0, y1 - y0
+            seg = dx * dx + dy * dy or 1e-9
+            y = math.floor(lo_y / CELL) * CELL + CELL / 2
+            while y <= hi_y:
+                x = math.floor(lo_x / CELL) * CELL + CELL / 2
+                while x <= hi_x:
+                    t = max(0.0, min(1.0, ((x - x0) * dx + (y - y0) * dy) / seg))
+                    if math.hypot(x - (x0 + t * dx), y - (y0 + t * dy)) <= half:
+                        paint(cls, x, y)
+                    x += CELL
+                y += CELL
+
+    def fill(poly, cls):
+        xs, ys = [p[0] for p in poly], [p[1] for p in poly]
+        y = math.floor(min(ys)) + CELL / 2
+        while y <= max(ys):
+            x = math.floor(min(xs)) + CELL / 2
+            while x <= max(xs):
+                if point_in_poly(x, y, poly):
+                    paint(cls, x, y)
+                x += CELL
+            y += CELL
+
+    for a in layout["areas"]:
+        if a["kind"] in ("village_green", "grass", "park", "garden"):
+            fill(a["poly"], "lawn")
+        elif a["kind"] == "parking":
+            fill(a["poly"], "parking")
+    for r in layout["roads"]:
+        if "Taft" in r["name"]:
+            continue
+        if r["kind"] in STREET_KINDS:
+            half = max(3.0, r["lanes"] * 3.2) / 2
+            ribbon(r["line"], half, "road")
+            ribbon(r["line"], half + SIDEWALK, "sidewalk")
+        elif r["kind"] == "service":
+            ribbon(r["line"], 2.0, "drive")
+        elif r["kind"] in ("footway", "pedestrian", "path"):
+            ribbon(r["line"], 0.9, "drive")
+    return grid, [PRIORITY[i] for i in range(len(PRIORITY))]
+
+
+def ground(root, layout):
     col = collection("Ground", root)
-    # The road sits 2 cm below everything laid on it, so no two surfaces share a plane.
-    slab(col, "Taft carriageway", -KERB_IN, KERB_IN, -140, 140, 0.0, 0.4, "road")
+    grid, names = classify(layout)
+    n = len(grid)
+    # One mesh per class, each row's runs merged into single boxes. Cells inside the Taft
+    # corridor are skipped here; corridor() lays them exactly.
+    meshes = {c: bmesh.new() for c in GROUND}
+    for j in range(n):
+        y0 = -EXTENT + j * CELL
+        i = 0
+        while i < n:
+            cls = grid[j][i]
+            k = i
+            while k < n and grid[j][k] == cls:
+                k += 1
+            x0, x1 = -EXTENT + i * CELL, -EXTENT + k * CELL
+            # Clip the run against the corridor.
+            for a, b in ((x0, min(x1, -PAVE_OUT)), (max(x0, PAVE_OUT), x1)):
+                if b - a > 1e-6:
+                    top, _ = GROUND[names[cls]]
+                    bmesh.ops.create_cube(meshes[names[cls]], size=1.0,
+                                          matrix=Matrix.Translation(((a + b) / 2, y0 + CELL / 2, top - 0.25)) @ Matrix.Diagonal((b - a, CELL, 0.5, 1)))
+            i = k
+    for cls, bm in meshes.items():
+        mesh = bpy.data.meshes.new("ground " + cls)
+        bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.001)
+        bm.to_mesh(mesh)
+        bm.free()
+        _obj(col, "ground " + cls, mesh, GROUND[cls][1])
+    # Beyond the detailed grid: a plain plate under the fog.
+    slab(col, "outer plate", -600, 600, -600, 600, -0.3, 0.5, "lot")
+    return grid, names
+
+
+def corridor(root, grid, names):
+    """Taft, exactly: the 14 m carriageway, the painted kerbs and the 4 m pavements, row by row,
+    with the pavements and kerbs dropped to road level wherever a real cross street meets Taft."""
+    col = collection("Taft corridor", root)
+    slab(col, "Taft carriageway", -KERB_IN, KERB_IN, -EXTENT, EXTENT, 0.0, 0.4, "road")
+    n = len(grid)
+
+    def is_road(x, y):
+        i, j = int((x + EXTENT) / CELL), int((y + EXTENT) / CELL)
+        return 0 <= i < n and 0 <= j < n and names[grid[j][i]] == "road"
+
     for s in (-1, 1):
-        # Kerb, painted white on top: the east and west chalk (Ilalim_Ng_Tulay.md section 2).
-        slab(col, "kerb", *sorted((s * KERB_IN, s * BOX)), -140, 140, KERB_TOP, 0.4, "kerb")
-        # The pavements stop at the cross streets and resume beyond them.
-        for y0, y1 in ((-140, SOUTH_ST[0]), (SOUTH_ST[1], FAURA[0]), (FAURA[1], 140)):
-            slab(col, "pavement", *sorted((s * BOX, s * PAVE_OUT)), y0, y1, PAVE_TOP, 0.4, "pavement")
-    # Cross streets, running the full width of the plan.
-    for name, (y0, y1) in (("Padre Faura", FAURA), ("side street", SOUTH_ST)):
-        for s in (-1, 1):
-            slab(col, name, *sorted((s * BOX, s * 140)), y0, y1, -0.02, 0.4, "road_cross")
-    # West: the campus lawn behind the fence line. East: the shop row's lots.
-    for y0, y1 in ((-140, SOUTH_ST[0]), (SOUTH_ST[1], FAURA[0]), (FAURA[1], 140)):
-        slab(col, "campus lawn", -140, -PAVE_OUT, y0, y1, LAWN_TOP, 0.5, "lawn")
-        slab(col, "east lots", PAVE_OUT, 140, y0, y1, PAVE_TOP + 0.02, 0.5, "pavement")
+        runs, start, state = [], -EXTENT, None
+        y = -EXTENT
+        while y <= EXTENT:
+            here = is_road(s * (PAVE_OUT + 1.5), y + 0.5) if y < EXTENT else None
+            if here != state:
+                if state is not None:
+                    runs.append((start, y, state))
+                start, state = y, here
+            y += CELL
+        for y0, y1, road in runs:
+            xs = sorted((s * KERB_IN, s * BOX))
+            xp = sorted((s * BOX, s * PAVE_OUT))
+            if road:
+                slab(col, "cross-street mouth", *sorted((s * KERB_IN, s * PAVE_OUT)), y0, y1, 0.0, 0.4, "road_cross")
+            else:
+                # Kerb, painted white on top: the east and west chalk.
+                slab(col, "kerb", *xs, y0, y1, KERB_TOP, 0.4, "kerb")
+                slab(col, "pavement", *xp, y0, y1, PAVE_TOP, 0.4, "pavement")
 
 
 # ------------------------------------------------------------------ gameplay markers
@@ -281,249 +414,293 @@ def gameplay(root):
     col = collection("Gameplay", root)
     w = 0.12
     for s in (-1, 1):
-        # North and south chalk across the road; east and west ride the kerb tops.
         slab(col, "chalk N/S", -BOX, BOX, s * BOX - w / 2, s * BOX + w / 2, 0.012, 0.03, "chalk")
         slab(col, "throwing line", -BOX, BOX, s * THROW - w / 2, s * THROW + w / 2, 0.012, 0.03, "throw")
-        # Potholes: flat, off the spawn-to-can line.
         cylinder(col, "pothole", (s * 3.4, -s * 3.0, 0.004), 0.55, 0.01, "pothole", 12)
-        # The playable walls, translucent: |x| = 11 and |y| = 16.5.
         box(col, "wall E/W", (s * (PAVE_OUT + 0.2), 0, 2.0), (0.4, 2 * WALL_Y, 4.0), "bounds")
         box(col, "wall N/S", (0, s * (WALL_Y + 0.2), 2.0), (2 * PAVE_OUT, 0.4, 4.0), "bounds")
     cylinder(col, "lata", (0, 0, 0.16), 0.08, 0.32, "lata", 12)
     for x in (-3.0, 0.0, 3.0):
         cylinder(col, "spawn", (x, -SPAWN, 0.01), 0.35, 0.02, "spawn", 12)
-    # The bridge hoop on the west pavement, beside the south-west live pier row.
     hx, hy = -8.9, -10.0
     cylinder(col, "hoop post", (hx - 0.9, hy, PAVE_TOP + 1.8), 0.08, 3.6, "pole", 8)
     box(col, "hoop board", (hx - 0.55, hy, PAVE_TOP + 3.3), (0.06, 1.2, 0.8), "heritage_w")
     cylinder(col, "hoop ring", (hx - 0.2, hy, PAVE_TOP + 3.05), 0.25, 0.04, "hoop", 16)
     label(col, "HOOP", (hx, hy - 1.5, 4.5), 0.8)
-    # The overclock pad, east pavement, outside PC Express.
     slab(col, "overclock pad", 8.1, 9.9, 4.6, 6.4, PAVE_TOP + 0.03, 0.03, "pad")
     label(col, "PAD", (9.0, 5.5, 1.0), 0.8)
+
+
+def street_business(root):
+    """The businesses the contract names, on the Astral Tower and West East Center podium."""
+    col = collection("East podium shops", root)
+    base = PAVE_TOP
+    fronts = [(-16.5, -9.5, "shop_c", "print xerox bind"), (-9.5, -1.5, "shop", "carinderia"),
+              (-1.5, 9.0, "pcx", "PC EXPRESS"), (9.0, 15.0, "shop_c", "pisonet"), (15.0, 20.0, "shop_b", "pharmacy")]
+    for y0, y1, colour, name in fronts:
+        slab(col, "shopfront " + name, PAVE_OUT, PAVE_OUT + 0.6, y0 + 0.1, y1 - 0.1, base + 4.2, 4.2, colour)
+        slab(col, "awning", PAVE_OUT - 1.2, PAVE_OUT, y0 + 0.4, y1 - 0.4, base + 3.2, 0.12, "awning")
+        label(col, name, (PAVE_OUT + 1, (y0 + y1) / 2, base + 5), 0.7)
+    slab(col, "PC Express fascia", PAVE_OUT - 0.25, PAVE_OUT, -1.2, 8.7, base + 5.0, 1.0, "train_band")
+    for i in range(3):
+        box(col, "pisonet terminal", (9.7, 10.0 + i * 1.75, base + 0.8), (0.7, 0.9, 1.6), "pisonet")
+    slab(col, "pisonet cord TRIP", 7.7, 9.1, 10.0, 12.6, base + 0.03, 0.03, "cord")
+    box(col, "pares cart", (8.8, -5.0, base + 1.3), (1.72, 2.03, 2.6), "pares")
+    box(col, "pares A-board", (8.05, -3.75, base + 0.4), (0.2, 0.9, 0.8), "shop_c")
+    # Vendors against the PGH fence on the west pavement, never mid-pavement.
+    for y in (12.5, 14.6, -14.2):
+        box(col, "vendor stall", (-PAVE_OUT + 0.65, y, base + 0.45), (1.1, 1.6, 0.9), "shop_c")
+        cylinder(col, "umbrella pole", (-PAVE_OUT + 0.65, y, base + 1.3), 0.03, 2.6, "pole", 6)
+        cone(col, "umbrella", (-PAVE_OUT + 0.65, y, base + 2.55), 1.2, 0.5, "umbrella")
+    # The shopfront-edge cables along the east pavement.
+    y = -118.0
+    while y < 118:
+        cylinder(col, "power pole", (10.65, y, base + 4.8), 0.16, 9.6, "pole", 8)
+        y += 12
+    for k, z in enumerate((8.6, 8.1, 7.6, 7.2)):
+        slab(col, "cable run", 10.55 + k * 0.08, 10.6 + k * 0.08, -118, 118, base + z, 0.04, "wire")
 
 
 # ------------------------------------------------------------------ LRT-1
 
 def guideway(root):
     col = collection("LRT-1", root)
-    length = 280
+    length = 2 * EXTENT
     slab(col, "deck", -DECK_HALF, DECK_HALF, -length / 2, length / 2, DECK_TOP, DECK_TOP - SOFFIT, "concrete")
     slab(col, "soffit", -DECK_HALF + 0.3, DECK_HALF - 0.3, -length / 2, length / 2, SOFFIT + 0.01, 0.02, "soffit")
     for s in (-1, 1):
-        # The projecting parapet lip that gives LRT-1 its silhouette.
         slab(col, "parapet", s * DECK_HALF - 0.25, s * DECK_HALF + 0.25, -length / 2, length / 2, DECK_TOP + 1.1, 1.3, "concrete")
         for rail in (-0.72, 0.72):
             slab(col, "rail", s * TRACK_X + rail - 0.05, s * TRACK_X + rail + 0.05, -length / 2, length / 2, DECK_TOP + 0.18, 0.18, "rail")
-    # Catenary masts on the deck's centre line, every 20 m.
     y = -length / 2 + 10
     while y < length / 2:
         cylinder(col, "catenary mast", (0, y, DECK_TOP + 2.6), 0.12, 5.2, "pole", 8)
         box(col, "catenary arm", (0, y, DECK_TOP + 5.0), (6.4, 0.15, 0.15), "pole")
         y += 20
-    # Twin-leg piers under one cap. The real LRT-1 stands on single median piers; the game
-    # needs two legs per row for the 7.5 m centre lane and the 1.85 m gutters (guide 0.4).
+    # Twin-leg piers under one cap (guide 0.4): real LRT-1 piers are single; the game needs two.
     for y in LIVE_PIERS + STRUCT_PIERS:
         for s in (-1, 1):
             box(col, "pier leg" + (" LIVE" if y in LIVE_PIERS else ""), (s * PIER_X, y, (SOFFIT - 0.9) / 2),
                 (2 * PIER_HALF, 2 * PIER_HALF, SOFFIT - 0.9), "concrete")
         slab(col, "pier cap", -PIER_X - 1.0, PIER_X + 1.0, y - 0.9, y + 0.9, SOFFIT, 0.9, "concrete")
-    # A parked consist north of the court for scale: 15.6 m, 2.6 m wide (TrainConsistHalfLength).
-    ty = 34.0
+    ty = 60.0
     for i, (y0, y1) in enumerate(((ty - 7.8, ty - 2.7), (ty - 2.55, ty + 2.55), (ty + 2.7, ty + 7.8))):
         slab(col, f"train car {i}", TRACK_X - 1.3, TRACK_X + 1.3, y0, y1, DECK_TOP + 3.6, 3.3, "train")
         slab(col, f"train band {i}", TRACK_X - 1.32, TRACK_X + 1.32, y0 + 0.1, y1 - 0.1, DECK_TOP + 2.3, 0.7, "train_band")
-    label(col, "LRT-1", (0, -30, DECK_TOP + 3), 2.0)
 
 
-# ------------------------------------------------------------------ west: the campus
+# ------------------------------------------------------------------ the real buildings
 
-def campus(root):
-    col = collection("Campus (west)", root)
-    rng = random.Random(7)
-    # A low iron fence ON the wall line, with gaps at the gates. See-through, so the frame opens.
-    for y0, y1 in ((-120, -40), (-36 + 10, -3), (3, FAURA[0]), (FAURA[1], 120)):
-        slab(col, "campus fence rail", -PAVE_OUT - 0.05, -PAVE_OUT + 0.05, y0, y1, PAVE_TOP + 1.25, 0.08, "fence")
-        y = y0
-        while y <= y1:
-            box(col, "campus fence post", (-PAVE_OUT, y, PAVE_TOP + 0.62), (0.12, 0.12, 1.25), "fence")
-            y += 2.5
-    # Vendors against the fence, never mid-pavement: stalls 1.1 m deep with striped umbrellas.
-    for y in (12.5, 14.6, -14.2):
-        box(col, "vendor stall", (-PAVE_OUT + 0.65, y, PAVE_TOP + 0.45), (1.1, 1.6, 0.9), "shop_c")
-        cylinder(col, "umbrella pole", (-PAVE_OUT + 0.65, y, PAVE_TOP + 1.3), 0.03, 2.6, "pole", 6)
-        cone(col, "umbrella", (-PAVE_OUT + 0.65, y, PAVE_TOP + 2.55), 1.2, 0.5, "umbrella")
+HERITAGE = ("Rizal", "Supreme Court Main", "Old Supreme", "PGH", "Out-Patient", "Nurses", "Bonifacio",
+            "Damian", "Museum", "Hospital", "Calderon", "College", "Hall")
 
-    # The hospital front: three storeys behind a forecourt, south-west. PGH is the real neighbour.
-    slab(col, "hospital front", -42, -16, -58, -4, LAWN_TOP + 12.0, 12.0, "hospital")
-    hip_roof(col, "hospital roof", -42, -16, -58, -4, LAWN_TOP + 12.0, 4.0, 0.9, "red_roof")
-    for y in (-50, -30, -12):
-        slab(col, "hospital gate canopy", -16, -12.5, y - 3, y + 3, LAWN_TOP + 3.6, 0.3, "heritage_w")
 
-    # RIZAL HALL at the north-west corner across Padre Faura, portico facing south (guide 0.3).
-    # Real distance from Taft ~100 m, pulled in to ~48 m. Footprint 28 x 14, three storeys.
-    rx0, rx1, ry0, ry1 = -62.0, -34.0, 44.0, 58.0
-    top = LAWN_TOP + 13.5
-    slab(col, "RIZAL HALL body", rx0, rx1, ry0, ry1, top, 13.5, "rizal")
-    hip_roof(col, "RIZAL HALL roof", rx0, rx1, ry0, ry1, top, 4.5, 1.4, "red_roof")
-    # The portico: tall Ionic columns under an entablature, three bays deep of front steps.
-    px0, px1 = -54.0, -42.0
-    slab(col, "RIZAL HALL portico floor", px0, px1, ry0 - 3.2, ry0, LAWN_TOP + 1.2, 1.2, "heritage")
+def style(b):
+    """(storey height, wall colour, red roof?) from what the building is."""
+    name = b["name"]
+    if "Rizal Hall" in name:
+        return 4.4, "rizal", True
+    if "Centennial" in name:
+        return 3.6, "court_white", False
+    if "Supreme" in name:
+        return 4.4, "court_white", True
+    if "Astral" in name:
+        return 3.3, "tower", False
+    if "Science High" in name or b["use"] == "school":
+        return 3.4, "school", False
+    if b["use"] in ("church",) or "Church" in name or "Cathedral" in name:
+        return 4.0, "church", False
+    if any(k in name for k in HERITAGE) or b["use"] in ("hospital", "university", "dormitory"):
+        return 4.2, "hospital", True
+    return 3.2, "midrise", False
+
+
+def extrude(col, name, poly, base, height, colour, roof=None):
+    mesh = bpy.data.meshes.new(name)
+    bm = bmesh.new()
+    verts = [bm.verts.new((x, y, base)) for x, y in poly]
+    try:
+        face = bm.faces.new(verts)
+    except ValueError:
+        bm.free()
+        return None
+    bmesh.ops.recalc_face_normals(bm, faces=[face])
+    if face.normal.z < 0:
+        face.normal_flip()
+    ext = bmesh.ops.extrude_face_region(bm, geom=[face])
+    top = [g for g in ext["geom"] if isinstance(g, bmesh.types.BMFace)]
+    bmesh.ops.translate(bm, vec=(0, 0, height), verts=[v for g in ext["geom"] if isinstance(g, bmesh.types.BMVert) for v in [g]])
+    face.normal_flip()
+    mesh_mats = [colour]
+    if roof:
+        # A hipped-looking roof: the top face inset and raised, in red.
+        res = bmesh.ops.inset_region(bm, faces=top, thickness=roof[0], depth=roof[1], use_even_offset=True)
+        mesh_mats.append("red_roof")
+        for f in top + res["faces"]:
+            f.material_index = 1
+    bm.to_mesh(mesh)
+    bm.free()
+    o = bpy.data.objects.new(name, mesh)
+    for m in mesh_mats:
+        mesh.materials.append(mat(m))
+    col.objects.link(o)
+    return o
+
+
+def buildings(root, layout):
+    col = collection("Buildings (OSM)", root)
+    rng = random.Random(5)
+    for k, b in enumerate(layout["buildings"]):
+        poly = b["poly"]
+        cx = sum(p[0] for p in poly) / len(poly)
+        cy = sum(p[1] for p in poly) / len(poly)
+        if max(abs(cx), abs(cy)) > EXTENT + 40:
+            continue
+        # Nothing may stand in the contract's corridor.
+        if any(abs(x) < PAVE_OUT - 0.05 for x, _ in poly):
+            poly = [(math.copysign(max(abs(x), PAVE_OUT), cx), y) for x, y in poly]
+        storey, colour, red = style(b)
+        levels = b["levels"] or rng.choice((2, 2, 3, 3, 4, 5))
+        height = max(3.5, levels * storey)
+        roof = (1.6, 2.4) if red else None
+        name = b["name"] or f"building {k}"
+        o = extrude(col, name, poly, LOT_TOP - 0.05, height, colour, roof)
+        if o is None:
+            continue
+        if b["name"]:
+            label(col, b["name"], (cx, cy, height + 4), 2.0)
+        if "Astral" in b["name"]:
+            # The cream and salmon bands of the real tower.
+            xs, ys = [p[0] for p in poly], [p[1] for p in poly]
+            for s in range(1, int(levels)):
+                slab(col, "Astral band", min(xs) - 0.2, max(xs) + 0.2, min(ys) - 0.2, max(ys) + 0.2,
+                     LOT_TOP + s * storey + 0.7, 0.7, "tower_band")
+
+
+def rizal_hall(root, layout):
+    """Rizal Hall's portico on its real south front, facing Padre Faura across the lawn and the
+    Oblation. The footprint itself comes from OSM in buildings()."""
+    col = collection("Rizal Hall portico", root)
+    hall = next(b for b in layout["buildings"] if "Rizal Hall" in b["name"])
+    front_y = min(p[1] for p in hall["poly"])
+    oblation = next(p["at"] for p in layout["points"] if "Oblation" in p["name"])
+    px = oblation[0]
+    base = LOT_TOP
+    x0, x1 = px - 7.0, px + 7.0
+    slab(col, "portico floor", x0, x1, front_y - 3.2, front_y + 0.2, base + 1.2, 1.2, "heritage")
     for i in range(6):
-        x = px0 + 0.8 + i * (px1 - px0 - 1.6) / 5
-        cylinder(col, "RIZAL HALL column", (x, ry0 - 2.6, LAWN_TOP + 1.2 + 5.4), 0.45, 10.8, "heritage_w", 16)
-    slab(col, "RIZAL HALL entablature", px0 - 0.3, px1 + 0.3, ry0 - 3.4, ry0, LAWN_TOP + 13.5, 1.5, "heritage_w")
+        x = x0 + 0.8 + i * (x1 - x0 - 1.6) / 5
+        cylinder(col, "Ionic column", (x, front_y - 2.6, base + 1.2 + 5.8), 0.5, 11.6, "heritage_w", 16)
+    slab(col, "entablature", x0 - 0.3, x1 + 0.3, front_y - 3.4, front_y + 0.2, base + 14.2, 1.6, "heritage_w")
     for k in range(3):
-        slab(col, "RIZAL HALL step", px0 + 1, px1 - 1, ry0 - 3.2 - 0.45 * (k + 1), ry0 - 3.2 - 0.45 * k,
-             LAWN_TOP + 1.2 - 0.4 * (k + 1), 0.3, "heritage")
-    text(col, "RIZAL HALL", ((px0 + px1) / 2, ry0 - 3.45, LAWN_TOP + 12.75), 0.9, "rizal_type")
-    # The Oblation on its plinth in front of the steps (guide 0.6 decision 3: included by default).
-    box(col, "Oblation plinth", ((px0 + px1) / 2, ry0 - 7.2, LAWN_TOP + 0.9), (1.6, 1.6, 1.8), "heritage")
-    cylinder(col, "Oblation figure", ((px0 + px1) / 2, ry0 - 7.2, LAWN_TOP + 2.8), 0.28, 2.0, "heritage_w", 10)
-    label(col, "RIZAL HALL", ((px0 + px1) / 2, (ry0 + ry1) / 2, top + 7), 2.4)
+        slab(col, "front step", x0 + 1, x1 - 1, front_y - 3.2 - 0.45 * (k + 1), front_y - 3.2 - 0.45 * k,
+             base + 1.2 - 0.4 * (k + 1), 0.3, "heritage")
+    text(col, "RIZAL HALL", (px, front_y - 3.45, base + 13.4), 1.0, "rizal_type")
+    ox, oy = oblation
+    box(col, "Oblation plinth", (ox, oy, base + 0.9), (1.6, 1.6, 1.8), "heritage")
+    cylinder(col, "Oblation figure", (ox, oy, base + 2.8), 0.28, 2.0, "heritage_w", 10)
 
-    # The columned corner hall at Taft and Padre Faura, standing in for the Supreme Court. White,
-    # unnamed, with its colonnade on the Padre Faura side.
-    slab(col, "corner hall", -29, -14, 40, 58, LAWN_TOP + 14.0, 14.0, "heritage_w")
-    hip_roof(col, "corner hall roof", -29, -14, 40, 58, LAWN_TOP + 14.0, 3.0, 0.8, "red_roof")
-    for i in range(5):
-        cylinder(col, "corner hall column", (-27.5 + i * 3.0, 38.6, LAWN_TOP + 5.5), 0.4, 11.0, "heritage_w", 12)
-    slab(col, "corner hall entablature", -29, -14, 37.8, 40, LAWN_TOP + 12.2, 1.2, "heritage_w")
 
-    # Campus wings behind: low cream blocks with red roofs, the "sea of red roofs".
-    wings = [(-110, -70, -60, -30), (-110, -80, -20, 20), (-70, -48, -20, 12), (-100, -70, 40, 70),
-             (-60, -30, 66, 90), (-110, -70, 80, 110), (-40, -16, 66, 96), (-110, -75, -110, -70),
-             (-60, -20, -110, -70)]
-    for i, (x0, x1, y0, y1) in enumerate(wings):
-        h = 8 + rng.random() * 6
-        slab(col, f"campus wing {i}", x0, x1, y0, y1, LAWN_TOP + h, h, "heritage")
-        hip_roof(col, f"campus wing roof {i}", x0, x1, y0, y1, LAWN_TOP + h, 3.0, 0.8, "red_roof")
-
-    # Trees: shade trees along the fence and on the lawn, kept off the Rizal Hall view line.
-    def on_view_line(x, y):
-        ax, ay, bx, by = 2.0, -12.0, -48.0, 41.0
-        t = max(0.0, min(1.0, ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) / ((bx - ax) ** 2 + (by - ay) ** 2)))
-        return math.hypot(x - (ax + t * (bx - ax)), y - (ay + t * (by - ay))) < 7.0
-
-    spots = [(-14.0, y) for y in (-52, -40, -30, -20, -8, 8, 20)] + [(-14.5, 60), (-14.5, 80), (-14.5, 100)]
-    for _ in range(260):
-        spots.append((-16 - rng.random() * 90, -100 + rng.random() * 200))
+def details(root, layout):
+    col = collection("Street details (OSM)", root)
+    rng = random.Random(9)
+    for p in layout["points"]:
+        x, y = p["at"]
+        if in_corridor(x, y) and abs(y) < WALL_Y + 1:
+            continue
+        kind = p["kind"]
+        if kind == "monument":
+            box(col, "statue plinth " + p["name"], (x, y, LOT_TOP + 0.8), (1.4, 1.4, 1.6), "heritage")
+            cylinder(col, "statue " + p["name"], (x, y, LOT_TOP + 2.6), 0.3, 2.0, "heritage_w", 10)
+            label(col, p["name"], (x, y, 6), 1.0)
+        elif kind == "flagpole":
+            cylinder(col, "flagpole", (x, y, LOT_TOP + 5), 0.08, 10, "pole", 8)
+        elif kind == "traffic_signals":
+            cylinder(col, "signal pole", (x, y, 3.0), 0.14, 6.0, "signal", 8)
+            box(col, "signal head", (x, y, 5.4), (0.4, 0.4, 1.0), "signal")
+        elif kind == "bus_stop":
+            slab(col, "bus shelter roof", x - 3, x + 3, y - 1.1, y + 1.1, 2.9, 0.15, "shelter")
+            for dx in (-2.8, 2.8):
+                cylinder(col, "bus shelter post", (x + dx, y - 0.9, 1.5), 0.05, 2.8, "pole", 6)
+        elif kind == "pole":
+            cylinder(col, "power pole", (x, y, 4.8), 0.16, 9.6, "pole", 8)
+    # Walls and fences, segment by segment, kept off the contract's pavements. Concrete walls
+    # are solid; fences are see-through iron, posts and two rails, as on Padre Faura and Taft.
+    for b in layout["barriers"]:
+        wall = b["kind"] == "wall"
+        for (x0, y0), (x1, y1) in zip(b["line"], b["line"][1:]):
+            if abs(x0) < PAVE_OUT - 0.3 and abs(x1) < PAVE_OUT - 0.3:
+                continue
+            L = math.hypot(x1 - x0, y1 - y0)
+            if L < 0.05:
+                continue
+            mid, ang = ((x0 + x1) / 2, (y0 + y1) / 2), math.atan2(y1 - y0, x1 - x0)
+            if wall:
+                box(col, "wall", (*mid, LOT_TOP + 1.5), (L, 0.18, 3.0), "wall", rot_z=ang)
+                continue
+            for z in (0.25, 1.35):
+                box(col, "fence rail", (*mid, LOT_TOP + z), (L, 0.05, 0.05), "fence", rot_z=ang)
+            for k in range(int(L / 2.4) + 1):
+                t = min(1.0, k * 2.4 / L)
+                box(col, "fence post", (x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, LOT_TOP + 0.72), (0.07, 0.07, 1.44), "fence")
+            k = 0.3
+            while k < L:
+                t = k / L
+                box(col, "fence picket", (x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, LOT_TOP + 0.8), (0.025, 0.025, 1.1), "fence")
+                k += 0.3
+    # Trees: every mapped tree, plus shade trees scattered over the lawns and parking.
+    spots = [tuple(t) for t in layout["trees"]]
+    for a in layout["areas"]:
+        if a["kind"] not in ("village_green", "parking"):
+            continue
+        xs, ys = [p[0] for p in a["poly"]], [p[1] for p in a["poly"]]
+        for _ in range(int((max(xs) - min(xs)) * (max(ys) - min(ys)) / 140)):
+            x, y = rng.uniform(min(xs), max(xs)), rng.uniform(min(ys), max(ys))
+            if point_in_poly(x, y, a["poly"]):
+                spots.append((x, y))
+    polys = [b["poly"] for b in layout["buildings"]]
     for x, y in spots:
-        if on_view_line(x, y):
+        if abs(x) < PAVE_OUT + 0.8 or max(abs(x), abs(y)) > EXTENT:
             continue
-        if -62 - 3 < x < -34 + 3 and 36 < y < 61:       # Rizal Hall and its forecourt
-            continue
-        if -42 - 2 < x < -12 and -60 < y < -2:           # the hospital front
-            continue
-        if -30 < x < -13 and 36 < y < 60:                # the corner hall
-            continue
-        if FAURA[0] - 2 < y < FAURA[1] + 2 or SOUTH_ST[0] - 2 < y < SOUTH_ST[1] + 2:
-            continue
-        if any(x0 - 2 < x < x1 + 2 and y0 - 2 < y < y1 + 2 for x0, x1, y0, y1 in wings):
+        if any(point_in_poly(x, y, p) for p in polys):
             continue
         h = 5 + rng.random() * 4
-        cylinder(col, "tree trunk", (x, y, LAWN_TOP + h / 2), 0.25, h, "trunk", 8)
-        blob(col, "tree canopy", (x, y, LAWN_TOP + h + 1.2), 2.8 + rng.random() * 1.6, "tree")
+        cylinder(col, "tree trunk", (x, y, LOT_TOP + h / 2), 0.25, h, "trunk", 8)
+        blob(col, "tree canopy", (x, y, LOT_TOP + h + 1.2), 2.6 + rng.random() * 1.6, "tree")
 
 
-# ------------------------------------------------------------------ east: the shop row
-
-def shops(root):
-    col = collection("Shop row (east)", root)
-    rng = random.Random(3)
-    base = PAVE_TOP + 0.02
-    # The near row, south to north. Varied widths, heights and setbacks, never mirrored.
-    row = [  # (y0, y1, depth, height, colour, name)
-        (-26.0, -16.5, 8, 9, "shop_b", "dorm (bedspace)"),
-        (-16.5, -9.5, 6, 7, "shop_c", "print xerox bind"),
-        (-9.5, -1.5, 7, 6, "shop", "carinderia (pares cart in front)"),
-        (-1.5, 9.0, 8, 8, "pcx", "PC EXPRESS"),
-        (9.0, 15.0, 6, 6.5, "shop_c", "pisonet"),
-        (15.0, 20.5, 7, 10, "shop_b", "medical supply, uniforms"),
-        (20.5, 26.0, 9, 14, "shop", "corner mid-rise"),
-    ]
-    for y0, y1, depth, h, colour, name in row:
-        setback = 0.0 if name in ("PC EXPRESS", "pisonet", "carinderia (pares cart in front)") else rng.choice((0.0, 0.6, 1.0))
-        x0 = PAVE_OUT + setback
-        slab(col, "shop " + name, x0, x0 + depth, y0 + 0.1, y1 - 0.1, base + h, h, colour)
-        # Awning at one of three depths over the pavement edge (never below head height).
-        slab(col, "awning", PAVE_OUT - rng.choice((0.8, 1.2, 1.6)), x0, y0 + 0.4, y1 - 0.4, base + 3.2, 0.12, "awning")
-        label(col, name, (PAVE_OUT + depth / 2, (y0 + y1) / 2, base + h + 1.5), 0.7)
-    # PC Express gets its fascia band; the rest of its detail comes in the kit pass.
-    slab(col, "PC Express fascia", PAVE_OUT - 0.25, PAVE_OUT, -1.2, 8.7, base + 5.2, 1.2, "train_band")
-    # Pisonet: three terminals against the shopfront edge, and the cord that trips.
-    for i in range(3):
-        box(col, "pisonet terminal", (9.7, 10.0 + i * 1.75, base + 0.8), (0.7, 0.9, 1.6), "pisonet")
-    slab(col, "pisonet cord TRIP", 7.7, 9.1, 10.0, 12.6, base + 0.03, 0.03, "cord")
-    # The pares cart, south of PC Express, with its A-board.
-    box(col, "pares cart", (8.8, -5.0, base + 1.3), (1.72, 2.03, 2.6), "pares")
-    box(col, "pares A-board", (8.05, -3.75, base + 0.4), (0.2, 0.9, 0.8), "shop_c")
-
-    # The second row and the district: mid-rises and dorms, stepping up away from Taft.
-    for y in range(-120, 121, 12):
-        if FAURA[0] - 3 < y < FAURA[1] + 3 or SOUTH_ST[0] - 3 < y < SOUTH_ST[1] + 3:
-            continue
-        for x0 in (24.0, 40.0, 58.0):
-            if 45 < x0 + 8 < 62 and -8 < y < 12:        # the banded tower's lot
-                continue
-            h = (8 if x0 == 24 else 14) + rng.random() * (16 if x0 == 24 else 30)
-            slab(col, "mid-rise", x0, x0 + 12, y + 0.8, y + 11.2, base + h, h, "midrise")
-    # The banded residential tower, cream and salmon (the Astral Tower silhouette, unnamed).
-    tx0, tx1, ty0, ty1 = 48.0, 60.0, -6.0, 8.0
-    slab(col, "banded tower", tx0, tx1, ty0, ty1, base + 62, 62, "tower")
-    for k in range(19):
-        z = base + 3 + k * 3.2
-        slab(col, "tower band", tx0 - 0.25, tx1 + 0.25, ty0 - 0.25, ty1 + 0.25, z + 0.7, 0.7, "tower_band")
-    label(col, "BANDED TOWER", ((tx0 + tx1) / 2, (ty0 + ty1) / 2, base + 66), 2.0)
-    # North-east corner across Padre Faura: the tall school block (Manila Science HS stand-in).
-    slab(col, "school block", 14, 40, 39, 60, base + 34, 34, "school")
-    label(col, "SCHOOL", (27, 50, base + 37), 2.0)
-    # Wires: poles on the shopfront edge every 12 m, and a sagging cable run between them.
-    y = -118.0
-    while y < 118:
-        if not (FAURA[0] - 1 < y < FAURA[1] + 1 or SOUTH_ST[0] - 1 < y < SOUTH_ST[1] + 1):
-            cylinder(col, "power pole", (10.65, y, base + 4.8), 0.16, 9.6, "pole", 8)
-        y += 12
-    for k, z in enumerate((8.6, 8.1, 7.6, 7.2)):
-        slab(col, "cable run", 10.55 + k * 0.08, 10.6 + k * 0.08, -118, 118, base + z, 0.04, "wire")
-
-
-# ------------------------------------------------------------------ street furniture and traffic
-
-def street(root):
-    col = collection("Street", root)
-    # Traffic lights on mast arms at the Padre Faura corners.
-    for sx in (-1, 1):
-        for y in (FAURA[0] - 0.8, FAURA[1] + 0.8):
-            cylinder(col, "signal pole", (sx * (BOX + 0.6), y, PAVE_TOP + 3.0), 0.14, 6.0, "signal", 8)
-            box(col, "signal arm", (sx * (BOX - 2.4), y, PAVE_TOP + 5.8), (6.0, 0.15, 0.15), "signal")
-            box(col, "signal head", (sx * (BOX - 4.8), y, PAVE_TOP + 5.2), (0.35, 0.35, 1.0), "signal")
-    # Green street-name blades at the north-west corner.
-    cylinder(col, "street sign post", (-BOX - 1.0, FAURA[0] - 1.0, PAVE_TOP + 1.5), 0.05, 3.0, "pole", 6)
-    box(col, "blade TAFT AVE", (-BOX - 1.0, FAURA[0] - 1.0, PAVE_TOP + 2.9), (0.04, 1.4, 0.3), "street_sign")
-    box(col, "blade PADRE FAURA", (-BOX - 1.0, FAURA[0] - 1.0, PAVE_TOP + 2.55), (1.6, 0.04, 0.3), "street_sign")
-    # Yellow steel railing on the Padre Faura kerbs.
-    for sx in (-1, 1):
-        slab(col, "yellow railing", sx * 7.4 - 0.04, sx * 7.4 + 0.04, FAURA[1] + 0.4, FAURA[1] + 9.0, PAVE_TOP + 1.0, 0.06, "railing")
-    # Traffic, all outside |y| = 16.5: jeepneys and a bus on Taft, cars on Padre Faura.
-    box(col, "jeepney (Taft, northbound)", (3.5, 23.0, 1.2), (2.2, 6.5, 2.4), "jeepney")
-    box(col, "jeepney (Taft, southbound)", (-3.5, -24.0, 1.2), (2.2, 6.5, 2.4), "jeepney")
-    box(col, "bus (Taft)", (3.5, 52.0, 1.6), (2.5, 11.0, 3.2), "bus")
-    box(col, "UV Express van", (-3.5, -48.0, 1.0), (1.9, 4.8, 2.0), "vehicle")
-    box(col, "car (Padre Faura)", (-24.0, 29.0, 0.8), (4.4, 1.9, 1.5), "vehicle")
-    box(col, "jeepney (Padre Faura)", (-40.0, 32.5, 1.2), (6.5, 2.2, 2.4), "jeepney")
-    box(col, "car (side street)", (22.0, -31.0, 0.8), (4.4, 1.9, 1.5), "vehicle")
+def traffic(root, layout):
+    """Traffic on the real streets, all outside |y| = 16.5 (the contract's car rule)."""
+    col = collection("Traffic", root)
+    box(col, "jeepney (Taft)", (3.5, 24.0, 1.2), (2.2, 6.5, 2.4), "jeepney")
+    box(col, "jeepney (Taft)", (-3.5, -26.0, 1.2), (2.2, 6.5, 2.4), "jeepney")
+    box(col, "bus (Taft)", (3.5, 70.0, 1.6), (2.5, 11.0, 3.2), "bus")
+    box(col, "UV Express van", (-3.5, -52.0, 1.0), (1.9, 4.8, 2.0), "vehicle")
+    faura = [r for r in layout["roads"] if "Padre Faura" in r["name"]]
+    rng = random.Random(4)
+    placed = 0
+    for r in faura:
+        for (x0, y0), (x1, y1) in zip(r["line"], r["line"][1:]):
+            L = math.hypot(x1 - x0, y1 - y0)
+            t = 12.0
+            while t < L and placed < 9:
+                x, y = x0 + (x1 - x0) * t / L, y0 + (y1 - y0) * t / L
+                if abs(x) > PAVE_OUT + 3 and abs(y) > WALL_Y + 2:
+                    kind = rng.choice(("vehicle", "vehicle", "jeepney"))
+                    size = (6.5, 2.2, 2.4) if kind == "jeepney" else (4.4, 1.9, 1.5)
+                    box(col, "car (Padre Faura)", (x, y, size[2] / 2), size, kind, rot_z=math.atan2(y1 - y0, x1 - x0))
+                    placed += 1
+                t += rng.uniform(18, 34)
 
 
 def horizon(root):
-    """A ring of towers fading into fog: Manila's skyline beyond the district."""
     col = collection("Horizon", root)
     rng = random.Random(11)
-    for i in range(56):
+    for i in range(70):
         a = rng.random() * math.tau
-        d = 150 + rng.random() * 120
-        s = 14 + rng.random() * 16
-        h = 25 + rng.random() * (60 if d < 210 else 100)
+        d = 260 + rng.random() * 160
+        s = 16 + rng.random() * 18
+        h = 30 + rng.random() * (70 if d < 330 else 120)
         box(col, f"skyline {i}", (math.cos(a) * d, math.sin(a) * d, h / 2), (s, s, h), "skyline", rot_z=rng.random())
 
 
@@ -536,8 +713,6 @@ def lighting():
     bg = world.node_tree.nodes["Background"]
     bg.inputs["Color"].default_value = (0.78, 0.80, 0.86, 1)
     bg.inputs["Strength"].default_value = 0.55
-    # Late afternoon (guide 0.4): a warm sun low from the west, through the campus trees, so the
-    # viaduct lays its shade band across the court.
     sun = bpy.data.objects.new("sun", bpy.data.lights.new("sun", "SUN"))
     sun.data.energy, sun.data.angle = 3.6, math.radians(3)
     sun.data.color = (1.0, 0.86, 0.68)
@@ -551,31 +726,38 @@ def lighting():
                 for space in area.spaces:
                     if space.type == "VIEW_3D":
                         space.shading.type = "MATERIAL"
-                        space.clip_end = 2000
+                        space.clip_end = 3000
                         space.clip_start = 0.1
 
 
-def preview(version):
+def preview(version, layout):
     PREVIEWS.mkdir(parents=True, exist_ok=True)
     scene = bpy.context.scene
     scene.render.engine = "BLENDER_EEVEE"
     scene.render.resolution_x, scene.render.resolution_y = 1600, 1000
     cam = bpy.data.objects.new("cam", bpy.data.cameras.new("cam"))
-    cam.data.clip_end = 2000
+    cam.data.clip_end = 3000
     scene.collection.objects.link(cam)
     scene.camera = cam
-    # The game's eye: 1.25 m above the pavement or road, 95 degrees horizontal.
     eye = 18 / math.tan(math.radians(95 / 2))
     e = EYE
+    hall = next(b for b in layout["buildings"] if "Rizal Hall" in b["name"])
+    ox, oy = next(p["at"] for p in layout["points"] if "Oblation" in p["name"])
+    front_y = min(p[1] for p in hall["poly"])
+    # The review stand for Rizal Hall: Padre Faura's south sidewalk, straight across from the portico.
+    faura_pts = [pt for r in layout["roads"] if "Padre Faura" in r["name"] for pt in r["line"]]
+    near = min(faura_pts, key=lambda pt: abs(pt[0] - ox))
+    faura_south = near[1] - 3 * 3.2 / 2 - SIDEWALK / 2
     shots = [
-        ("plan", "ORTHO", Vector((0, 5, 250)), Vector((0, 5, 0)), 150),
+        ("plan", "ORTHO", Vector((-40, 20, 400)), Vector((-40, 20, 0)), 300),
         ("plan_court", "ORTHO", Vector((0, 0, 250)), Vector((0, 0, 0)), 42),
-        ("aerial_campus", "PERSP", Vector((55, -70, 55)), Vector((-20, 15, 4)), 26),
-        ("aerial_shops", "PERSP", Vector((-60, -55, 45)), Vector((10, 5, 4)), 26),
-        ("spawn_north", "PERSP", Vector((0.0, -SPAWN, e)), Vector((0, 20, 4)), eye),
-        ("rizal_view", "PERSP", Vector((2.0, -12.0, e)), Vector((-48, 41, 8)), eye),
-        ("west_pavement_east", "PERSP", Vector((-9.5, -4.0, PAVE_TOP + e)), Vector((12, 6, 3)), eye),
+        ("aerial_rizal", "PERSP", Vector((60, -70, 70)), Vector((-70, 50, 6)), 24),
+        ("aerial_north", "PERSP", Vector((-20, -110, 60)), Vector((-10, 40, 4)), 24),
+        ("spawn_north", "PERSP", Vector((0.0, -SPAWN, e)), Vector((0, 30, 4)), eye),
         ("taya_south", "PERSP", Vector((0.0, 4.0, e)), Vector((0, -30, 2)), eye),
+        ("west_pavement_east", "PERSP", Vector((-9.5, -4.0, PAVE_TOP + e)), Vector((12, 6, 3)), eye),
+        ("court_to_rizal", "PERSP", Vector((-8.0, 16.0, PAVE_TOP + e)), Vector((ox, front_y, 8)), eye),
+        ("rizal_front", "PERSP", Vector((ox + 6, faura_south, PAVE_TOP + 1.7)), Vector((ox, front_y, 7)), eye),
     ]
     for name, kind, pos, tgt, lens in shots:
         cam.data.type = kind
@@ -590,20 +772,25 @@ def preview(version):
         scene.render.filepath = str(PREVIEWS / f"blockout_{name}_v{version}.png")
         bpy.ops.render.render(write_still=True)
         print("[ilalim] preview", scene.render.filepath)
+    bpy.data.collections["LRT-1"].hide_render = False
 
 
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     version = int(argv[argv.index("--preview") + 1]) if "--preview" in argv else 0
+    layout = json.loads(LAYOUT.read_text(encoding="utf-8"))
     bpy.ops.wm.read_factory_settings(use_empty=True)
     root = bpy.data.collections.new("ilalim_blockout")
     bpy.context.scene.collection.children.link(root)
-    ground(root)
+    grid, names = ground(root, layout)
+    corridor(root, grid, names)
     gameplay(root)
+    street_business(root)
     guideway(root)
-    campus(root)
-    shops(root)
-    street(root)
+    buildings(root, layout)
+    rizal_hall(root, layout)
+    details(root, layout)
+    traffic(root, layout)
     horizon(root)
     lighting()
     SOURCE.mkdir(parents=True, exist_ok=True)
@@ -614,7 +801,7 @@ def main():
         backup.unlink()
     print("[ilalim] blockout saved", out)
     if version:
-        preview(version)
+        preview(version, layout)
 
 
 if __name__ == "__main__":

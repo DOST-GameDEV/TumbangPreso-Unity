@@ -1,6 +1,6 @@
 # Ilalim ng Tulay rework guide (ILALIM-1)
 
-⚠️⚠️ **CURRENT STATE (2026-09-29): BLOCKOUT v3 BUILT, AWAITING OWNER REVIEW.** The owner chose
+⚠️⚠️ **CURRENT STATE (2026-09-29): BLOCKOUT v5 (REAL OSM LAYOUT) BUILT, AWAITING OWNER REVIEW.** The owner chose
 Ilalim ng Tulay as the next map after Kanto and the Lagoon Court, and set it at UP Manila's
 Padre Faura corner "cuz we wanna see our school's Rizal Hall in the game". § 0 is the proposed
 place and feel, with the open decisions in § 0.6. The evidence is in
@@ -17,7 +17,33 @@ The owner then asked "give me a blockout in blender". `tools/author_ilalim_block
 
 Each default is a small edit if the owner picks the other answer.
 
-NEXT: the owner reviews the blockout and answers § 0.6. Then ILALIM-1.3, the kits.
+⚠️ **v3 WAS REJECTED FOR ITS LAYOUT, NOT ITS MODELS.** The owner's words: "you should take a
+look at street map to see how the place is actually laid out", then "the models are pretty
+much accurate but the positioning, zoning and lack of sidewalks arent". Since v4, everything
+outside the play area comes from OpenStreetMap:
+- `tools/ilalim_osm_layout.js` converts an Overpass extract into
+  `ArtSource/ilalim/osm_layout.json`, in game metres (ODbL, attribution in the file).
+- Only the road and the east frontage band are squeezed into the 14 m box. Everything else
+  keeps its true position.
+- The ground is a 0.5 m grid, so every street gets real sidewalks with a kerb step.
+
+What the true layout puts around the court:
+
+| Where | What |
+|---|---|
+| West | PGH's fenced frontage (the fence lands exactly on the x = -11 wall), then the Nurses Home and the OPD |
+| North across Padre Faura | The Supreme Court corner, with Lady Justice and Moses facing Taft |
+| North-west, behind the Supreme Court | Rizal Hall: a quadrangle facing south across its lawn, with the Oblation |
+| East | The Astral Tower and West East Center podium on the wall line, then KFC and Vista GL Taft south |
+| North-east | Manila Science High School |
+
+§ 0.3's picture of a "campus lawn" with Rizal Hall visible from the court is superseded by
+this. ⚠️ **In the true layout Rizal Hall CANNOT be seen from the court.** It is about 115 m
+away, behind PGH and the Supreme Court (render `court_to_rizal`).
+
+NEXT: the owner reviews v5, and decides whether Rizal Hall must be visible from the court. It
+can stay true and appear only in the map card and the flyover, or it can be moved. The owner
+also answers § 0.6. Then ILALIM-1.3, the kits.
 
 Read first, in order: [AGENTS](../AGENTS.md), [VISION](VISION.md), [WORKING_RULES](WORKING_RULES.md),
 this guide, then the map's existing design document [Ilalim_Ng_Tulay.md](Ilalim_Ng_Tulay.md)
