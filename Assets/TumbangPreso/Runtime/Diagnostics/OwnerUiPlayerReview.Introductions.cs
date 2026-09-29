@@ -96,7 +96,7 @@ namespace TumbangPreso.Diagnostics
                             var listener = Object.FindObjectsByType<AudioListener>().FirstOrDefault(l => l.enabled && l.gameObject.activeInHierarchy);
                             if (listener == null) throw new InvalidOperationException("No game listener for sound review");
                             audio = listener.gameObject.AddComponent<ReviewAudioCapture>(); audio.Begin();
-                            if (!scene.StartSound()) throw new InvalidOperationException(hero + " has no retained theme source");
+                            if (!scene.StartSound() && Audio.AudioCues.SkillSfxOn) throw new InvalidOperationException(hero + " has no retained theme source");
                         }
                         var movie = StartCoroutine(RecordCatchMotion(motionName, seconds));
                         float began = Time.realtimeSinceStartup;

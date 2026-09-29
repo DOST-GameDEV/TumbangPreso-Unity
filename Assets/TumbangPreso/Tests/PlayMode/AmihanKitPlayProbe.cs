@@ -882,7 +882,10 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(actor.IsGrounded);
                 Assert.IsFalse(actor.IsFlying);
                 yield return new WaitForSeconds(.5f);
-                Assert.AreEqual(1, settles);
+                // ⚠️ The landing cue was this test's other witness, and every hero skill sound is deleted (2026-09-29, the owner:
+                // *"can we delete all skill abilities sfx"*, `AudioCues.IsSkillSfx`). The landing is proved by the body above; the
+                // cue must stay silent until the sounds are reworked.
+                Assert.AreEqual(Audio.AudioCues.SkillSfxOn ? 1 : 0, settles);
                 Assert.IsTrue(soundedOnGround);
                 Assert.IsNull(actor.GetComponent<AmihanFlightPose>());
                 Assert.IsNull(actor.GetComponentInChildren<AmihanHoverRing>());

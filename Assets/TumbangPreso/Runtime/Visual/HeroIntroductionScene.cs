@@ -320,6 +320,8 @@ namespace TumbangPreso.Visual
         {
             if (_sound != null) return true;
             string cue = Abilities.HeroAbilitySystem.ThemeFor(_hero);
+            // Hero skill sounds, the ultimate themes among them, are off until they are reworked (`AudioCues.SkillSfxOn`).
+            if (!Audio.AudioCues.Audible(cue)) return false;
             var clip = !string.IsNullOrEmpty(cue) ? Resources.Load<AudioClip>("Sfx/" + Audio.AudioCues.FileStemFor(cue)) : null;
             if (clip == null) return false;
             _sound = _root.AddComponent<AudioSource>(); _sound.playOnAwake = false;

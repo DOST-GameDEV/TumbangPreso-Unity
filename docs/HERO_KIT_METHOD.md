@@ -48,6 +48,14 @@ Where Paete's own records live, for the detail behind every line below:
 2. **Typed by hand, one part at a time.** *"do it one by one dont try to mass generate it"*, *"manually do each part of that builder
    dont js auto generate looping shit"*. Every leaf, cord, petal, root, row of a particle table has its own typed numbers. A loop
    that stamps one shape round a circle at one size is the thing he rejects.
+⚠️⚠️ **SKILL SOUNDS ARE DELETED AND NONE ARE TO BE ADDED UNTIL THE OWNER ASKS (2026-09-29).** *"also all ur skill sfx suck shit what
+is that HAHAHA even paete's"*, *"dont put sfx for all skills for now"*, *"will rework them at a lter date"*, *"can we delete all skill
+abilities sfx ty haha"*. Every cast, variant, status, payload, zone, ultimate theme and ultimate weather cue of every hero is gone from
+`Resources/Sfx` and from `AudioCues.Live`; call sites stay and play nothing (`AudioCues.IsSkillSfx`, `Audible`, `SkillSfxOn` false).
+Wherever this method says "sound" below (rules 3 and 8, the beat tables, the cutscene theme), SKIP IT for now and do not rerun the
+`tools/build_*_audio.py` or `tools/generate_*_audio.py` generators into `Resources/Sfx`. The heroes' voices and the base game's
+sounds stay.
+
 3. **Each ability gets its own animation, effects and sound.** *"i want each of his skill to have their own animation"*, *"think of
    vfx that should accompany it as well as sfx"*. No clip, effect builder or sound recipe is shared between two verbs.
 4. **Nothing appears from empty air.** *"coming out of the ground each time and forming on the spot not just spawning in"*, *"i also
