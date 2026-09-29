@@ -33,6 +33,7 @@ no kit owns:
     clear of the pier collars (Taft x about +/-1.9, outside |y| = 16.5; Padre Faura westbound);
   * the light: a warm late-afternoon sun low from the west (guide section 0.4) and a sky.
 """
+import json
 import math
 import sys
 from pathlib import Path
@@ -45,6 +46,9 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "ArtSource" / "ilalim"
 PREVIEWS = ROOT / "Logs" / "ilalim-blender"
 KITS = ["lrt_kit", "rizal_hall", "heritage", "eastside", "street", "trees", "props", "sarisari"]
+# The liveliness pass (owner: "can you think of a way to make the place look more lively, more
+# unique building shapes etc?"): linked when their files exist.
+OPTIONAL_KITS = ["rooftops", "streetlife", "landmarks"]
 SKIP = ("prototype", "review", "stand-in", "kit (", "(source", "(place on piers)")
 # The props kit's pier signs, placed on the piers, live in a review-named collection. Only that
 # one: its prototypes, "prop_column_signs (place on piers)", sit at the origin for the Unity
@@ -149,6 +153,24 @@ def traffic(parent):
     instance(col, "vehicles.blend", "veh_hatch_maroon", (26.0, 30.0, 0.0), west)
 
 
+def hide_replaced():
+    """The landmarks kit replaces a few generic background buildings; it lists their objects in
+    ArtSource/ilalim/landmarks.json ({"hide": [...]}). The east and heritage kits skip those
+    buildings when they build. Hiding them here as well only lasts for this session's preview
+    renders: a linked object's visibility is not saved in this file."""
+    path = SOURCE / "landmarks.json"
+    if not path.exists():
+        return
+    names = set(json.loads(path.read_text(encoding="utf-8")).get("hide", []))
+    hidden = []
+    for o in bpy.data.objects:
+        if o.name in names:
+            o.hide_render = True
+            o.hide_viewport = True
+            hidden.append(o.name)
+    print(f"[ilalim-city] hidden for landmarks: {sorted(hidden)}; missing: {sorted(names - set(hidden))}")
+
+
 def train(parent):
     col = bpy.data.collections.new("lrt train (instance)")
     parent.children.link(col)
@@ -248,7 +270,9 @@ def main():
     bpy.ops.wm.save_as_mainfile(filepath=str(out))
     root = bpy.data.collections.new("ilalim_city")
     bpy.context.scene.collection.children.link(root)
-    linked = {k: link_kit(k, root) for k in KITS}
+    kits = KITS + [k for k in OPTIONAL_KITS if (SOURCE / f"{k}.blend").exists()]
+    linked = {k: link_kit(k, root) for k in kits}
+    hide_replaced()
     lilies(root, linked["street"], linked["trees"])
     train(root)
     traffic(root)

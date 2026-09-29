@@ -51,6 +51,38 @@ THE BUILDINGS, each with its own construction, not a repaint (KANTO_DESIGN_GUIDE
     LOD blocks whose windows are painted facade textures. All carry roof tanks and parapets;
     the near ones carry aircon boxes and grilles.
 
+FACADE IDENTITY (2026-09-30; owner: "can you think of a way to make the place look more lively,
+more unique building shapes etc?", then "proceed"). Before this every unnamed building shared one
+grey-white look. Now each unnamed building and Vista GL Taft gets a Look (assign_looks):
+  * a PAINT from PALETTE, nine weathered pastels (mint, salmon, butter, lilac, cream, rose, sage,
+    seafoam, chalk), chosen greedily so no two buildings within 45 m share one, with the salmon
+    landmarks counting as salmon and rose neighbours and chalk kept off the front row (near-white
+    read as the old look from the street). Each paint has its own drawings (east_fac_punched_*,
+    _balcony_*, _ribbon_*, _shops_*), painted by the texture script with the window rhythm the
+    grille cards rely on; far LOD blocks take the same drawing kind as before in their paint, over
+    a ground storey of drawn shops with invented signboards;
+  * a GRILLE card style (sunburst, diamond, wave, grid), a roll-up SHUTTER paint, an AWNING kind,
+    a balcony PARAPET (solid in the paint or trim, or a grille card under a chunky rail) and its
+    own aircon and grille densities;
+  * TRAITS on its street faces (facade_traits, Site.exposed: edges whose ground 2.5 m out is not
+    another building). Slots follow the construction (between fins, else about every 3.4 m) and a
+    per-edge pattern (alternate, columns, mixed, sparse), so projecting BAYS run up the floors and
+    BALCONIES stack in columns, never scattered. Balconies carry pots with round shrubs and, on
+    some, a washing line on two rods; awnings (canvas or tin) hang over some ground-floor bays; one
+    hand-painted BLADE sign (FACADE_SIGNS, invented names) goes near a corner of each front-row
+    building. On Taft faces bays are 0.5 m and balconies 0.6 m deep, above the ground floor only,
+    and no awnings or blades.
+`detail` 2 is the front row (within 75 m of Taft and Padre Faura's corner, and Vista), 1 the
+second row (its two longest street faces, sparse), 0 the far LOD blocks (paint and drawings only).
+Every trait is checked against the other footprints, the corner store's lot (SARI_LOT, never
+entered) and the street and tree kits' poles, signals, trunks and crowns (read_boxes links their
+.blends only to measure, then unlinks them). Footprints, roof heights, roof slabs and the roof
+kits are untouched: the traits use the Look's own random stream, and every draw the roof kit
+depends on is made exactly as before, so tanks and stair houses stay where they were (another kit
+builds on these roofs). The shop row, its props and the named buildings other than Vista keep
+their own constructions. Kit faces went from about 46k to about 69k (93k with the linked
+guideway, 71k before).
+
 THE HOUSE STYLE (KANTO_DESIGN_GUIDE.md section 2, LAGOON_REWORK_GUIDE.md section 2): real
 editable models from this script; chunky and organic, never fiddly (thick rounded members, every
 footprint's corners filleted, detail in the painted textures); NO TWO SURFACES SHARE A PLANE
@@ -159,9 +191,98 @@ MATERIALS = {
     "east_cloth_d":      (None, (0.86, 0.78, 0.42), 0, None),
     "east_cloth_e":      (None, (0.55, 0.60, 0.66), 0, None),
 }
+
+# ------------------------------------------------------------------ facade identity tables
+# These four tables are plain literals on purpose: tools/author_ilalim_textures_eastside.py reads
+# them with ast.literal_eval (it cannot import this bpy script), so the painter and the builder
+# share one source.
+#
+# The district palette, weathered pastels of the Manila vernacular (owner: "can you think of a way
+# to make the place look more lively, more unique building shapes etc?"). key: (wall, trim), sRGB
+# hex. Every hue stays clear of the role hues: the salmon is pushed pink (hue about 10 degrees, low
+# saturation, where offence orange is 23 degrees and saturated), there is no mid blue, the lilac
+# sits at 270 degrees and the seafoam at 160, far either side of defence blue's 207.
+PALETTE = {
+    "mint":    ("b3d4b6", "f1eee4"),
+    "salmon":  ("e0b0a6", "f4ede2"),
+    "butter":  ("ecd88f", "f6f2e4"),
+    "lilac":   ("c4b6d6", "f3f0ee"),
+    "cream":   ("e6d4b0", "9c7a68"),
+    "rose":    ("d6a2aa", "f4ece6"),
+    "sage":    ("c0c89e", "efeadb"),
+    "seafoam": ("acd3c5", "f3f0e6"),
+    "chalk":   ("e5e2d8", "8fa290"),
+}
+# Security grille drawings, each a cut-out card (RGBA): the kit's first sunburst plus three more.
+GRILLE_STYLES = ("sunburst", "diamond", "wave", "grid")
+# Roll-up shutter paints (None: bare galvanized, the kit's first shutter).
+SHUTTER_PAINTS = {"galv": None, "green": "6e977a", "maroon": "8a4c4f", "butter": "d6c07c", "sage": "9dab8b"}
+# Hand-painted vertical signs for the front-row buildings: invented businesses, no brands. Each is
+# a blade in the sign kit's own system (tools/author_ilalim_signs.py), added to its SIGNS table.
+FACADE_SIGNS = {
+    "fac_gupitan": {"system": "blade", "w": 0.72, "h": 1.9, "lines": [["GUPITAN NI BOY", 1.0], ["HAIRCUT • SHAVE", 0.42]],
+                    "bg": "2f6b4f", "fg": "f5f0e0", "accent": "f5f0e0"},
+    "fac_tahian": {"system": "blade", "w": 0.72, "h": 1.9, "lines": [["TAHIAN NI NENA", 1.0], ["ALTERATION • UNIPORME", 0.42]],
+                   "bg": "f1ecdf", "fg": "7a2a3e", "accent": "7a2a3e"},
+    "fac_bigasan": {"system": "blade", "w": 0.72, "h": 1.9, "lines": [["BIGASAN", 1.0], ["BIGAS • ITLOG • ASUKAL", 0.42]],
+                    "bg": "e8cf62", "fg": "4a1c1c", "accent": "4a1c1c"},
+    "fac_paupahan": {"system": "blade", "w": 0.72, "h": 1.9, "lines": [["PAUPAHAN", 1.0], ["ROOM • BEDSPACE • 3F", 0.42]],
+                     "bg": "7a2a2e", "fg": "f3e7c4", "accent": "f3e7c4"},
+    "fac_manukan": {"system": "blade", "w": 0.72, "h": 1.9, "lines": [["LITSON MANOK", 1.0], ["LIEMPO • INASAL", 0.42]],
+                    "bg": "efe4c7", "fg": "8f2126", "accent": "3a5a2a"},
+    "fac_relo": {"system": "blade", "w": 0.72, "h": 1.9, "lines": [["RELOHERO NI KA ISKO", 1.0], ["RELO • BATERYA • SUSI", 0.42]],
+                 "bg": "33342f", "fg": "e9d77a", "accent": "e9d77a"},
+    "fac_kapehan": {"system": "blade", "w": 0.72, "h": 1.9, "lines": [["KAPEHAN NI LOLA", 1.0], ["KAPE • PANDESAL", 0.42]],
+                    "bg": "d9e5d6", "fg": "233f33", "accent": "233f33"},
+    "fac_hardware": {"system": "blade", "w": 0.72, "h": 1.9, "lines": [["HARDWARE NI OMENG", 1.0], ["PAKO • PINTURA • TUBO", 0.42]],
+                     "bg": "3f5a3a", "fg": "f1e6c8", "accent": "f1e6c8"},
+}
+S.SIGNS.update(FACADE_SIGNS)
+
 for _k, _spec in S.SIGNS.items():
     MATERIALS[S.face_material(_k)] = (f"east_sign_{_k}", None, 0, None)
 MATERIALS.update(S.BODY_MATERIALS)
+
+
+def _lin(hexs):
+    out = []
+    for i in (0, 2, 4):
+        c = int(hexs[i:i + 2], 16) / 255
+        out.append(c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4)
+    return out
+
+
+def paint_tint(hexs):
+    """The tint that turns the neutral east_render drawing (base ecebe7) into this paint: a ratio of
+    LINEAR colours, since the node multiplies after the texture's sRGB decode."""
+    return tuple(min(1.05, c / b) for c, b in zip(_lin(hexs), _lin("ecebe7")))
+
+
+FACADE_DRAWINGS = ("punched", "balcony", "ribbon", "shops")
+for _key, (_wall, _trim) in PALETTE.items():
+    MATERIALS[f"east_paint_{_key}"] = ("east_render", paint_tint(_wall), 0, (4, 4))
+    MATERIALS[f"east_trim_{_key}"] = ("east_render", paint_tint(_trim), 0, (4, 4))
+    for _d in FACADE_DRAWINGS:
+        MATERIALS[f"east_fac_{_d}_{_key}"] = (f"east_fac_{_d}_{_key}", None, 0, (6, 3.2))
+for _g in GRILLE_STYLES[1:]:
+    MATERIALS[f"east_grille_{_g}"] = (f"east_grille_{_g}", None, 0, None)
+for _p, _hex in SHUTTER_PAINTS.items():
+    if _hex:
+        MATERIALS[f"east_shutter_{_p}"] = (f"east_shutter_{_p}", None, 0.6, (2, 1))
+MATERIALS.update({
+    "east_pot_clay":  (None, (0.47, 0.31, 0.28), 0, None),
+    "east_pot_white": (None, (0.84, 0.83, 0.79), 0, None),
+    "east_pot_green": (None, (0.25, 0.35, 0.27), 0, None),
+    "east_rail":      ("east_tin", (0.30, 0.31, 0.29), 0.3, (2, 2)),
+})
+
+
+def grille_mat(style):
+    return "east_grille" if style == "sunburst" else f"east_grille_{style}"
+
+
+def shutter_mat(paint):
+    return "east_shutter" if SHUTTER_PAINTS.get(paint) is None else f"east_shutter_{paint}"
 
 # Surfaces that take the positional grime (walls, parapets, slab edges).
 GRIMED = {"east_wec_render", "east_wec_breeze", "east_wec_wall", "east_astral_wall", "east_astral_band",
@@ -171,7 +292,8 @@ GRIMED = {"east_wec_render", "east_wec_breeze", "east_wec_wall", "east_astral_wa
           "east_lod_punched_b", "east_lod_balcony_a", "east_lod_balcony_b", "east_tile_cream", "east_tile_maroon",
           "east_tile_green", "east_shutter", "east_brick", "east_maroon", "east_mustard", "east_tank",
           "east_tank_dark"}
-ALPHA = {"east_grille", S.face_material("pisonet")}
+GRIMED |= {m for m in MATERIALS if m.startswith(("east_paint_", "east_trim_", "east_fac_", "east_shutter_"))}
+ALPHA = {"east_grille", S.face_material("pisonet")} | {grille_mat(g) for g in GRILLE_STYLES}
 # The flat roofs repeated as wallpaper from above (owner: "not only ground but the flat roofs"):
 # rotated, feathered extra samples (tools/ilalim_antitile.py).
 ANTI_TILE = {"east_roof"}
@@ -347,6 +469,10 @@ class EBuf:
     def along_y(self, faces):
         """u along world y (awning stripes run down the slope)."""
         self._spec(faces, ("y",))
+
+    def along_t(self, faces, t):
+        """u along a plan direction t (an awning on any edge: its stripes run down the slope)."""
+        self._spec(faces, ("t", t.x, t.y))
 
     def face(self, verts, mat):
         f = self.bm.faces.new(verts)
@@ -526,6 +652,9 @@ class EBuf:
                     l[uv].uv = (co.dot(t) / tile[0], (co.z - spec[1]) / spec[2])
                 elif spec and spec[0] == "y":
                     l[uv].uv = (co.y / tile[0], (co.x + co.z) / tile[1])
+                elif spec and spec[0] == "t":
+                    tx, ty = spec[1], spec[2]
+                    l[uv].uv = ((co.x * tx + co.y * ty) / tile[0], (co.x * ty - co.y * tx + co.z) / tile[1])
                 elif abs(n.z) > 0.7:
                     l[uv].uv = (co.x / tile[0], co.y / tile[1])
                 else:
@@ -659,11 +788,13 @@ def grille(buf, a, b, n, z0, z1, gap=0.07):
              "east_grille", [(0, 0), (reps, 0), (reps, 1), (0, 1)])
 
 
-def window_grilles(buf, poly, bases, rng, prob=0.4, gap=0.06):
-    """Grilles over the windows drawn in east_lod_punched: the drawing puts a window centre at
-    s = 1, 3 and 5 m (mod 6) along each wall, where s is the world u of the facade UVs, and from
-    1.0 to 2.5 m over each floor. A grille is placed over some of those windows only."""
-    for a, b in zip(poly, poly[1:] + poly[:1]):
+def window_grilles(buf, poly, bases, rng, prob=0.4, gap=0.06, mat="east_grille", busy=None):
+    """Grilles over the windows drawn in east_lod_punched (and the east_fac_punched_* drawings,
+    which keep its window rhythm): the drawing puts a window centre at s = 1, 3 and 5 m (mod 6)
+    along each wall, where s is the world u of the facade UVs, and from 1.0 to 2.5 m over each
+    floor. A grille is placed over some of those windows only, never where `busy(edge, s)` says a
+    bay or balcony stands."""
+    for j, (a, b) in enumerate(zip(poly, poly[1:] + poly[:1])):
         a, b = Vector(a), Vector(b)
         e = b - a
         if e.length < 2.0:
@@ -680,8 +811,11 @@ def window_grilles(buf, poly, bases, rng, prob=0.4, gap=0.06):
             f = (sc - sa) / (sb - sa)
             c = a + e * f
             for z0 in bases:
-                if rng.random() < prob:
-                    grille(buf, c - t * 0.68, c + t * 0.68, n, z0 + 0.98, z0 + 2.52, gap=gap)
+                if rng.random() < prob and not (busy and busy(j, f * e.length, z0)):
+                    buf.quad([Vector((q.x, q.y, z)) for q, z in
+                              ((c - t * 0.68 + n * gap, z0 + 0.98), (c + t * 0.68 + n * gap, z0 + 0.98),
+                               (c + t * 0.68 + n * gap, z0 + 2.52), (c - t * 0.68 + n * gap, z0 + 2.52))],
+                             mat, [(0, 0), (1, 0), (1, 1), (0, 1)])
 
 
 def laundry(buf, a, b, z, rng):
@@ -713,6 +847,321 @@ def planter(buf, c, length, rng, along="y"):
                  rng.choice(("east_foliage", "east_foliage_lt")), subdiv=1)
 
 
+# ------------------------------------------------------------------ facade identity and traits
+
+SARI_LOT = (11.8, 22.8, 38.3, 47.3)     # the corner store's lot (sarisari kit): nothing enters it
+
+
+def inside(p, poly):
+    x, y = p[0], p[1]
+    c = False
+    for (x0, y0), (x1, y1) in zip(poly[-1:] + poly[:-1], poly):
+        if (y0 > y) != (y1 > y) and x < x0 + (y - y0) * (x1 - x0) / (y1 - y0):
+            c = not c
+    return c
+
+
+def read_boxes(path, max_plan=8.0):
+    """World boxes of the small mesh objects east of Taft in another kit's .blend (poles, signals,
+    tree trunks and crowns), linked for the reading and unlinked again, so eastside.blend keeps no
+    reference to it. World matrices are rebuilt from the saved parent chain."""
+    if not path.exists():
+        return []
+    before = set(bpy.data.libraries)
+    with bpy.data.libraries.load(str(path), link=True) as (src, dst):
+        dst.objects = list(src.objects)
+
+    def world(o):
+        m = o.matrix_basis.copy()
+        while o.parent is not None:
+            m = o.parent.matrix_basis @ o.matrix_parent_inverse @ m
+            o = o.parent
+        return m
+    boxes = []
+    for o in dst.objects:
+        if o is None or o.type != "MESH" or not o.data.vertices:
+            continue
+        m = world(o)
+        lo, hi = Vector((1e9, 1e9, 1e9)), Vector((-1e9, -1e9, -1e9))
+        for c in o.bound_box:
+            w = m @ Vector(c)
+            lo, hi = Vector(map(min, lo, w)), Vector(map(max, hi, w))
+        if hi.x < 9.0 or hi.x - lo.x > max_plan or hi.y - lo.y > max_plan:
+            continue
+        boxes.append((lo.x - 0.25, hi.x + 0.25, lo.y - 0.25, hi.y + 0.25, lo.z, hi.z + 0.2))
+    for lib in list(bpy.data.libraries):
+        if lib not in before:
+            bpy.data.libraries.remove(lib)
+    return boxes
+
+
+class Site:
+    """What a facade trait must stay clear of: the other buildings' footprints, the corner store's
+    lot, and (when those kits exist) the street kit's poles and signals and the tree kit's trunks
+    and crowns. Taft's own poles are the street kit's too."""
+
+    def __init__(self, polys):
+        self.polys = polys
+        x0, x1, y0, y1 = SARI_LOT
+        self.boxes = [(x0 - 0.4, x1 + 0.4, y0 - 0.4, y1 + 0.4, -5.0, 99.0)]
+        for blend in ("street.blend", "trees.blend"):
+            got = read_boxes(SOURCE / blend)
+            print("[east] obstacles from", blend, len(got))
+            self.boxes += got
+
+    def free(self, pts, z0, z1, own):
+        for p in pts:
+            for k, poly in self.polys.items():
+                if k != own and inside(p, poly):
+                    return False
+        xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+        ax0, ax1, ay0, ay1 = min(xs), max(xs), min(ys), max(ys)
+        return not any(ax0 < bx1 and ax1 > bx0 and ay0 < by1 and ay1 > by0 and z0 < bz1 and z1 > bz0
+                       for bx0, bx1, by0, by1, bz0, bz1 in self.boxes)
+
+    def exposed(self, poly, own, min_len=3.5):
+        """The street-facing edges of a footprint: (index, a, t, n, length) for every edge whose
+        ground 2.5 m out is not another building."""
+        out = []
+        for j, (a, b) in enumerate(zip(poly, poly[1:] + poly[:1])):
+            a, b = Vector(a), Vector(b)
+            e = b - a
+            if e.length < min_len:
+                continue
+            t = e.normalized()
+            n = Vector((t.y, -t.x))
+            probes = [a + t * (e.length * f) + n * 2.5 for f in (0.2, 0.5, 0.8)]
+            if any(inside(p, q) for p in probes for k, q in self.polys.items() if k != own):
+                continue
+            out.append((j, a, t, n, e.length))
+        return out
+
+
+class Look:
+    """One building's identity: its paint (a PALETTE key), trims, grille drawing, shutter paint,
+    awning, balcony parapet and how busy its facade is. `detail` 2 is the front row (what the court
+    and the two streets see), 1 the second row, 0 the far LOD blocks (paint and drawings only)."""
+
+    def __init__(self, key, rng, detail):
+        self.key, self.detail = key, detail
+        self.wall, self.trim = f"east_paint_{key}", f"east_trim_{key}"
+        self.grille = grille_mat(rng.choice(GRILLE_STYLES))
+        self.shutter = shutter_mat(rng.choice(list(SHUTTER_PAINTS)))
+        self.awning = rng.choice(("canvas_green", "canvas_maroon", "tin_green", "tin_maroon", "tin_grey", None))
+        self.rail = rng.choice(("solid", "rail", "rail"))
+        self.parapet = rng.choice((self.wall, self.trim))
+        self.ac_p = rng.uniform(0.25, 0.6)
+        self.grille_p = rng.uniform(0.25, 0.55)
+        self.bays_from = rng.choice((0, 0, 1))          # bays corbel out from the 1st or the 2nd floor
+        self.sign = None
+        self.rng = rng
+
+
+def _pt(a, t, n, s, o):
+    return a + t * s + n * o
+
+
+def _v3(p, z):
+    return Vector((p.x, p.y, z))
+
+
+def bay(buf, a, t, n, s, w, depth, zb, zt, floor_edges, fac, cap):
+    """A projecting bay (a box window) standing out of the wall `depth` m, sunk 12 cm into it,
+    from zb to zt, its walls carrying the building's facade drawing aligned to each floor, a slab
+    under it and a cap on it."""
+    rect = [_pt(a, t, n, s - w / 2, -0.12), _pt(a, t, n, s + w / 2, -0.12), _pt(a, t, n, s + w / 2, depth),
+            _pt(a, t, n, s - w / 2, depth)]
+    rect = ccw(fillet([(p.x, p.y) for p in rect], 0.16, 2))
+    zs = [zb] + [z for z in floor_edges if zb + 0.4 < z < zt - 0.4] + [zt]
+    bases = sorted(floor_edges)
+
+    def band(i):
+        z = zs[i] + 0.01
+        return (max([e for e in bases if e <= z] or [zb]), 3.2)
+    buf.rings_z(rect, [(0.0, z) for z in zs], lambda i, j: fac, seg_band=band, cap_bottom=False)
+    buf.extrude_z(offset(rect, 0.07), zb - 0.19, zb + 0.03, "east_slab")
+    buf.extrude_z(offset(rect, 0.09), zt - 0.05, zt + 0.19, cap)
+
+
+def balcony(buf, kit, a, t, n, s, w, d, z0, look, rng):
+    """A balcony: a chunky slab sunk 12 cm into the wall, a solid parapet or a painted grille card
+    under a chunky rail, a pot or two, and sometimes a washing line on two rods."""
+    rot = math.atan2(t.y, t.x)
+    c = _pt(a, t, n, s, (d - 0.12) / 2)
+    buf.box((c.x, c.y, z0 + 0.02), (w, d + 0.12, 0.24), "east_slab", r=0.06, rot=rot)
+    if look.rail == "solid":
+        f = _pt(a, t, n, s, d - 0.09)
+        buf.box((f.x, f.y, z0 + 0.62), (w - 0.04, 0.14, 0.98), look.parapet, r=0.05, rot=rot)
+        for sg in (-1, 1):
+            p = _pt(a, t, n, s + sg * (w / 2 - 0.1), (d - 0.12) / 2 - 0.03)
+            buf.box((p.x, p.y, z0 + 0.59), (0.14, d - 0.1, 0.94), look.parapet, r=0.05, rot=rot)
+    else:
+        lo, hi = z0 + 0.13, z0 + 1.0
+        l0, l1 = _pt(a, t, n, s - w / 2 + 0.07, d - 0.08), _pt(a, t, n, s + w / 2 - 0.07, d - 0.08)
+        w0, w1 = _pt(a, t, n, s - w / 2 + 0.07, 0.0), _pt(a, t, n, s + w / 2 - 0.07, 0.0)
+        reps = max(1, round((w - 0.14) / 1.2))
+        for p, q, u in ((l0, l1, reps), (w0, l0, 1), (l1, w1, 1)):
+            kit.quad([_v3(p, lo), _v3(q, lo), _v3(q, hi), _v3(p, hi)], look.grille, [(0, 0), (u, 0), (u, 1), (0, 1)])
+        for p, q in ((w0, l0), (l0, l1), (l1, w1)):
+            kit.tube([_v3(p, hi + 0.03), _v3(q, hi + 0.03)], 0.045, "east_rail", sides=8)
+        for p in (l0, l1):
+            kit.box((p.x, p.y, (lo + hi) / 2), (0.1, 0.1, hi - lo + 0.04), "east_rail", r=0.03, rot=rot)
+    # Pots: a clay, white or green pot with a round shrub, inside the front corners.
+    for k in range(rng.choice((0, 1, 1, 2))):
+        sg = (-1, 1)[k] if rng.random() < 0.5 else (1, -1)[k]
+        p = _pt(a, t, n, s + sg * (w / 2 - 0.38), d - 0.36)
+        pr = rng.uniform(0.13, 0.17)
+        kit.cylinder((p.x, p.y), pr, z0 + 0.12, z0 + 0.46, rng.choice(("east_pot_clay", "east_pot_white", "east_pot_green")),
+                     sides=10, top_scale=1.18)
+        rr = rng.uniform(0.2, 0.3)
+        kit.blob(Vector((p.x, p.y, z0 + 0.44 + rr * 0.55)), (rr, rr, rr * 0.85),
+                 rng.choice(("east_foliage", "east_foliage_lt")), subdiv=1)
+    if rng.random() < 0.45:
+        # The washing line runs between two rods that stand on the parapet's front corners.
+        p0, p1 = _pt(a, t, n, s - w / 2 + 0.12, d - 0.1), _pt(a, t, n, s + w / 2 - 0.12, d - 0.1)
+        for p in (p0, p1):
+            kit.tube([_v3(p, z0 + 0.95), _v3(p, z0 + 2.08)], 0.035, "east_rail", sides=6)
+        laundry(kit, (p0.x, p0.y), (p1.x, p1.y), z0 + 2.0, rng)
+    if rng.random() < look.ac_p * 0.5:
+        ac_box(kit, _pt(a, t, n, s + rng.uniform(-0.25, 0.25) * w, 0.0), n, z0 + 0.15)
+
+
+AWNING_MAT = {"canvas_green": "east_canvas_green", "canvas_maroon": "east_canvas_maroon", "tin_green": "east_tin_green",
+              "tin_maroon": "east_tin_maroon", "tin_grey": "east_tin_grey"}
+
+
+def edge_awning(kit, a, t, n, s0, s1, depth, zw, ze, kind, wall_o=-0.45):
+    """The shop row's awnings on any edge: a sloped canvas with a deep valance on a chunky frame,
+    or a corrugated tin sheet with a rolled edge on steel brackets. Starts `wall_o` out (inside the
+    recessed ground-floor wall)."""
+    mat, th = AWNING_MAT[kind], 0.035
+    if kind.startswith("canvas"):
+        prof = [(wall_o, zw), (depth, ze), (depth + 0.02, ze - 0.32), (depth - th, ze - 0.32), (depth - th, ze - th),
+                (wall_o, zw - th)]
+    else:
+        prof = [(wall_o, zw), (depth, ze), (depth, ze - th), (wall_o, zw - th)]
+    rings = [[Vector((p.x, p.y, z)) for p, z in ((_pt(a, t, n, s, o), z) for o, z in prof)] for s in (s0, s1)]
+    faces = kit.loft(rings, mat)
+    kit.along_t([f for f in faces if abs(f.normal.dot(Vector((t.x, t.y, 0)))) < 0.9], t)
+    if kind.startswith("tin"):
+        kit.tube([_v3(_pt(a, t, n, s0, depth - 0.02), ze - 0.02), _v3(_pt(a, t, n, s1, depth - 0.02), ze - 0.02)],
+                 0.045, mat, sides=8)
+    for s in (s0 + 0.3, s1 - 0.3):
+        kit.tube([_v3(_pt(a, t, n, s, wall_o + 0.03), zw - 0.6), _v3(_pt(a, t, n, s, depth - 0.3), ze - 0.06)],
+                 0.035, "east_metal", sides=8)
+
+
+def facade_traits(buf, kit, signs, poly, own, edges, style, look, site, storey=3.2, shops=True):
+    """Dress a mid-rise's street faces with its own vocabulary, deterministic per building:
+    projecting bays and stacked balconies in columns (never in random scatter: Manila facades are
+    built in bays), ground-floor awnings between the shop piers, and a hand-painted blade sign on
+    the front row. Returns busy(edge, s, z): whether a trait stands at s along edge `edge` on the
+    floor starting at z, so aircons and grilles keep clear."""
+    rng = look.rng
+    floors = len(edges) - 1
+    roof = edges[-1]
+    z_g = edges[0]
+    taken = {}
+
+    def mark(j, s0, s1, z0, z1):
+        taken.setdefault(j, []).append((s0, s1, z0, z1))
+
+    def busy(j, s, z=None):
+        return any(s0 - 0.5 < s < s1 + 0.5 and (z is None or z0 - 0.5 < z < z1)
+                   for s0, s1, z0, z1 in taken.get(j, []))
+    if look.detail == 0 or floors < 1:
+        return busy
+    fac = f"east_fac_{'ribbon' if style == 'ribbon' else 'punched'}_{look.key}"
+    exp = site.exposed(poly, own)
+    if look.detail == 1:
+        exp = sorted(exp, key=lambda r: -r[4])[:2]
+    for j, a, t, n, L in exp:
+        taft = n.x < -0.8 and (a + t * (L / 2)).x < 12.5
+        # Slots across the edge: between the fins on a fins facade, else about every 3.4 m.
+        if style == "fins":
+            m = int(L / 3.5)
+            if m < 1:
+                continue
+            marks = [L * i / (m + 1) for i in range(m + 2)]
+            slots = [((p + q) / 2, (q - p) - 0.75) for p, q in zip(marks, marks[1:])]
+        else:
+            m = max(1, int((L - 1.0) / 3.4))
+            pitch = (L - 1.0) / m
+            slots = [(0.5 + pitch * (i + 0.5), min(3.0, pitch - 0.7)) for i in range(m)]
+        slots = [(s, min(w, 2 * (s - 0.45), 2 * (L - s - 0.45))) for s, w in slots]
+        slots = [(s, w) for s, w in slots if w >= 1.7]
+        pattern = rng.choice(("alternate", "columns", "mixed", "sparse")) if look.detail == 2 else "sparse"
+        for i, (s, w) in enumerate(slots):
+            if pattern == "alternate":
+                kind = "bay" if i % 2 == 0 else "balcony"
+            elif pattern == "columns":
+                kind = "balcony"
+            elif pattern == "mixed":
+                kind = rng.choice(("bay", "balcony", "balcony", None))
+            else:
+                kind = "balcony" if i % 3 == 1 else None
+            if kind == "bay" and (style == "balcony" or floors < 2):
+                kind = "balcony"
+            if kind == "balcony" and style == "balcony":
+                kind = None                       # its whole perimeter is balconies already
+            if kind == "bay":
+                depth = 0.5 if taft else rng.choice((0.6, 0.75, 0.9))
+                zb = edges[min(look.bays_from, floors - 1)] + 0.02
+                top = rng.choice((floors, floors, floors - 1)) if floors > 2 else floors
+                zt = roof - 0.4 if top == floors else edges[top] + 0.02
+                pts = [_pt(a, t, n, s + sg * w / 2, o) for sg in (-1, 1) for o in (0.1, depth + 0.1)]
+                if zt - zb > 2.0 and site.free(pts, zb - 0.2, zt + 0.2, own):
+                    bay(buf, a, t, n, s, w, depth, zb, zt, edges, fac, look.trim if rng.random() < 0.5 else "east_slab")
+                    mark(j, s - w / 2, s + w / 2, zb - 0.2, zt + 0.2)
+            elif kind == "balcony":
+                d = 0.6 if taft else rng.choice((0.9, 1.0, 1.1))
+                every = rng.choice((1, 1, 2))
+                for k in range(floors):
+                    if (k + i) % every:
+                        continue
+                    z0 = edges[k]
+                    pts = [_pt(a, t, n, s + sg * w / 2, o) for sg in (-1, 1) for o in (0.1, d + 0.1)]
+                    if site.free(pts, z0 - 0.15, z0 + 2.3, own):
+                        balcony(buf, kit, a, t, n, s, w, d, z0, look, rng)
+                        mark(j, s - w / 2, s + w / 2, z0 - 0.2, z0 + storey)
+        # The ground floor: awnings over some of the shop bays between the piers.
+        if shops and look.awning and not taft:
+            count = max(1, round(L / 4.0))
+            depth = rng.uniform(1.2, 1.8)
+            zw = z_g - 0.82
+            ze = zw - rng.uniform(0.3, 0.42)
+            for i in range(count):
+                s0, s1 = L * i / count + 0.3, L * (i + 1) / count - 0.3
+                if s1 - s0 < 1.5 or rng.random() > 0.65:
+                    continue
+                pts = [_pt(a, t, n, s, o) for s in (s0, s1) for o in (0.2, depth + 0.1)]
+                if site.free(pts, ze - 0.4, zw + 0.1, own):
+                    edge_awning(kit, a, t, n, s0, s1, depth, zw, ze, look.awning)
+    # One hand-painted blade sign per front-row building, near a corner of a street face.
+    if look.detail == 2 and look.sign and style != "balcony":
+        spec = S.SIGNS[look.sign]
+        base = {"hood": 0.5, "ribbon": 0.6, "fins": 0.4}.get(style, 0.5)
+        zb = z_g + base
+        for j, a, t, n, L in sorted(exp, key=lambda r: -r[4]):
+            if (n.x < -0.8 and (a + t * (L / 2)).x < 12.5) or L < 6:
+                continue
+            for s in (0.55, L - 0.55):
+                if busy(j, s, zb):
+                    continue
+                pts = [_pt(a, t, n, s + sg * 0.15, o) for sg in (-1, 1) for o in (0.25, 0.45 + spec["w"])]
+                if not site.free(pts, zb - 0.1, zb + spec["h"] + 0.1, own):
+                    continue
+                p = _pt(a, t, n, s, 0.0)
+                S.build(look.sign, EBuf, signs, Matrix.Translation((p.x, p.y, zb))
+                        @ Matrix.Rotation(math.atan2(n.y, n.x) - math.pi / 2, 4, "Z"))
+                mark(j, s - 0.2, s + 0.2, zb, zb + spec["h"])
+                look.sign = None
+                break
+            if look.sign is None:
+                break
+    return busy
+
+
 # ------------------------------------------------------------------ generic mid-rise
 
 STYLE_TINTS = ["east_render_mint", "east_render_ochre", "east_render_rose", "east_render_cream", "east_render_grey",
@@ -720,14 +1169,19 @@ STYLE_TINTS = ["east_render_mint", "east_render_ochre", "east_render_rose", "eas
 
 
 def midrise(col, name, poly, levels, rng, style="ribbon", wall=None, storey=3.2, ground=4.0, base_z=0.0,
-            ac=True, grilles=True, shops=True, tanks=2):
+            ac=True, grilles=True, shops=True, tanks=2, look=None, site=None, own=None):
     """A concrete mid-rise. Styles, each a construction:
       ribbon   recessed ribbon windows wrapping every face, cantilevered slab bands.
       hood     plain walls with punched windows drawn, a deep concrete hood over each floor.
       fins     punched windows drawn, vertical concrete fins every ~3.5 m, thin sill bands.
       balcony  deep balconies on every floor, drawn sliding doors and laundry behind.
-    Returns the roof height."""
+    With a `look` (facade identity) the walls take its paint and its own facade drawings, the
+    ground floor its shutter paint, and facade_traits() dresses the street faces. The random
+    draws that place the roof kit are unchanged, so every tank and stair house stays where it
+    was (another kit builds on these roofs). Returns the roof height."""
     wall = wall or rng.choice(STYLE_TINTS)
+    if look:
+        wall = look.wall
     floors = max(1, int(levels) - 1)
     z_g = base_z + ground
     edges = [z_g + k * storey for k in range(floors + 1)]
@@ -739,7 +1193,8 @@ def midrise(col, name, poly, levels, rng, style="ribbon", wall=None, storey=3.2,
     # Ground floor: a recessed shop band (shutters and glass alternating by edge) under a slab.
     levels_g = [(0.0, base_z - 0.3), (0.0, base_z + 0.35), (-0.4, base_z + 0.37), (-0.4, z_g - 0.75),
                 (0.0, z_g - 0.73)]
-    shop_mat = lambda j: ("east_shutter" if (j * 7 + len(name)) % 3 else "east_shop_glass") if shops else wall
+    shutter = look.shutter if look else "east_shutter"
+    shop_mat = lambda j: (shutter if (j * 7 + len(name)) % 3 else "east_shop_glass") if shops else wall
 
     def seg_g(i, j):
         return shop_mat(j) if i == 2 else wall
@@ -770,6 +1225,8 @@ def midrise(col, name, poly, levels, rng, style="ribbon", wall=None, storey=3.2,
         elif style == "balcony":
             lm = "east_lod_balcony_a" if wall in ("east_render_rose", "east_render_ochre", "east_render_cream") \
                 else "east_lod_balcony_b"
+            if look:
+                lm = f"east_fac_balcony_{look.key}"
             buf.rings_z(poly, [(-0.9, z0 - 0.02), (-0.9, z0 + storey + 0.02)], lambda i, j: lm,
                         seg_band=lambda i, z0=z0: (z0, 3.2), cap_bottom=False)
             buf.annulus(offset(poly, 0.05), offset(poly, -0.95), z0 - 0.1, z0 + 0.15, "east_slab")
@@ -777,6 +1234,8 @@ def midrise(col, name, poly, levels, rng, style="ribbon", wall=None, storey=3.2,
         else:
             lm = "east_lod_punched_a" if wall in ("east_render_mint", "east_render_teal", "east_render_grey",
                                                    "east_render_white") else "east_lod_punched_b"
+            if look:
+                lm = f"east_fac_punched_{look.key}"
             buf.rings_z(poly, [(0.0, z0 - 0.02), (0.0, z0 + storey + 0.02)], lambda i, j: lm,
                         seg_band=lambda i, z0=z0: (z0, 3.2), cap_bottom=False)
             if style == "hood":
@@ -798,40 +1257,58 @@ def midrise(col, name, poly, levels, rng, style="ribbon", wall=None, storey=3.2,
                 p = a + e * (i / (int(e.length / 3.5) + 1))
                 kit.box((p.x + nrm.x * 0.22, p.y + nrm.y * 0.22, (z_g + roof) / 2 + 0.4),
                         (0.28, 0.28, roof - z_g + 0.8), "east_slab", r=0.06, rot=math.atan2(e.y, e.x))
+    busy = None
+    if look and site:
+        busy = facade_traits(buf, kit, bpy.data.collections["east shop signs"], poly, own, edges, style, look, site,
+                             storey=storey, shops=shops)
     if ac:
-        for nrm, mid, length in en:
+        for j, (nrm, mid, length) in enumerate(en):
             if length < 3:
                 continue
             for k in range(floors):
-                if rng.random() < 0.45:
+                if rng.random() < (look.ac_p if look else 0.45):
                     t = Vector((-nrm.y, nrm.x))
-                    p = mid + t * rng.uniform(-0.35, 0.35) * length
+                    u = rng.uniform(-0.35, 0.35)
+                    p = mid + t * u * length
+                    if busy and busy(j, (u + 0.5) * length, edges[k]):
+                        continue
                     inset = -0.28 if style == "ribbon" else (-0.9 if style == "balcony" else 0.0)
                     p = p + nrm * inset
                     zz = edges[k] + (1.05 if style != "balcony" else 1.2)
                     ac_box(kit, p, nrm, zz)
     if grilles and style in ("hood", "fins"):
-        window_grilles(kit, poly, edges[:-1], rng, prob=0.35)
+        window_grilles(kit, poly, edges[:-1], rng, prob=look.grille_p if look else 0.35,
+                       mat=look.grille if look else "east_grille", busy=busy)
     buf.finish(col, bevel=0.05)
     kit.finish(col, bevel=0.02)
     return roof
 
 
-def lod_block(col, name, poly, levels, rng, storey=3.2):
-    """A far building: one shell with a painted facade per storey, a roof, parapet and a tank."""
+def lod_block(col, name, poly, levels, rng, storey=3.2, look=None):
+    """A far building: one shell with a painted facade per storey, a roof, parapet and a tank. With
+    a `look` the facade is its paint's own drawing of the same kind (ribbons, punched windows or
+    balconies) over a ground storey of drawn shops, and the parapet takes its paint. The random
+    draws are the same as before, so the tank stays put."""
     fac = rng.choice(["east_lod_ribbon_a", "east_lod_ribbon_b", "east_lod_punched_a", "east_lod_punched_b",
                       "east_lod_balcony_a", "east_lod_balcony_b"])
+    ground_fac = fac
+    if look:
+        kind = "ribbon" if "ribbon" in fac else ("punched" if "punched" in fac else "balcony")
+        fac, ground_fac = f"east_fac_{kind}_{look.key}", f"east_fac_shops_{look.key}"
     roof = 0.1 + levels * storey
     edges = [0.1 + k * storey for k in range(levels + 1)]
     buf = EBuf(name, drip_top=drip_levels([e - 0.05 for e in edges[1:]] + [roof + 0.9]), splash=True)
     for k in range(levels):
         z0 = edges[k]
-        buf.rings_z(poly, [(0.0, z0 - (0.3 if k == 0 else 0.0)), (0.0, z0 + storey)], lambda i, j: fac,
+        buf.rings_z(poly, [(0.0, z0 - (0.3 if k == 0 else 0.0)), (0.0, z0 + storey)],
+                    lambda i, j, k=k: ground_fac if k == 0 else fac,
                     seg_band=lambda i, z0=z0: (z0, 3.2), cap_bottom=False)
     top = [buf.bm.verts.new((x, y, roof - 0.02)) for x, y in offset(poly, -0.01)]
     buf.face(top, "east_roof")
-    buf.annulus(offset(poly, 0.05), offset(poly, -0.2), roof - 0.08, roof + 0.9,
-                rng.choice(("east_concrete", "east_render_grey", "east_render_cream")), mat_top="east_slab")
+    par = rng.choice(("east_concrete", "east_render_grey", "east_render_cream"))
+    if look and par != "east_concrete":
+        par = look.wall if par == "east_render_grey" else look.trim
+    buf.annulus(offset(poly, 0.05), offset(poly, -0.2), roof - 0.08, roof + 0.9, par, mat_top="east_slab")
     if rng.random() < 0.8:
         xs, ys = [p[0] for p in poly], [p[1] for p in poly]
         tank(buf, ((min(xs) + max(xs)) / 2 + rng.uniform(-2, 2), (min(ys) + max(ys)) / 2 + rng.uniform(-2, 2)),
@@ -1301,9 +1778,9 @@ def school(col, poly, rng):
 
 # ------------------------------------------------------------------ Vista GL Taft
 
-def vista(col, poly, rng):
+def vista(col, poly, rng, look=None, site=None, own=None):
     roof = midrise(col, "east_vista_gl", poly, 6, rng, style="fins", wall="east_render_white", storey=3.0,
-                   ground=4.0, shops=True, tanks=3)
+                   ground=4.0, shops=True, tanks=3, look=look, site=site, own=own)
     signs = bpy.data.collections["east shop signs"]
     S.build("laundry", EBuf, signs, east_matrix(FRONT - 0.25, -46.5, 3.78))
     S.build("siomai", EBuf, signs, east_matrix(FRONT, -52.0, 3.6) @ Matrix.Identity(4))
@@ -1322,6 +1799,37 @@ NAMED = {
 NEAR_STYLES = ["ribbon", "hood", "balcony", "fins"]
 
 
+def assign_looks(polys):
+    """A Look for every unnamed building and Vista GL Taft, deterministic per OSM index. The paint
+    is chosen greedily so that no two buildings within 45 m share one (the least used nearby when
+    all nine are taken); blade signs go round the front row in index order, one each."""
+    looks = {}
+    keys = list(PALETTE)
+    signs = list(FACADE_SIGNS)
+    # The salmon-pink landmarks count as salmon and rose neighbours, so their pink is not repeated
+    # next door (v30 painted Vista rose beside the West East Center).
+    pinks = [(cx, cy) for b, poly, cx, cy in polys.values() if NAMED.get(b["name"]) in ("wec", "astral")]
+    for k in sorted(polys):
+        b, poly, cx, cy = polys[k]
+        kind = NAMED.get(b["name"])
+        if kind not in (None, "vista"):
+            continue
+        lr = random.Random(k * 131 + 17)
+        cand = keys[:]
+        lr.shuffle(cand)
+        near = [looks[j].key for j in looks if math.hypot(polys[j][2] - cx, polys[j][3] - cy) < 45]
+        near += ["salmon", "rose"] * sum(math.hypot(px - cx, py - cy) < 70 for px, py in pinks)
+        d = math.hypot(cx - 20, cy - 15)
+        detail = 2 if (d < 75 or kind == "vista") else (1 if math.hypot(cx - 20, cy) < 95 else 0)
+        if detail == 2:
+            cand.remove("chalk")        # near-white reads as the old grey-white look from the street
+        key = min(cand, key=lambda c: near.count(c))
+        looks[k] = Look(key, lr, detail)
+        if detail == 2 and signs:
+            looks[k].sign = signs.pop(0)
+    return looks
+
+
 def buildings(root, layout):
     col = collection("east buildings", root)
     rng = random.Random(1947)
@@ -1336,6 +1844,8 @@ def buildings(root, layout):
             continue
         polys[k] = (b, prepare(p), cx, cy)
     shops = collection("east shop signs", col)
+    looks = assign_looks(polys)
+    site = Site({k: v[1] for k, v in polys.items()})
     for k, (b, poly, cx, cy) in polys.items():
         name = b["name"]
         kind = NAMED.get(name)
@@ -1349,7 +1859,7 @@ def buildings(root, layout):
         elif kind == "manok":
             manok(col, poly, r)
         elif kind == "vista":
-            vista(col, poly, r)
+            vista(col, poly, r, looks.get(k), site, k)
         elif kind == "school":
             school(col, poly, r)
         elif kind == "church":
@@ -1359,16 +1869,24 @@ def buildings(root, layout):
         elif math.hypot(cx - 20, cy) < 95:
             style = NEAR_STYLES[k % 4]
             midrise(col, slug, poly, max(2, levels), r, style=style, storey=3.2, ground=4.0,
-                    ac=math.hypot(cx, cy) < 80)
+                    ac=math.hypot(cx, cy) < 80, look=looks.get(k), site=site, own=k)
             counts["near"] += 1
             continue
         else:
-            lod_block(col, slug, poly, max(2, levels), r)
+            lod_block(col, slug, poly, max(2, levels), r, look=looks.get(k))
             counts["lod"] += 1
             continue
         counts["named"] += 1
     shop_row(col, random.Random(11))
     print("[east] buildings", counts)
+    used = {}
+    for lk in looks.values():
+        used[lk.key] = used.get(lk.key, 0) + 1
+    print("[east] paints", used)
+    for k, lk in sorted(looks.items()):
+        if lk.detail:
+            print(f"[east] look {k}: {lk.key} detail {lk.detail} grille {lk.grille} shutter {lk.shutter} "
+                  f"awning {lk.awning} parapet {lk.rail}")
     return col
 
 
@@ -1496,6 +2014,22 @@ def preview(version, only=None):
         print("[east] preview", out)
 
 
+def drop_replaced():
+    """The landmarks kit (tools/author_ilalim_landmarks.py) replaces a few generic buildings with
+    landmark silhouettes and lists them in ArtSource/ilalim/landmarks.json ({"hide": [...]}).
+    Those buildings, and every object named after them ("<name>_..."), are removed AFTER the build,
+    so every other building keeps exactly its random look."""
+    import json
+    path = SOURCE / "landmarks.json"
+    if not path.exists():
+        return
+    names = json.loads(path.read_text(encoding="utf-8")).get("hide", [])
+    gone = [o for o in bpy.data.objects if any(o.name == n or o.name.startswith(n + "_") for n in names)]
+    for o in gone:
+        bpy.data.objects.remove(o, do_unlink=True)
+    print(f"[east] replaced by landmarks, removed {len(gone)} objects: {sorted(o for o in names)}")
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     version = int(argv[argv.index("--preview") + 1]) if "--preview" in argv else 0
@@ -1504,6 +2038,7 @@ def main():
     root = collection("eastside")
     layout = load_layout()
     buildings(root, layout)
+    drop_replaced()
     ctx = stand_ins(bpy.context.scene.collection)
     if "--no-lrt" not in argv:
         link_guideway(ctx)

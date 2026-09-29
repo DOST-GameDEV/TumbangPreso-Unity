@@ -64,6 +64,36 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
     depth buffer about 6 cm of precision from the air. The city file now opens with the floor
     grid off and a 0.1 m near clip. Renders were always clean.
   - Unity (ILALIM-1.4) needs the same anti-tiling in the map shader.
+- **The liveliness pass** (owner: "can you think of a way to make the place look more lively,
+  more unique building shapes etc?", then "proceed"). It was built by four parallel agents, and
+  the city links the three new kits when their files exist (`OPTIONAL_KITS`):
+  - **East side facades** (`author_ilalim_eastside.py` and its texture script): each background
+    building gets its own weathered pastel paint (9 paints, never repeated within 45 m) and
+    facade traits on its street faces. The traits are bays, balconies with pots and laundry,
+    four grille styles, painted roll-up shutters, awnings, and eight invented hand-painted blade
+    signs. Footprints and roof slabs are unchanged. Detail falls off with distance from the
+    Taft and Padre Faura corner.
+  - **Rooftops** (`author_ilalim_rooftops.py`, `rooftops.blend`): 150 items on 72 flat roofs.
+    They are water tanks (black, green, cream, galvanised, never blue), shacks, penthouses,
+    laundry lines, dishes, gardens, three invented billboards and two cell masts. Placement is
+    seeded per building and ray-checked. It is about 323k triangles, so it needs LODs or thinning
+    for Unity. Re-run it after any east or heritage rebuild.
+  - **Street life** (`author_ilalim_streetlife.py`, `streetlife.blend`): 13 banderitas spans
+    along Padre Faura (never over Taft), 9 bamboo fiesta poles, 29 parols, 20 parked vehicles
+    (18 from `vehicles.blend` and 2 pedicabs), 5 tarps, 4 notices and potted plants. It
+    ray-checks against every kit and prints `CHECK: clean`. Re-run it after any east rebuild.
+  - **Landmarks** (`author_ilalim_landmarks.py`, `landmarks.blend`, `landmarks.json`):
+    - TANAW RESIDENCES (by the invented developer DALISAY LAND), a tower under construction with
+      green netting and a yellow tower crane, behind the sari-sari store. It is seen from nearly
+      every court eye point.
+    - EDIFICIO AMIHAN, an art deco corner block, and the MAKABAYAN BUILDING, 1960s with a
+      brise-soleil grid. Both are at the G. Apacible junction, about 115 to 140 m south, and read
+      only as silhouettes from the court.
+
+    The buildings they replace are listed in `landmarks.json` under `hide`. The east kit drops
+    them after its build (`drop_replaced()`). A linked object's visibility cannot be saved in the
+    city file, so hiding them there is not enough.
+  - **Build order:** eastside, then rooftops and streetlife, then the city.
 - **OPEN owner decisions** (details under "Open decisions for the owner" below):
   - the train is invisible behind the solid parapet; a steel-railing parapet is recommended;
   - cable shadows on the court;

@@ -58,6 +58,26 @@ THE SURFACES (all world-scale; the tile sizes are in the eastside script's MATER
   east_grime_drips   the positional rain grime under every slab and sill (multiplier overlay).
   east_grime_splash  the street splash band at the foot of every wall (multiplier overlay).
   east_pcx_mark      PC Express's official artwork, downsized, the registered badge removed.
+
+FACADE IDENTITY (2026-09-30, owner: "make the place look more lively, more unique building
+shapes"). The palette, grille styles, shutter paints and facade signs are read as literals from
+tools/author_ilalim_eastside.py (_eastside_tables), so the builder and this painter share one
+source. Per paint (9 of them) there are four drawings, each with its own seed so no two buildings
+share one, and the swatch sheet Logs/ilalim-blender/east_facades_vN.png shows them all:
+  east_fac_punched_<paint>  one storey: windows at 1, 3, 5 m from 1.0 to 2.5 m (the grille cards
+                            depend on it), trim frames and sills, curtains, the paint's grille
+                            drawing over some panes, soft rust tongues.
+  east_fac_balcony_<paint>  one storey behind a balcony: the paint in shadow, sliding doors in
+                            trim, curtains, washing on a line.
+  east_fac_ribbon_<paint>   a ribbon window band flattened into a drawing, for bays and far blocks.
+  east_fac_shops_<paint>    a far block's ground storey: piers every 3 m, a roll-up shutter down,
+                            half or up over goods, a painted signboard with an invented word.
+  east_grille_diamond / _wave / _grid   cut-out grille cards beside the sunburst east_grille.
+  east_shutter_<paint>      painted roll-up shutters. v8 drew grey scuffs that read as leopard
+                            spots on the sheet; v9 keeps one broad faded and one broad dirty field.
+Plus a blade face per FACADE_SIGNS entry (east_sign_fac_*), through the sign kit's own painter.
+Every wall is flat paint with two large feathered coats; nothing near the role hues (the salmon
+stays pink, no mid blue; the lilac and seafoam sit far either side of defence blue).
 """
 import math
 import sys
@@ -646,6 +666,273 @@ def east_grille():
     save("east_grille", img, alpha=a)
 
 
+# ------------------------------------------------------------------ facade identity (per paint)
+
+def _eastside_tables():
+    """PALETTE, GRILLE_STYLES, SHUTTER_PAINTS and FACADE_SIGNS, read as literals from the eastside
+    builder (a bpy script this one cannot import), so both scripts share one source."""
+    import ast
+    src = (Path(__file__).resolve().parent / "author_ilalim_eastside.py").read_text(encoding="utf-8")
+    out = {}
+    for node in ast.parse(src).body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) \
+                and node.targets[0].id in ("PALETTE", "GRILLE_STYLES", "SHUTTER_PAINTS", "FACADE_SIGNS"):
+            out[node.targets[0].id] = ast.literal_eval(node.value)
+    return out
+
+
+TABLES = _eastside_tables()
+PALETTE, GRILLE_STYLES = TABLES["PALETTE"], TABLES["GRILLE_STYLES"]
+SHUTTER_PAINTS, FACADE_SIGNS = TABLES["SHUTTER_PAINTS"], TABLES["FACADE_SIGNS"]
+S.SIGNS.update(FACADE_SIGNS)
+
+
+def _shade(h, k):
+    return "".join(f"{int(min(255, max(0, round(int(h[i:i + 2], 16) * k)))):02x}" for i in (0, 2, 4))
+
+
+def _seed(key):
+    return 9000 + sum(ord(ch) * (i + 1) for i, ch in enumerate(key))
+
+
+def _grille_mask(style, X, Z, cx, cz, hw, hh):
+    """A window grille drawn over the glass of one window (centre cx, cz, half sizes hw, hh), in
+    one of the four GRILLE_STYLES; lines 2.4 cm wide, the weight of a real 12 mm bar at this scale."""
+    lx, lz = X - cx, Z - cz
+    lw = 0.012
+    if style == "diamond":
+        m = np.maximum(soft(periodic(lx + lz, 0.22) - lw, 0.006), soft(periodic(lx - lz, 0.22) - lw, 0.006))
+    elif style == "wave":
+        m = soft(periodic(lx + 0.035 * np.sin(lz / 0.32 * math.tau), 0.16) - lw, 0.006)
+    elif style == "grid":
+        m = np.maximum(soft(periodic(lx, 0.24) - lw, 0.006), soft(periodic(lz, 0.3) - lw, 0.006))
+        m = np.maximum(m, soft(np.abs(np.hypot(lx, lz) - 0.16) - lw, 0.006))
+    else:                                            # sunburst: bars above, rays from the sill
+        r = np.hypot(lx, lz + hh)
+        ang = np.arctan2(lz + hh, lx)
+        rays = soft(np.abs(np.sin(ang * 5)) * r - lw, 0.006) * (r < hh * 1.1)
+        bars = soft(periodic(lx, 0.14) - lw, 0.006) * (r >= hh * 1.1)
+        m = np.maximum(np.maximum(rays, bars), soft(np.abs(r - hh * 1.1) - lw, 0.006))
+    return m
+
+
+def _fac_base(c, wall, seed):
+    img = c.flat(wall)
+    img = c.coat(img, (1.03, 1.028, 1.025), 1.4, 0.26, seed, feather=1.3)
+    img = c.coat(img, (0.955, 0.95, 0.95), 1.0, 0.2, seed + 1, feather=1.1)
+    return img
+
+
+CURTAINS = ["efe4cc", "d9c1c8", "cfe0d2", "ecdca0", "e3d2dc", "f0e8e0"]
+
+
+def fac_punched(key, wall, trim, style):
+    """One storey (3.2 m, v = 0 at the floor) of punched windows in this paint: windows centred at
+    1, 3 and 5 m (the grille cards and the builder rely on it), from 1.0 to 2.5 m; trim-coloured
+    frames and sills, curtains, the building's own grille drawing over some panes, rust tongues."""
+    seed = _seed(key)
+    c = Canvas(6, 3.2, 128)
+    Z = _storey(c)
+    img = _fac_base(c, wall, seed)
+    dx, dy = c.wob(0.012, 0.6, seed + 2)
+    rng = np.random.default_rng(seed + 3)
+    hw, hh = rng.uniform(0.54, 0.64), rng.uniform(0.66, 0.74)
+    for k, x in enumerate((1.0, 3.0, 5.0)):
+        if rng.uniform() < 0.6:
+            tongue = soft(sd_rrect(c.X + dx, Z + dy, x + rng.uniform(-0.3, 0.3), 0.55, 0.12, 0.45, 0.1), 0.06)
+            img = paint(img, tongue, _shade(wall, 0.8), 0.35)
+        img = paint(img, soft(sd_rrect(c.X + dx, Z + dy, x, 1.75, hw + 0.08, hh + 0.08, 0.04), 0.012), trim)
+        img = paint(img, soft(sd_rrect(c.X + dx, Z + dy, x, 1.75 - hh - 0.1, hw + 0.16, 0.05, 0.02), 0.01), trim)
+        glass = soft(sd_rrect(c.X + dx, Z + dy, x, 1.75, hw, hh, 0.03), 0.01)
+        img = paint(img, glass, "56696a")
+        if rng.uniform() < 0.65:
+            before = img.copy()
+            img = _curtain(c, img, x - hw, x + hw, c.h_m - 1.75 - hh, c.h_m - 1.75 + hh,
+                           CURTAINS[rng.integers(len(CURTAINS))], seed + 10 + k, rng.uniform(0.3, 0.8))
+            img = before * (1 - glass[..., None]) + img * glass[..., None]
+        img = paint(img, soft(np.abs(c.X + dx - x) - 0.025, 0.008) * glass, trim, 0.9)     # the centre mullion
+        if rng.uniform() < 0.7:
+            img = paint(img, _grille_mask(style, c.X + dx, Z + dy, x, 1.75, hw, hh) * glass, "35302c", 0.85)
+    img = paint(img, soft(Z - 0.2, 0.02), _shade(wall, 0.9), 0.6)                            # the slab edge
+    return img
+
+
+def fac_balcony(key, wall, trim, style):
+    """One storey behind a balcony: the recessed wall in this paint, in shadow; two sliding doors
+    in trim frames with curtains; washing on a line; the parapet band along the foot."""
+    seed = _seed(key) + 100
+    c = Canvas(6, 3.2, 128)
+    Z = _storey(c)
+    img = _fac_base(c, _shade(wall, 0.86), seed)
+    dx, dy = c.wob(0.012, 0.6, seed + 2)
+    rng = np.random.default_rng(seed + 3)
+    for k, x in enumerate((1.5, 4.5)):
+        door = soft(sd_rrect(c.X + dx, Z + dy, x, 1.65, 0.8, 0.95, 0.03), 0.012)
+        img = paint(img, soft(sd_rrect(c.X + dx, Z + dy, x, 1.65, 0.87, 1.02, 0.04), 0.012), trim)
+        img = paint(img, door, "56686a")
+        before = img.copy()
+        img = _curtain(c, img, x - 0.8, x + 0.8, c.h_m - 2.6, c.h_m - 0.7, CURTAINS[rng.integers(len(CURTAINS))],
+                       seed + 10 + k, rng.uniform(0.3, 0.7))
+        img = before * (1 - door[..., None]) + img * door[..., None]
+        img = paint(img, soft(np.abs(c.X + dx - x) - 0.03, 0.01) * door, trim)
+    line = 2.3
+    for k in range(rng.integers(4, 8)):
+        x = rng.uniform(0.2, 5.8)
+        w, h = rng.uniform(0.2, 0.42), rng.uniform(0.3, 0.6)
+        m = soft(sd_rrect(c.X + dx, Z + dy, x, line - h / 2, w / 2, h / 2, 0.04), 0.012)
+        img = paint(img, m, ["e9e2cc", "c9d8cc", "d8b7bd", "e6d38e", "d4d0c6", "cdbfd6"][rng.integers(6)])
+    img = paint(img, soft(Z + dy - 1.1, 0.012), wall)
+    img = paint(img, soft(np.abs(Z + dy - 1.08) - 0.04, 0.01), trim)
+    return img
+
+
+def fac_ribbon(key, wall, trim, style):
+    """One storey of a ribbon-window building flattened into a drawing (for bays and far blocks):
+    a band of glass from 0.97 to 2.55 m, trim mullions every 1.2 m, curtains, the slab edge."""
+    seed = _seed(key) + 200
+    c = Canvas(6, 3.2, 128)
+    Z = _storey(c)
+    img = _fac_base(c, wall, seed)
+    dx, dy = c.wob(0.01, 0.6, seed + 2)
+    band = soft(np.abs(Z + dy - 1.76) - 0.79, 0.012)
+    img = paint(img, band, "56696a")
+    rng = np.random.default_rng(seed + 3)
+    for k in range(5):
+        if rng.uniform() < 0.65:
+            before = img.copy()
+            img = _curtain(c, img, k * 1.2 + 0.05, (k + 1) * 1.2 - 0.05, c.h_m - 2.5, c.h_m - 1.0,
+                           CURTAINS[rng.integers(len(CURTAINS))], seed + 10 + k, rng.uniform(0.3, 0.9))
+            img = before * (1 - band[..., None]) + img * band[..., None]
+    img = paint(img, soft(periodic(c.X + dx, 1.2) - 0.03, 0.01) * band, trim)
+    img = paint(img, soft(np.abs(Z + dy - 2.1) - 0.025, 0.008) * band, trim)                 # the transom
+    img = paint(img, soft(np.abs(Z + dy - 0.93) - 0.04, 0.01), trim)                         # the sill
+    img = paint(img, soft(Z - 0.22, 0.02), _shade(wall, 0.9), 0.6)
+    return img
+
+
+SHOP_WORDS = ["SARI-SARI", "BIGASAN", "TAHIAN", "GUPITAN", "LUTONG BAHAY", "PANCITERIA", "MERIENDA",
+              "PANADERIA", "KAKANIN", "ICE WATER", "E-LOAD", "PRINTING", "BOTIKA", "TSINELAS", "VULCANIZING",
+              "ULAM", "LUGAWAN", "PALAMIG"]
+BOARDS = [("efe4c7", "8f2126"), ("2f6b4f", "f5f0e0"), ("e8cf62", "4a1c1c"), ("f1ecdf", "2d4b2f"),
+          ("7a2a2e", "f3e7c4"), ("d9e5d6", "233f33")]
+
+
+def fac_shops(key, wall, trim, style):
+    """The ground storey of a far block: piers in this paint every 3 m, and between them a shop
+    each, its roll-up shutter down, half down or up over a dim interior, under a painted signboard
+    with an invented name."""
+    seed = _seed(key) + 300
+    c = Canvas(6, 3.2, 128)
+    Z = _storey(c)
+    img = _fac_base(c, wall, seed)
+    dx, dy = c.wob(0.008, 0.6, seed + 2)
+    rng = np.random.default_rng(seed + 3)
+    paints = [h for h in SHUTTER_PAINTS.values() if h] + ["c7c7c1", "c7c7c1"]
+    ink = np.zeros((c.h, c.w))
+    fgs = []
+    for k, x in enumerate((1.5, 4.5)):
+        hole = soft(sd_rrect(c.X + dx, Z + dy, x, 1.28, 1.2, 1.13, 0.03), 0.01)
+        img = paint(img, hole, "3d3935")
+        # Goods on shelves inside, two rows of soft blocks.
+        for z in (0.7, 1.4):
+            xx = x - 1.1
+            while xx < x + 1.05:
+                w, h = rng.uniform(0.12, 0.3), rng.uniform(0.18, 0.36)
+                g = soft(sd_rrect(c.X + dx, Z + dy, xx + w / 2, z + h / 2, w / 2, h / 2, 0.03), 0.012) * hole
+                img = paint(img, g, ["b9b2a2", "8fa08a", "a88c8c", "b8a86a", "9aa2a4"][rng.integers(5)], 0.8)
+                xx += w + rng.uniform(0.03, 0.12)
+        state = rng.choice(["down", "half", "up"])
+        low = {"down": 0.15, "half": 1.35, "up": 2.2}[state]
+        sh = soft(sd_rrect(c.X + dx, Z + dy, x, (low + 2.41) / 2, 1.2, (2.41 - low) / 2, 0.02), 0.008)
+        col = paints[rng.integers(len(paints))]
+        img = paint(img, sh, col)
+        ribs = soft(periodic(Z + dy, 0.12) - 0.008, 0.006) * sh
+        img = paint(img, ribs, _shade(col, 0.88), 0.7)
+        img = paint(img, soft(np.abs(Z + dy - low) - 0.03, 0.008) * soft(np.abs(c.X + dx - x) - 1.2, 0.01),
+                    _shade(col, 0.7))                                                        # the bottom rail
+        # The signboard.
+        bg, fg = BOARDS[rng.integers(len(BOARDS))]
+        img = paint(img, soft(sd_rrect(c.X + dx, Z + dy, x, 2.78, 1.3, 0.24, 0.04), 0.01), bg)
+        word = SHOP_WORDS[(rng.integers(len(SHOP_WORDS)) + k * 7) % len(SHOP_WORDS)]
+        m = _fit(_text_mask(word, "impact.ttf", 60, 1.0, 0.0), 2.3 * c.ppm, 0.3 * c.ppm)
+        one = np.zeros_like(ink)
+        _blit(one, m, x * c.ppm, (c.h_m - 2.78) * c.ppm)
+        fgs.append((one, fg))
+    for one, fg in fgs:
+        img = paint(img, _hand(one, 0.8, 10, seed + 7), fg)
+    img = paint(img, soft(periodic(c.X + dx, 3.0) - 0.22, 0.012), wall)                    # the piers
+    img = paint(img, soft(Z - 0.14, 0.02), _shade(wall, 0.85), 0.8)                          # the step
+    return img
+
+
+FACADES = {"punched": fac_punched, "balcony": fac_balcony, "ribbon": fac_ribbon, "shops": fac_shops}
+
+
+def east_facades():
+    """Every paint's own drawings: 9 paints x 4 drawings, each with its own seed, so no two
+    buildings share a drawing. Grille style follows the paint (the builder picks a card style per
+    building independently; the drawn grilles are the far read)."""
+    for i, (key, (wall, trim)) in enumerate(PALETTE.items()):
+        style = GRILLE_STYLES[i % len(GRILLE_STYLES)]
+        for name, fn in FACADES.items():
+            save(f"east_fac_{name}_{key}", fn(key, wall, trim, style))
+
+
+def east_grille_cards():
+    """The three new grille cards beside the sunburst (east_grille): 1.2 x 1.4 m, RGBA, a chunky
+    frame and the pattern, dark paint with soft rust."""
+    for style in GRILLE_STYLES[1:]:
+        c = Canvas(1.2, 1.4, 400)
+        Z = c.h_m - c.Y
+        dx, dy = c.wob(0.003, 0.3, 751)
+        X = c.X + dx
+        frame = soft(np.minimum(np.minimum(X, 1.2 - X), np.minimum(Z, 1.4 - Z)) - 0.03, 0.004)
+        pat = _grille_mask(style, X, Z + dy, 0.6, 0.7, 0.6, 0.7)
+        a = np.maximum(frame, pat)
+        img = c.flat("2f2b28")
+        img = c.coat(img, None, 0.3, 0.2, 752 + len(style), feather=0.8, colour="6b4a36")
+        save(f"east_grille_{style}", img, alpha=a)
+
+
+def east_shutter_paints():
+    """Roll-up shutters painted over: the paint, the ribs, a big scuffed patch where the galvanized
+    sheet shows, and a soft rust patch low down."""
+    for k, (name, hexs) in enumerate(SHUTTER_PAINTS.items()):
+        if not hexs:
+            continue
+        c = Canvas(2, 1, 256)
+        rib = 0.075
+        dx, dy = c.wob(0.004, 0.6, 621 + k)
+        ph = np.mod(c.Y + dy, rib) / rib
+        prof = 0.5 + 0.5 * np.cos(ph * math.tau)
+        img = c.flat(hexs) * (0.93 + 0.1 * prof[..., None])
+        # One broad sun-faded field and one broad dirty field per tile: no small scuffs (v8's grey
+        # scuff patches read as leopard spots on the sheet).
+        img = c.coat(img, (1.06, 1.06, 1.05), 1.6, 0.3, 624 + k, feather=1.6)
+        img = c.coat(img, (0.93, 0.91, 0.89), 1.8, 0.2, 627 + k, feather=1.6)
+        save(f"east_shutter_{name}", img, prof, 0.6)
+
+
+def facade_sheet(version):
+    names = [f"east_fac_{d}_{k}" for k in PALETTE for d in FACADES]
+    names += [f"east_grille_{g}" for g in GRILLE_STYLES[1:]] + ["east_grille"]
+    names += [f"east_shutter_{p}" for p, h in SHUTTER_PAINTS.items() if h]
+    cw, ch, cols = 300, 160, 8
+    rows = math.ceil(len(names) / cols)
+    sheet = Image.new("RGB", (cols * (cw + 12) + 12, rows * (ch + 30) + 12), (245, 242, 235))
+    d = ImageDraw.Draw(sheet)
+    for k, n in enumerate(names):
+        im = Image.open(OUT / f"{n}_albedo.png").convert("RGBA")
+        bg = Image.new("RGBA", im.size, (200, 196, 188, 255))
+        bg.alpha_composite(im)
+        tile = bg.convert("RGB")
+        tile.thumbnail((cw, ch), Image.LANCZOS)
+        x, y = 12 + (k % cols) * (cw + 12), 12 + (k // cols) * (ch + 30)
+        sheet.paste(tile, (x, y))
+        d.text((x, y + ch + 4), n, fill=(40, 40, 40))
+    sheet.save(SHEETS / f"east_facades_v{version}.png")
+
+
 # ------------------------------------------------------------------ grime overlays
 
 def _mult(name, a):
@@ -943,6 +1230,7 @@ PAINTERS = [east_wec_render, east_wec_breeze, east_wec_wall, east_astral_wall, e
             east_canvas_maroon, east_timber, east_interior_shelves, east_interior_eatery, east_interior_pc,
             east_ac, east_tank, east_brick, east_curtain, east_roof, east_grille]
 OVERLAYS = [east_grime_drips, east_grime_splash]
+IDENTITY = [east_facades, east_grille_cards, east_shutter_paints]
 
 
 def swatch_sheet(version):
@@ -999,13 +1287,14 @@ def main():
     argv = sys.argv[1:]
     version = int(argv[argv.index("--sheet") + 1]) if "--sheet" in argv else 1
     only = set(argv[argv.index("--only") + 1].split(",")) if "--only" in argv else None
-    for p in PAINTERS + OVERLAYS:
+    for p in PAINTERS + OVERLAYS + IDENTITY:
         if only is None or p.__name__ in only:
             p()
     for key, spec in S.SIGNS.items():
         if only is None or f"east_sign_{key}" in only or "signs" in only:
             sign_face(key, spec)
     swatch_sheet(version)
+    facade_sheet(version)
 
 
 if __name__ == "__main__":
