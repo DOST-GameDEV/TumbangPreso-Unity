@@ -1,6 +1,6 @@
 # Ilalim ng Tulay rework guide (ILALIM-1)
 
-⚠️⚠️ **CURRENT STATE (2026-09-29): BLOCKOUT v5 (REAL OSM LAYOUT) BUILT, AWAITING OWNER REVIEW.** The owner chose
+⚠️⚠️ **CURRENT STATE (2026-09-29): BLOCKOUT v9 (REAL OSM LAYOUT, SIGHTLINE OVERRIDE) BUILT, AWAITING OWNER REVIEW.** The owner chose
 Ilalim ng Tulay as the next map after Kanto and the Lagoon Court, and set it at UP Manila's
 Padre Faura corner "cuz we wanna see our school's Rizal Hall in the game". § 0 is the proposed
 place and feel, with the open decisions in § 0.6. The evidence is in
@@ -41,9 +41,25 @@ What the true layout puts around the court:
 this. ⚠️ **In the true layout Rizal Hall CANNOT be seen from the court.** It is about 115 m
 away, behind PGH and the Supreme Court (render `court_to_rizal`).
 
-NEXT: the owner reviews v5, and decides whether Rizal Hall must be visible from the court. It
-can stay true and appear only in the map card and the flyover, or it can be moved. The owner
-also answers § 0.6. Then ILALIM-1.3, the kits.
+**The sightline override (v9).** The owner's words: "we still wanna focus on sightlines, so
+even though the model is now accurate, we need RH to be more visible". A first reading removed
+the Supreme Court corner, and was corrected: "i only asked you to thin it down to make more room
+to move RH". `sightline_override()` in the blockout script now does three things:
+- It thins every Supreme Court building on the corner at x = -50, keeping its Taft side and the
+  Moses and Lady Justice statues.
+- It moves the whole Rizal Hall compound 26 m east into the freed space: the hall, the
+  courtyard, the lawn, the fence, the wall, the Oblation and the Gat Andres Bonifacio block.
+- It removes the one small PGH block in the court's view line.
+
+It also clears trees within 4 m of the view lines from the spawn and from both pavements to
+the portico. From the spawn, the portico and its lettering now read between PGH and the Supreme
+Court (render `spawn_to_rizal`). `osm_layout.json` stays the true map.
+
+The same review also rebuilt the ground: "fix the plane..". Each ground class is now one
+dissolved surface, with kerb walls only where heights differ: about 3,300 faces in total,
+instead of hundreds of thousands of boxes.
+
+NEXT: the owner reviews v9 and answers § 0.6. Then ILALIM-1.3, the kits.
 
 Read first, in order: [AGENTS](../AGENTS.md), [VISION](VISION.md), [WORKING_RULES](WORKING_RULES.md),
 this guide, then the map's existing design document [Ilalim_Ng_Tulay.md](Ilalim_Ng_Tulay.md)

@@ -23,7 +23,9 @@ What that puts around the court:
   * North across Padre Faura: the Supreme Court corner (Centennial Building, Old Supreme
     Court, with the Lady Justice and Moses statues facing Taft).
   * North-west, behind the Supreme Court: Rizal Hall, a quadrangle whose south front faces
-    Padre Faura across a lawn, with the Oblation.
+    Padre Faura across a lawn, with the Oblation. ⚠️ For the sightline, sightline_override()
+    thins the Supreme Court and moves the Rizal Hall compound east into the space that frees.
+    This is the owner's markup and the one deliberate departure from the real map.
   * East: the Astral Tower and West East Center podium, with KFC and Vista GL Taft south of
     them; Manila Science High School across Padre Faura.
 
@@ -265,6 +267,105 @@ def label(col, body, at, size=1.4):
     return text(col, body, at, size, "chalk", rot=(0, 0, 0), extrude=0.0, render=False)
 
 
+# ------------------------------------------------------------------ the sightline override
+
+# THE ONE DELIBERATE DEPARTURE FROM THE REAL MAP (owner, v5 review, 2026-09-29: "we still wanna
+# focus on sightlines, so even though the model is now accurate, we need RH to be more visible",
+# with a markup moving Rizal Hall east and striking out what blocks it):
+#   * the Supreme Court is THINNED, not removed (owner: "i only asked you to thin it down to
+#     make more room to move RH"). Every Supreme Court building on the corner is cut at
+#     SC_CUT_X and keeps its Taft side, together with the Moses and Lady Justice statues;
+#   * the whole Rizal Hall compound moves RIZAL_SHIFT metres east into the freed space: the
+#     hall, its courtyard, its front lawn, fence, compound wall, the Oblation and flagpole, and
+#     the Gat Andres Bonifacio block behind it. That leaves a 6 m gap to the thinned court;
+#   * the small PGH block beside Taft south of Padre Faura, which sits in the court's view line,
+#     is removed.
+# osm_layout.json stays the true map; only this blockout departs from it.
+RIZAL_SRC = (-142.0, -79.0, 38.0, 147.0)      # x0, x1, y0, y1 in game metres
+RIZAL_SHIFT = 26.0
+SC_CUT_X = -50.0
+REMOVE_NAMES = ()
+REMOVE_NEAR = [(-31.0, 14.3)]                  # the PGH block in the view line
+
+
+def clip_east(poly, cut):
+    """Sutherland-Hodgman clip of a polygon to the half-plane x >= cut."""
+    out = []
+    for k in range(len(poly)):
+        (ax, ay), (bx, by) = poly[k - 1], poly[k]
+        a_in, b_in = ax >= cut, bx >= cut
+        if b_in:
+            if not a_in:
+                out.append((cut, ay + (by - ay) * (cut - ax) / (bx - ax)))
+            out.append((bx, by))
+        elif a_in:
+            out.append((cut, ay + (by - ay) * (cut - ax) / (bx - ax)))
+    return out
+
+
+def _inside(x, y, b):
+    return b[0] <= x <= b[1] and b[2] <= y <= b[3]
+
+
+def _centre(pts):
+    return sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)
+
+
+def sightline_override(layout):
+    src = RIZAL_SRC
+    dst = (src[0] + RIZAL_SHIFT, src[1] + RIZAL_SHIFT, src[2], src[3])
+    moved = lambda pts: all(_inside(x, y, src) for x, y in pts)
+    shift = lambda pts: [(x + RIZAL_SHIFT, y) for x, y in pts]
+    near = lambda x, y: any(math.hypot(x - a, y - b) < 3.0 for a, b in REMOVE_NEAR)
+
+    def keep(pts, name=""):
+        cx, cy = _centre(pts)
+        return not (any(n in name for n in REMOVE_NAMES) or near(cx, cy) or _inside(cx, cy, dst))
+
+    out = dict(layout)
+    # Thin the Supreme Court: any unmoved building on the corner that reaches west of the cut
+    # keeps only its part east of it.
+    thinned = []
+    for b in layout["buildings"]:
+        cx, cy = _centre(b["poly"])
+        if not moved(b["poly"]) and cx > SC_CUT_X and src[2] <= cy <= src[3] and min(x for x, _ in b["poly"]) < SC_CUT_X:
+            poly = clip_east(b["poly"], SC_CUT_X)
+            if len(poly) >= 3:
+                thinned.append(dict(b, poly=poly))
+            continue
+        thinned.append(b)
+    out["buildings"] = [dict(b, poly=shift(b["poly"])) if moved(b["poly"]) else b
+                        for b in thinned if moved(b["poly"]) or keep(b["poly"], b["name"])]
+    out["areas"] = [dict(a, poly=shift(a["poly"])) if moved(a["poly"]) else a
+                    for a in layout["areas"] if moved(a["poly"]) or keep(a["poly"], a["name"])]
+    out["roads"] = [dict(r, line=shift(r["line"])) if moved(r["line"]) and "Padre Faura" not in r["name"] else r
+                    for r in layout["roads"]
+                    if r["kind"] in STREET_KINDS or moved(r["line"]) or not all(_inside(x, y, dst) for x, y in r["line"])]
+    out["trees"] = [((x + RIZAL_SHIFT, y) if _inside(x, y, src) else (x, y)) for x, y in layout["trees"]
+                    if _inside(x, y, src) or keep([(x, y)])]
+    out["points"] = [dict(p, at=shift([p["at"]])[0]) if _inside(*p["at"], src) else p
+                     for p in layout["points"] if _inside(*p["at"], src) or keep([p["at"]], p["name"])]
+    # Barriers: a wholly moved line moves; any other line loses the segments on the new corner.
+    barriers = []
+    for b in layout["barriers"]:
+        if moved(b["line"]):
+            barriers.append(dict(b, line=shift(b["line"])))
+            continue
+        run = []
+        for p, q in zip(b["line"], b["line"][1:]):
+            if _inside(*p, dst) and _inside(*q, dst):
+                if len(run) > 1:
+                    barriers.append(dict(b, line=run))
+                run = []
+                continue
+            run = run or [p]
+            run.append(q)
+        if len(run) > 1:
+            barriers.append(dict(b, line=run))
+    out["barriers"] = barriers
+    return out
+
+
 def point_in_poly(x, y, poly):
     inside = False
     j = len(poly) - 1
@@ -346,28 +447,52 @@ def ground(root, layout):
     col = collection("Ground", root)
     grid, names = classify(layout)
     n = len(grid)
-    # One mesh per class, each row's runs merged into single boxes. Cells inside the Taft
-    # corridor are skipped here; corridor() lays them exactly.
-    meshes = {c: bmesh.new() for c in GROUND}
+    # ONE CLEAN SURFACE PER CLASS (owner, v6: "fix the plane.."). The first version laid one box
+    # per row run, hundreds of thousands of them, which drew as a solid black sheet in
+    # wireframe. Now each class is a single top surface on shared grid vertices, dissolved into
+    # large flat faces, plus kerb walls only where two classes of different height meet. Cells
+    # inside the Taft corridor are skipped; corridor() lays them exactly.
+    top_of = [GROUND[c][0] for c in names]
+    skip = lambda i: abs(-EXTENT + (i + 0.5) * CELL) < PAVE_OUT
+    parts = {c: ([], {}, []) for c in GROUND}           # verts, index, faces
+
+    def vert(cls, x, y, z):
+        verts, index, _ = parts[cls]
+        key = (round(x, 3), round(y, 3), round(z, 3))
+        if key not in index:
+            index[key] = len(verts)
+            verts.append(key)
+        return index[key]
+
     for j in range(n):
-        y0 = -EXTENT + j * CELL
-        i = 0
-        while i < n:
-            cls = grid[j][i]
-            k = i
-            while k < n and grid[j][k] == cls:
-                k += 1
-            x0, x1 = -EXTENT + i * CELL, -EXTENT + k * CELL
-            # Clip the run against the corridor.
-            for a, b in ((x0, min(x1, -PAVE_OUT)), (max(x0, PAVE_OUT), x1)):
-                if b - a > 1e-6:
-                    top, _ = GROUND[names[cls]]
-                    bmesh.ops.create_cube(meshes[names[cls]], size=1.0,
-                                          matrix=Matrix.Translation(((a + b) / 2, y0 + CELL / 2, top - 0.25)) @ Matrix.Diagonal((b - a, CELL, 0.5, 1)))
-            i = k
-    for cls, bm in meshes.items():
+        y0, y1 = -EXTENT + j * CELL, -EXTENT + (j + 1) * CELL
+        for i in range(n):
+            if skip(i):
+                continue
+            cls = names[grid[j][i]]
+            z = top_of[grid[j][i]]
+            x0, x1 = -EXTENT + i * CELL, -EXTENT + (i + 1) * CELL
+            parts[cls][2].append((vert(cls, x0, y0, z), vert(cls, x1, y0, z), vert(cls, x1, y1, z), vert(cls, x0, y1, z)))
+            # Kerb walls on the east and north edges, owned by the higher side.
+            for ni, nj, ax, ay, bx, by in ((i + 1, j, x1, y0, x1, y1), (i, j + 1, x0, y1, x1, y1)):
+                if ni >= n or nj >= n or skip(ni):
+                    continue
+                z2 = top_of[grid[nj][ni]]
+                if abs(z - z2) < 1e-4:
+                    continue
+                hi, lo = (cls, z2) if z > z2 else (names[grid[nj][ni]], z)
+                zt = max(z, z2)
+                parts[hi][2].append((vert(hi, ax, ay, lo), vert(hi, bx, by, lo), vert(hi, bx, by, zt), vert(hi, ax, ay, zt)))
+    for cls, (verts, _, faces) in parts.items():
+        if not faces:
+            continue
         mesh = bpy.data.meshes.new("ground " + cls)
-        bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.001)
+        mesh.from_pydata(verts, [], faces)
+        bm = bmesh.new()
+        bm.from_mesh(mesh)
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+        bmesh.ops.dissolve_limit(bm, angle_limit=0.0005, verts=bm.verts, edges=bm.edges,
+                                 delimit={"NORMAL"})
         bm.to_mesh(mesh)
         bm.free()
         _obj(col, "ground " + cls, mesh, GROUND[cls][1])
@@ -659,8 +784,26 @@ def details(root, layout):
             if point_in_poly(x, y, a["poly"]):
                 spots.append((x, y))
     polys = [b["poly"] for b in layout["buildings"]]
+    # Keep the portico readable from the court: no tree within 4 m of the view lines from the
+    # spawn and from both pavements to the Rizal Hall portico.
+    hall = next(b for b in layout["buildings"] if "Rizal Hall" in b["name"])
+    ox = next(p["at"][0] for p in layout["points"] if "Oblation" in p["name"])
+    portico = (ox, min(p[1] for p in hall["poly"]) - 2.6)
+    eyes = [(0.0, -SPAWN), (-8.0, 16.0), (8.0, 0.0), (-8.0, -10.0)]
+
+    def on_view_line(x, y):
+        for ax, ay in eyes:
+            bx, by = portico
+            dx, dy = bx - ax, by - ay
+            t = max(0.0, min(1.0, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy)))
+            if math.hypot(x - (ax + t * dx), y - (ay + t * dy)) < 4.0:
+                return True
+        return False
+
     for x, y in spots:
         if abs(x) < PAVE_OUT + 0.8 or max(abs(x), abs(y)) > EXTENT:
+            continue
+        if on_view_line(x, y):
             continue
         if any(point_in_poly(x, y, p) for p in polys):
             continue
@@ -757,6 +900,7 @@ def preview(version, layout):
         ("taya_south", "PERSP", Vector((0.0, 4.0, e)), Vector((0, -30, 2)), eye),
         ("west_pavement_east", "PERSP", Vector((-9.5, -4.0, PAVE_TOP + e)), Vector((12, 6, 3)), eye),
         ("court_to_rizal", "PERSP", Vector((-8.0, 16.0, PAVE_TOP + e)), Vector((ox, front_y, 8)), eye),
+        ("spawn_to_rizal", "PERSP", Vector((3.0, -SPAWN, e)), Vector((ox, front_y, 8)), eye),
         ("rizal_front", "PERSP", Vector((ox + 6, faura_south, PAVE_TOP + 1.7)), Vector((ox, front_y, 7)), eye),
     ]
     for name, kind, pos, tgt, lens in shots:
@@ -778,7 +922,7 @@ def preview(version, layout):
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     version = int(argv[argv.index("--preview") + 1]) if "--preview" in argv else 0
-    layout = json.loads(LAYOUT.read_text(encoding="utf-8"))
+    layout = sightline_override(json.loads(LAYOUT.read_text(encoding="utf-8")))
     bpy.ops.wm.read_factory_settings(use_empty=True)
     root = bpy.data.collections.new("ilalim_blockout")
     bpy.context.scene.collection.children.link(root)

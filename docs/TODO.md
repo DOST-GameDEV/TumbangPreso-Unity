@@ -1629,8 +1629,10 @@ after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
   eye-level views). It uses the guide's § 0.6 default answers. The owner rejected v3's layout
   ("the positioning, zoning and lack of sidewalks arent" accurate). v5 (2026-09-29) builds
   everything outside the play area from OpenStreetMap (`tools/ilalim_osm_layout.js`, then
-  `ArtSource/ilalim/osm_layout.json`), with sidewalks on every street. OPEN: owner review, and
-  whether Rizal Hall must be visible from the court. In the true layout it is not.
+  `ArtSource/ilalim/osm_layout.json`), with sidewalks on every street. v9 (2026-09-29, owner's
+  markup): the Supreme Court is thinned at x = -50, the Rizal Hall compound moves 26 m east,
+  the PGH block in the view line is removed and the view-line trees are cleared. Rizal Hall now
+  reads from the spawn. The ground is rebuilt as clean dissolved surfaces. OPEN: owner review.
 - [ ] ILALIM-1.3 Kits and textures, one at a time with owner review: the guideway and columns,
   shopfronts and signs, props and trip hazards, vehicles, and the LRT consist.
 - [ ] ILALIM-1.4 Export, and a Unity builder that writes an UNREGISTERED sample scene. Every column
