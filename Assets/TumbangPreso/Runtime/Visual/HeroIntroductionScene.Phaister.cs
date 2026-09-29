@@ -31,22 +31,33 @@ namespace TumbangPreso.Visual
         // ⚠️ No sound: every hero skill sound is deleted. Nothing here runs on Update: every piece is posed from `t`.
         // =========================================================================================
 
-        private const float PhRiseAt = 1.10f, PhSeamAt = 2.10f, PhEyeAt = 2.90f, PhLockAt = 3.25f, PhBurstAt = 3.30f;
-        private const float PhGlovesAt = 3.60f, PhPullAt = 3.95f, PhDescentAt = 4.60f, PhLandAt = 5.47f, PhDropAt = 5.40f, PhPuppetAt = 5.80f;
+        // v12 (the owner on v11: *"put more focus as well on the head twist its fine if u speed up other parts a bit"*): everything
+        // before THE TWIST is quicker, and THE TWIST has a shot of its own.
+        private const float PhRiseAt = 0.90f, PhSeamAt = 1.70f, PhEyeAt = 2.40f, PhLockAt = 2.72f, PhBurstAt = 2.78f;
+        private const float PhGlovesAt = 3.00f, PhPullAt = 3.30f, PhDescentAt = 3.85f, PhTwistAt = 4.45f, PhFaceAt = 4.80f, PhBodyTurnAt = 5.18f;
+        /// <summary>When its face clears the pupil, dragged out head-first (an ink frame: the owner, *"add impact frames for him"*).</summary>
+        private const float PhEmergeAt = 3.52f;
+        private const float PhDropAt = 5.35f, PhLandAt = 5.42f, PhPuppetAt = 5.75f;
         /// <summary>When the circle starts to sew round the seam; its age runs 1:1 from there.</summary>
-        private const float PhCircleOpens = 2.10f;
+        private const float PhCircleOpens = 1.70f;
+        /// <summary>THE TWIST's three cranks of the control: (start, end, head turn reached, degrees).</summary>
+        private static readonly (float From, float To, float Turn)[] PhCranks = { (4.52f, 4.58f, 60f), (4.63f, 4.69f, 120f), (4.74f, 4.80f, 180f) };
         private const float PhStageRadius = 17f, PhDomeHeight = 16f;
         private static Vector3 PhDollSpot => new Vector3(Abilities.VoodooDollBody.BesideHer, 0f, 0f);
         private static Vector3 PhDollEnd => new Vector3(Abilities.VoodooDollBody.BesideHer, 0f, Abilities.VoodooDollBody.LurchForward);
         private static Vector3 PhCircleCentre => PhDollSpot + Vector3.up * VoodooSkyCircle.Height;
         /// <summary>The four hits the picture turns to ink for (the owner's reference frame), in order: the eye locking on, the pull,
         /// the landing, the head snapping up.</summary>
-        private static readonly float[] PhImpacts = { PhLockAt, PhPullAt, PhLandAt, PhPuppetAt + .02f };
+        private static readonly float[] PhImpacts = { PhLockAt, PhPullAt, PhEmergeAt, PhFaceAt, PhLandAt, PhPuppetAt + .02f };
 
-        private int _nightDome, _nightFloor, _phEyeFlare, _phDust, _phDustInner, _phPalmL, _phPalmR;
+        private int _nightDome, _nightFloor, _phEyeFlare, _phDust, _phDustInner, _phPalmL, _phPalmR, _phDollEyeL, _phDollEyeR, _phDollEyeBloomL, _phDollEyeBloomR;
         private readonly List<int> _stars = new List<int>(8), _phEmbers = new List<int>(24), _phDrawn = new List<int>(12);
         private readonly List<int> _phRays = new List<int>(16), _phRings = new List<int>(2), _phShards = new List<int>(18);
         private readonly List<Transform> _phPins = new List<Transform>(8);
+        private readonly List<int> _phPinGlows = new List<int>(8), _phSparks = new List<int>(64);
+        private readonly List<LineRenderer> _phPinTrails = new List<LineRenderer>(8);
+        private Transform _phSigil;
+        private Material _phSigilMat;
         /// <summary>Embers rising through the whole scene, some right at the lens (research: never an empty frame, something near the
         /// lens). Typed: (angle deg, radius m, start height m, rise m/s, size, phase).</summary>
         private static readonly (float A, float R, float Y, float Rise, float Size, float Phase)[] PhEmberRows =
@@ -98,16 +109,44 @@ namespace TumbangPreso.Visual
             _phUnderLight.intensity = 0f;
             _phUnderLight.shadows = LightShadows.None;
             _phUnderLight.enabled = false;
+            // HER PINS (v12; the owner on v11: *"the stuff that floats around her doesnt look thhat great"*, thin sticks, one through her
+            // face): real sewing pins, a long bright shaft with a taper to its point and a big glowing bead of a head, flying point-first
+            // round her on a wide tilted orbit clear of her head, each trailing a thread of light.
             for (int i = 0; i < 8; i++)
             {
                 var pin = new GameObject("PhPin" + i).transform;
                 pin.SetParent(_root.transform, false);
                 pin.gameObject.layer = _root.layer;
-                MarionetteControl.Block(pin, "Shaft", new Vector3(0f, 0f, .02f), new Vector3(.03f, .03f, .4f), new Color(.78f, .78f, .84f, 1f), _root.layer);
-                MarionetteControl.Block(pin, "Head", new Vector3(0f, 0f, -.2f), Vector3.one * .085f, i % 2 == 0 ? SkyCircle.Crimson : SkyCircle.Violet, _root.layer, 1.4f);
+                var steel = new Color(.86f, .86f, .92f, 1f);
+                var bead = i % 2 == 0 ? SkyCircle.Crimson : SkyCircle.Violet;
+                MarionetteControl.Block(pin, "Shaft", new Vector3(0f, 0f, 0f), new Vector3(.045f, .045f, .56f), steel, _root.layer, .5f);
+                MarionetteControl.Block(pin, "Taper", new Vector3(0f, 0f, .32f), new Vector3(.028f, .028f, .1f), steel, _root.layer, .5f);
+                MarionetteControl.Block(pin, "Point", new Vector3(0f, 0f, .39f), new Vector3(.014f, .014f, .06f), steel, _root.layer, .8f);
+                MarionetteControl.Block(pin, "Head", new Vector3(0f, 0f, -.3f), Vector3.one * .14f, bead, _root.layer, 1.6f);
+                MarionetteControl.Block(pin, "HeadCap", new Vector3(0f, 0f, -.3f), new Vector3(.1f, .1f, .17f), bead, _root.layer, 1.6f);
                 pin.gameObject.SetActive(false);
                 _phPins.Add(pin);
+                _phPinGlows.Add(AddGlow("PhPinGlow" + i, bead, falloff: 2.4f, core: .9f));
+                _phPinTrails.Add(PhThread("PhPinTrail" + i, 12));
             }
+            // HER CASTING SIGIL on the court under her: the circle's own rim, runes and star, no fangs, no void (the portal is the sky's).
+            _phSigilMat = SkyCircle.PartsMaterial(new Vector4(1f, 1f, 1f, 0f), 0f);
+            if (_phSigilMat != null)
+            {
+                var sigil = new GameObject("PhCastingSigil");
+                sigil.transform.SetParent(_root.transform, false);
+                sigil.layer = _root.layer;
+                sigil.AddComponent<MeshFilter>().sharedMesh = SkyCircle.DiscMesh;
+                var r = sigil.AddComponent<MeshRenderer>();
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; r.receiveShadows = false;
+                r.sharedMaterial = _phSigilMat;
+                VfxRenderTag.Own(sigil, _phSigilMat);
+                r.enabled = false;
+                _phSigil = sigil.transform;
+            }
+            // SPARKS for the hits: the seam's stitches snapping, the pull, each crank of THE TWIST, the landing.
+            for (int i = 0; i < PhSparkBursts.Length * PhSparksEach; i++)
+                _phSparks.Add(AddGlow("PhSpark" + i, i % 3 == 0 ? new Color(1f, .78f, .5f, 1f) : i % 3 == 1 ? new Color(1f, .3f, .4f, 1f) : new Color(.8f, .45f, 1f, 1f), falloff: 3f, core: .95f));
 
             // THE BURST: rays out of the eye, two shockwave rings, shards flung out.
             for (int i = 0; i < 14; i++)
@@ -117,6 +156,12 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < 18; i++)
                 _phShards.Add(Add("PhShard" + i, VfxShapes.TwoSided(VfxShapes.Star(4, .28f, 80 + i)), i % 3 == 0 ? new Color(.80f, .45f, 1f, .95f) : new Color(1f, .26f, .36f, .95f), 1.3f));
             _phEyeFlare = AddGlow("PhEyeFlare", new Color(1f, .30f, .36f, 1f), falloff: 2.8f, core: .9f);
+            // ITS EYES (the owner: *"make his stare look very scary"*): a pin of light in the button and in the X, lifted off the face.
+            // v13b: SHARP pinpoints (a soft glow read as a smudge on a pale face), each with a red bloom behind it.
+            _phDollEyeL = AddGlow("PhDollEyeButton", new Color(1f, .22f, .3f, 1f), falloff: 7f, core: 1f, lift: .2f);
+            _phDollEyeR = AddGlow("PhDollEyeX", new Color(1f, .2f, .2f, 1f), falloff: 7f, core: 1f, lift: .2f);
+            _phDollEyeBloomL = AddGlow("PhDollEyeBloomButton", new Color(.9f, .1f, .25f, 1f), falloff: 2.2f, core: .5f, lift: .1f);
+            _phDollEyeBloomR = AddGlow("PhDollEyeBloomX", new Color(.9f, .05f, .12f, 1f), falloff: 2.2f, core: .5f, lift: .1f);
             _phDust = Add("PhDropDust", VfxShapes.Hollow(48, .86f, .1f, 4), new Color(.62f, .30f, .70f, .85f), 1.4f);
             _phDustInner = Add("PhDropRing", VfxShapes.Hollow(64, .94f, 0f, 9), new Color(1f, .30f, .40f, .8f), 1.2f);
 
@@ -187,7 +232,7 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>How far her night has spread at <paramref name="t"/> (0 day, 1 all): you watch the day die.</summary>
-        private static float PhReach(float t) => Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.2f, 1.05f, t));
+        private static float PhReach(float t) => Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.15f, .85f, t));
 
         /// <summary>The spread of her night, and the circle's light on it (where it hangs over the dome's cap and the floor).</summary>
         private void PhNightLight(float t)
@@ -296,9 +341,18 @@ namespace TumbangPreso.Visual
                 at = hang + new Vector3(0f, -.6f, .4f) * yank;
                 pitch = -26f * yank + 6f * Mathf.Sin(t * 7f) * (1f - Ease(PhPullAt, PhDescentAt, t));
             }
+            else if (t >= PhTwistAt && t < PhDropAt)
+            {
+                // THE TWIST: the gloves crank the control round in three jerks, and with it the doll's head.
+                at = new Vector3(PhDollSpot.x, low.y, PhDollSpot.z) + Vector3.up * .05f * Mathf.Sin(t * 3f);
+                float crank = 0f;
+                foreach (var c in PhCranks) crank = Mathf.Max(crank, Flash(t, c.To, .07f));
+                turn = Quaternion.Euler(-10f * crank, PhCrankTurn(t) * .5f, 12f * crank * Mathf.Sin(t * 40f));
+                return at;
+            }
             else if (t < PhDropAt)
             {
-                float span = PhDropAt - PhDescentAt - .05f;
+                float span = PhTwistAt - PhDescentAt - .02f;
                 float u = Mathf.Clamp01((t - PhDescentAt) / span);
                 int step = u >= .68f ? 2 : u >= .34f ? 1 : 0;
                 float start = step * .34f;
@@ -325,6 +379,21 @@ namespace TumbangPreso.Visual
             return at;
         }
 
+        /// <summary>How far THE TWIST has cranked its head round at <paramref name="t"/>, degrees (ratcheting, a hold between cranks).</summary>
+        private static float PhCrankTurn(float t)
+        {
+            float turn = 0f, from = 0f;
+            foreach (var c in PhCranks)
+            {
+                float u = Mathf.Clamp01((t - c.From) / (c.To - c.From));
+                // Each crank overshoots a little and settles back: the head is dragged, not turned.
+                float over = u >= 1f ? Mathf.Sin(Mathf.Clamp01((t - c.To) / .12f) * Mathf.PI) * 6f * Mathf.Exp(-(t - c.To) * 10f) : 0f;
+                if (t >= c.From) turn = Mathf.Lerp(from, c.Turn, u * u * (3f - 2f * u)) + over;
+                from = c.Turn;
+            }
+            return turn;
+        }
+
         /// <summary>
         /// The doll's feet and its body's turn at <paramref name="t"/>: dragged out of the pupil head-first, upside down, swinging
         /// through to hang under the control, lowered, falling at THE DROP, then standing and lurching.
@@ -346,7 +415,7 @@ namespace TumbangPreso.Visual
                 body = Quaternion.FromToRotation(Vector3.up, -v) * Quaternion.Euler(0f, spin, 0f);
                 return;
             }
-            float yaw = 180f - 180f * Ease(PhDescentAt + .55f, PhDescentAt + .72f, t);
+            float yaw = 180f - 180f * Ease(PhBodyTurnAt, PhBodyTurnAt + .12f, t);
             if (t < PhDropAt)
             {
                 Vector3 sway = new Vector3(Mathf.Sin(t * 2.3f), 0f, Mathf.Cos(t * 1.9f)) * .06f;
@@ -404,77 +473,174 @@ namespace TumbangPreso.Visual
             }
 
             SamplePhaisterCast(t, leave);
+            SamplePhaisterSparks(t, leave);
             SamplePhaisterSky(t, leave);
             SamplePhaisterMonster(t, leave);
+            PhDollEyes(t, leave);
             SamplePhaisterStage(t, leave);
         }
 
-        /// <summary>SHE RISES: the light drawn up into her palms, her palms burning, the light under her face, the pins round her
-        /// (flung up into the circle's rim at THE SEAM), and the thread of light she sends up to the sky.</summary>
+        /// <summary>SHE RISES: her casting sigil turning on the court under her, the light drawn up into her palms, her palms burning,
+        /// the light under her face, her pins flying round her (flung up into the circle's rim at THE SEAM), and the thread of light
+        /// she sends up to the sky.</summary>
         private void SamplePhaisterCast(float t, float leave)
         {
             float lift = LiftAt(t);
             Vector3 palmL = FreePalm, palmR = RightPalm;
-            float casting = Ease(1.5f, 1.8f, t) * (1f - Ease(PhBurstAt + .2f, PhDescentAt + .4f, t)) * leave;
+            float casting = Ease(1.15f, 1.4f, t) * (1f - Ease(PhBurstAt + .2f, PhDescentAt, t)) * leave;
             PlaceGlow(_phPalmL, palmL, Vector3.one * (.32f + .1f * Mathf.Sin(t * 11f)), Quaternion.identity, casting * .9f);
             PlaceGlow(_phPalmR, palmR, Vector3.one * (.32f + .1f * Mathf.Sin(t * 11f + 1f)), Quaternion.identity, casting * .9f);
+
+            // THE SIGIL: sewn round under her as she lifts off, turning, gone once the sky has opened.
+            if (_phSigil != null)
+            {
+                float sigil = Ease(.95f, 1.35f, t) * (1f - Ease(PhEyeAt + .1f, PhBurstAt + .1f, t)) * leave;
+                var r = _phSigil.GetComponent<Renderer>();
+                r.enabled = sigil > .01f;
+                if (r.enabled)
+                {
+                    _phSigil.localPosition = new Vector3(0f, _phCourtY + .05f, 0f);
+                    _phSigil.localScale = Vector3.one * 1.9f;
+                    float age = t - .95f;
+                    _phSigilMat.SetFloat("_Reveal", Mathf.Clamp01(age / .4f));
+                    _phSigilMat.SetFloat("_Inner", Mathf.Clamp01((age - .2f) / .4f));
+                    _phSigilMat.SetFloat("_Spin", t * 1.2f);
+                    _phSigilMat.SetFloat("_Phase", t);
+                    _phSigilMat.SetFloat("_Glow", 2.2f + 2f * Flash(t, 1.3f, .15f));
+                    _phSigilMat.SetFloat("_Alpha", sigil);
+                }
+            }
+
             for (int i = 0; i < _phDrawn.Count; i++)
             {
-                float start = 1.3f + i * .06f, life = .55f;
+                float start = 1.0f + i * .05f, life = .5f;
                 float u = Mathf.InverseLerp(start, start + life, t);
                 bool on = u > 0f && u < 1f && leave > .02f;
                 float a = (i * 30f + 15f) * Mathf.Deg2Rad;
-                Vector3 from = new Vector3(Mathf.Sin(a) * 2.2f, _phCourtY + .05f, Mathf.Cos(a) * 2.2f);
+                Vector3 from = new Vector3(Mathf.Sin(a) * 1.8f, _phCourtY + .05f, Mathf.Cos(a) * 1.8f);
                 Vector3 to = i % 2 == 0 ? palmL : palmR;
                 Vector3 at = Vector3.Lerp(from, to, u * u) + Vector3.up * Mathf.Sin(u * Mathf.PI) * .6f;
                 PlaceGlow(_phDrawn[i], at, Vector3.one * .22f, Quaternion.identity, on ? Mathf.Sin(u * Mathf.PI) * 1.4f : 0f);
             }
             if (_phUnderLight != null)
             {
-                float under = Ease(1.3f, 1.8f, t) * (1f - Ease(PhEyeAt + .2f, PhBurstAt, t)) * leave;
+                float under = Ease(1.0f, 1.4f, t) * (1f - Ease(PhEyeAt + .1f, PhBurstAt, t)) * leave;
                 _phUnderLight.transform.localPosition = new Vector3(0f, lift + .35f, .7f);
                 _phUnderLight.intensity = 1.6f * under;
                 _phUnderLight.enabled = under > .01f;
             }
 
-            // Her pins orbit her chest, points out, then fly up one after another and stab into the circle's rim.
+            // HER PINS fly point-first round her on a wide orbit tilted toward the lens, clear of her head, each trailing a thread of light;
+            // then one after another they break off and fly up into the circle's rim.
             float spin = (t - Seconds) * 8f * Mathf.Deg2Rad;
             for (int i = 0; i < _phPins.Count; i++)
             {
                 var pin = _phPins[i];
-                float appear = Ease(1.55f + i * .03f, 1.8f + i * .03f, t);
-                float flyAt = 2.3f + i * .045f, arrive = 2.58f + i * .06f;
+                float appear = Ease(1.15f + i * .03f, 1.4f + i * .03f, t);
+                float flyAt = 1.9f + i * .04f, arrive = 2.2f + i * .06f;
                 bool on = appear > 0f && t < arrive && leave > .02f;
                 if (pin.gameObject.activeSelf != on) pin.gameObject.SetActive(on);
-                if (!on) continue;
-                float orbit = (i / 8f) * 360f + t * 150f;
-                Vector3 radial = Quaternion.Euler(0f, orbit, 0f) * Vector3.forward;
-                Vector3 round = new Vector3(0f, lift + 1.05f + .12f * Mathf.Sin(t * 4f + i), 0f) + radial * (.95f * appear);
+                var trail = _phPinTrails[i];
+                trail.enabled = on;
+                if (!on) { PlaceGlow(_phPinGlows[i], Vector3.zero, Vector3.one, Quaternion.identity, 0f); continue; }
                 float a = i / 8f * Mathf.PI * 2f + spin;
                 Vector3 rim = PhEye + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * SkyCircle.Radius * .86f;
                 float fly = Ease(flyAt, arrive, t);
-                Vector3 at = Vector3.Lerp(round, rim, fly * fly);
-                Vector3 point = fly > 0f ? (rim - round).normalized : radial;
+                Vector3 at = Vector3.Lerp(PhPinOrbit(i, t, lift, appear), rim, fly * fly);
+                Vector3 outward = at - PhPinHalo(lift);
+                Vector3 point = fly > .02f ? (rim - at).normalized : outward.sqrMagnitude > 1e-6f ? outward.normalized : Vector3.up;
                 pin.localPosition = at;
                 pin.localRotation = Quaternion.LookRotation(point, Vector3.up);
-                pin.localScale = Vector3.one * Mathf.Lerp(1f, 3.2f, fly);
+                pin.localScale = Vector3.one * Mathf.Lerp(1f, 2.4f, fly) * appear;
+                PlaceGlow(_phPinGlows[i], at - point * .3f * pin.localScale.x, Vector3.one * .3f, Quaternion.identity, appear * leave * 1.1f);
+                for (int k = 0; k < trail.positionCount; k++)
+                {
+                    float back = k * .025f;
+                    float f2 = Ease(flyAt, arrive, t - back);
+                    trail.SetPosition(k, Vector3.Lerp(PhPinOrbit(i, t - back, LiftAt(t - back), appear), rim, f2 * f2));
+                }
+                trail.widthMultiplier = .045f;
+                _phCircle.Paint(trail, i % 2 == 0 ? SkyCircle.Crimson : SkyCircle.Violet, leave * appear * .9f, 1f, 0f);
             }
 
             // THE THREAD: at the flare a line of her light shoots from her up to the sky, where the seam opens.
-            bool thread = t > 2.0f && t < 2.55f && leave > .02f;
+            bool thread = t > 1.6f && t < 2.1f && leave > .02f;
             _phRise.enabled = thread;
             if (thread)
             {
                 Vector3 from = new Vector3(0f, lift + 1.2f, .1f);
-                Vector3 to = Vector3.Lerp(from, PhEye, Ease(2.02f, 2.14f, t));
+                Vector3 to = Vector3.Lerp(from, PhEye, Ease(1.62f, 1.72f, t));
                 for (int i = 0; i < _phRise.positionCount; i++)
                 {
                     float u = i / (float)(_phRise.positionCount - 1);
                     Vector3 p = Vector3.Lerp(from, to, u) + new Vector3(Mathf.Sin(t * 30f + u * 17f), 0f, Mathf.Cos(t * 23f + u * 11f)) * .08f * Mathf.Sin(Mathf.PI * u);
                     _phRise.SetPosition(i, p);
                 }
-                _phRise.widthMultiplier = .12f * (1f - Ease(2.3f, 2.55f, t)) + .02f;
+                _phRise.widthMultiplier = .12f * (1f - Ease(1.85f, 2.1f, t)) + .02f;
                 _phCircle.Paint(_phRise, SkyCircle.Crimson, leave, 1f, 1f);
+            }
+        }
+
+        /// <summary>
+        /// Where pin <paramref name="i"/> hangs at <paramref name="t"/>: a HALO of needles fanned out behind her head and shoulders,
+        /// points outward, breathing (v12b; an orbit round her kept crossing her face at the close lens, and Black Swan's cards frame
+        /// her rather than cover her).
+        /// </summary>
+        private static Vector3 PhPinOrbit(int i, float t, float lift, float appear)
+        {
+            float a = (-118f + i * (236f / 7f) + 5f * Mathf.Sin(t * 1.7f + i * .9f)) * Mathf.Deg2Rad;
+            float radius = (1.05f + .05f * Mathf.Sin(t * 2.3f + i)) * appear;
+            return PhPinHalo(lift) + new Vector3(Mathf.Sin(a), Mathf.Cos(a), 0f) * radius + Vector3.back * .12f * Mathf.Cos(a);
+        }
+
+        private static Vector3 PhPinHalo(float lift) => new Vector3(0f, lift + 1.45f, -.4f);
+
+        /// <summary>THE SPARKS: (time, where, how many of the burst's slots, speed, spread up). Each burst owns its slots.</summary>
+        private const int PhSparksEach = 8;
+        private static readonly (float At, int Where, float Speed, float Up)[] PhSparkBursts =
+        {
+            (2.02f, 0, 2.2f, -.6f), (2.14f, 1, 2.2f, -.6f), (2.27f, 2, 2.2f, -.6f), (2.38f, 3, 2.2f, -.6f),   // the seam's stitches snapping
+            (PhPullAt, 4, 6.5f, -.3f), (PhPullAt + .03f, 4, 4.5f, -.8f),                                        // the pull out of the pupil
+            (4.58f, 5, 1.6f, .3f), (4.69f, 5, 1.6f, .3f), (4.80f, 5, 2.6f, .4f),                               // each crank of THE TWIST, at its neck
+            (PhEmergeAt, 5, 4.5f, .2f), (PhEmergeAt + .12f, 5, 3.5f, -.2f), (PhEmergeAt + .24f, 5, 3f, -.4f),   // torn off it as it swings out
+            (PhLandAt, 6, 3.4f, 1.2f), (PhLandAt + .02f, 6, 2.2f, 1.8f),                                         // the landing: stuffing and embers
+        };
+
+        private Vector3 PhSparkOrigin(int where, float t)
+        {
+            float eyeW = SkyCircle.EyeHalfWidth;
+            switch (where)
+            {
+                case 0: return PhEye + Vector3.right * -eyeW * .55f;
+                case 1: return PhEye + Vector3.right * eyeW * .2f;
+                case 2: return PhEye + Vector3.right * -eyeW * .1f;
+                case 3: return PhEye + Vector3.right * eyeW * .6f;
+                case 4: return PhEye + Vector3.down * .4f;
+                case 5: return _phMHead != null ? _root.transform.InverseTransformPoint(_phMHead.position) : PhMonsterFeet(t) + Vector3.up * _phMonsterHeight * .7f;
+                default: return PhDollSpot + Vector3.up * (_phCourtY + .2f);
+            }
+        }
+
+        private void SamplePhaisterSparks(float t, float leave)
+        {
+            for (int b = 0; b < PhSparkBursts.Length; b++)
+            {
+                var burst = PhSparkBursts[b];
+                float age = t - burst.At;
+                bool live = age >= 0f && age < .7f && leave > .02f && !_reducedEffects;
+                Vector3 origin = live ? PhSparkOrigin(burst.Where, burst.At) : Vector3.zero;
+                for (int i = 0; i < PhSparksEach; i++)
+                {
+                    int slot = b * PhSparksEach + i;
+                    if (!live) { PlaceGlow(_phSparks[slot], Vector3.zero, Vector3.one, Quaternion.identity, 0f); continue; }
+                    float yaw = (i * 45f + b * 17f) * Mathf.Deg2Rad;
+                    float h = Mathf.Repeat(Mathf.Sin((slot + 1) * 12.9898f) * 43758.5453f, 1f);
+                    Vector3 dir = new Vector3(Mathf.Cos(yaw), burst.Up + (h - .5f) * .8f, Mathf.Sin(yaw)).normalized;
+                    float speed = burst.Speed * (.6f + .8f * h);
+                    Vector3 at = origin + dir * speed * age + Vector3.down * 4.5f * age * age;
+                    float fade = 1f - age / .7f;
+                    PlaceGlow(_phSparks[slot], at, Vector3.one * (.16f + .1f * h) * fade, Quaternion.identity, fade * fade * 2f * leave);
+                }
             }
         }
 
@@ -483,11 +649,11 @@ namespace TumbangPreso.Visual
         private void SamplePhaisterSky(float t, float leave)
         {
             _phCircle.Seam = Ease(PhSeamAt, PhSeamAt + .2f, t);
-            _phCircle.Tear = Ease(PhSeamAt + .3f, PhEyeAt, t);
-            float open = Ease(PhEyeAt + .05f, PhLockAt, t);
-            _phCircle.EyeOverride = Mathf.Clamp01(open * (1f - .25f * Flash(t, PhEyeAt + .16f, .05f)));
+            _phCircle.Tear = Ease(PhSeamAt + .28f, PhEyeAt, t);
+            float open = Ease(PhEyeAt + .04f, PhLockAt, t);
+            _phCircle.EyeOverride = Mathf.Clamp01(open * (1f - .25f * Flash(t, PhEyeAt + .13f, .05f)));
             // The pupil darts left, right, then LOCKS on the lens (the camera is straight under it) and never leaves.
-            float look = t < PhEyeAt + .12f ? 0f : t < PhEyeAt + .22f ? -.9f : t < PhLockAt - .02f ? .9f : 0f;
+            float look = t < PhEyeAt + .1f ? 0f : t < PhEyeAt + .19f ? -.9f : t < PhLockAt - .02f ? .9f : 0f;
             _phCircle.LookX = look;
             _phCircle.LookY = 0f;
             _phCircle.BurstAge = t >= PhBurstAt ? t - PhBurstAt : -1f;
@@ -575,18 +741,29 @@ namespace TumbangPreso.Visual
             // ⚠️ Raw euler on the cast's rig (`author_ultimate_intros.py`): +x on the torso and head pitches FORWARD; +y turns the head
             // to its right. A dropped puppet slumps a little and its head falls SIDEWAYS (v4's 60 degrees face-down read as toppled).
             const float LandTorso = 8f, LandHeadX = 12f, LandHeadY = 12f, LandHeadZ = 26f;
-            float span = PhDropAt - PhDescentAt - .05f;
+            float span = PhTwistAt - PhDescentAt - .02f;
             float jerk = Flash(t, PhPullAt + .06f, .12f);
             for (int k = 0; k < 3; k++) jerk = Mathf.Max(jerk, Flash(t, PhDescentAt + k * .34f * span + .06f, .1f));
+            foreach (var c in PhCranks) jerk = Mathf.Max(jerk, .6f * Flash(t, c.To, .06f));
             Vector3 torso, head; float lRaise, lSpread, rRaise, rSpread, lLeg, rLeg, legSpread = 3f, torsoTurn = 0f;
             if (t < PhDropAt)
             {
                 // The head turn: while its body still faces away, the head comes round to the lens; then the body swings round under it.
-                float bodyYaw = t < PhDescentAt ? 180f : 180f - 180f * Ease(PhDescentAt + .55f, PhDescentAt + .72f, t);
-                float round = Ease(PhDescentAt + .2f, PhDescentAt + .5f, t);
-                float headYaw = Mathf.DeltaAngle(bodyYaw, -12f) * round;
-                torso = new Vector3(10f - 10f * jerk, 0f, 4f * Mathf.Sin(t * 3f));
-                head = new Vector3(Mathf.Lerp(20f - 26f * jerk, -4f, round), headYaw + 10f * Mathf.Sin(t * 2.3f) * (1f - round), 14f * (1f - round));
+                // THE TWIST: its body hangs facing away while its head is cranked round, 180 degrees in three jerks, to stare into the
+                // lens; then the body swings round under the head, which stays on the lens.
+                float bodyYaw = t < PhBodyTurnAt ? 180f : 180f - 180f * Ease(PhBodyTurnAt, PhBodyTurnAt + .12f, t);
+                float crankTurn = PhCrankTurn(t);
+                // As the body swings round under it the head counter-turns by the same amount, so the face never leaves the lens
+                // (v17 unwound it the other way and showed the back of its head for a frame).
+                float headYaw = crankTurn + (180f - bodyYaw);
+                float round = Ease(PhTwistAt, PhFaceAt, t);
+                float stare = Ease(PhFaceAt, PhFaceAt + .06f, t) * (1f - Ease(PhBodyTurnAt, PhBodyTurnAt + .1f, t));
+                // THE STARE: dead still on the lens, head cocked, then a twitch, another, a smaller one: something alive inside.
+                float twitch = 0f;
+                foreach (float at in new[] { PhFaceAt + .14f, PhFaceAt + .25f, PhFaceAt + .33f }) twitch += Flash(t, at, .03f) * (at == PhFaceAt + .33f ? .5f : 1f);
+                torso = new Vector3(10f - 10f * jerk, 0f, 4f * Mathf.Sin(t * 3f) * (1f - round));
+                head = new Vector3(Mathf.Lerp(20f - 26f * jerk, -8f, round) + 5f * twitch * stare, headYaw + 7f * twitch * stare,
+                                   Mathf.Lerp(14f, 0f, round) + 18f * stare - 9f * twitch * stare);
                 lRaise = 150f + 20f * jerk; lSpread = 42f; rRaise = 146f + 22f * jerk; rSpread = 46f;
                 lLeg = 6f * Mathf.Sin(t * 4f); rLeg = -6f * Mathf.Sin(t * 4f + .6f);
             }
@@ -649,6 +826,39 @@ namespace TumbangPreso.Visual
             }
         }
 
+        /// <summary>Its face (stage space): in front of its head, where the camera and the ink frames aim.</summary>
+        private Vector3 PhDollFace()
+        {
+            if (_phMHead == null || _phMonster == null || !_phMonster.gameObject.activeInHierarchy)
+                return PhMonsterFeet(Mathf.Max(PhPullAt, 0f)) + Vector3.up * (_phMonsterHeight * .8f);
+            return _root.transform.InverseTransformPoint(_phMHead.TransformPoint(new Vector3(0f, .15f, .17f)));
+        }
+
+        /// <summary>ITS EYES: two pins of light in its button and its X, from the moment it is dragged out; dim while it hangs, BLAZING in
+        /// THE STARE and at THE PUPPET, flickering like something alive behind them.</summary>
+        private void PhDollEyes(float t, float leave)
+        {
+            bool on = _phMHead != null && t >= PhPullAt && leave > .02f;
+            if (!on)
+            {
+                foreach (int g in new[] { _phDollEyeL, _phDollEyeR, _phDollEyeBloomL, _phDollEyeBloomR })
+                    PlaceGlow(g, Vector3.zero, Vector3.one, Quaternion.identity, 0f);
+                return;
+            }
+            float stare = Ease(PhFaceAt - .02f, PhFaceAt + .05f, t) * (1f - .6f * Ease(PhBodyTurnAt + .1f, PhDropAt, t));
+            float puppet = Flash(t, PhPuppetAt + .04f, .25f) + .5f * Ease(PhPuppetAt, PhPuppetAt + .2f, t);
+            float flicker = .75f + .25f * Mathf.Sin(t * 37f) * Mathf.Sin(t * 23f + 1f);
+            float power = (.55f + 2.2f * stare + 1.8f * puppet) * flicker * leave;
+            Vector3 facing = _phMHead.TransformDirection(Vector3.forward);
+            Vector3 face = _root.transform.InverseTransformDirection(facing);
+            foreach (var (glow, bloom, x) in new[] { (_phDollEyeL, _phDollEyeBloomL, .065f), (_phDollEyeR, _phDollEyeBloomR, -.065f) })
+            {
+                Vector3 at = _root.transform.InverseTransformPoint(_phMHead.TransformPoint(new Vector3(x, .146f, .17f)));
+                PlaceGlow(glow, at, Vector3.one * (.07f + .03f * stare + .06f * puppet), Quaternion.identity, power * 3.5f, face);
+                PlaceGlow(bloom, at, Vector3.one * (.35f + .35f * stare + .3f * puppet), Quaternion.identity, power * .55f, face);
+            }
+        }
+
         /// <summary>A glove on the control's bar end <paramref name="anchor"/>, its sleeve up to the pupil; drawn back into it as
         /// <paramref name="withdraw"/> goes to 1.</summary>
         private void PlaceGlove(Transform glove, int anchor, float withdraw)
@@ -693,8 +903,12 @@ namespace TumbangPreso.Visual
         private void PhaisterGrade(float t, out float brightness, out float saturation)
         {
             float away = PhReach(t) * (1f - .3f * Ease(PhPuppetAt, PhPuppetAt + .4f, t)) * (1f - Ease(Seconds - .16f, Seconds, t));
-            brightness = 1f - .26f * away;
-            saturation = 1f - .16f * away;
+            // THE STARE drains the world to grey round its burning eyes, and lets it back as its body turns.
+            float stare = Ease(PhFaceAt, PhFaceAt + .08f, t) * (1f - Ease(PhBodyTurnAt, PhDropAt, t));
+            // (Only a little: the grade takes the whole frame, glows too, and v15's grey turned its burning eyes a pale pink. The
+            // vignette in `PhaisterPostProcess` does the dark.)
+            brightness = 1f - .26f * away - .12f * stare;
+            saturation = 1f - .16f * away - .12f * stare;
         }
 
         /// <summary>The lens flinches on every hit and on the burst.</summary>
@@ -718,7 +932,8 @@ namespace TumbangPreso.Visual
             if (_reducedEffects) return;
             int hit = -1;
             for (int i = 0; i < PhImpacts.Length; i++) if (t >= PhImpacts[i] && t < PhImpacts[i] + .067f) hit = i;
-            if (hit < 0) return;
+            float vignette = Ease(PhFaceAt + .06f, PhFaceAt + .16f, t) * (1f - Ease(PhBodyTurnAt, PhBodyTurnAt + .1f, t));
+            if (hit < 0 && vignette <= .01f) return;
             if (_phImpact == null)
             {
                 var shader = Resources.Load<Shader>("Shaders/PhaisterImpact");
@@ -728,15 +943,16 @@ namespace TumbangPreso.Visual
                 _phImpact.SetColor("_Dark", new Color(.03f, .02f, .04f, 1f));
                 _phImpact.SetColor("_Ink", new Color(.85f, .10f, .22f, 1f));
             }
-            Vector3 focus = hit == 0 ? PhEye : hit == 1 ? PhControlAt(t, out _) : hit == 2 ? PhDollSpot + Vector3.up * .8f : PhMonsterFeet(t) + Vector3.up * (_phMonsterHeight * .8f);
+            Vector3 focus = hit < 0 ? PhDollFace() : hit == 0 ? PhEye : hit == 1 ? PhControlAt(t, out _) : hit == 4 ? PhDollSpot + Vector3.up * .8f : PhDollFace();
             var vp = camera.WorldToViewportPoint(_root.transform.TransformPoint(focus));
             if (vp.z < 0f) vp = new Vector3(.5f, .5f, 1f);
-            bool first = t < PhImpacts[hit] + .034f;
+            bool first = hit >= 0 && t < PhImpacts[hit] + .034f;
             _phImpact.SetVector("_Focus", new Vector4(Mathf.Clamp01(vp.x), Mathf.Clamp01(vp.y), 0f, 0f));
-            _phImpact.SetFloat("_Amount", first ? 1f : .85f);
-            _phImpact.SetFloat("_Seed", hit * 2 + (first ? 0f : 1f));
-            _phImpact.SetFloat("_Lines", 1f);
-            _phImpact.SetFloat("_Zoom", first ? .06f : .03f);
+            _phImpact.SetFloat("_Amount", hit < 0 ? 0f : first ? 1f : .85f);
+            _phImpact.SetFloat("_Seed", Mathf.Max(0, hit) * 2 + (first ? 0f : 1f));
+            _phImpact.SetFloat("_Lines", hit < 0 ? 0f : 1f);
+            _phImpact.SetFloat("_Zoom", hit < 0 ? 0f : first ? .06f : .03f);
+            _phImpact.SetFloat("_Vignette", hit < 0 ? vignette * .85f : 0f);
             var tmp = RenderTexture.GetTemporary(frame.descriptor);
             Graphics.Blit(frame, tmp, _phImpact);
             Graphics.Blit(tmp, frame);

@@ -45,9 +45,24 @@ namespace TumbangPreso.Visual
         private static Material _thread;
         private static Mesh _disc;
         private readonly bool _world;
-        private readonly Material _circle;
-        private readonly Transform _discT;
-        private readonly Renderer _discR;
+        /// <summary>
+        /// ⚠️ v12, THE CIRCLE IN DEPTH (the owner on v11: *"the circle itself looks flatly drawn and basic"*). One disc of light has no
+        /// depth from any side, so its parts are drawn on discs of their own at different heights, turning against each other, with a
+        /// band of height round its rim and a curtain of light hanging from it (`Shaders/VoodooRim`). Seen from under it the parts slide
+        /// past each other (parallax); seen from the side it is an object with thickness. The eye sits deepest, recessed behind the rest.
+        /// (height in metres at full size, size, which parts: rim, runes, star and stitches, void and eye; fangs)
+        /// </summary>
+        private static readonly (string Name, float Lift, float Size, Vector4 Parts, float Fangs)[] Layers =
+        {
+            ("VoodooCircleCore", 0.7f, 0.99f, new Vector4(0f, 0f, 0f, 1f), 0f),
+            ("VoodooCircleRim", 0f, 1f, new Vector4(1f, 0f, 0f, 0f), 1f),
+            ("VoodooCircleRunes", -0.45f, 1.02f, new Vector4(0f, 1f, 0f, 0f), 0f),
+            ("VoodooCircleStar", -1.0f, 0.95f, new Vector4(0f, 0f, 1f, 0f), 0f),
+        };
+        private readonly List<Material> _materials = new List<Material>(6);
+        private readonly List<(Transform T, Renderer R, float Lift, float Size)> _discs = new List<(Transform, Renderer, float, float)>(6);
+        private Transform _band, _curtain;
+        private Material _bandMat, _curtainMat;
         private readonly MaterialPropertyBlock _block = new MaterialPropertyBlock();
         private readonly List<GameObject> _owned = new List<GameObject>();
         private readonly List<LineRenderer> _pins = new List<LineRenderer>(Pins), _bolts = new List<LineRenderer>(Bolts);
@@ -63,6 +78,20 @@ namespace TumbangPreso.Visual
                 return _thread;
             }
         }
+
+        /// <summary>A new material on the circle's shader drawing only <paramref name="parts"/> (her casting sigil on the court).</summary>
+        public static Material PartsMaterial(Vector4 parts, float fangs)
+        {
+            var shader = Resources.Load<Shader>("Shaders/VoodooCircle");
+            if (shader == null) return null;
+            var m = new Material(shader) { name = "VoodooCircleParts" };
+            m.SetVector("_Parts", parts);
+            m.SetFloat("_Fangs", fangs);
+            return m;
+        }
+
+        /// <summary>The unit disc every layer is drawn on (uv 0 to 1 across 2.24 units).</summary>
+        public static Mesh DiscMesh => Disc;
 
         private static Mesh Disc
         {
@@ -86,20 +115,85 @@ namespace TumbangPreso.Visual
         public SkyCircle(Transform parent, bool world, int layer)
         {
             _world = world;
-            var go = new GameObject("VoodooCircle");
+            var shader = Resources.Load<Shader>("Shaders/VoodooCircle");
+            foreach (var l in Layers)
+            {
+                var go = new GameObject(l.Name);
+                if (parent != null) go.transform.SetParent(parent, false);
+                go.layer = layer;
+                _owned.Add(go);
+                go.AddComponent<MeshFilter>().sharedMesh = Disc;
+                var r = go.AddComponent<MeshRenderer>();
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                r.receiveShadows = false;
+                if (shader != null)
+                {
+                    var m = new Material(shader) { name = l.Name };
+                    m.SetVector("_Parts", l.Parts);
+                    m.SetFloat("_Fangs", l.Fangs);
+                    // The deeper a layer, the earlier it draws, so the nearer ones lie over it.
+                    m.renderQueue = 3009 + _materials.Count;
+                    r.sharedMaterial = m;
+                    _materials.Add(m);
+                }
+                r.enabled = false;
+                _discs.Add((go.transform, r, l.Lift, l.Size));
+            }
+            var rim = Resources.Load<Shader>("Shaders/VoodooRim");
+            if (rim != null)
+            {
+                _bandMat = new Material(rim) { name = "VoodooCircleBand" };
+                _bandMat.SetFloat("_Mode", 0f);
+                _curtainMat = new Material(rim) { name = "VoodooCircleCurtain" };
+                _curtainMat.SetFloat("_Mode", 1f);
+                _band = Wall("VoodooCircleBand", parent, layer, WallBand, _bandMat);
+                _curtain = Wall("VoodooCircleCurtain", parent, layer, WallCurtain, _curtainMat);
+            }
+            for (int i = 0; i < Pins; i++) _pins.Add(Line("SkyPin", 2, parent, layer));
+            for (int i = 0; i < Bolts; i++) _bolts.Add(Line("SkyBolt", BoltPoints, parent, layer));
+        }
+
+        private static Mesh _wallBand, _wallCurtain;
+        /// <summary>A ring wall at radius 0.95 of the circle (unit), 0.1 tall, centred on the rim: THE BAND.</summary>
+        private static Mesh WallBand => _wallBand != null ? _wallBand : _wallBand = RingWall("VoodooCircleBandMesh", 0.95f, -0.05f, 0.05f);
+        /// <summary>A ring wall hanging from just inside the rim down 0.55 of the circle's radius: THE CURTAIN.</summary>
+        private static Mesh WallCurtain => _wallCurtain != null ? _wallCurtain : _wallCurtain = RingWall("VoodooCircleCurtainMesh", 0.9f, 0f, -0.55f);
+
+        private static Mesh RingWall(string name, float radius, float top, float bottom)
+        {
+            const int sides = 96;
+            var v = new Vector3[(sides + 1) * 2];
+            var uv = new Vector2[v.Length];
+            var tris = new int[sides * 6];
+            for (int i = 0; i <= sides; i++)
+            {
+                float a = i / (float)sides * Mathf.PI * 2f;
+                var rim = new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * radius;
+                v[i * 2] = rim + Vector3.up * top; v[i * 2 + 1] = rim + Vector3.up * bottom;
+                uv[i * 2] = new Vector2(i / (float)sides, top > bottom ? 1f : 0f);
+                uv[i * 2 + 1] = new Vector2(i / (float)sides, top > bottom ? 0f : 1f);
+                if (i == sides) continue;
+                int k = i * 6, n = i * 2;
+                tris[k] = n; tris[k + 1] = n + 1; tris[k + 2] = n + 2; tris[k + 3] = n + 2; tris[k + 4] = n + 1; tris[k + 5] = n + 3;
+            }
+            var mesh = new Mesh { name = name, vertices = v, uv = uv, triangles = tris };
+            mesh.bounds = new Bounds(Vector3.zero, new Vector3(2.2f, 1.4f, 2.2f));
+            return mesh;
+        }
+
+        private Transform Wall(string name, Transform parent, int layer, Mesh mesh, Material material)
+        {
+            var go = new GameObject(name);
             if (parent != null) go.transform.SetParent(parent, false);
             go.layer = layer;
             _owned.Add(go);
-            go.AddComponent<MeshFilter>().sharedMesh = Disc;
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
             var r = go.AddComponent<MeshRenderer>();
             r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             r.receiveShadows = false;
-            var shader = Resources.Load<Shader>("Shaders/VoodooCircle");
-            if (shader != null) { _circle = new Material(shader) { name = "VoodooCircle" }; r.sharedMaterial = _circle; }
+            r.sharedMaterial = material;
             r.enabled = false;
-            _discT = go.transform; _discR = r;
-            for (int i = 0; i < Pins; i++) _pins.Add(Line("SkyPin", 2, parent, layer));
-            for (int i = 0; i < Bolts; i++) _bolts.Add(Line("SkyBolt", BoltPoints, parent, layer));
+            return go.transform;
         }
 
         private LineRenderer Line(string name, int points, Transform parent, int layer)
@@ -137,28 +231,48 @@ namespace TumbangPreso.Visual
         public void Pose(float age, Vector3 centre, float scale, float spin, float alpha, float detail = 1f)
         {
             bool on = age > 0f && alpha > 0.01f;
-            _discR.enabled = on;
-            if (on)
+            float reveal = Mathf.Clamp01(age / 0.55f);
+            float flash = Mathf.Clamp01(1f - Mathf.Abs(age - 0.58f) / 0.18f);
+            float burstGlow = BurstAge >= 0f ? Mathf.Exp(-BurstAge * 5f) : 0f;
+            float glow = 2.6f + 4.5f * flash + 7f * burstGlow + 0.25f * Mathf.Sin(age * 6f);
+            for (int k = 0; k < _discs.Count; k++)
             {
-                if (_world) { _discT.position = centre; _discT.localScale = Vector3.one * Radius * scale; }
-                else { _discT.localPosition = centre; _discT.localScale = Vector3.one * Radius * scale; }
-                float reveal = Mathf.Clamp01(age / 0.55f);
-                float flash = Mathf.Clamp01(1f - Mathf.Abs(age - 0.58f) / 0.18f);
-                if (_circle != null)
-                {
-                    _circle.SetFloat("_Reveal", reveal * reveal * (3f - 2f * reveal));
-                    _circle.SetFloat("_Inner", Mathf.Clamp01((age - 0.45f) / 0.5f));
-                    _circle.SetFloat("_Eye", EyeOverride >= 0f ? EyeOverride : Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((age - 0.5f) / 0.45f)));
-                    _circle.SetFloat("_Look", float.IsNaN(LookX) ? Mathf.Sin(age * 3.1f) * 0.7f + Mathf.Sin(age * 7.7f) * 0.2f : LookX);
-                    _circle.SetFloat("_LookY", float.IsNaN(LookX) ? 0f : LookY);
-                    _circle.SetFloat("_Seam", Seam);
-                    _circle.SetFloat("_Tear", Tear);
-                    _circle.SetFloat("_Spin", spin);
-                    _circle.SetFloat("_Phase", age);
-                    float burst = BurstAge >= 0f ? Mathf.Exp(-BurstAge * 5f) : 0f;
-                    _circle.SetFloat("_Glow", 2.6f + 4.5f * flash + 7f * burst + 0.25f * Mathf.Sin(age * 6f));
-                    _circle.SetFloat("_Alpha", alpha);
-                }
+                var d = _discs[k];
+                d.R.enabled = on;
+                if (!on) continue;
+                // The layers turn against each other: the star slower and backwards, the runes faster.
+                float layerSpin = k == 3 ? -spin * 0.7f : k == 2 ? spin * 1.4f : spin;
+                Vector3 at = centre + Vector3.up * d.Lift * scale;
+                if (_world) d.T.position = at; else d.T.localPosition = at;
+                d.T.localScale = Vector3.one * Radius * scale * d.Size;
+                if (k >= _materials.Count) continue;
+                var m = _materials[k];
+                m.SetFloat("_Reveal", reveal * reveal * (3f - 2f * reveal));
+                m.SetFloat("_Inner", Mathf.Clamp01((age - 0.45f) / 0.5f));
+                m.SetFloat("_Eye", EyeOverride >= 0f ? EyeOverride : Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((age - 0.5f) / 0.45f)));
+                m.SetFloat("_Look", float.IsNaN(LookX) ? Mathf.Sin(age * 3.1f) * 0.7f + Mathf.Sin(age * 7.7f) * 0.2f : LookX);
+                m.SetFloat("_LookY", float.IsNaN(LookX) ? 0f : LookY);
+                m.SetFloat("_Seam", Seam);
+                m.SetFloat("_Tear", Tear);
+                m.SetFloat("_Spin", layerSpin);
+                m.SetFloat("_Phase", age);
+                m.SetFloat("_Glow", glow);
+                m.SetFloat("_Alpha", alpha);
+            }
+            // THE BAND round the rim and THE CURTAIN hanging from it, sewn round with the rim.
+            foreach (var (wall, mat, shown) in new[] { (_band, _bandMat, on), (_curtain, _curtainMat, on && detail > 0.05f) })
+            {
+                if (wall == null) continue;
+                var r = wall.GetComponent<Renderer>();
+                r.enabled = shown;
+                if (!shown) continue;
+                if (_world) wall.position = centre; else wall.localPosition = centre;
+                wall.localScale = Vector3.one * Radius * scale;
+                mat.SetFloat("_Reveal", reveal * reveal * (3f - 2f * reveal));
+                mat.SetFloat("_Spin", spin);
+                mat.SetFloat("_Phase", age);
+                mat.SetFloat("_Glow", glow * 0.8f);
+                mat.SetFloat("_Alpha", alpha * (wall == _curtain ? Mathf.Clamp01((age - 0.3f) / 0.5f) * detail : 1f));
             }
 
             // The pins stab in through the rim from above, one after another.
@@ -227,7 +341,10 @@ namespace TumbangPreso.Visual
         {
             foreach (var go in _owned) if (go != null) Object.Destroy(go);
             _owned.Clear();
-            if (_circle != null) Object.Destroy(_circle);
+            foreach (var m in _materials) if (m != null) Object.Destroy(m);
+            _materials.Clear();
+            if (_bandMat != null) Object.Destroy(_bandMat);
+            if (_curtainMat != null) Object.Destroy(_curtainMat);
         }
     }
 

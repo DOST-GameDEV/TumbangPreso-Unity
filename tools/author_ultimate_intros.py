@@ -269,7 +269,7 @@ def build(hero, legacy=False):
 @performance
 def phaister():
     """
-    VOODOO DOLL, 6.4 s, v7 THE PUPPETEER (HERO-10 v3, 2026-09-29; `docs/reports/phaister-kit-2026-09-27/plan.md` 9.8c). The owner on
+    VOODOO DOLL, 6.35 s, v7 THE PUPPETEER (v12: THE TWIST gets a shot of its own, the rest quicker) (HERO-10 v3, 2026-09-29; `docs/reports/phaister-kit-2026-09-27/plan.md` 9.8c). The owner on
     v6: *"phaister's ult does not have a terrifying feeel at all eh"*, *"dont make her raise it up"*, *"i want her to look like she starts
     flying and is casting"*, *"show transition from day to dark too"*, *"when the eye opens the theres like a lot of vfx or smth of it
     being summoned"*, *"I want the portal (eye) to be diff from the thing that controls it too"* (a photo of gloved hands working a
@@ -295,8 +295,8 @@ def phaister():
     ⚠️ THE CAST IS CHIBI: THE ARMS ARE ABOUT A HEAD LONG, and hands overhead vanish inside the brim, so her cast is LOW and WIDE.
     ⚠️ THE HEAD GOES BACK ONLY 10 DEGREES: further and the wide brim turns into a flat slab toward the camera.
     """
-    p = Performance("phaister", 6.4)
-    p.voice = (1.6, "hero_phaister_ult")
+    p = Performance("phaister", 6.35)
+    p.voice = (1.3, "hero_phaister_ult")
 
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     # THE DAY DIES: her head goes down, the arms hang a little open.
@@ -318,45 +318,48 @@ def phaister():
     smirk = Pose(torso=(-2, -14, 4), head=(2, 16, 12), left=(10, 50, -70), right=(150, 10, 10), legs=((-2, 6), (8, 6)))
 
     p.key(0, rest)
-    p.key(.45, bow)
-    p.hold(.45, 1.05, bow)
-    p.key(1.35, limp)
-    p.key(1.75, cast)
-    p.hold(1.75, 1.95, cast)
-    p.key(2.02, cast_b)
-    p.key(2.14, flare, punch=True)
-    p.key(2.5, watch_up)
-    p.hold(2.5, 3.25, watch_up)
-    p.key(3.36, blown, punch=True)
-    p.key(3.8, watch_up)
-    p.key(4.4, watch)
-    p.hold(4.4, 5.35, watch)
-    p.key(5.48, flinch, punch=True)
-    p.key(5.8, watch)
-    p.key(6.05, smirk)
-    p.key(6.4, smirk.but(torso=(-2, -12, 4), head=(3, 18, 12)))
+    p.key(.35, bow)
+    p.hold(.35, .8, bow)
+    p.key(1.1, limp)
+    p.key(1.4, cast)
+    p.hold(1.4, 1.55, cast)
+    p.key(1.62, cast_b)
+    p.key(1.72, flare, punch=True)
+    p.key(2.05, watch_up)
+    p.hold(2.05, 2.74, watch_up)
+    p.key(2.84, blown, punch=True)
+    p.key(3.2, watch_up)
+    p.key(3.8, watch)
+    p.hold(3.8, 5.3, watch)
+    p.key(5.45, flinch, punch=True)
+    p.key(5.7, watch)
+    p.key(5.95, smirk)
+    p.key(6.35, smirk.but(torso=(-2, -12, 4), head=(3, 18, 12)))
 
-    # She rises 0.8 m and hangs there through the summoning, bobbing, then floats down behind it as it lands.
-    p.rise(0, 0).rise(1.1, 0).rise(1.5, .22).rise(2.05, .8).rise(2.3, .86).rise(3.3, .8).rise(3.45, .95).rise(4.2, .85) \
-        .rise(5.0, .8).rise(5.6, .06).rise(5.75, 0)
+    # She rises 0.8 m and hangs there through the summoning, bobbing. As the gloves begin to crank its head she floats up HIGH to
+    # watch from above (out of THE STARE: it is alone with you), then drops back down behind it as it lands.
+    p.rise(0, 0).rise(.9, 0).rise(1.2, .25).rise(1.65, .8).rise(1.9, .86).rise(2.8, .8).rise(2.92, .95).rise(3.6, .85) \
+        .rise(4.42, .8).rise(4.72, 3.6).rise(5.3, 3.7).rise(5.6, .06).rise(5.72, 0)
 
     # Shot distances are real metres (she is 2.38 m to the hat tip). Hero-local: +x her right, +z in front of her.
     # THE DAY DIES: wide and low in front, the whole sky in frame, nearly still.
-    p.shot(0, 1.10, (1.4, .9, 6.2), (.3, 2.6, 0), 62, eye_to=(1.3, .9, 5.8), look_to=(.3, 2.5, 0), fov_to=60)
-    # SHE RISES: a slow push up her body to her face from below.
-    p.shot(1.10, 2.10, (.8, .55, 3.6), (0, 1.5, 0), 50, eye_to=(.6, .9, 3.0), look_to=(0, 2.35, 0), fov_to=46)
+    p.shot(0, .9, (1.4, .9, 6.2), (.3, 2.6, 0), 62, eye_to=(1.3, .9, 5.8), look_to=(.3, 2.5, 0), fov_to=60)
+    # SHE RISES: a slow push up her body to her face from below, her pins round her and her sigil under her.
+    p.shot(.9, 1.7, (.8, .55, 3.9), (0, 1.5, 0), 52, eye_to=(.6, .9, 3.3), look_to=(0, 2.35, 0), fov_to=48)
     # THE SEAM: from under her, tilting up past her to the seam over her right (computed from the circle).
-    p.shot(2.10, 2.90, (.9, .6, 1.8), (0, 2.8, 0), 55, eye_to=(.2, .5, 2.2), look_to=(1.3, 7.0, 0), fov_to=66)
-    # THE EYE OPENS: straight up at it, filling the frame (computed).
-    p.shot(2.90, 3.60, (1.3, 2.8, .3), (1.3, 7.0, 0), 60, eye_to=(1.3, 2.4, .4), look_to=(1.3, 7.0, 0), fov_to=74)
+    p.shot(1.7, 2.4, (.9, .6, 1.8), (0, 2.8, 0), 55, eye_to=(.2, .5, 2.2), look_to=(1.3, 7.0, 0), fov_to=66)
+    # THE EYE OPENS: straight up at it, filling the frame, then thrown out by THE BURST (computed).
+    p.shot(2.4, 3.0, (1.3, 2.8, .3), (1.3, 7.0, 0), 60, eye_to=(1.3, 2.4, .4), look_to=(1.3, 7.0, 0), fov_to=74)
     # THE PUPPETEER: under the eye, the gloves coming at the lens (computed).
-    p.shot(3.60, 4.60, (3.1, 1.6, 3.8), (1.3, 5.0, 0), 58, eye_to=(3.3, 1.2, 4.2), look_to=(1.3, 4.2, 0), fov_to=62)
-    # THE DESCENT: from the court looking up, its face coming down at the lens (computed).
-    p.shot(4.60, 5.40, (1.9, .7, 3.6), (1.3, 3.0, 0), 56, eye_to=(1.8, .6, 3.4), look_to=(1.3, 2.0, 0), fov_to=58)
+    p.shot(3.0, 3.85, (3.1, 1.6, 3.8), (1.3, 5.0, 0), 58, eye_to=(3.3, 1.2, 4.2), look_to=(1.3, 4.2, 0), fov_to=62)
+    # THE DESCENT: from the court looking up, it coming down (computed).
+    p.shot(3.85, 4.45, (1.9, .7, 3.6), (1.3, 3.0, 0), 56, eye_to=(1.8, .6, 3.4), look_to=(1.3, 2.0, 0), fov_to=58)
+    # THE TWIST: the gloves crank the control, then in behind its head as its face comes round into the lens (computed).
+    p.shot(4.45, 5.35, (2.4, 1.8, 4.4), (1.3, 3.2, 0), 54, eye_to=(1.6, 2.2, 2.0), look_to=(1.3, 2.3, 0), fov_to=40, close=True)
     # THE DROP: low and wide from in front, the landing, her and the opponents.
-    p.shot(5.40, 5.80, (-1.8, .45, 4.8), (1.0, 1.3, .3), 62, eye_to=(-1.6, .5, 4.5), look_to=(1.0, 1.3, .3), fov_to=60)
+    p.shot(5.35, 5.75, (-1.8, .45, 4.8), (1.0, 1.3, .3), 62, eye_to=(-1.6, .5, 4.5), look_to=(1.0, 1.3, .3), fov_to=60)
     # THE PUPPET: in on its face as it snaps up, then back to it, her and the opponents (computed).
-    p.shot(5.80, 6.40, (1.6, 1.7, 3.0), (1.3, 1.7, .3), 44, eye_to=(2.4, 2.2, 6.0), look_to=(.8, 1.3, .3), fov_to=56)
+    p.shot(5.75, 6.35, (1.6, 1.7, 3.0), (1.3, 1.7, .3), 44, eye_to=(2.4, 2.2, 6.0), look_to=(.8, 1.3, .3), fov_to=56)
     p.locked((1.2, 1.8, 6.2), (.8, 2.4, .3), 60)
     return p
 

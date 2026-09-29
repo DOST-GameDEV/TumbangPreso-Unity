@@ -22,6 +22,7 @@ Shader "Hidden/TumbangPreso/PhaisterImpact"
         _Seed ("Seed", Float) = 0
         _Lines ("Radial speed lines", Float) = 0
         _Zoom ("Punch-in toward the focus", Float) = 0
+        _Vignette ("THE STARE: the dark closing in round the focus, no ink", Float) = 0
     }
     SubShader
     {
@@ -35,7 +36,7 @@ Shader "Hidden/TumbangPreso/PhaisterImpact"
 
             sampler2D _MainTex;
             float4 _MainTex_TexelSize;
-            float _Amount, _Seed, _Lines, _Zoom;
+            float _Amount, _Seed, _Lines, _Zoom, _Vignette;
             float4 _Focus;
             fixed4 _Light, _Dark, _Ink;
 
@@ -78,7 +79,11 @@ Shader "Hidden/TumbangPreso/PhaisterImpact"
                 float lineW = 0.08 + 0.3 * hash(lineCell + 8.0) * saturate((r - lineStart) * 2.0);
                 float streak = lineOn * step(lineStart, r) * step(abs(lineIn - 0.5), lineW);
                 c = lerp(c, 1.0 - c, streak * _Lines);
-                return fixed4(lerp(src.rgb, c, _Amount), 1.0);
+                // THE STARE (v14): the dark closes in round its face, the edges going to a blood-black.
+                float vig = smoothstep(0.12, 0.62, r) * _Vignette;
+                float3 outcol = lerp(src.rgb, c, _Amount);
+                outcol = lerp(outcol, outcol * float3(0.25, 0.04, 0.08), vig);
+                return fixed4(outcol, 1.0);
             }
             ENDCG
         }

@@ -542,7 +542,8 @@ namespace TumbangPreso.Net
         // 91: the `Score` message names the body that scored after the event (a companion's seat, whose owner is paid), so every
         // peer shows the point over the doll that made it (`MatchDirector.CompanionScored`, HERO-10 v3); and Phaister's introduction
         // becomes 6.4 s (VOODOO DOLL v7), which changes the shared ultimate phase every peer derives.
-        public const int ProtocolVersion = 91;
+        // 92: Phaister's introduction becomes 6.35 s (VOODOO DOLL v12, THE TWIST) and the doll body's speed 0.5.
+        public const int ProtocolVersion = 92;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

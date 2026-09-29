@@ -169,12 +169,35 @@ namespace TumbangPreso.Visual
             float start = _performance.Shots[index].Start;
             if (start >= PhPuppetAt - .01f) { PmPuppetCamera(t, ref eye, ref look, ref fov); return; }
             if (start >= PhDropAt - .01f) return;
+            if (start >= PhTwistAt - .01f)
+            {
+                // THE TWIST (v12, the owner: *"put more focus as well on the head twist"*): first wide enough to see the gloves crank the
+                // control, then in behind its head, level with it, so its face comes round INTO the lens; a punch in as the face locks.
+                Vector3 face = PhDollFace();
+                Vector3 control = PhControlAt(t, out _);
+                float inward = Ease(PhTwistAt + .1f, PhCranks[0].To, t);
+                Vector3 wideEye = PhDollSpot + new Vector3(1.1f, 1.5f, 4.4f), wideLook = (control + face) * .5f;
+                // THE STARE: a dolly zoom. The lens pushes in on its face while the lens widens, so its face holds its size and the
+                // world behind it stretches away: the moment it has you.
+                float zoom = Ease(PhFaceAt + .02f, PhBodyTurnAt, t);
+                float distance = Mathf.Lerp(Mathf.Lerp(2.3f, 1.9f, Ease(PhCranks[0].To, PhFaceAt, t)), 1.3f, zoom);
+                // As its body swings round under the head the lens backs off, or the turning head comes through it (v13).
+                distance = Mathf.Lerp(distance, 2.4f, Ease(PhBodyTurnAt - .03f, PhBodyTurnAt + .12f, t));
+                // Between her and it, a little toward her, so she is behind the lens and it is alone with you (v15: +x put her in shot).
+                Vector3 closeEye = face + new Vector3(-.5f, -.08f, distance);
+                eye = Vector3.Lerp(wideEye, closeEye, inward);
+                look = Vector3.Lerp(wideLook, face, inward);
+                // Half a dolly zoom (to 46 degrees, not the whole way): wider, and she comes into the frame beside it (v14).
+                float held = Mathf.Lerp(38f, 46f, zoom);
+                fov = Mathf.Lerp(54f, held, inward) - 4f * Flash(t, PhFaceAt + .02f, .1f);
+                return;
+            }
             if (start >= PhDescentAt - .01f)
             {
                 // From the court looking up at it coming down: its face (the head come round to the lens) filling more of the frame.
                 Vector3 feet = PhMonsterFeet(t);
                 Vector3 face = feet + Vector3.up * (_phMonsterHeight * .8f);
-                float u = Ease(PhDescentAt, PhDropAt, t);
+                float u = Ease(PhDescentAt, PhTwistAt, t);
                 eye = PhDollSpot + new Vector3(.6f, Mathf.Lerp(.6f, 1.0f, u), Mathf.Lerp(4.0f, 3.1f, u));
                 look = Vector3.Lerp(face, face + Vector3.up * .6f, .3f);
                 fov = Mathf.Lerp(58f, 50f, u);

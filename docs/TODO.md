@@ -1187,7 +1187,17 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   turning round too far; the drop; the puppet; four ink impact frames with radial speed lines (`Shaders/PhaisterImpact` `_Lines`,
   `_Zoom`). In play the portal shuts after 3 s and the control hangs over the doll's head with its wires, slack while it is tagged.
   Her handheld doll is her own (`Visual.PhaisterHandVoodoo`: flat black cloth, magenta stitches, mismatched button eyes, mouth sewn
-  shut, pins), no longer the monster at hand size. Film v11 sent (`phaister_voodoo_doll_ult_v11_small.mp4`). OPEN: the owner's verdict; the hip doll in her model is still the old one.
+  shut, pins), no longer the monster at hand size. Film v11 sent. The owner on v11: *"the stuff that floats around her doesnt look thhat great"*, *"the eye looks amazing but the circle
+  itself looks flatly drawn and basic"*, *"so basic"*, *"put more focus as well on the head twist"*, *"figure out ... where u can add
+  vfx"*, *"make doll coming out look more scary too ... add impact frames for him"*, *"make his stare look very scary"*, *"refine
+  animation of doll i want it to look more sluggish, make it slow too"*. v12 to v18: THE CIRCLE IN DEPTH (`SkyCircle` draws its parts
+  on four discs at different heights turning against each other, the eye deepest; a band of height round the rim and a curtain of
+  light hanging from it, `Shaders/VoodooRim`; the void an abyss with spiral filaments; the seam a jagged tear); her pins a HALO of
+  needles behind her head and a casting SIGIL on the court; sparks on the seam, the pull, the emergence, each crank and the landing;
+  THE TWIST in its own shot (the gloves crank the control round, its head ratchets 180 degrees, an ink frame as its face locks on);
+  THE STARE (burning pinpoint eyes, twitches, a half dolly zoom, the dark closing in; she floats up out of frame); an ink frame as its
+  face clears the pupil; 6.35 s. In play the doll is 0.5 of a player's speed with a heavier gait (`GaitStyles.PhaisterDoll` v2, a
+  slump on every step). Film v18 and `doll_walk_v5` sent. OPEN: the owner's verdict; the hip doll in her model is still the old one.
   [~] The doll's own glyph (`AbilityGlyph.PhaisterVoodooDoll`, a doll hung from the circle on three strings), its nameplate
   PHAISTER'S DOLL in her colour, the grey stitched X over it while tagged and +100 over it in her colour when it scores
   (`Visual.VoodooDollPresence`, `MatchDirector.CompanionScored`, protocol 91).

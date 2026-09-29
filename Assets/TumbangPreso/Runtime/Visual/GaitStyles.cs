@@ -391,19 +391,21 @@ namespace TumbangPreso.Visual
         public static readonly GaitStyle PhaisterDoll = new GaitStyle
         {
             Name = "phaister-doll",
+            // v2 (2026-09-29, the owner: *"i want it to look more sluggish, make it slow too"*): heavier and later everywhere, the body
+            // rolling further and later over each foot, the arms hanging later, a deeper slump on every step (the Quirk's THUD).
             Walk = new Gait
             {
-                LegForward = 30, LegBack = 28, LegSnap = .55f, Stance = 6,
-                ArmSpread = 8, ArmForward = 6, ArmBack = 8, ArmCarry = 3, ArmSnap = .7f, ArmLag = .12f,
-                Lean = 8, LeanPulse = 4, Roll = 8, RollDelay = .18f, Twist = 3,
-                HeadPitch = 10, HeadTilt = 12, HeadNod = 6, HeadSteady = 0, Stomp = .07f, Sway = .09f, Glide = 1.6f,
+                LegForward = 26, LegBack = 24, LegSnap = .45f, Stance = 7,
+                ArmSpread = 8, ArmForward = 5, ArmBack = 7, ArmCarry = 3, ArmSnap = .6f, ArmLag = .2f,
+                Lean = 12, LeanPulse = 6, Roll = 12, RollDelay = .26f, Twist = 3,
+                HeadPitch = 12, HeadTilt = 14, HeadNod = 9, HeadSteady = 0, Stomp = .1f, Sway = .12f, Glide = 1.6f,
             },
             Run = new Gait
             {
-                LegForward = 36, LegBack = 20, LegSnap = .45f, Stance = 6,
-                ArmSpread = 9, ArmForward = 6, ArmBack = 6, ArmCarry = 16, ArmSnap = .7f, ArmLag = .16f,
-                Lean = 16, LeanPulse = 8, Roll = 6, RollDelay = .12f, Twist = 5,
-                HeadPitch = 16, HeadTilt = 9, HeadNod = 7, HeadSteady = 0, Stomp = .08f, Sway = .08f, Glide = 1.7f,
+                LegForward = 32, LegBack = 18, LegSnap = .4f, Stance = 7,
+                ArmSpread = 9, ArmForward = 5, ArmBack = 5, ArmCarry = 16, ArmSnap = .6f, ArmLag = .24f,
+                Lean = 20, LeanPulse = 10, Roll = 9, RollDelay = .2f, Twist = 5,
+                HeadPitch = 18, HeadTilt = 10, HeadNod = 9, HeadSteady = 0, Stomp = .11f, Sway = .1f, Glide = 1.7f,
             },
             Quirk = (ref GaitPose p, in GaitMoment m) =>
             {
@@ -422,6 +424,13 @@ namespace TumbangPreso.Visual
                 // The arms swing only because the body sways: pendulums on the roll, out and in, late.
                 p.SpreadLeft += .9f * p.TorsoRoll;
                 p.SpreadRight -= .9f * p.TorsoRoll;
+                // THE THUD (v2): just after each foot lands the whole sack slumps down onto it, the chest folds forward and the head
+                // drops, then it drags itself back up; so every step looks like an effort.
+                float after = Mathf.Repeat(2f * (m.Phase - .25f) - .05f, 1f);
+                float thud = Mathf.Exp(-after * 6f);
+                p.RootUp -= .04f * thud;
+                p.TorsoPitch += 6f * thud;
+                p.HeadPitch += 7f * thud;
                 // Hung from one point: the whole body drifts a little from side to side under it.
                 p.RootRight += .03f * Wave(m.Time, .55f);
                 // THE YANK: the string snaps taut. Up, upright, head back, arms flicked out, feet lifted; then it sags.

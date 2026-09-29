@@ -34,6 +34,8 @@ Shader "TumbangPreso/VoodooCircle"
         _Phase ("Phase", Float) = 0
         _Glow ("Glow", Float) = 2.6
         _Alpha ("Alpha", Float) = 1
+        _Parts ("Layers drawn: rim, runes, star and stitches, the void and eye", Vector) = (1, 1, 1, 1)
+        _Fangs ("Fangs on the rim", Float) = 1
     }
     SubShader
     {
@@ -51,7 +53,8 @@ Shader "TumbangPreso/VoodooCircle"
             #include "UnityCG.cginc"
 
             float4 _Crimson, _Violet, _Ember;
-            float _Reveal, _Inner, _Eye, _Look, _LookY, _Seam, _Tear, _Spin, _Phase, _Glow, _Alpha;
+            float _Reveal, _Inner, _Eye, _Look, _LookY, _Seam, _Tear, _Spin, _Phase, _Glow, _Alpha, _Fangs;
+            float4 _Parts;
 
             struct appdata { float4 vertex : POSITION; float2 uv : TEXCOORD0; };
             struct v2f { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; };
@@ -89,9 +92,12 @@ Shader "TumbangPreso/VoodooCircle"
                 float teeth = 46.0;
                 float t = frac(aOut * teeth / TAU);
                 float fang = 0.975 + 0.095 * (1.0 - abs(t * 2.0 - 1.0));
-                float inFang = step(0.975, r) * step(r, fang) * sewn;
+                float inFang = step(0.975, r) * step(r, fang) * sewn * _Fangs;
                 dark += inFang * 0.9;
                 col += _Crimson.rgb * 1.6 * inFang * saturate(1.0 - (fang - r) / 0.02);
+                // v12 (the owner on v11: *"the circle itself looks flatly drawn and basic"*): each part can be drawn on a disc of its own,
+                // stacked at depths that turn against each other (`SkyCircle`), so every part is kept apart and weighed by `_Parts`.
+                float3 cRim = col; float dRim = dark; col = 0; dark = 0;
 
                 // --- the rune band, crawling the other way: glyph cells between two thin rings.
                 float aRune = a - _Spin * 2.2;
@@ -110,6 +116,7 @@ Shader "TumbangPreso/VoodooCircle"
                 float cellOn = step(ci / cells - floor(ci / cells), inner);
                 col += _Ember.rgb * 2.4 * saturate(g) * band * inner * cellOn;
                 dark += band * 0.35 * inner;
+                float3 cRune = col; float dRune = dark; col = 0; dark = 0;
 
                 // --- the star {8/3} in its violet ring, turning slowly.
                 float aStar = _Spin * 0.6;
@@ -130,13 +137,25 @@ Shader "TumbangPreso/VoodooCircle"
                 float xs = max(saturate(1.0 - abs(xu.x * 2.6 - xu.y * 0.9) / 0.18), saturate(1.0 - abs(xu.x * 2.6 + xu.y * 0.9) / 0.18))
                            * step(abs(xu.y), 0.9);
                 col += _Crimson.rgb * 1.8 * xs * inner;
+                float3 cStar = col; float dStar = dark; col = 0; dark = 0;
 
-                // --- the void: a dark swirling hole with violet currents.
+                // --- the void: an ABYSS (v12; v11's lavender disc with black blotches read as flat paint). Near black, deepening to its
+                // middle; thin filaments of light spiral in along a logarithmic spiral and are swallowed; specks of light fall inward;
+                // a hot lip where the sky is torn.
                 float voidMask = saturate((0.5 - r) / 0.04);
-                float swirl = 0.5 + 0.5 * sin(a * 3.0 + r * 14.0 - _Phase * 2.3) * sin(a * 5.0 - r * 9.0 + _Phase * 1.3);
-                col += _Violet.rgb * 0.55 * swirl * voidMask * (1.0 - r * 1.6);
-                col += _Violet.rgb * 2.0 * ring(r, 0.5, 0.01) * inner;
-                dark += voidMask * 0.92;
+                float lr = log(max(r, 0.004));
+                float spiral = frac((a / TAU) * 3.0 + lr * 1.6 + _Phase * 0.35);
+                float filament = saturate(1.0 - abs(spiral - 0.5) / 0.035) * saturate((r - 0.06) / 0.2) * saturate((0.5 - r) / 0.1);
+                float spiral2 = frac(-(a / TAU) * 2.0 + lr * 2.3 + _Phase * 0.22);
+                float filament2 = saturate(1.0 - abs(spiral2 - 0.5) / 0.02) * saturate((r - 0.1) / 0.2) * saturate((0.5 - r) / 0.12);
+                col += _Violet.rgb * 0.34 * filament * voidMask + _Crimson.rgb * 0.22 * filament2 * voidMask;
+                float speckCell = floor(a / TAU * 60.0 + 30.0);
+                float fall = frac(hash(speckCell) + _Phase * (0.25 + 0.3 * hash(speckCell + 2.0)));
+                float speck = saturate(1.0 - abs(r - 0.5 * (1.0 - fall)) / 0.008) * saturate(1.0 - abs(frac(a / TAU * 60.0) - 0.5) / 0.12);
+                col += float3(1.0, 0.75, 0.9) * 0.6 * speck * step(0.6, hash(speckCell + 5.0)) * voidMask * fall;
+                col += _Crimson.rgb * 1.6 * ring(r, 0.5, 0.012) * inner + _Crimson.rgb * 0.5 * exp(-pow((r - 0.47) / 0.03, 2.0)) * inner;
+                col += _Violet.rgb * 0.9 * ring(r, 0.515, 0.006) * inner;
+                dark += voidMask * 0.97;
 
                 // --- the eye: almond lids opening, a burning slit that twitches. v5 (film v4: *"the eye in the void does not show"*, it
                 // was a thin ring in the dark): nearly the void's width, thick hot lids with a halo and X stitches across them, the
@@ -176,15 +195,33 @@ Shader "TumbangPreso/VoodooCircle"
 
                 // --- THE SEAM (cutscene v7): before it opens, the eye is a stitched split in the sky, red light leaking out between
                 // black thread stitches that snap one by one (`_Tear`); the lids then peel apart from it.
+                // v12: a JAGGED TEAR, not a line: its edge zigzags, it gapes wider as the stitches go (`_Tear`), a white-hot core with
+                // crimson round it, light spiking out across it, and thick black thread stitches holding it shut.
                 float seamOn = saturate(_Seam) * step(abs(p.x), eyeW) * (1.0 - saturate(_Eye * 3.0));
-                float seamFrom = abs(p.y);
-                col += _Crimson.rgb * seamOn * (5.0 * saturate(1.0 - seamFrom / 0.012) + 1.6 * exp(-seamFrom / 0.05));
-                float sk = floor((p.x / eyeW * 0.5 + 0.5) * 9.0);
-                float sl = frac((p.x / eyeW * 0.5 + 0.5) * 9.0) - 0.5;
+                float along = p.x / eyeW;
+                float taper = saturate(1.0 - along * along);
+                float zig = (frac(along * 7.0 + hash(floor(along * 7.0)) * 0.3) - 0.5) * 0.025 + sin(along * 23.0) * 0.006;
+                float gape = (0.006 + 0.028 * saturate(_Tear)) * taper;
+                float seamY = p.y - zig * taper;
+                float seamFrom = abs(seamY);
+                float inside = saturate(1.0 - seamFrom / max(0.002, gape));
+                col += float3(1.0, 0.85, 0.75) * 2.2 * inside * seamOn;
+                col += _Crimson.rgb * seamOn * (2.2 * saturate(1.0 - seamFrom / (gape + 0.02)) + 1.3 * exp(-seamFrom / 0.06)) * taper;
+                float spikeCell = floor(along * 14.0 + 7.0);
+                float spike = saturate(1.0 - abs(frac(along * 14.0) - 0.5) / 0.05) * step(0.55, hash(spikeCell + 11.0));
+                col += _Crimson.rgb * 1.4 * spike * exp(-seamFrom / (0.05 + 0.08 * hash(spikeCell))) * seamOn * taper;
+                float sk = floor((along * 0.5 + 0.5) * 9.0);
+                float sl = frac((along * 0.5 + 0.5) * 9.0) - 0.5;
                 float held = step(_Tear, hash(sk + 3.7));
-                float xst = max(saturate(1.0 - abs(sl * 2.2 - p.y * 7.0) / 0.35), saturate(1.0 - abs(sl * 2.2 + p.y * 7.0) / 0.35)) * step(abs(p.y), 0.07);
+                float reach = 0.05 + gape;
+                float xst = max(saturate(1.0 - abs(sl * 2.2 - seamY / reach * 0.9) / 0.3), saturate(1.0 - abs(sl * 2.2 + seamY / reach * 0.9) / 0.3))
+                            * step(abs(seamY), reach) * step(0.2, taper);
                 col *= 1.0 - xst * held * seamOn;
                 dark += xst * held * seamOn;
+
+                float3 cCore = col; float dCore = dark;
+                col = cRim * _Parts.x + cRune * _Parts.y + cStar * _Parts.z + cCore * _Parts.w;
+                dark = dRim * _Parts.x + dRune * _Parts.y + dStar * _Parts.z + dCore * _Parts.w;
 
                 col *= _Glow;
                 float light = saturate(max(col.r, max(col.g, col.b)) * 0.35);
