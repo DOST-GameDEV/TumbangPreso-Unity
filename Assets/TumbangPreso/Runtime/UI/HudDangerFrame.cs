@@ -21,6 +21,11 @@ namespace TumbangPreso.UI
     /// retrieval. It is a state, not a pulse, which is `Hud.PopHitmarker`'s lesson the other way
     /// round: this one really is on for as long as the state lasts.
     ///
+    /// ⚠️ THE TAYA GETS THE SAME FRAME IN OFFENSE ORANGE WHILE THEIR CAN IS DOWN. The knockdown
+    /// usually lands behind a taya who is chasing, and it said so with a small edge icon and a
+    /// line of text. Same weight, fade and onset cue; the colour says "the attackers are free".
+    /// `TumpHudEffects` owns both states and one viewer is only ever in one of them.
+    ///
     /// ⚠️ THE CORNERS ARE ROUNDED so the frame reads as a border of the view rather than as a
     /// rectangle drawn on it, and a black keel inside keeps it visible over blue sky.
     /// </summary>

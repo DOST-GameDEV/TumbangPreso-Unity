@@ -392,6 +392,80 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator ArmedAttackerInsideTheBoxSeesTheDefenseFrame()
+        {
+            yield return Open(GameMode.Classic);
+            var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+            local.GetComponent<PlayerInputReader>().enabled = false; local.Intent.Clear();
+            Assert.IsFalse(local.IsDefender); Assert.IsTrue(local.HoldingSlipper, "Round start arms the attacker.");
+            var can = GameServices.Round.Lata;
+            local.Teleport(can.transform.position + new Vector3(0, 0, -2.5f)); local.transform.rotation = Quaternion.identity;
+            TumpUiCapture.StageHudReview(local);
+            var effects = Object.FindFirstObjectByType<TumpHudEffects>();
+            float frameBy = Time.unscaledTime + 1;
+            while (!effects.DangerFrameVisible && Time.unscaledTime < frameBy) yield return null;
+            Assert.IsTrue(local.IsTaggable());
+            Assert.IsTrue(effects.DangerFrameVisible, "An armed attacker inside the box must see the frame.");
+            Assert.IsFalse(effects.CanDownFrameVisible);
+            yield return new WaitForSecondsRealtime(.4f);
+            LogCanMarker("attacker");
+            yield return TumpUiCapture.Capture("CourtHud-attacker-danger-1280x720",
+                GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>(), 1280, 720, false, true, OffscreenUnderlay());
+        }
+
+        [UnityTest]
+        public IEnumerator TayaWhoseCanIsDownSeesTheOffenseFrameUntilTheReset()
+        {
+            int seat = GameLaunch.SoloSeat;
+            GameLaunch.SoloSeat = MatchRules.DefenderSlotFor(1);
+            try
+            {
+                yield return Open(GameMode.Classic);
+                var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+                local.GetComponent<PlayerInputReader>().enabled = false; local.Intent.Clear();
+                Assert.IsTrue(local.IsDefender, "The local seat is the real round-one taya.");
+                var can = GameServices.Round.Lata;
+                var effects = Object.FindFirstObjectByType<TumpHudEffects>();
+                // Chasing, looking away: the knockdown lands behind the taya.
+                local.Teleport(can.transform.position + new Vector3(0, 0, 4)); local.transform.rotation = Quaternion.identity;
+                float protectionDeadline = Time.time + 3;
+                while (can.IsProtected && Time.time < protectionDeadline) yield return null;
+                yield return null;
+                Assert.IsFalse(effects.DangerFrameVisible || effects.CanDownFrameVisible, "An upright can frames nothing for the taya.");
+                can.HostKnockDown((local.PlayerSlot + 1) % 4);
+                Assert.IsFalse(can.IsUpright);
+                float frameBy = Time.unscaledTime + 1;
+                while (!effects.CanDownFrameVisible && Time.unscaledTime < frameBy) yield return null;
+                Assert.IsTrue(effects.CanDownFrameVisible, "The taya whose can is down must see the frame.");
+                Assert.IsFalse(effects.DangerFrameVisible, "The taya is never told they can be tagged.");
+                yield return new WaitForSecondsRealtime(.4f);
+                LogCanMarker("taya");
+                yield return TumpUiCapture.Capture("CourtHud-taya-can-down-1280x720",
+                    GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>(), 1280, 720, false, true, OffscreenUnderlay());
+                can.HostRestore();
+                float clearBy = Time.unscaledTime + .5f;
+                while (effects.CanDownFrameVisible && Time.unscaledTime < clearBy) yield return null;
+                Assert.IsFalse(effects.CanDownFrameVisible, "The frame clears once the can stands again.");
+            }
+            finally { GameLaunch.SoloSeat = seat; }
+        }
+
+        // The edge can marker is its own canvas; the renders show it with the frame.
+        private static Canvas[] OffscreenUnderlay()
+        {
+            var marker = Object.FindFirstObjectByType<OffscreenIndicators>();
+            var canvas = marker != null ? marker.GetComponentInChildren<Canvas>(true) : null;
+            return canvas != null ? new[] { canvas } : null;
+        }
+
+        private static void LogCanMarker(string viewer)
+        {
+            var marker = Object.FindFirstObjectByType<OffscreenIndicators>();
+            Debug.Log($"[CanMarker] {viewer}: present={marker != null} visible={marker != null && marker.CanMarkerVisible} " +
+                      $"state={(marker != null ? marker.CanMarkerState : "")}");
+        }
+
+        [UnityTest]
         public IEnumerator PlantPromptRequiresAnEligibleOpponentPlantAndTracksThePull()
         {
             yield return Open(GameMode.HeroStrike);
