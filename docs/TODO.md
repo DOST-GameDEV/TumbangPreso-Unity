@@ -98,13 +98,14 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   an already-held shoe or leaves a carried shoe floating on cancellation;9 focused
   native cases pass. [Fetch evidence](reports/feedback-2026-09-30/nemu-kuro-fetch.md).
   Remaining Fetch eligibility, Catch and Haunt reconciliation stays open.
-- [ ] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
+- [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default request is protected by the latest no-lighting restriction.
   Native Period-key title entry, Escape opening/closing the menu with the same
-  actual background texture, and top-down stamina mesh depletion pass. Queue-button
-  cancellation still remains; no blanket
-  already-fixed claim. [Route evidence](reports/feedback-2026-09-30/menu-routes.md).
+  actual background texture, and top-down stamina mesh depletion pass. The actual
+  IN QUEUE button cancels/restarts both casual modes in a focused native case.
+  Live online queue-room teardown and physical devices were not qualified.
+  [Route evidence](reports/feedback-2026-09-30/menu-routes.md).
 - [x] F0930-14 Existing taya can-down fix verified on current controls/charge candidate.
   Native upright/down/reset case passes, distinct from attacker danger; offscreen
   can state records DOWN/visible.1280x720 frame/icon capture inspected.

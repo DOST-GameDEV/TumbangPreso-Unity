@@ -36,3 +36,20 @@ The retry produced fresh XML with both cases passing, durations3.056145s and
 
 - [Native result](checks/hud-menu-retry.xml)
 - [Fixture inputs and repair](checks/hud-menu-retry-inputs.json)
+
+## Queue Button
+
+The actual PlayButton starts a casual Classic search, changes to IN QUEUE and
+stays pressable. Pressing it again cancels the Matchmaker, clears QueueRoom and
+SceneFlow.Networked, restores PLAY and keeps Home in MatchSetup. The same button
+then starts and cancels casual Hero Strike. One focused native case passes1/1 in
+4.240036s, with no tooling retry or runtime edit. This closes the permitted
+already-labelled-fixed menu/stamina checks in F0930-13.
+
+This batch run disables UGS sign-in before any authentication call. It verifies
+the real offline search/button cancellation path. It does not establish teardown
+of a live Relay room, ranked behavior or remote-peer cancellation. The named
+profile/preferences were restored and the run's listed inputs stayed unchanged.
+
+- [Native result](checks/queue-button.xml)
+- [Fixture inputs](checks/queue-button-inputs.json)

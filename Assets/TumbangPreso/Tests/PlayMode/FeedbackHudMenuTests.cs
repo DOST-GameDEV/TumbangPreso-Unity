@@ -58,6 +58,46 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(60000)]
+        public IEnumerator InQueueButtonCancelsBothCasualModesAndRemainsUsable()
+        {
+            int originalChoice = HubHome.Choice;
+            try
+            {
+                SceneFlow.Networked = false; GameLaunch.Reset();
+                yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
+                float until = Time.realtimeSinceStartup + 60;
+                while ((TumpHub.Current == null || HubLoading.Visible) && Time.realtimeSinceStartup < until) yield return null;
+                var hub = TumpHub.Current; Assert.IsNotNull(hub); Assert.IsInstanceOf<HubHome>(hub.Top);
+                Assert.IsFalse(Net.NetIdentity.IsOnline, "Qualification must not use a live online identity.");
+                foreach (int choice in new[] { 1, 2 })
+                {
+                    HubHome.Choice = choice;
+                    yield return HubFlowTests.Press("PlayButton");
+                    Assert.IsTrue(HubQueueWatch.QueueRoom);
+                    Assert.IsFalse(HubQueueWatch.Found);
+                    Assert.IsTrue(Net.Matchmaker.Current.IsQueueing);
+                    Assert.AreEqual(HubHome.ChoiceMode, Net.Matchmaker.Current.Mode);
+                    var play = hub.Canvas.GetComponentsInChildren<HubButton>().Single(b => b.name == "PlayButton");
+                    Assert.IsTrue(play.IsInteractable()); Assert.AreEqual("IN QUEUE", HubKit.LabelOf(play).text);
+
+                    yield return HubFlowTests.Press("PlayButton");
+                    Assert.IsFalse(HubQueueWatch.QueueRoom);
+                    Assert.IsFalse(Net.Matchmaker.Current.IsQueueing);
+                    Assert.AreEqual(Net.QueueState.Cancelled, Net.Matchmaker.Current.State);
+                    Assert.IsFalse(SceneFlow.Networked);
+                    Assert.IsTrue(play.IsInteractable()); Assert.AreEqual("PLAY", HubKit.LabelOf(play).text);
+                    Assert.IsInstanceOf<HubHome>(hub.Top);
+                    Assert.AreEqual(SceneFlow.MatchSetup, SceneManager.GetActiveScene().name);
+                }
+            }
+            finally
+            {
+                TumpHub.Current?.Host.CancelQueue(); Net.NetSession.Instance?.Stop(); HubQueueWatch.End();
+                SceneFlow.Networked = false; HubHome.Choice = originalChoice;
+            }
+        }
+
+        [UnityTest, Timeout(60000)]
         public IEnumerator RealStaminaMeshDrainsFromItsTopAndKeepsItsLowerEnd()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);

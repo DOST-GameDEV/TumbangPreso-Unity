@@ -93,9 +93,10 @@ Handoffs were supplied in chat for manual copying; never upload/send them elsewh
 ## Exact Next Action
 
 FeedbackMenuRouteTests/evidence and this compact checkpoint shipped through
-570ba128d, remote HEAD verified. Complete remaining F0930-13 queue-button
-check or fix reproduced UX bugs. Continue independent network/bot work after
-checking latest shared ownership. All owned source/qualification work is committed; unrelated dirt remains untouched.
+570ba128d, remote HEAD verified. F0930-13 now qualified through focused queue-button
+acceptance. Continue unfinished authorized Feedback from bottom upward and
+independent network/bot/optimization work after checking latest shared ownership.
+Preserve unrelated dirt and current tutorial/ability/loading reservations.
 
 History is preserved whole in archive/ledger-through-2e87bda16-2026-09-30.md,
 including each earlier run, temporary reservation, failure and source decision.
@@ -147,3 +148,13 @@ One bounded fixture import/filter correction was needed before8-case qualificati
 Jobs73323/83839/79661 are terminal; profiles/preferences restored. Complete517-file
 candidate overlay excludes unrelated main dirt. Those source paths are released
 after publication. Queue-button cancellation is next; tutorial source remains held.
+
+f118597f6 is pushed and remote verified. Existing controls Feedback row has its
+short shipped note, confirmed through a fresh read. Native Done checkbox pending:
+the selected Chrome3 browser connection is unavailable; no UI click claimed.
+FeedbackHudMenuTests.cs queue follow-up passes1/1 in4.240036s, no retry or runtime
+defect: real IN QUEUE cancellation/restored PLAY/requeue cover both casual modes.
+UGS sign-in disabled; no paid Relay session or live queue-room teardown claimed.
+Job12858 terminal and profiles/preferences restored. Fixture path released after
+publication. F0930-13's permitted menu/stamina checks are qualified; lighting stays
+protected. Overall goal active, remaining feedback/TODO is not complete.
