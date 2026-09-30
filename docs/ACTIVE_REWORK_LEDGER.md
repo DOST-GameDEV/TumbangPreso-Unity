@@ -76,9 +76,20 @@ Done controls, reports, screenshots and hidden IDs were preserved. The tab's wid
 layout exceeds portrait PDF width; the requested new header/control column was
 visually checked, not a claim that the entire wiki is print-ready.
 
-Next independent unit: the owner's new Feedback clarification asks for continuous
-recorded motion throughout the approximately3-second caught replay, not a short
-clip held still. Read current ownership before claiming camera/history paths.
+Current Diddler reservation: owner-prioritized offline Esc/menu pause. Opening
+an offline match menu must stop simulation and closing it must resume safely,
+including repeated opens and nested settings; online menus stay live.
+Owned paths:
+- Assets/TumbangPreso/Runtime/UI/PausePanel.cs
+- Assets/TumbangPreso/Runtime/UI/PausePanel.LiveMenu.cs (truthful pause notice only)
+- Assets/TumbangPreso/Runtime/Hitstop.cs (do not unpause a stopped clock)
+- Assets/TumbangPreso/Tests/PlayMode/OfflineMenuPauseTests.cs and its .meta
+- docs/UI_DESIGN_METHOD.md, docs/TODO.md, docs/ACTIVE_REWORK_LEDGER.md
+- docs/reports/feedback-2026-09-30/offline-menu-pause.md
+
+No code has been edited yet. Current code deliberately leaves every menu live;
+verify the offline lifecycle before applying the owner's revised behavior.
+Continuous-motion caught replay remains the next independent request, unclaimed.
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.
