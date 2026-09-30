@@ -195,6 +195,13 @@ namespace TumbangPreso.Net
         /// </summary>
         public bool StartQueue(GameMode mode, QueueStake stake, int partySize = 1)
         {
+            // Retire the old search before a replacement can be refused locally.
+            // A completed/custom room's backfill advert belongs to that room.
+            if (IsQueueing)
+            {
+                Unsubscribe();
+                ClearAdvert();
+            }
             _queueCancellation.Cancel();
             _queueCancellation.Dispose();
             _queueCancellation = new CancellationTokenSource();
@@ -274,6 +281,7 @@ namespace TumbangPreso.Net
         public void Cancel()
         {
             if (!IsQueueing && State != QueueState.Refused) return;
+            bool withdrawAdvert = IsQueueing;
 
             _queueAttempts.Invalidate();
             _queueCancellation.Cancel();
@@ -283,7 +291,7 @@ namespace TumbangPreso.Net
             _reevaluateAt = float.PositiveInfinity;
             Elapsed = 0.0f;
             Unsubscribe();
-            ClearAdvert();
+            if (withdrawAdvert) ClearAdvert();
             Raise();
         }
 

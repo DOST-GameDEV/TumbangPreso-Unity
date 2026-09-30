@@ -1,17 +1,22 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol100 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol102 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
 
-Updated2026-10-01. Published a7d36881b; protocol100. Overall goal active.
+Updated2026-10-01. Published5dcb6a54c; protocol101. Overall goal active.
 Owner repeats: finish actionable Feedback bottom-up, then initial network/bot/
 optimization/UX and applicable TODO. Continue autonomously while the owner sleeps.
 Loading remains concurrently owned by the friend. Owner reopened the remaining
 ability queue on2026-10-01; preserve active file claims and finalized Paete/Phaister rules. No cross-chat work, subagents, resets or paid services.
 
 Published local engineering units and focused native scope:
+- ba2e7eef8(integrated4c58ac265): Frostbite payload applied before generic
+  cleanup; real defender/attacker flight, held-hand eligibility and neutral block
+  pass4/4. Protocol101. Full Cheska alignment remains open.
+- 5dcb6a54c: refused queues preserve an existing room's advert; replacements
+  retire abandoned active adverts/subscriptions. Four native offline cases pass.
 - ccd6935e2: spectator results input; actual final-board flight/director/cursor/
   close-resume case1/1. Separate from human-retired player mouse complaint.
 - 3862bd7d5: Ready tally packet bounds;25native receiver cases.
@@ -1376,6 +1381,9 @@ barrier FPP check in a bounded600s session, then Amihan current Wiki reconciliat
 Current Wiki: Drift35s, Featherfall40s/5s, Whirlwind35s/2.5s, Airburst15points
 and2.5s windup; Second Wind25percent/2.5s. No ability code claimed yet.
 
+Local unit2026-10-01: F0930-09 Frostbite delivery. Claim Slipper.cs body-hit ordering, CheskaHeroKit.cs held-hand eligibility, FrostbiteDeliveryTests.cs and matching protocol revision. Root hypothesis: TriggerAffinityImpact clears Frost before HostFrostbite sees it in both body paths. Four native baseline cases next; stop at fresh XML, one bounded tooling repair maximum. No VFX, SFX, animation or authored asset change. Remaining character alignment stays open.
+
+Frostbite unit final4/4native passes: actual defender and attacker frozen on real Carrier releases, neutral block and held-hand eligibility retained. Corrected baseline1pass/3fail; initial short-target grace setup miss retained, one fixture repair.584input hashes/no non-metadata drift. Protocol101. Publish exact source/tests/evidence; full F0930-09 alignment remains open. Next independent Matchmaker cancellation ownership hypothesis, not yet a confirmed bug. No heavy job active.
 Actual player barrier FPP check completed: Q shows stepped golden half-alpha
 barrier at7.0s while can/chalk/street remain visible. Ordinary Leave/Home/Quit,
 304.16s exit0, no safety/OOM stop. Runtime hash matches training confirmation.
@@ -1409,3 +1417,20 @@ Airburst final4/4native passes4.00s plus8Core contracts. Publish coherent host
 status/flight correction with protocol101. Keep same Feedback Airburst row open
 for full-map/near-edge/player review, and full F0930-11 open for remaining kit
 reconciliation. No new source art or SFX. Release runtime paths after publication.
+
+Local next unit ENG-0930-QUEUE-ADVERT: claim Matchmaker.cs and QueueAdvertOwnershipTests.cs only. Hypothesis: cancelling a locally refused new queue clears a pre-existing room's backfill advert; refusing replacement of an active queue leaves the old advert/subscription alive. Four native offline cases next, no service/hosting calls, stop at fresh XML; one bounded tooling repair maximum. Published Frostbite ba2e7eef8 integrated4c58ac265, remote verified; same Frozen-hit Doc note updated, native controls/human verification unchanged.
+
+Queue advert unit baseline2pass/2fail, final4/4pass;587hashes unchanged; no fixture repair/service calls. Fixed refused-start cancellation preserving an unrelated backfill advert and refused replacement withdrawing an abandoned active advert/subscription. Publish Matchmaker/tests/evidence, then investigate measured Nemu Fetch eligibility allocations using the existing retained slipper inventory; no kit redesign. No heavy job active.
+
+Local optimization ENG-0930-FETCH-QUERY: claim NemuHeroKit.cs loose-slipper lookup and FetchQueryAllocationTests.cs only. Reuse retained active slipper inventory, leave kit rules/selection eligibility untouched. Three native baseline cases next: calibrated100-query allocations, live ownership/activity/flight and destroy/birth. Stop at fresh XML; one bounded tooling repair maximum. Published queue ownership5dcb6a54c remote verified. No heavy job currently active.
+
+Fetch query unit final3/3native passes, calibrated100queries200allocation events→0;589inputs/no drift. Live ownership, active/inactive, flight and destroy/birth eligibility retained. No kit rules/loading/presentation changed. Publish exact Nemu lookup/test/evidence, then continue focused network/bot/UX defect investigation. Last native session40196 terminal; no heavy job active.
+
+Concurrent Frostbite/queue-advert/Fetch-query units integrated from137bde05.
+Frostbite already used protocol101, so combined Airburst contract advances102.
+All contributor code/evidence preserved. Qualify affected host slipper flight on
+the merged candidate before publishing; earlier unit receipts remain pre-merge.
+
+Merged Airburst/Frostbite native8/8passes11.33s, no new OOM. Publish integration
+protocol102, then same Airburst note with full-map follow-through still open.
+No need to reimplement incoming Frozen hit or Fetch allocation fix.

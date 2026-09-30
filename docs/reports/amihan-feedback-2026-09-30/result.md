@@ -19,6 +19,11 @@ slipper landing. Final observer-inclusive suite4/4passes4.00seconds; an observin
 apply status, carry or slipper flight. Eight focused Core contracts pass.
 Full-map near-edge composition and actual player validation remain pending;
 the Feedback row stays unfinished until that follow-through.
-Protocol101 prevents older clients joining changed gameplay. No actual-peer,
+Protocol102 prevents older clients joining changed gameplay. No actual-peer,
 physical-device, current-player or human approval claim. The rest of Amihan's
 Wiki reconciliation, including Second Wind and Drift, remains open.
+
+Concurrent Frostbite, queue-advert and Fetch-query units through137bde05 were
+integrated without discarding their behavior. Frostbite had already used101, so
+the combined contract is protocol102. The merged candidate passes8/8native
+Airburst/Frostbite cases11.33seconds. Previous unit evidence stays pre-merge.

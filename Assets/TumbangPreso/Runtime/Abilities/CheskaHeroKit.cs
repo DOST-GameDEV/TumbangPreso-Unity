@@ -89,7 +89,8 @@ namespace TumbangPreso.Abilities
                 _kit = kit;
             }
 
-            public override bool CanActivate(AbilityContext ctx) => base.CanActivate(ctx) && !ctx.Motor.IsDefender;
+            public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && !ctx.Motor.IsDefender && ctx.Motor.HoldingSlipper;
 
             protected override void OnActivate(AbilityContext ctx)
             {

@@ -153,6 +153,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Native shared-clock/UI case passes;960x540/1600x680 captures inspected.
   [Evidence](reports/feedback-2026-09-30/README.md#timed-power-lifetime).
 - [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
+  Frozen-hit bug fixed: both real body-hit paths now consume frost after applying
+  Frozen. Activation requires the held slipper. Four native cases pass; protocol101
+  requires matching updated builds. Complete kit alignment stays open.
+  [Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
 - [ ] F0930-10 Dante: reconcile wiki names/rules/statuses (owner reauthorized implementation).
   Barrier visibility implemented separately: half-alpha authored slabs retain their
   palette and lifecycle. Two distinct native cases pass; observer court capture
@@ -174,6 +178,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   an already-held shoe or leaves a carried shoe floating on cancellation;9 focused
   native cases pass. [Fetch evidence](reports/feedback-2026-09-30/nemu-kuro-fetch.md).
   Remaining Fetch eligibility, Catch and Haunt reconciliation stays open.
+  Fetch availability lookup now reuses the existing slipper inventory. Three
+  native checks pass;100warmed calls reduce allocation events200to0 with live
+  ownership/activity/flight/lifecycle retained. No kit-rule change.
+  [Evidence](reports/feedback-2026-09-30/fetch-query-allocations.md).
 - [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default/order reconciled with already-shipped BUGS-0926.5:
@@ -221,6 +229,9 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   authorized later; preserve loading as an outstanding contributor-owned requirement.
 - [ ] F0930-20 Continue focused network, bots, optimization, flow bugs and applicable
   existing TODO requirements after feedback, with actual behavior evidence.
+  Queue advert ownership fixed: refused new attempts preserve existing room adverts;
+  refused replacements withdraw old active searches/subscriptions. Four native
+  offline cases pass. [Evidence](reports/feedback-2026-09-30/queue-advert-ownership.md).
   Frozen c55574cd6 Windows build succeeds and passes real two-process direct LAN
   through round2 with replicated movement/objective state and no hard divergence.
   Other network paths and skill use remain unqualified.

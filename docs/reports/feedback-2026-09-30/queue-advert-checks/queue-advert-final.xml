@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 22:14:29Z" end-time="2026-09-30 22:14:29Z" duration="0.2687023">
+  <test-suite type="TestSuite" id="2233" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="994" result="Passed" start-time="2026-09-30 22:14:29Z" end-time="2026-09-30 22:14:29Z" duration="0.268702" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2227" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="994" result="Passed" start-time="2026-09-30 22:14:29Z" end-time="2026-09-30 22:14:29Z" duration="0.248409" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2228" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="994" result="Passed" start-time="2026-09-30 22:14:29Z" end-time="2026-09-30 22:14:29Z" duration="0.236826" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2229" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="994" result="Passed" start-time="2026-09-30 22:14:29Z" end-time="2026-09-30 22:14:29Z" duration="0.225704" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1794" name="QueueAdvertOwnershipTests" fullname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests" classname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-30 22:14:29Z" end-time="2026-09-30 22:14:29Z" duration="0.197694" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1796" name="ARefusedReplacementWithdrawsThePreviousQueueAndItsSubscription" fullname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests.ARefusedReplacementWithdrawsThePreviousQueueAndItsSubscription" methodname="ARefusedReplacementWithdrawsThePreviousQueueAndItsSubscription" classname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests" runstate="Runnable" seed="618395602" result="Passed" start-time="2026-09-30 22:14:29Z" end-time="2026-09-30 22:14:29Z" duration="0.085670" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1797" name="CancellingAnActiveQueueStillWithdrawsItsAdvert" fullname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests.CancellingAnActiveQueueStillWithdrawsItsAdvert" methodname="CancellingAnActiveQueueStillWithdrawsItsAdvert" classname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests" runstate="Runnable" seed="678009880" result="Passed" start-time="2026-09-30 22:14:29Z" end-time="2026-09-30 22:14:29Z" duration="0.032419" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1795" name="CancellingARefusedNewQueuePreservesTheExistingRoomsAdvert" fullname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests.CancellingARefusedNewQueuePreservesTheExistingRoomsAdvert" methodname="CancellingARefusedNewQueuePreservesTheExistingRoomsAdvert" classname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests" runstate="Runnable" seed="2013269120" result="Passed" start-time="2026-09-30 22:14:29Z" end-time="2026-09-30 22:14:29Z" duration="0.032090" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1798" name="RepeatedCancelAfterRefusalCannotWithdrawALaterRoomAdvert" fullname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests.RepeatedCancelAfterRefusalCannotWithdrawALaterRoomAdvert" methodname="RepeatedCancelAfterRefusalCannotWithdrawALaterRoomAdvert" classname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests" runstate="Runnable" seed="1782163247" result="Passed" start-time="2026-09-30 22:14:29Z" end-time="2026-09-30 22:14:29Z" duration="0.031175" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
