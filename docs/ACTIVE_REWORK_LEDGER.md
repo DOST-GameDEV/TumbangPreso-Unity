@@ -425,3 +425,12 @@ unchanged. Publish explicit AI/test/report paths, verify remote and release thos
 paths. Feedback-row insertion was rejected against an older reservation even after
 checking the owner's add-row permission; a fresh confirmation is pending in chat.
 Do not bypass that Doc block. Existing score/stock rows are already updated.
+
+Bot commitment4d7a7e79 is published and remote verified. AIController/test paths
+are released. The Doc-row permission question remains pending; no further Doc
+writes are attempted. Diddler next investigates measured flight-query allocations:
+reserve Slipper.cs BounceOffObstacles storage/iteration only, new
+Tests/PlayMode/SlipperObstacleQueryTests.cs and metadata, focused report and
+TODO/ledger notes. Existing closest-hit, banks, support and ability callbacks must
+stay identical. Loading and landing-circle source remain outside this reservation.
+Native warm-query allocation and dense nearest-wall cases precede runtime edits.
