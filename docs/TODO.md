@@ -67,19 +67,15 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   fallback for absent variants. Live HUD and training key row use the same resolver.
   Native import/family/cache checks pass 5/5; display case passes with inspected
   960x540/1600x680 captures. [Evidence](reports/feedback-2026-09-30/README.md#xelu-control-prompts).
-- [x] F0930-06 Default action bindings corrected: left mouse Throw/Tag, right mouse
-  Retrieve/Reset/Interact, wheel up-left/down-right, F Shove/Lunge/Ready. IDs and saved
-  overrides retained. Native device/intents and shared Ready-release guard pass;
-  default-collision and older-override checks pass. [Evidence](reports/feedback-2026-09-30/README.md#default-action-bindings).
-  Latest Feedback correction supersedes the first wheel order: UP RIGHT / DOWN LEFT.
-  Actions now show Throw/Tag, Retrieve/Reset, Curve Right, Curve Left, Shove/Lunge;
-  separate Hold Interact row removed. Actual action and saved overrides retained.
-  Three native settings-contract checks and the updated real-input case pass.
-  The owner's subsequent correction uses MIDDLE mouse Shove/Lunge and F Interact/
-  Ready. Its listed Actions order is adopted. Ready's held F cannot become gameplay
-  interaction when the window closes; a fresh press is required. IDs/overrides and
-  pad/touch routes are retained. Four native default/order/conflict/older-override
-  checks and the updated actual mouse/wheel/F case pass.
+- [x] F0930-06 Latest default/action feedback: left mouse Throw/Tag, middle mouse
+  Shove/Lunge, right mouse Retrieve/Reset, wheel up-left/down-right, F Interact/Ready,
+  in that order. Display Run, Role Ability and Ability Descriptions. Remove the
+  separate Ready row while preserving its action and saved overrides; a shared
+  keyboard Interact rebind must also move Ready and require release before gameplay.
+  Eight native settings/default/override checks and the real input/Ready-release
+  case pass for the newest labels, wheel correction and shared rebind.
+  IDs, independent saved Ready overrides and controller/touch routes stay intact.
+  [Evidence](reports/feedback-2026-09-30/README.md#default-action-bindings).
 - [x] F0930-07 Longer defender lunge: full charge targets3m in both modes, with
   derived speed, bot approach/celebration bounds and pressure stats. Actual local
   input and host-request travel, repeat refusal, new-range tag and distant miss

@@ -65,6 +65,39 @@ state are asserted. Loading implementation remains assigned to the owner's frien
 
 ## Default Action Bindings
 
+### Current Owner Correction
+
+The latest Feedback row ships this Actions order: left mouse Throw/Tag, middle
+mouse Shove/Lunge, right mouse Retrieve/Reset, wheel up Curve Left, wheel down
+Curve Right, F Interact/Ready. Settings display Run, Role Ability and Ability
+Descriptions. The separate Interface Ready row is removed. The existing Ready
+action, IDs and overrides remain; the shared keyboard/mouse key follows accepted
+Interact rebinding. A separately saved Ready key and pad bindings remain intact.
+Refused conflicts leave both keys untouched. Saved JSON restores shared bindings.
+
+On frozen e76ac6a90 plus the listed input correction,8 native EditMode cases pass
+for defaults, grouping/labels, device answers, collisions, older Grab overrides and
+both shared/independent Ready rebinding. One actual native player-input case passes
+in4.475406s. It drives the requested mouse/wheel/F layout, then rebinds Interact
+toF10, verifies Ready reaches that key, consumes the held press after its window
+closes and permits interaction only after release and a fresh press. Physical
+hardware and controller/touch gameplay were not rerun; their paths are unchanged.
+
+The first run stopped before testing because the fixture lacked its InputLayer
+import. One bounded correction added that import and corrected a filter's stale
+saved-override method name. Fresh retry XML reports8/8; no initial test success is
+claimed. Both isolated jobs ended and the guard restored profile/preferences.
+Import rewrote whitespace in198 Xelu metadata files only; all other319 overlay
+inputs, including changed runtime/test source, stayed byte-identical. Import churn
+remains isolated and is not part of this source change. All input IDs are preserved.
+
+- [Settings and saved keys](checks/latest-controls-edit-retry.xml)
+- [Real player input](checks/latest-controls-play.xml)
+- [Frozen inputs and correction](checks/latest-controls-retry-inputs.json)
+- [Import drift](checks/latest-controls-drift.json)
+
+### Initial Request Qualification (Historical)
+
 The requested defaults now retain existing action/binding IDs and saved overrides:
 left click Throw/Tag; right click Retrieve/Reset/Interact; wheel up Curve Left;
 wheel down Curve Right; F Shove/Lunge/Ready. The shared F press is consumed in

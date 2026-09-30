@@ -138,3 +138,12 @@ rebinding. New tutorial lesson text is explicitly DO NOT WORK YET; hold tutorial
 source/wording pending owner release. Incoming d3c64e209 releases the replay fixture
 and preserves Linux render limits; its unchanged full Classic bot assertions pass.
 No heavy job running.
+
+Latest human controls unit qualified: up-left/down-right, Run/Role Ability/Ability
+Descriptions labels, requested Actions order and no separate Interface Ready row.
+Shared keyboard/mouse Interact rebinding moves Ready; saved independent Ready/pad
+paths retained. Native EditMode8/8 and actual input/Ready-held-release1/1 pass.
+One bounded fixture import/filter correction was needed before8-case qualification.
+Jobs73323/83839/79661 are terminal; profiles/preferences restored. Complete517-file
+candidate overlay excludes unrelated main dirt. Those source paths are released
+after publication. Queue-button cancellation is next; tutorial source remains held.

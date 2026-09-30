@@ -510,7 +510,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0004-4000-8000-000000000101",
-                    "path": "<Mouse>/scroll/down",
+                    "path": "<Mouse>/scroll/up",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -521,7 +521,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0004-4000-8000-000000000102",
-                    "path": "<Mouse>/scroll/up",
+                    "path": "<Mouse>/scroll/down",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",

@@ -66,6 +66,11 @@ namespace TumbangPreso.PlayTests
             settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
             var keyboard = InputSystem.AddDevice<Keyboard>(); var mouse = InputSystem.AddDevice<Mouse>();
             InputSystem.EnableDevice(keyboard); InputSystem.EnableDevice(mouse);
+            var actions = Resources.Load<InputActionAsset>("TumbangPreso");
+            string savedBindings = actions.SaveBindingOverridesAsJson();
+            const string bindingStore = "tumbangpreso.bindings";
+            bool hadSavedBindings = PlayerPrefs.HasKey(bindingStore);
+            string storedBindings = PlayerPrefs.GetString(bindingStore, "");
             try
             {
                 GameLaunch.GuidedTutorial = false; GameLaunch.AllBots = false;
@@ -98,12 +103,12 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(local.Intent.Pressed(Verb.Grab), "Middle click triggered pickup.");
 
                 InputSystem.QueueStateEvent(mouse, new MouseState { scroll = new Vector2(0, 120) }); InputSystem.Update();
-                Assert.IsTrue(map.FindAction("CurveRight").IsPressed());
-                Assert.IsFalse(map.FindAction("CurveLeft").IsPressed());
-                yield return null;
-                InputSystem.QueueStateEvent(mouse, new MouseState { scroll = new Vector2(0, -120) }); InputSystem.Update();
                 Assert.IsTrue(map.FindAction("CurveLeft").IsPressed());
                 Assert.IsFalse(map.FindAction("CurveRight").IsPressed());
+                yield return null;
+                InputSystem.QueueStateEvent(mouse, new MouseState { scroll = new Vector2(0, -120) }); InputSystem.Update();
+                Assert.IsTrue(map.FindAction("CurveRight").IsPressed());
+                Assert.IsFalse(map.FindAction("CurveLeft").IsPressed());
                 UI.Hud.Instance.ShowReadyPrompt(true);
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F)); InputSystem.Update();
                 reader.SendMessage("Update");
@@ -117,10 +122,24 @@ namespace TumbangPreso.PlayTests
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F)); InputSystem.Update(); reader.SendMessage("Update");
                 Assert.IsTrue(local.Intent.Pressed(Verb.Interact), "A fresh F press did not reach interaction.");
                 Assert.IsFalse(local.Intent.Pressed(Verb.Lunge), "F still drives Shove/Lunge.");
+
+                Assert.IsNull(TumbangPreso.Settings.Rebinding.TryRebind(actions, "Interact", keyboard.f10Key));
+                UI.Hud.Instance.ShowReadyPrompt(true);
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F10)); InputSystem.Update(); reader.SendMessage("Update");
+                Assert.IsTrue(map.FindAction("ReadyUp").IsPressed(), "The shared Interact row left Ready on the old key.");
+                Assert.IsFalse(local.Intent.Pressed(Verb.Interact));
+                UI.Hud.Instance.ShowReadyPrompt(false); reader.SendMessage("Update");
+                Assert.IsFalse(local.Intent.Pressed(Verb.Interact), "Rebound Ready leaked into interaction while held.");
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState()); InputSystem.Update(); reader.SendMessage("Update");
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F10)); InputSystem.Update(); reader.SendMessage("Update");
+                Assert.IsTrue(local.Intent.Pressed(Verb.Interact), "The new Interact key failed after release.");
             }
             finally
             {
                 InputSystem.RemoveDevice(keyboard); InputSystem.RemoveDevice(mouse);
+                actions.LoadBindingOverridesFromJson(savedBindings);
+                if (hadSavedBindings) PlayerPrefs.SetString(bindingStore, storedBindings); else PlayerPrefs.DeleteKey(bindingStore);
+                PlayerPrefs.Save(); TumbangPreso.Settings.Rebinding.Invalidate();
                 settings.backgroundBehavior = background;
                 settings.editorInputBehaviorInPlayMode = editorInput;
             }
