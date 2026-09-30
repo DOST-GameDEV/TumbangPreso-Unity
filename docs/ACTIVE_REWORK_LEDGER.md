@@ -444,3 +444,9 @@ buffer rewrite was made. Experimental probe is preserved with its run evidence,
 not added as a falsely passing performance gate. Slipper/test paths released.
 No heavy cloud job running. Doc access confirmation remains pending; next work
 must remain independent of reserved kits/loading/input/tutorial/build paths.
+
+Diddler next independent chat-boundary investigation reserves MatchRpc.cs
+ClampChatLine only and ChatAndLobbyChromeTests.cs Unicode boundary cases, plus
+focused report/TODO/ledger notes. A120-code-unit substring can split an emoji's
+surrogate pair. Prove the current behavior with the actual clamp and strict UTF-8
+encoding before editing runtime. No UI redesign, identity, wire-layout or kit work.
