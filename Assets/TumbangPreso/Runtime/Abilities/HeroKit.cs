@@ -291,6 +291,12 @@ namespace TumbangPreso.Abilities
             if (Skill2 != null && Skill2.RechargedBy == what) Skill2.GrantCharge();
         }
 
+        // Most kits correct only the acknowledged ability. A kit with shared
+        // basic resources can correct its group without changing receipt guards.
+        internal virtual void ApplySkillReceiptResources(HeroAbility ability, float cooldown,
+            int charges, bool newerSkillRequestExists)
+            => ability.ApplyNetworkSnapshot(cooldown, charges, mayLower: true);
+
         public virtual void Tick(AbilityContext ctx, float dt)
         {
             // ⚠️⚠️ THERE IS NO PASSIVE CHARGE HERE ANY MORE, AND ITS ABSENCE IS THE FEATURE.
