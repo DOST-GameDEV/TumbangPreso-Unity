@@ -1477,3 +1477,15 @@ Incoming Cheska rulesd331cd72/ffe5030c preserved, including shared numeric tests
 Their103already changed gameplay, so combined Second Wind wire contract uses104.
 No runtime implementation overlap besides compatibility version. Recheck merged
 Core status/Amihan/loadout contracts; native passive/flight receipts stay pre-merge.
+Second Wind007dfcfd integrated01e660ca remote verified, protocol104. Same Amihan
+Doc note updated; full row still open. Source shows Whirled blocks slipper grab
+but neither local Carrier nor host reset gate checks it. Claim Carrier.cs reset
+eligibility only, MatchRpc.cs HostMayChannelReset only, StatusRules.cs Whirled
+text, corresponding Core assertion, NetSession.cs version and existing
+AmihanAirburstTests.cs focused reset cases. Native baseline first; preserve walking,
+throwing and other interactions. Cancel a running reset, allow a fresh one at expiry.
+
+Whirled baseline3/3fails: local can restored while statusactive, active channel
+survives, host gate accepts. Fix uses existing HasResetTarget so local input/HUD
+and channel share refusal; host gate independently mirrors it. General CanAct
+stays allowed. Protocol105 changes this shared rule; final3cases next.
