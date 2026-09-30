@@ -35,21 +35,21 @@ ability-contract paths. Do not continue Fetch/Catch/Haunt or other hero changes.
 The owner directly approved short Feedback-row updates; the Nemu partial fix note
 is written and verified, with the broader row left unchecked.
 
-Map-vote correction76cd07b7 is locally validated:13 packet cases and4 existing
-rematch/intermission cases pass. Incoming input work8a85bb12 is preserved unchanged;
-two additional ready/countdown cases pass on the integrated candidate. No job is
-running. Native evidence is in the map-vote report; actual peers remain unqualified.
-The new Feedback-row insertion awaits the owner's explicit permission; existing
-row notes are allowed. Publish and verify this integrated unit next.
+Map-vote correction76cd07b7 shipped through d54488bb, remote HEAD verified.
+Thirteen packet cases and four existing rematch/intermission cases pass. Incoming
+controls8a85bb12 are preserved unchanged; two ready/countdown cases pass on the
+integrated candidate. No job is running. Actual peers remain unqualified. The new
+Feedback-row insertion awaits explicit owner permission; existing notes are allowed.
+Map-vote handler/test paths are released.
 
-Diddler reservation: reproduce and reject malformed map-vote packets before
-reader exceptions or partial ballot mutation. Existing wire layouts and voting
-rules remain unchanged; no abilities, input or loading edits.
+Diddler reservation: the existing Feedback request for an approximately three-second
+tagged replay. Preserve the five-second tag penalty, immediate authority, control
+handback and accessible/camera-occluded fallbacks. Do not claim the separate contact
+gap issue fixed from a duration change.
 Owned paths:
-- Assets/TumbangPreso/Runtime/Net/MatchRpc.cs (OnSelectMapVoteMsg, OnMapVoteTallyMsg and OnQueueVoteStateMsg only)
-- Assets/TumbangPreso/Tests/PlayMode/MapVotePacketTests.cs and its .meta
-- docs/NETWORKING.md (map-vote validation note only)
-- docs/reports/feedback-2026-09-30/map-vote-packets.md
+- Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs (playback timing only)
+- Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs (timing acceptance only)
+- docs/reports/feedback-2026-09-30/catch-replay-duration.md
 - docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue and evidence only)
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
