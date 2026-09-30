@@ -1388,3 +1388,7 @@ unit is Airburst missing Whirled/airborne slippers. Claim only new
 Tests/PlayMode/AmihanAirburstTests.cs/meta, match partition and scoped plan/report.
 Baseline actual motor/hazard first; runtime claim follows concrete findings.
 No ability runtime edits yet; broader kit/passive remains open in F0930-11.
+
+Local next unit ENG-0930-QUEUE-ADVERT: claim Matchmaker.cs and QueueAdvertOwnershipTests.cs only. Hypothesis: cancelling a locally refused new queue clears a pre-existing room's backfill advert; refusing replacement of an active queue leaves the old advert/subscription alive. Four native offline cases next, no service/hosting calls, stop at fresh XML; one bounded tooling repair maximum. Published Frostbite ba2e7eef8 integrated4c58ac265, remote verified; same Frozen-hit Doc note updated, native controls/human verification unchanged.
+
+Queue advert unit baseline2pass/2fail, final4/4pass;587hashes unchanged; no fixture repair/service calls. Fixed refused-start cancellation preserving an unrelated backfill advert and refused replacement withdrawing an abandoned active advert/subscription. Publish Matchmaker/tests/evidence, then investigate measured Nemu Fetch eligibility allocations using the existing retained slipper inventory; no kit redesign. No heavy job active.

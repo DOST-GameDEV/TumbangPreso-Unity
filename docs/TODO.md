@@ -222,6 +222,9 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   authorized later; preserve loading as an outstanding contributor-owned requirement.
 - [ ] F0930-20 Continue focused network, bots, optimization, flow bugs and applicable
   existing TODO requirements after feedback, with actual behavior evidence.
+  Queue advert ownership fixed: refused new attempts preserve existing room adverts;
+  refused replacements withdraw old active searches/subscriptions. Four native
+  offline cases pass. [Evidence](reports/feedback-2026-09-30/queue-advert-ownership.md).
   Frozen c55574cd6 Windows build succeeds and passes real two-process direct LAN
   through round2 with replicated movement/objective state and no hard divergence.
   Other network paths and skill use remain unqualified.

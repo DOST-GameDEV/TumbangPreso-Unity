@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 22:13:18Z" end-time="2026-09-30 22:13:18Z" duration="0.2828877">
+  <test-suite type="TestSuite" id="2233" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="994" result="Failed" site="Child" start-time="2026-09-30 22:13:18Z" end-time="2026-09-30 22:13:18Z" duration="0.282888" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2227" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="994" result="Failed" site="Child" start-time="2026-09-30 22:13:18Z" end-time="2026-09-30 22:13:18Z" duration="0.262670" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7624" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2228" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="994" result="Failed" site="Child" start-time="2026-09-30 22:13:18Z" end-time="2026-09-30 22:13:18Z" duration="0.251232" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2229" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="994" result="Failed" site="Child" start-time="2026-09-30 22:13:18Z" end-time="2026-09-30 22:13:18Z" duration="0.239739" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1794" name="QueueAdvertOwnershipTests" fullname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests" classname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-30 22:13:18Z" end-time="2026-09-30 22:13:18Z" duration="0.211223" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1796" name="ARefusedReplacementWithdrawsThePreviousQueueAndItsSubscription" fullname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests.ARefusedReplacementWithdrawsThePreviousQueueAndItsSubscription" methodname="ARefusedReplacementWithdrawsThePreviousQueueAndItsSubscription" classname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests" runstate="Runnable" seed="116354684" result="Failed" start-time="2026-09-30 22:13:18Z" end-time="2026-09-30 22:13:18Z" duration="0.090248" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A rejected replacement left the abandoned queue discoverable.
+  Expected: TumbangPreso.Net.ServerQuery+HostedAdvert
+  But was:  TumbangPreso.Net.ServerQuery+HostedAdvert
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.QueueAdvertOwnershipTests.ARefusedReplacementWithdrawsThePreviousQueueAndItsSubscription () [0x0005b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\QueueAdvertOwnershipTests.cs:56
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1797" name="CancellingAnActiveQueueStillWithdrawsItsAdvert" fullname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests.CancellingAnActiveQueueStillWithdrawsItsAdvert" methodname="CancellingAnActiveQueueStillWithdrawsItsAdvert" classname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests" runstate="Runnable" seed="412462622" result="Passed" start-time="2026-09-30 22:13:18Z" end-time="2026-09-30 22:13:18Z" duration="0.037455" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1795" name="CancellingARefusedNewQueuePreservesTheExistingRoomsAdvert" fullname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests.CancellingARefusedNewQueuePreservesTheExistingRoomsAdvert" methodname="CancellingARefusedNewQueuePreservesTheExistingRoomsAdvert" classname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests" runstate="Runnable" seed="1459382739" result="Failed" start-time="2026-09-30 22:13:18Z" end-time="2026-09-30 22:13:18Z" duration="0.032090" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A refused queue never owned the existing room's backfill advert.
+  Expected: TumbangPreso.Net.ServerQuery+HostedAdvert
+  But was:  TumbangPreso.Net.ServerQuery+HostedAdvert
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.QueueAdvertOwnershipTests.CancellingARefusedNewQueuePreservesTheExistingRoomsAdvert () [0x0003e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\QueueAdvertOwnershipTests.cs:47
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1798" name="RepeatedCancelAfterRefusalCannotWithdrawALaterRoomAdvert" fullname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests.RepeatedCancelAfterRefusalCannotWithdrawALaterRoomAdvert" methodname="RepeatedCancelAfterRefusalCannotWithdrawALaterRoomAdvert" classname="TumbangPreso.PlayTests.QueueAdvertOwnershipTests" runstate="Runnable" seed="1039082115" result="Passed" start-time="2026-09-30 22:13:18Z" end-time="2026-09-30 22:13:18Z" duration="0.034040" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

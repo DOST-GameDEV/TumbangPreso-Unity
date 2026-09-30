@@ -5,6 +5,12 @@ Both body-hit paths apply Frozen before generic impact consumes the payload.
 Native real-flight checks pass; protocol101 actual peers remain unqualified.
 [Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
 
+Queue cancellation only withdraws an active search's advert. A locally refused
+attempt cannot clear an existing room's backfill offer; replacing an active search
+retires it before a replacement can refuse. Four native offline ownership cases
+pass; actual online browse/backfill delivery remains separate.
+[Evidence](reports/feedback-2026-09-30/queue-advert-ownership.md).
+
 Protocol100 requires matching builds for the5-second ordinary round boundary and
 10-second halftime package. Both freeze simulation and reject gameplay/UI input.
 Halftime can play a retained authoritative clip before standings; unavailable or
