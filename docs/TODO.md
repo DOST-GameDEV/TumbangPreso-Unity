@@ -23,8 +23,11 @@ Owner scope, 2026-09-30: finish the supplied feedback, then continue finding and
 fixing reasonable network, bot, loading, optimization and UI/UX bugs and applicable
 existing TODO work. Work alone, ship coherent batches, validate changed behavior
 before checking it done, and avoid repeated unchanged validation. No resets or
-cross-chat work. Ask before spending service credits. Do not change VFX, SFX,
-animation, models, maps or lighting except for a demonstrated bug fix.
+cross-chat work. Ask before spending service credits. Latest owner direction
+permits broader presentation work after prior actionable requests and before
+continuous manual bug hunting. Research, plan and critique using HERO_KIT_METHOD;
+finalized Paete/Phaister character-specific work remains protected. Ability mechanics
+remain owner-reserved; shared/global fixes apply normally.
 
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins
@@ -64,6 +67,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 
 - [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
   changed rows refresh without replaying entrance. Focused native path passes.
+- [x] ENG-0930-REPLAY-FORMAT Spectator pixel replay: unsupported RGB565 readback
+  no longer silently drops every frame. Exact format gate and one reused RGBA
+  staging image preserve the bounded RGB565 ring. Original3captures all fail;
+  corrected three-colour native capture1/1passes. Full-player/performance scope
+  remains separate. [Evidence](reports/feedback-2026-09-30/replay-format.md).
 - [x] F0930-38 Cloud toon-ramp sampling: opaque and transparent no-mipmap
   lookups use explicit level0. Original shaders reproduce non-finite lighting;
   both final measured lighting contracts pass and actual full-map colours recover.
@@ -307,9 +315,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   skipping completed and human-needed rows. Setup/scope handoffs were given in
   chat for manual copying; no automation or cross-chat action was performed.
 
-Cheska shatter/melt additions and Dante shield-logo addition from the feedback
-remain source context, but new VFX/animation work is excluded by the owner's newer
-restriction. Do not silently implement them or mark them shipped.
+Cheska shatter/melt and Dante shield-logo presentation requests are authorized
+for the later presentation pass by the latest owner instruction. They are not
+shipped. Finish preceding actionable requests, then research references, plan each
+effect with its animation/UI/sound, and critique actual playback. Preserve owner
+mechanics and finalized Paete/Phaister work. Manual bug hunting follows that pass.
 
 Current owner order after DOCS-0927: actual loading/optimization,then shared
 network/flow correctness,then remaining applicable QA/TODO requirements. Newer task

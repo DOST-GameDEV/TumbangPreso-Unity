@@ -52,7 +52,7 @@ so captures1/2 are the later match; the raw trace preserves both.
 Correction to the proposed run scope: custom4rounds did not exercise halftime.
 Do not claim new halftime qualification from this run; prior8round protocol100
 player evidence and native checks cover the existing10second path separately.
-Unity Services connection-refused errors and319 replay readback failures appear
+Unity Services connection-refused errors and766 replay readback failures (447
+in the first match,319in the rematch) appear
 in the log. Those remain diagnostic limits, not a clean-log or replay qualification.
 Actual peers, hardware performance and human approval remain separate.
-

@@ -1056,3 +1056,24 @@ Discriminate with a minimal native real-capture test, no full map/build repetiti
 Expected: three requested known-colour frames become ready with matching pixels.
 Baseline then smallest correction and one final focused pass, one tooling repair
 maximum. No other runtime paths or contributor-owned loading changes.
+
+Replay baseline1/1fails with3lost frames: async=True, render565=True,
+read565=False, actualAsync=True. Confirms capability mismatch before gameplay,
+not a transient lost context. Add exact ReadPixels format gate, retain existing
+synchronous RGB565 conversion/ring bound. Final same three-colour native check
+will validate real stored pixels and ready state; no world/ability/timing changes.
+
+First correction exposes a second real backend defect: the retained synchronous
+path cannot ReadPixels directly into RGB565 either (native assertion format7).
+This is product failure, not a fixture error. Use one reused RGBA32 CPU staging
+image, pack directly into the existing RGB565 NativeArray and Apply once; preserve
+100frame ring and async fast path on supported devices. Destroy staging with owner.
+Next focused pass reuses exact pixel assertions and checks staging reuse.
+
+Replay format correction passes1/1 in0.190247s with all3real colour frames ready,
+correct RGB565 pixels/size, reused staging and0failed readbacks. No OOM/guard.
+Publish camera/test/meta and evidence, release runtime claim. Do not claim player
+rebuild or performance improvement. Same source may cost sync readback on these
+drivers, while supported devices keep asynchronous capture. Owner presentation
+permission is reconciled in TODO/Feedback queued notes; no renewed permission
+needed for those later requests, finalized Paete/Phaister remain protected.

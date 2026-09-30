@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 18:59:06Z" end-time="2026-09-30 18:59:06Z" duration="0.2987236">
+  <test-suite type="TestSuite" id="2191" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="957" result="Failed" site="Child" start-time="2026-09-30 18:59:06Z" end-time="2026-09-30 18:59:06Z" duration="0.298724" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2185" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="957" result="Failed" site="Child" start-time="2026-09-30 18:59:06Z" end-time="2026-09-30 18:59:06Z" duration="0.285211" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="158667" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2186" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="957" result="Failed" site="Child" start-time="2026-09-30 18:59:06Z" end-time="2026-09-30 18:59:06Z" duration="0.277193" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2187" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="957" result="Failed" site="Child" start-time="2026-09-30 18:59:06Z" end-time="2026-09-30 18:59:06Z" duration="0.270134" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1797" name="ReplayReadbackSupportTests" fullname="TumbangPreso.PlayTests.ReplayReadbackSupportTests" classname="TumbangPreso.PlayTests.ReplayReadbackSupportTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-30 18:59:06Z" end-time="2026-09-30 18:59:06Z" duration="0.251789" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1798" name="ActualCaptureRetainsReadyColourFramesOnThisDevice" fullname="TumbangPreso.PlayTests.ReplayReadbackSupportTests.ActualCaptureRetainsReadyColourFramesOnThisDevice" methodname="ActualCaptureRetainsReadyColourFramesOnThisDevice" classname="TumbangPreso.PlayTests.ReplayReadbackSupportTests" runstate="Runnable" seed="177078241" result="Failed" start-time="2026-09-30 18:59:06Z" end-time="2026-09-30 18:59:06Z" duration="0.238706" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Known-colour frames were lost; failed=3
+  Expected: 3
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReplayReadbackSupportTests+<ActualCaptureRetainsReadyColourFramesOnThisDevice>d__3.MoveNext () [0x00262] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ReplayReadbackSupportTests.cs:47
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] readback warm-up landed in 2.1 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[ReplayFormat] async=True render565=True read565=False actualAsync=True
+[Replay] 0 captures dropped for a full readback queue, 3 readbacks failed.
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
