@@ -48,8 +48,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [ ] F0930-04 Tagged replay: approximately three seconds and truthful contact display;
   fix recording/reconstruction/contact timing without inventing a hit.
 - [ ] F0930-05 Adopt [Xelu prompts](https://thoseawesomeguys.com/prompts/) for keyboard/controller.
-- [ ] F0930-06 Default action bindings: left mouse Throw/Tag, right mouse Retrieve/Reset,
-  wheel up/down Curve Left/Right, F Shove/Lunge/Ready. Preserve saved rebinding choices.
+- [x] F0930-06 Default action bindings corrected: left mouse Throw/Tag, right mouse
+  Retrieve/Reset/Interact, wheel up-left/down-right, F Shove/Lunge/Ready. IDs and saved
+  overrides retained. Native device/intents and shared Ready-release guard pass;
+  default-collision and older-override checks pass. [Evidence](reports/feedback-2026-09-30/README.md#default-action-bindings).
 - [ ] F0930-07 Longer defender lunge, coherent travel/authority/bot bounds.
 - [ ] F0930-08 Visible remaining lifetime for timed abilities using real shared state.
 - [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.

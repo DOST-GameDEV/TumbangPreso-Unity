@@ -29,17 +29,17 @@ namespace TumbangPreso.Settings
     /// was not on left click even though it was bound there, and a hero's first skill fired out
     /// of the pickup key. Rebinding anything onto E or Q was refused by our own asset.
     ///
-    /// ⚠️⚠️ THE DEFAULT LAYOUT IS THE OWNER'S, 2026-09-27, KEY FOR KEY. MOVEMENT: WASD, sprint
-    /// Left Shift, jump Space. ACTIONS: Throw / Tag left click, Shove / Lunge right click, Curve
-    /// Throw the mouse wheel, Interact / Use F. ABILITIES: Signature E (`Skill1`), Attacking /
+    /// The owner's 2026-09-30 defaults: WASD, sprint Left Shift, jump Space.
+    /// Throw / Tag left click; Retrieve / Reset / Interact right click;
+    /// Shove / Lunge / Ready F; curve left wheel up, right wheel down.
+    /// ABILITIES: Signature E (`Skill1`), Attacking /
     /// Defending Q (`Skill2`), Ultimate X. INTERFACE: Ability Tooltips Tab. COMMUNICATIONS: Emote
     /// Wheel T. `Groups` below is laid out under the same five headings. It replaced Q/E/F for
     /// the deck, X for a contextual pickup/shove/reset, G for interact, B for emotes and Z/C
     /// for the curve (Z and C were themselves the fix for the arrow keys, 2026-08-27).
     ///
-    /// Every playing action holds ONE control, with ONE deliberate pair: `Grab` and `Interact`
-    /// are both F because they are his one Interact / Use key (`IsOneUseKey`). The shove left
-    /// the pickup key for Shove / Lunge, which is what makes that pair safe.
+    /// Grab/Interact share a contextual use control. Lunge/Ready share F in separate
+    /// phases; PlayerInputReader requires release after a Ready use before gameplay.
     /// `SettingsPanelTests` asserts the rest, so the collisions cannot come back quietly.
     ///
     /// ⚠️ THE CURVE IS A WHEEL NOTCH NOW: `PlayerInputReader.CurveInput` steps on each press edge
@@ -125,7 +125,9 @@ namespace TumbangPreso.Settings
             => IsSpectatorAction(a) == IsSpectatorAction(b);
 
         /// <summary>
-        /// ⚠️⚠️ THE ONE PAIR OF PLAYING ACTIONS THAT SHARES A KEY ON PURPOSE: `Grab` AND `Interact`
+        /// Contextual playing actions that share a key on purpose: Grab and Interact,
+        /// plus Lunge and ReadyUp in separate phases.
+        /// `Grab` AND `Interact`
         /// ARE THE OWNER'S ONE "INTERACT / USE" KEY. His default layout, 2026-09-27: *"Interact / Use
         /// - F"*. `Grab` is the tap and the reset hold (pick up the tsinelas, raise the can) and
         /// `Interact` is the free hold (break out of roots, pull out a plant); they were split on
@@ -135,7 +137,8 @@ namespace TumbangPreso.Settings
         /// buttons.
         /// </summary>
         public static bool IsOneUseKey(string a, string b)
-            => (a == "Grab" && b == "Interact") || (a == "Interact" && b == "Grab");
+            => (a == "Grab" && b == "Interact") || (a == "Interact" && b == "Grab")
+               || (a == "Lunge" && b == "ReadyUp") || (a == "ReadyUp" && b == "Lunge");
 
         /// <summary>True when binding one control to both actions would be two things on one press.</summary>
         public static bool WouldClash(string a, string b) => ShareAContext(a, b) && !IsOneUseKey(a, b);

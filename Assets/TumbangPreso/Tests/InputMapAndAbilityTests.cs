@@ -182,6 +182,19 @@ namespace TumbangPreso.Tests
                 string.Join(" | ", clashes));
         }
 
+        [Test]
+        public void EarlierGrabOverrideStillLoadsAfterDefaultMouseMappingChanges()
+        {
+            var asset = LoadActions();
+            asset.RemoveAllBindingOverrides();
+            const string saved = "{\"bindings\":[{\"action\":\"Player/Grab\",\"id\":\"6f1a2b30-0002-4000-8000-000000000005\",\"path\":\"<Keyboard>/g\",\"interactions\":null,\"processors\":null}]}";
+            asset.LoadBindingOverridesFromJson(saved);
+            var grab = asset.FindAction("Player/Grab");
+            Assert.AreEqual("<Keyboard>/g", grab.bindings[0].effectivePath);
+            Assert.AreEqual("<Mouse>/rightButton", grab.bindings[0].path, "Saved override replaced the new default.");
+            Assert.IsTrue(Rebinding.IsOneUseKey("Lunge", "ReadyUp"));
+        }
+
         /// <summary>Every rebindable action has to actually exist, or the panel draws a dead row.</summary>
         [Test]
         public void EveryRebindableActionExists()

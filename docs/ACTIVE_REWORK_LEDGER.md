@@ -41,7 +41,8 @@ Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu u
 Its source reservation is released except the pending human completion destination.
 Doc formatting is complete; contributors may update their own feedback rows after
 verified shipping. Local next reservation: Resources/TumbangPreso.inputactions,
-Runtime/Settings/Rebinding.cs if context/default reconciliation is needed, and the
+Runtime/Settings/Rebinding.cs, Runtime/PlayerInputReader.cs and Runtime/UI/Hud.cs
+(shared Ready/Shove/Lunge input-context guard only), and the
 relevant InputMapAndAbilityTests/InputContractTests/PlayMode InputReaderTests.
 All paths are under Assets/TumbangPreso. Preserve the Nemu reservation above and
 these input paths when updating the checkpoint. No cross-chat contact is required.
@@ -108,12 +109,26 @@ in the feedback report. Runtime source stayed frozen. It is committed and being
 merged with incoming authored Nemu changes, preserved byte-for-byte. The next input
 native check will compile the merged candidate; no whole-candidate qualification
 is inferred from the tutorial's earlier source snapshot.
-The completion destination remains human-needed. Do not repeat passing cases.
+The completion destination remains human-needed. Tutorial 2fbee1fb1 is shipped
+through the verified 625af762b integration. Do not repeat passing cases.
 Other network/bot files remain unclaimed by this unit. Reconcile explicit
 ownership before overlapping work. No subagents or cross-chat messaging.
 
 Next: default binding correction (inputactions asset and relevant input tests), then gameplay/network/bots
 and other optimization. Loading remains friend-owned. Do not repeat the first unit.
+
+Current local input edits: six keyboard/mouse default paths corrected without
+changing binding IDs (Grab/Interact right mouse, Lunge/Ready F, curve up-left/down-right).
+The Ready input guard consumes only a physically shared control and requires its
+release before gameplay use; differently rebound controls keep their behavior.
+The merged native candidate passes default collision and legacy override checks
+(2/2 EditMode), plus real device/intent/context checks (1/1 PlayMode). The input
+unit is being committed/pushed; no previous tutorial checks were repeated.
+
+Next local reservation after input shipping: Runtime/UI/InputGlyphs.cs,
+Tests/InputGlyphTests.cs, new Resources/UI/input/xelu prompt textures/metadata and
+docs/Asset_Sourcing.md. Import only needed CC0 Xelu keyboard/mouse/pad prompts,
+preserving fallback labels and device families. Loading stays friend-owned.
 
 Rematches now allocate a fresh host world identity before reload, adopt a matching
 previous/next pair on clients, scope votes/tallies and acknowledge seated voters.

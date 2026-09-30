@@ -55,3 +55,23 @@ All three captures were inspected. This is local native state/input/layout evide
 not physical keyboard/controller/touch certification or all-hero cutscene qualification.
 The owner must still name the tutorial completion destination; existing manual exit
 is retained. Loading is assigned to the owner's friend.
+
+## Default Action Bindings
+
+The requested defaults now retain existing action/binding IDs and saved overrides:
+left click Throw/Tag; right click Retrieve/Reset/Interact; wheel up Curve Left;
+wheel down Curve Right; F Shove/Lunge/Ready. The shared F press is consumed in
+the Ready window and must be released before gameplay use. Differently rebound
+controls retain independent behavior. Pad and touch mappings are unchanged.
+
+On the merged 625af762b source plus this input unit, two native EditMode checks
+pass in 0.1400925 seconds: default collisions and an earlier saved Grab override.
+One native PlayMode device/intent check passes in 5.0388768 seconds. It exercises
+mouse buttons, wheel direction, Ready-to-play hold/release and fresh F gameplay.
+All assemblies compiled with the integrated Nemu work. Input focus settings,
+named profile files and shared Editor preferences were restored. No broad suite
+or previous tutorial checks were repeated; physical hardware remains unqualified.
+
+- [EditMode results](checks/input-edit.xml)
+- [PlayMode results](checks/input-play.xml)
+- [Frozen merged inputs](checks/input-inputs.json)
