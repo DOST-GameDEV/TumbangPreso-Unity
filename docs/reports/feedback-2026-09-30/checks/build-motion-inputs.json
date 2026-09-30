@@ -1,0 +1,23 @@
+{
+  "sourceEquivalent": "e096ac821 plus read-only animation build prerequisites",
+  "question": "build gate validates native retained sets without rewriting; missing/empty/duplicate inputs fail; custom curves retained",
+  "expectedCases": 2,
+  "retry": 0,
+  "inputs": {
+    "Assets/TumbangPreso/Editor/GameBuilder.cs": "1b820cc25a8df758f38f19361cf54d41f5530843234591a2122d1513447f2918",
+    "Assets/TumbangPreso/Editor/AuthoredAnimationBuildCheck.cs": "c9fa091473f6156b6230969772979db755c8293850e4bc708bb8382d2c9a760b",
+    "Assets/TumbangPreso/Editor/AuthoredAnimationBuildCheck.cs.meta": "3e13434a9f02954c2613393d7a758113599d1984cfa301f7dc9405dc5d4cf9a7",
+    "Assets/TumbangPreso/Tests/AuthoredAnimationBuildTests.cs": "76aac2c275b4170edfc1eec03734cad79601778b4e55f5bd03e42426cd61254f",
+    "Assets/TumbangPreso/Tests/AuthoredAnimationBuildTests.cs.meta": "0df55e3c6de366081f1b5e626006dd5547af2eecf4cca4f0b2b7cb39ceee6bdd"
+  },
+  "finalInputs": {
+    "Assets/TumbangPreso/Editor/GameBuilder.cs": "1b820cc25a8df758f38f19361cf54d41f5530843234591a2122d1513447f2918",
+    "Assets/TumbangPreso/Editor/AuthoredAnimationBuildCheck.cs": "1a8f982c1fbc91646dc65fbe4218c3efeb3ffb2d293c8bab1fc83aefe029bac4",
+    "Assets/TumbangPreso/Editor/AuthoredAnimationBuildCheck.cs.meta": "3e13434a9f02954c2613393d7a758113599d1984cfa301f7dc9405dc5d4cf9a7",
+    "Assets/TumbangPreso/Tests/AuthoredAnimationBuildTests.cs": "626eb3ebd4e7cf67170317e60e6c604058c61d42d072fee6bfdf123bce5a039e",
+    "Assets/TumbangPreso/Tests/AuthoredAnimationBuildTests.cs.meta": "0df55e3c6de366081f1b5e626006dd5547af2eecf4cca4f0b2b7cb39ceee6bdd",
+    "Assets/TumbangPreso/Editor/SwimmingAnimationAuthor.cs": "957d705dfee73a471d6273f3780a079a3b0c1d3c49f6c7840e00ed4973a367c6",
+    "Assets/TumbangPreso/Editor/RecoveryAnimationAuthor.cs": "8c60f37e04b25f560504405e7f62752aa357ce08f073e09fb07f66a6981d8bb9"
+  },
+  "finalDrift": []
+}

@@ -1107,8 +1107,9 @@ namespace TumbangPreso.EditorTools
             // so every in-editor test passes and the shipped .exe dies on the scene load. This
             // runs BEFORE the build because the point is to never write the broken player at
             // all, and because the crash it prevents cost a whole handoff to find.
-            if(!SwimmingAnimationAuthor.Execute())return false;
-            if(!RecoveryAnimationAuthor.Execute())return false;
+            // Building must preserve approved clips. Authoring is an explicit
+            // operation; those tools overwrite retained curves when rerun.
+            if(!AuthoredAnimationBuildCheck.Execute())return false;
             if (!SceneScriptCheck.Execute(gate: true))
             {
                 Debug.LogError("[Build] refusing to build: a scene holds a script reference the " +
