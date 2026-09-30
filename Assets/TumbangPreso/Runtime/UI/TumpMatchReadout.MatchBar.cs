@@ -49,12 +49,12 @@ namespace TumbangPreso.UI
             if (_promptPlate == null || _prompt == null) return;
             bool show = _promptRoot.gameObject.activeInHierarchy && _prompt.enabled && !string.IsNullOrEmpty(_prompt.text);
             _promptPlate.enabled = show;
-            bool glyph = _readyGlyph != null && _readyGlyph.enabled;
+            bool glyph = _bindingGlyph != null && _bindingGlyph.enabled;
             if (glyph)
             {
                 float words = Mathf.Min(964, _prompt.preferredWidth);
                 float left = (1100 - words - 80) * .5f;
-                OwnerUiLayout.Place(_readyGlyph.rectTransform, left, 5, 64, 64);
+                OwnerUiLayout.Place(_bindingGlyph.rectTransform, left, 5, 64, 64);
                 OwnerUiLayout.Place(_prompt.rectTransform, left + 80, 0, words, 74);
                 OwnerUiLayout.Place(_promptPlate.rectTransform, left - 28, 0, words + 136, 74);
                 return;

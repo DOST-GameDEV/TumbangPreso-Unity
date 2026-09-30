@@ -48,7 +48,7 @@ namespace TumbangPreso.UI
             PlaceDeck(Hud.OnTouch);
             // Enlarge the live controls around their existing corner/bottom anchor.
             // HudReadingLayout retains this base scale for accessibility settings.
-            _deck.localScale = Vector3.one * 1.5f;
+            _deck.localScale = Vector3.one * 1.25f;
             for (int i = 0; i < 3; i++)
             {
                 float size = i == 2 ? 108 : 90, x = i == 0 ? 0 : i == 1 ? 102 : 206, y = OwnerDeckHeight - size - 4;
@@ -115,7 +115,7 @@ namespace TumbangPreso.UI
             if (touch) { _deck.anchorMin = _deck.anchorMax = _deck.pivot = new Vector2(.5f, 0); _deck.anchoredPosition = new Vector2(0, 34); }
             else { _deck.anchorMin = _deck.anchorMax = _deck.pivot = new Vector2(1, 0); _deck.anchoredPosition = new Vector2(-40, 30); }
             _deck.sizeDelta = new Vector2(OwnerDeckWidth, OwnerDeckHeight);
-            GetComponent<HudReadingLayout>()?.RebasePlacement();
+            _deck.GetComponentInParent<HudReadingLayout>()?.RebasePlacement(_deck);
         }
 
         public void Tick(HeroAbilitySystem system, bool visible)

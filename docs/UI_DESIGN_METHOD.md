@@ -73,7 +73,7 @@ Charge feedback names actual power percent and FULL RELEASE at the reticle, with
 The latest Feedback asks for Ready Up beside a larger Xelu glyph resolved from
 the actual saved Interact/Ready binding, without the old warmup subtitle. Touch
 keeps action wording without a keyboard image. Other contextual action prompts
-retain their own layout. The live power deck grows50percent around its existing
+now reuse the live glyph for Reset Can and Retrieve Slipper. The live power deck grows25percent around its existing
 corner/bottom anchor, preserving edge margins and accessibility scaling. The
 separate held-description sheet and all kit descriptions stay unchanged. The
 owner explicitly includes Paete/Phaister in this shared-HUD sizing exception.
@@ -81,3 +81,12 @@ Two focused native checks and four captures qualify the local binding/layout
 changes. [Evidence](reports/feedback-2026-09-30/hud-readability.md). Physical-device
 approval remains separate. The existing practice status sits above the larger deck
 and its hint so neither can obscure the ability controls.
+
+The25percent revision supersedes the earlier50percent target. Saved keyboard/pad
+bindings drive the glyph; touch retains the action label and emphasis. Ongoing
+reset progress/cancel wording stays intact. Real pickup, channel cancellation and
+completed reset pass locally. [Revision evidence](reports/feedback-2026-09-30/match-ui-revision.md).
+
+After a device-dependent anchor change, rebase that group on its actual canvas
+HudReadingLayout before accessibility refresh. Do not capture other already-scaled
+groups as new authored positions. Device-then-scale round trips must retain margins.
