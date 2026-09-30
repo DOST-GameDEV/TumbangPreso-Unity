@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 14:26:01Z" end-time="2026-09-30 14:26:08Z" duration="7.034151">
+  <test-suite type="TestSuite" id="2149" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="920" result="Failed" site="Child" start-time="2026-09-30 14:26:01Z" end-time="2026-09-30 14:26:08Z" duration="7.034151" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2143" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="920" result="Failed" site="Child" start-time="2026-09-30 14:26:01Z" end-time="2026-09-30 14:26:08Z" duration="7.007983" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10284" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2144" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="920" result="Failed" site="Child" start-time="2026-09-30 14:26:01Z" end-time="2026-09-30 14:26:08Z" duration="6.981816" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2145" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="920" result="Failed" site="Child" start-time="2026-09-30 14:26:01Z" end-time="2026-09-30 14:26:08Z" duration="6.953471" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2078" name="VictoryInputTests" fullname="TumbangPreso.PlayTests.VictoryInputTests" classname="TumbangPreso.PlayTests.VictoryInputTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-30 14:26:01Z" end-time="2026-09-30 14:26:08Z" duration="6.906948" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2080" name="VictoryStopsSpectatorFlightAndReleasesItWhenClosed" fullname="TumbangPreso.PlayTests.VictoryInputTests.VictoryStopsSpectatorFlightAndReleasesItWhenClosed" methodname="VictoryStopsSpectatorFlightAndReleasesItWhenClosed" classname="TumbangPreso.PlayTests.VictoryInputTests" runstate="Runnable" seed="446959765" result="Failed" start-time="2026-09-30 14:26:01Z" end-time="2026-09-30 14:26:08Z" duration="6.888389" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Spectator flies behind the victory board while W is held.
+  Expected: (0.00, 8.99, -13.97)
+  But was:  (0.00, 8.16, -12.28)
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.VictoryInputTests+<VictoryStopsSpectatorFlightAndReleasesItWhenClosed>d__3.MoveNext () [0x00252] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\VictoryInputTests.cs:95
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Replay] readback warm-up landed in 3.4 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[Slice] match over. scores: 0 / 0 / 0 / 0. draw
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

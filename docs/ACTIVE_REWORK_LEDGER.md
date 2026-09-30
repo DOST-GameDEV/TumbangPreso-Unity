@@ -295,6 +295,24 @@ the unavailable selected browser. No new browser tabs or native processes remain
 Next independent unit is current victory-screen input feedback or network/bot bugs;
 re-read current Doc and ownership first. Do not rerun qualified frozen-boundary cases.
 
+Current local reservation: PlayerInputReader.cs, CameraRig.cs, SpectatorCamera.cs,
+MatchResult.Native.cs and VictoryInputTests.cs/meta for the victory mouse/movement
+report. Offline baseline did not reproduce result-time movement: its only failure
+was post-close synthetic mouse look, which does not drive legacy Mouse X/Y axes.
+No runtime fix or result-time regression is established. Keep the unfinished
+fixture; investigate online/spectator input with a valid look source if resumed.
+Owner requests bottom-up unfinished Feedback first. Loading and ability mechanics
+remain reserved; retain current contributor reservations. No heavy job active.
+
+Current independent bug: final-round results fail to stop spectator flight.
+Native actual-scene W-input baseline reproduces movement from(0,8.99,-13.97)
+to(0,8.16,-12.28) behind the result board. Claim only SpectatorCamera.cs,
+SpectatorDirector.cs and VictoryInputTests.cs/meta. Both camera owners must stand
+down for external takeovers, retaining the spectator's own replay controls.
+The player result report is now human-retired in the Doc; do not reopen it or
+claim this spectator reproduction proves its original mouse symptom.
+Baseline51220 terminal; no paid service/player build/human approval claim.
+
 
 Cloud revised replay unit:2.5s recorded animation,1.25s immutable captured tag
 frame,.18s fade. Recovery clamps/interruptions remain active; no live-world pause.
@@ -398,6 +416,13 @@ quality guides, research references, plan each skill and integrate motion/effect
 camera/sound/UI. Paete/Phaister are quality references; ability mechanics remain
 owner-reserved. Critique native results and any generated concept images rather
 than treating them as proof. Manual bug hunting follows this presentation pass.
+
+Local spectator unit passes: baseline51220 reproduces final-board camera drift;
+final50614 passes actual held-W, director, cursor and close/resume assertions.
+No non-metadata frozen input drift. F0930-33 qualified; source two guards only.
+Doc already contains human-retired victory record; keep that record closed.
+No Unity job or task-owned browser tab active. Publish after integrating newest
+contributor commits; next inspect MatchRpc malformed-packet handling independently.
 
 Newest Harry refinement takes priority before the unstarted round-timing edit:
 look1.5seconds, move/run7.5metres, authored lesson wording only, no completion
