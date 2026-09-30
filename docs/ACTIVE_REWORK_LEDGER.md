@@ -397,3 +397,14 @@ quality guides, research references, plan each skill and integrate motion/effect
 camera/sound/UI. Paete/Phaister are quality references; ability mechanics remain
 owner-reserved. Critique native results and any generated concept images rather
 than treating them as proof. Manual bug hunting follows this presentation pass.
+
+Newest Harry refinement takes priority before the unstarted round-timing edit:
+look1.5seconds, move/run7.5metres, authored lesson wording only, no completion
+Practise Freely caption and left-aligned Quit after Skip disappears. Reclaim only
+Runtime/GuidedTraining.cs, Runtime/UI/GuidedTrainingHud.OwnerPainted.cs,
+Tests/PlayMode/OwnerTrainingUiTests.cs and Tests/PlayMode/TutorialLessonHonestyProbe.cs
+under Assets/TumbangPreso, plus this checkpoint/TODO/evidence. Round-timing paths
+stay reserved for the next coherent unit, with no edits started. Current jobs:none.
+Doc archive now has17 human-verified reports; active Feedback has31rows including
+header. Human notes/comments is added to both tables. Native checklist state is
+read from the document's own rich clipboard; preserve all controls and images.
