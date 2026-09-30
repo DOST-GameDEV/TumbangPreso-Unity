@@ -809,7 +809,7 @@ namespace TumbangPreso
                 default:
                     title = "TRAINING COMPLETE";
                     body = "You tested movement, stamina, jumping, throwing, retrieval, Pektus, hero powers, both roles, tags and emotes.";
-                    action = "ENTER  ·  RETURN TO MAIN MENU";
+                    action = "ENTER  ·  RETURN TO LOBBY";
                     _marker?.Bind(null);
 
                     // ⚠️ THE END OF THE ROUTE GETS THE MATCH FANFARE, NOT AN EIGHTEENTH PING.
@@ -1022,7 +1022,11 @@ namespace TumbangPreso
             if (_local != null) _local.Intent.AllowOnly(null);
             GameLaunch.GuidedTutorial = false;
             Hitstop.End();
-            SceneFlow.Go(SceneFlow.MainMenu);
+            // Offline directors survive the arena. End their training state before
+            // returning to the hub, just as network shutdown ends a live match.
+            GameServices.Round?.ResetForNewMatch();
+            GameServices.Match?.ResetForNewMatch();
+            SceneFlow.LeaveMatchToMainMenu();
         }
 
         /// <summary>

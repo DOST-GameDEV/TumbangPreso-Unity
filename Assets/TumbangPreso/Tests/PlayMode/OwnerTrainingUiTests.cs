@@ -17,6 +17,40 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
 
+        [UnityTest, Timeout(180000)]
+        public IEnumerator FinishedTutorialReturnsToTheLobbyHubThroughItsRealExit()
+        {
+            bool training = GameLaunch.GuidedTutorial;
+            try
+            {
+                SceneFlow.Networked = false;
+                SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+                GameLaunch.GuidedTutorial = true;
+                yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
+                var route = Object.FindFirstObjectByType<GuidedTraining>();
+                float until = Time.realtimeSinceStartup + 15;
+                while (route == null && Time.realtimeSinceStartup < until)
+                { route = Object.FindFirstObjectByType<GuidedTraining>(); yield return null; }
+                Assert.IsNotNull(route);
+                var ready = typeof(GuidedTraining).GetField("_ready", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                while (!(bool)ready.GetValue(route) && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsTrue((bool)ready.GetValue(route));
+                typeof(GuidedTraining).GetMethod("EnterLesson", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(route, new object[] { GuidedTraining.Lesson.Complete });
+                var hud = Object.FindFirstObjectByType<GuidedTrainingHud>();
+                Press(hud.GetComponentsInChildren<Button>().First(b => b.name == "SkipTrainingLesson"));
+                until = Time.realtimeSinceStartup + 130;
+                while ((SceneManager.GetActiveScene().name != SceneFlow.MatchSetup || UI.Hub.HubLoading.Visible) && Time.realtimeSinceStartup < until)
+                    yield return null;
+                Assert.AreEqual(SceneFlow.MatchSetup, SceneManager.GetActiveScene().name);
+                Assert.IsFalse(UI.Hub.HubLoading.Visible);
+                Assert.IsNotNull(UI.Hub.TumpHub.Current);
+                Assert.IsFalse(GameLaunch.GuidedTutorial);
+                Assert.IsFalse(GameServices.Match.MatchInProgress);
+            }
+            finally { GameLaunch.GuidedTutorial = training; }
+        }
+
         [UnityTest, Timeout(60000)]
         public IEnumerator XeluControlsRenderThroughTheRealTrainingKeyRow()
         {
@@ -98,8 +132,8 @@ namespace TumbangPreso.PlayTests
                 yield return TumpUiCapture.Capture("TrainingSidebar-complete",canvas,1280,720,false,true,checkActionBounds:true);
                 Press(hud.GetComponentsInChildren<Button>().First(b=>b.name=="QuitTraining"));
                 until=Time.realtimeSinceStartup+10;
-                while(SceneManager.GetActiveScene().name!=SceneFlow.MainMenu && Time.realtimeSinceStartup<until)yield return null;
-                Assert.AreEqual(SceneFlow.MainMenu,SceneManager.GetActiveScene().name);Assert.False(GameLaunch.GuidedTutorial);
+                while(SceneManager.GetActiveScene().name!=SceneFlow.MatchSetup && Time.realtimeSinceStartup<until)yield return null;
+                Assert.AreEqual(SceneFlow.MatchSetup,SceneManager.GetActiveScene().name);Assert.False(GameLaunch.GuidedTutorial);
             }
             finally{GameLaunch.GuidedTutorial=training;SceneFlow.Networked=networked;}
         }
