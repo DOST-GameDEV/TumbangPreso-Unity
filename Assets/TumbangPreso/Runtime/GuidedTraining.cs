@@ -216,7 +216,7 @@ namespace TumbangPreso
 
             if (_advancing) return;
 
-            if (keyboard != null && keyboard.nKey.wasPressedThisFrame)
+            if (keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame))
             {
                 CompleteLesson();
                 return;
@@ -1552,7 +1552,7 @@ namespace TumbangPreso
         /// tutorial chrome, not gameplay verbs), so the binding cannot be asked for its label the
         /// way `Hud.KeyLabel` asks; naming them once is the next best guarantee.
         /// </summary>
-        private const string SkipKeyLabel = "N";
+        private const string SkipKeyLabel = "ENTER";
 
         private const string QuitKeyLabel = "BACKSPACE";
 
@@ -1600,7 +1600,7 @@ namespace TumbangPreso
                 : $"{lesson + 1:00} / {total:00}";
 
             _title.text = title;
-            if(_ownerSkipLabel!=null)_ownerSkipLabel.text=lesson>=total?"ENTER · FINISH":"N · SKIP LESSON";
+            if(_ownerSkipLabel!=null)_ownerSkipLabel.text=lesson>=total?"FINISH":"SKIP LESSON";
             _body.text = body;
 
             for (int i = 0; i < _pips.Count; i++)

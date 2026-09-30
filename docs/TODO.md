@@ -33,8 +33,10 @@ may be corrected from their current implementations. Incomplete wiki cells are
 not specifications to invent. Scope restrictions supersede cosmetic additions.
 
 - [ ] F0930-01 Tutorial: latest owner-approved revision is IN PROGRESS in the cloud.
-  First update prompt readability, Enter skip and Darumadrop/Xelu footer controls;
-  then reconcile the20-lesson route, observed objectives and post-completion range.
+  Prompt readability, Enter skip and Darumadrop/Xelu footer controls now pass the
+  actual-scene native key/layout case with inspected960x540/1600x680captures.
+  [Evidence](reports/feedback-2026-09-30/tutorial-prompts.md). Next reconcile the
+ 20-lesson route, observed objectives and post-completion range.
   Earlier shipped history: prevent Tab-deck overlap; assess real actions, expose per-lesson
   progress and green completion, require three jumps, wait through ultimate playback
   plus 2.5 seconds, remove deprecated mash lesson, and return cleanly on completion.

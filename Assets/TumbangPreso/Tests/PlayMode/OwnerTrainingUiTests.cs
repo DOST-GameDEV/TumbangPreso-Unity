@@ -76,7 +76,8 @@ namespace TumbangPreso.PlayTests
                 hud.SetLesson(0, GuidedTraining.LessonCount, "YOUR CONTROLS", "Your current binding chooses the picture.",
                     "[F]  READY / SHOVE  [RMB]  PICK UP", UiTheme.Offense);
                 yield return null;
-                var glyphs = hud.GetComponentsInChildren<Image>().Where(i => i.sprite != null && i.sprite.name.StartsWith("xelu:")).ToArray();
+                var keyRow = hud.GetComponentsInChildren<RectTransform>().Single(r => r.name == "KeyRow");
+                var glyphs = keyRow.GetComponentsInChildren<Image>().Where(i => i.sprite != null && i.sprite.name.StartsWith("xelu:")).ToArray();
                 Assert.AreEqual(2, glyphs.Length);
                 var pad = OwnerUiLayout.Rect(hud.transform, "PadPromptSamples");
                 OwnerUiLayout.Place(pad, 800, 90, 640, 180);
@@ -137,6 +138,76 @@ namespace TumbangPreso.PlayTests
             }
             finally{GameLaunch.GuidedTutorial=training;SceneFlow.Networked=networked;}
         }
+        [UnityTest, Timeout(180000)]
+        public IEnumerator TutorialUsesReadableGlyphsAndEnterSkip()
+        {
+            bool training = GameLaunch.GuidedTutorial;
+            int mip = QualitySettings.globalTextureMipmapLimit;
+            var input = UnityEngine.InputSystem.InputSystem.settings;
+            var background = input.backgroundBehavior; var editor = input.editorInputBehaviorInPlayMode;
+            input.backgroundBehavior = UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
+            input.editorInputBehaviorInPlayMode = UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keys = UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>();
+            UnityEngine.InputSystem.InputSystem.EnableDevice(keys);
+            QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+                GameLaunch.GuidedTutorial = true;
+                yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
+                var route = Object.FindFirstObjectByType<GuidedTraining>();
+                float until = Time.unscaledTime + 15;
+                while (route == null && Time.unscaledTime < until)
+                { yield return null; route = Object.FindFirstObjectByType<GuidedTraining>(); }
+                Assert.IsNotNull(route);
+                var ready = typeof(GuidedTraining).GetField("_ready", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                while (!(bool)ready.GetValue(route) && Time.unscaledTime < until) yield return null;
+                Assert.IsTrue((bool)ready.GetValue(route));
+                var first = route.CurrentLesson;
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keys,
+                    new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.N));
+                UnityEngine.InputSystem.InputSystem.Update(); route.SendMessage("Update");
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keys, new UnityEngine.InputSystem.LowLevel.KeyboardState());
+                UnityEngine.InputSystem.InputSystem.Update();
+                yield return new WaitForSecondsRealtime(.8f);
+                Assert.AreEqual(first, route.CurrentLesson, "Retired N binding must not skip a lesson.");
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keys,
+                    new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.Enter));
+                UnityEngine.InputSystem.InputSystem.Update(); route.SendMessage("Update");
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keys, new UnityEngine.InputSystem.LowLevel.KeyboardState());
+                UnityEngine.InputSystem.InputSystem.Update();
+                yield return new WaitForSecondsRealtime(.8f);
+                Assert.AreEqual((int)first + 1, (int)route.CurrentLesson, "Enter must advance exactly one lesson.");
+                route.enabled = false;
+                var hud = Object.FindFirstObjectByType<GuidedTrainingHud>();
+                foreach (var name in new[] { "SkipTrainingLesson", "QuitTraining" })
+                {
+                    var action = hud.GetComponentsInChildren<Button>().Single(b => b.name == name);
+                    var label = action.GetComponentInChildren<Text>();
+                    Assert.AreSame(OwnerUiTheme.Current.Display, label.font);
+                    Assert.IsFalse(label.text.Contains("ENTER") || label.text.Contains("BACKSPACE"));
+                    var glyph = action.GetComponentsInChildren<Image>().Single(i => i.sprite != null);
+                    Assert.AreSame(InputGlyphs.For(name == "SkipTrainingLesson" ? "ENTER" : "BACKSPACE", true), glyph.sprite);
+                    Assert.That(glyph.rectTransform.rect.height, Is.GreaterThanOrEqualTo(64));
+                }
+                hud.SetLesson(1, GuidedTraining.LessonCount, "MOVE AROUND", "Move around the arena.", "[W] [A] [S] [D] MOVE", UiTheme.Offense);
+                yield return null;
+                var row = hud.GetComponentsInChildren<RectTransform>().Single(r => r.name == "KeyRow");
+                var prompts = row.GetComponentsInChildren<Image>().Where(i => i.sprite != null).ToArray();
+                Assert.AreEqual(4, prompts.Length);
+                Assert.IsTrue(prompts.All(i => i.rectTransform.rect.height >= 64));
+                foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                    yield return TumpUiCapture.Capture("Feedback0930-training-prompts-" + size.x + "x" + size.y,
+                        hud.GetComponent<Canvas>(), size.x, size.y, false, true, checkActionBounds: true);
+            }
+            finally
+            {
+                UnityEngine.InputSystem.InputSystem.RemoveDevice(keys);
+                input.backgroundBehavior = background; input.editorInputBehaviorInPlayMode = editor;
+                QualitySettings.globalTextureMipmapLimit = mip; GameLaunch.GuidedTutorial = training;
+            }
+        }
+
         private static void Press(Button button)
         {
             Canvas.ForceUpdateCanvases();var rect=(RectTransform)button.transform;

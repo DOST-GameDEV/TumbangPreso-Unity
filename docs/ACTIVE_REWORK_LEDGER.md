@@ -245,3 +245,12 @@ First coherent unit: readable larger key prompts, Enter skip, Darumadrop action
 labels, actual Xelu Enter/Backspace. Then implement the revised lesson route on
 these claimed paths. Preserve current progress/Tab handling and owner ability
 behavior. No changes to local round-break/victory unit or loading. Current jobs:none.
+
+
+Cloud tutorial prompt unit qualified: native actual-scene N/Enter test, real footer
+Xelu/font references and two action-bounds captures pass; both views inspected.
+72-unit keycaps replace42-unit caps. First fixture needed asynchronous installer
+wait; repaired baseline proves oldNskip. Cold final memory stop, one warm final
+pass, no new OOM. No broader tutorial-completion claim. All3tutorial paths remain
+claimed here for the owner-approved20-lesson flow and completion practice range.
+No Unity job active. Existing full-map cloud material artifact remains separate.

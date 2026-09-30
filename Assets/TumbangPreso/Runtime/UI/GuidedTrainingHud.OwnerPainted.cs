@@ -56,7 +56,7 @@ namespace TumbangPreso
             _body=OwnerUiLayout.Text(card,"LessonBody","",30);_body.color=TrainingInk;
             _body.alignment=TextAnchor.UpperLeft;_body.verticalOverflow=VerticalWrapMode.Overflow;
             _body.gameObject.AddComponent<LayoutElement>().minHeight=32;
-            _keyRow=OwnerRow(card,"KeyRow",43);var keys=_keyRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            _keyRow=OwnerRow(card,"KeyRow",72);var keys=_keyRow.gameObject.AddComponent<HorizontalLayoutGroup>();
             keys.childControlHeight=keys.childControlWidth=true;keys.childForceExpandHeight=keys.childForceExpandWidth=false;keys.spacing=9;
             var progress=OwnerRow(card,"ProgressBack",10).gameObject.AddComponent<Image>();progress.color=TrainingTrack;progress.raycastTarget=false;
             _fill=OwnerUiLayout.Rect(progress.transform,"ProgressFill").gameObject.AddComponent<Image>();
@@ -67,13 +67,25 @@ namespace TumbangPreso
             _complete.rectTransform.anchorMin=_complete.rectTransform.anchorMax=_complete.rectTransform.pivot=new Vector2(.5f,.5f);
             _complete.rectTransform.anchoredPosition=new Vector2(0,150);_complete.rectTransform.sizeDelta=new Vector2(790,85);_complete.enabled=false;
             var outline=_complete.gameObject.AddComponent<Outline>();outline.effectColor=UiTheme.InGameOutline;outline.effectDistance=new Vector2(2,-2);
-            var footer=OwnerRow(card,"RouteControls",58);
+            var footer=OwnerRow(card,"RouteControls",76);
             var training=GetComponentInParent<GuidedTraining>();
-            var skip=OwnerTextAction.Create(footer,"SkipTrainingLesson","N · SKIP LESSON",()=>training?.SkipFromUi(),0,0,300,58,30);
+            var skip=TrainingAction(footer,"SkipTrainingLesson","SKIP LESSON","ENTER",()=>training?.SkipFromUi(),0,300);
             _ownerSkipLabel=skip.GetComponentInChildren<Text>();_ownerSkipLabel.color=TrainingCurrent;
-            var quit=OwnerTextAction.Create(footer,"QuitTraining","BACKSPACE · QUIT",()=>training?.QuitFromUi(),320,0,318,58,30);quit.GetComponentInChildren<Text>().color=TrainingMuted;
+            var quit=TrainingAction(footer,"QuitTraining","QUIT","BACKSPACE",()=>training?.QuitFromUi(),320,318);
+            quit.GetComponentInChildren<Text>().color=TrainingMuted;
             HudReadingLayout.Watch(card);
             HudReadingLayout.Watch(_complete.rectTransform);
+        }
+        private static OwnerTextAction TrainingAction(Transform parent,string name,string words,string key,
+            System.Action callback,float x,float width)
+        {
+            var action=OwnerTextAction.Create(parent,name,words,callback,x,0,width,76,30);
+            var label=action.GetComponentInChildren<Text>();label.font=OwnerUiTheme.Current.Display;
+            label.alignment=TextAnchor.MiddleLeft;
+            OwnerUiLayout.Place(label.rectTransform,88,0,width-96,76);
+            KeyCap(action.transform,key);
+            OwnerUiLayout.Place((RectTransform)action.transform.Find("Key_"+key),8,2,72,72);
+            return action;
         }
         private static RectTransform OwnerRow(Transform parent,string name,float height)
         {
@@ -87,17 +99,17 @@ namespace TumbangPreso
             if(sprite!=null)
             {
                 var image=root.gameObject.AddComponent<Image>();image.sprite=sprite;image.preserveAspect=true;image.raycastTarget=false;
-                layout.preferredWidth=layout.preferredHeight=42;return;
+                layout.preferredWidth=layout.preferredHeight=72;return;
             }
             var face=root.gameObject.AddComponent<Image>();face.color=TrainingTrack;face.raycastTarget=false;
             var text=OwnerUiLayout.Text(root,"Cap",key,30,OwnerUiLayout.TypeRole.Display);text.alignment=TextAnchor.MiddleCenter;text.color=TrainingInk;
-            OwnerUiLayout.Fill(text.rectTransform);layout.preferredWidth=Mathf.Max(42,text.preferredWidth+20);layout.preferredHeight=42;
+            OwnerUiLayout.Fill(text.rectTransform);layout.preferredWidth=Mathf.Max(72,text.preferredWidth+20);layout.preferredHeight=72;
         }
         private static void Chip(Transform parent,string words,Color? colour=null)
         {
             var text=OwnerUiLayout.Text(parent,"Words",words,30);text.color=TrainingInk;
             text.horizontalOverflow=HorizontalWrapMode.Overflow;text.alignment=TextAnchor.MiddleCenter;
-            var layout=text.gameObject.AddComponent<LayoutElement>();layout.preferredWidth=text.preferredWidth+10;layout.preferredHeight=42;
+            var layout=text.gameObject.AddComponent<LayoutElement>();layout.preferredWidth=text.preferredWidth+10;layout.preferredHeight=72;
         }
     }
 }
