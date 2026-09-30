@@ -1573,7 +1573,11 @@ namespace TumbangPreso.Net
 
             string flat = text.Replace('\r', ' ').Replace('\n', ' ').Trim();
 
-            return flat.Length <= MaxChatLength ? flat : flat.Substring(0, MaxChatLength);
+            int end = System.Math.Min(flat.Length, MaxChatLength);
+            // The wire/UI bound counts UTF-16 units. uGUI may already have cut
+            // the pair at its characterLimit before this clamp sees the line.
+            if (end > 0 && char.IsHighSurrogate(flat[end - 1])) end--;
+            return end == flat.Length ? flat : flat.Substring(0, end);
         }
 
         public void BeginCountdownClientRpc()

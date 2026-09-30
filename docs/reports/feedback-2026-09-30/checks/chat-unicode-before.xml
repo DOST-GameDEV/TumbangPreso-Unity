@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 09:22:36Z" end-time="2026-09-30 09:22:36Z" duration="0.0946162">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="669" result="Failed" site="Child" start-time="2026-09-30 09:22:36Z" end-time="2026-09-30 09:22:36Z" duration="0.094616" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1780" name="TumbangPreso.Tests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="669" result="Failed" site="Child" start-time="2026-09-30 09:22:36Z" end-time="2026-09-30 09:22:36Z" duration="0.086203" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="76812" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1781" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="669" result="Failed" site="Child" start-time="2026-09-30 09:22:36Z" end-time="2026-09-30 09:22:36Z" duration="0.084829" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1782" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="669" result="Failed" site="Child" start-time="2026-09-30 09:22:36Z" end-time="2026-09-30 09:22:36Z" duration="0.083701" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1082" name="ChatAndLobbyChromeTests" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-09-30 09:22:36Z" end-time="2026-09-30 09:22:36Z" duration="0.043970" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1085" name="AChatLineCannotBeMadeTallWithNewlines" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.AChatLineCannotBeMadeTallWithNewlines" methodname="AChatLineCannotBeMadeTallWithNewlines" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="1517880642" result="Passed" start-time="2026-09-30 09:22:36Z" end-time="2026-09-30 09:22:36Z" duration="0.012338" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1084" name="AChatLineIsCutToTheLengthTheHostWillRelay" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.AChatLineIsCutToTheLengthTheHostWillRelay" methodname="AChatLineIsCutToTheLengthTheHostWillRelay" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="838839563" result="Passed" start-time="2026-09-30 09:22:36Z" end-time="2026-09-30 09:22:36Z" duration="0.005444" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1089" name="AnEmptyOrWhitespaceChatLineIsNothing" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.AnEmptyOrWhitespaceChatLineIsNothing" methodname="AnEmptyOrWhitespaceChatLineIsNothing" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="1546914297" result="Passed" start-time="2026-09-30 09:22:36Z" end-time="2026-09-30 09:22:36Z" duration="0.000304" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1088" name="ChatLengthBoundaryKeepsWholeUnicodeCharacters" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ChatLengthBoundaryKeepsWholeUnicodeCharacters" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-30 09:22:36Z" end-time="2026-09-30 09:22:36Z" duration="0.012001" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1086" name="ChatLengthBoundaryKeepsWholeUnicodeCharacters(118)" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ChatLengthBoundaryKeepsWholeUnicodeCharacters(118)" methodname="ChatLengthBoundaryKeepsWholeUnicodeCharacters" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="537346156" result="Passed" start-time="2026-09-30 09:22:36Z" end-time="2026-09-30 09:22:36Z" duration="0.004539" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1087" name="ChatLengthBoundaryKeepsWholeUnicodeCharacters(119)" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ChatLengthBoundaryKeepsWholeUnicodeCharacters(119)" methodname="ChatLengthBoundaryKeepsWholeUnicodeCharacters" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="667175909" result="Failed" start-time="2026-09-30 09:22:36Z" end-time="2026-09-30 09:22:36Z" duration="0.004608" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The length cap must not create an unmatched surrogate from a valid message.
+  Expected: No Exception to be thrown
+  But was:  <System.Text.EncoderFallbackException: Unable to translate Unicode character \\uD83D at index 119 to specified code page.
+  at System.Text.EncoderExceptionFallbackBuffer.Fallback (System.Char charUnknown, System.Int32 index) [0x0001d] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Text.EncoderFallbackBuffer.InternalFallback (System.Char ch, System.Char*& chars) [0x000dd] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Text.UTF8Encoding.GetByteCount (System.Char* chars, System.Int32 count, System.Text.EncoderNLS baseEncoder) [0x001a9] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Text.UTF8Encoding.GetByteCount (System.String chars) [0x00026] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.Tests.ChatAndLobbyChromeTests+<>c__DisplayClass3_0.<ChatLengthBoundaryKeepsWholeUnicodeCharacters>b__0 () [0x00000] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs:135 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ChatAndLobbyChromeTests.ChatLengthBoundaryKeepsWholeUnicodeCharacters (System.Int32 prefixLength) [0x0002c] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs:135
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

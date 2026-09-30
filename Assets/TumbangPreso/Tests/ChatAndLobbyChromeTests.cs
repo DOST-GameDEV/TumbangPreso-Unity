@@ -126,6 +126,36 @@ namespace TumbangPreso.Tests
             StringAssert.Contains("four", clamped);
         }
 
+        [TestCase(118), TestCase(119)]
+        public void ChatLengthBoundaryKeepsWholeUnicodeCharacters(int prefixLength)
+        {
+            string prefix = new string('x', prefixLength);
+            string face = "\uD83D\uDE42";
+            string clamped = MatchRpc.ClampChatLine(prefix + face + "extra");
+            Assert.DoesNotThrow(() => new UTF8Encoding(false, true).GetByteCount(clamped),
+                "The length cap must not create an unmatched surrogate from a valid message.");
+            Assert.AreEqual(prefixLength == 118 ? prefix + face : prefix, clamped);
+            Assert.LessOrEqual(clamped.Length, MatchRpc.MaxChatLength);
+        }
+
+        [Test]
+        public void ChatFieldPreclippingCannotSendHalfAnEmoji()
+        {
+            var go = new GameObject("Chat boundary field", typeof(RectTransform));
+            try
+            {
+                var field = go.AddComponent<UnityEngine.UI.InputField>();
+                field.characterLimit = MatchRpc.MaxChatLength;
+                string prefix = new string('x', MatchRpc.MaxChatLength - 1);
+                field.text = prefix + "\uD83D\uDE42";
+                Assert.LessOrEqual(field.text.Length, MatchRpc.MaxChatLength);
+                string clamped = MatchRpc.ClampChatLine(field.text);
+                Assert.DoesNotThrow(() => new UTF8Encoding(false, true).GetByteCount(clamped));
+                Assert.AreEqual(prefix, clamped);
+            }
+            finally { Object.DestroyImmediate(go); }
+        }
+
         [Test]
         public void AnEmptyOrWhitespaceChatLineIsNothing()
         {

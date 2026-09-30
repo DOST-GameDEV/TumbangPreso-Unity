@@ -138,6 +138,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   authorized later; preserve loading as an outstanding contributor-owned requirement.
 - [ ] F0930-20 Continue focused network, bots, optimization, flow bugs and applicable
   existing TODO requirements after feedback, with actual behavior evidence.
+- [x] F0930-30 Chat Unicode boundary: preserve complete UTF-16 pairs at the120-unit
+  cap, including text already clipped by the real uGUI field. Original malformed
+  result reproduced; six native boundary/field/existing-contract cases pass.
+  Feedback-row addition awaits Doc access; peers/font rendering are not qualified.
+  [Evidence](reports/feedback-2026-09-30/chat-unicode-boundary.md).
 - [x] F0930-29 Bot tag commitment: an already-held lunge no longer gets released
   accidentally alongside a punch when the target enters close range. Fresh nearby
   targets still get an immediate punch. Native baseline reproduces two cooldowns;

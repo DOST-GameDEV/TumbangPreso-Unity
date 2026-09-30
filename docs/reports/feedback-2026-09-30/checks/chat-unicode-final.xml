@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 09:26:31Z" end-time="2026-09-30 09:26:32Z" duration="0.2541061">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="670" result="Passed" start-time="2026-09-30 09:26:31Z" end-time="2026-09-30 09:26:32Z" duration="0.254106" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1781" name="TumbangPreso.Tests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="670" result="Passed" start-time="2026-09-30 09:26:31Z" end-time="2026-09-30 09:26:32Z" duration="0.233601" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="78252" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1782" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="670" result="Passed" start-time="2026-09-30 09:26:31Z" end-time="2026-09-30 09:26:32Z" duration="0.232355" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1783" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="670" result="Passed" start-time="2026-09-30 09:26:31Z" end-time="2026-09-30 09:26:32Z" duration="0.231252" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1082" name="ChatAndLobbyChromeTests" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-09-30 09:26:32Z" end-time="2026-09-30 09:26:32Z" duration="0.156563" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1085" name="AChatLineCannotBeMadeTallWithNewlines" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.AChatLineCannotBeMadeTallWithNewlines" methodname="AChatLineCannotBeMadeTallWithNewlines" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="1216985869" result="Passed" start-time="2026-09-30 09:26:32Z" end-time="2026-09-30 09:26:32Z" duration="0.020696" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1084" name="AChatLineIsCutToTheLengthTheHostWillRelay" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.AChatLineIsCutToTheLengthTheHostWillRelay" methodname="AChatLineIsCutToTheLengthTheHostWillRelay" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="402393055" result="Passed" start-time="2026-09-30 09:26:32Z" end-time="2026-09-30 09:26:32Z" duration="0.007487" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1090" name="AnEmptyOrWhitespaceChatLineIsNothing" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.AnEmptyOrWhitespaceChatLineIsNothing" methodname="AnEmptyOrWhitespaceChatLineIsNothing" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="1120660410" result="Passed" start-time="2026-09-30 09:26:32Z" end-time="2026-09-30 09:26:32Z" duration="0.000345" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1089" name="ChatFieldPreclippingCannotSendHalfAnEmoji" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ChatFieldPreclippingCannotSendHalfAnEmoji" methodname="ChatFieldPreclippingCannotSendHalfAnEmoji" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="167943909" result="Passed" start-time="2026-09-30 09:26:32Z" end-time="2026-09-30 09:26:32Z" duration="0.067552" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1088" name="ChatLengthBoundaryKeepsWholeUnicodeCharacters" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ChatLengthBoundaryKeepsWholeUnicodeCharacters" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 09:26:32Z" end-time="2026-09-30 09:26:32Z" duration="0.027690" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1086" name="ChatLengthBoundaryKeepsWholeUnicodeCharacters(118)" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ChatLengthBoundaryKeepsWholeUnicodeCharacters(118)" methodname="ChatLengthBoundaryKeepsWholeUnicodeCharacters" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="134433079" result="Passed" start-time="2026-09-30 09:26:32Z" end-time="2026-09-30 09:26:32Z" duration="0.005096" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1087" name="ChatLengthBoundaryKeepsWholeUnicodeCharacters(119)" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ChatLengthBoundaryKeepsWholeUnicodeCharacters(119)" methodname="ChatLengthBoundaryKeepsWholeUnicodeCharacters" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="959841208" result="Passed" start-time="2026-09-30 09:26:32Z" end-time="2026-09-30 09:26:32Z" duration="0.000296" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -450,3 +450,11 @@ ClampChatLine only and ChatAndLobbyChromeTests.cs Unicode boundary cases, plus
 focused report/TODO/ledger notes. A120-code-unit substring can split an emoji's
 surrogate pair. Prove the current behavior with the actual clamp and strict UTF-8
 encoding before editing runtime. No UI redesign, identity, wire-layout or kit work.
+
+Chat Unicode failure reproduced:119ordinary characters plus an emoji became an
+unmatched high surrogate at the120-unit cap. Final clamp also repairs the boundary
+when uGUI's real InputField clipped it first. Six native EditMode cases pass,
+including the field and unchanged length/newline/empty contracts; no peer/font
+claim. No heavy cloud job running. Publish explicit clamp/test/report paths and
+verify remote. Doc-row additions for bot/chat still await the pending permission
+answer; existing rows are preserved and no blocked route was bypassed.
