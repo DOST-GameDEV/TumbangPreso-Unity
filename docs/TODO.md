@@ -171,7 +171,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Remaining Fetch eligibility, Catch and Haunt reconciliation stays open.
 - [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
-  Lighting rename/default request is protected by the latest no-lighting restriction.
+  Lighting rename/default/order reconciled with already-shipped BUGS-0926.5:
+  current native2/2passes preserve old choices, default Standard, Nostalgic second,
+  live switch and discard. No lighting redesign or second implementation.
+  [Lighting evidence](reports/feedback-2026-09-30/lighting.md).
   Native Period-key title entry, Escape opening/closing the menu with the same
   actual background texture, and top-down stamina mesh depletion pass. The actual
   IN QUEUE button cancels/restarts both casual modes in a focused native case.

@@ -1310,3 +1310,14 @@ Retain that partial receipt and original1passed14.56s runtime contract; no runti
 changed. Publish bounded witness addition/evidence and reconcile same Feedback row.
 No further fixture retries. Lighting names/order/default already exist; next two
 focused existing native checks, no visual redesign or duplicated implementation.
+Concurrent remote a7d36881 integrated without conflicts; preserves authored
+bot-hop8a84ebb1 producer buffer and its Windows native baseline/final evidence.
+No overlap with beam/runtime presentation. Beam evidence belongs to pre-merge
+candidate; do not imply a new integrated player. Next lighting qualification
+claims evidence/docs only. Existing Standard/Nostalgic source, legacy migration
+and cards are already shipped; run two focused native checks, no source redesign.
+Lighting existing implementation2/2passes10.39s, legacy/current picks, real world
+switch/restore, current cards and dirty/discard. Captures inspected at1600x680 and
+both map looks, no guard stop/OOM. Publish evidence/docs only, same Lighting row
+Done after remote verification. No lighting values/assets changed. Next integrated
+player refresh and actual first-person barrier review before broader manual play.
