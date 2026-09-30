@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 05:14:59Z" end-time="2026-09-30 05:14:59Z" duration="0.2830164">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="663" result="Passed" start-time="2026-09-30 05:14:59Z" end-time="2026-09-30 05:14:59Z" duration="0.283016" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1772" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="663" result="Passed" start-time="2026-09-30 05:14:59Z" end-time="2026-09-30 05:14:59Z" duration="0.269343" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4528" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1773" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="663" result="Passed" start-time="2026-09-30 05:14:59Z" end-time="2026-09-30 05:14:59Z" duration="0.265192" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1774" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="663" result="Passed" start-time="2026-09-30 05:14:59Z" end-time="2026-09-30 05:14:59Z" duration="0.260879" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1237" name="InputGlyphTests" fullname="TumbangPreso.Tests.InputGlyphTests" classname="TumbangPreso.Tests.InputGlyphTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-30 05:14:59Z" end-time="2026-09-30 05:14:59Z" duration="0.205111" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1244" name="EveryTableEntryResolvesToASpriteOnBothGrounds" fullname="TumbangPreso.Tests.InputGlyphTests.EveryTableEntryResolvesToASpriteOnBothGrounds" methodname="EveryTableEntryResolvesToASpriteOnBothGrounds" classname="TumbangPreso.Tests.InputGlyphTests" runstate="Runnable" seed="319517653" result="Passed" start-time="2026-09-30 05:14:59Z" end-time="2026-09-30 05:14:59Z" duration="0.164335" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1242" name="XeluControllerFamiliesKeepTheirActualButtonNames" fullname="TumbangPreso.Tests.InputGlyphTests.XeluControllerFamiliesKeepTheirActualButtonNames" methodname="XeluControllerFamiliesKeepTheirActualButtonNames" classname="TumbangPreso.Tests.InputGlyphTests" runstate="Runnable" seed="280421510" result="Passed" start-time="2026-09-30 05:14:59Z" end-time="2026-09-30 05:14:59Z" duration="0.005915" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1241" name="XeluPromptsUseWholeSuppliedImagesOnBothGrounds" fullname="TumbangPreso.Tests.InputGlyphTests.XeluPromptsUseWholeSuppliedImagesOnBothGrounds" classname="TumbangPreso.Tests.InputGlyphTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-30 05:14:59Z" end-time="2026-09-30 05:14:59Z" duration="0.016686" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1238" name="XeluPromptsUseWholeSuppliedImagesOnBothGrounds(&quot;F&quot;)" fullname="TumbangPreso.Tests.InputGlyphTests.XeluPromptsUseWholeSuppliedImagesOnBothGrounds(&quot;F&quot;)" methodname="XeluPromptsUseWholeSuppliedImagesOnBothGrounds" classname="TumbangPreso.Tests.InputGlyphTests" runstate="Runnable" seed="563112994" result="Passed" start-time="2026-09-30 05:14:59Z" end-time="2026-09-30 05:14:59Z" duration="0.008366" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1239" name="XeluPromptsUseWholeSuppliedImagesOnBothGrounds(&quot;RMB&quot;)" fullname="TumbangPreso.Tests.InputGlyphTests.XeluPromptsUseWholeSuppliedImagesOnBothGrounds(&quot;RMB&quot;)" methodname="XeluPromptsUseWholeSuppliedImagesOnBothGrounds" classname="TumbangPreso.Tests.InputGlyphTests" runstate="Runnable" seed="1546833425" result="Passed" start-time="2026-09-30 05:14:59Z" end-time="2026-09-30 05:14:59Z" duration="0.000553" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1240" name="XeluPromptsUseWholeSuppliedImagesOnBothGrounds(&quot;LEFT SHIFT&quot;)" fullname="TumbangPreso.Tests.InputGlyphTests.XeluPromptsUseWholeSuppliedImagesOnBothGrounds(&quot;LEFT SHIFT&quot;)" methodname="XeluPromptsUseWholeSuppliedImagesOnBothGrounds" classname="TumbangPreso.Tests.InputGlyphTests" runstate="Runnable" seed="1217520465" result="Passed" start-time="2026-09-30 05:14:59Z" end-time="2026-09-30 05:14:59Z" duration="0.000400" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

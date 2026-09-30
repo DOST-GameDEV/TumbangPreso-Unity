@@ -62,15 +62,23 @@ both modes. Protocol96 requires matching builds. Its Feedback row is updated;
 landing-circle replacement and clearer charge feedback remain open. Charge and
 NetSession compatibility paths are released.
 
-Diddler reservation: Practice popup's Tutorial card is visually highlighted on
-opening without pointer hover. Separate this popup's automatic focus from real
-pointer/keyboard/pad attention, preserving navigation selection and all actions.
-Owned paths:
-- Assets/TumbangPreso/Runtime/UI/Hub/HubButton.cs (opt-in attention presentation only)
-- Assets/TumbangPreso/Runtime/UI/Hub/HubModeSelect.cs (Practice card opt-in only)
-- Assets/TumbangPreso/Tests/PlayMode/PracticeAttentionTests.cs and its .meta
-- docs/reports/feedback-2026-09-30/practice-attention.md
-- docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue and evidence only)
+Practice attention correction ae7a4aa8 is validated:8 native attention cases and
+an additional1/1 actual-popup capture check after incoming181015d3 integration.
+Both window shapes were inspected; automatic Tutorial selection stays visually
+neutral until pointer/navigation attention. Incoming glyph/loading code is intact.
+Practice paths are released after this integration is published. No job is running.
+
+Owner-requested Feedback table extension now includes Human verified between
+Done and Bug or feedback. All43 current report rows have unchecked native human
+checkboxes; only the owner/testers confirm those after playing. The header width
+was repaired after the owner's screenshot showed mid-word wrapping. Existing
+Done controls, reports, screenshots and hidden IDs were preserved. The tab's wide
+layout exceeds portrait PDF width; the requested new header/control column was
+visually checked, not a claim that the entire wiki is print-ready.
+
+Next independent unit: the owner's new Feedback clarification asks for continuous
+recorded motion throughout the approximately3-second caught replay, not a short
+clip held still. Read current ownership before claiming camera/history paths.
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.
@@ -161,9 +169,24 @@ The merged native candidate passes default collision and legacy override checks
 unit is being committed/pushed; no previous tutorial checks were repeated.
 
 Next local reservation after input shipping: Runtime/UI/InputGlyphs.cs,
-Tests/InputGlyphTests.cs, new Resources/UI/input/xelu prompt textures/metadata and
+Runtime/UI/TumpPowerReadout.OwnerDeck.cs (binding pictures only),
+Tests/InputGlyphTests.cs, Tests/PlayMode/OwnerTrainingUiTests.cs (prompt display case),
+Editor/InputGlyphImport.cs (xelu-only import filtering), new Resources/UI/input/xelu prompt textures/metadata and
 docs/Asset_Sourcing.md. Import only needed CC0 Xelu keyboard/mouse/pad prompts,
 preserving fallback labels and device families. Loading stays friend-owned.
+
+Current local Xelu edits: 198 original supplied PNGs copied unchanged (437,359 bytes
+on disk), valid unique 32-hex metadata, whole-image caching and correct Xbox/PS
+label resolution. Light/dark keyboard variants follow the background; absent wheel
+variants retain the existing fallback. Bilinear filtering is scoped only to xelu.
+Native import/family/cache/fallback checks pass 5/5. The actual training/live-HUD
+display case passes; 960x540/1600x680 captures were inspected. The Xelu unit is
+being shipped. No broad suite or unchanged input/tutorial checks were repeated.
+
+Next local unit: F0930-07 general defender lunge, not hero abilities. Review the
+current 1-metre dash and derived bot/network reach before choosing a longer safe
+travel target. Candidate target 3 metres preserves the existing 0.45-second active
+window and 28m/s movement-budget margin. Do not edit ability, loading or map lanes.
 
 Rematches now allocate a fresh host world identity before reload, adopt a matching
 previous/next pair on clients, scope votes/tallies and acknowledge seated voters.

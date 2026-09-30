@@ -75,3 +75,24 @@ or previous tutorial checks were repeated; physical hardware remains unqualified
 - [EditMode results](checks/input-edit.xml)
 - [PlayMode results](checks/input-play.xml)
 - [Frozen merged inputs](checks/input-inputs.json)
+
+## Xelu Control Prompts
+
+198 unchanged CC0 PNGs from the requested pack now resolve through the shared
+InputGlyphs path. Keyboard/mouse light and dark variants follow their background;
+Xbox and PlayStation keep actual button names. The live power HUD now draws the
+keyboard images as well as pad images. Existing wheel/text fallback, pad bridge and
+touch routes remain. Smooth filtering is scoped to the new folder; source pixels,
+models, animation, VFX/SFX, maps and loading code were not authored or replaced.
+
+Five native EditMode import/family/cache/fallback cases pass in 0.2830164 seconds.
+The final actual training/live-HUD display case passes 1/1 in 6.4825893 seconds;
+960x540 and 1600x680 captures were inspected. Named profiles and shared Editor input
+preferences were restored. Hardware certification and player performance are not
+claimed from these UI checks.
+
+- [Native import results](checks/xelu-edit.xml)
+- [Native HUD/display result](checks/xelu-hud.xml)
+- [Frozen source inputs](checks/xelu-inputs.json)
+- [Control display at 960x540](Xelu-controls-960x540.png)
+- [Control display at 1600x680](Xelu-controls-1600x680.png)

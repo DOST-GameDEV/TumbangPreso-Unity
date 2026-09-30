@@ -26,6 +26,35 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class InputGlyphTests
     {
+        [TestCase("F")]
+        [TestCase("RMB")]
+        [TestCase("LEFT SHIFT")]
+        public void XeluPromptsUseWholeSuppliedImagesOnBothGrounds(string label)
+        {
+            var dark = InputGlyphs.For(label, true);
+            var light = InputGlyphs.For(label, false);
+            Assert.IsNotNull(dark); Assert.IsNotNull(light);
+            StringAssert.StartsWith("xelu:", dark.name);
+            StringAssert.StartsWith("xelu:", light.name);
+            Assert.AreNotSame(dark.texture, light.texture);
+            Assert.AreEqual(dark.texture.width, dark.rect.width);
+            Assert.AreEqual(dark.texture.height, dark.rect.height);
+            Assert.AreEqual(FilterMode.Bilinear, dark.texture.filterMode);
+            Assert.AreSame(dark, InputGlyphs.For(label, true), "An unchanged control rebuilt its sprite.");
+        }
+
+        [Test]
+        public void XeluControllerFamiliesKeepTheirActualButtonNames()
+        {
+            var xbox = InputGlyphs.For("BUTTON SOUTH", true, InputGlyphs.PadFamily.Xbox);
+            var ps = InputGlyphs.For("BUTTON SOUTH", true, InputGlyphs.PadFamily.PlayStation);
+            StringAssert.Contains("XboxSeriesX_A", xbox.name);
+            StringAssert.Contains("PS5_Cross", ps.name);
+            Assert.AreNotSame(xbox.texture, ps.texture);
+            Assert.IsNotNull(InputGlyphs.For("WHEEL UP", true), "Missing pack variants must retain the established fallback.");
+            Assert.IsNull(InputGlyphs.For("NOT A REAL CONTROL", true));
+        }
+
         private static InputActionAsset Asset()
         {
             var asset = Resources.Load<InputActionAsset>("TumbangPreso");

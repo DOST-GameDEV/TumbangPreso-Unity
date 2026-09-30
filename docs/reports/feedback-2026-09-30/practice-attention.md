@@ -48,3 +48,15 @@ certification. No full player build or blanket front-end validation is claimed.
 - Practice-auto-960x540.png: SHA-256 1245cb912e710220261bbe04eb1e2b2ec98af514e100ac1d8b3e7d1041a39ae5
 - Practice-auto-1600x680.png: SHA-256 c901b22b08a9ab7ae6b1cf6b97296f22308308cd246d7d32f71a312a44da2b16
 - Practice-hover-960x540.png: SHA-256 67ab7176e1e8e85180d2dc577bbaafe3e8d07af4b2580a0b98f2980f6786ae2c
+
+## Incoming integration
+
+The automatic merge with181015d3 preserves its input glyph and loading paths
+byte-for-byte. The actual-popup visual case passes1/1 on that combined candidate,
+with both unhovered window shapes inspected again. All frozen code and PNG inputs
+are unchanged;198 newly imported Xelu metadata files have whitespace-only Unity
+serialization differences, retained only in the isolated validation checkout.
+This is Practice integration evidence, not a loading-performance qualification.
+
+- integration.xml: SHA-256 7f4814d09d1b89698b344b118ffdb8cfd569d913a1f4a8abd840852ed6fba362
+- integration-inputs.json: SHA-256 8e169ebc61d9bce1451e7d0943ea14e180fbe6d2a8ff177cfae222f8b00d04a0
