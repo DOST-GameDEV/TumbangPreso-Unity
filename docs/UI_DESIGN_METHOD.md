@@ -52,3 +52,12 @@ builds without entering; the owner must hide its root-level canvas until opening
 Reused controls refresh from range state, and each gameplay setter rechecks the
 offline gate. Choice popups own nested Back through `ScreenTakeover`.
 [Current evidence and remaining native checks](reports/stability-2026-09-27/practice-range.md).
+
+## Offline Match Menu
+
+Esc/menu pauses offline simulation and retains that pause through nested Settings.
+Resume, repeated closes and destruction restore the prior requested speed unless
+scene exit already selected another rate. Online matches continue running. The
+notice reflects the current mode. Menu animation/navigation remain unscaled, and
+hitstop may not unpause a stopped clock. Human play confirmation remains separate
+from native menu/clock checks.

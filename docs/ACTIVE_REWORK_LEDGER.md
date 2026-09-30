@@ -87,8 +87,12 @@ Owned paths:
 - docs/UI_DESIGN_METHOD.md, docs/TODO.md, docs/ACTIVE_REWORK_LEDGER.md
 - docs/reports/feedback-2026-09-30/offline-menu-pause.md
 
-No code has been edited yet. Current code deliberately leaves every menu live;
-verify the offline lifecycle before applying the owner's revised behavior.
+Correction is complete:6/6 native menu/clock/physics cases pass, including actual
+synthetic Escape, Resume, nested Settings, repeated opening, hitstop and teardown.
+Source inputs are unchanged; one root-canvas fixture lookup repair is documented.
+No native job remains. Commit, fetch, integrate if needed, push and verify remote
+before reporting shipped or updating the Feedback resolution. Reservation releases
+with verified publication; no actual peers or full player build are claimed.
 Continuous-motion caught replay remains the next independent request, unclaimed.
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
