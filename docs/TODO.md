@@ -107,7 +107,12 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Full ordinary charge is1.25 seconds instead of2.5 in both modes;8 native carrier
   timing/release/observed-state cases pass. Protocol96 requires matching builds.
   [Evidence](reports/feedback-2026-09-30/throw-charge-duration.md).
-  Landing-circle replacement and clearer charge feedback remain open.
+  The trajectory line is replaced with a local ground circle. Native real flight
+  comparisons cover flat, raised/curved and banked throws; legal charge/render/
+  release passes with an inspected capture. Shared support query measures zero
+  warm allocations and retains a dense-geometry fallback.
+  [Circle evidence](reports/feedback-2026-09-30/landing-circle.md).
+  Clearer charge feedback remains open; the parent requirement is not complete.
 - [ ] F0930-19 FRIEND RESERVED (owner 2026-09-30): loading work is assigned to the
   owner's friend. This agent must not edit loading paths. Other optimization remains
   authorized later; preserve loading as an outstanding contributor-owned requirement.

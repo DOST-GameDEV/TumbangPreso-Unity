@@ -5,9 +5,9 @@ using UnityEngine;
 namespace TumbangPreso
 {
     /// <summary>
-    /// A local directional guide, not an exact landing solution. Early/moving
-    /// holds show a short nominal path; settled holds show more of it. Actual
-    /// flight keeps bounded angular error and signed Pektus. No landing marker.
+    /// Local landing-circle UI for the current throw. Real gravity, signed curve,
+    /// world banks and supporting floor are predicted without changing gameplay.
+    /// Moving players, can impacts and later ability effects may still intercept it.
     /// </summary>
     [DefaultExecutionOrder(900)]
     public sealed class TrajectoryPreview : MonoBehaviour
@@ -26,6 +26,11 @@ namespace TumbangPreso
         private readonly List<Color> _colours = new List<Color>(Samples * 12);
         private readonly List<int> _tris = new List<int>(Samples * 12);
         private static Material _arcMaterial;
+        private readonly RaycastHit[] _hits = new RaycastHit[64];
+        private float _nextDraw;
+        public Vector3 LandingPoint { get; private set; }
+        public bool LandingVisible => _renderer != null && _renderer.enabled;
+        public const float CircleRadius = .4f;
 
         public static TrajectoryPreview AttachTo(CharacterMotor motor)
         {
@@ -53,6 +58,8 @@ namespace TumbangPreso
         private void LateUpdate()
         {
             if (!ShouldShow()) { Clear(); return; }
+            if (Time.unscaledTime < _nextDraw) return;
+            _nextDraw = Time.unscaledTime + .05f;
             Rebuild();
         }
 
@@ -70,59 +77,99 @@ namespace TumbangPreso
 
         private void Clear()
         {
+            _nextDraw = 0;
             if (_renderer != null) _renderer.enabled = false;
             if (_mesh != null && _mesh.vertexCount > 0) _mesh.Clear();
+        }
+
+        public bool TryPredictLanding(Vector3 origin, Vector3 velocity, float spin, out Vector3 landing)
+        {
+            landing = default;
+            Vector3 point = origin;
+            float dt = Time.fixedDeltaTime;
+            if (dt <= 0 || !float.IsFinite(dt) || !float.IsFinite(spin) || !float.IsFinite(origin.sqrMagnitude) || !float.IsFinite(velocity.sqrMagnitude)) return false;
+            _path.Clear(); _path.Add(point);
+            int banks = 0;
+            int steps = Mathf.Min(1200, Mathf.CeilToInt(Balance.MaxAirborneTime / dt));
+            for (int i = 0; i < steps; i++)
+            {
+                velocity = Slipper.StepFlightVelocity(velocity, spin, dt);
+                Vector3 next = point + velocity * dt;
+                Vector3 disp = next - point;
+                float distance = disp.magnitude;
+                float restitution = Mathf.Abs(spin) >= Balance.PektusBankSpinThreshold && banks == 0
+                    ? Balance.PektusBankRestitution : Balance.BounceRestitution;
+                if (distance > .001f)
+                {
+                    int count = Physics.SphereCastNonAlloc(point, Balance.SlipperHitRadius, disp / distance, _hits, distance, ~0, QueryTriggerInteraction.Ignore);
+                    // A dense collision set cannot safely pick a partial nearest wall.
+                    var hits = _hits;
+                    if (count == hits.Length)
+                    { hits = Physics.SphereCastAll(point, Balance.SlipperHitRadius, disp / distance, distance, ~0, QueryTriggerInteraction.Ignore); count = hits.Length; }
+                    float nearest = float.PositiveInfinity; RaycastHit wall = default;
+                    for (int k = 0; k < count; k++)
+                    {
+                        var h = hits[k]; var collider = h.collider;
+                        if (collider == null || collider.GetComponentInParent<CharacterMotor>() != null
+                            || collider.GetComponentInParent<Lata>() != null || collider.GetComponentInParent<Slipper>() != null
+                            || collider.name.StartsWith("Floor", System.StringComparison.OrdinalIgnoreCase)
+                            || h.distance <= .0001f || Vector3.Dot(h.normal, Vector3.up) > .6f) continue;
+                        if (h.distance < nearest) { nearest = h.distance; wall = h; }
+                    }
+                    if (!float.IsPositiveInfinity(nearest))
+                    {
+                        Vector3 normal = wall.normal; normal.y = 0;
+                        normal = normal.sqrMagnitude > .001f ? normal.normalized : -disp.normalized;
+                        velocity = Vector3.Reflect(velocity, normal) * restitution;
+                        next = wall.point + normal * (Balance.SlipperHitRadius + .02f); banks++;
+                    }
+                }
+                restitution = Mathf.Abs(spin) >= Balance.PektusBankSpinThreshold && banks == 0
+                    ? Balance.PektusBankRestitution : Balance.BounceRestitution;
+                bool bounded = BounceAxis(ref next.x, ref velocity.x, AIController.PlayableMinX, AIController.PlayableMaxX, restitution);
+                bounded |= BounceAxis(ref next.z, ref velocity.z, AIController.PlayableMinZ, AIController.PlayableMaxZ, restitution);
+                float ceiling = AIController.PlayableCeilingY - Balance.SlipperHitRadius;
+                if (next.y > ceiling) { next.y = ceiling; velocity.y = -Mathf.Abs(velocity.y) * restitution; bounded = true; }
+                if (bounded) banks++;
+                var support = next; support.y = Mathf.Max(point.y, next.y);
+                float ground = Slipper.FindGroundY(support, Balance.SlipperRestHeight);
+                _path.Add(next);
+                if (next.y <= ground + Balance.SlipperRestHeight)
+                { landing = new Vector3(next.x, ground + FloorEpsilon, next.z); return true; }
+                if (next.y < Balance.VoidY) return false;
+                point = next;
+            }
+            return false;
+        }
+
+        private static bool BounceAxis(ref float at, ref float velocity, float min, float max, float restitution)
+        {
+            float lo = min + Balance.SlipperHitRadius, hi = max - Balance.SlipperHitRadius;
+            if (hi <= lo) return false;
+            if (at > hi) { at = hi; velocity = -Mathf.Abs(velocity) * restitution; return true; }
+            if (at < lo) { at = lo; velocity = Mathf.Abs(velocity) * restitution; return true; }
+            return false;
         }
 
         private void Rebuild()
         {
             var camera = UnityEngine.Camera.main;
-            if (camera == null) { Clear(); return; }
-            Vector3 point = _carrier.AimGuideOrigin();
-            Vector3 velocity = _carrier.AimGuideVelocityNow();
-            float spin = _carrier.CurrentPektusSpin;
-            float step = _carrier.AimGuideHorizon / Samples;
-            _path.Clear(); _path.Add(point);
-            for (int i = 0; i < Samples; i++)
-            {
-                velocity.y -= Balance.Gravity * step;
-                var flat = new Vector3(velocity.x, 0, velocity.z);
-                if (Mathf.Abs(spin) > .01f && flat.sqrMagnitude > .1f)
-                    velocity += Vector3.Cross(flat.normalized, Vector3.up) * (spin * Balance.PektusCurveStrength * step);
-                Vector3 next = point + velocity * step;
-                // Stop at real scenery, not world y=0: raised courts and the
-                // guideway must not swallow the line or let it pass through them.
-                if (Physics.Linecast(point, next, out var hit, ~0, QueryTriggerInteraction.Ignore)
-                    && !hit.transform.IsChildOf(_motor.transform)
-                    && !hit.transform.IsChildOf(_carrier.Held.transform))
-                {
-                    _path.Add(hit.point + hit.normal * FloorEpsilon);
-                    break;
-                }
-                _path.Add(next); point = next;
-            }
+            if (camera == null || !TryPredictLanding(_carrier.AimGuideOrigin(), _carrier.AimGuideVelocityNow(), _carrier.CurrentPektusSpin, out var landing))
+            { Clear(); return; }
+            LandingPoint = landing;
             _verts.Clear(); _colours.Clear(); _tris.Clear();
             bool legal = GameServices.Round.CanThrow(_motor);
-            var tint = legal ? new Color(1, .92f, .58f) : new Color(.72f, .72f, .68f);
-            // A fine dark edge keeps the warm line readable on both bright
-            // plaza paving and dark alleys without a broad opaque band.
+            var tint = legal ? new Color(1, .92f, .58f, AlphaMax) : new Color(.72f, .72f, .68f, AlphaMax);
             for (int stroke = 0; stroke < 2; stroke++)
-            for (int i = 0; i < _path.Count - 1; i++)
+            for (int i = 0; i < Samples; i++)
             {
-                float fraction = i / (float)Mathf.Max(1, _path.Count - 1);
-                float fade = 1 - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.65f, 1, fraction));
-                float distance = Vector3.Distance((_path[i] + _path[i + 1]) * .5f, camera.transform.position);
-                float near = Mathf.InverseLerp(NearFadeStart, NearFadeEnd, distance);
-                var colour = stroke == 0 ? new Color(.018f, .012f, .008f) : tint;
-                colour.a = AlphaMax * fade * near;
-                float uncertainty = 1 + (1 - _carrier.AimGuideConfidence) * fraction * .65f;
-                AddQuad(_path[i], _path[i + 1], camera, colour, (stroke == 0 ? 1.7f : 1f) * uncertainty);
+                float a = i * Mathf.PI * 2 / Samples, b = (i + 1) * Mathf.PI * 2 / Samples;
+                Vector3 from = landing + new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a)) * CircleRadius;
+                Vector3 to = landing + new Vector3(Mathf.Cos(b), 0, Mathf.Sin(b)) * CircleRadius;
+                AddQuad(from, to, camera, stroke == 0 ? new Color(.018f, .012f, .008f, AlphaMax) : tint, stroke == 0 ? 1.7f : 1);
             }
-            if (_verts.Count == 0) { Clear(); return; }
-            _mesh.Clear();
-            _mesh.SetVertices(_verts); _mesh.SetColors(_colours); _mesh.SetTriangles(_tris, 0);
-            _mesh.RecalculateBounds();
-            _renderer.enabled = true;
+            _mesh.Clear(); _mesh.SetVertices(_verts); _mesh.SetColors(_colours); _mesh.SetTriangles(_tris, 0);
+            _mesh.RecalculateBounds(); _renderer.enabled = true;
         }
 
         private void AddQuad(Vector3 a, Vector3 b, Camera camera, Color colour, float widthScale)
@@ -131,7 +178,7 @@ namespace TumbangPreso
             if (along.sqrMagnitude < .00000001f) return;
             along.Normalize();
             var toEye = camera.transform.position - (a + b) * .5f;
-            var side = Vector3.Cross(along, toEye);
+            var side = Vector3.Cross(along, Vector3.up);
             if (side.sqrMagnitude < .0000001f) side = Vector3.ProjectOnPlane(camera.transform.right, along);
             if (side.sqrMagnitude < .0000001f) side = Vector3.ProjectOnPlane(camera.transform.up, along);
             float half = Mathf.Clamp(toEye.magnitude * WidthPerMetre, WidthMin, WidthMax) * widthScale;

@@ -159,7 +159,7 @@ namespace TumbangPreso
         public float AimGuideConfidence => ThrowAimRules.GuideConfidence(_aimHeldSeconds, _aimMovement, Held != null ? Held.SkinIndex : -1);
         public float AimGuideHorizon => ThrowAimRules.GuideHorizon(_aimHeldSeconds, _aimMovement, Held != null ? Held.SkinIndex : -1);
         public Vector3 AimGuidePoint() => RawAimPoint();
-        public Vector3 AimGuideOrigin() => ThrowOriginFor(AimGuidePoint());
+        public Vector3 AimGuideOrigin() => ThrowOriginFor(AimPoint());
 
         /// <summary>
         /// ⚠️⚠️ THE WIND-UP EVERY OTHER PLAYER CAN SEE, and it is a SEPARATE value from
@@ -853,7 +853,7 @@ namespace TumbangPreso
             => LaunchVelocityFor(ThrowOrigin(), AimPoint());
 
         public Vector3 AimGuideVelocityNow()
-            => LaunchVelocityFor(AimGuideOrigin(), AimGuidePoint());
+            => LaunchVelocityNow();
 
         private Vector3 LaunchVelocityFor(Vector3 origin, Vector3 target)
         {

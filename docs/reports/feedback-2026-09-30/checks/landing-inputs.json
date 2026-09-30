@@ -1,0 +1,21 @@
+{
+  "sourceEquivalent": "cc430e37a plus landing-circle UI/shared queries",
+  "question": "preview vs actual flat/curve/bank flight; real charge circle/release; warm support allocations and overflow",
+  "expectedCases": 5,
+  "retry": 0,
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/TrajectoryPreview.cs": "6a822869af6de12bfc826cede8b1a7a6899fba3e5629a3300674c3d42a864789",
+    "Assets/TumbangPreso/Runtime/Slipper.cs": "547367ec8e7838af81769a6dc2431b55ab78ca78ddf747f76e5f327aa8139b1d",
+    "Assets/TumbangPreso/Runtime/Carrier.cs": "f4e8ae47e809024cb46c0a42dca52247f2dc8118524d2603cd52667975e87380",
+    "Assets/TumbangPreso/Tests/PlayMode/LandingCircleTests.cs": "69b65b055e2c464e4308b3e7a54a37d5edf73327154470cd673723cb82a645c7",
+    "Assets/TumbangPreso/Tests/PlayMode/LandingCircleTests.cs.meta": "0aa122feb6110131b0d43ccf527fb0e45ce9fd42ec7216dcc5ea5a39317baa4d",
+    "Assets/TumbangPreso/Tests/PlayMode/ThrowAimIntegrationProbe.cs": "41949441dfc1823a92a59e2141a18c100044998794ba496692192e612d2bcb01"
+  },
+  "fixtureCorrections": [
+    "camera facing/pitch",
+    "legal throw position and charge preconditions",
+    "null-safe diagnostic"
+  ],
+  "finalFixtureSha256": "70108486073b5c338e0808ba2d2aa6795025276f688f4d412cb72245282f0fbe",
+  "runtimeDrift": []
+}

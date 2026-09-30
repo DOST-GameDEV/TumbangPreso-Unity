@@ -61,3 +61,7 @@ scene exit already selected another rate. Online matches continue running. The
 notice reflects the current mode. Menu animation/navigation remain unscaled, and
 hitstop may not unpause a stopped clock. Human play confirmation remains separate
 from native menu/clock checks.
+
+## Throw Landing Preview, Feedback2026-09-30
+
+The owner replaced the directional line with a local ground circle. It follows the current launch and supporting floor at20Hz, disappears with charge/release and predicts world banks. It does not resolve gameplay or promise immunity to player/can interception. Read the [native flight/render evidence](reports/feedback-2026-09-30/landing-circle.md). Keep the ordinary charge ring tied to Carrier.ChargeRatio; clarity feedback remains open.
