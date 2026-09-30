@@ -12,7 +12,7 @@ Diddler cloud unit complete: Nemu's 10 percent basic-cooldown movement bonus
 shipped in 770162fed59f241de4e07d8e1d8599a861ff4639. Native before/after checks
 reproduced 7 failures, then passed 8/8 after the correction, with frozen inputs.
 No actual-peer or rendered-player qualification is claimed. The broader Wiki
-Feedback row remains open; the later Doc release below supersedes its initial reservation.
+Feedback row remains open. Cloud document edits remain paused pending direct owner approval.
 
 Shared 25-second basic cooldowns shipped in 6b4e1d4ffa02d3976d57efee55b932d97d9c8d2c.
 Four native cases reproduced separate 40/30/30 clocks; the final 18-case fixture
