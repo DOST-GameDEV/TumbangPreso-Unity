@@ -3,6 +3,37 @@
 Updated2026-09-30. Branch ASTRAReworks. Protocol98 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
+## Live Local Resume
+
+Owner requests bottom-up unfinished Feedback, then independent reasonable bug
+hunting. Loading belongs to the friend; hero mechanics remain owner-reserved.
+No subagents, cross-chat work, resets or paid services. Preserve unrelated dirt.
+
+Local published80622a013 contains spectator results input(ccd6935e2) and Ready
+tally guards(3862bd7d5). Native evidence:1 spectator lifecycle case;25 Ready packet
+cases. Native camera fix is independent of the human-retired player mouse report.
+
+Current bot slipper-query unit is qualified and ready to publish: four ordinary
+AIController loops, Slipper Awake/OnDestroy invalidation, BotSlipperInventory and
+BotSlipperQueryTests. Native100-call allocation count200→0; five distinct cases
+pass across four first-final passes plus the repaired flight case.543inputs and
+no non-metadata drift. Last job87134 is terminal; no heavy job or task-owned tab.
+Keep the false ordering assumption and missed-shot fixture evidence as history.
+
+Contributor currently reserves GuidedTraining, GuidedTrainingHud.OwnerPainted,
+OwnerTrainingUiTests, TutorialLessonHonestyProbe and MatchInstaller for training
+flow/emote fixes; HalftimePresentation, NetSession, RoundBreakFreezeTests and ReplayRetentionTests for
+the subsequent3s ordinary/10s halftime revision. Re-read newest claims before edits.
+
+Doc now has Finished feedback history and a separate guide; native verification
+controls and reports are preserved. Icon row is yellow: concrete screenshot/screen
+needed; source has46illustrations and two vector fallbacks, no missing binding proven.
+No background Doc monitor/instant archive trigger is configured by this chat.
+
+Next: publish the qualified bot unit after fresh integration, then continue one
+focused independent network/bot/input bug. Do not repeat these qualified cases.
+Detailed older checkpoints below are history; current status is in TODO.
+
 ## Scope And Ownership
 
 - Finish authorized feedback/TODO, then reasonable network/bot/optimization/UX bugs.
@@ -482,6 +513,15 @@ selection used by its existing emote callback; the current heuristic chooses an
 AI-disabled training dummy. Reproduce through actual wheel inputs before the guard.
 The preceding4focused flow/landing cases pass; old airborne-to-retrieval baseline
 failed because it replaced the flying shoe with a loose snapshot. No heavy job active.
+
+Ready packet fix3862bd7d5 is published/integrated at80622a013, remote verified.
+Current independent optimization claim: four ordinary slipper scans in
+AIController.cs (RivalShotIsInbound, SlipperOwnedBy, MySlipper, TryInterceptPoint),
+Slipper.cs lifecycle registration only, BotSlipperInventory.cs/meta and
+BotSlipperQueryTests.cs/meta. Keep hero-specific planning unchanged. Baseline
+calibrates native GC.Alloc over100 actual lookups and checks query ordering,
+disabled/inactive objects, owner changes, destroy/replacement and duplicates.
+Do not cache ownership or ignore in-flight shoes. No heavy job active yet.
 
 Tutorial flow follow-up qualified:7distinct focused native cases pass, including
 real wheel press/select/release on the student, actual road-relative slipper
