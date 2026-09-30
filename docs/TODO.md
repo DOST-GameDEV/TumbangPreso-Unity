@@ -205,6 +205,12 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   cases and actual Windows host/client qualification through round2. Both peers
   retain the same deadline, frozen image/clock and resume normally. Protocol98.
   [Evidence](reports/feedback-2026-09-30/round-freeze.md). Protected assets preserved.
+  New Harry refinement QA_TUMP_0045 is implemented and locally checked: ordinary boundary3seconds,
+  halftime10seconds with retained replay. The prior no-replay/uniform10-second
+  wording above is history, superseded by this refinement. Preserve frozen
+  standings, input lock, no skip and the host-authored deadline. Protocol99 requires
+  matching builds. Eight native cases pass; current-scene frame rerun passes1/1.
+  Actual peers remain unqualified. [Revision evidence](reports/feedback-2026-09-30/round-timing-replay.md).
 
 
 

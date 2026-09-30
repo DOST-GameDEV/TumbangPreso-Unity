@@ -37,35 +37,41 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound()
         {
-            Assert.IsFalse(HalftimePresentation.IsMiddleBreak(2,4));
-            Assert.IsTrue(HalftimePresentation.IsMiddleBreak(3,6));
-            Assert.IsTrue(HalftimePresentation.IsMiddleBreak(4,8));
-            Assert.IsFalse(HalftimePresentation.IsMiddleBreak(8,8));
-            yield return MapRetrievalProbe.Load("Eskinita");
-            var round=GameServices.Round;var match=GameServices.Match;
-            RoundBreakFreezeTests.DrawFrame();
-            round.EndRound();match.BeginIntermission();var phase=HalftimePresentation.Instance;
-            Assert.IsTrue(phase.Active);Assert.IsFalse(phase.IsHalftime);Assert.AreEqual(10,phase.Duration);
-            Assert.IsTrue(PresentationClock.Held);Assert.IsTrue(PresentationClock.BlocksInput);
-            Assert.IsFalse(phase.HasReplay);Assert.IsNotNull(phase.FrozenFrame);
-            double began=SharedUltimatePhase.Now;
-            while(match.RoundNumber==1&&SharedUltimatePhase.Now-began<11)yield return null;
-            Assert.AreEqual(2,match.RoundNumber);Assert.That(SharedUltimatePhase.Now-began,Is.InRange(9.9,10.5));
-            while(match.RoundNumber<4){round.EndRound();match.AdvanceRound();yield return null;}
-            round.EndRound();match.BeginIntermission();
-            Assert.IsTrue(phase.IsHalftime);Assert.IsTrue(PresentationClock.Held);Assert.IsTrue(PresentationClock.BlocksInput);
-            Assert.AreEqual(10,phase.Duration);int score=match.ScoreFor(1);float time=Time.time;
-            match.SkipBuffer();Assert.IsFalse(match.SkipRequested,"Halftime has one shared end");
-            yield return new WaitForSecondsRealtime(.4f);
-            Assert.AreEqual(time,Time.time);Assert.IsNull(phase.FallbackReason);Assert.IsNotNull(phase.FrozenFrame);Assert.IsFalse(phase.HasReplay);Assert.AreEqual(score,match.ScoreFor(1));
-            Assert.IsTrue(Object.FindObjectsByType<UI.OffscreenIndicators>().All(i=>!i.CanMarkerVisible),"Live world markers cannot paint over halftime footage or standings");
-            // Join the same deadline late; duplicates cannot restart its ten seconds.
-            Assert.IsFalse(phase.Receive(phase.MatchId,phase.CompletedRound,phase.NextTaya,SharedUltimatePhase.Now,0,true,1));
-            double end=phase.Began+10;
-            while(SharedUltimatePhase.Now<end+.15)yield return null;
-            Assert.AreEqual(5,match.RoundNumber);Assert.IsFalse(PresentationClock.Held);Assert.IsFalse(phase.Active);
-            while(match.RoundNumber<8){round.EndRound();match.AdvanceRound();yield return null;}
-            round.EndRound();match.BeginIntermission();Assert.IsFalse(phase.Active);Assert.IsFalse(match.MatchInProgress);
+            int mip=QualitySettings.globalTextureMipmapLimit;
+            QualitySettings.globalTextureMipmapLimit=2;
+            try
+            {
+                Assert.IsFalse(HalftimePresentation.IsMiddleBreak(2,4));
+                Assert.IsTrue(HalftimePresentation.IsMiddleBreak(3,6));
+                Assert.IsTrue(HalftimePresentation.IsMiddleBreak(4,8));
+                Assert.IsFalse(HalftimePresentation.IsMiddleBreak(8,8));
+                yield return MapRetrievalProbe.Load("Eskinita");
+                var round=GameServices.Round;var match=GameServices.Match;
+                RoundBreakFreezeTests.DrawFrame();
+                round.EndRound();match.BeginIntermission();var phase=HalftimePresentation.Instance;
+                Assert.IsTrue(phase.Active);Assert.IsFalse(phase.IsHalftime);Assert.AreEqual(3,phase.Duration);
+                Assert.IsTrue(PresentationClock.Held);Assert.IsTrue(PresentationClock.BlocksInput);
+                Assert.IsFalse(phase.HasReplay);Assert.IsNotNull(phase.FrozenFrame);
+                double began=phase.Began;
+                while(match.RoundNumber==1&&SharedUltimatePhase.Now-began<4)yield return null;
+                Assert.AreEqual(2,match.RoundNumber);Assert.That(SharedUltimatePhase.Now-began,Is.InRange(2.9,3.5));
+                while(match.RoundNumber<4){round.EndRound();match.AdvanceRound();yield return null;}
+                round.EndRound();match.BeginIntermission();
+                Assert.IsTrue(phase.IsHalftime);Assert.IsTrue(PresentationClock.Held);Assert.IsTrue(PresentationClock.BlocksInput);
+                Assert.AreEqual(10,phase.Duration);int score=match.ScoreFor(1);float time=Time.time;
+                match.SkipBuffer();Assert.IsFalse(match.SkipRequested,"Halftime has one shared end");
+                yield return new WaitForSecondsRealtime(.4f);
+                Assert.AreEqual(time,Time.time);Assert.AreEqual("No complete highlight this half",phase.FallbackReason);Assert.IsNotNull(phase.FrozenFrame);Assert.IsFalse(phase.HasReplay);Assert.AreEqual(score,match.ScoreFor(1));
+                Assert.IsTrue(Object.FindObjectsByType<UI.OffscreenIndicators>().All(i=>!i.CanMarkerVisible),"Live world markers cannot paint over halftime footage or standings");
+                // Join the same deadline late; duplicates cannot restart its ten seconds.
+                Assert.IsFalse(phase.Receive(phase.MatchId,phase.CompletedRound,phase.NextTaya,SharedUltimatePhase.Now,0,true,1));
+                double end=phase.Began+10;
+                while(SharedUltimatePhase.Now<end+.15)yield return null;
+                Assert.AreEqual(5,match.RoundNumber);Assert.IsFalse(PresentationClock.Held);Assert.IsFalse(phase.Active);
+                while(match.RoundNumber<8){round.EndRound();match.AdvanceRound();yield return null;}
+                round.EndRound();match.BeginIntermission();Assert.IsFalse(phase.Active);Assert.IsFalse(match.MatchInProgress);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit=mip; }
         }
         [UnityTest]
         public IEnumerator AllPersistentFieldFamiliesUseRenderOnlyPlayback()

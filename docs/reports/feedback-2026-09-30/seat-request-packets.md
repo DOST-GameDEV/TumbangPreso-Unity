@@ -27,7 +27,7 @@ LobbySession with admitted host/guest and a declared-ready fixture state:
 - Fixed17cases:17passed. Six malformed lengths, three wide IDs, duplicate
   requests, two actual changes, two invalid seats, occupied seat, live match and
   non-host handling.
--546 frozen overlay inputs, unrelated main dirt excluded, no non-metadata drift.
+- 546 frozen overlay inputs, unrelated main dirt excluded, no non-metadata drift.
 
 Raw XML/manifests are in checks/seat-request; full logs remain in the isolated
 checkout's Logs/feedback-0930. The fixture checks receiver/lobby state and tally

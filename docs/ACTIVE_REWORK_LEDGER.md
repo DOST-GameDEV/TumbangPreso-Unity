@@ -558,3 +558,48 @@ and a repeated current-seat request dropping a guest's Ready state. Keep real se
 changes clearing that guest's Ready and protect occupied seats/live matches.
 Native receiver/lobby scope only; no paid transport or protocol change planned.
 
+QA_TUMP_0045 also owns Runtime/RoundBreakFrame.cs under Assets/TumbangPreso:
+its frozen overlay is order259 above the retained replay at240. Hide only that
+image while recorded footage is ready, retaining the clock and UI input lock;
+restore the exact frozen image for standings/fallback. This is required for the
+requested replay to actually be visible, rather than merely reporting Ready.
+Native run round-timing-replay-final asks whether ordinary breaks expire at3s,
+halftime renders an actual retained catch then standings by the shared10s end,
+and late/duplicate/abort/intro/input guards remain intact. Eight cases, native
+OpenGL with mip2 texture residency; pass XML plus inspect the3 captured surfaces.
+Stop at those outcomes; one bounded tooling retry only if setup fails. No actual
+peer or full-quality GPU claim. Current retry count0.
+First round-flow run stopped at compilation: the new retained-clip case lacked
+its CameraSystem namespace import. Fixed the test import only; no test executed,
+no memory stop or additional OOM. Bounded tooling repair1/1; run the same8cases
+as round-timing-replay-checked, preserving the failed receipt.
+Eight native cases pass in49.95seconds, exit0, no new OOM. Replay visibly renders
+and ordinary/late deadlines pass. Capture review found the ordinary test reused
+the earlier overlay test's magenta cached frame: the persistent match retains a
+texture, so its conditional DrawFrame skipped the new scene in batch mode.
+Correct only this owned fixture to always draw the current scene; one targeted
+capture/input rerun as round-current-view-checked. Runtime source is unchanged.
+Halftime contact/standings captures inspected; existing cloud material artifact
+remains and does not establish authored full-quality visual approval.
+Current-scene ordinary frame/input check passes1/1 in6.39seconds, exit0. Its capture
+now contains the actual arena with the3-second timer; inspected alongside retained
+halftime playback and standings. Eight distinct cases remain the qualification
+scope. No runtime source changed after their passing run. Publish explicit paths,
+then update QA_TUMP_0045 Notes/Done. No heavy job. Next Harry row is HUD Changes:
+larger ready Xelu prompt/Ready Up, remove warmup subtitle, ability controls/prompts
+50percent larger with margins preserved. Read its attached images before claiming.
+Round revision c10e8ec5 integrated with the independently checked bot inventory
+atb440ce6f, pushed and remote verified. Its Doc Notes/Done are updated; Human
+verified remains human-owned. Round runtime/test paths released, no heavy job.
+
+Claim newest Harry HUD Changes row, Ready Up portion first:
+Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.cs,
+Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.CourtHud.cs,
+Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.MatchBar.cs,
+Assets/TumbangPreso/Tests/PlayMode/TumpNativeHudTests.cs,
+and matching TODO/UI method/evidence. Read both supplied screenshots. Implement
+an actual larger Xelu Interact/Ready prompt and Ready Up label, remove the warmup
+subtitle, preserve saved bindings/device behavior and all non-ready action prompts.
+Ability-button enlargement is awaiting the owner's precise interpretation of the
+new Paete/Phaister presentation lock because the supplied screenshot is Paete.
+No power-deck or protected-hero changes until resolved.

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.Core;
+using TumbangPreso.CameraSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -22,8 +23,18 @@ namespace TumbangPreso.PlayTests
             public bool IsSeatlessReferee => false;
         }
 
-        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        int _mip;
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _mip = QualitySettings.globalTextureMipmapLimit;
+            QualitySettings.globalTextureMipmapLimit = 2;
+            yield return PlayModeWorld.Reset();
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();
+            QualitySettings.globalTextureMipmapLimit = _mip;
+        }
 
         [UnityTest, Timeout(60000)]
         public IEnumerator FinalViewAndRealInputsStayFrozenUntilTheHostDeadline()
@@ -41,6 +52,9 @@ namespace TumbangPreso.PlayTests
                 var match = GameServices.Match; var round = GameServices.Round;
                 var phase = HalftimePresentation.Instance; Assert.IsNotNull(phase);
                 var frames = phase.GetComponent<RoundBreakFrame>();
+                // The match survives test scene resets. Supply this scene's actual camera frame
+                // even when an earlier test left a valid cached render texture.
+                DrawFrame();
                 float until = Time.realtimeSinceStartup + 10;
                 while (frames.Texture == null && Time.realtimeSinceStartup < until) { DrawFrame(); yield return null; }
                 Assert.IsNotNull(frames.Texture, "The gameplay camera never supplied its final image.");
@@ -50,6 +64,7 @@ namespace TumbangPreso.PlayTests
                 Vector3 position = local.transform.position; Quaternion facing = Camera.main.transform.rotation;
                 var modules = EventSystem.current?.GetComponents<BaseInputModule>().Where(m => m.enabled).ToArray();
                 round.EndRound(); match.BeginIntermission();
+                Assert.AreEqual(3, phase.Duration);
                 Assert.AreSame(texture, phase.FrozenFrame);
                 Assert.IsTrue(PresentationClock.BlocksInput); Assert.IsTrue(UI.RoleSwapCard.Showing);
                 Assert.IsFalse(phase.HasReplay); Assert.IsFalse(BufferSkipVote.Showing);
@@ -96,7 +111,7 @@ namespace TumbangPreso.PlayTests
             {
                 GameServices.Round.EndRound(); match.IsWarmupBuffer = true;
                 NetAuthority.Provider = new Client();
-                double began = SharedUltimatePhase.Now - 8;
+                double began = SharedUltimatePhase.Now - 1;
                 Assert.IsTrue(phase.Receive(match.PresentationMatchId, 1, 1, began, 0, false, 1));
                 Assert.That(phase.Remaining, Is.InRange(1.8f, 2.1f));
                 Assert.IsFalse(phase.Receive(match.PresentationMatchId, 1, 1, SharedUltimatePhase.Now, 0, false, 1));
@@ -114,7 +129,7 @@ namespace TumbangPreso.PlayTests
                     Assert.AreEqual(1, cold.CapturedFrames);
                 }
                 finally { cold.Release(); Object.Destroy(coldRoot); }
-                while (phase.Active && SharedUltimatePhase.Now < began + 10.5) yield return null;
+                while (phase.Active && SharedUltimatePhase.Now < began + 3.5) yield return null;
                 Assert.IsFalse(phase.Active); Assert.IsFalse(PresentationClock.Held);
                 Assert.AreEqual(1, match.RoundNumber, "A client cannot advance the authoritative round.");
                 Assert.IsFalse(phase.Receive(match.PresentationMatchId, 1, 1, began, 0, false, 1), "Expired packets cannot restart the break.");
@@ -198,6 +213,85 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(GameObject.Find("FrozenRoundView")?.activeInHierarchy ?? false);
             Assert.AreEqual(1, GameServices.Match.RoundNumber);
             Time.timeScale = 1;
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator HalftimeShowsTheRetainedCatchThenStandingsOnItsTenSecondDeadline()
+        {
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            Settings.SettingsStore.Current.ReducedUiMotion = false;
+            try
+            {
+                yield return MapRetrievalProbe.Load(UI.SceneFlow.Eskinita);
+                var round = GameServices.Round; var match = GameServices.Match;
+                var taya = round.PlayerAt(0); var victim = round.PlayerAt(1);
+                foreach (var actor in round.Players) actor.Teleport(new Vector3(6, .12f, -6 + actor.PlayerSlot * 3));
+                taya.Teleport(new Vector3(0, .12f, -4)); victim.Teleport(new Vector3(0, .12f, -3));
+                taya.transform.forward = Vector3.forward;
+                var shoe = Object.FindObjectsByType<Slipper>(FindObjectsInactive.Include).First(s => s.SeatOfOrigin == 1);
+                shoe.gameObject.SetActive(true); Assert.IsTrue(shoe.HostForceEquip(victim));
+                yield return new WaitForSeconds(2.5f);
+                Assert.IsTrue(taya.GetComponent<CombatVerbs>().HostResolvePunch(taya.transform.position, taya.transform.forward));
+                yield return new WaitForSeconds(1.6f);
+                var archive = Object.FindAnyObjectByType<MatchReplayArchive>();
+                Assert.IsNotEmpty(archive.Clips, archive.LastSkip);
+                long clip = archive.Clips[0].Clip.Id;
+                while (match.RoundNumber < 4) { round.EndRound(); match.AdvanceRound(); yield return null; }
+                DrawFrame(); round.EndRound(); match.BeginIntermission();
+                var phase = HalftimePresentation.Instance;
+                Assert.IsTrue(phase.IsHalftime); Assert.AreEqual(10, phase.Duration); Assert.AreEqual(clip, phase.ClipId);
+                var frozen = phase.FrozenFrame; ulong image = Pixels(frozen);
+                var frozenCanvas = GameObject.Find("FrozenRoundView").GetComponent<Canvas>();
+                float simulation = Time.time; var scores = Enumerable.Range(0, 4).Select(match.ScoreFor).ToArray();
+                while (!phase.HasReplay && SharedUltimatePhase.Now < phase.Began + 2) yield return null;
+                Assert.IsTrue(phase.HasReplay, phase.FallbackReason);
+                Assert.IsNotNull(phase.ReplayFrame);
+                Assert.IsFalse(frozenCanvas.gameObject.activeSelf, "The frozen overlay must not cover the actual replay.");
+                Assert.IsFalse(UI.RoleSwapCard.Showing);
+                Assert.IsTrue(PresentationClock.BlocksInput); Assert.AreEqual(0, Time.timeScale);
+                match.SkipBuffer(); Assert.IsFalse(match.SkipRequested);
+                yield return new WaitForSecondsRealtime(.3f);
+                ulong first = Pixels(phase.ReplayFrame);
+                yield return new WaitForSecondsRealtime(.5f);
+                Assert.AreNotEqual(first, Pixels(phase.ReplayFrame), "The replay must render changing recorded poses.");
+                var replayCanvas = GameObject.Find("CanonicalReplayCanvas").GetComponent<Canvas>();
+                yield return TumpUiCapture.Capture("Round-halftime-retained-catch", replayCanvas, 960, 540, false);
+                while (SharedUltimatePhase.Now < phase.Began + 6.1) yield return null;
+                Assert.IsFalse(phase.HasReplay); Assert.IsTrue(UI.RoleSwapCard.Showing);
+                Assert.IsTrue(frozenCanvas.gameObject.activeSelf);
+                Assert.AreEqual(image, Pixels(frozen)); Assert.AreEqual(simulation, Time.time);
+                CollectionAssert.AreEqual(scores, Enumerable.Range(0, 4).Select(match.ScoreFor).ToArray());
+                Assert.IsTrue(PresentationClock.BlocksInput);
+                yield return TumpUiCapture.Capture("Round-halftime-standings", Object.FindAnyObjectByType<UI.TumpRoundSwapView>().Canvas,
+                    960, 540, false, underlays: new[] { frozenCanvas });
+                while (SharedUltimatePhase.Now < phase.Began + 10.15) yield return null;
+                Assert.AreEqual(5, match.RoundNumber); Assert.IsFalse(phase.Active); Assert.IsFalse(PresentationClock.Held);
+            }
+            finally { HalftimePresentation.Instance?.End(false); Settings.SettingsStore.Current.ReducedUiMotion = reduced; }
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator LateHalftimeUsesHonestFallbackAndCannotExtendTheHostDeadline()
+        {
+            yield return MapRetrievalProbe.Load(UI.SceneFlow.Eskinita);
+            var match = GameServices.Match; var round = GameServices.Round; var phase = HalftimePresentation.Instance;
+            while (match.RoundNumber < 4) { round.EndRound(); match.AdvanceRound(); yield return null; }
+            var provider = NetAuthority.Provider;
+            try
+            {
+                round.EndRound(); match.IsWarmupBuffer = true; NetAuthority.Provider = new Client();
+                double began = SharedUltimatePhase.Now - 8;
+                Assert.IsTrue(phase.Receive(match.PresentationMatchId, 4, 0, began, 0, true, 1));
+                Assert.That(phase.Remaining, Is.InRange(1.8f, 2.1f)); Assert.AreEqual(10, phase.Duration);
+                yield return null;
+                Assert.AreEqual("No complete highlight this half", phase.FallbackReason);
+                Assert.IsFalse(phase.HasReplay); Assert.IsTrue(UI.RoleSwapCard.Showing);
+                Assert.IsTrue(PresentationClock.BlocksInput);
+                while (phase.Active && SharedUltimatePhase.Now < began + 10.5) yield return null;
+                Assert.IsFalse(phase.Active); Assert.IsFalse(PresentationClock.Held); Assert.AreEqual(4, match.RoundNumber);
+                Assert.IsFalse(phase.Receive(match.PresentationMatchId, 4, 0, SharedUltimatePhase.Now, 0, true, 1));
+            }
+            finally { phase.End(false); NetAuthority.Provider = provider; }
         }
 
         static ulong Pixels(RenderTexture source)

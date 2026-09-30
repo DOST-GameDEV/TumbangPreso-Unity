@@ -1,8 +1,13 @@
 # Networking: Where To Work
 
-Protocol98 requires matching builds for the10-second frozen boundary after every
-round. Native input/image/lifecycle cases and an actual Windows host/client pair
-qualify the shared deadline, held clock and round2 return. [Round-freeze evidence](reports/feedback-2026-09-30/round-freeze.md).
+Protocol99 requires matching builds for the3-second ordinary round boundary and
+10-second halftime package. Both freeze simulation and reject gameplay/UI input.
+Halftime can play a retained authoritative clip before standings; unavailable or
+late footage falls back to the same frozen image without extending the host end.
+Eight focused native cases pass, including visible retained playback, late clients,
+input/image locking and round5 return. [Revision evidence](reports/feedback-2026-09-30/round-timing-replay.md). Earlier [protocol98 evidence](reports/feedback-2026-09-30/round-freeze.md)
+covered the former uniform10-second frozen boundary and is not peer qualification
+of protocol99.
 
 Read [AGENTS](../AGENTS.md),[working rules](WORKING_RULES.md#gameplay-and-authority),
 [skill contract](SKILL_NETWORK_CONTRACT.md),then the current NET-SKILLS-1 queue and
