@@ -1014,3 +1014,11 @@ transition, clean-feed hide/restore and unchanged player's frozen input/frame
 all qualify.960x540 native shared-card capture inspected. Publish explicit paths
 and update the same Feedback round row. Existing player binary lacks this fix;
 new player/actual-peer qualification remains separate. No heavy job active.
+For the actual-player follow-through, also claim Runtime/Diagnostics/RoundFreezeProbe.cs.
+Its witness currently captures ordinary breaks on their first entry frame because
+remaining5is already below9.5. Delay its read-only capture until0.5s into the actual
+phase duration, so screenshots observe the settled overlay. No simulation/input
+writes. Refresh the internal player with the proven headless build recipe, retaining
+old runtime hash/identity and logs. Then one supported4round/30second automatic
+Hero match covers ordinary/halftime/card/final completion without another long
+unchanged8round run or manual-pause delay. Native graphics remain enabled in play.
