@@ -269,3 +269,14 @@ Resources/UI/input/xelu/light/Mouse_Simple_Key_Light.png and
 Resources/UI/input/xelu/dark/Mouse_Simple_Key_Dark.png files plus their metadata
 (all beneath Assets/TumbangPreso). These are unchanged CC0 originals from Xelu's
 linked vendor archive, with a MOUSE label mapping; no input binding changes.
+
+
+Tutorial route's existing Assets/TumbangPreso/Tests/DeadFeatureAudit.cs count
+assertion also requires the adopted20-lesson contract; reserve only that count
+update. The original16 expectation is stale, not a production regression.
+Private memory recovery now also releases this task's exact Roslyn cache-server
+command after the verified compilation reload boundary; no unrelated compiler
+or application is stopped. The3-case route check reached runtime without a new
+OOM: movement/role/can setup and completed-range reset/realQuit pass; blocking
+revealed that the staged undercharged12m shot lands short. Correct its demonstration
+lane with the existing full-power solver, then rerun the physical block check.
