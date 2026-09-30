@@ -98,6 +98,174 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(360000)]
+        public IEnumerator RecordedApproachKeepsMovingThroughLateReplayAndSurvivesHistoryWrap()
+            => CheckReplayMotion(false);
+
+        [UnityTest]
+        public IEnumerator IsolatedNativeCatchRetainsContinuousMotion()
+            => CheckReplayMotion(true);
+
+        private static IEnumerator OpenIsolatedCatchWorld()
+        {
+            SceneFlow.Networked = false;
+            GameLaunch.Spectator = false;
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            floor.name = "Isolated replay floor";
+            floor.transform.position = Vector3.down * .1f;
+            floor.transform.localScale = new Vector3(30, .2f, 30);
+            var light = new GameObject("Isolated replay light").AddComponent<Light>();
+            light.type = LightType.Directional; light.transform.rotation = Quaternion.Euler(45, -35, 0);
+            var round = GameServices.Round;
+            round.Clear();
+            round.Lata = new GameObject("Isolated replay can").AddComponent<Lata>();
+            var people = Roster.GetPeople(GameMode.Classic);
+            for (int i = 0; i < 4; i++)
+            {
+                var owner = new GameObject("Isolated replay P" + i);
+                var motor = owner.AddComponent<CharacterMotor>();
+                motor.PlayerSlot = i; motor.Mode = GameMode.Classic; motor.enabled = false;
+                motor.SpawnPosition = new Vector3(-5 + i * 3, 0, 7);
+                motor.HoldingSlipper = i != 0;
+                owner.AddComponent<Carrier>(); owner.AddComponent<CombatVerbs>();
+                var art = RosterBook.Load().FindPersonArt(people[i].Id);
+                var visual = owner.AddComponent<CharacterVisual>();
+                var model = new GameObject("Visual"); model.transform.SetParent(owner.transform, false);
+                visual.SetModelRoot(model.transform);
+                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+                round.Register(motor);
+            }
+            GameServices.Match.StartMatch(); round.BeginRound();
+            for (int i = 0; i < 4; i++) round.PlayerAt(i).IsDefender = i == 0;
+            var cameraOwner = new GameObject("Isolated replay camera"); cameraOwner.tag = "MainCamera";
+            var camera = cameraOwner.AddComponent<Camera>(); camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(.3f, .3f, .3f);
+            cameraOwner.AddComponent<CameraRig>().Follow(round.PlayerAt(1));
+            CatchReconstruction.Attach(cameraOwner);
+            yield return null;
+        }
+
+        private IEnumerator CheckReplayMotion(bool isolated)
+        {
+            // Keep the software-rendered validation scene within its texture budget.
+            // This changes texture detail, never geometry or recorded motion.
+            int previousMipLimit = QualitySettings.globalTextureMipmapLimit;
+            QualitySettings.globalTextureMipmapLimit = 2;
+            if (isolated) yield return OpenIsolatedCatchWorld(); else yield return Open();
+            Stage();
+            var round = GameServices.Round;
+            var actor = round.PlayerAt(0); var victim = round.PlayerAt(1);
+            var view = Object.FindAnyObjectByType<CatchReconstruction>();
+            var settings = Settings.SettingsStore.Current;
+            bool reduced = settings.ReducedUiMotion, cinematic = settings.CinematicCameraMotion;
+            settings.ReducedUiMotion = false; settings.CinematicCameraMotion = true;
+            Camera.CameraCallback captureProbe = null;
+            try
+            {
+                Vector3 actorStart = actor.transform.position, victimStart = victim.transform.position;
+                float began = Time.time;
+                while (Time.time - began < 3.2f)
+                {
+                    float fraction = Mathf.Clamp01((Time.time - began) / 3.2f);
+                    actor.transform.position = actorStart + Vector3.back * (1 - fraction) * 2f;
+                    victim.transform.position = victimStart;
+                    yield return null;
+                }
+                Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(
+                    actor.transform.position, actor.transform.forward));
+                Assert.IsTrue(view.Playing);
+                yield return new WaitForSeconds(.25f);
+                var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                var clock = typeof(CatchReconstruction).GetField("_began", flags);
+                var step = typeof(CatchReconstruction).GetMethod("LateUpdate", flags);
+                var copy = (MatchPoseHistory.Copy)typeof(CatchReconstruction).GetField("_actorCopy", flags).GetValue(view);
+                var target = (RenderTexture)typeof(CatchReconstruction).GetField("_target", flags).GetValue(view);
+                var presentEffect = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                presentEffect.name = "Unrecorded present-time effect";
+                presentEffect.GetComponent<Collider>().enabled = false;
+                VfxRenderTag.Attach(presentEffect);
+                ComicPopup.Spawn(victim.transform.position + Vector3.up, "PRESENT TIME", Color.magenta);
+                var liveParticles = Object.FindObjectsByType<ParticleSystemRenderer>();
+                Assert.IsNotEmpty(liveParticles, "The accepted tag must exercise its live impact burst.");
+                var effectRenderers = Object.FindObjectsByType<VfxRenderTag>()
+                    .SelectMany(e => e.GetComponentsInChildren<Renderer>(true))
+                    .Concat(liveParticles).Distinct().ToArray();
+                var popups = Object.FindObjectsByType<ComicPopup>()
+                    .SelectMany(e => e.GetComponentsInChildren<Canvas>(true)).ToArray();
+                Assert.IsNotEmpty(effectRenderers); Assert.IsNotEmpty(popups);
+                var effectFlags = effectRenderers.Select(r => r.forceRenderingOff).ToArray();
+                var popupFlags = popups.Select(c => c.enabled).ToArray();
+                bool observed = false, isolatedCapture = true;
+                captureProbe = camera =>
+                {
+                    if (camera.name != "~CatchPlaybackCamera") return;
+                    observed = true;
+                    isolatedCapture &= effectRenderers.All(r => r == null || r.forceRenderingOff)
+                        && popups.All(c => c == null || !c.enabled);
+                };
+                Camera.onPreRender += captureProbe;
+                Vector3 middle = default, late = default;
+                foreach (float elapsed in new[] { .4f, 1.5f, 2.5f, 2.9f })
+                {
+                    clock.SetValue(view, Time.unscaledTime - elapsed);
+                    step.Invoke(view, null);
+                    Assert.IsTrue(view.Playing);
+                    if (elapsed == 1.5f) middle = copy.Root.transform.position;
+                    if (elapsed == 2.5f) late = copy.Root.transform.position;
+                    var previous = RenderTexture.active;
+                    var image = new Texture2D(target.width, target.height, TextureFormat.RGB24, false);
+                    try
+                    {
+                        RenderTexture.active = target;
+                        image.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0); image.Apply();
+                        System.IO.Directory.CreateDirectory("Logs/catch-replay-motion");
+                        System.IO.File.WriteAllBytes("Logs/catch-replay-motion/at-" + elapsed.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + ".png", image.EncodeToPNG());
+                    }
+                    finally { RenderTexture.active = previous; Object.Destroy(image); }
+                }
+                Assert.IsTrue(observed && isolatedCapture, "Present-time effects/callouts leaked into recorded approach.");
+                CollectionAssert.AreEqual(effectFlags, effectRenderers.Select(r => r.forceRenderingOff).ToArray());
+                CollectionAssert.AreEqual(popupFlags, popups.Select(c => c.enabled).ToArray());
+                Assert.That(Vector3.Distance(middle, late), Is.GreaterThan(.15f),
+                    "The late replay must advance through recorded approach, not hold its first short clip.");
+                Vector3 live = actor.transform.position;
+                var history = Object.FindAnyObjectByType<MatchPoseHistory>();
+                float future = Time.time + 20;
+                for (int i = 0; i < MatchPoseHistory.Samples + 2; i++)
+                {
+                    history.ForSeat(0).Record(future + i * MatchPoseHistory.Interval);
+                    history.ForSeat(1).Record(future + i * MatchPoseHistory.Interval);
+                }
+                clock.SetValue(view, Time.unscaledTime - 2.5f); step.Invoke(view, null);
+                Assert.That(Vector3.Distance(late, copy.Root.transform.position), Is.LessThan(.001f),
+                    "Ongoing live recording must not overwrite this catch's retained clip.");
+                Assert.That(actor.transform.position, Is.EqualTo(live));
+                Assert.IsFalse(victim.CanAct());
+                // Let the same retained clip play on its real unscaled clock too.
+                float realStart = Time.unscaledTime;
+                clock.SetValue(view, realStart);
+                bool haveMiddle = false, haveLate = false;
+                Vector3 realMiddle = default, realLate = default;
+                while (view.Playing && Time.unscaledTime - realStart < 3.5f)
+                {
+                    yield return null;
+                    if (!view.Playing) break;
+                    float elapsed = Time.unscaledTime - realStart;
+                    if (!haveMiddle && elapsed >= 1.3f) { realMiddle = copy.Root.transform.position; haveMiddle = true; }
+                    if (!haveLate && elapsed >= 2.3f) { realLate = copy.Root.transform.position; haveLate = true; }
+                }
+                Assert.IsFalse(view.Playing, "The real replay clock must end without a held tail.");
+                Assert.IsTrue(haveMiddle && haveLate);
+                Assert.That(Vector3.Distance(realMiddle, realLate), Is.GreaterThan(.15f));
+            }
+            finally
+            {
+                Camera.onPreRender -= captureProbe;
+                view.End(); settings.ReducedUiMotion = reduced; settings.CinematicCameraMotion = cinematic;
+                QualitySettings.globalTextureMipmapLimit = previousMipLimit;
+            }
+        }
+
+        [UnityTest, Timeout(360000)]
         public IEnumerator CatchLastsAboutThreeSecondsAndReturnsBeforeControl()
         {
             yield return Open(); Stage(); yield return new WaitForSeconds(.4f);

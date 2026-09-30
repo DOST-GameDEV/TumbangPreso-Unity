@@ -51,7 +51,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   cases passing. [Evidence](reports/feedback-2026-09-30/catch-replay-duration.md).
   Replay teleport discontinuities and visibility timing now pass9 native pose
   checks. [Evidence](reports/feedback-2026-09-30/live-pose-discontinuity.md).
-  Truthful contact visualization remains open; these fixes are not full contact proof.
+  Recorded approach now advances through the full replay instead of freezing after
+  0.6 seconds; detached clips survive ring wrap and current callouts/particles stay
+  out of past frames. The native accepted-tag motion/isolation case passes with
+  inspected early/contact captures. [Evidence](reports/feedback-2026-09-30/catch-replay-motion.md).
+  Full-map/actual-peer contact visualization remains open; this is not full contact proof.
 - [x] F0930-05 Adopted [Xelu prompts](https://thoseawesomeguys.com/prompts/): current
   binding labels and Xbox/PS families resolve whole supplied images, with retained
   fallback for absent variants. Live HUD and training key row use the same resolver.

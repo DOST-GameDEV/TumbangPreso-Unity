@@ -91,8 +91,20 @@ Owned paths:
 - Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs
 - Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs
 - docs/reports/feedback-2026-09-30/catch-replay-motion.md
+- docs/reports/feedback-2026-09-30/catch-motion-early.png
+- docs/reports/feedback-2026-09-30/catch-motion-contact.png
+- docs/reports/feedback-2026-09-30/checks/catch-motion-baseline.xml
+- docs/reports/feedback-2026-09-30/checks/catch-motion-final.xml
 - docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue only)
-No native job is running; baseline investigation precedes correction.
+Native isolated accepted-tag motion/isolation case passes1/1 after reproducing
+zero late movement. Real-time playback, ring overwrite stability and temporary
+live VFX/canvas/particle hiding all pass. Early/contact captures were inspected.
+Two full-map attempts terminated without XML; the isolated correction initially
+stalled before PlayMode under accumulated shutdown-helper pressure. Only verified
+task-owned shutdown helpers and the timed-out test were stopped; available memory
+recovered to7.9GiB. No job is running. Commit, integrate current incoming work and
+verify publication. The integratedcc430e37 candidate also passes the same1/1 native
+case with unchanged inputs. Full-map and actual-peer contact-gap qualification remain open.
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.
