@@ -201,3 +201,15 @@ with ProtocolTimeout; the host reached BayanPlaza but awaited peers at round0.
 The cold failure remains; longer preparation did not fix the session. Both
 processes exited, with no OOM. No runtime network source
 or timeout was edited. See cloud-validation-limits.md and its peer receipts.
+
+
+Current cloud ownership: F0930-04 latest Feedback revision, read11:40, asks for
+2.5seconds of animation followed by a1.25second tag freeze before fading back.
+Reserve Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs and
+Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs, plus the matching
+TODO/checkpoint and a catch-replay-tag-hold report. Preserve authoritative contact,
+recovery time, ongoing simulation and existing interruption exits. Freeze the
+captured image, not the live match. No hero/lighting/art behavior changes.
+Victory-screen input and per-round pause reports are separate; reconcile their
+local ownership before another implementation. Independent remaining-map checks
+are running on the frozen cloud candidate; source edits will not alter that run.

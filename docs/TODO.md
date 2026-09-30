@@ -45,7 +45,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime
   cards, removes redundant warmup line and fits large scores. Native state/bounds
   and inspected 960x540/1600x680 captures pass. [Evidence](reports/feedback-2026-09-30/README.md).
-- [ ] F0930-04 Tagged replay: approximately three seconds and truthful contact display;
+- [ ] F0930-04 Tagged replay: latest owner Feedback requests2.5seconds animated,
+  then a1.25second captured tag-frame hold before fade; cloud unit claimed.
+  Preserve earlier3second evidence as history, not the new acceptance target.
+  Original request: approximately three seconds and truthful contact display;
   fix recording/reconstruction/contact timing without inventing a hit.
   Victim replay duration is now approximately3 seconds, with5 native timing/exit
   cases passing. [Evidence](reports/feedback-2026-09-30/catch-replay-duration.md).
