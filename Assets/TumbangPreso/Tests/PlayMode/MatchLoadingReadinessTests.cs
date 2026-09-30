@@ -467,6 +467,14 @@ namespace TumbangPreso.PlayTests
                 yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
                 var controller = Object.FindFirstObjectByType<ConvertedMatchSetup>();
                 Assert.IsNotNull(controller);
+                // The hub builds itself after the scene load reports done; wait for it rather
+                // than for a curtain, which no longer exists.
+                float built = Time.realtimeSinceStartup + 30;
+                while (TumpHub.Current == null || !controller.IsInitialized)
+                {
+                    Assert.Less(Time.realtimeSinceStartup, built, "The hub did not build.");
+                    yield return null;
+                }
                 TumpHub.Current.Push<HubHost>();
                 yield return null;
                 SceneManager.sceneLoaded += CountLoad;

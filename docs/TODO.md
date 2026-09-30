@@ -1448,6 +1448,15 @@ it downloads or renders in the background in the loading screen".
   arenas only (map name heading). Done means: `MatchLoadingReadinessTests.MenuHopsAndTheHubOpenWithoutASecondLoadingScreen`
   and `CustomMapSwitchesShowEachArenaWithoutALoadingCurtainAndReuseIt` green natively, boot time
   measured against LOAD-1's 2.53 s, and the first pick of each map checked for a visible hitch.
+  Native evidence 2026-09-30 (Windows editor, PlayMode, `MatchLoadingReadinessTests` and
+  `OwnerMenuEditsTests` in one launch): total 25, passed 25, failed 0. The map-switch case took
+  11.8 s for five first picks plus a cached second pass with zero scene loads. A wider launch
+  that also ran `HomeFlowTests` and `HubFlowTests` first went 33/37: the map-switch case pushed
+  the hub before it had built (fixed), `SplashShaderAndMenuArtWarmupsCompleteInBoundedStages`
+  lacked the gitignored `ShaderWarmup.shadervariants` in a fresh worktree, and the two cold-cache
+  cases (`ViewmodelMeshWarmup...`, `LoadingPreparationRetains...`) found caches already warmed by
+  `HomeFlowTests`' boot, which is cross-fixture state rather than this change. Still OPEN: boot
+  time and the first-pick hitch in a player.
 - Evidence (Mac player built from this work): boot loading finished after 2.53 s (it waited at
   least 5 s before); a bot match's Eskinita curtain lifted after 1.60 s with the prewarm taking
   0.84 s; Ilalim through HOME lifted after 1.47 s (prewarm 0.87 s). Not measured: the Windows
