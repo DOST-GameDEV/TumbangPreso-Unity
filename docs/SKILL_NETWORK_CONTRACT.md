@@ -22,6 +22,17 @@ match/round/scene and snapshot-generation gates protect recovery ordering.
 Native lifecycle, real-companion placement and resource checks pass; actual-peer
 qualification remains open. [Evidence](reports/feedback-2026-09-30/nemu-kuro-sit.md).
 
+## Kuro Fetch Delivery
+
+Protocol95 changes nemu_skill2 delivery from forced equipment to a loose slipper
+beside its owner. Only the host moves or lands the slipper; ordinary pickup retains
+its ownership, reach and status gates. A changed owner or non-loose state ends the
+old fetch before any transform write. Delivery, interception and cancellation reuse
+Slipper.HostScatter for the existing terrain, playable bounds and landing state.
+The existing slipper snapshot route publishes the result; no packet layout changes.
+Native delivery/authority checks are recorded in [the Fetch report](reports/feedback-2026-09-30/nemu-kuro-fetch.md).
+Actual-peer transport and reconnect qualification remain open.
+
 ## Cosmetic Reworks
 
 - Keep an ability's ID when its gameplay identity is unchanged. Display names,

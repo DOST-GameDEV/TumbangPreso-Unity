@@ -190,8 +190,8 @@ namespace TumbangPreso.Abilities
             private float _nextBroadcast;
 
             public KuroFetch(NemuHeroKit kit)
-                : base("nemu_skill2", "KURO FETCH",
-                       "Attacking. Kuro flies to your slipper and brings it back to your hand. If the taya tags him on the way, he drops it.",
+                : base("nemu_skill2", "KURO: FETCH!",
+                       "Attacking. Kuro brings your loose slipper beside you for pickup. If the taya tags him on the way, he drops it.",
                        NecroRules.FetchCooldown, 8.0f, AbilityGlyph.NemuAstralPet,
                        summary: "Kuro fetches your slipper. The taya can make him drop it.",
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
@@ -226,10 +226,18 @@ namespace TumbangPreso.Abilities
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
-                if (_shoe == null || _kuro == null) { DurationRemaining = 0.0f; return; }
+                if (_shoe == null || !_shoe.gameObject.activeInHierarchy ||
+                    _shoe.OwnerSlot != ctx.Motor.PlayerSlot || _shoe.State != SlipperState.Loose)
+                {
+                    // A normal pickup or round ownership change wins over an old
+                    // fetch. Never reposition equipment that is now held or thrown.
+                    _carrying = false;
+                    DurationRemaining = 0.0f;
+                    return;
+                }
+                if (_kuro == null) { DurationRemaining = 0.0f; return; }
                 if (!_carrying)
                 {
-                    if (_shoe.State != SlipperState.Loose) { DurationRemaining = 0.0f; return; }
                     if (_kuro.ErrandArrived) { _carrying = true; NetCue.Play("sfx_possess_enter", _kuro.transform.position); }
                     return;
                 }
@@ -245,8 +253,7 @@ namespace TumbangPreso.Abilities
                         if (p != null && p.IsDefender && p.CanAct() &&
                             (p.transform.position - at).sqrMagnitude < NecroRules.FetchInterceptRadius * NecroRules.FetchInterceptRadius)
                         {
-                            _shoe.transform.position = new Vector3(at.x, Slipper.GroundY(at) + 0.05f, at.z);
-                            Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe);
+                            GroundCarriedSlipper();
                             MatchFlair.Announce(MatchFlair.Kind.Block, ctx.Motor.PlayerSlot, p.PlayerSlot, at, 4f);
                             NetCue.Play("sfx_nemu_fetch_drop", at);
                             DurationRemaining = 0.0f;
@@ -254,13 +261,32 @@ namespace TumbangPreso.Abilities
                         }
                 if ((ctx.Motor.transform.position - at).sqrMagnitude < 1.2f * 1.2f)
                 {
-                    _shoe.HostForceEquip(ctx.Motor);
-                    Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe);
+                    _shoe.transform.position = ctx.Motor.transform.position + ctx.Motor.transform.right * 0.8f;
+                    GroundCarriedSlipper();
                     DurationRemaining = 0.0f;
                 }
             }
 
-            protected override void OnEnd(AbilityContext ctx) { _kuro?.EndErrand(); _kuro = null; _shoe = null; _carrying = false; }
+            private void GroundCarriedSlipper()
+            {
+                if (_carrying && _shoe != null && _shoe.gameObject.activeInHierarchy &&
+                    _shoe.State == SlipperState.Loose && NetAuthority.ShouldResolve())
+                {
+                    // Reuse normal landing: terrain height, authored shoe rest pose,
+                    // playable bounds and pickup highlights stay in one place.
+                    _shoe.HostScatter(Vector3.zero);
+                    Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe);
+                }
+                _carrying = false;
+            }
+
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                GroundCarriedSlipper();
+                _kuro?.EndErrand();
+                _kuro = null;
+                _shoe = null;
+            }
             protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 
