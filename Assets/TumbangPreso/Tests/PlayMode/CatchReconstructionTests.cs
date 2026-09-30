@@ -156,9 +156,45 @@ namespace TumbangPreso.PlayTests
             finally { QualitySettings.globalTextureMipmapLimit = mip; }
         }
 
-        private IEnumerator CheckContactReach(float distance, bool authoredMap = false)
+        [UnityTest] public IEnumerator SmallNemuTaggingDanteHasVisibleContact() => CheckContactReach(1.65f, false, "nemu", "dante");
+        [UnityTest] public IEnumerator DanteTaggingSmallNemuHasVisibleContact() => CheckContactReach(1.65f, false, "dante", "nemu");
+
+        [UnityTest] public IEnumerator RosterTag_bayan_To_maring() => CheckContactReach(1.65f, false, "bayan", "maring");
+        [UnityTest] public IEnumerator RosterTag_maring_To_totoy() => CheckContactReach(1.65f, false, "maring", "totoy");
+        [UnityTest] public IEnumerator RosterTag_totoy_To_inday() => CheckContactReach(1.65f, false, "totoy", "inday");
+        [UnityTest] public IEnumerator RosterTag_inday_To_kuya_boy() => CheckContactReach(1.65f, false, "inday", "kuya_boy");
+        [UnityTest] public IEnumerator RosterTag_kuya_boy_To_ate_girlie() => CheckContactReach(1.65f, false, "kuya_boy", "ate_girlie");
+        [UnityTest] public IEnumerator RosterTag_ate_girlie_To_tikboy() => CheckContactReach(1.65f, false, "ate_girlie", "tikboy");
+        [UnityTest] public IEnumerator RosterTag_tikboy_To_bebang() => CheckContactReach(1.65f, false, "tikboy", "bebang");
+        [UnityTest] public IEnumerator RosterTag_bebang_To_jun_jun() => CheckContactReach(1.65f, false, "bebang", "jun_jun");
+        [UnityTest] public IEnumerator RosterTag_jun_jun_To_lola_pacing() => CheckContactReach(1.65f, false, "jun_jun", "lola_pacing");
+        [UnityTest] public IEnumerator RosterTag_lola_pacing_To_mang_kanor() => CheckContactReach(1.65f, false, "lola_pacing", "mang_kanor");
+        [UnityTest] public IEnumerator RosterTag_mang_kanor_To_aling_nena() => CheckContactReach(1.65f, false, "mang_kanor", "aling_nena");
+        [UnityTest] public IEnumerator RosterTag_aling_nena_To_dante() => CheckContactReach(1.65f, false, "aling_nena", "dante");
+        [UnityTest] public IEnumerator RosterTag_dante_To_cheska() => CheckContactReach(1.65f, false, "dante", "cheska");
+        [UnityTest] public IEnumerator RosterTag_cheska_To_sean() => CheckContactReach(1.65f, false, "cheska", "sean");
+        [UnityTest] public IEnumerator RosterTag_sean_To_zack() => CheckContactReach(1.65f, false, "sean", "zack");
+        [UnityTest] public IEnumerator RosterTag_zack_To_nemu() => CheckContactReach(1.65f, false, "zack", "nemu");
+        [UnityTest] public IEnumerator RosterTag_nemu_To_phaister() => CheckContactReach(1.65f, false, "nemu", "phaister");
+        [UnityTest] public IEnumerator RosterTag_phaister_To_rafi() => CheckContactReach(1.65f, false, "phaister", "rafi");
+        [UnityTest] public IEnumerator RosterTag_rafi_To_amihan() => CheckContactReach(1.65f, false, "rafi", "amihan");
+        [UnityTest] public IEnumerator RosterTag_amihan_To_paete() => CheckContactReach(1.65f, false, "amihan", "paete");
+        [UnityTest] public IEnumerator RosterTag_paete_To_bayan() => CheckContactReach(1.65f, false, "paete", "bayan");
+
+        private IEnumerator CheckContactReach(float distance, bool authoredMap = false, string actorArt = null, string victimArt = null)
         {
             if (authoredMap) yield return Open(); else yield return OpenIsolatedCatchWorld();
+            if (actorArt != null)
+            {
+                void SetArt(int seat, string id)
+                {
+                    var art = RosterBook.Load().FindPersonArt(id);
+                    Assert.IsNotNull(art, id);
+                    GameServices.Round.PlayerAt(seat).GetComponent<CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+                }
+                SetArt(0, actorArt); SetArt(1, victimArt);
+                yield return null;
+            }
             Stage();
             var victim = GameServices.Round.PlayerAt(1);
             var actor = GameServices.Round.PlayerAt(0);
@@ -179,6 +215,7 @@ namespace TumbangPreso.PlayTests
                 Vector3 restScale = sourceHand.parent.localScale;
                 var sourceTorso = actor.GetComponent<CharacterVisual>().TorsoBone;
                 var sourceRoot = sourceTorso.parent;
+                if (actorArt != null) Debug.Log("[TagGeometry] " + actorArt + " torso=" + sourceTorso.position + " hand=" + sourceHand.position + " victimTorso=" + victim.GetComponent<CharacterVisual>().TorsoBone.position + " victim=" + victim.transform.position);
                 Vector3 motorStart = actor.transform.position;
                 Vector3 rootStart = sourceRoot.localPosition;
                 int beforeScore = GameServices.Match.ScoreFor(0);
@@ -199,6 +236,7 @@ namespace TumbangPreso.PlayTests
                 var camera = (Camera)Field("_camera"); var target = (RenderTexture)Field("_target");
                 var picture = (UnityEngine.UI.RawImage)Field("_picture");
                 string directory = (authoredMap ? "Logs/tag-contact-authored/reach-" : "Logs/tag-contact/reach-") + distance.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+                if (actorArt != null) directory = "Logs/tag-contact-silhouettes/" + actorArt + "-to-" + victimArt;
                 System.IO.Directory.CreateDirectory(directory);
                 float lastTime = -1, lastGap = float.MaxValue, lastPoseTime = 0, lastAlpha = 0;
                 float lastShift = 0, lastLean = 0, lastStretch = 0;
@@ -242,7 +280,7 @@ namespace TumbangPreso.PlayTests
                         {
                             bestDistance = proximity; bestGap = lastGap; bestAlpha = lastAlpha;
                             bestShift = lastShift; bestLean = lastLean; bestStretch = lastStretch;
-                            if (authoredMap) bestSurfaceGap = SkinSurfaceDistance(hand.position, victimCopy.Renderers);
+                            if (authoredMap || actorArt != null) bestSurfaceGap = SkinSurfaceDistance(hand.position, victimCopy.Renderers);
                             System.IO.File.WriteAllBytes(directory + "/contact.png", bytes);
                         }
                         frames++;
@@ -257,11 +295,11 @@ namespace TumbangPreso.PlayTests
                 Assert.That(frames, Is.GreaterThan(8));
                 Assert.That(bestDistance, Is.LessThan(.09f));
                 Assert.That(bestGap, Is.LessThan(.08f), "The actual rendered reaching hand must reach the accepted victim's visible body bounds.");
-                if (authoredMap) Assert.That(bestSurfaceGap, Is.LessThan(.08f), "A bounding-box overlap is not visible contact with the actual skin.");
+                if (authoredMap || actorArt != null) Assert.That(bestSurfaceGap, Is.LessThan(.08f), "A bounding-box overlap is not visible contact with the actual skin.");
                 Assert.That(bestAlpha, Is.GreaterThan(.95f), "Do not fade out while the hand first reaches the target.");
                 Assert.That(Vector3.Distance(restScale, sourceHand.parent.localScale), Is.LessThan(.001f), "Temporary limb extension must restore.");
                 Assert.That(bestShift, Is.GreaterThan(.1f), "The hips must transfer weight into the step.");
-                Assert.That(bestLean, Is.GreaterThan(distance > 1.5f ? 35f : 18f), "The chest must commit to the reach.");
+                Assert.That(bestLean, Is.GreaterThan(distance > 1.5f ? 25f : 18f), "The chest must commit to the reach.");
                 if (distance < 1.1f) Assert.That(bestLean, Is.LessThan(30f), "Close tags should not dive through the target.");
                 Assert.That(bestStretch, Is.LessThanOrEqualTo(1.101f), "Do not substitute an elongated arm for body motion.");
                 Assert.That(Vector3.Distance(motorStart, actor.transform.position), Is.LessThan(.03f), "The visual step must not move the gameplay capsule.");

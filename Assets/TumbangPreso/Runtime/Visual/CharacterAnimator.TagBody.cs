@@ -74,7 +74,7 @@ namespace TumbangPreso.Visual
             float height = torso != null ? torso.position.y - victim.transform.position.y + .12f
                 : capsule != null ? capsule.center.y : .8f;
             Vector3 toward = transform.position - at; toward.y = 0;
-            float radius = capsule != null ? capsule.radius * .85f : .28f;
+            float radius = capsule != null ? capsule.radius * .70f : .28f;
             _tagContact = at + Vector3.up * Mathf.Clamp(height, .3f, 1.2f)
                 + (toward.sqrMagnitude > .001f ? toward.normalized * radius : Vector3.zero);
             _tagContactUntil = Time.unscaledTime + .35f;
@@ -156,8 +156,8 @@ namespace TumbangPreso.Visual
                 Vector3 toContact = _tagContact - transform.position; toContact.y = 0;
                 commitment = Mathf.InverseLerp(.65f, 1.35f, toContact.magnitude);
             }
-            float lean = (lunge ? 44f : Mathf.Lerp(22f, 38f, commitment)) * w;
-            float twist = (lunge ? -28f : -32f) * w;
+            float lean = (lunge ? 44f : Mathf.Lerp(22f, 28f, commitment)) * w;
+            float twist = (lunge ? -28f : -42f) * w;
             float side = transform.InverseTransformPoint(_tgArmR.position).x >= 0 ? 1f : -1f;
 
             _tgTorsoRest = _tgTorso.localRotation; _tgArmRRest = _tgArmR.localRotation; _tgArmLRest = _tgArmL.localRotation;
@@ -191,7 +191,19 @@ namespace TumbangPreso.Visual
             if (_tgHead != null) _tgHead.rotation = Quaternion.AngleAxis(-twist * side * .6f, up) * Quaternion.AngleAxis(-lean * .7f, right) * _tgHead.rotation;
             // The reaching hand: straight out at the target, chest height for the jab, low and long for the dive.
             var reach = lunge ? new Vector3(.08f, -.25f, .97f) : new Vector3(.05f, .02f, 1f);
-            if (_tagContactValid) ReachAcceptedContact(w);
+            if (_tagContactValid)
+            {
+                ReachAcceptedContact(w);
+                if (_tgRoot != null && _motor != null && _motor.IsGrounded)
+                {
+                    // Shorter authored arms need the body to finish the accepted step,
+                    // rather than a longer limb. This render-only offset restores next frame.
+                    Vector3 shortfall = Vector3.ProjectOnPlane(_tagContact - _tgArmR.TransformPoint(_tgPalmR), up);
+                    if (Vector3.Dot(shortfall, transform.forward) > 0)
+                        _tgRoot.position += Vector3.ClampMagnitude(shortfall, .5f) * w;
+                    ReachAcceptedContact(w);
+                }
+            }
             else PointArm(_tgArmR, _tgAlongR, new Vector3(reach.x * side, reach.y, reach.z), w, 0);
             // The off arm swings back for balance.
             PointArm(_tgArmL, _tgAlongL, new Vector3(-.35f * side, -.75f, -.55f), w * .9f, 0);

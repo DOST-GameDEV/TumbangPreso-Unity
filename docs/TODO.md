@@ -95,7 +95,7 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime
   cards, removes redundant warmup line and fits large scores. Native state/bounds
   and inspected 960x540/1600x680 captures pass. [Evidence](reports/feedback-2026-09-30/README.md).
-- [ ] F0930-04 Tagged replay: latest owner Feedback requests2.5seconds animated,
+- [x] F0930-04 Tagged replay: latest owner Feedback requests2.5seconds animated,
   then a1.25second captured tag-frame hold before fade. Implemented with.18s fade;
   3native timing/state cases and2real-clock close/far contact cases pass. The whole
   image holds while simulation/recovery continue. Full-map/player/peer and human
@@ -121,6 +121,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Authored Eskinita close/far native checks now pass2/2, including baked skin
   proximity; no new animation/camera edit. Human/all-roster/player checks remain.
   [Authored-map evidence](reports/feedback-2026-09-30/tag-authored-map.md).
+  Latest cross-body correction adds a bounded accepted-contact step, smaller far
+  lean and stronger shoulder turn without stretching arms or moving motors.
+  Four contrast/Classic,21cyclic all-model and2authored-map native cases pass.
+  Tester taste/all pair combinations/actual peers remain separate.
+  [Current evidence](reports/feedback-2026-09-30/tag-silhouettes.md).
 - [x] F0930-05 Adopted [Xelu prompts](https://thoseawesomeguys.com/prompts/): current
   binding labels and Xbox/PS families resolve whole supplied images, with retained
   fallback for absent variants. Live HUD and training key row use the same resolver.

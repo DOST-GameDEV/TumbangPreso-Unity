@@ -1114,3 +1114,38 @@ Test bounded adaptive body step for accepted contacts, preserving10percent arm
 stretch and actual motors/scoring. Include original Classic close/far controls.
 If target geometry remains wrong, diagnose that separately rather than enlarging
 arms or loosening contact assertions. No hero-specific mechanics/assets touched.
+
+Adaptive step reduces Nemu-to-Dante skin gap24cm→3cm; reverse remains8.5cm.
+Forward-only correction avoids cancelling the existing close step. Visual critique:
+far38degree lean drives the large head into the smaller victim before the hand.
+Refine to28degree far lean plus42degree shoulder turn and a bounded50cm extra
+accepted-contact step; inset the visual palm target from padded capsule85→70%.
+The old35degree assertion encoded the previous pose, not owner acceptance; change
+that one pose assertion to25degrees for the new28degree direction. Keep all skin
+contact, arm10percent, motor, recovery, score and timing assertions unchanged.
+Run four contrast/Classic cases and inspect pixels before any publication.
+
+Refined tag4/4passes18.33s. Contrasting skin gaps now4.3cm and0.7cm; close/far
+Classic also retain step/contact/recovery. Captures inspected, no arm stretching
+substitute. Qualify this coherent global body change across21authored roster
+models in cyclic pairs, each as tagger and victim once, far accepted distance.
+This is focused model compatibility, not all pair combinations or hero mechanics.
+One integrated native pass, with actual skin proximity/recovery/capsule/scoring
+checks unchanged. Keep human taste and actual peers separately open.
+
+Roster integration21/21passes94.98s, each of21authored models once as tagger and
+victim at far range, maximum skin gap5.5cm. Representative largest/smallest and
+worst-gap captures inspected. General step affects finalized heroes only through
+the explicitly allowed shared tag gesture; no character-specific edits. Final
+coherent check: the existing two authored Eskinita close/far cases on this changed
+source (old authored evidence predates new target/step). No full-player repeat.
+Chronological before/after videos prepared from captured timestamps for later
+owner review, not sent while asleep. Human taste and live peers stay distinct.
+
+Final authored2/2passes14.49s; together27distinct final cases qualify shared
+contact refinement. Representative contact pixels inspected and chronological
+films retained. Publish explicit TagBody/test/report paths, release ownership,
+update same tagged-contact Feedback row and Done. Human verified remains unchecked;
+no claim of all441pairs, perfect composition or actual peers. Next authorized
+presentation pass: read current full specifications and method, research/plan
+each selected effect, preserve finalized heroes and owner-reserved mechanics.
