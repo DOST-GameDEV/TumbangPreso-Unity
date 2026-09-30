@@ -9,8 +9,8 @@ namespace TumbangPreso.Abilities
 {
     /// <summary>
     /// Nemu's current Wiki passive and Kuro: Sit signature use the shared basic
-    /// cooldown and recall anchor. Fetch, Guard and the legacy seance below still
-    /// await their remaining Wiki behavior changes; this is not a full-kit claim.
+    /// cooldown and recall anchor. Catch protects the can through its owned clock.
+    /// Fetch eligibility and the legacy seance still need their remaining Wiki work.
     /// </summary>
     public sealed class NemuHeroKit : HeroKit
     {
@@ -290,76 +290,83 @@ namespace TumbangPreso.Abilities
             protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 
-        // ================================================================== KURO GUARD (defending)
+        // ================================================================== KURO: CATCH! (defending)
 
-        private sealed class KuroGuard : HeroAbility
+        private sealed class KuroGuard : HeroAbility, IPreparedWorldReplication
         {
             private readonly NemuHeroKit _kit;
-            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             private GhostPetCompanion _kuro;
-            private Vector3 _spot, _pending;
-            private float _think, _react;
-            private readonly HashSet<Slipper> _blocked = new HashSet<Slipper>();
+            private Lata _can;
+            private bool _approvedReplica;
 
             public KuroGuard(NemuHeroKit kit)
-                : base("nemu_skill2d", "KURO GUARD",
-                       "Defending. Kuro grows and guards the can for 6 s, moving to block the throws he sees coming. He is quick, not perfect.",
+                : base("nemu_skill2d", "KURO: CATCH!",
+                       "Defending. Command Kuro to protect the upright can from knockdown for 5 s.",
                        NecroRules.GuardCooldown, NecroRules.GuardSeconds, AbilityGlyph.NemuKuroGuard,
-                       summary: "Kuro grows and blocks throws at the can.",
+                       summary: "Protect the upright can for 5 s.",
                        castAction: "hero-nemu-seance", viewmodelAction: "seance-channel",
                        castCue: "sfx_cast_nemu_guard") { _kit = kit; }
+
+            public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && ctx.Motor.IsDefender && ctx.Round?.Lata?.IsUpright == true;
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
-                _kuro = Kuro(ctx);
-                _blocked.Clear();
-                var lata = ctx.Round?.Lata;
-                _spot = _pending = lata != null ? lata.transform.position + Vector3.forward * 1.2f : ctx.Position;
-                _think = 0.0f; _react = 0.0f;
-                _kuro?.BeginErrand(() => _spot, NecroRules.GuardMoveSpeed, NecroRules.GuardScale);
+                _approvedReplica = ctx.IsApprovedReplay;
+                BindCan(ctx);
             }
-
+            private void BindCan(AbilityContext ctx)
+            {
+                _can = ctx?.Round?.Lata;
+                _can?.AddAbilityProtection(this, _approvedReplica);
+                BindCompanion(ctx);
+            }
+            private void BindCompanion(AbilityContext ctx)
+            {
+                if (_can == null) return;
+                _kuro = Kuro(ctx);
+                _kuro?.BeginErrand(() => _can != null
+                    ? _can.transform.position + Vector3.forward * 1.2f : ctx.Position,
+                    NecroRules.GuardMoveSpeed, NecroRules.GuardScale);
+            }
             protected override void OnTick(AbilityContext ctx, float dt)
             {
-                var round = ctx?.Round;
-                var lata = round?.Lata;
-                if (lata == null || _kuro == null) return;
-                // ⚠️ THE FALLIBLE AI (owner: *"dont make it infallible"*): he re-decides every 0.35 s and acts
-                // on it 0.25 s later, standing between the can and whichever attacker holding a slipper is
-                // closest to it. He never predicts a curve and never sees a throw before it leaves the hand.
-                _think -= dt;
-                if (_think <= 0.0f)
-                {
-                    _think = NecroRules.GuardThinkSeconds;
-                    CharacterMotor threat = null; float best = float.MaxValue;
-                    foreach (var p in round.Players)
-                    {
-                        if (p == null || p.IsDefender || !p.HoldingSlipper) continue;
-                        float dd = (p.transform.position - lata.transform.position).sqrMagnitude;
-                        if (dd < best) { best = dd; threat = p; }
-                    }
-                    Vector3 toward = threat != null ? threat.transform.position - lata.transform.position : ctx.Motor.transform.forward;
-                    toward.y = 0.0f;
-                    _pending = lata.transform.position + (toward.sqrMagnitude > 0.01f ? toward.normalized : Vector3.forward) * 1.4f;
-                    _react = NecroRules.GuardReactSeconds;
-                }
-                if (_react > 0.0f) { _react -= dt; if (_react <= 0.0f) _spot = _pending; }
-
-                if (!NetAuthority.ShouldResolve()) return;
-                float reach = NecroRules.GuardBlockRadius * NecroRules.GuardScale;
-                foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
-                {
-                    if (s == null || s.State != SlipperState.InFlight || _blocked.Contains(s)) continue;
-                    if ((s.transform.position - _kuro.transform.position).sqrMagnitude > reach * reach) continue;
-                    _blocked.Add(s);
-                    Vector3 away = s.transform.position - _kuro.transform.position; away.y = 0.0f;
-                    s.Deflect((away.sqrMagnitude > 0.01f ? away.normalized : -s.Velocity.normalized) * Balance.LaunchSpeed * Balance.DeflectSpeedScale, 1.0f);
-                    NetCue.Play("sfx_nemu_guard_block", s.transform.position);
-                }
+                if (_can == null) { BindCan(ctx); return; }
+                if (_can != ctx?.Round?.Lata || (NetAuthority.ShouldResolve() && !_can.IsUpright))
+                { DurationRemaining = 0; return; }
+                _can.AddAbilityProtection(this, _approvedReplica);
+                if (_kuro == null) BindCompanion(ctx);
             }
-
-            protected override void OnEnd(AbilityContext ctx) { _kuro?.EndErrand(); _kuro = null; }
+            public bool CapturePreparedWorld(out Vector3 centre, out float preparation, out float remaining)
+            {
+                bool active = IsActive && _can != null;
+                centre = active ? _can.transform.position : Vector3.zero;
+                preparation = 0; remaining = active ? DurationRemaining : 0;
+                return active;
+            }
+            public bool RestorePreparedWorld(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
+            {
+                if (ctx?.Motor == null || !float.IsFinite(centre.x) || !float.IsFinite(centre.y)
+                    || !float.IsFinite(centre.z) || !float.IsFinite(preparation) || preparation != 0
+                    || !float.IsFinite(remaining) || remaining < 0 || remaining > Duration) return false;
+                if (remaining == 0)
+                { EndEarly(ctx); OnEnd(ctx); return false; }
+                if (ctx.Round?.Lata == null || (NetAuthority.ShouldResolve() && !ctx.Round.Lata.IsUpright)) return false;
+                RestoreLiveClock(remaining);
+                // This callback is reached through the validated shared recovery
+                // route, whose context is not an ordinary cast-playback context.
+                _approvedReplica = true;
+                BindCan(ctx);
+                return false;
+            }
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                _can?.RemoveAbilityProtection(this); _can = null;
+                _approvedReplica = false;
+                _kuro?.EndErrand(); _kuro = null;
+            }
             protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 

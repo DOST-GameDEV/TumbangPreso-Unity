@@ -190,6 +190,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   native checks pass;100warmed calls reduce allocation events200to0 with live
   ownership/activity/flight/lifecycle retained. No kit-rule change.
   [Evidence](reports/feedback-2026-09-30/fetch-query-allocations.md).
+  Kuro: Catch protects the upright can for5seconds through its owned clock;
+  independent restore protection survives cancellation. Host-confirmed delivery
+  and approved remaining-clock recovery preserve authority and replica state.
+  Eight distinct native cases pass. Haunt/full-kit work stays open.
+  [Evidence](reports/feedback-2026-09-30/nemu-kuro-catch.md).
 - [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default/order reconciled with already-shipped BUGS-0926.5:
