@@ -107,7 +107,7 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   owner-only gate and highlight setting unchanged. `SlipperRecallShots` gains a far frame.
   Done means that probe green with the beam under the 12 per cent frame budget, and the
   near, side and far frames inspected.
-- [ ] F0930-18 Throw: remove trajectory line, quicker charge and coherent charge feedback.
+- [x] F0930-18 Throw: remove trajectory line, quicker charge and coherent charge feedback.
   Full ordinary charge is1.25 seconds instead of2.5 in both modes;8 native carrier
   timing/release/observed-state cases pass. Protocol96 requires matching builds.
   [Evidence](reports/feedback-2026-09-30/throw-charge-duration.md).
@@ -116,7 +116,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   release passes with an inspected capture. Shared support query measures zero
   warm allocations and retains a dense-geometry fallback.
   [Circle evidence](reports/feedback-2026-09-30/landing-circle.md).
-  Clearer charge feedback remains open; the parent requirement is not complete.
+  The reticle now shows actual power percentage, FULL RELEASE and WAIT for blocked
+  states. Real carrier/can/protection/hidden-reticle/release check passes; two sizes
+  inspected. The current can-down release rule is retained.
+  [Charge UI evidence](reports/feedback-2026-09-30/throw-charge-ui.md).
 - [ ] F0930-19 FRIEND RESERVED (owner 2026-09-30): loading work is assigned to the
   owner's friend. This agent must not edit loading paths. Other optimization remains
   authorized later; preserve loading as an outstanding contributor-owned requirement.

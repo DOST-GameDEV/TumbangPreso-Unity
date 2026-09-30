@@ -65,3 +65,5 @@ from native menu/clock checks.
 ## Throw Landing Preview, Feedback2026-09-30
 
 The owner replaced the directional line with a local ground circle. It follows the current launch and supporting floor at20Hz, disappears with charge/release and predicts world banks. It does not resolve gameplay or promise immunity to player/can interception. Read the [native flight/render evidence](reports/feedback-2026-09-30/landing-circle.md). Keep the ordinary charge ring tied to Carrier.ChargeRatio; clarity feedback remains open.
+
+Charge feedback names actual power percent and FULL RELEASE at the reticle, with WAIT when the objective is protected or the round/actor disallows use. Keep the adopted can-down throwing rule. Captions hide with the reticle/release and use the shared black outline. [Native charge UI evidence](reports/feedback-2026-09-30/throw-charge-ui.md).
