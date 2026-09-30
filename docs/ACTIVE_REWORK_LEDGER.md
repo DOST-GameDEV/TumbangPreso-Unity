@@ -880,3 +880,13 @@ both sides are comparably clear, retain obstacle/too-tight fallback and one-time
 selection. No body/ability/mesh changes. Validate two authored-map contacts plus
 existing wall/fallback case. Strengthened skin checks remain, private side override
 is removed before final validation. This follows the reviewed rendering defect.
+
+Camera trial result:2contact passes; existing both-wall fallback case failed its
+one-frame wait. Do not repair unrelated fixture timing in this unit or claim
+fallback qualification. Review showed this actor's recorded reaching shoulder
+already matches the default side; opposite-side framing alone was not a proven
+product fix. Trial camera code and preference assertion removed, original runtime
+restored exactly. Keep authored-map/surface checks and their original2/2passing
+evidence; no animation/runtime change shipped from this qualification unit.
+Native pictures show the body reach; human taste, all-roster, actual-peer and
+dedicated interrupted-lunge checks remain open. Preserve failed/inconclusive history.

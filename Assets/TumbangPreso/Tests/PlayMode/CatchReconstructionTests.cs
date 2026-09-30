@@ -139,9 +139,27 @@ namespace TumbangPreso.PlayTests
             finally { GameServices.Match.Scored -= scored; }
         }
 
-        private IEnumerator CheckContactReach(float distance)
+        [UnityTest, Timeout(90000)]
+        public IEnumerator AuthoredMapCloseTagRetainsVisibleWholeBodyContact() => CheckAuthoredMapContact(1f);
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator AuthoredMapFarTagRetainsVisibleWholeBodyContact() => CheckAuthoredMapContact(1.65f);
+
+        private IEnumerator CheckAuthoredMapContact(float distance)
         {
-            yield return OpenIsolatedCatchWorld(); Stage();
+            int mip = QualitySettings.globalTextureMipmapLimit;
+            try
+            {
+                QualitySettings.globalTextureMipmapLimit = 2;
+                yield return CheckContactReach(distance, true);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        private IEnumerator CheckContactReach(float distance, bool authoredMap = false)
+        {
+            if (authoredMap) yield return Open(); else yield return OpenIsolatedCatchWorld();
+            Stage();
             var victim = GameServices.Round.PlayerAt(1);
             var actor = GameServices.Round.PlayerAt(0);
             actor.Teleport(victim.transform.position - Vector3.forward * distance);
@@ -180,7 +198,7 @@ namespace TumbangPreso.PlayTests
                 var copiedRoot = track.CopiedBone(copy, sourceRoot);
                 var camera = (Camera)Field("_camera"); var target = (RenderTexture)Field("_target");
                 var picture = (UnityEngine.UI.RawImage)Field("_picture");
-                string directory = "Logs/tag-contact/reach-" + distance.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+                string directory = (authoredMap ? "Logs/tag-contact-authored/reach-" : "Logs/tag-contact/reach-") + distance.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
                 System.IO.Directory.CreateDirectory(directory);
                 float lastTime = -1, lastGap = float.MaxValue, lastPoseTime = 0, lastAlpha = 0;
                 float lastShift = 0, lastLean = 0, lastStretch = 0;
@@ -200,7 +218,7 @@ namespace TumbangPreso.PlayTests
                 };
                 Camera.onPostRender += rendered;
                 float next = 0, bestDistance = float.MaxValue, bestGap = float.MaxValue, bestAlpha = 0;
-                float bestShift = 0, bestLean = 0, bestStretch = 0;
+                float bestShift = 0, bestLean = 0, bestStretch = 0, bestSurfaceGap = float.MaxValue;
                 int frames = 0;
                 var times = new System.Collections.Generic.List<string>();
                 while (view.Playing && Time.unscaledTime - began < duration + .5f)
@@ -224,6 +242,7 @@ namespace TumbangPreso.PlayTests
                         {
                             bestDistance = proximity; bestGap = lastGap; bestAlpha = lastAlpha;
                             bestShift = lastShift; bestLean = lastLean; bestStretch = lastStretch;
+                            if (authoredMap) bestSurfaceGap = SkinSurfaceDistance(hand.position, victimCopy.Renderers);
                             System.IO.File.WriteAllBytes(directory + "/contact.png", bytes);
                         }
                         frames++;
@@ -233,11 +252,12 @@ namespace TumbangPreso.PlayTests
                 System.IO.File.WriteAllLines(directory + "/times.txt", times);
                 string values = "distance=" + distance + " contactGap=" + bestGap + " contactAlpha=" + bestAlpha
                     + " sampleError=" + bestDistance + " frames=" + frames
-                    + " bodyShift=" + bestShift + " torsoLean=" + bestLean + " armStretch=" + bestStretch;
+                    + " bodyShift=" + bestShift + " torsoLean=" + bestLean + " armStretch=" + bestStretch + " skinSurfaceGap=" + bestSurfaceGap;
                 System.IO.File.WriteAllText(directory + "/measurements.txt", values); Debug.Log(values);
                 Assert.That(frames, Is.GreaterThan(8));
                 Assert.That(bestDistance, Is.LessThan(.09f));
                 Assert.That(bestGap, Is.LessThan(.08f), "The actual rendered reaching hand must reach the accepted victim's visible body bounds.");
+                if (authoredMap) Assert.That(bestSurfaceGap, Is.LessThan(.08f), "A bounding-box overlap is not visible contact with the actual skin.");
                 Assert.That(bestAlpha, Is.GreaterThan(.95f), "Do not fade out while the hand first reaches the target.");
                 Assert.That(Vector3.Distance(restScale, sourceHand.parent.localScale), Is.LessThan(.001f), "Temporary limb extension must restore.");
                 Assert.That(bestShift, Is.GreaterThan(.1f), "The hips must transfer weight into the step.");
@@ -254,6 +274,47 @@ namespace TumbangPreso.PlayTests
                 Camera.onPostRender -= rendered; view.End();
                 settings.ReducedUiMotion = reduced; settings.CinematicCameraMotion = cinematic;
             }
+        }
+
+        private static float SkinSurfaceDistance(Vector3 point, Renderer[] renderers)
+        {
+            float squared = float.PositiveInfinity;
+            var mesh = new Mesh();
+            try
+            {
+                foreach (var renderer in renderers)
+                {
+                    if (!(renderer is SkinnedMeshRenderer skin) || !skin.enabled) continue;
+                    skin.BakeMesh(mesh, true);
+                    var vertices = mesh.vertices; var triangles = mesh.triangles;
+                    for (int i = 0; i < vertices.Length; i++) vertices[i] = skin.transform.TransformPoint(vertices[i]);
+                    for (int i = 0; i < triangles.Length; i += 3)
+                        squared = Mathf.Min(squared, (point - ClosestTriangle(point, vertices[triangles[i]], vertices[triangles[i + 1]], vertices[triangles[i + 2]])).sqrMagnitude);
+                }
+            }
+            finally { Object.Destroy(mesh); }
+            return Mathf.Sqrt(squared);
+        }
+
+        private static Vector3 ClosestTriangle(Vector3 p, Vector3 a, Vector3 b, Vector3 c)
+        {
+            var ab = b - a; var ac = c - a; var ap = p - a;
+            float d1 = Vector3.Dot(ab, ap), d2 = Vector3.Dot(ac, ap);
+            if (d1 <= 0 && d2 <= 0) return a;
+            var bp = p - b; float d3 = Vector3.Dot(ab, bp), d4 = Vector3.Dot(ac, bp);
+            if (d3 >= 0 && d4 <= d3) return b;
+            float vc = d1 * d4 - d3 * d2;
+            if (vc <= 0 && d1 >= 0 && d3 <= 0) return a + ab * (d1 / (d1 - d3));
+            var cp = p - c; float d5 = Vector3.Dot(ab, cp), d6 = Vector3.Dot(ac, cp);
+            if (d6 >= 0 && d5 <= d6) return c;
+            float vb = d5 * d2 - d1 * d6;
+            if (vb <= 0 && d2 >= 0 && d6 <= 0) return a + ac * (d2 / (d2 - d6));
+            float va = d3 * d6 - d5 * d4;
+            if (va <= 0 && d4 - d3 >= 0 && d5 - d6 >= 0)
+                return b + (c - b) * ((d4 - d3) / ((d4 - d3) + (d5 - d6)));
+            float sum = va + vb + vc;
+            if (Mathf.Abs(sum) < .0000001f) return a;
+            return a + ab * (vb / sum) + ac * (vc / sum);
         }
 
         private static IEnumerator OpenIsolatedCatchWorld()
