@@ -4102,7 +4102,7 @@ namespace TumbangPreso.Net
             // raised `Scored` itself one line before sending; replaying it here would double
             // every toast and every sting on the host. See § THE LOOPBACK.
             if (NetAuthority.IsHost) return;
-            if (!FromHost(senderClientId)) return;
+            if (!FromHost(senderClientId) || reader.Length - reader.Position != 12 || !reader.TryBeginRead(12)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int rawEvent);
@@ -4127,7 +4127,7 @@ namespace TumbangPreso.Net
         private void OnTsinelasMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (NetAuthority.IsHost) return;
-            if (!FromHost(senderClientId)) return;
+            if (!FromHost(senderClientId) || !reader.TryBeginRead(8)) return;
 
             // ⚠️⚠️ THE TAYA'S SLOT TRAVELS WITH THE TABLE AND IS NOT INFERRED ON THIS PEER.
             // `docs/TODO.md` § 130.13. The taya's stock is 0 by definition, so a receiver that
@@ -4139,6 +4139,9 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int defenderSlot);
             reader.ReadValueSafe(out int count);
             if (count < 0 || count > Core.Balance.PlayerCount) return;
+            // Validate the whole declared table before allocating or changing
+            // any stock. Truncation and appended bytes are not valid messages.
+            if (reader.Length - reader.Position != count * 4 || !reader.TryBeginRead(count * 4)) return;
 
             var stocks = new int[Core.Balance.PlayerCount];
             for (int i = 0; i < count; i++)

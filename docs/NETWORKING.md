@@ -61,6 +61,15 @@ Read the [authoring contract](SKILL_NETWORK_CONTRACT.md) before adding a new RPC
 New gameplay data needs an explicit reusable state/recovery contract; no promise
 that every future mechanic fits the current centre-plus-clocks adapter.
 
+## Score And Stock Packet Bounds
+
+Score requires exactly12remaining bytes. Last Tsinelas checks its8-byte header,
+existing0-4count bound and exact declared table length before any stock update.
+Both reject truncated/trailing messages without events or partial state changes.
+Published layouts, count semantics and protocol97 remain unchanged.
+[Native before/after evidence](reports/feedback-2026-09-30/score-stock-packets.md)
+separates packet-handler checks from actual-peer qualification.
+
 ## Map Ballot Packet Bounds
 
 SelectMapVote requires exactly one integer and a sender ID representable by the

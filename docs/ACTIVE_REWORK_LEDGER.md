@@ -397,3 +397,12 @@ truncated host payload exceptions and trailing payload acceptance need native
 reproduction before runtime edits. No test or defect claim yet; no heavy job running.
 
 Incoming whole-body tag5f7589760 is preserved in the main integration. The active internal build stays frozen atc55574cd6; it does not qualify this later presentation revision. Do not restart the live build for an unrelated visual integration. Source/unit evidence remain separate; continue the planned actual-peer network check on the frozen binary first.
+
+Score/stock envelope reproduction confirmed10native failures before the fix;
+the same16cases now pass with frozen inputs. Score requires exactly12bytes and
+Last Tsinelas validates its header/full declared table before mutation. Valid
+payload semantics, totals, stocks and protocol97 stay unchanged. The two new
+Feedback rows are recorded separately under hidden QA_TUMP_0040/0041; both await
+the shipped note, Human verified untouched. No heavy cloud job running. Publish
+explicit handler/test/report paths, verify remote, update those rows and release
+this reservation. The local Windows build remains independently frozen.
