@@ -105,6 +105,9 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [ ] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default request is protected by the latest no-lighting restriction.
+  Native actual Period-key title entry and shared Back/menu/Home-background route
+  pass. Queue-button and stamina-specific acceptance still remain; no blanket
+  already-fixed claim. [Route evidence](reports/feedback-2026-09-30/menu-routes.md).
 - [x] F0930-14 Existing taya can-down fix verified on current controls/charge candidate.
   Native upright/down/reset case passes, distinct from attacker danger; offscreen
   can state records DOWN/visible.1280x720 frame/icon capture inspected.
