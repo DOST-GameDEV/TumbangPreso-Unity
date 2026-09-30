@@ -434,3 +434,13 @@ Tests/PlayMode/SlipperObstacleQueryTests.cs and metadata, focused report and
 TODO/ledger notes. Existing closest-hit, banks, support and ability callbacks must
 stay identical. Loading and landing-circle source remain outside this reservation.
 Native warm-query allocation and dense nearest-wall cases precede runtime edits.
+
+Flight-query investigation closed without a runtime edit. Dense70-wall closest
+collision passes. The allocation counter reported0even for a forced4096-byte
+array in its one bounded calibration, so its query-zero result is not usable
+performance evidence on this Linux Editor. Preserve that limit; calibrate counters
+before interpreting zero. No allocation improvement is claimed and no speculative
+buffer rewrite was made. Experimental probe is preserved with its run evidence,
+not added as a falsely passing performance gate. Slipper/test paths released.
+No heavy cloud job running. Doc access confirmation remains pending; next work
+must remain independent of reserved kits/loading/input/tutorial/build paths.
