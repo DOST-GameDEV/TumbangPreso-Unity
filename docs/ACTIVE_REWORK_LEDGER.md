@@ -348,3 +348,5 @@ metadata lifecycle; continuous motion is retained. Incoming80ff8b58 controls and
 charge-reticle source are integrated unchanged. Final combined native check2/2
 passes with frozen inputs. No native job is running. Verify remote publication
 and update the existing contact row; human and broader qualification stay open.
+
+Latest controls80ff8b583 shipped, remote HEAD verified. Existing F0930-14 can-down fix passes1/1 native upright/down/reset path on this candidate, capture inspected; no duplicate effect code. Local next reservation: Editor/GameBuilder.cs and new AuthoredAnimationBuildCheck.cs plus focused build-input test. GameBuilder currently invokes swim/recovery authoring on every build, and both author tools overwrite retained clips via CopySerialized. Change the build to validate existing sets without reauthoring; manual authoring tools remain explicit. No animation/model/map/loading files will be edited. This engineering bug fix precedes an internal Windows build and two-process LAN check. No native job running.
