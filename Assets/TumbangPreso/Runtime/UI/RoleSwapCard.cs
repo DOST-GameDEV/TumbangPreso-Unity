@@ -112,6 +112,7 @@ namespace TumbangPreso.UI
 
         public void DismissAndPractice()
         {
+            if (HalftimePresentation.Playing) return;
             if (_canvas != null)
             {
                 _canvas.gameObject.SetActive(false);
@@ -120,8 +121,9 @@ namespace TumbangPreso.UI
 
         private void OnIntermissionStarted(int nextRound, int nextDefenderSlot)
         {
-            if (HalftimePresentation.Playing) { _canvas.gameObject.SetActive(false); return; }
-            ShowScheduledBreak(nextRound,nextDefenderSlot,3,null);
+            // The shared phase already opened the passive card once.
+            if (HalftimePresentation.Playing) return;
+            ShowScheduledBreak(nextRound,nextDefenderSlot,HalftimePresentation.Instance?.Remaining??HalftimePresentation.BreakDuration,null);
         }
 
         public void ShowScheduledBreak(int nextRound,int nextDefenderSlot,float remaining,string fallback)
@@ -130,7 +132,7 @@ namespace TumbangPreso.UI
             {
                 _bufferRemaining = remaining; _isBufferActive = true;
                 _nativeSwap.Show(nextRound, nextDefenderSlot); _nativeSwap.Remaining(_bufferRemaining);
-                _nativeSwap.SetBreakContext(HalftimePresentation.Playing, fallback);
+                _nativeSwap.SetBreakContext(HalftimePresentation.Instance?.IsHalftime==true, fallback);
                 GameServices.Audio?.PlayUi("round_end"); return;
             }
             _title.text = $"END OF ROUND {Mathf.Max(1, nextRound - 1)}";

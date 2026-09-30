@@ -65,7 +65,7 @@ namespace TumbangPreso.UI
         }
         public void Show(int nextRound,int defender)
         {
-            _entered=Time.unscaledTime;_remainingStart=0;_nextRoundNumber=nextRound;_halftime=HalftimePresentation.Playing;_fallback=null;
+            _entered=Time.unscaledTime;_remainingStart=0;_nextRoundNumber=nextRound;_halftime=HalftimePresentation.Instance?.IsHalftime==true;_fallback=null;
             _round.text=_halftime?"HALFTIME":"NEXT ROUND";
             var who=GameServices.Round?.PlayerAt(defender);
             _name.text=_popupBuilt?SeatLabel.Raw(defender):PlayerIdentity.Label(defender)+" · "+SeatLabel.Raw(defender);

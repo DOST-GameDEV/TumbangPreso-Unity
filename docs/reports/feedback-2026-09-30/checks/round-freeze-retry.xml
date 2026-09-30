@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 11:48:53Z" end-time="2026-09-30 11:49:36Z" duration="43.320747">
+  <test-suite type="TestSuite" id="2133" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="905" result="Passed" start-time="2026-09-30 11:48:53Z" end-time="2026-09-30 11:49:36Z" duration="43.320747" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2127" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="905" result="Passed" start-time="2026-09-30 11:48:53Z" end-time="2026-09-30 11:49:36Z" duration="43.299728" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15380" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2128" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="905" result="Passed" start-time="2026-09-30 11:48:53Z" end-time="2026-09-30 11:49:36Z" duration="43.287894" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2129" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="905" result="Passed" start-time="2026-09-30 11:48:53Z" end-time="2026-09-30 11:49:36Z" duration="43.276487" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1760" name="ReplayRetentionTests" fullname="TumbangPreso.PlayTests.ReplayRetentionTests" classname="TumbangPreso.PlayTests.ReplayRetentionTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-30 11:48:53Z" end-time="2026-09-30 11:49:19Z" duration="25.544681" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1762" name="ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound" fullname="TumbangPreso.PlayTests.ReplayRetentionTests.ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound" methodname="ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound" classname="TumbangPreso.PlayTests.ReplayRetentionTests" runstate="Runnable" seed="1961399400" result="Passed" start-time="2026-09-30 11:48:53Z" end-time="2026-09-30 11:49:19Z" duration="25.528377" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[RoundFreezeFrame] pipeline=Built-in camera=Main Camera
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] round 5 begins, taya is seat 0
+[Slice] round 6 begins, taya is seat 1
+[Slice] round 7 begins, taya is seat 2
+[Slice] round 8 begins, taya is seat 3
+[Slice] match over. scores: 0 / 0 / 0 / 0. draw
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1797" name="RoundBreakFreezeTests" fullname="TumbangPreso.PlayTests.RoundBreakFreezeTests" classname="TumbangPreso.PlayTests.RoundBreakFreezeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-30 11:49:19Z" end-time="2026-09-30 11:49:36Z" duration="17.677517" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1800" name="AbortingTheBreakRestoresTheRequestedClockAndUiInput" fullname="TumbangPreso.PlayTests.RoundBreakFreezeTests.AbortingTheBreakRestoresTheRequestedClockAndUiInput" methodname="AbortingTheBreakRestoresTheRequestedClockAndUiInput" classname="TumbangPreso.PlayTests.RoundBreakFreezeTests" runstate="Runnable" seed="1744099102" result="Passed" start-time="2026-09-30 11:49:19Z" end-time="2026-09-30 11:49:21Z" duration="1.837923" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1798" name="FinalViewAndRealInputsStayFrozenUntilTheHostDeadline" fullname="TumbangPreso.PlayTests.RoundBreakFreezeTests.FinalViewAndRealInputsStayFrozenUntilTheHostDeadline" methodname="FinalViewAndRealInputsStayFrozenUntilTheHostDeadline" classname="TumbangPreso.PlayTests.RoundBreakFreezeTests" runstate="Runnable" seed="255417991" result="Passed" start-time="2026-09-30 11:49:21Z" end-time="2026-09-30 11:49:33Z" duration="12.040238" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Round-frozen-final-view-960x540 cream source=252,211,159 pixel=194,215,230; isolated UI camera, no ColourGrade.
+[Slice] round 2 begins, taya is seat 1
+]]></output>
+            </test-case>
+            <test-case id="1799" name="LateClientSharesTheDeadlineWithoutAdvancingOrRestartingIt" fullname="TumbangPreso.PlayTests.RoundBreakFreezeTests.LateClientSharesTheDeadlineWithoutAdvancingOrRestartingIt" methodname="LateClientSharesTheDeadlineWithoutAdvancingOrRestartingIt" classname="TumbangPreso.PlayTests.RoundBreakFreezeTests" runstate="Runnable" seed="2135794401" result="Passed" start-time="2026-09-30 11:49:33Z" end-time="2026-09-30 11:49:36Z" duration="3.797272" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[RoundFreezeFrame] pipeline=Built-in camera=Main Camera
+[RoundFreezeFrame] pipeline=Built-in camera=Main Camera
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

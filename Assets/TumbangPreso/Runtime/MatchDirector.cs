@@ -262,6 +262,7 @@ namespace TumbangPreso
         {
             SharedUltimatePhase.Instance?.Cancel();
             BeginPresentationMatch();
+            HalftimePresentation.Ensure();
             _scores.Reset();
             RoundNumber = 0;
             MatchInProgress = true;

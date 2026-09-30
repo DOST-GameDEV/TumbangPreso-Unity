@@ -171,3 +171,28 @@ One bounded Core.Balance qualifier repair was needed before final testing.
 Jobs9929/79934/37357 terminal; profiles/preferences restored. Source paths released
 after publication. Next: F0930-32 round-break request or independent authorized
 engineering work; tutorial release question remains pending. No heavy job running.
+
+662f6d93b pushed/remote verified. Latest fresh Doc revises F0930-32 to frozen final
+view, no clicks/movement until next round, no halftime replay. Current local unit:
+RoundBreakFrame.cs/meta, HalftimePresentation.cs, MatchDirector.cs, PauseWatcher.cs,
+RoleSwapCard.cs, TumpRoundSwapView.cs and NetSession protocol98. Every break uses
+the existing halftime10-second host deadline; scores/end rules preserved. Cache
+the last rendered world frame before reset, hold gameplay/UI input, restore on
+end/teardown; normal buffer now skips eager world reset through the existing gate.
+Native tests/qualification still pending, no DONE claim. Existing assets untouched.
+Need verify actual render capture incl current pipeline, cold/late peer handling,
+UI module restoration, held input, host-only advance and final-match teardown.
+Current helper uses final built-in image callback and URP endCameraRendering;
+verify source pixels/colour and no captured duplicate HUD before accepting it.
+
+F0930-32 native progress: first4-case run had no batch Game View image; one bounded
+fixture repair uses actual offscreen camera rendering. Retry passes4/4 and the
+960x540 capture is inspected, no doubled HUD. Current pipeline is Built-in.
+One additional baseline reproduced old introduction cleanup releasing the new
+round hold; fixed by cancelling it before acquiring the new hold. Native1/1 pass.
+Visible fullscreen view is snapshotted before presenter teardown; GPU1/1 passes.
+Do not edit CatchReconstruction.cs: incoming9902d4290 reserves that source/tests
+for revised2.5s animation/1.25s tag hold. Incoming3commits are docs/evidence only.
+Current opt-in RoundFreezeProbe.cs/meta observes actual peer phase/frame/clock
+and captures one game screenshot per boundary. Build/peer check pending. All jobs
+79670/98339/57162/60575/68147 terminal; no heavy job active. F0930-32 stays open.

@@ -546,7 +546,7 @@ namespace TumbangPreso.Net
         // 93: Phaister's introduction ends on the doll's stare, 6.0 s.
         // 97: the ordinary defender lunge travels 3 metres; predicted and host
         // movement must use matching tuning. The movement-budget ceiling is unchanged.
-        public const int ProtocolVersion = 97;
+        public const int ProtocolVersion = 98;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

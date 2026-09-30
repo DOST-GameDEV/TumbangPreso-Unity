@@ -156,9 +156,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
   [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
 - [ ] F0930-32 Latest Feedback round flow: remove the per-round skip-warmup option
-  and use a next-taya announcement/pause after each round without the halftime
-  animation. Preserve protected art/motion assets and network clock/role authority;
-  inspect current phase gates before implementation and qualify the changed flow.
+  and freeze the final view after every round, with no clicking/movement or halftime
+  replay until the next round. Latest Doc wording supersedes the earlier announcement
+  wording. Implementing shared10-second host boundary/frozen image/input lock;
+  native qualification pending. Preserve protected art/motion assets and authority.
 
 
 
