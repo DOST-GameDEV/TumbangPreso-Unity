@@ -150,6 +150,12 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   using the same calibrated recorder. [Evidence](reports/feedback-2026-09-30/bot-obstacle-allocation.md).
 
 
+
+- [x] F0930-30 Chat Unicode boundary: preserve complete UTF-16 pairs at the120-unit
+  cap, including text already clipped by the real uGUI field. Original malformed
+  result reproduced; six native boundary/field/existing-contract cases pass.
+  Feedback-row addition awaits Doc access; peers/font rendering are not qualified.
+  [Evidence](reports/feedback-2026-09-30/chat-unicode-boundary.md).
 - [x] F0930-29 Bot tag commitment: an already-held lunge no longer gets released
   accidentally alongside a punch when the target enters close range. Fresh nearby
   targets still get an immediate punch. Native baseline reproduces two cooldowns;

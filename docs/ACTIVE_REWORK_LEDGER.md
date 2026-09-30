@@ -433,3 +433,48 @@ Local optimization reservation: AIController.ShoveRouteIsClear and new AiObstacl
 Allocation evidence correction: Windows GC.GetAllocatedBytesForCurrentThread also reports0 for a deliberate4096-byte array. Earlier landing-circle support-query zero result is withdrawn as performance evidence; native flight/support behavior remains valid. Bot obstacle behavior/dense-fallback cases pass. One native ProfilerRecorder GC.Alloc attempt is active (session36833 replaced by completed calibration87954, now the current recorder job); use its explicit tool handle and fresh XML, not old zero claims. Do not repeat the two unchanged behavior cases.
 
 Bot obstacle optimization complete: two native behavior/dense-wall cases pass; calibrated native GC.Alloc sees a deliberate allocation and records0events across100warmed bot queries. Ground support/fallback also passes with the calibrated recorder. Old Windows GC.GetAllocatedBytes zero evidence is corrected, not reused. Final tests/source bytes match the frozen candidate. This unit is being shipped. No native job running. Next: F0930-13 actual title/Back/menu/queue checks, then independent remaining network/bot work. Do not overlap any newer contributor reservation.
+
+Bot commitment4d7a7e79 is published and remote verified. AIController/test paths
+are released. The Doc-row permission question remains pending; no further Doc
+writes are attempted. Diddler next investigates measured flight-query allocations:
+reserve Slipper.cs BounceOffObstacles storage/iteration only, new
+Tests/PlayMode/SlipperObstacleQueryTests.cs and metadata, focused report and
+TODO/ledger notes. Existing closest-hit, banks, support and ability callbacks must
+stay identical. Loading and landing-circle source remain outside this reservation.
+Native warm-query allocation and dense nearest-wall cases precede runtime edits.
+
+Flight-query investigation closed without a runtime edit. Dense70-wall closest
+collision passes. The allocation counter reported0even for a forced4096-byte
+array in its one bounded calibration, so its query-zero result is not usable
+performance evidence on this Linux Editor. Preserve that limit; calibrate counters
+before interpreting zero. No allocation improvement is claimed and no speculative
+buffer rewrite was made. Experimental probe is preserved with its run evidence,
+not added as a falsely passing performance gate. Slipper/test paths released.
+No heavy cloud job running. Doc access confirmation remains pending; next work
+must remain independent of reserved kits/loading/input/tutorial/build paths.
+
+Diddler next independent chat-boundary investigation reserves MatchRpc.cs
+ClampChatLine only and ChatAndLobbyChromeTests.cs Unicode boundary cases, plus
+focused report/TODO/ledger notes. A120-code-unit substring can split an emoji's
+surrogate pair. Prove the current behavior with the actual clamp and strict UTF-8
+encoding before editing runtime. No UI redesign, identity, wire-layout or kit work.
+
+Chat Unicode failure reproduced:119ordinary characters plus an emoji became an
+unmatched high surrogate at the120-unit cap. Final clamp also repairs the boundary
+when uGUI's real InputField clipped it first. Six native EditMode cases pass,
+including the field and unchanged length/newline/empty contracts; no peer/font
+claim. No heavy cloud job running. Publish explicit clamp/test/report paths and
+verify remote. Doc-row additions for bot/chat still await the pending permission
+answer; existing rows are preserved and no blocked route was bypassed.
+
+Chat boundary ca61ba86 is published; remote HEAD verified. Six final native cases
+pass and the input-field pre-clipping route is covered. Clamp/test source paths
+are released. Bot4d7a7e79 and score/stockde3b3113 are also published with their
+reported evidence; no active cloud test/editor job remains. Bot and chat Doc rows
+await the current access-confirmation answer. The two score/stock rows already
+carry their shipped notes; Human verified remains untouched. Whole-body tag source
+is released after824cdfb4, with owner visual review, other-body, full-map and peer
+qualification still open. Full-map launch and allocation-counter limits above
+remain limits, not passing results. Continue only independent authorized intake,
+respecting the tutorial hold and local input/build, owner-kit and friend-loading
+reservations.
