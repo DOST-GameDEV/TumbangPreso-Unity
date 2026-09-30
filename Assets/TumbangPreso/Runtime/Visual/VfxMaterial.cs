@@ -630,8 +630,15 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// Paint a renderer as a shaft of light: bright where it leaves the ground, brighter at
-        /// its edges than through its middle, gone by the top, with streaks climbing it.
+        /// Whether the beam shader is loadable here. `SlipperBeam` asks before it builds its
+        /// ribbon, because the ribbon is a quad the shader swings to face the camera and a flat
+        /// painter would draw it as a fixed card.
+        /// </summary>
+        internal static bool BeamAvailable => BeamShader != null;
+
+        /// <summary>
+        /// Paint a renderer as a line of light: a white-hot core in a soft coloured haze, rising
+        /// from the road and thinning into nothing, with slow sparkles climbing it.
         ///
         /// ⚠️⚠️ ITS MISS PATH IS A REGRESSION RATHER THAN AN ABSENCE, WHICH IS WORSE. It falls
         /// back to <see cref="Ghost"/>, and a `Ghost` cylinder is precisely the flat alpha-blended

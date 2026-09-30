@@ -15,10 +15,19 @@ namespace TumbangPreso.Visual
     /// ⚠️⚠️ THE SHADER IS THE FEATURE AND THIS FILE IS ONLY WHERE IT STANDS. An earlier build of
     /// this effect stacked six primitive cylinders at six alphas to fake a taper and animated
     /// three cubes up it for motes; it was rejected and reverted. Everything it was doing in
-    /// geometry and in `Update`, `Shaders/SlipperBeam.shader` now does per pixel, and that file's
-    /// header carries the four reasons why the two are not the same picture. What is left here is
-    /// two renderers, one light, and the questions only the game can answer: whose tsinelas it is,
-    /// what colour the player chose, and how close they are to picking it up.
+    /// geometry and in `Update`, `Shaders/SlipperBeam.shader` now does per pixel. What is left
+    /// here is two renderers, one light, and the questions only the game can answer: whose
+    /// tsinelas it is, what colour the player chose, and how close they are to picking it up.
+    ///
+    /// ⚠️⚠️ AND ITS SHAPE CHANGED ON 2026-09-30, FROM A COLUMN TO A LINE. Request: *"overhaul the
+    /// highlight beam when a tsinelas is thrown. it should look similar to the highlight beam of
+    /// the dropped items in apex legends ... noticeable but not too distracting."* The history is
+    /// the argument for the new shape. The 2.2 m hollow cone was findable and hid the can, the feet
+    /// and the chase; 3694d67c cut it to a 0.48 m locator, which hid nothing and could not be found
+    /// from across the street. Both were COLUMNS, whose visibility and whose obstruction are the
+    /// same number (width times height). The reference is a thin camera-facing line in a soft
+    /// haze: its visibility comes from height and brightness and its obstruction from a core a few
+    /// centimetres wide, so the two stop being one trade. The shader header has the picture.
     ///
     /// ⚠️⚠️ IT IS THE WORLD HALF OF A QUESTION `SlipperRecall` ANSWERS ON THE SCREEN, AND THE
     /// TWO ARE BUILT NOT TO ARGUE. Both exist because `docs/VISION.md` § 0 says the tension of
@@ -56,13 +65,32 @@ namespace TumbangPreso.Visual
     [DisallowMultipleComponent]
     public sealed class SlipperBeam : MonoBehaviour
     {
-        // A low locator leaves the can, feet and chase visible. The shader keeps
-        // the friend's soft taper and rising light, without a head-height column.
-        public const float Height = 0.48f;
-        public const float Diameter = 0.24f;
-        public const float PoolDiameter = 0.48f;
-        public const float BaseAlpha = 0.58f;
-        public const float PoolAlpha = 0.20f;
+        /// <summary>
+        /// ⚠️ 1.9 m: A LITTLE OVER EYE HEIGHT, AND UNDER THE 2.2 m THAT MET THE CEILINGS. Two of the
+        /// arenas are built under a bridge or a roof, which is why the first column stopped at a
+        /// doorway. This one clears a standing body and the props a tsinelas hides behind, so it
+        /// can be seen over them, and the core has thinned to nothing well before any ceiling.
+        /// </summary>
+        public const float Height = 1.9f;
+
+        /// <summary>
+        /// Half the width of the haze, in metres, up close. The core the eye actually finds is
+        /// about a ninth of this. At range the shader widens it to hold about a pixel, so this is
+        /// the NEAR size only.
+        /// </summary>
+        public const float HalfWidth = 0.14f;
+
+        public const float PoolDiameter = 0.62f;
+
+        /// <summary>
+        /// ⚠️ THE HAZE AND THE POOL, NOT THE CORE. The core's brightness is the shader's
+        /// `_CoreAlpha`; these are the two soft terms, and they are kept low on purpose: they are
+        /// what gives the line a colour and a footing, and they are the parts that would wash a
+        /// first-person frame if pushed. `SlipperRecallShots.MeasureBeamFrameFraction` holds the
+        /// whole effect under the 12 per cent frame budget.
+        /// </summary>
+        public const float BaseAlpha = 0.42f;
+        public const float PoolAlpha = 0.22f;
 
         /// <summary>
         /// How far above <see cref="Balance.PickupRadius"/> the beam is at full strength.
@@ -192,10 +220,22 @@ namespace TumbangPreso.Visual
             _shaded = PaintOnce(Disc("GroundPool", PoolDiameter, 0.004f, floor + 0.006f),
                             PoolAlpha, pool: true);
 
-            // A Unity cylinder is two units tall, so half the wanted height is the Y scale, and
-            // its object Y then spans the -1..1 the shader reads as the road and the tip.
-            _shaded &= PaintOnce(Disc("Column", Diameter, Height, floor + Height * 0.5f),
-                             BaseAlpha, pool: false);
+            // ⚠️⚠️ THE RIBBON IS A QUAD WHOSE CORNERS THE SHADER PLACES. Its object origin is the
+            // road under the shoe and nothing else about its transform is read: the vertex shader
+            // swings it to face the camera and sizes it in world metres from `_Height` and
+            // `_Width`. Without the shader it would be a fixed card lying in one plane, so the
+            // flat fallback gets the old cylinder instead, which is at least round.
+            _shaded &= PaintOnce(VfxMaterial.BeamAvailable
+                                     ? Ribbon(floor)
+                                     : Disc("Column", HalfWidth * 2.0f, Height, floor + Height * 0.5f),
+                                 BaseAlpha, pool: false);
+
+            var column = _painted.Count > 1 ? _painted[_painted.Count - 1] : null;
+            if (column != null && column.HasProperty(HeightId))
+            {
+                column.SetFloat(HeightId, Height);
+                column.SetFloat(WidthId, HalfWidth);
+            }
 
             // ⚠️ ONE LIGHT, NO SHADOWS, AND THERE IS NEVER MORE THAN ONE IN THE SCENE. The beam
             // only ever draws on the local player's own tsinelas, so this cannot multiply the way
@@ -208,11 +248,49 @@ namespace TumbangPreso.Visual
             // reads as drawn over the scene rather than as standing in it.
             var lampGo = new GameObject("Glow");
             lampGo.transform.SetParent(_column, false);
-            lampGo.transform.localPosition = new Vector3(0.0f, floor + 0.12f, 0.0f);
+            lampGo.transform.localPosition = new Vector3(0.0f, floor + 0.15f, 0.0f);
             _lamp = lampGo.AddComponent<Light>();
             _lamp.type = LightType.Point;
-            _lamp.range = 0.65f;
+            _lamp.range = 0.9f;
             _lamp.shadows = LightShadows.None;
+        }
+
+        /// <summary>
+        /// One quad, x -1..1 across and y 0..1 up, with its origin on the road.
+        ///
+        /// ⚠️ THE BOUNDS ARE SET BY HAND, AND GENEROUSLY. Unity culls a renderer against its mesh
+        /// bounds in object space, and this mesh's real corners are only decided in the vertex
+        /// shader, so bounds computed from the two-unit quad would cull a 1.9 m line the moment
+        /// its foot left the frame while its top was still in it.
+        /// </summary>
+        private Renderer Ribbon(float floor)
+        {
+            var go = new GameObject("Ribbon");
+            go.transform.SetParent(_column, false);
+            go.transform.localPosition = new Vector3(0.0f, floor, 0.0f);
+
+            var mesh = new Mesh { name = "SlipperBeamRibbon" };
+            mesh.vertices = new[]
+            {
+                new Vector3(-1.0f, 0.0f, 0.0f), new Vector3(1.0f, 0.0f, 0.0f),
+                new Vector3(-1.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f),
+            };
+            mesh.triangles = new[] { 0, 2, 1, 1, 2, 3 };
+            // Oversized again because these bounds are in the TSINELAS'S scale, which is per skin
+            // and can be well under one, while the shader sizes the ribbon in world metres.
+            mesh.bounds = new Bounds(new Vector3(0.0f, Height, 0.0f),
+                                     new Vector3(12.0f, Height * 6.0f, 12.0f));
+            _ribbonMesh = mesh;
+
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            return go.AddComponent<MeshRenderer>();
+        }
+
+        private Mesh _ribbonMesh;
+
+        private void OnDestroy()
+        {
+            if (_ribbonMesh != null) Destroy(_ribbonMesh);
         }
 
         /// <summary>
@@ -277,7 +355,7 @@ namespace TumbangPreso.Visual
         /// Drives the one float the whole effect hangs off.
         ///
         /// ⚠️ ONE `SetFloat` PER RENDERER PER FRAME IS THE ENTIRE PER-FRAME COST OF THIS FEATURE.
-        /// The taper, the edge brightening and the climbing streaks are all in the fragment, so
+        /// The billboard, the core, the haze and the climbing sparkles are all in the shader, so
         /// nothing here has to know about any of them.
         /// </summary>
         private void Paint(float strength)
@@ -304,10 +382,12 @@ namespace TumbangPreso.Visual
             if (_lamp != null)
             {
                 _lamp.color = _colour;
-                _lamp.intensity = 0.10f * strength;
+                _lamp.intensity = 0.16f * strength;
             }
         }
 
+        private static readonly int HeightId = Shader.PropertyToID("_Height");
+        private static readonly int WidthId = Shader.PropertyToID("_Width");
         private static readonly int ColourId = Shader.PropertyToID("_Color");
         private static readonly int StrengthId = Shader.PropertyToID("_Strength");
         private static readonly int BaseColourId = Shader.PropertyToID("_BaseColor");
@@ -323,7 +403,9 @@ namespace TumbangPreso.Visual
         /// ⚠️ THE PULSE IS SMALL ON PURPOSE. 🧑 on the menu work: **"make sure all main menu
         /// effects are subtle"**, and a beacon that throbs is a beacon that pulls the eye away
         /// from the fight it is standing beside. The movement a player actually reads is the
-        /// shader's climbing streaks, which cost nothing here.
+        /// shader's climbing sparkles, which cost nothing here. The ribbon's FACING ignores this
+        /// rotation (the shader turns it to the camera), but its origin, the pool and the lamp
+        /// all hang below the shoe and need it.
         /// </summary>
         private void Update()
         {
@@ -341,7 +423,9 @@ namespace TumbangPreso.Visual
 
             if (!_column.gameObject.activeSelf) _column.gameObject.SetActive(true);
 
-            float pulse = 0.88f + 0.12f * Mathf.Sin(Time.time * 2.4f);
+            // A slow breath rather than a throb; the climbing sparkles in the shader are the
+            // motion a player reads.
+            float pulse = 0.92f + 0.08f * Mathf.Sin(Time.time * 1.8f);
             Paint(strength * pulse);
         }
 
