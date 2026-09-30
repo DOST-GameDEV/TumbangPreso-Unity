@@ -1,43 +1,40 @@
-// § THE RECALL BEAM'S ONE PASS. The column of light standing on your own tsinelas while it lies
-// in the road, in the colour you picked for the slipper highlight.
+// § THE RECALL BEAM'S ONE PASS. The line of light standing on your own tsinelas while it lies in
+// the road, in the colour you picked for the slipper highlight.
 //
-// 🧑 2026-09-20, with a frame of a Fortnite loot beam: *"create a beam coming off of a slipper
-// that is thrown off the ground. this will be similar to the items on ground in fortnite. make
-// this a shader not a model."*
+// Request, 2026-09-30, over a first-person frame of the 0.48 m locator: "overhaul the highlight
+// beam when a tsinelas is thrown. it should look similar to the highlight beam of the dropped
+// items in apex legends ... it should be noticeable but not too distracting."
 //
-// ⚠️⚠️ THE MODEL VERSION IS WHY THIS EXISTS, AND ITS OWN NOTES RECORD THE FAULT TWICE. It stacked
-// six primitive cylinders at six alphas to fake a taper, after its FIRST build was one cylinder
-// and, in that commit's words, *"rendered as a length of plastic pipe"*. The stack was an attempt
-// to answer that in geometry; 🧑 asked for a shader instead. ⚠️ **The stacked render was not seen
-// from here** and this note does not claim otherwise: the commit was reverted whole before this
-// work started. What WAS seen here is `beam-witness` v1 of THIS shader, which had a constant
-// width, and it made the same mistake one level up. **Geometry can only ever give a column an
-// EDGE**, and every property that makes a beam read as light rather than as plastic is a
-// per-pixel one:
+// ⚠️⚠️ WHAT THE REFERENCE ACTUALLY IS, BECAUSE THE TWO EARLIER BUILDS OF THIS FILE WERE BOTH
+// SOMETHING ELSE. A dropped item in that game stands under a THIN vertical line of light: a
+// near-white core a few centimetres wide, a soft haze in the rarity colour that hugs the bottom,
+// no visible top (it thins into nothing) and no silhouette (it has no walls, so there is nothing
+// to read as an object). The item itself carries a rim in the same colour, which this game
+// already has as the landed rim. Two things follow from that picture and this shader is built on
+// both:
 //
-//   * **The taper is continuous.** `_Falloff` is a curve over the fragment's own height, so there
-//     is no step anywhere and no top edge at all: the column stops being there rather than
-//     stopping. Six segments could not do that at any count without paying six draws for it.
-//   * **The edges are brighter than the middle.** That is the whole reason a shaft of light looks
-//     hollow rather than solid, and it is a view-dependent term (`_Rim`): it moves as the player
-//     walks round it, which no baked alpha can.
-//   * **It never darkens what is behind it.** `Blend SrcAlpha One` adds light. The mesh version
-//     was alpha-blended `Standard`, so the column was subtracting the street's own colour before
-//     adding its own, which is exactly why it read as tinted plastic over the road.
-//   * **It moves without moving anything.** The rising motes in the mesh version were three cube
-//     transforms animated from `Update`; here they are `_Scroll` on a procedural streak field,
-//     which costs no objects, no per-frame C# and no allocation.
+//   * **It is a camera-facing ribbon, not a cylinder.** The 2026-09-20 build was a hollow cone
+//     with bright walls (`_Rim`), which is a Fortnite column: wide, sculpted, and something you
+//     see AS a shape. Its 2.2 m version hid the can, the feet and the chase behind half a metre of
+//     glowing tube, and 3694d67c cut it to a 0.48 m locator for exactly that reason, which then
+//     stopped being findable from across the street. A line that always faces the camera has the
+//     same few centimetres of core from every angle, so it can be tall enough to be a landmark and
+//     still cover almost nothing.
+//   * **Its width is pinned in PIXELS at range and in METRES up close.** `_Widen` is the floor: at
+//     distance the ribbon stops narrowing, so the core never drops under about a pixel and
+//     shimmers out. The haze is divided by the same factor, so a far beam is a crisp line rather
+//     than a growing smear. This is the half of the reference that makes it "noticeable": it reads
+//     at any range. The near fade in `SlipperBeam` is the half that makes it "not distracting":
+//     it is gone before you are standing in it.
 //
-// ⚠️ ONE PASS, NO TEXTURE, NO DEPTH TEXTURE. Two of the three arenas are built under things and
-// the third is a lit street, so this draws in every scene with no camera setup and no dependency
-// on the depth prepass. The noise is a cheap hash rather than a sampled sheet, which also means
-// it cannot be stripped out from under the effect the way `VfxFlipbook`'s sheets can.
+// ⚠️ STILL ONE PASS, NO TEXTURE, NO DEPTH TEXTURE, and still additive (`Blend One One`, with the
+// fragment returning premultiplied light), so it only ever brightens the street. The streak
+// field is gone: a thin core with slow rising sparkles is the reference's motion, and banded
+// streaks round a column were a Fortnite detail that only worked on a wide one.
 //
 // ⚠️⚠️ IT MUST BE IN `GameBuilder.EnsureRuntimeShaders` AND IT IS. `VfxMaterial.Beam` reaches it
-// through `Shader.Find` and nothing in any scene references it, which is exactly the case that
-// list exists for. Its miss path falls back to `Ghost`, which is the flat plastic look above: the
-// editor would be correct and the .exe would ship the rejected version, with one warning in a log
-// nobody reads during a playtest.
+// through `Shader.Find` and nothing in any scene references it. Its miss path is a flat `Ghost`
+// cylinder, which the editor would never show and the player would ship.
 Shader "TumbangPreso/SlipperBeam"
 {
     Properties
@@ -45,55 +42,57 @@ Shader "TumbangPreso/SlipperBeam"
         _Color ("Beam colour", Color) = (0.30,0.62,1.00,1)
 
         // The whole effect's strength, written every frame by `SlipperBeam.Paint`: the near-fade
-        // as the grab comes into reach, times the pulse. Zero is invisible rather than absent, so
-        // the component still switches the object off at the bottom of the fade.
+        // as the grab comes into reach, times a small breath. Zero is invisible rather than absent,
+        // so the component still switches the object off at the bottom of the fade.
         _Strength ("Strength", Range(0,2)) = 1
 
-        // ⚠️ 0 IS THE COLUMN AND 1 IS THE POOL ON THE ROAD, in one shader on purpose. They are the
-        // same light seen two ways and they must fade together; two shaders would be two places
-        // to forget, which is `HeroAbility.Glyph`'s argument one system down.
-        _Mode ("0 column, 1 ground pool", Float) = 0
+        // ⚠️ 0 IS THE RIBBON AND 1 IS THE POOL ON THE ROAD, in one shader on purpose. They are the
+        // same light seen two ways and they must fade together.
+        _Mode ("0 ribbon, 1 ground pool", Float) = 0
 
-        _Falloff ("Vertical falloff power", Range(0.5,6)) = 1.35
-        _Rim ("Edge brightening power", Range(0.5,8)) = 3.1
-        _Core ("Core brightness", Range(0,2)) = 0.16
+        // ⚠️ WORLD METRES, NOT OBJECT SCALE. The ribbon rebuilds its own corners from the object's
+        // ORIGIN (the road under the shoe) in the vertex shader, so the slipper's scale, which
+        // differs per skin, can never stretch it.
+        _Height ("Ribbon height, metres", Float) = 1.9
+        _Width ("Half width of the haze, metres", Float) = 0.14
 
-        // ⚠️⚠️ THE WIDTH TAPER IS IN THE VERTEX SHADER AND THE FIRST SHADER BUILD HAD NO SUCH
-        // THING. `beam-witness` v1 is the receipt: a column of constant width, fading on alpha
-        // alone, still reads as a CUT PIPE, because the two sides of the barrel stay parallel all
-        // the way up and the near and far walls converge into a bright ellipse where it ends. An
-        // alpha curve cannot remove a silhouette; only moving the vertices can. This is the one
-        // thing the mesh version was right about and it costs nothing to do properly: the column
-        // is a cone whose walls close to `_Tip` of their base width, so there is no top edge to
-        // see from any angle.
-        _Tip ("Width at the top, as a fraction of the base", Range(0.02,1)) = 0.46
+        // How wide the ribbon is allowed to be per metre of distance, as a floor. 0.009 keeps the
+        // core at roughly a pixel at 720p out to the far end of the longest arena.
+        // ⚠️ 0.014, MEASURED AGAINST `beam-far` v1. At 0.009 the line was gone at 18 m: the core
+        // held its pixel but a one-pixel line of that brightness does not read over asphalt.
+        _Widen ("Minimum half width per metre of distance", Float) = 0.014
 
-        // How much of the light goes white as it leaves the ground. Light that is one saturated
-        // hue from end to end is a coloured object; a hot base is what says it is emitting.
-        _Hot ("White-hot base", Range(0,1)) = 0.34
+        // The core as a fraction of the half width. Small: this is the line the eye finds.
+        _Core ("Core width, fraction of half width", Range(0.02,0.5)) = 0.13
 
-        _Streaks ("Streak count round the column", Range(1,24)) = 7
-        _StreakDepth ("How much the streaks bite", Range(0,1)) = 0.45
-        _Scroll ("Streak climb, metres a second", Range(0,4)) = 0.9
+        _CoreAlpha ("Core brightness", Range(0,2)) = 1.1
+        _Alpha ("Haze brightness", Range(0,1)) = 0.42
 
-        _Alpha ("Peak alpha", Range(0,1)) = 0.34
+        // The core runs nearly the full height; the haze is gone by about half way. That split is
+        // what makes it a line rising out of a glow rather than a glowing post. v1's 1.15 had the
+        // core visibly finished by about 1.2 m in `beam-witness`; 0.8 carries it to the tip.
+        _CoreFalloff ("Core vertical falloff power", Range(0.5,6)) = 0.8
+        _HazeFalloff ("Haze vertical falloff power", Range(0.5,8)) = 2.6
+
+        // How white the core goes. Light that is one saturated hue from end to end reads as a
+        // coloured object; a hot core is what says it is emitting.
+        _Hot ("White-hot core", Range(0,1)) = 0.55
+
+        _Scroll ("Sparkle climb, metres a second", Range(0,4)) = 0.55
+        _Sparkle ("How much the sparkles lift the core", Range(0,1)) = 0.35
     }
 
     SubShader
     {
-        // ⚠️ `Queue` IS TRANSPARENT+1 SO THE COLUMN DRAWS OVER THE POOL IT STANDS IN, whatever
-        // order the two renderers were created in. `SlipperBeam` builds the pool first for the
-        // same reason and this is what makes that not matter.
-        Tags { "Queue"="Transparent+1" "RenderType"="Transparent" "IgnoreProjector"="True" }
+        // ⚠️ `Queue` IS TRANSPARENT+1 SO THE RIBBON DRAWS OVER THE POOL IT STANDS IN.
+        Tags { "Queue"="Transparent+1" "RenderType"="Transparent" "IgnoreProjector"="True" "DisableBatching"="True" }
 
-        // ⚠️⚠️ THE THREE STATES BELOW ARE THE EFFECT. `Cull Off` because a player walks THROUGH
-        // this column in a first-person game and a single-sided shaft disappears from the inside.
-        // `ZWrite Off` because a light column that occludes the fight behind it is a wall.
-        // `Blend SrcAlpha One` because light adds: see the class note above for what the mesh
-        // version's alpha blend did to the road.
+        // `Cull Off` because the ribbon is one quad and must read from both sides while the
+        // billboard turns. `ZWrite Off` because light that occludes the fight behind it is a wall.
+        // `Blend One One` because light adds; the fragment premultiplies its own alpha.
         Cull Off
         ZWrite Off
-        Blend SrcAlpha One
+        Blend One One
 
         Pass
         {
@@ -103,61 +102,62 @@ Shader "TumbangPreso/SlipperBeam"
             #include "UnityCG.cginc"
 
             fixed4 _Color;
-            float _Strength, _Mode, _Falloff, _Rim, _Core, _Tip, _Hot;
-            float _Streaks, _StreakDepth, _Scroll, _Alpha;
+            float _Strength, _Mode, _Height, _Width, _Widen, _Core;
+            float _CoreAlpha, _Alpha, _CoreFalloff, _HazeFalloff, _Hot, _Scroll, _Sparkle;
 
             struct appdata
             {
                 float4 vertex : POSITION;
-                float3 normal : NORMAL;
             };
 
             struct v2f
             {
                 float4 vertex : SV_POSITION;
-                float3 obj    : TEXCOORD0;
-                float3 world  : TEXCOORD1;
-                float3 wnormal: TEXCOORD2;
+                // Ribbon: x -1..1 across, y 0 road .. 1 tip. Pool: object xz scaled to the unit disc.
+                float2 uv     : TEXCOORD0;
+                // How much the ribbon was widened past `_Width`, so the haze can be dimmed by it.
+                float  widen  : TEXCOORD1;
             };
 
             v2f vert(appdata v)
             {
                 v2f o;
 
-                // ⚠️⚠️ THE HEIGHT IS READ FROM OBJECT SPACE, NOT FROM UVs, AND THAT IS NOT A
-                // PREFERENCE. A Unity primitive cylinder's side UVs wrap once round the barrel and
-                // its two caps carry a disc mapping, so a `uv.y` taper would put a bright ring on
-                // the top cap and a seam down the side. Object Y is continuous over every vertex
-                // of every mesh this could ever be put on.
-                float h = saturate(v.vertex.y * 0.5 + 0.5);
+                if (_Mode > 0.5)
+                {
+                    // The pool: a flat disc, drawn where the mesh puts it. A Unity cylinder has a
+                    // radius of 0.5 in object space, so twice the xz length is 0..1 at the rim.
+                    // The xz position is passed and its LENGTH taken per pixel: a length taken per
+                    // vertex interpolates as straight lines between the rim vertices and draws a
+                    // polygon rather than a circle.
+                    o.vertex = UnityObjectToClipPos(v.vertex);
+                    o.uv = v.vertex.xz * 2.0;
+                    o.widen = 1.0;
+                    return o;
+                }
 
-                // ⚠️ THE COLUMN IS NARROWED INTO A CONE HERE. See `_Tip`: this is what removes the
-                // top edge, and it is a lerp rather than a multiply by `1-h` so the shaft keeps
-                // its width near the ground where it is doing its job. The pool is flat and must
-                // keep its radius, hence the `_Mode` guard.
-                float squeeze = lerp(lerp(1.0, _Tip, h), 1.0, _Mode);
-                float4 shaped = v.vertex;
-                shaped.xz *= squeeze;
+                // ⚠️⚠️ A CYLINDRICAL BILLBOARD, BUILT FROM THE ORIGIN. The quad's x (-1..1) is
+                // swung to face the camera round the vertical only, so the line stays upright when
+                // the player looks down at it from first person, which a full billboard would tip
+                // toward the camera and turn into a smear across the road.
+                float3 origin = mul(unity_ObjectToWorld, float4(0, 0, 0, 1)).xyz;
+                float3 toCam = _WorldSpaceCameraPos - origin;
+                float3 flat = float3(toCam.x, 0.0, toCam.z);
+                float flatLen = length(flat);
+                float3 right = flatLen > 1e-4 ? cross(float3(0, 1, 0), flat / flatLen) : float3(1, 0, 0);
 
-                o.vertex = UnityObjectToClipPos(shaped);
+                float halfWidth = max(_Width, length(toCam) * _Widen);
 
-                // ⚠️ THE FRAGMENT READS THE UNSQUEEZED POSITION, so the height and the angle round
-                // the column are the same numbers whatever the taper does to the mesh. Reading the
-                // shaped one would make the streaks pinch with the walls.
-                o.obj = v.vertex.xyz;
-                o.world = mul(unity_ObjectToWorld, shaped).xyz;
+                float3 world = origin
+                             + right * (v.vertex.x * halfWidth)
+                             + float3(0.0, v.vertex.y * _Height, 0.0);
 
-                // The normal has to lean with the wall or the edge brightening sits in the wrong
-                // place on a cone. The lean is the wall's own slope, which is the base radius
-                // minus the tip radius over the height.
-                float3 n = v.normal;
-                n.y += lerp((1.0 - _Tip) * 0.5, 0.0, _Mode) * length(v.normal.xz);
-                o.wnormal = UnityObjectToWorldNormal(normalize(n));
+                o.vertex = mul(UNITY_MATRIX_VP, float4(world, 1.0));
+                o.uv = float2(v.vertex.x, saturate(v.vertex.y));
+                o.widen = halfWidth / max(_Width, 1e-4);
                 return o;
             }
 
-            // A cheap deterministic hash, so the streaks differ round the column without a texture
-            // and without a random the CPU has to feed in.
             float hash11(float n)
             {
                 return frac(sin(n * 127.1) * 43758.5453);
@@ -165,69 +165,57 @@ Shader "TumbangPreso/SlipperBeam"
 
             fixed4 frag(v2f i) : SV_Target
             {
-                // A Unity cylinder spans -1..1 in object Y, so this is 0 at the road and 1 at the
-                // tip. `saturate` covers any other mesh a caller hands it rather than trusting it.
-                float h = saturate(i.obj.y * 0.5 + 0.5);
+                if (_Mode > 0.5)
+                {
+                    // A soft round glow on the road, strongest under the shoe and gone at the rim.
+                    float r = saturate(length(i.uv));
+                    float pool = pow(1.0 - r, 2.2) * _Alpha * _Strength;
+                    return fixed4(saturate(_Color.rgb * pool), 1.0);
+                }
 
-                // The pool is the same falloff read outward instead of upward. Its quad spans
-                // -0.5..0.5, so twice the radius is the 0..1 the column's height already is.
-                float r = saturate(length(i.obj.xz) * 2.0);
-                float t = lerp(h, r, _Mode);
+                float x = i.uv.x;
+                float h = i.uv.y;
 
-                // The taper. Raised to a power so most of the fade is in the last third: a linear
-                // one still ends on a visible edge, which is the mesh version's top step.
-                float body = pow(1.0 - t, _Falloff);
+                // Across the ribbon. The haze reaches exactly zero at the quad's edge, so the
+                // rectangle is never visible; the core is a narrow gaussian inside it.
+                float haze = pow(saturate(1.0 - x * x), 3.0);
+                float core = exp(-(x * x) / (_Core * _Core));
 
-                // ⚠️ THE EDGES ARE BRIGHTER THAN THE MIDDLE, WHICH IS WHAT MAKES A SHAFT READ AS
-                // HOLLOW. `abs` rather than a clamp because `Cull Off` draws the inside too, and
-                // an inward-facing normal would otherwise read as facing away and go black.
-                float3 view = normalize(UnityWorldSpaceViewDir(i.world));
-                float facing = abs(dot(normalize(i.wnormal), view));
-                float rim = pow(1.0 - facing, _Rim);
+                // Up the ribbon. A few centimetres of fade-in at the road so the light grows out of
+                // the ground under the shoe instead of starting on a hard line, then two different
+                // falloffs: the core runs up, the haze stays low.
+                float root = smoothstep(0.0, 0.025, h);
+                float coreUp = pow(1.0 - h, _CoreFalloff) * root;
+                float hazeUp = pow(1.0 - h, _HazeFalloff) * root;
 
-                // The pool is flat on the ground and its normal points at the sky, so a rim term
-                // there is a function of where the player is standing rather than of the shape.
-                // It gets the flat core instead.
-                float shape = lerp(saturate(rim + _Core * body), 1.0, _Mode);
+                // ⚠️ SLOW RISING SPARKLES ON THE CORE ONLY. Three soft pulses a metre climbing at
+                // `_Scroll`, each with its own phase, so the line reads as light moving up rather
+                // than a lit rod. Kept shallow: a beacon that flickers pulls the eye off the fight.
+                float metres = h * _Height;
+                float cell = floor(metres * 3.0 - _Time.y * _Scroll * 3.0);
+                float local = frac(metres * 3.0 - _Time.y * _Scroll * 3.0);
+                float spark = smoothstep(0.0, 0.5, local) * smoothstep(1.0, 0.5, local);
+                spark *= step(0.45, hash11(cell));
+                float lift = 1.0 + _Sparkle * spark;
 
-                // The streaks, climbing. `atan2` round the column, scrolled on height, so the
-                // pattern travels up rather than round: a column that spins reads as a machine.
-                float angle = atan2(i.obj.z, i.obj.x) / 6.2831853 + 0.5;
-                float band = floor(angle * _Streaks);
-                float phase = hash11(band);
-                float climb = frac(h * 1.35 - _Time.y * _Scroll * 0.25 + phase);
+                // At range the ribbon was widened to keep the core a pixel wide; the haze spread
+                // over that wider quad is dimmed so a far beam stays a line. By the square root
+                // rather than the whole factor: dimming it fully left nothing around the core to
+                // catch the eye at range (`beam-far` v1).
+                float hazeA = _Alpha * haze * hazeUp / sqrt(i.widen);
+                float coreA = _CoreAlpha * core * coreUp * lift;
 
-                // One soft pulse per band, so the streaks are separated lights rather than stripes.
-                float streak = smoothstep(0.0, 0.35, climb) * smoothstep(1.0, 0.65, climb);
+                float3 coreCol = lerp(_Color.rgb, float3(1, 1, 1), _Hot);
+                float3 light = (_Color.rgb * hazeA + coreCol * coreA) * _Strength;
 
-                // ⚠️ THE STREAKS ONLY BITE ON THE COLUMN. On the pool they would read as a
-                // spinning fan on the road, which is the "machine" fault one line up.
-                float grain = lerp(1.0 - _StreakDepth + _StreakDepth * streak, 1.0, _Mode);
-
-                float a = _Alpha * body * shape * grain * _Strength;
-
-                // ⚠️ CLAMPED, AND `AbilityShowcaseProbe` IS THE NUMBER BEHIND IT. That probe fails
-                // a run in which one effect blows more than 12 per cent of the frame to white, and
-                // it caught Zack's ultimate at 62.8. This is the one effect a player deliberately
-                // walks up to and stands under, so it is the one most able to fill a first-person
-                // frame: an additive blend with no ceiling on it would do exactly that.
-                a = saturate(a);
-
-                // ⚠️ THE BASE GOES WHITE-HOT AND THE TIP KEEPS THE PLAYER'S COLOUR. A shaft that
-                // is one saturated hue from end to end reads as a coloured object; the whitening
-                // is what says it is emitting. It is a lerp toward white rather than a brightness
-                // multiply because the blend is additive and a multiply would only fatten the
-                // frame fraction the clamp above exists to hold down.
-                float hot = _Hot * pow(1.0 - t, 5.0);
-                float3 rgb = lerp(_Color.rgb, float3(1,1,1), saturate(hot));
-
-                return fixed4(rgb, a);
+                // ⚠️ CLAMPED, AND `AbilityShowcaseProbe` IS THE NUMBER BEHIND IT: an additive blend
+                // with no ceiling is exactly how an effect blows a frame to white.
+                return fixed4(saturate(light), 1.0);
             }
             ENDCG
         }
     }
 
-    // ⚠️ NO FALLBACK LINE ON PURPOSE. A fallback here would draw the column as an opaque lit
-    // cylinder, which is the plastic pipe this shader was written to replace, and it would do so
-    // silently. `VfxMaterial.Beam` handles the miss in code, where it can warn.
+    // ⚠️ NO FALLBACK LINE ON PURPOSE. `VfxMaterial.Beam` handles the miss in code, where it can
+    // warn, rather than silently drawing an opaque lit cylinder.
 }

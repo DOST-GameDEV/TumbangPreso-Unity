@@ -87,7 +87,15 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   evidence before doing duplicate work.
 - [ ] F0930-15 Placeholder icons: reconcile current shipped icon coverage and correct bugs.
 - [ ] F0930-16 Running/walking defects: diagnose only concrete bugs; no animation redesign.
-- [ ] F0930-17 Highlight beam complaint: only a proven VFX bug is authorized now.
+- [ ] F0930-17 Highlight beam: owner request 2026-09-30 authorizes the overhaul, "similar to
+  the highlight beam of the dropped items in apex legends ... noticeable but not too
+  distracting". IMPLEMENTED, EVIDENCE PENDING. The 0.48 m locator column is replaced by a
+  1.9 m camera-facing line (`Shaders/SlipperBeam.shader`, `Visual/SlipperBeam.cs`): a
+  white-hot core about 3 cm wide in a low haze of the highlight colour, a soft road pool,
+  slow rising sparkles, a pixel-width floor at range, and the existing pickup-radius fade,
+  owner-only gate and highlight setting unchanged. `SlipperRecallShots` gains a far frame.
+  Done means that probe green with the beam under the 12 per cent frame budget, and the
+  near, side and far frames inspected.
 - [ ] F0930-18 Throw: remove trajectory line, quicker charge and coherent charge feedback.
   Full ordinary charge is1.25 seconds instead of2.5 in both modes;8 native carrier
   timing/release/observed-state cases pass. Protocol96 requires matching builds.
