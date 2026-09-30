@@ -1720,6 +1720,9 @@ namespace TumbangPreso
         /// </summary>
         private static CharacterMotor Driven(CharacterMotor fallback)
         {
+            // Training deliberately disables every practice actor's AI. Those actors
+            // must not steal the student's wheel request merely by appearing first.
+            if (GameLaunch.GuidedTutorial) return fallback;
             foreach (var unit in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude))
             {
                 var ai = unit.GetComponent<AIController>();

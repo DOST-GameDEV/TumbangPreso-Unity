@@ -47,6 +47,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   completion hides the extra action caption and left-aligns Quit. Three focused
   native checks pass with both completion sizes inspected.
   [Refinement evidence](reports/feedback-2026-09-30/tutorial-refinements.md).
+  Follow-up flow: centred attacker setup; continuous attacker transitions; real
+  slipper landing; curve-only completion; hidden event feed;2.5-second reading
+  and1-second accepted-cast waits; two retained attackers plus reset defender;
+  actual wheel release targets the student. Seven focused native cases pass.
+  [Flow evidence](reports/feedback-2026-09-30/tutorial-flow.md).
 - [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
   changed rows refresh without replaying entrance. Focused native path passes.
 - [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime

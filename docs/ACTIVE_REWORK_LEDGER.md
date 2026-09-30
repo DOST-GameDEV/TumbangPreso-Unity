@@ -22,7 +22,7 @@ Keep the false ordering assumption and missed-shot fixture evidence as history.
 
 Contributor currently reserves GuidedTraining, GuidedTrainingHud.OwnerPainted,
 OwnerTrainingUiTests, TutorialLessonHonestyProbe and MatchInstaller for training
-flow/emote fixes; HalftimePresentation, NetSession and RoundBreakFreezeTests for
+flow/emote fixes; HalftimePresentation, NetSession, RoundBreakFreezeTests and ReplayRetentionTests for
 the subsequent3s ordinary/10s halftime revision. Re-read newest claims before edits.
 
 Doc now has Finished feedback history and a separate guide; native verification
@@ -523,3 +523,25 @@ calibrates native GC.Alloc over100 actual lookups and checks query ordering,
 disabled/inactive objects, owner changes, destroy/replacement and duplicates.
 Do not cache ownership or ignore in-flight shoes. No heavy job active yet.
 
+Tutorial flow follow-up qualified:7distinct focused native cases pass, including
+real wheel press/select/release on the student, actual road-relative slipper
+landing, centre/continuity rules, curve-only completion, hidden feed, new read/
+cast delays, retained attacker identities, reset-only defender and real Quit.
+Cold final import overlap hit the private memory guard, then faulted on shutdown;
+one unchanged warmed3-case pass exits0 in37.22seconds, no new OOM. Captures inspected.
+Four runtime/test paths release after publication. Next remains reserved ordinary
+3-second round break with10-second halftime replay. No heavy job active.
+
+Tutorial100d8725 is published throughc98b5106, remote verified; its live refinement
+row is Done with Human verified left for testers. Hidden recordQA_TUMP_0044 is
+retained. No active tutorial ownership or Unity process remains.
+
+Now execute reservedQA_TUMP_0045: ordinary boundary3seconds, halftime10seconds
+with retained replay. Also claim Assets/TumbangPreso/Tests/PlayMode/ReplayRetentionTests.cs
+for its now-stale uniform10-second/no-replay assertions. Other reserved paths:
+Runtime/HalftimePresentation.cs, Runtime/Net/NetSession.cs and
+Tests/PlayMode/RoundBreakFreezeTests.cs under Assets/TumbangPreso; matching
+TODO/NETWORKING/evidence. Preserve host deadline, frozen ordinary image, all-input
+lock, no skip, consumed-packet protection, actual retained clip and honest fallback.
+Protocol must distinguish the changed derived timing. Keep the published frozen
+frame implementation and unrelated packet/spectator fixes intact.

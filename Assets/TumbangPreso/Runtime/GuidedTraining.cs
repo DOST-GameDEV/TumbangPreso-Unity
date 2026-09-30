@@ -186,7 +186,7 @@ namespace TumbangPreso
             { if (banner.enabled) { _mutedBanners.Add(banner); banner.enabled = false; } }
             var readout = FindFirstObjectByType<TumpMatchReadout>();
             if (readout != null && readout.Canvas != null)
-                foreach (string name in new[] { "MatchToast", "MatchToastPlate" })
+                foreach (string name in new[] { "MatchToast", "MatchToastPlate", "MatchEventFeed" })
                 {
                     var item = readout.Canvas.transform.Find(name);
                     if (item != null && item.gameObject.activeSelf)
@@ -298,8 +298,8 @@ namespace TumbangPreso
                     if (_ownSlipper != null && _ownSlipper.State == SlipperState.InFlight
                         && _ownSlipper.ThrowerSlot == _local.PlayerSlot && Mathf.Abs(_ownSlipper.PektusSpin) >= .30f)
                         _exerciseStage = 1;
-                    SetProgress(_exerciseStage * .5f);
-                    if (_exerciseStage == 1 && HasOwnSlipper()) CompleteLesson();
+                    SetProgress(_exerciseStage);
+                    if (_exerciseStage == 1) CompleteLesson();
                     break;
                 case Lesson.ThrowAndRetrieve:
                     if (_exerciseStage == 1 && HasOwnSlipper()) _exerciseStage = 2;
@@ -340,8 +340,8 @@ namespace TumbangPreso
                     if (_abilityInfo != null && _abilityInfo.IsPressed())
                     {
                         _metric += dt;
-                        SetProgress(_metric / 3f);
-                        if (_metric >= 3f) CompleteLesson();
+                        SetProgress(_metric / 2.5f);
+                        if (_metric >= 2.5f) CompleteLesson();
                     }
                     else { _metric = 0; SetProgress(0); }
                     break;
@@ -407,8 +407,8 @@ namespace TumbangPreso
             if (_castAcceptedAt < 0 && WasSuccessfulCast(slot)) _castAcceptedAt = Time.unscaledTime;
             if (_castAcceptedAt < 0) return;
             float elapsed = Time.unscaledTime - _castAcceptedAt;
-            SetProgress(elapsed / 2.5f);
-            if (elapsed >= 2.5f) CompleteLesson();
+            SetProgress(elapsed);
+            if (elapsed >= 1f) CompleteLesson();
         }
 
         private void OnTrainingScore(int seat, ScoreEvent kind)
@@ -468,24 +468,30 @@ namespace TumbangPreso
             _dummy.Intent.Parked = true; _marker?.Bind(_dummy.transform);
         }
 
-        private void PrepareAbilityGround()
+        private void PrepareAbilityGround(bool preserveExisting = false)
         {
             PrepareAttackerThrow();
             int shown = 0;
             foreach (var seat in _seats)
             {
                 if (seat == null || seat == _local || seat.IsDefender || shown >= 2) continue;
+                bool wasVisible = seat.gameObject.activeSelf;
                 seat.gameObject.SetActive(true); seat.Intent.Clear(); seat.Intent.Parked = false;
                 seat.ClearStun(); seat.ClearTrip(); seat.RoundActive = true;
-                seat.Teleport(new Vector3(shown == 0 ? -3 : 3, 0, 2)); shown++;
+                if (!preserveExisting || !wasVisible) seat.Teleport(new Vector3(shown == 0 ? -3 : 3, 0, 2));
+                shown++;
             }
         }
 
         private void PrepareCompletedRange()
         {
+            // Keep both existing attackers; use the already assigned defender rather
+            // than converting one of the two roaming partners into the reset actor.
+            foreach (var seat in _seats)
+                if (seat != null && seat != _local && seat.IsDefender) { _dummy = seat; break; }
             if (_dummy == null) return;
             ApplyRoles(_dummy.PlayerSlot);
-            _local.Teleport(SliceRunner.SpawnPointFor(_local.PlayerSlot, _dummy.PlayerSlot));
+            PrepareAbilityGround(preserveExisting: true);
             _local.Intent.AllowOnly(null);
             if (_ownSlipper != null) { _ownSlipper.gameObject.SetActive(true); _ownSlipper.HostForceEquip(_local); }
             _lata.HostRestore();
@@ -504,6 +510,7 @@ namespace TumbangPreso
             { _dummy.Intent.Clear(); _dummy.gameObject.SetActive(false); if (_dummySlipper != null) _dummySlipper.gameObject.SetActive(false); }
             if (_lesson == Lesson.Complete)
             {
+                StepRoamingAttackers();
                 if (_dummy == null || !_dummy.gameObject.activeSelf) return;
                 _dummy.Intent.Clear(); _dummy.Intent.Parked = false;
                 if (!_lata.IsUpright)
@@ -536,20 +543,22 @@ namespace TumbangPreso
                 if (!_dummy.HoldingSlipper) EquipDummySlipper();
                 return;
             }
-            if (_lesson >= Lesson.AbilityInfo && _lesson <= Lesson.Emote)
+            if (_lesson >= Lesson.AbilityInfo && _lesson <= Lesson.Emote) StepRoamingAttackers();
+        }
+
+        private void StepRoamingAttackers()
+        {
+            if (Time.time >= _nextRoamTarget)
             {
-                if (Time.time >= _nextRoamTarget)
-                {
-                    _nextRoamTarget = Time.time + 3; _roamUntil = Time.time + .65f;
-                    for (int i = 0; i < _roamTargets.Length; i++)
-                    { var pick = Random.insideUnitCircle * 4; _roamTargets[i] = new Vector3(pick.x, 0, pick.y); }
-                }
-                foreach (var seat in _seats)
-                {
-                    if (seat == null || seat == _local || seat.IsDefender || !seat.gameObject.activeSelf) continue;
-                    Vector3 delta = _roamTargets[seat.PlayerSlot] - seat.transform.position;
-                    seat.Intent.Move = Time.time < _roamUntil ? new Vector2(delta.x, delta.z).normalized : Vector2.zero;
-                }
+                _nextRoamTarget = Time.time + 3; _roamUntil = Time.time + .65f;
+                for (int i = 0; i < _roamTargets.Length; i++)
+                { var pick = Random.insideUnitCircle * 4; _roamTargets[i] = new Vector3(pick.x, 0, pick.y); }
+            }
+            foreach (var seat in _seats)
+            {
+                if (seat == null || seat == _local || seat.IsDefender || !seat.gameObject.activeSelf) continue;
+                Vector3 delta = _roamTargets[seat.PlayerSlot] - seat.transform.position;
+                seat.Intent.Move = Time.time < _roamUntil ? new Vector2(delta.x, delta.z).normalized : Vector2.zero;
             }
         }
 
@@ -842,21 +851,29 @@ namespace TumbangPreso
             // the whole exercise off the chalk box it is supposed to be taught inside.
             if (LessonIsTheTayas(lesson) && _lata != null) _lata.HostRestore();
 
+            bool changedRole = _local.IsDefender != LessonIsTheTayas(lesson);
             ApplyLessonRole(lesson);
 
             // ⚠️ THE DUMMY GOES AWAY AGAIN BETWEEN THE LESSONS THAT WANT IT. Three of the
             // seventeen need a body in front of you; the other fourteen do not, and a character
             // standing on the road for all of them is the *"other shit"* the route was asked to
             // stop showing. `PrepareDummyInFront` brings it back on the frame it is needed.
-            HideTheCast();
+            if (lesson != Lesson.Complete) HideTheCast();
             if (_ownSlipper != null) _ownSlipper.gameObject.SetActive(!LessonIsTheTayas(lesson));
             bool usesCan = lesson == Lesson.ThrowAndRetrieve || LessonIsTheTayas(lesson) || lesson == Lesson.Complete;
             _lata.gameObject.SetActive(usesCan);
             // The clock is installed beside the can, so hiding the can alone leaves its cue alive.
             var canClock = Visual.LataClockPresentation.For(_lata);
             if (canClock != null) canClock.gameObject.SetActive(usesCan);
-            _local.Teleport(SliceRunner.SpawnPointFor(_local.PlayerSlot, GameServices.Match.DefenderSlot));
-            Face(_local, _lata.transform.position);
+            bool placeStudent = LessonIsTheTayas(lesson) || changedRole || lesson == Lesson.Ready
+                || lesson == Lesson.Throw || lesson == Lesson.Shove;
+            if (placeStudent)
+            {
+                _local.Teleport(_local.IsDefender
+                    ? SliceRunner.SpawnPointFor(_local.PlayerSlot, GameServices.Match.DefenderSlot)
+                    : new Vector3(0, 0, Confinement.AttackerSpawnRing()));
+                Face(_local, _lata.transform.position);
+            }
             _lastPosition = _local.transform.position;
 
             string title;
@@ -884,9 +901,12 @@ namespace TumbangPreso
                 case Lesson.Throw:
                     PrepareAttackerThrow(); title = "THROW";
                     body = "You are now attacking. Hold to charge, aim, then throw the slipper. You can only throw your slipper outside the danger zone.";
-                    action = Key("SpecialAbility") + " HOLD, RELEASE"; break;
+                    action = Key("SpecialAbility") + " HOLD THEN RELEASE TO THROW"; break;
                 case Lesson.Retrieve:
-                    if (_ownSlipper == null || _ownSlipper.State != SlipperState.Loose) PlaceOwnSlipperTowardTheLata();
+                    // Keep the student's actual flight and landing. A skipped Throw still
+                    // needs a staged shoe, but a real throw must not be snapped onto a new surface.
+                    if (_ownSlipper == null || (_ownSlipper.State != SlipperState.Loose
+                        && _ownSlipper.State != SlipperState.InFlight)) PlaceOwnSlipperTowardTheLata();
                     title = "RETRIEVE SLIPPER";
                     body = "Retrieve your thrown slipper. You are safe from tags while you don't have your slipper yet. Retrieving it makes you vulnerable, so run back to the safe zone as fast as possible.";
                     action = Key("Grab") + " RETRIEVE";
@@ -928,7 +948,7 @@ namespace TumbangPreso
                 case Lesson.Lunge:
                     PrepareMovingAttacker(); title = "LUNGE";
                     body = "Lunge at an attacker inside the danger zone. Use this to make the tag harder to escape.";
-                    action = Key("Lunge") + " LUNGE"; break;
+                    action = Key("Lunge") + " HOLD THEN RELEASE TO LUNGE"; break;
                 case Lesson.AbilityInfo:
                     PrepareAbilityGround(); Hud.Instance?.SetTrainingDeckHidden(false);
                     title = "READ ABILITY DESCRIPTIONS";
