@@ -55,6 +55,16 @@ Read the [authoring contract](SKILL_NETWORK_CONTRACT.md) before adding a new RPC
 New gameplay data needs an explicit reusable state/recovery contract; no promise
 that every future mechanic fits the current centre-plus-clocks adapter.
 
+## Map Ballot Packet Bounds
+
+SelectMapVote requires exactly one integer and a sender ID representable by the
+lobby's peer key. MapVoteTally validates its count, exact payload size and every map
+entry before applying any ballot. QueueVoteState requires exactly its published
+28 bytes. Existing packet layouts and map-selection rules remain unchanged.
+[Native malformed/valid packet evidence](reports/feedback-2026-09-30/map-vote-packets.md)
+also records four previously unrun rematch/intermission cases now passing locally.
+Actual-peer qualification remains separate.
+
 ## Evidence And Remaining Limits
 
 Use [TESTING](TESTING.md) for guarded runs. Existing focused fixtures include

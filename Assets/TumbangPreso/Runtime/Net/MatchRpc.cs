@@ -1677,10 +1677,12 @@ namespace TumbangPreso.Net
 
         private void OnSelectMapVoteMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || senderClientId > int.MaxValue ||
+                reader.Length - reader.Position != 4 || !reader.TryBeginRead(4)) return;
             if (!TrySenderSeat(senderClientId, out int seat)) return;
 
             reader.ReadValueSafe(out int mapIndex);
+            if (mapIndex < 0 || mapIndex >= UI.SceneFlow.Maps.Length) return;
             if (_queueMapVoting) HostReceiveQueueMapVote(seat, mapIndex);
             else FindFirstObjectByType<UI.MatchResult>()?.HostReceiveMapVote(seat, mapIndex);
         }
@@ -1714,11 +1716,11 @@ namespace TumbangPreso.Net
 
         private void OnMapVoteTallyMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost) return;
-            if (!FromHost(senderClientId)) return;
+            if (NetAuthority.IsHost || !FromHost(senderClientId) || !reader.TryBeginRead(4)) return;
 
             reader.ReadValueSafe(out int count);
-            if (count < 0 || count > Core.Balance.PlayerCount) return;
+            if (count < 0 || count > Core.Balance.PlayerCount ||
+                reader.Length - reader.Position != count * 4 || !reader.TryBeginRead(count * 4)) return;
 
             var votes = new int[Core.Balance.PlayerCount];
             for (int i = 0; i < votes.Length; i++) votes[i] = Core.MapRotationRules.NoVote;
@@ -1726,6 +1728,7 @@ namespace TumbangPreso.Net
             for (int i = 0; i < count; i++)
             {
                 reader.ReadValueSafe(out int vote);
+                if (vote < Core.MapRotationRules.NoVote || vote >= UI.SceneFlow.Maps.Length) return;
                 votes[i] = vote;
             }
 
@@ -1748,7 +1751,8 @@ namespace TumbangPreso.Net
         private void OnQueueVoteStateMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (NetAuthority.IsHost || !FromHost(senderClientId) || !InPreparationScene()) return;
-            if (!reader.TryBeginRead(12 + Balance.PlayerCount * 4)) return;
+            int bytes = 12 + Balance.PlayerCount * 4;
+            if (reader.Length - reader.Position != bytes || !reader.TryBeginRead(bytes)) return;
             reader.ReadValueSafe(out int serial);
             reader.ReadValueSafe(out float remaining);
             reader.ReadValueSafe(out int winner);
