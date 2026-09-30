@@ -158,3 +158,31 @@ UGS sign-in disabled; no paid Relay session or live queue-room teardown claimed.
 Job12858 terminal and profiles/preferences restored. Fixture path released after
 publication. F0930-13's permitted menu/stamina checks are qualified; lighting stays
 protected. Overall goal active, remaining feedback/TODO is not complete.
+
+
+Cloud follow-through: bridge Classic full-match assertions pass1/1, all8rounds,
+198throws/193retrievals/41knocks/55resets/165tags. An internal Linux player now builds
+through the normal gates after one warmed-cache retry,2076MB;38 .anim hashes stay
+unchanged. Actual Guest/title/Home/Practice/training entry and keyboard movement
+work. OpenGL and explicitly selected CPU Vulkan both retain the visual anomaly;
+no Windows reproduction or manual aim/contact approval is claimed. Native players
+are closed. Rooftop Classic liveness also passed1/1:8rounds,195throws,189retrievals,43knocks,
+55resets,168tags. A private two-process Classic rematch check is now active, using
+the Linux candidate and separate empty profiles. No source gameplay paths are
+newly reserved.
+
+Latest Feedback read no longer contains the tutorial hold text and now describes
+continued practice after completion. The removal's author/intent is unknown and
+local tutorial ownership remains; do not infer release or edit that unit here.
+Two shipped cloud bug-row additions were refused twice despite the09:32 owner
+permission. A precise request to add the bot double-attack and chat-emoji rows
+superseding the old reservation is pending with the owner. No blank rows were
+inserted. Keep the published fixes/evidence; do not retry a different write route.
+
+
+Linux rematch baseline is not qualified: the actual host stayed at round0 and the
+client received ClosedByRemote before admission, with no OOM. The initial CPU
+Vulkan batch attempt crashed in native set_vSyncCount; one OpenGL repair allowed
+fresh reports. A separate warm-host timing control is active, preserving the cold
+failure rather than treating a longer settle as a fix. No runtime network source
+or timeout was edited. See cloud-validation-limits.md and its peer receipts.

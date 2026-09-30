@@ -144,6 +144,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   through round2 with replicated movement/objective state and no hard divergence.
   Other network paths and skill use remain unqualified.
   [Evidence](reports/feedback-2026-09-30/player-lan.md).
+  Cloud Classic whole-match cases now pass on Eskinita,Ilalim ng Tulay and Sa Bubong.
+  Internal Linux player builds and enters training, but software-rendered surfaces
+  remain unqualified. A Linux cold direct-peer attempt failed before round1;
+  startup timing is under investigation, with no Windows regression established.
+  [Cloud limits/evidence](reports/feedback-2026-09-30/cloud-validation-limits.md).
 - [x] F0930-30 Bot obstacle-query allocation: reuse bounded hit storage, preserve
   complete dense-world fallback and existing filters. Native behavior cases pass;
   calibrated Unity recorder detects a known allocation and records zero events
