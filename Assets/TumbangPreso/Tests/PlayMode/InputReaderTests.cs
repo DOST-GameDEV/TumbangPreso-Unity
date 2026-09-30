@@ -2,6 +2,10 @@ using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.SceneManagement;
+using TumbangPreso.Core;
 
 namespace TumbangPreso.PlayTests
 {
@@ -50,6 +54,69 @@ namespace TumbangPreso.PlayTests
                 "Resources/TumbangPreso. The human seat is unplayable in a build.");
 
             Object.DestroyImmediate(go);
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator RequestedDefaultsReachRealIntentsAndReadyDoesNotBecomeALunge()
+        {
+            var settings = InputSystem.settings;
+            var background = settings.backgroundBehavior;
+            var editorInput = settings.editorInputBehaviorInPlayMode;
+            settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keyboard = InputSystem.AddDevice<Keyboard>(); var mouse = InputSystem.AddDevice<Mouse>();
+            InputSystem.EnableDevice(keyboard); InputSystem.EnableDevice(mouse);
+            try
+            {
+                GameLaunch.GuidedTutorial = false; GameLaunch.AllBots = false;
+                UI.SceneFlow.Networked = false;
+                UI.SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+                yield return SceneManager.LoadSceneAsync(UI.SceneFlow.Eskinita);
+                float until = Time.realtimeSinceStartup + 20;
+                while (UI.Hud.Instance == null && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsNotNull(UI.Hud.Instance);
+                until = Time.realtimeSinceStartup + 20;
+                while (PresentationClock.BlocksInput && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsFalse(PresentationClock.BlocksInput, "The fixture is still inside arrival presentation.");
+                var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+                var reader = local.GetComponent<PlayerInputReader>();
+                reader.enabled = false;
+                var map = Resources.Load<InputActionAsset>("TumbangPreso").FindActionMap("Player");
+                map.Enable();
+                UI.Hud.Instance.ShowReadyPrompt(false);
+                InputSystem.QueueStateEvent(mouse, new MouseState { buttons = 1 }); InputSystem.Update();
+                reader.SendMessage("Update");
+                Assert.IsTrue(local.Intent.Pressed(Verb.SpecialAbility), "Left click did not reach Throw/Tag.");
+                InputSystem.QueueStateEvent(mouse, new MouseState { buttons = 2 }); InputSystem.Update();
+                reader.SendMessage("Update");
+                Assert.IsTrue(local.Intent.Pressed(Verb.Grab), "Right click did not reach pickup/reset.");
+                Assert.IsTrue(local.Intent.Pressed(Verb.Interact), "The contextual interaction must follow the pickup control.");
+                Assert.IsFalse(local.Intent.Pressed(Verb.Lunge), "Right click still drives Shove/Lunge.");
+                InputSystem.QueueStateEvent(mouse, new MouseState { scroll = new Vector2(0, 120) }); InputSystem.Update();
+                Assert.IsTrue(map.FindAction("CurveLeft").IsPressed());
+                Assert.IsFalse(map.FindAction("CurveRight").IsPressed());
+                yield return null;
+                InputSystem.QueueStateEvent(mouse, new MouseState { scroll = new Vector2(0, -120) }); InputSystem.Update();
+                Assert.IsTrue(map.FindAction("CurveRight").IsPressed());
+                Assert.IsFalse(map.FindAction("CurveLeft").IsPressed());
+                UI.Hud.Instance.ShowReadyPrompt(true);
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F)); InputSystem.Update();
+                reader.SendMessage("Update");
+                Assert.IsTrue(map.FindAction("ReadyUp").IsPressed());
+                Assert.IsFalse(local.Intent.Pressed(Verb.Lunge), "Ready also triggered a gameplay action.");
+                UI.Hud.Instance.ShowReadyPrompt(false);
+                reader.SendMessage("Update");
+                Assert.IsFalse(local.Intent.Pressed(Verb.Lunge), "Held Ready became a lunge when its window closed.");
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState()); InputSystem.Update(); reader.SendMessage("Update");
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F)); InputSystem.Update(); reader.SendMessage("Update");
+                Assert.IsTrue(local.Intent.Pressed(Verb.Lunge), "A fresh F press did not reach Shove/Lunge.");
+            }
+            finally
+            {
+                InputSystem.RemoveDevice(keyboard); InputSystem.RemoveDevice(mouse);
+                settings.backgroundBehavior = background;
+                settings.editorInputBehaviorInPlayMode = editorInput;
+            }
         }
 
         /// <summary>

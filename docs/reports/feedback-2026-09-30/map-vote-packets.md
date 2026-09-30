@@ -41,6 +41,15 @@ No production behavior or failure assertion was weakened. No actual sockets,
 ranked/LAN/Relay game, reconnect, physical-device or full-player-build qualification
 is claimed. Existing passed compiler/native cases were not rerun broadly.
 
+## Incoming controls integration
+
+Incoming input batch c4d7fefd and its integration checkpoint8a85bb12 are preserved
+byte-for-byte. On the resulting merged candidate, two additional existing native
+ready/countdown cases pass2/2: current-world seated votes wait for host readiness,
+and stale/duplicate countdowns cannot start a second round. All integrated input
+hashes remain frozen. The packet-handler sources are identical to the17-case run;
+those unchanged cases were not repeated. This is not whole-game qualification.
+
 ## Acceptance
 
 Deliver malformed sizes or invalid entries to the actual handlers: no exception
@@ -56,3 +65,5 @@ apply. Oversized sender IDs cannot alias an admitted peer.
 - baseline-inputs.json: SHA-256 8cc6bb58241cdead5a1bfe8aad3d97f5cce21904aedf16476f6e24eaa78d7a5a
 - baseline-retry-inputs.json: SHA-256 f62936ea8d0bd5b8b07fd6eef724858cb4e5f8ebc8c637dae8b4411d5473d40e
 - fixed-inputs.json: SHA-256 dd794ad885016a7fd0ce0400333582a9b2d0b4b445a80b7ea27ec7596fb0498a
+- integrated.xml: SHA-256 001cddfc13eb5e25e54a70a553f51852e4b60022eaa71d09326571007dbf0d21
+- integrated-inputs.json: SHA-256 54e50fc4f86d2b31dc4267a1007ec0b573a8e6b08e7aa2c6ae901fba57b81d65

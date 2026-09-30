@@ -99,9 +99,8 @@ namespace TumbangPreso
         /// other lesson drew the live binding. 🧑, 2026-08-26: *"im not sure as well if pektus
         /// controls are in settings"*. They were not.
         ///
-        /// ⚠️⚠️ THE DEFAULTS ARE THE MOUSE WHEEL SINCE 2026-09-27 (the owner's layout: *"Curve
-        /// Throw: Mouse Wheel Up / Mouse Wheel Up"*, wheel down curving left, up right, the way the
-        /// wheel always turned it). Z and C before that, the arrows before THAT. A wheel notch is
+        /// The owner's 2026-09-30 defaults curve left on wheel up and right on wheel down.
+        /// A wheel notch is
         /// a one-frame pulse, not a hold, so every press EDGE of either action steps the curve by
         /// `CurveStep` and a held key or d-pad keeps turning it at `CurveRate`. The wheel used to be
         /// read straight off `Mouse.current` as well; that read is gone, or a wheel binding would
@@ -109,6 +108,8 @@ namespace TumbangPreso
         /// the wheel.
         /// </summary>
         private InputAction _curveLeft, _curveRight;
+        private InputAction _readyUp;
+        private bool _readyUseHeld;
 
         /// <summary>One wheel notch (or one tap) of curve, and the turn rate while a key is held.</summary>
         private const float CurveStep = 0.35f, CurveRate = 2.5f;
@@ -179,6 +180,7 @@ namespace TumbangPreso
             _special = map.FindAction("SpecialAbility", true);
             _grab = map.FindAction("Grab", true);
             _lunge = map.FindAction("Lunge", true);
+            _readyUp = map.FindAction("ReadyUp", false);
             _emote = map.FindAction("EmoteWheel", true);
             _skill1 = map.FindAction("Skill1", false);
             _skill2 = map.FindAction("Skill2", false);
@@ -309,7 +311,16 @@ namespace TumbangPreso
                 _restoreToggle.Read(grabDown, settings.ToggleRestore, false);
                 intent.Set(Verb.Grab, grabDown); // Pickup and shove retain their ordinary press edge.
             }
-            intent.Set(Verb.Lunge, ReadButton(_lunge,Verb.Lunge));
+            bool readyDown = _readyUp != null && _readyUp.IsPressed();
+            bool sharedReadyControl = readyDown && _lunge != null && _lunge.IsPressed()
+                                      && _readyUp.activeControl == _lunge.activeControl;
+            bool readyContext = (UI.Hud.Instance != null && UI.Hud.Instance.ReadyWindowOpen)
+                                || BufferSkipVote.Showing;
+            if (!sharedReadyControl) _readyUseHeld = false;
+            else if (readyContext) _readyUseHeld = true;
+            // F means Ready in its window, then Shove/Lunge during play. A held
+            // ready press must be released before it can become a gameplay action.
+            intent.Set(Verb.Lunge, !_readyUseHeld && ReadButton(_lunge,Verb.Lunge));
             intent.Set(Verb.EmoteWheel, ReadButton(_emote,Verb.EmoteWheel));
 
             intent.LookDelta = ReadLookDelta();
@@ -460,6 +471,7 @@ namespace TumbangPreso
 
         private void OnDisable()
         {
+            _readyUseHeld = false;
             ResetToggleControls();
             // ⚠️ RELEASE EVERYTHING ON THE WAY OUT. A verb held across a disable stays held
             // in the intent table forever, and the player walks back in already sprinting.

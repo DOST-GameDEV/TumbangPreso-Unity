@@ -212,6 +212,7 @@ namespace TumbangPreso.UI
         private float _frostCoverage;
 
         public static Hud Instance { get; private set; }
+        public bool ReadyWindowOpen => _readyWindowOpen;
 
         private Text _vulnerable;
         private Text _crosshair;
