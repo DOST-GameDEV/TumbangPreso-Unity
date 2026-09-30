@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.InputSystem.UI;
+using TumbangPreso.InputLayer;
 
 namespace TumbangPreso.UI.Hub
 {
@@ -41,10 +43,39 @@ namespace TumbangPreso.UI.Hub
         /// not change what EQUIP acts on.</summary>
         public event Action Focused;
 
+        /// <summary>Keep automatic selection available to navigation without
+        /// showing this card's hover description until the user attends it.</summary>
+        public bool RequireUserAttention;
+        private bool _pointerOver, _navigationAttention;
+
+        private static bool NavigationRequested(BaseEventData eventData)
+        {
+            if (eventData is PointerEventData) return false;
+            if (eventData is AxisEventData || LastInputDevice.Current == InputDeviceKind.Gamepad) return true;
+            var system = EventSystem.current;
+            var module = system != null ? system.GetComponent<InputSystemUIInputModule>() : null;
+            return module != null &&
+                (module.move?.action?.WasPerformedThisFrame() == true ||
+                 module.submit?.action?.WasPerformedThisFrame() == true);
+        }
+
         public override void OnSelect(BaseEventData eventData)
         {
+            _navigationAttention = !RequireUserAttention || NavigationRequested(eventData);
             base.OnSelect(eventData);
             if (!(eventData is PointerEventData)) Focused?.Invoke();
+        }
+
+        public override void OnPointerEnter(PointerEventData eventData)
+        {
+            _pointerOver = true;
+            base.OnPointerEnter(eventData);
+        }
+
+        public override void OnPointerExit(PointerEventData eventData)
+        {
+            _pointerOver = false;
+            base.OnPointerExit(eventData);
         }
 
         private float _quietUntil;
@@ -61,6 +92,7 @@ namespace TumbangPreso.UI.Hub
 
         protected override void OnEnable()
         {
+            _pointerOver = false; _navigationAttention = false;
             base.OnEnable();
             _quietUntil = Time.unscaledTime + 0.3f;
             _lift = _liftTarget = 0.0f;
@@ -72,6 +104,9 @@ namespace TumbangPreso.UI.Hub
         {
             base.DoStateTransition(state, instant);
             if (!Application.isPlaying) return;
+
+            if (RequireUserAttention && state == SelectionState.Selected && !_navigationAttention)
+                state = _pointerOver ? SelectionState.Highlighted : SelectionState.Normal;
 
             bool attended = state == SelectionState.Highlighted || state == SelectionState.Selected
                             || state == SelectionState.Pressed;
@@ -174,6 +209,9 @@ namespace TumbangPreso.UI.Hub
 
         public override void OnPointerDown(PointerEventData eventData)
         {
+            // Clicking a card that already had pad focus may not raise OnSelect.
+            // The pointer now owns its attention, so leaving must clear the hover.
+            _navigationAttention = false;
             base.OnPointerDown(eventData);
         }
 
