@@ -12,7 +12,7 @@ Diddler cloud unit complete: Nemu's 10 percent basic-cooldown movement bonus
 shipped in 770162fed59f241de4e07d8e1d8599a861ff4639. Native before/after checks
 reproduced 7 failures, then passed 8/8 after the correction, with frozen inputs.
 No actual-peer or rendered-player qualification is claimed. The broader Wiki
-Feedback row remains open; its Doc tabs are still reserved locally.
+Feedback row remains open; the later Doc release below supersedes its initial reservation.
 
 Shared 25-second basic cooldowns shipped in 6b4e1d4ffa02d3976d57efee55b932d97d9c8d2c.
 Four native cases reproduced separate 40/30/30 clocks; the final 18-case fixture
@@ -20,20 +20,23 @@ passes, including accepted-cast callbacks, latest refusals and reordered receipt
 Actual peers remain unqualified. HeroKit and SkillReceipts edits for that unit are
 finished and released.
 
-Next Diddler cloud reservation: implement the Wiki Kuro: Sit signature, keeping
-its stable ability ID, a 10-second stationary recall anchor, existing authored
-presentation and shared cooldown. Use the existing prepared-world recovery route
-and qualify recall, expiry, cancellation and restored state. Raise compatibility
-for the changed gameplay meaning; no Phaister or Paete changes.
+Kuro: Sit shipped in 9d2cc308ad70e6cc96cac7c6af208b3bc4f49ab7 and was integrated
+with the unchanged incoming tutorial tree in 9a32f528. Ten native lifecycle and
+real-companion cases pass, plus 18 cooldown/receipt regressions. Protocol94 is
+required. The combined tutorial candidate is not yet natively qualified.
+
+Next Diddler cloud reservation: Kuro: Fetch must deliver the owned slipper beside
+Nemu for normal pickup, not force it into her hand. Qualify delivery, cancellation,
+interception, and a slipper picked up while Kuro is carrying it. Preserve existing
+art and movement; no changes to protected abilities, loading or local input work.
 
 Owned edit paths:
-- Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs
-- Packages/com.tumbangpreso.core/Runtime/RosterReworkRules.cs (NecroRules Sit constants only)
-- Assets/TumbangPreso/Runtime/Net/NetSession.cs (protocol compatibility constant only)
-- Assets/TumbangPreso/Tests/PlayMode/NemuSitContractTests.cs
-- Assets/TumbangPreso/Tests/PlayMode/NemuSitContractTests.cs.meta
-- docs/SKILL_NETWORK_CONTRACT.md (Kuro Sit recovery contract only)
-- docs/reports/feedback-2026-09-30/nemu-kuro-sit.md
+- Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs (Fetch only)
+- Assets/TumbangPreso/Runtime/Net/NetSession.cs (compatibility constant if needed)
+- Assets/TumbangPreso/Tests/PlayMode/NemuFetchContractTests.cs
+- Assets/TumbangPreso/Tests/PlayMode/NemuFetchContractTests.cs.meta
+- docs/SKILL_NETWORK_CONTRACT.md (Fetch authority contract only)
+- docs/reports/feedback-2026-09-30/nemu-kuro-fetch.md
 - docs/TODO.md (only this unit's evidence pointer)
 - docs/ACTIVE_REWORK_LEDGER.md (only this reservation and its result)
 
