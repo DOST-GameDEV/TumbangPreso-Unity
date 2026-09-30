@@ -478,3 +478,21 @@ qualification still open. Full-map launch and allocation-counter limits above
 remain limits, not passing results. Continue only independent authorized intake,
 respecting the tutorial hold and local input/build, owner-kit and friend-loading
 reservations.
+
+Cloud full-map recovery is now verified. The native cgroup has an8GiB hard limit,
+not the larger host figure shown by free. It recorded5OOM kills. Forty-eight
+confirmed stale Unity SDK shutdown helpers held about2420MiB summed RSS; only
+those exact task-owned commands were stopped. Full Eskinita then loaded and its
+retained-motion/isolation test passed1/1, exit0, with no new OOM event. Pre/post
+shutdown-helper cleanup and cgroup tracing are now in the cloud run wrapper.
+This is a full-map behavior check, not broad visual acceptance: the captured full
+scene shows unexpectedly black character surfaces. Diddler reserves
+CatchReconstructionTests.cs for a focused live/copy/post-effect render comparison
+before any runtime fix. Preserve lighting/art/kit design; diagnose the actual
+cause rather than repainting assets. No cloud editor job running currently.
+
+Owner09:32 explicitly reauthorized adding/updating Feedback rows, superseding the
+older reservation. Fresh read finds the former score/stock/map-vote/offline-pause
+rows absent; author/cause unknown, so do not silently recreate those deleted rows.
+Preserve their shipped repository evidence. The owner wants substantial Doc fixes,
+then sustained hands-on gameplay, and expects independent setup troubleshooting.
