@@ -22,3 +22,17 @@ The first fixture attempt had internal-method access compile errors; one bounded
 fixture repair invoked those existing presentation transitions through reflection.
 That failed compile is not runtime evidence. The result does not claim a refreshed
 player or actual-peer check; the actual-player barrier review follows this fix.
+
+## Actual refreshed player confirmation
+
+The refreshed Linux player Runtime hash is
+`d74e5a6a66d008567be98e8af6c6d4413490f052af13824544ffe773ba952ee3`.
+Manual input reached Practice > Training > Escape, opened Defender and selected
+YOU from BOT3. The menu visibly retained YOU, the defender marker changed and
+Resume returned to first-person play. This confirms the original configuration
+defect in the actual player, in addition to the native test.
+
+The session reached its900-second safety ceiling while starting the separate
+barrier check. Exit0 was a requested termination, not ordinary Quit or a completed
+match. No new OOM kill. Barrier activation was not visually established before
+termination; it is not counted as successful first-person barrier evidence.

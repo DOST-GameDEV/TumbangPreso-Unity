@@ -26,8 +26,8 @@ before checking it done, and avoid repeated unchanged validation. No resets or
 cross-chat work. Ask before spending service credits. Latest owner direction
 permits broader presentation work after prior actionable requests and before
 continuous manual bug hunting. Research, plan and critique using HERO_KIT_METHOD;
-finalized Paete/Phaister character-specific work remains protected. Ability mechanics
-remain owner-reserved; shared/global fixes apply normally.
+finalized Paete/Phaister character-specific work remains protected. The owner reopened remaining ability implementation on2026-10-01;
+shared/global fixes apply normally and exact concurrent claims still govern.
 
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins

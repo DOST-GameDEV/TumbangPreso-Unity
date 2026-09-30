@@ -1368,3 +1368,10 @@ all remaining work including ability implementation. Remove stale owner-only ski
 notes from the active Feedback queue. Preserve actual concurrent file reservations,
 finalized Paete/Phaister specifics and the separate no-skill-SFX instruction. Finish
 current player confirmation, then current complete ability specs and precise claims.
+
+Actual refreshed player confirms training Defender BOT3→YOU while paused and
+Resume returns to first-person play. Session stopped at its900s ceiling, no new
+OOM; do not report normal Quit or barrier qualification. Finish the separate
+barrier FPP check in a bounded600s session, then Amihan current Wiki reconciliation.
+Current Wiki: Drift35s, Featherfall40s/5s, Whirlwind35s/2.5s, Airburst15points
+and2.5s windup; Second Wind25percent/2.5s. No ability code claimed yet.
