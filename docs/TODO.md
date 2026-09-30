@@ -58,7 +58,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   The owner-reviewed tag reach gap is corrected for the measured Classic pair:
   accepted-contact hand aim, bounded restored reach and a visible follow-through
   pass close/far real-time native checks. [Contact evidence](reports/feedback-2026-09-30/tag-contact-readability.md).
-  Human/all-roster/full-map/actual-peer contact qualification remains open.
+  After owner review, the body now commits with a supporting step, hip transfer
+  and shoulder turn; short contacts use a smaller lean and arm extension is capped
+  at10percent. Close/far native films and normal recovery pass. Human/all-roster/
+  full-map/actual-peer and dedicated interrupted-lunge qualification remain open.
 - [x] F0930-05 Adopted [Xelu prompts](https://thoseawesomeguys.com/prompts/): current
   binding labels and Xbox/PS families resolve whole supplied images, with retained
   fallback for absent variants. Live HUD and training key row use the same resolver.

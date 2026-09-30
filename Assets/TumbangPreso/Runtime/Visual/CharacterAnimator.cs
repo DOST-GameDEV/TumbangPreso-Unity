@@ -509,10 +509,10 @@ namespace TumbangPreso.Visual
         private void ReleaseGraph()
         {
             ClearIntroductionPose();
+            ClearTagBody();
+            ClearResetRaise();
             ClearLocomotionArms();
             ClearThrowBody();
-            ClearResetRaise();
-            ClearTagBody();
             ClearLocomotionWeight();
             ClearChargePose();
             _throwReleaseTime=-1;_lastThrowPose=ThrowGesture.Rest;
@@ -546,10 +546,10 @@ namespace TumbangPreso.Visual
         {
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
+            RestoreTagBody();
+            RestoreResetRaise();
             RestoreLocomotionArms();
             RestoreThrowBody();
-            RestoreResetRaise();
-            RestoreTagBody();
             RestoreLocomotionWeight();
             if (!_graph.IsValid()) return;
 
@@ -991,10 +991,10 @@ namespace TumbangPreso.Visual
         {
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
+            RestoreTagBody();
+            RestoreResetRaise();
             RestoreLocomotionArms();
             RestoreThrowBody();
-            RestoreResetRaise();
-            RestoreTagBody();
             RestoreLocomotionWeight();
             try
             {

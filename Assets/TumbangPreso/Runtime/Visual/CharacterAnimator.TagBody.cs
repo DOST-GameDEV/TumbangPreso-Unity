@@ -28,9 +28,11 @@ namespace TumbangPreso.Visual
 
         private string _tagAction;
         private float _tagTime = -1;
-        private Transform _tgTorso, _tgHead, _tgArmR, _tgArmL, _tgLegR, _tgLegL;
+        private Transform _tgRoot, _tgTorso, _tgHead, _tgArmR, _tgArmL, _tgLegR, _tgLegL;
         private Vector3 _tgAlongR = Vector3.right, _tgAlongL = Vector3.left;
         private bool _tgResolved, _tgApplied;
+        private Vector3 _tgRootPositionRest;
+        private Quaternion _tgRootRotationRest;
         private Vector3 _tgPalmR, _tgArmScaleRest, _tagContact;
         private bool _tagContactValid, _tagContactPending;
         private float _tagContactUntil, _tagStartedAt = -100f;
@@ -51,13 +53,14 @@ namespace TumbangPreso.Visual
             if (!_tgApplied) return;
             _tgTorso.localRotation = _tgTorsoRest; _tgArmR.localRotation = _tgArmRRest; _tgArmL.localRotation = _tgArmLRest;
             _tgArmR.localScale = _tgArmScaleRest;
+            if (_tgRoot != null) { _tgRoot.localPosition = _tgRootPositionRest; _tgRoot.localRotation = _tgRootRotationRest; }
             if (_tgHead != null) _tgHead.localRotation = _tgHeadRest;
             if (_tgLegR != null) _tgLegR.localRotation = _tgLegRRest;
             if (_tgLegL != null) _tgLegL.localRotation = _tgLegLRest;
             _tgApplied = false;
         }
 
-        private void ClearTagBody() { RestoreTagBody(); _tgTorso = _tgHead = _tgArmR = _tgArmL = _tgLegR = _tgLegL = null; _tgResolved = false; _tagTime = -1; _tagContactValid = _tagContactPending = false; _tagStartedAt = -100f; }
+        private void ClearTagBody() { RestoreTagBody(); _tgRoot = _tgTorso = _tgHead = _tgArmR = _tgArmL = _tgLegR = _tgLegL = null; _tgResolved = false; _tagTime = -1; _tagContactValid = _tagContactPending = false; _tagStartedAt = -100f; }
 
         // The already accepted, replicated tag supplies the contact. Misses keep
         // the ordinary reach; this cannot award a hit or move either live motor.
@@ -88,7 +91,7 @@ namespace TumbangPreso.Visual
             Vector3 desired = _tagContact - _tgArmR.position;
             Vector3 current = _tgArmR.TransformPoint(_tgPalmR) - _tgArmR.position;
             if (desired.sqrMagnitude < .0001f || desired.sqrMagnitude > 9f || current.sqrMagnitude < .0001f) return;
-            float extension = Mathf.Clamp(desired.magnitude / current.magnitude, .75f, 2.25f);
+            float extension = Mathf.Clamp(desired.magnitude / current.magnitude, .90f, 1.10f);
             Vector3 scale = _tgArmScaleRest;
             Vector3 axis = new Vector3(Mathf.Abs(_tgPalmR.x), Mathf.Abs(_tgPalmR.y), Mathf.Abs(_tgPalmR.z));
             int index = axis.x >= axis.y && axis.x >= axis.z ? 0 : axis.y >= axis.z ? 1 : 2;
@@ -145,18 +148,44 @@ namespace TumbangPreso.Visual
             // The lunge holds for its actual live sweep, including late contacts.
             float w = lunge ? Envelope(_tagTime, .10f, Core.Balance.LungeActiveTime, end) : Envelope(_tagTime, .12f, .22f, end);
             if (w <= .001f) return;
-            float lean = (lunge ? 34f : 16f) * w;
-            float twist = (lunge ? -10f : -16f) * w;
+            // The shoulder travels because the body commits to the reach. Do not
+            // inherit the old melee clip's backwards wind-up under this pose.
+            float commitment = 1f;
+            if (_tagContactValid)
+            {
+                Vector3 toContact = _tagContact - transform.position; toContact.y = 0;
+                commitment = Mathf.InverseLerp(.65f, 1.35f, toContact.magnitude);
+            }
+            float lean = (lunge ? 44f : Mathf.Lerp(22f, 38f, commitment)) * w;
+            float twist = (lunge ? -28f : -32f) * w;
             float side = transform.InverseTransformPoint(_tgArmR.position).x >= 0 ? 1f : -1f;
 
             _tgTorsoRest = _tgTorso.localRotation; _tgArmRRest = _tgArmR.localRotation; _tgArmLRest = _tgArmL.localRotation;
             _tgArmScaleRest = _tgArmR.localScale;
+            if (!_swingBonesResolved) ResolveSwingBones();
+            _tgRoot = _swingRoot;
+            if (_tgRoot != null) { _tgRootPositionRest = _tgRoot.localPosition; _tgRootRotationRest = _tgRoot.localRotation; }
             if (_tgHead != null) _tgHeadRest = _tgHead.localRotation;
             if (_tgLegR != null) _tgLegRRest = _tgLegR.localRotation;
             if (_tgLegL != null) _tgLegLRest = _tgLegL.localRotation;
             _tgApplied = true;
 
+            ToBind(_tgRoot, w, true);
+            ToBind(_tgTorso, w, false); ToBind(_tgHead, w, false);
+            ToBind(_tgArmR, w, false); ToBind(_tgArmL, w, false);
+            ToBind(_tgLegR, w, false); ToBind(_tgLegL, w, false);
+
             var up = transform.up; var right = transform.right;
+            // Weight moves over the forward foot. The rear sole stays planted:
+            // with this rigid seven-bone rig, lowering the hips by the cosine
+            // loss keeps the split stance on the court without stretching legs.
+            float strideAngle = (lunge ? 42f : Mathf.Lerp(18f, 38f, commitment)) * w;
+            if (_tgRoot != null && _legReachWorld > 0f && _motor != null && _motor.IsGrounded)
+            {
+                float angle = strideAngle * Mathf.Deg2Rad;
+                _tgRoot.position += transform.forward * (_legReachWorld * Mathf.Sin(angle))
+                    - up * (_legReachWorld * (1f - Mathf.Cos(angle)));
+            }
             _tgTorso.rotation = Quaternion.AngleAxis(twist * side, up) * Quaternion.AngleAxis(lean, right) * _tgTorso.rotation;
             // Eyes on the target: the head does not follow the chest down.
             if (_tgHead != null) _tgHead.rotation = Quaternion.AngleAxis(-twist * side * .6f, up) * Quaternion.AngleAxis(-lean * .7f, right) * _tgHead.rotation;
@@ -166,13 +195,13 @@ namespace TumbangPreso.Visual
             else PointArm(_tgArmR, _tgAlongR, new Vector3(reach.x * side, reach.y, reach.z), w, 0);
             // The off arm swings back for balance.
             PointArm(_tgArmL, _tgAlongL, new Vector3(-.35f * side, -.75f, -.55f), w * .9f, 0);
-            // The legs split into the dive (the off side's leg forward); a small step into the jab.
+            // The free foot steps ahead as the opposite foot pushes off. The
+            // reaching-side shoulder rolls forward while the off arm balances.
             if (_tgLegR != null && _tgLegL != null)
             {
-                float split = (lunge ? 34f : 12f) * w;
-                var front = side > 0 ? _tgLegL : _tgLegR; var back = side > 0 ? _tgLegR : _tgLegL;
-                front.rotation = Quaternion.AngleAxis(-split, right) * front.rotation;
-                back.rotation = Quaternion.AngleAxis(split * .8f, right) * back.rotation;
+                float sideL = SideOf(_tgLegL, -1f), sideR = SideOf(_tgLegR, 1f);
+                PoseLimb(_tgLegL, _legAxisL, sideL, sideL * side < 0 ? strideAngle : -strideAngle, 0, w);
+                PoseLimb(_tgLegR, _legAxisR, sideR, sideR * side < 0 ? strideAngle : -strideAngle, 0, w);
             }
         }
     }
