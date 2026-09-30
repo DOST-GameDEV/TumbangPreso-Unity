@@ -64,22 +64,26 @@ namespace TumbangPreso.Core
 
     public static class NecroRules
     {
+        /// <summary>Current Wiki: every Kuro basic ability shares one 25-second cooldown.</summary>
+        public const float BasicCooldown = 25.0f;
+
         /// <summary>TERRIFY, owner: *"Leave Kuro somewhere and everyone there gets feared"*. Set here:
-        /// 40 s cooldown, aimed up to 7 m, a 4 s haunt, feared within 2.2 m, once per body per haunt.</summary>
-        public const float TerrifyCooldown = 40.0f;
+        /// aimed up to 7 m, a 4 s haunt, feared within 2.2 m, once per body per haunt.
+        /// Its behavior still awaits the current Sit definition; the shared cooldown is current.</summary>
+        public const float TerrifyCooldown = BasicCooldown;
         public const float TerrifyMaxRange = 7.0f;
         public const float TerrifyHauntSeconds = 4.0f;
         public const float TerrifyRadius = 2.2f;
 
         /// <summary>KURO FETCH, owner: *"Slipper retrieve"*, and the taya can intercept. Set here.</summary>
-        public const float FetchCooldown = 30.0f;
+        public const float FetchCooldown = BasicCooldown;
         public const float FetchSpeed = 9.0f;
         /// <summary>A tag this close to Kuro while he carries makes him drop it.</summary>
         public const float FetchInterceptRadius = 1.3f;
 
         /// <summary>KURO GUARD, owner: *"kuro aids withh blocking and becomes a bit bigger"*, *"give her
         /// like an AI to think abt where to stand but dont make it infallible"*. Set here.</summary>
-        public const float GuardCooldown = 30.0f;
+        public const float GuardCooldown = BasicCooldown;
         public const float GuardSeconds = 6.0f;
         public const float GuardScale = 1.6f;
         public const float GuardMoveSpeed = 6.0f;

@@ -32,7 +32,29 @@ namespace TumbangPreso.Abilities
         /// <summary>Phantom Veil is gone; a rejoiner has no veil to restore.</summary>
         public bool RestoreJoiningVeil(CharacterMotor motor, float remaining) => false;
 
-        public override float MovementSpeedScale => 1f;
+        // Kuro's current Wiki passive gives one 10 percent bonus while a basic
+        // ability is cooling down. Read the existing clocks so expiry, round
+        // resets and authoritative corrections cannot leave a stale bonus.
+        public override float MovementSpeedScale =>
+            Skill1?.CooldownRemaining > 0f || AttackingSkill?.CooldownRemaining > 0f ||
+            DefendingSkill?.CooldownRemaining > 0f ? 1.1f : 1f;
+
+        private void ShareBasicCooldown(float seconds, bool mayLower)
+        {
+            Skill1?.ApplyNetworkSnapshot(seconds, Skill1.ChargesRemaining, mayLower);
+            AttackingSkill?.ApplyNetworkSnapshot(seconds, AttackingSkill.ChargesRemaining, mayLower);
+            DefendingSkill?.ApplyNetworkSnapshot(seconds, DefendingSkill.ChargesRemaining, mayLower);
+        }
+
+        internal override void ApplySkillReceiptResources(HeroAbility ability, float cooldown,
+            int charges, bool newerSkillRequestExists)
+        {
+            // A reply for the other slot must not refund or shorten a later cast,
+            // even when that later request has already been acknowledged.
+            if (newerSkillRequestExists) return;
+            base.ApplySkillReceiptResources(ability, cooldown, charges, false);
+            ShareBasicCooldown(cooldown, mayLower: true);
+        }
 
         public void RestoreFamiliar(CharacterMotor motor, int mode, Vector3 position, float remaining, float? yaw = null)
         {
@@ -50,9 +72,9 @@ namespace TumbangPreso.Abilities
 
         public NemuHeroKit() : base("nemu", "NEMU")
         {
-            Skill1 = new Terrify();
-            AttackingSkill = new KuroFetch();
-            DefendingSkill = new KuroGuard();
+            Skill1 = new Terrify(this);
+            AttackingSkill = new KuroFetch(this);
+            DefendingSkill = new KuroGuard(this);
             Ultimate = new NightmareSeanceVoidAbility();
         }
 
@@ -65,12 +87,13 @@ namespace TumbangPreso.Abilities
 
         private sealed class Terrify : HeroAbility
         {
+            private readonly NemuHeroKit _kit;
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private Vector3 _spot;
             private readonly HashSet<int> _feared = new HashSet<int>();
             private GhostPetCompanion _kuro;
 
-            public Terrify()
+            public Terrify(NemuHeroKit kit)
                 : base("nemu_skill1", "TERRIFY",
                        "Hold to aim, release to leave Kuro haunting a spot for 4 s. Anyone who comes near him drops their slipper and runs in terror.",
                        NecroRules.TerrifyCooldown, NecroRules.TerrifyHauntSeconds, AbilityGlyph.NemuTerrify,
@@ -79,12 +102,14 @@ namespace TumbangPreso.Abilities
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
                        castCue: "sfx_cast_nemu_terrify")
             {
+                _kit = kit;
                 AimByHolding(2.0f, NecroRules.TerrifyMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Maw;
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
                 _spot = AimedDestination(ctx);
                 _feared.Clear();
                 _kuro = Kuro(ctx);
@@ -117,19 +142,20 @@ namespace TumbangPreso.Abilities
 
         private sealed class KuroFetch : HeroAbility
         {
+            private readonly NemuHeroKit _kit;
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private Slipper _shoe;
             private GhostPetCompanion _kuro;
             private bool _carrying;
             private float _nextBroadcast;
 
-            public KuroFetch()
+            public KuroFetch(NemuHeroKit kit)
                 : base("nemu_skill2", "KURO FETCH",
                        "Attacking. Kuro flies to your slipper and brings it back to your hand. If the taya tags him on the way, he drops it.",
                        NecroRules.FetchCooldown, 8.0f, AbilityGlyph.NemuAstralPet,
                        summary: "Kuro fetches your slipper. The taya can make him drop it.",
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
-                       castCue: "sfx_cast_nemu_fetch") { }
+                       castCue: "sfx_cast_nemu_fetch") { _kit = kit; }
 
             public override bool CanActivate(AbilityContext ctx)
             {
@@ -146,6 +172,7 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
                 _shoe = OwnLooseSlipper(ctx.Motor);
                 _kuro = Kuro(ctx);
                 _carrying = false;
@@ -201,22 +228,24 @@ namespace TumbangPreso.Abilities
 
         private sealed class KuroGuard : HeroAbility
         {
+            private readonly NemuHeroKit _kit;
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private GhostPetCompanion _kuro;
             private Vector3 _spot, _pending;
             private float _think, _react;
             private readonly HashSet<Slipper> _blocked = new HashSet<Slipper>();
 
-            public KuroGuard()
+            public KuroGuard(NemuHeroKit kit)
                 : base("nemu_skill2d", "KURO GUARD",
                        "Defending. Kuro grows and guards the can for 6 s, moving to block the throws he sees coming. He is quick, not perfect.",
                        NecroRules.GuardCooldown, NecroRules.GuardSeconds, AbilityGlyph.NemuKuroGuard,
                        summary: "Kuro grows and blocks throws at the can.",
                        castAction: "hero-nemu-seance", viewmodelAction: "seance-channel",
-                       castCue: "sfx_cast_nemu_guard") { }
+                       castCue: "sfx_cast_nemu_guard") { _kit = kit; }
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
                 _kuro = Kuro(ctx);
                 _blocked.Clear();
                 var lata = ctx.Round?.Lata;

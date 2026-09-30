@@ -57,6 +57,8 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [ ] F0930-11 Amihan: reconcile wiki names/rules/statuses; fast, strong airborne Airburst.
 - [ ] F0930-12 Nemu and other defined wiki rules: reconcile current behavior; preserve
   unspecified/placeholder kits rather than inventing replacements.
+  Kuro movement bonus and shared 25-second basic cooldowns pass 18 native cases;
+  broader Nemu behavior remains open. [Evidence](reports/feedback-2026-09-30/nemu-kuro-passive.md).
 - [ ] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default request is protected by the latest no-lighting restriction.

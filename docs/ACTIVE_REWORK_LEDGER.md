@@ -5,6 +5,43 @@ Current protocol:93 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSessio
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 TODO is the work-status queue; this file records resumption and evidence boundaries.
 
+
+## Shared Ownership
+
+Diddler cloud unit complete: Nemu's 10 percent basic-cooldown movement bonus
+shipped in 770162fed59f241de4e07d8e1d8599a861ff4639. Native before/after checks
+reproduced 7 failures, then passed 8/8 after the correction, with frozen inputs.
+No actual-peer or rendered-player qualification is claimed. The broader Wiki
+Feedback row remains open; its Doc tabs are still reserved locally.
+
+Next Diddler cloud reservation: Nemu's shared 25-second basic-ability cooldown
+from the complete current Wiki passive and basic ability definitions. Reproduce
+independent clocks, then make accepted basic casts start the same cooldown on
+all non-ultimate abilities, including accepted observer playback. Do not change
+ultimate behavior or the local tutorial unit.
+The receipt path must correct the entire shared group after a refusal and must
+not let an older other-slot reply overwrite a newer accepted or pending cast.
+
+Owned edit paths:
+- Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs
+- Assets/TumbangPreso/Runtime/Abilities/HeroKit.cs (authoritative resource hook only)
+- Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SkillReceipts.cs (shared-clock receipt routing only)
+- Packages/com.tumbangpreso.core/Runtime/RosterReworkRules.cs (NecroRules cooldowns only)
+- Assets/TumbangPreso/Tests/NemuKuroPassiveTests.cs
+- Assets/TumbangPreso/Tests/NemuKuroPassiveTests.cs.meta
+- docs/reports/feedback-2026-09-30/nemu-kuro-passive.md
+- docs/TODO.md (only this unit's evidence pointer)
+- docs/ACTIVE_REWORK_LEDGER.md (only this reservation and its result)
+
+Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
+Its source reservation is released except the pending human completion destination.
+Doc formatting is complete; contributors may update their own feedback rows after
+verified shipping. Local next reservation: Resources/TumbangPreso.inputactions,
+Runtime/Settings/Rebinding.cs if context/default reconciliation is needed, and the
+relevant InputMapAndAbilityTests/InputContractTests/PlayMode InputReaderTests.
+All paths are under Assets/TumbangPreso. Preserve the Nemu reservation above and
+these input paths when updating the checkpoint. No cross-chat contact is required.
+
 ## Current Unit
 
 ### 2026-09-30 continuation
@@ -59,15 +96,14 @@ DOTS setup and scope handoffs go in chat for manual copying; no automation or ot
 conversation is contacted. Tutorial return destination is still pending from the
 owner; other tutorial fixes can proceed. Xelu's prompt source declares CC0.
 
-Doc formatting/control reservation is released. Current local reservation is
-tutorial assessment/UI. Reserved paths under Assets/TumbangPreso:
-Runtime/GuidedTraining.cs, Runtime/UI/GuidedTrainingHud.OwnerPainted.cs,
-Tests/PlayMode/OwnerTrainingUiTests.cs, TutorialLessonHonestyProbe.cs,
-TutorialDefenderProbe.cs and Tests/DeadFeatureAudit.cs. No tutorial edit has landed
-yet at that checkpoint. The tutorial unit now passes its real-jump/common-completion
+Doc formatting/control reservation is released. Tutorial source batch 2fbee1fb1
+passes its real-jump/common-completion
 case and final Tab/ultimate case. Native combined captures at 960x540/1600x680 were
 inspected; the earlier focus and coordinate-measurement fixture failures are recorded
-in the feedback report. Runtime source stayed frozen. This batch is being shipped.
+in the feedback report. Runtime source stayed frozen. It is committed and being
+merged with incoming authored Nemu changes, preserved byte-for-byte. The next input
+native check will compile the merged candidate; no whole-candidate qualification
+is inferred from the tutorial's earlier source snapshot.
 The completion destination remains human-needed. Do not repeat passing cases.
 Other network/bot files remain unclaimed by this unit. Reconcile explicit
 ownership before overlapping work. No subagents or cross-chat messaging.

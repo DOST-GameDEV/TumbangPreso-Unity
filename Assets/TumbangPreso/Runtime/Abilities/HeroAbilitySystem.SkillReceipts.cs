@@ -108,7 +108,8 @@ namespace TumbangPreso.Abilities
             if(!newest)return true;
             // The host reports the actual resource result. A free reactivation
             // cannot mint a charge; an old answer cannot edit a later prediction.
-            ability.ApplyNetworkSnapshot(cooldown,charges,mayLower:true);
+            Kit.ApplySkillReceiptResources(ability, cooldown, charges,
+                _skillRequests[0] > request || _skillRequests[1] > request);
             return true;
         }
         public HeroKit.CastOutcome CheckNetworkSkill(Slot slot,Vector3 position,Vector3 forward,Vector3 aim,float held)
