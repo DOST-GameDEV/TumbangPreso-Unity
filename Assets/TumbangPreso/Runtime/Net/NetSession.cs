@@ -546,8 +546,8 @@ namespace TumbangPreso.Net
         // 93: Phaister's introduction ends on the doll's stare, 6.0 s.
         // 97: the ordinary defender lunge travels 3 metres; predicted and host
         // movement must use matching tuning. The movement-budget ceiling is unchanged.
-        // Protocol105 enforces Whirled can-reset refusal on local and host paths.
-        public const int ProtocolVersion = 105;
+        // Protocol106 applies Dante Earthbound to incoming impulse and carry distance.
+        public const int ProtocolVersion = 106;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

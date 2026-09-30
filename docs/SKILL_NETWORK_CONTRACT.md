@@ -67,6 +67,14 @@ Carrier target gate and HostMayChannelReset. The existing status timer and unit
 snapshot carry the state; no new packet field. Other CanAct permissions remain.
 Matching builds are required. Local channel and host-gate tests are not actual peers.
 
+## Earthbound Compatibility
+
+Protocol106 halves Dante incoming horizontal knockback/carry distance in Hero
+Strike. Existing Impact/Carry packets still deliver unmodified host intent to
+the simulating owner; its motor applies the kit factor once. Replica pose adoption
+does not reapply it. Held speed/time use sqrt(distance scale), lift stays unchanged.
+No new packet fields. Classic and default-one kits keep their existing behavior.
+
 ## Cosmetic Reworks
 
 Cheska protocol103: the current Wiki7.5s field,1.5s ultimate delay/every-player

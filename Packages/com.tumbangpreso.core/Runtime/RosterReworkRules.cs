@@ -40,6 +40,7 @@ namespace TumbangPreso.Core
 
     public static class GeoRules
     {
+        public const float EarthboundDistanceScale = .5f;
         /// <summary>SHIELD, owner: *"Status immunity for 20 seconds"*. Cooldown 45 s (set here).</summary>
         public const float ShieldSeconds = 20.0f;
         public const float ShieldCooldown = 45.0f;

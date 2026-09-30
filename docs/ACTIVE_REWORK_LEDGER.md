@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol105 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol106 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1502,3 +1502,20 @@ HeroKit.cs default distance property, DanteHeroKit.cs passive override,
 CharacterMotor.cs impulse, CharacterMotor.Status.cs carry, GeoRules constants,
 NetSession.cs protocol, new DanteEarthboundTests.cs/meta. Baseline before runtime.
 No heavy job active. Sourcebe249c3d fetched with no divergence.
+
+Earthbound baseline Classic control passes; impulse/carry both wrongly travel
+1.0times neutral. Implement Dante-only distance factor0.5 at existing incoming
+local physics application, sqrt-scale speed and carrytime, preserve lift and caps.
+Final fourcases include large capped impact/lift parity. No art or voluntary
+movement change. Protocol106; source-only private candidate until verified.
+
+Earthbound final4/4native passes4.44s. Actual impulse1.116m vs2.28m, carry2.693m
+vs5.70m; caps/lift parity and Classic control hold. Reuse these checks. One
+affected integration: existing Airburst authored-court victim is Dante, so qualify
+that new passive interaction before publication rather than claiming old9m still
+applies. No runtime edits for this check; next publish with explicit limits.
+
+Earthbound interaction passes1/1native8.82s: Dante travels7.374m under Airburst
+with the new passive, not the historical9m before it. Landed frame inspected.
+Publish fourunitcases plus this affected interaction. Full Dante row stays open;
+next ward/held-slipper/forward-cascade units retain existing presentation andSFXban.

@@ -26,6 +26,7 @@ namespace TumbangPreso.Abilities
     public sealed class DanteHeroKit : HeroKit, ITimedKitReplication
     {
         public const float StompContactSeconds = .30f;
+        public override float IncomingKnockbackDistanceScale => GeoRules.EarthboundDistanceScale;
 
         /// <summary>True while SHIELD holds: every status but Tagged is refused.</summary>
         public bool IsDemonicCarapaceActive => Skill1 != null && Skill1.IsActive;
