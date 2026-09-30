@@ -512,6 +512,23 @@ namespace TumbangPreso
             }
         }
 
+        private const float OrbitRadius = 3f, OrbitAngularSpeed = .45f;
+        private CharacterMotor _orbitActor;
+        private float _orbitSlow = 1;
+        private void EnsureOrbitSpeed()
+        {
+            if (_orbitActor == _dummy) return;
+            StopOrbit(); _orbitActor = _dummy;
+            float walking = Balance.Speed * Stamina.RoleSpeedScale(false) * Roster.PersonSpeedScale(_dummy.CharacterIndex, _dummy.Mode);
+            _orbitSlow = Mathf.Min(1, OrbitRadius * OrbitAngularSpeed / Mathf.Max(.1f, walking));
+            _orbitActor.EnterSpeedZone(_orbitSlow);
+        }
+        private void StopOrbit()
+        {
+            if (_orbitActor != null) _orbitActor.ExitSpeedZone(_orbitSlow);
+            _orbitActor = null; _orbitSlow = 1;
+        }
+
         private readonly Vector3[] _roamTargets = new Vector3[Balance.PlayerCount];
         private float _nextRoamTarget, _roamUntil;
         private void StepTrainingWorld()
@@ -546,10 +563,14 @@ namespace TumbangPreso
             if ((_lesson == Lesson.Punch || _lesson == Lesson.Lunge || _lesson == Lesson.ResetAndTag)
                 && !_dummyCaught && _dummy != null && _dummy.gameObject.activeSelf)
             {
-                float angle = (Time.time - _lessonBeganAt) * .45f;
-                Vector3 goal = _lata.transform.position + new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * 3f;
-                Vector3 delta = goal - _dummy.transform.position;
-                _dummy.Intent.Parked = false; _dummy.Intent.Move = new Vector2(delta.x, delta.z).normalized;
+                EnsureOrbitSpeed();
+                Vector3 radial = _dummy.transform.position - _lata.transform.position; radial.y = 0;
+                float radius = radial.magnitude;
+                Vector3 outward = radius > .01f ? radial / radius : Vector3.right;
+                // Follow the orbit tangent with gentle radial correction. Chasing a slow
+                // moving point at full walking speed repeatedly overshot and reversed.
+                Vector3 wish = new Vector3(-outward.z, 0, outward.x) + outward * ((OrbitRadius - radius) * 2f);
+                _dummy.Intent.Parked = false; _dummy.Intent.Move = new Vector2(wish.x, wish.z).normalized;
                 if (!_dummy.HoldingSlipper) EquipDummySlipper();
                 return;
             }
@@ -808,6 +829,7 @@ namespace TumbangPreso
 
         private void EnterLesson(Lesson lesson)
         {
+            StopOrbit();
             _lesson = lesson;
             _advancing = false;
             _metric = 0.0f;
@@ -1358,6 +1380,7 @@ namespace TumbangPreso
 
         private void OnDestroy()
         {
+            StopOrbit();
             GameLaunch.GuidedTutorial = false;
 
             // ⚠️ UNSUBSCRIBED WITH THE ROUTE. `RoundDirector` outlives this component, and a

@@ -181,6 +181,82 @@ namespace TumbangPreso.PlayTests
             finally { QualitySettings.globalTextureMipmapLimit = mip; }
         }
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator CirclingAttackerKeepsSmoothDirectionAndReleasesItsTrainingSpeed()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return LoadTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>();
+                EnterLesson(route, GuidedTraining.Lesson.Punch);
+                var dummy = Field<CharacterMotor>(route, "_dummy");
+                var centre = GameServices.Round.Lata.transform.position;
+                yield return new WaitForSeconds(1);
+                Vector3 before = dummy.transform.position, previous = Vector3.zero;
+                float maxTurn = 0, travelled = 0; int reversals = 0, samples = 0;
+                var trace = new StringBuilder("time,x,z,step,turn\n"); float began = Time.time;
+                while (Time.time < began + 4)
+                {
+                    yield return new WaitForFixedUpdate();
+                    Vector3 at = dummy.transform.position, step = at - before; step.y = 0;
+                    float turn = previous.sqrMagnitude > .000001f && step.sqrMagnitude > .000001f ? Vector3.Angle(previous, step) : 0;
+                    if (turn > 90) reversals++; maxTurn = Mathf.Max(maxTurn, turn); travelled += step.magnitude;
+                    trace.AppendLine(System.FormattableString.Invariant($"{Time.time-began:F4},{at.x:F5},{at.z:F5},{step.magnitude:F5},{turn:F3}"));
+                    if (step.sqrMagnitude > .000001f) previous = step;
+                    before = at; samples++;
+                    Assert.That(Flat(at, centre), Is.InRange(2.6f, 3.4f), "The training target must keep its authored circle.");
+                }
+                Directory.CreateDirectory("Logs/training-orbit"); File.WriteAllText("Logs/training-orbit/motion.csv", trace.ToString());
+                Debug.Log($"[TrainingOrbit] samples={samples} reversals={reversals} maxTurn={maxTurn:F2} meanSpeed={travelled/(Time.time-began):F3}");
+                Assert.AreEqual(0, reversals, "A slow orbit must not reverse the body's movement every few frames.");
+                Assert.Less(maxTurn, 30, "The movement heading must turn smoothly around the circle.");
+                Assert.That(travelled / (Time.time-began), Is.InRange(1.1f, 1.7f), "Keep the original3m/.45rad training pace.");
+                EnterLesson(route, GuidedTraining.Lesson.Shove);
+                Assert.AreEqual(1, dummy.SpeedMultiplier, .001f, "The orbit's private slow must not leak to another lesson.");
+                EnterLesson(route, GuidedTraining.Lesson.Punch); yield return null;
+                Object.DestroyImmediate(route);
+                Assert.AreEqual(1, dummy.SpeedMultiplier, .001f, "Destroying training must release its private slow.");
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator TutorialUltimateKeepsItsRenderedIntroductionWithoutTheAnnouncementBanner()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            var rules = TumbangPreso.UI.SceneFlow.SelectedRules;
+            try
+            {
+                TumbangPreso.UI.SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+                yield return LoadTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>();
+                EnterLesson(route, GuidedTraining.Lesson.Ultimate);
+                var local = Field<CharacterMotor>(route, "_local");
+                bool held = local.GetComponent<Carrier>().Held != null;
+                TumbangPreso.Visual.UltimateIntroductionCache.WarmOne(local);
+                float until = Time.realtimeSinceStartup + 15;
+                while (TumbangPreso.Visual.UltimateIntroductionCache.Find(local, held) == null && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsNotNull(TumbangPreso.Visual.UltimateIntroductionCache.Find(local, held));
+                var commits = new[] { new UltimateCommit(local.PlayerSlot, 1, local.transform.position, local.transform.forward, Vector3.forward, 0).WithIdentity(local.AbilitySystem.Kit) };
+                foreach (bool training in new[] { true, false })
+                {
+                    GameLaunch.GuidedTutorial = training;
+                    using (var view = new TumbangPreso.CameraSystem.UltimatePhaseView(route.transform, commits, 3))
+                    {
+                        view.Draw(.3f);
+                        var canvas = Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include).First(c => c.name == "SharedUltimateCanvas");
+                        var title = canvas.transform.Find("UltimateIdentity");
+                        Assert.AreEqual(!training, title.gameObject.activeSelf);
+                        Assert.IsNotNull(canvas.transform.Find("UltimateScene").GetComponent<RawImage>().texture, "Retain the actual introduction rendering.");
+                        if (training) yield return TumpUiCapture.Capture("Feedback-tutorial-ultimate-no-banner", canvas, 960, 540, false);
+                    }
+                    yield return null;
+                }
+            }
+            finally { GameLaunch.GuidedTutorial = true; QualitySettings.globalTextureMipmapLimit = mip; TumbangPreso.UI.SceneFlow.SetSelectedRules(rules); }
+        }
+
         [UnityTest, Timeout(180000)]
         public IEnumerator AbilityReadingAndSuccessfulCastsRespectTheirDelays()
         {

@@ -57,6 +57,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   owned slippers. Both perform legal throws in the focused native case. The
   existing2.5-second continuous-read qualification is unchanged.
   [Comment evidence](reports/feedback-2026-09-30/tutorial-comments.md).
+  Circling target now follows smooth tangent/radial steering at the original
+  training pace, with its private slow released on lesson change/destruction.
+  Tutorial ultimate identity banner hides while the actual introduction remains.
+  Two native cases pass. [Evidence](reports/feedback-2026-09-30/tutorial-orbit.md).
 
 - [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
   changed rows refresh without replaying entrance. Focused native path passes.

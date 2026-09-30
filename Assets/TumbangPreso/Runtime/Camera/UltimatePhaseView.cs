@@ -97,6 +97,7 @@ namespace TumbangPreso.CameraSystem
                 _picture = OwnerUiLayout.Rect(root, "UltimateScene").gameObject.AddComponent<RawImage>();
                 OwnerUiLayout.Fill(_picture.rectTransform); _picture.raycastTarget = false;
                 var header = OwnerUiLayout.Rect(root, "UltimateIdentity");
+                header.gameObject.SetActive(!GameLaunch.GuidedTutorial);
                 header.anchorMin=header.anchorMax=header.pivot=new Vector2(.5f,1);
                 bool together=commits.Count>1;
                 header.anchoredPosition=new Vector2(0,-32);header.sizeDelta=new Vector2(900,together?(commits.Count>2?248:164):128);

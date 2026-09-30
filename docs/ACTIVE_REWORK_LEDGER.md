@@ -744,3 +744,19 @@ cleanup at lesson change/destroy. Hide only the shared ultimate identity banner
 in training; retain the actual authored introduction/camera, deadline and ability.
 No hero-specific animation/effect edits. Next units:5s ordinary break,25percent
 power sizing and live Xelu retrieve/reset labels.
+Baseline training-orbit-baseline uses2focused cases: fixed-step direction/radius/
+pace trace through the actual motor, and actual introduction render with identity
+header in training versus ordinary mode. Predict direction reversals and visible
+training header; stop at fresh XML/trace. No runtime changes yet; retry0.
+Circle baseline reproduces144 movement reversals over201fixed samples, max turn
+179.97degrees. Target-chasing at full speed overshoots. Final uses tangent/radial
+steering at the original1.35m/s pace via a paired private speed-zone modifier.
+Banner fixture mistakenly searched below its owner for a root-level owned canvas;
+corrected only the lookup. Final checks both training-hidden and ordinary-visible
+identity, with actual intro texture retained. One fixture repair, assertions intact.
+Run training-orbit-final2cases, inspect intro frame and compare motion trace.
+Tutorial orbit/banner final2/2 pass in10.23s, exit0.201samples:144 reversals before,
+zero after; maximum turn179.97->0.52degrees, finalmean1.355m/s. Radius/zone cleanup
+pass. Actual ultimate frame inspected without identity banner; ordinary identity
+still visible. No additional OOM. Publish exact paths, then strike only the two
+resolved comments in the same row. No Unity job active.
