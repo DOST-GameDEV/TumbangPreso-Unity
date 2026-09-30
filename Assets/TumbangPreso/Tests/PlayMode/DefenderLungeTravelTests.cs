@@ -106,6 +106,61 @@ namespace TumbangPreso.PlayTests
             finally { GameServices.Match.Scored -= scored; }
         }
 
+        [UnityTest] public IEnumerator PresentationPausePreservesTheLiveLunge()
+        {
+            yield return Open(GameMode.Classic);
+            var victim = Seat(1, _taya.transform.position + Vector3.forward * 2f);
+            victim.HoldingSlipper = true;
+            var verbs = _taya.GetComponent<CombatVerbs>();
+            int hits = 0;
+            System.Action<int, ScoreEvent> scored = (slot, e) => { if (slot == 0 && e == ScoreEvent.Tag) hits++; };
+            GameServices.Match.Scored += scored;
+            try
+            {
+                Assert.IsTrue(verbs.HostResolveLunge(_taya.transform.position, Vector3.forward, 1));
+                PresentationClock.RequestScale(0);
+                Vector3 pausedAt = _taya.transform.position;
+                yield return new WaitForSecondsRealtime(.3f);
+                Assert.AreEqual(0, hits);
+                Assert.That(Vector3.Distance(pausedAt, _taya.transform.position), Is.LessThan(.001f));
+                PresentationClock.RequestScale(1);
+                yield return new WaitForSeconds(Balance.LungeActiveTime + .15f);
+                Assert.AreEqual(1, hits, "A paused, uninterrupted dash resumes its legitimate contact window.");
+            }
+            finally { PresentationClock.RequestScale(1); GameServices.Match.Scored -= scored; }
+        }
+
+        [UnityTest] public IEnumerator StaggeredLungeCannotTagAfterRecovery() => InterruptedLunge(false);
+        [UnityTest] public IEnumerator EndedRoundCannotResumeAnOldLunge() => InterruptedLunge(true);
+
+        IEnumerator InterruptedLunge(bool roundEnded)
+        {
+            yield return Open(GameMode.Classic);
+            var victim = Seat(1, new Vector3(6, 0, -6));
+            victim.HoldingSlipper = true;
+            var verbs = _taya.GetComponent<CombatVerbs>();
+            int hits = 0;
+            System.Action<int, ScoreEvent> scored = (slot, e) => { if (slot == 0 && e == ScoreEvent.Tag) hits++; };
+            GameServices.Match.Scored += scored;
+            try
+            {
+                Assert.IsTrue(verbs.HostResolveLunge(_taya.transform.position, Vector3.forward, 1));
+                if (roundEnded) GameServices.Round.EndRound();
+                else _taya.ApplyStagger(1f);
+                yield return new WaitForSeconds(1.15f);
+                Assert.AreEqual(0, hits);
+                if (roundEnded) GameServices.Round.BeginRound();
+                Assert.IsTrue(_taya.CanAct());
+                victim.Teleport(_taya.transform.position + Vector3.forward * .5f);
+                victim.HoldingSlipper = true;
+                Assert.IsTrue(victim.IsTaggable());
+                yield return null;
+                yield return null;
+                Assert.AreEqual(0, hits, "A cancelled dash must not revive a tag after recovery or a new round.");
+            }
+            finally { GameServices.Match.Scored -= scored; }
+        }
+
         [UnityTest] public IEnumerator DistantAttackerIsNotTagged()
         {
             yield return Open(GameMode.Classic);

@@ -138,7 +138,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [x] F0930-07 Longer defender lunge: full charge targets3m in both modes, with
   derived speed, bot approach/celebration bounds and pressure stats. Actual local
   input and host-request travel, repeat refusal, new-range tag and distant miss
-  pass natively. Packet ceiling stays28m/s; protocol97 requires matching builds.
+  pass natively. Interrupted-lunge follow-up prevents the old sweep tagging after
+  stun recovery or a new round; baseline2failures, final3/3including legitimate
+  pause/resume contact pass. [Interruption evidence](reports/feedback-2026-09-30/lunge-interrupt.md).
+  Packet ceiling stays28m/s; protocol97 requires matching builds.
   [Evidence](reports/feedback-2026-09-30/defender-lunge.md). Actual peers unqualified.
 - [x] F0930-08 Visible remaining lifetime: active ultimate rings now drain the
   actual effect clock; reactivation skills retain Again plus seconds remaining.

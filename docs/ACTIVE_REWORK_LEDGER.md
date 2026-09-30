@@ -1087,3 +1087,15 @@ attacker entering only after recovery; expected no tag without a fresh lunge.
 Two native cases (stagger, round inactivity), baseline then minimal correction.
 No ability-specific changes. Existing ordinary travel/accepted-tag cases reused
 unless the correction alters their active path. No heavy job yet.
+
+Interrupted-lunge baseline2/2fails: after either stagger or ended round, the old
+sweep awards1tag when the expected count is0. Minimal correction retires only
+lunge contact on true inability (round inactive/stun/fear); presentation pause
+retains its frozen window. Final adds pause/resume legitimate-contact check,
+so offline pause is not accidentally converted into attack cancellation.
+
+Interrupted lunge final3/3passes4.04s: both stale sweeps stay retired, genuine
+pause remains motionless and resumes1legal tag. No guard/OOM. Publish explicit
+CombatVerbs/test/report paths; same lunge Feedback row gets resolution note.
+Release runtime/test ownership after remote verification. Full all-roster visuals
+and actual peers remain separate; no existing wire semantics changed.
