@@ -18,6 +18,11 @@ Bot attempt distances, safe-emote clearance and pressure stats follow actual rea
 Local native travel/sweep checks are in [the lunge report](reports/feedback-2026-09-30/defender-lunge.md);
 they do not qualify real peer transport.
 
+Legacy seat-assignment reception now requires exactly4bytes and a valid player
+seat0..3 or spectator-1 before notifying local controls. Sender and repeated-seat
+semantics stay intact; protocol97 is unchanged. Native19-case receiver proof and
+the reproduced malformed baseline are in [seat packet evidence](reports/feedback-2026-09-30/seat-assignment-packets.md).
+
 Runtime files below are in `Assets/TumbangPreso/Runtime/`.
 
 | Concern | Entry points and invariant |

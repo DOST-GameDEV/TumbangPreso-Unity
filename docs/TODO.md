@@ -150,6 +150,16 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   across100warmed bot queries. Ground-query claim is corrected and requalified
   using the same calibrated recorder. [Evidence](reports/feedback-2026-09-30/bot-obstacle-allocation.md).
 
+- [x] F0930-31 Seat-assignment packet bounds: reject truncated/trailing payloads
+  before exceptions, and invalid seats before local-control seating changes.
+  All10 baseline failures reproduce;19 final native receiver cases pass for
+  malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
+  [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
+- [ ] F0930-32 Latest Feedback round flow: remove the per-round skip-warmup option
+  and use a next-taya announcement/pause after each round without the halftime
+  animation. Preserve protected art/motion assets and network clock/role authority;
+  inspect current phase gates before implementation and qualify the changed flow.
+
 
 
 - [x] F0930-30 Chat Unicode boundary: preserve complete UTF-16 pairs at the120-unit

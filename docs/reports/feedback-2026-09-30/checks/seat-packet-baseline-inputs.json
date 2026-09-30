@@ -1,0 +1,11 @@
+{
+  "retry": 0,
+  "expectedCases": 10,
+  "sourceEquivalent": "a52fe4f62 plus focused receiver fixture on existing fully overlaid candidate",
+  "inputs": {
+    "Assets/TumbangPreso/Tests/SeatAssignmentPacketTests.cs": "20e27c607167c1682f0436964036bf67fd46df129092198bd0b5bc511e35a87f",
+    "Assets/TumbangPreso/Tests/SeatAssignmentPacketTests.cs.meta": "7ccba8e2c34da651c09b17fcc563ba651c4d174b1ea309d9c0f17cc1aa6d0a3c",
+    "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "842c8e39f0e34b90bbb53feec65aba28ab9b502b45e11bd7428e598c205820af"
+  },
+  "question": "Reproduce malformed seat packet exception or seat mutation before any receiver edit"
+}

@@ -1,5 +1,8 @@
 # September 30 Feedback Fixes
 
+Independent engineering follow-up: [seat-assignment packet bounds](seat-assignment-packets.md)
+includes reproduced truncated/invalid packet failures and19 passing native receiver cases.
+
 ## Tasks And Round Standings
 
 Candidate: committed aecc0ee2c plus eight task-owned source/test inputs.

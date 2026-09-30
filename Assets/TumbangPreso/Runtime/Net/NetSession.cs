@@ -2014,7 +2014,11 @@ namespace TumbangPreso.Net
         private void OnSeatAssignmentMessage(ulong senderClientId, FastBufferReader reader)
         {
             if(senderClientId!=NetworkManager.ServerClientId)return;
+            // One complete seat only. Refuse malformed payloads before reads or
+            // seating notifications can throw/rebind the local player's controls.
+            if (reader.Length - reader.Position != sizeof(int) || !reader.TryBeginRead(sizeof(int))) return;
             reader.ReadValueSafe(out int seat);
+            if (seat < -1 || seat >= Core.Balance.PlayerCount) return;
             ApplyAssignedSeat(seat);
         }
 

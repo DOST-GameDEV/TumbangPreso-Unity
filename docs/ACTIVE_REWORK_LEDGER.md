@@ -158,3 +158,16 @@ UGS sign-in disabled; no paid Relay session or live queue-room teardown claimed.
 Job12858 terminal and profiles/preferences restored. Fixture path released after
 publication. F0930-13's permitted menu/stamina checks are qualified; lighting stays
 protected. Overall goal active, remaining feedback/TODO is not complete.
+
+a52fe4f62 pushed and remote verified. Five existing menu/stamina Feedback notes
+now contain their focused qualification; native Done checkboxes remain pending
+unavailable Chrome3. Latest tutorial row's hold marker disappeared; owner question
+is pending, so keep tutorial held and continue independent engineering work.
+Seat-assignment fix qualified: native baseline10/10 failures reproduce truncated
+read exceptions and trailing/out-of-range local-seat mutation. Receiver now gates
+exact4bytes and seats-1..3. Final native19/19 pass with valid seats, spectator,
+non-host rejection and repeat suppression intact; protocol97 unchanged.
+One bounded Core.Balance qualifier repair was needed before final testing.
+Jobs9929/79934/37357 terminal; profiles/preferences restored. Source paths released
+after publication. Next: F0930-32 round-break request or independent authorized
+engineering work; tutorial release question remains pending. No heavy job running.
