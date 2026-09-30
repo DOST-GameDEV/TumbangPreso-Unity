@@ -422,3 +422,14 @@ Non-passive in-game descriptions/names are also protected. Their owner-approved
 implementation overrides stale Wiki descriptions, which the owner explicitly
 asks to update now. AGENTS.md is the current controlling rule. No hero code or
 assets were edited for this documentation correction.
+
+ed60d6e5 tutorial timing/copy/footer refinement published and remote verified.
+The same live Feedback row has additional requests, so it stays open: centered
+attacker placement, no repeated attacker teleports except Throw/Shove, investigate
+levitating landed slipper, Curve completes on curved throw alone, Lunge HOLD/RELEASE
+prompt and2.5-second description hold. Reclaim GuidedTraining.cs,
+UI/GuidedTrainingHud.OwnerPainted.cs, Tests/PlayMode/OwnerTrainingUiTests.cs and
+Tests/PlayMode/TutorialLessonHonestyProbe.cs under Assets/TumbangPreso. Do not
+change the protected hero kits. Diagnose the training-owned placement first;
+ordinary Slipper.cs remains unclaimed until a reproduced defect requires it.
+No Unity job active. Reserved round timing is next after this newest row.
