@@ -45,6 +45,21 @@ Body carry still uses the existing owner-delivered Carry message, capped lift7m/
 The2.5s accepted windup and stable ability ID remain. Actual peers require matching
 protocol102 builds; local authority checks are not actual-peer qualification.
 
+## Second Wind Compatibility
+
+Protocol103 appends a bounded Second Wind remaining float to Amihan's existing
+scoped flight recovery tail (61bytes). The same match, round, epoch, generation,
+request/event watermark and adopted-clock gates protect it. A non-live round
+cannot restore positive time; simulation-clock age preserves ordinary pauses.
+Drift uses the current35second cooldown with its stable ability ID unchanged.
+
+Amihan opts into owner accepted-cast events through HeroKit.RequiresOwnerCastEvents.
+The existing matching owner request receives its event without activating or
+spending the predicted payload again. Rejected prediction alone grants no speed;
+repeated/older accepted events cannot refresh the timer. Shared ultimate reserved
+activation starts the same clock. Offline successful kit casts use that clock too.
+Round/transport reset clears it. This changes no other kit's event subscription.
+
 ## Cosmetic Reworks
 
 Frostbite protocol101: a held slipper is required for activation; on body impact

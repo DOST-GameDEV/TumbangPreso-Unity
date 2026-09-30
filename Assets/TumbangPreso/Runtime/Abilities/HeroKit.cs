@@ -133,6 +133,8 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Existing movement skills may scale wish speed; impulses and slows retain their own rules.</summary>
         public virtual float MovementSpeedScale => 1.0f;
+        // Kits with accepted-cast state need the owner event, without repeating a predicted payload.
+        public virtual bool RequiresOwnerCastEvents => false;
 
         /// <summary>
         /// ⚠️⚠️ KEPT AS THE METER'S FULL-SCALE VALUE, NOT AS THE PRICE. It used to be both, and

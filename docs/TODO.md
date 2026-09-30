@@ -166,8 +166,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Owner explicitly reopened this and the full remaining ability queue on2026-10-01.
   Check newest active file claims first; complete specs govern, no invented kits.
   Airburst status/airborne payload corrected: native4/4 and Core8/8pass;
-  full-map/player near-edge follow-through remains. Second Wind, Drift and broader
-  naming/rule reconciliation stay open. [Evidence](reports/amihan-feedback-2026-09-30/result.md).
+  authored court1/1also passes with9m travel to the confinement edge.
+  Second Wind25percent/2.5s and Drift35s/name now pass6native and22Core checks;
+  protocol103 carries recovery. Shared Whirled can-reset eligibility remains open.
+  [Passive evidence](reports/amihan-feedback-2026-09-30/wiki.md). [Evidence](reports/amihan-feedback-2026-09-30/result.md).
 - [ ] F0930-12 Nemu and other defined wiki rules: reconcile current behavior; preserve
   unspecified/placeholder kits rather than inventing replacements.
   Kuro movement bonus and shared 25-second basic cooldowns pass 18 native cases;

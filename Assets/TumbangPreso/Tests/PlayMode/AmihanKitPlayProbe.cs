@@ -616,7 +616,7 @@ namespace TumbangPreso.PlayTests
                 writer.WriteValueSafe(12345L); writer.WriteValueSafe(generation);
                 writer.WriteValueSafe(owner.MovementEpoch); writer.WriteValueSafe(eventId); writer.WriteValueSafe(0L);
                 writer.WriteValueSafe(GameServices.Round.TimeLeft); writer.WriteValueSafe(2.92f);
-                writer.WriteValueSafe(phase); writer.WriteValueSafe((ulong)(100 + generation)); writer.WriteValueSafe(episode);
+                writer.WriteValueSafe(phase); writer.WriteValueSafe((ulong)(100 + generation)); writer.WriteValueSafe(episode); writer.WriteValueSafe(0f);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 typeof(MatchRpc).GetMethod("ReadFeatherfallSnapshot", flags).Invoke(router, new object[]
                     { reader, owner.PlayerSlot, GameServices.Match.RoundNumber, phase == 1 ? 2f : 0f, 0f, 0f, false });
@@ -688,6 +688,51 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(60000)]
+        public IEnumerator OwnerAcceptanceGrantsPassiveWithoutReplayingPredictedPayload()
+        {
+            yield return LocalAttacker();
+            var actor=Amihan(GameLaunch.SoloSeat,new Vector3(0,.12f,-11.5f));
+            var root=new GameObject("Second Wind owner receiver");root.SetActive(false);
+            var router=root.AddComponent<MatchRpc>();var previous=NetAuthority.Provider;
+            try
+            {
+                NetAuthority.Provider=new FlightClient { LocalSlot=actor.PlayerSlot };
+                var kit=(AmihanHeroKit)actor.AbilitySystem.Kit;
+                var ctx=new AbilityContext(actor,actor.GetComponent<Carrier>(),actor.GetComponent<CombatVerbs>());
+                Assert.IsTrue(kit.TryActivateSkill1(ctx));
+                Assert.AreEqual(1,kit.MovementSpeedScale,"Prediction alone cannot grant accepted speed.");
+                Assert.IsTrue(actor.AbilitySystem.TrackSkillRequest(0,11));
+                Assert.IsTrue(actor.AbilitySystem.ResolveSkillReceipt(0,11,false,0,0));
+                Assert.AreEqual(1,kit.MovementSpeedScale,"Denied prediction granted Second Wind.");
+                Assert.IsTrue(actor.AbilitySystem.TrackSkillRequest(0,12));
+                float cooldown=kit.Skill1.CooldownRemaining;Vector3 at=actor.transform.position;
+                var cast=new SkillCastMessage { Seat=actor.PlayerSlot,Slot=0,Request=12,Event=22,
+                    AbilityId=new FixedString64Bytes(kit.Skill1.Id),Forward=Vector3.forward,Position=at };
+                typeof(MatchRpc).GetMethod("PlayReceivedAbility",BindingFlags.Instance|BindingFlags.NonPublic)
+                    .Invoke(router,new object[]{cast});
+                Assert.AreEqual(1.25f,kit.MovementSpeedScale);
+                Assert.AreEqual(cooldown,kit.Skill1.CooldownRemaining);Assert.AreEqual(at,actor.transform.position);
+                kit.Tick(ctx,.5f);
+                typeof(MatchRpc).GetMethod("PlayReceivedAbility",BindingFlags.Instance|BindingFlags.NonPublic)
+                    .Invoke(router,new object[]{cast});
+                Assert.AreEqual(2,kit.SecondWindRemaining,"Repeated acceptance restarted the passive.");
+            }
+            finally { NetAuthority.Provider=previous;Object.Destroy(root); }
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator OfflineAcceptedFlightGrantsAndExpiresSecondWind()
+        {
+            yield return LocalAttacker();
+            var actor=Amihan(GameLaunch.SoloSeat,new Vector3(0,.12f,-11.5f));
+            yield return PressSkill(actor,Verb.Skill2);
+            Assert.IsTrue(actor.IsAloft); Assert.AreEqual(1.25f,actor.AbilitySystem.Kit.MovementSpeedScale);
+            yield return new WaitForSeconds(2.6f);
+            Assert.AreEqual(1,actor.AbilitySystem.Kit.MovementSpeedScale);
+            Assert.IsTrue(actor.IsAloft,"The passive expiry must not end the five-second flight.");
+        }
+
+        [UnityTest, Timeout(60000)]
         public IEnumerator FeatherfallTimedKitHonoursGenerationRequestsAndKitIdentity()
         {
             yield return LocalAttacker();
@@ -702,14 +747,14 @@ namespace TumbangPreso.PlayTests
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
             void Field(string name, object value) => typeof(MatchRpc).GetField(name, flags).SetValue(router, value);
             void Clock() => typeof(MatchRpc).GetMethod("AdoptFeatherfallRoundClock", flags).Invoke(router, new object[] { GameServices.Match.RoundNumber });
-            void Snapshot(int generation, float remaining, byte phase = 1, int epoch = -1, long request = 0, long eventId = 20)
+            void Snapshot(int generation, float remaining, byte phase = 1, int epoch = -1, long request = 0, long eventId = 20, float secondWind = 0)
             {
                 using var writer = new FastBufferWriter(64, Allocator.Temp);
                 writer.WriteValueSafe(12345L); writer.WriteValueSafe(generation);
                 writer.WriteValueSafe(epoch < 0 ? actor.MovementEpoch : epoch); writer.WriteValueSafe(eventId);
                 writer.WriteValueSafe(request); writer.WriteValueSafe(GameServices.Round.TimeLeft);
-                writer.WriteValueSafe(2.92f); writer.WriteValueSafe(phase); writer.WriteValueSafe(100UL); writer.WriteValueSafe(-10L);
-                Assert.AreEqual(57, writer.Length);
+                writer.WriteValueSafe(2.92f); writer.WriteValueSafe(phase); writer.WriteValueSafe(100UL); writer.WriteValueSafe(-10L); writer.WriteValueSafe(secondWind);
+                Assert.AreEqual(61, writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 typeof(MatchRpc).GetMethod("ReadFeatherfallSnapshot", flags).Invoke(router, new object[]
                     { reader, actor.PlayerSlot, GameServices.Match.RoundNumber, remaining, 0f, 0f, false });
@@ -761,10 +806,12 @@ namespace TumbangPreso.PlayTests
                 Field("_lastWorldFieldGeneration", 1); Field("_worldFieldRound", GameServices.Match.RoundNumber);
                 Snapshot(1, 3);
                 Assert.IsFalse(actor.IsFlying, "An unadopted local round clock qualified a flight snapshot.");
-                Clock(); Snapshot(1, 3);
+                Clock(); Snapshot(1, 3, secondWind:2f);
                 var kit = (AmihanHeroKit)actor.AbilitySystem.Kit;
                 Assert.AreEqual(3, kit.AttackingSkill.DurationRemaining);
-                Snapshot(1, 5);
+                Assert.AreEqual(2, kit.SecondWindRemaining);
+                Snapshot(1, 5, secondWind:2.5f);
+                Assert.AreEqual(2, kit.SecondWindRemaining,"Duplicate generation restarted the passive.");
                 Assert.AreEqual(3, kit.AttackingSkill.DurationRemaining, "The same generation restarted flight.");
                 Field("_lastWorldFieldGeneration", 2);
                 Snapshot(2, 5, epoch: actor.MovementEpoch + 1);

@@ -13,10 +13,12 @@ namespace TumbangPreso.Core
     /// </summary>
     public static class AmihanRules
     {
+        public const float SecondWindSeconds = 2.5f;
+        public const float SecondWindScale = 1.25f;
         // ------------------------------------------------------------------ QUICK DASH (signature)
 
-        /// <summary>Owner's table: *"40 s cooldown"*.</summary>
-        public const float QuickDashCooldown = 40.0f;
+        /// <summary>Current Wiki: *"35 Seconds Cooldown"*.</summary>
+        public const float QuickDashCooldown = 35.0f;
 
         /// <summary>How far the dash throws her, metres, along her facing.</summary>
         public const float QuickDashDistance = 5.0f;

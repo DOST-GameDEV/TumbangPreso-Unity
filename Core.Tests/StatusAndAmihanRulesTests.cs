@@ -130,7 +130,7 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void AmihanUsesTheOwnersCostsAndStaysInsideTheKnockbackCap()
         {
-            Assert.Equal(40.0f, AmihanRules.QuickDashCooldown);
+            Assert.Equal(35.0f, AmihanRules.QuickDashCooldown);
             Assert.Equal(35.0f, AmihanRules.WhirlwindCooldown);
             Assert.Equal(2.5f, AmihanRules.WhirlwindSeconds);
             Assert.Equal(5.0f, AmihanRules.UpdraftSeconds);

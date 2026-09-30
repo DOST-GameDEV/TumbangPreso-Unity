@@ -1450,3 +1450,20 @@ Second Wind/Drift plan appended: own AmihanHeroKit.cs, AmihanRules.cs,
 Net/MatchRpc.Featherfall.cs, NetSession.cs, new AmihanWikiTests.cs/meta and scoped
 wire fixtures. Baseline name/cooldown and accepted-cast boost next. Source fetched,
 no divergence; no heavy job active, no passive runtime edits yet.
+Second Wind baseline2/2fails absent boost/stale Drift. Network route inspection
+finds ordinary predictions intentionally skip owner PlayAbility, and shared ult
+uses reserved activation. Extend claim to HeroKit.cs one opt-in property and
+MatchRpc.cs generic owner-event delivery plus flight-recast event adoption. This
+avoids a hero-name transport switch and never repeats payload/resource spending.
+Shared ultimate starts its passive from its already-accepted reserved activation.
+Second Wind/Drift final5/5native passes14.20s, including real offline flight
+cast and bounded generation/request/kit recovery. Add one targeted predicted-owner
+accept/deny/dedup case, since that new opt-in path must not replay paid payload.
+Core.Tests/StatusAndAmihanRulesTests.cs current Drift35assertion and Amihan-only
+HeroLoadout.cs display rows are part of this unit; preserve IDs/locked variants.
+
+Second Wind/Drift6distinct native cases and22Core checks pass. Publish scoped
+clock/owner-event/recovery plus Amihan names/cooldown, protocol103. Same full
+Amihan row stays open for shared Whirled can-reset review. Airburst alreadyDone.
+No actual-peer/new-player claim. No heavy job active; release these paths after
+remote verification and fresh intake before next claim.

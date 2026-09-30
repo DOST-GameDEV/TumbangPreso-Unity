@@ -36,6 +36,7 @@ namespace TumbangPreso.Net
                 var actor = Unit(slot);
                 if (!(actor?.AbilitySystem?.Kit is AmihanHeroKit kit)) continue;
                 kit.CancelFeatherfall(actor);
+                kit.ClearSecondWind();
                 actor.InvalidateFlightEpisode();
             }
         }
@@ -85,7 +86,7 @@ namespace TumbangPreso.Net
             if (!round.RoundActive || actor.IsDefender) phase = 0;
             float remaining = phase == 1 ? kit.AttackingSkill.DurationRemaining : 0;
             long processedRequest = _lastSkillRequest.TryGetValue(peer, out var request) ? request.request : 0;
-            using var writer = new FastBufferWriter(160, Allocator.Temp);
+            using var writer = new FastBufferWriter(164, Allocator.Temp);
             // Keep the common TimedKit header. Only Amihan reads the appended fields.
             writer.WriteValueSafe(slot); writer.WriteValueSafe(GameServices.Match.RoundNumber);
             writer.WriteValueSafe(kit.HeroId); writer.WriteValueSafe(remaining);
@@ -96,22 +97,25 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(actor.FlightCeiling); writer.WriteValueSafe(phase);
             writer.WriteValueSafe(_unitPoseSerial[slot]);
             writer.WriteValueSafe(actor.FlightEpisode);
+            writer.WriteValueSafe(round.RoundActive ? kit.SecondWindRemaining : 0);
             _nm.CustomMessagingManager.SendNamedMessage("TimedKit", peer, writer, NetworkDelivery.ReliableSequenced);
         }
 
         private void ReadFeatherfallSnapshot(ref FastBufferReader reader, int slot, int round, float remaining,
             float ultimateRemaining, float sentAt, bool ultimatePending)
         {
-            if (!reader.TryBeginRead(57)) return;
+            if (!reader.TryBeginRead(61)) return;
             reader.ReadValueSafe(out long match); reader.ReadValueSafe(out int generation);
             reader.ReadValueSafe(out int epoch); reader.ReadValueSafe(out long eventWatermark);
             reader.ReadValueSafe(out long requestWatermark); reader.ReadValueSafe(out float capturedClock);
             reader.ReadValueSafe(out float ceiling); reader.ReadValueSafe(out byte phase);
             reader.ReadValueSafe(out ulong poseSerial);
             reader.ReadValueSafe(out long episode);
+            reader.ReadValueSafe(out float secondWind);
             if (!ValidSlot(slot) || match <= 0 || match != PresentationMatchId || generation <= 0 || epoch < 0
                 || eventWatermark < 0 || requestWatermark < 0 || phase > 2 || poseSerial == 0
                 || episode == long.MinValue || (phase != 0 && episode == 0) || (episode < 0 && -episode > eventWatermark)
+                || !Finite(secondWind) || secondWind < 0 || secondWind > AmihanRules.SecondWindSeconds
                 || ultimateRemaining != 0 || ultimatePending || !Finite(sentAt)
                 || !Finite(remaining) || remaining < 0 || remaining > AmihanRules.UpdraftSeconds
                 || !Finite(capturedClock) || capturedClock < 0 || capturedClock > CustomGameRules.MaxRoundSeconds
@@ -120,6 +124,7 @@ namespace TumbangPreso.Net
             var director = GameServices.Round;
             if (actor == null || !(actor.AbilitySystem?.Kit is AmihanHeroKit kit) || director == null
                 || GameServices.Match?.RoundNumber != round || epoch != actor.MovementEpoch
+                || (!director.RoundActive && secondWind > 0)
                 || (phase != 0 && (actor.IsDefender || !director.RoundActive))) return;
             if (generation <= _flightGenerations[slot]) return;
             PrepareSkillReceipts();
@@ -154,6 +159,8 @@ namespace TumbangPreso.Net
                     return;
                 }
             }
+            float windLive = Mathf.Max(0, secondWind - Mathf.Max(0, capturedClock - director.TimeLeft));
+            kit.RestoreSecondWind(windLive, eventWatermark);
             _flightGenerations[slot] = generation;
             _lastSkillEvent[slot] = System.Math.Max(_lastSkillEvent[slot], eventWatermark);
             if (phase == 1 && live <= 0) RefreshFeatherfallOnce(slot, round, epoch);
