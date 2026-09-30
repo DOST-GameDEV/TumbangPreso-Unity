@@ -1440,3 +1440,18 @@ Local F0930-09 remaining concrete Wiki rules: claim CryoRules section in Package
 Cheska Wiki baseline Native1control pass/3product mismatches fail; Classic fixture dereferenced its intentionally absent ability component. Initial compile namespace failure retained, one extra baseline launch. Final prep uses null-safe Classic binding, no extra baseline loop. Final candidate protocol103 fixes current Wiki7.5s field,1.5s ultimate/every player including caster and Chilled on landed Hero Strike Cheska shove. Native session93725, profile feedback-cheska-wiki-1001, final XML Logs/feedback-0930/cheska-wiki-final.xml in isolated checkout;596 frozen inputs. Core focused numeric test session28603 runs separately with results in chat scratch work/cheska-core-results. Source/art/profile boundaries preserved.
 
 Cheska rules product cases pass4/4retained from final4pass/1Classic fixture failure; isolated corrected Classic control1/1passes. Five distinct native acceptance cases, Core numeric1/1,596hashes/no drift. Fixture namespace and absent-Classic-component errors retained, no rerun of four unchanged cases. Protocol103. Publish exact current Wiki7.5s field/1.5s all-player ultimate/shove passive. Native sessions93725/53667 and Core28603 terminal. Next one fresh internal Windows build and two-process direct LAN qualification of the integrated candidate; preserve old protocol98 player and Desktop build.
+Follow-through claims existing AmihanAirburstTests.cs only: one authored Eskinita
+case, actual defender lift/travel/confinement and two witness images. Runtime
+unchanged; reuse existing8integration checks. Stop at fresh result and visual
+inspection. Player remains protocol100 until a coherent later refresh.
+
+Authored Airburst case1/1passes9.17s: real defender airborne,9m travel to z7
+confinement edge. Two witness frames inspected and retained. Publish test/evidence,
+update same Airburst row Done; full Amihan row stays open. Next Second Wind and
+Drift alignment, exact claim before edits. No heavy job active.
+Airburst same Doc Donechecked/Humanunchecked/Saved verified22:31. New name
+question answered in place under standing collaborator-reply permission. Amihan
+Second Wind/Drift plan appended: own AmihanHeroKit.cs, AmihanRules.cs,
+Net/MatchRpc.Featherfall.cs, NetSession.cs, new AmihanWikiTests.cs/meta and scoped
+wire fixtures. Baseline name/cooldown and accepted-cast boost next. Source fetched,
+no divergence; no heavy job active, no passive runtime edits yet.

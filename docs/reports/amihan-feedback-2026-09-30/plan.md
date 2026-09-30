@@ -25,3 +25,24 @@ separately. One heavy native job, one bounded tooling repair if required.
 
 Second Wind and other name/cooldown changes remain open in F0930-11; this first
 unit must not mark the whole reconciliation Done.
+
+## Second Wind and Drift follow-through
+
+The next unit implements the complete stated passive rather than inferring it
+from cooldowns, which are affected by overhead-map cooldown rates. One simulation
+clock grants1.25movement scale for2.5seconds, refreshing rather than stacking.
+Offline successful casts refresh it; networked casts refresh only from existing
+accepted cast events, so a denied prediction cannot grant free speed. All four
+Amihan abilities and reactivation share the kit-owned clock. Round reset clears it.
+The existing scoped Featherfall recovery envelope can carry this Amihan timer as
+an appended bounded float, aged only by round-clock progress, including defenders
+whose flight phase is empty. Preserve generation/request/event/epoch guards.
+
+Drift display/cooldown changes to the current35second Wiki value; stable IDs and
+authored motion remain. Claim AmihanHeroKit.cs, AmihanRules.cs,
+Net/MatchRpc.Featherfall.cs, NetSession.cs compatibility, new
+Tests/PlayMode/AmihanWikiTests.cs/meta and relevant existing Featherfall packet
+fixtures only if their wire shape needs updating. No other hero edits.
+Baseline first: current name/cooldown and absent accepted-cast movement boost.
+Final: refresh/expiry/reset, refused prediction, ordinary offline cast, recovery
+age/rejection and existing flight compatibility. Actual peers remain separate.

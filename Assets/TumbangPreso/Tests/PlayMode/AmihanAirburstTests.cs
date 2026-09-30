@@ -109,5 +109,33 @@ namespace TumbangPreso.PlayTests
             }
             finally { NetAuthority.Provider=provider; }
         }
+        [UnityTest] public IEnumerator AirburstCarriesDefenderAcrossAuthoredCourt()
+        {
+            yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
+            yield return new WaitForSeconds(3.6f);
+            foreach(var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled=false;
+            foreach(var input in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) input.enabled=false;
+            foreach(var player in GameServices.Round.Players) { player.Intent.Clear(); player.Teleport(new Vector3(6,.12f,-6)); }
+            var caster=GameServices.Round.PlayerAt(1); var victim=GameServices.Round.PlayerAt(0);
+            caster.Teleport(new Vector3(0,.12f,-5)); caster.transform.rotation=Quaternion.identity;
+            caster.AbilitySystem.BindHero("amihan");
+            var art=RosterBook.Load().FindPersonArt("amihan");
+            caster.GetComponent<Visual.CharacterVisual>().ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+            victim.Teleport(new Vector3(0,.12f,-2));
+            var origin=victim.transform.position;
+            var storm=AmihanStorm.Spawn(caster.transform.position,Vector3.forward,1,null); Track(storm.gameObject);
+            var eye=Track(new GameObject("Airburst court witness")).AddComponent<Camera>();eye.enabled=false;
+            eye.transform.position=new Vector3(5,3,-7);eye.transform.LookAt(new Vector3(0,1,0));eye.fieldOfView=65;
+            storm.Release(); yield return new WaitForSeconds(.2f);
+            Assert.IsTrue(victim.IsWhirled); Assert.Greater(victim.transform.position.y-origin.y,.4f);
+            yield return GameplayShots.Render(eye,"airborne",false,"Logs/airburst-court-captures",victim);
+            yield return new WaitForSeconds(1.3f);
+            float travel=victim.transform.position.z-origin.z;
+            Debug.Log("[AirburstCourt] defenderTravel="+travel+" endpoint="+victim.transform.position);
+            Assert.Greater(travel,7f,"Strong wind crosses the actual court toward its confinement edge.");
+            Assert.LessOrEqual(Mathf.Abs(victim.transform.position.z),Balance.ConfinementRadius+.2f);
+            yield return GameplayShots.Render(eye,"landed",false,"Logs/airburst-court-captures",victim);
+        }
     }
 }
