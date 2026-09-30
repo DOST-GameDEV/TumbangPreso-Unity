@@ -262,3 +262,10 @@ Assets/TumbangPreso/Tests/PlayMode/TutorialLessonHonestyProbe.cs to update the
 obsolete16count/ultimate-next-lesson expectation and retain genuine jump/cast checks.
 Keep the existing TutorialDefenderProbe source unchanged unless a specific new
 contract requires claiming it. No unrelated test repair. No runtime job active.
+
+
+Tutorial look-prompt dependency: also claim Runtime/UI/InputGlyphs.cs and the
+Resources/UI/input/xelu/light/Mouse_Simple_Key_Light.png and
+Resources/UI/input/xelu/dark/Mouse_Simple_Key_Dark.png files plus their metadata
+(all beneath Assets/TumbangPreso). These are unchanged CC0 originals from Xelu's
+linked vendor archive, with a MOUSE label mapping; no input binding changes.
