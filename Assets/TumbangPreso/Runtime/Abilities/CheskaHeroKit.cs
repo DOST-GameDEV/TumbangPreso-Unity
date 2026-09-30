@@ -12,7 +12,7 @@ namespace TumbangPreso.Abilities
     ///
     /// | Slot | Name | Owner's table |
     /// |---|---|---|
-    /// | Signature | COLD FEET | a chilling field on the floor that inflicts Chilled indefinitely to players caught inside it; lasts 5 s; 35 s |
+    /// | Signature | COLD FEET | a chilling field on the floor that inflicts Chilled indefinitely to players caught inside it; lasts7.5s;35s |
     /// | Attacking | FROSTBITE | imbue the slipper with Frozen; hitting another player with it inflicts Frozen; 35 s |
     /// | Defending | GLACIAL WALL | an arc-shaped icicle wall that blocks slippers and players; takes 3 slipper hits to shatter; 35 s |
     /// | Ultimate | ABSOLUTE ZERO | inflict Frozen on every player, followed by Chilled after thawing; 12 objective points |
@@ -48,7 +48,7 @@ namespace TumbangPreso.Abilities
 
             public ColdFeet()
                 : base("cheska_skill1", "COLD FEET",
-                       "Hold to aim, release to freeze a patch of street for 5 s. Anyone standing in it is Chilled: half speed, and it lingers.",
+                       "Hold to aim, release to freeze a patch of street for 7.5 s. Anyone standing in it is Chilled: half speed, and it lingers.",
                        CryoRules.ColdFeetCooldown, 0.0f, AbilityGlyph.CheskaFrostSheet,
                        summary: "Freeze a patch of street. Anyone in it is Chilled.",
                        telegraphRadius: CryoRules.ColdFeetRadius, telegraphRange: CryoRules.ColdFeetMaxRange,
@@ -144,14 +144,14 @@ namespace TumbangPreso.Abilities
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             public AbsoluteZero()
                 : base("cheska_ultimate", "ABSOLUTE ZERO",
-                       "The whole street freezes. Every other player is Frozen for 2.5 s, then Chilled for 5 s as they thaw.",
+                       "After 1.5 s, every player is Frozen for 2.5 s, then Chilled for 5 s as they thaw.",
                        0.0f, 0.0f, AbilityGlyph.CheskaNova,
                        summary: "Freeze every player on the map, then chill them.",
                        castAction: "hero-cheska-nova", viewmodelAction: "nova-burst",
                        castCue: "sfx_cast_cheska_absolutezero")
             {
                 TelegraphStyle = GroundReticle.Style.Frost;
-                Windup = UltimateWindup;
+                Windup = CryoRules.AbsoluteZeroDelay;
                 SupportsPendingSnapshot = true;
             }
 
@@ -167,7 +167,7 @@ namespace TumbangPreso.Abilities
                 {
                     foreach (var p in round.Players)
                     {
-                        if (p == null || p.PlayerSlot == ctx.Motor.PlayerSlot) continue;
+                        if (p == null) continue;
                         // Frozen now; Chilled for the 5 s after the thaw (the timer runs through the
                         // freeze, where a slow changes nothing, so it is the thaw's 5 s exactly).
                         p.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);

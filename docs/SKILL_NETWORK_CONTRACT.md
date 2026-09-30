@@ -47,6 +47,12 @@ protocol102 builds; local authority checks are not actual-peer qualification.
 
 ## Cosmetic Reworks
 
+Cheska protocol103: the current Wiki7.5s field,1.5s ultimate delay/every-player
+targeting and Chilled shove passive require matching builds. Shared ultimate
+delivery and existing status/slipper snapshot formats stay intact. Five native
+cases and one Core numeric case pass; actual peer delivery remains separate.
+[Evidence](reports/feedback-2026-09-30/cheska-wiki-rules.md).
+
 Frostbite protocol101: a held slipper is required for activation; on body impact
 the host applies Frozen before generic affinity cleanup. The normal slipper and
 motor snapshot routes are unchanged. Native defender/attacker flight, eligibility

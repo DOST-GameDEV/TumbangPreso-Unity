@@ -157,6 +157,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Frozen. Activation requires the held slipper. Four native cases pass; protocol101
   requires matching updated builds. Complete kit alignment stays open.
   [Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
+  Current Wiki timing/passive rules implemented: Cold Feet7.5s; Absolute Zero1.5s
+  then all players including caster Frozen/Chilled; landed Hero Strike shove Chilled.
+  Five distinct native cases pass across two final receipts, plus one Core numeric
+  check. Protocol103. [Evidence](reports/feedback-2026-09-30/cheska-wiki-rules.md).
 - [ ] F0930-10 Dante: reconcile wiki names/rules/statuses (owner reauthorized implementation).
   Barrier visibility implemented separately: half-alpha authored slabs retain their
   palette and lifecycle. Two distinct native cases pass; observer court capture

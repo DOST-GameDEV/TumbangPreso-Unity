@@ -547,7 +547,7 @@ namespace TumbangPreso.Net
         // 97: the ordinary defender lunge travels 3 metres; predicted and host
         // movement must use matching tuning. The movement-budget ceiling is unchanged.
         // Protocol101 fixes Frostbite;102 adds Airburst status and airborne slipper flight.
-        public const int ProtocolVersion = 102;
+        public const int ProtocolVersion = 103;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

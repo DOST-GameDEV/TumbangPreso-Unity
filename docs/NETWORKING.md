@@ -1,5 +1,10 @@
 # Networking: Where To Work
 
+Protocol103 requires current Cheska field/delay/passive/all-player targeting rules.
+Cold Feet lasts7.5s, Absolute Zero waits1.5s and includes its caster, and landed
+Hero Strike Cheska shoves apply Chilled. Native cases pass; protocol103 actual
+peers are not yet qualified. [Evidence](reports/feedback-2026-09-30/cheska-wiki-rules.md).
+
 Protocol101 also requires the corrected Frostbite hit/held-slipper contract.
 Both body-hit paths apply Frozen before generic impact consumes the payload.
 Native real-flight checks pass; protocol101 actual peers remain unqualified.
