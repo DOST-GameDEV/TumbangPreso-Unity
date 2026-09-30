@@ -15,6 +15,20 @@ TODO IDs; open bodies live in TODO_Backlog and finished bodies in TODO_Archive.
 An old OPEN heading is not proof a feature is missing. Reconcile implemented,
 replaced, retired and genuinely blocked requirements without reviving old ideas.
 
+## Finalized Paete And Phaister
+
+- The owner-approved finalized Paete and Phaister implementations are authoritative
+  over stale Wiki text, old TODO entries and earlier proposals.
+- Do not change either hero's mechanics, model, animation, VFX, SFX, cutscene,
+  camera direction, UI presentation or authored assets except for a demonstrated
+  bug fix. Do not redesign or polish them as part of the broader presentation pass.
+- Do not change their in-game skill names or descriptions. Passive descriptions
+  are the only description exception; do not infer permission to change passives'
+  behavior. The owner separately authorized updating stale Wiki descriptions to
+  accurately document the finalized implementation; that is documentation work.
+- Any permitted bug fix must identify the reproducible defect, preserve the
+  finalized direction and include focused behavioral evidence.
+
 ## Autonomy And Continuity
 
 - Continue assigned independent work through questions, checkpoints, passing

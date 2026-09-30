@@ -28,8 +28,10 @@ animation, models, maps or lighting except for a demonstrated bug fix.
 
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins
-for other characters. Phaister and Paete ability behavior is protected; descriptions
-may be corrected from their current implementations. Incomplete wiki cells are
+for other characters. Paete and Phaister are finalized and governed by the
+protected-hero rule in AGENTS.md. Their implementation supersedes stale Wiki text.
+Only demonstrated bug fixes may change them; in-game skill descriptions stay
+untouched except passive descriptions. Wiki descriptions may document the final code. Incomplete wiki cells are
 not specifications to invent. Scope restrictions supersede cosmetic additions.
 
 - [x] F0930-01 Tutorial: revised20-lesson route, real ordered objectives,

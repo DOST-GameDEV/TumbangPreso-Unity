@@ -10,7 +10,8 @@ Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 - No resets, clean, force-push, discarded dirt, Desktop replacement or paid services
   without current authorization. Preserve profiles and task-unrelated processes.
 - Loading belongs to the owner's friend. All ability work now belongs to the owner.
-  Phaister/Paete ability behavior stays protected; descriptions may be corrected.
+  Paete/Phaister are finalized: demonstrated bug fixes only, including presentation.
+  In-game descriptions stay untouched except passives; stale Wiki is documentation.
 - No VFX/SFX/animation/models/maps/lighting except concrete bug fixes. Four absent
   generic Amihan/Paete swim/recovery sets were repaired under that exception;
   existing84asset/meta hashes and ability behavior stayed unchanged.
@@ -414,3 +415,10 @@ Actual look and both movement thresholds, authored body copy and completion foot
 are qualified;960x540/1600x680 inspected. Source paths release after publication.
 Next implement the reserved3-second ordinary break/10-second halftime replay
 revision. No heavy job active. Existing cloud material artifact remains separate.
+
+Owner14:23 explicitly locks all finalized Paete/Phaister work, including skills,
+models, effects, sound, animation and cutscenes, except demonstrated bug fixes.
+Non-passive in-game descriptions/names are also protected. Their owner-approved
+implementation overrides stale Wiki descriptions, which the owner explicitly
+asks to update now. AGENTS.md is the current controlling rule. No hero code or
+assets were edited for this documentation correction.
