@@ -28,8 +28,11 @@ namespace TumbangPreso
     ///   * SPECTATORS: passers-by who walk to a spot at the court's edge (the pavement ends past
     ///     the end walls, the PGH lawn behind the fence), watch facing the court, cheer when the
     ///     can goes down and groan at a tag (<see cref="MatchFlair.Presented"/>), then walk on.
-    ///   * BEGGAR: walks in, sits on a flattened carton against the PGH fence just past the
-    ///     south wall with a tin cup, within reach of a player at the wall. While he sits the
+    ///   * BEGGAR: his OWN voxel model (npc-beggar.glb, `tools/build_beggar_voxel.py`: the
+    ///     cast's pipeline on character-male-e's skeleton, so the same clips play, with painted
+    ///     dirt on his clothes), not a cast rig. Walks in, sits on a flattened carton against
+    ///     the PGH fence just past the south wall with a tin cup, a tied bundle and a plastic bag
+    ///     beside him, within reach of a player at the wall. While he sits the
     ///     match HUD offers "Give a coin" on the Interact control (<see cref="StreetInteractions"/>):
     ///     a coin arcs into the cup, a coin blip plays (the pisonet's "ui_click"), he bows and
     ///     waves and says thank you in a comic popup. ⚠️ COSMETIC: no currency, no score, no stat,
@@ -40,7 +43,35 @@ namespace TumbangPreso
     /// </summary>
     public sealed class SidewalkLife : MonoBehaviour
     {
-        [Serializable] public sealed class Look { public string Name; public RosterEntryAsset Art; public Color[] Palette; public float Scale = 1f; }
+        [Serializable] public sealed class Look { public string Name; public RosterEntryAsset Art; public Color[] Palette; public float Scale = 1f; public Wear Wear = new Wear(); }
+
+        /// <summary>
+        /// Head-level and shoulder-level extras over a Classic rig, so a sidewalk person can stop
+        /// reading as the cast member whose rig he borrows (owner 2026-09-30: the beggar "came out
+        /// as Mang Kanor"). Chunky boxes in the rig's own units (the .glb's, before the cast's
+        /// 2.38), each skinned rigidly to one bone like the rig's own parts, outlined by ToonSkin.
+        /// All off by default: a Look saved before this existed wears nothing extra.
+        /// </summary>
+        [Serializable] public sealed class Wear
+        {
+            public HatKind Hat = HatKind.None;
+            /// <summary>The top of the rig's hair (rig units), measured per rig by the author.</summary>
+            public float HairTop = .67f;
+            public Color HatColour = Color.grey, HatTrim = Color.grey;
+            /// <summary>A bimpo (a small face towel) over the left shoulder.</summary>
+            public bool Towel;
+            public Color TowelColour = Color.white, TowelStripe = Color.grey;
+            /// <summary>A stubble band on the jaw, below the mouth.</summary>
+            public bool Stubble;
+            public Color StubbleColour = Color.grey;
+        }
+        public enum HatKind { None, Cap, StrawHat }
+
+        /// <summary>How the magtataho carries his pingga. Waist: the committed look (the pole at
+        /// waist height on his right, a bucket before and behind). Shoulder: the real way, the
+        /// pole balanced on his right shoulder front to back under the head's overhang, one hand
+        /// steadying it, the buckets hanging at knee to hip height and swinging as he walks.</summary>
+        public enum TahoCarryStyle { Waist, Shoulder }
         /// <summary>A sidewalk route: Points[0] is the far end where the person appears and vanishes.
         /// Width (optional, one per point, 0 to 1) narrows the keep-right offset where the way
         /// squeezes between two posts.</summary>
@@ -68,6 +99,17 @@ namespace TumbangPreso
         [Header("Props (source colours; ToonSkin dresses them)")]
         public Material Bamboo;
         public Material Aluminium, Lid, Rope, Tin, Cardboard, Coin;
+        /// <summary>The beggar's belongings beside his carton: a tied cloth bundle and a plastic
+        /// bag. Optional: a SidewalkLife authored without them (null) builds neither.</summary>
+        public Material Bundle, BundleKnot, Bag;
+
+        /// <summary>REVIEW ONLY (the author's filmed events): lets the TAHOOO and thank-you popups
+        /// spawn outside Play, where the film steps <see cref="Simulate"/> by hand. Never set in
+        /// the game; false keeps Play's behaviour exactly.</summary>
+        public static bool FilmPopups;
+
+        [Header("Options awaiting the owner (defaults are the committed look)")]
+        public TahoCarryStyle TahoCarry = TahoCarryStyle.Waist;
 
         [Header("Timing and pace")]
         public int Seed = 7;
@@ -82,6 +124,15 @@ namespace TumbangPreso
         // ------------------------------------------------------------------ constants
 
         private const float PersonScale = 2.38f, KeepRight = .35f, Fade = .22f, YokeHeight = .56f;
+        /// <summary>The shoulder carry, measured off the rig times the cast's 2.38: the head's
+        /// underside is at 0.816 m and overhangs 0.54 m either side; a hanging arm's top is its
+        /// pivot, 0.685 m. So the pole (0.03 m radius) rides at 0.765 in the gap between the two,
+        /// its top 2 cm under the head and 5 cm over the arms, just outboard of the torso.
+        /// ⚠️ NO HAND ON THE POLE. A raised arm was tried (2026-09-30, the pole held at 0.74 with
+        /// the right arm pitched up): these arms are 0.38 m thick, so the pole ran through the
+        /// sleeve wherever the arm rose to meet it. The arms swing with the walk clip instead,
+        /// and the pole balances on the shoulder as the vendors carry it on a long walk.</summary>
+        private const float ShoulderPoleX = .40f, ShoulderPoleY = .765f;
         /// <summary>The sit clip drops the hips to 6 cm with the legs 15 degrees below level; this
         /// sets him ON his carton rather than sunk to the knees in the pavement.</summary>
         private const float SitLift = .07f;
@@ -100,8 +151,9 @@ namespace TumbangPreso
         private sealed class Body
         {
             public string Name, Role;
-            public Transform Root, Torso, Head, ArmL;
-            public Quaternion ArmLRest;
+            public Transform Root, Torso, Head, ArmL, ArmR;
+            public Quaternion ArmLRest, ArmRRest;
+            public bool ShoulderPole;
             public float Scale = 1f;
             public PlayableGraph Graph;
             public AnimationMixerPlayable Mixer;
@@ -179,7 +231,7 @@ namespace TumbangPreso
         private int _kidsPhase;
         private float _kidsTimer, _clock, _donateReady, _coinT = -1f;
         private Vector3 _coinFrom;
-        private Transform _carton, _cup, _coin;
+        private Transform _carton, _cup, _coin, _bundle, _bag;
         private System.Random _rng;
         private bool _begun;
         private CharacterMotor _local;
@@ -226,6 +278,7 @@ namespace TumbangPreso
         {
             foreach (var b in _all) if (b.Graph.IsValid()) b.Graph.Destroy();
             foreach (var m in _meshes.Values) if (m != null) Kill(m);
+            foreach (var m in _tints.Values) if (m != null) Kill(m);
         }
 
         /// <summary>Builds the people and props once (Start, or the probe's first step).</summary>
@@ -285,8 +338,12 @@ namespace TumbangPreso
                 if (t.name == "torso") b.Torso = t;
                 else if (t.name == "head") b.Head = t;
                 else if (t.name == "arm-left") b.ArmL = t;
+                else if (t.name == "arm-right") b.ArmR = t;
             }
             if (b.ArmL != null) b.ArmLRest = b.ArmL.localRotation;
+            if (b.ArmR != null) b.ArmRRest = b.ArmR.localRotation;
+            // In the bind pose, before any clip moves a bone.
+            if (look.Wear != null) Dress(b, look.Wear);
 
             var animator = model.GetComponent<Animator>();
             if (animator == null) animator = model.AddComponent<Animator>();
@@ -396,7 +453,8 @@ namespace TumbangPreso
             if (b.Head != null && _clock < b.CallUntil)
             {
                 float env = Mathf.Sin(Mathf.Clamp01(1f - (b.CallUntil - _clock) / 1.6f) * Mathf.PI);
-                b.Head.localRotation *= Quaternion.Euler(12f * env, 0f, 0f);
+                // A smaller nod under a shoulder pole: the head's overhang sits 2 cm above it.
+                b.Head.localRotation *= Quaternion.Euler((b.ShoulderPole ? 2f : 12f) * env, 0f, 0f);
             }
         }
 
@@ -448,10 +506,69 @@ namespace TumbangPreso
             return t;
         }
 
+        private readonly Dictionary<Color, Material> _tints = new Dictionary<Color, Material>();
+
+        /// <summary>A runtime copy of the carton's material in `colour` (never saved as an asset).</summary>
+        private Material Tint(Color colour)
+        {
+            if (_tints.TryGetValue(colour, out var m) && m != null) return m;
+            m = Cardboard != null ? new Material(Cardboard) : new Material(Shader.Find("Standard"));
+            m.name = "Sidewalk wear #" + ColorUtility.ToHtmlStringRGB(colour);
+            m.color = colour;
+            m.SetFloat("_Glossiness", .05f);
+            return _tints[colour] = m;
+        }
+
+        /// <summary>
+        /// Puts the Look's <see cref="Wear"/> on a body in its bind pose. Each piece is a box
+        /// given in the rig's own units in the .glb's frame (x toward the character's LEFT, z
+        /// toward the face), placed under the root and then handed to its bone with its world
+        /// pose kept, so the clip carries it.
+        /// </summary>
+        private void Dress(Body b, Wear wear)
+        {
+            if (wear.Hat == HatKind.None && !wear.Towel && !wear.Stubble) return;
+            var cube = Builtin("Cube.fbx");
+            float s = PersonScale * b.Scale;
+            Transform Box(Transform bone, string name, Color colour, Vector3 centre, Vector3 size, Vector3 euler = default)
+            {
+                var t = Part(b.Root, name, cube, Tint(colour), new Vector3(-centre.x, centre.y, centre.z) * s, size * s, euler);
+                if (bone != null) t.SetParent(bone, true);
+                return t;
+            }
+            float top = wear.HairTop;
+            switch (wear.Hat)
+            {
+                case HatKind.Cap:
+                    // A plain worn cap: the crown over the hair, the peak straight out over the face.
+                    Box(b.Head, "Cap", wear.HatColour, new Vector3(0f, top - .016f, -.004f), new Vector3(.372f, .078f, .364f));
+                    Box(b.Head, "Cap peak", wear.HatTrim, new Vector3(0f, top - .046f, .222f), new Vector3(.30f, .022f, .13f), new Vector3(6f, 0f, 0f));
+                    break;
+                case HatKind.StrawHat:
+                    // A boxy buri hat: a wide brim, a crown and a dark band.
+                    Box(b.Head, "Hat brim", wear.HatColour, new Vector3(0f, top - .064f, 0f), new Vector3(.56f, .026f, .54f));
+                    Box(b.Head, "Hat crown", wear.HatColour, new Vector3(0f, top - .004f, -.002f), new Vector3(.352f, .11f, .352f));
+                    Box(b.Head, "Hat band", wear.HatTrim, new Vector3(0f, top - .036f, -.002f), new Vector3(.362f, .03f, .362f));
+                    break;
+            }
+            if (wear.Towel)
+            {
+                // The bimpo over his left shoulder: a flap down the chest, one down the back, a
+                // stripe across the front flap's end; the fold on top hides under the head.
+                Box(b.Torso, "Towel front", wear.TowelColour, new Vector3(.085f, .292f, .1f), new Vector3(.105f, .15f, .024f));
+                Box(b.Torso, "Towel stripe", wear.TowelStripe, new Vector3(.085f, .238f, .1f), new Vector3(.109f, .028f, .028f));
+                Box(b.Torso, "Towel back", wear.TowelColour, new Vector3(.085f, .292f, -.152f), new Vector3(.105f, .15f, .024f));
+                Box(b.Torso, "Towel fold", wear.TowelColour, new Vector3(.085f, .356f, -.026f), new Vector3(.105f, .03f, .276f));
+            }
+            if (wear.Stubble)
+                Box(b.Head, "Stubble", wear.StubbleColour, new Vector3(0f, .372f, .163f), new Vector3(.27f, .052f, .012f));
+        }
+
         /// <summary>The pingga (the bamboo pole) on his right shoulder, a bucket hung at each end.
         /// Built at the root, not a bone, so its pose is independent of the clip.</summary>
         private void BuildYoke(Body b)
         {
+            if (TahoCarry == TahoCarryStyle.Shoulder) { BuildShoulderPole(b); return; }
             var cylinder = Builtin("Cylinder.fbx");
             // Under the head's overhang (the rig's head starts about 0.63 m up), outboard of the torso.
             var yoke = Part(b.Root, "Yoke", null, null, new Vector3(.40f, YokeHeight, 0f), Vector3.one, Vector3.zero);
@@ -469,9 +586,45 @@ namespace TumbangPreso
             b.Swing = swing.ToArray();
         }
 
+        /// <summary>The real carry (the default since 2026-09-30): the pingga balanced on his right
+        /// shoulder, running front to back. The cast's heads overhang the shoulders (the head's
+        /// underside is 0.816 m up at the cast's scale, 0.54 m either side), so the pole rides just
+        /// under that rim and just outboard of the torso, over the top of the hanging arm (see
+        /// ShoulderPoleY). One bucket hangs in front and one behind on a short chunky rod, their
+        /// bottoms at knee height and lids at the hip.</summary>
+        private void BuildShoulderPole(Body b)
+        {
+            var cylinder = Builtin("Cylinder.fbx");
+            var yoke = Part(b.Root, "Yoke", null, null, new Vector3(ShoulderPoleX, ShoulderPoleY, 0f), Vector3.one, Vector3.zero);
+            Part(yoke, "Pole", cylinder, Bamboo, Vector3.zero, new Vector3(.06f, .76f, .06f), new Vector3(90f, 0f, 0f));
+            var swing = new List<Transform>();
+            foreach (float end in new[] { -.62f, .62f })
+            {
+                var pivot = Part(yoke, end < 0 ? "Back" : "Front", null, null, new Vector3(0f, 0f, end), Vector3.one, Vector3.zero);
+                Part(pivot, "Rod", cylinder, Rope, new Vector3(0f, -.13f, 0f), new Vector3(.035f, .10f, .035f), Vector3.zero);
+                Part(pivot, "Lid", cylinder, Lid, new Vector3(0f, -.245f, 0f), new Vector3(.32f, .012f, .32f), Vector3.zero);
+                Part(pivot, "Bucket", cylinder, Aluminium, new Vector3(0f, -.395f, 0f), new Vector3(.30f, .14f, .30f), Vector3.zero);
+                swing.Add(pivot);
+            }
+            b.Yoke = yoke;
+            b.Swing = swing.ToArray();
+            b.ShoulderPole = true;
+            // Carried BY THE SHOULDERS: on the torso bone (still in its bind pose here), so the
+            // walk's bob and sway move the pole with the head above it and the 2 cm between them hold.
+            if (b.Torso != null) yoke.SetParent(b.Torso, true);
+        }
+
         private void Carry(Body b)
         {
             float walking = Mathf.Clamp01(b.MotionSpeed / .5f);
+            if (b.ShoulderPole)
+            {
+                // Front and back swing opposite ways along the walk, a little sideways roll on top.
+                for (int i = 0; i < b.Swing.Length; i++)
+                    b.Swing[i].localRotation = Quaternion.Euler(Mathf.Sin(_clock * 4.35f + i * Mathf.PI) * 7f * walking, 0f,
+                                                                Mathf.Sin(_clock * 2.9f + i) * 2.5f * walking);
+                return;
+            }
             var p = b.Yoke.localPosition;
             p.y = YokeHeight + Mathf.Sin(_clock * 8.7f) * .012f * walking;
             b.Yoke.localPosition = p;
@@ -491,6 +644,26 @@ namespace TumbangPreso
             _cup = Part(holder, "Tin cup", cylinder, Tin, new Vector3(-.22f, .05f, .55f), new Vector3(.11f, .05f, .11f), Vector3.zero);
             _coin = Part(transform, "Coin", cylinder, Coin, Vector3.zero, new Vector3(.05f, .004f, .05f), Vector3.zero);
             _carton.gameObject.SetActive(false); _cup.gameObject.SetActive(false); _coin.gameObject.SetActive(false);
+            // His things on his right, off the carton's edge: a soft tied bundle and a plastic bag.
+            var sphere = Builtin("Sphere.fbx");
+            if (Bundle != null)
+            {
+                // A cloth tied at the top: the two ears of the knot stand up out of it.
+                _bundle = Part(holder, "Bundle", sphere, Bundle, new Vector3(.74f, .09f, .06f), new Vector3(.28f, .18f, .24f), new Vector3(0f, 18f, 0f));
+                if (BundleKnot != null)
+                {
+                    Part(_bundle, "Knot", sphere, BundleKnot, new Vector3(0f, .56f, 0f), new Vector3(.4f, .45f, .42f), Vector3.zero);
+                    Part(_bundle, "Knot ear", sphere, BundleKnot, new Vector3(-.17f, .95f, 0f), new Vector3(.24f, .75f, .28f), new Vector3(0f, 0f, 32f));
+                    Part(_bundle, "Knot ear", sphere, BundleKnot, new Vector3(.18f, .92f, .03f), new Vector3(.24f, .72f, .28f), new Vector3(0f, 0f, -30f));
+                }
+                _bundle.gameObject.SetActive(false);
+            }
+            if (Bag != null)
+            {
+                _bag = Part(holder, "Plastic bag", sphere, Bag, new Vector3(.66f, .115f, -.24f), new Vector3(.19f, .23f, .14f), new Vector3(0f, -24f, 4f));
+                Part(_bag, "Tied handles", sphere, Bag, new Vector3(0f, .52f, 0f), new Vector3(.42f, .3f, .36f), Vector3.zero);
+                _bag.gameObject.SetActive(false);
+            }
         }
 
         // ------------------------------------------------------------------ the step
@@ -624,7 +797,7 @@ namespace TumbangPreso
         private void Call(Body b)
         {
             b.CallUntil = _clock + 1.6f;
-            if (!Application.isPlaying) return;
+            if (!Application.isPlaying && !FilmPopups) return;
             var camera = Camera.main;
             if (camera != null && (camera.transform.position - b.Position).sqrMagnitude > 38f * 38f) return;
             ComicPopup.Spawn(b.Position + Vector3.up * 2.2f, "TAHOOO!", UI.UiTheme.Highlight, .8f, ComicPopup.Weight.Flavour);
@@ -755,6 +928,8 @@ namespace TumbangPreso
         {
             if (_carton != null) _carton.gameObject.SetActive(shown);
             if (_cup != null) _cup.gameObject.SetActive(shown);
+            if (_bundle != null) _bundle.gameObject.SetActive(shown);
+            if (_bag != null) _bag.gameObject.SetActive(shown);
         }
 
         /// <summary>A coin for the beggar, from `from` (the giver's hand). Cosmetic: a thank-you and
@@ -770,7 +945,7 @@ namespace TumbangPreso
             _beggar.Timer = Mathf.Max(_beggar.Timer, 6f);
             _coinFrom = from; _coinT = 0f;
             if (_coin != null) { _coin.position = from; _coin.gameObject.SetActive(true); }
-            if (Application.isPlaying)
+            if (Application.isPlaying || FilmPopups)
                 ComicPopup.Spawn(b.Position + Vector3.up * 1.7f, Thanks[_rng.Next(Thanks.Length)], UI.UiTheme.Highlight, .9f, ComicPopup.Weight.Flavour);
             return true;
         }

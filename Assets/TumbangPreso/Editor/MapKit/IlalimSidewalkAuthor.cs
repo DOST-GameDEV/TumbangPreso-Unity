@@ -24,7 +24,9 @@ namespace TumbangPreso.EditorTools.MapKit
     /// rewritten, MEASURED per rig from the .glb's UVs and heights (torso 0.18 to 0.37, legs 0.03
     /// to 0.18 of the 0.7234 rig): skin, hair and slot 8 (the face) stay the rig's. No colour is
     /// near the offence orange #f87020 or the defence blue #0080e8 (checked below). Kids are the
-    /// same rigs at 0.70 to 0.74 of the cast's scale.
+    /// same rigs at 0.70 to 0.74 of the cast's scale. ⚠️ EXCEPT THE BEGGAR, who has his own
+    /// voxel model since 2026-09-30 (see <see cref="BeggarOption"/>): a street beggar must not
+    /// read as a playable cast member.
     ///
     /// ⚠️ THE ROUTES ARE MEASURED, NOT TRUSTED. Every route is sampled every 0.25 m at the lateral
     /// offsets the walkers use, and each sample is checked against the art (temporary MeshColliders
@@ -124,11 +126,151 @@ namespace TumbangPreso.EditorTools.MapKit
             ("spectator", "aling_nena", 1f, new[] { (5, "e3d6bb"), (11, "7a3446") }),
         };
 
+        // ------------------------------------------------------------------ the beggar's look and the taho's carry
+
+        /// <summary>
+        /// THE BEGGAR IS HIS OWN MODEL NOW (owner 2026-09-30, on the beggar who came out as Mang
+        /// Kanor: "use a different model to make him look more like a beggar, and better textured
+        /// with dirt and stuff whil still maintainiing artstyle"). D is the default: npc-beggar.glb,
+        /// built by `tools/build_beggar_voxel.py` (the cast's voxel person pipeline on
+        /// character-male-e's own skeleton, so every clip SidewalkLife plays still works; a thin
+        /// older man with greying messy hair and a short grey beard, a sun-faded torn shirt,
+        /// patched rolled trousers, dusty bare feet on worn tsinelas; his clothes are painted
+        /// with drawn dirt on his own atlas). His RosterEntryAsset (npc-beggar.asset, NOT in the
+        /// roster) is written here by <see cref="OwnBeggar"/>. The earlier looks stay selectable:
+        ///   * A: character-male-e (Mang Kanor's rig) in a faded shirt, the first committed look.
+        ///   * B: character-male-f (Bayan's rig): a faded navy cap over the hair, a bimpo over the
+        ///     left shoulder, a washed-out shirt and dark worn trousers.
+        ///   * C: character-male-d (Jun Jun's rig): grey hair under a boxy buri straw hat, grey
+        ///     stubble, a dark worn jacket over a faded shirt, the tie gone.
+        /// THE TAHO CARRIES ON HIS SHOULDER (owner 2026-09-30: "taho pole use option B on
+        /// shoulder"); Waist is the old look (<see cref="SidewalkLife.TahoCarryStyle"/>).
+        /// <see cref="RunOptions"/> still renders A to C into Logs/ilalim-unity/options_v1;
+        /// `IlalimSidewalkFilm` renders the new beggar's stills and the events' videos.
+        /// </summary>
+        internal enum BeggarOption { A_MangKanorRig, B_CapAndBimpo, C_StrawHatGrey, D_OwnModel }
+        internal static readonly BeggarOption BeggarChoice = BeggarOption.D_OwnModel;
+        internal static readonly SidewalkLife.TahoCarryStyle TahoChoice = SidewalkLife.TahoCarryStyle.Shoulder;
+
+        internal const string BeggarModelPath = Folder + "/npc-beggar.glb";
+        private const string BeggarEntryPath = Folder + "/npc-beggar.asset";
+        private const string BeggarPalettePath = Folder + "/npc-beggar-palette.json";
+
+        [Serializable] private sealed class PaletteFile { public string[] palette; }
+
+        /// <summary>The beggar's own model as a Look: a RosterEntryAsset outside the roster that
+        /// references the .glb, its clips (so they ship, see RosterEntryAsset.Clips) and the
+        /// sixteen flat colours the builder wrote beside it.</summary>
+        private static SidewalkLife.Look OwnBeggar()
+        {
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(BeggarModelPath);
+            if (model == null) { Debug.LogWarning(Tag + "Sidewalk: no beggar model at " + BeggarModelPath + " (run tools/build_beggar_voxel.py)"); return null; }
+            var entry = AssetDatabase.LoadAssetAtPath<RosterEntryAsset>(BeggarEntryPath);
+            if (entry == null) { entry = ScriptableObject.CreateInstance<RosterEntryAsset>(); AssetDatabase.CreateAsset(entry, BeggarEntryPath); }
+            entry.Id = "npc_beggar";
+            entry.Model = model;
+            entry.Tint = Color.white;
+            entry.Clips = AssetDatabase.LoadAllAssetsAtPath(BeggarModelPath).OfType<AnimationClip>().Where(c => !c.name.StartsWith("__preview")).ToArray();
+            var file = File.Exists(BeggarPalettePath) ? JsonUtility.FromJson<PaletteFile>(File.ReadAllText(BeggarPalettePath)) : null;
+            if (file?.palette != null && file.palette.Length == 16) entry.Palette = file.palette.Select(Hex).ToArray();
+            else Debug.LogWarning(Tag + "Sidewalk: the beggar's palette is missing or not 16 colours: " + BeggarPalettePath);
+            EditorUtility.SetDirty(entry);
+            AssetDatabase.SaveAssets();
+            return new SidewalkLife.Look { Name = "beggar (npc-beggar)", Art = entry, Palette = entry.Palette, Scale = 1f };
+        }
+
+        internal static SidewalkLife.Look BeggarLook(RosterBook book, BeggarOption option)
+        {
+            switch (option)
+            {
+                case BeggarOption.D_OwnModel:
+                    return OwnBeggar();
+                case BeggarOption.B_CapAndBimpo:
+                    // male-f: slot 1 shirt (torso and sleeves), 9 trousers; the hair is slot 8 (ink) and stays.
+                    return Dressed(book, "beggar", "bayan", 1f, new[] { (1, "b3ac98"), (9, "54503f") }, new SidewalkLife.Wear
+                    {
+                        Hat = SidewalkLife.HatKind.Cap, HairTop = .671f, HatColour = Hex("3e4756"), HatTrim = Hex("343a46"),
+                        Towel = true, TowelColour = Hex("e9e3d2"), TowelStripe = Hex("7d8c6a"),
+                    });
+                case BeggarOption.C_StrawHatGrey:
+                    // male-d: slot 8 is his whole suit AND the face's ink, so it stays dark (a worn
+                    // dark jacket); 12 the shirt front, 4 the tie (into the jacket), 13 the hair, grey.
+                    return Dressed(book, "beggar", "jun_jun", 1f, new[] { (8, "35302a"), (12, "a39a82"), (4, "35302a"), (13, "aeaaa2") }, new SidewalkLife.Wear
+                    {
+                        Hat = SidewalkLife.HatKind.StrawHat, HairTop = .722f, HatColour = Hex("cdb57c"), HatTrim = Hex("5e4a32"),
+                        Stubble = true, StubbleColour = Hex("8f8a82"),
+                    });
+                default:
+                    var a = Cast.First(c => c.role == "beggar");
+                    return Dressed(book, a.role, a.id, a.scale, a.dress, null);
+            }
+        }
+
+        private static SidewalkLife.Look Dressed(RosterBook book, string role, string id, float scale, (int slot, string hex)[] dress, SidewalkLife.Wear wear)
+        {
+            var art = book != null ? book.FindPersonArt(id) : null;
+            if (art == null || art.Model == null) { Debug.LogWarning(Tag + "Sidewalk: no roster art for " + id); return null; }
+            var palette = (art.Palette != null && art.Palette.Length == 16 ? art.Palette : new Color[16]).ToArray();
+            foreach (var (slot, hex) in dress)
+            {
+                var c = Hex(hex);
+                if (Near(c, Offence) || Near(c, Defence)) Debug.LogWarning($"{Tag}Sidewalk: {id} slot {slot} #{hex} is near a role hue");
+                palette[slot] = c;
+            }
+            var look = new SidewalkLife.Look { Name = $"{role} ({id})", Art = art, Palette = palette, Scale = scale };
+            if (wear != null) look.Wear = wear;
+            return look;
+        }
+
+        /// <summary>Batch: renders every option from the v12 cameras into
+        /// Logs/ilalim-unity/options_v1 (beggar_X_player/side, taho_X_close/court, and review
+        /// views under checks/). Opens the saved scene per option and NEVER saves it.</summary>
+        public static void RunOptions()
+        {
+            try
+            {
+                const string folder = "Logs/ilalim-unity/options_v1";
+                Directory.CreateDirectory(Path.Combine(folder, "checks"));
+                var book = RosterBook.Load();
+                var runs = new (string beggar, BeggarOption b, string taho, SidewalkLife.TahoCarryStyle t)[]
+                {
+                    ("A", BeggarOption.A_MangKanorRig, "A", SidewalkLife.TahoCarryStyle.Waist),
+                    ("B", BeggarOption.B_CapAndBimpo, "B", SidewalkLife.TahoCarryStyle.Shoulder),
+                    ("C", BeggarOption.C_StrawHatGrey, null, SidewalkLife.TahoCarryStyle.Shoulder),
+                };
+                foreach (var run in runs)
+                {
+                    var rename = new Dictionary<string, string>
+                    {
+                        ["sidewalk_beggar_player"] = $"beggar_{run.beggar}_player",
+                        ["sidewalk_beggar_side"] = $"beggar_{run.beggar}_side",
+                        ["check_beggar_front"] = $"checks/beggar_{run.beggar}_front",
+                    };
+                    if (run.taho != null)
+                    {
+                        rename["sidewalk_taho_close"] = $"taho_{run.taho}_close";
+                        rename["sidewalk_taho_court"] = $"taho_{run.taho}_court";
+                        foreach (var view in new[] { "side", "front", "back" }) rename["check_taho_" + view] = $"checks/taho_{run.taho}_{view}";
+                    }
+                    var look = BeggarLook(book, run.b);
+                    Probe(folder, IlalimSceneBuilder.ScenePath, life =>
+                    {
+                        if (look != null) life.Beggar = look;
+                        life.TahoCarry = run.t;
+                    }, rename, $"checks/probe_{run.beggar}.txt");
+                }
+            }
+            catch (Exception e) { Debug.LogError(Tag + "OPTIONS FAILED: " + e); EditorApplication.Exit(1); return; }
+            EditorApplication.Exit(0);
+        }
+
         private static readonly (string name, string hex, float gloss)[] PropColours =
         {
             ("sidewalk_bamboo", "c9ae6e", .1f), ("sidewalk_aluminium", "c3c8cc", .45f), ("sidewalk_lid", "9aa1a8", .4f),
             ("sidewalk_rope", "8a7a5a", .05f), ("sidewalk_tin", "b5b0a4", .35f), ("sidewalk_carton", "b8956a", .05f),
             ("sidewalk_coin", "e3c04a", .6f),
+            // The beggar's things: a faded plum-brown cloth bundle, its darker knot, a white plastic bag.
+            ("sidewalk_bundle", "7d5c50", .05f), ("sidewalk_bundle_knot", "5e463d", .05f), ("sidewalk_bag", "dedcd3", .3f),
         };
 
         private static readonly Color Offence = Hex("f87020"), Defence = Hex("0080e8");
@@ -167,10 +309,15 @@ namespace TumbangPreso.EditorTools.MapKit
             life.Beggar = looks.FirstOrDefault(l => l.role == "beggar").look;
             life.Kids = looks.Where(l => l.role == "kid").Select(l => l.look).ToArray();
             life.Spectators = looks.Where(l => l.role == "spectator").Select(l => l.look).ToArray();
+            // The owner's pending choices (see BeggarOption); A for both is the committed look.
+            if (BeggarChoice != BeggarOption.A_MangKanorRig) life.Beggar = BeggarLook(book, BeggarChoice) ?? life.Beggar;
+            life.TahoCarry = TahoChoice;
+            report.AppendLine($"Sidewalk: the beggar is {BeggarChoice} ({life.Beggar?.Name ?? "none"}), the magtataho carries at the {TahoChoice}.");
 
             var mats = Materials();
             life.Bamboo = mats["sidewalk_bamboo"]; life.Aluminium = mats["sidewalk_aluminium"]; life.Lid = mats["sidewalk_lid"];
             life.Rope = mats["sidewalk_rope"]; life.Tin = mats["sidewalk_tin"]; life.Cardboard = mats["sidewalk_carton"]; life.Coin = mats["sidewalk_coin"];
+            life.Bundle = mats["sidewalk_bundle"]; life.BundleKnot = mats["sidewalk_bundle_knot"]; life.Bag = mats["sidewalk_bag"];
 
             var traffic = root.GetComponentInChildren<KantoTraffic>();
             var lanes = traffic != null ? traffic.Routes.Select(r => r.Points).ToArray() : new Vector3[0][];
@@ -372,7 +519,10 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             int bad = 0;
             var f = Facing.normalized;
-            foreach (var p in new[] { seat, seat + f * .45f, seat + f * .6f + Vector3.Cross(f, Vector3.up) * .22f })
+            // His seat, his carton, the cup on his left, and his bundle and bag on his right.
+            var right = Vector3.Cross(Vector3.up, f);
+            foreach (var p in new[] { seat, seat + f * .45f, seat + f * .6f + Vector3.Cross(f, Vector3.up) * .22f,
+                                      seat + right * .74f + f * .06f, seat + right * .66f - f * .24f })
             {
                 string touch = art.Touches(p, .2f);
                 if (touch != null) { bad++; log.AppendLine($"    FAIL the beggar's spot {p:F2} touches {touch}"); }
@@ -445,7 +595,12 @@ namespace TumbangPreso.EditorTools.MapKit
         /// overlap with a vehicle's rectangle (with 0.3 m to spare). It gives the beggar a coin from
         /// a player spot at the wall the first time he sits, sends a can-down moment while somebody
         /// watches, and renders each event with the match look.</summary>
-        public static void Probe(string folder, string scenePath)
+        public static void Probe(string folder, string scenePath) => Probe(folder, scenePath, null, null, "sidewalk_probe.txt");
+
+        /// <summary>The probe, optionally with the opened (never saved) scene's SidewalkLife
+        /// changed first by `configure`, and with `rename` choosing which shots are written and
+        /// under what names (null: every shot under its own name).</summary>
+        private static void Probe(string folder, string scenePath, Action<SidewalkLife> configure, Dictionary<string, string> rename, string reportName)
         {
             EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
             var sb = new StringBuilder("ILALIM SIDEWALK LIFE PROBE (SidewalkLife.Simulate and the traffic's steps, 0.05 s, no PlayMode)\n");
@@ -454,9 +609,10 @@ namespace TumbangPreso.EditorTools.MapKit
             if (life == null)
             {
                 sb.AppendLine("No SidewalkLife in the scene.");
-                File.WriteAllText(Path.Combine(folder, "sidewalk_probe.txt"), sb.ToString());
+                File.WriteAllText(Path.Combine(folder, reportName), sb.ToString());
                 return;
             }
+            configure?.Invoke(life);
             const BindingFlags F = BindingFlags.Instance | BindingFlags.NonPublic;
             FieldInfo clock = null; MethodInfo routes = null, signals = null;
             if (traffic != null)
@@ -486,6 +642,14 @@ namespace TumbangPreso.EditorTools.MapKit
             var shots = new HashSet<string>();
             var playerSpot = new Vector3(-9.6f, .212f, -16.15f);
             Shooter shooter = null;
+            void Take(string name, Vector3 eye, Vector3 target)
+            {
+                string to = name;
+                if (rename == null ? name.StartsWith("check_") : !rename.TryGetValue(name, out to)) return;
+                string path = Path.Combine(folder, to);
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                shooter.Shot(Path.GetDirectoryName(path), Path.GetFileName(path), eye, target);
+            }
             try
             {
                 shooter = new Shooter();
@@ -540,9 +704,11 @@ namespace TumbangPreso.EditorTools.MapKit
                         shots.Add("beggar");
                         donation += FormattableString.Invariant($"; 0.5 s later thanking {life.BeggarThanking}, coin landing near the cup {life.CupPosition:F2}");
                         var seat = life.BeggarSeat;
-                        shooter.Shot(folder, "sidewalk_beggar_player", playerSpot + Vector3.up * 1.55f, seat + Vector3.up * .55f);
-                        shooter.Shot(folder, "sidewalk_beggar_side", seat + new Vector3(2.6f, 1.3f, -.9f), seat + Vector3.up * .5f);
-                        shooter.Shot(folder, "sidewalk_beggar_south", seat + new Vector3(.4f, 1.1f, -2.3f), seat + Vector3.up * .35f);
+                        Take("sidewalk_beggar_player", playerSpot + Vector3.up * 1.55f, seat + Vector3.up * .55f);
+                        Take("sidewalk_beggar_side", seat + new Vector3(2.6f, 1.3f, -.9f), seat + Vector3.up * .5f);
+                        Take("sidewalk_beggar_south", seat + new Vector3(.4f, 1.1f, -2.3f), seat + Vector3.up * .35f);
+                        // Review-only: straight at his face (written only when an options run asks).
+                        Take("check_beggar_front", seat + life.BeggarFacing.normalized * 1.7f + Vector3.up * .8f, seat + Vector3.up * .55f);
                     }
                     if (!reacted && life.Watching > 0)
                     {
@@ -554,8 +720,8 @@ namespace TumbangPreso.EditorTools.MapKit
                     if (kidsAt > 0f && t >= kidsAt + 14f && !shots.Contains("kids"))
                     {
                         shots.Add("kids");
-                        shooter.Shot(folder, "sidewalk_kids_court", new Vector3(5.8f, 1.55f, -15.8f), new Vector3(8.5f, .7f, -27f));
-                        shooter.Shot(folder, "sidewalk_kids_close", new Vector3(5.2f, 2.2f, -22f), new Vector3(8.6f, .5f, -28.5f));
+                        Take("sidewalk_kids_court", new Vector3(5.8f, 1.55f, -15.8f), new Vector3(8.5f, .7f, -27f));
+                        Take("sidewalk_kids_close", new Vector3(5.2f, 2.2f, -22f), new Vector3(8.6f, .5f, -28.5f));
                     }
                     for (int i = 0; i < n; i++)
                     {
@@ -565,15 +731,19 @@ namespace TumbangPreso.EditorTools.MapKit
                         if (role == "taho" && state == "calling" && p.z > -30f && !shots.Contains("taho"))
                         {
                             shots.Add("taho");
-                            shooter.Shot(folder, "sidewalk_taho_court", new Vector3(-6f, 1.55f, -15.8f), p + Vector3.up * .9f);
-                            shooter.Shot(folder, "sidewalk_taho_close", p + new Vector3(2.4f, 1.3f, 2.2f), p + Vector3.up * .7f);
+                            Take("sidewalk_taho_court", new Vector3(-6f, 1.55f, -15.8f), p + Vector3.up * .9f);
+                            Take("sidewalk_taho_close", p + new Vector3(2.4f, 1.3f, 2.2f), p + Vector3.up * .7f);
+                            // Review-only: his right side (the pole's) and his front, low.
+                            Take("check_taho_side", p + new Vector3(2.6f, .9f, 0f), p + Vector3.up * .7f);
+                            Take("check_taho_front", p + new Vector3(.3f, 1.0f, 2.6f), p + Vector3.up * .7f);
+                            Take("check_taho_back", p + new Vector3(-1.6f, 1.1f, -2.2f), p + Vector3.up * .7f);
                         }
                         if (role == "spectator" && state.StartsWith("watching") && !shots.Contains("spectator " + state) && shots.Count(x => x.StartsWith("spectator")) < 3)
                         {
                             shots.Add("spectator " + state);
                             var eye = new Vector3(Mathf.Clamp(p.x * .45f, -6f, 6f), 1.55f, Mathf.Clamp(p.z * .55f, -12f, 12f));
                             string where = state.Contains("PGH") ? "pgh" : p.z > 0f ? (p.x < 0f ? "nw" : "ne") : "s";
-                            shooter.Shot(folder, "sidewalk_watch_" + where, eye, p + Vector3.up * 1f);
+                            Take("sidewalk_watch_" + where, eye, p + Vector3.up * 1f);
                         }
                     }
                 }
@@ -590,7 +760,7 @@ namespace TumbangPreso.EditorTools.MapKit
             sb.AppendLine("Spectators: " + reaction + ".");
             sb.AppendLine(FormattableString.Invariant($"Kids first out at t={kidsAt:F1}s."));
             sb.AppendLine("Renders: " + string.Join(", ", Directory.GetFiles(folder, "sidewalk_*.png").Select(Path.GetFileName)));
-            File.WriteAllText(Path.Combine(folder, "sidewalk_probe.txt"), sb.ToString());
+            File.WriteAllText(Path.Combine(folder, reportName), sb.ToString());
             Debug.Log(Tag + sb);
             EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
         }

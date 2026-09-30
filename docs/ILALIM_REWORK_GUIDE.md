@@ -175,6 +175,26 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
     build (the "Sidewalk" build-log lines); `RunReview` also writes `sidewalk_probe.txt` (300 s
     beside the traffic) and `sidewalk_*.png`. Batch alone:
     `IlalimSidewalkAuthor.RunBuildAndProbe`.
+  - **2026-09-30, the beggar's own model and the shoulder carry.** Owner: *"use a different model
+    to make him look more like a beggar, and better textured with dirt and stuff whil still
+    maintainiing artstyle"* and *"taho pole use option B on shoulder"*. The beggar is no longer a
+    cast rig: `tools/build_beggar_voxel.py` (the voxel person pipeline, `build_person_voxel.py`'s
+    machinery imported, on character-male-e's own skeleton so every clip still plays) writes
+    `Art/IlalimRebuild/Life/npc-beggar.glb`, its own atlas `npc-beggar-atlas.png` and
+    `npc-beggar-palette.json`; the author wraps them in `npc-beggar.asset` (a RosterEntryAsset
+    outside the roster). A thin older man: greying messy hair receding at the front, a short grey
+    beard, a sun-faded torn shirt, patched rolled trousers, dusty bare feet on worn tsinelas (one
+    strap broken). His clothes and skin are PAINTED: `Toon.shader` samples the texture itself in
+    the atlas's non-palette half, so garment boxes are projected onto hand-drawn swatches (flat
+    fills, big feathered patches: sun-fade, sweat, grime at the hems, a torn hole, a frayed
+    sleeve, sewn patches, dust on the seat, cuffs and feet). A tied cloth bundle and a plastic bag
+    sit beside him. `BeggarOption.D_OwnModel` is the default; A (Mang Kanor's rig), B and C stay
+    selectable. The magtataho's default is `TahoCarryStyle.Shoulder`: the pole rides on the
+    torso bone at 0.765 m, 2 cm under the head's rim and over the hanging arms, with no hand on it
+    (a raised hand put the pole through the 0.38 m thick sleeve). Films and stills:
+    `IlalimSidewalkFilm.RunBuildProbeStills` then `RunVideos` (PlayMode-free, the life, traffic
+    and pigeons stepped at 30 Hz, the game's own TAHOOO and SALAMAT popups), encoded by
+    `tools/encode_ilalim_films.py` into `Logs/ilalim-unity/videos_v1/`.
   - OPEN: the owner's look review in Play, cable shadows striping the court under the 27 degree
     sun (decision 2 below), then ILALIM-1.5 and 1.6.
 

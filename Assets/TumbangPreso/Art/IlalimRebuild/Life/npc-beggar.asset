@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd6025c7ab6554d458e7834add491ac2, type: 3}
+  m_Name: npc-beggar
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
+  Id: npc_beggar
+  Model: {fileID: -232378401791911342, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  PetModel: {fileID: 0}
+  Material: {fileID: 0}
+  Tint: {r: 1, g: 1, b: 1, a: 1}
+  Clips:
+  - {fileID: 6907475494324315746, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 2203924018909043761, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -2058715007142741576, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 6422398547263628574, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 7394211616443434314, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -5788828422494046478, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -5656197328620225132, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 8444169216349218833, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -6693012064394926207, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 5638027722608592375, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 6316504600807357666, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 3916641520164824235, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -877892688320884640, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -3534582695741538158, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -6901733776427281509, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -1129283163419233802, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -2474113961476506421, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 3136869955099575062, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 6224930689648127318, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 2652845254095363116, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -4718476750892910589, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 6316130324300929012, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -4776023958905061225, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -2344400992752741691, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 6669351404405404641, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -4832708865683171987, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 3450422557711352013, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -3868565323850264498, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: 4889764192148153732, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -1602694845487291149, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -6296422904094572024, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -9152534441998152959, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  - {fileID: -4813772699318269175, guid: 18865369028b40fcbada09a068302b86, type: 3}
+  Palette:
+  - {r: 0.54901963, g: 0.50980395, b: 0.42352942, a: 1}
+  - {r: 0.35686275, g: 0.30980393, b: 0.2627451, a: 1}
+  - {r: 0.24313726, g: 0.20784314, b: 0.1764706, a: 1}
+  - {r: 0.43529412, g: 0.4862745, b: 0.4, a: 1}
+  - {r: 0.29803923, g: 0.34117648, b: 0.27450982, a: 1}
+  - {r: 0.38431373, g: 0.36862746, b: 0.34509805, a: 1}
+  - {r: 0.6392157, g: 0.61960787, b: 0.5803922, a: 1}
+  - {r: 0.52156866, g: 0.5019608, b: 0.46666667, a: 1}
+  - {r: 0.12156863, g: 0.10980392, b: 0.1254902, a: 1}
+  - {r: 0.54901963, g: 0.50980395, b: 0.42352942, a: 1}
+  - {r: 0.54901963, g: 0.50980395, b: 0.42352942, a: 1}
+  - {r: 0.54901963, g: 0.50980395, b: 0.42352942, a: 1}
+  - {r: 0.54901963, g: 0.50980395, b: 0.42352942, a: 1}
+  - {r: 0.47843137, g: 0.30588236, b: 0.21176471, a: 1}
+  - {r: 0.5411765, g: 0.3529412, b: 0.24705882, a: 1}
+  - {r: 0.5764706, g: 0.38039216, b: 0.27450982, a: 1}
+  Tagline: 
