@@ -134,9 +134,24 @@ The merged native candidate passes default collision and legacy override checks
 unit is being committed/pushed; no previous tutorial checks were repeated.
 
 Next local reservation after input shipping: Runtime/UI/InputGlyphs.cs,
-Tests/InputGlyphTests.cs, new Resources/UI/input/xelu prompt textures/metadata and
+Runtime/UI/TumpPowerReadout.OwnerDeck.cs (binding pictures only),
+Tests/InputGlyphTests.cs, Tests/PlayMode/OwnerTrainingUiTests.cs (prompt display case),
+Editor/InputGlyphImport.cs (xelu-only import filtering), new Resources/UI/input/xelu prompt textures/metadata and
 docs/Asset_Sourcing.md. Import only needed CC0 Xelu keyboard/mouse/pad prompts,
 preserving fallback labels and device families. Loading stays friend-owned.
+
+Current local Xelu edits: 198 original supplied PNGs copied unchanged (437,359 bytes
+on disk), valid unique 32-hex metadata, whole-image caching and correct Xbox/PS
+label resolution. Light/dark keyboard variants follow the background; absent wheel
+variants retain the existing fallback. Bilinear filtering is scoped only to xelu.
+Native import/family/cache/fallback checks pass 5/5. The actual training/live-HUD
+display case passes; 960x540/1600x680 captures were inspected. The Xelu unit is
+being shipped. No broad suite or unchanged input/tutorial checks were repeated.
+
+Next local unit: F0930-07 general defender lunge, not hero abilities. Review the
+current 1-metre dash and derived bot/network reach before choosing a longer safe
+travel target. Candidate target 3 metres preserves the existing 0.45-second active
+window and 28m/s movement-budget margin. Do not edit ability, loading or map lanes.
 
 Rematches now allocate a fresh host world identity before reload, adopt a matching
 previous/next pair on clients, scope votes/tallies and acknowledge seated voters.

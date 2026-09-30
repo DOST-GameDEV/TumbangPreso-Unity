@@ -382,6 +382,8 @@ namespace TumbangPreso.UI
             if (string.IsNullOrEmpty(label)) return null;
 
             string key = label.Trim().ToUpperInvariant();
+            var authored = XeluSprite(key, onDark, family ?? CurrentFamily);
+            if (authored != null) return authored;
 
             // ⚠️ THE PAD IS ASKED FIRST. Nothing is in both tables today, and if a keyboard row
             // is ever added whose name collides with a controller one, the controller answer is
@@ -452,6 +454,72 @@ namespace TumbangPreso.UI
 
             string key = label.Trim().ToUpperInvariant();
             return PadColumns.ContainsKey(key) || Table.ContainsKey(key);
+        }
+
+        private static Sprite XeluSprite(string key, bool onDark, PadFamily family)
+        {
+            string path = null;
+            string pad = key switch
+            {
+                "BUTTON NORTH" => family == PadFamily.Xbox ? "Y" : "Triangle",
+                "BUTTON EAST" => family == PadFamily.Xbox ? "B" : "Circle",
+                "BUTTON SOUTH" => family == PadFamily.Xbox ? "A" : "Cross",
+                "BUTTON WEST" => family == PadFamily.Xbox ? "X" : "Square",
+                "LEFT SHOULDER" => family == PadFamily.Xbox ? "LB" : "L1",
+                "RIGHT SHOULDER" => family == PadFamily.Xbox ? "RB" : "R1",
+                "LEFT TRIGGER" => family == PadFamily.Xbox ? "LT" : "L2",
+                "RIGHT TRIGGER" => family == PadFamily.Xbox ? "RT" : "R2",
+                "LEFT STICK PRESS" => "Left_Stick_Click", "RIGHT STICK PRESS" => "Right_Stick_Click",
+                "LEFT STICK" => "Left_Stick", "RIGHT STICK" => "Right_Stick",
+                "D-PAD" => "Dpad", "D-PAD/UP" => "Dpad_Up", "D-PAD/DOWN" => "Dpad_Down",
+                "D-PAD/LEFT" => "Dpad_Left", "D-PAD/RIGHT" => "Dpad_Right",
+                "SELECT" => family == PadFamily.Xbox ? "View" : "Share",
+                "START" => family == PadFamily.Xbox ? "Menu" : "Options", _ => null
+            };
+            if (pad != null)
+                path = "UI/input/xelu/" + (family == PadFamily.Xbox ? "xbox/XboxSeriesX_" : "ps/PS5_") + pad;
+            else
+            {
+                string name = XeluKeyName(key);
+                if (name != null)
+                {
+                    string variant = onDark ? "Light" : "Dark";
+                    path = "UI/input/xelu/" + variant.ToLowerInvariant() + "/" + name + "_Key_" + variant;
+                }
+            }
+            if (path == null) return null;
+            string id = "xelu:" + path;
+            if (Sprites.TryGetValue(id, out var cached)) return cached;
+            var texture = Resources.Load<Texture2D>(path);
+            var made = texture != null ? Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height),
+                Vector2.one * .5f, texture.height) : null;
+            if (made != null) { made.name = id; made.hideFlags = HideFlags.DontSave; }
+            Sprites[id] = made;
+            return made;
+        }
+
+        private static string XeluKeyName(string key)
+        {
+            if (key.Length == 1 && char.IsLetterOrDigit(key[0])) return key;
+            if (key.StartsWith("F") && int.TryParse(key.Substring(1), out int function) && function >= 1 && function <= 12) return key;
+            return key switch
+            {
+                "SHIFT" or "LEFT SHIFT" or "RIGHT SHIFT" => "Shift",
+                "CTRL" or "CONTROL" or "LEFT CTRL" or "RIGHT CTRL" or "LEFT CONTROL" or "RIGHT CONTROL" => "Ctrl",
+                "ALT" or "LEFT ALT" or "RIGHT ALT" => "Alt",
+                "WINDOWS" or "LEFT WINDOWS" or "RIGHT WINDOWS" or "WIN" => "Win",
+                "ESC" or "ESCAPE" => "Esc", "RETURN" or "ENTER" => "Enter",
+                "TAB" => "Tab", "SPACE" or "SPACEBAR" => "Space", "BACKSPACE" => "Backspace",
+                "DELETE" or "DEL" => "Del", "INSERT" => "Insert", "HOME" => "Home", "END" => "End",
+                "PAGEUP" or "PAGE UP" => "Page_Up", "PAGEDOWN" or "PAGE DOWN" => "Page_Down",
+                "CAPSLOCK" or "CAPS LOCK" => "Caps_Lock", "NUMLOCK" or "NUM LOCK" => "Num_Lock",
+                "UPARROW" or "UP ARROW" or "UP" => "Arrow_Up", "DOWNARROW" or "DOWN ARROW" or "DOWN" => "Arrow_Down",
+                "LEFTARROW" or "LEFT ARROW" or "LEFT" => "Arrow_Left", "RIGHTARROW" or "RIGHT ARROW" or "RIGHT" => "Arrow_Right",
+                "LMB" => "Mouse_Left", "RMB" => "Mouse_Right", "MMB" => "Mouse_Middle",
+                "+" => "Plus", "-" => "Minus", "/" => "Slash", ";" => "Semicolon",
+                "[" => "Bracket_Left", "]" => "Bracket_Right", "'" => "Quote", "`" or "~" => "Tilda",
+                _ => null
+            };
         }
 
         /// <summary>

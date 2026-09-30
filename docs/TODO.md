@@ -47,7 +47,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   and inspected 960x540/1600x680 captures pass. [Evidence](reports/feedback-2026-09-30/README.md).
 - [ ] F0930-04 Tagged replay: approximately three seconds and truthful contact display;
   fix recording/reconstruction/contact timing without inventing a hit.
-- [ ] F0930-05 Adopt [Xelu prompts](https://thoseawesomeguys.com/prompts/) for keyboard/controller.
+- [x] F0930-05 Adopted [Xelu prompts](https://thoseawesomeguys.com/prompts/): current
+  binding labels and Xbox/PS families resolve whole supplied images, with retained
+  fallback for absent variants. Live HUD and training key row use the same resolver.
+  Native import/family/cache checks pass 5/5; display case passes with inspected
+  960x540/1600x680 captures. [Evidence](reports/feedback-2026-09-30/README.md#xelu-control-prompts).
 - [x] F0930-06 Default action bindings corrected: left mouse Throw/Tag, right mouse
   Retrieve/Reset/Interact, wheel up-left/down-right, F Shove/Lunge/Ready. IDs and saved
   overrides retained. Native device/intents and shared Ready-release guard pass;

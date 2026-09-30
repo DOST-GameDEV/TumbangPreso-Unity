@@ -151,8 +151,8 @@ namespace TumbangPreso.UI
                 _symbols[i].canvasRenderer.SetAlpha(string.IsNullOrEmpty(state) ? 1 : drawn ? .5f : .22f);
                 string binding = Hud.KeyLabelFor(Actions[i]); _keys[i].text = Hud.OnTouch ? "" : binding;
                 bool pad = LastInputDevice.Current == InputDeviceKind.Gamepad;
-                _keyGlyphs[i].sprite = pad ? InputGlyphs.For(binding.ToUpperInvariant(), true) : null; _keyGlyphs[i].enabled = _keyGlyphs[i].sprite != null;
-                bool cap = !Hud.OnTouch && !pad && binding.Length <= 3;
+                _keyGlyphs[i].sprite = !Hud.OnTouch ? InputGlyphs.For(binding.ToUpperInvariant(), true) : null; _keyGlyphs[i].enabled = _keyGlyphs[i].sprite != null;
+                bool cap = !Hud.OnTouch && !pad && !_keyGlyphs[i].enabled && binding.Length <= 3;
                 _ownerKeycaps[i].gameObject.SetActive(cap);
                 _keys[i].color = _keyGlyphs[i].enabled ? Color.clear : cap ? HudDraw.CardInk : CourtPresentationPalette.Paper;
                 var edge = _keys[i].GetComponent<Outline>(); if (edge != null) edge.enabled = !cap && !_keyGlyphs[i].enabled;
