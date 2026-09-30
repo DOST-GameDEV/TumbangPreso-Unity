@@ -1,17 +1,22 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol102 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol103 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
 
-Updated2026-10-01. Published5dcb6a54c; protocol101. Overall goal active.
+Updated2026-10-01. Publishedffe5030c5; protocol103. Overall goal active.
 Owner repeats: finish actionable Feedback bottom-up, then initial network/bot/
 optimization/UX and applicable TODO. Continue autonomously while the owner sleeps.
 Loading remains concurrently owned by the friend. Owner reopened the remaining
 ability queue on2026-10-01; preserve active file claims and finalized Paete/Phaister rules. No cross-chat work, subagents, resets or paid services.
 
 Published local engineering units and focused native scope:
+- d331cd72d(integratedffe5030c5): current Cheska7.5s field,1.5s all-player
+  ultimate and landed Hero Strike shove Chilled. Five distinct native cases across
+  two final receipts plus Core1/1. Classic setup errors retained; no unchanged rerun.
+- 137bde051: Fetch query100warmed allocation events200to0; three native eligibility/
+  lifecycle/flight cases. No kit-rule/loading/presentation change.
 - ba2e7eef8(integrated4c58ac265): Frostbite payload applied before generic
   cleanup; real defender/attacker flight, held-hand eligibility and neutral block
   pass4/4. Protocol101. Full Cheska alignment remains open.
@@ -32,9 +37,14 @@ Published local engineering units and focused native scope:
   actual eligibility/chance/release/motor case1/1. Odds/intervals unchanged.
 
 All unit reports/receipts are in reports/feedback-2026-09-30 and status in TODO.
-No heavy job active; last native hop61737 is terminal. Named profiles preserved.
-Current Windows compiler/approval evidence is source6d382ea58 protocol99; no new
-Windows protocol100 player or peer claim. Frozen protocol98 player remains intact.
+Native/Core units, build74576, player freeze/drift53051/34117 and actual LAN95296
+are terminal. Committed overlaysffe5030c5 protocol103 build12scenes/2141MB/161s;
+15390inputs, only two isolated settings change, no C# drift. Fresh internal binary
+Builds/feedback-engineering-1001/TumbangPreso.exe RuntimeSHA40bdd1e400eaa66d1081259251bd5995b510a3673ec853dadaf9592c370a4c71.
+Actual direct UDP host/client both reach active HeroStrike/Eskinita round2 with
+structural3D9F2E02, no hard faults and preserved shared input. Both exit; no own
+player processes remain. Individual skill/online/Relay/lossy/device scope stays
+open. Frozen protocol98/Desktop binaries remain intact. No heavy job active.
 
 Branch integration preserved all incoming commits through b36a46a06. Pre-existing
 HeroHazards.cs dirty Supernova opacity edit is restored unstaged (6insertions/1
@@ -1455,3 +1465,9 @@ Second Wind/Drift plan appended: own AmihanHeroKit.cs, AmihanRules.cs,
 Net/MatchRpc.Featherfall.cs, NetSession.cs, new AmihanWikiTests.cs/meta and scoped
 wire fixtures. Baseline name/cooldown and accepted-cast boost next. Source fetched,
 no divergence; no heavy job active, no passive runtime edits yet.
+
+Integrated current Cheska d331cd72d atffe5030c5 remote verified. Same Wiki row note updated with native scope and all-player/caster targeting. Fresh player freeze15390inputs atffe5030c5; isolated native Git baseaecc0ee2c with committed overlays/import churn. Build job74576 active, guarded feedback-engineering-player-1001, log isolated Logs/feedback-engineering-1001/build.log, explicit new Builds/feedback-engineering-1001/TumbangPreso.exe. No fresh player/peer success yet; old protocol98/Desktop intact. Next verify binary/data and preparation drift, then one real direct LAN pair using that exact binary. Do not modify frozen runtime inputs mid-build.
+
+Freshffe5030c5 overlay Windows player build succeeds:12scenes,2141MB,161seconds, guard exit0, explicit new internal executable/data verified. Runtime SHA25640bdd1e400eaa66d1081259251bd5995b510a3673ec853dadaf9592c370a4c71. Protocol103. Build74576 terminal. One direct actual host/client run starts with separate preserved profiles and150s client sample, exact binary under isolated Builds/feedback-engineering-1001, output Logs/feedback-engineering-1001/lan-direct. No peer success yet; preserve preparation drift and limits. Loading/source models were not edited; isolated builder import churn stays private.
+
+Protocol103 actual LAN95296 passes with currentffe5030c5 overlay binary: both round2, structural3D9F2E02, no hard faults, profiles/input preserved, task players exited. Build/drift15390inputs changed onlytwo isolated settings, no C# drift. Publish compact receipts/report; no individual skill/online qualification claimed. Next bottom Feedback: Nemu Catch currentWiki5s can immunity/upright activation using existing shared routes; inspect precise authority/lifetime/recovery before editing. No heavy job active.
