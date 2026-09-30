@@ -12,7 +12,7 @@ Diddler cloud unit complete: Nemu's 10 percent basic-cooldown movement bonus
 shipped in 770162fed59f241de4e07d8e1d8599a861ff4639. Native before/after checks
 reproduced 7 failures, then passed 8/8 after the correction, with frozen inputs.
 No actual-peer or rendered-player qualification is claimed. The broader Wiki
-Feedback row remains open. Cloud document edits remain paused pending direct owner approval.
+Feedback row remains open; the owner has now approved short tested-fix notes.
 
 Shared 25-second basic cooldowns shipped in 6b4e1d4ffa02d3976d57efee55b932d97d9c8d2c.
 Four native cases reproduced separate 40/30/30 clocks; the final 18-case fixture
@@ -25,20 +25,18 @@ with the unchanged incoming tutorial tree in 9a32f528. Ten native lifecycle and
 real-companion cases pass, plus 18 cooldown/receipt regressions. Protocol94 is
 required. The combined tutorial candidate is not yet natively qualified.
 
-Next Diddler cloud reservation: Kuro: Fetch must deliver the owned slipper beside
-Nemu for normal pickup, not force it into her hand. Qualify delivery, cancellation,
-interception, and a slipper picked up while Kuro is carrying it. Preserve existing
-art and movement; no changes to protected abilities, loading or local input work.
+Kuro Fetch delivery shipped in e1ed3d775e9a920049ae8b658bc20bc46a012545.
+Nine focused native checks pass, including real pickup, cancellation, changed
+ownership, defender interception and observer authority. No actual peers claimed.
 
-Owned edit paths:
-- Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs (Fetch only)
-- Assets/TumbangPreso/Runtime/Net/NetSession.cs (compatibility constant if needed)
-- Assets/TumbangPreso/Tests/PlayMode/NemuFetchContractTests.cs
-- Assets/TumbangPreso/Tests/PlayMode/NemuFetchContractTests.cs.meta
-- docs/SKILL_NETWORK_CONTRACT.md (Fetch authority contract only)
-- docs/reports/feedback-2026-09-30/nemu-kuro-fetch.md
-- docs/TODO.md (only this unit's evidence pointer)
-- docs/ACTIVE_REWORK_LEDGER.md (only this reservation and its result)
+Owner update: all ability work is now reserved to the owner for manual work.
+Diddler releases NemuHeroKit, NetSession compatibility, all Nemu fixtures and
+ability-contract paths. Do not continue Fetch/Catch/Haunt or other hero changes.
+The owner directly approved short Feedback-row updates; the Nemu partial fix note
+is written and verified, with the broader row left unchecked.
+
+Diddler next: read-only investigation of networking/bot defects before claiming
+exact independent paths. No active code edit reservation at this checkpoint.
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.
