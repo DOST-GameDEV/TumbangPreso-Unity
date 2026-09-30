@@ -350,3 +350,14 @@ passes with frozen inputs. No native job is running. Verify remote publication
 and update the existing contact row; human and broader qualification stay open.
 
 Latest controls80ff8b583 shipped, remote HEAD verified. Existing F0930-14 can-down fix passes1/1 native upright/down/reset path on this candidate, capture inspected; no duplicate effect code. Local next reservation: Editor/GameBuilder.cs and new AuthoredAnimationBuildCheck.cs plus focused build-input test. GameBuilder currently invokes swim/recovery authoring on every build, and both author tools overwrite retained clips via CopySerialized. Change the build to validate existing sets without reauthoring; manual authoring tools remain explicit. No animation/model/map/loading files will be edited. This engineering bug fix precedes an internal Windows build and two-process LAN check. No native job running.
+
+Owner review of the tag film: "make it look like person body actually tries to
+reach not js arm extending". Diddler retains F0930-04 and owns
+Runtime/Visual/CharacterAnimator.TagBody.cs, CharacterAnimator.cs restoration
+ordering only, Tests/PlayMode/CatchReconstructionTests.cs, this ledger, TODO,
+NETWORKING and reports/feedback-2026-09-30/tag-contact*. The next revision uses
+hip weight transfer, a supporting step and shoulder turn; limb extension is
+bounded close to authored proportions. Live motor positions, hit range and
+scoring remain unchanged. No kit, loading, input or local build paths are owned.
+Native near/far real-time films and interruption/restoration checks will judge
+the change. No job running; no new animation acceptance claimed.
