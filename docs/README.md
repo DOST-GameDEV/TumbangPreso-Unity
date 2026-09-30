@@ -44,6 +44,8 @@ old prompts, counts and work orders are not current instructions.
   Do not rewrite old results to imply qualification of newer source.
   [September 30 feedback fixes](reports/feedback-2026-09-30/README.md) records the
   current Tasks/round-standings batch; its status lives in TODO FEEDBACK-0930.
+  [Cheska expiry presentation](reports/cheska-expiry-2026-09-30/plan.md) records
+  the scoped field-melt/wall-shatter plan and current reference limits.
 - **History:** archive, with original-path pointers and a replacement/reason in its index.
   Old documents keep their useful context; reusable methods remain live.
 - **Media:** latest two generated iterations per coherent subject/action/view when pruning

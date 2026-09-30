@@ -1162,3 +1162,12 @@ fixtures or claim the full aggregate gate passes. No Unity run needed for placem
 Owned fixture placement verified; full plan still reports other pre-existing
 placement issues, including its nested Client helper false positive. No aggregate
 pass is claimed and no unrelated fixture/discovery repair was made.
+
+Fixture placement22d58954 remote verified; tools claim released. Cheska expiry
+plan prepared from source/Wiki/method and primary reference guidance. Explicit
+mechanics discrepancy: WikiColdFeet7.5s, CryoRules5s. Do not alter owner-reserved
+rule; visual must follow assigned/restored Duration, test both. First unit claims
+Assets/TumbangPreso/Runtime/Visual/FrostSurfacePresentation.cs, Shaders/FrostSurface.shader,
+Tests/PlayMode/CheskaExpiryPresentationTests.cs/meta, tools/playmode_suite.py and
+scoped docs. HeroHazards untouched. Capture current native field before visual
+implementation; keep Nova wave unchanged, full danger boundary until its exit.

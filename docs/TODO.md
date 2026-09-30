@@ -329,6 +329,13 @@ shipped. Finish preceding actionable requests, then research references, plan ea
 effect with its animation/UI/sound, and critique actual playback. Preserve owner
 mechanics and finalized Paete/Phaister work. Manual bug hunting follows that pass.
 
+- [ ] PRESENTATION-CHESKA-EXPIRY: requested field melt and wall shatter are
+  authorized after the prior actionable feedback. Start with field thaw without
+  changing mechanics or HeroHazards. Wiki7.5s/current runtime5s disagreement stays
+  owner-reserved; presentation follows assigned Duration. Native baseline, then
+  restrained spatial melt, lifecycle/render checks and same-row Doc update.
+  [Research and plan](reports/cheska-expiry-2026-09-30/plan.md).
+
 Current owner order after DOCS-0927: actual loading/optimization,then shared
 network/flow correctness,then remaining applicable QA/TODO requirements. Newer task
 scope and contributor reservations override older dated order below. Work alone;
