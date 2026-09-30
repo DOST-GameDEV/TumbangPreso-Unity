@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework;
 using TumbangPreso.Core;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -51,11 +52,19 @@ namespace TumbangPreso.PlayTests
             Slab("Support", new Vector3(0, -.5f, 0), new Vector3(20, 1, 20));
             var query = (System.Func<Vector3, float, float>)System.Delegate.CreateDelegate(typeof(System.Func<Vector3, float, float>), Ground);
             for (int i = 0; i < 5; i++) query(Vector3.up, .045f);
-            long before = System.GC.GetAllocatedBytesForCurrentThread();
-            float total = 0;
-            for (int i = 0; i < 100; i++) total += query(Vector3.up, .045f);
-            long bytes = System.GC.GetAllocatedBytesForCurrentThread() - before;
-            Assert.AreEqual(0, total, .001f); Assert.AreEqual(0, bytes, "Normal support queries should reuse their hit storage.");
+            using (var calibrationRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "GC.Alloc", 100, ProfilerRecorderOptions.CollectOnlyOnCurrentThread))
+            {
+                Assert.IsTrue(calibrationRecorder.Valid);
+                var calibration = new byte[4096]; System.GC.KeepAlive(calibration); calibrationRecorder.Stop();
+                Assert.Greater(calibrationRecorder.Count, 0);
+            }
+            float total = 0; int allocations;
+            using (var recorder = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "GC.Alloc", 256, ProfilerRecorderOptions.CollectOnlyOnCurrentThread))
+            {
+                for (int i = 0; i < 100; i++) total += query(Vector3.up, .045f);
+                recorder.Stop(); allocations = recorder.Count;
+            }
+            Assert.AreEqual(0, total, .001f); Assert.AreEqual(0, allocations, "Normal support queries should reuse their hit storage.");
             for (int i = 0; i < 70; i++) Slab("DenseSupport" + i, new Vector3(0, .1f + i * .02f, 0), new Vector3(2, .01f, 2));
             Assert.That(query(Vector3.up * 3, .045f), Is.EqualTo(1.485f).Within(.001f), "A full nonalloc buffer must not silently lose the highest support.");
         }

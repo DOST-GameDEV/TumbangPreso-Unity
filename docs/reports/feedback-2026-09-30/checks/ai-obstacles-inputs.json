@@ -1,0 +1,18 @@
+{
+  "sourceEquivalent": "84569b4c0c0a4e7c2b660f850ba9665263b5d575 plus bot obstacle query",
+  "question": "world wall/body/trigger eligibility unchanged, dense fallback complete, warm query allocation zero",
+  "expectedCases": 3,
+  "retry": 0,
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/AIController.cs": "6a3457a101dc8a750f8eb4a1d530cf141537d0bd031cc560598a84d40f98713d",
+    "Assets/TumbangPreso/Tests/PlayMode/AiObstacleQueryTests.cs": "dec0c280b9125e0718a2601714cb38d7b5aa40d1468cd5393940c60e615c2267",
+    "Assets/TumbangPreso/Tests/PlayMode/AiObstacleQueryTests.cs.meta": "a158fafc6c6689cc0bc18e05d2b4f80a44898f85acfc762f841f8277fbeaad28"
+  },
+  "acceptedInputs": {
+    "Assets/TumbangPreso/Runtime/AIController.cs": "6a3457a101dc8a750f8eb4a1d530cf141537d0bd031cc560598a84d40f98713d",
+    "Assets/TumbangPreso/Tests/PlayMode/AiObstacleQueryTests.cs": "da114d748a83ecac83ed6a3b3dd141276b8bb688ea0c873ad36862fa3f7e1385",
+    "Assets/TumbangPreso/Tests/PlayMode/AiObstacleQueryTests.cs.meta": "a158fafc6c6689cc0bc18e05d2b4f80a44898f85acfc762f841f8277fbeaad28",
+    "Assets/TumbangPreso/Tests/PlayMode/LandingCircleTests.cs": "ac4be0ced8859e50c86ad794a6e13cf5a16ab89081c17c318aa40249a56c7532"
+  },
+  "drift": []
+}

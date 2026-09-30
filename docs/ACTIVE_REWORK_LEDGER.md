@@ -427,3 +427,9 @@ unchanged. Publish explicit AI/test/report paths, verify remote and release thos
 paths. Feedback-row insertion was rejected against an older reservation even after
 checking the owner's add-row permission; a fresh confirmation is pending in chat.
 Do not bypass that Doc block. Existing score/stock rows are already updated.
+
+Local optimization reservation: AIController.ShoveRouteIsClear and new AiObstacleQueryTests only. StepLungeIntent remains the other contributor lane; no overlap. Reuse32ray hits with complete-query fallback at capacity, preserving existing component/trigger filters. Native behavior/dense-wall/100query GC cases pending. Actual direct LAN remains qualified only on c555 frozen binary; no other heavy job running.
+
+Allocation evidence correction: Windows GC.GetAllocatedBytesForCurrentThread also reports0 for a deliberate4096-byte array. Earlier landing-circle support-query zero result is withdrawn as performance evidence; native flight/support behavior remains valid. Bot obstacle behavior/dense-fallback cases pass. One native ProfilerRecorder GC.Alloc attempt is active (session36833 replaced by completed calibration87954, now the current recorder job); use its explicit tool handle and fresh XML, not old zero claims. Do not repeat the two unchanged behavior cases.
+
+Bot obstacle optimization complete: two native behavior/dense-wall cases pass; calibrated native GC.Alloc sees a deliberate allocation and records0events across100warmed bot queries. Ground support/fallback also passes with the calibrated recorder. Old Windows GC.GetAllocatedBytes zero evidence is corrected, not reused. Final tests/source bytes match the frozen candidate. This unit is being shipped. No native job running. Next: F0930-13 actual title/Back/menu/queue checks, then independent remaining network/bot work. Do not overlap any newer contributor reservation.

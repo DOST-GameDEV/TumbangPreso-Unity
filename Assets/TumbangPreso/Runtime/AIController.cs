@@ -1620,6 +1620,7 @@ namespace TumbangPreso
         /// obstruction**: bodies are shoved through each other, and a tsinelas on the road stops
         /// nothing.
         /// </summary>
+        private readonly RaycastHit[] _shoveRouteHits = new RaycastHit[32];
         private bool ShoveRouteIsClear(Vector3 from, float toX, float toZ)
         {
             Vector3 a = from + Vector3.up * ShoveRouteProbeHeight;
@@ -1629,11 +1630,16 @@ namespace TumbangPreso
             float length = delta.magnitude;
             if (length < 0.05f) return true;
 
-            var hits = Physics.RaycastAll(a, delta / length, length, ~0,
-                                          QueryTriggerInteraction.Ignore);
+            var hits = _shoveRouteHits;
+            int count = Physics.RaycastNonAlloc(a, delta / length, hits, length, ~0, QueryTriggerInteraction.Ignore);
+            // A full buffer may omit the actual wall behind ignored bodies.
+            // Keep the original complete query for that dense-world case.
+            if (count == hits.Length)
+            { hits = Physics.RaycastAll(a, delta / length, length, ~0, QueryTriggerInteraction.Ignore); count = hits.Length; }
 
-            foreach (var hit in hits)
+            for (int i = 0; i < count; i++)
             {
+                var hit = hits[i];
                 var collider = hit.collider;
                 if (collider == null) continue;
 

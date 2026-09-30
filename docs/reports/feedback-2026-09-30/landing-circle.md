@@ -16,9 +16,17 @@ kit, model, map, lighting, animation, sound or effect asset was edited.
 ## Native Evidence
 
 Four unchanged native cases pass: actual host flight agrees with the circle within
-0.12m for flat, raised/curved and wall-bank shots;100 warmed floor queries allocate
-zero managed bytes. A70-collider fixture verifies the highest surface survives
-the overflow path. These are local functional/allocation checks, not player FPS.
+0.12m for flat, raised/curved and wall-bank shots. A70-collider fixture verifies
+the highest surface survives the overflow path. The100-query allocation counter
+reported zero, but later Windows calibration also reported zero for a deliberate
+4096-byte allocation. That earlier numeric result is withdrawn as performance
+evidence. Native flight/support behavior remains valid; player FPS and calibrated
+query-allocation evidence are separate.
+
+The subsequent [calibrated native recorder check](bot-obstacle-allocation.md)
+detects a deliberate allocation, then records zero allocation events across100
+warmed support queries; the dense highest-floor fallback also passes. This replaces
+the unreliable counter claim without rerunning unchanged flight/render cases.
 
 The initial visual fixture falsely appeared sufficient because it called Rebuild
 directly. Later actual render-frame checks caught a camera facing away and an

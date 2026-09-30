@@ -126,8 +126,9 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   [Evidence](reports/feedback-2026-09-30/throw-charge-duration.md).
   The trajectory line is replaced with a local ground circle. Native real flight
   comparisons cover flat, raised/curved and banked throws; legal charge/render/
-  release passes with an inspected capture. Shared support query measures zero
-  warm allocations and retains a dense-geometry fallback.
+  release passes with an inspected capture. Shared support query reuses hit storage
+  and retains a dense-geometry fallback; the earlier zero-allocation counter was
+  later found uncalibrated and is not usable performance evidence.
   [Circle evidence](reports/feedback-2026-09-30/landing-circle.md).
   The reticle now shows actual power percentage, FULL RELEASE and WAIT for blocked
   states. Real carrier/can/protection/hidden-reticle/release check passes; two sizes
@@ -142,6 +143,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   through round2 with replicated movement/objective state and no hard divergence.
   Other network paths and skill use remain unqualified.
   [Evidence](reports/feedback-2026-09-30/player-lan.md).
+- [x] F0930-30 Bot obstacle-query allocation: reuse bounded hit storage, preserve
+  complete dense-world fallback and existing filters. Native behavior cases pass;
+  calibrated Unity recorder detects a known allocation and records zero events
+  across100warmed bot queries. Ground-query claim is corrected and requalified
+  using the same calibrated recorder. [Evidence](reports/feedback-2026-09-30/bot-obstacle-allocation.md).
 
 
 - [x] F0930-29 Bot tag commitment: an already-held lunge no longer gets released
