@@ -86,3 +86,7 @@ The25percent revision supersedes the earlier50percent target. Saved keyboard/pad
 bindings drive the glyph; touch retains the action label and emphasis. Ongoing
 reset progress/cancel wording stays intact. Real pickup, channel cancellation and
 completed reset pass locally. [Revision evidence](reports/feedback-2026-09-30/match-ui-revision.md).
+
+After a device-dependent anchor change, rebase that group on its actual canvas
+HudReadingLayout before accessibility refresh. Do not capture other already-scaled
+groups as new authored positions. Device-then-scale round trips must retain margins.

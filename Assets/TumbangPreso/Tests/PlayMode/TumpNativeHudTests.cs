@@ -667,6 +667,49 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator DeviceChangesThenHudScalingKeepTheAuthoredPowerMargins()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit;
+            float scale = SettingsStore.Current.HudScale; bool larger = SettingsStore.Current.LargerText;
+            var device = LastInputDevice.Current; bool touch = TouchInput.Active;
+            try
+            {
+                QualitySettings.globalTextureMipmapLimit = 2;
+                SettingsStore.Current.HudScale = 1; SettingsStore.Current.LargerText = false;
+                TouchInput.Active = false;
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.KeyboardMouse });
+                yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
+                var hud = Object.FindAnyObjectByType<TumpMatchReadout>();
+                var deck = (RectTransform)hud.Canvas.transform.Find("PowerSeals");
+                var scores = (RectTransform)hud.Canvas.transform.Find("MatchScores");
+                Vector2 scorePosition = scores.anchoredPosition;
+                foreach (bool useTouch in new[] { true, false, true, false })
+                {
+                    TouchInput.Active = useTouch;
+                    typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { useTouch ? InputDeviceKind.Touch : InputDeviceKind.KeyboardMouse });
+                    yield return null; yield return null;
+                    Vector2 expected = useTouch ? new Vector2(0, 34) : new Vector2(-40, 30);
+                    Assert.AreEqual(expected, deck.anchoredPosition);
+                    foreach (float next in new[] { 1.2f, 1f })
+                    {
+                        SettingsStore.Current.HudScale = next;
+                        yield return null; yield return null;
+                        Assert.AreEqual(expected, deck.anchoredPosition, "Scaling after a device switch restored a stale power anchor.");
+                        Assert.AreEqual(1.25f * next, deck.localScale.x, .001f);
+                    }
+                    Assert.AreEqual(scorePosition, scores.anchoredPosition, "Rebasing powers must not accumulate offsets in other groups.");
+                }
+            }
+            finally
+            {
+                QualitySettings.globalTextureMipmapLimit = mip;
+                SettingsStore.Current.HudScale = scale; SettingsStore.Current.LargerText = larger;
+                TouchInput.Active = touch;
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { device });
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator RetrieveAndResetUseTheirLiveGlyphsAndKeepRealActions()
         {
             var actions = Resources.Load<InputActionAsset>("TumbangPreso");

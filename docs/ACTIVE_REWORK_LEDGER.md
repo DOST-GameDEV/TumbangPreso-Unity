@@ -838,3 +838,15 @@ and Tests/PlayMode/TumpNativeHudTests.cs under Assets/TumbangPreso plus docs/evi
 Question: does the deck retain touch centre and keyboard corner through repeated
 scale/device changes without shifting unrelated HUD groups? One baseline native
 case then minimal fix if reproduced; stop at actual anchor/scale checks. Retry0.
+
+Anchor baseline reproduces1/1failure: touch position(0,34) becomes the stale
+keyboard offset(-40,30) after HUD scale changes. Power owner looked for the layout
+on itself although the layout lives on the root canvas. Fix resolves the actual
+ancestor and rebases only PowerSeals; default unfiltered callers remain unchanged.
+Single final native case repeats both device directions and1/1.2scales, verifies
+base1.25 scaling and no cumulative score-group movement. No tooling retry.
+
+Anchor final1/1passes in3.16s, exit0, no new OOM. Repeated touch/keyboard then
+1.2/1scale round trips retain the original offsets and1.25base scale; unrelated
+score-group position unchanged. Publish focused runtime/test/evidence and append
+the result to the existing HUD refinement report. No visual redesign or mechanics.

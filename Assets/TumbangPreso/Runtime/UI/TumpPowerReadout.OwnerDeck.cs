@@ -115,7 +115,7 @@ namespace TumbangPreso.UI
             if (touch) { _deck.anchorMin = _deck.anchorMax = _deck.pivot = new Vector2(.5f, 0); _deck.anchoredPosition = new Vector2(0, 34); }
             else { _deck.anchorMin = _deck.anchorMax = _deck.pivot = new Vector2(1, 0); _deck.anchoredPosition = new Vector2(-40, 30); }
             _deck.sizeDelta = new Vector2(OwnerDeckWidth, OwnerDeckHeight);
-            GetComponent<HudReadingLayout>()?.RebasePlacement();
+            _deck.GetComponentInParent<HudReadingLayout>()?.RebasePlacement(_deck);
         }
 
         public void Tick(HeroAbilitySystem system, bool visible)

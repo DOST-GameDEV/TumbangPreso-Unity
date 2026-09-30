@@ -80,6 +80,9 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Latest revision uses25percent above original size and live Xelu Reset Can /
   Retrieve Slipper prompts. Real pickup, reset/cancel, pad/key/touch and margins
   pass. [Revision evidence](reports/feedback-2026-09-30/match-ui-revision.md).
+  Follow-up device-then-scale defect reproduced: touch centre reverted to keyboard
+  offset. Targeted canvas-layout rebase fixes it; repeated device/scale round trips
+  pass1/1. [Evidence](reports/feedback-2026-09-30/power-anchor.md).
 
 - [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime
   cards, removes redundant warmup line and fits large scores. Native state/bounds
