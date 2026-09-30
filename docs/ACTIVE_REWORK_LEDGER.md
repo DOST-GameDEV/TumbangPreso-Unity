@@ -43,14 +43,20 @@ Feedback row was added after explicit owner approval, preserving a native checkl
 and hidden QA_TUMP_0038 range. Its shipped note governs intake; no duplicate work.
 Map-vote handler/test paths are released.
 
-Diddler reservation: the existing Feedback request for an approximately three-second
-tagged replay. Preserve the five-second tag penalty, immediate authority, control
-handback and accessible/camera-occluded fallbacks. Do not claim the separate contact
-gap issue fixed from a duration change.
+Tagged replay duration shipped in cebc6963c20160169c385aca6d22bdbf95fae436.
+Five native timing/exit cases pass; first cold-scene timeout and one bounded retry
+are recorded. Capture-helper frames show recovery, not verified replay composition.
+The duration Feedback row has its short shipped note. Contact fidelity stays open.
+
+Diddler reservation: investigate phantom interpolation across teleports in the live
+catch pose history. Retained clips already guard recorded epochs; live Track.Apply
+does not, and offline teleports do not advance the network MovementEpoch. Preserve
+normal fast movement and exact recorded contact; never move live actors or fabricate
+contact. No abilities, loading or input changes.
 Owned paths:
-- Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs (playback timing only)
-- Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs (timing acceptance only)
-- docs/reports/feedback-2026-09-30/catch-replay-duration.md
+- Assets/TumbangPreso/Runtime/Camera/MatchPoseHistory.cs (recording discontinuity and playback only)
+- Assets/TumbangPreso/Tests/PlayMode/LivePoseHistoryTests.cs and its .meta
+- docs/reports/feedback-2026-09-30/live-pose-discontinuity.md
 - docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue and evidence only)
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
