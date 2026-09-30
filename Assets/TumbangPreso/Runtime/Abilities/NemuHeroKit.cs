@@ -32,7 +32,12 @@ namespace TumbangPreso.Abilities
         /// <summary>Phantom Veil is gone; a rejoiner has no veil to restore.</summary>
         public bool RestoreJoiningVeil(CharacterMotor motor, float remaining) => false;
 
-        public override float MovementSpeedScale => 1f;
+        // Kuro's current Wiki passive gives one 10 percent bonus while a basic
+        // ability is cooling down. Read the existing clocks so expiry, round
+        // resets and authoritative corrections cannot leave a stale bonus.
+        public override float MovementSpeedScale =>
+            Skill1?.CooldownRemaining > 0f || AttackingSkill?.CooldownRemaining > 0f ||
+            DefendingSkill?.CooldownRemaining > 0f ? 1.1f : 1f;
 
         public void RestoreFamiliar(CharacterMotor motor, int mode, Vector3 position, float remaining, float? yaw = null)
         {
