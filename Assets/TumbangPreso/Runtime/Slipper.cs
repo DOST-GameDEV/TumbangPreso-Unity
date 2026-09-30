@@ -388,9 +388,12 @@ namespace TumbangPreso
         private Visual.SlipperMotionAccent _motionAccent;
         private void Awake()
         {
+            BotSlipperInventory.Invalidate();
             _motionAccent = GetComponent<Visual.SlipperMotionAccent>();
             if (_motionAccent == null) _motionAccent = gameObject.AddComponent<Visual.SlipperMotionAccent>();
         }
+
+        private void OnDestroy() => BotSlipperInventory.Invalidate();
 
         /// <summary>
         /// `slipper.gd::OWNER_RIM_COLOR`. Gold, and deliberately NOT the UI theme's highlight:

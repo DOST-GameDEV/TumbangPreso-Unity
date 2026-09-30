@@ -946,7 +946,7 @@ namespace TumbangPreso
 
             Vector3 can = lata.transform.position;
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in BotSlipperInventory.All)
             {
                 if (s == null || s.State != SlipperState.InFlight) continue;
                 if (s.OwnerSlot == _motor.PlayerSlot) continue;
@@ -1234,7 +1234,7 @@ namespace TumbangPreso
 
         private static Slipper SlipperOwnedBy(RoundDirector round, int slot)
         {
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in BotSlipperInventory.All)
                 if (s != null && s.OwnerSlot == slot) return s;
 
             return null;
@@ -1676,7 +1676,7 @@ namespace TumbangPreso
         /// </summary>
         private Slipper MySlipper()
         {
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in BotSlipperInventory.All)
                 if (s.OwnerSlot == _motor.PlayerSlot) return s;
 
             return null;
@@ -1697,7 +1697,7 @@ namespace TumbangPreso
         {
             point = Vector3.zero;
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in BotSlipperInventory.All)
             {
                 if (s.State != SlipperState.InFlight) continue;
 

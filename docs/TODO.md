@@ -173,6 +173,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   All10 baseline failures reproduce;19 final native receiver cases pass for
   malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
   [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
+- [x] F0930-35 Ordinary bot slipper-query allocation: share a native snapshot
+  refreshed on births/destruction, reading current activity/owner/flight state.
+  Calibrated100warmed lookups drop from200 allocation events to zero; five distinct
+  native selection/lifecycle/flight cases pass. Hero planning and loading unchanged.
+  [Evidence](reports/feedback-2026-09-30/bot-slipper-queries.md).
 - [x] F0930-34 Lobby Ready tally: reject short/trailing packets and impossible
   counts before publishing a UI event. Valid empty/four-player tallies, host
   authority and loopback remain.16 native baseline failures;25 fixed receiver
