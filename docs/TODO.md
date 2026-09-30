@@ -1486,8 +1486,25 @@ it downloads or renders in the background in the loading screen".
   the hub before it had built (fixed), `SplashShaderAndMenuArtWarmupsCompleteInBoundedStages`
   lacked the gitignored `ShaderWarmup.shadervariants` in a fresh worktree, and the two cold-cache
   cases (`ViewmodelMeshWarmup...`, `LoadingPreparationRetains...`) found caches already warmed by
-  `HomeFlowTests`' boot, which is cross-fixture state rather than this change. Still OPEN: boot
-  time and the first-pick hitch in a player.
+  `HomeFlowTests`' boot, which is cross-fixture state rather than this change.
+  Mac evidence 2026-09-30 (editor 6000.5.8f1, OSXUniversal, merged onto ASTRAReworks 013d4cba,
+  `ShaderWarmup.shadervariants` regenerated first): `MatchLoadingReadinessTests` and
+  `OwnerMenuEditsTests` in one launch, total 25, passed 25, failed 0; the map-switch case took
+  7.1 s and the menu-hop case 1.1 s. The splash log reads `[SplashShaders] shaders=69
+  variants=128 warmed=128 complete=True frames=20`, so every shader variant is warmed inside the
+  boot splash. `HomeFlowTests` and `HubFlowTests` in a second launch (after the hub-build fix):
+  total 12, passed 11, failed 1, `HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable`
+  (`HubHero/Status clips its content`, 132 against a 123 bound at 960x540). That case
+  fails identically (132.0) on untouched ASTRAReworks 013d4cba run alone, so it is not this
+  change; it is filed as its own open item below.
+  Still OPEN: boot time and the first-pick hitch in a player.
+- [ ] LOAD-1.4a (hub accessibility, found while verifying LOAD-1.4, OPEN). The hub hero's
+  `Status` label clips under high contrast plus larger text at 960x540: measured 132 against
+  the 123 bound in `HubFlowTests.HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable`
+  (`Hub-A11y-Hero-960x540/TumpHubCanvas/Screens/HubHero/Status`). It fails identically on
+  ASTRAReworks 013d4cba without the LOAD-1.4 change, Mac editor 6000.5.8f1. Done means the
+  status line fits its box at every probe shape with the larger text setting on, and that test
+  is green.
 - Evidence (Mac player built from this work): boot loading finished after 2.53 s (it waited at
   least 5 s before); a bot match's Eskinita curtain lifted after 1.60 s with the prewarm taking
   0.84 s; Ilalim through HOME lifted after 1.47 s (prewarm 0.87 s). Not measured: the Windows
