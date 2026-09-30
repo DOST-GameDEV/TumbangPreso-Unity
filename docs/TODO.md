@@ -61,6 +61,12 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   unspecified/placeholder kits rather than inventing replacements.
   Kuro movement bonus and shared 25-second basic cooldowns pass 18 native cases;
   broader Nemu behavior remains open. [Evidence](reports/feedback-2026-09-30/nemu-kuro-passive.md).
+  Kuro: Sit recall and recovery now pass native lifecycle and real-companion
+  checks. [Sit evidence](reports/feedback-2026-09-30/nemu-kuro-sit.md).
+  Fetch delivery now leaves a loose shoe for normal pickup and no longer moves
+  an already-held shoe or leaves a carried shoe floating on cancellation;9 focused
+  native cases pass. [Fetch evidence](reports/feedback-2026-09-30/nemu-kuro-fetch.md).
+  Remaining Fetch eligibility, Catch and Haunt reconciliation stays open.
 - [ ] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default request is protected by the latest no-lighting restriction.
