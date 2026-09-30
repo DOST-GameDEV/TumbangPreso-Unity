@@ -7,6 +7,16 @@ namespace TumbangPreso
     public sealed partial class GuidedTrainingHud
     {
         private Text _ownerSkipLabel;
+        private bool _inspecting;
+        public void SetInspecting(bool held)
+        {
+            if (_inspecting == held) return;
+            _inspecting = held;
+            // The kit tray supplies the long descriptions while held. Retain the
+            // objective/progress/exit controls in a compact card above that tray.
+            if (_body != null) _body.gameObject.SetActive(!held);
+            if (_keyRow != null) _keyRow.gameObject.SetActive(!held);
+        }
         private static readonly Color TrainingInk=new Color32(244,238,219,255);
         private static readonly Color TrainingMuted=new Color32(180,202,212,255);
         private static readonly Color TrainingTrack=new Color32(74,87,101,255);
@@ -32,7 +42,7 @@ namespace TumbangPreso
             var header=OwnerRow(card,"TrainingHeader",52);
             var word=OwnerUiLayout.Text(header,"TrainingWord","TRAINING",30,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(word.rectTransform,0,0,330,52);word.color=TrainingMuted;
-            _counter=OwnerUiLayout.Text(header,"LessonCounter","01 / 17",30,OwnerUiLayout.TypeRole.Display);
+            _counter=OwnerUiLayout.Text(header,"LessonCounter","01 / " + GuidedTraining.LessonCount,30,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_counter.rectTransform,350,0,285,52);_counter.alignment=TextAnchor.MiddleRight;_counter.color=TrainingMuted;_counter.verticalOverflow=VerticalWrapMode.Overflow;
             var rail=OwnerRow(card,"RouteRail",8);var track=rail.gameObject.AddComponent<HorizontalLayoutGroup>();
             track.spacing=4;track.childControlWidth=track.childControlHeight=true;track.childForceExpandWidth=track.childForceExpandHeight=true;

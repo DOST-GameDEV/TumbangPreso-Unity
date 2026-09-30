@@ -35,6 +35,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [ ] F0930-01 Tutorial: prevent Tab-deck overlap; assess real actions, expose per-lesson
   progress and green completion, require three jumps, wait through ultimate playback
   plus 2.5 seconds, remove deprecated mash lesson, and return cleanly on completion.
+  Tab compaction/release, three distinct takeoffs, full green completion, the real
+  ultimate introduction plus post-delay, and the 16-lesson route are implemented
+  and natively verified. [Evidence](reports/feedback-2026-09-30/README.md#tutorial).
+  Completion destination remains human-needed: the owner's source sentence was
+  incomplete and the question is pending. No automatic destination was invented.
 - [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
   changed rows refresh without replaying entrance. Focused native path passes.
 - [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime
@@ -61,14 +66,17 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [ ] F0930-16 Running/walking defects: diagnose only concrete bugs; no animation redesign.
 - [ ] F0930-17 Highlight beam complaint: only a proven VFX bug is authorized now.
 - [ ] F0930-18 Throw: remove trajectory line, quicker charge and coherent charge feedback.
-- [ ] F0930-19 Loading too frequent: move reusable work to boot, retain dependencies and
-  avoid repeated preparation/curtains where destination readiness is already retained.
+- [ ] F0930-19 FRIEND RESERVED (owner 2026-09-30): loading work is assigned to the
+  owner's friend. This agent must not edit loading paths. Other optimization remains
+  authorized later; preserve loading as an outstanding contributor-owned requirement.
 - [ ] F0930-20 Continue focused network, bots, optimization, flow bugs and applicable
   existing TODO requirements after feedback, with actual behavior evidence.
-- [ ] F0930-21 Refine the same Google Doc Feedback tab for QA intake and future DOTS
-  use: stable IDs, clickable completion, explicit status, reproduction/acceptance,
-  preserved reports/screenshots and verified resolution evidence. Setup handoff
-  supplied directly in chat; no automation or cross-chat setup performed.
+- [x] F0930-21 Simplify the same Doc: Done / Bug or feedback / Notes-screenshot table,
+  short separate How to use Feedback tab, hidden stable native IDs and retained
+  original reports/images. Native table/checkmarks and yellow human-needed rows
+  are visually verified. Humans add rows at top; fixes proceed bottom upward,
+  skipping completed and human-needed rows. Setup/scope handoffs were given in
+  chat for manual copying; no automation or cross-chat action was performed.
 
 Cheska shatter/melt additions and Dante shield-logo addition from the feedback
 remain source context, but new VFX/animation work is excluded by the owner's newer
