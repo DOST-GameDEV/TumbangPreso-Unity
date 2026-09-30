@@ -271,6 +271,8 @@ scenes behind hub loading and reuses scene/look instances. One real-hub native c
 passes: all five maps cycle twice with zero loads and0.090-8.241ms Editor selection
 calls. Initial preparation was38.52s; player frame/memory/build and total-load-time
 qualification remain OPEN. [Evidence](reports/stability-2026-09-27/loading-audit.md#custom-preview-loading).
+Superseded 2026-09-30 by LOAD-1.4: the hub preview curtain and the menu-hop curtain
+below are removed, arena assets load in the boot splash instead.
 Converted menu scene loads are now asynchronous behind the existing curtain and
 wait for real UI initialization/layout. Hub preview preparation adopts the same
 owner; the loading canvas now blocks pointer input. New native title/hub handoff
@@ -1467,6 +1469,46 @@ it downloads or renders in the background in the loading screen".
   arena offscreen from 20 viewpoints, one per frame, into a target of the screen's HDR/MSAA
   format, so pipeline states, meshes and textures are on the GPU before the first visible frame.
   `HubLoading` lifts when that finishes; its 2 s hold is gone.
+- [ ] LOAD-1.4 One loading screen before the title, none on the way to the hub. IMPLEMENTED
+  2026-09-30, NATIVE CHECK OPEN. Request with two frames: the boot court screen and the hub's
+  "GETTING READY 50%" curtain, "the second one is redundant ... all loading of assets, shaders and
+  everything should be in the splashscreen section ... not hard coded to a fixed amount of time".
+  `HubLoading.BeginMenu`/`FollowMenu` (menu hops) and `PreparePreview`/`FollowPreview` with
+  `MapPreviewSurface.PrepareAll` (every arena instanced behind the curtain on EVERY hub entry,
+  38.52 s in the editor) are deleted; menu hops are plain scene changes again. The splash runs
+  `WarmMapAssets` unconditionally (it was skipped while the hub was on), so every arena's meshes,
+  textures and materials are read and retained at boot, and the illustrated splash lost its 0.5 s
+  floor, so it lasts exactly as long as the work. The hub preview instances only the map it shows,
+  then each map the first time it is picked, reusing it after that. `HubLoading` now covers
+  arenas only (map name heading). Done means: `MatchLoadingReadinessTests.MenuHopsAndTheHubOpenWithoutASecondLoadingScreen`
+  and `CustomMapSwitchesShowEachArenaWithoutALoadingCurtainAndReuseIt` green natively, boot time
+  measured against LOAD-1's 2.53 s, and the first pick of each map checked for a visible hitch.
+  Native evidence 2026-09-30 (Windows editor, PlayMode, `MatchLoadingReadinessTests` and
+  `OwnerMenuEditsTests` in one launch): total 25, passed 25, failed 0. The map-switch case took
+  11.8 s for five first picks plus a cached second pass with zero scene loads. A wider launch
+  that also ran `HomeFlowTests` and `HubFlowTests` first went 33/37: the map-switch case pushed
+  the hub before it had built (fixed), `SplashShaderAndMenuArtWarmupsCompleteInBoundedStages`
+  lacked the gitignored `ShaderWarmup.shadervariants` in a fresh worktree, and the two cold-cache
+  cases (`ViewmodelMeshWarmup...`, `LoadingPreparationRetains...`) found caches already warmed by
+  `HomeFlowTests`' boot, which is cross-fixture state rather than this change.
+  Mac evidence 2026-09-30 (editor 6000.5.8f1, OSXUniversal, merged onto ASTRAReworks 013d4cba,
+  `ShaderWarmup.shadervariants` regenerated first): `MatchLoadingReadinessTests` and
+  `OwnerMenuEditsTests` in one launch, total 25, passed 25, failed 0; the map-switch case took
+  7.1 s and the menu-hop case 1.1 s. The splash log reads `[SplashShaders] shaders=69
+  variants=128 warmed=128 complete=True frames=20`, so every shader variant is warmed inside the
+  boot splash. `HomeFlowTests` and `HubFlowTests` in a second launch (after the hub-build fix):
+  total 12, passed 11, failed 1, `HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable`
+  (`HubHero/Status clips its content`, 132 against a 123 bound at 960x540). That case
+  fails identically (132.0) on untouched ASTRAReworks 013d4cba run alone, so it is not this
+  change; it is filed as its own open item below.
+  Still OPEN: boot time and the first-pick hitch in a player.
+- [ ] LOAD-1.4a (hub accessibility, found while verifying LOAD-1.4, OPEN). The hub hero's
+  `Status` label clips under high contrast plus larger text at 960x540: measured 132 against
+  the 123 bound in `HubFlowTests.HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable`
+  (`Hub-A11y-Hero-960x540/TumpHubCanvas/Screens/HubHero/Status`). It fails identically on
+  ASTRAReworks 013d4cba without the LOAD-1.4 change, Mac editor 6000.5.8f1. Done means the
+  status line fits its box at every probe shape with the larger text setting on, and that test
+  is green.
 - Evidence (Mac player built from this work): boot loading finished after 2.53 s (it waited at
   least 5 s before); a bot match's Eskinita curtain lifted after 1.60 s with the prewarm taking
   0.84 s; Ilalim through HOME lifted after 1.47 s (prewarm 0.87 s). Not measured: the Windows

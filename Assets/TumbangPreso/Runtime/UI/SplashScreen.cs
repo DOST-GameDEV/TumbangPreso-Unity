@@ -210,9 +210,12 @@ namespace TumbangPreso.UI
                 fade = Mathf.Clamp01(_elapsed / 0.35f);
                 SetFade(1.0f - fade);
 
+                // ⚠️⚠️ NO MINIMUM ON THE ILLUSTRATED ROUTES. This held for at least half a second
+                // even when the work was already done; request, 2026-09-30: the screen lasts
+                // exactly as long as the loading does and no longer. Only the legacy studio video
+                // still waits for its own clip, because that clip IS the content.
                 bool presentationComplete = _ownerLoading || _illustration != null || _clip == null
-                    ? _elapsed >= 0.5f
-                    : (_video.isPrepared && !_video.isPlaying && _elapsed > 0.5f);
+                    || (_video.isPrepared && !_video.isPlaying && _elapsed > 0.5f);
 
                 // ⚠️ The illustrated route and reading window were requested after
                 // the studio-only choice in 114.3. Neither route bypasses readiness;
@@ -550,9 +553,13 @@ namespace TumbangPreso.UI
             // "both maps" and warmed Eskinita and Bayan Plaza only, which was every map when it was
             // written; Ilalim ng Tulay, Sa Bubong and the Lagoon then loaded cold on PLAY. Owner,
             // 2026-09-27: every shader and every asset loads behind the loading screen.
-            // The hub now retains the actual prepared preview scenes behind its own
-            // loading barrier. Loading/unloading them here first repeats scene setup.
-            if (!ConvertedMatchSetup.HubEnabled) yield return WarmMapAssets();
+            //
+            // ⚠️⚠️ UNCONDITIONAL AGAIN. From 2026-09-27 this was skipped whenever the hub was on,
+            // because the hub loaded every arena itself behind a second "GETTING READY" screen
+            // (`HubLoading.PreparePreview`). Request, 2026-09-30: that second screen is
+            // redundant and every asset and shader loads HERE. The hub curtain is gone, so this is
+            // once again the only place the arenas' meshes, textures and materials are read.
+            yield return WarmMapAssets();
 
             // 9. The hero ability layer.
             //
