@@ -94,11 +94,15 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   authorized later; preserve loading as an outstanding contributor-owned requirement.
 - [ ] F0930-20 Continue focused network, bots, optimization, flow bugs and applicable
   existing TODO requirements after feedback, with actual behavior evidence.
+- [x] F0930-23 Practice popup: automatic Tutorial focus no longer appears hovered.
+  Pointer entry/exit and keyboard/pad navigation keep their feedback;8 native cases
+  pass, with960x540 and1600x680 captures inspected.
+  [Evidence](reports/feedback-2026-09-30/practice-attention.md).
 - [x] F0930-22 Map-vote packet bug found during authorized hunting: reject truncated,
   trailing and invalid ballots before exceptions or partial mutation; reject sender
   narrowing aliases.13 packet cases plus4 existing rematch/intermission cases pass
   natively. [Evidence](reports/feedback-2026-09-30/map-vote-packets.md). Actual peers unqualified.
-- [x] F0930-21 Simplify the same Doc: Done / Bug or feedback / Notes-screenshot table,
+- [x] F0930-21 Simplify the same Doc: Done / Human verified / Bug or feedback / Notes-screenshot table,
   short separate How to use Feedback tab, hidden stable native IDs and retained
   original reports/images. Native table/checkmarks and yellow human-needed rows
   are visually verified. Humans add rows at top; fixes proceed bottom upward,

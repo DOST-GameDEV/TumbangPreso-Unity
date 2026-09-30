@@ -62,15 +62,23 @@ both modes. Protocol96 requires matching builds. Its Feedback row is updated;
 landing-circle replacement and clearer charge feedback remain open. Charge and
 NetSession compatibility paths are released.
 
-Diddler reservation: Practice popup's Tutorial card is visually highlighted on
-opening without pointer hover. Separate this popup's automatic focus from real
-pointer/keyboard/pad attention, preserving navigation selection and all actions.
-Owned paths:
-- Assets/TumbangPreso/Runtime/UI/Hub/HubButton.cs (opt-in attention presentation only)
-- Assets/TumbangPreso/Runtime/UI/Hub/HubModeSelect.cs (Practice card opt-in only)
-- Assets/TumbangPreso/Tests/PlayMode/PracticeAttentionTests.cs and its .meta
-- docs/reports/feedback-2026-09-30/practice-attention.md
-- docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue and evidence only)
+Practice attention correction ae7a4aa8 is validated:8 native attention cases and
+an additional1/1 actual-popup capture check after incoming181015d3 integration.
+Both window shapes were inspected; automatic Tutorial selection stays visually
+neutral until pointer/navigation attention. Incoming glyph/loading code is intact.
+Practice paths are released after this integration is published. No job is running.
+
+Owner-requested Feedback table extension now includes Human verified between
+Done and Bug or feedback. All43 current report rows have unchecked native human
+checkboxes; only the owner/testers confirm those after playing. The header width
+was repaired after the owner's screenshot showed mid-word wrapping. Existing
+Done controls, reports, screenshots and hidden IDs were preserved. The tab's wide
+layout exceeds portrait PDF width; the requested new header/control column was
+visually checked, not a claim that the entire wiki is print-ready.
+
+Next independent unit: the owner's new Feedback clarification asks for continuous
+recorded motion throughout the approximately3-second caught replay, not a short
+clip held still. Read current ownership before claiming camera/history paths.
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.

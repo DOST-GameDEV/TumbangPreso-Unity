@@ -96,10 +96,12 @@ namespace TumbangPreso.UI.Hub
                     Hub.Host.LeaveRoom();
                     SceneFlow.StartTraining();
                 });
+            _tutorial.RequireUserAttention = true;
             HubKit.Place((RectTransform)_tutorial.transform, HubKit.BottomLeft, new Vector2(48, 48), new Vector2(520, 460));
             var training = HubCards.Art(panel, "TrainingChoice", "TRAINING", HubStyle.Golden, 206,
                 "Offline with active bots. No match rewards.", new[] { "cheska", "phaister" }, HubGlyph.Mark.Bots,
                 () => Hub.Host.StartPractice());
+            training.RequireUserAttention = true;
             HubKit.Place((RectTransform)training.transform, HubKit.BottomRight, new Vector2(-48, 48), new Vector2(520, 460));
             HubSlap.On(_tutorial.transform, 0.02f, -2);
             HubSlap.On(training.transform, 0.08f, 2);
