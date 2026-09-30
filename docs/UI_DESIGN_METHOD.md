@@ -90,3 +90,10 @@ completed reset pass locally. [Revision evidence](reports/feedback-2026-09-30/ma
 After a device-dependent anchor change, rebase that group on its actual canvas
 HudReadingLayout before accessibility refresh. Do not capture other already-scaled
 groups as new authored positions. Device-then-scale round trips must retain margins.
+
+## Spectator Round Boundaries
+
+The passive next-taya/standings card belongs to the whole match. Install it for
+watchers and keep its event owner active when entering watch mode; only personal
+seat/stamina cards are excluded. Explicit clean feed hides the card's root canvas
+without reparenting away its scaler or losing the live boundary state.

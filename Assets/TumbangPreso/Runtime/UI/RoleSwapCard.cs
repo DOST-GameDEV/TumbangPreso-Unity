@@ -37,7 +37,7 @@ namespace TumbangPreso.UI
     {
         private static RoleSwapCard _current;
         public static bool Showing => _current != null && _current._canvas != null &&
-                                      _current._canvas.gameObject.activeInHierarchy;
+                                      _current._canvas.isActiveAndEnabled;
         public const float RevealDelay = 1.2f;
         public const float FightDelay = 2.3f;
         public const float RevealFade = 0.35f;
@@ -83,6 +83,9 @@ namespace TumbangPreso.UI
 
         private void Update()
         {
+            // Root canvases keep their own scaler. Hide drawing for explicit clean
+            // feed without disabling the event owner or losing its break state.
+            if (_canvas != null) _canvas.enabled = Hud.Instance == null || !Hud.Instance.CleanFeedEnabled;
             if (_isBufferActive && _canvas != null && _canvas.gameObject.activeSelf)
             {
                 _bufferRemaining = HalftimePresentation.Instance?.Active==true ? HalftimePresentation.Instance.Remaining : Mathf.Max(0.0f, _bufferRemaining - Time.deltaTime);

@@ -1008,3 +1008,9 @@ MatchInstaller.cs, explaining the actual player captures. Add that exact path to
 the claim before changing it. Keep YouCard personal; next-taya/standings are shared.
 Final scope: initial watch entry, player-to-watch entry, explicit clean-feed hide/
 restore, and the existing player's frozen-input/card check. No timer/wire changes.
+
+Spectator-card final3/3pass in12.84s, exit0, no new OOM. Initial spectator, watch
+transition, clean-feed hide/restore and unchanged player's frozen input/frame
+all qualify.960x540 native shared-card capture inspected. Publish explicit paths
+and update the same Feedback round row. Existing player binary lacks this fix;
+new player/actual-peer qualification remains separate. No heavy job active.

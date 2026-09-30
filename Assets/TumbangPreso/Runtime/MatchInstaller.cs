@@ -1648,29 +1648,17 @@ namespace TumbangPreso
             // each is its own root object with no other caller, so there is no field left null
             // and nothing downstream to guard. `Hud.StripToTrainingChrome` explains why the ones
             // inside the HUD had to go the other way.
-            // ⚠️⚠️ AND NEITHER IS BUILT FOR A SPECTATOR, WHICH IS THE OTHER HALF OF THE SAME
-            // ARGUMENT. 🧑 2026-08-27, with a screenshot of a watcher's screen: *"fix all these
-            // spectator hud problems wtf some shit dont hide"*. `YouCard` names the unit you are
-            // DRIVING and draws its stamina; a watcher drives nobody, so it was naming and
-            // metering whichever seat `local` happened to resolve to and reporting that seat's
-            // stamina as the viewer's own.
-            //
-            // ⚠️⚠️ AND IT COULD NOT BE HIDDEN AFTERWARDS EITHER. `YouCard.Build` makes its OWN
-            // root Canvas, so it is not under `Hud.CleanFeedRoot`: `Hud.EnterSpectatorMode` could
-            // not reach it, and neither could `SetCleanFeed`, which is why pressing H left a card
-            // and a yellow bar sitting in the corner of a supposedly clean feed. `RoleSwapCard`
-            // parents itself under the HUD for exactly this reason and says so in its own
-            // `Build`. Skipping the object outright is better than teaching a third path to hide
-            // it, and it is what the emote wheel below already does for a watcher.
-            if (!GameLaunch.GuidedTutorial && !_spectating)
+            // Frozen round boundaries now need their shared next-taya/standings
+            // context for watchers too. Only the personal YouCard is player-only.
+            if (!GameLaunch.GuidedTutorial)
             {
-                // The intermission card, on the same terms: it listens for the round boundary.
                 var swapGo = new GameObject("RoleSwapCard");
                 swapGo.AddComponent<UI.RoleSwapCard>();
-
-                // Which unit you are driving, and what it can do right now.
-                var youGo = new GameObject("YouCard");
-                youGo.AddComponent<UI.YouCard>().Bind(local);
+                if (!_spectating)
+                {
+                    var youGo = new GameObject("YouCard");
+                    youGo.AddComponent<UI.YouCard>().Bind(local);
+                }
             }
 
             // ⚠️⚠️ THE EMOTE WHEEL FOLLOWS WHOEVER IS BEING DRIVEN, NOT THE SEAT THIS MATCH

@@ -184,3 +184,6 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [match UI evidence](match-ui-revision.md).
 
 [Authored-map tag qualification and review limits](tag-authored-map.md).
+
+[Current cloud player and measured limits](cloud-player100.md).
+[Spectator round-card visibility correction](spectator-break.md).

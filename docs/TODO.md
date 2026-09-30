@@ -253,6 +253,9 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   standings, input lock, no skip and the host-authored deadline. Protocol99 requires
   matching builds. Eight native cases pass; current-scene frame rerun passes1/1.
   Actual peers remain unqualified. [Revision evidence](reports/feedback-2026-09-30/round-timing-replay.md).
+  Actual cloud player then exposed missing spectator standings. Shared card now
+  survives initial/watch transitions while respecting explicit clean feed;3/3
+  native cases pass. [Spectator evidence](reports/feedback-2026-09-30/spectator-break.md).
   Latest Harry revision supersedes ordinary3seconds with5seconds, protocol100.
   Halftime remains10seconds/replay. Native boundary/late-client/final-round and
   lock checks pass. [Latest evidence](reports/feedback-2026-09-30/match-ui-revision.md).
