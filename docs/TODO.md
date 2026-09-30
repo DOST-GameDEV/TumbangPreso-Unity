@@ -37,12 +37,14 @@ Only demonstrated bug fixes may change them; in-game skill descriptions stay
 untouched except passive descriptions. Wiki descriptions may document the final code. Incomplete wiki cells are
 not specifications to invent. Scope restrictions supersede cosmetic additions.
 
-- [ ] F0930-01 Tutorial: revised20-lesson route, real ordered objectives,
+- [x] F0930-01 Tutorial: revised20-lesson route, real ordered objectives,
   readable binding-specific prompts, Enter skip and Darumadrop/Xelu footer ship.
   Completion stays in a usable practice ground with a reset-only defender; Quit
   exits cleanly. This supersedes the earlier lobby-on-finish request.
-  Reopened October1: same-row flying-slipper report and redundant COMPLETE
-  corner label. Build unknown; targeted current-source reproduction in progress.
+  October1 same-row regression fixed: hidden protected can no longer rebounds
+  a high throw forever; existing lifetime ceiling cannot be bypassed by contact.
+  Redundant COMPLETE corner removed. Four final native checks pass, earlier
+  skipped-staging control retained. [Evidence](reports/feedback-2026-09-30/tutorial-regression.md).
   Twelve distinct native cases pass, plus the integrated free-play/Quit check.
   Three real jumps, green progress, Tab coexistence and ultimate presentation
   plus2.5seconds remain qualified. No new player or human approval is claimed.

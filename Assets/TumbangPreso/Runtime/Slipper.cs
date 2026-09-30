@@ -1275,6 +1275,10 @@ namespace TumbangPreso
             float dt = Time.fixedDeltaTime;
             _flightTime += dt;
             _airborneTotal += dt;
+            // Contact may rebound and return below. It cannot bypass the existing
+            // lifetime ceiling, even while a protected can repeatedly rejects it.
+            if (_flightTime >= Balance.MaxFlightTime || _airborneTotal >= Balance.MaxAirborneTime)
+            { Land(fromFlight: false); return; }
             if (_throwerIgnoreLeft > 0.0f) _throwerIgnoreLeft -= dt;
 
             _velocity = StepFlightVelocity(_velocity, PektusSpin, dt);
@@ -1320,7 +1324,7 @@ namespace TumbangPreso
             {
                 foreach (var p in round.Bodies)
                 {
-                    if (p == null || !p.IsDefender || p.PlayerSlot == _throwerSlot) continue;
+                    if (p == null || !p.gameObject.activeInHierarchy || !p.IsDefender || p.PlayerSlot == _throwerSlot) continue;
                     if (!HitsBody(p)) continue;
                     // Keep simulating the rebound, but don't restart its lift, body
                     // impulse, sound and flair on every step spent inside one body.
@@ -1335,7 +1339,8 @@ namespace TumbangPreso
             }
 
             // The can next: it is the thing being aimed at.
-            if (round?.Lata != null && round.Lata.IsUpright && round.Lata.Connects(transform.position))
+            if (round?.Lata != null && round.Lata.gameObject.activeInHierarchy
+                && round.Lata.IsUpright && round.Lata.Connects(transform.position))
             {
                 int before = round.Lata.HostKnockdownSerial;
                 TriggerAffinityImpact();
@@ -1361,7 +1366,7 @@ namespace TumbangPreso
             {
                 foreach (var p in round.Bodies)
                 {
-                    if (p == null || p.PlayerSlot == _throwerSlot) continue;
+                    if (p == null || !p.gameObject.activeInHierarchy || p.PlayerSlot == _throwerSlot) continue;
                     if (!HitsBody(p)) continue;
                     // Keep simulating the rebound, but don't restart its lift, body
                     // impulse, sound and flair on every step spent inside one body.
@@ -1394,9 +1399,6 @@ namespace TumbangPreso
             float flightGround = FindGroundY(supportAt, Balance.SlipperRestHeight);
             if (transform.position.y <= flightGround + Balance.SlipperRestHeight)
                 Land(fromFlight: true, landingGround: flightGround);
-            else if (_flightTime >= Balance.MaxFlightTime
-                     || _airborneTotal >= Balance.MaxAirborneTime)
-                Land(fromFlight: false);
         }
 
         /// <summary>

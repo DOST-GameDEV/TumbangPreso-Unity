@@ -1810,9 +1810,8 @@ namespace TumbangPreso
         public void SetLesson(int lesson, int total, string title, string body, string action,
                               Color role)
         {
-            _counter.text = lesson >= total
-                ? "COMPLETE"
-                : $"{lesson + 1:00} / {total:00}";
+            _counter.gameObject.SetActive(lesson < total);
+            _counter.text = lesson < total ? $"{lesson + 1:00} / {total:00}" : "";
 
             _title.text = title;
             if (_fill != null) _fill.transform.parent.gameObject.SetActive(lesson < total);

@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol108 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol109 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1587,3 +1587,10 @@ keeps rebounding before timeout; skipped staging is correctlygrounded. Expand
 claim Slipper.cs active can/body contact gates and existing timeout before early
 contact returns, NetSession.cs protocol109. No geometric/score redesign. Corner
 counter fix also owned. Targeted protected-can lifetime control next.
+
+Tutorial final4/4native9.76s: automatic three throws land at true rest height,
+corner counter hides/restores, protected contact cannot bypass timeout and active
+Frostbite contact remains. Stuck high throw12s becomes landed1.58s; skipped-staging
+baseline remains valid. Completion frame inspected. Publish coherent fix and same
+Doc row with original comments struck only after remote verification. No heavy job.
+Next Dante forward cascade, fresh claims/intake first; current player still100.
