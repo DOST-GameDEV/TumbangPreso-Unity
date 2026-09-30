@@ -1556,3 +1556,10 @@ Ward final6/6native1.35s and8Core pass, no guard/OOM. Publish exact signature
 eligibility/tag-preservation and current ward/Bastion names/clocks. Existing art
 unchanged. Full Dante row stays open for held-slipper Boulder and forward cascade.
 No heavy job active; fresh remote/claims before next unit.
+
+Wardf60eba04 remote verified. Boulder plan appended after source/recovery review:
+claim DanteHeroKit.cs attacking ability, Slipper.cs appended affinity/contact and
+snapshot, Carrier.cs transfer, SliceRunner.cs round clear, Core Geo/StatusRules,
+Core assertions, NetSession.cs and new DanteBoulderImbueTests/meta/partition.
+Existing slipper state owns the charge; no new kit timer or separate projectile.
+Baseline real held gate and actual throw next. No heavy job or runtime edit yet.
