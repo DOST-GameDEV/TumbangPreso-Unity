@@ -775,3 +775,36 @@ No recovery balance, hero mechanics or presentation edits. Baseline before any f
 Shader correction and checked HUD/tutorial work are integrated as authored.
 No paid services, Desktop replacement, cross-chat or subagents. No heavy job yet.
 
+Baseline training-orbit-baseline uses2focused cases: fixed-step direction/radius/
+pace trace through the actual motor, and actual introduction render with identity
+header in training versus ordinary mode. Predict direction reversals and visible
+training header; stop at fresh XML/trace. No runtime changes yet; retry0.
+Circle baseline reproduces144 movement reversals over201fixed samples, max turn
+179.97degrees. Target-chasing at full speed overshoots. Final uses tangent/radial
+steering at the original1.35m/s pace via a paired private speed-zone modifier.
+Banner fixture mistakenly searched below its owner for a root-level owned canvas;
+corrected only the lookup. Final checks both training-hidden and ordinary-visible
+identity, with actual intro texture retained. One fixture repair, assertions intact.
+Run training-orbit-final2cases, inspect intro frame and compare motion trace.
+Tutorial orbit/banner final2/2 pass in10.23s, exit0.201samples:144 reversals before,
+zero after; maximum turn179.97->0.52degrees, finalmean1.355m/s. Radius/zone cleanup
+pass. Actual ultimate frame inspected without identity banner; ordinary identity
+still visible. No additional OOM. Publish exact paths, then strike only the two
+resolved comments in the same row. No Unity job active.
+Integration preserves the independent20331b6c menu touch-look handback and its
+Windows evidence. Published TODO number37 now has two differently titled units
+(HUD readability and menu touch-look); retain their titles/commit evidence to
+disambiguate rather than silently renumber published history. No runtime overlap
+with the tutorial orbit/header fix; its checked source bytes are unchanged.
+Tutorial38e7ef05 integrated at920a5121, pushed/remote verified. Same-row note and
+resolved orbit/banner comment strikethroughs are updated; tutorial paths release.
+Next current Harry revisions, one match-UI batch: ordinary Next Round5seconds,
+Halftime unchanged10seconds/replay; shared ability controls25percent above the
+original size (supersedes50); live Xelu Reset Can/Retrieve Slipper prompts.
+Claim Assets/TumbangPreso/Runtime/HalftimePresentation.cs, Runtime/Net/NetSession.cs,
+Runtime/UI/TumpPowerReadout.OwnerDeck.cs, Runtime/UI/TumpMatchReadout.cs,
+Runtime/UI/TumpMatchReadout.CourtHud.cs, Runtime/UI/TumpMatchReadout.MatchBar.cs,
+Tests/PlayMode/RoundBreakFreezeTests.cs, Tests/PlayMode/ReplayRetentionTests.cs,
+Tests/PlayMode/TumpNativeHudTests.cs; TODO/NETWORKING/UI method/evidence.
+Preserve authoritative deadlines, saved overrides, normal channel/cancel feedback,
+unchanged hero text and original screen margins. Source screenshots read.
