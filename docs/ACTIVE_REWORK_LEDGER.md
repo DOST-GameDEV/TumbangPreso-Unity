@@ -655,3 +655,27 @@ TODO/ledger/evidence. Remove the tutorial objective-marker bindings for those
 objects, retaining ordinary world highlights and moving-dummy lesson markers.
 His2.5-second reading request is already implemented in100d8725 and qualified by
 actual Tab input; preserve that timing and reuse its unchanged passing evidence.
+Run training-object-markers, one native case: each object lesson entered after a
+marked person lesson must hide the tutorial pointer/glow, and returning to a
+person lesson must restore that cue. Inspect retrieval/reset captures; stop at
+fresh1case XML and both images. Keep ordinary highlights and2.5second reading
+unchanged. Isolated graphics/mip2, retry0. User also asks to strikethrough resolved
+Human notes/comments while retaining their original words; apply after shipping.
+Harry added two more comments to the same tutorial row: hide progress at Training
+Complete and make the two attacker AIs actually play. Extend this coherent unit
+using the already owned GuidedTraining.cs/TutorialLessonHonestyProbe.cs. Restore
+existing attacker AI brains and their owned slippers only after completion;
+keep the reset-only defender and student controls. Disable those brains again
+if entering a lesson. No AIController implementation changes or hero redesign.
+Object marker check already passes1/1 in4.72seconds; both captures inspected.
+Run training-complete-active asks whether both retained attackers actually throw
+through their existing AI within25simulation seconds, completion hides progress,
+student stays playable and returning to a lesson disables free-play brains/restores
+progress. One case plus native completion capture; stop at that outcome. No
+forced throws or AI-plan patches. Isolated graphics/mip2, retry0.
+Both same-row tutorial follow-ups pass: marker transitions1/1 (4.72s), actual
+completed attacker play1/1 (7.50s), both exit0/no OOM. Both attackers really throw;
+progress chrome retires, friendly defender/student controls remain, lesson reentry
+stops AI. Three captures inspected. Reading2.5s is unchanged/reuses prior proof.
+Publish explicit paths; append the same Doc row and strikethrough only these
+resolved Human comments, preserving words/screenshots and existing Done history.

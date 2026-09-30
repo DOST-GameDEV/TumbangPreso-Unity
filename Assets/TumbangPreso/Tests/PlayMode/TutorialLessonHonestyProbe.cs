@@ -108,6 +108,79 @@ namespace TumbangPreso.PlayTests
         private static float Flat(Vector3 a, Vector3 b)
             => Vector3.Distance(new Vector3(a.x, 0.0f, a.z), new Vector3(b.x, 0.0f, b.z));
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator ObjectLessonsDoNotCoverTheSlipperOrCanWithTutorialStars()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit;
+            QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return LoadTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>();
+                var marker = Field<Component>(route, "_marker");
+                var hud = Object.FindFirstObjectByType<GuidedTrainingHud>();
+                foreach (var lesson in new[] { GuidedTraining.Lesson.Retrieve, GuidedTraining.Lesson.ThrowAndRetrieve, GuidedTraining.Lesson.DefenderReset })
+                {
+                    EnterLesson(route, GuidedTraining.Lesson.Shove);
+                    Assert.IsTrue(marker.gameObject.activeSelf, "Keep the existing person-target cue.");
+                    EnterLesson(route, lesson); yield return null;
+                    Assert.AreEqual(lesson, route.CurrentLesson);
+                    Assert.IsFalse(marker.gameObject.activeSelf, "A previous lesson must not leave a star/glow over the can or slipper.");
+                    Assert.IsFalse(marker.GetComponentsInChildren<Renderer>(true).Any(r => r.enabled && r.gameObject.activeInHierarchy));
+                    if (lesson != GuidedTraining.Lesson.ThrowAndRetrieve)
+                        yield return TumpUiCapture.Capture("Feedback-tutorial-no-object-star-" + lesson, hud.GetComponent<Canvas>(), 960, 540, false, true);
+                }
+                EnterLesson(route, GuidedTraining.Lesson.Shove); yield return null;
+                Assert.IsTrue(marker.gameObject.activeSelf, "Later person-target lessons still work after object lessons.");
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator CompletedTrainingAttackersReallyThrowAndProgressChromeRetires()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return LoadTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>();
+                var local = Field<CharacterMotor>(route, "_local");
+                EnterLesson(route, GuidedTraining.Lesson.Emote);
+                var friends = GameServices.Round.Players.Where(p => p != null && p != local && !p.IsDefender && p.gameObject.activeSelf).ToArray();
+                var places = friends.Select(p => p.transform.position).ToArray();
+                Assert.AreEqual(2, friends.Length);
+                EnterLesson(route, GuidedTraining.Lesson.Complete);
+                var hud = Object.FindFirstObjectByType<GuidedTrainingHud>();
+                var progress = hud.transform.Find("ObjectiveCard/ProgressBack");
+                var rail = hud.transform.Find("ObjectiveCard/RouteRail");
+                Assert.IsFalse(progress.gameObject.activeSelf); Assert.IsFalse(rail.gameObject.activeSelf);
+                for (int i = 0; i < friends.Length; i++)
+                {
+                    Assert.IsTrue(friends[i].GetComponent<AIController>().enabled);
+                    Assert.IsTrue(friends[i].HoldingSlipper);
+                    Assert.Less(Vector3.Distance(places[i], friends[i].transform.position), .001f);
+                }
+                var defender = GameServices.Round.Players.First(p => p != null && p.IsDefender);
+                Assert.IsFalse(defender.GetComponent<AIController>().enabled, "Keep the friendly reset-only defender.");
+                var thrown = new System.Collections.Generic.HashSet<int>();
+                var shoes = Object.FindObjectsByType<Slipper>();
+                float until = Time.time + 25;
+                while (thrown.Count < 2 && Time.time < until)
+                {
+                    foreach (var shoe in shoes)
+                        if (shoe.State == SlipperState.InFlight && friends.Any(p => p.PlayerSlot == shoe.ThrowerSlot)) thrown.Add(shoe.ThrowerSlot);
+                    yield return null;
+                }
+                Assert.AreEqual(2, thrown.Count, "Both restored AIs must perform a real throw, not merely walk in place.");
+                Assert.IsTrue(local.CanAct()); Assert.IsFalse(local.Intent.Parked);
+                yield return TumpUiCapture.Capture("Feedback-tutorial-complete-active-attackers", hud.GetComponent<Canvas>(), 960, 540, false, true);
+                EnterLesson(route, GuidedTraining.Lesson.Ready); yield return null;
+                Assert.IsTrue(progress.gameObject.activeSelf); Assert.IsTrue(rail.gameObject.activeSelf);
+                Assert.IsTrue(friends.All(p => !p.GetComponent<AIController>().enabled), "Reentering lessons must not retain free-play AI.");
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
         [UnityTest, Timeout(180000)]
         public IEnumerator AbilityReadingAndSuccessfulCastsRespectTheirDelays()
         {

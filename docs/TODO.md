@@ -52,6 +52,12 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   and1-second accepted-cast waits; two retained attackers plus reset defender;
   actual wheel release targets the student. Seven focused native cases pass.
   [Flow evidence](reports/feedback-2026-09-30/tutorial-flow.md).
+  Latest same-row comments: tutorial can/slipper star markers removed; completion
+  hides progress chrome and the two retained attackers now use their real AI and
+  owned slippers. Both perform legal throws in the focused native case. The
+  existing2.5-second continuous-read qualification is unchanged.
+  [Comment evidence](reports/feedback-2026-09-30/tutorial-comments.md).
+
 - [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
   changed rows refresh without replaying entrance. Focused native path passes.
 - [x] F0930-37 New Harry HUD refinement: Ready Up uses a larger live Xelu
