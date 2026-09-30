@@ -1379,3 +1379,12 @@ and2.5s windup; Second Wind25percent/2.5s. No ability code claimed yet.
 Local unit2026-10-01: F0930-09 Frostbite delivery. Claim Slipper.cs body-hit ordering, CheskaHeroKit.cs held-hand eligibility, FrostbiteDeliveryTests.cs and matching protocol revision. Root hypothesis: TriggerAffinityImpact clears Frost before HostFrostbite sees it in both body paths. Four native baseline cases next; stop at fresh XML, one bounded tooling repair maximum. No VFX, SFX, animation or authored asset change. Remaining character alignment stays open.
 
 Frostbite unit final4/4native passes: actual defender and attacker frozen on real Carrier releases, neutral block and held-hand eligibility retained. Corrected baseline1pass/3fail; initial short-target grace setup miss retained, one fixture repair.584input hashes/no non-metadata drift. Protocol101. Publish exact source/tests/evidence; full F0930-09 alignment remains open. Next independent Matchmaker cancellation ownership hypothesis, not yet a confirmed bug. No heavy job active.
+Actual player barrier FPP check completed: Q shows stepped golden half-alpha
+barrier at7.0s while can/chalk/street remain visible. Ordinary Leave/Home/Quit,
+304.16s exit0, no safety/OOM stop. Runtime hash matches training confirmation.
+Next Amihan current-Wiki plan and exact source claim; no heavy job active.
+Amihan intake65b9c8e2: current Wiki read in full for its row and statuses. First
+unit is Airburst missing Whirled/airborne slippers. Claim only new
+Tests/PlayMode/AmihanAirburstTests.cs/meta, match partition and scoped plan/report.
+Baseline actual motor/hazard first; runtime claim follows concrete findings.
+No ability runtime edits yet; broader kit/passive remains open in F0930-11.

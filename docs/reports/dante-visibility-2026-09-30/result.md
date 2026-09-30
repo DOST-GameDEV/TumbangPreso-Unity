@@ -40,3 +40,16 @@ A later coherent player check should inspect the actual first-person camera.
 The current player predates this source. No new player, actual-peer, hardware
 performance or human final-approval claim is made. Wiki ability reconciliation and
 the separate shield-logo request remain separate work.
+
+## Actual player first-person check
+
+Manually operated the refreshed Linux player, Runtime hash
+`d74e5a6a66d008567be98e8af6c6d4413490f052af13824544ffe773ba952ee3`.
+Guest > Home > Practice > Training > Escape > Defender YOU > Resume > Q.
+At the visible7.0second active countdown, the full stepped golden barrier stood
+in front of the actual first-person camera. The can, chalk ring, street lines,
+fences and buildings remained visible through its central and side slabs. No
+self-head occlusion occurred. The barrier then retired, followed by ordinary
+Leave > Home > Quit. Receipt:304.16seconds, exit0, no safety stop or new OOM kill.
+This closes the earlier fixed-camera FPP gap for this Linux player/view. It does
+not qualify actual peers, moving opponents, physical devices or human approval.
