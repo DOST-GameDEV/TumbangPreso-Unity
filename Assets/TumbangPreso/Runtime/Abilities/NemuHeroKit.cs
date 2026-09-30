@@ -8,21 +8,9 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// ⚠️⚠️ NEMU, NECRO, IN THE NEW SHAPE (ABILITY-2, owner 2026-09-26: *"NECRO maps to nemu"*, the table and
-    /// his answers). `docs/reports/ability-rework-2026-09-26/plan.md` § 3.4; numbers in `Core.NecroRules`.
-    /// KURO IS THE KIT: every ability sends her ghost pet somewhere (`GhostPetCompanion.BeginErrand`).
-    ///
-    /// | Slot | Name | Owner |
-    /// |---|---|---|
-    /// | Signature | TERRIFY | *"Leave Kuro somewhere and everyone there gets feared"*; Feared = *"Flee from kuro and drop slipper"* |
-    /// | Attacking | KURO FETCH | *"Kuro Slipper retrieve"*; the taya can intercept |
-    /// | Defending | KURO GUARD | *"kuro aids withh blocking and becomes a bit bigger"*, *"give her like an AI to think abt where to stand but dont make it infallible"* |
-    /// | Ultimate | KURO PLAYS (NOT YET) | *"HARD BOT and fulfills whatever role u have and ghets separate copy of ur skills"* |
-    ///
-    /// ⚠️⚠️ THE ULTIMATE IS STILL DEVOURING SEANCE. KURO PLAYS is a fifth unit in a four-seat match (a
-    /// seatless motor, a bot brain, scoring routed to her seat, a second taya body, a snapshot for a
-    /// rejoiner) and the plan gives it its own design pass; building it blind would put a broken seat in
-    /// every match. It is the next Necro item in TODO ABILITY-2.
+    /// Nemu's current Wiki passive and Kuro: Sit signature use the shared basic
+    /// cooldown and recall anchor. Fetch, Guard and the legacy seance below still
+    /// await their remaining Wiki behavior changes; this is not a full-kit claim.
     /// </summary>
     public sealed class NemuHeroKit : HeroKit
     {
@@ -72,7 +60,7 @@ namespace TumbangPreso.Abilities
 
         public NemuHeroKit() : base("nemu", "NEMU")
         {
-            Skill1 = new Terrify(this);
+            Skill1 = new KuroSit(this);
             AttackingSkill = new KuroFetch(this);
             DefendingSkill = new KuroGuard(this);
             Ultimate = new NightmareSeanceVoidAbility();
@@ -83,27 +71,31 @@ namespace TumbangPreso.Abilities
 
         private static GhostPetCompanion Kuro(AbilityContext ctx) => ctx?.Motor?.GetComponent<CharacterVisual>()?.Companion;
 
-        // ================================================================== TERRIFY (signature)
+        // ================================================================== KURO: SIT!
 
-        private sealed class Terrify : HeroAbility
+        private sealed class KuroSit : HeroAbility, IPreparedWorldReplication
         {
             private readonly NemuHeroKit _kit;
-            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private Vector3 _spot;
-            private readonly HashSet<int> _feared = new HashSet<int>();
+            private bool _hasAnchor;
+            private CharacterMotor _owner;
             private GhostPetCompanion _kuro;
 
-            public Terrify(NemuHeroKit kit)
-                : base("nemu_skill1", "TERRIFY",
-                       "Hold to aim, release to leave Kuro haunting a spot for 4 s. Anyone who comes near him drops their slipper and runs in terror.",
-                       NecroRules.TerrifyCooldown, NecroRules.TerrifyHauntSeconds, AbilityGlyph.NemuTerrify,
-                       summary: "Kuro haunts a spot. Whoever comes near is Feared.",
-                       telegraphRadius: NecroRules.TerrifyRadius, telegraphRange: NecroRules.TerrifyMaxRange,
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
+            public override bool CanReactivate => true;
+            public override bool ReactivateReady => IsActive && _hasAnchor && _owner != null && _owner.CanAct();
+
+            public KuroSit(NemuHeroKit kit)
+                : base("nemu_skill1", "KURO: SIT!",
+                       "Hold to aim, release to leave Kuro at a location for 10 seconds. Reactivate to teleport back to him.",
+                       NecroRules.BasicCooldown, NecroRules.SitSeconds, AbilityGlyph.NemuPhase,
+                       summary: "Leave Kuro at a spot. Reactivate to return to him.",
+                       telegraphRadius: 0.4f, telegraphRange: NecroRules.SitMaxRange,
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
                        castCue: "sfx_cast_nemu_terrify")
             {
                 _kit = kit;
-                AimByHolding(2.0f, NecroRules.TerrifyMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                AimByHolding(2.0f, NecroRules.SitMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Maw;
             }
 
@@ -111,30 +103,78 @@ namespace TumbangPreso.Abilities
             {
                 _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
                 _spot = AimedDestination(ctx);
-                _feared.Clear();
-                _kuro = Kuro(ctx);
-                Vector3 spot = _spot;
-                _kuro?.BeginErrand(() => spot, 11.0f, 1.25f);
+                _owner = ctx?.Motor;
+                _hasAnchor = true;
+                BindCompanion(ctx);
                 NetCue.Play("sfx_ghost_teleport", _spot);
+            }
+
+            private void BindCompanion(AbilityContext ctx)
+            {
+                _kuro = Kuro(ctx);
+                if (_kuro == null) return;
+                _kuro.ApplyCastAnchor(_spot + Vector3.up * 0.9f);
+                _kuro.BeginErrand(() => _spot, NecroRules.FetchSpeed);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
-                if (!NetAuthority.ShouldResolve()) return;
-                var round = ctx?.Round;
-                if (round == null) return;
-                foreach (var p in round.Players)
-                {
-                    if (p == null || p == ctx.Motor || _feared.Contains(p.PlayerSlot)) continue;
-                    Vector3 d = p.transform.position - _spot; d.y = 0.0f;
-                    if (d.magnitude > NecroRules.TerrifyRadius) continue;
-                    _feared.Add(p.PlayerSlot);
-                    p.ApplyFeared(_spot);
-                    MatchFlair.Announce(MatchFlair.Kind.HeroHit, ctx.Motor.PlayerSlot, p.PlayerSlot, p.transform.position, 1.5f);
-                }
+                // A delayed model load must adopt the existing anchor, not cast
+                // again or restart the lifetime and shared cooldown.
+                if (_hasAnchor && _kuro == null) BindCompanion(ctx);
             }
 
-            protected override void OnEnd(AbilityContext ctx) { _kuro?.EndErrand(); _kuro = null; }
+            public override Vector3 TelegraphCentre(AbilityContext ctx)
+                => _hasAnchor && IsActive ? _spot : AimedDestination(ctx);
+
+            public override void Reactivate(AbilityContext ctx)
+            {
+                if (!IsActive || !_hasAnchor || ctx?.Motor == null) return;
+                if (!ctx.IsApprovedReplay && !ctx.Motor.CanAct()) return;
+                // Teleport owns confinement, prediction and host transform delivery.
+                // An observing replica cannot mutate another player's motor.
+                ctx.Motor.Teleport(_spot);
+                EndEarly(ctx);
+            }
+
+            public bool CapturePreparedWorld(out Vector3 centre, out float preparation, out float remaining)
+            {
+                bool active = _hasAnchor && IsActive;
+                centre = active ? _spot : Vector3.zero;
+                preparation = 0;
+                remaining = active ? DurationRemaining : 0;
+                return active;
+            }
+
+            public bool RestorePreparedWorld(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
+            {
+                if (ctx?.Motor == null || !float.IsFinite(centre.x) || !float.IsFinite(centre.y)
+                    || !float.IsFinite(centre.z) || !float.IsFinite(preparation) || preparation != 0
+                    || !float.IsFinite(remaining) || remaining < 0 || remaining > Duration) return false;
+                if (remaining == 0)
+                {
+                    EndEarly(ctx);
+                    OnEnd(ctx);
+                    return false;
+                }
+                _spot = centre;
+                _owner = ctx.Motor;
+                _hasAnchor = true;
+                RestoreLiveClock(remaining);
+                BindCompanion(ctx);
+                // The interface returns true only for a restored preparation pose.
+                // Sit has no windup; its live anchor was restored without a cast.
+                return false;
+            }
+
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                _kuro?.EndErrand();
+                _kuro = null;
+                _owner = null;
+                _hasAnchor = false;
+            }
+
             protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 

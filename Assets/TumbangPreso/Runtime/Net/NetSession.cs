@@ -544,7 +544,7 @@ namespace TumbangPreso.Net
         // becomes 6.4 s (VOODOO DOLL v7), which changes the shared ultimate phase every peer derives.
         // 92: Phaister's introduction becomes 6.35 s (VOODOO DOLL v12, THE TWIST) and the doll body's speed 0.5.
         // 93: Phaister's introduction ends on the doll's stare, 6.0 s.
-        public const int ProtocolVersion = 93;
+        public const int ProtocolVersion = 94;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -10,6 +10,18 @@ matching forward transition. Reusing a round-one/body-zero scope from the previo
 game defeats otherwise correct packet guards. Cosmetic changes do not mint world
 identities; the host's match/rematch transition owns them.
 
+## Kuro Sit Compatibility
+
+Protocol94 changes nemu_skill1 from Terrify to the Wiki Kuro: Sit recall anchor.
+Its stable ID remains; peers with the former behavior cannot join this version.
+The existing prepared-world route sends its anchor and simulation-clock lifetime,
+including authoritative empty state. Restore does not cast, spend resources or
+replay a cue. Recall uses CharacterMotor.Teleport for confinement and authority;
+observer playback cannot move another player's motor. The existing request/event,
+match/round/scene and snapshot-generation gates protect recovery ordering.
+Native lifecycle, real-companion placement and resource checks pass; actual-peer
+qualification remains open. [Evidence](reports/feedback-2026-09-30/nemu-kuro-sit.md).
+
 ## Cosmetic Reworks
 
 - Keep an ability's ID when its gameplay identity is unchanged. Display names,

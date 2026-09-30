@@ -66,10 +66,13 @@ namespace TumbangPreso.Core
     {
         /// <summary>Current Wiki: every Kuro basic ability shares one 25-second cooldown.</summary>
         public const float BasicCooldown = 25.0f;
+        public const float SitSeconds = 10.0f;
+        // The Wiki changes the action, not its existing hold-to-aim reach.
+        public const float SitMaxRange = TerrifyMaxRange;
 
         /// <summary>TERRIFY, owner: *"Leave Kuro somewhere and everyone there gets feared"*. Set here:
         /// aimed up to 7 m, a 4 s haunt, feared within 2.2 m, once per body per haunt.
-        /// Its behavior still awaits the current Sit definition; the shared cooldown is current.</summary>
+        /// Legacy fear-spot tuning is retained for references; the live signature now uses Sit.</summary>
         public const float TerrifyCooldown = BasicCooldown;
         public const float TerrifyMaxRange = 7.0f;
         public const float TerrifyHauntSeconds = 4.0f;

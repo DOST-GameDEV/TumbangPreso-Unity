@@ -54,6 +54,8 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   unspecified/placeholder kits rather than inventing replacements.
   Kuro movement bonus and shared 25-second basic cooldowns pass 18 native cases;
   broader Nemu behavior remains open. [Evidence](reports/feedback-2026-09-30/nemu-kuro-passive.md).
+  Kuro: Sit recall and recovery now pass native lifecycle and real-companion
+  checks; Fetch/Catch/Haunt remain open. [Sit evidence](reports/feedback-2026-09-30/nemu-kuro-sit.md).
 - [ ] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default request is protected by the latest no-lighting restriction.

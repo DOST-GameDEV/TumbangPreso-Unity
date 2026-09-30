@@ -1,7 +1,7 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-30. Branch: ASTRAReworks. Current unit: FEEDBACK-0930.
-Current protocol:93 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
+Current protocol:94 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 TODO is the work-status queue; this file records resumption and evidence boundaries.
 
