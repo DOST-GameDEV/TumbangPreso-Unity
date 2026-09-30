@@ -105,6 +105,135 @@ namespace TumbangPreso.PlayTests
         public IEnumerator IsolatedNativeCatchRetainsContinuousMotion()
             => CheckReplayMotion(true);
 
+        [UnityTest]
+        public IEnumerator ContactCameraShowsTheActualReachingHand() => CheckContactReach(1f);
+
+        [UnityTest]
+        public IEnumerator FarAcceptedTagHasVisibleHandContact() => CheckContactReach(1.65f);
+
+        [UnityTest]
+        public IEnumerator TagContactMetadataCannotAimTheNextMissOrCreateScores()
+        {
+            yield return OpenIsolatedCatchWorld(); Stage(); yield return null;
+            var actor = GameServices.Round.PlayerAt(0); var victim = GameServices.Round.PlayerAt(1);
+            var animator = actor.GetComponent<CharacterAnimator>();
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            bool HasContact() => (bool)typeof(CharacterAnimator).GetField("_tagContactValid", flags).GetValue(animator);
+            int tags = 0;
+            System.Action<int, ScoreEvent> scored = (slot, kind) => { if (kind == ScoreEvent.Tag) tags++; };
+            GameServices.Match.Scored += scored;
+            try
+            {
+                animator.PresentTagContact(victim, victim.transform.position);
+                animator.PlayAction("punch");
+                Assert.IsTrue(HasContact(), "A preceding accepted-contact callback can pair with its action.");
+                yield return new WaitForSeconds(.45f);
+                animator.PresentTagContact(victim, victim.transform.position);
+                animator.PlayAction("punch");
+                Assert.IsFalse(HasContact(), "A late callback for a completed gesture must not aim the next miss.");
+                animator.PresentTagContact(victim, new Vector3(float.NaN, 0, 0));
+                animator.PlayAction("punch");
+                Assert.IsFalse(HasContact());
+                Assert.AreEqual(0, tags, "Presentation alone cannot create an accepted tag.");
+            }
+            finally { GameServices.Match.Scored -= scored; }
+        }
+
+        private IEnumerator CheckContactReach(float distance)
+        {
+            yield return OpenIsolatedCatchWorld(); Stage();
+            var victim = GameServices.Round.PlayerAt(1);
+            var actor = GameServices.Round.PlayerAt(0);
+            actor.Teleport(victim.transform.position - Vector3.forward * distance);
+            yield return new WaitForSeconds(.4f);
+            Assert.IsTrue(actor.IsGrounded); Assert.IsTrue(victim.IsGrounded);
+            var view = Object.FindAnyObjectByType<CatchReconstruction>();
+            var settings = Settings.SettingsStore.Current;
+            bool reduced = settings.ReducedUiMotion, cinematic = settings.CinematicCameraMotion;
+            settings.ReducedUiMotion = false; settings.CinematicCameraMotion = true;
+            Camera.CameraCallback rendered = null;
+            int acceptedTags = 0;
+            System.Action<int, ScoreEvent> scored = (slot, kind) => { if (slot == 0 && kind == ScoreEvent.Tag) acceptedTags++; };
+            GameServices.Match.Scored += scored;
+            try
+            {
+                var sourceHand = actor.GetComponent<CharacterVisual>().HandAnchor;
+                Vector3 restScale = sourceHand.parent.localScale;
+                int beforeScore = GameServices.Match.ScoreFor(0);
+                Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(actor.transform.position, actor.transform.forward));
+                Assert.IsTrue(view.Playing);
+                Assert.AreEqual(beforeScore + MatchRules.PointsFor(ScoreEvent.Tag), GameServices.Match.ScoreFor(0));
+                var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                object Field(string name) => typeof(CatchReconstruction).GetField(name, flags).GetValue(view);
+                float contact = (float)Field("_contact"), start = (float)Field("_clipStart"), end = (float)Field("_clipEnd");
+                float began = (float)Field("_began"), duration = (float)Field("_duration");
+                var copy = (MatchPoseHistory.Copy)Field("_actorCopy");
+                var victimCopy = (MatchPoseHistory.Copy)Field("_victimCopy");
+                var hand = Object.FindAnyObjectByType<MatchPoseHistory>().ForSeat(0).CopiedBone(copy, sourceHand);
+                Assert.IsNotNull(hand);
+                var camera = (Camera)Field("_camera"); var target = (RenderTexture)Field("_target");
+                var picture = (UnityEngine.UI.RawImage)Field("_picture");
+                string directory = "Logs/tag-contact/reach-" + distance.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+                System.IO.Directory.CreateDirectory(directory);
+                float lastTime = -1, lastGap = float.MaxValue, lastPoseTime = 0, lastAlpha = 0;
+                rendered = c =>
+                {
+                    if (c != camera) return;
+                    lastTime = Time.unscaledTime - began;
+                    lastPoseTime = Mathf.Lerp(start, end, Mathf.Clamp01(lastTime / duration));
+                    var bounds = victimCopy.Renderers[0].bounds;
+                    foreach (var renderer in victimCopy.Renderers) bounds.Encapsulate(renderer.bounds);
+                    lastGap = Vector3.Distance(hand.position, bounds.ClosestPoint(hand.position));
+                    lastAlpha = picture.color.a;
+                };
+                Camera.onPostRender += rendered;
+                float next = 0, bestDistance = float.MaxValue, bestGap = float.MaxValue, bestAlpha = 0;
+                int frames = 0;
+                var times = new System.Collections.Generic.List<string>();
+                while (view.Playing && Time.unscaledTime - began < duration + .5f)
+                {
+                    // Read a completed real frame. Seeking bones and rendering several
+                    // times in one frame can reuse stale native skinning matrices.
+                    yield return null;
+                    if (!view.Playing || target == null || lastTime < next) continue;
+                    next = lastTime + .075f;
+                    var previous = RenderTexture.active;
+                    var image = new Texture2D(target.width, target.height, TextureFormat.RGB24, false);
+                    try
+                    {
+                        RenderTexture.active = target; image.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0); image.Apply();
+                        byte[] bytes = image.EncodeToPNG();
+                        System.IO.File.WriteAllBytes(directory + "/frame-" + frames.ToString("D3") + ".png", bytes);
+                        times.Add(lastTime.ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
+                        float proximity = Mathf.Abs(lastPoseTime - (contact + .17f));
+                        if (proximity < bestDistance)
+                        {
+                            bestDistance = proximity; bestGap = lastGap; bestAlpha = lastAlpha;
+                            System.IO.File.WriteAllBytes(directory + "/contact.png", bytes);
+                        }
+                        frames++;
+                    }
+                    finally { RenderTexture.active = previous; Object.Destroy(image); }
+                }
+                System.IO.File.WriteAllLines(directory + "/times.txt", times);
+                string values = "distance=" + distance + " contactGap=" + bestGap + " contactAlpha=" + bestAlpha
+                    + " sampleError=" + bestDistance + " frames=" + frames;
+                System.IO.File.WriteAllText(directory + "/measurements.txt", values); Debug.Log(values);
+                Assert.That(frames, Is.GreaterThan(8));
+                Assert.That(bestDistance, Is.LessThan(.09f));
+                Assert.That(bestGap, Is.LessThan(.08f), "The actual rendered reaching hand must reach the accepted victim's visible body bounds.");
+                Assert.That(bestAlpha, Is.GreaterThan(.95f), "Do not fade out while the hand first reaches the target.");
+                Assert.That(Vector3.Distance(restScale, sourceHand.parent.localScale), Is.LessThan(.001f), "Temporary limb extension must restore.");
+                Assert.AreEqual(1, acceptedTags, "Animation must not create another accepted tag.");
+            }
+            finally
+            {
+                GameServices.Match.Scored -= scored;
+                Camera.onPostRender -= rendered; view.End();
+                settings.ReducedUiMotion = reduced; settings.CinematicCameraMotion = cinematic;
+            }
+        }
+
         private static IEnumerator OpenIsolatedCatchWorld()
         {
             SceneFlow.Networked = false;
@@ -122,8 +251,14 @@ namespace TumbangPreso.PlayTests
             for (int i = 0; i < 4; i++)
             {
                 var owner = new GameObject("Isolated replay P" + i);
+                // MatchInstaller's actual person capsule; leave simulation enabled
+                // so grounding and the animator's base state are real.
+                var controller = owner.AddComponent<CharacterController>();
+                controller.height = 1.6f; controller.radius = .35f;
+                controller.center = new Vector3(0, .8f, 0);
+                controller.slopeLimit = 45; controller.stepOffset = .3f;
                 var motor = owner.AddComponent<CharacterMotor>();
-                motor.PlayerSlot = i; motor.Mode = GameMode.Classic; motor.enabled = false;
+                motor.PlayerSlot = i; motor.Mode = GameMode.Classic;
                 motor.SpawnPosition = new Vector3(-5 + i * 3, 0, 7);
                 motor.HoldingSlipper = i != 0;
                 owner.AddComponent<Carrier>(); owner.AddComponent<CombatVerbs>();
@@ -173,7 +308,7 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(
                     actor.transform.position, actor.transform.forward));
                 Assert.IsTrue(view.Playing);
-                yield return new WaitForSeconds(.25f);
+                yield return new WaitForSeconds(.6f);
                 var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
                 var clock = typeof(CatchReconstruction).GetField("_began", flags);
                 var step = typeof(CatchReconstruction).GetMethod("LateUpdate", flags);
@@ -184,8 +319,11 @@ namespace TumbangPreso.PlayTests
                 presentEffect.GetComponent<Collider>().enabled = false;
                 VfxRenderTag.Attach(presentEffect);
                 ComicPopup.Spawn(victim.transform.position + Vector3.up, "PRESENT TIME", Color.magenta);
+                // The original burst has expired by the longer follow-through capture.
+                // A real concurrent burst still must not enter this past recording.
+                ImpactBurst.SpawnAt(victim.transform.position);
                 var liveParticles = Object.FindObjectsByType<ParticleSystemRenderer>();
-                Assert.IsNotEmpty(liveParticles, "The accepted tag must exercise its live impact burst.");
+                Assert.IsNotEmpty(liveParticles, "Exercise an actual concurrent impact burst.");
                 var effectRenderers = Object.FindObjectsByType<VfxRenderTag>()
                     .SelectMany(e => e.GetComponentsInChildren<Renderer>(true))
                     .Concat(liveParticles).Distinct().ToArray();

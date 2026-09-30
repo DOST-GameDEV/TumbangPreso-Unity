@@ -34,7 +34,7 @@ namespace TumbangPreso.CameraSystem
         private Vector3 _pendingAt;
         private float _pendingUntil, _pendingStun;
         private Vector3 _actorContact, _victimContact;
-        private Quaternion _actorFacing, _victimFacing;
+        private Quaternion _victimFacing;
         private readonly List<Renderer> _hidden = new List<Renderer>();
         private readonly List<bool> _previous = new List<bool>();
         private readonly List<Canvas> _hiddenCanvases = new List<Canvas>();
@@ -44,6 +44,7 @@ namespace TumbangPreso.CameraSystem
         private readonly HashSet<Renderer> _seen = new HashSet<Renderer>();
         private Renderer[] _copiedItems;
         public const float ReplayDuration = 3.0f;
+        private const float Followthrough = .5f;
         public bool Playing => _stage != null;
         public float Remaining => Playing ? Mathf.Max(0, _duration - (Time.unscaledTime - _began)) : 0;
 
@@ -117,14 +118,14 @@ namespace TumbangPreso.CameraSystem
             _actorTrack = actor; _victimTrack = victimTrack; _victim = victim; _rig = rig;
             _contact = contact; _began = Time.unscaledTime; _duration = Mathf.Min(ReplayDuration, victim.StunLeft - .18f);
             _round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
-            _clipStart = Mathf.Max(contact - (ReplayDuration - .18f), actor.Oldest, victimTrack.Oldest);
-            _clipEnd = contact + .18f;
+            _clipStart = Mathf.Max(contact - (ReplayDuration - Followthrough), actor.Oldest, victimTrack.Oldest);
+            _clipEnd = contact + Followthrough;
             float availableEnd = Mathf.Min(_clipEnd, actor.Newest, victimTrack.Newest);
             if (!RetainClip(availableEnd)) { End(); return; }
             _followthroughCaptured = availableEnd >= _clipEnd;
             actor.Apply(_actorCopy, contact); victimTrack.Apply(_victimCopy, contact);
             _actorContact = _actorCopy.Root.transform.position; _victimContact = _victimCopy.Root.transform.position;
-            _actorFacing = _actorCopy.Root.transform.rotation; _victimFacing = _victimCopy.Root.transform.rotation;
+            _victimFacing = _victimCopy.Root.transform.rotation;
             CopyHeldItem(victimTrack, _victimCopy);
             Vector3 forward = _victimContact - _actorContact; forward.y = 0;
             if (forward.sqrMagnitude < .01f) forward = _victimFacing * Vector3.forward;
@@ -225,9 +226,8 @@ namespace TumbangPreso.CameraSystem
             _actorClip.Apply(_actorCopy.Bones, recordedTime); _victimClip.Apply(_victimCopy.Bones, recordedTime);
             if (recordedTime >= _contact)
             {
-                // Retain actual post-contact bone motion while keeping the
-                // reconstruction at contact, not following the penalty teleport.
-                _actorCopy.Root.transform.SetPositionAndRotation(_actorContact, _actorFacing);
+                // Keep only the penalized victim at contact. The tagger's real
+                // step and hand follow-through must remain in the recorded pose.
                 _victimCopy.Root.transform.SetPositionAndRotation(_victimContact, _victimFacing);
             }
             Vector3 a = _actorCopy.Root.transform.position, b = _victimCopy.Root.transform.position;

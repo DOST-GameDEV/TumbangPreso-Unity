@@ -55,7 +55,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   0.6 seconds; detached clips survive ring wrap and current callouts/particles stay
   out of past frames. The native accepted-tag motion/isolation case passes with
   inspected early/contact captures. [Evidence](reports/feedback-2026-09-30/catch-replay-motion.md).
-  Full-map/actual-peer contact visualization remains open; this is not full contact proof.
+  The owner-reviewed tag reach gap is corrected for the measured Classic pair:
+  accepted-contact hand aim, bounded restored reach and a visible follow-through
+  pass close/far real-time native checks. [Contact evidence](reports/feedback-2026-09-30/tag-contact-readability.md).
+  Human/all-roster/full-map/actual-peer contact qualification remains open.
 - [x] F0930-05 Adopted [Xelu prompts](https://thoseawesomeguys.com/prompts/): current
   binding labels and Xbox/PS families resolve whole supplied images, with retained
   fallback for absent variants. Live HUD and training key row use the same resolver.

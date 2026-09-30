@@ -377,6 +377,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private static void PlayTag(CharacterMotor taya, CharacterMotor victim, Vector3 at)
         {
+            taya?.GetComponent<CharacterAnimator>()?.PresentTagContact(victim, at);
             if (victim != null)
             {
                 DizzyStars.Attach(victim.transform, Balance.TagStunTime, UI.UiTheme.Defense);

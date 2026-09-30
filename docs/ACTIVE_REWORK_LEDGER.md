@@ -92,13 +92,34 @@ hand, body animation and replay camera side/timing before changing motion. Prese
 authoritative hit outcomes and both views; no ability or landing-circle overlap.
 Owned paths:
 - Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs
-- Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.TagBody.cs (only if reach diagnosis requires it)
+- Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.TagBody.cs
+- Assets/TumbangPreso/Runtime/Visual/MatchFlair.cs (accepted tag-contact presentation only)
 - Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.TagReach.cs (only if matching first-person correction is needed)
 - Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs
-- docs/reports/feedback-2026-09-30/tag-contact-readability.md and tag-contact-* captures
+- docs/reports/feedback-2026-09-30/tag-contact-readability.md
+- docs/reports/feedback-2026-09-30/tag-contact-close.png
+- docs/reports/feedback-2026-09-30/tag-contact-far.png
+- docs/reports/feedback-2026-09-30/tag-contact-native.mp4
+- docs/reports/feedback-2026-09-30/checks/tag-contact-far-before.xml
+- docs/reports/feedback-2026-09-30/checks/tag-contact-final.xml
+- docs/reports/feedback-2026-09-30/checks/tag-contact-lifecycle.xml
+- docs/reports/feedback-2026-09-30/catch-replay-motion.md (capture limitation correction)
+- docs/NETWORKING.md (contact-presentation contract only)
 - docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue only)
-No native job is running. The previous camera-motion captures prove progression,
-not visible hand contact; inspect both sides and the reach peak next.
+Grounded diagnosis: camera already shows the correct hand side. At a valid1.65m
+accepted tag, the copied hand still misses even the visible body bounds by0.4777m.
+The arm-axis hypothesis is ruled out (palm/axis dot0.9693). Refine the real tag
+pose toward its existing accepted event contact, with bounded arm extension and
+matching first-person timing; preserve gameplay hit range, score and teleport.
+The original motion fixture had disabled motors/default capsules; it now uses
+actual grounding and the shipped capsule dimensions. Manual same-frame seeks were
+also insufficient for skinned-pose review; the new film uses real completed frames.
+Near/far contacts pass, exact one Tag event and limb-scale restoration pass; receipt
+ordering rejects stale-contact reuse and cannot create scores. Continuous motion
+remains passing. Real-time960x720 film and close/far stills were inspected; human,
+all-roster, full-map and actual-peer approval are not claimed. No native job is
+running. Commit this unit, integrate current incoming work, verify remote and update
+the existing contact report. Preserve the local charge/input/tutorial reservation.
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.
@@ -322,6 +343,12 @@ Charge clarity cda86fd29 shipped throughd3e21c9d2; remote HEAD verified. Current
 
 Latest MMB/F layout is validated:4distinct native EditMode/default/order/conflict/older-override cases pass; actual mouse/wheel/F Ready hold/release case passes1/1. Initial conflict filter named an absent method, so only the omitted case was run separately; no unchanged cases repeated. All5frozen inputs unchanged. This unit is being shipped. Next F0930-13/14 existing-feedback qualification, then actual-peer network qualification with a fresh internal player if the build route preserves frozen assets. Source reservations: loading friend, all abilities owner, tag-contact Diddler. No job running.
 
+Tag-contact candidate7eb030f7 passes its near/far grounded real-time checks and
+metadata lifecycle; continuous motion is retained. Incoming80ff8b58 controls and
+charge-reticle source are integrated unchanged. Final combined native check2/2
+passes with frozen inputs. No native job is running. Verify remote publication
+and update the existing contact row; human and broader qualification stay open.
+
 Latest controls80ff8b583 shipped, remote HEAD verified. Existing F0930-14 can-down fix passes1/1 native upright/down/reset path on this candidate, capture inspected; no duplicate effect code. Local next reservation: Editor/GameBuilder.cs and new AuthoredAnimationBuildCheck.cs plus focused build-input test. GameBuilder currently invokes swim/recovery authoring on every build, and both author tools overwrite retained clips via CopySerialized. Change the build to validate existing sets without reauthoring; manual authoring tools remain explicit. No animation/model/map/loading files will be edited. This engineering bug fix precedes an internal Windows build and two-process LAN check. No native job running.
 
 Build-input baseline native failure identifies missing team-amihan swim set, not a validator/tool availability problem. Runtime GeneratedMotionAssets has no fallback set for that key. Explicit missing-only repair is authorized as a concrete animation bug fix under the owner exception: SwimmingAnimationAuthor/RecoveryAnimationAuthor gain EnsureMissing, skipped existing sets, and a separate repair entry point. Regular GameBuilder still only validates. Frozen motion-file hashes record every existing set/meta before repair. Correct the synthetic test to select its x curve (Unity creates additional position bindings). Native missing-only repair and focused rerun pending; do not claim build ready yet.
@@ -329,3 +356,14 @@ Build-input baseline native failure identifies missing team-amihan swim set, not
 Previous automatic goal turn made progress: charge clarity and latest MMB/F controls shipped, current can-down indicator qualified. Build repair is the current coherent unit. Active isolated session14616 runs explicit RepairMissing, with84retained asset/meta hashes saved in Logs/feedback-0930/retained-motion-before.json. Only missing swim/recovery sets may be copied back after the repair; no existing set may change. Do not run a regular Windows build until prerequisite tests pass. Native initial2failures are preserved: missing team-amihan set and synthetic x-curve selection. No paid service or other conversation used.
 
 Missing-only repair succeeded. Four new Amihan/Paete swim/recovery sets and metadata copied back; all84existing set/meta hashes unchanged. Protected ability behavior and every other animation/model/effect/map remain intact. Final prerequisites/refusal checks pass2/2; actual repaired fourteen clips bind/move native model bones1/1. Current build-input unit is being shipped. Next action: create a fresh clean short-path validation checkout at the shipped commit, seed its own Library cache, run the guarded internal Windows build with explicit Builds/feedback-0930-network/TumbangPreso.exe, then direct two-process LAN using preserved isolated profiles. No job running; user Desktop build is not a target.
+
+Owner review of the tag film: "make it look like person body actually tries to
+reach not js arm extending". Diddler retains F0930-04 and owns
+Runtime/Visual/CharacterAnimator.TagBody.cs, CharacterAnimator.cs restoration
+ordering only, Tests/PlayMode/CatchReconstructionTests.cs, this ledger, TODO,
+NETWORKING and reports/feedback-2026-09-30/tag-contact*. The next revision uses
+hip weight transfer, a supporting step and shoulder turn; limb extension is
+bounded close to authored proportions. Live motor positions, hit range and
+scoring remain unchanged. No kit, loading, input or local build paths are owned.
+Native near/far real-time films and interruption/restoration checks will judge
+the change. No job running; no new animation acceptance claimed.
