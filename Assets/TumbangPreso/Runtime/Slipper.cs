@@ -1250,6 +1250,18 @@ namespace TumbangPreso
         /// overlap volume fires on whichever peer owns the body, and 16 of 36 were measured
         /// failing to land.
         /// </summary>
+        // Shared by real flight and its local landing preview. This has no effects,
+        // collision, score or authority mutation.
+        internal static Vector3 StepFlightVelocity(Vector3 velocity, float spin, float dt)
+        {
+            velocity.y -= Balance.Gravity * dt;
+            var flat = new Vector3(velocity.x, 0, velocity.z);
+            if (Mathf.Abs(spin) > .01f && flat.sqrMagnitude > .1f)
+                velocity += Vector3.Cross(flat.normalized, Vector3.up).normalized * (spin * Balance.PektusCurveStrength * dt);
+            const float terminalSpeed = 34;
+            return velocity.sqrMagnitude > terminalSpeed * terminalSpeed ? velocity.normalized * terminalSpeed : velocity;
+        }
+
         private void FixedUpdate()
         {
             if (State != SlipperState.InFlight) return;
@@ -1260,46 +1272,7 @@ namespace TumbangPreso
             _airborneTotal += dt;
             if (_throwerIgnoreLeft > 0.0f) _throwerIgnoreLeft -= dt;
 
-            _velocity.y -= Balance.Gravity * dt;
-
-            // Apply lateral Magnus acceleration from Pektus spin
-            if (Mathf.Abs(PektusSpin) > 0.01f)
-            {
-                Vector3 flatVel = new Vector3(_velocity.x, 0.0f, _velocity.z);
-                if (flatVel.sqrMagnitude > 0.1f)
-                {
-                    Vector3 lateral = Vector3.Cross(flatVel.normalized, Vector3.up).normalized;
-                    _velocity += lateral * (PektusSpin * Balance.PektusCurveStrength * dt);
-                }
-            }
-
-            // -------------------------------------------------------------------
-            // ⚠️⚠️ A TSINELAS HAS A TERMINAL SPEED, AND THIS IS A GUARD RATHER THAN A CURE.
-            // 🧑 2026-08-27: *"appparently slippers randomly fly to sky too? idk how playtesters
-            // did that"*. The exact source is NOT identified and this does not claim to have
-            // found it; what it does is bound the symptom so a single bad frame cannot remove a
-            // slipper from the match.
-            //
-            // ⚠️ THERE ARE SEVERAL PLACES A LARGE VELOCITY CAN BE MANUFACTURED and none of them
-            // is obviously wrong on its own: `Deflect` off the lata multiplies the incoming speed
-            // by `LataRecoilScale`, so two recoils in quick succession compound; a
-            // `Vector3.Reflect` in `BounceOffObstacles` falls back to `-disp.normalized` which is
-            // ZERO if the slipper did not move that frame, and reflecting about a zero normal
-            // returns the velocity unchanged rather than reversing it; and `HeroHazards`
-            // teleports loose slippers every frame during Nemu's ultimate, which can drive one
-            // into a collider that then ejects it.
-            //
-            // ⚠️ 34 m/s IS ABOVE ANYTHING THE GAME CAN LEGITIMATELY PRODUCE. The hardest legal
-            // throw leaves the hand well under this, so a slipper that reaches it has been given
-            // energy by a defect. Clamping preserves the DIRECTION, so a hard throw still flies
-            // hard and only the impossible case is cut. **If this clamp ever fires in normal
-            // play the number is wrong; if the sky-launch stops being reported, the cause is
-            // still out there and is worth finding.** `docs/TODO.md` § 32.
-            const float TerminalSpeed = 34.0f;
-            if (_velocity.sqrMagnitude > TerminalSpeed * TerminalSpeed)
-            {
-                _velocity = _velocity.normalized * TerminalSpeed;
-            }
+            _velocity = StepFlightVelocity(_velocity, PektusSpin, dt);
 
             Vector3 prevPos = transform.position;
             transform.position += _velocity * dt;
@@ -1898,17 +1871,24 @@ namespace TumbangPreso
         public static float GroundY(Vector3 at)
             => FindGroundY(at, 6.0f);
 
-        private static float FindGroundY(Vector3 at, float scanAbove)
+        private static readonly RaycastHit[] GroundHits = new RaycastHit[64];
+
+        internal static float FindGroundY(Vector3 at, float scanAbove)
         {
             var from = new Vector3(at.x, at.y + scanAbove, at.z);
 
-            var hits = Physics.RaycastAll(from, Vector3.down, 40.0f, ~0,
-                                          QueryTriggerInteraction.Ignore);
+            var hits = GroundHits;
+            int count = Physics.RaycastNonAlloc(from, Vector3.down, hits, 40, ~0, QueryTriggerInteraction.Ignore);
+            // NonAlloc does not promise nearest hits if the buffer fills. Preserve
+            // the original complete query on unusually dense geometry.
+            if (count == hits.Length)
+            { hits = Physics.RaycastAll(from, Vector3.down, 40, ~0, QueryTriggerInteraction.Ignore); count = hits.Length; }
 
             float best = float.NegativeInfinity;
 
-            foreach (var hit in hits)
+            for (int i = 0; i < count; i++)
             {
+                var hit = hits[i];
                 // ⚠️⚠️ A BODY IS NOT THE GROUND, AND SKIPPING THIS PUT SLIPPERS ON PEOPLE'S
                 // HEADS. Every slipper starts at its owner's FEET, so the first thing a downward
                 // cast from above that mark meets is the owner's own capsule — and the slipper
