@@ -205,8 +205,8 @@ namespace TumbangPreso.Abilities
 
             private static Slipper OwnLooseSlipper(CharacterMotor who)
             {
-                foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
-                    if (s != null && s.OwnerSlot == who.PlayerSlot && s.State == SlipperState.Loose) return s;
+                foreach (var s in BotSlipperInventory.All)
+                    if (s.OwnerSlot == who.PlayerSlot && s.State == SlipperState.Loose) return s;
                 return null;
             }
 

@@ -175,6 +175,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   an already-held shoe or leaves a carried shoe floating on cancellation;9 focused
   native cases pass. [Fetch evidence](reports/feedback-2026-09-30/nemu-kuro-fetch.md).
   Remaining Fetch eligibility, Catch and Haunt reconciliation stays open.
+  Fetch availability lookup now reuses the existing slipper inventory. Three
+  native checks pass;100warmed calls reduce allocation events200to0 with live
+  ownership/activity/flight/lifecycle retained. No kit-rule change.
+  [Evidence](reports/feedback-2026-09-30/fetch-query-allocations.md).
 - [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default/order reconciled with already-shipped BUGS-0926.5:
