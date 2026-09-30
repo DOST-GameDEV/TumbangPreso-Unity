@@ -782,3 +782,15 @@ Windows evidence. Published TODO number37 now has two differently titled units
 (HUD readability and menu touch-look); retain their titles/commit evidence to
 disambiguate rather than silently renumber published history. No runtime overlap
 with the tutorial orbit/header fix; its checked source bytes are unchanged.
+Tutorial38e7ef05 integrated at920a5121, pushed/remote verified. Same-row note and
+resolved orbit/banner comment strikethroughs are updated; tutorial paths release.
+Next current Harry revisions, one match-UI batch: ordinary Next Round5seconds,
+Halftime unchanged10seconds/replay; shared ability controls25percent above the
+original size (supersedes50); live Xelu Reset Can/Retrieve Slipper prompts.
+Claim Assets/TumbangPreso/Runtime/HalftimePresentation.cs, Runtime/Net/NetSession.cs,
+Runtime/UI/TumpPowerReadout.OwnerDeck.cs, Runtime/UI/TumpMatchReadout.cs,
+Runtime/UI/TumpMatchReadout.CourtHud.cs, Runtime/UI/TumpMatchReadout.MatchBar.cs,
+Tests/PlayMode/RoundBreakFreezeTests.cs, Tests/PlayMode/ReplayRetentionTests.cs,
+Tests/PlayMode/TumpNativeHudTests.cs; TODO/NETWORKING/UI method/evidence.
+Preserve authoritative deadlines, saved overrides, normal channel/cancel feedback,
+unchanged hero text and original screen margins. Source screenshots read.
