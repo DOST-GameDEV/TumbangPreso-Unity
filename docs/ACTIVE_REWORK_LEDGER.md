@@ -1434,3 +1434,13 @@ the merged candidate before publishing; earlier unit receipts remain pre-merge.
 Merged Airburst/Frostbite native8/8passes11.33s, no new OOM. Publish integration
 protocol102, then same Airburst note with full-map follow-through still open.
 No need to reimplement incoming Frozen hit or Fetch allocation fix.
+
+Follow-through claims existing AmihanAirburstTests.cs only: one authored Eskinita
+case, actual defender lift/travel/confinement and two witness images. Runtime
+unchanged; reuse existing8integration checks. Stop at fresh result and visual
+inspection. Player remains protocol100 until a coherent later refresh.
+
+Authored Airburst case1/1passes9.17s: real defender airborne,9m travel to z7
+confinement edge. Two witness frames inspected and retained. Publish test/evidence,
+update same Airburst row Done; full Amihan row stays open. Next Second Wind and
+Drift alignment, exact claim before edits. No heavy job active.

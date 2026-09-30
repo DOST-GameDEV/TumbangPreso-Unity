@@ -27,3 +27,11 @@ Concurrent Frostbite, queue-advert and Fetch-query units through137bde05 were
 integrated without discarding their behavior. Frostbite had already used101, so
 the combined contract is protocol102. The merged candidate passes8/8native
 Airburst/Frostbite cases11.33seconds. Previous unit evidence stays pre-merge.
+
+Authored Eskinita follow-through1/1passes9.17seconds. The actual defender is
+airborne with the Whirled mark, then travels9m to z7, its real confinement edge.
+Both1920x1080witness frames inspected: body, can and chalk remain readable,
+existing green fan retires. Five distinct Airburst cases total; no count inflation
+from rerunning the four contracts during integration. This qualifies the scoped
+Airburst feedback in native play; current-player and actual-peer checks remain
+separate, as does broader Amihan reconciliation.
