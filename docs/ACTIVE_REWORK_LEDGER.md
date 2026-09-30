@@ -474,3 +474,11 @@ Tests/PlayMode/TutorialLessonHonestyProbe.cs under Assets/TumbangPreso. Do not
 change the protected hero kits. Diagnose the training-owned placement first;
 ordinary Slipper.cs remains unclaimed until a reproduced defect requires it.
 No Unity job active. Reserved round timing is next after this newest row.
+
+Latest tutorial row now also asks1second after signature/role casts, retaining the
+2roaming attackers on completion, and a real emote-wheel release fix. Reserve
+Assets/TumbangPreso/Runtime/MatchInstaller.cs for the tutorial-only driven-seat
+selection used by its existing emote callback; the current heuristic chooses an
+AI-disabled training dummy. Reproduce through actual wheel inputs before the guard.
+The preceding4focused flow/landing cases pass; old airborne-to-retrieval baseline
+failed because it replaced the flying shoe with a loose snapshot. No heavy job active.
