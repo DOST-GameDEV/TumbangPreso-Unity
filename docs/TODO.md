@@ -98,6 +98,9 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   authorized later; preserve loading as an outstanding contributor-owned requirement.
 - [ ] F0930-20 Continue focused network, bots, optimization, flow bugs and applicable
   existing TODO requirements after feedback, with actual behavior evidence.
+- [x] F0930-24 Offline Esc/menu pauses simulation and resumes on close, including
+  nested Settings and repeated opens. Network menus stay live; six native cases
+  pass. [Evidence](reports/feedback-2026-09-30/offline-menu-pause.md).
 - [x] F0930-23 Practice popup: automatic Tutorial focus no longer appears hovered.
   Pointer entry/exit and keyboard/pad navigation keep their feedback;8 native cases
   pass, with960x540 and1600x680 captures inspected.

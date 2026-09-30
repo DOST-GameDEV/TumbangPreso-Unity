@@ -74,7 +74,8 @@ namespace TumbangPreso
         /// presentation can never become a gameplay-length freeze.</summary>
         public static void Trigger(float duration, float timeScale)
         {
-            if (_active || PresentationClock.Held || Settings.SettingsStore.Current.ReducedEffects) return;
+            if (_active || PresentationClock.Held || PresentationClock.RequestedScale <= 0 ||
+                Settings.SettingsStore.Current.ReducedEffects) return;
 
             _active = true;
             _restoreScale = Time.timeScale;

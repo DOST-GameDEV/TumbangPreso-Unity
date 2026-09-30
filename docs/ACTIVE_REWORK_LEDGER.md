@@ -76,20 +76,23 @@ Done controls, reports, screenshots and hidden IDs were preserved. The tab's wid
 layout exceeds portrait PDF width; the requested new header/control column was
 visually checked, not a claim that the entire wiki is print-ready.
 
-Current Diddler reservation: owner-prioritized offline Esc/menu pause. Opening
-an offline match menu must stop simulation and closing it must resume safely,
-including repeated opens and nested settings; online menus stay live.
-Owned paths:
-- Assets/TumbangPreso/Runtime/UI/PausePanel.cs
-- Assets/TumbangPreso/Runtime/UI/PausePanel.LiveMenu.cs (truthful pause notice only)
-- Assets/TumbangPreso/Runtime/Hitstop.cs (do not unpause a stopped clock)
-- Assets/TumbangPreso/Tests/PlayMode/OfflineMenuPauseTests.cs and its .meta
-- docs/UI_DESIGN_METHOD.md, docs/TODO.md, docs/ACTIVE_REWORK_LEDGER.md
-- docs/reports/feedback-2026-09-30/offline-menu-pause.md
+Offline menu pause shipped in88b0f2f4, integrated with the unchanged incoming
+tutorial exit inafb79502, remote HEAD verified. Six native cases pass; the same
+Feedback report contains its short shipped note and hidden QA_TUMP_0039. Human
+verification remains unchecked. Repeated intake recognizes the evidence and does
+not create another fix. PausePanel/Hitstop/test paths are released.
 
-No code has been edited yet. Current code deliberately leaves every menu live;
-verify the offline lifecycle before applying the owner's revised behavior.
-Continuous-motion caught replay remains the next independent request, unclaimed.
+Current Diddler reservation: continuous recorded motion throughout the caught
+replay. The owner's new Feedback clarification rejects padding a short clip with
+a frozen pose. Retain actual history, spread playback through the existing duration
+and keep authoritative contact/teleport/recovery unchanged. Contact-gap visual
+qualification stays separate until actual evidence supports a correction.
+Owned paths:
+- Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs
+- Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs
+- docs/reports/feedback-2026-09-30/catch-replay-motion.md
+- docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue only)
+No native job is running; baseline investigation precedes correction.
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.
