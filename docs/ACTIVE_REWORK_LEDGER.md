@@ -110,11 +110,17 @@ confirmed stale Unity SDK shutdown helpers held about2420MiB summed RSS; only
 those exact task-owned commands were stopped. Full Eskinita then loaded and its
 retained-motion/isolation test passed1/1, exit0, with no new OOM event. Pre/post
 shutdown-helper cleanup and cgroup tracing are now in the cloud run wrapper.
-This is a full-map behavior check, not broad visual acceptance: the captured full
-scene shows unexpectedly black character surfaces. Diddler reserves
-CatchReconstructionTests.cs for a focused live/copy/post-effect render comparison
-before any runtime fix. Preserve lighting/art/kit design; diagnose the actual
-cause rather than repainting assets. No cloud editor job running currently.
+This is a full-map behavior check, not broad visual acceptance. Full-map black
+character surfaces also occur in the normal camera and persist without grade,
+outline or shadows. Windows reproduction is unverified; no runtime/art change
+was made. Vulkan is unavailable and fell back to OpenGL. The temporary comparison
+fixture is preserved privately and removed from source; CatchReconstructionTests.cs
+is released. See reports/feedback-2026-09-30/cloud-validation-limits.md.
+The guarded Classic full-match bot case passed 1/1: eight rounds,207 throws,198
+retrievals,34 can knocks,49 resets,167 tags and normal match completion. Existing
+behavior assertions were unchanged; the private adapter reduced texture mip
+resolution for memory. No new OOM event. This is automated gameplay coverage,
+not human visual approval. No cloud Editor job is active.
 
 Owner09:32 explicitly reauthorized adding/updating Feedback rows, superseding the
 older reservation. Fresh read finds the former score/stock/map-vote/offline-pause
@@ -129,5 +135,6 @@ isolated profile/input preferences restored. No runtime defect was found here.
 Latest Doc requests UP LEFT/DOWN RIGHT, Run/Ability Descriptions labels and removed
 separate Ready bind; next own input unit must preserve shared Interact/Ready
 rebinding. New tutorial lesson text is explicitly DO NOT WORK YET; hold tutorial
-source/wording pending owner release. Diddler replay-surface investigation remains
-independent. No heavy job running.
+source/wording pending owner release. Incoming d3c64e209 releases the replay fixture
+and preserves Linux render limits; its unchanged full Classic bot assertions pass.
+No heavy job running.
