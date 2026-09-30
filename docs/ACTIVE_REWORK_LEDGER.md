@@ -458,3 +458,15 @@ including the field and unchanged length/newline/empty contracts; no peer/font
 claim. No heavy cloud job running. Publish explicit clamp/test/report paths and
 verify remote. Doc-row additions for bot/chat still await the pending permission
 answer; existing rows are preserved and no blocked route was bypassed.
+
+Chat boundary ca61ba86 is published; remote HEAD verified. Six final native cases
+pass and the input-field pre-clipping route is covered. Clamp/test source paths
+are released. Bot4d7a7e79 and score/stockde3b3113 are also published with their
+reported evidence; no active cloud test/editor job remains. Bot and chat Doc rows
+await the current access-confirmation answer. The two score/stock rows already
+carry their shipped notes; Human verified remains untouched. Whole-body tag source
+is released after824cdfb4, with owner visual review, other-body, full-map and peer
+qualification still open. Full-map launch and allocation-counter limits above
+remain limits, not passing results. Continue only independent authorized intake,
+respecting the tutorial hold and local input/build, owner-kit and friend-loading
+reservations.
