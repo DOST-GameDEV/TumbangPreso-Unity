@@ -1026,3 +1026,228 @@ MatchInstaller.cs, explaining the actual player captures. Add that exact path to
 the claim before changing it. Keep YouCard personal; next-taya/standings are shared.
 Final scope: initial watch entry, player-to-watch entry, explicit clean-feed hide/
 restore, and the existing player's frozen-input/card check. No timer/wire changes.
+
+Spectator-card final3/3pass in12.84s, exit0, no new OOM. Initial spectator, watch
+transition, clean-feed hide/restore and unchanged player's frozen input/frame
+all qualify.960x540 native shared-card capture inspected. Publish explicit paths
+and update the same Feedback round row. Existing player binary lacks this fix;
+new player/actual-peer qualification remains separate. No heavy job active.
+For the actual-player follow-through, also claim Runtime/Diagnostics/RoundFreezeProbe.cs.
+Its witness currently captures ordinary breaks on their first entry frame because
+remaining5is already below9.5. Delay its read-only capture until0.5s into the actual
+phase duration, so screenshots observe the settled overlay. No simulation/input
+writes. Refresh the internal player with the proven headless build recipe, retaining
+old runtime hash/identity and logs. Then one supported4round/30second automatic
+Hero match covers ordinary/halftime/card/final completion without another long
+unchanged8round run or manual-pause delay. Native graphics remain enabled in play.
+
+Refreshed headless build hit guard at77.85s during linking, no new OOM. Fresh
+PLAYER compilation spawned a second idle Roslyn cache after the earlier Editor
+cache was released; post-exit receipt confirms its exact owned745MB process.
+Bounded repair: observer releases that same cache once UnityLinker startup proves
+managed compilation finished, retaining the existing exact-path/process checks and
+memory threshold. One final build retry; partial output is not a successful player.
+No authored/project setting change. This supplements build-only headless mode.
+Warm headless follow-through succeeds62.91s,2076MB, no new OOM. New linker-cache
+cleanup hook did not run because the warmed link step was cached; do not claim its
+benefit was measured in this pass. Actual refreshed runtime hash/identity saved.
+Run the prepared4round/30s automatic Hero player now, with settled round witnesses,
+fresh isolated home/profile and real graphics.300s bound; no manual pause/input.
+
+Actual refreshed player terminal: one4round/30s Hero match completed naturally,
+scores750/1120/890/705, seat1wins; automatic result-board rematch began. Outer300s
+bound stops second match inround3. No frame-cap report; do not claim that report
+passed. Five ordinary boundaries frozen/blocked, three shared-card captures
+inspected at1364x1024. Custom4rounds did NOT exercise halftime, correcting the
+planned scope; prior8round/native evidence stays separate. Services refused and
+319replay readback failures remain diagnostic limits. No new OOM. Publish witness
+04c675f7 plus exact player evidence, update same Doc row and release witness claim.
+No heavy job active. Next fresh Feedback intake, prioritize actionable refinements.
+Publication verified d8973504; witness04c675f7 included, same Feedback note updated.
+Round witness ownership released. Replay log correction:447failed readbacks in
+first match plus319in rematch, not319total. This is separate from recorded-world
+halftime replay. Investigate the actual spectator pixel ring, not hero animation.
+Claim Runtime/Camera/SpectatorCamera.cs and Tests/PlayMode/ReplayReadbackSupportTests.cs
+plus its metadata, TODO/report. Hypothesis: general async/render-format support
+is insufficient for RGB565 readback; Unity requires ReadPixels format support.
+Discriminate with a minimal native real-capture test, no full map/build repetition.
+Expected: three requested known-colour frames become ready with matching pixels.
+Baseline then smallest correction and one final focused pass, one tooling repair
+maximum. No other runtime paths or contributor-owned loading changes.
+
+Replay baseline1/1fails with3lost frames: async=True, render565=True,
+read565=False, actualAsync=True. Confirms capability mismatch before gameplay,
+not a transient lost context. Add exact ReadPixels format gate, retain existing
+synchronous RGB565 conversion/ring bound. Final same three-colour native check
+will validate real stored pixels and ready state; no world/ability/timing changes.
+
+First correction exposes a second real backend defect: the retained synchronous
+path cannot ReadPixels directly into RGB565 either (native assertion format7).
+This is product failure, not a fixture error. Use one reused RGBA32 CPU staging
+image, pack directly into the existing RGB565 NativeArray and Apply once; preserve
+100frame ring and async fast path on supported devices. Destroy staging with owner.
+Next focused pass reuses exact pixel assertions and checks staging reuse.
+
+Replay format correction passes1/1 in0.190247s with all3real colour frames ready,
+correct RGB565 pixels/size, reused staging and0failed readbacks. No OOM/guard.
+Publish camera/test/meta and evidence, release runtime claim. Do not claim player
+rebuild or performance improvement. Same source may cost sync readback on these
+drivers, while supported devices keep asynchronous capture. Owner presentation
+permission is reconciled in TODO/Feedback queued notes; no renewed permission
+needed for those later requests, finalized Paete/Phaister remain protected.
+Replay correction2ecc571d remote verified; QA_TUMP_0048 added with Done checked,
+Human verified unchecked, native controls/save verified. Runtime ownership released.
+Next interrupted-lunge gap: CombatVerbs returns on !CanAct before aging its live
+sweep, potentially reviving an old dash after stun or round end. Claim exact paths
+Assets/TumbangPreso/Runtime/CombatVerbs.cs and Tests/PlayMode/DefenderLungeTravelTests.cs,
+plus TODO/report. Reproduce actual host dash interrupted before contact, then an
+attacker entering only after recovery; expected no tag without a fresh lunge.
+Two native cases (stagger, round inactivity), baseline then minimal correction.
+No ability-specific changes. Existing ordinary travel/accepted-tag cases reused
+unless the correction alters their active path. No heavy job yet.
+
+Interrupted-lunge baseline2/2fails: after either stagger or ended round, the old
+sweep awards1tag when the expected count is0. Minimal correction retires only
+lunge contact on true inability (round inactive/stun/fear); presentation pause
+retains its frozen window. Final adds pause/resume legitimate-contact check,
+so offline pause is not accidentally converted into attack cancellation.
+
+Interrupted lunge final3/3passes4.04s: both stale sweeps stay retired, genuine
+pause remains motionless and resumes1legal tag. No guard/OOM. Publish explicit
+CombatVerbs/test/report paths; same lunge Feedback row gets resolution note.
+Release runtime/test ownership after remote verification. Full all-roster visuals
+and actual peers remain separate; no existing wire semantics changed.
+Lunge correction dcb64731 remote verified; same existing Feedback lunge row updated
+and re-read. Runtime ownership released. Continue the unfinished tag-body request
+with the smallest contrasting silhouettes: Nemu tagging Dante and Dante tagging
+Nemu at accepted far range. Claim only Tests/PlayMode/CatchReconstructionTests.cs
+initially; source model/assets/abilities remain untouched. Extend the existing
+real-clock contact film with exact art selection and actual skin proximity, then
+inspect outcomes before deciding any runtime fix. No claim of all-roster coverage.
+Contrasting silhouettes baseline2/2fails with visible gaps: Dante-to-Nemu hand is
+30.3cm from actual skin; Nemu-to-Dante24.1cm. Captures inspected; they reproduce
+the owner's remaining whole-body reach problem beyond the original Classic pair.
+Add Runtime/Visual/CharacterAnimator.TagBody.cs to ownership before editing.
+Test bounded adaptive body step for accepted contacts, preserving10percent arm
+stretch and actual motors/scoring. Include original Classic close/far controls.
+If target geometry remains wrong, diagnose that separately rather than enlarging
+arms or loosening contact assertions. No hero-specific mechanics/assets touched.
+
+Adaptive step reduces Nemu-to-Dante skin gap24cm→3cm; reverse remains8.5cm.
+Forward-only correction avoids cancelling the existing close step. Visual critique:
+far38degree lean drives the large head into the smaller victim before the hand.
+Refine to28degree far lean plus42degree shoulder turn and a bounded50cm extra
+accepted-contact step; inset the visual palm target from padded capsule85→70%.
+The old35degree assertion encoded the previous pose, not owner acceptance; change
+that one pose assertion to25degrees for the new28degree direction. Keep all skin
+contact, arm10percent, motor, recovery, score and timing assertions unchanged.
+Run four contrast/Classic cases and inspect pixels before any publication.
+
+Refined tag4/4passes18.33s. Contrasting skin gaps now4.3cm and0.7cm; close/far
+Classic also retain step/contact/recovery. Captures inspected, no arm stretching
+substitute. Qualify this coherent global body change across21authored roster
+models in cyclic pairs, each as tagger and victim once, far accepted distance.
+This is focused model compatibility, not all pair combinations or hero mechanics.
+One integrated native pass, with actual skin proximity/recovery/capsule/scoring
+checks unchanged. Keep human taste and actual peers separately open.
+
+Roster integration21/21passes94.98s, each of21authored models once as tagger and
+victim at far range, maximum skin gap5.5cm. Representative largest/smallest and
+worst-gap captures inspected. General step affects finalized heroes only through
+the explicitly allowed shared tag gesture; no character-specific edits. Final
+coherent check: the existing two authored Eskinita close/far cases on this changed
+source (old authored evidence predates new target/step). No full-player repeat.
+Chronological before/after videos prepared from captured timestamps for later
+owner review, not sent while asleep. Human taste and live peers stay distinct.
+
+Final authored2/2passes14.49s; together27distinct final cases qualify shared
+contact refinement. Representative contact pixels inspected and chronological
+films retained. Publish explicit TagBody/test/report paths, release ownership,
+update same tagged-contact Feedback row and Done. Human verified remains unchecked;
+no claim of all441pairs, perfect composition or actual peers. Next authorized
+presentation pass: read current full specifications and method, research/plan
+each selected effect, preserve finalized heroes and owner-reserved mechanics.
+Tag7b848635 remote verified. Same Feedback row Done checked and Saved to Drive;
+Human verified unchanged. Fresh intake has no new actionable refinement comment.
+Presentation research starts with Cheska wall shatter/field melt. Current full
+Wiki names/durations read; mechanics remain untouched. Direct official Ayaka video
+page loads but footage never decodes (readyState0), so no new frame-study claim.
+Riot VFX clarity guidance read; existing researched kit method is the workflow.
+Small evidence-maintenance claim: tools/playmode_suite.py, to assign only the three
+owned ReplayReadbackSupportTests/DefenderLungeTravelTests/RoundBreakFreezeTests to
+match isolation. Existing plan has other unassigned fixtures; do not repair unrelated
+fixtures or claim the full aggregate gate passes. No Unity run needed for placement.
+Owned fixture placement verified; full plan still reports other pre-existing
+placement issues, including its nested Client helper false positive. No aggregate
+pass is claimed and no unrelated fixture/discovery repair was made.
+
+Fixture placement22d58954 remote verified; tools claim released. Cheska expiry
+plan prepared from source/Wiki/method and primary reference guidance. Explicit
+mechanics discrepancy: WikiColdFeet7.5s, CryoRules5s. Do not alter owner-reserved
+rule; visual must follow assigned/restored Duration, test both. First unit claims
+Assets/TumbangPreso/Runtime/Visual/FrostSurfacePresentation.cs, Shaders/FrostSurface.shader,
+Tests/PlayMode/CheskaExpiryPresentationTests.cs/meta, tools/playmode_suite.py and
+scoped docs. HeroHazards untouched. Capture current native field before visual
+implementation; keep Nova wave unchanged, full danger boundary until its exit.
+
+Cold Feet native baseline captures confirm uniform fading and lacks spatial thaw,
+1/1expected failure. Implement a broad deterministic shader melt mask within the
+existing final0.7s, retaining the exact boundary and authored draped mesh. Keep
+interior islands visible until the final short trace instead of global alpha fade.
+Final check measures rendered coverage, samples5/7.5second durations repeatedly,
+and verifies Nova stays on its unchanged wave path. No gameplay-number edit.
+
+Thaw final2/2passes4.50s: rendered coverage47419→4898pixels while full danger
+edge remains,5/7.5s/repeated samples match, Nova unchanged. Native court stages
+inspected. Capture-only follow-through samples the same0.7s at20fps for a native
+review film; reuse the two distinct passed checks, do not inflate case count.
+No runtime change for this film. Extend edge assertion to its existing half-alpha
+point rather than treating every sub0.1s value as zero.
+
+Thaw native follow-through1/1passes with coverage unchanged47419→4898 and
+15timeline samples. Film and intermediate pixels inspected;2distinct cases total.
+Publish exact shader/presentation/test/meta/partition and evidence; update same
+Cheska chilling-field melt Feedback row and Done, leave Human verified unchecked.
+Release field paths after publication. Wall shatter is still open and next, no
+HeroHazards or ability-rule changes made. No heavy job active.
+Cold Feet29c60f8f remote verified, same melt Feedback row updated/whitened, Done
+checked/Saved and Human verified unchecked. Field runtime/shader claim released.
+Wall breakup plan appended before implementation. Claim Runtime/Visual/CheskaIceVisuals.cs,
+Runtime/Visual/CheskaWallBreak.cs/meta, the single wall-visual call in
+Runtime/Abilities/HeroHazards.cs, existing CheskaExpiryPresentationTests.cs and
+scoped docs. Preserve all hazard mechanics and unrelated edits. Baseline native
+three-hit break captures current center-only puff; expected source-width debris,
+immediate no-collision, duplicate refusal and cleanup. One heavy job at a time.
+
+Wall baseline2/2fails spatial acceptance: eight tiny chunks cover0.93/1.14m
+rather than the actual4.2m arc. Immediate collision retirement/duplicate guard
+already work. Native before/split frames inspected. Concept generated from that
+frame and critiqued: retain distributed breakup, reject opaque/smoothed ice and
+lingering puddles. Implement15hand-specified recipes on the actual slab transforms,
+one render-only0.8s timeline, existing authored shard/material ownership. Only
+HeroHazards change is passing its Transform to this visual entry; mechanics and
+restraint thaw untouched. Final two native hit/flair routes plus films next.
+
+Wall final2/2passes7.42s:15chunks span4.38/4.54m, immediate collision removal,
+no physical debris, duplicate guard and cleanup hold for hits and rotated flair.
+Native split/exit frames inspected. Real-time capture produced only4frames in
+0.85s under readback overhead; make one capture-only20Hz timeline film from the
+same unchanged runtime, rather than misrepresenting those four frames as smooth
+playback. Reuse actual lifetime checks; do not inflate distinct case count.
+
+Wall film capture passes,17native timeline samples inspected and encoded. Final
+2distinct lifetime/hit/flair cases remain the acceptance evidence, no inflated
+count. Publish exact visual files and one-line hazard entry, then same icicle
+shatter row notes/Done; Human verified untouched. Release wall paths after remote
+verification. Current player predates these presentation fixes; build a coherent
+integration candidate later rather than repeating a full build for every effect.
+No heavy job active. Next fresh Feedback intake, then remaining authorized
+presentation rows (Dante shield/status cue, beam/settings where specified).
+
+Dante barrier visibility claim,2026-09-30: source3256934b clean, fetched and no
+remote divergence. Own Runtime/Visual/GeoVfx.cs barrier-only material assignment,
+Shaders/DanteBarrier.shader/meta, Tests/PlayMode/DanteVisibilityTests.cs/meta,
+match fixture placement and scoped docs. Plan at reports/dante-visibility-2026-09-30.
+Baseline native center transmission first, then half-alpha palette-aware rendering.
+No ability mechanics, kit names, ward logo or other characters claimed. One heavy
+job; free disk774MB, avoid a new full player build until sufficient headroom.

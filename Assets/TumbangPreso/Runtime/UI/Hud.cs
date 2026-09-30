@@ -1042,27 +1042,15 @@ namespace TumbangPreso.UI
             if (_indicators != null) _indicators.gameObject.SetActive(false);
             if (_heroDeck != null) _heroDeck.SetActive(false);
 
-            // ⚠️⚠️ THE TWO CARDS THAT ARE NOT CHILDREN OF THIS HUD, SWEPT BY TYPE. 🧑 2026-08-27:
-            // *"fix all these spectator hud problems wtf some shit dont hide"*, with a watcher's
-            // screen showing the YOU card and its stamina bar in the corner. `MatchInstaller`
-            // skips building both for a spectator now, which covers a session that STARTS as one;
-            // this covers the other entry, `MatchInstaller.Bind(seat, spectator: true)`, which
-            // hands an existing player the camera mid-match with both cards already standing.
-            //
-            // ⚠️ BY TYPE RATHER THAN THROUGH A FIELD, because this HUD does not own either object
-            // and giving it a reference to two things it did not create is a second lifetime to
-            // keep in step. They are one-per-scene by construction.
+            // The personal seat/stamina card does not belong to a spectator.
+            // Shared next-taya/standings stay active for frozen round boundaries.
             foreach (var card in FindObjectsByType<YouCard>(FindObjectsInactive.Include,
                                                             FindObjectsSortMode.None))
             {
                 card.gameObject.SetActive(false);
             }
 
-            foreach (var card in FindObjectsByType<RoleSwapCard>(FindObjectsInactive.Include,
-                                                                 FindObjectsSortMode.None))
-            {
-                card.gameObject.SetActive(false);
-            }
+            // Shared round standings remain available while spectating.
 
             BuildSpectatorReadout();
             SetSpectatorReadoutEnabled(true);
@@ -1308,6 +1296,7 @@ namespace TumbangPreso.UI
         public bool Spectating => _spectating;
 
         private bool _cleanFeed;
+        public bool CleanFeedEnabled => _cleanFeed;
 
         /// <summary>
         /// ⚠️ THE NAMEPLATES AND GROUND RINGS ARE NOT PART OF THIS CANVAS, AND A CLEAN FEED THAT

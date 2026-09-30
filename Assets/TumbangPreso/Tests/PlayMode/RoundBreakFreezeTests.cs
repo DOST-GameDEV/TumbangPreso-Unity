@@ -37,6 +37,57 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(60000)]
+        public IEnumerator InitialAllBotSpectatorGetsSharedStandingsButNoPersonalCard()
+        {
+            bool bots = GameLaunch.AllBots;
+            try
+            {
+                GameLaunch.AllBots = true;
+                UI.SceneFlow.Networked = false;
+                UI.SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+                yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(UI.SceneFlow.Eskinita);
+                yield return new WaitForSeconds(.3f);
+                Object.FindAnyObjectByType<SliceRunner>().Begin();
+                yield return null;
+                Assert.IsTrue(UI.Hud.Instance.Spectating);
+                Assert.IsNotNull(Object.FindAnyObjectByType<UI.RoleSwapCard>());
+                Assert.IsNull(Object.FindAnyObjectByType<UI.YouCard>());
+                DrawFrame(); GameServices.Round.EndRound(); GameServices.Match.BeginIntermission();
+                yield return new WaitForSecondsRealtime(.6f);
+                Assert.IsTrue(UI.RoleSwapCard.Showing);
+                Assert.AreEqual(5, HalftimePresentation.Instance.Duration);
+                Assert.IsTrue(PresentationClock.BlocksInput);
+            }
+            finally { GameLaunch.AllBots = bots; }
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator SpectatorsSeeTheRoundCardUnlessTheyChooseCleanFeed()
+        {
+            yield return MapRetrievalProbe.Load(UI.SceneFlow.Eskinita);
+            var hud = UI.Hud.Instance;
+            hud.EnterSpectatorMode();
+            var card = Object.FindObjectsByType<UI.RoleSwapCard>(FindObjectsInactive.Include, FindObjectsSortMode.None).Single();
+            var view = card.GetComponent<UI.TumpRoundSwapView>();
+            DrawFrame();
+            GameServices.Round.EndRound(); GameServices.Match.BeginIntermission();
+            yield return new WaitForSecondsRealtime(.6f);
+            Assert.IsTrue(hud.Spectating);
+            Assert.IsTrue(card.gameObject.activeInHierarchy, "Spectating must not disable the shared round standings owner.");
+            Assert.IsTrue(UI.RoleSwapCard.Showing);
+            Assert.IsTrue(view.Canvas.isActiveAndEnabled);
+            Assert.AreEqual("NEXT ROUND", view.Canvas.GetComponentsInChildren<Text>().First(t => t.name == "RoundHeadline").text);
+            yield return TumpUiCapture.Capture("Feedback-spectator-round-card", view.Canvas, 960, 540, false, true);
+            hud.SetCleanFeed(true); yield return null; yield return null;
+            Assert.IsFalse(view.Canvas.isActiveAndEnabled, "Explicit clean feed must still hide the shared card.");
+            Assert.IsFalse(UI.RoleSwapCard.Showing);
+            Assert.IsTrue(HalftimePresentation.Instance.Active);
+            hud.SetCleanFeed(false); yield return null; yield return null;
+            Assert.IsTrue(UI.RoleSwapCard.Showing, "Leaving clean feed must restore a still-active break card.");
+            Assert.IsTrue(PresentationClock.BlocksInput);
+        }
+
+        [UnityTest, Timeout(60000)]
         public IEnumerator FinalViewAndRealInputsStayFrozenUntilTheHostDeadline()
         {
             var settings = InputSystem.settings;

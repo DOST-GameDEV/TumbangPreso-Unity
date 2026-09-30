@@ -3,6 +3,7 @@ using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.UI;
 
 namespace TumbangPreso.CameraSystem
@@ -451,11 +452,12 @@ namespace TumbangPreso.CameraSystem
         /// Whether this device can read a frame back without stalling.
         ///
         /// ⚠️ ASKED ONCE, IN `Awake`, RATHER THAN PER CAPTURE. Both halves have to be true: the
-        /// device supports asynchronous readback at all, and it can render the RGB565 scratch
-        /// target the two-byte path depends on. A device failing either falls back to the old
+        /// device supports asynchronous readback, can render the RGB565 scratch target,
+        /// and supports reading that exact format. A device failing any check uses the old
         /// synchronous copy, which is slower and correct.
         /// </summary>
         private bool _asyncReadbackWorks;
+        private Texture2D _synchronousReadback;
 
         /// <summary>
         /// True while a clip is covering the screen.
@@ -572,17 +574,16 @@ namespace TumbangPreso.CameraSystem
 
             BindActions();
 
-            // ⚠️⚠️ THE CAPABILITY IS ASKED ONCE, HERE, AND BOTH HALVES OF IT ARE REQUIRED. A
-            // device that cannot do an asynchronous readback keeps the synchronous copy, and so
-            // does one that cannot render the RGB565 scratch target the two-byte path depends on:
-            // falling back to ARGB32 would quietly double the buffer from 46 MB to 92 MB on the
-            // platform least able to afford it, which is the opposite of what § 134.12 asked for.
-            // Asking per capture would be a `SystemInfo` call ten times a second forever.
+            // Render support alone does not guarantee readback support. Linux OpenGL can
+            // render RGB565 while rejecting every async readback of it. Keep the bounded
+            // two-byte ring and use the existing synchronous conversion on those devices.
+            var replayFormat = GraphicsFormatUtility.GetGraphicsFormat(ReplayScratchFormat, false);
             _asyncReadbackWorks = SystemInfo.supportsAsyncGPUReadback &&
-                                  SystemInfo.SupportsRenderTextureFormat(ReplayScratchFormat);
+                                  SystemInfo.SupportsRenderTextureFormat(ReplayScratchFormat) &&
+                                  SystemInfo.IsFormatSupported(replayFormat, GraphicsFormatUsage.ReadPixels);
 
             if (!_asyncReadbackWorks)
-                Debug.Log("[Replay] this device has no asynchronous readback; the capture is the " +
+                Debug.Log("[Replay] this device cannot asynchronously read the replay format; the capture is the " +
                           "old synchronous copy, which is slower and correct.");
 
             PrewarmAsyncReadback();
@@ -1249,7 +1250,20 @@ namespace TumbangPreso.CameraSystem
                 Graphics.Blit(source, scratch);
                 RenderTexture.active = scratch;
 
-                frame.Image.ReadPixels(new Rect(0, 0, ReplayWidth, ReplayHeight), 0, 0, false);
+                // ReadPixels cannot write RGB565 on every backend either. One reusable
+                // RGBA staging image keeps the existing two-byte ring, without allocating
+                // a managed pixel array or doubling every retained frame.
+                if (_synchronousReadback == null)
+                    _synchronousReadback = new Texture2D(ReplayWidth, ReplayHeight,
+                        TextureFormat.RGBA32, mipChain: false) { name = "ReplayReadbackStaging" };
+                _synchronousReadback.ReadPixels(new Rect(0, 0, ReplayWidth, ReplayHeight), 0, 0, false);
+                var pixels = _synchronousReadback.GetRawTextureData<Color32>();
+                var packed = frame.Image.GetRawTextureData<ushort>();
+                for (int i = 0; i < pixels.Length; i++)
+                {
+                    var pixel = pixels[i];
+                    packed[i] = (ushort)(((pixel.r >> 3) << 11) | ((pixel.g >> 2) << 5) | (pixel.b >> 3));
+                }
                 frame.Image.Apply(updateMipmaps: false, makeNoLongerReadable: false);
                 frame.Pending = false;
             }
@@ -2228,6 +2242,8 @@ namespace TumbangPreso.CameraSystem
 
             if (_asyncReadbackWorks) AsyncGPUReadback.WaitAllRequests();
             _outstandingReadbacks = 0;
+            if (_synchronousReadback != null) Destroy(_synchronousReadback);
+            _synchronousReadback = null;
 
             foreach (var frame in _replayFrames) DestroyFrame(frame);
             foreach (var frame in _replayClip) DestroyFrame(frame);

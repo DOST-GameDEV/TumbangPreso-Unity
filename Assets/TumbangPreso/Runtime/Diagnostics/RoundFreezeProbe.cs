@@ -46,7 +46,7 @@ namespace TumbangPreso.Diagnostics
                 frames?.CapturedFrames ?? 0, frames?.Texture?.width ?? 0, frames?.Texture?.height ?? 0,
                 position.x, position.y, position.z };
             _writer.WriteLine(string.Join(",", values.Select(v => Convert.ToString(v, CultureInfo.InvariantCulture))));
-            if (phase?.Active == true && phase.Remaining < 9.5f && _capturedRound != match.RoundNumber)
+            if (phase?.Active == true && phase.Remaining < phase.Duration - .5f && _capturedRound != match.RoundNumber)
             {
                 _capturedRound = match.RoundNumber;
                 ScreenCapture.CaptureScreenshot(Path.ChangeExtension(_output, null) + "-round-" + match.RoundNumber + ".png");

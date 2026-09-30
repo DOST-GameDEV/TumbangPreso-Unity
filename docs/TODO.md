@@ -23,8 +23,11 @@ Owner scope, 2026-09-30: finish the supplied feedback, then continue finding and
 fixing reasonable network, bot, loading, optimization and UI/UX bugs and applicable
 existing TODO work. Work alone, ship coherent batches, validate changed behavior
 before checking it done, and avoid repeated unchanged validation. No resets or
-cross-chat work. Ask before spending service credits. Do not change VFX, SFX,
-animation, models, maps or lighting except for a demonstrated bug fix.
+cross-chat work. Ask before spending service credits. Latest owner direction
+permits broader presentation work after prior actionable requests and before
+continuous manual bug hunting. Research, plan and critique using HERO_KIT_METHOD;
+finalized Paete/Phaister character-specific work remains protected. Ability mechanics
+remain owner-reserved; shared/global fixes apply normally.
 
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins
@@ -64,6 +67,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 
 - [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
   changed rows refresh without replaying entrance. Focused native path passes.
+- [x] ENG-0930-REPLAY-FORMAT Spectator pixel replay: unsupported RGB565 readback
+  no longer silently drops every frame. Exact format gate and one reused RGBA
+  staging image preserve the bounded RGB565 ring. Original3captures all fail;
+  corrected three-colour native capture1/1passes. Full-player/performance scope
+  remains separate. [Evidence](reports/feedback-2026-09-30/replay-format.md).
 - [x] F0930-38 Cloud toon-ramp sampling: opaque and transparent no-mipmap
   lookups use explicit level0. Original shaders reproduce non-finite lighting;
   both final measured lighting contracts pass and actual full-map colours recover.
@@ -87,7 +95,7 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime
   cards, removes redundant warmup line and fits large scores. Native state/bounds
   and inspected 960x540/1600x680 captures pass. [Evidence](reports/feedback-2026-09-30/README.md).
-- [ ] F0930-04 Tagged replay: latest owner Feedback requests2.5seconds animated,
+- [x] F0930-04 Tagged replay: latest owner Feedback requests2.5seconds animated,
   then a1.25second captured tag-frame hold before fade. Implemented with.18s fade;
   3native timing/state cases and2real-clock close/far contact cases pass. The whole
   image holds while simulation/recovery continue. Full-map/player/peer and human
@@ -113,6 +121,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Authored Eskinita close/far native checks now pass2/2, including baked skin
   proximity; no new animation/camera edit. Human/all-roster/player checks remain.
   [Authored-map evidence](reports/feedback-2026-09-30/tag-authored-map.md).
+  Latest cross-body correction adds a bounded accepted-contact step, smaller far
+  lean and stronger shoulder turn without stretching arms or moving motors.
+  Four contrast/Classic,21cyclic all-model and2authored-map native cases pass.
+  Tester taste/all pair combinations/actual peers remain separate.
+  [Current evidence](reports/feedback-2026-09-30/tag-silhouettes.md).
 - [x] F0930-05 Adopted [Xelu prompts](https://thoseawesomeguys.com/prompts/): current
   binding labels and Xbox/PS families resolve whole supplied images, with retained
   fallback for absent variants. Live HUD and training key row use the same resolver.
@@ -130,7 +143,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [x] F0930-07 Longer defender lunge: full charge targets3m in both modes, with
   derived speed, bot approach/celebration bounds and pressure stats. Actual local
   input and host-request travel, repeat refusal, new-range tag and distant miss
-  pass natively. Packet ceiling stays28m/s; protocol97 requires matching builds.
+  pass natively. Interrupted-lunge follow-up prevents the old sweep tagging after
+  stun recovery or a new round; baseline2failures, final3/3including legitimate
+  pause/resume contact pass. [Interruption evidence](reports/feedback-2026-09-30/lunge-interrupt.md).
+  Packet ceiling stays28m/s; protocol97 requires matching builds.
   [Evidence](reports/feedback-2026-09-30/defender-lunge.md). Actual peers unqualified.
 - [x] F0930-08 Visible remaining lifetime: active ultimate rings now drain the
   actual effect clock; reactivation skills retain Again plus seconds remaining.
@@ -257,6 +273,12 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   standings, input lock, no skip and the host-authored deadline. Protocol99 requires
   matching builds. Eight native cases pass; current-scene frame rerun passes1/1.
   Actual peers remain unqualified. [Revision evidence](reports/feedback-2026-09-30/round-timing-replay.md).
+  Actual cloud player then exposed missing spectator standings. Shared card now
+  survives initial/watch transitions while respecting explicit clean feed;3/3
+  native cases pass. Refreshed protocol100 Linux player shows the shared card,
+  completes a custom4round match and enters rematch. Five ordinary boundaries
+  remain frozen; actual peers and new halftime qualification are separate.
+  [Spectator evidence](reports/feedback-2026-09-30/spectator-break.md).
   Latest Harry revision supersedes ordinary3seconds with5seconds, protocol100.
   Halftime remains10seconds/replay. Native boundary/late-client/final-round and
   lock checks pass. [Latest evidence](reports/feedback-2026-09-30/match-ui-revision.md).
@@ -305,9 +327,25 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   skipping completed and human-needed rows. Setup/scope handoffs were given in
   chat for manual copying; no automation or cross-chat action was performed.
 
-Cheska shatter/melt additions and Dante shield-logo addition from the feedback
-remain source context, but new VFX/animation work is excluded by the owner's newer
-restriction. Do not silently implement them or mark them shipped.
+Cheska shatter/melt and Dante shield-logo presentation requests are authorized
+for the later presentation pass by the latest owner instruction. They are not
+shipped. Finish preceding actionable requests, then research references, plan each
+effect with its animation/UI/sound, and critique actual playback. Preserve owner
+mechanics and finalized Paete/Phaister work. Manual bug hunting follows that pass.
+
+- [x] PRESENTATION-CHESKA-EXPIRY: requested field melt and wall shatter are
+  authorized after the prior actionable feedback. Start with field thaw without
+  changing mechanics or HeroHazards. Wiki7.5s/current runtime5s disagreement stays
+  owner-reserved; presentation follows assigned Duration. Native baseline, then
+  restrained spatial melt, lifecycle/render checks and same-row Doc update.
+  [Research and plan](reports/cheska-expiry-2026-09-30/plan.md).
+  Field thaw implemented:2native checks pass, repeated duration sampling and
+  separate Nova verified; coverage retreats to10percent while danger edge remains.
+  Native timeline film/captures inspected. Wall shatter now spreads15authored
+  chunks across the actual arc; third-hit/rotated-flair lifecycle cases pass2/2.
+  Collision retires immediately and debris is nonphysical.
+  [Wall evidence](reports/cheska-expiry-2026-09-30/wall.md).
+  [Thaw evidence](reports/cheska-expiry-2026-09-30/thaw.md).
 
 Current owner order after DOCS-0927: actual loading/optimization,then shared
 network/flow correctness,then remaining applicable QA/TODO requirements. Newer task

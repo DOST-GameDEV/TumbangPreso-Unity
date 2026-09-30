@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 19:56:53Z" end-time="2026-09-30 19:56:57Z" duration="4.5499418">
+  <test-suite type="TestSuite" id="2220" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="985" result="Passed" start-time="2026-09-30 19:56:53Z" end-time="2026-09-30 19:56:57Z" duration="4.549942" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2214" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="985" result="Passed" start-time="2026-09-30 19:56:53Z" end-time="2026-09-30 19:56:57Z" duration="4.540470" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="168533" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2215" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="985" result="Passed" start-time="2026-09-30 19:56:53Z" end-time="2026-09-30 19:56:57Z" duration="4.538084" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2216" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="985" result="Passed" start-time="2026-09-30 19:56:53Z" end-time="2026-09-30 19:56:57Z" duration="4.535694" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1170" name="CheskaExpiryPresentationTests" fullname="TumbangPreso.PlayTests.CheskaExpiryPresentationTests" classname="TumbangPreso.PlayTests.CheskaExpiryPresentationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 19:56:53Z" end-time="2026-09-30 19:56:57Z" duration="4.515344" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1172" name="AssignedLifetimeKeepsFullBoundaryAndThawsInPatches" fullname="TumbangPreso.PlayTests.CheskaExpiryPresentationTests.AssignedLifetimeKeepsFullBoundaryAndThawsInPatches" methodname="AssignedLifetimeKeepsFullBoundaryAndThawsInPatches" classname="TumbangPreso.PlayTests.CheskaExpiryPresentationTests" runstate="Runnable" seed="72075657" result="Passed" start-time="2026-09-30 19:56:53Z" end-time="2026-09-30 19:56:57Z" duration="4.458486" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[FrostThaw] full=47419 late=4898
+]]></output>
+            </test-case>
+            <test-case id="1171" name="NovaKeepsItsSeparateWave" fullname="TumbangPreso.PlayTests.CheskaExpiryPresentationTests.NovaKeepsItsSeparateWave" methodname="NovaKeepsItsSeparateWave" classname="TumbangPreso.PlayTests.CheskaExpiryPresentationTests" runstate="Runnable" seed="1446838925" result="Passed" start-time="2026-09-30 19:56:57Z" end-time="2026-09-30 19:56:57Z" duration="0.044433" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -91,9 +91,13 @@ namespace TumbangPreso.Visual
             }
             float growth = Mathf.Lerp(.03f,1.12f,Mathf.SmoothStep(0,1,seconds/.28f));
             float remaining = Mathf.Max(0,Duration-seconds);
-            float film = Mathf.Clamp01(remaining/.7f);
-            Set(_skin,growth,film);
-            Set(_veins,growth+.04f,Mathf.Clamp01(remaining/.45f));
+            float thaw = Mathf.Clamp01(1-remaining/.7f);
+            _skin.SetFloat("_Thaw",thaw);
+            _veins.SetFloat("_Thaw",thaw);
+            // Coverage retreats in coherent patches, rather than making the entire
+            // floor faint at once. Only the final trace softens before retirement.
+            Set(_skin,growth,Mathf.Clamp01(remaining/.12f));
+            Set(_veins,growth+.04f,Mathf.Clamp01(remaining/.16f));
             // The hazard is live immediately, so its whole boundary is readable
             // from the first frame while the interior freeze spreads inside it.
             Set(_edge,2,Mathf.Clamp01(remaining/.10f));

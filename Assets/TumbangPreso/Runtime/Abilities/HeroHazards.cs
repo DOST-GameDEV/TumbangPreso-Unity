@@ -95,7 +95,7 @@ namespace TumbangPreso.Abilities
                 if (_shattered) return;
                 _shattered=true;
                 foreach (var collider in GetComponentsInChildren<Collider>()) collider.enabled=false;
-                CheskaIceVisuals.Shatter(transform.position,true);
+                CheskaIceVisuals.ShatterWall(transform);
                 // Keep the actual ice-break cue and shared match event. Decorative
                 // fragments have no physics or colliders and cannot shove players.
                 NetCue.Play("sfx_ice_shatter", transform.position);

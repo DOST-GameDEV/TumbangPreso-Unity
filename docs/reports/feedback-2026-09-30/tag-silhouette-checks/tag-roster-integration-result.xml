@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="21" result="Passed" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 19:31:22Z" end-time="2026-09-30 19:32:57Z" duration="94.9825139">
+  <test-suite type="TestSuite" id="2217" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="983" result="Passed" start-time="2026-09-30 19:31:22Z" end-time="2026-09-30 19:32:57Z" duration="94.982514" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2211" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="983" result="Passed" start-time="2026-09-30 19:31:22Z" end-time="2026-09-30 19:32:57Z" duration="94.972583" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="165320" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2212" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="983" result="Passed" start-time="2026-09-30 19:31:22Z" end-time="2026-09-30 19:32:57Z" duration="94.969793" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2213" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="983" result="Passed" start-time="2026-09-30 19:31:22Z" end-time="2026-09-30 19:32:57Z" duration="94.967671" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1130" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="39" result="Passed" start-time="2026-09-30 19:31:23Z" end-time="2026-09-30 19:32:57Z" duration="94.435945" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1153" name="RosterTag_aling_nena_To_dante" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_aling_nena_To_dante" methodname="RosterTag_aling_nena_To_dante" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1176513452" result="Passed" start-time="2026-09-30 19:31:23Z" end-time="2026-09-30 19:31:28Z" duration="4.932567" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] aling_nena torso=(0.00, 0.37, -3.92) hand=(0.89, 0.38, -3.76) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.000896886 frames=44 bodyShift=0.4177769 torsoLean=27.92787 armStretch=1.004699 skinSurfaceGap=0.00539574
+]]></output>
+            </test-case>
+            <test-case id="1161" name="RosterTag_amihan_To_paete" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_amihan_To_paete" methodname="RosterTag_amihan_To_paete" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1039854350" result="Passed" start-time="2026-09-30 19:31:28Z" end-time="2026-09-30 19:31:32Z" duration="4.514717" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] amihan torso=(0.00, 0.37, -3.92) hand=(0.69, 0.48, -3.87) victimTorso=(0.00, 0.71, -2.29) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.007106856 frames=46 bodyShift=0.7088712 torsoLean=28.00574 armStretch=1.09934 skinSurfaceGap=0.01597118
+]]></output>
+            </test-case>
+            <test-case id="1147" name="RosterTag_ate_girlie_To_tikboy" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_ate_girlie_To_tikboy" methodname="RosterTag_ate_girlie_To_tikboy" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="611307408" result="Passed" start-time="2026-09-30 19:31:32Z" end-time="2026-09-30 19:31:37Z" duration="4.478792" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] ate_girlie torso=(0.00, 0.37, -3.92) hand=(0.93, 0.38, -3.85) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.002520636 frames=49 bodyShift=0.4068 torsoLean=27.94139 armStretch=1.00114 skinSurfaceGap=0.03776428
+]]></output>
+            </test-case>
+            <test-case id="1142" name="RosterTag_bayan_To_maring" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_bayan_To_maring" methodname="RosterTag_bayan_To_maring" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1504437313" result="Passed" start-time="2026-09-30 19:31:37Z" end-time="2026-09-30 19:31:41Z" duration="4.414869" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] bayan torso=(0.00, 0.37, -3.92) hand=(0.91, 0.36, -3.83) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.007719114 frames=49 bodyShift=0.4077675 torsoLean=27.96798 armStretch=1.004225 skinSurfaceGap=0.02793503
+]]></output>
+            </test-case>
+            <test-case id="1149" name="RosterTag_bebang_To_jun_jun" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_bebang_To_jun_jun" methodname="RosterTag_bebang_To_jun_jun" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="837446406" result="Passed" start-time="2026-09-30 19:31:41Z" end-time="2026-09-30 19:31:45Z" duration="4.463582" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] bebang torso=(0.00, 0.37, -3.92) hand=(0.93, 0.40, -3.86) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.001789019 frames=49 bodyShift=0.4061839 torsoLean=27.99414 armStretch=1.001399 skinSurfaceGap=0.03896284
+]]></output>
+            </test-case>
+            <test-case id="1155" name="RosterTag_cheska_To_sean" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_cheska_To_sean" methodname="RosterTag_cheska_To_sean" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1188084090" result="Passed" start-time="2026-09-30 19:31:45Z" end-time="2026-09-30 19:31:50Z" duration="4.585647" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] cheska torso=(0.00, 0.37, -3.92) hand=(0.70, 0.48, -3.88) victimTorso=(0.00, 0.52, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.005260393 frames=45 bodyShift=0.6823627 torsoLean=27.9176 armStretch=1.014857 skinSurfaceGap=0.002033949
+]]></output>
+            </test-case>
+            <test-case id="1154" name="RosterTag_dante_To_cheska" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_dante_To_cheska" methodname="RosterTag_dante_To_cheska" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1221972184" result="Passed" start-time="2026-09-30 19:31:50Z" end-time="2026-09-30 19:31:54Z" duration="4.474537" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] dante torso=(0.00, 0.37, -3.92) hand=(0.73, 0.48, -3.88) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.007522509 frames=47 bodyShift=0.6545528 torsoLean=27.9403 armStretch=1.003722 skinSurfaceGap=0.04438281
+]]></output>
+            </test-case>
+            <test-case id="1145" name="RosterTag_inday_To_kuya_boy" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_inday_To_kuya_boy" methodname="RosterTag_inday_To_kuya_boy" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="377149367" result="Passed" start-time="2026-09-30 19:31:54Z" end-time="2026-09-30 19:31:59Z" duration="4.450599" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] inday torso=(0.00, 0.37, -3.92) hand=(0.90, 0.37, -3.78) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.003786013 frames=50 bodyShift=0.4174216 torsoLean=27.99995 armStretch=1.000851 skinSurfaceGap=0.04151654
+]]></output>
+            </test-case>
+            <test-case id="1150" name="RosterTag_jun_jun_To_lola_pacing" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_jun_jun_To_lola_pacing" methodname="RosterTag_jun_jun_To_lola_pacing" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="261625154" result="Passed" start-time="2026-09-30 19:31:59Z" end-time="2026-09-30 19:32:03Z" duration="4.443962" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] jun_jun torso=(0.00, 0.37, -3.92) hand=(0.94, 0.40, -3.87) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.0005741864 frames=50 bodyShift=0.4064628 torsoLean=27.9662 armStretch=1.002385 skinSurfaceGap=0.03914094
+]]></output>
+            </test-case>
+            <test-case id="1146" name="RosterTag_kuya_boy_To_ate_girlie" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_kuya_boy_To_ate_girlie" methodname="RosterTag_kuya_boy_To_ate_girlie" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="449139975" result="Passed" start-time="2026-09-30 19:32:03Z" end-time="2026-09-30 19:32:08Z" duration="4.439576" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] kuya_boy torso=(0.00, 0.37, -3.92) hand=(0.92, 0.37, -3.84) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.0008486956 frames=50 bodyShift=0.4064044 torsoLean=27.9578 armStretch=1.00206 skinSurfaceGap=0.03724791
+]]></output>
+            </test-case>
+            <test-case id="1151" name="RosterTag_lola_pacing_To_mang_kanor" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_lola_pacing_To_mang_kanor" methodname="RosterTag_lola_pacing_To_mang_kanor" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="80750015" result="Passed" start-time="2026-09-30 19:32:08Z" end-time="2026-09-30 19:32:12Z" duration="4.454376" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] lola_pacing torso=(0.00, 0.37, -3.92) hand=(0.93, 0.40, -3.86) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.006300047 frames=48 bodyShift=0.4071797 torsoLean=28.00527 armStretch=1.001415 skinSurfaceGap=0.03650153
+]]></output>
+            </test-case>
+            <test-case id="1152" name="RosterTag_mang_kanor_To_aling_nena" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_mang_kanor_To_aling_nena" methodname="RosterTag_mang_kanor_To_aling_nena" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="175039270" result="Passed" start-time="2026-09-30 19:32:12Z" end-time="2026-09-30 19:32:17Z" duration="4.427455" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] mang_kanor torso=(0.00, 0.37, -3.92) hand=(0.91, 0.39, -3.80) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.001108095 frames=50 bodyShift=0.417634 torsoLean=28.00129 armStretch=1.00193 skinSurfaceGap=0.04156828
+]]></output>
+            </test-case>
+            <test-case id="1143" name="RosterTag_maring_To_totoy" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_maring_To_totoy" methodname="RosterTag_maring_To_totoy" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1064352588" result="Passed" start-time="2026-09-30 19:32:17Z" end-time="2026-09-30 19:32:21Z" duration="4.441323" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] maring torso=(0.00, 0.37, -3.92) hand=(0.92, 0.37, -3.84) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.009511873 frames=49 bodyShift=0.4054667 torsoLean=27.84072 armStretch=1.001516 skinSurfaceGap=0.03950667
+]]></output>
+            </test-case>
+            <test-case id="1158" name="RosterTag_nemu_To_phaister" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_nemu_To_phaister" methodname="RosterTag_nemu_To_phaister" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="634089431" result="Passed" start-time="2026-09-30 19:32:21Z" end-time="2026-09-30 19:32:26Z" duration="4.587227" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] nemu torso=(0.00, 0.36, -3.92) hand=(0.61, 0.27, -3.86) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.003091738 frames=47 bodyShift=0.6933141 torsoLean=27.87831 armStretch=1.00379 skinSurfaceGap=0.0003387928
+]]></output>
+            </test-case>
+            <test-case id="1162" name="RosterTag_paete_To_bayan" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_paete_To_bayan" methodname="RosterTag_paete_To_bayan" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1586818451" result="Passed" start-time="2026-09-30 19:32:26Z" end-time="2026-09-30 19:32:30Z" duration="4.462040" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] paete torso=(0.00, 0.71, -3.94) hand=(1.83, 0.70, -3.90) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.009435728 frames=46 bodyShift=0.5237892 torsoLean=27.99905 armStretch=1 skinSurfaceGap=0.02712916
+]]></output>
+            </test-case>
+            <test-case id="1159" name="RosterTag_phaister_To_rafi" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_phaister_To_rafi" methodname="RosterTag_phaister_To_rafi" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="155708702" result="Passed" start-time="2026-09-30 19:32:30Z" end-time="2026-09-30 19:32:35Z" duration="4.512244" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] phaister torso=(0.00, 0.37, -3.92) hand=(0.72, 0.50, -3.88) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.008493349 frames=47 bodyShift=0.664997 torsoLean=27.93745 armStretch=1.003986 skinSurfaceGap=0.04620116
+]]></output>
+            </test-case>
+            <test-case id="1160" name="RosterTag_rafi_To_amihan" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_rafi_To_amihan" methodname="RosterTag_rafi_To_amihan" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1402405233" result="Passed" start-time="2026-09-30 19:32:35Z" end-time="2026-09-30 19:32:39Z" duration="4.438575" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] rafi torso=(0.00, 0.37, -3.92) hand=(0.72, 0.50, -3.89) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.002656862 frames=48 bodyShift=0.6695871 torsoLean=27.99879 armStretch=1.003086 skinSurfaceGap=0.01770687
+]]></output>
+            </test-case>
+            <test-case id="1156" name="RosterTag_sean_To_zack" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_sean_To_zack" methodname="RosterTag_sean_To_zack" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1876954720" result="Passed" start-time="2026-09-30 19:32:39Z" end-time="2026-09-30 19:32:44Z" duration="4.508516" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] sean torso=(0.00, 0.51, -3.92) hand=(0.99, 0.77, -3.87) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.0004483014 frames=48 bodyShift=0.4721117 torsoLean=27.97405 armStretch=1.060102 skinSurfaceGap=0.05472255
+]]></output>
+            </test-case>
+            <test-case id="1148" name="RosterTag_tikboy_To_bebang" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_tikboy_To_bebang" methodname="RosterTag_tikboy_To_bebang" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="891661601" result="Passed" start-time="2026-09-30 19:32:44Z" end-time="2026-09-30 19:32:48Z" duration="4.420362" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] tikboy torso=(0.00, 0.37, -3.92) hand=(0.93, 0.40, -3.86) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.003309324 frames=50 bodyShift=0.4069669 torsoLean=27.97685 armStretch=1.002159 skinSurfaceGap=0.03890467
+]]></output>
+            </test-case>
+            <test-case id="1144" name="RosterTag_totoy_To_inday" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_totoy_To_inday" methodname="RosterTag_totoy_To_inday" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1021336472" result="Passed" start-time="2026-09-30 19:32:48Z" end-time="2026-09-30 19:32:53Z" duration="4.455248" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] totoy torso=(0.00, 0.37, -3.92) hand=(0.92, 0.38, -3.85) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.007719114 frames=48 bodyShift=0.4074766 torsoLean=27.98697 armStretch=1.004408 skinSurfaceGap=0.03927302
+]]></output>
+            </test-case>
+            <test-case id="1157" name="RosterTag_zack_To_nemu" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_zack_To_nemu" methodname="RosterTag_zack_To_nemu" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="51435920" result="Passed" start-time="2026-09-30 19:32:53Z" end-time="2026-09-30 19:32:57Z" duration="4.476467" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] zack torso=(0.00, 0.37, -3.92) hand=(0.71, 0.47, -3.89) victimTorso=(0.00, 0.36, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.00495331 frames=48 bodyShift=0.6617342 torsoLean=28 armStretch=1.004598 skinSurfaceGap=0.04230142
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
