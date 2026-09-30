@@ -202,6 +202,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   All10 baseline failures reproduce;19 final native receiver cases pass for
   malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
   [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
+- [x] F0930-37 Menu touch-look handback: actual Resume clears a pending menu drag
+  before the next gameplay read. Native baseline reproduces look(12,6); fixed case
+  preserves held touch state and accepts fresh look. Windows protocol99 integration
+  approval check also passes separately. Physical touch hardware unqualified.
+  [Evidence](reports/feedback-2026-09-30/menu-touch-look.md).
 - [x] F0930-36 Seat-request safety and readiness: reject malformed packets and
   wide peer-ID aliases; repeating the current seat preserves Ready, while actual
   changes still clear it. Nine baseline failures;17 fixed native receiver/lobby

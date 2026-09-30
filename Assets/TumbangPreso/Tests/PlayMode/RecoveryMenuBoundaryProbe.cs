@@ -63,6 +63,47 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest,Timeout(60000)]
+        public IEnumerator ResumeDoesNotReplayAPendingTouchLookDrag()
+        {
+            bool previousTouch=InputLayer.TouchInput.Active;
+            GameObject gestureRoot=null;PausePanel pause=null;
+            try
+            {
+                yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);GameServices.Round.BeginRound();
+                var who=GameServices.Round.PlayerAt(1);who.Intent.Parked=false;
+                var reader=who.GetComponent<PlayerInputReader>();
+                InputLayer.TouchInput.ReleaseAll();InputLayer.TouchInput.Active=true;
+                reader.SendMessage("Update");
+                gestureRoot=new GameObject("Menu look gesture");
+                var area=gestureRoot.AddComponent<InputLayer.TouchLookArea>();
+                var drag=new PointerEventData(EventSystem.current){pointerId=0,delta=new Vector2(80,40)};
+                area.OnDrag(drag);reader.SendMessage("Update");
+                Assert.Greater(who.Intent.LookAxis.sqrMagnitude,1,"Control: the real touch look producer must reach gameplay.");
+                var watcher=Object.FindAnyObjectByType<PauseWatcher>();
+                pause=Panel.Open<PausePanel>(watcher);pause.Local=who;yield return null;
+                Assert.IsTrue(who.Intent.Parked);
+                // UI drag callbacks arrive after the early gameplay input Update.
+                // A second finger can resume while the first look pointer remains held.
+                InputLayer.TouchInput.Set(Verb.Sprint,true);
+                area.OnDrag(drag);
+                var resume=Object.FindObjectsByType<Button>().First(b=>b.name=="ResumeMatch"&&b.isActiveAndEnabled);
+                resume.onClick.Invoke();Assert.IsFalse(pause.gameObject.activeInHierarchy);
+                Assert.IsFalse(who.Intent.Parked);
+                yield return null;reader.SendMessage("Update");
+                Assert.AreEqual(Vector2.zero,who.Intent.LookAxis,"A menu-time drag was replayed into the camera after Resume.");
+                Assert.IsTrue(InputLayer.TouchInput.Pressed(Verb.Sprint),"Handback must preserve unrelated held touch state.");
+                area.OnDrag(drag);reader.SendMessage("Update");
+                Assert.Greater(who.Intent.LookAxis.sqrMagnitude,1,"Fresh gameplay look must still work.");
+            }
+            finally
+            {
+                if(pause!=null&&pause.gameObject.activeInHierarchy)pause.Close();
+                if(gestureRoot!=null)Object.DestroyImmediate(gestureRoot);
+                InputLayer.TouchInput.ReleaseAll();InputLayer.TouchInput.Active=previousTouch;
+            }
+        }
+
+        [UnityTest,Timeout(60000)]
         public IEnumerator CustomJumpBindingStillRecoversAfterMenuRelease()
         {
             var settings=InputSystem.settings;var background=settings.backgroundBehavior;var editor=settings.editorInputBehaviorInPlayMode;
