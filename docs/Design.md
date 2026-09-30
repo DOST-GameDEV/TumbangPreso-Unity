@@ -320,7 +320,7 @@ file is 🤖 `build ai`'s; a second binding for one verb costs a human nothing.
 
 | Constant | Value | Where |
 |---|---|---|
-| `CHARGE_FULL_TIME` | **2.5 s** | `carrier.gd` |
+| `CHARGE_FULL_TIME` | **1.25 s** | Current Feedback: faster ordinary throw wind-up; power range and launch speed unchanged |
 | `CHARGE_MIN_POWER` | 0.35 | a tap still throws |
 | `THROW_LOCK_TIME` | **1.25 s** | after a pickup; ÷ the tsinelas' GRIT (§9) → 1.03–1.42 s |
 | `LAUNCH_SPEED` | **18.5 m/s** | at full charge, `slipper.gd`; × the tsinelas' SPEED (§9) → 17.6–19.4 |
