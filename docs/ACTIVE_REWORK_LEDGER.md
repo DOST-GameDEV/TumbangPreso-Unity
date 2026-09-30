@@ -406,3 +406,13 @@ Feedback rows are recorded separately under hidden QA_TUMP_0040/0041; both await
 the shipped note, Human verified untouched. No heavy cloud job running. Publish
 explicit handler/test/report paths, verify remote, update those rows and release
 this reservation. The local Windows build remains independently frozen.
+
+Score/stock de3b3113 is published and remote verified; both Feedback rows now have
+its shipped note. Sixteen native cases pass and all original ten failures remain
+in evidence. Handler reservation released. Diddler next investigates a bot that
+starts a lunge, then finds a punch target close: the Hunt sweep may release the
+charge on the same frame as its punch, spending both tags. Reserve AIController.cs
+StepLungeIntent only, new Tests/PlayMode/AiTagCommitmentTests.cs and metadata,
+focused report and queue/ledger/NETWORKING notes. CombatVerbs is read-only for the
+reproduction, not a gameplay-change target. No defect claim until native proof;
+no kit, local input/tutorial/build or friend loading overlap.
