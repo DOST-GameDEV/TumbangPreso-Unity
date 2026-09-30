@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol102 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol104 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1435,6 +1435,11 @@ Merged Airburst/Frostbite native8/8passes11.33s, no new OOM. Publish integration
 protocol102, then same Airburst note with full-map follow-through still open.
 No need to reimplement incoming Frozen hit or Fetch allocation fix.
 
+Local F0930-09 remaining concrete Wiki rules: claim CryoRules section in Packages/com.tumbangpreso.core/Runtime/RosterReworkRules.cs, CheskaHeroKit.cs, CombatVerbs.cs passive on landed shove, NetSession protocol revision, CheskaWikiRuleTests.cs and existing Core numeric assertion only. Current Wiki specifies Cold Feet7.5s, Absolute Zero1.5s then every player Frozen/Chilled, and Chilling Touch on shove. Five native baseline cases next; no authored visual/sound/animation edits. Contributor Airburst a71d99991/f3ea63a1a integrated; shared Amihan source untouched.
+
+Cheska Wiki baseline Native1control pass/3product mismatches fail; Classic fixture dereferenced its intentionally absent ability component. Initial compile namespace failure retained, one extra baseline launch. Final prep uses null-safe Classic binding, no extra baseline loop. Final candidate protocol103 fixes current Wiki7.5s field,1.5s ultimate/every player including caster and Chilled on landed Hero Strike Cheska shove. Native session93725, profile feedback-cheska-wiki-1001, final XML Logs/feedback-0930/cheska-wiki-final.xml in isolated checkout;596 frozen inputs. Core focused numeric test session28603 runs separately with results in chat scratch work/cheska-core-results. Source/art/profile boundaries preserved.
+
+Cheska rules product cases pass4/4retained from final4pass/1Classic fixture failure; isolated corrected Classic control1/1passes. Five distinct native acceptance cases, Core numeric1/1,596hashes/no drift. Fixture namespace and absent-Classic-component errors retained, no rerun of four unchanged cases. Protocol103. Publish exact current Wiki7.5s field/1.5s all-player ultimate/shove passive. Native sessions93725/53667 and Core28603 terminal. Next one fresh internal Windows build and two-process direct LAN qualification of the integrated candidate; preserve old protocol98 player and Desktop build.
 Follow-through claims existing AmihanAirburstTests.cs only: one authored Eskinita
 case, actual defender lift/travel/confinement and two witness images. Runtime
 unchanged; reuse existing8integration checks. Stop at fresh result and visual
@@ -1467,3 +1472,8 @@ clock/owner-event/recovery plus Amihan names/cooldown, protocol103. Same full
 Amihan row stays open for shared Whirled can-reset review. Airburst alreadyDone.
 No actual-peer/new-player claim. No heavy job active; release these paths after
 remote verification and fresh intake before next claim.
+
+Incoming Cheska rulesd331cd72/ffe5030c preserved, including shared numeric tests.
+Their103already changed gameplay, so combined Second Wind wire contract uses104.
+No runtime implementation overlap besides compatibility version. Recheck merged
+Core status/Amihan/loadout contracts; native passive/flight receipts stay pre-merge.

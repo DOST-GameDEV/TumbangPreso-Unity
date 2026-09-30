@@ -984,6 +984,8 @@ namespace TumbangPreso
 
             victim.ApplyResolvedImpact(push);
             victim.ApplyStagger(Balance.ShoveStun);
+            if (_motor.Mode == GameMode.HeroStrike && _motor.AbilitySystem?.Kit is Abilities.CheskaHeroKit)
+                victim.ApplyChilled();
             Visual.DizzyStars.Attach(victim.transform, Balance.ShoveStun);
             Visual.ComicPopup.Bonk(victim.transform.position);
 

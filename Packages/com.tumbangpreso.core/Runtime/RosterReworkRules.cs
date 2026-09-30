@@ -11,9 +11,9 @@ namespace TumbangPreso.Core
     /// </summary>
     public static class CryoRules
     {
-        /// <summary>COLD FEET, owner: *"The chilling field lasts for 5 seconds"*, *"35 Seconds Cooldown"*.</summary>
+        /// <summary>COLD FEET: current Wiki field lifetime7.5seconds, cooldown35seconds.</summary>
         public const float ColdFeetCooldown = 35.0f;
-        public const float ColdFeetSeconds = 5.0f;
+        public const float ColdFeetSeconds = 7.5f;
         /// <summary>The old Permafrost Sheet's radius and aim band, which already sat in the footprint budget.</summary>
         public const float ColdFeetRadius = 2.3f;
         public const float ColdFeetMinRange = 1.8f;
@@ -35,6 +35,7 @@ namespace TumbangPreso.Core
 
         /// <summary>ABSOLUTE ZERO, owner: *"12 Objective Points"*; Frozen on everyone, then Chilled.</summary>
         public const float AbsoluteZeroCost = 12.0f;
+        public const float AbsoluteZeroDelay = 1.5f;
     }
 
     public static class GeoRules

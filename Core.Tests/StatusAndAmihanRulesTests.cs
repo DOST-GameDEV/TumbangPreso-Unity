@@ -73,12 +73,13 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void TheReworkKitsCarryTheOwnersNumbers()
         {
-            Assert.Equal(5.0f, CryoRules.ColdFeetSeconds);
+            Assert.Equal(7.5f, CryoRules.ColdFeetSeconds);
             Assert.Equal(35.0f, CryoRules.ColdFeetCooldown);
             Assert.Equal(35.0f, CryoRules.FrostbiteCooldown);
             Assert.Equal(3, CryoRules.GlacialWallHits);
             Assert.Equal(35.0f, CryoRules.GlacialWallCooldown);
             Assert.Equal(12.0f, CryoRules.AbsoluteZeroCost);
+            Assert.Equal(1.5f, CryoRules.AbsoluteZeroDelay);
             Assert.Equal(20.0f, GeoRules.ShieldSeconds);
             Assert.Equal(7.5f, GeoRules.BarrierSeconds);
             Assert.Equal(25.0f, GeoRules.BarrierCooldown);

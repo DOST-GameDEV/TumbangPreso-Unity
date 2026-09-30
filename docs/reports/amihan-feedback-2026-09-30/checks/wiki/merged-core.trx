@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="36a30f47-d3d8-4d2c-b47e-e4f5dc2a769c" name="@0cb6403a4672 2026-10-01 06:47:26" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-01T06:47:26.7610709+08:00" queuing="2026-10-01T06:47:26.7610709+08:00" start="2026-10-01T06:47:26.1290415+08:00" finish="2026-10-01T06:47:26.7874717+08:00" />
+  <TestSettings name="default" id="4b9d6399-32e7-46c5-aa05-39e0ee1a00fa">
+    <Deployment runDeploymentRoot="_0cb6403a4672_2026-10-01_06_47_26" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="792fad2d-e3ec-4848-adc4-be0dd8aed0d9" testId="acd831b5-3ef0-7b4b-cd0b-0876f2fc9157" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.TheSkillTreeSwitchOpensEveryBranchAndTheLockedPathStaysIntact" computerName="0cb6403a4672" duration="00:00:00.0002386" startTime="2026-10-01T06:47:26.7326066+08:00" endTime="2026-10-01T06:47:26.7326066+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="792fad2d-e3ec-4848-adc4-be0dd8aed0d9" />
+    <UnitTestResult executionId="e66023fc-1f0e-4851-9485-5337a5626cc4" testId="070c72a4-0c61-b138-2f14-9d49eda260e6" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.CastingASkillCountsTowardsEveryAlternateInThatSlotAndNoOther" computerName="0cb6403a4672" duration="00:00:00.0027986" startTime="2026-10-01T06:47:26.7325728+08:00" endTime="2026-10-01T06:47:26.7325729+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e66023fc-1f0e-4851-9485-5337a5626cc4" />
+    <UnitTestResult executionId="e94f0423-f08b-4261-b12a-1795f14ac9cc" testId="6b0138f6-1874-da19-bf45-ce7b39b859ce" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.PracticeCastsUnlockTheAlternateAndStopAtItsTarget" computerName="0cb6403a4672" duration="00:00:00.0010835" startTime="2026-10-01T06:47:26.7073873+08:00" endTime="2026-10-01T06:47:26.7073873+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e94f0423-f08b-4261-b12a-1795f14ac9cc" />
+    <UnitTestResult executionId="b3239eb7-2672-4b03-befa-cdf9a66dc0ec" testId="ae73b109-e7f7-a9af-c46e-c9585b3d99f9" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.ABuildWireKeepsTwoLegalSidegradesAndDropsAnotherHeros" computerName="0cb6403a4672" duration="00:00:00.0009377" startTime="2026-10-01T06:47:26.7313391+08:00" endTime="2026-10-01T06:47:26.7313391+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b3239eb7-2672-4b03-befa-cdf9a66dc0ec" />
+    <UnitTestResult executionId="ea273ae8-e452-4ecf-8881-bb854f72bfe9" testId="fc483ec4-9eb1-c7a3-c6ea-0f712822bde2" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.StatusesOverlapByMaxNeverAdd" computerName="0cb6403a4672" duration="00:00:00.0001472" startTime="2026-10-01T06:47:26.7314323+08:00" endTime="2026-10-01T06:47:26.7314323+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea273ae8-e452-4ecf-8881-bb854f72bfe9" />
+    <UnitTestResult executionId="e48a99f0-adf5-4897-b2c8-c25a11a0618c" testId="8b6de2c7-6918-c8e2-1cf0-dc6cf46e2b3d" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.NoDefaultDescribesItselfAsBeingAsTuned" computerName="0cb6403a4672" duration="00:00:00.0003167" startTime="2026-10-01T06:47:26.7313093+08:00" endTime="2026-10-01T06:47:26.7313094+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e48a99f0-adf5-4897-b2c8-c25a11a0618c" />
+    <UnitTestResult executionId="ff5cfaeb-4939-4f8a-bf20-2094c37e4115" testId="b4da16bb-f1ae-18c5-3e88-db2e7c8a98cd" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.TheTwoReadingsOfEverySlotAreToldApartByTheirWords" computerName="0cb6403a4672" duration="00:00:00.0010072" startTime="2026-10-01T06:47:26.7072915+08:00" endTime="2026-10-01T06:47:26.7072915+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ff5cfaeb-4939-4f8a-bf20-2094c37e4115" />
+    <UnitTestResult executionId="bd3c83d7-e273-4b46-b5e1-786265f3a67b" testId="ee34a078-e80b-230c-4491-7b949abe366d" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.ACarryCoversExactlyTheWrittenDistance" computerName="0cb6403a4672" duration="00:00:00.0009017" startTime="2026-10-01T06:47:26.7069231+08:00" endTime="2026-10-01T06:47:26.7069231+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bd3c83d7-e273-4b46-b5e1-786265f3a67b" />
+    <UnitTestResult executionId="6be8419e-8f25-4262-939f-4935c2727ed7" testId="97616860-93d8-8bab-f017-7df16637ea40" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheStatusTableIsTheOwnersTable" computerName="0cb6403a4672" duration="00:00:00.0015058" startTime="2026-10-01T06:47:26.7314072+08:00" endTime="2026-10-01T06:47:26.7314072+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6be8419e-8f25-4262-939f-4935c2727ed7" />
+    <UnitTestResult executionId="6dd24b07-1c8b-4ca5-acf0-f8f0ec8fa2dd" testId="1bfc1936-52b1-a74e-0e82-272f7664e729" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.EveryVariantBelongsToAHeroTheGameActuallyHas" computerName="0cb6403a4672" duration="00:00:00.0003244" startTime="2026-10-01T06:47:26.7326341+08:00" endTime="2026-10-01T06:47:26.7326341+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6dd24b07-1c8b-4ca5-acf0-f8f0ec8fa2dd" />
+    <UnitTestResult executionId="49aba583-4870-4f79-a111-43735a86a775" testId="3d53d0c3-c0ee-fa50-c7a9-3247ceeb01a7" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.EveryVariantNamesAGlyphAndItsOwnBaseAbility" computerName="0cb6403a4672" duration="00:00:00.0001873" startTime="2026-10-01T06:47:26.7312785+08:00" endTime="2026-10-01T06:47:26.7312785+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="49aba583-4870-4f79-a111-43735a86a775" />
+    <UnitTestResult executionId="89e927a9-a9e6-41a0-b2e2-55344b4ae343" testId="5b197d89-f9ad-25e6-5888-7f810ab53b6e" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.AFreshAccountHasEveryDefaultUnlockedAndNoAlternate" computerName="0cb6403a4672" duration="00:00:00.0001565" startTime="2026-10-01T06:47:26.7326581+08:00" endTime="2026-10-01T06:47:26.7326581+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="89e927a9-a9e6-41a0-b2e2-55344b4ae343" />
+    <UnitTestResult executionId="45824eaf-205b-4e6a-a8fe-5085d86951f2" testId="aef284fd-c879-2eea-5474-265bba0d0d6e" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.FeatherfallSnapshotAgesOnlyWithTheAdoptedSimulationClock" computerName="0cb6403a4672" duration="00:00:00.0051583" startTime="2026-10-01T06:47:26.7027615+08:00" endTime="2026-10-01T06:47:26.7027761+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="45824eaf-205b-4e6a-a8fe-5085d86951f2" />
+    <UnitTestResult executionId="727232e7-ec10-4186-918a-544f51ec7e43" testId="fe5a3905-f00c-8876-ac93-d8510a04343e" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.AProfileThatHasDoneEverythingUnlocksEveryAchievementInTheCatalog" computerName="0cb6403a4672" duration="00:00:00.0026497" startTime="2026-10-01T06:47:26.7315528+08:00" endTime="2026-10-01T06:47:26.7315529+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="727232e7-ec10-4186-918a-544f51ec7e43" />
+    <UnitTestResult executionId="5bb58d5f-6360-442f-92a6-ac51a3587492" testId="70755510-54d9-f9fa-9d87-4d6d21b798cb" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheSkillTreeIsSwitchedOff" computerName="0cb6403a4672" duration="00:00:00.0000342" startTime="2026-10-01T06:47:26.7315002+08:00" endTime="2026-10-01T06:47:26.7315002+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5bb58d5f-6360-442f-92a6-ac51a3587492" />
+    <UnitTestResult executionId="1f87e591-fb14-4366-b67d-dc6563343b9a" testId="28c087c4-cf6c-58f6-7524-03fbba664a08" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.EveryVariantRowFitsTheTileItIsDrawnOn" computerName="0cb6403a4672" duration="00:00:00.0006593" startTime="2026-10-01T06:47:26.7074633+08:00" endTime="2026-10-01T06:47:26.7074634+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1f87e591-fb14-4366-b67d-dc6563343b9a" />
+    <UnitTestResult executionId="dd0e0727-5180-4e1d-a030-f2e8b531d2cc" testId="3c461b07-e177-7e71-24b9-2873fb568cba" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.EveryHeroHasOptionsInBothSlots" computerName="0cb6403a4672" duration="00:00:00.0051919" startTime="2026-10-01T06:47:26.7057554+08:00" endTime="2026-10-01T06:47:26.7057554+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dd0e0727-5180-4e1d-a030-f2e8b531d2cc" />
+    <UnitTestResult executionId="5ca1c711-d79e-4be0-aca7-3b338c71e6ad" testId="aecf6f19-8f3f-f39f-cb40-edfe839dfbdf" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheReworkKitsCarryTheOwnersNumbers" computerName="0cb6403a4672" duration="00:00:00.0025403" startTime="2026-10-01T06:47:26.7074134+08:00" endTime="2026-10-01T06:47:26.7074134+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ca1c711-d79e-4be0-aca7-3b338c71e6ad" />
+    <UnitTestResult executionId="9a9a7748-66da-42ee-a318-9b6bcd4b7754" testId="5d845c47-109a-0551-23e3-6a14c5dfd414" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.AnIllegalBuildFallsBackToTheDefaultRatherThanBeingHonoured" computerName="0cb6403a4672" duration="00:00:00.0006065" startTime="2026-10-01T06:47:26.7073326+08:00" endTime="2026-10-01T06:47:26.7073326+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a9a7748-66da-42ee-a318-9b6bcd4b7754" />
+    <UnitTestResult executionId="40ad05f8-6e31-49da-a559-bd937c09203e" testId="45d19d1b-6de9-d8e2-98ea-b5cea4ee86c2" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.AmihanUsesTheOwnersCostsAndStaysInsideTheKnockbackCap" computerName="0cb6403a4672" duration="00:00:00.0001464" startTime="2026-10-01T06:47:26.7311344+08:00" endTime="2026-10-01T06:47:26.7311344+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="40ad05f8-6e31-49da-a559-bd937c09203e" />
+    <UnitTestResult executionId="17f123ad-f3bc-4822-91be-e5ceb96ce893" testId="c7609ecb-1748-9c59-c7fb-e875d372d698" testName="TumbangPreso.Core.Tests.HeroLoadoutTests.EveryVariantIsBudgetNeutral" computerName="0cb6403a4672" duration="00:00:00.0005302" startTime="2026-10-01T06:47:26.7326844+08:00" endTime="2026-10-01T06:47:26.7326844+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="17f123ad-f3bc-4822-91be-e5ceb96ce893" />
+    <UnitTestResult executionId="62e08fed-b81c-4f63-8c7c-065929593cb8" testId="61126ad7-dcb6-9670-cee9-a259699bb034" testName="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheReworkStatusesAreTheOwnersAnswers" computerName="0cb6403a4672" duration="00:00:00.0001640" startTime="2026-10-01T06:47:26.7314752+08:00" endTime="2026-10-01T06:47:26.7314753+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="62e08fed-b81c-4f63-8c7c-065929593cb8" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.FeatherfallSnapshotAgesOnlyWithTheAdoptedSimulationClock" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="aef284fd-c879-2eea-5474-265bba0d0d6e">
+      <Execution id="45824eaf-205b-4e6a-a8fe-5085d86951f2" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="FeatherfallSnapshotAgesOnlyWithTheAdoptedSimulationClock" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheReworkStatusesAreTheOwnersAnswers" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="61126ad7-dcb6-9670-cee9-a259699bb034">
+      <Execution id="62e08fed-b81c-4f63-8c7c-065929593cb8" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="TheReworkStatusesAreTheOwnersAnswers" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.AFreshAccountHasEveryDefaultUnlockedAndNoAlternate" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="5b197d89-f9ad-25e6-5888-7f810ab53b6e">
+      <Execution id="89e927a9-a9e6-41a0-b2e2-55344b4ae343" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="AFreshAccountHasEveryDefaultUnlockedAndNoAlternate" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.AnIllegalBuildFallsBackToTheDefaultRatherThanBeingHonoured" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="5d845c47-109a-0551-23e3-6a14c5dfd414">
+      <Execution id="9a9a7748-66da-42ee-a318-9b6bcd4b7754" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="AnIllegalBuildFallsBackToTheDefaultRatherThanBeingHonoured" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.ABuildWireKeepsTwoLegalSidegradesAndDropsAnotherHeros" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="ae73b109-e7f7-a9af-c46e-c9585b3d99f9">
+      <Execution id="b3239eb7-2672-4b03-befa-cdf9a66dc0ec" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="ABuildWireKeepsTwoLegalSidegradesAndDropsAnotherHeros" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.EveryVariantNamesAGlyphAndItsOwnBaseAbility" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="3d53d0c3-c0ee-fa50-c7a9-3247ceeb01a7">
+      <Execution id="49aba583-4870-4f79-a111-43735a86a775" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="EveryVariantNamesAGlyphAndItsOwnBaseAbility" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.TheTwoReadingsOfEverySlotAreToldApartByTheirWords" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="b4da16bb-f1ae-18c5-3e88-db2e7c8a98cd">
+      <Execution id="ff5cfaeb-4939-4f8a-bf20-2094c37e4115" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="TheTwoReadingsOfEverySlotAreToldApartByTheirWords" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.PracticeCastsUnlockTheAlternateAndStopAtItsTarget" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="6b0138f6-1874-da19-bf45-ce7b39b859ce">
+      <Execution id="e94f0423-f08b-4261-b12a-1795f14ac9cc" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="PracticeCastsUnlockTheAlternateAndStopAtItsTarget" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.TheSkillTreeSwitchOpensEveryBranchAndTheLockedPathStaysIntact" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="acd831b5-3ef0-7b4b-cd0b-0876f2fc9157">
+      <Execution id="792fad2d-e3ec-4848-adc4-be0dd8aed0d9" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="TheSkillTreeSwitchOpensEveryBranchAndTheLockedPathStaysIntact" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.EveryVariantIsBudgetNeutral" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="c7609ecb-1748-9c59-c7fb-e875d372d698">
+      <Execution id="17f123ad-f3bc-4822-91be-e5ceb96ce893" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="EveryVariantIsBudgetNeutral" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.StatusesOverlapByMaxNeverAdd" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="fc483ec4-9eb1-c7a3-c6ea-0f712822bde2">
+      <Execution id="ea273ae8-e452-4ecf-8881-bb854f72bfe9" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="StatusesOverlapByMaxNeverAdd" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheReworkKitsCarryTheOwnersNumbers" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="aecf6f19-8f3f-f39f-cb40-edfe839dfbdf">
+      <Execution id="5ca1c711-d79e-4be0-aca7-3b338c71e6ad" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="TheReworkKitsCarryTheOwnersNumbers" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.EveryHeroHasOptionsInBothSlots" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="3c461b07-e177-7e71-24b9-2873fb568cba">
+      <Execution id="dd0e0727-5180-4e1d-a030-f2e8b531d2cc" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="EveryHeroHasOptionsInBothSlots" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.EveryVariantRowFitsTheTileItIsDrawnOn" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="28c087c4-cf6c-58f6-7524-03fbba664a08">
+      <Execution id="1f87e591-fb14-4366-b67d-dc6563343b9a" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="EveryVariantRowFitsTheTileItIsDrawnOn" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.AProfileThatHasDoneEverythingUnlocksEveryAchievementInTheCatalog" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="fe5a3905-f00c-8876-ac93-d8510a04343e">
+      <Execution id="727232e7-ec10-4186-918a-544f51ec7e43" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="AProfileThatHasDoneEverythingUnlocksEveryAchievementInTheCatalog" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.ACarryCoversExactlyTheWrittenDistance" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="ee34a078-e80b-230c-4491-7b949abe366d">
+      <Execution id="bd3c83d7-e273-4b46-b5e1-786265f3a67b" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="ACarryCoversExactlyTheWrittenDistance" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheStatusTableIsTheOwnersTable" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="97616860-93d8-8bab-f017-7df16637ea40">
+      <Execution id="6be8419e-8f25-4262-939f-4935c2727ed7" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="TheStatusTableIsTheOwnersTable" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.AmihanUsesTheOwnersCostsAndStaysInsideTheKnockbackCap" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="45d19d1b-6de9-d8e2-98ea-b5cea4ee86c2">
+      <Execution id="40ad05f8-6e31-49da-a559-bd937c09203e" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="AmihanUsesTheOwnersCostsAndStaysInsideTheKnockbackCap" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests.TheSkillTreeIsSwitchedOff" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="70755510-54d9-f9fa-9d87-4d6d21b798cb">
+      <Execution id="5bb58d5f-6360-442f-92a6-ac51a3587492" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.StatusAndAmihanRulesTests" name="TheSkillTreeIsSwitchedOff" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.CastingASkillCountsTowardsEveryAlternateInThatSlotAndNoOther" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="070c72a4-0c61-b138-2f14-9d49eda260e6">
+      <Execution id="e66023fc-1f0e-4851-9485-5337a5626cc4" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="CastingASkillCountsTowardsEveryAlternateInThatSlotAndNoOther" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.EveryVariantBelongsToAHeroTheGameActuallyHas" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="1bfc1936-52b1-a74e-0e82-272f7664e729">
+      <Execution id="6dd24b07-1c8b-4ca5-acf0-f8f0ec8fa2dd" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="EveryVariantBelongsToAHeroTheGameActuallyHas" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.HeroLoadoutTests.NoDefaultDescribesItselfAsBeingAsTuned" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="8b6de2c7-6918-c8e2-1cf0-dc6cf46e2b3d">
+      <Execution id="e48a99f0-adf5-4897-b2c8-c25a11a0618c" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.HeroLoadoutTests" name="NoDefaultDescribesItselfAsBeingAsTuned" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="acd831b5-3ef0-7b4b-cd0b-0876f2fc9157" executionId="792fad2d-e3ec-4848-adc4-be0dd8aed0d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="070c72a4-0c61-b138-2f14-9d49eda260e6" executionId="e66023fc-1f0e-4851-9485-5337a5626cc4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6b0138f6-1874-da19-bf45-ce7b39b859ce" executionId="e94f0423-f08b-4261-b12a-1795f14ac9cc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ae73b109-e7f7-a9af-c46e-c9585b3d99f9" executionId="b3239eb7-2672-4b03-befa-cdf9a66dc0ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc483ec4-9eb1-c7a3-c6ea-0f712822bde2" executionId="ea273ae8-e452-4ecf-8881-bb854f72bfe9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b6de2c7-6918-c8e2-1cf0-dc6cf46e2b3d" executionId="e48a99f0-adf5-4897-b2c8-c25a11a0618c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b4da16bb-f1ae-18c5-3e88-db2e7c8a98cd" executionId="ff5cfaeb-4939-4f8a-bf20-2094c37e4115" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ee34a078-e80b-230c-4491-7b949abe366d" executionId="bd3c83d7-e273-4b46-b5e1-786265f3a67b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="97616860-93d8-8bab-f017-7df16637ea40" executionId="6be8419e-8f25-4262-939f-4935c2727ed7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1bfc1936-52b1-a74e-0e82-272f7664e729" executionId="6dd24b07-1c8b-4ca5-acf0-f8f0ec8fa2dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3d53d0c3-c0ee-fa50-c7a9-3247ceeb01a7" executionId="49aba583-4870-4f79-a111-43735a86a775" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5b197d89-f9ad-25e6-5888-7f810ab53b6e" executionId="89e927a9-a9e6-41a0-b2e2-55344b4ae343" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aef284fd-c879-2eea-5474-265bba0d0d6e" executionId="45824eaf-205b-4e6a-a8fe-5085d86951f2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe5a3905-f00c-8876-ac93-d8510a04343e" executionId="727232e7-ec10-4186-918a-544f51ec7e43" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="70755510-54d9-f9fa-9d87-4d6d21b798cb" executionId="5bb58d5f-6360-442f-92a6-ac51a3587492" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="28c087c4-cf6c-58f6-7524-03fbba664a08" executionId="1f87e591-fb14-4366-b67d-dc6563343b9a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c461b07-e177-7e71-24b9-2873fb568cba" executionId="dd0e0727-5180-4e1d-a030-f2e8b531d2cc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aecf6f19-8f3f-f39f-cb40-edfe839dfbdf" executionId="5ca1c711-d79e-4be0-aca7-3b338c71e6ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d845c47-109a-0551-23e3-6a14c5dfd414" executionId="9a9a7748-66da-42ee-a318-9b6bcd4b7754" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="45d19d1b-6de9-d8e2-98ea-b5cea4ee86c2" executionId="40ad05f8-6e31-49da-a559-bd937c09203e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c7609ecb-1748-9c59-c7fb-e875d372d698" executionId="17f123ad-f3bc-4822-91be-e5ceb96ce893" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="61126ad7-dcb6-9670-cee9-a259699bb034" executionId="62e08fed-b81c-4f63-8c7c-065929593cb8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="22" executed="22" passed="22" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.20)
+[xUnit.net 00:00:00.07]   Discovering: TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.15]   Discovered:  TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.15]   Starting:    TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.23]   Finished:    TumbangPreso.Core.Tests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

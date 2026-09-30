@@ -10,7 +10,7 @@ The owner receives that event without replaying its paid payload. Older/duplicat
 events do not refresh. Shared ultimate accepted reserved activation starts it too.
 Round reset clears it, and the existing movement evaluator reads its1.25scale.
 
-Protocol103 appends the bounded remaining clock to the existing scoped Amihan
+Protocol104 appends the bounded remaining clock to the existing scoped Amihan
 recovery tail, aged by round-clock progress and gated by existing match, round,
 epoch, generation, request and event watermarks. Transport reset clears it.
 Drift keeps its stable ID, with current name and35s cooldown. Amihan-only retained
