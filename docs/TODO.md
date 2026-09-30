@@ -153,7 +153,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Native shared-clock/UI case passes;960x540/1600x680 captures inspected.
   [Evidence](reports/feedback-2026-09-30/README.md#timed-power-lifetime).
 - [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
-- [ ] F0930-10 Dante: reconcile wiki names/rules/statuses; barrier visibility bug fix.
+- [ ] F0930-10 Dante: reconcile wiki names/rules/statuses (owner-reserved).
+  Barrier visibility implemented separately: half-alpha authored slabs retain their
+  palette and lifecycle. Two distinct native cases pass; observer court capture
+  inspected. Fixed owner-eye capture is self-occluded, not FPP qualification.
+  [Evidence](reports/dante-visibility-2026-09-30/result.md).
 - [ ] F0930-11 Amihan: reconcile wiki names/rules/statuses; fast, strong airborne Airburst.
 - [ ] F0930-12 Nemu and other defined wiki rules: reconcile current behavior; preserve
   unspecified/placeholder kits rather than inventing replacements.
