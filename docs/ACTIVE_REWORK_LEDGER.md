@@ -1282,3 +1282,32 @@ Publish badge/ward integration and exact tests/evidence. No new OOM, no gameplay
 changes. Same shield-logo Feedback row becomes Done after remote verification;
 Human verified stays unchecked. Next reconcile already-implemented beam851f8ca8
 and lighting BUGS-0926.5 evidence instead of duplicating those implementations.
+Dante ward b36a46a0 remote verified, same Doc row updated/white and Done checked,
+Human verified unchecked. Claim released. Beam F0930-17 already implemented at
+851f8ca8; source/candidate beam/shader/SlipperRecallShots match byte-for-byte.
+Claim evidence/docs only, no second beam implementation. Run existing
+SlipperRecallShots.TheRecallMarkIsPhotographedInEveryState with native graphics,
+named profile, explicit outputs and guard. Stop on fresh result and inspected
+near/side/far coverage frames; one bounded tooling repair allowed if necessary.
+Existing beam probe1/1passes14.56s; measured max changed-pixel fraction0.006890,
+under12percent, no newwhite pixels or OOM. Side frame inspected: thin clear blue
+line/pool. TODO claimed an added far frame but source had none. Claim only
+SlipperRecallShots.cs for one capture correction adding11m side view; runtime
+stays851f8ca8. Reuse initial coverage while obtaining the promised far evidence.
+Beam far frame obtained/inspected, line remains clear at11m with actual bot action.
+Extra capture run stopped by memory safety guard before final XML, no new OOM.
+Retain that partial receipt and original1passed14.56s runtime contract; no runtime
+changed. Publish bounded witness addition/evidence and reconcile same Feedback row.
+No further fixture retries. Lighting names/order/default already exist; next two
+focused existing native checks, no visual redesign or duplicated implementation.
+Concurrent remote a7d36881 integrated without conflicts; preserves authored
+bot-hop8a84ebb1 producer buffer and its Windows native baseline/final evidence.
+No overlap with beam/runtime presentation. Beam evidence belongs to pre-merge
+candidate; do not imply a new integrated player. Next lighting qualification
+claims evidence/docs only. Existing Standard/Nostalgic source, legacy migration
+and cards are already shipped; run two focused native checks, no source redesign.
+Lighting existing implementation2/2passes10.39s, legacy/current picks, real world
+switch/restore, current cards and dirty/discard. Captures inspected at1600x680 and
+both map looks, no guard stop/OOM. Publish evidence/docs only, same Lighting row
+Done after remote verification. No lighting values/assets changed. Next integrated
+player refresh and actual first-person barrier review before broader manual play.

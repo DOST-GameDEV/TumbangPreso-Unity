@@ -171,7 +171,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Remaining Fetch eligibility, Catch and Haunt reconciliation stays open.
 - [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
-  Lighting rename/default request is protected by the latest no-lighting restriction.
+  Lighting rename/default/order reconciled with already-shipped BUGS-0926.5:
+  current native2/2passes preserve old choices, default Standard, Nostalgic second,
+  live switch and discard. No lighting redesign or second implementation.
+  [Lighting evidence](reports/feedback-2026-09-30/lighting.md).
   Native Period-key title entry, Escape opening/closing the menu with the same
   actual background texture, and top-down stamina mesh depletion pass. The actual
   IN QUEUE button cancels/restarts both casual modes in a focused native case.
@@ -183,15 +186,17 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   [Evidence](reports/feedback-2026-09-30/can-down-indicator.md).
 - [ ] F0930-15 Placeholder icons: reconcile current shipped icon coverage and correct bugs.
 - [ ] F0930-16 Running/walking defects: diagnose only concrete bugs; no animation redesign.
-- [ ] F0930-17 Highlight beam: owner request 2026-09-30 authorizes the overhaul, "similar to
+- [x] F0930-17 Highlight beam: owner request 2026-09-30 authorizes the overhaul, "similar to
   the highlight beam of the dropped items in apex legends ... noticeable but not too
-  distracting". IMPLEMENTED, EVIDENCE PENDING. The 0.48 m locator column is replaced by a
+  distracting". IMPLEMENTED, NATIVE CHECKED. The 0.48 m locator column is replaced by a
   1.9 m camera-facing line (`Shaders/SlipperBeam.shader`, `Visual/SlipperBeam.cs`): a
   white-hot core about 3 cm wide in a low haze of the highlight colour, a soft road pool,
   slow rising sparkles, a pixel-width floor at range, and the existing pickup-radius fade,
   owner-only gate and highlight setting unchanged. `SlipperRecallShots` gains a far frame.
-  Done means that probe green with the beam under the 12 per cent frame budget, and the
-  near, side and far frames inspected.
+  Native probe passes1/1 in14.56s; max effect coverage0.689percent, below12percent.
+  Near/side/far frames inspected. Far capture-only continuation hit the memory
+  safety guard after producing its frames, so it is not a second passed run.
+  [Evidence](reports/feedback-2026-09-30/beam.md).
 - [x] F0930-18 Throw: remove trajectory line, quicker charge and coherent charge feedback.
   Full ordinary charge is1.25 seconds instead of2.5 in both modes;8 native carrier
   timing/release/observed-state cases pass. Protocol96 requires matching builds.
