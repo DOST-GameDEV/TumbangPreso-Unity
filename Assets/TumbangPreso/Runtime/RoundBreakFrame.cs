@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace TumbangPreso
 {
-    // Keep the last presented world image; never rebuild a replay at a round boundary.
+    // Keep the last presented world image beneath scheduled standings or recorded halftime footage.
     public sealed class RoundBreakFrame : MonoBehaviour
     {
         public RenderTexture Texture => _latest;
@@ -17,6 +17,7 @@ namespace TumbangPreso
         Camera _camera;
         RoundBreakFrameCapture _capture;
         bool _locked;
+        bool _imageVisible = true;
         Material _composite;
         readonly Vector3[] _corners = new Vector3[4];
         readonly List<BaseInputModule> _modules = new List<BaseInputModule>();
@@ -64,7 +65,7 @@ namespace TumbangPreso
         public void Freeze()
         {
             CaptureVisibleOverlay();
-            _locked = true;
+            _locked = true; _imageVisible = true;
             if (EventSystem.current != null)
             {
                 EventSystem.current.SetSelectedGameObject(null);
@@ -125,7 +126,13 @@ namespace TumbangPreso
                 rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
                 rect.offsetMin = rect.offsetMax = Vector2.zero;
             }
-            _image.texture = _latest; _canvas.gameObject.SetActive(true);
+            _image.texture = _latest; _canvas.gameObject.SetActive(_imageVisible);
+        }
+
+        public void SetImageVisible(bool visible)
+        {
+            _imageVisible = visible;
+            if (_canvas != null) _canvas.gameObject.SetActive(_locked && visible);
         }
 
         public void Release()

@@ -1,3 +1,5 @@
+using System;
+using TumbangPreso.CameraSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,7 +10,8 @@ namespace TumbangPreso
     {
         public static HalftimePresentation Instance {get;private set;}
         public static bool Playing=>Instance!=null&&Instance.Active;
-        public const float BreakDuration = 10;
+        public const float BreakDuration = 3;
+        public const float HalftimeDuration = 10;
         public bool Active {get;private set;}
         public bool IsHalftime {get;private set;}
         public long MatchId {get;private set;}
@@ -16,13 +19,16 @@ namespace TumbangPreso
         public int CompletedRound {get;private set;}
         public int NextTaya {get;private set;}
         public double Began {get;private set;}
-        public float Duration=>BreakDuration;
+        public float Duration=>IsHalftime?HalftimeDuration:BreakDuration;
         public float Remaining=>Active?Mathf.Max(0,Duration-(float)(SharedUltimatePhase.Now-Began)):0;
-        public bool HasReplay=>false;
-        public RenderTexture ReplayFrame=>null;
+        public bool HasReplay=>_view?.Ready==true;
+        public RenderTexture ReplayFrame=>_view?.Target;
         public RenderTexture FrozenFrame=>_frame?.Texture;
         public string FallbackReason {get;private set;}
         private RoundBreakFrame _frame;
+        private RecordedWorldView _view;
+        private RecordedMatchClip _clip;
+        private bool _attempted,_standings;
         private Scene _scene;
         public static bool IsMiddleBreak(int completed,int total)=>total>=6&&completed==total/2&&completed<total;
         public static HalftimePresentation Ensure()
@@ -34,7 +40,17 @@ namespace TumbangPreso
         public void BeginHost(int nextRound,int nextTaya)
         {
             if(!NetAuthority.ShouldResolve())return;
-            Receive(GameServices.Match.PresentationMatchId,nextRound-1,nextTaya,SharedUltimatePhase.Now,0,
+            var archive=FindAnyObjectByType<MatchReplayArchive>();
+            long clip=0;
+            if(IsMiddleBreak(nextRound-1,GameServices.Match.TotalRounds)&&archive!=null&&archive.Clips.Count>0)
+            {
+                clip=archive.Clips[0].Clip.Id;
+                // Prefer a complete story already staged for the whole audience.
+                // A late join still shares the same end through the fallback.
+                if(NetAuthority.IsNetworked&&Net.MatchRpc.Instance!=null)
+                    foreach(var candidate in archive.Clips)if(Net.MatchRpc.Instance.ReplayReadyForAudience(candidate.Clip.Id)){clip=candidate.Clip.Id;break;}
+            }
+            Receive(GameServices.Match.PresentationMatchId,nextRound-1,nextTaya,SharedUltimatePhase.Now,clip,
                 IsMiddleBreak(nextRound-1,GameServices.Match.TotalRounds),PresentationClock.RequestedScale);
             Net.MatchRpc.Instance?.BroadcastBreak();
         }
@@ -45,12 +61,14 @@ namespace TumbangPreso
                 ||double.IsNaN(began)||double.IsInfinity(began)||began>SharedUltimatePhase.Now+1||clip<0
                 ||halftime!=IsMiddleBreak(completed,GameServices.Match.TotalRounds)||!float.IsFinite(requestedScale)||requestedScale<0||requestedScale>4)return false;
             if(MatchId==match&&CompletedRound==completed)return false;
-            if(SharedUltimatePhase.Now-began>=BreakDuration)return false;
-            End(false);_frame.Freeze();SharedUltimatePhase.Instance?.Cancel();
+            if(SharedUltimatePhase.Now-began>=(halftime?HalftimeDuration:BreakDuration))return false;
+            End(false);
+            if(halftime)FindAnyObjectByType<UI.RoleSwapCard>()?.DismissAndPractice();
+            _frame.Freeze();SharedUltimatePhase.Instance?.Cancel();
             MatchId=match;CompletedRound=completed;NextTaya=nextTaya;Began=began;ClipId=clip;IsHalftime=halftime;
-            _scene=SceneManager.GetActiveScene();Active=true;FallbackReason=null;
+            _scene=SceneManager.GetActiveScene();Active=true;_attempted=false;_standings=false;FallbackReason=null;
             PresentationClock.RequestScale(requestedScale);PresentationClock.Hold();FreshInput();
-            FindAnyObjectByType<UI.RoleSwapCard>()?.ShowScheduledBreak(completed+1,nextTaya,Remaining,null);
+            if(!halftime)FindAnyObjectByType<UI.RoleSwapCard>()?.ShowScheduledBreak(completed+1,nextTaya,Remaining,null);
             return true;
         }
         private void Update()
@@ -61,10 +79,44 @@ namespace TumbangPreso
             {End(false);return;}
             float age=(float)(SharedUltimatePhase.Now-Began);
             if(age>=Duration){End(true);return;}
+            if(!IsHalftime)return;
+            if(!_attempted&&age>=.2f)
+            {
+                _attempted=true;
+                var archive=FindAnyObjectByType<MatchReplayArchive>();
+                if(archive!=null)foreach(var retained in archive.Clips)if(retained.Clip.Id==ClipId&&retained.Clip.MatchId==MatchId)_clip=retained.Clip;
+                if(_clip==null)_clip=Net.MatchRpc.Instance?.ReceivedReplay(ClipId);
+                if(age<=.6f&&_clip!=null&&_clip.Duration<=4.5f&&!Settings.SettingsStore.Current.ReducedUiMotion)
+                {
+                    try
+                    {
+                        _view=new RecordedWorldView(transform,_clip);
+                        if(SharedUltimatePhase.Now-Began>1){_view.Dispose();_view=null;}
+                    }
+                    catch(Exception failure){Debug.LogWarning("[Replay] View unavailable: "+failure.Message);}
+                }
+                if(_view?.Ready!=true)
+                { Debug.Log("[Replay] clip="+ClipId+" unavailable: "+(_clip==null?"canonical bytes missing":_view?.UnavailableReason??"view preference or scene"));_view?.Dispose();_view=null;FallbackReason=ClipId==0?"No complete highlight this half":"Replay unavailable on this screen"; }
+            }
+            if(_view?.Ready==true&&age<5.8f)
+            {
+                // Real-time setup, a brief contact slowdown, then full consequence.
+                float elapsed=Mathf.Max(0,age-.35f),before=_clip.Contact-_clip.Start-.18f;
+                float offset=elapsed<=before?elapsed:elapsed<=before+.86f?before+(elapsed-before)*.5f:elapsed-.43f;
+                try{_view.Draw(_clip.Start+offset);}
+                catch(Exception failure){Debug.LogWarning("[Replay] Recorded view failed: "+failure.Message);_view.Dispose();_view=null;FallbackReason="Replay unavailable on this screen";}
+            }
+            _frame.SetImageVisible(_view?.Ready!=true||age>=5.8f);
+            if(!_standings&&_attempted&&(_view==null||age>=5.8f))
+            {
+                _standings=true;_view?.Dispose();_view=null;
+                FindAnyObjectByType<UI.RoleSwapCard>()?.ShowScheduledBreak(CompletedRound+1,NextTaya,Remaining,FallbackReason);
+            }
         }
         public void End(bool advance)
         {
             bool wasActive=Active;Active=false;IsHalftime=false;
+            _clip=null;_view?.Dispose();_view=null;
             _frame?.Release();
             if(wasActive){PresentationClock.Release();FreshInput();}
             if(advance&&wasActive&&NetAuthority.ShouldResolve()&&GameServices.Match?.IsWarmupBuffer==true)GameServices.Match.AdvanceRound();
