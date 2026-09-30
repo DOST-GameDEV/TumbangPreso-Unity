@@ -287,6 +287,13 @@ protocol refusal and all compiled assemblies. Actual player remains frozen7cb.
 No heavy job active. Next: update existing round-pause Feedback note after push,
 then independent authorized victory-screen/engineering bugs without reserved paths.
 
+Publication complete through9a97f5167, remote HEAD verified. Existing round-pause
+Feedback note updated using a fresh required revision:6native plus real Windows
+peer qualification, shared10s freeze and protocol98. Native checkbox still pending
+the unavailable selected browser. No new browser tabs or native processes remain.
+Next independent unit is current victory-screen input feedback or network/bot bugs;
+re-read current Doc and ownership first. Do not rerun qualified frozen-boundary cases.
+
 
 Cloud revised replay unit:2.5s recorded animation,1.25s immutable captured tag
 frame,.18s fade. Recovery clamps/interruptions remain active; no live-world pause.
