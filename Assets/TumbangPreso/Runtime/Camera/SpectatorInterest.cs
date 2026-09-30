@@ -295,7 +295,11 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         public const float ResetSeconds = 2.4f;
 
-        /// <summary>A charging throw, in seconds. `Balance.ChargeFullTime` is 2.5.</summary>
+        /// <summary>
+        /// A charging throw's interest window, in seconds. It was written when
+        /// `Balance.ChargeFullTime` was 2.5 s; the charge is 0.875 s now and this window is
+        /// left as it was, because it is the spectator's lead-in, not the throw's timing.
+        /// </summary>
         public const float ThrowPrepSeconds = 2.5f;
 
         /// <summary>A quiet establishing shot, in seconds.</summary>

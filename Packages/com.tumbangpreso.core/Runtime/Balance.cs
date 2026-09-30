@@ -525,7 +525,10 @@
 
         // Faster ordinary wind-up requested in Feedback. Power range, launch
         // speed and retrieval recovery remain unchanged in both modes.
-        public const float ChargeFullTime = 1.25f;
+        // Owner, 2026-09-30, a second time: "make charge up of tsinelas faster by
+        // about 30%". 1.25 s less 30 per cent is 0.875 s. Peers exchange charge in
+        // SECONDS against this number, so it moved `NetSession.ProtocolVersion`.
+        public const float ChargeFullTime = 0.875f;
         public const float ChargeMinPower = 0.35f;
         public const float ThrowLockTime = 1.25f;
         /// <summary>How close a body's FEET have to be to a resting tsinelas to pick it up.

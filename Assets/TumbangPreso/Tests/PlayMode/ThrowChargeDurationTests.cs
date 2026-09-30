@@ -63,9 +63,11 @@ namespace TumbangPreso.PlayTests
         }
 
         [TestCase(GameMode.Classic), TestCase(GameMode.HeroStrike)]
-        public void FullPowerIsReadyAfterOneAndAQuarterSeconds(GameMode mode)
+        public void FullPowerIsReadyAfterTheSharedChargeTime(GameMode mode)
         {
-            Hold(mode, 1.25f);
+            // The requested number itself: 1.25 s less 30 per cent (owner, 2026-09-30).
+            Assert.That(Balance.ChargeFullTime, Is.EqualTo(.875f).Within(.0001f));
+            Hold(mode, Balance.ChargeFullTime);
             Assert.That(_carrier.ChargeRatio, Is.EqualTo(1f).Within(.0001f));
             Assert.That(_carrier.ObservedChargePower, Is.EqualTo(1f).Within(.0001f));
             Assert.That(_shoe.State, Is.EqualTo(SlipperState.Held));
@@ -74,7 +76,7 @@ namespace TumbangPreso.PlayTests
         [TestCase(GameMode.Classic), TestCase(GameMode.HeroStrike)]
         public void HalfChargeAndLongHoldsStayBounded(GameMode mode)
         {
-            Hold(mode, .625f);
+            Hold(mode, Balance.ChargeFullTime * .5f);
             Assert.That(_carrier.ChargeRatio, Is.EqualTo(.5f).Within(.0001f));
             using (NetCue.SuppressRelay()) Step.Invoke(_carrier, new object[] { 10f });
             Assert.That(_carrier.ChargeRatio, Is.EqualTo(1f));
@@ -83,7 +85,7 @@ namespace TumbangPreso.PlayTests
         [TestCase(GameMode.Classic), TestCase(GameMode.HeroStrike)]
         public void ReleaseUsesTheDisplayedFullPowerAndClearsWindup(GameMode mode)
         {
-            Hold(mode, 1.25f);
+            Hold(mode, Balance.ChargeFullTime);
             Assert.That(_carrier.ChargeRatio, Is.EqualTo(1f));
             var expected = _carrier.LaunchVelocityNow();
             _motor.Intent.Set(Verb.SpecialAbility, false);
@@ -99,9 +101,9 @@ namespace TumbangPreso.PlayTests
         public void ObservedChargeUsesTheSameNewDuration(GameMode mode)
         {
             _motor.Mode = mode;
-            _carrier.ApplyObservedCharge(true, .625f);
+            _carrier.ApplyObservedCharge(true, Balance.ChargeFullTime * .5f);
             Assert.That(_carrier.ObservedChargePower, Is.EqualTo(.5f).Within(.0001f));
-            _carrier.ApplyObservedCharge(true, 1.25f);
+            _carrier.ApplyObservedCharge(true, Balance.ChargeFullTime);
             Assert.That(_carrier.ObservedChargePower, Is.EqualTo(1f));
             _carrier.ApplyObservedCharge(false);
             Assert.That(_carrier.ObservedChargePower, Is.EqualTo(-1f));

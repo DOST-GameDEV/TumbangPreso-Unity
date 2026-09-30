@@ -309,8 +309,8 @@ namespace TumbangPreso.CameraSystem
         ///
         /// ⚠️⚠️ 3.5 s IS THE APPROACH, AND IT IS MEASURED AGAINST THE PLAY RATHER THAN PICKED.
         /// An attacker crosses the 14 m box at `Speed * AttackerSpeedScale` = 2.53 m/s, so the
-        /// run into a tag is about three seconds; `Balance.ChargeFullTime` is 2.5 s, so a full
-        /// throw charge is under it too. **A replay that starts at the impact shows the result
+        /// run into a tag is about three seconds; `Balance.ChargeFullTime` is 0.875 s (it was
+        /// 2.5 s when this was measured), so a full throw charge is well under it. **A replay that starts at the impact shows the result
         /// and hides the decision**, and the decision is the thing worth watching twice.
         /// </summary>
         private const float LeadInSeconds = 3.5f;

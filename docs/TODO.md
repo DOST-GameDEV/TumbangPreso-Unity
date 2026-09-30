@@ -89,17 +89,31 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [ ] F0930-16 Running/walking defects: diagnose only concrete bugs; no animation redesign.
 - [ ] F0930-17 Highlight beam: owner request 2026-09-30 authorizes the overhaul, "similar to
   the highlight beam of the dropped items in apex legends ... noticeable but not too
-  distracting". IMPLEMENTED, EVIDENCE PENDING. The 0.48 m locator column is replaced by a
+  distracting". IMPLEMENTED at 851f8ca8. The 0.48 m locator column is replaced by a
   1.9 m camera-facing line (`Shaders/SlipperBeam.shader`, `Visual/SlipperBeam.cs`): a
   white-hot core about 3 cm wide in a low haze of the highlight colour, a soft road pool,
   slow rising sparkles, a pixel-width floor at range, and the existing pickup-radius fade,
-  owner-only gate and highlight setting unchanged. `SlipperRecallShots` gains a far frame.
-  Done means that probe green with the beam under the 12 per cent frame budget, and the
-  near, side and far frames inspected.
+  owner-only gate and highlight setting unchanged. Mac editor evidence:
+  `SlipperRecallShots.TheRecallMarkIsPhotographedInEveryState` 1/1, beam coverage at most
+  0.66 per cent of a 1280x720 frame against the 12 per cent budget; side frame inspected and
+  shown to the owner before push. Still OPEN: a far (across-the-street) frame. Live bots
+  blocked three attempts and the last camera landed inside a house, so readability at range
+  is unphotographed and the probe no longer carries that camera.
 - [ ] F0930-18 Throw: remove trajectory line, quicker charge and coherent charge feedback.
   Full ordinary charge is1.25 seconds instead of2.5 in both modes;8 native carrier
   timing/release/observed-state cases pass. Protocol96 requires matching builds.
   [Evidence](reports/feedback-2026-09-30/throw-charge-duration.md).
+  Owner, 2026-09-30, later: "make charge up of tsinelas faster by about 30% and overhaul
+  the trajectory line. make it even smoother." This supersedes "remove trajectory line":
+  the line stays and is rebuilt. Full charge is 0.875 s (1.25 s less 30 per cent),
+  Protocol 98. `TrajectoryPreview` is now one continuous tapered ribbon with per-vertex
+  fades, a per-pixel anti-aliased keyline (`Resources/UI/AimGuide.shader`), 64 samples and
+  a 50 ms aim ease; it is still a partial guide with no landing marker.
+  Mac editor evidence: `ThrowChargeDurationTests` 8/8 and two `ThrowAimIntegrationProbe`
+  guide cases pass, with rendered BayanPlaza, IlalimNgTulay, SaBubong and motion frames
+  inspected. `PreviewAndReleasedThrowRetainTheSameAimInBothModes` fails before reaching
+  the guide: it casts `TumpMatchReadout._crosshair` to `Text`, and 493ed8584 made that
+  field a `Graphic`. Stale fixture, not this change; the cast needs updating.
   Landing-circle replacement and clearer charge feedback remain open.
 - [ ] F0930-19 FRIEND RESERVED (owner 2026-09-30): loading work is assigned to the
   owner's friend. This agent must not edit loading paths. Other optimization remains
