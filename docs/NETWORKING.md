@@ -1,5 +1,12 @@
 # Networking: Where To Work
 
+Current Windows peer evidence: frozen committed overlaysffe5030c5, protocol103,
+same fresh internal binary on actual localhost UDP host/client. Both reach active
+HeroStrike/Eskinita round2 with matching structural state and no hard faults.
+This is direct local session qualification, not individual skill/online/Relay/
+lossy/reconnect/cross-platform delivery.
+[Evidence](reports/feedback-2026-09-30/engineering-player-1001.md).
+
 Protocol103 requires current Cheska field/delay/passive/all-player targeting rules.
 Cold Feet lasts7.5s, Absolute Zero waits1.5s and includes its caster, and landed
 Hero Strike Cheska shoves apply Chilled. Native cases pass; protocol103 actual

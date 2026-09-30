@@ -243,6 +243,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Queue advert ownership fixed: refused new attempts preserve existing room adverts;
   refused replacements withdraw old active searches/subscriptions. Four native
   offline cases pass. [Evidence](reports/feedback-2026-09-30/queue-advert-ownership.md).
+  Integratedffe5030c5 protocol103 Windows player builds and passes a real two-process
+  direct LAN session through active round2. Input/profile preservation passes;
+  individual skills, online/lossy/cross-platform paths remain unqualified.
+  [Current player evidence](reports/feedback-2026-09-30/engineering-player-1001.md).
   Frozen c55574cd6 Windows build succeeds and passes real two-process direct LAN
   through round2 with replicated movement/objective state and no hard divergence.
   Other network paths and skill use remain unqualified.
