@@ -47,6 +47,9 @@ Tagged replay duration shipped in cebc6963c20160169c385aca6d22bdbf95fae436.
 Five native timing/exit cases pass; first cold-scene timeout and one bounded retry
 are recorded. Capture-helper frames show recovery, not verified replay composition.
 The duration Feedback row has its short shipped note. Contact fidelity stays open.
+The live Feedback completion-destination row now contains the human-labelled answer
+"IT SHOULD RETURN TO THE LOBBY INSTEAD". Preserve the local tutorial reservation;
+its next contributor can reconcile this existing answer instead of asking again.
 
 Diddler reservation: investigate phantom interpolation across teleports in the live
 catch pose history. Retained clips already guard recorded epochs; live Track.Apply

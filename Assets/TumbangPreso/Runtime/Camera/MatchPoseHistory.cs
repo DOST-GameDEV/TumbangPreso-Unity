@@ -56,6 +56,8 @@ namespace TumbangPreso.CameraSystem
             private readonly Transform[] _bones;
             private readonly Frame[] _frames;
             private int _cursor, _count;
+            private int _lastMovementEpoch = int.MinValue, _lastTeleportSerial = int.MinValue;
+            private int _recordedEpoch;
             public bool Ready => _count >= 2;
             public float Newest => _count > 0 ? _frames[(_cursor + Samples - 1) % Samples].Time : 0;
             public float Oldest => _count > 0 ? _frames[(_cursor + Samples - _count) % Samples].Time : 0;
@@ -104,7 +106,21 @@ namespace TumbangPreso.CameraSystem
                 return visual!=null&&visual.Model==Source&&visual.CaptureRecordedAccent(out strength,out colour);
             }
             private int ReadEpoch()
-            {var motor=Source.GetComponentInParent<CharacterMotor>();return motor!=null?motor.MovementEpoch:-1;}
+            {
+                var motor = Source.GetComponentInParent<CharacterMotor>();
+                if (motor == null) return -1;
+                // Network epochs alone miss offline tag/respawn teleports.
+                // Record a local edge token when either accepted network state
+                // or the existing presentation teleport serial changes.
+                if (_lastMovementEpoch != motor.MovementEpoch ||
+                    _lastTeleportSerial != motor.PresentationTeleportSerial)
+                {
+                    _lastMovementEpoch = motor.MovementEpoch;
+                    _lastTeleportSerial = motor.PresentationTeleportSerial;
+                    _recordedEpoch = _recordedEpoch == int.MaxValue ? 1 : _recordedEpoch + 1;
+                }
+                return _recordedEpoch;
+            }
             private bool ReadCoat(out float frost,out float flash,out StunElement element)
             {
                 frost=flash=0;element=StunElement.None;
@@ -241,13 +257,22 @@ namespace TumbangPreso.CameraSystem
                     left = right;
                 }
                 float t = right.Time > left.Time ? Mathf.Clamp01((time-left.Time)/(right.Time-left.Time)) : 0;
+                // Match retained playback: a teleport is a recorded edge, not
+                // a path through positions the actor never occupied.
+                bool flight = left.Holder < 0 && right.Holder < 0 &&
+                    (left.State & 255) == (int)SlipperState.InFlight &&
+                    (right.State & 255) == (int)SlipperState.InFlight;
+                bool discontinuity = left.Epoch >= 0 && right.Epoch >= 0
+                    ? left.Epoch != right.Epoch
+                    : !flight && (right.Position[0] - left.Position[0]).sqrMagnitude > 4;
+                if (discontinuity && time < right.Time) t = 0;
                 for (int i = 0; i < copy.Bones.Length; i++)
                 {
                     var bone = copy.Bones[i];
                     bone.localPosition = Vector3.Lerp(left.Position[i], right.Position[i], t);
                     bone.localRotation = Quaternion.Slerp(left.Rotation[i], right.Rotation[i], t);
                     bone.localScale = Vector3.Lerp(left.Scale[i], right.Scale[i], t);
-                    bone.gameObject.SetActive(t < .5f ? left.Active[i] : right.Active[i]);
+                    bone.gameObject.SetActive(time < right.Time ? left.Active[i] : right.Active[i]);
                 }
             }
         }

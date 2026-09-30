@@ -49,7 +49,9 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   fix recording/reconstruction/contact timing without inventing a hit.
   Victim replay duration is now approximately3 seconds, with5 native timing/exit
   cases passing. [Evidence](reports/feedback-2026-09-30/catch-replay-duration.md).
-  Truthful contact visualization remains open; duration is not proof of contact.
+  Replay teleport discontinuities and visibility timing now pass9 native pose
+  checks. [Evidence](reports/feedback-2026-09-30/live-pose-discontinuity.md).
+  Truthful contact visualization remains open; these fixes are not full contact proof.
 - [ ] F0930-05 Adopt [Xelu prompts](https://thoseawesomeguys.com/prompts/) for keyboard/controller.
 - [x] F0930-06 Default action bindings corrected: left mouse Throw/Tag, right mouse
   Retrieve/Reset/Interact, wheel up-left/down-right, F Shove/Lunge/Ready. IDs and saved
