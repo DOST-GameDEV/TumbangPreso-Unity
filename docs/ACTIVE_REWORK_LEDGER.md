@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol99 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol100 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -827,3 +827,14 @@ completion, saved key/pad glyphs and touch exit all pass. No new OOM. Together
 with the six unchanged passing cases, seven distinct cases qualify this batch.
 Native5second card,25percent powers and key/pad action prompts inspected.
 No runtime pickup change. Publish explicit paths; peers/player/hardware unqualified.
+
+Cloud match UI e21fb5fb integrated at3664d9c5, pushed/remote verified. Existing
+Feedback rows updated and three resolved comments struck; human approval untouched.
+Independent bot recovery6ede1d66 preserved with its3/3 Windows evidence.
+Current focused follow-up: reproduce power deck anchor drift when switching input
+device BEFORE changing accessibility scale. Existing checks covered the opposite
+order only. Claim Runtime/UI/HudReadingLayout.cs, Runtime/UI/TumpPowerReadout.OwnerDeck.cs
+and Tests/PlayMode/TumpNativeHudTests.cs under Assets/TumbangPreso plus docs/evidence.
+Question: does the deck retain touch centre and keyboard corner through repeated
+scale/device changes without shifting unrelated HUD groups? One baseline native
+case then minimal fix if reproduced; stop at actual anchor/scale checks. Retry0.
