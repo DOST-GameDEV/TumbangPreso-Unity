@@ -60,6 +60,12 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 
 - [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
   changed rows refresh without replaying entrance. Focused native path passes.
+- [x] F0930-38 Cloud toon-ramp sampling: opaque and transparent no-mipmap
+  lookups use explicit level0. Original shaders reproduce non-finite lighting;
+  both final measured lighting contracts pass and actual full-map colours recover.
+  Art, palettes and lighting tuning unchanged. Windows/device parity remains
+  unqualified. [Evidence](reports/feedback-2026-09-30/toon-ramp.md).
+
 - [x] F0930-37 New Harry HUD refinement: Ready Up uses a larger live Xelu
   Interact/Ready prompt without the warmup subtitle; shared ability controls and
   their key prompts grow50percent with edge margins preserved. Owner15:31

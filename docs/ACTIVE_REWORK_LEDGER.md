@@ -710,3 +710,27 @@ Assets/TumbangPreso/Tests/PlayMode/WorldCourtCueTests.Stage.cs plus TODO/evidenc
 Both shaders share the same ramp lighting formula; preserve all palette/tuning.
 Add focused native opaque/transparent lighting-contract checks, not broad rework.
 Register the cloud/Linux-only defect in Feedback; Windows reproduction unverified.
+Native contract baseline uses original opaque/transparent shader bytes with the
+existing measured lit/shade test plus transparent parity and finite-value checks.
+Two cases, Bayan map, isolated mip2 graphics. Then one final pass with explicit
+level0 in both shaders and the prior actual-camera comparison on Eskinita. Stop
+at baseline/final lighting evidence and inspected final frames. Retry count0.
+The original opaque AND transparent shaders fail their native calibration with
+non-finite lit/shade values (0passed/2failed), not just dark-looking screenshots.
+The final run uses only explicit level0 ramp reads in both; authored formulas and
+palette stay unchanged. Check both finite lighting contracts and inspect the
+same real-camera baseline with the authored ramp. No resource failure or new OOM.
+Final shader run: opaque lighting and real-camera comparison pass; transparent
+values are now finite, but the new parity case used transparent's different
+.55/.02 band defaults against opaque's .45/.03 contrast expectation. Do not
+change authored defaults or relax the assertion. Correct the calibration material
+to the identical .45/.03 inputs, then rerun that single new transparent case.
+Runtime shader source stays unchanged. First final run is retained (2pass/1fail).
+Corrected transparent calibration passes1/1 in6.79s, exit0. All3 distinct final
+cases qualify the unchanged explicit-level0 shader bytes; baseline2/2 fail on
+non-finite values. Actual-camera authored-ramp frame now has normal colours and
+was inspected. No new OOM. Temporary private probe removed after evidence saved.
+Publish exact shaders/test/docs; update the existing cloud-render Feedback row.
+Next newest Harry comments: smooth circling tutorial attacker, hide tutorial
+ultimate announcement, then ordinary Next Round5seconds (latest revision).
+Keep user sleep updates quiet; no active Unity job.

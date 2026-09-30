@@ -474,7 +474,9 @@ Shader "TumbangPreso/Toon"
             // lights must still fade with range: a near-range-edge point retained
             // most of its color contribution and washed the cast in nearby colors.
             half falloff = lerp(1.0h, atten, _WorldSpaceLightPos0.w);
-            half3 ramp=tex2D(_WorldToonRamp,half2(softBand,.5h)).rgb;
+            // This generated lookup has no mipmaps. Sample its authored level directly;
+            // implicit screen derivatives produced invalid cloud/Mesa lighting samples.
+            half3 ramp = tex2Dlod(_WorldToonRamp, float4(softBand, .5, 0, 0)).rgb;
             c.rgb = s.Albedo * _LightColor0.rgb * lerp(level.xxx,ramp,_WorldLookWeight) * falloff;
             c.a = s.Alpha;
             return c;
