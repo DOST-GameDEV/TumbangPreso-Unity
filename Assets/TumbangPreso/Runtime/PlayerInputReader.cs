@@ -62,6 +62,7 @@ namespace TumbangPreso
             CaptureMenuButton(_sprint,Verb.Sprint);CaptureMenuButton(_emote,Verb.EmoteWheel);
             CaptureMenuButton(_skill1,Verb.Skill1);CaptureMenuButton(_skill2,Verb.Skill2);CaptureMenuButton(_ultimate,Verb.Ultimate);
             InputLayer.TouchInput.ConsumeRecoveryPress();
+            InputLayer.TouchInput.LookDelta = Vector2.zero;
             _motor?.Intent.Clear();_motor?.Intent.CommitFrame();
         }
         private void CaptureMenuButton(InputAction action,Verb verb)
