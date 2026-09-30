@@ -37,6 +37,7 @@ namespace TumbangPreso.CameraSystem
         private readonly List<Renderer> _scratch = new List<Renderer>();
         private readonly HashSet<Renderer> _seen = new HashSet<Renderer>();
         private Renderer[] _copiedItems;
+        public const float ReplayDuration = 3.0f;
         public bool Playing => _stage != null;
         public float Remaining => Playing ? Mathf.Max(0, _duration - (Time.unscaledTime - _began)) : 0;
 
@@ -108,7 +109,7 @@ namespace TumbangPreso.CameraSystem
             _actorCopy = actor.Clone(_stage.transform); _victimCopy = victimTrack.Clone(_stage.transform);
             if (_actorCopy == null || _victimCopy == null) { End(); return; }
             _actorTrack = actor; _victimTrack = victimTrack; _victim = victim; _rig = rig;
-            _contact = contact; _began = Time.unscaledTime; _duration = Mathf.Min(1.1f, victim.StunLeft - .18f);
+            _contact = contact; _began = Time.unscaledTime; _duration = Mathf.Min(ReplayDuration, victim.StunLeft - .18f);
             _round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
             actor.Apply(_actorCopy, contact); victimTrack.Apply(_victimCopy, contact);
             _actorContact = _actorCopy.Root.transform.position; _victimContact = _victimCopy.Root.transform.position;

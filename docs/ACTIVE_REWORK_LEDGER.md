@@ -1,7 +1,7 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-30. Branch: ASTRAReworks. Current unit: FEEDBACK-0930.
-Current protocol:95 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
+Current protocol:96 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 TODO is the work-status queue; this file records resumption and evidence boundaries.
 
@@ -35,14 +35,41 @@ ability-contract paths. Do not continue Fetch/Catch/Haunt or other hero changes.
 The owner directly approved short Feedback-row updates; the Nemu partial fix note
 is written and verified, with the broader row left unchecked.
 
-Diddler reservation: reproduce and reject malformed map-vote packets before
-reader exceptions or partial ballot mutation. Existing wire layouts and voting
-rules remain unchanged; no abilities, input or loading edits.
+Map-vote correction76cd07b7 shipped through d54488bb, remote HEAD verified.
+Thirteen packet cases and four existing rematch/intermission cases pass. Incoming
+controls8a85bb12 are preserved unchanged; two ready/countdown cases pass on the
+integrated candidate. No job is running. Actual peers remain unqualified. The new
+Feedback row was added after explicit owner approval, preserving a native checklist
+and hidden QA_TUMP_0038 range. Its shipped note governs intake; no duplicate work.
+Map-vote handler/test paths are released.
+
+Tagged replay duration shipped in cebc6963c20160169c385aca6d22bdbf95fae436.
+Five native timing/exit cases pass; first cold-scene timeout and one bounded retry
+are recorded. Capture-helper frames show recovery, not verified replay composition.
+The duration Feedback row has its short shipped note. Contact fidelity stays open.
+The live Feedback completion-destination row now contains the human-labelled answer
+"IT SHOULD RETURN TO THE LOBBY INSTEAD". Preserve the local tutorial reservation;
+its next contributor can reconcile this existing answer instead of asking again.
+
+Live pose-history discontinuity fix shipped in86ad3ef777b6e02a3a3377f20373f6dd0915bf76.
+Five native failures reproduced phantom teleport movement and early visibility;
+all9 final cases pass. The same contact Feedback row has a partial-resolution note.
+Full visible-contact proof remains open. Pose-history paths are released.
+
+Ordinary throw charge shipped in cc6476be2c2f112c8b088510e5e3433e4aea896a:
+1.25 seconds to full power, with8 native carrier/observed/release cases passing in
+both modes. Protocol96 requires matching builds. Its Feedback row is updated;
+landing-circle replacement and clearer charge feedback remain open. Charge and
+NetSession compatibility paths are released.
+
+Diddler reservation: Practice popup's Tutorial card is visually highlighted on
+opening without pointer hover. Separate this popup's automatic focus from real
+pointer/keyboard/pad attention, preserving navigation selection and all actions.
 Owned paths:
-- Assets/TumbangPreso/Runtime/Net/MatchRpc.cs (OnSelectMapVoteMsg, OnMapVoteTallyMsg and OnQueueVoteStateMsg only)
-- Assets/TumbangPreso/Tests/PlayMode/MapVotePacketTests.cs and its .meta
-- docs/NETWORKING.md (map-vote validation note only)
-- docs/reports/feedback-2026-09-30/map-vote-packets.md
+- Assets/TumbangPreso/Runtime/UI/Hub/HubButton.cs (opt-in attention presentation only)
+- Assets/TumbangPreso/Runtime/UI/Hub/HubModeSelect.cs (Practice card opt-in only)
+- Assets/TumbangPreso/Tests/PlayMode/PracticeAttentionTests.cs and its .meta
+- docs/reports/feedback-2026-09-30/practice-attention.md
 - docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue and evidence only)
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.

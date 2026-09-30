@@ -521,7 +521,9 @@
         // THE THROW — carrier.gd and slipper.gd
         // -------------------------------------------------------------------
 
-        public const float ChargeFullTime = 2.5f;
+        // Faster ordinary wind-up requested in Feedback. Power range, launch
+        // speed and retrieval recovery remain unchanged in both modes.
+        public const float ChargeFullTime = 1.25f;
         public const float ChargeMinPower = 0.35f;
         public const float ThrowLockTime = 1.25f;
         /// <summary>How close a body's FEET have to be to a resting tsinelas to pick it up.

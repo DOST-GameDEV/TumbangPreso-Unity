@@ -47,6 +47,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   and inspected 960x540/1600x680 captures pass. [Evidence](reports/feedback-2026-09-30/README.md).
 - [ ] F0930-04 Tagged replay: approximately three seconds and truthful contact display;
   fix recording/reconstruction/contact timing without inventing a hit.
+  Victim replay duration is now approximately3 seconds, with5 native timing/exit
+  cases passing. [Evidence](reports/feedback-2026-09-30/catch-replay-duration.md).
+  Replay teleport discontinuities and visibility timing now pass9 native pose
+  checks. [Evidence](reports/feedback-2026-09-30/live-pose-discontinuity.md).
+  Truthful contact visualization remains open; these fixes are not full contact proof.
 - [x] F0930-05 Adopted [Xelu prompts](https://thoseawesomeguys.com/prompts/): current
   binding labels and Xbox/PS families resolve whole supplied images, with retained
   fallback for absent variants. Live HUD and training key row use the same resolver.
@@ -80,11 +85,19 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [ ] F0930-16 Running/walking defects: diagnose only concrete bugs; no animation redesign.
 - [ ] F0930-17 Highlight beam complaint: only a proven VFX bug is authorized now.
 - [ ] F0930-18 Throw: remove trajectory line, quicker charge and coherent charge feedback.
+  Full ordinary charge is1.25 seconds instead of2.5 in both modes;8 native carrier
+  timing/release/observed-state cases pass. Protocol96 requires matching builds.
+  [Evidence](reports/feedback-2026-09-30/throw-charge-duration.md).
+  Landing-circle replacement and clearer charge feedback remain open.
 - [ ] F0930-19 FRIEND RESERVED (owner 2026-09-30): loading work is assigned to the
   owner's friend. This agent must not edit loading paths. Other optimization remains
   authorized later; preserve loading as an outstanding contributor-owned requirement.
 - [ ] F0930-20 Continue focused network, bots, optimization, flow bugs and applicable
   existing TODO requirements after feedback, with actual behavior evidence.
+- [x] F0930-22 Map-vote packet bug found during authorized hunting: reject truncated,
+  trailing and invalid ballots before exceptions or partial mutation; reject sender
+  narrowing aliases.13 packet cases plus4 existing rematch/intermission cases pass
+  natively. [Evidence](reports/feedback-2026-09-30/map-vote-packets.md). Actual peers unqualified.
 - [x] F0930-21 Simplify the same Doc: Done / Bug or feedback / Notes-screenshot table,
   short separate How to use Feedback tab, hidden stable native IDs and retained
   original reports/images. Native table/checkmarks and yellow human-needed rows

@@ -166,7 +166,7 @@ namespace TumbangPreso
         /// <see cref="ChargeRatio"/> on purpose. `carrier.gd`'s header states it: the charge
         /// clock only ticks on the peer that controls the unit, so a third-person wind-up pose
         /// driven from it is invisible to the person being aimed at — which is the whole
-        /// counterplay the 2.5 s charge exists to create.
+        /// counterplay the shared charge duration exists to create.
         ///
         /// -1 when nobody is winding up.
         /// </summary>
