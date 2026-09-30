@@ -9,7 +9,7 @@ Owner requests bottom-up unfinished Feedback, then independent reasonable bug
 hunting. Loading belongs to the friend; hero mechanics remain owner-reserved.
 No subagents, cross-chat work, resets or paid services. Preserve unrelated dirt.
 
-Local published6d382ea58 contains spectator results input(ccd6935e2) and Ready
+Local published1f7012af3 contains spectator results input(ccd6935e2) and Ready
 tally guards(3862bd7d5). Native evidence:1 spectator lifecycle case;25 Ready packet
 cases. Native camera fix is independent of the human-retired player mouse report.
 
@@ -34,7 +34,7 @@ Seat-request unit f542a50f2 is published through6d382ea58: MatchRpc receiver/
 duplicate-seat handling, SeatRequestPacketTests.cs/meta, TODO F0930-36 and report.
 Baseline91252 reproduces9failures; final70795 passes17cases.546frozen inputs and
 no non-metadata drift. Native receiver/lobby scope; live transport unqualified.
-Current touch-look unit is qualified and ready to publish: one-line
+Touch-look unit20331b6ca is published through1f7012af3: one-line
 PlayerInputReader handback clear and RecoveryMenuBoundaryProbe actual Resume case.
 Native baseline53540 reproduces pending look(12,6); final96550 passes old/fresh
 gesture and held-state assertions.547inputs, no non-metadata drift. Two earlier
@@ -42,8 +42,13 @@ namespace compilation failures are setup history, not runtime results.
 Merged Windows protocol99approval1829 passes1/1 separately. No heavy job active.
 Doc guide now states bottom-up intake. Owner repeats: finish actionable Doc queue,
 then initial network/bot/optimization/UX work; continue autonomously while asleep.
-Next publish this unit, then inspect bot recovery press sampling between render
-and physics. Do not repeat qualified cases. Player/transport claims stay separate.
+Current bot recovery unit is qualified and ready to publish: AIController branch,
+BotRecoveryInputTests.cs/meta, ENG-0930-RECOVERY TODO and report. Native91262baseline
+fails3/3;53335fixed passes2/4/6render-update ratios, one real physics recovery,
+buffer retirement and unchanged rate cap.553inputs, no non-metadata drift.
+The descriptive engineering ID avoids colliding with the contributor's F0930-38.
+No heavy job. Publish, refresh actionable Doc intake, then continue initial
+engineering work. Do not repeat qualified cases. Player/transport claims stay separate.
 Detailed older checkpoints below are history; current status is in TODO.
 
 ## Scope And Ownership
@@ -761,6 +766,15 @@ cleanup at lesson change/destroy. Hide only the shared ultimate identity banner
 in training; retain the actual authored introduction/camera, deadline and ability.
 No hero-specific animation/effect edits. Next units:5s ordinary break,25percent
 power sizing and live Xelu retrieve/reset labels.
+
+Menu look20331b6ca is published through1f7012af3; remote verified. Release reader
+and RecoveryMenuBoundaryProbe. Current bot recovery claim: AIController.cs early
+cannot-act branch and BotRecoveryInputTests.cs/meta. Simulate2/4/6render updates
+before real motor physics; recovery tap must persist once and obey Core rate cap.
+No recovery balance, hero mechanics or presentation edits. Baseline before any fix.
+Shader correction and checked HUD/tutorial work are integrated as authored.
+No paid services, Desktop replacement, cross-chat or subagents. No heavy job yet.
+
 Baseline training-orbit-baseline uses2focused cases: fixed-step direction/radius/
 pace trace through the actual motor, and actual introduction render with identity
 header in training versus ordinary mode. Predict direction reversals and visible
