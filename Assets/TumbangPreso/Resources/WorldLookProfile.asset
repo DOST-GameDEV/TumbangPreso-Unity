@@ -196,3 +196,24 @@ MonoBehaviour:
     CloudShade: {r: 0.62, g: 0.54, b: 0.74, a: 1}
     Lift: {r: 0.05, g: 0.03, b: 0.06, a: 1}
     GroundLift: 1
+  - Map: IlalimRebuild
+    Sky: {r: 0.53, g: 0.54, b: 0.6, a: 1}
+    Equator: {r: 0.56, g: 0.55, b: 0.56, a: 1}
+    Ground: {r: 0.52, g: 0.47, b: 0.42, a: 1}
+    ShadowTint: {r: 0.86, g: 0.86, b: 1.06, a: 1}
+    Chalk: {r: 0.96, g: 0.92, b: 0.81, a: 1}
+    ChalkEdge: {r: 0.14, g: 0.11, b: 0.075, a: 1}
+    FogStart: 45
+    FogEnd: 405
+    WearKind: 2
+    Sun: {r: 1, g: 0.93, b: 0.84, a: 1}
+    SunIntensity: 1.1
+    SunElevation: 27
+    ShadowStrength: 0.72
+    Fog: {r: 0.82, g: 0.82, b: 0.81, a: 1}
+    Zenith: {r: 0.58, g: 0.67, b: 0.76, a: 1}
+    Horizon: {r: 0.85, g: 0.84, b: 0.8, a: 1}
+    CloudLight: {r: 1, g: 0.97, b: 0.93, a: 1}
+    CloudShade: {r: 0.72, g: 0.72, b: 0.8, a: 1}
+    Lift: {r: 0.04, g: 0.038, b: 0.05, a: 1}
+    GroundLift: 1

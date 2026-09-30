@@ -139,8 +139,25 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
     wear `TumbangPreso/NearFade`. Leaves use `LagoonFoliage`.
   - About 6.43 million placed triangles (trees 2.78 million). Nothing decimated; trees, lilies,
     rooftop items, street life and parked traffic get cull-only LODGroups.
-  - OPEN: the WorldLookProfile retune in Play (the sample wears the Ilalim row through an alias in
-    `WorldLookProfile.Find`), the owner's look review, then ILALIM-1.5 and 1.6.
+  - **Own look (owner: "change the lighting setting so its less like the lagoon map").** A new
+    `IlalimRebuild` WorldLookProfile row (code defaults and `Resources/WorldLookProfile.asset`;
+    the shipped IlalimNgTulay row is untouched, the old alias is only a fallback). Blender's sun
+    (27 degrees from the west-south-west, 1, .93, .84), shade a greyed lavender at the other rows'
+    level, a smoggy grey sky and fog (zenith .58, .67, .76; horizon .85, .84, .80; fog .82, .82,
+    .81) from 45 to 405 m, the Blender haze's slope. The builder authors the scene to match the
+    row. Renders `Logs/ilalim-unity/v8` (v3 is the Lagoon-like before).
+  - **Live traffic, sound and pigeons (owner: "make the live moving cars and pigeons + the sfx").**
+    `Editor/MapKit/IlalimLifeAuthor.cs`, called by the builder. `KantoTraffic` gained a ROUTES
+    mode (Kanto's grid is unchanged): the court is a closed stretch of Taft, so Padre Faura runs
+    one-way west with a right turn up Taft, Taft's southbound traffic turns into Padre Faura, the
+    south turns into G. Apacible, and two cars queue at the south closure. 21 vehicles (the 8
+    placed Traffic ones plus 13 copies); parked cars stay parked. `KantoStreetSound` with Kanto's
+    clips supplies the bed, engines, horns and sirens. Kanto's pigeon flock (`LagoonFlocks`) lands
+    on perch lines measured against the meshes (guideway copings, roofs, station roofs, pavement
+    edges). `RunReview` now also writes `life_probe.txt`: 90 s stepped without PlayMode, no
+    overlaps, nothing in the court, every pigeon on a perch. No pigeon sounds exist in the repo.
+  - OPEN: the owner's look review in Play, cable shadows striping the court under the 27 degree
+    sun (decision 2 below), then ILALIM-1.5 and 1.6.
 
 ---
 

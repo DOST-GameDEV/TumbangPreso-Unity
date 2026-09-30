@@ -28,7 +28,9 @@ namespace TumbangPreso.EditorTools.MapKit
     /// `SceneFlow.MapRegistry`, not in `GameLaunch.Maps`, not in the build settings. The shipped
     /// IlalimNgTulay scene, its builder and every map index are untouched. Swapping the rebuild in
     /// under the `IlalimNgTulay` name (same index, no protocol bump) is ILALIM-1.6, on the owner's
-    /// say-so. Until then `WorldLookProfile.Find` maps this scene's name to the Ilalim row.
+    /// say-so. Until then the scene wears its own "IlalimRebuild" WorldLookProfile row (see
+    /// <see cref="Lighting"/>), and its moving traffic, street sound and pigeons come from
+    /// IlalimLifeAuthor.
     ///
     /// ⚠️ COORDINATES ARE NOT KANTO'S. The Ilalim kits are modelled in the game's own frame
     /// (Blender X = game x east, Blender Y = game z north), so a Blender point (x, y, z) lands at
@@ -148,6 +150,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 ProveFrame(folder);
                 CheckGeometry(folder);
                 Review(folder);
+                // The traffic and the pigeons stepped for 90 s without PlayMode (life_probe.txt).
+                IlalimLifeAuthor.Probe(folder, ScenePath);
             }
             catch (Exception e) { Debug.LogError(Tag + "FAILED: " + e); EditorApplication.Exit(1); return; }
             EditorApplication.Exit(0);
@@ -206,6 +210,9 @@ namespace TumbangPreso.EditorTools.MapKit
             Gameplay(root, g);
             Tulay(root, g, layout.piers);
             GameplayProps(dressing, g, layout.anchors, byObject);
+            // The moving cars and their street sound, and the pigeons (IlalimLifeAuthor): after the
+            // gameplay colliders, which the pigeons' perch measurement respects.
+            IlalimLifeAuthor.Build(root, dressing);
             Lighting(root, layout);
             EditorSceneManager.MarkSceneDirty(scene);
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
@@ -686,17 +693,25 @@ namespace TumbangPreso.EditorTools.MapKit
 
         // ------------------------------------------------------------------ light, sky and haze
 
-        /// <summary>The scene as authored matches the Blender renders: the late-afternoon sun's
-        /// direction and colour from the layout, and linear fog over the Blender haze's distances
-        /// and colour (tools/author_ilalim_city.py HAZE_START 45 m, HAZE_DEPTH 360 m, HAZE). ⚠️
-        /// Blender CAPS its haze at 0.55; linear fog cannot cap, so it matches the slope up to
-        /// 243 m (where the cap bites) and keeps thickening past it, beyond the game's 240 m far
-        /// plane anyway. The sky material and ambient come from MapAtmosphereAuthor.Apply under
-        /// this scene's own name (Art/MapAtmosphere/IlalimRebuildSky.mat; the shipped
-        /// IlalimNgTulaySky.mat is never written). ⚠️ IN PLAY the Ilalim WorldLookProfile row takes
-        /// over (WorldLookPresentation): its key light, its 52 degree sun elevation (the azimuth is
-        /// kept) and its 36..180 m fog. Retuning that row for the rebuild is the owner's call in
-        /// Play (ILALIM-1.4 TODO), so it is not changed here.</summary>
+        /// <summary>⚠️⚠️ THE REBUILD'S OWN LOOK, NOT THE LAGOON'S (owner, 2026-09-30: "change the
+        /// lighting setting so its less like the lagoon map"). The sample used to wear the shipped
+        /// Ilalim row, whose cyan fog, teal zenith and blue-violet shade read as the Lagoon. It now
+        /// has its own "IlalimRebuild" WorldLookProfile row, and the scene as authored matches that
+        /// row exactly (the LagoonCove pattern), so the look's weight in Play changes only the
+        /// extras it owns (ramp, grade, clouds):
+        ///   * the SUN keeps the Blender direction (the layout's `sun.forward`: 27 degrees up from
+        ///     the west-south-west, the row's elevation 27 so Play does not lift it to 52), in the
+        ///     row's golden-cream key colour, intensity and shadow strength;
+        ///   * the AMBIENT trilight (every shadow's colour here) is the row's dusty mauve-grey,
+        ///     at the other rows' level so the shade under the guideway stays readable;
+        ///   * the FOG is linear from 45 to 405 m, the Blender haze's slope (tools/author_ilalim_city.py:
+        ///     HAZE_START 45, HAZE_DEPTH 360). ⚠️ Blender CAPS its haze at 0.55; linear fog cannot
+        ///     cap, but the cap only bites at 243 m, past the game's 240 m far plane. The colour is
+        ///     the row's warm grey smog rather than the Blender haze's pale blue (0.58, 0.68, 0.82
+        ///     linear), which read too clean for Taft at 5 pm;
+        ///   * the SKY (Art/MapAtmosphere/IlalimRebuildSky.mat; the shipped IlalimNgTulaySky.mat is
+        ///     never written) takes the row's pale grey-teal zenith, warm grey-cream horizon and
+        ///     cloud colours, and the sun's direction.</summary>
         private static void Lighting(Transform root, Layout layout)
         {
             var sun = new GameObject("Sun").AddComponent<Light>();
@@ -718,7 +733,23 @@ namespace TumbangPreso.EditorTools.MapKit
                 RenderSettings.fogStartDistance = h.start;
                 RenderSettings.fogEndDistance = h.start + h.depth;
             }
+            var look = WorldLookProfile.Current.Find(SceneName);
+            if (look != null && look.Map == SceneName)
+            {
+                sun.color = look.Sun; sun.intensity = look.SunIntensity; sun.shadowStrength = look.ShadowStrength;
+                RenderSettings.ambientMode = AmbientMode.Trilight;
+                RenderSettings.ambientSkyColor = look.Sky; RenderSettings.ambientEquatorColor = look.Equator; RenderSettings.ambientGroundColor = look.Ground;
+                RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear;
+                RenderSettings.fogColor = look.Fog; RenderSettings.fogStartDistance = look.FogStart; RenderSettings.fogEndDistance = look.FogEnd;
+            }
+            else Debug.LogWarning(Tag + "No IlalimRebuild row in the WorldLookProfile asset: the scene keeps the layout's Blender light and haze.");
             var sky = RenderSettings.skybox;
+            if (sky != null && look != null && look.Map == SceneName && sky.HasProperty("_Zenith"))
+            {
+                sky.SetColor("_Zenith", look.Zenith); sky.SetColor("_Horizon", look.Horizon);
+                sky.SetColor("_CloudLight", look.CloudLight); sky.SetColor("_CloudShade", look.CloudShade);
+                sky.SetColor("_SunColor", look.Sun);
+            }
             if (sky != null && sky.HasProperty("_SunDirection")) { sky.SetVector("_SunDirection", -sun.transform.forward); EditorUtility.SetDirty(sky); }
             Debug.Log($"{Tag}Sun forward {sun.transform.forward} (elevation {Mathf.Asin(-sun.transform.forward.y) * Mathf.Rad2Deg:F1} deg), " +
                       $"fog {RenderSettings.fogStartDistance}..{RenderSettings.fogEndDistance} m {RenderSettings.fogColor}");

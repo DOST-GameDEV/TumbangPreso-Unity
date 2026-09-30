@@ -59,6 +59,38 @@ namespace TumbangPreso
         public Vector2 StopDwell = new Vector2(5f, 10f);
         public float GreenSeconds = 14f, AmberSeconds = 3f, AllRedSeconds = 1.5f;
 
+        // ⚠️⚠️ § ROUTES, THE SECOND NETWORK (ILALIM-1.4, owner 2026-09-30: "make the live moving
+        // cars"). The Ilalim ng Tulay rebuild is not a # grid: its court IS Taft Avenue, so Taft
+        // carries cars only outside the play walls, and they turn into and out of Padre Faura and
+        // G. Apacible (Editor/MapKit/IlalimLifeAuthor.cs). With `Routes` empty (Kanto) nothing
+        // below changes and the grid drives exactly as before. With routes, a Driver's `Lane` is
+        // its ROUTE index and `Along` is metres from the route's first point. Each route is a
+        // polyline in world space (its own y is the road), may turn, obeys its own stop lines
+        // (each tied to a signal axis, or to none: a closed road, the queue at the court), and
+        // hands its vehicles on to `Next` at its end (or re-enters them at its own start when
+        // clear, the grid's rule). Car following reads the vehicle ahead on the same route by
+        // `Along`, and ANY vehicle ahead within `FollowReach` of the path by world position, so
+        // two routes that share a street keep their gaps without a merge model. Turns cap the
+        // speed from their radius (`TurnGrip`, m/s^2 sideways).
+        [Serializable] public sealed class Route
+        {
+            public string Name;
+            public Vector3[] Points = Array.Empty<Vector3>();
+            public float[] StopAlong = Array.Empty<float>();   // ascending, metres along the route
+            public int[] StopAxis = Array.Empty<int>();        // per stop: 0 along X, 1 along Z, -1 always red, -2 yield to Next
+            public int Next = -1;                               // -1: re-enter at this route's start
+            public float NextAlong;                             // where on Next a vehicle continues
+        }
+        public Route[] Routes = Array.Empty<Route>();
+        public float TurnGrip = 2.2f, FollowReach = 1.8f;
+        // The material names of a signal head's three lamps and of a vehicle's brake lamp. A lamp
+        // whose material carries no emission of its own (the Ilalim kits light only the red lens)
+        // takes the matching `LampGlow` / `BrakeGlow` instead; left empty or black, nothing changes.
+        public string[] LampMaterials = { "signal_red", "signal_amber", "signal_green" };
+        public string BrakeMaterial = "signal_red";
+        public Color[] LampGlow = Array.Empty<Color>();
+        public Color BrakeGlow = Color.black;
+
         // Lanes: 0..3 run along X (lines z = -Road, +Road; dir +X, -X), 4..7 along Z.
         private const int LaneCount = 8;
         private readonly Vector3[] _origin = new Vector3[LaneCount], _dir = new Vector3[LaneCount];
@@ -86,6 +118,7 @@ namespace TumbangPreso
         {
             _random = new System.Random(Guid.NewGuid().GetHashCode());
             BuildLanes();
+            if (RouteMode) BuildRoutes();
             int n = Drivers.Length;
             _speed = new float[n]; _shift = new float[n]; _dwell = new float[n]; _brake = new float[n]; _stopState = new int[n];
             _order = new int[LaneCount][]; _orderCount = new int[LaneCount];
@@ -102,10 +135,14 @@ namespace TumbangPreso
                 _brakeBase[i] = new Color[_vehicleRenderers[i].Length];
                 for (int r = 0; r < _vehicleRenderers[i].Length; r++)
                 {
-                    int slot = SlotOf(_vehicleRenderers[i][r], "signal_red");
+                    int slot = SlotOf(_vehicleRenderers[i][r], BrakeMaterial);
                     var mat = slot >= 0 ? _vehicleRenderers[i][r].sharedMaterials[slot] : null;
                     if (mat == null || !mat.HasProperty(EmissionId)) slot = -1;
-                    else _brakeBase[i][r] = mat.GetColor(EmissionId);
+                    else
+                    {
+                        var glow = mat.GetColor(EmissionId);
+                        _brakeBase[i][r] = glow.maxColorComponent < .001f && BrakeGlow.maxColorComponent > 0f ? BrakeGlow : glow;
+                    }
                     _brakeSlots[i][r] = slot;
                 }
                 // A jeepney that starts AT the stop begins its dwell there.
@@ -118,7 +155,7 @@ namespace TumbangPreso
             {
                 var r = Signals[s];
                 if (r == null) continue;
-                _lampSlots[s] = new[] { SlotOf(r, "signal_red"), SlotOf(r, "signal_amber"), SlotOf(r, "signal_green") };
+                _lampSlots[s] = new[] { SlotOf(r, LampMaterials[0]), SlotOf(r, LampMaterials[1]), SlotOf(r, LampMaterials[2]) };
                 var f = r.transform.forward;
                 _signalAxis[s] = Mathf.Abs(f.x) > Mathf.Abs(f.z) ? 0 : 1;
                 for (int k = 0; k < 3; k++)
@@ -126,9 +163,24 @@ namespace TumbangPreso
                     int slot = _lampSlots[s][k];
                     if (slot >= 0 && r.sharedMaterials[slot].HasProperty(EmissionId))
                         _lampEmission[k] = r.sharedMaterials[slot].GetColor(EmissionId);
+                    if (LampGlow != null && LampGlow.Length == 3) _lampEmission[k] = LampGlow[k];
                 }
             }
             _clock = Range(0f, CycleSeconds);
+            // A vehicle placed just short of a stop line starts no faster than it can stop at it.
+            if (RouteMode)
+                for (int i = 0; i < n; i++)
+                {
+                    var d = Drivers[i];
+                    if (d.Body == null || d.Lane < 0 || d.Lane >= Routes.Length) continue;
+                    foreach (float stop in Routes[d.Lane].StopAlong ?? Array.Empty<float>())
+                    {
+                        float room = stop - d.Along - d.Length * .5f;
+                        if (room < -.5f) continue;
+                        _speed[i] = Mathf.Min(_speed[i], Mathf.Sqrt(2f * 2.8f * Mathf.Max(0f, room - 1f)));
+                        break;
+                    }
+                }
         }
 
         private float Range(float a, float b) => a + (float)_random.NextDouble() * (b - a);
@@ -173,7 +225,9 @@ namespace TumbangPreso
         /// <summary>True while the vehicle waits at a light, in a queue, or at the jeepney stop.</summary>
         public bool DriverWaiting(int i) => _speed != null && _speed[i] < .3f;
         /// <summary>The road axis the vehicle drives along: 0 = X, 1 = Z (matches GreenStarted).</summary>
-        public int DriverAxis(int i) => Drivers[i].Lane >= 4 ? 1 : 0;
+        public int DriverAxis(int i) => RouteMode
+            ? (_head != null && i < _head.Length && Mathf.Abs(_head[i].x) > Mathf.Abs(_head[i].z) ? 0 : 1)
+            : Drivers[i].Lane >= 4 ? 1 : 0;
         /// <summary>Fired when a road axis (0 = along X, 1 = along Z) turns green.</summary>
         public event Action<int> GreenStarted;
 
@@ -216,6 +270,7 @@ namespace TumbangPreso
             if (dt <= 0f || Drivers.Length == 0) return;
             dt = Mathf.Min(dt, .05f);
             _clock += dt;
+            if (RouteMode) { UpdateRoutes(dt); UpdateSignals(); return; }
             SortLanes();
             for (int l = 0; l < LaneCount; l++)
             {
@@ -370,9 +425,239 @@ namespace TumbangPreso
             }
         }
 
+        // ------------------------------------------------------------------ routes (§ ROUTES)
+
+        private bool RouteMode => Routes != null && Routes.Length > 0;
+        private float[][] _cum, _cap;           // per route: metres at each point, the turn speed cap there
+        private Vector3[] _pos, _head;          // per driver, this frame: position and flat heading
+
+        private void BuildRoutes()
+        {
+            _cum = new float[Routes.Length][]; _cap = new float[Routes.Length][];
+            for (int r = 0; r < Routes.Length; r++)
+            {
+                var p = Routes[r].Points ?? Array.Empty<Vector3>();
+                int n = p.Length;
+                _cum[r] = new float[n]; _cap[r] = new float[n];
+                for (int k = 1; k < n; k++) _cum[r][k] = _cum[r][k - 1] + Vector3.Distance(p[k - 1], p[k]);
+                for (int k = 0; k < n; k++)
+                {
+                    _cap[r][k] = float.MaxValue;
+                    if (k == 0 || k == n - 1) continue;
+                    var a = p[k] - p[k - 1]; var b = p[k + 1] - p[k]; a.y = 0; b.y = 0;
+                    float angle = Vector3.Angle(a, b) * Mathf.Deg2Rad;
+                    if (angle < .02f) continue;
+                    // The radius of the arc these two chords sample: chord / turned angle.
+                    float radius = Mathf.Min(a.magnitude, b.magnitude) / angle;
+                    _cap[r][k] = Mathf.Sqrt(TurnGrip * Mathf.Max(radius, .5f));
+                }
+            }
+        }
+
+        private float RouteLength(int r) => _cum[r].Length > 0 ? _cum[r][_cum[r].Length - 1] : 0f;
+
+        /// <summary>The index of the point that starts the segment holding `along` (clamped).</summary>
+        private int SegmentAt(int r, float along)
+        {
+            var cum = _cum[r]; int lo = 0, hi = cum.Length - 1;
+            if (hi <= 0) return 0;
+            if (along <= 0f) return 0;
+            if (along >= cum[hi]) return hi - 1;
+            while (hi - lo > 1) { int mid = (lo + hi) >> 1; if (cum[mid] <= along) lo = mid; else hi = mid; }
+            return lo;
+        }
+
+        /// <summary>A point on a route; before its start and past its end it runs on straight.</summary>
+        public Vector3 RoutePoint(int r, float along)
+        {
+            if (_cum == null) BuildRoutes();
+            var p = Routes[r].Points; var cum = _cum[r]; int n = p.Length;
+            if (n == 0) return Vector3.zero;
+            if (n == 1) return p[0];
+            int k = SegmentAt(r, along);
+            float span = cum[k + 1] - cum[k];
+            if (span < 1e-4f) return p[k];
+            return p[k] + (p[k + 1] - p[k]) * ((along - cum[k]) / span);
+        }
+
+        /// <summary>The route's flat travel direction at `along`, smoothed over 2.4 m so a car
+        /// turns through an arc's corners instead of snapping at each.</summary>
+        public Vector3 RouteHeading(int r, float along)
+        {
+            var d = RoutePoint(r, along + 1.2f) - RoutePoint(r, along - 1.2f); d.y = 0;
+            return d.sqrMagnitude > 1e-6f ? d.normalized : Vector3.forward;
+        }
+
+        /// <summary>Metres along a route of the point on it nearest `at` (for the builder).</summary>
+        public float RouteAlong(int r, Vector3 at, out float distance)
+        {
+            if (_cum == null) BuildRoutes();
+            var p = Routes[r].Points; float best = float.MaxValue, along = 0f;
+            for (int k = 0; k + 1 < p.Length; k++)
+            {
+                var ab = p[k + 1] - p[k]; ab.y = 0; float len2 = ab.sqrMagnitude;
+                var ap = at - p[k]; ap.y = 0;
+                float t = len2 > 1e-8f ? Mathf.Clamp01(Vector3.Dot(ap, ab) / len2) : 0f;
+                float dist = (ap - ab * t).magnitude;
+                if (dist < best) { best = dist; along = _cum[r][k] + t * Mathf.Sqrt(len2); }
+            }
+            distance = best;
+            return along;
+        }
+
+        private void UpdateRoutes(float dt)
+        {
+            int n = Drivers.Length;
+            if (_pos == null || _pos.Length != n) { _pos = new Vector3[n]; _head = new Vector3[n]; }
+            for (int i = 0; i < n; i++)
+            {
+                var d = Drivers[i];
+                if (d.Body == null || d.Lane < 0 || d.Lane >= Routes.Length) continue;
+                _pos[i] = RoutePoint(d.Lane, d.Along); _head[i] = RouteHeading(d.Lane, d.Along);
+            }
+            for (int i = 0; i < n; i++)
+            {
+                var d = Drivers[i];
+                if (d.Body == null || d.Lane < 0 || d.Lane >= Routes.Length) continue;
+                StepRoute(i, dt);
+            }
+        }
+
+        private void StepRoute(int i, float dt)
+        {
+            var d = Drivers[i]; int r = d.Lane; var route = Routes[r];
+            float v = _speed[i];
+            const float amax = 1.6f, bcomf = 2.8f, s0 = 2.2f, headway = 1.1f;
+            float gap = float.MaxValue, vAhead = v;
+            for (int j = 0; j < Drivers.Length; j++)
+            {
+                var o = Drivers[j];
+                if (j == i || o.Body == null || o.Lane < 0 || o.Lane >= Routes.Length) continue;
+                float g;
+                if (o.Lane == r)
+                {
+                    float da = o.Along - d.Along;
+                    if (da <= 0f || da > 90f) continue;
+                    g = da - (o.Length + d.Length) * .5f;
+                }
+                else
+                {
+                    var off = _pos[j] - _pos[i]; off.y = 0f;
+                    float ahead = Vector3.Dot(off, _head[i]);
+                    if (ahead <= 0f || ahead > 60f) continue;
+                    g = ahead - (o.Length + d.Length) * .5f;
+                    // Just ahead, a body counts as far as it reaches across this lane (a bus in a U-turn
+                    // sweeps both lanes); further out, only what is in the lane.
+                    float reach = g < 6f ? FollowReach + .8f + .5f * o.Length * Mathf.Abs(Vector3.Cross(_head[i], _head[j]).y) : FollowReach;
+                    if ((off - _head[i] * ahead).magnitude > reach) continue;
+                    // Oncoming and crossing vehicles are the signals' business, not a gap, unless one
+                    // is already across this vehicle's path just ahead (a U-turn, a late turner).
+                    if (Vector3.Dot(_head[i], _head[j]) < .2f && g > 6f) continue;
+                }
+                if (g < gap) { gap = g; vAhead = _speed[j]; }
+            }
+            // The first stop line ahead: through on green, a stopped "vehicle" on red, and on amber
+            // only if there is room to stop comfortably. Axis -1 never turns green.
+            var stops = route.StopAlong ?? Array.Empty<float>();
+            for (int k = 0; k < stops.Length; k++)
+            {
+                float toLine = stops[k] - d.Along - d.Length * .5f;
+                if (toLine < -.5f) continue;
+                int axis = route.StopAxis != null && k < route.StopAxis.Length ? route.StopAxis[k] : -1;
+                int phase = axis == -2 ? (NextClear(route, i) ? 1 : 0) : axis < 0 ? 0 : PhaseFor(axis);
+                if (phase == 1) break;
+                bool committed = phase == 2 && toLine < v * v / (2f * bcomf) * .8f;
+                if (!committed && toLine + s0 < gap) { gap = toLine + s0; vAhead = 0f; }
+                break;
+            }
+            // Turns: the fastest speed from which each capped point ahead can still be met.
+            float v0 = d.Cruise, look = v * v / (2f * bcomf) + 6f;
+            var cum = _cum[r]; var cap = _cap[r];
+            for (int k = SegmentAt(r, d.Along); k < cum.Length && cum[k] - d.Along <= look; k++)
+            {
+                if (cap[k] == float.MaxValue) continue;
+                float dist = Mathf.Max(0f, cum[k] - d.Along);
+                v0 = Mathf.Min(v0, Mathf.Sqrt(cap[k] * cap[k] + 2f * bcomf * dist));
+            }
+            v0 = Mathf.Max(v0, .5f);
+            float sStar = s0 + Mathf.Max(0f, v * headway + v * (v - vAhead) / (2f * Mathf.Sqrt(amax * bcomf)));
+            float accel = amax * (1f - Mathf.Pow(v / v0, 4f)) - (gap < float.MaxValue ? amax * (sStar / Mathf.Max(gap, .1f)) * (sStar / Mathf.Max(gap, .1f)) : 0f);
+            accel = Mathf.Clamp(accel, -7f, amax);
+            v = Mathf.Max(0f, v + accel * dt);
+            d.Along += v * dt;
+            // ⚠️ A line that never turns green (the closure) is never crossed, whatever the speed.
+            for (int k = 0; k < stops.Length; k++)
+            {
+                int axis = route.StopAxis != null && k < route.StopAxis.Length ? route.StopAxis[k] : -1;
+                if (axis != -1 || d.Along - v * dt + d.Length * .5f > stops[k] + .5f) continue;
+                if (d.Along + d.Length * .5f > stops[k]) { d.Along = stops[k] - d.Length * .5f; v = 0f; }
+                break;
+            }
+            _speed[i] = v;
+            _brake[i] = Mathf.MoveTowards(_brake[i], accel < -.6f || v < .2f ? 1f : 0f, dt * 6f);
+
+            float length = RouteLength(r);
+            if (route.Next >= 0 && route.Next < Routes.Length && route.Next != r)
+            {
+                // Handed on, speed kept: the next route starts where this one ends.
+                if (d.Along >= length) { d.Along = route.NextAlong + (d.Along - length); d.Lane = r = route.Next; }
+            }
+            else if (d.Along > length + 4f)
+            {
+                // Off the far end: back in at the start (out of sight) when the entry is clear.
+                if (EntryClear(r, -4f, i)) { d.Along = -4f; _speed[i] = d.Cruise * .8f; }
+                else d.Along = length + 4f;
+            }
+
+            var pos = RoutePoint(r, d.Along);
+            var dir = RouteHeading(r, d.Along);
+            var right = Vector3.Cross(Vector3.up, dir);
+            float pitch = Mathf.Clamp(-accel * .45f, -1.2f, 2.2f);
+            d.Body.SetPositionAndRotation(pos, Quaternion.AngleAxis(pitch, right) * Quaternion.LookRotation(dir, Vector3.up) * d.ModelOffset);
+            ApplyBrakeLights(i);
+        }
+
+        /// <summary>A yield line (axis -2): clear when nothing on the route this one joins is within
+        /// 30 m before, or 10 m past, the point where it joins (a U-turn into a live lane).</summary>
+        private bool NextClear(Route route, int self)
+        {
+            if (route.Next < 0) return true;
+            for (int j = 0; j < Drivers.Length; j++)
+            {
+                var o = Drivers[j];
+                if (j == self || o.Body == null || o.Lane != route.Next) continue;
+                if (o.Along > route.NextAlong - 30f && o.Along < route.NextAlong + 10f) return false;
+            }
+            return true;
+        }
+
+        private bool EntryClear(int r, float along, int self)
+        {
+            var at = RoutePoint(r, along);
+            for (int j = 0; j < Drivers.Length; j++)
+            {
+                var o = Drivers[j];
+                if (j == self || o.Body == null) continue;
+                var off = o.Body.position - at; off.y = 0f;
+                if (off.magnitude < (o.Length + Drivers[self].Length) * .5f + 12f) return false;
+            }
+            return true;
+        }
+
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
+            if (RouteMode)
+            {
+                for (int r = 0; r < Routes.Length; r++)
+                {
+                    var p = Routes[r].Points; if (p == null) continue;
+                    Gizmos.color = Color.HSVToRGB(r * .17f % 1f, .8f, 1f);
+                    for (int k = 0; k + 1 < p.Length; k++) Gizmos.DrawLine(p[k] + Vector3.up * .2f, p[k + 1] + Vector3.up * .2f);
+                    if (Routes[r].StopAlong != null) foreach (float s in Routes[r].StopAlong) Gizmos.DrawWireSphere(RoutePoint(r, s), .6f);
+                }
+                return;
+            }
             if (_dir[0] == Vector3.zero) BuildLanes();
             for (int l = 0; l < LaneCount; l++)
             {

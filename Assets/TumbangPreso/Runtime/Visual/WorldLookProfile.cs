@@ -307,7 +307,22 @@ namespace TumbangPreso.Visual
             // the gradient (the sky rule above). High key still: nothing black, a coloured floor.
             new MapLook("LagoonCove",new Color(.44f,.42f,.64f),new Color(.66f,.52f,.54f),new Color(.62f,.46f,.34f),new Color(.9f,.8f,1.1f),70,340,4,false)
                 .Air(new Color(.98f,.78f,.64f),new Color(.3f,.46f,.72f),new Color(1,.74f,.54f),new Color(1,.8f,.64f),new Color(.62f,.54f,.74f))
-                .Key(new Color(1,.8f,.56f),1.25f,6,.7f,new Color(.05f,.03f,.06f))
+                .Key(new Color(1,.8f,.56f),1.25f,6,.7f,new Color(.05f,.03f,.06f)),
+            // ⚠️ THE ILALIM NG TULAY REBUILD, LATE AFTERNOON ON TAFT (owner, 2026-09-30, on the sample
+            // wearing the shipped Ilalim row: "change the lighting setting so its less like the lagoon
+            // map"). Its own entry, so the shipped IlalimNgTulay keeps its look until ILALIM-1.6. The
+            // Blender art direction (tools/author_ilalim_city.py): the sun 27 degrees up from the
+            // west-south-west in Blender's own colour (1, .86, .68 linear, which is 1, .93, .84 here:
+            // a Light colour is sRGB), and a pale haze from 45 m over 360 m. What moves it away from
+            // the Lagoon's clean tropical blue and teal: a SMOGGY sky, a pale grey-blue zenith down to
+            // a grey-cream horizon (the sky rule above: green close to red at the horizon), the same
+            // neutral grey in the fog, and shade that is a greyed lavender rather than a clean
+            // violet. ⚠️ The first cut (a 1, .88, .72 key over a .54, .44, .35 bounce) turned the
+            // grey concrete tan and the whole frame sepia (Logs/ilalim-unity/v4). The shade keeps the other rows' level, so the deep shade under the
+            // guideway stays readable. Elevation 27 keeps the Blender sun instead of lifting it to 52.
+            new MapLook("IlalimRebuild",new Color(.53f,.54f,.6f),new Color(.56f,.55f,.56f),new Color(.52f,.47f,.42f),new Color(.86f,.86f,1.06f),45,405,2,false)
+                .Air(new Color(.82f,.82f,.81f),new Color(.58f,.67f,.76f),new Color(.85f,.84f,.8f),new Color(1,.97f,.93f),new Color(.72f,.72f,.8f))
+                .Key(new Color(1,.93f,.84f),1.1f,27,.72f,new Color(.04f,.038f,.05f))
         };
         public MapLook Find(string map)
         {
@@ -317,8 +332,8 @@ namespace TumbangPreso.Visual
             // before that entry existed falls back to the Lagoon's look rather than to none.
             if(map=="LagoonCove")return Find("Lagoon");
             // The Ilalim ng Tulay rebuild's unregistered sample scene (ILALIM-1.4,
-            // Editor/MapKit/IlalimSceneBuilder.cs) wears the shipped Ilalim look until it is swapped
-            // in under the IlalimNgTulay name (ILALIM-1.6), where that row applies directly.
+            // Editor/MapKit/IlalimSceneBuilder.cs) has its own late-afternoon entry above; a profile
+            // asset authored before that entry existed falls back to the shipped Ilalim look.
             if(map=="IlalimRebuild")return Find("IlalimNgTulay");
             return null;
         }
