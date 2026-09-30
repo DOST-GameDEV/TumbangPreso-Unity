@@ -751,3 +751,13 @@ Publish exact shaders/test/docs; update the existing cloud-render Feedback row.
 Next newest Harry comments: smooth circling tutorial attacker, hide tutorial
 ultimate announcement, then ordinary Next Round5seconds (latest revision).
 Keep user sleep updates quiet; no active Unity job.
+Render c2e56b0e pushed/remote verified and same Feedback row Done checked. Shader
+paths released. Current newest tutorial claim: GuidedTraining.cs,
+Camera/UltimatePhaseView.cs and Tests/PlayMode/TutorialLessonHonestyProbe.cs under
+Assets/TumbangPreso, plus TODO/ledger/evidence. Reproduce circle-direction reversals
+before changing movement. Preserve the prior3m/.45rad-per-second training pace
+through an owned speed-zone modifier and smooth tangent/radial steering, with
+cleanup at lesson change/destroy. Hide only the shared ultimate identity banner
+in training; retain the actual authored introduction/camera, deadline and ability.
+No hero-specific animation/effect edits. Next units:5s ordinary break,25percent
+power sizing and live Xelu retrieve/reset labels.
