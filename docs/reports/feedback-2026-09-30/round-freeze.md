@@ -70,3 +70,10 @@ old Desktop binary and unrelated work were not replaced.
 - [Preparation drift](checks/round-freeze-preparation-drift.json)
 - [Host frozen frame](Round-frozen-peer-host.png)
 - [Client frozen frame](Round-frozen-peer-client.png)
+
+Incoming replay/tut-prompt source is integrated intact through dee3fe181. One
+focused native connection-approval case passes on the merged source, accepting
+the current LAN identity and refusing protocol97. All merged assemblies compile.
+The actual player qualification above remains explicitly frozen at7cb964d0c;
+it does not claim a rebuilt player containing those later incoming changes.
+- [Merged compilation/protocol gate](checks/round-integration.xml)

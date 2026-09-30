@@ -277,6 +277,16 @@ existing Feedback row. Keep Catch source/tests reserved to incoming contributor.
 Then continue the remaining authorized feedback/engineering queue. Tutorial release
 question still pending; overall goal active. Do not revive the old running-build note.
 
+Incoming6commits throughd78d6cb8a integrated intact atdee3fe181: revised tag hold
+and owner-approved tutorial prompt work. Current contributor reserves GuidedTraining,
+GuidedTrainingHud.OwnerPainted, InputGlyphs/plain mouse assets, OwnerTrainingUiTests,
+TutorialLessonHonestyProbe and DeadFeatureAudit count for adopted20-lesson flow.
+Do not overlap those paths. Local round-freeze paths are released after publication.
+Merged native protocol/compilation gate17029 passed1/1; preserves current/previous
+protocol refusal and all compiled assemblies. Actual player remains frozen7cb.
+No heavy job active. Next: update existing round-pause Feedback note after push,
+then independent authorized victory-screen/engineering bugs without reserved paths.
+
 
 Cloud revised replay unit:2.5s recorded animation,1.25s immutable captured tag
 frame,.18s fade. Recovery clamps/interruptions remain active; no live-world pause.

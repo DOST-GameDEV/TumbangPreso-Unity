@@ -1,0 +1,6 @@
+{
+  "expectedCases": 1,
+  "question": "Merged source compiles and refuses previous protocol while accepting matching LAN identity",
+  "retry": 0,
+  "sourceHead": "dee3fe181"
+}
