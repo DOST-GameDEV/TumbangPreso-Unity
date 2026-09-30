@@ -33,11 +33,17 @@ namespace TumbangPreso.EditorTools.MapKit
     /// film's step, because ComicPopup.Update reads Time.deltaTime, which does not advance
     /// outside Play. The match HUD's "Give a coin" prompt is screen-space UI of a live match and
     /// is not in these films.
+    ///
+    /// THE SOUND (2026-10-01): the second pass also records every sound the life starts
+    /// (SidewalkLife.RecordSounds: the clip, where, its gain and reach) into sound_events.tsv,
+    /// and each film's camera per frame into camera_&lt;event&gt;.tsv; `tools/encode_ilalim_films.py`
+    /// mixes each film's soundtrack from them (the clips themselves, the life's logarithmic
+    /// rolloff from the camera, panned by it) and muxes it in.
     /// </summary>
     internal static class IlalimSidewalkFilm
     {
         private const string Tag = "[IlalimRebuild] ";
-        internal const string Out = "Logs/ilalim-unity/videos_v1";
+        internal const string Out = "Logs/ilalim-unity/videos_v2";
         private const float Dt = 1f / 30f;
         private const int W = 1280, H = 720;
         private static readonly Vector3 PlayerSpot = new Vector3(-9.6f, .212f, -16.15f);
@@ -337,9 +343,12 @@ namespace TumbangPreso.EditorTools.MapKit
 
                 var films = Plan(scout, report);
 
-                // Pass 2: film.
+                // Pass 2: film (and hear: every sound the life starts, and every frame's camera).
                 var story = new Story();
                 float end = films.SelectMany(f => f.Windows).Max(x => x.to) + .1f;
+                var cameras = films.ToDictionary(f => f.Name, f => new StringBuilder("frame\tt\teye_x\teye_y\teye_z\tat_x\tat_y\tat_z\n"));
+                SidewalkLife.SoundLog.Clear();
+                SidewalkLife.RecordSounds = true;
                 using (var w = new World(null))
                 {
                     while (w.T < end)
@@ -352,15 +361,25 @@ namespace TumbangPreso.EditorTools.MapKit
                             if (k != f.Window) { f.Window = k; f.Rig = new Rig(); }   // a cut: the camera starts fresh
                             float fov = f.Aim(w, f.Rig, k);
                             w.Camera.Write(Path.Combine(frames, f.Name, $"f_{f.Frames:D5}.jpg"), f.Rig.Eye, f.Rig.Target, fov);
+                            cameras[f.Name].AppendLine(FormattableString.Invariant($"{f.Frames}\t{w.T:F4}\t{f.Rig.Eye.x:F3}\t{f.Rig.Eye.y:F3}\t{f.Rig.Eye.z:F3}\t{f.Rig.Target.x:F3}\t{f.Rig.Target.y:F3}\t{f.Rig.Target.z:F3}"));
                             f.Frames++;
                         }
                     }
                 }
+                SidewalkLife.RecordSounds = false;
+                // The life's clock and the film's run together (both step 1/30 s from zero).
+                var heard = new StringBuilder("t\tclip\tx\ty\tz\tgain\tpitch\tnear\tfar\n");
+                foreach (var h in SidewalkLife.SoundLog)
+                    heard.AppendLine(FormattableString.Invariant($"{h.Time:F4}\t{h.Clip}\t{h.At.x:F3}\t{h.At.y:F3}\t{h.At.z:F3}\t{h.Gain:F3}\t{h.Pitch:F3}\t{h.Near:F2}\t{h.Far:F1}"));
+                File.WriteAllText(Path.Combine(Out, "sound_events.tsv"), heard.ToString());
+                foreach (var kv in cameras) File.WriteAllText(Path.Combine(Out, $"camera_{kv.Key}.tsv"), kv.Value.ToString());
+                report.AppendLine($"Sounds started in pass 2: {SidewalkLife.SoundLog.Count} ({string.Join(", ", SidewalkLife.SoundLog.GroupBy(h => System.Text.RegularExpressions.Regex.Replace(h.Clip, "_[0-9]+$", "")).Select(g => g.Key + " " + g.Count()))}).");
+                SidewalkLife.SoundLog.Clear();
                 bool same = Math.Abs(story.Seated - scout.Seated) < 1e-3f && Math.Abs(story.WatchAt - scout.WatchAt) < 1e-3f && Math.Abs(story.KidsOut - scout.KidsOut) < 1e-3f;
                 report.AppendLine($"Pass 2 replayed pass 1 exactly: {same}.");
                 foreach (var f in films) report.AppendLine(FormattableString.Invariant($"  {f.Name}: {f.Frames} frames ({f.Frames * Dt:F1} s) in {string.Join(" + ", f.Windows.Select(x => $"[{x.from:F1}, {x.to:F1}]"))} {f.Note}"));
             }
-            finally { SidewalkLife.FilmPopups = false; }
+            finally { SidewalkLife.FilmPopups = false; SidewalkLife.RecordSounds = false; }
             File.WriteAllText(Path.Combine(Out, "films.txt"), report.ToString());
             Debug.Log(Tag + report);
             EditorSceneManager.OpenScene(IlalimSceneBuilder.ScenePath, OpenSceneMode.Single);
@@ -536,23 +555,46 @@ namespace TumbangPreso.EditorTools.MapKit
                 }
             }
 
-            // 2. Sitting at his spot (the scene's default look), his things beside him.
+            // 2. Sitting at his spot (the scene's default look), his things beside him; first
+            // halfway down (the drawn sit, from his side and front), then seated.
             using (var w = new World(null))
             {
-                float seated = -1f;
+                float seated = -1f, sitting = -1f;
+                int beggar = w.Find("beggar");
+                var seat = w.Life.BeggarSeat; var f = w.Life.BeggarFacing.normalized;
+                var across = Vector3.Cross(Vector3.up, f);
                 while (w.T < 200f)
                 {
                     w.Step();
+                    if (beggar >= 0 && sitting < 0f && w.Life.PersonState(beggar) == "sitting down") sitting = w.T;
+                    // 1.3 s into settling the sit starts; 0.65 s later he is halfway down.
+                    if (sitting > 0f && w.T >= sitting + 1.95f && w.T < sitting + 1.95f + Dt)
+                    {
+                        Shoot(w, stills, "beggar_sitting_mid_side", seat + across * 2.3f + Vector3.up * .9f + f * .3f, seat + Vector3.up * .5f + f * .2f, 45f);
+                        Shoot(w, stills, "beggar_sitting_mid_front", seat + f * 2.2f + Vector3.up * .9f, seat + Vector3.up * .5f, 45f);
+                    }
                     if (seated < 0f && w.Life.BeggarSeated) seated = w.T;
                     if (seated > 0f && w.T >= seated + 1f) break;
                 }
-                var seat = w.Life.BeggarSeat; var f = w.Life.BeggarFacing.normalized;
                 report.AppendLine(FormattableString.Invariant($"Seated at t={seated:F1}s at {seat:F2}."));
                 Shoot(w, stills, "beggar_seated_player_view", PlayerSpot + Vector3.up * 1.55f, seat + Vector3.up * .55f, 58f);
                 Shoot(w, stills, "beggar_seated_front", seat + f * 2.1f + Vector3.up * .95f + Vector3.Cross(Vector3.up, f) * .4f, seat + Vector3.up * .5f, 45f);
                 Shoot(w, stills, "beggar_seated_side", seat + new Vector3(2.6f, 1.3f, -.9f), seat + Vector3.up * .5f, 50f);
                 Shoot(w, stills, "beggar_seated_close", seat + f * 1.25f + Vector3.up * .75f - Vector3.Cross(Vector3.up, f) * .35f, seat + Vector3.up * .55f, 45f);
                 Shoot(w, stills, "beggar_seated_context", new Vector3(-5.8f, 2.3f, -13.6f), seat + Vector3.up * .6f, 55f);
+                Shoot(w, stills, "beggar_seated_side_level", seat + across * 2.4f + f * .35f + Vector3.up * .45f, seat + Vector3.up * .35f + f * .35f, 42f);
+                Shoot(w, stills, "beggar_seated_front_low", seat + f * 2.3f + Vector3.up * .5f, seat + Vector3.up * .4f, 42f);
+                report.AppendLine(FormattableString.Invariant($"Seated: the legs' lowest point {w.Life.BeggarSeatClearance:+0.000;-0.000} m over the carton's top."));
+                // The coin and the seated thank-you, from beside the player spot: at the bow's deepest and at the wave.
+                bool took = w.Life.Donate(PlayerSpot + Vector3.up * 1.1f);
+                float given = w.T;
+                while (w.T < given + 2.6f)
+                {
+                    w.Step();
+                    if (w.T >= given + .95f && w.T < given + .95f + Dt) Shoot(w, stills, "beggar_thanks_bow", seat + f * 2.1f + across * .5f + Vector3.up * .95f, seat + Vector3.up * .5f, 45f);
+                    if (w.T >= given + 1.75f && w.T < given + 1.75f + Dt) Shoot(w, stills, "beggar_thanks_wave", seat + f * 2.1f + across * .5f + Vector3.up * .95f, seat + Vector3.up * .55f, 45f);
+                }
+                report.AppendLine($"Seated thank-you stills: coin accepted {took}.");
                 // The survey the wide film's camera is chosen from.
                 Survey(w, stills, report);
             }

@@ -319,6 +319,29 @@ namespace TumbangPreso.EditorTools.MapKit
             life.Rope = mats["sidewalk_rope"]; life.Tin = mats["sidewalk_tin"]; life.Cardboard = mats["sidewalk_carton"]; life.Coin = mats["sidewalk_coin"];
             life.Bundle = mats["sidewalk_bundle"]; life.BundleKnot = mats["sidewalk_bundle_knot"]; life.Bag = mats["sidewalk_bag"];
 
+            // The sounds (owner 2026-10-01: a "Tahoooooo" call, and "as much as possible all these
+            // liveliness-adding character need sounds"). `tools/synth_ilalim_life_sfx.py` writes them
+            // beside Kanto's street clips in Art/audio/ambience, and KantoTrafficAuthor.Clip keeps
+            // their import settings the street's (no normalize). The footstep is the game's own.
+            life.TahoCall = KantoTrafficAuthor.Clips("sfx_taho_call_");
+            life.KidGiggle = KantoTrafficAuthor.Clips("sfx_life_kid_giggle_");
+            life.KidTaya = KantoTrafficAuthor.Clips("sfx_life_kid_taya_");
+            life.Cheer = KantoTrafficAuthor.Clips("sfx_life_cheer_");
+            life.Clap = KantoTrafficAuthor.Clips("sfx_life_clap_");
+            life.Groan = KantoTrafficAuthor.Clips("sfx_life_groan_");
+            life.Salamat = KantoTrafficAuthor.Clips("sfx_life_salamat_");
+            life.CoinTin = KantoTrafficAuthor.Clips("sfx_life_coin_tin_");
+            life.Carton = KantoTrafficAuthor.Clips("sfx_life_carton_");
+            life.Bucket = KantoTrafficAuthor.Clips("sfx_life_bucket_");
+            life.PigeonCoo = KantoTrafficAuthor.Clips("sfx_life_pigeon_coo_");
+            life.PigeonFlap = KantoTrafficAuthor.Clips("sfx_life_pigeon_flap_");
+            life.Footstep = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/TumbangPreso/Resources/Sfx/step_rubber.wav");
+            life.Pigeons = root.GetComponentInChildren<LagoonFlocks>();
+            report.AppendLine($"Sidewalk sound: call {life.TahoCall.Length}, giggle {life.KidGiggle.Length}, taya {life.KidTaya.Length}, " +
+                              $"cheer {life.Cheer.Length}, clap {life.Clap.Length}, groan {life.Groan.Length}, salamat {life.Salamat.Length}, " +
+                              $"coin {life.CoinTin.Length}, carton {life.Carton.Length}, bucket {life.Bucket.Length}, coo {life.PigeonCoo.Length}, " +
+                              $"flap {life.PigeonFlap.Length}, footstep {(life.Footstep != null ? life.Footstep.name : "MISSING")}, pigeons {(life.Pigeons != null)}.");
+
             var traffic = root.GetComponentInChildren<KantoTraffic>();
             var lanes = traffic != null ? traffic.Routes.Select(r => r.Points).ToArray() : new Vector3[0][];
             using (var art = new ArtQuery(dressing))
@@ -636,6 +659,12 @@ namespace TumbangPreso.EditorTools.MapKit
             var closestPlay = Enumerable.Repeat(float.MaxValue, n).ToArray(); var closestCar = Enumerable.Repeat(float.MaxValue, n).ToArray();
             var states = Enumerable.Range(0, n).Select(_ => new HashSet<string>()).ToArray();
             var firstShown = Enumerable.Repeat(-1f, n).ToArray();
+            // The drawn walk (SidewalkLife's class note): the planted sole's own ground speed
+            // against the body's, and its height over the ground, per person, while walking.
+            var slipSum = new float[n]; var slipAbs = new float[n]; var slipSpeed = new float[n]; var slipN = new int[n];
+            var soleLow = Enumerable.Repeat(float.MaxValue, n).ToArray(); var soleHigh = Enumerable.Repeat(float.MinValue, n).ToArray();
+            var lastSole = new Vector3[n]; var lastLeft = new bool[n]; var hadSole = new bool[n]; var lastPos = new Vector3[n];
+            float seatLow = float.MaxValue, seatHigh = float.MinValue; int seatN = 0;
             string donation = "the beggar never sat down in 300 s", reaction = "nobody watched in 300 s";
             bool donated = false, reacted = false;
             float kidsAt = -1f, beggarThanksAt = -1f;
@@ -670,6 +699,22 @@ namespace TumbangPreso.EditorTools.MapKit
                         var p = life.PersonPosition(i);
                         shown[i]++; states[i].Add(life.PersonState(i));
                         if (firstShown[i] < 0f) firstShown[i] = t;
+                        if (life.PersonSole(i, out var sole, out bool leftSole))
+                        {
+                            bool walking = life.PersonLocomotion(i) > .95f && life.PersonSpeed(i) > .3f;
+                            if (walking && hadSole[i] && lastLeft[i] == leftSole)
+                            {
+                                var v = (sole - lastSole[i]) / dt; v.y = 0f;
+                                var go = p - lastPos[i]; go.y = 0f;
+                                if (go.sqrMagnitude > 1e-8f)
+                                {
+                                    slipSum[i] += Vector3.Dot(v, go.normalized); slipAbs[i] += v.magnitude; slipSpeed[i] += go.magnitude / dt; slipN[i]++;
+                                    soleLow[i] = Mathf.Min(soleLow[i], sole.y - p.y); soleHigh[i] = Mathf.Max(soleHigh[i], sole.y - p.y);
+                                }
+                            }
+                            lastSole[i] = sole; lastLeft[i] = leftSole; hadSole[i] = walking;
+                        }
+                        lastPos[i] = p;
                         if (Mathf.Abs(p.x) < PlayX && Mathf.Abs(p.z) < PlayZ) inPlay[i]++;
                         if (Mathf.Abs(p.x) < BoxX && Mathf.Abs(p.z) < BoxZ) inBox[i]++;
                         closestPlay[i] = Mathf.Min(closestPlay[i], OutsideBy(p));
@@ -688,6 +733,10 @@ namespace TumbangPreso.EditorTools.MapKit
                                 closestCar[i] = Mathf.Min(closestCar[i], gap);
                                 if (gap < .3f) hitTraffic[i]++;
                             }
+                    }
+                    if (!float.IsNaN(life.BeggarSeatClearance))
+                    {
+                        seatLow = Mathf.Min(seatLow, life.BeggarSeatClearance); seatHigh = Mathf.Max(seatHigh, life.BeggarSeatClearance); seatN++;
                     }
                     // The events, once each.
                     if (!donated && life.BeggarSeated)
@@ -756,6 +805,15 @@ namespace TumbangPreso.EditorTools.MapKit
             for (int i = 0; i < n; i++)
                 sb.AppendLine(FormattableString.Invariant($"  {life.PersonName(i),-12} {life.PersonRole(i),-9} shown {shown[i] * .05f,6:F1} s (first at {firstShown[i]:F1} s), play {inPlay[i]}, box {inBox[i]}, off-route {offRoute[i]}, ") +
                               FormattableString.Invariant($"nearest the play area {(closestPlay[i] == float.MaxValue ? 0f : closestPlay[i]):F2} m outside, nearest vehicle {(closestCar[i] == float.MaxValue ? -1f : closestCar[i]):F2} m; states: {string.Join(", ", states[i])}"));
+            sb.AppendLine("Walks (the planted sole while walking: its mean ground speed along the body's travel and its mean speed at all, against the body's, and its height over the pavement; a sole that does not slide reads about 0):");
+            for (int i = 0; i < n; i++)
+            {
+                if (slipN[i] == 0) { sb.AppendLine($"  {life.PersonName(i),-12} {life.PersonGait(i),-12} no walking frames"); continue; }
+                sb.AppendLine(FormattableString.Invariant($"  {life.PersonName(i),-12} {life.PersonGait(i),-12} {slipN[i],5} frames, body {slipSpeed[i] / slipN[i]:F2} m/s, planted sole along {slipSum[i] / slipN[i]:+0.00;-0.00} m/s, at all {slipAbs[i] / slipN[i]:F2} m/s, height {soleLow[i]:+0.000;-0.000}..{soleHigh[i]:+0.000;-0.000} m"));
+            }
+            sb.AppendLine(seatN > 0
+                ? FormattableString.Invariant($"Seated beggar: the legs' lowest point {seatLow:+0.000;-0.000}..{seatHigh:+0.000;-0.000} m over the carton's top ({seatN} steps; under 0 is a leg in the carton).")
+                : "Seated beggar: never seated.");
             sb.AppendLine("Donation: " + donation + ".");
             sb.AppendLine("Spectators: " + reaction + ".");
             sb.AppendLine(FormattableString.Invariant($"Kids first out at t={kidsAt:F1}s."));

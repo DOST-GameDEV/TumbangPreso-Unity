@@ -79,6 +79,12 @@ namespace TumbangPreso
             _birdPos != null && i >= 0 && i < _birdCount ? _birdPos[i] : transform.position;
         /// <summary>False while bird <paramref name="i"/> is burst and waiting to respawn.</summary>
         public bool BirdVisible(int i) => _mode != null && i >= 0 && i < _birdCount && _mode[i] != ModeDead;
+        /// <summary>True while bird <paramref name="i"/> stands on the ground or a perch. Read only (the
+        /// Ilalim sidewalk life's coos listen for it); nothing here changes because it is asked.</summary>
+        public bool BirdSettled(int i) => _mode != null && i >= 0 && i < _birdCount && _mode[i] == ModeGrounded;
+        /// <summary>True while bird <paramref name="i"/> beats up off the ground or a perch (a flush).
+        /// Read only, for the Ilalim sidewalk life's wing-flap sound.</summary>
+        public bool BirdTakingOff(int i) => _mode != null && i >= 0 && i < _birdCount && _mode[i] == ModeTakeoff;
         /// <summary>Raised with the burst point whenever a slipper bursts a bird.</summary>
         public event Action<Vector3> BirdBurst;
         /// <summary>How many birds slippers have burst since Start (for probes).</summary>

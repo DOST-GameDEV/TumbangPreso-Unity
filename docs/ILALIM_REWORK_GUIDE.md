@@ -195,6 +195,33 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
     `IlalimSidewalkFilm.RunBuildProbeStills` then `RunVideos` (PlayMode-free, the life, traffic
     and pigeons stepped at 30 Hz, the game's own TAHOOO and SALAMAT popups), encoded by
     `tools/encode_ilalim_films.py` into `Logs/ilalim-unity/videos_v1/`.
+  - **2026-10-01, the sidewalk people's animation and sound.** Owner: *"you should probably fix
+    the animations for the walking and sitting of these characters"*, *"can you add a "Tahoooooo"
+    voice sfx for the taho guy?"*, *"as much as possible all these liveliness-adding character
+    need sounds"*. `SidewalkLife` (class note) now DRAWS the walk and run bone by bone like the
+    cast's `CharacterAnimator.LocomotionArms`: each body's `GaitStyle` (kids and passers-by their
+    rig's own entry; the magtataho and the beggar their own `TahoGait`, `BeggarGait`), the cadence
+    from the measured ground speed over the no-slide stride, the cast's foot plant, damped turns,
+    rounded corners, stepping while turning on the spot, the kids braking through a juke, the
+    buckets swinging in step. The beggar no longer plays the `sit` clip (a chair sit: legs sunk,
+    arms out at 45 degrees): a drawn floor sit on the carton (legs level and a little apart, hips
+    at the height that rests the thighs on the carton, a slight lean back, head bowed, the left
+    hand on the pavement by the cup, the right forearm over his lap), breathing, nods, looking up
+    at passers-by; one continuous sit-down and stand-up; the bow and a wave from the seated pose;
+    "SALAMAT PO!" everywhere. Offline check of the seated pose on the real mesh:
+    `Logs/ilalim-unity/pose_offline/seated.png`. SOUND: `tools/synth_ilalim_life_sfx.py`
+    (numpy/scipy formant and noise synthesis, fixed seeds) writes 36 clips, 3 variants each,
+    into `Art/audio/ambience/` (`sfx_taho_call_1..3`, `sfx_life_{kid_giggle, kid_taya, cheer,
+    clap, groan, salamat, coin_tin, carton, bucket, pigeon_coo, pigeon_flap}_1..3`), with
+    spectrograms in `Logs/ilalim-unity/life_sfx/` and the call's pitch and formant analysis in
+    `Logs/ilalim-unity/taho_call/`. Footsteps reuse `step_rubber`. They play on the life's own
+    pool of 3D voices, like `KantoStreetSound` (SFX slider, replay duck, log rolloff, priority
+    200, cooldowns); pigeons read `LagoonFlocks.BirdSettled`/`BirdTakingOff` (new, read only).
+    The probe now reports planted-foot slip and the seated clearance; the films log every sound
+    and camera, and `tools/encode_ilalim_films.py` mixes and muxes the soundtracks
+    (`Logs/ilalim-unity/videos_v2/`). ⚠️ NOT YET VERIFIED IN UNITY: the batch editor had no
+    licence token on 2026-10-01 (exit 198); run `IlalimSidewalkFilm.RunBuildProbeStills`, then
+    `RunVideos`, then `py -3 tools/encode_ilalim_films.py`, and look.
   - OPEN: the owner's look review in Play, cable shadows striping the court under the 27 degree
     sun (decision 2 below), then ILALIM-1.5 and 1.6.
 
