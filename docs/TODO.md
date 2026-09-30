@@ -202,6 +202,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   All10 baseline failures reproduce;19 final native receiver cases pass for
   malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
   [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
+- [x] ENG-0930-HOP Normal bot hop delivery: an issued one-render Jump survives
+  release until physics. Native baseline reproduces the lost edge; fixed producer/
+  motor case passes, retaining held release and existing hop tuning.
+  [Evidence](reports/feedback-2026-09-30/bot-hop-input.md).
 - [x] ENG-0930-RECOVERY Bot recovery input: preserve a recovery tap when several render
   updates occur before physics. Three baseline failures;2/4/6-update fixed native
   cases retain one real motor press, retire it once and respect Core's rate cap.

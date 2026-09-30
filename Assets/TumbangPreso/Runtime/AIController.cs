@@ -3213,6 +3213,7 @@ namespace TumbangPreso
 
             _hopHeld = true;
             Press(intent, Verb.Jump, true);
+            intent.BufferPress(Verb.Jump);
         }
 
         /// <summary>
