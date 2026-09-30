@@ -45,6 +45,28 @@ Body carry still uses the existing owner-delivered Carry message, capped lift7m/
 The2.5s accepted windup and stable ability ID remain. Actual peers require matching
 protocol102 builds; local authority checks are not actual-peer qualification.
 
+## Second Wind Compatibility
+
+Protocol104 appends a bounded Second Wind remaining float to Amihan's existing
+scoped flight recovery tail (61bytes). The same match, round, epoch, generation,
+request/event watermark and adopted-clock gates protect it. A non-live round
+cannot restore positive time; simulation-clock age preserves ordinary pauses.
+Drift uses the current35second cooldown with its stable ability ID unchanged.
+
+Amihan opts into owner accepted-cast events through HeroKit.RequiresOwnerCastEvents.
+The existing matching owner request receives its event without activating or
+spending the predicted payload again. Rejected prediction alone grants no speed;
+repeated/older accepted events cannot refresh the timer. Shared ultimate reserved
+activation starts the same clock. Offline successful kit casts use that clock too.
+Round/transport reset clears it. This changes no other kit's event subscription.
+
+## Whirled Reset Compatibility
+
+Protocol105 makes Whirled refuse and cancel can-reset channels on both the local
+Carrier target gate and HostMayChannelReset. The existing status timer and unit
+snapshot carry the state; no new packet field. Other CanAct permissions remain.
+Matching builds are required. Local channel and host-gate tests are not actual peers.
+
 ## Cosmetic Reworks
 
 Cheska protocol103: the current Wiki7.5s field,1.5s ultimate delay/every-player

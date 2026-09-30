@@ -3050,7 +3050,7 @@ namespace TumbangPreso.Net
             var who = Unit(slot);
 
             if (lata == null || who == null || lata.IsUpright) return false;
-            if (!who.IsDefender || !who.CanAct()) return false;
+            if (!who.IsDefender || !who.CanAct() || who.IsWhirled) return false;
 
             Vector3 a = who.transform.position;
             Vector3 b = lata.transform.position;
@@ -3562,7 +3562,8 @@ namespace TumbangPreso.Net
             foreach (ulong clientId in _nm.ConnectedClientsIds)
             {
                 if (clientId == _nm.LocalClientId ||
-                    (exceptClientId.HasValue && clientId == exceptClientId.Value && !confirmRitualOwner && !confirmWorldOwner))
+                    (exceptClientId.HasValue && clientId == exceptClientId.Value && !confirmRitualOwner && !confirmWorldOwner
+                        && Unit(slot)?.AbilitySystem?.Kit?.RequiresOwnerCastEvents != true))
                     continue;
 
                 using var writer = new FastBufferWriter(SkillCastMessage.MaxWireBytes, Allocator.Temp);
@@ -3617,6 +3618,7 @@ namespace TumbangPreso.Net
                 if(flightIntent!=0)
                 {
                     ApplyFeatherfallRecast(actor,flightIntent);
+                    Skill(actor, abilitySlot)?.AdoptAcceptedCastEvent(eventId, cast.Reactivation);
                     return;
                 }
                 ((Abilities.AmihanHeroKit)actor.AbilitySystem.Kit).CancelFeatherfall(actor);

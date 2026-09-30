@@ -1,6 +1,7 @@
 # Active Rework Checkpoint
 
 Updated2026-10-01. Branch ASTRAReworks. Protocol103 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol105 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1471,3 +1472,50 @@ Integrated current Cheska d331cd72d atffe5030c5 remote verified. Same Wiki row n
 Freshffe5030c5 overlay Windows player build succeeds:12scenes,2141MB,161seconds, guard exit0, explicit new internal executable/data verified. Runtime SHA25640bdd1e400eaa66d1081259251bd5995b510a3673ec853dadaf9592c370a4c71. Protocol103. Build74576 terminal. One direct actual host/client run starts with separate preserved profiles and150s client sample, exact binary under isolated Builds/feedback-engineering-1001, output Logs/feedback-engineering-1001/lan-direct. No peer success yet; preserve preparation drift and limits. Loading/source models were not edited; isolated builder import churn stays private.
 
 Protocol103 actual LAN95296 passes with currentffe5030c5 overlay binary: both round2, structural3D9F2E02, no hard faults, profiles/input preserved, task players exited. Build/drift15390inputs changed onlytwo isolated settings, no C# drift. Publish compact receipts/report; no individual skill/online qualification claimed. Next bottom Feedback: Nemu Catch currentWiki5s can immunity/upright activation using existing shared routes; inspect precise authority/lifetime/recovery before editing. No heavy job active.
+Second Wind baseline2/2fails absent boost/stale Drift. Network route inspection
+finds ordinary predictions intentionally skip owner PlayAbility, and shared ult
+uses reserved activation. Extend claim to HeroKit.cs one opt-in property and
+MatchRpc.cs generic owner-event delivery plus flight-recast event adoption. This
+avoids a hero-name transport switch and never repeats payload/resource spending.
+Shared ultimate starts its passive from its already-accepted reserved activation.
+Second Wind/Drift final5/5native passes14.20s, including real offline flight
+cast and bounded generation/request/kit recovery. Add one targeted predicted-owner
+accept/deny/dedup case, since that new opt-in path must not replay paid payload.
+Core.Tests/StatusAndAmihanRulesTests.cs current Drift35assertion and Amihan-only
+HeroLoadout.cs display rows are part of this unit; preserve IDs/locked variants.
+
+Second Wind/Drift6distinct native cases and22Core checks pass. Publish scoped
+clock/owner-event/recovery plus Amihan names/cooldown, protocol103. Same full
+Amihan row stays open for shared Whirled can-reset review. Airburst alreadyDone.
+No actual-peer/new-player claim. No heavy job active; release these paths after
+remote verification and fresh intake before next claim.
+
+Incoming Cheska rulesd331cd72/ffe5030c preserved, including shared numeric tests.
+Their103already changed gameplay, so combined Second Wind wire contract uses104.
+No runtime implementation overlap besides compatibility version. Recheck merged
+Core status/Amihan/loadout contracts; native passive/flight receipts stay pre-merge.
+Second Wind007dfcfd integrated01e660ca remote verified, protocol104. Same Amihan
+Doc note updated; full row still open. Source shows Whirled blocks slipper grab
+but neither local Carrier nor host reset gate checks it. Claim Carrier.cs reset
+eligibility only, MatchRpc.cs HostMayChannelReset only, StatusRules.cs Whirled
+text, corresponding Core assertion, NetSession.cs version and existing
+AmihanAirburstTests.cs focused reset cases. Native baseline first; preserve walking,
+throwing and other interactions. Cancel a running reset, allow a fresh one at expiry.
+
+Whirled baseline3/3fails: local can restored while statusactive, active channel
+survives, host gate accepts. Fix uses existing HasResetTarget so local input/HUD
+and channel share refusal; host gate independently mirrors it. General CanAct
+stays allowed. Protocol105 changes this shared rule; final3cases next.
+
+Whirled final3/3native passes5.31s plus8Core. Publish exact local/host gate and
+status text; full Amihan Wiki row can now be Done with the prior scoped units.
+Human verification stays unchanged. No newplayer/actualpeer claim. Release runtime
+paths after remote verification; fresh intake before next independent hero.
+Full Amihan Donechecked/Humanunchecked/Saved verified22:57. Existing Cheska
+Frozen-hit row likewise reconciledDone22:58, no second implementation. Full
+Cheska row remains open under its own evidence limits. Dante full Wiki/source
+reconciliation plan at reports/dante-wiki-2026-09-30/plan.md. First claimEarthbound:
+HeroKit.cs default distance property, DanteHeroKit.cs passive override,
+CharacterMotor.cs impulse, CharacterMotor.Status.cs carry, GeoRules constants,
+NetSession.cs protocol, new DanteEarthboundTests.cs/meta. Baseline before runtime.
+No heavy job active. Sourcebe249c3d fetched with no divergence.

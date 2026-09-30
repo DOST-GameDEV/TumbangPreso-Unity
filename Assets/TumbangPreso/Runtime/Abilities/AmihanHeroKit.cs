@@ -13,10 +13,10 @@ namespace TumbangPreso.Abilities
     ///
     /// | Slot | Name | Owner's table |
     /// |---|---|---|
-    /// | Signature | QUICK DASH | Propel forward in the target direction; inflicts Whirled and slightly pushes back other players. 40 s. |
+    /// | Signature | DRIFT | Propel forward in the target direction; inflicts Whirled and slightly pushes back other players. 35 s. |
     /// | Attacking | FEATHERFALL | Fly for 5 seconds; move and throw aloft, descend to retrieve. 40 s (updated owner table, 2026-09-26). |
     /// | Defending | WHIRLWIND | An arc-shaped gale that inflicts Whirled on players it hits as it swiftly moves forward. Lasts 2.5 s. 35 s. |
-    /// | Ultimate | STORM SURGE | After a 2.5 s delay, a map-wide fan of wind in the target direction that greatly pushes back all players and slippers caught inside. 15 points. |
+    /// | Ultimate | AIRBURST | After a 2.5 s delay, a map-wide fan inflicts Whirled and sends caught players and slippers airborne toward the edge. 15 points. |
     ///
     /// Every number is in `Core.AmihanRules`; the design, the decisions the owner left open and
     /// every moving part are in `docs/reports/amihan-kit-2026-09-25/plan.md`, and the look, the
@@ -33,11 +33,45 @@ namespace TumbangPreso.Abilities
 
         public AmihanHeroKit() : base("amihan", "AMIHAN")
         {
-            Skill1 = new QuickDash();
-            AttackingSkill = new Updraft();
-            DefendingSkill = new Whirlwind();
-            Ultimate = new StormSurge();
+            Skill1 = new QuickDash(this);
+            AttackingSkill = new Updraft(this);
+            DefendingSkill = new Whirlwind(this);
+            Ultimate = new StormSurge(this);
         }
+
+        private float _secondWind;
+        private long _secondWindEvent;
+        public float SecondWindRemaining => _secondWind;
+        public override bool RequiresOwnerCastEvents => true;
+        public override float MovementSpeedScale => _secondWind > 0 ? AmihanRules.SecondWindScale : 1;
+        private void AcceptSecondWind(long eventId)
+        {
+            if(eventId <= _secondWindEvent) return;
+            _secondWindEvent=eventId; _secondWind=AmihanRules.SecondWindSeconds;
+        }
+        private CastOutcome OfflineSecondWind(CastOutcome result)
+        {
+            if(result==CastOutcome.Cast && !NetAuthority.IsNetworked) _secondWind=AmihanRules.SecondWindSeconds;
+            return result;
+        }
+        public override CastOutcome CastSkill1(AbilityContext ctx) => OfflineSecondWind(base.CastSkill1(ctx));
+        public override CastOutcome CastSkill2(AbilityContext ctx) => OfflineSecondWind(base.CastSkill2(ctx));
+        public override CastOutcome CastUltimate(AbilityContext ctx) => OfflineSecondWind(base.CastUltimate(ctx));
+        public override void Tick(AbilityContext ctx,float dt)
+        {
+            _secondWind=Mathf.Max(0,_secondWind-Mathf.Max(0,dt));
+            base.Tick(ctx,dt);
+        }
+        public bool RestoreSecondWind(float remaining,long eventWatermark)
+        {
+            if(!float.IsFinite(remaining)||remaining<0||remaining>AmihanRules.SecondWindSeconds
+                ||eventWatermark<_secondWindEvent) return false;
+            _secondWind=remaining; _secondWindEvent=eventWatermark; return true;
+        }
+        public void ClearSecondWind() { _secondWind=0; _secondWindEvent=0; }
+        public override void Reset() { ClearSecondWind(); base.Reset(); }
+        public override void ResetForRound(AbilityContext ctx)
+        { ClearSecondWind(); base.ResetForRound(ctx); }
 
         /// <summary>True while Updraft holds her in the air.</summary>
         public bool IsFlying => AttackingSkill != null && AttackingSkill.IsActive;
@@ -58,6 +92,8 @@ namespace TumbangPreso.Abilities
 
         private sealed class QuickDash : HeroAbility
         {
+            private readonly AmihanHeroKit _kit;
+            protected override void OnAcceptedCastEvent(long eventId) => _kit.AcceptSecondWind(eventId);
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private Vector3 _start, _dir;
             private CharacterMotor _caster;
@@ -67,14 +103,15 @@ namespace TumbangPreso.Abilities
             private static float HitWindow => AmihanRules.QuickDashHoldSeconds
                 + AmihanRules.QuickDashSpeed / (2.0f * Balance.Friction) + 0.05f;
 
-            public QuickDash()
-                : base("amihan_skill1", "QUICK DASH",
+            public QuickDash(AmihanHeroKit kit)
+                : base("amihan_skill1", "DRIFT",
                        "Throw yourself forward where you aim. Anyone you pass is shoved aside and Whirled: slipper dropped, no pickups for 2.5 s.",
                        AmihanRules.QuickDashCooldown, 0.0f, AbilityGlyph.AmihanQuickDash,
                        summary: "Dash where you aim. Whoever you pass is Whirled and shoved.",
                        castAction: "hero-amihan-dash", viewmodelAction: "gust-dash",
                        castCue: "sfx_cast_amihan_dash")
             {
+                _kit=kit;
                 Duration = HitWindow;
             }
 
@@ -144,16 +181,18 @@ namespace TumbangPreso.Abilities
 
         private sealed class Updraft : HeroAbility
         {
+            private readonly AmihanHeroKit _kit;
+            protected override void OnAcceptedCastEvent(long eventId) => _kit.AcceptSecondWind(eventId);
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private CharacterMotor _flyer;
 
-            public Updraft()
+            public Updraft(AmihanHeroKit kit)
                 : base("amihan_skill2", "FEATHERFALL",
                        "Fly for 5 s. Move and throw aloft; press again or grab to descend before picking up.",
                        AmihanRules.UpdraftCooldown, AmihanRules.UpdraftSeconds, AbilityGlyph.AmihanUpdraft,
                        summary: "Fly for 5 s. Move and throw aloft; descend to retrieve.",
                        castAction: "hero-amihan-updraft", viewmodelAction: "updraft-lift",
-                       castCue: "sfx_cast_amihan_updraft") { }
+                       castCue: "sfx_cast_amihan_updraft") { _kit=kit; }
 
             public override bool CanReactivate => true;
 
@@ -248,12 +287,14 @@ namespace TumbangPreso.Abilities
 
         private sealed class Whirlwind : HeroAbility
         {
+            private readonly AmihanHeroKit _kit;
+            protected override void OnAcceptedCastEvent(long eventId) => _kit.AcceptSecondWind(eventId);
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             // ⚠️ THE GALE IS A WORLD OBJECT, SO THE OWNER WAITS FOR THE HOST before drawing it, as
             // Cheska's barricade does: a refused cast must not leave a front rolling across one
             // player's screen that exists nowhere else.
 
-            public Whirlwind()
+            public Whirlwind(AmihanHeroKit kit)
                 : base("amihan_skill2d", "WHIRLWIND",
                        "Defending. Roll an arc of gale down the court for 2.5 s. Everyone it passes is Whirled: slipper dropped, no pickups.",
                        AmihanRules.WhirlwindCooldown, 0.0f, AbilityGlyph.AmihanWhirlwind,
@@ -261,7 +302,7 @@ namespace TumbangPreso.Abilities
                        telegraphRadius: AmihanRules.WhirlwindWidth * 0.5f,
                        telegraphRange: AmihanRules.WhirlwindStart + AmihanRules.WhirlwindWidth * 0.5f,
                        castAction: "hero-amihan-whirlwind", viewmodelAction: "gale-sweep",
-                       castCue: "sfx_cast_amihan_whirlwind") { }
+                       castCue: "sfx_cast_amihan_whirlwind") { _kit=kit; }
 
             protected override void OnActivate(AbilityContext ctx)
             {
@@ -275,10 +316,12 @@ namespace TumbangPreso.Abilities
 
         private sealed class StormSurge : HeroAbility
         {
+            private readonly AmihanHeroKit _kit;
+            protected override void OnAcceptedCastEvent(long eventId) => _kit.AcceptSecondWind(eventId);
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             private AmihanStorm _storm;
 
-            public StormSurge()
+            public StormSurge(AmihanHeroKit kit)
                 : base("amihan_ultimate", "AIRBURST",
                        "After 2.5 s, unleash a map-wide fan of wind. Players caught are Whirled and thrown airborne; caught slippers fly toward the arena edge.",
                        0.0f, 0.0f, AbilityGlyph.AmihanStormSurge,
@@ -292,12 +335,14 @@ namespace TumbangPreso.Abilities
                 // calls the storm, everybody else gets 2.5 s to read the fan and leave it, and she
                 // pays for the ultimate by standing still inside her own telegraph. Phaister's ritual
                 // is the precedent for a wind-up longer than the shared 0.4 s.
+                _kit=kit;
                 Windup = AmihanRules.StormSurgeGatherSeconds;
             }
 
             public override void Activate(AbilityContext ctx)
             {
                 base.Activate(ctx);
+                _kit._secondWind=AmihanRules.SecondWindSeconds;
                 // The wind-up has begun: the fan goes down now, on every peer, from the accepted
                 // pose, so what every player reads is the real wind.
                 if (IsWindingUp && ctx?.Motor != null)

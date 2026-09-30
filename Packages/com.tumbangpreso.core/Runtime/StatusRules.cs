@@ -158,8 +158,8 @@ namespace TumbangPreso.Core
         private static readonly StatusRule[] Table =
         {
             new StatusRule(StatusKind.Whirled, "WHIRLED",
-                "Drops slipper if currently in hand. Prevents slipper retrieval for 2.5 seconds.",
-                "Disabled Slipper Retrieval",
+                "Drops slipper if currently in hand. Prevents slipper retrieval and can resetting for 2.5 seconds.",
+                "Disabled Slipper Retrieval and Can Reset",
                 WhirledSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: true, dropsHeldSlipper: true, removable: true, immunityApplies: true),
             new StatusRule(StatusKind.Chilled, "CHILLED",

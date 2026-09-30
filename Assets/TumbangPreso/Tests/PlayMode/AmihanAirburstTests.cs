@@ -137,5 +137,39 @@ namespace TumbangPreso.PlayTests
             Assert.LessOrEqual(Mathf.Abs(victim.transform.position.z),Balance.ConfinementRadius+.2f);
             yield return GameplayShots.Render(eye,"landed",false,"Logs/airburst-court-captures",victim);
         }
+        IEnumerator PrepareReset()
+        {
+            yield return Open(); var lata=GameServices.Round.Lata;
+            _caster.Teleport(lata.transform.position+Vector3.back*.5f);
+            lata.HostKnockDown(1);Assert.IsFalse(lata.IsUpright);
+            _caster.Intent.Set(Verb.Grab,true);
+        }
+        [UnityTest] public IEnumerator WhirledDefenderCannotResetUntilExpiry()
+        {
+            yield return PrepareReset();_caster.ApplyWhirled();
+            Assert.IsFalse(_caster.GetComponent<Carrier>().HasResetTarget);
+            Assert.IsTrue(_caster.CanAct(),"Whirled is not a general stun.");
+            yield return new WaitForSeconds(GameServices.Round.Lata.ResetChannelTime+.1f);
+            Assert.IsFalse(GameServices.Round.Lata.IsUpright,"Whirled must prevent can resetting.");
+            Assert.AreEqual(0,_caster.GetComponent<Carrier>().ChannelRatio);
+            yield return new WaitForSeconds(2.6f);
+            Assert.IsTrue(GameServices.Round.Lata.IsUpright,"Held reset can start fresh after the status expires.");
+        }
+        [UnityTest] public IEnumerator WhirledCancelsAnAlreadyRunningReset()
+        {
+            yield return PrepareReset();yield return new WaitForSeconds(.3f);
+            Assert.Greater(_caster.GetComponent<Carrier>().ChannelRatio,0);
+            _caster.ApplyWhirled();yield return new WaitForFixedUpdate();yield return new WaitForFixedUpdate();
+            Assert.AreEqual(0,_caster.GetComponent<Carrier>().ChannelRatio);
+            Assert.IsFalse(GameServices.Round.Lata.IsUpright);
+        }
+        [UnityTest] public IEnumerator WhirledHostGateRefusesTheSameReset()
+        {
+            yield return PrepareReset();var root=Track(new GameObject("Whirled reset authority"));root.SetActive(false);
+            var router=root.AddComponent<Net.MatchRpc>();
+            var gate=typeof(Net.MatchRpc).GetMethod("HostMayChannelReset",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            Assert.IsTrue((bool)gate.Invoke(router,new object[]{0}));
+            _caster.ApplyWhirled();Assert.IsFalse((bool)gate.Invoke(router,new object[]{0}));
+        }
     }
 }

@@ -929,6 +929,7 @@ namespace TumbangPreso
         {
             get
             {
+                if (_motor != null && _motor.IsWhirled) return false;
                 var lata = GameServices.Round?.Lata;
                 if (lata == null || lata.IsUpright) return false;
                 var offset = transform.position - lata.transform.position; offset.y = 0;

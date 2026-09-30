@@ -385,20 +385,20 @@ namespace TumbangPreso.Core
             // keep the sidegrade rule true (`EveryVariantIsBudgetNeutral`). Slot 2 is her ROLE
             // ability, named for the attacking one her kit reports before a role is known; the
             // screens show both role abilities beside it (`HeroKit.AttackingSkill`, `DefendingSkill`).
-            new AbilityVariant("amihan.1.quickdash", "amihan", 1, "QUICK DASH", "AmihanQuickDash",
-                "QUICK DASH", "Dash where you aim. Whoever you pass is Whirled and shoved.",
-                0, 0, "Dash through a crowd", "40 s to come back"),
-            new AbilityVariant("amihan.1.quickdash_next", "amihan", 1, "QUICK DASH", "AmihanQuickDash",
-                "QUICK DASH II", "A second reading, still being designed. Plays as Quick Dash.",
+            new AbilityVariant("amihan.1.quickdash", "amihan", 1, "DRIFT", "AmihanQuickDash",
+                "DRIFT", "Dash where you aim. Whoever you pass is Whirled and shoved.",
+                0, 0, "Dash through a crowd", "35 s to come back"),
+            new AbilityVariant("amihan.1.quickdash_next", "amihan", 1, "DRIFT", "AmihanQuickDash",
+                "DRIFT II", "A second reading, still being designed. Plays as Drift.",
                 .30f, -.30f, "Being designed", "Same as the default",
-                "Use Quick Dash eight times", true, 8),
-            new AbilityVariant("amihan.2.updraft", "amihan", 2, "UPDRAFT", "AmihanUpdraft",
-                "UPDRAFT", "Attacking: fly high for 10 s. Throw from the air, land to grab.",
+                "Use Drift eight times", true, 8),
+            new AbilityVariant("amihan.2.updraft", "amihan", 2, "FEATHERFALL", "AmihanUpdraft",
+                "FEATHERFALL", "Attacking: fly high for 5 s. Throw from the air, land to grab.",
                 0, 0, "Throw from above", "Land to pick up"),
-            new AbilityVariant("amihan.2.updraft_next", "amihan", 2, "UPDRAFT", "AmihanUpdraft",
-                "UPDRAFT II", "A second reading, still being designed. Plays as Updraft.",
+            new AbilityVariant("amihan.2.updraft_next", "amihan", 2, "FEATHERFALL", "AmihanUpdraft",
+                "FEATHERFALL II", "A second reading, still being designed. Plays as Featherfall.",
                 .30f, -.30f, "Being designed", "Same as the default",
-                "Use Updraft six times", true, 6),
+                "Use Featherfall six times", true, 6),
 
             // ⚠️ PAETE (2026-09-25), SAME RULE AS AMIHAN'S ROWS ABOVE: named for his real abilities,
             // the second reading of each slot plays as the default until the owner designs the
