@@ -32,14 +32,14 @@ for other characters. Phaister and Paete ability behavior is protected; descript
 may be corrected from their current implementations. Incomplete wiki cells are
 not specifications to invent. Scope restrictions supersede cosmetic additions.
 
-- [ ] F0930-01 Tutorial: prevent Tab-deck overlap; assess real actions, expose per-lesson
+- [x] F0930-01 Tutorial: prevent Tab-deck overlap; assess real actions, expose per-lesson
   progress and green completion, require three jumps, wait through ultimate playback
   plus 2.5 seconds, remove deprecated mash lesson, and return cleanly on completion.
   Tab compaction/release, three distinct takeoffs, full green completion, the real
   ultimate introduction plus post-delay, and the 16-lesson route are implemented
   and natively verified. [Evidence](reports/feedback-2026-09-30/README.md#tutorial).
-  Completion destination remains human-needed: the owner's source sentence was
-  incomplete and the question is pending. No automatic destination was invented.
+  The owner answered lobby. Completion and quit now use the existing hub exit,
+  clearing the offline round/match state. The actual Finish-button native case passes.
 - [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
   changed rows refresh without replaying entrance. Focused native path passes.
 - [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime

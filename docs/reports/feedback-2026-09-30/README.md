@@ -53,8 +53,15 @@ shared Editor input preferences were restored. No broad suite was repeated.
 
 All three captures were inspected. This is local native state/input/layout evidence,
 not physical keyboard/controller/touch certification or all-hero cutscene qualification.
-The owner must still name the tutorial completion destination; existing manual exit
-is retained. Loading is assigned to the owner's friend.
+The owner answered lobby. Finish and quit now clear surviving offline round/match
+state and use the existing hub exit. The focused real Finish-button case reproduced
+stale MatchInProgress state on the initial run, then passes 1/1 after the cleanup.
+The lobby scene, loading-curtain dismissal, hub instance and cleared launch/match
+state are asserted. Loading implementation remains assigned to the owner's friend.
+
+- [Initial lobby-exit failure](checks/tutorial-lobby.xml)
+- [Final lobby-exit result](checks/tutorial-lobby-final.xml)
+- [Lobby-exit inputs](checks/tutorial-lobby-inputs.json)
 
 ## Default Action Bindings
 

@@ -203,6 +203,20 @@ current 1-metre dash and derived bot/network reach before choosing a longer safe
 travel target. Candidate target 3 metres preserves the existing 0.45-second active
 window and 28m/s movement-budget margin. Do not edit ability, loading or map lanes.
 
+Latest human answer verified directly in the Feedback table: tutorial completion
+returns to the lobby. Local small follow-up reserved: GuidedTraining.cs and
+Tests/PlayMode/OwnerTrainingUiTests.cs. Finish/quit now use the existing cleaned
+match-exit route, which opens MatchSetup's hub. No loading/navigation implementation
+was edited. The real Finish-button case reproduced surviving offline match state;
+the tutorial now clears its round/match directors before the existing hub exit.
+Final native check passes 1/1. This follow-up is being shipped; tutorial is complete.
+
+Latest Doc intake adds a Human verified column and new rows. Preserve that column
+and all human text. The latest requested wheel directions are UP RIGHT / DOWN LEFT,
+with Hold Interact removed from the visible Actions settings. Reconcile this newest
+request after the current longer-lunge unit. Tagged replay now also requests three
+seconds of motion rather than a short replay held on its final frame.
+
 Rematches now allocate a fresh host world identity before reload, adopt a matching
 previous/next pair on clients, scope votes/tallies and acknowledge seated voters.
 Existing rotation/result policies remain. Core, Runtime and Editor compile on the
