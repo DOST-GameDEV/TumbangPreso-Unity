@@ -448,6 +448,22 @@ implementation overrides stale Wiki descriptions, which the owner explicitly
 asks to update now. AGENTS.md is the current controlling rule. No hero code or
 assets were edited for this documentation correction.
 
+Spectator fix ccd6935e2 published/integrated at62544c46d; remote HEAD verified.
+Next independent claim: MatchRpc.cs OnReadyTallyMsg and ReadyTallyPacketTests.cs/meta.
+The receiver currently reads two ints without size/range checks. Qualify malformed
+lengths/counts, valid empty/four-seat tallies, sender gate and host loopback before
+changing it. Native receiver scope only; protocol stays unchanged. No heavy job.
+
+
+Ready tally unit: native baseline50379 gives16failed/9passed; final92194 gives
+25passed/0failed with539 frozen inputs and no non-metadata drift. The actual
+receiver rejects short/trailing payloads and impossible counts before any event.
+Two source guard lines; valid0/0 and4/4, non-host gate and loopback retained.
+No live peers or protocol change. No heavy job active. Publish the coherent unit
+after fresh fetch, then continue bot-query allocation work; preserve loading owner.
+Icon report now yellow with the concrete screen/screenshot question;46illustrations
+and ComingSoon/Voodoo vector fallbacks found in source, no missing binding proven.
+
 ed60d6e5 tutorial timing/copy/footer refinement published and remote verified.
 The same live Feedback row has additional requests, so it stays open: centered
 attacker placement, no repeated attacker teleports except Throw/Shove, investigate

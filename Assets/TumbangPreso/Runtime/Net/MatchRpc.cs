@@ -1289,9 +1289,11 @@ namespace TumbangPreso.Net
             // the section on the loopback; the host raised the event itself one line earlier.
             if (NetAuthority.IsHost) return;
             if (!FromHost(senderClientId)) return;
+            if (reader.Length - reader.Position != 8 || !reader.TryBeginRead(8)) return;
 
             reader.ReadValueSafe(out int ready);
             reader.ReadValueSafe(out int expected);
+            if (expected < 0 || expected > Balance.PlayerCount || ready < 0 || ready > expected) return;
             OnLobbyReadyChanged?.Invoke(ready, expected);
         }
 

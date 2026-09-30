@@ -178,6 +178,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   All10 baseline failures reproduce;19 final native receiver cases pass for
   malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
   [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
+- [x] F0930-34 Lobby Ready tally: reject short/trailing packets and impossible
+  counts before publishing a UI event. Valid empty/four-player tallies, host
+  authority and loopback remain.16 native baseline failures;25 fixed receiver
+  cases pass. Protocol unchanged. Actual peers unqualified.
+  [Evidence](reports/feedback-2026-09-30/ready-tally-packets.md).
 - [x] F0930-33 Spectator results input: external takeover screens now stop manual
   flight and automatic directing while retaining the spectator's own replay route.
   Actual final-round keyboard baseline reproduced drift; native fixed case proves
