@@ -19,9 +19,13 @@ from the complete current Wiki passive and basic ability definitions. Reproduce
 independent clocks, then make accepted basic casts start the same cooldown on
 all non-ultimate abilities, including accepted observer playback. Do not change
 ultimate behavior or the local tutorial unit.
+The receipt path must correct the entire shared group after a refusal and must
+not let an older other-slot reply overwrite a newer accepted or pending cast.
 
 Owned edit paths:
 - Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs
+- Assets/TumbangPreso/Runtime/Abilities/HeroKit.cs (authoritative resource hook only)
+- Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SkillReceipts.cs (shared-clock receipt routing only)
 - Packages/com.tumbangpreso.core/Runtime/RosterReworkRules.cs (NecroRules cooldowns only)
 - Assets/TumbangPreso/Tests/NemuKuroPassiveTests.cs
 - Assets/TumbangPreso/Tests/NemuKuroPassiveTests.cs.meta
