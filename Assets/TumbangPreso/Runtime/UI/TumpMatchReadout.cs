@@ -471,6 +471,18 @@ namespace TumbangPreso.UI
             }
             if (local.IsDefender && round.IsTayaCampWarningActive)
                 _context.text = "Leave the can ring";
+            // A street character's offer (StreetInteractions, the Ilalim rebuild's beggar): read
+            // last and only into an empty line, so every match prompt above keeps its priority.
+            // No offer on any other map, so this line never speaks there.
+            if (string.IsNullOrEmpty(_prompt.text))
+            {
+                string street = StreetInteractions.ActionFor(local);
+                if (street != null)
+                {
+                    _prompt.text = Hud.PressCue("Interact") + street;
+                    if (Hud.OnTouch) TouchHud.Emphasise(Verb.Interact);
+                }
+            }
         }
         private static bool PilotingFamiliar(CharacterMotor local)
         {

@@ -156,6 +156,25 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
     on perch lines measured against the meshes (guideway copings, roofs, station roofs, pavement
     edges). `RunReview` now also writes `life_probe.txt`: 90 s stepped without PlayMode, no
     overlaps, nothing in the court, every pigeon on a perch. No pigeon sounds exist in the repo.
+  - **Sidewalk life (owner: "kids chasing each other around, some taho vendor, people stopping by
+    to watch, maybe some beggar that comes sits down that you can interact with to donate to").**
+    `Editor/MapKit/IlalimSidewalkAuthor.cs` (called by IlalimLifeAuthor) authors
+    `Runtime/Map/SidewalkLife.cs`. The people are Classic rigs from the RosterBook with their own
+    everyday palettes (garment slots only, measured per rig; skin, hair and the face slot kept;
+    nothing near the role hues), animated by the rigs' own clips plus LagoonResident's arm cheer,
+    a bow, a head shake and a laughing hop. All scenery: no collider, no CharacterMotor, nothing
+    networked, never in the play area. Three kids play tag on the south-east pavement for about
+    a minute, now and then; the magtataho (yoke and two aluminium buckets) walks the south-west
+    pavement, stopping to call "TAHOOO!" as a small comic popup (no taho clip exists); three
+    passers-by walk to the north corners and the PGH lot fence, watch the court, cheer a can
+    going down and groan at a tag; a beggar sits on a carton against the PGH fence just past the
+    south wall. Within 2.6 m (a player at the wall is 2 m away) the HUD offers "Give a coin" on
+    Interact (`StreetInteractions`, read last by TumpMatchReadout and Hud; TouchHud shows
+    INTERACT while it stands): a coin arcs into his cup, the pisonet's `ui_click` blip, a bow
+    and wave, a thank-you popup. Cosmetic only. Every route is measured against the meshes at
+    build (the "Sidewalk" build-log lines); `RunReview` also writes `sidewalk_probe.txt` (300 s
+    beside the traffic) and `sidewalk_*.png`. Batch alone:
+    `IlalimSidewalkAuthor.RunBuildAndProbe`.
   - OPEN: the owner's look review in Play, cable shadows striping the court under the 27 degree
     sun (decision 2 below), then ILALIM-1.5 and 1.6.
 

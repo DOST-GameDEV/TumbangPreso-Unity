@@ -520,7 +520,7 @@ namespace TumbangPreso.InputLayer
 
                 // ⚠️ HIDDEN MEANS HIDDEN AND RELEASED. A control switched off while held would
                 // otherwise leave its verb pressed for ever, which is `OnDisable`'s note again.
-                bool visible = !tweak.Hidden && VisibleInMode(button.Entry);
+                bool visible = !tweak.Hidden && (VisibleInMode(button.Entry) || StreetInteractShown(button.Entry));
                 button.gameObject.SetActive(visible);
                 if (!visible) TouchInput.Set(button.Entry.Verb, false);
             }
@@ -598,6 +598,27 @@ namespace TumbangPreso.InputLayer
                || (entry.Zone != TouchZone.SkillRail && entry.Verb != Verb.Interact)
                || SceneFlow.SelectedMode == Core.GameMode.HeroStrike;
 
+        // ⚠️ AND WHILE A STREET CHARACTER OFFERS SOMETHING (`StreetInteractions`, the Ilalim
+        // rebuild's beggar), in Classic too: the offer is taken with INTERACT on every device, so a
+        // phone needs the control for exactly as long as the prompt stands. No offer (every other
+        // map) leaves the Classic layer exactly as it was.
+        private bool _streetInteract;
+        private bool StreetInteractShown(VerbInput entry) => _streetInteract && entry.Verb == Verb.Interact;
+
+        private void RefreshStreetInteract()
+        {
+            bool offered = StreetInteractions.Offered;
+            if (offered == _streetInteract) return;
+            _streetInteract = offered;
+            foreach (var button in _buttons)
+            {
+                if (button == null || button.Entry.Verb != Verb.Interact) continue;
+                bool visible = !TouchLayoutStore.TweakFor(Verb.Interact).Hidden && (VisibleInMode(button.Entry) || StreetInteractShown(button.Entry));
+                button.gameObject.SetActive(visible);
+                if (!visible) TouchInput.Set(Verb.Interact, false);
+            }
+        }
+
         private int _layoutRevision = -1;
         private Vector2 _lastCanvasSize;
         private CharacterMotor _local;
@@ -674,6 +695,7 @@ namespace TumbangPreso.InputLayer
             // switch that stopped repainting on those frames would show a stale ON in the first
             // frames of a networked match, which is the one state it must never show.
             RefreshSandbox();
+            RefreshStreetInteract();
 
             Verb? hint = _hintVerb;
             _hintVerb = null;

@@ -184,6 +184,8 @@ namespace TumbangPreso.EditorTools.MapKit
             var report = new StringBuilder();
             Traffic(root, dressing, report);
             Pigeons(root, dressing, report);
+            // The sidewalk people (IlalimSidewalkAuthor): after the traffic, whose lanes they keep clear of.
+            IlalimSidewalkAuthor.Build(root, dressing, report);
             Debug.Log(Tag + "Life:\n" + report);
         }
 

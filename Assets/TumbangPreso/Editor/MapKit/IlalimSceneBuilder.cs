@@ -152,6 +152,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 Review(folder);
                 // The traffic and the pigeons stepped for 90 s without PlayMode (life_probe.txt).
                 IlalimLifeAuthor.Probe(folder, ScenePath);
+                // The sidewalk people stepped for 300 s beside the traffic (sidewalk_probe.txt).
+                IlalimSidewalkAuthor.Probe(folder, ScenePath);
             }
             catch (Exception e) { Debug.LogError(Tag + "FAILED: " + e); EditorApplication.Exit(1); return; }
             EditorApplication.Exit(0);
