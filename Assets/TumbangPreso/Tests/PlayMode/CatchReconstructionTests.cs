@@ -97,6 +97,45 @@ namespace TumbangPreso.PlayTests
             Object.Destroy(wall); Object.Destroy(otherWall);
         }
 
+        [UnityTest, Timeout(360000)]
+        public IEnumerator CatchLastsAboutThreeSecondsAndReturnsBeforeControl()
+        {
+            yield return Open(); Stage(); yield return new WaitForSeconds(.4f);
+            var round = GameServices.Round;
+            var taya = round.PlayerAt(0); var victim = round.PlayerAt(1);
+            var view = Object.FindAnyObjectByType<CatchReconstruction>();
+            var settings = Settings.SettingsStore.Current;
+            bool reduced = settings.ReducedUiMotion, cinematic = settings.CinematicCameraMotion;
+            settings.ReducedUiMotion = false; settings.CinematicCameraMotion = true;
+            try
+            {
+                Vector3 tayaAt = taya.transform.position;
+                int score = GameServices.Match.ScoreFor(0);
+                Assert.IsTrue(taya.GetComponent<CombatVerbs>().HostResolvePunch(tayaAt, taya.transform.forward));
+                Assert.IsTrue(view.Playing);
+                Assert.That(view.Remaining, Is.InRange(2.9f, 3.01f));
+                Assert.AreEqual(score + MatchRules.PointsFor(ScoreEvent.Tag), GameServices.Match.ScoreFor(0));
+                Assert.IsTrue(taya.CanAct());
+                Assert.AreEqual(tayaAt, taya.transform.position);
+                yield return new WaitForSecondsRealtime(1.3f);
+                Assert.IsTrue(view.Playing, "The old 1.1-second cutoff returned too early.");
+                Assert.IsFalse(victim.CanAct());
+                yield return GameplayShots.Render(Camera.main, "catch-after-one-second", true,
+                    outDir: "Logs/catch-replay-duration");
+                yield return new WaitForSecondsRealtime(view.Remaining + .1f);
+                Assert.IsFalse(view.Playing);
+                Assert.IsFalse(victim.CanAct(), "Replay duration must not remove the five-second penalty.");
+                Assert.IsTrue(Camera.main.GetComponent<CameraRig>().IsFollowing(victim));
+                yield return GameplayShots.Render(Camera.main, "recovery-after-replay", true,
+                    outDir: "Logs/catch-replay-duration");
+            }
+            finally
+            {
+                settings.ReducedUiMotion = reduced; settings.CinematicCameraMotion = cinematic;
+                view.End();
+            }
+        }
+
         [UnityTest]
         public IEnumerator TenActualCatchesPreserveTayaAndReturnBeforeControl()
         {
@@ -137,7 +176,7 @@ namespace TumbangPreso.PlayTests
                         yield return new WaitForSecondsRealtime(.30f);
                         yield return GameplayShots.Render(Camera.main, "victim-followthrough", true, outDir: "Logs/catch-reconstruction-v2");
                     }
-                    yield return new WaitForSecondsRealtime(1.1f);
+                    yield return new WaitForSecondsRealtime(view.Remaining + .1f);
                     Assert.IsFalse(view.Playing); Assert.IsFalse(victim.CanAct(), "Camera exit does not cancel the tag penalty.");
                     Assert.IsTrue(rig.IsFollowing(victim)); Assert.AreEqual(lens, Camera.main.fieldOfView, .1f);
                     Assert.IsTrue(victim.GetComponent<Carrier>().Held.GetComponentsInChildren<Renderer>(true).All(r => !r.forceRenderingOff),

@@ -39,7 +39,8 @@ Map-vote correction76cd07b7 shipped through d54488bb, remote HEAD verified.
 Thirteen packet cases and four existing rematch/intermission cases pass. Incoming
 controls8a85bb12 are preserved unchanged; two ready/countdown cases pass on the
 integrated candidate. No job is running. Actual peers remain unqualified. The new
-Feedback-row insertion awaits explicit owner permission; existing notes are allowed.
+Feedback row was added after explicit owner approval, preserving a native checklist
+and hidden QA_TUMP_0038 range. Its shipped note governs intake; no duplicate work.
 Map-vote handler/test paths are released.
 
 Diddler reservation: the existing Feedback request for an approximately three-second
