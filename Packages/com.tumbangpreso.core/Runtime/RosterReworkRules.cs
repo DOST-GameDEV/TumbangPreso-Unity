@@ -45,8 +45,8 @@ namespace TumbangPreso.Core
         public const float ShieldSeconds = 15.0f;
         public const float ShieldCooldown = 40.0f;
 
-        /// <summary>BOULDER, owner: *"Throw rock -> Concussed"*. Cooldown, speed and roll set here.</summary>
-        public const float BoulderCooldown = 30.0f;
+        /// <summary>BOULDER imbues a held slipper. Legacy rock constants remain for retained assets.</summary>
+        public const float BoulderCooldown = 35.0f;
         public const float BoulderSpeed = 14.0f;
         public const float BoulderRollDistance = 2.0f;
         public const float BoulderHitRadius = 0.7f;

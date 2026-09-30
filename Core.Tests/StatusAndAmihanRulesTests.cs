@@ -53,7 +53,9 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(9, (int)StatusKind.Vulnerable);
 
             var concussed = StatusRules.For(StatusKind.Concussed);
-            Assert.Equal(0.7f, concussed.SpeedScale);
+            Assert.Equal(0.25f, concussed.SpeedScale);
+            Assert.Equal(2.5f, StatusRules.ConcussedSeconds);
+            Assert.Equal(35.0f, GeoRules.BoulderCooldown);
             Assert.False(concussed.BlocksMovement || concussed.BlocksInteraction);
 
             // "Flee from kuro and drop slipper".

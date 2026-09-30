@@ -442,3 +442,13 @@ Check the behavior actually changed: admission,prediction/confirmation,owner and
 observer presentation,spectators,late join,interruption and cleanup as applicable.
 Reuse unaffected evidence. Cosmetic edits do not justify repeating every network
 suite or character film. Native/real-peer gaps remain explicit until exercised.
+
+## Boulder Slipper Compatibility
+
+Protocol108 appends Concussed affinity4 while preserving Normal0, Fire1, Electric2
+and Frost3. The host imbues a real held slipper and publishes the existing reliable
+slipper state. Held/drop recovery retains this affinity; ordinary throw carries
+it and impact consumes it. Round reset clears unused charges. Accepted observer
+casts cannot mutate it. Existing status snapshots carry2.5second Concussed with
+0.25movement scale. No new packet layout, timer or separate rock is introduced.
+Native delivery/recovery checks do not qualify actual peers or reconnect.

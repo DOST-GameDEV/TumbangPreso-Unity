@@ -117,25 +117,25 @@ namespace TumbangPreso.Abilities
 
             public Boulder()
                 : base("dante_skill2", "BOULDER",
-                       "Attacking. Hold to aim, release to hurl a boulder. Whoever it hits or rolls into is Concussed: slower, no sprint, wobbly aim.",
+                       "Imbue your held slipper. Your next throw inflicts Concussed on a player hit: 75% slower for 2.5 s.",
                        GeoRules.BoulderCooldown, 0.0f, AbilityGlyph.DanteBoulder,
-                       summary: "Hurl a boulder. Whoever it hits is Concussed.",
-                       telegraphRadius: GeoRules.BoulderHitRadius, telegraphRange: 9.0f,
+                       summary: "Imbue your held slipper with Concussed.",
                        castAction: "hero-dante-stomp", viewmodelAction: "stomp-heavy",
-                       castCue: "sfx_cast_dante_boulder")
-            {
-                AimByHolding(3.0f, 9.0f, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
-                TelegraphStyle = GroundReticle.Style.Fissure;
-            }
+                       castCue: "sfx_cast_dante_boulder") { }
 
-            public override bool CanActivate(AbilityContext ctx) => base.CanActivate(ctx) && !ctx.Motor.IsDefender;
+            public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && !ctx.Motor.IsDefender
+                    && ctx.Carrier?.Held != null && ctx.Carrier.Held.State == SlipperState.Held
+                    && ctx.Carrier.Held.Holder == ctx.Motor;
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 NetCue.Play("hero_dante_grunt", ctx.Position);
-                ctx.Motor.GetComponent<CharacterSquashStretch>()?.Squash(0.2f);
-                Vector3 from = ctx.Position + Vector3.up * 1.6f + ctx.Forward * 0.5f;
-                DanteBoulder.Spawn(from, AimedDestination(ctx), ctx.Motor.PlayerSlot);
+                if (!NetAuthority.ShouldResolve()) return;
+                var shoe = ctx.Carrier?.Held;
+                if (shoe == null || shoe.State != SlipperState.Held || shoe.Holder != ctx.Motor) return;
+                shoe.Affinity = SlipperAffinity.Concussed;
+                Net.MatchRpc.Instance?.BroadcastSlipperState(shoe);
             }
         }
 

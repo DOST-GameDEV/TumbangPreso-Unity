@@ -1563,3 +1563,13 @@ snapshot, Carrier.cs transfer, SliceRunner.cs round clear, Core Geo/StatusRules,
 Core assertions, NetSession.cs and new DanteBoulderImbueTests/meta/partition.
 Existing slipper state owns the charge; no new kit timer or separate projectile.
 Baseline real held gate and actual throw next. No heavy job or runtime edit yet.
+Boulder baseline4cases: ordinary throw passes; empty-hand acceptance and both
+imbued throws fail (affinity staysNormal). No guard/OOM. Implement existing
+slipper-owned charge, held/drop snapshot, body payload before cleanup and round
+clear, current2.5s/75percent Concussed and35s cooldown. Final recovery/observer
+cases join the three delivery controls; protocol108. No new projectile orSFX.
+Boulder final7/7native11.54s and8Core pass. Actual attacker/defender hits, ordinary
+control, held/drop restore/round clear, observer refusal and affected Frostbite
+control qualified. Publish explicit unit paths, protocol108. No newplayer/peer
+claim. Fresh Doc report says tutorial slipper still flies; after publishing this
+unit, inspect that same row and current tutorial ownership before Dante cascade.

@@ -429,6 +429,7 @@ namespace TumbangPreso
                 // the rule in ONE place rather than two that have to agree.
                 if (!Slippers[slot].gameObject.activeSelf) Slippers[slot].gameObject.SetActive(true);
 
+                Slippers[slot].Affinity = SlipperAffinity.Normal;
                 Slippers[slot].transform.position = SlipperHome(slot);
             }
         }
