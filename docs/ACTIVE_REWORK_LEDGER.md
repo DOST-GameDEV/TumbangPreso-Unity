@@ -491,3 +491,17 @@ Cold final import overlap hit the private memory guard, then faulted on shutdown
 one unchanged warmed3-case pass exits0 in37.22seconds, no new OOM. Captures inspected.
 Four runtime/test paths release after publication. Next remains reserved ordinary
 3-second round break with10-second halftime replay. No heavy job active.
+
+Tutorial100d8725 is published throughc98b5106, remote verified; its live refinement
+row is Done with Human verified left for testers. Hidden recordQA_TUMP_0044 is
+retained. No active tutorial ownership or Unity process remains.
+
+Now execute reservedQA_TUMP_0045: ordinary boundary3seconds, halftime10seconds
+with retained replay. Also claim Assets/TumbangPreso/Tests/PlayMode/ReplayRetentionTests.cs
+for its now-stale uniform10-second/no-replay assertions. Other reserved paths:
+Runtime/HalftimePresentation.cs, Runtime/Net/NetSession.cs and
+Tests/PlayMode/RoundBreakFreezeTests.cs under Assets/TumbangPreso; matching
+TODO/NETWORKING/evidence. Preserve host deadline, frozen ordinary image, all-input
+lock, no skip, consumed-packet protection, actual retained clip and honest fallback.
+Protocol must distinguish the changed derived timing. Keep the published frozen
+frame implementation and unrelated packet/spectator fixes intact.
