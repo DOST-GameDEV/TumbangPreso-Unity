@@ -1581,3 +1581,9 @@ unit is Nemu Catch; published tutorial paths released. Claim GuidedTraining.cs
 corner counter only and OwnerTrainingUiTests.cs flight/staging/completion cases.
 No Slipper physics claim until reproduction. Plan tutorial-regression.md; current
 source clean before claim, no heavy job active. Dante cascade resumes afterward.
+Tutorial current-source reproduction confirmed: high throw staysInFlight12s at
+11.77m, upwardvelocity1.54, enabled/timeScale1. Hidden protected can's flat contact
+keeps rebounding before timeout; skipped staging is correctlygrounded. Expand
+claim Slipper.cs active can/body contact gates and existing timeout before early
+contact returns, NetSession.cs protocol109. No geometric/score redesign. Corner
+counter fix also owned. Targeted protected-can lifetime control next.
