@@ -167,6 +167,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   All10 baseline failures reproduce;19 final native receiver cases pass for
   malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
   [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
+- [x] F0930-33 Spectator results input: external takeover screens now stop manual
+  flight and automatic directing while retaining the spectator's own replay route.
+  Actual final-round keyboard baseline reproduced drift; native fixed case proves
+  frozen position/rotation, visible unlocked cursor and flight resumption on close.
+  [Evidence](reports/feedback-2026-09-30/victory-spectator-input.md).
 - [x] F0930-32 Latest Feedback round flow: remove the per-round skip-warmup option
   and freeze the final view after every round, with no clicking/movement or halftime
   replay until the next round. Latest Doc wording supersedes the earlier announcement

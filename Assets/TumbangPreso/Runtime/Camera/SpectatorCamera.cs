@@ -693,7 +693,7 @@ namespace TumbangPreso.CameraSystem
             // ⚠️ ReclaimView IS SKIPPED WITH THE REST, WHICH IS CORRECT RATHER THAN LAZY: the
             // rigs it defends against are all disabled while the match is stopped, and a camera
             // that keeps raising its own depth against a paused frame is doing nothing.
-            if (UI.Panel.AnyOpen) return;
+            if (UI.Panel.AnyOpen || UI.ScreenTakeover.AnyOpenOutside(transform)) return;
 
             // ⚠️⚠️ IT RE-CLAIMS THE VIEW EVERY FRAME, AND WITHOUT THIS THE WHOLE MODE IS A LIE.
             //

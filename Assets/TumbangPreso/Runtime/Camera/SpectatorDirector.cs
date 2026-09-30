@@ -330,7 +330,7 @@ namespace TumbangPreso.CameraSystem
         {
             if (PresentationClock.Held) return;
             if (!_engaged || _camera == null) return;
-            if (UI.Panel.AnyOpen) return;
+            if (UI.Panel.AnyOpen || UI.ScreenTakeover.AnyOpenOutside(_camera.transform)) return;
 
             float dt = Time.unscaledDeltaTime;
             if (dt <= 0.0f) return;
