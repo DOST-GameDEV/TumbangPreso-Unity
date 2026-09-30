@@ -1375,3 +1375,8 @@ OOM; do not report normal Quit or barrier qualification. Finish the separate
 barrier FPP check in a bounded600s session, then Amihan current Wiki reconciliation.
 Current Wiki: Drift35s, Featherfall40s/5s, Whirlwind35s/2.5s, Airburst15points
 and2.5s windup; Second Wind25percent/2.5s. No ability code claimed yet.
+
+Actual player barrier FPP check completed: Q shows stepped golden half-alpha
+barrier at7.0s while can/chalk/street remain visible. Ordinary Leave/Home/Quit,
+304.16s exit0, no safety/OOM stop. Runtime hash matches training confirmation.
+Next Amihan current-Wiki plan and exact source claim; no heavy job active.
