@@ -5,6 +5,30 @@ Current protocol:93 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSessio
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 TODO is the work-status queue; this file records resumption and evidence boundaries.
 
+
+## Shared Ownership
+
+Diddler cloud reservation: FEEDBACK-0930, other complete Wiki specifications,
+first coherent unit: Nemu's Kuro passive. Reproduce and correct the missing
+10 percent movement bonus during basic-ability cooldown, with focused native
+checks. The broader Nemu kit reconciliation remains open; no full-row completion
+is claimed by this unit.
+
+Owned edit paths:
+- Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs
+- Assets/TumbangPreso/Tests/NemuKuroPassiveTests.cs
+- Assets/TumbangPreso/Tests/NemuKuroPassiveTests.cs.meta
+- docs/reports/feedback-2026-09-30/nemu-kuro-passive.md
+- docs/TODO.md (only this unit's evidence pointer)
+- docs/ACTIVE_REWORK_LEDGER.md (only this reservation and its result)
+
+Local contributor reservation supplied by owner: GuidedTraining.cs,
+GuidedTrainingHud.OwnerPainted.cs, OwnerTrainingUiTests.cs,
+TutorialLessonHonestyProbe.cs, TutorialDefenderProbe.cs and DeadFeatureAudit.cs.
+The local contributor also owns final review of Feedback and How to use Feedback
+in the shared Wiki. Do not edit those paths or tabs until released. Preserve this
+reservation when updating the checkpoint. No cross-chat contact is required.
+
 ## Current Unit
 
 ### 2026-09-30 continuation
