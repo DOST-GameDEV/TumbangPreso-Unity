@@ -95,6 +95,12 @@ namespace TumbangPreso
         private static void KeyCap(Transform parent,string key)
         {
             var root=OwnerUiLayout.Rect(parent,"Key_"+key);var layout=root.gameObject.AddComponent<LayoutElement>();
+            if(key=="WHEEL UP" || key=="WHEEL DOWN")
+            {
+                var wheel=root.gameObject.AddComponent<TrainingWheelGlyph>();
+                wheel.Up=key=="WHEEL UP";wheel.raycastTarget=false;
+                layout.preferredWidth=layout.preferredHeight=72;return;
+            }
             var sprite=InputGlyphs.For(key,onDark:true);
             if(sprite!=null)
             {
@@ -110,6 +116,49 @@ namespace TumbangPreso
             var text=OwnerUiLayout.Text(parent,"Words",words,30);text.color=TrainingInk;
             text.horizontalOverflow=HorizontalWrapMode.Overflow;text.alignment=TextAnchor.MiddleCenter;
             var layout=text.gameObject.AddComponent<LayoutElement>();layout.preferredWidth=text.preferredWidth+10;layout.preferredHeight=72;
+        }
+        // Original vector mouse/scroll marks, kept readable beside the Xelu keys.
+        // Only actual wheel bindings use these; rebound controls retain their own glyph.
+        [RequireComponent(typeof(CanvasRenderer))]
+        private sealed class TrainingWheelGlyph : MaskableGraphic
+        {
+            public bool Up;
+            protected override void OnPopulateMesh(VertexHelper h)
+            {
+                h.Clear();var r=GetPixelAdjustedRect();
+                var rim=new Color32(97,99,101,255);var face=new Color32(239,240,238,255);
+                Ellipse(h,r,.38f,.48f,.29f,.44f,rim);
+                Ellipse(h,r,.38f,.48f,.255f,.405f,face);
+                Box(h,r,.12f,.62f,.64f,.65f,rim);
+                Box(h,r,.365f,.64f,.395f,.87f,rim);
+                Box(h,r,.33f,.66f,.43f,.80f,rim);
+                Box(h,r,.355f,.685f,.405f,.775f,face);
+                Box(h,r,.775f,.31f,.865f,.66f,rim);
+                Box(h,r,.80f,.32f,.84f,.65f,face);
+                float tip=Up ? .86f : .12f,baseY=Up ? .62f : .36f;
+                Tri(h,r,new Vector2(.64f,baseY),new Vector2(.99f,baseY),new Vector2(.82f,tip),rim);
+                Tri(h,r,new Vector2(.705f,baseY+(Up ? .025f : -.025f)),
+                    new Vector2(.925f,baseY+(Up ? .025f : -.025f)),new Vector2(.82f,tip+(Up ? -.055f : .055f)),face);
+            }
+            private static void Ellipse(VertexHelper h,Rect r,float x,float y,float rx,float ry,Color32 c)
+            {
+                int start=h.currentVertCount;Add(h,r,x,y,c);
+                for(int i=0;i<=24;i++)
+                {float a=i*Mathf.PI*2/24;Add(h,r,x+Mathf.Cos(a)*rx,y+Mathf.Sin(a)*ry,c);}
+                for(int i=0;i<24;i++)h.AddTriangle(start,start+i+1,start+i+2);
+            }
+            private static void Box(VertexHelper h,Rect r,float x0,float y0,float x1,float y1,Color32 c)
+            {
+                int start=h.currentVertCount;Add(h,r,x0,y0,c);Add(h,r,x1,y0,c);Add(h,r,x1,y1,c);Add(h,r,x0,y1,c);
+                h.AddTriangle(start,start+1,start+2);h.AddTriangle(start,start+2,start+3);
+            }
+            private static void Tri(VertexHelper h,Rect r,Vector2 a,Vector2 b,Vector2 c,Color32 tint)
+            {
+                int start=h.currentVertCount;Add(h,r,a.x,a.y,tint);Add(h,r,b.x,b.y,tint);Add(h,r,c.x,c.y,tint);
+                h.AddTriangle(start,start+1,start+2);
+            }
+            private static void Add(VertexHelper h,Rect r,float x,float y,Color32 c)
+                =>h.AddVert(new Vector3(r.x+x*r.width,r.y+y*r.height),c,Vector2.zero);
         }
     }
 }

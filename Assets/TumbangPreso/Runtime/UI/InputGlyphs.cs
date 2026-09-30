@@ -453,7 +453,7 @@ namespace TumbangPreso.UI
             if (string.IsNullOrEmpty(label)) return false;
 
             string key = label.Trim().ToUpperInvariant();
-            return PadColumns.ContainsKey(key) || Table.ContainsKey(key);
+            return key == "MOUSE" || PadColumns.ContainsKey(key) || Table.ContainsKey(key);
         }
 
         private static Sprite XeluSprite(string key, bool onDark, PadFamily family)
@@ -515,7 +515,7 @@ namespace TumbangPreso.UI
                 "CAPSLOCK" or "CAPS LOCK" => "Caps_Lock", "NUMLOCK" or "NUM LOCK" => "Num_Lock",
                 "UPARROW" or "UP ARROW" or "UP" => "Arrow_Up", "DOWNARROW" or "DOWN ARROW" or "DOWN" => "Arrow_Down",
                 "LEFTARROW" or "LEFT ARROW" or "LEFT" => "Arrow_Left", "RIGHTARROW" or "RIGHT ARROW" or "RIGHT" => "Arrow_Right",
-                "LMB" => "Mouse_Left", "RMB" => "Mouse_Right", "MMB" => "Mouse_Middle",
+                "MOUSE" => "Mouse_Simple", "LMB" => "Mouse_Left", "RMB" => "Mouse_Right", "MMB" => "Mouse_Middle",
                 "+" => "Plus", "-" => "Minus", "/" => "Slash", ";" => "Semicolon",
                 "[" => "Bracket_Left", "]" => "Bracket_Right", "'" => "Quote", "`" or "~" => "Tilda",
                 _ => null
@@ -528,6 +528,7 @@ namespace TumbangPreso.UI
         /// </summary>
         public static IEnumerable<string> KnownLabels()
         {
+            yield return "MOUSE";
             foreach (string key in Table.Keys) yield return key;
             foreach (string key in PadColumns.Keys) yield return key;
         }

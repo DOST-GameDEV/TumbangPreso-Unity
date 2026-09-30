@@ -369,3 +369,40 @@ or application is stopped. The3-case route check reached runtime without a new
 OOM: movement/role/can setup and completed-range reset/realQuit pass; blocking
 revealed that the staged undercharged12m shot lands short. Correct its demonstration
 lane with the existing full-power solver, then rerun the physical block check.
+
+Cloud tutorial route now implements the20-lesson Feedback contract, ordered real
+objectives,3-second continuous reading, accepted-cast delay and post-completion
+practice with reset-only defender. Twelve distinct focused native cases pass;
+raw earlier block/cast setup failures and their corrections are preserved in
+reports/feedback-2026-09-30/tutorial-route.md. Final integrated free-play/Quit
+check passes1/1 with the published protocol98 round-freeze paths. No new player
+build or human verification is claimed. Existing cloud material artifact remains.
+Owner13:32 prioritizes Harry's newest Feedback over the old bottom-up order.
+Owner13:26 confirms Done is independent of Human verified. Cloud native-checkbox
+access works: eight additional shipped rows were ticked, Human verified unchanged.
+New tutorial rows remain open until publication. Victory-screen input is the
+local contributor's next candidate; keep it separate. Tutorial paths release after this coherent unit is published. No loading/hero ability source is changed.
+
+Published tutorial f0d8db85e2b2a110bb41007a9869ae9365076514; remote verified.
+All tutorial paths released. Feedback notes and Done updated independently of
+Human verified. Nine human-verified rows moved intact into the owner's existing
+Finished feedback history tab; native checks/images and seven hidden IDs retained.
+The temporary copy is removed. Remaining original reports are preserved.
+
+Next cloud claim, newest Harry Feedback read13:59: ordinary NEXT ROUND must last
+3seconds; HALFTIME stays10seconds and retains its replay. This supersedes the
+recent uniform10-second/no-replay request. Keep no-skip, frozen ordinary view,
+input lock, host-owned deadlines, duplicate/late packet safety and teardown.
+Reserve Assets/TumbangPreso/Runtime/HalftimePresentation.cs,
+Assets/TumbangPreso/Runtime/Net/NetSession.cs,
+Assets/TumbangPreso/Tests/PlayMode/RoundBreakFreezeTests.cs and matching
+TODO/NETWORKING/evidence. Inspect retained halftime code rather than redesigning
+it. Any further source dependency must be named before editing. Victory-screen
+input stays the other contributor's candidate. No heavy job active.
+
+Owner13:56 expands authorization to presentation VFX/animation work previously
+excluded: finish prior requests first, then follow HERO_KIT_METHOD and related
+quality guides, research references, plan each skill and integrate motion/effects/
+camera/sound/UI. Paete/Phaister are quality references; ability mechanics remain
+owner-reserved. Critique native results and any generated concept images rather
+than treating them as proof. Manual bug hunting follows this presentation pass.

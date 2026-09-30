@@ -300,7 +300,7 @@ namespace TumbangPreso.Tests
                 "the title screen's TUTORIAL button no longer reaches playable training, and the "
                 + "text panel that used to carry the only other way in is deleted");
 
-            Assert.AreEqual(16, GuidedTraining.LessonCount,
+            Assert.AreEqual(20, GuidedTraining.LessonCount,
                 "the objective counter no longer agrees with the complete training route");
         }
 

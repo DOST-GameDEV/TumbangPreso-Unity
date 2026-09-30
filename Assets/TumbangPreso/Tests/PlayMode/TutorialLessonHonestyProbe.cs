@@ -108,6 +108,77 @@ namespace TumbangPreso.PlayTests
         private static float Flat(Vector3 a, Vector3 b)
             => Vector3.Distance(new Vector3(a.x, 0.0f, a.z), new Vector3(b.x, 0.0f, b.z));
 
+        [UnityTest, Timeout(180000)]
+        public IEnumerator AbilityReadingAndSuccessfulCastsRespectTheirDelays()
+        {
+            var oldRules = TumbangPreso.UI.SceneFlow.SelectedRules;
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            var settings = InputSystem.settings; var background = settings.backgroundBehavior;
+            var editor = settings.editorInputBehaviorInPlayMode;
+            settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keyboard = InputSystem.AddDevice<Keyboard>(); InputSystem.EnableDevice(keyboard);
+            try
+            {
+                TumbangPreso.UI.SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+                yield return LoadTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>();
+                var local = Field<CharacterMotor>(route, "_local");
+                var abilities = local.AbilitySystem; Assert.IsNotNull(abilities.Kit);
+                EnterLesson(route, GuidedTraining.Lesson.AbilityInfo);
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Tab)); InputSystem.Update();
+                yield return new WaitForSecondsRealtime(2.5f);
+                Assert.AreEqual(GuidedTraining.Lesson.AbilityInfo, route.CurrentLesson);
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState()); InputSystem.Update();
+                yield return new WaitForSecondsRealtime(.2f);
+                Assert.AreEqual(0f, Field<float>(route, "_metric"), .01f, "Releasing the description key resets the continuous read interval.");
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Tab)); InputSystem.Update();
+                float until = Time.unscaledTime + 5;
+                while (route.CurrentLesson == GuidedTraining.Lesson.AbilityInfo && Time.unscaledTime < until) yield return null;
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState()); InputSystem.Update();
+                Assert.AreEqual(GuidedTraining.Lesson.Skill1, route.CurrentLesson);
+                foreach (var item in new[] {
+                    (GuidedTraining.Lesson.Skill1, TumbangPreso.Abilities.HeroAbilitySystem.Slot.Skill1, Verb.Skill1, GuidedTraining.Lesson.Skill2),
+                    (GuidedTraining.Lesson.Skill2, TumbangPreso.Abilities.HeroAbilitySystem.Slot.Skill2, Verb.Skill2, GuidedTraining.Lesson.Ultimate) })
+                {
+                    EnterLesson(route, item.Item1);
+                    local.ApplyStagger(1f); local.Intent.Set(item.Item3, true); yield return null;
+                    local.Intent.Set(item.Item3, false); yield return new WaitForSecondsRealtime(.6f);
+                    Assert.AreEqual(item.Item1, route.CurrentLesson, "A refused cast must not finish the lesson.");
+                    local.ClearStun();
+                    var dummy = Field<CharacterMotor>(route, "_dummy");
+                    local.Intent.AimPoint = dummy.transform.position + Vector3.up * .8f;
+                    Vector3 facing = dummy.transform.position - local.transform.position; facing.y = 0;
+                    local.transform.forward = facing.normalized;
+                    var ability = item.Item2 == TumbangPreso.Abilities.HeroAbilitySystem.Slot.Skill1 ? abilities.Kit.Skill1 : abilities.Kit.Skill2;
+                    Assert.IsNotNull(ability, abilities.HeroId + " " + item.Item1 + " has no implemented ability.");
+                    Assert.IsTrue(local.CanAct(), "Prepared student cannot act.");
+                    Assert.IsFalse(local.Intent.Parked || local.Intent.Locked(item.Item3), "Prepared cast input is gated.");
+                    Assert.IsFalse(PresentationClock.BlocksInput, "Presentation is still holding input.");
+                    // Let both press and release cross real Update frames, including hold-to-aim slots.
+                    local.Intent.Set(item.Item3, true); yield return new WaitForSecondsRealtime(.15f);
+                    local.Intent.Set(item.Item3, false); yield return new WaitForSecondsRealtime(.1f);
+                    Assert.AreEqual(TumbangPreso.Abilities.HeroKit.CastOutcome.Cast, abilities.LastAnswer(item.Item2),
+                        abilities.HeroId + " " + item.Item1 + " real cast must be accepted before this timing check can qualify.");
+                    float accepted = Field<float>(route, "_castAcceptedAt"); Assert.GreaterOrEqual(accepted, 0);
+                    while (Time.unscaledTime < accepted + 2.3f) yield return null;
+                    Assert.IsFalse(Field<bool>(route, "_advancing"), "A successful cast must retain its full2.5second observation beat.");
+                    Assert.AreEqual(item.Item1, route.CurrentLesson);
+                    while (Time.unscaledTime < accepted + 2.6f) yield return null;
+                    Assert.IsTrue(Field<bool>(route, "_advancing"), "The observation beat should now show completion.");
+                    until = Time.unscaledTime + 4;
+                    while (route.CurrentLesson == item.Item1 && Time.unscaledTime < until) yield return null;
+                    Assert.AreEqual(item.Item4, route.CurrentLesson);
+                }
+            }
+            finally
+            {
+                InputSystem.RemoveDevice(keyboard); settings.backgroundBehavior = background;
+                settings.editorInputBehaviorInPlayMode = editor; QualitySettings.globalTextureMipmapLimit = mip;
+                TumbangPreso.UI.SceneFlow.SetSelectedRules(oldRules);
+            }
+        }
+
         [UnityTest, Timeout(60000)]
         public IEnumerator ThreeRealJumpsFillTheLessonAndOneTimeCompletionTurnsGreen()
         {
@@ -208,8 +279,8 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(GuidedTraining.Lesson.Ultimate, route.CurrentLesson, "The post-introduction delay was skipped.");
                 deadline = Time.realtimeSinceStartup + 4;
                 while (route.CurrentLesson == GuidedTraining.Lesson.Ultimate && Time.realtimeSinceStartup < deadline) yield return null;
-                Assert.AreEqual(GuidedTraining.Lesson.DefenderReset, route.CurrentLesson);
-                Assert.AreEqual(16, GuidedTraining.LessonCount);
+                Assert.AreEqual(GuidedTraining.Lesson.Emote, route.CurrentLesson);
+                Assert.AreEqual(20, GuidedTraining.LessonCount);
             }
             finally
             {
