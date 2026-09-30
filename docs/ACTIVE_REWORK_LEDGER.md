@@ -90,11 +90,10 @@ Handoffs were supplied in chat for manual copying; never upload/send them elsewh
 
 ## Exact Next Action
 
-Ship the current FeedbackMenuRouteTests/evidence and this compact checkpoint.
-Then complete remaining F0930-13 queue-button/stamina/physical-Escape and backdrop
+FeedbackMenuRouteTests/evidence and this compact checkpoint shipped through
+570ba128d, remote HEAD verified. Complete remaining F0930-13 queue-button/stamina/physical-Escape and backdrop
 checks or fix reproduced UX bugs. Continue independent network/bot work after
-checking latest shared ownership. All playable source work is committed except
-this small qualification/docs unit; unrelated dirt remains untouched.
+checking latest shared ownership. All owned source/qualification work is committed; unrelated dirt remains untouched.
 
 History is preserved whole in archive/ledger-through-2e87bda16-2026-09-30.md,
 including each earlier run, temporary reservation, failure and source decision.
